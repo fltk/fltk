@@ -8,6 +8,9 @@ CHANGES IN FLTK 1.1.0b4
 	  integer instead of uchar, to support the new
 	  FL_OVERRIDE flag for Fl_Window.
 
+	- The parent() method of Fl_Widget now uses pointers to
+	  Fl_Group instead of Fl_Widget.
+
 	- Fl_Window now provides the FLTK 2.0 "override()" and
 	  "set_override()" methods for windows.
 
