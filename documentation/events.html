@@ -217,6 +217,30 @@ widget. This indicates that some other widget or program has
 claimed the selection. Motif programs used this to clear the
 selection indication. Most modern programs ignore this.
 
+<H2><A NAME="dnd">Drag And Drop Events</A></H2>
+
+<H3>FL_DND_ENTER</H3>
+
+<P>The mouse has been moved to point at this widget. A widget
+that is interested in receiving drag'n'drop data must return 1
+to receive FL_DND_DRAG, FL_DND_LEAVE and FL_DND_RELEASE events.
+
+<H3>FL_DND_DRAG</H3>
+
+<P>The mouse has been moved inside a widget while dragging data.
+A widget that is interested in receiving drag'n'drop data should
+indicate the possible drop position.
+
+<H3>FL_DND_LEAVE</H3>
+
+<P>The mouse has moved out of the widget.
+
+<H3>FL_DND_RELEASE</H3>
+
+<P>The user has released the mouse button dropping data into 
+the widget. If the widget returns 1, it will receive the data in
+the immediatly following FL_PASTE event.
+
 <H2><A name="event_xxx">Fl::event_*() methods</A></H2>
 
 <P>FLTK keeps the information about the most recent event in

@@ -362,6 +362,7 @@ positions you might want to call <TT>child-&gt;draw_label(x,y,w,h,a)</TT>.
 should call this on all the children if your own damage is equal to
 FL_DAMAGE_CHILD.  Nothing is done if the child is not <TT>visible()</TT>
  or if it is clipped.
+
 <H2>Cut and Paste Support</H2>
 FLTK provides routines to cut and paste 8-bit text (in the future this
 may be UTF-8) between applications:
@@ -372,6 +373,24 @@ may be UTF-8) between applications:
 </UL>
 It may be possible to cut/paste non-text data by using <A href=osissues.html#add_handler>
 <TT>Fl::add_handler()</TT></A>.
+
+<H2>Drag And Drop Support</H2>
+
+FLTK provides routines to drag and drop 8-bit text between applications:
+
+<P>Drag'n'drop operations are are initiated by copying data to the 
+clipboard and calling the function
+<A href="Fl.html#Fl.dnd"><TT>Fl::dnd()</TT></A>.
+
+<P>Drop attempts are handled via <A href="events.html#dnd">events</A>:
+<UL>
+<LI><TT>FL_DND_ENTER</TT></LI>
+<LI><TT>FL_DND_DRAG</TT></LI>
+<LI><TT>FL_DND_LEAVE</TT></LI>
+<LI><TT>FL_DND_RELEASE</TT></LI>
+<LI><TT>FL_PASTE</TT></LI>
+</UL>
+
 <H2>Making a subclass of Fl_Window</H2>
 
 <P>You may want your widget to be a subclass of
