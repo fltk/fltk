@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.4 2002/05/04 05:28:11 easysw Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.5 2002/05/12 01:02:17 easysw Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -257,7 +257,29 @@ void Fl_Function_Type::write_code1() {
       *sptr = '\0';
 
       write_h("%s;\n", s);
-      write_c("%s::%s {\n", k, name());
+      // skip all function default param. init in body:
+      int skips=0;
+      int nc=0,level=0;
+      for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
+	if (!skips && *nptr=='(') level++;
+	else if (!skips && *nptr==')') level--;
+	
+	if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
+	  skips = skips ? 0 : 1;
+	if(!skips && level==1 && *nptr =='=' && 
+	   !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
+	  while(*++nptr  && (skips || *(nptr-1)=='\'' || 
+		(*nptr!=',' &&  (*nptr!=')' || level!=1) ))) {
+	    if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
+	      skips = skips ? 0 : 1;
+	    if (!skips && *nptr=='(') level++;
+	    else if (!skips && *nptr==')') level--;
+	  }
+	*sptr++ = *nptr;
+      }
+      *sptr = '\0';
+ 
+      write_c("%s::%s {\n", k, s);
     } else {
       if (public_) {
 	if (cdecl_)
@@ -680,5 +702,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.4 2002/05/04 05:28:11 easysw Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.5 2002/05/12 01:02:17 easysw Exp $".
 //

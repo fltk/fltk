@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0rc2
 
 	- Portability fixes.
+	- FLUID now properly handles default argument parameters
+	  properly.
 	- Fixed WM_PAINT handling under WIN32 - didn't validate
 	  the correct region that was drawn.
 	- Fl_Multiline_Output would insert the enter key.
