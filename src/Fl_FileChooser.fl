@@ -23,7 +23,7 @@ window->hide();} open
       code3 {\#include <string.h>} modal visible
     } {
       Fl_Browser fileList {
-        callback {fileListCB();} selected
+        callback {fileListCB();}
         private xywh {10 45 355 180} type Hold resizable hotspot
         code0 {\#include <FL/Fl_FileBrowser.H>}
         class Fl_FileBrowser
@@ -32,13 +32,16 @@ window->hide();} open
         label Cancel
         callback {fileList->deselect();
 fileName->value("");
-window->hide();}
+window->hide();} selected
         private xywh {285 280 80 25}
+        code0 {o->label(fl_cancel);}
       }
       Fl_Return_Button okButton {
         label OK
         callback {window->hide();}
-        private xywh {205 280 75 25}
+        private xywh {200 280 75 25}
+        code0 {\#include <FL/fl_ask.H>}
+        code1 {okButton->label(fl_ok);}
       }
       Fl_Input fileName {
         label {Filename:}

@@ -104,16 +104,17 @@ Fl_FileChooser::Fl_FileChooser(const char *d, const char *p, int t, const char *
     w->hotspot(o);
     { Fl_FileBrowser* o = fileList = new Fl_FileBrowser(10, 45, 355, 180);
       o->type(2);
-      o->when(FL_WHEN_RELEASE_ALWAYS);
       o->callback((Fl_Callback*)cb_fileList);
       Fl_Group::current()->resizable(o);
       w->hotspot(o);
     }
     { Fl_Button* o = new Fl_Button(285, 280, 80, 25, "Cancel");
       o->callback((Fl_Callback*)cb_Cancel);
+      o->label(fl_cancel);
     }
-    { Fl_Return_Button* o = okButton = new Fl_Return_Button(205, 280, 75, 25, "OK");
+    { Fl_Return_Button* o = okButton = new Fl_Return_Button(200, 280, 75, 25, "OK");
       o->callback((Fl_Callback*)cb_okButton);
+      okButton->label(fl_ok);
     }
     { Fl_Input* o = fileName = new Fl_Input(10, 245, 355, 25, "Filename:");
       o->callback((Fl_Callback*)cb_fileName);

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.H,v 1.5.2.3 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: fl_file_chooser.H,v 1.5.2.3.2.1 2001/08/03 18:46:57 easysw Exp $"
 //
 // File chooser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,10 +29,9 @@
 #include "Enumerations.H"
 
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname);
-FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char *));
 
 #endif
 
 //
-// End of "$Id: fl_file_chooser.H,v 1.5.2.3 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: fl_file_chooser.H,v 1.5.2.3.2.1 2001/08/03 18:46:57 easysw Exp $".
 //

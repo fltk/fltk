@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_FileBrowser.cxx,v 1.13.2.1 2001/08/02 16:17:04 easysw Exp $"
+// "$Id: Fl_FileBrowser.cxx,v 1.13.2.2 2001/08/03 18:46:57 easysw Exp $"
 //
 // Fl_FileBrowser routines.
 //
@@ -237,11 +237,11 @@ Fl_FileBrowser::item_width(void *p) const	// I - List item data
 //
 
 void
-Fl_FileBrowser::item_draw(void *p,		// I - List item data
-                       int  x,		// I - Upper-lefthand X coordinate
-		       int  y,		// I - Upper-lefthand Y coordinate
-		       int  w,		// I - Width of item
-		       int  h) const	// I - Height of item
+Fl_FileBrowser::item_draw(void *p,	// I - List item data
+                	  int  x,	// I - Upper-lefthand X coordinate
+			  int  y,	// I - Upper-lefthand Y coordinate
+			  int  w,	// I - Width of item
+			  int  h) const	// I - Height of item
 {
   int		i;			// Looping var
   FL_BLINE	*line;			// Pointer to line
@@ -260,7 +260,10 @@ Fl_FileBrowser::item_draw(void *p,		// I - List item data
   // Draw the list item text...
   line = (FL_BLINE *)p;
 
-  fl_font(textfont(), textsize());
+  if (line->txt[strlen(line->txt) - 1] == '/')
+    fl_font(textfont() | FL_BOLD, textsize());
+  else
+    fl_font(textfont(), textsize());
 
   if (line->flags & SELECTED)
     c = contrast(textcolor(), selection_color());
@@ -278,16 +281,15 @@ Fl_FileBrowser::item_draw(void *p,		// I - List item data
     // Draw the icon if it is set...
     if (line->data)
       ((Fl_FileIcon *)line->data)->draw(x, y, iconsize_, iconsize_,
-                                     (line->flags & SELECTED) ? FL_YELLOW :
-				                                FL_LIGHT2,
-				     active_r());
+                                	(line->flags & SELECTED) ? FL_YELLOW :
+				                                   FL_LIGHT2,
+					active_r());
 
     // Draw the text offset to the right...
     x += iconsize_ + 9;
     w -= iconsize_ - 10;
 
     // Center the text vertically...
-    line   = (FL_BLINE *)p;
     height = fl_height();
 
     for (text = line->txt; *text != '\0'; text ++)
@@ -385,6 +387,7 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
 {
   int		i;		// Looping var
   int		num_files;	// Number of files in directory
+  int		num_dirs;	// Number of directories in list
   char		filename[4096];	// Current file
   Fl_FileIcon	*icon;		// Icon to use
 
@@ -413,7 +416,7 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
     for (i = 'A'; i <= 'Z'; i ++, drives >>= 1)
       if (drives & 1)
       {
-        sprintf(filename, "%c:", i);
+        sprintf(filename, "%c:/", i);
 
 	if (i < 'C')
 	  add(filename, icon);
@@ -433,7 +436,7 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
     for (i = 'A'; i <= 'Z'; i ++, drives >>= 1)
       if (drives & 1)
       {
-        sprintf(filename, "%c:", i);
+        sprintf(filename, "%c:/", i);
         add(filename, icon);
 
 	num_files ++;
@@ -464,6 +467,8 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
 	  continue;
         if (sscanf(line, "%*s%4095s", filename) != 1)
 	  continue;
+
+        strncat(filename, "/", sizeof(filename) - 1);
 
 //        printf("Fl_FileBrowser::load() - adding \"%s\" to list...\n", filename);
         add(filename, icon);
@@ -502,15 +507,24 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
     if (num_files <= 0)
       return (0);
 
-    for (i = 0; i < num_files; i ++)
+    for (i = 0, num_dirs = 0; i < num_files; i ++)
     {
       if (strcmp(files[i]->d_name, ".") != 0 &&
           strcmp(files[i]->d_name, "..") != 0)
       {
-	sprintf(filename, "%s/%s", directory_, files[i]->d_name);
+	snprintf(filename, sizeof(filename), "%s/%s", directory_,
+	         files[i]->d_name);
 
-	if (filename_isdir(filename) ||
-            filename_match(files[i]->d_name, pattern_))
+	if (filename_isdir(filename))
+	{
+	  char name[1024]; // Temporary directory name
+
+	  snprintf(name, sizeof(name), "%s/", files[i]->d_name);
+
+          num_dirs ++;
+          insert(num_dirs, name, Fl_FileIcon::find(filename));
+	}
+	else if (filename_match(files[i]->d_name, pattern_))
           add(files[i]->d_name, Fl_FileIcon::find(filename));
       }
 
@@ -543,5 +557,5 @@ Fl_FileBrowser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.1 2001/08/02 16:17:04 easysw Exp $".
+// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.2 2001/08/03 18:46:57 easysw Exp $".
 //
