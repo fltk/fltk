@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0rc2
 
 	- Portability fixes.
+	- Fl_Window::draw() cleared the window label but didn't
+	  restore it, so windows could lose their titles.
 	- Eliminated multiple definitions of dirent structure
 	  when compiling under WIN32.
 	- Adjusted the size of the circle that is drawn inside
