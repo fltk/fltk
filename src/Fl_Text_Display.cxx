@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.49 2004/03/01 02:05:02 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.50 2004/04/06 17:38:36 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -143,7 +143,10 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 ** freed, nor are the style buffer or style table.
 */
 Fl_Text_Display::~Fl_Text_Display() {
-  if (mBuffer) mBuffer->remove_modify_callback(buffer_modified_cb, this);
+  if (mBuffer) {
+    mBuffer->remove_modify_callback(buffer_modified_cb, this);
+    mBuffer->remove_predelete_callback(buffer_predelete_cb, this);
+  }
   if (mLineStarts) delete[] mLineStarts;
 }
 
@@ -1583,13 +1586,15 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     font  = styleRec->font;
     fsize = styleRec->size;
 
-    if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) && Fl::focus() == this) {
-      background = selection_color();
+    if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
+      if (Fl::focus() == this) background = selection_color();
+      else background = fl_color_average(color(), selection_color(), 0.5f);
     } else background = color();
 
     foreground = fl_contrast(styleRec->color, background);
-  } else if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) && Fl::focus() == this ) {
-    background = selection_color();
+  } else if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
+    if (Fl::focus() == this) background = selection_color();
+    else background = fl_color_average(color(), selection_color(), 0.5f);
     foreground = fl_contrast(textcolor(), background);
   } else {
     foreground = textcolor();
@@ -3061,5 +3066,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.49 2004/03/01 02:05:02 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.50 2004/04/06 17:38:36 easysw Exp $".
 //

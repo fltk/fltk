@@ -1,7 +1,17 @@
 CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
-	  STR #281)
+	  STR #281, STR #328, STR #338)
+	- FLUID's Layout->Center In Group functionality did not
+	  properly handle widgets that were children of a
+	  Fl_Window widget (STR #318)
+	- The Fl_Text_Display destructor did not remove the
+	  predelete callback associated with the current buffer
+	  (STR #332)
+	- Fixed several bugs in the MacOS X Fl::add_fd()
+	  handling (STR #333, STR #337)
+	- The Fl_Text_Display widget did not display selections
+	  set by the application (STR #322)
 	- FLUID crashed if you did layout with a window widget
 	  (STR #317)
 	- Fl_Scroll::clear() didn't remove the child widget from

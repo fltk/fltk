@@ -1,5 +1,5 @@
 //
-// "$Id: align_widget.cxx,v 1.1.2.4 2004/04/06 02:47:25 easysw Exp $"
+// "$Id: align_widget.cxx,v 1.1.2.5 2004/04/06 17:38:36 easysw Exp $"
 //
 // alignment code for the Fast Light Tool Kit (FLTK).
 //
@@ -303,7 +303,10 @@ void align_widget_cb(Fl_Widget*, long how)
       {
 	Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
-	int center2 = 2*p->x()+p->w();
+	int center2;
+
+	if (w->window() == p) center2 = p->w();
+	else center2 = 2*p->x()+p->w();
 	w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
 	w->redraw();
 	if (w->window()) w->window()->redraw();
@@ -315,7 +318,10 @@ void align_widget_cb(Fl_Widget*, long how)
       {
 	Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
-	int center2 = 2*p->y()+p->h();
+	int center2;
+
+	if (w->window() == p) center2 = p->h();
+	else center2 = 2*p->y()+p->h();
 	w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
 	w->redraw();
 	if (w->window()) w->window()->redraw();
@@ -326,6 +332,6 @@ void align_widget_cb(Fl_Widget*, long how)
 
 
 //
-// End of "$Id: align_widget.cxx,v 1.1.2.4 2004/04/06 02:47:25 easysw Exp $".
+// End of "$Id: align_widget.cxx,v 1.1.2.5 2004/04/06 17:38:36 easysw Exp $".
 //
 

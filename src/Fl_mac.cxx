@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.52 2004/03/11 05:17:12 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.53 2004/04/06 17:38:36 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -57,13 +57,15 @@ extern "C" {
 
 // #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT
-#include <stdio.h>	// testing
-#define DEBUGMSG(msg)		fprintf(stderr, msg);
-#define DEBUGPERRORMSG(msg)	perror(msg)
+#include <stdio.h>		// testing
+#define DEBUGMSG(msg)		if ( msg ) fprintf(stderr, msg);
+#define DEBUGPERRORMSG(msg)	if ( msg ) perror(msg)
+#define DEBUGTEXT(txt)		txt
 #else
 #define DEBUGMSG(msg)
 #define DEBUGPERRORMSG(msg)
-#endif /*DEBUGSELECT*/
+#define DEBUGTEXT(txt)		NULL
+#endif /*DEBUG_SELECT*/
 
 // external functions
 extern Fl_Window* fl_find(Window);
@@ -141,127 +143,269 @@ static void nothing() {}
 void (*fl_lock_function)() = nothing;
 void (*fl_unlock_function)() = nothing;
 
-
 //
-// Select interface
-//
+// Select interface -- how it's implemented:
+//     When the user app configures one or more file descriptors to monitor
+//     with Fl::add_fd(), we start a separate thread to select() the  data,
+//     sending a custom OSX 'FLTK data ready event' to the parent  thread's
+//     RunApplicationLoop(), so that it triggers the data  ready  callbacks
+//     in the parent thread.                               -erco 04/04/04
+//     
 #define POLLIN  1
 #define POLLOUT 4
 #define POLLERR 8
-struct FD
-{
-  int fd;
-  short events;
-  void (*cb)(int, void*);
-  void* arg;
-};
-static int nfds = 0;
-static int fd_array_size = 0;
-static FD *fd = 0;
-static int G_pipe[2] = { 0,0 };		// work around pthread_cancel() problem
-enum GetSet { GET = 1, SET = 2 };
-static pthread_mutex_t select_mutex;	// global data lock
 
-// MAXFD ACCESSOR (HANDLES LOCKING)
-static void MaxFD(GetSet which, int& val)
+// Class to handle select() 'data ready'
+class DataReady
 {
-  static int maxfd = 0;
-  pthread_mutex_lock(&select_mutex);
-  if ( which == GET ) { val = maxfd; }
-  else                { maxfd = val; }
-  pthread_mutex_unlock(&select_mutex);
+    struct FD
+    {
+      int fd;
+      short events;
+      void (*cb)(int, void*);
+      void* arg;
+    };
+    int nfds, fd_array_size;
+    FD *fds;
+    pthread_t tid;		// select()'s thread id
+
+    // Data that needs to be locked (all start with '_')
+    pthread_mutex_t _datalock;	// data lock
+    fd_set _fdsets[3];		// r/w/x sets user wants to monitor
+    int _maxfd;			// max fd count to monitor
+    int _cancelpipe[2];		// pipe used to help cancel thread
+    void *_userdata;		// thread's userdata
+
+public:
+    DataReady()
+    {
+      nfds = 0;
+      fd_array_size = 0;
+      fds = 0;
+      tid = 0;
+
+      pthread_mutex_init(&_datalock, NULL);
+      FD_ZERO(&_fdsets[0]); FD_ZERO(&_fdsets[1]); FD_ZERO(&_fdsets[2]);
+      _cancelpipe[0] = _cancelpipe[1] = 0;
+      _userdata = 0;
+      _maxfd = 0;
+    }
+
+    ~DataReady()
+    {
+        CancelThread(DEBUGTEXT("DESTRUCTOR\n"));
+        if (fds) { free(fds); fds = 0; }
+	nfds = 0;
+    }
+
+    // Locks
+    //    The convention for locks: volatile vars start with '_',
+    //    and must be locked before use. Locked code is prefixed 
+    //    with /*LOCK*/ to make painfully obvious esp. in debuggers. -erco
+    //
+    void DataLock() { pthread_mutex_lock(&_datalock); }
+    void DataUnlock() { pthread_mutex_unlock(&_datalock); }
+
+    // Accessors
+    int IsThreadRunning() { return(tid ? 1 : 0); }
+    int GetNfds() { return(nfds); }
+    int GetCancelPipe(int ix) { return(_cancelpipe[ix]); }
+    fd_set GetFdset(int ix) { return(_fdsets[ix]); }
+
+    // Methods
+    void AddFD(int n, int events, void (*cb)(int, void*), void *v);
+    void RemoveFD(int n, int events);
+    int CheckData(fd_set& r, fd_set& w, fd_set& x);
+    void HandleData(fd_set& r, fd_set& w, fd_set& x);
+    static void* DataReadyThread(void *self);
+    void StartThread(void *userdata);
+    void CancelThread(const char *reason);
+};
+
+static DataReady dataready;
+
+void DataReady::AddFD(int n, int events, void (*cb)(int, void*), void *v)
+{
+  RemoveFD(n, events);
+  int i = nfds++;
+  if (i >= fd_array_size) 
+  {
+    FD *temp;
+    fd_array_size = 2*fd_array_size+1;
+    if (!fds) { temp = (FD*)malloc(fd_array_size*sizeof(FD)); }
+    else { temp = (FD*)realloc(fds, fd_array_size*sizeof(FD)); }
+    if (!temp) return;
+    fds = temp;
+  }
+  fds[i].cb  = cb;
+  fds[i].arg = v;
+  fds[i].fd  = n;
+  fds[i].events = events;
+  DataLock();
+  /*LOCK*/  if (events & POLLIN)  FD_SET(n, &_fdsets[0]);
+  /*LOCK*/  if (events & POLLOUT) FD_SET(n, &_fdsets[1]);
+  /*LOCK*/  if (events & POLLERR) FD_SET(n, &_fdsets[2]);
+  /*LOCK*/  if (n > _maxfd) _maxfd = n;
+  DataUnlock();
 }
 
-// FDSET ACCESSOR (HANDLES LOCKING)
-static void Fdset(GetSet which, fd_set& r, fd_set &w, fd_set &x)
+// Remove an FD from the array
+void DataReady::RemoveFD(int n, int events)
 {
-  static fd_set fdsets[3];
-  pthread_mutex_lock(&select_mutex);
-  if ( which == GET ) { r = fdsets[0]; w = fdsets[1]; x = fdsets[2]; }
-  else                { fdsets[0] = r; fdsets[1] = w; fdsets[2] = x; }
-  pthread_mutex_unlock(&select_mutex);
+  int i,j;
+  for (i=j=0; i<nfds; i++)
+  {
+    if (fds[i].fd == n) 
+    {
+      int e = fds[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      fds[i].events = e;
+    }
+    // move it down in the array if necessary:
+    if (j<i)
+      { fds[j] = fds[i]; }
+    j++;
+  }
+  nfds = j;
+  DataLock();
+  /*LOCK*/  if (events & POLLIN)  FD_CLR(n, &_fdsets[0]);
+  /*LOCK*/  if (events & POLLOUT) FD_CLR(n, &_fdsets[1]);
+  /*LOCK*/  if (events & POLLERR) FD_CLR(n, &_fdsets[2]);
+  /*LOCK*/  if (n == _maxfd) _maxfd--;
+  DataUnlock();
+}
+
+// CHECK IF USER DATA READY, RETURNS r/w/x INDICATING WHICH IF ANY
+int DataReady::CheckData(fd_set& r, fd_set& w, fd_set& x)
+{
+  int ret;
+  DataLock();
+  /*LOCK*/  timeval t = { 0, 1 };		// quick check
+  /*LOCK*/  r = _fdsets[0], w = _fdsets[1], x = _fdsets[2];
+  /*LOCK*/  ret = ::select(_maxfd+1, &r, &w, &x, &t);
+  DataUnlock();
+  if ( ret == -1 )
+    { DEBUGPERRORMSG("CheckData(): select()"); }
+  return(ret);
+}
+
+// HANDLE DATA READY CALLBACKS
+void DataReady::HandleData(fd_set& r, fd_set& w, fd_set& x)
+{
+  for (int i=0; i<nfds; i++) 
+  {
+    int f = fds[i].fd;
+    short revents = 0;
+    if (FD_ISSET(f, &r)) revents |= POLLIN;
+    if (FD_ISSET(f, &w)) revents |= POLLOUT;
+    if (FD_ISSET(f, &x)) revents |= POLLERR;
+    if (fds[i].events & revents) 
+    {
+      DEBUGMSG("DOING CALLBACK: ");
+      fds[i].cb(f, fds[i].arg);
+      DEBUGMSG("DONE\n");
+    }
+  }
+}
+
+// DATA READY THREAD
+//    This thread watches for changes in user's file descriptors.
+//    Sends a 'data ready event' to the main thread if any change.
+//
+void* DataReady::DataReadyThread(void *o)
+{
+  DataReady *self = (DataReady*)o;
+  while ( 1 )					// loop until thread cancel or error
+  {
+    // Thread safe local copies of data before each select()
+    self->DataLock();
+    /*LOCK*/  int maxfd = self->_maxfd;
+    /*LOCK*/  fd_set r = self->GetFdset(0);
+    /*LOCK*/  fd_set w = self->GetFdset(1);
+    /*LOCK*/  fd_set x = self->GetFdset(2);
+    /*LOCK*/  void *userdata = self->_userdata;
+    /*LOCK*/  int cancelpipe = self->GetCancelPipe(0);
+    /*LOCK*/  if ( cancelpipe > maxfd ) maxfd = cancelpipe;
+    /*LOCK*/  FD_SET(cancelpipe, &r);		// add cancelpipe to fd's to watch
+    /*LOCK*/  FD_SET(cancelpipe, &x);
+    self->DataUnlock();
+    // timeval t = { 1000, 0 };	// 1000 seconds;
+    timeval t = { 2, 0 };	// HACK: 2 secs prevents 'hanging' problem
+    int ret = ::select(maxfd+1, &r, &w, &x, &t);
+    pthread_testcancel();	// OSX 10.0.4 and older: needed for parent to cancel
+    switch ( ret )
+    {
+      case 0:	// NO DATA
+        continue;
+      case -1:	// ERROR
+      {
+        DEBUGPERRORMSG("CHILD THREAD: select() failed");
+        return(NULL);		// error? exit thread
+      }
+      default:	// DATA READY
+      {
+	if (FD_ISSET(cancelpipe, &r) || FD_ISSET(cancelpipe, &x)) 	// cancel?
+	    { return(NULL); }						// just exit
+        DEBUGMSG("CHILD THREAD: DATA IS READY\n");
+        EventRef drEvent;
+        CreateEvent( 0, kEventClassFLTK, kEventFLTKDataReady,
+		     0, kEventAttributeUserEvent, &drEvent);
+        EventQueueRef eventqueue = (EventQueueRef)userdata;
+        PostEventToQueue(eventqueue, drEvent, kEventPriorityStandard );
+        ReleaseEvent( drEvent );
+        return(NULL);		// done with thread
+      }
+    }
+  }
+}
+
+// START 'DATA READY' THREAD RUNNING, CREATE INTER-THREAD PIPE
+void DataReady::StartThread(void *new_userdata)
+{
+  CancelThread(DEBUGTEXT("STARTING NEW THREAD\n"));
+  DataLock();
+  /*LOCK*/  pipe(_cancelpipe);	// pipe for sending cancel msg to thread
+  /*LOCK*/  _userdata = new_userdata;
+  DataUnlock();
+  DEBUGMSG("*** START THREAD\n");
+  pthread_create(&tid, NULL, DataReadyThread, (void*)this);
+}
+
+// CANCEL 'DATA READY' THREAD, CLOSE PIPE
+void DataReady::CancelThread(const char *reason)
+{
+  if ( tid )
+  {
+    DEBUGMSG("*** CANCEL THREAD: ");
+    DEBUGMSG(reason);
+    if ( pthread_cancel(tid) == 0 )		// cancel first
+    {
+      DataLock();
+      /*LOCK*/  write(_cancelpipe[1], "x", 1);	// wake thread from select
+      DataUnlock();
+      pthread_join(tid, NULL);			// wait for thread to finish
+    }
+    tid = 0;
+    DEBUGMSG("(JOINED) OK\n");
+  }
+  // Close pipe if open
+  DataLock();
+  /*LOCK*/  if ( _cancelpipe[0] ) { close(_cancelpipe[0]); _cancelpipe[0] = 0; }
+  /*LOCK*/  if ( _cancelpipe[1] ) { close(_cancelpipe[1]); _cancelpipe[1] = 0; }
+  DataUnlock();
 }
 
 void Fl::add_fd( int n, int events, void (*cb)(int, void*), void *v )
-{
-  remove_fd(n, events);
-
-  int i = nfds++;
-
-  if (i >= fd_array_size) {
-    FD *temp;
-    fd_array_size = 2*fd_array_size+1;
-
-    if (!fd) { temp = (FD*)malloc(fd_array_size*sizeof(FD)); }
-    else     { temp = (FD*)realloc(fd, fd_array_size*sizeof(FD)); }
-
-    if (!temp) return;
-    fd = temp;
-  }
-
-  fd[i].cb  = cb;
-  fd[i].arg = v;
-  fd[i].fd  = n;
-  fd[i].events = events;
-
-  {
-    int maxfd;
-    fd_set r, w, x;
-    MaxFD(GET, maxfd);
-    Fdset(GET, r, w, x);
-    if (events & POLLIN)  FD_SET(n, &r);
-    if (events & POLLOUT) FD_SET(n, &w);
-    if (events & POLLERR) FD_SET(n, &x);
-    if (n > maxfd) maxfd = n;
-    Fdset(SET, r, w, x);
-    MaxFD(SET, maxfd);
-  }
-}
+    { dataready.AddFD(n, events, cb, v); }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v)
-{
-  Fl::add_fd(fd, POLLIN, cb, v);
-}
+    { dataready.AddFD(fd, POLLIN, cb, v); }
 
 void Fl::remove_fd(int n, int events)
-{
-  int i,j;
-
-  for (i=j=0; i<nfds; i++) {
-
-    if (fd[i].fd == n) {
-      int e = fd[i].events & ~events;
-      if (!e) continue; // if no events left, delete this fd
-      fd[i].events = e;
-    }
-
-    // move it down in the array if necessary:
-    if (j<i)
-    { fd[j] = fd[i]; }
-
-    j++;
-  }
-
-  nfds = j;
-
-  {
-    int maxfd;
-    fd_set r, w, x;
-    MaxFD(GET, maxfd);
-    Fdset(GET, r, w, x);
-    if (events & POLLIN)  FD_CLR(n, &r);
-    if (events & POLLOUT) FD_CLR(n, &w);
-    if (events & POLLERR) FD_CLR(n, &x);
-    if (n == maxfd) maxfd--;
-    Fdset(SET, r, w, x);
-    MaxFD(SET, maxfd);
-  }
-}
+    { dataready.RemoveFD(n, events); }
 
 void Fl::remove_fd(int n)
-{
-  remove_fd(n, -1);
-}
+    { dataready.RemoveFD(n, -1); }
 
 /**
  * Check if there is actually a message pending!
@@ -271,39 +415,6 @@ int fl_ready()
   if (GetNumEventsInQueue(GetCurrentEventQueue()) > 0) return 1;
   return 0;
 }
-
-// CHECK IF USER DATA READY
-static int CheckDataReady(fd_set& r, fd_set& w, fd_set& x)
-{
-  int maxfd;
-  MaxFD(GET, maxfd);
-  timeval t = { 0, 1 };		// quick check
-  int ret = ::select(maxfd+1, &r, &w, &x, &t);
-  if ( ret == -1 )
-    { DEBUGPERRORMSG("CheckDataReady(): select()"); }
-  return(ret);
-}
-
-// HANDLE DATA READY CALLBACKS
-static void HandleDataReady(fd_set& r, fd_set& w, fd_set& x)
-{
-  for (int i=0; i<nfds; i++) 
-  {
-    // fprintf(stderr, "CHECKING FD %d OF %d (%d)\n", i, nfds, fd[i].fd);
-    int f = fd[i].fd;
-    short revents = 0;
-    if (FD_ISSET(f, &r)) revents |= POLLIN;
-    if (FD_ISSET(f, &w)) revents |= POLLOUT;
-    if (FD_ISSET(f, &x)) revents |= POLLERR;
-    if (fd[i].events & revents) 
-    {
-      DEBUGMSG("DOING CALLBACK: ");
-      fd[i].cb(f, fd[i].arg);
-      DEBUGMSG("DONE\n");
-    }
-  }
-}
-
 
 /**
  * handle Apple Menu items (can be created using the Fl_Sys_Menu_Bar
@@ -401,24 +512,21 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
       break;
     case kEventFLTKDataReady:
       {
-	DEBUGMSG("DATA READY EVENT: RECEIVED\n");
+	dataready.CancelThread(DEBUGTEXT("DATA READY EVENT\n"));
 
         // CHILD THREAD TELLS US DATA READY
 	//     Check to see what's ready, and invoke user's cb's
 	//
-	fd_set r, w, x;
-	Fdset(GET, r, w, x);
-	switch ( CheckDataReady(r, w, x) )
+	fd_set r,w,x;
+	switch(dataready.CheckData(r,w,x))
 	{
-	case 0:		// NO DATA
-	  break;
-
-	case -1:	// ERROR
-	  break;
-
-	default:	// DATA READY
-	  HandleDataReady(r, w, x);
-	  break;
+	  case 0:	// NO DATA
+	    break;
+	  case -1:	// ERROR
+	    break;
+	  default:	// DATA READY
+	    dataready.HandleData(r,w,x);
+	    break;
         }
       }
       ret = noErr;
@@ -446,55 +554,6 @@ static pascal void timerProcCB( EventLoopTimerRef, void* )
 
   fl_unlock_function();
 }
-
-
-// DATA READY THREAD
-//    Separate thread, watches for changes in user's file descriptors.
-//    Sends a 'data ready event' to the main thread if any change.
-//
-static void *dataready_thread(void *userdata)
-{
-  EventRef drEvent;
-  CreateEvent( 0, kEventClassFLTK, kEventFLTKDataReady,
-               0, kEventAttributeUserEvent, &drEvent);
-  EventQueueRef eventqueue = (EventQueueRef)userdata;
-
-  // Thread safe local copy
-  int maxfd;
-  fd_set r, w, x;
-  MaxFD(GET, maxfd);
-  Fdset(GET, r, w, x);
-
-  // TACK ON FD'S FOR 'CANCEL PIPE'
-  FD_SET(G_pipe[0], &r);
-  if ( G_pipe[0] > maxfd ) maxfd = G_pipe[0];
-
-  // FOREVER UNTIL THREAD CANCEL OR ERROR
-  while ( 1 )
-  {
-    timeval t = { 1000, 0 };	// 1000 seconds;
-    int ret = ::select(maxfd+1, &r, &w, &x, &t);
-    pthread_testcancel();	// OSX 10.0.4 and under: need to do this
-                          // so parent can cancel us :(
-    switch ( ret )
-    {
-      case  0:	// NO DATA
-        continue;
-      case -1:	// ERROR
-      {
-        DEBUGPERRORMSG("CHILD THREAD: select() failed");
-        return(NULL);		// error? exit thread
-      }
-      default:	// DATA READY
-      {
-        DEBUGMSG("DATA READY EVENT: SENDING\n");
-        PostEventToQueue(eventqueue, drEvent, kEventPriorityStandard );
-        return(NULL);		// done with thread
-      }
-    }
-  }
-}
-
 
 /**
  * break the current event loop
@@ -566,38 +625,20 @@ static double do_queued_events( double time = 0.0 )
 
   got_events = 0;
 
-  // START A THREAD TO WATCH FOR DATA READY
-  static pthread_t dataready_tid = 0;
-  if ( nfds )
-  {
-    void *userdata = (void*)GetCurrentEventQueue();
+  // Check for re-entrant condition
+  if ( dataready.IsThreadRunning() )
+    { dataready.CancelThread(DEBUGTEXT("AVOID REENTRY\n")); }
 
-    // PREPARE INTER-THREAD DATA
-    pthread_mutex_init(&select_mutex, NULL);
-
-    if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
-    if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
-    pipe(G_pipe);
-
-    DEBUGMSG("*** START THREAD\n");
-    pthread_create(&dataready_tid, NULL, dataready_thread, userdata);
-  }
+  // Start thread to watch for data ready
+  if ( dataready.GetNfds() )
+      { dataready.StartThread((void*)GetCurrentEventQueue()); }
 
   fl_unlock_function();
 
   SetEventLoopTimerNextFireTime( timer, time );
   RunApplicationEventLoop(); // will return after the previously set time
-  if ( dataready_tid != 0 )
-  {
-      DEBUGMSG("*** CANCEL THREAD: ");
-      pthread_cancel(dataready_tid);		// cancel first
-      write(G_pipe[1], "x", 1);		// then wakeup thread from select
-      pthread_join(dataready_tid, NULL);	// wait for thread to finish
-      if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
-      if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
-      dataready_tid = 0;
-      DEBUGMSG("OK\n");
-  }
+  if ( dataready.IsThreadRunning() )
+    { dataready.CancelThread(DEBUGTEXT("APPEVENTLOOP DONE\n")); }
 
   fl_lock_function();
 
@@ -1879,6 +1920,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.52 2004/03/11 05:17:12 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.53 2004/04/06 17:38:36 easysw Exp $".
 //
 

@@ -45,7 +45,7 @@ be "private": a dynamically allocated array managed by the Fl_Menu_.
 <LI><A href=#Fl_Menu_.copy>copy</A></LI>
 <LI><A href=#Fl_Menu_.down_box>down_box</A></LI>
 <LI><A href=#Fl_Menu_.global>global</A></LI>
-<LI><A href=#Fl_Menu_.item_pathname>global</A></LI>
+<LI><A href=#Fl_Menu_.item_pathname>item_pathname</A></LI>
 <LI><A href=#Fl_Menu_.menu>menu</A></LI>
 </UL>
 </TD><TD align=left valign=top>
@@ -146,12 +146,13 @@ that the new entry was placed at.</P>
 FL_CTRL+'A') or a string describing the shortcut in one of two ways:</p>
 
 <pre>
-  [#+^]<ascii_value>     eg. "97", "^97", "+97", "#97"
-  [#+^]<ascii_char>      eg. "a", "^a", "+a", "#a"
+  [#+^]&lt;ascii_value&gt;�   eg. "97", "^97", "+97", "#97"
+  [#+^]&lt;ascii_char&gt;�    eg. "a", "^a", "+a", "#a"
 </pre>
-..where <ascii_value> is a decimal value representing an ascii character
-(eg. 97 is the ascii for 'a'), and the optional prefixes enhance the value 
-that follows. Multiple prefixes must appear in the above order.
+..where &lt;ascii_value&gt; is a decimal value representing an
+ascii character (eg. 97 is the ascii for 'a'), and the optional
+prefixes enhance the value  that follows. Multiple prefixes must
+appear in the above order.
 <pre>
   # - Alt
   + - Shift
@@ -215,7 +216,7 @@ not have to be put in a window at all).
 one will replace the old one.  There is no way to remove the <TT>
 global()</TT> setting (so don't destroy the widget!)</P>
 
-<h4><a name='Fl_Menu_.item_pathnaem'>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
+<h4><a name=Fl_Menu_.item_pathname>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
 int Fl_Menu_::item_pathname(char *name, int namelen,
                             const Fl_Menu_Item *finditem) const;</h4>
 
