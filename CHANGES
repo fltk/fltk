@@ -1,3 +1,10 @@
+CHANGES IN FLTK 1.1.5rc3
+
+	- The build system now creates image libraries named
+	  "libfltk_name.a" instead of "libname.a" to avoid
+	  clobbering an existing installed library (STR #480)
+
+
 CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365, STR #399, STR #407,
