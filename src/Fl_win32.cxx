@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.30 1999/03/03 07:40:18 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.31 1999/03/04 18:32:13 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -328,6 +328,20 @@ static Fl_Window* resize_bug_fix;
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
   static char buffer[2];
+
+	static int cnt=0;
+	if(uMsg == WM_SYNCPAINT)
+	{
+		if(cnt)
+		{
+			InvalidateRect(fl_window,0,FALSE);
+			cnt = 0;
+		} else {
+			cnt = 1; 
+		}
+	} else if (uMsg == WM_PAINT) {
+		cnt = 0;
+	}
 
   fl_msg.message = uMsg;
 
@@ -891,5 +905,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.30 1999/03/03 07:40:18 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.31 1999/03/04 18:32:13 mike Exp $".
 //

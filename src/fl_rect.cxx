@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.9 1999/02/01 01:59:13 mike Exp $"
+// "$Id: fl_rect.cxx,v 1.10 1999/03/04 18:32:14 mike Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -68,6 +68,7 @@ void fl_xyline(int x, int y, int x1) {
 void fl_xyline(int x, int y, int x1, int y2) {
 #ifdef WIN32
   if (y2 < y) y2--;
+  else y2++;
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
@@ -81,6 +82,8 @@ void fl_xyline(int x, int y, int x1, int y2) {
 
 void fl_xyline(int x, int y, int x1, int y2, int x3) {
 #ifdef WIN32
+  if(x3 < x1) x3--;
+  else x3++;
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
@@ -97,6 +100,7 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
 void fl_yxline(int x, int y, int y1) {
 #ifdef WIN32
   if (y1 < y) y1--;
+  else y1++;
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
@@ -106,6 +110,7 @@ void fl_yxline(int x, int y, int y1) {
 void fl_yxline(int x, int y, int y1, int x2) {
 #ifdef WIN32
   if (x2 > x) x2++;
+  else x2--;
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
@@ -119,6 +124,8 @@ void fl_yxline(int x, int y, int y1, int x2) {
 
 void fl_yxline(int x, int y, int y1, int x2, int y3) {
 #ifdef WIN32
+  if(y3<y1) y3--;
+  else y3++;
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
@@ -138,7 +145,7 @@ void fl_line(int x, int y, int x1, int y1) {
   LineTo(fl_gc, x1, y1);
   // Draw the last point *again* because the GDI line drawing
   // functions will not draw the last point ("it's a feature!"...)
-  LineTo(fl_gc, x1, y1);
+  SetPixel(fl_gc, x1, y1, fl_RGB());
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
 #endif
@@ -151,7 +158,7 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(fl_gc, x2, y2);
   // Draw the last point *again* because the GDI line drawing
   // functions will not draw the last point ("it's a feature!"...)
-  LineTo(fl_gc, x2, y2);
+  SetPixel(fl_gc, x2, y2, fl_RGB());
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = y;
@@ -379,5 +386,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.9 1999/02/01 01:59:13 mike Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10 1999/03/04 18:32:14 mike Exp $".
 //
