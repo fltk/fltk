@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.105 2003/09/09 15:15:16 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.106 2003/09/14 14:28:22 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -417,6 +417,8 @@ HLINKS=
 POSTBUILD=:
 THREADS=
 
+AC_ARG_WITH(links, [  --with-links            make header links for common misspellings])
+
 case $uname in
     CYGWIN* | MINGW*)
 	dnl Cygwin environment...
@@ -446,7 +448,9 @@ case $uname in
 	fi
 
 	# Don't make symlinks since Windows is not case sensitive.
-	HLINKS="#"
+	if test "x$with_links" != xyes; then
+		HLINKS="#"
+	fi
 	;;
 
     Darwin*)
@@ -470,7 +474,9 @@ case $uname in
         fi
 
 	# Don't make symlinks because HFS+ is not case sensitive...
-	HLINKS="#"
+	if test "x$with_links" != xyes; then
+		HLINKS="#"
+	fi
 
 	# Add a postbuild step after linking applications
 	POSTBUILD="/Developer/Tools/Rez -t APPL -o"
@@ -572,6 +578,11 @@ case $uname in
 
         if test x$ac_cv_have_overlay = xyes; then
 	    AC_DEFINE(HAVE_OVERLAY)
+	fi
+
+	# Make symlinks since UNIX/Linux is case sensitive.
+	if test "x$with_links" = xno; then
+		HLINKS="#"
 	fi
 	;;
 esac
@@ -852,5 +863,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.105 2003/09/09 15:15:16 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.106 2003/09/14 14:28:22 easysw Exp $".
 dnl

@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Added "--with-links" configure option to control
+	  whether symlinks are created for the FLTK header files
+	  (STR #164)
 	- Added new hoverdelay() to Fl_Tooltip to control how
 	  quickly recent tooltips appear (STR #126)
 	- FLUID now sets the size range when a window is shown.
