@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.1 2001/08/04 16:56:02 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.2 2001/09/29 03:36:27 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -244,12 +244,12 @@ void name_cb(Fl_Input* o, void *v) {
     if (numselected != 1) {
       static char buf[16];
       sprintf(buf,"(%d widgets)",numselected);
-      ((Fl_Window*)(o->parent()))->label(buf);
+      ((Fl_Window*)(o->parent()->parent()->parent()))->label(buf);
       o->hide();
     } else {
       o->static_value(current_widget->name());
       o->show();
-      ((Fl_Window*)(o->parent()))->label(current_widget->title());
+      ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
     }
   } else {
     if (numselected == 1) {
@@ -257,7 +257,7 @@ void name_cb(Fl_Input* o, void *v) {
       // I don't update window title, as it probably is being closed
       // and wm2 (a window manager) barfs if you retitle and then
       // hide a window:
-      // ((Fl_Window*)(o->parent()))->label(current_widget->title());
+      // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
     }
   }
 }
@@ -285,11 +285,109 @@ void label_cb(Fl_Input* i, void *v) {
       oldlabel = (char*)realloc(oldlabel,oldlabellen);
     }
     strcpy(oldlabel,i->value());
-    if (current_widget->image) i->deactivate();
-    else i->activate();
   } else {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget()) o->label(i->value());
+  }
+}
+
+static Fl_Input *image_input;
+
+void image_cb(Fl_Input* i, void *v) {
+  if (v == LOAD) {
+    image_input = i;
+//    i->static_value(current_widget->label());
+  } else {
+//    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+//      if (o->selected && o->is_widget()) o->label(i->value());
+  }
+}
+
+void image_browse_cb(Fl_Button* b, void *v) {
+  if (v != LOAD) {
+  }
+}
+
+static Fl_Input *inactive_input;
+
+void inactive_cb(Fl_Input* i, void *v) {
+  if (v == LOAD) {
+    inactive_input = i;
+//    i->static_value(current_widget->label());
+  } else {
+//    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+//      if (o->selected && o->is_widget()) o->label(i->value());
+  }
+}
+
+void inactive_browse_cb(Fl_Button* b, void *v) {
+  if (v != LOAD) {
+  }
+}
+
+Fl_Value_Input *x_input, *y_input, *w_input, *h_input;
+
+void x_cb(Fl_Value_Input *i, void *v) {
+  if (v == LOAD) {
+    x_input = i;
+    if (current_widget->is_widget()) {
+      i->value(((Fl_Widget_Type *)current_widget)->o->x());
+      x_input->activate();
+    } else x_input->deactivate();
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) {
+        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+	w->resize((int)i->value(), w->y(), w->w(), w->h());
+      }
+  }
+}
+
+void y_cb(Fl_Value_Input *i, void *v) {
+  if (v == LOAD) {
+    y_input = i;
+    if (current_widget->is_widget()) {
+      i->value(((Fl_Widget_Type *)current_widget)->o->y());
+      y_input->activate();
+    } else y_input->deactivate();
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) {
+        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+	w->resize(w->x(), (int)i->value(), w->w(), w->h());
+      }
+  }
+}
+
+void w_cb(Fl_Value_Input *i, void *v) {
+  if (v == LOAD) {
+    w_input = i;
+    if (current_widget->is_widget()) {
+      i->value(((Fl_Widget_Type *)current_widget)->o->w());
+      w_input->activate();
+    } else w_input->deactivate();
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) {
+        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+	w->resize(w->x(), w->y(), (int)i->value(), w->h());
+      }
+  }
+}
+
+void h_cb(Fl_Value_Input *i, void *v) {
+  if (v == LOAD) {
+    h_input = i;
+    if (current_widget->is_widget()) {
+      i->value(((Fl_Widget_Type *)current_widget)->o->h());
+      h_input->activate();
+    } else h_input->deactivate();
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) {
+        Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+	w->resize(w->x(), w->y(), w->w(), (int)i->value());
+      }
   }
 }
 
@@ -377,7 +475,7 @@ int boxnumber(const char *i) {
 
 void box_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     int n = current_widget->o->box(); if (!n) n = ZERO_ENTRY;
     for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
       if (boxmenu[j].argument() == n) {i->value(j); break;}
@@ -403,9 +501,9 @@ void down_box_cb(Fl_Choice* i, void *v) {
     else if (current_widget->is_menu_button())
       n = ((Fl_Menu_*)(current_widget->o))->down_box();
     else {
-      i->hide(); return;
+      i->deactivate(); return;
     }
-    i->show();
+    i->activate();
     if (!n) n = ZERO_ENTRY;
     for (int j = 0; j < int(sizeof(boxmenu)/sizeof(*boxmenu)); j++)
       if (boxmenu[j].argument() == n) {i->value(j); break;}
@@ -448,7 +546,7 @@ static Fl_Menu_Item whensymbolmenu[] = {
 
 void when_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     int n = current_widget->o->when() & (~FL_WHEN_NOT_CHANGED);
     if (!n) n = ZERO_ENTRY;
     for (int j = 0; j < int(sizeof(whenmenu)/sizeof(*whenmenu)); j++)
@@ -468,7 +566,7 @@ void when_cb(Fl_Choice* i, void *v) {
 
 void when_button_cb(Fl_Light_Button* i, void *v) {
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     i->value(current_widget->o->when()&FL_WHEN_NOT_CHANGED);
   } else {
     int n = i->value() ? FL_WHEN_NOT_CHANGED : 0;
@@ -508,9 +606,9 @@ void Fl_Widget_Type::resizable(uchar v) {
 
 void resizable_cb(Fl_Light_Button* i,void* v) {
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;}
-    if (numselected > 1) {i->hide(); return;}
-    i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;}
+    if (numselected > 1) {i->deactivate(); return;}
+    i->activate();
     i->value(current_widget->resizable());
   } else {
     current_widget->resizable(i->value());
@@ -519,10 +617,10 @@ void resizable_cb(Fl_Light_Button* i,void* v) {
 
 void hotspot_cb(Fl_Light_Button* i,void* v) {
   if (v == LOAD) {
-    if (numselected > 1) {i->hide(); return;}
+    if (numselected > 1) {i->deactivate(); return;}
     if (current_widget->is_menu_item()) i->label("divider");
     else i->label("hotspot");
-    i->show();
+    i->activate();
     i->value(current_widget->hotspot());
   } else {
     current_widget->hotspot(i->value());
@@ -542,8 +640,8 @@ void hotspot_cb(Fl_Light_Button* i,void* v) {
 void visible_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
     i->value(current_widget->o->visible());
-    if (current_widget->is_window()) i->hide();
-    else i->show();
+    if (current_widget->is_window()) i->deactivate();
+    else i->activate();
   } else {
     int n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
@@ -558,8 +656,8 @@ void visible_cb(Fl_Light_Button* i, void* v) {
 void active_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
     i->value(current_widget->o->active());
-    if (current_widget->is_window()) i->hide();
-    else i->show();
+    if (current_widget->is_window()) i->deactivate();
+    else i->activate();
   } else {
     int n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
@@ -688,7 +786,7 @@ void labeltype_cb(Fl_Choice* i, void *v) {
 void color_cb(Fl_Button* i, void *v) {
   Fl_Color c = current_widget->o->color();
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
   } else {
     Fl_Color d = fl_show_colormap(c);
     if (d == c) return;
@@ -705,7 +803,7 @@ void color_cb(Fl_Button* i, void *v) {
 void color2_cb(Fl_Button* i, void *v) {
   Fl_Color c = current_widget->o->selection_color();
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
   } else {
     Fl_Color d = fl_show_colormap(c);
     if (d == c) return;
@@ -761,7 +859,7 @@ static Fl_Menu_Item alignmenu[] = {
 void align_cb(Fl_Button* i, void *v) {
   int b = int(long(i->user_data()));
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     i->value(current_widget->o->align() & b);
   } else {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
@@ -859,7 +957,7 @@ void v_input_cb(Fl_Input* i, void* v) {
 
 void subclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_menu_item()) {i->hide(); return;} else i->show();
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     i->static_value(current_widget->subclass());
   } else {
     const char *c = i->value();
@@ -881,8 +979,8 @@ int Fl_Widget_Type::textstuff(int, Fl_Font&, int&, Fl_Color&) {return 0;}
 void textfont_cb(Fl_Choice* i, void* v) {
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->hide(); return;}
-    i->show();
+    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
+    i->activate();
     if (n > 15) n = FL_HELVETICA;
     i->value(n);
   } else {
@@ -899,8 +997,8 @@ void textfont_cb(Fl_Choice* i, void* v) {
 void textsize_cb(Fl_Value_Input* i, void* v) {
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->hide(); return;}
-    i->show();
+    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
+    i->activate();
   } else {
     s = int(i->value());
     if (s <= 0) s = FL_NORMAL_SIZE;
@@ -917,8 +1015,8 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
 void textcolor_cb(Fl_Button* i, void* v) {
   Fl_Font n; int s; Fl_Color c;
   if (v == LOAD) {
-    if (!current_widget->textstuff(0,n,s,c)) {i->hide(); return;}
-    i->show();
+    if (!current_widget->textstuff(0,n,s,c)) {i->deactivate(); return;}
+    i->activate();
   } else {
     c = i->color();
     Fl_Color d = fl_show_colormap(c);
@@ -938,8 +1036,8 @@ void textcolor_cb(Fl_Button* i, void* v) {
 
 void slider_size_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_valuator()!=2) {i->hide(); return;}
-    i->show();
+    if (current_widget->is_valuator()!=2) {i->deactivate(); return;}
+    i->activate();
     i->value(((Fl_Slider*)(current_widget->o))->slider_size());
   } else {
     double n = i->value();
@@ -956,8 +1054,8 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
 
 void min_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_valuator()) {i->hide(); return;}
-    i->show();
+    if (!current_widget->is_valuator()) {i->deactivate(); return;}
+    i->activate();
     i->value(((Fl_Valuator*)(current_widget->o))->minimum());
   } else {
     double n = i->value();
@@ -974,8 +1072,8 @@ void min_cb(Fl_Value_Input* i, void* v) {
 
 void max_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_valuator()) {i->hide(); return;}
-    i->show();
+    if (!current_widget->is_valuator()) {i->deactivate(); return;}
+    i->activate();
     i->value(((Fl_Valuator*)(current_widget->o))->maximum());
   } else {
     double n = i->value();
@@ -992,8 +1090,8 @@ void max_cb(Fl_Value_Input* i, void* v) {
 
 void step_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_valuator()) {i->hide(); return;}
-    i->show();
+    if (!current_widget->is_valuator()) {i->deactivate(); return;}
+    i->activate();
     i->value(((Fl_Valuator*)(current_widget->o))->step());
   } else {
     double n = i->value();
@@ -1011,13 +1109,13 @@ void step_cb(Fl_Value_Input* i, void* v) {
 void value_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_valuator()) {
-      i->show();
+      i->activate();
       i->value(((Fl_Valuator*)(current_widget->o))->value());
     } else if (current_widget->is_button()) {
-      i->show();
+      i->activate();
       i->value(((Fl_Button*)(current_widget->o))->value());
     } else 
-      i->hide();
+      i->deactivate();
   } else {
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
@@ -1042,7 +1140,7 @@ Fl_Menu_Item *Fl_Widget_Type::subtypes() {return 0;}
 void subtype_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
     Fl_Menu_Item* m = current_widget->subtypes();
-    if (!m) {i->hide(); return;}
+    if (!m) {i->deactivate(); return;}
     i->menu(m);
     int j;
     for (j = 0;; j++) {
@@ -1050,7 +1148,7 @@ void subtype_cb(Fl_Choice* i, void* v) {
       if (m[j].argument() == current_widget->o->type()) break;
     }
     i->value(j);
-    i->show();
+    i->activate();
     i->redraw();
   } else {
     int n = int(i->mvalue()->argument());
@@ -1770,5 +1868,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.1 2001/08/04 16:56:02 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.2 2001/09/29 03:36:27 easysw Exp $".
 //
