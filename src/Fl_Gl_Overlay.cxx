@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.6 2000/03/24 08:55:34 bill Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.7 2000/04/07 16:55:45 bill Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 
 #if HAVE_GL_OVERLAY
 
-#ifndef WIN32
+#ifndef _WIN32
 
 // Methods on Fl_Gl_Window that create an overlay window.  Because
 // many programs don't need the overlay, this is seperated into this
@@ -101,14 +101,14 @@ int Fl_Gl_Window::can_do_overlay() {
   return fl_find_overlay_visual() != 0;
 }
 
-#else // WIN32:
+#else // _WIN32:
 
 int Fl_Gl_Window::can_do_overlay() {
   Fl_Gl_Choice* choice = Fl_Gl_Choice::find(0,0);
   return (choice && (choice->pfd.bReserved & 15));
 }
 
-int fl_overlay_depth = 0;
+extern int fl_overlay_depth;
 
 #endif
 
@@ -121,12 +121,10 @@ int Fl_Gl_Window::can_do_overlay() {return 0;}
 void Fl_Gl_Window::make_overlay() {
   if (!overlay) {
 #if HAVE_GL_OVERLAY
-#ifdef WIN32
+#ifdef _WIN32
     HDC hdc = fl_private_dc(this, mode_,&g);
     GLXContext context = wglCreateLayerContext(hdc, 1);
-    if (!context) {
-      ; // no overlay hardware
-    } else {
+    if (context) { // we found a usable overlay context
       if (fl_first_context) wglShareLists(fl_first_context, context);
       else fl_first_context = context;
       overlay = context;
@@ -172,7 +170,7 @@ void Fl_Gl_Window::make_overlay() {
 void Fl_Gl_Window::redraw_overlay() {
   if (!shown()) return;
   make_overlay();
-#ifndef WIN32
+#ifndef _WIN32
   if (overlay != this)
     ((Fl_Gl_Window*)overlay)->redraw();
   else
@@ -184,10 +182,10 @@ void Fl_Gl_Window::make_overlay_current() {
   make_overlay();
 #if HAVE_GL_OVERLAY
   if (overlay != this) {
-#ifdef WIN32
+#ifdef _WIN32
     fl_set_gl_context(this, (GLXContext)overlay);
     if (fl_overlay_depth)
-      wglRealizeLayerPalette(fl_private_dc(this, mode_,&g), 1, TRUE);
+      wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
 #else
     ((Fl_Gl_Window*)overlay)->make_current();
 #endif
@@ -198,7 +196,7 @@ void Fl_Gl_Window::make_overlay_current() {
 
 void Fl_Gl_Window::hide_overlay() {
 #if HAVE_GL_OVERLAY
-#ifdef WIN32
+#ifdef _WIN32
   // nothing needs to be done?  Or should it be erased?
 #else
   if (overlay && overlay!=this) ((Fl_Gl_Window*)overlay)->hide();
@@ -209,5 +207,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.6 2000/03/24 08:55:34 bill Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.7 2000/04/07 16:55:45 bill Exp $".
 //
