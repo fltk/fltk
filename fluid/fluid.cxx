@@ -468,6 +468,18 @@ void cut_cb(Fl_Widget *, void *) {
   if (p) select_only(p);
 }
 
+void delete_cb(Fl_Widget *, void *) {
+  if (!Fl_Type::current) {
+    fl_beep();
+    return;
+  }
+  ipasteoffset = 0;
+  Fl_Type *p = Fl_Type::current->parent;
+  while (p && p->selected) p = p->parent;
+  delete_all(1);
+  if (p) select_only(p);
+}
+
 extern int force_parent;
 
 void paste_cb(Fl_Widget*, void*) {
@@ -584,7 +596,7 @@ Fl_Menu_Item Main_Menu[] = {
     {0},
   {"&Insert...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
   {"&Save", FL_CTRL+'s', save_cb, 0},
-  {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1, FL_MENU_DIVIDER},
+  {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
   {"Write &Code...", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
   {"&Quit", FL_CTRL+'q', exit_cb},
@@ -593,11 +605,12 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Undo", FL_CTRL+'z', nyi},
   {"C&ut", FL_CTRL+'x', cut_cb},
   {"&Copy", FL_CTRL+'c', copy_cb},
-  {"&Duplicate", FL_CTRL+'d', duplicate_cb},
-  {"&Paste", FL_CTRL+'v', paste_cb, 0, FL_MENU_DIVIDER},
+  {"&Delete", FL_Delete, delete_cb},
+  {"Dup&licate", FL_CTRL+'d', duplicate_cb},
+  {"&Paste", FL_CTRL+'v', paste_cb},
   {"Select &All", FL_CTRL+'a', select_all_cb},
   {"Select &None", FL_CTRL+FL_SHIFT+'a', select_none_cb, 0, FL_MENU_DIVIDER},
-  {"&Open...", FL_F+1, openwidget_cb},
+  {"&Show Widget Panel...", FL_F+1, openwidget_cb},
   {"&Sort",0,sort_cb},
   {"&Earlier", FL_F+2, earlier_cb},
   {"&Later", FL_F+3, later_cb},
@@ -608,9 +621,9 @@ Fl_Menu_Item Main_Menu[] = {
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
-  {"Show Widget &Bin",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_DIVIDER},
-  {"Pro&ject Settings...",FL_CTRL+'p',show_project_cb},
-  {"&GUI Settings...",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
+  {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_DIVIDER},
+  {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
+  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -635,12 +648,12 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
-  {"&Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
-    {"&Tiny",0,(Fl_Callback *)widget_size_cb,(void*)8,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,8},
-    {"&Small",0,(Fl_Callback *)widget_size_cb,(void*)11,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,11},
-    {"&Normal",0,(Fl_Callback *)widget_size_cb,(void*)14,FL_MENU_RADIO|FL_MENU_VALUE},
+  {"&Set Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
+    {"&Tiny",FL_ALT+'1',(Fl_Callback *)widget_size_cb,(void*)8,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,8},
+    {"&Small",FL_ALT+'2',(Fl_Callback *)widget_size_cb,(void*)11,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,11},
+    {"&Normal",FL_ALT+'3',(Fl_Callback *)widget_size_cb,(void*)14,FL_MENU_RADIO|FL_MENU_VALUE},
     {0},
-  {"&Grid...",FL_CTRL+'g',show_grid_cb},
+  {"&Grid...",FL_ALT+'g',show_grid_cb},
   {0},
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
@@ -686,10 +699,10 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 
   if (widgetbin_panel->visible()) {
     widgetbin_panel->hide();
-    Main_Menu[37].label("Show Widget &Bin");
+    Main_Menu[38].label("Show Widget &Bin...");
   } else {
     widgetbin_panel->show();
-    Main_Menu[37].label("Hide Widget &Bin");
+    Main_Menu[38].label("Hide Widget &Bin");
   }
 }
 

@@ -927,7 +927,7 @@ extern Fl_Menu_Item Main_Menu[];
 
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
-  Main_Menu[36].label("Hide O&verlays");
+  Main_Menu[37].label("Hide O&verlays");
   overlays_invisible = 0;
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
@@ -942,8 +942,8 @@ void redraw_overlays() {
 void toggle_overlays(Fl_Widget *,void *) {
   overlays_invisible = !overlays_invisible;
 
-  if (overlays_invisible) Main_Menu[36].label("Show O&verlays");
-  else Main_Menu[36].label("Hide O&verlays");
+  if (overlays_invisible) Main_Menu[37].label("Show O&verlays");
+  else Main_Menu[37].label("Hide O&verlays");
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
     if (o->is_window()) {
