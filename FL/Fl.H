@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.5 2001/11/28 18:00:16 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.6 2001/11/28 20:43:44 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -24,12 +24,12 @@
 //
 
 #ifndef Fl_H
-#define Fl_H
+#  define Fl_H
 
-#include "Enumerations.H"
-#ifndef Fl_Object
-#define Fl_Object Fl_Widget
-#endif
+#  include "Enumerations.H"
+#  ifndef Fl_Object
+#    define Fl_Object Fl_Widget
+#  endif
 
 class Fl_Widget;
 class Fl_Window;
@@ -70,7 +70,7 @@ public: // should be private!
 public:
 
   // API version number
-  static double version();
+  static FL_EXPORT double version();
 
   // argument parsers:
   static FL_EXPORT int arg(int, char**, int&);
@@ -222,8 +222,8 @@ public:
   static int  visible_focus() { return visible_focus_; }
 };
 
-#endif
+#endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.5 2001/11/28 18:00:16 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.6 2001/11/28 20:43:44 easysw Exp $".
 //

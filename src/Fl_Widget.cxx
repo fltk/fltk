@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.7 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.8 2001/11/28 20:43:44 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -97,11 +97,6 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
-}
-
-void Fl_Widget::tooltip(const char *t) {
-  Fl_Tooltip::enable();
-  tooltip_ = t;
 }
 
 void Fl_Widget::resize(int X, int Y, int W, int H) {
@@ -249,5 +244,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.7 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.8 2001/11/28 20:43:44 easysw Exp $".
 //

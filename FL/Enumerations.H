@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.7 2001/11/28 15:55:33 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.8 2001/11/28 20:43:44 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -364,5 +364,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.7 2001/11/28 15:55:33 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.8 2001/11/28 20:43:44 easysw Exp $".
 //

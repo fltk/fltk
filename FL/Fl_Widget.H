@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.10 2001/11/03 05:11:34 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.11 2001/11/28 20:43:44 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -143,7 +143,7 @@ public:
   void deimage(Fl_Image* a) {label_.deimage=a;}
   void deimage(Fl_Image& a) {label_.deimage=&a;}
   const char *tooltip() const {return tooltip_;}
-  void tooltip(const char *t);
+  void tooltip(const char *t) {tooltip_=t;}
   Fl_Callback_p callback() const {return callback_;}
   void callback(Fl_Callback* c, void* p) {callback_=c; user_data_=p;}
   void callback(Fl_Callback* c) {callback_=c;}
@@ -207,5 +207,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.10 2001/11/03 05:11:34 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.11 2001/11/28 20:43:44 easysw Exp $".
 //

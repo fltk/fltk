@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.9 2001/11/28 18:00:17 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.10 2001/11/28 20:43:44 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -802,7 +802,7 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
     // if we already have damage we must merge with existing region:
     if (i->region) {
 #ifdef WIN32
-      Region R = XRectangleRegion(X, Y, W, H);
+      Fl_Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
 #elif defined(__APPLE__)
@@ -834,5 +834,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.9 2001/11/28 18:00:17 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.10 2001/11/28 20:43:44 easysw Exp $".
 //

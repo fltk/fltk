@@ -1,5 +1,5 @@
 //
-// "$Id: gl_start.cxx,v 1.6.2.5.2.2 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: gl_start.cxx,v 1.6.2.5.2.3 2001/11/28 20:43:44 easysw Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ static int pw, ph;
 static Fl_Gl_Choice* gl_choice;
 #endif
 
-Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
+Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 void gl_start() {
   if (!context) {
@@ -117,5 +117,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.6.2.5.2.2 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: gl_start.cxx,v 1.6.2.5.2.3 2001/11/28 20:43:44 easysw Exp $".
 //
