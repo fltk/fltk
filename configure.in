@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.9 1998/10/21 21:42:13 mike Exp $"
+dnl# "$Id: configure.in,v 1.10 1998/10/21 21:43:54 mike Exp $"
 dnl#
 dnl# for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -66,13 +66,8 @@ if eval "test x$enable_shared = xyes"; then
   esac
 fi])
 
-if test -n "$CFLAGS"; then
-	CFLAGS="$DEBUGFLAG $CFLAGS"
-fi
-
-if test -n "$CXXFLAGS"; then
-	CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
-fi
+CFLAGS="$DEBUGFLAG $CFLAGS"
+CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -141,5 +136,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.9 1998/10/21 21:42:13 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.10 1998/10/21 21:43:54 mike Exp $".
 dnl#
