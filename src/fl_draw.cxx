@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.1 2001/08/05 23:58:54 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -31,11 +31,14 @@
 // Aligns them against the inside of the box.
 
 #include <FL/fl_draw.H>
+#include <FL/Fl_Image.H>
+
 #include <string.h>
 
 #define MAXBUF 1024
 
-char fl_draw_shortcut;	// set by fl_labeltypes.C
+char fl_draw_shortcut;	// set by fl_labeltypes.cxx
+
 static char* underline_at;
 
 // Copy p to buf, replacing unprintable characters with ^X and \nnn
@@ -90,19 +93,6 @@ expand(const char* from, char* buf, double maxw, int& n, double &width, int wrap
       *o++ = '^';
       *o++ = c ^ 0x40;
 
-   /*
-    * mike@fltk.org - The following escaping code causes problems when
-    * using the PostScript ISOLatin1 and WinANSI encodings, because these
-    * map to I18N characters...
-    */
-#if 0
-    } else if (c >= 128 && c < 0xA0) { // \nnn
-      *o++ = '\\';
-      *o++ = (c>>6)+'0';
-      *o++ = ((c>>3)&7)+'0';
-      *o++ = (c&7)+'0';
-#endif /* 0 */
-
     } else if (c == 0xA0) { // non-breaking space
       *o++ = ' ';
 
@@ -122,8 +112,8 @@ void fl_draw(
     const char* str,	// the (multi-line) string
     int x, int y, int w, int h,	// bounding box
     Fl_Align align,
-    void (*callthis)(const char*,int,int,int)
-) {
+    void (*callthis)(const char*,int,int,int),
+    Fl_Image* img) {
   const char* p;
   const char* e;
   char buf[MAXBUF];
@@ -140,18 +130,30 @@ void fl_draw(
   }
 
   // figure out vertical position of the first line:
+  int xpos;
   int ypos;
   int height = fl_height();
-  if (align & FL_ALIGN_BOTTOM) ypos = y+h-(lines-1)*height;
+  int imgh = img ? img->h() : 0;
+
+  if (align & FL_ALIGN_BOTTOM) ypos = y+h-(lines-1)*height-imgh;
   else if (align & FL_ALIGN_TOP) ypos = y+height;
-  else ypos = y+(h-lines*height)/2+height;
+  else ypos = y+(h-lines*height-imgh)/2+height;
+
+  // draw the image unless the "text over image" alignment flag is set...
+  if (img && !(align & FL_ALIGN_TEXT_OVER_IMAGE)) {
+    if (align & FL_ALIGN_LEFT) xpos = x;
+    else if (align & FL_ALIGN_RIGHT) xpos = x+w-img->w();
+    else xpos = x+(w-img->w())/2;
+
+    img->draw(xpos, ypos - height);
+    ypos += img->h();
+  }
 
   // now draw all the lines:
   int desc = fl_descent();
   for (p=str; ; ypos += height) {
     if (lines>1) e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
 
-    int xpos;
     if (align & FL_ALIGN_LEFT) xpos = x;
     else if (align & FL_ALIGN_RIGHT) xpos = x+w-int(width+.5);
     else xpos = x+int((w-width)/2);
@@ -165,16 +167,25 @@ void fl_draw(
     p = e;
   }
 
+  // draw the image if the "text over image" alignment flag is set...
+  if (img && (align & FL_ALIGN_TEXT_OVER_IMAGE)) {
+    if (align & FL_ALIGN_LEFT) xpos = x;
+    else if (align & FL_ALIGN_RIGHT) xpos = x+w-img->w();
+    else xpos = x+(w-img->w())/2;
+
+    img->draw(xpos, ypos);
+  }
 }
 
 void fl_draw(
   const char* str,	// the (multi-line) string
   int x, int y, int w, int h,	// bounding box
-  Fl_Align align) {
+  Fl_Align align,
+  Fl_Image* img) {
   if (!str || !*str) return;
   if (w && h && !fl_not_clipped(x, y, w, h)) return;
   if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
-  fl_draw(str, x, y, w, h, align, fl_draw);
+  fl_draw(str, x, y, w, h, align, fl_draw, img);
   if (align & FL_ALIGN_CLIP) fl_pop_clip();
 }
 
@@ -200,5 +211,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.1 2001/08/05 23:58:54 easysw Exp $".
 //

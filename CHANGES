@@ -1,10 +1,9 @@
 CHANGES IN FLTK 1.1.0
 
-TODO	- Added new image(), active_image(), and
-	  inactive_image() methods to support image + text
-	  labels more easily.
+	- Added new image() and deimage() methods to support
+	  image + text labels more easily.
 
-TODO	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
+	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
 
 	- Added tooltip support using Jacques Tremblay's tooltip
 	  patch.

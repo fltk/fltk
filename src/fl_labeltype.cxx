@@ -1,5 +1,5 @@
 //
-// "$Id: fl_labeltype.cxx,v 1.6.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
 //
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,16 @@ fl_normal_label(const Fl_Label* o, int X, int Y, int W, int H, Fl_Align align)
 {
   fl_font(o->font, o->size);
   fl_color((Fl_Color)o->color);
-  fl_draw(o->value, X, Y, W, H, align);
+  if (o->image) {
+    if (align & FL_ALIGN_TEXT_OVER_IMAGE) {
+      fl_draw(o->value, X, Y, W, H, align, o->image);
+    } else {
+      fl_draw(o->value, X, Y, W, H, align, o->image);
+    }
+  }
+  else {
+    fl_draw(o->value, X, Y, W, H, align, o->image);
+  }
 }
 
 void
@@ -77,12 +86,16 @@ void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m)
 
 // draw label with arbitrary alignment in arbitrary box:
 void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
-  if (!value) return;
+  if (!value && !image) return;
   table[type](this, X, Y, W, H, align);
 }
 
 void Fl_Label::measure(int& W, int& H) const {
-  if (!value) return;
+  if (!value && !image) {
+    W = H = 0;
+    return;
+  }
+
   Fl_Label_Measure_F* f = ::measure[type]; if (!f) f = fl_normal_measure;
   f(this, W, H);
 }
@@ -103,11 +116,13 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H) const {
 }
 
 // Anybody can call this to force the label to draw anywhere:
-extern char fl_draw_shortcut;
 void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
   if (flags()&SHORTCUT_LABEL) fl_draw_shortcut = 1;
   Fl_Label l1 = label_;
-  if (!active_r()) l1.color = inactive((Fl_Color)l1.color);
+  if (!active_r()) {
+    l1.color = inactive((Fl_Color)l1.color);
+    if (l1.deimage) l1.image = l1.deimage;
+  }
   l1.draw(X,Y,W,H,a);
   fl_draw_shortcut = 0;
 }
@@ -117,5 +132,5 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
 #include <FL/Fl_Input_.H>
 
 //
-// End of "$Id: fl_labeltype.cxx,v 1.6.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.3 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.4 2001/08/05 23:58:54 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -62,10 +62,11 @@ enum Fl_Event {	// events
   FL_DRAG		= 5,
   FL_FOCUS		= 6,
   FL_UNFOCUS		= 7,
-  FL_KEYBOARD		= 8,
-  FL_CLOSE		= 9,
-  FL_MOVE		= 10,
-  FL_SHORTCUT		= 11,
+  FL_KEYDOWN		= 8,
+  FL_KEYUP		= 9,
+  FL_CLOSE		= 10,
+  FL_MOVE		= 11,
+  FL_SHORTCUT		= 12,
   FL_DEACTIVATE		= 13,
   FL_ACTIVATE		= 14,
   FL_HIDE		= 15,
@@ -74,6 +75,7 @@ enum Fl_Event {	// events
   FL_SELECTIONCLEAR	= 18,
   FL_MOUSEWHEEL		= 19
 };
+#define FL_KEYBOARD FL_KEYDOWN
 
 enum Fl_When { // Fl_Widget::when():
   FL_WHEN_NEVER		= 0,
@@ -215,23 +217,25 @@ extern Fl_Labeltype FL_EXPORT define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL define_FL_EMBOSSED_LABEL()
 
 enum Fl_Align {	// align() values
-  FL_ALIGN_CENTER	= 0,
-  FL_ALIGN_TOP		= 1,
-  FL_ALIGN_BOTTOM	= 2,
-  FL_ALIGN_LEFT		= 4,
-  FL_ALIGN_RIGHT	= 8,
-  FL_ALIGN_INSIDE	= 16,
-  FL_ALIGN_CLIP		= 64,
-  FL_ALIGN_WRAP		= 128,
-  FL_ALIGN_TOP_LEFT	= FL_ALIGN_TOP | FL_ALIGN_LEFT,
-  FL_ALIGN_TOP_RIGHT	= FL_ALIGN_TOP | FL_ALIGN_RIGHT,
-  FL_ALIGN_BOTTOM_LEFT	= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT,
-  FL_ALIGN_BOTTOM_RIGHT	= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT,
-  FL_ALIGN_LEFT_TOP	= FL_ALIGN_TOP_LEFT,
-  FL_ALIGN_RIGHT_TOP	= FL_ALIGN_TOP_RIGHT,
-  FL_ALIGN_LEFT_BOTTOM	= FL_ALIGN_BOTTOM_LEFT,
-  FL_ALIGN_RIGHT_BOTTOM	= FL_ALIGN_BOTTOM_RIGHT,
-  FL_ALIGN_NOWRAP	= 0 // for back compatability
+  FL_ALIGN_CENTER		= 0,
+  FL_ALIGN_TOP			= 1,
+  FL_ALIGN_BOTTOM		= 2,
+  FL_ALIGN_LEFT			= 4,
+  FL_ALIGN_RIGHT		= 8,
+  FL_ALIGN_INSIDE		= 16,
+  FL_ALIGN_TEXT_OVER_IMAGE	= 32,
+  FL_ALIGN_IMAGE_OVER_TEXT	= 0,
+  FL_ALIGN_CLIP			= 64,
+  FL_ALIGN_WRAP			= 128,
+  FL_ALIGN_TOP_LEFT		= FL_ALIGN_TOP | FL_ALIGN_LEFT,
+  FL_ALIGN_TOP_RIGHT		= FL_ALIGN_TOP | FL_ALIGN_RIGHT,
+  FL_ALIGN_BOTTOM_LEFT		= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT,
+  FL_ALIGN_BOTTOM_RIGHT		= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT,
+  FL_ALIGN_LEFT_TOP		= FL_ALIGN_TOP_LEFT,
+  FL_ALIGN_RIGHT_TOP		= FL_ALIGN_TOP_RIGHT,
+  FL_ALIGN_LEFT_BOTTOM		= FL_ALIGN_BOTTOM_LEFT,
+  FL_ALIGN_RIGHT_BOTTOM		= FL_ALIGN_BOTTOM_RIGHT,
+  FL_ALIGN_NOWRAP		= 0 // for back compatability
 };
 
 enum Fl_Font {	// standard fonts
@@ -365,5 +369,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.3 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.4 2001/08/05 23:58:54 easysw Exp $".
 //

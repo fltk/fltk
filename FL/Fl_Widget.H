@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.4 2001/08/04 20:17:10 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.5 2001/08/05 23:58:54 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,7 @@
 
 class Fl_Widget;
 class Fl_Window;
+class Fl_Image;
 
 typedef void (Fl_Callback )(Fl_Widget*, void*);
 typedef Fl_Callback* Fl_Callback_p; // needed for BORLAND
@@ -38,6 +39,8 @@ typedef void (Fl_Callback1)(Fl_Widget*, long);
 
 struct Fl_Label {
   const char* value;
+  Fl_Image* image;
+  Fl_Image* deimage;
   uchar type;
   uchar font;
   uchar size;
@@ -132,6 +135,12 @@ public:
   void labelfont(uchar a) {label_.font=a;}
   uchar labelsize() const {return label_.size;}
   void labelsize(uchar a) {label_.size=a;}
+  Fl_Image* image() {return label_.image;}
+  void image(Fl_Image* a) {label_.image=a;}
+  void image(Fl_Image& a) {label_.image=&a;}
+  Fl_Image* deimage() {return label_.deimage;}
+  void deimage(Fl_Image* a) {label_.deimage=a;}
+  void deimage(Fl_Image& a) {label_.deimage=&a;}
   const char *tooltip() const {return tooltip_;}
   void tooltip(const char *t);
   Fl_Callback_p callback() const {return callback_;}
@@ -197,5 +206,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.4 2001/08/04 20:17:10 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.5 2001/08/05 23:58:54 easysw Exp $".
 //

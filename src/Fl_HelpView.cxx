@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.cxx,v 1.1.2.3 2001/08/02 21:11:43 easysw Exp $"
+// "$Id: Fl_HelpView.cxx,v 1.1.2.4 2001/08/05 23:58:54 easysw Exp $"
 //
 // Fl_HelpView widget routines.
 //
@@ -499,7 +499,7 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
   {
     // Make the image if needed...
     if (!img->image)
-      img->image = new Fl_Image(img->data, img->w, img->h, img->d);
+      img->image = new Fl_RGB_Image(img->data, img->w, img->h, img->d);
 
     return (img);
   }
@@ -723,7 +723,7 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
   img->hattr[sizeof(img->hattr) - 1] = '\0';
 
   if (make)
-    img->image = new Fl_Image(img->data, img->w, img->h, img->d);
+    img->image = new Fl_RGB_Image(img->data, img->w, img->h, img->d);
   else
     img->image = (Fl_Image *)0;
 
@@ -3132,5 +3132,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_HelpView.cxx,v 1.1.2.3 2001/08/02 21:11:43 easysw Exp $".
+// End of "$Id: Fl_HelpView.cxx,v 1.1.2.4 2001/08/05 23:58:54 easysw Exp $".
 //
