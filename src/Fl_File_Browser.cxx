@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.21 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.22 2002/08/09 23:49:52 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -269,8 +269,6 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
   int		column;			// Current column
   const int	*columns;		// Columns
 
-
-  (void)h;
 
   // Draw the list item text...
   line = (FL_BLINE *)p;
@@ -645,5 +643,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.21 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.22 2002/08/09 23:49:52 easysw Exp $".
 //
