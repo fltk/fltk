@@ -147,6 +147,10 @@ SOURCE=..\src\Fl_Bitmap.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_BMP_Image.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Box.cxx
 # End Source File
 # Begin Source File

@@ -297,6 +297,11 @@ DEP_CPP_FL_BI=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_BMP_Image.cxx
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Box.cxx
 DEP_CPP_FL_BO=\
 	"..\fl\enumerations.h"\
