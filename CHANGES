@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
 	  STR #281, STR #328, STR #338)
+	- fl_scroll() did not handle scrolling from off-screen on
+	  WIN32 (STR #315)
 	- Fl_File_Chooser did not allow manual entry of a drive
 	  letter (STR #339)
 	- Fl_Menu now uses the boxtype to redraw the menu

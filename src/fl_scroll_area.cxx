@@ -1,5 +1,5 @@
 //
-// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.4 2003/01/30 21:44:12 easysw Exp $"
+// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.5 2004/04/11 01:40:12 easysw Exp $"
 //
 // Scrolling routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 // a "callback" which is called to draw rectangular areas that are moved
 // into the drawing area.
 
+#include <FL/Fl.H>
 #include <FL/x.H>
 
 // scroll a rectangle and redraw the newly exposed portions:
@@ -71,6 +72,36 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   BitBlt(fl_gc, dest_x, dest_y, src_w, src_h, fl_gc, src_x, src_y,SRCCOPY);
   // NYI: need to redraw areas that the source of BitBlt was bad due to
   // overlapped windows, probably similar to X version:
+  // MRS: basic code needs to redraw parts that scrolled from off-screen...
+  int temp, limit;
+  int wx, wy;
+
+  // Compute the X position of the current window;
+  // this only works when scrolling in response to
+  // a user event; Fl_Window::x/y_root() do not work
+  // on WIN32...
+  wx = Fl::event_x_root() - Fl::event_x();
+  wy = Fl::event_y_root() - Fl::event_y();
+
+  temp = wx + src_x;
+  if (temp < Fl::x()) {
+    draw_area(data, dest_x, dest_y, Fl::x() - temp, src_h);
+  }
+  temp  = wx + src_x + src_w;
+  limit = Fl::x() + Fl::w();
+  if (temp > limit) {
+    draw_area(data, dest_x + src_w - temp + limit, dest_y, temp - limit, src_h);
+  }
+
+  temp = wy + src_y;
+  if (temp < Fl::y()) {
+    draw_area(data, dest_x, dest_y, src_w, Fl::y() - temp);
+  }
+  temp  = wy + src_y + src_h;
+  limit = Fl::y() + Fl::h();
+  if (temp > limit) {
+    draw_area(data, dest_x, dest_y + src_h - temp + limit, src_w, temp - limit);
+  }
 #elif defined(__APPLE__)
   Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
@@ -96,5 +127,5 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 }
 
 //
-// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.4 2003/01/30 21:44:12 easysw Exp $".
+// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.5 2004/04/11 01:40:12 easysw Exp $".
 //

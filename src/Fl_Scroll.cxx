@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.8 2004/04/10 00:37:03 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.9 2004/04/11 01:39:57 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -74,7 +74,7 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
 	                       W+Fl::scheme_bg_->w(),
 			       H+Fl::scheme_bg_->h());
 	  break;
-        } else if (s->box() == FL_NO_BOX) break;
+        }
 
     default :
 	fl_color(s->color());
@@ -271,5 +271,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.8 2004/04/10 00:37:03 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.9 2004/04/11 01:39:57 easysw Exp $".
 //
