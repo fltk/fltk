@@ -22,6 +22,6 @@ extern void font_cb(Fl_Choice*, long);
 extern void font_size_cb(Fl_Value_Input*, long);
 extern void scrollbar_thickness_cb(Fl_Value_Slider*, void*);
 extern void text_box_thickness_cb(Fl_Value_Slider*, void*);
-extern Fl_Window *style_panel;
-void show_style_panel();
+extern Fl_Double_Window *style_panel;
+Fl_Double_Window* show_style_panel();
 extern Fl_Menu_Item menu_[];

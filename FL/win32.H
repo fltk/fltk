@@ -44,6 +44,7 @@ public:
   Fl_Window* w;
   Region region;
   Fl_X *next;
+  int wait_for_expose;
   HDC private_dc; // used for OpenGL
   HCURSOR cursor;
   static Fl_X* first;

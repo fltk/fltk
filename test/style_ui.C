@@ -2,7 +2,7 @@
 
 #include "style_ui.H"
 
-Fl_Window *style_panel;
+Fl_Double_Window *style_panel;
 
 static void cb_OK(Fl_Return_Button* o, void*) {
   o->window()->hide();
@@ -46,10 +46,10 @@ static void cb_click(Fl_Button*, void*) {
 }
 static Fl_Menu_Item* font_menu();
 
-void show_style_panel() {
-  Fl_Window *w;
+Fl_Double_Window* show_style_panel() {
+  Fl_Double_Window* w;
   if (!style_panel) {
-    { Fl_Window* o = style_panel = w = new Fl_Double_Window(335, 425, "style");
+    { Fl_Double_Window* o = style_panel = w = new Fl_Double_Window(335, 425, "style");
       { Fl_Choice* o = new Fl_Choice(60, 155, 220, 25, "labels:");
         o->callback((Fl_Callback*)font_cb, (void*)(0));
         o->menu(font_menu());
@@ -147,11 +147,12 @@ void show_style_panel() {
     }
       }
       style_panel->show();
+  return w;
 }
 
 int main(int argc, char **argv) {
-  Fl_Window *w;
-  { Fl_Window* o = w = new Fl_Double_Window(445, 435);
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = w = new Fl_Double_Window(445, 435);
     { Fl_Group* o = new Fl_Group(270, 35, 140, 75, "Packed buttons:");
       o->align(4);
       { Fl_Button* o = new Fl_Button(270, 35, 35, 25, "A");
@@ -196,10 +197,7 @@ int main(int argc, char **argv) {
       o->labeltype(FL_ENGRAVED_LABEL);
       o->align(4);
     }
-    { Fl_Counter* o = new Fl_Counter(20, 120, 170, 25, "counter");
-      o->minimum(-1e+06);
-      o->maximum(1e+06);
-    }
+    new Fl_Counter(20, 120, 170, 25, "counter");
     { Fl_Adjuster* o = new Fl_Adjuster(80, 40, 25, 75, "adjuster:");
       o->labeltype(FL_SYMBOL_LABEL);
       o->align(4);

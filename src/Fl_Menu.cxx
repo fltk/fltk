@@ -147,7 +147,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 	b = m ? m->box() : FL_UP_BOX;
       } else {
 	r = (Fl_Color)(FL_COLOR_CUBE-1); // white
-	b = FL_THIN_UP_BOX;
+	//b = FL_THIN_UP_BOX;
       }
     } else {
       l.color = contrast((Fl_Color)labelcolor_, r);
@@ -359,7 +359,7 @@ int menuwindow::find_selected(int mx, int my) {
   if (!menu || !menu->text) return -1;
   mx -= x();
   my -= y();
-  if (my <= 0 || my >= h()) return -1;
+  if (my < 0 || my >= h()) return -1;
   if (!itemheight) { // menubar
     int x = BW; int i = 0;
     const Fl_Menu_Item* m = menu;
@@ -370,11 +370,10 @@ int menuwindow::find_selected(int mx, int my) {
     }
     return i;
   }
-  if (mx <= 0 || mx >= w()) return -1;
-  my -= h()-(BOTTOM + numitems*itemheight - LEADING + 2);
-  if (my <= 0) return -1;
-  int i = my/itemheight;
+  if (mx < 0 || mx >= w()) return -1;
+  int i = (my-(TOP-1))/itemheight;
   if (i>=numitems) i = numitems-1;
+  else if (i < 0) i = 0;
   return i;
 }
 
@@ -712,5 +711,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.3 1998/10/19 20:45:51 mike Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.4 1998/10/19 21:00:20 mike Exp $".
 //

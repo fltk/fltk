@@ -340,11 +340,12 @@ int fl_handle(const XEvent& xevent)
     break;
 
   case Expose:
-  case GraphicsExpose:
-#if 1	// try to keep windows on top even if WM_TRANSIENT_FOR does not work:
+    Fl_X::i(window)->wait_for_expose = 0;
+    // try to keep windows on top even if WM_TRANSIENT_FOR does not work:
     if (Fl::first_window()->non_modal() && window != Fl::first_window())
       Fl::first_window()->show();
-#endif
+
+  case GraphicsExpose:
     window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
 		   xevent.xexpose.width, xevent.xexpose.height);
     return 1;
@@ -413,8 +414,8 @@ int fl_handle(const XEvent& xevent)
       // ascii characters.  This won't work on non-PC layout keyboards,
       // but are there any of those left??
       buffer[0] = "7486293150."[keysym-0xff95];
-      len = 1;
       keysym = FL_KP+buffer[0];
+      len = 1;
     }
     buffer[len] = 0;
     Fl::e_keysym = int(keysym);
@@ -466,23 +467,23 @@ int fl_handle(const XEvent& xevent)
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  if (resize_bug_fix == this)
-    resize_bug_fix = 0;
-  else if (shown()) {
-    // tell X window manager to change window size:
-    if (!(flags()&FL_FORCE_POSITION) && X == x() && Y == y())
-      XResizeWindow(fl_display, i->xid, W>0 ? W : 1, H>0 ? H : 1);
-    else if (W != w() || H != h())
+  int is_a_resize = (W != w() || H != h());
+  int resize_from_program = (this != resize_bug_fix);
+  if (!resize_from_program) resize_bug_fix = 0;
+  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
+  else if (!is_a_resize) return;
+  if (is_a_resize) {
+    Fl_Group::resize(X,Y,W,H);
+    if (shown()) {redraw(); i->wait_for_expose = 1;}
+  } else {
+    x(X); y(Y);
+  }
+  if (resize_from_program && shown()) {
+    if (is_a_resize)
       XMoveResizeWindow(fl_display, i->xid, X, Y, W>0 ? W : 1, H>0 ? H : 1);
     else
       XMoveWindow(fl_display, i->xid, X, Y);
   }
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  if (W != w() || H != h()) Fl_Group::resize(X,Y,W,H); else {x(X); y(Y);}
-  // Notice that this does *not* set any redraw bits.  I assumme
-  // I will receive damage for the whole window from X.  I think
-  // that "ForgetGravity" forces the expose event for the entire
-  // window, but this may not be true on some implementations.
 }
 
 ////////////////////////////////////////////////////////////////
@@ -497,9 +498,11 @@ Fl_X* Fl_X::set_xid(Fl_Window* w, Window xid) {
   x->setwindow(w);
   x->next = Fl_X::first;
   x->region = 0;
+  x->wait_for_expose = 1;
   Fl_X::first = x;
   w->set_visible();
   w->handle(FL_SHOW); // get child windows to appear
+  w->redraw();
   fl_fix_focus(); // if this is modal we must fix focus now
   return x;
 }
@@ -804,5 +807,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.5 1998/10/19 20:46:20 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.6 1998/10/19 21:00:22 mike Exp $".
 //

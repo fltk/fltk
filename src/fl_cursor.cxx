@@ -84,7 +84,7 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
 
 #define CURSORSIZE 16
 #define HOTXY 7
-static struct TableEntry {
+struct TableEntry {
   uchar bits[CURSORSIZE*CURSORSIZE/8];
   uchar mask[CURSORSIZE*CURSORSIZE/8];
   Cursor cursor;
@@ -167,5 +167,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.3 1998/10/19 20:46:31 mike Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.4 1998/10/19 21:00:22 mike Exp $".
 //

@@ -122,7 +122,7 @@ void Fl::flush() {
   if (damage()) {
     damage_ = 0;
     for (Fl_X* x = Fl_X::first; x; x = x->next) {
-      if (x->w->damage() && x->w->visible()) {
+      if (!x->wait_for_expose && x->w->damage() && x->w->visible()) {
 	x->flush();
 	x->w->clear_damage();
       }
@@ -415,10 +415,10 @@ int Fl::handle(int event, Fl_Window* window)
       fl_xmousewin = window; fl_fix_focus();
     }
     if (Fl::pushed()) {
+      w = Fl::pushed();
+      event = FL_DRAG;
       Fl::e_x += mouse_dx;
       Fl::e_y += mouse_dy;
-      event = FL_DRAG;
-      w = Fl::pushed();
     } else if (Fl::grab())
       w = Fl::grab();
     else if (Fl::modal() && w != Fl::modal())
@@ -426,11 +426,11 @@ int Fl::handle(int event, Fl_Window* window)
     break;
 
   case FL_RELEASE: {
-    if (Fl::pushed_) {
+    if (Fl::pushed()) {
+      w = Fl::pushed();
+      Fl::pushed_ = 0; // must be zero before callback is done!
       Fl::e_x += mouse_dx;
       Fl::e_y += mouse_dy;
-      w = Fl::pushed_;
-      Fl::pushed_ = 0; // must be zero before callback is done!
     }
     int r = w->handle(event);
     fl_fix_focus();
@@ -527,8 +527,9 @@ void Fl_Window::hide() {
 #ifdef WIN32
   if (x->private_dc) ReleaseDC(x->xid,x->private_dc);
   if (x->xid == fl_window) fl_GetDC(0); // releases dc belonging to window
-#endif
+#else
   if (x->region) XDestroyRegion(x->region);
+#endif
   XDestroyWindow(fl_display, x->xid);
 
   delete x;
@@ -584,5 +585,5 @@ void fl_throw_focus(Fl_Widget *o) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.4 1998/10/19 20:45:34 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.5 1998/10/19 21:00:20 mike Exp $".
 //

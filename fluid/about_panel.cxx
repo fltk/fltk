@@ -19,8 +19,7 @@ static void cb_OK(Fl_Return_Button* o, void*) {
 
 Fl_Window* make_about_panel(const char *copyright) {
   Fl_Window* w;
-  { Fl_Window* o = about_panel = new Fl_Window(309, 221, "about fluid");
-    w = o;
+  { Fl_Window* o = about_panel = w = new Fl_Window(309, 221, "about fluid");
     o->box(FL_UP_BOX);
     o->color(97);
     o->selection_color(47);

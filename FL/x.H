@@ -68,6 +68,7 @@ public:
   Fl_Window *w;
   Region region;
   Fl_X *next;
+  int wait_for_expose;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}

@@ -164,29 +164,29 @@ static int mouse_event(Fl_Window *window, int what, int button,
 // convert a MSWindows VK_x to an Fltk (X) Keysym:
 // See also the inverse converter in Fl_get_key_win32.C
 // This table is in numeric order by VK:
-static const struct {unsigned short vk, fltk;} vktab[] = {
+static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_BACK,	FL_BackSpace},
   {VK_TAB,	FL_Tab},
   {VK_CLEAR,	FL_KP+'5'},
-  {VK_RETURN,	FL_Enter},
-  {VK_SHIFT,	FL_Shift_L},
-  {VK_CONTROL,	FL_Control_L},
-  {VK_MENU,	FL_Alt_L},
+  {VK_RETURN,	FL_Enter,	FL_KP_Enter},
+  {VK_SHIFT,	FL_Shift_L,	FL_Shift_R},
+  {VK_CONTROL,	FL_Control_L,	FL_Control_R},
+  {VK_MENU,	FL_Alt_L,	FL_Alt_R},
   {VK_PAUSE,	FL_Pause},
   {VK_CAPITAL,	FL_Caps_Lock},
   {VK_ESCAPE,	FL_Escape},
   {VK_SPACE,	' '},
-  {VK_PRIOR,	FL_KP+'9'},
-  {VK_NEXT,	FL_KP+'3'},
-  {VK_END,	FL_KP+'1'},
-  {VK_HOME,	FL_KP+'7'},
-  {VK_LEFT,	FL_KP+'4'},
-  {VK_UP,	FL_KP+'8'},
-  {VK_RIGHT,	FL_KP+'6'},
-  {VK_DOWN,	FL_KP+'2'},
+  {VK_PRIOR,	FL_KP+'9',	FL_Page_Up},
+  {VK_NEXT,	FL_KP+'3',	FL_Page_Down},
+  {VK_END,	FL_KP+'1',	FL_End},
+  {VK_HOME,	FL_KP+'7',	FL_Home},
+  {VK_LEFT,	FL_KP+'4',	FL_Left},
+  {VK_UP,	FL_KP+'8',	FL_Up},
+  {VK_RIGHT,	FL_KP+'6',	FL_Right},
+  {VK_DOWN,	FL_KP+'2',	FL_Down},
   {VK_SNAPSHOT,	FL_Print},	// does not work on NT
-  {VK_INSERT,	FL_KP+'0'},
-  {VK_DELETE,	FL_KP+'.'},
+  {VK_INSERT,	FL_KP+'0',	FL_Insert},
+  {VK_DELETE,	FL_KP+'.',	FL_Delete},
   {VK_LWIN,	FL_Meta_L},
   {VK_RWIN,	FL_Meta_R},
   {VK_APPS,	FL_Menu},
@@ -211,35 +211,19 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
 };
 static int ms2fltk(int vk, int extended) {
   static unsigned short vklut[256];
+  static unsigned short extendedlut[256];
   if (!vklut[1]) { // init the table
     unsigned int i;
     for (i = 0; i < 256; i++) vklut[i] = tolower(i);
     for (i=VK_F1; i<=VK_F16; i++) vklut[i] = i+(FL_F-(VK_F1-1));
     for (i=VK_NUMPAD0; i<=VK_NUMPAD9; i++) vklut[i] = i+(FL_KP+'0'-VK_NUMPAD0);
-    for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++)
+    for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
       vklut[vktab[i].vk] = vktab[i].fltk;
+      extendedlut[vktab[i].vk] = vktab[i].extended;
   }
-  if (extended)
-  {
-    //this is lame, have to check the vk code to make it faster
-    switch (vk) {
-      case VK_INSERT: return FL_Insert;
-      case VK_DELETE: return FL_Delete;
-      case VK_END: return FL_End;
-      case VK_DOWN: return FL_Down;
-      case VK_NEXT: return FL_Page_Down;
-      case VK_LEFT: return FL_Left;
-      case VK_RIGHT: return FL_Right;
-      case VK_HOME: return FL_Home;
-      case VK_UP: return FL_Up;
-      case VK_PRIOR: return FL_Page_Up;
-      case VK_SHIFT: return FL_Shift_R;
-      case VK_CONTROL : return FL_Control_R;
-      case VK_MENU: return FL_Alt_R;
-      case VK_RETURN: return FL_KP_Enter;
+    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
     }
-  }
-  return vklut[vk];
+  return extended ? extendedlut[vk] : vklut[vk];
 }
 
 #if USE_COLORMAP
@@ -275,6 +259,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // "exposure alert", like the X event. 
 
     Fl_X *i = Fl_X::i(window);
+    i->wait_for_expose = 0;
+    // if region == entire window we should delete i->region, else
     if (window->damage()) {
       if (i->region) {
 	InvalidateRgn(hWnd,i->region,FALSE);
@@ -336,19 +322,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       goto STUPID_MICROSOFT;
     }
     // otherwise use it as a 0-character key...
-    // otherwise use it as a 0-character key...
   case WM_DEADCHAR:
   case WM_SYSDEADCHAR:
-    buffer[0] = 0;
-    Fl::e_text = buffer;
-    Fl::e_length = 0;
-    goto GETSTATE;
   case WM_CHAR:
   case WM_SYSCHAR:
-    buffer[0] = char(wParam);
-    Fl::e_text = buffer;
-    Fl::e_length = 1;
-  GETSTATE:
     {ulong state = Fl::e_state & 0xff000000; // keep the mouse button state
      // if GetKeyState is expensive we might want to comment some of these out:
       if (GetKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
@@ -363,6 +340,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
       Fl::e_state = state;}
     if (lParam & (1<<31)) goto DEFAULT; // ignore up events after fixing shift
+    if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
+      buffer[0] = char(wParam);
+      Fl::e_length = 1;
+    } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
+      buffer[0] = Fl::e_keysym-FL_KP;
+      Fl::e_length = 1;
+    } else {
+      buffer[0] = 0;
+      Fl::e_length = 0;
+    }
+    Fl::e_text = buffer;
     // for (int i = lParam&0xff; i--;)
     while (window->parent()) window = window->window();
     if (Fl::handle(FL_KEYBOARD,window)) return 0;
@@ -426,14 +414,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  int resize_from_program = 1;
-  if (this == resize_bug_fix) {
-    resize_from_program = 0;
-    resize_bug_fix = 0;
-  }
-  if (X==x() && Y==y() && W==w() && H==h()) return;
+  int is_a_resize = (W != w() || H != h());
+  int resize_from_program = (this != resize_bug_fix);
+  if (!resize_from_program) resize_bug_fix = 0;
   if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  if (W != w() || H != h()) Fl_Group::resize(X,Y,W,H); else {x(X); y(Y);}
+  else if (!is_a_resize) return;
+  if (is_a_resize) {
+    Fl_Group::resize(X,Y,W,H);
+    if (shown()) {redraw(); i->wait_for_expose = 1;}
+  } else {
+    x(X); y(Y);
+  }
   if (resize_from_program && shown()) {
     if (border() && !parent()) {
       X -= GetSystemMetrics(SM_CXFRAME);
@@ -442,7 +433,6 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       H += 2*GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
     }
     MoveWindow(i->xid, X, Y, W, H, TRUE);
-    //if (!parent()) redraw();
   }
 }
 
@@ -455,7 +445,6 @@ int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
-  w->clear_damage(); // wait for expose events
 
   static char* class_name;
   if (!class_name) {	// create a single WNDCLASS used for everything:
@@ -555,8 +544,10 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   // use w->xclass() to set the icon...
 
+  x->wait_for_expose = 1;
   w->set_visible();
   w->handle(FL_SHOW); // get child windows to appear
+  w->redraw(); // force draw to happen
   // If we've captured the mouse, we dont want do activate any
   // other windows from the code, or we loose the capture.
   ShowWindow(x->xid, fl_show_iconic ? SW_SHOWMINNOACTIVE : 
@@ -737,5 +728,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.8 1998/10/19 20:46:19 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.9 1998/10/19 21:00:21 mike Exp $".
 //

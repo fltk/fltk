@@ -53,7 +53,6 @@ void header_input_cb(Fl_Input* i, void*) {
 }
 void code_input_cb(Fl_Input* i, void*) {
   code_file_name = i->value();
-  printf("code file name set to %s\n", code_file_name);
 }
 
 void include_H_from_C_button_cb(Fl_Light_Button* b, void*) {

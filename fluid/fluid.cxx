@@ -365,7 +365,6 @@ int main(int argc,char **argv) {
   }
   const char *c = argv[i];
   make_main_window();
-  include_H_from_C=1;
   if (c) set_filename(c);
   if (!compile_only) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));

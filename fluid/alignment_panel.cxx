@@ -22,8 +22,7 @@ Fl_Light_Button *include_H_from_C_button;
 
 Fl_Window* make_alignment_window() {
   Fl_Window* w;
-  { Fl_Window* o = alignment_window = new Fl_Window(210, 310, "fluid Preferences");
-    w = o;
+  { Fl_Window* o = alignment_window = w = new Fl_Window(210, 310, "fluid Preferences");
     { Fl_Box* o = new Fl_Box(10, 20, 190, 100, "ALIGNMENT:");
       o->box(FL_ENGRAVED_FRAME);
       o->labelsize(10);

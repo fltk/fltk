@@ -117,12 +117,6 @@ void fl_draw(
     Fl_Align align,
     void (*callthis)(const char*,int,int,int)
 ) {
-  if (!str || !*str) return;
-
-  // clip:
-  if (w && h && !fl_not_clipped(x, y, w, h)) return;
-  if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
-
   const char* p;
   const char* e;
   char buf[MAXBUF];
@@ -171,6 +165,9 @@ void fl_draw(
   const char* str,	// the (multi-line) string
   int x, int y, int w, int h,	// bounding box
   Fl_Align align) {
+  if (!str || !*str) return;
+  if (w && h && !fl_not_clipped(x, y, w, h)) return;
+  if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
   fl_draw(str, x, y, w, h, align, fl_draw);
 }
 
@@ -196,5 +193,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.2 1998/10/19 20:46:33 mike Exp $".
+// End of "$Id: fl_draw.cxx,v 1.3 1998/10/19 21:00:23 mike Exp $".
 //

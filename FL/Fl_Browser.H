@@ -74,7 +74,7 @@ public:
   char column_char() const {return column_char_;}
   void column_char(char c) {column_char_ = c;}
   const int* column_widths() const {return column_widths_;}
-  void column_widths(const int* l) { column_widths_=l; }
+  void column_widths(const int* l) {column_widths_ = l;}
 
   int displayed(int n) const {return Fl_Browser_::displayed(find_line(n));}
 

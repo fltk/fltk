@@ -336,18 +336,16 @@ void FCB::set(const char* buf) {
 }
 
 void FCB::draw() {
-  if (message) {
+  if (!message) {
+    Fl_Browser_::draw();
+    if (full_height() > 0) return;
+    message = "No matching files";
+  }
     Fl_Boxtype b = box(); if (!b) b = Fl_Input_::default_box();
     draw_box(b,color());
     fl_color(FL_INACTIVE_COLOR);
+  fl_font(textfont(), textsize(), default_font(), default_size());
     fl_draw(message, x()+7, y()+3, w(), h()-3, FL_ALIGN_TOP_LEFT);
-  } else {
-    Fl_Browser_::draw();
-    if (full_height()<=0) {
-      message = "No matching files";
-      draw();
-    }
-  }
 }
 
 void FCB::clear_prev() {
@@ -613,5 +611,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.2 1998/10/19 20:46:37 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.3 1998/10/19 21:00:24 mike Exp $".
 //
