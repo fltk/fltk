@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.27 2002/02/20 19:29:57 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.28 2002/03/04 21:48:50 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2153,7 +2153,8 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 		*tempptr;	// Pointer into temporary filename
 
 
-      if (strchr(directory_, ':') != NULL && strchr(link->filename, ':') == NULL)
+      if (strchr(directory_, ':') != NULL &&
+          strchr(link->filename, ':') == NULL)
       {
 	if (link->filename[0] == '/')
 	{
@@ -2165,8 +2166,6 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 	}
 	else
 	  sprintf(temp, "%s/%s", directory_, link->filename);
-
-	load(temp);
       }
       else if (link->filename[0] != '/' && strchr(link->filename, ':') == NULL)
       {
@@ -2177,11 +2176,14 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 	  getcwd(dir, sizeof(dir));
 	  sprintf(temp, "file:%s/%s", dir, link->filename);
 	}
-
-        load(temp);
       }
       else
-        load(link->filename);
+        strcpy(temp, link->filename);
+
+      if (link->name[0])
+        sprintf(temp + strlen(temp), "#%s", link->name);
+
+      load(temp);
     }
     else if (target[0])
       topline(target);
@@ -2627,5 +2629,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.27 2002/02/20 19:29:57 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.28 2002/03/04 21:48:50 easysw Exp $".
 //

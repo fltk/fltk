@@ -1,7 +1,9 @@
 CHANGES IN FLTK 1.1.0b12
 
-	- Drag'n'drop support for MacOS
-	- Updated Mac OSIssues documentation
+	- Fl_Help_View didn't preserve target names (e.g.
+	  "filename.html#target") when following links.
+	- Drag-and-drop support for MacOS.
+	- Updated MacOS issues documentation.
 
 
 CHANGES IN FLTK 1.1.0b11
