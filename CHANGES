@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- Long menus that were aligned such that the top of an
+	  item was exactly at the top of the screen would not
+	  scroll (STR #33)
 	- The OS issues appendix incorrectly stated that MacOS
 	  8.6 and 9 were supported; they are not (STR #28)
 	- Fixed handling of nested double-buffered windows (STR
