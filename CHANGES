@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.0b6
 	- Documentation updates...
 	- The configure script now works within the CygWin
 	  environment.
+	- Tooltips are now enabled by default, but are not
+	  re-enabled when calling the Fl_Widget::tooltip()
+	  method.
 	- Added new Fl::version() method to get the current
 	  FLTK library version (for shared libraries/DLLs)
 	- Added new Fl::event() method to get the current
