@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.33 2002/05/06 21:15:48 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.34 2002/05/23 16:42:22 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -588,18 +588,13 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // We need to merge this damage into fltk's damage.  I do this in
     // reverse, telling Win32 about fltk's damage and then reading back
     // the new accumulated region.
-    if (window->damage()) {
+    if (i->region) {
       // If there is no region the entire window is damaged
-      if (i->region) {
-	InvalidateRgn(hWnd,i->region,FALSE);
-	GetUpdateRgn(hWnd,i->region,0);
-	ValidateRgn(hWnd,i->region);
-      }
-    } else {
-      if (!i->region) i->region = CreateRectRgn(0,0,0,0);
+      if (window->damage()) InvalidateRgn(hWnd,i->region,FALSE);
+
       GetUpdateRgn(hWnd,i->region,0);
-      ValidateRgn(hWnd,i->region);
     }
+    ValidateRgn(hWnd,i->region);
     window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
     // These next two statements should not be here, so that all update
     // is deferred until Fl::flush() is called during idle.  However Win32
@@ -1182,5 +1177,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.33 2002/05/06 21:15:48 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.34 2002/05/23 16:42:22 easysw Exp $".
 //
