@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.28 2002/03/04 21:48:50 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.29 2002/03/05 11:26:41 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -137,11 +137,11 @@ static Fl_Pixmap broken_image(broken_xpm);
 
 Fl_Help_Block *					// O - Pointer to new block
 Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
-                       int           xx,	// I - X position of block
-		       int           yy,	// I - Y position of block
-		       int           ww,	// I - Right margin of block
-		       int           hh,	// I - Height of block
-		       unsigned char border)	// I - Draw border?
+                	int           xx,	// I - X position of block
+			int           yy,	// I - Y position of block
+			int           ww,	// I - Right margin of block
+			int           hh,	// I - Height of block
+			unsigned char border)	// I - Draw border?
 {
   Fl_Help_Block	*temp;				// New block
 
@@ -161,13 +161,14 @@ Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
 
   temp = blocks_ + nblocks_;
   memset(temp, 0, sizeof(Fl_Help_Block));
-  temp->start  = s;
-  temp->end    = s;
-  temp->x      = xx;
-  temp->y      = yy;
-  temp->w      = ww;
-  temp->h      = hh;
-  temp->border = border;
+  temp->start   = s;
+  temp->end     = s;
+  temp->x       = xx;
+  temp->y       = yy;
+  temp->w       = ww;
+  temp->h       = hh;
+  temp->border  = border;
+  temp->bgcolor = bgcolor_;
   nblocks_ ++;
 
   return (temp);
@@ -329,7 +330,6 @@ Fl_Help_View::draw()
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
 					// Box to draw...
-  Fl_Color		tc, rc, c;	// Table/row/cell background color
 
 
   // Draw the scrollbar(s) and box first...
@@ -360,8 +360,6 @@ Fl_Help_View::draw()
   // Clip the drawing to the inside of the box...
   fl_push_clip(x() + 4, y() + 4, ww - 8, hh - 8);
   fl_color(textcolor_);
-
-  tc = rc = c = bgcolor_;
 
   // Draw all visible blocks...
   for (i = 0, block = blocks_; i < nblocks_; i ++, block ++)
@@ -549,10 +547,6 @@ Fl_Help_View::draw()
 	  else if (strcasecmp(buf, "B") == 0 ||
 	           strcasecmp(buf, "STRONG") == 0)
 	    pushfont(font |= FL_BOLD, size);
-	  else if (strcasecmp(buf, "TABLE") == 0)
-            tc = rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
-	  else if (strcasecmp(buf, "TR") == 0)
-            rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), tc);
 	  else if (strcasecmp(buf, "TD") == 0 ||
 	           strcasecmp(buf, "TH") == 0)
           {
@@ -562,8 +556,6 @@ Fl_Help_View::draw()
 	      pushfont(font |= FL_BOLD, size);
 	    else
 	      pushfont(font = textfont_, size);
-
-            c = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), rc);
 
             tx = block->x - 4 - leftline_;
 	    ty = block->y - topline_ - size - 3;
@@ -585,11 +577,9 @@ Fl_Help_View::draw()
             tx += x();
 	    ty += y();
 
-//	    printf("%s: %d,%d - %dx%d\n", buf, tx, ty, tw, th);
-
-            if (c != bgcolor_)
+            if (block->bgcolor != bgcolor_)
 	    {
-	      fl_color(c);
+	      fl_color(block->bgcolor);
               fl_rectf(tx, ty, tw, th);
               fl_color(textcolor_);
 	    }
@@ -622,11 +612,6 @@ Fl_Help_View::draw()
 		   strcasecmp(buf, "/KBD") == 0 ||
 		   strcasecmp(buf, "/VAR") == 0)
 	    popfont(font, size);
-	  else if (strcasecmp(buf, "/TABLE") == 0)
-	    tc = rc = c = bgcolor_;
-	  else if (strcasecmp(buf, "/TD") == 0 ||
-	           strcasecmp(buf, "/TH") == 0)
-	    c = rc;
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
 	    popfont(font, size);
@@ -804,6 +789,7 @@ Fl_Help_View::format()
   int		column,		// Current table column number
 		columns[MAX_COLUMNS];
 				// Column widths
+  Fl_Color	tc, rc, c;	// Table/row/cell background color
 
 
   // Reset document width...
@@ -821,6 +807,8 @@ Fl_Help_View::format()
     bgcolor_   = color();
     textcolor_ = textcolor();
     linkcolor_ = selection_color();
+
+    tc = rc = c = bgcolor_;
 
     strcpy(title_, "Untitled");
 
@@ -1033,6 +1021,8 @@ Fl_Help_View::format()
 	    else
 	      border = 0;
 
+            tc = rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
+
 	    block->h += size + 2;
 
             format_table(&table_width, columns, start);
@@ -1189,6 +1179,8 @@ Fl_Help_View::format()
 	  needspace = 0;
 	  column    = 0;
 	  line      = 0;
+
+          rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), tc);
 	}
 	else if (strcasecmp(buf, "/TR") == 0 && row)
 	{
@@ -1268,6 +1260,9 @@ Fl_Help_View::format()
           cells[column] = block - blocks_;
 
 	  column += colspan;
+
+          block->bgcolor = get_color(get_attr(attrs, "BGCOLOR", attr,
+	                                      sizeof(attr)), rc);
 	}
 	else if ((strcasecmp(buf, "/TD") == 0 ||
                   strcasecmp(buf, "/TH") == 0) && row)
@@ -2629,5 +2624,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.28 2002/03/04 21:48:50 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.29 2002/03/05 11:26:41 easysw Exp $".
 //

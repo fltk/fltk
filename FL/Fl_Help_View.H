@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.8 2002/02/20 13:02:25 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.9 2002/03/05 11:26:41 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -56,6 +56,7 @@ struct Fl_Help_Block
   const char	*start,		// Start of text
 		*end;		// End of text
   uchar		border;		// Draw border?
+  Fl_Color	bgcolor;	// Background color
   int		x,		// Indentation/starting X coordinate
 		y,		// Starting Y coordinate
 		w,		// Width
@@ -186,5 +187,5 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.8 2002/02/20 13:02:25 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.9 2002/03/05 11:26:41 easysw Exp $".
 //
