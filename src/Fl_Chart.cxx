@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.7 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.8 2002/06/09 18:18:50 spitzak Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -229,31 +229,35 @@ static void draw_piechart(int x,int y,int w,int h,
 }
 
 void Fl_Chart::draw() {
-    int xx,yy,ww,hh;
-    int i;
 
-    xx = x()+9;
-    yy = y()+9;
-    ww = w()-2*9;
-    hh = h()-2*9;
+    draw_box();
+    Fl_Boxtype b = box();
+    int xx = x()+Fl::box_dx(b); // was 9 instead of dx...
+    int yy = y()+Fl::box_dy(b);
+    int ww = w()-Fl::box_dw(b);
+    int hh = h()-Fl::box_dh(b);
+    fl_push_clip(xx, yy, ww, hh);
+
+    ww--; hh--; // adjust for line thickness
 
     if (min >= max) {
 	min = max = 0.0;
-	for (i=0; i<numb; i++) {
+	for (int i=0; i<numb; i++) {
 	    if (entries[i].val < min) min = entries[i].val;
 	    if (entries[i].val > max) max = entries[i].val;
 	}
     }
 
-    draw_box();
     fl_font(textfont(),textsize());
 
     switch (type()) {
     case FL_BAR_CHART:
+	ww++; // makes the bars fill box correctly
 	draw_barchart(xx,yy,ww,hh, numb, entries, min, max,
 			autosize(), maxnumb, textcolor());
 	break;
     case FL_HORBAR_CHART:
+	hh++; // makes the bars fill box correctly
 	draw_horbarchart(xx,yy,ww,hh, numb, entries, min, max,
 			autosize(), maxnumb, textcolor());
 	break;
@@ -269,6 +273,7 @@ void Fl_Chart::draw() {
 	break;
     }
     draw_label();
+    fl_pop_clip();
 }
 
 /*------------------------------*/
@@ -375,5 +380,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.7 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.8 2002/06/09 18:18:50 spitzak Exp $".
 //
