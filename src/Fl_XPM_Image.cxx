@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XPM_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $"
+// "$Id: Fl_XPM_Image.cxx,v 1.1.2.2 2001/12/21 20:45:43 easysw Exp $"
 //
 // Fl_XPM_Image routines.
 //
@@ -119,11 +119,11 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
 
   fclose(f);
 
-  data(new_data, i);
+  data((const char **)new_data, i);
   measure();
 }
 
 
 //
-// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $".
+// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.2 2001/12/21 20:45:43 easysw Exp $".
 //

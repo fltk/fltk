@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3.2.8 2001/11/29 00:24:43 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.9 2001/12/21 20:45:43 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -76,7 +76,7 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   Fl_Bitmask mask; // for internal use (mask bitmap)
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
-    Fl_Image(W,H,D), array(bits), alloc_array(0), id(0), mask(0) {data((char **)&array, 1); ld(LD);}
+    Fl_Image(W,H,D), array(bits), alloc_array(0), id(0), mask(0) {data((const char **)&array, 1); ld(LD);}
   virtual ~Fl_RGB_Image();
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return copy(w(), h()); }
@@ -91,5 +91,5 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3.2.8 2001/11/29 00:24:43 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.9 2001/12/21 20:45:43 easysw Exp $".
 //

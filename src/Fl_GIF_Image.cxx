@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.7 2001/12/19 18:15:33 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.8 2001/12/21 20:45:43 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -363,7 +363,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     new_data[i + 2][Width] = 0;
   }
 
-  data(new_data, Height + 2);
+  data((const char **)new_data, Height + 2);
   alloc_data = 1;
 
   delete[] Image;
@@ -373,5 +373,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.7 2001/12/19 18:15:33 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.8 2001/12/21 20:45:43 easysw Exp $".
 //
