@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.2 2001/08/02 18:08:36 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.3 2001/08/02 18:15:44 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -24,27 +24,35 @@
 #
 
 CPPFILES =\
-	CubeMain.cxx CubeView.cxx \
-	adjuster.cxx arc.cxx ask.cxx bitmap.cxx boxtype.cxx browser.cxx button.cxx \
-	buttons.cxx checkers.cxx clock.cxx colbrowser.cxx color_chooser.cxx \
-	cube.cxx cursor.cxx curve.cxx demo.cxx doublebuffer.cxx editor.cxx \
-	file_chooser.cxx fonts.cxx forms.cxx fractals.cxx fullscreen.cxx \
-	gl_overlay.cxx glpuzzle.cxx hello.cxx iconize.cxx image.cxx input.cxx \
-	keyboard.cxx label.cxx list_visuals.cxx mandelbrot.cxx menubar.cxx \
-	message.cxx minimum.cxx navigation.cxx output.cxx overlay.cxx pixmap.cxx \
-	pixmap_browser.cxx radio.cxx resizebox.cxx scroll.cxx shape.cxx shiny.cxx \
-	subwindow.cxx symbols.cxx tabs.cxx tile.cxx valuators.cxx fast_slow.cxx \
-	resize.cxx pack.cxx inactive.cxx line_style.cxx
+	CubeMain.cxx CubeView.cxx adjuster.cxx arc.cxx ask.cxx \
+	bitmap.cxx boxtype.cxx browser.cxx button.cxx \
+	buttons.cxx checkers.cxx clock.cxx colbrowser.cxx \
+	color_chooser.cxx cube.cxx cursor.cxx curve.cxx demo.cxx \
+	doublebuffer.cxx editor.cxx file_chooser.cxx fonts.cxx \
+	forms.cxx fractals.cxx fullscreen.cxx gl_overlay.cxx \
+	glpuzzle.cxx hello.cxx iconize.cxx image.cxx input.cxx \
+	keyboard.cxx label.cxx list_visuals.cxx mandelbrot.cxx \
+	menubar.cxx message.cxx minimum.cxx navigation.cxx \
+	output.cxx overlay.cxx pixmap.cxx pixmap_browser.cxx \
+	radio.cxx resizebox.cxx scroll.cxx shape.cxx shiny.cxx \
+	subwindow.cxx symbols.cxx tabs.cxx tile.cxx \
+	valuators.cxx fast_slow.cxx resize.cxx pack.cxx \
+	inactive.cxx line_style.cxx
 
-ALL =	CubeView adjuster arc ask bitmap boxtype browser button buttons checkers \
-	clock colbrowser color_chooser cube cursor curve demo doublebuffer \
-	editor file_chooser fonts forms fractals fullscreen gl_overlay \
-	glpuzzle hello iconize image input keyboard label list_visuals \
-	mandelbrot menubar message minimum navigation output overlay pixmap \
-	pixmap_browser radio resizebox scroll shape shiny subwindow \
-	symbols tabs tile valuators fast_slow resize pack inactive line_style
+ALL =	adjuster arc ask bitmap boxtype browser button buttons \
+	checkers clock colbrowser color_chooser cursor curve \
+	demo doublebuffer editor file_chooser fonts forms hello \
+	iconize image input keyboard label list_visuals \
+	mandelbrot menubar message minimum navigation output \
+	overlay pixmap pixmap_browser radio resizebox scroll \
+	subwindow symbols tabs tile valuators fast_slow resize \
+	pack inactive line_style
 
-all:	$(ALL)
+GLALL =	CubeView cube fullscreen fractals gl_overlay glpuzzle shiny shape
+
+all:	$(ALL) $(GLDEMOS)
+
+gldemos:	$(GLALL)
 
 include ../makeinclude
 
@@ -116,5 +124,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.2 2001/08/02 18:08:36 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.3 2001/08/02 18:15:44 easysw Exp $".
 #

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.1 2001/08/02 18:08:36 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.2 2001/08/02 18:15:44 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -31,6 +31,7 @@ AC_PROG_RANLIB
 
 LINKFLTK="-lfltk"
 LINKFLTKGL="-lfltkgl"
+GLDEMOS="gldemos"
 
 LIBNAME="../lib/libfltk.a"
 GLLIBNAME="../lib/libfltkgl.a"
@@ -197,13 +198,16 @@ if test x$enable_gl != xno; then
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
 	    GLDSONAME=""
+	    GLDEMOS=""
     fi
 else
     LINKFLTKGL=""
     GLLIBNAME=""
     GLDSONAME=""
+    GLDEMOS=""
 fi
 
+AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
 
 dnl Check for the Xdbe extension...
@@ -399,5 +403,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.1 2001/08/02 18:08:36 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.2 2001/08/02 18:15:44 easysw Exp $".
 dnl
