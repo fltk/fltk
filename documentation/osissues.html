@@ -584,21 +584,19 @@ version of FLTK:
 
 <H2>The MacOS Interface</h2>
 
-<P>FLTK supports MacOS 8.6, MacOS 9 and MacOS X using the Apple
-Carbon library. When compiled with MPW or MetroWerks'
-CodeWarrior, application binaries in CFM format will run on all
-the above systems without changes. The OS X GNU (gcc) compiler,
-however, creates Mach-O binaries which are not supported by
-MacOS 9 and earlier.
+<P>FLTK supports MacOS X using the Apple Carbon library. Older
+versions of MacOS are <I>not</I> supported.
 
-<H4>control, option and command modifier keys</H4>
+<H4>Control, Option, and Command Modifier Keys</H4>
 
-<P>FLTK maps the Mac 'control' key to FL_CTRL, the 'option' key
-to FL_ALT and the 'Apple' key to FL_META. Keyboard events return
-the key name in Fl::event_key and the keystroke translation in
-Fl::event_text. For example, typing Option-Y on a Mac keyboard
-will set FL_ALT in Fl::event_state, set Fl::event_key to 'y'
-and return the Yen symbol in Fl::event_text.
+<P>FLTK maps the Mac 'control' key to <TT>FL_CTRL</TT>, the
+'option' key to <TT>FL_ALT</TT> and the 'Apple' key to
+<TT>FL_META</TT>. Keyboard events return the key name in
+<TT>Fl::event_key()</TT> and the keystroke translation in
+<TT>Fl::event_text()</TT>. For example, typing Option-Y on a Mac
+keyboard will set <TT>FL_ALT</TT> in <TT>Fl::event_state()</TT>,
+set <TT>Fl::event_key()</TT> to 'y' and return the Yen symbol in
+<TT>Fl::event_text()</TT>.
 
 <H4>WindowRef fl_xid(const Fl_Window *)</H4>
 
@@ -619,7 +617,7 @@ called, FLTK has prepared the Window and CGrafPort for drawing.
 Clipping and offsets are prepared to allow correct subwindow
 drawing.
 
-<P>OS X doublebuffers all windows automatically. On OS X,
+<P>OS X double-buffers all windows automatically. On OS X,
 <tt>Fl_Window</tt> and <tt>Fl_Double_Window</tt> are handled
 internally in the same way.
 
@@ -628,17 +626,24 @@ internally in the same way.
 <h4>Resource Forks</h4>
 
 <P>FLTK does not access the resource fork of an application.
-However, a minimal resource fork must be created for OS 8 and OS
-X applications
+However, a minimal resource fork must be created for OS X
+applications
 
-<br><br>Caution: when using Unix commands to copy or move executables,
-OS X will NOT copy any resource forks! For copying and moving use CpMac
-and MvMac respectively. For creating a tar archive, all executables
-need to be stripped from their Resource Fork before packing (DeRez fluid >fluid.r).
-After unpacking the Resource Fok needs to be reattached (Rez fluid.r -o fluid).
+<CENTER><TABLE WIDTH="80%" BORDER="1" BGCOLOR="#cccccc" CELLPADDING="5">
+<TR><TD><B>Caution:</B>
 
-<br><br>It is advisable to use the Finder for moving and copying and Mac archiving
-tools like Sit for distribution as they will handle the Resource Fork correctly. 
+<P>When using UNIX commands to copy or move executables, OS X
+will NOT copy any resource forks! For copying and moving use
+CpMac and MvMac respectively. For creating a tar archive, all
+executables need to be stripped from their Resource Fork before
+packing, e.g. "DeRez fluid >fluid.r". After unpacking the
+Resource Fork needs to be reattached, e.g. "Rez fluid.r -o
+fluid".
+</TD></TR></TABLE></CENTER>
+
+<P>It is advisable to use the Finder for moving and copying and
+Mac archiving tools like Sit for distribution as they will
+handle the Resource Fork correctly. 
 
 <h4>Mac File Paths</h4>
 
@@ -646,8 +651,8 @@ tools like Sit for distribution as they will handle the Resource Fork correctly.
 
 <H3>Known MacOS Bugs and Problems</H3>
 
-<P>The following is a list of known bugs and problems in the MacOS
-version of FLTK:
+<P>The following is a list of known bugs and problems in the
+MacOS version of FLTK:
 
 <UL>
 
