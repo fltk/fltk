@@ -675,7 +675,7 @@ DEP_CPP_FL_FI=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileBrowser.cxx
+SOURCE=..\src\Fl_File_Browser.cxx
 DEP_CPP_FL_FIL=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
@@ -696,7 +696,7 @@ DEP_CPP_FL_FIL=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileChooser.cxx
+SOURCE=..\src\Fl_File_Chooser.cxx
 DEP_CPP_FL_FILE=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
@@ -726,7 +726,7 @@ DEP_CPP_FL_FILE=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileChooser2.cxx
+SOURCE=..\src\Fl_File_Chooser2.cxx
 DEP_CPP_FL_FILEC=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
@@ -757,7 +757,7 @@ DEP_CPP_FL_FILEC=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileIcon.cxx
+SOURCE=..\src\Fl_File_Icon.cxx
 DEP_CPP_FL_FILEI=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
@@ -848,7 +848,7 @@ DEP_CPP_FL_GRO=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_HelpDialog.cxx
+SOURCE=..\src\Fl_Help_Dialog.cxx
 DEP_CPP_FL_HE=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
@@ -868,7 +868,7 @@ DEP_CPP_FL_HE=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_HelpView.cxx
+SOURCE=..\src\Fl_Help_View.cxx
 DEP_CPP_FL_HEL=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\

@@ -259,19 +259,19 @@ SOURCE=..\src\fl_file_chooser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileBrowser.cxx
+SOURCE=..\src\Fl_File_Browser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileChooser.cxx
+SOURCE=..\src\Fl_File_Chooser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileChooser2.cxx
+SOURCE=..\src\Fl_File_Chooser2.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_FileIcon.cxx
+SOURCE=..\src\Fl_File_Icon.cxx
 # End Source File
 # Begin Source File
 
@@ -295,11 +295,11 @@ SOURCE=..\src\Fl_Group.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_HelpDialog.cxx
+SOURCE=..\src\Fl_Help_Dialog.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_HelpView.cxx
+SOURCE=..\src\Fl_Help_View.cxx
 # End Source File
 # Begin Source File
 
