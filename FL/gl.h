@@ -1,5 +1,5 @@
 //
-// "$Id: gl.h,v 1.6.2.2 2000/06/05 21:20:34 mike Exp $"
+// "$Id: gl.h,v 1.6.2.3 2000/11/28 15:32:07 spitzak Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,8 +34,15 @@
 #define gl_draw_H
 
 #include "Enumerations.H" // for color names
-#ifdef WIN32
+#ifdef _WIN32
 # include <windows.h>
+#endif
+#ifndef APIENTRY
+# if defined(__CYGWIN__)
+#  define APIENTRY __attribute__ ((__stdcall__))
+# else
+#  define APIENTRY
+# endif
 #endif
 #include <GL/gl.h>
 
@@ -69,5 +76,5 @@ FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, in
 #endif
 
 //
-// End of "$Id: gl.h,v 1.6.2.2 2000/06/05 21:20:34 mike Exp $".
+// End of "$Id: gl.h,v 1.6.2.3 2000/11/28 15:32:07 spitzak Exp $".
 //
