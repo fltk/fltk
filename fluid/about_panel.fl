@@ -49,7 +49,7 @@ Function {make_about_panel()} {open
         label {FLTK User
 Interface
 Designer
-Version 1.1.4}
+Version 1.1.5}
         xywh {140 27 160 123} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
