@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.14 2002/05/16 20:53:22 matthiaswm Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,7 @@
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
+#  include <io.h>
 #elif defined (__APPLE__)
 #  include <Carbon/Carbon.H>
 #  include <unistd.h>
@@ -1066,5 +1067,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.14 2002/05/16 20:53:22 matthiaswm Exp $".
 //
