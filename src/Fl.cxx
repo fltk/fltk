@@ -1,6 +1,5 @@
-#include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.21 2000/05/13 20:03:17 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.22 2000/05/16 12:26:58 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -706,5 +705,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.21 2000/05/13 20:03:17 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.22 2000/05/16 12:26:58 mike Exp $".
 //
