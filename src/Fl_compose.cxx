@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_compose.cxx,v 1.1.2.4 2000/06/05 21:21:00 mike Exp $"
+// "$Id: Fl_compose.cxx,v 1.1.2.5 2000/12/06 15:45:13 easysw Exp $"
 //
 // Character compose processing for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@ static const char* const compose_pairs =
 "`A'A^A~A:A*AAE,C`E'E^E:E`I'I^I:I-D~N`O'O^O~O:Ox O/`U'U^U:U'YTHss"
 "`a'a^a~a:a*aae,c`e'e^e:e`i'i^i:i-d~n`o'o^o~o:o-:o/`u'u^u:u'yth:y";
 
-#ifndef _WIN32 // X only
+#if !defined(_WIN32) && !defined(WIN32) // X only
 // X dead-key lookup table.  This turns a dead-key keysym into the
 // first of two characters for one of the compose sequences.  These
 // keysyms start at 0xFE50.
@@ -113,7 +113,7 @@ int Fl::compose(int& del) {
     return 1;
   }
 
-#ifndef _WIN32 // X only
+#if !defined(_WIN32) && !defined(WIN32) // X only
   // See if they typed a dead key.  This gets it into the same state as
   // typing prefix+accent:
   if (i >= 0xfe50 && i <= 0xfe5b) {

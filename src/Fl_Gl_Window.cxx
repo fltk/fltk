@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.17 2000/09/15 07:52:51 spitzak Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.18 2000/12/06 15:45:13 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -63,7 +63,7 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 }
 
 void Fl_Gl_Window::show() {
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32)
   if (!shown()) {
     if (!g) {
       g = Fl_Gl_Choice::find(mode_,alist);
@@ -78,7 +78,7 @@ void Fl_Gl_Window::show() {
 
 void Fl_Gl_Window::invalidate() {
   valid(0);
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32)
   if (overlay) ((Fl_Gl_Window*)overlay)->valid(0);
 #endif
 }
@@ -86,7 +86,7 @@ void Fl_Gl_Window::invalidate() {
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
   mode_ = m; alist = a;
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
   // destroy context and g:
   if (shown()) {hide(); show();}
 #else
@@ -104,7 +104,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 
 void Fl_Gl_Window::make_current() {
   if (!context) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
     context = wglCreateContext(fl_private_dc(this, mode_,&g));
     if (fl_first_context) wglShareLists(fl_first_context, (GLXContext)context);
     else fl_first_context = (GLXContext)context;
@@ -115,7 +115,7 @@ void Fl_Gl_Window::make_current() {
     valid(0);
   }
   fl_set_gl_context(this, (GLXContext)context);
-#if defined(_WIN32) && USE_COLORMAP
+#if (defined(_WIN32) || defined(WIN32)) && USE_COLORMAP
   if (fl_palette) {
     fl_GetDC(fl_xid(this));
     SelectPalette(fl_gc, fl_palette, FALSE);
@@ -142,7 +142,7 @@ void Fl_Gl_Window::ortho() {
 }
 
 void Fl_Gl_Window::swap_buffers() {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
 #if HAVE_GL_OVERLAY
   // Do not swap the overlay, to match GLX:
   wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
@@ -161,14 +161,14 @@ int fl_overlay_depth = 0;
 
 void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
   // SGI 320 messes up overlay with user-defined cursors:
   bool fixcursor =
     Fl_X::i(this)->cursor && Fl_X::i(this)->cursor != fl_default_cursor;
   if (fixcursor) SetCursor(0);
 #endif
 
-#if HAVE_GL_OVERLAY && defined(_WIN32)
+#if HAVE_GL_OVERLAY && (defined(_WIN32) || defined(WIN32))
   // Draw into hardware overlay planes:
   if (overlay && overlay != this
       && (damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE) || !save_valid)) {
@@ -228,7 +228,7 @@ void Fl_Gl_Window::flush() {
 	static Fl_Gl_Window* ortho_window = 0;
 	int init = !ortho_context;
 	if (init) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
 	  ortho_context = wglCreateContext(Fl_X::i(this)->private_dc);
 #else
 	  ortho_context =glXCreateContext(fl_display,g->vis,fl_first_context,1);
@@ -274,7 +274,7 @@ void Fl_Gl_Window::flush() {
 
   }
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
   if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
 #endif
   valid(1);
@@ -283,7 +283,7 @@ void Fl_Gl_Window::flush() {
 void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32)
     if (!resizable() && overlay && overlay != this)
       ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
 #endif
@@ -295,7 +295,7 @@ void Fl_Gl_Window::hide() {
   if (context) {
     fl_no_gl_context();
     if (context != fl_first_context) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
       wglDeleteContext((GLXContext)context);
 #else
       glXDestroyContext(fl_display, (GLXContext)context);
@@ -308,7 +308,7 @@ void Fl_Gl_Window::hide() {
 //#endif
     context = 0;
   }
-#if HAVE_GL_OVERLAY && defined(_WIN32)
+#if HAVE_GL_OVERLAY && (defined(_WIN32) || defined(WIN32))
   if (overlay && overlay != this && (GLXContext)overlay != fl_first_context) {
     wglDeleteContext((GLXContext)overlay);
     overlay = 0;
@@ -337,5 +337,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.17 2000/09/15 07:52:51 spitzak Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.18 2000/12/06 15:45:13 easysw Exp $".
 //

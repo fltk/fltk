@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.12 2000/09/15 07:52:51 spitzak Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.13 2000/12/06 15:45:12 easysw Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 
 #if HAVE_GL_OVERLAY
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32)
 
 // Methods on Fl_Gl_Window that create an overlay window.  Because
 // many programs don't need the overlay, this is seperated into this
@@ -122,7 +122,7 @@ int Fl_Gl_Window::can_do_overlay() {return 0;}
 void Fl_Gl_Window::make_overlay() {
   if (!overlay) {
 #if HAVE_GL_OVERLAY
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
     HDC hdc = fl_private_dc(this, mode_,&g);
     GLXContext context = wglCreateLayerContext(hdc, 1);
     if (context) { // we found a usable overlay context
@@ -172,7 +172,7 @@ void Fl_Gl_Window::make_overlay() {
 void Fl_Gl_Window::redraw_overlay() {
   if (!shown()) return;
   make_overlay();
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32)
   if (overlay != this)
     ((Fl_Gl_Window*)overlay)->redraw();
   else
@@ -184,7 +184,7 @@ void Fl_Gl_Window::make_overlay_current() {
   make_overlay();
 #if HAVE_GL_OVERLAY
   if (overlay != this) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
     fl_set_gl_context(this, (GLXContext)overlay);
 //  if (fl_overlay_depth)
 //    wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
@@ -198,7 +198,7 @@ void Fl_Gl_Window::make_overlay_current() {
 
 void Fl_Gl_Window::hide_overlay() {
 #if HAVE_GL_OVERLAY
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32)
   // nothing needs to be done?  Or should it be erased?
 #else
   if (overlay && overlay!=this) ((Fl_Gl_Window*)overlay)->hide();
@@ -209,5 +209,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.12 2000/09/15 07:52:51 spitzak Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.13 2000/12/06 15:45:12 easysw Exp $".
 //
