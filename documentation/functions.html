@@ -492,10 +492,13 @@ pointer to that filename or <tt>NULL</tt> if Cancel is chosen.
 <P><tt>message</tt> is a string used to title the window.
 
 <P><tt>pattern</tt> is used to limit the files listed in a
-directory to those matching the pattern. This matching is done
-by <A
-href="#fl_filename_match"><tt>fl_filename_match()</tt></A>. Use
-<tt>NULL</tt> to show all files.
+directory to those matching the pattern. This matching is done by
+<A href="#fl_filename_match"><tt>fl_filename_match()</tt></A>.
+Multiple patterns can be used by separating them with tabs, like
+"*.jpg\t*.png\t*.gif\t*". In addition, you can provide
+human-readable labels with the patterns inside parenthesis, like
+"JPEG&nbsp;Files&nbsp;(*.jpg)\tPNG&nbsp;Files&nbsp;(*.png)\tGIF&nbsp;Files&nbsp;(*.gif)\tAll&nbsp;Files&nbsp;(*)".
+Pass <tt>NULL</tt> to show all files.</p>
 
 <P><tt>fname</tt> is a default filename to fill in the chooser
 with. If this is <tt>NULL</tt> then the last filename that was

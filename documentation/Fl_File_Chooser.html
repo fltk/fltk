@@ -82,6 +82,10 @@ dialogs:
 	<TD>"Preview"</TD>
 </TR>
 <TR>
+	<TD><TT>save_label</TT></TD>
+	<TD>"Save"</TD>
+</TR>
+<TR>
 	<TD><TT>show_label</TT></TD>
 	<TD>"Show:"</TD>
 </TR>
@@ -117,6 +121,7 @@ code and changing it accordingly.
 	<LI><A HREF="#Fl_File_Chooser.hide">hide</A>
 	<LI><A HREF="#Fl_File_Chooser.iconsize">iconsize</A>
 	<LI><A HREF="#Fl_File_Chooser.label">label</A>
+	<LI><A HREF="#Fl_File_Chooser.ok_label">ok_label</A>
 	<LI><A HREF="#Fl_File_Chooser.preview">preview</A>
 	<LI><A HREF="#Fl_File_Chooser.rescan">rescan</A>
 	<LI><A HREF="#Fl_File_Chooser.show">show</A>
@@ -193,7 +198,14 @@ const char *directory()</A></H4>
 <H4><A NAME="Fl_File_Chooser.filter">void filter(const char *pattern)<BR>
 const char *filter()</A></H4>
 
-<P>Sets or gets the current filename filter pattern.
+<P>Sets or gets the current filename filter patterns. The filter
+patterns use <A
+href="#fl_filename_match"><tt>fl_filename_match()</tt></A>.
+Multiple patterns can be used by separating them with tabs, like
+"*.jpg\t*.png\t*.gif\t*". In addition, you can provide
+human-readable labels with the patterns inside parenthesis, like
+"JPEG&nbsp;Files&nbsp;(*.jpg)\tPNG&nbsp;Files&nbsp;(*.png)\tGIF&nbsp;Files&nbsp;(*.gif)\tAll&nbsp;Files&nbsp;(*)".
+Use <tt>filter(NULL)</tt> to show all files.</p>
 
 <H4><A NAME="Fl_File_Chooser.filter_value">void filter_value(int f)<BR>
 int filter_value()</A></H4>
@@ -214,6 +226,12 @@ default the icon size is set to 1.5 times the <CODE>textsize()</CODE>.
 const char *label()</A></H4>
 
 <P>Sets or gets the title bar text for the <CODE>Fl_File_Chooser</CODE>.
+
+<H4><A NAME="Fl_File_Chooser.label">void ok_label(const char *l)<BR>
+const char *ok_label()</A></H4>
+
+<P>Sets or gets the label for the "ok" button in the
+<CODE>Fl_File_Chooser</CODE>.
 
 <H4><A NAME="Fl_File_Chooser.preview">void preview(int e)<BR>
 int preview()</A></H4>

@@ -2,6 +2,35 @@
 version 1.0107 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
 class FL_EXPORT Fl_File_Chooser {open
 } {
   decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public
@@ -37,12 +66,12 @@ window->hide();} open
       code3 {\#include <string.h>} modal visible
     } {
       Fl_Group {} {
-        private xywh {65 10 415 25}
+        private xywh {10 10 470 25}
       } {
         Fl_Choice showChoice {
           label {Show:}
           callback {showChoiceCB();} open
-          private xywh {65 10 215 25} down_box BORDER_BOX resizable
+          private xywh {65 10 215 25} down_box BORDER_BOX labelfont 1 resizable
           code0 {showChoice->label(show_label);}
         } {}
         Fl_Menu_Button favoritesButton {
@@ -90,12 +119,12 @@ window->hide();} open
         }
         Fl_File_Input fileName {
           callback {fileNameCB();}
-          private xywh {115 300 365 35} when 8 resizable
+          private xywh {115 300 365 35} labelfont 1 when 8 resizable
           code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
         }
         Fl_Box {} {
           label {Filename:}
-          private xywh {10 310 105 25} align 24
+          private xywh {10 310 105 25} labelfont 1 align 24
           code0 {o->label(filename_label);}
         }
         Fl_Group {} {open
@@ -108,61 +137,72 @@ if (callback_)
   (*callback_)(this, data_);
 
 window->hide();}
-            private xywh {300 345 85 25}
+            private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}
           }
-          Fl_Button {} {
+          Fl_Button cancelButton {
             label Cancel
             callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();}
-            private xywh {395 345 85 25}
+            private xywh {408 345 72 25}
             code0 {o->label(fl_cancel);}
           }
-          Fl_Box {} {
-            private xywh {10 345 300 25} resizable
+          Fl_Box {} {selected
+            private xywh {10 345 30 25} resizable
           }
         }
       }
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {580 44 355 150} type Double hide
-      code0 {favWindow->label(manage_favorites_label);} modal
+      private xywh {580 44 355 150} type Double resizable
+      code0 {favWindow->label(manage_favorites_label);} modal visible
     } {
       Fl_File_Browser favList {
         callback {favoritesCB(favList);}
-        private xywh {10 10 300 95} type Hold
+        private xywh {10 10 300 95} type Hold resizable
       }
-      Fl_Button favUpButton {
-        label {@8>}
-        callback {favoritesCB(favUpButton);}
-        private xywh {320 10 25 25}
+      Fl_Group {} {open
+        xywh {320 10 25 95}
+      } {
+        Fl_Button favUpButton {
+          label {@8>}
+          callback {favoritesCB(favUpButton);}
+          private xywh {320 10 25 25}
+        }
+        Fl_Button favDeleteButton {
+          label X
+          callback {favoritesCB(favDeleteButton);}
+          private xywh {320 45 25 25} labelfont 1 resizable
+        }
+        Fl_Button favDownButton {
+          label {@2>}
+          callback {favoritesCB(favDownButton);}
+          private xywh {320 80 25 25}
+        }
       }
-      Fl_Button favDeleteButton {
-        label X
-        callback {favoritesCB(favDeleteButton);}
-        private xywh {320 45 25 25} labelfont 1
-      }
-      Fl_Button favDownButton {
-        label {@2>}
-        callback {favoritesCB(favDownButton);}
-        private xywh {320 80 25 25}
-      }
-      Fl_Button favCancelButton {
-        label Cancel
-        callback {favWindow->hide();}
-        private xywh {270 115 75 25}
-        code0 {favCancelButton->label(fl_cancel);}
-      }
-      Fl_Return_Button favOkButton {
-        label OK
-        callback {favoritesCB(favOkButton);}
-        private xywh {185 115 75 25}
-        code0 {\#include <FL/fl_ask.H>}
-        code1 {favOkButton->label(fl_ok);}
+      Fl_Group {} {open
+        xywh {10 113 335 29}
+      } {
+        Fl_Button favCancelButton {
+          label Cancel
+          callback {favWindow->hide();}
+          private xywh {273 115 72 25}
+          code0 {favCancelButton->label(fl_cancel);}
+        }
+        Fl_Return_Button favOkButton {
+          label Save
+          callback {favoritesCB(favOkButton);}
+          private xywh {181 115 79 25}
+          code0 {\#include <FL/fl_ask.H>}
+          code1 {favOkButton->label(save_label);}
+        }
+        Fl_Box {} {
+          xywh {10 115 161 25} resizable
+        }
       }
     }
     code {callback_ = 0;
@@ -239,6 +279,18 @@ showChoiceCB();} {}
   } {
     code {return (window->label());} {}
   }
+  Function {ok_label(const char *l)} {open return_type void
+  } {
+    code {okButton->label(l);
+int w, h;
+okButton->measure_label(w, h);
+okButton->resize(cancelButton->x() - 50 - w, cancelButton->y(),
+                 w + 40, 25);} {}
+  }
+  Function {ok_label()} {return_type {const char *}
+  } {
+    code {return (okButton->label());} {}
+  }
   decl {void preview(int e);} {public
   }
   decl {int preview() const { return previewButton->value(); }} {public
@@ -250,8 +302,7 @@ showChoiceCB();} {}
     code {window->hotspot(fileList);
 window->show();
 rescan();
-fileName->take_focus();} {selected
-    }
+fileName->take_focus();} {}
   }
   Function {shown()} {return_type int
   } {
@@ -331,6 +382,8 @@ else
   }
   decl {static const char *preview_label;} {public
   }
+  decl {static const char *save_label;} {public
+  }
   decl {static const char *show_label;} {public
   }
   decl {static Fl_File_Sort_F *sort;} {public
@@ -344,4 +397,10 @@ decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const 
 } 
 
 decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public
+} 
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
 } 
