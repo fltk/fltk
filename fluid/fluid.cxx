@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.1 1999/04/18 23:43:42 mike Exp $"
+// "$Id: fluid.cxx,v 1.15.2.2 1999/11/20 09:17:21 bill Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -158,7 +158,7 @@ void new_cb(Fl_Widget *, void *v) {
   modflag = 0;
 }
 
-static int compile_only = 0;
+int compile_only = 0;
 int header_file_set = 0;
 int code_file_set = 0;
 const char* header_file_name = ".h";
@@ -428,5 +428,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.1 1999/04/18 23:43:42 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.2 1999/11/20 09:17:21 bill Exp $".
 //

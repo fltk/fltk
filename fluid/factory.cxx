@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.3 1999/08/05 09:01:25 bill Exp $"
+// "$Id: factory.cxx,v 1.4.2.4 1999/11/20 09:17:20 bill Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -136,6 +136,8 @@ static Fl_Round_Button_Type Fl_Round_Button_type;
 
 ////////////////////////////////////////////////////////////////
 
+extern int compile_only;
+
 #include <FL/Fl_Browser.H>
 static Fl_Menu_Item browser_type_menu[] = {
   {"No Select",0,0,(void*)FL_NORMAL_BROWSER},
@@ -150,10 +152,14 @@ public:
   virtual const char *type_name() {return "Fl_Browser";}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Browser* b = new Fl_Browser(x,y,w,h);
-    char buffer[20];
-    for (int i = 1; i <= 20; i++) {
-      sprintf(buffer,"Browser Line %d",i);
-      b->add(buffer);
+    // Fl_Browser::add calls fl_height(), which requires the X display open.
+    // Avoid this when compiling so it works w/o a display:
+    if (!compile_only) {
+      char buffer[20];
+      for (int i = 1; i <= 20; i++) {
+	sprintf(buffer,"Browser Line %d",i);
+	b->add(buffer);
+      }
     }
     return b;
   }
@@ -687,5 +693,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.3 1999/08/05 09:01:25 bill Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.4 1999/11/20 09:17:20 bill Exp $".
 //
