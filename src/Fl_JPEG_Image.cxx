@@ -36,6 +36,7 @@
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <setjmp.h>
 
 
 // Some releases of the Cygwin JPEG libraries don't have a correctly
@@ -62,7 +63,7 @@ extern "C"
 #ifdef HAVE_LIBJPEG
 struct fl_jpeg_error_mgr {
   jpeg_error_mgr	pub_;		// Destination manager...
-  int			err_;		// Error flag
+  jmp_buf		errhand_;	// Error handler
 };
 #endif // HAVE_LIBJPEG
 
@@ -74,7 +75,7 @@ struct fl_jpeg_error_mgr {
 #ifdef HAVE_LIBJPEG
 static void
 fl_jpeg_error_handler(j_common_ptr dinfo) {	// I - Decompressor info
-  ((fl_jpeg_error_mgr *)(dinfo->err))->err_ = 1;
+  longjmp(((fl_jpeg_error_mgr *)(dinfo->err))->errhand_, 1);
   return;
 }
 
@@ -109,13 +110,31 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   dinfo.err                = jpeg_std_error((jpeg_error_mgr *)&jerr);
   jerr.pub_.error_exit     = fl_jpeg_error_handler;
   jerr.pub_.output_message = fl_jpeg_output_handler;
-  jerr.err_                = 0;
+
+  if (setjmp(jerr.errhand_))
+  {
+    // JPEG error handling...
+    if (array) jpeg_finish_decompress(&dinfo);
+    jpeg_destroy_decompress(&dinfo);
+
+    fclose(fp);
+
+    w(0);
+    h(0);
+    d(0);
+
+    if (array) {
+      delete[] (uchar *)array;
+      array = 0;
+      alloc_array = 0;
+    }
+
+    return;
+  }
 
   jpeg_create_decompress(&dinfo);
   jpeg_stdio_src(&dinfo, fp);
   jpeg_read_header(&dinfo, 1);
-
-  if (jerr.err_) goto error_return;
 
   dinfo.quantize_colors      = (boolean)FALSE;
   dinfo.out_color_space      = JCS_RGB;
@@ -128,16 +147,12 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   h(dinfo.output_height);
   d(dinfo.output_components);
 
-  if (!w() || !h() || !d() || jerr.err_) goto error_return;
-
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
 
   jpeg_start_decompress(&dinfo);
 
   while (dinfo.output_scanline < dinfo.output_height) {
-    if (jerr.err_) goto error_return;
-
     row = (JSAMPROW)(array +
                      dinfo.output_scanline * dinfo.output_width *
                      dinfo.output_components);
@@ -148,26 +163,6 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jpeg_destroy_decompress(&dinfo);
 
   fclose(fp);
-
-  return;
-
-  // JPEG error handling...
-  error_return:
-
-  if (array) jpeg_finish_decompress(&dinfo);
-  jpeg_destroy_decompress(&dinfo);
-
-  fclose(fp);
-
-  w(0);
-  h(0);
-  d(0);
-
-  if (array) {
-    delete[] (uchar *)array;
-    array = 0;
-    alloc_array = 0;
-  }
 #endif // HAVE_LIBJPEG
 }
 
