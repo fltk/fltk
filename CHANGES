@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.4
 
+	- Symbols with outlines did not get drawn inactive.
 	- The Fl_Help_View widget now provides a find() method
 	  to search for text within the page.
 	- The Fl_Help_Dialog widget now provides a search box

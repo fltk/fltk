@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3.2.5 2003/01/30 21:44:25 easysw Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.6 2003/05/21 16:52:42 easysw Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -159,7 +159,7 @@ int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
 
 //for the outline color
 static void set_outline_color(Fl_Color c) {
-  fl_color(fl_color_average(c, FL_BLACK, 0.5f));
+  fl_color(fl_color_average(c, Fl::draw_box_active() ? FL_BLACK : FL_GRAY, 0.5f));
 }
 
 static void rectangle(double x,double y,double x2,double y2,Fl_Color col) {
@@ -361,5 +361,5 @@ static void fl_init_symbols(void) {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.5 2003/01/30 21:44:25 easysw Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.6 2003/05/21 16:52:42 easysw Exp $".
 //
