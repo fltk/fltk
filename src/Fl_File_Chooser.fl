@@ -166,7 +166,16 @@ window->hide();}
     }
     code {callback_ = 0;
 data_ = 0;
-directory_[0] = '\0';} {}
+directory_[0] = 0;
+window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
+type(t);
+filter(p);
+update_favorites();
+value(d);
+type(t);
+int e;
+prefs_.get("preview", e, 1);
+preview(e);} {}
   }
   Function {~Fl_File_Chooser()} {open
   } {

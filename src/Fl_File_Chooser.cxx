@@ -246,7 +246,16 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
   }
   callback_ = 0;
 data_ = 0;
-directory_[0] = '\0';
+directory_[0] = 0;
+window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
+type(t);
+filter(p);
+update_favorites();
+value(d);
+type(t);
+int e;
+prefs_.get("preview", e, 1);
+preview(e);
 }
 
 Fl_File_Chooser::~Fl_File_Chooser() {
