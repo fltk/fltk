@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.23 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.24 2002/10/20 06:06:31 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -922,6 +922,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->next = Fl_X::first;
   xp->region = 0;
   xp->wait_for_expose = 1;
+  xp->backbuffer_bad = 1;
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
   return xp;
@@ -1233,5 +1234,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.23 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.24 2002/10/20 06:06:31 easysw Exp $".
 //
