@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.27 2004/04/11 04:38:58 easysw Exp $"
+// "$Id$"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -616,7 +616,11 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
 	nn = FL_PATH_MAX - appDataLen;
 	err = RegQueryValueEx( key, "AppData", 0L, &type, (BYTE*)filename, &nn );
 	if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) )
-	  filename[0] = 0;
+	{
+	  err = RegQueryValueEx( key, "Personal", 0L, &type, (BYTE*)filename, &nn );
+	  if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) )
+	    filename[0] = 0;
+	}
         RegCloseKey(key);
       }
       break;
@@ -1113,5 +1117,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.27 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id$".
 //

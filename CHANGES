@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Fl_Preferences::RootNode did not find the user's home
+	  directory on some non-US versions of Windows (STR
+	  #720)
 	- Fl_Window::hide() didn't delete the current clipping
 	  region on WIN32, causing a GDI resource leak in some
 	  situations (STR #723)
