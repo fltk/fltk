@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.36 2002/06/03 12:32:57 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.37 2002/06/28 21:04:37 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -223,15 +223,15 @@ doublebuffer$(EXEEXT): doublebuffer.o
 
 editor$(EXEEXT): editor.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fast_slow$(EXEEXT): fast_slow.o
 fast_slow.cxx:	fast_slow.fl
 
-file_chooser$(EXEEXT): file_chooser.o
+file_chooser$(EXEEXT): file_chooser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fonts$(EXEEXT): fonts.o
@@ -243,9 +243,9 @@ forms$(EXEEXT): forms.o
 
 hello$(EXEEXT): hello.o
 
-help$(EXEEXT): help.o
+help$(EXEEXT): help.o ../lib/$(LIBFLTKIMG)
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 iconize$(EXEEXT): iconize.o
@@ -288,7 +288,7 @@ minimum$(EXEEXT): minimum.o
 
 navigation$(EXEEXT): navigation.o
 
-output$(EXEEXT): output.o
+output$(EXEEXT): output.o ../lib/$(FLLIBNAME)
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
@@ -299,9 +299,9 @@ pack$(EXEEXT): pack.o
 
 pixmap$(EXEEXT): pixmap.o
 
-pixmap_browser$(EXEEXT): pixmap_browser.o
+pixmap_browser$(EXEEXT): pixmap_browser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 preferences$(EXEEXT):	preferences.o
@@ -381,5 +381,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.36 2002/06/03 12:32:57 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.37 2002/06/28 21:04:37 easysw Exp $".
 #

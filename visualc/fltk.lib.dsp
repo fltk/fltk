@@ -279,10 +279,6 @@ SOURCE=..\src\Fl_File_Icon.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_File_Icon2.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_File_Input.cxx
 # End Source File
 # Begin Source File
@@ -328,10 +324,6 @@ SOURCE=..\src\Fl_Input.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_Input_.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_JPEG_Image.cxx
 # End Source File
 # Begin Source File
 
@@ -412,10 +404,6 @@ SOURCE=..\src\Fl_Pixmap.cxx
 # Begin Source File
 
 SOURCE=..\src\fl_plastic.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_PNG_Image.cxx
 # End Source File
 # Begin Source File
 

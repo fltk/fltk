@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.H,v 1.22.2.4 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_Shared_Image.H,v 1.22.2.5 2002/06/28 21:04:35 easysw Exp $"
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
                                        int headerlen);
 
 // Shared images class. 
-class Fl_Shared_Image : public Fl_Image {
+class FL_EXPORT Fl_Shared_Image : public Fl_Image {
   protected:
 
   static Fl_Shared_Image **images_;	// Shared images
@@ -81,8 +81,16 @@ class Fl_Shared_Image : public Fl_Image {
   static void		remove_handler(Fl_Shared_Handler f);
 };
 
+//
+// The following function is provided in the fltk_images library and
+// registers all of the "extra" image file formats that are not part
+// of the core FLTK library...
+//
+
+FL_EXPORT void fl_register_images();
+
 #endif // !Fl_Shared_Image_H
 
 //
-// End of "$Id: Fl_Shared_Image.H,v 1.22.2.4 2002/05/25 13:38:24 easysw Exp $"
+// End of "$Id: Fl_Shared_Image.H,v 1.22.2.5 2002/06/28 21:04:35 easysw Exp $"
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.6 2002/06/13 18:18:33 easysw Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.7 2002/06/28 21:04:37 easysw Exp $"
 //
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -83,6 +83,9 @@ int arg(int, char **argv, int &i) {
 
 int main(int argc, char **argv) {
   int i = 1;
+
+  fl_register_images();
+
   Fl::args(argc,argv,i,arg);
 
   Fl_Window window(400,400); ::w = &window;
@@ -98,5 +101,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.6 2002/06/13 18:18:33 easysw Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.7 2002/06/28 21:04:37 easysw Exp $".
 //

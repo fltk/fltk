@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.75 2002/06/26 12:03:27 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.76 2002/06/28 21:04:35 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -79,18 +79,22 @@ esac
 dnl Define the libraries and link options we'll need.
 LINKFLTK="-lfltk"
 LINKFLTKGL="-lfltk_gl"
+LINKFLTKIMG="-lfltk_images"
 GLDEMOS="gldemos"
 
 LIBNAME="../lib/libfltk.a"
 FLLIBNAME="../lib/libfltk_forms.a"
 GLLIBNAME="../lib/libfltk_gl.a"
+IMGLIBNAME="../lib/libfltk_images.a"
 
 AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIBNAME)
+AC_SUBST(IMGLIBNAME)
 AC_SUBST(LIBNAME)
 AC_SUBST(LINKFLTK)
 AC_SUBST(LINKFLTKGL)
+AC_SUBST(LINKFLTKIMG)
 
 dnl Handle compile-time options...
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]])
@@ -110,6 +114,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.$FL_API_VERSION.dylib"
             FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
+            IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="ld $DSOFLAGS -dylib /usr/lib/dylib1.o -lc"
 	    if test "$libdir" != "/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -120,6 +125,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.so.$FL_API_VERSION"
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib"; then
 		    DSOLINK="-R$libdir"
@@ -129,6 +135,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.sl.$FL_API_VERSION"
             FLDSONAME="libfltk_forms.sl.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
+            IMGDSONAME="libfltk_images.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -138,6 +145,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.so.$FL_API_VERSION"
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -147,6 +155,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.so.$FL_API_VERSION"
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -156,6 +165,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.so.$FL_API_VERSION"
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -165,6 +175,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk_s.a"
             FLDSONAME="libfltk_forms_s.a"
             GLDSONAME="libfltk_gl_s.a"
+            IMGDSONAME="libfltk_images_s.a"
             DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             ;;
         CYGWIN*)
@@ -175,6 +186,7 @@ if test x$enable_shared = xyes; then
             DSONAME="libfltk.so.$FL_API_VERSION"
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
     esac
@@ -184,6 +196,7 @@ else
     DSONAME=""
     FLDSONAME=""
     GLDSONAME=""
+    IMGDSONAME=""
     PICFLAG=0
 fi
 
@@ -192,6 +205,7 @@ AC_SUBST(DSOLINK)
 AC_SUBST(DSONAME)
 AC_SUBST(FLDSONAME)
 AC_SUBST(GLDSONAME)
+AC_SUBST(IMGDSONAME)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support])
 
@@ -752,5 +766,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.75 2002/06/26 12:03:27 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.76 2002/06/28 21:04:35 easysw Exp $".
 dnl

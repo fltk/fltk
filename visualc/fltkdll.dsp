@@ -2518,5 +2518,10 @@ DEP_CPP_VSNPR=\
 	".\config.h"\
 	
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\fl_images_core.cxx
+	
+# End Source File
 # End Target
 # End Project

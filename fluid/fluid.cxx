@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.27 2002/06/07 15:06:32 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.28 2002/06/28 21:04:36 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -760,6 +760,7 @@ int main(int argc,char **argv) {
     return 1;
   }
   const char *c = argv[i];
+  fl_register_images();
   make_main_window();
   if (c) set_filename(c);
   if (!compile_only) {
@@ -795,5 +796,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.27 2002/06/07 15:06:32 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.28 2002/06/28 21:04:36 easysw Exp $".
 //

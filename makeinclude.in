@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.11.2.18 2002/03/25 21:39:01 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.11.2.19 2002/06/28 21:04:35 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -53,11 +53,13 @@ CXXFLAGS	=$(OPTIM) @CXXFLAGS@
 LIBNAME		=@LIBNAME@
 FLLIBNAME	=@FLLIBNAME@
 GLLIBNAME	=@GLLIBNAME@
+IMGLIBNAME	=@IMGLIBNAME@
 LIBCOMMAND	=@LIBCOMMAND@
 RANLIB		=@RANLIB@
 DSONAME		=@DSONAME@
 FLDSONAME	=@FLDSONAME@
 GLDSONAME	=@GLDSONAME@
+IMGDSONAME	=@IMGDSONAME@
 DSOCOMMAND	=@DSOCOMMAND@
 
 # libraries to link with:
@@ -66,6 +68,7 @@ GLDLIBS		=@LDFLAGS@ @GLLIB@ @LIBS@ $(LDFLAGS_MIPSPRO)
 LINKFLTK	=-L../lib @LINKFLTK@
 LINKFLTKGL	=-L../lib @LINKFLTKGL@
 LINKFLTKFORMS	=-L../lib -lfltk_forms @LINKFLTK@
+LINKFLTKIMG	=-L../lib -lfltk_images @LINKFLTK@ $(IMAGELIBS)
 IMAGELIBS	=@IMAGELIBS@
 
 # Do we build the OpenGL demos?
@@ -116,5 +119,5 @@ CAT3EXT		=@CAT3EXT@
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.11.2.18 2002/03/25 21:39:01 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.11.2.19 2002/06/28 21:04:35 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.14 2002/05/10 00:18:37 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.15 2002/06/28 21:04:36 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -646,6 +646,9 @@ Fl_File_Icon::load_system_icons(void)
   // Add symbols if they haven't been added already...
   if (!init)
   {
+    // This method requires the images library...
+    fl_register_images();
+
     if (!access("/usr/share/mimelnk", F_OK))
     {
       // Load KDE icons...
@@ -941,5 +944,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.14 2002/05/10 00:18:37 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.15 2002/06/28 21:04:36 easysw Exp $".
 //

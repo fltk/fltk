@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0
 
+	- The JPEG and PNG image classes have been moved to the
+	  fltk_images library, a la FLTK 2.0.  You can register
+	  all image file formats provided in fltk_images using
+	  the new fl_register_images() function.
 	- Fl_XBM_Image didn't correctly load XBM files.
 	- MacOS: Added Greg Ercolano's file descriptor support.
 	- MacOS: Fixed text width bug.

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.13 2002/06/28 15:23:03 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.14 2002/06/28 21:04:36 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -226,11 +226,6 @@ Fl_Shared_Image::reload() {
   if (memcmp(header, "GIF87a", 6) == 0 ||
       memcmp(header, "GIF89a", 6) == 0)
     img = new Fl_GIF_Image(name_);
-  else if (memcmp(header, "\211PNG", 4) == 0)
-    img = new Fl_PNG_Image(name_);
-  else if (memcmp(header, "\377\330\377", 3) == 0 &&	// Start-of-Image
-	   header[3] >= 0xe0 && header[3] <= 0xef)	// APPn
-    img = new Fl_JPEG_Image(name_);
   else if (memcmp(header, "BM", 2) == 0)	// BMP file
     img = new Fl_BMP_Image(name_);
   else if (header[0] == 'P' && header[1] >= '1' && header[1] <= '6') // Portable anymap
@@ -461,5 +456,5 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.13 2002/06/28 15:23:03 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.14 2002/06/28 21:04:36 easysw Exp $".
 //

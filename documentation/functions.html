@@ -35,6 +35,7 @@ A</A>.
 	<LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
 	<LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
 	<LI><A HREF="#fl_password"><TT>fl_password</TT></A></LI>
+	<LI><A HREF="#fl_register_images"><TT>fl_register_images</TT></A></LI>
 	<LI><A HREF="#fl_rgb_color"><TT>fl_rgb_color</TT></A></LI>
 	<LI><A HREF="#fl_show_colormap"><TT>fl_show_colormap</TT></A></LI>
 
@@ -87,38 +88,12 @@ A</A>.
 	</UL>
 	</LI>
 
+	<LI>Image Functions
+	<UL>
+		<LI><A HREF="#fl_register_images"><TT>fl_register_images</TT></A></LI>
+	</UL>
+	</LI>
 </UL>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- NEED 4in -->
@@ -928,6 +903,31 @@ const char *fl_password(const char *label, const char *deflt = 0, ...);
 <P>Same as <tt>fl_input()</tt>, except an <A
 href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A> field is
 used.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_register_images">fl_register_images</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Shared_Image.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_register_images();
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Registers the extra image file formats that are not provided
+as part of the core FLTK library for use with the <A
+HREF="Fl_Shared_Image.html#Fl_Shared_Image"><CODE>Fl_Shared_Image</CODE></A>
+class.
 
 
 <!-- NEED 4in -->

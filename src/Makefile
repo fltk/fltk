@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.44 2002/05/30 15:09:03 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.45 2002/06/28 21:04:37 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -46,7 +46,6 @@ CPPFILES = \
 	Fl_File_Chooser.cxx \
 	Fl_File_Chooser2.cxx \
 	Fl_File_Icon.cxx \
-	Fl_File_Icon2.cxx \
 	Fl_File_Input.cxx \
 	Fl_GIF_Image.cxx \
 	Fl_Group.cxx \
@@ -55,7 +54,6 @@ CPPFILES = \
 	Fl_Image.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
-	Fl_JPEG_Image.cxx \
 	Fl_Light_Button.cxx \
 	Fl_Menu.cxx \
 	Fl_Menu_.cxx \
@@ -68,7 +66,6 @@ CPPFILES = \
 	Fl_Overlay_Window.cxx \
 	Fl_Pack.cxx \
 	Fl_Pixmap.cxx \
-	Fl_PNG_Image.cxx \
 	Fl_PNM_Image.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
@@ -171,6 +168,12 @@ GLCPPFILES = \
 	glut_compatability.cxx \
 	glut_font.cxx
 
+IMGCPPFILES = \
+	fl_images_core.cxx \
+	Fl_File_Icon2.cxx \
+	Fl_JPEG_Image.cxx \
+	Fl_PNG_Image.cxx
+
 CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
 
 CLEAN =	core* cmap
@@ -182,8 +185,12 @@ include ../makeinclude
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
 FLOBJECTS = $(FLCPPFILES:.cxx=.o)
+IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
 
-all:	$(LIBNAME) $(DSONAME) $(FLLIBNAME) $(FLDSONAME) $(GLLIBNAME) $(GLDSONAME)
+all:	$(LIBNAME) $(DSONAME) \
+	$(FLLIBNAME) $(FLDSONAME) \
+	$(GLLIBNAME) $(GLDSONAME) \
+	$(IMGLIBNAME) $(IMGDSONAME)
 
 $(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -239,11 +246,30 @@ libfltk_gl_s.a: $(GLOBJECTS)
 	$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
 	chmod +x libfltk_gl_s.a
 
+$(IMGLIBNAME): $(IMGOBJECTS)
+	echo $(LIBCOMMAND) $@ ...
+	-$(RM) $@
+	$(LIBCOMMAND) $@ $(IMGOBJECTS)
+	$(RANLIB) $@
+
+libfltk_images.so.1.1 libfltk_images.sl.1.1: $(IMGOBJECTS)
+	echo $(DSOCOMMAND) $@ ...
+	$(DSOCOMMAND) $@ $(IMGOBJECTS)
+
+libfltk_images_s.a: $(IMGOBJECTS)
+	echo $(DSOCOMMAND) libfltk_images_s.o ...
+	$(DSOCOMMAND) libfltk_images_s.o $(IMGOBJECTS)
+	echo $(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
+	-$(RM) $@
+	$(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
+	chmod +x libfltk_images_s.a
+
+
 clean :
 	-@ rm -f *.o $(DSONAME) $(FLDSONAME) $(GLDSONAME) \
 		../lib/$(LIBNAME) ../lib/$(FLLIBNAME) ../lib/$(GLLIBNAME) \
-		libfltk.so libfltk_forms.so libfltk_gl.so \
-		libfltk.sl libfltk_forms.sl libfltk_gl.sl \
+		libfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \
+		libfltk.sl libfltk_forms.sl libfltk_gl.sl libfltk_images.sl \
 		$(CLEAN)
 
 depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(CFILES)
@@ -312,16 +338,20 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 
 ################################################################
 
-install: $(LIBNAME) $(DSONAME) $(FLLIBNAME) $(FLDSONAME) $(GLLIBNAME) $(GLDSONAME)
+install: $(LIBNAME) $(DSONAME) \
+	$(FLLIBNAME) $(FLDSONAME) \
+	$(GLLIBNAME) $(GLDSONAME) \
+	$(IMGLIBNAME) $(IMGDSONAME)
 	echo "Installing libraries in $(libdir)..."
 	-mkdir -p $(libdir)
 	rm -f $(libdir)/$(LIBNAME)
-	-cp $(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) $(libdir)
+	-cp $(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) $(IMGLIBNAME) $(libdir)
 	$(RANLIB) $(libdir)/$(LIBNAME)
 	$(RANLIB) $(libdir)/$(FLLIBNAME)
 	if test x$(GLLIBNAME) != x; then \
 		$(RANLIB) $(libdir)/$(GLLIBNAME); \
 	fi
+	$(RANLIB) $(libdir)/$(IMGLIBNAME)
 	if test x$(DSONAME) = xlibfltk.so.1.1; then\
 		rm -f $(libdir)/libfltk.so*;\
 		cp libfltk.so.1.1 $(libdir); \
@@ -391,6 +421,29 @@ install: $(LIBNAME) $(DSONAME) $(FLLIBNAME) $(FLDSONAME) $(GLLIBNAME) $(GLDSONAM
 		cp libfltk_gl_s.a $(libdir); \
 		chmod 755 $(libdir)/libfltk_gl.a; \
 	fi
+	if test x$(IMGDSONAME) = xlibfltk_images.so.1.1; then\
+		rm -f $(libdir)/libfltk_images.so*;\
+		cp libfltk_images.so.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk_images.so.1.1; \
+		ln -s libfltk_images.so.1.1 $(libdir)/libfltk_images.so;\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images.sl.1.1; then\
+		rm -f $(libdir)/libfltk_images.sl*;\
+		cp libfltk_images.sl.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk_images.sl.1.1; \
+		ln -s libfltk_images.sl.1.1 $(libdir)/libfltk_images.sl;\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images.1.1.dylib; then\
+		rm -f $(libdir)/libfltk_images.*dylib;\
+		cp libfltk_images.1.1.dylib $(libdir); \
+		chmod 755 $(libdir)/libfltk_images.1.1.dylib; \
+		ln -s libfltk_images.1.1.dylib $(libdir)/libfltk_images.dylib;\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
+		rm -f $(libdir)/libfltk_images_s.a;\
+		cp libfltk_images_s.a $(libdir); \
+		chmod 755 $(libdir)/libfltk_images.a; \
+	fi
 
 uninstall:
 	echo "Uninstalling libraries..."
@@ -435,8 +488,23 @@ uninstall:
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
 		rm -f $(libdir)/libfltk_gl_s.a;\
 	fi
+	if test x$(IMGLIBNAME) != x; then\
+		rm -f $(libdir)/$(IMGLIBNAME);\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images.so.1.1; then\
+		rm -f $(libdir)/libfltk_images.so*;\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images.sl.1.1; then\
+		rm -f $(libdir)/libfltk_images.sl*;\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images.1.1.dylib; then\
+		rm -f $(libdir)/libfltk_images.*dylib;\
+	fi
+	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
+		rm -f $(libdir)/libfltk_images_s.a;\
+	fi
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.44 2002/05/30 15:09:03 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.45 2002/06/28 21:04:37 easysw Exp $".
 #
