@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.40 2001/01/26 13:31:51 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41 2001/02/26 00:19:02 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -330,15 +330,12 @@ void Fl::flush() {
   if (damage()) {
     damage_ = 0;
     for (Fl_X* x = Fl_X::first; x; x = x->next) {
-      if (x->w->damage() && x->w->visible_r()) {
-       if (x->wait_for_expose) {
-         // leave Fl::damage() set so programs can tell damage still exists
-         damage_ = 1;
-       } else {
-         x->flush();
-         x->w->clear_damage();
-       }
-      }
+      if (x->wait_for_expose) {damage_ = 1; continue;}
+      Fl_Window* w = x->w;
+      if (!w->visible_r()) continue;
+      if (w->damage()) {x->flush(); w->clear_damage();}
+      // destroy damage regions for windows that don't use them:
+      if (x->region) {XDestroyRegion(x->region); x->region = 0;}
     }
   }
 #ifdef WIN32
@@ -783,5 +780,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.40 2001/01/26 13:31:51 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41 2001/02/26 00:19:02 spitzak Exp $".
 //
