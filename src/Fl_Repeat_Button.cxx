@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Repeat_Button.cxx,v 1.4 1999/01/07 19:17:25 mike Exp $"
+// "$Id: Fl_Repeat_Button.cxx,v 1.4.2.1 1999/09/20 04:27:24 bill Exp $"
 //
 // Repeat button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -38,6 +38,8 @@ void Fl_Repeat_Button::repeat_callback(void *v) {
 int Fl_Repeat_Button::handle(int event) {
   int newval;
   switch (event) {
+  case FL_HIDE:
+  case FL_DEACTIVATE:
   case FL_RELEASE:
     newval = 0; goto J1;
   case FL_PUSH:
@@ -59,5 +61,5 @@ int Fl_Repeat_Button::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Repeat_Button.cxx,v 1.4 1999/01/07 19:17:25 mike Exp $".
+// End of "$Id: Fl_Repeat_Button.cxx,v 1.4.2.1 1999/09/20 04:27:24 bill Exp $".
 //
