@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.13 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.14 2002/05/10 00:18:37 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -650,8 +650,18 @@ Fl_File_Icon::load_system_icons(void)
     {
       // Load KDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
-      if (!access("/usr/share/icons/hicolor/32x32/mimetypes/unknown.png", F_OK))
-        icon->load_image("/usr/share/icons/hicolor/32x32/mimetypes/unknown.png");
+      if (!access("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png", F_OK))
+        icon->load_image("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png");
+      else
+        icon->load_image("/usr/share/icons/unknown.xpm");
+
+      icon = new Fl_File_Icon("*", Fl_File_Icon::LINK);
+      if (!access("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png", F_OK))
+        icon->load_image("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png");
+      else
+        icon->load_image("/usr/share/icons/unknown.xpm");
+      if (!access("/usr/share/icons/hicolor/16x16/filesystems/link.png", F_OK))
+        icon->load_image("/usr/share/icons/hicolor/16x16/filesystems/link.png");
       else
         icon->load_image("/usr/share/icons/unknown.xpm");
 
@@ -823,11 +833,11 @@ load_kde_mimelnk(const char *filename)
         // KDE 2.x icons
 	int		i;		// Looping var
 	static const char *paths[] = {	// Subdirs to look in...
-	  "32x32/actions",
-	  "32x32/apps",
-	  "32x32/devices",
-	  "32x32/filesystems",
-	  "32x32/mimetypes",
+	  "16x16/actions",
+	  "16x16/apps",
+	  "16x16/devices",
+	  "16x16/filesystems",
+	  "16x16/mimetypes",
 
 	  "22x22/actions",
 	  "22x22/apps",
@@ -835,11 +845,11 @@ load_kde_mimelnk(const char *filename)
 	  "22x22/filesystems",
 	  "22x22/mimetypes",
 
-	  "16x16/actions",
-	  "16x16/apps",
-	  "16x16/devices",
-	  "16x16/filesystems",
-	  "16x16/mimetypes"
+	  "32x32/actions",
+	  "32x32/apps",
+	  "32x32/devices",
+	  "32x32/filesystems",
+	  "32x32/mimetypes"
 	};
 
         for (i = 0; i < (int)(sizeof(paths) / sizeof(paths[0])); i ++) {
@@ -931,5 +941,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.13 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.14 2002/05/10 00:18:37 easysw Exp $".
 //

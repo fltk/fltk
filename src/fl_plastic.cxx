@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.11 2002/04/11 11:52:43 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.12 2002/05/10 00:18:37 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@ static void shade_frame(int x, int y, int w, int h, const char *c, Fl_Color bc) 
   uchar *g = fl_gray_ramp();
   int b = strlen(c) / 4 + 1;
 
-  for (x += b, y += b, w -= 2 * b + 1, h -= 2 * b + 1; b > 1; b --)
+  for (x += b, y += b, w -= 2 * b, h -= 2 * b; b > 1; b --)
   {
     // Draw lines around the perimeter of the button, 4 colors per
     // circuit.
@@ -84,7 +84,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
 
       // Draw the bottom line and points...
       fl_color(shade_color(g[c[clen - i]], bc));
-      fl_xyline(x + 1, y + h - 1 - i, x + w - 1);
+      fl_xyline(x + 1, y + h - i, x + w - 1);
 
       fl_color(shade_color(g[c[clen - i] - 2], bc));
       fl_point(x, y + h - i);
@@ -95,7 +95,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
     i = chalf / cstep;
 
     fl_color(shade_color(g[c[chalf]], bc));
-    fl_rectf(x + 1, y + i, w - 2, h - 2 * i);
+    fl_rectf(x + 1, y + i, w - 2, h - 2 * i + 1);
 
     fl_color(shade_color(g[c[chalf] - 2], bc));
     fl_yxline(x, y + i, y + h - i);
@@ -173,5 +173,5 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.11 2002/04/11 11:52:43 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.12 2002/05/10 00:18:37 easysw Exp $".
 //
