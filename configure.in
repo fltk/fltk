@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.41 2001/12/14 21:02:24 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.42 2001/12/17 15:36:28 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -263,9 +263,26 @@ dnl some environments need postprocessing (Darwin, MacOS)
 POSTBUILD=:
 
 dnl Check for pthreads for multi-threaded apps...
+have_pthread=no
+
 if test x"$enable_threads" = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
     AC_SEARCH_LIBS(pthread_create, pthread)
+
+    if test x"$ac_cv_search_pthread_create" = xyes -a x$ac_cv_header_pthread_h = xyes; then
+        have_pthread=yes
+    else
+        dnl *BSD uses -pthread option...
+        AC_MSG_CHECKING([for pthread_create using -pthread])
+	SAVELIBS="$LIBS"
+	LIBS="-pthread $LIBS"
+        AC_TRY_LINK([#include <pthread.h>],
+	    [pthread_create(0, 0, 0, 0);],
+            LIBS="-pthread $SAVELIBS"
+            have_pthread=yes,
+	    LIBS="$SAVELIBS")
+        AC_MSG_RESULT([$have_pthread])
+    fi
 fi
 
 THREADS=""
@@ -321,8 +338,8 @@ case $uname in
 	POSTBUILD="/Developer/Tools/Rez -t APPL -o"
 	;;
     *)
-
-	if test "x$ac_cv_search_pthread_create" != xno -a x"$enable_threads" = xyes; then
+	# All others are UNIX/X11...
+	if test $have_pthread = yes; then
 	    AC_DEFINE(HAVE_PTHREAD)
 	    THREADS="threads"
 	fi
@@ -615,5 +632,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.41 2001/12/14 21:02:24 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.42 2001/12/17 15:36:28 easysw Exp $".
 dnl

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Added a configure check for *BSD - use -pthread option
+	  instead of -lpthread.
 	- Fl_Text_Display could get in an infinite loop when
 	  redrawing a portion of the screen.  Added a check for
 	  the return value from fl_clip_box() so that the
