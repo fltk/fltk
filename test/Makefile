@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.6 1998/10/21 16:53:14 mike Exp $"
+# "$Id: Makefile,v 1.7 1998/10/21 17:15:44 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -74,9 +74,20 @@ glpuzzle: glpuzzle.C
 shape: shape.C
 	@echo $@:
 	@${CXX} -I.. ${CXXFLAGS} shape.C -L../lib -lfltk ${GLDLIBS} -o $@
-shiny: shiny.C
+shiny: shiny.C shiny_panel.C
 	@echo $@:
 	@${CXX} -I.. ${CXXFLAGS} shiny.C -L../lib -lfltk ${GLDLIBS} -o $@
+
+# Other programs needing special "help"...
+keyboard: keyboard.C keyboard_ui.C
+	@echo $@:
+	@${CXX} -I.. ${CXXFLAGS} keyboard.C -L../lib -lfltk ${LDLIBS} -o $@
+mandelbrot: mandelbrot.C mandelbrot_ui.C
+	@echo $@:
+	@${CXX} -I.. ${CXXFLAGS} mandelbrot.C -L../lib -lfltk ${LDLIBS} -o $@
+style: style.C style_ui.C
+	@echo $@:
+	@${CXX} -I.. ${CXXFLAGS} style.C -L../lib -lfltk ${LDLIBS} -o $@
 
 # If you have libjpeg installed, you might want to try this test program:
 
@@ -91,5 +102,5 @@ clean:
 	-@ rm -f ${ALL} jpeg_image *.o core *~
 
 #
-# End of "$Id: Makefile,v 1.6 1998/10/21 16:53:14 mike Exp $".
+# End of "$Id: Makefile,v 1.7 1998/10/21 17:15:44 mike Exp $".
 #
