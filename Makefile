@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.5 1998/10/21 16:49:59 mike Exp $"
+# "$Id: Makefile,v 1.6 1998/10/21 22:03:51 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -36,7 +36,7 @@ all:
 		(cd $$dir;$(MAKE));\
 	done
 
-install: all
+install:
 	for dir in $(DIRS); do\
 		echo "=== installing $$dir ===";\
 		if test ! -f $$dir/makedepend; then\
@@ -62,5 +62,5 @@ clean:
 	done
 
 #
-# End of "$Id: Makefile,v 1.5 1998/10/21 16:49:59 mike Exp $".
+# End of "$Id: Makefile,v 1.6 1998/10/21 22:03:51 mike Exp $".
 #
