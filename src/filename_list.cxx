@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.2 1999/12/08 20:49:57 mike Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.3 2000/01/26 06:27:15 bill Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,20 +40,21 @@ extern "C" {
 }
 
 int filename_list(const char *d, dirent ***list) {
-#if defined(_AIX) || defined(CRAY) || defined(linux) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
-  // on some systems you may need to do this, due to a rather common
-  // error in the prototype for the sorting function, where a level
-  // of pointer indirection is missing:
-  return scandir(d, list, 0, (int(*)(const void*,const void*))numericsort);
-#elif defined(__hpux)
-  // HP-UX defines the comparison function to take const pointers instead of
-  // ordinary ones...
+#if defined(__hpux)
+  // HP-UX defines the comparison function like this:
   return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))numericsort);
+#elif HAVE_SCANDIR
+  // The vast majority of Unix systems want the sort function to have this
+  // prototype, most likely so that it can be passed to qsort without any
+  // changes:
+  return scandir(d, list, 0, (int(*)(const void*,const void*))numericsort);
 #else
+  // This version is when we define our own scandir (WIN32 and perhaps
+  // some Unix systems).  This may be necessary for some Unix systems:
   return scandir(d, list, 0, numericsort);
 #endif
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.2 1999/12/08 20:49:57 mike Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.3 2000/01/26 06:27:15 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.10 2000/01/23 01:56:42 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.11 2000/01/26 06:27:14 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -716,9 +716,10 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
     }
 
     XWMHints hints;
-    hints.flags = 0;
+    hints.input = True;
+    hints.flags = InputHint;
     if (fl_show_iconic) {
-      hints.flags = StateHint;
+      hints.flags |= StateHint;
       hints.initial_state = IconicState;
       fl_show_iconic = 0;
     }
@@ -726,7 +727,7 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
       hints.icon_pixmap = (Pixmap)w->icon();
       hints.flags       |= IconPixmapHint;
     }
-    if (hints.flags) XSetWMHints(fl_display, x->xid, &hints);
+    XSetWMHints(fl_display, x->xid, &hints);
   }
 
   XMapWindow(fl_display, x->xid);
@@ -877,5 +878,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.10 2000/01/23 01:56:42 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.11 2000/01/26 06:27:14 bill Exp $".
 //
