@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.11 1999/01/19 19:24:32 mike Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.12 1999/02/16 13:55:06 mike Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -217,15 +217,13 @@ void Fl_Menu_Item_Type::write_static() {
 
   if (k) {
     // Write menu item variables...
-    int i = 0;
-    const char *c;
-    
     t = prev; while (t && t->is_menu_item()) t = t->prev;
-    for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next, i ++) {
-      c = array_name((Fl_Menu_Item_Type *)q);
-      if (c)
-	write_c("Fl_Menu_Item *%s::%s = %s::%s + %d;\n", k, c, k, menu_name(level), i);
-    }
+    for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
+      const char *c = array_name((Fl_Menu_Item_Type *)q);
+      if (c) {
+      int i; const char* n = menu_name(i);
+      write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
+      }
   }
 }
 
@@ -529,5 +527,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.11 1999/01/19 19:24:32 mike Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.12 1999/02/16 13:55:06 mike Exp $".
 //
