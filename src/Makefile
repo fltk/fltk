@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.1 1999/03/25 15:26:43 mike Exp $"
+# "$Id: Makefile,v 1.18.2.2 1999/03/25 15:47:11 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -186,13 +186,13 @@ install: ../lib/$(LIBNAME) $(DSONAME)
 	@-chmod 644 $(libdir)/$(LIBNAME)
 	@if test "$(DSONAME)" = libfltk.so.1; then\
 		rm -f $(libdir)/libfltk.so*;\
-		cp libfltk.so $(libdir)/libfltk.so.1; \
+		cp libfltk.so.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk.so.1; \
 		ln -s $(libdir)/libfltk.so.1 $(libdir)/libfltk.so;\
 	fi
 	@if test "$(DSONAME)" = libfltk.sl.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
-		cp libfltk.sl $(libdir)/libfltk.sl.1; \
+		cp libfltk.sl.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk.sl.1; \
 		ln -s $(libdir)/libfltk.sl.1 $(libdir)/libfltk.sl;\
 	fi
@@ -208,5 +208,5 @@ install: ../lib/$(LIBNAME) $(DSONAME)
 	@-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.1 1999/03/25 15:26:43 mike Exp $".
+# End of "$Id: Makefile,v 1.18.2.2 1999/03/25 15:47:11 mike Exp $".
 #
