@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.9 2002/09/17 20:27:18 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.10 2002/10/11 02:30:20 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -119,7 +119,8 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 //  printf("%s = %dx%dx%d\n", name, w(), h(), d());
 
-  array = new uchar[w() * h() * d()];
+  array       = new uchar[w() * h() * d()];
+  alloc_array = 1;
 
   // Read the image file...
   for (y = 0; y < h(); y ++) {
@@ -175,5 +176,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.9 2002/09/17 20:27:18 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.10 2002/10/11 02:30:20 easysw Exp $".
 //
