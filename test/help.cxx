@@ -1,5 +1,5 @@
 //
-// "$Id: help.cxx,v 1.1.2.7 2002/07/15 23:39:22 easysw Exp $"
+// "$Id: help.cxx,v 1.1.2.8 2002/09/16 01:35:34 easysw Exp $"
 //
 // Fl_Help_Dialog test program.
 //
@@ -45,8 +45,6 @@ main(int  argc,			// I - Number of command-line arguments
   Fl_Help_Dialog	*help;		// Help dialog
 
 
-  fl_register_images();
-
   help = new Fl_Help_Dialog;
 
   if (argc < 2)
@@ -65,5 +63,5 @@ main(int  argc,			// I - Number of command-line arguments
 
 
 //
-// End of "$Id: help.cxx,v 1.1.2.7 2002/07/15 23:39:22 easysw Exp $".
+// End of "$Id: help.cxx,v 1.1.2.8 2002/09/16 01:35:34 easysw Exp $".
 //

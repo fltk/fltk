@@ -299,10 +299,6 @@ SOURCE=..\src\Fl_Group.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Help_Dialog.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_Help_View.cxx
 # End Source File
 # Begin Source File

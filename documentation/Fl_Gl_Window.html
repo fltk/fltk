@@ -1,21 +1,32 @@
-<HTML><BODY>
+<HTML>
+<BODY>
+
 <!-- NEW PAGE -->
+
 <H2><A name=Fl_Gl_Window>class Fl_Gl_Window</A></H2>
+
 <HR>
+
 <H3>Class Hierarchy</H3>
-<UL>
-<PRE>
+
+<UL><PRE>
 <A href=Fl_Window.html#Fl_Window>Fl_Window</A>
    |
    +----<B>Fl_Gl_Window</B>
-</PRE>
-</UL>
+</PRE></UL>
+
 <H3>Include Files</H3>
-<UL>
-<PRE>
+
+<UL><PRE>
 #include &lt;FL/Fl_Gl_Window.H&gt;
-</PRE>
-</UL>
+</PRE></UL>
+
+<H3>Additional Libraries</H3>
+
+<UL><PRE>
+-lfltk_gl  /  fltkgl.lib
+</PRE></UL>
+
 <H3>Description</H3>
  The <TT>Fl_Gl_Window</TT> widget sets things up so OpenGL works, and
 also keeps an OpenGL &quot;context&quot; for that window, so that changes to the
@@ -208,4 +219,5 @@ Fl_Gl_Window::valid()</TT> and set the same transformation.  If you
 don't your code may not work on other systems.  Depending on the OS,
 and on whether overlays are real or simulated, the OpenGL context may
 be the same or different between the overlay and main window. </P>
-</BODY></HTML>
+</BODY>
+</HTML>

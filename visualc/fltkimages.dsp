@@ -95,6 +95,10 @@ SOURCE=..\src\Fl_GIF_Image.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Help_Dialog.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_images_core.cxx
 # End Source File
 # Begin Source File

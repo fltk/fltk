@@ -152,6 +152,8 @@ forward_->deactivate();
 
 index_ = -1;
 max_  = 0;
+
+fl_register_images();
 }
 
 Fl_Help_Dialog::~Fl_Help_Dialog() {
