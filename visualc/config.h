@@ -1,9 +1,9 @@
 /*
- * "$Id: config.h,v 1.5.2.1 2000/04/25 22:17:00 mike Exp $"
+ * "$Id: config.h,v 1.5.2.2 2000/06/07 12:11:53 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
- * Copyright 1998 by Bill Spitzak and others.
+ * Copyright 1998-2000 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "FLTK-bugs@easysw.com".
+ * Please report all bugs and problems to "fltk-bugs@fltk.org".
  */
 
 /*
@@ -138,5 +138,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.h,v 1.5.2.1 2000/04/25 22:17:00 mike Exp $".
+ * End of "$Id: config.h,v 1.5.2.2 2000/06/07 12:11:53 mike Exp $".
  */

@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list,v 1.1.2.2 2000/04/27 00:17:51 mike Exp $"
+# "$Id: fltk.list,v 1.1.2.3 2000/06/07 12:11:52 mike Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -22,7 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
 %product Fast Light Tool Kit (FLTK)
@@ -30,7 +30,7 @@
 %vendor LGPL
 %license COPYING
 %readme README
-%version 1.0.8
+%version 1.0.9
 %description FLTK is a cross-platform GUI toolkit for C++.
 
 # FLUID
@@ -377,5 +377,5 @@ f 0444 root sys /usr/share/doc/fltk/value_slider.gif documentation/value_slider.
 f 0444 root sys /usr/share/doc/fltk/widgets.html documentation/widgets.html
 
 #
-# End of "$Id: fltk.list,v 1.1.2.2 2000/04/27 00:17:51 mike Exp $".
+# End of "$Id: fltk.list,v 1.1.2.3 2000/06/07 12:11:52 mike Exp $".
 #

@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.3 2000/06/04 20:54:56 mike Exp $"
+# "$Id: fltk.spec,v 1.1.2.4 2000/06/07 12:11:52 mike Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -20,10 +20,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-%define version 1.0.8
+%define version 1.0.9
 %define release 1
 %define prefix /usr
 
@@ -90,5 +90,5 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.3 2000/06/04 20:54:56 mike Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.4 2000/06/07 12:11:52 mike Exp $".
 #
