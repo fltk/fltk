@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.24 2000/06/05 21:20:46 mike Exp $"
+// "$Id: Fl.cxx,v 1.24.2.25 2000/06/10 21:30:59 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -321,6 +321,7 @@ void Fl::focus(Fl_Widget *o) {
   if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = focus_;
   if (o != p) {
+    Fl::compose_reset();
     focus_ = o;
     fl_oldfocus = 0;
     for (; p && !p->contains(o); p = p->parent()) {
@@ -720,5 +721,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.24 2000/06/05 21:20:46 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.25 2000/06/10 21:30:59 bill Exp $".
 //
