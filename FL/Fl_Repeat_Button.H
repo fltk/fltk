@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Repeat_Button.H,v 1.5.2.5.2.2 2002/08/09 03:17:29 easysw Exp $"
+// "$Id: Fl_Repeat_Button.H,v 1.5.2.5.2.3 2002/08/14 16:49:38 easysw Exp $"
 //
 // Repeat button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,10 +28,10 @@
 #include "Fl.H"
 #include "Fl_Button.H"
 
-class Fl_Repeat_Button : public Fl_Button {
-  static FL_EXPORT void repeat_callback(void *);
+class FL_EXPORT Fl_Repeat_Button : public Fl_Button {
+  static void repeat_callback(void *);
 public:
-  FL_EXPORT int handle(int);
+  int handle(int);
   Fl_Repeat_Button(int X,int Y,int W,int H,const char *l=0)
     : Fl_Button(X,Y,W,H,l) {}
   void deactivate() {
@@ -43,5 +43,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Repeat_Button.H,v 1.5.2.5.2.2 2002/08/09 03:17:29 easysw Exp $".
+// End of "$Id: Fl_Repeat_Button.H,v 1.5.2.5.2.3 2002/08/14 16:49:38 easysw Exp $".
 //

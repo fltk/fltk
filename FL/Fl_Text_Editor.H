@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.H,v 1.1.2.3 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Text_Editor.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $"
 //
 // Header file for Fl_Text_Editor class.
 //
@@ -34,73 +34,73 @@
 // key will match in any state
 #define FL_TEXT_EDITOR_ANY_STATE  (-1L)
 
-class Fl_Text_Editor : public Fl_Text_Display {
+class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
   public:
     typedef int (*Key_Func)(int key, Fl_Text_Editor* editor);
 
-    struct FL_EXPORT Key_Binding {
+    struct Key_Binding {
       int          key;
       int          state;
       Key_Func     function;
       Key_Binding* next;
     };
 
-    FL_EXPORT Fl_Text_Editor(int X, int Y, int W, int H, const char* l = 0);
+    Fl_Text_Editor(int X, int Y, int W, int H, const char* l = 0);
     ~Fl_Text_Editor() { remove_all_key_bindings(); }
-    FL_EXPORT virtual int handle(int e);
+    virtual int handle(int e);
     void insert_mode(int b) { insert_mode_ = b; }
     int insert_mode() { return insert_mode_; }
 
-    FL_EXPORT void add_key_binding(int key, int state, Key_Func f, Key_Binding** list);
+    void add_key_binding(int key, int state, Key_Func f, Key_Binding** list);
     void add_key_binding(int key, int state, Key_Func f)
       { add_key_binding(key, state, f, &key_bindings); }
-    FL_EXPORT void remove_key_binding(int key, int state, Key_Binding** list);
+    void remove_key_binding(int key, int state, Key_Binding** list);
     void remove_key_binding(int key, int state)
       { remove_key_binding(key, state, &key_bindings); }
-    FL_EXPORT void remove_all_key_bindings(Key_Binding** list);
+    void remove_all_key_bindings(Key_Binding** list);
     void remove_all_key_bindings() { remove_all_key_bindings(&key_bindings); }
-    FL_EXPORT void add_default_key_bindings(Key_Binding** list);
-    FL_EXPORT Key_Func bound_key_function(int key, int state, Key_Binding* list);
+    void add_default_key_bindings(Key_Binding** list);
+    Key_Func bound_key_function(int key, int state, Key_Binding* list);
     Key_Func bound_key_function(int key, int state)
       { return bound_key_function(key, state, key_bindings); }
     void default_key_function(Key_Func f) { default_key_function_ = f; }
 
     // functions for the built in default bindings
-    FL_EXPORT static int kf_default(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_ignore(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_backspace(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_enter(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_move(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_shift_move(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_ctrl_move(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_c_s_move(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_home(int, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_end(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_left(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_up(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_right(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_down(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_page_up(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_page_down(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_insert(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_delete(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_copy(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_cut(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_paste(int c, Fl_Text_Editor* e);
-    FL_EXPORT static int kf_select_all(int c, Fl_Text_Editor* e);
+    static int kf_default(int c, Fl_Text_Editor* e);
+    static int kf_ignore(int c, Fl_Text_Editor* e);
+    static int kf_backspace(int c, Fl_Text_Editor* e);
+    static int kf_enter(int c, Fl_Text_Editor* e);
+    static int kf_move(int c, Fl_Text_Editor* e);
+    static int kf_shift_move(int c, Fl_Text_Editor* e);
+    static int kf_ctrl_move(int c, Fl_Text_Editor* e);
+    static int kf_c_s_move(int c, Fl_Text_Editor* e);
+    static int kf_home(int, Fl_Text_Editor* e);
+    static int kf_end(int c, Fl_Text_Editor* e);
+    static int kf_left(int c, Fl_Text_Editor* e);
+    static int kf_up(int c, Fl_Text_Editor* e);
+    static int kf_right(int c, Fl_Text_Editor* e);
+    static int kf_down(int c, Fl_Text_Editor* e);
+    static int kf_page_up(int c, Fl_Text_Editor* e);
+    static int kf_page_down(int c, Fl_Text_Editor* e);
+    static int kf_insert(int c, Fl_Text_Editor* e);
+    static int kf_delete(int c, Fl_Text_Editor* e);
+    static int kf_copy(int c, Fl_Text_Editor* e);
+    static int kf_cut(int c, Fl_Text_Editor* e);
+    static int kf_paste(int c, Fl_Text_Editor* e);
+    static int kf_select_all(int c, Fl_Text_Editor* e);
 
   protected:
-    FL_EXPORT int handle_key();
+    int handle_key();
 
     int insert_mode_;
     Key_Binding* key_bindings;
-    FL_EXPORT static Key_Binding* global_key_bindings;
+    static Key_Binding* global_key_bindings;
     Key_Func default_key_function_;
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Text_Editor.H,v 1.1.2.3 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.7.2.5 2002/08/09 03:17:29 easysw Exp $"
+// "$Id: forms.H,v 1.7.2.7.2.6 2002/08/14 16:49:38 easysw Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -807,10 +807,10 @@ inline void fl_set_slider_precision(Fl_Widget* o, int i) {
 // filter function!
 
 // The forms text object was the same as an Fl_Box except it inverted the
-// meaning of FL_ALIGN_INSIDE.  Implementation in forms.C
-class Fl_FormsText : public Fl_Widget {
+// meaning of FL_ALIGN_INSIDE.  Implementation in forms.cxx
+class FL_EXPORT Fl_FormsText : public Fl_Widget {
 protected:
-    FL_EXPORT void draw();
+    void draw();
 public:
     Fl_FormsText(Fl_Boxtype b, int X, int Y, int W, int H, const char* l=0)
 	: Fl_Widget(X,Y,W,H,l) {box(b); align(FL_ALIGN_LEFT);}
@@ -838,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.7.2.5 2002/08/09 03:17:29 easysw Exp $".
+// End of "$Id: forms.H,v 1.7.2.7.2.6 2002/08/14 16:49:38 easysw Exp $".
 //

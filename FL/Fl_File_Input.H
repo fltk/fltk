@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.H,v 1.1.2.1 2002/04/30 21:50:16 easysw Exp $"
+// "$Id: Fl_File_Input.H,v 1.1.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #  include <FL/Fl_Input.H>
 
 
-class Fl_File_Input : public Fl_Input
+class FL_EXPORT Fl_File_Input : public Fl_Input
 {
   Fl_Color	errorcolor_;
   char		ok_entry_;
@@ -44,17 +44,17 @@ class Fl_File_Input : public Fl_Input
 
 public:
 
-  FL_EXPORT Fl_File_Input(int,int,int,int,const char *t=0);
+  Fl_File_Input(int,int,int,int,const char *t=0);
 
-  FL_EXPORT virtual int handle(int);
-  FL_EXPORT virtual void draw();
+  virtual int handle(int);
+  virtual void draw();
 
   Fl_Boxtype	down_box() const { return (Fl_Boxtype)down_box_; }
   void		down_box(Fl_Boxtype b) { down_box_ = b; }
   Fl_Color	errorcolor() const { return errorcolor_; }
   void		errorcolor(Fl_Color c) { errorcolor_ = c; }
-  FL_EXPORT int	value(const char*);
-  FL_EXPORT int	value(const char*, int);
+  int	value(const char*);
+  int	value(const char*, int);
   const char	*value() { return Fl_Input_::value(); }
 };
 
@@ -62,5 +62,5 @@ public:
 
 
 //
-// End of "$Id: Fl_File_Input.H,v 1.1.2.1 2002/04/30 21:50:16 easysw Exp $".
+// End of "$Id: Fl_File_Input.H,v 1.1.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

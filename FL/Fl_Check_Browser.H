@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Browser.H,v 1.1.2.3 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Check_Browser.H,v 1.1.2.4 2002/08/14 16:49:37 easysw Exp $"
 //
 // Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,17 +29,17 @@
 #include "Fl.H"
 #include "Fl_Browser_.H"
 
-class Fl_Check_Browser : public Fl_Browser_ {
+class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   /* required routines for Fl_Browser_ subclass: */
 
-  FL_EXPORT void *item_first() const;
-  FL_EXPORT void *item_next(void *) const;
-  FL_EXPORT void *item_prev(void *) const;
-  FL_EXPORT int item_height(void *) const;
-  FL_EXPORT int item_width(void *) const;
-  FL_EXPORT void item_draw(void *, int, int, int, int) const;
-  FL_EXPORT void item_select(void *, int);
-  FL_EXPORT int item_selected(void *) const;
+  void *item_first() const;
+  void *item_next(void *) const;
+  void *item_prev(void *) const;
+  int item_height(void *) const;
+  int item_width(void *) const;
+  void item_draw(void *, int, int, int, int) const;
+  void item_select(void *, int);
+  int item_selected(void *) const;
 
   /* private data */
 
@@ -61,31 +61,31 @@ class Fl_Check_Browser : public Fl_Browser_ {
   int cached_item;
   int nitems_;
   int nchecked_;
-  FL_EXPORT cb_item *find_item(int) const;
-  FL_EXPORT int lineno(cb_item *) const;
+  cb_item *find_item(int) const;
+  int lineno(cb_item *) const;
 
   public:
 
-  FL_EXPORT Fl_Check_Browser(int x, int y, int w, int h, const char *l = 0);
+  Fl_Check_Browser(int x, int y, int w, int h, const char *l = 0);
 
-  FL_EXPORT int add(char *s);               // add an (unchecked) item
-  FL_EXPORT int add(char *s, int b);        // add an item and set checked
+  int add(char *s);               // add an (unchecked) item
+  int add(char *s, int b);        // add an item and set checked
 				  // both return the new nitems()
-  FL_EXPORT void clear();                   // delete all items
+  void clear();                   // delete all items
   int nitems() const { return nitems_; }
   int nchecked() const { return nchecked_; }
-  FL_EXPORT int checked(int item) const;
-  FL_EXPORT void checked(int item, int b);
+  int checked(int item) const;
+  void checked(int item, int b);
   void set_checked(int item) { checked(item, 1); }
-  FL_EXPORT void check_all();
-  FL_EXPORT void check_none();
-  FL_EXPORT int value() const;              // currently selected item
-  FL_EXPORT char *text(int item) const;     // returns pointer to internal buffer
+  void check_all();
+  void check_none();
+  int value() const;              // currently selected item
+  char *text(int item) const;     // returns pointer to internal buffer
 };
 
 #endif // Fl_Check_Browser_H
 
 //
-// End of "$Id: Fl_Check_Browser.H,v 1.1.2.3 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Check_Browser.H,v 1.1.2.4 2002/08/14 16:49:37 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Round_Button.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Round_Button.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Round button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,13 +28,13 @@
 
 #include "Fl_Light_Button.H"
 
-class Fl_Round_Button : public Fl_Light_Button {
+class FL_EXPORT Fl_Round_Button : public Fl_Light_Button {
 public:
-  FL_EXPORT Fl_Round_Button(int x,int y,int w,int h,const char *l = 0);
+  Fl_Round_Button(int x,int y,int w,int h,const char *l = 0);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Round_Button.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Round_Button.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

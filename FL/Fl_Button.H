@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.H,v 1.5.2.3.2.3 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Button.H,v 1.5.2.3.2.4 2002/08/14 16:49:37 easysw Exp $"
 //
 // Button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@
 
 extern FL_EXPORT int fl_old_shortcut(const char*);
 
-class Fl_Button : public Fl_Widget {
+class FL_EXPORT Fl_Button : public Fl_Widget {
 
   int shortcut_;
   char value_;
@@ -47,17 +47,17 @@ class Fl_Button : public Fl_Widget {
 
 protected:
 
-  virtual FL_EXPORT void draw();
+  virtual void draw();
 
 public:
 
-  virtual FL_EXPORT int handle(int);
-  FL_EXPORT Fl_Button(int,int,int,int,const char * = 0);
-  FL_EXPORT int value(int);
+  virtual int handle(int);
+  Fl_Button(int,int,int,int,const char * = 0);
+  int value(int);
   char value() const {return value_;}
   int set() {return value(1);}
   int clear() {return value(0);}
-  FL_EXPORT void setonly(); // this should only be called on FL_RADIO_BUTTONs
+  void setonly(); // this should only be called on FL_RADIO_BUTTONs
   int shortcut() const {return shortcut_;}
   void shortcut(int s) {shortcut_ = s;}
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
@@ -72,5 +72,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Button.H,v 1.5.2.3.2.3 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Button.H,v 1.5.2.3.2.4 2002/08/14 16:49:37 easysw Exp $".
 //

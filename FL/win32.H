@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.15.2.3.2.8 2002/07/01 20:14:08 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.9 2002/08/14 16:49:38 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -66,7 +66,7 @@ inline void XClipBox(Fl_Region r,XRectangle* rect) {
 #include "Fl_Window.H"
 // this object contains all win32-specific stuff about a window:
 // Warning: this object is highly subject to change!
-class Fl_X {
+class FL_EXPORT Fl_X {
 public:
   Window xid;
   HBITMAP other_xid; // for double-buffered windows
@@ -76,15 +76,15 @@ public:
   int wait_for_expose;
   HDC private_dc; // used for OpenGL
   HCURSOR cursor;
-  static FL_EXPORT Fl_X* first;
-  static FL_EXPORT Fl_X* i(const Fl_Window* w) {return w->i;}
-  static FL_EXPORT int fake_X_wm(const Fl_Window* w,int &X, int &Y,
+  static Fl_X* first;
+  static Fl_X* i(const Fl_Window* w) {return w->i;}
+  static int fake_X_wm(const Fl_Window* w,int &X, int &Y,
 		                 int &bt,int &bx,int &by);
-  FL_EXPORT void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
-  FL_EXPORT void flush() {w->flush();}
-  FL_EXPORT void set_minmax(LPMINMAXINFO minmax);
-  FL_EXPORT void mapraise();
-  static FL_EXPORT Fl_X* make(Fl_Window*);
+  void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
+  void flush() {w->flush();}
+  void set_minmax(LPMINMAXINFO minmax);
+  void mapraise();
+  static Fl_X* make(Fl_Window*);
 };
 extern FL_EXPORT HCURSOR fl_default_cursor;
 extern FL_EXPORT UINT fl_wake_msg;
@@ -135,5 +135,5 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: win32.H,v 1.15.2.3.2.8 2002/07/01 20:14:08 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.9 2002/08/14 16:49:38 easysw Exp $".
 //

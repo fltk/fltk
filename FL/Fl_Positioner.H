@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Positioner.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Positioner.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Positioner header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #include "Fl_Widget.H"
 #endif
 
-class Fl_Positioner : public Fl_Widget {
+class FL_EXPORT Fl_Positioner : public Fl_Widget {
 
   double xmin, ymin;
   double xmax, ymax;
@@ -40,25 +40,25 @@ class Fl_Positioner : public Fl_Widget {
 protected:
 
   // these allow subclasses to put the dial in a smaller area:
-  FL_EXPORT void draw(int, int, int, int);
-  FL_EXPORT int handle(int, int, int, int, int);
-  FL_EXPORT void draw();
+  void draw(int, int, int, int);
+  int handle(int, int, int, int, int);
+  void draw();
 
 public:
 
-  FL_EXPORT int handle(int);
-  FL_EXPORT Fl_Positioner(int x,int y,int w,int h, const char *l=0);
+  int handle(int);
+  Fl_Positioner(int x,int y,int w,int h, const char *l=0);
   double xvalue() const {return xvalue_;}
   double yvalue() const {return yvalue_;}
-  FL_EXPORT int xvalue(double);
-  FL_EXPORT int yvalue(double);
-  FL_EXPORT int value(double,double);
-  FL_EXPORT void xbounds(double, double);
+  int xvalue(double);
+  int yvalue(double);
+  int value(double,double);
+  void xbounds(double, double);
   double xminimum() const {return xmin;}
   void xminimum(double a) {xbounds(a,xmax);}
   double xmaximum() const {return xmax;}
   void xmaximum(double a) {xbounds(xmin,a);}
-  FL_EXPORT void ybounds(double, double);
+  void ybounds(double, double);
   double yminimum() const {return ymin;}
   void yminimum(double a) {ybounds(a,ymax);}
   double ymaximum() const {return ymax;}
@@ -71,5 +71,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Positioner.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Positioner.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.H,v 1.1.2.6 2002/05/10 00:18:37 easysw Exp $"
+// "$Id: Fl_File_Icon.H,v 1.1.2.7 2002/08/14 16:49:38 easysw Exp $"
 //
 // Fl_File_Icon definitions.
 //
@@ -44,9 +44,9 @@
 // Fl_File_Icon class...
 //
 
-class Fl_File_Icon			//// Icon data
+class FL_EXPORT Fl_File_Icon			//// Icon data
 {
-  FL_EXPORT static Fl_File_Icon *first_;	// Pointer to first icon/filetype
+  static Fl_File_Icon *first_;	// Pointer to first icon/filetype
   Fl_File_Icon	*next_;		// Pointer to next icon/filetype
   const char	*pattern_;	// Pattern string
   int		type_;		// Match only if directory or file?
@@ -77,10 +77,10 @@ class Fl_File_Icon			//// Icon data
     VERTEX			// Followed by scaled X,Y
   };
 
-  FL_EXPORT Fl_File_Icon(const char *p, int t, int nd = 0, short *d = 0);
-  FL_EXPORT ~Fl_File_Icon();
+  Fl_File_Icon(const char *p, int t, int nd = 0, short *d = 0);
+  ~Fl_File_Icon();
 
-  FL_EXPORT short	*add(short d);
+  short	*add(short d);
   short			*add_color(Fl_Color c)
 			{ short *d = add(COLOR); add(c >> 16); add(c); return (d); }
   short			*add_vertex(int x, int y)
@@ -89,25 +89,25 @@ class Fl_File_Icon			//// Icon data
 			{ short *d = add(VERTEX); add((int)(x * 10000.0));
 			  add((int)(y * 10000.0)); return (d); }
   void			clear() { num_data_ = 0; }
-  FL_EXPORT void	draw(int x, int y, int w, int h, Fl_Color ic, int active = 1);
-  FL_EXPORT void	label(Fl_Widget *w);
-  FL_EXPORT static void	labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a);
-  FL_EXPORT void	load(const char *f);
-  FL_EXPORT int		load_fti(const char *fti);
-  FL_EXPORT int		load_image(const char *i);
+  void	draw(int x, int y, int w, int h, Fl_Color ic, int active = 1);
+  void	label(Fl_Widget *w);
+  static void	labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a);
+  void	load(const char *f);
+  int		load_fti(const char *fti);
+  int		load_image(const char *i);
   Fl_File_Icon		*next() { return (next_); }
   const char		*pattern() { return (pattern_); }
   int			size() { return (num_data_); }
   int			type() { return (type_); }
   short			*value() { return (data_); }
 
-  FL_EXPORT static Fl_File_Icon *find(const char *filename, int filetype = ANY);
+  static Fl_File_Icon *find(const char *filename, int filetype = ANY);
   static Fl_File_Icon *first() { return (first_); }
-  FL_EXPORT static void	load_system_icons(void);
+  static void	load_system_icons(void);
 };
 
 #endif // !_Fl_Fl_File_Icon_H_
 
 //
-// End of "$Id: Fl_File_Icon.H,v 1.1.2.6 2002/05/10 00:18:37 easysw Exp $".
+// End of "$Id: Fl_File_Icon.H,v 1.1.2.7 2002/08/14 16:49:38 easysw Exp $".
 //

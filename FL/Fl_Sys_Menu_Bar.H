@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Sys_Menu_Bar.H,v 1.1.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Sys_Menu_Bar.H,v 1.1.2.3 2002/08/14 16:49:38 easysw Exp $"
 //
 // MacOS system menu bar header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,19 +28,19 @@
 
 #include "Fl_Menu_Bar.H"
 
-class Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
+class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
-  FL_EXPORT void draw();
+  void draw();
 public:
-//FL_EXPORT int handle(int);
+//int handle(int);
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0)
       : Fl_Menu_Bar(x,y,w,h,l) {}
-  FL_EXPORT void menu(const Fl_Menu_Item *m);
-//  FL_EXPORT Fl_Menu_Item* picked(const Fl_Menu_Item* v);
+  void menu(const Fl_Menu_Item *m);
+//  Fl_Menu_Item* picked(const Fl_Menu_Item* v);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Sys_Menu_Bar.H,v 1.1.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Sys_Menu_Bar.H,v 1.1.2.3 2002/08/14 16:49:38 easysw Exp $".
 //

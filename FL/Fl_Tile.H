@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tile.H,v 1.6.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Tile.H,v 1.6.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Tile header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,16 +28,16 @@
 
 #include "Fl_Group.H"
 
-class Fl_Tile : public Fl_Group {
+class FL_EXPORT Fl_Tile : public Fl_Group {
 public:
-  FL_EXPORT int handle(int);
+  int handle(int);
   Fl_Tile(int X,int Y,int W,int H,const char*l=0) : Fl_Group(X,Y,W,H,l) {}
-  FL_EXPORT void resize(int, int, int, int);
-  FL_EXPORT void position(int, int, int, int);
+  void resize(int, int, int, int);
+  void position(int, int, int, int);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Tile.H,v 1.6.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Tile.H,v 1.6.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Timer.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Timer.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Timer header file for the Fast Light Tool Kit (FLTK).
 //
@@ -35,29 +35,29 @@
 #define FL_VALUE_TIMER		1
 #define FL_HIDDEN_TIMER		2
 
-class Fl_Timer : public Fl_Widget {
-  static FL_EXPORT void stepcb(void *);
-  FL_EXPORT void step();
+class FL_EXPORT Fl_Timer : public Fl_Widget {
+  static void stepcb(void *);
+  void step();
   char on, direction_;
   double delay, total;
   long lastsec,lastusec;
 protected:
-  FL_EXPORT void draw();
+  void draw();
 public:
-  FL_EXPORT int handle(int);
-  FL_EXPORT Fl_Timer(uchar t,int x,int y,int w,int h, const char *l);
-  FL_EXPORT ~Fl_Timer();
-  FL_EXPORT void value(double);
+  int handle(int);
+  Fl_Timer(uchar t,int x,int y,int w,int h, const char *l);
+  ~Fl_Timer();
+  void value(double);
   double value() const {return delay>0.0?delay:0.0;}
   char direction() const {return direction_;}
   void direction(char d) {direction_ = d;}
   char suspended() const {return !on;}
-  FL_EXPORT void suspended(char d);
+  void suspended(char d);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Timer.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Timer.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Button.H,v 1.5.2.3.2.1 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Check_Button.H,v 1.5.2.3.2.2 2002/08/14 16:49:37 easysw Exp $"
 //
 // Check button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,13 +28,13 @@
 
 #include "Fl_Light_Button.H"
 
-class Fl_Check_Button : public Fl_Light_Button {
+class FL_EXPORT Fl_Check_Button : public Fl_Light_Button {
 public:
-  FL_EXPORT Fl_Check_Button(int x,int y,int w,int h,const char *l = 0);
+  Fl_Check_Button(int x,int y,int w,int h,const char *l = 0);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Check_Button.H,v 1.5.2.3.2.1 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Check_Button.H,v 1.5.2.3.2.2 2002/08/14 16:49:37 easysw Exp $".
 //

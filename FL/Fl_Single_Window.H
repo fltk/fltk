@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Single_Window.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Single_Window.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Single-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,11 +28,11 @@
 
 #include "Fl_Window.H"
 
-class Fl_Single_Window : public Fl_Window {
+class FL_EXPORT Fl_Single_Window : public Fl_Window {
 public:
-  FL_EXPORT void show();
+  void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  FL_EXPORT void flush();
+  void flush();
   Fl_Single_Window(int W, int H, const char *l=0)
     : Fl_Window(W,H,l) {}
   Fl_Single_Window(int X, int Y, int W, int H, const char *l=0)
@@ -43,5 +43,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Single_Window.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Single_Window.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

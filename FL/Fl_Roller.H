@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.H,v 1.5.2.4.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Roller.H,v 1.5.2.4.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Roller header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,16 +30,16 @@
 #include "Fl_Valuator.H"
 #endif
 
-class Fl_Roller : public Fl_Valuator {
+class FL_EXPORT Fl_Roller : public Fl_Valuator {
 protected:
-  FL_EXPORT void draw();
+  void draw();
 public:
-  FL_EXPORT int handle(int);
-  FL_EXPORT Fl_Roller(int X,int Y,int W,int H,const char* L=0);
+  int handle(int);
+  Fl_Roller(int X,int Y,int W,int H,const char* L=0);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Roller.H,v 1.5.2.4.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Roller.H,v 1.5.2.4.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

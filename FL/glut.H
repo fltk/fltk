@@ -1,5 +1,5 @@
 //
-// "$Id: glut.H,v 1.6.2.10.2.2 2002/03/25 16:41:01 easysw Exp $"
+// "$Id: glut.H,v 1.6.2.10.2.3 2002/08/14 16:49:38 easysw Exp $"
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -54,17 +54,17 @@
 #include "Fl.H"
 #include "Fl_Gl_Window.H"
 
-class Fl_Glut_Window : public Fl_Gl_Window {
-  FL_EXPORT void _init();
+class FL_EXPORT Fl_Glut_Window : public Fl_Gl_Window {
+  void _init();
   int mouse_down;
 protected:
-  FL_EXPORT void draw();
-  FL_EXPORT void draw_overlay();
-  FL_EXPORT int handle(int);
+  void draw();
+  void draw_overlay();
+  int handle(int);
 public: // so the inline functions work
   int number;
   int menu[3];
-  FL_EXPORT void make_current();
+  void make_current();
   void (*display)();
   void (*overlaydisplay)();
   void (*reshape)(int w, int h);
@@ -75,9 +75,9 @@ public: // so the inline functions work
   void (*entry)(int);
   void (*visibility)(int);
   void (*special)(int, int x, int y);
-  FL_EXPORT Fl_Glut_Window(int w, int h, const char *);
-  FL_EXPORT Fl_Glut_Window(int x, int y, int w, int h, const char *);
-  FL_EXPORT ~Fl_Glut_Window();
+  Fl_Glut_Window(int w, int h, const char *);
+  Fl_Glut_Window(int x, int y, int w, int h, const char *);
+  ~Fl_Glut_Window();
 };
 
 extern FL_EXPORT Fl_Glut_Window *glut_window;	// the current window
@@ -470,5 +470,5 @@ extern void APIENTRY glutSolidIcosahedron();
 #endif                  /* __glut_h__ */
 
 //
-// End of "$Id: glut.H,v 1.6.2.10.2.2 2002/03/25 16:41:01 easysw Exp $".
+// End of "$Id: glut.H,v 1.6.2.10.2.3 2002/08/14 16:49:38 easysw Exp $".
 //

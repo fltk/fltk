@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Overlay_Window.H,v 1.5.2.3.2.3 2002/01/07 18:47:27 easysw Exp $"
+// "$Id: Fl_Overlay_Window.H,v 1.5.2.3.2.4 2002/08/14 16:49:38 easysw Exp $"
 //
 // Overlay window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,18 +28,18 @@
 
 #include "Fl_Double_Window.H"
 
-class Fl_Overlay_Window : public Fl_Double_Window {
+class FL_EXPORT Fl_Overlay_Window : public Fl_Double_Window {
   friend class _Fl_Overlay;
-  virtual FL_EXPORT void draw_overlay() = 0;
+  virtual void draw_overlay() = 0;
   Fl_Window *overlay_;
 public:
-  FL_EXPORT void show();
-  FL_EXPORT void flush();
-  FL_EXPORT void hide();
-  FL_EXPORT void resize(int,int,int,int);
-  FL_EXPORT ~Fl_Overlay_Window();
-  FL_EXPORT int can_do_overlay();
-  FL_EXPORT void redraw_overlay();
+  void show();
+  void flush();
+  void hide();
+  void resize(int,int,int,int);
+  ~Fl_Overlay_Window();
+  int can_do_overlay();
+  void redraw_overlay();
   Fl_Overlay_Window(int W, int H, const char *l=0)
     : Fl_Double_Window(W,H,l) {overlay_ = 0; force_doublebuffering_=1; image(0); }
   Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0)
@@ -50,5 +50,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Overlay_Window.H,v 1.5.2.3.2.3 2002/01/07 18:47:27 easysw Exp $".
+// End of "$Id: Fl_Overlay_Window.H,v 1.5.2.3.2.4 2002/08/14 16:49:38 easysw Exp $".
 //

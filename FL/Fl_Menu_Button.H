@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Button.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Menu_Button.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Menu button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,19 +28,19 @@
 
 #include "Fl_Menu_.H"
 
-class Fl_Menu_Button : public Fl_Menu_ {
+class FL_EXPORT Fl_Menu_Button : public Fl_Menu_ {
 protected:
-  FL_EXPORT void draw();
+  void draw();
 public:
   // values for type:
   enum {POPUP1 = 1, POPUP2, POPUP12, POPUP3, POPUP13, POPUP23, POPUP123};
-  FL_EXPORT int handle(int);
-  FL_EXPORT const Fl_Menu_Item* popup();
-  FL_EXPORT Fl_Menu_Button(int,int,int,int,const char * =0);
+  int handle(int);
+  const Fl_Menu_Item* popup();
+  Fl_Menu_Button(int,int,int,int,const char * =0);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Menu_Button.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Menu_Button.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

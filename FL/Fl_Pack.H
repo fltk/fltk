@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Pack.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Pack header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,15 +28,15 @@
 
 #include <FL/Fl_Group.H>
 
-class Fl_Pack : public Fl_Group {
+class FL_EXPORT Fl_Pack : public Fl_Group {
   int spacing_;
 public:
   enum { // values for type(int)
     VERTICAL = 0,
     HORIZONTAL = 1
   };
-  FL_EXPORT void draw();
-  FL_EXPORT Fl_Pack(int x,int y,int w ,int h,const char *l = 0);
+  void draw();
+  Fl_Pack(int x,int y,int w ,int h,const char *l = 0);
   int spacing() const {return spacing_;}
   void spacing(int i) {spacing_ = i;}
   uchar horizontal() const {return type();}
@@ -45,5 +45,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Pack.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Pack.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

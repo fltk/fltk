@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.6.2.4.2.5 2002/07/23 16:28:18 easysw Exp $"
+// "$Id: Fl_Input_.H,v 1.6.2.4.2.6 2002/08/14 16:49:38 easysw Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -44,7 +44,7 @@
 #define FL_MULTILINE_INPUT_WRAP	(FL_MULTILINE_INPUT | FL_INPUT_WRAP)
 #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
 
-class Fl_Input_ : public Fl_Widget {
+class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
   const char* value_;
   char* buffer;
@@ -63,39 +63,39 @@ class Fl_Input_ : public Fl_Widget {
   unsigned textcolor_;
   unsigned cursor_color_;
 
-  FL_EXPORT const char* expand(const char*, char*) const;
-  FL_EXPORT double expandpos(const char*, const char*, const char*, int*) const;
-  FL_EXPORT void minimal_update(int, int);
-  FL_EXPORT void minimal_update(int p);
-  FL_EXPORT void put_in_buffer(int newsize);
+  const char* expand(const char*, char*) const;
+  double expandpos(const char*, const char*, const char*, int*) const;
+  void minimal_update(int, int);
+  void minimal_update(int p);
+  void put_in_buffer(int newsize);
 
-  FL_EXPORT void setfont() const;
+  void setfont() const;
 
 protected:
 
-  FL_EXPORT int word_start(int i) const;
-  FL_EXPORT int word_end(int i) const;
-  FL_EXPORT int line_start(int i) const;
-  FL_EXPORT int line_end(int i) const;
-  FL_EXPORT void drawtext(int, int, int, int);
-  FL_EXPORT int up_down_position(int, int keepmark=0);
-  FL_EXPORT void handle_mouse(int, int, int, int, int keepmark=0);
-  FL_EXPORT int handletext(int e, int, int, int, int);
-  FL_EXPORT void maybe_do_callback();
+  int word_start(int i) const;
+  int word_end(int i) const;
+  int line_start(int i) const;
+  int line_end(int i) const;
+  void drawtext(int, int, int, int);
+  int up_down_position(int, int keepmark=0);
+  void handle_mouse(int, int, int, int, int keepmark=0);
+  int handletext(int e, int, int, int, int);
+  void maybe_do_callback();
   int xscroll() const {return xscroll_;}
   int yscroll() const {return yscroll_;}
 
 public:
 
-  FL_EXPORT void resize(int, int, int, int);
+  void resize(int, int, int, int);
 
-  FL_EXPORT Fl_Input_(int, int, int, int, const char* = 0);
-  FL_EXPORT ~Fl_Input_();
+  Fl_Input_(int, int, int, int, const char* = 0);
+  ~Fl_Input_();
 
-  FL_EXPORT int value(const char*);
-  FL_EXPORT int value(const char*, int);
-  FL_EXPORT int static_value(const char*);
-  FL_EXPORT int static_value(const char*, int);
+  int value(const char*);
+  int value(const char*, int);
+  int static_value(const char*);
+  int static_value(const char*, int);
   const char* value() const {return value_;}
   char index(int i) const {return value_[i];}
   int size() const {return size_;}
@@ -104,17 +104,17 @@ public:
 
   int position() const {return position_;}
   int mark() const {return mark_;}
-  FL_EXPORT int position(int p, int m);
+  int position(int p, int m);
   int position(int p) {return position(p, p);}
   int mark(int m) {return position(position(), m);}
-  FL_EXPORT int replace(int, int, const char*, int=0);
+  int replace(int, int, const char*, int=0);
   int cut() {return replace(position(), mark(), 0);}
   int cut(int n) {return replace(position(), position()+n, 0);}
   int cut(int a, int b) {return replace(a, b, 0);}
   int insert(const char* t, int l=0){return replace(position_, mark_, t, l);}
-  FL_EXPORT int copy(int clipboard);
-  FL_EXPORT int undo();
-  FL_EXPORT int copy_cuts();
+  int copy(int clipboard);
+  int undo();
+  int copy_cuts();
 
   Fl_Font textfont() const {return (Fl_Font)textfont_;}
   void textfont(uchar s) {textfont_ = s;}
@@ -138,5 +138,5 @@ public:
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.5 2002/07/23 16:28:18 easysw Exp $".
+// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.6 2002/08/14 16:49:38 easysw Exp $".
 //

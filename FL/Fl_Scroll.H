@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Scroll.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $"
 //
 // Scroll header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,30 +29,30 @@
 #include "Fl_Group.H"
 #include "Fl_Scrollbar.H"
 
-class Fl_Scroll : public Fl_Group {
+class FL_EXPORT Fl_Scroll : public Fl_Group {
 
   int xposition_, yposition_;
   int width_, height_;
   int oldx, oldy;
-  static FL_EXPORT void hscrollbar_cb(Fl_Widget*, void*);
-  static FL_EXPORT void scrollbar_cb(Fl_Widget*, void*);
-  FL_EXPORT void fix_scrollbar_order();
-  static FL_EXPORT void draw_clip(void*,int,int,int,int);
-  FL_EXPORT void bbox(int&,int&,int&,int&);
+  static void hscrollbar_cb(Fl_Widget*, void*);
+  static void scrollbar_cb(Fl_Widget*, void*);
+  void fix_scrollbar_order();
+  static void draw_clip(void*,int,int,int,int);
+  void bbox(int&,int&,int&,int&);
 
 protected:
 
-  FL_EXPORT void draw();
+  void draw();
 
 public:
 
   Fl_Scrollbar scrollbar;
   Fl_Scrollbar hscrollbar;
 
-  FL_EXPORT void resize(int,int,int,int);
-  FL_EXPORT int handle(int);
+  void resize(int,int,int,int);
+  int handle(int);
 
-  FL_EXPORT Fl_Scroll(int X,int Y,int W,int H,const char*l=0);
+  Fl_Scroll(int X,int Y,int W,int H,const char*l=0);
 
   enum { // values for type()
     HORIZONTAL = 1,
@@ -66,11 +66,11 @@ public:
 
   int xposition() const {return xposition_;}
   int yposition() const {return yposition_;}
-  FL_EXPORT void position(int, int);
+  void position(int, int);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Scroll.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Scroll.H,v 1.5.2.3.2.2 2002/08/14 16:49:38 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.H,v 1.6.2.4.2.2 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Browser_.H,v 1.6.2.4.2.3 2002/08/14 16:49:37 easysw Exp $"
 //
 // Common browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@
 #define FL_HOLD_BROWSER		2
 #define FL_MULTI_BROWSER	3
 
-class Fl_Browser_ : public Fl_Group {
+class FL_EXPORT Fl_Browser_ : public Fl_Group {
   int position_;	// where user wants it scrolled to
   int real_position_;	// the current vertical scrolling position
   int hposition_;	// where user wants it panned to
@@ -60,61 +60,61 @@ class Fl_Browser_ : public Fl_Group {
 
   static int scrollbar_width_;
 
-  FL_EXPORT void update_top();
+  void update_top();
 
 protected:
 
   // All of the following must be supplied by the subclass:
-  virtual FL_EXPORT void *item_first() const = 0;
-  virtual FL_EXPORT void *item_next(void *) const = 0;
-  virtual FL_EXPORT void *item_prev(void *) const = 0;
-  virtual FL_EXPORT int item_height(void *) const = 0;
-  virtual FL_EXPORT int item_width(void *) const = 0;
-  virtual FL_EXPORT int item_quick_height(void *) const ;
-  virtual FL_EXPORT void item_draw(void *,int,int,int,int) const = 0;
+  virtual void *item_first() const = 0;
+  virtual void *item_next(void *) const = 0;
+  virtual void *item_prev(void *) const = 0;
+  virtual int item_height(void *) const = 0;
+  virtual int item_width(void *) const = 0;
+  virtual int item_quick_height(void *) const ;
+  virtual void item_draw(void *,int,int,int,int) const = 0;
   // you don't have to provide these but it may help speed it up:
-  virtual FL_EXPORT int full_width() const ;	// current width of all items
-  virtual FL_EXPORT int full_height() const ;	// current height of all items
-  virtual FL_EXPORT int incr_height() const ;	// average height of an item
+  virtual int full_width() const ;	// current width of all items
+  virtual int full_height() const ;	// current height of all items
+  virtual int incr_height() const ;	// average height of an item
   // These only need to be done by subclass if you want a multi-browser:
-  virtual FL_EXPORT void item_select(void *,int=1);
-  virtual FL_EXPORT int item_selected(void *) const ;
+  virtual void item_select(void *,int=1);
+  virtual int item_selected(void *) const ;
 
   // things the subclass may want to call:
-  FL_EXPORT void *top() const {return top_;}
-  FL_EXPORT void *selection() const {return selection_;}
-  FL_EXPORT void new_list(); // completely clobber all data, as though list replaced
-  FL_EXPORT void deleting(void *a); // get rid of any pointers to a
-  FL_EXPORT void replacing(void *a,void *b); // change a pointers to b
-  FL_EXPORT void inserting(void *a,void *b); // insert a before b
-  FL_EXPORT int displayed(void *) const ; // true if this line is visible
-  FL_EXPORT void redraw_line(void *); // minimal update, no change in size
-  FL_EXPORT void redraw_lines() {damage(FL_DAMAGE_SCROLL);} // redraw all of them
-  FL_EXPORT void bbox(int&,int&,int&,int&) const;
-  FL_EXPORT int leftedge() const;	// x position after scrollbar & border
-  FL_EXPORT void *find_item(int my); // item under mouse
-  FL_EXPORT void draw(int,int,int,int);
-  FL_EXPORT int handle(int,int,int,int,int);
+  void *top() const {return top_;}
+  void *selection() const {return selection_;}
+  void new_list(); // completely clobber all data, as though list replaced
+  void deleting(void *a); // get rid of any pointers to a
+  void replacing(void *a,void *b); // change a pointers to b
+  void inserting(void *a,void *b); // insert a before b
+  int displayed(void *) const ; // true if this line is visible
+  void redraw_line(void *); // minimal update, no change in size
+  void redraw_lines() {damage(FL_DAMAGE_SCROLL);} // redraw all of them
+  void bbox(int&,int&,int&,int&) const;
+  int leftedge() const;	// x position after scrollbar & border
+  void *find_item(int my); // item under mouse
+  void draw(int,int,int,int);
+  int handle(int,int,int,int,int);
 
-  FL_EXPORT void draw();
-  FL_EXPORT Fl_Browser_(int,int,int,int,const char * = 0);
+  void draw();
+  Fl_Browser_(int,int,int,int,const char * = 0);
 
 public:
 
   Fl_Scrollbar scrollbar;		// Vertical scrollbar
   Fl_Scrollbar hscrollbar;		// Horizontal scrollbar
 
-  FL_EXPORT int handle(int);
-  FL_EXPORT void resize(int,int,int,int);
+  int handle(int);
+  void resize(int,int,int,int);
 
-  FL_EXPORT int select(void *,int=1,int docallbacks=0);
-  FL_EXPORT int select_only(void *,int docallbacks=0);
-  FL_EXPORT int deselect(int docallbacks=0);
+  int select(void *,int=1,int docallbacks=0);
+  int select_only(void *,int docallbacks=0);
+  int deselect(int docallbacks=0);
   int position() const {return position_;}
   int hposition() const {return hposition_;}
-  FL_EXPORT void position(int); // scroll to here
-  FL_EXPORT void hposition(int); // pan to here
-  FL_EXPORT void display(void*); // scroll so this item is shown
+  void position(int); // scroll to here
+  void hposition(int); // pan to here
+  void display(void*); // scroll so this item is shown
 
   uchar has_scrollbar() const {return has_scrollbar_;}
   void has_scrollbar(uchar i) {has_scrollbar_ = i;}
@@ -147,5 +147,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser_.H,v 1.6.2.4.2.2 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Browser_.H,v 1.6.2.4.2.3 2002/08/14 16:49:37 easysw Exp $".
 //

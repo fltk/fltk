@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Input.H,v 1.5.2.3.2.3 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_Value_Input.H,v 1.5.2.3.2.4 2002/08/14 16:49:38 easysw Exp $"
 //
 // Value input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,18 +29,18 @@
 #include "Fl_Valuator.H"
 #include "Fl_Input.H"
 
-class Fl_Value_Input : public Fl_Valuator {
+class FL_EXPORT Fl_Value_Input : public Fl_Valuator {
 public:
   Fl_Input input;
 private:
   char soft_;
-  static FL_EXPORT void input_cb(Fl_Widget*,void*);
-  virtual FL_EXPORT void value_damage(); // cause damage() due to value() changing
+  static void input_cb(Fl_Widget*,void*);
+  virtual void value_damage(); // cause damage() due to value() changing
 public:
-  FL_EXPORT int handle(int);
-  FL_EXPORT void draw();
-  FL_EXPORT void resize(int,int,int,int);
-  FL_EXPORT Fl_Value_Input(int x,int y,int w,int h,const char *l=0);
+  int handle(int);
+  void draw();
+  void resize(int,int,int,int);
+  Fl_Value_Input(int x,int y,int w,int h,const char *l=0);
 
   void soft(char s) {soft_ = s;}
   char soft() const {return soft_;}
@@ -59,5 +59,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Value_Input.H,v 1.5.2.3.2.3 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_Value_Input.H,v 1.5.2.3.2.4 2002/08/14 16:49:38 easysw Exp $".
 //

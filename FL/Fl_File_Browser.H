@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.H,v 1.1.2.3 2002/05/02 14:31:10 easysw Exp $"
+// "$Id: Fl_File_Browser.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $"
 //
 // FileBrowser definitions.
 //
@@ -39,7 +39,7 @@
 // Fl_File_Browser class...
 //
 
-class Fl_File_Browser : public Fl_Browser
+class FL_EXPORT Fl_File_Browser : public Fl_Browser
 {
   int		filetype_;
   const char	*directory_;
@@ -55,15 +55,15 @@ class Fl_File_Browser : public Fl_Browser
 public:
   enum { FILES, DIRECTORIES };
 
-  FL_EXPORT Fl_File_Browser(int, int, int, int, const char * = 0);
+  Fl_File_Browser(int, int, int, int, const char * = 0);
 
   uchar			iconsize() const { return (iconsize_); };
   void			iconsize(uchar s) { iconsize_ = s; redraw(); };
 
-  FL_EXPORT void	filter(const char *pattern);
+  void	filter(const char *pattern);
   const char		*filter() const { return (pattern_); };
 
-  FL_EXPORT int		load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
+  int		load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
 
   uchar			textsize() const { return (Fl_Browser::textsize()); };
   void			textsize(uchar s) { Fl_Browser::textsize(s); iconsize_ = 3 * s / 2; };
@@ -75,5 +75,5 @@ public:
 #endif // !_Fl_File_Browser_H_
 
 //
-// End of "$Id: Fl_File_Browser.H,v 1.1.2.3 2002/05/02 14:31:10 easysw Exp $".
+// End of "$Id: Fl_File_Browser.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $".
 //

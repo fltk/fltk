@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Progress.H,v 1.1.2.3 2002/04/18 20:37:29 easysw Exp $"
+// "$Id: Fl_Progress.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $"
 //
 // Progress bar widget definitions.
 //
@@ -37,7 +37,7 @@
 // Progress class...
 //
 
-class Fl_Progress : public Fl_Widget
+class FL_EXPORT Fl_Progress : public Fl_Widget
 {
   float	value_,
 	minimum_,
@@ -45,11 +45,11 @@ class Fl_Progress : public Fl_Widget
 
   protected:
 
-  FL_EXPORT virtual void draw();
+  virtual void draw();
 
   public:
 
-  FL_EXPORT Fl_Progress(int x, int y, int w, int h, const char *l = 0);
+  Fl_Progress(int x, int y, int w, int h, const char *l = 0);
 
   void	maximum(float v) { maximum_ = v; redraw(); }
   float	maximum() const { return (maximum_); }
@@ -64,5 +64,5 @@ class Fl_Progress : public Fl_Widget
 #endif // !_Fl_Progress_H_
 
 //
-// End of "$Id: Fl_Progress.H,v 1.1.2.3 2002/04/18 20:37:29 easysw Exp $".
+// End of "$Id: Fl_Progress.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $".
 //
