@@ -1,3 +1,11 @@
+CHANGES IN FLTK 1.1.4
+
+	- The Fl_Text_Editor widget did not set changed() nor
+	  did it call the widget's callback function for
+	  FL_WHEN_CHANGED when processing characters that
+	  Fl::compose() handles (STR #52)
+
+
 CHANGES IN FLTK 1.1.4rc1
 
 	- The file chooser did not reset the click count when

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.15 2003/04/01 20:14:16 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.16 2003/05/27 20:20:20 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -187,7 +187,8 @@ int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   if (e->insert_mode()) e->insert(s);
   else e->overstrike(s);
   e->show_insert_position();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
+  else e->set_changed();
   return 1;
 }
 
@@ -401,8 +402,7 @@ int Fl_Text_Editor::kf_undo(int , Fl_Text_Editor* e) {
 }
 
 int Fl_Text_Editor::handle_key() {
-
-  // Call fltk's rules to try to turn this into a printing character.
+  // Call FLTK's rules to try to turn this into a printing character.
   // This uses the right-hand ctrl key as a "compose prefix" and returns
   // the changes that should be made to the text, as a number of
   // bytes to delete and a string to insert:
@@ -415,6 +415,8 @@ int Fl_Text_Editor::handle_key() {
       else overstrike(Fl::event_text());
     }
     show_insert_position();
+    if (when()&FL_WHEN_CHANGED) do_callback();
+    else set_changed();
     return 1;
   }
 
@@ -423,13 +425,14 @@ int Fl_Text_Editor::handle_key() {
   Key_Func f;
   f = bound_key_function(key, state, global_key_bindings);
   if (!f) f = bound_key_function(key, state, key_bindings);
-
   if (f) return f(key, this);
   if (default_key_function_ && !state) return default_key_function_(c, this);
   return 0;
 }
 
 void Fl_Text_Editor::maybe_do_callback() {
+//  printf("Fl_Text_Editor::maybe_do_callback()\n");
+//  printf("changed()=%d, when()=%x\n", changed(), when());
   if (changed() || (when()&FL_WHEN_NOT_CHANGED)) {
     clear_changed(); do_callback();}
 }
@@ -483,5 +486,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.15 2003/04/01 20:14:16 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.16 2003/05/27 20:20:20 easysw Exp $".
 //
