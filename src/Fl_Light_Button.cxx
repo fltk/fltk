@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.15 2002/04/29 19:27:51 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.16 2002/04/30 15:34:57 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -70,16 +70,34 @@ void Fl_Light_Button::draw() {
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
 	  fl_color(col);
-	  int tW = W - Fl::box_dw(down_box()) - 3;
+	  int tW = W - Fl::box_dw(down_box()) - 2;
 	  int tdx = dx + Fl::box_dx(down_box()) + 1;
 	  int tdy = dy + Fl::box_dy(down_box()) + 1;
 
-	  if (tW > 4) {
-            fl_pie(x() + tdx, y() + tdy, tW, tW , 0.0, 360.0);
-	  } else {
-            // Small circles don't draw well with some X servers...
-	    fl_rectf(x() + tdx + 1, y() + tdy, 2, 4);
-	    fl_rectf(x() + tdx, y() + tdy + 1, 4, 2);
+	  switch (tW) {
+	    // Larger circles draw fine...
+	    default :
+              fl_pie(x() + tdx, y() + tdy, tW, tW, 0.0, 360.0);
+	      break;
+
+            // Small circles don't draw well on many systems...
+	    case 6 :
+	      fl_rectf(x() + tdx + 2, y() + tdy, tW - 4, tW);
+	      fl_rectf(x() + tdx + 1, y() + tdy + 1, tW - 2, tW - 2);
+	      fl_rectf(x() + tdx, y() + tdy + 2, tW, tW - 4);
+	      break;
+
+	    case 5 :
+	    case 4 :
+	    case 3 :
+	      fl_rectf(x() + tdx + 1, y() + tdy, tW - 2, tW);
+	      fl_rectf(x() + tdx, y() + tdy + 1, tW, tW - 2);
+	      break;
+
+	    case 2 :
+	    case 1 :
+	      fl_rectf(x() + tdx, y() + tdy, tW, tW);
+	      break;
 	  }
 	}
         break;
@@ -123,5 +141,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.15 2002/04/29 19:27:51 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.16 2002/04/30 15:34:57 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.5 2002/04/29 21:04:12 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.6 2002/04/30 15:34:58 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -447,11 +447,11 @@ static char makePath( const char *path )
     p[len] = 0;
     makePath( p );
     free( p );
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
     return ( mkdir( path ) == 0 );
 #else
     return ( mkdir( path, 0777 ) == 0 );
-#endif
+#endif // WIN32 && !__CYGWIN__
   }
   return 1;
 }
@@ -935,5 +935,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.5 2002/04/29 21:04:12 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.6 2002/04/30 15:34:58 easysw Exp $".
 //

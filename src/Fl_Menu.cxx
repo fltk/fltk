@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.10 2002/04/29 19:27:51 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.11 2002/04/30 15:34:58 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -166,14 +166,32 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
       fl_draw_box(FL_ROUND_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
 	fl_color(labelcolor_);
-	int tW = W - Fl::box_dw(FL_ROUND_DOWN_BOX) - 3;
+	int tW = W - Fl::box_dw(FL_ROUND_DOWN_BOX) - 2;
 	int td = Fl::box_dx(FL_ROUND_DOWN_BOX) + 1;
-	if (tW > 4) {
-          fl_pie(x+2 + td , y + d + td, tW, tW , 0.0, 360.0);
-	} else {
-          // Small circles don't draw well with some X servers...
-	  fl_rectf(x + td + 3, y + d + td, 2, 4);
-	  fl_rectf(x + td + 2, y + d + td + 1, 4, 2);
+	switch (tW) {
+	  // Larger circles draw fine...
+	  default :
+            fl_pie(x + td + 2, y + d + td, tW, tW, 0.0, 360.0);
+	    break;
+
+          // Small circles don't draw well on many systems...
+	  case 6 :
+	    fl_rectf(x + td + 4, y + d + td, tW - 4, tW);
+	    fl_rectf(x + td + 3, y + d + td + 1, tW - 2, tW - 2);
+	    fl_rectf(x + td + 2, y + d + td + 2, tW, tW - 4);
+	    break;
+
+	  case 5 :
+	  case 4 :
+	  case 3 :
+	    fl_rectf(x + td + 3, y + d + td, tW - 2, tW);
+	    fl_rectf(x + td + 2, y + d + td + 1, tW, tW - 2);
+	    break;
+
+	  case 2 :
+	  case 1 :
+	    fl_rectf(x + td + 2, y + d + td, tW, tW);
+	    break;
 	}
       }
     } else {
@@ -756,5 +774,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.10 2002/04/29 19:27:51 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.11 2002/04/30 15:34:58 easysw Exp $".
 //
