@@ -1,5 +1,8 @@
 CHANGES SINCE FLTK 1.0.11
 
+	- Fl_Menu_Item::add() didn't use the flags that were
+	  passed in.
+
 	- Fixed a bug in Fl_Scrollbar - clicking in the "trough"
 	  of the scrollbar would move the scroller in the wrong
 	  direction.

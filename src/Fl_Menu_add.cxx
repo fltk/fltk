@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.12 2001/05/19 21:30:23 spitzak Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.13 2001/07/09 23:04:56 easysw Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -156,7 +156,7 @@ int Fl_Menu_Item::add(
     int n = m-array;
     array = insert(array, size, n, item, myflags|flags1);
     size++;
-    if (flags & FL_SUBMENU) { // add submenu delimiter
+    if (myflags & FL_SUBMENU) { // add submenu delimiter
       array = insert(array, size, n+1, 0, 0);
       size++;
     }
@@ -261,5 +261,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.12 2001/05/19 21:30:23 spitzak Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13 2001/07/09 23:04:56 easysw Exp $".
 //
