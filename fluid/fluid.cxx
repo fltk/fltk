@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.18 2002/05/01 10:36:08 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.19 2002/05/01 10:44:55 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -533,6 +533,8 @@ void update_history(const char *filename) {
 }
 
 // Shell command support...
+#if !defined(WIN32) || defined(__CYGWIN__)
+// Support the full piped shell command...
 static FILE *shell_pipe;
 
 void
@@ -549,7 +551,7 @@ shell_pipe_cb(int, void*) {
 
     pclose(shell_pipe);
     shell_pipe = NULL;
-    shell_run_list->add("COMPLETE");
+    shell_run_list->add("... END SHELL COMMAND ...");
   }
 }
 
@@ -605,6 +607,45 @@ do_shell_command(Fl_Return_Button*, void*) {
 
   while (shell_run_window->shown()) Fl::wait();
 }
+#else
+// Just do basic shell command stuff, no status window...
+void
+do_shell_command(Fl_Return_Button*, void*) {
+  const char	*command;	// Command to run
+  int		status;		// Status from command...
+
+
+  shell_window->hide();
+
+  if ((command = shell_command_input->value()) == NULL || !*command) {
+    fl_alert("No shell command entered!");
+    return;
+  }
+
+  if (shell_savefl_button->value()) {
+    save_cb(0, 0);
+  }
+
+  if (shell_writecode_button->value()) {
+    compile_only = 1;
+    write_cb(0, 0);
+    compile_only = 0;
+  }
+
+  if (shell_writemsgs_button->value()) {
+    compile_only = 1;
+    write_strings_cb(0, 0);
+    compile_only = 0;
+  }
+
+  if ((status = system(command)) != 0) {
+    fl_alert("Shell command returned status %d!", status);
+  } else if (completion_button->value()) {
+    fl_message("Shell command completed successfully!");
+  }
+}
+#endif // !WIN32 || __CYGWIN__
+
 
 void
 show_shell_window() {
@@ -702,5 +743,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.18 2002/05/01 10:36:08 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.19 2002/05/01 10:44:55 easysw Exp $".
 //
