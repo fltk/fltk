@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.16 2002/06/06 14:04:53 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.17 2002/06/09 13:35:49 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1656,6 +1656,9 @@ int Fl_Text_Display::measure_vline( int visLineNum ) {
       style = ( unsigned char ) mStyleBuffer->character(
                 lineStartPos + i ) - 'A';
 
+      if (style < 0) style = 0;
+      else if (style >= mNStyles) style = mNStyles - 1;
+
       fl_font( mStyleTable[ style ].font, mStyleTable[ style ].size );
 
       width += ( int ) fl_width( expandedChar, len );
@@ -1948,5 +1951,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.16 2002/06/06 14:04:53 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.17 2002/06/09 13:35:49 easysw Exp $".
 //

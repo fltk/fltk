@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.H,v 1.3.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Text_Buffer.H,v 1.3.2.3 2002/06/09 13:35:49 easysw Exp $"
 //
 // Header file for Fl_Text_Buffer class.
 //
@@ -72,11 +72,11 @@ class FL_EXPORT Fl_Text_Buffer {
     ~Fl_Text_Buffer();
 
     int length() { return mLength; }
-    const char* text();
+    char* text();
     void text(const char* text);
-    const char* text_range(int start, int end);
+    char* text_range(int start, int end);
     char character(int pos);
-    const char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
+    char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
     void insert(int pos, const char* text);
     void append(const char* text) { insert(length(), text); }
     void remove(int start, int end);
@@ -114,7 +114,7 @@ class FL_EXPORT Fl_Text_Buffer {
     int selection_position(int* start, int* end, int* isRect, int* rectStart,
                            int* rectEnd);
 
-    const char* selection_text();
+    char* selection_text();
     void remove_selection();
     void replace_selection(const char* text);
     void secondary_select(int start, int end);
@@ -126,7 +126,7 @@ class FL_EXPORT Fl_Text_Buffer {
     int secondary_selection_position(int* start, int* end, int* isRect,
                                      int* rectStart, int* rectEnd);
 
-    const char* secondary_selection_text();
+    char* secondary_selection_text();
     void remove_secondary_selection();
     void replace_secondary_selection(const char* text);
     void highlight(int start, int end);
@@ -136,13 +136,13 @@ class FL_EXPORT Fl_Text_Buffer {
     int highlight_position(int* start, int* end, int* isRect, int* rectStart,
                            int* rectEnd);
 
-    const char* highlight_text();
+    char* highlight_text();
     void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
     void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
 
     void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
 
-    const char* line_text(int pos);
+    char* line_text(int pos);
     int line_start(int pos);
     int line_end(int pos);
     int word_start(int pos);
@@ -198,7 +198,7 @@ class FL_EXPORT Fl_Text_Buffer {
 
     void move_gap(int pos);
     void reallocate_with_gap(int newGapStart, int newGapLen);
-    const char* selection_text_(Fl_Text_Selection* sel);
+    char* selection_text_(Fl_Text_Selection* sel);
     void remove_selection_(Fl_Text_Selection* sel);
     void replace_selection_(Fl_Text_Selection* sel, const char* text);
 
@@ -238,5 +238,5 @@ class FL_EXPORT Fl_Text_Buffer {
 #endif
 
 //
-// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.3 2002/06/09 13:35:49 easysw Exp $".
 //

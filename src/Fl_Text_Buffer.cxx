@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.6 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.7 2002/06/09 13:35:49 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -115,7 +115,7 @@ Fl_Text_Buffer::~Fl_Text_Buffer() {
 ** Get the entire contents of a text buffer.  Memory is allocated to contain
 ** the returned string, which the caller must free.
 */
-const char * Fl_Text_Buffer::text() {
+char * Fl_Text_Buffer::text() {
   char *t;
 
   t = (char *)malloc( mLength + 1 );
@@ -163,7 +163,7 @@ void Fl_Text_Buffer::text( const char *t ) {
 ** from text buffer "buf".  Positions start at 0, and the range does not
 ** include the character pointed to by "end"
 */
-const char * Fl_Text_Buffer::text_range( int start, int end ) {
+char * Fl_Text_Buffer::text_range( int start, int end ) {
   char * text;
   int length, part1Length;
 
@@ -451,7 +451,7 @@ void Fl_Text_Buffer::clear_rectangular( int start, int end, int rectStart,
   free( (void *) newlineString );
 }
 
-const char * Fl_Text_Buffer::text_in_rectangle( int start, int end,
+char * Fl_Text_Buffer::text_in_rectangle( int start, int end,
     int rectStart, int rectEnd ) {
   int lineStart, selLeft, selRight, len;
   char *textOut, *outPtr, *retabbedStr;
@@ -535,7 +535,7 @@ int Fl_Text_Buffer::selection_position( int *start, int *end,
                             rectEnd );
 }
 
-const char * Fl_Text_Buffer::selection_text() {
+char * Fl_Text_Buffer::selection_text() {
   return selection_text_( &mPrimary );
 }
 
@@ -575,7 +575,7 @@ int Fl_Text_Buffer::secondary_selection_position( int *start, int *end,
                               rectEnd );
 }
 
-const char * Fl_Text_Buffer::secondary_selection_text() {
+char * Fl_Text_Buffer::secondary_selection_text() {
   return selection_text_( &mSecondary );
 }
 
@@ -615,7 +615,7 @@ int Fl_Text_Buffer::highlight_position( int *start, int *end,
                               rectEnd );
 }
 
-const char * Fl_Text_Buffer::highlight_text() {
+char * Fl_Text_Buffer::highlight_text() {
   return selection_text_( &mHighlight );
 }
 
@@ -695,7 +695,7 @@ void Fl_Text_Buffer::remove_modify_callback( Fl_Text_Modify_Cb bufModifiedCB,
 /*
 ** Return the text from the entire line containing position "pos"
 */
-const char * Fl_Text_Buffer::line_text( int pos ) {
+char * Fl_Text_Buffer::line_text( int pos ) {
   return text_range( line_start( pos ), line_end( pos ) );
 }
 
@@ -1720,7 +1720,7 @@ int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) {
 
 
 
-const char * Fl_Text_Buffer::selection_text_( Fl_Text_Selection *sel ) {
+char * Fl_Text_Buffer::selection_text_( Fl_Text_Selection *sel ) {
   int start, end, isRect, rectStart, rectEnd;
   char *text;
 
@@ -2284,5 +2284,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.6 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.7 2002/06/09 13:35:49 easysw Exp $".
 //

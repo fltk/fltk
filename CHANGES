@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.0
 
+	- Added syntax highlighting example code to the editor
+	  test program.
+	- Fl_Text_Display didn't range check style buffer
+	  values.
+	- Added "dark" color constants (FL_DARK_RED, etc.)
 	- The MacOS font code was missing definitions for
 	  fl_font_ and fl_size_.
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.23 2002/04/26 11:32:37 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.24 2002/06/09 13:35:49 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -298,6 +298,14 @@ enum Fl_Color {	// standard colors
   FL_BLUE		= 216,
   FL_MAGENTA		= 248,
   FL_CYAN		= 223,
+  FL_DARK_RED		= 72,
+
+  FL_DARK_GREEN		= 60,
+  FL_DARK_YELLOW	= 76,
+  FL_DARK_BLUE		= 136,
+  FL_DARK_MAGENTA	= 152,
+  FL_DARK_CYAN		= 140,
+
   FL_WHITE		= 255
 };
 
@@ -389,5 +397,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.23 2002/04/26 11:32:37 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.24 2002/06/09 13:35:49 easysw Exp $".
 //
