@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.28 1999/02/16 21:59:51 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.29 1999/02/19 15:34:09 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -156,9 +156,37 @@ double fl_wait(int timeout_flag, double time) {
 
 ////////////////////////////////////////////////////////////////
 
-int Fl::h() {return GetSystemMetrics(SM_CYSCREEN);}
+int Fl::x()
+{
+  RECT r;
 
-int Fl::w() {return GetSystemMetrics(SM_CXSCREEN);}
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.left;
+}
+
+int Fl::y()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.top;
+}
+
+int Fl::h()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.bottom - r.top;
+}
+
+int Fl::w()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.right - r.left;
+}
 
 void Fl::get_mouse(int &x, int &y) {
   POINT p;
@@ -867,5 +895,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.28 1999/02/16 21:59:51 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.29 1999/02/19 15:34:09 mike Exp $".
 //

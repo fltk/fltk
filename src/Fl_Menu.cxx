@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.15 1999/01/29 07:52:21 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.16 1999/02/19 15:34:08 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -272,9 +272,9 @@ void menuwindow::position(int X, int Y) {
 // scroll so item i is visible on screen
 void menuwindow::autoscroll(int i) {
   int Y = y()+Fl::box_dx(box())+2+i*itemheight;
-  if (Y <= 0) Y = -Y+10;
+  if (Y <= Fl::y()) Y = Fl::y()-Y+10;
   else {
-    Y = Y+itemheight-Fl::h();
+    Y = Y+itemheight-Fl::h()-Fl::y();
     if (Y < 0) return;
     Y = -Y-10;
   }
@@ -710,5 +710,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.15 1999/01/29 07:52:21 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.16 1999/02/19 15:34:08 mike Exp $".
 //
