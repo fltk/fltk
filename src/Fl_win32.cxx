@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.24 2002/04/09 21:17:01 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.25 2002/04/10 15:01:20 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,8 +45,12 @@
 #include <ctype.h>
 #include <winuser.h>
 #include <commctrl.h>
-#include <ole2.h>
-#include <ShellApi.h>
+
+// The following include files require GCC 3.x or a non-GNU compiler...
+#if !defined(__GNUC__) || __GNUC__ >= 3
+#  include <ole2.h>
+#  include <ShellApi.h>
+#endif // !__GNUC__ || __GNUC__ >= 3
 
 
 //
@@ -1026,11 +1030,15 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // other windows from the code, or we loose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
 	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
-  // register all windows for potential drag'n'drop operations
-  { static char oleInitialized = 0;
-    if (!oleInitialized) { OleInitialize(0L); oleInitialized=1; }
-  }
+
+  // Drag-n-drop requires GCC 3.x or a non-GNU compiler...
+#if !defined(__GNUC__) || __GNUC__ >= 3
+  // Register all windows for potential drag'n'drop operations
+  static char oleInitialized = 0;
+  if (!oleInitialized) { OleInitialize(0L); oleInitialized=1; }
+
   RegisterDragDrop(x->xid, (IDropTarget*)&flDropTarget);
+#endif // !__GNUC__ || __GNUC__ >= 3
 
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
@@ -1162,5 +1170,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.24 2002/04/09 21:17:01 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.25 2002/04/10 15:01:20 easysw Exp $".
 //
