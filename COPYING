@@ -1,3 +1,42 @@
+                             FLTK License
+                         Ammended May 4, 2001
+
+The following ammendments to the GNU Library General Public
+License apply for the FLTK library:
+
+    1. Modifications to the FLTK configure script, config
+       header file, and makefiles by themselves to support
+       a specific platform do not constitute a modified or
+       derived work.
+
+       The authors do request that such modifications be
+       contributed to the FLTK project - send all
+       contributions to "fltk-bugs@fltk.org".
+
+    2. Widgets that are subclassed from FLTK widgets do not
+       constitute a derived work.
+
+    3. Static linking of applications and widgets to the
+       FLTK library does not constitute a derived work
+       and does not require the author to provide source
+       code for the application or widget, use the shared
+       FLTK libraries, or link their applications or
+       widgets against a user version of FLTK.
+
+       If the author links the application or widget to a
+       modified version of FLTK, then the changes to FLTK
+       must be provided under the terms in sections 1, 2,
+       and 4.
+
+    4. Authors that develop applications and widgets that
+       use FLTK must include the following statement in
+       their user documentation:
+
+           [program/widget] is based in part on the work of
+           the FLTK project (http://www.fltk.org).
+
+-----------------------------------------------------------------------
+
 		  GNU LIBRARY GENERAL PUBLIC LICENSE
 			 Version 2, June 1991
 
