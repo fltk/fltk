@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
 	- Config header file changes for Borland C++.
+	- FLTK didn't provide a Fl::remove_handler() method.
 
 
 CHANGES IN FLTK 1.1.0rc4

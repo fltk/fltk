@@ -106,6 +106,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.release">release</A></LI>
 	<LI><A HREF="#Fl.remove_check">remove_check</A></LI>
 	<LI><A HREF="#Fl.remove_fd">remove_fd</A></LI>
+	<LI><A HREF="#Fl.remove_handler">remove_handler</A></LI>
 	<LI><A HREF="#Fl.remove_idle">remove_idle</A></LI>
 	<LI><A HREF="#Fl.remove_timeout">remove_timeout</A></LI>
 	<LI><A HREF="#Fl.repeat_timeout">repeat_timeout</A></LI>
@@ -926,6 +927,12 @@ callback that no longer exists.
 
 <H4><A NAME="Fl.remove_fd">void remove_fd(int, int when);<BR>
 void remove_fd(int);</A></H4>
+
+<P>Removes a file descriptor handler.
+
+<H4><A NAME="Fl.remove_handler">void remove_handler(int (*h)(int));</A></H4>
+
+<P>Removes a previously added event handler.
 
 <H4><A NAME="Fl.remove_idle">void remove_idle(void (*cb)(void*), void* = 0);</A></H4>
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.15 2002/04/13 22:17:45 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.16 2002/07/08 15:14:37 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -168,6 +168,7 @@ public:
   static FL_EXPORT Fl_Widget* focus()	{return focus_;}
   static FL_EXPORT void focus(Fl_Widget*);
   static FL_EXPORT void add_handler(int (*h)(int));
+  static FL_EXPORT void remove_handler(int (*h)(int));
 
   // cut/paste:
   static FL_EXPORT void copy(const char* stuff, int len, int clipboard = 0);
@@ -252,5 +253,5 @@ public:
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.15 2002/04/13 22:17:45 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.16 2002/07/08 15:14:37 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.39 2002/06/27 20:52:44 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.40 2002/07/08 15:14:38 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -389,6 +389,22 @@ void Fl::add_handler(int (*h)(int)) {
   l->handle = h;
   l->next = handlers;
   handlers = l;
+}
+
+void Fl::remove_handler(int (*h)(int)) {
+  handler_link *l, *p;
+
+  // Search for the handler in the list...
+  for (l = handlers, p = 0; l && l->handle != h; p = l; l = l->next);
+
+  if (l) {
+    // Found it, so remove it from the list...
+    if (p) p->next = l->next;
+    else handlers = l->next;
+
+    // And free the record...
+    delete l;
+  }
 }
 
 int (*fl_local_grab)(int); // used by fl_dnd.cxx
@@ -933,5 +949,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.39 2002/06/27 20:52:44 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.40 2002/07/08 15:14:38 easysw Exp $".
 //
