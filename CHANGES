@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Fl_Pack now allows any child widget to be the
+	  resizable() widget, not just the last one.
 	- MacOS: opaque window resizing, all events except 
 	  Mac menus are now handled using Carbon, window 
 	  activation fixed, GL_SWAP_TYPE default changed to 

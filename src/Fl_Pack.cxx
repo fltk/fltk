@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.1 2001/12/19 15:49:39 easysw Exp $"
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
@@ -44,10 +44,30 @@ void Fl_Pack::draw() {
   int ty = y()+Fl::box_dy(box());
   int tw = w()-Fl::box_dw(box());
   int th = h()-Fl::box_dh(box());
+  int rw, rh;
   int current_position = horizontal() ? tx : ty;
   int maximum_position = current_position;
   uchar d = damage();
   Fl_Widget*const* a = array();
+  if (horizontal()) {
+    rw = -spacing_;
+    rh = th;
+
+    for (int i = children(); i--;)
+      if (child(i)->visible()) {
+	if (child(i) != this->resizable()) rw += child(i)->w();
+	rw += spacing_;
+      }
+  } else {
+    rw = tw;
+    rh = -spacing_;
+
+    for (int i = children(); i--;)
+      if (child(i)->visible()) {
+	if (child(i) != this->resizable()) rh += child(i)->h();
+	rh += spacing_;
+      }
+  }
   for (int i = children(); i--;) {
     Fl_Widget* o = *a++;
     if (o->visible()) {
@@ -66,9 +86,9 @@ void Fl_Pack::draw() {
       // Last child, if resizable, takes all remaining room
       if(i == 0 && o == this->resizable()) {
        if(horizontal())
-         W = this->w() - Fl::box_dw(box()) - maximum_position;
+         W = tw - rw;
        else
-         H = this->h() - Fl::box_dh(box()) - maximum_position;
+         H = th - rh;
       }
       if (spacing_ && current_position>maximum_position &&
   	  (X != o->x() || Y != o->y() || d&FL_DAMAGE_ALL)) {
@@ -112,5 +132,5 @@ void Fl_Pack::draw() {
 }
 
 //
-// End of "$Id: Fl_Pack.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.1 2001/12/19 15:49:39 easysw Exp $".
 //
