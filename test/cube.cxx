@@ -1,5 +1,5 @@
 //
-// "$Id: cube.cxx,v 1.4.2.5.2.3 2002/06/26 03:36:57 matthiaswm Exp $"
+// "$Id: cube.cxx,v 1.4.2.5.2.4 2002/07/11 01:10:15 matthiaswm Exp $"
 //
 // Another forms test program for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 #include <FL/Fl_Radio_Light_Button.H>
 #include <FL/Fl_Slider.H>
 #include <stdlib.h>
+#include <stdio.h>
 
 #if !HAVE_GL
 class cube_box : public Fl_Box {
@@ -184,5 +185,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: cube.cxx,v 1.4.2.5.2.3 2002/06/26 03:36:57 matthiaswm Exp $".
+// End of "$Id: cube.cxx,v 1.4.2.5.2.4 2002/07/11 01:10:15 matthiaswm Exp $".
 //

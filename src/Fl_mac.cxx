@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.29 2002/06/28 00:28:09 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.30 2002/07/11 01:10:15 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -450,7 +450,7 @@ static void breakMacEventLoop()
 
 
 /**
- * This function iss the central event handler.
+ * This function is the central event handler.
  * It reads events from the event queue using the given maximum time
  * Funny enough, it returns the same time that it got as the argument. 
  */
@@ -538,7 +538,7 @@ static double do_queued_events( double time = 0.0 )
   {
     EventRef breakEvent;
     CreateEvent( 0, kEventClassFLTK, kEventFLTKBreakLoop, 0, kEventAttributeUserEvent, &breakEvent );
-    PostEventToQueue( GetCurrentEventQueue(), breakEvent, kEventPriorityStandard );
+    PostEventToQueue( GetCurrentEventQueue(), breakEvent, kEventPriorityLow );
     RunApplicationEventLoop();
     ReleaseEvent( breakEvent );
     if ( dataready_tid != 0 )
@@ -1683,6 +1683,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.29 2002/06/28 00:28:09 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.30 2002/07/11 01:10:15 matthiaswm Exp $".
 //
 

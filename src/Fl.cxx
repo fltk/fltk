@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.41 2002/07/08 19:19:07 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.42 2002/07/11 01:10:15 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -367,7 +367,6 @@ void Fl::flush() {
   if ( port ) 
   {
     QDFlushPortBuffer( port, 0 );
-    //printf("DBG: Fl::flush\n");
   }
 #else
   if (fl_display) XFlush(fl_display);
@@ -949,5 +948,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.41 2002/07/08 19:19:07 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.42 2002/07/11 01:10:15 matthiaswm Exp $".
 //
