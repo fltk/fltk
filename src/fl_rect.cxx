@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.11 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.12 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -28,6 +28,7 @@
 // Also all fl_clip routines, since they are always linked in so
 // that minimal update works.
 
+#include <config.h>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -40,7 +41,12 @@ void fl_rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x+w-1, y+h-1);
   LineTo(fl_gc, x, y+h-1);
   LineTo(fl_gc, x, y);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  Rect rect;
+  SetRect(&rect, x, y, x+w, y+h);
+  FrameRect(&rect);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   Rect rect;
   SetRect(&rect, x, y, x+w, y+h);
   FrameRect(&rect);
@@ -56,7 +62,12 @@ void fl_rectf(int x, int y, int w, int h) {
   rect.left = x; rect.top = y;  
   rect.right = x + w; rect.bottom = y + h;
   FillRect(fl_gc, &rect, fl_brush());
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  Rect rect;
+  SetRect(&rect, x, y, x+w, y+h);
+  PaintRect(&rect);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   Rect rect;
   SetRect(&rect, x, y, x+w, y+h);
   PaintRect(&rect);
@@ -68,7 +79,10 @@ void fl_rectf(int x, int y, int w, int h) {
 void fl_xyline(int x, int y, int x1) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  MoveTo(x, y); LineTo(x1, y);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   MoveTo(x, y); LineTo(x1, y);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
@@ -82,8 +96,13 @@ void fl_xyline(int x, int y, int x1, int y2) {
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x1, y);
+  LineTo(x1, y2);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x1, y);
   LineTo(x1, y2);
 #else
@@ -102,8 +121,14 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
   LineTo(fl_gc, x3, y2);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x1, y);
+  LineTo(x1, y2);
+  LineTo(x3, y2);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x1, y);
   LineTo(x1, y2);
   LineTo(x3, y2);
@@ -121,7 +146,10 @@ void fl_yxline(int x, int y, int y1) {
   if (y1 < y) y1--;
   else y1++;
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  MoveTo(x, y); LineTo(x, y1);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   MoveTo(x, y); LineTo(x, y1);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
@@ -135,8 +163,13 @@ void fl_yxline(int x, int y, int y1, int x2) {
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x, y1);
+  LineTo(x2, y1);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x, y1);
   LineTo(x2, y1);
 #else
@@ -155,8 +188,14 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
   LineTo(fl_gc, x2, y3);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x, y1);
+  LineTo(x2, y1);
+  LineTo(x2, y3);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x, y1);
   LineTo(x2, y1);
   LineTo(x2, y3);
@@ -176,8 +215,12 @@ void fl_line(int x, int y, int x1, int y1) {
   // Draw the last point *again* because the GDI line drawing
   // functions will not draw the last point ("it's a feature!"...)
   SetPixel(fl_gc, x1, y1, fl_RGB());
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x1, y1);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x1, y1);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
@@ -192,8 +235,13 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
   // Draw the last point *again* because the GDI line drawing
   // functions will not draw the last point ("it's a feature!"...)
   SetPixel(fl_gc, x2, y2, fl_RGB());
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x1, y1);
   LineTo(x2, y2);
 #else
@@ -211,8 +259,14 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(fl_gc, x1, y1);
   LineTo(fl_gc, x2, y2);
   LineTo(fl_gc, x, y);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  LineTo(x, y);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x1, y1);
   LineTo(x2, y2);
   LineTo(x, y);
@@ -233,8 +287,15 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   LineTo(fl_gc, x2, y2);
   LineTo(fl_gc, x3, y3);
   LineTo(fl_gc, x, y);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); 
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  LineTo(x3, y3);
+  LineTo(x, y);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y);
   LineTo(x1, y1);
   LineTo(x2, y2);
   LineTo(x3, y3);
@@ -258,7 +319,16 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
 #ifdef WIN32
   SelectObject(fl_gc, fl_brush());
   Polygon(fl_gc, p, 3);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  PolyHandle poly = OpenPoly();
+  MoveTo(x, y);
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  ClosePoly();
+  PaintPoly(poly);
+  KillPoly(poly);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   PolyHandle poly = OpenPoly();
   MoveTo(x, y);
   LineTo(x1, y1);
@@ -282,7 +352,17 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #ifdef WIN32
   SelectObject(fl_gc, fl_brush());
   Polygon(fl_gc, p, 4);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  PolyHandle poly = OpenPoly();
+  MoveTo(x, y);
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  LineTo(x3, y3);
+  ClosePoly();
+  PaintPoly(poly);
+  KillPoly(poly);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   PolyHandle poly = OpenPoly();
   MoveTo(x, y);
   LineTo(x1, y1);
@@ -301,8 +381,11 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 void fl_point(int x, int y) {
 #ifdef WIN32
   SetPixel(fl_gc, x, y, fl_RGB());
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   MoveTo(x, y); Line(0, 0); 
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  MoveTo(x, y); Line(0, 0);
 #else
   XDrawPoint(fl_display, fl_window, fl_gc, x, y);
 #endif
@@ -328,7 +411,10 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 }
 #endif
 
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
+extern Fl_Region fl_window_region;
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
 extern Fl_Region fl_window_region;
 #endif
 
@@ -338,7 +424,7 @@ void fl_restore_clip() {
   Fl_Region r = rstack[rstackptr];
 #ifdef WIN32
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
 #  if 1
   if ( fl_window ) 
   {
@@ -359,6 +445,20 @@ void fl_restore_clip() {
     ClipRect(&rect);
   }
 #  endif
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  if ( fl_window )
+  {
+    GrafPtr port = GetWindowPort( fl_window );
+    if ( port ) { 
+      RgnHandle portClip = NewRgn();
+      CopyRgn( fl_window_region, portClip ); // changed
+      if ( r )
+        SectRgn( portClip, r, portClip );
+      SetPortClipRegion( port, portClip );
+      DisposeRgn( portClip );
+    }
+  }
 #else
   if (r) XSetRegion(fl_display, fl_gc, r);
   else XSetClipMask(fl_display, fl_gc, 0);
@@ -387,8 +487,11 @@ void fl_push_clip(int x, int y, int w, int h) {
     if (current) {
 #ifdef WIN32
       CombineRgn(r,r,current,RGN_AND);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
       SectRgn(r, current, r); 
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+      SectRgn(r, current, r);
 #else
       Fl_Region temp = XCreateRegion();
       XIntersectRegion(current, r, temp);
@@ -399,8 +502,12 @@ void fl_push_clip(int x, int y, int w, int h) {
   } else { // make empty clip region:
 #ifdef WIN32
     r = CreateRectRgn(0,0,0,0);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
     r = NewRgn(); 
+    SetEmptyRgn(r);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+    r = NewRgn();
     SetEmptyRgn(r);
 #else
     r = XCreateRegion();
@@ -435,7 +542,13 @@ int fl_not_clipped(int x, int y, int w, int h) {
   RECT rect;
   rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
   return RectInRegion(r,&rect);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  if (!r) return 1;
+  Rect rect;
+  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+  return RectInRgn(&rect, r);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   if (!r) return 1;
   Rect rect;
   rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
@@ -472,7 +585,21 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   DeleteObject(temp);
   DeleteObject(rr);
   return ret;
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  RgnHandle rr = NewRgn();
+  SetRectRgn( rr, x, y, x+w, y+h );
+  SectRgn( r, rr, rr );
+  Rect rp; GetRegionBounds(rr, &rp);
+  X = rp.left;
+  Y = rp.top;
+  W = rp.right - X;
+  H = rp.bottom - Y;
+  DisposeRgn( rr );
+  if ( H==0 ) return 2;
+  if ( h==H && w==W ) return 0;
+  return 0;
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   RgnHandle rr = NewRgn();
   SetRectRgn( rr, x, y, x+w, y+h );
   SectRgn( r, rr, rr );
@@ -508,5 +635,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.11 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.12 2004/08/25 00:20:27 matthiaswm Exp $".
 //

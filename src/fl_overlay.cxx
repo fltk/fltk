@@ -1,5 +1,5 @@
 //
-// "$Id: fl_overlay.cxx,v 1.4.2.3.2.4 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_overlay.cxx,v 1.4.2.3.2.5 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Overlay support for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,9 @@
 
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+#ifdef __APPLE__
+#include <config.h>
+#endif
 
 static int px,py,pw,ph;
 
@@ -38,7 +41,12 @@ static void draw_current_rect() {
   int old = SetROP2(fl_gc, R2_NOT);
   fl_rect(px, py, pw, ph);
   SetROP2(fl_gc, old);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  PenMode( patXor );
+  fl_rect(px, py, pw, ph);
+  PenMode( patCopy );
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   PenMode( patXor );
   fl_rect(px, py, pw, ph);
   PenMode( patCopy );
@@ -66,5 +74,5 @@ void fl_overlay_rect(int x, int y, int w, int h) {
 }
 
 //
-// End of "$Id: fl_overlay.cxx,v 1.4.2.3.2.4 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_overlay.cxx,v 1.4.2.3.2.5 2004/08/25 00:20:27 matthiaswm Exp $".
 //

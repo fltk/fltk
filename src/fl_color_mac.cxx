@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_mac.cxx,v 1.1.2.6 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: fl_color_mac.cxx,v 1.1.2.7 2004/08/25 00:20:26 matthiaswm Exp $"
 //
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,10 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 static unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":
@@ -86,5 +90,5 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 }
 
 //
-// End of "$Id: fl_color_mac.cxx,v 1.1.2.6 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: fl_color_mac.cxx,v 1.1.2.7 2004/08/25 00:20:26 matthiaswm Exp $".
 //

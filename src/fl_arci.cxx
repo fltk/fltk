@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arci.cxx,v 1.4.2.5.2.5 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: fl_arci.cxx,v 1.4.2.5.2.6 2004/08/25 00:20:26 matthiaswm Exp $"
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
@@ -38,6 +38,9 @@
 #ifdef WIN32
 #include <FL/math.h>
 #endif
+#ifdef __APPLE__
+#include <config.h>
+#endif
 
 void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
@@ -47,7 +50,12 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
   Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
+  a1 = a2-a1; a2 = 450-a2;
+  FrameArc(&r, (short int)a2, (short int)a1);
+#elif defined(__APPLE_QUARTZ__)
+#  warning quartz
   Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
   FrameArc(&r, (short int)a2, (short int)a1);
@@ -66,7 +74,12 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
   SelectObject(fl_gc, fl_brush());
   Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
+  a1 = a2-a1; a2 = 450-a2;
+  PaintArc(&r, (short int)a2, (short int)a1);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
   PaintArc(&r, (short int)a2, (short int)a1);
@@ -76,5 +89,5 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
 }
 
 //
-// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.5 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.6 2004/08/25 00:20:26 matthiaswm Exp $".
 //

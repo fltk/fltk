@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.19 2004/05/15 22:58:18 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.20 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,7 +33,10 @@
 #  include <FL/gl_draw.H>
 #  include "flstring.h"
 
-#  ifdef __APPLE__
+#  ifdef __APPLE_QD__
+#    include <FL/Fl_Window.H>
+#  elif defined(__APPLE_QUARTZ__)
+#warning quartz
 #    include <FL/Fl_Window.H>
 #  endif
 
@@ -49,7 +52,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     if (g->mode == m && g->alist == alistp) 
       return g;
 
-#  ifdef __APPLE__
+#  ifdef __APPLE_QD__
   const int *blist;
   int list[32];
     
@@ -75,6 +78,56 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
 	  list[n++] = AGL_ACCUM_ALPHA_SIZE;
 	  list[n++] = 1;
 	}
+      }
+    }
+    if (m & FL_DOUBLE) {
+      list[n++] = AGL_DOUBLEBUFFER;
+    }
+    if (m & FL_DEPTH) {
+      list[n++] = AGL_DEPTH_SIZE; list[n++] = 24;
+    }
+    if (m & FL_STENCIL) {
+      list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
+    }
+#    ifdef AGL_STEREO
+    if (m & FL_STEREO) {
+      list[n++] = AGL_STEREO;
+    }
+#    endif
+    list[n] = AGL_NONE;
+    blist = list;
+  }
+  fl_open_display();
+  AGLPixelFormat fmt = aglChoosePixelFormat(NULL, 0, (GLint*)blist);
+  if (!fmt) return 0;
+
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  const int *blist;
+  int list[32];
+   
+  if (alistp)
+    blist = alistp;
+  else {
+    int n = 0;
+    if (m & FL_INDEX) {
+      list[n++] = AGL_BUFFER_SIZE;
+      list[n++] = 8; // glut tries many sizes, but this should work...
+    } else {
+      list[n++] = AGL_RGBA;
+      list[n++] = AGL_GREEN_SIZE;
+      list[n++] = (m & FL_RGB8) ? 8 : 1;
+      if (m & FL_ALPHA) {
+        list[n++] = AGL_ALPHA_SIZE;
+        list[n++] = 1;
+      }
+      if (m & FL_ACCUM) {
+        list[n++] = AGL_ACCUM_GREEN_SIZE;
+        list[n++] = 1;
+        if (m & FL_ALPHA) {
+          list[n++] = AGL_ACCUM_ALPHA_SIZE;
+          list[n++] = 1;
+        }
       }
     }
     if (m & FL_DOUBLE) {
@@ -205,7 +258,10 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
 #  ifdef WIN32
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE_QD__)
+  g->pixelformat = fmt;
+#  elif defined(__APPLE_QUARTZ__)
+#warning quartz
   g->pixelformat = fmt;
 #  else
   g->vis = visp;
@@ -271,7 +327,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   return context;
 }
 
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE_QD__)
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
     GLContext context, shared_ctx = context_list ? context_list[0] : 0;
     context = aglCreateContext( g->pixelformat, shared_ctx);
@@ -280,6 +336,22 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
     if ( window->parent() ) {
       Rect wrect; GetWindowPortBounds( fl_xid(window), &wrect );
       GLint rect[] = { window->x(), wrect.bottom-window->h()-window->y(), window->w(), window->h() }; 
+      aglSetInteger( (GLContext)context, AGL_BUFFER_RECT, rect );
+      aglEnable( (GLContext)context, AGL_BUFFER_RECT );
+    }
+    aglSetDrawable( context, GetWindowPort( fl_xid(window) ) );
+    return (context);
+}
+#  elif defined(__APPLE_QUARTZ__)
+#warning quartz
+GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
+    GLContext context, shared_ctx = context_list ? context_list[0] : 0;
+    context = aglCreateContext( g->pixelformat, shared_ctx);
+    if (!context) return 0;
+    add_context((GLContext)context);
+    if ( window->parent() ) {
+      Rect wrect; GetWindowPortBounds( fl_xid(window), &wrect );
+      GLint rect[] = { window->x(), wrect.bottom-window->h()-window->y(), window->w(), window->h() };
       aglSetInteger( (GLContext)context, AGL_BUFFER_RECT, rect );
       aglEnable( (GLContext)context, AGL_BUFFER_RECT );
     }
@@ -307,7 +379,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     cached_window = w;
 #  ifdef WIN32
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE_QD__)
     if ( w->parent() ) { //: resize our GL buffer rectangle
       Rect wrect; GetWindowPortBounds( fl_xid(w), &wrect );
       GLint rect[] = { w->x(), wrect.bottom-w->h()-w->y(), w->w(), w->h() };
@@ -315,6 +387,16 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
       aglEnable( context, AGL_BUFFER_RECT );
     }
     aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); 
+    aglSetCurrentContext(context);
+#  elif defined(__APPLE_QUARTZ__)
+#warning
+    if ( w->parent() ) { //: resize our GL buffer rectangle
+      Rect wrect; GetWindowPortBounds( fl_xid(w), &wrect );
+      GLint rect[] = { w->x(), wrect.bottom-w->h()-w->y(), w->w(), w->h() };
+      aglSetInteger( context, AGL_BUFFER_RECT, rect );
+      aglEnable( context, AGL_BUFFER_RECT );
+    }
+    aglSetDrawable(context, GetWindowPort( fl_xid(w) ) );
     aglSetCurrentContext(context);
 #  else
     glXMakeCurrent(fl_display, fl_xid(w), context);
@@ -327,7 +409,10 @@ void fl_no_gl_context() {
   cached_window = 0;
 #  ifdef WIN32
   wglMakeCurrent(0, 0);
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE_QD__)
+  aglSetCurrentContext(0);
+#  elif defined(__APPLE_QUARTZ__)
+#warning quartz
   aglSetCurrentContext(0);
 #  else
   glXMakeCurrent(fl_display, 0, 0);
@@ -338,9 +423,14 @@ void fl_delete_gl_context(GLContext context) {
   if (cached_context == context) fl_no_gl_context();
 #  ifdef WIN32
   wglDeleteContext(context);
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE_QD__)
   aglSetCurrentContext( NULL );
   aglSetDrawable( context, NULL );    
+  aglDestroyContext( context );
+#  elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  aglSetCurrentContext( NULL );
+  aglSetDrawable( context, NULL );
   aglDestroyContext( context );
 #  else
   glXDestroyContext(fl_display, context);
@@ -352,5 +442,5 @@ void fl_delete_gl_context(GLContext context) {
 
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.19 2004/05/15 22:58:18 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.20 2004/08/25 00:20:25 matthiaswm Exp $".
 //

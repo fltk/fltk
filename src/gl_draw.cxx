@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5.2.13 2004/05/15 22:58:19 easysw Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.14 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -56,7 +56,13 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base); 
     SelectObject(fl_gc, oldFid);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+    // undefined characters automatically receive an empty GL list in aglUseFont
+    fl_fontsize->listbase = glGenLists(256);
+    aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
+               fl_fontsize->size, 0, 256, fl_fontsize->listbase);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
     // undefined characters automatically receive an empty GL list in aglUseFont
     fl_fontsize->listbase = glGenLists(256);
     aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
@@ -207,5 +213,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.13 2004/05/15 22:58:19 easysw Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.14 2004/08/25 00:20:27 matthiaswm Exp $".
 //

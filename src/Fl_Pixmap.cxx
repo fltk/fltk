@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.28 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.29 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -104,7 +104,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   if (mask) {
     Rect src, dst;
     src.left = cx; src.right = cx+W;
@@ -119,6 +119,26 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
 	     GetPortBitMapForCopyBits((GrafPtr)mask), 
 	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
+             &src, &src, &dst);
+  } else {
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  }
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  if (mask) {
+    Rect src, dst;
+    src.left = cx; src.right = cx+W;
+    src.top = cy; src.bottom = cy+H;
+    dst.left = X; dst.right = X+W;
+    dst.top = Y; dst.bottom = Y+H;
+    RGBColor rgb;
+    rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
+    RGBBackColor(&rgb);
+    rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
+    RGBForeColor(&rgb);
+    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
+             GetPortBitMapForCopyBits((GrafPtr)mask),
+             GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
              &src, &src, &dst);
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
@@ -461,5 +481,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.28 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.29 2004/08/25 00:20:25 matthiaswm Exp $".
 //

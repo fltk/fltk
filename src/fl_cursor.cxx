@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.6.2.10 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.6.2.11 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -109,6 +109,9 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
 }
 
 #elif defined(__APPLE__)
+#ifdef __APPLE_QUARTZ__
+#warning are cursor shaped handled in Quickdraw/Quartz or in Carbon?
+#endif
 
 static Cursor crsrHAND =
 {
@@ -312,5 +315,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.10 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.11 2004/08/25 00:20:27 matthiaswm Exp $".
 //

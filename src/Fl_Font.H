@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.6.2.3.2.5 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Font.H,v 1.6.2.3.2.6 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,8 @@
 #ifndef FL_FONT_
 #define FL_FONT_
 
+#include <config.h>
+
 #  if USE_XFT
 typedef struct _XftFont XftFont;
 #  endif // USE_XFT
@@ -48,7 +50,14 @@ public:
   int width[256];
   TEXTMETRIC metr;
   FL_EXPORT Fl_FontSize(const char* fontname, int size);
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE_QD__)
+  FL_EXPORT Fl_FontSize(const char* fontname, int size);
+  short font, face, size;
+  short ascent, descent;
+  short width[256];
+  bool knowMetrics;
+#  elif defined(__APPLE_QUARTZ__)
+#warning quartz
   FL_EXPORT Fl_FontSize(const char* fontname, int size);
   short font, face, size;
   short ascent, descent;
@@ -94,5 +103,5 @@ FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.6.2.3.2.5 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Font.H,v 1.6.2.3.2.6 2004/08/25 00:20:25 matthiaswm Exp $".
 //

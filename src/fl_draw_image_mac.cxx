@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_mac.cxx,v 1.1.2.6 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: fl_draw_image_mac.cxx,v 1.1.2.7 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,10 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 #define MAXBUFFER 0x40000 // 256k
 
@@ -275,5 +279,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.6 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.7 2004/08/25 00:20:27 matthiaswm Exp $".
 //

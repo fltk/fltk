@@ -1,5 +1,5 @@
 //
-// "$Id: fl_read_image_mac.cxx,v 1.1.2.5 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_read_image_mac.cxx,v 1.1.2.6 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,12 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
+
+#include <config.h>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 //
 // 'fl_read_image()' - Read an image from the current window.
@@ -116,5 +122,5 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
 
 //
-// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.5 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.6 2004/08/25 00:20:27 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_mac.cxx,v 1.1.2.5 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: fl_dnd_mac.cxx,v 1.1.2.6 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,10 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 extern EventRef fl_os_event;
 extern char *fl_selection_buffer;
@@ -81,5 +85,5 @@ int Fl::dnd()
   
 
 //
-// End of "$Id: fl_dnd_mac.cxx,v 1.1.2.5 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: fl_dnd_mac.cxx,v 1.1.2.6 2004/08/25 00:20:27 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.20 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.21 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -106,7 +106,10 @@ int Fl_Gl_Window::mode(int m, const int *a) {
       hide();
       show();
     }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+    redraw();
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
     redraw();
 #else
     // under X, if the visual changes we must make a new X window (yuck!):
@@ -189,7 +192,10 @@ void Fl_Gl_Window::swap_buffers() {
 #  else
   SwapBuffers(Fl_X::i(this)->private_dc);
 #  endif
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  aglSwapBuffers((AGLContext)context_);
+#elif defined(__APPLE_QUARTZ__)
+# warning quartz
   aglSwapBuffers((AGLContext)context_);
 #else
   glXSwapBuffers(fl_display, fl_xid(this));
@@ -204,7 +210,16 @@ int fl_overlay_depth = 0;
 void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
 
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
+  //: clear previous clipping in this shared port
+  GrafPtr port = GetWindowPort( fl_xid(this) );
+  Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
+  GrafPtr old; GetPort( &old );
+  SetPort( port );
+  ClipRect( &rect );
+  SetPort( old );
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   //: clear previous clipping in this shared port
   GrafPtr port = GetWindowPort( fl_xid(this) );
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
@@ -251,7 +266,10 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
+      SWAP_TYPE = COPY;
+#elif defined __APPLE_QUARTZ__
+#warning quartz
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
@@ -338,7 +356,25 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 //  printf("Fl_Gl_Window::resize(X=%d, Y=%d, W=%d, H=%d)\n", X, Y, W, H);
   if (W != w() || H != h()) {
     valid(0);
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
+    GLint xywh[4];
+
+    if (window()) {
+      // MRS: This isn't quite right, but the parent window won't have its W and H updated yet...
+      xywh[0] = x();
+      xywh[1] = window()->h() - y() - h();
+    } else {
+      xywh[0] = 0;
+      xywh[1] = 0;
+    }
+
+    xywh[2] = W;
+    xywh[3] = H;
+    aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
+//    printf("resize: xywh=[%d %d %d %d]\n", xywh[0], xywh[1], xywh[2], xywh[3]);
+
+    aglUpdateContext(context_);
+#elif defined(__APPLE_QUARTZ__)
     GLint xywh[4];
 
     if (window()) {
@@ -409,5 +445,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.20 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.21 2004/08/25 00:20:25 matthiaswm Exp $".
 //

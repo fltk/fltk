@@ -1,5 +1,5 @@
 //
-// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.6 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.7 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Scrolling routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 // a "callback" which is called to draw rectangular areas that are moved
 // into the drawing area.
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 
@@ -102,7 +103,15 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   if (temp > limit) {
     draw_area(data, dest_x, dest_y + src_h - temp + limit, src_w, temp - limit);
   }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
+  Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
+  static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
+  static RGBColor fg = { 0x0000, 0x0000, 0x0000 }; RGBForeColor( &fg );
+  CopyBits( GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
+            GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
+#elif defined(__APPLE_QUARTZ__)
+#warning
   Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
   static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
@@ -127,5 +136,5 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 }
 
 //
-// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.6 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.7 2004/08/25 00:20:27 matthiaswm Exp $".
 //

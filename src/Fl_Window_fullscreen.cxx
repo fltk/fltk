@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.6 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.7 2004/08/25 00:20:26 matthiaswm Exp $"
 //
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,10 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 
+#ifdef __APPLE__
+#include <config.h>
+#endif 
+
 void Fl_Window::border(int b) {
   if (b) {
     if (border()) return;
@@ -47,8 +51,10 @@ void Fl_Window::border(int b) {
 #ifdef WIN32
   // not yet implemented, but it's possible
   // for full fullscreen we have to make the window topmost as well
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   // \todo Mac : not yet implemeted
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
 #else
   if (shown()) Fl_X::i(this)->sendxjunk();
 #endif
@@ -73,5 +79,5 @@ void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.6 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.7 2004/08/25 00:20:26 matthiaswm Exp $".
 //

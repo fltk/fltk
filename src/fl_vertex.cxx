@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.8 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.9 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,7 @@
 // Portable drawing code for drawing arbitrary shapes with
 // simple 2D transformations.  See also fl_arc.cxx
 
+#include <config.h>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/math.h>
@@ -123,8 +124,11 @@ void fl_vertex(double x,double y) {
 void fl_end_points() {
 #ifdef WIN32
   for (int i=0; i<n; i++) SetPixel(fl_gc, p[i].x, p[i].y, fl_RGB());
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); } 
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); }
 #else
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
 #endif
@@ -137,7 +141,12 @@ void fl_end_line() {
   }
 #ifdef WIN32
   if (n>1) Polyline(fl_gc, p, n);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  if (n<=1) return;
+  MoveTo(p[0].x, p[0].y);
+  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
+#elif defined(__APPLE_QUARTZ__)
+#warning
   if (n<=1) return;
   MoveTo(p[0].x, p[0].y);
   for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
@@ -167,7 +176,16 @@ void fl_end_polygon() {
     SelectObject(fl_gc, fl_brush());
     Polygon(fl_gc, p, n);
   }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  if (n<=1) return;
+  PolyHandle ph = OpenPoly();
+  MoveTo(p[0].x, p[0].y);
+  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
+  ClosePoly();
+  PaintPoly(ph);
+  KillPoly(ph);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   if (n<=1) return;
   PolyHandle ph = OpenPoly();
   MoveTo(p[0].x, p[0].y);
@@ -218,7 +236,16 @@ void fl_end_complex_polygon() {
     SelectObject(fl_gc, fl_brush());
     PolyPolygon(fl_gc, p, counts, numcount);
   }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  if (n<=1) return;
+  PolyHandle ph = OpenPoly();
+  MoveTo(p[0].x, p[0].y);
+  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
+  ClosePoly();
+  PaintPoly(ph);
+  KillPoly(ph);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
   if (n<=1) return;
   PolyHandle ph = OpenPoly();
   MoveTo(p[0].x, p[0].y);
@@ -250,7 +277,11 @@ void fl_circle(double x, double y,double r) {
     Pie(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
   } else
     Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
+  (what == POLYGON ? PaintOval : FrameOval)(&rt);
+#elif defined(__APPLE_QUARTZ__)
+#warning
   Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
   (what == POLYGON ? PaintOval : FrameOval)(&rt);
 #else
@@ -260,5 +291,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.8 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.9 2004/08/25 00:20:27 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.10 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.11 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // MacOS font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,12 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
+
+#include <config.h>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 // This function fills in the fltk font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
@@ -162,5 +168,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.10 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.11 2004/08/25 00:20:27 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.23 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.24 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -150,7 +150,7 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
 
   fl_color(fl_contrast(FL_BLACK, color()));
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE_QD__)
   // Windows 95/98/ME do not implement the dotted line style, so draw
   // every other pixel around the focus area...
   //
@@ -245,5 +245,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.23 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.24 2004/08/25 00:20:25 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.32 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.33 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -329,7 +329,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   if (mask) {
     Rect src, dst;
     // MRS: STR #114 says we should be using cx, cy, W, and H...
@@ -359,6 +359,42 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
 	     GetPortBitMapForCopyBits((GrafPtr)mask), 
 	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
+             &src, &src, &dst);
+#  endif // 0
+  } else {
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  }
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  if (mask) {
+    Rect src, dst;
+    // MRS: STR #114 says we should be using cx, cy, W, and H...
+//    src.left = 0; src.right = w();
+//    src.top = 0; src.bottom = h();
+//    dst.left = X; dst.right = X+w();
+//    dst.top = Y; dst.bottom = Y+h();
+    src.left = cx; src.right = cx+W;
+    src.top = cy; src.bottom = cy+H;
+    dst.left = X; dst.right = X+W;
+    dst.top = Y; dst.bottom = Y+H;
+    RGBColor rgb;
+    rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
+    RGBBackColor(&rgb); 
+    rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
+    RGBForeColor(&rgb);
+
+#  if 0
+    // MRS: This *should* work, but doesn't on my system (iBook); change to
+    //      "#if 1" and restore the corresponding code in Fl_Bitmap.cxx
+    //      to test the real alpha channel support.
+    CopyDeepMask(GetPortBitMapForCopyBits((GrafPtr)id),
+                 GetPortBitMapForCopyBits((GrafPtr)mask),
+                 GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
+                 &src, &src, &dst, blend, NULL);
+#  else // Fallback to screen-door transparency...
+    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
+             GetPortBitMapForCopyBits((GrafPtr)mask),
+             GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
              &src, &src, &dst);
 #  endif // 0
   } else {
@@ -397,5 +433,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.32 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.33 2004/08/25 00:20:25 matthiaswm Exp $".
 //

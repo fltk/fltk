@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.56 2004/06/19 01:50:31 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.57 2004/08/25 00:20:26 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,7 @@ extern "C" {
 #include <pthread.h>
 }
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Tooltip.H>
@@ -54,6 +55,10 @@ extern "C" {
 #include <stdlib.h>
 #include "flstring.h"
 #include <unistd.h>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 // #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT
@@ -1922,6 +1927,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.56 2004/06/19 01:50:31 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.57 2004/08/25 00:20:26 matthiaswm Exp $".
 //
 

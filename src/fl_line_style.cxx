@@ -1,5 +1,5 @@
 //
-// "$Id: fl_line_style.cxx,v 1.3.2.3.2.14 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.15 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
@@ -54,12 +54,27 @@ void fl_line_style(int style, int width, char* dashes) {
   HPEN oldpen = (HPEN)SelectObject(fl_gc, newpen);
   DeleteObject(oldpen);
   fl_current_xmap->pen = newpen;
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   // QuickDraw supports pen size and pattern, but no arbitrary line styles.
   static Pattern	styles[] = {
     { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },	// FL_SOLID
     { { 0xf0, 0xf0, 0xf0, 0xf0, 0x0f, 0x0f, 0x0f, 0x0f } },	// FL_DASH
     { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } }	// FL_DOT
+  };
+
+  if (!width) width = 1;
+  PenSize(width, width);
+
+  style &= 0xff;
+  if (style > 2) style = 2;
+  PenPat(styles + style);
+#elif defined(__APPLE_QUARTZ__)
+#warning quartz
+  // QuickDraw supports pen size and pattern, but no arbitrary line styles.
+  static Pattern        styles[] = {
+    { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },     // FL_SOLID
+    { { 0xf0, 0xf0, 0xf0, 0xf0, 0x0f, 0x0f, 0x0f, 0x0f } },     // FL_DASH
+    { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } }      // FL_DOT
   };
 
   if (!width) width = 1;
@@ -104,5 +119,5 @@ void fl_line_style(int style, int width, char* dashes) {
 
 
 //
-// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.14 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.15 2004/08/25 00:20:27 matthiaswm Exp $".
 //

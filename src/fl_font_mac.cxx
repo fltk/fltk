@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.15 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.16 2004/08/25 00:20:27 matthiaswm Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,12 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
+
+#include <config.h>
+
+#ifdef __APPLE_QUARTZ__
+#warning quartz
+#endif
 
 //: MeasureText, FontMetrics, WidthTabHandle, GetSysFont, SysFontSize
 //: TextSize, TextFont
@@ -195,5 +201,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.15 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.16 2004/08/25 00:20:27 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.23 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.24 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 #include <FL/Fl_Bitmap.H>
 #include "flstring.h"
 
-#ifdef __APPLE__ // MacOS bitmask functions
+#ifdef __APPLE_QD__ // MacOS bitmask functions
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
   Rect srcRect;
   srcRect.left = 0; srcRect.right = w;
@@ -74,6 +74,51 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
   return gw;               /* tell caller we succeeded! */
 }
 
+void fl_delete_bitmask(Fl_Bitmask id) {
+  if (id) DisposeGWorld(id);
+}
+#elif defined(__APPLE_QUARTZ__)
+#  warning quartz
+Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
+  Rect srcRect;
+  srcRect.left = 0; srcRect.right = w;
+  srcRect.top = 0; srcRect.bottom = h;
+  GrafPtr savePort;
+
+  GetPort(&savePort); // remember the current port
+
+  Fl_Bitmask gw;
+  NewGWorld( &gw, 1, &srcRect, 0L, 0L, 0 );
+  PixMapHandle pm = GetGWorldPixMap( gw );
+  if ( pm )
+  {
+    LockPixels( pm );
+    if ( *pm )
+    {
+      uchar *base = (uchar*)GetPixBaseAddr( pm );
+      if ( base )
+      {
+        PixMapPtr pmp = *pm;
+        // verify the parameters for direct memory write
+        if ( pmp->pixelType == 0 || pmp->pixelSize == 1 || pmp->cmpCount == 1 || pmp->cmpSize == 1 )
+        {
+          static uchar reverse[16] =    /* Bit reversal lookup table */
+          { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee, 0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+          uchar *dst = base;
+          const uchar *src = array;
+          int rowBytesSrc = (w+7)>>3 ;
+          int rowPatch = (pmp->rowBytes&0x3fff) - rowBytesSrc;
+          for ( int j=0; j<h; j++,dst+=rowPatch )
+            for ( int i=0; i<rowBytesSrc; i++,src++ )
+              *dst++ = (reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f);
+        }
+      }
+      UnlockPixels( pm );
+    }
+  }
+  SetPort(savePort);
+  return gw;               /* tell caller we succeeded! */
+}
 void fl_delete_bitmask(Fl_Bitmask id) {
   if (id) DisposeGWorld(id);
 }
@@ -213,7 +258,7 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 //      If you want to test/fix this, uncomment the "#ifdef __APPLE__" and comment out
 //      the "#if 0" here.  Also see Fl_Image.cxx for a similar check...
 
-//#ifdef __APPLE__
+//#ifdef __APPLE_QD__
 #if 0
 // Create an 8-bit mask used for alpha blending
 Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) {
@@ -356,7 +401,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // secret bitblt code found in old MSWindows reference manual:
   BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
   DeleteDC(tempdc);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
   if (!id) id = fl_create_bitmask(w(), h(), array);
   GrafPtr dstPort;
   GetPort( &dstPort );
@@ -370,6 +415,21 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 	   &dst, 				// dst bounds
 	   srcOr, 				// mode
 	   0L);					// mask region
+#elif defined(__APPLE_QUARTZ__)
+# warning quartz
+  if (!id) id = fl_create_bitmask(w(), h(), array);
+  GrafPtr dstPort;
+  GetPort( &dstPort );
+  Rect src, dst;
+  GetPortBounds( (Fl_Offscreen)id, &src );
+  SetRect( &src, cx, cy, cx+W, cy+H );
+  SetRect( &dst, X, Y, X+W, Y+H );
+  CopyBits(GetPortBitMapForCopyBits((Fl_Offscreen)id),  // srcBits
+           GetPortBitMapForCopyBits(dstPort),   // dstBits
+           &src,                                // src bounds
+           &dst,                                // dst bounds
+           srcOr,                               // mode
+           0L);                                 // mask region
 #else
   if (!id) id = fl_create_bitmask(w(), h(), array);
 
@@ -474,5 +534,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.23 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.24 2004/08/25 00:20:25 matthiaswm Exp $".
 //

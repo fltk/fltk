@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.62 2004/04/11 04:38:56 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.63 2004/08/25 00:20:25 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -317,7 +317,10 @@ Fl_X* Fl_X::first;
 Fl_Window* fl_find(Window xid) {
   Fl_X *window;
   for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next)
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
+    if (window->xid == xid && !window->w->window()) {
+#elif defined(__APPLE_QUARTZ__)
+#   warning QUARTZ
     if (window->xid == xid && !window->w->window()) {
 #else
     if (window->xid == xid) {
@@ -368,9 +371,16 @@ void Fl::flush() {
 
 #ifdef WIN32
   GdiFlush();
-#elif defined (__APPLE__)
+#elif defined (__APPLE_QD__)
   GrafPtr port; GetPort( &port );
   if ( port ) 
+  {
+    QDFlushPortBuffer( port, 0 );
+  }
+#elif defined (__APPLE_QUARTZ__)
+#warning quartz
+  GrafPtr port; GetPort( &port );
+  if ( port )
   {
     QDFlushPortBuffer( port, 0 );
   }
@@ -734,12 +744,20 @@ void Fl_Window::hide() {
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return;
   *pp = ip->next;
 
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
   // remove all childwindow links
   for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
   { 
     if ( pc->xidNext == ip ) pc->xidNext = ip->xidNext;
     if ( pc->xidChildren == ip ) pc->xidChildren = ip->xidNext;   
+  }
+#elif defined(__APPLE_QUARTZ__)
+# warning quartz
+  // remove all childwindow links
+  for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
+  {
+    if ( pc->xidNext == ip ) pc->xidNext = ip->xidNext;
+    if ( pc->xidChildren == ip ) pc->xidChildren = ip->xidNext;
   }
 #endif // __APPLE__
 
@@ -773,14 +791,26 @@ void Fl_Window::hide() {
     fl_window = (HWND)-1;
     fl_gc = 0;
   }
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
+  if ( ip->xid == fl_window )
+    fl_window = 0;
+#elif defined(__APPLE_QUARTZ__)
+# warning quartz
   if ( ip->xid == fl_window )
     fl_window = 0;
 #else
   if (ip->region) XDestroyRegion(ip->region);
 #endif
 
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
+  if ( !parent() ) // don't destroy shared windows!
+  {
+    //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
+    //+ RemoveReceiveHandler( dndReceiveHandler, ip->xid );
+    XDestroyWindow(fl_display, ip->xid);
+  }
+#elif defined(__APPLE_QUARTZ__)
+# warning quartz
   if ( !parent() ) // don't destroy shared windows!
   {
     //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
@@ -835,9 +865,13 @@ int Fl_Window::handle(int ev)
 	 Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
 	 if (p->type() >= FL_WINDOW) break; // don't do the unmap
 	}
-#ifdef __APPLE__
+#ifdef __APPLE_QD__
         hide();
 	set_visible();
+#elif defined(__APPLE_QUARTZ__)
+# warning quartz
+        hide();
+        set_visible();
 #else
 	XUnmapWindow(fl_display, fl_xid(this));
 #endif // __APPLE__
@@ -956,8 +990,14 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
       Fl_Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
-#elif defined(__APPLE__)
+#elif defined(__APPLE_QD__)
       Fl_Region R = NewRgn(); 
+      SetRectRgn(R, X, Y, X+W, Y+H);
+      UnionRgn(R, i->region, i->region);
+      DisposeRgn(R);
+#elif defined(__APPLE_QUARTZ__)
+#  warning quartz
+      Fl_Region R = NewRgn();
       SetRectRgn(R, X, Y, X+W, Y+H);
       UnionRgn(R, i->region, i->region);
       DisposeRgn(R);
@@ -985,5 +1025,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.62 2004/04/11 04:38:56 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.63 2004/08/25 00:20:25 matthiaswm Exp $".
 //
