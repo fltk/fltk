@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.7 1999/01/07 19:17:36 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.8 1999/03/05 05:55:27 bill Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -75,7 +75,7 @@ static Fl_Window *makeform() {
  return w;
 }
 
-#if !HAVE_VSNPRINTF
+#if !HAVE_VSNPRINTF || defined(__hpux)
 extern "C" {
 int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 }
@@ -195,5 +195,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.7 1999/01/07 19:17:36 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8 1999/03/05 05:55:27 bill Exp $".
 //
