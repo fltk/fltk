@@ -1,5 +1,5 @@
 //
-// "$Id: input.cxx,v 1.5.2.4.2.5 2003/01/30 21:45:45 easysw Exp $"
+// "$Id: input.cxx,v 1.5.2.4.2.6 2003/06/05 21:14:19 easysw Exp $"
 //
 // Input field test program for the Fast Light Tool Kit (FLTK).
 //
@@ -97,16 +97,16 @@ int main(int argc, char **argv) {
   int y1 = y;
 
   Fl_Button *b;
-  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&CHANGED");
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_CHANGED");
   b->callback(toggle_cb, FL_WHEN_CHANGED); y += 25;
   b->tooltip("Do callback each time the text changes");
-  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&RELEASE");
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_RELEASE");
   b->callback(toggle_cb, FL_WHEN_RELEASE); y += 25;
   b->tooltip("Do callback when widget loses focus");
-  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&ENTER_KEY");
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_ENTER_KEY");
   b->callback(toggle_cb, FL_WHEN_ENTER_KEY); y += 25;
   b->tooltip("Do callback when user hits Enter key");
-  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&NOT_CHANGED");
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_NOT_CHANGED");
   b->callback(toggle_cb, FL_WHEN_NOT_CHANGED); y += 25;
   b->tooltip("Do callback even if the text is not changed");
   y += 5;
@@ -132,5 +132,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: input.cxx,v 1.5.2.4.2.5 2003/01/30 21:45:45 easysw Exp $".
+// End of "$Id: input.cxx,v 1.5.2.4.2.6 2003/06/05 21:14:19 easysw Exp $".
 //

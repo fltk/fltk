@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.17 2003/01/30 21:41:57 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.18 2003/06/05 21:14:18 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,7 @@
 // In theory you can replace this code with another subclass to change
 // the keybindings.
 
+#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
@@ -57,7 +58,7 @@ int Fl_Input::shift_up_down_position(int p) {
 // define it as 1 to prevent cursor movement from going to next field:
 #define NORMAL_INPUT_MOVE 0
 
-#define ctrl(x) (x^0x40)
+#define ctrl(x) ((x)^0x40)
 
 int Fl_Input::handle_key() {
 
@@ -150,7 +151,13 @@ int Fl_Input::handle_key() {
   case 'v' :
   case 'x' :
   case 'z' :
-    if (Fl::event_state(FL_META)) ascii = ctrl(Fl::event_key());
+//    printf("'%c' (0x%02x) pressed with%s%s%s%s\n", ascii, ascii,
+//           Fl::event_state(FL_SHIFT) ? " FL_SHIFT" : "",
+//           Fl::event_state(FL_CTRL) ? " FL_CTRL" : "",
+//           Fl::event_state(FL_ALT) ? " FL_ALT" : "",
+//           Fl::event_state(FL_META) ? " FL_META" : "");
+    if (Fl::event_state(FL_META)) ascii -= 0x60;
+//    printf("using '%c' (0x%02x)...\n", ascii, ascii);
     break;
 #endif // __APPLE__
   }
@@ -407,5 +414,5 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.17 2003/01/30 21:41:57 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.18 2003/06/05 21:14:18 easysw Exp $".
 //
