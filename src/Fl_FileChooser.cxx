@@ -83,7 +83,7 @@ void Fl_FileChooser::cb_dirMenu(Fl_Choice* o, void* v) {
   ((Fl_FileChooser*)(o->parent()->user_data()))->cb_dirMenu_i(o,v);
 }
 
-inline void Fl_FileChooser::cb_allfiles_i(Fl_Button*, void*) {
+inline void Fl_FileChooser::cb__i(Fl_Button*, void*) {
   const char *f;
 if ((f = fl_input("New Filter?",
                   fileList->filter())) != NULL)
@@ -92,8 +92,8 @@ if ((f = fl_input("New Filter?",
   rescan();
 };
 }
-void Fl_FileChooser::cb_allfiles(Fl_Button* o, void* v) {
-  ((Fl_FileChooser*)(o->parent()->user_data()))->cb_allfiles_i(o,v);
+void Fl_FileChooser::cb_(Fl_Button* o, void* v) {
+  ((Fl_FileChooser*)(o->parent()->user_data()))->cb__i(o,v);
 }
 
 static unsigned char bits_allfiles[] =
@@ -127,23 +127,24 @@ Fl_FileChooser::Fl_FileChooser(const char *d, const char *p, int t, const char *
       fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
     }
     { Fl_Button* o = upButton = new Fl_Button(280, 10, 25, 25);
-      bitmap_up.label(o);
+      o->image(bitmap_up);
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_upButton);
     }
     { Fl_Button* o = newButton = new Fl_Button(310, 10, 25, 25);
-      bitmap_new.label(o);
+      o->image(bitmap_new);
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_newButton);
     }
     { Fl_Choice* o = dirMenu = new Fl_Choice(95, 10, 180, 25, "Directory:");
+      o->down_box(FL_BORDER_BOX);
       o->callback((Fl_Callback*)cb_dirMenu);
     }
     { Fl_Button* o = new Fl_Button(340, 10, 25, 25);
-      bitmap_allfiles.label(o);
+      o->image(bitmap_allfiles);
       o->labelsize(28);
       o->labelcolor(4);
-      o->callback((Fl_Callback*)cb_allfiles);
+      o->callback((Fl_Callback*)cb_);
       o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
     }
     if (title) window->label(title);

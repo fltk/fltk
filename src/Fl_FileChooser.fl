@@ -16,7 +16,7 @@ class Fl_FileChooser {open
       callback {fileList->deselect();
 fileName->value("");
 window->hide();} open
-      private xywh {250 430 375 315} resizable hotspot
+      private xywh {99 225 375 315} resizable hotspot
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -54,14 +54,12 @@ window->hide();}
         code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
       }
       Fl_Button upButton {
-        label {up.xbm}
-        callback {up();}
-        private xywh {280 10 25 25} labeltype image labelsize 8
+        callback {up();} selected
+        private image {up.xbm} xywh {280 10 25 25} labelsize 8
       }
       Fl_Button newButton {
-        label {new.xbm}
         callback {newdir();}
-        private xywh {310 10 25 25} labeltype image labelsize 8
+        private image {new.xbm} xywh {310 10 25 25} labelsize 8
       }
       Fl_Choice dirMenu {
         label {Directory:}
@@ -72,10 +70,9 @@ pathname[0] = '\\0';
 for (i = 1; i <= dirMenu->value(); i ++)
   strcat(pathname, dirMenu->text(i));
 directory(pathname);} open
-        private xywh {95 10 180 25}
+        private xywh {95 10 180 25} down_box BORDER_BOX
       } {}
       Fl_Button {} {
-        label {allfiles.xbm}
         callback {const char *f;
 if ((f = fl_input("New Filter?",
                   fileList->filter())) != NULL)
@@ -83,7 +80,7 @@ if ((f = fl_input("New Filter?",
   fileList->filter(f);
   rescan();
 }}
-        private xywh {340 10 25 25} labeltype image labelsize 28 labelcolor 4 align 16
+        private image {allfiles.xbm} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
         code0 {\#include <FL/fl_ask.H>}
       }
     }
@@ -102,7 +99,7 @@ data_ = 0;} {}
   decl {void fileNameCB();} {}
   decl {void newdir();} {}
   decl {void up();} {}
-  Function {callback(void (*cb)(Fl_FileChooser *, void *), void *d)} {selected return_type void
+  Function {callback(void (*cb)(Fl_FileChooser *, void *), void *d)} {return_type void
   } {
     code {callback_ = cb;
 data_     = d;} {}

@@ -42,8 +42,8 @@ private:
   Fl_Choice *dirMenu;
   inline void cb_dirMenu_i(Fl_Choice*, void*);
   static void cb_dirMenu(Fl_Choice*, void*);
-  inline void cb_allfiles_i(Fl_Button*, void*);
-  static void cb_allfiles(Fl_Button*, void*);
+  inline void cb__i(Fl_Button*, void*);
+  static void cb_(Fl_Button*, void*);
   void (*callback_)(Fl_FileChooser*, void *);
   void *data_;
   char directory_[1024];
