@@ -7,8 +7,8 @@ class CubeViewUI {open
   Function {CubeViewUI()} {open
   } {
     Fl_Window mainWindow {
-      label CubeView open
-      private xywh {428 124 415 405} box UP_BOX labelsize 12 resizable visible
+      label CubeView open selected
+      private xywh {428 124 415 405} type Double box UP_BOX labelsize 12 resizable visible
     } {
       Fl_Group {} {open
         xywh {5 3 374 399}
@@ -53,7 +53,7 @@ cube->redraw();}
             xywh {46 27 333 333} box DOWN_FRAME color 4 selection_color 69
           }
           Fl_Box cube {
-            label {This is the cube_view} selected
+            label {This is the cube_view}
             xywh {48 29 329 329} align 16
             code0 {\#include "CubeView.h"}
             class CubeView
