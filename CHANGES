@@ -1,8 +1,10 @@
 CHANGES SINCE FLTK 1.0.8
 
 	- More documentation fixes.
+	- GLUT_STROKE_*_ROMAN in glut.h are defined as 0,1 on
+	  WIN32 to match the glut header files there.
 	- Added Fl::has_timeout() and Fl::has_idle() functions.
-	- Added new Fl::add_interval_timeout() method that
+	- Added new Fl::repeat_timeout() method that
 	  measures time from when the last timeout was called. 
 	  This has slightly less overhead and allows accurate
 	  spacing of timeouts.
