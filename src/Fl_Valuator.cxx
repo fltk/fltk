@@ -118,10 +118,13 @@ double Fl_Valuator::increment(double v, int n) {
 int Fl_Valuator::format(char* buffer) {
   double v = value();
   // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
-  if (!A) return snprintf(buffer, 128, "%g", v);
-  int i, X;
-  double ba = B / A;
-  for (X = 1, i = 0; X < ba; X *= 10) i++;
+  if (!A || !B) return snprintf(buffer, 128, "%g", v);
+  int i;
+  double ab = A/B;
+  for (i=0; i<8; i++) {
+    if ((ab-floor(ab))<1e-9) break;
+    ab *= 10.0;
+  }
   return sprintf(buffer, "%.*f", i, v);
 }
 

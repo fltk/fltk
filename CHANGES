@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fl_Valuator would not format text output with decimal 
+          point when the step value was fractional, but above 1
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
 	- fl_filename_relative() didn't compare drive letters in
