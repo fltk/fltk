@@ -235,17 +235,17 @@ print_update_status();} open
       }
     }
     Fl_Group {} {
-      label {Output Mode:}
+      label {Output Mode:} open
       xywh {110 45 170 40} labelfont 1 align 4
     } {
-      Fl_Button {print_output_mode[0]} {
+      Fl_Button {print_output_mode[0]} {selected
         image {pixmaps/print_color.xpm} xywh {110 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX value 1 color 7 selection_color 0
       }
       Fl_Button {print_output_mode[1]} {
-        image {pixmaps/print_gray.xpm} xywh {200 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+        image {pixmaps/print_color.xpm} xywh {150 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
       }
       Fl_Button {print_output_mode[2]} {
-        image {pixmaps/print_color.xpm} xywh {150 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+        image {pixmaps/print_gray.xpm} xywh {200 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
       }
       Fl_Button {print_output_mode[3]} {
         image {pixmaps/print_gray.xpm} xywh {240 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
@@ -355,8 +355,7 @@ print_page_size->value(val);
 
 snprintf(name, sizeof(name), "%s/output_mode", printer);
 fluid_prefs.get(name, val, 0);
-print_output_mode[val]->setonly();} {selected
-  }
+print_output_mode[val]->setonly();} {}
 } 
 
 comment {

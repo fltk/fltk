@@ -465,21 +465,21 @@ Fl_Double_Window* make_print_panel() {
         o->selection_color(FL_FOREGROUND_COLOR);
         o->image(image_print_color);
       }
-      { Fl_Button* o = print_output_mode[1] = new Fl_Button(200, 45, 30, 40);
-        o->type(102);
-        o->box(FL_BORDER_BOX);
-        o->down_box(FL_BORDER_BOX);
-        o->color(FL_BACKGROUND2_COLOR);
-        o->selection_color(FL_FOREGROUND_COLOR);
-        o->image(image_print_gray);
-      }
-      { Fl_Button* o = print_output_mode[2] = new Fl_Button(150, 50, 40, 30);
+      { Fl_Button* o = print_output_mode[1] = new Fl_Button(150, 50, 40, 30);
         o->type(102);
         o->box(FL_BORDER_BOX);
         o->down_box(FL_BORDER_BOX);
         o->color(FL_BACKGROUND2_COLOR);
         o->selection_color(FL_FOREGROUND_COLOR);
         o->image(image_print_color);
+      }
+      { Fl_Button* o = print_output_mode[2] = new Fl_Button(200, 45, 30, 40);
+        o->type(102);
+        o->box(FL_BORDER_BOX);
+        o->down_box(FL_BORDER_BOX);
+        o->color(FL_BACKGROUND2_COLOR);
+        o->selection_color(FL_FOREGROUND_COLOR);
+        o->image(image_print_gray);
       }
       { Fl_Button* o = print_output_mode[3] = new Fl_Button(240, 50, 40, 30);
         o->type(102);
