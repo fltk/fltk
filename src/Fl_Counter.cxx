@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.6 1998/12/02 18:43:27 mike Exp $"
+// "$Id: Fl_Counter.cxx,v 1.7 1998/12/02 18:55:57 mike Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -62,9 +62,9 @@ void Fl_Counter::draw() {
   if (!(damage()&FL_DAMAGE_ALL)) return; // only need to redraw text
 
   if (active_r())
-    selcolor = selection_color();
+    selcolor = labelcolor();
   else
-    selcolor = inactive(selection_color());
+    selcolor = inactive(labelcolor());
 
   if (type() == FL_NORMAL_COUNTER) {
     draw_box(boxtype[1], xx[1], y(), ww[1], h(), color());
@@ -165,5 +165,5 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.6 1998/12/02 18:43:27 mike Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.7 1998/12/02 18:55:57 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.3 1998/10/21 14:21:02 mike Exp $"
+// "$Id: fl_symbols.cxx,v 1.4 1998/12/02 18:55:58 mike Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -171,9 +171,6 @@ static void draw_arrow1(Fl_Color col)
   fl_color(col);
   BP; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,-0.4); EP;
   BP; vv(0.0,0.8); vv(0.8,0.0); vv(0.0,-0.8); vv(0.0,-0.4); vv(0.0,0.4); EP;
-  fl_color(FL_BLACK);
-  BC; vv(-0.8,-0.4); vv(-0.8,0.4); vv(0.0,0.4); vv(0.0,0.8); vv(0.8,0.0);
-      vv(0.0,-0.8); vv(0.0,-0.4); EC;
 }
 
 static void draw_arrow1bar(Fl_Color col)
@@ -186,8 +183,6 @@ static void draw_arrow2(Fl_Color col)
 {
   fl_color(col);
   BP; vv(-0.3,0.8); vv(0.50,0.0); vv(-0.3,-0.8); EP;
-  fl_color(FL_BLACK);
-  BC; vv(-0.3,0.8); vv(0.50,0.0); vv(-0.3,-0.8); EC;
 }
 
 static void draw_arrow3(Fl_Color col)
@@ -195,9 +190,6 @@ static void draw_arrow3(Fl_Color col)
   fl_color(col);
   BP; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EP;
   BP; vv(-0.7,0.8); vv(0.1,0.0); vv(-0.7,-0.8); EP;
-  fl_color(FL_BLACK);
-  BC; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EC;
-  BC; vv(-0.7,0.8); vv(0.1,0.0); vv(-0.7,-0.8); EC;
 }
 
 static void draw_arrowbar(Fl_Color col)
@@ -205,18 +197,12 @@ static void draw_arrowbar(Fl_Color col)
   fl_color(col);
   BP; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EP;
   BP; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EP;
-  fl_color(FL_BLACK);
-  BC; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EC;
-  BC; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EC;
 }
 
 static void draw_arrowbox(Fl_Color col)
 {
   fl_color(col);
   BP; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EP;
-  fl_color(FL_BLACK);
-  BC; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EC;
-  BC; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EC;
 }
 
 static void draw_bararrow(Fl_Color col)
@@ -224,9 +210,6 @@ static void draw_bararrow(Fl_Color col)
   fl_color(col);
   BP; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EP;
   BP; vv(-0.5,0.8); vv(-0.1,0.8); vv(-0.1,-0.8); vv(-0.5,-0.8); EP;
-  fl_color(FL_BLACK);
-  BC; vv(0.1,0.8); vv(0.9,0.0); vv(0.1,-0.8); EC;
-  BC; vv(-0.5,0.8); vv(-0.1,0.8); vv(-0.1,-0.8); vv(-0.5,-0.8); EC;
 }
 
 static void draw_doublebar(Fl_Color col) { 
@@ -258,19 +241,12 @@ static void draw_doublearrow(Fl_Color col)
   BP; vv(-0.35,-0.4); vv(-0.35,0.4); vv(0.35,0.4); vv(0.35,-0.4); EP;
   BP; vv(0.15,0.8); vv(0.95,0.0); vv(0.15,-0.8); EP;
   BP; vv(-0.15,0.8); vv(-0.95,0.0); vv(-0.15,-0.8); EP;
-  fl_color(FL_BLACK);
-  BC; vv(-0.15,0.4); vv(0.15,0.4); vv(0.15,0.8); vv(0.95,0.0);
-      vv(0.15,-0.8); vv(0.15,-0.4); vv(-0.15,-0.4); vv(-0.15,-0.8);
-      vv(-0.95,0.0); vv(-0.15,0.8); EC;
 }
 
 static void draw_arrow(Fl_Color col)
 {
   fl_color(col);
   BP; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EP;
-  fl_color(FL_BLACK);
-  BL; vv(-1.0,0.0); vv(0.65,0.0); EL;
-  BC; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EC;
 }
 
 #if 0
@@ -279,9 +255,6 @@ static void fl_draw_returnarrow(Fl_Color col) {
     fl_begin_polygon();
     vv(-0.8,0.0); vv(-0.1,0.7); vv(-0.1,-0.7);
     fl_end_polygon();
-    fl_color(FL_BLACK);
-    fl_begin_loop(); vv(-0.8,0.0); vv(-0.1,0.7); vv(-0.1,-0.7);fl_end_loop();
-    fl_begin_line(); vv(-0.1,0.0); vv(0.8,0.0); vv(0.8,-0.7); fl_end_line();
 }
 #endif
 
@@ -290,7 +263,6 @@ static void draw_square(Fl_Color col)
 
 static void draw_circle(Fl_Color col) {
     fl_color(col); BP; fl_circle(0,0,1); EP;
-    fl_color(FL_BLACK); BC; fl_circle(0,0,1); EC;
 }
 
 static void draw_line(Fl_Color col)
@@ -301,12 +273,6 @@ static void draw_plus(Fl_Color col)
   fl_color(col);
   BP; vv(-0.9,-0.15); vv(-0.9,0.15); vv(0.9,0.15); vv(0.9,-0.15); EP;
   BP; vv(-0.15,-0.9); vv(-0.15,0.9); vv(0.15,0.9); vv(0.15,-0.9); EP;
-  fl_color(FL_BLACK);
-  BC;
-  vv(-0.9,-0.15); vv(-0.9,0.15); vv(-0.15,0.15); vv(-0.15,0.9);
-  vv(0.15,0.9); vv(0.15,0.15); vv(0.9,0.15); vv(0.9,-0.15);
-  vv(0.15,-0.15); vv(0.15,-0.9); vv(-0.15,-0.9); vv(-0.15,-0.15);
-  EC;
 }
 
 static void draw_uparrow(Fl_Color) {
@@ -387,5 +353,5 @@ void Fl::enable_symbols() {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.3 1998/10/21 14:21:02 mike Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.4 1998/12/02 18:55:58 mike Exp $".
 //
