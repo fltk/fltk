@@ -1,5 +1,12 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- The prototypes for fl_input() and fl_password() did
+	  not default the "default value" to NULL.
+	- Fl_Tabs now draws tabs using the selection_color() of
+	  the child groups; this allows the tabs to be colored
+	  separately from the body.  Selected tabs are a mix of
+	  the Fl_Tabs selection_color() and the child group's
+	  selection_color().
 	- Fl_Tabs didn't include images in the measurement of
 	  the tabs if no label text was defined.
 	- The WIN32 code didn't return 0 from the window

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0009 
+version 1.0100 
 header_name {.h} 
 code_name {.cxx} 
 gridx 10 
@@ -8,14 +8,14 @@ snap 3
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {329 266 321 324} resizable visible
+    xywh {674 782 321 324} resizable visible
   } {
     Fl_Tabs {} {open
-      xywh {10 10 300 200} selection_color 15 resizable
+      xywh {10 10 300 200} selection_color 7 resizable
     } {
       Fl_Group {} {
         label Label1 open
-        xywh {10 30 300 180} hide resizable
+        xywh {10 30 300 180} selection_color 1 hide resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -32,7 +32,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab2 open
-        xywh {10 30 300 180} hide
+        xywh {10 30 300 180} selection_color 2 hide
       } {
         Fl_Button {} {
           label button1
@@ -48,8 +48,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab3 open selected
-        xywh {10 30 300 180}
+        label tab3 open
+        xywh {10 30 300 180} selection_color 3 hide
       } {
         Fl_Button {} {
           label button2
@@ -66,7 +66,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab4 open
-        xywh {10 30 300 180} labelfont 2 hide
+        xywh {10 30 300 180} selection_color 5 labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
@@ -82,8 +82,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label {     tab5      } open
-        xywh {10 30 300 180} labeltype ENGRAVED_LABEL hide
+        label {     tab5      } open selected
+        xywh {10 30 300 180} labeltype ENGRAVED_LABEL
       } {
         Fl_Button {} {
           label button2

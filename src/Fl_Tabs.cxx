@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.8 2002/01/29 00:56:19 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.9 2002/01/30 13:38:15 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -254,7 +254,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     H += dh;
 
-    draw_box(box(), x1, y(), W, H, o->color());
+    draw_box(box(), x1, y(), W, H,
+             sel ? fl_color_average(selection_color(), o->selection_color(), 0.5f)
+	         : o->selection_color());
 
     o->draw_label(x1, y(), W, H, FL_ALIGN_CENTER);
 
@@ -270,7 +272,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     H += dh;
 
-    draw_box(box(), x1, y() + h() - H, W, H, o->color());
+    draw_box(box(), x1, y() + h() - H, W, H,
+             sel ? fl_color_average(selection_color(), o->selection_color(), 0.5f)
+	         : o->selection_color());
 
     o->draw_label(x1, y() + h() - H, W, H, FL_ALIGN_CENTER);
 
@@ -289,5 +293,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.8 2002/01/29 00:56:19 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.9 2002/01/30 13:38:15 easysw Exp $".
 //
