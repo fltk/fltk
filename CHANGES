@@ -1,5 +1,18 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_File_Browser incorrectly included "." on WIN32 (STR
+	  #9)
+	- Include shellapi.h instead of ShellAPI.h in the WIN32
+	  drag-n-drop code in order to work with the MingW cross
+	  compiler (STR #6)
+	- The cursor was not properly restored when doing
+	  drag-n-drop on X11 (STR #4)
+	- Fl::remove_fd() didn't recalculate the highest file
+	  descriptor properly (STR #20)
+	- Fl_Preferences::deleteGroup() didn't work properly
+	  (STR #13)
+	- Fixed the fl_show_file_selector() function - it was
+	  copying using the wrong string size (STR #14)
 	- fl_font() and fl_size() were not implemented on MacOS
 	  X.
 	- Sorted the icon menu bar in fluid.

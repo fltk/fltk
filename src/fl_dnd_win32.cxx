@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.14 2003/01/30 21:43:37 easysw Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.15 2003/05/04 21:45:46 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -52,7 +52,7 @@ Fl_Window *fl_dnd_target_window = 0;
 #if !defined(__GNUC__) || __GNUC__ >= 3
 
 #include <ole2.h>
-#include <ShellAPI.h>
+#include <shellapi.h>
 
 /**
  * subclass the IDropTarget to receive data from DnD operations
@@ -349,5 +349,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.14 2003/01/30 21:43:37 easysw Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.15 2003/05/04 21:45:46 easysw Exp $".
 //

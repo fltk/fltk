@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.28 2003/04/03 04:28:15 matthiaswm Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.29 2003/05/04 21:45:46 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -123,6 +123,7 @@ void Fl::add_fd(int n, void (*cb)(int, void*), void* v) {
 
 void Fl::remove_fd(int n, int events) {
   int i,j;
+  maxfd = -1; // recalculate maxfd on the fly
   for (i=j=0; i<nfds; i++) {
 #  if USE_POLL
     if (pollfds[i].fd == n) {
@@ -137,6 +138,7 @@ void Fl::remove_fd(int n, int events) {
       fd[i].events = e;
     }
 #  endif
+    if (fd[i].fd > maxfd) maxfd = fd[i].fd;
     // move it down in the array if necessary:
     if (j<i) {
       fd[j] = fd[i];
@@ -151,7 +153,6 @@ void Fl::remove_fd(int n, int events) {
   if (events & POLLIN) FD_CLR(n, &fdsets[0]);
   if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
   if (events & POLLERR) FD_CLR(n, &fdsets[2]);
-  if (n == maxfd) maxfd--;
 #  endif
 }
 
@@ -1266,5 +1267,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.28 2003/04/03 04:28:15 matthiaswm Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.29 2003/05/04 21:45:46 easysw Exp $".
 //
