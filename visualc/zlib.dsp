@@ -103,14 +103,6 @@ SOURCE=..\zlib\gzio.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\zlib\infblock.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\infcodes.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\zlib\inffast.c
 # End Source File
 # Begin Source File
@@ -120,10 +112,6 @@ SOURCE=..\zlib\inflate.c
 # Begin Source File
 
 SOURCE=..\zlib\inftrees.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\infutil.c
 # End Source File
 # Begin Source File
 
