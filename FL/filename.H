@@ -1,5 +1,5 @@
 /*
- * "$Id: filename.H,v 1.11.2.4.2.9 2002/06/26 12:03:28 easysw Exp $"
+ * "$Id: filename.H,v 1.11.2.4.2.10 2002/07/08 15:20:57 easysw Exp $"
  *
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
@@ -92,8 +92,8 @@ typedef int (Fl_File_Sort_F)(struct dirent **, struct dirent **);
  * Portable "scandir" function.  Ugly but necessary...
  */
 
-FL_EXPORT int fl_filename_list(const char *d, struct dirent ***list,
-                               Fl_File_Sort_F *sort = fl_numericsort);
+FL_EXPORT int fl_filename_list(const char *d, struct dirent ***l,
+                               Fl_File_Sort_F *s = fl_numericsort);
 #  endif /* __cplusplus */
 
 /*
@@ -116,5 +116,5 @@ FL_EXPORT int fl_filename_list(const char *d, struct dirent ***list,
 #endif /* FL_FILENAME_H */
 
 /*
- * End of "$Id: filename.H,v 1.11.2.4.2.9 2002/06/26 12:03:28 easysw Exp $".
+ * End of "$Id: filename.H,v 1.11.2.4.2.10 2002/07/08 15:20:57 easysw Exp $".
  */
