@@ -35,6 +35,12 @@
 static int num_screens = 0;
 
 #ifdef WIN32
+
+#if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
+#define COMPILE_MULTIMON_STUBS
+#include <multimon.h>
+#endif
+
 static RECT screens[16];
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
