@@ -1,0 +1,31 @@
+
+Libpng 1.2.1 - December 12, 2001
+
+This is a public release of libpng, intended for use in production codes.
+
+Changes since the last public release (1.2.0):
+
+  Revised makefile.std in contrib/pngminus
+  Include background_1 in png_struct regardless of gamma support.
+  Revised makefile.netbsd and makefile.macosx, added makefile.darwin.
+  Revised example.c to provide more details about using row_callback().
+  Added makefile.so9.
+  Removed type casts from all NULLs, except for those appearing in function
+    calls when PNG_NO_TYPECAST_NULL is defined.
+  Simplified png_create_info_struct() and png_creat_struct_2().
+  Added error message if png_write_info() was omitted.
+  Changed typecast of "size" argument to png_size_t in pngmem.c calls to
+    the user malloc_fn, to agree with the prototype in png.h
+  Added a pop/push operation to pnggccrd.c, to preserve Eflag (Maxim Sobolev)
+  Updated makefile.sgi to recognize LIBPATH and INCPATH.
+  Updated various makefiles so "make clean" does not remove previous major
+    version of the shared library.
+  Added a pop/push operation to pngvcrd.c, to preserve Eflag.
+  Always allocate 256-entry internal palette, hist, and trans arrays, to
+    avoid out-of-bounds memory reference caused by invalid PNG datastreams.
+  Added a check for prefix_length > data_length in iCCP chunk handler.
+
+Send comments/corrections/commendations to
+png-implement@ccrc.wustl.edu or to randeg@alum.rpi.edu
+
+Glenn R-P

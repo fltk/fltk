@@ -1,0 +1,18 @@
+# DO NOT DELETE
+
+adler32.o: zlib.h zconf.h
+compress.o: zlib.h zconf.h
+crc32.o: zlib.h zconf.h
+gzio.o: zutil.h zlib.h zconf.h
+uncompr.o: zlib.h zconf.h
+deflate.o: deflate.h zutil.h zlib.h zconf.h
+trees.o: deflate.h zutil.h zlib.h zconf.h trees.h
+zutil.o: zutil.h zlib.h zconf.h
+inflate.o: zutil.h zlib.h zconf.h infblock.h
+infblock.o: zutil.h zlib.h zconf.h infblock.h inftrees.h infcodes.h infutil.h
+inftrees.o: zutil.h zlib.h zconf.h inftrees.h inffixed.h
+infcodes.o: zutil.h zlib.h zconf.h inftrees.h infblock.h infcodes.h infutil.h
+infcodes.o: inffast.h
+infutil.o: zutil.h zlib.h zconf.h infblock.h inftrees.h infcodes.h infutil.h
+inffast.o: zutil.h zlib.h zconf.h inftrees.h infblock.h infcodes.h infutil.h
+inffast.o: inffast.h
