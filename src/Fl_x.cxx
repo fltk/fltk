@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.23 1999/02/03 08:43:34 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24 1999/03/09 17:08:35 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -28,6 +28,8 @@
 #else
 
 #define CONSOLIDATE_MOTION 1
+/**** Define this if your keyboard lacks a backspace key... ****/
+/* #define BACKSPACE_HACK 1 */
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -418,7 +420,9 @@ int fl_handle(const XEvent& xevent)
     break;
 
   case KeyPress: {
+#if BACKSPACE_HACK
     static int got_backspace;
+#endif /* BACKSPACE_HACK */
     static char buffer[21];
     KeySym keysym;
     int i = xevent.xkey.keycode; fl_key_vector[i/8] |= (1 << (i%8));
@@ -439,12 +443,14 @@ int fl_handle(const XEvent& xevent)
     case 149: keysym = FL_Menu; break;
     }
 #endif
+#if BACKSPACE_HACK
     if (!got_backspace) {
       // Backspace kludge: until user hits the backspace key, assumme
       // it is missing and use the Delete key for that purpose:
       if (keysym == FL_Delete) keysym = FL_BackSpace;
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
+#endif /* BACKSPACE_HACK */
     if (keysym >= 0xff95 && keysym < 0xffa0) {
       // Make NumLock irrelevant (always on):
       // This lookup table turns the XK_KP_* functions back into the
@@ -821,5 +827,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.23 1999/02/03 08:43:34 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24 1999/03/09 17:08:35 mike Exp $".
 //
