@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b12
 
+	- All of the convenience functions defined in fl_ask.H
+	  now resize the widgets and dialog window as needed for
+	  the labels and prompt.
 	- Backported FLTK 2.0 dual cut/paste buffer.
 	- Added support for Xft library to support anti-aliased
 	  text on X11.

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8.2.5 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.6 2002/03/23 15:35:08 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,7 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Secret_Input.H>
 #include <FL/x.H>
+#include <FL/fl_draw.H>
 
 static Fl_Window *message_form;
 static Fl_Box *message;
@@ -50,7 +51,7 @@ static Fl_Box *icon;
 static Fl_Button *button[3];
 static Fl_Input *input;
 static const char *iconlabel = "?";
-uchar fl_message_font_ = 0;
+Fl_Font fl_message_font_ = FL_HELVETICA;
 uchar fl_message_size_ = 14;
 
 static Fl_Window *makeform() {
@@ -58,7 +59,7 @@ static Fl_Window *makeform() {
    message_form->size(410,103);
    return message_form;
  }
- Fl_Window *w = message_form = new Fl_Window(410,103);
+ Fl_Window *w = message_form = new Fl_Window(410,103,"");
  // w->clear_border();
  // w->box(FL_UP_BOX);
  (message = new Fl_Box(60, 25, 340, 20))
@@ -72,12 +73,89 @@ static Fl_Window *makeform() {
   o->labelcolor(FL_BLUE);
  }
  (button[0] = new Fl_Button(310, 70, 90, 23))->shortcut("^[");
+ button[0]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  button[1] = new Fl_Return_Button(210, 70, 90, 23);
+ button[1]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  button[2] = new Fl_Button(110, 70, 90, 23);
+ button[2]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  w->resizable(new Fl_Box(60,10,110-60,27));
  w->end();
  w->set_modal();
  return w;
+}
+
+/*
+ * 'resizeform()' - Resize the form and widgets so that they hold everything
+ *                  that is asked of them...
+ */
+
+void resizeform() {
+  int	i;
+  int	message_w, message_h;
+  int	icon_size;
+  int	button_w[3], button_h[3];
+  int	x, w, h, max_w, max_h;
+
+  fl_font(fl_message_font_, fl_message_size_);
+  message_w = message_h = 0;
+  fl_measure(message->label(), message_w, message_h);
+
+  message_w += 10;
+  message_h += 10;
+  if (message_w < 60)
+    message_w = 60;
+  if (message_h < 30)
+    message_h = 30;
+
+  fl_font(button[0]->labelfont(), button[0]->labelsize());
+  for (max_h = 25, i = 0; i < 3; i ++)
+    if (button[i]->visible())
+    {
+      fl_measure(button[i]->label(), button_w[i], button_h[i]);
+
+      if (i == 1)
+        button_w[1] += 20;
+
+      button_w[i] += 30;
+      button_h[i] += 10;
+
+      if (button_h[i] > max_h)
+        max_h = button_h[i];
+    }
+    else
+    {
+      button_w[i] = 0;
+      button_h[i] = 0;
+    }
+
+  if (input->visible()) icon_size = message_h + 25;
+  else icon_size = message_h;
+
+  max_w = message_w + 10 + icon_size;
+  w     = button_w[0] + button_w[1] + button_w[2] - 10;
+
+  if (w > max_w)
+    max_w = w;
+
+  message_w = max_w - 10 - icon_size;
+
+  w = max_w + 20;
+  h = max_h + 30 + icon_size;
+
+  message_form->size(w, h);
+  message_form->size_range(w, h, w, h);
+
+  message->resize(20 + icon_size, 10, message_w, message_h);
+  icon->resize(10, 10, icon_size, icon_size);
+  icon->labelsize(icon_size - 10);
+  input->resize(20 + icon_size, 10 + message_h, message_w, 25);
+
+  for (x = w, i = 2; i >= 0; i --)
+    if (button_w[i])
+    {
+      x -= button_w[i];
+      button[i]->resize(x, h - 10 - max_h, button_w[i] - 10, max_h);
+    }
 }
 
 static int innards(const char* fmt, va_list ap,
@@ -94,8 +172,8 @@ static int innards(const char* fmt, va_list ap,
     ::vsnprintf(buffer, 1024, fmt, ap);
     message->label(buffer);
   }
-  Fl_Font f = (Fl_Font)fl_message_font_;
-  message->labelfont(f);
+
+  message->labelfont(fl_message_font_);
   message->labelsize(fl_message_size_);
   if (b0) {button[0]->show(); button[0]->label(b0); button[1]->position(210,70);}
   else {button[0]->hide(); button[1]->position(310,70);}
@@ -105,6 +183,9 @@ static int innards(const char* fmt, va_list ap,
   else button[2]->hide();
   const char* prev_icon_label = icon->label();
   if (!prev_icon_label) icon->label(iconlabel);
+
+  resizeform();
+
   message_form->hotspot(button[0]);
   message_form->show();
   int r;
@@ -259,5 +340,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.5 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.6 2002/03/23 15:35:08 easysw Exp $".
 //

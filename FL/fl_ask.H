@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.H,v 1.7.2.4.2.3 2002/01/30 13:38:15 easysw Exp $"
+// "$Id: fl_ask.H,v 1.7.2.4.2.4 2002/03/23 15:35:08 easysw Exp $"
 //
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
@@ -48,10 +48,10 @@ FL_EXPORT const char *fl_input(const char *label, const char *deflt = 0, ...);
 FL_EXPORT const char *fl_password(const char *label, const char *deflt = 0, ...);
 
 FL_EXPORT Fl_Widget *fl_message_icon();
-extern FL_EXPORT unsigned char fl_message_font_;
+extern FL_EXPORT Fl_Font fl_message_font_;
 extern FL_EXPORT unsigned char fl_message_size_;
 inline void fl_message_font(unsigned char f,unsigned char s) {
-  fl_message_font_ = f; fl_message_size_ = s;}
+  fl_message_font_ = (Fl_Font)f; fl_message_size_ = s;}
 
 // pointers you can use to change FLTK to a foreign language:
 extern FL_EXPORT const char* fl_no;
@@ -62,5 +62,5 @@ extern FL_EXPORT const char* fl_cancel;
 #endif
 
 //
-// End of "$Id: fl_ask.H,v 1.7.2.4.2.3 2002/01/30 13:38:15 easysw Exp $".
+// End of "$Id: fl_ask.H,v 1.7.2.4.2.4 2002/03/23 15:35:08 easysw Exp $".
 //
