@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.112 2004/07/06 00:18:48 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.113 2004/07/12 15:50:01 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -395,13 +395,15 @@ AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, defaul
 	ac_cv_lib_png_png_set_tRNS_to_alpha=no
     fi])
 
-AC_CHECK_LIB(png,png_set_tRNS_to_alpha,
+AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
     PNGINC=""
     PNG=""
-    IMAGELIBS="-lpng $IMAGELIBS",
+    IMAGELIBS="-lpng $IMAGELIBS"
+    AC_CHECK_HEADER(png.h, AC_DEFINE(HAVE_PNG_H))],[
+    AC_DEFINE(HAVE_PNG_H)
     PNGINC="-I../png"
     PNG="png"
-    IMAGELIBS="../png/libpng.a $IMAGELIBS")
+    IMAGELIBS="../png/libpng.a $IMAGELIBS"])
 
 AC_SUBST(JPEG)
 AC_SUBST(JPEGINC)
@@ -894,5 +896,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.112 2004/07/06 00:18:48 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.113 2004/07/12 15:50:01 easysw Exp $".
 dnl
