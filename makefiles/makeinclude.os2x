@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4.2.1 2001/10/16 20:19:22 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.2 2001/10/27 03:33:25 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # Generated automatically from makeinclude.in by configure.
@@ -36,6 +36,7 @@ srcdir		=.
 # programs we use...
 HTMLDOC		=e:/XFree86/bin/htmldoc.exe
 NROFF		=e:/usr/local/bin/nroff
+RM		=del
 
 # compiler names:
 CXX		=gcc.exe
@@ -97,5 +98,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.1 2001/10/16 20:19:22 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.2 2001/10/27 03:33:25 easysw Exp $".
 #

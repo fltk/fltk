@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.14 2001/10/27 03:29:25 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.15 2001/10/27 03:33:25 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -170,7 +170,7 @@ all:	$(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 
 $(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
-	rm -f $@
+	-$(RM) $@
 	$(LIBCOMMAND) $@ $(OBJECTS)
 	$(RANLIB) $@
 
@@ -182,13 +182,13 @@ libfltk_s.a: $(OBJECTS)
 	echo $(DSOCOMMAND) libfltk_s.o ...
 	$(DSOCOMMAND) libfltk_s.o $(OBJECTS) $(IMAGELIBS)
 	echo $(LIBCOMMAND) libfltk_s.a libfltk_s.o
-	rm -f $@
+	-$(RM) $@
 	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
 	chmod +x libfltk_s.a
 
 $(GLLIBNAME): $(GLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
-	rm -f $@
+	-$(RM) $@
 	$(LIBCOMMAND) $@ $(GLOBJECTS)
 	$(RANLIB) $@
 
@@ -200,7 +200,7 @@ libfltk_gl_s.a: $(GLOBJECTS)
 	echo $(DSOCOMMAND) libfltk_gl_s.o ...
 	$(DSOCOMMAND) libfltk_gl_s.o $(GLOBJECTS)
 	echo $(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
-	rm -f $@
+	-$(RM) $@
 	$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
 	chmod +x libfltk_gl_s.a
 
@@ -267,5 +267,5 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.14 2001/10/27 03:29:25 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.15 2001/10/27 03:33:25 easysw Exp $".
 #

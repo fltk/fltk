@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.no-cygwin,v 1.1.2.4.2.1 2001/10/16 20:19:22 easysw Exp $"
+# "$Id: makeinclude.no-cygwin,v 1.1.2.4.2.2 2001/10/27 03:33:25 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -65,6 +65,7 @@ CXXFLAGS	= -Wall -O2 -DWIN32
 LIBNAME		= ../lib/libfltk.a
 GLLIBNAME	= ../lib/libfltk_gl.a
 LIBCOMMAND	= ar -ruv
+RM		= del
 RANLIB		= ranlib
 DSONAME		=
 DSOCOMMAND	= echo
@@ -95,5 +96,5 @@ IMAGELIBS	=
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.no-cygwin,v 1.1.2.4.2.1 2001/10/16 20:19:22 easysw Exp $".
+# End of "$Id: makeinclude.no-cygwin,v 1.1.2.4.2.2 2001/10/27 03:33:25 easysw Exp $".
 #
