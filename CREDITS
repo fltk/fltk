@@ -1,5 +1,5 @@
-CREDITS - Fast Light Tool Kit (FLTK) Version 1.1.0
--------------------------------------------------
+CREDITS - Fast Light Tool Kit (FLTK) Version 1.1.4
+--------------------------------------------------
 
     This file lists the people responsible for the toolkit you
     are now using.  If you've looking for your name in lights
@@ -12,7 +12,7 @@ CORE DEVELOPERS
     The following people do the day-to-day development of FLTK:
 
         Craig P. Earls
-	Curtis Edwards (trilex@users.sourceforge.net)
+	Curtis Edwards (trilec@users.sourceforge.net)
 	Gustavo Hime (hime@users.sourceforge.net)
 	Talbot Hughes
 	Robert Kesterson (robertk@users.sourceforge.net)

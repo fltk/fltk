@@ -1,9 +1,11 @@
 CHANGES IN FLTK 1.1.4
 
+	- fl_font() and fl_size() were not implemented on MacOS
+	  X.
 	- Sorted the icon menu bar in fluid.
 	- Fixed minor memory access complaints from Valgrind
-	- Compiling src/flstring.h on OS X with BSD header
-          would fail.
+	- Compiling src/flstring.h on OS X with BSD header would
+	  fail.
 	- Fl_Text_Editor didn't scroll the buffer when the user
 	  pressed Ctrl+End or Ctrl+Home.
 	- Fl_Text_Editor didn't show its cursor when the mouse

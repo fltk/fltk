@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.11 2003/01/30 21:43:48 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.12 2003/04/06 12:54:57 easysw Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -127,7 +127,12 @@ static Fl_FontSize* find(int fnum, int size) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
+int fl_font_ = 0;
+int fl_size_ = 0;
+
 void fl_font(int fnum, int size) {
+  fl_font_ = fnum;
+  fl_size_ = size;
   fl_font(find(fnum, size));
 }
 
@@ -154,5 +159,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.11 2003/01/30 21:43:48 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.12 2003/04/06 12:54:57 easysw Exp $".
 //
