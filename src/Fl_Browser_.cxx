@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.2 1999/06/07 07:03:32 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.3 1999/09/15 15:18:11 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -264,6 +264,24 @@ J1:
     real_hposition_ = 0;
     if (hscrollbar.visible()) {
       hscrollbar.clear_visible();
+      clear_damage(damage()|FL_DAMAGE_SCROLL);
+    }
+  }
+
+  // Check the vertical scrollbar again, just in case it needs to be drawn
+  // because the horizontal one is drawn.  There should be a cleaner way
+  // to do this besides copying the same code...
+  if ((has_scrollbar_ & VERTICAL) && (
+	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
+    if (!scrollbar.visible()) {
+      scrollbar.set_visible();
+      drawsquare = 1;
+      bbox(X, Y, W, H);
+    }
+  } else {
+    top_ = item_first(); real_position_ = offset_ = 0;
+    if (scrollbar.visible()) {
+      scrollbar.clear_visible();
       clear_damage(damage()|FL_DAMAGE_SCROLL);
     }
   }
@@ -647,5 +665,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.2 1999/06/07 07:03:32 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.3 1999/09/15 15:18:11 mike Exp $".
 //
