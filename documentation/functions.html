@@ -230,8 +230,10 @@ but <TT>Fl::ready()</TT> does not.</P>
 something that calls <TT>Fl::wait()</TT> or <TT>Fl::check()</TT> (such
 as a message pop-up) you  should first remove the idle callback so that
 it does not recurse. </P>
+
 <H3><A name=add_timeout>static void Fl::add_timeout(float t, void 
 (*cb)(void *),void *v=0)</A></H3>
+
 Add a one-shot timeout callback.  The timeout will happen as soon as 
 possible after <TT>t</TT> seconds after the last time <TT>wait()</TT>
 was called.  The optional <TT>void *</TT> argument is passed to the 
@@ -657,9 +659,22 @@ while (!calculation_done()) {
 </UL>
 <H3><A name=redraw>static void Fl::redraw()</A></H3>
  Redraws all widgets. 
+
+<H3><A name=has_idle>static int Fl::has_idle(void (*cb)(void *), 
+void *= 0)</A></H3>
+
+Returns true if the specified idle callback is currently installed.
+
 <H3><A name=remove_idle>static void Fl::remove_idle(void (*cb)(void *), 
 void *= 0)</A></H3>
- Removes the specified idle callback. 
+
+Removes the specified idle callback, if it is installed.
+
+<H3><A name=has_timeout>static int Fl::has_timeout(void 
+(*cb)(void *), void *= 0)</A></H3>
+
+Returns true if the timeout exists and has not been called yet.
+
 <H3><A name=remove_timeout>static void Fl::remove_timeout(void 
 (*cb)(void *), void *= 0)</A></H3>
  Removes a timeout callback. It is harmless to remove a timeout 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.6 2000/06/05 21:20:18 mike Exp $"
+// "$Id: Fl.H,v 1.8.2.7 2000/06/16 07:27:57 bill Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -91,12 +91,14 @@ public:
   static FL_EXPORT int run();
   static FL_EXPORT Fl_Widget* readqueue();
   static FL_EXPORT void add_timeout(double t, Fl_Timeout_Handler,void* = 0);
+  static FL_EXPORT int  has_timeout(Fl_Timeout_Handler, void* = 0);
   static FL_EXPORT void remove_timeout(Fl_Timeout_Handler, void* = 0);
   static FL_EXPORT void add_fd(int fd, int when, void (*cb)(int,void*),void* =0);
   static FL_EXPORT void add_fd(int fd, void (*cb)(int, void*), void* = 0);
   static FL_EXPORT void remove_fd(int, int when);
   static FL_EXPORT void remove_fd(int);
   static FL_EXPORT void add_idle(void (*cb)(void*), void* = 0);
+  static FL_EXPORT int  has_idle(void (*cb)(void*), void* = 0);
   static FL_EXPORT void remove_idle(void (*cb)(void*), void* = 0);
   static FL_EXPORT int damage() {return damage_;}
   static FL_EXPORT void redraw();
@@ -211,5 +213,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.6 2000/06/05 21:20:18 mike Exp $".
+// End of "$Id: Fl.H,v 1.8.2.7 2000/06/16 07:27:57 bill Exp $".
 //
