@@ -507,19 +507,21 @@ Fl_Double_Window* make_widget_panel() {
       { Fl_Box* o = new Fl_Box(12, 335, 12, 25);
         Fl_Group::current()->resizable(o);
       }
-      { Fl_Button* o = new Fl_Button(50, 335, 100, 25, "No &Overlay");
+      { Fl_Button* o = new Fl_Button(215, 335, 100, 25, "No &Overlay");
         o->tooltip("Hide the widget overlay box.");
         o->labelcolor(1);
         o->callback((Fl_Callback*)overlay_cb);
       }
       { Fl_Button* o = new Fl_Button(155, 335, 80, 25, "Revert");
         o->callback((Fl_Callback*)revert_cb);
+        o->hide();
       }
-      { Fl_Return_Button* o = new Fl_Return_Button(240, 335, 80, 25, "OK");
+      { Fl_Return_Button* o = new Fl_Return_Button(325, 335, 80, 25, "OK");
         o->callback((Fl_Callback*)ok_cb);
       }
       { Fl_Button* o = new Fl_Button(325, 335, 80, 25, "Cancel");
         o->callback((Fl_Callback*)cancel_cb);
+        o->hide();
       }
       o->end();
     }
