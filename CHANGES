@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- The keypad Enter key works as the normal Enter/Return
+	  key in common widgets (STR #191)
 	- Doco fixes (STR #186)
 	- Fixed some OS/2-specific build problems (STR #185)
 	- Calling Fl_Text_Display::buffer() with the same buffer

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.27 2003/07/18 22:36:00 matthiaswm Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.28 2003/11/01 01:49:35 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -535,6 +535,7 @@ int menuwindow::handle(int e) {
 	setitem(pp.menu_number-1, pp.p[pp.menu_number-1]->selected);
       return 1;
     case FL_Enter:
+    case FL_KP_Enter:
     case ' ':
       pp.state = DONE_STATE;
       return 1;
@@ -793,5 +794,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.27 2003/07/18 22:36:00 matthiaswm Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.28 2003/11/01 01:49:35 easysw Exp $".
 //

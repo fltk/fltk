@@ -1,5 +1,5 @@
 //
-// "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.4 2003/01/30 21:44:23 easysw Exp $"
+// "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.5 2003/11/01 01:49:35 easysw Exp $"
 //
 // Colormap color selection dialog for the Fast Light Tool Kit (FLTK).
 //
@@ -102,6 +102,7 @@ int ColorMenu::handle(int e) {
     case FL_Left: if (c > 0) c--; break;
     case FL_Right: if (c < 255) c++; break;
     case FL_Escape: which = initial; done = 1; return 1;
+    case FL_KP_Enter:
     case FL_Enter: done = 1; return 1;
     default: return 0;
     }
@@ -150,5 +151,5 @@ Fl_Color fl_show_colormap(Fl_Color oldcol) {
 }
 
 //
-// End of "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.4 2003/01/30 21:44:23 easysw Exp $".
+// End of "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.5 2003/11/01 01:49:35 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.32 2003/09/03 19:38:01 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.33 2003/11/01 01:49:35 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -488,7 +488,7 @@ Fl_File_Chooser::fileNameCB()
   filename = pathname;
 
   // Now process things according to the key pressed...
-  if (Fl::event_key() == FL_Enter)
+  if (Fl::event_key() == FL_Enter  ||  Fl::event_key() == FL_KP_Enter)
   {
     // Enter pressed - select or change directory...
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
@@ -1163,5 +1163,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.32 2003/09/03 19:38:01 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.33 2003/11/01 01:49:35 easysw Exp $".
 //
