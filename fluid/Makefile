@@ -25,21 +25,22 @@
 
 CPPFILES = \
 	Fl_Function_Type.cxx \
-	Fl_Menu_Type.cxx \
 	Fl_Group_Type.cxx \
-	Fl_Widget_Type.cxx \
+	Fl_Menu_Type.cxx \
 	Fl_Type.cxx \
+	Fl_Widget_Type.cxx \
 	Fl_Window_Type.cxx \
 	Fluid_Image.cxx \
+	about_panel.cxx \
+	align_widget.cxx \
+	alignment_panel.cxx \
 	code.cxx \
 	factory.cxx \
 	file.cxx \
 	fluid.cxx \
-	align_widget.cxx \
-	about_panel.cxx \
-	widget_panel.cxx \
-	alignment_panel.cxx \
-	function_panel.cxx
+	function_panel.cxx \
+	undo.cxx \
+	widget_panel.cxx
 
 ################################################################
 

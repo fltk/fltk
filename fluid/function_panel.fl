@@ -35,6 +35,8 @@ decl {\#include <FL/Fl_Pixmap.H>} {}
 
 decl {\#include "Fl_Type.h"} {} 
 
+decl {\#include "undo.h"} {} 
+
 decl {extern class Fl_Pixmap *pixmap[];} {} 
 
 decl {extern class Fl_Type *Fl_Type_make(const char*);} {} 
@@ -265,8 +267,13 @@ Function {make_comment_panel()} {open
 
 Function {type_make_cb(Fl_Widget*w,void*d)} {open return_type void
 } {
-  code {Fl_Type *t = Fl_Type_make((char*)d);
-if (t) {select_only(t); set_modflag(1); t->open();}} {}
+  code {undo_checkpoint();
+  Fl_Type *t = Fl_Type_make((char*)d);
+  if (t) {
+    select_only(t);
+    set_modflag(1);
+    t->open();
+  }} {}
 } 
 
 Function {make_widgetbin()} {open

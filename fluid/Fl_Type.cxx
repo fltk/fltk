@@ -43,6 +43,7 @@
 #include <stdio.h>
 
 #include "Fl_Type.h"
+#include "undo.h"
 
 #include <FL/Fl_Pixmap.H>
 #include "pixmaps/lock.xpm"
@@ -449,6 +450,7 @@ void Fl_Type::remove_child(Fl_Type*) {}
 // add a list of widgets as a new child of p:
 void Fl_Type::add(Fl_Type *p) {
   if (p && parent == p) return;
+  undo_checkpoint();
   parent = p;
   Fl_Type *end = this;
   while (end->next) end = end->next;
@@ -544,6 +546,7 @@ Fl_Type *Fl_Type::remove() {
 // update a string member:
 int storestring(const char *n, const char * & p, int nostrip) {
   if (n == p) return 0;
+  undo_checkpoint();
   int length = 0;
   if (n) { // see if blank, strip leading & trailing blanks
     if (!nostrip) while (isspace(*n)) n++;
@@ -604,7 +607,6 @@ Fl_Type::~Fl_Type() {
   if (prev) prev->next = next; else first = next;
   if (next) next->prev = prev; else last = prev;
   if (current == this) current = 0;
-  set_modflag(1);
   if (parent) parent->remove_child(this);
 }
 

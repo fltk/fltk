@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// alignment code for the Fast Light Tool Kit (FLTK).
+// Alignment code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2005 by Bill Spitzak and others.
 //
@@ -26,6 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "Fl_Widget_Type.h"
+#include "undo.h"
 
 /**
  * the first behaviour always uses the first selected widget as a reference
@@ -40,6 +41,7 @@ void align_widget_cb(Fl_Widget*, long how)
   const int max = 32768, min = -32768;
   int left, right, top, bot, wdt, hgt, n;
   Fl_Type *o;
+  int changed = 0;
   switch ( how )
   {
   //---- align
@@ -57,6 +59,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -66,7 +74,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(left, w->y(), w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -89,6 +96,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -98,7 +111,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -118,6 +130,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -127,7 +145,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(right-w->w(), w->y(), w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -146,6 +163,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -155,7 +178,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), top, w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -178,6 +200,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -187,7 +215,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -207,6 +234,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -216,7 +249,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize( w->x(), bot-w->h(), w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -243,6 +275,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -252,7 +290,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(left+wsum+wdt*cnt/n, w->y(), w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	  cnt++;
@@ -281,6 +318,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -290,7 +333,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), top+hsum+hgt*cnt/n, w->w(), w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	  cnt++;
@@ -313,6 +355,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -322,7 +370,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), w->y(), wdt, w->h());
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -341,6 +388,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -350,7 +403,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize( w->x(), w->y(), w->w(), hgt);
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -371,6 +423,12 @@ void align_widget_cb(Fl_Widget*, long how)
       for (Fl_Type *o = Fl_Type::first; o; o = o->next)
 	if (o->selected && o->is_widget())
 	{
+	  if (!changed) {
+	    changed = 1;
+	    set_modflag(1);
+	    undo_checkpoint();
+	  }
+
 	  Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	  if (o->next && o->next->level > o->level && !o->next->selected &&
 	      !o->is_menu_button()) {
@@ -380,7 +438,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize( w->x(), w->y(), wdt, hgt);
 	  }
-	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -390,6 +447,12 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget() && o->parent)
       {
+	if (!changed) {
+	  changed = 1;
+	  set_modflag(1);
+	  undo_checkpoint();
+	}
+
 	Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
 	int center2;
@@ -405,7 +468,6 @@ void align_widget_cb(Fl_Widget*, long how)
 	  // Otherwise, just do the widget...
 	  w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
 	}
-	set_modflag(1);
 	w->redraw();
 	if (w->window()) w->window()->redraw();
       }
@@ -414,6 +476,12 @@ void align_widget_cb(Fl_Widget*, long how)
     for (o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget() && o->parent)
       {
+	if (!changed) {
+	  changed = 1;
+	  set_modflag(1);
+	  undo_checkpoint();
+	}
+
 	Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	Fl_Widget *p = ((Fl_Widget_Type *)o->parent)->o;
 	int center2;
@@ -444,8 +512,15 @@ void widget_size_cb(Fl_Widget *, long size) {
   Fl_Widget_Type::default_size = size;
 
   // Update any selected widgets...
+  int changed = 0;
   for (Fl_Type *o = Fl_Type::first; o; o = o->next)
     if (o->selected && o->is_widget()) {
+      if (!changed) {
+	changed = 1;
+	set_modflag(1);
+	undo_checkpoint();
+      }
+
       Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
       w->labelsize(size);
       Fl_Font f;
@@ -454,8 +529,6 @@ void widget_size_cb(Fl_Widget *, long size) {
       ((Fl_Widget_Type *)o)->textstuff(2, f, s, c);
 
       w->redraw();
-
-      set_modflag(1);
     }
 }
 

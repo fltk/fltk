@@ -37,6 +37,7 @@
 #include <FL/Fl_Pixmap.H>
 #include <stdio.h>
 #include "../src/flstring.h"
+#include "undo.h"
 
 #include "Fl_Widget_Type.h"
 
@@ -828,6 +829,8 @@ extern void select_only(Fl_Type *);
 #include <FL/Fl_Window.H>
 
 static void cb(Fl_Widget *, void *v) {
+  undo_checkpoint();
+  undo_suspend();
   Fl_Type *t = ((Fl_Type*)v)->make();
   if (t) {
     if (t->is_widget() && !t->is_window()) {
@@ -857,7 +860,11 @@ static void cb(Fl_Widget *, void *v) {
     select_only(t);
     set_modflag(1);
     t->open();
+  } else {
+    undo_current --;
+    undo_last --;
   }
+  undo_resume();
 }
 
 Fl_Menu_Item New_Menu[] = {

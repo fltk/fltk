@@ -57,6 +57,7 @@
 #endif
 
 #include "about_panel.h"
+#include "undo.h"
 
 #include "Fl_Type.h"
 
@@ -79,10 +80,6 @@ void	update_history(const char *);
 void	show_shell_window();
 
 ////////////////////////////////////////////////////////////////
-
-void nyi(Fl_Widget *,void *) {
-    fl_message("That's not yet implemented, sorry");
-}
 
 static const char *filename;
 void set_filename(const char *c);
@@ -176,6 +173,7 @@ void save_cb(Fl_Widget *, void *v) {
     return;
   }
   set_modflag(0);
+  undo_save = undo_current;
 }
 
 void exit_cb(Fl_Widget *,void *) {
@@ -202,6 +200,8 @@ void exit_cb(Fl_Widget *,void *) {
   if (help_dialog)
     delete help_dialog;
 
+  undo_clear();
+
   exit(0);
 }
 
@@ -227,7 +227,9 @@ apple_open_cb(const char *c) {
   oldfilename = filename;
   filename    = NULL;
   set_filename(c);
+  undo_suspend();
   if (!read_file(c, 0)) {
+    undo_resume();
     fl_message("Can't read %s: %s", c, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
@@ -237,6 +239,8 @@ apple_open_cb(const char *c) {
 
   // Loaded a file; free the old filename...
   set_modflag(0);
+  undo_resume();
+  undo_clear();
   if (oldfilename) free((void *)oldfilename);
 }
 #endif // __APPLE__
@@ -264,13 +268,17 @@ void open_cb(Fl_Widget *, void *v) {
   oldfilename = filename;
   filename    = NULL;
   set_filename(c);
+  if (v != 0) undo_checkpoint();
+  undo_suspend();
   if (!read_file(c, v!=0)) {
+    undo_resume();
     fl_message("Can't read %s: %s", c, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
     if (main_window) main_window->label(filename);
     return;
   }
+  undo_resume();
   if (v) {
     // Inserting a file; restore the original filename...
     set_modflag(1);
@@ -280,6 +288,7 @@ void open_cb(Fl_Widget *, void *v) {
   } else {
     // Loaded a file; free the old filename...
     set_modflag(0);
+    undo_clear();
     if (oldfilename) free((void *)oldfilename);
   }
 }
@@ -301,7 +310,10 @@ void open_history_cb(Fl_Widget *, void *v) {
   const char *oldfilename = filename;
   filename = NULL;
   set_filename((char *)v);
+  undo_suspend();
   if (!read_file(filename, 0)) {
+    undo_resume();
+    undo_clear();
     fl_message("Can't read %s: %s", filename, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
@@ -309,6 +321,8 @@ void open_history_cb(Fl_Widget *, void *v) {
     return;
   }
   set_modflag(0);
+  undo_resume();
+  undo_clear();
   if (oldfilename) free((void *)oldfilename);
 }
 
@@ -329,6 +343,7 @@ void new_cb(Fl_Widget *, void *v) {
   delete_all();
   set_filename(NULL);
   set_modflag(0);
+  undo_clear();
 }
 
 int compile_only = 0;
@@ -457,13 +472,15 @@ void cut_cb(Fl_Widget *, void *) {
     fl_beep();
     return;
   }
-  ipasteoffset = 0;
-  Fl_Type *p = Fl_Type::current->parent;
-  while (p && p->selected) p = p->parent;
   if (!write_file(cutfname(),1)) {
     fl_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
   }
+  undo_checkpoint();
+  set_modflag(1);
+  ipasteoffset = 0;
+  Fl_Type *p = Fl_Type::current->parent;
+  while (p && p->selected) p = p->parent;
   delete_all(1);
   if (p) select_only(p);
 }
@@ -473,6 +490,8 @@ void delete_cb(Fl_Widget *, void *) {
     fl_beep();
     return;
   }
+  undo_checkpoint();
+  set_modflag(1);
   ipasteoffset = 0;
   Fl_Type *p = Fl_Type::current->parent;
   while (p && p->selected) p = p->parent;
@@ -487,9 +506,12 @@ void paste_cb(Fl_Widget*, void*) {
   pasteoffset = ipasteoffset;
   if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
   if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
+  undo_checkpoint();
+  undo_suspend();
   if (!read_file(cutfname(), 1)) {
     fl_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
+  undo_resume();
   pasteoffset = 0;
   ipasteoffset += 10;
   force_parent = 0;
@@ -510,9 +532,12 @@ void duplicate_cb(Fl_Widget*, void*) {
   pasteoffset  = 0;
   force_parent = 1;
 
+  undo_checkpoint();
+  undo_suspend();
   if (!read_file(cutfname(1), 1)) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
+  undo_resume();
 
   force_parent = 0;
 }
@@ -602,7 +627,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Quit", FL_CTRL+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
-  {"&Undo", FL_CTRL+'z', nyi},
+  {"&Undo", FL_CTRL+'z', undo_cb},
+  {"&Redo", FL_CTRL+FL_SHIFT+'z', redo_cb, 0, FL_MENU_DIVIDER},
   {"C&ut", FL_CTRL+'x', cut_cb},
   {"&Copy", FL_CTRL+'c', copy_cb},
   {"&Delete", FL_Delete, delete_cb},
@@ -614,12 +640,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Sort",0,sort_cb},
   {"&Earlier", FL_F+2, earlier_cb},
   {"&Later", FL_F+3, later_cb},
-//{"Show", FL_F+5, show_cb},
-//{"Hide", FL_F+6, hide_cb},
   {"&Group", FL_F+7, group_cb},
   {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
-//{"Deactivate", 0, nyi},
-//{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
@@ -705,6 +727,7 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
     Main_Menu[38].label("Hide Widget &Bin");
   }
 }
+
 
 void make_main_window() {
   fluid_prefs.get("snap", snap, 1);
@@ -951,6 +974,7 @@ void set_modflag(int mf) {
     } else main_window->label(basename);
   }
 
+  // Enable/disable the Save menu item...
   if (modflag) Main_Menu[16].activate();
   else Main_Menu[16].deactivate();
 }
@@ -977,6 +1001,7 @@ static int arg(int argc, char** argv, int& i) {
 
 #if ! (defined(WIN32) && !defined (__CYGWIN__))
 
+int quit_flag = 0;
 #include <signal.h>
 #ifdef _sigargs
 #define SIGARG _sigargs
@@ -991,7 +1016,7 @@ static int arg(int argc, char** argv, int& i) {
 extern "C" {
 static void sigint(SIGARG) {
   signal(SIGINT,sigint);
-  exit_cb(0,0);
+  quit_flag = 1;
 }
 }
 #endif
@@ -1030,6 +1055,7 @@ int main(int argc,char **argv) {
       open_history_cb(0, absolute_history[0]);
     }
   }
+  undo_suspend();
   if (c && !read_file(c,0)) {
     if (compile_only) {
       fprintf(stderr,"%s : %s\n", c, strerror(errno));
@@ -1037,19 +1063,31 @@ int main(int argc,char **argv) {
     }
     fl_message("Can't read %s: %s", c, strerror(errno));
   }
+  undo_resume();
   if (compile_only) {
     if (compile_strings) write_strings_cb(0,0);
     write_cb(0,0);
     exit(0);
   }
   set_modflag(0);
+  undo_clear();
 #ifndef WIN32
   signal(SIGINT,sigint);
 #endif
 
   grid_cb(horizontal_input, 0); // Makes sure that windows get snap params...
 
-  return Fl::run();
+#ifdef WIN32
+  Fl::run();
+#else
+  while (!quit_flag) Fl::wait();
+
+  if (quit_flag) exit_cb(0,0);
+#endif // WIN32
+
+  undo_clear();
+
+  return (0);
 }
 
 //

@@ -30,6 +30,7 @@
 #include "function_panel.h"
 #include <FL/Fl_Pixmap.H>
 #include "Fl_Type.h"
+#include "undo.h"
 extern class Fl_Pixmap *pixmap[];
 extern class Fl_Type *Fl_Type_make(const char*);
 extern void select_only(Fl_Type*);
@@ -415,8 +416,13 @@ Fl_Window* make_comment_panel() {
 }
 
 void type_make_cb(Fl_Widget*w,void*d) {
+  undo_checkpoint();
   Fl_Type *t = Fl_Type_make((char*)d);
-if (t) {select_only(t); set_modflag(1); t->open();}
+  if (t) {
+    select_only(t);
+    set_modflag(1);
+    t->open();
+  }
 }
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;

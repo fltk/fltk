@@ -33,6 +33,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 #include "Fl_Widget_Type.h"
+#include "undo.h"
 #include <math.h>
 #include <stdlib.h>
 #include "alignment_panel.h"
@@ -112,6 +113,8 @@ void grid_cb(Fl_Input *i, long v) {
 }
 
 void i18n_type_cb(Fl_Choice *c, void *) {
+  undo_checkpoint();
+
   switch (i18n_type = c->value()) {
   case 0 : /* None */
       i18n_include_input->hide();
@@ -147,6 +150,8 @@ void i18n_type_cb(Fl_Choice *c, void *) {
 }
 
 void i18n_text_cb(Fl_Input *i, void *) {
+  undo_checkpoint();
+
   if (i == i18n_function_input)
     i18n_function = i->value();
   else if (i == i18n_file_input)
@@ -927,7 +932,7 @@ extern Fl_Menu_Item Main_Menu[];
 
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
-  Main_Menu[37].label("Hide O&verlays");
+  Main_Menu[38].label("Hide O&verlays");
   overlays_invisible = 0;
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
@@ -942,8 +947,8 @@ void redraw_overlays() {
 void toggle_overlays(Fl_Widget *,void *) {
   overlays_invisible = !overlays_invisible;
 
-  if (overlays_invisible) Main_Menu[37].label("Show O&verlays");
-  else Main_Menu[37].label("Hide O&verlays");
+  if (overlays_invisible) Main_Menu[38].label("Show O&verlays");
+  else Main_Menu[38].label("Hide O&verlays");
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
     if (o->is_window()) {
@@ -964,6 +969,7 @@ extern Fl_Menu_Item New_Menu[];
 // move the selected children according to current dx,dy,drag state:
 void Fl_Window_Type::moveallchildren()
 {
+  undo_checkpoint();
   Fl_Type *i;
   for (i=next; i && i->level>level;) {
     if (i->selected && i->is_widget() && !i->is_menu_item()) {
