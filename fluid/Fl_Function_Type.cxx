@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.8 1998/12/06 15:16:23 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.9 1999/01/07 18:49:35 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -197,6 +197,13 @@ void Fl_Function_Type::write_code1() {
       if (havewidgets) t = "Fl_Window*";
       else t = "void";
     }
+
+    // Remove leading spacing and "static" declarations...
+    const char* t1 = t;
+    while (*t1==' ') t1++;
+    if (!strncmp(t1, "static ", 7)) t1+= 7;
+    while (*t1==' ') t1++;
+
     const char* k = class_name();
     if (k) {
       write_public(public_);
@@ -685,5 +692,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.8 1998/12/06 15:16:23 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.9 1999/01/07 18:49:35 mike Exp $".
 //
