@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.4 1998/10/21 14:18:53 mike Exp $"
+# "$Id: Makefile,v 1.5 1998/10/21 16:49:59 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -27,15 +27,21 @@ SHELL=/bin/sh
 
 DIRS	=	src fluid test
 
-all:	depend
+all:
 	for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
+		if test ! -f $$dir/makedepend; then\
+			touch $$dir/makedepend;\
+		fi;\
 		(cd $$dir;$(MAKE));\
 	done
 
 install: all
 	for dir in $(DIRS); do\
 		echo "=== installing $$dir ===";\
+		if test ! -f $$dir/makedepend; then\
+			touch $$dir/makedepend;\
+		fi;\
 		(cd $$dir;$(MAKE) install);\
 	done
 
@@ -43,7 +49,7 @@ depend:
 	for dir in $(DIRS); do\
 		echo "=== making dependencies in $$dir ===";\
 		if test ! -f $$dir/makedepend; then\
-			touch 0101000070 $$dir/makedepend;\
+			touch $$dir/makedepend;\
 		fi;\
 		(cd $$dir;$(MAKE) depend);\
 	done
@@ -56,5 +62,5 @@ clean:
 	done
 
 #
-# End of "$Id: Makefile,v 1.4 1998/10/21 14:18:53 mike Exp $".
+# End of "$Id: Makefile,v 1.5 1998/10/21 16:49:59 mike Exp $".
 #
