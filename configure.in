@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.88 2002/10/07 13:19:21 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.89 2002/10/22 13:45:23 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -276,6 +276,23 @@ else
     if test $ac_cv_sizeof_long -eq 8; then
         AC_DEFINE(U64,unsigned long)
     fi
+fi
+
+dnl Does the C++ compiler support the bool type?
+AC_CACHE_CHECK(whether the compiler recognizes bool as a built-in type,
+ac_cv_cxx_bool,
+[AC_LANG_SAVE
+ AC_LANG_CPLUSPLUS
+ AC_TRY_COMPILE([
+int f(int  x){return 1;}
+int f(char x){return 1;}
+int f(bool x){return 1;}
+],[bool b = true; return f(b);],
+ ac_cv_cxx_bool=yes, ac_cv_cxx_bool=no)
+ AC_LANG_RESTORE
+])
+if test "$ac_cv_cxx_bool" = yes; then
+  AC_DEFINE(HAVE_BOOL)
 fi
 
 dnl Standard headers and functions...
@@ -785,5 +802,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.88 2002/10/07 13:19:21 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.89 2002/10/22 13:45:23 easysw Exp $".
 dnl

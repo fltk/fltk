@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.11.2.13 2002/08/05 17:50:21 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.14 2002/10/22 13:45:23 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -30,6 +30,22 @@
 
 #define FLTK_DATADIR	""
 #define FLTK_DOCDIR	""
+
+/*
+ * Old C++ compilers don't support the bool type; unfortunately, it crept
+ * into FLTK 1.1.0 (Fl_Text_*) when we updated to the latest NEdit code,
+ * but we didn't notice it before 1.1.0 went out the door.  Rather than
+ * break binary compatibility or do a 1.2.0 release for the sake of the
+ * few old C++ compilers that can't handle it, the following definitions
+ * allow older compilers to compile code using the bool type...
+ */
+
+#undef HAVE_BOOL
+
+#if !defined(HAVE_BOOL) && defined(__cplusplus)
+typedef char bool;
+enum { false, true };
+#endif /* !HAVE_BOOL */
 
 /*
  * BORDER_WIDTH:
@@ -220,5 +236,5 @@
 
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11.2.13 2002/08/05 17:50:21 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11.2.14 2002/10/22 13:45:23 easysw Exp $".
  */

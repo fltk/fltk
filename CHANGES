@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.1
 
+	- The Fl_Text_* widgets use the C++ bool type, which is
+	  not supported by older C++ compilers.  Added a
+	  configure check and workaround code for this.
 	- Fl_X::set_xid() didn't initialize the backbuffer_bad
 	  element that was used with XDBE.
 	- Fl_Shared_Image::uncache() was not implemented.
