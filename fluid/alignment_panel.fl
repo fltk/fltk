@@ -1,7 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 0.99 
-header_name {.H} 
-code_name {.C} 
+header_name {.h} 
+code_name {.cxx} 
 gridx 10 
 gridy 10 
 snap 3

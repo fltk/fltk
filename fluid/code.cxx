@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.6 1998/12/06 15:09:19 mike Exp $"
+// "$Id: code.cxx,v 1.7 1998/12/06 15:52:15 mike Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #include <stdarg.h>
 
 #include <FL/Fl.H>
-#include "Fl_Type.H"
+#include "Fl_Type.h"
 #include "alignment_panel.h"
 
 static FILE *code_file;
@@ -290,5 +290,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.6 1998/12/06 15:09:19 mike Exp $".
+// End of "$Id: code.cxx,v 1.7 1998/12/06 15:52:15 mike Exp $".
 //

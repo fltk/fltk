@@ -1,7 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 0.99 
-header_name {.H} 
-code_name {.C} 
+header_name {.h} 
+code_name {.cxx} 
 gridx 10 
 gridy 5 
 snap 3
@@ -140,7 +140,7 @@ Function {make_widget_panel()} {open
       label {shortcut:}
       callback shortcut_in_cb
       xywh {90 170 270 20} box THIN_UP_BOX color {7 7} align 4
-      code0 {\#include "Shortcut_Button.H"}
+      code0 {\#include "Shortcut_Button.h"}
       class Shortcut_Button
     }
     Fl_Value_Input {} {
