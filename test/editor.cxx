@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.8 2002/06/09 13:35:49 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.9 2002/06/09 18:28:49 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -57,8 +57,7 @@ Fl_Text_Buffer     *textbuf = 0;
 // Syntax highlighting stuff...
 Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
-                   styletable[] =
-                   {
+                   styletable[] = {	// Style table
 		     { FL_BLACK,      FL_COURIER,        FL_NORMAL_SIZE }, // A - Plain
 		     { FL_DARK_GREEN, FL_COURIER_ITALIC, FL_NORMAL_SIZE }, // B - Line comments
 		     { FL_DARK_GREEN, FL_COURIER_ITALIC, FL_NORMAL_SIZE }, // C - Block comments
@@ -67,8 +66,7 @@ Fl_Text_Display::Style_Table_Entry
 		     { FL_DARK_RED,   FL_COURIER_BOLD,   FL_NORMAL_SIZE }, // F - Types
 		     { FL_BLUE,       FL_COURIER_BOLD,   FL_NORMAL_SIZE }  // G - Keywords
 		   };
-const char         *code_keywords[] =	// List of known C/C++ keywords...
-		   {
+const char         *code_keywords[] = {	// List of known C/C++ keywords...
 		     "and",
 		     "and_eq",
 		     "asm",
@@ -104,8 +102,7 @@ const char         *code_keywords[] =	// List of known C/C++ keywords...
 		     "xor",
 		     "xor_eq"
 		   };
-const char         *code_types[] =	// List of known C/C++ types...
-		   {
+const char         *code_types[] = {	// List of known C/C++ types...
 		     "auto",
 		     "bool",
 		     "char",
@@ -764,5 +761,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.8 2002/06/09 13:35:49 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.9 2002/06/09 18:28:49 easysw Exp $".
 //

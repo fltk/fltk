@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.17 2002/06/09 13:35:49 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.18 2002/06/09 18:28:49 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1045,7 +1045,11 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
   Fl_Color background;
 
   if ( style & STYLE_LOOKUP_MASK ) {
-    styleRec = &mStyleTable[ ( style & STYLE_LOOKUP_MASK ) - 'A' ];
+    int si = (style & STYLE_LOOKUP_MASK) - 'A';
+    if (si < 0) si = 0;
+    else if (si >= mNStyles) si = mNStyles - 1;
+
+    styleRec = mStyleTable + si;
     font = styleRec->font;
     size = styleRec->size;
 
@@ -1234,8 +1238,12 @@ int Fl_Text_Display::string_width( const char *string, int length, int style ) {
   int size;
 
   if ( style & STYLE_LOOKUP_MASK ) {
-    font = mStyleTable[ ( style & STYLE_LOOKUP_MASK ) - 'A' ].font;
-    size = mStyleTable[ ( style & STYLE_LOOKUP_MASK ) - 'A' ].size;
+    int si = (style & STYLE_LOOKUP_MASK) - 'A';
+    if (si < 0) si = 0;
+    else if (si >= mNStyles) si = mNStyles - 1;
+
+    font = mStyleTable[si].font;
+    size = mStyleTable[si].size;
   } else {
     font = textfont();
     size = textsize();
@@ -1951,5 +1959,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.17 2002/06/09 13:35:49 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.18 2002/06/09 18:28:49 easysw Exp $".
 //

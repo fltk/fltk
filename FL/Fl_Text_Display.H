@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.7 2002/06/08 12:51:38 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.8 2002/06/09 18:28:48 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -55,10 +55,18 @@ class Fl_Text_Display: public Fl_Group {
 
     typedef void (*Unfinished_Style_Cb)();
 
+    // style attributes - currently not implemented!
+    enum {
+      ATTR_NONE = 0,
+      ATTR_UNDERLINE = 1,
+      ATTR_HIDDEN = 2
+    };
+
     struct FL_EXPORT Style_Table_Entry {
-      Fl_Color color;
-      Fl_Font  font;
-      int      size;
+      Fl_Color	color;
+      Fl_Font	font;
+      int	size;
+      unsigned	attr;
     };
 
     FL_EXPORT Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
@@ -234,5 +242,5 @@ class Fl_Text_Display: public Fl_Group {
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.7 2002/06/08 12:51:38 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.8 2002/06/09 18:28:48 easysw Exp $".
 //
