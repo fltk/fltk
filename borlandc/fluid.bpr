@@ -4,65 +4,77 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="fluid.exe"/>
-    <OBJFILES value="..\fluid\fluid.obj ..\fluid\widget_panel.obj ..\fluid\alignment_panel.obj 
-      ..\fluid\code.obj ..\fluid\factory.obj ..\fluid\file.obj 
-      ..\fluid\Fl_Function_Type.obj ..\fluid\Fl_Group_Type.obj 
-      ..\fluid\Fl_Menu_Type.obj ..\fluid\Fl_Type.obj ..\fluid\Fl_Widget_Type.obj 
-      ..\fluid\Fl_Window_Type.obj ..\fluid\Fluid_Image.obj 
-      ..\fluid\function_panel.obj ..\fluid\about_panel.obj"/>
-    <RESFILES value=""/>
+    <OBJFILES value="..\obj\widget_panel.obj ..\obj\align_widget.obj ..\obj\alignment_panel.obj 
+      ..\obj\code.obj ..\obj\factory.obj ..\obj\file.obj 
+      ..\obj\Fl_Function_Type.obj ..\obj\Fl_Group_Type.obj 
+      ..\obj\Fl_Menu_Type.obj ..\obj\Fl_Type.obj ..\obj\Fl_Widget_Type.obj 
+      ..\obj\Fl_Window_Type.obj ..\obj\fluid.obj ..\obj\Fluid_Image.obj 
+      ..\obj\function_panel.obj ..\obj\about_panel.obj"/>
+    <RESFILES value="fluid.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
-    <LIBFILES value=""/>
-    <LIBRARIES value="rtl.lib vcl.lib"/>
-    <SPARELIBS value="vcl.lib rtl.lib"/>
-    <PACKAGES value=""/>
-    <PATHCPP value="..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid"/>
+    <LIBFILES value="..\lib\fltklib.lib"/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value=""/>
+    <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
+      vcldbx.bpi ibxpress.bpi cds.bpi dsnap.bpi bdecds.bpi qrpt.bpi teeui.bpi 
+      teedb.bpi tee.bpi dss.bpi teeqr.bpi visualclx.bpi visualdbclx.bpi 
+      dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi vc.bpi Sparx4.bpi sparx4rep.bpi 
+      sparx4ots.bpi"/>
+    <PATHCPP value=".;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid;..\fluid"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="ilink32"/>
-    <USERDEFINES value="_DEBUG"/>
-    <SYSDEFINES value="_RTLDLL;NO_STRICT"/>
-    <MAINSOURCE value="fluid.cpp"/>
-    <INCLUDEPATH value=".;..\fluid;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="..\lib;..\fluid;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <USERDEFINES value="WIN32"/>
+    <SYSDEFINES value="NO_STRICT;_NO_VCL;_RTLDLL;USEPACKAGES"/>
+    <MAINSOURCE value="fluid.bpf"/>
+    <INCLUDEPATH value="..\fluid;..\test;..;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\fluid;$(BCB)\Projects\Lib;..\test;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -x- -X- -a8 -5 -b- -d -k -y -v 
-      -vi- -c -tW -tWM"/>
-    <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <IDLCFLAGS value="-I..\fluid -I..\test -I.. -I$(BCB)\include -I$(BCB)\include\vcl 
+      -src_suffix cpp -DWIN32 -boa"/>
+    <CFLAG1 value="-O2 -H=$(BCB)\lib\vcl60.csm -Hc -P -Vx -Ve -X- -a8 -b -d -k- -vi -tWC 
+      -tWM- -c"/>
+    <PFLAGS value="-N2..\obj -N0..\obj -$Y- -$L- -$D- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
-    <AFLAGS value="/mx /w2 /zd"/>
-    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn"/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-I..\obj -D&quot;&quot; -ap -Tpe -x -Gn"/>
     <OTHERFILES value=""/>
   </OPTIONS>
   <LINKER>
-    <ALLOBJ value="c0w32.obj Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLOBJ value="c0x32.obj $(PACKAGES) $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
-    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cw32i.lib"/>
     <OTHERFILES value=""/>
   </LINKER>
   <FILELIST>
-      <FILE FILENAME="..\fluid\fluid.cxx" FORMNAME="" UNITNAME="fluid.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\widget_panel.cxx" FORMNAME="" UNITNAME="widget_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\alignment_panel.cxx" FORMNAME="" UNITNAME="alignment_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\code.cxx" FORMNAME="" UNITNAME="code.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\factory.cxx" FORMNAME="" UNITNAME="factory.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\file.cxx" FORMNAME="" UNITNAME="file.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Function_Type.cxx" FORMNAME="" UNITNAME="Fl_Function_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Group_Type.cxx" FORMNAME="" UNITNAME="Fl_Group_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Menu_Type.cxx" FORMNAME="" UNITNAME="Fl_Menu_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Type.cxx" FORMNAME="" UNITNAME="Fl_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Widget_Type.cxx" FORMNAME="" UNITNAME="Fl_Widget_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Window_Type.cxx" FORMNAME="" UNITNAME="Fl_Window_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fluid_Image.cxx" FORMNAME="" UNITNAME="Fluid_Image.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\function_panel.cxx" FORMNAME="" UNITNAME="function_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\about_panel.cxx" FORMNAME="" UNITNAME="about_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fluid.res" FORMNAME="" UNITNAME="fluid.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fluid.bpf" FORMNAME="" UNITNAME="fluid" CONTAINERID="BPF" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\lib\fltklib.lib" FORMNAME="" UNITNAME="fltklib.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\widget_panel.cxx" FORMNAME="" UNITNAME="widget_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\align_widget.cxx" FORMNAME="" UNITNAME="align_widget.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\alignment_panel.cxx" FORMNAME="" UNITNAME="alignment_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\code.cxx" FORMNAME="" UNITNAME="code.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\factory.cxx" FORMNAME="" UNITNAME="factory.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\file.cxx" FORMNAME="" UNITNAME="file.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Function_Type.cxx" FORMNAME="" UNITNAME="Fl_Function_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Group_Type.cxx" FORMNAME="" UNITNAME="Fl_Group_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Menu_Type.cxx" FORMNAME="" UNITNAME="Fl_Menu_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Type.cxx" FORMNAME="" UNITNAME="Fl_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Widget_Type.cxx" FORMNAME="" UNITNAME="Fl_Widget_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Window_Type.cxx" FORMNAME="" UNITNAME="Fl_Window_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\fluid.cxx" FORMNAME="" UNITNAME="fluid.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fluid_Image.cxx" FORMNAME="" UNITNAME="Fluid_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\function_panel.cxx" FORMNAME="" UNITNAME="function_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\about_panel.cxx" FORMNAME="" UNITNAME="about_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -86,36 +98,38 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.1.0.0
+FileVersion=1.0.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=1.1.0.0
+ProductVersion=1.0.0.0
 Comments=
 
-[Excluded Packages]
-c:\program files\borland\cbuilder6\Bin\dclstd60.bpl=Borland Standard Components
-c:\program files\borland\cbuilder6\Bin\dcl31w60.bpl=Delphi 1.0 Compatibility Components
-c:\program files\borland\cbuilder6\Bin\dclbcbsmp60.bpl=Borland Sample Controls Design Time Package
-c:\program files\borland\cbuilder6\Bin\dclocx60.bpl=Borland Sample Imported ActiveX Controls
-
 [HistoryLists\hlIncludePath]
-Count=1
-Item0=$(BCB)\include;$(BCB)\include\vcl
+Count=2
+Item0=..\test;..;$(BCB)\include;$(BCB)\include\vcl
+Item1=..\test;R:\fltk\BCB6;$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
-Count=1
-Item0=$(BCB)\lib\obj;$(BCB)\lib
+Count=3
+Item0=$(BCB)\Projects\Lib;..\test;$(BCB)\lib\obj;$(BCB)\lib
+Item1=..\test;$(BCB)\lib\obj;$(BCB)\lib
+Item2=$(BCB)\Projects\Lib;..\test;R:\fltk\BCB6;$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
 Count=1
 Item0=$(BCB)\source\vcl
 
 [HistoryLists\hlConditionals]
+Count=2
+Item0=WIN32
+Item1=_DEBUG
+
+[HistoryLists\hlIntOutputDir]
 Count=1
-Item0=_DEBUG
+Item0=..\obj
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl
@@ -135,5 +149,11 @@ RemoteDebug=0
 [Compiler]
 ShowInfoMsgs=0
 LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
   </IDEOPTIONS>
 </PROJECT>

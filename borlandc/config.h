@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.1.2.2 2002/05/16 12:47:42 easysw Exp $"
+ * "$Id: config.h,v 1.1.2.3 2002/07/01 20:26:06 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Borland C++.
  *
@@ -27,6 +27,7 @@
  * Where to find the documentation files...
  */
 
+#define FLTK_DATADIR	"C:/FLTK"
 #define FLTK_DOCDIR	"C:/FLTK/DOC"
 
 
@@ -167,13 +168,28 @@
 #undef HAVE_LIBJPEG
 
 /*
+ * Which header file do we include for libpng?
+ */
+
+#undef HAVE_PNG_H
+#undef HAVE_LIBPNG_PNG_H
+
+/*
  * Do we have the png_xyz() functions?
  */
 
 #undef HAVE_PNG_GET_VALID
 #undef HAVE_PNG_SET_TRNS_TO_ALPHA
+#undef HAVE_PNG_READ_DESTROY
+
+/*
+ * Do we have POSIX threading?
+ */
+
+#undef HAVE_PTHREAD
+#undef HAVE_PTHREAD_H
 
 
 /*
- * End of "$Id: config.h,v 1.1.2.2 2002/05/16 12:47:42 easysw Exp $".
+ * End of "$Id: config.h,v 1.1.2.3 2002/07/01 20:26:06 easysw Exp $".
  */
