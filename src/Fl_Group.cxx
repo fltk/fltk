@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.7 1999/01/24 15:28:58 mike Exp $"
+// "$Id: Fl_Group.cxx,v 1.8 1999/01/26 21:37:14 mike Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -63,6 +63,33 @@ static int send(Fl_Widget* o, int event) {
   return ret;
 }
 
+// translate the current keystroke into up/down/left/right for navigation:
+#define ctrl(x) (x^0x40)
+static int navkey() {
+  switch (Fl::event_key()) {
+  case FL_Tab:
+    if (!Fl::event_state(FL_SHIFT)) return FL_Right;
+  case 0xfe20: // XK_ISO_Left_Tab
+    return FL_Left;
+  case FL_Right:
+    return FL_Right;
+  case FL_Left:
+    return FL_Left;
+  case FL_Up:
+    return FL_Up;
+  case FL_Down:
+    return FL_Down;
+  default:
+    switch (Fl::event_text()[0]) {
+    case ctrl('N') : return FL_Down;
+    case ctrl('P') : return FL_Up;
+    case ctrl('F') : return FL_Right;
+    case ctrl('B') : return FL_Left;
+    }
+  }
+  return 0;
+}
+
 int Fl_Group::handle(int event) {
 
   Fl_Widget*const* a = array();
@@ -72,8 +99,18 @@ int Fl_Group::handle(int event) {
   switch (event) {
 
   case FL_FOCUS:
-    if (savedfocus_ && savedfocus_->take_focus()) return 1;
-    for (i = children(); i--;) if ((*a++)->take_focus()) return 1;
+    switch (navkey()) {
+    default:
+      if (savedfocus_ && savedfocus_->take_focus()) return 1;
+    case FL_Right:
+    case FL_Down:
+      for (i = children(); i--;) if ((*a++)->take_focus()) return 1;
+      break;
+    case FL_Left:
+    case FL_Up:
+      for (i = children(); i--;) if (a[i]->take_focus()) return 1;
+      break;
+    }
     return 0;
 
   case FL_UNFOCUS:
@@ -81,7 +118,7 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_KEYBOARD:
-    return navigation();
+    return navigation(navkey());
 
   case FL_SHORTCUT:
     for (i = children(); i--;) {
@@ -147,33 +184,6 @@ int Fl_Group::handle(int event) {
   }
 }
 
-// translate the current keystroke into up/down/left/right for navigation:
-#define ctrl(x) (x^0x40)
-int navkey() {
-  switch (Fl::event_key()) {
-  case FL_Tab:
-    if (!Fl::event_state(FL_SHIFT)) return FL_Right;
-  case 0xfe20: // XK_ISO_Left_Tab
-    return FL_Left;
-  case FL_Right:
-    return FL_Right;
-  case FL_Left:
-    return FL_Left;
-  case FL_Up:
-    return FL_Up;
-  case FL_Down:
-    return FL_Down;
-  default:
-    switch (Fl::event_text()[0]) {
-    case ctrl('N') : return FL_Down;
-    case ctrl('P') : return FL_Up;
-    case ctrl('F') : return FL_Right;
-    case ctrl('B') : return FL_Left;
-    }
-  }
-  return 0;
-}
-
 //void Fl_Group::focus(Fl_Widget *o) {Fl::focus(o); o->handle(FL_FOCUS);}
 
 #if 0
@@ -187,35 +197,42 @@ const char *nameof(Fl_Widget *o) {
 // try to move the focus in response to a keystroke:
 int Fl_Group::navigation(int key) {
   if (children() <= 1) return 0;
-  if (!key) {key = navkey(); if (!key) return 0;}
-  Fl_Widget *focus_ = Fl::focus();
-  int old_i;
-  for (old_i=0;;old_i++) {
-    if (old_i >= children_) return 0;
-    if (array_[old_i]->contains(focus_)) break;
+  int i;
+  for (i = 0; ; i++) {
+    if (i >= children_) return 0;
+    if (array_[i]->contains(Fl::focus())) break;
   }
-  int i = old_i;
+  Fl_Widget *previous = array_[i];
 
   for (;;) {
     switch (key) {
     case FL_Right:
     case FL_Down:
-      i++; if (i >= children_) i = 0;
+      i++;
+      if (i >= children_) {
+	if (parent()) return 0;
+	i = 0;
+      }
       break;
     case FL_Left:
     case FL_Up:
-      if (i) i--; else i = children_-1;
+      if (i) i--;
+      else {
+	if (parent()) return 0;
+	i = children_-1;
+      }
       break;
     default:
       return 0;
     }
-    if (i == old_i) return 0;
     Fl_Widget* o = array_[i];
+    if (o == previous) return 0;
     switch (key) {
     case FL_Down:
     case FL_Up:
-      if (o->x() >= focus_->x()+focus_->w() ||
-	  o->x()+o->w() <= focus_->x()) continue;
+      // for up/down, the widgets have to overlap horizontally:
+      if (o->x() >= previous->x()+previous->w() ||
+	  o->x()+o->w() <= previous->x()) continue;
     }
     if (o->take_focus()) return 1;
   }
@@ -468,5 +485,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.7 1999/01/24 15:28:58 mike Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8 1999/01/26 21:37:14 mike Exp $".
 //
