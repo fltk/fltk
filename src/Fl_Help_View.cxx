@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.2 2001/10/01 19:33:22 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -612,6 +612,7 @@ Fl_Help_View::add_image(const char *name,	// I - Path of image
 
     img->wattr[0] = '\0';
     img->hattr[0] = '\0';
+    img->image    = 0;
 
     nimage_ ++;
 
@@ -3580,5 +3581,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.2 2001/10/01 19:33:22 easysw Exp $".
 //
