@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.2 2001/09/29 22:59:45 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -287,7 +287,10 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
     directory(pathname);
   }
   else
+  {
+    directory(".");
     slash = pathname;
+  }
 
   // Set the input field to the remaining portion
   fileName->value(slash);
@@ -684,5 +687,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.2 2001/09/29 22:59:45 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.1 2001/09/29 22:59:45 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -670,6 +670,10 @@ void Fl_Input_::maybe_do_callback() {
 int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
   switch (event) {
 
+  case FL_ENTER:
+  case FL_LEAVE:
+    return 1;
+
   case FL_FOCUS:
     if (mark_ == position_) {
       minimal_update(size()+1);
@@ -817,5 +821,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.1 2001/09/29 22:59:45 easysw Exp $".
 //

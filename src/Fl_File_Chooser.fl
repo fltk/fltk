@@ -55,11 +55,11 @@ window->hide();}
       }
       Fl_Button upButton {
         callback {up();}
-        private image {up.xbm} xywh {280 10 25 25} labelsize 8
+        private image {up.xbm} tooltip {Show the parent directory.} xywh {280 10 25 25} labelsize 8
       }
       Fl_Button newButton {
         callback {newdir();}
-        private image {new.xbm} xywh {310 10 25 25} labelsize 8
+        private image {new.xbm} tooltip {Create a new directory.} xywh {310 10 25 25} labelsize 8
       }
       Fl_Choice dirMenu {
         label {Directory:}
@@ -70,7 +70,7 @@ pathname[0] = '\\0';
 for (i = 1; i <= dirMenu->value(); i ++)
   strcat(pathname, dirMenu->text(i));
 directory(pathname);} open
-        private xywh {95 10 180 25} down_box BORDER_BOX
+        private tooltip {Choose a parent directory.} xywh {95 10 180 25} down_box BORDER_BOX
       } {}
       Fl_Button {} {
         callback {const char *f;
@@ -80,7 +80,7 @@ if ((f = fl_input("New Filter?",
   fileList->filter(f);
   rescan();
 }}
-        private image {allfiles.xbm} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
+        private image {allfiles.xbm} tooltip {Change the filename filter.} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
         code0 {\#include <FL/fl_ask.H>}
       }
     }

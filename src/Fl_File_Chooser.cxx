@@ -127,20 +127,24 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
     }
     { Fl_Button* o = upButton = new Fl_Button(280, 10, 25, 25);
+      o->tooltip("Show the parent directory.");
       o->image(bitmap_up);
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_upButton);
     }
     { Fl_Button* o = newButton = new Fl_Button(310, 10, 25, 25);
+      o->tooltip("Create a new directory.");
       o->image(bitmap_new);
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_newButton);
     }
     { Fl_Choice* o = dirMenu = new Fl_Choice(95, 10, 180, 25, "Directory:");
+      o->tooltip("Choose a parent directory.");
       o->down_box(FL_BORDER_BOX);
       o->callback((Fl_Callback*)cb_dirMenu);
     }
     { Fl_Button* o = new Fl_Button(340, 10, 25, 25);
+      o->tooltip("Change the filename filter.");
       o->image(bitmap_allfiles);
       o->labelsize(28);
       o->labelcolor(4);

@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.6 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.7 2001/09/29 22:59:45 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -48,6 +48,7 @@ const char *copyright =
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Menu_Bar.H>
@@ -426,6 +427,7 @@ void make_main_window() {
     main_window->box(FL_NO_BOX);
     o = make_widget_browser(0,MENUHEIGHT,BROWSERWIDTH,BROWSERHEIGHT);
     o->box(FL_FLAT_BOX);
+    o->tooltip("Double-click to view or change an item.");
     main_window->resizable(o);
     Fl_Menu_Bar *m = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
     m->menu(Main_Menu);
@@ -498,6 +500,7 @@ int main(int argc,char **argv) {
   if (c) set_filename(c);
   if (!compile_only) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
+    Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
     main_window->show(argc,argv);
   }
@@ -518,5 +521,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.6 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.7 2001/09/29 22:59:45 easysw Exp $".
 //

@@ -50,6 +50,12 @@ CHANGES IN FLTK 1.1.0b2
 
 	- Changed Fl_HelpXYZ to Fl_Help_XYZ.
 
+	- Tooltip fixes for Fl_Browser_, Fl_Choice, and Fl_Input_.
+
+	- Added tooltips to FLUID, help dialog, and file chooser.
+
+	- Now load system icons in FLUID.
+
 
 CHANGES IN FLTK 1.1.0b1
 

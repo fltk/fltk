@@ -120,21 +120,25 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       o->callback((Fl_Callback*)cb_Close);
     }
     { Fl_Button* o = back_ = new Fl_Button(365, 350, 25, 25, "@<-");
+      o->tooltip("Show the previous help page.");
       o->shortcut(0xff51);
       o->labelcolor(2);
       o->callback((Fl_Callback*)cb_back_);
     }
     { Fl_Button* o = forward_ = new Fl_Button(395, 350, 25, 25, "@->");
+      o->tooltip("Show the next help page.");
       o->shortcut(0xff53);
       o->labelcolor(2);
       o->callback((Fl_Callback*)cb_forward_);
     }
     { Fl_Button* o = smaller_ = new Fl_Button(305, 350, 25, 25, "F");
+      o->tooltip("Make the help text smaller.");
       o->labelfont(1);
       o->labelsize(10);
       o->callback((Fl_Callback*)cb_smaller_);
     }
     { Fl_Button* o = larger_ = new Fl_Button(335, 350, 25, 25, "F");
+      o->tooltip("Make the help text larger.");
       o->labelfont(1);
       o->labelsize(16);
       o->callback((Fl_Callback*)cb_larger_);
