@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.10 1999/03/09 07:51:10 bill Exp $"
+// "$Id: Fl_Dial.cxx,v 1.11 1999/03/10 00:13:52 carl Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -50,9 +50,9 @@ void Fl_Dial::draw(int x, int y, int w, int h) {
     int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
     if (foo) {x--; y--; w+=2; h+=2;}
     fl_color(color());
-    fl_pie(x, y, w-1, h-1, 90-a1, 360+90-angle);
+    fl_pie(x, y, w-1, h-1, 270-a1, 360+270-angle);
     fl_color(selection_color());
-    fl_pie(x, y, w-1, h-1, 90-angle, 90-a1);
+    fl_pie(x, y, w-1, h-1, 270-angle, 270-a1);
     if (foo) {
       fl_color(FL_BLACK);
       fl_arc(x, y, w, h, 0, 360);
@@ -72,7 +72,7 @@ void Fl_Dial::draw(int x, int y, int w, int h) {
     fl_begin_line(); fl_vertex(0, 0); fl_vertex(.5, 0); fl_end_line();
   }
 */
-  fl_rotate(225-angle);
+  fl_rotate(45-angle);
   fl_color(selection_color());
   if (type() == FL_LINE_DIAL) {
     fl_begin_polygon();
@@ -114,7 +114,7 @@ int Fl_Dial::handle(int event, int x, int y, int w, int h) {
     int my = Fl::event_y()-y-h/2;
     if (!mx && !my) return 1;
     angle = atan2((float)-my, (float)-mx) + M_PI;
-    angle = (angle*360) / (2*M_PI) + 90;
+    angle = (angle*360) / (2*M_PI) + 270;
     while (angle < oldangle-180) angle += 360;
     while (angle > oldangle+180) angle -= 360;
     if (angle <= a1) {
@@ -143,9 +143,9 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
   : Fl_Valuator(x, y, w, h, l) {
   box(FL_OVAL_BOX);
   selection_color(FL_INACTIVE_COLOR); // was 37
-  angles(225,135);
+  angles(0,360);
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.10 1999/03/09 07:51:10 bill Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.11 1999/03/10 00:13:52 carl Exp $".
 //

@@ -34,12 +34,12 @@ and label string. The default type is <TT>FL_NORMAL_DIAL</TT>.
  Destroys the valuator. 
 <H4><A name=Fl_Dial.angles>void Fl_Dial::angles(short a, short b)</A></H4>
  Sets the angles used for the minimum and maximum values.  By default 
-these are 225 and 135, respectively.  (0 degrees is straight up and the
+these are 0 and 360, respectively.  (0 degrees is straight down and the
 angles progress clockwise.)  The angles specified should be greater than
-or equal to 0 and less than 360.  The progress of the dial always starts at
-the minimum angle and progresses clockwise to the maximum angle.  Currently,
-counter-clockwise progression is not supported (but user code can always
-use 1/value()).
+or equal to 0 and less than or equal to 360.  The progress of the dial always
+starts at the minimum angle and progresses clockwise to the maximum angle. 
+Currently, counter-clockwise progression is not supported (but user code can
+always use 1/value()).
 <H4><A name=Fl_Dial.type>type(uchar)</A></H4>
  Sets the type of the dial to: 
 <UL>
