@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.14 2002/04/24 12:20:36 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.15 2002/04/24 12:30:00 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -58,7 +58,7 @@ class Fl_Tooltip_Window : public Fl_Menu_Window {
 
   FL_EXPORT ~Fl_Tooltip_Window() {}
   Fl_Tooltip_Window(int W, int H, const char *l = 0)
-    : Fl_Menu_Window(W,H,l) {}
+    : Fl_Menu_Window(W,H,l) { set_override(); }
   Fl_Tooltip_Window(int X, int Y, int W, int H, const char *l = 0)
     : Fl_Menu_Window(X,Y,W,H,l) {}
 };
@@ -221,5 +221,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.14 2002/04/24 12:20:36 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.15 2002/04/24 12:30:00 easysw Exp $".
 //
