@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- FLUID now sets the size range when a window is shown.
+	  This seems to be necessary with some window managers
+	  (STR #166)
 
 
 CHANGES IN FLTK 1.1.4

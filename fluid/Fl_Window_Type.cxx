@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.7 2003/08/02 21:17:30 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.8 2003/09/14 13:42:04 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -304,6 +304,9 @@ void Fl_Window_Type::open() {
     w->show();
     w->resizable(p);
   }
+
+  w->size_range(gridx * snap, gridy * snap, Fl::w(), Fl::h(),
+                gridx * snap, gridy * snap, 0);
 }
 
 // control panel items:
@@ -792,5 +795,5 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.7 2003/08/02 21:17:30 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.8 2003/09/14 13:42:04 easysw Exp $".
 //
