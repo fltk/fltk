@@ -1470,8 +1470,13 @@ void make_main_window() {
 // Load file history from preferences...
 void load_history() {
   int	i;		// Looping var
+  int	max_files;
 
-  for (i = 0; i < 10; i ++) {
+
+  fluid_prefs.get("recent_files", max_files, 5);
+  if (max_files > 10) max_files = 10;
+
+  for (i = 0; i < max_files; i ++) {
     fluid_prefs.get( Fl_Preferences::Name("file%d", i), absolute_history[i], "", sizeof(absolute_history[i]));
     if (absolute_history[i][0]) {
       // Make a relative version of the filename for the menu...
@@ -1479,10 +1484,12 @@ void load_history() {
                            absolute_history[i]);
 
       Main_Menu[i + HISTORY_ITEM].flags = 0;
-    } else {
-      if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
-      Main_Menu[i + HISTORY_ITEM].hide();
-    }
+    } else break;
+  }
+
+  for (; i < 10; i ++) {
+    if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
+    Main_Menu[i + HISTORY_ITEM].hide();
   }
 }
 
@@ -1490,10 +1497,15 @@ void load_history() {
 void update_history(const char *flname) {
   int	i;		// Looping var
   char	absolute[1024];
+  int	max_files;
+
+
+  fluid_prefs.get("recent_files", max_files, 5);
+  if (max_files > 10) max_files = 10;
 
   fl_filename_absolute(absolute, sizeof(absolute), flname);
 
-  for (i = 0; i < 10; i ++)
+  for (i = 0; i < max_files; i ++)
 #if defined(WIN32) || defined(__APPLE__)
     if (!strcasecmp(absolute, absolute_history[i])) break;
 #else
@@ -1502,7 +1514,7 @@ void update_history(const char *flname) {
 
   if (i == 0) return;
 
-  if (i >= 10) i = 9;
+  if (i >= max_files) i = max_files - 1;
 
   // Move the other flnames down in the list...
   memmove(absolute_history + 1, absolute_history,
@@ -1517,13 +1529,16 @@ void update_history(const char *flname) {
                        absolute_history[0]);
 
   // Update the menu items as needed...
-  for (i = 0; i < 10; i ++) {
+  for (i = 0; i < max_files; i ++) {
     fluid_prefs.set( Fl_Preferences::Name("file%d", i), absolute_history[i]);
     if (absolute_history[i][0]) Main_Menu[i + HISTORY_ITEM].flags = 0;
-    else {
-      if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
-      Main_Menu[i + HISTORY_ITEM].hide();
-    }
+    else break;
+  }
+
+  for (; i < 10; i ++) {
+    fluid_prefs.set( Fl_Preferences::Name("file%d", i), "");
+    if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
+    Main_Menu[i + HISTORY_ITEM].hide();
   }
 }
 

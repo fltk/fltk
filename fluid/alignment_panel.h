@@ -32,6 +32,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
+extern void load_history();
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
@@ -70,6 +71,8 @@ extern Fl_Check_Button *tooltips_button;
 extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
 extern Fl_Check_Button *prevpos_button;
+#include <FL/Fl_Spinner.H>
+extern Fl_Spinner *recent_spinner;
 Fl_Double_Window* make_settings_window();
 extern Fl_Menu_Item menu_scheme_choice[];
 extern Fl_Double_Window *shell_window;

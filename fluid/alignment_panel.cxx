@@ -206,11 +206,18 @@ static void cb_Close1(Fl_Button*, void*) {
   settings_window->hide();
 }
 
+Fl_Spinner *recent_spinner=(Fl_Spinner *)0;
+
+static void cb_recent_spinner(Fl_Spinner*, void*) {
+  fluid_prefs.set("recent_files", recent_spinner->value());
+load_history();
+}
+
 Fl_Double_Window* make_settings_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(300, 190, "GUI Settings");
+  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(340, 225, "GUI Settings");
     w = o;
-    { Fl_Choice* o = scheme_choice = new Fl_Choice(75, 10, 115, 25, "Scheme:");
+    { Fl_Choice* o = scheme_choice = new Fl_Choice(116, 10, 115, 25, "Scheme:");
       o->down_box(FL_BORDER_BOX);
       o->labelfont(1);
       o->callback((Fl_Callback*)scheme_cb);
@@ -220,10 +227,10 @@ Fl_Double_Window* make_settings_window() {
       scheme_choice->value(s);
       scheme_cb(0, 0);
     }
-    { Fl_Group* o = new Fl_Group(75, 45, 215, 100, "Options:\n\n\n\n\n");
+    { Fl_Group* o = new Fl_Group(116, 45, 215, 100, "Options:\n\n\n\n\n");
       o->labelfont(1);
       o->align(FL_ALIGN_LEFT);
-      { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(75, 45, 113, 25, "Show Tooltips");
+      { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(116, 45, 113, 25, "Show Tooltips");
         o->down_box(FL_DOWN_BOX);
         o->callback((Fl_Callback*)cb_tooltips_button);
         int b;
@@ -231,21 +238,21 @@ Fl_Double_Window* make_settings_window() {
         tooltips_button->value(b);
         Fl_Tooltip::enable(b);
       }
-      { Fl_Check_Button* o = completion_button = new Fl_Check_Button(75, 70, 186, 25, "Show Completion Dialogs");
+      { Fl_Check_Button* o = completion_button = new Fl_Check_Button(116, 70, 186, 25, "Show Completion Dialogs");
         o->down_box(FL_DOWN_BOX);
         o->callback((Fl_Callback*)cb_completion_button);
         int b;
         fluid_prefs.get("show_completion_dialogs", b, 1);
         completion_button->value(b);
       }
-      { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(75, 95, 215, 25, "Open Previous File on Startup");
+      { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(116, 95, 215, 25, "Open Previous File on Startup");
         o->down_box(FL_DOWN_BOX);
         o->callback((Fl_Callback*)cb_openlast_button);
         int b;
         fluid_prefs.get("open_previous_file", b, 0);
         openlast_button->value(b);
       }
-      { Fl_Check_Button* o = prevpos_button = new Fl_Check_Button(75, 120, 210, 25, "Remember Window Positions");
+      { Fl_Check_Button* o = prevpos_button = new Fl_Check_Button(116, 120, 210, 25, "Remember Window Positions");
         o->down_box(FL_DOWN_BOX);
         o->callback((Fl_Callback*)cb_prevpos_button);
         int b;
@@ -254,9 +261,18 @@ Fl_Double_Window* make_settings_window() {
       }
       o->end();
     }
-    { Fl_Button* o = new Fl_Button(226, 155, 64, 25, "Close");
+    { Fl_Button* o = new Fl_Button(266, 190, 64, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close1);
+    }
+    { Fl_Spinner* o = recent_spinner = new Fl_Spinner(116, 155, 40, 25, "# Recent Files:");
+      o->labelfont(1);
+      o->callback((Fl_Callback*)cb_recent_spinner);
+      o->when(FL_WHEN_CHANGED);
+      int c;
+      fluid_prefs.get("recent_files", c, 5);
+      recent_spinner->maximum(10);
+      recent_spinner->value(c);
     }
     o->end();
   }
