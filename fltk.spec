@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.5 2000/06/24 20:30:24 bill Exp $"
+# "$Id: fltk.spec,v 1.1.2.6 2000/06/24 20:43:33 bill Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -36,8 +36,8 @@ Group: System Environment/Libraries
 Source: ftp://ftp.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
 URL: http://www.fltk.org
 Packager: Michael Sweet <mike@easysw.com>
-# use buildroot so as not to disturb the version already installed
-Buildroot: /var/tmp/fltk-%{PACKAGE_VERSION}
+# use BuildRoot so as not to disturb the version already installed
+BuildRoot: /var/tmp/fltk-%{PACKAGE_VERSION}
 
 %description
 The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a LGPL'd
@@ -90,5 +90,5 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.5 2000/06/24 20:30:24 bill Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.6 2000/06/24 20:43:33 bill Exp $".
 #
