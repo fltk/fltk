@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.9 2002/08/14 16:19:48 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.10 2002/08/27 03:03:34 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -46,6 +46,7 @@ public:
   // enum Type { win32, macos, fltk };
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
+  Fl_Preferences( const char *path, const char *vendor, const char *application );
   Fl_Preferences( Fl_Preferences&, const char *group );
   Fl_Preferences( Fl_Preferences*, const char *group );
   ~Fl_Preferences();
@@ -139,6 +140,7 @@ private:
     char *vendor_, *application_;
   public:
     RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
+    RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application );
     ~RootNode();
     int read();
     int write();
@@ -155,5 +157,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.9 2002/08/14 16:19:48 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.10 2002/08/27 03:03:34 easysw Exp $".
 //

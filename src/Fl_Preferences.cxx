@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.18 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.19 2002/08/27 03:03:37 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -62,6 +62,18 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
 {
   node = new Node( "." );
   rootNode = new RootNode( this, root, vendor, application );
+}
+
+
+/**
+ * create the initial preferences base
+ * - path: an application-supplied path
+ * example: Fl_Preferences base( "/usr/foo" );
+ */
+Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char *application )
+{
+  node = new Node( "." );
+  rootNode = new RootNode( this, path, vendor, application );
 }
 
 
@@ -669,6 +681,24 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   read();
 }
 
+// create the root node
+// - construct the name of the file that will hold our preferences
+Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, const char *path, const char *vendor, const char *application )
+{
+  char filename[ FL_PATH_MAX ]; filename[0] = 0;
+
+  snprintf(filename, sizeof(filename), "%s/%s.prefs", path, application);
+
+  makePathForFile(filename);
+
+  prefs_       = prefs;
+  filename_    = strdup(filename);
+  vendor_      = strdup(vendor);
+  application_ = strdup(application);
+
+  read();
+}
+
 // destroy the root node and all depending nodes
 Fl_Preferences::RootNode::~RootNode()
 {
@@ -1054,5 +1084,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.18 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.19 2002/08/27 03:03:37 easysw Exp $".
 //
