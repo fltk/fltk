@@ -110,8 +110,9 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.remove_timeout">remove_timeout</A></LI>
 	<LI><A HREF="#Fl.repeat_timeout">repeat_timeout</A></LI>
 	<LI><A HREF="#Fl.run">run</A></LI>
-	<LI><A HREF="#Fl.selection_owner">selection_owner</A></LI>
+	<LI><A HREF="#Fl.scheme">scheme</A></LI>
 	<LI><A HREF="#Fl.selection">selection</A></LI>
+	<LI><A HREF="#Fl.selection_owner">selection_owner</A></LI>
 	<LI><A HREF="#Fl.set_abort">set_abort</A></LI>
 	<LI><A HREF="#Fl.set_atclose">set_atclose</A></LI>
 	<LI><A HREF="#Fl.set_boxtype">set_boxtype</A></LI>
@@ -971,6 +972,14 @@ repeatedly.  When all the windows are closed it returns zero
 exit directly for these).  A normal program will end <tt>main()</tt>
 with <tt>return Fl::run();</tt>.
 
+<H4><A NAME="Fl.scheme">void scheme(const char *name);
+<BR>const char *scheme();</A></H4>
+
+<P>Gets or sets the current widget scheme. Currently only "none"
+and "plastic" are recognized, and <TT>NULL</TT> will use the
+scheme defined in the <TT>FLTK_SCHEME</TT> environment variable
+or the <TT>scheme</TT> resource under X11.
+
 <H4><A NAME="Fl.selection">void selection(Fl_Widget &amp;owner, const char* stuff, int len);</A></H4>
 
 <P>Changes the current selection.  The block of text is
@@ -978,7 +987,6 @@ copied to an internal buffer by FLTK (be careful if doing this in
 response to an <tt>FL_PASTE</tt> as this <I>may</I> be the same buffer
 returned by <tt>event_text()</tt>).  The <tt>selection_owner()</tt>
 widget is set to the passed owner (possibly sending <tt>
-FL_SELECTIONCLEAR</tt> to the previous owner).
 
 <H4><A NAME="Fl.selection_owner">Fl_Widget* selection_owner();<BR>
 void selection_owner(Fl_Widget*);</A></H4>
@@ -1046,7 +1054,7 @@ done.
 <P>Sets an idle callback.
 
 <P>This method is obsolete - use the <A
-HREF="#add_idle"><TT>add_idle()</TT></A> method instead.
+HREF="#Fl.add_idle"><TT>add_idle()</TT></A> method instead.
 
 <H4><A NAME="Fl.set_labeltype">void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);<BR>
 void set_labeltype(Fl_Labeltype, Fl_Labeltype from);</A></H4>
