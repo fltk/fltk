@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.17 2001/11/01 14:54:06 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.18 2001/11/01 16:43:38 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -380,7 +380,7 @@ if test -n "$GXX"; then
     fi
 
     # See if GCC supports -fno-exceptions...
-    AC_MSG_CHECKING(Checking if GCC supports -fno-exceptions)
+    AC_MSG_CHECKING(if GCC supports -fno-exceptions)
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
     AC_TRY_COMPILE(,,
@@ -391,7 +391,7 @@ if test -n "$GXX"; then
 
     # See if we are running Solaris; if so, try the -fpermissive option...
     if test "$uname" = SunOS; then
-	AC_MSG_CHECKING(Checking if GCC supports -fpermissive)
+	AC_MSG_CHECKING(if GCC supports -fpermissive)
 
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fpermissive"
@@ -494,5 +494,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.17 2001/11/01 14:54:06 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.18 2001/11/01 16:43:38 easysw Exp $".
 dnl
