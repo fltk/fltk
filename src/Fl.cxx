@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.20 1999/02/26 07:07:55 bill Exp $"
+// "$Id: Fl.cxx,v 1.21 1999/03/03 07:40:17 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -418,7 +418,6 @@ int Fl::handle(int event, Fl_Window* window)
   case FL_DRAG:
     // this should not happen if enter/leave events were reported
     // correctly by the system, but just in case:
-    fl_xmousewin = window;
     if (pushed()) {
       w = pushed();
       event = FL_DRAG;
@@ -427,7 +426,10 @@ int Fl::handle(int event, Fl_Window* window)
     } else if (modal() && w != modal()) {
       w = 0;
     }
-    if (grab()) w = grab();
+    if (grab())
+      w = grab();
+    else
+      fl_xmousewin = window;
     break;
 
   case FL_RELEASE: {
@@ -490,11 +492,11 @@ int Fl::handle(int event, Fl_Window* window)
     return 0;
 
   case FL_ENTER:
-    fl_xmousewin = window; fl_fix_focus();
+    if (!grab()) {fl_xmousewin = window; fl_fix_focus();}
     return 1;
 
   case FL_LEAVE:
-    if (window == fl_xmousewin) {fl_xmousewin = 0; fl_fix_focus();}
+    if (!grab() && window == fl_xmousewin) {fl_xmousewin = 0; fl_fix_focus();}
     return 1;
 
   default:
@@ -681,5 +683,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.20 1999/02/26 07:07:55 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.21 1999/03/03 07:40:17 bill Exp $".
 //
