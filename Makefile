@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.13 2002/07/30 14:07:24 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.14 2002/09/26 01:15:33 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -73,8 +73,8 @@ distclean: clean
 	$(RM) documentation/fltk.ps
 	$(RM) -r documentation/fltk.d
 	for file in test/*.fl; do\
-		$(RM) `basename $file .fl`.cxx; \
-		$(RM) `basename $file .fl`.h; \
+		$(RM) test/`basename $file .fl`.cxx; \
+		$(RM) test/`basename $file .fl`.h; \
 	done
 
 makeinclude: configure configh.in makeinclude.in
@@ -97,5 +97,5 @@ native-dist:
 
 
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.13 2002/07/30 14:07:24 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.14 2002/09/26 01:15:33 easysw Exp $".
 #
