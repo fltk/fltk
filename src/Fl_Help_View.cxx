@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.42 2002/08/18 15:19:24 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.43 2002/10/11 20:48:14 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2067,8 +2067,17 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
     return (FL_BLACK);
   else if (strcasecmp(n, "red") == 0)
     return (FL_RED);
+#ifdef __BORLANDC__ // Workaround for compiler bug...
+  else if (strcasecmp(n, "green") == 0) {
+    r = 0;
+    g = 0x80;
+    b = 0;
+    return (fl_rgb_color(r, g, b));
+  }
+#else
   else if (strcasecmp(n, "green") == 0)
     return (fl_rgb_color(0, 0x80, 0));
+#endif // __BORLANDC__
   else if (strcasecmp(n, "yellow") == 0)
     return (FL_YELLOW);
   else if (strcasecmp(n, "blue") == 0)
@@ -2721,5 +2730,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.42 2002/08/18 15:19:24 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.43 2002/10/11 20:48:14 easysw Exp $".
 //

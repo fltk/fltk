@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.1
 
+	- Added a workaround for a compiler bug in Borland C++
+	  that prevented Fl_Help_View.cxx from compiling.
 	- Checkmarks didn't scale properly; copied the 2.0 check
 	  mark code over.
 	- Replaced several memcpy's with memmove's for
