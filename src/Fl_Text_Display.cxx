@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.4 2001/12/03 18:29:49 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.5 2001/12/03 20:14:30 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -71,6 +71,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   dragPos = dragType = dragging = 0;
   display_insert_position_hint = 0;
 
+  color(FL_WHITE, FL_SELECTION_COLOR);
   box(FL_DOWN_FRAME);
   textsize(FL_NORMAL_SIZE);
   textcolor(FL_BLACK);
@@ -1059,17 +1060,15 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     styleRec = &mStyleTable[ ( style & STYLE_LOOKUP_MASK ) - 'A' ];
     font = styleRec->font;
     size = styleRec->size;
-    foreground = styleRec->color;
-    background = style & PRIMARY_MASK ? FL_SELECTION_COLOR :
-                 style & HIGHLIGHT_MASK ? fl_contrast(textcolor(),color()) : color();
-    if ( foreground == background )   /* B&W kludge */
-      foreground = textcolor();
-  } else if ( style & HIGHLIGHT_MASK ) {
-    foreground = textcolor();
-    background = fl_contrast(textcolor(),color());
-  } else if ( style & PRIMARY_MASK ) {
-    foreground = textcolor();
-    background = FL_SELECTION_COLOR;
+
+    if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) ) {
+      background = selection_color();
+    } else background = color();
+
+    foreground = fl_contrast(styleRec->color, background);
+  } else if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) ) {
+    background = selection_color();
+    foreground = fl_contrast(textcolor(), background);
   } else {
     foreground = textcolor();
     background = color();
@@ -1597,7 +1596,7 @@ void Fl_Text_Display::update_v_scrollbar() {
      bar maximum value is chosen to generally represent the size of the whole
      buffer, with minor adjustments to keep the scroll bar widget happy */
   mVScrollBar->value(mTopLineNum, mNVisibleLines, 1, mNBufferLines+2);
-  mVScrollBar->linesize(1);
+  mVScrollBar->linesize(3);
 }
 
 /*
@@ -1956,5 +1955,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.4 2001/12/03 18:29:49 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.5 2001/12/03 20:14:30 easysw Exp $".
 //

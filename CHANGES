@@ -39,6 +39,10 @@ CHANGES IN FLTK 1.1.0b7
 	- fl_draw() reset the text color under WIN32, causing
 	  bitmaps to draw incorrectly.
 	- Fl::get_font_sizes() is now implemented under WIN32.
+	- Fl_Text_Display now uses the same default colors for
+	  selection and text as Fl_Input_ and friends.
+	- Changed the default line scrolling in Fl_Text_Display
+	  to 3 lines for the mouse wheel and scrollbar arrows.
 
 
 CHANGES IN FLTK 1.1.0b6
