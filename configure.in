@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.76 2002/06/28 21:04:35 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.77 2002/07/10 02:47:14 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -65,7 +65,7 @@ AC_SUBST(OPTIM)
 
 dnl OS-specific pre-tests...
 case $uname in
-    CYGWIN*)
+    CYGWIN* | MINGW*)
         # Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=no]])
 	if test x$enable_cygwin != xyes; then
@@ -178,7 +178,7 @@ if test x$enable_shared = xyes; then
             IMGDSONAME="libfltk_images_s.a"
             DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             ;;
-        CYGWIN*)
+        CYGWIN* | MINGW*)
             AC_MSG_WARN(Shared libraries are not supported under CygWin.)
 	    ;;
 	*)
@@ -357,7 +357,7 @@ POSTBUILD=:
 THREADS=
 
 case $uname in
-    CYGWIN*)
+    CYGWIN* | MINGW*)
 	dnl Cygwin environment...
 	CFLAGS="-mwindows -DWIN32 $CFLAGS"
 	CXXFLAGS="-mwindows -DWIN32 $CXXFLAGS"
@@ -766,5 +766,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.76 2002/06/28 21:04:35 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.77 2002/07/10 02:47:14 easysw Exp $".
 dnl
