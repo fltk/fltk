@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.20 2003/05/21 16:12:14 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.21 2003/07/12 04:20:48 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -258,17 +258,20 @@ int Fl::reload_scheme() {
 
     get_color(FL_GRAY, r, g, b);
 
+//    printf("FL_GRAY = 0x%02x 0x%02x 0x%02x\n", r, g, b);
+
     for (i = 0; i < 3; i ++) {
-      nr = levels[i] * r / 0xd8;
+      nr = levels[i] * r / 0xe8;
       if (nr > 255) nr = 255;
 
-      ng = levels[i] * g / 0xd8;
+      ng = levels[i] * g / 0xe8;
       if (ng > 255) ng = 255;
 
-      nb = levels[i] * b / 0xd8;
+      nb = levels[i] * b / 0xe8;
       if (nb > 255) nb = 255;
 
       sprintf(tile_cmap[i], "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
+//      puts(tile_cmap[i]);
     }
 
     tile.uncache();
@@ -320,5 +323,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.20 2003/05/21 16:12:14 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.21 2003/07/12 04:20:48 easysw Exp $".
 //

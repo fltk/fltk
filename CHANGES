@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- FLUID didn't keep the double/single buffer type for
+	  windows.
+	- FLTK didn't work with Xft2.
 	- OSX window resizing didn't work (STR #64)
 	- Fixed MacOS X shared library generation (STR #51)
 	- Several widgets defined their own size() method but

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.11 2003/05/04 21:58:59 easysw Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.12 2003/07/12 04:20:48 easysw Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
@@ -169,11 +169,18 @@ double fl_width(uchar c) {
 #if HAVE_GL
 // This call is used by opengl to get a bitmapped font.
 XFontStruct* fl_xxfont() {
+#  if XFT_MAJOR > 1
+  // kludge!
+  static XFontStruct* fixed = 0;
+  if (!fixed) fixed = XLoadQueryFont(fl_display, "fixed");
+  return fixed;
+#  else
   if (current_font->core) return current_font->u.core.font;
   static XftFont* xftfont;
   if (xftfont) XftFontClose (fl_display, xftfont);
   xftfont = fontopen(fl_fonts[fl_font_].name, true);
   return xftfont->u.core.font;
+#  endif // XFT_MAJOR > 1
 }
 #endif // HAVE_GL
 
@@ -240,5 +247,5 @@ void fl_draw(const char *str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.11 2003/05/04 21:58:59 easysw Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.12 2003/07/12 04:20:48 easysw Exp $"
 //
