@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.25 1999/02/22 21:42:54 mike Exp $"
+dnl# "$Id: configure.in,v 1.26 1999/02/25 19:47:31 carl Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -167,8 +167,8 @@ if test -n "$GXX"; then
     CFLAGS="-Wall $CFLAGS"
     CXXFLAGS="-Wall -Wno-return-type $CXXFLAGS"
     if test -z "$DEBUGFLAG"; then
-        CFLAGS="-O3 $CFLAGS"
-        CXXFLAGS="-O3 $CXXFLAGS"
+        CFLAGS="-O2 $CFLAGS"
+        CXXFLAGS="-O2 $CXXFLAGS"
     fi
 else
     case `(uname) 2>/dev/null` in
@@ -223,5 +223,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.25 1999/02/22 21:42:54 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.26 1999/02/25 19:47:31 carl Exp $".
 dnl#
