@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.14 1998/12/29 14:01:46 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.15 1998/12/29 14:06:08 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -711,10 +711,6 @@ void Fl_X::sendxjunk() {
     prop[0] = 1; // MWM_HINTS_FUNCTIONS
     prop[1] = 1|2|16; // MWM_FUNC_ALL | MWM_FUNC_RESIZE | MWM_FUNC_MAXIMIZE
   }
-  if (w->non_modal()) {
-    prop[0] = 1; // MWM_HINTS_FUNCTIONS
-    prop[1] |= 8; // turn off MWM_FUNC_MINIMIZE in 4Dwm
-  }
 
   if (w->flags() & Fl_Window::FL_FORCE_POSITION) {
     hints.flags |= USPosition;
@@ -802,5 +798,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.14 1998/12/29 14:01:46 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.15 1998/12/29 14:06:08 mike Exp $".
 //
