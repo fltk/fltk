@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.7
 
+	- fixed frame drawing of Fl_Text_Display (STR #762.2)
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
 	- Fl_Clock_Output::value() did not return the previously
