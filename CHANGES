@@ -1,7 +1,7 @@
 CHANGES SINCE FLTK 1.0.9
 
-	- Updated the makeinclude.in file to work with the Sun
-	  PRO compilers.
+	- Updated the configure script and makeinclude.in file
+	  to work with the Sun PRO compilers.
 
 	- Disabled the WIN32 async socket select code by default:
 	  it doesn't seem to work anymore...

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.17 2000/11/09 21:53:00 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.18 2000/11/20 15:12:39 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -63,7 +63,7 @@ if eval "test x$enable_shared = xyes"; then
   case $uname in
       SunOS* | UNIX_S*)
           DSONAME="libfltk.so.1"
-	  DSOCOMMAND="\$(CXX) -Wl,-h,libfltk.so.1 \$(LDLIBS) -G $DEBUGFLAG -o"
+	  DSOCOMMAND="\$(CXX) -h libfltk.so.1 \$(LDLIBS) -G $DEBUGFLAG -o"
 	  ;;
       HP-UX*)
           DSONAME="libfltk.sl.1"
@@ -278,5 +278,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.17 2000/11/09 21:53:00 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.18 2000/11/20 15:12:39 easysw Exp $".
 dnl
