@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6 1999/01/13 15:57:38 mike Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.1 1999/10/19 04:50:34 bill Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -75,6 +75,11 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   default: return 0;
   }
   int R,G,B; if (sscanf(p,pattern,&R,&G,&B) != 3) return 0;
+  switch(m) {
+  case 1: R *= 0x11; G *= 0x11; B *= 0x11; break;
+  case 3: R >>= 4; G >>= 4; B >>= 4; break;
+  case 4: R >>= 8; G >>= 8; B >>= 8; break;
+  }
   r = R; g = G; b = B;
   return 1;
 }
@@ -127,5 +132,5 @@ void Fl::get_system_colors()
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6 1999/01/13 15:57:38 mike Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.1 1999/10/19 04:50:34 bill Exp $".
 //
