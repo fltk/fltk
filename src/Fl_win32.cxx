@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.52 2004/12/03 03:14:16 easysw Exp $"
+// "$Id$"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -104,7 +104,7 @@
 // the sockets has pending data, etc.
 //
 
-#define WM_FLSELECT	(WM_USER+0x0400)
+#define WM_FLSELECT	(WM_APP+1)	// WM_APP is used for hide-window
 
 
 ////////////////////////////////////////////////////////////////
@@ -1244,5 +1244,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.52 2004/12/03 03:14:16 easysw Exp $".
+// End of "$Id$".
 //

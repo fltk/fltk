@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Fl::wait() could block on WIN32 if the window was
+	  deleted via Fl::delete_widget() (STR #679)
 	- Fl_Preferences::RootNode did not find the user's home
 	  directory on some non-US versions of Windows (STR
 	  #720)

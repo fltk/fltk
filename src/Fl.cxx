@@ -829,6 +829,8 @@ void Fl_Window::hide() {
   handle(FL_HIDE);
 
 #ifdef WIN32
+  // Send a message to myself so that I'll get out of the event loop...
+  PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) ReleaseDC(ip->xid,ip->private_dc);
   if (ip->xid == fl_window && fl_gc) {
     ReleaseDC(fl_window, fl_gc);
