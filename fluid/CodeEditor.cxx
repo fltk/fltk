@@ -332,6 +332,31 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
   free(style);
 }
 
+int CodeEditor::auto_indent(int, CodeEditor* e) {
+  if (e->buffer()->selected()) {
+    e->insert_position(e->buffer()->primary_selection()->start());
+    e->buffer()->remove_selection();
+  }
+
+  int pos = e->insert_position();
+  int start = e->line_start(pos);
+  char *text = e->buffer()->text_range(start, pos);
+  char *ptr;
+
+  for (ptr = text; isspace(*ptr); ptr ++);
+  *ptr = '\0';  
+  e->insert("\n");
+  if (*text) e->insert(text);
+  e->show_insert_position();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
+
+  free(text);
+
+  return 1;
+}
+
+// Create a CodeEditor widget...
 CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
   Fl_Text_Editor(X, Y, W, H, L) {
   buffer(new Fl_Text_Buffer);
@@ -353,8 +378,11 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
   free(text);
 
   mBuffer->add_modify_callback(style_update, this);
+  add_key_binding(FL_Enter, FL_TEXT_EDITOR_ANY_STATE,
+                  (Fl_Text_Editor::Key_Func)auto_indent);
 }
 
+// Destroy a CodeEditor widget...
 CodeEditor::~CodeEditor() {
   Fl_Text_Buffer *buf = mStyleBuffer;
 //  style_buffer(0);
