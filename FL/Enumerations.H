@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.26 2002/10/07 13:47:54 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.27 2002/10/15 20:45:58 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -381,7 +381,8 @@ enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
   FL_STENCIL	= 32,
   FL_RGB8	= 64,
   FL_MULTISAMPLE= 128,
-  FL_STEREO     = 256
+  FL_STEREO     = 256,
+  FL_FAKE_SINGLE = 512	// Fake single buffered windows using double-buffer
 };
 
 // damage masks
@@ -405,5 +406,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.26 2002/10/07 13:47:54 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.27 2002/10/15 20:45:58 easysw Exp $".
 //

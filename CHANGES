@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.1
 
+	- Some OpenGL implementations don't support single-
+	  buffered visuals. The Fl_Gl_Window class now emulates
+	  single-buffered windows using double-buffered
+	  windows.
 	- Added a workaround for a compiler bug in Borland C++
 	  that prevented Fl_Help_View.cxx from compiling.
 	- Checkmarks didn't scale properly; copied the 2.0 check

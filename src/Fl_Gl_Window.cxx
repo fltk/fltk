@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.12 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.13 2002/10/15 20:45:58 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -65,7 +65,16 @@ void Fl_Gl_Window::show() {
   if (!shown()) {
     if (!g) {
       g = Fl_Gl_Choice::find(mode_,alist);
-      if (!g) {Fl::error("Insufficient GL support"); return;}
+
+      if (!g && (mode_ & FL_DOUBLE) == FL_SINGLE) {
+        g = Fl_Gl_Choice::find(mode_ | FL_DOUBLE,alist);
+	if (g) mode_ |= FL_FAKE_SINGLE;
+      }
+
+      if (!g) {
+        Fl::error("Insufficient GL support");
+	return;
+      }
     }
 #if !defined(WIN32) && !defined(__APPLE__)
     Fl_X::make_xid(this, g->vis, g->colormap);
@@ -128,6 +137,10 @@ void Fl_Gl_Window::make_current() {
     RealizePalette(fl_gc);
   }
 #endif // USE_COLORMAP
+  if (mode_ & FL_FAKE_SINGLE) {
+    glDrawBuffer(GL_FRONT);
+    glReadBuffer(GL_FRONT);
+  }
   current_ = this;
 }
 
@@ -367,5 +380,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.12 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.13 2002/10/15 20:45:58 easysw Exp $".
 //
