@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN=RIGHT><A NAME=basics>2 - FLTK Basics</A></H1>
+<H1 ALIGN="RIGHT"><A NAME="basics">2 - FLTK Basics</A></H1>
 
 <P>This chapter teaches you the basics of compiling programs
 that use FLTK.</P>
@@ -37,13 +37,13 @@ int main(int argc, char **argv) {
 window:</P>
 
 <UL><PRE>
-Fl_Window *window = new <A href=Fl_Window.html#Fl_Window>Fl_Window</A>(300,180);
+Fl_Window *window = new <A href="Fl_Window.html#Fl_Window">Fl_Window</A>(300,180);
 </PRE></UL>
 
 <P>and a box with the &quot;Hello, World!&quot; string in it:</P>
 
 <UL><PRE>
-Fl_Box *box = new <A href=Fl_Box.html#Fl_Box>Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
+Fl_Box *box = new <A href="Fl_Box.html#Fl_Box">Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
 </PRE></UL>
 
 <P>Next, we set the type of box and the size, font, and style of the label:</P>
@@ -216,12 +216,21 @@ CC ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
 gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
 </PRE></UL>
 
-<P>The <TT>fltk-config</TT> script included with FLTK can be
+<P>As before, the <TT>fltk-config</TT> script included with FLTK can be
 used to get the options that are required by your linker:</P>
 
 <UL><PRE>
 CC ... `fltk-config --ldflags`
 </PRE></UL>
+
+<P>Finally, you can use the <TT>fltk-config</TT> script to
+compile a single source file as a FLTK program:
+
+<UL><PRE>
+fltk-config --compile filename.cpp
+</PRE></UL>
+
+<P>This will create an executable named <TT>filename</TT>.
 
 <H2>Compiling Programs with Microsoft Visual C++</H2>
 

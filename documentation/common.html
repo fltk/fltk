@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN=RIGHT><A NAME="common">3 - Common Widgets and Attributes</A></H1>
+<H1 ALIGN="RIGHT"><A NAME="common">3 - Common Widgets and Attributes</A></H1>
 
 <P>This chapter describes many of the widgets that are provided
 with FLTK and covers how to query and set the standard
@@ -536,7 +536,7 @@ button-&gt;when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 	<TT>callback()</TT> method of the widget can be a
 	pointer to the instance of your class.</P>
 
-	<UL><PRE>
+<PRE>
 class foo {
   void my_callback(Widget *);
   static void my_static_callback(Widget *w, foo *f) { f->my_callback(w); }
@@ -546,7 +546,7 @@ class foo {
 ...
 
 w->callback(my_static_callback, this);
-	</PRE></UL>
+</PRE>
 	</TD>
 </TR>
 </TABLE></CENTER>

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.11 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.12 2002/03/24 17:26:00 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -591,7 +591,7 @@ void down_box_cb(Fl_Choice* i, void *v) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Item whenmenu[] = {
-  {"never",0,0,(void*)ZERO_ENTRY},
+  {"Never",0,0,(void*)ZERO_ENTRY},
   {"Release",0,0,(void*)FL_WHEN_RELEASE},
   {"Changed",0,0,(void*)FL_WHEN_CHANGED},
   {"Enter key",0,0,(void*)FL_WHEN_ENTER_KEY},
@@ -1974,5 +1974,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.11 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.12 2002/03/24 17:26:00 easysw Exp $".
 //
