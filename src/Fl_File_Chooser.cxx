@@ -3,7 +3,7 @@
 #include "../FL/Fl_File_Chooser.H"
 
 inline void Fl_File_Chooser::cb_window_i(Fl_Window*, void*) {
-  fileName->value(directory_);
+  fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();

@@ -1,5 +1,5 @@
 //
-// "$Id: file_chooser.cxx,v 1.4.2.3.2.8 2002/07/14 18:19:00 easysw Exp $"
+// "$Id: file_chooser.cxx,v 1.4.2.3.2.9 2002/11/20 15:49:24 easysw Exp $"
 //
 // File chooser test program.
 //
@@ -323,6 +323,9 @@ show_callback(void)
 
     for (i = 1; i <= count; i ++)
     {
+      if (!fc->value(i))
+        break;
+
       fl_filename_relative(relative, sizeof(relative), fc->value(i));
 
       files->add(relative,
@@ -335,5 +338,5 @@ show_callback(void)
 
 
 //
-// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.8 2002/07/14 18:19:00 easysw Exp $".
+// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.9 2002/11/20 15:49:24 easysw Exp $".
 //
