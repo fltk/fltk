@@ -40,25 +40,25 @@ lay this out in fluid, using the fluid browser to select each child
 group and resize them until the tabs look the way you want them to. </P>
 <H3>Methods</H3>
 <UL>
-<LI><A href=#Fl_Tab.Fl_Tab>Fl_Tab</A></LI>
-<LI><A href=#Fl_Tab.~Fl_Tab>~Fl_Tab</A></LI>
-<LI><A href=#Fl_Tab.value>value</A></LI>
+<LI><A href=#Fl_Tabs.Fl_Tabs>Fl_Tabs</A></LI>
+<LI><A href=#Fl_Tabs.~Fl_Tabs>~Fl_Tabs</A></LI>
+<LI><A href=#Fl_Tabs.value>value</A></LI>
 </UL>
-<H4><A name=Fl_Tab.Fl_Tab>Fl_Tab::Fl_Tab(int x, int y, int w, int h, 
+<H4><A name=Fl_Tabs.Fl_Tabs>Fl_Tabs::Fl_Tabs(int x, int y, int w, int h, 
 const char *label = 0)</A></H4>
- Creates a new <TT>Fl_Tab</TT> widget using the given position, size, 
+ Creates a new <TT>Fl_Tabs</TT> widget using the given position, size, 
 and label string. The default boxtype is <TT>FL_THIN_UP_BOX</TT>. 
 <P>Use <A href=Fl_Group.html#Fl_Group.add><TT>add(Fl_Widget *)</TT></A>
  to add each child (which is probably itself a <TT>Fl_Group</TT>).  The 
 children should be sized to stay away from the top or bottom edge of 
 the <TT>Fl_Tabs</TT>, which is where the tabs are drawn. </P>
-<H4><A name=Fl_Tab.~Fl_Tab>virtual Fl_Tab::~Fl_Tab()</A></H4>
+<H4><A name=Fl_Tabs.~Fl_Tabs>virtual Fl_Tabs::~Fl_Tabs()</A></H4>
  The destructor <I>also deletes all the children</I>. This allows a 
 whole tree to be deleted at once, without having to keep a pointer to 
 all the children in the user code. A kludge has been done so the <TT>
-Fl_Tab</TT> and all of it's children can be automatic (local) 
-variables, but you must declare the <TT>Fl_Tab</TT><I>first</I>, so 
+Fl_Tabs</TT> and all of it's children can be automatic (local) 
+variables, but you must declare the <TT>Fl_Tabs</TT><I>first</I>, so 
 that it is destroyed last. 
-<H4><A name=Fl_Tab.value>Fl_Widget* Fl_Tabs::value() const
+<H4><A name=Fl_Tabs.value>Fl_Widget* Fl_Tabs::value() const
 <BR> int Fl_Tabs::value(Fl_Widget*)</A></H4>
  Gets or sets the currently visible widget/tab. </BODY></HTML>
