@@ -470,7 +470,8 @@ public:
 
   void open();
 
-  void fix_overlay();	// update the bounding box, etc
+  void fix_overlay();			// Update the bounding box, etc
+  uchar *read_image(int &ww, int &hh);	// Read an image of the window
 
   virtual void write_properties();
   virtual void read_property(const char *);

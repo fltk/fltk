@@ -31,6 +31,7 @@
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_message.H>
 #include <FL/fl_draw.H>
+#include <FL/x.H>
 #include <FL/Fl_Menu_Item.H>
 #include "Fl_Widget_Type.h"
 #include "undo.h"
@@ -247,6 +248,7 @@ public:
   int handle(int);
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {Fl_Group::current(0);}
   void resize(int,int,int,int);
+  uchar *read_image(int &ww, int &hh);
 };
 void Overlay_Window::draw() {
   const int CHECKSIZE = 8;
@@ -262,6 +264,36 @@ void Overlay_Window::draw() {
       }
   }
   Fl_Overlay_Window::draw();
+}
+
+extern Fl_Window *main_window;
+
+// Read an image of the overlay window
+uchar *Overlay_Window::read_image(int &ww, int &hh) {
+  // Create an off-screen buffer for the window...
+  main_window->make_current();
+
+  ww = w();
+  hh = h();
+
+  Fl_Offscreen offscreen = fl_create_offscreen(ww, hh);
+  uchar *pixels;
+
+  // Redraw the window into the offscreen buffer...
+  fl_begin_offscreen(offscreen);
+
+  redraw();
+  draw();
+
+  // Read the screen image...
+  pixels = fl_read_image(0, 0, 0, ww, hh);
+
+  fl_end_offscreen();
+
+  // Cleanup and return...
+  fl_delete_offscreen(offscreen);
+
+  return pixels;
 }
 
 void Overlay_Window::draw_overlay() {
@@ -340,6 +372,15 @@ void Fl_Window_Type::open() {
   w->image(Fl::scheme_bg_);
   w->size_range(gridx, gridy, Fl::w(), Fl::h(), gridx, gridy, 0);
 }
+
+// Read an image of the window
+uchar *Fl_Window_Type::read_image(int &ww, int &hh) {
+  Overlay_Window *w = (Overlay_Window *)o;
+
+  // Read the screen image...
+  return (w->read_image(ww, hh));
+}
+
 
 // control panel items:
 
@@ -932,7 +973,7 @@ extern Fl_Menu_Item Main_Menu[];
 
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
-  Main_Menu[38].label("Hide O&verlays");
+  Main_Menu[40].label("Hide O&verlays");
   overlays_invisible = 0;
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
@@ -947,8 +988,8 @@ void redraw_overlays() {
 void toggle_overlays(Fl_Widget *,void *) {
   overlays_invisible = !overlays_invisible;
 
-  if (overlays_invisible) Main_Menu[38].label("Show O&verlays");
-  else Main_Menu[38].label("Hide O&verlays");
+  if (overlays_invisible) Main_Menu[40].label("Show O&verlays");
+  else Main_Menu[40].label("Hide O&verlays");
 
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)
     if (o->is_window()) {

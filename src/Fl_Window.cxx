@@ -92,6 +92,7 @@ int Fl_Window::y_root() const {
 
 void Fl_Window::draw() {
   const char *savelabel = label();
+  uchar saveflags = flags();
   int savex = x(); x(0);
   int savey = y(); y(0);
   // Make sure we don't draw the window title in the window background...
@@ -99,13 +100,18 @@ void Fl_Window::draw() {
   Fl_Group::draw();
   // Restore the label...
   Fl_Widget::label(savelabel);
+  set_flag(saveflags);
   y(savey);
   x(savex);
 }
 
 void Fl_Window::label(const char *name) {label(name, iconlabel());}
 
-void Fl_Window::iconlabel(const char *iname) {label(label(), iname);}
+void Fl_Window::iconlabel(const char *iname) {
+  uchar saveflags = flags();
+  label(label(), iname);
+  set_flag(saveflags);
+}
 
 // the Fl::atclose pointer is provided for back compatability.  You
 // can now just change the callback for the window instead.

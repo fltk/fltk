@@ -2,6 +2,11 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- fl_not_clipped() incorrectly used the current window
+	  dimensions for gross clipping, which interfered with
+	  off-screen rendering.
+	- Fl_Window::draw() and Fl_Window::iconlabel() could leak
+	  memory if copy_label() was used on the window.
 	- fl_shortcut_label() now shows letter shortcuts in
 	  uppercase, e.g. "Ctrl+N" instead of "Ctrl+n" to be
 	  consistent with other toolkits.

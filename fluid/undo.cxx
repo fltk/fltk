@@ -41,8 +41,8 @@
 extern Fl_Preferences	fluid_prefs;	// FLUID preferences
 extern Fl_Menu_Item	Main_Menu[];	// Main menu
 
-#define UNDO_ITEM	23		// Undo menu item index
-#define REDO_ITEM	24		// Redo menu item index
+#define UNDO_ITEM	25		// Undo menu item index
+#define REDO_ITEM	26		// Redo menu item index
 
 
 //
@@ -67,7 +67,7 @@ static char *undo_filename(int level, char *buf, int bufsize) {
 
   if (!undo_path[0]) fluid_prefs.getUserdataPath(undo_path, sizeof(undo_path));
 
-  snprintf(buf, bufsize, "%s/undo_%d_%d.fl", undo_path, getpid(), level);
+  snprintf(buf, bufsize, "%sundo_%d_%d.fl", undo_path, getpid(), level);
   return buf;
 }
 

@@ -47,7 +47,7 @@ extern "C"
 #  else
 #    include <libpng/png.h>
 #  endif // HAVE_PNG_H
-#endif // HAVE_LIBPNG ** HAVE_LIBZ
+#endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
 

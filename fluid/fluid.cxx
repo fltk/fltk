@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "../src/flstring.h"
 #include "alignment_panel.h"
@@ -60,6 +61,18 @@
 #include "undo.h"
 
 #include "Fl_Type.h"
+
+extern "C"
+{
+#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
+#  include <zlib.h>
+#  ifdef HAVE_PNG_H
+#    include <png.h>
+#  else
+#    include <libpng/png.h>
+#  endif // HAVE_PNG_H
+#endif // HAVE_LIBPNG && HAVE_LIBZ
+}
 
 static Fl_Help_Dialog *help_dialog = 0;
 
@@ -145,12 +158,11 @@ void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
   if (v || !c || !*c) {
     fl_ok = "Save";
-    c=fl_file_chooser("Save to:", "FLUID Files (*.f[ld])", c);
+    c=fl_file_chooser("Save To:", "FLUID Files (*.f[ld])", c);
     fl_ok = "OK";
     if (!c) return;
 
-    if (!access(c, 0))
-    {
+    if (!access(c, 0)) {
       const char *basename;
       if ((basename = strrchr(c, '/')) != NULL)
         basename ++;
@@ -169,11 +181,110 @@ void save_cb(Fl_Widget *, void *v) {
     set_filename(c);
   }
   if (!write_file(c)) {
-    fl_message("Error writing %s: %s", c, strerror(errno));
+    fl_alert("Error writing %s: %s", c, strerror(errno));
     return;
   }
   set_modflag(0);
   undo_save = undo_current;
+}
+
+void save_template_cb(Fl_Widget *, void *) {
+  const char *c = fl_input("Template Name:");
+  if (!c) return;
+
+  char filename[1024];
+  fluid_prefs.getUserdataPath(filename, sizeof(filename));
+
+  strlcat(filename, "templates", sizeof(filename));
+  if (access(filename, 0)) mkdir(filename, 0777);
+
+  strlcat(filename, "/", sizeof(filename));
+  strlcat(filename, c, sizeof(filename));
+
+  char *ext = filename + strlen(filename);
+  if (ext >= (filename + sizeof(filename) - 5)) {
+    fl_alert("The template name \"%s\" is too long!", c);
+    return;
+  }
+
+  strcpy(ext, ".fl");
+
+//  printf("save_template_cb: template filename=\"%s\"\n", filename);
+
+  if (!access(filename, 0)) {
+    if (fl_choice("The template \"%s\" already exists.\n"
+                  "Do you want to replace it?", "Cancel",
+		  "Replace", NULL, c) == 0) return;
+  }
+
+  if (!write_file(filename)) {
+    fl_alert("Error writing %s: %s", filename, strerror(errno));
+    return;
+  }
+
+#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
+  // Get the screenshot, if any...
+  Fl_Type *t;
+
+  for (t = Fl_Type::first; t; t = t->next) {
+    // Find the first window...
+    if (t->is_window()) break;
+  }
+
+  if (!t) return;
+
+  // Grab a screenshot...
+  Fl_Window_Type *wt = (Fl_Window_Type *)t;
+  uchar *pixels;
+  int w, h;
+
+  if ((pixels = wt->read_image(w, h)) == NULL) return;
+
+//  printf("save_template_cb: pixels=%p, w=%d, h=%d...\n", pixels, w, h);
+
+  // Save to a PNG file...
+  strcpy(ext, ".png");
+
+//  printf("save_template_cb: screenshot filename=\"%s\"\n", filename);
+
+  FILE *fp;
+
+  if ((fp = fopen(filename, "wb")) == NULL) {
+    delete[] pixels;
+    fl_alert("Error writing %s: %s", filename, strerror(errno));
+    return;
+  }
+
+  png_structp pptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  png_infop iptr = png_create_info_struct(pptr);
+  png_bytep ptr = (png_bytep)pixels;
+
+  png_init_io(pptr, fp);
+  png_set_IHDR(pptr, iptr, w, h, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+               PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+  png_set_sRGB(pptr, iptr, PNG_sRGB_INTENT_PERCEPTUAL);
+
+  png_write_info(pptr, iptr);
+
+  for (int i = h; i > 0; i --, ptr += w * 3) {
+    png_write_row(pptr, ptr);
+  }
+
+  png_write_end(pptr, iptr);
+  png_destroy_write_struct(&pptr, &iptr);
+
+  fclose(fp);
+
+#  if 0 // The original PPM output code...
+  strcpy(ext, ".ppm");
+  fp = fopen(filename, "wb");
+  fprintf(fp, "P6\n%d %d 255\n", w, h);
+  fwrite(pixels, w * h, 3, fp);
+  fclose(fp);
+#  endif // 0
+
+  delete[] pixels;
+#endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
 void exit_cb(Fl_Widget *,void *) {
@@ -607,7 +718,7 @@ Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
   {"&New", FL_CTRL+'n', new_cb, 0},
   {"&Open...", FL_CTRL+'o', open_cb, 0},
-  {"Open &Previous",0,0,0,FL_SUBMENU},
+  {"Open Pre&vious",0,0,0,FL_SUBMENU},
     {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},
     {relative_history[1], FL_CTRL+'1', open_history_cb, absolute_history[1]},
     {relative_history[2], FL_CTRL+'2', open_history_cb, absolute_history[2]},
@@ -622,6 +733,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Insert...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
   {"&Save", FL_CTRL+'s', save_cb, 0},
   {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
+  {"Save &Template...", 0, save_template_cb, (void*)2, FL_MENU_DIVIDER},
+  {"&Print...", FL_CTRL+'p', 0},
   {"Write &Code...", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
   {"&Quit", FL_CTRL+'q', exit_cb},
@@ -721,10 +834,10 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 
   if (widgetbin_panel->visible()) {
     widgetbin_panel->hide();
-    Main_Menu[39].label("Show Widget &Bin...");
+    Main_Menu[41].label("Show Widget &Bin...");
   } else {
     widgetbin_panel->show();
-    Main_Menu[39].label("Hide Widget &Bin");
+    Main_Menu[41].label("Hide Widget &Bin");
   }
 }
 
