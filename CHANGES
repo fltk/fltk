@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- Fixed a bug in the file chooser when entering an
+	  absolute path.
 	- Back-ported some FLTK 2.0 tooltip changes to eliminate
 	  erroneous tooltip display.
 	- MacOS windows were resizable, even when size_range

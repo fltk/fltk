@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.24 2002/10/28 15:00:56 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.25 2002/10/29 20:07:34 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -522,17 +522,15 @@ Fl_File_Chooser::fileNameCB()
     if (slash != NULL)
     {
       // Yes, change directories if necessary...
-      if (slash > pathname)		// Special case for "/"
-        *slash++ = '\0';
-      else
-        slash++;
-
+      *slash++ = '\0';
       filename = slash;
 
 #if defined(WIN32) || defined(__EMX__)
-      if (strcasecmp(pathname, directory_)) {
+      if (strcasecmp(pathname, directory_) &&
+          (pathname[0] || strcasecmp("/", directory_))) {
 #else
-      if (strcmp(pathname, directory_)) {
+      if (strcmp(pathname, directory_) &&
+          (pathname[0] || strcasecmp("/", directory_))) {
 #endif // WIN32 || __EMX__
         int p = fileName->position();
 	int m = fileName->mark();
@@ -1149,5 +1147,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.24 2002/10/28 15:00:56 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.25 2002/10/29 20:07:34 easysw Exp $".
 //
