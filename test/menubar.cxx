@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.1 1999/04/26 06:45:29 bill Exp $"
+// "$Id: menubar.cxx,v 1.6.2.2 2000/01/16 04:30:39 bill Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -64,7 +64,7 @@ Fl_Menu_Item menutable[] = {
     {"shortcut",FL_ALT+FL_SHIFT+'a'},
     {"shortcut",FL_ALT+FL_CTRL+'a'},
     {"shortcut",FL_ALT+FL_SHIFT+FL_CTRL+'a', 0,0, FL_MENU_DIVIDER},
-  {"shortcut",'\r'/*FL_Enter*/},
+    {"shortcut",'\r'/*FL_Enter*/},
     {"shortcut",FL_CTRL+FL_Enter, 0,0, FL_MENU_DIVIDER},
     {"shortcut",FL_F+1},
     {"shortcut",FL_SHIFT+FL_F+1},
@@ -201,6 +201,7 @@ int main(int argc, char **argv) {
   Fl_Menu_Button mb(0,0,WIDTH,400,"&popup");
   mb.type(Fl_Menu_Button::POPUP3);
   mb.menu(menutable);
+  mb.remove(1); // delete the "File" submenu
   mb.callback(test_cb);
   menus[3] = &mb;
   Fl_Box b(200,200,200,100,"Press right button\nfor a pop-up menu");
@@ -214,5 +215,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.1 1999/04/26 06:45:29 bill Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.2 2000/01/16 04:30:39 bill Exp $".
 //

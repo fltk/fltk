@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.13 1999/10/23 06:19:59 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.14 2000/01/16 04:30:36 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -573,7 +573,11 @@ void Fl_Window::hide() {
 
 #ifdef WIN32
   if (x->private_dc) ReleaseDC(x->xid,x->private_dc);
-  if (x->xid == fl_window) fl_GetDC(0); // releases dc belonging to window
+  if (x->xid == fl_window && fl_gc) {
+    ReleaseDC(fl_window, fl_gc);
+    fl_window = (HWND)-1;
+    fl_gc = 0;
+  }
 #else
   if (x->region) XDestroyRegion(x->region);
 #endif
@@ -700,5 +704,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.13 1999/10/23 06:19:59 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.14 2000/01/16 04:30:36 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.4 1999/12/29 03:14:37 mike Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.5 2000/01/16 04:30:37 bill Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -106,7 +106,7 @@ int Fl_Scrollbar::handle(int event) {
   case FL_LEAVE:
     return 1;
   case FL_RELEASE:
-      damage(FL_DAMAGE_EXPOSE);
+      damage(FL_DAMAGE_ALL);
     if (pushed_) {
       Fl::remove_timeout(timeout_cb, this);
       pushed_ = 0;
@@ -120,7 +120,7 @@ int Fl_Scrollbar::handle(int event) {
       handle_push();
       Fl::add_timeout(INITIALREPEAT, timeout_cb, this);
       increment_cb();
-      damage(FL_DAMAGE_EXPOSE);
+      damage(FL_DAMAGE_ALL);
       return 1;
     }
     return Fl_Slider::handle(event, X,Y,W,H);
@@ -190,9 +190,9 @@ void Fl_Scrollbar::draw() {
     if (W < 3*H) {Fl_Slider::draw(X,Y,W,H); return;}
     Fl_Slider::draw(X+H,Y,W-2*H,H);
     if (damage()&FL_DAMAGE_ALL) {
-      draw_box((pushed_&1) ? down(slider()) : slider(),
+      draw_box((pushed_==1) ? down(slider()) : slider(),
 	       X, Y, H, H, selection_color());
-      draw_box((pushed_&2) ? down(slider()) : slider(),
+      draw_box((pushed_==2) ? down(slider()) : slider(),
 		  X+W-H, Y, H, H, selection_color());
       if (active_r())
         fl_color(labelcolor());
@@ -210,9 +210,9 @@ void Fl_Scrollbar::draw() {
     if (H < 3*W) {Fl_Slider::draw(X,Y,W,H); return;}
     Fl_Slider::draw(X,Y+W,W,H-2*W);
     if (damage()&FL_DAMAGE_ALL) {
-      draw_box((pushed_&1) ? down(slider()) : slider(),
+      draw_box((pushed_==1) ? down(slider()) : slider(),
 	       X, Y, W, W, selection_color());
-      draw_box((pushed_&2) ? down(slider()) : slider(),
+      draw_box((pushed_==2) ? down(slider()) : slider(),
 	       X, Y+H-W, W, W, selection_color());
       if (active_r())
         fl_color(labelcolor());
@@ -241,5 +241,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.4 1999/12/29 03:14:37 mike Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.5 2000/01/16 04:30:37 bill Exp $".
 //
