@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_add_idle.cxx,v 1.4.2.4 2000/06/16 07:28:03 bill Exp $"
+// "$Id: Fl_add_idle.cxx,v 1.4.2.5 2000/09/05 17:15:48 spitzak Exp $"
 //
 // Idle routine support for the Fast Light Tool Kit (FLTK).
 //
@@ -55,6 +55,7 @@ void Fl::add_idle(void (*cb)(void*), void* data) {
   p->data = data;
   if (first) {
     last->next = p;
+    last = p;
     p->next = first;
   } else {
     first = last = p;
@@ -90,5 +91,5 @@ void Fl::remove_idle(void (*cb)(void*), void* data) {
 }
 
 //
-// End of "$Id: Fl_add_idle.cxx,v 1.4.2.4 2000/06/16 07:28:03 bill Exp $".
+// End of "$Id: Fl_add_idle.cxx,v 1.4.2.5 2000/09/05 17:15:48 spitzak Exp $".
 //
