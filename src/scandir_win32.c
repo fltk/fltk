@@ -1,9 +1,9 @@
 /*
- * "$Id: scandir_win32.c,v 1.11.2.4.2.8 2004/02/26 03:06:41 easysw Exp $"
+ * "$Id: scandir_win32.c,v 1.11.2.4.2.9 2004/04/11 04:39:00 easysw Exp $"
  *
  * WIN32 scandir function for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2003 by Bill Spitzak and others.
+ * Copyright 1998-2004 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -104,5 +104,5 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
 #endif
 
 /*
- * End of "$Id: scandir_win32.c,v 1.11.2.4.2.8 2004/02/26 03:06:41 easysw Exp $".
+ * End of "$Id: scandir_win32.c,v 1.11.2.4.2.9 2004/04/11 04:39:00 easysw Exp $".
  */

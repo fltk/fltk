@@ -1,9 +1,9 @@
 //
-// "$Id: fl_show_input.H,v 1.4.2.3.2.2 2003/01/30 21:40:46 easysw Exp $"
+// "$Id: fl_show_input.H,v 1.4.2.3.2.3 2004/04/11 04:38:55 easysw Exp $"
 //
 // Standard input dialog header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -26,5 +26,5 @@
 #include "fl_ask.H"
 
 //
-// End of "$Id: fl_show_input.H,v 1.4.2.3.2.2 2003/01/30 21:40:46 easysw Exp $".
+// End of "$Id: fl_show_input.H,v 1.4.2.3.2.3 2004/04/11 04:38:55 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_read_image_mac.cxx,v 1.1.2.4 2003/09/08 18:08:04 easysw Exp $"
+// "$Id: fl_read_image_mac.cxx,v 1.1.2.5 2004/04/11 04:39:00 easysw Exp $"
 //
 // WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -116,5 +116,5 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
 
 //
-// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.4 2003/09/08 18:08:04 easysw Exp $".
+// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.5 2004/04/11 04:39:00 easysw Exp $".
 //

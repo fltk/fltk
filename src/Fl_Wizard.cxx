@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Wizard.cxx,v 1.1.2.6 2003/11/01 01:07:07 easysw Exp $"
+// "$Id: Fl_Wizard.cxx,v 1.1.2.7 2004/04/11 04:38:58 easysw Exp $"
 //
 // Fl_Wizard widget routines.
 //
-// Copyright 1997-2003 by Easy Software Products.
+// Copyright 1997-2004 by Easy Software Products.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -204,5 +204,5 @@ Fl_Wizard::value(Fl_Widget *kid)
 
 
 //
-// End of "$Id: Fl_Wizard.cxx,v 1.1.2.6 2003/11/01 01:07:07 easysw Exp $".
+// End of "$Id: Fl_Wizard.cxx,v 1.1.2.7 2004/04/11 04:38:58 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.40 2003/09/05 12:24:31 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.41 2004/04/11 04:39:00 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2003 by Bill Spitzak and others.
+# Copyright 1998-2004 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -372,5 +372,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.40 2003/09/05 12:24:31 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.41 2004/04/11 04:39:00 easysw Exp $".
 #

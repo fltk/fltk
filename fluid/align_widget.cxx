@@ -1,9 +1,9 @@
 //
-// "$Id: align_widget.cxx,v 1.1.2.6 2004/04/06 18:32:52 easysw Exp $"
+// "$Id: align_widget.cxx,v 1.1.2.7 2004/04/11 04:38:56 easysw Exp $"
 //
 // alignment code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -412,6 +412,6 @@ void align_widget_cb(Fl_Widget*, long how)
 
 
 //
-// End of "$Id: align_widget.cxx,v 1.1.2.6 2004/04/06 18:32:52 easysw Exp $".
+// End of "$Id: align_widget.cxx,v 1.1.2.7 2004/04/11 04:38:56 easysw Exp $".
 //
 

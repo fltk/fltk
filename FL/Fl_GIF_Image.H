@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_GIF_Image.H,v 1.1.2.4 2003/01/30 21:39:10 easysw Exp $"
+// "$Id: Fl_GIF_Image.H,v 1.1.2.5 2004/04/11 04:38:54 easysw Exp $"
 //
 // GIF image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -37,5 +37,5 @@ class FL_EXPORT Fl_GIF_Image : public Fl_Pixmap {
 #endif
 
 //
-// End of "$Id: Fl_GIF_Image.H,v 1.1.2.4 2003/01/30 21:39:10 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.H,v 1.1.2.5 2004/04/11 04:38:54 easysw Exp $".
 //

@@ -1,7 +1,7 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.11.2.4 2003/01/30 21:43:28 easysw Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.11.2.5 2004/04/11 04:38:59 easysw Exp $"
  *
- * Copyright 1998-2003 by Bill Spitzak and others.
+ * Copyright 1998-2004 by Bill Spitzak and others.
  *
  * fl_call_main() calls main() for you Windows people.  Needs to be done in C
  * because Borland C++ won't let you call main() from C++.
@@ -100,6 +100,6 @@ static void dummy(void) {dummy();}
 #endif
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.11.2.4 2003/01/30 21:43:28 easysw Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.11.2.5 2004/04/11 04:38:59 easysw Exp $".
  */
 

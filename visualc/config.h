@@ -1,9 +1,9 @@
 /*
- * "$Id: config.h,v 1.5.2.5.2.11 2004/04/10 21:35:44 easysw Exp $"
+ * "$Id: config.h,v 1.5.2.5.2.12 2004/04/11 04:39:01 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
- * Copyright 1998-2003 by Bill Spitzak and others.
+ * Copyright 1998-2004 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -184,5 +184,5 @@
 
 
 /*
- * End of "$Id: config.h,v 1.5.2.5.2.11 2004/04/10 21:35:44 easysw Exp $".
+ * End of "$Id: config.h,v 1.5.2.5.2.12 2004/04/11 04:39:01 easysw Exp $".
  */

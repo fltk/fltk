@@ -1,7 +1,7 @@
 CHANGES IN FLTK 1.1.5rc1
 
-	- Documentation updates (STR #245, STR #250, STR #277,
-	  STR #281, STR #328, STR #338)
+	- Documentation updates (STR #186, STR #245, STR #250,
+	  STR #277, STR #281, STR #328, STR #338)
 	- fl_scroll() did not handle scrolling from off-screen on
 	  WIN32 (STR #315)
 	- Fl_File_Chooser did not allow manual entry of a drive
@@ -80,12 +80,11 @@ CHANGES IN FLTK 1.1.5rc1
 	  keyboard navigation (STR #228)
 	- Fl_File_Browser::load() didn't handle a NULL directory
 	  name (STR #266)
-	- 64-bit library fixes (STR #261, )
+	- 64-bit library fixes (STR #261)
 	- The Fl_Valuator::format() function did not limit the
 	  size of the number buffer (STR #268)
 	- The keypad Enter key works as the normal Enter/Return
 	  key in common widgets (STR #191)
-	- Doco fixes (STR #186)
 	- Fixed some OS/2-specific build problems (STR #185 and
 	  #197)
 	- Calling Fl_Text_Display::buffer() with the same buffer

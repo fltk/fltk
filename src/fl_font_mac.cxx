@@ -1,9 +1,9 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.14 2003/05/26 14:19:50 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.15 2004/04/11 04:39:00 easysw Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -195,5 +195,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.14 2003/05/26 14:19:50 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.15 2004/04/11 04:39:00 easysw Exp $".
 //

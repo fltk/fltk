@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Text_Buffer.H,v 1.3.2.8 2003/01/30 21:40:17 easysw Exp $"
+// "$Id: Fl_Text_Buffer.H,v 1.3.2.9 2004/04/11 04:38:54 easysw Exp $"
 //
 // Header file for Fl_Text_Buffer class.
 //
-// Copyright 2001-2003 by Bill Spitzak and others.
+// Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -253,5 +253,5 @@ class FL_EXPORT Fl_Text_Buffer {
 #endif
 
 //
-// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.8 2003/01/30 21:40:17 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.9 2004/04/11 04:38:54 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: tile.cxx,v 1.4.2.3.2.3 2003/01/30 21:46:06 easysw Exp $"
+// "$Id: tile.cxx,v 1.4.2.3.2.4 2004/04/11 04:39:01 easysw Exp $"
 //
 // Tile test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -86,5 +86,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: tile.cxx,v 1.4.2.3.2.3 2003/01/30 21:46:06 easysw Exp $".
+// End of "$Id: tile.cxx,v 1.4.2.3.2.4 2004/04/11 04:39:01 easysw Exp $".
 //

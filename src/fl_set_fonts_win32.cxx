@@ -1,9 +1,9 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.10 2003/03/09 00:22:18 spitzak Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.11 2004/04/11 04:39:00 easysw Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -143,5 +143,5 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.10 2003/03/09 00:22:18 spitzak Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.11 2004/04/11 04:39:00 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.9 2003/09/17 20:22:12 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.10 2004/04/11 04:38:57 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
-// Copyright 1997-2003 by Easy Software Products.
+// Copyright 1997-2004 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
 //
 // This library is free software; you can redistribute it and/or
@@ -122,5 +122,5 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.9 2003/09/17 20:22:12 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.10 2004/04/11 04:38:57 easysw Exp $".
 //

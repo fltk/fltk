@@ -1,9 +1,9 @@
 //
-// "$Id: win32.H,v 1.15.2.3.2.11 2003/06/01 00:31:31 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.12 2004/04/11 04:38:55 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -138,5 +138,5 @@ inline void fl_open_callback(void (*)(const char *)) {}
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: win32.H,v 1.15.2.3.2.11 2003/06/01 00:31:31 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.12 2004/04/11 04:38:55 easysw Exp $".
 //

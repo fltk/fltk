@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.18 2003/06/05 21:14:18 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.19 2004/04/11 04:38:57 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -414,5 +414,5 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.18 2003/06/05 21:14:18 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.19 2004/04/11 04:38:57 easysw Exp $".
 //

@@ -1,12 +1,12 @@
 //
-// "$Id: glpuzzle.cxx,v 1.8.2.5.2.3 2003/01/30 21:45:38 easysw Exp $"
+// "$Id: glpuzzle.cxx,v 1.8.2.5.2.4 2004/04/11 04:39:01 easysw Exp $"
 //
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
 // This is a GLUT demo program to demonstrate fltk's GLUT emulation.
 // Search for "fltk" to find all the changes
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1484,5 +1484,5 @@ main(int argc, char **argv)
 #endif // added for fltk's distribution
 
 //
-// End of "$Id: glpuzzle.cxx,v 1.8.2.5.2.3 2003/01/30 21:45:38 easysw Exp $".
+// End of "$Id: glpuzzle.cxx,v 1.8.2.5.2.4 2004/04/11 04:39:01 easysw Exp $".
 //

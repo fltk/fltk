@@ -1,9 +1,9 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.12 2003/07/18 17:43:30 matthiaswm Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.13 2004/04/11 04:39:00 easysw Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -201,5 +201,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.12 2003/07/18 17:43:30 matthiaswm Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.13 2004/04/11 04:39:00 easysw Exp $".
 //

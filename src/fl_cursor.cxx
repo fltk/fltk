@@ -1,9 +1,9 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.6.2.9 2003/04/03 04:28:15 matthiaswm Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.6.2.10 2004/04/11 04:38:59 easysw Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2003 by Bill Spitzak and others.
+// Copyright 1998-2004 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -312,5 +312,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.9 2003/04/03 04:28:15 matthiaswm Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.10 2004/04/11 04:38:59 easysw Exp $".
 //
