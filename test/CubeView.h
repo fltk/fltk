@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.h,v 1.3 1999/03/04 20:26:00 mike Exp $"
+// "$Id: CubeView.h,v 1.4 1999/03/10 16:40:19 mike Exp $"
 //
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -36,9 +36,6 @@
 #endif /* HAVE_GL */
 
 #include <stdlib.h>
-
-// shorthand to save some bits.
-#define v3f(x) glVertex3fv(x)
 
 #if HAVE_GL
 class CubeView : public Fl_Gl_Window {
@@ -122,5 +119,5 @@ private:
 #endif
 
 //
-// End of "$Id: CubeView.h,v 1.3 1999/03/04 20:26:00 mike Exp $".
+// End of "$Id: CubeView.h,v 1.4 1999/03/10 16:40:19 mike Exp $".
 //

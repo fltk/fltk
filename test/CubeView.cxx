@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.cxx,v 1.3 1999/03/04 20:26:00 mike Exp $"
+// "$Id: CubeView.cxx,v 1.4 1999/03/10 16:40:19 mike Exp $"
 //
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
@@ -57,25 +57,88 @@ CubeView::CubeView(int x,int y,int w,int h,const char *l)
 #endif /* !HAVE_GL */
 };
 
-// The color used for the edges of the bounding cube.
-#define CUBECOLOR 255,255,255,255
-
 #if HAVE_GL
 void CubeView::drawCube() {
 /* Draw a colored cube */
-    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0); v3f(boxv1); v3f(boxv2); v3f(boxv3); glEnd();
-    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv5); v3f(boxv4); v3f(boxv7); v3f(boxv6); glEnd();
-    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0); v3f(boxv4); v3f(boxv5); v3f(boxv1); glEnd();
-    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv2); v3f(boxv6); v3f(boxv7); v3f(boxv3); glEnd();
-    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0); v3f(boxv3); v3f(boxv7); v3f(boxv4); glEnd();
-    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv1); v3f(boxv5); v3f(boxv6); v3f(boxv2); glEnd();
-#define ALPHA 128
-    glBegin(GL_QUADS); glColor4ub(  0,   0, 255, ALPHA); v3f(boxv0); v3f(boxv1); v3f(boxv2); v3f(boxv3); glEnd();
-    glBegin(GL_QUADS); glColor4ub(255, 255,   0, ALPHA); v3f(boxv0); v3f(boxv4); v3f(boxv5); v3f(boxv1); glEnd();
-    glBegin(GL_QUADS); glColor4ub(  0, 255, 255, ALPHA); v3f(boxv2); v3f(boxv6); v3f(boxv7); v3f(boxv3); glEnd();
-    glBegin(GL_QUADS); glColor4ub(255,   0,   0, ALPHA); v3f(boxv4); v3f(boxv5); v3f(boxv6); v3f(boxv7); glEnd();
-    glBegin(GL_QUADS); glColor4ub(255,   0, 255, ALPHA); v3f(boxv0); v3f(boxv3); v3f(boxv7); v3f(boxv4); glEnd();
-    glBegin(GL_QUADS); glColor4ub(  0, 255,   0, ALPHA); v3f(boxv1); v3f(boxv5); v3f(boxv6); v3f(boxv2); glEnd();
+#define ALPHA 0.5
+    glShadeModel(GL_FLAT);
+
+    glBegin(GL_QUADS);
+      glColor4f(0.0, 0.0, 1.0, ALPHA);
+      glVertex3fv(boxv0);
+      glVertex3fv(boxv1);
+      glVertex3fv(boxv2);
+      glVertex3fv(boxv3);
+
+      glColor4f(1.0, 1.0, 0.0, ALPHA);
+      glVertex3fv(boxv0);
+      glVertex3fv(boxv4);
+      glVertex3fv(boxv5);
+      glVertex3fv(boxv1);
+
+      glColor4f(0.0, 1.0, 1.0, ALPHA);
+      glVertex3fv(boxv2);
+      glVertex3fv(boxv6);
+      glVertex3fv(boxv7);
+      glVertex3fv(boxv3);
+
+      glColor4f(1.0, 0.0, 0.0, ALPHA);
+      glVertex3fv(boxv4);
+      glVertex3fv(boxv5);
+      glVertex3fv(boxv6);
+      glVertex3fv(boxv7);
+
+      glColor4f(1.0, 0.0, 1.0, ALPHA);
+      glVertex3fv(boxv0);
+      glVertex3fv(boxv3);
+      glVertex3fv(boxv7);
+      glVertex3fv(boxv4);
+
+      glColor4f(0.0, 1.0, 0.0, ALPHA);
+      glVertex3fv(boxv1);
+      glVertex3fv(boxv5);
+      glVertex3fv(boxv6);
+      glVertex3fv(boxv2);
+    glEnd();
+
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_LINES);
+      glVertex3fv(boxv0);
+      glVertex3fv(boxv1);
+
+      glVertex3fv(boxv1);
+      glVertex3fv(boxv2);
+
+      glVertex3fv(boxv2);
+      glVertex3fv(boxv3);
+
+      glVertex3fv(boxv3);
+      glVertex3fv(boxv0);
+
+      glVertex3fv(boxv4);
+      glVertex3fv(boxv5);
+
+      glVertex3fv(boxv5);
+      glVertex3fv(boxv6);
+
+      glVertex3fv(boxv6);
+      glVertex3fv(boxv7);
+
+      glVertex3fv(boxv7);
+      glVertex3fv(boxv4);
+
+      glVertex3fv(boxv0);
+      glVertex3fv(boxv4);
+
+      glVertex3fv(boxv1);
+      glVertex3fv(boxv5);
+
+      glVertex3fv(boxv2);
+      glVertex3fv(boxv6);
+
+      glVertex3fv(boxv3);
+      glVertex3fv(boxv7);
+    glEnd();
 };//drawCube
 
 void CubeView::draw() {
@@ -102,5 +165,5 @@ void CubeView::draw() {
 #endif /* HAVE_GL */
 
 //
-// End of "$Id: CubeView.cxx,v 1.3 1999/03/04 20:26:00 mike Exp $".
+// End of "$Id: CubeView.cxx,v 1.4 1999/03/10 16:40:19 mike Exp $".
 //
