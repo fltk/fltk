@@ -1,6 +1,6 @@
-.TH LIBPNG 3 "December 12, 2001"
+.TH LIBPNG 3 "August 15, 2004"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
+libpng \- Portable Network Graphics (PNG) Reference Library 1.2.6
 .SH SYNOPSIS
 \fI\fB
 
@@ -100,10 +100,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
-\fBpng_uint_32 png_get_asm_flags (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
 \fBpng_byte png_get_bit_depth (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
@@ -196,18 +192,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
-\fBpng_byte png_get_mmx_bitdepth_threshold (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
-\fBpng_uint_32 png_get_mmx_flagmask (int \fP\fIflag_select\fP\fB, int \fI*compilerID\fP\fB);\fP
-
-\fI\fB
-
-\fBpng_uint_32 png_get_mmx_rowbytes_threshold (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
 \fBpng_uint_32 png_get_oFFs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*offset_x\fP\fB, png_uint_32 \fP\fI*offset_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
 \fI\fB
@@ -282,7 +266,15 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
+\fBpng_uint_32 png_get_user_height_max( png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
 \fBpng_voidp png_get_user_transform_ptr (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_user_width_max (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -315,6 +307,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 \fI\fB
 
 \fBpng_uint_32 png_get_compression_buffer_size (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBint png_handle_as_unknown (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fIchunk_name\fP\fB);\fP
 
 \fI\fB
 
@@ -351,10 +347,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 \fI\fB
 
 \fBpng_voidp png_memset_check (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIs1\fP\fB, int \fP\fIvalue\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBint png_mmx_support \fI(void\fP\fB);\fP
 
 \fI\fB
 
@@ -407,10 +399,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 \fI\fB
 
 \fBvoid png_read_update_info (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
-
-\fBpng_set_asm_flags (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIasm_flags\fP\fB);\fP
 
 \fI\fB
 
@@ -542,10 +530,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
-\fBpng_set_mmx_thresholds (png_structp \fP\fIpng_ptr\fP\fB, png_byte \fP\fImmx_bitdepth_threshold\fP\fB, png_uint_32 \fImmx_rowbytes_threshold\fP\fB);\fP
-
-\fI\fB
-
 \fBvoid png_set_oFFs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fIoffset_x\fP\fB, png_uint_32 \fP\fIoffset_y\fP\fB, int \fIunit_type\fP\fB);\fP
 
 \fI\fB
@@ -638,12 +622,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
-\fBvoid png_set_strip_error_numbers (png_structp \fIpng_ptr,
-
-\fBpng_uint_32 \fIstrip_mode\fP\fB);\fP
-
-\fI\fB
-
 \fBvoid png_set_swap (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
@@ -677,6 +655,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 \fI\fB
 
 \fBvoid png_set_read_user_chunk_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIuser_chunk_ptr\fP\fB, png_user_chunk_ptr \fIread_user_chunk_fn\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_user_limits (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIuser_width_max\fP\fB, png_uint_32 \fIuser_height_max\fP\fB);\fP
 
 \fI\fB
 
@@ -732,10 +714,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
-\fBvoid png_write_destroy_info (png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
-
 \fBvoid png_write_end (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
@@ -776,6 +754,14 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.1
 
 \fI\fB
 
+\fBvoidpf png_zalloc (voidpf \fP\fIpng_ptr\fP\fB, uInt \fP\fIitems\fP\fB, uInt \fIsize\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_zfree (voidpf \fP\fIpng_ptr\fP\fB, voidpf \fIptr\fP\fB);\fP
+
+\fI\fB
+
 .SH DESCRIPTION
 The
 .I libpng
@@ -787,10 +773,10 @@ Following is a copy of the libpng.txt file that accompanies libpng.
 .SH LIBPNG.TXT
 libpng.txt - A description on how to use and modify libpng
 
- libpng version 1.2.1 - December 12, 2001
+ libpng version 1.2.6 - August 15, 2004
  Updated and distributed by Glenn Randers-Pehrson
- <randeg@alum.rpi.edu>
- Copyright (c) 1998-2001 Glenn Randers-Pehrson
+ <glennrp@users.sourceforge.net>
+ Copyright (c) 1998-2004 Glenn Randers-Pehrson
  For conditions of distribution and use, see copyright
  notice in png.h.
 
@@ -1087,6 +1073,28 @@ To inform libpng about your function, use
 
     png_set_read_status_fn(png_ptr, read_row_callback);
 
+%-%.SS Width and height limits
+%-%
+%-%The PNG specification allows the width and height of an image to be as
+%-%large as 2^31-1 (0x7fffffff), or about 2.147 billion rows and columns.
+%-%Since very few applications really need to process such large images,
+%-%we have imposed an arbitrary 1-million limit on rows and columns.
+%-%Larger images will be rejected immediately with a png_error() call. If
+%-%you wish to override this limit, you can use
+%-%
+%-%   png_set_user_limits(png_ptr, width_max, height_max);
+%-%
+%-%to set your own limits, or use width_max = height_max = 0x7fffffffL
+%-%to allow all valid dimensions (libpng may reject some very large images
+%-%anyway because of potential buffer overflow conditions).
+%-%
+%-%You should put this statement after you create the PNG structure and
+%-%before calling png_read_info(), png_read_png(), or png_process_data().
+%-%If you need to retrieve the limits that are being applied, use
+%-%
+%-%   width_max = png_get_user_width_max(png_ptr);
+%-%   height_max = png_get_user_height_max(png_ptr);
+%-%
 .SS Unknown-chunk handling
 
 Now you get to set the way the library processes unknown chunks in the
@@ -1095,23 +1103,31 @@ behavior is that known chunks will be parsed into information in
 various info_ptr members; unknown chunks will be discarded. To change
 this, you can call:
 
-    png_set_keep_unknown_chunks(png_ptr, info_ptr, keep,
+    png_set_keep_unknown_chunks(png_ptr, keep,
         chunk_list, num_chunks);
-    keep       - 0: do not keep
-                 1: keep only if safe-to-copy
-                 2: keep even if unsafe-to-copy
+    keep       - 0: do not handle as unknown
+                 1: do not keep
+                 2: keep only if safe-to-copy
+                 3: keep even if unsafe-to-copy
+               You can use these definitions:
+                 PNG_HANDLE_CHUNK_AS_DEFAULT   0
+                 PNG_HANDLE_CHUNK_NEVER        1
+                 PNG_HANDLE_CHUNK_IF_SAFE      2
+                 PNG_HANDLE_CHUNK_ALWAYS       3
     chunk_list - list of chunks affected (a byte string,
                  five bytes per chunk, NULL or '\0' if
                  num_chunks is 0)
     num_chunks - number of chunks affected; if 0, all
-                 unknown chunks are affected
+                 unknown chunks are affected.  If nonzero,
+                 only the chunks in the list are affected
 
 Unknown chunks declared in this way will be saved as raw data onto a
 list of png_unknown_chunk structures.  If a chunk that is normally
 known to libpng is named in the list, it will be handled as unknown,
 according to the "keep" directive.  If a chunk is named in successive
 instances of png_set_keep_unknown_chunks(), the final instance will
-take precedence.
+take precedence.  The IHDR and IEND chunks should not be named in
+chunk_list; if they are, libpng will process them normally anyway.
 
 .SS The high-level read interface
 
@@ -1166,8 +1182,14 @@ where row_pointers is an array of pointers to the pixel data for each row:
 If you know your image size and pixel size ahead of time, you can allocate
 row_pointers prior to calling png_read_png() with
 
+   if (height > PNG_UINT_32_MAX/png_sizeof(png_byte))
+      png_error (png_ptr,
+         "Image is too tall to process in memory");
+   if (width > PNG_UINT_32_MAX/pixel_size)
+      png_error (png_ptr,
+         "Image is too wide to process in memory");
    row_pointers = png_malloc(png_ptr,
-      height*sizeof(png_bytep));
+      height*png_sizeof(png_bytep));
    for (int i=0; i<height, i++)
       row_pointers[i]=png_malloc(png_ptr,
          width*pixel_size);
@@ -1364,7 +1386,7 @@ into the info_ptr is returned for any complex types.
                  after decompression, 0 for tEXt/zTXt
     text_ptr[i].lang  - language of comment (empty
                          string for unknown).
-    text_ptr[i].translated_keyword  - keyword in UTF-8
+    text_ptr[i].lang_key  - keyword in UTF-8
                          (empty string for unknown).
     num_text       - number of comments (same as
                      num_comments; you can put NULL here
@@ -1672,8 +1694,8 @@ which can be expressed with integers as
 The calculation is done in a linear colorspace, if the image gamma
 is known.
 
-If you have a grayscale and you are using png_set_expand_depth() or
-png_set_expand() to change to
+If you have a grayscale and you are using png_set_expand_depth(),
+png_set_expand(), or png_set_gray_to_rgb to change to truecolor or to
 a higher bit-depth, you must either supply the background color as a gray
 value at the original file bit-depth (need_expand = 1) or else supply the
 background color as an RGB triplet at the final, expanded bit depth
@@ -1770,7 +1792,7 @@ histogram, it may not do as good a job.
       if (png_get_valid(png_ptr, info_ptr,
          PNG_INFO_PLTE))
       {
-         png_uint_16p histogram;
+         png_uint_16p histogram = NULL;
 
          png_get_hIST(png_ptr, info_ptr,
             &histogram);
@@ -2993,61 +3015,130 @@ When you are done, you can free all memory used by libpng like this:
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
 It is also possible to individually free the info_ptr members that
-point to libpng-allocated storage with the following functions:
+point to libpng-allocated storage with the following function:
 
-    png_free_data(png_ptr, info_ptr, mask, n)
-    mask         - identifies data to be freed, a mask
-                   made up by the OR one or more of
-                   PNG_FREE_PLTE, PNG_FREE_TRNS,
-                   PNG_FREE_HIST, PNG_FREE_ICCP,
-                   PNG_FREE_SPLT, PNG_FREE_ROWS,
-                   PNG_FREE_PCAL, PNG_FREE_SCAL,
-                   PNG_FREE_TEXT, PNG_FREE_UNKN,
-                   or simply PNG_FREE_ALL
-    n            - sequence number of item to be freed
-                   (-1 for all items)
+    png_free_data(png_ptr, info_ptr, mask, seq)
+    mask  - identifies data to be freed, a mask
+            containing the logical OR of one or
+            more of
+              PNG_FREE_PLTE, PNG_FREE_TRNS,
+              PNG_FREE_HIST, PNG_FREE_ICCP,
+              PNG_FREE_PCAL, PNG_FREE_ROWS,
+              PNG_FREE_SCAL, PNG_FREE_SPLT,
+              PNG_FREE_TEXT, PNG_FREE_UNKN,
+            or simply PNG_FREE_ALL
+    seq   - sequence number of item to be freed
+            (-1 for all items)
 
-These functions may be safely called when the relevant storage has
-already been freed, or has not yet been allocated, and will in that
-case do nothing.  The "n" parameter is ignored if only one item
-of the selected data type, such as PLTE, is allowed.  If "n" is not
+This function may be safely called when the relevant storage has
+already been freed, or has not yet been allocated, or was allocated
+by the user  and not by libpng,  and will in those
+cases do nothing.  The "seq" parameter is ignored if only one item
+of the selected data type, such as PLTE, is allowed.  If "seq" is not
 -1, and multiple items are allowed for the data type identified in
-the mask, such as text or splt, only the n'th item is freed.
+the mask, such as text or sPLT, only the n'th item in the structure
+is freed, where n is "seq".
 
-If you allocated data such as a palette that you passed in to libpng with
-png_set_*, you must not free it until just before the call to
+If you allocated data such as a palette that you passed
+in to libpng with png_set_*, you must not free it until just before the call to
 png_destroy_write_struct().
 
+The default behavior is only to free data that was allocated internally
+by libpng.  This can be changed, so that libpng will not free the data,
+or so that it will free data that was allocated by the user with png_malloc()
+or png_zalloc() and passed in via a png_set_*() function, with
+
+    png_data_freer(png_ptr, info_ptr, freer, mask)
+    mask   - which data elements are affected
+             same choices as in png_free_data()
+    freer  - one of
+               PNG_DESTROY_WILL_FREE_DATA
+               PNG_SET_WILL_FREE_DATA
+               PNG_USER_WILL_FREE_DATA
+
+For example, to transfer responsibility for some data from a read structure
+to a write structure, you could use
+
+    png_data_freer(read_ptr, read_info_ptr,
+       PNG_USER_WILL_FREE_DATA,
+       PNG_FREE_PLTE|PNG_FREE_tRNS|PNG_FREE_hIST)
+    png_data_freer(write_ptr, write_info_ptr,
+       PNG_DESTROY_WILL_FREE_DATA,
+       PNG_FREE_PLTE|PNG_FREE_tRNS|PNG_FREE_hIST)
+
+thereby briefly reassigning responsibility for freeing to the user but
+immediately afterwards reassigning it once more to the write_destroy
+function.  Having done this, it would then be safe to destroy the read
+structure and continue to use the PLTE, tRNS, and hIST data in the write
+structure.
+
+This function only affects data that has already been allocated.
+You can call this function before calling after the png_set_*() functions
+to control whether the user or png_destroy_*() is supposed to free the data.
+When the user assumes responsibility for libpng-allocated data, the
+application must use
+png_free() to free it, and when the user transfers responsibility to libpng
+for data that the user has allocated, the user must have used png_malloc()
+or png_zalloc() to allocate it.
+
+If you allocated text_ptr.text, text_ptr.lang, and text_ptr.translated_keyword
+separately, do not transfer responsibility for freeing text_ptr to libpng,
+because when libpng fills a png_text structure it combines these members with
+the key member, and png_free_data() will free only text_ptr.key.  Similarly,
+if you transfer responsibility for free'ing text_ptr from libpng to your
+application, your application must not separately free those members.
 For a more compact example of writing a PNG image, see the file example.c.
 
 .SH V. Modifying/Customizing libpng:
 
-There are two issues here.  The first is changing how libpng does
+There are three issues here.  The first is changing how libpng does
 standard things like memory allocation, input/output, and error handling.
 The second deals with more complicated things like adding new chunks,
 adding new transformations, and generally changing how libpng works.
+Both of those are compile-time issues; that is, they are generally
+determined at the time the code is written, and there is rarely a need
+to provide the user with a means of changing them.  The third is a
+run-time issue:  choosing between and/or tuning one or more alternate
+versions of computationally intensive routines; specifically, optimized
+assembly-language (and therefore compiler- and platform-dependent)
+versions.
+
+Memory allocation, input/output, and error handling
 
 All of the memory allocation, input/output, and error handling in libpng
-goes through callbacks that are user settable.  The default routines are
-in pngmem.c, pngrio.c, pngwio.c, and pngerror.c respectively.  To change
+goes through callbacks that are user-settable.  The default routines are
+in pngmem.c, pngrio.c, pngwio.c, and pngerror.c, respectively.  To change
 these functions, call the appropriate png_set_*_fn() function.
 
-Memory allocation is done through the functions png_large_malloc(),
-png_malloc(), png_realloc(), png_large_free(), and png_free().  These
-currently just call the standard C functions.  The large functions must
-handle exactly 64K, but they don't have to handle more than that.  If
+Memory allocation is done through the functions png_malloc()
+and png_free().  These currently just call the standard C functions.  If
 your pointers can't access more then 64K at a time, you will want to set
 MAXSEG_64K in zlib.h.  Since it is unlikely that the method of handling
 memory allocation on a platform will change between applications, these
-functions must be modified in the library at compile time.
+functions must be modified in the library at compile time.  If you prefer
+to use a different method of allocating and freeing data, you can use
+png_create_read_struct_2() or png_create_write_struct_2() to register
+your own functions as described above.
+These functions also provide a void pointer that can be retrieved via
+
+    mem_ptr=png_get_mem_ptr(png_ptr);
+
+Your replacement memory functions must have prototypes as follows:
+
+    png_voidp malloc_fn(png_structp png_ptr,
+       png_size_t size);
+    void free_fn(png_structp png_ptr, png_voidp ptr);
+
+Your malloc_fn() must return NULL in case of failure.  The png_malloc()
+function will normally call png_error() if it receives a NULL from the
+system memory allocator or from your replacement malloc_fn().
 
 Input/Output in libpng is done through png_read() and png_write(),
 which currently just call fread() and fwrite().  The FILE * is stored in
 png_struct and is initialized via png_init_io().  If you wish to change
 the method of I/O, the library supplies callbacks that you can set
 through the function png_set_read_fn() and png_set_write_fn() at run
-time, instead of calling the png_init_io() function.
-These functions
+time, instead of calling the png_init_io() function.  These functions
 also provide a void pointer that can be retrieved via the function
 png_get_io_ptr().  For example:
 
@@ -3064,9 +3155,9 @@ png_get_io_ptr().  For example:
 The replacement I/O functions must have prototypes as follows:
 
     void user_read_data(png_structp png_ptr,
-        png_bytep data, png_uint_32 length);
+        png_bytep data, png_size_t length);
     void user_write_data(png_structp png_ptr,
-        png_bytep data, png_uint_32 length);
+        png_bytep data, png_size_t length);
     void user_flush_data(png_structp png_ptr);
 
 Supplying NULL for the read, write, or flush functions sets them back
@@ -3201,6 +3292,10 @@ compression level by calling:
 Another useful one is to reduce the memory level used by the library.
 The memory level defaults to 8, but it can be lowered if you are
 short on memory (running DOS, for example, where you only have 640K).
+Note that the memory level does have an effect on compression; among
+other things, lower levels will result in sections of incompressible
+data being emitted in smaller stored blocks, with a correspondingly
+larger relative overhead of up to 15% in the worst case.
 
     png_set_compression_mem_level(png_ptr, level);
 
@@ -3235,19 +3330,18 @@ to turn filtering on and off, respectively.
 Individual filter types are PNG_FILTER_NONE, PNG_FILTER_SUB,
 PNG_FILTER_UP, PNG_FILTER_AVG, PNG_FILTER_PAETH, which can be bitwise
 ORed together with '|' to specify one or more filters to use.
-These filters are described in more detail in the PNG specification.  If
-you intend to change the filter type during the course of writing
+These filters are described in more detail in the PNG specification.
+If you intend to change the filter type during the course of writing
 the image, you should start with flags set for all of the filters
 you intend to use so that libpng can initialize its internal
-structures appropriately for all of the filter types.
+structures appropriately for all of the filter types.  (Note that this
+means the first row must always be adaptively filtered, because libpng
+currently does not allocate the filter buffers until png_write_row()
+is called for the first time.)
 
     filters = PNG_FILTER_NONE | PNG_FILTER_SUB
               PNG_FILTER_UP | PNG_FILTER_AVE |
               PNG_FILTER_PAETH | PNG_ALL_FILTERS;
-    or
-    filters = one of PNG_FILTER_VALUE_NONE,
-              PNG_FILTER_VALUE_SUB, PNG_FILTER_VALUE_UP,
-              PNG_FILTER_VALUE_AVE, PNG_FILTER_VALUE_PAETH
 
     png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE,
        filters);
@@ -3259,16 +3353,16 @@ structures appropriately for all of the filter types.
               in png_set_IHDR().
 
 It is also possible to influence how libpng chooses from among the
-available filters.  This is done in two ways - by telling it how
-important it is to keep the same filter for successive rows, and
-by telling it the relative computational costs of the filters.
+available filters.  This is done in one or both of two ways - by
+telling it how important it is to keep the same filter for successive
+rows, and by telling it the relative computational costs of the filters.
 
     double weights[3] = {1.5, 1.3, 1.1},
        costs[PNG_FILTER_VALUE_LAST] =
        {1.0, 1.3, 1.3, 1.5, 1.7};
 
-    png_set_filter_selection(png_ptr,
-       PNG_FILTER_SELECTION_WEIGHTED, 3,
+    png_set_filter_heuristics(png_ptr,
+       PNG_FILTER_HEURISTIC_WEIGHTED, 3,
        weights, costs);
 
 The weights are multiplying factors that indicate to libpng that the
@@ -3368,127 +3462,126 @@ When PNG_DEBUG = 1, the macros are defined, but only png_debug statements
 having level = 0 will be printed.  There aren't any such statements in
 this version of libpng, but if you insert some they will be printed.
 
-.SH VI.  Runtime optimization
-
-A new feature in libpng 1.2.0 is the ability to dynamically switch between
-standard and optimized versions of some routines.  Currently these are
-limited to three computationally intensive tasks when reading PNG files:
-decoding row filters, expanding interlacing, and combining interlaced or
-transparent row data with previous row data.  Currently the optimized
-versions are available only for x86 (Intel, AMD, etc.) platforms with
-MMX support, though this may change in future versions.  (For example,
-the non-MMX assembler optimizations for zlib might become similarly
-runtime-selectable in future releases, in which case libpng could be
-extended to support them.  Alternatively, the compile-time choice of
-floating-point versus integer routines for gamma correction might become
-runtime-selectable.)
-
-Because such optimizations tend to be very platform- and compiler-dependent,
-both in how they are written and in how they perform, the new runtime code
-in libpng has been written to allow programs to query, enable, and disable
-either specific optimizations or all such optimizations.  For example, to
-enable all possible optimizations (bearing in mind that some "optimizations"
-may actually run more slowly in rare cases):
-
-    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
-       png_uint_32 mask, flags;
-
-       flags = png_get_asm_flags(png_ptr);
-       mask = png_get_asm_flagmask(PNG_SELECT_READ | PNG_SELECT_WRITE);
-       png_set_asm_flags(png_ptr, flags | mask);
-    #endif
-
-To enable only optimizations relevant to reading PNGs, use PNG_SELECT_READ
-by itself when calling png_get_asm_flagmask(); similarly for optimizing
-only writing.  To disable all optimizations:
-
-    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
-       flags = png_get_asm_flags(png_ptr);
-       mask = png_get_asm_flagmask(PNG_SELECT_READ | PNG_SELECT_WRITE);
-       png_set_asm_flags(png_ptr, flags & ~mask);
-    #endif
-
-To enable or disable only MMX-related features, use png_get_mmx_flagmask()
-in place of png_get_asm_flagmask().  The mmx version takes one additional
-parameter:
-
-    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
-       int selection = PNG_SELECT_READ | PNG_SELECT_WRITE;
-       int compilerID;
-
-       mask = png_get_mmx_flagmask(selection, &compilerID);
-    #endif
-
-On return, compilerID will indicate which version of the MMX assembler
-optimizations was compiled.  Currently two flavors exist:  Microsoft
-Visual C++ (compilerID == 1) and GNU C (a.k.a. gcc/gas, compilerID == 2).
-On non-x86 platforms or on systems compiled without MMX optimizations, a
-value of -1 is used.
-
-Note that both png_get_asm_flagmask() and png_get_mmx_flagmask() return
-all valid, settable optimization bits for the version of the library that's
-currently in use.  In the case of shared (dynamically linked) libraries,
-this may include optimizations that did not exist at the time the code was
-written and compiled.  It is also possible, of course, to enable only known,
-specific optimizations; for example:
-
-    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
-       flags = PNG_ASM_FLAG_MMX_READ_COMBINE_ROW  \
-             | PNG_ASM_FLAG_MMX_READ_INTERLACE    \
-             | PNG_ASM_FLAG_MMX_READ_FILTER_SUB   \
-             | PNG_ASM_FLAG_MMX_READ_FILTER_UP    \
-             | PNG_ASM_FLAG_MMX_READ_FILTER_AVG   \
-             | PNG_ASM_FLAG_MMX_READ_FILTER_PAETH ;
-       png_set_asm_flags(png_ptr, flags);
-    #endif
-
-This method would enable only the MMX read-optimizations available at the
-time of libpng 1.2.0's release, regardless of whether a later version of
-the DLL were actually being used.  (Also note that these functions did not
-exist in versions older than 1.2.0, so any attempt to run a dynamically
-linked app on such an older version would fail.)
-
-To determine whether the processor supports MMX instructions at all, use
-the png_mmx_support() function:
-
-    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
-       mmxsupport = png_mmx_support();
-    #endif
-
-It returns -1 if MMX support is not compiled into libpng, 0 if MMX code
-is compiled but MMX is not supported by the processor, or 1 if MMX support
-is fully available.  Note that png_mmx_support(), png_get_mmx_flagmask(),
-and png_get_asm_flagmask() all may be called without allocating and ini-
-tializing any PNG structures (for example, as part of a usage screen or
-"about" box).
-
-The following code can be used to prevent an application from using the
-thread_unsafe features, even if libpng was built with PNG_THREAD_UNSAFE_OK
-defined:
-
-#if defined(PNG_USE_PNGGCCRD) && defined(PNG_ASSEMBLER_CODE_SUPPORTED) \
-  && defined(PNG_THREAD_UNSAFE_OK)
-    /* Disable thread-unsafe features of pnggccrd */
-    if (png_access_version() >= 10200)
-    {
-      png_uint_32 mmx_disable_mask = 0;
-      png_uint_32 asm_flags;
-
-      mmx_disable_mask |= ( PNG_ASM_FLAG_MMX_READ_COMBINE_ROW  \
-                          | PNG_ASM_FLAG_MMX_READ_FILTER_SUB   \
-                          | PNG_ASM_FLAG_MMX_READ_FILTER_AVG   \
-                          | PNG_ASM_FLAG_MMX_READ_FILTER_PAETH );
-      asm_flags = png_get_asm_flags(png_ptr);
-      png_set_asm_flags(png_ptr, asm_flags & ~mmx_disable_mask);
-    }
-#endif
-
-For more extensive examples of runtime querying, enabling and disabling
-of optimized features, see contrib/gregbook/readpng2.c in the libpng
-source-code distribution.
-
-
-.SH VII.  MNG support
+%-%.SH VI.  Runtime optimization
+%-%
+%-%A new feature in libpng 1.2.0 is the ability to dynamically switch between
+%-%standard and optimized versions of some routines.  Currently these are
+%-%limited to three computationally intensive tasks when reading PNG files:
+%-%decoding row filters, expanding interlacing, and combining interlaced or
+%-%transparent row data with previous row data.  Currently the optimized
+%-%versions are available only for x86 (Intel, AMD, etc.) platforms with
+%-%MMX support, though this may change in future versions.  (For example,
+%-%the non-MMX assembler optimizations for zlib might become similarly
+%-%runtime-selectable in future releases, in which case libpng could be
+%-%extended to support them.  Alternatively, the compile-time choice of
+%-%floating-point versus integer routines for gamma correction might become
+%-%runtime-selectable.)
+%-%
+%-%Because such optimizations tend to be very platform- and compiler-dependent,
+%-%both in how they are written and in how they perform, the new runtime code
+%-%in libpng has been written to allow programs to query, enable, and disable
+%-%either specific optimizations or all such optimizations.  For example, to
+%-%enable all possible optimizations (bearing in mind that some "optimizations"
+%-%may actually run more slowly in rare cases):
+%-%
+%-%    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
+%-%       png_uint_32 mask, flags;
+%-%
+%-%       flags = png_get_asm_flags(png_ptr);
+%-%       mask = png_get_asm_flagmask(PNG_SELECT_READ | PNG_SELECT_WRITE);
+%-%       png_set_asm_flags(png_ptr, flags | mask);
+%-%    #endif
+%-%
+%-%To enable only optimizations relevant to reading PNGs, use PNG_SELECT_READ
+%-%by itself when calling png_get_asm_flagmask(); similarly for optimizing
+%-%only writing.  To disable all optimizations:
+%-%
+%-%    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
+%-%       flags = png_get_asm_flags(png_ptr);
+%-%       mask = png_get_asm_flagmask(PNG_SELECT_READ | PNG_SELECT_WRITE);
+%-%       png_set_asm_flags(png_ptr, flags & ~mask);
+%-%    #endif
+%-%
+%-%To enable or disable only MMX-related features, use png_get_mmx_flagmask()
+%-%in place of png_get_asm_flagmask().  The mmx version takes one additional
+%-%parameter:
+%-%
+%-%    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
+%-%       int selection = PNG_SELECT_READ | PNG_SELECT_WRITE;
+%-%       int compilerID;
+%-%
+%-%       mask = png_get_mmx_flagmask(selection, &compilerID);
+%-%    #endif
+%-%
+%-%On return, compilerID will indicate which version of the MMX assembler
+%-%optimizations was compiled.  Currently two flavors exist:  Microsoft
+%-%Visual C++ (compilerID == 1) and GNU C (a.k.a. gcc/gas, compilerID == 2).
+%-%On non-x86 platforms or on systems compiled without MMX optimizations, a
+%-%value of -1 is used.
+%-%
+%-%Note that both png_get_asm_flagmask() and png_get_mmx_flagmask() return
+%-%all valid, settable optimization bits for the version of the library that's
+%-%currently in use.  In the case of shared (dynamically linked) libraries,
+%-%this may include optimizations that did not exist at the time the code was
+%-%written and compiled.  It is also possible, of course, to enable only known,
+%-%specific optimizations; for example:
+%-%
+%-%    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
+%-%       flags = PNG_ASM_FLAG_MMX_READ_COMBINE_ROW  \
+%-%             | PNG_ASM_FLAG_MMX_READ_INTERLACE    \
+%-%             | PNG_ASM_FLAG_MMX_READ_FILTER_SUB   \
+%-%             | PNG_ASM_FLAG_MMX_READ_FILTER_UP    \
+%-%             | PNG_ASM_FLAG_MMX_READ_FILTER_AVG   \
+%-%             | PNG_ASM_FLAG_MMX_READ_FILTER_PAETH ;
+%-%       png_set_asm_flags(png_ptr, flags);
+%-%    #endif
+%-%
+%-%This method would enable only the MMX read-optimizations available at the
+%-%time of libpng 1.2.0's release, regardless of whether a later version of
+%-%the DLL were actually being used.  (Also note that these functions did not
+%-%exist in versions older than 1.2.0, so any attempt to run a dynamically
+%-%linked app on such an older version would fail.)
+%-%
+%-%To determine whether the processor supports MMX instructions at all, use
+%-%the png_mmx_support() function:
+%-%
+%-%    #if defined(PNG_LIBPNG_VER) && (PNG_LIBPNG_VER >= 10200)
+%-%       mmxsupport = png_mmx_support();
+%-%    #endif
+%-%
+%-%It returns -1 if MMX support is not compiled into libpng, 0 if MMX code
+%-%is compiled but MMX is not supported by the processor, or 1 if MMX support
+%-%is fully available.  Note that png_mmx_support(), png_get_mmx_flagmask(),
+%-%and png_get_asm_flagmask() all may be called without allocating and ini-
+%-%tializing any PNG structures (for example, as part of a usage screen or
+%-%"about" box).
+%-%
+%-%The following code can be used to prevent an application from using the
+%-%thread_unsafe features, even if libpng was built with PNG_THREAD_UNSAFE_OK
+%-%defined:
+%-%
+%-%#if defined(PNG_USE_PNGGCCRD) && defined(PNG_ASSEMBLER_CODE_SUPPORTED) \
+%-%  && defined(PNG_THREAD_UNSAFE_OK)
+%-%    /* Disable thread-unsafe features of pnggccrd */
+%-%    if (png_access_version() >= 10200)
+%-%    {
+%-%      png_uint_32 mmx_disable_mask = 0;
+%-%      png_uint_32 asm_flags;
+%-%
+%-%      mmx_disable_mask |= ( PNG_ASM_FLAG_MMX_READ_COMBINE_ROW  \
+%-%                          | PNG_ASM_FLAG_MMX_READ_FILTER_SUB   \
+%-%                          | PNG_ASM_FLAG_MMX_READ_FILTER_AVG   \
+%-%                          | PNG_ASM_FLAG_MMX_READ_FILTER_PAETH );
+%-%      asm_flags = png_get_asm_flags(png_ptr);
+%-%      png_set_asm_flags(png_ptr, asm_flags & ~mmx_disable_mask);
+%-%    }
+%-%#endif
+%-%
+%-%For more extensive examples of runtime querying, enabling and disabling
+%-%of optimized features, see contrib/gregbook/readpng2.c in the libpng
+%-%source-code distribution.
+%-%
+.SH VI.  MNG support
 
 The MNG specification (available at http://www.libpng.org/pub/mng) allows
 certain extensions to PNG for PNG images that are embedded in MNG datastreams.
@@ -3501,7 +3594,7 @@ png_permit_mng_features() function:
         PNG_FLAG_MNG_EMPTY_PLTE
         PNG_FLAG_MNG_FILTER_64
         PNG_ALL_MNG_FEATURES
-   feature_set is a png_32_uint that is the logical AND of
+   feature_set is a png_uint_32 that is the logical AND of
       your mask with the set of MNG features that is
       supported by the version of libpng that you are using.
 
@@ -3513,7 +3606,7 @@ or any other MNG chunks; your application must provide its own support for
 them.  You may wish to consider using libmng (available at
 http://www.libmng.com) instead.
 
-.SH VIII.  Changes to Libpng from version 0.88
+.SH VII.  Changes to Libpng from version 0.88
 
 It should be noted that versions of libpng later than 0.96 are not
 distributed by the original libpng author, Guy Schalnat, nor by
@@ -3562,15 +3655,15 @@ application:
 
    png_uint_32 application_vn = PNG_LIBPNG_VER;
 
-.SH IX. Y2K Compliance in libpng
+.SH VII. Y2K Compliance in libpng
 
-December 12, 2001
+August 15, 2004
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.2.1 are Y2K compliant.  It is my belief that earlier
+upward through 1.2.6 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that
@@ -3693,6 +3786,26 @@ the first widely used release:
  1.2.1beta-4          3    10201  3.1.2.1beta1-4
  1.2.1rc1-2           3    10201  3.1.2.1rc1-2
  1.2.1                3    10201  3.1.2.1
+ 1.2.2beta1-6        12    10202  12.so.0.1.2.2beta1-6
+ 1.0.13beta1         10    10013  10.so.0.1.0.13beta1
+ 1.0.13rc1           10    10013  10.so.0.1.0.13rc1
+ 1.2.2rc1            12    10202  12.so.0.1.2.2rc1
+ 1.0.13              10    10013  10.so.0.1.0.13
+ 1.2.2               12    10202  12.so.0.1.2.2
+ 1.2.3rc1-6          12    10203  12.so.0.1.2.3rc1-6
+ 1.2.3               12    10203  12.so.0.1.2.3
+ 1.2.4beta1-3        13    10204  12.so.0.1.2.4beta1-3
+ 1.2.4rc1            13    10204  12.so.0.1.2.4rc1
+ 1.0.14              10    10014  10.so.0.1.0.14
+ 1.2.4               13    10204  12.so.0.1.2.4
+ 1.2.5beta1-2        13    10205  12.so.0.1.2.5beta1-2
+ 1.0.15rc1           10    10015  10.so.0.1.0.15rc1
+ 1.0.15              10    10015  10.so.0.1.0.15
+ 1.2.5               13    10205  12.so.0.1.2.5
+ 1.2.6beta1-4        13    10206  12.so.0.1.2.6beta1-4
+ 1.2.6rc1-5          13    10206  12.so.0.1.2.6rc1-5
+ 1.0.16              10    10016  10.so.0.1.0.16
+ 1.2.6               13    10206  12.so.0.1.2.6
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -3705,16 +3818,15 @@ version 1.0.6j; from then on they were given the upcoming public
 release number plus "betaNN" or "rcN".
 
 .SH "SEE ALSO"
-.BR libpngpf (3),
-.BR png (5).
+libpngpf(3), png(5)
 .LP
-.IR libpng:
+.IR libpng :
 .IP
 ftp://ftp.uu.net/graphics/png
 http://www.libpng.org/pub/png
 
 .LP
-.IR zlib:
+.IR zlib :
 .IP
 (generally) at the same location as
 .I libpng
@@ -3725,8 +3837,7 @@ ftp://ftp.uu.net/pub/archiving/zip/zlib
 ftp://ftp.info-zip.org/pub/infozip/zlib
 
 .LP
-.IR "PNG specification":
-RFC 2083
+.IR PNG specification: RFC 2083
 .IP
 (generally) at the same location as
 .I libpng
@@ -3744,7 +3855,7 @@ and this library, the specification takes precedence.
 
 .SH AUTHORS
 This man page: Glenn Randers-Pehrson
-<randeg@alum.rpi.edu>
+<glennrp@users.sourceforge.net>
 
 The contributing authors would like to thank all those who helped
 with testing, bug fixes, and patience.  This wouldn't have been
@@ -3752,9 +3863,9 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.2.1 - December 12, 2001:
+Libpng version 1.2.6 - August 15, 2004:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
-Currently maintained by Glenn Randers-Pehrson (randeg@alum.rpi.edu).
+Currently maintained by Glenn Randers-Pehrson (glennrp@users.sourceforge.net).
 
 Supported by the PNG development group
 .br
@@ -3769,8 +3880,15 @@ included in the libpng distribution, the latter shall prevail.)
 If you modify libpng you may insert additional notices immediately following
 this sentence.
 
-libpng versions 1.0.7, July 1, 2000, through  1.2.1, December 12, 2001, are
-Copyright (c) 2000-2001 Glenn Randers-Pehrson, and are
+libpng version 1.2.6, August 15, 2004, is
+Copyright (c) 2004 Glenn Randers-Pehrson, and is
+distributed according to the same disclaimer and license as libpng-1.2.5
+with the following individual added to the list of Contributing Authors
+
+   Cosmin Truta
+
+libpng versions 1.0.7, July 1, 2000, through 1.2.5 - October 3, 2002, are
+Copyright (c) 2000-2002 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.0.6
 with the following individuals added to the list of Contributing Authors
 
@@ -3860,8 +3978,8 @@ Libpng is OSI Certified Open Source Software.  OSI Certified Open Source is a
 certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
-randeg@alum.rpi.edu
-December 12, 2001
+glennrp@users.sourceforge.net
+August 15, 2004
 
 .\" end of man page
 

@@ -1,9 +1,9 @@
 libpng.txt - A description on how to use and modify libpng
 
- libpng version 1.2.1 - December 12, 2001
+ libpng version 1.2.6 - August 15, 2004
  Updated and distributed by Glenn Randers-Pehrson
- <randeg@alum.rpi.edu>
- Copyright (c) 1998-2001 Glenn Randers-Pehrson
+ <glennrp@users.sourceforge.net>
+ Copyright (c) 1998-2004 Glenn Randers-Pehrson
  For conditions of distribution and use, see copyright
  notice in png.h.
 
@@ -300,6 +300,28 @@ To inform libpng about your function, use
 
     png_set_read_status_fn(png_ptr, read_row_callback);
 
+Width and height limits
+
+The PNG specification allows the width and height of an image to be as
+large as 2^31-1 (0x7fffffff), or about 2.147 billion rows and columns.
+Since very few applications really need to process such large images,
+we have imposed an arbitrary 1-million limit on rows and columns.
+Larger images will be rejected immediately with a png_error() call. If
+you wish to override this limit, you can use
+
+   png_set_user_limits(png_ptr, width_max, height_max);
+
+to set your own limits, or use width_max = height_max = 0x7fffffffL
+to allow all valid dimensions (libpng may reject some very large images
+anyway because of potential buffer overflow conditions).
+
+You should put this statement after you create the PNG structure and
+before calling png_read_info(), png_read_png(), or png_process_data().
+If you need to retrieve the limits that are being applied, use
+
+   width_max = png_get_user_width_max(png_ptr);
+   height_max = png_get_user_height_max(png_ptr);
+
 Unknown-chunk handling
 
 Now you get to set the way the library processes unknown chunks in the
@@ -308,23 +330,31 @@ behavior is that known chunks will be parsed into information in
 various info_ptr members; unknown chunks will be discarded. To change
 this, you can call:
 
-    png_set_keep_unknown_chunks(png_ptr, info_ptr, keep,
+    png_set_keep_unknown_chunks(png_ptr, keep,
         chunk_list, num_chunks);
-    keep       - 0: do not keep
-                 1: keep only if safe-to-copy
-                 2: keep even if unsafe-to-copy
+    keep       - 0: do not handle as unknown
+                 1: do not keep
+                 2: keep only if safe-to-copy
+                 3: keep even if unsafe-to-copy
+               You can use these definitions:
+                 PNG_HANDLE_CHUNK_AS_DEFAULT   0
+                 PNG_HANDLE_CHUNK_NEVER        1
+                 PNG_HANDLE_CHUNK_IF_SAFE      2
+                 PNG_HANDLE_CHUNK_ALWAYS       3
     chunk_list - list of chunks affected (a byte string,
                  five bytes per chunk, NULL or '\0' if
                  num_chunks is 0)
     num_chunks - number of chunks affected; if 0, all
-                 unknown chunks are affected
+                 unknown chunks are affected.  If nonzero,
+                 only the chunks in the list are affected
 
 Unknown chunks declared in this way will be saved as raw data onto a
 list of png_unknown_chunk structures.  If a chunk that is normally
 known to libpng is named in the list, it will be handled as unknown,
 according to the "keep" directive.  If a chunk is named in successive
 instances of png_set_keep_unknown_chunks(), the final instance will
-take precedence.
+take precedence.  The IHDR and IEND chunks should not be named in
+chunk_list; if they are, libpng will process them normally anyway.
 
 The high-level read interface
 
@@ -379,8 +409,14 @@ where row_pointers is an array of pointers to the pixel data for each row:
 If you know your image size and pixel size ahead of time, you can allocate
 row_pointers prior to calling png_read_png() with
 
+   if (height > PNG_UINT_32_MAX/png_sizeof(png_byte))
+      png_error (png_ptr,
+         "Image is too tall to process in memory");
+   if (width > PNG_UINT_32_MAX/pixel_size)
+      png_error (png_ptr,
+         "Image is too wide to process in memory");
    row_pointers = png_malloc(png_ptr,
-      height*sizeof(png_bytep));
+      height*png_sizeof(png_bytep));
    for (int i=0; i<height, i++)
       row_pointers[i]=png_malloc(png_ptr,
          width*pixel_size);
@@ -577,7 +613,7 @@ into the info_ptr is returned for any complex types.
                  after decompression, 0 for tEXt/zTXt
     text_ptr[i].lang  - language of comment (empty
                          string for unknown).
-    text_ptr[i].translated_keyword  - keyword in UTF-8
+    text_ptr[i].lang_key  - keyword in UTF-8
                          (empty string for unknown).
     num_text       - number of comments (same as
                      num_comments; you can put NULL here
@@ -885,8 +921,8 @@ which can be expressed with integers as
 The calculation is done in a linear colorspace, if the image gamma
 is known.
 
-If you have a grayscale and you are using png_set_expand_depth() or
-png_set_expand() to change to
+If you have a grayscale and you are using png_set_expand_depth(),
+png_set_expand(), or png_set_gray_to_rgb to change to truecolor or to
 a higher bit-depth, you must either supply the background color as a gray
 value at the original file bit-depth (need_expand = 1) or else supply the
 background color as an RGB triplet at the final, expanded bit depth
@@ -983,7 +1019,7 @@ histogram, it may not do as good a job.
       if (png_get_valid(png_ptr, info_ptr,
          PNG_INFO_PLTE))
       {
-         png_uint_16p histogram;
+         png_uint_16p histogram = NULL;
 
          png_get_hIST(png_ptr, info_ptr,
             &histogram);
@@ -2206,61 +2242,130 @@ When you are done, you can free all memory used by libpng like this:
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
 It is also possible to individually free the info_ptr members that
-point to libpng-allocated storage with the following functions:
+point to libpng-allocated storage with the following function:
 
-    png_free_data(png_ptr, info_ptr, mask, n)
-    mask         - identifies data to be freed, a mask
-                   made up by the OR one or more of
-                   PNG_FREE_PLTE, PNG_FREE_TRNS,
-                   PNG_FREE_HIST, PNG_FREE_ICCP,
-                   PNG_FREE_SPLT, PNG_FREE_ROWS,
-                   PNG_FREE_PCAL, PNG_FREE_SCAL,
-                   PNG_FREE_TEXT, PNG_FREE_UNKN,
-                   or simply PNG_FREE_ALL
-    n            - sequence number of item to be freed
-                   (-1 for all items)
+    png_free_data(png_ptr, info_ptr, mask, seq)
+    mask  - identifies data to be freed, a mask
+            containing the logical OR of one or
+            more of
+              PNG_FREE_PLTE, PNG_FREE_TRNS,
+              PNG_FREE_HIST, PNG_FREE_ICCP,
+              PNG_FREE_PCAL, PNG_FREE_ROWS,
+              PNG_FREE_SCAL, PNG_FREE_SPLT,
+              PNG_FREE_TEXT, PNG_FREE_UNKN,
+            or simply PNG_FREE_ALL
+    seq   - sequence number of item to be freed
+            (-1 for all items)
 
-These functions may be safely called when the relevant storage has
-already been freed, or has not yet been allocated, and will in that
-case do nothing.  The "n" parameter is ignored if only one item
-of the selected data type, such as PLTE, is allowed.  If "n" is not
+This function may be safely called when the relevant storage has
+already been freed, or has not yet been allocated, or was allocated
+by the user  and not by libpng,  and will in those
+cases do nothing.  The "seq" parameter is ignored if only one item
+of the selected data type, such as PLTE, is allowed.  If "seq" is not
 -1, and multiple items are allowed for the data type identified in
-the mask, such as text or splt, only the n'th item is freed.
+the mask, such as text or sPLT, only the n'th item in the structure
+is freed, where n is "seq".
 
-If you allocated data such as a palette that you passed in to libpng with
-png_set_*, you must not free it until just before the call to
+If you allocated data such as a palette that you passed
+in to libpng with png_set_*, you must not free it until just before the call to
 png_destroy_write_struct().
 
+The default behavior is only to free data that was allocated internally
+by libpng.  This can be changed, so that libpng will not free the data,
+or so that it will free data that was allocated by the user with png_malloc()
+or png_zalloc() and passed in via a png_set_*() function, with
+
+    png_data_freer(png_ptr, info_ptr, freer, mask)
+    mask   - which data elements are affected
+             same choices as in png_free_data()
+    freer  - one of
+               PNG_DESTROY_WILL_FREE_DATA
+               PNG_SET_WILL_FREE_DATA
+               PNG_USER_WILL_FREE_DATA
+
+For example, to transfer responsibility for some data from a read structure
+to a write structure, you could use
+
+    png_data_freer(read_ptr, read_info_ptr,
+       PNG_USER_WILL_FREE_DATA,
+       PNG_FREE_PLTE|PNG_FREE_tRNS|PNG_FREE_hIST)
+    png_data_freer(write_ptr, write_info_ptr,
+       PNG_DESTROY_WILL_FREE_DATA,
+       PNG_FREE_PLTE|PNG_FREE_tRNS|PNG_FREE_hIST)
+
+thereby briefly reassigning responsibility for freeing to the user but
+immediately afterwards reassigning it once more to the write_destroy
+function.  Having done this, it would then be safe to destroy the read
+structure and continue to use the PLTE, tRNS, and hIST data in the write
+structure.
+
+This function only affects data that has already been allocated.
+You can call this function before calling after the png_set_*() functions
+to control whether the user or png_destroy_*() is supposed to free the data.
+When the user assumes responsibility for libpng-allocated data, the
+application must use
+png_free() to free it, and when the user transfers responsibility to libpng
+for data that the user has allocated, the user must have used png_malloc()
+or png_zalloc() to allocate it.
+
+If you allocated text_ptr.text, text_ptr.lang, and text_ptr.translated_keyword
+separately, do not transfer responsibility for freeing text_ptr to libpng,
+because when libpng fills a png_text structure it combines these members with
+the key member, and png_free_data() will free only text_ptr.key.  Similarly,
+if you transfer responsibility for free'ing text_ptr from libpng to your
+application, your application must not separately free those members.
 For a more compact example of writing a PNG image, see the file example.c.
 
 V. Modifying/Customizing libpng:
 
-There are two issues here.  The first is changing how libpng does
+There are three issues here.  The first is changing how libpng does
 standard things like memory allocation, input/output, and error handling.
 The second deals with more complicated things like adding new chunks,
 adding new transformations, and generally changing how libpng works.
+Both of those are compile-time issues; that is, they are generally
+determined at the time the code is written, and there is rarely a need
+to provide the user with a means of changing them.  The third is a
+run-time issue:  choosing between and/or tuning one or more alternate
+versions of computationally intensive routines; specifically, optimized
+assembly-language (and therefore compiler- and platform-dependent)
+versions.
+
+Memory allocation, input/output, and error handling
 
 All of the memory allocation, input/output, and error handling in libpng
-goes through callbacks that are user settable.  The default routines are
-in pngmem.c, pngrio.c, pngwio.c, and pngerror.c respectively.  To change
+goes through callbacks that are user-settable.  The default routines are
+in pngmem.c, pngrio.c, pngwio.c, and pngerror.c, respectively.  To change
 these functions, call the appropriate png_set_*_fn() function.
 
-Memory allocation is done through the functions png_large_malloc(),
-png_malloc(), png_realloc(), png_large_free(), and png_free().  These
-currently just call the standard C functions.  The large functions must
-handle exactly 64K, but they don't have to handle more than that.  If
+Memory allocation is done through the functions png_malloc()
+and png_free().  These currently just call the standard C functions.  If
 your pointers can't access more then 64K at a time, you will want to set
 MAXSEG_64K in zlib.h.  Since it is unlikely that the method of handling
 memory allocation on a platform will change between applications, these
-functions must be modified in the library at compile time.
+functions must be modified in the library at compile time.  If you prefer
+to use a different method of allocating and freeing data, you can use
+png_create_read_struct_2() or png_create_write_struct_2() to register
+your own functions as described above.
+These functions also provide a void pointer that can be retrieved via
+
+    mem_ptr=png_get_mem_ptr(png_ptr);
+
+Your replacement memory functions must have prototypes as follows:
+
+    png_voidp malloc_fn(png_structp png_ptr,
+       png_size_t size);
+    void free_fn(png_structp png_ptr, png_voidp ptr);
+
+Your malloc_fn() must return NULL in case of failure.  The png_malloc()
+function will normally call png_error() if it receives a NULL from the
+system memory allocator or from your replacement malloc_fn().
 
 Input/Output in libpng is done through png_read() and png_write(),
 which currently just call fread() and fwrite().  The FILE * is stored in
 png_struct and is initialized via png_init_io().  If you wish to change
 the method of I/O, the library supplies callbacks that you can set
 through the function png_set_read_fn() and png_set_write_fn() at run
-time, instead of calling the png_init_io() function.
-These functions
+time, instead of calling the png_init_io() function.  These functions
 also provide a void pointer that can be retrieved via the function
 png_get_io_ptr().  For example:
 
@@ -2277,9 +2382,9 @@ png_get_io_ptr().  For example:
 The replacement I/O functions must have prototypes as follows:
 
     void user_read_data(png_structp png_ptr,
-        png_bytep data, png_uint_32 length);
+        png_bytep data, png_size_t length);
     void user_write_data(png_structp png_ptr,
-        png_bytep data, png_uint_32 length);
+        png_bytep data, png_size_t length);
     void user_flush_data(png_structp png_ptr);
 
 Supplying NULL for the read, write, or flush functions sets them back
@@ -2414,6 +2519,10 @@ compression level by calling:
 Another useful one is to reduce the memory level used by the library.
 The memory level defaults to 8, but it can be lowered if you are
 short on memory (running DOS, for example, where you only have 640K).
+Note that the memory level does have an effect on compression; among
+other things, lower levels will result in sections of incompressible
+data being emitted in smaller stored blocks, with a correspondingly
+larger relative overhead of up to 15% in the worst case.
 
     png_set_compression_mem_level(png_ptr, level);
 
@@ -2448,19 +2557,18 @@ to turn filtering on and off, respectively.
 Individual filter types are PNG_FILTER_NONE, PNG_FILTER_SUB,
 PNG_FILTER_UP, PNG_FILTER_AVG, PNG_FILTER_PAETH, which can be bitwise
 ORed together with '|' to specify one or more filters to use.
-These filters are described in more detail in the PNG specification.  If
-you intend to change the filter type during the course of writing
+These filters are described in more detail in the PNG specification.
+If you intend to change the filter type during the course of writing
 the image, you should start with flags set for all of the filters
 you intend to use so that libpng can initialize its internal
-structures appropriately for all of the filter types.
+structures appropriately for all of the filter types.  (Note that this
+means the first row must always be adaptively filtered, because libpng
+currently does not allocate the filter buffers until png_write_row()
+is called for the first time.)
 
     filters = PNG_FILTER_NONE | PNG_FILTER_SUB
               PNG_FILTER_UP | PNG_FILTER_AVE |
               PNG_FILTER_PAETH | PNG_ALL_FILTERS;
-    or
-    filters = one of PNG_FILTER_VALUE_NONE,
-              PNG_FILTER_VALUE_SUB, PNG_FILTER_VALUE_UP,
-              PNG_FILTER_VALUE_AVE, PNG_FILTER_VALUE_PAETH
 
     png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE,
        filters);
@@ -2472,16 +2580,16 @@ structures appropriately for all of the filter types.
               in png_set_IHDR().
 
 It is also possible to influence how libpng chooses from among the
-available filters.  This is done in two ways - by telling it how
-important it is to keep the same filter for successive rows, and
-by telling it the relative computational costs of the filters.
+available filters.  This is done in one or both of two ways - by
+telling it how important it is to keep the same filter for successive
+rows, and by telling it the relative computational costs of the filters.
 
     double weights[3] = {1.5, 1.3, 1.1},
        costs[PNG_FILTER_VALUE_LAST] =
        {1.0, 1.3, 1.3, 1.5, 1.7};
 
-    png_set_filter_selection(png_ptr,
-       PNG_FILTER_SELECTION_WEIGHTED, 3,
+    png_set_filter_heuristics(png_ptr,
+       PNG_FILTER_HEURISTIC_WEIGHTED, 3,
        weights, costs);
 
 The weights are multiplying factors that indicate to libpng that the
@@ -2700,8 +2808,7 @@ For more extensive examples of runtime querying, enabling and disabling
 of optimized features, see contrib/gregbook/readpng2.c in the libpng
 source-code distribution.
 
-
-VII.  MNG support
+VI.  MNG support
 
 The MNG specification (available at http://www.libpng.org/pub/mng) allows
 certain extensions to PNG for PNG images that are embedded in MNG datastreams.
@@ -2714,7 +2821,7 @@ png_permit_mng_features() function:
         PNG_FLAG_MNG_EMPTY_PLTE
         PNG_FLAG_MNG_FILTER_64
         PNG_ALL_MNG_FEATURES
-   feature_set is a png_32_uint that is the logical AND of
+   feature_set is a png_uint_32 that is the logical AND of
       your mask with the set of MNG features that is
       supported by the version of libpng that you are using.
 
@@ -2726,7 +2833,7 @@ or any other MNG chunks; your application must provide its own support for
 them.  You may wish to consider using libmng (available at
 http://www.libmng.com) instead.
 
-VIII.  Changes to Libpng from version 0.88
+VII.  Changes to Libpng from version 0.88
 
 It should be noted that versions of libpng later than 0.96 are not
 distributed by the original libpng author, Guy Schalnat, nor by
@@ -2775,15 +2882,15 @@ application:
 
    png_uint_32 application_vn = PNG_LIBPNG_VER;
 
-IX. Y2K Compliance in libpng
+VII. Y2K Compliance in libpng
 
-December 12, 2001
+August 15, 2004
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.2.1 are Y2K compliant.  It is my belief that earlier
+upward through 1.2.6 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that

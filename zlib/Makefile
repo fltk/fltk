@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.5 2004/09/06 11:20:53 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.6 2004/09/08 16:04:42 easysw Exp $"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -31,8 +31,7 @@ include ../makeinclude
 #
 
 OBJS	=	adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o \
-		trees.o zutil.o inflate.o infblock.o inftrees.o infcodes.o \
-		infutil.o inffast.o
+		trees.o zutil.o inflate.o inftrees.o inffast.o
 
 LIBZ	=	../lib/libfltk_z$(LIBEXT)
 
@@ -104,5 +103,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.5 2004/09/06 11:20:53 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.6 2004/09/08 16:04:42 easysw Exp $".
 #

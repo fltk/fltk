@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.5rc3
 
 	- Documentation updates (STR #505, STR #513)
+	- Updated PNG library source to 1.2.6 + wutil patch.
+	- Updated ZLIB library source to 1.2.1.
 	- The old source file "fl_set_gray.cxx" is not needed
 	  (STR #516)
 	- Fl_Text_Display still called delete[] instead of

@@ -1008,14 +1008,306 @@ version 1.2.1rc1 [November 24, 2001]
   Updated various makefiles so "make clean" does not remove previous major
     version of the shared library.
 version 1.2.1rc2 [December 4, 2001]
-  Added a pop/push operation to pngvcrd.c, to preserve Eflag.
   Always allocate 256-entry internal palette, hist, and trans arrays, to
     avoid out-of-bounds memory reference caused by invalid PNG datastreams.
   Added a check for prefix_length > data_length in iCCP chunk handler.
-version 1.2.1 [December 12, 2001]
+version 1.2.1 [December 7, 2001]
   None.
+version 1.2.2beta1 [February 22, 2002]
+  Fixed a bug with reading the length of iCCP profiles (Larry Reeves).
+  Revised makefile.linux, makefile.gcmmx, and makefile.sgi to generate
+    libpng.a, libpng12.so (not libpng.so.3), and libpng12/png.h
+  Revised makefile.darwin to remove "-undefined suppress" option.
+  Added checks for gamma and chromaticity values over 21474.83, which exceed
+    the limit for PNG unsigned 32-bit integers when encoded.
+  Revised calls to png_create_read_struct() and png_create_write_struct()
+    for simpler debugging.
+  Revised png_zalloc() so zlib handles errors (uses PNG_FLAG_MALLOC_NULL_MEM_OK)
+version 1.2.2beta2 [February 23, 2002]
+  Check chunk_length and idat_size for invalid (over PNG_MAX_UINT) lengths.
+  Check for invalid image dimensions in png_get_IHDR.
+  Added missing "fi;" in the install target of the SGI makefiles.
+  Added install-static to all makefiles that make shared libraries.
+  Always do gamma compensation when image is partially transparent.
+version 1.2.2beta3 [March 7, 2002]
+  Compute background.gray and background_1.gray even when color_type is RGB
+    in case image gets reduced to gray later.
+  Modified shared-library makefiles to install pkgconfig/libpngNN.pc.
+  Export (with PNGAPI) png_zalloc, png_zfree, and png_handle_as_unknown
+  Removed unused png_write_destroy_info prototype from png.h
+  Eliminated incorrect use of width_mmx from pnggccrd.c in pixel_bytes == 8 case
+  Added install-shared target to all makefiles that make shared libraries.
+  Stopped a double free of palette, hist, and trans when not using free_me.
+  Added makefile.32sunu for Sun Ultra 32 and makefile.64sunu for Sun Ultra 64.
+version 1.2.2beta4 [March 8, 2002]
+  Compute background.gray and background_1.gray even when color_type is RGB
+    in case image gets reduced to gray later (Jason Summers).
+  Relocated a misplaced /bin/rm in the "install-shared" makefile targets
+  Added PNG_1_0_X macro which can be used to build a 1.0.x-compatible library.
+version 1.2.2beta5 [March 26, 2002]
+  Added missing PNGAPI to several function definitions.
+  Check for invalid bit_depth or color_type in png_get_IHDR(), and
+    check for missing PLTE or IHDR in png_push_read_chunk() (Matthias Clasen).
+  Revised iTXt support to accept NULL for lang and lang_key.
+  Compute gamma for color components of background even when color_type is gray.
+  Changed "()" to "{}" in scripts/libpng.pc.in.
+  Revised makefiles to put png.h and pngconf.h only in $prefix/include/libpngNN
+  Revised makefiles to make symlink to libpng.so.NN in addition to libpngNN.so
+version 1.2.2beta6 [March 31, 2002]
+version 1.0.13beta1 [March 31, 2002]
+  Prevent png_zalloc() from trying to memset memory that it failed to acquire.
+  Add typecasts of PNG_MAX_UINT in pngset_cHRM_fixed() (Matt Holgate).
+  Ensure that the right function (user or default) is used to free the
+    png_struct after an error in png_create_read_struct_2().
+version 1.2.2rc1 [April 7, 2002]
+version 1.0.13rc1 [April 7, 2002]
+  Save the ebx register in pnggccrd.c (Sami Farin)
+  Add "mem_ptr = png_ptr->mem_ptr" in png_destroy_write_struct() (Paul Gardner).
+  Updated makefiles to put headers in include/libpng and remove old include/*.h.
+version 1.2.2 [April 15, 2002]
+version 1.0.13 [April 15, 2002]
+  Revised description of png_set_filter() in libpng.3/libpng.txt.
+  Revised makefile.netbsd and added makefile.neNNbsd and makefile.freebsd
+version 1.0.13patch01 [April 17, 2002]
+version 1.2.2patch01 [April 17, 2002]
+  Changed ${PNGMAJ}.${PNGVER} bug to ${PNGVER} in makefile.sgi and makefile.sggcc
+  Fixed VER -> PNGVER typo in makefile.macosx and added install-static to install
+  Added install: target to makefile.32sunu and makefile.64sunu
+version 1.0.13patch03 [April 18, 2002]
+version 1.2.2patch03 [April 18, 2002]
+  Revised 15 makefiles to link libpng.a to libpngNN.a and the include libpng
+  subdirectory to libpngNN subdirectory without the full pathname.
+  Moved generation of libpng.pc from "install" to "all" in 15 makefiles.
+version 1.2.3rc1 [April 28, 2002]
+  Added install-man target to 15 makefiles (Dimitri Papadopolous-Orfanos).
+  Added $(DESTDIR) feature to 24 makefiles (Tim Mooney)
+  Fixed bug with $prefix, should be $(prefix) in makefile.hpux.
+  Updated cygwin-specific portion of pngconf.h and revised makefile.cygwin
+  Added a link from libpngNN.pc to libpng.pc in 15 makefiles.
+  Added links from include/libpngNN/*.h to include/*.h in 24 makefiles.
+  Revised makefile.darwin to make relative links without full pathname.
+  Added setjmp() at the end of png_create_*_struct_2() in case user forgets
+    to put one in their application.
+  Restored png_zalloc() and png_zfree() prototypes to version 1.2.1 and
+    removed them from module definition files.
+version 1.2.3rc2 [May 1, 2002]
+  Fixed bug in reporting number of channels in pngget.c and pngset.c,
+    that was introduced in version 1.2.2beta5.
+  Exported png_zalloc(), png_zfree(), png_default_read(), png_default_write(),
+    png_default_flush(), and png_push_fill_buffer() and included them in
+    module definition files.
+  Added "libpng.pc" dependency to the "install-shared" target in 15 makefiles.
+version 1.2.3rc3 [May 1, 2002]
+  Revised prototype for png_default_flush()
+  Remove old libpng.pc and libpngNN.pc before installing new ones.
+version 1.2.3rc4 [May 2, 2002]
+  Typos in *.def files (png_default_read|write -> png_default_read|write_data)
+  In makefiles, changed rm libpng.NN.pc to rm libpngNN.pc
+  Added libpng-config and libpngNN-config and modified makefiles to install them.
+  Changed $(MANPATH) to $(DESTDIR)$(MANPATH) in makefiles
+  Added "Win32 DLL VB" configuration to projects/msvc/libpng.dsp
+version 1.2.3rc5 [May 11, 2002]
+  Changed "error" and "message" in prototypes to "error_message" and
+    "warning_message" to avoid namespace conflict.
+  Revised 15 makefiles to build libpng-config from libpng-config-*.in
+  Once more restored png_zalloc and png_zfree to regular nonexported form.
+  Restored png_default_read|write_data, png_default_flush, png_read_fill_buffer
+    to nonexported form, but with PNGAPI, and removed them from module def files.
+version 1.2.3rc6 [May 14, 2002]
+  Removed "PNGAPI" from png_zalloc() and png_zfree() in png.c
+  Changed "Gz" to "Gd" in projects/msvc/libpng.dsp and zlib.dsp.
+  Removed leftover libpng-config "sed" script from four makefiles.
+  Revised libpng-config creating script in 16 makefiles.
+version 1.2.3 [May 22, 2002]
+  Revised libpng-config target in makefile.cygwin.
+  Removed description of png_set_mem_fn() from documentation.
+  Revised makefile.freebsd.
+  Minor cosmetic changes to 15 makefiles, e.g., $(DI) = $(DESTDIR)/$(INCDIR).
+  Revised projects/msvc/README.txt
+  Changed -lpng to -lpngNN in LDFLAGS in several makefiles.
+version 1.2.4beta1 [May 24, 2002]
+  Added libpng.pc and libpng-config to "all:" target in 16 makefiles.
+  Fixed bug in 16 makefiles: $(DESTDIR)/$(LIBPATH) to $(DESTDIR)$(LIBPATH)
+  Added missing "\" before closing double quote in makefile.gcmmx.
+  Plugged various memory leaks; added png_malloc_warn() and png_set_text_2()
+    functions.
+version 1.2.4beta2 [June 25, 2002]
+  Plugged memory leak of png_ptr->current_text (Matt Holgate).
+  Check for buffer overflow before reading CRC in pngpread.c (Warwick Allison)
+  Added -soname to the loader flags in makefile.dec, makefile.sgi, and
+    makefile.sggcc.
+  Added "test-installed" target to makefile.linux, makefile.gcmmx,
+    makefile.sgi, and makefile.sggcc.
+version 1.2.4beta3 [June 28, 2002]
+  Plugged memory leak of row_buf in pngtest.c when there is a png_error().
+  Detect buffer overflow in pngpread.c when IDAT is corrupted with extra data.
+  Added "test-installed" target to makefile.32sunu, makefile.64sunu,
+    makefile.beos, makefile.darwin, makefile.dec, makefile.macosx, 
+    makefile.solaris, makefile.hpux, makefile.hpgcc, and makefile.so9.
+version 1.2.4rc1 and 1.0.14rc1 [July 2, 2002]
+  Added "test-installed" target to makefile.cygwin and makefile.sco.
+  Revised pnggccrd.c to be able to back out version 1.0.x via PNG_1_0_X macro.
+version 1.2.4 and 1.0.14 [July 8, 2002]
+  Changed png_warning() to png_error() when width is too large to process.
+version 1.2.4patch01 [July 20, 2002]
+  Revised makefile.cygwin to use DLL number 12 instead of 13.
+version 1.2.5beta1 [August 6, 2002]
+  Added code to contrib/gregbook/readpng2.c to ignore unused chunks.
+  Replaced toucan.png in contrib/gregbook (it has been corrupt since 1.0.11)
+  Removed some stray *.o files from contrib/gregbook.
+  Changed png_error() to png_warning() about "Too much data" in pngpread.c
+    and about "Extra compressed data" in pngrutil.c.
+  Prevent png_ptr->pass from exceeding 7 in png_push_finish_row().
+  Updated makefile.hpgcc
+  Updated png.c and pnggccrd.c handling of return from png_mmx_support()
+version 1.2.5beta2 [August 15, 2002]
+  Only issue png_warning() about "Too much data" in pngpread.c when avail_in
+    is nonzero.
+  Updated makefiles to install a separate libpng.so.3 with its own rpath.
+version 1.2.5rc1 and 1.0.15rc1 [August 24, 2002]
+  Revised makefiles to not remove previous minor versions of shared libraries.
+version 1.2.5rc2 and 1.0.15rc2 [September 16, 2002]
+  Revised 13 makefiles to remove "-lz" and "-L$(ZLIBLIB)", etc., from shared
+    library loader directive.
+  Added missing "$OBJSDLL" line to makefile.gcmmx.
+  Added missing "; fi" to makefile.32sunu.
+version 1.2.5rc3 and 1.0.15rc3 [September 18, 2002]
+  Revised libpng-config script.
+version 1.2.5 and 1.0.15 [October 3, 2002]
+  Revised makefile.macosx, makefile.darwin, makefile.hpgcc, and makefile.hpux,
+    and makefile.aix.
+  Relocated two misplaced PNGAPI lines in pngtest.c
+version 1.2.6beta1 [October 22, 2002]
+  Commented out warning about uninitialized mmx_support in pnggccrd.c.
+  Changed "IBMCPP__" flag to "__IBMCPP__" in pngconf.h.
+  Relocated two more misplaced PNGAPI lines in pngtest.c
+  Fixed memory overrun bug in png_do_read_filler() with 16-bit datastreams,
+    introduced in version 1.0.2.
+  Revised makefile.macosx, makefile.dec, makefile.aix, and makefile.32sunu.
+version 1.2.6beta2 [November 1, 2002]
+  Added libpng-config "--ldopts" output.
+  Added "AR=ar" and "ARFLAGS=rc" and changed "ar rc" to "$(AR) $(ARFLAGS)"
+    in makefiles.
+version 1.2.6beta3 [July 18, 2004]
+  Reverted makefile changes from version 1.2.6beta2 and some of the changes
+    from version 1.2.6beta1; these will be postponed until version 1.2.7.
+    Version 1.2.6 is going to be a simple bugfix release.
+  Changed the one instance of "ln -sf" to "ln -f -s" in each Sun makefile.
+  Fixed potential overrun in pngerror.c by using strncpy instead of memcpy.
+  Added "#!/bin/sh" at the top of configure, for recognition of the
+    'x' flag under Cygwin (Cosmin).
+  Optimized vacuous tests that silence compiler warnings, in png.c (Cosmin).
+  Added support for PNG_USER_CONFIG, in pngconf.h (Cosmin).
+  Fixed the special memory handler for Borland C under DOS, in pngmem.c
+    (Cosmin).
+  Removed some spurious assignments in pngrutil.c (Cosmin).
+  Replaced 65536 with 65536L, and 0xffff with 0xffffL, to silence warnings
+    on 16-bit platforms (Cosmin).
+  Enclosed shift op expressions in parentheses, to silence warnings (Cosmin).
+  Used proper type png_fixed_point, to avoid problems on 16-bit platforms,
+    in png_handle_sRGB() (Cosmin).
+  Added compression_type to png_struct, and optimized the window size
+    inside the deflate stream (Cosmin).
+  Fixed definition of isnonalpha(), in pngerror.c and pngrutil.c (Cosmin).
+  Fixed handling of unknown chunks that come after IDAT (Cosmin).
+  Allowed png_error() and png_warning() to work even if png_ptr == NULL
+    (Cosmin).
+  Replaced row_info->rowbytes with row_bytes in png_write_find_filter()
+    (Cosmin).
+  Fixed definition of PNG_LIBPNG_VER_DLLNUM (Simon-Pierre).
+  Used PNG_LIBPNG_VER and PNG_LIBPNG_VER_STRING instead of the hardcoded
+    values in png.c (Simon-Pierre, Cosmin).
+  Initialized png_libpng_ver[] with PNG_LIBPNG_VER_STRING (Simon-Pierre).
+  Replaced PNG_LIBPNG_VER_MAJOR with PNG_LIBPNG_VER_DLLNUM in png.rc
+    (Simon-Pierre).
+  Moved the definition of PNG_HEADER_VERSION_STRING near the definitions
+    of the other PNG_LIBPNG_VER_... symbols in png.h (Cosmin).
+  Relocated #ifndef PNGAPI guards in pngconf.h (Simon-Pierre, Cosmin).
+  Updated scripts/makefile.vc(a)win32 (Cosmin).
+  Updated the MSVC project (Simon-Pierre, Cosmin).
+  Updated the Borland C++ Builder project (Cosmin).
+  Avoided access to asm_flags in pngvcrd.c, if PNG_1_0_X is defined (Cosmin).
+  Commented out warning about uninitialized mmx_support in pngvcrd.c (Cosmin).
+  Removed scripts/makefile.bd32 and scripts/pngdef.pas (Cosmin).
+  Added extra guard around inclusion of Turbo C memory headers, in pngconf.h
+    (Cosmin).
+  Renamed projects/msvc/ to projects/visualc6/, and projects/borland/ to
+    projects/cbuilder5/ (Cosmin).
+  Moved projects/visualc6/png32ms.def to scripts/pngw32.def,
+    and projects/visualc6/png.rc to scripts/pngw32.rc (Cosmin).
+  Added projects/visualc6/pngtest.dsp; removed contrib/msvctest/ (Cosmin).
+  Changed line endings to DOS style in cbuilder5 and visualc6 files, even
+    in the tar.* distributions (Cosmin).
+  Updated contrib/visupng/VisualPng.dsp (Cosmin).
+  Updated contrib/visupng/cexcept.h to version 2.0.0 (Cosmin).
+  Added a separate distribution with "configure" and supporting files (Junichi).
+version 1.2.6beta4 [July 28, 2004]
+  Added user ability to change png_size_t via a PNG_SIZE_T macro.
+  Added png_sizeof() and png_convert_size() functions.
+  Added PNG_SIZE_MAX (maximum value of a png_size_t variable.
+  Added check in png_malloc_default() for (size_t)size != (png_uint_32)size
+    which would indicate an overflow.
+  Changed sPLT failure action from png_error to png_warning and abandon chunk.
+  Changed sCAL and iCCP failures from png_error to png_warning and abandon.
+  Added png_get_uint_31(png_ptr, buf) function.
+  Added PNG_UINT_32_MAX macro.
+  Renamed PNG_MAX_UINT to PNG_UINT_31_MAX.
+  Made png_zalloc() issue a png_warning and return NULL on potential
+    overflow.
+  Turn on PNG_NO_ZALLOC_ZERO by default in version 1.2.x
+  Revised "clobber list" in pnggccrd.c so it will compile under gcc-3.4.
+  Revised Borland portion of png_malloc() to return NULL or issue
+    png_error() according to setting of PNG_FLAG_MALLOC_NULL_MEM_OK.
+  Added PNG_NO_SEQUENTIAL_READ_SUPPORTED macro to conditionally remove
+    sequential read support.
+  Added some "#if PNG_WRITE_SUPPORTED" blocks.
+  #ifdef'ed out some redundancy in png_malloc_default().
+  Use png_malloc instead of png_zalloc to allocate the pallete.
+version 1.2.6rc1 [August 4, 2004]
+  Fixed buffer overflow vulnerability in png_handle_tRNS()
+  Fixed integer arithmetic overflow vulnerability in png_read_png().
+  Fixed some harmless bugs in png_handle_sBIT, etc, that would cause
+    duplicate chunk types to go undetected.
+  Fixed some timestamps in the -config version
+  Rearranged order of processing of color types in png_handle_tRNS().
+  Added ROWBYTES macro to calculate rowbytes without integer overflow.
+  Updated makefile.darwin and removed makefile.macosx from scripts directory.
+  Imposed default one million column, one-million row limits on the image
+    dimensions, and added png_set_user_limits() function to override them.
+  Revised use of PNG_SET_USER_LIMITS_SUPPORTED macro.
+  Fixed wrong cast of returns from png_get_user_width|height_max().
+  Changed some "keep the compiler happy" from empty statements to returns,
+version 1.2.6rc2 [August 7, 2004]
+  Revised makefile.darwin and makefile.solaris.  Removed makefile.macosx.
+  Revised pngtest's png_debug_malloc() to use png_malloc() instead of
+    png_malloc_default() which is not supposed to be exported.
+  Fixed off-by-one error in one of the conversions to PNG_ROWBYTES() in
+    pngpread.c.  Bug was introduced in 1.2.6rc1.
+  Fixed bug in RGB to RGBX transformation introduced in 1.2.6rc1.
+  Fixed old bug in RGB to Gray transformation.
+  Fixed problem with 64-bit compilers by casting arguments to abs()
+    to png_int_32.
+  Changed "ln -sf" to "ln -f -s" in three makefiles (solaris, sco, so9).
+  Changed "HANDLE_CHUNK_*" to "PNG_HANDLE_CHUNK_*" (Cosmin)
+  Added "-@/bin/rm -f $(DL)/$(LIBNAME).so.$(PNGMAJ)" to 15 *NIX makefiles.
+  Added code to update the row_info->colortype in png_do_read_filler() (MSB).
+version 1.2.6rc3 [August 9, 2004]
+  Eliminated use of "abs()" in testing cHRM and gAMA values, to avoid
+    trouble with some 64-bit compilers.  Created PNG_OUT_OF_RANGE() macro.
+  Revised documentation of png_set_keep_unknown_chunks().
+  Check handle_as_unknown status in pngpread.c, as in pngread.c previously.
+  Moved  "PNG_HANDLE_CHUNK_*" macros out of PNG_INTERNAL section of png.h
+  Added "rim" definitions for CONST4 and CONST6 in pnggccrd.c
+version 1.2.6rc4 [August 10, 2004]
+  Fixed mistake in pngtest.c introduced in 1.2.6rc2 (declaration of
+    "pinfo" was out of place).
+version 1.2.6rc5 [August 10, 2004]
+  Moved  "PNG_HANDLE_CHUNK_*" macros out of PNG_ASSEMBLER_CODE_SUPPORTED
+     section of png.h where they were inadvertently placed in version rc3.
+version 1.2.6rc6 [August 15, 2004]
+  Revised pngtest so memory allocation testing is only done when PNG_DEBUG==1.
 
 Send comments/corrections/commendations to
-png-implement@ccrc.wustl.edu or to randeg@alum.rpi.edu
+png-implement@ccrc.wustl.edu or to glennrp@users.sourceforge.net
 
 Glenn R-P

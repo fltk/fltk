@@ -1,9 +1,9 @@
 
 /* pngrio.c - functions for data input
  *
- * libpng 1.2.1 - December 12, 2001
+ * libpng 1.2.6 - August 15, 2004
  * For conditions of distribution and use, see copyright notice in png.h
- * Copyright (c) 1998-2001 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2004 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -39,7 +39,7 @@ png_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
    read_data function and use it at run time with png_set_read_fn(), rather
    than changing the library. */
 #ifndef USE_FAR_KEYWORD
-static void /* PRIVATE */
+void PNGAPI
 png_default_read_data(png_structp png_ptr, png_bytep data, png_size_t length)
 {
    png_size_t check;
