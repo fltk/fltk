@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.4 2001/09/13 18:21:40 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.5 2001/09/23 13:08:02 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -64,6 +64,11 @@ const char *copyright =
 #include <errno.h>
 #include <config.h>
 
+#if !HAVE_SNPRINTF
+extern "C" {
+extern int snprintf(char* str, size_t size, const char* fmt, ...);
+}
+#endif // !HAVE_SNPRINTF
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -341,16 +346,27 @@ void about_cb(Fl_Widget *, void *) {
   about_panel->show();
 }
 
-void help_cb(Fl_Widget *, void *) {
+void show_help(const char *name) {
+  const char	*docdir;
+  char		filename[1024];
+  
   if (!help_dialog) help_dialog = new Fl_HelpDialog();
-  help_dialog->load(FLTK_DOCDIR "/fluid.html");
+
+  if ((docdir = getenv("FLTK_DOCDIR")) == NULL)
+    docdir = FLTK_DOCDIR;
+
+  snprintf(filename, sizeof(filename), "%s/%s", docdir, name);  
+
+  help_dialog->load(filename);
   help_dialog->show();
 }
 
+void help_cb(Fl_Widget *, void *) {
+  show_help("fluid.html");
+}
+
 void manual_cb(Fl_Widget *, void *) {
-  if (!help_dialog) help_dialog = new Fl_HelpDialog();
-  help_dialog->load(FLTK_DOCDIR "/index.html");
-  help_dialog->show();
+  show_help("index.html");
 }
 
 ////////////////////////////////////////////////////////////////
@@ -502,5 +518,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.4 2001/09/13 18:21:40 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.5 2001/09/23 13:08:02 easysw Exp $".
 //

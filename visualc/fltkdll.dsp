@@ -383,17 +383,21 @@ SOURCE=..\src\Fl_Check_Browser.cxx
 DEP_CPP_FL_CHE=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
-	"..\fl\fl_button.h"\
+	"..\fl\fl_browser_.h"\
 	"..\fl\fl_check_browser.h"\
+	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
-	"..\fl\fl_light_button.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_scrollbar.h"\
+	"..\fl\fl_slider.h"\
+	"..\fl\fl_valuator.h"\
 	"..\fl\fl_widget.h"\
 	
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\Fl_Check_Button.cxx
-DEP_CPP_FL_CHE=\
+DEP_CPP_FL_CHEC=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_button.h"\
@@ -849,6 +853,7 @@ DEP_CPP_FL_HE=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_button.h"\
+	"..\fl\fl_double_window.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
@@ -931,6 +936,7 @@ DEP_CPP_FL_LA=\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
+	"..\fl\fl_image.h"\
 	"..\fl\fl_input_.h"\
 	"..\fl\fl_widget.h"\
 	
@@ -1196,6 +1202,18 @@ DEP_CPP_FL_PO=\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_positioner.h"\
+	"..\fl\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Progress.cxx
+DEP_CPP_FL_PR=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_progress.h"\
 	"..\fl\fl_widget.h"\
 	
 # End Source File

@@ -395,6 +395,10 @@ SOURCE=..\src\Fl_Positioner.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Progress.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_rect.cxx
 # End Source File
 # Begin Source File

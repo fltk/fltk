@@ -27,6 +27,9 @@ CHANGES IN FLTK 1.1.0b2
 	  COLSPAN.
 	- The FLUID keyboard shortcuts now work as expected
 	  (CTRL-C copies, SHIFT-CTRL-C writes code, etc.)
+	- The FLTK_DOCDIR environment variable can now be
+	  used to tell FLUID where to find the on-line
+	  documentation files.
 
 
 CHANGES IN FLTK 1.1.0b1
