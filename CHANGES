@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Text_Editor didn't scroll the text in the widget
+	  when dragging text.
 	- Config header file changes for Borland C++.
 	- FLTK didn't provide a Fl::remove_handler() method.
 

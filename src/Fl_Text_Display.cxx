@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.19 2002/06/10 21:04:19 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.20 2002/07/08 17:15:35 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1918,9 +1918,11 @@ int Fl_Text_Display::handle(int event) {
         int X = Fl::event_x(), Y = Fl::event_y(), pos;
         if (Y < text_area.y) {
           move_up();
+	  scroll(mTopLineNum - 1, mHorizOffset);
           pos = insert_position();
         } else if (Y >= text_area.y+text_area.h) {
           move_down();
+	  scroll(mTopLineNum + 1, mHorizOffset);
           pos = insert_position();
         } else pos = xy_to_position(X, Y, CURSOR_POS);
         fl_text_drag_me(pos, this);
@@ -1945,18 +1947,6 @@ int Fl_Text_Display::handle(int event) {
 
     case FL_MOUSEWHEEL:
       return mVScrollBar->handle(event);
-#if 0
-        // I shouldn't be using mNVisibleLines or mTopLineNum here in handle()
-        // because the values for these might change between now and layout(),
-        // but it's OK because I really want the result based on how things
-        // were last displayed rather than where they should be displayed next
-        // time layout()/draw() happens.
-        int lines, sign = (Fl::event_dy() < 0) ? -1 : 1;
-        if (abs(Fl::event_dy()) > mNVisibleLines-2) lines = mNVisibleLines-2;
-        else lines = abs(Fl::event_dy());
-        scroll(mTopLineNum - lines*sign, mHorizOffset);
-        return 1;
-#endif
   }
 
   return 0;
@@ -1964,5 +1954,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.19 2002/06/10 21:04:19 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.20 2002/07/08 17:15:35 easysw Exp $".
 //
