@@ -14,8 +14,8 @@ TODO	- Added keyboard navigation to all widgets.
 PARTIAL	- Added support for mouse wheels using the new
 	  FL_MOUSEWHEEL event type.
 
-	- Added the Fl_FileBrowser, Fl_FileChooser, and
-	  Fl_FileIcon widgets from the bazaar.
+	- Added the Fl_FileBrowser, Fl_FileChooser, Fl_FileIcon,
+	  and Fl_Wizard widgets from the bazaar.
 
 TODO	- Added the Fl_Check_Browser, Fl_HelpDialog,
 	  Fl_HelpView, Fl_Tree_Browser, and Fl_Wizard widgets
