@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.32 2000/10/21 20:01:55 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.33 2000/11/20 02:49:40 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 //
 // Globals...
@@ -343,7 +344,6 @@ void Fl::belowmouse(Fl_Widget *o) {
   if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = belowmouse_;
   if (o != p) {
-    event_is_click(0);
     belowmouse_ = o;
     for (; p && !p->contains(o); p = p->parent()) p->handle(FL_LEAVE);
   }
@@ -734,5 +734,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.32 2000/10/21 20:01:55 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.33 2000/11/20 02:49:40 easysw Exp $".
 //

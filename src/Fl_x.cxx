@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.20 2000/10/21 20:01:56 spitzak Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.21 2000/11/20 02:49:40 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -340,8 +340,8 @@ static void set_event_xy() {
   if (fl_key_vector[18]&0x18) Fl::e_state |= FL_META;
 #endif
   // turn off is_click if enough time or mouse movement has passed:
-  if (abs(Fl::e_x_root-px)+abs(Fl::e_y_root-py) > 3 
-      || fl_event_time >= ptime+1000)
+  if (abs(Fl::e_x_root-px)+abs(Fl::e_y_root-py) > 3 ||
+      fl_event_time >= ptime+1000)
     Fl::e_is_click = 0;
 }
 
@@ -520,7 +520,8 @@ int fl_handle(const XEvent& xevent)
     Fl::e_keysym = int(keysym);
     Fl::e_text = buffer;
     Fl::e_length = len;
-    set_event_xy(); Fl::e_is_click = 0;
+    set_event_xy();
+    Fl::e_is_click = 0;
     if (Fl::event_state(FL_CTRL) && keysym == '-') buffer[0] = 0x1f; // ^_
     event = FL_KEYBOARD;
     break;}
@@ -897,5 +898,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.20 2000/10/21 20:01:56 spitzak Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.21 2000/11/20 02:49:40 easysw Exp $".
 //
