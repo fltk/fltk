@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Fl_Widget::copy_label(NULL) didn't work (STR #707)
+	- Fl_Choice now allows click selection like
+	  Fl_Menu_Button and Fl_Menubar (STR #706)
 	- Updated cmake support (STR #645)
 	- Fl_Check_Browser didn't draw properly when inactive
 	  (STR #681)

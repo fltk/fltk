@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.26 2004/11/23 19:51:03 easysw Exp $"
+// "$Id$"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -262,12 +262,17 @@ Fl_Widget::label(const char *a) {
 void
 Fl_Widget::copy_label(const char *a) {
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
-  set_flag(COPIED_LABEL);
-  label_.value=strdup(a);
+  if (a) {
+    set_flag(COPIED_LABEL);
+    label_.value=strdup(a);
+  } else {
+    clear_flag(COPIED_LABEL);
+    label_.value=(char *)0;
+  }
   redraw_label();
 }
 
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.26 2004/11/23 19:51:03 easysw Exp $".
+// End of "$Id$".
 //
