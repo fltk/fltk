@@ -780,7 +780,9 @@ void Fl_Comment_Type::open() {
       }
       else if (w == comment_load) {
         // load a comment from disk
+	fl_file_chooser_ok_label("Use File");
         const char *fname = fl_file_chooser("Pick a comment", 0L, 0L);
+	fl_file_chooser_ok_label(NULL);
         if (fname) {
           if (comment_input->buffer()->loadfile(fname)) {
             fl_alert("Error loading file\n%s", fname);

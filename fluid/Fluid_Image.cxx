@@ -212,7 +212,9 @@ Fluid_Image::~Fluid_Image() {
 const char *ui_find_image_name;
 Fluid_Image *ui_find_image(const char *oldname) {
   goto_source_dir();
+  fl_file_chooser_ok_label("Use Image");
   const char *name = fl_file_chooser("Image?","Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm})",oldname,1);
+  fl_file_chooser_ok_label(NULL);
   ui_find_image_name = name;
   Fluid_Image *ret = (name && *name) ? Fluid_Image::find(name) : 0;
   leave_source_dir();

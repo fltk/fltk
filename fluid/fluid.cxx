@@ -176,9 +176,9 @@ static char* cutfname(int which = 0) {
 void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
   if (v || !c || !*c) {
-    fl_ok = "Save";
+    fl_file_chooser_ok_label("Save");
     c=fl_file_chooser("Save To:", "FLUID Files (*.f[ld])", c);
-    fl_ok = "OK";
+    fl_file_chooser_ok_label(NULL);
     if (!c) return;
 
     if (!access(c, 0)) {
@@ -436,9 +436,9 @@ void open_cb(Fl_Widget *, void *v) {
   }
   const char *c;
   const char *oldfilename;
-  fl_ok = "Open";
+  fl_file_chooser_ok_label("Open");
   c = fl_file_chooser("Open:", "FLUID Files (*.f[ld])", filename);
-  fl_ok = "OK";
+  fl_file_chooser_ok_label(NULL);
   if (!c) return;
   oldfilename = filename;
   filename    = NULL;
@@ -964,9 +964,9 @@ void print_cb(Fl_Return_Button *, void *) {
     outfile = popen(command, "w");
   } else {
     // Print to file...
-    fl_ok = "Print";
+    fl_file_chooser_ok_label("Print");
     const char *outname = fl_file_chooser("Print To", "PostScript (*.ps)", NULL, 1);
-    fl_ok = "OK";
+    fl_file_chooser_ok_label(NULL);
 
     if (outname && !access(outname, 0)) {
       if (fl_choice("The file \"%s\" already exists.\n"

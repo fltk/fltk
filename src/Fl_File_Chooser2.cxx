@@ -415,8 +415,36 @@ Fl_File_Chooser::fileListCB()
   }
   else
   {
-    // Strip any trailing slash from the directory name...
+    // Check if the user clicks on a directory when picking files;
+    // if so, make sure only that item is selected...
     filename = pathname + strlen(pathname) - 1;
+
+    if ((type_ & MULTI) && !(type_ & DIRECTORY)) {
+      if (*filename == '/') {
+	// Clicked on a directory, deselect everything else...
+	int i = fileList->value();
+	fileList->deselect();
+	fileList->select(i);
+      } else {
+        // Clicked on a file - see if there are other directories selected...
+        int i;
+	const char *temp;
+	for (i = 1; i <= fileList->size(); i ++) {
+	  if (i != fileList->value() && fileList->selected(i)) {
+	    temp = fileList->text(i);
+	    temp += strlen(temp) - 1;
+	    if (*temp == '/') break;	// Yes, selected directory
+	  }
+	}
+
+        if (i <= fileList->size()) {
+	  i = fileList->value();
+	  fileList->deselect();
+	  fileList->select(i);
+	}
+      }
+    }
+    // Strip any trailing slash from the directory name...
     if (*filename == '/') *filename = '\0';
 
 //    puts("Setting fileName from fileListCB...");
