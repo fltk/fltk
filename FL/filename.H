@@ -1,5 +1,5 @@
 /*
- * "$Id: filename.H,v 1.11.2.4.2.14 2004/04/11 04:38:54 easysw Exp $"
+ * "$Id: filename.H,v 1.11.2.4.2.15 2004/10/18 20:29:54 easysw Exp $"
  *
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
@@ -51,7 +51,7 @@ inline int fl_filename_relative(char *to, const char *from) { return fl_filename
 #  endif /* __cplusplus */
 
 
-#  if defined(WIN32) && !defined(__CYGWIN__)
+#  if defined(WIN32) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
 
 struct dirent {char d_name[1];};
 
@@ -64,6 +64,10 @@ struct dirent {char d_name[1];};
 // in the project)
 #    include <sys/types.h>
 #    include "/usr/include/dirent.h"
+
+#  elif defined(__WATCOMC__)
+#    include <sys/types.h>
+#    include <direct.h>
 
 #  else
 /*
@@ -127,5 +131,5 @@ FL_EXPORT int fl_filename_list(const char *d, struct dirent ***l,
 #endif /* FL_FILENAME_H */
 
 /*
- * End of "$Id: filename.H,v 1.11.2.4.2.14 2004/04/11 04:38:54 easysw Exp $".
+ * End of "$Id: filename.H,v 1.11.2.4.2.15 2004/10/18 20:29:54 easysw Exp $".
  */

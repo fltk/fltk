@@ -346,7 +346,7 @@ with your application use:
 <UL><PRE>
 #include &quot;icon.xbm&quot;
 
-fl_opendisplay();                // needed if display has not been previously opened
+fl_open_display(); // needed if display has not been previously opened
 
 Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
                                  icon_bits, icon_width, icon_height);

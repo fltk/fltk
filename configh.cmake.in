@@ -1,10 +1,10 @@
 /*
- * "$Id: configh.cmake.in,v 1.1.2.1 2004/09/13 02:12:40 easysw Exp $"
+ * "$Id: configh.cmake.in,v 1.1.2.2 2004/10/18 20:29:54 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
  *
- * Copyright 1998-2003 by Bill Spitzak and others.
+ * Copyright 1998-2004 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -97,6 +97,30 @@
  */
 
 #define USE_XDBE HAVE_XDBE
+
+/*
+ * USE_QUARTZ:
+ *
+ * Use Quartz instead of Quickdraw on Apple Mac OS X machines.
+ * FLTK was originally ported to Quickdraw which is no longer 
+ * supported by Apple. If USE_QUARTZ is defined, FLTK will be
+ * compiled using Quartz instead. This flag has no meaning on
+ * other operating systems.
+ */
+
+#cmakedefine FLTK_APPLE
+#ifdef FLTK_APPLE
+  #cmakedefine FLTK_QUARTZ
+  #ifdef FLTK_QUARTZ
+    #define USE_QUARTZ 1
+    #define __APPLE_QUARTZ__
+    #undef __APPLE_QD__
+  #else
+    #define USE_QUARTZ 0
+    #undef __APPLE_QUARTZ__
+    #define __APPLE_QD__
+  #endif
+#endif
 
 /*
  * HAVE_OVERLAY:
@@ -230,5 +254,5 @@
 #endif
 
 /*
- * End of "$Id: configh.cmake.in,v 1.1.2.1 2004/09/13 02:12:40 easysw Exp $".
+ * End of "$Id: configh.cmake.in,v 1.1.2.2 2004/10/18 20:29:54 easysw Exp $".
  */
