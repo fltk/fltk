@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.14 2003/07/17 05:52:47 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.15 2003/07/23 14:38:00 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -26,14 +26,15 @@
 #include <config.h>
 #if HAVE_GL
 
-#include <FL/Fl.H>
-#include <FL/x.H>
-#include <stdlib.h>
-#include "Fl_Gl_Choice.H"
+#  include <FL/Fl.H>
+#  include <FL/x.H>
+#  include <stdlib.h>
+#  include "Fl_Gl_Choice.H"
+#  include "flstring.h"
 
-#ifdef __APPLE__
-#  include <FL/Fl_Window.H>
-#endif
+#  ifdef __APPLE__
+#    include <FL/Fl_Window.H>
+#  endif
 
 static Fl_Gl_Choice *first;
 
@@ -47,7 +48,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     if (g->mode == m && g->alist == alistp) 
       return g;
 
-#ifdef __APPLE__
+#  ifdef __APPLE__
   const int *blist;
   int list[32];
     
@@ -84,11 +85,11 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     if (m & FL_STENCIL) {
       list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
     }
-#  ifdef AGL_STEREO  /* is there such a thing as AGL_STEREO? */
+#    ifdef AGL_STEREO
     if (m & FL_STEREO) {
       list[n++] = AGL_STEREO;
     }
-#  endif
+#    endif
     list[n] = AGL_NONE;
     blist = list;
   }
@@ -96,7 +97,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   AGLPixelFormat fmt = aglChoosePixelFormat(NULL, 0, (GLint*)blist);
   if (!fmt) return 0;
   
-#elif !defined(WIN32)    
+#  elif !defined(WIN32)    
 
   const int *blist;
   int list[32];
@@ -137,12 +138,12 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     if (m & FL_STEREO) {
       list[n++] = GLX_STEREO;
     }
-#  if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
+#    if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
     if (m & FL_MULTISAMPLE) {
       list[n++] = GLX_SAMPLES_SGIS;
       list[n++] = 4; // value Glut uses
     }
-#  endif
+#    endif
     list[n] = 0;
     blist = list;
   }
@@ -150,13 +151,13 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   fl_open_display();
   XVisualInfo *visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
   if (!visp) {
-#  if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
+#    if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
     if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE,0);
-#  endif
+#    endif
     return 0;
   }
 
-#else
+#  else
 
   // Replacement for ChoosePixelFormat() that finds one with an overlay
   // if possible:
@@ -189,7 +190,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   //printf("Chosen pixel format is %d\n", pixelformat);
   if (!pixelformat) return 0;
 
-#endif
+#  endif
 
   g = new Fl_Gl_Choice;
   g->mode = m;
@@ -197,12 +198,12 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   g->next = first;
   first = g;
 
-#ifdef WIN32
+#  ifdef WIN32
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
-#elif defined(__APPLE__)
+#  elif defined(__APPLE__)
   g->pixelformat = fmt;
-#else
+#  else
   g->vis = visp;
 
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
@@ -212,7 +213,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   else
     g->colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
 				  visp->visual, AllocNone);
-#endif
+#  endif
 
   return g;
 }
@@ -243,7 +244,7 @@ static void del_context(GLContext ctx) {
   }
 }
 
-#ifdef WIN32
+#  ifdef WIN32
 
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   Fl_X* i = Fl_X::i(window);
@@ -251,9 +252,9 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   if (!hdc) {
     hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
     SetPixelFormat(hdc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
-#  if USE_COLORMAP
+#    if USE_COLORMAP
     if (fl_palette) SelectPalette(hdc, fl_palette, FALSE);
-#  endif
+#    endif
   }
   GLContext context =
     layer ? wglCreateLayerContext(hdc, layer) : wglCreateContext(hdc);
@@ -265,7 +266,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   return context;
 }
 
-#elif defined(__APPLE__)
+#  elif defined(__APPLE__)
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
     GLContext context, shared_ctx = context_list ? context_list[0] : 0;
     context = aglCreateContext( g->pixelformat, shared_ctx);
@@ -280,7 +281,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
     aglSetDrawable( context, GetWindowPort( fl_xid(window) ) );
     return (context);
 }
-#else
+#  else
 
 GLContext fl_create_gl_context(XVisualInfo* vis) {
   GLContext shared_ctx = context_list ? context_list[0] : 0;
@@ -290,7 +291,7 @@ GLContext fl_create_gl_context(XVisualInfo* vis) {
   return context;
 }
 
-#endif
+#  endif
 
 static GLContext cached_context;
 static Fl_Window* cached_window;
@@ -299,9 +300,9 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-#ifdef WIN32
+#  ifdef WIN32
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
-#elif defined(__APPLE__)
+#  elif defined(__APPLE__)
     if ( w->parent() ) { //: resize our GL buffer rectangle
       Rect wrect; GetWindowPortBounds( fl_xid(w), &wrect );
       GLint rect[] = { w->x(), wrect.bottom-w->h()-w->y(), w->w(), w->h() };
@@ -310,40 +311,41 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     }
     aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); 
     aglSetCurrentContext(context);
-#else
+#  else
     glXMakeCurrent(fl_display, fl_xid(w), context);
-#endif
+#  endif
   }
 }
 
 void fl_no_gl_context() {
   cached_context = 0;
   cached_window = 0;
-#ifdef WIN32
+#  ifdef WIN32
   wglMakeCurrent(0, 0);
-#elif defined(__APPLE__)
+#  elif defined(__APPLE__)
   aglSetCurrentContext(0);
-#else
+#  else
   glXMakeCurrent(fl_display, 0, 0);
-#endif
+#  endif
 }
 
 void fl_delete_gl_context(GLContext context) {
   if (cached_context == context) fl_no_gl_context();
-#ifdef WIN32
+#  ifdef WIN32
   wglDeleteContext(context);
-#elif defined(__APPLE__)
+#  elif defined(__APPLE__)
   aglSetCurrentContext( NULL );
   aglSetDrawable( context, NULL );    
   aglDestroyContext( context );
-#else
+#  else
   glXDestroyContext(fl_display, context);
-#endif
+#  endif
   del_context(context);
 }
 
-#endif
+#endif // HAVE_GL
+
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.14 2003/07/17 05:52:47 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.15 2003/07/23 14:38:00 easysw Exp $".
 //
