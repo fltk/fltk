@@ -23,7 +23,7 @@ TODO	- Added keyboard navigation to all widgets.
 TODO	- Added the Fl_Check_Browser, and Fl_Tree_Browser
 	  widgets from the bazaar.
 
-TODO	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
+	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
 	  based on NEdit.
 
 TODO	- The Fl_Choice widget now looks more line a combo box

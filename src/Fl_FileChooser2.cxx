@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_FileChooser2.cxx,v 1.15.2.1 2001/08/02 16:17:04 easysw Exp $"
+// "$Id: Fl_FileChooser2.cxx,v 1.15.2.2 2001/08/04 12:21:33 easysw Exp $"
 //
 // More Fl_FileChooser routines.
 //
@@ -431,7 +431,14 @@ Fl_FileChooser::fileListCB()
       upButton->activate();
     }
     else
+    {
+      // Do any callback that is registered...
+      if (callback_)
+        (*callback_)(this, data_);
+
+      // Hide the window...
       window->hide();
+    }
   }
   else
   {
@@ -542,6 +549,10 @@ Fl_FileChooser::fileNameCB()
       if (type_ == MULTI)
         type(SINGLE);
 
+      // Do any callback that is registered...
+      if (callback_)
+        (*callback_)(this, data_);
+
       // Hide the window to signal things are done...
       window->hide();
     }
@@ -614,6 +625,13 @@ Fl_FileChooser::fileNameCB()
 	  pathname[sizeof(pathname) - 1] = '\0';
 	  max_match = strlen(pathname);
 
+          // Strip trailing /, if any...
+	  if (pathname[max_match - 1] == '/')
+	  {
+	    max_match --;
+	    pathname[max_match] = '\0';
+	  }
+
 	  // And then make sure that the item is visible
           fileList->topline(i);
 	  first_line = i;
@@ -673,5 +691,5 @@ Fl_FileChooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_FileChooser2.cxx,v 1.15.2.1 2001/08/02 16:17:04 easysw Exp $".
+// End of "$Id: Fl_FileChooser2.cxx,v 1.15.2.2 2001/08/04 12:21:33 easysw Exp $".
 //

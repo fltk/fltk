@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.H,v 1.1 2000/08/04 10:21:59 clip Exp $"
+// "$Id: Fl_Text_Editor.H,v 1.1.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Header file for Fl_Text_Editor class.
 //
@@ -28,16 +28,16 @@
 #ifndef FL_TEXT_EDITOR_H
 #define FL_TEXT_EDITOR_H
 
-#include <FL/Fl_Text_Display.H>
+#include "Fl_Text_Display.H"
 
 // key will match in any state
 #define FL_TEXT_EDITOR_ANY_STATE  (-1L)
 
-class FL_API Fl_Text_Editor : public Fl_Text_Display {
+class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
   public:
     typedef int (*Key_Func)(int key, Fl_Text_Editor* editor);
 
-    struct FL_API Key_Binding {
+    struct FL_EXPORT Key_Binding {
       int          key;
       int          state;
       Key_Func     function;
@@ -100,6 +100,6 @@ class FL_API Fl_Text_Editor : public Fl_Text_Display {
 #endif
 
 //
-// End of "$Id: Fl_Text_Editor.H,v 1.1 2000/08/04 10:21:59 clip Exp $".
+// End of "$Id: Fl_Text_Editor.H,v 1.1.2.1 2001/08/04 12:21:33 easysw Exp $".
 //
 

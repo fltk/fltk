@@ -16,7 +16,7 @@ class Fl_FileChooser {open
       callback {fileList->deselect();
 fileName->value("");
 window->hide();} open
-      private xywh {208 292 375 315} resizable hotspot
+      private xywh {250 430 375 315} resizable hotspot
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -32,13 +32,17 @@ window->hide();} open
         label Cancel
         callback {fileList->deselect();
 fileName->value("");
-window->hide();} selected
+window->hide();}
         private xywh {285 280 80 25}
         code0 {o->label(fl_cancel);}
       }
       Fl_Return_Button okButton {
         label OK
-        callback {window->hide();}
+        callback {// Do any callback that is registered...
+if (callback_)
+  (*callback_)(this, data_);
+
+window->hide();}
         private xywh {200 280 75 25}
         code0 {\#include <FL/fl_ask.H>}
         code1 {okButton->label(fl_ok);}
@@ -86,14 +90,23 @@ if ((f = fl_input("New Filter?",
     code {window->size_range(345, 270, 345);
 fileList->filter(p);
 type(t);
-value(d);} {}
+value(d);
+callback_ = 0;
+data_ = 0;} {}
   }
+  decl {void (*callback_)(Fl_FileChooser*, void *);} {}
+  decl {void *data_;} {}
   decl {char directory_[1024];} {}
   decl {int type_;} {}
   decl {void fileListCB();} {}
   decl {void fileNameCB();} {}
   decl {void newdir();} {}
   decl {void up();} {}
+  Function {callback(void (*cb)(Fl_FileChooser *, void *), void *d)} {selected return_type void
+  } {
+    code {callback_ = cb;
+data_     = d;} {}
+  }
   Function {color(Fl_Color c)} {} {
     code {fileList->color(c);} {}
   }

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12 2001/07/23 09:50:05 spitzak Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -22,10 +22,9 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <fltk/Fl.h>
-#include <fltk/Fl_Text_Buffer.h>
-#include <fltk/Fl_Text_Display.h>
-#include <fltk/Fl_Style.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Display.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -72,6 +71,11 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   dragPos = dragType = dragging = 0;
   display_insert_position_hint = 0;
 
+  box(FL_DOWN_FRAME);
+  textsize(FL_NORMAL_SIZE);
+  textcolor(FL_BLACK);
+  textfont(FL_HELVETICA);
+
   Fl_Group* current = Fl_Group::current();
   Fl_Group::current(this);
 
@@ -83,8 +87,8 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 
   Fl_Group::current(current);
 
-  scrollbar_width(Fl_Style::scrollbar_width);
-  scrollbar_align(Fl_Style::scrollbar_align);
+  scrollbar_width(16);
+  scrollbar_align(FL_ALIGN_BOTTOM_RIGHT);
 
   mCursorOn = 0;
   mCursorPos = 0;
@@ -182,10 +186,14 @@ int Fl_Text_Display::longest_vline() {
 /*
 ** Change the size of the displayed text area
 */
-void Fl_Text_Display::layout() {
+void Fl_Text_Display::resize(int X, int Y, int W, int H) {
+  Fl_Widget::resize(X,Y,W,H);
   if (!buffer() || !visible_r()) return;
-  int X = 0, Y = 0, W = w(), H = h();
-  text_box()->inset(X, Y, W, H);
+  X += Fl::box_dx(box());
+  Y += Fl::box_dy(box());
+  W -= Fl::box_dw(box());
+  H -= Fl::box_dh(box());
+
   text_area.x = X+LEFT_MARGIN;
   text_area.y = Y+BOTTOM_MARGIN;
   text_area.w = W-LEFT_MARGIN-RIGHT_MARGIN;
@@ -193,8 +201,8 @@ void Fl_Text_Display::layout() {
   int i;
 
   /* Find the new maximum font height for this text display */
-  for (i = 0, mMaxsize = fl_height(text_font(), text_size())+leading(); i < mNStyles; i++)
-    mMaxsize = max(mMaxsize, fl_height(mStyleTable[i].font, mStyleTable[i].size)+leading());
+  for (i = 0, mMaxsize = fl_height(textfont(), textsize()); i < mNStyles; i++)
+    mMaxsize = max(mMaxsize, fl_height(mStyleTable[i].font, mStyleTable[i].size));
 
   // did we have scrollbars initially?
   bool hscrollbarvisible = mHScrollBar->visible();
@@ -311,10 +319,6 @@ void Fl_Text_Display::layout() {
 
   update_v_scrollbar();
   update_h_scrollbar();
-  damage(FL_DAMAGE_CHILD);
-
-  // clear the layout flag
-  damage(damage()&(~FL_DAMAGE_LAYOUT));
 }
 
 /*
@@ -325,7 +329,7 @@ void Fl_Text_Display::draw_text( int left, int top, int width, int height ) {
   int fontHeight, firstLine, lastLine, line;
 
   /* find the line number range of the display */
-  fontHeight = mMaxsize;
+  fontHeight = mMaxsize ? mMaxsize : textsize_;
   firstLine = ( top - text_area.y - fontHeight + 1 ) / fontHeight;
   lastLine = ( top + height - text_area.y ) / fontHeight + 1;
 
@@ -639,7 +643,7 @@ void Fl_Text_Display::display_insert() {
 
 void Fl_Text_Display::show_insert_position() {
   display_insert_position_hint = 1;
-  relayout();
+  resize(x(), y(), w(), h());
 }
 
 /*
@@ -750,7 +754,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   int scrolled, origCursorPos = textD->mCursorPos;
 
   // refigure scrollbars & stuff
-  textD->relayout();
+  textD->resize(textD->x(), textD->y(), textD->w(), textD->h());
 
   /* buffer modification cancels vertical cursor motion column */
   if ( nInserted != 0 || nDeleted != 0 )
@@ -1040,8 +1044,8 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
      pre-allocated and pre-configured.  For syntax highlighting, GCs are
      configured here, on the fly. */
 
-  Fl_Font font = text_font();
-  int size = text_size();
+  Fl_Font font = textfont();
+  int size = textsize();
   Fl_Color foreground;
   Fl_Color background;
 
@@ -1050,19 +1054,19 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     font = styleRec->font;
     size = styleRec->size;
     foreground = styleRec->color;
-    background = style & PRIMARY_MASK ? selection_color() :
-                 style & HIGHLIGHT_MASK ? highlight_color() : text_background();
+    background = style & PRIMARY_MASK ? FL_SELECTION_COLOR :
+                 style & HIGHLIGHT_MASK ? fl_contrast(textcolor(),color()) : color();
     if ( foreground == background )   /* B&W kludge */
-      foreground = text_background();
+      foreground = textcolor();
   } else if ( style & HIGHLIGHT_MASK ) {
-    foreground = highlight_label_color();
-    background = highlight_color();
+    foreground = textcolor();
+    background = fl_contrast(textcolor(),color());
   } else if ( style & PRIMARY_MASK ) {
-    foreground = selection_text_color();
-    background = selection_color();
+    foreground = textcolor();
+    background = FL_SELECTION_COLOR;
   } else {
-    foreground = text_color();
-    background = text_background();
+    foreground = textcolor();
+    background = color();
   }
 
   fl_color( background );
@@ -1101,13 +1105,13 @@ void Fl_Text_Display::clear_rect( int style, int X, int Y,
     return;
 
   if ( style & HIGHLIGHT_MASK ) {
-    fl_color( highlight_color() );
+    fl_color( fl_contrast(textcolor(), color()) );
     fl_rectf( X, Y, width, height );
   } else if ( style & PRIMARY_MASK ) {
-    fl_color( selection_color() );
+    fl_color( FL_SELECTION_COLOR );
     fl_rectf( X, Y, width, height );
   } else {
-    fl_color( text_background() );
+    fl_color( color() );
     fl_rectf( X, Y, width, height );
   }
 }
@@ -1240,8 +1244,8 @@ int Fl_Text_Display::string_width( const char *string, int length, int style ) {
     font = mStyleTable[ ( style & STYLE_LOOKUP_MASK ) - 'A' ].font;
     size = mStyleTable[ ( style & STYLE_LOOKUP_MASK ) - 'A' ].size;
   } else {
-    font = text_font();
-    size = text_size();
+    font = textfont();
+    size = textsize();
   }
   fl_font( font, size );
 
@@ -1548,7 +1552,7 @@ void Fl_Text_Display::calc_last_char() {
 void Fl_Text_Display::scroll(int topLineNum, int horizOffset) {
   mTopLineNumHint = topLineNum;
   mHorizOffsetHint = horizOffset;
-  relayout();
+  resize(x(), y(), w(), h());
 }
 
 void Fl_Text_Display::scroll_(int topLineNum, int horizOffset) {
@@ -1644,7 +1648,7 @@ int Fl_Text_Display::measure_vline( int visLineNum ) {
       len = mBuffer->expand_character( lineStartPos + i,
                                        charCount, expandedChar );
 
-      fl_font( text_font(), text_size() );
+      fl_font( textfont(), textsize() );
 
       width += ( int ) fl_width( expandedChar, len );
 
@@ -1738,25 +1742,26 @@ void Fl_Text_Display::draw(void) {
   if (damage() & FL_DAMAGE_ALL) {
     //printf("drawing all\n");
     // draw the box()
-    draw_text_frame();
+    draw_box(box(), text_area.x, text_area.y, text_area.w, text_area.h,
+             color());
 
     // left margin
     fl_rectf(text_area.x-LEFT_MARGIN, text_area.y-TOP_MARGIN,
              LEFT_MARGIN, text_area.h+TOP_MARGIN+BOTTOM_MARGIN,
-             text_background());
+             color());
 
     // right margin
     fl_rectf(text_area.x+text_area.w, text_area.y-TOP_MARGIN,
              RIGHT_MARGIN, text_area.h+TOP_MARGIN+BOTTOM_MARGIN,
-             text_background());
+             color());
 
     // top margin
     fl_rectf(text_area.x, text_area.y-TOP_MARGIN,
-             text_area.w, TOP_MARGIN, text_background());
+             text_area.w, TOP_MARGIN, color());
 
     // bottom margin
     fl_rectf(text_area.x, text_area.y+text_area.h,
-             text_area.w, BOTTOM_MARGIN, text_background());
+             text_area.w, BOTTOM_MARGIN, color());
 
     // draw that little box in the corner of the scrollbars
     if (mVScrollBar->visible() && mHScrollBar->visible())
@@ -1774,9 +1779,9 @@ void Fl_Text_Display::draw(void) {
                  text_area.w+LEFT_MARGIN+RIGHT_MARGIN,
                  text_area.h);
     fl_rectf(text_area.x-LEFT_MARGIN, mCursorOldY,
-             LEFT_MARGIN, mMaxsize, text_background());
+             LEFT_MARGIN, mMaxsize, color());
     fl_rectf(text_area.x+text_area.w, mCursorOldY,
-             RIGHT_MARGIN, mMaxsize, text_background());
+             RIGHT_MARGIN, mMaxsize, color());
     fl_pop_clip();
   }
 
@@ -1917,13 +1922,13 @@ int Fl_Text_Display::handle(int event) {
         dragType = DRAG_CHAR;
 
         const char* copy = buffer()->selection_text();
-        if (*copy) Fl::copy(copy, strlen(copy), false);
+        if (*copy) Fl::selection(*this, copy, strlen(copy));
         free((void*)copy);
         return 1;
       }
 
     case FL_MOUSEWHEEL:
-      return send(event, *mVScrollBar);
+      return mVScrollBar->handle(event);
 #if 0
         // I shouldn't be using mNVisibleLines or mTopLineNum here in handle()
         // because the values for these might change between now and layout(),
@@ -1943,5 +1948,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12 2001/07/23 09:50:05 spitzak Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

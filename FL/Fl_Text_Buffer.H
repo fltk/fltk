@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.H,v 1.3 2001/02/21 06:15:44 clip Exp $"
+// "$Id: Fl_Text_Buffer.H,v 1.3.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Header file for Fl_Text_Buffer class.
 //
@@ -31,9 +31,9 @@
    of a single buffer character */
 #define FL_TEXT_MAX_EXP_CHAR_LEN 20
 
-#include <FL/Fl_Export.H>
+#include "Fl_Export.H"
 
-class FL_API Fl_Text_Selection {
+class FL_EXPORT Fl_Text_Selection {
   friend class Fl_Text_Buffer;
 
   public:
@@ -65,7 +65,7 @@ typedef void (*Fl_Text_Modify_Cb)(int pos, int nInserted, int nDeleted,
                                   int nRestyled, const char* deletedText,
                                   void* cbArg);
 
-class FL_API Fl_Text_Buffer {
+class FL_EXPORT Fl_Text_Buffer {
   public:
     Fl_Text_Buffer(int requestedSize = 0);
     ~Fl_Text_Buffer();
@@ -237,5 +237,5 @@ class FL_API Fl_Text_Buffer {
 #endif
 
 //
-// End of "$Id: Fl_Text_Buffer.H,v 1.3 2001/02/21 06:15:44 clip Exp $".
+// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

@@ -44,6 +44,8 @@ private:
   static void cb_dirMenu(Fl_Choice*, void*);
   inline void cb_allfiles_i(Fl_Button*, void*);
   static void cb_allfiles(Fl_Button*, void*);
+  void (*callback_)(Fl_FileChooser*, void *);
+  void *data_;
   char directory_[1024];
   int type_;
   void fileListCB();
@@ -51,6 +53,7 @@ private:
   void newdir();
   void up();
 public:
+  void callback(void (*cb)(Fl_FileChooser *, void *), void *d);
   void color(Fl_Color c);
   Fl_Color color();
   int count();

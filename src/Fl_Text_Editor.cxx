@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9 2001/07/23 09:50:05 spitzak Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -23,20 +23,15 @@
 //
 
 
-#include <fltk/Fl.h>
-#include <fltk/Fl_Text_Editor.h>
-#include <fltk/Fl_Style.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Text_Editor.H>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-static void revert(Fl_Style*) {}
-static Fl_Named_Style style("Text_Editor", revert, &Fl_Text_Editor::default_style);
-Fl_Named_Style* Fl_Text_Editor::default_style = &::style;
 
 Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
     : Fl_Text_Display(X, Y, W, H, l) {
-  style(default_style);
   mCursorOn = 1;
   insert_mode_ = 1;
   key_bindings = 0;
@@ -348,7 +343,7 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected()) return 1;
   const char *copy = e->buffer()->selection_text();
-  if (*copy) Fl::copy(copy, strlen(copy), true);
+  if (*copy) Fl::selection(*e, copy, strlen(copy));
   free((void*)copy);
   e->show_insert_position();
   return 1;
@@ -362,7 +357,7 @@ int Fl_Text_Editor::kf_cut(int c, Fl_Text_Editor* e) {
 
 int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
   kill_selection(e);
-  Fl::paste(*e,true);
+  Fl::paste(*e);
   e->show_insert_position();
   return 1;
 }
@@ -406,7 +401,7 @@ int Fl_Text_Editor::handle(int event) {
 
   if (event == FL_PUSH && Fl::event_button() == 2) {
     dragType = -1;
-    Fl::paste(*this,false);
+    Fl::paste(*this);
     Fl::focus(this);
     return 1;
   }
@@ -442,5 +437,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9 2001/07/23 09:50:05 spitzak Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.2 2001/08/02 16:17:04 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.3 2001/08/04 12:21:33 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -26,19 +26,8 @@
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
-//
-// The following is only used when building DLLs under WIN32 with Visual C++...
-//
+#  include "Fl_Export.H"
 
-#if defined(FL_DLL) && defined(_MSC_VER)
-#  ifdef FL_LIBRARY
-#    define FL_EXPORT	__declspec(dllexport)
-#  else
-#    define FL_EXPORT	__declspec(dllimport)
-#  endif /* FL_LIBRARY */
-#else
-#  define FL_EXPORT
-#endif /* FL_DLL && _MSC_VER */
 
 //
 // The FLTK version number; this is changed slightly from the beta versions
@@ -300,8 +289,10 @@ enum Fl_Color {	// standard colors
   FL_COLOR_CUBE		= 56
 };
 
-FL_EXPORT Fl_Color inactive(Fl_Color c);
-FL_EXPORT Fl_Color contrast(Fl_Color fg, Fl_Color bg);
+#define inactive fl_inactive
+FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
+#define contrast fl_contrast
+FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
@@ -374,5 +365,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.2 2001/08/02 16:17:04 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.3 2001/08/04 12:21:33 easysw Exp $".
 //

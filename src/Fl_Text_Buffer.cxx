@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9 2001/07/23 09:50:05 spitzak Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <fltk/Fl_Text_Buffer.h>
+#include <FL/Fl_Text_Buffer.H>
 
 
 #define PREFERRED_GAP_SIZE 80
@@ -2283,5 +2283,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9 2001/07/23 09:50:05 spitzak Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9.2.6 2001/04/13 19:07:40 easysw Exp $"
+// "$Id: fl_draw.H,v 1.9.2.6.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -66,7 +66,9 @@ enum {
 
 // rectangles tweaked to exactly fill the pixel rectangle:
 FL_EXPORT void fl_rect(int x, int y, int w, int h);
+inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 FL_EXPORT void fl_rectf(int x, int y, int w, int h);
+inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
 // line segments:
 FL_EXPORT void fl_line(int,int, int,int);
@@ -134,6 +136,7 @@ inline int fl_size() {return fl_size_;}
 
 // information you can get about the current font:
 FL_EXPORT int   fl_height();	// using "size" should work ok
+inline int fl_height(int, int size) {return size;}
 FL_EXPORT int   fl_descent();
 FL_EXPORT double fl_width(const char*);
 FL_EXPORT double fl_width(const char*, int n);
@@ -181,5 +184,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9.2.6 2001/04/13 19:07:40 easysw Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.6.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

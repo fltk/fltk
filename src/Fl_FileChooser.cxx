@@ -28,7 +28,11 @@ void Fl_FileChooser::cb_Cancel(Fl_Button* o, void* v) {
 }
 
 inline void Fl_FileChooser::cb_okButton_i(Fl_Return_Button*, void*) {
-  window->hide();
+  // Do any callback that is registered...
+if (callback_)
+  (*callback_)(this, data_);
+
+window->hide();
 }
 void Fl_FileChooser::cb_okButton(Fl_Return_Button* o, void* v) {
   ((Fl_FileChooser*)(o->parent()->user_data()))->cb_okButton_i(o,v);
@@ -150,6 +154,13 @@ Fl_FileChooser::Fl_FileChooser(const char *d, const char *p, int t, const char *
 fileList->filter(p);
 type(t);
 value(d);
+callback_ = 0;
+data_ = 0;
+}
+
+void Fl_FileChooser::callback(void (*cb)(Fl_FileChooser *, void *), void *d) {
+  callback_ = cb;
+data_     = d;
 }
 
 void Fl_FileChooser::color(Fl_Color c) {

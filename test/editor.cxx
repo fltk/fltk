@@ -1,11 +1,11 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.1 2001/08/04 12:21:34 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
 // This program is described in Chapter 4 of the FLTK Programmer's Guide.
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -22,343 +22,61 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
 //
 // Include necessary headers...
 //
 
-#include <stdio.h>			// Standard library files
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
-#include <FL/Fl.H>			// Main FLTK header file
-#include <FL/Fl_Group.H>		// Fl_Group header file
-#include <FL/Fl_Window.H>		// Fl_Window header file
-#include <FL/fl_ask.H>			// FLTK convenience functions
-#include <FL/fl_file_chooser.H>		// FLTK file chooser
-#include <FL/Fl_Menu_Bar.H>		// Fl_Menu_Bar header file
-#include <FL/Fl_Input.H>		// Fl_Input header file
-#include <FL/Fl_Multiline_Input.H>	// Fl_Multiline_Input header file
-#include <FL/Fl_Button.H>		// Fl_Button header file
-#include <FL/Fl_Return_Button.H>	// Fl_Return_Button header file
+#include <FL/Fl.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/fl_ask.H>
+#include <FL/fl_file_chooser.H>
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Editor.H>
 
-
-Fl_Window          *window;
-Fl_Menu_Bar        *menubar;
-Fl_Multiline_Input *input;
-Fl_Window          *replace_dlg;
-Fl_Input           *replace_find;
-Fl_Input           *replace_with;
-Fl_Button          *replace_all;
-Fl_Return_Button   *replace_next;
-Fl_Button          *replace_cancel;
 
 int                changed = 0;
-char               filename[1024] = "";
-char               search[256] = "";
+char               filename[256] = "";
+char               title[256];
+Fl_Text_Buffer     *textbuf;
 
 
-void set_changed(int);
-void save_cb(void);
-void saveas_cb(void);
-void find2_cb(void);
+void save_cb();
+void saveas_cb();
+void find2_cb(Fl_Widget*, void*);
+void replall_cb(Fl_Widget*, void*);
+void replace2_cb(Fl_Widget*, void*);
+void replcan_cb(Fl_Widget*, void*);
 
-int check_save(void) {
-  if (!changed) return 1;
+class EditorWindow : public Fl_Double_Window {
+  public:
+    EditorWindow(int w, int h, const char* t);
+    ~EditorWindow();
 
-  if (fl_ask("The current file has not been saved.\n"
-             "Would you like to save it now?")) {
-    // Save the file...
-    save_cb();
+    Fl_Window          *replace_dlg;
+    Fl_Input           *replace_find;
+    Fl_Input           *replace_with;
+    Fl_Button          *replace_all;
+    Fl_Return_Button   *replace_next;
+    Fl_Button          *replace_cancel;
 
-    return !changed;
-  }
-  else return (1);
-}
-
-void load_file(char *newfile) {
-  FILE *fp;
-  char buffer[8192];
-  int  nbytes;
-  int  pos;
-
-  input->value("");
-
-  fp = fopen(newfile, "r");
-  if (fp != NULL) {
-    // Was able to open file; let's read from it...
-    strcpy(filename, newfile);
-    pos = 0;
-
-    while ((nbytes = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
-      input->replace(pos, pos, buffer, nbytes);
-      pos += nbytes;
-    }
-
-    fclose(fp);
-    input->position(0);
-    set_changed(0);
-  } else {
-    // Couldn't open file - say so...
-    fl_alert("Unable to open \'%s\' for reading!");
-  }
-}
-
-void save_file(char *newfile) {
-  FILE *fp;
-
-  fp = fopen(newfile, "w");
-  if (fp != NULL) {
-    // Was able to create file; let's write to it...
-    strcpy(filename, newfile);
-
-    if (fwrite(input->value(), 1, input->size(), fp) < 1) {
-      fl_alert("Unable to write file!");
-      fclose(fp);
-      return;
-    }
-
-    fclose(fp);
-    changed = 1;
-    set_changed(0);
-  } else {
-    // Couldn't open file - say so...
-    fl_alert("Unable to create \'%s\' for writing!");
-  }
-}
-
-void set_changed(int c) {
-  if (c != changed) {
-    char title[1024];
-    char *slash;
-
-    changed = c;
-
-    if (filename[0] == '\0') strcpy(title, "Untitled");
-    else {
-      slash = strrchr(filename, '/');
-      if (slash == NULL) slash = strrchr(filename, '\\');
-
-      if (slash != NULL) strcpy(title, slash + 1);
-      else strcpy(title, filename);
-    }
-
-    if (changed) strcat(title, " (modified)");
-
-    window->label(title);
-  }
-}
-
-void changed_cb(void) {
-  set_changed(1);
-}
-
-void copy_cb(void) {
-  input->copy();
-}
-
-void cut_cb(void) {
-  input->copy();
-  input->cut();
-}
-
-void delete_cb(void) {
-  input->cut();
-}
-
-void find_cb(void) {
-  const char *val;
-
-  val = fl_input("Search String:", search);
-  if (val != NULL) {
-    // User entered a string - go find it!
-    strcpy(search, val);
-    find2_cb();
-  }
-}
-
-void find2_cb(void) {
-  const char *val, *found;
-  int pos;
-
-  if (search[0] == '\0') {
-    // Search string is blank; get a new one...
-    find_cb();
-    return;
-  }
-
-  val   = input->value() + input->mark();
-  found = strstr(val, search);
-
-  if (found != NULL) {
-    // Found a match; update the position and mark...
-    pos = input->mark() + found - val;
-    input->position(pos, pos + strlen(search));
-  }
-  else fl_alert("No occurrences of \'%s\' found!", search);
-}
-
-void new_cb(void) {
-  if (changed)
-    if (!check_save()) return;
-
-  filename[0] = '\0';
-  input->value("");
-  set_changed(0);
-}
-
-void open_cb(void) {
-  char *newfile;
-
-  if (changed)
-    if (!check_save()) return;
-
-  newfile = fl_file_chooser("Open File?", "*", filename);
-  if (newfile != NULL) load_file(newfile);
-}
-
-void paste_cb(void) {
-  Fl::paste(*input);
-}
-
-void quit_cb(void) {
-  if (changed)
-    if (!check_save())
-      return;
-
-  window->hide();
-}
-
-void replace_cb(void) {
-  replace_dlg->show();
-}
-
-void replace2_cb() {
-  const char *find, *val, *found;
-  int pos;
-
-  find = replace_find->value();
-  if (find[0] == '\0') {
-    // Search string is blank; get a new one...
-    replace_dlg->show();
-    return;
-  }
-
-  replace_dlg->hide();
-
-  val   = input->value() + input->position();
-  found = strstr(val, find);
-
-  if (found != NULL) {
-    // Found a match; update the position and replace text...
-    pos = input->position() + found - val;
-    input->replace(pos, pos + strlen(find), replace_with->value());
-    input->position(pos + strlen(replace_with->value()));
-  }
-  else fl_alert("No occurrences of \'%s\' found!", find);
-}
-
-void replall_cb() {
-  const char *find, *val, *found;
-  int pos;
-  int times;
-
-  find = replace_find->value();
-  if (find[0] == '\0') {
-    // Search string is blank; get a new one...
-    replace_dlg->show();
-    return;
-  }
-
-  replace_dlg->hide();
-
-  input->position(0);
-  times = 0;
-
-  // Loop through the whole string
-  do {
-    val   = input->value() + input->position();
-    found = strstr(val, find);
-
-    if (found != NULL) {
-      // Found a match; update the position and replace text...
-      times ++;
-      pos = input->position() + found - val;
-      input->replace(pos, pos + strlen(find), replace_with->value());
-      input->position(pos + strlen(replace_with->value()));
-    }
-  } while (found != NULL);
-
-  if (times > 0) fl_message("Replaced %d occurrences.", times);
-  else fl_alert("No occurrences of \'%s\' found!", find);
-}
-
-void replcan_cb() {
-  replace_dlg->hide();
-}
-
-void save_cb(void) {
-  if (filename[0] == '\0') {
-    // No filename - get one!
-    saveas_cb();
-    return;
-  }
-  else save_file(filename);
-}
-
-void saveas_cb(void) {
-  char *newfile;
-
-  newfile = fl_file_chooser("Save File As?", "*", filename);
-  if (newfile != NULL) save_file(newfile);
-}
-
-void undo_cb(void) {
-  input->undo();
-}
-
-Fl_Menu_Item menuitems[] = {
-  { "&File", 0, 0, 0, FL_SUBMENU },
-    { "&New",        FL_ALT + 'n', (Fl_Callback *)new_cb },
-    { "&Open...",    FL_ALT + 'o', (Fl_Callback *)open_cb, 0, FL_MENU_DIVIDER },
-    { "&Save",       FL_ALT + 's', (Fl_Callback *)save_cb },
-    { "Save &As...", FL_ALT + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
-    { "&Quit", FL_ALT + 'q', (Fl_Callback *)quit_cb },
-    { 0 },
-
-  { "&Edit", 0, 0, 0, FL_SUBMENU },
-    { "&Undo",       FL_ALT + 'z', (Fl_Callback *)undo_cb, 0, FL_MENU_DIVIDER },
-    { "Cu&t",        FL_ALT + 'x', (Fl_Callback *)cut_cb },
-    { "&Copy",       FL_ALT + 'c', (Fl_Callback *)copy_cb },
-    { "&Paste",      FL_ALT + 'v', (Fl_Callback *)paste_cb },
-    { "&Delete",     0, (Fl_Callback *)delete_cb },
-    { 0 },
-
-  { "&Search", 0, 0, 0, FL_SUBMENU },
-    { "&Find...",       FL_ALT + 'f', (Fl_Callback *)find_cb },
-    { "F&ind Again",    FL_ALT + 'g', (Fl_Callback *)find2_cb },
-    { "&Replace...",    FL_ALT + 'r', (Fl_Callback *)replace_cb },
-    { "Re&place Again", FL_ALT + 't', (Fl_Callback *)replace2_cb },
-    { 0 },
-
-  { 0 }
+    Fl_Text_Editor     *editor;
+    char               search[256];
 };
 
-int main(int argc, char **argv) {
-  window = new Fl_Window(640, 480, "Untitled");
-    menubar = new Fl_Menu_Bar(0, 0, 640, 30);
-    menubar->menu(menuitems);
-
-    input = new Fl_Multiline_Input(0, 30, 640, 450);
-    input->callback((Fl_Callback *)changed_cb);
-    input->when(FL_WHEN_CHANGED);
-    input->textfont(FL_COURIER);
-  window->end();
-  window->resizable(input);
-  window->callback((Fl_Callback *)quit_cb);
-
+EditorWindow::EditorWindow(int w, int h, const char* t) : Fl_Double_Window(w, h, t) {
   replace_dlg = new Fl_Window(300, 105, "Replace");
     replace_find = new Fl_Input(70, 10, 210, 25, "Find:");
     replace_find->align(FL_ALIGN_LEFT);
@@ -367,23 +85,344 @@ int main(int argc, char **argv) {
     replace_with->align(FL_ALIGN_LEFT);
 
     replace_all = new Fl_Button(10, 70, 90, 25, "Replace All");
-    replace_all->callback((Fl_Callback *)replall_cb);
+    replace_all->callback((Fl_Callback *)replall_cb, this);
 
     replace_next = new Fl_Return_Button(105, 70, 120, 25, "Replace Next");
-    replace_next->callback((Fl_Callback *)replace2_cb);
+    replace_next->callback((Fl_Callback *)replace2_cb, this);
 
     replace_cancel = new Fl_Button(230, 70, 60, 25, "Cancel");
-    replace_cancel->callback((Fl_Callback *)replcan_cb);
+    replace_cancel->callback((Fl_Callback *)replcan_cb, this);
   replace_dlg->end();
-  replace_dlg->set_modal();
+  replace_dlg->set_non_modal();
+  editor = 0;
+  *search = (char)0;
+}
+
+EditorWindow::~EditorWindow() {
+  delete replace_dlg;
+}
+
+int check_save(void) {
+  if (!changed) return 1;
+
+  int r = fl_choice("The current file has not been saved.\n"
+                    "Would you like to save it now?",
+                    "Cancel", "Save", "Discard");
+
+  if (r == 2) {
+    save_cb(); // Save the file...
+    return !changed;
+  };
+
+   return (r == 1) ? 1 : 0;
+}
+
+int loading = 0;
+void load_file(char *newfile, int ipos) {
+  loading = 1;
+  int insert = (ipos != -1);
+  changed = insert;
+  if (!insert) strcpy(filename, "");
+  int r;
+  if (!insert) r = textbuf->loadfile(newfile);
+  else r = textbuf->insertfile(newfile, ipos);
+  if (r)
+    fl_alert("Error reading from file \'%s\':\n%s.", newfile, strerror(errno));
+  else
+    if (!insert) strcpy(filename, newfile);
+  loading = 0;
+  textbuf->call_modify_callbacks();
+}
+
+void save_file(char *newfile) {
+  if (textbuf->savefile(newfile))
+    fl_alert("Error writing to file \'%s\':\n%s.", newfile, strerror(errno));
+  else
+    strcpy(filename, newfile);
+  changed = 0;
+  textbuf->call_modify_callbacks();
+}
+
+void copy_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  Fl_Text_Editor::kf_copy(0, e->editor);
+}
+
+void cut_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  Fl_Text_Editor::kf_cut(0, e->editor);
+}
+
+void delete_cb(Fl_Widget*, void*) {
+  textbuf->remove_selection();
+}
+
+void find_cb(Fl_Widget* w, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  const char *val;
+
+  val = fl_input("Search String:", e->search);
+  if (val != NULL) {
+    // User entered a string - go find it!
+    strcpy(e->search, val);
+    find2_cb(w, v);
+  }
+}
+
+void find2_cb(Fl_Widget* w, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  if (e->search[0] == '\0') {
+    // Search string is blank; get a new one...
+    find_cb(w, v);
+    return;
+  }
+
+  int pos = e->editor->insert_position();
+  int found = textbuf->search_forward(pos, e->search, &pos);
+  if (found) {
+    // Found a match; select and update the position...
+    textbuf->select(pos, pos+strlen(e->search));
+    e->editor->insert_position(pos+strlen(e->search));
+    e->editor->show_insert_position();
+  }
+  else fl_alert("No occurrences of \'%s\' found!", e->search);
+}
+
+void set_title(Fl_Window* w) {
+  if (filename[0] == '\0') strcpy(title, "Untitled");
+  else {
+    char *slash;
+    slash = strrchr(filename, '/');
+#ifdef WIN32
+    if (slash == NULL) slash = strrchr(filename, '\\');
+#endif
+    if (slash != NULL) strcpy(title, slash + 1);
+    else strcpy(title, filename);
+  }
+
+  if (changed) strcat(title, " (modified)");
+
+  w->label(title);
+}
+
+void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
+  if ((nInserted || nDeleted) && !loading) changed = 1;
+  EditorWindow *w = (EditorWindow *)v;
+  set_title(w);
+  if (loading) w->editor->show_insert_position();
+}
+
+void new_cb(Fl_Widget*, void*) {
+  if (!check_save()) return;
+
+  filename[0] = '\0';
+  textbuf->select(0, textbuf->length());
+  textbuf->remove_selection();
+  changed = 0;
+  textbuf->call_modify_callbacks();
+}
+
+void open_cb(Fl_Widget*, void*) {
+  if (!check_save()) return;
+
+  char *newfile = fl_file_chooser("Open File?", "*", filename);
+  if (newfile != NULL) load_file(newfile, -1);
+}
+
+void insert_cb(Fl_Widget*, void *v) {
+  char *newfile = fl_file_chooser("Insert File?", "*", filename);
+  EditorWindow *w = (EditorWindow *)v;
+  if (newfile != NULL) load_file(newfile, w->editor->insert_position());
+}
+
+void paste_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  Fl_Text_Editor::kf_paste(0, e->editor);
+}
+
+int num_windows = 0;
+
+void close_cb(Fl_Widget*, void* v) {
+  Fl_Window* w = (Fl_Window*)v;
+  if (num_windows == 1 && !check_save()) {
+    return;
+  }
+
+  w->hide();
+  textbuf->remove_modify_callback(changed_cb, w);
+  delete w;
+  num_windows--;
+  if (!num_windows) exit(0);
+}
+
+void quit_cb(Fl_Widget*, void*) {
+  if (changed && !check_save())
+    return;
+
+  exit(0);
+}
+
+void replace_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  e->replace_dlg->show();
+}
+
+void replace2_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  const char *find = e->replace_find->value();
+  const char *replace = e->replace_with->value();
+
+  if (find[0] == '\0') {
+    // Search string is blank; get a new one...
+    e->replace_dlg->show();
+    return;
+  }
+
+  e->replace_dlg->hide();
+
+  int pos = e->editor->insert_position();
+  int found = textbuf->search_forward(pos, find, &pos);
+
+  if (found) {
+    // Found a match; update the position and replace text...
+    textbuf->select(pos, pos+strlen(find));
+    textbuf->remove_selection();
+    textbuf->insert(pos, replace);
+    textbuf->select(pos, pos+strlen(replace));
+    e->editor->insert_position(pos+strlen(replace));
+    e->editor->show_insert_position();
+  }
+  else fl_alert("No occurrences of \'%s\' found!", find);
+}
+
+void replall_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  const char *find = e->replace_find->value();
+  const char *replace = e->replace_with->value();
+
+  find = e->replace_find->value();
+  if (find[0] == '\0') {
+    // Search string is blank; get a new one...
+    e->replace_dlg->show();
+    return;
+  }
+
+  e->replace_dlg->hide();
+
+  e->editor->insert_position(0);
+  int times = 0;
+
+  // Loop through the whole string
+  for (int found = 1; found;) {
+    int pos = e->editor->insert_position();
+    found = textbuf->search_forward(pos, find, &pos);
+
+    if (found) {
+      // Found a match; update the position and replace text...
+      textbuf->select(pos, pos+strlen(find));
+      textbuf->remove_selection();
+      textbuf->insert(pos, replace);
+      e->editor->insert_position(pos+strlen(replace));
+      e->editor->show_insert_position();
+      times++;
+    }
+  }
+
+  if (times) fl_message("Replaced %d occurrences.", times);
+  else fl_alert("No occurrences of \'%s\' found!", find);
+}
+
+void replcan_cb(Fl_Widget*, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  e->replace_dlg->hide();
+}
+
+void save_cb() {
+  if (filename[0] == '\0') {
+    // No filename - get one!
+    saveas_cb();
+    return;
+  }
+  else save_file(filename);
+}
+
+void saveas_cb() {
+  char *newfile;
+
+  newfile = fl_file_chooser("Save File As?", "*", filename);
+  if (newfile != NULL) save_file(newfile);
+}
+
+void undo_cb(Fl_Widget*, void*) {
+  fl_alert("Undo not implemented!");
+}
+
+Fl_Window* new_view();
+
+void view_cb(Fl_Widget*, void*) {
+  Fl_Window* w = new_view();
+  w->show();
+}
+
+Fl_Menu_Item menuitems[] = {
+  { "&File",              0, 0, 0, FL_SUBMENU },
+    { "&New File",        0, (Fl_Callback *)new_cb },
+    { "&Open File...",    FL_CTRL + 'o', (Fl_Callback *)open_cb },
+    { "&Insert File...",  FL_CTRL + 'i', (Fl_Callback *)insert_cb, 0, FL_MENU_DIVIDER },
+    { "&Save File",       FL_CTRL + 's', (Fl_Callback *)save_cb },
+    { "Save File &As...", FL_CTRL + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
+    { "New &View", FL_ALT + 'v', (Fl_Callback *)view_cb, 0 },
+    { "&Close View", FL_CTRL + 'w', (Fl_Callback *)close_cb, 0, FL_MENU_DIVIDER },
+    { "E&xit", FL_CTRL + 'q', (Fl_Callback *)quit_cb, 0 },
+    { 0 },
+
+  { "&Edit", 0, 0, 0, FL_SUBMENU },
+    { "&Undo",       FL_CTRL + 'z', (Fl_Callback *)undo_cb, 0, FL_MENU_DIVIDER },
+    { "Cu&t",        FL_CTRL + 'x', (Fl_Callback *)cut_cb },
+    { "&Copy",       FL_CTRL + 'c', (Fl_Callback *)copy_cb },
+    { "&Paste",      FL_CTRL + 'v', (Fl_Callback *)paste_cb },
+    { "&Delete",     0, (Fl_Callback *)delete_cb },
+    { 0 },
+
+  { "&Search", 0, 0, 0, FL_SUBMENU },
+    { "&Find...",       FL_CTRL + 'f', (Fl_Callback *)find_cb },
+    { "F&ind Again",    FL_CTRL + 'g', find2_cb },
+    { "&Replace...",    FL_CTRL + 'r', replace_cb },
+    { "Re&place Again", FL_CTRL + 't', replace2_cb },
+    { 0 },
+
+  { 0 }
+};
+
+Fl_Window* new_view() {
+  EditorWindow* w = new EditorWindow(512, 384, title);
+    w->begin();
+    Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 512, 30);
+    m->copy(menuitems, w);
+    w->editor = new Fl_Text_Editor(0, 30, 512, 354);
+    w->editor->buffer(textbuf);
+    w->editor->textfont(FL_COURIER);
+  w->end();
+  w->resizable(w->editor);
+  w->callback((Fl_Callback *)close_cb, w);
+  textbuf->add_modify_callback(changed_cb, w);
+  textbuf->call_modify_callbacks();
+  num_windows++;
+  return w;
+}
+
+int main(int argc, char **argv) {
+  textbuf = new Fl_Text_Buffer;
+
+  Fl_Window* window = new_view();
 
   window->show(1, argv);
 
-  if (argc > 1) load_file(argv[1]);
+  if (argc > 1) load_file(argv[1], -1);
 
   return Fl::run();
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.1 2001/08/04 12:21:34 easysw Exp $".
 //

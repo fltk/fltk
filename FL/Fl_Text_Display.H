@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4 2000/08/20 04:31:36 spitzak Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -27,13 +27,13 @@
 #ifndef FL_TEXT_DISPLAY_H
 #define FL_TEXT_DISPLAY_H
 
-#include <FL/fl_draw.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Widget.H>
-#include <FL/Fl_Scrollbar.H>
-#include <FL/Fl_Text_Buffer.H>
+#include "fl_draw.H"
+#include "Fl_Group.H"
+#include "Fl_Widget.H"
+#include "Fl_Scrollbar.H"
+#include "Fl_Text_Buffer.H"
 
-class FL_API Fl_Text_Display: public Fl_Group {
+class FL_EXPORT Fl_Text_Display: public Fl_Group {
   public:
     enum {
       NORMAL_CURSOR, CARET_CURSOR, DIM_CURSOR,
@@ -54,7 +54,7 @@ class FL_API Fl_Text_Display: public Fl_Group {
 
     typedef void (*Unfinished_Style_Cb)();
 
-    struct FL_API Style_Table_Entry {
+    struct FL_EXPORT Style_Table_Entry {
       Fl_Color color;
       Fl_Font  font;
       int      size;
@@ -85,12 +85,13 @@ class FL_API Fl_Text_Display: public Fl_Group {
     void hide_cursor() { show_cursor(0); }
     void cursor_style(int style);
     int scrollbar_width() { return scrollbar_width_; }
-    Fl_Flags scrollbar_align() { return scrollbar_align_; }
+    Fl_Align scrollbar_align() { return scrollbar_align_; }
     void scrollbar_width(int w) { scrollbar_width_ = w; }
-    void scrollbar_align(Fl_Flags a) { scrollbar_align_ = a; }
+    void scrollbar_align(Fl_Align a) { scrollbar_align_ = a; }
     int word_start(int pos) { return buffer()->word_start(pos); }
     int word_end(int pos) { return buffer()->word_end(pos); }
 
+    
     void highlight_data(Fl_Text_Buffer *styleBuffer,
                         Style_Table_Entry *styleTable,
                         int nStyles, char unfinishedStyle,
@@ -99,13 +100,20 @@ class FL_API Fl_Text_Display: public Fl_Group {
 
     int position_style(int lineStartPos, int lineLen, int lineIndex,
                        int dispIndex);
+
+    Fl_Font textfont() const {return (Fl_Font)textfont_;}
+    void textfont(uchar s) {textfont_ = s;}
+    uchar textsize() const {return textsize_;}
+    void textsize(uchar s) {textsize_ = s;}
+    Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    void textcolor(uchar n) {textcolor_ = n;}
     
   protected:
-    // Most (all?) of this stuff should only be called from layout() or
+    // Most (all?) of this stuff should only be called from resize() or
     // draw().
     // Anything with "vline" indicates thats it deals with currently
     // visible lines.
-    virtual void layout();
+    virtual void resize(int X, int Y, int W, int H);
 
     virtual void draw();
     void draw_text(int X, int Y, int W, int H);
@@ -204,14 +212,18 @@ class FL_API Fl_Text_Display: public Fl_Group {
     Fl_Scrollbar* mHScrollBar;
     Fl_Scrollbar* mVScrollBar;
     int scrollbar_width_;
-    Fl_Flags scrollbar_align_;
+    Fl_Align scrollbar_align_;
     int dragPos, dragType, dragging;
     int display_insert_position_hint;
     struct { int x, y, w, h; } text_area;
+
+    uchar textfont_;
+    uchar textsize_;
+    uchar textcolor_;
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4 2000/08/20 04:31:36 spitzak Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.1 2001/08/04 12:21:33 easysw Exp $".
 //
