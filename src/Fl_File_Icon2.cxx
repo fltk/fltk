@@ -1,11 +1,11 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.19 2003/01/30 21:41:43 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.20 2004/02/29 12:47:36 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
 // KDE icon code donated by Maarten De Boer.
 //
-// Copyright 1999-2003 by Michael Sweet.
+// Copyright 1999-2004 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -74,8 +74,8 @@
 // Local functions...
 //
 
-static void	load_kde_icons(const char *directory);
-static void	load_kde_mimelnk(const char *filename);
+static void	load_kde_icons(const char *directory, const char *icondir);
+static void	load_kde_mimelnk(const char *filename, const char *icondir);
 static char	*kde_to_fltk_pattern(const char *kdepattern);
 static char	*get_kde_val(char *str, const char *key);
 
@@ -582,9 +582,19 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 void
 Fl_File_Icon::load_system_icons(void)
 {
+  int		i;		// Looping var
   Fl_File_Icon	*icon;		// New icons
   char		filename[1024];	// Filename
+  char		icondir[1024];	// Icon directory
   static int	init = 0;	// Have the icons been initialized?
+  const char * const icondirs[] =
+		{		// Icon directories to look for, in order
+		  "Bluecurve",
+		  "crystalsvg",
+		  "default.kde",
+		  "hicolor",
+		  NULL
+		};
   static short	plain[] =	// Plain file icon
 		{
 		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
@@ -678,25 +688,35 @@ Fl_File_Icon::load_system_icons(void)
       // Load KDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
 
-      snprintf(filename, sizeof(filename),
-               "%s/share/icons/hicolor/16x16/mimetypes/unknown.png", kdedir);
+      for (i = 0; icondirs[i]; i ++)
+      {
+	snprintf(icondir, sizeof(icondir), "%s/share/icons/%s", kdedir,
+		 icondirs[i]);
 
-      if (access(filename, F_OK))
+        if (!access(icondir, F_OK))
+	  break;
+      }
+
+      if (icondirs[i])
+        snprintf(filename, sizeof(filename), "%s/16x16/mimetypes/unknown.png",
+	         icondir);
+      else
 	snprintf(filename, sizeof(filename), "%s/share/icons/unknown.xpm",
 	         kdedir);
 
-      icon->load_image(filename);
+      if (!access(filename, F_OK))
+	icon->load_image(filename);
 
       icon = new Fl_File_Icon("*", Fl_File_Icon::LINK);
 
-      snprintf(filename, sizeof(filename),
-               "%s/share/icons/hicolor/16x16/filesystems/link.png", kdedir);
+      snprintf(filename, sizeof(filename), "%s/16x16/filesystems/link.png",
+               icondir);
 
       if (!access(filename, F_OK))
         icon->load_image(filename);
 
       snprintf(filename, sizeof(filename), "%s/share/mimelnk", kdedir);
-      load_kde_icons(filename);
+      load_kde_icons(filename, icondir);
     }
     else if (!access("/usr/share/icons/folder.xpm", F_OK))
     {
@@ -790,7 +810,8 @@ Fl_File_Icon::load_system_icons(void)
 //
 
 static void
-load_kde_icons(const char *directory)	// I - Directory to load
+load_kde_icons(const char *directory,	// I - Directory to load
+               const char *icondir)	// I - Location of icons
 {
   int		i;			// Looping var
   int		n;			// Number of entries in directory
@@ -808,9 +829,9 @@ load_kde_icons(const char *directory)	// I - Directory to load
       snprintf(full, sizeof(full), "%s/%s", directory, entries[i]->d_name);
 
       if (fl_filename_isdir(full))
-	load_kde_icons(full);
+	load_kde_icons(full, icondir);
       else
-	load_kde_mimelnk(full);				
+	load_kde_mimelnk(full, icondir);
     }
 
     free((void *)entries[i]);
@@ -825,7 +846,8 @@ load_kde_icons(const char *directory)	// I - Directory to load
 //
 
 static void
-load_kde_mimelnk(const char *filename)
+load_kde_mimelnk(const char *filename,	// I - mimelnk filename
+                 const char *icondir)	// I - Location of icons
 {
   FILE		*fp;
   char		tmp[1024];
@@ -857,11 +879,9 @@ load_kde_mimelnk(const char *filename)
 
     if (iconfilename[0] && (pattern[0] || strncmp(mimetype, "inode/", 6) == 0))
     {
-      snprintf(tmp, sizeof(tmp), "%s/share/icons/hicolor", kdedir);
-
-      if (!access(tmp, F_OK))
+      if (!access(icondir, F_OK))
       {
-        // KDE 2.x icons
+        // KDE 3.x and 2.x icons
 	int		i;		// Looping var
 	static const char *paths[] = {	// Subdirs to look in...
 	  "16x16/actions",
@@ -870,22 +890,58 @@ load_kde_mimelnk(const char *filename)
 	  "16x16/filesystems",
 	  "16x16/mimetypes",
 
+	  "20x20/actions",
+	  "20x20/apps",
+	  "20x20/devices",
+	  "20x20/filesystems",
+	  "20x20/mimetypes",
+
 	  "22x22/actions",
 	  "22x22/apps",
 	  "22x22/devices",
 	  "22x22/filesystems",
 	  "22x22/mimetypes",
 
+	  "24x24/actions",
+	  "24x24/apps",
+	  "24x24/devices",
+	  "24x24/filesystems",
+	  "24x24/mimetypes",
+
 	  "32x32/actions",
 	  "32x32/apps",
 	  "32x32/devices",
 	  "32x32/filesystems",
-	  "32x32/mimetypes"
+	  "32x32/mimetypes",
+
+	  "36x36/actions",
+	  "36x36/apps",
+	  "36x36/devices",
+	  "36x36/filesystems",
+	  "36x36/mimetypes",
+
+	  "48x48/actions",
+	  "48x48/apps",
+	  "48x48/devices",
+	  "48x48/filesystems",
+	  "48x48/mimetypes",
+
+	  "64x64/actions",
+	  "64x64/apps",
+	  "64x64/devices",
+	  "64x64/filesystems",
+	  "64x64/mimetypes",
+
+	  "96x96/actions",
+	  "96x96/apps",
+	  "96x96/devices",
+	  "96x96/filesystems",
+	  "96x96/mimetypes"
 	};
 
         for (i = 0; i < (int)(sizeof(paths) / sizeof(paths[0])); i ++) {
           snprintf(full_iconfilename, sizeof(full_iconfilename),
-	           "%s/%s/%s.png", tmp, paths[i], iconfilename);
+	           "%s/%s/%s.png", icondir, paths[i], iconfilename);
 
           if (!access(full_iconfilename, F_OK)) break;
 	}
@@ -971,5 +1027,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.19 2003/01/30 21:41:43 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.20 2004/02/29 12:47:36 easysw Exp $".
 //

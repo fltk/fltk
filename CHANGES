@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Fl_File_Icon::load_system_icons() didn't support KDE
+	  3.x (STR #299)
 	- WIN32's scandir() emulation did not allocate enough
 	  memory for directory names (STR #263)
 	- Fl::compose() did not handle special keys like
