@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.32 1999/03/04 19:01:48 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33 1999/03/04 21:20:55 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,14 @@
 #include <sys/types.h>
 #include <time.h>
 #include <winsock.h>
+
+//
+// WM_SYNCPAINT is an "undocumented" message, which is finally defined in
+// VC++ 6.0.
+//
+#ifndef WM_SYNCPAINT
+#  define WM_SYNCPAINT 0x0088
+#endif /* !WM_SYNCPAINT */
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -330,7 +338,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   static char buffer[2];
   static int cnt=0;
 
-  if(uMsg == WM_NCPAINT) {
+  if(uMsg == WM_SYNCPAINT) {
     if(cnt) {
       InvalidateRect(fl_window,0,FALSE);
       cnt = 0;
@@ -899,5 +907,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.32 1999/03/04 19:01:48 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33 1999/03/04 21:20:55 mike Exp $".
 //
