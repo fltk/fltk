@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.14 2002/04/27 19:35:18 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.15 2002/04/29 19:27:51 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -44,6 +44,7 @@ void Fl_Light_Button::draw() {
   W  = labelsize();
   dx = Fl::box_dx(box()) + 2;
   dy = (h() - W) / 2;
+  if (dy < 0) dy = 0;         // no negative values (?)
 
   if (down_box()) {
     // draw other down_box() styles:
@@ -66,7 +67,7 @@ void Fl_Light_Button::draw() {
       case _FL_ROUND_DOWN_BOX :
       case _FL_ROUND_UP_BOX :
         // Radio button...
-        draw_box(down_box(), x()+dx, y()+dy+1, W, W, FL_BACKGROUND2_COLOR);
+        draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
 	  fl_color(col);
 	  int tW = W - Fl::box_dw(down_box()) - 3;
@@ -74,7 +75,7 @@ void Fl_Light_Button::draw() {
 	  int tdy = dy + Fl::box_dy(down_box()) + 1;
 
 	  if (tW > 4) {
-            fl_pie(x() + tdx, y() + tdy, tW, tW + 1, 0.0, 360.0);
+            fl_pie(x() + tdx, y() + tdy, tW, tW , 0.0, 360.0);
 	  } else {
             // Small circles don't draw well with some X servers...
 	    fl_rectf(x() + tdx + 1, y() + tdy, 2, 4);
@@ -122,5 +123,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.14 2002/04/27 19:35:18 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.15 2002/04/29 19:27:51 easysw Exp $".
 //
