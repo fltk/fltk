@@ -120,19 +120,21 @@ editor.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/Fl_Text_Buffer.H
 fast_slow.o: fast_slow.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fast_slow.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 fast_slow.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Box.H
-file_chooser.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-file_chooser.o: ../FL/Fl_Button.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-file_chooser.o: ../FL/Fl_Widget.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
-file_chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
+file_chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/Enumerations.H
+file_chooser.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+file_chooser.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
 file_chooser.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
-file_chooser.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+file_chooser.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
 file_chooser.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
 file_chooser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 file_chooser.o: ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H ../FL/Fl.H
 file_chooser.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
 file_chooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
-file_chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Return_Button.H ../FL/fl_ask.H
-file_chooser.o: ../FL/Fl_File_Icon.H
+file_chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+file_chooser.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H ../FL/Fl_File_Icon.H
+file_chooser.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H
+file_chooser.o: ../FL/Fl_Window.H ../FL/Fl_PNM_Image.H ../src/flstring.h
+file_chooser.o: ../config.h
 fonts.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 fonts.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Hold_Browser.H
 fonts.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
