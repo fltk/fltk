@@ -105,7 +105,6 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
   { Fl_Window* o = window = new Fl_Window(375, 315, "Pick a File");
     w = o;
     o->callback((Fl_Callback*)cb_window, (void*)(this));
-    w->hotspot(o);
     { Fl_File_Browser* o = fileList = new Fl_File_Browser(10, 45, 355, 180);
       o->type(2);
       o->callback((Fl_Callback*)cb_fileList);

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.3 2001/10/29 03:44:31 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.4 2001/12/03 18:29:49 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -191,8 +191,6 @@ class Fl_Text_Display: public Fl_Group {
     int mTopLineNumHint;        /* Line number of top displayed line
                                    of file (first line of file is 1) */
     int mHorizOffsetHint;       /* Horizontal scroll pos. in pixels */
-    int mVisibility;            /* Window visibility (see XVisibility
-                                   event) */
     int mNStyles;               /* Number of entries in styleTable */
     Style_Table_Entry *mStyleTable; /* Table of fonts and colors for
                                    coloring/syntax-highlighting */
@@ -225,5 +223,5 @@ class Fl_Text_Display: public Fl_Group {
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.3 2001/10/29 03:44:31 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.4 2001/12/03 18:29:49 easysw Exp $".
 //

@@ -16,7 +16,7 @@ class Fl_File_Chooser {open
       callback {fileList->deselect();
 fileName->value("");
 window->hide();} open
-      private xywh {99 225 375 315} resizable hotspot
+      private xywh {99 225 375 315} resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}

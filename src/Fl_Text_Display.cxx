@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.3 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.4 2001/12/03 18:29:49 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -76,16 +76,18 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   textcolor(FL_BLACK);
   textfont(FL_HELVETICA);
 
-  Fl_Group* current = Fl_Group::current();
-  Fl_Group::current(this);
+  text_area.x = 0;
+  text_area.y = 0;
+  text_area.w = 0;
+  text_area.h = 0;
 
-  mVScrollBar = new Fl_Scrollbar(0,0,0,0);
+  mVScrollBar = new Fl_Scrollbar(0,0,1,1);
   mVScrollBar->callback((Fl_Callback*)v_scrollbar_cb, this);
-  mHScrollBar = new Fl_Scrollbar(0,0,0,0);
+  mHScrollBar = new Fl_Scrollbar(0,0,1,1);
   mHScrollBar->callback((Fl_Callback*)h_scrollbar_cb, this);
   mHScrollBar->type(FL_HORIZONTAL);
 
-  Fl_Group::current(current);
+  end();
 
   scrollbar_width(16);
   scrollbar_align(FL_ALIGN_BOTTOM_RIGHT);
@@ -112,6 +114,10 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   mNVisibleLines = 1;
   mLineStarts = new int[mNVisibleLines];
   mLineStarts[0] = 0;
+
+  mUnfinishedStyle = 0;
+  mUnfinishedHighlightCB = 0;
+  mHighlightCBArg = 0;
 }
 
 /*
@@ -1950,5 +1956,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.3 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.4 2001/12/03 18:29:49 easysw Exp $".
 //

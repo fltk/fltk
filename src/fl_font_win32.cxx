@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_win32.cxx,v 1.9.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_font_win32.cxx,v 1.9.2.3.2.1 2001/12/03 18:29:49 easysw Exp $"
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -164,9 +164,10 @@ double fl_width(uchar c) {
 }
 
 void fl_draw(const char* str, int n, int x, int y) {
-  SetTextColor(fl_gc, fl_RGB());
+  COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, fl_fontsize->fid);
   TextOut(fl_gc, x, y, str, n);
+  SetTextColor(fl_gc, oldColor);
 }
 
 void fl_draw(const char* str, int x, int y) {
@@ -174,5 +175,5 @@ void fl_draw(const char* str, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_win32.cxx,v 1.9.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_font_win32.cxx,v 1.9.2.3.2.1 2001/12/03 18:29:49 easysw Exp $".
 //

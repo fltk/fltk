@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.2 2001/12/03 18:29:49 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -92,6 +92,7 @@ Fl_Text_Buffer::Fl_Text_Buffer( int requestedSize ) {
   mNodifyProcs = NULL;
   mCbArgs = NULL;
   mNModifyProcs = 0;
+  mCursorPosHint = 0;
   mNullSubsChar = '\0';
 #ifdef PURIFY
 { int i; for (i = mGapStart; i < mGapEnd; i++) mBuf[ i ] = '.'; }
@@ -2283,5 +2284,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.2 2001/12/03 18:29:49 easysw Exp $".
 //

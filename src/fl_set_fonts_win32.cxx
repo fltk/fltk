@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.1 2001/11/26 20:13:29 easysw Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.2 2001/12/03 18:29:49 easysw Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -23,7 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-// This function fills in the fltk font table with all the fonts that
+// This function fills in the FLTK font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
 // and to sort them so the first 4 in a family are normal, bold, italic,
 // and bold italic.
@@ -57,19 +57,22 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 
 static int fl_free_font = FL_FREE_FONT;
 
-static int CALLBACK enumcb(ENUMLOGFONT FAR *lpelf,
-  NEWTEXTMETRIC FAR *lpntm, int FontType, LPARAM p) {
-  if (!p && lpelf->elfLogFont.lfCharSet != ANSI_CHARSET) return 1;
-  char *n = (char*)(lpelf->elfFullName);
+static int CALLBACK
+enumcb(CONST LOGFONT    *lpelf,
+       CONST TEXTMETRIC *lpntm,
+       int              FontType,
+       LPARAM           p) {
+  if (!p && lpelf->lfCharSet != ANSI_CHARSET) return 1;
+  char *n = (char*)(lpelf->lfFaceName);
   for (int i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
     if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) return 1;
-  char buffer[128];
+  char buffer[LF_FACESIZE + 1];
   strcpy(buffer+1, n);
   buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  if (lpelf->elfLogFont.lfWeight <= 400)
+  if (lpelf->lfWeight <= 400)
     buffer[0] = 'B', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
   buffer[0] = 'I'; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  if (lpelf->elfLogFont.lfWeight <= 400)
+  if (lpelf->lfWeight <= 400)
     buffer[0] = 'P', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
   return 1;
 }
@@ -82,14 +85,62 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
   return (Fl_Font)fl_free_font;
 }
 
-int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
-  // pretend all fonts are scalable (most are and I don't know how
-  // to tell anyways)
-  static int array[1];
-  sizep = array;
-  return 1;
+
+static int nbSize;
+static int cyPerInch;
+static int sizes[128];
+
+static int CALLBACK
+EnumSizeCb(CONST LOGFONT    *lpelf,
+           CONST TEXTMETRIC *lpntm,
+	   DWORD            fontType,
+	   LPARAM           p) {
+  if ((fontType & RASTER_FONTTYPE) == 0) {
+    sizes[0] = 0;
+    nbSize = 1;
+
+    // Scalable font
+    return 0;
+  }
+
+  int add = lpntm->tmHeight - lpntm->tmInternalLeading;
+  add = MulDiv(add, 72, cyPerInch);
+
+  int start = 0;
+  while ((start < nbSize) && (sizes[start] < add)) {
+    start++;
+  }
+
+  if ((start < nbSize) && (sizes[start] == add)) {
+    return 1;
+  }
+
+  for (int i=nbSize; i>start; i--) sizes[i] = sizes[i - 1];
+
+  sizes[start] = add;
+  nbSize++;
+
+  // Stop enum if buffer overflow
+  return nbSize < 128;
 }
 
+
+int
+Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
+  nbSize = 0;
+  Fl_Fontdesc *s = fl_fonts+fnum;
+  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+
+  if (!fl_gc) fl_GetDC(0);
+  cyPerInch = GetDeviceCaps(fl_gc, LOGPIXELSY);
+  if (cyPerInch < 1) cyPerInch = 1;
+  EnumFontFamilies(fl_gc, s->name+1, EnumSizeCb, 0);
+
+  sizep = sizes;
+  return nbSize;
+}
+
+
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.1 2001/11/26 20:13:29 easysw Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.2 2001/12/03 18:29:49 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.4 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.5 2001/12/03 18:29:49 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -268,10 +268,10 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
   }
 
   fl_draw_image(chars_per_pixel==1 ? cb1 : cb2, &d, x, y, d.w, d.h, 4);
-  if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete d.byte1[i];
+  if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete[] d.byte1[i];
   return 1;
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.4 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.5 2001/12/03 18:29:49 easysw Exp $".
 //

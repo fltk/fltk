@@ -21,6 +21,24 @@ CHANGES IN FLTK 1.1.0b7
 	  when compiled for debugging under WIN32.
 	- Added plastic box types to forms demo.
 	- Added mousewheel to keyboard demo.
+	- The Fl_Text_Editor widget caused an infinite loop
+	  when it received keyboard focus.
+	- filename_isdir() didn't properly handle drive letters
+	  properly; WIN32 needs a trailing slash for drive
+	  letters by themselves, but cannot have a trailing
+	  slash for directory names, go figure...
+	- The Fl_Text_Buffer and Fl_Text_Display classes did not
+	  initialize all of their members.
+	- fl_normal_label() had a totally redundant set of
+	  if/else tests, which the new code handles all from
+	  fl_draw().
+	- The Fl_File_Chooser dialog contained two hotspots.
+	- The fl_draw_pixmap() function didn't free the 2-byte
+	  color lookup table properly (delete instead of
+	  delete[]).
+	- fl_draw() reset the text color under WIN32, causing
+	  bitmaps to draw incorrectly.
+	- Fl::get_font_sizes() is now implemented under WIN32.
 
 
 CHANGES IN FLTK 1.1.0b6
