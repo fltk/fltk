@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.9 2001/02/12 15:12:14 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.10 2001/02/12 15:34:37 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -58,6 +58,10 @@ DSOCOMMAND	=@DSOCOMMAND@
 LDLIBS		=@LDFLAGS@ @LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 GLDLIBS		=@LDFLAGS@ @LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 
+# Man page extensions...
+CAT1EXT		=@CAT1EXT@
+CAT3EXT		=@CAT3EXT@
+
 # Be quiet when building...
 .SILENT:
 
@@ -78,16 +82,16 @@ GLDLIBS		=@LDFLAGS@ @LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 
 .man.0 .man.1 .man.3:
 	echo Formatting $<...
-	$(RM) $@
+	rm -f $@
 	$(NROFF) -man $< >$@
 
 .man.z:
 	echo Formatting $<...
-	$(RM) $@ t.z
+	rm -f $@ t.z
 	$(NROFF) -man $< >t
 	pack -f t
-	$(MV) t.z $@
+	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.9 2001/02/12 15:12:14 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.10 2001/02/12 15:34:37 easysw Exp $".
 #
