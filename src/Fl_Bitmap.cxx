@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5 1999/01/07 19:17:16 mike Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.1 1999/11/18 17:12:55 mike Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -52,7 +52,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     uchar* dest = newarray;
     static uchar reverse[16] =	/* Bit reversal lookup table */
   		{ 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-		  0x11, 0x99, 0x55, 0xdd, 0x22, 0xbb, 0x77, 0xff };
+		  0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
     for (int y=0; y < h; y++) {
       for (int n = 0; n < w1; n++, src++)
 	*dest++ = (reverse[*src & 0x0f] & 0xf0) |
@@ -125,5 +125,5 @@ void Fl_Bitmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5 1999/01/07 19:17:16 mike Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.1 1999/11/18 17:12:55 mike Exp $".
 //
