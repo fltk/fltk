@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.6 1999/05/06 06:20:47 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.7 1999/11/04 18:35:12 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -618,6 +618,11 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
   int H = w->h();
   if (H <= 0) H = 1; // X don't like zero...
   if (!w->parent() && !Fl::grab()) {
+    // center windows in case window manager does not do anything:
+    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
+      w->x(X = (Fl::w()-W)/2);
+      w->y(Y = (Fl::h()-H)/2);
+    }
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
     if (w->border()) {
@@ -866,5 +871,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.6 1999/05/06 06:20:47 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.7 1999/11/04 18:35:12 bill Exp $".
 //
