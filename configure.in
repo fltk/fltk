@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.22 2001/01/22 15:13:37 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.23 2001/02/12 15:12:14 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -93,6 +93,16 @@ fi])
 AC_PROG_CC
 AC_PROG_CXX
 dnl AC_PROG_INSTALL
+AC_PATH_PROG(NROFF,nroff)
+if test "$NROFF" = ""; then
+    AC_PATH_PROG(GROFF,groff)
+    if test "$GROFF" = ""; then
+        NROFF="echo"
+    else
+        NROFF="$GROFF -T ascii"
+    fi
+fi
+AC_PATH_PROG(HTMLDOC,htmldoc)
 
 AC_C_BIGENDIAN
 
@@ -120,8 +130,8 @@ fi
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h)
 AC_CHECK_FUNC(scandir,
-    if test "$uname" = "SunOS"; then
-	echo Not using Solaris scandir BSD emulation function.
+    if test "$uname" = SunOS -o "$uname" = QNX; then
+        echo Not using $uname scandir emulation function.
     else
         AC_DEFINE(HAVE_SCANDIR)
     fi)
@@ -138,6 +148,7 @@ AC_CHECK_FUNC(snprintf,
         AC_DEFINE(HAVE_SNPRINTF)
     fi)
 AC_CHECK_FUNCS(vsprintf)
+AC_CHECK_HEADER(strings.h)
 AC_CHECK_FUNCS(strcasecmp)
 
 AC_PATH_XTRA
@@ -170,10 +181,50 @@ if test "$ac_cv_have_overlay" = yes; then
     AC_DEFINE(HAVE_OVERLAY)
 fi
 
+dnl Figure out the appropriate formatted man page extension...
+case "$uname" in
+    FreeBSD* | NetBSD* | OpenBSD*)
+	# *BSD
+	CAT1EXT=0
+	CAT3EXT=0
+	;;
+    IRIX*)
+	# SGI IRIX
+	CAT1EXT=z
+	CAT3EXT=z
+	;;
+    *)
+	# All others
+	CAT1EXT=1
+	CAT3EXT=3
+	;;
+esac
+
+AC_SUBST(CAT1EXT)
+AC_SUBST(CAT3EXT)
+
+dnl Fix "mandir" variable...
+if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
+	case "$uname" in
+        	FreeBSD* | NetBSD* | OpenBSD*)
+        		# *BSD
+        		mandir="/usr/share/man"
+        		;;
+        	IRIX*)
+        		# SGI IRIX
+        		mandir="/usr/share/catman"
+        		;;
+        	*)
+        		# All others
+        		mandir="/usr/man"
+        		;;
+	esac
+fi
+
+dnl Add warnings to compiler switches:
+dnl do this last so messing with switches does not break tests
 MAKEDEPEND="\$(CXX) -M"
 
-dnl add warnings to compiler switches:
-dnl do this last so messing with switches does not break tests
 if test -n "$GXX"; then
     CFLAGS="-Wall $CFLAGS"
     CXXFLAGS="-Wall $CXXFLAGS"
@@ -281,5 +332,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.22 2001/01/22 15:13:37 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.23 2001/02/12 15:12:14 easysw Exp $".
 dnl

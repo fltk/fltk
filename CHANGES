@@ -25,8 +25,16 @@ CHANGES SINCE FLTK 1.0.10
 	- Fl::flush() now calls GdiFlush() under WIN32 to
 	  ensure that all graphics are drawn.
 
+	- fl_curve() now uses a much better algorithim to figure
+	  out how many pieces to cut the curve into.
+
 	- FLUID now uses GetTempPath() under WIN32 to determine
 	  where to store the clipboard.
+
+	- Right-ctrl does not delete selected text in Fl_Input,
+	  until you type a composed character.
+
+	- Added simple FLTK and FLUID manual pages.
 
 
 CHANGES SINCE FLTK 1.0.9

@@ -10,7 +10,7 @@ You can generate your own (printable) copy of the manual by typing
 "make" in this directory.  You will need to have the HTMLDOC software
 installed on your system.  HTMLDOC can be downloaded from:
 
-    http://www.easysw.com/~mike/htmldoc
+    http://www.easysw.com/htmldoc
 
 The default media size is 8.27x11.0" (210x279mm), which is the lesser
 of A4 and US Letter sizes.  You can change this in the makefile by

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.9 2001/01/28 06:57:32 spitzak Exp $"
+# "$Id: Makefile,v 1.9.2.10 2001/02/12 15:12:14 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -25,9 +25,6 @@
 
 # Get configuration stuff...
 include ../makeinclude
-
-# Where to find HTMLDOC (http://www.fltk.org/htmldoc)...
-HTMLDOC		=	htmldoc
 
 # What media size to use:
 
@@ -118,7 +115,9 @@ HTMLFILES	= \
 		osissues.html \
 		license.html
 
-all:	fltk.ps fltk.pdf
+MANPAGES =	fltk.$(CAT3EXT) fluid.$(CAT1EXT)
+
+all:	fltk.ps fltk.pdf $(MANPAGES)
 
 clean:
 	rm -f fltk.ps
@@ -127,31 +126,35 @@ clean:
 depend:
 
 # According to FHS this should be:
-# htmldir = $(prefix)/share/doc/html/en/fltk
+# htmldir = $(datadir)/doc/html/en/fltk
 # Possibly the "en/" can be removed, it is not clear.
 # KDE uses "HTML" instead of "html", which is correct?
-htmldir = $(prefix)/share/doc/fltk
+docdir = $(datadir)/doc/fltk
 
-# According to FHS this should be:
-# mandir = $(prefix)/share/man/en/man
-# they say the "en/" is optional
-mandir = $(prefix)/man/man
+install: $(MANPAGES)
+	-mkdir -p $(docdir)
+	cp $(HTMLFILES) *.gif *.jpg index.html $(docdir)
+	chmod 644 $(docdir)/*
+	-mkdir -p $(mandir)/cat1
+	cp fluid.$(CAT1EXT) $(mandir)/cat1
+	chmod 644 $(mandir)/cat1/fluid.$(CAT1EXT)
+	-mkdir -p $(mandir)/cat3
+	cp fltk.$(CAT3EXT) $(mandir)/cat3
+	chmod 644 $(mandir)/cat3/fltk.$(CAT3EXT)
+	-mkdir -p $(mandir)/man1
+	cp fluid.man $(mandir)/man1/fluid.1
+	chmod 644 $(mandir)/man1/fluid.1
+	-mkdir -p $(mandir)/man3
+	cp fltk.man $(mandir)/man3/fltk.3
+	chmod 644 $(mandir)/man3/fltk.3
 
-install:
-	-mkdir -p $(htmldir)
-	cp $(HTMLFILES) *.gif *.jpg index.html $(htmldir)
-	chmod 644 $(htmldir)/*
-	-mkdir -p $(mandir)1
-	cp *.1 $(mandir)1
-	-mkdir -p $(mandir)3
-	cp *.3 $(mandir)3
-
-# Base html files are now the readable ones, this is not done:
-#fltk.d/index.html: $(HTMLFILES)
-#	echo "Generating HTML documentation..."
-#	-mkdir fltk.d
-#	-rm -f fltk.d/*
-#	$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --bodycolor white --titleimage FL.gif $(HTMLFILES)
+# Base html files are now the readable ones, so this target is not make by
+# default...
+fltk.d/index.html: $(HTMLFILES)
+	echo "Generating HTML documentation..."
+	-mkdir fltk.d
+	-rm -f fltk.d/*
+	$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --bodycolor white --titleimage FL.gif $(HTMLFILES)
 
 fltk.ps: $(HTMLFILES)
 	echo "Generating PostScript documentation..."
@@ -163,5 +166,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.9 2001/01/28 06:57:32 spitzak Exp $".
+# End of "$Id: Makefile,v 1.9.2.10 2001/02/12 15:12:14 easysw Exp $".
 #

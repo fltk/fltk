@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.9 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.10 2001/02/12 15:12:14 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,9 +34,14 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
-#include <string.h>
 #include <stdio.h>
 #include <config.h>
+
+#include <string.h>
+
+#ifdef HAVE_STRINGS_H
+#  include <strings.h>
+#endif // HAVE_STRINGS_H
 
 #if defined(WIN32) || defined(__EMX__)
 #define strcasecmp stricmp
@@ -722,5 +727,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.9 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.10 2001/02/12 15:12:14 easysw Exp $".
 //
