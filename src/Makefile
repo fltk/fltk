@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.43 2002/05/16 12:47:43 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.44 2002/05/30 15:09:03 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -141,6 +141,7 @@ CPPFILES = \
 	fl_overlay.cxx \
 	fl_overlay_visual.cxx \
 	fl_plastic.cxx \
+	fl_read_image.cxx \
 	fl_rect.cxx \
 	fl_round_box.cxx \
 	fl_rounded_box.cxx \
@@ -259,6 +260,7 @@ fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
 fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
+fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
 		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
 
@@ -292,6 +294,9 @@ fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
 Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
 Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
+fl_read_image.o:	../FL/mac.H ../FL/win32.H
+fl_read_image_mac.o:	../FL/mac.H ../FL/win32.H
+fl_read_image_win32.o:	../FL/mac.H ../FL/win32.H
 fl_rect.o:	../FL/mac.H ../FL/win32.H
 fl_scroll_area.o:	../FL/mac.H ../FL/win32.H
 fl_set_font.o:	../FL/mac.H ../FL/win32.H
@@ -433,5 +438,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.43 2002/05/16 12:47:43 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.44 2002/05/30 15:09:03 easysw Exp $".
 #

@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- Added fl_read_image() function.
 	- Fixed Fl_Valuator::format() so that the correct format
 	  type is used when step == 1.0.
 	- Fl_Help_View didn't support the TT markup.

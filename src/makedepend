@@ -93,7 +93,7 @@ Fl_File_Chooser2.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 Fl_File_Chooser2.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
 Fl_File_Chooser2.o: ../FL/filename.H ../FL/x.H ../FL/Fl_Window.H flstring.h
 Fl_File_Chooser2.o: ../config.h
-Fl_File_Icon.o: ../config.h flstring.h ../FL/Fl_File_Icon.H ../FL/Fl.H
+Fl_File_Icon.o: flstring.h ../config.h ../FL/Fl_File_Icon.H ../FL/Fl.H
 Fl_File_Icon.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Widget.H
 Fl_File_Icon.o: ../FL/fl_draw.H ../FL/filename.H
 Fl_File_Icon2.o: flstring.h ../config.h ../FL/math.h ../FL/Fl_File_Icon.H
@@ -106,7 +106,7 @@ Fl_File_Input.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 Fl_File_Input.o: ../FL/fl_draw.H flstring.h ../config.h
 Fl_GIF_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_GIF_Image.o: ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
-Fl_GIF_Image.o: ../FL/x.H ../FL/Fl_Window.H ../config.h flstring.h
+Fl_GIF_Image.o: ../FL/x.H ../FL/Fl_Window.H flstring.h ../config.h
 Fl_Group.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Group.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Group.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
@@ -178,7 +178,7 @@ Fl_PNG_Image.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 Fl_PNG_Image.o: ../config.h
 Fl_PNM_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_PNM_Image.o: ../FL/Fl_PNM_Image.H ../FL/Fl_Image.H ../FL/x.H
-Fl_PNM_Image.o: ../FL/Fl_Window.H ../config.h flstring.h
+Fl_PNM_Image.o: ../FL/Fl_Window.H flstring.h ../config.h
 Fl_Positioner.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Positioner.o: ../FL/Fl_Positioner.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Preferences.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -267,10 +267,10 @@ Fl_Wizard.o: ../FL/Fl_Wizard.H ../FL/Fl_Group.H ../FL/fl_draw.H
 Fl_Wizard.o: ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_XBM_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_XBM_Image.o: ../FL/Fl_XBM_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-Fl_XBM_Image.o: ../FL/x.H ../FL/Fl_Window.H ../config.h flstring.h
+Fl_XBM_Image.o: ../FL/x.H ../FL/Fl_Window.H flstring.h ../config.h
 Fl_XPM_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_XPM_Image.o: ../FL/Fl_XPM_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
-Fl_XPM_Image.o: ../FL/x.H ../FL/Fl_Window.H ../config.h flstring.h
+Fl_XPM_Image.o: ../FL/x.H ../FL/Fl_Window.H flstring.h ../config.h
 Fl_abort.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H flstring.h
 Fl_abort.o: ../config.h
 Fl_add_idle.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -295,14 +295,14 @@ Fl_own_colormap.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
 Fl_own_colormap.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H
 Fl_visual.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_visual.o: ../FL/x.H ../FL/Fl_Window.H
-Fl_x.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-Fl_x.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_x.o: ../FL/Fl_Widget.H flstring.h
+Fl_x.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
+Fl_x.o: ../FL/Fl_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_x.o: ../FL/Fl_Widget.H flstring.h ../config.h
 filename_absolute.o: ../FL/filename.H flstring.h ../config.h
 filename_expand.o: ../FL/filename.H flstring.h ../config.h
 filename_ext.o: ../FL/filename.H
 filename_isdir.o: flstring.h ../config.h ../FL/filename.H
-filename_list.o: ../config.h ../FL/filename.H flstring.h
+filename_list.o: ../FL/filename.H flstring.h ../config.h
 filename_match.o: ../FL/filename.H
 filename_setext.o: ../FL/filename.H flstring.h ../config.h
 fl_arc.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/math.h
@@ -334,9 +334,9 @@ fl_draw.o: ../config.h
 fl_draw_image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_draw_image.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H Fl_XColor.H
 fl_draw_image.o: ../config.h ../FL/Enumerations.H flstring.h
-fl_draw_pixmap.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
-fl_draw_pixmap.o: ../FL/Fl_Export.H ../FL/fl_draw.H ../FL/x.H
-fl_draw_pixmap.o: ../FL/Fl_Window.H flstring.h
+fl_draw_pixmap.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_draw_pixmap.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H flstring.h
+fl_draw_pixmap.o: ../config.h
 fl_engraved_label.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_engraved_label.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
 fl_file_dir.o: flstring.h ../config.h ../FL/filename.H
@@ -349,9 +349,9 @@ fl_file_dir.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 fl_file_dir.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
 fl_file_dir.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 fl_file_dir.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
-fl_font.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-fl_font.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H Fl_Font.H flstring.h
-fl_font.o: fl_font_x.cxx
+fl_font.o: flstring.h ../config.h ../FL/Fl.H ../FL/Enumerations.H
+fl_font.o: ../FL/Fl_Export.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_font.o: Fl_Font.H fl_font_x.cxx
 fl_labeltype.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_labeltype.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/fl_draw.H
 fl_labeltype.o: ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
@@ -365,16 +365,18 @@ fl_overlay.o: ../FL/Fl_Window.H ../FL/fl_draw.H
 fl_overlay_visual.o: ../config.h
 fl_plastic.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_plastic.o: ../FL/fl_draw.H flstring.h ../config.h
+fl_read_image.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_read_image.o: ../FL/Fl_Window.H ../FL/fl_draw.H flstring.h ../config.h
 fl_rect.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Enumerations.H
 fl_rect.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H
 fl_round_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_round_box.o: ../FL/fl_draw.H
 fl_rounded_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_rounded_box.o: ../FL/fl_draw.H
-fl_set_font.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-fl_set_font.o: ../FL/x.H ../FL/Fl_Window.H Fl_Font.H flstring.h
-fl_set_fonts.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-fl_set_fonts.o: ../FL/x.H ../FL/Fl_Window.H Fl_Font.H flstring.h
+fl_set_font.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
+fl_set_font.o: ../FL/Fl_Window.H flstring.h ../config.h Fl_Font.H
+fl_set_fonts.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
+fl_set_fonts.o: ../FL/Fl_Window.H Fl_Font.H flstring.h ../config.h
 fl_set_fonts.o: fl_set_fonts_x.cxx
 fl_scroll_area.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_scroll_area.o: ../FL/Fl_Window.H
@@ -396,12 +398,12 @@ Fl_Gl_Choice.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
 Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
 Fl_Gl_Overlay.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
 Fl_Gl_Overlay.o: ../FL/Fl_Gl_Window.H
-Fl_Gl_Window.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-Fl_Gl_Window.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
-Fl_Gl_Window.o: ../FL/Fl_Gl_Window.H flstring.h
-gl_draw.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-gl_draw.o: ../FL/gl.h ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
-gl_draw.o: Fl_Gl_Choice.H Fl_Font.H flstring.h
+Fl_Gl_Window.o: flstring.h ../config.h ../FL/Fl.H ../FL/Enumerations.H
+Fl_Gl_Window.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
+Fl_Gl_Window.o: ../FL/Fl_Gl_Window.H
+gl_draw.o: flstring.h ../config.h ../FL/Fl.H ../FL/Enumerations.H
+gl_draw.o: ../FL/Fl_Export.H ../FL/gl.h ../FL/x.H ../FL/Fl_Window.H
+gl_draw.o: ../FL/fl_draw.H Fl_Gl_Choice.H Fl_Font.H
 gl_start.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 gl_start.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H
 gl_start.o: ../FL/Fl_Window.H ../FL/fl_draw.H Fl_Gl_Choice.H
