@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_dir.cxx,v 1.1.2.12 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: fl_file_dir.cxx,v 1.1.2.13 2002/06/13 18:18:33 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -33,8 +33,8 @@ static void		(*current_callback)(const char*) = 0;
 
 
 static void callback(Fl_File_Chooser *, void*) {
-  if (current_callback)
-    (*current_callback)(fc->value(0));
+  if (current_callback && fc->value())
+    (*current_callback)(fc->value());
 }
 
 
@@ -142,5 +142,5 @@ fl_dir_chooser(const char *message,	// I - Message for titlebar
 
 
 //
-// End of "$Id: fl_file_dir.cxx,v 1.1.2.12 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: fl_file_dir.cxx,v 1.1.2.13 2002/06/13 18:18:33 easysw Exp $".
 //

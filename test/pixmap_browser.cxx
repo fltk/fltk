@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.5 2002/01/06 17:51:12 easysw Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.6 2002/06/13 18:18:33 easysw Exp $"
 //
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -44,6 +44,10 @@ void load_file(const char *n) {
   if (img) img->release();
 
   img = Fl_Shared_Image::get(n);
+  if (!img) {
+    fl_alert("Image file format not recognized!");
+    return;
+  }
   if (img->w() > b->w() || img->h() > b->h()) {
     Fl_Image *temp;
     if (img->w() > img->h()) temp = img->copy(b->w(), b->h() * img->h() / img->w());
@@ -94,5 +98,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.5 2002/01/06 17:51:12 easysw Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.6 2002/06/13 18:18:33 easysw Exp $".
 //

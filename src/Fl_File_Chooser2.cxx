@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.15 2002/06/07 15:06:32 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.16 2002/06/13 18:18:33 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -864,7 +864,7 @@ Fl_File_Chooser::update_preview()
 
   oldimage = (Fl_Shared_Image *)previewBox->image();
 
-  if (oldimage) while (oldimage->refcount()) oldimage->release();
+  if (oldimage) oldimage->release();
 
   previewBox->image(0);
 
@@ -1103,5 +1103,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.15 2002/06/07 15:06:32 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.16 2002/06/13 18:18:33 easysw Exp $".
 //

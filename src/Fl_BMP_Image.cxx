@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.5 2002/06/10 17:21:49 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.6 2002/06/13 18:18:33 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -94,19 +94,23 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   // Then the bitmap information...
   info_size = read_dword(fp);
-  w(read_long(fp));
-  h(read_long(fp));
-  read_word(fp);
-  depth = read_word(fp);
 
   if (info_size < 40) {
     // Old Windows/OS2 BMP header...
+    w(read_word(fp));
+    h(read_word(fp));
+    read_word(fp);
+    depth = read_word(fp);
     compression = BI_RGB;
     colors_used = 0;
 
-    count = info_size - 12;
+    count = info_size - 8;
   } else {
     // New BMP header...
+    w(read_long(fp));
+    h(read_long(fp));
+    read_word(fp);
+    depth = read_word(fp);
     compression = read_dword(fp);
     read_dword(fp);
     read_long(fp);
@@ -129,7 +133,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   for (count = 0; count < colors_used; count ++) {
     // Read BGR color...
-    fread(colormap, colors_used, 3, fp);
+    fread(colormap[count], colors_used, 3, fp);
 
     // Skip pad byte for new BMP files...
     if (info_size > 12) getc(fp);
@@ -371,5 +375,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.5 2002/06/10 17:21:49 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.6 2002/06/13 18:18:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.13 2002/06/13 18:18:33 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -190,25 +190,36 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
 
   // Get file information if needed...
   if (filetype == ANY)
+  {
+#ifdef WIN32 
+    if (fl_filename_isdir(filename))
+      filetype = DIRECTORY;
+    else
+      filetype = PLAIN;
+#else
     if (!stat(filename, &fileinfo))
     {
       if (S_ISDIR(fileinfo.st_mode))
         filetype = DIRECTORY;
-#ifdef S_IFIFO
+#  ifdef S_IFIFO
       else if (S_ISFIFO(fileinfo.st_mode))
         filetype = FIFO;
-#endif // S_IFIFO
-#if defined(S_ICHR) && defined(S_IBLK)
+#  endif // S_IFIFO
+#  if defined(S_ICHR) && defined(S_IBLK)
       else if (S_ISCHR(fileinfo.st_mode) || S_ISBLK(fileinfo.st_mode))
         filetype = DEVICE;
-#endif // S_ICHR && S_IBLK
-#ifdef S_ILNK
+#  endif // S_ICHR && S_IBLK
+#  ifdef S_ILNK
       else if (S_ISLNK(fileinfo.st_mode))
         filetype = LINK;
-#endif // S_ILNK
+#  endif // S_ILNK
       else
         filetype = PLAIN;
     }
+    else
+      filetype = PLAIN;
+#endif // WIN32
+  }
 
   // Look at the base name in the filename
   name = fl_filename_name(filename);
@@ -464,5 +475,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.13 2002/06/13 18:18:33 easysw Exp $".
 //
