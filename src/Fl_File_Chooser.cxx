@@ -4,6 +4,7 @@
 
 inline void Fl_File_Chooser::cb_window_i(Fl_Window*, void*) {
   fileName->value(directory_);
+fileList->deselect();
 window->hide();
 }
 void Fl_File_Chooser::cb_window(Fl_Window* o, void* v) {
@@ -92,6 +93,7 @@ void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
 
 inline void Fl_File_Chooser::cb_Cancel_i(Fl_Button*, void*) {
   fileName->value(directory_);
+fileList->deselect();
 window->hide();
 }
 void Fl_File_Chooser::cb_Cancel(Fl_Button* o, void* v) {
@@ -154,8 +156,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     o->set_modal();
     o->end();
   }
-  window->size_range(375, 315, 375);
-fileList->filter(p);
+  fileList->filter(p);
 type(t);
 value(d);
 callback_ = 0;

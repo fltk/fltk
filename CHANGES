@@ -1,6 +1,10 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- The file chooser would return the last selected
+	  file(s) when cancel was pressed.
+	- The file chooser limited the resizing of the chooser
+	  window unnecessarily.
 	- Fixed WM_PAINT handling under WIN32.
 	- Minor tweeks to MingW and OS/2 config headers.
 	- Fl_Value_Input now correctly determines if step()
