@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.5 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: mac.H,v 1.1.2.6 2002/04/14 21:26:05 easysw Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -107,6 +107,7 @@ extern void fl_end_offscreen();
 typedef GWorldPtr Fl_Bitmask; // Carbon requires a 1-bit GWorld instead of a BitMap
 
 extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
+extern FL_EXPORT Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *data);
 extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
 extern void fl_open_display();
@@ -116,6 +117,6 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif // !FL_MAC_H
 
 //
-// End of "$Id: mac.H,v 1.1.2.5 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: mac.H,v 1.1.2.6 2002/04/14 21:26:05 easysw Exp $".
 //
 

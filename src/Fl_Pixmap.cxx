@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.15 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.16 2002/04/14 21:26:06 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -102,11 +102,10 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     DeleteDC(new_gc);
   } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   }
 #elif defined(__APPLE__)
-  if ( mask )
-  {
+  if (mask) {
     Rect src, dst;
     src.left = 0; src.right = w();
     src.top = 0; src.bottom = h();
@@ -114,18 +113,15 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     dst.top = Y; dst.bottom = Y+h();
     RGBColor rgb;
     rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
-    RGBBackColor( &rgb );
+    RGBBackColor(&rgb);
     rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
-    RGBForeColor( &rgb );
-    CopyMask( 
-      GetPortBitMapForCopyBits((GrafPtr)id),
-      GetPortBitMapForCopyBits((GrafPtr)mask), 
-      GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
-      &src, &src, &dst);
-  }
-  else 
-  {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+    RGBForeColor(&rgb);
+    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
+	     GetPortBitMapForCopyBits((GrafPtr)mask), 
+	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
+             &src, &src, &dst);
+  } else {
+    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   }
 #else
   if (mask) {
@@ -140,7 +136,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     int oy = Y-cy; if (oy < 0) oy += h();
     XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
   }
-  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   if (mask) {
     // put the old clip region back
     XSetClipOrigin(fl_display, fl_gc, 0, 0);
@@ -467,5 +463,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.15 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.16 2002/04/14 21:26:06 easysw Exp $".
 //

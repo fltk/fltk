@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.10 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.11 2002/04/14 21:26:05 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -206,6 +206,123 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 }
 #endif // __APPLE__
 
+
+#ifdef __APPLE__
+// Create an 8-bit "deep" mask (used for alpha blending)
+Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *array) {
+  Rect srcRect;
+  srcRect.left = 0; srcRect.right = w;
+  srcRect.top = 0; srcRect.bottom = h;
+  GrafPtr savePort;
+
+  GetPort(&savePort); // remember the current port
+
+  Fl_Bitmask gw;
+  NewGWorld( &gw, 8, &srcRect, 0L, 0L, 0 );
+  PixMapHandle pm = GetGWorldPixMap( gw );
+  if ( pm ) 
+  {
+    LockPixels( pm );
+    if ( *pm ) 
+    {
+      uchar *base = (uchar*)GetPixBaseAddr( pm );
+      if ( base ) 
+      {
+        PixMapPtr pmp = *pm;
+        // verify the parameters for direct memory write
+        if ( pmp->pixelType == 0 || pmp->pixelSize == 1 || pmp->cmpCount == 1 || pmp->cmpSize == 1 ) 
+        {
+	  // Copy alpha values from the source array to the pixmap...
+	  array += d - 1;
+	  for (int y = h; y > 0; y --, array += ld) {
+	    for (int x = w; x > 0; x --, array += d) {
+	      *pmp++ = *array;
+	    }
+	  }
+        }
+      }
+      UnlockPixels( pm );
+    }
+  }
+
+  SetPort(savePort);
+  return gw;               /* tell caller we succeeded! */
+}
+#else
+// Create a 1-bit "deep" mask (used for alpha blending)
+Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *array) {
+  Fl_Bitmask mask;
+  int bmw = (w + 7) / 8;
+  uchar *bitmap = new uchar[bmw * h];
+  uchar *bitptr, bit;
+  const uchar *dataptr;
+  int x, y;
+  static uchar dither[16][16] = { // Simple 16x16 Floyd dither
+    { 0,   128, 32,  160, 8,   136, 40,  168,
+      2,   130, 34,  162, 10,  138, 42,  170 },
+    { 192, 64,  224, 96,  200, 72,  232, 104,
+      194, 66,  226, 98,  202, 74,  234, 106 },
+    { 48,  176, 16,  144, 56,  184, 24,  152,
+      50,  178, 18,  146, 58,  186, 26,  154 },
+    { 240, 112, 208, 80,  248, 120, 216, 88,
+      242, 114, 210, 82,  250, 122, 218, 90 },
+    { 12,  140, 44,  172, 4,   132, 36,  164,
+      14,  142, 46,  174, 6,   134, 38,  166 },
+    { 204, 76,  236, 108, 196, 68,  228, 100,
+      206, 78,  238, 110, 198, 70,  230, 102 },
+    { 60,  188, 28,  156, 52,  180, 20,  148,
+      62,  190, 30,  158, 54,  182, 22,  150 },
+    { 252, 124, 220, 92,  244, 116, 212, 84,
+      254, 126, 222, 94,  246, 118, 214, 86 },
+    { 3,   131, 35,  163, 11,  139, 43,  171,
+      1,   129, 33,  161, 9,   137, 41,  169 },
+    { 195, 67,  227, 99,  203, 75,  235, 107,
+      193, 65,  225, 97,  201, 73,  233, 105 },
+    { 51,  179, 19,  147, 59,  187, 27,  155,
+      49,  177, 17,  145, 57,  185, 25,  153 },
+    { 243, 115, 211, 83,  251, 123, 219, 91,
+      241, 113, 209, 81,  249, 121, 217, 89 },
+    { 15,  143, 47,  175, 7,   135, 39,  167,
+      13,  141, 45,  173, 5,   133, 37,  165 },
+    { 207, 79,  239, 111, 199, 71,  231, 103,
+      205, 77,  237, 109, 197, 69,  229, 101 },
+    { 63,  191, 31,  159, 55,  183, 23,  151,
+      61,  189, 29,  157, 53,  181, 21,  149 },
+    { 254, 127, 223, 95,  247, 119, 215, 87,
+      253, 125, 221, 93,  245, 117, 213, 85 }
+  };
+
+  // Generate a 1-bit "screen door" alpha mask; not always pretty, but
+  // definitely fast...  In the future we may be able to support things
+  // like the RENDER extension in XFree86, when available, to provide
+  // true RGBA-blended rendering.  See:
+  //
+  //     http://www.xfree86.org/~keithp/render/protocol.html
+  //
+  // for more info on XRender...
+  //
+  // MacOS already provides alpha blending support and has its own
+  // fl_create_deepmask() function...
+  memset(bitmap, 0, bmw * h);
+
+  for (dataptr = array + d - 1, y = 0; y < h; y ++, dataptr += ld)
+    for (bitptr = bitmap + y * bmw, bit = 1, x = 0; x < w; x ++, dataptr += d) {
+      if (*dataptr > dither[x & 15][y & 15])
+	*bitptr |= bit;
+      if (bit < 128) bit <<= 1;
+      else {
+	bit = 1;
+	bitptr ++;
+      }
+    }
+
+  mask = fl_create_bitmask(w, h, bitmap);
+  delete[] bitmap;
+
+  return (mask);
+}
+#endif // __APPLE__
+
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!array) {
     draw_empty(XP, YP);
@@ -239,13 +356,12 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   GetPortBounds( id, &src );
   SetRect( &src, cx, cy, cx+W, cy+H );
   SetRect( &dst, X, Y, X+W, Y+H );
-  CopyBits(
-    GetPortBitMapForCopyBits(id),		// srcBits
-    GetPortBitMapForCopyBits(dstPort),	// dstBits
-    &src,		 			// src bounds
-    &dst, 				// dst bounds
-    srcOr, 				// mode
-    0L);					// mask region
+  CopyBits(GetPortBitMapForCopyBits(id),	// srcBits
+	   GetPortBitMapForCopyBits(dstPort),	// dstBits
+	   &src,		 		// src bounds
+	   &dst, 				// dst bounds
+	   srcOr, 				// mode
+	   0L);					// mask region
 #else
   if (!id) id = fl_create_bitmask(w(), h(), array);
 
@@ -340,5 +456,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.10 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.11 2002/04/14 21:26:05 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.7 2002/03/07 19:22:56 spitzak Exp $"
+// "$Id: x.H,v 1.10.2.8.2.8 2002/04/14 21:26:05 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -98,6 +98,7 @@ typedef ulong Fl_Offscreen;
 typedef ulong Fl_Bitmask;
 
 extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
+extern FL_EXPORT Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *data);
 extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
 // this object contains all X-specific stuff about a window:
@@ -137,5 +138,5 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.7 2002/03/07 19:22:56 spitzak Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.8 2002/04/14 21:26:05 easysw Exp $".
 //
