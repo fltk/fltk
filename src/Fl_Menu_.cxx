@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.5 1999/05/06 06:20:46 bill Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -112,12 +112,15 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   value_ = menu_ = (Fl_Menu_Item*)m;
 }
 
+#if 1
+// this version is ok with new Fl_Menu_add code with fl_menu_array_owner:
+
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
-  int n = m->size()+1;
+  int n = m->size();
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
   memcpy(newMenu, m, n*sizeof(Fl_Menu_Item));
   menu(newMenu);
-  alloc = 1; // make destructor free it
+  alloc = 1; // make destructor free array, but not strings
   // for convienence, provide way to change all the user data pointers:
   if (user_data) for (; n--;) {
     if (newMenu->callback_) newMenu->user_data_ = user_data;
@@ -125,20 +128,49 @@ void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
   }
 }
 
+#else
+// This is Guillaume Nodet's fixed version for the older Fl_Menu_add
+// that enlarged the array at powers of 2:
+
+void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
+  int i, s = m->size(), n=s;
+  for (i=0; n; n>>=1, i++);
+  n = 1 << i;
+  Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
+  memcpy(newMenu, m, s*sizeof(Fl_Menu_Item));
+  memset(newMenu+s, 0, (n-s)*sizeof(Fl_Menu_Item));
+  menu(newMenu);
+  alloc = 1; // make destructor free it
+  // for convienence, provide way to change all the user data pointers:
+  if (user_data) for (; s--;) {
+    if (newMenu->callback_) newMenu->user_data_ = user_data;
+    newMenu++;
+  }
+}
+#endif
+
 Fl_Menu_::~Fl_Menu_() {
   clear();
 }
+
+// Fl_Menu::add() uses this to indicate the owner of the dynamically-
+// expanding array.  We must not free this array:
+Fl_Menu_* fl_menu_array_owner = 0;
 
 void Fl_Menu_::clear() {
   if (alloc) {
     if (alloc>1) for (int i = size(); i--;)
       if (menu_[i].text) free((void*)menu_[i].text);
-    delete[] menu_;
+    if (this == fl_menu_array_owner)
+      fl_menu_array_owner = 0;
+    else
+      delete[] menu_;
     menu_ = 0;
+    value_ = 0;
     alloc = 0;
   }
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.5 1999/05/06 06:20:46 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4 1999/01/07 19:17:10 mike Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.2 1999/04/18 14:10:55 gustavo Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,32 +33,12 @@
 #include <FL/fl_message.H>
 #include "Fl_Widget_Type.h"
 
-class igroup : public Fl_Group {
-public:
-  void resize(int,int,int,int);
-  igroup(int x,int y,int w,int h) : Fl_Group(x,y,w,h) {Fl_Group::current(0);}
-};
 // Override group's resize behavior to do nothing to children:
 void igroup::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X,Y,W,H);
   redraw();
 }
 
-class Fl_Group_Type : public Fl_Widget_Type {
-public:
-  virtual const char *type_name() {return "Fl_Group";}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    igroup *g = new igroup(x,y,w,h); Fl_Group::current(0); return g;}
-  Fl_Widget_Type *_make() {return new Fl_Group_Type();}
-  Fl_Type *make();
-  void write_code1();
-  void write_code2();
-  void add_child(Fl_Type*, Fl_Type*);
-  void move_child(Fl_Type*, Fl_Type*);
-  void remove_child(Fl_Type*);
-  int is_parent() const {return 1;}
-  int is_group() const {return 1;}
-};
 Fl_Group_Type Fl_Group_type;	// the "factory"
 
 Fl_Type *Fl_Group_Type::make() {
@@ -141,38 +121,22 @@ void Fl_Group_Type::write_code1() {
 }
 
 void Fl_Group_Type::write_code2() {
+  write_extra_code();
   write_c("%so->end();\n", indent());
   if (resizable()) write_c("%sFl_Group::current()->resizable(o);\n", indent());
-  Fl_Widget_Type::write_code2();
+  write_block_close();
 }
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Tabs.H>
+const char tabs_type_name[] = "Fl_Tabs";
 
-class itabs : public Fl_Tabs {
-public:
-  void resize(int,int,int,int);
-  itabs(int x,int y,int w,int h) : Fl_Tabs(x,y,w,h) {}
-};
 // Override group's resize behavior to do nothing to children:
 void itabs::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X,Y,W,H);
   redraw();
 }
 
-static const char tabs_type_name[] = "Fl_Tabs";
-
-class Fl_Tabs_Type : public Fl_Group_Type {
-public:
-  virtual const char *type_name() {return tabs_type_name;}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    itabs *g = new itabs(x,y,w,h); Fl_Group::current(0); return g;}
-  Fl_Widget_Type *_make() {return new Fl_Tabs_Type();}
-  Fl_Type* click_test(int,int);
-  void add_child(Fl_Type*, Fl_Type*);
-  void remove_child(Fl_Type*);
-};
 Fl_Tabs_Type Fl_Tabs_type;	// the "factory"
 
 // This is called when user clicks on a widget in the window.  See
@@ -236,9 +200,9 @@ void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
 
 #include <FL/Fl_Scroll.H>
 
-static const char scroll_type_name[] = "Fl_Scroll";
+const char scroll_type_name[] = "Fl_Scroll";
 
-static Fl_Menu_Item scroll_type_menu[] = {
+Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH", 0, 0, 0/*(void*)Fl_Scroll::BOTH*/},
   {"HORIZONTAL", 0, 0, (void*)Fl_Scroll::HORIZONTAL},
   {"VERTICAL", 0, 0, (void*)Fl_Scroll::VERTICAL},
@@ -247,25 +211,14 @@ static Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH_ALWAYS", 0, 0, (void*)Fl_Scroll::BOTH_ALWAYS},
   {0}};
 
-class Fl_Scroll_Type : public Fl_Group_Type {
-  Fl_Menu_Item *subtypes() {return scroll_type_menu;}
-public:
-  virtual const char *type_name() {return scroll_type_name;}
-  Fl_Widget_Type *_make() {return new Fl_Scroll_Type();}
-};
 Fl_Scroll_Type Fl_Scroll_type;	// the "factory"
 
 ////////////////////////////////////////////////////////////////
 
-static const char tile_type_name[] = "Fl_Tile";
+const char tile_type_name[] = "Fl_Tile";
 
-class Fl_Tile_Type : public Fl_Group_Type {
-public:
-  virtual const char *type_name() {return tile_type_name;}
-  Fl_Widget_Type *_make() {return new Fl_Tile_Type();}
-};
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4 1999/01/07 19:17:10 mike Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.2 1999/04/18 14:10:55 gustavo Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: connect.cxx,v 1.4 1999/01/07 19:17:51 mike Exp $"
+// "$Id: connect.cxx,v 1.4.2.1 1999/05/11 09:39:31 bill Exp $"
 //
 // PPP example program for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -40,6 +41,7 @@ int running;	// actually the pid
 Fl_Toggle_Button *Button;
 
 void sigchld(int) {
+  waitpid(running, 0, 0);
   running = 0;
   Button->value(0);
 }
@@ -53,6 +55,7 @@ void cb(Fl_Widget *o, void *) {
   } else {
     if (!running) return;
     kill(running, SIGINT);
+    waitpid(running, 0, 0);
     running = 0;
   }
 }
@@ -68,5 +71,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: connect.cxx,v 1.4 1999/01/07 19:17:51 mike Exp $".
+// End of "$Id: connect.cxx,v 1.4.2.1 1999/05/11 09:39:31 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: checkers.cxx,v 1.9 1999/01/07 19:17:50 mike Exp $"
+// "$Id: checkers.cxx,v 1.9.2.2 1999/06/07 07:03:34 bill Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -56,7 +56,6 @@ const char* copyright =
 #define FLTK
 //#define VT100
 
-#include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -1299,7 +1298,7 @@ Fl_Menu_Item menu[] = {
   {"Intelligence...", 'i', intel_cb, 0, FL_MENU_DIVIDER},
   {"Copyright", 'c', copyright_cb},
   {"Quit", 'q', quit_cb},
-  {0}};
+  {(const char *)0}};
 
 Fl_Menu_Item busymenu[] = {
   {"Stop", '.', stop_cb},
@@ -1309,7 +1308,7 @@ Fl_Menu_Item busymenu[] = {
   {"Intelligence...", 'i', intel_cb},
   {"Copyright", 'c', copyright_cb},
   {"Quit", 'q', quit_cb},
-  {0}};
+  {(const char *)0}};
 
 #endif
 
@@ -1366,5 +1365,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.9 1999/01/07 19:17:50 mike Exp $".
+// End of "$Id: checkers.cxx,v 1.9.2.2 1999/06/07 07:03:34 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9 1999/02/18 13:12:50 mike Exp $"
+// "$Id: fl_draw.H,v 1.9.2.1 1999/05/11 09:39:27 bill Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -137,7 +137,7 @@ FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
 // images:
 FL_EXPORT void fl_draw_image(const uchar*, int,int,int,int, int delta=3, int ldelta=0);
 FL_EXPORT void fl_draw_image_mono(const uchar*, int,int,int,int, int delta=1, int ld=0);
-FL_EXPORT typedef void (*Fl_Draw_Image_Cb)(void*,int,int,int,uchar*);
+typedef void (*Fl_Draw_Image_Cb)(void*,int,int,int,uchar*);
 FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=3);
 FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=1);
 FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
@@ -161,5 +161,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9 1999/02/18 13:12:50 mike Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.1 1999/05/11 09:39:27 bill Exp $".
 //

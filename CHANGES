@@ -1,0 +1,120 @@
+CHANGES SINCE FLTK 1.0.3
+
+    - Documentation updates
+    - Fl_Browser::bottomline(size) didn't scroll to the bottom
+      if the second-to-last line was visible.
+    - fl_wait() didn't poll FDs properly for WIN32.
+    - Fixed DLL definitions for BC++.
+    - FLUID now handles nested classes properly.
+    - The "connect" demo now does a wait() for the PPP process
+      so that you aren't left with a lot of zombie processes.
+    - Fixed the FLTK colormap to use FF instead of F4 for full
+      intensity values.
+    - Minor change to scrollbar drawing code to match other
+      toolkits.
+    - New selections would cancel themselves out in WIN32.
+    - The header file links were broken in the IRIX
+      distributions.
+    - fl_elapsed() now always uses GetClockTick() for WIN32.
+    - fl_display is now initialized to GetModuleHandle(NULL) -
+      this fixes problems people had with Cygwin and MingW32.
+    - WinMain() is no longer compiled in with Cygwin and
+      MingW32; it wasn't being used for those compilers anyways.
+    - Added Solaris compiler options to configure script.
+    - Fl_Value_Input wouldn't update properly if you set the
+      value from a callback.
+    - Fl_Tile wouldn't resize if the resizeable widget was the
+      last child.
+    - Was missing #include <ctype.h> and #include <stdlib.h> in
+      several files, which caused problems on some platforms.
+    - Fixed another case where Fl_Browser_ could get in an
+      infinite resizing loop.
+    - Fl_win32.cxx now includes <FL/filename.H> to export missing
+      DLL symbols.
+    - Fluid didn't handle member functions that include the
+      scope operator.
+    - Fl_Chart was dividing by 0 if there were no data samples
+      or if they were all the same (min == max).
+
+CHANGES SINCE FLTK 1.0.2
+
+    - XDBE is now enabled for IRIX 6.[234] as well as 6.5.
+    - FLUID didn't write the when() condition properly.
+    - Tab/space/backtab/backspace can be used to navigate
+      through menus.
+    - Changed $(DSONAME) in the src/Makefile to "libfltk.so.1
+      libfltk.sl.1".
+    - Fl_Browser could read past the end of the string when
+      computing the item height.
+    - Fl_Browser could get in an infinite loop when checking to
+      see if scrollbars needed to be displayed.
+    - FLUID now honors the return type of the outermost widget. 
+      This was a problem when substituting Fl_Group in an
+      Fl_Window widget.
+    - Fl_Menu_::copy() wasn't allocating a power of 2 for the
+      array size.
+    - FLWM would crash if fl_xmousewin was deleted.
+    - The fast_slow demo now uses output widgets.
+    - Timers under WIN32 were unreliable.
+
+CHANGES SINCE FLTK 1.0.1
+
+    - Documentation updates
+    - The Visual C++ project files didn't include fl_add_idle.cxx.
+    - LIBRARY/DSO name inconsistencies in src/Makefile.
+    - src/Makefile didn't clean the DSO.
+    - The valuator demo now has only a single callback.
+    - The code looked for HAVE_SYS_SELECT_H, but the
+      config file uses HAVE_SYS_SELECT.
+    - Fl_Image redraw not quite right under X11 or WIN32
+    - Problems with timeouts & cube demo under WIN32
+    - FLUID problems with inline functions.
+    - Documentation fixes...
+    - Fl_Browser::item_height() didn't handle blank lines or
+      non-default fonts properly.
+    - FL/math.h didn't have #ifndef...#define...#endif guards
+      against multiple inclusion...
+    - Fl_Menu_::copy() fix - didn't allocate power of 2...
+    - Fl::damage() now remains true until all windows are actually
+      redrawn.
+    - Fl_Widget destructor, hide(), and deactivate() methods no longer
+      send FL_LEAVE, FL_RELEASE, or FL_UNFOCUS events to the widget
+      (which could cause applications to crash).
+    - FLUID now outputs symbolic names for align() and when().
+    - Fixed select() to use maxfd + 1 instead of maxfd.
+    - Added "Fl::remove_fd(fd, when)" function so you can remove the
+      read and write callbacks separately.
+    - The Fl::add_fd() and Fl::add_timeout() arrays are now dynamically
+      allocated.
+    - FLUID didn't always turn the FL_SUBMENU flag on for submenu titles.
+    - The "extra code" in FLUID now is placed before the "o->end()" call
+      for Fl_Group and its derived classes.
+    - You can now set a FL_Window widget's class in FLUID to Fl_Group to
+      generate a function or class that builds part of a GUI (i.e. no window).
+    - FLUID now displays "Save file before exiting?" with the standard yes,
+      no, and cancel buttons rather than "Discard changes?".
+    - Fl_Menu_::add() now works with any type of menu, even one set with
+      the menu() method.
+    - The keypad keys were not always decoded properly under X11.
+    - Some pointers were not being turned off when widgets were deleted,
+      which caused some applications (like FLWM) to crash.
+
+CHANGES SINCE FLTK 1.0
+
+    - Documentation fixes.
+    - Fl::check() didn't return the correct value, breaking a number
+      of applications.
+    - Fixed fluid bug that caused styles patch to crash when you delete
+      a menu item.
+    - Updated valuators demo to put the values in the gui box.
+    - Fl_Browser_::item_height() didn't always compute the correct
+      value.
+    - Fixed the alignment of Fl_Choice text.
+    - Fixes for OS/2.
+    - Fl_Menu_Item::clear() didn't clear value.
+    - Added some changes to make FLTK work with Borland C++.
+    - ANSI C++ fixes.
+    - Plugged a memory leak in the fractal demo.
+    - Fl::add_timeout() didn't work under WIN32 with small values.
+    - The configure script and makefiles now define DSONAME and
+      use the static library for all example programs.    

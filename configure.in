@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.33 1999/03/10 14:22:29 mike Exp $"
+dnl# "$Id: configure.in,v 1.33.2.4 1999/05/19 19:07:15 bill Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -36,6 +36,7 @@ else
   LIBCOMMAND="ar crs"
 fi
 DSOCOMMAND="echo"
+DSONAME=""
 
 dnl# Get the operating system and version number...
 
@@ -61,31 +62,26 @@ if eval "test x$enable_shared = xyes"; then
   PICFLAG=1
   case $uname in
       SunOS* | UNIX_S*)
-          LIBNAME="libfltk.so.1"
-	  DSOCOMMAND="\$(CXX) -Wl,-h,\$(LIBNAME) \$(LDLIBS) -G $DEBUGFLAG -o"
-	  ln -s libfltk.so.1 lib/libfltk.so
+          DSONAME="libfltk.so.1"
+	  DSOCOMMAND="\$(CXX) -Wl,-h,libfltk.so.1 \$(LDLIBS) -G $DEBUGFLAG -o"
 	  ;;
       HP-UX*)
-          LIBNAME="libfltk.sl.1"
+          DSONAME="libfltk.sl.1"
 	  DSOCOMMAND="ld -b -z +h libfltk.sl.1 $DEBUGFLAG -o"
-	  ln -s libfltk.sl.1 lib/libfltk.sl
 	  ;;
       OSF1*)
-          LIBNAME="libfltk.so.1"
-          DSOCOMMAND="\$(CXX) -Wl,-soname,\$(LIBNAME) \$(LDLIBS) -shared $DEBUGFLAG -o"
-	  ln -s libfltk.so.1 lib/libfltk.so
+          DSONAME="libfltk.so.1"
+          DSOCOMMAND="\$(CXX) -Wl,-soname,libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	  ;;
       IRIX*)
-          LIBNAME="libfltk.so.1"
-          DSOCOMMAND="\$(CXX) -soname \$(LIBNAME) \$(LDLIBS) -shared $DEBUGFLAG -o"
-	  ln -s libfltk.so.1 lib/libfltk.so
+          DSONAME="libfltk.so.1"
+          DSOCOMMAND="\$(CXX) -soname libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	  ;;
       *)
           echo "Warning: shared libraries may not be supported.  Trying -shared"
 	  echo "         option with compiler."
-          LIBNAME="libfltk.so.1"
-          DSOCOMMAND="\$(CXX) -Wl,-soname,\$(LIBNAME) \$(LDLIBS) -shared $DEBUGFLAG -o"
-	  ln -s libfltk.so.1 lib/libfltk.so
+          DSONAME="libfltk.so.1"
+          DSOCOMMAND="\$(CXX) -Wl,-soname,libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	  ;;
   esac
 fi])
@@ -149,10 +145,7 @@ AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
 AC_SUBST(GLLIB)
 
 AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
-    if test "$uname" != "SunOS" -a "$uname" != "IRIX"; then
-        AC_DEFINE(HAVE_XDBE)
-    fi
-    if test "$uname" = "IRIX" -a "$uversion" -gt 63; then
+    if test "$uname" != "SunOS"; then
         AC_DEFINE(HAVE_XDBE)
     fi)
 
@@ -195,9 +188,10 @@ else
 		#     LD="ld -n32"
 		#     MAKEDEPEND="CC -M"
 
+		echo "FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI -n32"
         	# -woff 3322 is necessary due to errors in Xlib headers on IRIX
         	CFLAGS="-fullwarn $CFLAGS"
-        	CXXFLAGS="-fullwarn -woff 1685 -woff 3322 $CXXFLAGS"
+        	CXXFLAGS="-fullwarn -woff 1685,3322 $CXXFLAGS"
 	    else
         	CXXFLAGS="+w +pp $CXXFLAGS"
 	    fi
@@ -211,6 +205,17 @@ else
 	    if test -z "$DEBUGFLAG"; then
 		CFLAGS="+O2 $CFLAGS"
 		CXXFLAGS="+O2 +W336,501,736,740,749,829 $CXXFLAGS"
+	    fi
+	    ;;
+	SunOS*)
+	    # Solaris
+	    if test -z "$DEBUGFLAG"; then
+		CFLAGS="-O"
+		CXXFLAGS="-O"
+	    fi
+	    if test $PICFLAG = 1; then
+		CFLAGS="-KPIC $CFLAGS"
+		CXXFLAGS="-PIC $CXXFLAGS"
 	    fi
 	    ;;
 	*)
@@ -227,6 +232,7 @@ fi
 CFLAGS="$DEBUGFLAG $CFLAGS"
 CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
 
+AC_SUBST(DSONAME)
 AC_SUBST(DSOCOMMAND)
 AC_SUBST(LIBNAME)
 AC_SUBST(LIBCOMMAND)
@@ -235,5 +241,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.33 1999/03/10 14:22:29 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.33.2.4 1999/05/19 19:07:15 bill Exp $".
 dnl#

@@ -237,7 +237,7 @@ f dev info/fltk/widgets.html=documentation/widgets.html 0444 root sys
 d eoe lib 0555 root sys
 d dev lib 0555 root sys
 f dev lib/libfltk.a=lib/libfltk.a 0555 root sys
-f eoe lib/libfltk.so.1=lib/libfltk.so.1 0555 root sys
+f eoe lib/libfltk.so.1=src/libfltk.so.1 0555 root sys
 s dev include/FL/Enumerations.h=Enumerations.H
 s dev include/FL/Fl.h=Fl.H
 s dev include/FL/Fl_Adjuster.h=Fl_Adjuster.H

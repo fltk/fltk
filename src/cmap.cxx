@@ -1,5 +1,5 @@
 //
-// "$Id: cmap.cxx,v 1.4 1999/01/07 19:17:33 mike Exp $"
+// "$Id: cmap.cxx,v 1.4.2.1 1999/05/14 09:07:08 bill Exp $"
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
@@ -36,7 +36,10 @@
 // fltk programs more friendly on color-adjusted screens.  If you want
 // pure colors you should get them out of the colormap.
 
-#define III 244 // maximum intensity of the basic colors
+//#define III 244 // maximum intensity of the basic colors
+
+// that results in errors and unshared colormap entries, so full intensity:
+#define III 255 // maximum intensity of the basic colors
 
 static short cmap[256][3] = {
 // 3-bit colormap:
@@ -145,5 +148,5 @@ int main() {
 }
 
 //
-// End of "$Id: cmap.cxx,v 1.4 1999/01/07 19:17:33 mike Exp $".
+// End of "$Id: cmap.cxx,v 1.4.2.1 1999/05/14 09:07:08 bill Exp $".
 //

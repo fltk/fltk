@@ -1,5 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 0.99 
+version 1.00 
+header_name {.h} 
+code_name {.cxx} 
 gridx 10 
 gridy 10 
 snap 3
@@ -18,19 +20,21 @@ if (!Fl::pushed()) slow->value(o->value());}
     }
     Fl_Slider fast {
       label {fast
-redraw}
-      xywh {140 200 30 200} deactivate
+redraw} selected
+      xywh {140 200 30 200}
+      code0 {o->set_output();}
     }
     Fl_Slider slow {
       label {slow
-redraw}
-      xywh {190 200 30 200} deactivate
+redraw} selected
+      xywh {190 200 30 200}
+      code0 {o->set_output();}
     }
     Fl_Box {} {
       label {The left slider has changed( FL_WHEN_CHANGED | FL_WHEN_RELEASE | FL_WHEN_NOT_CHANGED) so it produces a callback on both drag and release mouse events.
 The middle slider (representing a widget with low overhead) is changed on every mouse movement.
-The right slider (representing a widget with high overhead) is only updated when the mouse is released, by checking if Fl::pushed() is zero.} selected
-      xywh {10 10 300 180} box DOWN_BOX color {53 47} labelfont 4 labelsize 12 align 148
+The right slider (representing a widget with high overhead) is only updated when the mouse is released, by checking if Fl::pushed() is zero.}
+      xywh {10 10 300 180} box DOWN_BOX color 53 selection_color 47 labelfont 4 labelsize 12 align 148
     }
   }
 } 
