@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.14 1998/11/08 14:39:09 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.15 1998/11/08 16:37:20 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -227,7 +227,7 @@ static int ms2fltk(int vk, int extended) {
 }
 
 #if USE_COLORMAP
-extern HPALETTE fl_select_palette(); // in fl_color_win32.C
+extern HPALETTE fl_select_palette(int gl); // in fl_color_win32.C
 #endif
 
 static Fl_Window* resize_bug_fix;
@@ -388,17 +388,20 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #if USE_COLORMAP
   case WM_QUERYNEWPALETTE :
     fl_GetDC(hWnd);
-    if (fl_select_palette()) InvalidateRect(hWnd, NULL, FALSE);
+    if (fl_select_palette(window->type() == FL_GL_WINDOW))
+      InvalidateRect(hWnd, NULL, FALSE);
     break;
        
   case WM_PALETTECHANGED:
     fl_GetDC(hWnd);
-    if ((HWND)wParam != hWnd && fl_select_palette()) UpdateColors(fl_gc);
+    if ((HWND)wParam != hWnd &&
+        fl_select_palette(window->type() == FL_GL_WINDOW))
+      UpdateColors(fl_gc);
     break;
 
   case WM_CREATE :
     fl_GetDC(hWnd);
-    fl_select_palette();
+    fl_select_palette(window->type() == FL_GL_WINDOW);
     break;
 
 #endif
@@ -813,5 +816,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.14 1998/11/08 14:39:09 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.15 1998/11/08 16:37:20 mike Exp $".
 //
