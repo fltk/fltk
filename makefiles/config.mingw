@@ -1,5 +1,5 @@
 /*
- * "$Id: config.mingw,v 1.1.2.3.2.6 2002/05/21 18:13:31 easysw Exp $"
+ * "$Id: config.mingw,v 1.1.2.3.2.7 2002/05/24 14:50:20 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -56,7 +56,7 @@
  * library files.  Consult the README.win32 file for further details.
  */
 
-#define HAVE_GL 0
+#define HAVE_GL 1
 
 /*
  * HAVE_GL_GLU_H:
@@ -216,5 +216,5 @@
 
 
 /*
- * End of "$Id: config.mingw,v 1.1.2.3.2.6 2002/05/21 18:13:31 easysw Exp $".
+ * End of "$Id: config.mingw,v 1.1.2.3.2.7 2002/05/24 14:50:20 easysw Exp $".
  */
