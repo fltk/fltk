@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.7 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.8 2001/11/27 17:44:06 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -86,7 +86,7 @@ struct Timeout {
 static Timeout* first_timeout, *free_timeout;
 
 #ifndef WIN32
-#include <sys/time.h>
+#  include <sys/time.h>
 #endif
 
 // I avoid the overhead of getting the current time when we have no
@@ -299,7 +299,11 @@ Fl_X* Fl_X::first;
 Fl_Window* fl_find(Window xid) {
   Fl_X *window;
   for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next)
+#ifdef __APPLE__
+    if (window->xid == xid && !window->w->window()) {
+#else
     if (window->xid == xid) {
+#endif // __APPLE__
       if (window != Fl_X::first && !Fl::modal()) {
 	// make this window be first to speed up searches
 	// this is not done if modal is true to avoid messing up modal stack
@@ -343,9 +347,10 @@ void Fl::flush() {
       if (x->region) {XDestroyRegion(x->region); x->region = 0;}
     }
   }
+
 #ifdef WIN32
   GdiFlush();
-#else
+#elif !defined(__APPLE__)
   if (fl_display) XFlush(fl_display);
 #endif
 }
@@ -630,6 +635,16 @@ void Fl_Window::hide() {
   Fl_X** pp = &Fl_X::first;
   for (; *pp != x; pp = &(*pp)->next) if (!*pp) return;
   *pp = x->next;
+
+#ifdef __APPLE__
+  // remove all childwindow links
+  for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
+  { 
+    if ( pc->xidNext == x ) pc->xidNext = x->xidNext;
+    if ( pc->xidChildren == x ) pc->xidChildren = x->xidNext;   
+  }
+#endif // __APPLE__
+
   i = 0;
 
   // recursively remove any subwindows:
@@ -660,6 +675,9 @@ void Fl_Window::hide() {
     fl_window = (HWND)-1;
     fl_gc = 0;
   }
+#elif defined(__APPLE__)
+  //++ MacOS needs a simulation of focus events?! DONT!
+  Fl::handle(FL_UNFOCUS, this);
 #else
   if (x->region) XDestroyRegion(x->region);
 #endif
@@ -770,14 +788,19 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
   if (window->damage()) {
     // if we already have damage we must merge with existing region:
     if (i->region) {
-#ifndef WIN32
-      XRectangle R;
-      R.x = X; R.y = Y; R.width = W; R.height = H;
-      XUnionRectWithRegion(&R, i->region, i->region);
-#else
+#ifdef WIN32
       Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
+#elif defined(__APPLE__)
+      Fl_Region R = NewRgn(); 
+      SetRectRgn(R, X, Y, X+W, Y+H);
+      UnionRgn(R, i->region, i->region);
+      DisposeRgn(R);
+#else
+      XRectangle R;
+      R.x = X; R.y = Y; R.width = W; R.height = H;
+      XUnionRectWithRegion(&R, i->region, i->region);
 #endif
     }
     window->damage_ |= flags;
@@ -798,5 +821,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.7 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.8 2001/11/27 17:44:06 easysw Exp $".
 //

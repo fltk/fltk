@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -123,6 +123,8 @@ void fl_vertex(double x,double y) {
 void fl_end_points() {
 #ifdef WIN32
   for (int i=0; i<n; i++) SetPixel(fl_gc, p[i].x, p[i].y, fl_RGB());
+#elif defined(__APPLE__)
+  for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); } 
 #else
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
 #endif
@@ -131,6 +133,10 @@ void fl_end_points() {
 void fl_end_line() {
 #ifdef WIN32
   if (n>1) Polyline(fl_gc, p, n);
+#elif defined(__APPLE__)
+  if (n<=1) return;
+  MoveTo(p[0].x, p[0].y);
+  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
 #else
   if (n>1) XDrawLines(fl_display, fl_window, fl_gc, p, n, 0);
 #endif
@@ -153,6 +159,14 @@ void fl_end_polygon() {
     SelectObject(fl_gc, fl_brush());
     Polygon(fl_gc, p, n);
   }
+#elif defined(__APPLE__)
+  if (n<=1) return;
+  PolyHandle ph = OpenPoly();
+  MoveTo(p[0].x, p[0].y);
+  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
+  ClosePoly();
+  PaintPoly(ph);
+  KillPoly(ph);
 #else
   if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, Convex, 0);
 #endif
@@ -192,6 +206,14 @@ void fl_end_complex_polygon() {
     SelectObject(fl_gc, fl_brush());
     PolyPolygon(fl_gc, p, counts, numcount);
   }
+#elif defined(__APPLE__)
+  if (n<=1) return;
+  PolyHandle ph = OpenPoly();
+  MoveTo(p[0].x, p[0].y);
+  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
+  ClosePoly();
+  PaintPoly(ph);
+  KillPoly(ph);
 #else
   if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, 0, 0);
 #endif
@@ -216,6 +238,9 @@ void fl_circle(double x, double y,double r) {
     Pie(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
   } else
     Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
+#elif defined(__APPLE__)
+  Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
+  (what == POLYGON ? PaintOval : FrameOval)(&rt);
 #else
   (what == POLYGON ? XFillArc : XDrawArc)
     (fl_display, fl_window, fl_gc, llx, lly, w, h, 0, 360*64);
@@ -223,5 +248,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

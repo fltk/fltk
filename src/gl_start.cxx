@@ -1,5 +1,5 @@
 //
-// "$Id: gl_start.cxx,v 1.6.2.5.2.1 2001/11/22 15:35:02 easysw Exp $"
+// "$Id: gl_start.cxx,v 1.6.2.5.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -61,12 +61,14 @@ void gl_start() {
 #ifdef WIN32
     if (!gl_choice) Fl::gl_visual(0);
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
+#elif defined(__APPLE__)
+    //++
 #else
     context = fl_create_gl_context(fl_visual);
 #endif
   }
   fl_set_gl_context(Fl_Window::current(), context);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   glXWaitX();
 #endif
   if (pw != Fl_Window::current()->w() || ph != Fl_Window::current()->h()) {
@@ -93,7 +95,7 @@ void gl_start() {
 
 void gl_finish() {
   glFlush();
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   glXWaitGL();
 #endif
 }
@@ -103,6 +105,8 @@ int Fl::gl_visual(int mode, int *alist) {
   if (!c) return 0;
 #ifdef WIN32
   gl_choice = c;
+#elif defined(__APPLE__)
+  //++
 #else
   fl_visual = c->vis;
   fl_colormap = c->colormap;
@@ -113,5 +117,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.6.2.5.2.1 2001/11/22 15:35:02 easysw Exp $".
+// End of "$Id: gl_start.cxx,v 1.6.2.5.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: image.cxx,v 1.6.2.3.2.5 2001/11/24 18:07:57 easysw Exp $"
+// "$Id: image.cxx,v 1.6.2.3.2.6 2001/11/27 17:44:08 easysw Exp $"
 //
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -80,7 +80,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/x.H>
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 #include "list_visuals.cxx"
 #endif
 
@@ -96,7 +96,7 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   int i = 1;
 
   Fl::args(argc,argv,i,arg);
@@ -155,5 +155,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: image.cxx,v 1.6.2.3.2.5 2001/11/24 18:07:57 easysw Exp $".
+// End of "$Id: image.cxx,v 1.6.2.3.2.6 2001/11/27 17:44:08 easysw Exp $".
 //

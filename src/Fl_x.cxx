@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.6 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.7 2001/11/27 17:44:06 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,56 +24,57 @@
 //
 
 #ifdef WIN32
-#include "Fl_win32.cxx"
+#  include "Fl_win32.cxx"
+#elif defined(__APPLE__)
+#  include "Fl_mac.cxx"
 #else
 
-#define CONSOLIDATE_MOTION 1
+#  define CONSOLIDATE_MOTION 1
 /**** Define this if your keyboard lacks a backspace key... ****/
 /* #define BACKSPACE_HACK 1 */
 
-#include <config.h>
-#include <FL/Fl.H>
-#include <FL/x.H>
-#include <FL/Fl_Window.H>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/time.h>
+#  include <config.h>
+#  include <FL/Fl.H>
+#  include <FL/x.H>
+#  include <FL/Fl_Window.H>
+#  include <ctype.h>
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <string.h>
+#  include <unistd.h>
+#  include <sys/time.h>
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
-#if USE_POLL
+#  if USE_POLL
 
-#include <poll.h>
+#    include <poll.h>
 static pollfd *pollfds = 0;
 
-#else
-
-#if HAVE_SYS_SELECT_H
-#  include <sys/select.h>
-#endif /* HAVE_SYS_SELECT_H */
+#  else
+#    if HAVE_SYS_SELECT_H
+#      include <sys/select.h>
+#    endif /* HAVE_SYS_SELECT_H */
 
 // The following #define is only needed for HP-UX 9.x and earlier:
 //#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
 
 static fd_set fdsets[3];
 static int maxfd;
-#define POLLIN 1
-#define POLLOUT 4
-#define POLLERR 8
+#    define POLLIN 1
+#    define POLLOUT 4
+#    define POLLERR 8
 
-#endif /* USE_POLL */
+#  endif /* USE_POLL */
 
 static int nfds = 0;
 static int fd_array_size = 0;
 struct FD {
-#if !USE_POLL
+#  if !USE_POLL
   int fd;
   short events;
-#endif
+#  endif
   void (*cb)(int, void*);
   void* arg;
 };
@@ -93,7 +94,7 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
     if (!temp) return;
     fd = temp;
 
-#if USE_POLL
+#  if USE_POLL
     pollfd *tpoll;
 
     if (!pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
@@ -101,21 +102,21 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
 
     if (!tpoll) return;
     pollfds = tpoll;
-#endif
+#  endif
   }
   fd[i].cb = cb;
   fd[i].arg = v;
-#if USE_POLL
+#  if USE_POLL
   pollfds[i].fd = n;
   pollfds[i].events = events;
-#else
+#  else
   fd[i].fd = n;
   fd[i].events = events;
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
   if (n > maxfd) maxfd = n;
-#endif
+#  endif
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
@@ -125,57 +126,57 @@ void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
 void Fl::remove_fd(int n, int events) {
   int i,j;
   for (i=j=0; i<nfds; i++) {
-#if USE_POLL
+#  if USE_POLL
     if (pollfds[i].fd == n) {
       int e = pollfds[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
       pollfds[j].events = e;
     }
-#else
+#  else
     if (fd[i].fd == n) {
       int e = fd[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
       fd[i].events = e;
     }
-#endif
+#  endif
     // move it down in the array if necessary:
     if (j<i) {
       fd[j] = fd[i];
-#if USE_POLL
+#  if USE_POLL
       pollfds[j] = pollfds[i];
-#endif
+#  endif
     }
     j++;
   }
   nfds = j;
-#if !USE_POLL
+#  if !USE_POLL
   if (events & POLLIN) FD_CLR(n, &fdsets[0]);
   if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
   if (events & POLLERR) FD_CLR(n, &fdsets[2]);
   if (n == maxfd) maxfd--;
-#endif
+#  endif
 }
 
 void Fl::remove_fd(int n) {
   remove_fd(n, -1);
 }
 
-#if CONSOLIDATE_MOTION
+#  if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
-#endif
+#  endif
 static void do_queued_events() {
  while (XEventsQueued(fl_display,QueuedAfterReading)) {
     XEvent xevent;
     XNextEvent(fl_display, &xevent);
     fl_handle(xevent);
   }
-#if CONSOLIDATE_MOTION
+#  if CONSOLIDATE_MOTION
   if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
     Fl::handle(FL_MOVE, fl_xmousewin);
   }
-#endif
+#  endif
 }
 
 // This is never called with time_to_wait < 0.0:
@@ -188,42 +189,42 @@ int fl_wait(double time_to_wait) {
   // so we must check for already-read events:
   if (fl_display && XQLength(fl_display)) {do_queued_events(); return 1;}
 
-#if !USE_POLL
+#  if !USE_POLL
   fd_set fdt[3];
   fdt[0] = fdsets[0];
   fdt[1] = fdsets[1];
   fdt[2] = fdsets[2];
-#endif
+#  endif
   int n;
 
   if (time_to_wait < 2147483.648) {
-#if USE_POLL
+#  if USE_POLL
     n = ::poll(pollfds, nfds, int(time_to_wait*1000 + .5));
-#else
+#  else
     timeval t;
     t.tv_sec = int(time_to_wait);
     t.tv_usec = int(1000000 * (time_to_wait-t.tv_sec));
     n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#endif
+#  endif
   } else {
-#if USE_POLL
+#  if USE_POLL
     n = ::poll(pollfds, nfds, -1);
-#else
+#  else
     n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],0);
-#endif
+#  endif
   }
   if (n > 0) {
     for (int i=0; i<nfds; i++) {
-#if USE_POLL
+#  if USE_POLL
       if (pollfds[i].revents) fd[i].cb(pollfds[i].fd, fd[i].arg);
-#else
+#  else
       int f = fd[i].fd;
       short revents = 0;
       if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
       if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
       if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
       if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
-#endif
+#  endif
     }
   }
   return n;
@@ -232,9 +233,9 @@ int fl_wait(double time_to_wait) {
 // fl_ready() is just like fl_wait(0.0) except no callbacks are done:
 int fl_ready() {
   if (XQLength(fl_display)) return 1;
-#if USE_POLL
+#  if USE_POLL
   return ::poll(pollfds, nfds, 0);
-#else
+#  else
   timeval t;
   t.tv_sec = 0;
   t.tv_usec = 0;
@@ -243,7 +244,7 @@ int fl_ready() {
   fdt[1] = fdsets[1];
   fdt[2] = fdsets[2];
   return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#endif
+#  endif
 }
 
 ////////////////////////////////////////////////////////////////
@@ -304,9 +305,9 @@ void fl_open_display(Display* d) {
   fl_visual = XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
   fl_colormap = DefaultColormap(fl_display,fl_screen);
 
-#if !USE_COLORMAP
+#  if !USE_COLORMAP
   Fl::visual(FL_RGB);
-#endif
+#  endif
 }
 
 void fl_close_display() {
@@ -346,19 +347,19 @@ static int px, py;
 static ulong ptime;
 
 static void set_event_xy() {
-#if CONSOLIDATE_MOTION
+#  if CONSOLIDATE_MOTION
   send_motion = 0;
-#endif
+#  endif
   Fl::e_x_root = fl_xevent->xbutton.x_root;
   Fl::e_x = fl_xevent->xbutton.x;
   Fl::e_y_root = fl_xevent->xbutton.y_root;
   Fl::e_y = fl_xevent->xbutton.y;
   Fl::e_state = fl_xevent->xbutton.state << 16;
   fl_event_time = fl_xevent->xbutton.time;
-#ifdef __sgi
+#  ifdef __sgi
   // get the meta key off PC keyboards:
   if (fl_key_vector[18]&0x18) Fl::e_state |= FL_META;
-#endif
+#  endif
   // turn off is_click if enough time or mouse movement has passed:
   if (abs(Fl::e_x_root-px)+abs(Fl::e_y_root-py) > 3 ||
       fl_event_time >= ptime+1000)
@@ -434,12 +435,12 @@ int fl_handle(const XEvent& xevent)
 
   case Expose:
     Fl_X::i(window)->wait_for_expose = 0;
-#if 0
+#  if 0
     // try to keep windows on top even if WM_TRANSIENT_FOR does not work:
     // opaque move/resize window managers do not like this, so I disabled it.
     if (Fl::first_window()->non_modal() && window != Fl::first_window())
       Fl::first_window()->show();
-#endif
+#  endif
 
   case GraphicsExpose:
     window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
@@ -464,13 +465,13 @@ int fl_handle(const XEvent& xevent)
 
   case MotionNotify:
     set_event_xy();
-#if CONSOLIDATE_MOTION
+#  if CONSOLIDATE_MOTION
     send_motion = fl_xmousewin = window;
     return 0;
-#else
+#  else
     event = FL_MOVE;
     break;
-#endif
+#  endif
 
   case ButtonRelease:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
@@ -518,7 +519,7 @@ int fl_handle(const XEvent& xevent)
       // keyup events just get the unshifted keysym:
       keysym = XKeycodeToKeysym(fl_display, keycode, 0);
     }
-#ifdef __sgi
+#  ifdef __sgi
     // You can plug a microsoft keyboard into an sgi but the extra shift
     // keys are not translated.  Make them translate like XFree86 does:
     if (!keysym) switch(keycode) {
@@ -526,8 +527,8 @@ int fl_handle(const XEvent& xevent)
     case 148: keysym = FL_Meta_R; break;
     case 149: keysym = FL_Menu; break;
     }
-#endif
-#if BACKSPACE_HACK
+#  endif
+#  if BACKSPACE_HACK
     // Attempt to fix keyboards that send "delete" for the key in the
     // upper-right corner of the main keyboard.  But it appears that
     // very few of these remain?
@@ -536,7 +537,7 @@ int fl_handle(const XEvent& xevent)
       if (keysym == FL_Delete) keysym = FL_BackSpace;
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
-#endif
+#  endif
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
     // for them.  There are 15 of these in the range 0xff91 ... 0xff9f
@@ -936,5 +937,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.6 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.7 2001/11/27 17:44:06 easysw Exp $".
 //

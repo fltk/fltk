@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.9 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.10 2001/11/27 17:44:06 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -102,6 +102,29 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     DeleteDC(new_gc);
   } else {
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  }
+#elif defined(__APPLE__)
+  if ( mask )
+  {
+    Rect src, dst;
+    src.left = 0; src.right = w();
+    src.top = 0; src.bottom = h();
+    dst.left = X; dst.right = X+w();
+    dst.top = Y; dst.bottom = Y+h();
+    RGBColor rgb;
+    rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
+    RGBBackColor( &rgb );
+    rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
+    RGBForeColor( &rgb );
+    CopyMask( 
+      GetPortBitMapForCopyBits((GrafPtr)id),
+      GetPortBitMapForCopyBits((GrafPtr)mask), 
+      GetPortBitMapForCopyBits((GrafPtr)fl_window),
+      &src, &src, &dst);
+  }
+  else 
+  {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
 #else
@@ -342,7 +365,7 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
 	while (*p && !isspace(*p)) p++;
       }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
       if (fl_parse_color(p, r, g, b)) {
 #else
       XColor x;
@@ -437,7 +460,7 @@ void Fl_Pixmap::desaturate() {
 	while (*p && !isspace(*p)) p++;
       }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
       if (fl_parse_color(p, r, g, b)) {
 #else
       XColor x;
@@ -462,5 +485,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.9 2001/11/24 02:46:19 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.10 2001/11/27 17:44:06 easysw Exp $".
 //

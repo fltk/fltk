@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.1 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,9 @@
 // defeat some of the shortcuts in translating the image for X.
 
 #ifdef WIN32
-#include "fl_draw_image_win32.cxx"
+#  include "fl_draw_image_win32.cxx"
+#elif defined(__APPLE__)
+#  include "fl_draw_image_mac.cxx"
 #else
 
 // A list of assumptions made about the X display:
@@ -55,11 +57,11 @@
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include <FL/x.H>
-#include "Fl_XColor.H"
-#include <string.h>
+#  include <FL/Fl.H>
+#  include <FL/fl_draw.H>
+#  include <FL/x.H>
+#  include "Fl_XColor.H"
+#  include <string.h>
 
 static XImage i;	// template used to pass info to X
 static int bytes_per_pixel;
@@ -72,7 +74,7 @@ static void (*mono_converter)(const uchar *from, uchar *to, int w, int delta);
 static int dir;		// direction-alternator
 static int ri,gi,bi;	// saved error-diffusion value
 
-#if USE_COLORMAP
+#  if USE_COLORMAP
 ////////////////////////////////////////////////////////////////
 // 8-bit converter with error diffusion
 
@@ -134,22 +136,22 @@ static void mono8_converter(const uchar *from, uchar *to, int w, int delta) {
   ri = r; gi = g; bi = b;
 }
 
-#endif
+#  endif
 
 ////////////////////////////////////////////////////////////////
 // 16 bit TrueColor converters with error diffusion
 // Cray computers have no 16-bit type, so we use character pointers
 // (which may be slow)
 
-#ifdef U16
-#define OUTTYPE U16
-#define OUTSIZE 1
-#define OUTASSIGN(v) *t = v
-#else
-#define OUTTYPE uchar
-#define OUTSIZE 2
-#define OUTASSIGN(v) int tt=v; t[0] = uchar(tt>>8); t[1] = uchar(tt)
-#endif
+#  ifdef U16
+#    define OUTTYPE U16
+#    define OUTSIZE 1
+#    define OUTASSIGN(v) *t = v
+#  else
+#    define OUTTYPE uchar
+#    define OUTSIZE 2
+#    define OUTASSIGN(v) int tt=v; t[0] = uchar(tt>>8); t[1] = uchar(tt)
+#  endif
 
 static void color16_converter(const uchar *from, uchar *to, int w, int delta) {
   OUTTYPE *t = (OUTTYPE *)to;
@@ -288,24 +290,24 @@ static void rrr_converter(const uchar *from, uchar *to, int w, int delta) {
 ////////////////////////////////////////////////////////////////
 // 32bit TrueColor converters on a 32 or 64-bit machine:
 
-#ifdef U64
-#define STORETYPE U64
-#if WORDS_BIGENDIAN
-#define INNARDS32(f) \
+#  ifdef U64
+#    define STORETYPE U64
+#    if WORDS_BIGENDIAN
+#      define INNARDS32(f) \
   U64 *t = (U64*)to; \
   int w1 = (w+1)/2; \
   for (; w1--; from += delta) {U64 i = f; from += delta; *t++ = (i<<32)|(f);}
-#else
-#define INNARDS32(f) \
+#    else
+#      define INNARDS32(f) \
   U64 *t = (U64*)to; \
   int w1 = (w+1)/2; \
   for (; w1--; from += delta) {U64 i=f; from+= delta; *t++ = ((U64)(f)<<32)|i;}
-#endif
-#else
-#define STORETYPE U32
-#define INNARDS32(f) \
+#    endif
+#  else
+#    define STORETYPE U32
+#    define INNARDS32(f) \
   U32 *t = (U32*)to; for (; w--; from += delta) *t++ = f
-#endif
+#  endif
 
 static void rgbx_converter(const uchar *from, uchar *to, int w, int delta) {
   INNARDS32((unsigned(from[0])<<24)+(from[1]<<16)+(from[2]<<8));
@@ -374,7 +376,7 @@ static void figure_out_visual() {
   scanline_add = n-1;
   scanline_mask = -n;
 
-#if USE_COLORMAP
+#  if USE_COLORMAP
   if (bytes_per_pixel == 1) {
     converter = color8_converter;
     mono_converter = mono8_converter;
@@ -382,7 +384,7 @@ static void figure_out_visual() {
   }
   if (!fl_visual->red_mask)
     Fl::fatal("Can't do %d bits_per_pixel colormap",i.bits_per_pixel);
-#endif
+#  endif
 
   // otherwise it is a TrueColor visual:
 
@@ -395,11 +397,11 @@ static void figure_out_visual() {
   case 2:
     // All 16-bit TrueColor visuals are supported on any machine with
     // 24 or more bits per integer.
-#ifdef U16
+#  ifdef U16
     ::i.byte_order = WORDS_BIGENDIAN;
-#else
+#  else
     ::i.byte_order = 1;
-#endif
+#  endif
     if (rs == 11 && gs == 6 && bs == 0 && fl_extrashift == 3) {
       converter = c565_converter;
       mono_converter = m565_converter;
@@ -450,7 +452,7 @@ static void figure_out_visual() {
 
 }
 
-#define MAXBUFFER 0x40000 // 256k
+#  define MAXBUFFER 0x40000 // 256k
 
 static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int mono,
@@ -478,15 +480,15 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   // This can set bytes_per_line negative if image is bottom-to-top
   // I tested it on Linux, but it may fail on other Xlib implementations:
   if (buf && (
-#if 0	// set this to 1 to allow 32-bit shortcut
+#  if 0	// set this to 1 to allow 32-bit shortcut
       delta == 4 &&
-#if WORDS_BIGENDIAN
+#    if WORDS_BIGENDIAN
       conv == rgbx_converter
-#else
+#    else
       conv == xbgr_converter
-#endif
+#    endif
       ||
-#endif
+#  endif
       conv == rgb_converter && delta==3
       ) && !(linedelta&scanline_add)) {
     i.data = (char *)(buf+delta*dx+linedelta*dy);
@@ -522,11 +524,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	XPutImage(fl_display,fl_window,fl_gc, &i, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
     } else {
-#ifdef __GNUC__
-      STORETYPE linebuf[(W*delta+(sizeof(STORETYPE)-1))/sizeof(STORETYPE)];
-#else
       STORETYPE* linebuf = new STORETYPE[(W*delta+(sizeof(STORETYPE)-1))/sizeof(STORETYPE)];
-#endif
       for (int j=0; j<h; ) {
 	STORETYPE *to = buffer;
 	int k;
@@ -537,9 +535,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	}
 	XPutImage(fl_display,fl_window,fl_gc, &i, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
-#ifndef __GNUC__
+
       delete[] linebuf;
-#endif
     }
   }
 }
@@ -573,5 +570,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.1 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

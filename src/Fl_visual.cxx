@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_visual.cxx,v 1.7.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_visual.cxx,v 1.7.2.4.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
 // Visual support for the Fast Light Tool Kit (FLTK).
 //
@@ -38,6 +38,14 @@ int Fl::visual(int flags) {
   if ((flags & FL_RGB8) && GetDeviceCaps(fl_gc,BITSPIXEL)<24) return 0;
   return 1;
 }
+#elif defined(__APPLE__)
+
+//++ later
+int Fl::visual(int flags) {
+  (void)flags;
+  return 1;
+}
+
 #else
 
 #if USE_XDBE
@@ -107,5 +115,5 @@ int Fl::visual(int flags) {
 #endif
 
 //
-// End of "$Id: Fl_visual.cxx,v 1.7.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_visual.cxx,v 1.7.2.4.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

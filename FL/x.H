@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.1 2001/11/18 20:52:27 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.2 2001/11/27 17:44:06 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,26 +29,28 @@
 // systems.
 
 #ifndef Fl_X_H
-#define Fl_X_H
+#  define Fl_X_H
 
-#include "Enumerations.H"
+#  include "Enumerations.H"
 
-#ifdef WIN32
+#  ifdef WIN32
+#    include "win32.H"
+#  elif defined(__APPLE__)
+#    include "mac.H"
+#  else
+#    if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
+#      pragma set woff 3322
+#    endif
+#    include <X11/Xlib.h>
+#    include <X11/Xutil.h>
+#    if defined(_ABIN32) || defined(_ABI64)
+#      pragma reset woff 3322
+#    endif
+#    include <X11/Xatom.h>
+#    include "Fl_Window.H"
 
-#include "win32.H"
-
-#else
-
-#if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
-#pragma set woff 3322
-#endif
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#if defined(_ABIN32) || defined(_ABI64)
-#pragma reset woff 3322
-#endif
-#include <X11/Xatom.h>
-#include "Fl_Window.H"
+// Mirror X definition of Region to Fl_Region, for portability...
+typedef Region Fl_Region
 
 FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);
@@ -66,8 +68,8 @@ extern FL_EXPORT Window fl_window;
 extern FL_EXPORT XFontStruct* fl_xfont;
 FL_EXPORT ulong fl_xpixel(Fl_Color i);
 FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);
-FL_EXPORT void fl_clip_region(Region);
-FL_EXPORT Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
+FL_EXPORT void fl_clip_region(Fl_Region);
+FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 // feed events into fltk:
 FL_EXPORT int fl_handle(const XEvent&);
@@ -81,14 +83,14 @@ typedef ulong Fl_Offscreen;
 #define fl_create_offscreen(w,h) \
   XCreatePixmap(fl_display, fl_window, w, h, fl_visual->depth)
 // begin/end are macros that save the old state in local variables:
-#define fl_begin_offscreen(pixmap) \
+#    define fl_begin_offscreen(pixmap) \
   Window _sw=fl_window; fl_window=pixmap; fl_push_no_clip()
-#define fl_end_offscreen() \
+#    define fl_end_offscreen() \
   fl_pop_clip(); fl_window = _sw
 
-#define fl_copy_offscreen(x,y,w,h,pixmap,srcx,srcy) \
+#    define fl_copy_offscreen(x,y,w,h,pixmap,srcx,srcy) \
   XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y)
-#define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
+#    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
 
 // Bitmap masks
 typedef ulong Fl_Bitmask;
@@ -104,7 +106,7 @@ public:
   Window xid;
   Window other_xid;
   Fl_Window *w;
-  Region region;
+  Fl_Region region;
   Fl_X *next;
   char wait_for_expose;
   char backbuffer_bad; // used for XDBE
@@ -127,9 +129,9 @@ FL_EXPORT Fl_Window* fl_find(Window xid);
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
-#endif
+#  endif
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.1 2001/11/18 20:52:27 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.2 2001/11/27 17:44:06 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.2 2001/11/27 17:44:06 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -409,6 +409,7 @@ int Fl_Text_Editor::handle(int event) {
   switch (event) {
     case FL_FOCUS:
       show_cursor(mCursorOn); // redraws the cursor
+      take_focus();
       return 1;
 
     case FL_UNFOCUS:
@@ -437,5 +438,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.1 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.2 2001/11/27 17:44:06 easysw Exp $".
 //

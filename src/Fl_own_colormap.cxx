@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_own_colormap.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_own_colormap.cxx,v 1.4.2.3.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
 // Private colormap support for the Fast Light Tool Kit (FLTK).
 //
@@ -41,6 +41,10 @@
 
 void Fl::own_colormap() {}
 
+#elif defined(__APPLE__)
+// MacOS X always provides a TrueColor interface...
+
+void Fl::own_colormap() {}
 #else
 // X version
 
@@ -73,5 +77,5 @@ void Fl::own_colormap() {
 #endif
 
 //
-// End of "$Id: Fl_own_colormap.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_own_colormap.cxx,v 1.4.2.3.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

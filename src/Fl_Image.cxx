@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.10 2001/11/26 18:56:26 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.11 2001/11/27 17:44:06 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -333,6 +333,9 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   } else {
     fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   }
+#elif defined(__APPLE__)
+  //+ Need to implement masking/alpha blend!!!
+  fl_copy_offscreen(X, Y, W, H, id, cx, cy);
 #else
   if (mask) {
     // I can't figure out how to combine a mask with existing region,
@@ -364,5 +367,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.10 2001/11/26 18:56:26 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.11 2001/11/27 17:44:06 easysw Exp $".
 //

@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Sys_Menu_Bar.H,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
-// Window minification code for the Fast Light Tool Kit (FLTK).
+// MacOS system menu bar header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2001 by Bill Spitzak and others.
 //
@@ -23,27 +23,24 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <FL/x.H>
+#ifndef Fl_Sys_Menu_Bar_H
+#define Fl_Sys_Menu_Bar_H
 
-extern char fl_show_iconic; // in Fl_x.cxx
+#include "Fl_Menu_Bar.H"
 
-void Fl_Window::iconize() {
-  if (!shown()) {
-    fl_show_iconic = 1;
-    show();
-  } else {
-#ifdef WIN32
-    ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
-#elif defined(__APPLE__)
-    //: http://developer.apple.com/techpubs/mac/Toolbox/Toolbox-254.html#HEADING254-0
-    //++ see iconize, above is the WRONG CALL
-    //++ call "hide all" ZoomWindow(i->xid, inZoomIn, 0);
-#else
-    XIconifyWindow(fl_display, i->xid, fl_screen);
+class Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
+protected:
+  FL_EXPORT void draw();
+public:
+//FL_EXPORT int handle(int);
+  Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0)
+      : Fl_Menu_Bar(x,y,w,h,l) {}
+  FL_EXPORT void menu(const Fl_Menu_Item *m);
+//  FL_EXPORT Fl_Menu_Item* picked(const Fl_Menu_Item* v);
+};
+
 #endif
-  }
-}
 
 //
-// End of "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Sys_Menu_Bar.H,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

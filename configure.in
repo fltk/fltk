@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.26 2001/11/22 13:56:10 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.27 2001/11/27 17:44:05 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -219,6 +219,7 @@ AC_CHECK_HEADER(png.h,
 dnl Restore original LIBS settings...
 LIBS="$SAVELIBS"
 
+dnl Check for standard graphics API and OpenGL...
 EXEEXT=
 HLINKS=
 
@@ -243,6 +244,20 @@ case $uname in
 	    GLDSONAME=""
 	    GLDEMOS=""
 	fi
+	;;
+    Darwin*)
+        # MacOS X uses Carbon for graphics...
+        LIBS="$LIBS -framework Carbon -framework ApplicationServices"
+	if test x$enable_gl != xno; then
+            AC_DEFINE(HAVE_GL);
+            AC_DEFINE(HAVE_GL_GLU_H);
+            GLLIB="-framework OpenGL"
+        else
+	    LINKFLTKGL=""
+	    GLLIBNAME=""
+	    GLDSONAME=""
+	    GLDEMOS=""
+        fi
 	;;
     *)
 	dnl Check for X11...
@@ -311,11 +326,6 @@ case $uname in
 	    else
         	ac_cv_have_overlay=no
 	    fi)
-
-	if test x$ac_cv_have_overlay = xyes; then
-	    AC_DEFINE(HAVE_OVERLAY)
-	fi
-	;;
 esac
 
 AC_SUBST(EXEEXT)
@@ -325,7 +335,7 @@ AC_SUBST(GLLIB)
 
 dnl Figure out the appropriate formatted man page extension...
 case "$uname" in
-    FreeBSD* | NetBSD* | OpenBSD*)
+    *BSD* | Darwin*)
 	# *BSD
 	CAT1EXT=0
 	CAT3EXT=0
@@ -349,7 +359,7 @@ dnl Fix "mandir" variable...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
         	*BSD* | Darwin* | Linux*)
-        		# *BSD
+        		# *BSD, Darwin, and Linux
         		mandir="\${prefix}/share/man"
         		;;
         	IRIX*)
@@ -532,5 +542,5 @@ AC_OUTPUT(makeinclude fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.26 2001/11/22 13:56:10 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.27 2001/11/27 17:44:05 easysw Exp $".
 dnl

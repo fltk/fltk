@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8.2.3 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.4 2001/11/27 17:44:08 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -90,7 +90,8 @@ static int innards(const char* fmt, va_list ap,
   if (!strcmp(fmt,"%s")) {
     message->label(va_arg(ap, const char*));
   } else {
-    vsnprintf(buffer, 1024, fmt, ap);
+    //: matt: MacOS provides two equally named vsnprintf's...
+    ::vsnprintf(buffer, 1024, fmt, ap);
     message->label(buffer);
   }
   Fl_Font f = (Fl_Font)fl_message_font_;
@@ -142,6 +143,15 @@ void fl_beep(int type) {
       break;
     default :
       MessageBeep(MB_ICONERROR);
+      break;
+  }
+#elif defined(__APPLE__)
+  switch (type) {
+    case FL_BEEP_DEFAULT :
+    case FL_BEEP_ERROR :
+      SysBeep( 30 );
+      break;
+    default :
       break;
   }
 #else
@@ -249,5 +259,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.3 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.4 2001/11/27 17:44:08 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.2 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.3 2001/11/27 17:44:06 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,16 +34,16 @@
 #include <ctype.h>
 #include <string.h>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
-#define NoValue		0x0000
-#define XValue  	0x0001
-#define YValue		0x0002
-#define WidthValue  	0x0004
-#define HeightValue  	0x0008
-#define AllValues 	0x000F
-#define XNegative 	0x0010
-#define YNegative 	0x0020
+#  define NoValue	0x0000
+#  define XValue  	0x0001
+#  define YValue	0x0002
+#  define WidthValue  	0x0004
+#  define HeightValue  	0x0008
+#  define AllValues 	0x000F
+#  define XNegative 	0x0010
+#  define YNegative 	0x0020
 #endif
 
 static int match(const char *a, const char *match, int atleast = 1) {
@@ -104,7 +104,7 @@ int Fl::arg(int argc, char **argv, int &i) {
     if (!flags) return 0;
     geometry = v;
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   } else if (match(s, "display")) {
     Fl::display(v);
 #endif
@@ -187,24 +187,17 @@ void Fl_Window::show(int argc, char **argv) {
     Fl::get_system_colors(); // opens display!  May call Fl::fatal()
   }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   // set the command string, used by state-saving window managers:
   int j;
   int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
-#ifdef __GNUC__
-  char buffer[n];
-#else
   char *buffer = new char[n];
-#endif
   char *p = buffer;
   for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
   XChangeProperty(fl_display, fl_xid(this), XA_WM_COMMAND, XA_STRING, 8, 0,
 		  (unsigned char *)buffer, p-buffer-1);
-#ifndef __GNUC__
   delete[] buffer;
 #endif
-#endif
-
 }
 
 // Calls useful for simple demo programs, with automatic help message:
@@ -226,7 +219,7 @@ void Fl::args(int argc, char **argv) {
   int i; if (Fl::args(argc,argv,i) < argc) Fl::error(helpmsg);
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 
 /* the following function was stolen from the X sources as indicated. */
 
@@ -365,5 +358,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.2 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.3 2001/11/27 17:44:06 easysw Exp $".
 //

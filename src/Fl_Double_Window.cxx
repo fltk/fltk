@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -59,7 +59,7 @@ static int can_xdbe() {
 #endif
 
 void Fl_Double_Window::show() {
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   if (!shown()) { // don't set the background pixel
     fl_open_display();
     Fl_X::make_xid(this);
@@ -90,6 +90,82 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy)
   SelectObject(new_gc, bitmap);
   BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   DeleteDC(new_gc);
+}
+
+extern void fl_restore_clip();
+
+#elif defined(__APPLE__)
+
+/**
+ * Mac:
+ */
+GWorldPtr fl_create_offscreen(int w, int h) {
+  GWorldPtr gw;
+  Rect bounds;
+  bounds.left=0; bounds.right=w; bounds.top=0; bounds.bottom=h;
+  QDErr err = NewGWorld(&gw, 0, &bounds, 0L, 0L, useTempMem);
+  if ( err == -108 )
+    { }
+//    fl_message( "The application memory is low. Please increase the initial memory assignment.\n" ); 
+  if (err!=noErr || gw==0L) return 0L;
+  return gw;
+}
+
+/**
+ * Mac:
+ */
+void fl_copy_offscreen(int x,int y,int w,int h,GWorldPtr gWorld,int srcx,int srcy) {
+  Rect src;
+  src.top = srcy; src.left = srcx; src.bottom = srcy+h; src.right = srcx+w;
+  Rect dst;
+  GrafPtr dstPort; GetPort(&dstPort);
+  dst.top = y; dst.left = x; dst.bottom = y+h; dst.right = x+w;
+  RGBColor rgb;
+  rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
+  RGBBackColor( &rgb );
+  rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
+  RGBForeColor( &rgb );
+  CopyBits(GetPortBitMapForCopyBits(gWorld), GetPortBitMapForCopyBits(dstPort), &src, &dst, srcCopy, 0L);
+}
+
+/**
+ * Mac:
+ */
+void fl_delete_offscreen(GWorldPtr gWorld) {
+  DisposeGWorld(gWorld);
+}
+
+static GrafPtr prevPort;
+static GDHandle prevGD;
+
+/**
+ * Mac:
+ */
+void fl_begin_offscreen(GWorldPtr gWorld) {
+  GetGWorld( &prevPort, &prevGD );
+  if ( gWorld )
+  {
+    SetGWorld( gWorld, 0L );
+    PixMapHandle pm = GetGWorldPixMap(gWorld);
+    LockPixels(pm);
+    fl_window = (Window)prevPort;
+    SetPort( (GrafPtr)fl_window );
+  }
+  fl_push_no_clip();
+}
+
+/**
+ * Mac:
+ */
+void fl_end_offscreen() {
+  GWorldPtr currPort;
+  GDHandle currGD;
+  GetGWorld( &currPort, &currGD );
+  fl_pop_clip();
+  PixMapHandle pm = GetGWorldPixMap(currPort);
+  UnlockPixels(pm);
+  fl_window = (Window)prevPort;
+  SetGWorld( prevPort, prevGD );
 }
 
 extern void fl_restore_clip();
@@ -149,6 +225,13 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     draw();
     DeleteDC(fl_gc);
     fl_gc = _sgc;
+#elif defined(__APPLE__)
+    if ( myi->other_xid ) fl_begin_offscreen( myi->other_xid );
+    fl_restore_clip(); // duplicate region into new gc
+    draw();
+    if ( myi->other_xid ) fl_end_offscreen(); 
+  } else {
+    fl_clip_region( 0 );   
 #else // X:
     fl_window = myi->other_xid;
     draw();
@@ -192,5 +275,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

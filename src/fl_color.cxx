@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.5.2.3 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: fl_color.cxx,v 1.12.2.5.2.4 2001/11/27 17:44:08 easysw Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,9 @@
 // Implementation of fl_color(i), fl_color(r,g,b).
 
 #ifdef WIN32
-#include "fl_color_win32.cxx"
+#  include "fl_color_win32.cxx"
+#elif defined(__APPLE__)
+#  include "fl_color_mac.cxx"
 #else
 
 // Also code to look at the X visual and figure out the best way to turn
@@ -36,10 +38,10 @@
 // being used to index arrays.  So I always copy them to an integer
 // before use.
 
-#include "Fl_XColor.H"
-#include <FL/Fl.H>
-#include <FL/x.H>
-#include <FL/fl_draw.H>
+#  include "Fl_XColor.H"
+#  include <FL/Fl.H>
+#  include <FL/x.H>
+#  include <FL/fl_draw.H>
 
 ////////////////////////////////////////////////////////////////
 // figure_out_visual() calculates masks & shifts for generating
@@ -52,12 +54,12 @@ static uchar beenhere;
 static void figure_out_visual() {
   beenhere = 1;
   if (!fl_visual->red_mask || !fl_visual->green_mask || !fl_visual->blue_mask){
-#if USE_COLORMAP
+#  if USE_COLORMAP
     fl_redmask = 0;
     return;
-#else
+#  else
     Fl::fatal("Requires true color visual");
-#endif
+#  endif
   }
 
   // get the bit masks into a more useful form:
@@ -93,16 +95,16 @@ static unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":
 };
 
-#if HAVE_OVERLAY
+#  if HAVE_OVERLAY
 Fl_XColor fl_xmap[2][256];
 uchar fl_overlay;
 Colormap fl_overlay_colormap;
 XVisualInfo* fl_overlay_visual;
 ulong fl_transparent_pixel;
-#else
+#  else
 Fl_XColor fl_xmap[1][256];
-#define fl_overlay 0
-#endif
+#    define fl_overlay 0
+#  endif
 
 ////////////////////////////////////////////////////////////////
 // Get an rgb color.  This is easy for a truecolor visual.  For
@@ -113,7 +115,7 @@ Fl_XColor fl_xmap[1][256];
 
 ulong fl_xpixel(uchar r,uchar g,uchar b) {
   if (!beenhere) figure_out_visual();
-#if USE_COLORMAP
+#  if USE_COLORMAP
   if (!fl_redmask) {
     // find closest entry in the colormap:
     Fl_Color i =
@@ -125,7 +127,7 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
       fl_cmap[i] = (r<<24)|(g<<16)|(b<<8);
     return fl_xpixel(i); // allocate an X color
   }
-#endif
+#  endif
   return
     (((r&fl_redmask) << fl_redshift)+
      ((g&fl_greenmask)<<fl_greenshift)+
@@ -145,7 +147,7 @@ void fl_color(uchar r,uchar g,uchar b) {
 
 // calculate what color is actually on the screen for a mask:
 static inline uchar realcolor(uchar color, uchar mask) {
-#if 0
+#  if 0
   // accurate version if the display has linear gamma, but fl_draw_image
   // works better with the simpler version on most screens...
   uchar m = mask;
@@ -157,9 +159,9 @@ static inline uchar realcolor(uchar color, uchar mask) {
     result |= color&m;
   }
   return result;
-#else
+#  else
   return (color&mask) | (~mask)&(mask>>1);
-#endif
+#  endif
 }
 
 ulong fl_xpixel(Fl_Color i) {
@@ -171,13 +173,13 @@ ulong fl_xpixel(Fl_Color i) {
   uchar r,g,b;
   {unsigned c = fl_cmap[i]; r=uchar(c>>24); g=uchar(c>>16); b=uchar(c>>8);}
 
-#if USE_COLORMAP
+#  if USE_COLORMAP
   Colormap colormap = fl_colormap;
-#if HAVE_OVERLAY
+#    if HAVE_OVERLAY
   if (fl_overlay) colormap = fl_overlay_colormap; else
-#endif
+#    endif
   if (fl_redmask) {
-#endif
+#  endif
     // return color for a truecolor visual:
     xmap.mapped = 2; // 2 prevents XFreeColor from being called
     xmap.r = realcolor(r, fl_redmask);
@@ -188,17 +190,17 @@ ulong fl_xpixel(Fl_Color i) {
        ((g&fl_greenmask)<<fl_greenshift)+
        ((b&fl_bluemask)<< fl_blueshift)
        ) >> fl_extrashift;
-#if USE_COLORMAP
+#  if USE_COLORMAP
   }
-#if HAVE_OVERLAY
+#    if HAVE_OVERLAY
   static XColor* ac[2];
   XColor*& allcolors = ac[fl_overlay];
   static int nc[2];
   int& numcolors = nc[fl_overlay];
-#else
+#    else
   static XColor *allcolors;
   static int numcolors;
-#endif
+#    endif
 
   // I don't try to allocate colors with XAllocColor once it fails
   // with any color.  It is possible that it will work, since a color
@@ -218,9 +220,9 @@ ulong fl_xpixel(Fl_Color i) {
     // I only read the colormap once.  Again this is due to the slowness
     // of round-trips to the X server, even though other programs may alter
     // the colormap after this and make decisions here wrong.
-#if HAVE_OVERLAY
+#    if HAVE_OVERLAY
     if (fl_overlay) numcolors = fl_overlay_visual->colormap_size; else
-#endif
+#    endif
       numcolors = fl_visual->colormap_size;
     if (!allcolors) allcolors = new XColor[numcolors];
     for (int p = numcolors; p--;) allcolors[p].pixel = p;
@@ -231,9 +233,9 @@ ulong fl_xpixel(Fl_Color i) {
   int mindist = 0x7FFFFFFF;
   unsigned int bestmatch = 0;
   for (unsigned int n = numcolors; n--;) {
-#if HAVE_OVERLAY
+#    if HAVE_OVERLAY
     if (fl_overlay && n == fl_transparent_pixel) continue;
-#endif
+#    endif
     XColor &a = allcolors[n];
     int d, t;
     t = int(r)-int(a.red>>8); d = t*t;
@@ -263,7 +265,7 @@ ulong fl_xpixel(Fl_Color i) {
   xmap.g = p.green>>8;
   xmap.b = p.blue>>8;
   return xmap.pixel;
-#endif
+#  endif
 }
 
 Fl_Color fl_color_;
@@ -279,20 +281,20 @@ void fl_color(Fl_Color i) {
 }
 
 void Fl::free_color(Fl_Color i, int overlay) {
-#if HAVE_OVERLAY
-#else
+#  if HAVE_OVERLAY
+#  else
   if (overlay) return;
-#endif
+#  endif
   if (fl_xmap[overlay][i].mapped) {
-#if USE_COLORMAP
-#if HAVE_OVERLAY
+#  if USE_COLORMAP
+#    if HAVE_OVERLAY
     Colormap colormap = overlay ? fl_overlay_colormap : fl_colormap;
-#else
+#    else
     Colormap colormap = fl_colormap;
-#endif
+#    endif
     if (fl_xmap[overlay][i].mapped == 1)
       XFreeColors(fl_display, colormap, &(fl_xmap[overlay][i].pixel), 1, 0);
-#endif
+#  endif
     fl_xmap[overlay][i].mapped = 0;
   }
 }
@@ -300,9 +302,9 @@ void Fl::free_color(Fl_Color i, int overlay) {
 void Fl::set_color(Fl_Color i, unsigned c) {
   if (fl_cmap[i] != c) {
     free_color(i,0);
-#if HAVE_OVERLAY
+#  if HAVE_OVERLAY
     free_color(i,1);
-#endif
+#  endif
     fl_cmap[i] = c;
   }
 }
@@ -370,5 +372,5 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.5.2.3 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: fl_color.cxx,v 1.12.2.5.2.4 2001/11/27 17:44:08 easysw Exp $".
 //

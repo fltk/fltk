@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.9 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.1 2001/11/27 17:44:08 easysw Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@
 #include <FL/fl_draw.H>
 #include <ctype.h>
 #include <string.h>
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 #include <FL/x.H>
 #endif
 
@@ -74,7 +74,7 @@ int Fl::test_shortcut(int shortcut) {
   return 0;
 }
 
-#ifdef WIN32 // if not X
+#if defined(WIN32) || defined(__APPLE__) // if not X
 // This table must be in numeric order by fltk (X) keysym number:
 struct Keyname {int key; const char* name;};
 static Keyname table[] = {
@@ -115,12 +115,20 @@ const char * fl_shortcut_label(int shortcut) {
   static char buf[20];
   char *p = buf;
   if (!shortcut) {*p = 0; return buf;}
+#ifdef __APPLE__
+  //++ to avoid getting stoned and feathered by mac users we should replace the text with the correct symbols
+  if (shortcut & FL_SHIFT) {strcpy(p,"shift+"); p += 6;} //: Mac hollow up arrow
+  if (shortcut & FL_META)  {strcpy(p,"ctrl+"); p += 6;}  //: Mac 'cotrol'
+  if (shortcut & FL_ALT)   {strcpy(p,"option+"); p += 4;}   //: Mac 'Option' or fancy switch symbol
+  if (shortcut & FL_CTRL)  {strcpy(p,"cmd+"); p += 4;}  //: Mac Apple or Curlyflour
+#else
   if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
   if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;}
   if (shortcut & FL_CTRL) {strcpy(p,"Ctrl+"); p += 5;}
+#endif // __APPLE__
   int key = shortcut & 0xFFFF;
-#ifdef WIN32 // if not X
+#if defined(WIN32) || defined(__APPLE__) // if not X
   if (key >= FL_F && key <= FL_F_Last) {
     *p++ = 'F';
     if (key > FL_F+9) *p++ = (key-FL_F)/10+'0';
@@ -192,5 +200,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.9 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.1 2001/11/27 17:44:08 easysw Exp $".
 //

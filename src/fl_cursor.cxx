@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.6 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.6.2.1 2001/11/27 17:44:08 easysw Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -32,8 +32,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
-#ifndef WIN32
-#include <X11/cursorfont.h>
+#if !defined(WIN32) && !defined(__APPLE__)
+#  include <X11/cursorfont.h>
 #endif
 #include <FL/fl_draw.H>
 
@@ -93,6 +93,46 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
     i->cursor = LoadCursor(NULL, n);
   }
   SetCursor(i->cursor);
+}
+
+#elif defined(__APPLE__)
+
+static Cursor crsrNS = 
+{
+  { 0x0000, 0x0180, 0x03c0, 0x07e0, 0x0180, 0x0180, 0x0180, 0x0180, 
+    0x0180, 0x0180, 0x0180, 0x0180, 0x07e0, 0x03c0, 0x0180, 0x0000 },
+  { 0x0180, 0x03c0, 0x07e0, 0x0ff0, 0x0ff0, 0x03c0, 0x03c0, 0x03c0, 
+    0x03c0, 0x03c0, 0x03c0, 0x0ff0, 0x0ff0, 0x07e0, 0x03c0, 0x0180 },
+  { 8, 8 }
+}, *crsrNSptr = &crsrNS;
+
+void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
+  if (!shown()) return;
+  switch (c) {
+  case FL_CURSOR_CROSS:     i->cursor = GetCursor( crossCursor ); break;
+  case FL_CURSOR_WAIT:      i->cursor = GetCursor( watchCursor ); break;
+  case FL_CURSOR_NS:        i->cursor = &crsrNSptr; break;
+  case FL_CURSOR_INSERT:    //++ the following shapes are missing...
+  case FL_CURSOR_HELP:	
+  case FL_CURSOR_HAND:	
+  case FL_CURSOR_MOVE:	
+  case FL_CURSOR_N:
+  case FL_CURSOR_S:
+  case FL_CURSOR_NE:
+  case FL_CURSOR_SW:
+  case FL_CURSOR_NESW:	
+  case FL_CURSOR_E:
+  case FL_CURSOR_W:
+  case FL_CURSOR_WE:		
+  case FL_CURSOR_SE:
+  case FL_CURSOR_NW:
+  case FL_CURSOR_NWSE:	
+  case FL_CURSOR_ARROW:	
+  case FL_CURSOR_DEFAULT:
+  default:
+    i->cursor = fl_default_cursor; break;
+  }
+  SetCursor( *i->cursor );
 }
 
 #else
@@ -184,5 +224,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.6 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.1 2001/11/27 17:44:08 easysw Exp $".
 //

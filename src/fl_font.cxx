@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font.cxx,v 1.9.2.5 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_font.cxx,v 1.9.2.5.2.1 2001/11/27 17:44:08 easysw Exp $"
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -26,18 +26,20 @@
 // Select fonts from the fltk font table.
 
 #ifdef WIN32
-#include "fl_font_win32.cxx"
+#  include "fl_font_win32.cxx"
+#elif defined(__APPLE__)
+#  include "fl_font_mac.cxx"
 #else
 
-#include <config.h>
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include <FL/x.H>
-#include "Fl_Font.H"
+#  include <config.h>
+#  include <FL/Fl.H>
+#  include <FL/fl_draw.H>
+#  include <FL/x.H>
+#  include "Fl_Font.H"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#  include <ctype.h>
+#  include <stdlib.h>
+#  include <string.h>
 
 Fl_FontSize::Fl_FontSize(const char* name) {
   font = XLoadQueryFont(fl_display, name);
@@ -45,15 +47,15 @@ Fl_FontSize::Fl_FontSize(const char* name) {
     Fl::warning("bad font: %s", name);
     font = XLoadQueryFont(fl_display, "fixed"); // if fixed fails we crash
   }
-#if HAVE_GL
+#  if HAVE_GL
   listbase = 0;
-#endif
+#  endif
 }
 
 Fl_FontSize* fl_fontsize;
 
 Fl_FontSize::~Fl_FontSize() {
-#if HAVE_GL
+#  if HAVE_GL
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
 // of "free" routine pointer, or a subclass?
@@ -63,7 +65,7 @@ Fl_FontSize::~Fl_FontSize() {
 //  int base = 0; int size = 256;
 //  glDeleteLists(listbase+base,size);
 // }
-#endif
+#  endif
   if (this == fl_fontsize) fl_fontsize = 0;
   XFreeFont(fl_display, font);
 }
@@ -293,5 +295,5 @@ void fl_draw(const char* str, int x, int y) {
 #endif
 
 //
-// End of "$Id: fl_font.cxx,v 1.9.2.5 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_font.cxx,v 1.9.2.5.2.1 2001/11/27 17:44:08 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.6 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.7 2001/11/27 17:44:06 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,54 @@
 #include <FL/Fl_Bitmap.H>
 #include <string.h>
 
-#ifdef WIN32 // Windows bitmask functions...
+#ifdef __APPLE__ // MacOS bitmask functions
+Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
+  Rect srcRect;
+  RgnHandle r = NewRgn();
+  srcRect.left = 0; srcRect.right = w;
+  srcRect.top = 0; srcRect.bottom = h;
+  GrafPtr savePort;
+  GrafPtr newPort;
+
+  GetPort(&savePort); // remember the current port
+
+  newPort = CreateNewPort();
+
+  SetPortBounds(newPort, &srcRect);    // make bitmap the size of the bounds that caller supplied 
+  RectRgn( GetPortClipRegion(newPort, r), &srcRect );
+  RectRgn( GetPortVisibleRegion(newPort, r), &srcRect );
+  DisposeRgn(r);
+
+  //++ rowBytes is size of row, it must be rounded up to an even number of bytes 
+//  int rowBytes = newPort->portBits.rowBytes = (( w + 15 ) >> 4 ) << 1;
+//  int rowBytesSrc = (( w + 7 ) >> 3 );
+//  newPort->portBits.baseAddr = NewPtr( rowBytes * h );
+//  if ( !newPort->portBits.baseAddr ) 
+//  {
+//    SetPort(savePort);
+//    ClosePort(newPort);
+//    DisposePtr((Ptr)newPort);
+//    return 0L;
+//  }
+//
+//  static uchar reverse[16] =	/* Bit reversal lookup table */
+//    { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+//      0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+//  uchar *dst = (uchar*)newPort->portBits.baseAddr;
+//  const uchar *src = array;
+//  int rowPatch = ( rowBytes!=rowBytesSrc ) ? 1 : 0 ;
+//  for ( int j=0; j<h; j++,dst+=rowPatch )
+//    for ( int i=0; i<rowBytesSrc; i++,src++ )
+//      *dst++ = (reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f);
+
+  SetPort(savePort);
+  return newPort;               /* tell caller we succeeded! */
+}
+
+void fl_delete_bitmask(Fl_Bitmask id) {
+  if (id) DisposePort(id);
+}
+#elif defined(WIN32) // Windows bitmask functions...
 // 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
 static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   // we need to pad the lines out to words & swap the bits
@@ -158,7 +205,7 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
 void fl_delete_bitmask(Fl_Bitmask bm) {
   fl_delete_offscreen((Fl_Offscreen)bm);
 }
-#endif // WIN32
+#endif // __APPLE__
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!array) {
@@ -185,6 +232,20 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // secret bitblt code found in old MSWindows reference manual:
   BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
   DeleteDC(tempdc);
+#elif defined(__APPLE__)
+  if (!id) id = fl_create_bitmask(w(), h(), array);
+  GrafPtr dstPort;
+  GetPort( &dstPort );
+  Rect dst;
+  dst.left = X; dst.right = X+W;
+  dst.top = Y; dst.bottom = Y+H;
+  CopyBits(
+    GetPortBitMapForCopyBits((GrafPtr)id), 
+    GetPortBitMapForCopyBits(dstPort),
+    GetPortBounds((GrafPtr)id, 0), 
+    &dst, 
+    srcOr, 
+    0L);
 #else
   if (!id) id = fl_create_bitmask(w(), h(), array);
 
@@ -277,6 +338,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
   return new_image;
 }
 
+
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.6 2001/11/24 02:46:19 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.7 2001/11/27 17:44:06 easysw Exp $".
 //

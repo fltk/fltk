@@ -1,12 +1,12 @@
 //
-// "$Id: list_visuals.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: list_visuals.cxx,v 1.5.2.3.2.1 2001/11/27 17:44:08 easysw Exp $"
 //
 // Visual list utility for the Fast Light Tool Kit (FLTK).
 //
 // List all the visuals on the screen, and dumps anything interesting
 // about them to stdout.
 //
-// Does not use fltk.
+// Does not use FLTK.
 //
 // This file may be #included in another program to make a function to
 // call to list the visuals.  Fl.H must be included first to indicate this.
@@ -31,7 +31,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
 
@@ -235,5 +235,5 @@ int main(int argc, char **argv) {
 #endif
 
 //
-// End of "$Id: list_visuals.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: list_visuals.cxx,v 1.5.2.3.2.1 2001/11/27 17:44:08 easysw Exp $".
 //

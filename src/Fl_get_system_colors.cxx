@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.1 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.2 2001/11/27 17:44:06 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/math.h>
+#include <string.h>
 
 void Fl::background(uchar r, uchar g, uchar b) {
   // replace the gray ramp so that FL_GRAY is this color
@@ -62,9 +63,9 @@ static void set_selection_color(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_SELECTION_COLOR,r,g,b);
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__APPLE__)
 
-#include <stdio.h>
+#  include <stdio.h>
 // simulation of XParseColor:
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   if (*p == '#') p++;
@@ -87,7 +88,9 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   r = R; g = G; b = B;
   return 1;
 }
+#endif // WIN32 || __APPLE__
 
+#if defined(WIN32)
 static void
 getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
 {
@@ -110,6 +113,15 @@ void Fl::get_system_colors() {
   getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
 }
 
+#elif defined(__APPLE__)
+// MacOS X currently supports two color schemes - Blue and Graphite.
+// Since we aren't emulating the Aqua interface (even if Apple would
+// let us), we can stick with the defaults that FLTK has traditionally
+// used...
+void Fl::get_system_colors()
+{
+  fl_open_display();
+}
 #else
 
 // Read colors that KDE writes to the xrdb database.
@@ -150,5 +162,5 @@ void Fl::get_system_colors()
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.1 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.2 2001/11/27 17:44:06 easysw Exp $".
 //

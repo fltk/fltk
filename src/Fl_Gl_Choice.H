@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.6 2001/03/14 17:20:01 spitzak Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -55,11 +55,14 @@
 // Warning: whatever GLContext is defined to must take exactly the same
 // space in a structure as a void*!!!
 #ifdef WIN32
-# include <FL/gl.h>
-# define GLContext HGLRC
+#  include <FL/gl.h>
+#  define GLContext HGLRC
+#elif defined(__APPLE__)
+#  include <OpenGL.h>
+#  define GLContext CGLContextObj
 #else
-# include <GL/glx.h>
-# define GLContext GLXContext
+#  include <GL/glx.h>
+#  define GLContext GLXContext
 #endif
 
 // Describes crap needed to create a GLContext.
@@ -71,6 +74,8 @@ public:
 #ifdef WIN32
   int pixelformat;	// the visual to use
   PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
+#elif defined(__APPLE__)
+  //++
 #else
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
@@ -86,6 +91,10 @@ class Fl_Window;
 #ifdef WIN32
 
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
+
+#elif defined(__APPLE__)
+
+//++
 
 #else
 
@@ -105,5 +114,5 @@ void fl_delete_gl_context(GLContext);
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6 2001/03/14 17:20:01 spitzak Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

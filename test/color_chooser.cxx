@@ -1,5 +1,5 @@
 //
-// "$Id: color_chooser.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: color_chooser.cxx,v 1.6.2.3.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // Color chooser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -35,7 +35,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 #include "list_visuals.cxx"
 #endif
 
@@ -115,7 +115,7 @@ int main(int argc, char ** argv) {
 	   " - : default visual\n"
 	   " r : call Fl::visual(FL_RGB)\n"
 	   " c : call Fl::own_colormap()\n",argv[0]);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     printf(" # : use this visual with an empty colormap:\n");
     list_visuals();
 #endif
@@ -127,7 +127,7 @@ int main(int argc, char ** argv) {
   } else if (argv[i][0] == 'c') {
     Fl::own_colormap();
   } else if (argv[i][0] != '-') {
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     int visid = atoi(argv[i]);
     fl_open_display();
     XVisualInfo templt; int num;
@@ -138,7 +138,7 @@ int main(int argc, char ** argv) {
 				  fl_visual->visual, AllocNone);
     fl_xpixel(FL_BLACK); // make sure black is allocated
 #else
-    Fl::fatal("Visual id's not supported on MSWindows");
+    Fl::fatal("Visual id's not supported on MSWindows or MacOS.");
 #endif
   }
   window.show(argc,argv);
@@ -146,5 +146,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: color_chooser.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: color_chooser.cxx,v 1.6.2.3.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

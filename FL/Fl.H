@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.3 2001/11/03 05:11:33 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.4 2001/11/27 17:44:06 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -159,13 +159,13 @@ public:
   static FL_EXPORT void paste(Fl_Widget &receiver);
 
   // screen size:
-#if defined(WIN32)
+#if defined(WIN32) || defined(__APPLE__)
   static FL_EXPORT int x();
   static FL_EXPORT int y();
 #else
   static FL_EXPORT int x() {return 0;}
   static FL_EXPORT int y() {return 0;}
-#endif /* WIN32 */
+#endif /* WIN32 || __APPLE__ */
   static FL_EXPORT int w();
   static FL_EXPORT int h();
 
@@ -220,5 +220,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.3 2001/11/03 05:11:33 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.4 2001/11/27 17:44:06 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.6.2.3 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Font.H,v 1.6.2.3.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -39,14 +39,20 @@
 class Fl_FontSize {
 public:
   Fl_FontSize *next;	// linked list for this Fl_Fontdesc
-#ifndef WIN32
-  XFontStruct* font;	// X font information
-  FL_EXPORT Fl_FontSize(const char* xfontname);
-#else
+#ifdef WIN32
   HFONT fid;
   int width[256];
   TEXTMETRIC metr;
   FL_EXPORT Fl_FontSize(const char* fontname, int size);
+#elif defined(__APPLE__)
+  FL_EXPORT Fl_FontSize(const char* fontname, int size);
+  short font, face, size;
+  short ascent, descent;
+  short width[256];
+  bool knowMetrics;
+#else
+  XFontStruct* font;	// X font information
+  FL_EXPORT Fl_FontSize(const char* xfontname);
 #endif
   int minsize;		// smallest point size that should use this
   int maxsize;		// largest point size that should use this
@@ -78,5 +84,5 @@ FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.6.2.3 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Font.H,v 1.6.2.3.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

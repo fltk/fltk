@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22 2001/07/18 08:11:02 spitzak Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -68,7 +68,7 @@ void Fl_Gl_Window::show() {
       g = Fl_Gl_Choice::find(mode_,alist);
       if (!g) {Fl::error("Insufficient GL support"); return;}
     }
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     Fl_X::make_xid(this, g->vis, g->colormap);
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
 #endif
@@ -85,7 +85,7 @@ void Fl_Gl_Window::invalidate() {
 
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   int oldmode = mode_;
   Fl_Gl_Choice* oldg = g;
 #endif
@@ -93,7 +93,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   mode_ = m; alist = a;
   if (shown()) {
     g = Fl_Gl_Choice::find(m, a);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     // under X, if the visual changes we must make a new X window (yuck!):
     if (!g || g->vis->visualid!=oldg->vis->visualid || (oldmode^m)&FL_DOUBLE) {
       hide();
@@ -142,12 +142,14 @@ void Fl_Gl_Window::ortho() {
 
 void Fl_Gl_Window::swap_buffers() {
 #ifdef WIN32
-#if HAVE_GL_OVERLAY
+#  if HAVE_GL_OVERLAY
   // Do not swap the overlay, to match GLX:
   wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
-#else
+#  else
   SwapBuffers(Fl_X::i(this)->private_dc);
-#endif
+#  endif
+#elif defined(__APPLE__)
+  aglSwapBuffers((AGLContext)context_);
 #else
   glXSwapBuffers(fl_display, fl_xid(this));
 #endif
@@ -189,6 +191,12 @@ void Fl_Gl_Window::flush() {
       return;
     }
   }
+#endif
+
+#ifdef __APPLE__
+  //: clear previous clipping in this shared port
+  CGrafPort *port = (CGrafPort*)fl_xid(this);
+  SetRectRgn( port->clipRgn, 0, 0, 0x7fff, 0x7fff );
 #endif
 
   make_current();
@@ -279,7 +287,14 @@ void Fl_Gl_Window::flush() {
 void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
-#ifndef WIN32
+#ifdef __APPLE__
+  if ( parent() ) { //: resize our GL buffer rectangle
+    CGrafPort *port = (CGrafPort*)fl_xid(this);
+    GLint rect[] = { X, port->portRect.bottom-h()-y(), W, H };
+    aglSetInteger( (GLXContext)context_, AGL_BUFFER_RECT, rect );
+    aglEnable( (GLXContext)context_, AGL_BUFFER_RECT );
+  }
+#elif !defined(WIN32)
     if (!resizable() && overlay && overlay != this)
       ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
 #endif
@@ -325,5 +340,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22 2001/07/18 08:11:02 spitzak Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

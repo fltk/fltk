@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_font.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: fl_set_font.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // Font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -53,7 +53,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
     if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
 #endif
     for (Fl_FontSize* f = s->first; f;) {
@@ -62,7 +62,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
     s->first = 0;
   }
   s->name = name;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
   s->xlist = 0;
 #endif
   s->first = 0;
@@ -71,5 +71,5 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
 const char* Fl::get_font(Fl_Font fnum) {return fl_fonts[fnum].name;}
 
 //
-// End of "$Id: fl_set_font.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: fl_set_font.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_cutpaste_mac.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $"
 //
-// Cut/paste code for the Fast Light Tool Kit (FLTK).
+// MacOS cut/paste code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2001 by Bill Spitzak and others.
 //
@@ -23,28 +23,17 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-// Implementation of cut and paste.
+// Implementation of cut and paste for MacOS.
 
-// This is seperated from Fl.cxx mostly to test Fl::add_handler().
-// But this will save a small amount of code size in a program that
-// has no text editing fields or other things that call cut or paste.
-
-#ifdef WIN32
-#  include "Fl_cutpaste_win32.cxx"
-#elif defined(__APPLE__)
-#  include "Fl_cutpaste_mac.cxx"
-#else
-
-#  include <FL/Fl.H>
-#  include <FL/x.H>
-#  include <FL/Fl_Window.H>
-#  include <string.h>
-
+#include <FL/Fl.H>
+#include <FL/mac.H>
+#include <FL/Fl_Window.H>
+#include <string.h>
+/*
 static char *selection_buffer;
 static int selection_length;
 static int selection_buffer_length;
 static char beenhere;
-static Atom TARGETS;
 
 extern Fl_Widget *fl_selection_requestor; // widget doing request_paste()
 
@@ -82,21 +71,15 @@ static int selection_xevent_handler(int) {
     e.selection = fl_xevent->xselectionrequest.selection;
     e.target = fl_xevent->xselectionrequest.target;
     e.time = fl_xevent->xselectionrequest.time;
-    e.property = fl_xevent->xselectionrequest.property;
-    if (e.target == TARGETS) {
-      Atom a = XA_STRING;
-      XChangeProperty(fl_display, e.requestor, e.property,
-		      XA_ATOM, sizeof(Atom)*8, 0, (unsigned char*)&a,
-		      sizeof(Atom));
-    } else if (e.target == XA_STRING && selection_length) {
+    if (fl_xevent->xselectionrequest.target != XA_STRING || !selection_length) {
+      e.property = 0;
+    } else {
+      e.property = fl_xevent->xselectionrequest.property;
+    }
+    if (e.property) {
       XChangeProperty(fl_display, e.requestor, e.property,
 		      XA_STRING, 8, 0, (unsigned char *)selection_buffer,
 		      selection_length);
-    } else {
-//    char* x = XGetAtomName(fl_display,e.target);
-//    fprintf(stderr,"selection request of %s\n",x);
-//    XFree(x);
-      e.property = 0;
     }
     XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);}
     return 1;
@@ -105,19 +88,12 @@ static int selection_xevent_handler(int) {
     return 0;
   }
 }
-
+*/
 ////////////////////////////////////////////////////////////////
 
-static void setup_crap() {
-  if (!beenhere) {
-    beenhere = 1;
-    TARGETS = XInternAtom(fl_display, "TARGETS", 0);
-    Fl::add_handler(selection_xevent_handler);
-  }
-}
-
 // Call this when a "paste" operation happens:
-void Fl::paste(Fl_Widget &receiver) {
+void Fl::paste(Fl_Widget &/*receiver*/) {
+/* //++
   if (selection_owner()) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
@@ -131,13 +107,18 @@ void Fl::paste(Fl_Widget &receiver) {
   fl_selection_requestor = &receiver;
   XConvertSelection(fl_display, XA_PRIMARY, XA_STRING, XA_PRIMARY,
 		    fl_xid(Fl::first_window()), fl_event_time);
-  setup_crap();
+  if (!beenhere) {
+    Fl::add_handler(selection_xevent_handler);
+    beenhere = 1;
+  }
+  */
 }
 
 ////////////////////////////////////////////////////////////////
 
 // call this when you create a selection:
-void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
+void Fl::selection(Fl_Widget &/*owner*/, const char */*stuff*/, int /*len*/) {
+/* //++
   if (!stuff || len<0) return;
   if (len+1 > selection_buffer_length) {
     delete[] selection_buffer;
@@ -154,11 +135,14 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
 				     RootWindow(fl_display, fl_screen),
 				     0,0,1,1,0,0,0);
   XSetSelectionOwner(fl_display, XA_PRIMARY, selxid, fl_event_time);
-  setup_crap();
+  if (!beenhere) {
+    Fl::add_handler(selection_xevent_handler);
+    beenhere = 1;
+  }
+  */
 }
 
-#endif
 
 //
-// End of "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_cutpaste_mac.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $".
 //

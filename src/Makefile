@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.20 2001/11/24 18:07:57 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.21 2001/11/27 17:44:07 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -221,7 +221,19 @@ depend:
 #	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
 	makedepend -Y -I.. -f makedepend $(CPPFILES) $(GLCPPFILES) $(CFILES)
 
+# Automatically generated dependencies...
 include makedepend
+
+# These dependencies aren't part of the makedepend file since
+# they are part of the WIN32 and MacOS code base...
+Fl_cutpaste.o:	Fl_cutpaste_mac.cxx Fl_cutpaste_win32.cxx
+Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
+Fl_x.o:		Fl_mac.cxx Fl_win32.cxx
+fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
+fl_draw_image.o:	fl_draw_image_mac.cxx fl_draw_image_win32.cxx
+fl_font.o:	fl_font_mac.cxx fl_font_win32.cxx
+fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_win32.cxx
+
 
 ################################################################
 
@@ -284,5 +296,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.20 2001/11/24 18:07:57 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.21 2001/11/27 17:44:07 easysw Exp $".
 #

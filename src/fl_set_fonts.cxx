@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.1 2001/11/26 20:13:29 easysw Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,9 @@
 // and bold italic.
 
 #ifdef WIN32
-#include "fl_set_fonts_win32.cxx"
+#  include "fl_set_fonts_win32.cxx"
+#elif defined(__APPLE__)
+#  include "fl_set_fonts_mac.cxx"
 #else
 
 // Standard X fonts are matched by a pattern that is always of
@@ -55,12 +57,12 @@
 // and can identify any font on X that way.  You may want to write your
 // own system of font management and not use this code.
 
-#include <FL/Fl.H>
-#include <FL/x.H>
-#include "Fl_Font.H"
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
+#  include <FL/Fl.H>
+#  include <FL/x.H>
+#  include "Fl_Font.H"
+#  include <ctype.h>
+#  include <string.h>
+#  include <stdlib.h>
 
 // turn word N of a X font name into either some attribute bits
 // (right now 0, FL_BOLD, or FL_ITALIC), or into -1 indicating that
@@ -335,5 +337,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.1 2001/11/26 20:13:29 easysw Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

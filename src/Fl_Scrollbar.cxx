@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.4 2001/11/03 19:24:22 easysw Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.5 2001/11/27 17:44:06 easysw Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -125,7 +125,7 @@ int Fl_Scrollbar::handle(int event) {
     return Fl_Slider::handle(event, X,Y,W,H);
   case FL_MOUSEWHEEL :
     if (horizontal()) return 0;
-    handle_drag(clamp(value() + 3 * linesize_ * Fl::e_dy));
+    handle_drag(clamp(value() + linesize_ * Fl::e_dy));
     return 1;
   case FL_FOCUS :
   case FL_UNFOCUS :
@@ -246,5 +246,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.4 2001/11/03 19:24:22 easysw Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.5 2001/11/27 17:44:06 easysw Exp $".
 //

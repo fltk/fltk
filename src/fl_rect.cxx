@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.1 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.2 2001/11/27 17:44:08 easysw Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,6 +40,10 @@ void fl_rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x+w-1, y+h-1);
   LineTo(fl_gc, x, y+h-1);
   LineTo(fl_gc, x, y);
+#elif defined(__APPLE__)
+  Rect rect;
+  SetRect(&rect, x, y, x+w, y+h);
+  FrameRect(&rect);
 #else
   XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
 #endif
@@ -52,6 +56,10 @@ void fl_rectf(int x, int y, int w, int h) {
   rect.left = x; rect.top = y;  
   rect.right = x + w; rect.bottom = y + h;
   FillRect(fl_gc, &rect, fl_brush());
+#elif defined(__APPLE__)
+  Rect rect;
+  SetRect(&rect, x, y, x+w, y+h);
+  PaintRect(&rect);
 #else
   if (w && h) XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
 #endif
@@ -60,6 +68,8 @@ void fl_rectf(int x, int y, int w, int h) {
 void fl_xyline(int x, int y, int x1) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
+#elif defined(__APPLE__)
+  MoveTo(x, y); LineTo(x1, y);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
 #endif
@@ -72,6 +82,10 @@ void fl_xyline(int x, int y, int x1, int y2) {
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x1, y);
+  LineTo(x1, y2);
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -88,6 +102,11 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
   LineTo(fl_gc, x3, y2);
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x1, y);
+  LineTo(x1, y2);
+  LineTo(x3, y2);
 #else
   XPoint p[4];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -102,6 +121,8 @@ void fl_yxline(int x, int y, int y1) {
   if (y1 < y) y1--;
   else y1++;
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
+#elif defined(__APPLE__)
+  MoveTo(x, y); LineTo(x, y1);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
 #endif
@@ -114,6 +135,10 @@ void fl_yxline(int x, int y, int y1, int x2) {
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x, y1);
+  LineTo(x2, y1);
 #else
   XPoint p[3];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -130,6 +155,11 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
   LineTo(fl_gc, x2, y3);
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x, y1);
+  LineTo(x2, y1);
+  LineTo(x2, y3);
 #else
   XPoint p[4];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -146,6 +176,9 @@ void fl_line(int x, int y, int x1, int y1) {
   // Draw the last point *again* because the GDI line drawing
   // functions will not draw the last point ("it's a feature!"...)
   SetPixel(fl_gc, x1, y1, fl_RGB());
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x1, y1);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
 #endif
@@ -159,6 +192,10 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
   // Draw the last point *again* because the GDI line drawing
   // functions will not draw the last point ("it's a feature!"...)
   SetPixel(fl_gc, x2, y2, fl_RGB());
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x1, y1);
+  LineTo(x2, y2);
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = y;
@@ -174,6 +211,11 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(fl_gc, x1, y1);
   LineTo(fl_gc, x2, y2);
   LineTo(fl_gc, x, y);
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  LineTo(x, y);
 #else
   XPoint p[4];
   p[0].x = x;  p[0].y = y;
@@ -191,6 +233,12 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   LineTo(fl_gc, x2, y2);
   LineTo(fl_gc, x3, y3);
   LineTo(fl_gc, x, y);
+#elif defined(__APPLE__)
+  MoveTo(x, y); 
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  LineTo(x3, y3);
+  LineTo(x, y);
 #else
   XPoint p[5];
   p[0].x = x;  p[0].y = y;
@@ -210,6 +258,14 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
 #ifdef WIN32
   SelectObject(fl_gc, fl_brush());
   Polygon(fl_gc, p, 3);
+#elif defined(__APPLE__)
+  PolyHandle poly = OpenPoly();
+  MoveTo(x, y);
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  ClosePoly();
+  PaintPoly(poly);
+  KillPoly(poly);
 #else
   p[3].x = x;  p[3].y = y;
   XFillPolygon(fl_display, fl_window, fl_gc, p, 3, Convex, 0);
@@ -226,6 +282,15 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #ifdef WIN32
   SelectObject(fl_gc, fl_brush());
   Polygon(fl_gc, p, 4);
+#elif defined(__APPLE__)
+  PolyHandle poly = OpenPoly();
+  MoveTo(x, y);
+  LineTo(x1, y1);
+  LineTo(x2, y2);
+  LineTo(x3, y3);
+  ClosePoly();
+  PaintPoly(poly);
+  KillPoly(poly);
 #else
   p[4].x = x;  p[4].y = y;
   XFillPolygon(fl_display, fl_window, fl_gc, p, 4, Convex, 0);
@@ -236,6 +301,8 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 void fl_point(int x, int y) {
 #ifdef WIN32
   SetPixel(fl_gc, x, y, fl_RGB());
+#elif defined(__APPLE__)
+  MoveTo(x, y); Line(0, 0); 
 #else
   XDrawPoint(fl_display, fl_window, fl_gc, x, y);
 #endif
@@ -245,28 +312,44 @@ void fl_point(int x, int y) {
 
 #define STACK_SIZE 10
 #define STACK_MAX (STACK_SIZE - 1)
-static Region rstack[STACK_SIZE];
+static Fl_Region rstack[STACK_SIZE];
 static int rstackptr=0;
 int fl_clip_state_number=0; // used by gl_begin.cxx to update GL clip
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
 // MSWindows equivalent exists, implemented inline in win32.H
-Region XRectangleRegion(int x, int y, int w, int h) {
+Fl_Region XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
   R.x = x; R.y = y; R.width = w; R.height = h;
-  Region r = XCreateRegion();
+  Fl_Region r = XCreateRegion();
   XUnionRectWithRegion(&R, r, r);
   return r;
 }
 #endif
 
+#ifdef __APPLE__
+extern Fl_Region fl_window_region;
+#endif
+
 // undo any clobbering of clip done by your program:
 void fl_restore_clip() {
   fl_clip_state_number++;
-  Region r = rstack[rstackptr];
+  Fl_Region r = rstack[rstackptr];
 #ifdef WIN32
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
+#elif defined(__APPLE__)
+#  if 1
+  CopyRgn( fl_window_region, GetPortClipRegion((GrafPtr)fl_window, 0) );
+  if ( r ) 
+    SectRgn( GetPortClipRegion((GrafPtr)fl_window, 0), r, GetPortClipRegion((GrafPtr)fl_window, 0) );
+#  else
+  if (r) SetClip(r);
+  else {
+    Rect rect; rect.left=0; rect.top=0; rect.right=0x7fff; rect.bottom=0x7fff;
+    ClipRect(&rect);
+  }
+#  endif
 #else
   if (r) XSetRegion(fl_display, fl_gc, r);
   else XSetClipMask(fl_display, fl_gc, 0);
@@ -274,8 +357,8 @@ void fl_restore_clip() {
 }
 
 // Replace the top of the clip stack:
-void fl_clip_region(Region r) {
-  Region oldr = rstack[rstackptr];
+void fl_clip_region(Fl_Region r) {
+  Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
   rstack[rstackptr] = r;
   fl_restore_clip();
@@ -283,25 +366,30 @@ void fl_clip_region(Region r) {
 
 // Intersect & push a new clip rectangle:
 void fl_clip(int x, int y, int w, int h) {
-  Region r;
+  Fl_Region r;
   if (w > 0 && h > 0) {
     r = XRectangleRegion(x,y,w,h);
-    Region current = rstack[rstackptr];
+    Fl_Region current = rstack[rstackptr];
     if (current) {
-#ifndef WIN32
-      Region temp = XCreateRegion();
+#ifdef WIN32
+      CombineRgn(r,r,current,RGN_AND);
+#elif defined(__APPLE__)
+      SectRgn(r, current, r); 
+#else
+      Fl_Region temp = XCreateRegion();
       XIntersectRegion(current, r, temp);
       XDestroyRegion(r);
       r = temp;
-#else
-      CombineRgn(r,r,current,RGN_AND);
 #endif
     }
   } else { // make empty clip region:
-#ifndef WIN32
-    r = XCreateRegion();
-#else
+#ifdef WIN32
     r = CreateRectRgn(0,0,0,0);
+#elif defined(__APPLE__)
+    r = NewRgn(); 
+    SetEmptyRgn(r);
+#else
+    r = XCreateRegion();
 #endif
   }
   if (rstackptr < STACK_MAX) rstack[++rstackptr] = r;
@@ -317,7 +405,7 @@ void fl_push_no_clip() {
 // pop back to previous clip:
 void fl_pop_clip() {
   if (rstackptr > 0) {
-    Region oldr = rstack[rstackptr--];
+    Fl_Region oldr = rstack[rstackptr--];
     if (oldr) XDestroyRegion(oldr);
   }
   fl_restore_clip();
@@ -327,48 +415,34 @@ void fl_pop_clip() {
 int fl_not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0 || x > Fl_Window::current()->w()
       || y > Fl_Window::current()->h()) return 0;
-  Region r = rstack[rstackptr];
-#ifndef WIN32
-  return r ? XRectInRegion(r, x, y, w, h) : 1;
-#else
+  Fl_Region r = rstack[rstackptr];
+#ifdef WIN32
   if (!r) return 1;
   RECT rect;
   rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
   return RectInRegion(r,&rect);
+#elif defined(__APPLE__)
+  if (!r) return 1;
+  Rect rect;
+  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+  return RectInRgn(&rect, r);
+#else
+  return r ? XRectInRegion(r, x, y, w, h) : 1;
 #endif
 }
 
 // return rectangle surrounding intersection of this rectangle and clip:
 int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
-  Region r = rstack[rstackptr];
+  Fl_Region r = rstack[rstackptr];
   if (!r) return 0;
-#ifndef WIN32
-  switch (XRectInRegion(r, x, y, w, h)) {
-  case 0: // completely outside
-    W = H = 0;
-    return 2;
-  case 1: // completely inside:
-    return 0;
-  default: // partial:
-    break;
-  }
-  Region rr = XRectangleRegion(x,y,w,h);
-  Region temp = XCreateRegion();
-  XIntersectRegion(r, rr, temp);
-  XRectangle rect;
-  XClipBox(temp, &rect);
-  X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
-  XDestroyRegion(temp);
-  XDestroyRegion(rr);
-  return 1;
-#else
+#ifdef WIN32
 // The win32 API makes no distinction between partial and complete
 // intersection, so we have to check for partial intersection ourselves.
 // However, given that the regions may be composite, we have to do
 // some voodoo stuff...
-  Region rr = XRectangleRegion(x,y,w,h);
-  Region temp = CreateRectRgn(0,0,0,0);
+  Fl_Region rr = XRectangleRegion(x,y,w,h);
+  Fl_Region temp = CreateRectRgn(0,0,0,0);
   int ret;
   if (CombineRgn(temp, rr, r, RGN_AND) == NULLREGION) { // disjoint
     W = H = 0;
@@ -384,9 +458,41 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   DeleteObject(temp);
   DeleteObject(rr);
   return ret;
+#elif defined(__APPLE__)
+  RgnHandle rr = NewRgn();
+  SetRectRgn( rr, x, y, x+w, y+h );
+  SectRgn( r, rr, rr );
+  Rect *rp = GetRegionBounds(rr, 0);
+  X = rp->left;
+  Y = rp->top;
+  W = rp->right - X;
+  H = rp->bottom - Y;
+  DisposeRgn( rr );
+  if ( H==0 ) return 2;
+  if ( h==H && w==W ) return 0;
+  return 0;
+#else
+  switch (XRectInRegion(r, x, y, w, h)) {
+  case 0: // completely outside
+    W = H = 0;
+    return 2;
+  case 1: // completely inside:
+    return 0;
+  default: // partial:
+    break;
+  }
+  Fl_Region rr = XRectangleRegion(x,y,w,h);
+  Fl_Region temp = XCreateRegion();
+  XIntersectRegion(r, rr, temp);
+  XRectangle rect;
+  XClipBox(temp, &rect);
+  X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
+  XDestroyRegion(temp);
+  XDestroyRegion(rr);
+  return 1;
 #endif
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.1 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.2 2001/11/27 17:44:08 easysw Exp $".
 //

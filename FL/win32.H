@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.15.2.3.2.2 2001/11/19 20:59:59 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.3 2001/11/27 17:44:06 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -42,13 +42,13 @@
 typedef HWND Window;
 typedef POINT XPoint;
 struct XRectangle {int x, y, width, height;};
-typedef HRGN Region;
-FL_EXPORT void fl_clip_region(Region);
-inline Region XRectangleRegion(int x, int y, int w, int h) {
+typedef HRGN Fl_Region;
+FL_EXPORT void fl_clip_region(Fl_Region);
+inline Fl_Region XRectangleRegion(int x, int y, int w, int h) {
     return CreateRectRgn(x,y,x+w,y+h);
 }
-inline void XDestroyRegion(Region r) {DeleteObject(r);}
-inline void XClipBox(Region r,XRectangle* rect) {
+inline void XDestroyRegion(Fl_Region r) {DeleteObject(r);}
+inline void XClipBox(Fl_Region r,XRectangle* rect) {
     RECT win_rect; GetRgnBox(r,&win_rect);
     rect->x=win_rect.left;
     rect->y=win_rect.top;
@@ -67,7 +67,7 @@ public:
   Window xid;
   HBITMAP other_xid; // for double-buffered windows
   Fl_Window* w;
-  Region region;
+  Fl_Region region;
   Fl_X *next;
   int wait_for_expose;
   HDC private_dc; // used for OpenGL
@@ -129,5 +129,5 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: win32.H,v 1.15.2.3.2.2 2001/11/19 20:59:59 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.3 2001/11/27 17:44:06 easysw Exp $".
 //
