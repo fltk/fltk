@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.20 2002/04/13 20:28:51 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.21 2002/04/15 20:30:06 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <ctype.h>
@@ -983,7 +984,7 @@ OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReference dragRef )
  */
 void Fl_X::make(Fl_Window* w)
 {
-  static int xyPos = 24;
+  static int xyPos = 50;
   if ( w->parent() ) // create a subwindow
   {
     Fl_Group::current(0);
@@ -1020,7 +1021,6 @@ void Fl_X::make(Fl_Window* w)
     int winclass = kDocumentWindowClass;
     int winattr = kWindowCloseBoxAttribute 
                 | kWindowCollapseBoxAttribute 
-                | kWindowLiveResizeAttribute 
                 | kWindowStandardHandlerAttribute
                 ;
     int xp = w->x();
@@ -1035,7 +1035,7 @@ void Fl_X::make(Fl_Window* w)
         int minw = o->w(); if (minw > 100) minw = 100;
         int minh = o->h(); if (minh > 100) minh = 100;
         w->size_range(w->w() - o->w() + minw, w->h() - o->h() + minh, 0, 0);
-        winattr |= kWindowFullZoomAttribute | kWindowResizableAttribute;
+        winattr |= kWindowFullZoomAttribute | kWindowResizableAttribute | kWindowLiveResizeAttribute;
       } else {
         w->size_range(w->w(), w->h(), w->w(), w->h());
       }
@@ -1053,8 +1053,8 @@ void Fl_X::make(Fl_Window* w)
     }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
       w->x(xyPos+Fl::x()); w->y(xyPos+Fl::y()); // \todo use the Carbon function for default window positioning
-      xyPos += 24;
-      if (xyPos>200) xyPos = 24;
+      xyPos += 25;
+      if (xyPos>200) xyPos = 25;
     } else {
       if (!Fl::grab()) {
         xp = xwm; yp = ywm;
@@ -1137,11 +1137,14 @@ void Fl_X::make(Fl_Window* w)
       if ( err==noErr ) SetFrontProcess( &psn );
     }
     
-    if ( fl_show_iconic ) { 
+    if (fl_show_iconic) { 
       fl_show_iconic = 0;
       CollapseWindow( x->xid, true ); // \todo Mac ; untested
+    } else if (winclass != kHelpWindowClass) {
+      Fl_Tooltip::enter(0);
     }
-    ShowWindow( x->xid );
+
+    ShowWindow(x->xid);
 
     w->handle(FL_SHOW);
     w->redraw(); // force draw to happen
@@ -1214,8 +1217,10 @@ void Fl_Window::show() {
       if ( !parent() )
       {
         if ( IsWindowCollapsed( i->xid ) ) CollapseWindow( i->xid, false );
-        if (!fl_capture)
+        if (!fl_capture) {
           BringToFront(i->xid);
+          SelectWindow(i->xid);
+        }
       }
   }
 }
@@ -1359,6 +1364,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.20 2002/04/13 20:28:51 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.21 2002/04/15 20:30:06 easysw Exp $".
 //
 
