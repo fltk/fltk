@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.36 2001/04/27 15:21:33 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37 2001/04/27 15:43:38 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,6 +32,7 @@
 #include <FL/win32.H>
 #include <FL/Fl_Window.H>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <time.h>
@@ -510,9 +511,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_ACTIVATEAPP:
     // From eric@vfx.sel.sony.com, we should process WM_ACTIVATEAPP
     // messages to restore the correct state of the shift/ctrl/alt/lock
-    // keys...  Added control, shift, alt, and meta keys, mouse buttons,
-    // and changed to use GetAsyncKeyState...
-    if (!wParam)
+    // keys...  Added control, shift, alt, and meta keys, and changed
+    // to use GetAsyncKeyState and do it when wParam is 1
+    // (that means we have focus...)
+    if (wParam)
     {
       ulong state = 0;
       if (GetAsyncKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
@@ -521,10 +523,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (GetAsyncKeyState(VK_CONTROL)&~1) state |= FL_CTRL;
       if (GetAsyncKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
       if (GetAsyncKeyState(VK_MENU)) state |= FL_ALT;
-      if (GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN)) state |= FL_META;
-      if (GetAsyncKeyState(VK_LBUTTON)) state |= FL_BUTTON1;
-      if (GetAsyncKeyState(VK_MBUTTON)) state |= FL_BUTTON2;
-      if (GetAsyncKeyState(VK_RBUTTON)) state |= FL_BUTTON3;
+      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1) state |= FL_META;
       Fl::e_state = state;
       return 0;
     }
@@ -556,10 +555,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if ((lParam&(1<<29)) //same as GetKeyState(VK_MENU)
 	&& uMsg != WM_CHAR) state |= FL_ALT;
     if (GetKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
-    if (GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) {
+    if ((GetKeyState(VK_LWIN)|GetKeyState(VK_RWIN))&~1) {
       // WIN32 bug?  GetKeyState returns garbage if the user hit the
       // meta key to pop up start menu.  Sigh.
-      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN)))
+      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1)
 	state |= FL_META;
     }
     if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
@@ -975,5 +974,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.36 2001/04/27 15:21:33 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37 2001/04/27 15:43:38 easysw Exp $".
 //
