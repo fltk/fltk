@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.8 2000/06/10 18:24:31 bill Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.9 2000/06/15 05:37:39 bill Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -95,8 +95,8 @@ void Fl_Slider::draw_bg(int x, int y, int w, int h) {
 }
 
 void Fl_Slider::draw(int x, int y, int w, int h) {
-  double val;
 
+  double val;
   if (minimum() == maximum())
     val = 0.5;
   else {
@@ -179,43 +179,47 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
     if (!Fl::event_inside(x, y, w, h)) return 0;
     handle_push();
   case FL_DRAG: {
-    int W = (horizontal() ? w : h);
-    //int H = (horizontal() ? h : w);
-    int mx = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y);
-    int S = int(slider_size_*W+.5); if (S >= W) return 0;
-    int X;
-    static int offcenter;
 
-    double val =
-      (maximum()-minimum()) ? (value()-minimum())/(maximum()-minimum()) : 0.5;
+    double val;
+    if (minimum() == maximum())
+      val = 0.5;
+    else {
+      val = (value()-minimum())/(maximum()-minimum());
+      if (val > 1.0) val = 1.0;
+      else if (val < 0.0) val = 0.0;
+    }
+
+    int W = (horizontal() ? w : h);
+    int mx = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y);
+    int S;
+    static int offcenter;
 
     if (type() == FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
 
-      if (val >= 1.0) X = W;
-      else if (val <= 0.0) X = 0;
-      else X = int(val*W+.5);
-
+      S = 0;
       if (event == FL_PUSH) {
+	int X = int(val*W+.5);
 	offcenter = mx-X;
-	if (offcenter < -S/2) offcenter = 0;
-	else if (offcenter > S/2) offcenter = 0;
+	if (offcenter < -10 || offcenter > 10) offcenter = 0;
 	else return 1;
       }
-      S = 0;
+
     } else {
 
-      if (val >= 1.0) X = W-S;
-      else if (val <= 0.0) X = 0;
-      else X = int(val*(W-S)+.5);
-
+      S = int(slider_size_*W+.5); if (S >= W) return 0;
+      int T = (horizontal() ? h : w)/2+1;
+      if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
+      if (S < T) S = T;
       if (event == FL_PUSH) {
+	int X = int(val*(W-S)+.5);
 	offcenter = mx-X;
 	if (offcenter < 0) offcenter = 0;
 	else if (offcenter > S) offcenter = S;
 	else return 1;
       }
     }
-    X = mx-offcenter;
+
+    int X = mx-offcenter;
     double v;
   TRY_AGAIN:
     if (X < 0) {
@@ -251,5 +255,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.8 2000/06/10 18:24:31 bill Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.9 2000/06/15 05:37:39 bill Exp $".
 //
