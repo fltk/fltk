@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc2
 
 	- Portability fixes.
+	- Fl_Multiline_Output would insert the enter key.
 	- Fl_File_Browser didn't clip items to the column width.
 	- Fl_Window::draw() cleared the window label but didn't
 	  restore it, so windows could lose their titles.
