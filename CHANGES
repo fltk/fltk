@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0b12
 
+	- Backported FLTK 2.0 dual cut/paste buffer.
 	- Added support for Xft library to support anti-aliased
 	  text on X11.
 	- Fl_Help_View didn't keep track of the background color
