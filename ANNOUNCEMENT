@@ -32,6 +32,40 @@ exceptions that allow for static linking.
 
 Changes since FLTK 1.1.3 include:
 
+	- VC++ 7.1 didn't like how the copy operators were
+	  disabled for the Fl_Widget class; now include inline
+	  code which will never be used but makes VC++ happy
+	  (STR #156)
+	- Fixed an IRIX compile problem caused by a missing
+	  #include (STR #157)
+	- FLUID didn't write color/selection_color() calls using
+	  the symbolic names when possible, nor did it cast
+	  integer colors to Fl_Color (STR #146)
+	- Fl_File_Chooser was very close for multiple file
+	  selection in large directories (STR #140)
+	- Fl_Text_Display/Editor did not disable the current
+	  selection when focus was shifted to another widget
+	  (STR #131)
+	- Fl_Choice didn't use the normal focus box when the
+	  plastic scheme was in use (STR #129)
+	- Fl_Text_Editor didn't use selection_color()
+	  consistently (STR #130)
+	- The fltk_forms, fltk_gl, and fltk_images DSO's and
+	  HP-UX shared libraries are now linked against the fltk
+	  shared library to provide complete dependency
+	  resolution (STR #118)
+	- The configure.in file did not work with autoconf 2.57.
+	- FLUID didn't redraw widgets when changing the X, Y, W,
+	  or H values in the widget panel (STR #120)
+	- Fl_Window::show(argc, argv) wasn't calling
+	  Fl::get_system_colors() as documented (STR #119)
+	- DSO (shared library) building wasn't quite right for
+	  some platforms (STR #118)
+	- OSX: some changes to make ProjectBuilder compiles
+	  possible.
+	- OSX: FLTK would not know where a window was positioned
+	  by the OS. As a result, popup menus could open at 
+	  wrong positions.
 	- Fl_Window::show(argc,argv) incorrectly opened the
 	  display prior to parsing the arguments; this prevented
 	  the "-display foo" option from working (STR #111)
@@ -231,88 +265,122 @@ exceptions that allow for static linking.
 
 <UL>
 
+	<LI>VC++ 7.1 didn't like how the copy operators were
+	disabled for the Fl_Widget class; now include inline
+	code which will never be used but makes VC++ happy
+	(<A HREF="http://www.fltk.org/str.php?L156">STR #156</A>)
+	<LI>Fixed an IRIX compile problem caused by a missing
+	#include (<A HREF="http://www.fltk.org/str.php?L157">STR #157</A>)
+	<LI>FLUID didn't write color/selection_color() calls using
+	the symbolic names when possible, nor did it cast
+	integer colors to Fl_Color (<A HREF="http://www.fltk.org/str.php?L146">STR #146</A>)
+	<LI>Fl_File_Chooser was very close for multiple file
+	selection in large directories (<A HREF="http://www.fltk.org/str.php?L140">STR #140</A>)
+	<LI>Fl_Text_Display/Editor did not disable the current
+	selection when focus was shifted to another widget
+	(<A HREF="http://www.fltk.org/str.php?L131">STR #131</A>)
+	<LI>Fl_Choice didn't use the normal focus box when the
+	plastic scheme was in use (<A HREF="http://www.fltk.org/str.php?L129">STR #129</A>)
+	<LI>Fl_Text_Editor didn't use selection_color()
+	consistently (<A HREF="http://www.fltk.org/str.php?L130">STR #130</A>)
+	<LI>The fltk_forms, fltk_gl, and fltk_images DSO's and
+	HP-UX shared libraries are now linked against the fltk
+	shared library to provide complete dependency
+	resolution (<A HREF="http://www.fltk.org/str.php?L118">STR #118</A>)
+	<LI>The configure.in file did not work with autoconf 2.57.
+	<LI>FLUID didn't redraw widgets when changing the X, Y, W,
+	or H values in the widget panel (<A HREF="http://www.fltk.org/str.php?L120">STR #120</A>)
+	<LI>Fl_Window::show(argc, argv) wasn't calling
+	Fl::get_system_colors() as documented (<A HREF="http://www.fltk.org/str.php?L119">STR #119</A>)
+	<LI>DSO (shared library) building wasn't quite right for
+	some platforms (<A HREF="http://www.fltk.org/str.php?L118">STR #118</A>)
+	<LI>OSX: some changes to make ProjectBuilder compiles
+	possible.
+	<LI>OSX: FLTK would not know where a window was positioned
+	by the OS. As a result, popup menus could open at 
+	wrong positions.
 	<LI>Fl_Window::show(argc,argv) incorrectly opened the
 	display prior to parsing the arguments; this prevented
-	the "-display foo" option from working (STR #111)
-	<LI>Images were not clipped properly on MacOS X (STR #114)
+	the "-display foo" option from working (<A HREF="http://www.fltk.org/str.php?L111">STR #111</A>)
+	<LI>Images were not clipped properly on MacOS X (<A HREF="http://www.fltk.org/str.php?L114">STR #114</A>)
 	<LI>Fl::reload_scheme() and Fl::scheme("foo") incorrectly
 	called Fl::get_system_colors().  This prevented an
 	application from setting its own color preferences
-	(STR #115)
+	(<A HREF="http://www.fltk.org/str.php?L115">STR #115</A>)
 	<LI>The 'Enter' key event on OS X would not set Fl::e_text
 	(STR #???)
 	<LI>Changed behaviour of fluid to always paste into
-	a selected group (STR #88)
+	a selected group (<A HREF="http://www.fltk.org/str.php?L88">STR #88</A>)
 	<LI>Menuitem now changes font, even if fontsize
-	is not set (STR #110)
-	<LI>Swapped shortcut labels in OS X (STR #86)
+	is not set (<A HREF="http://www.fltk.org/str.php?L110">STR #110</A>)
+	<LI>Swapped shortcut labels in OS X (<A HREF="http://www.fltk.org/str.php?L86">STR #86</A>)
 	<LI>Non-square Fl_Dial would calculate angle from user
-	input wrong (STR #101)
-	<LI>Updated documentatiopn of fl_draw (STR #94)
-	and Fl_Menu_::add() (STR #99)
+	input wrong (<A HREF="http://www.fltk.org/str.php?L101">STR #101</A>)
+	<LI>Updated documentatiopn of fl_draw (<A HREF="http://www.fltk.org/str.php?L94">STR #94</A>)
+	and Fl_Menu_::add() (<A HREF="http://www.fltk.org/str.php?L99">STR #99</A>)
 	<LI>Fluid collapse triangle events were not offset by
-	horizontal scroll (STR #106)
+	horizontal scroll (<A HREF="http://www.fltk.org/str.php?L106">STR #106</A>)
 	<LI>QuitAppleEvent now correctly returns from Fl::run()
-	instead of just exiting (STR #87)
+	instead of just exiting (<A HREF="http://www.fltk.org/str.php?L87">STR #87</A>)
 	<LI>Hiding the first created OpenGL context was not
-	possible. FLTK now manages a list of contexts (STR #77)
+	possible. FLTK now manages a list of contexts (<A HREF="http://www.fltk.org/str.php?L77">STR #77</A>)
 	<LI>FLUID didn't keep the double/single buffer type for
 	windows.
 	<LI>FLTK didn't work with Xft2.
-	<LI>OSX window resizing didn't work (STR #64)
-	<LI>Fixed MacOS X shared library generation (STR #51)
+	<LI>OSX window resizing didn't work (<A HREF="http://www.fltk.org/str.php?L64">STR #64</A>)
+	<LI>Fixed MacOS X shared library generation (<A HREF="http://www.fltk.org/str.php?L51">STR #51</A>)
 	<LI>Several widgets defined their own size() method but
 	didn't provide an inline method that mapped to the
-	Fl_Widget::size() method (STR #62)
+	Fl_Widget::size() method (<A HREF="http://www.fltk.org/str.php?L62">STR #62</A>)
 	<LI>Fl_Scroll didn't provide its own clear() method, so
 	calling clear() on a Fl_Scroll widget would also
-	destroy the scrollbars (STR #75)
+	destroy the scrollbars (<A HREF="http://www.fltk.org/str.php?L75">STR #75</A>)
 	<LI>Fl::event_text() was sometimes initialized to NULL
-	instead of an empty string (STR #70)
+	instead of an empty string (<A HREF="http://www.fltk.org/str.php?L70">STR #70</A>)
 	<LI>fl_draw() didn't properly handle a trailing escaped
-	"@" character (STR #84)
+	"@" character (<A HREF="http://www.fltk.org/str.php?L84">STR #84</A>)
 	<LI>Added documentation for all forms of
-	Fl_Widget::damage() (STR #61)
+	Fl_Widget::damage() (<A HREF="http://www.fltk.org/str.php?L61">STR #61</A>)
 	<LI>Fl_Double_Window now has a type() value of
 	FL_DOUBLE_WINDOW, to allow double-buffered windows to
-	process redraws properly on WIN32 (STR #46)
+	process redraws properly on WIN32 (<A HREF="http://www.fltk.org/str.php?L46">STR #46</A>)
 	<LI>Added FL_DAMAGE_USER1 and FL_DAMAGE_USER2 damage bits
-	for use by widget developers (STR #57)
+	for use by widget developers (<A HREF="http://www.fltk.org/str.php?L57">STR #57</A>)
 	<LI>Fl_Help_View didn't support numeric character entities
-	(STR #66)
+	(<A HREF="http://www.fltk.org/str.php?L66">STR #66</A>)
 	<LI>Menu shortcuts didn't use the Mac key names under
-	MacOS X (STR #71)
+	MacOS X (<A HREF="http://www.fltk.org/str.php?L71">STR #71</A>)
 	<LI>CodeWarrior Mac OS X updated to work with current
-	CW8.3 (STR #34)
+	CW8.3 (<A HREF="http://www.fltk.org/str.php?L34">STR #34</A>)
 	<LI>Apple-C/X/V/Z didn't work in the Fl_Input widget due
-	to a bad mapping to control keys (STR #79)
+	to a bad mapping to control keys (<A HREF="http://www.fltk.org/str.php?L79">STR #79</A>)
 	<LI>Added the OSX-specific fl_open_callback() function to
 	handle Open Documents messages from the Finder (STR
 	#80)
 	<LI>The configure script contained erroneous whitespace in
 	various tests which caused errors on some platforms
-	(STR #60)
+	(<A HREF="http://www.fltk.org/str.php?L60">STR #60</A>)
 	<LI>The fltk-config script still supported the deprecated
 	--prefix and --exec-prefix options; dropped them since
 	they serve no useful purpose and would never have
-	worked for the intended purpose anyways... (STR #56)
+	worked for the intended purpose anyways... (<A HREF="http://www.fltk.org/str.php?L56">STR #56</A>)
 	<LI>fl_filename_list returned 0 on Win32 if no directory
-	existed (STR #54)
+	existed (<A HREF="http://www.fltk.org/str.php?L54">STR #54</A>)
 	<LI>Pressing 'home' after the last letter in a Text_Editor
-	would move the cursor to pos 0 (STR #39)
+	would move the cursor to pos 0 (<A HREF="http://www.fltk.org/str.php?L39">STR #39</A>)
 	<LI>Fl::get_key(x) would mix up Ctrl and Meta on OS X (STR
 	#55)
 	<LI>The configure script used the wrong dynamic library
-	linking command for OSX (STR #51)
+	linking command for OSX (<A HREF="http://www.fltk.org/str.php?L51">STR #51</A>)
 	<LI>The Fl_Text_Editor widget did not set changed() nor
 	did it call the widget's callback function for
 	FL_WHEN_CHANGED when processing characters that
-	Fl::compose() handles (STR #52)
+	Fl::compose() handles (<A HREF="http://www.fltk.org/str.php?L52">STR #52</A>)
 	<LI>The file chooser did not reset the click count when
 	changing directories; if you clicked on a file in the
 	same position after changing directories with a
 	double<LI>click, the chooser treated it as a triple
-	click (STR #27)
+	click (<A HREF="http://www.fltk.org/str.php?L27">STR #27</A>)
 	<LI>Symbols with outlines did not get drawn inactive.
 	<LI>The Fl_Help_View widget now provides a find() method
 	to search for text within the page.
@@ -321,20 +389,20 @@ exceptions that allow for static linking.
 	<LI>The default font encoding on OSX did not match the
 	default on WIN32 or X11.
 	<LI>Menu items were not drawn using the font specified in
-	the Fl_Menu_Item structure (STR #30)
+	the Fl_Menu_Item structure (<A HREF="http://www.fltk.org/str.php?L30">STR #30</A>)
 	<LI>Long menus that were aligned such that the top of an
 	item was exactly at the top of the screen would not
-	scroll (STR #33)
+	scroll (<A HREF="http://www.fltk.org/str.php?L33">STR #33</A>)
 	<LI>The OS issues appendix incorrectly stated that MacOS
-	8.6 and 9 were supported; they are not (STR #28)
+	8.6 and 9 were supported; they are not (<A HREF="http://www.fltk.org/str.php?L28">STR #28</A>)
 	<LI>Fixed handling of nested double-buffered windows (STR
 	#1)
 	<LI>Showing a subwindow inside a hidden window would crash
-	the application (STR #23)
+	the application (<A HREF="http://www.fltk.org/str.php?L23">STR #23</A>)
 	<LI>OSX users couldn't enter some special chars when using
-	some foreign key layouts (STR #32)
+	some foreign key layouts (<A HREF="http://www.fltk.org/str.php?L32">STR #32</A>)
 	<LI>Hiding subwindows on OSX would hide the parent window
-	(STR #22)
+	(<A HREF="http://www.fltk.org/str.php?L22">STR #22</A>)
 	<LI>Added thin plastic box types.
 	<LI>Fl_Pack ignored the box() setting and cleared any
 	unused areas to the widget color; it now only does so
@@ -348,22 +416,22 @@ exceptions that allow for static linking.
 	better contrast.
 	<LI>Fl_Text_Display and friends now look for the next
 	non-punctuation/space character for word boundaries
-	(STR #26)
+	(<A HREF="http://www.fltk.org/str.php?L26">STR #26</A>)
 	<LI>gl_font() didn't work properly for X11 when Xft was
-	used (STR #12)
+	used (<A HREF="http://www.fltk.org/str.php?L12">STR #12</A>)
 	<LI>Fl_File_Browser incorrectly included "." on WIN32 (STR
 	#9)
 	<LI>Include shellapi.h instead of ShellAPI.h in the WIN32
 	drag-n-drop code in order to work with the MingW cross
-	compiler (STR #6)
+	compiler (<A HREF="http://www.fltk.org/str.php?L6">STR #6</A>)
 	<LI>The cursor was not properly restored when doing
-	drag-n-drop on X11 (STR #4)
+	drag-n-drop on X11 (<A HREF="http://www.fltk.org/str.php?L4">STR #4</A>)
 	<LI>Fl::remove_fd() didn't recalculate the highest file
-	descriptor properly (STR #20)
+	descriptor properly (<A HREF="http://www.fltk.org/str.php?L20">STR #20</A>)
 	<LI>Fl_Preferences::deleteGroup() didn't work properly
-	(STR #13)
+	(<A HREF="http://www.fltk.org/str.php?L13">STR #13</A>)
 	<LI>Fixed the fl_show_file_selector() function <LI>it was
-	copying using the wrong string size (STR #14)
+	copying using the wrong string size (<A HREF="http://www.fltk.org/str.php?L14">STR #14</A>)
 	<LI>fl_font() and fl_size() were not implemented on MacOS
 	X.
 	<LI>Sorted the icon menu bar in fluid.
