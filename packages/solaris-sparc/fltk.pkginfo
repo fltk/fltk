@@ -1,11 +1,11 @@
 PKG=fltk
-NAME=Fast Light Tool Kit, 1.0
+NAME=Fast Light Tool Kit, 1.0.1
 ARCH=sun4m
-VERSION=1.0
+VERSION=1.0.1
 CATEGORY=development
 DESC=C++ GUI Toolkit for UNIX and Windows.
 VENDOR=GNU
 HOTLINE=http://www.fltk.org
 EMAIL=fltk-bugs@fltk.org
 CLASSES=dev doc dso
-PSTAMP=fltk19990310000
+PSTAMP=fltk19990325000

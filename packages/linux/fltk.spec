@@ -1,10 +1,10 @@
 Summary: Fast Light Tool Kit
 Name: fltk
-Version: 1.0
+Version: 1.0.1
 Release: 1
 Copyright: LGPL
-Group: Development/GUI
-Source: ftp://ftp.fltk.org/pub/fltk/1.0/fltk-1.0-source.tar.gz
+Group: Development/Libraries
+Source: ftp://ftp.fltk.org/pub/fltk/1.0.1/fltk-1.0.1-source.tar.gz
 URL: http://www.fltk.org
 Packager: Michael Sweet <mike@easysw.com>
 %description
