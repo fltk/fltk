@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- fl_beep(FL_BEEP_DEFAULT) now uses the PC speaker under
+	  Windows (0xFFFFFFFF) rather than an event sound.
 	- The configure script didn't include the -mwindows or
 	  -DWIN32 compiler options in the output of fltk-config
 	  when using the Cygwin tools.

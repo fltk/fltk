@@ -8,13 +8,41 @@ A</A>.
 
 <h2>Functions</h2>
 
+<h3><A name="fl_beep">void fl_beep(int type = FL_BEEP_DEFAULT)</A></h3>
+
+<P>Sounds an audible notification; the default <CODE>type</CODE> argument
+sounds a simple "beep" sound. Other values for <CODE>type</CODE> may use
+a system or user-defined sound file:
+
+<UL>
+
+	<LI><TT>FL_BEEP_DEFAULT</TT> - Make a generic "beep" sound.
+
+	<LI><TT>FL_BEEP_MESSAGE</TT> - Make a sound appropriate for an
+	informational message.
+
+	<LI><TT>FL_BEEP_ERROR</TT> - Make a sound appropriate for an
+	error message.
+
+	<LI><TT>FL_BEEP_QUESTION</TT> - Make a sound appropriate for
+	a question.
+
+	<LI><TT>FL_BEEP_PASSWORD</TT> - Make a sound appropriate for
+	a password prompt.
+
+	<LI><TT>FL_BEEP_NOTIFICATION</TT> - Make a sound appropriate for
+	an event notification ("you have mail", etc.)
+
+</UL>
+
 <h3><A name="fl_color_chooser_func">int fl_color_chooser(const char
 *title, double &amp;r, double &amp;g, double &amp;b)
 <br>int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A></h3>
 
-The double version takes RGB values in the range 0.0 to 1.0.  The
-uchar version takes RGB values in the range 0 to 255. The <tt>title</tt>
-argument specifies the label (title) for the window.
+<P>The <CODE>double</CODE> version takes RGB values in the range
+0.0 to 1.0.  The <CODE>uchar</CODE> version takes RGB values in
+the range 0 to 255. The <tt>title</tt> argument specifies the
+label (title) for the window.
 
 <p align=center><img src="fl_color_chooser.jpg" ALT="The fl_color_chooser dialog.">
 
