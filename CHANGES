@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0b12
 
 	- Documentation updates.
+	- Fl_Choice didn't clip the current value properly - it
+	  wasn't accounting for the box border width.
 	- The forms compatibility functions are now placed in a
 	  "fltk_forms" library to match FLTK 2.0.
 	- Renamed down() and frame() to fl_down() and

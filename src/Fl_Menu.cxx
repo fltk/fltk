@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.7 2002/02/20 13:02:27 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.8 2002/03/25 22:11:52 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -221,7 +221,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   } else {
     box(FL_UP_BOX);
   }
-  color(button ? button->color() : FL_GRAY);
+  color(button && !Fl::scheme() ? button->color() : FL_GRAY);
   selected = -1;
   {int j = 0;
   if (m) for (const Fl_Menu_Item* m1=m; ; m1 = m1->next(), j++) {
@@ -316,7 +316,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int erase) {
   int h = itemheight - LEADING;
 
   if (erase && n != selected) {
-    fl_color(button ? button->color() : FL_GRAY);
+    fl_color(button && !Fl::scheme() ? button->color() : FL_GRAY);
     fl_rectf(x+1, y-(LEADING-2)/2, w-2, h+(LEADING-2));
   }
 
@@ -756,5 +756,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.7 2002/02/20 13:02:27 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.8 2002/03/25 22:11:52 easysw Exp $".
 //
