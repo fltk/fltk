@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.3 2000/06/05 21:21:10 mike Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.4 2000/10/17 07:03:41 spitzak Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -74,8 +74,10 @@ static int CALLBACK enumcb(ENUMLOGFONT FAR *lpelf,
 }
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
-  if (fl_free_font == FL_FREE_FONT) // if not already been called
+  if (fl_free_font == FL_FREE_FONT) {// if not already been called
+    if (!fl_gc) fl_GetDC(0);
     EnumFontFamilies(fl_gc, NULL, (FONTENUMPROC)enumcb, xstarname != 0);
+  }
   return (Fl_Font)fl_free_font;
 }
 
@@ -88,5 +90,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.3 2000/06/05 21:21:10 mike Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.4 2000/10/17 07:03:41 spitzak Exp $".
 //
