@@ -1,4 +1,4 @@
-CHANGES IN FLTK 1.1.0
+CHANGES IN FLTK 1.1.0rc5
 
 	- Removed extra 3 pixel border around input fields.
 	- No longer quote characters from 0x80 to 0x9f in input
