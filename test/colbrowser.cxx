@@ -1,5 +1,5 @@
 //
-// "$Id: colbrowser.cxx,v 1.3 1998/10/21 14:21:19 mike Exp $"
+// "$Id: colbrowser.cxx,v 1.4 1998/12/07 13:41:56 mike Exp $"
 //
 // Forms test program for the Fast Light Tool Kit (FLTK).
 //
@@ -153,7 +153,6 @@ load_browser(char *fname)
     int r, g, b,  lr  = -1 , lg = -1, lb = -1;
     char name[256], buf[256];
 #ifdef __EMX__
-    extern char *__XOS2RedirRoot(const char*);
     if (!(fp = fopen(__XOS2RedirRoot(fname), "r")))
 #else
     if (!(fp = fopen(fname, "r")))
@@ -341,5 +340,5 @@ create_form_cl(void)
 }
 
 //
-// End of "$Id: colbrowser.cxx,v 1.3 1998/10/21 14:21:19 mike Exp $".
+// End of "$Id: colbrowser.cxx,v 1.4 1998/12/07 13:41:56 mike Exp $".
 //
