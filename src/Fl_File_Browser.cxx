@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.17 2002/06/13 19:35:59 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -582,8 +582,12 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
     for (i = 0, num_dirs = 0; i < num_files; i ++)
     {
+#if 0
       if (strcmp(files[i]->d_name, ".") != 0 &&
           strcmp(files[i]->d_name, "..") != 0)
+#else
+      if (strcmp(files[i]->d_name, ".") != 0)
+#endif // 0
       {
 	snprintf(filename, sizeof(filename), "%s/%s", directory_,
 	         files[i]->d_name);
@@ -639,5 +643,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.17 2002/06/13 19:35:59 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $".
 //

@@ -45,6 +45,10 @@ dialogs:
 	<TD>"All Files (*)"</TD>
 </TR>
 <TR>
+	<TD><TT>custom_filter_label</TT></TD>
+	<TD>"Custom Filter"</TD>
+</TR>
+<TR>
 	<TD><TT>existing_file_label</TT></TD>
 	<TD>"Please choose an existing file!"</TD>
 </TR>
@@ -92,6 +96,7 @@ used when loading the contents of a directory.
 	<LI><A HREF="#Fl_File_Chooser.count">count</A>
 	<LI><A HREF="#Fl_File_Chooser.directory">directory</A>
 	<LI><A HREF="#Fl_File_Chooser.filter">filter</A>
+	<LI><A HREF="#Fl_File_Chooser.filter_value">filter_value</A>
 	<LI><A HREF="#Fl_File_Chooser.hide">hide</A>
 	<LI><A HREF="#Fl_File_Chooser.iconsize">iconsize</A>
 	<LI><A HREF="#Fl_File_Chooser.label">label</A>
@@ -172,6 +177,11 @@ const char *directory()</A></H4>
 const char *filter()</A></H4>
 
 <P>Sets or gets the current filename filter pattern.
+
+<H4><A NAME="Fl_File_Chooser.filter_value">void filter_value(int f)<BR>
+int filter_value()</A></H4>
+
+<P>Sets or gets the current filename filter selection.
 
 <H4><A NAME="Fl_File_Chooser.hide">void hide()</A></H4>
 

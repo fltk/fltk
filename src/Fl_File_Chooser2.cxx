@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.17 2002/06/13 19:36:00 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -78,6 +78,7 @@ Fl_Preferences	Fl_File_Chooser::prefs_(Fl_Preferences::USER, "fltk.org", "filech
 
 const char	*Fl_File_Chooser::add_favorites_label = "Add to Favorites";
 const char	*Fl_File_Chooser::all_files_label = "All Files (*)";
+const char	*Fl_File_Chooser::custom_filter_label = "Custom Filter";
 const char	*Fl_File_Chooser::existing_file_label = "Please choose an existing file!";
 const char	*Fl_File_Chooser::favorites_label = "Favorites";
 const char	*Fl_File_Chooser::filename_label = "Filename:";
@@ -171,12 +172,27 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
     else
       strlcpy(directory_, d, sizeof(directory_));
 
-    // Strip any trailing slash and/or period...
+    // Strip any trailing slash...
     dirptr = directory_ + strlen(directory_) - 1;
-    if (*dirptr == '.')
-      *dirptr-- = '\0';
     if ((*dirptr == '/' || *dirptr == '\\') && dirptr > directory_)
       *dirptr = '\0';
+
+    // See if we have a trailing .. or . in the filename...
+    dirptr = directory_ + strlen(directory_) - 3;
+    if (dirptr >= directory_ && strcmp(dirptr, "/..") == 0) {
+      // Yes, we have "..", so strip the trailing path...
+      *dirptr = '\0';
+      while (dirptr > directory_) {
+        if (*dirptr == '/') break;
+	dirptr --;
+      }
+
+      if (dirptr >= directory_ && *dirptr == '/')
+        *dirptr = '\0';
+    } else if ((dirptr + 1) >= directory_ && strcmp(dirptr + 1, "/.") == 0) {
+      // Strip trailing "."...
+      dirptr[1] = '\0';
+    }
   }
   else
     directory_[0] = '\0';
@@ -352,7 +368,7 @@ Fl_File_Chooser::favoritesCB(Fl_Widget *w)
 
 //
 // 'Fl_File_Chooser::fileListCB()' - Handle clicks (and double-clicks) in the
-//                                    Fl_File_Browser.
+//                                   Fl_File_Browser.
 //
 
 void
@@ -366,13 +382,13 @@ Fl_File_Chooser::fileListCB()
   if (!filename)
     return;
 
-  if (directory_[0] != '\0')
+  if (directory_[0] != '\0') {
     snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-  else
+  } else {
     strlcpy(pathname, filename, sizeof(pathname));
+  }
 
-  if (Fl::event_clicks())
-  {
+  if (Fl::event_clicks()) {
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
         fl_filename_isdir(pathname))
@@ -469,13 +485,12 @@ Fl_File_Chooser::fileNameCB()
     // Enter pressed - select or change directory...
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
-        fl_filename_isdir(pathname))
+        fl_filename_isdir(pathname)) {
 #else
-    if (fl_filename_isdir(pathname))
+    if (fl_filename_isdir(pathname)) {
 #endif /* WIN32 || __EMX__ */
       directory(pathname);
-    else if ((type_ & CREATE) || access(pathname, 0) == 0)
-    {
+    } else if ((type_ & CREATE) || access(pathname, 0) == 0) {
       // New file or file exists...  If we are in multiple selection mode,
       // switch to single selection mode...
       if (type_ & MULTI)
@@ -631,6 +646,7 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 		*start,				// Start of pattern
 		*end;				// End of pattern
   int		allfiles;			// Do we have a "*" pattern?
+  char		temp[1024];			// Temporary pattern string
 
 
   // Make sure we have a pattern...
@@ -641,8 +657,6 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 
   // Separate the pattern string as necessary...
   showChoice->clear();
-  showChoice->add("bla");
-  showChoice->clear();
 
   for (start = copyp, allfiles = 0; start && *start; start = end) {
     end = strchr(start, '\t');
@@ -652,7 +666,8 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
       showChoice->add(all_files_label);
       allfiles = 1;
     } else {
-      showChoice->add(start);
+      quote_pathname(temp, start, sizeof(temp));
+      showChoice->add(temp);
       if (strstr(start, "(*)") != NULL) allfiles = 1;
     }
   }
@@ -660,6 +675,8 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
   free(copyp);
 
   if (!allfiles) showChoice->add(all_files_label);
+
+  showChoice->add(custom_filter_label);
 
   showChoice->value(0);
   showChoiceCB();
@@ -782,11 +799,20 @@ Fl_File_Chooser::showChoiceCB()
   const char	*item,			// Selected item
 		*patstart;		// Start of pattern
   char		*patend;		// End of pattern
+  char		temp[1024];		// Temporary string for pattern
 
 
   item = showChoice->text(showChoice->value());
 
-  if ((patstart = strchr(item, '(')) == NULL) {
+  if (strcmp(item, custom_filter_label) == 0) {
+    if ((item = fl_input(custom_filter_label, pattern_)) != NULL) {
+      strlcpy(pattern_, item, sizeof(pattern_));
+
+      quote_pathname(temp, item, sizeof(temp));
+      showChoice->add(temp);
+      showChoice->value(showChoice->size() - 2);
+    }
+  } else if ((patstart = strchr(item, '(')) == NULL) {
     strlcpy(pattern_, item, sizeof(pattern_));
   } else {
     strlcpy(pattern_, patstart + 1, sizeof(pattern_));
@@ -1108,5 +1134,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.17 2002/06/13 19:36:00 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $".
 //

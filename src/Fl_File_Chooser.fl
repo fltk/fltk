@@ -173,8 +173,7 @@ value(d);
 type(t);
 int e;
 prefs_.get("preview", e, 1);
-preview(e);} {selected
-    }
+preview(e);} {}
   }
   Function {~Fl_File_Chooser()} {open
   } {
@@ -207,6 +206,15 @@ data_     = d;} {}
   Function {filter()} {return_type {const char *}
   } {
     code {return (fileList->filter());} {}
+  }
+  Function {filter_value()} {return_type int
+  } {
+    code {return showChoice->value();} {}
+  }
+  Function {filter_value(int f)} {return_type void
+  } {
+    code {showChoice->value(f);
+showChoiceCB();} {}
   }
   Function {hide()} {return_type void
   } {
@@ -299,6 +307,8 @@ else
   decl {static const char *add_favorites_label;} {public
   }
   decl {static const char *all_files_label;} {public
+  }
+  decl {static const char *custom_filter_label;} {selected public
   }
   decl {static const char *existing_file_label;} {public
   }

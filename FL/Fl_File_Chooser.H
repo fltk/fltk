@@ -101,6 +101,8 @@ public:
   char * directory();
   void filter(const char *p);
   const char * filter();
+  int filter_value();
+  void filter_value(int f);
   void hide();
   void iconsize(uchar s);
   uchar iconsize();
@@ -124,6 +126,7 @@ public:
   int visible();
   static const char *add_favorites_label;
   static const char *all_files_label;
+  static const char *custom_filter_label;
   static const char *existing_file_label;
   static const char *favorites_label;
   static const char *filename_label;

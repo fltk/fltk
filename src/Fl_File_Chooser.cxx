@@ -283,6 +283,15 @@ const char * Fl_File_Chooser::filter() {
   return (fileList->filter());
 }
 
+int Fl_File_Chooser::filter_value() {
+  return showChoice->value();
+}
+
+void Fl_File_Chooser::filter_value(int f) {
+  showChoice->value(f);
+showChoiceCB();
+}
+
 void Fl_File_Chooser::hide() {
   window->hide();
 }
