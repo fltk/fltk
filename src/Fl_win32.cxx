@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.21 1999/01/06 21:20:01 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.22 1999/01/07 16:43:04 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -665,16 +665,11 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     }
 
     parent = 0;
-    if (w->non_modal() && !fl_disable_transient_for) {
+    if (w->non_modal() && Fl_X::first && !fl_disable_transient_for) {
       // find some other window to be "transient for":
-      for (Fl_X* y = Fl_X::first; y; y = y->next) {
-	Fl_Window* w = y->w;
-	while (w->parent()) w = w->window();
-	if (!w->non_modal()) {
-	  parent = fl_xid(w);
-	  break;
-	}
-      }
+      Fl_Window* w = Fl_X::first->w;
+      while (w->parent()) w = w->window();
+      parent = fl_xid(w);
     }
   }
 
@@ -875,5 +870,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.21 1999/01/06 21:20:01 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.22 1999/01/07 16:43:04 mike Exp $".
 //
