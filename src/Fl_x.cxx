@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.5 1999/05/01 15:08:22 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.6 1999/05/06 06:20:47 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -156,6 +156,7 @@ int fl_ready() {
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
+extern Fl_Window* fl_xmousewin;
 #endif
 static void do_queued_events() {
  while (XEventsQueued(fl_display,QueuedAfterReading)) {
@@ -164,10 +165,9 @@ static void do_queued_events() {
     fl_handle(xevent);
   }
 #if CONSOLIDATE_MOTION
-  if (send_motion) {
-    Fl_Window* w = send_motion;
+  if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
-    Fl::handle(FL_MOVE, w);
+    Fl::handle(FL_MOVE, fl_xmousewin);
   }
 #endif
 }
@@ -420,7 +420,7 @@ int fl_handle(const XEvent& xevent)
   case MotionNotify:
     set_event_xy();
 #if CONSOLIDATE_MOTION
-    send_motion = window;
+    send_motion = fl_xmousewin = window;
     return 0;
 #else
     event = FL_MOVE;
@@ -741,6 +741,7 @@ void Fl_X::sendxjunk() {
   }
 
   XSizeHints hints;
+  // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
   hints.min_width = w->minw;
   hints.min_height = w->minh;
   hints.max_width = w->maxw;
@@ -865,5 +866,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.5 1999/05/01 15:08:22 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.6 1999/05/06 06:20:47 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.4 1999/05/06 01:17:49 carl Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.5 1999/05/06 06:20:46 bill Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -112,7 +112,9 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   value_ = menu_ = (Fl_Menu_Item*)m;
 }
 
-/* This version is broken
+#if 1
+// this version is ok with new Fl_Menu_add code with fl_menu_array_owner:
+
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
   int n = m->size();
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
@@ -125,9 +127,11 @@ void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
     newMenu++;
   }
 }
-*/
 
-// This is Guillaume Nodet's fixed version
+#else
+// This is Guillaume Nodet's fixed version for the older Fl_Menu_add
+// that enlarged the array at powers of 2:
+
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
   int i, s = m->size(), n=s;
   for (i=0; n; n>>=1, i++);
@@ -143,6 +147,7 @@ void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
     newMenu++;
   }
 }
+#endif
 
 Fl_Menu_::~Fl_Menu_() {
   clear();
@@ -167,5 +172,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.4 1999/05/06 01:17:49 carl Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.5 1999/05/06 06:20:46 bill Exp $".
 //
