@@ -56,9 +56,12 @@ pack
 pixmap
 pixmap_browser
 preferences
+preferences.cxx
+preferences.h
 radio
 radio.cxx
 radio.h
+resize
 resize.cxx
 resize.h
 resizebox
