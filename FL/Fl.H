@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.4 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.5 2001/11/28 18:00:16 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,7 @@ class Fl {
 
 public: // should be private!
 
+  static FL_EXPORT int e_number;
   static FL_EXPORT int e_x,e_y,e_x_root,e_y_root;
   static FL_EXPORT int e_dx, e_dy;
   static FL_EXPORT int e_state;
@@ -67,6 +68,9 @@ public: // should be private!
   static FL_EXPORT void (*idle)();
 
 public:
+
+  // API version number
+  static double version();
 
   // argument parsers:
   static FL_EXPORT int arg(int, char**, int&);
@@ -119,8 +123,9 @@ public:
   static FL_EXPORT void grab(Fl_Window*);
 
   // event information:
-  static FL_EXPORT int event_x()		{return e_x;}
-  static FL_EXPORT int event_y()		{return e_y;}
+  static FL_EXPORT int event()		{return e_number;}
+  static FL_EXPORT int event_x()	{return e_x;}
+  static FL_EXPORT int event_y()	{return e_y;}
   static FL_EXPORT int event_x_root()	{return e_x_root;}
   static FL_EXPORT int event_y_root()	{return e_y_root;}
   static FL_EXPORT void get_mouse(int &,int &);
@@ -220,5 +225,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.4 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.5 2001/11/28 18:00:16 easysw Exp $".
 //

@@ -95,7 +95,6 @@ excellent NEdit text editor engine - see
 	<H4><A NAME="Fl_Text_Buffer.skip_lines">skip_lines</A></H4>
 	<H4><A NAME="Fl_Text_Buffer.substitute_null_characters">substitute_null_characters</A></H4>
 	<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
-	<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
 	<H4><A NAME="Fl_Text_Buffer.text_in_rectangle">text_in_rectangle</A></H4>
 	<H4><A NAME="Fl_Text_Buffer.text_range">text_range</A></H4>
 	<H4><A NAME="Fl_Text_Buffer.text">text</A></H4>
@@ -107,257 +106,159 @@ excellent NEdit text editor engine - see
 
 </UL>
 
-<H4><A NAME="Fl_Text_Buffer.Fl_Text_Buffer">Fl_Text_Buffer</A></H4>
+<H4><A NAME="Fl_Text_Buffer.Fl_Text_Buffer">Fl_Text_Buffer(int requestedSize = 0);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.~Fl_Text_Buffer">~Fl_Text_Buffer</A></H4>
+<H4><A NAME="Fl_Text_Buffer.~Fl_Text_Buffer">~Fl_Text_Buffer();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.add_modify_callback">add_modify_callback</A></H4>
+<H4><A NAME="Fl_Text_Buffer.add_modify_callback">void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.append">append</A></H4>
+<H4><A NAME="Fl_Text_Buffer.append">void append(const char* text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.appendfile">appendfile</A></H4>
+<H4><A NAME="Fl_Text_Buffer.appendfile">int appendfile(const char *file, int buflen = 128*1024);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.call_modify_callbacks">call_modify_callbacks</A></H4>
+<H4><A NAME="Fl_Text_Buffer.call_modify_callbacks">void call_modify_callbacks();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.character">character</A></H4>
+<H4><A NAME="Fl_Text_Buffer.character">char character(int pos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.character_width">character_width</A></H4>
+<H4><A NAME="Fl_Text_Buffer.character_width">static int character_width(char c, int indent, int tabDist, char nullSubsChar);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.clear_rectangular">clear_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.clear_rectangular">void clear_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.copy">copy</A></H4>
+<H4><A NAME="Fl_Text_Buffer.copy">void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.count_displayed_characters">count_displayed_characters</A></H4>
+<H4><A NAME="Fl_Text_Buffer.count_displayed_characters">int count_displayed_characters(int lineStartPos, int targetPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.count_lines">count_lines</A></H4>
+<H4><A NAME="Fl_Text_Buffer.count_lines">int count_lines(int startPos, int endPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.expand_character">expand_character</A></H4>
+<H4><A NAME="Fl_Text_Buffer.expand_character">int expand_character(int pos, int indent, char *outStr);<BR>
+static int expand_character(char c, int indent, char* outStr, int tabDist,
+char nullSubsChar);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.findchar_backward">findchar_backward</A></H4>
+<H4><A NAME="Fl_Text_Buffer.findchar_backward">int findchar_backward(int startPos, char searchChar, int* foundPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.findchar_forward">findchar_forward</A></H4>
+<H4><A NAME="Fl_Text_Buffer.findchar_forward">int findchar_forward(int startPos, char searchChar, int* foundPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.findchars_backward">findchars_backward</A></H4>
+<H4><A NAME="Fl_Text_Buffer.findchars_backward">int findchars_backward(int startPos, const char* searchChars, int* foundPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.findchars_forward">findchars_forward</A></H4>
+<H4><A NAME="Fl_Text_Buffer.findchars_forward">int findchars_forward(int startPos, const char* searchChars, int* foundPos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.highlight">highlight</A></H4>
+<H4><A NAME="Fl_Text_Buffer.highlight">void highlight(int start, int end);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.highlight_position">highlight_position</A></H4>
+<H4><A NAME="Fl_Text_Buffer.highlight_position">int highlight_position(int* start, int* end, int* isRect, int* rectStart,
+int* rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.highlight_rectangular">highlight_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.highlight_rectangular">void highlight_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.highlight_selection">highlight_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.highlight_selection">Fl_Text_Selection* highlight_selection();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.highlight_text">highlight_text</A></H4>
+<H4><A NAME="Fl_Text_Buffer.highlight_text">const char* highlight_text();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.insert_column">insert_column</A></H4>
+<H4><A NAME="Fl_Text_Buffer.insert_column">void insert_column(int column, int startPos, const char* text,
+int* charsInserted, int* charsDeleted);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.insertfile">insertfile</A></H4>
+<H4><A NAME="Fl_Text_Buffer.insertfile">int insertfile(const char *file, int pos, int buflen = 128*1024);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.insert">insert</A></H4>
+<H4><A NAME="Fl_Text_Buffer.insert">void insert(int pos, const char* text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.length">length</A></H4>
+<H4><A NAME="Fl_Text_Buffer.length">int length();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.line_end">line_end</A></H4>
+<H4><A NAME="Fl_Text_Buffer.line_end">int line_end(int pos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.line_start">line_start</A></H4>
+<H4><A NAME="Fl_Text_Buffer.line_start">int line_start(int pos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.line_text">line_text</A></H4>
+<H4><A NAME="Fl_Text_Buffer.line_text">const char* line_text(int pos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.loadfile">loadfile</A></H4>
+<H4><A NAME="Fl_Text_Buffer.loadfile">int loadfile(const char *file, int buflen = 128*1024);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.null_substitution_character">null_substitution_character</A></H4>
+<H4><A NAME="Fl_Text_Buffer.null_substitution_character">char null_substitution_character();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.outputfile">outputfile</A></H4>
+<H4><A NAME="Fl_Text_Buffer.outputfile">int outputfile(const char *file, int start, int end, int buflen = 128*1024);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.overlay_rectangular">overlay_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.overlay_rectangular">void overlay_rectangular(int startPos, int rectStart, int rectEnd,
+const char* text, int* charsInserted, int* charsDeleted);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.primary_selection">primary_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.primary_selection">Fl_Text_Selection* primary_selection();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.remove_modify_callback">remove_modify_callback</A></H4>
+<H4><A NAME="Fl_Text_Buffer.remove_modify_callback">void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.remove_rectangular">remove_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.remove_rectangular">void remove_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.remove">remove</A></H4>
+<H4><A NAME="Fl_Text_Buffer.remove">void remove(int start, int end);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.remove_secondary_selection">remove_secondary_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.remove_secondary_selection">void remove_secondary_selection();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.remove_selection">remove_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.remove_selection">void remove_selection();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.replace_rectangular">replace_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.replace_rectangular">void replace_rectangular(int start, int end, int rectStart, int rectEnd,
+const char* text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.replace">replace</A></H4>
+<H4><A NAME="Fl_Text_Buffer.replace">void replace(int start, int end, const char *text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.replace_secondary_selection">replace_secondary_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.replace_secondary_selection">void replace_secondary_selection(const char* text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.replace_selection">replace_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.replace_selection">void replace_selection(const char* text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.rewind_lines">rewind_lines</A></H4>
+<H4><A NAME="Fl_Text_Buffer.rewind_lines">int rewind_lines(int startPos, int nLines);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.savefile">savefile</A></H4>
+<H4><A NAME="Fl_Text_Buffer.savefile">int savefile(const char *file, int buflen = 128*1024);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.search_backward">search_backward</A></H4>
+<H4><A NAME="Fl_Text_Buffer.search_backward">int search_backward(int startPos, const char* searchString, int* foundPos,
+int matchCase = 0);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.search_forward">search_forward</A></H4>
+<H4><A NAME="Fl_Text_Buffer.search_forward">int search_forward(int startPos, const char* searchString, int* foundPos,
+int matchCase = 0);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.secondary_selection_position">secondary_selection_position</A></H4>
+<H4><A NAME="Fl_Text_Buffer.secondary_selection_position">int secondary_selection_position(int* start, int* end, int* isRect,
+int* rectStart, int* rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.secondary_selection">secondary_selection</A></H4>
+<H4><A NAME="Fl_Text_Buffer.secondary_selection">Fl_Text_Selection* secondary_selection();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.secondary_selection_text">secondary_selection_text</A></H4>
+<H4><A NAME="Fl_Text_Buffer.secondary_selection_text">const char* secondary_selection_text();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.secondary_select_rectangular">secondary_select_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.secondary_select_rectangular">void secondary_select_rectangular(int start, int end, int rectStart,
+int rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.secondary_select">secondary_select</A></H4>
+<H4><A NAME="Fl_Text_Buffer.secondary_select">void secondary_select(int start, int end);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.secondary_unselect">secondary_unselect</A></H4>
+<H4><A NAME="Fl_Text_Buffer.secondary_unselect">void secondary_unselect();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.selected">selected</A></H4>
+<H4><A NAME="Fl_Text_Buffer.selected">int selected();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.selection_position">selection_position</A></H4>
+<H4><A NAME="Fl_Text_Buffer.selection_position">int selection_position(int* start, int* end);<BR>
+int selection_position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.selection_text">selection_text</A></H4>
+<H4><A NAME="Fl_Text_Buffer.selection_text">const char* selection_text();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.select_rectangular">select_rectangular</A></H4>
+<H4><A NAME="Fl_Text_Buffer.select_rectangular">void select_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.select">select</A></H4>
+<H4><A NAME="Fl_Text_Buffer.select">void select(int start, int end);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.skip_displayed_characters">skip_displayed_characters</A></H4>
+<H4><A NAME="Fl_Text_Buffer.skip_displayed_characters">int skip_displayed_characters(int lineStartPos, int nChars);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.skip_lines">skip_lines</A></H4>
+<H4><A NAME="Fl_Text_Buffer.skip_lines">int skip_lines(int startPos, int nLines);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.substitute_null_characters">substitute_null_characters</A></H4>
+<H4><A NAME="Fl_Text_Buffer.substitute_null_characters">int substitute_null_characters(char* string, int length);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
+<H4><A NAME="Fl_Text_Buffer.tab_distance">int tab_distance();<BR>
+void tab_distance(int tabDist);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
+<H4><A NAME="Fl_Text_Buffer.text_in_rectangle">const char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.text_in_rectangle">text_in_rectangle</A></H4>
+<H4><A NAME="Fl_Text_Buffer.text_range">const char* text_range(int start, int end);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.text_range">text_range</A></H4>
+<H4><A NAME="Fl_Text_Buffer.text">const char* text();<BR>
+void text(const char* text);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.text">text</A></H4>
+<H4><A NAME="Fl_Text_Buffer.unhighlight">void unhighlight();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.unhighlight">unhighlight</A></H4>
+<H4><A NAME="Fl_Text_Buffer.unselect">void unselect();</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.unselect">unselect</A></H4>
+<H4><A NAME="Fl_Text_Buffer.unsubstitute_null_characters">void unsubstitute_null_characters(char* string);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.unsubstitute_null_characters">unsubstitute_null_characters</A></H4>
+<H4><A NAME="Fl_Text_Buffer.word_end">int word_end(int pos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.word_end">word_end</A></H4>
+<H4><A NAME="Fl_Text_Buffer.word_start">int word_start(int pos);</A></H4>
 
-<H4><A NAME="Fl_Text_Buffer.word_start">word_start</A></H4>
-
-
-
-    Fl_Text_Buffer(int requestedSize = 0);
-    ~Fl_Text_Buffer();
-
-    int length() { return mLength; }
-    const char* text();
-    void text(const char* text);
-    const char* text_range(int start, int end);
-    char character(int pos);
-    const char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
-    void insert(int pos, const char* text);
-    void append(const char* text) { insert(length(), text); }
-    void remove(int start, int end);
-    void replace(int start, int end, const char *text);
-    void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
-    int insertfile(const char *file, int pos, int buflen = 128*1024);
-    int appendfile(const char *file, int buflen = 128*1024)
-      { return insertfile(file, length(), buflen); }
-    int loadfile(const char *file, int buflen = 128*1024)
-      { select(0, length()); remove_selection(); return appendfile(file, buflen); }
-    int outputfile(const char *file, int start, int end, int buflen = 128*1024);
-    int savefile(const char *file, int buflen = 128*1024)
-      { return outputfile(file, 0, length(), buflen); }
-
-    void insert_column(int column, int startPos, const char* text,
-                       int* charsInserted, int* charsDeleted);
-
-    void replace_rectangular(int start, int end, int rectStart, int rectEnd,
-                             const char* text);
-
-    void overlay_rectangular(int startPos, int rectStart, int rectEnd,
-                             const char* text, int* charsInserted,
-                             int* charsDeleted);
-
-    void remove_rectangular(int start, int end, int rectStart, int rectEnd);
-    void clear_rectangular(int start, int end, int rectStart, int rectEnd);
-    int tab_distance() { return mTabDist; }
-    void tab_distance(int tabDist);
-    void select(int start, int end);
-    int selected() { return mPrimary.selected(); }
-    void unselect();
-    void select_rectangular(int start, int end, int rectStart, int rectEnd);
-    int selection_position(int* start, int* end);
-
-    int selection_position(int* start, int* end, int* isRect, int* rectStart,
-                           int* rectEnd);
-
-    const char* selection_text();
-    void remove_selection();
-    void replace_selection(const char* text);
-    void secondary_select(int start, int end);
-    void secondary_unselect();
-
-    void secondary_select_rectangular(int start, int end, int rectStart,
-                                      int rectEnd);
-
-    int secondary_selection_position(int* start, int* end, int* isRect,
-                                     int* rectStart, int* rectEnd);
-
-    const char* secondary_selection_text();
-    void remove_secondary_selection();
-    void replace_secondary_selection(const char* text);
-    void highlight(int start, int end);
-    void unhighlight();
-    void highlight_rectangular(int start, int end, int rectStart, int rectEnd);
-
-    int highlight_position(int* start, int* end, int* isRect, int* rectStart,
-                           int* rectEnd);
-
-    const char* highlight_text();
-    void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
-    void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
-
-    void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
-
-    const char* line_text(int pos);
-    int line_start(int pos);
-    int line_end(int pos);
-    int word_start(int pos);
-    int word_end(int pos);
-    int expand_character(int pos, int indent, char *outStr);
-
-    static int expand_character(char c, int indent, char* outStr, int tabDist,
-                                char nullSubsChar);
-
-    static int character_width(char c, int indent, int tabDist, char nullSubsChar);
-    int count_displayed_characters(int lineStartPos, int targetPos);
-    int skip_displayed_characters(int lineStartPos, int nChars);
-    int count_lines(int startPos, int endPos);
-    int skip_lines(int startPos, int nLines);
-    int rewind_lines(int startPos, int nLines);
-    int findchar_forward(int startPos, char searchChar, int* foundPos);
-    int findchar_backward(int startPos, char searchChar, int* foundPos);
-    int findchars_forward(int startPos, const char* searchChars, int* foundPos);
-    int findchars_backward(int startPos, const char* searchChars, int* foundPos);
-
-    int search_forward(int startPos, const char* searchString, int* foundPos,
-                       int matchCase = 0);
-
-    int search_backward(int startPos, const char* searchString, int* foundPos,
-                        int matchCase = 0);
-
-    int substitute_null_characters(char* string, int length);
-    void unsubstitute_null_characters(char* string);
-    char null_substitution_character() { return mNullSubsChar; }
-    Fl_Text_Selection* primary_selection() { return &mPrimary; }
-    Fl_Text_Selection* secondary_selection() { return &mSecondary; }
-    Fl_Text_Selection* highlight_selection() { return &mHighlight; }
 
 </BODY>
 </HTML>

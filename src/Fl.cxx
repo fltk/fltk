@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.8 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.9 2001/11/28 18:00:17 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,6 +41,7 @@ Fl_Widget	*Fl::belowmouse_,
 		*Fl::focus_,
 		*Fl::selection_owner_;
 int		Fl::damage_,
+		Fl::e_number,
 		Fl::e_x,
 		Fl::e_y,
 		Fl::e_x_root,
@@ -54,6 +55,16 @@ int		Fl::damage_,
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
 int		Fl::visible_focus_ = 1;
+
+
+//
+// 'Fl::version()' - Return the API version number...
+//
+
+double
+Fl::version() {
+  return FL_VERSION;
+}
 
 
 //
@@ -506,6 +517,8 @@ int Fl::handle(int event, Fl_Window* window)
 {
   Fl_Widget* w = window;
 
+  e_number = event;
+
   switch (event) {
 
   case FL_CLOSE:
@@ -536,7 +549,7 @@ int Fl::handle(int event, Fl_Window* window)
     fl_xmousewin = window; // this should already be set, but just in case.
     if (pushed()) {
       w = pushed();
-      event = FL_DRAG;
+      e_number = event = FL_DRAG;
     } else if (modal() && w != modal()) {
       w = 0;
     }
@@ -577,7 +590,7 @@ int Fl::handle(int event, Fl_Window* window)
     {char* c = (char*)event_text(); // cast away const
     if (!isalpha(*c)) return 0;
     *c = isupper(*c) ? tolower(*c) : toupper(*c);}
-    event = FL_SHORTCUT;
+    e_number = event = FL_SHORTCUT;
 
   case FL_SHORTCUT:
     Fl_Tooltip::enter((Fl_Widget*)0);
@@ -821,5 +834,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.8 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.9 2001/11/28 18:00:17 easysw Exp $".
 //

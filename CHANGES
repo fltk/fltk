@@ -3,6 +3,10 @@ CHANGES IN FLTK 1.1.0b6
 	- Documentation updates...
 	- The configure script now works within the CygWin
 	  environment.
+	- Added new Fl::version() method to get the current
+	  FLTK library version (for shared libraries/DLLs)
+	- Added new Fl::event() method to get the current
+	  event that is being processed.
 	- Added new fl_beep() function to do audible
 	  notifications of various types.
 	- Added new Fl_GIF_Image, Fl_JPEG_Image, Fl_PNG_Image,
