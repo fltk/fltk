@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.2 2000/06/05 21:21:07 mike Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.3 2000/06/27 23:07:51 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -59,6 +59,7 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include "Fl_XColor.H"
+#include <string.h>
 
 static XImage i;	// template used to pass info to X
 static int bytes_per_pixel;
@@ -97,8 +98,12 @@ static void improve(uchar *p, int& e, int r, int g, int b, int i) {
 }
 
 static int filled_color_cube;
+static char alloc_color[256]; // 1 = allocated, 0 = not allocated
+
 static void fill_color_cube() {
   filled_color_cube = 1;
+
+#if 0 // Delay color filling to reduce colormap usage...
   int i;
   // allocate all the colors in the fltk color cube and gray ramp:
   // allocate widely seperated values first so that the bad ones are
@@ -111,6 +116,10 @@ static void fill_color_cube() {
     fl_xpixel((Fl_Color)(i+FL_GRAY_RAMP));
     i = (i+7)%FL_NUM_GRAY; if (!i) break;
   }
+#else
+  memset(alloc_color, 0, sizeof(alloc_color));
+#endif /* 0 */
+
   // fill in the 16x16x16 cube:
   uchar *p = cube;
   for (int r = 0; r<16; r++) {
@@ -141,6 +150,7 @@ static void fill_color_cube() {
 static void color8_converter(const uchar *from, uchar *to, int w, int delta) {
   if (!filled_color_cube) fill_color_cube();
   int r=ri, g=gi, b=bi;
+  int i;
   int d, td;
   if (dir) {
     dir = 0;
@@ -157,10 +167,16 @@ static void color8_converter(const uchar *from, uchar *to, int w, int delta) {
     r += from[0]; if (r < 0) r = 0; else if (r>255) r = 255;
     g += from[1]; if (g < 0) g = 0; else if (g>255) g = 255;
     b += from[2]; if (b < 0) b = 0; else if (b>255) b = 255;
-    Fl_XColor* x = fl_xmap[0] + cube[((r<<4)&0xf00)+(g&0xf0)+(b>>4)];
+    i = cube[((r<<4)&0xf00)+(g&0xf0)+(b>>4)];
+    Fl_XColor* x = fl_xmap[0] + i;
     r -= x->r;
     g -= x->g;
     b -= x->b;
+    if (!alloc_color[i])
+    {
+      fl_xpixel((Fl_Color)i);
+      alloc_color[i] = 1;
+    }
     *to = uchar(x->pixel);
   }
   ri = r; gi = g; bi = b;
@@ -169,6 +185,7 @@ static void color8_converter(const uchar *from, uchar *to, int w, int delta) {
 static void mono8_converter(const uchar *from, uchar *to, int w, int delta) {
   if (!filled_color_cube) fill_color_cube();
   int r=ri;
+  int i;
   int d, td;
   if (dir) {
     dir = 0;
@@ -183,8 +200,14 @@ static void mono8_converter(const uchar *from, uchar *to, int w, int delta) {
   }
   for (; w--; from += d, to += td) {
     r += from[0]; if (r < 0) r = 0; else if (r>255) r = 255;
-    Fl_XColor* x = fl_xmap[0] + cube[(r>>4)*0x111];
+    i = cube[(r>>4)*0x111];
+    Fl_XColor* x = fl_xmap[0] + i;
     r -= x->g;
+    if (!alloc_color[i])
+    {
+      fl_xpixel((Fl_Color)i);
+      alloc_color[i] = 1;
+    }
     *to = uchar(x->pixel);
   }
   ri = r;
@@ -627,5 +650,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.2 2000/06/05 21:21:07 mike Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.3 2000/06/27 23:07:51 easysw Exp $".
 //
