@@ -311,6 +311,10 @@ SOURCE=..\src\Fl_Light_Button.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_line_style.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Menu.cxx
 # End Source File
 # Begin Source File

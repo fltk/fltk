@@ -27,7 +27,7 @@ void fl_line_style(int style, int width, char* dashes) {
   }
   HPEN oldpen = (HPEN)SelectObject(fl_gc, newpen);
   DeleteObject(oldpen);
-  fl_current_xmap.pen = newpen;
+  fl_current_xmap->pen = newpen;
 #else
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the WIN32 dash patterns on X
