@@ -1,5 +1,5 @@
 //
-// "$Id: glpuzzle.cxx,v 1.8.2.4 2001/03/14 17:35:47 spitzak Exp $"
+// "$Id: glpuzzle.cxx,v 1.8.2.5 2001/04/30 17:17:01 easysw Exp $"
 //
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
@@ -28,11 +28,11 @@
 
 // this block added for fltk's distribtion so it will compile w/o OpenGL:
 #include <config.h>
-#if !HAVE_GL
+#if !HAVE_GL || !HAVE_GL_GLU_H
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
 int main(int, char**) {
-  fl_alert("This demo does not work without GL");
+  fl_alert("This demo does not work without GL and GLU");
   return 1;
 }
 #else
@@ -1480,5 +1480,5 @@ main(int argc, char **argv)
 #endif // added for fltk's distribution
 
 //
-// End of "$Id: glpuzzle.cxx,v 1.8.2.4 2001/03/14 17:35:47 spitzak Exp $".
+// End of "$Id: glpuzzle.cxx,v 1.8.2.5 2001/04/30 17:17:01 easysw Exp $".
 //

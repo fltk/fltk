@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.5.2.4 2001/01/22 15:13:41 easysw Exp $"
+ * "$Id: config.h,v 1.5.2.5 2001/04/30 17:17:01 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -43,6 +43,15 @@
  */
 
 #define HAVE_GL 1
+
+/*
+ * HAVE_GL_GLU_H:
+ *
+ * Do you have the OpenGL Utility Library header file?
+ * (many broken Mesa RPMs do not...)
+ */
+
+#define HAVE_GL_GLU_H 1
 
 /*
  * USE_COLORMAP:
@@ -144,5 +153,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.h,v 1.5.2.4 2001/01/22 15:13:41 easysw Exp $".
+ * End of "$Id: config.h,v 1.5.2.5 2001/04/30 17:17:01 easysw Exp $".
  */

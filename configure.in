@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.29 2001/04/27 17:00:23 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.30 2001/04/30 17:17:01 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -179,10 +179,19 @@ GLLIB=
 
 if test x$enable_gl != xno; then
     AC_CHECK_HEADER(GL/gl.h,
-	AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
-	    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGLU -lMesaGL",,\
+	AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB="-lGL", \
+	    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGL",,\
 		-lX11 -lXext $X_EXTRA_LIBS -lm), \
 	    -lX11 -lXext $X_EXTRA_LIBS -lm)
+    )
+    AC_CHECK_HEADER(GL/glu.h,
+        AC_DEFINE(HAVE_GL_GLU_H)
+	if test $ac_cv_lib_GL_glXMakeCurrent = yes; then
+	    GLLIB="-lGLU $GLLIB"
+	fi
+	if test $ac_cv_lib_MesaGL_glXMakeCurrent = yes; then
+	    GLLIB="-lMesaGLU $GLLIB"
+	fi
     )
 fi
 
@@ -372,5 +381,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.29 2001/04/27 17:00:23 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.30 2001/04/30 17:17:01 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 //
-// "$Id: fractals.cxx,v 1.5.2.5 2001/03/14 17:35:47 spitzak Exp $"
+// "$Id: fractals.cxx,v 1.5.2.6 2001/04/30 17:17:01 easysw Exp $"
 //
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
@@ -28,11 +28,11 @@
 //
 
 #include <config.h>
-#if !HAVE_GL
+#if !HAVE_GL || !HAVE_GL_GLU_H
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
 int main(int, char**) {
-  fl_alert("This demo does not work without GL");
+  fl_alert("This demo does not work without GL and GLU");
   return 1;
 }
 #else
@@ -806,5 +806,5 @@ int main(int argc, char** argv)
 #endif
 
 //
-// End of "$Id: fractals.cxx,v 1.5.2.5 2001/03/14 17:35:47 spitzak Exp $".
+// End of "$Id: fractals.cxx,v 1.5.2.6 2001/04/30 17:17:01 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.10 2001/04/27 17:00:23 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11 2001/04/30 17:17:01 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -48,6 +48,15 @@
  */
 
 #define HAVE_GL 0
+
+/*
+ * HAVE_GL_GLU_H:
+ *
+ * Do you have the OpenGL Utility Library header file?
+ * (many broken Mesa RPMs do not...)
+ */
+
+#undef HAVE_GL_GLU_H
 
 /*
  * USE_COLORMAP:
@@ -168,5 +177,5 @@
 #define USE_POLL 0
 
 /*
- * End of "$Id: configh.in,v 1.11.2.10 2001/04/27 17:00:23 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11 2001/04/30 17:17:01 easysw Exp $".
  */
