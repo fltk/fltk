@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.1 2000/04/25 22:15:41 mike Exp $"
+# "$Id: fltk.spec,v 1.1.2.2 2000/05/15 19:20:03 mike Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -30,7 +30,7 @@
 Summary: Fast Light Tool Kit (FLTK)
 Name: fltk
 Version: %{version}
-Release: ${release}
+Release: %{release}
 Copyright: LGPL
 Group: Development/Libraries
 Source: ftp://ftp.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
@@ -81,5 +81,5 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.1 2000/04/25 22:15:41 mike Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.2 2000/05/15 19:20:03 mike Exp $".
 #
