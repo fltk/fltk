@@ -104,6 +104,7 @@ Fl_FileChooser::Fl_FileChooser(const char *d, const char *p, int t, const char *
     w->hotspot(o);
     { Fl_FileBrowser* o = fileList = new Fl_FileBrowser(10, 45, 355, 180);
       o->type(2);
+      o->when(FL_WHEN_RELEASE_ALWAYS);
       o->callback((Fl_Callback*)cb_fileList);
       Fl_Group::current()->resizable(o);
       w->hotspot(o);

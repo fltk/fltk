@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.2 2001/08/03 02:28:32 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.3 2001/08/03 15:48:20 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -726,6 +726,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     x(X); y(Y);
     flags |= SWP_NOSIZE;
   }
+  if (!border()) flags |= SWP_NOACTIVATE;
   if (resize_from_program && shown()) {
     int dummy, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
@@ -837,7 +838,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
       while (w->parent()) w = w->window();
       parent = fl_xid(w);
       if (!w->visible()) showit = 0;
-    }
+    } else if (Fl::grab()) parent = fl_xid(Fl::grab());
   }
 
   Fl_X* x = new Fl_X;
@@ -868,7 +869,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // If we've captured the mouse, we dont want do activate any
   // other windows from the code, or we loose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
-	     fl_capture? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
+	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
+
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
 }
@@ -991,5 +993,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.2 2001/08/03 02:28:32 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.3 2001/08/03 15:48:20 easysw Exp $".
 //

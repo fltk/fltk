@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.1 2001/08/02 16:17:04 easysw Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.2 2001/08/03 15:48:20 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,8 @@ void fl_file_chooser_callback(void (*cb)(const char*)) {
 
 char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 {
+  if (!fname || !*fname) fname = ".";
+
   if (!fc) fc = new Fl_FileChooser(fname, pat, Fl_FileChooser::CREATE, message);
   else {
     fc->filter(pat);
@@ -54,5 +56,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.1 2001/08/02 16:17:04 easysw Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.2 2001/08/03 15:48:20 easysw Exp $".
 //
