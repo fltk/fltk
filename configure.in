@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.31 1999/03/09 18:32:41 mike Exp $"
+dnl# "$Id: configure.in,v 1.32 1999/03/09 19:24:42 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -35,6 +35,7 @@ if test "$RANLIB" != ":"; then
 else
   LIBCOMMAND="ar crs"
 fi
+DSOCOMMAND="echo"
 
 dnl# Get the operating system and version number...
 
@@ -226,6 +227,7 @@ fi
 CFLAGS="$DEBUGFLAG $CFLAGS"
 CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
 
+AC_SUBST(DSOCOMMAND)
 AC_SUBST(LIBNAME)
 AC_SUBST(LIBCOMMAND)
 AC_SUBST(MAKEDEPEND)
@@ -233,5 +235,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.31 1999/03/09 18:32:41 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.32 1999/03/09 19:24:42 mike Exp $".
 dnl#
