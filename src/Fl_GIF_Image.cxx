@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.11 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -32,7 +32,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_GIF_Image.H>
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -374,5 +373,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.11 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $".
 //

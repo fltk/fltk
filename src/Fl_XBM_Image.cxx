@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XBM_Image.cxx,v 1.1.2.4 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_XBM_Image.cxx,v 1.1.2.5 2002/05/25 13:38:24 easysw Exp $"
 //
 // Fl_XBM_Image routines.
 //
@@ -33,7 +33,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_XBM_Image.H>
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -98,5 +97,5 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
 
 //
-// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.4 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.5 2002/05/25 13:38:24 easysw Exp $".
 //

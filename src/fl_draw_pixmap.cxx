@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.8 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.9 2002/05/25 13:38:25 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,11 +33,9 @@
 // as I want to discourage programs that require support files to work.
 // All data needed by a program ui should be compiled in!!!
 
-#include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
-#include <ctype.h>
 #include <stdio.h>
 #include "flstring.h"
 
@@ -262,5 +260,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.8 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.9 2002/05/25 13:38:25 easysw Exp $".
 //

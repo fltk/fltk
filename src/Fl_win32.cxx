@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.34 2002/05/23 16:42:22 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.35 2002/05/25 13:38:24 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,6 @@
 // in.  Search other files for "WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
-#include <config.h>
 #include <FL/Fl.H>
 #include <FL/win32.H>
 #include <FL/Fl_Window.H>
@@ -42,7 +41,6 @@
 #else
 #  include <winsock.h>
 #endif
-#include <ctype.h>
 #include <winuser.h>
 #include <commctrl.h>
 
@@ -1177,5 +1175,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.34 2002/05/23 16:42:22 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.35 2002/05/25 13:38:24 easysw Exp $".
 //

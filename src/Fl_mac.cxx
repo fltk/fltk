@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.22 2002/04/16 15:49:06 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.23 2002/05/25 13:38:24 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -42,13 +42,11 @@
 // still be useful.
 #define CONSOLIDATE_MOTION 0
 
-#include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -1429,6 +1427,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.22 2002/04/16 15:49:06 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.23 2002/05/25 13:38:24 easysw Exp $".
 //
 

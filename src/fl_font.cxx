@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font.cxx,v 1.9.2.5.2.5 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: fl_font.cxx,v 1.9.2.5.2.6 2002/05/25 13:38:25 easysw Exp $"
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,16 +24,14 @@
 //
 
 // Select fonts from the FLTK font table.
-#include <config.h>
+#include "flstring.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include "Fl_Font.H"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "flstring.h"
 
 #ifdef WIN32
 #  include "fl_font_win32.cxx"
@@ -56,5 +54,5 @@ void fl_draw(const char* str, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font.cxx,v 1.9.2.5.2.5 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: fl_font.cxx,v 1.9.2.5.2.6 2002/05/25 13:38:25 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.20 2002/05/23 16:47:41 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.21 2002/05/25 13:38:25 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,11 +33,9 @@
 /**** Define this if your keyboard lacks a backspace key... ****/
 /* #define BACKSPACE_HACK 1 */
 
-#  include <config.h>
 #  include <FL/Fl.H>
 #  include <FL/x.H>
 #  include <FL/Fl_Window.H>
-#  include <ctype.h>
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
@@ -1229,5 +1227,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.20 2002/05/23 16:47:41 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.21 2002/05/25 13:38:25 easysw Exp $".
 //

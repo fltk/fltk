@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.11 2002/05/25 02:56:59 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.12 2002/05/25 13:38:24 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ Fl_Shared_Image **Fl_Shared_Image::images_ = 0;	// Shared images
 int	Fl_Shared_Image::num_images_ = 0;	// Number of shared images
 int	Fl_Shared_Image::alloc_images_ = 0;	// Allocated shared images
 
-Fl_Shared_Handler **Fl_Shared_Image::handlers_;	// Additional format handlers
+Fl_Shared_Handler *Fl_Shared_Image::handlers_;	// Additional format handlers
 int	Fl_Shared_Image::num_handlers_;		// Number of format handlers
 int	Fl_Shared_Image::alloc_handlers_;	// Allocated format handlers
 
@@ -242,7 +242,7 @@ Fl_Shared_Image::reload() {
   else {
     // Not a standard format; try an image handler...
     for (i = 0, img = 0; i < num_handlers_; i ++) {
-      img = (*(handlers_[i]))(name_, header, sizeof(header));
+      img = (handlers_[i])(name_, header, sizeof(header));
 
       if (img) break;
     }
@@ -406,9 +406,9 @@ Fl_Shared_Image::get(const char *n, int W, int H) {
 //
 
 void
-Fl_Shared_Image::add_handler(Fl_Shared_Handler *f) {
+Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
   int			i;		// Looping var...
-  Fl_Shared_Handler	**temp;		// New image handler array...
+  Fl_Shared_Handler	*temp;		// New image handler array...
 
   // First see if we have already added the handler...
   for (i = 0; i < num_handlers_; i ++) {
@@ -417,10 +417,10 @@ Fl_Shared_Image::add_handler(Fl_Shared_Handler *f) {
 
   if (num_handlers_ >= alloc_handlers_) {
     // Allocate more memory...
-    temp = new Fl_Shared_Handler *[alloc_handlers_ + 32];
+    temp = new Fl_Shared_Handler [alloc_handlers_ + 32];
 
     if (alloc_handlers_) {
-      memcpy(temp, handlers_, alloc_handlers_ * sizeof(Fl_Shared_Handler *));
+      memcpy(temp, handlers_, alloc_handlers_ * sizeof(Fl_Shared_Handler));
 
       delete[] handlers_;
     }
@@ -439,7 +439,7 @@ Fl_Shared_Image::add_handler(Fl_Shared_Handler *f) {
 //
 
 void
-Fl_Shared_Image::remove_handler(Fl_Shared_Handler *f) {
+Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
   int	i;				// Looping var...
 
   // First see if the handler has been added...
@@ -455,11 +455,11 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler *f) {
   if (i < num_handlers_) {
     // Shift later handlers down 1...
     memcpy(handlers_ + i, handlers_ + i + 1,
-           (num_handlers_ - i) * sizeof(Fl_Shared_Handler *));
+           (num_handlers_ - i) * sizeof(Fl_Shared_Handler ));
   }
 }
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.11 2002/05/25 02:56:59 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.12 2002/05/25 13:38:24 easysw Exp $".
 //

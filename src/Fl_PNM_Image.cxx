@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.6 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.7 2002/05/25 13:38:24 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -33,11 +33,9 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_PNM_Image.H>
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
-#include <ctype.h>
 
 
 //
@@ -89,17 +87,15 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
     } else if (isdigit(*lineptr)) {
-      w(atoi(lineptr));
-      while (isdigit(*lineptr))	lineptr ++;
+      w(strtol(lineptr, &lineptr, 10));
     } else lineptr ++;
   }
 
-  while (lineptr != NULL && h()) {
+  while (lineptr != NULL && h() == 0) {
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
     } else if (isdigit(*lineptr)) {
-      h(atoi(lineptr));
-      while (isdigit(*lineptr)) lineptr ++;
+      h(strtol(lineptr, &lineptr, 10));
     } else lineptr ++;
   }
 
@@ -110,8 +106,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
       if (*lineptr == '\0' || *lineptr == '#') {
 	lineptr = fgets(line, sizeof(line), fp);
       } else if (isdigit(*lineptr)) {
-	maxval = atoi(lineptr);
-	while (isdigit(*lineptr)) lineptr ++;
+	maxval = strtol(lineptr, &lineptr, 10);
       } else lineptr ++;
     }
   } else maxval = 1;
@@ -166,5 +161,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.6 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.7 2002/05/25 13:38:24 easysw Exp $".
 //

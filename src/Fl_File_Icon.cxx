@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.11 2002/04/12 20:16:07 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -39,11 +39,9 @@
 // Include necessary header files...
 //
 
-#include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
-#include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -466,5 +464,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.11 2002/04/12 20:16:07 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $".
 //
