@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.4 1998/11/09 14:11:06 mike Exp $"
+ * "$Id: config.h,v 1.5 1999/03/04 18:11:37 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -138,13 +138,5 @@
 #define HAVE_POLL 0
 
 /*
- * HAVE_LIBJPEG
- *
- * Do we have the JPEG group's JPEG file library?
- */
-
-#define HAVE_LIBJPEG 0
-
-/*
- * End of "$Id: config.h,v 1.4 1998/11/09 14:11:06 mike Exp $".
+ * End of "$Id: config.h,v 1.5 1999/03/04 18:11:37 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.10 1999/01/27 17:52:22 mike Exp $"
+ * "$Id: configh.in,v 1.11 1999/03/04 18:11:34 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -151,13 +151,5 @@
 #define HAVE_POLL 0
 
 /*
- * HAVE_LIBJPEG
- *
- * Do we have the JPEG group's JPEG file library?
- */
-
-#define HAVE_LIBJPEG 0
-
-/*
- * End of "$Id: configh.in,v 1.10 1999/01/27 17:52:22 mike Exp $".
+ * End of "$Id: configh.in,v 1.11 1999/03/04 18:11:34 mike Exp $".
  */
