@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10 1999/03/04 18:32:14 mike Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.1 2000/02/15 08:31:46 bill Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -325,6 +325,8 @@ void fl_pop_clip() {
 
 // does this rectangle intersect current clip?
 int fl_not_clipped(int x, int y, int w, int h) {
+  if (x+w <= 0 || y+h <= 0 || x > Fl_Window::current()->w()
+      || y > Fl_Window::current()->h()) return 0;
   Region r = rstack[rstackptr];
 #ifndef WIN32
   return r ? XRectInRegion(r, x, y, w, h) : 1;
@@ -386,5 +388,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10 1999/03/04 18:32:14 mike Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.1 2000/02/15 08:31:46 bill Exp $".
 //

@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.14 2000/01/16 04:30:36 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.15 2000/02/15 08:31:45 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -496,8 +496,9 @@ int Fl::handle(int event, Fl_Window* window)
 
     // and then try a shortcut with the case of the text swapped, by
     // changing the text and falling through to FL_SHORTCUT case:
-    if (!isalpha(event_text()[0])) return 0;
-    *(char*)(event_text()) ^= ('A'^'a');
+    {char* c = (char*)event_text(); // cast away const
+    if (!isalpha(*c)) return 0;
+    *c = isupper(*c) ? tolower(*c) : toupper(*c);}
     event = FL_SHORTCUT;
 
   case FL_SHORTCUT:
@@ -704,5 +705,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.14 2000/01/16 04:30:36 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.15 2000/02/15 08:31:45 bill Exp $".
 //
