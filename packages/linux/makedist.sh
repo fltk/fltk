@@ -11,8 +11,8 @@
 #           destination-file = source-file
 #
 #       If you look at the other (commercial) UNIX distributions
-#       you'll notice that ALL of them support this syntax in one
-#       form or another.
+#       you'll notice that ALL of them (except for Digital UNIX)
+#       support this syntax in one form or another.
 #
 #       Several folks have pointed out the "build root" stuff
 #       provided by RPM.  There are two problems with this:

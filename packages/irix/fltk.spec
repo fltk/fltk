@@ -15,7 +15,7 @@ product fltk
             exp fltk.sw.dev
             prereq
             (
-            	fltk.sw.eoe 010000000 010000000
+            	fltk.sw.eoe 010001000 010001999
             )
         endsubsys
     endimage
