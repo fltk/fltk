@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- Fl_Help_View didn't support the TT markup.
 	- Fl_Shared_Image used a double-pointer to the image
 	  handler functions, which was unnecessary and
 	  unintuitive.

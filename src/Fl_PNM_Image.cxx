@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.7 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.8 2002/05/27 21:16:47 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -115,6 +115,8 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
   if (format == 1 || format == 2 || format == 4 || format == 5) d(1);
   else d(3);
 
+//  printf("%s = %dx%dx%d\n", name, w(), h(), d());
+
   array = new uchar[w() * h() * d()];
 
   // Read the image file...
@@ -161,5 +163,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.7 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.8 2002/05/27 21:16:47 easysw Exp $".
 //

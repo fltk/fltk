@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.33 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.34 2002/05/27 21:16:47 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -587,7 +587,8 @@ Fl_Help_View::draw()
 	  else if (strcasecmp(buf, "I") == 0 ||
                    strcasecmp(buf, "EM") == 0)
 	    pushfont(font |= FL_ITALIC, size);
-	  else if (strcasecmp(buf, "CODE") == 0)
+	  else if (strcasecmp(buf, "CODE") == 0 ||
+	           strcasecmp(buf, "TT") == 0)
 	    pushfont(font = FL_COURIER, size);
 	  else if (strcasecmp(buf, "KBD") == 0)
 	    pushfont(font = FL_COURIER_BOLD, size);
@@ -606,6 +607,7 @@ Fl_Help_View::draw()
 		   strcasecmp(buf, "/I") == 0 ||
 		   strcasecmp(buf, "/EM") == 0 ||
 		   strcasecmp(buf, "/CODE") == 0 ||
+		   strcasecmp(buf, "/TT") == 0 ||
 		   strcasecmp(buf, "/KBD") == 0 ||
 		   strcasecmp(buf, "/VAR") == 0)
 	    popfont(font, size);
@@ -1277,7 +1279,8 @@ Fl_Help_View::format()
 	else if (strcasecmp(buf, "I") == 0 ||
         	 strcasecmp(buf, "EM") == 0)
 	  pushfont(font |= FL_ITALIC, size);
-	else if (strcasecmp(buf, "CODE") == 0)
+	else if (strcasecmp(buf, "CODE") == 0 ||
+	         strcasecmp(buf, "TT") == 0)
 	  pushfont(font = FL_COURIER, size);
 	else if (strcasecmp(buf, "KBD") == 0)
 	  pushfont(font = FL_COURIER_BOLD, size);
@@ -1288,6 +1291,7 @@ Fl_Help_View::format()
 		 strcasecmp(buf, "/I") == 0 ||
 		 strcasecmp(buf, "/EM") == 0 ||
 		 strcasecmp(buf, "/CODE") == 0 ||
+		 strcasecmp(buf, "/TT") == 0 ||
 		 strcasecmp(buf, "/KBD") == 0 ||
 		 strcasecmp(buf, "/VAR") == 0)
 	  popfont(font, size);
@@ -1721,7 +1725,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
       else if (strcasecmp(buf, "I") == 0 ||
                strcasecmp(buf, "EM") == 0)
 	pushfont(font |= FL_ITALIC, size);
-      else if (strcasecmp(buf, "CODE") == 0)
+      else if (strcasecmp(buf, "CODE") == 0 ||
+               strcasecmp(buf, "TT") == 0)
 	pushfont(font = FL_COURIER, size);
       else if (strcasecmp(buf, "KBD") == 0)
 	pushfont(font = FL_COURIER_BOLD, size);
@@ -1732,6 +1737,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	       strcasecmp(buf, "/I") == 0 ||
 	       strcasecmp(buf, "/EM") == 0 ||
 	       strcasecmp(buf, "/CODE") == 0 ||
+	       strcasecmp(buf, "/TT") == 0 ||
 	       strcasecmp(buf, "/KBD") == 0 ||
 	       strcasecmp(buf, "/VAR") == 0)
 	popfont(font, size);
@@ -2625,5 +2631,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.33 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.34 2002/05/27 21:16:47 easysw Exp $".
 //
