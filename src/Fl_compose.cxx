@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_compose.cxx,v 1.1.2.7.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_compose.cxx,v 1.1.2.7.2.2 2002/11/08 16:05:33 easysw Exp $"
 //
 // Character compose processing for the Fast Light Tool Kit (FLTK).
 //
@@ -25,16 +25,25 @@
 
 #include <FL/Fl.H>
 
+//
+// MRS: Uncomment the following define to get the original (pre-1.1.2)
+//      dead key support code.  The original code apparently did not
+//      work on Belgian keyboards.
+//
+
+//#define OLD_DEAD_KEY_CODE
+
+
 static const char* const compose_pairs =
 "  ! % # $ y=| & : c a <<~ - r _ * +-2 3 ' u p . , 1 o >>141234? "
 "`A'A^A~A:A*AAE,C`E'E^E:E`I'I^I:I-D~N`O'O^O~O:Ox O/`U'U^U:U'YTHss"
 "`a'a^a~a:a*aae,c`e'e^e:e`i'i^i:i-d~n`o'o^o~o:o-:o/`u'u^u:u'yth:y";
 
-#ifndef WIN32 // X only
+#if !defined(WIN32) && defined(OLD_DEAD_KEY_CODE) // X only
 // X dead-key lookup table.  This turns a dead-key keysym into the
 // first of two characters for one of the compose sequences.  These
 // keysyms start at 0xFE50.
-// Win32 handles the dead keys before fltk can see them.  This is
+// Win32 handles the dead keys before FLTK can see them.  This is
 // unfortunate, because you don't get the preview effect.
 static char dead_keys[] = {
   '`',	// XK_dead_grave
@@ -55,14 +64,14 @@ static char dead_keys[] = {
 //   0,	// XK_dead_semivoiced_sound
 //   0	// XK_dead_belowdot
 };
-#endif
+#endif // !WIN32 && OLD_DEAD_KEY_CODE
 
-int Fl::compose_state;
+int Fl::compose_state = 0;
 
 int Fl::compose(int& del) {
 
   del = 0;
-  char ascii = e_text[0];
+  unsigned char ascii = (unsigned)e_text[0];
 
   // Alt+letters are reserved for shortcuts.  But alt+foreign letters
   // has to be allowed, because some key layouts require alt to be held
@@ -117,12 +126,22 @@ int Fl::compose(int& del) {
   // See if they typed a dead key.  This gets it into the same state as
   // typing prefix+accent:
   if (i >= 0xfe50 && i <= 0xfe5b) {
+#  ifdef OLD_DEAD_KEY_CODE
     ascii = dead_keys[i-0xfe50];
     for (const char *p = compose_pairs; *p; p += 2)
       if (p[0] == ascii) {
-      compose_state = ascii;
-      return 1;
-    }
+	compose_state = ascii;
+	return 1;
+      }
+#  else
+    ascii = e_text[0];
+    for (const char *p = compose_pairs; *p; p += 2)
+      if (p[0] == ascii ||
+          (p[1] == ' ' && (p - compose_pairs) / 2 + 0xA0 == ascii)) {
+        compose_state = p[0];
+        return 1;
+      }
+#  endif // OLD_DEAD_KEY_CODE
     compose_state = 0;
     return 1;
   }

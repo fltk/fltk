@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- FLTK had trouble doing character composition with some
+	  keyboard layouts under X11 (in particular, Belgian).
 	- Fl_Text_Editor would cause a segfault if the user
 	  pressed CTRL-V (paste) without having any data in the
 	  clipboard...
