@@ -9,12 +9,12 @@ MACRO(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 			SET(srcs ${srcs} "${cxx_name}")
 			ADD_CUSTOM_COMMAND(
 				OUTPUT ${cxx_name}
-				DEPENDS ${fluid_name}
+				DEPENDS "${fluid_name}" "${FLUID_COMMAND}"
 				COMMAND ${FLUID_COMMAND}
 				ARGS -c ${fluid_name})
 			ADD_CUSTOM_COMMAND(
 				OUTPUT ${h_name}
-				DEPENDS ${fluid_name}
+				DEPENDS "${fluid_name}" "${FLUID_COMMAND}"
 				COMMAND ${FLUID_COMMAND}
 				ARGS -c ${fluid_name})
 		ELSE("${src}" MATCHES ".fl$")
