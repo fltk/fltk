@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key_mac.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_get_key_mac.cxx,v 1.1.2.2 2001/12/22 07:16:12 matthiaswm Exp $"
 //
 // MacOS keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -47,11 +47,11 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { 32, 'U' }, {  9, 'V'  }, { 13, 'W'  }, {  7, 'X'  }, 
   { 16, 'Y' }, {  6, 'Z'  }, 
   { 33, '[' }, { 30, ']' }, { 50, '`' },  { 42, '|' },
-  { 51, FL_BackSpace }, { 48, FL_Tab }, { 36, FL_Enter }, { 0x72, FL_Pause },
-  { 127, FL_Scroll_Lock }, { 53, FL_Escape }, { 0x73, FL_Home }, { 123, FL_Left },
+  { 51, FL_BackSpace }, { 48, FL_Tab }, { 36, FL_Enter }, { 127, FL_Pause },
+  { 107, FL_Scroll_Lock }, { 53, FL_Escape }, { 0x73, FL_Home }, { 123, FL_Left },
   { 126, FL_Up }, { 124, FL_Right }, { 125, FL_Down }, { 0x74, FL_Page_Up },
-  { 0x79, FL_Page_Down },  { 127, FL_End }, { 0x71, FL_Print }, { 127, FL_Insert },
-  { 127, FL_Menu }, { 0x47, FL_Num_Lock }, 
+  { 0x79, FL_Page_Down },  { 119, FL_End }, { 0x71, FL_Print }, { 127, FL_Insert },
+  { 127, FL_Menu }, { 114, FL_Help }, { 0x47, FL_Num_Lock }, 
   { 76, FL_KP_Enter }, { 67, FL_KP+'*' }, { 69, FL_KP+'+'}, { 78, FL_KP+'-' }, { 65, FL_KP+'.' }, { 75, FL_KP+'/' }, 
   { 82, FL_KP+'0' }, { 83, FL_KP+'1' }, { 84, FL_KP+'2' }, { 85, FL_KP+'3' }, 
   { 86, FL_KP+'4' }, { 87, FL_KP+'5' }, { 88, FL_KP+'6' }, { 89, FL_KP+'7' }, 
@@ -61,7 +61,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { 0x65, FL_F+9 }, { 0x6D, FL_F+10 }, { 0x67, FL_F+11 }, { 0x6f, FL_F+12 }, 
   { 56, FL_Shift_L }, { 56, FL_Shift_R }, { 55, FL_Control_L }, { 55, FL_Control_R }, 
   { 57, FL_Caps_Lock }, { 59, FL_Meta_L }, { 59, FL_Meta_R },
-  { 58, FL_Alt_L }, { 58, FL_Alt_R }, // Fl_Help = 0x72
+  { 58, FL_Alt_L }, { 58, FL_Alt_R },
 };
 
 static int fltk2mac(int fltk) {
@@ -100,5 +100,5 @@ int Fl::get_key(int k) {
 }
 
 //
-// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.2 2001/12/22 07:16:12 matthiaswm Exp $".
 //

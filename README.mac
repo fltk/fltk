@@ -126,12 +126,10 @@ OTHER STUFF
     used for FLTK applications ('FLTK') and FLUID files
     ('Flid').
 
-    All applications should call exit(0) to terminate; otherwise
-    they may hang until killed.
-
     Under MacOS X, all windows are double-buffered. Using
     Fl_Window has the same effect as using Fl_Double_Window on
-    other operating systems.
+    other operating systems. However Fl_Overlay_Window uses one 
+    additional buffer for the overlay plane.
 
 
 FLTK 1.0.X FOR MAC

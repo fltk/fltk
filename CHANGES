@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- MacOS: improved keyboard handling, fixed keyboard
+	  focus handling, fixed get_key, modified 'keyboard'
+	  demo to show second mouse wheel and additional keys
+	  'help' and FL_NK+'='
 	- OS/2 build fixes.
 	- fl_draw() didn't ignore symbol escapes properly for
 	  the browsers...

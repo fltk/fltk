@@ -1,5 +1,5 @@
 //
-// "$Id: keyboard.cxx,v 1.5.2.3.2.2 2001/12/21 14:35:34 easysw Exp $"
+// "$Id: keyboard.cxx,v 1.5.2.3.2.3 2001/12/22 07:16:12 matthiaswm Exp $"
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ public:
 // these are used to identify which buttons are which:
 void key_cb(Fl_Button*, void*) {}
 void shift_cb(Fl_Button*, void*) {}
-void wheel_cb(Fl_Button*, void*) {}
+void wheel_cb(Fl_Dial*, void*) {}
 
 // this is used to stop Esc from exiting the program:
 int handle(int e) {
@@ -64,7 +64,8 @@ int handle(int e) {
 int MyWindow::handle(int msg) {
   if (msg==FL_MOUSEWHEEL)
   {
-    roller->value( roller->value() + Fl::e_dy * roller->step() );
+    roller_x->value( roller_x->value() + Fl::e_dx * roller_x->step() );
+    roller_y->value( roller_y->value() + Fl::e_dy * roller_y->step() );
     return 1;
   }
   return 0;
@@ -98,6 +99,7 @@ struct {int n; const char* text;} table[] = {
   {FL_Meta_L, "FL_Meta_L"},
   {FL_Meta_R, "FL_Meta_R"},
   {FL_Menu, "FL_Menu"},
+  {FL_Help, "FL_Help"},
   {FL_Num_Lock, "FL_Num_Lock"},
   {FL_KP_Enter, "FL_KP_Enter"}
 };
@@ -129,7 +131,7 @@ int main(int argc, char** argv) {
       keyname = "0";
     else if (k < 256) {
       sprintf(buffer, "'%c'", k);
-    } else if (k >= FL_F && k <= FL_F_Last) {
+    } else if (k > FL_F && k <= FL_F_Last) {
       sprintf(buffer, "FL_F+%d", k - FL_F);
     } else if (k >= FL_KP && k <= FL_KP_Last) {
       sprintf(buffer, "FL_KP+'%c'", k-FL_KP);
@@ -148,5 +150,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: keyboard.cxx,v 1.5.2.3.2.2 2001/12/21 14:35:34 easysw Exp $".
+// End of "$Id: keyboard.cxx,v 1.5.2.3.2.3 2001/12/22 07:16:12 matthiaswm Exp $".
 //

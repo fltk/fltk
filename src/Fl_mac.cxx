@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.9 2001/12/20 22:02:25 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.10 2001/12/22 07:16:12 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -65,6 +65,7 @@ static Fl_Window* resize_from_system;
 Fl_Window* fl_find(Window);
 int fl_handle(const EventRecord &event);
 void handleUpdateEvent( WindowPtr xid );
+extern void fl_fix_focus();
 
 int fl_screen;
 Handle fl_system_menu;
@@ -443,6 +444,8 @@ pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, EventRef e
   Fl_Window *window = (Fl_Window*)userData;
 
   Rect currentBounds, originalBounds;
+  WindowClass winClass;
+  static Fl_Window *activeWindow = 0;
   
   switch ( kind )
   {
@@ -465,16 +468,31 @@ pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, EventRef e
     } 
     break; }
   case kEventWindowShown:
+    // ;;;; printf("Show %s\n", window->label());
     if ( !window->parent() ) Fl::handle( FL_SHOW, window);
     break;
   case kEventWindowHidden:
+    // ;;;; printf("Hide %s\n", window->label());
     if ( !window->parent() ) Fl::handle( FL_HIDE, window);
     break;
   case kEventWindowActivated:
-    if ( !window->parent() ) Fl::handle(FL_FOCUS, window);
+    if ( window!=activeWindow ) 
+    {
+      GetWindowClass( fl_xid( window ), &winClass );
+      if ( winClass != kHelpWindowClass ) {	// help windows can't get the focus!
+        Fl::handle( FL_FOCUS, window);
+        activeWindow = window;
+        // ;;;; printf("Activate %s\n", window->label());
+      }
+    }
     break;
   case kEventWindowDeactivated:
-    if ( !window->parent() ) Fl::handle(FL_UNFOCUS, window);
+    if ( window==activeWindow ) 
+    {
+      Fl::handle( FL_UNFOCUS, window);
+      activeWindow = 0;
+      // ;;;; printf("Deactivate %s\n", window->label());
+    }
     break;
   case kEventWindowClose:
     Fl::handle( FL_CLOSE, window ); // this might or might not close the window
@@ -562,21 +580,27 @@ pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef ev
   case kEventMouseUp:
     // ;;;; if ( !sendEvent ) printf("Carb-win-hdlr: mouse up (x:%d, y:d)\n", pos.h, pos.v );
     if ( !window ) break;
-    if ( !sendEvent ) sendEvent = FL_RELEASE; 
+    if ( !sendEvent ) {
+      sendEvent = FL_RELEASE; 
+    }
     Fl::e_keysym = keysym[ btn ];
     // fall through
   case kEventMouseMoved:
     // ;;;; if ( !sendEvent ) printf("Carb-win-hdlr: mouse moved (x:%d, y:d)\n", pos.h, pos.v );
-    if ( !sendEvent ) { sendEvent = FL_MOVE; chord = 0; }
+    if ( !sendEvent ) { 
+      sendEvent = FL_MOVE; chord = 0; 
+    }
     // fall through
   case kEventMouseDragged:
     // ;;;; if ( !sendEvent ) printf("Carb-win-hdlr: mouse dragged (x:%d, y:d)\n", pos.h, pos.v );
     if ( !sendEvent ) {
       sendEvent = FL_DRAG;
-      if (abs(pos.h-px)>5 || abs(pos.v-py)>5) Fl::e_is_click = 0;
+      if (abs(pos.h-px)>5 || abs(pos.v-py)>5) 
+        Fl::e_is_click = 0;
     }
     chord_to_e_state( chord );
-    SetPort( GetWindowPort(xid) ); SetOrigin(0, 0);
+    SetPort( GetWindowPort(xid) ); //++ remove this! There must be some GlobalToLocal call that has a port as an argument
+    SetOrigin(0, 0);
     Fl::e_x_root = pos.h;
     Fl::e_y_root = pos.v;
     GlobalToLocal( &pos );
@@ -610,7 +634,7 @@ static void mods_to_e_state( UInt32 mods )
 static void mods_to_e_keysym( UInt32 mods )
 {
   if ( mods & cmdKey ) Fl::e_keysym = FL_Control_L;
-  //else if ( mods & kEventKeyModifierNumLockMask ) Fl::e_keysym = FL_Num_Lock;
+  else if ( mods & kEventKeyModifierNumLockMask ) Fl::e_keysym = FL_Num_Lock;
   else if ( mods & optionKey ) Fl::e_keysym = FL_Alt_L;
   else if ( mods & rightOptionKey ) Fl::e_keysym = FL_Alt_R;
   else if ( mods & controlKey ) Fl::e_keysym = FL_Meta_L;
@@ -630,14 +654,15 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
   int sendEvent = 0;
   Fl_Window *window = (Fl_Window*)userData;
   UInt32 mods;
-  static UInt32 prevMods = 0xdeadbeef;
+  static UInt32 prevMods = 0xffffffff;
   GetEventParameter( event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &mods );
-  if ( prevMods == 0xdeadbeef ) prevMods = mods;
+  if ( prevMods == 0xffffffff ) prevMods = mods;
   UInt32 keyCode;
   GetEventParameter( event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyCode );
-  char key;
+  unsigned char key;
   GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &key );
-  // ;;;; printf( "kb: %08x %08x %02x %04x\n", mods, keyCode, key, GetEventKind( event ) );
+  unsigned short sym;
+  // ;;;; printf( "kb: %08x %08x %02x %04x %04x\n", mods, keyCode, key, GetEventKind( event ), macKeyLookUp[ keyCode & 0x7f ] );
   switch ( GetEventKind( event ) )
   {
   case kEventRawKeyDown:
@@ -646,12 +671,11 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
     // fall through
   case kEventRawKeyUp:
     if ( !sendEvent ) sendEvent = FL_KEYUP;
-    Fl::e_keysym = macKeyLookUp[ keyCode & 0x7f ];
-    if ( key=='\t' || key==27 || ( key>=32 && keyCode!=0x75 )  ) {
+    sym = macKeyLookUp[ keyCode & 0x7f ];
+    Fl::e_keysym = sym;
+    if ( keyCode==0x4c ) key=0x0d;
+    if ( ( (sym>=FL_KP) && (sym<=FL_KP_Last) ) || ((sym&0xff00)==0) || (sym==FL_Tab) ) {
       buffer[0] = key;
-      Fl::e_length = 1;
-    } else if ( key==3 || key==0x0d ) {
-      buffer[0] = 0x0d;
       Fl::e_length = 1;
     } else {
       buffer[0] = 0;
@@ -878,9 +902,9 @@ static unsigned short macKeyLookUp[128] =
  FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0, 
  
  FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11, 
- 0, 0, FL_F+13, FL_F+14, 0, FL_F+10, 0, FL_F+12, 
+ 0, 0, FL_Print, FL_Scroll_Lock, 0, FL_F+10, 0, FL_F+12, 
  
- 0, FL_F+15, FL_Pause, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End, 
+ 0, FL_Pause, FL_Help, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End, 
  FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0, 
 };
 
@@ -1312,8 +1336,6 @@ void Fl_X::make(Fl_Window* w)
     w->handle(FL_SHOW);
     w->redraw(); // force draw to happen
     fl_show_iconic = 0;
-    //++ hmmm, this should maybe set by the activate event?!
-    Fl::handle(FL_FOCUS, w);
     //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
     // ;;;; printf("Created subwindow %08x (%08x)\n", w, x->xid );
   }
@@ -1350,9 +1372,9 @@ void Fl_X::make(Fl_Window* w)
     }
     int xwm = xp, ywm = yp, bt, bx, by;
     if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) 
-      { winclass = kHelpWindowClass; winattr = 0; }
+      { winclass = kHelpWindowClass; winattr = 0; } // menu windows and tooltips
     else if (w->modal()) 
-      winclass = kFloatingWindowClass; // basically fine, but not modal! The modal window however does nor show
+      winclass = kFloatingWindowClass; // basically fine, but not modal! The modal window however does not show
     else if (w->non_modal()) 
       winclass = kFloatingWindowClass; // we need to call 'InitFloatingWindows for OS 8, 9
     if (by+bt) {
@@ -1366,7 +1388,7 @@ void Fl_X::make(Fl_Window* w)
       if (xyPos>200) xyPos = 24;
     } else {
       if (!Fl::grab()) {
-	    xp = xwm; yp = ywm;
+        xp = xwm; yp = ywm;
         w->x(xp);w->y(yp);
       }
       xp -= bx;
@@ -1448,17 +1470,16 @@ void Fl_X::make(Fl_Window* w)
       if ( err==noErr ) SetFrontProcess( &psn );
       // or 'BringToFront'
     }
-
-    w->handle(FL_SHOW);
-    w->redraw(); // force draw to happen
-
+    
     //TransitionWindow( x->xid, kWindowZoomTransitionEffect, kWindowShowTransitionAction, 0 );
     ShowWindow( x->xid );
 
+    w->handle(FL_SHOW);
+    w->redraw(); // force draw to happen
     fl_show_iconic = 0;
-    //++ hmmm, this should maybe set by the activate event?!
-    Fl::handle(FL_FOCUS, w);
-    //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    w->set_visible();
+    
+    if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
     //;;;; printf("Created top level window %08x (%08x)\n", w, x->xid );
   }
 }
@@ -1573,7 +1594,7 @@ void Fl_Window::make_current()
   fl_window = i->xid;
   current_ = this;
 
-  SetPort( GetWindowPort(i->xid) );
+  SetPort( GetWindowPort(i->xid) ); //++ this does not handle double buffered windows!
 
   int xp = 0, yp = 0;
   Fl_Window *win = this;
@@ -1693,6 +1714,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 //++ we MUST call aglConfigure(AGL_TARGET_OS_MAC_OSX, GL_TRUE);
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.9 2001/12/20 22:02:25 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.10 2001/12/22 07:16:12 matthiaswm Exp $".
 //
 

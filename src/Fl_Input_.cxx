@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.4 2001/11/17 17:00:22 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.5 2001/12/22 07:16:12 matthiaswm Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -87,7 +87,11 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
 	*o++ = '^';
 	*o++ = c ^ 0x40;
       }
+#ifdef __APPLE__
+    } else if ( 0 ) { // this is a rather complex issue on MacOS: see glyphs vs. characters in font sets...
+#else
     } else if (c >= 128 && c < 0xA0) {
+#endif
       *o++ = '\\';
       *o++ = (c>>6)+'0';
       *o++ = ((c>>3)&7)+'0';
@@ -855,5 +859,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.4 2001/11/17 17:00:22 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.5 2001/12/22 07:16:12 matthiaswm Exp $".
 //
