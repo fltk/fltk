@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Clock.cxx,v 1.5 1999/01/13 15:45:49 mike Exp $"
+// "$Id: Fl_Clock.cxx,v 1.6 1999/01/13 15:58:33 mike Exp $"
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
@@ -136,17 +136,18 @@ Fl_Clock::Fl_Clock(uchar t, int x, int y, int w, int h, const char *l)
   box(t==FL_ROUND_CLOCK ? FL_NO_BOX : FL_UP_BOX);
 }
 
-#ifndef WIN32
-#include <sys/time.h>
-#endif
-
 static void tick(void *v) {
+#ifdef WIN32
+  ((Fl_Clock*)v)->value(time(0));
+  Fl::add_timeout(1.0, tick, v);
+#else
   struct timeval t;
   gettimeofday(&t, NULL);
   ((Fl_Clock*)v)->value(t.tv_sec);
   double delay = 1.0-t.tv_usec*.000001;
   if (delay < .1 || delay > .9) delay = 1.0;
   Fl::add_timeout(delay, tick, v);
+#endif
 }
 
 int Fl_Clock::handle(int event) {
@@ -166,5 +167,5 @@ Fl_Clock::~Fl_Clock() {
 }
 
 //
-// End of "$Id: Fl_Clock.cxx,v 1.5 1999/01/13 15:45:49 mike Exp $".
+// End of "$Id: Fl_Clock.cxx,v 1.6 1999/01/13 15:58:33 mike Exp $".
 //
