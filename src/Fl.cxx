@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.11 1998/12/15 16:24:37 mike Exp $"
+// "$Id: Fl.cxx,v 1.12 1999/01/04 19:27:00 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -423,6 +423,7 @@ int Fl::handle(int event, Fl_Window* window)
     } else if (modal() && w != modal()) {
       w = 0;
     }
+    if (grab()) w = grab();
     break;
 
   case FL_RELEASE: {
@@ -468,7 +469,7 @@ int Fl::handle(int event, Fl_Window* window)
 
   case FL_SHORTCUT:
 
-    if (grab()) break; // send it to grab window
+    if (grab()) {w = grab(); break;} // send it to grab window
 
     // Try it as shortcut, sending to mouse widget and all parents:
     w = belowmouse(); if (!w) {w = modal(); if (!w) w = window;}
@@ -496,7 +497,6 @@ int Fl::handle(int event, Fl_Window* window)
   default:
     break;
   }
-  if (grab()) w = grab(); // always send to grab widget
   if (w && w->handle(event)) return 1;
   return send_handlers(event);
 }
@@ -668,5 +668,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.11 1998/12/15 16:24:37 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.12 1999/01/04 19:27:00 mike Exp $".
 //
