@@ -27,25 +27,34 @@ SHELL=/bin/sh
 
 DIRS	=	src fluid test
 
-all:
+all:	depend
 	for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
-		cd $$dir && $(MAKE);\
+		(cd $$dir;$(MAKE));\
 	done
 
 install: all
 	for dir in $(DIRS); do\
 		echo "=== installing $$dir ===";\
-		cd $$dir && $(MAKE) install;\
+		(cd $$dir;$(MAKE) install);\
+	done
+
+depend:
+	for dir in $(DIRS); do\
+		echo "=== making dependencies in $$dir ===";\
+		if test ! -f $$dir/makedepend; then\
+			touch 0101000070 $$dir/makedepend;\
+		fi;\
+		(cd $$dir;$(MAKE) depend);\
 	done
 
 clean:
 	-@ rm -f core config.cache *.o *.bck
 	for dir in $(DIRS); do\
 		echo "=== cleaning $$dir ===";\
-		cd $$dir && $(MAKE) clean;\
+		(cd $$dir;$(MAKE) clean);\
 	done
 
 #
-# End of "$Id: Makefile,v 1.2 1998/10/20 21:06:17 mike Exp $".
+# End of "$Id: Makefile,v 1.3 1998/10/21 14:00:51 mike Exp $".
 #
