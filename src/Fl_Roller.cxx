@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6 1999/01/07 19:17:26 mike Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.1 1999/09/15 16:07:03 mike Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -55,6 +55,7 @@ void Fl_Roller::draw() {
   int Y = y()+Fl::box_dy(box());
   int W = w()-Fl::box_dw(box())-1;
   int H = h()-Fl::box_dh(box())-1;
+  if (W<=0 || H <=0) return;
   int offset = step() ? int(value()/step()) : 0;
   const double ARC = 1.5; // 1/2 the number of radians visible
   const double delta = .2; // radians per knurl
@@ -136,5 +137,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6 1999/01/07 19:17:26 mike Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.1 1999/09/15 16:07:03 mike Exp $".
 //

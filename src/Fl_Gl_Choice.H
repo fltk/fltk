@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4 1999/01/07 19:17:20 mike Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.1 1999/09/16 05:34:24 bill Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -68,19 +68,27 @@ public:
   Colormap colormap;	// a colormap to use
 #endif
   uchar r,d,o;		// rgb mode, double buffered, overlay flags
-  // either use mode flags from gl_draw.H or a literal glX int list.
-  // one of the two arguments must be zero!
+  // Return one of these structures for a given gl mode.
+  // The second argument is a glX attribute list, and is used if mode is
+  // zero.  This is not supported on Win32:
   static Fl_Gl_Choice *find(int mode, const int *);
 };
 
-#ifdef WIN32
-// function to create and init the dc needed to draw OpenGL:
+extern GLXContext fl_first_context; // used to make all contexts share
+extern GLXContext fl_current_context;
+
 class Fl_Window;
+
+#ifdef WIN32
+// This must be called before fl_set_gl_context works:
 HDC fl_private_dc(Fl_Window*, int, Fl_Gl_Choice **gp);
 #endif
+
+void fl_set_gl_context(Fl_Window*, GLXContext);
+void fl_no_gl_context();
 
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4 1999/01/07 19:17:20 mike Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.1 1999/09/16 05:34:24 bill Exp $".
 //

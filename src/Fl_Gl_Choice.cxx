@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5 1999/01/07 19:17:20 mike Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.1 1999/09/16 05:34:25 bill Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -174,10 +174,37 @@ HDC fl_private_dc(Fl_Window* w, int mode, Fl_Gl_Choice **gp) {
   }
   return i->private_dc;
 }
+
 #endif
+
+static GLXContext cached_context;
+
+static Fl_Window* cached_window;
+
+void fl_set_gl_context(Fl_Window* w, GLXContext c) {
+  if (c != cached_context || w != cached_window) {
+    cached_context = c;
+    cached_window = w;
+#ifdef WIN32
+    wglMakeCurrent(Fl_X::i(w)->private_dc, c);
+#else
+    glXMakeCurrent(fl_display, fl_xid(w), c);
+#endif
+  }
+}
+
+void fl_no_gl_context() {
+  cached_context = 0;
+  cached_window = 0;
+#ifdef WIN32
+  wglMakeCurrent(0, 0);
+#else
+  glXMakeCurrent(fl_display, 0, 0);
+#endif
+}
 
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5 1999/01/07 19:17:20 mike Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.1 1999/09/16 05:34:25 bill Exp $".
 //

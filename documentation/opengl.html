@@ -283,9 +283,15 @@ void OptimizerWindow::draw() {
     // This is the first time we've been asked to draw; create the
     // Optimizer context for the scene...
 
+#ifdef WIN32
+    context_ = new csContext((HDC)fl_getHDC());
+    context_-&gt;ref();
+    context_-&gt;makeCurrent((HDC)fl_getHDC());
+#else
     context_ = new csContext(fl_display, fl_visual);
     context_-&gt;ref();
     context_-&gt;makeCurrent(fl_display, fl_window);
+#endif // WIN32
 
     ... perform other context setup as desired ...    
 
@@ -296,6 +302,12 @@ void OptimizerWindow::draw() {
       draw_action_-&gt;setCamera(camera_);
       camera_-&gt;draw(draw_action_);
     }
+  } else {
+#ifdef WIN32
+    context_-&gt;makeCurrent((HDC)fl_getHDC());
+#else
+    context_-&gt;makeCurrent(fl_display, fl_window);
+#endif // WIN32
   }
 
   if (!valid()) {

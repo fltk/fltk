@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw32,v 1.9 1999/02/18 14:28:18 mike Exp $"
+# "$Id: makeinclude.mingw32,v 1.9.2.1 1999/03/25 15:26:31 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -42,10 +42,13 @@ CXXFLAGS	= -Wall -O2 -DWIN32 -mwindows
 LIBNAME		= libfltk.a
 LIBCOMMAND	= ar -ruv
 RANLIB		= ranlib
+DSONAME		=
+DSOCOMMAND	= echo
 
 # libraries to link with:
-LDLIBS		= -lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lwsock32 -lm
+LDLIBS		= -lgdi32 -luser32 -lmsvcrt -lwsock32 -lm
+GLDLIBS		= -lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lwsock32 -lm
 
 #
-# End of "$Id: makeinclude.mingw32,v 1.9 1999/02/18 14:28:18 mike Exp $".
+# End of "$Id: makeinclude.mingw32,v 1.9.2.1 1999/03/25 15:26:31 mike Exp $".
 #

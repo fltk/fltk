@@ -11,6 +11,16 @@ script for your operating system:
     cd <operating-system>
     sh makedist.sh
 
+Also, we are now including a distribution "list" file for the ESP
+Package Manager.  EPM builds tar files and scripts and so works on all
+UNIX operating systems without extra software.  To build a distribution
+using EPM run the following from the main FLTK directory:
+
+    epm fltk packages/fltk.list
+
+Eventually we may phase out the system-specific installation stuff in
+favor of EPM to make maintenance of the FLTK binaries easier.
+
 For Microsoft Windows we are using the InstallShield software.
 Unfortunately it is nearly impossible to distribute the InstallShield
 "source" files...

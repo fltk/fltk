@@ -1,0 +1,36 @@
+fltk.readme - 09/15/1999
+------------------------
+
+
+INTRODUCTION
+
+    This distribution contains the Fast Light Tool Kit ("FLTK") version
+    1.0.5. To install it type:
+
+	./fltk.install ENTER
+
+    If you later decide to remove the software, type:
+
+	/etc/software/fltk.remove ENTER
+
+    Upgrades to the software automatically remove the old version.
+
+
+RESOURCES
+
+    You can find out more about FLTK at our web site at:
+
+        http://www.fltk.org
+
+
+LICENSING
+
+    FLTK is provided under the terms of the GNU Library General Public
+    License.  A copy of this license is available in the file
+    "fltk.license".
+
+
+REPORTING PROBLEMS
+
+    Please report any problems you encounter with FLTK or this
+    distribution to "fltk-bugs@fltk.org".

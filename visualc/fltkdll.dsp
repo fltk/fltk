@@ -44,8 +44,8 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /MT /W3 /GX /Os /Ob2 /I "." /I ".." /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /c
-# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o /win32 "NUL"
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o /win32 "NUL"
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -70,9 +70,9 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MTd /Gm /GX /Zi /Od /I "." /I ".." /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /c
-# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
+# ADD CPP /nologo /MTd /GX /Od /I "." /I ".." /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /ZI /c
+# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o /win32 "NUL"
+# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o /win32 "NUL"
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -184,6 +184,10 @@ DEP_CPP_FL_AB=\
 	"..\fl\fl.h"\
 	".\config.h"\
 	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_add_idle.cxx
 # End Source File
 # Begin Source File
 
@@ -950,9 +954,6 @@ DEP_CPP_FL_OVE=\
 # Begin Source File
 
 SOURCE=..\src\fl_overlay_visual.cxx
-
-!IF  "$(CFG)" == "fltkdll - Win32 Release"
-
 DEP_CPP_FL_OVER=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
@@ -963,15 +964,6 @@ DEP_CPP_FL_OVER=\
 	"..\fl\x.h"\
 	".\config.h"\
 	
-
-!ELSEIF  "$(CFG)" == "fltkdll - Win32 Debug"
-
-DEP_CPP_FL_OVER=\
-	".\config.h"\
-	
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -1748,9 +1740,6 @@ NODEP_CPP_NUMER=\
 # Begin Source File
 
 SOURCE=..\src\scandir.c
-
-!IF  "$(CFG)" == "fltkdll - Win32 Release"
-
 DEP_CPP_SCAND=\
 	"..\src\scandir_win32.c"\
 	".\config.h"\
@@ -1758,16 +1747,6 @@ DEP_CPP_SCAND=\
 NODEP_CPP_SCAND=\
 	".\ys\types.h"\
 	
-
-!ELSEIF  "$(CFG)" == "fltkdll - Win32 Debug"
-
-DEP_CPP_SCAND=\
-	"..\src\scandir_win32.c"\
-	".\config.h"\
-	
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 

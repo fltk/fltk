@@ -1,5 +1,5 @@
 //
-// "$Id: subwindow.cxx,v 1.5 1999/02/03 08:43:35 bill Exp $"
+// "$Id: subwindow.cxx,v 1.5.2.2 1999/07/22 21:37:04 bill Exp $"
 //
 // Nested window test program for the Fast Light Tool Kit (FLTK).
 //
@@ -37,23 +37,6 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Input.H>
 
-class testwindow : public Fl_Window {
-  int handle(int);
-  void draw();
-public:
-  testwindow(Fl_Boxtype b,int x,int y,const char *l)
-    : Fl_Window(x,y,l) {box(b);}
-  testwindow(Fl_Boxtype b,int x,int y,int w,int h,const char *l)
-    : Fl_Window(x,y,w,h,l) {box(b);}
-};
-
-void testwindow::draw() {
-#ifdef DEBUG
-  printf("%s : draw\n",label());
-#endif
-  Fl_Window::draw();
-}
-
 class EnterExit : public Fl_Box {
   int handle(int);
 public:
@@ -90,16 +73,45 @@ const char *eventnames[] = {
 };
 #endif
 
-Fl_Menu_Button* popup;
+class testwindow : public Fl_Window {
+  int handle(int);
+  void draw();
+  int cx, cy; char key;
+public:
+  testwindow(Fl_Boxtype b,int x,int y,const char *l)
+    : Fl_Window(x,y,l) {box(b); key = 0;}
+  testwindow(Fl_Boxtype b,int x,int y,int w,int h,const char *l)
+    : Fl_Window(x,y,w,h,l) {box(b); key = 0;}
+};
+
+#include <FL/fl_draw.H>
+
+void testwindow::draw() {
+#ifdef DEBUG
+  printf("%s : draw\n",label());
+#endif
+  Fl_Window::draw();
+  if (key) fl_draw(&key, 1, cx, cy);
+}
 
 int testwindow::handle(int e) {
 #ifdef DEBUG
   if (e != FL_MOVE) printf("%s : %s\n",label(),eventnames[e]);
 #endif
   if (Fl_Window::handle(e)) return 1;
-  //  if (e==FL_PUSH) return popup->handle(e);
+  if (e == FL_FOCUS) return 1;
+  if (e == FL_PUSH) {Fl::focus(this); return 1;}
+  if (e == FL_KEYBOARD && Fl::event_text()[0]) {
+    key = Fl::event_text()[0];
+    cx = Fl::event_x();
+    cy = Fl::event_y();
+    redraw();
+    return 1;
+  }
   return 0;
 }
+
+Fl_Menu_Button* popup;
 
 const char* bigmess =
 #if 1
@@ -165,10 +177,11 @@ int main(int, char **) {
   popup = new Fl_Menu_Button(0,0,400,400);
   popup->type(Fl_Menu_Button::POPUP3);
   popup->add("This|is|a popup|menu");
+  popup->add(bigmess);
   window->show();
   return Fl::run();
 }
 
 //
-// End of "$Id: subwindow.cxx,v 1.5 1999/02/03 08:43:35 bill Exp $".
+// End of "$Id: subwindow.cxx,v 1.5.2.2 1999/07/22 21:37:04 bill Exp $".
 //

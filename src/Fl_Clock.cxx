@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Clock.cxx,v 1.8 1999/02/01 20:27:16 mike Exp $"
+// "$Id: Fl_Clock.cxx,v 1.8.2.1 1999/03/25 15:26:42 mike Exp $"
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
@@ -145,7 +145,7 @@ static void tick(void *v) {
   Fl::add_timeout(1.0, tick, v);
 #else
   struct timeval t;
-  gettimeofday(&t, NULL);
+  gettimeofday(&t, 0);
   ((Fl_Clock*)v)->value(t.tv_sec);
   double delay = 1.0-t.tv_usec*.000001;
   if (delay < .1 || delay > .9) delay = 1.0;
@@ -170,5 +170,5 @@ Fl_Clock::~Fl_Clock() {
 }
 
 //
-// End of "$Id: Fl_Clock.cxx,v 1.8 1999/02/01 20:27:16 mike Exp $".
+// End of "$Id: Fl_Clock.cxx,v 1.8.2.1 1999/03/25 15:26:42 mike Exp $".
 //

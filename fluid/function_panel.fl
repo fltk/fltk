@@ -9,18 +9,22 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {function/method} open
-    xywh {281 608 287 173} resizable modal visible
+    xywh {975 642 287 173} resizable modal visible
   } {
     Fl_Light_Button f_public_button {
       label public
       xywh {10 15 65 25} labelsize 10 when 0
+    }
+    Fl_Light_Button f_c_button {
+      label {C declaration} selected
+      xywh {90 15 90 25} labelsize 10
     }
     Fl_Input f_name_input {
       label {Name(args): (blank for main())}
       xywh {10 60 270 25} labelsize 12 align 5 when 0 resizable
     }
     Fl_Input f_return_type_input {
-      label {Return Type: (blank to return outermost widget)} selected
+      label {Return Type: (blank to return outermost widget)}
       xywh {10 105 270 25} labelsize 12 align 5 when 0
     }
     Fl_Return_Button f_panel_ok {
@@ -38,7 +42,7 @@ Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
     label code open
-    xywh {256 219 291 178} resizable modal visible
+    xywh {260 242 291 178} hide resizable modal
   } {
     Fl_Input code_input {
       xywh {6 5 280 135} type Multiline labelsize 12 align 0 when 0 resizable
@@ -58,7 +62,7 @@ Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
     label codeblock open
-    xywh {285 439 293 134} resizable modal visible
+    xywh {289 462 293 134} hide resizable modal
   } {
     Fl_Input code_before_input {
       xywh {10 5 275 25} labelsize 12 align 5 when 0 resizable
@@ -85,7 +89,7 @@ Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
     label {declaration block} open
-    xywh {296 118 293 134} resizable modal visible
+    xywh {517 141 293 134} hide resizable modal
   } {
     Fl_Input decl_before_input {
       xywh {15 10 275 25} labelsize 12 align 5 when 0 resizable
@@ -112,7 +116,7 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label declaration open
-    xywh {278 800 290 176} resizable visible
+    xywh {282 823 290 176} hide resizable
   } {
     Fl_Light_Button decl_public_button {
       label public
@@ -140,7 +144,7 @@ Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
     label class open
-    xywh {513 790 287 173} resizable modal visible
+    xywh {517 813 287 173} hide resizable modal
   } {
     Fl_Light_Button c_public_button {
       label public

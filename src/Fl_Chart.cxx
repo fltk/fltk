@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5 1999/02/01 20:15:00 mike Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.1 1999/06/12 12:38:14 mike Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -44,9 +44,11 @@ static void draw_barchart(int x,int y,int w,int h,
 /* Draws a bar chart. x,y,w,h is the bounding box, entries the array of
    numb entries and min and max the boundaries. */
 {
-  double incr = h/(max-min);
+  double incr;
   int zeroh;
   double lh = fl_height();
+  if (max == min) incr = h;
+  else incr = h/(max-min);
   if ( (-min*incr) < lh) {
       incr = (h - lh + min*incr)/(max-min);
       zeroh = int(y+h-lh);
@@ -90,8 +92,10 @@ static void draw_horbarchart(int x,int y,int w,int h,
       if (w1 > lw) lw = w1;
   }
   if (lw > 0.0) lw += 4.0;
-  double incr = w/(max-min);
+  double incr;
   int zeroh;
+  if (max == min) incr = w;
+  else incr = w/(max-min);
   if ( (-min*incr) < lw) {
       incr = (w - lw + min*incr)/(max-min);
       zeroh = x+int(lw+.5);
@@ -127,7 +131,9 @@ static void draw_linechart(int type, int x,int y,int w,int h,
 {
   int i;
   double lh = fl_height();
-  double incr = (h-2.0*lh)/ (max-min);
+  double incr;
+  if (max == min) incr = h-2.0*lh;
+  else incr = (h-2.0*lh)/ (max-min);
   int zeroh = int(y+h-lh+min * incr + .5);
   double bwidth = w/double(autosize?numb:maxnumb);
   /* Draw the values */
@@ -371,5 +377,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5 1999/02/01 20:15:00 mike Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.1 1999/06/12 12:38:14 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7 1999/03/04 18:45:31 mike Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.1 1999/07/31 08:00:08 bill Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -75,7 +75,7 @@ void pixmap_image::write_static() {
   int l;
   for (l = 0; p->data[l]; l++) {
     if (l) write_c(",\n");
-    write_c("(unsigned char *)");
+    write_c("(unsigned char*)\n");
     write_cstring(p->data[l],linelength[l]);
   }
   write_c("\n};\n");
@@ -239,14 +239,26 @@ void bitmap_image::write_static() {
     write_c("#include <FL/Fl_Bitmap.H>\n");
     bitmap_header_written = write_number;
   }
+#if 0 // older one
   write_c("static unsigned char %s[] = {  \n",
 	  unique_id(this, "bits", filename_name(name()), 0));
   int n = ((p->w+7)/8)*p->h;
+  int linelength = 0;
   for (int i = 0; i < n; i++) {
-    if (i) write_c(", ");
-    write_c("%d",p->array[i]);
+    if (i) {write_c(","); linelength++;}
+    if (linelength > 75) {write_c("\n"); linelength=0;}
+    int v = p->array[i];
+    write_c("%d",v);
+    linelength++; if (v>9) linelength++; if (v>99) linelength++;
   }
   write_c("\n};\n");
+#else // this seems to produce slightly shorter c++ files
+  write_c("static unsigned char %s[] =\n",
+	  unique_id(this, "bits", filename_name(name()), 0));
+  int n = ((p->w+7)/8)*p->h;
+  write_cstring((const char*)(p->array), n);
+  write_c(";\n");
+#endif
   write_c("static Fl_Bitmap %s(%s, %d, %d);\n",
 	  unique_id(this, "bitmap", filename_name(name()), 0),
 	  unique_id(this, "bits", filename_name(name()), 0),
@@ -405,5 +417,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7 1999/03/04 18:45:31 mike Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.1 1999/07/31 08:00:08 bill Exp $".
 //

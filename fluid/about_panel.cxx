@@ -47,7 +47,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->color(6);
         o->selection_color(47);
         o->labelcolor(6);
-        o->align(16);
+        o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
       }
       { Fl_Box* o = new Fl_Box(10, 150, 150, 90, "fluid");
         o->box(FL_ROUND_UP_BOX);
@@ -69,7 +69,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->selection_color(47);
         o->labelsize(20);
         o->labelcolor(7);
-        o->align(17);
+        o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
       }
       { Fl_Box* o = new Fl_Box(70, 145, 15, 15, "` ");
         o->box(FL_OVAL_BOX);
@@ -77,7 +77,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->selection_color(47);
         o->labelsize(20);
         o->labelcolor(7);
-        o->align(17);
+        o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
       }
       { Fl_Box* o = new Fl_Box(84, 125, 15, 15, "` ");
         o->box(FL_OVAL_BOX);
@@ -85,7 +85,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->selection_color(47);
         o->labelsize(20);
         o->labelcolor(7);
-        o->align(17);
+        o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
       }
       { Fl_Box* o = new Fl_Box(150, 27, 140, 113, "FLTK User\nInterface\nDesigner\nVersion 1.0");
         o->box(FL_OVAL_BOX);
@@ -96,7 +96,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelsize(18);
         o->labelcolor(7);
       }
-      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251\061\071\071\070-1999 by\nBill Spitzak and others");
+      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251""1998-1999 by\nBill Spitzak and others");
         o->box(FL_THIN_UP_BOX);
         o->labelsize(10);
         o->labelcolor(136);
@@ -107,7 +107,7 @@ Fl_Window* make_about_panel(const char *copyright) {
     { Fl_Box* o = copyright_box = new Fl_Box(5, 5, 300, 210);
       o->labelsize(8);
       o->labelcolor(6);
-      o->align(148);
+      o->align(132|FL_ALIGN_INSIDE);
       o->hide();
       o->label(copyright);
     }
