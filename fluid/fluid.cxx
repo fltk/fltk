@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.10 1999/01/19 19:10:38 mike Exp $"
+// "$Id: fluid.cxx,v 1.11 1999/01/25 22:05:38 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -25,7 +25,7 @@
 
 const char *copyright =
 "The FLTK user interface designer version 1.0\n"
-"Copyright 1998-1999 Bill Spitzak\n"
+"Copyright 1998-1999 by Bill Spitzak and others.\n"
 "\n"
 "This library is free software; you can redistribute it and/or "
 "modify it under the terms of the GNU Library General Public "
@@ -42,7 +42,7 @@ const char *copyright =
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 "
 "USA.\n"
 "\n"
-"Written by Bill Spitzak spitzak@d2.com\n";
+"Please report bugs to fltk-bugs@easysw.com.";
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -279,7 +279,7 @@ extern Fl_Menu_Item New_Menu[];
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
   {"New", 0, new_cb, 0},
-  {"Open...", FL_ALT+'O', open_cb, 0},
+  {"Open...", FL_ALT+'o', open_cb, 0},
   {"Save", FL_ALT+'s', save_cb, 0},
   {"Save As...", FL_ALT+'S', save_cb, (void*)1},
   {"Merge...", FL_ALT+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
@@ -302,7 +302,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Ungroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
-  {"Overlays on/off",FL_ALT+'o',toggle_overlays},
+  {"Overlays on/off",FL_ALT+'O',toggle_overlays},
   {"Preferences",FL_ALT+'p',show_alignment_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.10 1999/01/19 19:10:38 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.11 1999/01/25 22:05:38 mike Exp $".
 //
