@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.4 1998/10/21 16:28:55 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.5 1998/11/05 16:04:43 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -758,7 +758,7 @@ void callback_cb(Fl_Input* i, void *v) {
   } else {
     const char *c = i->value();
     const char *d = c_check(c);
-    if (d) {fl_show_message("Error in callback:",d,0); haderror = 1; return;}
+    if (d) {fl_message("Error in callback: %s",d); haderror = 1; return;}
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) if (o->selected) {
       o->callback(c);
     }
@@ -771,7 +771,7 @@ void user_data_cb(Fl_Input *i, void *v) {
   } else {
     const char *c = i->value();
     const char *d = c_check(c);
-    if (d) {fl_show_message("Error in user_data:",d,0); haderror = 1; return;}
+    if (d) {fl_message("Error in user_data: %s",d); haderror = 1; return;}
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) if (o->selected) {
       o->user_data(c);
     }
@@ -793,7 +793,7 @@ void user_data_type_cb(Fl_Input *i, void *v) {
       if (c && *c && c[strlen(c)-1] != '*' && strcmp(c,"long"))
 	d = "must be pointer or long";
     }
-    if (d) {fl_show_message("Error in type:",d,0); haderror = 1; return;}
+    if (d) {fl_message("Error in type: %s",d); haderror = 1; return;}
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) if (o->selected) {
       o->user_data_type(c);
     }
@@ -809,7 +809,7 @@ void v_input_cb(Fl_Input* i, void* v) {
   } else {
     const char *c = i->value();
     const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
-    if (d) {fl_show_message("Error in",i->label(),d); haderror = 1; return;}
+    if (d) {fl_message("Error in %s: %s",i->label(),d); haderror = 1; return;}
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget()) {
 	Fl_Widget_Type *t = (Fl_Widget_Type*)o;
@@ -1699,5 +1699,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.4 1998/10/21 16:28:55 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.5 1998/11/05 16:04:43 mike Exp $".
 //

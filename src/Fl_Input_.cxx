@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.4 1998/10/21 14:20:09 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.5 1998/11/05 16:04:46 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -544,7 +544,7 @@ int Fl_Input_::undo() {
   if (xlen) {
     undobuffersize(xlen);
     memcpy(undobuffer, buffer+b, xlen);
-    memmove(buffer+b, buffer+b+xlen, size_-xlen-b);
+    memmove(buffer+b, buffer+b+xlen, size_-xlen-b+1);
     size_ -= xlen;
   }
 
@@ -725,5 +725,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.4 1998/10/21 14:20:09 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.5 1998/11/05 16:04:46 mike Exp $".
 //

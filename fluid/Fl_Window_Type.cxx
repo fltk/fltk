@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.6 1998/10/21 16:28:56 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.7 1998/11/05 16:04:44 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -293,29 +293,29 @@ Fl_Window_Type Fl_Window_type;
 // Resize from window manager, try to resize it back to a legal size.
 // This is not proper X behavior, but works on 4DWM and fvwm
 void Overlay_Window::resize(int X,int Y,int W,int H) {
-  if (!visible() || W==w() && H==h()) {
-    Fl_Overlay_Window::resize(X,Y,W,H);
-    return;
-  }
-  int nw = gridx&&W!=w() ? ((W+gridx/2)/gridx)*gridx : W;
-  int nh = gridy&&H!=h() ? ((H+gridy/2)/gridy)*gridy : H;
+//   if (!visible() || W==w() && H==h()) {
+//     Fl_Overlay_Window::resize(X,Y,W,H);
+//     return;
+//   }
+//   int nw = gridx&&W!=w() ? ((W+gridx/2)/gridx)*gridx : W;
+//   int nh = gridy&&H!=h() ? ((H+gridy/2)/gridy)*gridy : H;
   Fl_Widget* t = resizable(); resizable(0);
   Fl_Overlay_Window::resize(X,Y,W,H);
   resizable(t);
-  // make sure new window size surrounds the widgets:
-  int b = 0;
-  int r = 0;
-  for (Fl_Type *o=window->next; o && o->level>window->level; o=o->next)
-    if (o->is_widget() && !o->is_menu_item()) {
-      Fl_Widget* w = ((Fl_Widget_Type*)o)->o;
-      if (w->x()+w->w() > r) r = w->x()+w->w();
-      if (w->y()+w->h() > b) b = w->y()+w->h();
-    }
-  if (nh < b) nh = b;
-  if (nw < r) nw = r;
-  // If changed, tell the window manager.  Skip really big windows
-  // that might be bigger than screen:
-  if (nw != W && nw < Fl::w()-100 || nh != H && nh < Fl::h()-100) size(nw,nh);
+//   // make sure new window size surrounds the widgets:
+//   int b = 0;
+//   int r = 0;
+//   for (Fl_Type *o=window->next; o && o->level>window->level; o=o->next)
+//     if (o->is_widget() && !o->is_menu_item()) {
+//       Fl_Widget* w = ((Fl_Widget_Type*)o)->o;
+//       if (w->x()+w->w() > r) r = w->x()+w->w();
+//       if (w->y()+w->h() > b) b = w->y()+w->h();
+//     }
+//   if (nh < b) nh = b;
+//   if (nw < r) nw = r;
+//   // If changed, tell the window manager.  Skip really big windows
+//   // that might be bigger than screen:
+//   if (nw != W && nw < Fl::w()-100 || nh != H && nh < Fl::h()-100) size(nw,nh);
 }
 
 // calculate actual move by moving mouse position (mx,my) to
@@ -693,5 +693,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.6 1998/10/21 16:28:56 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.7 1998/11/05 16:04:44 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.3 1998/10/21 14:20:28 mike Exp $"
+// "$Id: Fl_Window_hotspot.cxx,v 1.4 1998/11/05 16:04:48 mike Exp $"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
@@ -26,15 +26,36 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
+#ifdef WIN32
+#include <FL/win32.H>
+#endif
+
 void Fl_Window::hotspot(int X, int Y, int offscreen) {
   int mx,my; Fl::get_mouse(mx,my);
   X = mx-X; Y = my-Y;
   if (!offscreen) {
+    if (border()) {
+      // ensure border is on screen:
+#ifdef WIN32
+      int top, left, right, bottom;
+      Fl_X::get_border(this, top, left, bottom);
+      right = left; top += bottom;
+#else
+      const int top = 20;
+      const int left = 1;
+      const int right = 1;
+      const int bottom = 1;
+#endif
+      if (X+w()+right > Fl::w()) X = Fl::w()-right-w();
+      if (X-left < 0) X = left;
+      if (Y+h()+bottom > Fl::h()) Y = Fl::h()-bottom-h();
+      if (Y-top < 0) Y = top;
+    }
+    // now insure contents are on-screen (more important than border):
+    if (X+w() > Fl::w()) X = Fl::w()-w();
     if (X < 0) X = 0;
-    if (X > Fl::w()-w()) X = Fl::w()-w();
-    if (Y > Fl::h()-h()) Y = Fl::h()-h();
+    if (Y+h() > Fl::h()) Y = Fl::h()-h();
     if (Y < 0) Y = 0;
-    if (border() && Y < 20) Y = 20;
   }
   position(X,Y);
 }
@@ -50,5 +71,5 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
 }
 
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.3 1998/10/21 14:20:28 mike Exp $".
+// End of "$Id: Fl_Window_hotspot.cxx,v 1.4 1998/11/05 16:04:48 mike Exp $".
 //

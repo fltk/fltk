@@ -1,5 +1,5 @@
 //
-// "$Id: forms_compatability.cxx,v 1.3 1998/10/21 14:21:05 mike Exp $"
+// "$Id: forms_compatability.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $"
 //
 // Forms compatibility functions for the Fast Light Tool Kit (FLTK).
 //
@@ -175,6 +175,34 @@ Fl_Button *fl_add_button(uchar t,int x,int y,int w,int h,const char *l) {
   return b;
 }
 
+void fl_show_message(const char *q1,const char *q2,const char *q3) {
+  fl_message("%s\n%s\n%s", q1?q1:"", q2?q2:"", q3?q3:"");
+}
+
+void fl_show_alert(const char *q1,const char *q2,const char *q3,int) {
+  fl_alert("%s\n%s\n%s", q1?q1:"", q2?q2:"", q3?q3:"");
+}
+
+int fl_show_question(const char *q1,const char *q2,const char *q3) {
+  return fl_ask("%s\n%s\n%s", q1?q1:"", q2?q2:"", q3?q3:"");
+}
+
+int fl_show_choice(
+  const char *q1,
+  const char *q2,
+  const char *q3,
+  int, // number of buttons, ignored
+  const char *b0,
+  const char *b1,
+  const char *b2) {
+  return fl_choice("%s\n%s\n%s", q1?q1:"", q2?q2:"", q3?q3:"", b0,b1,b2)+1;
+}
+
+char *fl_show_simple_input(const char *str1, const char *defstr) {
+  const char *r = fl_input(str1, defstr);
+  return (char *)(r ? r : defstr);
+}
+
 //
-// End of "$Id: forms_compatability.cxx,v 1.3 1998/10/21 14:21:05 mike Exp $".
+// End of "$Id: forms_compatability.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $".
 //

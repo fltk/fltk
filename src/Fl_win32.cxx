@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.10 1998/10/21 14:20:36 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.11 1998/11/05 16:04:50 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -220,9 +220,9 @@ static int ms2fltk(int vk, int extended) {
     for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
       vklut[vktab[i].vk] = vktab[i].fltk;
       extendedlut[vktab[i].vk] = vktab[i].extended;
-  }
-    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
     }
+    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
+  }
   return extended ? extendedlut[vk] : vklut[vk];
 }
 
@@ -412,13 +412,45 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 }
 
 ////////////////////////////////////////////////////////////////
+// This function gets the dimensions of the top/left borders and
+// the title bar, if there is one, based on the FL_BORDER, FL_MODAL
+// and FL_NONMODAL flags, and on the window's size range. 
+// It returns the following values:
+//
+// value | border | title bar
+//   0   |  none  |   no
+//   1   |  fix   |   no
+//   2   |  fix   |   yes
+//   3   |  size  |   yes
+
+int Fl_X::get_border(const Fl_Window* w,int &T, int &X, int &Y) {
+  int ret = T = X = Y = 0;
+  if (w->border() && !w->parent()) {
+    ret = 2;
+    if ((w->maxw != w->minw || w->maxh != w->minh) && !w->non_modal()) {
+      ret |= 1;
+      X = GetSystemMetrics(SM_CXSIZEFRAME);
+      Y = GetSystemMetrics(SM_CYSIZEFRAME);
+    } else {
+      X = GetSystemMetrics(SM_CXFIXEDFRAME);
+      Y = GetSystemMetrics(SM_CYFIXEDFRAME);
+    }
+    if (w->modal())
+      ret = 1;
+      else T = GetSystemMetrics(SM_CYCAPTION); 
+  }
+  return ret;
+}
+
+////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
+  UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER;
   int is_a_resize = (W != w() || H != h());
   int resize_from_program = (this != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
   if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  else if (!is_a_resize) return;
+    else {if (!is_a_resize) return; flags |= SWP_NOMOVE;}
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
     if (shown()) {redraw(); i->wait_for_expose = 1;}
@@ -426,13 +458,14 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     x(X); y(Y);
   }
   if (resize_from_program && shown()) {
-    if (border() && !parent()) {
-      X -= GetSystemMetrics(SM_CXFRAME);
-      Y -= GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
-      W += 2*GetSystemMetrics(SM_CXFRAME);
-      H += 2*GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
-    }
-    MoveWindow(i->xid, X, Y, W, H, TRUE);
+    int bt, bx, by;
+    if (Fl_X::get_border(this, bt, bx, by)) {
+      X -= bx;
+      Y -= by+bt;
+      W += 2*bx;
+      H += 2*by+bt;
+    } else {flags |= SWP_NOSIZE;}
+    SetWindowPos(i->xid, 0, X, Y, W, H, flags);
   }
 }
 
@@ -470,16 +503,17 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   }
 
   HWND parent;
-  DWORD style;
-  DWORD styleEx;
+  DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+  DWORD styleEx = WS_EX_LEFT;
+
   int xp = w->x();
   int yp = w->y();
   int wp = w->w();
   int hp = w->h();
 
   if (w->parent()) {
-    style = WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-    styleEx = WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
+    style = WS_CHILD;
+    styleEx = WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
     parent = fl_xid(w->window());
   } else {
     if (!w->size_range_set) {
@@ -492,24 +526,35 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 	w->size_range(w->w(), w->h(), w->w(), w->h());
       }
     }
-    if (w->border()) {
-      style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU
-	| WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-      styleEx = WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
-      if (w->maxw != w->minw || w->maxh != w->minh)
-	style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
-      if (!w->modal()) style |= WS_MINIMIZEBOX;
-      xp -= GetSystemMetrics(SM_CXFRAME);
-      yp -= GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
-      wp += 2*GetSystemMetrics(SM_CXFRAME);
-      hp += 2*GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
-    } else {
-      style = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_OVERLAPPED;
-      styleEx = WS_EX_LEFT | WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
+    styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
+    int bt, bx, by;
+    switch (Fl_X::get_border(w, bt, bx, by)) {
+      // No border (user for menus)
+      case 0: style |= WS_POPUP; break;
+
+      // Thin border
+      case 1: style |= WS_POPUP | WS_DLGFRAME; break;
+
+      // Thin border and title bar
+      case 2: style |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU; 
+	      if (!w->non_modal()) style |= WS_MINIMIZEBOX; break;
+
+      // Thick, resizable border and title bar, with maximize button
+      case 3: style |= WS_THICKFRAME | WS_MAXIMIZEBOX | WS_CAPTION | 
+		       WS_SYSMENU | WS_MINIMIZEBOX;
     }
+    wp += 2*bx;
+    hp += 2*by+bt;
+
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
       xp = yp = CW_USEDEFAULT;
+    } else {
+      xp -= bx;
+      yp -= by+bt;
     }
+//  if (xp<0) xp = 0;
+//  if (yp<0) yp = 0;
+
     parent = 0;
     if (w->non_modal() && !fl_disable_transient_for) {
       // find some other window to be "transient for":
@@ -581,13 +626,13 @@ void Fl_Window::size_range_() {
 
 void Fl_X::set_minmax(LPMINMAXINFO minmax)
 {
-  int wd, hd;
-  if (w->border()) {
-    wd = 2*GetSystemMetrics(SM_CXFRAME);
-    hd = 2*GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION);
-  } else {
-    wd = hd = 0;
-  }
+  int td, wd, hd;
+
+  get_border(w, td, wd, hd);
+  wd *= 2;
+  hd *= 2;
+  hd += td;
+
   minmax->ptMinTrackSize.x = w->minw + wd;
   minmax->ptMinTrackSize.y = w->minh + hd;
   if (w->maxw) {
@@ -642,7 +687,9 @@ void Fl_Window::show() {
     Fl_X::make(this);
   } else {
     // Once again, we would lose the capture if we activated the window.
-    ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
+    if (IsIconic(i->xid)) OpenIcon(i->xid);
+    if (!fl_capture) BringWindowToTop(i->xid);
+    //ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
 }
 
@@ -728,5 +775,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.10 1998/10/21 14:20:36 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.11 1998/11/05 16:04:50 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.8 1998/10/21 14:19:50 mike Exp $"
+// "$Id: win32.H,v 1.9 1998/11/05 16:04:41 mike Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,9 +28,11 @@
 // portability of even the system-specific code...
 
 #include <windows.h>
+// In some of the distributions, the gcc header files are missing some stuff:
 #ifndef LPMINMAXINFO
-// the gcc header files are missing some stuff:
 #define LPMINMAXINFO MINMAXINFO*
+#endif
+#ifndef VK_LWIN
 #define VK_LWIN 0x5B
 #define VK_RWIN 0x5C
 #define VK_APPS 0x5D
@@ -72,6 +74,7 @@ public:
   HCURSOR cursor;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
+  static int get_border(const Fl_Window* w,int &bt,int &bx,int &by);
   void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
   void flush() {w->flush();}
   void set_minmax(LPMINMAXINFO minmax);
@@ -116,5 +119,5 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy)
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
 
 //
-// End of "$Id: win32.H,v 1.8 1998/10/21 14:19:50 mike Exp $".
+// End of "$Id: win32.H,v 1.9 1998/11/05 16:04:41 mike Exp $".
 //

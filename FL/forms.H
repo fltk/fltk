@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.3 1998/10/21 14:19:47 mike Exp $"
+// "$Id: forms.H,v 1.4 1998/11/05 16:04:39 mike Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -648,9 +648,21 @@ fl_add_free(int t,double x,double y,double w,double h,const char* l,
 #include "fl_ask.H"
 #include "fl_show_colormap.H"
 
-inline int fl_show_question(const char* c, int) {return fl_ask(c);}
-inline void fl_show_alert(const char* a,const char*b,const char*c,int) {
-  fl_show_alert(a,b,c);}
+inline int fl_show_question(const char* c, int = 0) {return fl_ask(c);}
+void fl_show_message(const char *,const char *,const char *);
+void fl_show_alert(const char *,const char *,const char *,int=0);
+int fl_show_question(const char *,const char *,const char *);
+inline const char *fl_show_input(const char *l,const char*d=0) {return fl_input(l,d);}
+/*const*/ char *fl_show_simple_input(const char *label, const char *deflt = 0);
+int fl_show_choice(
+    const char *m1,
+    const char *m2,
+    const char *m3,
+    int numb,
+    const char *b0,
+    const char *b1,
+    const char *b2);
+
 inline void fl_set_goodies_font(uchar a, uchar b) {fl_message_font(a,b);}
 #define fl_show_messages fl_message
 inline int fl_show_choices(const char* c,int n,const char* b1,const char* b2,
@@ -829,5 +841,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.3 1998/10/21 14:19:47 mike Exp $".
+// End of "$Id: forms.H,v 1.4 1998/11/05 16:04:39 mike Exp $".
 //

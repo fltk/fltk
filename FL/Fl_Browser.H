@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.4 1998/10/21 14:18:59 mike Exp $"
+// "$Id: Fl_Browser.H,v 1.5 1998/11/05 16:04:37 mike Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -79,6 +79,7 @@ public:
   int selected(int) const ;
   void show(int n);
   void hide(int n);
+  void hide() {Fl_Widget::hide();}
   int visible(int n) const ;
 
   int value() const ;
@@ -107,5 +108,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.4 1998/10/21 14:18:59 mike Exp $".
+// End of "$Id: Fl_Browser.H,v 1.5 1998/11/05 16:04:37 mike Exp $".
 //

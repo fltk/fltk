@@ -1,5 +1,5 @@
 //
-// "$Id: message.cxx,v 1.3 1998/10/21 14:21:35 mike Exp $"
+// "$Id: message.cxx,v 1.4 1998/11/05 16:04:52 mike Exp $"
 //
 // Message test program for the Fast Light Tool Kit (FLTK).
 //
@@ -29,19 +29,30 @@
 #include <stdio.h>
 
 int main(int, char **) {
-  fl_message("Spelling check sucessfull.");
-  fl_alert("Quantum fluctuations in the space-time continuim detected.");
+
+  fl_message("Spelling check sucessfull, %d errors found with %g%% confidence",
+	     1002, 100*(15/77.0));
+
+  fl_alert("Quantum fluctuations in the space-time continuim detected, "
+	   "you have %g seconds to comply.", 10.0);
+
   printf("fl_ask returned %d\n",
-    fl_ask("Do you really want to?"));
+    fl_ask("Do you really want to %s?", "continue"));
+
   printf("fl_choice returned %d\n",
     fl_choice("Choose one of the following:","choice0","choice1","choice2"));
-  printf("fl_show_input returned \"%s\"\n",
-    fl_show_input("Please enter a string:", "this is the default value"));
-  printf("fl_password returned \"%s\"\n",
-    fl_password("Enter your password:"));
+  const char *r;
+
+  r = fl_input("Please enter a string for '%s':", "this is the default value",
+	       "testing");
+  printf("fl_input returned \"%s\"\n", r ? r : "NULL");
+
+  r = fl_password("Enter %s's password:", 0, "somebody");
+  printf("fl_password returned \"%s\"\n", r ? r : "NULL");
+
   return 0;
 }
 
 //
-// End of "$Id: message.cxx,v 1.3 1998/10/21 14:21:35 mike Exp $".
+// End of "$Id: message.cxx,v 1.4 1998/11/05 16:04:52 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Overlay_Window.cxx,v 1.5 1998/10/21 14:20:15 mike Exp $"
+// "$Id: Fl_Overlay_Window.cxx,v 1.6 1998/11/05 16:04:47 mike Exp $"
 //
 // Overlay window code for the Fast Light Tool Kit (FLTK).
 //
@@ -43,13 +43,9 @@ void Fl_Overlay_Window::hide() {
 }
 
 void Fl_Overlay_Window::flush() {
-  // turn off the bit set by redraw_overlay:
+  int erase_overlay = (damage()&FL_DAMAGE_OVERLAY);
   clear_damage(damage()&~FL_DAMAGE_OVERLAY);
-  // even if damage() == 0, flush() will erase the fake overlay by
-  // copying back buffer over it.  It will also set the clip to the
-  // region made by all the expose events:
-  Fl_Double_Window::flush();
-  // Now draw the fake overlay, if any, using the current clip:
+  Fl_Double_Window::flush(erase_overlay);
   if (overlay_ == this) draw_overlay();
 }
 
@@ -67,7 +63,11 @@ Fl_Overlay_Window::~Fl_Overlay_Window() {
 
 int Fl_Overlay_Window::can_do_overlay() {return 0;}
 
-void Fl_Overlay_Window::redraw_overlay() {overlay_ = this; damage(FL_DAMAGE_OVERLAY);}
+void Fl_Overlay_Window::redraw_overlay() {
+  overlay_ = this;
+  clear_damage(damage()|FL_DAMAGE_OVERLAY);
+  Fl::damage(FL_DAMAGE_CHILD);
+}
 
 #else
 
@@ -127,9 +127,10 @@ void Fl_Overlay_Window::redraw_overlay() {
     }
   }
   if (shown()) {
-    if (overlay_ == this)
-      damage(FL_DAMAGE_OVERLAY);
-    else if (!overlay_->shown())
+    if (overlay_ == this) {
+      clear_damage(damage()|FL_DAMAGE_OVERLAY);
+      Fl::damage(FL_DAMAGE_CHILD);
+    } else if (!overlay_->shown())
       overlay_->show();
     else
       overlay_->redraw();
@@ -139,5 +140,5 @@ void Fl_Overlay_Window::redraw_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Overlay_Window.cxx,v 1.5 1998/10/21 14:20:15 mike Exp $".
+// End of "$Id: Fl_Overlay_Window.cxx,v 1.6 1998/11/05 16:04:47 mike Exp $".
 //

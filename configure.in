@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.10 1998/10/21 21:43:54 mike Exp $"
+dnl# "$Id: configure.in,v 1.11 1998/11/05 16:04:37 mike Exp $"
 dnl#
 dnl# for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -31,9 +31,9 @@ AC_PROG_RANLIB
 
 LIBNAME="libfltk.a"
 if test "$RANLIB" != ":"; then
-  LIBCOMMAND="ar crv"
+  LIBCOMMAND="ar cr"
 else
-  LIBCOMMAND="ar crvs"
+  LIBCOMMAND="ar crs"
 fi
 
 DEBUGFLAG="-O2"
@@ -99,6 +99,9 @@ fi
 AC_HEADER_DIRENT
 
 AC_CHECK_FUNCS(scandir)
+AC_CHECK_FUNCS(vsnprintf)
+AC_CHECK_FUNCS(snprintf)
+AC_CHECK_FUNCS(vsprintf)
 
 AC_PATH_XTRA
 echo "Ignoring libraries \"$X_PRE_LIBS\" requested by configure."
@@ -129,6 +132,28 @@ fi
 
 MAKEDEPEND="\$(CXX) -M"
 
+dnl# add warnings to compiler switches:
+dnl# do this last so messing with switches does not break tests
+if test -n "$GXX"; then
+    CFLAGS="-Wall $CFLAGS"
+    CXXFLAGS="-Wall -Wno-return-type $CXXFLAGS"
+else
+if test "`(uname) 2>/dev/null`" = IRIX; then
+  if expr "`(uname -r)`" \>= 6.2; then
+    CXX="CC -n32"
+    CC="cc -n32"
+    LD="ld -n32"
+    MAKEDEPEND="CC -M"
+    # -woff 3322 is necessary due to errors in Xlib headers on IRIX
+    CFLAGS="-fullwarn $CFLAGS"
+    CXXFLAGS="-fullwarn -woff 1685 -woff 3322 $CXXFLAGS"
+    MAKEDEPEND="CC -M"
+  else
+    CXXFLAGS="+w +pp $CXXFLAGS"
+  fi
+fi
+fi
+
 AC_SUBST(LIBNAME)
 AC_SUBST(LIBCOMMAND)
 AC_SUBST(MAKEDEPEND)
@@ -136,5 +161,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.10 1998/10/21 21:43:54 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.11 1998/11/05 16:04:37 mike Exp $".
 dnl#

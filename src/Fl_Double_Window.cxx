@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.8 1998/10/21 14:20:02 mike Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.9 1998/11/05 16:04:45 mike Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -56,9 +56,6 @@ static int can_xdbe() {
   }
   return use_xdbe;
 }
-#define DAMAGE_TEST() (damage() && (use_xdbe || damage() != FL_DAMAGE_EXPOSE))
-#else
-#define DAMAGE_TEST() (damage() & ~FL_DAMAGE_EXPOSE)
 #endif
 
 void Fl_Double_Window::show() {
@@ -99,57 +96,66 @@ extern void fl_restore_clip();
 
 #endif
 
-// Fl_Overlay_Window relies on flush() copying the back buffer to the
-// front even if damage() == 0, thus erasing the overlay inside the region:
+// Fl_Overlay_Window relies on flush(1) copying the back buffer to the
+// front everywhere, even if damage() == 0, thus erasing the overlay,
+// and leaving the clip region set to the entire window.
 
-void Fl_Double_Window::flush() {
+void Fl_Double_Window::flush() {flush(0);}
+
+void Fl_Double_Window::flush(int eraseoverlay) {
   make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(this);
   if (!i->other_xid) {
 #if USE_XDBE
     if (can_xdbe()) i->other_xid =
-      XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeCopied);
+      XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeUndefined);
     else
 #endif
       i->other_xid = fl_create_offscreen(w(), h());
     clear_damage(FL_DAMAGE_ALL);
   }
+#if USE_XDBE
+  if (use_xdbe) {
+    // if this is true, copy rather than swap so back buffer is preserved:
+    int copy = (i->region || eraseoverlay);
+    if (i->backbuffer_bad) { // make sure we do a complete redraw...
+      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+      clear_damage(FL_DAMAGE_ALL);
+    }
+    if (damage()) {
+      fl_clip_region(i->region); i->region = 0;
+      fl_window = i->other_xid;
+      draw();
+      fl_window = i->xid;
+    }
+    if (!copy) {
+      XdbeSwapInfo s;
+      s.swap_window = fl_xid(this);
+      s.swap_action = XdbeUndefined;
+      XdbeSwapBuffers(fl_display, &s, 1);
+      i->backbuffer_bad = 1;
+      return;
+    }
+    // otherwise just use normal copy from back to front:
+    i->backbuffer_bad = 0; // which won't destroy the back buffer...
+  } else
+#endif
+  if (damage() & ~FL_DAMAGE_EXPOSE) {
+    fl_clip_region(i->region); i->region = 0;
 #ifdef WIN32
-  fl_clip_region(i->region); i->region = 0;
-  if (DAMAGE_TEST()) {
     HDC _sgc = fl_gc;
     fl_gc = fl_makeDC(i->other_xid);
     fl_restore_clip(); // duplicate region into new gc
     draw();
     DeleteDC(fl_gc);
     fl_gc = _sgc;
-  }
 #else // X:
-#if USE_XDBE
-  int clipped = i->region != 0;
-#endif
-  fl_clip_region(i->region); i->region = 0;
-  if (DAMAGE_TEST()) {
     fl_window = i->other_xid;
     draw();
     fl_window = i->xid;
-  }
-#if USE_XDBE
-  // It appears that swapbuffers ignores the clip region (it has to
-  // as the gc is not passed as an argument to it).  This causes it
-  // to erase parts of the overlay that won't be redrawn, and (at least
-  // on XFree86) it is slower.  So I don't use it unless the entire
-  // window is being redrawn.   Sigh.
-  if (use_xdbe && !clipped) {
-    XdbeSwapInfo s;
-    s.swap_window = fl_xid(this);
-    s.swap_action = XdbeCopied;
-    XdbeSwapBuffers(fl_display, &s, 1);
-    // fl_clip_region(0); older fix for clipping problem but overlay blinked
-    return;
-  }
 #endif
-#endif
+  }
+  if (eraseoverlay) fl_clip_region(0);
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
@@ -186,5 +192,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.8 1998/10/21 14:20:02 mike Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.9 1998/11/05 16:04:45 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.5 1998/10/21 17:28:27 mike Exp $"
+// "$Id: fluid.cxx,v 1.6 1998/11/05 16:04:44 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -121,7 +121,7 @@ void save_cb(Fl_Widget *, void *v) {
     set_filename(c);
   }
   if (!write_file(c)) {
-    fl_show_message("Error writing", c, strerror(errno));
+    fl_message("Error writing %s: %s", c, strerror(errno));
     return;
   }
   modflag = 0;
@@ -132,7 +132,7 @@ void open_cb(Fl_Widget *, void *v) {
   const char *c;
   if (!(c = fl_file_chooser("Open:", "*.f[ld]", filename))) return;
   if (!read_file(c, v!=0)) {
-    fl_show_message("Can't read", c, strerror(errno));
+    fl_message("Can't read %s: %s", c, strerror(errno));
     return;
   }
   if (!v) {set_filename(c); modflag = 0;}
@@ -178,9 +178,9 @@ void write_cb(Fl_Widget *, void *) {
     if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
   } else {
     if (!x) {
-      fl_show_message("Can't write", cname, strerror(errno));
+      fl_message("Can't write %s: %s", cname, strerror(errno));
     } else {
-      fl_show_message("Wrote", cname, 0);
+      fl_message("Wrote %s", cname, 0);
     }
   }
 }
@@ -219,7 +219,7 @@ void copy_cb(Fl_Widget*, void*) {
   if (!Fl_Type::current) return;
   ipasteoffset = 10;
   if (!write_file(cutfname(),1)) {
-    fl_show_message("Can't write", cutfname(), strerror(errno));
+    fl_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
   }
 }
@@ -231,7 +231,7 @@ void cut_cb(Fl_Widget *, void *) {
   Fl_Type *p = Fl_Type::current->parent;
   while (p && p->selected) p = p->parent;
   if (!write_file(cutfname(),1)) {
-    fl_show_message("Can't write", cutfname(), strerror(errno));
+    fl_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
   }
   delete_all(1);
@@ -246,7 +246,7 @@ void paste_cb(Fl_Widget*, void*) {
   if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
   if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
   if (!read_file(cutfname(), 1)) {
-    fl_show_message("Can't read", cutfname(), strerror(errno));
+    fl_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
   pasteoffset = 0;
   ipasteoffset += 10;
@@ -396,7 +396,7 @@ int main(int argc,char **argv) {
       fprintf(stderr,"%s : %s\n", c, strerror(errno));
       exit(1);
     }
-    fl_show_message("Can't read", c, strerror(errno));
+    fl_message("Can't read %s: %s", c, strerror(errno));
   }
   if (compile_only) {write_cb(0,0); exit(0);}
   modflag = 0;
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.5 1998/10/21 17:28:27 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.6 1998/11/05 16:04:44 mike Exp $".
 //

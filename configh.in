@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.6 1998/10/21 21:41:41 mike Exp $"
+ * "$Id: configh.in,v 1.7 1998/11/05 16:04:36 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -123,6 +123,14 @@
 #define HAVE_SCANDIR 0
 
 /*
+ * possibly missing sprintf-style functions:
+ */
+
+#define HAVE_VSNPRINTF 0
+#define HAVE_SNPRINTF 0
+#define HAVE_VSPRINTF 0
+
+/*
  * HAVE_POLL:
  *
  * Use poll() if we don't have select().
@@ -139,5 +147,5 @@
 #define HAVE_LIBJPEG 0
 
 /*
- * End of "$Id: configh.in,v 1.6 1998/10/21 21:41:41 mike Exp $".
+ * End of "$Id: configh.in,v 1.7 1998/11/05 16:04:36 mike Exp $".
  */

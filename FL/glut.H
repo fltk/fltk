@@ -1,5 +1,5 @@
 //
-// "$Id: glut.H,v 1.3 1998/10/21 14:19:49 mike Exp $"
+// "$Id: glut.H,v 1.4 1998/11/05 16:04:40 mike Exp $"
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -55,11 +55,12 @@
 #include "Fl_Gl_Window.H"
 
 class Fl_Glut_Window : public Fl_Gl_Window {
+  void _init();
+  int mouse_down;
+protected:
   void draw();
   void draw_overlay();
   int handle(int);
-  void _init();
-  int mouse_down;
 public: // so the inline functions work
   int number;
   int menu[3];
@@ -466,5 +467,5 @@ extern void glutSolidIcosahedron();
 #endif                  /* __glut_h__ */
 
 //
-// End of "$Id: glut.H,v 1.3 1998/10/21 14:19:49 mike Exp $".
+// End of "$Id: glut.H,v 1.4 1998/11/05 16:04:40 mike Exp $".
 //

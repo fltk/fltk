@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_abort.cxx,v 1.3 1998/10/21 14:20:29 mike Exp $"
+// "$Id: Fl_abort.cxx,v 1.4 1998/11/05 16:04:49 mike Exp $"
 //
 // Warning/error message code for the Fast Light Tool Kit (FLTK).
 //
@@ -56,12 +56,15 @@ static void error(const char *format, ...) {
 #else
 
 #include <windows.h>
+extern "C" {
+int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
+}
 
 static void warning(const char *format, ...) {
   va_list args;
   char buf[1024];
   va_start(args, format);
-  vsprintf(buf, format, args);
+  vnsprintf(buf, 1024, format, args);
   va_end(args);
   MessageBox(0,buf,"Warning",MB_ICONEXCLAMATION|MB_OK);
 }
@@ -70,7 +73,7 @@ static void error(const char *format, ...) {
   va_list args;
   char buf[1024];
   va_start(args, format);
-  vsprintf(buf, format, args);
+  vnsprintf(buf, 1024, format, args);
   va_end(args);
   MessageBox(0,buf,"Error",MB_ICONSTOP|MB_SYSTEMMODAL);
   ::exit(1);
@@ -83,5 +86,5 @@ void (*Fl::error)(const char* format, ...) = ::error;
 void (*Fl::fatal)(const char* format, ...) = ::error;
 
 //
-// End of "$Id: Fl_abort.cxx,v 1.3 1998/10/21 14:20:29 mike Exp $".
+// End of "$Id: Fl_abort.cxx,v 1.4 1998/11/05 16:04:49 mike Exp $".
 //

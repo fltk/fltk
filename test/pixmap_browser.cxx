@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.3 1998/10/21 14:21:39 mike Exp $"
+// "$Id: pixmap_browser.cxx,v 1.4 1998/11/05 16:04:53 mike Exp $"
 //
 // Another pixmap test program for the Fast Light Tool Kit (FLTK).
 //
@@ -55,7 +55,7 @@ static int hexdigit(int x) {
 int load_file(const char *name) {
   FILE *f = fopen(name,"r");
   if (!f) {
-    fl_show_message("Can't open",name,strerror(errno));
+    fl_message("Can't open %s, %s",name,strerror(errno));
     return 0;
   }
   if (data) {
@@ -164,5 +164,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.3 1998/10/21 14:21:39 mike Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.4 1998/11/05 16:04:53 mike Exp $".
 //

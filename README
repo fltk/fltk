@@ -98,32 +98,18 @@ WHAT DOES "FLTK" MEAN?
 
 BUILDING AND INSTALLING FLTK UNDER UNIX
 
+    In most cases you can just type "make".  This will run configure
+    with the default of no options and then compile everything.
+
     FLTK uses GNU autoconf to configure itself for your UNIX platform.
-    If you aren't using UNIX then you'll need to configure things
-    differently. See below for other operating system configurations.
-
-    Before you configure FLTK you'll want to make sure your environment
-    is setup properly.  Some variables of note are:
-
-	CC         - C compiler to use
-	CFLAGS     - C compiler options
-
-	CXX        - C++ compiler to use
-	CXXFLAGS   - C++ compiler options
-
-	LDFLAGS    - Linker options
-	LIBS       - Linker libraries
-
     The main things that the configure script will look for are the
     X11, OpenGL (or Mesa), and JPEG header and library files.  Make
-    sure that they are in the standard include/library locations, and
-    if not define one or more of the environment variables listed
-    above.
+    sure that they are in the standard include/library locations.
 
-    Once you have everything ready you can run the "configure" script
-    located in this directory.  The "--enable-windows-style" option to
-    configure will make the FLTK widgets look more like their Microsoft
-    Windows counterparts.  Other options include:
+    You can run configure yourself to get the exact setup you need.
+    Type "./configure <options>".  The "--enable-windows-style" option
+    will make the FLTK widgets look more like their Microsoft Windows
+    counterparts.  Other options include:
 
 	--enable-debug          - Enable debugging code & symbols
 	--enable-shared         - Enable generation of shared libraries

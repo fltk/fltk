@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.3 1998/10/21 14:20:44 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -39,11 +39,11 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Secret_Input.H>
 static Fl_Window *message_form;
-static Fl_Box *message[3];
+static Fl_Box *message;
 static Fl_Box *icon;
 static Fl_Button *button[3];
 static Fl_Input *input;
-static char *iconlabel;
+static char *iconlabel = "?";
 uchar fl_message_font_ = 0;
 uchar fl_message_size_ = FL_NORMAL_SIZE;
 
@@ -52,11 +52,7 @@ static Fl_Window *makeform() {
  Fl_Window *w = message_form = new Fl_Window(410,105);
  // w->clear_border();
  // w->box(FL_UP_BOX);
- (message[0] = new Fl_Box(60, 9, 340, 20))
-   ->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
- (message[1] = new Fl_Box(60, 25, 340, 20))
-   ->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
- (message[2] = new Fl_Box(60, 41, 340, 20))
+ (message = new Fl_Box(60, 25, 340, 20))
    ->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  (input = new Fl_Input(60,32,340,30))->hide();
  {Fl_Box* o = icon = new Fl_Box(10, 10, 50, 50);
@@ -74,28 +70,32 @@ static Fl_Window *makeform() {
  return w;
 }
 
-// back-compatable functions:
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#if !HAVE_VSNPRINTF
+extern "C" {
+int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
+}
+#endif
 
-int fl_show_choice(
-  const char *m0,
-  const char *m1,
-  const char *m2,
-  int, // number of buttons, ignored
+static int innards(const char* fmt, va_list ap,
   const char *b0,
   const char *b1,
   const char *b2)
 {
   makeform();
-  message[0]->label(m0);
-  message[1]->label(m1);
-  message[2]->label(m2);
+  char buffer[1024];
+  if (!strcmp(fmt,"%s")) {
+    message->label(va_arg(ap, const char*));
+  } else {
+    vsnprintf(buffer, 1024, fmt, ap);
+    message->label(buffer);
+  }
   Fl_Font f = (Fl_Font)fl_message_font_;
   if (!f) f = Fl_Input_::default_font();
-  int s = fl_message_size_ + Fl_Input::default_size();
-  for (int i=0; i<3; i++) {
-    message[i]->labelfont(f);
-    message[i]->labelsize(s);
-  }
+  message->labelfont(f);
+  message->labelsize(fl_message_size_ + Fl_Input::default_size());
   if (b0) {button[0]->show();button[0]->label(b0);button[1]->position(210,70);}
   else {button[0]->hide(); button[1]->position(310,70);}
   if (b1) {button[1]->show(); button[1]->label(b1);}
@@ -117,7 +117,7 @@ int fl_show_choice(
   }
   message_form->hide();
   icon->label(prev_icon_label);
-  return r+1;
+  return r;
 }
 
 // pointers you can use to change fltk to a foreign language:
@@ -126,64 +126,73 @@ const char* fl_yes= "Yes";
 const char* fl_ok = "OK";
 const char* fl_cancel= "Cancel";
 
-// back-compatable XForms functions:
-
-void fl_show_message(const char *q1,const char *q2,const char *q3) {
-  iconlabel = "i";
-  fl_show_choice(q1, q2, q3, 1, 0, fl_ok, 0);
-}
-
-void fl_show_alert(const char *q1,const char *q2,const char *q3) {
-  iconlabel = "!";
-  fl_show_choice(q1, q2, q3, 1, 0, fl_ok, 0);
-}
-
-int fl_show_question(const char *q1,const char *q2,const char *q3) {
-  iconlabel = "?";
-  return fl_show_choice(q1, q2, q3, 2, fl_no, fl_yes, 0) - 1;
-}
-
 // fltk functions:
 
-void fl_message(const char *question) {
-  fl_show_message(0, question, 0);
-}
-
-void fl_alert(const char *question) {
-  fl_show_alert(0, question, 0);
-}
-
-int fl_ask(const char *question) {
-  return fl_show_question(0, question, 0);
-}
-
-int fl_choice(const char *q,const char *b0,const char *b1,const char *b2) {
+void fl_message(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  iconlabel = "i";
+  innards(fmt, ap, 0, fl_ok, 0);
+  va_end(ap);
   iconlabel = "?";
-  return fl_show_choice(0,q,0,3,b0,b1,b2) - 1;
+}
+
+void fl_alert(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  iconlabel = "!";
+  innards(fmt, ap, 0, fl_ok, 0);
+  va_end(ap);
+  iconlabel = "?";
+}
+
+int fl_ask(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  int r = innards(fmt, ap, fl_no, fl_yes, 0);
+  va_end(ap);
+  return r;
+}
+
+int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
+  va_list ap;
+  va_start(ap, b2);
+  int r = innards(fmt, ap, b0, b1, b2);
+  va_end(ap);
+  return r;
 }
 
 Fl_Widget *fl_message_icon() {makeform(); return icon;}
 
-const char *fl_input(const char *str1, const char *defstr, uchar type) {
+static const char* input_innards(const char* fmt, va_list ap,
+				 const char* defstr, uchar type) {
   makeform();
+  message->position(60,10);
   input->type(type);
   input->show();
   input->value(defstr);
-  iconlabel = "?";
-  int r = fl_show_choice(str1,0,0,2,fl_cancel,fl_ok,0);
+  int r = innards(fmt, ap, fl_cancel, fl_ok, 0);
   input->hide();
-  return r==2 ? input->value() : 0;
+  message->position(60,25);
+  return r ? input->value() : 0;
 }
 
-const char *fl_input(const char *str1, const char *defstr) {
-  return fl_input(str1, defstr, FL_NORMAL_INPUT);
+const char* fl_input(const char *fmt, const char *defstr, ...) {
+  va_list ap;
+  va_start(ap, defstr);
+  const char* r = input_innards(fmt, ap, defstr, FL_NORMAL_INPUT);
+  va_end(ap);
+  return r;
 }
 
-char *fl_show_simple_input(const char *str1, const char *defstr) {
-  const char *r = fl_input(str1, defstr, FL_NORMAL_INPUT);
-  return (char *)(r ? r : defstr);
+const char *fl_password(const char *fmt, const char *defstr, ...) {
+  va_list ap;
+  va_start(ap, defstr);
+  const char* r = input_innards(fmt, ap, defstr, FL_SECRET_INPUT);
+  va_end(ap);
+  return r;
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.3 1998/10/21 14:20:44 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $".
 //
