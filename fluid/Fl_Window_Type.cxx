@@ -53,6 +53,8 @@ extern int modflag;
 
 extern Fl_Preferences	fluid_prefs;
 
+inline int fl_min(int a, int b) { return (a < b ? a : b); } 
+
 #include "widget_panel.h"
 
 // Update the XYWH values in the widget panel...
@@ -713,23 +715,29 @@ void Fl_Window_Type::draw_overlay() {
           // Only check visible widgets...
 	  if (!qw->o->visible_r()) continue;
 
-          // Align to left of other widget...
-          if ((drag & (LEFT | DRAG)) && abs(d = mybx - qw->o->x()) < 5) {
-	    dx += d;
-            mybx += d;
-	    mybr += d;
+          // Do horizontal alignment when the widget is within 50
+	  // pixels vertically...
+	  if (fl_min(abs(qw->o->y() - mysel->o->y() - mysel->o->h()),
+	             abs(mysel->o->y() - qw->o->y() - qw->o->h())) < 50) {
+            // Align to left of other widget...
+            if ((drag & (LEFT | DRAG)) && abs(d = mybx - qw->o->x()) < 5) {
+	      dx += d;
+              mybx += d;
+	      mybr += d;
 
-	    draw_left_brace(qw->o);
-	  }
+	      draw_left_brace(qw->o);
+	    }
 
-          // Align to right of other widget...
-          if ((drag & (RIGHT | DRAG)) && abs(d = qw->o->x() + qw->o->w() - mybr) < 5) {
-	    dx += d;
-            mybx += d;
-	    mybr += d;
+            // Align to right of other widget...
+            if ((drag & (RIGHT | DRAG)) &&
+	        abs(d = qw->o->x() + qw->o->w() - mybr) < 5) {
+	      dx += d;
+              mybx += d;
+	      mybr += d;
 
-	    draw_right_brace(qw->o);
-	  }
+	      draw_right_brace(qw->o);
+	    }
+          }
 
           // Align to top of other widget...
           if ((drag & (TOP | DRAG)) && abs(d = myby - qw->o->y()) < 5) {
