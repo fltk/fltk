@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.41 2002/08/17 21:28:54 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.42 2002/08/18 15:19:24 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1857,7 +1857,9 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   else
     *table_width = 0;
 
-//  printf("num_columns = %d, table_width = %d\n", num_columns, *table_width);
+#ifdef DEBUG
+  printf("num_columns = %d, table_width = %d\n", num_columns, *table_width);
+#endif // DEBUG
 
   if (num_columns == 0)
     return;
@@ -1866,10 +1868,12 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   for (column = 0, width = 0; column < num_columns; column ++)
     width += columns[column];
 
-//  printf("width = %d, w() = %d\n", width, w());
-//  for (column = 0; column < num_columns; column ++)
-//    printf("    columns[%d] = %d, minwidths[%d] = %d\n", column, columns[column],
-//           column, minwidths[column]);
+#ifdef DEBUG
+  printf("width = %d, w() = %d\n", width, w());
+  for (column = 0; column < num_columns; column ++)
+    printf("    columns[%d] = %d, minwidths[%d] = %d\n", column, columns[column],
+           column, minwidths[column]);
+#endif // DEBUG
 
   // Adjust the width if needed...
   int scale_width = *table_width;
@@ -1879,15 +1883,18 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
     else scale_width = width;
   }
 
-  if (width < scale_width)
-  {
-//    printf("width = %d, scale_width = %d\n", width, scale_width);
+  if (width < scale_width) {
+#ifdef DEBUG
+    printf("Scaling table up to %d from %d...\n", scale_width, width);
+#endif // DEBUG
 
     *table_width = 0;
 
     scale_width = (scale_width - width) / num_columns;
 
-//    printf("adjusted scale_width = %d\n", scale_width);
+#ifdef DEBUG
+    printf("adjusted scale_width = %d\n", scale_width);
+#endif // DEBUG
 
     for (column = 0; column < num_columns; column ++) {
       columns[column] += scale_width;
@@ -1895,12 +1902,41 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
       (*table_width) += columns[column];
     }
   }
+  else if (width > scale_width) {
+#ifdef DEBUG
+    printf("Scaling table down to %d from %d...\n", scale_width, width);
+#endif // DEBUG
+
+    for (column = 0; column < num_columns; column ++) {
+      width       -= minwidths[column];
+      scale_width -= minwidths[column];
+    }
+
+#ifdef DEBUG
+    printf("adjusted width = %d, scale_width = %d\n", width, scale_width);
+#endif // DEBUG
+
+    if (width > 0) {
+      for (column = 0; column < num_columns; column ++) {
+	columns[column] -= minwidths[column];
+	columns[column] = scale_width * columns[column] / width;
+	columns[column] += minwidths[column];
+      }
+    }
+
+    *table_width = 0;
+    for (column = 0; column < num_columns; column ++) {
+      (*table_width) += columns[column];
+    }
+  }
   else if (*table_width == 0)
     *table_width = width;
 
-//  printf("FINAL table_width = %d\n", *table_width);
-//  for (column = 0; column < num_columns; column ++)
-//    printf("    columns[%d] = %d\n", column, columns[column]);
+#ifdef DEBUG
+  printf("FINAL table_width = %d\n", *table_width);
+  for (column = 0; column < num_columns; column ++)
+    printf("    columns[%d] = %d\n", column, columns[column]);
+#endif // DEBUG
 }
 
 
@@ -2685,5 +2721,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.41 2002/08/17 21:28:54 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.42 2002/08/18 15:19:24 easysw Exp $".
 //
