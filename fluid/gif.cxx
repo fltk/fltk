@@ -1,5 +1,5 @@
 //
-// "$Id: gif.cxx,v 1.3.2.2 2000/06/05 21:20:43 mike Exp $"
+// "$Id: gif.cxx,v 1.3.2.3 2000/07/07 08:38:58 spitzak Exp $"
 //
 // GIF support for the Fast Light Tool Kit (FLTK).
 //
@@ -355,9 +355,9 @@ int gif2xpm(
   }
 
   data[Height+2] = 0; // null to end string array
-  return 1;
+  return Height+1;
 }
 
 //
-// End of "$Id: gif.cxx,v 1.3.2.2 2000/06/05 21:20:43 mike Exp $".
+// End of "$Id: gif.cxx,v 1.3.2.3 2000/07/07 08:38:58 spitzak Exp $".
 //

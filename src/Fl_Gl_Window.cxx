@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.15 2000/06/10 19:30:01 carl Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.16 2000/07/07 08:38:58 spitzak Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,8 @@
 #include <FL/x.H>
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
+#include <stdlib.h>
+#include <string.h>
 
 ////////////////////////////////////////////////////////////////
 
@@ -42,22 +44,17 @@
 // this reason you can define some symbols to describe what is left in
 // the back buffer.
 
-// The default of SWAP_SWAP works on an SGI, and will also work (but
-// is sub-optimal) on machines that should be SWAP_COPY or SWAP_NODAMAGE.
-// The win32 emulation of OpenGL can use COPY, but some (all?) OpenGL
-// cards use SWAP.
+// Having not found any way to determine this from glx (or wgl) I have
+// resorted to letting the user specify it with an environment variable,
+// GL_SWAP_TYPE, it should be equal to one of these symbols:
 
 // contents of back buffer after glXSwapBuffers():
-#define UNDEFINED 0 	// unknown
-#define SWAP 1		// former front buffer
-#define COPY 2		// unchanged
-#define NODAMAGE 3	// unchanged even by X expose() events
+#define UNDEFINED 1 	// anything
+#define SWAP 2		// former front buffer (same as unknown)
+#define COPY 3		// unchanged
+#define NODAMAGE 4	// unchanged even by X expose() events
 
-//#ifdef MESA
-//#define SWAP_TYPE NODAMAGE
-//#else
-#define SWAP_TYPE SWAP
-//#endif
+static char SWAP_TYPE; // 0 = determine it from environment variable
 
 ////////////////////////////////////////////////////////////////
 
@@ -196,66 +193,71 @@ void Fl_Gl_Window::flush() {
 
   if (g->d) {
 
-#if SWAP_TYPE == NODAMAGE
+    if (!SWAP_TYPE) {
+      SWAP_TYPE = UNDEFINED;
+      const char* c = getenv("GL_SWAP_TYPE");
+      if (c) {
+	if (!strcmp(c,"COPY")) SWAP_TYPE = COPY;
+	else if (!strcmp(c, "NODAMAGE")) SWAP_TYPE = NODAMAGE;
+      }
+    }
 
-    // don't draw if only overlay damage or expose events:
-    if ((damage()&~(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE)) || !save_valid) draw();
-    swap_buffers();
+    if (SWAP_TYPE == NODAMAGE) {
 
-#elif SWAP_TYPE == COPY
+      // don't draw if only overlay damage or expose events:
+      if ((damage()&~(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE)) || !save_valid)
+	draw();
+      swap_buffers();
 
-    // don't draw if only the overlay is damaged:
-    if (damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
-    swap_buffers();
-
-#else // SWAP_TYPE == SWAP || SWAP_TYPE == UNDEFINED
-
-    if (overlay == this) { // Use CopyPixels to act like SWAP_TYPE == COPY
+    } else if (SWAP_TYPE == COPY) {
 
       // don't draw if only the overlay is damaged:
-      if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
-      // we use a seperate context for the copy because rasterpos must be 0
-      // and depth test needs to be off:
-      static GLXContext ortho_context = 0;
-      static Fl_Gl_Window* ortho_window = 0;
-      int init = !ortho_context;
-      if (init) {
+      if (damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
+      swap_buffers();
+
+    } else { // SWAP_TYPE == UNDEFINED
+
+      // If we are faking the overlay, use CopyPixels to act like
+      // SWAP_TYPE == COPY.  Otherwise overlay redraw is way too slow.
+      if (overlay == this) {
+	// don't draw if only the overlay is damaged:
+	if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
+	// we use a seperate context for the copy because rasterpos must be 0
+	// and depth test needs to be off:
+	static GLXContext ortho_context = 0;
+	static Fl_Gl_Window* ortho_window = 0;
+	int init = !ortho_context;
+	if (init) {
 #ifdef _WIN32
-	ortho_context = wglCreateContext(Fl_X::i(this)->private_dc);
+	  ortho_context = wglCreateContext(Fl_X::i(this)->private_dc);
 #else
-	ortho_context = glXCreateContext(fl_display,g->vis,fl_first_context,1);
+	  ortho_context =glXCreateContext(fl_display,g->vis,fl_first_context,1);
 #endif
-      }
-      fl_set_gl_context(this, ortho_context);
-      if (init || !save_valid || ortho_window != this) {
-	glDisable(GL_DEPTH_TEST);
-	glReadBuffer(GL_BACK);
-	glDrawBuffer(GL_FRONT);
-	glLoadIdentity();
-	glViewport(0, 0, w(), h());
-	glOrtho(0, w(), 0, h(), -1, 1);
-	glRasterPos2i(0,0);
-	ortho_window = this;
-      }
-      glCopyPixels(0,0,w(),h(),GL_COLOR);
-      make_current(); // set current context back to draw overlay
-      damage1_ = 0;
+	}
+	fl_set_gl_context(this, ortho_context);
+	if (init || !save_valid || ortho_window != this) {
+	  glDisable(GL_DEPTH_TEST);
+	  glReadBuffer(GL_BACK);
+	  glDrawBuffer(GL_FRONT);
+	  glLoadIdentity();
+	  glViewport(0, 0, w(), h());
+	  glOrtho(0, w(), 0, h(), -1, 1);
+	  glRasterPos2i(0,0);
+	  ortho_window = this;
+	}
+	glCopyPixels(0,0,w(),h(),GL_COLOR);
+	make_current(); // set current context back to draw overlay
+	damage1_ = 0;
 
-    } else {
+      } else {
 
-#if SWAP_TYPE == SWAP
-      uchar old_damage = damage();
-      clear_damage(damage1_|old_damage); draw();
-      swap_buffers();
-      damage1_ = old_damage;
-#else // SWAP_TYPE == UNDEFINED
-      clear_damage(~0); draw();
-      swap_buffers();
-      damage1_ = ~0;
-#endif
+	damage1_ = damage();
+	clear_damage(~0); draw();
+	swap_buffers();
+
+      }
 
     }
-#endif
 
     if (overlay==this) { // fake overlay in front buffer
       glDrawBuffer(GL_FRONT);
@@ -269,6 +271,7 @@ void Fl_Gl_Window::flush() {
     draw();
     if (overlay == this) draw_overlay();
     glFlush();
+
   }
 
 #ifdef _WIN32
@@ -321,7 +324,6 @@ void Fl_Gl_Window::init() {
   context = 0;
   g = 0;
   overlay = 0;
-  damage1_ = 0;
 }
 
 void Fl_Gl_Window::draw_overlay() {}
@@ -329,5 +331,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.15 2000/06/10 19:30:01 carl Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.16 2000/07/07 08:38:58 spitzak Exp $".
 //

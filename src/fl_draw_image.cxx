@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.4 2000/06/27 23:30:54 easysw Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.5 2000/07/07 08:38:58 spitzak Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -76,83 +76,8 @@ static int ri,gi,bi;	// saved error-diffusion value
 ////////////////////////////////////////////////////////////////
 // 8-bit converter with error diffusion
 
-// I make a 16x16x16 cube of the closest colors in the fltk colormap
-// we could allocate to each of the colors in a 4-bit image.  This is
-// then used to find the pixel values and actual colors for error diffusion.
-static uchar cube[16*16*16];
-extern unsigned fl_cmap[];
-
-// calculate sum-of-squares error between 4-bit index and pixel colors:
-static int calc_error(int r, int g, int b, int i) {
-  int t; int s;
-  t = ((r<<4)+8)-((fl_cmap[i] >> 24) & 255); s = t*t;
-  t = ((g<<4)+8)-((fl_cmap[i] >> 16) & 255); s += t*t;
-  t = ((b<<4)+8)-((fl_cmap[i] >> 8) & 255); s += t*t;
-  return s;
-}
-
-// replace the color stored at a location with a better one:
-static void improve(uchar *p, int& e, int r, int g, int b, int i) {
-  if (i < FL_GRAY_RAMP || i > 255) return;
-  int e1 = calc_error(r,g,b,i);
-  if (e1 < e) {*p = i; e = e1;}
-}
-
-static int filled_color_cube;
-static char alloc_color[256]; // 1 = allocated, 0 = not allocated
-
-static void fill_color_cube() {
-  filled_color_cube = 1;
-
-#if 0 // Delay color filling to reduce colormap usage...
-  int i;
-  // allocate all the colors in the fltk color cube and gray ramp:
-  // allocate widely seperated values first so that the bad ones are
-  // distributed evenly through the colormap:
-  for (i=0;;) {
-    fl_xpixel((Fl_Color)(i+FL_COLOR_CUBE));
-    i = (i+109)%(FL_NUM_RED*FL_NUM_GREEN*FL_NUM_BLUE); if (!i) break;
-  }
-  for (i=0;;) {
-    fl_xpixel((Fl_Color)(i+FL_GRAY_RAMP));
-    i = (i+7)%FL_NUM_GRAY; if (!i) break;
-  }
-  memset(alloc_color, 1, sizeof(alloc_color));
-#else
-  memset(alloc_color, 0, sizeof(alloc_color));
-#endif /* 0 */
-
-  // fill in the 16x16x16 cube:
-  uchar *p = cube;
-  for (int r = 0; r<16; r++) {
-    for (int g = 0; g<16; g++) {
-      for (int b = 0; b<16; b++, p++) {
-	// initial try is value from color cube:
-	Fl_Color i = fl_color_cube(r*FL_NUM_RED/16, g*FL_NUM_GREEN/16,
-				   b*FL_NUM_BLUE/16);
-	int e = calc_error(r,g,b,i);
-	*p = uchar(i);
-	// try neighbor pixels in the cube to see if they are better:
-	improve(p,e,r,g,b,i+FL_NUM_RED*FL_NUM_GREEN);
-	improve(p,e,r,g,b,i-FL_NUM_RED*FL_NUM_GREEN);
-	improve(p,e,r,g,b,i+FL_NUM_GREEN);
-	improve(p,e,r,g,b,i-FL_NUM_GREEN);
-	improve(p,e,r,g,b,i+1);
-	improve(p,e,r,g,b,i-1);
-	// try the gray ramp:
-	i = fl_gray_ramp(g*FL_NUM_GRAY/15);
-	improve(p,e,r,g,b,i);
-	improve(p,e,r,g,b,i+1);
-	improve(p,e,r,g,b,i-1);
-      }
-    }
-  }
-}
-
 static void color8_converter(const uchar *from, uchar *to, int w, int delta) {
-  if (!filled_color_cube) fill_color_cube();
   int r=ri, g=gi, b=bi;
-  int i;
   int d, td;
   if (dir) {
     dir = 0;
@@ -169,25 +94,19 @@ static void color8_converter(const uchar *from, uchar *to, int w, int delta) {
     r += from[0]; if (r < 0) r = 0; else if (r>255) r = 255;
     g += from[1]; if (g < 0) g = 0; else if (g>255) g = 255;
     b += from[2]; if (b < 0) b = 0; else if (b>255) b = 255;
-    i = cube[((r<<4)&0xf00)+(g&0xf0)+(b>>4)];
-    if (!alloc_color[i])
-    {
-      fl_xpixel((Fl_Color)i);
-      alloc_color[i] = 1;
-    }
-    Fl_XColor* x = fl_xmap[0] + i;
-    r -= x->r;
-    g -= x->g;
-    b -= x->b;
-    *to = uchar(x->pixel);
+    Fl_Color i = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+    Fl_XColor& xmap = fl_xmap[0][i];
+    if (!xmap.mapped) {if (!fl_redmask) fl_xpixel(r,g,b); else fl_xpixel(i);}
+    r -= xmap.r;
+    g -= xmap.g;
+    b -= xmap.b;
+    *to = uchar(xmap.pixel);
   }
   ri = r; gi = g; bi = b;
 }
 
 static void mono8_converter(const uchar *from, uchar *to, int w, int delta) {
-  if (!filled_color_cube) fill_color_cube();
-  int r=ri;
-  int i;
+  int r=ri, g=gi, b=bi;
   int d, td;
   if (dir) {
     dir = 0;
@@ -202,17 +121,17 @@ static void mono8_converter(const uchar *from, uchar *to, int w, int delta) {
   }
   for (; w--; from += d, to += td) {
     r += from[0]; if (r < 0) r = 0; else if (r>255) r = 255;
-    i = cube[(r>>4)*0x111];
-    if (!alloc_color[i])
-    {
-      fl_xpixel((Fl_Color)i);
-      alloc_color[i] = 1;
-    }
-    Fl_XColor* x = fl_xmap[0] + i;
-    r -= x->g;
-    *to = uchar(x->pixel);
+    g += from[0]; if (g < 0) g = 0; else if (g>255) g = 255;
+    b += from[0]; if (b < 0) b = 0; else if (b>255) b = 255;
+    Fl_Color i = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+    Fl_XColor& xmap = fl_xmap[0][i];
+    if (!xmap.mapped) {if (!fl_redmask) fl_xpixel(r,g,b); else fl_xpixel(i);}
+    r -= xmap.r;
+    g -= xmap.g;
+    b -= xmap.b;
+    *to = uchar(xmap.pixel);
   }
-  ri = r;
+  ri = r; gi = g; bi = b;
 }
 
 #endif
@@ -428,6 +347,9 @@ mono32_converter(const uchar *from,uchar *to,int w, int delta) {
 
 static void figure_out_visual() {
 
+  fl_xpixel(FL_BLACK); // setup fl_redmask, etc, in fl_color.C
+  fl_xpixel(FL_WHITE); // also make sure white is allocated
+
   static XPixmapFormatValues *pfvlist;
   static int FL_NUM_pfv;
   if (!pfvlist) pfvlist = XListPixmapFormats(fl_display,&FL_NUM_pfv);
@@ -463,7 +385,6 @@ static void figure_out_visual() {
 #endif
 
   // otherwise it is a TrueColor visual:
-  fl_xpixel(0,0,0); // setup fl_redmask, etc, in fl_color.C
 
   int rs = fl_redshift;
   int gs = fl_greenshift;
@@ -652,5 +573,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.4 2000/06/27 23:30:54 easysw Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.5 2000/07/07 08:38:58 spitzak Exp $".
 //
