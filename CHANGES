@@ -1,3 +1,8 @@
+CHANGES IN FLTK 1.1.0
+
+	- Config header file changes for Borland C++.
+
+
 CHANGES IN FLTK 1.1.0rc4
 
 	- Added new filter_value() methods to Fl_File_Chooser to

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.1.2.3 2002/07/01 20:26:06 easysw Exp $"
+ * "$Id: config.h,v 1.1.2.4 2002/07/08 14:58:49 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Borland C++.
  *
@@ -71,6 +71,14 @@
 #define USE_COLORMAP 1
 
 /*
+ * USE_XFT
+ *
+ * Use the new Xft library to draw anti-aliased text.
+ */
+
+#define USE_XFT 0
+
+/*
  * HAVE_XDBE:
  *
  * Do we have the X double-buffer extension?
@@ -124,7 +132,7 @@
 
 #define U16 unsigned short
 #define U32 unsigned
-#undef U64
+/* #undef U64 */
 
 /*
  * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H, HAVE_SCANDIR:
@@ -133,23 +141,42 @@
  */
 
 #define HAVE_DIRENT_H 1
-#define HAVE_SYS_NDIR_H 0
-#define HAVE_SYS_DIR_H 0
-#define HAVE_NDIR_H 0
-#define HAVE_SCANDIR 0
+/* #undef HAVE_SYS_NDIR_H */
+/* #undef HAVE_SYS_DIR_H */
+/* #undef HAVE_NDIR_H */
+/* #undef HAVE_SCANDIR */
 
 /*
  * Possibly missing sprintf-style functions:
  */
 
-#define HAVE_VSNPRINTF 0
-#define HAVE_SNPRINTF 0
+#define HAVE_VSNPRINTF 1
+#define HAVE_SNPRINTF 1
 
 /*
- * String functions...
+ * String functions and headers...
  */
 
-#define HAVE_STRCASECMP	1
+/* #undef HAVE_STRINGS_H */
+#define HAVE_STRCASECMP 1
+/* #undef HAVE_STRLCAT */
+/* #undef HAVE_STRLCPY */
+
+/*
+ * HAVE_SYS_SELECT_H:
+ *
+ * Whether or not select() call has its own header file.
+ */
+
+/* #undef HAVE_SYS_SELECT_H */
+
+/*
+ * HAVE_SYS_STDTYPES_H:
+ *
+ * Whether or not we have the <sys/stdtypes.h> header file.
+ */
+
+/* #undef HAVE_SYS_STDTYPES_H */
 
 /*
  * HAVE_POLL:
@@ -163,33 +190,33 @@
  * Do we have various image libraries?
  */
 
-#undef HAVE_LIBPNG
-#undef HAVE_LIBZ
-#undef HAVE_LIBJPEG
+/* #undef HAVE_LIBPNG */
+/* #undef HAVE_LIBZ */
+/* #undef HAVE_LIBJPEG */
 
 /*
  * Which header file do we include for libpng?
  */
 
-#undef HAVE_PNG_H
-#undef HAVE_LIBPNG_PNG_H
+/* #undef HAVE_PNG_H */
+/* #undef HAVE_LIBPNG_PNG_H */
 
 /*
  * Do we have the png_xyz() functions?
  */
 
-#undef HAVE_PNG_GET_VALID
-#undef HAVE_PNG_SET_TRNS_TO_ALPHA
-#undef HAVE_PNG_READ_DESTROY
+/* #undef HAVE_PNG_GET_VALID */
+/* #undef HAVE_PNG_SET_TRNS_TO_ALPHA */
+/* #undef HAVE_PNG_READ_DESTROY */
 
 /*
  * Do we have POSIX threading?
  */
 
-#undef HAVE_PTHREAD
-#undef HAVE_PTHREAD_H
+/* #undef HAVE_PTHREAD */
+/* #undef HAVE_PTHREAD_H */
 
 
 /*
- * End of "$Id: config.h,v 1.1.2.3 2002/07/01 20:26:06 easysw Exp $".
+ * End of "$Id: config.h,v 1.1.2.4 2002/07/08 14:58:49 easysw Exp $".
  */
