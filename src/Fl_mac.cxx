@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.48 2003/06/15 06:10:54 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.49 2003/07/18 03:12:05 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -640,7 +640,7 @@ static OSErr QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* repl
       return noErr; // FLTK has not close all windows, so we return to the main program now
     }
   }
-  ExitToShell();
+  QuitApplicationEventLoop();
 
   fl_unlock_function();
 
@@ -1867,6 +1867,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.48 2003/06/15 06:10:54 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.49 2003/07/18 03:12:05 matthiaswm Exp $".
 //
 

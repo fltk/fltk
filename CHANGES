@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.4
 
+	- QuitAppleEvent now correctly returns from Fl::run()
+          instead of just exiting.
+	- Hiding the first created OpenGL context was not
+	  possible. FLTK now manages a list of contexts.
 	- FLUID didn't keep the double/single buffer type for
 	  windows.
 	- FLTK didn't work with Xft2.
