@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.5 1999/03/26 07:28:39 bill Exp $"
+# "$Id: Makefile,v 1.18.2.6 1999/03/26 12:46:25 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -169,7 +169,7 @@ $(DSONAME): $(OBJECTS)
 	$(CC) -I.. $(CFLAGS) -c -o $@ $<
 
 clean :
-	-@ rm -f *.o *.do $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
+	-@ rm -f *.o *.do $(DSONAME) $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
 	@touch makedepend
 
 depend:
@@ -209,5 +209,5 @@ install: $(LIBRARY) $(DSONAME)
 	@-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.5 1999/03/26 07:28:39 bill Exp $".
+# End of "$Id: Makefile,v 1.18.2.6 1999/03/26 12:46:25 mike Exp $".
 #
