@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.3 2000/03/18 10:04:17 bill Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.4 2000/03/24 08:42:02 bill Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -103,10 +103,14 @@ int Fl_Gl_Window::can_do_overlay() {
 
 #else // WIN32:
 
+static int no_overlay_hardware = 0;
 int Fl_Gl_Window::can_do_overlay() {
+  if (no_overlay_hardware) return 0;
   Fl_Gl_Choice* choice = Fl_Gl_Choice::find(0,0);
   return (choice && (choice->pfd.bReserved & 15));
 }
+
+int fl_overlay_depth = 0;
 
 #endif
 
@@ -116,28 +120,50 @@ int Fl_Gl_Window::can_do_overlay() {return 0;}
 
 #endif
 
+#include <stdio.h>
+
 void Fl_Gl_Window::make_overlay() {
   if (!overlay) {
 #if HAVE_GL_OVERLAY
 #ifdef WIN32
-    HDC hdc = fl_private_dc(this, mode_,&g);
-    GLXContext context = wglCreateLayerContext(hdc, 1);
-    if (context) {
-      if (fl_first_context) wglShareLists(fl_first_context, context);
-      else fl_first_context = context;
-      overlay = context;
-      // copy all colors except #0 into the overlay palette:
-      COLORREF pcr[256];
-      for (int i = 0; i < 256; i++) {
-	uchar r,g,b; Fl::get_color((Fl_Color)i,r,g,b);
-	pcr[i] = RGB(r,g,b);
+    if (!no_overlay_hardware) {
+      HDC hdc = fl_private_dc(this, mode_,&g);
+      GLXContext context = wglCreateLayerContext(hdc, 1);
+      if (!context) { // no overlay hardware
+	no_overlay_hardware = 1;
+	printf("No overlay detected\n");
+      } else {
+	if (fl_first_context) wglShareLists(fl_first_context, context);
+	else fl_first_context = context;
+	overlay = context;
+	LAYERPLANEDESCRIPTOR pfd;
+	wglDescribeLayerPlane(hdc, g->pixelformat, 1, sizeof(pfd), &pfd);
+	if (!pfd.iPixelType) {
+	  printf("Color Overlay found\n");
+	} else {
+	  printf("Overlay of depth %d found\n", pfd.cColorBits);
+	  fl_overlay_depth = pfd.cColorBits; // used by gl_color()
+	  if (fl_overlay_depth > 8) fl_overlay_depth = 8;
+	  COLORREF palette[256];
+	  // copy all colors except #0 into the overlay palette:
+	  for (int i = 0; i < 256; i++) {
+	    uchar r,g,b; Fl::get_color((Fl_Color)i,r,g,b);
+	    palette[i] = RGB(r,g,b);
+	  }
+	  // always provide black & white in the last 2 pixels:
+	  if (fl_overlay_depth < 8) {
+	    palette[(1<<fl_overlay_depth)-2] = RGB(0,0,0);
+	    palette[(1<<fl_overlay_depth)-1] = RGB(255,255,255);
+	  }
+	  // and use it:
+	  wglSetLayerPaletteEntries(hdc, 1, 1, 255, palette+1);
+	  wglRealizeLayerPalette(hdc, 1, TRUE);
+	}
+	valid(0);
+	return;
       }
-      wglSetLayerPaletteEntries(hdc, 1, 1, 255, pcr+1);
-      wglRealizeLayerPalette(hdc, 1, TRUE);
-      valid(0);
-      return;
     }
-#else // glX version:
+#else
     if (can_do_overlay()) {
       _Fl_Gl_Overlay* o = new _Fl_Gl_Overlay(0,0,w(),h());
       overlay = o;
@@ -168,6 +194,8 @@ void Fl_Gl_Window::make_overlay_current() {
   if (overlay != this) {
 #ifdef WIN32
     fl_set_gl_context(this, (GLXContext)overlay);
+    if (fl_overlay_depth)
+      wglRealizeLayerPalette(fl_private_dc(this, mode_,&g), 1, TRUE);
 #else
     ((Fl_Gl_Window*)overlay)->make_current();
 #endif
@@ -189,5 +217,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.3 2000/03/18 10:04:17 bill Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.4 2000/03/24 08:42:02 bill Exp $".
 //

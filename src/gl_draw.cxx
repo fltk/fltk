@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7 1999/01/07 19:17:46 mike Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.1 2000/03/24 08:42:03 bill Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -117,12 +117,25 @@ void gl_rect(int x, int y, int w, int h) {
 
 #if HAVE_GL_OVERLAY
 extern uchar fl_overlay;
+extern int fl_overlay_depth;
 #endif
 
 void gl_color(Fl_Color i) {
 #if HAVE_GL_OVERLAY
 #ifdef WIN32
-  if (fl_overlay) {glIndexi(i ? i : FL_GRAY_RAMP); return;}
+  if (fl_overlay && fl_overlay_depth) {
+    if (fl_overlay_depth < 8) {
+      // only black & white produce the expected colors.  This could
+      // be improved by fixing the colormap set in Fl_Gl_Overlay.cxx
+      int size = 1<<fl_overlay_depth;
+      if (!i) glIndexi(size-2);
+      else if (i >= size-2) glIndexi(size-1);
+      else glIndexi(i);
+    } else {
+      glIndexi(i ? i : FL_GRAY_RAMP);
+    }    
+    return;
+  }
 #else
   if (fl_overlay) {glIndexi(int(fl_xpixel(i))); return;}
 #endif
@@ -142,5 +155,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7 1999/01/07 19:17:46 mike Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.1 2000/03/24 08:42:03 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.8 2000/03/18 10:04:18 bill Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.9 2000/03/24 08:42:02 bill Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -57,14 +57,6 @@
 #define SWAP_TYPE NODAMAGE
 #else
 #define SWAP_TYPE SWAP
-#endif
-
-//
-// Windows may need a different color palette...
-//
-
-#if defined(WIN32) && HAVE_GL
-extern HPALETTE fl_gl_palette;
 #endif
 
 ////////////////////////////////////////////////////////////////
@@ -159,41 +151,57 @@ void Fl_Gl_Window::swap_buffers() {
 #endif
 }
 
-#if HAVE_GL_OVERLAY
-#ifdef WIN32
+#if defined(_WIN32) && HAVE_GL_OVERLAY
 uchar fl_overlay; // changes how fl_color() works
-#endif
 #endif
 
 void Fl_Gl_Window::flush() {
-  make_current();
+  uchar save_valid = valid_;
 
 #if defined(_WIN32) && HAVE_GL_OVERLAY
-  uchar save_valid = valid_;
-  if (overlay && overlay!= this && damage() == FL_DAMAGE_OVERLAY) goto DRAW_OVERLAY_ONLY;
+  if (overlay && overlay != this &&
+      ((damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_ALL|FL_DAMAGE_EXPOSE))
+       || !save_valid)) {
+    // Draw into hardware overlay planes
+    if (!g->d) SetCursor(0); // SGI 320 messes up overlay over singlebuffer
+    fl_set_gl_context(this, (GLXContext)overlay);
+    glDisable(GL_SCISSOR_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+    fl_overlay = 1;
+    draw_overlay();
+    fl_overlay = 0;
+    valid(save_valid);
+    if (damage() == FL_DAMAGE_OVERLAY) {
+      wglSwapLayerBuffers(Fl_X::i(this)->private_dc,WGL_SWAP_OVERLAY1);
+      if (!g->d) SetCursor(Fl_X::i(this)->cursor);
+      return;
+    }
+    if (!g->d) SetCursor(Fl_X::i(this)->cursor);
+  }
 #endif
+
+  make_current();
 
   if (g->d) {
 
 #if SWAP_TYPE == NODAMAGE
 
     // don't draw if only overlay damage or expose events:
-    if ((damage()&~(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE)) || !valid()) draw();
+    if ((damage()&~(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE)) || !save_valid) draw();
     swap_buffers();
 
 #elif SWAP_TYPE == COPY
 
     // don't draw if only the overlay is damaged:
-    if (damage() != FL_DAMAGE_OVERLAY || !valid()) draw();
+    if (damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
     swap_buffers();
 
 #else // SWAP_TYPE == SWAP || SWAP_TYPE == UNDEFINED
 
     if (overlay == this) { // Use CopyPixels to act like SWAP_TYPE == COPY
 
-      uchar save_valid = valid_;
       // don't draw if only the overlay is damaged:
-      if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !valid()) draw();
+      if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
       // we use a seperate context for the copy because rasterpos must be 0
       // and depth test needs to be off:
       static GLXContext ortho_context = 0;
@@ -207,7 +215,6 @@ void Fl_Gl_Window::flush() {
 #endif
       fl_set_gl_context(this, ortho_context);
       if (init || !save_valid || ortho_window != this) {
-	ortho_window = this;
 	glDisable(GL_DEPTH_TEST);
 	glReadBuffer(GL_BACK);
 	glDrawBuffer(GL_FRONT);
@@ -215,6 +222,7 @@ void Fl_Gl_Window::flush() {
 	glViewport(0, 0, w(), h());
 	glOrtho(0, w(), 0, h(), -1, 1);
 	glRasterPos2i(0,0);
+	ortho_window = this;
       }
       glCopyPixels(0,0,w(),h(),GL_COLOR);
       make_current(); // set current context back to draw overlay
@@ -250,25 +258,6 @@ void Fl_Gl_Window::flush() {
     glFlush();
 
   }
-
-#if HAVE_GL_OVERLAY
-#ifdef WIN32
-  if (overlay && overlay != this) {
-  DRAW_OVERLAY_ONLY:
-    // Draw into hardware overlay planes
-    if (!g->d) SetCursor(0); // SGI system messes up overlay over singlebuffer
-    valid_ = save_valid;
-    fl_set_gl_context(this, (GLXContext)overlay);
-    glDisable(GL_SCISSOR_TEST);
-    fl_overlay = 1;
-    glClear(GL_COLOR_BUFFER_BIT);
-    draw_overlay();
-    wglSwapLayerBuffers(Fl_X::i(this)->private_dc,WGL_SWAP_OVERLAY1);
-    fl_overlay = 0;
-    if (!g->d) SetCursor(Fl_X::i(this)->cursor);
-  }
-#endif
-#endif
 
   valid(1);
 }
@@ -318,5 +307,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.8 2000/03/18 10:04:18 bill Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.9 2000/03/24 08:42:02 bill Exp $".
 //
