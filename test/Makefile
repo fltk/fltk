@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.4 1998/10/21 14:21:12 mike Exp $"
+# "$Id: Makefile,v 1.5 1998/10/21 16:46:07 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -72,9 +72,12 @@ jpeg_image: jpeg_image.C
 	@echo $@:
 	@${CXX} -I.. ${CXXFLAGS} -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.C -L../lib -lfltk ${LDLIBS} -ljpeg -lXext -o $@
 
+depend:
+	$(MAKEDEPEND) -I.. $(CXXFLAGS) *.c *.C > makedepend
+
 clean:
 	-@ rm -f ${ALL} jpeg_image *.o core *~
 
 #
-# End of "$Id: Makefile,v 1.4 1998/10/21 14:21:12 mike Exp $".
+# End of "$Id: Makefile,v 1.5 1998/10/21 16:46:07 mike Exp $".
 #
