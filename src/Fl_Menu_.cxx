@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.6 1999/02/03 08:43:32 bill Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_.H>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 int Fl_Menu_::value(const Fl_Menu_Item* m) {
@@ -51,9 +52,11 @@ const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
 	set_changed();
 	((Fl_Menu_Item*)v)->setonly();
       }
+      redraw();
     } else if (v->flags & FL_MENU_TOGGLE) {
       set_changed();
       ((Fl_Menu_Item*)v)->flags ^= FL_MENU_VALUE;
+      redraw();
     } else if (v != value_) { // normal item
       set_changed();
     }
@@ -137,5 +140,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.6 1999/02/03 08:43:32 bill Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $".
 //
