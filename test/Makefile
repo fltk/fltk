@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.2 2000/04/25 22:16:49 mike Exp $"
+# "$Id: Makefile,v 1.19.2.3 2000/04/27 00:17:54 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -52,33 +52,44 @@ $(ALL):  ../lib/$(LIBNAME)
 
 # Other programs needing special "help"...
 CubeView: CubeMain.o CubeView.o CubeViewUI.o
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
 		-L../lib -lfltk $(GLDLIBS) -o $@
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 
 cube: cube.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) cube.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 fractals: fractals.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fractals.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 fullscreen: fullscreen.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fullscreen.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 glpuzzle: glpuzzle.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) glpuzzle.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 gl_overlay: gl_overlay.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) gl_overlay.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 shiny: shiny.cxx shiny_panel.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 keyboard: keyboard.cxx keyboard_ui.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx -L../lib -lfltk $(LDLIBS) -o $@
 mandelbrot: mandelbrot.cxx mandelbrot_ui.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx -L../lib -lfltk $(LDLIBS) -o $@
 shape: shape.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shape.cxx -L../lib -lfltk $(GLDLIBS) -o $@
 
 # If you have libjpeg installed, you might want to try this test program:
 
 jpeg_image: jpeg_image.cxx
+	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.cxx -L../lib -lfltk $(LDLIBS) -ljpeg -lXext -o $@
 
 depend:
@@ -91,5 +102,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.2 2000/04/25 22:16:49 mike Exp $".
+# End of "$Id: Makefile,v 1.19.2.3 2000/04/27 00:17:54 mike Exp $".
 #

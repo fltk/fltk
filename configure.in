@@ -1,29 +1,29 @@
-dnl# -*- sh -*-
-dnl# the "configure" script is made from this by running GNU "autoconf"
-dnl#
-dnl# "$Id: configure.in,v 1.33.2.11 2000/04/26 14:14:41 mike Exp $"
-dnl#
-dnl# Configuration script for the Fast Light Tool Kit (FLTK).
-dnl#
-dnl# Copyright 1998-2000 by Bill Spitzak and others.
-dnl#
-dnl# This library is free software; you can redistribute it and/or
-dnl# modify it under the terms of the GNU Library General Public
-dnl# License as published by the Free Software Foundation; either
-dnl# version 2 of the License, or (at your option) any later version.
-dnl#
-dnl# This library is distributed in the hope that it will be useful,
-dnl# but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl# Library General Public License for more details.
-dnl#
-dnl# You should have received a copy of the GNU Library General Public
-dnl# License along with this library; if not, write to the Free Software
-dnl# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-dnl# USA.
-dnl#
-dnl# Please report all bugs and problems to "fltk-bugs@easysw.com".
-dnl#
+dnl -*- sh -*-
+dnl the "configure" script is made from this by running GNU "autoconf"
+dnl
+dnl "$Id: configure.in,v 1.33.2.12 2000/04/27 00:17:51 mike Exp $"
+dnl
+dnl Configuration script for the Fast Light Tool Kit (FLTK).
+dnl
+dnl Copyright 1998-2000 by Bill Spitzak and others.
+dnl
+dnl This library is free software; you can redistribute it and/or
+dnl modify it under the terms of the GNU Library General Public
+dnl License as published by the Free Software Foundation; either
+dnl version 2 of the License, or (at your option) any later version.
+dnl
+dnl This library is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public
+dnl License along with this library; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+dnl USA.
+dnl
+dnl Please report all bugs and problems to "fltk-bugs@easysw.com".
+dnl
 
 AC_INIT(src/Fl.cxx)
 
@@ -38,7 +38,7 @@ fi
 DSOCOMMAND="echo"
 DSONAME=""
 
-dnl# Get the operating system and version number...
+dnl Get the operating system and version number...
 
 uname=`uname`
 uversion=`uname -r | sed -e 's/-.*$//g;s/[\.]//g'`
@@ -46,8 +46,8 @@ if test "$uname" = "IRIX64"; then
     uname="IRIX"
 fi
 
-dnl# Clear debugging flags and only enable debugging if the user asks for
-dnl# it.
+dnl Clear debugging flags and only enable debugging if the user asks for
+dnl it.
 
 DEBUGFLAG=""
 PICFLAG=0
@@ -92,7 +92,7 @@ fi])
 
 AC_PROG_CC
 AC_PROG_CXX
-dnl# AC_PROG_INSTALL
+dnl AC_PROG_INSTALL
 
 AC_C_BIGENDIAN
 
@@ -141,12 +141,12 @@ AC_CHECK_FUNCS(vsprintf)
 
 AC_PATH_XTRA
 echo "Ignoring libraries \"$X_PRE_LIBS\" requested by configure."
-dnl# LIBS="$LIBS$X_LIBS$X_PRE_LIBS"
+dnl LIBS="$LIBS$X_LIBS$X_PRE_LIBS"
 LIBS="$LIBS$X_LIBS"
 CFLAGS="$CFLAGS $X_CFLAGS"
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
-dnl# My test to see if OpenGL is on this machine:
+dnl My test to see if OpenGL is on this machine:
 GLLIB=
 AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
     AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGLU -lMesaGL",,\
@@ -166,30 +166,30 @@ AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
         ac_cv_have_overlay=no
     fi)
 
-dnl# Note: Overlay support seems to be broken for menus; disable...
-dnl# 
-dnl# if test "$ac_cv_have_overlay" = yes; then
-dnl#     AC_DEFINE(HAVE_OVERLAY)
-dnl# fi
+dnl Note: Overlay support seems to be broken for menus; disable...
+dnl 
+dnl if test "$ac_cv_have_overlay" = yes; then
+dnl     AC_DEFINE(HAVE_OVERLAY)
+dnl fi
 
 MAKEDEPEND="\$(CXX) -M"
 
-dnl# add warnings to compiler switches:
-dnl# do this last so messing with switches does not break tests
+dnl add warnings to compiler switches:
+dnl do this last so messing with switches does not break tests
 if test -n "$GXX"; then
     CFLAGS="-Wall $CFLAGS"
     CXXFLAGS="-Wall -Wno-return-type $CXXFLAGS"
     if test -z "$DEBUGFLAG"; then
-        CFLAGS="-O2 $CFLAGS"
-        CXXFLAGS="-O2 $CXXFLAGS"
+        CFLAGS="-O2 -fforce-mem -fforce-addr -fcaller-saves $CFLAGS"
+        CXXFLAGS="-O2 -fforce-mem -fforce-addr -fcaller-saves $CXXFLAGS"
     fi
     if test $PICFLAG = 1; then
     	CFLAGS="-fPIC $CFLAGS"
     	CXXFLAGS="-fPIC $CXXFLAGS"
     fi
 
-    CFLAGS="-fno-rtti -fomit-frame-pointer $CFLAGS"
-    CXXFLAGS="-fno-rtti -fomit-frame-pointer $CXXFLAGS"
+    CFLAGS="-fno-rtti $CFLAGS"
+    CXXFLAGS="-fno-rtti $CXXFLAGS"
 
     # See if GCC supports -fno-exceptions...
     echo "Testing if GCC supports -fno-exceptions..."
@@ -197,7 +197,7 @@ if test -n "$GXX"; then
     CFLAGS="$CFLAGS -fno-exceptions"
     AC_TRY_COMPILE(,,
 	CXXFLAGS="$CXXFLAGS -fno-exceptions"
-	echo "Congratulations - your GCC supports exceptions; disabling them...",
+	echo "Congratulations - your GCC supports exceptions; disabling them for FLTK...",
 	CFLAGS="$OLDCFLAGS"
 	echo "GCC does not support exceptions...")
 
@@ -279,6 +279,6 @@ AC_SUBST(MAKEDEPEND)
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
-dnl#
-dnl# End of "$Id: configure.in,v 1.33.2.11 2000/04/26 14:14:41 mike Exp $".
-dnl#
+dnl
+dnl End of "$Id: configure.in,v 1.33.2.12 2000/04/27 00:17:51 mike Exp $".
+dnl
