@@ -4,23 +4,43 @@ Using Watcom to build and use FLTK 1.1.5
 Supported targets: Win32 only, static builds (no DLLs). Can be used from any Watcom
    supported host (DOS, OS/2, Windows).
 
-1. Unzip the include file in the root of the fltk 1.1.5 directory. It will create a
-   new directory called watcom, put a makefile.wat in source directories, and update
-   two sources files which need to be different from the 1.1.5 versions (STR updated),
-   and put a watcom.mif file in the fltk root directory.
+1. To build fltk itself:
+   - set the environment variable fltk to the root directory of fltk
+   - go to the Watcom directory, run wmake.
+   Both debug and release versions of all libs, test programs and FLUID will be built.
 
-2. To build: set the environment variable fltk to the root directory of fltk, go
-   to the Watcom directory, run wmake. Both debug and release versions of all libs,
-   test programs and FLUID will be built.
+2. To create you own programs using fluid:
+   - set the environment variable fltk to the root directory of fltk
+   - make a directory where you want to create the source of your program.
+   - from fltk's watcom directory, copy file "makefile.example" to "makefile" in your
+     directory.
+   - Start fluid, and create your program.
+   - You can either put in fluid's menu shell->execute command:
+     "cmd /k "wmake && hello && exit || pause && exit"
+     to compile and run the program (if you are running under Windows only),
+   - Or in Fluid do shift-Ctrl-C to create C+= code, and then in a cmd prompt
+     in your directory enter 'wmake", and then run the program.
+   I have been able to do most of the Fluid Flash tutorial (no time to do all,
+   but no error at all for the ones I did do.
 
-3. To create you own programs: use the supplied watcom.mif file. If you use fluid,
-   move the two fluid rules from test/makefile.wat into the watcom.mif
-   file. Look in test/makefile.wat also for rules about building a non-fluid program
-   with one object (source) file, or with multiple. if you use FLUID, take care in
-   the order of object files specified (see tes/makefile.wat keyboard.exe).
+3. Known errors:
+    - Fluid aborts when exiting.
 
-Questions about the watcom port please to the fltk.general newsgroup.
+    Probably a lot more :-( . I cannot test/debug under NT or later, so I must
+    rely on the help of others to find and fix :-) Watcom-related bugs.
 
-Mat Nieuwenhoven, Hilversum, 2004-10-28
+
+Questions about the OpenWatcom port please to the fltk.general newsgroup.
+Questions related to Openwatcom itself please to the c/c++ users group at
+new.openwatcom.org.
+
+
+Mat Nieuwenhoven, Hilversum, 2004-11-22
+
+
+
+
+
+
 
 

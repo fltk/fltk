@@ -1,5 +1,5 @@
 #
-# "$Id: makefile.wat,v 1.1.2.2 2004/11/21 14:32:21 easysw Exp $"
+# "$Id: makefile.wat,v 1.1.2.3 2004/11/23 18:48:09 easysw Exp $"
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -45,8 +45,6 @@ OBJECTS = &
 
 ################################################################
 
-EXTRA_LIBS = wsock32
-
 !include ../watcom.mif
 
 all:  $(ODIR)/fluid$(EXEEXT)
@@ -74,5 +72,5 @@ rebuild:
     ./fluid -c widget_panel.fl
 
 #
-# End of "$Id: makefile.wat,v 1.1.2.2 2004/11/21 14:32:21 easysw Exp $".
+# End of "$Id: makefile.wat,v 1.1.2.3 2004/11/23 18:48:09 easysw Exp $".
 #

@@ -133,6 +133,7 @@ LIBS = $(LIBNAME) $(LIBNAMEFL) $(LIBNAMEGL) $(LIBNAMEIMG)
 !ifeqi TARGET  nt                   # WINDOWS 32 bit
 SYSDEF= -DWIN32
 ASYSDEF=
+SYSLIBS=wsock32.lib mpr.lib glu32.lib opengl32.lib
 EXEEXT=.exe
 
 !else ifeqi TARGET linux            # Linux Intel 32 bit generic
@@ -171,14 +172,14 @@ EXEEXT=.exe
 !   message
     %abort
 !endif
-    @if not exist $(ODIR) -mkdir $(ODIR)
-!ifeqi O d
+    @if not exist $(ODIR) mkdir $(ODIR) >nul
+!ifeqi TARGET dos
    @set INCLUDE=$(%WATCOM)\H;$(EXTRA_INCLUDE_DIRS)
-!else ifeqi O o
+!else ifeqi TARGET os2
    @set INCLUDE=$(%WATCOM)\H;$(%WATCOM)\H\OS2;$(EXTRA_INCLUDE_DIRS)
-!else ifeqi O w
+!else ifeqi TARGET nt
    @set INCLUDE=$(%WATCOM)\H;$(%WATCOM)\H\NT;$(EXTRA_INCLUDE_DIRS)
-!else ifeqi O l
+!else ifeqi TARGET linux
    @set INCLUDE=$(%WATCOM)\LH;$(EXTRA_INCLUDE_DIRS)
 !endif
 
@@ -276,5 +277,3 @@ LIB=wlib                                     # Watcom librarian
     @for %i in ($(SYSLIBS)) do @%append $^*.lk1 L %i
     $(LN) $(LNOPTS) name $^@ op map=$^* @$^*.lk1
     @del $^*.lk1
-
-

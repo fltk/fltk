@@ -33,6 +33,32 @@ exceptions that allow for static linking.
 
 Changes since FLTK 1.1.4 include:
 
+	- Documentation updates (STR #568, STR #570)
+	- Shortcuts were incorrectly underlined in multi-line
+	  labels (STR #566)
+	- More CMake updates (STR #499)
+	- The Watcom C++ compiler needed a small change (STR
+	  #567)
+	- Added DESTDIR support and now remove all man pages for
+	  the "uninstall" target (STR #545)
+	- Fix PNG drawing on buggy WIN32 graphics cards (STR
+	  #548)
+	- The configure script didn't propagate the CPPFLAGS
+	  environment variable (STR #549)
+	- The numpad keys didn't work properly on WIN32 (STR
+	  #502)
+	- fl_input() and friends now set the input focus to the
+	  text field when the dialog is shown (STR #553)
+	- Fixed background color mixup when drawing Fl_Choice
+	  menus (STR #544)
+	- Fixed MingW makefiles (STR #550)
+	- More VC++ project file tweaking (STR #559)
+	- Fl_PNG_Image didn't use the png_set_trns_to_alpha
+	  function when available (STR #547)
+	- The FL_UNFOCUS event wasn't always sent when switching
+	  tabs (STR #558)
+
+	[1.1.5rc3]
 	- Documentation updates (STR #505, STR #513)
 	- Updated PNG library source to 1.2.7.
 	- Updated ZLIB library source to 1.2.1.
@@ -325,6 +351,30 @@ exceptions that allow for static linking.
 <P>Changes since FLTK 1.1.4 include:
 
 <UL>
+
+	<li>Documentation updates (<a href='str.php?L568'>STR #568</a>, <a href='str.php?L570'>STR #570</a>)
+	<li>Shortcuts were incorrectly underlined in multi-line
+	labels (<a href='str.php?L566'>STR #566</a>)
+	<li>More CMake updates (<a href='str.php?L499'>STR #499</a>)
+	<li>The Watcom C++ compiler needed a small change (<a href='str.php?L567'>STR #567</a>)
+	<li>Added DESTDIR support and now remove all man pages for
+	the "uninstall" target (<a href='str.php?L545'>STR #545</a>)
+	<li>Fix PNG drawing on buggy WIN32 graphics cards (<a href='str.php?L548'>STR #548</a>)
+	<li>The configure script didn't propagate the CPPFLAGS
+	environment variable (<a href='str.php?L549'>STR #549</a>)
+	<li>The numpad keys didn't work properly on WIN32 (<a href='str.php?L502'>STR #502</a>)
+	<li>fl_input() and friends now set the input focus to the
+	text field when the dialog is shown (<a href='str.php?L553'>STR #553</a>)
+	<li>Fixed background color mixup when drawing Fl_Choice
+	menus (<a href='str.php?L544'>STR #544</a>)
+	<li>Fixed MingW makefiles (<a href='str.php?L550'>STR #550</a>)
+	<li>More VC++ project file tweaking (<a href='str.php?L559'>STR #559</a>)
+	<li>Fl_PNG_Image didn't use the png_set_trns_to_alpha
+	function when available (<a href='str.php?L547'>STR #547</a>)
+	<li>The FL_UNFOCUS event wasn't always sent when switching
+	tabs (<a href='str.php?L558'>STR #558</a>)
+
+	<br /><i>[1.1.5rc3]</i>
 
 	<li>Documentation updates (<a href='http://www.fltk.org/str.php?L505'>STR #505</a>, <a href='http://www.fltk.org/str.php?L513'>STR #513</a>)
 	<li>Updated PNG library source to 1.2.7.

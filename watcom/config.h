@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.1.2.1 2004/11/20 03:19:59 easysw Exp $"
+ * "$Id: config.h,v 1.1.2.2 2004/11/23 18:48:10 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Watcom C++ 1.3
  *
@@ -218,5 +218,5 @@
 
 
 /*
- * End of "$Id: config.h,v 1.1.2.1 2004/11/20 03:19:59 easysw Exp $".
+ * End of "$Id: config.h,v 1.1.2.2 2004/11/23 18:48:10 easysw Exp $".
  */
