@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.31 2003/05/26 01:39:53 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.32 2003/09/03 19:38:01 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -112,7 +112,6 @@ Fl_File_Chooser::count()
   int		i;		// Looping var
   int		fcount;		// Number of selected files
   const char	*filename;	// Filename in input field or list
-  char		pathname[1024];	// Full path to file
 
 
   if (!(type_ & MULTI))
@@ -134,12 +133,8 @@ Fl_File_Chooser::count()
     {
       // See if this file is a directory...
       filename = (char *)fileList->text(i);
-      if (directory_[0] != '\0')
-	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-      else
-	strlcpy(pathname, filename, sizeof(pathname));
 
-      if (!fl_filename_isdir(pathname))
+      if (filename[strlen(filename) - 1] != '/')
 	fcount ++;
     }
 
@@ -1027,16 +1022,19 @@ Fl_File_Chooser::value(int f)	// I - File number
       // See if this file is a directory...
       name = fileList->text(i);
 
-      if (directory_[0]) {
-	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
-      } else {
-	strlcpy(pathname, name, sizeof(pathname));
-      }
-
-      if (!fl_filename_isdir(pathname)) {
-        // Nope, see if this this is "the one"...
+      if (name[strlen(name) - 1] != '/') {
+        // Not a directory, see if this this is "the one"...
 	fcount ++;
-	if (fcount == f) return (pathname);
+
+	if (fcount == f) {
+	  if (directory_[0]) {
+	    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
+	  } else {
+	    strlcpy(pathname, name, sizeof(pathname));
+	  }
+
+	  return (pathname);
+	}
       }
     }
 
@@ -1165,5 +1163,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.31 2003/05/26 01:39:53 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.32 2003/09/03 19:38:01 easysw Exp $".
 //
