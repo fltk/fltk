@@ -1,6 +1,6 @@
 CHANGES IN FLTK 1.1.6
 
-	- Documentation updates (STR #608)
+	- Documentation updates (STR #552, STR #608)
 	- Fl_Sys_Menu_Bar didn't compile on case-sensitive
 	  file-systems (STR #622)
 	- FLUID didn't handle default function parameters

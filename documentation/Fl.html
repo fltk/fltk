@@ -233,6 +233,29 @@ FLTK will not recursively call the idle callback.
 <tt>Fl::wait()</tt> at <i>t</i> seconds after this function is called.
 The optional <tt>void*</tt> argument is passed to the callback.
 
+<P>You can have multiple timeout callbacks. To remove an timeout
+callback use <A
+href="#Fl.remove_timeout"><tt>Fl::remove_timeout()</tt></A>.
+
+<p>If you need more accurate, repeated timeouts, use <a
+href='#Fl.repeat_timeout'><tt>Fl::repeat_timeout()</tt></a> to
+reschedule the subsequent timeouts.</p>
+
+<p>The following code will print &quot;TICK&quot; each second on
+<tt>stdout</tt> with a fair degree of accuracy:</p>
+
+<PRE>
+    void callback(void*) {
+      puts("TICK");
+      Fl::repeat_timeout(1.0, callback);
+    }
+
+    int main() {
+      Fl::add_timeout(1.0, callback);
+      return Fl::run();
+    }
+</PRE>
+
 <H4><A NAME="Fl.arg">int arg(int, char**, int&amp;);</A></H4>
 
 <P>Consume a single switch from <tt>argv</tt>, starting at word i.
@@ -988,31 +1011,24 @@ callback that no longer exists.
 
 <H4><A NAME="Fl.repeat_timeout">void repeat_timeout(double t, Fl_Timeout_Handler,void* = 0);</A></H4>
 
-<P>Inside a timeout callback you can call this to add another timeout.
-Rather than the time being measured from "now", it is measured from
-when the system call elapsed that caused this timeout to be called.  This
-will result in far more accurate spacing of the timeout callbacks, it
-also has slightly less system call overhead.  (It will also use all
-your machine time if your timeout code and FLTK's overhead take more
-than <i>t</i> seconds, as the real timeout will be reduced to zero).
+<P>This method repeats a timeout callback from the expiration of the
+previous timeout, allowing for more accurate timing. You may only call
+this method inside a timeout callback.
 
-<p>It is undefined what this does if called from outside a timeout
-callback.
+<p>The following code will print &quot;TICK&quot; each second on
+<tt>stdout</tt> with a fair degree of accuracy:</p>
 
-<P>This code will print &quot;TICK&quot; each second on stdout, with a
-fair degree of accuracy:
+<PRE>
+    void callback(void*) {
+      puts("TICK");
+      Fl::repeat_timeout(1.0, callback);
+    }
 
-<UL><PRE>
-void callback(void*) {
-  printf(&quot;TICK\n&quot;);
-  Fl::repeat_timeout(1.0,callback);
-}
-
-main() {
-  Fl::add_timeout(1.0,callback);
-  return Fl::run();
-}
-</PRE></UL>
+    int main() {
+      Fl::add_timeout(1.0, callback);
+      return Fl::run();
+    }
+</PRE>
 
 <H4><A NAME="Fl.run">int run();</A></H4>
 
