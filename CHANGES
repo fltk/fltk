@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- The fl_read_image() function was not implemented on
+	  OSX (STR #161)
 	- VC++ 7.1 didn't like how the copy operators were
 	  disabled for the Fl_Widget class; now include inline
 	  code which will never be used but makes VC++ happy

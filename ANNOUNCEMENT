@@ -32,6 +32,8 @@ exceptions that allow for static linking.
 
 Changes since FLTK 1.1.3 include:
 
+	- The fl_read_image() function was not implemented on
+	  OSX (STR #161)
 	- VC++ 7.1 didn't like how the copy operators were
 	  disabled for the Fl_Widget class; now include inline
 	  code which will never be used but makes VC++ happy
@@ -265,6 +267,8 @@ exceptions that allow for static linking.
 
 <UL>
 
+	<LI>The fl_read_image() function was not implemented on
+	OSX (<A HREF="http://www.fltk.org/str.php?L161">STR #161</A>)
 	<LI>VC++ 7.1 didn't like how the copy operators were
 	disabled for the Fl_Widget class; now include inline
 	code which will never be used but makes VC++ happy
