@@ -1,5 +1,5 @@
 /*
- * "$Id: vsnprintf.c,v 1.3.2.5.2.1 2002/01/01 15:11:32 easysw Exp $"
+ * "$Id: vsnprintf.c,v 1.3.2.5.2.2 2002/03/25 21:55:05 easysw Exp $"
  *
  * vsnprintf() function for the Fast Light Tool Kit (FLTK).
  *
@@ -38,8 +38,7 @@
  */
 
 #include <stdio.h>
-#include <stdarg.h>
-#include <config.h>
+#include "flstring.h"
 
 #ifdef HAVE_SYS_STDTYPES_H
 #  include <sys/stdtypes.h>
@@ -51,7 +50,7 @@ extern "C" {
 
 #if !HAVE_VSNPRINTF
 
-int vsnprintf(char* str, size_t size, const char* fmt, va_list ap) {
+int fl_vsnprintf(char* str, size_t size, const char* fmt, va_list ap) {
   const char* e = str+size-1;
   char* p = str;
   char copy[20];
@@ -119,7 +118,7 @@ int vsnprintf(char* str, size_t size, const char* fmt, va_list ap) {
 
 #if !HAVE_SNPRINTF
 
-int snprintf(char* str, size_t size, const char* fmt, ...) {
+int fl_snprintf(char* str, size_t size, const char* fmt, ...) {
   int ret;
   va_list ap;
   va_start(ap, fmt);
@@ -135,6 +134,6 @@ int snprintf(char* str, size_t size, const char* fmt, ...) {
 #endif
 
 /*
- * End of "$Id: vsnprintf.c,v 1.3.2.5.2.1 2002/01/01 15:11:32 easysw Exp $".
+ * End of "$Id: vsnprintf.c,v 1.3.2.5.2.2 2002/03/25 21:55:05 easysw Exp $".
  */
 

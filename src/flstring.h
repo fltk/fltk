@@ -1,5 +1,5 @@
 /*
- * "$Id: flstring.h,v 1.1.2.2 2002/01/15 01:33:16 easysw Exp $"
+ * "$Id: flstring.h,v 1.1.2.3 2002/03/25 21:55:05 easysw Exp $"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
@@ -53,11 +53,13 @@ extern "C" {
 #  endif /* __cplusplus */
 
 #  if !HAVE_SNPRINTF
-extern int snprintf(char *, size_t, const char *, ...);
+extern int fl_snprintf(char *, size_t, const char *, ...);
+#    define snprintf fl_snprintf
 #  endif /* !HAVE_SNPRINTF */
 
 #  if !HAVE_VSNPRINTF
-extern int vsnprintf(char *, size_t, const char *, va_list ap);
+extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
+#    define vsnprintf fl_vsnprintf
 #  endif /* !HAVE_VSNPRINTF */
 
 #  ifdef __cplusplus
@@ -66,5 +68,5 @@ extern int vsnprintf(char *, size_t, const char *, va_list ap);
 #endif /* !flstring_h */
 
 /*
- * End of "$Id: flstring.h,v 1.1.2.2 2002/01/15 01:33:16 easysw Exp $".
+ * End of "$Id: flstring.h,v 1.1.2.3 2002/03/25 21:55:05 easysw Exp $".
  */
