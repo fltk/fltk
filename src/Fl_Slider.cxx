@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.5 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.6 2002/04/11 10:46:19 easysw Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -86,7 +86,7 @@ void Fl_Slider::draw_bg(int x, int y, int w, int h) {
   if (!(damage()&FL_DAMAGE_ALL)) { // not a complete redraw
     draw_box();
   }
-  Fl_Color black = active_r() ? FL_BLACK : FL_INACTIVE_COLOR;
+  Fl_Color black = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
   if (type() == FL_VERT_NICE_SLIDER) {
     draw_box(FL_THIN_DOWN_BOX, x+w/2-2, y, 4, h, black);
   } else if (type() == FL_HOR_NICE_SLIDER) {
@@ -291,5 +291,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.5 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.6 2002/04/11 10:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.10 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.11 2002/04/11 10:46:19 easysw Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -671,15 +671,14 @@ Fl_Browser_::Fl_Browser_(int x, int y, int w, int h, const char* l)
   top_ = 0;
   when(FL_WHEN_RELEASE_ALWAYS);
   selection_ = 0;
-  color(FL_WHITE);
-  selection_color(FL_SELECTION_COLOR);
+  color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   scrollbar.callback(scrollbar_callback);
 //scrollbar.align(FL_ALIGN_LEFT|FL_ALIGN_BOTTOM); // back compatability?
   hscrollbar.callback(hscrollbar_callback);
   hscrollbar.type(FL_HORIZONTAL);
   textfont_ = FL_HELVETICA;
   textsize_ = FL_NORMAL_SIZE;
-  textcolor_ = FL_BLACK;
+  textcolor_ = FL_FOREGROUND_COLOR;
   has_scrollbar_ = BOTH;
   max_width = 0;
   max_width_item = 0;
@@ -713,5 +712,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.10 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.11 2002/04/11 10:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.29 2002/03/05 11:26:41 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.30 2002/04/11 10:46:19 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2230,9 +2230,8 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   leftline_    = 0;
   size_        = 0;
 
-  color(FL_WHITE);
-  textcolor(FL_BLACK);
-  selection_color(FL_BLUE);
+  color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
+  textcolor(FL_FOREGROUND_COLOR);
 
   scrollbar_.value(0, hh, 0, 1);
   scrollbar_.step(8.0);
@@ -2624,5 +2623,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.29 2002/03/05 11:26:41 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.30 2002/04/11 10:46:19 easysw Exp $".
 //

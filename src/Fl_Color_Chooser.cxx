@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.3 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.4 2002/04/11 10:46:19 easysw Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -289,7 +289,7 @@ void Flcc_HueBox::draw() {
   if (X < 0) X = 0; else if (X > w1-6) X = w1-6;
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
   //  fl_color(c->value()>.75 ? FL_BLACK : FL_WHITE);
-  draw_box(FL_UP_BOX,x1+X,y1+Y,6,6,Fl::focus() == this ? FL_BLACK : FL_GRAY);
+  draw_box(FL_UP_BOX,x1+X,y1+Y,6,6,Fl::focus() == this ? FL_FOREGROUND_COLOR : FL_GRAY);
   px = X; py = Y;
 }
 
@@ -350,7 +350,7 @@ void Flcc_ValueBox::draw() {
   if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
   int Y = int((1-c->value()) * (h1-6));
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
-  draw_box(FL_UP_BOX,x1,y1+Y,w1,6,Fl::focus() == this ? FL_BLACK : FL_GRAY);
+  draw_box(FL_UP_BOX,x1,y1+Y,w1,6,Fl::focus() == this ? FL_FOREGROUND_COLOR : FL_GRAY);
   py = Y;
 }
 
@@ -521,5 +521,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.3 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.4 2002/04/11 10:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.5.2.5 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_color.cxx,v 1.12.2.5.2.6 2002/04/11 10:46:19 easysw Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -366,11 +366,11 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   if ((c1^c2)&0x80800000)
     return fg;
   else if (c2&0x80800000)
-    return FL_GRAY_RAMP; // black from gray ramp
+    return FL_BLACK;
   else
-    return (Fl_Color)(FL_COLOR_CUBE-1); // white from gray ramp
+    return FL_WHITE;
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.5.2.5 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_color.cxx,v 1.12.2.5.2.6 2002/04/11 10:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_gray.cxx,v 1.5.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_set_gray.cxx,v 1.5.2.3.2.2 2002/04/11 10:46:19 easysw Exp $"
 //
 // Background (gray) color routines for the Fast Light Tool Kit (FLTK).
 //
@@ -41,22 +41,22 @@ void Fl::background(uchar r, uchar g, uchar b) {
 }
 
 static void set_others() {
-  uchar r,g,b; Fl::get_color(FL_BLACK,r,g,b);
-  uchar r1,g1,b1; Fl::get_color(FL_WHITE,r1,g1,b1);
+  uchar r,g,b; Fl::get_color(FL_FOREGROUND_COLOR,r,g,b);
+  uchar r1,g1,b1; Fl::get_color(FL_BACKGROUND2_COLOR,r1,g1,b1);
   Fl::set_color(FL_INACTIVE_COLOR,(2*r+r1)/3, (2*g+g1)/3, (2*b+b1)/3);
   Fl::set_color(FL_SELECTION_COLOR,(2*r1+r)/3, (2*g1+g)/3, (2*b1+b)/3);
 }
 
 void Fl::foreground(uchar r, uchar g, uchar b) {
-  Fl::set_color(FL_BLACK,r,g,b);
+  Fl::set_color(FL_FOREGROUND_COLOR,r,g,b);
   set_others();
 }
 
 void Fl::background2(uchar r, uchar g, uchar b) {
-  Fl::set_color(FL_WHITE,r,g,b);
+  Fl::set_color(FL_BACKGROUND2_COLOR,r,g,b);
   set_others();
 }
 
 //
-// End of "$Id: fl_set_gray.cxx,v 1.5.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_set_gray.cxx,v 1.5.2.3.2.2 2002/04/11 10:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.21 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.22 2002/04/11 10:46:19 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -272,34 +272,43 @@ enum Fl_Font {	// standard fonts
 extern FL_EXPORT int FL_NORMAL_SIZE;
 
 enum Fl_Color {	// standard colors
-  FL_BLACK		= 0,
-  FL_RED		= 1,
-  FL_GREEN		= 2,
-  FL_YELLOW		= 3,
-  FL_BLUE		= 4,
-  FL_MAGENTA		= 5,
-  FL_CYAN		= 6,
-  FL_WHITE		= 7,
+  // These are used as default colors in widgets and altered as necessary
+  FL_FOREGROUND_COLOR   = 0,
+  FL_BACKGROUND2_COLOR  = 7,
   FL_INACTIVE_COLOR	= 8,
   FL_SELECTION_COLOR	= 15,
 
-  FL_FREE_COLOR		= 16,
-  FL_NUM_FREE_COLOR	= 16,
-
-  FL_GRAY_RAMP		= 32,
-
-  // boxtypes limit themselves to these colors so whole ramp is not allocated:
+  // boxtypes generally limit themselves to these colors so
+  // the whole ramp is not allocated:
   FL_GRAY0		= 32,	// 'A'
   FL_DARK3		= 39,	// 'H'
   FL_DARK2		= 45,   // 'N'
   FL_DARK1		= 47,	// 'P'
-  FL_GRAY		= 49,	// 'R' default color
+  FL_BACKGROUND_COLOR	= 49,	// 'R' default background color
   FL_LIGHT1		= 50,	// 'S'
   FL_LIGHT2		= 52,	// 'U'
   FL_LIGHT3		= 54,	// 'W'
 
-  FL_COLOR_CUBE		= 56
+  // FLTK provides a 5x8x5 color cube that is used with colormap visuals
+  FL_BLACK		= 56,
+  FL_RED		= 88,
+  FL_GREEN		= 63,
+  FL_YELLOW		= 95,
+  FL_BLUE		= 216,
+  FL_MAGENTA		= 248,
+  FL_CYAN		= 223,
+  FL_WHITE		= 255
 };
+
+#define FL_FREE_COLOR		(Fl_Color)16
+#define FL_NUM_FREE_COLOR	16
+#define FL_GRAY_RAMP		(Fl_Color)32
+#define FL_NUM_GRAY		24
+#define FL_GRAY			FL_BACKGROUND_COLOR
+#define FL_COLOR_CUBE		(Fl_Color)56
+#define FL_NUM_RED		5
+#define FL_NUM_GREEN		8
+#define FL_NUM_BLUE		5
 
 FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
 FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
@@ -307,13 +316,14 @@ FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
 inline Fl_Color fl_rgb_color(uchar r, uchar g, uchar b) {
-  return (Fl_Color)(((((r << 8) | g) << 8) | b) << 8);
+  if (!r && !g && !b) return FL_BLACK;
+  else return (Fl_Color)(((((r << 8) | g) << 8) | b) << 8);
 }
-#define FL_NUM_GRAY	24
+inline Fl_Color fl_rgb_color(uchar g) {
+  if (!g) return FL_BLACK;
+  else return (Fl_Color)(((((g << 8) | g) << 8) | g) << 8);
+}
 inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
-#define FL_NUM_RED	5
-#define FL_NUM_GREEN	8
-#define FL_NUM_BLUE	5
 inline Fl_Color fl_color_cube(int r, int g, int b) {
   return (Fl_Color)((b*FL_NUM_RED + r) * FL_NUM_GREEN + g + FL_COLOR_CUBE);}
 
@@ -378,5 +388,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.21 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.22 2002/04/11 10:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.11 2002/03/07 19:22:56 spitzak Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.12 2002/04/11 10:46:19 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -72,10 +72,10 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   dragPos = dragType = dragging = 0;
   display_insert_position_hint = 0;
 
-  color(FL_WHITE, FL_SELECTION_COLOR);
+  color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   box(FL_DOWN_FRAME);
   textsize(FL_NORMAL_SIZE);
-  textcolor(FL_BLACK);
+  textcolor(FL_FOREGROUND_COLOR);
   textfont(FL_HELVETICA);
 
   text_area.x = 0;
@@ -1958,5 +1958,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.11 2002/03/07 19:22:56 spitzak Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.12 2002/04/11 10:46:19 easysw Exp $".
 //

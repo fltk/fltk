@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.6 2002/01/07 18:47:27 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.7 2002/04/11 10:46:19 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -53,12 +53,13 @@ void Fl::background(uchar r, uchar g, uchar b) {
 }
 
 void Fl::foreground(uchar r, uchar g, uchar b) {
-  Fl::set_color(FL_BLACK,r,g,b);
+  Fl::set_color(FL_FOREGROUND_COLOR,r,g,b);
 }
 
 void Fl::background2(uchar r, uchar g, uchar b) {
-  Fl::set_color(FL_WHITE,r,g,b);
-  Fl::set_color(FL_BLACK,get_color(fl_contrast(FL_BLACK,FL_WHITE)));
+  Fl::set_color(FL_BACKGROUND2_COLOR,r,g,b);
+  Fl::set_color(FL_FOREGROUND_COLOR,
+                get_color(fl_contrast(FL_FOREGROUND_COLOR,FL_BACKGROUND2_COLOR)));
 }
 
 // these are set by Fl::args() and override any system colors:
@@ -304,5 +305,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.6 2002/01/07 18:47:27 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.7 2002/04/11 10:46:19 easysw Exp $".
 //

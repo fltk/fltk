@@ -1,9 +1,11 @@
 <HTML><BODY>
 <H1 ALIGN=RIGHT><A NAME=Enumerations>C - FLTK Enumerations</A></H1>
- This appendix lists the enumerations provided in the <TT>
-&lt;FL/Enumerations.H&gt;</TT> header file, organized by section.
-Constants whose value is zero are marked with "(0)", this is often
-useful to know when programming.
+
+<P>This appendix lists the enumerations provided in the
+<TT>&lt;FL/Enumerations.H&gt;</TT> header file, organized by
+section. Constants whose value is zero are marked with "(0)",
+this is often useful to know when programming.
+
 <H2>Version Numbers</H2>
  The FLTK version number is stored in a number of compile-time
 constants:
@@ -177,42 +179,93 @@ bold-oblique. </LI>
 </ul>
 
 <H2><a name=colors>Colors</A></H2>
- The following color constants can be used to access the colors in the
-FLTK standard color palette:
+
+<P>The <TT>Fl_Color</TT> enumeration type holds a FLTK color value.
+Colors are either 8-bit indexes into a virtual colormap or 24-bit RGB
+color values. Color indices occupy the lower 8 bits of the value, while
+RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
+
+<H3>Color Constants</H3>
+
+<P>Constants are defined for the user-defined foreground and background
+colors, as well as specific colors and the start of the grayscale ramp
+and color cube in the virtual colormap. Inline functions are provided to
+retrieve specific grayscale, color cube, or RGB color values.
+
+<P>The following color constants can be used to access the user-defined
+colors:
+
 <UL>
-<LI><TT>FL_BLACK</TT> - the default label color (0)</LI>
-<LI><TT>FL_RED</TT></LI>
-<LI><TT>FL_GREEN</TT></LI>
-<LI><TT>FL_YELLOW</TT></LI>
-<LI><TT>FL_BLUE</TT></LI>
-<LI><TT>FL_MAGENTA</TT></LI>
-<LI><TT>FL_CYAN</TT></LI>
-<LI><TT>FL_WHITE</TT> - the default background for text</LI>
-<LI><TT>FL_SELECTION_COLOR</TT> - change to dark blue for Windows style</LI>
-<LI><TT>FL_GRAY</TT> - the default color.</LI>
+
+	<LI><TT>FL_BACKGROUND_COLOR</TT> - the default
+	background color</LI>
+
+	<LI><TT>FL_BACKGROUND2_COLOR</TT> - the default
+	background color for text, list, and valuator widgets</LI>
+
+	<LI><TT>FL_FOREGROUND_COLOR</TT> - the default
+	foreground color (0) used for labels and text</LI>
+
+	<LI><TT>FL_INACTIVE_COLOR</TT> - the inactive foreground
+	color</LI>
+
+	<LI><TT>FL_SELECTION_COLOR</TT> - the default selection/highlight
+	color</LI>
+
 </UL>
 
-In addition there are two inline functions to allow you to select
-grays or colors from the FLTK colormap:
+<P>The following color constants can be used to access the colors from the
+FLTK standard color cube:
 
-<p><b>Fl_Color fl_gray_ramp(int i)</b>
-<br>Returns a gray color.  Returns black for zero, returns white for
-<tt>FL_NUM_GRAY</tt> (which is 24) minus 1.  To get the closest to an
-8-bit gray value 'I' use
-<tt>fl_gray_ramp(I*FL_NUM_GRAY/256)</tt>
+<UL>
 
-<p><b>Fl_Color fl_color_cube(int r, int g, int b)</b>
-<br>Returns a color out of the color cube.
+	<LI><TT>FL_BLACK</TT></LI>
+	<LI><TT>FL_RED</TT></LI>
+	<LI><TT>FL_GREEN</TT></LI>
+	<LI><TT>FL_YELLOW</TT></LI>
+	<LI><TT>FL_BLUE</TT></LI>
+	<LI><TT>FL_MAGENTA</TT></LI>
+	<LI><TT>FL_CYAN</TT></LI>
+	<LI><TT>FL_WHITE</TT></LI>
 
+</UL>
+
+<P>The inline methods for getting a grayscale, color cube, or RGB color
+value are described next.
+
+<H3>Color Functions</H3>
+
+<H4>Fl_Color fl_gray_ramp(int i)</H4>
+
+<P>Returns a gray color value from black (<TT>i == 0</TT>) to
+white (<TT>i == FL_NUM_GRAY - 1</TT>). <TT>FL_NUM_GRAY</TT> is
+defined to be 24 in the current FLTK release. To get the closest
+FLTK gray value to an 8-bit grayscale color 'I' use:
+
+<UL><PRE>
+fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
+</PRE></UL>
+
+<H4>Fl_Color fl_color_cube(int r, int g, int b)</H4>
+
+<P>Returns a color out of the color cube.
 <tt>r</tt> must be in the range 0 to FL_NUM_RED (5) minus 1.
 <tt>g</tt> must be in the range 0 to FL_NUM_GREEN (8) minus 1.
 <tt>b</tt> must be in the range 0 to FL_NUM_BLUE (5) minus 1.
 
-To get the closest color to a 8-bit set of R,G,B values use
-<tt>fl_color_cube(R*FL_NUM_RED/256, G*FL_NUM_GREEN/256,
-B*FL_NUM_BLUE/256);</tt>
+<P>To get the closest color to a 8-bit set of R,G,B values use:
 
-<p><a name="fl_rgb_color"><b>Fl_Color fl_rgb_color(uchar r, uchar g, uchar b)</b></a>
+<UL><PRE>
+fl_color_cube(R * (FL_NUM_RED - 1) / 255,
+              G * (FL_NUM_GREEN - 1) / 255,
+              B * (FL_NUM_BLUE - 1) / 255);
+</PRE></UL>
+
+<H4><a name="fl_rgb_color">Fl_Color fl_rgb_color(uchar r, uchar g, uchar b)<BR>
+Fl_Color fl_rgb_color(uchar g)</a></H4>
+
+<P>Returns the 24-bit RGB color value for the specified 8-bit
+RGB or grayscale values.
 
 <H2><a name=cursor>Cursors</A></H2>
 
@@ -220,30 +273,40 @@ B*FL_NUM_BLUE/256);</tt>
 FLTK.  The  double-headed arrows are bitmaps
 provided by FLTK on X, the others are provided by system-defined
 cursors.</P>
+
 <UL>
-<LI><TT>FL_CURSOR_DEFAULT</TT> - the default cursor, usually an arrow (0)</LI>
-<LI><TT>FL_CURSOR_ARROW</TT> - an arrow pointer </LI>
-<LI><TT>FL_CURSOR_CROSS</TT> - crosshair </LI>
-<LI><TT>FL_CURSOR_WAIT</TT> - watch or hourglass </LI>
-<LI><TT>FL_CURSOR_INSERT</TT> - I-beam </LI>
-<LI><TT>FL_CURSOR_HAND</TT> - hand (uparrow on MSWindows) </LI>
-<LI><TT>FL_CURSOR_HELP</TT> - question mark </LI>
-<LI><TT>FL_CURSOR_MOVE</TT> - 4-pointed arrow </LI>
-<LI><TT>FL_CURSOR_NS</TT> - up/down arrow </LI>
-<LI><TT>FL_CURSOR_WE</TT> - left/right arrow </LI>
-<LI><TT>FL_CURSOR_NWSE</TT> - diagonal arrow </LI>
-<LI><TT>FL_CURSOR_NESW</TT> - diagonal arrow </LI>
-<LI><TT>FL_CURSOR_NONE</TT> - invisible </LI>
+
+	<LI><TT>FL_CURSOR_DEFAULT</TT> - the default cursor, usually an arrow (0)</LI>
+	<LI><TT>FL_CURSOR_ARROW</TT> - an arrow pointer </LI>
+	<LI><TT>FL_CURSOR_CROSS</TT> - crosshair </LI>
+	<LI><TT>FL_CURSOR_WAIT</TT> - watch or hourglass </LI>
+	<LI><TT>FL_CURSOR_INSERT</TT> - I-beam </LI>
+	<LI><TT>FL_CURSOR_HAND</TT> - hand (uparrow on MSWindows) </LI>
+	<LI><TT>FL_CURSOR_HELP</TT> - question mark </LI>
+	<LI><TT>FL_CURSOR_MOVE</TT> - 4-pointed arrow </LI>
+	<LI><TT>FL_CURSOR_NS</TT> - up/down arrow </LI>
+	<LI><TT>FL_CURSOR_WE</TT> - left/right arrow </LI>
+	<LI><TT>FL_CURSOR_NWSE</TT> - diagonal arrow </LI>
+	<LI><TT>FL_CURSOR_NESW</TT> - diagonal arrow </LI>
+	<LI><TT>FL_CURSOR_NONE</TT> - invisible </LI>
+
 </UL>
+
 <H2>FD &quot;When&quot; Conditions</H2>
+
 <UL>
-<LI><TT>FL_READ</TT> - Call the callback when there is data to be
- read. </LI>
-<LI><TT>FL_WRITE</TT> - Call the callback when data can be written
- without blocking. </LI>
-<LI><TT>FL_EXCEPT</TT> - Call the callback if an exception occurs on
- the file. </LI>
+
+	<LI><TT>FL_READ</TT> - Call the callback when there is data to be
+	read.</LI>
+
+	<LI><TT>FL_WRITE</TT> - Call the callback when data can be written
+	without blocking.</LI>
+
+	<LI><TT>FL_EXCEPT</TT> - Call the callback if an exception occurs on
+	the file.</LI>
+
 </UL>
+
 <H2><a name=damage>Damage Masks</A></H2>
  The following damage mask bits are used by the standard FLTK widgets:
 <UL>

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Progress.cxx,v 1.1.2.4 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Progress.cxx,v 1.1.2.5 2002/04/11 10:46:19 easysw Exp $"
 //
 // Progress bar widget routines.
 //
@@ -97,7 +97,7 @@ Fl_Progress::Fl_Progress(int x, int y, int w, int h, const char* l)
 {
   align(FL_ALIGN_INSIDE);
   box(FL_DOWN_BOX);
-  color(FL_WHITE, FL_YELLOW);
+  color(FL_BACKGROUND2_COLOR, FL_YELLOW);
   minimum(0.0f);
   maximum(100.0f);
   value(0.0f);
@@ -105,5 +105,5 @@ Fl_Progress::Fl_Progress(int x, int y, int w, int h, const char* l)
 
 
 //
-// End of "$Id: Fl_Progress.cxx,v 1.1.2.4 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Progress.cxx,v 1.1.2.5 2002/04/11 10:46:19 easysw Exp $".
 //

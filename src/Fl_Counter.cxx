@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.7 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.8 2002/04/11 10:46:19 easysw Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ void Fl_Counter::draw() {
     xx[3] = x()+w()-1*W; ww[3] = W;
   }
 
-  draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_WHITE);
+  draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_BACKGROUND2_COLOR);
   fl_font(textfont(), textsize());
   fl_color(active_r() ? textcolor() : fl_inactive(textcolor()));
   char str[128]; format(str);
@@ -184,9 +184,9 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
   mouseobj = 0;
   textfont_ = FL_HELVETICA;
   textsize_ = FL_NORMAL_SIZE;
-  textcolor_ = FL_BLACK;
+  textcolor_ = FL_FOREGROUND_COLOR;
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.7 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.8 2002/04/11 10:46:19 easysw Exp $".
 //

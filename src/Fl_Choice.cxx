@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.8 2002/03/26 00:50:16 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.9 2002/04/11 10:46:19 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -81,7 +81,7 @@ Fl_Choice::Fl_Choice(int x,int y,int w,int h, const char *l)
   textfont(FL_HELVETICA);
   box(FL_FLAT_BOX);
   down_box(FL_BORDER_BOX);
-  color(FL_WHITE);
+  color(FL_BACKGROUND2_COLOR);
 }
 
 int Fl_Choice::value(int v) {
@@ -128,5 +128,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.8 2002/03/26 00:50:16 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.9 2002/04/11 10:46:19 easysw Exp $".
 //

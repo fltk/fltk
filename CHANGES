@@ -1,3 +1,17 @@
+CHANGES IN FLTK 1.1.0
+
+	- Some source files still used the "false" and "true"
+	  C++ keywords, even though several of our "supported"
+	  C++ compilers don't support them.  Using 0 and 1 until
+	  FLTK 2.0 (which uses the bool type instead of int for
+	  any boolean values...)
+	- Minor Fl_Color revamping, so that color constants map
+	  to the color cube and FL_FOREGROUND_COLOR,
+	  FL_BACKGROUND_COLOR, FL_BACKGROUND2_COLOR,
+	  FL_INACTIVE_COLOR, and FL_SELECTION_COLOR map to the
+	  user-defined colors.
+
+
 CHANGES IN FLTK 1.1.0b13
 
 	- Fixed a bug in the Xft support in Fl_Window::hide()
