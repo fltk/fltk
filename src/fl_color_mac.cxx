@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_mac.cxx,v 1.1.2.3 2002/05/16 02:16:17 easysw Exp $"
+// "$Id: fl_color_mac.cxx,v 1.1.2.4 2002/06/07 16:56:15 easysw Exp $"
 //
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
-#include <FL/mac.H>
+#include <FL/x.H>
 #include <FL/fl_draw.H>
 
 static unsigned fl_cmap[256] = {
@@ -86,5 +86,5 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 }
 
 //
-// End of "$Id: fl_color_mac.cxx,v 1.1.2.3 2002/05/16 02:16:17 easysw Exp $".
+// End of "$Id: fl_color_mac.cxx,v 1.1.2.4 2002/06/07 16:56:15 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-//
+// "$Id: fl_dnd_mac.cxx,v 1.1.2.3 2002/06/07 16:56:15 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -28,7 +28,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
-#include <FL/mac.H>
+#include <FL/x.H>
 #include <FL/Fl_Window.H>
 
 extern EventRef fl_os_event;
@@ -81,5 +81,5 @@ int Fl::dnd()
   
 
 //
-//
+// End of "$Id: fl_dnd_mac.cxx,v 1.1.2.3 2002/06/07 16:56:15 easysw Exp $".
 //

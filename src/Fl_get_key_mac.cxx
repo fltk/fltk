@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key_mac.cxx,v 1.1.2.4 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: Fl_get_key_mac.cxx,v 1.1.2.5 2002/06/07 16:56:15 easysw Exp $"
 //
 // MacOS keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -28,7 +28,7 @@
 // symbols.
 
 #include <FL/Fl.H>
-#include <FL/mac.H>
+#include <FL/x.H>
 
 // convert an FLTK (X) keysym to a MacOS symbol:
 // See also the inverse converter in Fl_mac.cxx
@@ -99,5 +99,5 @@ int Fl::get_key(int k) {
 }
 
 //
-// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.4 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.5 2002/06/07 16:56:15 easysw Exp $".
 //
