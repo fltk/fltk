@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365)
+	- FLTK now honors the numlock key state (STR #369)
 	- The Fl_Text_Display widget did not redraw selections
 	  when focus changed (STR #390)
 	- The plastic background image is now less contrasty
