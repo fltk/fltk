@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.3 1999/12/07 17:53:08 bill Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.4 1999/12/29 03:14:37 mike Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,8 @@ void Fl_Scrollbar::increment_cb() {
   switch (pushed_) {
   case 1: i = -linesize_; break;
   default:i =  linesize_; break;
-  case 3: i = -int(S * (maximum() - minimum()) / W); break;
-  case 4: i =  int(S * (maximum() - minimum()) / W); break;
+  case 5: i = -int(S * (maximum() - minimum()) / W); break;
+  case 6: i =  int(S * (maximum() - minimum()) / W); break;
   }
   if (maximum() < minimum() && pushed_ < 3) i = -i;
   handle_drag(clamp(value() + i));
@@ -80,9 +80,9 @@ int Fl_Scrollbar::handle(int event) {
       else if (val <= 0.0) sliderx = 0;
       else sliderx = int(val*(W-S)+.5);
 
-      if (mx < X+sliderx) area = 3;
-      else if (mx >= X+sliderx+S) area = 4;
-      else area = 5;
+      if (mx < X+sliderx) area = 5;
+      else if (mx >= X+sliderx+S) area = 6;
+      else area = 8;
     }
   } else {
     if (mx < X || mx >= X+W) area = 0;
@@ -96,9 +96,9 @@ int Fl_Scrollbar::handle(int event) {
       else if (val <= 0.0) slidery = 0;
       else slidery = int(val*(H-S)+.5);
 
-      if (my < Y+slidery) area = 3;
-      else if (my >= Y+slidery+S) area = 4;
-      else area = 5;
+      if (my < Y+slidery) area = 5;
+      else if (my >= Y+slidery+S) area = 6;
+      else area = 8;
     }
   }
   switch (event) {
@@ -115,7 +115,7 @@ int Fl_Scrollbar::handle(int event) {
     return 1;
   case FL_PUSH:
     if (pushed_) return 1;
-    if (area != 5) pushed_ = area;
+    if (area != 8) pushed_ = area;
     if (pushed_) {
       handle_push();
       Fl::add_timeout(INITIALREPEAT, timeout_cb, this);
@@ -241,5 +241,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.3 1999/12/07 17:53:08 bill Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.4 1999/12/29 03:14:37 mike Exp $".
 //
