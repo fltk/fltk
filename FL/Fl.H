@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.17 2002/07/14 19:08:25 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.18 2002/07/17 06:09:25 matthiaswm Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,10 @@
 #  include "Enumerations.H"
 #  ifndef Fl_Object
 #    define Fl_Object Fl_Widget
+#  endif
+
+#  ifdef check
+#    undef check
 #  endif
 
 class Fl_Widget;
@@ -253,5 +257,5 @@ public:
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.17 2002/07/14 19:08:25 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.18 2002/07/17 06:09:25 matthiaswm Exp $".
 //

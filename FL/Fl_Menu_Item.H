@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.3 2002/07/17 06:09:25 matthiaswm Exp $"
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,10 @@
 #ifndef Fl_Widget_H
 // used to get the Fl_Callback typedefs:
 #include "Fl_Widget.H"
+#endif
+
+#if defined __APPLE__ && defined __MWERKS__
+# undef check
 #endif
 
 enum { // values for flags:
@@ -153,5 +157,5 @@ enum {	// back-compatability enum:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.3 2002/07/17 06:09:25 matthiaswm Exp $".
 //

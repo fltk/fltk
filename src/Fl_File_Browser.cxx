@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.19 2002/07/17 06:09:25 matthiaswm Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -62,7 +62,8 @@
 #  include <os2.h>
 #endif // __EMX__
 
-#ifdef __APPLE__
+// CodeWarrior (__MWERKS__) gets its include paths confused, so we temporarily disable this
+#if defined(__APPLE__) && !defined(__MWERKS__)
 #  include <sys/param.h>
 #  include <sys/ucred.h>
 #  include <sys/mount.h>
@@ -488,7 +489,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
 	num_files ++;
       }
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) && !defined(__MWERKS__)
     // MacOS X and Darwin use getfsstat() system call...
     int			numfs;	// Number of file systems
     struct statfs	*fs;	// Buffer for file system info
@@ -643,5 +644,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.19 2002/07/17 06:09:25 matthiaswm Exp $".
 //

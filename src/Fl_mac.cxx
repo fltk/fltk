@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.31 2002/07/11 04:11:41 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.32 2002/07/17 06:09:26 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -432,7 +432,7 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
 /**
  * this callback simply quits the main event loop handler, so FLTK can do its magic
  */
-static void timerProcCB( EventLoopTimerRef, void* )
+static pascal void timerProcCB( EventLoopTimerRef, void* )
 {
   fl_lock_function();
 
@@ -1214,7 +1214,7 @@ Fl_Window *fl_dnd_target_window = 0;
 /**
  * Drag'n'drop tracking handler
  */
-OSErr dndTrackingHandler( DragTrackingMessage msg, WindowPtr w, void *userData, DragReference dragRef )
+static pascal OSErr dndTrackingHandler( DragTrackingMessage msg, WindowPtr w, void *userData, DragReference dragRef )
 {
   Fl_Window *target = (Fl_Window*)userData;
   Point mp;
@@ -1270,7 +1270,7 @@ OSErr dndTrackingHandler( DragTrackingMessage msg, WindowPtr w, void *userData, 
 /**
  * Drag'n'drop receive handler
  */
-OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReference dragRef )
+static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReference dragRef )
 {
   Point mp;
   OSErr ret;
@@ -1744,6 +1744,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.31 2002/07/11 04:11:41 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.32 2002/07/17 06:09:26 matthiaswm Exp $".
 //
 

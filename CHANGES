@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Added first steps to CodeWarrior/OS_X support (see
+	  fltk-1.1.x/CodeWarrior/OS_X.sit)
 	- Cleaned up the WIN32 export definitions for some of
 	  the widget classes.
 	- Fixed a filename completion bug when changing
