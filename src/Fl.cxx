@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.39 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.40 2001/01/26 13:31:51 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -341,7 +341,9 @@ void Fl::flush() {
       }
     }
   }
-#ifndef WIN32
+#ifdef WIN32
+  GdiFlush();
+#else
   if (fl_display) XFlush(fl_display);
 #endif
 }
@@ -781,5 +783,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.39 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.40 2001/01/26 13:31:51 easysw Exp $".
 //

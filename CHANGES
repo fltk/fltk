@@ -14,13 +14,16 @@ CHANGES SINCE FLTK 1.0.10
 	  and respond to them.
 
 	- "accu-timer": some changes to repeat_timeout that seem
-	  to make it accurate on Unix and Win32 at speeds up to
+	  to make it accurate on Unix and WIN32 at speeds up to
 	  500000 timeouts/second (and 700000 on Linux), and
 	  within about .001% as accurate as the system clock.
 
 	- Fix to Fl_Valuator::step() by Guillermo Andrade.
 
-	- Fixed the write-menu bug introduced in 1.0.10
+	- Fixed the FLUID write-menu bug introduced in 1.0.10
+
+	- Fl::flush() now calls GdiFlush() under WIN32 to
+	  ensure that all graphics are drawn.
 
 
 CHANGES SINCE FLTK 1.0.9
