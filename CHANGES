@@ -78,6 +78,7 @@ CHANGES IN FLTK 1.1.0b6
 	  old FL_PATH_MAX size.
 	- fl_file_chooser() and fl_dir_chooser() now return a
 	  relative path.
+	- Fl_Help_View now supports all ampersand escapes.
 
 
 CHANGES IN FLTK 1.1.0b5

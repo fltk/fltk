@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $"
+// "$Id: Fl_Button.H,v 1.5.2.3.2.2 2001/11/26 21:40:14 easysw Exp $"
 //
 // Button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 #endif
 
 // values for type()
+#define FL_NORMAL_BUTTON	0
 #define FL_TOGGLE_BUTTON	1
 #define FL_RADIO_BUTTON		(FL_RESERVED_TYPE+2)
 #define FL_HIDDEN_BUTTON	3 // for Forms compatability
@@ -71,5 +72,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Button.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $".
+// End of "$Id: Fl_Button.H,v 1.5.2.3.2.2 2001/11/26 21:40:14 easysw Exp $".
 //
