@@ -1,3 +1,10 @@
+CHANGES IN FLTK 1.1.0b10
+
+	- Fixed the new WIN32 TrackMouseEvent code.
+	- Fixed the VC++ project files to link against
+	  comctl32.lib.
+
+
 CHANGES IN FLTK 1.1.0b9
 
 	- Better FL_LEAVE event handling for WIN32.
