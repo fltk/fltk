@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.8 1999/03/08 21:44:30 carl Exp $"
+// "$Id: Fl_Dial.cxx,v 1.9 1999/03/09 07:26:28 bill Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -104,6 +104,7 @@ int Fl_Dial::handle(int event, int x, int y, int w, int h) {
   case FL_PUSH:
     handle_push();
   case FL_DRAG: {
+    double oldangle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
     double angle;
     static double last = 0.0;
     double val = value();
@@ -112,11 +113,12 @@ int Fl_Dial::handle(int event, int x, int y, int w, int h) {
     if (!mx && !my) return 1;
     angle = atan2((float)-my, (float)-mx) + M_PI;
     angle = (angle*360) / (2*M_PI) + 90;
-    if (angle >= 360.0) angle -= 360.0;
-    if (a2 >= 360 && angle <= (a2-360)) angle += 360;
-    if (angle < a1 || angle > a2) {
-      if ((last - a1) < (a2 - last)) val = minimum();
-      else val = maximum();
+    while (angle < oldangle-180) angle += 360;
+    while (angle > oldangle+180) angle -= 360;
+    if (angle <= a1) {
+      val = minimum();
+    } else if (angle >= a2) {
+      val = maximum();
     } else {
       val = minimum() + (maximum()-minimum())*(angle-a1)/(a2-a1);
       last = angle;
@@ -143,5 +145,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.8 1999/03/08 21:44:30 carl Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.9 1999/03/09 07:26:28 bill Exp $".
 //
