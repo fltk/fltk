@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.12 2002/04/15 12:19:01 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.13 2002/04/15 17:18:48 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -207,7 +207,12 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 #endif // __APPLE__
 
 
-#ifdef __APPLE__
+// MRS: Currently it appears that CopyDeepMask() does not work with an 8-bit alpha mask.
+//      If you want to test/fix this, uncomment the "#ifdef __APPLE__" and comment out
+//      the "#if 0" here.  Also see Fl_Image.cxx for a similar check...
+
+//#ifdef __APPLE__
+#if 0
 // Create an 8-bit mask used for alpha blending
 Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) {
   Rect srcRect;
@@ -230,13 +235,14 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
       {
         PixMapPtr pmp = *pm;
         // verify the parameters for direct memory write
-        if ( pmp->pixelType == 0 || pmp->pixelSize == 1 || pmp->cmpCount == 1 || pmp->cmpSize == 1 ) 
+        if ( pmp->pixelType == 0 || pmp->pixelSize == 8 || pmp->cmpCount == 1 || pmp->cmpSize == 8 ) 
         {
 	  // Copy alpha values from the source array to the pixmap...
 	  array += d - 1;
-	  for (int y = h; y > 0; y --, array += ld) {
+          int rowoffset = (pmp->rowBytes & 0x3fff) - w;
+	  for (int y = h; y > 0; y --, array += ld, base += rowoffset) {
 	    for (int x = w; x > 0; x --, array += d) {
-	      *pmp++ = *array;
+	      *base++ = 255 /*255 - *array*/;
 	    }
 	  }
         }
@@ -456,5 +462,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.12 2002/04/15 12:19:01 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.13 2002/04/15 17:18:48 easysw Exp $".
 //

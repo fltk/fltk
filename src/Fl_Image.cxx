@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.18 2002/04/15 12:19:01 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.19 2002/04/15 17:18:48 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -283,8 +283,6 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   }
 #elif defined(__APPLE__)
-  fl_copy_offscreen(X, Y, W, H, id, cx, cy);
-
   if (mask) {
     Rect src, dst;
     src.left = 0; src.right = w();
@@ -296,10 +294,21 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     RGBBackColor(&rgb);
     rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
     RGBForeColor(&rgb);
+
+#if 0
+    // MRS: This *should* work, but doesn't on my system (iBook); change to
+    //      "#if 1" and restore the corresponding code in Fl_Bitmap.cxx
+    //      to test the real alpha channel support.
     CopyDeepMask(GetPortBitMapForCopyBits((GrafPtr)id),
 	         GetPortBitMapForCopyBits((GrafPtr)mask), 
 	         GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
                  &src, &src, &dst, blend, NULL);
+#else // Fallback to screen-door transparency...
+    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
+	     GetPortBitMapForCopyBits((GrafPtr)mask), 
+	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
+             &src, &src, &dst);
+#endif // 0
   } else {
     fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   }
@@ -334,5 +343,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.18 2002/04/15 12:19:01 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.19 2002/04/15 17:18:48 easysw Exp $".
 //
