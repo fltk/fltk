@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.5 1999/05/01 15:08:21 mike Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.6 1999/05/11 09:39:29 bill Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -394,9 +394,12 @@ void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
   if (line<1) line = 1;
   if (line>lines) line = lines;
   int p = 0;
-  for (FL_BLINE* l=first; l&& line>1; l = l->next) {
+
+  FL_BLINE* l;
+  for (l=first; l && line>1; l = l->next) {
     line--; p += item_height(l);
   }
+  if (l && (pos == BOTTOM)) p += item_height (l);
 
   int final = p, X, Y, W, H;
   bbox(X, Y, W, H);
@@ -485,5 +488,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.5 1999/05/01 15:08:21 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.6 1999/05/11 09:39:29 bill Exp $".
 //

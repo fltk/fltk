@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.9 1999/05/09 14:49:14 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.10 1999/05/11 09:39:30 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -132,7 +132,6 @@ double fl_wait(int timeout_flag, double time) {
   int have_message = 0;
   int timerid;
 
-
   if (nfds) {
     // For WIN32 we need to poll for socket input FIRST, since
     // the event queue is not something we can select() on...
@@ -148,8 +147,8 @@ double fl_wait(int timeout_flag, double time) {
     if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i ++) {
-        int f = fd[i].fd;
-        short revents = 0;
+	int f = fd[i].fd;
+	short revents = 0;
 	if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
 	if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
 	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
@@ -166,15 +165,15 @@ double fl_wait(int timeout_flag, double time) {
       // First see if there is a message waiting...
       have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
       if (!have_message) {
-        // If not then set a 1ms timer...
+	// If not then set a 1ms timer...
 	timerid = SetTimer(NULL, 0, 1, NULL);
-        GetMessage(&fl_msg, NULL, 0, 0);
-        KillTimer(NULL, timerid);
+	GetMessage(&fl_msg, NULL, 0, 0);
+	KillTimer(NULL, timerid);
       }
-    } else
+    } else {
       // Wait for a message...
       GetMessage(&fl_msg, NULL, 0, 0);
-
+    }
     have_message = 1;
   } else {
     // Perform the requested timeout...
@@ -854,6 +853,8 @@ void Fl_X::set_minmax(LPMINMAXINFO minmax)
 
 ////////////////////////////////////////////////////////////////
 
+#include <FL/filename.H> // need so FL_EXPORT filename_name works
+
 // returns pointer to the filename, or null if name ends with '/'
 const char *filename_name(const char *name) {
   const char *p,*q;
@@ -939,5 +940,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.9 1999/05/09 14:49:14 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.10 1999/05/11 09:39:30 bill Exp $".
 //

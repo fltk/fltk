@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.2 1999/04/30 16:29:40 gustavo Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.3 1999/05/11 09:39:28 bill Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -543,7 +543,22 @@ void Fl_DeclBlock_Type::write_code2() {
 
 const char* Fl_Type::class_name() const {
   Fl_Type* p = parent;
-  while (p) {if (p->is_class()) return p->name(); p = p->parent;}
+  while (p) {
+    if (p->is_class()) {
+      // see if we are nested in another class, we must fully-qualify name:
+      // this is lame but works...
+      const char* q = p->class_name();
+      if (q) {
+	static char buffer[256];
+	if (q != buffer) strcpy(buffer, q);
+	strcat(buffer, "::");
+	strcat(buffer, p->name());
+	return buffer;
+      }
+      return p->name();
+    }
+    p = p->parent;
+  }
   return 0;
 }
 
@@ -638,5 +653,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.2 1999/04/30 16:29:40 gustavo Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.3 1999/05/11 09:39:28 bill Exp $".
 //
