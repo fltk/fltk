@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.8 1998/11/08 15:28:42 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.9 1998/11/12 14:14:57 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -275,15 +275,20 @@ ulong fl_event_time; // the last timestamp from an x event
 char fl_key_vector[32]; // used by Fl::get_key()
 
 // Record event mouse position and state from an XEvent:
+// Also fix buggy window managers: since we now have a window event
+// x/y and a root x/y we can figure out the real window position even
+// if the window manager sent an incorrect ConfigureNotify event.
 
 static int px, py;
 static ulong ptime;
 
-static void set_event_xy() {
+static void set_event_xy(Fl_Window* window) {
   Fl::e_x_root = fl_xevent->xbutton.x_root;
   Fl::e_x = fl_xevent->xbutton.x;
+  Fl_X::x(window,Fl::e_x_root-Fl::e_x);
   Fl::e_y_root = fl_xevent->xbutton.y_root;
   Fl::e_y = fl_xevent->xbutton.y;
+  Fl_X::y(window,Fl::e_y_root-Fl::e_y);
   Fl::e_state = fl_xevent->xbutton.state << 16;
   fl_event_time = fl_xevent->xbutton.time;
 #ifdef __sgi
@@ -358,22 +363,19 @@ int fl_handle(const XEvent& xevent)
 
   case ButtonPress:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy(); checkdouble();
-    // fix buggy window managers that position window wrong:
-    Fl_X::x(window,Fl::e_x_root-Fl::e_x);
-    Fl_X::y(window,Fl::e_y_root-Fl::e_y);
+    set_event_xy(window); checkdouble();
     Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
     event = FL_PUSH;
     break;
 
   case MotionNotify:
-    set_event_xy();
+    set_event_xy(window);
     event = FL_MOVE;
     break;
 
   case ButtonRelease:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
     event = FL_RELEASE;
     break;
@@ -427,27 +429,27 @@ int fl_handle(const XEvent& xevent)
     Fl::e_keysym = int(keysym);
     Fl::e_text = buffer;
     Fl::e_length = len;
-    set_event_xy(); Fl::e_is_click = 0;
+    set_event_xy(window); Fl::e_is_click = 0;
     if (Fl::event_state(FL_CTRL) && keysym == '-') buffer[0] = 0x1f; // ^_
     event = FL_KEYBOARD;
     break;}
 
   case KeyRelease: {
     int i = xevent.xkey.keycode; fl_key_vector[i/8] &= ~(1 << (i%8));
-    set_event_xy();}
+    set_event_xy(window);}
     break;
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
     // XInstallColormap(fl_display, Fl_X::i(window)->colormap);
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
     break;
 
   case LeaveNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_LEAVE;
     break;
@@ -535,6 +537,34 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
+  int X = w->x();
+  int Y = w->y();
+  int W = w->w();
+  if (W <= 0) W = 1; // X don't like zero...
+  int H = w->h();
+  if (H <= 0) H = 1; // X don't like zero...
+  if (!w->parent() && !Fl::grab()) {
+    // force the window to be on-screen.  Usually the X window manager
+    // does this, but a few don't, so we do it here for consistency:
+    if (w->border()) {
+      // ensure border is on screen:
+      // (assumme extremely minimal dimensions for this border)
+      const int top = 20;
+      const int left = 1;
+      const int right = 1;
+      const int bottom = 1;
+      if (X+W+right > Fl::w()) X = Fl::w()-right-W;
+      if (X-left < 0) X = left;
+      if (Y+H+bottom > Fl::h()) Y = Fl::h()-bottom-H;
+      if (Y-top < 0) Y = top;
+    }
+    // now insure contents are on-screen (more important than border):
+    if (X+W > Fl::w()) X = Fl::w()-W;
+    if (X < 0) X = 0;
+    if (Y+H > Fl::h()) Y = Fl::h()-H;
+    if (Y < 0) Y = 0;
+  }
+
   ulong root = w->parent() ?
     fl_xid(w->window()) : RootWindow(fl_display, fl_screen);
 
@@ -554,12 +584,11 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
     fl_background_pixel = -1;
     mask |= CWBackPixel;
   }
+
   Fl_X* x =
     set_xid(w, XCreateWindow(fl_display,
 			     root,
-			     w->x(), w->y(),
-			     w->w()>0 ? w->w() : 1,
-			     w->h()>0 ? w->h() : 1,
+			     X, Y, W, H,
 			     0, // borderwidth
 			     visual->depth,
 			     InputOutput,
@@ -813,5 +842,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.8 1998/11/08 15:28:42 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.9 1998/11/12 14:14:57 mike Exp $".
 //

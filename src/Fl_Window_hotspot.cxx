@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.5 1998/11/08 14:36:55 mike Exp $"
+// "$Id: Fl_Window_hotspot.cxx,v 1.6 1998/11/12 14:14:56 mike Exp $"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
@@ -30,9 +30,11 @@
 #include <FL/win32.H>
 #endif
 
-void Fl_Window::hotspot(int X, int Y, int offscreen) {
+void Fl_Window::hotspot(int X, int Y, int /*offscreen*/) {
   int mx,my; Fl::get_mouse(mx,my);
   X = mx-X; Y = my-Y;
+#if 0
+  // Both the WIN32 and X versions do this to all windows all the time...
   if (!offscreen) {
 #ifdef WIN32
     //These will be used by reference, so we must passed different variables
@@ -60,6 +62,7 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
     if (Y < 0) Y = 0;
 #endif
   }
+#endif
   position(X,Y);
 }
 
@@ -74,5 +77,5 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
 }
 
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.5 1998/11/08 14:36:55 mike Exp $".
+// End of "$Id: Fl_Window_hotspot.cxx,v 1.6 1998/11/12 14:14:56 mike Exp $".
 //
