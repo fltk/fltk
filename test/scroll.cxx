@@ -1,5 +1,5 @@
 //
-// "$Id: scroll.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: scroll.cxx,v 1.4.2.3.2.2 2002/10/24 12:53:41 easysw Exp $"
 //
 // Fl_Scroll test program for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
-#include <FL/Fl_Toggle_Button.H>
+#include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Box.H>
 #include <string.h>
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
   Fl_Box box(0,300,5*75,window.h()-300); // gray area below the scroll
   box.box(FL_FLAT_BOX);
 
-  Fl_Toggle_Button but1(150, 310, 200, 25, "box");
+  Fl_Light_Button but1(150, 310, 200, 25, "box");
   but1.callback(box_cb);
   
   Fl_Choice choice(150, 335, 200, 25, "type():");
@@ -137,5 +137,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: scroll.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: scroll.cxx,v 1.4.2.3.2.2 2002/10/24 12:53:41 easysw Exp $".
 //
