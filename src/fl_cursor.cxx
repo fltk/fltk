@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.2 1999/12/06 14:43:40 mike Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.3 2000/02/04 06:35:22 bill Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -101,7 +101,7 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
 
 #define CURSORSIZE 16
 #define HOTXY 7
-struct TableEntry {
+static struct TableEntry {
   uchar bits[CURSORSIZE*CURSORSIZE/8];
   uchar mask[CURSORSIZE*CURSORSIZE/8];
   Cursor cursor;
@@ -184,5 +184,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.2 1999/12/06 14:43:40 mike Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.3 2000/02/04 06:35:22 bill Exp $".
 //
