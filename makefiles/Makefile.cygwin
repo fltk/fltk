@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.cygnus,v 1.1.2.2 2000/06/13 20:33:33 mike Exp $"
+# "$Id: Makefile.cygwin,v 1.1.2.1 2000/06/20 18:47:31 carl Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -85,12 +85,12 @@ clean:
 	touch test/makedepend
 	cd test ; $(MAKE) clean
 
-config.h: makefiles/config.cygnus
+config.h: makefiles/config.cygwin
 	cp $< $@
 
-makeinclude: makefiles/makeinclude.cygnus
+makeinclude: makefiles/makeinclude.cygwin
 	cp $< $@
 
 #
-# End of "$Id: Makefile.cygnus,v 1.1.2.2 2000/06/13 20:33:33 mike Exp $".
+# End of "$Id: Makefile.cygwin,v 1.1.2.1 2000/06/20 18:47:31 carl Exp $".
 #

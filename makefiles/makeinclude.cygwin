@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.cygnus,v 1.9.2.6 2000/06/20 17:54:41 mike Exp $"
+# "$Id: makeinclude.cygwin,v 1.1.2.1 2000/06/20 18:47:33 carl Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -31,11 +31,7 @@
 #    but will cause an 'unnecessary' console to appear when run directly from
 #    windows (say explorer). It provides i/o for stdin/stdout for debugging
 #
-#    To avoid this use an additional compile/link switch to move the program
-#    entry point to WinMain(). If not defined a link warning may appear
-#    but the program will run correctly from main() and not produce a console.
-#    Adding -mwindows to CFLAGS,CXXFLAGS,LDLIBS,GLDLIBS below
-#    will cause this revised behaviour
+#    To avoid this add "-mwindows" to LDLIBS and GLDLIBS below
 #
 # 2) Stripping the executable to reduce size
 #
@@ -73,7 +69,6 @@ DSONAME		=
 DSOCOMMAND	= echo
 
 # libraries to link with (in addition to default libs):
-# (Note: -lm may be required with older versions of the Cygwin environment)
 LDLIBS		=  -lgdi32 -lwsock32
 GLDLIBS		=  -lglu32 -lopengl32 -lgdi32 -lwsock32
 
@@ -96,5 +91,5 @@ GLDLIBS		=  -lglu32 -lopengl32 -lgdi32 -lwsock32
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.cygnus,v 1.9.2.6 2000/06/20 17:54:41 mike Exp $".
+# End of "$Id: makeinclude.cygwin,v 1.1.2.1 2000/06/20 18:47:33 carl Exp $".
 #

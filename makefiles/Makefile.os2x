@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.6.2.2 2000/06/13 20:33:34 mike Exp $"
+# "$Id: Makefile.os2x,v 1.6.2.3 2000/06/20 18:47:31 carl Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -67,12 +67,12 @@ clean:
 	touch test/makedepend
 	cd test & $(MAKE) clean
 
-config.h: makefiles\config.os2x
-	copy $< $@
+config.h: makefiles/config.os2x
+	cp $< $@
 
-makeinclude: makefiles\makeinclude.os2x
-	copy $< $@
+makeinclude: makefiles/makeinclude.os2x
+	cp $< $@
 
 #
-# End of "$Id: Makefile.os2x,v 1.6.2.2 2000/06/13 20:33:34 mike Exp $".
+# End of "$Id: Makefile.os2x,v 1.6.2.3 2000/06/20 18:47:31 carl Exp $".
 #
