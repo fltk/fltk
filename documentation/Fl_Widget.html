@@ -300,7 +300,11 @@ with arbitrary arguments.
 
 <P>Handles the specified event. You normally don't call this
 method directly, but instead let FLTK do it when the user
-interacts with the widget.
+interacts with the widget.</p>
+
+<p>When implemented in a new widget, this function must return 0
+if the widget does not use the event or 1 if it uses the
+event.</p>
 
 
 <H4><A name="Fl_Widget.image">Fl_Image* Fl_Widget::image()</A><BR>
