@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_dir.cxx,v 1.1.2.7 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: fl_file_dir.cxx,v 1.1.2.8 2002/04/24 12:14:57 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -55,16 +55,24 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
   } else {
     if (!fname || !*fname) {
       if (fc->filter() != pat && (!pat || !fc->filter() ||
-          strcmp(pat, fc->filter()))) {
+          strcmp(pat, fc->filter())) && fc->value()) {
 	// if pattern is different, remove name but leave old directory:
-	char* p = (char *)fc->value();
-	const char* q = fl_filename_name(p);
-	int i;
+	strncpy(retname, fc->value(), sizeof(retname) - 1);
+	retname[sizeof(retname) - 1] = '\0';
 
-	if (q == NULL) i = 0;
-	else i = strlen(q);
+	char *p = strrchr(retname, '/');
 
-	p[i] = 0;
+        if (p) {
+	  // If the filename is "/foo", then the directory will be "/", not
+	  // ""...
+	  if (p == retname)
+	    retname[1] = '\0';
+	  else
+	    *p = '\0';
+	}
+
+	// Set the directory...
+	fc->directory(retname);
       }
     }
     else
@@ -119,5 +127,5 @@ char* fl_dir_chooser(const char* message, const char* fname)
 
 
 //
-// End of "$Id: fl_file_dir.cxx,v 1.1.2.7 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: fl_file_dir.cxx,v 1.1.2.8 2002/04/24 12:14:57 easysw Exp $".
 //

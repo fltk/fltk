@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.9 2002/03/25 21:39:01 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.10 2002/04/24 12:14:57 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -85,6 +85,7 @@ Options telling what information we request:
 	[--libs]          return FLTK libraries full path for dependencies
 
 Option to compile and link an application:
+	[-g]              compile the program with debugging information
 	[--compile program.cxx]
         [--post program]
 "
@@ -97,6 +98,7 @@ fi
 no_plugins=no
 compile=
 post=
+debug=
 
 # Parse command line options
 while test $# -gt 0 
@@ -152,6 +154,9 @@ do
       ;;
     --libs)
       echo_libs=yes
+      ;;
+    -g)
+      debug=-g
       ;;
     --compile)
       compile=$2
@@ -230,8 +235,8 @@ if test -n "$compile"; then
 	    
     post=$prog
 
-    echo $CXX $CXXFLAGS -o $prog $compile $LDSTATIC
-    $CXX $CXXFLAGS -o $prog $compile $LDSTATIC
+    echo $CXX $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+    $CXX $CXXFLAGS $debug -o $prog $compile $LDSTATIC
 fi
 
 if test -n "$post" -a "$POSTBUILD" != ":"; then

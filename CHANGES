@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- fl_file_chooser() could cause a segfault when passed a
+	  NULL filename parameter in some situations.
+	- Added a "-g" option to fltk-config to support quick
+	  compiling with debugging enabled.
 	- Fixed redraw problem with Fl_Input and anti-aliased
 	  text.
 	- Added threading support for MacOS X and Darwin.

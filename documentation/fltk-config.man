@@ -1,4 +1,4 @@
-.TH fltk-config 1 "Fast Light Tool Kit" "6 January 2002"
+.TH fltk-config 1 "Fast Light Tool Kit" "24 April 2002"
 .SH NAME
 fltk-config \- script to get information about the installed version of fltk.
 .sp
@@ -9,7 +9,7 @@ fltk-config [ --prefix
 .I [=DIR]
 ] [ --version ] [ --api-version ] [ --use-gl ] [ --use-images ] [ --use-glut ]
 [ --cflags ] [ --cxxflags ] [ --ldflags ] [ --ldstaticflags ] [ --libs ]
-[ --compile
+[ -g ] [ --compile
 .I program.cxx
 ] [ --post
 .I program
@@ -37,6 +37,11 @@ files that use FLTK.
 .br
 Compiles the source file \fIprogram.cxx\fR into \fIprogram\fR.
 This option implies "--post \fIprogram\fR".
+.TP 5
+-g
+.br
+Enables debugging information when compiling with the \fI--compile\fR
+option.
 .TP 5
 --ldflags
 .br
