@@ -21,7 +21,7 @@ int gridx = 5;
 int gridy = 5;
 int snap = 3;
 
-bool include_H_from_C;
+int include_H_from_C;
 
 void alignment_cb(Fl_Input *i, long v) {
   int n = atoi(i->value());
