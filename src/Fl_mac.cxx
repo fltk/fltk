@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.39 2003/05/20 17:53:26 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.40 2003/05/22 18:32:51 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1416,16 +1416,23 @@ void Fl_X::make(Fl_Window* w)
       }
     }
     int xwm = xp, ywm = yp, bt, bx, by;
-    if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) 
-      { winclass = kHelpWindowClass; winattr = 0; } // menu windows and tooltips
-    else if (w->modal())
+
+    if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) {
+      // menu windows and tooltips
+      winclass = kHelpWindowClass;
+      winattr  = 0;
+    } else if (w->modal()) {
       winclass = kMovableModalWindowClass;
+    }
+
     if (by+bt) {
       wp += 2*bx;
       hp += 2*by+bt;
     }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
-      w->x(xyPos+Fl::x()); w->y(xyPos+Fl::y()); // use the Carbon functions below for default window positioning
+      // use the Carbon functions below for default window positioning
+      w->x(xyPos+Fl::x());
+      w->y(xyPos+Fl::y());
       xyPos += 25;
       if (xyPos>200) xyPos = 25;
     } else {
@@ -1451,8 +1458,12 @@ void Fl_X::make(Fl_Window* w)
 
     const char *name = w->label();
     Str255 pTitle; 
-    if (name) { pTitle[0] = strlen(name); memcpy(pTitle+1, name, pTitle[0]); }
-    else pTitle[0]=0;
+    if (name) {
+      if (strlen(name) > 255) pTitle[0] = 255;
+      else pTitle[0] = strlen(name);
+
+      memcpy(pTitle+1, name, pTitle[0]);
+    } else pTitle[0] = 0;
 
     Fl_X* x = new Fl_X;
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
@@ -1466,17 +1477,20 @@ void Fl_X::make(Fl_Window* w)
     CreateNewWindow( winclass, winattr, &wRect, &(x->xid) );
     SetWTitle(x->xid, pTitle);
     MoveWindow(x->xid, wRect.left, wRect.top, 1);	// avoid Carbon Bug on old OS
-    if (w->non_modal() && !w->modal())
-      SetWindowClass(x->xid, kFloatingWindowClass );	// Major kludge: this is to have the regular look, but stay above the document windows
+    if (w->non_modal() && !w->modal()) {
+      // Major kludge: this is to have the regular look, but stay above the document windows
+      SetWindowClass(x->xid, kFloatingWindowClass);
+    }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION))
     {
       WindowRef pw = Fl_X::first ? Fl_X::first->xid : 0 ;
-      if ( w->modal() )
-        RepositionWindow( x->xid, pw, kWindowAlertPositionOnParentWindowScreen );
-      else if ( w->non_modal() )
-        RepositionWindow( x->xid, pw, kWindowCenterOnParentWindowScreen );
-      else
-        RepositionWindow( x->xid, pw, kWindowCascadeOnParentWindowScreen );
+      if (w->modal()) {
+        RepositionWindow(x->xid, pw, kWindowAlertPositionOnParentWindowScreen);
+      } else if (w->non_modal()) {
+        RepositionWindow(x->xid, pw, kWindowCenterOnParentWindowScreen);
+      } else {
+        RepositionWindow(x->xid, pw, kWindowCascadeOnParentWindowScreen);
+      }
     }
     x->w = w; w->i = x;
     x->wait_for_expose = 1;
@@ -1760,6 +1774,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.39 2003/05/20 17:53:26 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.40 2003/05/22 18:32:51 easysw Exp $".
 //
 
