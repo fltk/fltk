@@ -326,8 +326,38 @@ fair degree of accuracy:
 
 main() {
   Fl::add_timeout(1.0,callback);
-  for (;;) Fl::wait();
+  return Fl::run();
 }</PRE></UL>
+
+<h3><A name=add_timeout>static void Fl::add_check(void (*cb)(void*),void*v=0)</A></h3>
+
+Fltk will call this callback just before it flushes the display and
+waits for events.  This is different than an idle callback because it
+is only called once, then fltk calls the system and tells it not to
+return until an event happens.
+
+<p>This can be used by code that wants to monitor the
+application's state, such as to keep a display up to date. The
+advantage of using a check callback is that it is called only when no
+events are pending. If events are coming in quickly, whole blocks of
+them will be processed before this is called once. This can save
+significant time and avoid the application falling behind the events.
+
+<p>Sample code:
+
+<ul><pre>bool state_changed; // anything that changes the display turns this on
+
+void callback(void*) {
+  if (!state_changed) return;
+  state_changed = false;
+  do_expensive_calculation();
+  widget->redraw();
+}
+
+main() {
+  Fl::add_check(1.0,callback);
+  return Fl::run();
+}</pre></ul>
 
 <h3><A name=arg>static int Fl::arg(int argc, char **argv, int &amp;i)</A></h3>
 
@@ -865,6 +895,15 @@ Returns true if the timeout exists and has not been called yet.
 <h3><A name=remove_timeout>static void Fl::remove_timeout(void (*cb)(void*), void* = 0)</A></h3>
 
 Removes a timeout callback. It is harmless to remove a timeout
+callback that no longer exists.
+
+<h3><A name=has_check>static int Fl::has_check(void (*cb)(void*), void* = 0)</A></h3>
+
+Returns true if the check exists and has not been called yet.
+
+<h3><A name=remove_check>static void Fl::remove_check(void (*cb)(void*), void* = 0)</A></h3>
+
+Removes a check callback. It is harmless to remove a check
 callback that no longer exists.
 
 <h3><A name=run>static Fl::run()</A></h3>

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.34 2000/11/20 19:02:20 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.35 2000/12/12 08:57:30 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -67,23 +67,16 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 }
 
 ////////////////////////////////////////////////////////////////
-// Timeouts and Fl::wait()
-
-void (*Fl::idle)();
-
-// Timeouts are insert-sorted into order.  This works good if there
-// are only a small number:
-
-static struct Timeout {
+// Timeouts are stored in a sorted list, so only the first one needs
+// to be checked to see if any should be called.
+  
+struct Timeout {
   double time;
   void (*cb)(void*);
   void* arg;
-} * timeout;
-static int numtimeouts;
-static int timeout_array_size;
-
-extern int fl_wait(double time); // warning: assummes time >= 0.0
-extern int fl_ready();
+  Timeout* next;
+};
+static Timeout* first_timeout, *free_timeout;
 
 #ifndef WIN32
 #include <sys/time.h>
@@ -96,68 +89,152 @@ extern int fl_ready();
 static char reset_clock = 1;
 
 static void elapse_timeouts() {
-
 #ifdef WIN32
-
   unsigned long newclock = GetTickCount();
   static unsigned long prevclock;
-  if (reset_clock) {
-    prevclock = newclock;
-    reset_clock = 0;
-    return;
-  }
-  if (newclock <= prevclock) return;
   double elapsed = (newclock-prevclock)/1000.0;
   prevclock = newclock;
-
 #else
-
   static struct timeval prevclock;
   struct timeval newclock;
   gettimeofday(&newclock, NULL);
-  if (reset_clock) {
-    prevclock.tv_sec = newclock.tv_sec;
-    prevclock.tv_usec = newclock.tv_usec;
-    reset_clock = 0;
-    return;
-  }
   double elapsed = newclock.tv_sec - prevclock.tv_sec +
     (newclock.tv_usec - prevclock.tv_usec)/1000000.0;
   prevclock.tv_sec = newclock.tv_sec;
   prevclock.tv_usec = newclock.tv_usec;
-  if (elapsed <= 0) return;
-
 #endif
-
-  for (int i=0; i<numtimeouts; i++) timeout[i].time -= elapsed;
+  if (reset_clock) {
+    reset_clock = 0;
+  } else if (elapsed > 0) {
+    for (Timeout* t = first_timeout; t; t = t->next) t->time -= elapsed;
+  }
 }
+
+void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
+  elapse_timeouts();
+  repeat_timeout(time, cb, arg);
+}
+
+void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
+  elapse_timeouts();
+  Timeout* t = free_timeout;
+  if (t) free_timeout = t->next;
+  else t = new Timeout;
+  t->time = time;
+  t->cb = cb;
+  t->arg = arg;
+  // insert-sort the new timeout:
+  Timeout** p = &first_timeout; 
+  while (*p && (*p)->time <= time) p = &((*p)->next);
+  t->next = *p;
+  *p = t;
+}
+
+int Fl::has_timeout(Fl_Timeout_Handler cb, void *arg) {
+  for (Timeout* t = first_timeout; t; t = t->next)
+    if (t->cb == cb && t->arg == arg) return 1;
+  return 0;
+}
+
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void *arg) {
+  // This version removes all matching timeouts, not just the first one.
+  // This may change in the future.
+  for (Timeout** p = &first_timeout; *p;) {
+    Timeout* t = *p;
+    if (t->cb == cb && t->arg == arg) {
+      *p = t->next;
+      t->next = free_timeout;
+      free_timeout = t;
+    } else {
+      p = &(t->next);
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////
+// Checks are just stored in a list. They are called in the reverse
+// order that they were added (this may change in the future).
+// This is a bit messy because I want to allow checks to be added,
+// removed, and have wait() called from inside them, to do this
+// next_check points at the next unprocessed one for the outermost
+// call to Fl::wait().
+
+struct Check {
+  void (*cb)(void*);
+  void* arg;
+  Check* next;
+};
+static Check* first_check, *next_check, *free_check;
+
+void Fl::add_check(Fl_Timeout_Handler cb, void *arg) {
+  Check* t = free_check;
+  if (t) free_check = t->next;
+  else t = new Check;
+  t->cb = cb;
+  t->arg = arg;
+  t->next = first_check;
+  if (next_check == first_check) next_check = t;
+  first_check = t;
+}
+
+void Fl::remove_check(Fl_Timeout_Handler cb, void *arg) {
+  for (Check** p = &first_check; *p;) {
+    Check* t = *p;
+    if (t->cb == cb && t->arg == arg) {
+      if (next_check == t) next_check = t->next;
+      *p = t->next;
+      t->next = free_check;
+      free_check = t;
+    } else {
+      p = &(t->next);
+    }
+  }
+}
+  
+////////////////////////////////////////////////////////////////
+// wait/run/check/ready:
+
+void (*Fl::idle)(); // see Fl_add_idle.cxx for the add/remove functions
+
+extern int fl_wait(double time); // in Fl_x.cxx or Fl_win32.cxx
 
 static char in_idle;
 
 double Fl::wait(double time_to_wait) {
-  if (numtimeouts) {
+  if (first_timeout) {
     elapse_timeouts();
-    if (timeout[0].time <= time_to_wait) time_to_wait = timeout[0].time;
-    while (numtimeouts) {
-      if (timeout[0].time > 0) break;
+    while (Timeout* t = first_timeout) {
+      if (t->time > 0) break;
       // The first timeout in the array has expired.
       // We must remove timeout from array before doing the callback:
-      void (*cb)(void*) = timeout[0].cb;
-      void *arg = timeout[0].arg;
-      numtimeouts--;
-      if (numtimeouts)
-	memmove(timeout, timeout+1, numtimeouts*sizeof(Timeout));
+      void (*cb)(void*) = t->cb;
+      void *arg = t->arg;
+      first_timeout = t->next;
+      t->next = free_timeout;
+      free_timeout = t;
       // Now it is safe for the callback to do add_timeout:
       cb(arg);
     }
   } else {
     reset_clock = 1; // we are not going to check the clock
   }
+  // checks are a bit messy so that add/remove and wait may be called
+  // from inside them without causing an infinite loop:
+  if (next_check == first_check) {
+    while (next_check) {
+      Check* check = next_check;
+      next_check = check->next;
+      (check->cb)(check->arg);
+    }
+    next_check = first_check;
+  }
   if (idle) {
     if (!in_idle) {in_idle = 1; idle(); in_idle = 0;}
     // the idle function may turn off idle, we can then wait:
     if (idle) time_to_wait = 0.0;
   }
+  if (first_timeout && first_timeout->time < time_to_wait)
+    time_to_wait = first_timeout->time;
   if (time_to_wait <= 0.0) {
     // do flush second so that the results of events are visible:
     int ret = fl_wait(0.0);
@@ -187,56 +264,16 @@ int Fl::check() {
   return Fl_X::first != 0; // return true if there is a window
 }
 
+extern int fl_ready();
+
 int Fl::ready() {
-  if (numtimeouts) {
+  if (first_timeout) {
     elapse_timeouts();
-    if (timeout[0].time <= 0) return 1;
+    if (first_timeout->time <= 0) return 1;
   } else {
     reset_clock = 1;
   }
   return fl_ready();
-}
-
-void Fl::add_timeout(double t, Fl_Timeout_Handler cb, void *v) {
-  elapse_timeouts();
-  repeat_timeout(t, cb, v);
-}
-
-void Fl::repeat_timeout(double t, Fl_Timeout_Handler cb, void *v) {
-
-  if (numtimeouts >= timeout_array_size) {
-    timeout_array_size = 2*timeout_array_size+1;
-    timeout = (Timeout*)realloc(timeout, timeout_array_size*sizeof(Timeout));
-  }
-
-  // insert-sort the new timeout:
-  int i;
-  for (i=0; i<numtimeouts; i++) {
-    if (timeout[i].time > t) {
-      for (int j=numtimeouts; j>i; j--) timeout[j] = timeout[j-1];
-      break;
-    }
-  }
-  timeout[i].time = t;
-  timeout[i].cb = cb;
-  timeout[i].arg = v;
-
-  numtimeouts++;
-}
-
-int Fl::has_timeout(Fl_Timeout_Handler cb, void *v) {
-  for (int i=0; i<numtimeouts; i++)
-    if (timeout[i].cb == cb && timeout[i].arg==v) return 1;
-  return 0;
-}
-
-void Fl::remove_timeout(Fl_Timeout_Handler cb, void *v) {
-  int i,j;
-  for (i=j=0; i<numtimeouts; i++) {
-    if (timeout[i].cb == cb && timeout[i].arg==v) ;
-    else {if (j<i) timeout[j]=timeout[i]; j++;}
-  }
-  numtimeouts = j;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -734,5 +771,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.34 2000/11/20 19:02:20 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.35 2000/12/12 08:57:30 spitzak Exp $".
 //
