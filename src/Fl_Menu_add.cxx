@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.11 2001/02/12 15:34:37 easysw Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.12 2001/05/19 21:30:23 spitzak Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -112,16 +112,23 @@ int Fl_Menu_Item::add(
 
   int size = array==local_array ? local_array_size : array->size();
   int flags1 = 0;
-  char* item;
-  for (;;) {    /* do all the supermenus: */
+  const char* item;
 
-    /* fill in the buf with name, changing \x to x: */
+  // split at slashes to make submenus:
+  for (;;) {
+
+    // leading slash makes us assumme it is a filename:
+    if (*mytext == '/') {item = mytext; break;}
+
+    // leading underscore causes divider line:
+    if (*mytext == '_') {mytext++; flags1 = FL_MENU_DIVIDER;}
+
+    // copy to buf, changing \x to x:
     q = buf;
     for (p=mytext; *p && *p != '/'; *q++ = *p++) if (*p=='\\') p++;
     *q = 0;
 
     item = buf;
-    if (*item == '_') {item++; flags1 = FL_MENU_DIVIDER;}
     if (*p != '/') break; /* not a menu title */
     mytext = p+1;	/* point at item title */
 
@@ -143,7 +150,7 @@ int Fl_Menu_Item::add(
 
   /* find a matching menu item: */
   for (; m->text; m = m->next())
-    if (!compare(m->text,item)) break;
+    if (!(m->flags&FL_SUBMENU) && !compare(m->text,item)) break;
 
   if (!m->text) {	/* add a new menu item */
     int n = m-array;
@@ -254,5 +261,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.11 2001/02/12 15:34:37 easysw Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.12 2001/05/19 21:30:23 spitzak Exp $".
 //
