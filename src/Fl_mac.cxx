@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.13 2002/01/03 18:28:36 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.14 2002/02/26 00:34:55 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -59,7 +59,7 @@ extern void fl_fix_focus();
 
 // forward definition of functions in this file
 static void handleUpdateEvent( WindowPtr xid );
-int fl_handle(const EventRecord &event);
+//+ int fl_handle(const EventRecord &event);
 
 // public variables
 int fl_screen;
@@ -75,6 +75,7 @@ const Fl_Window* fl_modal_for;       // parent of modal() window
 Fl_Region fl_window_region = 0;
 Window fl_window;
 Fl_Window *Fl_Window::current_;
+EventRef fl_os_event;		// last (mouse) event
 
 // forward declarations of variables in this file
 static unsigned short macKeyLookUp[];
@@ -188,6 +189,18 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
 static void timerProcCB( EventLoopTimerRef, void* )
 {
   QuitApplicationEventLoop();
+}
+
+
+/**
+ * break the current event loop
+ */
+static void breakMacEventLoop()
+{
+  EventRef breakEvent;
+  CreateEvent( 0, kEventClassFLTK, kEventFLTKBreakLoop, 0, kEventAttributeUserEvent, &breakEvent );
+  PostEventToQueue( GetCurrentEventQueue(), breakEvent, kEventPriorityStandard );
+  ReleaseEvent( breakEvent );
 }
 
 
@@ -407,6 +420,7 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
 {
   static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
   static int px, py;
+  fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
   Point pos;
   GetEventParameter( event, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &pos );
@@ -786,6 +800,182 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   return ret;
 }
 
+/**
+ * convert a Mac FSSpec structure into a Unix filename 
+ */
+static int FSSpec2UnixPath( FSSpec *fs, char *dst )
+{
+  FSRef fsRef;
+  FSpMakeFSRef( fs, &fsRef );
+  FSRefMakePath( &fsRef, (UInt8*)dst, 1024 );
+  return strlen(dst);
+/* keep the code below. The above function is only implemented in OS X, so we might need the other code for OS 9 and friends
+  short offset = 0;
+  if ( fs->parID != fsRtParID )
+  {
+    FSSpec parent;
+    OSErr ret = FSMakeFSSpec( fs->vRefNum, fs->parID, 0, &parent );
+    if ( ret != noErr ) return 0;
+    offset = FSSpec2UnixPath( &parent, dst );
+  }
+
+  if ( fs->parID == fsRtParID && fs->vRefNum == -100 ) //+ bad hack: we assume that volume -100 is mounted as root
+  {
+    memcpy( dst, "/", 2 );
+    return 1; // don't add anything to the filename - we are fine already
+  }
+
+  short len = fs->name[0];
+  if ( fs->parID == fsRtParID ) { // assume tat all other volumes are in this directory (international name WILL vary!)
+    memcpy( dst, "/Volumes", 8 );
+    offset = 8;
+  }
+  
+  if ( offset!=1 ) dst[ offset++ ] = '/'; // avoid double '/'
+  memcpy( dst+offset, fs->name+1, len );
+  dst[ len+offset ] = 0;
+  return len+offset;
+*/
+}
+ 
+Fl_Window *fl_dnd_target_window = 0;
+#include <Fl/fl_draw.h>
+/**
+ * Drag'n'drop tracking handler
+ */
+OSErr dndTrackingHandler( DragTrackingMessage msg, WindowPtr w, void *userData, DragReference dragRef )
+{
+  Fl_Window *target = (Fl_Window*)userData;
+  Point mp;
+  static int px, py;
+  
+  switch ( msg )
+  {
+  case kDragTrackingEnterWindow:
+    // check if 'TEXT' is available
+    GetDragMouse( dragRef, &mp, 0 );
+    Fl::e_x_root = px = mp.h;
+    Fl::e_y_root = py = mp.v;
+    Fl::e_x = px - target->x();
+    Fl::e_y = py - target->y();
+    fl_dnd_target_window = target;
+    if ( Fl::handle( FL_DND_ENTER, target ) )
+      fl_cursor( FL_CURSOR_HAND ); //ShowDragHilite( ); // modify the mouse cursor?!
+    else
+      fl_cursor( FL_CURSOR_DEFAULT ); //HideDragHilite( dragRef );
+    breakMacEventLoop();
+    return noErr;
+  case kDragTrackingInWindow:
+    GetDragMouse( dragRef, &mp, 0 );
+    if ( mp.h==px && mp.v==py )
+      break;	//+ return previous condition for dnd hiliting
+    Fl::e_x_root = px = mp.h;
+    Fl::e_y_root = py = mp.v;
+    Fl::e_x = px - target->x();
+    Fl::e_y = py - target->y();
+    fl_dnd_target_window = target;
+    if ( Fl::handle( FL_DND_DRAG, target ) )
+      fl_cursor( FL_CURSOR_HAND ); //ShowDragHilite( ); // modify the mouse cursor?!
+    else
+      fl_cursor( FL_CURSOR_DEFAULT ); //HideDragHilite( dragRef );
+    breakMacEventLoop();
+    return noErr;
+    break;
+  case kDragTrackingLeaveWindow:
+    // HideDragHilite()
+    fl_cursor( FL_CURSOR_DEFAULT ); //HideDragHilite( dragRef );
+    if ( fl_dnd_target_window )
+    {
+      Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
+      fl_dnd_target_window = 0;
+    }
+    breakMacEventLoop();
+    return noErr;
+  }
+  return noErr;
+}
+
+
+/**
+ * Drag'n'drop receive handler
+ */
+OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReference dragRef )
+{
+  Point mp;
+  OSErr ret;
+  
+  Fl_Window *target = fl_dnd_target_window = (Fl_Window*)userData;
+  GetDragMouse( dragRef, &mp, 0 );
+  Fl::e_x_root = mp.h;
+  Fl::e_y_root = mp.v;
+  Fl::e_x = Fl::e_x_root - target->x();
+  Fl::e_y = Fl::e_y_root - target->y();
+  if ( !Fl::handle( FL_DND_RELEASE, target ) )
+    return userCanceledErr;
+    
+  // get the ASCII text
+  UInt16 i, nItem;
+  ItemReference itemRef;
+  FlavorFlags flags;
+  Size itemSize, size = 0;
+  CountDragItems( dragRef, &nItem );
+  for ( i = 1; i <= nItem; i++ )
+  {
+    GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
+      size += itemSize;
+    }
+    ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
+    if ( ret == noErr )
+    {
+      size += 1024; //++ ouch! We should create the full pathname and figure out its length
+    }
+  }
+  
+  if ( !size )
+    return userCanceledErr;
+  
+  Fl::e_length = size + nItem - 1;
+  char *dst = Fl::e_text = (char*)malloc( size+nItem );;
+  
+  for ( i = 1; i <= nItem; i++ )
+  {
+    GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
+      GetFlavorData( dragRef, itemRef, 'TEXT', dst, &itemSize, 0L );
+      dst += itemSize;
+      *dst++ = '\n'; // add our element seperator
+    }
+    ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
+    if ( ret == noErr )
+    {
+      HFSFlavor hfs; itemSize = sizeof( hfs );
+      GetFlavorData( dragRef, itemRef, 'hfs ', &hfs, &itemSize, 0L );
+      itemSize = FSSpec2UnixPath( &hfs.fileSpec, dst );
+      dst += itemSize;
+      if ( itemSize>1 && ( hfs.fileType=='fold' || hfs.fileType=='disk' ) ) 
+        *dst++ = '/';
+      *dst++ = '\n'; // add our element seperator
+    }
+  }
+  
+  dst[-1] = 0;
+//  if ( Fl::e_text[Fl::e_length-1]==0 ) Fl::e_length--; // modify, if trailing 0 is part of string
+  Fl::e_length = dst - Fl::e_text - 1;
+  target->handle(FL_PASTE);
+  free( Fl::e_text );
+  
+  fl_dnd_target_window = 0L;
+  breakMacEventLoop();
+  return noErr;
+}
+
 
 /**
  * go ahead, create that (sub)window
@@ -936,6 +1126,8 @@ void Fl_X::make(Fl_Window* w)
         { kEventClassWindow, kEventWindowClose },
         { kEventClassWindow, kEventWindowBoundsChanged } };
       ret = InstallWindowEventHandler( x->xid, windowHandler, 7, windowEvents, w, 0L );
+      ret = InstallTrackingHandler( dndTrackingHandler, x->xid, w );
+      ret = InstallReceiveHandler( dndReceiveHandler, x->xid, w );
     }
 
     if ( ! Fl_X::first->next ) // if this is the first window, we need to bring the application to the front
@@ -1096,6 +1288,6 @@ void Fl_Window::make_current()
 }
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.13 2002/01/03 18:28:36 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.14 2002/02/26 00:34:55 matthiaswm Exp $".
 //
 
