@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.53 2004/05/24 01:30:30 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.54 2004/05/26 02:42:10 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1645,7 +1645,11 @@ void Fl_Text_Display::clear_rect( int style, int X, int Y,
     return;
 
   if ( Fl::focus() != this ) {
-    fl_color( color() );
+    if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
+      fl_color(fl_color_average(color(), selection_color(), 0.5f));
+    } else {
+      fl_color( color() );
+    }
     fl_rectf( X, Y, width, height );
   } else if ( style & HIGHLIGHT_MASK ) {
     fl_color( fl_contrast(textcolor(), color()) );
@@ -2986,7 +2990,7 @@ int Fl_Text_Display::handle(int event) {
   // This isn't very elegant!
   if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h) &&
       !dragging && event != FL_LEAVE && event != FL_ENTER &&
-      event != FL_MOVE) {
+      event != FL_MOVE && event != FL_FOCUS && event != FL_UNFOCUS) {
     return Fl_Group::handle(event);
   }
 
@@ -3073,9 +3077,9 @@ int Fl_Text_Display::handle(int event) {
 
     case FL_FOCUS:
     case FL_UNFOCUS:
-      if (buffer()->primary_selection()->start() !=
-          buffer()->primary_selection()->end()) redraw(); // Redraw selections...
-      break;
+      if (buffer()->selected()) redraw();
+
+      return 1;
   }
 
   return 0;
@@ -3083,5 +3087,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.53 2004/05/24 01:30:30 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.54 2004/05/26 02:42:10 easysw Exp $".
 //
