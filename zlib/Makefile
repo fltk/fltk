@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:27 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.4 2004/07/29 18:13:11 easysw Exp $"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -34,7 +34,7 @@ OBJS	=	adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o \
 		trees.o zutil.o inflate.o infblock.o inftrees.o infcodes.o \
 		infutil.o inffast.o
 
-LIBZ	=	../lib/libz$(LIBEXT)
+LIBZ	=	../lib/libfltk_z$(LIBEXT)
 
 
 #
@@ -58,11 +58,11 @@ clean:
 #
 
 install: $(LIBZ)
-	echo "Installing libz$(LIBEXT) in $(libdir)..."
+	echo "Installing libfltk_z$(LIBEXT) in $(libdir)..."
 	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libz$(LIBEXT)
+	$(RM) $(libdir)/libfltk_z$(LIBEXT)
 	$(CP) $(LIBZ) $(libdir)
-	$(RANLIB) $(libdir)/libz$(LIBEXT)
+	$(RANLIB) $(libdir)/libfltk_z$(LIBEXT)
 
 
 #
@@ -70,12 +70,12 @@ install: $(LIBZ)
 #
 
 uninstall:
-	echo "Uninstalling libz$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libz$(LIBEXT)
+	echo "Uninstalling libfltk_z$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libfltk_z$(LIBEXT)
 
 
 #
-# libz.a
+# libfltk_z.a
 #
 
 $(LIBZ):	$(OBJS)
@@ -97,5 +97,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:27 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.4 2004/07/29 18:13:11 easysw Exp $".
 #

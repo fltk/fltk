@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:26 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.4 2004/07/29 18:13:11 easysw Exp $"
 #
 # JPEG library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -41,7 +41,7 @@ OBJS	=	jmemnobs.o \
 		jidctflt.o jidctfst.o jidctint.o jidctred.o jquant1.o \
 		jquant2.o jutils.o jmemmgr.o
 
-LIBJPEG	=	../lib/libjpeg$(LIBEXT)
+LIBJPEG	=	../lib/libfltk_jpeg$(LIBEXT)
 
 
 #
@@ -65,9 +65,9 @@ clean:
 #
 
 install:
-	echo "Installing libjpeg$(LIBEXT) in $(libdir)..."
+	echo "Installing libfltk_jpeg$(LIBEXT) in $(libdir)..."
 	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libjpeg$(LIBEXT)
+	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
 	$(CP) $(LIBJPEG) $(libdir)
 
 
@@ -76,12 +76,12 @@ install:
 #
 
 uninstall:
-	echo "Uninstalling libjpeg$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libjpeg$(LIBEXT)
+	echo "Uninstalling libfltk_jpeg$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
 
 
 #
-# libjpeg.a
+# libfltk_jpeg.a
 #
 
 $(LIBJPEG):	$(OBJS)
@@ -103,5 +103,5 @@ include makedepend
 $(OBJS):	../makeinclude
 
 #
-# End of "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:26 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.4 2004/07/29 18:13:11 easysw Exp $".
 #

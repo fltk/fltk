@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.115 2004/07/26 17:46:36 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.116 2004/07/29 18:13:10 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -375,7 +375,7 @@ AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
     IMAGELIBS="-ljpeg $IMAGELIBS",
     JPEGINC="-I../jpeg"
     JPEG="jpeg"
-    IMAGELIBS="../lib/libjpeg.a $IMAGELIBS")
+    IMAGELIBS="-lfltk_jpeg $IMAGELIBS")
 
 AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library, default=auto],
     [if eval "test x$enable_localzlib = xyes"; then
@@ -389,8 +389,8 @@ AC_CHECK_LIB(z,gzgets,
     IMAGELIBS="-lz $IMAGELIBS",
     ZLIBINC="-I../zlib"
     ZLIB="zlib"
-    LIBS="../lib/libz.a $LIBS"
-    IMAGELIBS="../lib/libz.a $IMAGELIBS")
+    LIBS="-lfltk_z $LIBS"
+    IMAGELIBS="-lfltk_z $IMAGELIBS")
 
 AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto],
     [if eval "test x$enable_localpng = xyes"; then
@@ -405,7 +405,7 @@ AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
     AC_DEFINE(HAVE_PNG_H)
     PNGINC="-I../png"
     PNG="png"
-    IMAGELIBS="../lib/libpng.a $IMAGELIBS"])
+    IMAGELIBS="-lfltk_png $IMAGELIBS"])
 
 AC_SUBST(JPEG)
 AC_SUBST(JPEGINC)
@@ -716,11 +716,12 @@ if test -n "$GCC"; then
 
     CXX="$CC"
 
-    # Show all standard warnings + unused variables when compiling...
-    OPTIM="-Wall -Wunused $OPTIM"
+    # Show all standard warnings + unused variables, conversion errors,
+    # and inlining problems when compiling...
+    OPTIM="-Wall -Wunused -Wconversion -Winline $OPTIM"
 
     # The following additional warnings are useful for tracking down problems...
-    OPTIM="-Wshadow -Wconversion -Winline $OPTIM"
+    #OPTIM="-Wshadow $OPTIM"
 
     # Set the default compiler optimizations...
     if test -z "$DEBUGFLAG"; then
@@ -898,5 +899,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.115 2004/07/26 17:46:36 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.116 2004/07/29 18:13:10 easysw Exp $".
 dnl
