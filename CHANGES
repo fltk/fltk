@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- Fixed Fl_Valuator::format() so that the correct format
+	  type is used when step == 1.0.
 	- Fl_Help_View didn't support the TT markup.
 	- Fl_Shared_Image used a double-pointer to the image
 	  handler functions, which was unnecessary and

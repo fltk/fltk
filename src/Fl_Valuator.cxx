@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.2 2002/05/27 21:54:11 easysw Exp $"
 //
 // Valuator widget for the Fast Light Tool Kit (FLTK).
 //
@@ -115,7 +115,7 @@ double Fl_Valuator::increment(double v, int n) {
 
 int Fl_Valuator::format(char* buffer) {
   double v = value();
-  if (!A || B==1) return sprintf(buffer, "%g", v);
+  if (!A) return sprintf(buffer, "%g", v);
   int i, x;
   for (x = 10, i = 2; x < B; x *= 10) i++;
   if (x == B) i--;
@@ -123,5 +123,5 @@ int Fl_Valuator::format(char* buffer) {
 }
 
 //
-// End of "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.2 2002/05/27 21:54:11 easysw Exp $".
 //
