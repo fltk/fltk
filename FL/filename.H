@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.6 1999/02/16 21:59:47 mike Exp $"
+// "$Id: filename.H,v 1.7 1999/02/18 03:20:32 mike Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,9 @@
 #  ifdef FL_DLL
 #    define FL_EXPORT	__declspec(dllexport)
 #    define FL_IMPORT	__declspec(dllimport)
+#  elif defined(FL_STATIC)
+#    define FL_EXPORT
+#    define FL_IMPORT
 #  else
 #    define FL_EXPORT	__declspec(dllimport)
 #    define FL_IMPORT	__declspec(dllexport)
@@ -79,5 +82,5 @@ FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.6 1999/02/16 21:59:47 mike Exp $".
+// End of "$Id: filename.H,v 1.7 1999/02/18 03:20:32 mike Exp $".
 //
