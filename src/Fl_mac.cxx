@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.64 2004/09/09 21:34:46 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.65 2004/11/23 00:28:35 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1335,18 +1335,70 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   H = w->h()+dy;
 
   //Proceed to positioning the window fully inside the screen, if possible
-  //Make border's lower right corner visible
-  if (Fl::w() < X+W) X = Fl::w() - W;
-  if (Fl::h() < Y+H) Y = Fl::h() - H;
-  //Make border's upper left corner visible
-  if (X<0) X = 0;
-  if (Y<0) Y = 0;
-  //Make client area's lower right corner visible
-  if (Fl::w() < X+dx+ w->w()) X = Fl::w() - w->w() - dx;
-  if (Fl::h() < Y+dy+ w->h()) Y = Fl::h() - w->h() - dy;
-  //Make client area's upper left corner visible
-  if (X+xoff < 0) X = -xoff;
-  if (Y+yoff < 0) Y = -yoff;
+
+  // let's get a little elaborate here. Mac OS X puts a lot of stuff on the desk
+  // that we want to avoid when positioning our window, namely the Dock and the
+  // top menu bar (and even more stuff in 10.4 Tiger). So we will go through the
+  // list of all available screens and find the one that this window is most
+  // likely to go to, and then reposition it to fit withing the 'good' area.
+  Rect r;
+  // find the screen, that the center of this window will fall into
+  int R = X+W, B = Y+H; // right and bottom
+  int cx = (X+R)/2, cy = (Y+B)/2; // center of window;
+  GDHandle gd = 0L;
+  for (gd = GetDeviceList(); gd; gd = GetNextDevice(gd)) {
+  GDPtr gp = *gd;
+  if (    cx >= gp->gdRect.left && cx <= gp->gdRect.right
+       && cy >= gp->gdRect.top  && cy <= gp->gdRect.bottom)
+    break;
+  }
+  // if the center doesn't fall on a screen, try the top left
+  if (!gd) {
+    for (gd = GetDeviceList(); gd; gd = GetNextDevice(gd)) {
+      GDPtr gp = *gd;
+      if (    X >= gp->gdRect.left && X <= gp->gdRect.right
+           && Y >= gp->gdRect.top  && Y <= gp->gdRect.bottom)
+        break;
+    }
+  }
+  // if that doesn't fall on a screen, try the top right
+  if (!gd) {
+    for (gd = GetDeviceList(); gd; gd = GetNextDevice(gd)) {
+      GDPtr gp = *gd;
+      if (    R >= gp->gdRect.left && R <= gp->gdRect.right
+           && Y >= gp->gdRect.top  && Y <= gp->gdRect.bottom)
+        break;
+    }
+  }
+  // if that doesn't fall on a screen, try the bottom left
+  if (!gd) {
+    for (gd = GetDeviceList(); gd; gd = GetNextDevice(gd)) {
+      GDPtr gp = *gd;
+      if (    X >= gp->gdRect.left && X <= gp->gdRect.right
+           && B >= gp->gdRect.top  && B <= gp->gdRect.bottom)
+        break;
+    }
+  }
+  // last resort, try the bottom right
+  if (!gd) {
+    for (gd = GetDeviceList(); gd; gd = GetNextDevice(gd)) {
+      GDPtr gp = *gd;
+      if (    R >= gp->gdRect.left && R <= gp->gdRect.right
+           && B >= gp->gdRect.top  && B <= gp->gdRect.bottom)
+        break;
+    }
+  }
+  // if we still have not found a screen, we will use the main
+  // screen, the one that has the application menu bar.
+  if (!gd) gd = GetMainDevice();
+  if (gd) {
+    GetAvailableWindowPositioningBounds(gd, &r);
+    if ( R > r.right )  X -= R - r.right;
+    if ( B > r.bottom ) Y -= B - r.bottom;
+    if ( X < r.left )   X = r.left;
+    if ( Y < r.top )    Y = r.top;
+  }
+
   //Return the client area's top left corner in (X,Y)
   X+=xoff;
   Y+=yoff;
@@ -2013,6 +2065,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.64 2004/09/09 21:34:46 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.65 2004/11/23 00:28:35 matthiaswm Exp $".
 //
 

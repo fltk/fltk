@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.7 2004/11/22 23:32:11 matthiaswm Exp $"
+// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.8 2004/11/23 00:28:35 matthiaswm Exp $"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
@@ -38,63 +38,13 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
   // If offscreen is 0 (the default), make sure that the window
   // stays on the screen, if possible.
   if (!offscreen) {
-#if defined(WIN32)
+#if defined(WIN32) || defined(__APPLE__)
     // These will be used by reference, so we must passed different variables
     int bt,bx,by;
     x(X);y(Y);
     Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
     //force FL_FORCE_POSITION to be set in Fl_Window::resize()
     if (X==x()) x(X-1);
-#elif defined(__APPLE__)
-    // let's get a little elaborate here. Mac OS X puts a lot of stuff on the desk
-    // that we want to avoid when positioning our window, namely the Dock and the
-    // top menu bar (and even more stuff in 10.4 Tiger). So we will go through the 
-    // list of all available screens and find the one that this window is most
-    // likely to go to, and then reposition it to fit withing the 'good' area.
-    Rect r;
-    // find the screen, that the center of this window will fall into
-    int R = X+w(), B = Y+h(); // right and bottom
-    int cx = (X+R)/2, cy = (Y+B)/2; // center of window;
-    GDHandle gd = GetDeviceList();
-    while (gd) {
-      GDPtr gp = *gd;
-      if (    cx >= gp->gdRect.left && cx <= gp->gdRect.right 
-           && cy >= gp->gdRect.top  && cy <= gp->gdRect.bottom) 
-        break;
-      gd = GetNextDevice(gd);
-    }
-    // if the center doesn't fall on a screen, try the top left
-    if (!gd) {
-      gd = GetDeviceList();
-      while (gd) {
-        GDPtr gp = *gd;
-        if (    X >= gp->gdRect.left && X <= gp->gdRect.right
-             && Y >= gp->gdRect.top  && Y <= gp->gdRect.bottom)
-          break;
-        gd = GetNextDevice(gd);
-      }
-    }
-    // last resort, try the bottom right
-    if (!gd) { 
-      gd = GetDeviceList();
-      while (gd) {
-        GDPtr gp = *gd;
-        if (    R >= gp->gdRect.left && R <= gp->gdRect.right
-             && B >= gp->gdRect.top  && B <= gp->gdRect.bottom)
-          break;
-        gd = GetNextDevice(gd);
-      }
-    }
-    // if we still have not found a screen, we will use the main
-    // screen, the one that has the application menu bar.
-    if (!gd) gd = GetMainDevice();
-    if (gd) {
-      GetAvailableWindowPositioningBounds(gd, &r);
-      if ( R > r.right-4 )  X -= R - (r.right-4);
-      if ( B > r.bottom-4 ) Y -= B - (r.bottom-4);
-      if ( X < r.left+4 )   X = r.left+4;
-      if ( Y < r.top+24 )   Y = r.top+24;
-    }
 #else
     if (border()) {
       // Ensure border is on screen; these values are generic enough
@@ -131,5 +81,5 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
 
 
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.7 2004/11/22 23:32:11 matthiaswm Exp $".
+// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.8 2004/11/23 00:28:35 matthiaswm Exp $".
 //
