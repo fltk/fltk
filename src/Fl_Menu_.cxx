@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.7 2004/03/11 05:17:12 easysw Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.8 2004/04/06 19:19:41 easysw Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -71,6 +71,44 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
     }
     *name = '\0';
     return(-1);						// item not found
+}
+
+// FIND MENU ITEM INDEX, GIVEN MENU PATHNAME
+//     eg. "Edit/Copy"
+//     Will also return submenus, eg. "Edit"
+//     Returns NULL if not found.
+//
+const Fl_Menu_Item *
+Fl_Menu_::find_item(const char *name)
+{
+  char menupath[1024] = "";	// File/Export
+
+  for ( int t=0; t < size(); t++ ) {
+    Fl_Menu_Item *m = menu_ + t;
+
+    if (m->submenu()) {
+      // IT'S A SUBMENU
+      if (menupath[0]) strlcat(menupath, "/", sizeof(menupath));
+      strlcat(menupath, m->label(), sizeof(menupath));
+      if (!strcmp(menupath, name)) return m;
+    } else {
+      if (!m->label()) {
+	// END OF SUBMENU? Pop back one level.
+	char *ss = strrchr(menupath, '/');
+	if ( ss ) *ss = 0;
+	continue;
+      }
+
+      // IT'S A MENU ITEM
+      char itempath[1024];	// eg. Edit/Copy
+      strcpy(itempath, menupath);
+      if (itempath[0]) strlcat(itempath, "/", sizeof(itempath));
+      strlcat(itempath, m->label(), sizeof(itempath));
+      if (!strcmp(itempath, name)) return m;
+    }
+  }
+
+  return (const Fl_Menu_Item *)0;
 }
 
 int Fl_Menu_::value(const Fl_Menu_Item* m) {
@@ -187,5 +225,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.7 2004/03/11 05:17:12 easysw Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.8 2004/04/06 19:19:41 easysw Exp $".
 //

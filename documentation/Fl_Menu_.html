@@ -39,11 +39,12 @@ be "private": a dynamically allocated array managed by the Fl_Menu_.
 <LI><A href=#Fl_Menu_.~Fl_Menu_>~Fl_Menu_</A></LI>
 <LI><A href=#Fl_Menu_.add>add</A></LI>
 <LI><A href=#Fl_Menu_.clear>clear</A></LI>
+<LI><A href=#Fl_Menu_.copy>copy</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Menu_.copy>copy</A></LI>
 <LI><A href=#Fl_Menu_.down_box>down_box</A></LI>
+<LI><A href=#Fl_Menu_.find_item>find_item</A></LI>
 <LI><A href=#Fl_Menu_.global>global</A></LI>
 <LI><A href=#Fl_Menu_.item_pathname>item_pathname</A></LI>
 <LI><A href=#Fl_Menu_.menu>menu</A></LI>
@@ -215,6 +216,12 @@ not have to be put in a window at all).
 <P>Currently there can be only one <TT>global()</TT>menu.  Setting a new
 one will replace the old one.  There is no way to remove the <TT>
 global()</TT> setting (so don't destroy the widget!)</P>
+
+<h4><a name="Fl_Menu_.find_item">const Fl_Menu_Item *Fl_Menu_::find_item(const char *name);</a></h4>
+
+<p>Returns a pointer to the menu item with the given pathname or
+label. If no matching menu item can be found, a NULL pointer is
+returned.</p>
 
 <h4><a name=Fl_Menu_.item_pathname>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
 int Fl_Menu_::item_pathname(char *name, int namelen,
