@@ -1,5 +1,5 @@
 //
-// "$Id: gl.h,v 1.3 1998/10/21 14:19:48 mike Exp $"
+// "$Id: gl.h,v 1.4 1998/11/24 13:18:34 mike Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -58,7 +58,9 @@ double gl_width(uchar);
 void gl_draw(const char*);
 void gl_draw(const char*, int n);
 void gl_draw(const char*, int x, int y);
+void gl_draw(const char*, float x, float y);
 void gl_draw(const char*, int n, int x, int y);
+void gl_draw(const char*, int n, float x, float y);
 void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 void gl_measure(const char*, int& x, int& y);
 
@@ -67,5 +69,5 @@ void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 #endif
 
 //
-// End of "$Id: gl.h,v 1.3 1998/10/21 14:19:48 mike Exp $".
+// End of "$Id: gl.h,v 1.4 1998/11/24 13:18:34 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.3 1998/10/21 14:21:08 mike Exp $"
+// "$Id: gl_draw.cxx,v 1.4 1998/11/24 13:18:16 mike Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -82,11 +82,20 @@ void gl_draw(const char* str, int n, int x, int y) {
   gl_draw(str, n);
 }
 
+void gl_draw(const char* str, int n, float x, float y) {
+  glRasterPos2f(x, y);
+  gl_draw(str, n);
+}
+
 void gl_draw(const char* str) {
   gl_draw(str, strlen(str));
 }
 
 void gl_draw(const char* str, int x, int y) {
+  gl_draw(str, strlen(str), x, y);
+}
+
+void gl_draw(const char* str, float x, float y) {
   gl_draw(str, strlen(str), x, y);
 }
 
@@ -143,5 +152,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.3 1998/10/21 14:21:08 mike Exp $".
+// End of "$Id: gl_draw.cxx,v 1.4 1998/11/24 13:18:16 mike Exp $".
 //
