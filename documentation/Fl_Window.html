@@ -81,23 +81,31 @@ exit(0)</TT> if this is the last top-level window. </P>
 </TD></TR>
 </TABLE>
 </CENTER>
-<H4><A name=Fl_Window.Fl_Window>Fl_Window::Fl_Window(int x, int y, int 
-w, int h, const char *title = 0)
-<BR> Fl_Window::Fl_Window(int w, int h, const char *title = 0)</A></H4>
- The first constructor takes 4 int arguments to create the window with 
-a preset position and size.  The second constructor with 2 arguments 
-will create the window with a preset size, but the window manager will 
-choose the position according to it's own whims. 
+<H4><A name=Fl_Window.Fl_Window>Fl_Window::Fl_Window(int w, int h, const char *title = 0)<BR>
+Fl_Window::Fl_Window(int x, int y, int w, int h, const char *title = 0)</A></H4>
+
+The first form of the constructor should be used for a "top-level" window
+(that is, one that is not inside another window).  It correctly sets
+<tt>visible()</tt> to false and <tt>parent()</tt> to <tt>NULL</tt>.
+By not specifying the position of the window, the window system will pick a
+place to show the window or allow the user to pick a location.  If you want to
+force a position you should call <tt>position(x,y)</tt> or <tt>hotspot()</tt>
+before calling <tt>show()</tt>.
+
+<P>The second form of the constructor is for creating child windows.  It
+leaves <tt>visible()</tt> set to true.
+
 <P><TT>Fl_Widget::box()</TT> is set to <TT>FL_FLAT_BOX</TT>.  If you 
 plan to completely fill the window with children widgets you should 
 change this to <TT>FL_NO_BOX</TT>. If you turn the window border off 
 you may want to change this to <TT>FL_UP_BOX</TT>. </P>
+
 <H4><A name=Fl_Window.~Fl_Window>virtual Fl_Window::~Fl_Window()</A></H4>
  The destructor <I>also deletes all the children</I>. This allows a 
 whole tree to be deleted at once, without having to keep a pointer to 
 all the children in the user code. A kludge has been done so the <TT>
 Fl_Window</TT> and all of it's children can be automatic (local) 
-variables, but you must declare the <TT>Fl_Window</TT><I>first</I>, so 
+variables, but you must declare the <TT>Fl_Window</TT> <I>first</I> so 
 that it is destroyed last. 
 <H4><A name=Fl_Window.size_range>void Fl_Window::size_range(int minw, 
 int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0)</A></H4>
@@ -146,8 +154,7 @@ top.  This is really convenient because your program can call <TT>show()</TT>
 show()</TT> serves the purpose of <TT>raise()</TT> in other toolkits. </P>
 <H4><A name=Fl_Window.hide>virtual void Fl_Window::hide()</A></H4>
  Remove the window from the screen.  If the window is already hidden or 
-has not been shown then this does nothing (and is harmless). <I>Under 
-the X Window System this actually destroys the xid</I>. 
+has not been shown then this does nothing and is harmless.
 <H4><A name=Fl_Window.shown>int Fl_Window::shown() const</A></H4>
  Returns non-zero if <TT>show()</TT> has been called (but not <TT>hide()</TT>
 ). You can tell if a window is iconified with <TT>(w-&gt;shown() 

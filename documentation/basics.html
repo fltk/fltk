@@ -121,7 +121,7 @@ program by closing the window or pressing the ESCape key.
 arguments to the constructors are usually one of the following: 
 <UL>
 <PRE>
-Fl_Widget(boxtype, x, y, width, height)
+Fl_Widget(boxtype, x, y, width, height, label)
 Fl_Widget(x, y, width, height)
 Fl_Widget(width, height)
 </PRE>
@@ -139,6 +139,11 @@ pixels. </P>
 <P>The <TT>width</TT> and <TT>height</TT> parameters determine the size 
 of the widget or window in pixels.  The maximum widget size is 
 typically governed by the underlying window system or hardware. </P>
+<p><tt>label</tt> is a pointer to a character string to label the
+widget with or <tt>NULL</tt>. If not specified the label defaults to
+<tt>NULL</tt>.  The label string must be in static storage (such as a
+string constant) because FLTK does not make a copy of it (it just uses
+the pointer).
 <H3>Labels</H3>
  All widgets support labels.  In the case of window widgets, the label 
 is used for the label in the title bar. Our example program calls the <A href=Fl_Widget.html#Fl_Widget.labelfont>

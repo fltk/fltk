@@ -60,6 +60,8 @@ Fl_Input *input = new Fl_Input(x, y, width, height, &quot;label&quot;);
 input-&gt;value(&quot;Now is the time for all good men...&quot;);
 </PRE>
 </UL>
+<p>The string is copied to the widget's own storage when you set the
+<tt>value()<tt> of the widget.
 <H2>Valuators</H2>
  Unlike text widgets, valuators keep track of numbers instead of 
 strings. FLTK provides the following valuators: 
@@ -75,7 +77,7 @@ strings. FLTK provides the following valuators:
  The <A href=Fl_Valuator.html#Fl_Valuator.value><TT>value()</TT></A>
  method gets and sets the current value of the widget.  The <A href=Fl_Valuator.html#Fl_Valuator.minimum>
 <TT>minimum()</TT></A> and <A href=Fl_Valuator.html#Fl_Valuator.maximum><TT>
-maximum</TT></A> methods set the range of values that are reported by 
+maximum()</TT></A> methods set the range of values that are reported by 
 the widget. 
 <H2>Groups</H2>
  The <TT>Fl_Group</TT> widget class is used as a general purpose 
@@ -92,9 +94,11 @@ any widgets together. </LI>
 <LI><TT>Fl_Window</TT> - A window on the screen. </LI>
 </UL>
 <H2>Setting the Size and Position of Widgets</H2>
- The size and position of widgets is usually set when you create them. 
- You can change this at any time using the <TT>position</TT>, <TT>
-resize()</TT>, and <TT>size</TT> methods: 
+The size and position of widgets is usually set when you create them.
+You can access them with the <tt>x()</tt>, <tt>y()</tt>, <tt>w()</tt>,
+and <tt>h()</tt> methods.
+<p>You can change the size and position by using the <TT>position()</TT>, <TT>
+resize()</TT>, and <TT>size()</TT> methods: 
 <UL>
 <PRE>
 button-&gt;position(x, y);
@@ -102,21 +106,23 @@ group-&gt;resize(x, y, width, height);
 window-&gt;size(width, height);
 </PRE>
 </UL>
- Changing the size or position of a widget will cause a redraw of that 
-widget and its children. 
+If you change a widget's size or position after it is displayed you
+will have to call <tt>redraw()</tt> on the widget's parent.
 <H2><A NAME=colors>Colors</A></H2>
- FLTK manages a virtual color palette of &quot;standard&quot; colors.  The 
-standard colors are: 
+FLTK stores the colors of widgets as an 8-bit number that is an index
+into a color palette of 256 colors. This is <i>not</i> the X or WIN32
+colormap, but instead is an internal table with fixed contents.
+<p>There are symbols for naming some of the more common colors:
 <UL>
-<LI><TT>FL_BLACK</TT></LI>
+<LI><TT>FL_BLACK</TT> (this is the default label color)</LI>
 <LI><TT>FL_RED</TT></LI>
 <LI><TT>FL_GREEN</TT></LI>
 <LI><TT>FL_YELLOW</TT></LI>
 <LI><TT>FL_BLUE</TT></LI>
 <LI><TT>FL_MAGENTA</TT></LI>
 <LI><TT>FL_CYAN</TT></LI>
-<LI><TT>FL_WHITE</TT></LI>
-<LI><TT>FL_GRAY</TT></LI>
+<LI><TT>FL_WHITE</TT> (this is the default background color of text widgets)</LI>
+<LI><TT>FL_GRAY</TT> (this is the default background color of most widgets)</LI>
 </UL>
  The widget color can be set using the <TT>color()</TT> method: 
 <UL>
@@ -135,7 +141,7 @@ button-&gt;labelcolor(FL_WHITE);
 <P>The type <TT>Fl_Boxtype</TT> stored and returned in <A href=Fl_Widget.html#Fl_Widget.box>
 <TT>Fl_Widget::box()</TT></A> is an enumeration defined in <A href=enumerations.html#enumerations>
 <TT>&lt;Enumerations.H&gt;</TT></A>: 
-<P ALIGN=CENTER><IMG src=./boxtypes.gif width=80%></P>
+<P ALIGN=CENTER><IMG src="boxtypes.gif"></P>
 <P><TT>FL_NO_BOX</TT> means nothing is drawn at all, so whatever is 
 already on the screen remains.  The <TT>FL_..._FRAME</TT> types only 
 draw their edges, leaving the center unchanged.  In the above diagram 
@@ -188,7 +194,7 @@ label. For the <TT>FL_SYMBOL_LABEL</TT> and image label types the
 string contains the actual symbol or image data. 
 <H3>align()</H3>
  The <TT>align()</TT> method positions the label.  The following 
-constants are defined: 
+constants are defined (they may be OR'd together as needed): 
 <UL>
 <LI><TT>FL_ALIGN_CENTER</TT> - center the label in the widget. </LI>
 <LI><TT>FL_ALIGN_TOP</TT> - align the label at the top of the widget. </LI>
@@ -322,7 +328,7 @@ button-&gt;when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 </UL>
 <H2>Shortcuts</H2>
  Shortcuts are key sequences that activate widgets (usually buttons or 
-menu items).  The <TT>shortcut()</TT> method registers a shortcut for a 
+menu items).  The <TT>shortcut()</TT> method sets the shortcut for a 
 widget: 
 <UL>
 <PRE>
@@ -331,8 +337,11 @@ button-&gt;shortcut(FL_SHIFT + 'b');
 button-&gt;shortcut(FL_CTRL + 'b');
 button-&gt;shortcut(FL_ALT + 'b');
 button-&gt;shortcut(FL_CTRL + FL_ALT + 'b');
+button-&gt;shortcut(0); // no shortcut
 </PRE>
 </UL>
- The shortcut value is the key event value (the ASCII value or one of 
-the special keys like <TT>FL_Enter</TT>) combined with any modifiers 
-(like shift, alt, and control). </BODY></HTML>
+The shortcut value is the key event value (the ASCII value or one of
+the special keys like <a
+href="enumerations.html#key_values"><TT>FL_Enter</TT></a>) combined
+with any modifiers (like shift, alt, and control).
+</BODY></HTML>

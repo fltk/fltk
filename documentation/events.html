@@ -166,4 +166,184 @@ to leaf widgets.  These procedures control those leaf widgets: </P>
 <LI><A href=Fl_Widget.html#Fl_Widget.take_focus>Fl_Widget::take_focus</A>
 </LI>
 </UL>
+
+<H2><A name=compose>FLTK Compose-Character Sequences</A></H2>
+
+The <A href="#Fl_Input"><tt>Fl_Input</tt></a> widget lets you type all the
+characters in the standard ISO-8859-1 character set.  Most fonts will
+display these characters correctly.
+
+<P>To insert them, type the [compose] key and then one or two
+characters.  The two characters can be in either order.  The [compose]
+key is any of: Ctrl+Q, the righthand control key, or any key your X server
+calls <TT>XK_Multi_key</TT>.
+
+<center><table border=1>
+<tr>
+	<td><TT>sp</TT>nbsp</td>
+	<td><TT>*</TT>°</td>
+	<td><TT>A`</TT>À</td>
+	<td><TT>D-</TT>Ð</td>
+	<td><TT>a`</TT>à</td>
+	<td><TT>d-</TT>ð</td>
+</tr>
+<tr>
+	<td><TT>!</TT>¡</td>
+	<td><TT>+-</TT>±</td>
+	<td><TT>A'</TT>Á</td>
+	<td><TT>N~</TT>Ñ</td>
+	<td><TT>a'</TT>á</td>
+	<td><TT>n~</TT>ñ</td>
+</tr>
+<tr>
+	<td><TT>%</TT>¢</td>
+	<td><TT>2</TT>²</td>
+	<td><TT>A^</TT>Â</td>
+	<td><TT>O`</TT>Ò</td>
+	<td><TT>a^</TT>â</td>
+	<td><TT>o`</TT>ò</td>
+</tr>
+<tr>
+	<td><TT>#</TT>£</td>
+	<td><TT>3</TT>³</td>
+	<td><TT>A~</TT>Ã</td>
+	<td><TT>O'</TT>Ó</td>
+	<td><TT>a~</TT>ã</td>
+	<td><TT>o'</TT>ó</td>
+</tr>
+<tr>
+	<td><TT>$</TT>¤</td>
+	<td><TT>'</TT>´</td>
+	<td><TT>A:</TT>Ä</td>
+	<td><TT>O^</TT>Ô</td>
+	<td><TT>a:</TT>ä</td>
+	<td><TT>o^</TT>ô</td>
+</tr>
+<tr>
+	<td><TT>y=</TT>¥</td>
+	<td><TT>u</TT>µ</td>
+	<td><TT>A*</TT>Å</td>
+	<td><TT>O~</TT>Õ</td>
+	<td><TT>a*</TT>å</td>
+	<td><TT>o~</TT>õ</td>
+</tr>
+<tr>
+	<td><TT>|</TT>¦</td>
+	<td><TT>p</TT>¶</td>
+	<td><TT>AE</TT>Æ</td>
+	<td><TT>O:</TT>Ö</td>
+	<td><TT>ae</TT>æ</td>
+	<td><TT>o:</TT>ö</td>
+</tr>
+<tr>
+	<td><TT>&</TT>§</td>
+	<td><TT>.</TT>·</td>
+	<td><TT>C,</TT>Ç</td>
+	<td><TT>x</TT>×</td>
+	<td><TT>c,</TT>ç</td>
+	<td><TT>-:</TT>÷</td>
+</tr>
+<tr>
+	<td><TT>:</TT>¨</td>
+	<td><TT>,</TT>¸</td>
+	<td><TT>E`</TT>È</td>
+	<td><TT>O/</TT>Ø</td>
+	<td><TT>e`</TT>è</td>
+	<td><TT>o/</TT>ø</td>
+</tr>
+<tr>
+	<td><TT>c</TT>©</td>
+	<td><TT>1</TT>¹</td>
+	<td><TT>E'</TT>É</td>
+	<td><TT>U`</TT>Ù</td>
+	<td><TT>e'</TT>é</td>
+	<td><TT>u`</TT>ù</td>
+</tr>
+<tr>
+	<td><TT>a</TT>ª</td>
+	<td><TT>o</TT>º</td>
+	<td><TT>E^</TT>Ê</td>
+	<td><TT>U'</TT>Ú</td>
+	<td><TT>e^</TT>ê</td>
+	<td><TT>u'</TT>ú</td>
+</tr>
+<tr>
+	<td><TT>&lt;&lt;</TT>«</td>
+	<td><TT>>></TT>»</td>
+	<td><TT>E:</TT>Ë</td>
+	<td><TT>U^</TT>Û</td>
+	<td><TT>e:</TT>ë</td>
+	<td><TT>u^</TT>û</td>
+</tr>
+<tr>
+	<td><TT>~</TT>¬</td>
+	<td><TT>14</TT>¼</td>
+	<td><TT>I`</TT>Ì</td>
+	<td><TT>U:</TT>Ü</td>
+	<td><TT>i`</TT>ì</td>
+	<td><TT>u:</TT>ü</td>
+</tr>
+<tr>
+	<td><TT>-</TT>­</td>
+	<td><TT>12</TT>½</td>
+	<td><TT>I'</TT>Í</td>
+	<td><TT>Y'</TT>Ý</td>
+	<td><TT>i'</TT>í</td>
+	<td><TT>y'</TT>ý</td>
+</tr>
+<tr>
+	<td><TT>r</TT>®</td>
+	<td><TT>34</TT>¾</td>
+	<td><TT>I^</TT>Î</td>
+	<td><TT>DD</TT>Þ</td>
+	<td><TT>i^</TT>î</td>
+	<td><TT>dd</TT>þ</td>
+</tr>
+<tr>
+	<td><TT>_</TT>¯</td>
+	<td><TT>?</TT>¿</td>
+	<td><TT>I:</TT>Ï</td>
+	<td><TT>ss</TT>ß</td>
+	<td><TT>i:</TT>ï</td>
+	<td><TT>y:</TT>ÿ</td>
+</tr>
+</table>
+</center>
+
+For instance, to type "á" type [compose][a]['] or [compose]['][a].
+
+<P>The character "nbsp" (non-breaking space) is typed by using
+[compose][space].
+
+<P>The single-character sequences may be followed by a space if
+necessary to remove ambiguity.  For instance, if you really want to
+type "ª~" rather than "ã" you must type [compose][a][space][~].
+
+<P>If you wish to use the compose function in your own code, your
+widget's <tt>handle()</tt> method must call <tt>fl_compose()</tt>
+in response to <tt>FL_KEYPRESS</tt> events:
+
+<h4><TT>int fl_compose(int state, char c, int &amp;del, char *buffer, int &amp;ins)</TT></h4>
+
+Starts or adds a single ASCII character to a compose sequence.  This
+will return the number of old bytes to delete and a set of new bytes to
+insert, and a new <tt>state</tt> value.  If this returns zero you can
+ignore the result (which just says to insert the character unchanged)
+and handle the keystroke yourself.
+
+<P><tt>state</tt> must either be the return value of the last call to
+<tt>fl_compose()</tt> or zero to start a new compose sequence.  Be sure to reset
+to zero if the user ever moves the cursor.
+
+<P><tt>c</tt> is the ASCII character that the user typed.
+
+<P><tt>del</tt> is set to the number of bytes to delete backwards.  This
+will always be less or equal to the <tt>ins</tt> from the last call to
+<tt>fl_compose()</tt>, and will be zero if <tt>state</tt> is zero.
+
+<P><tt>buffer</tt> will have the first <tt>ins</tt> bytes set to the data
+to insert and display (it is <I>not</I> nul-terminated).
+
+<P><tt>ins</tt> will be the number of characters to insert.
+
 </BODY></HTML>

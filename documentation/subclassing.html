@@ -74,20 +74,19 @@ flags(ACTIVE|VISIBLE);
 <H3><A name=damage>void Fl_Widget::damage(uchar mask)
 <BR> void Fl_Widget::damage(uchar mask, int x, int y, int w, int h)
 <BR> uchar Fl_Widget::damage()</A></H3>
- The first form indicates that a partial update of the object is 
+The first form indicates that a partial update of the object is 
 needed.  The bits in mask are OR'd into <TT>damage()</TT>.  Your <TT>
-draw()</TT> routine can examine these bits to limit what it is drawing. 
- The public method <TT>Fl_Widget::redraw()</TT> simply does <TT>
-Fl_Widget::damage(FL_DAMAGE_ALL)</TT>. 
+draw()</TT> routine can examine these bits to limit what it is
+drawing.  The public method <TT>Fl_Widget::redraw()</TT> simply does
+<TT> Fl_Widget::damage(FL_DAMAGE_ALL)</TT>, but the  implementation of
+your widget can call the private <TT>damage(n)</TT>. 
 <P>The second form indicates that a region is damaged.  If only these 
 calls are done in a window (no calls to <TT>damage(n)</TT>) then FLTK 
 will clip to the union of all these calls before drawing anything. 
  This can greatly speed up incremental displays.  The mask bits are 
 or'd into <TT>damage()</TT> unless this is a <TT>Fl_Window</TT> widget. </P>
 <P>The third form returns the bitwise-OR of all <TT>damage(n)</TT>
- calls done since the last <TT>draw()</TT>.  The public method <TT>
-redraw()</TT> does <TT>damage(FL_DAMAGE_ALL)</TT>, but the 
-implementation of your widget can call the private <TT>damage(n)</TT>. </P>
+calls done since the last <TT>draw()</TT>.</P>
 <H3><A name=draw_box>void Fl_Widget::draw_box() const
 <BR></A>void Fl_Widget::draw_box(Fl_Boxtype b, ulong c) const</H3>
  The first form draws this widget's <TT>box()</TT>, using the 
@@ -110,7 +109,7 @@ the passed bounding box. This is designed for parent groups to draw
 labels with. </P>
 <H3><A name=set_flag>void Fl_Widget::set_flag(SHORTCUT_LABEL)</A></H3>
  If your constructor calls this it modifies <TT>draw_label()</TT> so 
-that ''characters cause an underscore to be printed under the next 
+that '&amp;' characters cause an underscore to be printed under the next 
 letter. 
 <H3><A name=set_visible>void Fl_Widget::set_visible()</A>
 <BR><A name=clear_visible>void Fl_Widget::clear_visible()</A></H3>
@@ -121,10 +120,10 @@ FL_SHOW</TT> events to the widget.
 <BR> static int Fl_Widget::test_shortcut(const char *s)</A></H3>
  The first version tests <TT>Fl_Widget::label()</TT> against the 
 current event (which should be a <TT>FL_SHORTCUT</TT> event).  If the 
-label contains a ''character and the character after it matches the key 
+label contains a '&amp;' character and the character after it matches the key 
 press, this returns true.  This returns false if the <TT>SHORTCUT_LABEL</TT>
- flag is off, if the label is <TT>NULL</TT> or does not have a 
-''character in it, or if the keypress does not match the character. 
+flag is off, if the label is <TT>NULL</TT> or does not have a 
+'&amp;' character in it, or if the keypress does not match the character. 
 <P>The second version lets you do this test against an arbitrary 
 string. </P>
 <H3><A name=type>uchar Fl_Widget::type() const
@@ -140,11 +139,10 @@ standard everywhere. </P>
 <P>If you don't have RTTI you can use the clumsy FLTK mechanisim, by 
 having <TT>type()</TT> have a unique value.  These unique values must 
 be greater than the symbol <TT>FL_RESERVED_TYPE</TT> (which is 100). 
- Look through the header files for <TT>FL_RESERVED_TYPE</TT> to find an 
-unused number.  If you make a subclass of <TT>Fl_Group</TT> you must 
-use <TT>FL_GROUP + n</TT>, and if you make a subclass of <TT>Fl_Window<TT>
-you must use <TT>FL_WINDOW + n</TT> (in both cases <TT>n is in the 
-range 1 to 7). </TT></TT></TT></P>
+Look through the header files for <TT>FL_RESERVED_TYPE</TT> to find an 
+unused number.  If you make a subclass of <TT>Fl_Window</TT>
+you must use <TT>FL_WINDOW + n</TT> (<TT>n</tt> must be in the 
+range 1 to 7). </P>
 <H2>Handling Events</H2>
  The virtual method <TT>int Fl_Widget::handle(int event)</TT> is called 
 to handle each event passed to the widget. It can: 
@@ -216,8 +214,8 @@ be called from non-drawing code.
 <P><TT>damage()</TT> contains the bitwise-OR of all the <TT>damage(n)</TT>
  calls to this widget since it was last drawn.  This can be used for 
 minimal update, by only redrawing the parts whose bits are set.  FLTK 
-will turn <I>all</I> the bits on if it thinks the entire widget must be 
-redrawn (for instance due to an expose event). </P>
+will turn on the <TT>FL_DAMAGE_ALL</TT> bit if it thinks the entire widget
+must be redrawn (for instance due to an expose event). </P>
 <P>Expose events (and the above <TT>damage(b,x,y,w,h)</TT>) will cause <TT>
 draw()</TT> to be called with FLTK's <A href=drawing.html#clipping>
 clipping</A> turned on.  You can greatly speed up redrawing in some 
@@ -285,8 +283,8 @@ void MyClass::slider_cb() { // normal method
 </UL>
  If you make the <TT>handle()</TT> method, you can quickly pass all the 
 events to the children using the <TT>Fl_Group::handle()</TT> method. 
-Note that you don't need to override <TT>handle()</TT> if your 
-composite widget does nothing other than pass events to the children: 
+You don't need to override <TT>handle()</TT> if your composite widget
+does nothing other than pass events to the children: 
 <UL>
 <PRE>
 int MyClass::handle(int event) {
