@@ -1,5 +1,5 @@
 //
-// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.1 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.2 2001/12/04 03:03:17 matthiaswm Exp $"
 //
 // Scrolling routines for the Fast Light Tool Kit (FLTK).
 //
@@ -76,8 +76,8 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
   static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
   static RGBColor fg = { 0x0000, 0x0000, 0x0000 }; RGBForeColor( &fg );
-  CopyBits( GetPortBitMapForCopyBits((GrafPtr)fl_window),
-            GetPortBitMapForCopyBits((GrafPtr)fl_window), &src, &dst, srcCopy, 0L);
+  CopyBits( GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
+            GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
 #else
   XCopyArea(fl_display, fl_window, fl_window, fl_gc,
 	    src_x, src_y, src_w, src_h, dest_x, dest_y);
@@ -96,5 +96,5 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 }
 
 //
-// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.1 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.2 2001/12/04 03:03:17 matthiaswm Exp $".
 //

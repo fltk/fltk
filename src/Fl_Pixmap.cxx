@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.10 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.11 2001/12/04 03:03:17 matthiaswm Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -120,7 +120,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     CopyMask( 
       GetPortBitMapForCopyBits((GrafPtr)id),
       GetPortBitMapForCopyBits((GrafPtr)mask), 
-      GetPortBitMapForCopyBits((GrafPtr)fl_window),
+      GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
       &src, &src, &dst);
   }
   else 
@@ -485,5 +485,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.10 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.11 2001/12/04 03:03:17 matthiaswm Exp $".
 //

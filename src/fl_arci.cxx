@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arci.cxx,v 1.4.2.5.2.1 2001/11/27 17:44:07 easysw Exp $"
+// "$Id: fl_arci.cxx,v 1.4.2.5.2.2 2001/12/04 03:03:17 matthiaswm Exp $"
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
@@ -50,7 +50,7 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
 #elif defined(__APPLE__)
   Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
-  FrameArc(&r, a2, a1);
+  FrameArc(&r, (short int)a2, (short int)a1);
 #else
   XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 #endif
@@ -69,12 +69,12 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
 #elif defined(__APPLE__)
   Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
-  PaintArc(&r, a2, a1);
+  PaintArc(&r, (short int)a2, (short int)a1);
 #else
   XFillArc(fl_display, fl_window, fl_gc, x,y,w,h, int(a1*64),int((a2-a1)*64));
 #endif
 }
 
 //
-// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.1 2001/11/27 17:44:07 easysw Exp $".
+// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.2 2001/12/04 03:03:17 matthiaswm Exp $".
 //

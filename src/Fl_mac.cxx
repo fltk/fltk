@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.2 2001/12/04 03:03:17 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,7 @@
 #include <unistd.h>
 
 
-int fl_handle(const EventRef event);
+int fl_handle(const EventRecord &event);
 
 int fl_screen;
 Handle fl_system_menu;
@@ -183,13 +183,35 @@ static double do_queued_events( double time = 0.0 )
     //++ SystemEventMask ( MouseUp )
     been_here = 1;
   }
-  
+#ifdef STRICTLY_CARBON  
   EventRef ev;
-  while ( ReceiveNextEvent(0, NULL, time, true, &ev) )
+  //static int evn = 0, evnn = 0;
+  //printf( "do events %d %g\n", evn++, time );
+  //if (time>0.1) time=0.1;
+  time = 0.1; // TODO: cheat
+  for (;;) 
   {
+    OSStatus status = ReceiveNextEvent(0, NULL, time, true, &ev);
+    if ( status==eventLoopTimedOutErr )
+      break;
+    // TODO: status is 'eventLoopTimedOutErr' if we didn't receive an event in time
+    // It is (against previous documentation) 0 whenever we receive an event
+    //printf( "  status 0x%08x\n", status );
+    //printf( "  events %d\n", evnn++ );
+    //if ( status!=0 ) break;
     fl_handle(ev); //: handle the nullEvent to get mouse up events
+    break; // TODO: cheat
 //    SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
   }
+#else
+  EventRecord ev;
+  unsigned long ticks = (int)(time*60.0);
+  while ( WaitNextEvent(everyEvent, &ev, ticks, rgn) )
+  {
+    fl_handle(ev); //: handle the nullEvent to get mouse up events
+    SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
+  }
+#endif
   
 #if CONSOLIDATE_MOTION
     if (send_motion && send_motion == fl_xmousewin) {
@@ -276,6 +298,15 @@ static void HandleMenu( long mResult )
   HiliteMenu( 0 );
 }
 
+static OSErr QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* reply, UInt32 refcon )
+{
+    // call 'close' for every window. If any window returns unclosed, don't exit to the shell!
+    // Fl::handle(FL_CLOSE, fl_find(xid));
+    ExitToShell();
+    return noErr;
+}
+
+
 
 /**
  * initialize the Mac toolboxes and set the default menubar
@@ -299,6 +330,9 @@ void fl_open_display() {
 //    MaxApplZone();
     
 //    SysEnvirons( 1, &MacWorld );
+    // this thing call the quit-app function which in turn either quits our app or calls 'close' on all windows?!
+    // (don't know which one would be better)
+    AEInstallEventHandler( kCoreEventClass, kAEQuitApplication, NewAEEventHandlerUPP((AEEventHandlerProcPtr)QuitAppleEventHandler), 0, false );
 
     // OK, this is just ridiculous...    
     GetQDGlobalsArrow(&default_cursor);
@@ -312,9 +346,18 @@ void fl_open_display() {
     
     // create a minimal menu bar (\todo "about app", "FLTK settings") 
     // Any FLTK application may replace this menu later with its own bar.
-    fl_system_menu = GetNewMBar( 1 );
+    fl_system_menu = GetNewMBar( 128 );
     if ( fl_system_menu ) {
         SetMenuBar( fl_system_menu );
+        /* This is used to remove the Quit menu item from the File Drop Down in 'normal' Mac Apps
+        err = Gestalt(gestaltMenuMgrAttr, &response);
+	if ((err == noErr) && (response & gestaltMenuMgrAquaLayoutMask))
+        {
+            menu = GetMenuHandle( mFile );
+            DeleteMenuItem( menu, iQuit );
+            DeleteMenuItem( menu, iQuitSeparator );
+        }
+                */
         AppendResMenu( GetMenuHandle( 1 ), 'DRVR' );
     }
     
@@ -520,14 +563,19 @@ void Fl_X::MacGrowWindow(WindowPtr xid, const EventRecord &macevent)
  */
 void Fl_X::MacDragWindow(WindowPtr xid, const EventRecord &macevent) 
 {
+  // copied from a Carbon sample file
+  Rect tempRect;
+  GetRegionBounds(GetGrayRgn(), &tempRect);
+  DragWindow(xid, macevent.where, &tempRect);
+  /*
   BitMap bm;
-
   GetQDGlobalsScreenBits(&bm);
   DragWindow(xid, macevent.where, &(bm.bounds));
+  */
   Fl_Window *win = fl_find(xid);
   if (!win) return;
   Point pt; pt.h = 0; pt.v = 0;
-  SetPort((GrafPtr)xid); SetOrigin(0, 0); LocalToGlobal(&pt);
+  SetPort( GetWindowPort(xid) ); SetOrigin(0, 0); LocalToGlobal(&pt);
   win->resize( pt.h, pt.v, win->w(), win->h() );
   //++ win->x(pt.h); win->y(pt.v);    
 }
@@ -575,7 +623,9 @@ void handleUpdateEvent( WindowPtr xid )
 {
   Fl_Window *window = fl_find( xid );
   if ( !window ) return;
-  SetPort( (GrafPtr)xid );
+  GrafPtr oldPort;
+  GetPort( &oldPort );
+  SetPort( GetWindowPort(xid) );
   Fl_X *i = Fl_X::i( window );
   i->wait_for_expose = 0; //++ what about this flag?!
   if ( window->damage() ) {
@@ -589,6 +639,8 @@ void handleUpdateEvent( WindowPtr xid )
   }
   BeginUpdate( xid );
   
+  DrawControls(xid);  // do we need this?
+  DrawGrowIcon(xid);  // do we need this?
   for ( Fl_X *cx = i->xidChildren; cx; cx = cx->xidNext )
   {
     cx->w->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
@@ -598,16 +650,19 @@ void handleUpdateEvent( WindowPtr xid )
   window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
   i->flush();
   window->clear_damage();
-  
+
   EndUpdate( xid );
+  SetPort( oldPort );
 }     
 
 
 /**
  * dispatch all mac events
  */
+#ifdef STRICTLY_CARBON  
 int fl_handle(const EventRef event) 
 {
+  EventRecord &macevent = *event;
   UInt32 eventclass, eventkind;
   static char buffer[5];
   static unsigned short prevMod = 0;
@@ -619,13 +674,23 @@ int fl_handle(const EventRef event)
   eventkind  = GetEventKind(event);
   memcpy(buffer, &eventclass, 4);
   buffer[4] = '\0';
-  printf("fl_event(): class = %s, kind = %d\n", buffer, eventkind);
-#if 0
-  switch (macevent.what)
+  printf("fl_event(): class = %s, kind = %ld\n", buffer, eventkind);
+}
+#else
+int fl_handle(const EventRecord &macevent) 
+{
+  static char buffer[2];
+  static unsigned short prevMod = 0;
+  static WindowPtr prevMouseDownXid;
+  WindowPtr xid;
+  int event = 0;
+  Fl_Window *window = 0L;
+  switch (macevent.what) 
   {
   case mouseDown: {
     // handle the differnt mouseDown events in various areas of the screen
     int part = FindWindow(macevent.where, &xid);
+    printf("mousedown in part %d\n", part );
     prevMouseDownXid = xid;
     switch (part) {
     case inDesk: break;
@@ -635,15 +700,17 @@ int fl_handle(const EventRef event)
       if (xid!=FrontWindow()) SelectWindow( xid ); //{ SelectWindow(xid); return 1; }
       window = fl_find(xid);
       if (!window) break;
-      SetPort((GrafPtr)xid); SetOrigin(0, 0);
+      SetPort( GetWindowPort(xid) ); SetOrigin(0, 0);
       Fl::e_keysym = FL_Button+((macevent.modifiers&controlKey)?3:1); //++ simulate three button using modifiers
       set_event_xy(macevent); checkdouble();
 	  Fl::e_state |= ((macevent.modifiers&controlKey)?FL_BUTTON3:FL_BUTTON1);
       return Fl::handle(FL_PUSH, window); }
     case inDrag: Fl_X::MacDragWindow(xid, macevent); break;
     case inGrow: Fl_X::MacGrowWindow(xid, macevent); break;
-    case inGoAway: 
+    case inGoAway:
       if (TrackGoAway(xid, macevent.where)) Fl::handle(FL_CLOSE, fl_find(xid));
+      // if there are no more windows, send a high-level quit event
+      if (!Fl_X::first) QuitAppleEventHandler( 0, 0, 0 );
       break;
     case inZoomIn: case inZoomOut:
 //      if (TrackBox(xid, event.where, part)) DoZoomWindow(xid, part); 
@@ -654,7 +721,7 @@ int fl_handle(const EventRef event)
       xid = FrontWindow();
       window = fl_find( xid );
       if (!window) break;
-      SetPort((GrafPtr)xid); 
+      SetPort( GetWindowPort(xid) ); 
       SetOrigin(0, 0);
       Fl::e_keysym = FL_Button+((Fl::e_state&FL_BUTTON1)?1:3); // macevent.modifiers ... 
       set_event_xy(macevent);
@@ -732,7 +799,7 @@ int fl_handle(const EventRef event)
       xid = FrontWindow();
       window = fl_find( xid );
       if (!window) break;
-      SetPort((GrafPtr)xid); SetOrigin(0, 0);
+      SetPort( GetWindowPort(xid) ); SetOrigin(0, 0);
       set_event_xy(macevent);
       #if CONSOLIDATE_MOTION
         send_motion = fl_xmousewin = window;
@@ -867,9 +934,12 @@ void Fl_X::make(Fl_Window* w)
     Fl_Group::current(0);
     fl_open_display();
     int winclass = kDocumentWindowClass;
-//    int winattr = kCloseBoxAttribute | kCollapseBoxAttribute | kWindowStandardHandlerAttribute;
+    int winattr = kWindowCloseBoxAttribute 
+                | kWindowCollapseBoxAttribute 
+                //| kWindowStandardHandlerAttribute
+                ;
 //    int winattr = kWindowStandardHandlerAttribute;
-    int winattr = 0;
+//    int winattr = 0;
     int xp = w->x();
     int yp = w->y();
     int wp = w->w();
@@ -880,8 +950,8 @@ void Fl_X::make(Fl_Window* w)
         int minw = o->w(); if (minw > 100) minw = 100;
         int minh = o->h(); if (minh > 100) minh = 100;
         w->size_range(w->w() - o->w() + minw, w->h() - o->h() + minh, 0, 0);
-//        winattr |= kWindowFullZoomAttribute | kWindowResizeableAttribute;
-        winattr |= kWindowFullZoomAttribute;
+        winattr |= kWindowFullZoomAttribute | kWindowResizableAttribute;
+        //winattr |= kWindowFullZoomAttribute;
       } else {
         w->size_range(w->w(), w->h(), w->w(), w->h());
       }
@@ -1057,7 +1127,7 @@ void Fl_Window::make_current()
   fl_window = i->xid;
   current_ = this;
 
-  SetPort((GrafPtr)(i->xid));
+  SetPort( GetWindowPort(i->xid) );
 
   int xp = 0, yp = 0;
   Fl_Window *win = this;
@@ -1088,7 +1158,7 @@ void Fl_Window::make_current()
   }
   
   fl_clip_region( 0 );
-  CopyRgn( fl_window_region, GetPortClipRegion((GrafPtr)(i->xid), 0) ); // for Fl_GL_Window
+  CopyRgn( fl_window_region, GetPortClipRegion( GetWindowPort(i->xid), 0) ); // for Fl_GL_Window
   return;
 }
 
@@ -1153,6 +1223,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 */
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.2 2001/12/04 03:03:17 matthiaswm Exp $".
 //
 

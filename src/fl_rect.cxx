@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.2 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.3 2001/12/04 03:03:17 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -340,9 +340,9 @@ void fl_restore_clip() {
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE__)
 #  if 1
-  CopyRgn( fl_window_region, GetPortClipRegion((GrafPtr)fl_window, 0) );
+  CopyRgn( fl_window_region, GetPortClipRegion( GetWindowPort(fl_window), 0) ); // changed
   if ( r ) 
-    SectRgn( GetPortClipRegion((GrafPtr)fl_window, 0), r, GetPortClipRegion((GrafPtr)fl_window, 0) );
+    SectRgn( GetPortClipRegion( GetWindowPort(fl_window), 0), r, GetPortClipRegion( GetWindowPort(fl_window), 0) );
 #  else
   if (r) SetClip(r);
   else {
@@ -494,5 +494,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.2 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.3 2001/12/04 03:03:17 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.2 2001/12/04 03:03:17 matthiaswm Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -149,7 +149,7 @@ void fl_begin_offscreen(GWorldPtr gWorld) {
     PixMapHandle pm = GetGWorldPixMap(gWorld);
     LockPixels(pm);
     fl_window = (Window)prevPort;
-    SetPort( (GrafPtr)fl_window );
+    SetPort( GetWindowPort(fl_window) );
   }
   fl_push_no_clip();
 }
@@ -275,5 +275,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.2 2001/12/04 03:03:17 matthiaswm Exp $".
 //

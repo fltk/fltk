@@ -1,0 +1,97 @@
+README.mac - 12/03/2001 - Building FLTK under MacOS and OS X
+------------------------------------------------------------
+
+
+INTRODUCTION
+------------
+
+FLTK for Mac OS X is in pre-beta stage. Expect rapid changes to the 
+source code and build environment. Expect many crashes and funny
+bliking patterns.
+
+FLTK currently supports the following development environment on the
+Mac OS X platform:
+
+    - gcc (Carbon)
+
+    - (Metrowerks CodeWarrior - future releases)
+
+    - (Apple Project Builder - future releases)
+
+    - (MPW - future releases)
+
+FLTK for Mac is carbonized, i.e. all applicatiosn should run on Mac
+OS 8.1 and higher and OS X without changes.
+
+
+gcc (Carbon) - how to buid
+--------------------------
+
+Since the Max OS X command line build environment is based on BSD 
+Unix, the normal Unix build procedure as described in 'README' 
+applies. Compiled applications can only be started from within
+the terminal though.
+
+A 'resource fork' needs to be attached to applications to make
+them visible to the Finder. A sample resource file is ./FL/mac.r .
+
+To make 'hello' a full application, compile and link 'hello', then 
+change into the test directory and type:
+
+> Rez -t APPL -c Fltk ../FL/mac.r -o hello
+
+
+scripts
+-------
+
+When using Finder applications on source files (i.e. FileMerge)
+I found the following script very useful. It adds resource forks to
+all text files.
+
+#!/bin/tcsh
+setenv SET_MAC_TYPE "SetFile -t TEXT -c ttxt "
+setenv F1MAC_N 7
+echo "Setting Mac File Types. Please wait..."
+echo "[1/"$F1MAC_N"]"
+find . -name '*.H' -exec $SET_MAC_TYPE {} \;
+echo "[2/"$F1MAC_N"]"
+find . -name '*.h' -exec $SET_MAC_TYPE {} \;
+echo "[3/"$F1MAC_N"]"
+find . -name '*.c' -exec $SET_MAC_TYPE {} \;
+echo "[4/"$F1MAC_N"]"
+find . -name '*.cxx' -exec $SET_MAC_TYPE {} \;
+echo "[5/"$F1MAC_N"]"
+find . -name '*.fl' -exec $SET_MAC_TYPE {} \;
+echo "[6/"$F1MAC_N"]"
+find . -name 'make*' -exec $SET_MAC_TYPE {} \;
+echo "[7/"$F1MAC_N"]"
+find . -name 'Make*' -exec $SET_MAC_TYPE {} \;
+echo "done."
+
+
+other stuff
+-----------
+
+The following creator ID's 'FLTK', 'Fltk', 'FLID' and 'Flid' are
+officially registered with Aplle Computers and can be used for
+FLTK applications ('FLTK') and fluid files ('Flid').
+
+All applications shout be ended with exit(0); or they might 
+hang until killed.
+
+
+FLTK 1.0.x for Mac
+------------------
+
+FLTK 1.0.6 for Mac OS 8.x and OS 9.x is in beta stage and can be
+downloaded from http://www.matthiasm.com/fltk/mac.shtml. The
+archive contains build files for Metrowerks CodeWarrior 5 and 6.
+
+FLTK 1.0.6 for Mac is not supported by the FLTK team and will not 
+be further developed by the author. Instead it will be replaced 
+by FLTK 1.1.x for Mac in the near future.
+
+
+
+
+
