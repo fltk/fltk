@@ -1,131 +1,208 @@
-<HTML><BODY>
-<H1 ALIGN=RIGHT><A NAME=osissues>F - Operating System Issues</A></H1>
- This appendix describes the X and WIN32 specific interfaces in FLTK.
-<H2>X-Specific Interface</H2>
-<UL>
-<PRE>
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="osissues">F - Operating System Issues</A></H1>
+
+<P>This appendix describes the operating system specific interfaces in FLTK.
+
+<H2>Accessing the OS Interfaces</H2>
+
+<P>All programs that need to access the operating system
+specific interfaces must include the following header file:
+
+<UL><PRE>
 #include &lt;FL/x.H&gt;
-</PRE>
-</UL>
- On X you can include this file to access FLTK's X-specific functions.
- Be warned that some of the structures and calls in it are subject to
-change in future version of FLTK.  Try to avoid doing this so your code
-is portable.
+</PRE></UL>
+
+<P>Despite the name, this header file will define the
+appropriate interface for your environment. The pages that
+follow describe the functionality that is provided for each
+operating system.
+
+<CENTER><TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>WARNING:</B>
+
+	<P>The interfaces provided by this header file may
+	change radically in new FLTK releases. Use them only
+	when an existing generic FLTK interface is not
+	sufficient.</P>
+
+	</TD>
+</TR>
+</TABLE></CENTER>
+
+<H2>The UNIX (X11) Interface</H2>
+
+<P>The UNIX interface provides access to the X Window System
+state information and data structures.
+
 <H3>Handling Other X Events</H3>
-<H4><A name=add_handler>void Fl::add_handler(int (*f)(int))</A></H4>
- Installs a function to parse unrecognized events.  If FLTK cannot
-figure out what to do with an event, it calls each of these functions
-(most recent first) until one of them returns non-zero.  If none of
-them returns non-zero then the event is ignored.
-<P>FLTK calls this for any X events it does not recognize, or X events
-with a window id that FLTK does not recognize.  You can look at the X
-event with the <A href=#fl_xevent><TT>fl_xevent</TT></A> variable. </P>
-<P>The argument is zero for unrecognized X events.  These handlers are
-also called for global shortcuts and some other events that the widget
-they were passed to did not handle.  In this case the argument is
-non-zero (for example <TT>FL_SHORTCUT</TT>). </P>
-<H4><A name=fl_xevent>extern XEvent *fl_xvent</A></H4>
- The most recent X event.
-<H4><A name=fl_event_time>extern ulong fl_event_time</A></H4>
- This is the time stamp from the most recent X event that reported it
-(not all do).  Many X calls (like cut and paste) need this value.
-<H4><A name=fl_xid>Window fl_xid(const Fl_Window *)</A></H4>
- Returns the XID for a window, or zero if not <TT>shown()</TT>.
-<H4><A name=fl_find>Fl_Window *fl_find(ulong xid)</A></H4>
- Returns the <TT>Fl_Window</TT> that corresponds to the given XID, or <TT>
-NULL</TT> if not found.  This uses a cache so it is slightly faster
-than iterating through the windows yourself.
-<H4><A name=fl_handle>int fl_handle(const XEvent &amp;)</A></H4>
- This call allows you to supply the X events to FLTK, which may allow
-FLTK to cooperate with another toolkit or library.  The return value is
-true if FLTK understood the event (if the window does not belong to
-FLTK and the <TT>add_handler()</TT> functions all ignore it this
-returns false).
-<P>Besides feeding events your code should call <A href=functions.html#flush>
-<TT>Fl::flush()</TT></A> periodically so that FLTK redraws its windows. </P>
-<P>This function will call the callback functions.  It will not return
-until they complete.  In particular if a callback pops up a modal
-window (by calling <A href=functions.html#fl_ask><TT>fl_ask()</TT></A>,
-for instance) it will not return until the modal function returns. </P>
+
+<H4><A name="add_handler">void Fl::add_handler(int (*f)(int))</A></H4>
+
+<P>Installs a function to parse unrecognized events. If FLTK
+cannot figure out what to do with an event, it calls each of
+these functions (most recent first) until one of them returns
+non-zero. If none of them returns non-zero then the event is
+ignored.
+
+<P>FLTK calls this for any X events it does not recognize, or X
+events with a window ID that FLTK does not recognize. You can
+look at the X event in the <A
+href="#fl_xevent"><TT>fl_xevent</TT></A> variable.</P>
+
+<P>The argument is the FLTK event type that was not handled, or
+zero for unrecognized X events. These handlers are also called
+for global shortcuts and some other events that the widget they
+were passed to did not handle, for example
+<TT>FL_SHORTCUT</TT>.</P>
+
+<H4><A name="fl_xevent">extern XEvent *fl_xvent</A></H4>
+
+<P>This variable contains the most recent X event.
+
+<H4><A name="fl_event_time">extern ulong fl_event_time</A></H4>
+
+<P>This variable contains the time stamp from the most recent X
+event that reported it; not all events do. Many X calls like cut
+and paste need this value.
+
+<H4><A name="fl_xid">Window fl_xid(const Fl_Window *)</A></H4>
+
+<P>Returns the XID for a window, or zero if not <TT>shown()</TT>.
+
+<H4><A name="fl_find">Fl_Window *fl_find(ulong xid)</A></H4>
+
+<P>Returns the <TT>Fl_Window</TT> that corresponds to the given
+XID, or <TT>NULL</TT> if not found. This function uses a cache
+so it is slightly faster than iterating through the windows
+yourself.</P>
+
+<H4><A name="fl_handle">int fl_handle(const XEvent &amp;)</A></H4>
+
+<P>This call allows you to supply the X events to FLTK, which
+may allow FLTK to cooperate with another toolkit or library. The
+return value is non-zero if FLTK understood the event. If the
+window does not belong to FLTK and the <TT>add_handler()</TT>
+functions all return 0, this function will return false.
+
+<P>Besides feeding events your code should call <A
+href="functions.html#flush"><TT>Fl::flush()</TT></A>
+periodically so that FLTK redraws its windows.</P>
+
+<P>This function will call the callback functions. It will not
+return until they complete. In particular, if a callback pops up
+a modal window by calling <A
+href="functions.html#fl_ask"><TT>fl_ask()</TT></A>, for
+instance, it will not return until the modal function
+returns.</P>
+
 <H3>Drawing using Xlib</H3>
- The following global variables are set before <A HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A>
- is called, or by <A href=Fl_Window.html#Fl_Window.make_current><TT>
-Fl_Window::make_current()</TT></A>:
-<UL>
-<PRE>
+
+<P>The following global variables are set before <A
+HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> is
+called, or by <A
+href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::make_current()</TT></A>:
+
+<UL><PRE>
 extern Display *fl_display;
 extern Window fl_window;
 extern GC fl_gc;
 extern int fl_screen;
 extern XVisualInfo *fl_visual;
 extern Colormap fl_colormap;
-</PRE>
-</UL>
- You must use them to produce Xlib calls.  Don't attempt to change
-them.  A typical X drawing call is written like this:
-<UL>
-<PRE>
+</PRE></UL>
+
+<P>You must use them to produce Xlib calls.  Don't attempt to change
+them. A typical X drawing call is written like this:
+
+<UL><PRE>
 XDrawSomething(fl_display, fl_window, fl_gc, ...);
-</PRE>
-</UL>
- Other information such as the position or size of the X window can be
-found by looking at <A href=Fl_Window.html#Fl_Window.make_current><TT>
-Fl_Window::current()</TT></A>, which returns a pointer to the <TT>
-Fl_Window</TT> being drawn.
-<H4><A name=fl_xpixel>unsigned long fl_xpixel(Fl_Color i)
-<BR> unsigned long fl_xpixel(uchar r, uchar g, uchar b)</A></H4>
- Returns the X pixel number used to draw the given FLTK color index or
-RGB color. This is the X pixel that <A href="drawing.html#fl_color"><TT>fl_color()</TT>
-</A> would use.
-<H4><A name=fl_xfont>extern XFontStruct *fl_xfont</A></H4>
- Points at the font selected by the most recent <A href=drawing.html#fl_font>
-<TT>fl_font()</TT></A>.  This is not necessarily the current font of <TT>
-fl_gc</TT>, which is not set until <A href="drawing.html#text"><TT>fl_draw()</TT></A>
- is called.
+</PRE></UL>
+
+<P>Other information such as the position or size of the X
+window can be found by looking at <A
+href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::current()</TT></A>,
+which returns a pointer to the <TT>Fl_Window</TT> being drawn.
+
+<H4><A name="fl_xpixel">unsigned long fl_xpixel(Fl_Color i)<BR>
+unsigned long fl_xpixel(uchar r, uchar g, uchar b)</A></H4>
+
+<P>Returns the X pixel number used to draw the given FLTK color
+index or RGB color. This is the X pixel that <A
+href="drawing.html#fl_color"><TT>fl_color()</TT></A> would use.
+
+<H4><A name="fl_xfont">extern XFontStruct *fl_xfont</A></H4>
+
+<P>Points to the font selected by the most recent <A
+href="drawing.html#fl_font"><TT>fl_font()</TT></A>. This is not
+necessarily the current font of <TT>fl_gc</TT>, which is not set
+until <A href="drawing.html#text"><TT>fl_draw()</TT></A> is
+called.
+
 <H3>Changing the Display, Screen, or X Visual</H3>
- FLTK uses only a single display, screen, X visual, and X colormap.
-This greatly simplifies its internal structure and makes it much
-smaller and faster.  You can change which it uses by setting global
-variables <I>before the first <TT>Fl_Window::show()</TT> is called</I>.
-You may also want to call <A href=functions.html#visual>Fl::visual()</A>
-, which is a portable interface to get a full color and/or double
-buffered visual.
-<H4><A name=display>int Fl::display(const char *)</A></H4>
- Set which X display to use.  This actually does <TT>
-putenv(&quot;DISPLAY=...&quot;)</TT> so that child programs will display on the
-same screen if called with <TT>exec()</TT>.  This must be done before
-the display is opened.  This call is provided under WIN32 but it has no
-effect.
-<H4><A name=fl_display>extern Display *fl_display</A></H4>
- The open X display.  This is needed as an argument to most Xlib calls.
-Don't attempt to change it!  This is <TT>NULL</TT> before the display
-is opened.
-<H4><A name=fl_open_display>void fl_open_display()</A></H4>
- Opens the display.  Does nothing if it is already open.  This will
-make sure <TT>fl_display</TT> is non-zero.  You should call this if you
-wish to do X calls and there is a chance that your code will be called
-before the first <TT>show()</TT> of a window.
-<P>This may call <TT>Fl::abort()</TT> if there is an error opening the
-display. </P>
-<H4><A name=fl_close_display>void fl_close_display()</A></H4>
- This closes the X connection.  You do <I>not</I> need to call this to
-exit, and in fact it is faster to not do so!  It may be useful to call
-this if you want your program to continue without the X connection. You
-cannot open the display again, and probably cannot call any FLTK
-functions.
-<H4><A name=fl_screen>extern int fl_screen</A></H4>
- Which screen number to use.  This is set by <TT>fl_open_display()</TT>
- to the default screen.  You can change it by setting this to a
-different value immediately afterwards.  It can also be set by changing
-the last number in the <TT>Fl::display()</TT> string to &quot;host:0,#&quot;.
-<H4><A name=fl_visual>extern XVisualInfo *fl_visual</A>
-<BR><A name=fl_colormap>extern Colormap fl_colormap</A></H4>
- The visual and colormap that FLTK will use for all windows.  These are
-set by <TT>fl_open_display()</TT> to the default visual and colormap.
- You can change them before calling <TT>show()</TT> on the first
-window.  Typical code for changing the default visual is:
-<UL>
-<PRE>
+
+<P>FLTK uses only a single display, screen, X visual, and X
+colormap. This greatly simplifies its internal structure and
+makes it much smaller and faster. You can change which it uses
+by setting global variables <I>before the first
+<TT>Fl_Window::show()</TT> is called</I>. You may also want to
+call <A href="functions.html#visual">Fl::visual()</A>, which is
+a portable interface to get a full color and/or double buffered
+visual.
+
+<H4><A name="display">int Fl::display(const char *)</A></H4>
+
+<P>Set which X display to use.  This actually does
+<TT>putenv(&quot;DISPLAY=...&quot;)</TT> so that child programs
+will display on the same screen if called with <TT>exec()</TT>.
+This must be done before the display is opened. This call is
+provided under MacOS and WIN32 but it has no effect.
+
+<H4><A name="fl_display">extern Display *fl_display</A></H4>
+
+<P>The open X display. This is needed as an argument to most
+Xlib calls. Don't attempt to change it! This is <TT>NULL</TT>
+before the display is opened.
+
+<H4><A name="fl_open_display">void fl_open_display()</A></H4>
+
+<P>Opens the display. Does nothing if it is already open. This
+will make sure <TT>fl_display</TT> is non-zero. You should call
+this if you wish to do X calls and there is a chance that your
+code will be called before the first <TT>show()</TT> of a
+window.
+
+<P>This may call <TT>Fl::abort()</TT> if there is an error
+opening the display.</P>
+
+<H4><A name="fl_close_display">void fl_close_display()</A></H4>
+
+<P>This closes the X connection. You do <I>not</I> need to call
+this to exit, and in fact it is faster to not do so! It may be
+useful to call this if you want your program to continue without
+the X connection. You cannot open the display again, and
+probably cannot call any FLTK functions.
+
+<H4><A name="fl_screen">extern int fl_screen</A></H4>
+
+<P>Which screen number to use. This is set by
+<TT>fl_open_display()</TT> to the default screen. You can change
+it by setting this to a different value immediately afterwards.
+It can also be set by changing the last number in the
+<TT>Fl::display()</TT> string to &quot;host:0.#&quot;.
+
+<H4><A name="fl_visual">extern XVisualInfo *fl_visual</A><BR>
+<A name="fl_colormap">extern Colormap fl_colormap</A></H4>
+
+<P>The visual and colormap that FLTK will use for all windows.
+These are set by <TT>fl_open_display()</TT> to the default
+visual and colormap. You can change them before calling
+<TT>show()</TT> on the first window. Typical code for changing
+the default visual is:
+
+<UL><PRE>
 Fl::args(argc, argv); // do this first so $DISPLAY is set
 fl_open_display();
 fl_visual = find_a_good_visual(fl_display, fl_screen);
@@ -133,25 +210,34 @@ if (!fl_visual) Fl::abort(&quot;No good visual&quot;);
 fl_colormap = make_a_colormap(fl_display, fl_visual-&gt;visual, fl_visual-&gt;depth);
 // it is now ok to show() windows:
 window-&gt;show(argc, argv);
-</PRE>
-</UL>
+</PRE></UL>
+
 <H3>Using a Subclass of Fl_Window for Special X Stuff</H3>
- FLTK can manage an X window on a different screen, visual and/or
-colormap, you just can't use FLTK's drawing routines to draw into it.
-But you can write your own <TT>draw()</TT> method that uses Xlib
-(and/or OpenGL) calls only.
-<P>FLTK can also manage XID's provided by other libraries or programs,
-and call those libraries when the window needs to be redrawn. </P>
-<P>To do this, you need to make a subclass of <A href=Fl_Window.html#Fl_Window>
-<TT>Fl_Window</TT></A> and override some of these virtual functions: </P>
+
+<P>FLTK can manage an X window on a different screen, visual
+and/or colormap, you just can't use FLTK's drawing routines to
+draw into it. But you can write your own <TT>draw()</TT> method
+that uses Xlib (and/or OpenGL) calls only.
+
+<P>FLTK can also manage XID's provided by other libraries or
+programs, and call those libraries when the window needs to be
+redrawn.</P>
+
+<P>To do this, you need to make a subclass of <A
+href="Fl_Window.html#Fl_Window"><TT>Fl_Window</TT></A> and
+override some of these virtual functions:</P>
+
 <H4>virtual void Fl_Window::show()</H4>
- If the window is already <TT>shown()</TT> this must cause it to be
-raised, this can usually be done by calling <TT>Fl_Window::show()</TT>.
- If not <TT>shown()</TT> your implementation must call either <TT>
-Fl_X::set_xid()</TT> or <TT>Fl_X::make_xid()</TT>.
-<P>An example: </P>
-<UL>
-<PRE>
+
+<P>If the window is already <TT>shown()</TT> this must cause it
+to be raised, this can usually be done by calling
+<TT>Fl_Window::show()</TT>. If not <TT>shown()</TT> your
+implementation must call either <TT>Fl_X::set_xid()</TT> or
+<TT>Fl_X::make_xid()</TT>.
+
+<P>An example:</P>
+
+<UL><PRE>
 void MyWindow::show() {
   if (shown()) {Fl_Window::show(); return;}  // you must do this!
   fl_open_display();	// necessary if this is first window
@@ -161,56 +247,69 @@ void MyWindow::show() {
   if (!visual) {
     visual = figure_out_visual();
     colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
-			        vis-&gt;visual, AllocNone);
+                               vis-&gt;visual, AllocNone);
   }
   Fl_X::make_xid(this, visual, colormap);
 }
-</PRE>
-</UL>
+</PRE></UL>
+
 <H4>Fl_X *Fl_X::set_xid(Fl_Window *, Window xid)</H4>
- Allocate a hidden structure called an <TT>Fl_X</TT>, put the XID into
-it, and set a pointer to it from the <TT>Fl_Window</TT>.  This causes <TT>
-Fl_Window::shown()</TT> to return true.
-<H4>void Fl_X::make_xid(Fl_Window *, XVisualInfo *= fl_visual, Colormap
-= fl_colormap)</H4>
- This static method does the most onerous parts of creating an X
-window, including setting the label, resize limitations, etc.  It then
-does <TT>Fl_X::set_xid()</TT> with this new window and maps the window.
+
+<P>Allocate a hidden structure called an <TT>Fl_X</TT>, put the
+XID into it, and set a pointer to it from the
+<TT>Fl_Window</TT>. This causes <TT>Fl_Window::shown()</TT> to
+return true.
+
+<H4>void Fl_X::make_xid(Fl_Window *, XVisualInfo *= fl_visual,
+Colormap = fl_colormap)</H4>
+
+<P>This static method does the most onerous parts of creating an
+X window, including setting the label, resize limitations, etc.
+It then does <TT>Fl_X::set_xid()</TT> with this new window and
+maps the window.
+
 <H4>virtual void Fl_Window::flush()</H4>
- This virtual function is called by <TT>Fl::flush()</TT> to update the
-window. For FLTK's own windows it does this by setting the global
-variables <TT>fl_window</TT> and <TT>fl_gc</TT> and then calling the <TT>
-draw()</TT> method.  For your own windows you might just want to put
-all the drawing code in here.
-<P>The X region that is a combination of all <TT>damage()</TT> calls
-done so far is in <TT>Fl_X::i(this)-&gt;region</TT>.  If <TT>NULL</TT>
- then you should redraw the entire window.  The undocumented function <TT>
-fl_clip_region(XRegion)</TT> will initialize the FLTK clip stack with a
-region or <TT>NULL</TT> for no clipping.  You must set region to <TT>
-NULL</TT> afterwards as <TT>fl_clip_region()</TT> now owns it and will
-delete it when done. </P>
-<P>If <TT>damage() FL_DAMAGE_EXPOSE</TT> then only X expose events have
-happened.  This may be useful if you have an undamaged image (such as a
-backing buffer) around. </P>
-<P>Here is a sample where an undamaged image is kept somewhere: </P>
-<UL>
-<PRE>
+
+<P>This virtual function is called by <TT>Fl::flush()</TT> to
+update the window. For FLTK's own windows it does this by
+setting the global variables <TT>fl_window</TT> and
+<TT>fl_gc</TT> and then calling the <TT>draw()</TT> method.  For
+your own windows you might just want to put all the drawing code
+in here.
+
+<P>The X region that is a combination of all <TT>damage()</TT>
+calls done so far is in <TT>Fl_X::i(this)-&gt;region</TT>. If
+<TT>NULL</TT> then you should redraw the entire window. The
+undocumented function <TT>fl_clip_region(XRegion)</TT> will
+initialize the FLTK clip stack with a region or <TT>NULL</TT>
+for no clipping. You must set region to <TT>NULL</TT> afterwards
+as <TT>fl_clip_region()</TT> will own and delete it when
+done.</P>
+
+<P>If <TT>damage() &amp; FL_DAMAGE_EXPOSE</TT> then only X
+expose events have happened. This may be useful if you have an
+undamaged image (such as a backing buffer) around.</P>
+
+<P>Here is a sample where an undamaged image is kept somewhere:</P>
+
+<UL><PRE>
 void MyWindow::flush() {
   fl_clip_region(Fl_X::i(this)-&gt;region);
   Fl_X::i(this)-&gt;region = 0;
   if (damage() != 2) {... draw things into backing store ...}
   ... copy backing store to window ...
 }
-</PRE>
-</UL>
+</PRE></UL>
+
 <H4>virtual void Fl_Window::hide()</H4>
- Destroy the window server copy of the window.  Usually you will
-destroy contexts, pixmaps, or other resources used by the window, and
-then call <TT>Fl_Window::hide()</TT> to get rid of the main window
-identified by <TT>xid()</TT>.  If you override this, you must also
-override the destructor as shown:
-<UL>
-<PRE>
+
+<P>Destroy the window server copy of the window. Usually you
+will destroy contexts, pixmaps, or other resources used by the
+window, and then call <TT>Fl_Window::hide()</TT> to get rid of
+the main window identified by <TT>xid()</TT>. If you override
+this, you must also override the destructor as shown:
+
+<UL><PRE>
 void MyWindow::hide() {
   if (mypixmap) {
     XFreePixmap(fl_display,mypixmap);
@@ -218,191 +317,286 @@ void MyWindow::hide() {
   }
   Fl_Window::hide(); // you must call this
 }
-</PRE>
-</UL>
+</PRE></UL>
+
 <H4>virtual void Fl_Window::~Fl_Window()</H4>
- Because of the way C++ works, if you override <TT>hide()</TT> you <I>
-must</I> override the destructor as well (otherwise only the base class <TT>
-hide()</TT> is called):
-<UL>
-<PRE>
+
+<P>Because of the way C++ works, if you override <TT>hide()</TT>
+you <I>must</I> override the destructor as well (otherwise only
+the base class <TT>hide()</TT> is called):
+
+<UL><PRE>
 MyWindow::~MyWindow() {
   hide();
 }
-</PRE>
-</UL>
+</PRE></UL>
+
 <H3>Setting the Icon of a Window</H3>
-FLTK currently supports setting a window's icon *before* it is shown
-using the <TT>Fl_Window::icon()</TT> method.
+
+<P>FLTK currently supports setting a window's icon *before* it
+is shown using the <TT>Fl_Window::icon()</TT> method.
+
 <H4>void Fl_Window::icon(char *)</H4>
-Sets the icon for the window to the passed pointer.  You will need to
-cast the icon <TT>Pixmap</TT> to a <TT>char *</TT> when calling this
-method. To set the icon using a bitmap compiled with your application
-use:
-<UL>
-<PRE>
+
+<P>Sets the icon for the window to the passed pointer. You will
+need to cast the icon <TT>Pixmap</TT> to a <TT>char *</TT> when
+calling this method. To set the icon using a bitmap compiled
+with your application use:
+
+<UL><PRE>
 #include &quot;icon.xbm&quot;
 
 Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
                                  icon_bits, icon_width, icon_height);
 
 window-&gt;icon((char *)p);
-</PRE>
-</UL>
+</PRE></UL>
 
-<P><B>Note:</B> you must call <A HREF="Fl_Window.html#Fl_Window.show">
-<TT>Fl_Window::show(argc, argv)</TT></A> for the icon to be used. The
-<TT>Fl_Window::show()</TT> method does not bind the icon to the window.
+<CENTER><TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>NOTE:</B>
+	
+	<P>You must call <A
+	HREF="Fl_Window.html#Fl_Window.show"><TT>Fl_Window::show(argc,
+	argv)</TT></A> for the icon to be used. The
+	<TT>Fl_Window::show()</TT> method does not bind the icon
+	to the window.
 
-<H2>WIN32-Specific Interface</H2>
-<UL>
-<PRE>
-#include &lt;FL/x.H&gt;
-</PRE>
-</UL>
- The <TT>&lt;FL/x.H&gt;</TT> header file defines the interface to FLTK's
-WIN32-specific functions.  Be warned that some of the structures and
-calls in it are subject to change in future version of FLTK.  Try to
-avoid doing this so your code is portable.
+	</TD>
+</TR>
+</TABLE></CENTER>
+
+<H2>The Windows (WIN32) Interface</H2>
+
+<P>The Windows interface provides access to the WIN32 GDI
+state information and data structures.
+
 <H3>Handling Other WIN32 Messages</H3>
- By default a single WNDCLASSEX called &quot;FLTK&quot; is created.  All <TT>
-Fl_Windows</TT> are of this class unless you use <TT>Fl_Window::xclass()</TT>
-. The window class is created the first time <TT>Fl_Window::show()</TT>
- is called.
-<P>You can probably combine FLTK with other libraries that make their
-own WIN32 window classes.  The easiest way is to call <TT>Fl::wait()</TT>
-, it will call <TT>DispatchMessage</TT> for all messages to the other
-windows.  If necessary you can let the other library take over (as long
-as it calls <TT>DispatchMessage()</TT>), but you will have to arrange
-for the function <TT>Fl::flush()</TT> to be called regularily so that
-widgets are updated, timeouts are handled, and the idle functions are
-called. </P>
-<H4><A name=fl_msg>extern MSG fl_msg</A></H4>
- The most recent message read by <TT>GetMessage</TT> (which is called
-by <A href=functions.html#wait><TT>Fl::wait()</TT></A>.  This may not
-be the most recent message sent to an FLTK window, because silly WIN32
+
+<P>By default a single WNDCLASSEX called &quot;FLTK&quot; is
+created. All <TT>Fl_Window</TT>'s are of this class unless you
+use <TT>Fl_Window::xclass()</TT>. The window class is created
+the first time <TT>Fl_Window::show()</TT> is called.
+
+<P>You can probably combine FLTK with other libraries that make
+their own WIN32 window classes. The easiest way is to call
+<TT>Fl::wait()</TT>, as it will call <TT>DispatchMessage</TT>
+for all messages to the other windows. If necessary you can let
+the other library take over as long as it calls
+<TT>DispatchMessage()</TT>, but you will have to arrange for the
+function <TT>Fl::flush()</TT> to be called regularly so that
+widgets are updated, timeouts are handled, and the idle
+functions are called.</P>
+
+<H4><A name="fl_msg">extern MSG fl_msg</A></H4>
+
+<P>This variable contains the most recent message read by
+<TT>GetMessage</TT>, which is called by <A
+href="Fl.html#wait"><TT>Fl::wait()</TT></A>. This may not be the
+most recent message sent to an FLTK window, because silly WIN32
 calls the handle procedures directly for some events (sigh).
-<H4><A name=WIN32.add_handler>void Fl::add_handler(int (*f)(int))</A></H4>
- Install a function to parse unrecognized messages sent to FLTK
-windows.  If FLTK cannot figure out what to do with a message, it calls
-each of these functions (most recent first) until one of them returns
-non-zero.  The argument passed to the fuctions is zero.  If all the
-handlers return zero then FLTK calls <TT>DefWindowProc()</TT>.
-<H4><A name=WIN32.fl_xid>HWND fl_xid(const Fl_Window *)</A></H4>
- Returns the window handle for a <TT>Fl_Window</TT>, or zero if not <TT>
-shown()</TT>.
-<H4><A name=WIN32.fl_find>Fl_Window *fl_find(HWND xid)</A></H4>
- Return the <TT>Fl_Window</TT> that corresponds to the given window
-handle, or <TT>NULL</TT> if not found.  This uses a cache so it is
-slightly faster than iterating through the windows yourself.
+
+<H4><A name="WIN32.add_handler">void Fl::add_handler(int (*f)(int))</A></H4>
+
+<P>Installs a function to parse unrecognized messages sent to
+FLTK windows. If FLTK cannot figure out what to do with a
+message, it calls each of these functions (most recent first)
+until one of them returns non-zero. The argument passed to the
+functions is the FLTK event that was not handled or zero for
+unknown messages. If all the handlers return zero then FLTK
+calls <TT>DefWindowProc()</TT>.
+
+<H4><A name="WIN32.fl_xid">HWND fl_xid(const Fl_Window *)</A></H4>
+
+<P>Returns the window handle for a <TT>Fl_Window</TT>, or zero
+if not <TT>shown()</TT>.
+
+<H4><A name="WIN32.fl_find">Fl_Window *fl_find(HWND xid)</A></H4>
+
+<P>Returns the <TT>Fl_Window</TT> that corresponds to the given
+window handle, or <TT>NULL</TT> if not found. This function uses
+a cache so it is slightly faster than iterating through the
+windows yourself.
+
 <H3>Drawing Things Using the WIN32 GDI</H3>
- When the virtual function <A HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> is called, FLTK
-has stashed in some global variables all the silly extra arguments you
-need to make a proper GDI call.  These are:
-<UL>
-<PRE>
+
+<P>When the virtual function <A
+HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> is
+called, FLTK stores all the silly extra arguments you need to
+make a proper GDI call in some global variables:
+
+<UL><PRE>
 extern HINSTANCE fl_display;
 extern HWND fl_window;
 extern HDC fl_gc;
 COLORREF fl_RGB();
 HPEN fl_pen();
 HBRUSH fl_brush();
-</PRE>
-</UL>
- These global variables are set before <TT>draw()</TT> is called, or by <A
-href=Fl_Window.html#Fl_Window.make_current><TT>Fl_Window::make_current()</TT>
-</A>. You can refer to them when needed to produce GDI calls.  Don't
-attempt to change them.  The functions return GDI objects for the
-current color set by <TT>fl_color()</TT> and are created as needed and
-cached.  A typical GDI drawing call is written like this:
-<UL>
-<PRE>
+</PRE></UL>
+
+<P>These global variables are set before <TT>draw()</TT> is
+called, or by <A
+href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::make_current()</TT></A>.
+You can refer to them when needed to produce GDI calls, but don't
+attempt to change them. The functions return GDI objects for
+the current color set by <TT>fl_color()</TT> and are created as
+needed and cached. A typical GDI drawing call is written like
+this:
+
+<UL><PRE>
 DrawSomething(fl_gc, ..., fl_brush());
-</PRE>
-</UL>
- It may also be useful to refer to <A href=Fl_Window.html#Fl_Window.make_current>
-<TT>Fl_Window::current()</TT></A> to get the window's size or position.
+</PRE></UL>
+
+<P>It may also be useful to refer to <A
+href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::current()</TT></A>
+to get the window's size or position.
+
 <H3>Setting the Icon of a Window</H3>
- FLTK currently supports setting a window's icon *before* it is shown
-using the <TT>Fl_Window::icon()</TT> method.
+
+<P>FLTK currently supports setting a window's icon *before* it
+is shown using the <TT>Fl_Window::icon()</TT> method.
+
 <H4>void Fl_Window::icon(char *)</H4>
- Sets the icon for the window to the passed pointer.  You will need to
-cast the <TT>HICON</TT> handle to a <TT>char *</TT> when calling this
-method. To set the icon using an icon resource compiled with your
-application use:
-<UL>
-<PRE>
+
+<P>Sets the icon for the window to the passed pointer. You will
+need to cast the <TT>HICON</TT> handle to a <TT>char *</TT> when
+calling this method. To set the icon using an icon resource
+compiled with your application use:
+
+<UL><PRE>
 window-&gt;icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
-</PRE>
-</UL>
+</PRE></UL>
 
-You can also use the <TT>LoadImage()</TT> and related functions to load
-specific resolutions or create the icon from bitmap data.
+<P>You can also use the <TT>LoadImage()</TT> and related
+functions to load specific resolutions or create the icon from
+bitmap data.
 
-<P><B>Note:</B> you must call <A HREF="Fl_Window.html#Fl_Window.show">
-<TT>Fl_Window::show(argc, argv)</TT></A> for the icon to be used. The
-<TT>Fl_Window::show()</TT> method does not bind the icon to the window.
+<CENTER><TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>NOTE:</B>
+	
+	<P>You must call <A
+	HREF="Fl_Window.html#Fl_Window.show"><TT>Fl_Window::show(argc,
+	argv)</TT></A> for the icon to be used. The
+	<TT>Fl_Window::show()</TT> method does not bind the icon
+	to the window.
+
+	</TD>
+</TR>
+</TABLE></CENTER>
 
 <H3>How to Not Get a MSDOS Console Window</H3>
- WIN32 has a really stupid mode switch stored in the executables that
-controls whether or not to make a console window.
+
+<P>WIN32 has a really stupid mode switch stored in the
+executables that controls whether or not to make a console
+window.
+
 <P>To always get a console window you simply create a console
-application (the &quot;/SUBSYSTEM:CONSOLE&quot; option for the linker).  For a
-GUI-only application create a WIN32 application (the
-&quot;/SUBSYSTEM:WINDOWS&quot; option for the linker). </P>
-<P>FLTK includes a <TT>WinMain()</TT> function that calls the ANSI
-standard <TT>main()</TT> entry point for you. <I>This function creates
-a console window when you use the debug version of the library.</I></P>
-<P>WIN32 applications without a console cannot write to <TT>stdout</TT>
- or <TT>stderr</TT>, even if they are run from a console window.  Any
-output is silently thrown away. </P>
-<H3>Known Bugs</H3>
- If a program is deactivated, <TT>Fl::wait()</TT> does not return until
-it is activated again, even though many events are delivered to the
-program. This can cause idle background processes to stop unexpectedly.
- This also happens while the user is dragging or resizing windows or
-otherwise holding the mouse down.  I was forced to remove most of the
-efficiency FLTK uses for redrawing in order to get windows to update
-while being moved.  This is a design error in WIN32 and probably
-impossible to get around.
-<P><TT>Fl_Gl_Window::can_do_overlay()</TT> returns true until the first
-time it attempts to draw an overlay, and then correctly returns whether
-or not there is overlay hardware. </P>
-<P>Cut text contains ^J rather than ^M^J to break lines.  This is a
-feature, not a bug. </P>
-<P><TT>SetCapture</TT> (used by <TT>Fl::grab()</TT>) doesn't work, and
-the main window title bar turns gray while menus are popped up. </P>
-<P>FLUID does not support BMP files yet. </P>
+application (the &quot;/SUBSYSTEM:CONSOLE&quot; option for the
+linker). For a GUI-only application create a WIN32 application
+(the &quot;/SUBSYSTEM:WINDOWS&quot; option for the linker).</P>
 
-<H2>MacOS-specific interface</h2>
-FLTK supports MacOS 8.6, MacOS 9 and Mac OS X using the Apple Carbon library.
-When compiled with  MPW or MetroWerks' CodeWarrior, application binaries in CFM format will
-run on all the above systems without changes. 
-OS X's 'gcc' however creates Mach-O binaries which are not supported by
+<P>FLTK includes a <TT>WinMain()</TT> function that calls the
+ANSI standard <TT>main()</TT> entry point for you. <I>This
+function creates a console window when you use the debug version
+of the library.</I></P>
+
+<P>WIN32 applications without a console cannot write to
+<TT>stdout</TT> or <TT>stderr</TT>, even if they are run from a
+console window. Any output is silently thrown away.
+Additionally, WIN32 applications are run in the background by
+the console, although you can use "start /wait program" to run
+them in the foreground.</P>
+
+<H3>Known WIN32 Bugs and Problems</H3>
+
+<P>The following is a list of known bugs and problems in the WIN32
+version of FLTK:
+
+<UL>
+
+	<LI>If a program is deactivated, <TT>Fl::wait()</TT>
+	does not return until it is activated again, even though
+	many events are delivered to the program. This can cause
+	idle background processes to stop unexpectedly. This
+	also happens while the user is dragging or resizing
+	windows or otherwise holding the mouse down. We were
+	forced to remove most of the efficiency FLTK uses for
+	redrawing in order to get windows to update while being
+	moved. This is a design error in WIN32 and probably
+	impossible to get around.</LI>
+
+	<LI><TT>Fl_Gl_Window::can_do_overlay()</TT> returns true
+	until the first time it attempts to draw an overlay, and
+	then correctly returns whether or not there is overlay
+	hardware.</LI>
+
+	<LI>Cut text contains ^J rather than ^M^J to break
+	lines. This is a feature, not a bug. </LI>
+
+	<LI><TT>SetCapture</TT> (used by <TT>Fl::grab()</TT>)
+	doesn't work, and the main window title bar turns gray
+	while menus are popped up.</LI>
+
+	<LI>FLTK does not support BMP files yet.</LI>
+
+</UL>
+
+<H2>The MacOS Interface</h2>
+
+<P>FLTK supports MacOS 8.6, MacOS 9 and MacOS X using the Apple
+Carbon library. When compiled with MPW or MetroWerks'
+CodeWarrior, application binaries in CFM format will run on all
+the above systems without changes. The OS X GNU (gcc) compiler,
+however, creates Mach-O binaries which are not supported by
 MacOS 9 and earlier.
-<br>
-<PRE>#include &lt;FL/x.H&gt;</PRE>
-The <tt>&lt;FL/x.H&gt;</tt> header file defines the interface to FLTK's MacOS-specific 
-functions. Be warned that some of the structures and calls in it are 
-subject to change in future version of FLTK. Try to avoid doing this 
-so your code is portable.
-<H4>WindowRef fl_xid(const Fl_Window *)</h4>
-Returns the window reference for an <tt>Fl_Window</tt>, or NULL if not shown.
-<h4>Fl_Window *fl_find(WindowRef xid)</h4>
-Return the <tt>Fl_Window</tt> that corresponds to the give window hande, or NULL if not found. FLTK Windows that are children of top-level windows share the WindowRef 
-with the top-level window.
-<h3>Drawing Things Using QuickDraw</h3>
-When the virtual function <tt>Fl_Widget::draw()</tt> is called, FLTK has prepared
-the Window and CGrafPort for drawing. Clipping and offsets are prepared to allow
-correct subwindow drawing.
-<br><br>
-OS X doublebuffers all windows automatically. On OS X <tt>Fl_Window</tt> and
-<tt>Fl_Double_Window</tt> are handled internally in the same way.
-<h3>Mac File System Specifics</h3>
-<h4>Resource Forks</h4>
-FLTK does not access the resource fork of an application. However, a minimal
-resource fork must be created for OS 8 and OS X applications.
-<h4>Mac File Paths</h4>
-FLTK uses Unix-style filenames and paths.
 
-</BODY></HTML>
+<H4>WindowRef fl_xid(const Fl_Window *)</H4>
+
+<P>Returns the window reference for an <tt>Fl_Window</tt>, or
+<TT>NULL</TT> if the window has not been shown.
+
+<h4>Fl_Window *fl_find(WindowRef xid)</h4>
+
+<P>Returns the <tt>Fl_Window</tt> that corresponds to the give
+window handle, or <TT>NULL</TT> if not found. FLTK windows that
+are children of top-level windows share the WindowRef of the
+top-level window.
+
+<h3>Drawing Things Using QuickDraw</h3>
+
+<P>When the virtual function <tt>Fl_Widget::draw()</tt> is
+called, FLTK has prepared the Window and CGrafPort for drawing.
+Clipping and offsets are prepared to allow correct subwindow
+drawing.
+
+<P>OS X doublebuffers all windows automatically. On OS X,
+<tt>Fl_Window</tt> and <tt>Fl_Double_Window</tt> are handled
+internally in the same way.
+
+<h3>Mac File System Specifics</h3>
+
+<h4>Resource Forks</h4>
+
+<P>FLTK does not access the resource fork of an application.
+However, a minimal resource fork must be created for OS 8 and OS
+X applications.
+
+<h4>Mac File Paths</h4>
+
+<P>FLTK uses UNIX-style filenames and paths.
+
+<H3>Known MacOS Bugs and Problems</H3>
+
+<P>The following is a list of known bugs and problems in the MacOS
+version of FLTK:
+
+<UL>
+
+	<LI>Line styles are not well supported. This is due to
+	limitations in the QuickDraw interface.</LI>
+
+</UL>
+
+</BODY>
+</HTML>
