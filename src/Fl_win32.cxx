@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.22 1999/01/07 16:43:04 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.23 1999/01/07 17:20:03 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,12 +48,10 @@
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
+struct pollfd {int fd; short events; short revents;};
 
 #define MAXFD 8
-#if !HAVE_POLL
 static fd_set fdsets[3];
-static int maxfd;
-#endif
 static int nfds;
 static struct pollfd fds[MAXFD];
 static struct {
@@ -66,12 +64,9 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   if (nfds < MAXFD) {i = nfds; nfds++;} else {i = MAXFD-1;}
   fds[i].fd = n;
   fds[i].events = events;
-#if !HAVE_POLL
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
-  if (n > maxfd) maxfd = n;
-#endif
   fd[i].cb = cb;
   fd[i].arg = v;
 }
@@ -87,12 +82,9 @@ void Fl::remove_fd(int n) {
     else {if (j<i) {fd[j]=fd[i]; fds[j]=fds[i];} j++;}
   }
   nfds = j;
-#if !HAVE_POLL
   FD_CLR(n, &fdsets[0]);
   FD_CLR(n, &fdsets[1]);
   FD_CLR(n, &fdsets[2]);
-  if (n == maxfd) maxfd--;
-#endif
 }
 
 MSG fl_msg;
@@ -107,7 +99,7 @@ int fl_ready() {
   fdt[0] = fdsets[0];
   fdt[1] = fdsets[1];
   fdt[2] = fdsets[2];
-  return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
+  return ::select(0,&fdt[0],&fdt[1],&fdt[2],&t);
 }
 
 double fl_wait(int timeout_flag, double time) {
@@ -127,7 +119,7 @@ double fl_wait(int timeout_flag, double time) {
   fdt[1] = fdsets[1];
   fdt[2] = fdsets[2];
 
-  if (::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t)) {
+  if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
     // We got something - do the callback!
     for (int i = 0; i < nfds; i ++) {
       int f = fds[i].fd;
@@ -870,5 +862,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.22 1999/01/07 16:43:04 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.23 1999/01/07 17:20:03 mike Exp $".
 //
