@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.18 2003/03/26 00:47:14 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.19 2003/05/29 19:43:06 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -66,8 +66,6 @@ usage ()
 {
     echo "Usage: fltk-config [OPTIONS]
 Options:
-	[--prefix[=DIR]]  return/set where FLTK is installed
-	[--exec-prefix[=DIR]]
 	[--version]
 	[--api-version]
 
@@ -115,22 +113,6 @@ do
     esac
 
     case $1 in
-	--prefix=*)
-	    prefix=$optarg
-	    if test $exec_prefix_set = no ; then
-              exec_prefix=$optarg
-	    fi
-	    ;;
-	--prefix)
-	    echo_prefix=yes
-	    ;;
-	--exec-prefix=*)
-	    exec_prefix=$optarg
-	    exec_prefix_set=yes
-	    ;;
-	--exec-prefix)
-	    echo_exec_prefix=yes
-	    ;;
 	--version)
 	    echo $VERSION
 	    ;;
@@ -251,14 +233,6 @@ if test -n "$post" -a "$POSTBUILD" != ":"; then
     $POSTBUILD $post $includedir/FL/mac.r
 fi
 
-if test "$echo_prefix" = "yes"; then
-    echo $prefix
-fi
-
-if test "$echo_exec_prefix" = "yes"; then
-    echo $exec_prefix
-fi
-
 if test "$echo_cflags" = "yes"; then
     echo $includes $CFLAGS
 fi
@@ -292,5 +266,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.18 2003/03/26 00:47:14 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.19 2003/05/29 19:43:06 easysw Exp $".
 #

@@ -1,9 +1,16 @@
 CHANGES IN FLTK 1.1.4
 
+	- The configure script contained erroneous whitespace in
+	  various tests which caused errors on some platforms
+	  (STR #60)
+	- The fltk-config script still supported the deprecated
+	  --prefix and --exec-prefix options; dropped them since
+	  they serve no useful purpose and would never have
+	  worked for the intended purpose anyways... (STR #56)
 	- fl_filename_list returned 0 on Win32 if no directory
 	  existed (STR #54)
 	- Pressing 'home' after the last letter in a Text_Editor
-          would move the cursor to pos 0 (STR #39)
+	  would move the cursor to pos 0 (STR #39)
 	- Fl::get_key(x) would mix up Ctrl and Meta on OS X (STR
 	  #55)
 	- The configure script used the wrong dynamic library

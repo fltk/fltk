@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.98 2003/05/27 20:22:50 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.99 2003/05/29 19:43:06 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -47,10 +47,10 @@ AC_SUBST(FL_API_VERSION)
 dnl Get the operating system and version number...
 uname=`uname`
 uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
-if test x$uname = xIRIX64; then
+if test "x$uname" = xIRIX64; then
     uname="IRIX"
 fi
-if test x$uname = x; then
+if test "x$uname" = x; then
     # MingW doesn't provide any output when uname is run, even with "-s"...
     uname="CYGWIN"
 fi
@@ -119,7 +119,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="ld $DSOFLAGS -dylib /usr/lib/dylib1.o -lc -o"
-	    if test "$libdir" != "/usr/lib"; then
+	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
@@ -130,7 +130,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
-	    if test "$libdir" != "/usr/lib"; then
+	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-R$libdir"
             fi
 	    ;;
@@ -140,7 +140,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
-	    if test "$libdir" != "/usr/lib"; then
+	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
@@ -150,7 +150,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
-	    if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
+	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
@@ -160,7 +160,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
-	    if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
+	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
@@ -170,7 +170,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
-	    if test "$libdir" != "/usr/lib"; then
+	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
@@ -228,9 +228,9 @@ AC_PROG_CC
 AC_PROG_CXX
 dnl AC_PROG_INSTALL
 AC_PATH_PROG(NROFF,nroff)
-if test "$NROFF" = ""; then
+if test "x$NROFF" = "x:"; then
     AC_PATH_PROG(GROFF,groff)
-    if test "$GROFF" = ""; then
+    if test "x$GROFF" = "x:"; then
         NROFF="echo"
     else
         NROFF="$GROFF -T ascii"
@@ -303,13 +303,13 @@ AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_HEADER(sys/stdtypes.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_FUNC(scandir,
-    if test "$uname" = SunOS -o "$uname" = QNX; then
+    if test "x$uname" = xSunOS -o "x$uname" = xQNX; then
         AC_MSG_WARN(Not using $uname scandir emulation function.)
     else
         AC_DEFINE(HAVE_SCANDIR)
     fi)
 AC_CHECK_FUNC(vsnprintf,[
-    case $uname in
+    case "$uname" in
     	HP-UX*)
 	    if test "$uversion" = "1020"; then
 	        AC_MSG_WARN(Not using built-in vsnprintf function because you are running HP-UX 10.20.)
@@ -331,7 +331,7 @@ AC_CHECK_FUNC(vsnprintf,[
 	    ;;
     esac])
 AC_CHECK_FUNC(snprintf,[
-    case $uname in
+    case "$uname" in
     	HP-UX*)
 	    if test "$uversion" = "1020"; then
 	        AC_MSG_WARN(Not using built-in snprintf function because you are running HP-UX 10.20.)
@@ -395,11 +395,11 @@ AC_EXEEXT
 dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
 
-if test x"$enable_threads" = xyes; then
+if test "x$enable_threads" = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
     AC_CHECK_LIB(pthread, pthread_create)
 
-    if test x"$ac_cv_lib_pthread_pthread_create" = xyes -a x$ac_cv_header_pthread_h = xyes; then
+    if test "x$ac_cv_lib_pthread_pthread_create" = xyes -a x$ac_cv_header_pthread_h = xyes; then
         have_pthread=yes
     else
         dnl *BSD uses -pthread option...
@@ -848,5 +848,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.98 2003/05/27 20:22:50 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.99 2003/05/29 19:43:06 easysw Exp $".
 dnl
