@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- Fl_Tabs didn't include images in the measurement of
+	  the tabs if no label text was defined.
 	- The WIN32 code didn't return 0 from the window
 	  procedure after handling WM_PAINT messages.
 	- fl_draw() would incorrectly test the clipping of
