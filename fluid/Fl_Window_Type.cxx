@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.9 2004/04/11 04:38:56 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.10 2004/11/20 15:42:24 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -527,6 +527,16 @@ extern void fix_group_size(Fl_Type *t);
 extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Item New_Menu[];
 
+// Update the XYWH values in the widget panel...
+static void update_xywh() {
+  if (current_widget && current_widget->is_widget()) {
+    widget_x_input->value(((Fl_Widget_Type *)current_widget)->o->x());
+    widget_y_input->value(((Fl_Widget_Type *)current_widget)->o->y());
+    widget_w_input->value(((Fl_Widget_Type *)current_widget)->o->w());
+    widget_h_input->value(((Fl_Widget_Type *)current_widget)->o->h());
+  }
+}
+
 // move the selected children according to current dx,dy,drag state:
 void Fl_Window_Type::moveallchildren()
 {
@@ -558,6 +568,8 @@ void Fl_Window_Type::moveallchildren()
   ((Overlay_Window *)(this->o))->redraw_overlay();
   modflag = 1;
   dx = dy = 0;
+
+  update_xywh();
 }
 
 int Fl_Window_Type::handle(int event) {
@@ -795,5 +807,5 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.9 2004/04/11 04:38:56 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.10 2004/11/20 15:42:24 easysw Exp $".
 //

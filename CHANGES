@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.6
 
+	- Moving or resizing widgets in FLUID didn't always
+	  update the widget panel (STR #600)
 	- FLTK windows could appear off-screen on X11 (STR #586)
 	- The configure script did not support
 	  --disable-localfoo to completely disable image file

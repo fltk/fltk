@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 Function {make_widget_panel()} {open
@@ -124,26 +124,26 @@ image}
               xywh {256 116 20 20} resizable
             }
           }
-          Fl_Value_Input {} {
+          Fl_Value_Input widget_x_input {
             label {X:}
-            callback x_cb
+            callback x_cb selected
             tooltip {The X position of the widget.} xywh {95 150 60 20} labelsize 10 align 5 maximum 2048 step 1
           }
           Fl_Box {} {
             label {Position:}
             xywh {95 150 0 20} align 24
           }
-          Fl_Value_Input {} {
+          Fl_Value_Input widget_y_input {
             label {Y:}
             callback y_cb
             tooltip {The Y position of the widget.} xywh {155 150 60 20} labelsize 10 align 5 maximum 2048 step 1
           }
-          Fl_Value_Input {} {
+          Fl_Value_Input widget_w_input {
             label {Width:}
             callback w_cb
             tooltip {The width of the widget.} xywh {215 150 60 20} labelsize 10 align 5 maximum 2048 step 1
           }
-          Fl_Value_Input {} {
+          Fl_Value_Input widget_h_input {
             label {Height:}
             callback h_cb
             tooltip {The height of the widget.} xywh {275 150 60 20} labelsize 10 align 5 maximum 2048 step 1
@@ -470,7 +470,7 @@ image}
       }
       Fl_Button {} {
         label {No &Overlay}
-        callback overlay_cb selected
+        callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {215 335 100 25} labelcolor 1
       }
       Fl_Button {} {
