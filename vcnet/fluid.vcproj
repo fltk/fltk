@@ -466,6 +466,25 @@
 					PreprocessorDefinitions=""/>
 			</FileConfiguration>
 		</File>
+		<File
+			RelativePath="..\fluid\CodeEditor.cxx">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCLCompilerTool"
+					FavorSizeOrSpeed="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""/>
+			</FileConfiguration>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
