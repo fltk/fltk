@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.6.2.5 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.1 2001/11/26 20:13:29 easysw Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -93,7 +93,10 @@ static int use_registry(const char *p) {
 // turn a stored (with *'s) X font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   const char* p = fl_fonts[fnum].name;
-  if (!p) return "";
+  if (!p) {
+    if (ap) *ap = 0;
+    return "";
+  }
   static char *buffer; if (!buffer) buffer = new char[128];
   char *o = buffer;
 
@@ -118,7 +121,10 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 
   // get the family:
   const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;
-  if (!*x) return p;
+  if (!*x) {
+    if (ap) *ap = 0;
+    return p;
+  }
   const char *e = fl_font_word(x,1);
   strncpy(o,x,e-x); o += e-x;
 
@@ -329,5 +335,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.1 2001/11/26 20:13:29 easysw Exp $".
 //

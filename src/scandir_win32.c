@@ -1,33 +1,32 @@
-//
-// "$Id: scandir_win32.c,v 1.11.2.4 2001/01/22 15:13:41 easysw Exp $"
-//
-// WIN32 scandir function for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2001 by Bill Spitzak and others.
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
-//
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
-//
+/*
+ * "$Id: scandir_win32.c,v 1.11.2.4.2.1 2001/11/26 20:13:29 easysw Exp $"
+ *
+ * WIN32 scandir function for the Fast Light Tool Kit (FLTK).
+ *
+ * Copyright 1998-2001 by Bill Spitzak and others.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "fltk-bugs@fltk.org".
+ */
 
 #ifndef __CYGWIN__
-// Emulation of posix scandir() call
+/* Emulation of posix scandir() call */
 
-#include <config.h>
-#include <string.h>
+#include "flstring.h"
 #include <windows.h>
 #include <stdlib.h>
 
@@ -46,6 +45,9 @@ int scandir(const char *dirname, struct dirent ***namelist,
 
   len    = strlen(dirname);
   findIn = malloc(len+5);
+
+  if (!findIn) return 0;
+
   strcpy(findIn, dirname);
   for (d = findIn; *d; d++) if (*d=='/') *d='\\';
   if ((len==0)) { strcpy(findIn, ".\\*"); }
@@ -54,9 +56,10 @@ int scandir(const char *dirname, struct dirent ***namelist,
   if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; }
   
   if ((h=FindFirstFile(findIn, &find))==INVALID_HANDLE_VALUE) {
+    free(findIn);
     ret = GetLastError();
     if (ret != ERROR_NO_MORE_FILES) {
-      // TODO: return some error code
+      /* TODO: return some error code */
     }
     *namelist = dir;
     return nDir;
@@ -81,7 +84,7 @@ int scandir(const char *dirname, struct dirent ***namelist,
   } while (FindNextFile(h, &find));
   ret = GetLastError();
   if (ret != ERROR_NO_MORE_FILES) {
-    // TODO: return some error code
+    /* TODO: return some error code */
   }
   FindClose(h);
 
@@ -100,6 +103,6 @@ int alphasort (struct dirent **a, struct dirent **b) {
 
 #endif
 
-//
-// End of "$Id: scandir_win32.c,v 1.11.2.4 2001/01/22 15:13:41 easysw Exp $".
-//
+/*
+ * End of "$Id: scandir_win32.c,v 1.11.2.4.2.1 2001/11/26 20:13:29 easysw Exp $".
+ */

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.15 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.16 2001/11/26 20:13:29 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -84,6 +84,7 @@ extern "C"
 // Local functions...
 //
 
+static int	quote_char(const char *);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 static void	hscrollbar_callback(Fl_Widget *s, void *);
 
@@ -661,40 +662,13 @@ Fl_Help_View::draw()
 	{
 	  ptr ++;
 
-	  if (strncasecmp(ptr, "amp;", 4) == 0)
-	  {
-            *s++ = '&';
-	    ptr += 4;
-	  }
-	  else if (strncasecmp(ptr, "lt;", 3) == 0)
-	  {
-            *s++ = '<';
-	    ptr += 3;
-	  }
-	  else if (strncasecmp(ptr, "gt;", 3) == 0)
-	  {
-            *s++ = '>';
-	    ptr += 3;
-	  }
-	  else if (strncasecmp(ptr, "nbsp;", 5) == 0)
-	  {
-            *s++ = ' ';
-	    ptr += 5;
-	  }
-	  else if (strncasecmp(ptr, "copy;", 5) == 0)
-	  {
-            *s++ = '\251';
-	    ptr += 5;
-	  }
-	  else if (strncasecmp(ptr, "reg;", 4) == 0)
-	  {
-            *s++ = '\256';
-	    ptr += 4;
-	  }
-	  else if (strncasecmp(ptr, "quot;", 5) == 0)
-	  {
-            *s++ = '\"';
-	    ptr += 5;
+          int qch = quote_char(ptr);
+
+	  if (qch < 0)
+	    *s++ = '&';
+	  else {
+	    *s++ = qch;
+	    ptr = strchr(ptr, ';') + 1;
 	  }
 
           if ((size + 2) > hh)
@@ -1318,40 +1292,13 @@ Fl_Help_View::format()
       {
 	ptr ++;
 
-	if (strncasecmp(ptr, "amp;", 4) == 0)
-	{
-          *s++ = '&';
-	  ptr += 4;
-	}
-	else if (strncasecmp(ptr, "lt;", 3) == 0)
-	{
-          *s++ = '<';
-	  ptr += 3;
-	}
-	else if (strncasecmp(ptr, "gt;", 3) == 0)
-	{
-          *s++ = '>';
-	  ptr += 3;
-	}
-	else if (strncasecmp(ptr, "nbsp;", 5) == 0)
-	{
-          *s++ = '\240';
-	  ptr += 5;
-	}
-	else if (strncasecmp(ptr, "copy;", 5) == 0)
-	{
-          *s++ = '\251';
-	  ptr += 5;
-	}
-	else if (strncasecmp(ptr, "reg;", 4) == 0)
-	{
-          *s++ = '\256';
-	  ptr += 4;
-	}
-	else if (strncasecmp(ptr, "quot;", 5) == 0)
-	{
-          *s++ = '\"';
-	  ptr += 5;
+        int qch = quote_char(ptr);
+
+	if (qch < 0)
+	  *s++ = '&';
+	else {
+	  *s++ = qch;
+	  ptr = strchr(ptr, ';') + 1;
 	}
 
 	if ((size + 2) > hh)
@@ -1763,40 +1710,13 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
     {
       ptr ++;
 
-      if (strncasecmp(ptr, "amp;", 4) == 0)
-      {
-        *s++ = '&';
-	ptr += 4;
-      }
-      else if (strncasecmp(ptr, "lt;", 3) == 0)
-      {
-        *s++ = '<';
-	ptr += 3;
-      }
-      else if (strncasecmp(ptr, "gt;", 3) == 0)
-      {
-        *s++ = '>';
-	ptr += 3;
-      }
-      else if (strncasecmp(ptr, "nbsp;", 5) == 0)
-      {
-        *s++ = '\240';
-	ptr += 5;
-      }
-      else if (strncasecmp(ptr, "copy;", 5) == 0)
-      {
-        *s++ = '\251';
-	ptr += 5;
-      }
-      else if (strncasecmp(ptr, "reg;", 4) == 0)
-      {
-        *s++ = '\256';
-	ptr += 4;
-      }
-      else if (strncasecmp(ptr, "quot;", 5) == 0)
-      {
-        *s++ = '\"';
-	ptr += 5;
+      int qch = quote_char(ptr);
+
+      if (qch < 0)
+	*s++ = '&';
+      else {
+	*s++ = qch;
+	ptr = strchr(ptr, ';') + 1;
       }
     }
     else
@@ -2475,6 +2395,132 @@ Fl_Help_View::compare_blocks(const void *a,	// I - First block
 
 
 //
+// 'quote_char()' - Return the character code associated with a quoted char.
+//
+
+static int			// O - Code or -1 on error
+quote_char(const char *p) {	// I - Quoted string
+  int	i;			// Looping var
+  static struct {
+    const char	*name;
+    int		namelen;
+    int		code;
+  }	*nameptr,		// Pointer into name array
+	names[] = {		// Quoting names
+    { "Aacute;", 7, 193 },
+    { "aacute;", 7, 225 },
+    { "Acirc;",  6, 194 },
+    { "acirc;",  6, 226 },
+    { "acute;",  6, 180 },
+    { "AElig;",  6, 198 },
+    { "aelig;",  6, 230 },
+    { "Agrave;", 7, 192 },
+    { "agrave;", 7, 224 },
+    { "amp;",    4, '&' },
+    { "Aring;",  6, 197 },
+    { "aring;",  6, 229 },
+    { "Atilde;", 7, 195 },
+    { "atilde;", 7, 227 },
+    { "Auml;",   5, 196 },
+    { "auml;",   5, 228 },
+    { "brvbar;", 7, 166 },
+    { "Ccedil;", 7, 199 },
+    { "ccedil;", 7, 231 },
+    { "cedil;",  6, 184 },
+    { "cent;",   5, 162 },
+    { "copy;",   5, 169 },
+    { "curren;", 7, 164 },
+    { "deg;",    4, 176 },
+    { "divide;", 7, 247 },
+    { "Eacute;", 7, 201 },
+    { "eacute;", 7, 233 },
+    { "Ecirc;",  6, 202 },
+    { "ecirc;",  6, 234 },
+    { "Egrave;", 7, 200 },
+    { "egrave;", 7, 232 },
+    { "ETH;",    4, 208 },
+    { "eth;",    4, 240 },
+    { "Euml;",   5, 203 },
+    { "euml;",   5, 235 },
+    { "frac12;", 7, 189 },
+    { "frac14;", 7, 188 },
+    { "frac34;", 7, 190 },
+    { "gt;",     3, '>' },
+    { "Iacute;", 7, 205 },
+    { "iacute;", 7, 237 },
+    { "Icirc;",  6, 206 },
+    { "icirc;",  6, 238 },
+    { "iexcl;",  6, 161 },
+    { "Igrave;", 7, 204 },
+    { "igrave;", 7, 236 },
+    { "iquest;", 7, 191 },
+    { "Iuml;",   5, 207 },
+    { "iuml;",   5, 239 },
+    { "laquo;",  6, 171 },
+    { "lt;",     3, '<' },
+    { "macr;",   5, 175 },
+    { "micro;",  6, 181 },
+    { "middot;", 7, 183 },
+    { "nbsp;",   5, ' ' },
+    { "not;",    4, 172 },
+    { "Ntilde;", 7, 209 },
+    { "ntilde;", 7, 241 },
+    { "Oacute;", 7, 211 },
+    { "oacute;", 7, 243 },
+    { "Ocirc;",  6, 212 },
+    { "ocirc;",  6, 244 },
+    { "Ograve;", 7, 210 },
+    { "ograve;", 7, 242 },
+    { "ordf;",   5, 170 },
+    { "ordm;",   5, 186 },
+    { "Oslash;", 7, 216 },
+    { "oslash;", 7, 248 },
+    { "Otilde;", 7, 213 },
+    { "otilde;", 7, 245 },
+    { "Ouml;",   5, 214 },
+    { "ouml;",   5, 246 },
+    { "para;",   5, 182 },
+    { "plusmn;", 7, 177 },
+    { "pound;",  6, 163 },
+    { "quot;",   5, '\"' },
+    { "raquo;",  6, 187 },
+    { "reg;",    4, 174 },
+    { "sect;",   5, 167 },
+    { "shy;",    4, 173 },
+    { "sup1;",   5, 185 },
+    { "sup2;",   5, 178 },
+    { "sup3;",   5, 179 },
+    { "szlig;",  6, 223 },
+    { "THORN;",  6, 222 },
+    { "thorn;",  6, 254 },
+    { "times;",  6, 215 },
+    { "Uacute;", 7, 218 },
+    { "uacute;", 7, 250 },
+    { "Ucirc;",  6, 219 },
+    { "ucirc;",  6, 251 },
+    { "Ugrave;", 7, 217 },
+    { "ugrave;", 7, 249 },
+    { "uml;",    4, 168 },
+    { "Uuml;",   5, 220 },
+    { "uuml;",   5, 252 },
+    { "Yacute;", 7, 221 },
+    { "yacute;", 7, 253 },
+    { "yen;",    4, 165 },
+    { "yuml;",   5, 255 }
+  };
+
+
+  if (isdigit(*p)) return atoi(p);
+
+  for (i = (int)(sizeof(names) / sizeof(names[0])), nameptr = names; i > 0; i --, nameptr ++)
+    if (strncmp(p, nameptr->name, nameptr->namelen) == 0)
+      return nameptr->code;
+
+  return -1;
+}
+
+
+//
 // 'scrollbar_callback()' - A callback for the scrollbar.
 //
 
@@ -2497,5 +2543,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.15 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.16 2001/11/26 20:13:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.1 2001/11/26 20:13:29 easysw Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -16,7 +16,7 @@
 // Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
+// License along with this7 library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
@@ -46,6 +46,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   case 'P': type = FL_BOLD | FL_ITALIC; break;
   default:  type = 0; break;
   }
+  if (ap) *ap = type;
   if (!type) return p+1;
   static char *buffer; if (!buffer) buffer = new char[128];
   strcpy(buffer, p+1);
@@ -90,5 +91,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.1 2001/11/26 20:13:29 easysw Exp $".
 //
