@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_x.cxx,v 1.5.2.3 2002/03/07 19:22:58 spitzak Exp $"
+// "$Id: fl_dnd_x.cxx,v 1.5.2.4 2002/04/10 19:22:45 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -65,7 +65,7 @@ static int dnd_aware(Window& window) {
 
 static int grabfunc(int event) {
   if (event == FL_RELEASE) Fl::pushed(0);
-  return false;
+  return 0;
 }
 
 extern int (*fl_local_grab)(int); // in Fl.cxx
@@ -162,10 +162,10 @@ int Fl::dnd() {
 
   fl_local_grab = 0;
   Fl::first_window()->cursor(FL_CURSOR_DEFAULT);
-  return true;
+  return 1;
 }
 
 
 //
-// End of "$Id: fl_dnd_x.cxx,v 1.5.2.3 2002/03/07 19:22:58 spitzak Exp $".
+// End of "$Id: fl_dnd_x.cxx,v 1.5.2.4 2002/04/10 19:22:45 easysw Exp $".
 //
