@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.8 1999/02/16 21:59:47 mike Exp $"
+// "$Id: fl_draw.H,v 1.9 1999/02/18 13:12:50 mike Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -42,24 +42,6 @@ FL_EXPORT void fl_push_no_clip();
 FL_EXPORT void fl_pop_clip();
 FL_EXPORT int fl_not_clipped(int x, int y, int w, int h);
 FL_EXPORT int fl_clip_box(int, int, int, int, int& x, int& y, int& w, int& h);
-
-// line style:
-// Enumerations chosen so zero is the default, unfortunatly this does
-// not match values for either X or Windows...
-enum Fl_LineStyle {
-  FL_SOLID	=      0,
-  FL_DASH	=      1,
-  FL_DOT	=      2,
-  FL_DASHDOT	=      3,
-  FL_DASHDOTDOT	=      4,
-  FL_CAP_FLAT	= 0x0100,
-  FL_CAP_ROUND	= 0x0200,
-  FL_CAP_SQUARE	= 0x0300,
-  FL_JOIN_MITER	= 0x1000,
-  FL_JOIN_ROUND	= 0x2000,
-  FL_JOIN_BEVEL	= 0x3000,
-};
-FL_EXPORT void fl_line_style(int style, int width = 0, char* dashes = 0);
 
 // points:
 FL_EXPORT void fl_point(int x, int y);
@@ -179,5 +161,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.8 1999/02/16 21:59:47 mike Exp $".
+// End of "$Id: fl_draw.H,v 1.9 1999/02/18 13:12:50 mike Exp $".
 //

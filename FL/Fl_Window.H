@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.11 1999/02/16 21:59:47 mike Exp $"
+// "$Id: Fl_Window.H,v 1.12 1999/02/18 13:12:50 mike Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -88,7 +88,7 @@ public:
   const char* xclass() const	{return xclass_;}
   void xclass(const char* c)	{xclass_ = c;}
   const void* icon() const	{return icon_;}
-  void icon(const void * i)	{icon_ = i;}
+  void icon(const void * ic)	{icon_ = ic;}
 
   int shown() {return i != 0;}
   virtual FL_EXPORT void show();
@@ -113,5 +113,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.11 1999/02/16 21:59:47 mike Exp $".
+// End of "$Id: Fl_Window.H,v 1.12 1999/02/18 13:12:50 mike Exp $".
 //
