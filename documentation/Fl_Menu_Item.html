@@ -285,9 +285,10 @@ does not match any shortcuts then <TT>NULL</TT> is returned.  This only
 matches the <TT>shortcut()</TT> fields, not the letters in the title 
 preceeded by ' 
 <H4><A name=Fl_Menu_Item.size>int Fl_Menu_Item::size()</A></H4>
- Return the offset of the <TT>NULL</TT> terminator that ends this menu, 
-correctly skipping over submenus.  To copy a menu you should copy <TT>
-size() + 1</TT> structures. 
+ Returns the number of Fl_Menu_Item structures that make up this menu,
+correctly counting submenus.  This includes the "terminator" item at
+the end.  So to copy a menu you need to copy
+<tt>size()*sizeof(Fl_Menu_Item)</tt> bytes.
 <H4><A name=Fl_Menu_Item.next>const Fl_Menu_Item* 
 Fl_Menu_Item::next(int n=1) const
 <BR> Fl_Menu_Item* Fl_Menu_Item::next(int n=1);</A></H4>
