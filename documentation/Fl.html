@@ -46,6 +46,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.check">check</A></LI>
 	<LI><A HREF="#Fl.compose">compose</A></LI>
 	<LI><A HREF="#Fl.compose_reset">compose_reset</A></LI>
+	<LI><A HREF="#Fl.copy">copy</A></LI>
 	<LI><A HREF="#Fl.damage">damage</A></LI>
 	<LI><A HREF="#Fl.default_atclose">default_atclose</A></LI>
 	<LI><A HREF="#Fl.display">display</A></LI>
@@ -452,6 +453,14 @@ The next call to Fl::compose() will start out in an initial state.  In
 particular it will not set "del" to non-zero. This call is very fast
 so it is ok to call it many times and in many places.
 
+<H4><A NAME="Fl.copy">void copy(const char *stuff, int len, int clipboard);</A></H4>
+
+<P>Copies the data pointed to by <TT>stuff</TT> to the selection
+(0) or primary (1) clipboard.  The selection clipboard is used
+for middle-mouse pastes and for drag-and-drop selections. The
+primary clipboard is used for traditional copy/cut/paste
+operations.
+
 <H4><A NAME="Fl.damage">int damage();<BR>
 void damage(int x);</A></H4>
 
@@ -493,11 +502,19 @@ prints the error message to <TT>stderr</TT> and returns.
 
 <H4><A NAME="Fl.event_alt">int event_alt();</A></H4>
 
+<P>Returns non-zero if the Alt key is pressed.
+
 <H4><A NAME="Fl.event_button1">int event_button1();</A></H4>
+
+<P>Returns non-zero if button 1 is pressed.
 
 <H4><A NAME="Fl.event_button2">int event_button2();</A></H4>
 
+<P>Returns non-zero if button 2 is pressed.
+
 <H4><A NAME="Fl.event_button3">int event_button3();</A></H4>
+
+<P>Returns non-zero if button 3 is pressed.
 
 <H4><A NAME="Fl.event_button">int event_button();</A></H4>
 
@@ -506,6 +523,9 @@ most recent event was not a <tt>FL_PUSH</tt> or <tt>FL_RELEASE</tt>
 event.
 
 <H4><A NAME="Fl.event_buttons">int event_buttons();</A></H4>
+
+<P>Returns the button state bits; if non-zero, then at least one
+button is pressed.
 
 <H4><A NAME="Fl.event_clicks">int event_clicks();</A></H4>
 
@@ -520,7 +540,13 @@ later code does not think an item was double-clicked.
 
 <H4><A NAME="Fl.event_ctrl">int event_ctrl();</A></H4>
 
+<P>Returns non-zero if the Control key is pressed.
+
 <H4><A NAME="Fl.event">int event();</A></H4>
+
+<P>Returns the last event that was processed. This can be used
+to determine if a callback is being done in response to a
+keypress, mouse click, etc.
 
 <H4><A NAME="Fl.event_inside">int event_inside(int,int,int,int);<BR>
 int event_inside(const Fl_Widget*);</A></H4>
@@ -597,6 +623,8 @@ be a nul before that if the keystroke translates to a nul character or
 you paste a nul character.
 
 <H4><A NAME="Fl.event_shift">int event_shift();</A></H4>
+
+<P>Returns non-zero if the Shift key is pressed.
 
 <H4><A NAME="Fl.event_state">int event_state();<BR>
 int event_state(int i);</A></H4>
@@ -999,7 +1027,7 @@ or the <TT>scheme</TT> resource under X11.
 copied to an internal buffer by FLTK (be careful if doing this in
 response to an <tt>FL_PASTE</tt> as this <I>may</I> be the same buffer
 returned by <tt>event_text()</tt>).  The <tt>selection_owner()</tt>
-widget is set to the passed owner (possibly sending <tt>
+widget is set to the passed owner.
 
 <H4><A NAME="Fl.selection_owner">Fl_Widget* selection_owner();<BR>
 void selection_owner(Fl_Widget*);</A></H4>
