@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.17 2002/08/14 16:19:48 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.18 2002/08/14 17:05:38 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -69,9 +69,13 @@ class FL_EXPORT Fl_Widget {
 
   const char *tooltip_;
 
-  // "de-implement" the copy constructors:
+#  if defined(WIN32) && !defined(FL_DLL)
+  // "de-implement" the copy constructors, EXCEPT for when we are using the WIN32 DLL
+  // interface, in which case we can't hide them because Microsoft requires the copy
+  // constructors to implement subclassing...
   Fl_Widget & operator=(const Fl_Widget &);
   Fl_Widget(const Fl_Widget &);
+#  endif // WIN32 && !FL_DLL
 
 protected:
 
@@ -212,5 +216,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.17 2002/08/14 16:19:48 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.18 2002/08/14 17:05:38 easysw Exp $".
 //
