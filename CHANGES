@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- fl_draw() didn't properly handle a trailing escaped
+	  "@" character (STR #84)
 	- Added documentation for all forms of
 	  Fl_Widget::damage() (STR #61)
 	- Fl_Double_Window now has a type() value of
