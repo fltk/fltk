@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9 1999/03/10 20:06:37 mike Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.1 1999/03/13 20:20:37 bill Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -206,17 +206,11 @@ void Fl_Browser::data(int line, void* data) {
 int Fl_Browser::item_height(void* lv) const {
   FL_BLINE* l = (FL_BLINE*)lv;
   if (l->flags & NOTDISPLAYED) return 0;
-  char* str = l->txt;
-  Fl_Font font;
-  int size;
-  int w, h;
   int hmax = 0;
 
-  for(;*str;str++)
-  {
-    w = 0; // no wrap
-    font = Fl_Font(0); // default font
-    size = textsize(); // default size
+  for (char* str = l->txt; *str; str++) {
+    Fl_Font font = Fl_Font(0); // default font
+    int size = textsize(); // default size
     while(*str==format_char())
     {
       str++;
@@ -235,14 +229,13 @@ int Fl_Browser::item_height(void* lv) const {
     }
     END_FORMAT:
     char* ptr = str;
-    for(;*str && (*str!=column_char());str++) ;
-    char prev = *str;
-    *str = 0;
-    fl_font(font,size);
-    fl_measure(ptr,w,h);
-    *str = prev;
-    if(h>hmax) hmax=h;
+    for(;*str && (*str!=column_char()); str++) ;
+    if (ptr < str) {
+      fl_font(font, size); int h = fl_height;
+      if (h > hmax) hmax = size;
+    }
   }
+
   return hmax+2;
 }
 
@@ -482,5 +475,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9 1999/03/10 20:06:37 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.1 1999/03/13 20:20:37 bill Exp $".
 //
