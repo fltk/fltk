@@ -1,5 +1,5 @@
 //
-// "$Id: message.cxx,v 1.5.2.3.2.3 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: message.cxx,v 1.5.2.3.2.4 2002/03/25 21:55:41 easysw Exp $"
 //
 // Message test program for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 int main(int, char **) {
   Fl::scheme(NULL);
 
-  fl_message("Spelling check sucessfull, %d errors found with %g%% confidence",
+  fl_message("Spelling check sucessful, %d errors found with %g%% confidence",
 	     1002, 100*(15/77.0));
 
   fl_alert("Quantum fluctuations in the space-time continuum detected, "
@@ -55,5 +55,5 @@ int main(int, char **) {
 }
 
 //
-// End of "$Id: message.cxx,v 1.5.2.3.2.3 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: message.cxx,v 1.5.2.3.2.4 2002/03/25 21:55:41 easysw Exp $".
 //
