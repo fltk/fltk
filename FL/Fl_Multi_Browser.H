@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Multi_Browser.H,v 1.4.2.3.2.3 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Multi_Browser.H,v 1.4.2.3.2.4 2004/09/29 15:05:48 easysw Exp $"
 //
 // Multi browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,12 +30,12 @@
 
 class Fl_Multi_Browser : public Fl_Browser {
 public:
-    Fl_Multi_Browser(int x,int y,int w,int h,const char *l=0)
-	: Fl_Browser(x,y,w,h,l) {type(FL_MULTI_BROWSER);}
+    Fl_Multi_Browser(int X,int Y,int W,int H,const char *L=0)
+	: Fl_Browser(X,Y,W,H,L) {type(FL_MULTI_BROWSER);}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Multi_Browser.H,v 1.4.2.3.2.3 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Multi_Browser.H,v 1.4.2.3.2.4 2004/09/29 15:05:48 easysw Exp $".
 //
