@@ -1,8 +1,12 @@
 CHANGES IN FLTK 1.1.0b7
 
 	- More documentation updates...
+	- Fl_Text_Display would lockup when all text was
+	  deleted; for example, when running the editor
+	  demo, you couldn't load a second file.
 	- Added Fl::lock() and friends from FLTK 2.0 to
-	  support multi-threaded applications.
+	  support multi-threaded applications; see the
+	  "threads" demo for an example of this.
 	- Fl_Check_Button and Fl_Round_Button now use the
 	  FL_NO_BOX box type to show the background of the
 	  parent widget.

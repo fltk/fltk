@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.6 2001/12/07 16:27:54 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.7 2001/12/08 20:46:33 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -760,9 +760,6 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   Fl_Text_Buffer *buf = textD->mBuffer;
   int scrolled, origCursorPos = textD->mCursorPos;
 
-  // refigure scrollbars & stuff
-  textD->resize(textD->x(), textD->y(), textD->w(), textD->h());
-
   /* buffer modification cancels vertical cursor motion column */
   if ( nInserted != 0 || nDeleted != 0 )
     textD->mCursorPreferredCol = -1;
@@ -792,6 +789,9 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
     else
       textD->mCursorPos += nInserted - nDeleted;
   }
+
+  // refigure scrollbars & stuff
+  textD->resize(textD->x(), textD->y(), textD->w(), textD->h());
 
   // don't need to do anything else if not visible?
   if (!textD->visible_r()) return;
@@ -1649,6 +1649,7 @@ int Fl_Text_Display::measure_vline( int visLineNum ) {
   int charCount = 0, lineStartPos = mLineStarts[ visLineNum ];
   char expandedChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
 
+  if (lineStartPos < 0) return 0;
   if ( mStyleBuffer == NULL ) {
     for ( i = 0; i < lineLen; i++ ) {
       len = mBuffer->expand_character( lineStartPos + i,
@@ -1955,5 +1956,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.6 2001/12/07 16:27:54 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.7 2001/12/08 20:46:33 easysw Exp $".
 //
