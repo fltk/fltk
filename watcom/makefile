@@ -75,6 +75,17 @@ RO  : .SYMBOLIC
     @set OPTIONS=D=r O=o ROOT=$(ROOT) PROJ=$(PROJ) EXTRA_INCLUDE_DIRS=$(ROOT)
     %make BuildOne
 
+#
+# Linux Debug and Release targets. Environment variable XLIB must point to a directory
+# which has a subdirectory X11 with X include files. Builds only jpeg, zlib and png libs for now.
+#
+DL  : .SYMBOLIC
+    @set OPTIONS=D=d O=l ROOT=$(ROOT) PROJ=$(PROJ) EXTRA_INCLUDE_DIRS=$(ROOT);$(%XLIB)
+    %make BuildOne
+
+RL  : .SYMBOLIC
+    @set OPTIONS=D=r O=l ROOT=$(ROOT) PROJ=$(PROJ) EXTRA_INCLUDE_DIRS=$(ROOT);$(%XLIB)
+    %make BuildOne
 
 # Internal target to build the individual modules. The following macros must
 # have been set: D (value D or R), O (D,O,W,L)

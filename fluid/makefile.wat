@@ -1,5 +1,5 @@
 #
-# "$Id: makefile.wat,v 1.1.2.1 2004/11/20 03:19:58 easysw Exp $"
+# "$Id: makefile.wat,v 1.1.2.2 2004/11/21 14:32:21 easysw Exp $"
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,7 +23,7 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-CPPFILES = &
+OBJECTS = &
     Fl_Function_Type.obj &
     Fl_Menu_Type.obj &
     Fl_Group_Type.obj &
@@ -34,17 +34,18 @@ CPPFILES = &
     code.obj &
     factory.obj &
     file.obj &
-    fluid.obj &
     align_widget.obj &
     about_panel.obj &
     widget_panel.obj &
     alignment_panel.obj &
     function_panel.obj
 
+#   fluid.obj should not be in the list, because the watcom.mif file
+#   assumes an object file with the same name as the target executable
+
 ################################################################
 
-OBJECTS = $(CPPFILES)
-EXTRA_LIBS = uuid.lib
+EXTRA_LIBS = wsock32
 
 !include ../watcom.mif
 
@@ -73,5 +74,5 @@ rebuild:
     ./fluid -c widget_panel.fl
 
 #
-# End of "$Id: makefile.wat,v 1.1.2.1 2004/11/20 03:19:58 easysw Exp $".
+# End of "$Id: makefile.wat,v 1.1.2.2 2004/11/21 14:32:21 easysw Exp $".
 #

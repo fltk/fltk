@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.6
 
 	- Documentation updates (STR #608)
+	- Fl_Sys_Menu_Bar didn't compile on case-sensitive
+	  file-systems (STR #622)
 	- FLUID didn't handle default function parameters
 	  properly (STR #579)
 	- Moving or resizing widgets in FLUID didn't always
@@ -14,7 +16,8 @@ CHANGES IN FLTK 1.1.6
 	- Fixed the scandir() conditional code for HP-UX 11i
 	  (STR #585)
 	- Fl_Text_Display didn't support CTRL/CMD-A/C (STR #601)
-	- Watcom fixes (STR #581, STR #584, STR #594, STR #595)
+	- Watcom fixes (STR #581, STR #584, STR #594, STR #595,
+	  STR #623)
 	- Fixed library include order when building DSOs on
 	  MacOS X (STR #596)
 	- fl_xid() could cause a WIN32 application to crash (STR

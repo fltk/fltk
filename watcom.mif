@@ -77,10 +77,19 @@ TARGET=linux
 !  endif
 !endif
 
-!ifeq TARGET os2
-WATCOMTARGET=os2v2
+#
+# Now we know the target. Determine the link target. For fltk, this
+# is always GUI for Windows and OS/2. For possible link targets (aliases
+# for a set of linker directives) see wlsystem.lnk in Watcom's BINW directory.
+#
+!ifeq TARGET dos
+LINKTARGET=dos32a
+!else ifeq TARGET os2
+LINKTARGET=os2v2_pm
+!else ifeq TARGET nt
+LINKTARGET=nt_win
 !else
-WATCOMTARGET=$(TARGET)
+LINKTARGET=linux
 !endif
 
 #
@@ -119,7 +128,7 @@ LIBNAMEIMG = $(LIBDIR)$(LIBNAMEROOT)_img_$(D)$(O).lib
 LIBS = $(LIBNAME) $(LIBNAMEFL) $(LIBNAMEGL) $(LIBNAMEIMG)
 !endif
 
-# Set target environment options
+# Set target environment options for the project
 
 !ifeqi TARGET  nt                   # WINDOWS 32 bit
 SYSDEF= -DWIN32
@@ -129,7 +138,7 @@ EXEEXT=.exe
 !else ifeqi TARGET linux            # Linux Intel 32 bit generic
 SYSDEF=
 ASYSDEF=
-EXEEXT=
+EXEEXT=.exe                         # We need some exe extension else the build won't work
 
 !else ifeqi TARGET os2              # OS/2 32 bit
 SYSDEF=
@@ -173,9 +182,9 @@ EXEEXT=.exe
    @set INCLUDE=$(%WATCOM)\LH;$(EXTRA_INCLUDE_DIRS)
 !endif
 
-    @set LIB=$(LIBPATH)
+#    @set LIB=$(LIBPATH)
 #    @echo Top dir: $(PROJ)
-#    @echo Include dirs: $(%INCLUDE)
+    @echo Include dirs: $(%INCLUDE)
 #    @echo Lib dirs: $(LIBDIRS)
 #    @echo Libname=$(LIBNAME)
 #    @echo extra libs: $(LIBS)
@@ -189,7 +198,7 @@ EXEEXT=.exe
 !ifeqi D d
 WCADEBUG=-d1                        # debug opts for wasm
 WCCDEBUG=-d2 -s -ors                # debug opts for wcc. NOTE: -we is to make errors of all warnings
-WCLDEBUG=d d all                    # debug opts for wlink
+WCLDEBUG=d all                      # debug opts for wlink
 # WCCTIMING=-et         # if added to CC command line will generate timing file after execution
 !else
 #
@@ -218,27 +227,14 @@ WCCDEBUG= -ors -s                              # release opts for wcc
 !loaddll wlink  wlink
 !loaddll wlib   wlibd
 
-!ifeqi O D
-LIBPATH=$(%WATCOM)\lib386;$(%WATCOM)\lib386\dos;
-SYSLIBS=
-!else ifeqi O O
-LIBPATH=$(%WATCOM)\lib386;$(%WATCOM)\lib386\os2
-SYSLIBS=
-!else ifeqi O W
-LIBPATH=$(%WATCOM)\lib386;$(%WATCOM)\lib386\nt
-SYSLIBS=netapi32.lib wsock32.lib mpr.lib glu32.lib opengl32.lib
-!else ifeqi O L
-LIBPATH=$(%WATCOM)\lib386;$(%WATCOM)\lib386\linux
-SYSLIBS=
-!endif
 CCOPTS0=-6r -zq
 CCOPTS1=$(WCCDEBUG) -bt=$(TARGET) -fp6 -fpi87 # 1st part of Watcom opts
-CCOPTS2=-mf -wce=130 -wx -zm -zq                # -j # 2nd part of Watcom opts
-CCOPTS3=-fo$(ODIR)\$^&.obj                      # 3rd part Watcom opts
+CCOPTS2=-mf -wce=130 -wx -zq                  # -j # 2nd part of Watcom opts
+CCOPTS3=-fo$(ODIR)\$^&.obj                    # 3rd part Watcom opts
 COPTS=-zm
-CPPOPTS=-zm -zv -fx
+CPPOPTS=-zmf -zv -fx
 
-LNOPTS=sys $(WATCOMTARGET) $(WCLDEBUG) op symf,q,m,el,vfr op st=32k ru native libpath $(LIBPATH) # linker options
+LNOPTS=sys $(LINKTARGET) $(WCLDEBUG) op symf,q,m,el,vfr op st=32k # linker options
 LIBOPTS= -b -q -p=512 -c                     # librarian options
 LN=wlink                                     # Watcom linker
 AS=wasm                                      # Watcom assembler
