@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.16 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.17 2002/06/13 19:35:59 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -49,6 +49,8 @@
 #elif defined(WIN32)
 #  include <windows.h>
 #  include <direct.h>
+// Apparently Borland C++ defines DIRECTORY in <direct.h>, which
+// interfers with the Fl_File_Icon enumeration of the same name.
 #  ifdef DIRECTORY
 #    undef DIRECTORY
 #  endif // DIRECTORY
@@ -637,5 +639,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.16 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.17 2002/06/13 19:35:59 easysw Exp $".
 //

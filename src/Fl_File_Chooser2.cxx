@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.16 2002/06/13 18:18:33 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.17 2002/06/13 19:36:00 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -59,6 +59,11 @@
 #if defined(WIN32) && ! defined (__CYGWIN__)
 #  include <direct.h>
 #  include <io.h>
+// Apparently Borland C++ defines DIRECTORY in <direct.h>, which
+// interfers with the Fl_File_Icon enumeration of the same name.
+#  ifdef DIRECTORY
+#    undef DIRECTORY
+#  endif // DIRECTORY
 #else
 #  include <unistd.h>
 #  include <pwd.h>
@@ -1103,5 +1108,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.16 2002/06/13 18:18:33 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.17 2002/06/13 19:36:00 easysw Exp $".
 //

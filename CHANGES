@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0
 
+	- BC++ fixes.
 	- The pixmap_browser demo didn't check for a NULL image
 	  pointer.
 	- Fl_File_Icon::find() now uses fl_filename_isdir()

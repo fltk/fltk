@@ -1,17 +1,14 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {.h} 
-code_name {.cxx} 
-gridx 2 
-gridy 2 
-snap 2
+code_name {.cxx}
 class CubeViewUI {open
 } {
   Function {CubeViewUI()} {open
   } {
     Fl_Window mainWindow {
       label CubeView open
-      private xywh {428 124 419 406} box UP_BOX labelsize 12 resizable visible
+      private xywh {428 124 415 405} box UP_BOX labelsize 12 resizable visible
     } {
       Fl_Group {} {open
         xywh {5 3 374 399}
@@ -56,8 +53,8 @@ cube->redraw();}
             xywh {46 27 333 333} box DOWN_FRAME color 4 selection_color 69
           }
           Fl_Box cube {
-            label {This is the cube_view}
-            xywh {48 29 329 329}
+            label {This is the cube_view} selected
+            xywh {48 29 329 329} align 16
             code0 {\#include "CubeView.h"}
             class CubeView
           }
@@ -71,7 +68,7 @@ cube->redraw();}
       }
     }
   }
-  Function {show(int argc, char **argv)} {open selected
+  Function {show(int argc, char **argv)} {open
   } {
     code {mainWindow->show(argc, argv);} {}
   }
