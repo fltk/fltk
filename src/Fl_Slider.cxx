@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.5 1998/11/18 17:26:44 mike Exp $"
+// "$Id: Fl_Slider.cxx,v 1.6 1998/11/18 18:01:21 mike Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -85,7 +85,7 @@ int Fl_Slider::scrollvalue(int p, int w, int t, int l) {
 void Fl_Slider::draw_bg(int x, int y, int w, int h) {
   draw_box(box(), x, y, w, h, color());
   int BW = Fl::box_dx(box());
-  int black = active() ? FL_BLACK : inactive(FL_BLACK);
+  Fl_Color black = active_r() ? FL_BLACK : FL_INACTIVE_COLOR;
   if (type() == FL_VERT_NICE_SLIDER) {
     draw_box(FL_THIN_DOWN_BOX, x+w/2-2, y+BW, 4, h-2*BW, black);
   } else if (type() == FL_HOR_NICE_SLIDER) {
@@ -228,5 +228,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.5 1998/11/18 17:26:44 mike Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.6 1998/11/18 18:01:21 mike Exp $".
 //
