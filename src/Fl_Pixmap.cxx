@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.4 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.5 2001/11/19 20:59:59 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -82,7 +82,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       mask = fl_create_bitmask(w(), h(), bitmap);
 #if 0 // Don't think this is needed; try using fl_create_bitmask()...
 #ifdef WIN32 // Matt: mask done
-      // this won't work ehen the user changes display mode during run or
+      // this won't work when the user changes display mode during run or
       // has two screens with differnet depths
       static uchar hiNibble[16] =
       { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
@@ -387,7 +387,7 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
       }
 
 #ifdef WIN32
-      if (fl_parse_color(p, r, g, b) {
+      if (fl_parse_color(p, r, g, b)) {
 #else
       XColor x;
       if (XParseColor(fl_display, fl_colormap, p, &x)) {
@@ -405,7 +405,7 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
 	                                 data[color + 1][1], r, g, b);
         else sprintf(line, "%c c #%02X%02X%02X", data[color + 1][0], r, g, b);
 
-        delete[] data[color + 1];
+        delete[] (char *)data[color + 1];
 	((char **)data)[color + 1] = new char[strlen(line) + 1];
 	strcpy((char *)data[color + 1], line);
       }
@@ -415,8 +415,8 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
 
 void Fl_Pixmap::delete_data() {
   if (alloc_data) {
-    for (int i = 0; data[i]; i ++) delete[] data[i];
-    delete[] data;
+    for (int i = 0; data[i]; i ++) delete[] (char *)data[i];
+    delete[] (char **)data;
   }
 }
 
@@ -471,7 +471,7 @@ void Fl_Pixmap::desaturate() {
       }
 
 #ifdef WIN32
-      if (fl_parse_color(p, r, g, b) {
+      if (fl_parse_color(p, r, g, b)) {
 #else
       XColor x;
       if (XParseColor(fl_display, fl_colormap, p, &x)) {
@@ -486,7 +486,7 @@ void Fl_Pixmap::desaturate() {
 	                                 data[i + 1][1], g, g, g);
         else sprintf(line, "%c c #%02X%02X%02X", data[i + 1][0], g, g, g);
 
-        delete[] data[i + 1];
+        delete[] (char *)data[i + 1];
 	((char **)data)[i + 1] = new char[strlen(line) + 1];
 	strcpy((char *)data[i + 1], line);
       }
@@ -495,5 +495,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.4 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.5 2001/11/19 20:59:59 easysw Exp $".
 //

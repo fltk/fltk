@@ -255,10 +255,6 @@ SOURCE=..\src\fl_engraved_label.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_file_dir.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_File_Browser.cxx
 # End Source File
 # Begin Source File
@@ -271,7 +267,15 @@ SOURCE=..\src\Fl_File_Chooser2.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_file_dir.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_File_Icon.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_File_Icon2.cxx
 # End Source File
 # Begin Source File
 
@@ -284,6 +288,10 @@ SOURCE=..\src\Fl_get_key.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_get_system_colors.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_GIF_Image.cxx
 # End Source File
 # Begin Source File
 
@@ -312,6 +320,10 @@ SOURCE=..\src\Fl_Input.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_Input_.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_JPEG_Image.cxx
 # End Source File
 # Begin Source File
 
@@ -388,6 +400,10 @@ SOURCE=..\src\Fl_Pack.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_Pixmap.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_PNG_Image.cxx
 # End Source File
 # Begin Source File
 

@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.15.2.3.2.1 2001/11/18 20:52:27 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.2 2001/11/19 20:59:59 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -126,6 +126,8 @@ typedef HBITMAP Fl_Bitmask;
 extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
+extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
+
 //
-// End of "$Id: win32.H,v 1.15.2.3.2.1 2001/11/18 20:52:27 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.2 2001/11/19 20:59:59 easysw Exp $".
 //

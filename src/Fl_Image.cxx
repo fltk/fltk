@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.4 2001/11/19 20:59:59 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -58,7 +58,7 @@ void Fl_Image::label(Fl_Menu_Item* m) {
 
 Fl_RGB_Image::~Fl_RGB_Image() {
   if (id) fl_delete_offscreen((Fl_Offscreen)id);
-  if (alloc_array) delete[] array;
+  if (alloc_array) delete[] (uchar *)array;
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
@@ -212,7 +212,7 @@ void Fl_RGB_Image::desaturate() {
     }
 
   // Free the old array as needed, and then set the new pointers/values...
-  if (alloc_array) delete[] array;
+  if (alloc_array) delete[] (uchar *)array;
 
   array       = new_array;
   alloc_array = 1;
@@ -232,7 +232,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
   if (!id) {
-    id = (ulong)fl_create_offscreen(w(), h());
+    id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
     fl_draw_image(array, 0, 0, w(), h(), d, ld);
     fl_end_offscreen();
@@ -394,5 +394,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.4 2001/11/19 20:59:59 easysw Exp $".
 //

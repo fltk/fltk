@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.H,v 1.1.2.1 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: Fl_JPEG_Image.H,v 1.1.2.2 2001/11/19 20:59:59 easysw Exp $"
 //
 // JPEG image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -32,11 +32,10 @@ class FL_EXPORT Fl_JPEG_Image : public Fl_RGB_Image {
   public:
 
   Fl_JPEG_Image(const char* filename);
-  virtual ~Fl_JPEG_Image();
 };
 
 #endif
 
 //
-// End of "$Id: Fl_JPEG_Image.H,v 1.1.2.1 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.H,v 1.1.2.2 2001/11/19 20:59:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.6 2001/11/03 05:11:34 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.7 2001/11/19 20:59:59 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,7 @@
 // Expands all unprintable characters to ^X or \nnn notation
 // Aligns them against the inside of the box.
 
+#define min(a,b) ((a)<(b)?(a):(b))
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
 
@@ -37,7 +38,6 @@
 #include <ctype.h>
 
 #define MAXBUF 1024
-#define min(a,b) ((a)<(b)?(a):(b))
 
 char fl_draw_shortcut;	// set by fl_labeltypes.cxx
 
@@ -327,5 +327,5 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.6 2001/11/03 05:11:34 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.7 2001/11/19 20:59:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.3 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.4 2001/11/19 20:59:59 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,94 @@
 #include <string.h>
 
 #ifdef WIN32 // Windows bitmask functions...
+// 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
+static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
+  // we need to pad the lines out to words & swap the bits
+  // in each byte.
+  int w1 = (w+7)/8;
+  int w2 = ((w+15)/16)*2;
+  uchar* newarray = new uchar[w2*h];
+  const uchar* src = data;
+  uchar* dest = newarray;
+  Fl_Bitmask id;
+  static uchar reverse[16] =	/* Bit reversal lookup table */
+  	      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+		0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+
+  for (int y=0; y < h; y++) {
+    for (int n = 0; n < w1; n++, src++)
+      *dest++ = (reverse[*src & 0x0f] & 0xf0) |
+	        (reverse[(*src >> 4) & 0x0f] & 0x0f);
+    dest += w2-w1;
+  }
+
+  id = CreateBitmap(w, h, 1, 1, newarray);
+
+  delete[] newarray;
+
+  return id;
+}
+
+// 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
+  // this won't work when the user changes display mode during run or
+  // has two screens with differnet depths
+  Fl_Bitmask id;
+  static uchar hiNibble[16] =
+  { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
+    0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
+  static uchar loNibble[16] =
+  { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
+    0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
+  int np  = GetDeviceCaps(fl_gc, PLANES);	//: was always one on sample machines
+  int bpp = GetDeviceCaps(fl_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
+  int Bpr = (bpp*w+7)/8;			//: bytes per row
+  int pad = Bpr&1, w1 = (w+7)/8, shr = ((w-1)&7)+1;
+  if (bpp==4) shr = (shr+1)/2;
+  uchar *newarray = new uchar[(Bpr+pad)*h];
+  uchar *dst = newarray;
+  const uchar *src = data;
+
+  for (int i=0; i<h; i++) {
+    // This is slooow, but we do it only once per pixmap
+    for (int j=w1; j>0; j--) {
+      uchar b = *src++;
+      if (bpp==1) {
+        *dst++ = ( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
+      } else if (bpp==4) {
+        for (int k=(j==1)?shr:4; k>0; k--) {
+          *dst++ = "\377\360\017\000"[b&3];
+          b = b >> 2;
+        }
+      } else {
+        for (int k=(j==1)?shr:8; k>0; k--) {
+          if (b&1) {
+            *dst++=0;
+	    if (bpp>8) *dst++=0;
+            if (bpp>16) *dst++=0;
+	    if (bpp>24) *dst++=0;
+	  } else {
+	    *dst++=0xff;
+	    if (bpp>8) *dst++=0xff;
+	    if (bpp>16) *dst++=0xff;
+	    if (bpp>24) *dst++=0xff;
+	  }
+
+	  b = b >> 1;
+        }
+      }
+    }
+
+    dst += pad;
+  }
+
+  id = CreateBitmap(w, h, np, bpp, newarray);
+  delete[] newarray;
+
+  return id;
+}
+
+Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data, int for_mask) {
   // we need to pad the lines out to words & swap the bits
   // in each byte.
   int w1 = (w+7)/8;
@@ -84,9 +171,9 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
   if ((cy+H) > h()) H = h()-cy;
   if (H <= 0) return;
-  if (!id) id = fl_create_bitmask(w(), h(), array);
-
 #ifdef WIN32
+  if (!id) id = fl_create_bitmap(w(), h(), array);
+
   HDC tempdc = CreateCompatibleDC(fl_gc);
   SelectObject(tempdc, (HGDIOBJ)id);
   SelectObject(fl_gc, fl_brush());
@@ -94,6 +181,8 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
   DeleteDC(tempdc);
 #else
+  if (!id) id = fl_create_bitmask(w(), h(), array);
+
   XSetStipple(fl_display, fl_gc, id);
   int ox = X-cx; if (ox < 0) ox += w();
   int oy = Y-cy; if (oy < 0) oy += h();
@@ -106,7 +195,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 
 Fl_Bitmap::~Fl_Bitmap() {
   if (id) fl_delete_bitmask(id);
-  if (alloc_array) delete[] array;
+  if (alloc_array) delete[] (uchar *)array;
 }
 
 void Fl_Bitmap::label(Fl_Widget* w) {
@@ -184,5 +273,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.3 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.4 2001/11/19 20:59:59 easysw Exp $".
 //
