@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.13 2002/11/19 16:37:34 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.14 2003/01/12 14:49:32 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -81,7 +81,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   char **new_data;	// Data array
 
   if ((GifFile = fopen(infname, "rb")) == NULL) {
-    Fl::error("Unable to open %s!", infname);
+    Fl::error("Fl_GIF_Image: Unable to open %s!", infname);
     return;
   }
 
@@ -92,7 +92,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   }
   if (b[0]!='G' || b[1]!='I' || b[2] != 'F') {
     fclose(GifFile);
-    Fl::error("%s is not a GIF file.\n", infname);
+    Fl::error("Fl_GIF_Image: %s is not a GIF file.\n", infname);
     return;
   }
   if (b[3]!='8' || b[4]>'9' || b[5]!= 'a')
@@ -135,7 +135,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     int i = NEXTBYTE;
     if (i<0) {
       fclose(GifFile);
-      Fl::error("%s: unexpected EOF",infname); 
+      Fl::error("Fl_GIF_Image: %s - unexpected EOF",infname); 
       return;
     }
     int blocklen;
@@ -257,7 +257,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     int i;
     if (CurCode < FreeCode) i = CurCode;
     else if (CurCode == FreeCode) {*tp++ = (uchar)FinChar; i = OldCode;}
-    else {fprintf(stderr,"%s : LZW Barf!\n",infname); break;}
+    else {Fl::error("Fl_GIF_Image: %s - LZW Barf!", infname); break;}
 
     while (i >= ColorMapSize) {*tp++ = Suffix[i]; i = Prefix[i];}
     *tp++ = FinChar = i;
@@ -373,5 +373,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.13 2002/11/19 16:37:34 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.14 2003/01/12 14:49:32 easysw Exp $".
 //

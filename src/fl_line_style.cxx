@@ -1,5 +1,5 @@
 //
-// "$Id: fl_line_style.cxx,v 1.3.2.3.2.10 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.11 2003/01/12 14:49:33 easysw Exp $"
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
@@ -47,8 +47,7 @@ void fl_line_style(int style, int width, char* dashes) {
   LOGBRUSH penbrush = {BS_SOLID,fl_RGB(),0}; // can this be fl_brush()?
   HPEN newpen = ExtCreatePen(s1, width, &penbrush, n, n ? a : 0);
   if (!newpen) {
-    // CET - FIXME - remove this debug fprintf()?
-    fprintf(stderr, "fl_line_style(): Could not create GDI pen object.\n");
+    Fl::error("fl_line_style(): Could not create GDI pen object.");
     return;
   }
   HPEN oldpen = (HPEN)SelectObject(fl_gc, newpen);
@@ -104,5 +103,5 @@ void fl_line_style(int style, int width, char* dashes) {
 
 
 //
-// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.10 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.11 2003/01/12 14:49:33 easysw Exp $".
 //

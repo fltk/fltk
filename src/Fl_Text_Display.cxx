@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.40 2002/12/26 01:15:32 matthiaswm Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.41 2003/01/12 14:49:33 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1359,7 +1359,7 @@ int Fl_Text_Display::position_to_line( int pos, int *lineNum ) {
     if ( empty_vlines() ) {
       if ( mLastChar < mBuffer->length() ) {
         if ( !position_to_line( mLastChar, lineNum ) ) {
-          fprintf( stderr, "Consistency check ptvl failed\n" );
+          Fl::error("Fl_Text_Display::position_to_line(): Consistency check ptvl failed");
           return 0;
         }
         return ++( *lineNum ) <= mNVisibleLines - 1;
@@ -1428,8 +1428,8 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
      prevent a potential infinite loop if X does not advance */
   stdCharWidth = TMPFONTWIDTH;   //mFontStruct->max_bounds.width;
   if ( stdCharWidth <= 0 ) {
-    fprintf( stderr, "Internal Error, bad font measurement\n" );
-    delete [] (char *)lineStr;
+    Fl::error("Fl_Text_Display::draw_vline(): bad font measurement");
+    free((void *)lineStr);
     return;
   }
 
@@ -1537,7 +1537,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
     }
   */
   if ( lineStr != NULL )
-    delete [] (char *)lineStr;
+    free((void *)lineStr);
 }
 
 /*
@@ -3038,5 +3038,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.40 2002/12/26 01:15:32 matthiaswm Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.41 2003/01/12 14:49:33 easysw Exp $".
 //
