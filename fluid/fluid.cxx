@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.3 2001/08/11 16:09:26 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.4 2001/09/13 18:21:40 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -362,10 +362,10 @@ Fl_Menu_Item Main_Menu[] = {
   {"New", 0, new_cb, 0},
   {"Open...", FL_CTRL+'o', open_cb, 0},
   {"Save", FL_CTRL+'s', save_cb, 0},
-  {"Save As...", FL_CTRL+'S', save_cb, (void*)1},
+  {"Save As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
   {"Merge...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
-  {"Write code", FL_CTRL+'C', write_cb, 0},
-  {"Write strings", FL_CTRL+'W', write_strings_cb, 0},
+  {"Write code", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
+  {"Write strings", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0},
   {"Quit", FL_CTRL+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
@@ -384,7 +384,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Ungroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
-  {"Overlays on/off",FL_CTRL+'O',toggle_overlays},
+  {"Overlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
   {"Preferences",FL_CTRL+'p',show_alignment_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
@@ -502,5 +502,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.3 2001/08/11 16:09:26 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.4 2001/09/13 18:21:40 easysw Exp $".
 //
