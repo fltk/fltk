@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.12 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.13 2002/04/01 16:19:32 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -42,13 +42,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <config.h>
 
-#if !HAVE_SNPRINTF
-extern "C" {
-extern int snprintf(char* str, size_t size, const char* fmt, ...);
-}
-#endif // !HAVE_SNPRINTF
+#include "../src/flstring.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -511,5 +506,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.12 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.13 2002/04/01 16:19:32 easysw Exp $".
 //
