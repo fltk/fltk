@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.cxx,v 1.5 1998/12/15 15:38:16 mike Exp $"
+// "$Id: Fl_Menu_Window.cxx,v 1.6 1999/01/04 19:25:00 mike Exp $"
 //
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
@@ -137,7 +137,7 @@ void Fl::grab(Fl_Window& w) {
 #endif
 }
 
-extern fl_send_extra_move(); // in Fl.cxx
+extern void fl_send_extra_move(); // in Fl.cxx
 
 void Fl::release() {
   grab_ = 0;
@@ -156,5 +156,5 @@ void Fl::release() {
 }
 
 //
-// End of "$Id: Fl_Menu_Window.cxx,v 1.5 1998/12/15 15:38:16 mike Exp $".
+// End of "$Id: Fl_Menu_Window.cxx,v 1.6 1999/01/04 19:25:00 mike Exp $".
 //

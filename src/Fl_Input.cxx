@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.6 1998/12/29 14:30:23 mike Exp $"
+// "$Id: Fl_Input.cxx,v 1.7 1999/01/04 19:24:59 mike Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -320,9 +320,8 @@ int Fl_Input::handle(int event) {
 
 Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 : Fl_Input_(x, y, w, h, l) {
-  box(FL_DOWN_BOX);
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.6 1998/12/29 14:30:23 mike Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.7 1999/01/04 19:24:59 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.8 1998/11/08 17:02:38 mike Exp $"
+// "$Id: Fl_Window.H,v 1.9 1999/01/04 19:24:57 mike Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,7 @@ class Fl_Window : public Fl_Group {
 
   const char* iconlabel_;
   const char* xclass_;
+  const void* icon_;
   // size_range stuff:
   short minw, minh, maxw, maxh;
   uchar dw, dh, aspect, size_range_set;
@@ -86,6 +87,8 @@ public:
   void label(const char* label, const char* iconlabel);
   const char* xclass() const	{return xclass_;}
   void xclass(const char* c)	{xclass_ = c;}
+  const void* icon() const	{return icon_;}
+  void icon(const void * i)	{icon_ = i;}
 
   int shown() {return i != 0;}
   virtual void show();
@@ -110,5 +113,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.8 1998/11/08 17:02:38 mike Exp $".
+// End of "$Id: Fl_Window.H,v 1.9 1999/01/04 19:24:57 mike Exp $".
 //

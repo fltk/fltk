@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.cxx,v 1.4 1998/10/21 14:20:16 mike Exp $"
+// "$Id: Fl_Pack.cxx,v 1.5 1999/01/04 19:25:01 mike Exp $"
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
@@ -50,37 +50,40 @@ void Fl_Pack::draw() {
   Fl_Widget*const* a = array();
   for (int i = children(); i--;) {
     Fl_Widget* o = *a++;
-    int X,Y,W,H;
-    if (horizontal()) {
-      X = current_position;
-      W = o->w();
-      Y = ty;
-      H = th;
-    } else {
-      X = tx;
-      W = tw;
-      Y = current_position;
-      H = o->h();
+    if (o->visible()) {
+      int X,Y,W,H;
+      if (horizontal()) {
+        X = current_position;
+        W = o->w();
+        Y = ty;
+        H = th;
+      } else {
+        X = tx;
+        W = tw;
+        Y = current_position;
+        H = o->h();
+      }
+      if (spacing_ && current_position>maximum_position &&
+  	  (X != o->x() || Y != o->y() || d&FL_DAMAGE_ALL)) {
+        fl_color(color());
+        if (horizontal())
+	  fl_rectf(maximum_position, ty, spacing_, th);
+        else
+	  fl_rectf(tx, maximum_position, tw, spacing_);
+      }
+      if (X != o->x() || Y != o->y() || W != o->w() || H != o->h()) {
+        o->resize(X,Y,W,H);
+        o->clear_damage(FL_DAMAGE_ALL);
+      }
+      if (d&FL_DAMAGE_ALL) draw_child(*o); else update_child(*o);
+      // child's draw() can change it's size, so use new size:
+      current_position += (horizontal() ? o->w() : o->h());
+      if (current_position > maximum_position)
+        maximum_position = current_position;
+      current_position += spacing_;
     }
-    if (spacing_ && current_position>maximum_position &&
-	(X != o->x() || Y != o->y() || d&FL_DAMAGE_ALL)) {
-      fl_color(color());
-      if (horizontal())
-	fl_rectf(maximum_position, ty, spacing_, th);
-      else
-	fl_rectf(tx, maximum_position, tw, spacing_);
-    }
-    if (X != o->x() || Y != o->y() || W != o->w() || H != o->h()) {
-      o->resize(X,Y,W,H);
-      o->clear_damage(FL_DAMAGE_ALL);
-    }
-    if (d&FL_DAMAGE_ALL) draw_child(*o); else update_child(*o);
-    // child's draw() can change it's size, so use new size:
-    current_position += (horizontal() ? o->w() : o->h());
-    if (current_position > maximum_position)
-      maximum_position = current_position;
-    current_position += spacing_;
   }
+
   if (horizontal()) {
     if (maximum_position < tx+tw) {
       fl_color(color());
@@ -94,6 +97,7 @@ void Fl_Pack::draw() {
     }
     th = maximum_position-ty;
   }
+
   tw += Fl::box_dw(box()); if (tw <= 0) tw = 1;
   th += Fl::box_dh(box()); if (th <= 0) th = 1;
   if (tw != w() || th != h()) {Fl_Widget::resize(x(),y(),tw,th); d = FL_DAMAGE_ALL;}
@@ -101,5 +105,5 @@ void Fl_Pack::draw() {
 }
 
 //
-// End of "$Id: Fl_Pack.cxx,v 1.4 1998/10/21 14:20:16 mike Exp $".
+// End of "$Id: Fl_Pack.cxx,v 1.5 1999/01/04 19:25:01 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.19 1998/12/08 21:08:50 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.20 1999/01/04 19:25:02 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,6 +32,8 @@
 #include <FL/win32.H>
 #include <FL/Fl_Window.H>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -508,28 +510,29 @@ int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
-  static char* class_name;
-  if (!class_name) {	// create a single WNDCLASS used for everything:
-    class_name = "FLTK";
-    WNDCLASSEX wc;
-    // Documentation states a device context consumes about 800 bytes
-    // of memory... so who cares? If 800 bytes per window is what it 
-    // takes to speed things up, I'm game.
-    //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
-    wc.lpfnWndProc = (WNDPROC)WndProc;
-    wc.cbClsExtra = wc.cbWndExtra = 0;
-    wc.hInstance = fl_display;
-    wc.hIcon = wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
-    //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
-    //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = class_name;
-    wc.cbSize = sizeof(WNDCLASSEX);
-    RegisterClassEx(&wc);
-  }
+  const char* class_name = w->xclass();
+  if (!class_name) class_name = "FLTK"; // create a "FLTK" WNDCLASS
+
+  WNDCLASSEX wc;
+  // Documentation states a device context consumes about 800 bytes
+  // of memory... so who cares? If 800 bytes per window is what it 
+  // takes to speed things up, I'm game.
+  //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
+  wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
+  wc.lpfnWndProc = (WNDPROC)WndProc;
+  wc.cbClsExtra = wc.cbWndExtra = 0;
+  wc.hInstance = fl_display;
+  if (!w->icon())
+    w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
+  wc.hIcon = wc.hIconSm = (HICON)w->icon();
+  wc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
+  //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
+  //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
+  wc.hbrBackground = NULL;
+  wc.lpszMenuName = NULL;
+  wc.lpszClassName = class_name;
+  wc.cbSize = sizeof(WNDCLASSEX);
+  RegisterClassEx(&wc);
 
   HWND parent;
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
@@ -615,8 +618,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->next = Fl_X::first;
   Fl_X::first = x;
 
-  // use w->xclass() to set the icon...
-
   x->wait_for_expose = 1;
   w->set_visible();
   w->handle(FL_SHOW); // get child windows to appear
@@ -632,18 +633,54 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
 ////////////////////////////////////////////////////////////////
 
-HINSTANCE fl_display;
+HINSTANCE fl_display = 0;
 
-int Fl_WinMain(HINSTANCE hInstance, LPSTR lpCmdLine, int nCmdShow,
-	       int (*mainp)(int, char**)) {
+extern "C" {
+extern int  __argc;
+extern char **__argv;
+extern int  main(int argc, char *argv[]);
+extern int  WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                           LPSTR lpCmdLine, int nCmdShow);
+}
+
+//
+// This WinMain() function can be overridden by an application and
+// is provided for compatibility with programs written for other
+// operating systems that conform to the ANSI standard entry point
+// "main()".  This will allow you to build a WIN32 Application
+// without any special settings.
+//
+// Currently the debug version of this library will create a
+// console window for your application so you can put printf()
+// statements for debugging or informational purposes.  Ultimately
+// we want to update this to always use the parent's console,
+// but at present we have not identified a function or API in
+// Microsoft(r) Windows(r) that allows for it.
+//
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                   LPSTR lpCmdLine, int nCmdShow) {
+  // Save the current instance in the fl_display variable...
   fl_display = hInstance;
 
-  int argc;
-  char **argv;
-  // test version for now:
-  argc = 1; char* testargv[] = {"test", 0}; argv = testargv;
+#ifdef _DEBUG
+  // If we are using compiling in debug mode, open a console window so
+  // we can see any printf's, etc...
+  //
+  // While we can detect if the program was run from the command-line -
+  // look at the CMDLINE environment variable, it will be "WIN" for
+  // programs started from the GUI - the shell seems to run all WIN32
+  // applications in the background anyways...
 
-  return mainp(argc, argv);
+  AllocConsole();
+  freopen("conin$", "r", stdin);
+  freopen("conout$", "w", stdout);
+  freopen("conout$", "w", stderr);
+#endif // _DEBUG
+
+  // Run the standard main entry point function...
+
+  return main(__argc, __argv);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -760,5 +797,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.19 1998/12/08 21:08:50 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.20 1999/01/04 19:25:02 mike Exp $".
 //

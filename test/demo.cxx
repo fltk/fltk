@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.4 1998/12/02 15:52:41 mike Exp $"
+// "$Id: demo.cxx,v 1.5 1999/01/04 19:25:06 mike Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -27,16 +27,16 @@
 #include <string.h>
 #include <stdlib.h>
 #if defined(WIN32) && !defined(CYGNUS)
-# include <direct.h>
-//# define chdir _chdir
+#  include <direct.h>
 #else
-# include <unistd.h>
+#  include <unistd.h>
 #endif
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/filename.H>
+#include <FL/x.H>
 
 /* The form description */
 
@@ -50,7 +50,7 @@ Fl_Button *but[9];
 void create_the_forms() {
   Fl_Widget *obj;
   form = new Fl_Window(370, 450);
-  obj = new Fl_Box(FL_FRAME_BOX,20,390,330,40,"Fltk Demonstration");
+  obj = new Fl_Box(FL_FRAME_BOX,20,390,330,40,"FLTK Demonstration");
   obj->color(FL_GRAY-4);
   obj->labelsize(24);
   obj->labelfont(FL_BOLD);
@@ -173,10 +173,6 @@ void push_menu(char nnn[])
     bn = numb2but(i,n-1);
     but[bn]->show();
     but[bn]->label(menus[men].iname[i]);
-//     if (menus[men].icommand[i][0] == '@')
-//       but[bn]->color(FL_GRAY-8);
-//     else
-//       but[bn]->color(FL_GRAY);
   }
   strcpy(stack[stsize],nnn);
   stsize++;
@@ -195,13 +191,33 @@ void pop_menu()
 void dobut(Fl_Widget *, long arg)
 /* handles a button push */
 {
+  char command[255];
   int men = find_menu(stack[stsize-1]);
   int n = menus[men].numb;
   int bn = but2numb( (int) arg, n-1);
   if (menus[men].icommand[bn][0] == '@')
     push_menu(menus[men].icommand[bn]);
-  else
-    system(menus[men].icommand[bn]);
+  else {
+#ifdef WIN32
+    STARTUPINFO		suInfo;		// Process startup information
+    PROCESS_INFORMATION	prInfo;		// Process information
+    
+    memset(&suInfo, 0, sizeof(suInfo));
+    suInfo.cb = sizeof(suInfo);
+
+#  ifdef _DEBUG
+    sprintf(command, "%sd.exe", menus[men].icommand[bn]);
+#  else
+    sprintf(command, "%s.exe", menus[men].icommand[bn]);
+#  endif // _DEBUG
+
+    CreateProcess(NULL, command, NULL, NULL, FALSE,
+                  NORMAL_PRIORITY_CLASS, NULL, NULL, &suInfo, &prInfo);
+#else
+    sprintf(command, "./%s &", menus[men].icommand[bn]);
+    system(command);
+#endif // WIN32
+  }
 }
 
 void doback(Fl_Widget *, void *) {pop_menu();}
@@ -272,5 +288,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.4 1998/12/02 15:52:41 mike Exp $".
+// End of "$Id: demo.cxx,v 1.5 1999/01/04 19:25:06 mike Exp $".
 //
