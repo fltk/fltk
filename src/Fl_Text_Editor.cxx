@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.11 2002/11/05 06:45:40 matthiaswm Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.12 2002/11/05 19:53:50 matthiaswm Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -93,8 +93,8 @@ static struct {
   { FL_Page_Up,   FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
   { FL_Page_Down, FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
 //{ FL_Clear,	  0,                        Fl_Text_Editor::delete_to_eol },
-//{ 'z',          FL_CTRL,                  Fl_Text_Editor::undo	  },
-//{ '/',          FL_CTRL,                  Fl_Text_Editor::undo	  },
+  { 'z',          FL_CTRL,                  Fl_Text_Editor::kf_undo	  },
+  { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo	  },
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },
   { FL_Delete,    FL_SHIFT,                 Fl_Text_Editor::kf_cut        },
   { 'c',          FL_CTRL,                  Fl_Text_Editor::kf_copy       },
@@ -105,6 +105,7 @@ static struct {
 
 #ifdef __APPLE__
   // Define CMD+key accelerators...
+  { 'z',          FL_COMMAND,               Fl_Text_Editor::kf_undo       },
   { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        },
   { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       },
   { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      },
@@ -386,6 +387,16 @@ int Fl_Text_Editor::kf_select_all(int, Fl_Text_Editor* e) {
   return 1;
 }
 
+int Fl_Text_Editor::kf_undo(int , Fl_Text_Editor* e) {
+  e->buffer()->unselect();
+  int crsr;
+  int ret = e->buffer()->undo(&crsr);
+  e->insert_position(crsr);
+  e->show_insert_position();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  return ret;
+}
+
 int Fl_Text_Editor::handle_key() {
 
   // Call fltk's rules to try to turn this into a printing character.
@@ -466,5 +477,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.11 2002/11/05 06:45:40 matthiaswm Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.12 2002/11/05 19:53:50 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.H,v 1.1.2.5 2002/11/05 06:45:40 matthiaswm Exp $"
+// "$Id: Fl_Text_Editor.H,v 1.1.2.6 2002/11/05 19:53:50 matthiaswm Exp $"
 //
 // Header file for Fl_Text_Editor class.
 //
@@ -88,6 +88,7 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
     static int kf_cut(int c, Fl_Text_Editor* e);
     static int kf_paste(int c, Fl_Text_Editor* e);
     static int kf_select_all(int c, Fl_Text_Editor* e);
+    static int kf_undo(int c, Fl_Text_Editor* e);
 
   protected:
     int handle_key();
@@ -102,6 +103,6 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
 #endif
 
 //
-// End of "$Id: Fl_Text_Editor.H,v 1.1.2.5 2002/11/05 06:45:40 matthiaswm Exp $".
+// End of "$Id: Fl_Text_Editor.H,v 1.1.2.6 2002/11/05 19:53:50 matthiaswm Exp $".
 //
 
