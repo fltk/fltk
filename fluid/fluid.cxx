@@ -857,6 +857,26 @@ void print_menu_cb(Fl_Widget *, void *) {
   print_panel->show();
 }
 
+// Quote a string for PostScript printing
+static const char *ps_string(const char *s) {
+  char *bufptr;
+  static char buffer[2048];
+
+
+  if (!s) {
+    buffer[0] = '\0';
+  } else {
+    for (bufptr = buffer; bufptr < (buffer + sizeof(buffer) - 3) && *s;) {
+      if (*s == '(' || *s == ')' || *s == '\\') *bufptr++ = '\\';
+      *bufptr++ = *s++;
+    }
+
+    *bufptr = '\0';
+  }
+
+  return (buffer);
+}
+
 // Actually print...
 void print_cb(Fl_Return_Button *, void *) {
   FILE		*outfile;		// Output file or pipe to print command
@@ -931,8 +951,14 @@ void print_cb(Fl_Return_Button *, void *) {
   } else {
     // Print to file...
     fl_ok = "Print";
-    const char *outname = fl_file_chooser("Print To", "PostScript (*.ps)", NULL);
+    const char *outname = fl_file_chooser("Print To", "PostScript (*.ps)", NULL, 1);
     fl_ok = "OK";
+
+    if (outname && !access(outname, 0)) {
+      if (fl_choice("The file \"%s\" already exists.\n"
+                    "Do you want to replace it?", "Cancel",
+		    "Replace", NULL, outname) == 0) outname = NULL;
+    }
 
     if (outname) outfile = fopen(outname, "w");
     else outfile = NULL;
@@ -987,11 +1013,23 @@ void print_cb(Fl_Return_Button *, void *) {
 	    "%%%%Pages: %d\n"
 	    "%%%%LanguageLevel: 1\n"
 	    "%%%%DocumentData: Clean7Bit\n"
-	    "%%%%DocumentNeededResources: font Helvetica\n"
+	    "%%%%DocumentNeededResources: font Helvetica-Bold\n"
 	    "%%%%Creator: FLUID %.4f\n"
 	    "%%%%CreationDate: %s\n"
 	    "%%%%Title: (%s)\n"
 	    "%%%%EndComments\n"
+	    "%%%%BeginProlog\n"
+	    "%%languagelevel 1 eq {\n"
+	    "  /rectfill {\n"
+	    "    newpath 4 2 roll moveto dup 0 exch rlineto exch 0 rlineto\n"
+	    "    neg 0 exch rlineto closepath fill\n"
+	    "  } bind def\n"
+	    "  /rectstroke {\n"
+	    "    newpath 4 2 roll moveto dup 0 exch rlineto exch 0 rlineto\n"
+	    "    neg 0 exch rlineto closepath stroke\n"
+	    "  } bind def\n"
+	    "%%} if\n"
+	    "%%%%EndProlog\n"
 	    "%%%%BeginSetup\n"
 	    "%%%%BeginFeature: *PageSize %s\n"
 	    "languagelevel 1 ne {\n"
@@ -1037,11 +1075,11 @@ void print_cb(Fl_Return_Button *, void *) {
         // Draw header...
 	fprintf(outfile,
 		"0 setgray\n"
-		"/Helvetica findfont 14 scalefont setfont\n"
+		"/Helvetica-Bold findfont 14 scalefont setfont\n"
 		"%d %d moveto (%s) show\n"
 		"%.1f %d moveto (%s) dup stringwidth pop -0.5 mul 0 rmoveto show\n"
 		"%d %d moveto (%d/%d) dup stringwidth pop neg 0 rmoveto show\n",
-	        left, top - 15, basename,
+	        left, top - 15, ps_string(basename),
 		0.5 * (left + right), top - 15, date,
 		right, top - 15, winpage + 1, num_windows);
 
@@ -1052,7 +1090,9 @@ void print_cb(Fl_Return_Button *, void *) {
 	float	border;			// Width of 1 pixel
         float	llx, lly,		// Lower-lefthand corner
 		urx, ury;		// Upper-righthand corner
+	Fl_Window *win;			// Window widget
 
+        win    = (Fl_Window *)(windows[winpage]->o);
 	pixels = windows[winpage]->read_image(w, h);
 
         // Figure out the window size, first at 100 PPI and then scaled
@@ -1079,39 +1119,113 @@ void print_cb(Fl_Return_Button *, void *) {
 	ury = 0.5 * (top - bottom + hh);
 
         // Draw a simulated window border...
+        fprintf(outfile,
+	        "0.75 setgray\n"			// Gray background
+	        "newpath %.2f %.2f %.2f 180 90 arcn\n"	// Top left 
+		"%.2f %.2f %.2f 90 0 arcn\n"		// Top right
+		"%.2f %.2f %.2f 0 -90 arcn\n"		// Bottom right
+		"%.2f %.2f %.2f -90 -180 arcn\n"	// Bottom left
+		"closepath gsave fill grestore\n"	// Fill
+		"0 setlinewidth 0 setgray stroke\n",	// Outline
+		llx, ury + 12 * border, 4 * border,
+		urx, ury + 12 * border, 4 * border,
+		urx, lly, 4 * border,
+		llx, lly, 4 * border);
+
+        // Title bar...
 	if (output_mode & 2) {
 	  fputs("0.25 setgray\n", outfile);
 	} else {
 	  fputs("0.1 0.2 0.6 setrgbcolor\n", outfile);
 	}
 
-        fprintf(outfile,
-	        "newpath %.2f %.2f %.2f 180 90 arcn\n"	// Top left 
-		"%.2f %.2f %.2f 90 0 arcn\n"		// Top right
-		"%.2f %.2f %.2f 0 -90 arcn\n"		// Bottom right
-		"%.2f %.2f %.2f -90 -180 arcn\n"	// Bottom left
-		"closepath fill\n",			// Fill
-		llx, ury + 12 * border, 4 * border,
-		urx, ury + 12 * border, 4 * border,
-		urx, lly, 4 * border,
-		llx, lly, 4 * border);
+        fprintf(outfile, "%.2f %.2f %.2f %.2f rectfill\n",
+	        llx + 12 * border, ury,
+		ww - (24 + 16 * (!win->modal() || win->resizable()) +
+		      16 * (!win->modal() && win->resizable())) * border,
+		16 * border);
 
-        if (windows[winpage]->label()) {
+        if (win->resizable()) {
+	  fprintf(outfile,
+		  "%.2f %.2f %.2f -90 -180 arcn\n"	// Bottom left
+	          "0 %.2f rlineto %.2f 0 rlineto 0 -%.2f rlineto closepath fill\n"
+		  "%.2f %.2f %.2f 0 -90 arcn\n"	// Bottom right
+	          "-%.2f 0 rlineto 0 %.2f rlineto %.2f 0 rlineto closepath fill\n",
+		  llx, lly, 4 * border,
+		  12 * border, 16 * border, 16 * border,
+		  urx, lly, 4 * border,
+		  12 * border, 16 * border, 16 * border);
+	}
+
+        // Inside outline and button shading...
+        fprintf(outfile,
+	        "%.2f setlinewidth 0.5 setgray\n"
+		"%.2f %.2f %.2f %.2f rectstroke\n"
+		"%.2f %.2f moveto 0 %.2f rlineto\n"
+		"%.2f %.2f moveto 0 %.2f rlineto\n",
+		border,
+		llx - 0.5 * border, lly - 0.5 * border, ww + border, hh + border,
+		llx + 12 * border, ury, 16 * border,
+		urx - 12 * border, ury, 16 * border);
+
+        if (!win->modal() || win->resizable()) {
+	  fprintf(outfile, "%.2f %.2f moveto 0 %.2f rlineto\n",
+	          urx - 28 * border, ury, 16 * border);
+	}
+
+        if (!win->modal() && win->resizable()) {
+	  fprintf(outfile, "%.2f %.2f moveto 0 %.2f rlineto\n",
+	          urx - 44 * border, ury, 16 * border);
+	}
+
+        fprintf(outfile, "%.2f %.2f moveto %.2f 0 rlineto stroke\n",
+		llx - 3.5 * border, ury + 0.5 * border, ww + 7 * border);
+
+        // Button icons...
+        fprintf(outfile,
+	        "%.2f setlinewidth 0 setgray\n"
+		"%.2f %.2f moveto %.2f -%.2f rlineto %.2f %.2f rlineto\n"
+		"%.2f %.2f moveto -%.2f -%.2f rlineto 0 %.2f rmoveto %.2f -%.2f rlineto\n",
+		2 * border,
+		llx, ury + 10 * border, 4 * border, 4 * border, 4 * border, 4 * border,
+		urx, ury + 12 * border, 8 * border, 8 * border, 8 * border, 8 * border, 8 * border);
+
+        float x = urx - 16 * border;
+
+        if (win->resizable()) {
+	  // Maximize button
+	  fprintf(outfile,
+	          "%.2f %.2f moveto -%.2f 0 rlineto 0 -%.2f rlineto "
+		  "%.2f 0 rlineto 0 %.2f rlineto\n",
+		  x, ury + 12 * border, 8 * border, 8 * border,
+		  8 * border, 8 * border);
+
+          x -= 16 * border;
+        }
+
+        if (!win->modal()) {
+	  // Minimize button
+	  fprintf(outfile,
+	          "%.2f %.2f moveto -%.2f 0 rlineto\n",
+		  x, ury + 4 * border, 8 * border);
+        }
+
+        fputs("stroke\n", outfile);
+
+        if (win->label()) {
 	  // Add window title...
 	  fprintf(outfile,
 		  "1 setgray\n"
-		  "/Helvetica findfont %.2f scalefont setfont\n"
-		  "%.2f %.2f moveto\n"
-		  "(%s) dup stringwidth pop -0.5 mul 0 rmoveto show\n",
+		  "/Helvetica-Bold findfont %.2f scalefont setfont\n"
+		  "(%s) %.2f %.2f moveto show\n",
 		  12 * border,
-		  0.5 * (llx + urx), ury + 4 * border,
-		  windows[winpage]->label());
+		  ps_string(win->label()), llx + 16 * border, ury + 4 * border);
 	}
 
         fprintf(outfile,
 	        "gsave\n"
 		"%.2f %.2f translate %.2f %.2f scale\n",
-		llx, ury, border, border);
+		llx, ury - border, border, border);
 
         if (output_mode & 2) {
 	  // Grayscale image...
