@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.4 2001/12/20 05:27:14 matthiaswm Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -146,10 +146,18 @@ void fl_begin_offscreen(GWorldPtr gWorld) {
   GetGWorld( &prevPort, &prevGD );
   if ( gWorld )
   {
-    SetGWorld( gWorld, 0L ); // sets the correct port
+    SetGWorld( gWorld, 0 ); // sets the correct port
     PixMapHandle pm = GetGWorldPixMap(gWorld);
-    LockPixels(pm);
-    fl_window = GetWindowFromPort( gWorld );
+    Boolean ret = LockPixels(pm);
+    if ( ret == false )
+    {
+      Rect rect;
+      GetPortBounds( gWorld, &rect );
+      UpdateGWorld( &gWorld, 0, &rect, 0, 0, 0 );
+      pm = GetGWorldPixMap( gWorld );
+      LockPixels( pm );
+    }
+    fl_window = 0;
   }
   fl_push_no_clip();
 }
@@ -190,7 +198,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #ifdef __APPLE__
     // the Apple OS X window manager double buffers ALL windows anyway, so there is no need to waste memory and time
     // BTW: Windows2000 and later also forces doublebuffering if transparent windows are beeing used (alpha channel)
-    if ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) )
+    if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) || force_doublebuffering_ )
       myi->other_xid = fl_create_offscreen(w(), h());
 #else
     myi->other_xid = fl_create_offscreen(w(), h());
@@ -233,12 +241,14 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     DeleteDC(fl_gc);
     fl_gc = _sgc;
 #elif defined(__APPLE__)
-    if ( myi->other_xid ) fl_begin_offscreen( myi->other_xid );
-    fl_restore_clip(); // duplicate region into new gc
-    draw();
-    if ( myi->other_xid ) fl_end_offscreen(); 
-  } else {
-    fl_clip_region( 0 );   
+    if ( myi->other_xid ) {
+      fl_begin_offscreen( myi->other_xid );
+      fl_clip_region( 0 );   
+      draw();
+      fl_end_offscreen();
+    } else {
+      draw();
+    }
 #else // X:
     fl_window = myi->other_xid;
     draw();
@@ -286,5 +296,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.4 2001/12/20 05:27:14 matthiaswm Exp $".
 //

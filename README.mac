@@ -29,8 +29,8 @@ Mac OS X platform:
 
     - (MPW - future releases)
 
-FLTK for Mac is carbonized, i.e. all applications should run on Mac
-OS 8.1 and higher and OS X without changes.
+FLTK for Mac is fully carbonized, i.e. all applications should run 
+on Mac OS 8.1 and higher and OS X without changes.
 
 
 gcc (Carbon) - how to build
@@ -75,16 +75,13 @@ find . -name 'Make*' -exec $SET_MAC_TYPE {} \;
 echo "done."
 
 
-known MacFLTK bugs
-------------------
+known MacFLTK bugs and ToDo's
+-----------------------------
 
 - file handles not supported
-- timing not fully supported
-- line styles not fully supported
-- cut, copy, paste
+- line styles not fully implemented
+- cut, copy, paste not implemented
 - sub-sub-subwindow not tested
-- modal windows are not modal
-- overlay not complete
 - image transparency not implemented
 - 'shiny' needs work (flush/aglFlush)
 - threads not implemented
@@ -101,9 +98,9 @@ clock(++), colbrowser(++), color_chooser(++), cube(++), cursor(++),
 curve(++), demo(++), doublebuffer(++), editor(++), fast_slow(++),
 file_chooser(++), fonts(++), forms(++), fractals(++), fullscreen(++),
 gl_overlay(++), glpuzzle(++), hello(++), help(++), iconize(++), image(+),
-inactive(++), input(++), keyboard(+), label(++), line_style(+),
+inactive(++), input(++), keyboard(++), label(++), line_style(+),
 mandelbrot(++), menubar(++), message(++), minimum(++), navigation(++),
-output(++), overlay(-), pack(++), pixmap(++), pixmap_browser(++),
+output(++), overlay(++), pack(++), pixmap(++), pixmap_browser(++),
 radio(++), resizebox(++), scroll(++), shape(++), shiny(-), subwindow(++),
 symbols(++), tabs(++), tile(++), tiled_image(++), valuators(++), 
 fluid(++)
@@ -136,6 +133,8 @@ archive contains build files for Metrowerks CodeWarrior 5 and 6.
 FLTK 1.0.6 for Mac is not supported by the FLTK team and will not 
 be further developed by the author. Instead it will be replaced 
 by FLTK 1.1.x for Mac in the near future.
+
+  Matthias Melcher
 
 
 

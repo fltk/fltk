@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.H,v 1.7.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Double_Window.H,v 1.7.2.3.2.1 2001/12/20 05:27:14 matthiaswm Exp $"
 //
 // Double-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 class Fl_Double_Window : public Fl_Window {
 protected:
   FL_EXPORT void flush(int eraseoverlay);
+  char force_doublebuffering_; // force db, even if the OS already buffers windows (overlays need that on MacOS and Windows2000)
 public:
   FL_EXPORT void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}
@@ -38,13 +39,14 @@ public:
   FL_EXPORT void resize(int,int,int,int);
   FL_EXPORT void hide();
   FL_EXPORT ~Fl_Double_Window();
-  Fl_Double_Window(int W, int H, const char *l = 0) : Fl_Window(W,H,l) {}
+  Fl_Double_Window(int W, int H, const char *l = 0) 
+    : Fl_Window(W,H,l), force_doublebuffering_(0) {}
   Fl_Double_Window(int X, int Y, int W, int H, const char *l = 0)
-    : Fl_Window(X,Y,W,H,l) {}
+    : Fl_Window(X,Y,W,H,l), force_doublebuffering_(0) {}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Double_Window.H,v 1.7.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Double_Window.H,v 1.7.2.3.2.1 2001/12/20 05:27:14 matthiaswm Exp $".
 //

@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- MacOS: fixed iBook keyboard handling, moved 
+	  remaining message handling to Carbon, added mouse
+	  capture support, added timer support, added overlay
+	  support, fixed doublebuffering side effects.
 	- The configure script wasn't using the -fpermissive or
 	  -fno-exceptions options with GCC.
 	- Fl_JPEG_Image and friends didn't set the depth if the

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.7 2001/12/19 09:10:00 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.8 2001/12/20 05:27:14 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,22 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
+
+/**
+ * From the inner edge of a MetroWerks CodeWarrior CD:
+ * (without permission)
+ *
+ * Three Compiles for 68Ks under the sky,
+ * Seven Compiles for PPCs in their fragments of code,
+ * Nine Compiles for Mortal Carbon doomed to die,
+ * One Compile for Mach-O Cocoa on its Mach-O throne,
+ * in the Land of MacOS X where the Drop-Shadows lie.
+ * 
+ * One Compile to link them all, One Compile to merge them,
+ * One Compile to copy them all and in the bundle bind them,
+ * in the Land of MacOS X where the Drop-Shadows lie.
+ */
+
 
 // we don't need the following definition because we deliver only
 // true mouse moves.  On very slow systems however, this flag may
@@ -178,6 +194,50 @@ void printMacEvent( const EventRecord &ev )
 printf("Event: w:0x%04x m:0x%08x mod:0x%04x flags:%08x x:%d, y:%d\n", ev.what, ev.message, ev.modifiers, 0, ev.where.h, ev.where.v );
 }
 
+
+
+WindowRef fl_capture = 0; // we need this to compensate for a missing(?) mouse capture
+WindowRef fl_os_capture = 0; // the dispatch handler will redirect mose move and drag events to these windows
+
+/**
+ * We can make every event pass through this function
+ * - mouse events need to be manipulated to use a mouse focus window
+ * - keyboard, mouse and some window  events need to quit the Apple Event Loop
+ *   so FLTK can continue its own management
+ */
+pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+{
+  OSStatus ret = eventNotHandledErr;
+  switch ( GetEventClass( event ) )
+  {
+  case kEventClassMouse:
+    switch ( GetEventKind( event ) )
+    {
+    case kEventMouseUp:
+    case kEventMouseMoved:
+    case kEventMouseDragged:
+      if ( fl_capture )
+        ret = SendEventToEventTarget( event, GetWindowEventTarget( fl_capture ) );
+      else if ( fl_os_capture )
+        ret = SendEventToEventTarget( event, GetWindowEventTarget( fl_os_capture ) );
+      break;
+    }
+    break;
+  }
+  if ( ret == eventNotHandledErr )
+    ret = CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
+  QuitApplicationEventLoop();
+  return ret;
+}
+
+/**
+ * this callback simply quits the main event loop handler, so FLTK can do its magic
+ */
+static void timerProcCB( EventLoopTimerRef, void* )
+{
+  QuitApplicationEventLoop();
+}
+
 /**
  * This function iss the central event handler.
  * It reads events from the event queue using the given maximum time
@@ -222,7 +282,38 @@ static double do_queued_events( double time = 0.0 )
   OSStatus ret;
   EventRef ev;
   static EventTargetRef target = 0;
-  if ( !target ) target = GetEventDispatcherTarget();
+  static EventLoopTimerRef timer = 0;
+  if ( !target ) 
+  {
+    target = GetEventDispatcherTarget();
+
+    EventHandlerUPP dispatchHandler = NewEventHandlerUPP( carbonDispatchHandler ); // will not be disposed by Carbon...
+    static EventTypeSpec dispatchEvents[] = {
+        { kEventClassWindow, kEventWindowShown },
+        { kEventClassWindow, kEventWindowHidden },
+        { kEventClassWindow, kEventWindowActivated },
+        { kEventClassWindow, kEventWindowDeactivated },
+        { kEventClassWindow, kEventWindowClose },
+        { kEventClassKeyboard, kEventRawKeyDown },
+        { kEventClassKeyboard, kEventRawKeyRepeat },
+        { kEventClassKeyboard, kEventRawKeyUp },
+        { kEventClassKeyboard, kEventRawKeyModifiersChanged },
+        { kEventClassMouse, kEventMouseDown },
+        { kEventClassMouse, kEventMouseUp },
+        { kEventClassMouse, kEventMouseMoved },
+        { kEventClassMouse, kEventMouseWheelMoved },
+        { kEventClassMouse, kEventMouseDragged } };
+    ret = InstallEventHandler( target, dispatchHandler, 14, dispatchEvents, 0, 0L );
+    ret = InstallEventLoopTimer( GetMainEventLoop(), 0, 0, NewEventLoopTimerUPP( timerProcCB ), 0, &timer );
+  }
+  
+  // InstallEventLoopTimer(); SetEventLoopNextFireTime();
+  if ( time > 0.0 ) 
+    SetEventLoopTimerNextFireTime( timer, time );
+  RunApplicationEventLoop();
+  // ;;;; printf("Left Event Loop!\n");
+  //RunCurrentEventLoop(0.1);
+  /*
   ret = ReceiveNextEvent( 0, NULL, time, true, &ev );
   if ( ret == noErr )
   {
@@ -235,6 +326,7 @@ static double do_queued_events( double time = 0.0 )
     }
     ReleaseEvent( ev );
   }
+  */
 #else
   EventRecord ev;
   unsigned long ticks = (int)(time*60.0); // setting ticks to 7fffffff will wait forever
@@ -385,11 +477,10 @@ pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, EventRef e
     if ( !window->parent() ) Fl::handle(FL_UNFOCUS, window);
     break;
   case kEventWindowClose:
-    //printf("Close\n");
-    Fl::handle( FL_CLOSE, window );
+    Fl::handle( FL_CLOSE, window ); // this might or might not close the window
       // if there are no more windows, send a high-level quit event
     if (!Fl_X::first) QuitAppleEventHandler( 0, 0, 0 );
-    ret = noErr;
+    ret = noErr; // returning noErr tells Carbon to stop following up on this event
     break;
   }
   
@@ -456,26 +547,30 @@ pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef ev
   switch ( GetEventKind( event ) )
   {
   case kEventMouseDown:
-    //printf("mouse down window %08x (%08x) [%08x]\n", window, xid, nextHandler );
+    // ;;;; printf("Carb-win-hdlr: mouse down (x:%d, y:d)\n", pos.h, pos.v );
     part = FindWindow( pos, &tempXid );
     if ( part != inContent )
       return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
     if ( !IsWindowActive( xid ) )
       CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
     // normal handling of mouse-down follows
+    fl_os_capture = xid;
     sendEvent = FL_PUSH;
     Fl::e_is_click = 1; px = pos.h; py = pos.v;
-    Fl::e_clicks = clickCount;
+    Fl::e_clicks = clickCount-1;
     // fall through
   case kEventMouseUp:
-    if (!window) break;
+    // ;;;; if ( !sendEvent ) printf("Carb-win-hdlr: mouse up (x:%d, y:d)\n", pos.h, pos.v );
+    if ( !window ) break;
     if ( !sendEvent ) sendEvent = FL_RELEASE; 
     Fl::e_keysym = keysym[ btn ];
     // fall through
   case kEventMouseMoved:
+    // ;;;; if ( !sendEvent ) printf("Carb-win-hdlr: mouse moved (x:%d, y:d)\n", pos.h, pos.v );
     if ( !sendEvent ) { sendEvent = FL_MOVE; chord = 0; }
     // fall through
   case kEventMouseDragged:
+    // ;;;; if ( !sendEvent ) printf("Carb-win-hdlr: mouse dragged (x:%d, y:d)\n", pos.h, pos.v );
     if ( !sendEvent ) {
       sendEvent = FL_DRAG;
       if (abs(pos.h-px)>5 || abs(pos.v-py)>5) Fl::e_is_click = 0;
@@ -542,6 +637,7 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
   GetEventParameter( event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyCode );
   char key;
   GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &key );
+  // ;;;; printf( "kb: %08x %08x %02x %04x\n", mods, keyCode, key, GetEventKind( event ) );
   switch ( GetEventKind( event ) )
   {
   case kEventRawKeyDown:
@@ -551,9 +647,11 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
   case kEventRawKeyUp:
     if ( !sendEvent ) sendEvent = FL_KEYUP;
     Fl::e_keysym = macKeyLookUp[ keyCode & 0x7f ];
-    if ( key=='\t' || key==27 || key>=32 )
-    {
+    if ( key=='\t' || key==27 || ( key>=32 && key!=0x7f )  ) {
       buffer[0] = key;
+      Fl::e_length = 1;
+    } else if ( key==3 || key==0x0d ) {
+      buffer[0] = 0x0d;
       Fl::e_length = 1;
     } else {
       buffer[0] = 0;
@@ -782,7 +880,7 @@ static unsigned short macKeyLookUp[128] =
  FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11, 
  0, 0, 0, 0, 0, FL_F+10, 0, FL_F+12, 
  
- 0, 0, FL_Pause, FL_Home, FL_Page_Up, 0, FL_F+4, 0, 
+ 0, 0, FL_Pause, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, 0, 
  FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0, 
 };
 
@@ -1217,6 +1315,7 @@ void Fl_X::make(Fl_Window* w)
     //++ hmmm, this should maybe set by the activate event?!
     Fl::handle(FL_FOCUS, w);
     //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    // ;;;; printf("Created subwindow %08x (%08x)\n", w, x->xid );
   }
   else // create a desktop window
   {
@@ -1360,6 +1459,7 @@ void Fl_X::make(Fl_Window* w)
     //++ hmmm, this should maybe set by the activate event?!
     Fl::handle(FL_FOCUS, w);
     //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    //;;;; printf("Created top level window %08x (%08x)\n", w, x->xid );
   }
 }
 
@@ -1432,7 +1532,7 @@ void Fl_Window::show() {
       {
         if ( IsWindowCollapsed( i->xid ) ) CollapseWindow( i->xid, false );
         //++ do we need to do grab and icon handling here?
-        /*if (!fl_capture)*/ 
+        if (!fl_capture) //++ Do we need this? It should keep the mouse modal window in front
           BringToFront(i->xid);
       }
   }
@@ -1470,7 +1570,6 @@ void Fl_Window::make_current()
 {
   if ( !fl_window_region )
     fl_window_region = NewRgn();
-  //- printf(" make current: 0x%08x\n", this);
   fl_window = i->xid;
   current_ = this;
 
@@ -1590,7 +1689,10 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 
 */
 
+//++ when using OpenGL in a Mach-O executable and include<aglMacro.h>
+//++ we MUST call aglConfigure(AGL_TARGET_OS_MAC_OSX, GL_TRUE);
+
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.7 2001/12/19 09:10:00 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.8 2001/12/20 05:27:14 matthiaswm Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_grab.cxx,v 1.1.2.4.2.3 2001/12/12 07:50:37 matthiaswm Exp $"
+// "$Id: Fl_grab.cxx,v 1.1.2.4.2.4 2001/12/20 05:27:14 matthiaswm Exp $"
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
@@ -44,6 +44,11 @@ extern void fl_fix_focus(); // in Fl.cxx
 extern HWND fl_capture;
 #endif
 
+#ifdef __APPLE__
+// MacOS Carbon does not seem to have a mechanism to grab the mouse pointer
+extern WindowRef fl_capture;
+#endif
+
 void Fl::grab(Fl_Window* w) {
   if (w) {
     if (!grab_) {
@@ -51,7 +56,9 @@ void Fl::grab(Fl_Window* w) {
       SetActiveWindow(fl_capture = fl_xid(first_window()));
       SetCapture(fl_capture);
 #elif defined(__APPLE__)
-      BeginAppModalStateForWindow( fl_xid(first_window()) );
+//      BeginAppModalStateForWindow( fl_xid(first_window()) ); //+ please check if we need this (sample app?)
+      fl_capture = fl_xid( first_window() );
+      SetUserFocusWindow( fl_capture );
 #else
       XGrabPointer(fl_display,
 		   fl_xid(first_window()),
@@ -78,7 +85,9 @@ void Fl::grab(Fl_Window* w) {
       fl_capture = 0;
       ReleaseCapture();
 #elif defined(__APPLE__)
-      EndAppModalStateForWindow( fl_xid(first_window()) );
+//      EndAppModalStateForWindow( fl_xid(first_window()) ); //+ Please check if we need this
+      fl_capture = 0;
+      SetUserFocusWindow( (WindowRef)kUserFocusAuto );
 #else
       XUngrabKeyboard(fl_display, fl_event_time);
       XUngrabPointer(fl_display, fl_event_time);
@@ -93,5 +102,5 @@ void Fl::grab(Fl_Window* w) {
 }
 
 //
-// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.3 2001/12/12 07:50:37 matthiaswm Exp $".
+// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.4 2001/12/20 05:27:14 matthiaswm Exp $".
 //
