@@ -746,6 +746,25 @@ function finds and returns the width and height. The return
 value is non-zero if the dimensions were parsed ok and zero if
 there was any problem.
 
+<H3>Direct Image Reading</H3>
+
+<p>FLTK provides a single function for reading from the current
+window or off-screen buffer into a RGB(A) image buffer.</p>
+
+<H4><A NAME="fl_read_image">uchar *fl_read_image(uchar *p, int
+X, int Y, int W, int H, int alpha = 0);</A></H4>
+
+<p>Read a RGB(A) image from the current window or off-screen
+buffer. The <tt>p</tt> argument points to a buffer that can hold
+the image and must be at least <tt>W*H*3</tt> bytes when reading
+RGB images and <tt>W*H*4</tt> bytes when reading RGBA images. If
+<tt>NULL</tt>, <tt>fl_read_image()</tt> will create an array of
+the proper size which can be freed using <tt>delete[]</tt>.</p>
+
+<p>The <tt>alpha</tt> parameter controls whether an alpha
+channel is created and the value that is placed in the alpha
+channel. If 0, no alpha channel is generated.</p>
+
 <H3><A name="Fl_Image">Image Classes</A></H3>
 
 <P>FLTK provides a base image class called <A

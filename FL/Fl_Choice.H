@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.H,v 1.5.2.3.2.4 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Choice.H,v 1.5.2.3.2.5 2004/04/29 02:47:09 easysw Exp $"
 //
 // Choice header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,7 @@ protected:
 public:
   int handle(int);
   Fl_Choice(int,int,int,int,const char * = 0);
+  int value(const Fl_Menu_Item*);
   int value(int i);
   int value() const {return Fl_Menu_::value();}
 };
@@ -41,5 +42,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Choice.H,v 1.5.2.3.2.4 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Choice.H,v 1.5.2.3.2.5 2004/04/29 02:47:09 easysw Exp $".
 //
