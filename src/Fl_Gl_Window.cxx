@@ -38,13 +38,19 @@
 
 ////////////////////////////////////////////////////////////////
 
+HDC fl_GetDC(HWND);
+
 int Fl_Gl_Window::can_do(int a, const int *b) {
 #ifdef WIN32
   Fl_Gl_Choice *g = Fl_Gl_Choice::find(a,b);
+/*
+  Is this necessary? Don't all windows have the same 
+  support for pixel formats?
   HWND w = GetDesktopWindow();
   HDC dc = GetDC(w);
-  int r = ChoosePixelFormat(dc, &g->pfd);
-  ReleaseDC(w,dc);
+*/
+  if (!fl_gc) fl_GetDC(0);
+  int r = ChoosePixelFormat(fl_gc, &g->pfd);
   return r != 0;
 #else
   return Fl_Gl_Choice::find(a,b) != 0;

@@ -36,7 +36,7 @@ Fl_XFont::Fl_XFont(const char *name, int size, int num) {
     DEFAULT_PITCH,	// pitch and family 
     name	        // pointer to typeface name string 
     );
-  if (!fl_gc) fl_gc = fl_GetDC(0);
+  if (!fl_gc) fl_GetDC(0);
   SelectObject(fl_gc, fid);
   GetTextMetrics(fl_gc, &metr);
 //  BOOL ret = GetCharWidthFloat(fl_gc, metr.tmFirstChar, metr.tmLastChar, font->width+metr.tmFirstChar);
@@ -109,7 +109,7 @@ static Fl_XFont *find(int fnum, int size) {
 
 int fl_font_;
 int fl_size_;
-static HDC font_gc;
+//static HDC font_gc;
 
 void fl_font(int fnum, int size) {
   if (fnum == fl_font_ && size == fl_size_) return;

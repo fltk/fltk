@@ -158,7 +158,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
   }
 }
 
-// convert a Micro$oft VK_x to an Fltk (X) Keysym:
+// convert a MSWindows VK_x to an Fltk (X) Keysym:
 // See also the inverse converter in Fl_get_key_win32.C
 // This table is in numeric order by VK:
 static const struct {unsigned short vk, fltk;} vktab[] = {
@@ -209,7 +209,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
 static int ms2fltk(int vk, int extended) {
   static unsigned short vklut[256];
   if (!vklut[1]) { // init the table
-    int i;
+    unsigned int i;
     for (i = 0; i < 256; i++) vklut[i] = tolower(i);
     for (i=VK_F1; i<=VK_F16; i++) vklut[i] = i+(FL_F-(VK_F1-1));
     for (i=VK_NUMPAD0; i<=VK_NUMPAD9; i++) vklut[i] = i+(FL_KP+'0'-VK_NUMPAD0);
@@ -223,9 +223,6 @@ static int ms2fltk(int vk, int extended) {
   }
   return vklut[vk];
 }
-
-char fl_direct_paint;
-static HDC direct_paint_dc;
 
 #if USE_COLORMAP
 extern HPALETTE fl_select_palette(); // in fl_color_win32.C
@@ -256,17 +253,41 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // since it wants to draw it's own damage at the same time, and
     // this damage may be outside the clip region.  I kludge around
     // this, grep for fl_direct_paint to find the kludges...
-    if (!window->damage()) fl_direct_paint = 1;
+    // if (!(window->damage())) fl_direct_paint = 1;
     PAINTSTRUCT ps;
-    direct_paint_dc = BeginPaint(hWnd, &ps);
+
+    // I think MSWindows refuses to allocate two DCs for the same hWnd,
+    // so it may kludge the way the DCs are being handled. Works for now,
+    // the "final" solution can wait... Whatever the behaviour of the win32
+    // API, there is bound to be some small memory leak here. 
+    // If anyone knows EXACTLY how DCs are allocated, please fix.
+    fl_window = hWnd;
+    fl_gc = BeginPaint(hWnd, &ps);
+    // A bug popped up because of the two following lines, which according to 
+    // the original code's comments GetDC always resets. I just don't get
+    // why the problem hadn't manifested itself here earlier (well, probably
+    // because MSWindows was not allocating a new DC, but using the old one)
+    // Anyway, these followed the original GetDC calls, but for some reason
+    // were not here with the BeginPaint
+    SetTextAlign(fl_gc, TA_BASELINE|TA_LEFT);
+    SetBkMode(fl_gc, TRANSPARENT);
+
     window->expose(2, ps.rcPaint.left, ps.rcPaint.top,
 		   ps.rcPaint.right-ps.rcPaint.left,
 		   ps.rcPaint.bottom-ps.rcPaint.top);
-    if (!fl_direct_paint) {EndPaint(hWnd,&ps);ReleaseDC(hWnd,direct_paint_dc);}
+
     Fl_X::i(window)->flush();
     window->clear_damage();
-    Fl_X::i(window)->region = 0;
-    if (fl_direct_paint) {EndPaint(hWnd, &ps); fl_direct_paint = 0;}
+    //Since damage has been reset, we can dispose of the clip region
+    Region &r=Fl_X::i(window)->region;
+    if (r) {
+      DeleteObject(r);
+      r = 0;
+    }
+    EndPaint(hWnd, &ps);
+
+    fl_gc = 0;
+    fl_window = (HWND)-1;
     } break;
 
   case WM_LBUTTONDOWN:  mouse_event(window, 0, 1, wParam, lParam); return 0;
@@ -639,16 +660,26 @@ void Fl_Window::show() {
 }
 
 Fl_Window *Fl_Window::current_;
-HDC fl_gc; // the current context
-HWND fl_window; // the current window
+HDC window_dc;
+// the current context
+HDC fl_gc = 0;
+// the current window handle, initially set to -1 so we can correctly
+// allocate fl_GetDC(0)
+HWND fl_window = (HWND)-1;
 
-// Make sure we always ReleaseDC every DC we allocate...
+// Here we ensure only one GetDC is ever in place. There is a little
+// workaround for the case of direct_paint.
 HDC fl_GetDC(HWND w) {
+ /*
+  if (fl_direct_paint) {
+    if (w == direct_paint_window) return direct_paint_dc;
+  } 
+*/
   if (fl_gc) {
     if (w == fl_window) return fl_gc;
     ReleaseDC(fl_window, fl_gc);
   }
-  fl_gc = fl_direct_paint ? direct_paint_dc : GetDC(w);
+  fl_gc = GetDC(w);
   fl_window = w;
   // calling GetDC seems to always reset these: (?)
   SetTextAlign(fl_gc, TA_BASELINE|TA_LEFT);
@@ -665,22 +696,62 @@ void Fl_Window::make_current() {
 // WM_PAINT events and cropped damage call this:
 void Fl_Window::expose(uchar flags,int X,int Y,int W,int H) {
   if (i) {
-    if (!i->region.r) {
-      i->region.x = X;
-      i->region.y = Y;
-      i->region.r = X+W;
-      i->region.b = Y+H;
-    } else {
-      if (X < i->region.x) i->region.x = X;
-      if (Y < i->region.y) i->region.y = Y;
-      if (X+W > i->region.r) i->region.r = X+W;
-      if (Y+H > i->region.b) i->region.b = Y+H;
+    Region temp= XRectangleRegion(X,Y,W,H);
+    if (i->region) {
+      CombineRgn(temp,temp,i->region,RGN_AND);
+      DeleteObject((HGDIOBJ)i->region);
     }
+    i->region=temp;
   }
   damage(flags);
 }
 
 #include <FL/fl_draw.H>
+
+void Fl_Widget::damage(uchar flags) {
+  if (type() < FL_WINDOW) {
+    damage(flags, x(), y(), w(), h());
+  } else {
+    Fl_X* i = Fl_X::i((Fl_Window*)this);
+    if (i) {
+      if (i->region) {DeleteObject((HGDIOBJ)i->region); i->region = 0;}
+      damage_ |= flags;
+      Fl::damage(1);
+    }
+  }
+}
+
+void Fl_Widget::redraw() {damage(~0);}
+
+Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
+
+void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
+  if (type() < FL_WINDOW) {
+    damage_ |= flags;
+    if (parent()) parent()->damage(1,X,Y,W,H);
+  } else {
+    // see if damage covers entire window:
+    if (X<=0 && Y<=0 && W>=w() && H>=h()) {damage(flags); return;}
+    Fl_X* i = Fl_X::i((Fl_Window*)this);
+    if (i) {
+      if (damage()) {
+	// if we already have damage we must merge with existing region:
+	if (i->region) {
+	  Region r = XRectangleRegion(X,Y,W,H);
+	  CombineRgn(i->region,i->region,r,RGN_OR);
+	  DeleteObject(r);
+	}
+	damage_ |= flags;
+      } else {
+	// create a new region:
+	if (i->region) DeleteObject(i->region);
+	i->region = XRectangleRegion(X,Y,W,H);
+	damage_ = flags;
+      }
+      Fl::damage(1);
+    }
+  }
+}
 
 void Fl_Window::flush() {
   make_current();

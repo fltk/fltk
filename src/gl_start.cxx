@@ -26,7 +26,7 @@ extern GLXContext fl_first_context; // in Fl_Gl_Choice.C
 extern int fl_clip_state_number; // in fl_rect.C
 
 static GLXContext context;
-static int clip_state_number;
+static int clip_state_number=-1;
 static int pw, ph;
 
 #ifdef WIN32

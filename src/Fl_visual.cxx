@@ -8,10 +8,11 @@
 
 #ifdef WIN32
 int Fl::visual(int flags) {
+  fl_GetDC(0);
   if (flags & FL_DOUBLE) return 0;
   if (!(flags & FL_INDEX) &&
-    GetDeviceCaps(fl_GetDC(0),BITSPIXEL) <= 8) return 0;
-  if ((flags & FL_RGB8) && GetDeviceCaps(fl_GetDC(0),BITSPIXEL)<24) return 0;
+    GetDeviceCaps(fl_gc,BITSPIXEL) <= 8) return 0;
+  if ((flags & FL_RGB8) && GetDeviceCaps(fl_gc,BITSPIXEL)<24) return 0;
   return 1;
 }
 #else

@@ -25,6 +25,9 @@
 #endif
 #endif
 
+#ifdef __cplusplus
+extern "C"
+#endif
 int numericsort(const struct dirent **A, const struct dirent **B) {
   const char* a = (*A)->d_name;
   const char* b = (*B)->d_name;

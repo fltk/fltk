@@ -51,29 +51,27 @@ void Fl_Double_Window::show() {
 
 #ifdef WIN32
 
-// Code to switch output to an off-screen window:
-// this is lame, I allow two to exist...
+// I've removed the second one (never understool why
+// it was there to begin with).
 
-static HDC blt_gc[2];
+static HDC blt_gc;
 
 void fl_switch_offscreen(HBITMAP bitmap) {
-  if (!blt_gc[0]) for (int i = 0; i < 2; i++) {
-    blt_gc[i] = CreateCompatibleDC(fl_gc);
-    SetTextAlign(blt_gc[i], TA_BASELINE|TA_LEFT);
-    SetBkMode(blt_gc[i], TRANSPARENT);
+  if (!blt_gc) {
+    blt_gc = CreateCompatibleDC(fl_gc);
+    SetTextAlign(blt_gc, TA_BASELINE|TA_LEFT);
+    SetBkMode(blt_gc, TRANSPARENT);
 #if USE_COLORMAP
-    if (fl_palette) SelectPalette(blt_gc[i], fl_palette, FALSE);
+    if (fl_palette) SelectPalette(blt_gc, fl_palette, FALSE);
 #endif
   }
-  int which = 0; if (fl_gc == blt_gc[0]) which = 1;
-  SelectObject(blt_gc[which], bitmap);
-  fl_gc = blt_gc[which];
+  SelectObject(blt_gc, bitmap);
+  fl_gc = blt_gc;
 }
 
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
-  int which = 0; if (fl_gc == blt_gc[0]) which = 1;
-  SelectObject(blt_gc[which], bitmap);
-  BitBlt(fl_gc, x, y, w, h, blt_gc[which], srcx, srcy, SRCCOPY);
+  SelectObject(blt_gc, bitmap);
+  BitBlt(window_dc, x, y, w, h, blt_gc, srcx, srcy, SRCCOPY);
 }
 
 #endif
@@ -93,27 +91,35 @@ void Fl_Double_Window::_flush(int eraseoverlay) {
   }
   XRectangle rect = {0,0,w(),h()};
   if (damage()) {
-    if (i->region && !eraseoverlay) XClipBox(i->region, &rect);
     if (	// don't draw if back buffer is ok
 #if USE_XDBE
 	use_xdbe ||
 #endif
 	damage() != 2) {
+/*
 #ifdef WIN32
       fl_begin_offscreen(i->other_xid);
       fl_clip_region(i->region); i->region = 0;
       draw();
       fl_end_offscreen();
 #else
+*/
+#ifdef WIN32
+      fl_begin_offscreen(i->other_xid);
+#endif
       fl_window = i->other_xid;
       fl_clip_region(i->region); i->region = 0;
       draw();
       fl_window = i->xid;
+#ifdef WIN32
+      fl_end_offscreen();
 #endif
+//#endif
     }
   }
   fl_clip_region(0);
 #if USE_XDBE
+  if (i->region && !eraseoverlay) XClipBox(i->region, &rect);
   if (use_xdbe) {
     XdbeSwapInfo s;
     s.swap_window = fl_xid(this);

@@ -208,82 +208,13 @@ void fl_point(int x, int y) {
 
 ////////////////////////////////////////////////////////////////
 
-#ifdef WIN32
-
-static struct rect {int notnull, x, y, r, b;} rstack[10];
+static Region rstack[10];
 static int rstackptr;
-int fl_clip_state_number; // used by gl_begin.C to update GL clip
-extern char fl_direct_paint; // in Fl_win32.C
+int fl_clip_state_number=0; // used by gl_begin.C to update GL clip
 
-void fl_clip(int x, int y, int w, int h) {
-  fl_clip_state_number++;
-  int r = x+w;
-  int b = y+h;
-  rect& current = rstack[rstackptr];
-  if (current.notnull) {
-    if (current.x > x) x = current.x;
-    if (current.y > y) y = current.y;
-    if (current.r < r) r = current.r;
-    if (current.b < b) b = current.b;
-  }
-  rect& newrect = rstack[++rstackptr];
-  newrect.notnull = 1;
-  newrect.x = x;
-  newrect.y = y;
-  newrect.r = r;
-  newrect.b = b;
-  if (rstackptr == 1 && fl_direct_paint) return;
-  HRGN R = CreateRectRgn(x,y,r,b);
-  SelectClipRgn(fl_gc, R);
-  DeleteObject(R);
-}
-
-void fl_push_no_clip() {
-  fl_clip_state_number++;
-  if (rstack[rstackptr].notnull) SelectClipRgn(fl_gc, 0);
-  rstack[++rstackptr].notnull = 0;
-}
-
-void fl_pop_clip() {
-  fl_clip_state_number++;
-  rect& r = rstack[--rstackptr];
-  if (r.notnull) {
-    HRGN R = CreateRectRgn(r.x, r.y, r.r, r.b);
-    SelectClipRgn(fl_gc, R);
-    DeleteObject(R);
-  } else {
-    SelectClipRgn(fl_gc, 0);
-  }
-}
-
-// does this rectangle intersect current clip?
-int fl_not_clipped(int x, int y, int w, int h) {
-  rect& r = rstack[rstackptr];
-  if (!r.notnull) return 2;
-  return (x < r.r && x+w > r.x && y < r.b && y+h > r.y);
-}
-
-// return rectangle surrounding intersection of this rectangle and clip:
-int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
-  X = x; Y = y; W = w; H = h;
-  rect& r = rstack[rstackptr];
-  if (!r.notnull) return 0;
-  int R = x+w;
-  int B = y+h;
-  int ret = 0;
-  if (r.x > x) {X = r.x; ret = 1;}
-  if (r.y > y) {Y = r.y; ret = 1;}
-  if (r.r < R) {R = r.r; ret = 1;}
-  if (r.b < B) {B = r.b; ret = 1;}
-  if (B <= Y || R <= X) {W = H = 0; return 2;}
-  W = R-X;
-  H = B-Y;
-  return ret;
-}
-
-#else
-
+#ifndef WIN32
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
+// MSWindows equivalent exists, implemented inline in win32.H
 Region XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
   R.x = x; R.y = y; R.width = w; R.height = h;
@@ -291,17 +222,18 @@ Region XRectangleRegion(int x, int y, int w, int h) {
   XUnionRectWithRegion(&R, r, r);
   return r;
 }
-
-static Region rstack[10];
-static int rstackptr;
-int fl_clip_state_number; // used by gl_begin.C to update GL clip
+#endif
 
 // undo any clobbering of clip done by your program:
 void fl_restore_clip() {
   fl_clip_state_number++;
   Region r = rstack[rstackptr];
+#ifdef WIN32
+  SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
+#else
   if (r) XSetRegion(fl_display, fl_gc, r);
   else XSetClipMask(fl_display, fl_gc, 0);
+#endif
 }
 
 // Replace the top of the clip stack:
@@ -319,13 +251,21 @@ void fl_clip(int x, int y, int w, int h) {
     r = XRectangleRegion(x,y,w,h);
     Region current = rstack[rstackptr];
     if (current) {
+#ifndef WIN32
       Region temp = XCreateRegion();
       XIntersectRegion(current, r, temp);
       XDestroyRegion(r);
       r = temp;
+#else
+      CombineRgn(r,r,current,RGN_AND);
+#endif
     }
   } else { // make empty clip region:
+#ifndef WIN32
     r = XCreateRegion();
+#else
+    r = 0; //whatever, for win32 this is the same as having 0 for HRGN
+#endif
   }
   rstack[++rstackptr] = r;
   fl_restore_clip();
@@ -347,7 +287,14 @@ void fl_pop_clip() {
 // does this rectangle intersect current clip?
 int fl_not_clipped(int x, int y, int w, int h) {
   Region r = rstack[rstackptr];
+#ifndef WIN32
   return r ? XRectInRegion(r, x, y, w, h) : 1;
+#else
+  if (!r) return 1;
+  RECT rect;
+  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+  return RectInRegion(r,&rect);
+#endif
 }
 
 // return rectangle surrounding intersection of this rectangle and clip:
@@ -355,6 +302,7 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
   Region r = rstack[rstackptr];
   if (!r) return 0;
+#ifndef WIN32
   switch (XRectInRegion(r, x, y, w, h)) {
   case 0: // completely outside
     W = H = 0;
@@ -364,6 +312,24 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   default: // partial:
     break;
   }
+#else
+// The win32 API makes no distinction between partial and complete
+// intersection, so we have to check for partial intersection ourselves.
+  RECT rect;
+  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+  if (!RectInRegion(r,&rect)) {
+    W = H = 0;
+    return 2;
+  } else {
+    if (PtInRegion(r, rect.left, rect.top) &&
+        PtInRegion(r, rect.left, rect.top) &&
+        PtInRegion(r, rect.right, rect.bottom) &&
+        PtInRegion(r, rect.right, rect.bottom))
+      return 0;
+  }
+#endif
+
+#ifndef WIN32
   Region rr = XRectangleRegion(x,y,w,h);
   Region temp = XCreateRegion();
   XIntersectRegion(r, rr, temp);
@@ -372,9 +338,14 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
   XDestroyRegion(temp);
   XDestroyRegion(rr);
+#else
+  Region rr = XRectangleRegion(x,y,w,h);
+  CombineRgn(rr, rr, r,RGN_AND);
+  GetRgnBox(rr, &rect);
+  X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
+  DeleteObject(rr);
+#endif
   return 1;
 }
-
-#endif
 
 // end of fl_rect.C

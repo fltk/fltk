@@ -506,9 +506,8 @@ void Fl_Window::hide() {
 #ifdef WIN32
   if (x->private_dc) ReleaseDC(x->xid,x->private_dc);
   if (x->xid == fl_window) fl_GetDC(0); // releases dc belonging to window
-#else
-  if (x->region) XDestroyRegion(x->region);
 #endif
+  if (x->region) XDestroyRegion(x->region);
   XDestroyWindow(fl_display, x->xid);
 
   delete x;
