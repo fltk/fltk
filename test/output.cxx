@@ -1,5 +1,5 @@
 //
-// "$Id: output.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: output.cxx,v 1.4.2.3.2.2 2002/08/20 16:15:29 easysw Exp $"
 //
 // Output test program for the Fast Light Tool Kit (FLTK).
 //
@@ -85,11 +85,13 @@ int main(int argc, char **argv) {
   text2 = new Fl_Multiline_Output(100,150,200,100,"Fl_Multiline_Output");
   text2->value(input->value());
   text2->align(FL_ALIGN_BOTTOM);
+  text2->tooltip("This is an Fl_Multiline_Output widget.");
   window->resizable(text2);
 
   text = new Fl_Output(100,280,200,30,"Fl_Output");
   text->value(input->value());
   text->align(FL_ALIGN_BOTTOM);
+  text->tooltip("This is an Fl_Output widget.");
 
   window->forms_end();
   window->show(argc,argv);
@@ -97,5 +99,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: output.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: output.cxx,v 1.4.2.3.2.2 2002/08/20 16:15:29 easysw Exp $".
 //
