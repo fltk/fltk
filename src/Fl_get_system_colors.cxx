@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.25 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.26 2004/05/25 21:06:19 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -263,7 +263,9 @@ int Fl::reload_scheme() {
     uchar r, g, b;
     int nr, ng, nb;
     int i;
-    static uchar levels[3] = { 0xff, 0xef, 0xe8 };
+//    static uchar levels[3] = { 0xff, 0xef, 0xe8 };
+    // OSX 10.3 and higher use a background with less contrast...
+    static uchar levels[3] = { 0xff, 0xf8, 0xf4 };
 
     get_color(FL_GRAY, r, g, b);
 
@@ -332,5 +334,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.25 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.26 2004/05/25 21:06:19 easysw Exp $".
 //
