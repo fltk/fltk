@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.12 1999/02/18 13:12:50 mike Exp $"
+// "$Id: Fl_Window.H,v 1.12.2.1 1999/08/27 08:27:42 bill Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -64,7 +64,7 @@ public:
 
   virtual FL_EXPORT int handle(int);
 
-  virtual void resize(int,int,int,int);
+  virtual FL_EXPORT void resize(int,int,int,int);
   FL_EXPORT void border(int b);
   void clear_border()	{set_flag(FL_NOBORDER);}
   int border() const	{return !(flags() & FL_NOBORDER);}
@@ -113,5 +113,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.12 1999/02/18 13:12:50 mike Exp $".
+// End of "$Id: Fl_Window.H,v 1.12.2.1 1999/08/27 08:27:42 bill Exp $".
 //
