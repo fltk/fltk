@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.3 1998/10/21 14:19:53 mike Exp $"
+# "$Id: Makefile,v 1.4 1998/10/21 17:20:07 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -49,7 +49,7 @@ OBJECTS = $(CPPFILES:.C=.o)
 
 include ../makeinclude
 
-.SUFFIXES : .C .c .o .do .fl .H
+.SUFFIXES : .C .c .o
 
 .C.o :
 	@echo $<:
@@ -60,13 +60,6 @@ include ../makeinclude
 .C :
 	@echo $@:
 	@$(CXX) -I.. $(CXXFLAGS) -o $@ $< -L../lib -lfltk $(LDLIBS)
-
-.fl.C .fl.H :
-	-fluid -c $<
-
-# better way to do this for gnu make:
-# %.H %.C: %.fl
-#	fluid -c $<
 
 $(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
 	@echo linking $@:
@@ -90,5 +83,5 @@ uninstall:
 	-@ rm -f $(bindir)/$(PROGRAM)
 
 #
-# End of "$Id: Makefile,v 1.3 1998/10/21 14:19:53 mike Exp $".
+# End of "$Id: Makefile,v 1.4 1998/10/21 17:20:07 mike Exp $".
 #
