@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.5 1998/12/03 13:28:21 mike Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.6 1998/12/06 15:12:23 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -44,7 +44,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // ignore empty or bad pixmap data:
   if (w<0) {
     fl_measure_pixmap(data, w, h);
-    if (WP==-1) { WP = w; HP = h; } // correct the default setting
+    if (WP==-1) { WP = w; HP = h; }
   }
   if (!w) return;
   // account for current clip region (faster on Irix):
@@ -60,13 +60,32 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!id) {
     id = (ulong)fl_create_offscreen(w, h);
     fl_begin_offscreen((Fl_Offscreen)id);
-#ifdef WIN32 // mask is nyi, instead use a constant color
-    fl_draw_pixmap(data, 0, 0, (Fl_Color)mask);
-#else
     uchar *bitmap = 0;
     fl_mask_bitmap = &bitmap;
     fl_draw_pixmap(data, 0, 0, FL_BLACK);
     fl_mask_bitmap = 0;
+#ifdef WIN32 // Matt: mask done
+    if (bitmap) {
+      // we need to pad the lines out to words & swap the bits
+      // in each byte.
+      int w1 = (w+7)/8;
+      int w2 = ((w+15)/16)*2;
+      uchar* newarray = new uchar[w2*h];
+      const uchar* src = bitmap;
+      uchar* dest = newarray;
+      static uchar reverse[16] =	
+      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+	0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+      for (int y=0; y < h; y++) {
+	for (int n = 0; n < w1; n++, src++)
+	  *dest++ = ~((reverse[*src & 0x0f] & 0xf0) |
+		      (reverse[(*src >> 4) & 0x0f] & 0x0f));
+	dest += w2-w1;
+      }
+      mask = (ulong)CreateBitmap(w, h, 1, 1, newarray);
+      delete[] newarray;
+    }
+#else
     if (bitmap) {
       mask = XCreateBitmapFromData(fl_display, fl_window,
 				   (const char*)bitmap, (w+7)&-8, h);
@@ -75,7 +94,18 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #endif
     fl_end_offscreen();
   }
-#ifndef WIN32
+#ifdef WIN32
+  if (mask) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    SelectObject(new_gc, (void*)mask);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    SelectObject(new_gc, (void*)id);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    DeleteDC(new_gc);
+  } else {
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  }
+#else
   if (mask) {
     // I can't figure out how to combine a mask with existing region,
     // so cut the image down to a clipped rectangle:
@@ -88,9 +118,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     int oy = Y-cy; if (oy < 0) oy += h;
     XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
   }
-#endif
   fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-#ifndef WIN32
   if (mask) {
     // put the old clip region back
     XSetClipOrigin(fl_display, fl_gc, 0, 0);
@@ -101,9 +129,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 
 Fl_Pixmap::~Fl_Pixmap() {
   if (id) fl_delete_offscreen((Fl_Offscreen)id);
-#ifndef WIN32
   if (mask) fl_delete_offscreen((Fl_Offscreen)mask);
-#endif
 }
 
 static void pixmap_labeltype(
@@ -130,9 +156,6 @@ static void pixmap_measure(const Fl_Label* o, int& w, int& h) {
 }
 
 void Fl_Pixmap::label(Fl_Widget* o) {
-#ifdef WIN32
-  mask = o->color();
-#endif
   Fl::set_labeltype(_FL_PIXMAP_LABEL, pixmap_labeltype, pixmap_measure);
   o->label(_FL_PIXMAP_LABEL, (const char*)this);
 }
@@ -143,5 +166,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.5 1998/12/03 13:28:21 mike Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.6 1998/12/06 15:12:23 mike Exp $".
 //
