@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.1 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.2 2001/12/18 04:58:43 matthiaswm Exp $"
 //
 // MacOS font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -46,6 +46,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   case 'P': type = FL_BOLD | FL_ITALIC; break;
   default:  type = 0; break;
   }
+  if (ap) *ap = type;
   if (!type) return p+1;
   static char *buffer; if (!buffer) buffer = new char[128];
   strcpy(buffer, p+1);
@@ -55,39 +56,95 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 }
 
 static int fl_free_font = FL_FREE_FONT;
-/*
-static int CALLBACK enumcb(ENUMLOGFONT FAR *lpelf,
-  NEWTEXTMETRIC FAR *lpntm, int FontType, LPARAM p) {
-  if (!p && lpelf->elfLogFont.lfCharSet != ANSI_CHARSET) return 1;
-  char *n = (char*)(lpelf->elfFullName);
-  for (int i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
-    if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) return 1;
-  char buffer[128];
-  strcpy(buffer+1, n);
-  buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  if (lpelf->elfLogFont.lfWeight <= 400)
-    buffer[0] = 'B', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  buffer[0] = 'I'; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  if (lpelf->elfLogFont.lfWeight <= 400)
-    buffer[0] = 'P', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
-  return 1;
-}
-*/
+
 Fl_Font Fl::set_fonts(const char* xstarname) {
 #pragma unused ( xstarname )
-//++  EnumFontFamilies(fl_gc, NULL, (FONTENUMPROC)enumcb, xstarname != 0);
+  if (fl_free_font != FL_FREE_FONT) 
+    return (Fl_Font)fl_free_font;
+  static char styleLU[] = " BIP";
+  FMFontFamilyInstanceIterator ffiIterator;
+  FMFontFamilyIterator ffIterator;
+  FMFontFamily family;
+  FMFont font;
+  FMFontStyle style; // bits 0..6: bold, italic underline, outline, shadow, condens, extended (FLTK supports 0 and 1 )
+  FMFontSize size;
+  //FMFilter filter; // do we need to set a specific (or multiple) filter(s) to get ALL fonts?
+  
+  Str255 buf;
+  //filter.format = kFMCurrentFilterFormat;
+  //filter.selector = kFMGenerationFilterSelector;
+  //filter.filter.generationFilter = 
+  FMCreateFontFamilyIterator( NULL, NULL, kFMUseGlobalScopeOption, &ffIterator );
+  OSStatus listFamilies, listInstances;
+  for (;;)
+  {
+    listFamilies = FMGetNextFontFamily( &ffIterator, &family );
+    if ( listFamilies != 0 ) break;
+    FMGetFontFamilyName( family, buf );
+    buf[ buf[0]+1 ] = 0;
+    //printf( "Font Family: %s\n", buf+1 );
+    int i;
+    for (i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
+      if (!strcmp(Fl::get_font_name((Fl_Font)i),(char*)buf+1)) break;
+    if ( i < FL_FREE_FONT ) continue;
+    FMCreateFontFamilyInstanceIterator( family, &ffiIterator );
+    char pStyle = 0, nStyle;
+    for (;;)
+    {
+      listInstances = FMGetNextFontFamilyInstance( &ffiIterator, &font, &style, &size );
+      if ( listInstances != 0 ) break;
+      // printf(" %d %d %d\n", font, style, size );
+      nStyle = styleLU[style&0x03];
+      if ( ( pStyle & ( 1<<(style&0x03) ) ) == 0 )
+      {
+        buf[0] = nStyle;
+        Fl::set_font((Fl_Font)(fl_free_font++), strdup((char*)buf));
+        pStyle |= ( 1<<(style&0x03) );
+      }
+    }
+    FMDisposeFontFamilyInstanceIterator( &ffiIterator );
+  }
+  FMDisposeFontFamilyIterator( &ffIterator );
   return (Fl_Font)fl_free_font;
 }
 
+static int array[128];
 int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
-#pragma unused ( fnum )
-  // pretend all fonts are scalable (most are and I don't know how
-  // to tell anyways)
-  static int array[1];
+  Fl_Fontdesc *s = fl_fonts+fnum;
+  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+
+  Str255 name;
+  int len = strlen( s->name ); strncpy( (char*)(name+1), s->name+1, len ); name[0] = len-1;
+  FMFontFamily family = FMGetFontFamilyFromName( name );
+  if ( family == kInvalidFontFamily ) return 0;
+
   sizep = array;
-  return 1;
+  FMFont font;
+  FMFontStyle style, fStyle;
+  switch ( s->name[0] ) { case ' ':fStyle=0; break; case 'B':fStyle=1; break; case 'I':fStyle=2; break; case 'P':fStyle=3; break; }
+  FMFontSize size, pSize = -1;
+  FMFontFamilyInstanceIterator ffiIterator;
+  FMCreateFontFamilyInstanceIterator( family, &ffiIterator );
+  int cnt = 0;
+  OSStatus listInstances;
+  for (;;)
+  {
+    listInstances = FMGetNextFontFamilyInstance( &ffiIterator, &font, &style, &size );
+    if ( listInstances != 0 ) break;
+    if ( style==fStyle )
+    {
+      if ( size>pSize ) 
+      {
+        array[ cnt++ ] = size;
+        pSize = size;
+      }
+    }
+  }
+  FMDisposeFontFamilyInstanceIterator( &ffiIterator );
+
+  return cnt;
 }
 
 //
-// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.1 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.2 2001/12/18 04:58:43 matthiaswm Exp $".
 //
