@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.50 2004/07/04 23:27:48 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.51 2004/07/23 21:12:24 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1568,8 +1568,19 @@ Fl_Help_View::format()
     }
   }
 
-  topline(topline_);
-  leftline(leftline_);
+  // Reset scrolling if it needs to be...
+  if (scrollbar_.visible()) {
+    int hh = h() - 8;
+    if (hscrollbar_.visible()) hh -= 16;
+    if ((topline_ + hh) > size_) topline(size_ - hh);
+    else topline(topline_);
+  } else topline(0);
+
+  if (hscrollbar_.visible()) {
+    int ww = w() - 24;
+    if ((leftline_ + ww) > hsize_) leftline(hsize_ - ww);
+    else leftline(leftline_);
+  } else leftline(0);
 }
 
 
@@ -2795,5 +2806,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.50 2004/07/04 23:27:48 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.51 2004/07/23 21:12:24 easysw Exp $".
 //

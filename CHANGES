@@ -1,6 +1,15 @@
 CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365, STR #399, STR #412)
+	- Fl_Counter didn't use a thin down box for the text
+	  field if the box type was set to FL_THIN_UP_BOX (STR
+	  #467)
+	- Fl_Help_View now resets the scrollbars if they go
+	  outside the current view (STR #464)
+	- fl_dir_chooser() did not show the previous selection
+	  as documented (STR #443)
+	- Fl_Text_Display used delete[] instead of free() in
+	  some places (STR #466)
 	- FLTK now includes copies of the PNG, JPEG, and ZLIB
 	  libraries for platforms that do not have them (STR
 	  #441)
@@ -16,9 +25,7 @@ CHANGES IN FLTK 1.1.5rc2
 	  FL_Menu and FL_Delete keys on external (PC) keyboards
 	  (STR #445)
 	- Fl_File_Icon::draw() did not support drawing of complex
-	  polygons in icon descriptions (STR #???)
-	- Fl_File_Icon::draw() did not support drawing of complex
-	  polygons in icon descriptions (STR #???)
+	  polygons in icon descriptions (STR #474)
 	- The configure script now offers options for JPEG, PNG,
 	  and ZLIB libraries (STR #416)
 	- The first menu item in a list would not go invisible 

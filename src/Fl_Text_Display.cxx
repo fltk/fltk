@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.54 2004/05/26 02:42:10 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.55 2004/07/23 21:12:24 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -793,7 +793,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) {
     outIndex += charLen;
   }
   *X = xStep;
-  delete [] (char *)lineStr;
+  free((char *)lineStr);
   return 1;
 }
 
@@ -1851,9 +1851,10 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) {
     outIndex += charLen;
   }
 
+  free((char *)lineStr);
+
   /* If the X position was beyond the end of the line, return the position
      of the newline at the end of the line */
-  delete [] (char *)lineStr;
   return lineStart + lineLen;
 }
 
@@ -3087,5 +3088,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.54 2004/05/26 02:42:10 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.55 2004/07/23 21:12:24 easysw Exp $".
 //
