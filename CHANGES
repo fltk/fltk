@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.1
 
+	- Fl_Output now calls its callback when the user clicks
+	  or drags in the widget.
+	- Shortcuts now cause buttons to take focus when visible
+	  focus is enabled.
 	- fl_filename_relative() didn't check that the path was
 	  absolute under WIN32.
 	- fl_filename_relative() didn't check that the path was

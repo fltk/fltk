@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.13 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.14 2002/10/10 19:39:49 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -337,6 +337,9 @@ int Fl_Input::handle(int event) {
       position(drag_start, drag_start);
       drag_start = -1;
     }
+    // For output widgets, do the callback so the app knows the user
+    // did something with the mouse...
+    if (readonly()) do_callback();
     return 1;
 
   case FL_DND_ENTER:
@@ -393,5 +396,5 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.13 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.14 2002/10/10 19:39:49 easysw Exp $".
 //
