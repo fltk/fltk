@@ -312,7 +312,7 @@ void menutitle::draw() {
 
 void menuwindow::draw() {
 
-  if (damage() != 1) {	// complete redraw
+  if (damage() != FL_DAMAGE_CHILD) {	// complete redraw
     if (menu) {
       fl_draw_box(button&&button->box() ? button->box() : FL_UP_BOX,
 		  0, 0, w(), h(),
@@ -321,7 +321,7 @@ void menuwindow::draw() {
       for (m=menu, i=0; m->text; i++, m = m->next()) drawentry(m, i, 0);
     }
   } else {
-    if (damage() & 1 && selected!=drawn_selected) { // change selection
+    if (damage() & FL_DAMAGE_CHILD && selected!=drawn_selected) { // change selection
       drawentry(menu->next(drawn_selected), drawn_selected, 1);
       drawentry(menu->next(selected), selected, 1);
     }
@@ -330,7 +330,7 @@ void menuwindow::draw() {
 }
 
 void menuwindow::set_selected(int i) {
-  if (i != selected) {selected = i; damage(1);}
+  if (i != selected) {selected = i; damage(FL_DAMAGE_CHILD);}
 }
 
 ////////////////////////////////////////////////////////////////

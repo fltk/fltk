@@ -45,7 +45,7 @@ void ColorMenu::drawbox(Fl_Color c) {
 }
 
 void ColorMenu::draw() {
-  if (damage() != 1) {
+  if (damage() != FL_DAMAGE_CHILD) {
     fl_draw_box(FL_UP_BOX,0,0,w(),h(),color());
     for (int c = 0; c < 256; c++) drawbox((Fl_Color)c);
   } else {
@@ -87,7 +87,7 @@ int ColorMenu::handle(int e) {
     return 0;
   }
   if (c != which) {
-    which = (Fl_Color)c; damage(1);
+    which = (Fl_Color)c; damage(FL_DAMAGE_CHILD);
     int bx = (c%8)*BOXSIZE+BORDER;
     int by = (c/8)*BOXSIZE+BORDER;
     int px = x();

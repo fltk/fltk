@@ -128,7 +128,7 @@ int Fl_Tabs::handle(int event) {
 
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
-  if (push_ && push_ != value_ || o && o != value_) damage(2);
+  if (push_ && push_ != value_ || o && o != value_) damage(FL_DAMAGE_EXPOSE);
   push_ = o;
   return 1;
 }
@@ -164,7 +164,7 @@ enum {LEFT, RIGHT, SELECTED};
 void Fl_Tabs::draw() {
   Fl_Widget *v = value();
   int H = tab_height();
-  if (damage() & ~3) { // redraw the entire thing:
+  if (damage() & ~(FL_DAMAGE_EXPOSE|FL_DAMAGE_CHILD)) { // redraw the entire thing:
     fl_clip(x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H));
     draw_box(box(), x(), y(), w(), h(), v->color());
     fl_pop_clip();
@@ -172,7 +172,7 @@ void Fl_Tabs::draw() {
   } else { // redraw the child
     update_child(*v);
   }
-  if (damage() & 2) {
+  if (damage() & (FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL)) {
     int p[128]; int w[128];
     int selected = tab_positions(p,w);
     int i;

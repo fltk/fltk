@@ -65,7 +65,7 @@ protected:
   void inserting(void *a,void *b); // insert a before b
   int displayed(void *) const ; // true if this line is visible
   void redraw_line(void *); // minimal update, no change in size
-  void redraw_lines() {damage(4);} // redraw all of them
+  void redraw_lines() {damage(FL_DAMAGE_SCROLL);} // redraw all of them
   void bbox(int&,int&,int&,int&) const;
   int leftedge() const;	// x position after scrollbar & border
   void *find_item(int my); // item under mouse

@@ -376,7 +376,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
 void Fl_Group::draw() {
   Fl_Widget*const* a = array();
-  if (damage() & ~1) { // redraw the entire thing:
+  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
     draw_box();
     draw_label();
     for (int i=children_; i--;) {
@@ -402,7 +402,7 @@ void Fl_Group::update_child(Fl_Widget& w) const {
 void Fl_Group::draw_child(Fl_Widget& w) const {
   if (w.visible() && w.type() < FL_WINDOW &&
       fl_not_clipped(w.x(), w.y(), w.w(), w.h())) {
-    w.clear_damage(~0);
+    w.clear_damage(FL_DAMAGE_ALL);
     w.draw();
     w.clear_damage();
   }

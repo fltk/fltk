@@ -84,13 +84,13 @@ double Fl_Input_::expandpos(
 // being erased, so they don't blink.
 
 void Fl_Input_::minimal_update(int p) {
-  if (damage() & 128) return; // don't waste time if it won't be done
-  if (damage() & 2) {
+  if (damage() & FL_DAMAGE_ALL) return; // don't waste time if it won't be done
+  if (damage() & FL_DAMAGE_EXPOSE) {
     if (p < mu_p) mu_p = p;
   } else {
     mu_p = p;
   }
-  damage(2);
+  damage(FL_DAMAGE_EXPOSE);
   erase_cursor_only = 0;
 }
 
@@ -110,7 +110,7 @@ void Fl_Input_::setfont() const {
 
 void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
-  int do_mu = !(damage()&128);
+  int do_mu = !(damage()&FL_DAMAGE_ALL);
   if (Fl::focus()!=this && !size()) {
     if (do_mu) { // we have to erase it if cursor was there
       fl_color(color());
@@ -374,7 +374,7 @@ int Fl_Input_::position(int p, int m) {
     // new position is a cursor
     if (position_ == mark_) {
       // old position was just a cursor
-      if (!(damage()&2)) {
+      if (!(damage()&FL_DAMAGE_EXPOSE)) {
 	minimal_update(position_); erase_cursor_only = 1;
       }
     } else { // old position was a selection
@@ -569,7 +569,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
 
   case FL_UNFOCUS:
     if (mark_ == position_) {
-      if (!(damage()&2)) {minimal_update(position_); erase_cursor_only = 1;}
+      if (!(damage()&FL_DAMAGE_EXPOSE)) {minimal_update(position_); erase_cursor_only = 1;}
     } else if (Fl::selection_owner() != this) {
       minimal_update(mark_, position_);
     }

@@ -342,7 +342,7 @@ int fl_handle(const XEvent& xevent)
     if (Fl::first_window()->non_modal() && window != Fl::first_window())
       Fl::first_window()->show();
 #endif
-    window->damage(2, xevent.xexpose.x, xevent.xexpose.y,
+    window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
 		   xevent.xexpose.width, xevent.xexpose.height);
     return 1;
 
@@ -463,23 +463,23 @@ int fl_handle(const XEvent& xevent)
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  int is_a_resize = (W != w() || H != h());
-  int resize_from_program = (this != resize_bug_fix);
-  if (!resize_from_program) resize_bug_fix = 0;
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  else if (!is_a_resize) return;
-  if (is_a_resize) {
-    Fl_Group::resize(X,Y,W,H);
-    if (shown()) {redraw(); i->wait_for_expose = 1;}
-  } else {
-    x(X); y(Y);
-  }
-  if (resize_from_program && shown()) {
-    if (is_a_resize)
+  if (resize_bug_fix == this)
+    resize_bug_fix = 0;
+  else if (shown()) {
+    // tell X window manager to change window size:
+    if (!(flags()&FL_FORCE_POSITION) && X == x() && Y == y())
+      XResizeWindow(fl_display, i->xid, W>0 ? W : 1, H>0 ? H : 1);
+    else if (W != w() || H != h())
       XMoveResizeWindow(fl_display, i->xid, X, Y, W>0 ? W : 1, H>0 ? H : 1);
     else
       XMoveWindow(fl_display, i->xid, X, Y);
   }
+  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
+  if (W != w() || H != h()) Fl_Group::resize(X,Y,W,H); else {x(X); y(Y);}
+  // Notice that this does *not* set any redraw bits.  I assumme
+  // I will receive damage for the whole window from X.  I think
+  // that "ForgetGravity" forces the expose event for the entire
+  // window, but this may not be true on some implementations.
 }
 
 ////////////////////////////////////////////////////////////////
@@ -746,11 +746,6 @@ void Fl_Window::make_current() {
 
 #include <FL/fl_draw.H>
 
-// Current meaning of damage() bits on a window:
-// 1 = a child needs redrawing
-// 2 = expose events
-// 128 = redraw everything
-
 void Fl_Widget::damage(uchar flags) {
   if (type() < FL_WINDOW) {
     damage(flags, x(), y(), w(), h());
@@ -759,19 +754,19 @@ void Fl_Widget::damage(uchar flags) {
     if (i) {
       if (i->region) {XDestroyRegion(i->region); i->region = 0;}
       damage_ |= flags;
-      Fl::damage(1);
+      Fl::damage(FL_DAMAGE_CHILD);
     }
   }
 }
 
-void Fl_Widget::redraw() {damage(~0);}
+void Fl_Widget::redraw() {damage(FL_DAMAGE_ALL);}
 
 Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
 
 void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
   if (type() < FL_WINDOW) {
     damage_ |= flags;
-    if (parent()) parent()->damage(1,X,Y,W,H);
+    if (parent()) parent()->damage(FL_DAMAGE_CHILD,X,Y,W,H);
   } else {
     // see if damage covers entire window:
     if (X<=0 && Y<=0 && W>=w() && H>=h()) {damage(flags); return;}
@@ -791,14 +786,14 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
 	i->region = XRectangleRegion(X,Y,W,H);
 	damage_ = flags;
       }
-      Fl::damage(1);
+      Fl::damage(FL_DAMAGE_CHILD);
     }
   }
 }
 
 void Fl_Window::flush() {
   make_current();
-//if (damage() == 2 && can_boxcheat(box())) fl_boxcheat = this;
+//if (damage() == FL_DAMAGE_EXPOSE && can_boxcheat(box())) fl_boxcheat = this;
   fl_clip_region(i->region); i->region = 0;
   draw();
 }

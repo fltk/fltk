@@ -32,7 +32,7 @@ void Fl_Valuator::precision(int p) {
   for (B = 1; p--;) B *= 10;
 }
 
-void Fl_Valuator::value_damage() {damage(2);} // by default do partial-redraw
+void Fl_Valuator::value_damage() {damage(FL_DAMAGE_EXPOSE);} // by default do partial-redraw
 
 int Fl_Valuator::value(double v) {
   clear_changed();

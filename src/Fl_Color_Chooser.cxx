@@ -104,10 +104,13 @@ int Fl_Color_Chooser::rgb(double r, double g, double b) {
   set_valuators();
   if (value_ != pv) {
 #ifdef UPDATE_HUE_BOX
-    huebox.damage(6);
+    huebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
 #endif
-    valuebox.damage(2);}
-  if (hue_ != ph || saturation_ != ps) {huebox.damage(2); valuebox.damage(6);}
+    valuebox.damage(FL_DAMAGE_EXPOSE);}
+  if (hue_ != ph || saturation_ != ps) {
+    huebox.damage(FL_DAMAGE_EXPOSE); 
+    valuebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
+  }
   return 1;
 }
 
@@ -122,10 +125,13 @@ int Fl_Color_Chooser::hsv(double h, double s, double v) {
   hue_ = h; saturation_ = s; value_ = v;
   if (value_ != pv) {
 #ifdef UPDATE_HUE_BOX
-    huebox.damage(6);
+    huebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
 #endif
-    valuebox.damage(2);}
-  if (hue_ != ph || saturation_ != ps) {huebox.damage(2); valuebox.damage(6);}
+    valuebox.damage(FL_DAMAGE_EXPOSE);}
+  if (hue_ != ph || saturation_ != ps) {
+    huebox.damage(FL_DAMAGE_EXPOSE); 
+    valuebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
+  }
   hsv2rgb(h,s,v,r_,g_,b_);
   set_valuators();
   return 1;
@@ -189,14 +195,14 @@ static void generate_image(void* vv, int X, int Y, int W, uchar* buf) {
 }
 
 void Flcc_HueBox::draw() {
-  if (damage()&128) draw_box();
+  if (damage()&FL_DAMAGE_ALL) draw_box();
   int x1 = x()+Fl::box_dx(box());
   int y1 = y()+Fl::box_dy(box());
   int w1 = w()-Fl::box_dw(box());
   int h1 = h()-Fl::box_dh(box());
-  if (damage() == 2) fl_clip(x1+px,y1+py,6,6);
+  if (damage() == FL_DAMAGE_EXPOSE) fl_clip(x1+px,y1+py,6,6);
   fl_draw_image(generate_image, this, x1, y1, w1, h1);
-  if (damage() == 2) fl_pop_clip();
+  if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
 #ifdef CIRCLE
   int X = int(.5*(cos(c->hue()*(M_PI/3.0))*c->saturation()+1) * (w1-6));
@@ -244,16 +250,16 @@ static void generate_vimage(void* vv, int X, int Y, int W, uchar* buf) {
 }
 
 void Flcc_ValueBox::draw() {
-  if (damage()&128) draw_box();
+  if (damage()&FL_DAMAGE_ALL) draw_box();
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
   c->hsv2rgb(c->hue(),c->saturation(),1.0,tr,tg,tb);
   int x1 = x()+Fl::box_dx(box());
   int y1 = y()+Fl::box_dy(box());
   int w1 = w()-Fl::box_dw(box());
   int h1 = h()-Fl::box_dh(box());
-  if (damage() == 2) fl_clip(x1,y1+py,w1,6);
+  if (damage() == FL_DAMAGE_EXPOSE) fl_clip(x1,y1+py,w1,6);
   fl_draw_image(generate_vimage, this, x1, y1, w1, h1);
-  if (damage() == 2) fl_pop_clip();
+  if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
   int Y = int((1-c->value()) * (h1-6));
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
   draw_box(FL_UP_BOX,x1,y1+Y,w1,6,FL_GRAY);
@@ -331,7 +337,7 @@ public:
 };
 
 void ColorChip::draw() {
-  if (damage()&128) draw_box();
+  if (damage()&FL_DAMAGE_ALL) draw_box();
   fl_rectf(x()+Fl::box_dx(box()),
 	   y()+Fl::box_dy(box()),
 	   w()-Fl::box_dw(box()),
@@ -344,7 +350,7 @@ static void chooser_cb(Fl_Object* o, void* vv) {
   v->r = uchar(255*c->r()+.5);
   v->g = uchar(255*c->g()+.5);
   v->b = uchar(255*c->b()+.5);
-  v->damage(2);
+  v->damage(FL_DAMAGE_EXPOSE);
 }
 
 extern const char* fl_ok;

@@ -27,7 +27,7 @@ int Fl_Roller::handle(int event) {
 }
 
 void Fl_Roller::draw() {
-  if (damage()&128) draw_box();
+  if (damage()&FL_DAMAGE_ALL) draw_box();
   int X = x()+Fl::box_dx(box());
   int Y = y()+Fl::box_dy(box());
   int W = w()-Fl::box_dw(box())-1;

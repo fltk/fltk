@@ -20,7 +20,7 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   fl_clip(X,Y,W,H);
   Fl_Scroll* s = (Fl_Scroll*)v;
   // erase background if there is a boxtype:
-  if (s->box() && !(s->damage()&128)) {
+  if (s->box() && !(s->damage()&FL_DAMAGE_ALL)) {
     fl_color(s->color());
     fl_rectf(X,Y,W,H);
   }
@@ -66,14 +66,14 @@ void Fl_Scroll::draw() {
 
   uchar d = damage();
 
-  if (d & 128) { // full redraw
+  if (d & FL_DAMAGE_ALL) { // full redraw
     draw_box(box(),x(),y(),w(),h(),color());
     draw_clip(this, X, Y, W, H);
   } else {
-    if (d & 2) { // scroll the contents:
+    if (d & FL_DAMAGE_EXPOSE) { // scroll the contents:
       fl_scroll(X, Y, W, H, oldx-xposition_, oldy-yposition_, draw_clip, this);
     }
-    if (d & 1) { // draw damaged children
+    if (d & FL_DAMAGE_CHILD) { // draw damaged children
       fl_clip(X, Y, W, H);
       Fl_Widget*const* a = array();
       for (int i=children()-2; i--;) update_child(**a++);
@@ -98,7 +98,7 @@ void Fl_Scroll::draw() {
       if (!scrollbar.visible()) {
 	scrollbar.set_visible();
 	W -= scrollbar.w();
-	d = 128;
+	d = FL_DAMAGE_ALL;
       }
     } else {
       if (scrollbar.visible()) {
@@ -107,14 +107,14 @@ void Fl_Scroll::draw() {
 		  scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar.w() : X+W,
 		  Y, scrollbar.w(), H);
 	W += scrollbar.w();
-	d = 128;
+	d = FL_DAMAGE_ALL;
       }
     }
     if ((type()&HORIZONTAL) && (type()&ALWAYS_ON || l < X || r > X+W)) {
       if (!hscrollbar.visible()) {
 	hscrollbar.set_visible();
 	H -= hscrollbar.h();
-	d = 128;
+	d = FL_DAMAGE_ALL;
       }
     } else {
       if (hscrollbar.visible()) {
@@ -123,7 +123,7 @@ void Fl_Scroll::draw() {
 		  scrollbar.align()&FL_ALIGN_TOP ? Y-hscrollbar.h() : Y+H,
 		  W, hscrollbar.h());
 	H += hscrollbar.h();
-	d = 128;
+	d = FL_DAMAGE_ALL;
       }
     }
   }
@@ -138,7 +138,7 @@ void Fl_Scroll::draw() {
   hscrollbar.value(oldx = xposition_ = X, W, l, r-l);
 
   // draw the scrollbars:
-  if (d & 128) {
+  if (d & FL_DAMAGE_ALL) {
     draw_child(scrollbar);
     draw_child(hscrollbar);
     if (scrollbar.visible() && hscrollbar.visible()) {
@@ -175,7 +175,7 @@ void Fl_Scroll::position(int X, int Y) {
     if (o == &hscrollbar || o == &scrollbar) continue;
     o->position(o->x()+dx, o->y()+dy);
   }
-  damage(2);
+  damage(FL_DAMAGE_EXPOSE);
 }
 
 void Fl_Scroll::hscrollbar_cb(Fl_Widget* o, void*) {

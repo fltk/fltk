@@ -112,7 +112,7 @@ void Fl_Scrollbar::draw() {
   if (horizontal()) {
     if (w() < 3*h()) {Fl_Slider::draw(); return;}
     Fl_Slider::draw(x()+h(), y(), w()-2*h(), h());
-    if (damage()&128) {
+    if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_&1) ? down(slider()) : slider(),
 	       x(), y(), h(), h(), selection_color());
       draw_box((pushed_&2) ? down(slider()) : slider(),
@@ -129,7 +129,7 @@ void Fl_Scrollbar::draw() {
   } else { // vertical
     if (h() < 3*w()) {Fl_Slider::draw(); return;}
     Fl_Slider::draw(x(), y()+w(), w(), h()-2*w());
-    if (damage()&128) {
+    if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_&1) ? down(slider()) : slider(),
 	       x(), y(), w(), w(), selection_color());
       draw_box((pushed_&2) ? down(slider()) : slider(),

@@ -144,7 +144,7 @@ void Fl_Gl_Window::flush() {
 #if HAVE_GL_OVERLAY
 #ifdef WIN32
   uchar save_valid = valid_;
-  if (overlay && overlay!= this && damage() == 8) goto DRAW_OVERLAY_ONLY;
+  if (overlay && overlay!= this && damage() == FL_DAMAGE_OVERLAY) goto DRAW_OVERLAY_ONLY;
 #endif
 #endif
 
@@ -153,13 +153,13 @@ void Fl_Gl_Window::flush() {
 #if SWAP_TYPE == NODAMAGE
 
     // don't draw if only overlay damage or expose events:
-    if ((damage()&~0xA0) || !valid()) draw();
+    if ((damage()&~(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE)) || !valid()) draw();
     swap_buffers();
 
 #elif SWAP_TYPE == COPY
 
     // don't draw if only the overlay is damaged:
-    if (damage() != 8 || !valid()) draw();
+    if (damage() != FL_DAMAGE_OVERLAY || !valid()) draw();
     swap_buffers();
 
 #else // SWAP_TYPE == SWAP || SWAP_TYPE == UNDEFINED
@@ -167,7 +167,7 @@ void Fl_Gl_Window::flush() {
     if (overlay == this) { // Use CopyPixels to act like SWAP_TYPE == COPY
 
       // don't draw if only the overlay is damaged:
-      if (damage1_ || damage() != 8 || !valid()) draw();
+      if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !valid()) draw();
       // we use a seperate context for the copy because rasterpos must be 0
       // and depth test needs to be off:
       static GLXContext ortho_context;
@@ -216,7 +216,7 @@ void Fl_Gl_Window::flush() {
 
     // this faking of the overlay is incorrect but worked good for
     // one in-house program:
-    if (overlay != this || damage()!=8 || !Fl::pushed()) draw();
+    if (overlay != this || damage()!=FL_DAMAGE_OVERLAY || !Fl::pushed()) draw();
     if (overlay == this) draw_overlay();
     glFlush();
 

@@ -72,9 +72,9 @@ void Fl_Browser_::resize(int X, int Y, int W, int H) {
 
 // Cause minimal update to redraw the given item:
 void Fl_Browser_::redraw_line(void* l) {
-  if (!redraw1 || redraw1 == l) {redraw1 = l; damage(2);}
-  else if (!redraw2 || redraw2 == l) {redraw2 = l; damage(2);}
-  else damage(4);
+  if (!redraw1 || redraw1 == l) {redraw1 = l; damage(FL_DAMAGE_LINE);}
+  else if (!redraw2 || redraw2 == l) {redraw2 = l; damage(FL_DAMAGE_LINE);}
+  else damage(FL_DAMAGE_SCROLL);
 }
 
 // Figure out top() based on position():
@@ -127,7 +127,7 @@ void Fl_Browser_::update_top() {
       offset_ = y-ly;
       real_position_ = y;
     }
-    damage(4);
+    damage(FL_DAMAGE_SCROLL);
   }
 }
 
@@ -201,7 +201,7 @@ void Fl_Browser_::display(void* x) {
 // redraw, has side effect of updating top and setting scrollbar:
 void Fl_Browser_::draw() {
   int drawsquare = 0;
-  if (damage() & 128) { // redraw the box if full redraw
+  if (damage() & FL_DAMAGE_ALL) { // redraw the box if full redraw
     Fl_Boxtype b = box() ? box() : Fl_Input_::default_box();
     draw_box(b, x(), y(), w(), h(), color());
     drawsquare = 1;
@@ -239,11 +239,11 @@ J1:
   for (; l && yy < H; l = item_next(l)) {
     int hh = item_height(l);
     if (hh <= 0) continue;
-    if ((damage()&4) || l == redraw1 || l == redraw2) {
+    if ((damage()&(FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) || l == redraw1 || l == redraw2) {
       if (item_selected(l)) {
 	fl_color(selection_color());
 	fl_rectf(X, yy+Y, W, hh);
-      } else if (!(damage()&128)) {
+      } else if (!(damage()&FL_DAMAGE_ALL)) {
 	fl_color(color());
 	fl_rectf(X, yy+Y, W, hh);
       }
@@ -258,7 +258,7 @@ J1:
     yy += hh;
   }
   // erase the area below last line:
-  if (!(damage()&128) && yy < H) {
+  if (!(damage()&FL_DAMAGE_ALL) && yy < H) {
     fl_color(color());
     fl_rectf(X, yy+Y, W, H-yy);
   }

@@ -15,7 +15,7 @@ void Fl_Value_Output::draw() {
   int Y = y()+Fl::box_dy(b);
   int W = w()-Fl::box_dw(b);
   int H = h()-Fl::box_dh(b);
-  if (damage()&~1)
+  if (damage()&~FL_DAMAGE_CHILD)
     draw_box(b, color());
   else {
     fl_color(color());

@@ -39,7 +39,7 @@ void Fl_Counter::draw() {
   fl_color(active_r() ? textcolor() : inactive(textcolor()));
   char str[128]; format(str);
   fl_draw(str, xx[0], y(), ww[0], h(), FL_ALIGN_CENTER);
-  if (!(damage()&128)) return; // only need to redraw text
+  if (!(damage()&FL_DAMAGE_ALL)) return; // only need to redraw text
 
   if (type() == FL_NORMAL_COUNTER) {
     draw_box(boxtype[1], xx[1], y(), ww[1], h(), color());

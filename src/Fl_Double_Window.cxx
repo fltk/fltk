@@ -36,9 +36,9 @@ static int can_xdbe() {
   }
   return use_xdbe;
 }
-#define DAMAGE_TEST() (damage() && (use_xdbe || damage() != 2))
+#define DAMAGE_TEST() (damage() && (use_xdbe || damage() != FL_DAMAGE_EXPOSE))
 #else
-#define DAMAGE_TEST() (damage() & ~2)
+#define DAMAGE_TEST() (damage() & ~FL_DAMAGE_EXPOSE)
 #endif
 
 void Fl_Double_Window::show() {
@@ -92,7 +92,7 @@ void Fl_Double_Window::flush() {
     else
 #endif
       i->other_xid = fl_create_offscreen(w(), h());
-    clear_damage(~0);
+    clear_damage(FL_DAMAGE_ALL);
   }
 #ifdef WIN32
   fl_clip_region(i->region); i->region = 0;

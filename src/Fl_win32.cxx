@@ -281,7 +281,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (!i->region) i->region = CreateRectRgn(0,0,0,0);
       GetUpdateRgn(hWnd,i->region,0);
     }
-    window->clear_damage(window->damage()|2);
+    window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
     i->flush();
     window->clear_damage();
     // This convinces MSWindows we have painted whatever they wanted
@@ -423,17 +423,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  int is_a_resize = (W != w() || H != h());
-  int resize_from_program = (this != resize_bug_fix);
-  if (!resize_from_program) resize_bug_fix = 0;
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  else if (!is_a_resize) return;
-  if (is_a_resize) {
-    Fl_Group::resize(X,Y,W,H);
-    if (shown()) {redraw(); i->wait_for_expose = 1;}
-  } else {
-    x(X); y(Y);
+  int resize_from_program = 1;
+  if (this == resize_bug_fix) {
+    resize_from_program = 0;
+    resize_bug_fix = 0;
   }
+  if (X==x() && Y==y() && W==w() && H==h()) return;
+  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
+  if (W != w() || H != h()) Fl_Group::resize(X,Y,W,H); else {x(X); y(Y);}
   if (resize_from_program && shown()) {
     if (border() && !parent()) {
       X -= GetSystemMetrics(SM_CXFRAME);
@@ -442,6 +439,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       H += 2*GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
     }
     MoveWindow(i->xid, X, Y, W, H, TRUE);
+    //if (!parent()) redraw();
   }
 }
 
@@ -693,19 +691,19 @@ void Fl_Widget::damage(uchar flags) {
       if (i->region) {DeleteObject(i->region);}
       i->region = 0;
       damage_ |= flags;
-      Fl::damage(1);
+      Fl::damage(FL_DAMAGE_CHILD);
     }
   }
 }
 
-void Fl_Widget::redraw() {damage(~0);}
+void Fl_Widget::redraw() {damage(FL_DAMAGE_ALL);}
 
 Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
 
 void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
   if (type() < FL_WINDOW) {
     damage_ |= flags;
-    if (parent()) parent()->damage(1,X,Y,W,H);
+    if (parent()) parent()->damage(FL_DAMAGE_CHILD,X,Y,W,H);
   } else {
     // see if damage covers entire window:
     if (X<=0 && Y<=0 && W>=w() && H>=h()) {damage(flags); return;}
@@ -724,7 +722,7 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
 	i->region = XRectangleRegion(X,Y,W,H);
       }
       damage_ |= flags;
-      Fl::damage(1);
+      Fl::damage(FL_DAMAGE_CHILD);
     }
   }
 }

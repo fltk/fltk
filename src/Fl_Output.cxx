@@ -9,7 +9,7 @@
 
 void Fl_Output::draw() {
   Fl_Boxtype b = box() ? box() : default_box();
-  if (damage() & 128) draw_box(b, color());
+  if (damage() & FL_DAMAGE_ALL) draw_box(b, color());
   Fl_Input_::drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
 		      w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b));
 }

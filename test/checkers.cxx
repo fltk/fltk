@@ -989,8 +989,8 @@ void Board::drag_piece(int i, int dx, int dy) {
     dragging = b[i];
   }
   if (dx != dragx || dy != dragy) {
-    damage(4, dragx, dragy, ISIZE, ISIZE);
-    damage(4, dx, dy, ISIZE, ISIZE);
+    damage(FL_DAMAGE_OVERLAY, dragx, dragy, ISIZE, ISIZE);
+    damage(FL_DAMAGE_OVERLAY, dx, dy, ISIZE, ISIZE);
   }
   dragx = dx;
   dragy = dy;
@@ -1004,8 +1004,8 @@ void Board::drop_piece(int i) {
   int x = squarex(i);
   int y = squarey(i);
   if (x != dragx || y != dragy) {
-    damage(4, dragx, dragy, ISIZE, ISIZE);
-    damage(4, x, y, ISIZE, ISIZE);
+    damage(FL_DAMAGE_OVERLAY, dragx, dragy, ISIZE, ISIZE);
+    damage(FL_DAMAGE_OVERLAY, x, y, ISIZE, ISIZE);
   }
 }
 

@@ -21,7 +21,7 @@ void Fl_Value_Input::input_cb(Fl_Widget*, void* v) {
 }
 
 void Fl_Value_Input::draw() {
-  if (damage()&~1) input.clear_damage(~0);
+  if (damage()&~FL_DAMAGE_CHILD) input.clear_damage(FL_DAMAGE_ALL);
   input.box(box());
   input.color(color(), selection_color());
   input.draw();

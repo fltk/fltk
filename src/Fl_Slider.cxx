@@ -27,11 +27,17 @@ Fl_Slider::Fl_Slider(uchar t, int x, int y, int w, int h, const char* l)
 void Fl_Slider::slider_size(double v) {
   if (v <  0) v = 0;
   if (v > 1) v = 1;
-  if (slider_size_ != float(v)) {slider_size_ = float(v); damage(2);}
+  if (slider_size_ != float(v)) {
+    slider_size_ = float(v); 
+    damage(FL_DAMAGE_EXPOSE);
+  }
 }
 
 void Fl_Slider::bounds(double a, double b) {
-  if (minimum() != a || maximum() != b) {Fl_Valuator::bounds(a, b); damage(2);}
+  if (minimum() != a || maximum() != b) {
+    Fl_Valuator::bounds(a, b); 
+    damage(FL_DAMAGE_EXPOSE);
+  }
 }
 
 int Fl_Slider::scrollvalue(int p, int w, int t, int l) {
@@ -101,7 +107,7 @@ void Fl_Slider::draw(int x, int y, int w, int h) {
     wsl = w-2*BW;
   }
 
-  if (damage()&128) { // complete redraw
+  if (damage()&FL_DAMAGE_ALL) { // complete redraw
     draw_bg(x, y, w, h);
   } else { // partial redraw, clip off new position of slider
     if (X > BW) {

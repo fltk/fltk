@@ -290,4 +290,13 @@ enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
   FL_MULTISAMPLE= 128
 };
 
+// damage masks
+
+const uchar FL_DAMAGE_CHILD    = 0x01;
+const uchar FL_DAMAGE_EXPOSE   = 0x02;
+const uchar FL_DAMAGE_LINE     = 0x02;
+const uchar FL_DAMAGE_SCROLL   = 0x04;
+const uchar FL_DAMAGE_OVERLAY  = 0x04|0x08;
+const uchar FL_DAMAGE_ALL      = 0x80;
+
 #endif

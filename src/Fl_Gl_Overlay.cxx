@@ -52,7 +52,7 @@ public:
 };
 
 void _Fl_Gl_Overlay::draw() {
-  if (damage() != 2) glClear(GL_COLOR_BUFFER_BIT);
+  if (damage() != FL_DAMAGE_EXPOSE) glClear(GL_COLOR_BUFFER_BIT);
   Fl_Gl_Window *w = (Fl_Gl_Window *)parent();
   uchar save_valid = w->valid_;
   w->valid_ = valid_;
@@ -144,7 +144,7 @@ void Fl_Gl_Window::redraw_overlay() {
     ((Fl_Gl_Window*)overlay)->redraw();
   else
 #endif
-    damage(8);
+    damage(FL_DAMAGE_OVERLAY);
 }
 
 void Fl_Gl_Window::make_overlay_current() {

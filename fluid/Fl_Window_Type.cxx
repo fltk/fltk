@@ -129,7 +129,7 @@ public:
 void Overlay_Window::draw() {
   const int CHECKSIZE = 8;
   // see if box is clear or a frame or rounded:
-  if ((damage()&128) &&
+  if ((damage()&FL_DAMAGE_ALL) &&
       (!box() || (box()>=4&&!(box()&2)) || box()>=_FL_ROUNDED_BOX)) {
     // if so, draw checkerboard so user can see what areas are clear:
     for (int y = 0; y < h(); y += CHECKSIZE) 

@@ -9,7 +9,7 @@
 #include <FL/math.h>
 
 void Fl_Dial::draw(int x, int y, int w, int h) {
-  if (damage()&128) draw_box(box(), x, y, w, h, color());
+  if (damage()&FL_DAMAGE_ALL) draw_box(box(), x, y, w, h, color());
   x += Fl::box_dx(box());
   y += Fl::box_dy(box());
   w -= Fl::box_dw(box());
@@ -30,7 +30,7 @@ void Fl_Dial::draw(int x, int y, int w, int h) {
     }
     return;
   }
-  if (!(damage()&128)) {
+  if (!(damage()&FL_DAMAGE_ALL)) {
     fl_color(color());
     fl_pie(x+1, y+1, w-2, h-2, 0, 360);
   }
