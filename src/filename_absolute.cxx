@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.5 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.6 2002/01/22 00:46:09 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -141,6 +141,9 @@ filename_relative(char       *to,	// O - Relative filename
     else if (*slash != *newslash) break;
 #endif // WIN32 || __EMX__ || __APPLE__
 
+  if (*newslash == '\0' && *slash != '\0' && !isdirsep(*slash))
+    newslash--;
+
   while (!isdirsep(*slash) && slash > from) slash --;
 
   if (isdirsep(*slash)) slash ++;
@@ -172,5 +175,5 @@ filename_relative(char       *to,	// O - Relative filename
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.5 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.6 2002/01/22 00:46:09 easysw Exp $".
 //
