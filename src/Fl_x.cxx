@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.12 2000/02/18 07:11:09 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.13 2000/02/23 09:23:53 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -258,6 +258,10 @@ void fl_open_display() {
   Display *d = XOpenDisplay(0);
   if (!d) Fl::fatal("Can't open display: %s",XDisplayName(0));
 
+  fl_open_display(d);
+}
+
+void fl_open_display(Display* d) {
   fl_display = d;
 
   wm_delete_window = XInternAtom(d,"WM_DELETE_WINDOW",0);
@@ -880,5 +884,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.12 2000/02/18 07:11:09 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.13 2000/02/23 09:23:53 bill Exp $".
 //
