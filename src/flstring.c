@@ -1,5 +1,5 @@
 /*
- * "$Id: flstring.c,v 1.1.2.1 2002/05/16 12:47:43 easysw Exp $"
+ * "$Id: flstring.c,v 1.1.2.2 2002/05/17 11:31:09 easysw Exp $"
  *
  * BSD string functions for the Fast Light Tool Kit (FLTK).
  *
@@ -68,7 +68,7 @@ fl_strlcat(char       *dst,	/* O - Destination string */
 
 #  if !HAVE_STRLCPY
 /*
- * 'fl_strlcat()' - Safely copy two strings.
+ * 'fl_strlcpy()' - Safely copy two strings.
  */
 
 size_t				/* O - Length of string */
@@ -101,5 +101,5 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
 
 
 /*
- * End of "$Id: flstring.c,v 1.1.2.1 2002/05/16 12:47:43 easysw Exp $".
+ * End of "$Id: flstring.c,v 1.1.2.2 2002/05/17 11:31:09 easysw Exp $".
  */
