@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.47 2003/11/01 01:07:07 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.48 2003/11/01 01:32:40 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -153,6 +153,7 @@ Fl_Text_Display::~Fl_Text_Display() {
 void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   /* If the text display is already displaying a buffer, clear it off
      of the display and remove our callback from it */
+  if ( buf == mBuffer) return;
   if ( mBuffer != 0 ) {
     buffer_modified_cb( 0, 0, mBuffer->length(), 0, 0, this );
     mBuffer->remove_modify_callback( buffer_modified_cb, this );
@@ -3058,5 +3059,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.47 2003/11/01 01:07:07 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.48 2003/11/01 01:32:40 easysw Exp $".
 //

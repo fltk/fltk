@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Calling Fl_Text_Display::buffer() with the same buffer
+	  would cause an application to lockup (STR #196)
 	- Some of the widgets could crash an application if the
 	  cursor was changed after a window was deleted (STR
 	  #181)
