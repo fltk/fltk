@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.6.2.2 2001/12/09 23:45:22 matthiaswm Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.6.2.3 2001/12/18 00:24:01 matthiaswm Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -103,7 +103,7 @@ static Cursor crsrHAND =
     0x8801, 0x4801, 0x2002, 0x2002, 0x1004, 0x0804, 0x0408, 0x0408 },
   { 0x0600, 0x0F00, 0x0F00, 0x0F00, 0x0FC0, 0x0FF8, 0x6FFE, 0xFFFF,
     0xFFFF, 0x7FFF, 0x3FFE, 0x3FFE, 0x1FFC, 0x0FFC, 0x07F8, 0x07F8 },
-  { 5, 1 }
+  { 1, 5 } // Hotspot: ( y, x )
 }, *crsrHANDptr = &crsrHAND;
 static Cursor crsrHELP =
 {
@@ -290,5 +290,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.2 2001/12/09 23:45:22 matthiaswm Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.3 2001/12/18 00:24:01 matthiaswm Exp $".
 //
