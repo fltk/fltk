@@ -570,6 +570,28 @@ void set_title(Fl_Window* w) {
 }
 </PRE></UL>
 
+<H2>The main() Function</H2>
+
+<P>Once we've created all of the support functions, the only thing left
+is to tie them all together with the <TT>main()</TT> function.
+The <TT>main()</TT> function creates a new text buffer, creates a
+new view (window) for the text, shows the window, loads the file on
+the command-line (if any), and then enters the FLTK event loop:
+
+<UL><PRE>
+int main(int argc, char **argv) {
+  textbuf = new Fl_Text_Buffer;
+
+  Fl_Window* window = new_view();
+
+  window->show(1, argv);
+
+  if (argc > 1) load_file(argv[1], -1);
+
+  return Fl::run();
+}
+</PRE></UL>
+
 <H2>Compiling the Editor</H2>
 
 <P>The complete source for our text editor can be found in the <TT>test/editor.cxx</TT> source file.  Both the Makefile and Visual C++
