@@ -10,7 +10,7 @@ Appendix A</A>.
 </H3>
  The double version takes RGB values in the range 0.0 to 1.0.  The 
 uchar version takes RGB values in the range 0 to 255. 
-<CENTER><IMG src=./fl_color_chooser.jpg></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_color_chooser.jpg></P>
 <P><TT>fl_color_chooser()</TT> pops up a window to let the user pick an 
 arbitrary RGB color.  They can pick the hue and saturation in the &quot;hue 
 box&quot; on the left (hold down CTRL to just change the saturation), and 
@@ -32,22 +32,22 @@ dithering. </P>
 access with <A href=#fl_color><TT>fl_color()</TT></A> and lets the user 
 pick one of them.  It returns the new color index, or the old one if 
 the user types ESC or clicks outside the window. 
-<CENTER><IMG src=./fl_show_colormap.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_show_colormap.gif></P>
 <H3><A name=fl_message>void fl_message(const char *, ...)</A></H3>
  Displays a printf-style message in a pop-up box with an &quot;OK&quot; button, 
 waits for the user to hit the button.  The message will wrap to fit the 
 window, or may be many lines by putting <TT>\n</TT> characters into it. 
  The enter key is a shortcut for the OK button. 
-<CENTER><IMG src=./fl_message.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_message.gif></P>
 <H3><A name=fl_>void fl_alert(const char *, ...)</A></H3>
  Same as <TT>fl_message()</TT> except for the &quot;!&quot; symbol. 
-<CENTER><IMG src=./fl_alert.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_alert.gif></P>
 <H3><A name=fl_ask>int fl_ask(const char *, ...)</A></H3>
  Displays a printf-style message in a pop-up box with an &quot;Yes&quot; and &quot;No&quot; 
 button and waits for the user to hit a button.  The return value is 1 
 if the user hits Yes, 0 if they pick No.  The enter key is a shortcut 
 for Yes and ESC is a shortcut for No. 
-<CENTER><IMG src=./fl_ask.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_ask.gif></P>
 <H3><A name=fl_choice>int fl_choice(const char *q, const char *b0, 
 const char *b1, const char *b2, ...)</A></H3>
  Shows the message with three buttons below it marked with the strings <TT>
@@ -56,7 +56,7 @@ which button is hit. ESC is a shortcut for button 0 and the enter key
 is a shortcut for button 1.  Notice the &quot;misordered&quot; position of the 
 buttons.  You can hide buttons by passing <TT>NULL</TT> as their 
 labels. 
-<CENTER><IMG src=./fl_choice.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_choice.gif></P>
 <H3><A name=fl_input>const char *fl_input(const char *label, const char 
 *deflt = 0, ...)</A></H3>
  Pops up a window displaying a string, lets the user edit it, and 
@@ -64,12 +64,12 @@ return the new value.  The cancel button returns <TT>NULL</TT>. <I>The
 returned pointer is only valid until the next time <TT>fl_input()</TT>
  is called</I>.  Due to back-compatability, the arguments to any printf 
 commands in the label are after the default value. 
-<CENTER><IMG src=./fl_input.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_input.gif></P>
 <H3><A name=fl_password>const char *fl_password(const char *label, 
 const char *deflt = 0, ...)</A></H3>
  Same as <TT>fl_input()</TT> except an <A href=Fl_Secret_Input.html#Fl_Secret_Input>
 <TT>Fl_Secret_Input</TT></A> field is used. 
-<CENTER><IMG src=./fl_password.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./fl_password.gif></P>
 <H3><A name=fl_message_font>void fl_message_font(Fl_Font fontid, uchar 
 size)</A></H3>
  Change the font and font size used for the messages in all the popups. 
@@ -84,7 +84,7 @@ choose files from large directories.  This file chooser has several
 unique features, the major one being that the Tab key completes 
 filenames like it does in Emacs or tcsh, and the list always shows all 
 possible completions. 
-<CENTER><IMG src=./filechooser.gif></CENTER>
+<P ALIGN=CENTER><IMG src=./filechooser.gif></P>
 <TT>fl_file_chooser()</TT> pops up the file chooser, waits for the user 
 to pick a file or Cancel, and then returns a pointer to that filename 
 or <TT>NULL</TT> if Cancel is chosen. 

@@ -31,7 +31,7 @@ use the inline functions and instead use &quot;pure&quot; FLTK.  This will make
 it a lot cleaner and make it easier to figure out how to call the FLTK 
 functions.  Unfortunately this conversion is harder than expected and 
 even Digital Domain's inhouse code still uses <TT>forms.H</TT> a lot. </P>
-<H2>Problems you will encounter</H2>
+<H2>Problems You Will Encounter</H2>
 <P>Many parts of XForms use X-specific structures like <TT>XEvent</TT>
  in their interface.  I did not emulate these!  Unfortunately these 
 features (such as the &quot;canvas&quot; widget) are needed by most large 
@@ -125,7 +125,7 @@ encountered when going from old Forms to XForms:
 unless &quot;foreground()&quot; was called.  FLTK acts like &quot;foreground()&quot; is 
 called all the time.  If you really want the fork behavior do &quot;if 
 (fork()) exit(0)&quot; right at the start of your program. 
-<H3>You Cannot Use IRISGL windows or fl_queue</H3>
+<H3>You Cannot Use IRISGL Windows or fl_queue</H3>
  If a Forms (not XForms) program if you wanted your own window for 
 displaying things you would create a IRISGL window and draw in it, 
 periodically calling Forms to check if the user hit buttons on the 
