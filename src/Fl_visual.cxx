@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_visual.cxx,v 1.5 1998/10/21 14:20:35 mike Exp $"
+// "$Id: Fl_visual.cxx,v 1.6 1998/12/06 14:44:00 mike Exp $"
 //
 // Visual support for the Fast Light Tool Kit (FLTK).
 //
@@ -47,14 +47,14 @@ int Fl::visual(int flags) {
 static int test_visual(XVisualInfo& v, int flags) {
   if (v.screen != fl_screen) return 0;
   if (!(flags & FL_INDEX)) {
-    if (!v.red_mask) return 0; // detects static, true, and direct color
+    if (v.c_class != StaticColor && v.c_class != TrueColor) return 0;
     if (v.depth <= 8) return 0; // fltk will work better in colormap mode
   }
   if (flags & FL_RGB8) {
     if (v.depth < 24) return 0;
   }
   // for now, fltk does not like colormaps of more than 8 bits:
-  if (!v.red_mask && v.depth > 8) return 0;
+  if ((v.c_class&1) && v.depth > 8) return 0;
 #if USE_XDBE
   if (flags & FL_DOUBLE) {
     static XdbeScreenVisualInfo *xdbejunk;
@@ -102,5 +102,5 @@ int Fl::visual(int flags) {
 #endif
 
 //
-// End of "$Id: Fl_visual.cxx,v 1.5 1998/10/21 14:20:35 mike Exp $".
+// End of "$Id: Fl_visual.cxx,v 1.6 1998/12/06 14:44:00 mike Exp $".
 //
