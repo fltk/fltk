@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.5rc3
 	- Documentation updates (STR #505, STR #513)
 	- Updated PNG library source to 1.2.6 + wutil patch.
 	- Updated ZLIB library source to 1.2.1.
+	- Fixed an edge case in fl_old_shortcut() that could
+	  cause it to read beyond then end of the shortcut
+	  string (used for XForms named shortcuts)
 	- Added (unsupported) CMake files (STR #499)
 	- Tooltips would not reappear on the same widget, and
 	  the initial tooltip delay was not used after a tooltip

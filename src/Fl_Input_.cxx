@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.31 2004/09/09 21:34:46 matthiaswm Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.32 2004/09/21 13:35:39 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -793,6 +793,15 @@ void Fl_Input_::put_in_buffer(int len) {
     } else {
       bufsize = len+1;
     }
+    // Note: the following code is equivalent to:
+    //
+    //   if (moveit) value_ = value_ - buffer;
+    //   char* nbuffer = (char*)realloc(buffer, bufsize);
+    //   if (moveit) value_ = value_ + nbuffer;
+    //   buffer = nbuffer;
+    //
+    // We just optimized the pointer arithmetic for value_...
+    //
     char* nbuffer = (char*)realloc(buffer, bufsize);
     if (moveit) value_ += (nbuffer-buffer);
     buffer = nbuffer;
@@ -857,5 +866,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.31 2004/09/09 21:34:46 matthiaswm Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.32 2004/09/21 13:35:39 easysw Exp $".
 //
