@@ -25,7 +25,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
-#include <FL/fl_file_chooser.H>
+#include <FL/Fl_File_Chooser.H>
 #include "Fl_Type.h"
 #include <FL/fl_show_input.H>
 #include "../src/flstring.h"
