@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.18 1998/12/02 15:47:29 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.19 1998/12/08 21:08:50 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -759,59 +759,6 @@ void Fl_Window::make_current() {
   fl_clip_region(0);
 }
 
-#include <FL/fl_draw.H>
-
-void Fl_Widget::damage(uchar flags) {
-  if (type() < FL_WINDOW) {
-    damage(flags, x(), y(), w(), h());
-  } else {
-    Fl_X* i = Fl_X::i((Fl_Window*)this);
-    if (i) {
-      if (i->region) {DeleteObject(i->region);}
-      i->region = 0;
-      damage_ |= flags;
-      Fl::damage(FL_DAMAGE_CHILD);
-    }
-  }
-}
-
-void Fl_Widget::redraw() {damage(FL_DAMAGE_ALL);}
-
-Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
-
-void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
-  if (type() < FL_WINDOW) {
-    damage_ |= flags;
-    if (parent()) parent()->damage(FL_DAMAGE_CHILD,X,Y,W,H);
-  } else {
-    // see if damage covers entire window:
-    if (X<=0 && Y<=0 && W>=w() && H>=h()) {damage(flags); return;}
-    Fl_X* i = Fl_X::i((Fl_Window*)this);
-    if (i) {
-      if (damage()) {
-	// if we already have damage we must merge with existing region:
-	if (i->region) {
-	  Region r = XRectangleRegion(X,Y,W,H);
-	  CombineRgn(i->region,i->region,r,RGN_OR);
-	  DeleteObject(r);
-	}
-      } else {
-	// create a new region:
-	if (i->region) DeleteObject(i->region);
-	i->region = XRectangleRegion(X,Y,W,H);
-      }
-      damage_ |= flags;
-      Fl::damage(FL_DAMAGE_CHILD);
-    }
-  }
-}
-
-void Fl_Window::flush() {
-  make_current();
-  fl_clip_region(i->region);i->region=0;
-  draw();
-}
-
 //
-// End of "$Id: Fl_win32.cxx,v 1.18 1998/12/02 15:47:29 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.19 1998/12/08 21:08:50 mike Exp $".
 //
