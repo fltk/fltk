@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.19 2002/05/13 15:43:10 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.20 2002/05/13 17:23:10 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,6 +40,8 @@ int		Fl_Tooltip::size_ = FL_NORMAL_SIZE;
 
 #define MAX_WIDTH 400
 
+static const char* tip;
+
 class Fl_TooltipBox : public Fl_Menu_Window {
 public:
   Fl_TooltipBox() : Fl_Menu_Window(0, 0) {
@@ -48,9 +50,11 @@ public:
   }
   void draw();
   void layout();
+  void show() {
+    if (tip) Fl_Menu_Window::show();
+  }
 };
 
-static const char* tip;
 static Fl_Widget* widget;
 static Fl_TooltipBox *window = 0;
 static int X,Y,W,H;
@@ -108,6 +112,8 @@ static void tooltip_timeout(void*) {
   ((Fl_Widget*)window)->label(tip);
   window->layout();
   window->redraw();
+//  printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+//         window, tip ? tip : "(null)");
   window->show();
   Fl::remove_timeout(recent_timeout);
   recent_tooltip = 1;
@@ -117,11 +123,17 @@ static void tooltip_timeout(void*) {
 // This is called when a widget is destroyed:
 static void
 tt_exit(Fl_Widget *w) {
+//  printf("tt_exit(w=%p)\n", w);
+//  printf("    widget=%p, window=%p\n", widget, window);
+
   if (w && w == widget) Fl_Tooltip::enter_area(0,0,0,0,0,0);
 }
 
 static void
 tt_enter(Fl_Widget* widget) {
+//  printf("tt_enter(widget=%p)\n", widget);
+//  printf("    window=%p\n", window);
+
   // find the enclosing group with a tooltip:
   Fl_Widget* w = widget;
   while (w && !w->tooltip()) {
@@ -138,6 +150,10 @@ tt_enter(Fl_Widget* widget) {
 void
 Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
 {
+//  printf("Fl_Tooltip::enter_area(wid=%p, x=%d, y=%d, w=%d, h=%d, t=\"%s\")\n",
+//         wid, x, y, w, h, t ? t : "(null)");
+//  printf("    recursion=%d, window=%p\n", recursion, window);
+
   if (recursion) return;
   Fl::remove_timeout(tooltip_timeout);
   Fl::remove_timeout(recent_timeout);
@@ -159,6 +175,9 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
     if (window) window->hide();
     if (recent_tooltip) Fl::add_timeout(.2, recent_timeout);
   }
+
+//  printf("    tip=\"%s\", window->shown()=%d\n", tip ? tip : "(null)",
+//         window ? window->shown() : 0);
 }
 
 void Fl_Widget::tooltip(const char *tt) {
@@ -172,5 +191,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.19 2002/05/13 15:43:10 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.20 2002/05/13 17:23:10 easysw Exp $".
 //
