@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.15 2000/02/15 08:31:45 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.16 2000/02/18 07:11:08 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -352,6 +352,8 @@ void fl_fix_focus() {
 
   if (Fl::grab()) return; // don't do anything while grab is on.
 
+  Fl::e_keysym = 0; // make sure it is not confused with navigation key
+
   // set focus based on Fl::modal() and fl_xfocus
   Fl_Widget* w = fl_xfocus;
   if (w) {
@@ -480,12 +482,11 @@ int Fl::handle(int event, Fl_Window* window)
     window = 0;
   case FL_FOCUS:
     fl_xfocus = window;
-    e_keysym = 0; // make sure it is not confused with navigation key
     fl_fix_focus();
     return 1;
 
   case FL_KEYBOARD:
-    fl_xfocus = window; // this should already be set, but just in case.
+    fl_xfocus = window; // this should not happen!  But maybe it does:
 
     // Try it as keystroke, sending it to focus and all parents:
     for (w = grab() ? grab() : focus(); w; w = w->parent())
@@ -705,5 +706,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.15 2000/02/15 08:31:45 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.16 2000/02/18 07:11:08 bill Exp $".
 //

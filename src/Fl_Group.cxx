@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.3 1999/08/09 06:19:32 bill Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.4 2000/02/18 07:11:09 bill Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -67,6 +67,8 @@ static int send(Fl_Widget* o, int event) {
 #define ctrl(x) (x^0x40)
 static int navkey() {
   switch (Fl::event_key()) {
+  case 0: // not an FL_KEYBOARD/FL_SHORTCUT event
+    break;
   case FL_Tab:
     if (!Fl::event_state(FL_SHIFT)) return FL_Right;
   case 0xfe20: // XK_ISO_Left_Tab
@@ -503,5 +505,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.3 1999/08/09 06:19:32 bill Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.4 2000/02/18 07:11:09 bill Exp $".
 //

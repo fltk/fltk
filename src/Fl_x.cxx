@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.11 2000/01/26 06:27:14 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.12 2000/02/18 07:11:09 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -451,7 +451,9 @@ int fl_handle(const XEvent& xevent)
     fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char buffer[21];
     KeySym keysym;
-    int len = XLookupString((XKeyEvent*)&(xevent.xkey),buffer,20,&keysym,0);
+    //static XComposeStatus compose;
+    int len = XLookupString((XKeyEvent*)&(xevent.xkey),
+			    buffer, 20, &keysym, 0/*&compose*/);
     if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
       // force it to type a character (not sure if this ever is needed):
       if (!len) {buffer[0] = char(keysym); len = 1;}
@@ -878,5 +880,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.11 2000/01/26 06:27:14 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.12 2000/02/18 07:11:09 bill Exp $".
 //
