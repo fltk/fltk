@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.3
 
 	- Documentation updates.
+	- Tweeked the plastic scheme under MacOSX to better
+	  match the colors.
 	- The Fl_Image.H always included the x.H header file,
 	  which included many system headers that could
 	  interfere with normal GUI applications.  It now uses

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.15 2003/01/10 19:29:09 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.16 2003/01/11 14:19:17 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -148,7 +148,7 @@ void Fl::get_system_colors()
   fl_open_display();
 
   foreground(0, 0, 0);
-  background(0xe0, 0xe0, 0xe0);
+  background(0xe8, 0xe8, 0xe8);
   background2(0xf0, 0xf0, 0xf0);
   set_selection_color(0x80, 0x80, 0x80);
 }
@@ -252,13 +252,23 @@ int Fl::reload_scheme() {
   if (scheme_ && !strcasecmp(scheme_, "plastic")) {
     // Update the tile image to match the background color...
     uchar r, g, b;
+    int nr, ng, nb;
 
     get_color(FL_GRAY, r, g, b);
-    sprintf(tile_cmap[0], "O c #%02x%02x%02x", r, g, b);
-    sprintf(tile_cmap[1], "o c #%02x%02x%02x", 0xe0 * (int)r / 0xf0,
-            0xe0 * (int)g / 0xf0, 0xe0 * (int)b / 0xf0);
-    sprintf(tile_cmap[2], ". c #%02x%02x%02x", 0xd8 * (int)r / 0xf0,
-            0xd8 * (int)g / 0xf0, 0xd8 * (int)b / 0xf0);
+
+    nr = 0xf0 * r / 0xe0;
+    if (nr > 255) nr = 255;
+
+    ng = 0xf0 * g / 0xe0;
+    if (ng > 255) ng = 255;
+
+    nb = 0xf0 * b / 0xe0;
+    if (nb > 255) nb = 255;
+
+    sprintf(tile_cmap[0], "O c #%02x%02x%02x", nr, ng, nb);
+    sprintf(tile_cmap[1], "o c #%02x%02x%02x", r, g, b);
+    sprintf(tile_cmap[2], ". c #%02x%02x%02x", 0xd8 * (int)r / 0xe0,
+            0xd8 * (int)g / 0xe0, 0xd8 * (int)b / 0xe0);
 
     tile.uncache();
 
@@ -309,5 +319,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.15 2003/01/10 19:29:09 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.16 2003/01/11 14:19:17 easysw Exp $".
 //
