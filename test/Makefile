@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.13 2001/11/29 21:24:49 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.14 2001/11/29 21:50:05 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -158,12 +158,6 @@ gldemos:	$(GLALL)
 	echo Generating $<...
 	../fluid/fluid -c $<
 
-#.fl$(EXEEXT):
-#	echo Generating, compiling, and linking $@...
-#	../fluid/fluid -c $<
-#	$(CXX) -I.. $(CXXFLAGS) $@.cxx $(LINKFLTK) $(LDLIBS) -o $@
-
-
 $(ALL):  ../lib/$(LIBNAME)
 
 # Programs needing special instructions...
@@ -236,5 +230,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.13 2001/11/29 21:24:49 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.14 2001/11/29 21:50:05 easysw Exp $".
 #
