@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc2
 
 	- Portability fixes.
+	- Several of the valuators did not support tooltips.
 	- The last menu item in a menu didn't pick up on font
 	  changes.
 	- FLUID now properly handles default argument parameters

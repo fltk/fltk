@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.12.2.3.2.2 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_Dial.cxx,v 1.12.2.3.2.3 2002/05/12 11:12:56 easysw Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -113,6 +113,9 @@ int Fl_Dial::handle(int event, int x, int y, int w, int h) {
   case FL_RELEASE:
     handle_release();
     return 1;
+  case FL_ENTER :
+  case FL_LEAVE :
+    return 1;
   default:
     return 0;
   }
@@ -131,5 +134,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.12.2.3.2.2 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.12.2.3.2.3 2002/05/12 11:12:56 easysw Exp $".
 //

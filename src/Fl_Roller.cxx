@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.4 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.5 2002/05/12 11:12:56 easysw Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -73,6 +73,9 @@ int Fl_Roller::handle(int event) {
       redraw();
       return 1;
     } else return 0;
+  case FL_ENTER :
+  case FL_LEAVE :
+    return 1;
   default:
     return 0;
   }
@@ -168,5 +171,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.4 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.5 2002/05/12 11:12:56 easysw Exp $".
 //

@@ -1,10 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {.h} 
-code_name {.cxx} 
-gridx 5 
-gridy 5 
-snap 3
+code_name {.cxx}
 Function {callback(Fl_Widget* o, void*)} {open private return_type void
 } {
   code {printf("%g     \\r", ((Fl_Valuator*)o)->value());
@@ -15,7 +12,7 @@ Function {} {open
 } {
   Fl_Window {} {
     label {Valuator classes, showing values for type()} open
-    xywh {382 441 567 506} color 43 selection_color 43
+    xywh {635 288 565 505} color 43 selection_color 43
     code0 {\#include <stdio.h>} visible
   } {
     Fl_Box {} {
@@ -25,7 +22,7 @@ Function {} {open
     Fl_Slider {} {
       label 0
       callback callback
-      xywh {30 45 20 145} selection_color 1 labelsize 8 align 1
+      tooltip {Vertical Slider} xywh {30 45 20 145} selection_color 1 labelsize 8 align 1
     }
     Fl_Slider {} {
       label FL_VERT_FILL_SLIDER
@@ -44,7 +41,7 @@ Function {} {open
     Fl_Value_Slider {} {
       label 0
       callback callback
-      xywh {30 260 30 145} selection_color 1 labelsize 8 align 1
+      tooltip {Value Slider} xywh {30 260 30 145} selection_color 1 labelsize 8 align 1
     }
     Fl_Value_Slider {} {
       label FL_VERT_FILL_SLIDER
@@ -87,18 +84,18 @@ Function {} {open
     }
     Fl_Value_Slider {} {
       label FL_HOR_NICE_SLIDER
-      callback callback selected
+      callback callback
       xywh {140 370 130 20} type {Horz Knob} box FLAT_BOX color 10 selection_color 1 labelsize 8
     }
     Fl_Adjuster {} {
       label {w()>h()}
       callback callback
-      xywh {440 60 75 25} labelsize 8
+      tooltip {Horizontal Adjuster} xywh {440 60 75 25} labelsize 8
     }
     Fl_Adjuster {} {
       label {w()<h()}
       callback callback
-      xywh {520 35 25 75} labelsize 8
+      tooltip {Vertical Adjuster} xywh {520 35 25 75} labelsize 8
     }
     Fl_Box {} {
       label Fl_Counter
@@ -107,12 +104,12 @@ Function {} {open
     Fl_Counter {} {
       label 0
       callback callback
-      xywh {360 160 180 30} labelsize 8
+      tooltip {Standard Counter} xywh {360 160 180 30} labelsize 8
     }
     Fl_Counter {} {
       label FL_SIMPLE_COUNTER
       callback callback
-      xywh {360 205 180 30} type Simple labelsize 8
+      tooltip {Simple Counter} xywh {360 205 180 30} type Simple labelsize 8
     }
     Fl_Box {} {
       label Fl_Dial
@@ -121,18 +118,18 @@ Function {} {open
     Fl_Dial {} {
       label 0
       callback callback
-      xywh {315 280 65 65} color 10 selection_color 1 labelsize 8 value 0.5
+      tooltip {Standard Dial} xywh {315 280 65 65} color 10 selection_color 1 labelsize 8 value 0.5
       code0 {o->angles(0,315);}
     }
     Fl_Dial {} {
       label FL_LINE_DIAL
       callback callback
-      xywh {395 280 65 65} type Line color 10 selection_color 1 labelsize 8 value 0.5
+      tooltip {Line Dial} xywh {395 280 65 65} type Line color 10 selection_color 1 labelsize 8 value 0.5
     }
     Fl_Dial {} {
       label FL_FILL_DIAL
       callback callback
-      xywh {475 280 65 65} type Fill color 10 selection_color 1 labelsize 8 value 1
+      tooltip {Fill Dial} xywh {475 280 65 65} type Fill color 10 selection_color 1 labelsize 8 value 1
       code0 {o->angles(0,360);}
     }
     Fl_Box {} {
@@ -142,12 +139,12 @@ Function {} {open
     Fl_Roller {} {
       label 0
       callback callback
-      xywh {315 390 20 95} labelsize 8
+      tooltip {Vertical Roller} xywh {315 390 20 95} labelsize 8
     }
     Fl_Roller {} {
       label FL_HORIZONTAL
       callback callback
-      xywh {340 430 90 20} type Horizontal labelsize 8
+      tooltip {Horizontal Roller} xywh {340 430 90 20} type Horizontal labelsize 8
     }
     Fl_Box {} {
       label Fl_Value_Input
@@ -164,12 +161,12 @@ Function {} {open
     Fl_Value_Input {} {
       label 0
       callback callback
-      xywh {30 460 110 30} labelsize 8 maximum 100 step 0.1
+      tooltip {Value Input} xywh {30 460 110 30} labelsize 8 maximum 100 step 0.1
     }
     Fl_Value_Output {} {
       label 0
-      callback callback
-      xywh {170 460 110 30} labelsize 8 maximum 100 step 0.1
+      callback callback selected
+      tooltip {Value Output} xywh {170 460 110 30} labelsize 8 maximum 100 step 0.1
     }
     Fl_Box {} {
       label {   Fl_Scrollbar}
@@ -178,12 +175,12 @@ Function {} {open
     Fl_Scrollbar {} {
       label 0
       callback callback
-      xywh {395 20 20 105} labelsize 8 align 1 maximum 100 slider_size 0.3
+      tooltip {Vertical Scrollbar} xywh {395 20 20 105} labelsize 8 align 1 maximum 100 slider_size 0.3
     }
     Fl_Scrollbar {} {
       label FL_HORIZONTAL
       callback callback
-      xywh {300 65 95 20} type Horizontal labelsize 8 maximum 100 slider_size 0.3
+      tooltip {Horizontal Scrollbar} xywh {300 65 95 20} type Horizontal labelsize 8 maximum 100 slider_size 0.3
     }
   }
 } 
