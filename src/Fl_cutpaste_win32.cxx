@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.4 2000/02/05 09:10:07 bill Exp $"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.5 2000/03/28 05:10:17 bill Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
@@ -39,6 +39,7 @@ static char *selection_buffer;
 static int selection_length;
 static int selection_buffer_length;
 static char beenhere;
+static char ignore_destroy;
 
 extern Fl_Widget *fl_selection_requestor; // widget doing request_paste()
 
@@ -47,15 +48,10 @@ static int selection_xevent_handler(int) {
   switch (fl_msg.message) {
 
   case WM_DESTROYCLIPBOARD:
-// This commented-out code was in previous versions of fltk, but it broke
-// things, and I'm not sure what the intention of it is:
-//       {Fl_Window *w = Fl::first_window();
-//       while (w != (Fl_Window *)0)
-//         if (fl_msg.hwnd == fl_xid(w)) break;
-//         else w = Fl::next_window(w);
-//       if (w != (Fl_Window *)0) return 1;}
-    Fl::selection_owner(0);
-    Fl::flush(); // get the redraw to happen
+    if (!ignore_destroy) {
+      Fl::selection_owner(0);
+      Fl::flush(); // get the redraw to happen
+    }
     return 1;
 
   case WM_RENDERALLFORMATS:
@@ -93,6 +89,7 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
   memcpy(selection_buffer, stuff, len);
   selection_buffer[len] = 0; // needed for direct paste
   selection_length = len;
+  ignore_destroy = 1;
   if (OpenClipboard(fl_xid(Fl::first_window()))) {
     EmptyClipboard();
     SetClipboardData(CF_TEXT, NULL);
@@ -102,6 +99,7 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
       beenhere = 1;
     }
   }
+  ignore_destroy = 0;
   selection_owner(&owner);
 }
 
@@ -137,5 +135,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.4 2000/02/05 09:10:07 bill Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.5 2000/03/28 05:10:17 bill Exp $".
 //
