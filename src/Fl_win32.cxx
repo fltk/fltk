@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.40 2002/10/28 15:15:24 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.41 2002/10/29 20:18:55 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -587,16 +587,22 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     Fl_Region R;
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
-    // We need to merge WIN32's damage into FLTK's damage.
-    R = CreateRectRgn(0,0,0,0);
-    GetUpdateRgn(hWnd,R,0);
-    if (i->region) {
-      // Also tell WIN32 that we are drawing someplace else as well...
-      InvalidateRgn(hWnd, i->region, FALSE);
-      CombineRgn(i->region, i->region, R, RGN_OR);
-      XDestroyRegion(R);
+    if (!i->region && window->damage()) {
+      // Redraw the whole window...
+      i->region = CreateRectRgn(0, 0, window->w(), window->h());
     } else {
-      i->region = R;
+      // We need to merge WIN32's damage into FLTK's damage.
+      R = CreateRectRgn(0,0,0,0);
+      GetUpdateRgn(hWnd,R,0);
+
+      if (i->region) {
+        // Also tell WIN32 that we are drawing someplace else as well...
+        InvalidateRgn(hWnd, i->region, FALSE);
+        CombineRgn(i->region, i->region, R, RGN_OR);
+        XDestroyRegion(R);
+      } else {
+        i->region = R;
+      }
     }
     window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
     // These next two statements should not be here, so that all update
@@ -1186,5 +1192,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.40 2002/10/28 15:15:24 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.41 2002/10/29 20:18:55 easysw Exp $".
 //
