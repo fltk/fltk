@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.16 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.17 2004/06/14 15:58:52 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -298,11 +298,11 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 		  break;
 
 	      case POLYGON :
-		  fl_end_polygon();
+		  fl_end_complex_polygon();
 		  break;
 
 	      case OUTLINEPOLYGON :
-		  fl_end_polygon();
+		  fl_end_complex_polygon();
 
         	  oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
 	                	  ((unsigned short *)prim)[2]);
@@ -368,13 +368,13 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
       case POLYGON :
           prim = d;
 	  d ++;
-	  fl_begin_polygon();
+	  fl_begin_complex_polygon();
 	  break;
 
       case OUTLINEPOLYGON :
           prim = d;
 	  d += 3;
-	  fl_begin_polygon();
+	  fl_begin_complex_polygon();
 	  break;
 
       case VERTEX :
@@ -477,5 +477,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.16 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.17 2004/06/14 15:58:52 easysw Exp $".
 //
