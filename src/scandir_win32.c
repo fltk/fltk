@@ -1,5 +1,5 @@
 //
-// "$Id: scandir_win32.c,v 1.8 1998/12/08 21:00:18 mike Exp $"
+// "$Id: scandir_win32.c,v 1.9 1998/12/08 22:07:30 mike Exp $"
 //
 // WIN32 scandir function for the Fast Light Tool Kit (FLTK).
 //
@@ -29,37 +29,28 @@
 #include <string.h>
 #include <windows.h>
 
-struct dirent { char name[1]; };
+struct dirent { char d_name[1]; };
 
-#ifdef __cplusplus
-extern "C"
-#endif 
 int scandir(const char *dirname, struct dirent ***namelist,
     int (*select)(struct dirent *),
     int (*compar)(struct dirent **, struct dirent **)) {
+  int len;
+  char *findIn, *d;
+  WIN32_FIND_DATA find;
+  HANDLE h;
+  int nDir = 0, NDir = 0;
+  struct dirent **dir = 0, *selectDir;
+  unsigned long ret;
 
-  int len = strlen(dirname);
-  char *findIn = new char[len+5]; strcpy(findIn, dirname);
-  for (char *d = findIn; *d; d++) if (*d=='/') *d='\\';
+  len    = strlen(dirname);
+  findIn = malloc(len+5);
+  strcpy(findIn, dirname);
+  for (d = findIn; *d; d++) if (*d=='/') *d='\\';
   if ((len==0)) { strcpy(findIn, ".\\*"); }
   if ((len==1)&& (d[-1]=='.')) { strcpy(findIn, ".\\*"); }
   if ((len>0) && (d[-1]=='\\')) { *d++ = '*'; *d = 0; }
   if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; }
   
-  WIN32_FIND_DATA find;
-  HANDLE h;
-  int nDir = 0, NDir = 0;
-  struct dirent **dir = 0, *selectDir;
-  /*
-  selectDir = (struct dirent*)new char[sizeof(dirent)+1];
-  strcpy(selectDir->d_name, ".");
-  dir[0] = selectDir;
-  selectDir = (struct dirent*)new char[sizeof(dirent)+2];
-  strcpy(selectDir->d_name, "..");
-  dir[1] = selectDir;
-  */
-  unsigned long ret;
-
   if ((h=FindFirstFile(findIn, &find))==INVALID_HANDLE_VALUE) {
     ret = GetLastError();
     if (ret != ERROR_NO_MORE_FILES) {
@@ -69,13 +60,13 @@ int scandir(const char *dirname, struct dirent ***namelist,
     return nDir;
   }
   do {
-    selectDir=(struct dirent*)new char[sizeof(dirent)+strlen(find.cFileName)];
+    selectDir=(struct dirent*)malloc(sizeof(struct dirent)+strlen(find.cFileName));
     strcpy(selectDir->d_name, find.cFileName);
     if (!select || (*select)(selectDir)) {
       if (nDir==NDir) {
-	struct dirent **tempDir = new struct dirent*[NDir+33];
+	struct dirent **tempDir = calloc(sizeof(struct dirent*), NDir+33);
 	if (NDir) memcpy(tempDir, dir, sizeof(struct dirent*)*NDir);
-	if (dir) delete dir;
+	if (dir) free(dir);
 	dir = tempDir;
 	NDir += 32;
       }
@@ -83,7 +74,7 @@ int scandir(const char *dirname, struct dirent ***namelist,
       nDir++;
       dir[nDir] = 0;
     } else {
-      delete selectDir;
+      free(selectDir);
     }
   } while (FindNextFile(h, &find));
   ret = GetLastError();
@@ -92,7 +83,7 @@ int scandir(const char *dirname, struct dirent ***namelist,
   }
   FindClose(h);
 
-  delete findIn;
+  free (findIn);
 
   if (compar) qsort (dir, nDir, sizeof(*dir),
 		     (int(*)(const void*, const void*))compar);
@@ -101,13 +92,10 @@ int scandir(const char *dirname, struct dirent ***namelist,
   return nDir;
 }
 
-#ifdef __cplusplus
-extern "C"
-#endif 
 int alphasort (struct dirent **a, struct dirent **b) {
   return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
 //
-// End of "$Id: scandir_win32.c,v 1.8 1998/12/08 21:00:18 mike Exp $".
+// End of "$Id: scandir_win32.c,v 1.9 1998/12/08 22:07:30 mike Exp $".
 //
