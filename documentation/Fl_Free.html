@@ -17,11 +17,11 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- Emulation of the Forms &quot;free&quot; widget.  This emulation allows the free 
-demo to run, and appears to be useful for porting programs written in 
-Forms which use the free widget or make subclasses of the Forms 
-widgets. 
-<P>There are five types of free, which determine when the handle 
+ Emulation of the Forms &quot;free&quot; widget.  This emulation allows the free
+demo to run, and appears to be useful for porting programs written in
+Forms which use the free widget or make subclasses of the Forms
+widgets.
+<P>There are five types of free, which determine when the handle
 function is called: </P>
 <UL>
 <PRE>
@@ -32,19 +32,19 @@ function is called: </P>
 #define FL_ALL_FREE		5
 </PRE>
 </UL>
-<P>An FL_INPUT_FREE accepts FL_FOCUS events.  A FL_CONTINUOUS_FREE sets 
-a timeout callback 100 times a second and provides a FL_STEP event, 
-this has obvious detrimental effects on machine performance. 
+<P>An FL_INPUT_FREE accepts FL_FOCUS events.  A FL_CONTINUOUS_FREE sets
+a timeout callback 100 times a second and provides a FL_STEP event,
+this has obvious detrimental effects on machine performance.
 FL_ALL_FREE does both.  FL_SLEEPING_FREE are deactivated. </P>
 <H3>Methods</H3>
 <UL>
 <LI><A href=#Fl_Free.Fl_Free>Fl_Free</A></LI>
 <LI><A href=#Fl_Free.~Fl_Free>~Fl_Free</A></LI>
 </UL>
-<H4><A name=Fl_Free.Fl_Free>Fl_Free(uchar type, int, int, int, int, 
+<H4><A name=Fl_Free.Fl_Free>Fl_Free(uchar type, int, int, int, int,
 const char*l, FL_HANDLEPTR hdl)</A></H4>
  The constructor takes both the <TT>type</TT> and the <TT>handle</TT>
- function. The handle function should be declared as follows: 
+ function. The handle function should be declared as follows:
 <UL>
 <PRE>
 int
@@ -55,9 +55,9 @@ handle_function(Fl_Widget *w,
 		char      key)
 </PRE>
 </UL>
- This function is called from the the <TT>handle()</TT> method in 
-response to most events, and is called by the <TT>draw()</TT> method. 
-The <TT>event</TT> argument contains the event type: 
+ This function is called from the the <TT>handle()</TT> method in
+response to most events, and is called by the <TT>draw()</TT> method.
+The <TT>event</TT> argument contains the event type:
 <UL>
 <PRE>
 // old event names for compatability:

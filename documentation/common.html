@@ -120,12 +120,12 @@ value, instead of a simple string.</P>
 
 <H2>Valuators</H2>
 
-<P>Unlike text widgets, valuators keep track of numbers instead of 
+<P>Unlike text widgets, valuators keep track of numbers instead of
 strings. FLTK provides the following valuators:</P>
 
 <UL>
 
-	<LI><A HREF="Fl_Counter.html"><TT>Fl_Counter</TT></A> - A widget with arrow buttons that shows the 
+	<LI><A HREF="Fl_Counter.html"><TT>Fl_Counter</TT></A> - A widget with arrow buttons that shows the
 	current value. </LI>
 
 	<LI><A HREF="Fl_Dial.html"><TT>Fl_Dial</TT></A> - A round knob. </LI>
@@ -164,7 +164,7 @@ with FLTK:</P>
 
 	<LI><A HREF="Fl_Gl_Window.html"><TT>Fl_Gl_Window</TT></A> - An OpenGL window on the screen. </LI>
 
-	<LI><A HREF="Fl_Group.html"><TT>Fl_Group</TT></A> - The base container class; can be used to group 
+	<LI><A HREF="Fl_Group.html"><TT>Fl_Group</TT></A> - The base container class; can be used to group
 	any widgets together. </LI>
 
 	<LI><A HREF="Fl_Packed.html"><TT>Fl_Pack</TT></A> - A collection of widgets that are packed into the group area.</LI>
@@ -259,14 +259,14 @@ Figure 3-3 shows the standard box types included with FLTK.</P>
 <P ALIGN="CENTER"><IMG src="boxtypes.gif" ALT="FLTK Box Types"><BR>
 <I>Figure 3-3: FLTK box types</I></P>
 
-<P><TT>FL_NO_BOX</TT> means nothing is drawn at all, so whatever is 
-already on the screen remains. The <TT>FL_..._FRAME</TT> types only 
+<P><TT>FL_NO_BOX</TT> means nothing is drawn at all, so whatever is
+already on the screen remains. The <TT>FL_..._FRAME</TT> types only
 draw their edges, leaving the interior unchanged. The blue color in
 Figure 3-3 is the area that is not drawn by the frame types.</P>
 
 <H3>Making Your Own Boxtypes</H3>
 
-<P>You can define your own boxtypes by making a small function that draws 
+<P>You can define your own boxtypes by making a small function that draws
 the box and adding it to the table of boxtypes.</P>
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
@@ -279,7 +279,7 @@ the box and adding it to the table of boxtypes.</P>
 
 <H4>The Drawing Function</H4>
 
-<P>The drawing function is passed the bounding box and background color 
+<P>The drawing function is passed the bounding box and background color
 for the widget:</P>
 
 <UL><PRE>
@@ -350,7 +350,7 @@ sign. Figure 3-4 shows the available symbols.</P>
 
 <H3>align()</H3>
 
-<P>The <TT>align()</TT> method positions the label. The following 
+<P>The <TT>align()</TT> method positions the label. The following
 constants are defined and may be OR'd together as needed:</P>
 
 <UL>
@@ -359,17 +359,17 @@ constants are defined and may be OR'd together as needed:</P>
 
 	<LI><TT>FL_ALIGN_TOP</TT> - align the label at the top of the widget.</LI>
 
-	<LI><TT>FL_ALIGN_BOTTOM</TT> - align the label at the bottom of the 
+	<LI><TT>FL_ALIGN_BOTTOM</TT> - align the label at the bottom of the
 	widget.</LI>
 
 	<LI><TT>FL_ALIGN_LEFT</TT> - align the label to the left of the widget.</LI>
 
-	<LI><TT>FL_ALIGN_RIGHT</TT> - align the label to the right of the 
+	<LI><TT>FL_ALIGN_RIGHT</TT> - align the label to the right of the
 	widget.</LI>
 
 	<LI><TT>FL_ALIGN_INSIDE</TT> - align the label inside the widget.</LI>
 
-	<LI><TT>FL_ALIGN_CLIP</TT> - clip the label to the widget's bounding 
+	<LI><TT>FL_ALIGN_CLIP</TT> - clip the label to the widget's bounding
 	box.</LI>
 
 	<LI><TT>FL_ALIGN_WRAP</TT> - wrap the label text as needed.</LI>
@@ -382,7 +382,7 @@ constants are defined and may be OR'd together as needed:</P>
 
 <H3><A NAME="labeltypes">labeltype()</A></H3>
 
-<P>The <TT>labeltype()</TT> method sets the type of the label.  The 
+<P>The <TT>labeltype()</TT> method sets the type of the label.  The
 following standard label types are included:</P>
 
 <UL>
@@ -478,7 +478,7 @@ starting at the constant <TT>FL_FREE_LABELTYPE</TT>. Once you
 have added the label type you can use the <TT>labeltype()</TT>
 method to select your label type.</P>
 
-<P>The <TT>Fl::set_labeltype</TT> method can also be used to overload 
+<P>The <TT>Fl::set_labeltype</TT> method can also be used to overload
 an existing label type such as <TT>FL_NORMAL_LABEL</TT>.</P>
 
 <H2>Callbacks</H2>
@@ -494,8 +494,8 @@ void xyz_callback(Fl_Widget *w, void *data) {
 }
 </PRE></UL>
 
-<P>The <TT>callback()</TT> method sets the callback function for a 
-widget. You can optionally pass a pointer to some data needed for the 
+<P>The <TT>callback()</TT> method sets the callback function for a
+widget. You can optionally pass a pointer to some data needed for the
 callback:</P>
 
 <UL><PRE>

@@ -361,7 +361,30 @@ FLTK).
 
 <H4><A NAME="Fl.compose">int compose(int &amp;del);</A></H4>
 
+<p>Use of this function is very simple. Any text editing widget should
+call this for each <tt>FL_KEYBOARD</tt> event.
+
+<p>If <i>true</i> is returned, then it has modified the
+Fl::event_text() and Fl::event_length() to a set of <i>bytes</i> to
+insert (it may be of zero length!).  In will also set the "del"
+parameter to the number of <i>bytes</i> to the left of the cursor to
+delete, this is used to delete the results of the previous call to
+Fl::compose().
+
+<p>If <i>false</i> is returned, the keys should be treated as function
+keys, and del is set to zero. You could insert the text anyways, if
+you don't know what else to do.
+
+<p>Though the current implementation returns immediately, future
+versions may take quite awhile, as they may pop up a window or do
+other user-interface things to allow characters to be selected.
+
 <H4><A NAME="Fl.compose_reset">void compose_reset();</A></H4>
+
+<p>If the user moves the cursor, be sure to call Fl::compose_reset().
+The next call to Fl::compose() will start out in an initial state.  In
+particular it will not set "del" to non-zero. This call is very fast
+so it is ok to call it many times and in many places.
 
 <H4><A NAME="Fl.damage">int damage();<BR>
 void damage(int x);</A></H4>
@@ -597,7 +620,7 @@ between this and <tt>FL_WHITE</tt>.
 
 <H4><A NAME="Fl.free_color">void free_color(Fl_Color c, int overlay = 0);</A></H4>
 
-<P>Frees the specified color from the colormap, if applicable. 
+<P>Frees the specified color from the colormap, if applicable.
 If <tt>overlay</tt> is non-zero then the color is freed from the
 overlay colormap.
 

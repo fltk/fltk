@@ -19,11 +19,11 @@
 </PRE>
 </UL>
 <H3>Description</H3>
-All widgets that have a menu in FLTK are subclassed off of this class. 
+All widgets that have a menu in FLTK are subclassed off of this class.
 Currently FLTK provides you with <A href=Fl_Menu_Button.html#Fl_Menu_Button>
 <TT>Fl_Menu_Button</TT></A>, <A href=Fl_Menu_Bar.html#Fl_Menu_Bar><TT>
 Fl_Menu_Bar</TT></A>, and <A href=Fl_Choice.html#Fl_Choice><TT>Fl_Choice</TT>
-</A>. 
+</A>.
 
 <P>The class contains a pointer to an array of structures of type <A
 href=Fl_Menu_Item.html#Fl_Menu_Item> <TT>Fl_Menu_Item</TT></A>.  The
@@ -71,7 +71,7 @@ be "private": a dynamically allocated array managed by the Fl_Menu_.
 </TABLE>
 </CENTER>
 
-<H4><A name=Fl_Menu_.Fl_Menu_>Fl_Menu_::Fl_Menu_(int x, int y, int w, 
+<H4><A name=Fl_Menu_.Fl_Menu_>Fl_Menu_::Fl_Menu_(int x, int y, int w,
 int h, const char *label = 0)</A></H4>
 
 Creates a new <TT>Fl_Menu_</TT> widget using the given position, size,
@@ -124,9 +124,9 @@ will result in a submenu called &quot;foo&quot; and one in that called
 copied to new memory and can be freed.  The other arguments (including
 the shortcut) are copied into the menu item unchanged. </P>
 
-<P>If an item exists already with that name then it is replaced with 
-this new one.  Otherwise this new one is added to the end of the 
-correct menu or submenu.  The return value is the offset into the array 
+<P>If an item exists already with that name then it is replaced with
+this new one.  Otherwise this new one is added to the end of the
+correct menu or submenu.  The return value is the offset into the array
 that the new entry was placed at.</P>
 
 <P>The return value is the index into the array that the entry was put. </P>
@@ -163,42 +163,42 @@ href=Fl_Menu_Item.html>Fl_Menu_Item</a>.
 <BR> int Fl_Menu_::value(int)
 <BR> const Fl_Menu_Item* mvalue() const
 <BR> int Fl_Menu_::value(const Fl_Menu_Item*)</A></H4>
- The value is the index into <TT>menu()</TT> of the last item chosen by 
-the user.  It is zero initially.  You can set it as an integer, or set 
-it with a pointer to a menu item.  The set routines return non-zero if 
-the new value is different than the old one. 
+ The value is the index into <TT>menu()</TT> of the last item chosen by
+the user.  It is zero initially.  You can set it as an integer, or set
+it with a pointer to a menu item.  The set routines return non-zero if
+the new value is different than the old one.
 
-<H4><A name=Fl_Menu_.test_shortcut>const Fl_Menu_Item* 
+<H4><A name=Fl_Menu_.test_shortcut>const Fl_Menu_Item*
 Fl_Menu_::test_shortcut()</A></H4>
- Only call this in response to <TT>FL_SHORTCUT events</TT>.  If the 
-event matches an entry in the menu that entry is selected and the 
-callback will be done (or <TT>changed()</TT> will be set).  This allows 
-shortcuts directed at one window to call menus in another. 
+ Only call this in response to <TT>FL_SHORTCUT events</TT>.  If the
+event matches an entry in the menu that entry is selected and the
+callback will be done (or <TT>changed()</TT> will be set).  This allows
+shortcuts directed at one window to call menus in another.
 <H4><A name=Fl_Menu_.global>void Fl_Menu_::global()</A></H4>
- Make the shortcuts for this menu work no matter what window has the 
+ Make the shortcuts for this menu work no matter what window has the
 focus when you type it.  This is done by using <A href=osissues.html#add_handler>
-<TT>Fl::add_handler()</TT></A>.  This <TT>Fl_Menu_</TT> widget does not 
-have to be visible (ie the window it is in can be hidden, or it does 
-not have to be put in a window at all). 
-<P>Currently there can be only one <TT>global()</TT>menu.  Setting a new 
+<TT>Fl::add_handler()</TT></A>.  This <TT>Fl_Menu_</TT> widget does not
+have to be visible (ie the window it is in can be hidden, or it does
+not have to be put in a window at all).
+<P>Currently there can be only one <TT>global()</TT>menu.  Setting a new
 one will replace the old one.  There is no way to remove the <TT>
 global()</TT> setting (so don't destroy the widget!)</P>
 <H4><A name=Fl_Menu_.text>const char* Fl_Menu_::text() const
 <BR> const char* Fl_Menu_::text(int i) const</A></H4>
- Returns the title of the last item chosen, or of item <TT>i</TT>. 
+ Returns the title of the last item chosen, or of item <TT>i</TT>.
 
 <H4><A name=Fl_Menu_.textcolor>Fl_Color Fl_Menu_::textcolor() const
 <BR> void Fl_Menu_::textcolor(Fl_Color)</A></H4>
- Get or set the current color of menu item labels. 
+ Get or set the current color of menu item labels.
 <H4><A name=Fl_Menu_.textfont>Fl_Font Fl_Menu_::textfont() const
 <BR> void Fl_Menu_::textfont(Fl_Font)</A></H4>
- Get or set the current font of menu item labels. 
+ Get or set the current font of menu item labels.
 <H4><A name=Fl_Menu_.textsize>uchar Fl_Menu_::textsize() const
 <BR> void Fl_Menu_::textsize(uchar)</A></H4>
- Get or set the font size of menu item labels. 
+ Get or set the font size of menu item labels.
 <H4><A name=Fl_Menu_.down_box>Fl_Boxtype Fl_Menu_::down_box() const
 <BR> void Fl_Menu_::down_box(Fl_Boxtype)</A></H4>
- This box type is used to surround the currently-selected items in the 
+ This box type is used to surround the currently-selected items in the
 menus.  If this is <TT>FL_NO_BOX</TT> then it acts like <TT>
 FL_THIN_UP_BOX</TT> and <TT>selection_color()</TT> acts like <TT>
 FL_WHITE</TT>, for back compatability. </BODY></HTML>

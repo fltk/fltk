@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.3 2001/10/18 19:21:45 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.4 2001/11/29 19:24:00 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -353,10 +353,6 @@ void saveas_cb() {
   if (newfile != NULL) save_file(newfile);
 }
 
-void undo_cb(Fl_Widget*, void*) {
-  fl_alert("Undo not implemented!");
-}
-
 Fl_Window* new_view();
 
 void view_cb(Fl_Widget*, void*) {
@@ -377,7 +373,6 @@ Fl_Menu_Item menuitems[] = {
     { 0 },
 
   { "&Edit", 0, 0, 0, FL_SUBMENU },
-    { "&Undo",       FL_CTRL + 'z', (Fl_Callback *)undo_cb, 0, FL_MENU_DIVIDER },
     { "Cu&t",        FL_CTRL + 'x', (Fl_Callback *)cut_cb },
     { "&Copy",       FL_CTRL + 'c', (Fl_Callback *)copy_cb },
     { "&Paste",      FL_CTRL + 'v', (Fl_Callback *)paste_cb },
@@ -424,5 +419,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.3 2001/10/18 19:21:45 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.4 2001/11/29 19:24:00 easysw Exp $".
 //

@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 }
 </PRE></UL>
 
-<P>After including the required header files, the program then creates a 
+<P>After including the required header files, the program then creates a
 window:</P>
 
 <UL><PRE>
@@ -116,7 +116,7 @@ of the form "type&nbsp;name()&nbsp;const".</P>
 <P>Almost all of the set/get pairs are very fast, short inline
 functions and thus very efficient. However, <i>the "set"
 methods do not call <TT>redraw()</TT></i> - you have to call it
-yourself. This greatly reduces code size and execution time. 
+yourself. This greatly reduces code size and execution time.
 The only common exception is <tt>value()</tt> which calls
 <TT>redraw()</TT> if necessary.</P>
 
@@ -144,8 +144,8 @@ desired.</P>
 
 <H3>Showing the Window</H3>
 
-<P>The <TT>show()</TT> method shows the widget or window. For windows 
-you can also provide the command-line arguments to allow users to 
+<P>The <TT>show()</TT> method shows the widget or window. For windows
+you can also provide the command-line arguments to allow users to
 customize the appearance, size, and position of your windows.</P>
 
 <H3>The Main Event Loop</H3>
@@ -192,8 +192,8 @@ under FLTK control are closed by the user or your program.</P>
 
 <H2>Compiling Programs with Standard Compilers</H2>
 
-<P>Under UNIX (and under Microsoft Windows when using the GNU development 
-tools) you will probably need to tell the compiler where to find the 
+<P>Under UNIX (and under Microsoft Windows when using the GNU development
+tools) you will probably need to tell the compiler where to find the
 header files. This is usually done using the <TT>-I</TT> option:</P>
 
 <UL><PRE>
@@ -208,7 +208,7 @@ used to get the options that are required by your compiler:</P>
 CC `fltk-config --cxxflags` ...
 </PRE></UL>
 
-<P>Similarly, when linking your application you will need to tell the 
+<P>Similarly, when linking your application you will need to tell the
 compiler to use the FLTK library:</P>
 
 <UL><PRE>
@@ -228,18 +228,18 @@ CC ... `fltk-config --ldflags`
 <P>In Visual C++ you will need to tell the compiler where to
 find the  FLTK header files.  This can be done by selecting
 &quot;Settings&quot; from the  &quot;Project&quot; menu and then
-changing the &quot;Preprocessor&quot; settings under the 
+changing the &quot;Preprocessor&quot; settings under the
 &quot;C/C++&quot; tab. You will also need to add the FLTK and
 WinSock (WSOCK32.LIB) libraries to the &quot;Link&quot;
 settings.</P>
 
-<P>You can build your Microsoft Windows applications as Console or 
+<P>You can build your Microsoft Windows applications as Console or
 WIN32 applications.  If you want to use the standard C <TT>main()</TT>
 function as the entry point, FLTK includes a <TT>WinMain()</TT>
 function that will call your <TT>main()</TT> function for you.</P>
 
-<P><I>Note: The Visual C++ 5.0 optimizer is known to cause problems with 
-many programs.  We only recommend using the &quot;Favor Small Code&quot; 
+<P><I>Note: The Visual C++ 5.0 optimizer is known to cause problems with
+many programs.  We only recommend using the &quot;Favor Small Code&quot;
 optimization setting.</I> The Visual C++ 6.0 optimizer seems to be much
 better and can be used with the "optimized for speed" setting.</P>
 

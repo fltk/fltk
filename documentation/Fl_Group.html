@@ -19,12 +19,12 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- The <TT>Fl_Group</TT> class is the FLTK container widget. It maintains 
-an array of child widgets. These children can themselves be any widget 
+ The <TT>Fl_Group</TT> class is the FLTK container widget. It maintains
+an array of child widgets. These children can themselves be any widget
 including <TT>Fl_Group</TT>. The most important subclass of <TT>Fl_Group</TT>
- is <A href=Fl_Window.html#Fl_Window><TT>Fl_Window</TT></A>, however 
-groups can also be used to control radio buttons or to enforce resize 
-behavior. 
+ is <A href=Fl_Window.html#Fl_Window><TT>Fl_Window</TT></A>, however
+groups can also be used to control radio buttons or to enforce resize
+behavior.
 <H3>Methods</H3>
 <CENTER>
 <TABLE width=90% summary="Fl_Group methods.">
@@ -61,17 +61,17 @@ behavior.
 </TD></TR>
 </TABLE>
 </CENTER>
-<H4><A name=Fl_Group.Fl_Group>Fl_Group::Fl_Group(int x, int y, int w, 
+<H4><A name=Fl_Group.Fl_Group>Fl_Group::Fl_Group(int x, int y, int w,
 int h, const char *label = 0)</A></H4>
- Creates a new <TT>Fl_Group</TT> widget using the given position, size, 
-and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+ Creates a new <TT>Fl_Group</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
 <H4><A name=Fl_Group.~Fl_Group>virtual Fl_Group::~Fl_Group()</A></H4>
- The destructor <I>also deletes all the children</I>. This allows a 
-whole tree to be deleted at once, without having to keep a pointer to 
+ The destructor <I>also deletes all the children</I>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to
 all the children in the user code. A kludge has been done so the <TT>
-Fl_Group</TT> and all of it's children can be automatic (local) 
-variables, but you must declare the <TT>Fl_Group</TT> <I>first</I>, so 
-that it is destroyed last. 
+Fl_Group</TT> and all of it's children can be automatic (local)
+variables, but you must declare the <TT>Fl_Group</TT> <I>first</I>, so
+that it is destroyed last.
 <H4><A name=Fl_Group.add>void Fl_Group::add(Fl_Widget &amp;w)
 <BR> void Fl_Group::add(Fl_Widget *w)</A></H4>
 
@@ -99,8 +99,8 @@ This does <tt>insert(w, find(beforethis))</tt>.  This will append the
 widget if <tt>beforethis</tt> is not in the group.
 
 <H4><A name=Fl_Group.remove>void Fl_Group::remove(Fl_Widget &amp;w)</A></H4>
-Removes a widget from the group. This does nothing if the widget is 
-not currently a child of this group. 
+Removes a widget from the group. This does nothing if the widget is
+not currently a child of this group.
 
 <H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()
 <BR> static void Fl_Group::current(Fl_Group *w)</A></H4>
@@ -108,48 +108,48 @@ not currently a child of this group.
  constructor automatically does <tt>current()->add(widget)</tt> if this is not null.
  To prevent new widgets from being added to a group, call <TT>Fl_Group::current(0)</TT>.
 <H4><A name=Fl_Group.begin>void Fl_Group::begin()</A></H4>
-<TT>begin()</TT> sets the current group so you can build the widget 
-tree by just constructing the widgets. <TT>begin()</TT> is 
-automatically called by the constructor for Fl_Group (and thus for 
-Fl_Window as well). <TT>begin()</TT> <i>is exactly the same as</i> <TT>current(this)</TT>. 
+<TT>begin()</TT> sets the current group so you can build the widget
+tree by just constructing the widgets. <TT>begin()</TT> is
+automatically called by the constructor for Fl_Group (and thus for
+Fl_Window as well). <TT>begin()</TT> <i>is exactly the same as</i> <TT>current(this)</TT>.
 <P><I>Don't forget to <TT>end()</TT> the group or window!</I></P>
 <H4><A name=Fl_Group.end>void Fl_Group::end()</A></H4>
-<TT>end()</TT> <i>is exactly the same as</i> <TT>current(this-&gt;parent())</TT>. Any new widgets 
-added to the widget tree will be added to the parent of the group. 
+<TT>end()</TT> <i>is exactly the same as</i> <TT>current(this-&gt;parent())</TT>. Any new widgets
+added to the widget tree will be added to the parent of the group.
 <H4><A name=Fl_Group.array>const Fl_Widget **Fl_Group::array() const</A></H4>
  Returns a pointer to the array of children. <I>This pointer is only
  valid until the next time a child is added or removed.</I>
 <H4><A name=Fl_Group.child>Fl_Widget *Fl_Group::child(int n) const</A></H4>
  Returns <tt>array()[n]</tt>.  <i>No range checking is done!</i>
 <H4><A name=Fl_Group.children>int Fl_Group::children() const</A></H4>
- Returns how many child widgets the group has. 
+ Returns how many child widgets the group has.
 <H4><A name=Fl_Group.find>int Fl_Group::find(const Fl_Widget *w) const
 <BR> int Fl_Group::find(const Fl_Widget &amp;w) const</A></H4>
  Searches the child array for the widget and returns the index. Returns <A
 href=#Fl_Group.children><TT>children()</TT></A> if the widget is <TT>
-NULL</TT> or not found. 
+NULL</TT> or not found.
 <H4><A name=Fl_Group.resizable>void Fl_Group::resizable(Fl_Widget *box)
 <BR> void Fl_Group::resizable(Fl_Widget &amp;box)
 <BR> Fl_Widget *Fl_Group::resizable() const</A></H4>
- The resizable widget defines the resizing box for the group. When the 
-group is resized it calculates a new size and position for all of its 
-children. Widgets that are horizontally or vertically inside the 
-dimensions of the box are scaled to the new size. Widgets outside the 
-box are moved. 
+ The resizable widget defines the resizing box for the group. When the
+group is resized it calculates a new size and position for all of its
+children. Widgets that are horizontally or vertically inside the
+dimensions of the box are scaled to the new size. Widgets outside the
+box are moved.
 <P>In these examples the gray area is the resizable:
 <BR></P>
 <P align=center><IMG align=TOP SRC="resizebox1.gif" ALT="Resizeable groups">&nbsp;&nbsp;
 <IMG align=TOP SRC="resizebox2.gif" ALT="Resizeable groups"></P>
-<P>The resizable may be set to the group itself (this is the default 
-value for an <TT>Fl_Group</TT>, although <TT>NULL</TT> is the default 
-for an <TT>Fl_Window</TT>), in which case all the contents are resized. 
-If the resizable is <TT>NULL</TT> then all widgets remain a fixed size 
+<P>The resizable may be set to the group itself (this is the default
+value for an <TT>Fl_Group</TT>, although <TT>NULL</TT> is the default
+for an <TT>Fl_Window</TT>), in which case all the contents are resized.
+If the resizable is <TT>NULL</TT> then all widgets remain a fixed size
 and distance from the top-left corner. </P>
-<P>It is possible to achieve any type of resize behavior by using an 
-invisible <TT>Fl_Box</TT> as the resizable and/or by using a hierarchy 
+<P>It is possible to achieve any type of resize behavior by using an
+invisible <TT>Fl_Box</TT> as the resizable and/or by using a hierarchy
 of child <TT>Fl_Group</TT>'s. </P>
 
-<H4><A name=Fl_Group.add_resizable>Fl_Group 
+<H4><A name=Fl_Group.add_resizable>Fl_Group
 &amp;Fl_Group::add_resizable(Fl_Widget &amp;box)</A></H4>
- Adds a widget to the group and makes it the resizable widget. 
+ Adds a widget to the group and makes it the resizable widget.
 </BODY></HTML>

@@ -1,20 +1,20 @@
 <HTML><BODY>
 <H1 ALIGN=RIGHT><A NAME=FLUID>8 - Programming with FLUID</A></H1>
 
-This chapter shows how to use the Fast Light User-Interface Designer 
-(&quot;FLUID&quot;) to create your GUIs. 
+This chapter shows how to use the Fast Light User-Interface Designer
+(&quot;FLUID&quot;) to create your GUIs.
 
 <H2>What is FLUID?</H2>
 
-<P>The Fast Light User Interface Designer, or FLUID, is a graphical 
-editor that is used to produce FLTK source code. 
+<P>The Fast Light User Interface Designer, or FLUID, is a graphical
+editor that is used to produce FLTK source code.
 
-<P>FLUID edits and saves its state in <TT>.fl</TT> files.  These files are 
-text, and you can (with care) edit them in a text editor, perhaps to 
+<P>FLUID edits and saves its state in <TT>.fl</TT> files.  These files are
+text, and you can (with care) edit them in a text editor, perhaps to
 get some special effects. </P>
 
-<P>FLUID can &quot;compile&quot; the <TT>.fl</TT> file into a <TT>.cxx</TT> and a <TT>.h</TT> file.  The 
-<TT>.cxx</TT> file defines all the objects from the <TT>.fl</TT> file and the <TT>.h</TT> file 
+<P>FLUID can &quot;compile&quot; the <TT>.fl</TT> file into a <TT>.cxx</TT> and a <TT>.h</TT> file.  The
+<TT>.cxx</TT> file defines all the objects from the <TT>.fl</TT> file and the <TT>.h</TT> file
 declares all the global ones. </P>
 
 <P>FLUID also supports localization (<A HREF="#I18N">Internationalization</A>)
@@ -22,41 +22,41 @@ of label strings using message files and the GNU gettext or POSIX catgets
 interfaces.
 
 <P>A simple program can be made by putting all your code (including a <TT>
-main()</TT> function) into the <TT>.fl</TT> file and thus making the <TT>.cxx</TT> file a 
-single source file to compile.  Most programs are more complex than 
-this, so you write other <TT>.cxx</TT> files that call the FLUID functions. 
+main()</TT> function) into the <TT>.fl</TT> file and thus making the <TT>.cxx</TT> file a
+single source file to compile.  Most programs are more complex than
+this, so you write other <TT>.cxx</TT> files that call the FLUID functions.
 These <TT>.cxx</TT> files must <TT>#include</TT> the <TT>.h</TT> file or they can <TT>
-#include</TT> the <TT>.cxx</TT> file so it still appears to be a single source 
+#include</TT> the <TT>.cxx</TT> file so it still appears to be a single source
 file.
 
 <P ALIGN=CENTER><IMG src="fluid-org.gif" ALT="FLUID organization.">
 
 <P>Normally the FLUID file defines one or more functions or classes which
-output C++ code.  Each function defines a one or more FLTK 
+output C++ code.  Each function defines a one or more FLTK
 windows, and all the widgets that go inside those windows. </P>
-<P>Widgets created by FLUID are either &quot;named&quot;, &quot;complex named&quot; or 
-&quot;unnamed&quot;.  A named widget has a legal C++ variable identifier as its 
-name (i.e. only alphanumeric and underscore).  In this case FLUID 
-defines a global variable or class member that will point at the widget 
-after the function defining it is called.  A complex named object has 
-punctuation such as '.' or '-&gt;' or any other symbols in its name.  In 
-this case FLUID assigns a pointer to the widget to the name, but does 
-not attempt to declare it.  This can be used to get the widgets into 
+<P>Widgets created by FLUID are either &quot;named&quot;, &quot;complex named&quot; or
+&quot;unnamed&quot;.  A named widget has a legal C++ variable identifier as its
+name (i.e. only alphanumeric and underscore).  In this case FLUID
+defines a global variable or class member that will point at the widget
+after the function defining it is called.  A complex named object has
+punctuation such as '.' or '-&gt;' or any other symbols in its name.  In
+this case FLUID assigns a pointer to the widget to the name, but does
+not attempt to declare it.  This can be used to get the widgets into
 structures.  An unnamed widget has a blank name and no pointer is stored. </P>
-<P>Widgets may either call a named callback function that you write in 
-another source file, or you can supply a small piece of C++ source and 
+<P>Widgets may either call a named callback function that you write in
+another source file, or you can supply a small piece of C++ source and
 FLUID will write a private callback function into the <TT>.cxx</TT> file. </P>
 <H2>Running FLUID Under UNIX</H2>
- To run FLUID under UNIX, type: 
+ To run FLUID under UNIX, type:
 <UL>
 <PRE>
 fluid <I>filename.fl</I> &amp;</PRE>
 </UL>
-to edit the <TT>.fl</TT> file <TT>filename.fl</TT>.  If the file does not exist 
-you will get an error pop-up, but if you dismiss it you will be editing 
-a blank file of that name.  You can run FLUID without any name, in 
-which case you will be editing an unnamed blank setup (but you can use 
-save-as to write it to a file). 
+to edit the <TT>.fl</TT> file <TT>filename.fl</TT>.  If the file does not exist
+you will get an error pop-up, but if you dismiss it you will be editing
+a blank file of that name.  You can run FLUID without any name, in
+which case you will be editing an unnamed blank setup (but you can use
+save-as to write it to a file).
 <P>You can provide any of the standard FLTK switches before the filename: </P>
 <UL>
 <PRE>
@@ -70,25 +70,25 @@ save-as to write it to a file).
 -bg2 color
 </PRE>
 </UL>
- Changing the colors may be useful to see what your interface will look 
-at if the user calls it with the same switches. 
-<P>In the current version, if you don't go into the background (with 
-'&amp;') then you will be able to abort FLUID by typing ^C on the terminal. It 
+ Changing the colors may be useful to see what your interface will look
+at if the user calls it with the same switches.
+<P>In the current version, if you don't go into the background (with
+'&amp;') then you will be able to abort FLUID by typing ^C on the terminal. It
 will exit immediately, losing any changes. </P>
 <H2>Running FLUID Under Microsoft Windows</H2>
-To run FLUID under WIN32, double-click on the <I>FLUID.exe</I> file. 
-You can also run FLUID from the Command Prompt window (FLUID always 
-runs in the background under WIN32). 
+To run FLUID under WIN32, double-click on the <I>FLUID.exe</I> file.
+You can also run FLUID from the Command Prompt window (FLUID always
+runs in the background under WIN32).
 <H2>Compiling <TT>.fl</TT> files</H2>
- FLUID can also be called as a command-line &quot;compiler&quot; to create the 
-<TT>.cxx</TT> and <TT>.h</TT> file from a <TT>.fl</TT> file.  To do this type: 
+ FLUID can also be called as a command-line &quot;compiler&quot; to create the
+<TT>.cxx</TT> and <TT>.h</TT> file from a <TT>.fl</TT> file.  To do this type:
 <UL><PRE>
 fluid -c <I>filename.fl</I>
 </PRE></UL>
 This will read the <TT>filename.fl</TT> file and write <I>filename.cxx</I> and <I>
-filename.h</I>. The directory will be stripped, so they are written to 
-the current directory always.  If there are any errors reading or 
-writing the files it will print the error and exit with a non-zero 
+filename.h</I>. The directory will be stripped, so they are written to
+the current directory always.  If there are any errors reading or
+writing the files it will print the error and exit with a non-zero
 code.  In a makefile you can use a line like this:
 <UL>
 <PRE>
@@ -96,8 +96,8 @@ my_panels.h my_panels.cxx: my_panels.fl
 	fluid -c my_panels.fl
 </PRE>
 </UL>
- Some versions of make will accept rules like this to allow all <TT>.fl</TT> 
-files found to be compiled: 
+ Some versions of make will accept rules like this to allow all <TT>.fl</TT>
+files found to be compiled:
 <UL>
 <PRE>
 .SUFFIXES: .fl .cxx .h
@@ -191,7 +191,7 @@ class CubeView : public Fl_Gl_Window {
      * CUBECOLOR.
      */
     void drawCube();
-    
+   
     float vAng,hAng; float xshift,yshift;
 
     float boxv0[3];float boxv1[3]; float boxv2[3];float boxv3[3];
@@ -423,11 +423,11 @@ extensions and you are in business. You can include the CubeViewUI.h
 <H2>FLUID Reference</H2>
 
 <H3>The Widget Browser</H3>
-The main window shows a menu bar and a scrolling browser of all 
-the defined widgets.  The name of the <TT>.fl</TT> file being edited is shown in 
-the window title. 
-<P>The widgets are stored in a hierarchy.  You can open and close a 
-level by clicking the &quot;triangle&quot; at the left of a widget. 
+The main window shows a menu bar and a scrolling browser of all
+the defined widgets.  The name of the <TT>.fl</TT> file being edited is shown in
+the window title.
+<P>The widgets are stored in a hierarchy.  You can open and close a
+level by clicking the &quot;triangle&quot; at the left of a widget.
 The leftmost widgets are the <I>parents</I>, and all the widgets
 listed below them are their <I>children</I>.  Parents don't have to have
 any children.</P>
@@ -435,30 +435,30 @@ any children.</P>
 <I>classes</I>.  Each of these will produce a single C++ public
 function or class in the output <TT>.cxx</TT> file.  Calling the function or
 instantiating the class will create all of the child widgets. </P>
-<P>The second level of the hierarchy contains the <I>windows</I>.  Each of these 
+<P>The second level of the hierarchy contains the <I>windows</I>.  Each of these
 produces an instance of class <tt>Fl_Window</tt>. </P>
 <P>Below that are either <I>widgets</I> (subclasses of <tt>Fl_Widget</tt>) or <I>
-groups</I> of widgets (including other groups).  Plain groups are for 
-layout, navigation, and resize purposes. <I>Tab groups</I> provide the 
+groups</I> of widgets (including other groups).  Plain groups are for
+layout, navigation, and resize purposes. <I>Tab groups</I> provide the
 well-known file-card tab interface. </P>
-<P>Widgets are shown in the browser by either their <I>name</I> (such 
+<P>Widgets are shown in the browser by either their <I>name</I> (such
 as &quot;main_panel&quot; in the example), or by their <I>type</I>
 and <I>label</I> (such as &quot;Button &quot;the green&quot;&quot;). </P>
-<P>You <I>select</I> widgets by clicking on their names, which highlights 
-them (you can also select widgets from any displayed window).  You can 
-select many widgets by dragging the mouse across them, or by using 
-Shift+Click to toggle them on and off.  To select no widgets, click in 
-the blank area under the last widget.  Note that hidden children may 
-be selected even when there is no visual indication of this. 
-<P>You <I>open</I> widgets by double-clicking on them, or (to open several 
+<P>You <I>select</I> widgets by clicking on their names, which highlights
+them (you can also select widgets from any displayed window).  You can
+select many widgets by dragging the mouse across them, or by using
+Shift+Click to toggle them on and off.  To select no widgets, click in
+the blank area under the last widget.  Note that hidden children may
+be selected even when there is no visual indication of this.
+<P>You <I>open</I> widgets by double-clicking on them, or (to open several
 widgets you have picked) by typing the F1 key.  A control panel will appear
 so you can change the widget(s).</P>
 <H3>Menu Items</H3>
-<P>The menu bar at the top is duplicated as a pop-up menu on any 
-displayed window.  The shortcuts for all the menu items work in any 
+<P>The menu bar at the top is duplicated as a pop-up menu on any
+displayed window.  The shortcuts for all the menu items work in any
 window.  The menu items are: </P>
 <H4>File/Open... (Alt+o)</H4>
-Discards the current editing session and reads in a different <TT>.fl</TT> file. 
+Discards the current editing session and reads in a different <TT>.fl</TT> file.
 You are asked for confirmation if you have changed the current file.
 <P>FLUID can also read <tt>.fd</tt> files produced by the Forms and
 XForms &quot;fdesign&quot; programs. It is best to File/Merge them
@@ -469,19 +469,19 @@ to edit the resulting setup to fix these errors. Be careful not to
 save the file without changing the name, as FLUID will write over the
 <tt>.fd</tt> file with its own format, which fdesign cannot read! </P>
 <H4>File/Save (Alt+s)</H4>
-Writes the current data to the <TT>.fl</TT> file.  If the file is unnamed 
-then FLUID will ask for a filename. 
+Writes the current data to the <TT>.fl</TT> file.  If the file is unnamed
+then FLUID will ask for a filename.
 <H4>File/Save As...(Alt+Shift+S)</H4>
 Asks for a new filename and saves the file.
 <H4>File/Merge... (Alt+i)</H4>
-Inserts the contents of another <TT>.fl</TT> file, without changing the name of 
-the current <TT>.fl</TT> file.  All the functions (even if they have the same 
-names as the current ones) are added, and you will have to use cut/paste to 
-put the widgets where you want. 
+Inserts the contents of another <TT>.fl</TT> file, without changing the name of
+the current <TT>.fl</TT> file.  All the functions (even if they have the same
+names as the current ones) are added, and you will have to use cut/paste to
+put the widgets where you want.
 <H4>File/Write Code (Alt+Shift+C)</H4>
 &quot;Compiles&quot; the data into a <TT>.cxx</TT> and <TT>.h</TT>
 file. These are exactly the same as the files you get when you run
-FLUID with the <tt>-c</tt> switch. 
+FLUID with the <tt>-c</tt> switch.
 <P>The output file names are the same as the <TT>.fl</TT> file, with
 the leading  directory and trailing &quot;.fl&quot; stripped, and
 &quot;.h&quot; or &quot;.cxx&quot; appended.  </P>
@@ -492,65 +492,65 @@ the leading  directory and trailing &quot;.fl&quot; stripped, and
 &quot;.txt&quot;, &quot;.po&quot;, or &quot;.msg&quot; appended depending
 on the <A HREF="#I18N">Internationalization Mode</A>.  </P>
 <H4>File/Quit (Alt+q)</H4>
-Exits FLUID.  You are asked for confirmation if you have changed the 
-current data. 
+Exits FLUID.  You are asked for confirmation if you have changed the
+current data.
 <H4>Edit/Undo (Alt+z)</H4>
 This isn't implemented yet.  You should do save  often so you can
-recover from any mistakes you make. 
+recover from any mistakes you make.
 <H4>Edit/Cut (Alt+x)</H4>
-Deletes the selected widgets and all of their children.  These are saved 
+Deletes the selected widgets and all of their children.  These are saved
 to a &quot;clipboard&quot; file and can be pasted back into any FLUID
 window.
 <H4>Edit/Copy (Alt+c)</H4>
-Copies the selected widgets and all of their children to the &quot;clipboard&quot; 
-file. 
+Copies the selected widgets and all of their children to the &quot;clipboard&quot;
+file.
 <H4>Edit/Paste (Alt+c)</H4>
-Pastes the widgets from the clipboard file. 
-<P>If the widget is a window, it is added to whatever function is 
+Pastes the widgets from the clipboard file.
+<P>If the widget is a window, it is added to whatever function is
 selected, or contained in the current selection. </P>
-<P>If the widget is a normal widget, it is added to whatever window or 
-group is selected.  If none is, it is added to the window or group that 
+<P>If the widget is a normal widget, it is added to whatever window or
+group is selected.  If none is, it is added to the window or group that
 is the parent of the current selection. </P>
-<P>To avoid confusion, it is best to select exactly one widget before 
+<P>To avoid confusion, it is best to select exactly one widget before
 doing a paste. </P>
 <P>Cut/paste is the only way to change the parent of a widget. </P>
 <H4>Edit/Select All (Alt+a)</H4>
-Selects all widgets in the same group as the current selection. 
-<P>If they are all selected already then this selects all widgets in 
-that group's parent.  Repeatedly typing Alt+a will select larger and 
+Selects all widgets in the same group as the current selection.
+<P>If they are all selected already then this selects all widgets in
+that group's parent.  Repeatedly typing Alt+a will select larger and
 larger groups of widgets until everything is selected. </P>
 <H4>Edit/Open... (F1 or double click)</H4>
 Displays the current widget in the attributes panel. If the widget is a window
 and it is not visible then the window is shown instead.
 <H4>Edit/Sort</H4>
-Sorts the selected widgets into left to right, top to bottom 
-order.  You need to do this to make navigation keys in FLTK work 
-correctly.  You may then fine-tune the sorting with &quot;Earlier&quot; and 
-&quot;Later&quot;.  This does not affect the positions of windows or functions. 
+Sorts the selected widgets into left to right, top to bottom
+order.  You need to do this to make navigation keys in FLTK work
+correctly.  You may then fine-tune the sorting with &quot;Earlier&quot; and
+&quot;Later&quot;.  This does not affect the positions of windows or functions.
 <H4>Edit/Earlier (F2)</H4>
-Moves all of the selected widgets one earlier in order among the 
-children of their parent (if possible).  This will affect navigation 
-order, and if the widgets overlap it will affect how they draw, as the 
-later widget is drawn on top of the earlier one.  You can also use this 
-to reorder functions, classes, and windows within functions. 
+Moves all of the selected widgets one earlier in order among the
+children of their parent (if possible).  This will affect navigation
+order, and if the widgets overlap it will affect how they draw, as the
+later widget is drawn on top of the earlier one.  You can also use this
+to reorder functions, classes, and windows within functions.
 <H4>Edit/Later (F3)</H4>
-Moves all of the selected widgets one later in order among the 
-children of their parent (if possible). 
+Moves all of the selected widgets one later in order among the
+children of their parent (if possible).
 <H4>Edit/Group (F7)</H4>
 Creates a new <tt>Fl_Group</tt> and make all the currently selected widgets
 children of it.
 <H4>Edit/Ungroup (F8)</H4>
 Deletes the parent group if all the children of a group are selected.
 <H4>Edit/Overlays on/off (Alt+Shift+O)</H4>
-Toggles the display of the red overlays off, without changing the 
-selection.  This makes it easier to see box borders and how the layout 
-looks.  The overlays will be forced back on if you change the 
-selection. 
+Toggles the display of the red overlays off, without changing the
+selection.  This makes it easier to see box borders and how the layout
+looks.  The overlays will be forced back on if you change the
+selection.
 <H4>Edit/Preferences (Alt+p)</H4>
 
 Displays the preferences panel.  The alignment preferences control the
 grid that all widgets snap to when you move and resize them, and for the
-"snap" which is how far a widget has to be dragged from its original position 
+"snap" which is how far a widget has to be dragged from its original position
 to actually change.
 
 <P ALIGN="CENTER"><IMG SRC="fluid_prefs.gif" ALT="FLUID Preferences Window"></P>
@@ -563,10 +563,10 @@ file will include the header file automatically.
 this chapter</A>.
 
 <H4>New/Code/Function</H4>
-Creates a new C function.  You will be asked for a name for the 
-function.  This name should be a legal C++ function template, without 
-the return type.  You can pass arguments which can be referred to by 
-code you type into the individual widgets. 
+Creates a new C function.  You will be asked for a name for the
+function.  This name should be a legal C++ function template, without
+the return type.  You can pass arguments which can be referred to by
+code you type into the individual widgets.
 <P>If the function contains any unnamed windows, it will be declared
 as  returning a Fl_Window pointer.  The unnamed window will be returned
 from it  (more than one unnamed window is useless).  If the function
@@ -574,7 +574,7 @@ contains  only named windows, it will be declared as returning nothing
 (<tt>void</tt>). </P>
 <P>It is possible to make the <TT>.cxx</TT> output be a self-contained
 program  that can be compiled and executed.  This is done by deleting
-the  function name so <tt>main(argc,argv)</tt> is used.  The function 
+the  function name so <tt>main(argc,argv)</tt> is used.  The function
 will call <tt>show()</tt> on all the windows it creates and then call
 <tt>Fl::run()</tt>.  This can also be used to test resize behavior or
 other parts of the user  interface.</P>
@@ -582,39 +582,39 @@ other parts of the user  interface.</P>
 <H4>New/Window</H4>
 Creates a new <tt>Fl_Window</tt> widget.  The window is added to the
 currently selected  function, or to the function containing the
-currently selected item.  The window will appear, sized to 100x100. 
-You can resize it to whatever size you require. 
+currently selected item.  The window will appear, sized to 100x100.
+You can resize it to whatever size you require.
 <P>The widget panel will also appear and is described later in this
 chapter.</P>
 <H4>New/...</H4>
-All other items on the New menu are subclasses of <tt>Fl_Widget</tt>.  Creating 
-them will add them to the currently selected group or window, or the 
-group or window containing the currently selected widget.  The initial 
-dimensions and position are chosen by copying the current widget, if 
-possible. 
-<P>When you create the widget you will get the widget's control panel, 
+All other items on the New menu are subclasses of <tt>Fl_Widget</tt>.  Creating
+them will add them to the currently selected group or window, or the
+group or window containing the currently selected widget.  The initial
+dimensions and position are chosen by copying the current widget, if
+possible.
+<P>When you create the widget you will get the widget's control panel,
 which is described later in this chapter. </P>
 <H4>Help/About FLUID</H4>
-Pops up a panel showing the version of FLUID. 
+Pops up a panel showing the version of FLUID.
 <H3>The Widget Panel</H3>
-When you double-click on a widget or a set of widgets you will get 
-the &quot;widget attribute panel&quot;. 
-<P>When you change attributes using this panel, the changes are 
-reflected immediately in the window. It is useful to hit the &quot;no 
-overlay&quot; button (or type Alt+Shift+O) to hide the red overlay so you can see 
+When you double-click on a widget or a set of widgets you will get
+the &quot;widget attribute panel&quot;.
+<P>When you change attributes using this panel, the changes are
+reflected immediately in the window. It is useful to hit the &quot;no
+overlay&quot; button (or type Alt+Shift+O) to hide the red overlay so you can see
 the widgets more accurately, especially when setting the box type.
-<P>If you have several widgets selected, they may have different values 
-for the fields.  In this case the value for <I>one</I> of the widgets 
-is shown.  But if you change this value, <I>all</I> of the selected 
+<P>If you have several widgets selected, they may have different values
+for the fields.  In this case the value for <I>one</I> of the widgets
+is shown.  But if you change this value, <I>all</I> of the selected
 widgets are changed to the new value.
-<P>Hitting &quot;OK&quot; makes the changes permanent.  Selecting a different 
-widget also makes the changes permanent.  FLUID checks for simple 
-syntax errors such as mismatched parenthesis in any code before 
+<P>Hitting &quot;OK&quot; makes the changes permanent.  Selecting a different
+widget also makes the changes permanent.  FLUID checks for simple
+syntax errors such as mismatched parenthesis in any code before
 saving any text.
-<P>&quot;Revert&quot; or &quot;Cancel&quot; put everything back to when you last brought up 
-the panel or hit OK.  However in the current version of FLUID, changes 
-to &quot;visible&quot; attributes (such as the color, label, box) are not undone 
-by revert or cancel.  Changes to code like the callbacks are undone, 
+<P>&quot;Revert&quot; or &quot;Cancel&quot; put everything back to when you last brought up
+the panel or hit OK.  However in the current version of FLUID, changes
+to &quot;visible&quot; attributes (such as the color, label, box) are not undone
+by revert or cancel.  Changes to code like the callbacks are undone,
 however.
 <!-- NEW PAGE -->
 <TABLE cellpadding=0 cellspacing=0 width=100% summary="columns of text">
@@ -622,125 +622,125 @@ however.
 <TD VALIGN=TOP>
 <H3><A name=widget_attributes>Widget Attributes</A></H3>
 <H4>Name (text field)</H4>
-Name of a variable to declare, and to store a pointer to this 
-widget into.  This variable will be of type &quot;&lt;class&gt;*&quot;.  If the name is 
-blank then no variable is created. 
-<P>You can name several widgets with &quot;name[0]&quot;, &quot;name[1]&quot;, &quot;name[2]&quot;, 
-etc.  This will cause FLUID to declare an array of pointers.  The array 
-is big enough that the highest number found can be stored.  All widgets 
+Name of a variable to declare, and to store a pointer to this
+widget into.  This variable will be of type &quot;&lt;class&gt;*&quot;.  If the name is
+blank then no variable is created.
+<P>You can name several widgets with &quot;name[0]&quot;, &quot;name[1]&quot;, &quot;name[2]&quot;,
+etc.  This will cause FLUID to declare an array of pointers.  The array
+is big enough that the highest number found can be stored.  All widgets
 that in the array must be the same type. </P>
 <H4>Type (upper-right pulldown menu)</H4>
- Some classes have subtypes that modify their appearance or behavior. 
-You pick the subtype off of this menu. 
+ Some classes have subtypes that modify their appearance or behavior.
+You pick the subtype off of this menu.
 <H4>Box (pulldown menu)</H4>
-The boxtype to draw as a background for the widget. 
+The boxtype to draw as a background for the widget.
 </TD>
 <TD>&nbsp;&nbsp;&nbsp;</TD>
 <TD VALIGN=TOP WIDTH=378><IMG src="fluid_widget.gif" ALT="The FLUID widget dialog."></TD>
 </TR>
 </TABLE>
-<P>Many widgets will work, and draw faster, with a &quot;frame&quot; instead of a 
-&quot;box&quot;.  A frame does not draw the colored interior, leaving whatever 
-was already there visible.  Be careful, as FLUID may draw this ok but 
+<P>Many widgets will work, and draw faster, with a &quot;frame&quot; instead of a
+&quot;box&quot;.  A frame does not draw the colored interior, leaving whatever
+was already there visible.  Be careful, as FLUID may draw this ok but
 the real program may leave unwanted stuff inside the widget. </P>
-<P>If a window is filled with child widgets, you can speed up redrawing 
-by changing the window's box type to &quot;NO_BOX&quot;.  FLUID will display a 
-checkerboard for any areas that are not colored in by boxes. Note 
-that this checkerboard is not drawn by the resulting program. Instead 
+<P>If a window is filled with child widgets, you can speed up redrawing
+by changing the window's box type to &quot;NO_BOX&quot;.  FLUID will display a
+checkerboard for any areas that are not colored in by boxes. Note
+that this checkerboard is not drawn by the resulting program. Instead
 random garbage will be displayed.</P>
 <H4>Color</H4>
 <P>The color to draw the box with. </P>
 <H4>Color2</H4>
-<P>Some widgets will use this color for certain parts.  FLUID does not 
-always show the result of this: this is the color buttons draw in when 
+<P>Some widgets will use this color for certain parts.  FLUID does not
+always show the result of this: this is the color buttons draw in when
 pushed down, and the color of input fields when they have the focus. </P>
 <H4>Label</H4>
- String to print next to or inside the button. 
-<P>You can put newlines into the string to make multiple lines. The 
+ String to print next to or inside the button.
+<P>You can put newlines into the string to make multiple lines. The
 easiest way is by typing Ctrl+j. </P>
 <H4>Label style (pull down menu)</H4>
- How to draw the label.  Normal, shadowed, engraved, and embossed 
-change the appearance of the text.  &quot;symbol&quot; requires the label to 
+ How to draw the label.  Normal, shadowed, engraved, and embossed
+change the appearance of the text.  &quot;symbol&quot; requires the label to
 start with an '@' sign to draw a named <A href="common.html#symbols">
-symbol</A>. 
+symbol</A>.
 <P>From this menu you can also pick <A href=drawing.html#images>
 &quot;Image...&quot;</A>.  This lets you use the contents of a GIF, XPM, or
 XBM image file to label the widget. </P>
 <H4>Label Alignment (Buttons)</H4>
- Where to draw the label.  The arrows put it on that side of the 
-widget, you can combine the to put it in the corner.  The &quot;box&quot; button 
-puts the label inside the widget, rather than outside. 
+ Where to draw the label.  The arrows put it on that side of the
+widget, you can combine the to put it in the corner.  The &quot;box&quot; button
+puts the label inside the widget, rather than outside.
 <H4>Label Font</H4>
- Font to draw the label in.  Ignored by symbols, bitmaps, and pixmaps. 
-Your program can change the actual font used by these &quot;slots&quot; in case 
-you want some font other than the 16 provided. 
+ Font to draw the label in.  Ignored by symbols, bitmaps, and pixmaps.
+Your program can change the actual font used by these &quot;slots&quot; in case
+you want some font other than the 16 provided.
 <H4>Label Size</H4>
-Pixel size (height) for the font to draw the label in.  Ignored by symbols, 
-bitmaps, and pixmaps.  To see the result without dismissing the panel, 
-type the new number and then Tab. 
+Pixel size (height) for the font to draw the label in.  Ignored by symbols,
+bitmaps, and pixmaps.  To see the result without dismissing the panel,
+type the new number and then Tab.
 <H4>Label Color</H4>
-Color to draw the label.  Ignored by pixmaps (bitmaps, however, do use 
-this color as the foreground color). 
+Color to draw the label.  Ignored by pixmaps (bitmaps, however, do use
+this color as the foreground color).
 <H4>Text Font, Size, and Color</H4>
 Some widgets display text, such as input fields, pull-down menus, and
 browsers.
 <H4>Visible</H4>
-If you turn this off then the widget is hidden initially.  Don't change 
-this for windows or for the immediate children of a Tabs group. 
+If you turn this off then the widget is hidden initially.  Don't change
+this for windows or for the immediate children of a Tabs group.
 <H4>Active</H4>
 If you turn this off then the widget is deactivated initially.
 <H4>Resizable</H4>
-If a window is resizable or has an immediate child that is resizable, 
-then the user will be able to resize it.  In addition all the size 
-changes of a window or group will go &quot;into&quot; the resizable child.  If 
-you have a large data display surrounded by buttons, you probably want 
-that data area to be resizable. 
-<P>Only one child can be resizable.  Turning this on turns it off for 
+If a window is resizable or has an immediate child that is resizable,
+then the user will be able to resize it.  In addition all the size
+changes of a window or group will go &quot;into&quot; the resizable child.  If
+you have a large data display surrounded by buttons, you probably want
+that data area to be resizable.
+<P>Only one child can be resizable.  Turning this on turns it off for
 the other children. </P>
-<P>You can get more complex behavior by making invisible boxes the 
-resizable widget, or by using hierarchies of groups.  Unfortunately the 
-only way to test it is to compile the program.  Resizing the FLUID 
+<P>You can get more complex behavior by making invisible boxes the
+resizable widget, or by using hierarchies of groups.  Unfortunately the
+only way to test it is to compile the program.  Resizing the FLUID
 window is <I>not</I> the same as what will happen in the user program. </P>
 <H4>Hotspot</H4>
- Each window may have exactly one hotspot (turning this on will turn 
-off any others).  This will cause it to be positioned with that widget 
-centered on the mouse.  This position is determined <I>when the FLUID 
-function is called</I>, so you should call it immediately before showing 
-the window.  If you want the window to hide and then reappear at a 
-new position, you should have your program set the hotspot itself just 
-before <tt>show()</tt>. 
+ Each window may have exactly one hotspot (turning this on will turn
+off any others).  This will cause it to be positioned with that widget
+centered on the mouse.  This position is determined <I>when the FLUID
+function is called</I>, so you should call it immediately before showing
+the window.  If you want the window to hide and then reappear at a
+new position, you should have your program set the hotspot itself just
+before <tt>show()</tt>.
 <H4>Subclass</H4>
-This is how you use your own subclasses of <tt>Fl_Widget</tt>.  Whatever 
-identifier you type in here will be the class that is instantiated. 
-<P>In addition, no <tt>#include</tt> header file is put in the <TT>.h</TT> file.  You 
+This is how you use your own subclasses of <tt>Fl_Widget</tt>.  Whatever
+identifier you type in here will be the class that is instantiated.
+<P>In addition, no <tt>#include</tt> header file is put in the <TT>.h</TT> file.  You
 must provide a <tt>#include</tt> line as the first line of the &quot;Extra
 Code&quot; which declares your subclass. </P>
-<P>The class must be similar to the class you are spoofing.  It 
-does not have to be a subclass.  It is sometimes useful to change this 
-to another FLTK class. Currently the only way to get a double-buffered 
-window is to change this field for the window to &quot;Fl_Double_Window&quot; and 
+<P>The class must be similar to the class you are spoofing.  It
+does not have to be a subclass.  It is sometimes useful to change this
+to another FLTK class. Currently the only way to get a double-buffered
+window is to change this field for the window to &quot;Fl_Double_Window&quot; and
 to add &quot;#include &lt;FL/Fl_Double_Window.h&gt;&quot; to the extra code. </P>
 <H4>Extra Code</H4>
-These four fields let you type in literal lines of code to dump into 
-the <TT>.h</TT> or <TT>.cxx</TT> files. 
-<P>If the text starts with a <tt>#</tt> or the word <tt>extern</tt> then FLUID thinks 
-this is an &quot;include&quot; line, and it is written to the <TT>.h</TT> file. If the 
+These four fields let you type in literal lines of code to dump into
+the <TT>.h</TT> or <TT>.cxx</TT> files.
+<P>If the text starts with a <tt>#</tt> or the word <tt>extern</tt> then FLUID thinks
+this is an &quot;include&quot; line, and it is written to the <TT>.h</TT> file. If the
 same include line occurs several times then only one copy is written. </P>
-<P>All other lines are &quot;code&quot; lines.  The current widget is 
-pointed to by the local variable <tt>o</tt>.  The window being constructed is 
-pointed to by the local variable <tt>w</tt>.  You can also access any 
-arguments passed to the function here, and any named widgets that are 
+<P>All other lines are &quot;code&quot; lines.  The current widget is
+pointed to by the local variable <tt>o</tt>.  The window being constructed is
+pointed to by the local variable <tt>w</tt>.  You can also access any
+arguments passed to the function here, and any named widgets that are
 before this one. </P>
-<P>FLUID will check for matching parenthesis, braces, and quotes, but 
-does not do much other error checking.  Be careful here, as it may be 
-hard to figure out what widget is producing an error in the compiler. 
-If you need more than four lines you probably should call a function in 
+<P>FLUID will check for matching parenthesis, braces, and quotes, but
+does not do much other error checking.  Be careful here, as it may be
+hard to figure out what widget is producing an error in the compiler.
+If you need more than four lines you probably should call a function in
 your own <TT>.cxx</TT> code. </P>
 <H4>Callback</H4>
-This can either be the name of a function, or a small snippet of code. 
+This can either be the name of a function, or a small snippet of code.
 If you enter anything but letters, numbers, and the underscore then FLUID
-treats it as code. 
-<P>A name names a function in your own code.  It must be declared as 
+treats it as code.
+<P>A name names a function in your own code.  It must be declared as
 <tt>void name(&lt;class&gt;*,void*)</tt>. </P>
 <P>A code snippet is inserted into a static function in the
 <TT>.cxx</TT> output  file.  The function prototype is <tt>void
@@ -751,131 +751,131 @@ much other error  checking.  Be careful here, as it may be hard to
 figure out what widget  is producing an error in the compiler. </P>
 <P>If the callback is blank then no callback is set. </P>
 <H4>user_data</H4>
-This is a value for the <tt>user_data()</tt> of the widget.  If blank the 
-default value of zero is used.  This can be any piece of C code that 
+This is a value for the <tt>user_data()</tt> of the widget.  If blank the
+default value of zero is used.  This can be any piece of C code that
 can be cast to a <tt>void</tt> pointer.
 <H4>User Data Type</H4>
-The <tt>void *</tt> in the callback function prototypes is replaced with this. 
-You may want to use <tt>long</tt> for old XForms code.  Be warned that 
-anything other than <tt>void *</tt> is not guaranteed to work! 
-However on most architectures other pointer types are ok, and <tt>long</tt> is 
-usually ok, too. 
+The <tt>void *</tt> in the callback function prototypes is replaced with this.
+You may want to use <tt>long</tt> for old XForms code.  Be warned that
+anything other than <tt>void *</tt> is not guaranteed to work!
+However on most architectures other pointer types are ok, and <tt>long</tt> is
+usually ok, too.
 <H4>When</H4>
 When to do the callback.  This can be &quot;never&quot;, &quot;changed&quot;,
-&quot;release&quot;, &quot;enter key&quot;, or &quot;no change&quot;.  The 
-value of &quot;enter key&quot; is only useful for text input fields.  The &quot;no 
-change&quot; button means the callback is done on the matching event even if 
-the data is not changed. 
-<P>There are other rare but useful values for the <tt>when()</tt> field that are 
-not in the menu.  You should use the extra code fields to put these 
+&quot;release&quot;, &quot;enter key&quot;, or &quot;no change&quot;.  The
+value of &quot;enter key&quot; is only useful for text input fields.  The &quot;no
+change&quot; button means the callback is done on the matching event even if
+the data is not changed.
+<P>There are other rare but useful values for the <tt>when()</tt> field that are
+not in the menu.  You should use the extra code fields to put these
 values in.</P>
 <H3>Selecting and Moving Widgets</H3>
-Double-clicking a window name in the browser will display it, if not 
-displayed yet.  From this display you can select widgets, sets of 
-widgets, and move or resize them.  To close a window either 
+Double-clicking a window name in the browser will display it, if not
+displayed yet.  From this display you can select widgets, sets of
+widgets, and move or resize them.  To close a window either
 double-click it or type Esc.
-<P>To select a widget, click it.  To select several widgets drag a 
-rectangle around them.  Holding down shift will toggle the selection of 
+<P>To select a widget, click it.  To select several widgets drag a
+rectangle around them.  Holding down shift will toggle the selection of
 the widgets instead. </P>
-<P>You cannot pick hidden widgets.  You also cannot choose some widgets 
-if they are completely overlapped by later widgets.  Use the browser to 
+<P>You cannot pick hidden widgets.  You also cannot choose some widgets
+if they are completely overlapped by later widgets.  Use the browser to
 select these widgets. </P>
-<P>The selected widgets are shown with a red &quot;overlay&quot; line around 
-them.  You can move the widgets by dragging this box.  Or you can 
-resize them by dragging the outer edges and corners.  Hold down the Alt 
-key while dragging the mouse to defeat the snap-to-grid effect for fine 
+<P>The selected widgets are shown with a red &quot;overlay&quot; line around
+them.  You can move the widgets by dragging this box.  Or you can
+resize them by dragging the outer edges and corners.  Hold down the Alt
+key while dragging the mouse to defeat the snap-to-grid effect for fine
 positioning. </P>
-<P>If there is a tab box displayed you can change which child is 
+<P>If there is a tab box displayed you can change which child is
 visible by clicking on the file tabs.  The child you pick is selected. </P>
-<P>The arrow, tab, and shift+tab keys &quot;navigate&quot; the selection.  Left, 
-right, tab, or shift+tab move to the next or previous widgets in the 
-hierarchy.  Hit the right arrow enough and you will select every widget 
-in the window.  Up/down widgets move to the previous/next widgets that 
-overlap horizontally.  If the navigation does not seem to work you 
-probably need to &quot;Sort&quot; the widgets.  This is important if you have 
-input fields, as FLTK uses the same rules when using arrow keys to move 
+<P>The arrow, tab, and shift+tab keys &quot;navigate&quot; the selection.  Left,
+right, tab, or shift+tab move to the next or previous widgets in the
+hierarchy.  Hit the right arrow enough and you will select every widget
+in the window.  Up/down widgets move to the previous/next widgets that
+overlap horizontally.  If the navigation does not seem to work you
+probably need to &quot;Sort&quot; the widgets.  This is important if you have
+input fields, as FLTK uses the same rules when using arrow keys to move
 between input fields. </P>
-<P>To &quot;open&quot; a widget, double click it.  To open several widgets select 
+<P>To &quot;open&quot; a widget, double click it.  To open several widgets select
 them and then type F1 or pick &quot;Edit/Open&quot; off the pop-up menu. </P>
-<P>Type Alt+o to temporarily toggle the overlay off without changing 
+<P>Type Alt+o to temporarily toggle the overlay off without changing
 the selection, so you can see the widget borders. </P>
-<P>You can resize the window by using the window manager border 
-controls.  FLTK will attempt to round the window size to the nearest 
-multiple of the grid size and makes it big enough to contain all the 
-widgets (it does this using illegal X methods, so it is possible it 
-will barf with some window managers!).  Notice that the actual window 
-in your program may not be resizable, and if it is, the effect on child 
+<P>You can resize the window by using the window manager border
+controls.  FLTK will attempt to round the window size to the nearest
+multiple of the grid size and makes it big enough to contain all the
+widgets (it does this using illegal X methods, so it is possible it
+will barf with some window managers!).  Notice that the actual window
+in your program may not be resizable, and if it is, the effect on child
 widgets may be different. </P>
-<P>The panel for the window (which you get by double-clicking it) is 
-almost identical to the panel for any other Fl_Widget.  There are three 
+<P>The panel for the window (which you get by double-clicking it) is
+almost identical to the panel for any other Fl_Widget.  There are three
 extra items: </P>
 <H4>Border</H4>
- This button turns the window manager border on or off.  On most window 
-managers you will have to close the window and reopen it to see the 
-effect. 
+ This button turns the window manager border on or off.  On most window
+managers you will have to close the window and reopen it to see the
+effect.
 <H4>xclass</H4>
- The string typed into here is passed to the X window manager as the 
-class.  This can change the icon or window decorations.  On most (all?) 
-window managers you will have to close the window and reopen it to see 
+ The string typed into here is passed to the X window manager as the
+class.  This can change the icon or window decorations.  On most (all?)
+window managers you will have to close the window and reopen it to see
 the effect.
 <H3><A name=images>Image Labels</A></H3>
-<P>Selecting &quot;Image...&quot; off the label style pull-down menu will bring 
-up a file chooser from which you pick the image file.  If an image has 
-already been chosen, you can change the image used by picking 
-&quot;Image...&quot; again.  The name of the image will appear in the &quot;label&quot; 
+<P>Selecting &quot;Image...&quot; off the label style pull-down menu will bring
+up a file chooser from which you pick the image file.  If an image has
+already been chosen, you can change the image used by picking
+&quot;Image...&quot; again.  The name of the image will appear in the &quot;label&quot;
 field, but you can't edit it. </P>
-<P>The <I>contents</I> of the image file are written to the <TT>.cxx</TT> file, 
-so if you wish to distribute the C code, you only need to copy the <TT>.cxx</TT> 
-file, not the images.  If many widgets share the same image then only 
+<P>The <I>contents</I> of the image file are written to the <TT>.cxx</TT> file,
+so if you wish to distribute the C code, you only need to copy the <TT>.cxx</TT>
+file, not the images.  If many widgets share the same image then only
 one copy is written. </P>
-<P>However the <I>file name</I> is stored in the <TT>.fl</TT> file, so to read 
-the <TT>.fl</TT> file you need the image files as well.  Filenames are relative 
-to the location the <TT>.fl</TT> file is (not necessarily the current 
-directory).  I recommend you either put the images in the same 
+<P>However the <I>file name</I> is stored in the <TT>.fl</TT> file, so to read
+the <TT>.fl</TT> file you need the image files as well.  Filenames are relative
+to the location the <TT>.fl</TT> file is (not necessarily the current
+directory).  I recommend you either put the images in the same
 directory as the <TT>.fl</TT> file, or use absolute path names. </P>
 <H4>Notes for all image types</H4>
-FLUID runs using the default visual of your X server.  This may be 8 
-bits, which will give you dithered images.  You may get better results 
-in your actual program by adding the code &quot;Fl::visual(FL_RGB)&quot; to your 
+FLUID runs using the default visual of your X server.  This may be 8
+bits, which will give you dithered images.  You may get better results
+in your actual program by adding the code &quot;Fl::visual(FL_RGB)&quot; to your
 code right before the first window is displayed.
-<P>All widgets with the same image on them share the same code and 
-source X pixmap.  Thus once you have put an image on a widget, it is 
+<P>All widgets with the same image on them share the same code and
+source X pixmap.  Thus once you have put an image on a widget, it is
 nearly free to put the same image on many other widgets. </P>
-<P>If you are using a painting program to edit an image: the only way 
-to convince FLUID to read the image file again is to remove the image 
-from all widgets that are using it (including ones in closed windows), 
-which will cause it to free its internal copy, and then set the image 
+<P>If you are using a painting program to edit an image: the only way
+to convince FLUID to read the image file again is to remove the image
+from all widgets that are using it (including ones in closed windows),
+which will cause it to free its internal copy, and then set the image
 again.  You may find it easier to exit FLUID and run it again. </P>
-<P>Don't rely on how FLTK crops images that are outside the widget, as 
-this may change in future versions!  The cropping of inside labels will 
+<P>Don't rely on how FLTK crops images that are outside the widget, as
+this may change in future versions!  The cropping of inside labels will
 probably be unchanged. </P>
-<P>To more accurately place images, make a new &quot;box&quot; widget and put the 
-image in that as the label.  This is also how you can put both an image 
-and text label on the same widget.  If your widget is a button, and you 
-want the image inside it, you must change the button's boxtype to 
-FL_UP_FRAME (or another frame), otherwise when it is pushed it will 
+<P>To more accurately place images, make a new &quot;box&quot; widget and put the
+image in that as the label.  This is also how you can put both an image
+and text label on the same widget.  If your widget is a button, and you
+want the image inside it, you must change the button's boxtype to
+FL_UP_FRAME (or another frame), otherwise when it is pushed it will
 erase the image. </P>
 <H4>XBM (X bitmap files)</H4>
-FLUID will read X bitmap files.  These files have C source code to 
-define a bitmap.  Sometimes they are stored with the &quot;.h&quot; or &quot;.bm&quot; 
+FLUID will read X bitmap files.  These files have C source code to
+define a bitmap.  Sometimes they are stored with the &quot;.h&quot; or &quot;.bm&quot;
 extension rather than the standard &quot;.xbm&quot;.
-<P>FLUID will output code to construct an Fl_Bitmap widget and use it 
-to label the widget.  The '1' bits in the bitmap are drawn using the 
-label color of the widget.  You can change the color in FLUID.  The '0' 
+<P>FLUID will output code to construct an Fl_Bitmap widget and use it
+to label the widget.  The '1' bits in the bitmap are drawn using the
+label color of the widget.  You can change the color in FLUID.  The '0'
 bits are transparent. </P>
-<P>The program &quot;bitmap&quot; on the X distribution does an ok job of editing 
+<P>The program &quot;bitmap&quot; on the X distribution does an ok job of editing
 bitmaps. </P>
 <H4>XPM (X pixmap files)</H4>
-FLUID will read X pixmap files as used by the libxpm library. These 
-files have C source code to define a pixmap.  The filenames usually 
+FLUID will read X pixmap files as used by the libxpm library. These
+files have C source code to define a pixmap.  The filenames usually
 have a &quot;.xpm&quot; extension.
-<P>FLUID will output code to construct an Fl_Pixmap widget and use it 
-to label the widget.  The label color of the widget is ignored, even 
+<P>FLUID will output code to construct an Fl_Pixmap widget and use it
+to label the widget.  The label color of the widget is ignored, even
 for 2-color images that could be a bitmap. </P>
-<P>XPM files can mark a single color as being transparent.  Currently 
-FLTK and FLUID simulate this transparency rather badly.  It will use 
-the color() of the widget as the background, and all widgets using the 
-same pixmap are assummed to have the same color.  This may be fixed in 
+<P>XPM files can mark a single color as being transparent.  Currently
+FLTK and FLUID simulate this transparency rather badly.  It will use
+the color() of the widget as the background, and all widgets using the
+same pixmap are assummed to have the same color.  This may be fixed in
 the future or on non-X systems. </P>
 
 <P>I have not found any good editors for small iconic pictures.  For
@@ -886,13 +886,13 @@ color images and are difficult to use to edit an image of small size
 and few colors. </P>
 
 <H4>GIF files</H4>
-FLUID will also read GIF image files.  These files are often used on 
-html documents to make icons.  This lets you use nice icons that you 
+FLUID will also read GIF image files.  These files are often used on
+html documents to make icons.  This lets you use nice icons that you
 steal off the net in your user interface.
-<P>FLUID converts these into (modified) XPM format and uses an 
-Fl_Pixmap widget to label the widget.  Transparency is handled the same 
-as for xpm files.  Notice that the conversion removes the compression, 
-so the code may be much bigger than the .gif file.  Only the first 
+<P>FLUID converts these into (modified) XPM format and uses an
+Fl_Pixmap widget to label the widget.  Transparency is handled the same
+as for xpm files.  Notice that the conversion removes the compression,
+so the code may be much bigger than the .gif file.  Only the first
 image of an animated gif file is used. </P>
 <P>Behavior and performance with large .gif files is not guaranteed! </P>
 <H2><A NAME="I18N">Internationalization with FLUID</A></H2>
@@ -905,7 +905,7 @@ use POSIX catgets. The "use none" method is the default and just passes the
 label strings as-is to the widget constructors.
 <P>The "GNU gettext" method uses GNU gettext (or a similar text-based I18N
 library) to retrieve a localized string before calling the widget
-constructor. 
+constructor.
 <P>The "POSIX catgets" method uses the POSIX catgets function to retrieve a
 numbered message from a message catalog before calling the widget
 constructor.

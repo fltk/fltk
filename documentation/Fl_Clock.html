@@ -17,9 +17,9 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- This widget provides a round analog clock display and is provided for 
+ This widget provides a round analog clock display and is provided for
 Forms compatibility.  It installs a 1-second timeout callback using <A href=functions.html#add_timeout>
-<TT>Fl::add_timeout()</TT></A>. 
+<TT>Fl::add_timeout()</TT></A>.
 <P ALIGN=CENTER><IMG src="clock.gif" ALT="Fl_Clock widget."> <IMG src="round_clock.gif" ALT="Fl_Clock widget."></P>
 <H3>Methods</H3>
 <UL>
@@ -30,28 +30,28 @@ Forms compatibility.  It installs a 1-second timeout callback using <A href=func
 <LI><A href=#Fl_Clock.second>second</A></LI>
 <LI><A href=#Fl_Clock.value>value</A></LI>
 </UL>
-<H4><A name=Fl_Clock.Fl_Clock>Fl_Clock::Fl_Clock(int x, int y, int w, 
+<H4><A name=Fl_Clock.Fl_Clock>Fl_Clock::Fl_Clock(int x, int y, int w,
 int h, const char *label = 0)</A></H4>
- Creates a new <TT>Fl_Clock</TT> widget using the given position, size, 
-and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+ Creates a new <TT>Fl_Clock</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
 <H4><A name=Fl_Clock.~Fl_Clock>virtual Fl_Clock::~Fl_Clock()</A></H4>
- The destructor <I>also deletes all the children</I>. This allows a 
-whole tree to be deleted at once, without having to keep a pointer to 
+ The destructor <I>also deletes all the children</I>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to
 all the children in the user code. A kludge has been done so the <TT>
-Fl_Clock</TT> and all of it's children can be automatic (local) 
-variables, but you must declare the <TT>Fl_Clock</TT><I>first</I>, so 
-that it is destroyed last. 
+Fl_Clock</TT> and all of it's children can be automatic (local)
+variables, but you must declare the <TT>Fl_Clock</TT><I>first</I>, so
+that it is destroyed last.
 <H4><A name=Fl_Clock.hour>int Fl_Clock::hour() const</A></H4>
- Returns the current hour (0 to 23). 
+ Returns the current hour (0 to 23).
 <H4><A name=Fl_Clock.minute>int Fl_Clock::minute() const</A></H4>
- Returns the current minute (0 to 59). 
+ Returns the current minute (0 to 59).
 <H4><A name=Fl_Clock.second>int Fl_Clock::second() const</A></H4>
- Returns the current second (0 to 60, 60 = leap second). 
+ Returns the current second (0 to 60, 60 = leap second).
 <H4><A name=Fl_Clock.value>void Fl_Clock::value(ulong v)
 <BR> void Fl_Clock::value(int h, int m, int s)
 <BR> ulong Fl_Clock::value(void)</A></H4>
- The first two forms of <TT>value</TT> set the displayed time to the 
-given UNIX time value or specific hours, minutes, and seconds. 
-<P>The third form of <TT>value</TT> returns the displayed time in 
+ The first two forms of <TT>value</TT> set the displayed time to the
+given UNIX time value or specific hours, minutes, and seconds.
+<P>The third form of <TT>value</TT> returns the displayed time in
 seconds since the UNIX epoch (January 1, 1970). </P>
 </BODY></HTML>

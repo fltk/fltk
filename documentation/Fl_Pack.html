@@ -17,15 +17,15 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- This widget was designed to add the functionality of compressing and 
-aligning widgets. 
-<P>If <TT>type()</TT> is <TT>FL_HORIZONTAL</TT> all the children are 
-resized to the height of the <TT>Fl_Pack</TT>, and are moved next to 
+ This widget was designed to add the functionality of compressing and
+aligning widgets.
+<P>If <TT>type()</TT> is <TT>FL_HORIZONTAL</TT> all the children are
+resized to the height of the <TT>Fl_Pack</TT>, and are moved next to
 each other horizontally. If <TT>type()</TT> is not <TT>FL_HORIZONTAL</TT>
- then the children are resized to the width and are stacked below each 
-other.  Then the <TT>Fl_Pack</TT> resizes itself to surround the child 
+ then the children are resized to the width and are stacked below each
+other.  Then the <TT>Fl_Pack</TT> resizes itself to surround the child
 widgets. </P>
-<P>This widget is needed for the <A href=Fl_Tabs.html#Fl_Tabs><TT>Fl_Tabs</TT></A>. 
+<P>This widget is needed for the <A href=Fl_Tabs.html#Fl_Tabs><TT>Fl_Tabs</TT></A>.
  In addition you may want to put the <TT>Fl_Pack</TT> inside an <A href=Fl_Scroll.html#Fl_Scroll>
 <TT>Fl_Scroll</TT></A>. </P>
 <H3>Methods</H3>
@@ -34,18 +34,18 @@ widgets. </P>
 <LI><A href=#Fl_Pack.~Fl_Pack>~Fl_Pack</A></LI>
 <LI><A href=#Fl_Pack.spacing>spacing</A></LI>
 </UL>
-<H4><A name=Fl_Pack.Fl_Pack>Fl_Pack::Fl_Pack(int x, int y, int w, int 
+<H4><A name=Fl_Pack.Fl_Pack>Fl_Pack::Fl_Pack(int x, int y, int w, int
 h, const char *label = 0)</A></H4>
- Creates a new <TT>Fl_Pack</TT> widget using the given position, size, 
-and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+ Creates a new <TT>Fl_Pack</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
 <H4><A name=Fl_Pack.~Fl_Pack>virtual Fl_Pack::~Fl_Pack()</A></H4>
- The destructor <I>also deletes all the children</I>. This allows a 
-whole tree to be deleted at once, without having to keep a pointer to 
+ The destructor <I>also deletes all the children</I>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to
 all the children in the user code. A kludge has been done so the <TT>
-Fl_Pack</TT> and all of it's children can be automatic (local) 
-variables, but you must declare the <TT>Fl_Pack</TT><I>first</I>, so 
-that it is destroyed last. 
+Fl_Pack</TT> and all of it's children can be automatic (local)
+variables, but you must declare the <TT>Fl_Pack</TT><I>first</I>, so
+that it is destroyed last.
 <H4><A name=Fl_Pack.spacing>int Fl_Pack::spacing() const
 <BR> void Fl_Pack::spacing(int)</A></H4>
- Gets or sets the number of extra pixels of blank space that are added 
+ Gets or sets the number of extra pixels of blank space that are added
 between the children. </BODY></HTML>

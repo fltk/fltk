@@ -19,18 +19,18 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- This is the base class for browsers.  To be useful it must be 
-subclassed and several virtual functions defined.  The Forms-compatable 
-browser and the file chooser's browser are subclassed off of this. 
-<P>This has been designed so that the subclass has complete control 
+ This is the base class for browsers.  To be useful it must be
+subclassed and several virtual functions defined.  The Forms-compatable
+browser and the file chooser's browser are subclassed off of this.
+<P>This has been designed so that the subclass has complete control
 over the storage of the data, although because <TT>next()</TT> and <TT>
-prev()</TT> functions are used to index, it works best as a linked list 
-or as a large block of characters in which the line breaks must be 
+prev()</TT> functions are used to index, it works best as a linked list
+or as a large block of characters in which the line breaks must be
 searched for. </P>
-<P>A great deal of work has been done so that the &quot;height&quot; of a data 
-object does not need to be determined until it is drawn.  This is 
-useful if actually figuring out the size of an object requires 
-accessing image data or doing <TT>stat()</TT> on a file or doing some 
+<P>A great deal of work has been done so that the &quot;height&quot; of a data
+object does not need to be determined until it is drawn.  This is
+useful if actually figuring out the size of an object requires
+accessing image data or doing <TT>stat()</TT> on a file or doing some
 other slow operation. </P>
 <H3>Methods</H3>
 <CENTER>
@@ -95,15 +95,15 @@ other slow operation. </P>
 </TABLE>
 </CENTER>
 
-<H4><A name="Fl_Browser_.Fl_Browser_">Fl_Browser::Fl_Browser(int, int, 
+<H4><A name="Fl_Browser_.Fl_Browser_">Fl_Browser::Fl_Browser(int, int,
 int, int, const char * = 0)</A></H4>
 
-<P>The constructor makes an empty browser. 
+<P>The constructor makes an empty browser.
 
 
 <H4><A name="Fl_Browser_.~Fl_Browser_">Fl_Browser::~Fl_Browser(void)</A></H4>
 
-<P>The destructor deletes all list items and destroys the browser. 
+<P>The destructor deletes all list items and destroys the browser.
 
 
 <H4><A NAME="Fl_Browser_.bbox">Fl_Browser_::bbox(int &amp;x, int &amp;y, int &amp;w, int &amp;h) const</A></H4>
@@ -176,12 +176,12 @@ width from the item widths.
 <P>The second form handles an event within the specified bounding box.
 
 
-<H4><A name="Fl_Browser_.has_scrollbar">void 
+<H4><A name="Fl_Browser_.has_scrollbar">void
 Fl_Browser_::has_scrollbar(int h)</A></H4>
 
-<P>By default you can scroll in both directions, and the scrollbars 
-disappear if the data will fit in the widget.  has_scrollbar() changes 
-this based on the value of <TT>h</TT>: 
+<P>By default you can scroll in both directions, and the scrollbars
+disappear if the data will fit in the widget.  has_scrollbar() changes
+this based on the value of <TT>h</TT>:
 
 <UL>
 
@@ -196,10 +196,10 @@ this based on the value of <TT>h</TT>:
 	<LI><CODE>Fl_Browser_::BOTH</CODE> - The default is both
 	scrollbars.
 
-	<LI><CODE>Fl_Browser_::HORIZONTAL_ALWAYS</CODE> - Horizontal 
+	<LI><CODE>Fl_Browser_::HORIZONTAL_ALWAYS</CODE> - Horizontal
 	scrollbar always on, vertical always off.
 
-	<LI><CODE>Fl_Browser_::VERTICAL_ALWAYS</CODE> - Vertical 
+	<LI><CODE>Fl_Browser_::VERTICAL_ALWAYS</CODE> - Vertical
 	scrollbar always on, horizontal always off.
 
 	<LI><CODE>Fl_Browser_::BOTH_ALWAYS</CODE> - Both always on.
@@ -368,8 +368,8 @@ selected.
 <H4><A name="Fl_Browser_.textcolor">Fl_Color Fl_Browser_::textcolor() const
 <BR>void Fl_Browser_::textcolor(Fl_Color color)</A></H4>
 
-<P>The first form gets the default text color for the lines in the 
-browser. 
+<P>The first form gets the default text color for the lines in the
+browser.
 
 <P>The second form sets the default text color to <TT>color</TT></P>
 
@@ -377,8 +377,8 @@ browser.
 <H4><A name="Fl_Browser_.textfont">Fl_Font Fl_Browser_::textfont() const
 <BR>void Fl_Browser_::textfont(Fl_Font font)</A></H4>
 
-<P>The first form gets the default text font for the lines in the 
-browser. 
+<P>The first form gets the default text font for the lines in the
+browser.
 
 <P>The second form sets the default text font to <TT>font</TT></P>
 
@@ -386,8 +386,8 @@ browser.
 <H4><A name="Fl_Browser_.textsize">uchar Fl_Browser_::textsize() const
 <BR>void Fl_Browser_::textsize(uchar size)</A></H4>
 
-<P>The first form gets the default text size for the lines in the 
-browser. 
+<P>The first form gets the default text size for the lines in the
+browser.
 
 <P>The second form sets the default text size to <TT>size</TT></P>
 

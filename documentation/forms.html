@@ -1,69 +1,69 @@
 <HTML><BODY>
 <H1 ALIGN=RIGHT><A NAME=forms>E - Forms Compatibility</A></H1>
- This appendix describes the Forms compatibility included with FLTK. 
+ This appendix describes the Forms compatibility included with FLTK.
 <H2>Importing Forms Layout Files</H2>
-<A href=fluid.html#FLUID>FLUID</A> can read the .fd files put out by 
-all versions of Forms and XForms fdesign.  However, it will mangle them 
-a bit, but it prints a warning message about anything it does not 
-understand.  FLUID cannot write fdesign files, so you should save to a 
-new name so you don't write over the old one. 
-<P>You will need to edit your main code considerably to get it to link 
-with the output from FLUID.  If you are not interested in this you may 
+<A href=fluid.html#FLUID>FLUID</A> can read the .fd files put out by
+all versions of Forms and XForms fdesign.  However, it will mangle them
+a bit, but it prints a warning message about anything it does not
+understand.  FLUID cannot write fdesign files, so you should save to a
+new name so you don't write over the old one.
+<P>You will need to edit your main code considerably to get it to link
+with the output from FLUID.  If you are not interested in this you may
 have more immediate luck with the forms compatibility header, <TT>
 &lt;FL/forms.H&gt;</TT>. </P>
 <H2>Using the Compatibility Header File</H2>
- You should be able to compile existing Forms or XForms source code by 
+ You should be able to compile existing Forms or XForms source code by
 changing the include directory switch to your compiler so that the <TT>
 forms.h</TT> file supplied with FLTK is included.  Take a look at <TT>
-forms.h</TT> to see how it works, but the basic trick is lots of inline 
-functions. Most of the XForms demo programs work without changes. 
-<P>You will also have to compile your Forms or XForms program using a 
-C++ compiler.  The FLTK library does not provide C bindings or header 
+forms.h</TT> to see how it works, but the basic trick is lots of inline
+functions. Most of the XForms demo programs work without changes.
+<P>You will also have to compile your Forms or XForms program using a
+C++ compiler.  The FLTK library does not provide C bindings or header
 files. </P>
-<P>Although FLTK was designed to be compatable with the GL Forms 
-library (version 0.3 or so), XForms has bloated severely and it's 
-interface is X-specific.  Therefore, XForms compatibility is no longer 
-a goal of FLTK.  Compatibility was limited to things that were free, or 
-that would add code that would not be linked in if the feature is 
+<P>Although FLTK was designed to be compatable with the GL Forms
+library (version 0.3 or so), XForms has bloated severely and it's
+interface is X-specific.  Therefore, XForms compatibility is no longer
+a goal of FLTK.  Compatibility was limited to things that were free, or
+that would add code that would not be linked in if the feature is
 unused, or that was not X-specific. </P>
-<P>To use any new features of FLTK, you should rewrite your code to not 
-use the inline functions and instead use &quot;pure&quot; FLTK.  This will make 
-it a lot cleaner and make it easier to figure out how to call the FLTK 
-functions.  Unfortunately this conversion is harder than expected and 
+<P>To use any new features of FLTK, you should rewrite your code to not
+use the inline functions and instead use &quot;pure&quot; FLTK.  This will make
+it a lot cleaner and make it easier to figure out how to call the FLTK
+functions.  Unfortunately this conversion is harder than expected and
 even Digital Domain's inhouse code still uses <TT>forms.H</TT> a lot. </P>
 <H2>Problems You Will Encounter</H2>
 <P>Many parts of XForms use X-specific structures like <TT>XEvent</TT>
- in their interface.  I did not emulate these!  Unfortunately these 
-features (such as the &quot;canvas&quot; widget) are needed by most large 
+ in their interface.  I did not emulate these!  Unfortunately these
+features (such as the &quot;canvas&quot; widget) are needed by most large
 programs.  You will need to rewrite these to use FLTK subclasses. </P>
-<P><A href=Fl_Free.html#Fl_Free><TT>Fl_Free</TT></A> widgets emulate 
-the <I>old</I> Forms &quot;free&quot; widget.  It may be useful for porting 
-programs that change the <TT>handle()</TT> function on widgets, but you 
+<P><A href=Fl_Free.html#Fl_Free><TT>Fl_Free</TT></A> widgets emulate
+the <I>old</I> Forms &quot;free&quot; widget.  It may be useful for porting
+programs that change the <TT>handle()</TT> function on widgets, but you
 will still need to rewrite things. </P>
-<P><A href=Fl_Timer.html#Fl_Timer><TT>Fl_Timer</TT></A> widgets are 
-provided to emulate the XForms timer.  These work, but are quite 
+<P><A href=Fl_Timer.html#Fl_Timer><TT>Fl_Timer</TT></A> widgets are
+provided to emulate the XForms timer.  These work, but are quite
 inefficient and inaccurate compared to using <A href=functions.html#add_timeout>
 <TT>Fl::add_timeout()</TT></A>. </P>
-<P><I>All instance variables are hidden.</I> If you directly refer to 
-the x, y, w, h, label, or other fields of your Forms widgets you will 
-have to add empty parenthesis after each reference.  The easiest way to 
-do this is to globally replace &quot;-&gt;x&quot; with &quot;-&gt;x()&quot;, etc.  Replace 
+<P><I>All instance variables are hidden.</I> If you directly refer to
+the x, y, w, h, label, or other fields of your Forms widgets you will
+have to add empty parenthesis after each reference.  The easiest way to
+do this is to globally replace &quot;-&gt;x&quot; with &quot;-&gt;x()&quot;, etc.  Replace
 &quot;boxtype&quot; with &quot;box()&quot;. </P>
-<P><TT>const char *</TT> arguments to most FLTK methods are simply 
-stored, while Forms would <TT>strdup()</TT> the passed string.  This is 
-most noticable with the label of widgets.  Your program must always 
+<P><TT>const char *</TT> arguments to most FLTK methods are simply
+stored, while Forms would <TT>strdup()</TT> the passed string.  This is
+most noticable with the label of widgets.  Your program must always
 pass static data such as a string constant or malloc'd buffer to <TT>
-label()</TT>.  If you are using labels to display program output you 
+label()</TT>.  If you are using labels to display program output you
 may want to try the <A href=Fl_Output.html#Fl_Output><TT>Fl_Output</TT></A>
  widget. </P>
-<P>The default fonts and sizes are matched to the older GL version of 
-Forms, so all labels will draw somewhat larger than an XForms program 
+<P>The default fonts and sizes are matched to the older GL version of
+Forms, so all labels will draw somewhat larger than an XForms program
 does. </P>
-<P>fdesign outputs a setting of a &quot;fdui&quot; instance variable to the main 
-window.  I did not emulate this because I wanted all instance variables 
+<P>fdesign outputs a setting of a &quot;fdui&quot; instance variable to the main
+window.  I did not emulate this because I wanted all instance variables
 to be hidden.  You can store the same information in the <TT>user_data()</TT>
- field of a window.  To do this,  search through the fdesign output for 
-all occurances of &quot;-&gt;fdui&quot; and edit to use &quot;-&gt;user_data()&quot; instead. 
+ field of a window.  To do this,  search through the fdesign output for
+all occurances of &quot;-&gt;fdui&quot; and edit to use &quot;-&gt;user_data()&quot; instead.
  This will require casts and is not trivial. </P>
 <P>The prototype for the functions passed to <TT>fl_add_timeout()</TT>
  and <TT>fl_set_idle_callback()</TT> callback are different. </P>
@@ -116,55 +116,55 @@ all occurances of &quot;-&gt;fdui&quot; and edit to use &quot;-&gt;user_data()&q
 <LI>xyplot object </LI>
 </UL>
 <H2>Additional Notes</H2>
- These notes were written for porting programs written with the older 
-IRISGL version of Forms.  Most of these problems are the same ones 
-encountered when going from old Forms to XForms: 
+ These notes were written for porting programs written with the older
+IRISGL version of Forms.  Most of these problems are the same ones
+encountered when going from old Forms to XForms:
 <H3>Does Not Run In Background</H3>
- The IRISGL library always forked when you created the first window, 
-unless &quot;foreground()&quot; was called.  FLTK acts like &quot;foreground()&quot; is 
-called all the time.  If you really want the fork behavior do &quot;if 
-(fork()) exit(0)&quot; right at the start of your program. 
+ The IRISGL library always forked when you created the first window,
+unless &quot;foreground()&quot; was called.  FLTK acts like &quot;foreground()&quot; is
+called all the time.  If you really want the fork behavior do &quot;if
+(fork()) exit(0)&quot; right at the start of your program.
 <H3>You Cannot Use IRISGL Windows or fl_queue</H3>
- If a Forms (not XForms) program if you wanted your own window for 
-displaying things you would create a IRISGL window and draw in it, 
-periodically calling Forms to check if the user hit buttons on the 
-panels.  If the user did things to the IRISGL window, you would find 
-this out by having the value FL_EVENT returned from the call to Forms. 
-<P>None of this works with FLTK.  Nor will it compile, the necessary 
+ If a Forms (not XForms) program if you wanted your own window for
+displaying things you would create a IRISGL window and draw in it,
+periodically calling Forms to check if the user hit buttons on the
+panels.  If the user did things to the IRISGL window, you would find
+this out by having the value FL_EVENT returned from the call to Forms.
+<P>None of this works with FLTK.  Nor will it compile, the necessary
 calls are not in the interface. </P>
 <P>You have to make a subclass of <A href=Fl_Gl_Window.html#Fl_Gl_Window>
 <TT>Fl_Gl_Window</TT></A> and write a <TT>draw()</TT> method and <TT>
-handle()</TT> method.  This may require anywhere from a trivial to a 
+handle()</TT> method.  This may require anywhere from a trivial to a
 major rewrite. </P>
 <P>If you draw into the overlay planes you will have to also write a <TT>
-draw_overlay()</TT> method and call <TT>redraw_overlay()</TT> on the 
+draw_overlay()</TT> method and call <TT>redraw_overlay()</TT> on the
 OpenGL window. </P>
 <P>One easy way to hack your program so it works is to make the <TT>
-draw()</TT> and <TT>handle()</TT> methods on your window set some 
-static variables, storing what event happened.  Then in the main loop 
-of your program, call <TT>Fl::wait()</TT> and then check these 
+draw()</TT> and <TT>handle()</TT> methods on your window set some
+static variables, storing what event happened.  Then in the main loop
+of your program, call <TT>Fl::wait()</TT> and then check these
 variables, acting on them as though they are events read from <TT>
 fl_queue</TT>. </P>
 <H3>You Must Use OpenGL to Draw Everything</H3>
-<P>The file <TT>&lt;FL/gl.h&gt;</TT> defines replacements for a lot of IRISGL 
-calls, translating them to OpenGL.  There are much better translators 
+<P>The file <TT>&lt;FL/gl.h&gt;</TT> defines replacements for a lot of IRISGL
+calls, translating them to OpenGL.  There are much better translators
 available that you might want to investigate. </P>
 <H3>You Cannot Make Forms Subclasses</H3>
- Programs that call <TT>fl_make_object</TT> or directly setting the 
-handle routine will not compile.  You have to rewrite them to use a 
+ Programs that call <TT>fl_make_object</TT> or directly setting the
+handle routine will not compile.  You have to rewrite them to use a
 subclass of <TT>Fl_Widget</TT>.  It is important to note that the <TT>
 handle()</TT> method is not exactly the same as the <TT>handle()</TT>
- function of Forms.  Where a Forms <TT>handle()</TT> returned non-zero, 
+ function of Forms.  Where a Forms <TT>handle()</TT> returned non-zero,
 your <TT>handle()</TT> must call <TT>do_callback()</TT>. And your <TT>
-handle()</TT> must return non-zero if it &quot;understood&quot; the event. 
-<P>An attempt has been made to emulate the &quot;free&quot; widget.  This appears 
-to work quite well.  It may be quicker to modify your subclass into a 
+handle()</TT> must return non-zero if it &quot;understood&quot; the event.
+<P>An attempt has been made to emulate the &quot;free&quot; widget.  This appears
+to work quite well.  It may be quicker to modify your subclass into a
 &quot;free&quot; widget, since the &quot;handle&quot; functions match. </P>
-<P>If your subclass draws into the overlay you are in trouble and will 
+<P>If your subclass draws into the overlay you are in trouble and will
 have to rewrite things a lot. </P>
 <H3>You Cannot Use &lt;device.h&gt;</H3>
- If you have written your own &quot;free&quot; widgets you will probably get a 
-lot of errors about &quot;getvaluator&quot;.  You should substitute: 
+ If you have written your own &quot;free&quot; widgets you will probably get a
+lot of errors about &quot;getvaluator&quot;.  You should substitute:
 <CENTER><TABLE border=1 WIDTH=90% summary="Mapping of Forms valuators to FLTK.">
 <TR><TH align=center>Forms</TH><TH align=center>FLTK</TH></TR>
 <TR><TD>MOUSE_X</TD><TD>Fl::event_x_root()</TD></TR>
@@ -177,12 +177,12 @@ lot of errors about &quot;getvaluator&quot;.  You should substitute:
 <TR><TD>MOUSE2,MIDDLEMOUSE</TD><TD>Fl::event_state()</TD></TR>
 <TR><TD>MOUSE3,LEFTMOUSE</TD><TD>Fl::event_state()</TD></TR>
 </TABLE></CENTER>
- Anything else in <TT>getvaluator</TT> and you are on your own... 
+ Anything else in <TT>getvaluator</TT> and you are on your own...
 <H3>Font Numbers Are Different</H3>
- The &quot;style&quot; numbers have been changed because I wanted to insert 
-bold-italic versions of the normal fonts.  If you use Times, Courier, 
-or Bookman to display any text you will get a different font out of 
-FLTK.  If you are really desperate to fix this use the following code: 
+ The &quot;style&quot; numbers have been changed because I wanted to insert
+bold-italic versions of the normal fonts.  If you use Times, Courier,
+or Bookman to display any text you will get a different font out of
+FLTK.  If you are really desperate to fix this use the following code:
 <UL>
 <PRE>
 fl_font_name(3,&quot;*courier-medium-r-no*&quot;);
