@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.4 2000/03/24 08:42:02 bill Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.5 2000/03/24 08:48:40 bill Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -120,8 +120,6 @@ int Fl_Gl_Window::can_do_overlay() {return 0;}
 
 #endif
 
-#include <stdio.h>
-
 void Fl_Gl_Window::make_overlay() {
   if (!overlay) {
 #if HAVE_GL_OVERLAY
@@ -131,7 +129,6 @@ void Fl_Gl_Window::make_overlay() {
       GLXContext context = wglCreateLayerContext(hdc, 1);
       if (!context) { // no overlay hardware
 	no_overlay_hardware = 1;
-	printf("No overlay detected\n");
       } else {
 	if (fl_first_context) wglShareLists(fl_first_context, context);
 	else fl_first_context = context;
@@ -139,9 +136,8 @@ void Fl_Gl_Window::make_overlay() {
 	LAYERPLANEDESCRIPTOR pfd;
 	wglDescribeLayerPlane(hdc, g->pixelformat, 1, sizeof(pfd), &pfd);
 	if (!pfd.iPixelType) {
-	  printf("Color Overlay found\n");
+	  ; // full-color overlay
 	} else {
-	  printf("Overlay of depth %d found\n", pfd.cColorBits);
 	  fl_overlay_depth = pfd.cColorBits; // used by gl_color()
 	  if (fl_overlay_depth > 8) fl_overlay_depth = 8;
 	  COLORREF palette[256];
@@ -217,5 +213,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.4 2000/03/24 08:42:02 bill Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.5 2000/03/24 08:48:40 bill Exp $".
 //
