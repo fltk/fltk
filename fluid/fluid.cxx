@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.36 2002/11/03 00:01:20 matthiaswm Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.37 2003/04/01 19:58:08 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -636,16 +636,18 @@ shell_pipe_cb(int, void*) {
 
   if (fgets(line, sizeof(line), shell_pipe) != NULL) {
     // Add the line to the output list...
-    shell_run_list->add(line);
-    shell_run_list->make_visible(shell_run_list->size());
+    shell_run_buffer->append(line);
   } else {
     // End of file; tell the parent...
     Fl::remove_fd(fileno(shell_pipe));
 
     pclose(shell_pipe);
     shell_pipe = NULL;
-    shell_run_list->add("... END SHELL COMMAND ...");
+    shell_run_buffer->append("... END SHELL COMMAND ...\n");
   }
+
+  shell_run_display->scroll(shell_run_display->count_lines(0,
+                            shell_run_buffer->length(), 1), 0);
 }
 
 void
@@ -682,8 +684,9 @@ do_shell_command(Fl_Return_Button*, void*) {
   }
 
   // Show the output window and clear things...
-  shell_run_list->clear();
-  shell_run_list->add(command);
+  shell_run_buffer->text("");
+  shell_run_buffer->append(command);
+  shell_run_buffer->append("\n");
   shell_run_window->label("Shell Command Running...");
 
   if ((shell_pipe = popen(command, "r")) == NULL) {
@@ -692,7 +695,7 @@ do_shell_command(Fl_Return_Button*, void*) {
   }
 
   shell_run_button->deactivate();
-  shell_run_window->hotspot(shell_run_list);
+  shell_run_window->hotspot(shell_run_display);
   shell_run_window->show();
 
   Fl::add_fd(fileno(shell_pipe), shell_pipe_cb);
@@ -853,5 +856,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.36 2002/11/03 00:01:20 matthiaswm Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.37 2003/04/01 19:58:08 easysw Exp $".
 //

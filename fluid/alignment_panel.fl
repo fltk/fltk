@@ -1,7 +1,13 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0102 
+version 1.0103 
 header_name {.h} 
 code_name {.cxx}
+decl {\#include <FL/Fl_Text_Buffer.H>} {public
+} 
+
+decl {\#include <FL/Fl_Text_Display.H>} {public
+} 
+
 Function {make_project_window()} {open
 } {
   Fl_Window project_window {
@@ -97,15 +103,18 @@ decl {extern void i18n_cb(Fl_Choice *,void *);} {public
 decl {extern Fl_Preferences fluid_prefs;} {public
 } 
 
+decl {Fl_Text_Buffer *shell_run_buffer;} {selected public
+} 
+
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {340 243 255 213} visible
+    xywh {340 243 255 210} visible
   } {
     Fl_Button {} {
       label Close
-      callback {settings_window->hide();} selected
+      callback {settings_window->hide();}
       tooltip {Close this dialog.} xywh {185 179 60 25}
     }
     Fl_Tabs {} {
@@ -213,15 +222,17 @@ Function {make_shell_window()} {open
   }
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {693 386 555 435} hide resizable
+    xywh {693 386 555 435} resizable visible
   } {
-    Fl_Browser shell_run_list {
-      xywh {10 10 535 380} textfont 4 textsize 12 resizable
-    }
     Fl_Return_Button shell_run_button {
       label Close
       callback {shell_run_window->hide();}
       xywh {465 400 80 25}
+    }
+    Fl_Text_Display shell_run_display {
+      xywh {10 10 530 380} textfont 4 textsize 12 resizable
+      code0 {shell_run_buffer = new Fl_Text_Buffer();}
+      code1 {shell_run_display->buffer(shell_run_buffer);}
     }
   }
 } 
@@ -230,7 +241,7 @@ Function {make_grid_window()} {open
 } {
   Fl_Window grid_window {
     label Grid open
-    xywh {1128 236 155 175} visible
+    xywh {1120 236 155 175} visible
   } {
     Fl_Tabs {} {
       xywh {10 10 135 120} align 5
