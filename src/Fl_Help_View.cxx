@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.34 2002/05/27 21:16:47 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.35 2002/06/06 13:40:49 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2212,33 +2212,40 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
       scrollbar_(xx + ww - 17, yy, 17, hh - 17),
       hscrollbar_(xx, yy + hh - 17, ww - 17, 17)
 {
-  link_        = (Fl_Help_Func *)0;
-
-  filename_[0] = '\0';
-  value_       = NULL;
-
-  ablocks_     = 0;
-  nblocks_     = 0;
-  blocks_      = (Fl_Help_Block *)0;
-
-  alinks_      = 0;
-  nlinks_      = 0;
-  links_       = (Fl_Help_Link *)0;
-
-  atargets_    = 0;
-  ntargets_    = 0;
-  targets_     = (Fl_Help_Target *)0;
-
-  nfonts_      = 0;
-  textfont_    = FL_TIMES;
-  textsize_    = 12;
-
-  topline_     = 0;
-  leftline_    = 0;
-  size_        = 0;
-
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
-  textcolor(FL_FOREGROUND_COLOR);
+
+  title_[0]     = '\0';
+  defcolor_     = FL_FOREGROUND_COLOR;
+  bgcolor_      = FL_BACKGROUND_COLOR;
+  textcolor_    = FL_FOREGROUND_COLOR;
+  linkcolor_    = FL_SELECTION_COLOR;
+  textfont_     = FL_TIMES;
+  textsize_     = 12;
+  value_        = NULL;
+
+  ablocks_      = 0;
+  nblocks_      = 0;
+  blocks_       = (Fl_Help_Block *)0;
+
+  nfonts_       = 0;
+
+  link_         = (Fl_Help_Func *)0;
+
+  alinks_       = 0;
+  nlinks_       = 0;
+  links_        = (Fl_Help_Link *)0;
+
+  atargets_     = 0;
+  ntargets_     = 0;
+  targets_      = (Fl_Help_Target *)0;
+
+  directory_[0] = '\0';
+  filename_[0]  = '\0';
+
+  topline_      = 0;
+  leftline_     = 0;
+  size_         = 0;
+  hsize_        = 0;
 
   scrollbar_.value(0, hh, 0, 1);
   scrollbar_.step(8.0);
@@ -2631,5 +2638,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.34 2002/05/27 21:16:47 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.35 2002/06/06 13:40:49 easysw Exp $".
 //
