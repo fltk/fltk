@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- Minor tweeks to MingW and OS/2 config headers.
 	- Fl_Value_Input now correctly determines if step()
 	  specifies an integer value.
 	- Fl_Help_View didn't add links inside PRE elements.
