@@ -1,5 +1,5 @@
 //
-// "$Id: fl_line_style.cxx,v 1.3.2.3.2.7 2001/12/07 16:28:38 easysw Exp $"
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.8 2001/12/12 07:50:37 matthiaswm Exp $"
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
@@ -58,8 +58,8 @@ void fl_line_style(int style, int width, char* dashes) {
   // QuickDraw supports pen size and pattern, but no arbitrary line styles.
   static Pattern	styles[] = {
     { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },	// FL_SOLID
-    { { 0xcc, 0xcc, 0x00, 0x00, 0xcc, 0xcc, 0x00, 0x00 } },	// FL_DASH
-    { { 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00 } }	// FL_DOT
+    { { 0xf0, 0xf0, 0xf0, 0xf0, 0x0f, 0x0f, 0x0f, 0x0f } },	// FL_DASH
+    { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } }	// FL_DOT
   };
 
   if (!width) width = 1;
@@ -104,5 +104,5 @@ void fl_line_style(int style, int width, char* dashes) {
 
 
 //
-// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.7 2001/12/07 16:28:38 easysw Exp $".
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.8 2001/12/12 07:50:37 matthiaswm Exp $".
 //

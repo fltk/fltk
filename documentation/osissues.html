@@ -373,4 +373,36 @@ feature, not a bug. </P>
 <P><TT>SetCapture</TT> (used by <TT>Fl::grab()</TT>) doesn't work, and
 the main window title bar turns gray while menus are popped up. </P>
 <P>FLUID does not support BMP files yet. </P>
+
+<H2>MacOS-specific interface</h2>
+FLTK supports MacOS 8.6, MacOS 9 and Mac OS X using the Apple Carbon library.
+When compiled with  MPW or MetroWerks' CodeWarrior, application binaries in CFM format will
+run on all the above systems without changes. 
+OS X's 'gcc' however creates Mach-O binaries which are not supported by
+MacOS 9 and earlier.
+<br>
+<PRE>#include &lt;FL/x.H&gt;</PRE>
+The <tt>&lt;FL/x.H&gt;</tt> header file defines the interface to FLTK's MacOS-specific 
+functions. Be warned that some of the structures and calls in it are 
+subject to change in future version of FLTK. Try to avoid doing this 
+so your code is portable.
+<H4>WindowRef fl_xid(const Fl_Window *)</h4>
+Returns the window reference for an <tt>Fl_Window</tt>, or NULL if not shown.
+<h4>Fl_Window *fl_find(WindowRef xid)</h4>
+Return the <tt>Fl_Window</tt> that corresponds to the give window hande, or NULL if not found. FLTK Windows that are children of top-level windows share the WindowRef 
+with the top-level window.
+<h3>Drawing Things Using QuickDraw</h3>
+When the virtual function <tt>Fl_Widget::draw()</tt> is called, FLTK has prepared
+the Window and CGrafPort for drawing. Clipping and offsets are prepared to allow
+correct subwindow drawing.
+<br><br>
+OS X doublebuffers all windows automatically. On OS X <tt>Fl_Window</tt> and
+<tt>Fl_Double_Window</tt> are handled internally in the same way.
+<h3>Mac File System Specifics</h3>
+<h4>Resource Forks</h4>
+FLTK does not access the resource fork of an application. However, a minimal
+resource fork must be created for OS 8 and OS X applications.
+<h4>Mac File Paths</h4>
+FLTK uses Unix-style filenames and paths.
+
 </BODY></HTML>

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.4 2001/12/12 07:50:37 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -28,8 +28,6 @@
 // still be useful.
 #define CONSOLIDATE_MOTION 0
 
-// use TARGET_API_MAC_CARBON if needed
-
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -41,7 +39,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifdef TARGET_API_MAC_CARBON
+// use the above define if you want to use full Carbon API
+// - this will change event handling to Carbon Events
+#endif
 
+static unsigned short macKeyLookUp[];
+static Fl_Window* resize_from_system;
+Fl_Window* fl_find(Window);
 int fl_handle(const EventRecord &event);
 
 int fl_screen;
@@ -213,13 +218,33 @@ static double do_queued_events( double time = 0.0 )
 //    SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
   }
 #else
+  #ifdef TARGET_API_MAC_CARBON
+  OSStatus ret;
+  EventRef ev;
+  static EventTargetRef target = 0;
+  if ( !target ) target = GetEventDispatcherTarget();
+  ret = ReceiveNextEvent( 0, NULL, time, true, &ev );
+  if ( ret == noErr )
+  {
+    ret = SendEventToEventTarget( ev, target );
+    if ( ret == eventNotHandledErr )
+    {
+      EventRecord er;
+      if ( ConvertEventRefToEventRecord( ev, &er ) )
+        fl_handle( er );
+    }
+    ReleaseEvent( ev );
+  }
+  
+  #else
   EventRecord ev;
-  unsigned long ticks = (int)(time*60.0);
+  unsigned long ticks = (int)(time*60.0); // setting ticks to 7fffffff will wait forever
   if ( WaitNextEvent(everyEvent, &ev, ticks, rgn) )
   {
     fl_handle(ev); //: handle the nullEvent to get mouse up events
     SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
   }
+  #endif
 #endif
   
 #if CONSOLIDATE_MOTION
@@ -315,7 +340,180 @@ static OSErr QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* repl
     return noErr;
 }
 
+/**
+ * Carbon Mousewheel handler
+ * This needs to be linked into all new window event handlers
+ */
+OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+{
+  Fl_Window *window = (Fl_Window*)userData;
+  EventMouseWheelAxis axis;
+  GetEventParameter( event, kEventParamMouseWheelAxis, typeMouseWheelAxis, NULL, sizeof(EventMouseWheelAxis), NULL, &axis );
+  long delta;
+  GetEventParameter( event, kEventParamMouseWheelDelta, typeLongInteger, NULL, sizeof(long), NULL, &delta );
+  if ( axis == kEventMouseWheelAxisY )
+  {
+    Fl::e_dy = - delta;
+    if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
+  }
+  return noErr;
+}
 
+/**
+ * convert the current mouse chord into the FLTK modifier state
+ */
+static void chord_to_e_state( UInt32 chord )
+{
+  static ulong state[] = 
+  { 
+    0, FL_BUTTON1, FL_BUTTON3, FL_BUTTON1|FL_BUTTON3, FL_BUTTON2,
+    FL_BUTTON2|FL_BUTTON1, FL_BUTTON2|FL_BUTTON3, FL_BUTTON2|FL_BUTTON1|FL_BUTTON3
+  };
+  Fl::e_state = ( Fl::e_state & 0xff0000 ) | state[ chord & 0x07 ];
+}
+
+/**
+ * Carbon Mouse Button Handler
+ */
+OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+{
+  static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
+  static int px, py;
+  Fl_Window *window = (Fl_Window*)userData;
+  Point pos;
+  GetEventParameter( event, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &pos );
+  EventMouseButton btn;
+  GetEventParameter( event, kEventParamMouseButton, typeMouseButton, NULL, sizeof(EventMouseButton), NULL, &btn );
+  UInt32 clickCount;
+  GetEventParameter( event, kEventParamClickCount, typeUInt32, NULL, sizeof(UInt32), NULL, &clickCount );
+  UInt32 chord;
+  GetEventParameter( event, kEventParamMouseChord, typeUInt32, NULL, sizeof(UInt32), NULL, &chord );
+  WindowRef xid = fl_xid(window);
+  int sendEvent = 0;
+  switch ( GetEventKind( event ) )
+  {
+  case kEventMouseDown:
+    if ( btn==kEventMouseButtonPrimary && FindWindow( pos, &xid )!=inContent )
+      return CallNextEventHandler( nextHandler, event ); // we won't handle this. The OS should do that.
+    if (xid!=FrontWindow()) SelectWindow( xid ); //{ SelectWindow(xid); return 1; } // do we want to keep this?!
+    sendEvent = FL_PUSH;
+    Fl::e_is_click = 1; px = pos.h; py = pos.v;
+    Fl::e_clicks = clickCount;
+    // fall through
+  case kEventMouseUp:
+    if (!window) break;
+    if ( !sendEvent ) sendEvent = FL_RELEASE; 
+    Fl::e_keysym = keysym[ btn ];
+    // fall through
+  case kEventMouseMoved:
+    if ( !sendEvent ) { sendEvent = FL_MOVE; chord = 0; }
+    // fall through
+  case kEventMouseDragged:
+    if ( !sendEvent ) {
+      sendEvent = FL_DRAG;
+      if (abs(pos.h-px)>5 || abs(pos.v-py)>5) Fl::e_is_click = 0;
+    }
+    chord_to_e_state( chord );
+    SetPort( GetWindowPort(xid) ); SetOrigin(0, 0);
+    Fl::e_x_root = pos.h;
+    Fl::e_y_root = pos.v;
+    GlobalToLocal( &pos );
+    Fl::e_x = pos.h;
+    Fl::e_y = pos.v;
+    Fl::handle( sendEvent, window );
+    break;
+  }
+  return noErr;
+}
+
+/**
+ * convert the current mouse chord into the FLTK modifier state
+ */
+static void mods_to_e_state( UInt32 mods )
+{
+  long state = 0;
+  if ( mods & kEventKeyModifierNumLockMask ) state |= FL_NUM_LOCK;
+  if ( mods & cmdKey ) state |= FL_CTRL;
+  if ( mods & (optionKey|rightOptionKey) ) state |= FL_ALT;
+  if ( mods & (controlKey|rightControlKey) ) state |= FL_META;
+  if ( mods & (shiftKey|rightShiftKey) ) state |= FL_SHIFT;
+  if ( mods & alphaLock ) state |= FL_CAPS_LOCK;
+  Fl::e_state = ( Fl::e_state & 0xff000000 ) | state;
+  //printf( "State 0x%08x (%04x)\n", Fl::e_state, mods );
+}
+
+/**
+ * convert the current mouse chord into the FLTK keysym
+ */
+static void mods_to_e_keysym( UInt32 mods )
+{
+  if ( mods & cmdKey ) Fl::e_keysym = FL_Control_L;
+  //else if ( mods & kEventKeyModifierNumLockMask ) Fl::e_keysym = FL_Num_Lock;
+  else if ( mods & optionKey ) Fl::e_keysym = FL_Alt_L;
+  else if ( mods & rightOptionKey ) Fl::e_keysym = FL_Alt_R;
+  else if ( mods & controlKey ) Fl::e_keysym = FL_Meta_L;
+  else if ( mods & rightControlKey ) Fl::e_keysym = FL_Meta_R;
+  else if ( mods & shiftKey ) Fl::e_keysym = FL_Shift_L;
+  else if ( mods & rightShiftKey ) Fl::e_keysym = FL_Shift_R;
+  else if ( mods & alphaLock ) Fl::e_keysym = FL_Caps_Lock;
+  else Fl::e_keysym = 0;
+}
+
+/**
+ * handle carbon keyboard events
+ */
+OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+{
+  static char buffer[5];
+  int sendEvent = 0;
+  Fl_Window *window = (Fl_Window*)userData;
+  UInt32 mods;
+  static UInt32 prevMods = 0xdeadbeef;
+  GetEventParameter( event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &mods );
+  if ( prevMods == 0xdeadbeef ) prevMods = mods;
+  UInt32 keyCode;
+  GetEventParameter( event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyCode );
+  char key;
+  GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &key );
+  switch ( GetEventKind( event ) )
+  {
+  case kEventRawKeyDown:
+  case kEventRawKeyRepeat:
+    sendEvent = FL_KEYBOARD;
+    // fall through
+  case kEventRawKeyUp:
+    if ( !sendEvent ) sendEvent = FL_KEYUP;
+    Fl::e_keysym = macKeyLookUp[ keyCode & 0x7f ];
+    if ( key=='\t' || key==27 || key>=32 )
+    {
+      buffer[0] = key;
+      Fl::e_length = 1;
+    } else {
+      buffer[0] = 0;
+      Fl::e_length = 0;
+    }
+    Fl::e_text = buffer;
+    // insert UnicodeHandling right here!
+    break;
+  case kEventRawKeyModifiersChanged: {
+    UInt32 tMods = prevMods ^ mods;
+    if ( tMods )
+    {
+      mods_to_e_keysym( tMods );
+      if ( Fl::e_keysym ) 
+        sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;
+      Fl::e_length = 0;
+      buffer[0] = 0;
+      prevMods = mods;
+    }
+    mods_to_e_state( mods );
+    break; }
+  }
+  while (window->parent()) window = window->window();
+  if (sendEvent && Fl::handle(sendEvent,window)) return noErr;
+  return noErr; // for testing
+  return CallNextEventHandler( nextHandler, event );;
+}
 
 /**
  * initialize the Mac toolboxes and set the default menubar
@@ -533,7 +731,7 @@ unsigned short mac2fltk(ulong macKey)
  */
 static inline void checkdouble() 
 {
-  if (Fl::e_is_click == Fl::e_keysym)
+  if (Fl::e_is_click == Fl::e_keysym) 
     Fl::e_clicks++;
   else {
     Fl::e_clicks = 0;
@@ -544,10 +742,6 @@ static inline void checkdouble()
   ptime = fl_event_time;
 }
 
-/************************** Mac Window System stuff ***********************/
-
-static Fl_Window* resize_from_system;
-Fl_Window* fl_find(Window);
 
 
 /**
@@ -687,7 +881,7 @@ int fl_handle(const EventRef event)
   eventkind  = GetEventKind(event);
   memcpy(buffer, &eventclass, 4);
   buffer[4] = '\0';
-  printf("fl_event(): class = %s, kind = %ld\n", buffer, eventkind);
+  //printf("fl_event(): class = %s, kind = %ld\n", buffer, eventkind);
 }
 #else
 int fl_handle(const EventRecord &macevent) 
@@ -702,7 +896,7 @@ int fl_handle(const EventRecord &macevent)
   switch (macevent.what) 
   {
   case mouseDown: {
-    // handle the differnt mouseDown events in various areas of the screen
+    // handle the different mouseDown events in various areas of the screen
     int part = FindWindow(macevent.where, &xid);
     //printf("mousedown in part %d\n", part );
     prevMouseDownXid = xid;
@@ -792,7 +986,7 @@ int fl_handle(const EventRecord &macevent)
     break;
   case updateEvt:
     xid = (WindowPtr)macevent.message;
-    handleUpdateEvent( xid );
+    if (xid) handleUpdateEvent( xid );
     break;
   case diskEvt:
     break;
@@ -975,22 +1169,6 @@ void Fl_X::make(Fl_Window* w)
       }
     }
     int xwm = xp, ywm = yp, bt, bx, by;
-    // classes:
-    // kAlertWindowClass: small up frame - nice
-    // kModalWindowClass: as above
-    // kFloatingWindowClass: does not deactivate app window, but has small title bar (medium decoration)
-    // kDocumentWindowClass: transparent huge upper title (large decoration) -- last standard definition
-    // kUtilityWindowClass: like 'floating (small decoration)
-    // kHelpWindowClass: perfect: no decoration, keeps master active, stays on top of ALL windows, not modal though
-    // kSheetWindowClass: no deco, deactivates parent
-    // kToolbarWindowClass: no deco, passive, under other menues
-    // kPlainWindowClass: no deco, active, under
-    // kOverlayWindowClass: invisible!
-    // kSheetAlertWindowClass: no deco, active, under
-    // kAltPlainWindowClass: no deco, active, under
-    // attributes:
-    // kWindowCloseBoxAttribute, HorizontalZoom, VerticalZoom, FullZoom, CollapsBox, Resizable,
-    // SideTitlebar(floatin only), NoUpdates, NoActivates, Macros: StandardDocument, StandardFloating
     if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) 
       { winclass = kHelpWindowClass; winattr = 0; }
     else if (w->modal()) 
@@ -1048,6 +1226,42 @@ void Fl_X::make(Fl_Window* w)
     Fl_X::first = x;
     if (w->resizable()) DrawGrowIcon(x->xid);
     w->set_visible();
+    // add event handlers
+    #ifdef TARGET_API_MAC_CARBON
+    { // Install Carbon Event handlers 
+      OSStatus ret;
+      EventHandlerUPP mousewheelHandler = NewEventHandlerUPP( carbonMousewheelHandler ); // will not be disposed by Carbon...
+      EventTypeSpec mousewheelEvents[1];
+      mousewheelEvents[0].eventClass = kEventClassMouse;
+      mousewheelEvents[0].eventKind = kEventMouseWheelMoved;
+      ret = InstallWindowEventHandler( x->xid, mousewheelHandler, 2, mousewheelEvents, w, 0L );
+      EventHandlerUPP mouseHandler = NewEventHandlerUPP( carbonMouseHandler ); // will not be disposed by Carbon...
+      EventTypeSpec mouseEvents[4];
+      mouseEvents[0].eventClass = kEventClassMouse;
+      mouseEvents[0].eventKind = kEventMouseDown;
+      mouseEvents[1].eventClass = kEventClassMouse;
+      mouseEvents[1].eventKind = kEventMouseUp;
+      mouseEvents[2].eventClass = kEventClassMouse;
+      mouseEvents[2].eventKind = kEventMouseMoved;
+      mouseEvents[3].eventClass = kEventClassMouse;
+      mouseEvents[3].eventKind = kEventMouseDragged;
+      ret = InstallWindowEventHandler( x->xid, mouseHandler, 4, mouseEvents, w, 0L );
+      EventHandlerUPP keyboardHandler = NewEventHandlerUPP( carbonKeyboardHandler ); // will not be disposed by Carbon...
+      EventTypeSpec keyboardEvents[4];
+      keyboardEvents[0].eventClass = kEventClassKeyboard;
+      keyboardEvents[0].eventKind = kEventRawKeyDown;
+      keyboardEvents[1].eventClass = kEventClassKeyboard;
+      keyboardEvents[1].eventKind = kEventRawKeyRepeat;
+      keyboardEvents[2].eventClass = kEventClassKeyboard;
+      keyboardEvents[2].eventKind = kEventRawKeyUp;
+      keyboardEvents[3].eventClass = kEventClassKeyboard;
+      keyboardEvents[3].eventKind = kEventRawKeyModifiersChanged;
+      ret = InstallWindowEventHandler( x->xid, keyboardHandler, 4, keyboardEvents, w, 0L );
+      //EventTargetRef winTarget = GetWindowEventTarget( x->xid );
+      //InstallStandardEventHandler( winTarget ); // it would be useful to call this, but we must make sure that ALL other events are Carbonized first
+    }
+    #endif
+
     w->handle(FL_SHOW);
     w->redraw(); // force draw to happen
     //TransitionWindow( x->xid, kWindowZoomTransitionEffect, kWindowShowTransitionAction, 0 );
@@ -1265,9 +1479,29 @@ DoMyOperation();
 endTime = UpTime();
 elapsedTime = SubAbsoluteFromAbsolute(endTime, startTime);
 elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
+
+------ window classes:
+    // classes:
+    // kAlertWindowClass: small up frame - nice
+    // kModalWindowClass: as above
+    // kFloatingWindowClass: does not deactivate app window, but has small title bar (medium decoration)
+    // kDocumentWindowClass: transparent huge upper title (large decoration) -- last standard definition
+    // kUtilityWindowClass: like 'floating (small decoration)
+    // kHelpWindowClass: perfect: no decoration, keeps master active, stays on top of ALL windows, not modal though
+    // kSheetWindowClass: no deco, deactivates parent
+    // kToolbarWindowClass: no deco, passive, under other menues
+    // kPlainWindowClass: no deco, active, under
+    // kOverlayWindowClass: invisible!
+    // kSheetAlertWindowClass: no deco, active, under
+    // kAltPlainWindowClass: no deco, active, under
+    // attributes:
+    // kWindowCloseBoxAttribute, HorizontalZoom, VerticalZoom, FullZoom, CollapsBox, Resizable,
+    // SideTitlebar(floatin only), NoUpdates, NoActivates, Macros: StandardDocument, StandardFloating
+
+
 */
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.4 2001/12/12 07:50:37 matthiaswm Exp $".
 //
 

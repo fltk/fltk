@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_grab.cxx,v 1.1.2.4.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_grab.cxx,v 1.1.2.4.2.3 2001/12/12 07:50:37 matthiaswm Exp $"
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
@@ -51,7 +51,7 @@ void Fl::grab(Fl_Window* w) {
       SetActiveWindow(fl_capture = fl_xid(first_window()));
       SetCapture(fl_capture);
 #elif defined(__APPLE__)
-      //++
+      BeginAppModalStateForWindow( fl_xid(first_window()) );
 #else
       XGrabPointer(fl_display,
 		   fl_xid(first_window()),
@@ -78,7 +78,7 @@ void Fl::grab(Fl_Window* w) {
       fl_capture = 0;
       ReleaseCapture();
 #elif defined(__APPLE__)
-      //++
+      EndAppModalStateForWindow( fl_xid(first_window()) );
 #else
       XUngrabKeyboard(fl_display, fl_event_time);
       XUngrabPointer(fl_display, fl_event_time);
@@ -93,5 +93,5 @@ void Fl::grab(Fl_Window* w) {
 }
 
 //
-// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.3 2001/12/12 07:50:37 matthiaswm Exp $".
 //

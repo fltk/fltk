@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b7
 
+	- Mac OS X uses mostly Carbon event handling to support
+	  Mousewheel, three buttons, all modifier keys, etc.
 	- More documentation updates...
 	- Mac OS X support works 95%
 	- Updated paragraph 4 of the FLTK license exceptions;
