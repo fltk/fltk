@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.3 2001/11/18 12:48:38 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.4 2001/11/27 22:03:29 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -25,9 +25,9 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-MAJOR_VERSION=1
-MINOR_VERSION=1
-PATCH_VERSION=0
+MAJOR_VERSION=@FL_MAJOR_VERSION@
+MINOR_VERSION=@FL_MINOR_VERSION@
+PATCH_VERSION=@FL_PATCH_VERSION@
 VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
@@ -68,18 +68,21 @@ Options:
 	[--version]
 	[--api-version]
 
-options telling what we are doing :
+Options telling what we are doing:
 	[--use-gl]        use GL
 	[--use-images]    use extra image formats (PNG, JPEG)
 	[--use-glut]      use glut compatibility layer
 
-options telling what information we request
+Options telling what information we request:
 	[--cflags]        return flags to compile C using FLTK
 	[--cxxflags]      return flags to compile C++ using FLTK
 	[--ldflags]       return flags to link against FLTK
 	[--ldstaticflags] return flags to link against static FLTK library
                                           even if there are DSOs installed
 	[--libs]          return FLTK libraries full path for dependencies
+
+Option to compile and link an application:
+	[--compile program.cxx]
 "
     exit $1
 }
@@ -88,6 +91,7 @@ if test $# -eq 0; then usage 1
 fi
 
 no_plugins=no
+compile=
 
 # Parse command line options
 while test $# -gt 0 
@@ -141,6 +145,10 @@ do
     --libs)
       echo_libs=yes
       ;;
+    --compile)
+      compile=$2
+      shift
+      ;;
     *)
       echo_help=yes
       ;;
@@ -180,6 +188,12 @@ LDSTATIC="$LDSTATIC -lm"
 
 # Answer to user requests
 if test -n "$echo_help"; then usage 1
+fi
+
+if test -n "$compile"; then
+    prog=`basename $compile`
+
+    $CXX $CXXFLAGS -o $prog $compile $LDSTATIC
 fi
 
 if test "$echo_prefix" = "yes"; then
