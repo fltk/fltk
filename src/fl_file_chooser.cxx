@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.6 1998/11/08 15:05:46 mike Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.7 1998/11/18 18:39:13 mike Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -346,6 +346,9 @@ void FCB::draw() {
   fl_color(FL_INACTIVE_COLOR);
   fl_font(textfont(), textsize(), default_font(), default_size());
   fl_draw(message, x()+7, y()+3, w(), h()-3, FL_ALIGN_TOP_LEFT);
+  // insure scrollbars are redrawn if error message goes away:
+  scrollbar.redraw();
+  hscrollbar.redraw();
 }
 
 void FCB::clear_prev() {
@@ -611,5 +614,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.6 1998/11/08 15:05:46 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.7 1998/11/18 18:39:13 mike Exp $".
 //
