@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21 1999/03/04 18:09:18 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.1 1999/10/15 09:01:44 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -170,7 +170,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   int selstart, selend;
-  if (Fl::focus()!=this && Fl::selection_owner()!=this && Fl::pushed()!=this)
+  if (Fl::focus()!=this && /*Fl::selection_owner()!=this &&*/ Fl::pushed()!=this)
     selstart = selend = 0;
   else if (position() <= mark()) {
     selstart = position(); selend = mark();
@@ -352,13 +352,17 @@ void Fl_Input_::handle_mouse(int X, int Y,
     p = e;
     if (e >= value_+size_) break;
   }
-  const char *l, *r, *t;
+  const char *l, *r, *t; double f0 = 0;
   for (l = p, r = e; l<r; ) {
     double f;
     t = l+(r-l+1)/2;
     f = X-xscroll_+expandpos(p, t, buf, 0);
-    if (f <= Fl::event_x()) l = t;
+    if (f <= Fl::event_x()) {l = t; f0 = Fl::event_x()-f;}
     else r = t-1;
+  }
+  if (l < e) { // see if closer to character on right:
+    double f1 = X-xscroll_+expandpos(p, l+1, buf, 0)-Fl::event_x();
+    if (f1 < f0) l = l+1;
   }
   newpos = l-value();
 
@@ -394,7 +398,7 @@ int Fl_Input_::position(int p, int m) {
   if (m<0) m = 0;
   if (m>size()) m = size();
   if (p == position_ && m == mark_) return 0;
-  if (Fl::selection_owner() == this) Fl::selection_owner(0);
+  //if (Fl::selection_owner() == this) Fl::selection_owner(0);
   if (p != m) {
     if (p != position_) minimal_update(position_, p);
     if (m != mark_) minimal_update(mark_, m);
@@ -590,16 +594,15 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
   case FL_FOCUS:
     if (mark_ == position_) {
       minimal_update(size()+1);
-    } else if (Fl::selection_owner() != this)
+    } else //if (Fl::selection_owner() != this)
       minimal_update(mark_, position_);
     return 1;
 
   case FL_UNFOCUS:
     if (mark_ == position_) {
       if (!(damage()&FL_DAMAGE_EXPOSE)) {minimal_update(position_); erase_cursor_only = 1;}
-    } else if (Fl::selection_owner() != this) {
+    } else //if (Fl::selection_owner() != this)
       minimal_update(mark_, position_);
-    }
     if (when() & FL_WHEN_RELEASE) maybe_do_callback();
     return 1;
 
@@ -616,10 +619,10 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     copy();
     return 1;
 
-  case FL_SELECTIONCLEAR:
-    minimal_update(mark_, position_);
-    mark_ = position_;
-    return 1;
+//   case FL_SELECTIONCLEAR:
+//     minimal_update(mark_, position_);
+//     mark_ = position_;
+//     return 1;
 
   case FL_PASTE: {
     // strip trailing control characters and spaces before pasting:
@@ -734,5 +737,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21 1999/03/04 18:09:18 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.1 1999/10/15 09:01:44 bill Exp $".
 //

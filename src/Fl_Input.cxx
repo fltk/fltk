@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.2 1999/10/14 04:56:08 bill Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.3 1999/10/15 09:01:43 bill Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -279,6 +279,8 @@ int Fl_Input::handle_key() {
 }
 
 int Fl_Input::handle(int event) {
+  static char first_click;
+
   switch (event) {
 
   case FL_FOCUS:
@@ -311,27 +313,31 @@ int Fl_Input::handle(int event) {
 
   case FL_PUSH:
     compose = 0;
-    if (Fl::event_button() == 2) {
-      Fl::paste(*this);
-#ifndef MOTIF // use -DMOTIF for Motif rather than Win32+Motif hybrid
-      if (Fl::focus()==this) return 1;
-#endif
-    }
+    first_click = 0;
     if (Fl::focus() != this) {
       Fl::focus(this);
-      handle(FL_FOCUS); // cause minimal update
-#ifndef MOTIF
-      position(size(),0); // select everything
-      Fl::event_is_click(0); // prevents next click from doing word-select
-      return 1;
-#endif
+      handle(FL_FOCUS);
+      // Windoze-style: select everything on first click:
+      if (type() != FL_MULTILINE_INPUT) {
+        first_click = 1;
+        position(size(), 0); // select everything
+        Fl::event_is_click(0); // prevents next click from being a double click
+        return 1;
+      }
     }
+    // don't remove selection when pasting in a replacement:
+    if (Fl::event_button() == 2 && mark() != position()) return 1;
     break;
 
-  case FL_DRAG:
   case FL_RELEASE:
-    if (Fl::event_button() == 2) return 0;
-    break;
+    if (Fl::event_button() == 2) {
+      Fl::event_is_click(0); // stop double click from picking a word
+      Fl::paste(*this);
+    } else if (!first_click) {
+      copy();
+    }
+    return 1;
+
   }
   Fl_Boxtype b = box();
   return Fl_Input_::handletext(event,
@@ -344,5 +350,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.2 1999/10/14 04:56:08 bill Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.3 1999/10/15 09:01:43 bill Exp $".
 //
