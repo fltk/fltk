@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18 1999/02/22 21:50:16 mike Exp $"
+# "$Id: Makefile,v 1.19 1999/02/22 21:52:17 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -58,7 +58,7 @@ $(ALL):  ../lib/$(LIBNAME)
 .cxx.o:
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
-.fl.cxx:
+.fl.cxx .fl.h:
 	../fluid/fluid -c $<
 
 .fl:
@@ -69,6 +69,9 @@ $(ALL):  ../lib/$(LIBNAME)
 CubeView: CubeMain.o CubeView.o CubeViewUI.o
 	$(CXX) -I.. $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
 		-L../lib -lfltk $(LDLIBS) -o $@
+CubeMain.o: CubeViewUI.h CubeView.h
+CubeView.o: CubeView.h
+
 shiny: shiny.cxx shiny_panel.cxx
 	$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(LDLIBS) -o $@
 keyboard: keyboard.cxx keyboard_ui.cxx
@@ -91,5 +94,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.18 1999/02/22 21:50:16 mike Exp $".
+# End of "$Id: Makefile,v 1.19 1999/02/22 21:52:17 mike Exp $".
 #
