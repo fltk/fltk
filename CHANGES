@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- Cygwin needs "-fvtable-thunks" to compile the new
+	  WIN32 drag-n-drop code.
 	- Tooltips now appear for inactive and output widgets.
 	- Tooltips no longer steal keyboard events other than
 	  ESCape.
