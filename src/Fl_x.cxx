@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.25 2003/01/30 21:43:14 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.26 2003/01/31 15:50:28 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -495,11 +495,21 @@ static inline void checkdouble() {
 
 static Fl_Window* resize_bug_fix;
 
+extern "C" {
+  static Bool fake_keyup_test(Display*, XEvent* event, char* previous) {
+     return
+      event->type == KeyPress &&
+      event->xkey.keycode == ((XKeyEvent*)previous)->keycode &&
+      event->xkey.time == ((XKeyEvent*)previous)->time;
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 
-int fl_handle(const XEvent& xevent)
+int fl_handle(const XEvent& thisevent)
 {
-  fl_xevent = &xevent;
+  XEvent xevent = thisevent;
+  fl_xevent = &thisevent;
   Window xid = xevent.xany.window;
 
   switch (xevent.type) {
@@ -721,6 +731,7 @@ int fl_handle(const XEvent& xevent)
 
   case KeyPress:
   case KeyRelease: {
+  KEYPRESS:
     int keycode = xevent.xkey.keycode;
     fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char buffer[21];
@@ -743,6 +754,15 @@ int fl_handle(const XEvent& xevent)
       Fl::e_text = buffer;
       Fl::e_length = len;
     } else {
+      // Stupid X sends fake key-up events when a repeating key is held
+      // down, probably due to some back compatability problem. Fortunatley
+      // we can detect this because the repeating KeyPress event is in
+      // the queue, get it and execute it instead:
+      XEvent temp;
+      if (XCheckIfEvent(fl_display,&temp,fake_keyup_test,(char*)(&xevent))){
+	xevent = temp;
+	goto KEYPRESS;
+      }
       event = FL_KEYUP;
       fl_key_vector[keycode/8] &= ~(1 << (keycode%8));
       // keyup events just get the unshifted keysym:
@@ -1234,5 +1254,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.25 2003/01/30 21:43:14 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.26 2003/01/31 15:50:28 easysw Exp $".
 //
