@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.6 1998/11/09 14:06:25 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.7 1998/11/18 18:40:09 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -786,9 +786,9 @@ void user_data_type_cb(Fl_Input *i, void *v) {
     i->static_value(c);
   } else {
     const char *c = i->value();
+    const char *d = c_check(c);
     if (!*c) i->value(dflt);
     else if (!strcmp(c,dflt)) c = 0;
-    const char *d = c_check(c);
     if (!d) {
       if (c && *c && c[strlen(c)-1] != '*' && strcmp(c,"long"))
 	d = "must be pointer or long";
@@ -1699,5 +1699,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.6 1998/11/09 14:06:25 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.7 1998/11/18 18:40:09 mike Exp $".
 //
