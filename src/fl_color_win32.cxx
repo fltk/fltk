@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.13 1999/01/07 19:17:37 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.14 1999/01/13 15:56:23 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -147,36 +147,6 @@ CREATE_BRUSH:
   return brushes[i].brush;
 }
 
-Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
-  Fl_Color avg;
-  unsigned rgb1 = fl_cmap[color1];
-  unsigned rgb2 = fl_cmap[color2];
-  uchar r, g, b;
-
-  r = (uchar)(((uchar)(rgb1>>24))*weight + ((uchar)(rgb2>>24))*(1-weight));
-  g = (uchar)(((uchar)(rgb1>>16))*weight + ((uchar)(rgb2>>16))*(1-weight));
-  b = (uchar)(((uchar)(rgb1>>8))*weight + ((uchar)(rgb2>>8))*(1-weight));
-
-  if (r == g && r == b) { // get it out of gray ramp
-    avg = fl_gray_ramp(r*FL_NUM_GRAY/256);
-  } else {		// get it out of color cube:
-    avg = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
-  }
-
-  return avg;
-}
-
-Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
-  // bright/dark is decided based on high bit of green:
-  if (fl_cmap[bg] & 0x800000) {
-    if (fl_cmap[fg] & 0x800000) return FL_GRAY_RAMP; // black from gray ramp
-  } else {
-    if (!(fl_cmap[fg] & 0x800000))
-      return (Fl_Color)(FL_COLOR_CUBE-1); // white from gray ramp
-  }
-  return fg; // this color is ok
-}
-
 void Fl::free_color(Fl_Color i, int overlay) {
   if (overlay) return; // do something about GL overlay?
   clear_xmap(fl_xmap[i]);
@@ -187,22 +157,6 @@ void Fl::set_color(Fl_Color i, unsigned c) {
     clear_xmap(fl_xmap[i]);
     fl_cmap[i] = c;
   }
-}
-
-unsigned Fl::get_color(Fl_Color i) {
-  return fl_cmap[i];
-}
-
-void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
-  Fl::set_color(i,
-	((unsigned)red<<24)+((unsigned)green<<16)+((unsigned)blue<<8));
-}
-
-void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
-  unsigned c = fl_cmap[i];
-  red   = uchar(c>>24);
-  green = uchar(c>>16);
-  blue  = uchar(c>>8);
 }
 
 #if USE_COLORMAP
@@ -252,5 +206,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.13 1999/01/07 19:17:37 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.14 1999/01/13 15:56:23 mike Exp $".
 //

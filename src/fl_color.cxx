@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.9 1999/01/07 19:17:36 mike Exp $"
+// "$Id: fl_color.cxx,v 1.10 1999/01/13 15:56:22 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -269,42 +269,6 @@ void fl_color(Fl_Color i) {
   XSetForeground(fl_display, fl_gc, fl_xpixel(i));
 }
 
-////////////////////////////////////////////////////////////////
-// Ways to modify the fltk colormap:
-
-// bright/dark is decided based on high bits of green:
-#define bright(x) ((x)&0xc00000)
-
-Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
-  Fl_Color avg;
-  unsigned rgb1 = fl_cmap[color1];
-  unsigned rgb2 = fl_cmap[color2];
-  uchar r, g, b;
-
-  r = (uchar)(((uchar)(rgb1>>24))*weight + ((uchar)(rgb2>>24))*(1-weight));
-  g = (uchar)(((uchar)(rgb1>>16))*weight + ((uchar)(rgb2>>16))*(1-weight));
-  b = (uchar)(((uchar)(rgb1>>8))*weight + ((uchar)(rgb2>>8))*(1-weight));
-
-  if (r == g && r == b) { // get it out of gray ramp
-    avg = fl_gray_ramp(r*FL_NUM_GRAY/256);
-  } else {		// get it out of color cube:
-    avg = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
-  }
-
-  return avg;
-}
-
-Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
-  if (bright(fl_cmap[bg])) {
-    if (bright(fl_cmap[fg]))
-      return FL_GRAY_RAMP; // black from gray ramp
-  } else {
-    if (!bright(fl_cmap[fg]))
-      return (Fl_Color)(FL_COLOR_CUBE-1); // white from gray ramp
-  }
-  return fg; // this color is ok
-}
-
 void Fl::free_color(Fl_Color i, int overlay) {
 #if HAVE_OVERLAY
 #else
@@ -334,6 +298,8 @@ void Fl::set_color(Fl_Color i, unsigned c) {
   }
 }
 
+#endif // end of X-specific code
+
 unsigned Fl::get_color(Fl_Color i) {
   return fl_cmap[i];
 }
@@ -350,8 +316,38 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   blue  = uchar(c>>8);
 }
 
-#endif
+Fl_Color inactive(Fl_Color c) {
+  // cache because it is like to ask for the same color a lot:
+  static Fl_Color cache_from = FL_GRAY;
+  static Fl_Color cache_to = FL_GRAY;
+  if (c == cache_from) return cache_to;
+  cache_from = c;
+  // do a 33% mix between this color and FL_GRAY:
+  unsigned rgb1 = fl_cmap[c];
+  unsigned rgb2 = fl_cmap[FL_GRAY];
+  uchar r = (uchar)((((uchar)(rgb1>>24)) + ((uchar)(rgb2>>24))*2)/3);
+  uchar g = (uchar)((((uchar)(rgb1>>16)) + ((uchar)(rgb2>>16))*2)/3);
+  uchar b = (uchar)((((uchar)(rgb1>> 8)) + ((uchar)(rgb2>> 8))*2)/3);
+  // and find the closest color in gray ramp or color cube:
+  if (r == g && r == b) // get it out of gray ramp
+    cache_to = fl_gray_ramp(r*FL_NUM_GRAY/256);
+  else		// get it out of color cube:
+    cache_to =
+      fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+  return cache_to;
+}
+
+Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
+  int c1 = int(fl_cmap[fg]);
+  int c2 = int(fl_cmap[bg]);
+  if (((c1|(c1<<1)&0x800000)^(c2|(c2<<1)&0x800000))&0x80808000)
+    return fg;
+  else if (c2&0x80c00000)
+    return FL_GRAY_RAMP; // black from gray ramp
+  else
+    return (Fl_Color)(FL_COLOR_CUBE-1); // white from gray ramp
+}
 
 //
-// End of "$Id: fl_color.cxx,v 1.9 1999/01/07 19:17:36 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.10 1999/01/13 15:56:22 mike Exp $".
 //
