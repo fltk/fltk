@@ -20,7 +20,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 //
 
 // Implementation of fl_message, fl_ask, fl_choice, fl_input
@@ -273,7 +275,7 @@ void fl_message(const char *fmt, ...) {
 
   va_start(ap, fmt);
   iconlabel = "i";
-  innards(fmt, ap, 0, fl_ok, 0);
+  innards(fmt, ap, 0, fl_close, 0);
   va_end(ap);
   iconlabel = "?";
 }
@@ -285,7 +287,7 @@ void fl_alert(const char *fmt, ...) {
 
   va_start(ap, fmt);
   iconlabel = "!";
-  innards(fmt, ap, 0, fl_ok, 0);
+  innards(fmt, ap, 0, fl_close, 0);
   va_end(ap);
   iconlabel = "?";
 }

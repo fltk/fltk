@@ -20,7 +20,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 //
 // Contents:
 //
@@ -35,6 +37,7 @@
 //                                          in the Fl_File_Browser.
 //   Fl_File_Chooser::fileNameCB()        - Handle text entry in the FileBrowser.
 //   Fl_File_Chooser::showChoiceCB()      - Handle show selections.
+//   compare_dirnames()                   - Compare two directory names.
 //   quote_pathname()                     - Quote a pathname for a menu.
 //   unquote_pathname()                   - Unquote a pathname from a menu.
 //
@@ -100,6 +103,7 @@ Fl_File_Sort_F	*Fl_File_Chooser::sort = fl_numericsort;
 // Local functions...
 //
 
+static int	compare_dirnames(const char *a, const char *b);
 static void	quote_pathname(char *, const char *, int);
 static void	unquote_pathname(char *, const char *, int);
 
@@ -499,9 +503,11 @@ Fl_File_Chooser::fileNameCB()
     // Enter pressed - select or change directory...
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((isalpha(pathname[0] & 255) && pathname[1] == ':' && !pathname[2]) ||
-        fl_filename_isdir(pathname)) {
+        fl_filename_isdir(pathname) &&
+	compare_dirnames(pathname, directory_)) {
 #else
-    if (fl_filename_isdir(pathname)) {
+    if (fl_filename_isdir(pathname) &&
+	compare_dirnames(pathname, directory_)) {
 #endif /* WIN32 || __EMX__ */
       directory(pathname);
     } else if ((type_ & CREATE) || access(pathname, 0) == 0) {
@@ -1117,6 +1123,36 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
       fileList->select(i);
       break;
     }
+}
+
+
+//
+// 'compare_dirnames()' - Compare two directory names.
+//
+
+static int
+compare_dirnames(const char *a, const char *b) {
+  int alen, blen;
+
+  // Get length of each string...
+  alen = strlen(a) - 1;
+  blen = strlen(b) - 1;
+
+  if (alen < 0 || blen < 0) return alen - blen;
+
+  // Check for trailing slashes...
+  if (a[alen] != '/') alen ++;
+  if (b[blen] != '/') blen ++;
+
+  // If the lengths aren't the same, then return the difference...
+  if (alen != blen) return alen - blen;
+
+  // Do a comparison of the first N chars (alen == blen at this point)...
+#ifdef WIN32
+  return strnicmp(a, b, alen);
+#else
+  return strncmp(a, b, alen);
+#endif // WIN32
 }
 
 

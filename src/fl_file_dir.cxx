@@ -26,20 +26,31 @@
 #include "flstring.h"
 #include <FL/filename.H>
 #include <FL/Fl_File_Chooser.H>
-#include <FL/Fl_File_Chooser.H>
+#include <FL/fl_ask.H>
+
 
 static Fl_File_Chooser	*fc = (Fl_File_Chooser *)0;
 static void		(*current_callback)(const char*) = 0;
+static const char	*current_label = fl_ok;
 
 
+// Do a file chooser callback...
 static void callback(Fl_File_Chooser *, void*) {
   if (current_callback && fc->value())
     (*current_callback)(fc->value());
 }
 
 
+// Set the file chooser callback
 void fl_file_chooser_callback(void (*cb)(const char*)) {
   current_callback = cb;
+}
+
+
+// Set the "OK" button label
+void fl_file_chooser_ok_label(const char *l) {
+  if (l) current_label = l;
+  else current_label = fl_ok;
 }
 
 
@@ -89,6 +100,7 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
       fc->value(fname);
   }
 
+  fc->ok_label(current_label);
   fc->show();
 
   while (fc->shown())

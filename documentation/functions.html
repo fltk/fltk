@@ -24,6 +24,7 @@ A</A>.
 	<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
+	<LI><A HREF="#fl_file_chooser_ok_label"><TT>fl_file_chooser_ok_label</TT></A></LI>
 	<LI><A HREF="#fl_filename_absolute"><TT>fl_filename_absolute</TT></A></LI>
 	<LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
 	<LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
@@ -60,6 +61,7 @@ A</A>.
 		<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
 		<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
 		<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
+		<LI><A HREF="#fl_file_chooser_ok_label"><TT>fl_file_chooser_ok_label</TT></A></LI>
 		<LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
 		<LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
 		<LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
@@ -158,7 +160,7 @@ a shortcut for No.
 <P ALIGN="CENTER"><IMG SRC="fl_ask.gif" ALT="The fl_ask window.">
 
 <p><b>Note:</b> Use of this function is <i>strongly</i>
-discouraged. Instead, use <a
+discouraged, and it will be removed in FLTK 2.0. Instead, use <a
 href='#fl_choice'><tt>fl_choice()</tt></a> instead and provide
 unambiguous verbs in place of "Yes" and "No".</p>
 
@@ -537,6 +539,30 @@ void fl_file_chooser_callback(void (*cb)(const char *));
 file in the currently popped-up file chooser. This could be used
 to preview the contents of the file. It has to be reasonably
 fast, and cannot create FLTK windows.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_file_chooser_ok_label">fl_file_chooser_ok_label</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_file_chooser_ok_label(const char *l);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sets the label that is shown on the "OK" button in the file
+chooser. The default label (<tt>fl_ok</tt>) can be restored by
+passing a <tt>NULL</tt> pointer for the label string.</p>
 
 
 <!-- NEED 4in -->

@@ -150,7 +150,7 @@ window->hide();}
             private xywh {408 345 72 25}
             code0 {o->label(fl_cancel);}
           }
-          Fl_Box {} {selected
+          Fl_Box {} {
             private xywh {10 345 30 25} resizable
           }
         }
@@ -397,6 +397,9 @@ decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const 
 } 
 
 decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public
+} 
+
+decl {FL_EXPORT void fl_file_chooser_ok_label(const char*l);} {selected public
 } 
 
 comment {

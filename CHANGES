@@ -2,6 +2,16 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Pressing Enter in the file chooser when selecting a
+	  directory will choose that directory if it is currently
+	  shown (STR #746)
+	- Added a fl_file_chooser_ok_label() function to set the
+	  "OK" button label for the fl_file_chooser() and
+	  fl_dir_chooser() functions.
+	- Added Fl_File_Chooser::ok_label() methods to set the
+	  "OK" button label.
+	- The fl_ask() function is now deprecated since it does
+	  not conform to the FLTK Human Interface Guidelines.
 	- The Fl_File_Chooser window now properly resizes its
 	  controls (STR #766)
 	- The Fl_Help_Dialog window now properly resizes its

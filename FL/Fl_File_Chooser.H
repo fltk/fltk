@@ -176,6 +176,7 @@ public:
 FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);
 FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));
+FL_EXPORT void fl_file_chooser_ok_label(const char*l);
 #endif
 
 //
