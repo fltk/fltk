@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.20 1999/02/01 19:40:25 mike Exp $"
+dnl# "$Id: configure.in,v 1.21 1999/02/18 13:00:21 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -37,7 +37,7 @@ else
 fi
 
 dnl# Clear debugging flags and only enable debugging if the user asks for
-dns# it.
+dnl# it.
 
 DEBUGFLAG=""
 CFLAGS="${CFLAGS:=}"
@@ -204,5 +204,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.20 1999/02/01 19:40:25 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.21 1999/02/18 13:00:21 mike Exp $".
 dnl#
