@@ -1,13 +1,35 @@
-/*	factory.C
-
-	Type classes for most of the fltk widgets.  Most of the work
-	is done by code in Fl_Widget_Type.C.  Also a factory instance
-	of each of these type classes.
-
-	This file also contains the "new" menu, which has a pointer
-	to a factory instance for every class (both the ones defined
-	here and ones in other files)
-*/
+//
+// "$Id: factory.cxx,v 1.2 1998/10/21 16:28:59 mike Exp $"
+//
+// Widget factory code for the Fast Light Tool Kit (FLTK).
+//
+// Type classes for most of the fltk widgets.  Most of the work
+// is done by code in Fl_Widget_Type.C.  Also a factory instance
+// of each of these type classes.
+//
+// This file also contains the "new" menu, which has a pointer
+// to a factory instance for every class (both the ones defined
+// here and ones in other files)
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -649,3 +671,7 @@ int lookup_symbol(const char *name, int &v, int numberok) {
   if (numberok && ((v = atoi(name)) || !strcmp(name,"0"))) return 1;
   return 0;
 }
+
+//
+// End of "$Id: factory.cxx,v 1.2 1998/10/21 16:28:59 mike Exp $".
+//

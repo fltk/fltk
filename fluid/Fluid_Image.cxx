@@ -1,6 +1,27 @@
-// Fluid_Image.C
-
-// For pixmap labels.
+//
+// "$Id: Fluid_Image.cxx,v 1.2 1998/10/21 16:28:57 mike Exp $"
+//
+// Pixmap label support for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
@@ -50,7 +71,7 @@ void pixmap_image::write_static() {
     write_c("#include <FL/Fl_Pixmap.H>\n");
     pixmap_header_written = write_number;
   }
-  write_c("static char *%s[] = {\n",
+  write_c("static unsigned char *%s[] = {\n",
 	  unique_id(this, "image", filename_name(name()), 0));
   int l;
   for (l = 0; p->data[l]; l++) {
@@ -218,7 +239,7 @@ void bitmap_image::write_static() {
     write_c("#include <FL/Fl_Bitmap.H>\n");
     bitmap_header_written = write_number;
   }
-  write_c("static char %s[] = {  \n",
+  write_c("static unsigned char %s[] = {  \n",
 	  unique_id(this, "bits", filename_name(name()), 0));
   int n = ((p->w+7)/8)*p->h;
   for (int i = 0; i < n; i++) {
@@ -382,3 +403,7 @@ Fluid_Image *ui_find_image(const char *oldname) {
   leave_source_dir();
   return ret;
 }
+
+//
+// End of "$Id: Fluid_Image.cxx,v 1.2 1998/10/21 16:28:57 mike Exp $".
+//

@@ -1,13 +1,35 @@
-// Fl_Type.H
-
+//
+// "$Id: Fl_Type.h,v 1.4 1998/10/21 16:28:54 mike Exp $"
+//
+// Widget type header file for the Fast Light Tool Kit (FLTK).
+//
 // Each object described by Fluid is one of these objects.  They
 // are all stored in a double-linked list.
-
+//
 // There is also a single "factory" instance of each type of this.
 // The method "make()" is called on this factory to create a new
 // instance of this object.  It could also have a "copy()" function,
 // but it was easier to implement this by using the file read/write
 // that is needed to save the setup anyways.
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu.H>
@@ -142,3 +164,7 @@ const char *c_check(const char *c, int type = 0);
 int storestring(const char *n, const char * & p, int nostrip=0);
 
 extern int include_H_from_C;
+
+//
+// End of "$Id: Fl_Type.h,v 1.4 1998/10/21 16:28:54 mike Exp $".
+//
