@@ -78,6 +78,7 @@ tabs.h
 threads
 tile
 tiled_image
+unittests
 valuators
 valuators.cxx
 valuators.h
