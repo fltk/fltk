@@ -82,8 +82,7 @@ BUILDING FLTK UNDER MICROSOFT WINDOWS
     tools simply copy the appropriate makeinclude and config files to
     the main directory and do a make:
 
-	cp makefiles/makeinclude.<env> makeinclude
-	cp makefiles/config.<env> config.h
+	copy makefiles\Makefile.<env> Makefile
 	make
 
 
@@ -96,9 +95,7 @@ BUILDING FLTK UNDER OS/2
     To build the XFree86 version of FLTK for OS/2, copy the appropriate
     makeinclude and config files to the main directory and do a make:
 
-        cp makefiles/Makefile.os2x Makefile
-	cp makefiles/makeinclude.os2x makeinclude
-	cp makefiles/config.os2x config.h
+        copy makefiles\Makefile.os2x Makefile
 	make
 
 
