@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.13 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.14 2001/11/24 04:12:56 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -94,6 +94,7 @@ extern "C"
 //
 
 static void	scrollbar_callback(Fl_Widget *s, void *);
+static void	hscrollbar_callback(Fl_Widget *s, void *);
 
 
 //
@@ -295,20 +296,33 @@ Fl_Help_View::draw()
   Fl_Color		tc, c;		// Table/cell background color
 
 
-  // Draw the scrollbar and box first...
-  if (scrollbar_.visible())
-  {
-    draw_child(scrollbar_);
-    draw_box(b, x(), y(), w() - 17, h(), bgcolor_);
+  // Draw the scrollbar(s) and box first...
+  ww = w();
+  hh = h();
+  i  = 0;
+
+  if (hscrollbar_.visible()) {
+    draw_child(hscrollbar_);
+    hh -= 17;
+    i ++;
   }
-  else
-    draw_box(b, x(), y(), w(), h(), bgcolor_);
+  if (scrollbar_.visible()) {
+    draw_child(scrollbar_);
+    ww -= 17;
+    i ++;
+  }
+  if (i == 2) {
+    fl_color(FL_GRAY);
+    fl_rectf(x() + ww, y() + hh, 17, 17);
+  }
+
+  draw_box(b, x(), y(), ww, hh, bgcolor_);
 
   if (!value_)
     return;
 
   // Clip the drawing to the inside of the box...
-  fl_push_clip(x() + 4, y() + 4, w() - 28, h() - 8);
+  fl_push_clip(x() + 4, y() + 4, ww - 8, hh - 8);
   fl_color(textcolor_);
 
   tc = c = bgcolor_;
@@ -350,7 +364,7 @@ Fl_Help_View::draw()
 	      hh = 0;
 	    }
 
-            fl_draw(buf, xx + x(), yy + y());
+            fl_draw(buf, xx + x() - leftline_, yy + y());
 
             xx += ww;
 	    if ((size + 2) > hh)
@@ -367,7 +381,7 @@ Fl_Help_View::draw()
 	        *s = '\0';
                 s = buf;
 
-                fl_draw(buf, xx + x(), yy + y());
+                fl_draw(buf, xx + x() - leftline_, yy + y());
 
 		if (line < 31)
 	          line ++;
@@ -395,7 +409,7 @@ Fl_Help_View::draw()
 	      *s = '\0';
 	      s = buf;
 
-              fl_draw(buf, xx + x(), yy + y());
+              fl_draw(buf, xx + x() - leftline_, yy + y());
               xx += (int)fl_width(buf);
 	    }
 
@@ -486,7 +500,7 @@ Fl_Help_View::draw()
             if (strcasecmp(buf, "LI") == 0)
 	    {
 	      fl_font(FL_SYMBOL, size);
-	      fl_draw("\267", xx - size + x(), yy + y());
+	      fl_draw("\267", xx - size + x() - leftline_, yy + y());
 	    }
 
 	    pushfont(font, size);
@@ -494,7 +508,7 @@ Fl_Help_View::draw()
             if (c != bgcolor_)
 	    {
 	      fl_color(c);
-              fl_rectf(block->x + x() - 4,
+              fl_rectf(block->x + x() - 4 - leftline_,
 	               block->y - topline_ + y() - size - 3,
 		       block->w - block->x + 7, block->h + size - 5);
               fl_color(textcolor_);
@@ -523,14 +537,14 @@ Fl_Help_View::draw()
             if (c != bgcolor_)
 	    {
 	      fl_color(c);
-              fl_rectf(block->x + x() - 4,
+              fl_rectf(block->x + x() - 4 - leftline_,
 	               block->y - topline_ + y() - size - 3,
 		       block->w - block->x + 7, block->h + size - 5);
               fl_color(textcolor_);
 	    }
 
             if (block->border)
-              fl_rect(block->x + x() - 4,
+              fl_rect(block->x + x() - 4 - leftline_,
 	              block->y - topline_ + y() - size - 3,
 		      block->w - block->x + 7, block->h + size - 5);
 	  }
@@ -578,8 +592,8 @@ Fl_Help_View::draw()
 
             get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
             get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
-	    width  = atoi(wattr);
-	    height = atoi(hattr);
+	    width  = get_length(wattr);
+	    height = get_length(hattr);
 
 	    if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
 	      img = get_image(attr, width, height);
@@ -609,7 +623,7 @@ Fl_Help_View::draw()
 	    }
 
 	    if (img) 
-	      img->draw(xx + x(),
+	      img->draw(xx + x() - leftline_,
 	                yy + y() - fl_height() + fl_descent() + 2);
 
 	    xx += ww;
@@ -624,7 +638,7 @@ Fl_Help_View::draw()
 	  *s = '\0';
 	  s = buf;
 
-          fl_draw(buf, xx + x(), yy + y());
+          fl_draw(buf, xx + x() - leftline_, yy + y());
 
 	  if (line < 31)
 	    line ++;
@@ -724,7 +738,7 @@ Fl_Help_View::draw()
       }
 
       if (s > buf && !head)
-        fl_draw(buf, xx + x(), yy + y());
+        fl_draw(buf, xx + x() - leftline_, yy + y());
     }
 
   fl_pop_clip();
@@ -739,6 +753,7 @@ void
 Fl_Help_View::format()
 {
   int		i;		// Looping var
+  int		done;		// Are we done yet?
   Fl_Help_Block	*block,		// Current block
 		*cell;		// Current table cell
   int		row;		// Current table row (block number)
@@ -766,336 +781,390 @@ Fl_Help_View::format()
 		columns[MAX_COLUMNS];
 				// Column widths
 
+  // Reset document width...
+  hsize_ = w() - 24;
 
-  // Reset state variables...
-  nblocks_   = 0;
-  nlinks_    = 0;
-  ntargets_  = 0;
-  size_      = 0;
-  bgcolor_   = color();
-  textcolor_ = textcolor();
-  linkcolor_ = selection_color();
-
-  strcpy(title_, "Untitled");
-
-  if (!value_)
-    return;
-
-  // Setup for formatting...
-  initfont(font, size);
-
-  line      = 0;
-  links     = 0;
-  xx        = 4;
-  yy        = size + 2;
-  ww        = 0;
-  column    = 0;
-  border    = 0;
-  hh        = 0;
-  block     = add_block(value_, xx, yy, w() - 24, 0);
-  row       = 0;
-  head      = 0;
-  pre       = 0;
-  align     = LEFT;
-  newalign  = LEFT;
-  needspace = 0;
-  link[0]   = '\0';
-
-  for (ptr = value_, s = buf; *ptr;)
+  done = 0;
+  while (!done)
   {
-    if ((*ptr == '<' || isspace(*ptr)) && s > buf)
+    // Reset state variables...
+    done       = 1;
+    nblocks_   = 0;
+    nlinks_    = 0;
+    ntargets_  = 0;
+    size_      = 0;
+    bgcolor_   = color();
+    textcolor_ = textcolor();
+    linkcolor_ = selection_color();
+
+    strcpy(title_, "Untitled");
+
+    if (!value_)
+      return;
+
+    // Setup for formatting...
+    initfont(font, size);
+
+    line      = 0;
+    links     = 0;
+    xx        = 4;
+    yy        = size + 2;
+    ww        = 0;
+    column    = 0;
+    border    = 0;
+    hh        = 0;
+    block     = add_block(value_, xx, yy, hsize_, 0);
+    row       = 0;
+    head      = 0;
+    pre       = 0;
+    align     = LEFT;
+    newalign  = LEFT;
+    needspace = 0;
+    link[0]   = '\0';
+
+    for (ptr = value_, s = buf; *ptr;)
     {
-      if (!head && !pre)
+      if ((*ptr == '<' || isspace(*ptr)) && s > buf)
       {
-        // Check width...
-        *s = '\0';
-        ww = (int)fl_width(buf);
-
-        if (needspace && xx > block->x)
-	  ww += (int)fl_width(' ');
-
-//        printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
-//	       line, xx, ww, block->x, block->w);
-
-        if ((xx + ww) > block->w)
+	if (!head && !pre)
 	{
-          line     = do_align(block, line, xx, newalign, links);
-	  xx       = block->x;
-	  yy       += hh;
-	  block->h += hh;
-	  hh       = 0;
-	}
+          // Check width...
+          *s = '\0';
+          ww = (int)fl_width(buf);
 
-        if (link[0])
-	  add_link(link, xx, yy - size, ww, size);
-
-	xx += ww;
-	if ((size + 2) > hh)
-	  hh = size + 2;
-
-	needspace = 0;
-      }
-      else if (pre)
-      {
-        // Handle preformatted text...
-	while (isspace(*ptr))
-	{
-	  if (*ptr == '\n')
-	  {
-            if (link[0])
-	      add_link(link, xx, yy - hh, ww, hh);
-
-            line     = do_align(block, line, xx, newalign, links);
-            xx       = block->x;
-	    yy       += hh;
-	    block->h += hh;
-	    hh       = size + 2;
+          if (ww > hsize_) {
+	    hsize_ = ww;
+	    done   = 0;
+	    break;
 	  }
 
-          if ((size + 2) > hh)
+          if (needspace && xx > block->x)
+	    ww += (int)fl_width(' ');
+
+  //        printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
+  //	       line, xx, ww, block->x, block->w);
+
+          if ((xx + ww) > block->w)
+	  {
+            line     = do_align(block, line, xx, newalign, links);
+	    xx       = block->x;
+	    yy       += hh;
+	    block->h += hh;
+	    hh       = 0;
+	  }
+
+          if (link[0])
+	    add_link(link, xx, yy - size, ww, size);
+
+	  xx += ww;
+	  if ((size + 2) > hh)
 	    hh = size + 2;
 
-          ptr ++;
+	  needspace = 0;
+	}
+	else if (pre)
+	{
+          // Handle preformatted text...
+	  while (isspace(*ptr))
+	  {
+	    if (*ptr == '\n')
+	    {
+              if (xx > hsize_) break;
+
+              if (link[0])
+		add_link(link, xx, yy - hh, ww, hh);
+
+              line     = do_align(block, line, xx, newalign, links);
+              xx       = block->x;
+	      yy       += hh;
+	      block->h += hh;
+	      hh       = size + 2;
+	    }
+
+            if ((size + 2) > hh)
+	      hh = size + 2;
+
+            ptr ++;
+	  }
+
+          if (xx > hsize_) {
+	    hsize_ = xx;
+	    done   = 0;
+	    break;
+	  }
+
+	  needspace = 0;
+	}
+	else
+	{
+          // Handle normal text or stuff in the <HEAD> section...
+	  while (isspace(*ptr))
+            ptr ++;
 	}
 
-	needspace = 0;
-      }
-      else
-      {
-        // Handle normal text or stuff in the <HEAD> section...
-	while (isspace(*ptr))
-          ptr ++;
+	s = buf;
       }
 
-      s = buf;
-    }
-
-    if (*ptr == '<')
-    {
-      start = ptr;
-      ptr ++;
-      while (*ptr && *ptr != '>' && !isspace(*ptr))
-        if (s < (buf + sizeof(buf) - 1))
-          *s++ = *ptr++;
-	else
-	  ptr ++;
-
-      *s = '\0';
-      s = buf;
-
-//      puts(buf);
-
-      attrs = ptr;
-      while (*ptr && *ptr != '>')
-        ptr ++;
-
-      if (*ptr == '>')
-        ptr ++;
-
-      if (strcasecmp(buf, "HEAD") == 0)
-        head = 1;
-      else if (strcasecmp(buf, "/HEAD") == 0)
-        head = 0;
-      else if (strcasecmp(buf, "TITLE") == 0)
+      if (*ptr == '<')
       {
-        // Copy the title in the document...
-        for (s = title_;
-	     *ptr != '<' && *ptr && s < (title_ + sizeof(title_) - 1);
-	     *s++ = *ptr++);
+	start = ptr;
+	ptr ++;
+	while (*ptr && *ptr != '>' && !isspace(*ptr))
+          if (s < (buf + sizeof(buf) - 1))
+            *s++ = *ptr++;
+	  else
+	    ptr ++;
 
 	*s = '\0';
 	s = buf;
-      }
-      else if (strcasecmp(buf, "A") == 0)
-      {
-        if (get_attr(attrs, "NAME", attr, sizeof(attr)) != NULL)
-	  add_target(attr, yy - size - 2);
 
-	if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
-	{
-	  strncpy(link, attr, sizeof(link) - 1);
-	  link[sizeof(link) - 1] = '\0';
-	}
-      }
-      else if (strcasecmp(buf, "/A") == 0)
-        link[0] = '\0';
-      else if (strcasecmp(buf, "BODY") == 0)
-      {
-        bgcolor_   = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)),
-	                       color());
-        textcolor_ = get_color(get_attr(attrs, "TEXT", attr, sizeof(attr)),
-	                       textcolor());
-        linkcolor_ = get_color(get_attr(attrs, "LINK", attr, sizeof(attr)),
-	                       selection_color());
-      }
-      else if (strcasecmp(buf, "BR") == 0)
-      {
-        line     = do_align(block, line, xx, newalign, links);
-        xx       = block->x;
-	block->h += hh;
-        yy       += hh;
-	hh       = 0;
-      }
-      else if (strcasecmp(buf, "CENTER") == 0 ||
-               strcasecmp(buf, "P") == 0 ||
-               strcasecmp(buf, "H1") == 0 ||
-	       strcasecmp(buf, "H2") == 0 ||
-	       strcasecmp(buf, "H3") == 0 ||
-	       strcasecmp(buf, "H4") == 0 ||
-	       strcasecmp(buf, "H5") == 0 ||
-	       strcasecmp(buf, "H6") == 0 ||
-	       strcasecmp(buf, "UL") == 0 ||
-	       strcasecmp(buf, "OL") == 0 ||
-	       strcasecmp(buf, "DL") == 0 ||
-	       strcasecmp(buf, "LI") == 0 ||
-	       strcasecmp(buf, "DD") == 0 ||
-	       strcasecmp(buf, "DT") == 0 ||
-	       strcasecmp(buf, "HR") == 0 ||
-	       strcasecmp(buf, "PRE") == 0 ||
-	       strcasecmp(buf, "TABLE") == 0)
-      {
-        block->end = start;
-        line       = do_align(block, line, xx, newalign, links);
-        xx         = block->x;
-        block->h   += hh;
+//        puts(buf);
 
-        if (strcasecmp(buf, "UL") == 0 ||
-	    strcasecmp(buf, "OL") == 0 ||
-	    strcasecmp(buf, "DL") == 0)
-        {
-	  block->h += size + 2;
-	  xx       += 4 * size;
-	}
-        else if (strcasecmp(buf, "TABLE") == 0)
+	attrs = ptr;
+	while (*ptr && *ptr != '>')
+          ptr ++;
+
+	if (*ptr == '>')
+          ptr ++;
+
+	if (strcasecmp(buf, "HEAD") == 0)
+          head = 1;
+	else if (strcasecmp(buf, "/HEAD") == 0)
+          head = 0;
+	else if (strcasecmp(buf, "TITLE") == 0)
 	{
-	  if (get_attr(attrs, "BORDER", attr, sizeof(attr)))
-	    border = atoi(attr);
+          // Copy the title in the document...
+          for (s = title_;
+	       *ptr != '<' && *ptr && s < (title_ + sizeof(title_) - 1);
+	       *s++ = *ptr++);
+
+	  *s = '\0';
+	  s = buf;
+	}
+	else if (strcasecmp(buf, "A") == 0)
+	{
+          if (get_attr(attrs, "NAME", attr, sizeof(attr)) != NULL)
+	    add_target(attr, yy - size - 2);
+
+	  if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
+	  {
+	    strncpy(link, attr, sizeof(link) - 1);
+	    link[sizeof(link) - 1] = '\0';
+	  }
+	}
+	else if (strcasecmp(buf, "/A") == 0)
+          link[0] = '\0';
+	else if (strcasecmp(buf, "BODY") == 0)
+	{
+          bgcolor_   = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)),
+	                	 color());
+          textcolor_ = get_color(get_attr(attrs, "TEXT", attr, sizeof(attr)),
+	                	 textcolor());
+          linkcolor_ = get_color(get_attr(attrs, "LINK", attr, sizeof(attr)),
+	                	 selection_color());
+	}
+	else if (strcasecmp(buf, "BR") == 0)
+	{
+          line     = do_align(block, line, xx, newalign, links);
+          xx       = block->x;
+	  block->h += hh;
+          yy       += hh;
+	  hh       = 0;
+	}
+	else if (strcasecmp(buf, "CENTER") == 0 ||
+        	 strcasecmp(buf, "P") == 0 ||
+        	 strcasecmp(buf, "H1") == 0 ||
+		 strcasecmp(buf, "H2") == 0 ||
+		 strcasecmp(buf, "H3") == 0 ||
+		 strcasecmp(buf, "H4") == 0 ||
+		 strcasecmp(buf, "H5") == 0 ||
+		 strcasecmp(buf, "H6") == 0 ||
+		 strcasecmp(buf, "UL") == 0 ||
+		 strcasecmp(buf, "OL") == 0 ||
+		 strcasecmp(buf, "DL") == 0 ||
+		 strcasecmp(buf, "LI") == 0 ||
+		 strcasecmp(buf, "DD") == 0 ||
+		 strcasecmp(buf, "DT") == 0 ||
+		 strcasecmp(buf, "HR") == 0 ||
+		 strcasecmp(buf, "PRE") == 0 ||
+		 strcasecmp(buf, "TABLE") == 0)
+	{
+          block->end = start;
+          line       = do_align(block, line, xx, newalign, links);
+          xx         = block->x;
+          block->h   += hh;
+
+          if (strcasecmp(buf, "UL") == 0 ||
+	      strcasecmp(buf, "OL") == 0 ||
+	      strcasecmp(buf, "DL") == 0)
+          {
+	    block->h += size + 2;
+	    xx       += 4 * size;
+	  }
+          else if (strcasecmp(buf, "TABLE") == 0)
+	  {
+	    if (get_attr(attrs, "BORDER", attr, sizeof(attr)))
+	      border = atoi(attr);
+	    else
+	      border = 0;
+
+	    block->h += size + 2;
+
+            format_table(&table_width, columns, start);
+
+            if ((xx + table_width) > hsize_) {
+	      hsize_ = xx + table_width;
+	      done   = 0;
+	      break;
+	    }
+
+	    column = 0;
+	  }
+
+          if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+	  {
+	    font = FL_HELVETICA_BOLD;
+	    size = textsize_ + '7' - buf[1];
+	  }
+	  else if (strcasecmp(buf, "DT") == 0)
+	  {
+	    font = textfont_ | FL_ITALIC;
+	    size = textsize_;
+	  }
+	  else if (strcasecmp(buf, "PRE") == 0)
+	  {
+	    font = FL_COURIER;
+	    size = textsize_;
+	    pre  = 1;
+	  }
 	  else
-	    border = 0;
+	  {
+	    font = textfont_;
+	    size = textsize_;
+	  }
 
-	  block->h += size + 2;
+	  pushfont(font, size);
 
-          format_table(&table_width, columns, start);
+          yy = block->y + block->h;
+          hh = 0;
 
-	  column = 0;
+          if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
+	      strcasecmp(buf, "DD") == 0 ||
+	      strcasecmp(buf, "DT") == 0 ||
+	      strcasecmp(buf, "P") == 0)
+            yy += size + 2;
+	  else if (strcasecmp(buf, "HR") == 0)
+	  {
+	    hh += 2 * size;
+	    yy += size;
+	  }
+
+          if (row)
+	    block = add_block(start, xx, yy, block->w, 0);
+	  else
+	    block = add_block(start, xx, yy, hsize_, 0);
+
+	  needspace = 0;
+	  line      = 0;
+
+	  if (strcasecmp(buf, "CENTER") == 0)
+	    newalign = align = CENTER;
+	  else
+	    newalign = get_align(attrs, align);
 	}
-
-        if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+	else if (strcasecmp(buf, "/CENTER") == 0 ||
+		 strcasecmp(buf, "/P") == 0 ||
+		 strcasecmp(buf, "/H1") == 0 ||
+		 strcasecmp(buf, "/H2") == 0 ||
+		 strcasecmp(buf, "/H3") == 0 ||
+		 strcasecmp(buf, "/H4") == 0 ||
+		 strcasecmp(buf, "/H5") == 0 ||
+		 strcasecmp(buf, "/H6") == 0 ||
+		 strcasecmp(buf, "/PRE") == 0 ||
+		 strcasecmp(buf, "/UL") == 0 ||
+		 strcasecmp(buf, "/OL") == 0 ||
+		 strcasecmp(buf, "/DL") == 0 ||
+		 strcasecmp(buf, "/TABLE") == 0)
 	{
-	  font = FL_HELVETICA_BOLD;
-	  size = textsize_ + '7' - buf[1];
+          line       = do_align(block, line, xx, newalign, links);
+          xx         = block->x;
+          block->end = ptr;
+
+          if (strcasecmp(buf, "/UL") == 0 ||
+	      strcasecmp(buf, "/OL") == 0 ||
+	      strcasecmp(buf, "/DL") == 0)
+	  {
+	    xx       -= 4 * size;
+	    block->h += size + 2;
+	  }
+	  else if (strcasecmp(buf, "/TABLE") == 0)
+	    block->h += size + 2;
+	  else if (strcasecmp(buf, "/PRE") == 0)
+	  {
+	    pre = 0;
+	    hh  = 0;
+	  }
+	  else if (strcasecmp(buf, "/CENTER") == 0)
+	    align = LEFT;
+
+          popfont(font, size);
+
+          while (isspace(*ptr))
+	    ptr ++;
+
+          block->h += hh;
+          yy       += hh;
+
+          if (tolower(buf[2]) == 'l')
+            yy += size + 2;
+
+          if (row)
+	    block = add_block(ptr, xx, yy, block->w, 0);
+	  else
+	    block = add_block(ptr, xx, yy, hsize_, 0);
+
+	  needspace = 0;
+	  hh        = 0;
+	  line      = 0;
+	  newalign  = align;
 	}
-	else if (strcasecmp(buf, "DT") == 0)
+	else if (strcasecmp(buf, "TR") == 0)
 	{
-	  font = textfont_ | FL_ITALIC;
-	  size = textsize_;
+          block->end = start;
+          line       = do_align(block, line, xx, newalign, links);
+          xx         = block->x;
+          block->h   += hh;
+
+          if (row)
+	  {
+            yy = blocks_[row].y + blocks_[row].h;
+
+	    for (cell = blocks_ + row + 1; cell <= block; cell ++)
+	      if ((cell->y + cell->h) > yy)
+		yy = cell->y + cell->h;
+
+            block->h = yy - block->y + 2;
+
+	    for (cell = blocks_ + row + 1; cell < block; cell ++)
+	      cell->h = block->h;
+	  }
+
+	  yy        = block->y + block->h - 4;
+	  hh        = 0;
+          block     = add_block(start, xx, yy, hsize_, 0);
+	  row       = block - blocks_;
+	  needspace = 0;
+	  column    = 0;
+	  line      = 0;
 	}
-	else if (strcasecmp(buf, "PRE") == 0)
+	else if (strcasecmp(buf, "/TR") == 0 && row)
 	{
-	  font = FL_COURIER;
-	  size = textsize_;
-	  pre  = 1;
-	}
-	else
-	{
-	  font = textfont_;
-	  size = textsize_;
-	}
+          line       = do_align(block, line, xx, newalign, links);
+          block->end = start;
+	  block->h   += hh;
 
-	pushfont(font, size);
+          xx = blocks_[row].x;
 
-        yy = block->y + block->h;
-        hh = 0;
-
-        if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
-	    strcasecmp(buf, "DD") == 0 ||
-	    strcasecmp(buf, "DT") == 0 ||
-	    strcasecmp(buf, "P") == 0)
-          yy += size + 2;
-	else if (strcasecmp(buf, "HR") == 0)
-	{
-	  hh += 2 * size;
-	  yy += size;
-	}
-
-        if (row)
-	  block = add_block(start, xx, yy, block->w, 0);
-	else
-	  block = add_block(start, xx, yy, w() - 24, 0);
-
-	needspace = 0;
-	line      = 0;
-
-	if (strcasecmp(buf, "CENTER") == 0)
-	  newalign = align = CENTER;
-	else
-	  newalign = get_align(attrs, align);
-      }
-      else if (strcasecmp(buf, "/CENTER") == 0 ||
-	       strcasecmp(buf, "/P") == 0 ||
-	       strcasecmp(buf, "/H1") == 0 ||
-	       strcasecmp(buf, "/H2") == 0 ||
-	       strcasecmp(buf, "/H3") == 0 ||
-	       strcasecmp(buf, "/H4") == 0 ||
-	       strcasecmp(buf, "/H5") == 0 ||
-	       strcasecmp(buf, "/H6") == 0 ||
-	       strcasecmp(buf, "/PRE") == 0 ||
-	       strcasecmp(buf, "/UL") == 0 ||
-	       strcasecmp(buf, "/OL") == 0 ||
-	       strcasecmp(buf, "/DL") == 0 ||
-	       strcasecmp(buf, "/TABLE") == 0)
-      {
-        line       = do_align(block, line, xx, newalign, links);
-        xx         = block->x;
-        block->end = ptr;
-
-        if (strcasecmp(buf, "/UL") == 0 ||
-	    strcasecmp(buf, "/OL") == 0 ||
-	    strcasecmp(buf, "/DL") == 0)
-	{
-	  xx       -= 4 * size;
-	  block->h += size + 2;
-	}
-	else if (strcasecmp(buf, "/TABLE") == 0)
-	  block->h += size + 2;
-	else if (strcasecmp(buf, "/PRE") == 0)
-	{
-	  pre = 0;
-	  hh  = 0;
-	}
-	else if (strcasecmp(buf, "/CENTER") == 0)
-	  align = LEFT;
-
-        popfont(font, size);
-
-        while (isspace(*ptr))
-	  ptr ++;
-
-        block->h += hh;
-        yy       += hh;
-
-        if (tolower(buf[2]) == 'l')
-          yy += size + 2;
-
-        if (row)
-	  block = add_block(ptr, xx, yy, block->w, 0);
-	else
-	  block = add_block(ptr, xx, yy, w() - 24, 0);
-
-	needspace = 0;
-	hh        = 0;
-	line      = 0;
-	newalign  = align;
-      }
-      else if (strcasecmp(buf, "TR") == 0)
-      {
-        block->end = start;
-        line       = do_align(block, line, xx, newalign, links);
-        xx         = block->x;
-        block->h   += hh;
-
-        if (row)
-	{
           yy = blocks_[row].y + blocks_[row].h;
 
 	  for (cell = blocks_ + row + 1; cell <= block; cell ++)
@@ -1106,257 +1175,248 @@ Fl_Help_View::format()
 
 	  for (cell = blocks_ + row + 1; cell < block; cell ++)
 	    cell->h = block->h;
+
+	  yy        = block->y + block->h - 4;
+          block     = add_block(start, xx, yy, hsize_, 0);
+	  needspace = 0;
+	  row       = 0;
+	  line      = 0;
 	}
-
-	yy        = block->y + block->h - 4;
-	hh        = 0;
-        block     = add_block(start, xx, yy, w() - 24, 0);
-	row       = block - blocks_;
-	needspace = 0;
-	column    = 0;
-	line      = 0;
-      }
-      else if (strcasecmp(buf, "/TR") == 0 && row)
-      {
-        line       = do_align(block, line, xx, newalign, links);
-        block->end = start;
-	block->h   += hh;
-
-        xx = blocks_[row].x;
-
-        yy = blocks_[row].y + blocks_[row].h;
-
-	for (cell = blocks_ + row + 1; cell <= block; cell ++)
-	  if ((cell->y + cell->h) > yy)
-	    yy = cell->y + cell->h;
-
-        block->h = yy - block->y + 2;
-
-	for (cell = blocks_ + row + 1; cell < block; cell ++)
-	  cell->h = block->h;
-
-	yy        = block->y + block->h - 4;
-        block     = add_block(start, xx, yy, w() - 24, 0);
-	needspace = 0;
-	row       = 0;
-	line      = 0;
-      }
-      else if ((strcasecmp(buf, "TD") == 0 ||
-                strcasecmp(buf, "TH") == 0) && row)
-      {
-        int	colspan;		// COLSPAN attribute
-
-
-        line       = do_align(block, line, xx, newalign, links);
-        block->end = start;
-	block->h   += hh;
-
-        if (strcasecmp(buf, "TH") == 0)
-	  font = textfont_ | FL_BOLD;
-	else
-	  font = textfont_;
-
-        size = textsize_;
-
-        xx = blocks_[row].x + size + 3;
-	for (i = 0; i < column; i ++)
-	  xx += columns[i] + 6;
-
-        if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != NULL)
-	  colspan = atoi(attr);
-	else
-	  colspan = 1;
-
-        for (i = 0, ww = 0; i < colspan; i ++)
-	  ww += columns[column + i];
-
-        if (block->end == block->start && nblocks_ > 1)
+	else if ((strcasecmp(buf, "TD") == 0 ||
+                  strcasecmp(buf, "TH") == 0) && row)
 	{
-	  nblocks_ --;
-	  block --;
+          int	colspan;		// COLSPAN attribute
+
+
+          line       = do_align(block, line, xx, newalign, links);
+          block->end = start;
+	  block->h   += hh;
+
+          if (strcasecmp(buf, "TH") == 0)
+	    font = textfont_ | FL_BOLD;
+	  else
+	    font = textfont_;
+
+          size = textsize_;
+
+          xx = blocks_[row].x + size + 3;
+	  for (i = 0; i < column; i ++)
+	    xx += columns[i] + 6;
+
+          if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != NULL)
+	    colspan = atoi(attr);
+	  else
+	    colspan = 1;
+
+          for (i = 0, ww = 0; i < colspan; i ++)
+	    ww += columns[column + i];
+
+          if (block->end == block->start && nblocks_ > 1)
+	  {
+	    nblocks_ --;
+	    block --;
+	  }
+
+	  pushfont(font, size);
+
+	  yy        = blocks_[row].y;
+	  hh        = 0;
+          block     = add_block(start, xx, yy, xx + ww, 0, border);
+	  needspace = 0;
+	  line      = 0;
+	  newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? CENTER : LEFT);
+
+	  column ++;
 	}
-
-	pushfont(font, size);
-
-	yy        = blocks_[row].y;
-	hh        = 0;
-        block     = add_block(start, xx, yy, xx + ww, 0, border);
-	needspace = 0;
-	line      = 0;
-	newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? CENTER : LEFT);
-
-	column ++;
-      }
-      else if ((strcasecmp(buf, "/TD") == 0 ||
-                strcasecmp(buf, "/TH") == 0) && row)
-        popfont(font, size);
-      else if (strcasecmp(buf, "B") == 0 ||
-               strcasecmp(buf, "STRONG") == 0)
-	pushfont(font |= FL_BOLD, size);
-      else if (strcasecmp(buf, "I") == 0 ||
-               strcasecmp(buf, "EM") == 0)
-	pushfont(font |= FL_ITALIC, size);
-      else if (strcasecmp(buf, "CODE") == 0)
-	pushfont(font = FL_COURIER, size);
-      else if (strcasecmp(buf, "KBD") == 0)
-	pushfont(font = FL_COURIER_BOLD, size);
-      else if (strcasecmp(buf, "VAR") == 0)
-	pushfont(font = FL_COURIER_ITALIC, size);
-      else if (strcasecmp(buf, "/B") == 0 ||
-	       strcasecmp(buf, "/STRONG") == 0 ||
-	       strcasecmp(buf, "/I") == 0 ||
-	       strcasecmp(buf, "/EM") == 0 ||
-	       strcasecmp(buf, "/CODE") == 0 ||
-	       strcasecmp(buf, "/KBD") == 0 ||
-	       strcasecmp(buf, "/VAR") == 0)
-	popfont(font, size);
-      else if (strcasecmp(buf, "IMG") == 0)
-      {
-	Fl_Shared_Image	*img = 0;
-	int		width;
-	int		height;
-
-
-        get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
-        get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
-	width  = atoi(wattr);
-	height = atoi(hattr);
-
-	if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
-	  img    = get_image(attr, width, height);
-	  width  = img->w();
-	  height = img->h();
-	}
-
-	ww = width;
-
-	if (needspace && xx > block->x)
-	  ww += (int)fl_width(' ');
-
-	if ((xx + ww) > block->w)
+	else if ((strcasecmp(buf, "/TD") == 0 ||
+                  strcasecmp(buf, "/TH") == 0) && row)
+          popfont(font, size);
+	else if (strcasecmp(buf, "B") == 0 ||
+        	 strcasecmp(buf, "STRONG") == 0)
+	  pushfont(font |= FL_BOLD, size);
+	else if (strcasecmp(buf, "I") == 0 ||
+        	 strcasecmp(buf, "EM") == 0)
+	  pushfont(font |= FL_ITALIC, size);
+	else if (strcasecmp(buf, "CODE") == 0)
+	  pushfont(font = FL_COURIER, size);
+	else if (strcasecmp(buf, "KBD") == 0)
+	  pushfont(font = FL_COURIER_BOLD, size);
+	else if (strcasecmp(buf, "VAR") == 0)
+	  pushfont(font = FL_COURIER_ITALIC, size);
+	else if (strcasecmp(buf, "/B") == 0 ||
+		 strcasecmp(buf, "/STRONG") == 0 ||
+		 strcasecmp(buf, "/I") == 0 ||
+		 strcasecmp(buf, "/EM") == 0 ||
+		 strcasecmp(buf, "/CODE") == 0 ||
+		 strcasecmp(buf, "/KBD") == 0 ||
+		 strcasecmp(buf, "/VAR") == 0)
+	  popfont(font, size);
+	else if (strcasecmp(buf, "IMG") == 0)
 	{
-	  line     = do_align(block, line, xx, newalign, links);
-	  xx       = block->x;
-	  yy       += hh;
-	  block->h += hh;
-	  hh       = 0;
-	}
+	  Fl_Shared_Image	*img = 0;
+	  int		width;
+	  int		height;
 
+
+          get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
+          get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+	  width  = get_length(wattr);
+	  height = get_length(hattr);
+
+	  if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+	    img    = get_image(attr, width, height);
+	    width  = img->w();
+	    height = img->h();
+	  }
+
+	  ww = width;
+
+          if (ww > hsize_) {
+	    hsize_ = ww;
+	    done   = 0;
+	    break;
+	  }
+
+	  if (needspace && xx > block->x)
+	    ww += (int)fl_width(' ');
+
+	  if ((xx + ww) > block->w)
+	  {
+	    line     = do_align(block, line, xx, newalign, links);
+	    xx       = block->x;
+	    yy       += hh;
+	    block->h += hh;
+	    hh       = 0;
+	  }
+
+	  if (link[0])
+	    add_link(link, xx, yy - height, ww, height);
+
+	  xx += ww;
+	  if ((height + 2) > hh)
+	    hh = height + 2;
+
+	  needspace = 0;
+	}
+      }
+      else if (*ptr == '\n' && pre)
+      {
 	if (link[0])
-	  add_link(link, xx, yy - height, ww, height);
+	  add_link(link, xx, yy - hh, ww, hh);
 
-	xx += ww;
-	if ((height + 2) > hh)
-	  hh = height + 2;
+        if (xx > hsize_) {
+	  hsize_ = xx;
+          done   = 0;
+	  break;
+	}
 
+	line      = do_align(block, line, xx, newalign, links);
+	xx        = block->x;
+	yy        += hh;
+	block->h  += hh;
 	needspace = 0;
+	ptr ++;
       }
-    }
-    else if (*ptr == '\n' && pre)
-    {
-      if (link[0])
-	add_link(link, xx, yy - hh, ww, hh);
+      else if (isspace(*ptr))
+      {
+	needspace = 1;
 
-      line      = do_align(block, line, xx, newalign, links);
-      xx        = block->x;
-      yy        += hh;
-      block->h  += hh;
-      needspace = 0;
-      ptr ++;
-    }
-    else if (isspace(*ptr))
-    {
-      needspace = 1;
+	ptr ++;
+      }
+      else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
+      {
+	ptr ++;
 
-      ptr ++;
-    }
-    else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
-    {
-      ptr ++;
+	if (strncasecmp(ptr, "amp;", 4) == 0)
+	{
+          *s++ = '&';
+	  ptr += 4;
+	}
+	else if (strncasecmp(ptr, "lt;", 3) == 0)
+	{
+          *s++ = '<';
+	  ptr += 3;
+	}
+	else if (strncasecmp(ptr, "gt;", 3) == 0)
+	{
+          *s++ = '>';
+	  ptr += 3;
+	}
+	else if (strncasecmp(ptr, "nbsp;", 5) == 0)
+	{
+          *s++ = '\240';
+	  ptr += 5;
+	}
+	else if (strncasecmp(ptr, "copy;", 5) == 0)
+	{
+          *s++ = '\251';
+	  ptr += 5;
+	}
+	else if (strncasecmp(ptr, "reg;", 4) == 0)
+	{
+          *s++ = '\256';
+	  ptr += 4;
+	}
+	else if (strncasecmp(ptr, "quot;", 5) == 0)
+	{
+          *s++ = '\"';
+	  ptr += 5;
+	}
 
-      if (strncasecmp(ptr, "amp;", 4) == 0)
-      {
-        *s++ = '&';
-	ptr += 4;
+	if ((size + 2) > hh)
+          hh = size + 2;
       }
-      else if (strncasecmp(ptr, "lt;", 3) == 0)
-      {
-        *s++ = '<';
-	ptr += 3;
-      }
-      else if (strncasecmp(ptr, "gt;", 3) == 0)
-      {
-        *s++ = '>';
-	ptr += 3;
-      }
-      else if (strncasecmp(ptr, "nbsp;", 5) == 0)
-      {
-        *s++ = '\240';
-	ptr += 5;
-      }
-      else if (strncasecmp(ptr, "copy;", 5) == 0)
-      {
-        *s++ = '\251';
-	ptr += 5;
-      }
-      else if (strncasecmp(ptr, "reg;", 4) == 0)
-      {
-        *s++ = '\256';
-	ptr += 4;
-      }
-      else if (strncasecmp(ptr, "quot;", 5) == 0)
-      {
-        *s++ = '\"';
-	ptr += 5;
-      }
-
-      if ((size + 2) > hh)
-        hh = size + 2;
-    }
-    else
-    {
-      if (s < (buf + sizeof(buf) - 1))
-        *s++ = *ptr++;
       else
-        ptr ++;
+      {
+	if (s < (buf + sizeof(buf) - 1))
+          *s++ = *ptr++;
+	else
+          ptr ++;
 
-      if ((size + 2) > hh)
-        hh = size + 2;
+	if ((size + 2) > hh)
+          hh = size + 2;
+      }
     }
-  }
 
-  if (s > buf && !pre && !head)
-  {
-    *s = '\0';
-    ww = (int)fl_width(buf);
-
-//    printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
-//	   line, xx, ww, block->x, block->w);
-
-    if (needspace && xx > block->x)
-      ww += (int)fl_width(' ');
-
-    if ((xx + ww) > block->w)
+    if (s > buf && !pre && !head)
     {
-      line     = do_align(block, line, xx, newalign, links);
-      xx       = block->x;
-      yy       += hh;
-      block->h += hh;
-      hh       = 0;
+      *s = '\0';
+      ww = (int)fl_width(buf);
+
+  //    printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
+  //	   line, xx, ww, block->x, block->w);
+
+      if (ww > hsize_) {
+	hsize_ = ww;
+	done   = 0;
+	break;
+      }
+
+      if (needspace && xx > block->x)
+	ww += (int)fl_width(' ');
+
+      if ((xx + ww) > block->w)
+      {
+	line     = do_align(block, line, xx, newalign, links);
+	xx       = block->x;
+	yy       += hh;
+	block->h += hh;
+	hh       = 0;
+      }
+
+      if (link[0])
+	add_link(link, xx, yy - size, ww, size);
+
+      xx += ww;
+      if ((size + 2) > hh)
+	hh = size + 2;
+
+      needspace = 0;
     }
 
-    if (link[0])
-      add_link(link, xx, yy - size, ww, size);
-
-    xx += ww;
-    if ((size + 2) > hh)
-      hh = size + 2;
-
-    needspace = 0;
+    block->end = ptr;
+    size_      = yy + hh;
   }
-
-  block->end = ptr;
-  size_      = yy + hh;
 
   if (ntargets_ > 1)
     qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
@@ -1366,12 +1426,29 @@ Fl_Help_View::format()
     qsort(blocks_, nblocks_, sizeof(Fl_Help_Block),
           (compare_func_t)compare_blocks);
 
-  if (size_ < (h() - 8))
-    scrollbar_.hide();
-  else
-    scrollbar_.show();
+  if (hsize_ > (w() - 24)) {
+    hscrollbar_.show();
+
+    if (size_ < (h() - 24)) {
+      scrollbar_.hide();
+      hscrollbar_.resize(x(), y() + h() - 17, w(), 17);
+    } else {
+      scrollbar_.show();
+      scrollbar_.resize(x() + w() - 17, y(), 17, h() - 17);
+      hscrollbar_.resize(x(), y() + h() - 17, w() - 17, 17);
+    }
+  } else {
+    hscrollbar_.hide();
+
+    if (size_ < (h() - 8)) scrollbar_.hide();
+    else {
+      scrollbar_.resize(x() + w() - 17, y(), 17, h());
+      scrollbar_.show();
+    }
+  }
 
   topline(topline_);
+  leftline(leftline_);
 }
 
 
@@ -1381,8 +1458,8 @@ Fl_Help_View::format()
 
 void
 Fl_Help_View::format_table(int        *table_width,	// O - Total table width
-                          int        *columns,		// O - Column widths
-	                  const char *table)		// I - Pointer to start of table
+                           int        *columns,		// O - Column widths
+	                   const char *table)		// I - Pointer to start of table
 {
   int		column,					// Current column
 		num_columns,				// Number of columns
@@ -1617,12 +1694,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	pushfont(font, size);
 
         if (get_attr(attrs, "WIDTH", attr, sizeof(attr)) != NULL)
-	{
-	  max_width = atoi(attr);
-
-	  if (attr[strlen(attr) - 1] == '%')
-	    max_width = max_width * w() / 100;
-	}
+	  max_width = get_length(attr);
 	else
 	  max_width = 0;
 
@@ -1662,8 +1734,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
         get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
         get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
-	iwidth  = atoi(wattr);
-	iheight = atoi(hattr);
+	iwidth  = get_length(wattr);
+	iheight = get_length(hattr);
 
         if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
 	  img     = get_image(attr, iwidth, iheight);
@@ -1748,12 +1820,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   // Now that we have scanned the entire table, adjust the table and
   // cell widths to fit on the screen...
   if (get_attr(table + 6, "WIDTH", attr, sizeof(attr)))
-  {
-    if (attr[strlen(attr) - 1] == '%')
-      *table_width = atoi(attr) * w() / 100;
-    else
-      *table_width = atoi(attr);
-  }
+    *table_width = get_length(attr);
   else
     *table_width = 0;
 
@@ -1774,29 +1841,32 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   // Adjust the width if needed...
   int scale_width = *table_width;
 
-  if (scale_width == 0 && width > w())
-    scale_width = width;
+  if (scale_width == 0) {
+    if (width > hsize_) scale_width = hsize_;
+    else scale_width = width;
+  }
 
   if (width > scale_width)
   {
+//    printf("width = %d, scale_width = %d\n", width, scale_width);
+
     *table_width = 0;
 
-    for (column = 0; column < num_columns; column ++)
-    {
-      if (width > 0)
-      {
-        temp_width = scale_width * columns[column] / width;
+    for (column = 0; column < num_columns; column ++) {
+      scale_width     -= minwidths[column];
+      width           -= minwidths[column];
+      columns[column] -= minwidths[column];
+    }
 
-	if (temp_width < minwidths[column])
-	  temp_width = minwidths[column];
-      }
-      else
-        temp_width = minwidths[column];
+//    printf("extra width = %d, scale_width = %d\n", width, scale_width);
 
-      width           -= columns[column];
-      scale_width     -= temp_width;
-      columns[column] = temp_width;
-      (*table_width)  += temp_width;
+    for (column = 0; column < num_columns; column ++) {
+      if (width > 0) {
+        columns[column] = scale_width * columns[column] / width +
+	                  minwidths[column];
+      } else columns[column] = minwidths[column];
+
+      (*table_width) += columns[column];
     }
   }
   else if (*table_width == 0)
@@ -2015,6 +2085,23 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
 
 
 //
+// 'Fl_Help_View::get_length()' - Get a length value, either absolute or %.
+//
+
+int
+Fl_Help_View::get_length(const char *l) {	// I - Value
+  int	val;					// Integer value
+
+  if (!l[0]) return 0;
+
+  val = atoi(l);
+  if (l[strlen(l) - 1] == '%') val = val * hsize_ / 100;
+
+  return val;
+}
+
+
+//
 // 'Fl_Help_View::handle()' - Handle events in the widget.
 //
 
@@ -2034,7 +2121,7 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 	  return (1);
 
     case FL_MOVE :
-        xx = Fl::event_x() - x();
+        xx = Fl::event_x() - x() + leftline_;
 	yy = Fl::event_y() - y() + topline_;
 	break;
 
@@ -2124,7 +2211,8 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 			   int        hh,	// I - Height in pixels
 			   const char *l)
     : Fl_Group(xx, yy, ww, hh, l),
-      scrollbar_(xx + ww - 17, yy, 17, hh)
+      scrollbar_(xx + ww - 17, yy, 17, hh - 17),
+      hscrollbar_(xx, yy + hh - 17, ww - 17, 17)
 {
   link_        = (Fl_Help_Func *)0;
 
@@ -2148,6 +2236,7 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   textsize_    = 12;
 
   topline_     = 0;
+  leftline_    = 0;
   size_        = 0;
 
   color(FL_WHITE);
@@ -2159,6 +2248,11 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   scrollbar_.show();
   scrollbar_.callback(scrollbar_callback);
 
+  hscrollbar_.value(0, ww, 0, 1);
+  hscrollbar_.step(8.0);
+  hscrollbar_.show();
+  hscrollbar_.callback(hscrollbar_callback);
+  hscrollbar_.type(FL_HORIZONTAL);
   end();
 }
 
@@ -2316,17 +2410,40 @@ Fl_Help_View::topline(int t)	// I - Top line number
   if (!value_)
     return;
 
-  if (size_ < (h() - 8) || t < 0)
+  if (size_ < (h() - 24) || t < 0)
     t = 0;
   else if (t > size_)
     t = size_;
 
   topline_ = t;
 
-  scrollbar_.value(topline_, h(), 0, size_);
+  scrollbar_.value(topline_, h() - 24, 0, size_);
 
   do_callback();
   clear_changed();
+
+  redraw();
+}
+
+
+//
+// 'Fl_Help_View::leftline()' - Set the left position.
+//
+
+void
+Fl_Help_View::leftline(int l)	// I - Left position
+{
+  if (!value_)
+    return;
+
+  if (hsize_ < (w() - 24) || l < 0)
+    l = 0;
+  else if (l > hsize_)
+    l = hsize_;
+
+  leftline_ = l;
+
+  hscrollbar_.value(leftline_, w() - 24, 0, hsize_);
 
   redraw();
 }
@@ -2378,5 +2495,16 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.13 2001/11/24 02:46:19 easysw Exp $".
+// 'hscrollbar_callback()' - A callback for the horizontal scrollbar.
+//
+
+static void
+hscrollbar_callback(Fl_Widget *s, void *)
+{
+  ((Fl_Help_View *)(s->parent()))->leftline(int(((Fl_Scrollbar*)s)->value()));
+}
+
+
+//
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.14 2001/11/24 04:12:56 easysw Exp $".
 //

@@ -10,6 +10,8 @@ CHANGES IN FLTK 1.1.0b6
 	- Added new Fl_Shared_Image class, a la FLTK 2.0.
 	- Added new copy(), desaturate(), inactive(), and
 	  color_average() methods to the Fl_Image classes.
+	- Added a horizontal scrollbar to the Fl_Help_View
+	  widget.
 	- Fl_Float_Input and Fl_Int_Input no longer accept
 	  pasted text that is not a floating point or integer
 	  value.  Pasted numbers now replace text in these

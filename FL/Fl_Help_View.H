@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.5 2001/11/24 04:12:56 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -121,13 +121,16 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 
   int		ntargets_,		// Number of targets
 		atargets_;		// Allocated targets
-  Fl_Help_Target	*targets_;		// Targets
+  Fl_Help_Target *targets_;		// Targets
 
   char		directory_[1024];	// Directory for current file
   char		filename_[1024];	// Current filename
   int		topline_,		// Top line in document
-		size_;			// Total document length
-  Fl_Scrollbar	scrollbar_;		// Vertical scrollbar for document
+		leftline_,		// Lefthand position
+		size_,			// Total document length
+		hsize_;			// Maximum document width
+  Fl_Scrollbar	scrollbar_,		// Vertical scrollbar for document
+		hscrollbar_;		// Horizontal scrollbar
 
   Fl_Help_Block	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   static int	compare_blocks(const void *a, const void *b);
@@ -142,6 +145,7 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
   const char	*get_attr(const char *p, const char *n, char *buf, int bufsize);
   Fl_Color	get_color(const char *n, Fl_Color c);
   Fl_Shared_Image *get_image(const char *name, int W, int H);
+  int		get_length(const char *l);
   int		handle(int);
 
   void		initfont(uchar &f, uchar &s) { nfonts_ = 0;
@@ -176,6 +180,8 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
   void		topline(const char *n);
   void		topline(int);
   int		topline() const { return (topline_); }
+  void		leftline(int);
+  int		leftline() const { return (leftline_); }
   void		value(const char *v);
   const char	*value() const { return (value_); }
 };
@@ -183,5 +189,5 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.5 2001/11/24 04:12:56 easysw Exp $".
 //
