@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Input.cxx,v 1.6.2.1 1999/05/20 18:01:41 bill Exp $"
+// "$Id: Fl_Value_Input.cxx,v 1.6.2.2 2000/04/04 17:05:59 bill Exp $"
 //
 // Value input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,18 +32,20 @@
 #include <FL/Fl_Group.H>
 #include <stdlib.h>
 
-static Fl_Value_Input* hack_o_rama;
-
 void Fl_Value_Input::input_cb(Fl_Widget*, void* v) {
   Fl_Value_Input& t = *(Fl_Value_Input*)v;
   double nv;
   if (t.step()>=1.0) nv = strtol(t.input.value(), 0, 0);
   else nv = strtod(t.input.value(), 0);
-  hack_o_rama = &t;
-  t.handle_push();
-  t.handle_drag(nv);
-  t.handle_release();
-  hack_o_rama = 0;
+  if (nv != t.value() || t.when() & FL_WHEN_NOT_CHANGED) {
+    t.set_value(nv);
+    if (t.when()) {
+      t.clear_changed();
+      t.do_callback();
+    } else {
+      t.set_changed();
+    }
+  }
 }
 
 void Fl_Value_Input::draw() {
@@ -60,7 +62,6 @@ void Fl_Value_Input::resize(int X, int Y, int W, int H) {
 }
 
 void Fl_Value_Input::value_damage() {
-  if (hack_o_rama==this) return;
   char buf[128];
   format(buf);
   input.value(buf);
@@ -127,5 +128,5 @@ Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Value_Input.cxx,v 1.6.2.1 1999/05/20 18:01:41 bill Exp $".
+// End of "$Id: Fl_Value_Input.cxx,v 1.6.2.2 2000/04/04 17:05:59 bill Exp $".
 //

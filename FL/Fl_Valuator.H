@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.H,v 1.5 1999/02/16 21:59:45 mike Exp $"
+// "$Id: Fl_Valuator.H,v 1.5.2.1 2000/04/04 17:05:58 bill Exp $"
 //
 // Valuator header file for the Fast Light Tool Kit (FLTK).
 //
@@ -52,6 +52,7 @@ protected:
   FL_EXPORT void handle_drag(double newvalue);
   FL_EXPORT void handle_release(); // use drag() value
   virtual FL_EXPORT void value_damage(); // cause damage() due to value() changing
+  void set_value(double v) {value_ = v;}
 
 public:
 
@@ -79,5 +80,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Valuator.H,v 1.5 1999/02/16 21:59:45 mike Exp $".
+// End of "$Id: Fl_Valuator.H,v 1.5.2.1 2000/04/04 17:05:58 bill Exp $".
 //
