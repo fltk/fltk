@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0102 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 class Fl_File_Chooser {open
@@ -113,10 +113,10 @@ window->hide();}
           }
           Fl_Button {} {
             label Cancel
-            callback {fileName->value(directory_);
+            callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();}
+window->hide();} selected
             private xywh {405 345 75 25}
             code0 {o->label(fl_cancel);}
           }
@@ -128,8 +128,8 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites} open
-      private xywh {580 44 355 150}
-      code0 {favWindow->label(manage_favorites_label);} modal visible
+      private xywh {580 44 355 150} hide
+      code0 {favWindow->label(manage_favorites_label);} modal
     } {
       Fl_File_Browser favList {
         callback {favoritesCB(favList);}
@@ -292,8 +292,7 @@ else
 if (t & DIRECTORY)
   fileList->filetype(Fl_File_Browser::DIRECTORIES);
 else
-  fileList->filetype(Fl_File_Browser::FILES);} {selected
-    }
+  fileList->filetype(Fl_File_Browser::FILES);} {}
   }
   Function {type()} {return_type int
   } {
