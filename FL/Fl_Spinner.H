@@ -35,6 +35,7 @@
 #  include <FL/Fl_Group.H>
 #  include <FL/Fl_Input.H>
 #  include <FL/Fl_Repeat_Button.H>
+#  include <stdio.h>
 #  include <stdlib.h>
 
 

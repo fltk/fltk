@@ -46,6 +46,9 @@
 #include "alignment_panel.h"
 #include "function_panel.h"
 #include "template_panel.h"
+#ifndef WIN32
+#  include "print_panel.h"
+#endif // !WIN32
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -826,6 +829,355 @@ void manual_cb(Fl_Widget *, void *) {
   show_help("index.html");
 }
 
+
+////////////////////////////////////////////////////////////////
+
+// Load and show the print dialog...
+void print_menu_cb(Fl_Widget *, void *) {
+#ifdef WIN32
+  fl_message("Sorry, printing is not yet implemented on Windows...");
+}
+#else
+  if (!print_panel) make_print_panel();
+
+  print_load();
+
+  print_selection->deactivate();
+
+  for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+    if (t->selected && t->is_window()) {
+      print_selection->activate();
+      break;
+    }
+  }
+
+  print_all->setonly();
+  print_all->do_callback();
+
+  print_panel->show();
+}
+
+// Actually print...
+void print_cb(Fl_Return_Button *, void *) {
+  FILE		*outfile;		// Output file or pipe to print command
+  char		command[1024];		// Print command
+  int		copies;			// Collated copies
+  int		first, last;		// First and last page
+  int		page;			// Current page
+  int		winpage;		// Current window page
+  int		num_pages;		// Number of pages
+  Fl_Type	*t;			// Current widget
+  int		num_windows;		// Number of windows
+  Fl_Window_Type *windows[1000];	// Windows to print
+
+  // Show progress, deactivate controls...
+  print_panel_controls->deactivate();
+  print_progress->show();
+
+  // Figure out how many pages we'll have to print...
+  if (print_collate_button->value()) copies = print_copies->value();
+  else copies = 1;
+
+  if (print_pages->value()) {
+    // Get from and to page numbers...
+    if ((first = atoi(print_from->value())) < 1) first = 1;
+    if ((last = atoi(print_to->value())) < 1) last = 1000;
+
+    if (first > last) {
+      // Swap first/last page
+      page  = first;
+      first = last;
+      last  = page;
+    }
+  } else {
+    // Print everything...
+    first = 1;
+    last  = 1000;
+  }
+
+  for (t = Fl_Type::first, num_windows = 0, winpage = 0; t; t = t->next) {
+    if (t->is_window()) {
+      winpage ++;
+      windows[num_windows] = (Fl_Window_Type *)t;
+
+      if (print_all->value()) num_windows ++;
+      else if (print_pages->value() && winpage >= first &&
+               winpage <= last) num_windows ++;
+      else if (print_selection->value() && t->selected) num_windows ++;
+    }
+  }
+
+  num_pages = num_windows * copies;
+
+  print_progress->minimum(0);
+  print_progress->maximum(num_pages);
+  print_progress->value(0);
+  Fl::check();
+
+  // Get the base filename...
+  const char *basename = strrchr(filename, '/');
+  if (basename) basename ++;
+  else basename = filename;
+
+  // Open the print stream...
+  if (print_choice->value()) {
+    // Pipe the output into the lp command...
+    snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
+             print_choice->text(print_choice->value()),
+	     print_collate_button->value() ? 1 : print_copies->value(),
+	     basename, print_page_size->text(print_page_size->value()));
+    outfile = popen(command, "w");
+  } else {
+    // Print to file...
+    fl_ok = "Print";
+    const char *outname = fl_file_chooser("Print To", "PostScript (*.ps)", NULL);
+    fl_ok = "OK";
+
+    if (outname) outfile = fopen(outname, "w");
+  }
+
+  if (outfile) {
+    // Figure out the page size and margins...
+    int	width, length;			// Size of page
+    int	left, bottom,			// Bottom lefthand corner
+	right, top;			// Top righthand corner
+
+    if (print_page_size->value()) {
+      // A4
+      width  = 595;
+      length = 842;
+    } else {
+      // Letter
+      width  = 612;
+      length = 792;
+    }
+
+    int output_mode;
+    for (output_mode = 0; output_mode < 4; output_mode ++) {
+      if (print_output_mode[output_mode]->value()) break;
+    }
+
+    if (output_mode & 1) {
+      // Landscape
+      left   = 36;
+      bottom = 18;
+      right  = length - 36;
+      top    = width - 18;
+    } else {
+      // Portrait
+      left   = 18;
+      bottom = 36;
+      right  = width - 18;
+      top    = length - 36;
+    }
+
+    // Get the time and date...
+    time_t curtime = time(NULL);
+    struct tm *curdate = localtime(&curtime);
+    char date[1024];
+
+    strftime(date, sizeof(date), "%c", curdate);
+    
+    // Write the prolog...
+    fprintf(outfile,
+            "%%!PS-Adobe-3.0\n"
+	    "%%%%BoundingBox: 18 36 %d %d\n"
+	    "%%%%Pages: %d\n"
+	    "%%%%LanguageLevel: 1\n"
+	    "%%%%DocumentData: Clean7Bit\n"
+	    "%%%%DocumentNeededResources: font Helvetica\n"
+	    "%%%%Creator: FLUID %.4f\n"
+	    "%%%%CreationDate: %s\n"
+	    "%%%%Title: (%s)\n"
+	    "%%%%EndComments\n"
+	    "%%%%BeginSetup\n"
+	    "%%%%BeginFeature: *PageSize %s\n"
+	    "languagelevel 1 ne {\n"
+	    "  <</PageSize[%d %d]/ImagingBBox null>>setpagedevice\n"
+	    "} {\n"
+	    "  %s\n"
+	    "} ifelse\n"
+	    "%%%%EndFeature\n"
+	    "%%%%EndSetup\n",
+	    width - 18, length - 36,
+	    num_pages,
+	    FL_VERSION,
+	    date,
+	    basename,
+	    print_page_size->text(print_page_size->value()),
+	    width, length,
+	    print_page_size->value() ? "a4tray" : "lettertray");
+
+    // Print each of the windows...
+    char	progress[255];		// Progress text
+    int		copy;			// Current copy
+
+    for (copy = 0, page = 0; copy < copies; copy ++) {
+      for (winpage = 0; winpage < num_pages; winpage ++) {
+        // Start next page...
+        page ++;
+	sprintf(progress, "Printing page %d/%d...", page, num_pages);
+	print_progress->value(page);
+	print_progress->label(progress);
+	Fl::check();
+
+        // Add common page stuff...
+	fprintf(outfile,
+	        "%%%%Page: %d %d\n"
+		"gsave\n",
+		page, page);
+
+        if (output_mode & 1) {
+	  // Landscape...
+	  fprintf(outfile, "%d 0 translate 90 rotate\n", width);
+	}
+
+        // Draw header...
+	fprintf(outfile,
+		"0 setgray\n"
+		"/Helvetica findfont 14 scalefont setfont\n"
+		"%d %d moveto (%s) show\n"
+		"%.1f %d moveto (%s) dup stringwidth pop -0.5 mul 0 rmoveto show\n"
+		"%d %d moveto (%d) dup stringwidth pop neg 0 rmoveto show\n",
+	        left, top - 15, basename,
+		0.5 * (left + right), top - 15, date,
+		right, top - 15, winpage + 1);
+
+        // Get window image...
+	uchar	*pixels;		// Window image data
+        int	w, h;			// Window image dimensions
+	float	ww, hh;			// Scaled size
+	float	border;			// Width of 1 pixel
+        float	llx, lly,		// Lower-lefthand corner
+		urx, ury;		// Upper-righthand corner
+
+	pixels = windows[winpage]->read_image(w, h);
+
+        // Figure out the window size, first at 100 PPI and then scaled
+	// down if that is too big...
+        ww = w * 72.0 / 100.0;
+	hh = h * 72.0 / 100.0;
+
+        if (ww > (right - left)) {
+	  ww = right - left;
+	  hh = h * ww / w;
+	}
+
+        if (hh > (top - bottom - 36)) {
+	  hh = top - bottom;
+	  ww = w * hh / h;
+	}
+
+        border = ww / w;
+
+	// Position the window in the center...
+	llx = 0.5 * (right - left - ww);
+	lly = 0.5 * (top - bottom - hh);
+	urx = 0.5 * (right - left + ww);
+	ury = 0.5 * (top - bottom + hh);
+
+        // Draw a simulated window border...
+	if (output_mode & 2) {
+	  fputs("0.25 setgray\n", outfile);
+	} else {
+	  fputs("0.1 0.2 0.6 setrgbcolor\n", outfile);
+	}
+
+        fprintf(outfile,
+	        "newpath %.2f %.2f %.2f 180 90 arcn\n"	// Top left 
+		"%.2f 0 rlineto\n"			// Top
+		"%.2f %.2f %.2f 90 0 arcn\n"		// Top right
+		"0 -%.2f rlineto\n"			// Right
+		"%.2f %.2f %.2f 0 -90 arcn\n"		// Bottom right
+		"-%.2f 0 rlineto\n"			// Bottom
+		"%.2f %.2f %.2f -90 -180 arcn\n"	// Bottom left
+		"closepath fill\n",			// Left + fill
+		llx + 12 * border, ury, 16 * border,
+		ww - 8 * border,
+		urx - 12 * border, ury, 16 * border,
+		hh,
+		urx, lly, 4 * border,
+		ww - 4 * border,
+		llx, lly, 4 * border);
+
+        if (windows[winpage]->label()) {
+	  // Add window title...
+	  fprintf(outfile,
+		  "1 setgray\n"
+		  "/Helvetica findfont %.2f scalefont setfont\n"
+		  "%.2f %.2f moveto\n"
+		  "(%s) dup stringwidth pop -0.5 mul 0 rmoveto show\n",
+		  12 * border,
+		  0.5 * (llx + urx), ury + 4 * border,
+		  windows[winpage]->label());
+	}
+
+        fprintf(outfile,
+	        "gsave\n"
+		"%.2f %.2f translate %.2f %.2f scale\n",
+		llx, ury, border, border);
+
+        if (output_mode & 2) {
+	  // Grayscale image...
+	  fprintf(outfile,
+	          "/imgdata %d string def\n"
+		  "%d %d 8[1 0 0 -1 0 1] "
+		  "{currentfile imgdata readhexstring pop} image\n",
+		  w,
+		  w, h);
+
+          uchar *ptr = pixels;
+	  int i, count = w * h;
+
+          for (i = 0; i < count; i ++, ptr += 3) {
+	    fprintf(outfile, "%02X",
+	            (31 * ptr[0] + 61 * ptr[1] + 8 * ptr[2]) / 100);
+	    if (!(i % 40)) putc('\n', outfile);
+	  }
+	} else {
+	  // Color image...
+	  fprintf(outfile,
+	          "/imgdata %d string def\n"
+		  "%d %d 8[1 0 0 -1 0 1] "
+		  "{currentfile imgdata readhexstring pop} false 3 colorimage\n",
+		  w * 3,
+		  w, h);
+
+          uchar *ptr = pixels;
+	  int i, count = w * h;
+
+          for (i = 0; i < count; i ++, ptr += 3) {
+	    fprintf(outfile, "%02X%02X%02X", ptr[0], ptr[1], ptr[2]);
+	    if (!(i % 13)) putc('\n', outfile);
+	  }
+	}
+
+        fputs("\ngrestore\n", outfile);
+
+        delete[] pixels;
+
+        // Show the page...
+	fputs("grestore showpage\n", outfile);
+      }
+    }
+
+    // Finish up...
+    fputs("%%EOF\n", outfile);
+
+    if (print_choice->value()) pclose(outfile);
+    else fclose(outfile);
+  } else {
+    // Unable to print...
+    fl_alert("Error printing: %s", strerror(errno));
+  }
+
+  // Hide progress, activate controls, hide print panel...
+  print_panel_controls->activate();
+  print_progress->hide();
+  print_panel->hide();
+}
+#endif // WIN32
+
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -852,7 +1204,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Save", FL_CTRL+'s', save_cb, 0},
   {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
   {"Save &Template...", 0, save_template_cb, (void*)2, FL_MENU_DIVIDER},
-  {"&Print...", FL_CTRL+'p', 0},
+  {"&Print...", FL_CTRL+'p', print_menu_cb},
   {"Write &Code...", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
   {"&Quit", FL_CTRL+'q', exit_cb},

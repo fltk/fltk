@@ -106,7 +106,8 @@ void fl_thin_down_frame(int x, int y, int w, int h, Fl_Color) {
 
 void fl_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_thin_down_frame(x,y,w,h,c);
-  fl_color(c); fl_rectf(x+1, y+1, w-2, h-2);
+  fl_color(draw_it_active ? c : fl_inactive(c));
+  fl_rectf(x+1, y+1, w-2, h-2);
 }
 
 void fl_thin_up_frame(int x, int y, int w, int h, Fl_Color) {
@@ -115,7 +116,8 @@ void fl_thin_up_frame(int x, int y, int w, int h, Fl_Color) {
 
 void fl_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_thin_up_frame(x,y,w,h,c);
-  fl_color(c); fl_rectf(x+1, y+1, w-2, h-2);
+  fl_color(draw_it_active ? c : fl_inactive(c));
+  fl_rectf(x+1, y+1, w-2, h-2);
 }
 
 void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
@@ -135,7 +137,8 @@ void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
 
 void fl_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_up_frame(x,y,w,h,c);
-  fl_color(c); fl_rectf(x+D1, y+D1, w-D2, h-D2);
+  fl_color(draw_it_active ? c : fl_inactive(c));
+  fl_rectf(x+D1, y+D1, w-D2, h-D2);
 }
 
 void fl_down_frame(int x, int y, int w, int h, Fl_Color) {
@@ -161,7 +164,8 @@ void fl_engraved_frame(int x, int y, int w, int h, Fl_Color) {
 
 void fl_engraved_box(int x, int y, int w, int h, Fl_Color c) {
   fl_engraved_frame(x,y,w,h,c);
-  fl_color(c); fl_rectf(x+2, y+2, w-4, h-4);
+  fl_color(draw_it_active ? c : fl_inactive(c));
+  fl_rectf(x+2, y+2, w-4, h-4);
 }
 
 void fl_embossed_frame(int x, int y, int w, int h, Fl_Color) {
@@ -170,17 +174,20 @@ void fl_embossed_frame(int x, int y, int w, int h, Fl_Color) {
 
 void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
   fl_embossed_frame(x,y,w,h,c);
-  fl_color(c); fl_rectf(x+2, y+2, w-4, h-4);
+  fl_color(draw_it_active ? c : fl_inactive(c));
+  fl_rectf(x+2, y+2, w-4, h-4);
 }
 
 void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
-  fl_color(FL_BLACK); fl_rect(x, y, w, h);
-  fl_color(bgcolor); fl_rectf(x+1, y+1, w-2, h-2);
+  fl_color(draw_it_active ? FL_BLACK : fl_inactive(FL_BLACK));
+  fl_rect(x, y, w, h);
+  fl_color(draw_it_active ? bgcolor : fl_inactive(bgcolor));
+  fl_rectf(x+1, y+1, w-2, h-2);
 }
 #define fl_border_box fl_rectbound
 
 void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c);
+  fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rect(x, y, w, h);
 }
 

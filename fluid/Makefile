@@ -39,6 +39,7 @@ CPPFILES = \
 	file.cxx \
 	fluid.cxx \
 	function_panel.cxx \
+	print_panel.cxx \
 	template_panel.cxx \
 	undo.cxx \
 	widget_panel.cxx
