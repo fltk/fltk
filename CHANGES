@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- The configure script used the wrong dynamic library
+	  linking command for OSX (STR #51)
 	- The Fl_Text_Editor widget did not set changed() nor
 	  did it call the widget's callback function for
 	  FL_WHEN_CHANGED when processing characters that
