@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.12 2001/10/19 14:04:08 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.13 2001/10/23 11:42:23 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -336,10 +336,28 @@ dnl do this last so messing with switches does not break tests
 MAKEDEPEND="\$(CXX) -M"
 
 if test -n "$GXX"; then
-    # Use gcc instead of c++ or g++, since we don't need the C++
-    # library to depend on...  Note that this doesn't work with
-    # GCC 3.0, but then again not much *does* work with GCC 3.0...
-    CXX="$CC"
+    # Starting with GCC 3.0, the brainiacs in the GCC team decided
+    # that all C++ programs should depend on libstdc++.  Not only
+    # is this not necessary, but it *prevents* binary compatibility
+    # between different distributions of Linux (and even on other
+    # OS's that normally don't include the GCC version of libstdc++...)
+    #
+    # Also, GCC 3.0.x still has problems compiling some code.  You may
+    # or may not have success with it.  USE 3.0.x WITH EXTREME CAUTION!
+    #
+    # The following check uses "gcc" instead of "c++" or "g++"
+    # when compiling with older versions of GCC which don't have
+    # this ridiculous reliance on libstdc++.
+
+    case "`$CXX --version`" in
+    	3*)
+	    AC_MSG_WARN(GCC 3.x may not work properly and introduces unnecessary dependencies on libstdc++!)
+	    ;;
+	*)
+	    CXX="$CC"
+	    ;;
+    esac
+
     CFLAGS="-Wall $CFLAGS"
     CXXFLAGS="-Wall $CXXFLAGS"
     if test -z "$DEBUGFLAG"; then
@@ -474,5 +492,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.12 2001/10/19 14:04:08 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.13 2001/10/23 11:42:23 easysw Exp $".
 dnl
