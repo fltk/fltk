@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.7 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.8 2001/12/06 22:16:49 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -179,6 +179,11 @@ static void do_queued_events() {
 #  endif
 }
 
+// these pointers are set by the Fl::lock() function:
+static void nothing() {}
+void (*fl_lock_function)() = nothing;
+void (*fl_unlock_function)() = nothing;
+
 // This is never called with time_to_wait < 0.0:
 // It should return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.
@@ -197,6 +202,8 @@ int fl_wait(double time_to_wait) {
 #  endif
   int n;
 
+  fl_unlock_function();
+
   if (time_to_wait < 2147483.648) {
 #  if USE_POLL
     n = ::poll(pollfds, nfds, int(time_to_wait*1000 + .5));
@@ -213,6 +220,9 @@ int fl_wait(double time_to_wait) {
     n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],0);
 #  endif
   }
+
+  fl_lock_function();
+
   if (n > 0) {
     for (int i=0; i<nfds; i++) {
 #  if USE_POLL
@@ -937,5 +947,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.7 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.8 2001/12/06 22:16:49 easysw Exp $".
 //

@@ -339,6 +339,10 @@ SOURCE=..\src\fl_line_style.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_lock.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Menu.cxx
 # End Source File
 # Begin Source File

@@ -1143,6 +1143,21 @@ DEP_CPP_FL_LIN=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_lock.cxx
+DEP_CPP_FL_LOC=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\fl\mac.H"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Menu.cxx
 DEP_CPP_FL_ME=\
 	"..\fl\enumerations.h"\

@@ -1,9 +1,21 @@
 CHANGES IN FLTK 1.1.0b7
 
+	- More documentation updates...
+	- Added Fl::lock() and friends from FLTK 2.0 to
+	  support multi-threaded applications.
+	- Fl_Check_Button and Fl_Round_Button now use the
+	  FL_NO_BOX box type to show the background of the
+	  parent widget.
+	- Tweeked the plastic boxtype code to draw with the
+	  right shading for narrow, but horizontal buttons.
+	- Fl_Progress now shades the bounding box instead of
+	  drawing a polygon inside it.
+	- Fl::warning() under WIN32 defaults to no action. This
+	  avoids warning dialogs when an image file cannot be
+	  loaded.
 	- Some Win32 drivers would draw into wrong buffers
 	  after OpenGL mode change
 	- Mac OS X support works 95%
-	- More documentation updates...
 	- The file chooser would cause a segfault if you
 	  clicked in an empty area of the file list.
 	- Fl_File_Icon::labeltype() would cause a segfault
@@ -58,16 +70,6 @@ CHANGES IN FLTK 1.1.0b7
 	  selection and text as Fl_Input_ and friends.
 	- Changed the default line scrolling in Fl_Text_Display
 	  to 3 lines for the mouse wheel and scrollbar arrows.
-	- Fl_Check_Button and Fl_Round_Button now use the
-	  FL_NO_BOX box type to show the background of the
-	  parent widget.
-	- Tweeked the plastic boxtype code to draw with the
-	  right shading for narrow, but horizontal buttons.
-	- Fl_Progress now shades the bounding box instead of
-	  drawing a polygon inside it.
-	- Fl::warning() under WIN32 defaults to no action. This
-	  avoids warning dialogs when an image file cannot be
-	  loaded.
 
 
 CHANGES IN FLTK 1.1.0b6

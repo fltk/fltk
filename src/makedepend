@@ -269,6 +269,7 @@ Fl_get_system_colors.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_get_system_colors.o: ../FL/x.H ../FL/Fl_Window.H ../FL/math.h
 Fl_grab.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_grab.o: ../FL/x.H ../FL/Fl_Window.H
+Fl_lock.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../config.h
 Fl_own_colormap.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
 Fl_own_colormap.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H
 Fl_visual.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -280,7 +281,7 @@ filename_absolute.o: ../FL/filename.H ../FL/Fl_Export.H flstring.h
 filename_absolute.o: ../config.h
 filename_expand.o: ../FL/filename.H ../FL/Fl_Export.H
 filename_ext.o: ../FL/filename.H ../FL/Fl_Export.H
-filename_isdir.o: ../config.h ../FL/filename.H ../FL/Fl_Export.H
+filename_isdir.o: flstring.h ../config.h ../FL/filename.H ../FL/Fl_Export.H
 filename_list.o: ../config.h ../FL/filename.H ../FL/Fl_Export.H
 filename_match.o: ../FL/filename.H ../FL/Fl_Export.H
 filename_setext.o: ../FL/filename.H ../FL/Fl_Export.H
@@ -443,13 +444,27 @@ forms_pixmap.o: ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H ../FL/Fl_Positioner.H
 forms_pixmap.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Timer.H
 forms_timer.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 forms_timer.o: ../FL/Fl_Timer.H ../FL/Fl_Widget.H ../FL/fl_draw.H
-Fl_Gl_Choice.o: ../config.h
-Fl_Gl_Overlay.o: ../config.h
-Fl_Gl_Window.o: ../config.h
-gl_draw.o: ../config.h
-gl_start.o: ../config.h
-glut_compatability.o: ../config.h
-glut_font.o: ../config.h
+Fl_Gl_Choice.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Gl_Choice.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
+Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
+Fl_Gl_Overlay.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
+Fl_Gl_Overlay.o: ../FL/Fl_Gl_Window.H
+Fl_Gl_Window.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Gl_Window.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
+Fl_Gl_Window.o: ../FL/Fl_Gl_Window.H
+gl_draw.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+gl_draw.o: ../FL/gl.h ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
+gl_draw.o: Fl_Gl_Choice.H Fl_Font.H
+gl_start.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+gl_start.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H
+gl_start.o: ../FL/Fl_Window.H ../FL/fl_draw.H Fl_Gl_Choice.H
+glut_compatability.o: ../config.h ../FL/glut.H ../FL/gl.h
+glut_compatability.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl.H
+glut_compatability.o: ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
+glut_compatability.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
+glut_font.o: ../config.h ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+glut_font.o: ../FL/Fl_Export.H ../FL/Fl.H ../FL/Fl_Gl_Window.H
+glut_font.o: ../FL/Fl_Window.H
 scandir.o: ../config.h
 numericsort.o: ../config.h
 vsnprintf.o: ../config.h

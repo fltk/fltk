@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.6 2001/11/28 20:43:44 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.7 2001/12/06 22:16:49 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -220,10 +220,16 @@ public:
   // Visible focus methods...
   static void visible_focus(int v) { visible_focus_ = v; }
   static int  visible_focus() { return visible_focus_; }
+
+  // Multithreading support:
+  static void lock();
+  static void unlock();
+  static void awake(void* message = 0);
+  static void* thread_message();
 };
 
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.6 2001/11/28 20:43:44 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.7 2001/12/06 22:16:49 easysw Exp $".
 //

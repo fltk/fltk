@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.36 2001/12/06 02:20:36 matthiaswm Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.37 2001/12/06 22:16:48 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -159,6 +159,7 @@ AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [defau
 		;;
 	esac
     fi])
+AC_ARG_ENABLE(threads, [  --disable-threads       disable multi-threading support],,enable_threads=yes)
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -299,12 +300,23 @@ case $uname in
 	    GLDSONAME=""
 	    GLDEMOS=""
         fi
+
 	# Don't make symlinks because HFS+ is not case sensitive...
 	HLINKS="#"
+
 	# Add a postbuild step after linking applications
 	POSTBUILD="/Developer/Tools/Rez -t APPL ../FL/mac.r -o \$@"
 	;;
     *)
+	dnl Check for pthreads for multi-threaded apps...
+	if test "$enable_threads" = yes; then
+	    AC_SEARCH_LIBS(pthread_create, pthread)
+	fi
+
+	if test "x$ac_cv_search_pthread" != x; then
+	    AC_DEFINE(HAVE_PTHREAD)
+	fi
+
 	dnl Check for X11...
 	AC_PATH_XTRA
 
@@ -592,5 +604,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.36 2001/12/06 02:20:36 matthiaswm Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.37 2001/12/06 22:16:48 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.9 2001/11/30 16:10:08 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.10 2001/12/06 22:16:49 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -164,6 +164,18 @@ void Fl::remove_fd(int n) {
   remove_fd(n, -1);
 }
 
+// these pointers are set by the Fl::lock() function:
+static void nothing() {}
+void (*fl_lock_function)() = nothing;
+void (*fl_unlock_function)() = nothing;
+
+static void* thread_message_;
+void* Fl::thread_message() {
+  void* r = thread_message_;
+  thread_message_ = 0;
+  return r;
+}
+
 MSG fl_msg;
 
 // This is never called with time_to_wait < 0.0.
@@ -206,12 +218,17 @@ int fl_wait(double time_to_wait) {
   }
 #endif // USE_ASYNC_SELECT
 
+  fl_unlock_function();
+
   if (time_to_wait < 2147483.648) {
     // Perform the requested timeout...
     have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
     if (!have_message) {
       int t = (int)(time_to_wait * 1000.0 + .5);
-      if (t <= 0) return 0; // too short to measure
+      if (t <= 0) { // too short to measure
+        fl_lock_function();
+	return 0;
+      }
       timerid = SetTimer(NULL, 0, t, NULL);
       have_message = GetMessage(&fl_msg, NULL, 0, 0);
       KillTimer(NULL, timerid);
@@ -219,6 +236,8 @@ int fl_wait(double time_to_wait) {
   } else {
     have_message = GetMessage(&fl_msg, NULL, 0, 0);
   }
+
+  fl_lock_function();
 
   // Execute the message we got, and all other pending messages:
   while (have_message) {
@@ -233,6 +252,10 @@ int fl_wait(double time_to_wait) {
       // looks like it is best to do the dispatch-message anyway:
     }
 #endif
+
+    if (fl_msg.message == WM_USER)  // Used for awaking wait() from another thread
+      thread_message_ = (void*)fl_msg.wParam;
+
     TranslateMessage(&fl_msg);
     DispatchMessage(&fl_msg);
     have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
@@ -997,5 +1020,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.9 2001/11/30 16:10:08 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.10 2001/12/06 22:16:49 easysw Exp $".
 //
