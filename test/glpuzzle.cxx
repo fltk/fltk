@@ -1,5 +1,5 @@
 //
-// "$Id: glpuzzle.cxx,v 1.7 1999/02/22 21:11:25 mike Exp $"
+// "$Id: glpuzzle.cxx,v 1.8 1999/02/25 20:05:30 bill Exp $"
 //
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
@@ -802,7 +802,7 @@ selectPiece(int mousex, int mousey)
     return 0;
   }
   closest = 0;
-  dist = 2147483647;
+  dist = 0xFFFFFFFFU; //2147483647;
   while (hits) {
     if (selectBuf[(hits - 1) * 4 + 1] < dist) {
       dist = selectBuf[(hits - 1) * 4 + 1];
@@ -1479,5 +1479,5 @@ main(int argc, char **argv)
 #endif // added for fltk's distribution
 
 //
-// End of "$Id: glpuzzle.cxx,v 1.7 1999/02/22 21:11:25 mike Exp $".
+// End of "$Id: glpuzzle.cxx,v 1.8 1999/02/25 20:05:30 bill Exp $".
 //

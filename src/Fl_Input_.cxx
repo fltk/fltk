@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.15 1999/01/13 15:57:38 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.16 1999/02/25 20:05:29 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -621,6 +621,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
 
   case FL_SELECTIONCLEAR:
     minimal_update(mark_, position_);
+    // mark_ = position_;
     return 1;
 
   case FL_PASTE: {
@@ -735,5 +736,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.15 1999/01/13 15:57:38 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.16 1999/02/25 20:05:29 bill Exp $".
 //
