@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.21 1999/02/18 13:00:21 mike Exp $"
+dnl# "$Id: configure.in,v 1.22 1999/02/18 13:42:08 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -104,7 +104,17 @@ fi
 
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h)
-AC_CHECK_FUNCS(scandir)
+AC_CHECK_FUNCS(scandir,
+    case `(uname) 2>/dev/null` in
+        SunOS)
+	    # Solaris may have scandir, but we don't want to
+	    # depend on it...
+	    ;;
+	*)
+	    # All others either have it or not...
+	    AC_DEFINE(HAVE_SCANDIR)
+	    ;;
+    esac)
 AC_CHECK_FUNCS(vsnprintf)
 AC_CHECK_FUNCS(snprintf)
 AC_CHECK_FUNCS(vsprintf)
@@ -164,16 +174,12 @@ else
         	# -woff 3322 is necessary due to errors in Xlib headers on IRIX
         	CFLAGS="-fullwarn $CFLAGS"
         	CXXFLAGS="-fullwarn -woff 1685 -woff 3322 $CXXFLAGS"
-		if test -z "$DEBUGFLAG"; then
-        	    CFLAGS="-O3 $CFLAGS"
-        	    CXXFLAGS="-O3 $CXXFLAGS"
-		fi
 	    else
         	CXXFLAGS="+w +pp $CXXFLAGS"
-		if test -z "$DEBUGFLAG"; then
-        	    CFLAGS="-O2 $CFLAGS"
-        	    CXXFLAGS="-O2 $CXXFLAGS"
-		fi
+	    fi
+	    if test -z "$DEBUGFLAG"; then
+        	CFLAGS="-O2 $CFLAGS"
+        	CXXFLAGS="-O2 $CXXFLAGS"
 	    fi
 	    ;;
 	HP-UX)
@@ -204,5 +210,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.21 1999/02/18 13:00:21 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.22 1999/02/18 13:42:08 mike Exp $".
 dnl#
