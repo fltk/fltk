@@ -50,3 +50,19 @@
 #define HAVE_SYS_DIR_H 0
 #define HAVE_NDIR_H 0
 #define HAVE_SCANDIR 0
+
+/*
+ * possibly missing sprintf-style functions:
+ */
+
+#define HAVE_VSNPRINTF 0
+#define HAVE_SNPRINTF 0
+#define HAVE_VSPRINTF 0
+
+/*
+ * HAVE_LIBJPEG
+ *
+ * Do we have the JPEG group's JPEG file library?
+ */
+
+#define HAVE_LIBJPEG 0
