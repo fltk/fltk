@@ -1,5 +1,5 @@
 //
-// "$Id: forms_timer.cxx,v 1.4.2.3.2.4 2003/01/30 21:44:31 easysw Exp $"
+// "$Id: forms_timer.cxx,v 1.4.2.3.2.5 2003/09/03 19:58:08 easysw Exp $"
 //
 // Forms timer object for the Fast Light Tool Kit (FLTK).
 //
@@ -31,14 +31,15 @@
 #include <FL/Fl_Timer.H>
 #include <FL/fl_draw.H>
 #ifdef WIN32
-# ifdef __MWERKS__
-#  include <time.h>
-# else
-#  include <sys/types.h> 
-#  include <sys/timeb.h>
-# endif
+#  ifdef __MWERKS__
+#    include <time.h>
+#  else
+#    include <sys/types.h> 
+#    include <sys/timeb.h>
+#  endif
 #else
-# include <sys/time.h>
+#  include <time.h>
+#  include <sys/time.h>
 #endif
 #include <stdio.h>
 
@@ -161,5 +162,5 @@ void Fl_Timer::suspended(char d) {
 }
 
 //
-// End of "$Id: forms_timer.cxx,v 1.4.2.3.2.4 2003/01/30 21:44:31 easysw Exp $".
+// End of "$Id: forms_timer.cxx,v 1.4.2.3.2.5 2003/09/03 19:58:08 easysw Exp $".
 //

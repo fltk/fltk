@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fixed an IRIX compile problem caused by a missing
+	  #include (STR #157)
 	- FLUID didn't write color/selection_color() calls using
 	  the symbolic names when possible, nor did it cast
 	  integer colors to Fl_Color (STR #146)
