@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.9 1998/12/08 22:07:30 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.10 1999/01/05 17:57:48 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -147,6 +147,25 @@ CREATE_BRUSH:
   return brushes[i].brush;
 }
 
+Fl_Color inactive(Fl_Color c) {
+  Fl_Color i;
+  unsigned incolor = fl_cmap[c];
+  unsigned gray = fl_cmap[FL_GRAY];
+  uchar r, g, b;
+
+  r = ((uchar)(incolor>>24))/3 + ((uchar)(gray>>24))/3 * 2;
+  g = ((uchar)(incolor>>16))/3 + ((uchar)(gray>>16))/3 * 2;
+  b = ((uchar)(incolor>>8))/3 + ((uchar)(gray>>8))/3 * 2;
+
+  if (r == g && r == b) { // get it out of gray ramp
+    i = fl_gray_ramp(r*FL_NUM_GRAY/256);
+  } else {		// get it out of color cube:
+    i = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+  }
+
+  return i;
+}
+
 Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
   // bright/dark is decided based on high bit of green:
   if (fl_cmap[bg] & 0x800000) {
@@ -233,5 +252,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.9 1998/12/08 22:07:30 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.10 1999/01/05 17:57:48 mike Exp $".
 //

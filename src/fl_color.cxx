@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.5 1998/12/29 14:05:13 mike Exp $"
+// "$Id: fl_color.cxx,v 1.6 1999/01/05 17:57:48 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -275,6 +275,25 @@ void fl_color(Fl_Color i) {
 // bright/dark is decided based on high bits of green:
 #define bright(x) ((x)&0xc00000)
 
+Fl_Color inactive(Fl_Color c) {
+  Fl_Color i;
+  unsigned incolor = fl_cmap[c];
+  unsigned gray = fl_cmap[FL_GRAY];
+  uchar r, g, b;
+
+  r = ((uchar)(incolor>>24))/3 + ((uchar)(gray>>24))/3 * 2;
+  g = ((uchar)(incolor>>16))/3 + ((uchar)(gray>>16))/3 * 2;
+  b = ((uchar)(incolor>>8))/3 + ((uchar)(gray>>8))/3 * 2;
+
+  if (r == g && r == b) { // get it out of gray ramp
+    i = fl_gray_ramp(r*FL_NUM_GRAY/256);
+  } else {		// get it out of color cube:
+    i = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+  }
+
+  return i;
+}
+
 Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
   if (bright(fl_cmap[bg])) {
     if (bright(fl_cmap[fg]))
@@ -334,5 +353,5 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 #endif
 
 //
-// End of "$Id: fl_color.cxx,v 1.5 1998/12/29 14:05:13 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.6 1999/01/05 17:57:48 mike Exp $".
 //
