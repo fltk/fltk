@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.9 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.10 2001/11/26 18:56:26 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -298,7 +298,13 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       };
 
       // Right now do a "screen door" alpha mask; not always pretty, but
-      // definitely fast...
+      // definitely fast...  In the future we should look at supporting
+      // the RENDER extension in XFree86, when available, to provide
+      // true RGBA-blended rendering.  See:
+      //
+      //     http://www.xfree86.org/~keithp/render/protocol.html
+      //
+      // for more info...
       memset(bitmap, 0, bmw * h());
 
       for (dataptr = array + d() - 1, y = 0; y < h(); y ++, dataptr += ld())
@@ -358,5 +364,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.9 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.10 2001/11/26 18:56:26 easysw Exp $".
 //
