@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.2
 
+	- The redraw_label() method didn't damage the parent
+	  window when the label was outside the widget's
+	  bounding box.
 	- Added a "draw_children()" method to Fl_Group to make
 	  subclassing Fl_Group with a custom draw() function
 	  easier.
