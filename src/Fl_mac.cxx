@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.4 2001/12/12 07:50:37 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.5 2001/12/14 19:34:30 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -217,8 +217,7 @@ static double do_queued_events( double time = 0.0 )
     break; // TODO: cheat
 //    SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
   }
-#else
-  #ifdef TARGET_API_MAC_CARBON
+#elif defined(TARGET_API_MAC_CARBON)
   OSStatus ret;
   EventRef ev;
   static EventTargetRef target = 0;
@@ -235,8 +234,7 @@ static double do_queued_events( double time = 0.0 )
     }
     ReleaseEvent( ev );
   }
-  
-  #else
+#else
   EventRecord ev;
   unsigned long ticks = (int)(time*60.0); // setting ticks to 7fffffff will wait forever
   if ( WaitNextEvent(everyEvent, &ev, ticks, rgn) )
@@ -244,7 +242,6 @@ static double do_queued_events( double time = 0.0 )
     fl_handle(ev); //: handle the nullEvent to get mouse up events
     SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
   }
-  #endif
 #endif
   
 #if CONSOLIDATE_MOTION
@@ -351,9 +348,14 @@ OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef even
   GetEventParameter( event, kEventParamMouseWheelAxis, typeMouseWheelAxis, NULL, sizeof(EventMouseWheelAxis), NULL, &axis );
   long delta;
   GetEventParameter( event, kEventParamMouseWheelDelta, typeLongInteger, NULL, sizeof(long), NULL, &delta );
-  if ( axis == kEventMouseWheelAxisY )
+  if ( axis == kEventMouseWheelAxisX )
   {
-    Fl::e_dy = - delta;
+    Fl::e_dx = delta;
+    if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
+  }
+  else if ( axis == kEventMouseWheelAxisY )
+  {
+    Fl::e_dy = -delta;
     if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
   }
   return noErr;
@@ -553,6 +555,7 @@ void fl_open_display() {
     
     // create a minimal menu bar (\todo "about app", "FLTK settings") 
     // Any FLTK application may replace this menu later with its own bar.
+#if 0
     fl_system_menu = GetNewMBar( 128 );
     if ( fl_system_menu ) {
         SetMenuBar( fl_system_menu );
@@ -567,7 +570,11 @@ void fl_open_display() {
                 */
         AppendResMenu( GetMenuHandle( 1 ), 'DRVR' );
     }
-    
+#else
+    ClearMenuBar();
+    AppendResMenu( GetMenuHandle( 1 ), 'DRVR' );
+#endif // 0
+
     DrawMenuBar();
   }
 }
@@ -1502,6 +1509,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 */
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.4 2001/12/12 07:50:37 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.5 2001/12/14 19:34:30 easysw Exp $".
 //
 

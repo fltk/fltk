@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.39 2001/12/09 20:26:24 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.40 2001/12/14 19:34:29 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -260,7 +260,7 @@ dnl Check for standard graphics API and OpenGL...
 HLINKS=
 
 dnl some environments need postprocessing (Darwin, MacOS)
-POSTBUILD=
+POSTBUILD=:
 
 dnl Check for pthreads for multi-threaded apps...
 if test "$enable_threads" = yes; then
@@ -315,7 +315,7 @@ case $uname in
 	HLINKS="#"
 
 	# Add a postbuild step after linking applications
-	POSTBUILD="/Developer/Tools/Rez -t APPL ../FL/mac.r -o \$@"
+	POSTBUILD="/Developer/Tools/Rez -t APPL -o"
 	;;
     *)
 
@@ -610,5 +610,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.39 2001/12/09 20:26:24 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.40 2001/12/14 19:34:29 easysw Exp $".
 dnl

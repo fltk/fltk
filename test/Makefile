@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.19 2001/12/14 16:48:13 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.20 2001/12/14 19:34:30 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -166,78 +166,78 @@ $(ALL):  ../lib/$(LIBNAME)
 editor$(EXEEXT): editor.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 file_chooser$(EXEEXT): file_chooser.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 help$(EXEEXT): help.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 keyboard$(EXEEXT): keyboard.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.o $(LINKFLTK) $(LDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 keyboard.o: keyboard.cxx keyboard_ui.cxx
 
 mandelbrot$(EXEEXT): mandelbrot.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.o $(LINKFLTK) $(LDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 mandlebrot.o: mandelbrot.cxx mandelbrot_ui.cxx
 
 pixmap_browser$(EXEEXT): pixmap_browser.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 # OpenGL demos...
 CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	echo Linking $@...
 	$(CXX) $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 fractals$(EXEEXT): fractals.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fractals.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 fullscreen$(EXEEXT): fullscreen.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 glpuzzle$(EXEEXT): glpuzzle.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 shiny$(EXEEXT): shiny.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 shiny.o:	shiny.cxx shiny_panel.cxx
 
 shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 # If you have libjpeg installed, you might want to try this test program:
 
 jpeg_image$(EXEEXT): jpeg_image.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) jpeg_image.o $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
-	$(POSTBUILD)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 depend:
 #	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
@@ -253,5 +253,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.19 2001/12/14 16:48:13 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.20 2001/12/14 19:34:30 easysw Exp $".
 #

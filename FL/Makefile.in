@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.1.2.1 2001/11/19 21:25:35 easysw Exp $"
+# "$Id: Makefile.in,v 1.1.2.2 2001/12/14 19:34:29 easysw Exp $"
 #
 # Header makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -32,7 +32,7 @@ install:
 	-mkdir -p $(includedir)
 	rm -rf $(includedir)/FL
 	mkdir $(includedir)/FL
-	cp ../FL/*.[hH] $(includedir)/FL
+	cp ../FL/*.[hHr] $(includedir)/FL
 @HLINKS@	cd $(includedir)/FL;\
 @HLINKS@	for file in *.H; do\
 @HLINKS@		rm -f "`basename $$file H`h";\
@@ -52,5 +52,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile.in,v 1.1.2.1 2001/11/19 21:25:35 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.1.2.2 2001/12/14 19:34:29 easysw Exp $".
 #

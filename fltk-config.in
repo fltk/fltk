@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.5 2001/11/28 15:55:33 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.6 2001/12/14 19:34:29 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -45,18 +45,19 @@ srcdir=@srcdir@
 CXX="@CXX@"
 CC="@CC@"
 
+# post-process command (only needed for MacOS)
+POSTBUILD="@POSTBUILD@"
+
 # flags for C++ compiler:
 CFLAGS="@CFLAGS@"
 CXXFLAGS="@CXXFLAGS@"
 LDFLAGS="@LDFLAGS@"
 LDLIBS="@LDFLAGS@ @LIBS@"
 
-# program to make the archive:
+# libraries to link with:
 LIBNAME="@LIBNAME@"
 DSONAME="@DSONAME@"
 DSOLINK="@DSOLINK@"
-
-# libraries to link with:
 IMAGELIBS="@IMAGELIBS@"
 
 usage ()
@@ -83,6 +84,7 @@ Options telling what information we request:
 
 Option to compile and link an application:
 	[--compile program.cxx]
+        [--post program]
 "
     exit $1
 }
@@ -92,6 +94,7 @@ fi
 
 no_plugins=no
 compile=
+post=
 
 # Parse command line options
 while test $# -gt 0 
@@ -147,6 +150,11 @@ do
       ;;
     --compile)
       compile=$2
+      post=$2
+      shift
+      ;;
+    --post)
+      post=$2
       shift
       ;;
     *)
@@ -192,9 +200,15 @@ fi
 
 if test -n "$compile"; then
     prog=`basename $compile .cxx`
+    post=$prog
 
     echo $CXX $CXXFLAGS -o $prog $compile $LDSTATIC
     $CXX $CXXFLAGS -o $prog $compile $LDSTATIC
+fi
+
+if test -n "$post" -a "$POSTBUILD" != ":"; then
+    echo $POSTBUILD $post $includedir/FL/mac.r
+    $POSTBUILD $post $includedir/FL/mac.r
 fi
 
 if test "$echo_prefix" = "yes"; then
