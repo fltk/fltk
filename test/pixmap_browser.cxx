@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5.2.4 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.1 2001/09/02 11:23:27 easysw Exp $"
 //
 // Another pixmap test program for the Fast Light Tool Kit (FLTK).
 //
@@ -123,7 +123,8 @@ Fl_Pixmap *pixmap;
 void newpixmap() {
   delete pixmap;
   pixmap = new Fl_Pixmap(data);
-  pixmap->label(b);
+  b->image(pixmap);
+  b->redraw();
   w->redraw();
 }
 
@@ -165,5 +166,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5.2.4 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.1 2001/09/02 11:23:27 easysw Exp $".
 //

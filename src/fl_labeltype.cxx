@@ -1,5 +1,5 @@
 //
-// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.2 2001/08/06 03:17:43 easysw Exp $"
+// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.3 2001/09/02 11:23:27 easysw Exp $"
 //
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Image.H>
 
 void
 fl_no_label(const Fl_Label*,int,int,int,int,Fl_Align) {}
@@ -56,6 +57,10 @@ void
 fl_normal_measure(const Fl_Label* o, int& W, int& H) {
   fl_font(o->font, o->size);
   fl_measure(o->value, W, H);
+  if (o->image) {
+    if (o->image->w() > W) W = o->image->w();
+    H += o->image->h();
+  }
 }
 
 #define MAX_LABELTYPE 16
@@ -131,5 +136,5 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
 #include <FL/Fl_Input_.H>
 
 //
-// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.2 2001/08/06 03:17:43 easysw Exp $".
+// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.3 2001/09/02 11:23:27 easysw Exp $".
 //

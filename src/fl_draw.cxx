@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.3 2001/08/06 15:19:20 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.4 2001/09/02 11:23:27 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -149,13 +149,15 @@ void fl_draw(
   }
 
   symtotal = symwidth[0] + symwidth[1];
-  
-  for (p = str, lines=0; p;) {
-    e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP);
-    lines++;
-    if (!*e || *e == '@') break;
-    p = e;
-  }
+
+  if (str) {
+    for (p = str, lines=0; p;) {
+      e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP);
+      lines++;
+      if (!*e || *e == '@') break;
+      p = e;
+    }
+  } else lines = 0;
 
   if ((symwidth[0] || symwidth[1]) && lines) {
     if (symwidth[0]) symwidth[0] = lines * fl_height();
@@ -189,24 +191,26 @@ void fl_draw(
   }
 
   // now draw all the lines:
-  int desc = fl_descent();
-  for (p=str; ; ypos += height) {
-    if (lines>1) e = expand(p, buf, w - symtotal, buflen, width,
-                            align&FL_ALIGN_WRAP);
+  if (str) {
+    int desc = fl_descent();
+    for (p=str; ; ypos += height) {
+      if (lines>1) e = expand(p, buf, w - symtotal, buflen, width,
+                              align&FL_ALIGN_WRAP);
 
-    if (width > symoffset) symoffset = (int)(width + 0.5);
+      if (width > symoffset) symoffset = (int)(width + 0.5);
 
-    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
-    else if (align & FL_ALIGN_RIGHT) xpos = x + w - (int)(width + .5) - symwidth[1];
-    else xpos = x + (w - (int)(width + .5) - symtotal) / 2 + symwidth[0];
+      if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+      else if (align & FL_ALIGN_RIGHT) xpos = x + w - (int)(width + .5) - symwidth[1];
+      else xpos = x + (w - (int)(width + .5) - symtotal) / 2 + symwidth[0];
 
-    callthis(buf,buflen,xpos,ypos-desc);
+      callthis(buf,buflen,xpos,ypos-desc);
 
-    if (underline_at)
-      callthis("_",1,xpos+int(fl_width(buf,underline_at-buf)),ypos-desc);
+      if (underline_at)
+	callthis("_",1,xpos+int(fl_width(buf,underline_at-buf)),ypos-desc);
 
-    if (!*e || *e == '@') break;
-    p = e;
+      if (!*e || *e == '@') break;
+      p = e;
+    }
   }
 
   // draw the image if the "text over image" alignment flag is set...
@@ -253,7 +257,7 @@ void fl_draw(
   int x, int y, int w, int h,	// bounding box
   Fl_Align align,
   Fl_Image* img) {
-  if (!str || !*str) return;
+  if ((!str || !*str) && !img) return;
   if (w && h && !fl_not_clipped(x, y, w, h)) return;
   if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
   fl_draw(str, x, y, w, h, align, fl_draw, img);
@@ -261,8 +265,8 @@ void fl_draw(
 }
 
 void fl_measure(const char* str, int& w, int& h) {
+  if (!str || !*str) {w = 0; h = 0; return;}
   h = fl_height();
-  if (!str || !*str) {w = 0; return;}
   const char* p;
   const char* e;
   char buf[MAXBUF];
@@ -318,5 +322,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.3 2001/08/06 15:19:20 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.4 2001/09/02 11:23:27 easysw Exp $".
 //
