@@ -15,7 +15,7 @@
 #include <config.h>
 
 #if HAVE_GL && HAVE_GL_GLU_H
-#  include <FL/glut.h>
+#  include <FL/glut.H>
 #  ifdef __APPLE__
 #    include <OpenGL/glu.h>
 #  else

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.27 2002/01/03 14:08:08 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.28 2002/01/13 18:38:24 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -150,37 +150,110 @@ GLALL = \
 	gl_overlay$(EXEEXT) \
 	glpuzzle$(EXEEXT) \
 	shape$(EXEEXT) \
-	shiny$(EXEEXT) \
+	shiny$(EXEEXT)
 
 all:	$(ALL) $(GLDEMOS)
 
 gldemos:	$(GLALL)
+
+depend:	$(CPPFILES)
+	makedepend -Y -I.. -f makedepend $(CPPFILES)
+
+clean:
+	-@ rm -f $(ALL) $(GLALL) *.o core *~
+
+install:
+	@echo Nothing to install in test directory.
+
+uninstall:
+	@echo Nothing to uninstall in test directory.
+
 
 # FLUID file rules
 .fl.cxx .fl.h:
 	echo Generating $<...
 	../fluid/fluid -c $<
 
-$(ALL):  ../lib/$(LIBNAME)
+# All demos depend on the FLTK library...
+$(ALL): ../lib/$(LIBNAME)
 
-# Programs needing special instructions...
+# General demos...
+adjuster$(EXEEXT): adjuster.o
+
+arc$(EXEEXT): arc.o
+
+ask$(EXEEXT): ask.o
+
+bitmap$(EXEEXT): bitmap.o
+
+boxtype$(EXEEXT): boxtype.o
+
+browser$(EXEEXT): browser.o
+
+button$(EXEEXT): button.o
+
+buttons$(EXEEXT): buttons.o
+
+checkers$(EXEEXT): checkers.o
+
+clock$(EXEEXT): clock.o
+
+colbrowser$(EXEEXT): colbrowser.o
+
+color_chooser$(EXEEXT): color_chooser.o
+
+cursor$(EXEEXT): cursor.o
+
+curve$(EXEEXT): curve.o
+
+demo$(EXEEXT): demo.o
+
+doublebuffer$(EXEEXT): doublebuffer.o
+
 editor$(EXEEXT): editor.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
+
+fast_slow$(EXEEXT): fast_slow.o
+fast_slow.cxx:	../fluid/fluid
+
 file_chooser$(EXEEXT): file_chooser.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
+
+fonts$(EXEEXT): fonts.o
+
+forms$(EXEEXT): forms.o
+
+hello$(EXEEXT): hello.o
+
 help$(EXEEXT): help.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
+
+iconize$(EXEEXT): iconize.o
+
+image$(EXEEXT): image.o
+
+inactive$(EXEEXT): inactive.o
+inactive.cxx:	../fluid/fluid
+
+input$(EXEEXT): input.o
+
 keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 keyboard_ui.o:	keyboard_ui.h ../fluid/fluid
+
+label$(EXEEXT): label.o
+
+line_style$(EXEEXT): line_style.o
+
+list_visuals$(EXEEXT): list_visuals.o
 
 mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	echo Linking $@...
@@ -188,10 +261,55 @@ mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	$(POSTBUILD) $@ ../FL/mac.r
 mandelbrot_ui.o:	mandelbrot_ui.h ../fluid/fluid
 
+menubar$(EXEEXT): menubar.o
+
+message$(EXEEXT): message.o
+
+minimum$(EXEEXT): minimum.o
+
+navigation$(EXEEXT): navigation.o
+
+output$(EXEEXT): output.o
+
+overlay$(EXEEXT): overlay.o
+
+pack$(EXEEXT): pack.o
+
+pixmap$(EXEEXT): pixmap.o
+
 pixmap_browser$(EXEEXT): pixmap_browser.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
+
+radio$(EXEEXT): radio.o
+radio.cxx:	../fluid/fluid
+
+resize$(EXEEXT): resize.o
+resize.cxx:	../fluid/fluid
+
+resizebox$(EXEEXT): resizebox.o
+
+scroll$(EXEEXT): scroll.o
+
+subwindow$(EXEEXT): subwindow.o
+
+symbols$(EXEEXT): symbols.o
+
+tabs$(EXEEXT): tabs.o
+tabs.cxx:	../fluid/fluid
+
+threads$(EXEEXT): threads.o
+
+tile$(EXEEXT): tile.o
+
+tiled_image$(EXEEXT): tiled_image.o
+
+valuators$(EXEEXT): valuators.o
+valuators.cxx:	../fluid/fluid
+
+# All OpenGL demos depend on the FLTK and FLTK_GL libraries...
+$(GLALL): ../lib/$(LIBNAME) ../lib/$(GLLIBNAME)
 
 # OpenGL demos...
 CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
@@ -234,32 +352,7 @@ shape$(EXEEXT): shape.o
 	$(CXX) -I.. $(CXXFLAGS) shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 
-fast_slow.cxx:	../fluid/fluid
-inactive.cxx:	../fluid/fluid
-radio.cxx:	../fluid/fluid
-resize.cxx:	../fluid/fluid
-tabs.cxx:	../fluid/fluid
-valuators.cxx:	../fluid/fluid
-
-# If you have libjpeg installed, you might want to try this test program:
-
-jpeg_image$(EXEEXT): jpeg_image.o
-	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) jpeg_image.o $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
-	$(POSTBUILD) $@ ../FL/mac.r
-
-depend:	$(CPPFILES)
-	makedepend -Y -I.. -f makedepend $(CPPFILES)
-
-clean:
-	-@ rm -f $(ALL) $(GLALL) jpeg_image *.o core *~
-
-install:
-	@echo Nothing to install in test directory.
-
-uninstall:
-	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.27 2002/01/03 14:08:08 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.28 2002/01/13 18:38:24 easysw Exp $".
 #
