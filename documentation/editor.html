@@ -173,7 +173,7 @@ need to define our callback functions.</P>
 
 <UL><PRE>
 void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
-  if ((nInserted || nDeleted) && !loading) changed = 1;
+  if ((nInserted || nDeleted) &amp;&amp; !loading) changed = 1;
   EditorWindow *w = (EditorWindow *)v;
   set_title(w);
   if (loading) w->editor->show_insert_position();
@@ -259,7 +259,7 @@ void find2_cb(Fl_Widget* w, void* v) {
   }
 
   int pos = e->editor->insert_position();
-  int found = textbuf->search_forward(pos, e->search, &pos);
+  int found = textbuf->search_forward(pos, e->search, &amp;pos);
   if (found) {
     // Found a match; select and update the position...
     textbuf->select(pos, pos+strlen(e->search));
@@ -330,7 +330,7 @@ from the program:
 
 <UL><PRE>
 void quit_cb(Fl_Widget*, void*) {
-  if (changed && !check_save())
+  if (changed &amp;&amp; !check_save())
     return;
 
   exit(0);
