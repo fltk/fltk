@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.1
 
+	- Fl_Text_Display fix for bug #620633 (crash on
+	  redisplay).
 	- Fl_Output now calls its callback when the user clicks
 	  or drags in the widget.
 	- Shortcuts now cause buttons to take focus when visible

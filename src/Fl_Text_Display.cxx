@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.30 2002/09/26 20:52:50 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.31 2002/10/10 20:02:58 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -761,7 +761,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) {
      to "pos" to calculate the X coordinate */
   xStep = text_area.x - mHorizOffset;
   outIndex = 0;
-  for ( charIndex = 0; charIndex < pos - lineStartPos; charIndex++ ) {
+  for ( charIndex = 0; charIndex < lineLen && charIndex < pos - lineStartPos; charIndex++ ) {
     charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
               mBuffer->tab_distance(), mBuffer->null_substitution_character() );
     charStyle = position_style( lineStartPos, lineLen, charIndex,
@@ -3008,5 +3008,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.30 2002/09/26 20:52:50 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.31 2002/10/10 20:02:58 easysw Exp $".
 //
