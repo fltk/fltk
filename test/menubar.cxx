@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.8.2.4 2002/09/01 22:39:33 easysw Exp $"
+// "$Id: menubar.cxx,v 1.6.2.8.2.5 2003/01/14 21:30:55 easysw Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -196,12 +196,12 @@ int main(int argc, char **argv) {
   menus[3] = &mb;
   Fl_Box b(200,200,200,100,"Press right button\nfor a pop-up menu");
   window.resizable(&mb);
-  window.size_range(300,20);
+  window.size_range(300,400,0,400);
   window.end();
   window.show(argc, argv);
   return Fl::run();
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.8.2.4 2002/09/01 22:39:33 easysw Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.8.2.5 2003/01/14 21:30:55 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.36 2002/10/30 01:01:52 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.37 2003/01/14 21:30:15 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1626,6 +1626,14 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       Rect all; all.top=-32000; all.bottom=32000; all.left=-32000; all.right=32000;
       InvalWindowRect( i->xid, &all );    
     }
+  } else if (resize_from_system == this && size_range_set && !parent() && shown()) {
+    if (size_range_set) {
+      if (W < minw) W = minw;
+      else if (W > maxw && maxw) W = maxw;
+      if (H < minh) H = minh;
+      else if (H > maxh && maxh) H = maxh;
+    }
+    SizeWindow(i->xid, W>0 ? W : 1, H>0 ? H : 1, 1);
   }
   resize_from_system = 0;
   if (is_a_resize) {
@@ -1750,6 +1758,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.36 2002/10/30 01:01:52 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.37 2003/01/14 21:30:15 easysw Exp $".
 //
 
