@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.26 2004/12/03 03:14:16 easysw Exp $"
+// "$Id$"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -162,7 +162,7 @@ int Fl_Group::handle(int event) {
 	if (o->contains(Fl::belowmouse())) {
 	  return send(o,FL_MOVE);
 	} else {
-	  if (!o->contains(Fl::belowmouse())) Fl::belowmouse(o);
+	  Fl::belowmouse(o);
 	  if (send(o,FL_ENTER)) return 1;
 	}
       }
@@ -593,5 +593,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.26 2004/12/03 03:14:16 easysw Exp $".
+// End of "$Id$".
 //
