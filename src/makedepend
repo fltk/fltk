@@ -314,6 +314,9 @@ fl_cursor.o: ../FL/Fl_Window.H ../FL/fl_draw.H
 fl_curve.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_diamond_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_diamond_box.o: ../FL/fl_draw.H
+fl_dnd.o: fl_dnd_x.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_dnd.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H
+fl_dnd.o: ../FL/Fl_Window.H
 fl_draw.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_draw.o: ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
 fl_draw_image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -345,7 +348,8 @@ fl_oval_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_oval_box.o: ../FL/fl_draw.H
 fl_overlay.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_overlay.o: ../FL/Fl_Window.H ../FL/fl_draw.H
-fl_overlay_visual.o: ../config.h
+fl_overlay_visual.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
+fl_overlay_visual.o: ../FL/Fl_Export.H ../FL/x.H ../FL/Fl_Window.H
 fl_plastic.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_plastic.o: ../FL/fl_draw.H
 fl_rect.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Enumerations.H

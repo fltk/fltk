@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_x.cxx,v 1.5.2.1 2002/01/09 21:50:02 easysw Exp $"
+// "$Id: fl_dnd_x.cxx,v 1.5.2.2 2002/02/26 05:25:11 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,6 @@ extern Atom fl_XdndStatus;
 extern Atom fl_XdndActionCopy;
 extern Atom fl_XdndFinished;
 //extern Atom fl_XdndProxy;
-
-extern char fl_i_own_selection;
 
 extern void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d0,
@@ -87,7 +85,7 @@ int Fl::dnd() {
   Window target_window = 0;
   Fl_Window* local_window = 0;
   int version = 4; int dest_x, dest_y;
-  XSetSelectionOwner(fl_display, fl_XdndSelection, fl_message_window, fl_event_time);
+  XSetSelectionOwner(fl_display, fl_XdndSelection, source_window, fl_event_time);
 
   while (Fl::pushed()) {
 
@@ -134,8 +132,8 @@ int Fl::dnd() {
   }
 
   if (local_window) {
-    fl_i_own_selection = 1;
-    if (local_handle(FL_DND_RELEASE, local_window)) paste(*belowmouse(),false);
+    selection_owner(local_window);
+    if (local_handle(FL_DND_RELEASE, local_window)) paste(*belowmouse());
   } else if (version) {
     fl_sendClientMessage(target_window, fl_XdndDrop, source_window,
 		      0, fl_event_time);
@@ -167,5 +165,5 @@ int Fl::dnd() {
 
 
 //
-// End of "$Id: fl_dnd_x.cxx,v 1.5.2.1 2002/01/09 21:50:02 easysw Exp $".
+// End of "$Id: fl_dnd_x.cxx,v 1.5.2.2 2002/02/26 05:25:11 easysw Exp $".
 //
