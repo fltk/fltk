@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.8 2002/05/31 19:27:56 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.9 2002/08/14 16:19:48 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -30,14 +30,14 @@
 #    include <windows.h>
 #  endif // WIN32
 
-#include <stdio.h>
-
+#  include <stdio.h>
+#  include "Fl_Export.H"
 
 
 /**
  * Preferences are a data tree containing a root, branches and leafs
  */
-class Fl_Preferences 
+class FL_EXPORT Fl_Preferences 
 {
 
 public:
@@ -45,50 +45,50 @@ public:
   enum Root { SYSTEM=0, USER };
   // enum Type { win32, macos, fltk };
 
-  FL_EXPORT Fl_Preferences( Root root, const char *vendor, const char *application );
-  FL_EXPORT Fl_Preferences( Fl_Preferences&, const char *group );
-  FL_EXPORT Fl_Preferences( Fl_Preferences*, const char *group );
-  FL_EXPORT ~Fl_Preferences();
+  Fl_Preferences( Root root, const char *vendor, const char *application );
+  Fl_Preferences( Fl_Preferences&, const char *group );
+  Fl_Preferences( Fl_Preferences*, const char *group );
+  ~Fl_Preferences();
 
-  FL_EXPORT int groups();
-  FL_EXPORT const char *group( int );
-  FL_EXPORT char groupExists( const char *group );
-  FL_EXPORT char deleteGroup( const char *group );
+  int groups();
+  const char *group( int );
+  char groupExists( const char *group );
+  char deleteGroup( const char *group );
 
-  FL_EXPORT int entries();
-  FL_EXPORT const char *entry( int );
-  FL_EXPORT char entryExists( const char *entry );
-  FL_EXPORT char deleteEntry( const char *entry );
+  int entries();
+  const char *entry( int );
+  char entryExists( const char *entry );
+  char deleteEntry( const char *entry );
 
-  FL_EXPORT char set( const char *entry, int value );
-  FL_EXPORT char set( const char *entry, float value );
-  FL_EXPORT char set( const char *entry, double value );
-  FL_EXPORT char set( const char *entry, const char *value );
-  FL_EXPORT char set( const char *entry, const void *value, int size ); 
+  char set( const char *entry, int value );
+  char set( const char *entry, float value );
+  char set( const char *entry, double value );
+  char set( const char *entry, const char *value );
+  char set( const char *entry, const void *value, int size ); 
 
-  FL_EXPORT char get( const char *entry, int &value,    int defaultValue );
-  FL_EXPORT char get( const char *entry, float &value,  float defaultValue );
-  FL_EXPORT char get( const char *entry, double &value, double defaultValue );
-  FL_EXPORT char get( const char *entry, char *&value,  const char *defaultValue );
-  FL_EXPORT char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
-  FL_EXPORT char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
-  FL_EXPORT char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
-  FL_EXPORT int size( const char *entry );
+  char get( const char *entry, int &value,    int defaultValue );
+  char get( const char *entry, float &value,  float defaultValue );
+  char get( const char *entry, double &value, double defaultValue );
+  char get( const char *entry, char *&value,  const char *defaultValue );
+  char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
+  char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
+  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
+  int size( const char *entry );
 
-  FL_EXPORT char getUserdataPath( char *path, int pathlen );
+  char getUserdataPath( char *path, int pathlen );
 
-  FL_EXPORT void flush();
+  void flush();
 
-  // FL_EXPORT char export( const char *filename, Type fileFormat );
-  // FL_EXPORT char import( const char *filename );
+  // char export( const char *filename, Type fileFormat );
+  // char import( const char *filename );
 
   class Name {
     char *data_;
   public:
-    FL_EXPORT Name( unsigned int n );
-    FL_EXPORT Name( const char *format, ... );
-    FL_EXPORT operator const char *() { return data_; }
-    FL_EXPORT ~Name();
+    Name( unsigned int n );
+    Name( const char *format, ... );
+    operator const char *() { return data_; }
+    ~Name();
   };
 
   struct Entry
@@ -155,5 +155,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.8 2002/05/31 19:27:56 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.9 2002/08/14 16:19:48 easysw Exp $".
 //

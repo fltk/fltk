@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.H,v 1.6.2.4.2.5 2002/07/14 19:08:25 easysw Exp $"
+// "$Id: Fl_Group.H,v 1.6.2.4.2.6 2002/08/14 16:19:48 easysw Exp $"
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,11 +43,11 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 
 protected:
 
-  FL_EXPORT void draw();
-  FL_EXPORT void draw_child(Fl_Widget&) const;
-  FL_EXPORT void update_child(Fl_Widget&) const;
-  FL_EXPORT void draw_outside_label(const Fl_Widget&) const ;
-  FL_EXPORT short* sizes();
+  void draw();
+  void draw_child(Fl_Widget&) const;
+  void update_child(Fl_Widget&) const;
+  void draw_outside_label(const Fl_Widget&) const ;
+  short* sizes();
 
 public:
 
@@ -88,7 +88,7 @@ public:
 
 // dummy class used to end child groups in constructors for complex
 // subclasses of Fl_Group:
-class Fl_End {
+class FL_EXPORT Fl_End {
 public:
   Fl_End() {Fl_Group::current()->end();}
 };
@@ -96,5 +96,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Group.H,v 1.6.2.4.2.5 2002/07/14 19:08:25 easysw Exp $".
+// End of "$Id: Fl_Group.H,v 1.6.2.4.2.6 2002/08/14 16:19:48 easysw Exp $".
 //

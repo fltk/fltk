@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.16 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.17 2002/08/14 16:19:48 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@ typedef Fl_Callback* Fl_Callback_p; // needed for BORLAND
 typedef void (Fl_Callback0)(Fl_Widget*);
 typedef void (Fl_Callback1)(Fl_Widget*, long);
 
-struct Fl_Label {
+struct FL_EXPORT Fl_Label {
   const char* value;
   Fl_Image* image;
   Fl_Image* deimage;
@@ -46,11 +46,11 @@ struct Fl_Label {
   uchar font;
   uchar size;
   unsigned color;
-  FL_EXPORT void draw(int,int,int,int, Fl_Align) const ;
-  FL_EXPORT void measure(int&, int&) const ;
+  void draw(int,int,int,int, Fl_Align) const ;
+  void measure(int&, int&) const ;
 };
 
-class Fl_Widget {
+class FL_EXPORT Fl_Widget {
   friend class Fl_Group;
 
   Fl_Group* parent_;
@@ -70,12 +70,12 @@ class Fl_Widget {
   const char *tooltip_;
 
   // "de-implement" the copy constructors:
-  FL_EXPORT Fl_Widget & operator=(const Fl_Widget &);
-  FL_EXPORT Fl_Widget(const Fl_Widget &);
+  Fl_Widget & operator=(const Fl_Widget &);
+  Fl_Widget(const Fl_Widget &);
 
 protected:
 
-  FL_EXPORT Fl_Widget(int,int,int,int,const char* =0);
+  Fl_Widget(int,int,int,int,const char* =0);
 
   void x(int v) {x_ = v;}
   void y(int v) {y_ = v;}
@@ -88,20 +88,20 @@ protected:
   enum {INACTIVE=1, INVISIBLE=2, OUTPUT=4, SHORTCUT_LABEL=64,
         CHANGED=128, VISIBLE_FOCUS=512};
 
-  FL_EXPORT void draw_box() const;
-  FL_EXPORT void draw_box(Fl_Boxtype, Fl_Color) const;
-  FL_EXPORT void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
+  void draw_box() const;
+  void draw_box(Fl_Boxtype, Fl_Color) const;
+  void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
   void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
-  FL_EXPORT void draw_focus(Fl_Boxtype, int,int,int,int) const;
-  FL_EXPORT void draw_label() const;
-  FL_EXPORT void draw_label(int, int, int, int) const;
+  void draw_focus(Fl_Boxtype, int,int,int,int) const;
+  void draw_label() const;
+  void draw_label(int, int, int, int) const;
 
 public:
 
-  FL_EXPORT virtual ~Fl_Widget();
+  virtual ~Fl_Widget();
 
-  FL_EXPORT virtual void draw() = 0;
-  FL_EXPORT virtual int handle(int);
+  virtual void draw() = 0;
+  virtual int handle(int);
   Fl_Group* parent() const {return parent_;}
   void parent(Fl_Group* p) {parent_ = p;} // for hacks only, Fl_Group::add()
 
@@ -112,8 +112,8 @@ public:
   int y() const {return y_;}
   int w() const {return w_;}
   int h() const {return h_;}
-  FL_EXPORT virtual void resize(int,int,int,int);
-  FL_EXPORT int damage_resize(int,int,int,int);
+  virtual void resize(int,int,int,int);
+  int damage_resize(int,int,int,int);
   void position(int X,int Y) {resize(X,Y,w_,h_);}
   void size(int W,int H) {resize(x_,y_,W,H);}
 
@@ -144,7 +144,7 @@ public:
   void deimage(Fl_Image* a) {label_.deimage=a;}
   void deimage(Fl_Image& a) {label_.deimage=&a;}
   const char *tooltip() const {return tooltip_;}
-  FL_EXPORT void tooltip(const char *t);
+  void tooltip(const char *t);
   Fl_Callback_p callback() const {return callback_;}
   void callback(Fl_Callback* c, void* p) {callback_=c; user_data_=p;}
   void callback(Fl_Callback* c) {callback_=c;}
@@ -158,15 +158,15 @@ public:
   void when(uchar i) {when_ = i;}
 
   int visible() const {return !(flags_&INVISIBLE);}
-  FL_EXPORT int visible_r() const;
-  FL_EXPORT void show();
-  FL_EXPORT void hide();
+  int visible_r() const;
+  void show();
+  void hide();
   void set_visible() {flags_ &= ~INVISIBLE;}
   void clear_visible() {flags_ |= INVISIBLE;}
   int active() const {return !(flags_&INACTIVE);}
-  FL_EXPORT int active_r() const;
-  FL_EXPORT void activate();
-  FL_EXPORT void deactivate();
+  int active_r() const;
+  void activate();
+  void deactivate();
   int output() const {return (flags_&OUTPUT);}
   void set_output() {flags_ |= OUTPUT;}
   void clear_output() {flags_ &= ~OUTPUT;}
@@ -174,30 +174,30 @@ public:
   int changed() const {return flags_&CHANGED;}
   void set_changed() {flags_ |= CHANGED;}
   void clear_changed() {flags_ &= ~CHANGED;}
-  FL_EXPORT int take_focus();
+  int take_focus();
   void set_visible_focus() { flags_ |= VISIBLE_FOCUS; }
   void clear_visible_focus() { flags_ &= ~VISIBLE_FOCUS; }
   void visible_focus(int v) { if (v) set_visible_focus(); else clear_visible_focus(); }
   int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
-  FL_EXPORT static void default_callback(Fl_Widget*, void*);
+  static void default_callback(Fl_Widget*, void*);
   void do_callback() {callback_(this,user_data_);}
   void do_callback(Fl_Widget* o,void* arg=0) {callback_(o,arg);}
   void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg);}
-  FL_EXPORT int test_shortcut();
-  FL_EXPORT static int test_shortcut(const char*);
-  FL_EXPORT int contains(const Fl_Widget*) const ;
+  int test_shortcut();
+  static int test_shortcut(const char*);
+  int contains(const Fl_Widget*) const ;
   int inside(const Fl_Widget* o) const {return o ? o->contains(this) : 0;}
 
-  FL_EXPORT void redraw();
+  void redraw();
   uchar damage() const {return damage_;}
   void clear_damage(uchar c = 0) {damage_ = c;}
-  FL_EXPORT void damage(uchar c);
-  FL_EXPORT void damage(uchar c,int,int,int,int);
-  FL_EXPORT void draw_label(int, int, int, int, Fl_Align) const;
+  void damage(uchar c);
+  void damage(uchar c,int,int,int,int);
+  void draw_label(int, int, int, int, Fl_Align) const;
   void measure_label(int& xx, int& yy) {label_.measure(xx,yy);}
 
-  FL_EXPORT Fl_Window* window() const ;
+  Fl_Window* window() const ;
 
   // back compatability only:
   Fl_Color color2() const {return (Fl_Color)color2_;}
@@ -212,5 +212,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.16 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.17 2002/08/14 16:19:48 easysw Exp $".
 //

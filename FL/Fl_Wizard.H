@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Wizard.H,v 1.1.2.3 2002/07/14 19:08:25 easysw Exp $"
+// "$Id: Fl_Wizard.H,v 1.1.2.4 2002/08/14 16:19:48 easysw Exp $"
 //
 // Fl_Wizard widget definitions.
 //
@@ -41,7 +41,7 @@ class FL_EXPORT Fl_Wizard : public Fl_Group
 {
   Fl_Widget *value_;
 
-  FL_EXPORT void draw();
+  void draw();
 
   public:
 
@@ -56,5 +56,5 @@ class FL_EXPORT Fl_Wizard : public Fl_Group
 #endif // !_Fl_Wizard_H_
 
 //
-// End of "$Id: Fl_Wizard.H,v 1.1.2.3 2002/07/14 19:08:25 easysw Exp $".
+// End of "$Id: Fl_Wizard.H,v 1.1.2.4 2002/08/14 16:19:48 easysw Exp $".
 //

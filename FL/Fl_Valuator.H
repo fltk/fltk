@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.H,v 1.5.2.5.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Valuator.H,v 1.5.2.5.2.2 2002/08/14 16:19:48 easysw Exp $"
 //
 // Valuator header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 #define FL_VERTICAL		0
 #define FL_HORIZONTAL		1
 
-class Fl_Valuator : public Fl_Widget {
+class FL_EXPORT Fl_Valuator : public Fl_Widget {
 
   double value_;
   double previous_value_;
@@ -44,14 +44,14 @@ class Fl_Valuator : public Fl_Widget {
 protected:
 
   int horizontal() const {return type()&1;}
-  FL_EXPORT Fl_Valuator(int X, int Y, int W, int H, const char* L);
+  Fl_Valuator(int X, int Y, int W, int H, const char* L);
 
   double previous_value() const {return previous_value_;}
   void handle_push() {previous_value_ = value_;}
-  FL_EXPORT double softclamp(double);
-  FL_EXPORT void handle_drag(double newvalue);
-  FL_EXPORT void handle_release(); // use drag() value
-  virtual FL_EXPORT void value_damage(); // cause damage() due to value() changing
+  double softclamp(double);
+  void handle_drag(double newvalue);
+  void handle_release(); // use drag() value
+  virtual void value_damage(); // cause damage() due to value() changing
   void set_value(double v) {value_ = v;}
 
 public:
@@ -64,21 +64,21 @@ public:
   void range(double a, double b) {min = a; max = b;}
   void step(int a) {A = a; B = 1;}
   void step(double a, int b) {A = a; B = b;}
-  FL_EXPORT void step(double s);
+  void step(double s);
   double step() const {return A/B;}
-  FL_EXPORT void precision(int);
+  void precision(int);
 
   double value() const {return value_;}
-  FL_EXPORT int value(double);
+  int value(double);
 
-  virtual FL_EXPORT int format(char*);
-  FL_EXPORT double round(double); // round to nearest multiple of step
-  FL_EXPORT double clamp(double); // keep in range
-  FL_EXPORT double increment(double, int); // add n*step to value
+  virtual int format(char*);
+  double round(double); // round to nearest multiple of step
+  double clamp(double); // keep in range
+  double increment(double, int); // add n*step to value
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Valuator.H,v 1.5.2.5.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Valuator.H,v 1.5.2.5.2.2 2002/08/14 16:19:48 easysw Exp $".
 //

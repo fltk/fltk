@@ -147,10 +147,6 @@ SOURCE=..\src\Fl_Bitmap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_BMP_Image.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_Box.cxx
 # End Source File
 # Begin Source File
@@ -295,10 +291,6 @@ SOURCE=..\src\Fl_get_system_colors.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_GIF_Image.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_grab.cxx
 # End Source File
 # Begin Source File
@@ -404,10 +396,6 @@ SOURCE=..\src\Fl_Pixmap.cxx
 # Begin Source File
 
 SOURCE=..\src\fl_plastic.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_PNM_Image.cxx
 # End Source File
 # Begin Source File
 

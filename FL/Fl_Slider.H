@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Slider.H,v 1.5.2.3.2.2 2002/08/14 16:19:48 easysw Exp $"
 //
 // Slider header file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,30 +38,30 @@
 #define FL_VERT_NICE_SLIDER	4
 #define FL_HOR_NICE_SLIDER	5
 
-class Fl_Slider : public Fl_Valuator {
+class FL_EXPORT Fl_Slider : public Fl_Valuator {
 
   float slider_size_;
   uchar slider_;
-  FL_EXPORT void _Fl_Slider();
-  FL_EXPORT void draw_bg(int, int, int, int);
+  void _Fl_Slider();
+  void draw_bg(int, int, int, int);
 
 protected:
 
   // these allow subclasses to put the slider in a smaller area:
-  FL_EXPORT void draw(int, int, int, int);
-  FL_EXPORT int handle(int, int, int, int, int);
+  void draw(int, int, int, int);
+  int handle(int, int, int, int, int);
 
 public:
 
-  FL_EXPORT void draw();
-  FL_EXPORT int handle(int);
-  FL_EXPORT Fl_Slider(int x,int y,int w,int h, const char *l = 0);
-  FL_EXPORT Fl_Slider(uchar t,int x,int y,int w,int h, const char *l);
+  void draw();
+  int handle(int);
+  Fl_Slider(int x,int y,int w,int h, const char *l = 0);
+  Fl_Slider(uchar t,int x,int y,int w,int h, const char *l);
 
-  FL_EXPORT int scrollvalue(int windowtop,int windowsize,int first,int totalsize);
-  FL_EXPORT void bounds(double a, double b);
+  int scrollvalue(int windowtop,int windowsize,int first,int totalsize);
+  void bounds(double a, double b);
   float slider_size() const {return slider_size_;}
-  FL_EXPORT void slider_size(double v);
+  void slider_size(double v);
   Fl_Boxtype slider() const {return (Fl_Boxtype)slider_;}
   void slider(Fl_Boxtype c) {slider_ = c;}
 };
@@ -69,5 +69,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Slider.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Slider.H,v 1.5.2.3.2.2 2002/08/14 16:19:48 easysw Exp $".
 //

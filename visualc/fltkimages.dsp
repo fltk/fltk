@@ -8,12 +8,12 @@ CFG=fltkimages - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "fltkimages.lib.mak".
+!MESSAGE NMAKE /f "fltkimages.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "fltkimages.lib.mak" CFG="fltkimages - Win32 Debug"
+!MESSAGE NMAKE /f "fltkimages.mak" CFG="fltkimages - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -83,11 +83,19 @@ LIB32=link.exe -lib
 # Name "fltkimages - Win32 Debug"
 # Begin Source File
 
-SOURCE=..\src\fl_images_core.cxx
+SOURCE=..\src\Fl_BMP_Image.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\Fl_File_Icon2.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_GIF_Image.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\fl_images_core.cxx
 # End Source File
 # Begin Source File
 
@@ -96,6 +104,10 @@ SOURCE=..\src\Fl_JPEG_Image.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_PNG_Image.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_PNM_Image.cxx
 # End Source File
 # End Target
 # End Project

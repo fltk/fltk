@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.12.2.6.2.4 2002/08/01 02:15:41 easysw Exp $"
+// "$Id: Fl_Window.H,v 1.12.2.6.2.5 2002/08/14 16:19:48 easysw Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // cursor stuff
   Fl_Cursor cursor_default;
   Fl_Color cursor_fg, cursor_bg;
-  FL_EXPORT void size_range_();
+  void size_range_();
   // values for flags():
   enum {
     FL_MODAL = 64,
@@ -55,13 +55,13 @@ class FL_EXPORT Fl_Window : public Fl_Group {
     FL_NON_MODAL = 32,
     FL_OVERRIDE = 256
   };
-  FL_EXPORT void _Fl_Window(); // constructor innards
+  void _Fl_Window(); // constructor innards
 
 protected:
 
-  static FL_EXPORT Fl_Window *current_;
-  virtual FL_EXPORT void draw();
-  virtual FL_EXPORT void flush();
+  static Fl_Window *current_;
+  virtual void draw();
+  virtual void flush();
 
 public:
 
@@ -123,5 +123,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.12.2.6.2.4 2002/08/01 02:15:41 easysw Exp $".
+// End of "$Id: Fl_Window.H,v 1.12.2.6.2.5 2002/08/14 16:19:48 easysw Exp $".
 //
