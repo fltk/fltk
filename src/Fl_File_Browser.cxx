@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.12 2002/04/30 12:11:25 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.13 2002/05/01 20:05:19 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -49,6 +49,9 @@
 #elif defined(WIN32)
 #  include <windows.h>
 #  include <direct.h>
+#  ifdef DIRECTORY
+#    undef DIRECTORY
+#  endif // DIRECTORY
 #endif // __CYGWIN__
 
 #ifdef __EMX__
@@ -623,5 +626,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.12 2002/04/30 12:11:25 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.13 2002/05/01 20:05:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.7 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.8 2002/05/01 20:05:19 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -209,6 +209,8 @@ public:
   }
 } flDropTarget;
 
+IDropTarget *flIDropTarget = &flDropTarget;
+
 /**
  * this class is needed to allow FLTK apps to be a DnD source
  */
@@ -349,5 +351,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.7 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.8 2002/05/01 20:05:19 easysw Exp $".
 //
