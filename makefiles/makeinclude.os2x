@@ -1,10 +1,10 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4.2.4 2001/12/21 18:16:50 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.5 2002/03/26 00:05:18 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # Generated automatically from makeinclude.in by configure.
 #
-# Copyright 1998-2001 by Bill Spitzak and others.
+# Copyright 1998-2002 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -31,38 +31,54 @@ datadir		=${prefix}/share
 includedir	=${prefix}/include
 libdir		=${exec_prefix}/lib
 mandir		=${prefix}/man
-srcdir		=.
+srcdir		=./.
+VPATH		=./.
 
 # programs we use...
-HTMLDOC		=htmldoc
+HTMLDOC		=htmldoc.exe
 NROFF		=nroff
-RM		=rm
+RM		=rm -f
 
 # compiler names:
 CXX		=gcc.exe
 CC		=gcc.exe
 MAKEDEPEND	=$(CXX) -M
-POSTBUILD	=echo
 
 # flags for C++ compiler:
-CFLAGS		=-Wall -O4 -mpentium -Zmt -fno-exceptions
-CXXFLAGS	=-Wall -O4 -mpentium -Zmt -fno-exceptions
-LDFLAGS		=-s -Zexe -Zmt -Zcrtdll -Zbsd-signals -Zbin-files -fno-exceptions
+OPTIM		= -O2 -Wall  -fno-exceptions
+CFLAGS		=$(OPTIM) -O4 -mpentium -Zmt
+CXXFLAGS	=$(OPTIM) -O4 -mpentium -Zmt
 
 # program to make the archive:
-LIBNAME		=../lib/fltk.a
-GLLIBNAME	=../lib/fltk_gl.a
-LIBCOMMAND	=ar cr
+LIBNAME		=../lib/libfltk.a
+FLLIBNAME	=../lib/libfltk_forms.a
+GLLIBNAME	=
+LIBCOMMAND	=ar.exe cr
 RANLIB		=ar.exe s
 DSONAME		=
+FLDSONAME	=
+GLDSONAME	=
 DSOCOMMAND	=echo
 
 # libraries to link with:
-LDLIBS		=-lX11 -lXext -lsocket
-GLDLIBS		=-lX11 -lXext -lsocket
-LINKFLTK	=-L../lib -lfltk
-LINKFLTKGL	=-L../lib -lfltk_gl
-IMAGELIBS	=
+LDLIBS		= -s -Zmt -Zcrtdll -Zbsd-signals -lXext -lX11 -lsocket $(LDFLAGS_MIPSPRO)
+GLDLIBS		= -s -Zmt -Zcrtdll -Zbsd-signals -lXext -lX11 -lsocket  -lshm $(LDFLAGS_MIPSPRO)
+LINKFLTK	=  ../lib/libfltk.a
+LINKFLTKGL	= -L../lib 
+LINKFLTKFORMS	= ../lib/libfltk_forms.a ../lib/libfltk.a
+IMAGELIBS	=-lpng  -ljpeg -lz
+
+# Do we build the OpenGL demos?
+GLDEMOS		=
+
+# Do we build the threads demo?
+THREADS		=
+
+# The extension to use for executables...
+EXEEXT		=.exe
+
+# Possible steps after linking...
+POSTBUILD	=:
 
 # Man page extensions...
 CAT1EXT		=1
@@ -72,18 +88,19 @@ CAT3EXT		=3
 .SILENT:
 
 # Build commands and filename extensions...
-.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z
+.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z $(EXEEXT)
 
-.cxx:
-	echo Compiling and linking $@...
+.o$(EXEEXT):
+	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
-	echo Compiling $@...
+	echo Compiling $<...
 	$(CC) -I.. $(CFLAGS) -c $<
 
 .cxx.o:
-	echo Compiling $@...
+	echo Compiling $<...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
 .man.0 .man.1 .man.3:
@@ -99,5 +116,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.4 2001/12/21 18:16:50 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.5 2002/03/26 00:05:18 easysw Exp $".
 #

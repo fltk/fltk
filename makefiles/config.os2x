@@ -1,9 +1,11 @@
+/* config.h.  Generated automatically by configure.  */
 /*
- * "$Id: config.os2x,v 1.1.2.4.2.2 2001/10/19 14:04:08 easysw Exp $"
+ * "$Id: config.os2x,v 1.1.2.4.2.3 2002/03/26 00:05:18 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
+ * @configure_input@
  *
- * Copyright 1998-2001 by Bill Spitzak and others.
+ * Copyright 1998-2002 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,14 +22,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "FLTK-bugs@fltk.org".
+ * Please report all bugs and problems to "fltk-bugs@fltk.org".
  */
 
 /*
  * Where to find the documentation files...
  */
 
-#define FLTK_DOCDIR	"C:/FLTK/DOC"
+#define FLTK_DOCDIR	"/usr/local/share/doc/fltk"
 
 
 /*
@@ -56,6 +58,15 @@
 #define HAVE_GL 0
 
 /*
+ * HAVE_GL_GLU_H:
+ *
+ * Do you have the OpenGL Utility Library header file?
+ * (many broken Mesa RPMs do not...)
+ */
+
+#define HAVE_GL_GLU_H 1
+
+/*
  * USE_COLORMAP:
  *
  * Setting this to zero will save a good deal of code (especially for
@@ -63,6 +74,14 @@
  */
 
 #define USE_COLORMAP 1
+
+/*
+ * USE_XFT
+ *
+ * Use the new Xft library to draw anti-aliased text.
+ */
+
+#define USE_XFT 0
 
 /*
  * HAVE_XDBE:
@@ -75,8 +94,7 @@
 /*
  * USE_XDBE:
  *
- * Actually try to use the double-buffer extension?  Set this to zero
- * disable use of XDBE without breaking the list_visuals program.
+ * Actually try to use the double-buffer extension?
  */
 
 #define USE_XDBE HAVE_XDBE
@@ -118,7 +136,7 @@
 
 #define U16 unsigned short
 #define U32 unsigned
-#undef U64
+/* #undef U64 */
 
 /*
  * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H, HAVE_SCANDIR:
@@ -127,10 +145,10 @@
  */
 
 #define HAVE_DIRENT_H 1
-#define HAVE_SYS_NDIR_H 0
-#define HAVE_SYS_DIR_H 0
-#define HAVE_NDIR_H 0
-#define HAVE_SCANDIR 0
+/* #undef HAVE_SYS_NDIR_H */
+/* #undef HAVE_SYS_DIR_H */
+/* #undef HAVE_NDIR_H */
+/* #undef HAVE_SCANDIR */
 
 /*
  * Possibly missing sprintf-style functions:
@@ -141,10 +159,11 @@
 #define HAVE_VSPRINTF 1
 
 /*
- * String functions...
+ * String functions and headers...
  */
 
-#define HAVE_STRCASECMP 1
+#define HAVE_STRINGS_H 1
+/* #undef HAVE_STRCASECMP */
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -155,30 +174,46 @@
 #define HAVE_SYS_SELECT_H 1
 
 /*
- * HAVE_POLL:
+ * HAVE_SYS_STDTYPES_H:
  *
- * Use poll() if we don't have select().
+ * Whether or not we have the <sys/stdtypes.h> header file.
  */
 
-#define HAVE_POLL 0
+/* #undef HAVE_SYS_STDTYPES_H */
+
+/*
+ * USE_POLL:
+ *
+ * Use the poll() call provided on Linux and Irix instead of select()
+ */
+
+#define USE_POLL 0
 
 /*
  * Do we have various image libraries?
  */
 
-#undef HAVE_LIBPNG
-#undef HAVE_LIBZ
-#undef HAVE_LIBJPEG
+#define HAVE_LIBPNG 1
+#define HAVE_LIBZ 1
+#define HAVE_LIBJPEG 1
 
 /*
  * Do we have the png_xyz() functions?
  */
 
-#undef HAVE_PNG_GET_VALID
-#undef HAVE_PNG_SET_TRNS_TO_ALPHA
-#undef HAVE_PNG_READ_DESTROY
+#define HAVE_PNG_GET_VALID 1
+/* #undef HAVE_PNG_SET_TRNS_TO_ALPHA */
+#define HAVE_PNG_READ_DESTROY 1
 
 
 /*
- * End of "$Id: config.os2x,v 1.1.2.4.2.2 2001/10/19 14:04:08 easysw Exp $".
+ * Do we have POSIX threading?
+ */
+
+/* #undef HAVE_PTHREAD */
+/* #undef HAVE_PTHREAD_H */
+
+
+/*
+ * End of "$Id: config.os2x,v 1.1.2.4.2.3 2002/03/26 00:05:18 easysw Exp $".
  */
