@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list,v 1.1.2.5 2001/01/22 15:13:37 easysw Exp $"
+# "$Id: fltk.list,v 1.1.2.6 2001/05/07 14:51:10 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -30,7 +30,7 @@
 %vendor LGPL
 %license COPYING
 %readme README
-%version 1.0.10
+%version 1.0.11
 %description FLTK is a cross-platform GUI toolkit for C++.
 
 # FLUID
@@ -38,9 +38,11 @@ f 0555 root sys /usr/bin/fluid fluid/fluid
 
 # Man pages
 %system irix
-f 0444 root sys /usr/catman/u_man/cat1/fluid.1 documentation/fluid.1
+f 0444 root sys /usr/catman/u_man/cat1/fluid.z documentation/fluid.z
+f 0444 root sys /usr/catman/p_man/cat3/fltk.z documentation/fltk.z
 %system !irix
 f 0444 root sys /usr/man/man1/fluid.1 documentation/fluid.man
+f 0444 root sys /usr/man/man3/fltk.3 documentation/fltk.man
 %system all
 
 # Library files
@@ -381,5 +383,5 @@ f 0444 root sys /usr/share/doc/fltk/value_slider.gif documentation/value_slider.
 f 0444 root sys /usr/share/doc/fltk/widgets.html documentation/widgets.html
 
 #
-# End of "$Id: fltk.list,v 1.1.2.5 2001/01/22 15:13:37 easysw Exp $".
+# End of "$Id: fltk.list,v 1.1.2.6 2001/05/07 14:51:10 easysw Exp $".
 #
