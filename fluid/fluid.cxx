@@ -445,6 +445,7 @@ void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
 
 void align_widget_cb(Fl_Widget *, long);
+void widget_size_cb(Fl_Widget *, long);
 
 void about_cb(Fl_Widget *, void *) {
   if (!about_panel) make_about_panel();
@@ -525,8 +526,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Insert...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
   {"&Save", FL_CTRL+'s', save_cb, 0},
   {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1, FL_MENU_DIVIDER},
-  {"Write &code...", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
-  {"&Write strings...", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
+  {"Write &Code...", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
+  {"&Write Strings...", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
   {"&Quit", FL_CTRL+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
@@ -570,9 +571,14 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Height",0,(Fl_Callback *)align_widget_cb,(void*)31},
     {"&Both",0,(Fl_Callback *)align_widget_cb,(void*)32},
     {0},
-  {"&Center In Group",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
+  {"&Center In Group",0,0,0,FL_SUBMENU},
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
+    {0},
+  {"&Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
+    {"&Tiny",0,(Fl_Callback *)widget_size_cb,(void*)8,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,8},
+    {"&Small",0,(Fl_Callback *)widget_size_cb,(void*)11,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,11},
+    {"&Normal",0,(Fl_Callback *)widget_size_cb,(void*)14,FL_MENU_RADIO|FL_MENU_VALUE},
     {0},
   {"&Grid...",FL_CTRL+'g',show_grid_cb},
   {0},

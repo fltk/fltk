@@ -409,6 +409,8 @@ void Fl_Window_Type::newdx() {
   if (Fl::event_state(FL_ALT) || !snap) {
     mydx = mx-x1;
     mydy = my-y1;
+
+    if (abs(mydx) < 2 && abs(mydy) < 2) mydx = mydy = 0;
   } else {
     int dx0 = mx-x1;
     int ix = (drag&RIGHT) ? br : bx;
@@ -614,6 +616,14 @@ void Fl_Window_Type::draw_overlay() {
       int x,y,r,t;
       newposition(myo,x,y,r,t);
       if (!show_guides || !drag || numselected != 1) fl_rect(x,y,r-x,t-y);
+      if (!(myo->o->align() & FL_ALIGN_INSIDE)) {
+        // Adjust top/bottom for top/bottom labels...
+	int ww, hh;
+	hh = myo->o->labelsize();
+	myo->o->measure_label(ww, hh);
+	if (myo->o->align() & FL_ALIGN_TOP) y -= hh;
+	if (myo->o->align() & FL_ALIGN_BOTTOM) t += hh;
+      }
       if (x < mybx) mybx = x;
       if (y < myby) myby = y;
       if (r > mybr) mybr = r;
@@ -969,7 +979,7 @@ int Fl_Window_Type::handle(int event) {
   case FL_PUSH:
     x1 = mx = Fl::event_x();
     y1 = my = Fl::event_y();
-    drag = 0;
+    drag = dx = dy = 0;
     // test for popup menu:
     if (Fl::event_button() >= 3) {
       in_this_only = this; // modifies how some menu items work.

@@ -2,6 +2,35 @@
 version 1.0107 
 header_name {.h} 
 code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// Code dialogs for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
 decl {\#include <FL/Fl_Pixmap.H>} {} 
 
 decl {\#include "Fl_Type.h"} {} 
@@ -15,32 +44,32 @@ decl {extern void select_only(Fl_Type*);} {}
 Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
-    label {function/method} open
-    xywh {1046 445 285 170} type Single hide resizable modal
+    label {Function/Method} open
+    xywh {855 21 285 140} type Single resizable modal visible
   } {
     Fl_Light_Button f_public_button {
       label public
-      tooltip {Make the function or method publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
+      tooltip {Make the function or method publicly accessible.} xywh {10 10 58 20} labelsize 11 when 0
     }
     Fl_Light_Button f_c_button {
       label {C declaration}
-      tooltip {Declare with a C interface instead of C++.} xywh {80 10 90 25} labelsize 10
+      tooltip {Declare with a C interface instead of C++.} xywh {73 10 94 20} labelsize 11
     }
     Fl_Input f_name_input {
       label {Name(args): (blank for main())}
-      tooltip {The name of the function or method.} xywh {10 55 265 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {The name of the function or method.} xywh {10 49 265 19} labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Input f_return_type_input {
       label {Return Type: (blank to return outermost widget)}
-      tooltip {The return type of the function or method.} xywh {10 100 265 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {The return type of the function or method.} xywh {10 87 265 19} labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Return_Button f_panel_ok {
       label OK
-      tooltip {Apply the changes.} xywh {110 135 80 25} hotspot
+      tooltip {Apply the changes.} xywh {175 113 47 20} labelsize 11 hotspot
     }
     Fl_Button f_panel_cancel {
       label Cancel
-      tooltip {Cancel the changes.} xywh {195 135 80 25} shortcut 0xff1b
+      tooltip {Cancel the changes.} xywh {227 113 48 20} shortcut 0xff1b labelsize 11
     }
   }
 } 
@@ -48,26 +77,29 @@ Function {make_function_panel()} {open
 Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
-    label code open
-    xywh {327 261 545 175} type Single hide resizable modal
+    label Code open
+    xywh {327 261 545 175} type Single labelsize 11 resizable modal visible
   } {
+    Fl_Text_Editor code_input {selected
+      xywh {12 12 523 123} box DOWN_BOX labelsize 11 textsize 11 resizable
+      code0 {o->buffer(new Fl_Text_Buffer);}
+      code1 {o->textfont(FL_COURIER);}
+      code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+    }
     Fl_Group {} {open
-      xywh {10 10 525 120} box DOWN_FRAME resizable
+      xywh {12 145 523 20} labelsize 11
     } {
-      Fl_Text_Editor code_input {
-        xywh {12 12 521 116} box NO_BOX resizable
-        code0 {o->buffer(new Fl_Text_Buffer);}
-        code1 {o->textfont(FL_COURIER);}
-        code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+      Fl_Return_Button code_panel_ok {
+        label OK
+        xywh {419 145 55 20} labelsize 11 hotspot
       }
-    }
-    Fl_Return_Button code_panel_ok {
-      label OK
-      xywh {370 140 80 25} hotspot
-    }
-    Fl_Button code_panel_cancel {
-      label Cancel
-      xywh {455 140 80 25} shortcut 0xff1b
+      Fl_Button code_panel_cancel {
+        label Cancel
+        xywh {479 145 56 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {12 145 402 20} labelsize 11 resizable
+      }
     }
   }
 } 
@@ -227,7 +259,7 @@ Function {make_comment_panel()} {open
         tooltip {Put the comment into the header (.h) file.} xywh {10 40 80 25} labelsize 10 when 0
       }
       Fl_Menu_Button comment_predefined {
-        label predefined open selected
+        label predefined open
         xywh {10 75 80 25} labelsize 10
       } {}
       Fl_Button comment_load {
@@ -563,4 +595,10 @@ Function {make_widgetbin()} {open
       }
     }
   }
+} 
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
 } 

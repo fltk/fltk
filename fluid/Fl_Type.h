@@ -282,6 +282,7 @@ protected:
   void write_color(const char*, Fl_Color);
 
 public:
+  static int default_size;
 
   const char *xclass; // junk string, used for shortcut
   Fl_Widget *o;
@@ -488,7 +489,7 @@ extern Fl_Menu_Item menu_item_type_menu[];
 class Fl_Menu_Item_Type : public Fl_Widget_Type {
 public:
   Fl_Menu_Item* subtypes() {return menu_item_type_menu;}
-  const char* type_name() {return "menuitem";}
+  const char* type_name() {return "Menu_Item";}
   Fl_Type* make();
   int is_menu_item() const {return 1;}
   int is_button() const {return 1;} // this gets shortcut to work
@@ -506,7 +507,7 @@ public:
 class Fl_Submenu_Type : public Fl_Menu_Item_Type {
 public:
   Fl_Menu_Item* subtypes() {return 0;}
-  const char* type_name() {return "submenu";}
+  const char* type_name() {return "Submenu";}
   int is_parent() const {return 1;}
   int is_button() const {return 0;} // disable shortcut
   Fl_Type* make();
@@ -556,7 +557,8 @@ class Fl_Menu_Button_Type : public Fl_Menu_Type {
 public:
   virtual void ideal_size(int &w, int &h) {
     Fl_Widget_Type::ideal_size(w, h);
-    w += 20;
+    w += 2 * ((o->labelsize() - 3) & ~1) + o->labelsize() - 4;
+    h = (h / 5) * 5;
   }
   virtual const char *type_name() {return "Fl_Menu_Button";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
@@ -572,7 +574,12 @@ class Fl_Choice_Type : public Fl_Menu_Type {
 public:
   virtual void ideal_size(int &w, int &h) {
     Fl_Widget_Type::ideal_size(w, h);
-    w += 20;
+    int w1 = o->h() - Fl::box_dh(o->box());
+    if (w1 > 20) w1 = 20;
+    w1 = (w1 - 4) / 3;
+    if (w1 < 1) w1 = 1;
+    w += 2 * w1 + o->labelsize() - 4;
+    h = (h / 5) * 5;
   }
   virtual const char *type_name() {return "Fl_Choice";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
@@ -618,12 +625,17 @@ public:
   int pixmapID() { return 15; }
 };
 
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Menu_Bar.H>
 class Fl_Menu_Bar_Type : public Fl_Menu_Type {
 public:
+  virtual void ideal_size(int &w, int &h) {
+    w = o->window()->w();
+    h = ((o->labelsize() + Fl::box_dh(o->box()) + 4) / 5) * 5;
+    if (h < 15) h = 15;
+  }
   virtual const char *type_name() {return "Fl_Menu_Bar";}
-  Fl_Widget *widget(int X,int Y,int W,int H) {
-    return new Fl_Menu_Bar(X,Y,W,H);}
+  Fl_Widget *widget(int X,int Y,int W,int H) {return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() {return new Fl_Menu_Bar_Type();}
   int pixmapID() { return 17; }
 };

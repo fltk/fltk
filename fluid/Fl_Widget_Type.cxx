@@ -52,6 +52,8 @@ extern const char* i18n_function;
 extern const char* i18n_file;
 extern const char* i18n_set;
 
+int Fl_Widget_Type::default_size = FL_NORMAL_SIZE;
+
 int Fl_Widget_Type::is_widget() const {return 1;}
 int Fl_Widget_Type::is_public() const {return public_;}
 
@@ -71,8 +73,11 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
   h = o->labelsize();
   o->measure_label(w, h);
 
-  h += o->labelsize() - 6; 
-  w += 2 * (o->labelsize() - 4);
+  w += Fl::box_dw(o->box());
+  h += Fl::box_dh(o->box());
+
+  if (w < 15) w = 15;
+  if (h < 15) h = 15;
 }
 
 // Return the ideal widget spacing...
@@ -805,7 +810,7 @@ void labelsize_cb(Fl_Value_Input* i, void *v) {
     n = current_widget->o->labelsize();
   } else {
     n = int(i->value());
-    if (n <= 0) n = FL_NORMAL_SIZE;
+    if (n <= 0) n = Fl_Widget_Type::default_size;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget()) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
@@ -1091,7 +1096,7 @@ void textsize_cb(Fl_Value_Input* i, void* v) {
     i->activate();
   } else {
     s = int(i->value());
-    if (s <= 0) s = FL_NORMAL_SIZE;
+    if (s <= 0) s = Fl_Widget_Type::default_size;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget()) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;

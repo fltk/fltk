@@ -2,6 +2,11 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- In FLUID, new widgets are now created with the ideal
+	  size by default, and menu bars are positioned to use
+	  the entire width of the window.
+	- Added Layout/Widget Size submenu to select default
+	  label and text size (Tiny, Small, and Normal).
 	- Added Edit/Duplicate command to FLUID to duplicate the
 	  current selection.
 	- FLUID now tracks the current state of the widget bin

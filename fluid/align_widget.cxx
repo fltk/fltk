@@ -29,7 +29,8 @@
 
 /**
  * the first behaviour always uses the first selected widget as a reference
- * the second behaviour uses the larges widget (most extreme positions) as a reference
+ * the second behaviour uses the largest widget (most extreme positions) as
+ * a reference.
  */
 #define BREAK_ON_FIRST break
 //#define BREAK_ON_FIRST
@@ -434,6 +435,28 @@ void align_widget_cb(Fl_Widget*, long how)
       }
     break;
   }
+}
+
+
+// Set default widget sizes...
+void widget_size_cb(Fl_Widget *, long size) {
+  // Update the "normal" text size of new widgets...
+  Fl_Widget_Type::default_size = size;
+
+  // Update any selected widgets...
+  for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+    if (o->selected && o->is_widget()) {
+      Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
+      w->labelsize(size);
+      Fl_Font f;
+      int s = (int)size;
+      Fl_Color c;
+      ((Fl_Widget_Type *)o)->textstuff(2, f, s, c);
+
+      w->redraw();
+
+      modflag = 1;
+    }
 }
 
 
