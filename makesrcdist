@@ -38,7 +38,7 @@ echo "Removing CVS directories..."
 
 rm -rf CVS */CVS */*/CVS
 rm -rf .cvsignore */.cvsignore */*/.cvsignore
-rm -rf OpenGL autom4te bc5 config forms gl glut images packages themes
+rm -rf OpenGL autom4te* bc5 config forms gl glut images packages themes
 rm makesrcdist
 
 cd ..

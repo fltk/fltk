@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.7 2002/06/24 02:04:54 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.8 2002/07/26 14:22:02 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -111,7 +111,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     compression = BI_RGB;
     colors_used = 0;
 
-    count = info_size - 8;
+    count = info_size - 12;
   } else {
     // New BMP header...
     w(read_long(fp));
@@ -393,5 +393,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.7 2002/06/24 02:04:54 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.8 2002/07/26 14:22:02 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.11 2002/05/01 19:35:53 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.12 2002/07/26 14:22:01 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -25,47 +25,54 @@
 
 include makeinclude
 
-SHELL	=	/bin/sh
 DIRS	=	src fluid test documentation
 
 all: makeinclude
-	@for dir in $(DIRS); do\
+	for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || break;\
 	done
 
 install: makeinclude
 	-mkdir -p $(bindir)
-	rm -f $(bindir)/fltk-config
+	$(RM) $(bindir)/fltk-config
 	-cp fltk-config $(bindir)
 	-chmod 755 $(bindir)/fltk-config
-	@for dir in FL $(DIRS); do\
+	for dir in FL $(DIRS); do\
 		echo "=== installing $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
 	done
 
 uninstall: makeinclude
-	rm -f $(bindir)/fltk-config
-	@for dir in FL $(DIRS); do\
+	$(RM) $(bindir)/fltk-config
+	for dir in FL $(DIRS); do\
 		echo "=== uninstalling $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || break;\
 	done
 
 depend: makeinclude
-	@for dir in $(DIRS); do\
+	for dir in $(DIRS); do\
 		echo "=== making dependencies in $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) depend) || break;\
 	done
 
 clean:
-	-@ rm -f core *.o
-	@for dir in $(DIRS); do\
+	-$(RM) core *.o
+	for dir in $(DIRS); do\
 		echo "=== cleaning $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) clean) || break;\
 	done
 
 distclean: clean
-	rm -f config.* makeinclude
+	-$(RM) config.*
+	$(RM) fltk-config fltk.list makeinclude
+	$(RM) FL/Makefile
+	$(RM) doc/*.$(CAT1EXT) doc/*.$(CAT3EXT)
+	$(RM) -r doc/fltk.pdf doc/fltk.ps doc/fltk.d
+	for file in test/*.fl; do\
+		$(RM) `basename $file .fl`.cxx; \
+		$(RM) `basename $file .fl`.h; \
+	done
 
 makeinclude: configure configh.in makeinclude.in
 	if test -f config.status; then \
@@ -87,5 +94,5 @@ native-dist:
 
 
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.11 2002/05/01 19:35:53 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.12 2002/07/26 14:22:01 easysw Exp $".
 #

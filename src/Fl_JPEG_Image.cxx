@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.5 2002/05/25 02:56:59 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.6 2002/07/26 14:22:02 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
@@ -25,6 +25,7 @@
 //
 // Contents:
 //
+//   Fl_JPEG_Image::Fl_JPEG_Image() - Load a JPEG image file.
 //
 
 //
@@ -35,6 +36,16 @@
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+
+// Some releases of the Cygwin JPEG libraries don't have a correctly
+// updated header file for the INT32 data type; the following define
+// from Shane Hill seems to be a usable workaround...
+
+#if defined(WIN32) && defined(__CYGWIN__)
+#  define XMD_H
+#endif // WIN32 && __CYGWIN__
+
 
 extern "C"
 {
@@ -96,5 +107,5 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.5 2002/05/25 02:56:59 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.6 2002/07/26 14:22:02 easysw Exp $".
 //

@@ -1,6 +1,10 @@
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
+	- Fl_JPEG_Image didn't compile out-of-the-box with Cygwin
+	  due to a bug in the Cygwin JPEG library headers.
+	- Fl_BMP_Image still didn't work with some old BMP files.
+	- "make distclean" didn't really clean out everything.
 	- Tweeked the look of the check button with a patch from
 	  Albrecht Schlosser.
 
