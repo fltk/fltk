@@ -1,8 +1,11 @@
 CHANGES IN FLTK 1.1.3
 
 	- Documentation updates.
-	- The size_range() values were not honored under MacOS X.
-          [SF Bug #647074]
+	- Lines with less than 2 unique vertices and polygons
+	  with less the 3 unique vertices were not drawn
+	  properly. [SF Bug #647067]
+	- The size_range() values were not honored under MacOS
+	  X. [SF Bug #647074]
 	- OpenGL windows didn't resize correctly on MacOS X.
           [SF Bug #667855]
 	- The menus incorrectly used the overlay visual when one
