@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.57 2004/08/25 00:20:26 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.58 2004/08/26 00:18:42 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -83,6 +83,7 @@ static int FSSpec2UnixPath( FSSpec *fs, char *dst );
 
 // public variables
 int fl_screen;
+CGContextRef fl_gc = 0;
 Handle fl_system_menu;
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 CursHandle fl_default_cursor;
@@ -1256,7 +1257,6 @@ void Fl_X::flush()
 {
   w->flush();
   SetOrigin( 0, 0 );
-  //QDFlushPortBuffer( GetWindowPort(xid), 0 ); // \todo do we need this?
 }
 
 
@@ -1517,6 +1517,7 @@ void Fl_X::make(Fl_Window* w)
     x->region = 0;
     x->subRegion = 0;
     x->cursor = fl_default_cursor;
+    x->gc = 0; // stay 0 for Quickdraw; fill with CGContext for Quartz
     Fl_Window *win = w->window();
     Fl_X *xo = Fl_X::i(win);
     w->set_visible();
@@ -1615,6 +1616,7 @@ void Fl_X::make(Fl_Window* w)
     x->cursor = fl_default_cursor;
     x->xidChildren = 0;
     x->xidNext = 0;
+    x->gc = 0;
 
     winattr &= GetAvailableWindowAttributes( winclass );	// make sure that the window will open
     CreateNewWindow( winclass, winattr, &wRect, &(x->xid) );
@@ -1852,6 +1854,25 @@ void Fl_Window::make_current()
   
   fl_clip_region( 0 );
   SetPortClipRegion( GetWindowPort(i->xid), fl_window_region );
+#ifdef __APPLE_QUARTZ__
+#warning : bracket all the QD stuff above with ifdefs!
+#warning : verbose copy of patch; please check code
+  Rect portRect;
+  GetPortBounds(GetWindowPort(i->xid), &portRect);
+  short port_height = portRect.bottom - portRect.top;
+  if (!i->gc) {
+    //CreateCGContextForPort(GetWindowPort(i->xid), &i->gc);
+    QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
+    // set clipping region
+    //ClipCGContextToRegion (i->gc, &portRect, fl_window_region );  
+    // translate coordinate system to coorespond with fltk's.
+    CGContextTranslateCTM(i->gc, -0.5f, port_height+0.5f);
+    CGContextScaleCTM(i->gc, 1.0f, -1.0f);
+    static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+    CGContextSetTextMatrix(i->gc, font_mx);
+  }
+  fl_gc = i->gc;
+#endif
   return;
 }
 
@@ -1927,6 +1948,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.57 2004/08/25 00:20:26 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.58 2004/08/26 00:18:42 matthiaswm Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.16 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.17 2004/08/26 00:18:43 matthiaswm Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,7 @@
 //: SetFractEnable
 
 Fl_FontSize::Fl_FontSize(const char* name, int Size) {
+#ifdef __APPLE_QD__
   knowMetrics = 0;
   switch (*name++) {
   case 'I': face = italic; break;
@@ -56,6 +57,14 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   listbase = 0;
 #endif
   minsize = maxsize = size;
+#elif defined(__APPLE_QUARTZ__)
+  q_name = strdup(name+1);
+  size = Size;
+  ascent = Size*3/4;
+  descent = Size-ascent;
+  q_width = Size*2/3;
+  minsize = maxsize = Size;
+#endif
 }
 
 Fl_FontSize* fl_fontsize = 0L;
@@ -76,6 +85,9 @@ Fl_FontSize::~Fl_FontSize() {
 #endif
   */
   if (this == fl_fontsize) fl_fontsize = 0;
+#ifdef __APPLE_QUARTZ__
+  free(q_name);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////
@@ -103,6 +115,7 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 void fl_font(Fl_FontSize* s) {
   fl_fontsize = s;
+#ifdef __APPLE_QD__
   if (fl_window) SetPort( GetWindowPort(fl_window) );
   TextFont(fl_fontsize->font);	//: select font into current QuickDraw GC
   TextFace(fl_fontsize->face);
@@ -116,6 +129,11 @@ void fl_font(Fl_FontSize* s) {
     for (int i=0; i<256; i++) fl_fontsize->width[i] = f[2*i];
     fl_fontsize->knowMetrics = 1;
   }
+#elif defined(__APPLE_QUARTZ__)
+  CGContextSelectFont(fl_gc, s->q_name, (float)s->size, kCGEncodingMacRoman);
+#else
+# error : need to defined either Quartz or Quickdraw
+#endif
 }
 
 static Fl_FontSize* find(int fnum, int size) {
@@ -193,13 +211,18 @@ void fl_draw(const char* str, int n, int x, int y) {
 
   for (i = n, bufptr = buf; i > 0; i --)
     *bufptr++ = macroman_lut[*str++ & 255];
-
+#ifdef __APPLE_QD__
   // Then draw it...
   MoveTo(x, y);
   DrawText((const char *)buf, 0, n);
+#elif defined(__APPLE_QUARTZ__)
+  CGContextShowTextAtPoint(fl_gc, (float)x, (float)y, (const char*)buf, n);
+#else
+# error : neither Quartz no Quickdraw chosen
+#endif
 }
 
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.16 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.17 2004/08/26 00:18:43 matthiaswm Exp $".
 //

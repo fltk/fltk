@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_mac.cxx,v 1.1.2.7 2004/08/25 00:20:26 matthiaswm Exp $"
+// "$Id: fl_color_mac.cxx,v 1.1.2.8 2004/08/26 00:18:43 matthiaswm Exp $"
 //
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -28,16 +28,13 @@
 // changes can be made.  Not to be confused with the X colormap, which
 // I try to hide completely.
 
-// MacOS - matt: the macintosh port does not support colormaps
+// matt: Neither Quartz nor Quickdraw support colormaps in this implementation
+// matt: Quartz support done
 
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
-
-#ifdef __APPLE_QUARTZ__
-#warning quartz
-#endif
 
 static unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":
@@ -67,20 +64,40 @@ void fl_color(Fl_Color i) {
     g = c>>16;
     b = c>> 8;
   }
+#ifdef __APPLE_QD__
   RGBColor rgb; 
   rgb.red   = (r<<8)|r;
   rgb.green = (g<<8)|g;
   rgb.blue  = (b<<8)|b;
   RGBForeColor(&rgb);
+#elif defined(__APPLE_QUARTZ__)
+  float fr = r/255.0f;
+  float fg = g/255.0f;
+  float fb = b/255.0f;
+  CGContextSetRGBFillColor(fl_gc, fr, fg, fb, 1.0f);
+  CGContextSetRGBStrokeColor(fl_gc, fr, fg, fb, 1.0f);
+#else
+#  error : neither Quickdraw nor Quartz defined
+#endif
 }
 
 void fl_color(uchar r, uchar g, uchar b) {
-  RGBColor rgb; 
   fl_color_ = fl_rgb_color(r, g, b);
+#ifdef __APPLE_QD__
+  RGBColor rgb; 
   rgb.red   = (r<<8)|r;
   rgb.green = (g<<8)|g;
   rgb.blue  = (b<<8)|b;
   RGBForeColor(&rgb);
+#elif defined(__APPLE_QUARTZ__)
+  float fr = r/255.0f;
+  float fg = g/255.0f;
+  float fb = b/255.0f;
+  CGContextSetRGBFillColor(fl_gc, fr, fg, fb, 1.0f);
+  CGContextSetRGBStrokeColor(fl_gc, fr, fg, fb, 1.0f);
+#else
+#  error : neither Quickdraw nor Quartz defined
+#endif
 }
 
 void Fl::set_color(Fl_Color i, unsigned c) {
@@ -90,5 +107,5 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 }
 
 //
-// End of "$Id: fl_color_mac.cxx,v 1.1.2.7 2004/08/25 00:20:26 matthiaswm Exp $".
+// End of "$Id: fl_color_mac.cxx,v 1.1.2.8 2004/08/26 00:18:43 matthiaswm Exp $".
 //

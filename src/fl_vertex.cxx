@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.9 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.10 2004/08/26 00:18:43 matthiaswm Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -25,6 +25,9 @@
 
 // Portable drawing code for drawing arbitrary shapes with
 // simple 2D transformations.  See also fl_arc.cxx
+
+// matt: the Quartz implementation purposly doesn't use the Quartz matrix
+//       operations for reasons of compatibility and maintainability
 
 #include <config.h>
 #include <FL/fl_draw.H>
@@ -72,13 +75,20 @@ void fl_rotate(double d) {
   }
 }
 
-static XPoint *p = (XPoint *)0;
 // typedef what the x,y fields in a point are:
 #ifdef WIN32
 typedef int COORD_T;
+#define XPOINT XPoint
+#elif defined(__APPLE_QUARTZ__)
+typedef float COORD_T;
+typedef struct { float x; float y; } QPoint;
+#define XPOINT QPoint
 #else
 typedef short COORD_T;
+#define XPOINT XPoint;
 #endif
+
+static XPOINT *p = (XPOINT *)0;
 
 static int p_size;
 static int n;
@@ -105,7 +115,7 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
   if (!n || x != p[n-1].x || y != p[n-1].y) {
     if (n >= p_size) {
       p_size = p ? 2*p_size : 16;
-      p = (XPoint *)realloc((void*)p, p_size*sizeof(*p));
+      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
     }
     p[n].x = x;
     p[n].y = y;
@@ -114,7 +124,11 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
 }
 
 void fl_transformed_vertex(double xf, double yf) {
+#ifdef __APPLE_QUARTZ__
+  fl_transformed_vertex(COORD_T(xf), COORD_T(yf));
+#else
   fl_transformed_vertex(COORD_T(rint(xf)), COORD_T(rint(yf)));
+#endif
 }
 
 void fl_vertex(double x,double y) {
@@ -127,8 +141,11 @@ void fl_end_points() {
 #elif defined(__APPLE_QD__)
   for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); } 
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); }
+  for (int i=0; i<n; i++) { 
+    CGContextMoveToPoint(fl_gc, p[i].x, p[i].y);
+    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
+    CGContextStrokePath(fl_gc);
+  }
 #else
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
 #endif
@@ -146,10 +163,11 @@ void fl_end_line() {
   MoveTo(p[0].x, p[0].y);
   for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
 #elif defined(__APPLE_QUARTZ__)
-#warning
   if (n<=1) return;
-  MoveTo(p[0].x, p[0].y);
-  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
+  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
+  for (int i=1; i<n; i++)
+    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
+  CGContextStrokePath(fl_gc);
 #else
   if (n>1) XDrawLines(fl_display, fl_window, fl_gc, p, n, 0);
 #endif
@@ -185,14 +203,12 @@ void fl_end_polygon() {
   PaintPoly(ph);
   KillPoly(ph);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
   if (n<=1) return;
-  PolyHandle ph = OpenPoly();
-  MoveTo(p[0].x, p[0].y);
-  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
-  ClosePoly();
-  PaintPoly(ph);
-  KillPoly(ph);
+  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
+  for (int i=1; i<n; i++) 
+    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
+  CGContextClosePath(fl_gc);
+  CGContextFillPath(fl_gc);
 #else
   if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, Convex, 0);
 #endif
@@ -245,14 +261,12 @@ void fl_end_complex_polygon() {
   PaintPoly(ph);
   KillPoly(ph);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
   if (n<=1) return;
-  PolyHandle ph = OpenPoly();
-  MoveTo(p[0].x, p[0].y);
-  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
-  ClosePoly();
-  PaintPoly(ph);
-  KillPoly(ph);
+  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
+  for (int i=1; i<n; i++)
+    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
+  CGContextClosePath(fl_gc);
+  CGContextFillPath(fl_gc);
 #else
   if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, 0, 0);
 #endif
@@ -281,9 +295,9 @@ void fl_circle(double x, double y,double r) {
   Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
   (what == POLYGON ? PaintOval : FrameOval)(&rt);
 #elif defined(__APPLE_QUARTZ__)
-#warning
-  Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
-  (what == POLYGON ? PaintOval : FrameOval)(&rt);
+# warning quartz : cicle won_t scale to current matrix!
+  CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 1);
+  (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
 #else
   (what == POLYGON ? XFillArc : XDrawArc)
     (fl_display, fl_window, fl_gc, llx, lly, w, h, 0, 360*64);
@@ -291,5 +305,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.9 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.10 2004/08/26 00:18:43 matthiaswm Exp $".
 //

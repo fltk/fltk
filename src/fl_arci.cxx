@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arci.cxx,v 1.4.2.5.2.6 2004/08/25 00:20:26 matthiaswm Exp $"
+// "$Id: fl_arci.cxx,v 1.4.2.5.2.7 2004/08/26 00:18:43 matthiaswm Exp $"
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
@@ -55,10 +55,11 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   a1 = a2-a1; a2 = 450-a2;
   FrameArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
-#  warning quartz
-  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
-  a1 = a2-a1; a2 = 450-a2;
-  FrameArc(&r, (short int)a2, (short int)a1);
+#  warning : no support for ovals yet!
+  float cx = x + 0.5f*w, cy = y + 0.5f*h;
+  float r = (w+h)*0.5f;
+  CGContextAddArc(fl_gc, cx, cy, r, a1/180.0f*M_PI, a2/180.0f*M_PI, 1);
+  CGContextStrokePath(fl_gc);
 #else
   XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 #endif
@@ -79,15 +80,12 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   a1 = a2-a1; a2 = 450-a2;
   PaintArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
-  a1 = a2-a1; a2 = 450-a2;
-  PaintArc(&r, (short int)a2, (short int)a1);
+# warning : not implemented yet
 #else
   XFillArc(fl_display, fl_window, fl_gc, x,y,w,h, int(a1*64),int((a2-a1)*64));
 #endif
 }
 
 //
-// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.6 2004/08/25 00:20:26 matthiaswm Exp $".
+// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.7 2004/08/26 00:18:43 matthiaswm Exp $".
 //

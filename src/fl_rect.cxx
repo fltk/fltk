@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.12 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.13 2004/08/26 00:18:43 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -46,10 +46,8 @@ void fl_rect(int x, int y, int w, int h) {
   SetRect(&rect, x, y, x+w, y+h);
   FrameRect(&rect);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  Rect rect;
-  SetRect(&rect, x, y, x+w, y+h);
-  FrameRect(&rect);
+  CGRect rect = CGRectMake(x, y, w, h);
+  CGContextStrokeRect(fl_gc, rect);
 #else
   XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
 #endif
@@ -67,10 +65,8 @@ void fl_rectf(int x, int y, int w, int h) {
   SetRect(&rect, x, y, x+w, y+h);
   PaintRect(&rect);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  Rect rect;
-  SetRect(&rect, x, y, x+w, y+h);
-  PaintRect(&rect);
+  CGRect rect = CGRectMake(x, y, w, h);
+  CGContextFillRect(fl_gc, rect);
 #else
   if (w && h) XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
 #endif
@@ -82,8 +78,9 @@ void fl_xyline(int x, int y, int x1) {
 #elif defined(__APPLE_QD__)
   MoveTo(x, y); LineTo(x1, y);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y); LineTo(x1, y);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextStrokePath(fl_gc);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
 #endif
@@ -101,10 +98,10 @@ void fl_xyline(int x, int y, int x1, int y2) {
   LineTo(x1, y);
   LineTo(x1, y2);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x1, y);
-  LineTo(x1, y2);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextAddLineToPoint(fl_gc, x1, y2);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -127,11 +124,11 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(x1, y2);
   LineTo(x3, y2);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x1, y);
-  LineTo(x1, y2);
-  LineTo(x3, y2);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextAddLineToPoint(fl_gc, x1, y2);
+  CGContextAddLineToPoint(fl_gc, x3, y2);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[4];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -149,8 +146,9 @@ void fl_yxline(int x, int y, int y1) {
 #elif defined(__APPLE_QD__)
   MoveTo(x, y); LineTo(x, y1);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y); LineTo(x, y1);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y1);
+  CGContextStrokePath(fl_gc);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
 #endif
@@ -168,10 +166,10 @@ void fl_yxline(int x, int y, int y1, int x2) {
   LineTo(x, y1);
   LineTo(x2, y1);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x, y1);
-  LineTo(x2, y1);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y1);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[3];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -194,11 +192,11 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(x2, y1);
   LineTo(x2, y3);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x, y1);
-  LineTo(x2, y1);
-  LineTo(x2, y3);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y3);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[4];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -219,9 +217,9 @@ void fl_line(int x, int y, int x1, int y1) {
   MoveTo(x, y); 
   LineTo(x1, y1);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x1, y1);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextStrokePath(fl_gc);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
 #endif
@@ -240,10 +238,10 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(x1, y1);
   LineTo(x2, y2);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x1, y1);
-  LineTo(x2, y2);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = y;
@@ -265,11 +263,11 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(x2, y2);
   LineTo(x, y);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x1, y1);
-  LineTo(x2, y2);
-  LineTo(x, y);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextClosePath(fl_gc);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[4];
   p[0].x = x;  p[0].y = y;
@@ -294,12 +292,12 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   LineTo(x3, y3);
   LineTo(x, y);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y);
-  LineTo(x1, y1);
-  LineTo(x2, y2);
-  LineTo(x3, y3);
-  LineTo(x, y);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextAddLineToPoint(fl_gc, x3, y3);
+  CGContextClosePath(fl_gc);
+  CGContextStrokePath(fl_gc);
 #else
   XPoint p[5];
   p[0].x = x;  p[0].y = y;
@@ -328,14 +326,11 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
   PaintPoly(poly);
   KillPoly(poly);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  PolyHandle poly = OpenPoly();
-  MoveTo(x, y);
-  LineTo(x1, y1);
-  LineTo(x2, y2);
-  ClosePoly();
-  PaintPoly(poly);
-  KillPoly(poly);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextClosePath(fl_gc);
+  CGContextFillPath(fl_gc);
 #else
   p[3].x = x;  p[3].y = y;
   XFillPolygon(fl_display, fl_window, fl_gc, p, 3, Convex, 0);
@@ -362,15 +357,12 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   PaintPoly(poly);
   KillPoly(poly);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  PolyHandle poly = OpenPoly();
-  MoveTo(x, y);
-  LineTo(x1, y1);
-  LineTo(x2, y2);
-  LineTo(x3, y3);
-  ClosePoly();
-  PaintPoly(poly);
-  KillPoly(poly);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextAddLineToPoint(fl_gc, x3, y3);
+  CGContextClosePath(fl_gc);
+  CGContextFillPath(fl_gc);
 #else
   p[4].x = x;  p[4].y = y;
   XFillPolygon(fl_display, fl_window, fl_gc, p, 4, Convex, 0);
@@ -384,8 +376,9 @@ void fl_point(int x, int y) {
 #elif defined(__APPLE_QD__)
   MoveTo(x, y); Line(0, 0); 
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  MoveTo(x, y); Line(0, 0);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y);
+  CGContextStrokePath(fl_gc);
 #else
   XDrawPoint(fl_display, fl_window, fl_gc, x, y);
 #endif
@@ -455,7 +448,18 @@ void fl_restore_clip() {
       CopyRgn( fl_window_region, portClip ); // changed
       if ( r )
         SectRgn( portClip, r, portClip );
-      SetPortClipRegion( port, portClip );
+      //SetPortClipRegion( port, portClip );
+      // the following code is inefficient and should be replaced with 
+      // Carbon clipping - which unfortunatly has some problems on its own...
+      Rect portRect; GetPortBounds(port, &portRect);
+      CGContextSaveGState(fl_gc);
+      CGAffineTransform tf = CGContextGetCTM(fl_gc);
+      tf.d = -1.0f; tf.tx = -tf.tx; tf.ty = tf.ty;  
+      //CGContextConcatCTM(fl_gc, tf);
+      tf = CGContextGetCTM(fl_gc);
+      tf.a = 1;
+      ClipCGContextToRegion(fl_gc, &portRect, portClip ); // this call uses transformed coords!
+      CGContextRestoreGState(fl_gc); // DOH! Restores the clipping region!
       DisposeRgn( portClip );
     }
   }
@@ -635,5 +639,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.12 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.13 2004/08/26 00:18:43 matthiaswm Exp $".
 //
