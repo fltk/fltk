@@ -113,30 +113,22 @@ static void	unquote_pathname(char *, const char *, int);
 //
 
 int				// O - Number of selected files
-Fl_File_Chooser::count()
-{
+Fl_File_Chooser::count() {
   int		i;		// Looping var
   int		fcount;		// Number of selected files
   const char	*filename;	// Filename in input field or list
 
 
-  if (!(type_ & MULTI))
-  {
+  filename = fileName->value();
+
+  if (!(type_ & MULTI)) {
     // Check to see if the file name input field is blank...
-    filename = fileName->value();
-
-//    printf("Fl_File_Chooser::count(): filename=\"%s\"\n", filename);
-
-    if (!filename || !filename[0])
-      return (0);
-
-    // Is the file name just the current directory?
-    return (strcmp(filename, directory_) != 0);
+    if (!filename || !filename[0]) return 0;
+    else return 1;
   }
 
   for (i = 1, fcount = 0; i <= fileList->size(); i ++)
-    if (fileList->selected(i))
-    {
+    if (fileList->selected(i)) {
       // See if this file is a directory...
       filename = (char *)fileList->text(i);
 
@@ -144,7 +136,9 @@ Fl_File_Chooser::count()
 	fcount ++;
     }
 
-  return (fcount);
+  if (fcount) return fcount;
+  else if (!filename || !filename[0]) return 0;
+  else return 1;
 }
 
 
@@ -511,11 +505,6 @@ Fl_File_Chooser::fileNameCB()
 #endif /* WIN32 || __EMX__ */
       directory(pathname);
     } else if ((type_ & CREATE) || access(pathname, 0) == 0) {
-      // New file or file exists...  If we are in multiple selection mode,
-      // switch to single selection mode...
-      if (type_ & MULTI)
-        type(SINGLE);
-
       // Update the preview box...
       update_preview();
 
@@ -1015,8 +1004,10 @@ Fl_File_Chooser::value(int f)	// I - File number
   static char	pathname[1024];	// Filename + directory
 
 
+  name = fileName->value();
+
   if (!(type_ & MULTI)) {
-    name = fileName->value();
+    // Return the filename in the filename field...
     if (!name || !name[0]) return NULL;
     else if (fl_filename_isdir(name)) {
       if (type_ & DIRECTORY) {
@@ -1029,28 +1020,40 @@ Fl_File_Chooser::value(int f)	// I - File number
     } else return name;
   }
 
+  // Return a filename from the list...
   for (i = 1, fcount = 0; i <= fileList->size(); i ++)
     if (fileList->selected(i)) {
-      // See if this file is a directory...
+      // See if this file is a selected file/directory...
       name = fileList->text(i);
 
-      if (name[strlen(name) - 1] != '/') {
-        // Not a directory, see if this this is "the one"...
-	fcount ++;
+      fcount ++;
 
-	if (fcount == f) {
-	  if (directory_[0]) {
-	    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
-	  } else {
-	    strlcpy(pathname, name, sizeof(pathname));
-	  }
-
-	  return (pathname);
+      if (fcount == f) {
+	if (directory_[0]) {
+	  snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
+	} else {
+	  strlcpy(pathname, name, sizeof(pathname));
 	}
+
+	// Strip trailing slash, if any...
+	strlcpy(pathname, name, sizeof(pathname));
+	slash = pathname + strlen(pathname) - 1;
+	if (*slash == '/') *slash = '\0';
+	return pathname;
       }
     }
 
-  return (NULL);
+  // If nothing is selected, use the filename field...
+  if (!name || !name[0]) return NULL;
+  else if (fl_filename_isdir(name)) {
+    if (type_ & DIRECTORY) {
+      // Strip trailing slash, if any...
+      strlcpy(pathname, name, sizeof(pathname));
+      slash = pathname + strlen(pathname) - 1;
+      if (*slash == '/') *slash = '\0';
+      return pathname;
+    } else return NULL;
+  } else return name;
 }
 
 
@@ -1077,10 +1080,6 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
     okButton->deactivate();
     return;
   }
-
-  // Switch to single-selection mode as needed
-  if (type_ & MULTI)
-    type(SINGLE);
 
   // See if there is a directory in there...
   fl_filename_absolute(pathname, sizeof(pathname), filename);

@@ -22,13 +22,20 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 //
 // Contents:
 //
+//   Fl_File_Icon::load()              - Load an icon file...
 //   Fl_File_Icon::load_fti()          - Load an SGI-format FTI file...
 //   Fl_File_Icon::load_image()        - Load an image icon file...
 //   Fl_File_Icon::load_system_icons() - Load the standard system icons/filetypes.
+//   load_kde_icons()                  - Load KDE icon files.
+//   load_kde_mimelnk()                - Load a KDE "mimelnk" file.
+//   kde_to_fltk_pattern()             - Convert a KDE pattern to a FLTK pattern.
+//   get_kde_val()                     - Get a KDE value.
 //
 
 //
@@ -580,23 +587,20 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 // 'Fl_File_Icon::load_system_icons()' - Load the standard system icons/filetypes.
 
 void
-Fl_File_Icon::load_system_icons(void)
-{
+Fl_File_Icon::load_system_icons(void) {
   int		i;		// Looping var
   Fl_File_Icon	*icon;		// New icons
   char		filename[1024];	// Filename
   char		icondir[1024];	// Icon directory
   static int	init = 0;	// Have the icons been initialized?
-  const char * const icondirs[] =
-		{		// Icon directories to look for, in order
-		  "Bluecurve",
+  const char * const icondirs[] = {
+		  "Bluecurve",	// Icon directories to look for, in order
 		  "crystalsvg",
 		  "default.kde",
 		  "hicolor",
 		  NULL
 		};
-  static short	plain[] =	// Plain file icon
-		{
+  static short	plain[] = {	// Plain file icon
 		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
 		  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
 		  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
@@ -614,8 +618,7 @@ Fl_File_Icon::load_system_icons(void)
 		  VERTEX, 7000, 2000, END, 
 		  END
 		};
-  static short	image[] =	// Image file icon
-		{
+  static short	image[] = {	// Image file icon
 		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
 		  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
 		  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
@@ -642,8 +645,7 @@ Fl_File_Icon::load_system_icons(void)
 		  VERTEX, 5500, 3500, END,
 		  END
 		};
-  static short	dir[] =		// Directory icon
-		{
+  static short	dir[] = {	// Directory icon
 		  COLOR, -1, -1, POLYGON, VERTEX, 1000, 1000,
 		  VERTEX, 1000, 7500,  VERTEX, 9000, 7500,
 		  VERTEX, 9000, 1000, END,
@@ -662,73 +664,59 @@ Fl_File_Icon::load_system_icons(void)
 
 
   // Add symbols if they haven't been added already...
-  if (!init)
-  {
+  if (!init) {
     // This method requires the images library...
     fl_register_images();
 
-    if (!kdedir)
-    {
+    if (!kdedir) {
       // Figure out where KDE is installed...
-      if ((kdedir = getenv("KDEDIR")) == NULL)
-      {
-        if (!access("/opt/kde", F_OK))
-	  kdedir = "/opt/kde";
-	else if (!access("/usr/local/share/mimelnk", F_OK))
-	  kdedir = "/usr/local";
-        else
-	  kdedir = "/usr";
+      if ((kdedir = getenv("KDEDIR")) == NULL) {
+        if (!access("/opt/kde", F_OK)) kdedir = "/opt/kde";
+	else if (!access("/usr/local/share/mimelnk", F_OK)) kdedir = "/usr/local";
+        else kdedir = "/usr";
       }
     }
 
     snprintf(filename, sizeof(filename), "%s/share/mimelnk", kdedir);
 
-    if (!access(filename, F_OK))
-    {
+    if (!access(filename, F_OK)) {
       // Load KDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
 
-      for (i = 0; icondirs[i]; i ++)
-      {
+      for (i = 0; icondirs[i]; i ++) {
 	snprintf(icondir, sizeof(icondir), "%s/share/icons/%s", kdedir,
 		 icondirs[i]);
 
-        if (!access(icondir, F_OK))
-	  break;
+        if (!access(icondir, F_OK)) break;
       }
 
-      if (icondirs[i])
+      if (icondirs[i]) {
         snprintf(filename, sizeof(filename), "%s/16x16/mimetypes/unknown.png",
 	         icondir);
-      else
+      } else {
 	snprintf(filename, sizeof(filename), "%s/share/icons/unknown.xpm",
 	         kdedir);
+      }
 
-      if (!access(filename, F_OK))
-	icon->load_image(filename);
+      if (!access(filename, F_OK)) icon->load_image(filename);
 
       icon = new Fl_File_Icon("*", Fl_File_Icon::LINK);
 
       snprintf(filename, sizeof(filename), "%s/16x16/filesystems/link.png",
                icondir);
 
-      if (!access(filename, F_OK))
-        icon->load_image(filename);
+      if (!access(filename, F_OK)) icon->load_image(filename);
 
       snprintf(filename, sizeof(filename), "%s/share/mimelnk", kdedir);
       load_kde_icons(filename, icondir);
-    }
-    else if (!access("/usr/share/icons/folder.xpm", F_OK))
-    {
+    } else if (!access("/usr/share/icons/folder.xpm", F_OK)) {
       // Load GNOME icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_image("/usr/share/icons/page.xpm");
 
       icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
       icon->load_image("/usr/share/icons/folder.xpm");
-    }
-    else if (!access("/usr/dt/appconfig/icons", F_OK))
-    {
+    } else if (!access("/usr/dt/appconfig/icons", F_OK)) {
       // Load CDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_image("/usr/dt/appconfig/icons/C/Dtdata.m.pm");
@@ -747,9 +735,7 @@ Fl_File_Icon::load_system_icons(void)
 
       icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
       icon->load_image("/usr/dt/appconfig/icons/C/DtPrtpr.m.pm");
-    }
-    else if (!access("/usr/lib/filetype", F_OK))
-    {
+    } else if (!access("/usr/lib/filetype", F_OK)) {
       // Load SGI icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_fti("/usr/lib/filetype/iconlib/generic.doc.fti");
@@ -763,35 +749,28 @@ Fl_File_Icon::load_system_icons(void)
       icon = new Fl_File_Icon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN);
       icon->load_fti("/usr/lib/filetype/system/iconlib/ImageFile.fti");
 
-      if (!access("/usr/lib/filetype/install/iconlib/acroread.doc.fti", F_OK))
-      {
+      if (!access("/usr/lib/filetype/install/iconlib/acroread.doc.fti", F_OK)) {
 	icon = new Fl_File_Icon("*.{eps|ps}", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
 
 	icon = new Fl_File_Icon("*.pdf", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/install/iconlib/acroread.doc.fti");
-      }
-      else
-      {
+      } else {
 	icon = new Fl_File_Icon("*.{eps|pdf|ps}", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
       }
 
-      if (!access("/usr/lib/filetype/install/iconlib/html.fti", F_OK))
-      {
+      if (!access("/usr/lib/filetype/install/iconlib/html.fti", F_OK)) {
 	icon = new Fl_File_Icon("*.{htm|html|shtml}", Fl_File_Icon::PLAIN);
         icon->load_fti("/usr/lib/filetype/iconlib/generic.doc.fti");
 	icon->load_fti("/usr/lib/filetype/install/iconlib/html.fti");
       }
 
-      if (!access("/usr/lib/filetype/install/iconlib/color.ps.idle.fti", F_OK))
-      {
+      if (!access("/usr/lib/filetype/install/iconlib/color.ps.idle.fti", F_OK)) {
 	icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/install/iconlib/color.ps.idle.fti");
       }
-    }
-    else
-    {
+    } else {
       // Create the default icons...
       new Fl_File_Icon("*", Fl_File_Icon::PLAIN, sizeof(plain) / sizeof(plain[0]), plain);
       new Fl_File_Icon("*.{bm|bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN,
@@ -801,6 +780,13 @@ Fl_File_Icon::load_system_icons(void)
 
     // Mark things as initialized...
     init = 1;
+
+#ifdef DEBUG
+    int count;
+    Fl_File_Icon *temp;
+    for (count = 0, temp = first_; temp; temp = temp->next_, count ++);
+    printf("count of Fl_File_Icon's is %d...\n", count);
+#endif // DEBUG
   }
 }
 
@@ -811,8 +797,7 @@ Fl_File_Icon::load_system_icons(void)
 
 static void
 load_kde_icons(const char *directory,	// I - Directory to load
-               const char *icondir)	// I - Location of icons
-{
+               const char *icondir) {	// I - Location of icons
   int		i;			// Looping var
   int		n;			// Number of entries in directory
   dirent	**entries;		// Entries in directory
@@ -822,16 +807,12 @@ load_kde_icons(const char *directory,	// I - Directory to load
   entries = (dirent **)0;
   n       = fl_filename_list(directory, &entries);
 
-  for (i = 0; i < n; i ++)
-  {
-    if (entries[i]->d_name[0] != '.')
-    {
+  for (i = 0; i < n; i ++) {
+    if (entries[i]->d_name[0] != '.') {
       snprintf(full, sizeof(full), "%s/%s", directory, entries[i]->d_name);
 
-      if (fl_filename_isdir(full))
-	load_kde_icons(full, icondir);
-      else
-	load_kde_mimelnk(full, icondir);
+      if (fl_filename_isdir(full)) load_kde_icons(full, icondir);
+      else load_kde_mimelnk(full, icondir);
     }
 
     free((void *)entries[i]);
@@ -847,8 +828,7 @@ load_kde_icons(const char *directory,	// I - Directory to load
 
 static void
 load_kde_mimelnk(const char *filename,	// I - mimelnk filename
-                 const char *icondir)	// I - Location of icons
-{
+                 const char *icondir) {	// I - Location of icons
   FILE		*fp;
   char		tmp[1024];
   char		iconfilename[1024];
@@ -863,10 +843,8 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
   pattern[0]      = '\0';
   iconfilename[0] = '\0';
 
-  if ((fp = fopen(filename, "rb")) != NULL)
-  {
-    while (fgets(tmp, sizeof(tmp), fp))
-    {
+  if ((fp = fopen(filename, "rb")) != NULL) {
+    while (fgets(tmp, sizeof(tmp), fp)) {
       if ((val = get_kde_val(tmp, "Icon")) != NULL)
 	strlcpy(iconfilename, val, sizeof(iconfilename));
       else if ((val = get_kde_val(tmp, "MimeType")) != NULL)
@@ -877,10 +855,17 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
 
     fclose(fp);
 
-    if (iconfilename[0] && (pattern[0] || strncmp(mimetype, "inode/", 6) == 0))
-    {
-      if (!access(icondir, F_OK))
-      {
+#ifdef DEBUG
+    printf("%s: Icon=\"%s\", MimeType=\"%s\", Patterns=\"%s\"\n", filename,
+           iconfilename, mimetype, pattern);
+#endif // DEBUG
+
+    if (!pattern[0] && strncmp(mimetype, "inode/", 6)) return;
+
+    if (iconfilename[0]) {
+      if (iconfilename[0] == '/') {
+        strlcpy(full_iconfilename, iconfilename, sizeof(full_iconfilename));
+      } else if (!access(icondir, F_OK)) {
         // KDE 3.x and 2.x icons
 	int		i;		// Looping var
 	static const char *paths[] = {	// Subdirs to look in...
@@ -889,7 +874,7 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
 	  "16x16/devices",
 	  "16x16/filesystems",
 	  "16x16/mimetypes",
-
+/*
 	  "20x20/actions",
 	  "20x20/apps",
 	  "20x20/devices",
@@ -907,13 +892,13 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
 	  "24x24/devices",
 	  "24x24/filesystems",
 	  "24x24/mimetypes",
-
+*/
 	  "32x32/actions",
 	  "32x32/apps",
 	  "32x32/devices",
 	  "32x32/filesystems",
 	  "32x32/mimetypes",
-
+/*
 	  "36x36/actions",
 	  "36x36/apps",
 	  "36x36/devices",
@@ -937,7 +922,7 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
 	  "96x96/devices",
 	  "96x96/filesystems",
 	  "96x96/mimetypes"
-	};
+*/	};
 
         for (i = 0; i < (int)(sizeof(paths) / sizeof(paths[0])); i ++) {
           snprintf(full_iconfilename, sizeof(full_iconfilename),
@@ -956,15 +941,17 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
       }
 
       if (strncmp(mimetype, "inode/", 6) == 0) {
-	if (strcmp(mimetype + 6, "directory") == 0)
+	if (!strcmp(mimetype + 6, "directory"))
 	  icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
-	else if (strcmp(mimetype + 6, "blockdevice") == 0)
+	else if (!strcmp(mimetype + 6, "blockdevice"))
 	  icon = new Fl_File_Icon("*", Fl_File_Icon::DEVICE);
-	else if (strcmp(mimetype + 6, "fifo") == 0)
+	else if (!strcmp(mimetype + 6, "fifo"))
 	  icon = new Fl_File_Icon("*", Fl_File_Icon::FIFO);
 	else return;
-      } else
-        icon = new Fl_File_Icon(kde_to_fltk_pattern(pattern), Fl_File_Icon::PLAIN);
+      } else {
+        icon = new Fl_File_Icon(kde_to_fltk_pattern(pattern),
+                                Fl_File_Icon::PLAIN);
+      }
 
       icon->load(full_iconfilename);
     }
@@ -977,8 +964,7 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
 //
 
 static char *
-kde_to_fltk_pattern(const char *kdepattern)
-{
+kde_to_fltk_pattern(const char *kdepattern) {
   char	*pattern,
 	*patptr;
 
@@ -987,14 +973,13 @@ kde_to_fltk_pattern(const char *kdepattern)
   strcpy(pattern, "{");
   strcpy(pattern + 1, kdepattern);
 
-  if (pattern[strlen(pattern) - 1] == ';')
-    pattern[strlen(pattern) - 1] = '\0';
+  if (pattern[strlen(pattern) - 1] == ';') pattern[strlen(pattern) - 1] = '\0';
 
   strcat(pattern, "}");
 
-  for (patptr = pattern; *patptr; patptr ++)
-    if (*patptr == ';')
-      *patptr = '|';
+  for (patptr = pattern; *patptr; patptr ++) {
+    if (*patptr == ';') *patptr = '|';
+  }
 
   return (pattern);
 }
@@ -1006,18 +991,14 @@ kde_to_fltk_pattern(const char *kdepattern)
 
 static char *
 get_kde_val(char       *str,
-            const char *key)
-{
-  while (*str == *key)
-  {
+            const char *key) {
+  while (*str == *key) {
     str ++;
     key ++;
   }
 
-  if (*key == '\0' && *str == '=')
-  {
-    if (str[strlen(str) - 1] == '\n')
-      str[strlen(str) - 1] = '\0';
+  if (*key == '\0' && *str == '=') {
+    if (str[strlen(str) - 1] == '\n') str[strlen(str) - 1] = '\0';
 
     return (str + 1);
   }

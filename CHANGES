@@ -2,6 +2,11 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fl_File_Chooser no longer resets the type() when
+	  choosing a single file, and it now works when selecting
+	  multiple directories (STR #747)
+	- Fl_File_Icon::load_system_icons() now only loads 16x16
+	  and 32x32 icon images to improve startup performance.
 	- Pressing Enter in the file chooser when selecting a
 	  directory will choose that directory if it is currently
 	  shown (STR #746)

@@ -651,7 +651,7 @@ void write_cb(Fl_Widget *, void *) {
     if (!x) {
       fl_message("Can't write %s: %s", cname, strerror(errno));
     } else if (completion_button->value()) {
-      fl_message("Wrote %s", cname, 0);
+      fl_message("Wrote %s", cname);
     }
   }
 }
