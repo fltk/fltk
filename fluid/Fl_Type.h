@@ -34,6 +34,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu.H>
 #include "Fluid_Image.h"
+#include <FL/fl_draw.H>
 
 class Fl_Type {
 
@@ -338,6 +339,7 @@ public:
 
 class Fl_Group_Type : public Fl_Widget_Type {
 public:
+  virtual void ideal_spacing(int &x, int &y) { x = y = 10; }
   virtual const char *type_name() {return "Fl_Group";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
     igroup *g = new igroup(X,Y,W,H); Fl_Group::current(0); return g;}
@@ -368,6 +370,11 @@ extern const char tabs_type_name[];
 
 class Fl_Tabs_Type : public Fl_Group_Type {
 public:
+  virtual void ideal_spacing(int &x, int &y) {
+     x = 10;
+     fl_font(o->labelfont(), o->labelsize());
+     y = fl_height() + o->labelsize() - 6;
+  }
   virtual const char *type_name() {return tabs_type_name;}
   Fl_Widget *widget(int X,int Y,int W,int H) {
     itabs *g = new itabs(X,Y,W,H); Fl_Group::current(0); return g;}
@@ -437,6 +444,7 @@ class Fl_Window_Type : public Fl_Widget_Type {
 
 public:
 
+  Fl_Window_Type() { drag = dx = dy = 0; }
   uchar modal, non_modal;
 
   Fl_Type *make();

@@ -17,9 +17,9 @@ Fl_Light_Button *include_H_from_C_button=(Fl_Light_Button *)0;
 Fl_Choice *i18n_type_chooser=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_i18n_type_chooser[] = {
- {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
- {"GNU gettext", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
- {"POSIX catgets", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
+ {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 56},
+ {"GNU gettext", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 56},
+ {"POSIX catgets", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 56},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -33,73 +33,100 @@ Fl_Input *i18n_function_input=(Fl_Input *)0;
 
 Fl_Double_Window* make_project_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = project_window = new Fl_Double_Window(365, 210, "Project Settings");
+  { Fl_Double_Window* o = project_window = new Fl_Double_Window(365, 208, "Project Settings");
     w = o;
     { Fl_Button* o = new Fl_Button(295, 175, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close);
     }
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 345, 155);
-      { Fl_Group* o = new Fl_Group(10, 35, 345, 130, "Output");
-        { Fl_Box* o = new Fl_Box(25, 45, 325, 15, "Use \"name.ext\" to set name or just \".ext\" to set only extension.");
-          o->labelsize(10);
+    { Fl_Tabs* o = new Fl_Tabs(10, 10, 345, 154);
+      o->labelsize(11);
+      { Fl_Group* o = new Fl_Group(10, 30, 345, 134, "Output");
+        o->labelsize(11);
+        o->hide();
+        { Fl_Box* o = new Fl_Box(23, 40, 319, 15, "Use \"name.ext\" to set name or just \".ext\" to set only extension.");
+          o->labelsize(11);
           o->align(132|FL_ALIGN_INSIDE);
         }
-        { Fl_Input* o = header_file_input = new Fl_Input(105, 65, 245, 20, "Header File:");
+        { Fl_Input* o = header_file_input = new Fl_Input(97, 60, 245, 20, "Header File:");
           o->tooltip("The name of the generated header file.");
           o->box(FL_THIN_DOWN_BOX);
+          o->labelsize(11);
           o->textfont(4);
+          o->textsize(11);
           o->callback((Fl_Callback*)header_input_cb, (void*)(1));
           o->when(FL_WHEN_CHANGED);
         }
-        { Fl_Input* o = code_file_input = new Fl_Input(105, 95, 245, 20, "Code File:");
+        { Fl_Input* o = code_file_input = new Fl_Input(98, 85, 244, 20, "Code File:");
           o->tooltip("The name of the generated code file.");
           o->box(FL_THIN_DOWN_BOX);
+          o->labelsize(11);
           o->textfont(4);
+          o->textsize(11);
           o->callback((Fl_Callback*)code_input_cb, (void*)(1));
           o->when(FL_WHEN_CHANGED);
         }
-        { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(105, 125, 170, 20, "Include Header from Code");
+        { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(177, 110, 165, 20, "Include Header from Code");
           o->tooltip("Include the header file from the code file.");
           o->value(1);
-          o->labelsize(12);
+          o->labelsize(11);
           o->callback((Fl_Callback*)include_H_from_C_button_cb);
         }
         o->end();
       }
-      { Fl_Group* o = new Fl_Group(10, 35, 345, 130, "Internationalization");
+      { Fl_Group* o = new Fl_Group(10, 30, 345, 134, "Internationalization");
+        o->labelsize(11);
         o->hide();
-        { Fl_Choice* o = i18n_type_chooser = new Fl_Choice(100, 45, 125, 20, "Use:");
+        { Fl_Choice* o = i18n_type_chooser = new Fl_Choice(100, 42, 100, 20, "Use:");
           o->tooltip("Type of internationalization to use.");
           o->box(FL_THIN_UP_BOX);
           o->down_box(FL_BORDER_BOX);
+          o->labelsize(11);
+          o->textsize(11);
           o->callback((Fl_Callback*)i18n_type_cb);
           o->menu(menu_i18n_type_chooser);
         }
-        { Fl_Input* o = i18n_include_input = new Fl_Input(100, 75, 245, 20, "#include:");
+        { Fl_Input* o = i18n_include_input = new Fl_Input(100, 67, 245, 20, "#include:");
           o->tooltip("The include file for internationalization.");
           o->box(FL_THIN_DOWN_BOX);
+          o->labelsize(11);
           o->textfont(4);
+          o->textsize(11);
           o->callback((Fl_Callback*)i18n_text_cb);
         }
-        { Fl_Input* o = i18n_file_input = new Fl_Input(100, 105, 245, 20, "File:");
+        { Fl_Input* o = i18n_file_input = new Fl_Input(100, 92, 245, 20, "File:");
           o->tooltip("The name of the message catalog.");
           o->box(FL_THIN_DOWN_BOX);
+          o->labelsize(11);
           o->textfont(4);
+          o->textsize(11);
           o->callback((Fl_Callback*)i18n_text_cb);
         }
-        { Fl_Input* o = i18n_set_input = new Fl_Input(100, 135, 245, 20, "Set:");
+        { Fl_Input* o = i18n_set_input = new Fl_Input(100, 117, 245, 20, "Set:");
           o->tooltip("The message set number.");
           o->type(2);
           o->box(FL_THIN_DOWN_BOX);
+          o->labelsize(11);
           o->textfont(4);
+          o->textsize(11);
           o->callback((Fl_Callback*)i18n_text_cb);
         }
-        { Fl_Input* o = i18n_function_input = new Fl_Input(100, 105, 245, 20, "Function:");
+        { Fl_Input* o = i18n_function_input = new Fl_Input(100, 92, 245, 20, "Function:");
           o->tooltip("The function to call to internationalize the labels and tooltips.");
           o->box(FL_THIN_DOWN_BOX);
+          o->labelsize(11);
           o->textfont(4);
+          o->textsize(11);
           o->callback((Fl_Callback*)i18n_text_cb);
+        }
+        o->end();
+      }
+      { Fl_Group* o = new Fl_Group(10, 30, 345, 134, "Copyright");
+        o->labelsize(11);
+        { Fl_Text_Editor* o = new Fl_Text_Editor(15, 35, 335, 124);
+          o->labelsize(11);
+          o->textfont(4);
+          o->textsize(11);
         }
         o->end();
       }
@@ -311,7 +338,7 @@ static void cb_Close2(Fl_Button*, void*) {
 
 Fl_Double_Window* make_grid_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(155, 208, "Grid");
+  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(155, 205, "Grid");
     w = o;
     { Fl_Tabs* o = new Fl_Tabs(10, 10, 135, 150);
       o->align(FL_ALIGN_TOP_LEFT);

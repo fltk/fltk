@@ -12,7 +12,7 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {217 589 365 210} type Double
+    xywh {4 21 365 210} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -22,75 +22,83 @@ Function {make_project_window()} {open
       tooltip {Close this dialog.} xywh {295 175 60 25}
     }
     Fl_Tabs {} {open
-      xywh {10 10 345 155}
+      xywh {10 10 345 154} labelsize 11
     } {
       Fl_Group {} {
-        label Output
-        xywh {10 35 345 130}
+        label Output open
+        xywh {10 30 345 134} labelsize 11 hide
       } {
         Fl_Box {} {
           label {Use "name.ext" to set name or just ".ext" to set only extension.}
-          xywh {25 45 325 15} labelsize 10 align 148
+          xywh {23 40 319 15} labelsize 11 align 148
         }
         Fl_Input header_file_input {
           label {Header File:}
           user_data 1 user_data_type {void*}
           callback header_input_cb
-          tooltip {The name of the generated header file.} xywh {105 65 245 20} box THIN_DOWN_BOX when 1 textfont 4
+          tooltip {The name of the generated header file.} xywh {97 60 245 20} box THIN_DOWN_BOX labelsize 11 when 1 textfont 4 textsize 11
         }
         Fl_Input code_file_input {
           label {Code File:}
           user_data 1 user_data_type {void*}
           callback code_input_cb
-          tooltip {The name of the generated code file.} xywh {105 95 245 20} box THIN_DOWN_BOX when 1 textfont 4
+          tooltip {The name of the generated code file.} xywh {98 85 244 20} box THIN_DOWN_BOX labelsize 11 when 1 textfont 4 textsize 11
         }
         Fl_Light_Button include_H_from_C_button {
           label {Include Header from Code}
           callback include_H_from_C_button_cb
-          tooltip {Include the header file from the code file.} xywh {105 125 170 20} value 1 labelsize 12
+          tooltip {Include the header file from the code file.} xywh {177 110 165 20} value 1 labelsize 11
         }
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 35 345 130} hide
+        xywh {10 30 345 134} labelsize 11 hide
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
           callback i18n_type_cb open
-          tooltip {Type of internationalization to use.} xywh {100 45 125 20} box THIN_UP_BOX down_box BORDER_BOX
+          tooltip {Type of internationalization to use.} xywh {100 42 100 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
         } {
           menuitem {} {
             label None
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 11
           }
           menuitem {} {
             label {GNU gettext}
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 11
           }
           menuitem {} {
             label {POSIX catgets}
-            xywh {0 0 100 20}
+            xywh {0 0 100 20} labelsize 11
           }
         }
         Fl_Input i18n_include_input {
           label {\#include:}
           callback i18n_text_cb
-          tooltip {The include file for internationalization.} xywh {100 75 245 20} box THIN_DOWN_BOX textfont 4
+          tooltip {The include file for internationalization.} xywh {100 67 245 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
         }
         Fl_Input i18n_file_input {
           label {File:}
           callback i18n_text_cb
-          tooltip {The name of the message catalog.} xywh {100 105 245 20} box THIN_DOWN_BOX textfont 4
+          tooltip {The name of the message catalog.} xywh {100 92 245 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
         }
         Fl_Input i18n_set_input {
           label {Set:}
           callback i18n_text_cb
-          tooltip {The message set number.} xywh {100 135 245 20} type Int box THIN_DOWN_BOX textfont 4
+          tooltip {The message set number.} xywh {100 117 245 20} type Int box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
         }
         Fl_Input i18n_function_input {
           label {Function:}
           callback i18n_text_cb
-          tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 105 245 20} box THIN_DOWN_BOX textfont 4
+          tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 92 245 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
+        }
+      }
+      Fl_Group {} {
+        label Copyright open
+        xywh {10 30 345 134} labelsize 11
+      } {
+        Fl_Text_Editor {} {selected
+          xywh {20 40 325 114} labelsize 11 textfont 4 textsize 11
         }
       }
     }
@@ -241,7 +249,7 @@ Function {make_grid_window()} {open
 } {
   Fl_Window grid_window {
     label Grid open
-    xywh {51 589 155 208} type Double visible
+    xywh {51 589 155 205} type Double visible
   } {
     Fl_Tabs {} {
       xywh {10 10 135 150} align 5
@@ -274,7 +282,7 @@ Function {make_grid_window()} {open
         Fl_Check_Button guides_toggle {
           label {Show Guides}
           user_data 4 user_data_type long
-          callback guides_cb selected
+          callback guides_cb
           tooltip {Show distance and alignment guides in overlay} xywh {30 125 105 25} down_box DOWN_BOX
         }
       }

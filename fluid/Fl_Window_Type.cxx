@@ -105,9 +105,9 @@ void grid_cb(Fl_Input *i, long v) {
   for (p = Fl_Type::first; p; p = p->next) {
     if (p->is_window()) {
       w = (Fl_Window_Type *)p;
-      ((Fl_Window *)(w->o))->size_range(gridx * snap, gridy * snap,
+      ((Fl_Window *)(w->o))->size_range(gridx, gridy,
                                         Fl::w(), Fl::h(),
-                                        gridx * snap, gridy * snap, 0);
+                                        gridx, gridy, 0);
     }
   }
 }
@@ -281,9 +281,9 @@ Fl_Type *Fl_Window_Type::make() {
   }
   // Set the size ranges for this window; in order to avoid opening the
   // X display we use an arbitrary maximum size...
-  ((Fl_Window *)(this->o))->size_range(gridx * snap, gridy * snap,
+  ((Fl_Window *)(this->o))->size_range(gridx, gridy,
                                        3072, 2048,
-                                       gridx * snap, gridy * snap, 0);
+                                       gridx, gridy, 0);
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
@@ -333,8 +333,7 @@ void Fl_Window_Type::open() {
     w->resizable(p);
   }
 
-  w->size_range(gridx * snap, gridy * snap, Fl::w(), Fl::h(),
-                gridx * snap, gridy * snap, 0);
+  w->size_range(gridx, gridy, Fl::w(), Fl::h(), gridx, gridy, 0);
 }
 
 // control panel items:
@@ -407,7 +406,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
 // nearest multiple of gridsize, and snap to original position
 void Fl_Window_Type::newdx() {
   int mydx, mydy;
-  if (Fl::event_state(FL_ALT)) {
+  if (Fl::event_state(FL_ALT) || !snap) {
     mydx = mx-x1;
     mydy = my-y1;
   } else {
