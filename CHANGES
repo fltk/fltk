@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.1
 
+	- The WIN32 port needed to handle WM_MOUSELEAVE events
+	  in order to avoid problems with tooltips.
 	- Fl_PNM_Image didn't set the "alloc" flag for the data,
 	  which could lead to a memory leak.
 	- fl_filename_match() was inconsistently doing case-

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.37 2002/07/01 20:14:08 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.38 2002/10/11 13:46:56 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -70,6 +70,10 @@
 //
 
 //#define USE_TRACK_MOUSE
+
+#if !defined(__GNUC__)
+#  define USE_TRACK_MOUSE
+#endif // !__GNUC__
 
 
 //
@@ -629,7 +633,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_MOUSELEAVE:
     Fl::belowmouse(0);
-//    Fl::handle(FL_LEAVE, window);
+    if (!window->parent()) Fl::handle(FL_LEAVE, window);
     break;
 
   case WM_SETFOCUS:
@@ -1179,5 +1183,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.37 2002/07/01 20:14:08 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.38 2002/10/11 13:46:56 easysw Exp $".
 //
