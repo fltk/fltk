@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list.in,v 1.1.2.10 2003/06/01 00:23:56 easysw Exp $"
+# "$Id: fltk.list.in,v 1.1.2.11 2003/06/01 00:31:31 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -53,6 +53,7 @@ $FLUID=@FLUID@
 
 %system darwin
 f 0444 root sys $includedir/FL/mac.r FL/mac.r
+l 0444 root sys /usr/inclue/gcc/darwin/3.1/g++-v3/FL $includedir/FL
 
 d 0555 root sys /Applications/fluid.app -
 d 0555 root sys /Applications/fluid.app/Contents -
@@ -261,5 +262,5 @@ f 0444 root sys $datadir/doc/fltk/COPYING COPYING
 f 0444 root sys $datadir/doc/fltk/CHANGES CHANGES
 
 #
-# End of "$Id: fltk.list.in,v 1.1.2.10 2003/06/01 00:23:56 easysw Exp $".
+# End of "$Id: fltk.list.in,v 1.1.2.11 2003/06/01 00:31:31 easysw Exp $".
 #

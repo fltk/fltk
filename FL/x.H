@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.12 2003/01/30 21:40:58 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.13 2003/06/01 00:31:32 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -132,11 +132,14 @@ FL_EXPORT Fl_Window* fl_find(Window xid);
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
+// Dummy function to register a function for opening files via the window manager...
+inline void fl_open_callback(void (*)(const char *)) {}
+
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 #  endif
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.12 2003/01/30 21:40:58 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.13 2003/06/01 00:31:32 easysw Exp $".
 //
