@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.3 1998/10/21 14:20:31 mike Exp $"
+// "$Id: Fl_arg.cxx,v 1.4 1998/12/02 16:00:47 mike Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #define YNegative 	0x0020
 #endif
 
-static int match(const char *a, const char *match, int atleast = 2) {
+static int match(const char *a, const char *match, int atleast = 1) {
   const char *b = match;
   while (*a && (*a == *b || tolower(*a) == *b)) {a++; b++;}
   return !*a && b >= match+atleast;
@@ -57,11 +57,12 @@ extern char fl_show_iconic; // in Fl_x.C
 static char arg_called;
 static char return_i;
 static const char *name;
-static const char *fg;
-static const char *bg;
-static const char *bg2;
 static const char *geometry;
 static const char *title;
+// these are in Fl_get_system_colors and are set by the switches:
+extern const char *fl_fg;
+extern const char *fl_bg;
+extern const char *fl_bg2;
 
 // consume a switch from argv.  Returns number of words eaten, 0 on error:
 int Fl::arg(int argc, char **argv, int &i) {
@@ -107,13 +108,13 @@ int Fl::arg(int argc, char **argv, int &i) {
     name = v;
 
   } else if (match(s, "bg2", 3) || match(s, "background2", 11)) {
-    bg2 = v;
+    fl_bg2 = v;
 
   } else if (match(s, "bg") || match(s, "background")) {
-    bg = v;
+    fl_bg = v;
 
   } else if (match(s, "fg") || match(s, "foreground")) {
-    fg = v;
+    fl_fg = v;
 
   } else return 0; // unrecognized
 
@@ -137,47 +138,6 @@ int Fl::args(int argc, char** argv, int& i, int (*cb)(int,char**,int&)) {
   return i;
 }
 
-#ifdef WIN32
-#include <stdio.h>
-// simulation of XParseColor:
-int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
-  if (*p == '#') p++;
-  int n = strlen(p);
-  int m = n/3;
-  const char *pattern = 0;
-  switch(m) {
-  case 1: pattern = "%1x%1x%1x"; break;
-  case 2: pattern = "%2x%2x%2x"; break;
-  case 3: pattern = "%3x%3x%3x"; break;
-  case 4: pattern = "%4x%4x%4x"; break;
-  default: return 0;
-  }
-  int R,G,B; if (sscanf(p,pattern,&R,&G,&B) != 3) return 0;
-  r = R; g = G; b = B;
-  return 1;
-}
-
-static void parsecolor(const char *name, void (*func)(uchar,uchar,uchar)) {
-  uchar r,g,b;
-  if (!name) return;
-  if (!fl_parse_color(name, r,g,b))
-    Fl::error("Unknown color: %s", name);
-  else
-    func(r,g,b);
-}
-
-#else
-
-static void parsecolor(const char *name, void (*func)(uchar,uchar,uchar)) {
-  XColor x;
-  if (!name) return;
-  if (!XParseColor(fl_display, fl_colormap, name, &x))
-    Fl::error("Unknown color: %s", name);
-  else
-    func(x.red>>8, x.green>>8, x.blue>>8);
-}
-
-#endif
 
 // show a main window, use any parsed arguments
 void Fl_Window::show(int argc, char **argv) {
@@ -188,9 +148,6 @@ void Fl_Window::show(int argc, char **argv) {
   if (!beenhere) {
     beenhere = 1;
     Fl::get_system_colors(); // opens display!  May call Fl::fatal()
-    parsecolor(fg, Fl::foreground);
-    parsecolor(bg, Fl::background);
-    parsecolor(bg2,Fl::background2);
     if (geometry) {
       int flags = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
       flags = XParseGeometry(geometry, &gx, &gy, &gw, &gh);
@@ -240,11 +197,11 @@ void Fl_Window::show(int argc, char **argv) {
 
 static const char * const helpmsg =
 "options are:\n"
-" -di[splay] host:n.n\n"
-" -ge[ometry] WxH+X+Y\n"
-" -ti[tle] windowtitle\n"
-" -na[me] classname\n"
-" -ic[onic]\n"
+" -d[isplay] host:n.n\n"
+" -g[eometry] WxH+X+Y\n"
+" -t[itle] windowtitle\n"
+" -n[ame] classname\n"
+" -i[conic]\n"
 " -fg color\n"
 " -bg color\n"
 " -bg2 color";
@@ -394,5 +351,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.3 1998/10/21 14:20:31 mike Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.4 1998/12/02 16:00:47 mike Exp $".
 //

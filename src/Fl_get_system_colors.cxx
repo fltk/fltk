@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.3 1998/10/21 14:20:34 mike Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.4 1998/12/02 16:00:48 mike Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -61,33 +61,79 @@ void Fl::background2(uchar r, uchar g, uchar b) {
   set_others();
 }
 
+// these are set by Fl::args() and override any system colors:
+const char *fl_fg;
+const char *fl_bg;
+const char *fl_bg2;
+
 #ifdef WIN32
 
-static void getsyscolor(int what, void (*func)(uchar,uchar,uchar)) {
-  DWORD x = GetSysColor(what);
-  uchar r = uchar(x&255);
-  uchar g = uchar(x>>8);
-  uchar b = uchar(x>>16);
-  func(r,g,b);
+#include <stdio.h>
+// simulation of XParseColor:
+int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
+  if (*p == '#') p++;
+  int n = strlen(p);
+  int m = n/3;
+  const char *pattern = 0;
+  switch(m) {
+  case 1: pattern = "%1x%1x%1x"; break;
+  case 2: pattern = "%2x%2x%2x"; break;
+  case 3: pattern = "%3x%3x%3x"; break;
+  case 4: pattern = "%4x%4x%4x"; break;
+  default: return 0;
+  }
+  int R,G,B; if (sscanf(p,pattern,&R,&G,&B) != 3) return 0;
+  r = R; g = G; b = B;
+  return 1;
+}
+
+static void
+getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
+{
+  if (arg) {
+    uchar r,g,b;
+    if (!fl_parse_color(arg, r,g,b))
+      Fl::error("Unknown color: %s", arg);
+    else
+      func(r,g,b);
+  } else {
+    DWORD x = GetSysColor(what);
+    func(uchar(x&255), uchar(x>>8), uchar(x>>16));
+  }
 }
 
 void Fl::get_system_colors() {
-  getsyscolor(COLOR_WINDOWTEXT, Fl::foreground);
-  getsyscolor(COLOR_BTNFACE, Fl::background);
-  getsyscolor(COLOR_WINDOW, Fl::background2);
+  getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
+  getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
+  getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
 }
 
 #else
-// For X we should do something. KDE stores these colors in some standard
-// place, where?
+
+// For X we should do something. KDE and Gnome store these colors in
+// some standard places, where?
+
+static void
+getsyscolor(const char *arg, void (*func)(uchar,uchar,uchar)) {
+  if (arg) {
+    XColor x;
+    if (!XParseColor(fl_display, fl_colormap, arg, &x))
+      Fl::error("Unknown color: %s", arg);
+    else
+      func(x.red>>8, x.green>>8, x.blue>>8);
+  }
+}
 
 void Fl::get_system_colors()
 {
   fl_open_display();
+  getsyscolor(fl_fg, Fl::foreground);
+  getsyscolor(fl_bg, Fl::background);
+  getsyscolor(fl_bg2,Fl::background2);
 }
 
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.3 1998/10/21 14:20:34 mike Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.4 1998/12/02 16:00:48 mike Exp $".
 //
