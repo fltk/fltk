@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.2
 
+	- Fl_Button, Fl_Choice, and Fl_Menu_Button incorrectly
+	  activated the button/menu when the spacebar was
+	  pressed in conjunction with shift, control, alt, or
+	  meta.
 	- FLTK should now compile with Xft 2.0.
 	- Some versions of Tru64 4.0 have snprintf and
 	  vnsprintf, but don't have the prototypes for those

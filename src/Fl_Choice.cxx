@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.11 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.12 2002/11/11 20:22:21 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -100,7 +100,8 @@ int Fl_Choice::handle(int e) {
     return 1;
 
   case FL_KEYBOARD:
-    if (Fl::event_key() != ' ') return 0;
+    if (Fl::event_key() != ' ' ||
+        (Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) return 0;
   case FL_PUSH:
     if (Fl::visible_focus()) Fl::focus(this);
     Fl::event_is_click(0);
@@ -129,5 +130,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.11 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.12 2002/11/11 20:22:21 easysw Exp $".
 //
