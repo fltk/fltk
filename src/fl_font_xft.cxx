@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.1 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.2 2002/03/09 21:33:54 spitzak Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
@@ -168,7 +168,6 @@ double fl_width(uchar c) {
   return fl_width((const char *)(&c), 1);
 }
 
-
 #if USE_OVERLAY
 // Currently Xft does not work with colormapped visuals, so this probably
 // does not work unless you have a true-color overlay.
@@ -177,23 +176,42 @@ extern Colormap fl_overlay_colormap;
 extern XVisualInfo* fl_overlay_visual;
 #endif
 
+// For some reason Xft produces errors if you destroy a window whose id
+// still exists in an XftDraw structure. It would be nice if this is not
+// true, a lot of junk is needed to try to stop this:
+
+static XftDraw* draw;
+static Window draw_window;
+#if USE_OVERLAY
+static XftDraw* draw_overlay;
+static Window draw_overlay_window;
+#endif
+
+void fl_destroy_xft_draw(Window id) {
+  if (id == draw_window)
+    XftDrawChange(draw, draw_window = fl_message_window);
+#if USE_OVERLAY
+  if (id == draw_overlay_window)
+    XftDrawChange(draw_overlay, draw_overlay_window = fl_message_window);
+#endif
+}
+
 void fl_draw(const char *str, int n, int x, int y) {
 #if USE_OVERLAY
-  static XftDraw* draw_main, * draw_overlay;
-  XftDraw*& draw = fl_overlay ? draw_overlay : draw_main;
-  if (!draw)
-    draw = XftDrawCreate(fl_display, fl_window,
-			 (fl_overlay?fl_overlay_visual:fl_visual)->visual,
-			 fl_overlay ? fl_overlay_colormap : fl_colormap);
-  else
-    XftDrawChange(draw, fl_window);
-#else
-  static XftDraw *draw = 0;
-  if (!draw)
-    draw = XftDrawCreate(fl_display, fl_window, fl_visual->visual, fl_colormap);
-  else
-    XftDrawChange(draw, fl_window);
+  XftDraw*& draw = fl_overlay ? draw_overlay : ::draw;
+  if (fl_overlay) {
+    if (!draw) 
+      draw = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
+			   fl_overlay_visual->visual, fl_overlay_colormap);
+    else //if (draw_overlay_window != fl_window)
+      XftDrawChange(draw, draw_overlay_window = fl_window);
+  } else
 #endif
+  if (!draw)
+    draw = XftDrawCreate(fl_display, draw_window = fl_window,
+			 fl_visual->visual, fl_colormap);
+  else //if (draw_window != fl_window)
+    XftDrawChange(draw, draw_window = fl_window);
 
   Region region = fl_clip_region();
   if (region) {
@@ -215,5 +233,5 @@ void fl_draw(const char *str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.1 2002/03/06 18:11:01 easysw Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.2 2002/03/09 21:33:54 spitzak Exp $"
 //
