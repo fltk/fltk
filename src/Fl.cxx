@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.8 1998/12/15 15:34:36 mike Exp $"
+// "$Id: Fl.cxx,v 1.9 1998/12/15 15:38:15 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -293,6 +293,7 @@ static int send_handlers(int event) {
 Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
 
 void Fl::focus(Fl_Widget *o) {
+  if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = focus_;
   if (o != p) {
     focus_ = o;
@@ -305,6 +306,7 @@ void Fl::focus(Fl_Widget *o) {
 }
 
 void Fl::belowmouse(Fl_Widget *o) {
+  if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = belowmouse_;
   if (o != p) {
     event_is_click(0);
@@ -339,17 +341,15 @@ Fl_Window *Fl::modal_;
 // changed.
 void fl_fix_focus() {
 
-  // set Fl::modal() based on grab or any modal windows displayed:
-  if (Fl::grab_)
-    Fl::modal_ = Fl::grab_;
-  else {
-    Fl_Window* w = Fl::first_window();
-    while (w && w->parent()) w = Fl::next_window(w);
-    Fl::modal_ = w && w->modal() ? w : 0;
-  }
+  if (Fl::grab()) return; // don't do anything while grab is on.
+
+  // set Fl::modal() based on any modal windows displayed:
+  Fl_Window* w = Fl::first_window();
+  while (w && w->parent()) w = Fl::next_window(w);
+  Fl::modal_ = (w && w->modal()) ? w : 0;
 
   // set focus based on Fl::modal() and fl_xfocus
-  Fl_Window *w = fl_xfocus;
+  w = fl_xfocus;
   while (w && w->parent()) w = w->window();
   if (w) {
     if (Fl::modal()) w = Fl::modal();
@@ -358,13 +358,7 @@ void fl_fix_focus() {
   } else
     Fl::focus(0);
 
-  if (Fl::pushed()) {
-
-    // move pushed() to modal window (necessary for menus):
-    if (Fl::modal() && !Fl::modal()->contains(Fl::pushed()))
-      Fl::pushed_ = Fl::modal();
-
-  } else {    // set belowmouse only when pushed() is false
+  if (!Fl::pushed()) {
 
     // set belowmouse based on Fl::modal() and fl_xmousewin:
     w = fl_xmousewin;
@@ -379,6 +373,15 @@ void fl_fix_focus() {
 
 ////////////////////////////////////////////////////////////////
 
+void fl_send_extra_move() {
+  // send a FL_MOVE event so the enter/leave state is up to date
+  if (fl_xmousewin && !Fl::grab()) {
+    Fl::e_x = Fl::e_x_root-fl_xmousewin->x();
+    Fl::e_y = Fl::e_y_root-fl_xmousewin->y();
+    fl_xmousewin->handle(FL_MOVE);
+  }
+}
+
 int Fl::handle(int event, Fl_Window* window)
 {
   Fl_Widget* w = window;
@@ -386,7 +389,7 @@ int Fl::handle(int event, Fl_Window* window)
   switch (event) {
 
   case FL_CLOSE:
-    if (modal() && window != modal()) return 0;
+    if (grab() || modal() && window != modal()) return 0;
     w->do_callback();
     return 1;
 
@@ -399,9 +402,9 @@ int Fl::handle(int event, Fl_Window* window)
     return 1;
 
   case FL_PUSH:
-    if (Fl::grab()) w = Fl::grab();
-    else if (Fl::modal() && w != Fl::modal()) return 0;
-    Fl::pushed_ = w; mouse_dx = mouse_dy = 0;
+    if (grab()) w = grab();
+    else if (modal() && w != modal()) return 0;
+    pushed_ = w; mouse_dx = mouse_dy = 0;
     if (w->handle(event)) return 1;
     // raise windows that are clicked on:
     window->show();
@@ -409,69 +412,73 @@ int Fl::handle(int event, Fl_Window* window)
 
   case FL_MOVE:
   case FL_DRAG:
-    if (window != fl_xmousewin) {
-      // this should not happen if enter/leave events were reported
-      // correctly by the system, but just in case...
-      fl_xmousewin = window; fl_fix_focus();
-    }
-    if (Fl::pushed()) {
-      w = Fl::pushed();
+    // this should not happen if enter/leave events were reported
+    // correctly by the system, but just in case...
+    if (window != fl_xmousewin) handle(FL_ENTER, window);
+    if (pushed()) {
+      w = pushed();
       event = FL_DRAG;
-      Fl::e_x += mouse_dx;
-      Fl::e_y += mouse_dy;
-    } else if (Fl::grab())
-      w = Fl::grab();
-    else if (Fl::modal() && w != Fl::modal())
+      e_x += mouse_dx;
+      e_y += mouse_dy;
+    } else if (modal() && w != modal()) {
       w = 0;
+    }
     break;
 
   case FL_RELEASE: {
-    if (Fl::pushed()) {
-      w = Fl::pushed();
-      Fl::pushed_ = 0; // must be zero before callback is done!
-      Fl::e_x += mouse_dx;
-      Fl::e_y += mouse_dy;
+    if (pushed()) {
+      w = pushed();
+      pushed_ = 0; // must be zero before callback is done!
+      e_x += mouse_dx;
+      e_y += mouse_dy;
     }
+    if (grab()) w = grab();
     int r = w->handle(event);
     fl_fix_focus();
-    if (fl_xmousewin) fl_xmousewin->handle(FL_MOVE);
+    fl_send_extra_move();
     return r;}
 
   case FL_UNFOCUS:
     window = 0;
   case FL_FOCUS:
     fl_xfocus = window;
-    Fl::e_keysym = 0; // make sure it is not confused with navigation key
+    e_keysym = 0; // make sure it is not confused with navigation key
     fl_fix_focus();
     return 1;
 
   case FL_KEYBOARD:
-    if (window != fl_xfocus) {
-      // this should not happen if enter/leave events were reported
-      // correctly by the system, but just in case...
-      fl_xfocus = window; fl_fix_focus();
-    }
+
+    // this should not happen if focus/unfocus events were reported
+    // correctly by the system, but just in case...
+    if (window != fl_xfocus) handle(FL_FOCUS, window);
+      
     // Try it as keystroke, sending it to focus and all parents:
-    for (w = Fl::focus(); w; w = w->parent())
+    for (w = grab() ? grab() : focus(); w; w = w->parent())
       if (w->handle(FL_KEYBOARD)) return 1;
 
+    // recursive call to try shortcut:
+    if (handle(FL_SHORTCUT, window)) return 1;
+
+    // and then try a shortcut with the case of the text swapped:
+    if (!isalpha(event_text()[0])) return 0;
+
+    // swap the case and fall through to FL_SHORTCUT case:
+    *(char*)(event_text()) ^= ('A'^'a');
+    event = FL_SHORTCUT;
+
+  case FL_SHORTCUT:
+
+    if (grab()) break; // send it to grab window
+
     // Try it as shortcut, sending to mouse widget and all parents:
-    w = Fl::belowmouse(); if (!w) {w = Fl::modal(); if (!w) w = window;}
+    w = belowmouse(); if (!w) {w = modal(); if (!w) w = window;}
     for (; w; w = w->parent()) if (w->handle(FL_SHORTCUT)) return 1;
 
     // try using add_handle() functions:
     if (send_handlers(FL_SHORTCUT)) return 1;
 
-    // Try swapping the case of the text in the shortcut:
-    if (isalpha(Fl::event_text()[0])) {
-      *(char*)(Fl::event_text()) ^= ('A'^'a');
-      w = Fl::belowmouse(); if (!w) {w = Fl::modal(); if (!w) w = window;}
-      for (; w; w = w->parent()) if (w->handle(FL_SHORTCUT)) return 1;
-      if (send_handlers(FL_SHORTCUT)) return 1;
-    }
-
     // make Escape key close windows:
-    if (Fl::event_key()==FL_Escape) {
+    if (event_key()==FL_Escape) {
       window->do_callback();
       return 1;
     }
@@ -489,6 +496,7 @@ int Fl::handle(int event, Fl_Window* window)
   default:
     break;
   }
+  if (grab()) w = grab(); // always send to grab widget
   if (w && w->handle(event)) return 1;
   return send_handlers(event);
 }
@@ -660,5 +668,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.8 1998/12/15 15:34:36 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.9 1998/12/15 15:38:15 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.cxx,v 1.4 1998/10/21 14:20:12 mike Exp $"
+// "$Id: Fl_Menu_Window.cxx,v 1.5 1998/12/15 15:38:16 mike Exp $"
 //
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
@@ -114,7 +114,6 @@ HWND fl_capture;
 
 void Fl::grab(Fl_Window& w) {
   grab_ = &w;
-  fl_fix_focus();
 #ifdef WIN32
   SetActiveWindow(fl_capture = fl_xid(first_window()));
   SetCapture(fl_capture);
@@ -138,9 +137,10 @@ void Fl::grab(Fl_Window& w) {
 #endif
 }
 
+extern fl_send_extra_move(); // in Fl.cxx
+
 void Fl::release() {
   grab_ = 0;
-  fl_fix_focus();
 #ifdef WIN32
   fl_capture = 0;
   ReleaseCapture();
@@ -151,9 +151,10 @@ void Fl::release() {
   // an infinite loop, so we don't leave the X server locked up:
   XFlush(fl_display);
 #endif
+  fl_send_extra_move();
   return;
 }
 
 //
-// End of "$Id: Fl_Menu_Window.cxx,v 1.4 1998/10/21 14:20:12 mike Exp $".
+// End of "$Id: Fl_Menu_Window.cxx,v 1.5 1998/12/15 15:38:16 mike Exp $".
 //
