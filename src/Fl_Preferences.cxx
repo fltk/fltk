@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.21 2002/10/03 15:23:46 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.22 2002/10/07 13:19:22 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -882,6 +882,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::addChild( const char *path )
   char *name = strdup( nameBuffer );
   Node *nd = find( nameBuffer );
   free( name );
+  dirty_ = 1;
   return nd;
 }
 
@@ -979,6 +980,7 @@ char Fl_Preferences::Node::deleteEntry( const char *name )
   if ( ix == -1 ) return 0;
   memmove( entry+ix, entry+ix+1, (nEntry-ix-1) * sizeof(Entry) );
   nEntry--;
+  dirty_ = 1;
   return 1;
 }
 
@@ -1108,10 +1110,11 @@ char Fl_Preferences::Node::remove()
     }
   }
   delete this;
+  dirty_ = 1;
   return ( nd != 0 );
 }
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.21 2002/10/03 15:23:46 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.22 2002/10/07 13:19:22 easysw Exp $".
 //

@@ -391,7 +391,6 @@ Fl_Window* make_widget_panel() {
           o->selection_color(1);
           o->labelsize(10);
           o->callback((Fl_Callback*)when_button_cb);
-          o->when(FL_WHEN_NEVER);
         }
         o->end();
       }

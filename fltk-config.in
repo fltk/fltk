@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.14 2002/07/14 17:03:30 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.15 2002/10/07 13:19:21 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -242,8 +242,8 @@ if test -n "$compile"; then
 	    
     post=$prog
 
-    echo $CXX $CXXFLAGS $debug -o $prog $compile $LDSTATIC
-    $CXX $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+    echo $CXX $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+    $CXX $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
 fi
 
 if test -n "$post" -a "$POSTBUILD" != ":"; then
@@ -292,5 +292,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.14 2002/07/14 17:03:30 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.15 2002/10/07 13:19:21 easysw Exp $".
 #

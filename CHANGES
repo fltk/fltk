@@ -1,5 +1,14 @@
 CHANGES IN FLTK 1.1.1
 
+	- The fltk-config script didn't add the required include
+	  path, if any, when compiling a program.
+	- Added a license clarification that the FLTK manual is
+	  covered by the same license as FLTK itself.
+	- Fl_Check_Browser wasn't documented.
+	- Fl_Preferences::Node::addChild(), deleteEntry(), and
+	  remove() didn't set the "dirty" flag.
+	- The "no change" button didn't work in the FLUID widget
+	  panel.
 	- Vertical scrollbars did not draw the arrows inactive
 	  when the scrollbar was inactive.
 

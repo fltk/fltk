@@ -357,7 +357,7 @@ image}
         Fl_Light_Button {} {
           label {No Change}
           callback when_button_cb
-          tooltip {Call the callback even if the value has not changed.} xywh {290 295 105 20} selection_color 1 labelsize 10 when 0
+          tooltip {Call the callback even if the value has not changed.} xywh {290 295 105 20} selection_color 1 labelsize 10
         }
       }
     }
