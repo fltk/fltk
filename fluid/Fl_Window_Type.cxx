@@ -428,6 +428,17 @@ void Fl_Window_Type::newdx() {
     } else 
       mydy = 0;
   }
+
+  if (!(drag & (DRAG | BOX | LEFT | RIGHT))) {
+    mydx = 0;
+    dx = 0;
+  }
+
+  if (!(drag & (DRAG | BOX | TOP | BOTTOM))) {
+    mydy = 0;
+    dy = 0;
+  }
+
   if (dx != mydx || dy != mydy) {
     dx = mydx; dy = mydy;
     ((Overlay_Window *)o)->redraw_overlay();
@@ -615,68 +626,85 @@ void Fl_Window_Type::draw_overlay() {
     //    * FLTK suggests 10 pixels from the edge
     int d;
     int xsp, ysp;
+    Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
 
 
     ideal_spacing(xsp, ysp);
 
     if (drag & DRAG) {
+      // Check top spacing...
       if (abs(d = ysp - myby) < 5) {
 	dy += d;
 	mybt += d;
-	myby = ysp;
+	myby += d;
 	draw_v_arrow(mybx+5, myby, 0);
       }
+
+      // Check bottom spacing...
       if (abs(d = o->h() - ysp - mybt) < 5) {
 	dy += d;
 	myby += d;
-	mybt = o->h()- ysp;
+	mybt += d;
 	draw_v_arrow(mybx+5, mybt, o->h());
       }
+
+      // Check left spacing...
       if (abs(d = xsp - mybx) < 5) {
         dx += d;
 	mybr += d;
-	mybx = xsp;
+	mybx += d;
 	draw_h_arrow(mybx, myby+5, 0);
       }
+
+      // Check left spacing...
       if (abs(d = o->w() - xsp - mybr) < 5) {
 	dx += d;
 	mybx += d;
-	mybr = o->w()- xsp;
+	mybr += d;
 	draw_h_arrow(mybr, myby+5, o->w());
       }
     } else if (numselected==1 && selection) {
-      // check for FLTK preferred sizes
-      Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
+      // Check ideal sizes
       int w = mybr-mybx;
       int h = mybt-myby;
       int iw = w, ih = h;
 
       mysel->ideal_size(iw, ih);
 
-      if (abs(d = h-ih) < 4) {
-	mybt = myby + ih;
-	if (drag & TOP) dy -= d;
-	else dy += d;
+      // Check height
+      if (abs(d = ih - h) < 5) {
+        // Resize height
+	if (drag & TOP) {
+	  myby -= d;
+	  dy -= d;
+	} else {
+	  mybt += d;
+	  dy += d;
+	}
       }
 
+      // Draw height guide
       draw_height(mybx < 20 ? mybr+10 : mybx-10, myby, mybt,
 	          mybx < 20 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
 
+      // Check width
       if (abs(d = iw - w) < 5) {
-	if (drag & LEFT) {
-          mybx = mybr - iw;
+        // Resize width
+        if (drag & LEFT) {
+	  mybx -= d;
 	  dx -= d;
 	} else {
-          mybr = mybx + iw;
+	  mybr += d;
 	  dx += d;
 	}
       }
 
+      // Draw width guide
       draw_width(mybx, myby < 20 ? mybt+10 : myby-10, mybr,
 	         myby < 20 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
     }
 
-    // - check distances between individual widgets
+    // Check spacing and alignment between individual widgets
     if (drag && selection->is_widget()) {
       for (Fl_Type *q=next; q && q->level>level; q = q->next)
 	if (q != selection && q->is_widget()) {
@@ -685,102 +713,90 @@ void Fl_Window_Type::draw_overlay() {
           // Only check visible widgets...
 	  if (!qw->o->visible_r()) continue;
 
-          qw->ideal_spacing(xsp, ysp);
-
-          // - check horizontal and vertical alignment with other widgets
-          if (abs(d = qw->o->y() - myby) < 5) {
-	    if (drag & (TOP | DRAG)) dy += d;
-	    else dy -= d;
-
-            myby += d;
-	    mybt += d;
-
-	    draw_top_brace(qw->o);
-	  }
-          if (abs(d = qw->o->x() - mybx) < 5) {
-	    if (drag & (LEFT | DRAG)) dx += d;
-	    else dx -= d;
-
+          // Align to left of other widget...
+          if ((drag & (LEFT | DRAG)) && abs(d = mybx - qw->o->x()) < 5) {
+	    dx += d;
             mybx += d;
 	    mybr += d;
 
 	    draw_left_brace(qw->o);
 	  }
-          if (abs(d = qw->o->x() + qw->o->w() - mybr) < 5) {
-	    if (drag & (LEFT | DRAG)) dx += d;
-	    else dx -= d;
 
+          // Align to right of other widget...
+          if ((drag & (RIGHT | DRAG)) && abs(d = qw->o->x() + qw->o->w() - mybr) < 5) {
+	    dx += d;
             mybx += d;
 	    mybr += d;
 
 	    draw_right_brace(qw->o);
 	  }
-          if (abs(d = qw->o->y() + qw->o->h() - mybt) < 5) {
-	    if (drag & (TOP | DRAG)) dy += d;
-	    else dy -= d;
 
+          // Align to top of other widget...
+          if ((drag & (TOP | DRAG)) && abs(d = myby - qw->o->y()) < 5) {
+	    dy += d;
+            myby += d;
+	    mybt += d;
+
+	    draw_top_brace(qw->o);
+	  }
+
+          // Align to bottom of other widget...
+          if ((drag & (BOTTOM | DRAG)) && abs(d = qw->o->y() + qw->o->h() - mybt) < 5) {
+	    dy += d;
             myby += d;
 	    mybt += d;
 
 	    draw_bottom_brace(qw->o);
 	  }
 
-          // - check distances between widgets
+          // Check spacing between widgets
+          qw->ideal_spacing(xsp, ysp);
+
           if ((qw->o->y()+qw->o->h())>=myby && qw->o->y()<=mybt) {
 	    // Compare left of selected to right of current
-            if (abs(d = xsp - (mybx - qw->o->x() - qw->o->w())) < 5) {
-	      if (drag & (LEFT | DRAG)) dx += d;
-	      else dx -= d;
-
+            if ((drag & (LEFT | DRAG)) && abs(d = xsp - (mybx - qw->o->x() - qw->o->w())) < 5) {
+	      dx += d;
               mybx += d;
 	      mybr += d;
 
               // Draw left arrow
 	      draw_h_arrow(mybx, (myby+mybt)/2, qw->o->x()+qw->o->w());
-            } else {
-	      // Compare right of selected to left of current
-              if (abs(d = xsp - (qw->o->x() - mybr)) < 5) {
-	        if (drag & (LEFT | DRAG)) dx += d;
-		else dx -= d;
+            }
 
-                mybx += d;
-		mybr += d;
+	    // Compare right of selected to left of current
+            if ((drag & (RIGHT | DRAG)) && abs(d = qw->o->x() - mybr - xsp) < 5) {
+	      dx += d;
+              mybx += d;
+	      mybr += d;
 
-                // Draw right arrow
-		draw_h_arrow(mybr, (myby+mybt)/2, qw->o->x());
-              }
-	    }
+              // Draw right arrow
+	      draw_h_arrow(mybr, (myby+mybt)/2, qw->o->x());
+            }
 	  }
 
           if ((qw->o->x()+qw->o->w())>=mybx && qw->o->x()<=mybr) {
             // Compare top of selected to bottom of current
-            if (abs(d = ysp - (myby - qw->o->y() - qw->o->h())) < 5) {
-	      if (drag & (TOP | DRAG)) dy += d;
-	      else dy -= d;
-
-              myby += d;
+            if ((drag & (TOP | DRAG)) && abs(d = ysp - (myby - qw->o->y() - qw->o->h())) < 5) {
+	      dy += d;
+	      myby += d;
 	      mybt += d;
 
 	      // Draw up arrow...
 	      draw_v_arrow((mybx+mybr)/2, myby, qw->o->y()+qw->o->h());
-            } else {
-	      // Compare bottom of selected to top of current
-              if (abs(d = ysp - (qw->o->y() - mybt)) < 5) {
-	        if (drag & (TOP | DRAG)) dy += d;
-		else dy -= d;
+            }
 
-                myby += d;
-		mybt += d;
+	    // Compare bottom of selected to top of current
+            if ((drag & (BOTTOM | DRAG)) && abs(d = qw->o->y() - mybt - ysp) < 5) {
+	      dy += d;
+	      myby += d;
+	      mybt += d;
 
-	        // Draw down arrow...
-		draw_v_arrow((mybx+mybr)/2, mybt, qw->o->y());
-              }
-	    }
+	      // Draw down arrow...
+	      draw_v_arrow((mybx+mybr)/2, mybt, qw->o->y());
+            }
           }
 	}
     }
-
-    // \todo add more cases, maybe an interpreter?
   }
 
   // Draw selection box + resize handles...
@@ -789,7 +805,6 @@ void Fl_Window_Type::draw_overlay() {
   fl_rectf(mybr-5,myby,5,5);
   fl_rectf(mybr-5,mybt-5,5,5);
   fl_rectf(mybx,mybt-5,5,5);
-
 }
 
 // Calculate new bounding box of selected widgets:
@@ -926,7 +941,6 @@ int Fl_Window_Type::handle(int event) {
     if (!drag) return 0;
     mx = Fl::event_x();
     my = Fl::event_y();
-//    newdx();
     if (drag != BOX && (dx || dy || !Fl::event_is_click())) {
       if (dx || dy) moveallchildren();
     } else if ((Fl::event_clicks() || Fl::event_state(FL_CTRL))) {
