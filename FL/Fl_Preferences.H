@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.11 2002/09/05 20:44:35 matthiaswm Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.12 2003/01/21 14:51:54 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -83,7 +83,7 @@ public:
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
 
-  class Name {
+  class FL_EXPORT Name {
     char *data_;
   public:
     Name( unsigned int n );
@@ -101,7 +101,7 @@ private:
 
   static char nameBuffer[128];
 
-  class Node // a node contains a list to all its entries 
+  class FL_EXPORT Node // a node contains a list to all its entries 
   {          // and all means to manage the tree structure
     Node *child_, *next_, *parent_;
     char *path_;
@@ -133,7 +133,7 @@ private:
   };
   friend class Node;
 
-  class RootNode  // the root node manages file paths and basic reading and writing
+  class FL_EXPORT RootNode  // the root node manages file paths and basic reading and writing
   {
     Fl_Preferences *prefs_;
     char *filename_;
@@ -157,5 +157,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.11 2002/09/05 20:44:35 matthiaswm Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.12 2003/01/21 14:51:54 easysw Exp $".
 //
