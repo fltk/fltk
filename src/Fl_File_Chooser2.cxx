@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.37 2004/07/26 20:52:51 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.38 2004/09/07 20:59:16 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -935,7 +935,9 @@ Fl_File_Chooser::update_preview()
     Fl::check();
 
     // Scan the buffer for printable chars...
-    for (ptr = preview_text_; *ptr && (isprint(*ptr) || isspace(*ptr)); ptr ++);
+    for (ptr = preview_text_;
+         *ptr && (isprint(*ptr & 255) || isspace(*ptr & 255));
+	 ptr ++);
 
     if (*ptr || ptr == preview_text_) {
       // Non-printable file, just show a big ?...
@@ -1158,5 +1160,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.37 2004/07/26 20:52:51 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.38 2004/09/07 20:59:16 easysw Exp $".
 //

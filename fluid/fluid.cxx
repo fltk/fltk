@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.44 2004/04/11 04:38:56 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.45 2004/09/07 20:59:16 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -135,7 +135,7 @@ void save_position(Fl_Window *w, const char *prefsName) {
   pos.set("y", w->y());
   pos.set("w", w->w());
   pos.set("h", w->h());
-  pos.set("visible", w->shown() && w->visible() );
+  pos.set("visible", (int)(w->shown() && w->visible()));
 }
 
 Fl_Window *main_window;
@@ -886,5 +886,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.44 2004/04/11 04:38:56 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.45 2004/09/07 20:59:16 easysw Exp $".
 //

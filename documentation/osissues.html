@@ -333,7 +333,7 @@ MyWindow::~MyWindow() {
 
 <H3>Setting the Icon of a Window</H3>
 
-<P>FLTK currently supports setting a window's icon *before* it
+<P>FLTK currently supports setting a window's icon <b>before</b> it
 is shown using the <TT>Fl_Window::icon()</TT> method.
 
 <H4>void Fl_Window::icon(char *)</H4>
@@ -358,6 +358,7 @@ window-&gt;icon((char *)p);
 should be used as follows:
 
 <UL><PRE>
+#include &lt;X11/xpm.h&gt;
 #include &quot;icon.xpm&quot;
 
 fl_opendisplay();                // needed if display has not been previously opened
@@ -369,6 +370,10 @@ XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
 
 window-&gt;icon((char *)p);
 </PRE></UL>
+
+<p>When using the Xpm library, be sure to include it in the list
+of libraries that are used to link the application (usually
+"-lXpm").</p>
 
 <CENTER><TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>

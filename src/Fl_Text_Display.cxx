@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.56 2004/07/27 18:40:29 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.57 2004/09/07 20:59:17 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1888,7 +1888,7 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) {
     charStyle = position_style( lineStart, lineLen, charIndex, outIndex );
     charWidth = string_width( expandedChar, charLen, charStyle );
     if ( X < xStep + ( posType == CURSOR_POS ? charWidth / 2 : charWidth ) ) {
-      delete [] (char *)lineStr;
+      free((char *)lineStr);
       return lineStart + charIndex;
     }
     xStep += charWidth;
@@ -3131,5 +3131,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.56 2004/07/27 18:40:29 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.57 2004/09/07 20:59:17 easysw Exp $".
 //

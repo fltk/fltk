@@ -81,7 +81,12 @@ to the end of this group.
 
 <H4><A name="Fl_Group.clear">void Fl_Group::clear()</A></H4>
 
-<P>The <TT>clear()</TT> method deletes all child widgets recursively.
+<p>The <tt>clear()</tt> method deletes all child widgets from
+memory recursively.</p>
+
+<p>This method differs from the <a
+href='#Fl_Group.remove'><tt>remove()</tt></a> method in that it
+affects all child widgets and deletes them from memory.</p>
 
 <H4><A name="Fl_Group.init_sizes">void Fl_Group::init_sizes()</A></H4>
 
@@ -104,8 +109,15 @@ This does <tt>insert(w, find(beforethis))</tt>.  This will append the
 widget if <tt>beforethis</tt> is not in the group.
 
 <H4><A name=Fl_Group.remove>void Fl_Group::remove(Fl_Widget &amp;w)</A></H4>
-Removes a widget from the group. This does nothing if the widget is
-not currently a child of this group.
+
+<p>Removes a widget from the group but does not delete it. This
+method does nothing if the widget is not a child of the
+group.</p>
+
+<p>This method differs from the <a
+href='#Fl_Group.clear'><tt>clear()</tt></a> method in that it
+only affects a single widget and does not delete it from
+memory.</p>
 
 <H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()
 <BR> static void Fl_Group::current(Fl_Group *w)</A></H4>

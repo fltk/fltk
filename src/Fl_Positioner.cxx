@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.5 2004/07/27 16:02:21 easysw Exp $"
+// "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.6 2004/09/07 20:59:17 easysw Exp $"
 //
 // Positioner widget for the Fast Light Tool Kit (FLTK).
 //
@@ -81,12 +81,22 @@ int Fl_Positioner::handle(int event, int X, int Y, int W, int H) {
     double h1 = H - 2 * 4;
     double xx = flinear(Fl::event_x(), x1, x1+w1-1.0, xmin, xmax);
     if (xstep_) xx = int(xx/xstep_+0.5) * xstep_;
-    if (xx < xmin) xx = xmin;
-    if (xx > xmax) xx = xmax;
+    if (xmin < xmax) {
+      if (xx < xmin) xx = xmin;
+      if (xx > xmax) xx = xmax;
+    } else {
+      if (xx > xmin) xx = xmin;
+      if (xx < xmax) xx = xmax;
+    }
     double yy = flinear(Fl::event_y(), y1, y1+h1-1.0, ymin, ymax);
     if (ystep_) yy = int(yy/ystep_+0.5) * ystep_;
-    if (yy < ymin) yy = ymin;
-    if (yy > ymax) yy = ymax;
+    if (ymin < ymax) {
+      if (yy < ymin) yy = ymin;
+      if (yy > ymax) yy = ymax;
+    } else {
+      if (yy > ymin) yy = ymin;
+      if (yy < ymax) yy = ymax;
+    }
     if (value(xx, yy)) set_changed();}
     if (!(when() & FL_WHEN_CHANGED ||
 	  (when() & FL_WHEN_RELEASE && event == FL_RELEASE))) return 1;
@@ -131,5 +141,5 @@ void Fl_Positioner::ybounds(double a, double b) {
 }
 
 //
-// End of "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.5 2004/07/27 16:02:21 easysw Exp $".
+// End of "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.6 2004/09/07 20:59:17 easysw Exp $".
 //
