@@ -1,5 +1,5 @@
 //
-// "$Id: keyboard.cxx,v 1.5.2.3.2.3 2001/12/22 07:16:12 matthiaswm Exp $"
+// "$Id: keyboard.cxx,v 1.5.2.3.2.4 2001/12/30 05:16:10 easysw Exp $"
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
@@ -38,18 +38,7 @@
 //
 
 
-#include <stdio.h>
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-
-class MyWindow : public Fl_Window {
-  int handle(int);
-public:
-  MyWindow(int w, int h, const char *t=0L) 
-    : Fl_Window( w, h, t ) { }
-};
-
-#include "keyboard_ui.cxx"
+#include "keyboard_ui.h"
 
 // these are used to identify which buttons are which:
 void key_cb(Fl_Button*, void*) {}
@@ -150,5 +139,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: keyboard.cxx,v 1.5.2.3.2.3 2001/12/22 07:16:12 matthiaswm Exp $".
+// End of "$Id: keyboard.cxx,v 1.5.2.3.2.4 2001/12/30 05:16:10 easysw Exp $".
 //

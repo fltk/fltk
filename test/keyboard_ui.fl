@@ -7,8 +7,9 @@ gridy 5
 snap 3
 Function {make_window()} {open
 } {
-  Fl_Window my_window {open
+  Fl_Window my_window {selected
     xywh {461 296 494 203}
+    code0 {\#include "keyboard.h"}
     class MyWindow visible
   } {
     Fl_Button {} {
@@ -709,12 +710,12 @@ Function {make_window()} {open
     }
     Fl_Dial roller_x {
       label {x:}
-      callback wheel_cb selected
+      callback wheel_cb
       xywh {440 60 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
     }
     Fl_Dial roller_y {
       label {y:}
-      callback wheel_cb selected
+      callback wheel_cb
       xywh {460 60 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
     }
   }

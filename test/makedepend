@@ -197,11 +197,9 @@ input.o: ../FL/Fl_Multiline_Input.H ../FL/Fl_Button.H
 input.o: ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H ../FL/Fl_Color_Chooser.H
 input.o: ../FL/Fl_Group.H ../FL/Fl_Box.H ../FL/Fl_Return_Button.H
 input.o: ../FL/Fl_Choice.H ../FL/Fl_Value_Input.H ../FL/Fl_Valuator.H
-keyboard.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-keyboard.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-keyboard.o: keyboard_ui.cxx keyboard_ui.h ../FL/Fl_Button.H ../FL/Fl_Output.H
-keyboard.o: ../FL/Fl_Input_.H ../FL/Fl_Box.H ../FL/Fl_Roller.H
-keyboard.o: ../FL/Fl_Valuator.H
+keyboard.o: keyboard_ui.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+keyboard.o: ../FL/Fl_Button.H ../FL/Fl_Output.H ../FL/Fl_Input_.H
+keyboard.o: ../FL/Fl_Box.H ../FL/Fl_Dial.H ../FL/Fl_Valuator.H
 label.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 label.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 label.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Hor_Value_Slider.H
@@ -213,11 +211,7 @@ line_style.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 line_style.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 line_style.o: ../FL/fl_draw.H ../FL/Fl_Choice.H
 list_visuals.o: ../config.h
-mandelbrot.o: mandelbrot_ui.cxx mandelbrot_ui.h ../FL/Fl.H
-mandelbrot.o: ../FL/Enumerations.H ../FL/Fl_Export.H mandelbrot.h
-mandelbrot.o: ../FL/Fl_Box.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-mandelbrot.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-mandelbrot.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_draw.H
+mandelbrot.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
 menubar.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Box.H
 menubar.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 menubar.o: ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
@@ -287,12 +281,12 @@ shape.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 shape.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 shape.o: ../FL/Fl_Hor_Slider.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 shape.o: ../FL/math.h ../FL/gl.h ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
-shiny.o: ../config.h shiny_panel.cxx shiny_panel.h ../FL/Fl.H
-shiny.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
-shiny.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Group.H
-shiny.o: ../FL/Fl_Button.H ../FL/Fl_Value_Slider.H ../FL/Fl_Slider.H
-shiny.o: ../FL/Fl_Valuator.H ../FL/Fl_Slider.H ../FL/fl_message.H
-shiny.o: ../FL/fl_ask.H ../FL/fl_draw.H ../FL/gl.h
+shiny.o: ../config.h shiny_panel.h ../FL/Fl.H ../FL/Enumerations.H
+shiny.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+shiny.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Group.H ../FL/Fl_Button.H
+shiny.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+shiny.o: ../FL/Fl_Slider.H ../FL/fl_message.H ../FL/fl_ask.H ../FL/fl_draw.H
+shiny.o: ../FL/gl.h
 subwindow.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 subwindow.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 subwindow.o: ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H

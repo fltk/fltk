@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- Fixed the make problems in the test directory - some
+	  make programs had trouble handling the recursive
+	  dependencies on the FLUID files...
 	- Now use rint() to round floating-point coordinates.
 	- Demo cleanup - made sure they all worked with schemes.
 	- Fl_Tabs no longer clears the unused area of the tab
