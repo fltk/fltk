@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.39 2002/08/15 19:38:53 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.40 2002/08/16 11:36:08 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1863,25 +1863,18 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
     else scale_width = width;
   }
 
-  if (width != scale_width)
+  if (width < scale_width)
   {
 //    printf("width = %d, scale_width = %d\n", width, scale_width);
 
     *table_width = 0;
 
-    for (column = 0; column < num_columns; column ++) {
-      scale_width     -= minwidths[column];
-      width           -= minwidths[column];
-      columns[column] -= minwidths[column];
-    }
+    scale_width = (scale_width - width) / num_columns;
 
-//    printf("extra width = %d, scale_width = %d\n", width, scale_width);
+//    printf("adjusted scale_width = %d\n", scale_width);
 
     for (column = 0; column < num_columns; column ++) {
-      if (width > 0) {
-        columns[column] = scale_width * columns[column] / width +
-	                  minwidths[column];
-      } else columns[column] = minwidths[column];
+      columns[column] += scale_width;
 
       (*table_width) += columns[column];
     }
@@ -2676,5 +2669,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.39 2002/08/15 19:38:53 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.40 2002/08/16 11:36:08 easysw Exp $".
 //
