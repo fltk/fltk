@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.5 2001/12/13 21:48:58 matthiaswm Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.6 2001/12/14 03:45:37 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -189,5 +189,5 @@ Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.5 2001/12/13 21:48:58 matthiaswm Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.6 2001/12/14 03:45:37 easysw Exp $".
 //
