@@ -27,24 +27,7 @@ functions.  These .cxx files must <tt>#include</tt> the .h file or
 they can <tt>#include</tt> the .cxx file so it still appears to be a single
 source file.
 
-<hr break>
-<ul><pre>
-                               ___________
-                              /          /
-    __________            +->/.cxx file /--------+
-   /         /           /  /__________/         |
-  /.fl file /&lt;==>[FLUID]&lt;     #include          |
- /_________/             \     ___v_____         |
-                          \   /        /         |
-                           +>/.h file /          |
-                            /________/           |
-                                  ^              |
-                              #include           |
-                               ___|_______       |          __________
-                              /          /       V         /         /
-                             / main.cxx /--->[c++,link]-->/ program /
-                            /__________/                 /_________/
-</pre></ul>
+<center><img src=fluid-org.gif></center>
 
 <p>Normally the FLUID file defines one or more "functions", which
 output C++ functions.  Each function defines a one or more FLTK

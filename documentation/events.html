@@ -8,7 +8,7 @@ widget.
 
 <H2>The FLTK Event Model</H2>
 
-Events are identified the small integer argument passed to the <a
+Events are identified by the integer argument passed to the <a
 href="#handle"><tt>Fl_Widget::handle()</tt></a> virtual method. Other
 information about the most recent event is stored in static locations
 and acquired by calling the <a
@@ -133,7 +133,7 @@ or one of its parents.
 <h3>FL_HIDE</h3>
 
 This widget is no longer visible, due to <a
-href="#Fl_Widget.hide><tt>hide()</a> being called on it or one of its
+href="#Fl_Widget.hide><tt>hide()</tt></a> being called on it or one of its
 parents, or due to a parent window being minimized.  <tt>visible()</tt>
 may still be true after this, but the widget is visible only if
 <tt>visible()</tt> is true for it and all its parents (use

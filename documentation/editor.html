@@ -386,7 +386,7 @@ void replall_cb() {
 
     if (found != NULL) {
       // Found a match; update the position and replace text...
-      times ++
+      times ++;
       pos = input->position() + found - val;
       input->replace(pos, pos + strlen(find), replace_with->value());
       input->position(pos + strlen(replace_with->value()));
