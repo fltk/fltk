@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.33.2.3 1999/05/14 09:08:05 bill Exp $"
+dnl# "$Id: configure.in,v 1.33.2.4 1999/05/19 19:07:15 bill Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -207,6 +207,17 @@ else
 		CXXFLAGS="+O2 +W336,501,736,740,749,829 $CXXFLAGS"
 	    fi
 	    ;;
+	SunOS*)
+	    # Solaris
+	    if test -z "$DEBUGFLAG"; then
+		CFLAGS="-O"
+		CXXFLAGS="-O"
+	    fi
+	    if test $PICFLAG = 1; then
+		CFLAGS="-KPIC $CFLAGS"
+		CXXFLAGS="-PIC $CXXFLAGS"
+	    fi
+	    ;;
 	*)
 	    # Running some other operating system; inform the user they
 	    # should contribute the necessary options to fltk-bugs@easysw.com...
@@ -230,5 +241,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.33.2.3 1999/05/14 09:08:05 bill Exp $".
+dnl# End of "$Id: configure.in,v 1.33.2.4 1999/05/19 19:07:15 bill Exp $".
 dnl#
