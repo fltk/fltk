@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font.cxx,v 1.9.2.5.2.1 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_font.cxx,v 1.9.2.5.2.2 2001/12/11 16:03:13 easysw Exp $"
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -38,6 +38,7 @@
 #  include "Fl_Font.H"
 
 #  include <ctype.h>
+#  include <stdio.h>
 #  include <stdlib.h>
 #  include <string.h>
 
@@ -172,14 +173,7 @@ static Fl_FontSize* find(int fnum, int size) {
       // whoa!  A scalable font!  Use unless exact match found:
       int l = c-thisname;
       memcpy(namebuffer,thisname,l);
-#if 1 // this works if you don't want stdio
-      if (size>=100) namebuffer[l++] = size/100+'0';
-      if (size>=10) namebuffer[l++] = (size/10)%10+'0';
-      namebuffer[l++] = (size%10)+'0';
-#else
-      //for some reason, sprintf fails to return the right value under Solaris.
       l += sprintf(namebuffer+l,"%d",size);
-#endif
       while (*c == '0') c++;
       strcpy(namebuffer+l,c);
       name = namebuffer;
@@ -295,5 +289,5 @@ void fl_draw(const char* str, int x, int y) {
 #endif
 
 //
-// End of "$Id: fl_font.cxx,v 1.9.2.5.2.1 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_font.cxx,v 1.9.2.5.2.2 2001/12/11 16:03:13 easysw Exp $".
 //

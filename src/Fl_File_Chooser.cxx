@@ -53,10 +53,10 @@ void Fl_File_Chooser::cb_upButton(Fl_Button* o, void* v) {
 }
 
 #include <FL/Fl_Bitmap.H>
-static unsigned char bits_up[] =
+static unsigned char idata_up[] =
 "\0\0x\0\204\0\2\1""1\376y\200\375\200""1\200""1\200""1\200""1\200""1\200\1\
 \200\1\200\377\377\0\0";
-static Fl_Bitmap bitmap_up(bits_up, 16, 16);
+static Fl_Bitmap image_up(idata_up, 16, 16);
 
 inline void Fl_File_Chooser::cb_newButton_i(Fl_Button*, void*) {
   newdir();
@@ -65,10 +65,10 @@ void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_newButton_i(o,v);
 }
 
-static unsigned char bits_new[] =
+static unsigned char idata_new[] =
 "\0\0x\0\204\0\2\1\1\376\1\200""1\200""1\200\375\200\375\200""1\200""1\200\1\
 \200\1\200\377\377\0\0";
-static Fl_Bitmap bitmap_new(bits_new, 16, 16);
+static Fl_Bitmap image_new(idata_new, 16, 16);
 
 inline void Fl_File_Chooser::cb_dirMenu_i(Fl_Choice*, void*) {
   char pathname[1024];
@@ -96,9 +96,9 @@ void Fl_File_Chooser::cb_(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->user_data()))->cb__i(o,v);
 }
 
-static unsigned char bits_allfiles[] =
+static unsigned char idata_allfiles[] =
 "\374?\4 \4 \4 \204!\244%\304#\364/\364/\304#\244%\204!\4 \4 \4 \374?";
-static Fl_Bitmap bitmap_allfiles(bits_allfiles, 16, 16);
+static Fl_Bitmap image_allfiles(idata_allfiles, 16, 16);
 
 Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
   Fl_Window* w;
@@ -127,13 +127,13 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     }
     { Fl_Button* o = upButton = new Fl_Button(280, 10, 25, 25);
       o->tooltip("Show the parent directory.");
-      o->image(bitmap_up);
+      o->image(image_up);
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_upButton);
     }
     { Fl_Button* o = newButton = new Fl_Button(310, 10, 25, 25);
       o->tooltip("Create a new directory.");
-      o->image(bitmap_new);
+      o->image(image_new);
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_newButton);
     }
@@ -144,7 +144,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     }
     { Fl_Button* o = new Fl_Button(340, 10, 25, 25);
       o->tooltip("Change the filename filter.");
-      o->image(bitmap_allfiles);
+      o->image(image_allfiles);
       o->labelsize(28);
       o->labelcolor(4);
       o->callback((Fl_Callback*)cb_);
@@ -154,7 +154,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     o->set_modal();
     o->end();
   }
-  window->size_range(345, 270, 345);
+  window->size_range(375, 315, 375);
 fileList->filter(p);
 type(t);
 value(d);

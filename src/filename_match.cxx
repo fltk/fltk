@@ -1,5 +1,5 @@
 //
-// "$Id: filename_match.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: filename_match.cxx,v 1.5.2.4.2.1 2001/12/11 16:03:13 easysw Exp $"
 //
 // Pattern matching routines for the Fast Light Tool Kit (FLTK).
 //
@@ -89,25 +89,20 @@ int filename_match(const char *s, const char *p) {
     case 0:	// end of pattern
       return !*s;
 
-#if defined(WIN32) && !defined(__CYGWIN__)
     case '\\':	// quote next character
       if (*p) p++;
-      if (*s++ != *(p-1)) return 0;
-      break;
     default:
+#if defined(WIN32) || defined(__CYGWIN__) || defined(__APPLE__)
       if (tolower(*s) != tolower(*(p-1))) return 0;
       s++;
 #else
-    case '\\':	// quote next character
-      if (*p) p++;
-    default  :
       if (*s++ != *(p-1)) return 0;
-      break;
 #endif
+      break;
     }
   }
 }
 
 //
-// End of "$Id: filename_match.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: filename_match.cxx,v 1.5.2.4.2.1 2001/12/11 16:03:13 easysw Exp $".
 //

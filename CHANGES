@@ -1,6 +1,20 @@
 CHANGES IN FLTK 1.1.0b7
 
 	- More documentation updates...
+	- Mac OS X support works 95%
+	- Fl_Button::handle() was calling take_focus() for both
+	  FL_PUSH and FL_DRAG.
+	- File and memory fixes for Fl_GIF_Image, Fl_PNG_Image,
+	  Fl_PNM_Image, Fl_Shared_Image, Fl_Tiled_Image, and
+	  Fl_XBM_Image.
+	- filename_match() didn't handle backslashes properly
+	  under WIN32, and didn't use a case-insensitive
+	  comparison under MacOS X.
+	- The Fl class was missing access methods for the
+	  FL_MOUSEWHEEL event values - Fl::event_dx() and
+	  Fl::event_dy().
+	- The default help string didn't include the -nokbd
+	  option.
 	- "make uninstall" didn't uninstall the static OpenGL
 	  widget library.
 	- Mac cursor shapes added...
@@ -22,7 +36,6 @@ CHANGES IN FLTK 1.1.0b7
 	  loaded.
 	- Some Win32 drivers would draw into wrong buffers
 	  after OpenGL mode change
-	- Mac OS X support works 95%
 	- The file chooser would cause a segfault if you
 	  clicked in an empty area of the file list.
 	- Fl_File_Icon::labeltype() would cause a segfault

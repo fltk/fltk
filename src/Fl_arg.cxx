@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.3 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.4 2001/12/11 16:03:12 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -211,7 +211,8 @@ static const char * const helpmsg =
 " -i[conic]\n"
 " -fg color\n"
 " -bg color\n"
-" -bg2 color";
+" -bg2 color\n"
+" -nokbd";
 
 const char * const Fl::help = helpmsg+13;
 
@@ -358,5 +359,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.3 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.4 2001/12/11 16:03:12 easysw Exp $".
 //

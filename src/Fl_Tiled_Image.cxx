@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tiled_Image.cxx,v 1.1.2.2 2001/12/06 18:12:35 easysw Exp $"
+// "$Id: Fl_Tiled_Image.cxx,v 1.1.2.3 2001/12/11 16:03:12 easysw Exp $"
 //
 // Tiled image code for the Fast Light Tool Kit (FLTK).
 //
@@ -74,12 +74,15 @@ Fl_Tiled_Image::copy(int W,	// I - New width
 void
 Fl_Tiled_Image::color_average(Fl_Color c,	// I - Color to blend with
                               float    i) {	// I - Blend fraction
-  Fl_Image *temp = image_->copy();
+  if (alloc_image_) image_->color_average(c, i);
+  else {
+    Fl_Image *temp = image_->copy();
 
-  temp->color_average(c, i);
+    temp->color_average(c, i);
 
-  image_       = temp;
-  alloc_image_ = 1;
+    image_       = temp;
+    alloc_image_ = 1;
+  }
 }
 
 
@@ -89,12 +92,15 @@ Fl_Tiled_Image::color_average(Fl_Color c,	// I - Color to blend with
 
 void
 Fl_Tiled_Image::desaturate() {
-  Fl_Image *temp = image_->copy();
+  if (alloc_image_) image_->desaturate();
+  else {
+    Fl_Image *temp = image_->copy();
 
-  temp->desaturate();
+    temp->desaturate();
 
-  image_       = temp;
-  alloc_image_ = 1;
+    image_       = temp;
+    alloc_image_ = 1;
+  }
 }
 
 
@@ -133,5 +139,5 @@ Fl_Tiled_Image::draw(int X,	// I - Starting X position
 
 
 //
-// End of "$Id: Fl_Tiled_Image.cxx,v 1.1.2.2 2001/12/06 18:12:35 easysw Exp $".
+// End of "$Id: Fl_Tiled_Image.cxx,v 1.1.2.3 2001/12/11 16:03:12 easysw Exp $".
 //

@@ -84,12 +84,13 @@ if ((f = fl_input("New Filter?",
         code0 {\#include <FL/fl_ask.H>}
       }
     }
-    code {window->size_range(345, 270, 345);
+    code {window->size_range(375, 315, 375);
 fileList->filter(p);
 type(t);
 value(d);
 callback_ = 0;
-data_ = 0;} {}
+data_ = 0;} {selected
+    }
   }
   decl {void (*callback_)(Fl_File_Chooser*, void *);} {}
   decl {void *data_;} {}
@@ -215,5 +216,5 @@ decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname);} {p
 decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname);} {public
 } 
 
-decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {selected public
+decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public
 } 

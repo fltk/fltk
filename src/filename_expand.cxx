@@ -1,5 +1,5 @@
 //
-// "$Id: filename_expand.cxx,v 1.4.2.4.2.1 2001/11/26 00:15:06 easysw Exp $"
+// "$Id: filename_expand.cxx,v 1.4.2.4.2.2 2001/12/11 16:03:13 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 int filename_expand(char *to,int tolen, const char *from) {
 
   char *temp = new char[tolen];
-  strncpy(temp,from, tolen);
+  strncpy(temp,from, tolen - 1);
   temp[tolen - 1] = '\0';
   char *start = temp;
   char *end = temp+strlen(temp);
@@ -106,5 +106,5 @@ int filename_expand(char *to,int tolen, const char *from) {
 
 
 //
-// End of "$Id: filename_expand.cxx,v 1.4.2.4.2.1 2001/11/26 00:15:06 easysw Exp $".
+// End of "$Id: filename_expand.cxx,v 1.4.2.4.2.2 2001/12/11 16:03:13 easysw Exp $".
 //

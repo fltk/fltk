@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XBM_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $"
+// "$Id: Fl_XBM_Image.cxx,v 1.1.2.2 2001/12/11 16:03:12 easysw Exp $"
 //
 // Fl_XBM_Image routines.
 //
@@ -24,6 +24,7 @@
 //
 // Contents:
 //
+//   Fl_XBM_Image::Fl_XBM_Image() - Load an XBM file.
 //
 
 //
@@ -37,6 +38,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+//
+// 'Fl_XBM_Image::Fl_XBM_Image()' - Load an XBM file.
+//
+
 Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
   FILE	*f;
   uchar	*data;
@@ -49,7 +54,10 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
   int i;
   for (i = 0; i<2; i++) {
     for (;;) {
-      if (!fgets(buffer,1024,f)) return;
+      if (!fgets(buffer,1024,f)) {
+        fclose(f);
+	return;
+      }
       int r = sscanf(buffer,"#define %s %d",junk,&wh[i]);
       if (r >= 2) break;
     }
@@ -57,7 +65,10 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
   // skip to data array:
   for (;;) {
-    if (!fgets(buffer,1024,f)) return;
+    if (!fgets(buffer,1024,f)) {
+      fclose(f);
+      return;
+    }
     if (!strncmp(buffer,"static ",7)) break;
   }
 
@@ -70,7 +81,10 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
   // read the data:
   for (i = 0, data = (uchar *)array; i < n;) {
-    if (!fgets(buffer,1024,f)) return;
+    if (!fgets(buffer,1024,f)) {
+      fclose(f);
+      return;
+    }
     const char *a = buffer;
     while (*a && i<n) {
       int t;
@@ -84,5 +98,5 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
 
 //
-// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $".
+// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.2 2001/12/11 16:03:12 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.17 2001/11/30 16:10:08 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.18 2001/12/11 16:03:12 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -162,13 +162,13 @@ Fl_Help_View::add_link(const char *n,	// I - Name of link
   temp->w       = xx + ww;
   temp->h       = yy + hh;
 
-  strncpy(temp->filename, n, sizeof(temp->filename));
+  strncpy(temp->filename, n, sizeof(temp->filename) - 1);
   temp->filename[sizeof(temp->filename) - 1] = '\0';
 
   if ((target = strrchr(temp->filename, '#')) != NULL)
   {
     *target++ = '\0';
-    strncpy(temp->name, target, sizeof(temp->name));
+    strncpy(temp->name, target, sizeof(temp->name) - 1);
     temp->name[sizeof(temp->name) - 1] = '\0';
   }
   else
@@ -202,7 +202,7 @@ Fl_Help_View::add_target(const char *n,	// I - Name of target
   temp = targets_ + ntargets_;
 
   temp->y = yy;
-  strncpy(temp->name, n, sizeof(temp->name));
+  strncpy(temp->name, n, sizeof(temp->name) - 1);
   temp->name[sizeof(temp->name) - 1] = '\0';
 
   ntargets_ ++;
@@ -2042,6 +2042,9 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 	yy = Fl::event_y() - y() + topline_;
 	break;
 
+    case FL_LEAVE :
+        fl_cursor(FL_CURSOR_DEFAULT);
+
     default :
 	return (Fl_Group::handle(event));
   }
@@ -2549,5 +2552,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.17 2001/11/30 16:10:08 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.18 2001/12/11 16:03:12 easysw Exp $".
 //

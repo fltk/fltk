@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.5 2001/11/24 18:07:57 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.6 2001/12/11 16:03:12 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -87,9 +87,15 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   }
 
   {char b[6];
-  if (fread(b,1,6,GifFile)<6) return; /* quit on eof */
+  if (fread(b,1,6,GifFile)<6) {
+    fclose(GifFile);
+    return; /* quit on eof */
+  }
   if (b[0]!='G' || b[1]!='I' || b[2] != 'F') {
-    Fl::error("%s is not a GIF file.\n", infname); return;}
+    Fl::error("%s is not a GIF file.\n", infname);
+    fclose(GifFile);
+    return;
+  }
   if (b[3]!='8' || b[4]>'9' || b[5]!= 'a')
     Fl::warning("%s is version %c%c%c.",infname,b[3],b[4],b[5]);
   }
@@ -128,7 +134,11 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   for (;;) {
 
     int i = NEXTBYTE;
-    if (i<0) {Fl::error("%s: unexpected EOF",infname); return;}
+    if (i<0) {
+      Fl::error("%s: unexpected EOF",infname); 
+      fclose(GifFile);
+      return;
+    }
     int blocklen;
 
     //  if (i == 0x3B) return 0;  eof code
@@ -185,6 +195,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   uchar *Image = new uchar[Width*Height];
   if (!Image) {
     Fl::fatal("Insufficient memory for %s.", infname);
+    fclose(GifFile);
     return;
   }
 
@@ -361,9 +372,11 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   alloc_data = 1;
 
   delete[] Image;
+
+  fclose(GifFile);
 }
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.5 2001/11/24 18:07:57 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.6 2001/12/11 16:03:12 easysw Exp $".
 //

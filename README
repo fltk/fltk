@@ -5,10 +5,10 @@ WHAT IS FLTK?
 
     The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
     LGPL'd C++ graphical user interface toolkit for X (UNIX(r)),
-    OpenGL(r), and Microsoft(r) Windows(r) NT 4.0, 95, or 98. It
-    was originally developed by Mr. Bill Spitzak and is
-    currently maintained by a small group of developers across
-    the world with a central repository in the US.
+    OpenGL(r), MacOS(r) X, and Microsoft(r) Windows(r). It was
+    originally developed by Mr. Bill Spitzak and is currently
+    maintained by a small group of developers across the world
+    with a central repository in the US.
 
 
 LICENSING
@@ -29,7 +29,7 @@ ON-LINE DOCUMENTATION
         http://www.fltk.org/documentation.php
 
 
-BUILDING AND INSTALLING FLTK UNDER UNIX
+BUILDING AND INSTALLING FLTK UNDER UNIX AND MacOS X
 
     In most cases you can just type "make".  This will run
     configure with the default (no) options and then compile
@@ -78,14 +78,20 @@ BUILDING AND INSTALLING FLTK UNDER UNIX
 BUILDING FLTK UNDER MICROSOFT WINDOWS
 
     There are two ways to build FLTK under Microsoft Windows. 
-    The first is to use the 5.0 project files under the
+    The first is to use the VC++ 6.0 project files under the
     "visualc" directory.  Just open (or double-click on) the
     "fltk.dsw" file to get the whole shebang.
 
     The second method is to use a GNU-based development tool
-    with the files in the "makefiles" directory.  To build using
-    one of these tools simply copy the appropriate makeinclude
-    and config files to the main directory and do a make:
+    with the files in the "makefiles" directory.  To build
+    with the CygWin tools, use the supplied configure script
+    as specified in the UNIX section above:
+
+        sh configure ...options...
+
+    To build using other tools simply copy the appropriate
+    makeinclude and config files to the main directory and do a
+    make:
 
 	copy makefiles\Makefile.<env> Makefile
 	make
@@ -162,7 +168,8 @@ TRADEMARKS
     Microsoft and Windows are registered trademarks of Microsoft
     Corportation. UNIX is a registered trademark of the X/Open
     Group, Inc.  OpenGL is a registered trademark of Silicon
-    Graphics, Inc.
+    Graphics, Inc.  MacOS is a registered trademark of Apple
+    Computers, Inc.
 
 
 COPYRIGHT

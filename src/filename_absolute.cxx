@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.2 2001/11/26 19:41:57 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.3 2001/12/11 16:03:12 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -110,13 +110,12 @@ int filename_absolute(char *to, int tolen, const char *from) {
  */
 
 int					// O - 0 if no change, 1 if changed
-filename_relative(char       *to,		// O - Relative filename
-               int        tolen,	// I - Size of "to" buffer
-               const char *from) {	// I - Absolute filename
+filename_relative(char       *to,	// O - Relative filename
+                  int        tolen,	// I - Size of "to" buffer
+                  const char *from) {	// I - Absolute filename
   const char	*newslash;		// Directory separator
-  char		*slash;			// Directory separator
+  const char	*slash;			// Directory separator
   char		cwd[1024];		// Current directory
-  char		*temp = new char[tolen];// Temporary pathname
 
 
   if (from[0] == '\0' || !isdirsep(*from)) {
@@ -131,16 +130,13 @@ filename_relative(char       *to,		// O - Relative filename
     return 0;
   }
 
-  strncpy(temp, from, tolen - 1);
-  temp[tolen - 1] = '\0';
-
-  for (slash = temp, newslash = cwd;
+  for (slash = from, newslash = cwd;
        *slash != '\0' && *newslash != '\0';
        slash ++, newslash ++)
     if (isdirsep(*slash) && isdirsep(*newslash)) continue;
     else if (*slash != *newslash) break;
 
-  while (!isdirsep(*slash) && slash > temp) slash --;
+  while (!isdirsep(*slash) && slash > from) slash --;
 
   if (isdirsep(*slash)) slash ++;
 
@@ -158,10 +154,8 @@ filename_relative(char       *to,		// O - Relative filename
   to[0]         = '\0';
   to[tolen - 1] = '\0';
 
-  while (*newslash != '\0')
-  {
-    if (*newslash == '/' || *newslash == '\\')
-      strncat(to, "../", tolen - 1);
+  while (*newslash != '\0') {
+    if (isdirsep(*newslash)) strncat(to, "../", tolen - 1);
 
     newslash ++;
   }
@@ -173,5 +167,5 @@ filename_relative(char       *to,		// O - Relative filename
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.2 2001/11/26 19:41:57 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.3 2001/12/11 16:03:12 easysw Exp $".
 //
