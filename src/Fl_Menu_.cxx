@@ -52,10 +52,10 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
     for ( int t=0; t<size(); t++ ) {
         const Fl_Menu_Item *m = &(menu()[t]);
 	if ( m->submenu() ) {				// submenu? descend
-	    if ( *name ) SAFE_STRCAT("/");
-	    SAFE_STRCAT(m->label());
+	    if (*name) SAFE_STRCAT("/");
+	    if (m->label()) SAFE_STRCAT(m->label());
 	} else {
-	    if ( m->label() ) {				// menu item?
+	    if (m->label()) {				// menu item?
 		if ( m == finditem ) {			// found? tack on itemname, done.
 		    SAFE_STRCAT("/");
 		    SAFE_STRCAT(m->label());
