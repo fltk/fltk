@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.54 2002/03/08 01:18:09 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.55 2002/03/25 21:39:01 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -35,7 +35,7 @@ dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
 FL_PATCH_VERSION=0
-FL_RELEASE_VERSION=b11
+FL_RELEASE_VERSION=b12
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)
@@ -77,8 +77,10 @@ LINKFLTKGL="-lfltk_gl"
 GLDEMOS="gldemos"
 
 LIBNAME="../lib/libfltk.a"
+FLLIBNAME="../lib/libfltk_forms.a"
 GLLIBNAME="../lib/libfltk_gl.a"
 
+AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIBNAME)
 AC_SUBST(LIBNAME)
@@ -101,6 +103,7 @@ if test x$enable_shared = xyes; then
     case $uname in
 	*BSD* | Darwin*)
             DSONAME="libfltk.$FL_API_VERSION.dylib"
+            FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="ld $DSOFLAGS -dylib /usr/lib/dylib1.o -lc"
 	    if test "$libdir" != "/usr/lib"; then
@@ -110,6 +113,7 @@ if test x$enable_shared = xyes; then
 
 	SunOS* | UNIX_S*)
             DSONAME="libfltk.so.$FL_API_VERSION"
+            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib"; then
@@ -118,6 +122,7 @@ if test x$enable_shared = xyes; then
 	    ;;
 	HP-UX*)
             DSONAME="libfltk.sl.$FL_API_VERSION"
+            FLDSONAME="libfltk_forms.sl.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib"; then
@@ -126,6 +131,7 @@ if test x$enable_shared = xyes; then
 	    ;;
 	IRIX* | OSF1*)
             DSONAME="libfltk.so.$FL_API_VERSION"
+            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
@@ -134,6 +140,7 @@ if test x$enable_shared = xyes; then
 	    ;;
 	Linux*)
             DSONAME="libfltk.so.$FL_API_VERSION"
+            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 	    if test "$libdir" != "/usr/lib"; then
@@ -142,6 +149,7 @@ if test x$enable_shared = xyes; then
 	    ;;
 	AIX*)
             DSONAME="libfltk_s.a"
+            FLDSONAME="libfltk_forms_s.a"
             GLDSONAME="libfltk_gl_s.a"
             DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             ;;
@@ -151,6 +159,7 @@ if test x$enable_shared = xyes; then
 	*)
             AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)
             DSONAME="libfltk.so.$FL_API_VERSION"
+            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
@@ -159,6 +168,7 @@ else
     DSOCOMMAND="echo"
     DSOLINK=""
     DSONAME=""
+    FLDSONAME=""
     GLDSONAME=""
     PICFLAG=0
 fi
@@ -166,6 +176,7 @@ fi
 AC_SUBST(DSOCOMMAND)
 AC_SUBST(DSOLINK)
 AC_SUBST(DSONAME)
+AC_SUBST(FLDSONAME)
 AC_SUBST(GLDSONAME)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support])
@@ -693,5 +704,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.54 2002/03/08 01:18:09 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.55 2002/03/25 21:39:01 easysw Exp $".
 dnl

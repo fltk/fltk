@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10.2.6.2.15 2002/03/25 20:09:12 easysw Exp $"
+# "$Id: Makefile,v 1.10.2.6.2.16 2002/03/25 21:39:01 easysw Exp $"
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -52,7 +52,7 @@ include ../makeinclude
 
 $(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
 	echo Linking $@...
-	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $(OBJECTS) $(LINKFLTK) \
+	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $(OBJECTS) $(LINKFLTKFORMS) \
 		$(IMAGELIBS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
@@ -86,5 +86,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.6.2.15 2002/03/25 20:09:12 easysw Exp $".
+# End of "$Id: Makefile,v 1.10.2.6.2.16 2002/03/25 21:39:01 easysw Exp $".
 #

@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.8 2002/02/20 13:02:25 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.9 2002/03/25 21:39:01 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -74,6 +74,7 @@ Options telling what we are doing:
 	[--use-gl]        use GL
 	[--use-images]    use extra image formats (PNG, JPEG)
 	[--use-glut]      use glut compatibility layer
+	[--use-forms]     use forms compatibility layer
 
 Options telling what information we request:
 	[--cflags]        return flags to compile C using FLTK
@@ -131,6 +132,9 @@ do
     --use-gl | --use-glut)
       use_gl=yes
       ;;
+    --use-forms)
+      use_forms=yes
+      ;;
     --use-images)
       use_images=yes
       ;;
@@ -182,12 +186,17 @@ LDSTATIC="$libdir/libfltk.a $LDLIBS"
 LDLIBS="$libs -lfltk $LDLIBS"
 LIBS="$LIBS $libdir/libfltk.a"
 
-if test "$use_gl" = "yes"; then
+if test x$use_forms = xyes; then
+    LDLIBS="-lfltk_forms $LDLIBS"
+    LDSTATIC="$libdir/libfltk_forms.a $LDSTATIC"
+    LIBS="$LIBS $libdir/libfltk_forms.a"
+fi
+if test x$use_gl = xyes; then
     LDLIBS="-lfltk_gl @GLLIB@ $LDLIBS"
     LDSTATIC="$libdir/libfltk_gl.a @GLLIB@ $LDSTATIC"
     LIBS="$LIBS $libdir/libfltk_gl.a"
 fi
-if test "$use_images" = "yes"; then
+if test x$use_images = xyes; then
     LDLIBS="$LDLIBS $IMAGELIBS"
     LDSTATIC="$LDSTATIC $IMAGELIBS"
 fi

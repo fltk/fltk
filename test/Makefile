@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.29 2002/01/15 01:33:16 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.30 2002/03/25 21:39:01 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -199,6 +199,9 @@ checkers$(EXEEXT): checkers.o
 clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 color_chooser$(EXEEXT): color_chooser.o
 
@@ -207,6 +210,9 @@ cursor$(EXEEXT): cursor.o
 curve$(EXEEXT): curve.o
 
 demo$(EXEEXT): demo.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 doublebuffer$(EXEEXT): doublebuffer.o
 
@@ -226,6 +232,9 @@ file_chooser$(EXEEXT): file_chooser.o
 fonts$(EXEEXT): fonts.o
 
 forms$(EXEEXT): forms.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 hello$(EXEEXT): hello.o
 
@@ -250,6 +259,9 @@ keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 keyboard_ui.o:	keyboard_ui.h ../fluid/fluid
 
 label$(EXEEXT): label.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 line_style$(EXEEXT): line_style.o
 
@@ -270,6 +282,9 @@ minimum$(EXEEXT): minimum.o
 navigation$(EXEEXT): navigation.o
 
 output$(EXEEXT): output.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 overlay$(EXEEXT): overlay.o
 
@@ -354,5 +369,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.29 2002/01/15 01:33:16 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.30 2002/03/25 21:39:01 easysw Exp $".
 #

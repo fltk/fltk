@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.37 2002/03/08 13:13:14 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.38 2002/03/25 21:39:01 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -150,7 +150,9 @@ CPPFILES = \
 	fl_shortcut.cxx \
 	fl_show_colormap.cxx \
 	fl_symbols.cxx \
-	fl_vertex.cxx \
+	fl_vertex.cxx
+
+FLCPPFILES = \
 	forms_compatability.cxx \
 	forms_bitmap.cxx \
 	forms_free.cxx \
@@ -177,8 +179,9 @@ include ../makeinclude
 
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
+FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 
-all:	$(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
+all:	$(LIBNAME) $(DSONAME) $(FLLIBNAME) $(FLDSONAME) $(GLLIBNAME) $(GLDSONAME)
 
 $(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -197,6 +200,24 @@ libfltk_s.a: $(OBJECTS)
 	-$(RM) $@
 	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
 	chmod +x libfltk_s.a
+
+$(FLLIBNAME): $(FLOBJECTS)
+	echo $(LIBCOMMAND) $@ ...
+	-$(RM) $@
+	$(LIBCOMMAND) $@ $(FLOBJECTS)
+	$(RANLIB) $@
+
+libfltk_forms.so.1.1 libfltk_forms.sl.1.1: $(FLOBJECTS)
+	echo $(DSOCOMMAND) $@ ...
+	$(DSOCOMMAND) $@ $(FLOBJECTS)
+
+libfltk_forms_s.a: $(FLOBJECTS)
+	echo $(DSOCOMMAND) libfltk_forms_s.o ...
+	$(DSOCOMMAND) libfltk_forms_s.o $(FLOBJECTS)
+	echo $(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o
+	-$(RM) $@
+	$(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o
+	chmod +x libfltk_forms_s.a
 
 $(GLLIBNAME): $(GLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -219,7 +240,7 @@ libfltk_gl_s.a: $(GLOBJECTS)
 clean :
 	-@ rm -f *.o $(DSONAME) $(GLDSONAME) $(LIBRARY) $(CLEAN) libfltk.so libfltk_gl.so
 
-depend:	$(CPPFILES) $(GLCPPFILES) $(CFILES)
+depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(CFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES) $(GLCPPFILES) $(CFILES)
 
 # Automatically generated dependencies...
@@ -227,10 +248,10 @@ include makedepend
 
 # These dependencies aren't part of the makedepend file since
 # they are part of the WIN32 and MacOS code base...
-Fl_cutpaste.o:	Fl_cutpaste_mac.cxx Fl_cutpaste_win32.cxx
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
 Fl_x.o:		Fl_mac.cxx Fl_win32.cxx
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
+fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
 fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
@@ -242,8 +263,7 @@ fl_ask.o:	../FL/mac.H ../FL/win32.H
 Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H
 fl_color.o:	../FL/mac.H ../FL/win32.H
 fl_cursor.o:	../FL/mac.H ../FL/win32.H
-Fl_cutpaste.o:	../FL/mac.H ../FL/win32.H
-Fl_cutpaste_win32.o:	../FL/mac.H ../FL/win32.H
+fl_dnd.o:	../FL/mac.H ../FL/win32.H
 Fl.o:	../FL/mac.H ../FL/win32.H
 Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image.o:	../FL/mac.H ../FL/win32.H
@@ -282,12 +302,13 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 
 ################################################################
 
-install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
+install: $(LIBNAME) $(DSONAME) $(FLLIBNAME) $(FLDSONAME) $(GLLIBNAME) $(GLDSONAME)
 	echo "Installing libraries in $(libdir)..."
 	-mkdir -p $(libdir)
 	rm -f $(libdir)/$(LIBNAME)
-	-cp $(LIBNAME) $(GLLIBNAME) $(libdir)
+	-cp $(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) $(libdir)
 	$(RANLIB) $(libdir)/$(LIBNAME)
+	$(RANLIB) $(libdir)/$(FLLIBNAME)
 	if test x$(GLLIBNAME) != x; then \
 		$(RANLIB) $(libdir)/$(GLLIBNAME); \
 	fi
@@ -303,10 +324,39 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 		chmod 755 $(libdir)/libfltk.sl.1.1; \
 		ln -s libfltk.sl.1.1 $(libdir)/libfltk.sl;\
 	fi
+	if test x$(DSONAME) = xlibfltk.1.1.dylib; then\
+		rm -f $(libdir)/libfltk.*dylib;\
+		cp libfltk.1.1.dylib $(libdir); \
+		chmod 755 $(libdir)/libfltk.1.1.dylib; \
+		ln -s libfltk.1.1.dylib $(libdir)/libfltk.dylib;\
+	fi
 	if test x$(DSONAME) = xlibfltk_s.a; then\
 		rm -f $(libdir)/libfltk_s.a;\
 		cp libfltk_s.a $(libdir); \
 		chmod 755 $(libdir)/libfltk_s.a; \
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms.so.1.1; then\
+		rm -f $(libdir)/libfltk_forms.so*;\
+		cp libfltk_forms.so.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk_forms.so.1.1; \
+		ln -s libfltk_forms.so.1.1 $(libdir)/libfltk_forms.so;\
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms.sl.1.1; then\
+		rm -f $(libdir)/libfltk_forms.sl*;\
+		cp libfltk_forms.sl.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk_forms.sl.1.1; \
+		ln -s libfltk_forms.sl.1.1 $(libdir)/libfltk_forms.sl;\
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms.1.1.dylib; then\
+		rm -f $(libdir)/libfltk_forms.*dylib;\
+		cp libfltk_forms.1.1.dylib $(libdir); \
+		chmod 755 $(libdir)/libfltk_forms.1.1.dylib; \
+		ln -s libfltk_forms.1.1.dylib $(libdir)/libfltk_forms.dylib;\
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
+		rm -f $(libdir)/libfltk_forms_s.a;\
+		cp libfltk_forms_s.a $(libdir); \
+		chmod 755 $(libdir)/libfltk_forms.a; \
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.so.1.1; then\
 		rm -f $(libdir)/libfltk_gl.so*;\
@@ -319,6 +369,12 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 		cp libfltk_gl.sl.1.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk_gl.sl.1.1; \
 		ln -s libfltk_gl.sl.1.1 $(libdir)/libfltk_gl.sl;\
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl.1.1.dylib; then\
+		rm -f $(libdir)/libfltk_gl.*dylib;\
+		cp libfltk_gl.1.1.dylib $(libdir); \
+		chmod 755 $(libdir)/libfltk_gl.1.1.dylib; \
+		ln -s libfltk_gl.1.1.dylib $(libdir)/libfltk_gl.dylib;\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
 		rm -f $(libdir)/libfltk_gl_s.a;\
@@ -335,8 +391,24 @@ uninstall:
 	if test x$(DSONAME) = xlibfltk.sl.1.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
 	fi
+	if test x$(DSONAME) = xlibfltk.1.1.dylib; then\
+		rm -f $(libdir)/libfltk.*dylib;\
+	fi
 	if test x$(DSONAME) = xlibfltk_s.a; then\
 		rm -f $(libdir)/libfltk_s.a;\
+	fi
+	rm -f $(libdir)/$(FLLIBNAME);
+	if test x$(FLDSONAME) = xlibfltk_forms.so.1.1; then\
+		rm -f $(libdir)/libfltk_forms.so*;\
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms.sl.1.1; then\
+		rm -f $(libdir)/libfltk_forms.sl*;\
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms.1.1.dylib; then\
+		rm -f $(libdir)/libfltk_forms.*dylib;\
+	fi
+	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
+		rm -f $(libdir)/libfltk_forms_s.a;\
 	fi
 	if test x$(GLLIBNAME) != x; then\
 		rm -f $(libdir)/$(GLLIBNAME);\
@@ -347,11 +419,14 @@ uninstall:
 	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.1; then\
 		rm -f $(libdir)/libfltk_gl.sl*;\
 	fi
+	if test x$(GLDSONAME) = xlibfltk_gl.1.1.dylib; then\
+		rm -f $(libdir)/libfltk_gl.*dylib;\
+	fi
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
 		rm -f $(libdir)/libfltk_gl_s.a;\
 	fi
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.37 2002/03/08 13:13:14 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.38 2002/03/25 21:39:01 easysw Exp $".
 #

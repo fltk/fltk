@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list.in,v 1.1.2.4 2002/01/07 18:47:27 easysw Exp $"
+# "$Id: fltk.list.in,v 1.1.2.5 2002/03/25 21:39:01 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -45,6 +45,8 @@ $CAT1EXT=@CAT1EXT@
 $CAT3EXT=@CAT3EXT@
 
 $DSONAME=@DSONAME@
+$FLDSONAME=@FLDSONAME@
+$FLLIBNAME=@FLLIBNAME@
 $GLDSONAME=@GLDSONAME@
 $GLLIBNAME=@GLLIBNAME@
 
@@ -80,6 +82,19 @@ f 0555 root sys $libdir/libfltk.so.@FL_API_VERSION@ src/libfltk.so.@FL_API_VERSI
 l 0000 root sys $libdir/libfltk.so libfltk.so.@FL_API_VERSION@
 %system all
 %endif
+
+%system aix
+f 0555 root sys $libdir/libfltk_forms_s.a src/libfltk_forms_s.a
+%system hpux
+f 0555 root sys $libdir/libfltk_forms.sl.@FL_API_VERSION@ src/libfltk_forms.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_forms.sl libfltk_forms.sl.@FL_API_VERSION@
+%system darwin freebsd openbsd netbsd
+f 0555 root sys $libdir/libfltk_forms.dylib.@FL_API_VERSION@ src/libfltk_forms.dylib.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_forms.dylib libfltk_forms.dylib.@FL_API_VERSION@
+%system !aix !darwin !freebsd !openbsd !netbsd !hpux
+f 0555 root sys $libdir/libfltk_forms.so.@FL_API_VERSION@ src/libfltk_forms.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_forms.so libfltk_forms.so.@FL_API_VERSION@
+%system all
 
 %if GLDSONAME
 %system aix
@@ -217,5 +232,5 @@ f 0444 root sys $datadir/doc/fltk/COPYING COPYING
 f 0444 root sys $datadir/doc/fltk/CHANGES CHANGES
 
 #
-# End of "$Id: fltk.list.in,v 1.1.2.4 2002/01/07 18:47:27 easysw Exp $".
+# End of "$Id: fltk.list.in,v 1.1.2.5 2002/03/25 21:39:01 easysw Exp $".
 #
