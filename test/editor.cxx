@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.15 2002/09/26 20:43:03 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.16 2002/09/27 18:01:30 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -367,12 +367,12 @@ style_update(int        pos,		// I - Position of update
   style = stylebuf->text_range(start, end);
   last  = style[end - start - 1];
 
-  printf("start = %d, end = %d, text = \"%s\", style = \"%s\"...\n",
-         start, end, text, style);
+//  printf("start = %d, end = %d, text = \"%s\", style = \"%s\"...\n",
+//         start, end, text, style);
 
   style_parse(text, style, end - start);
 
-  printf("new style = \"%s\"...\n", style);
+//  printf("new style = \"%s\"...\n", style);
 
   stylebuf->replace(start, end, style);
   ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
@@ -771,5 +771,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.15 2002/09/26 20:43:03 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.16 2002/09/27 18:01:30 easysw Exp $".
 //
