@@ -1,5 +1,5 @@
 //
-// "$Id: keyboard.cxx,v 1.5.2.3.2.1 2001/12/01 01:54:30 matthiaswm Exp $"
+// "$Id: keyboard.cxx,v 1.5.2.3.2.2 2001/12/21 14:35:34 easysw Exp $"
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
@@ -148,5 +148,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: keyboard.cxx,v 1.5.2.3.2.1 2001/12/01 01:54:30 matthiaswm Exp $".
+// End of "$Id: keyboard.cxx,v 1.5.2.3.2.2 2001/12/21 14:35:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.8.2.5.2.3 2001/12/01 01:54:30 matthiaswm Exp $"
+// "$Id: demo.cxx,v 1.8.2.5.2.4 2001/12/21 14:35:33 easysw Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -340,6 +340,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.8.2.5.2.3 2001/12/01 01:54:30 matthiaswm Exp $".
+// End of "$Id: demo.cxx,v 1.8.2.5.2.4 2001/12/21 14:35:33 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.cxx,v 1.4.2.4.2.1 2001/12/01 01:54:30 matthiaswm Exp $"
+// "$Id: CubeView.cxx,v 1.4.2.4.2.2 2001/12/21 14:35:33 easysw Exp $"
 //
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
@@ -167,5 +167,5 @@ void CubeView::draw() {
 #endif /* HAVE_GL */
 
 //
-// End of "$Id: CubeView.cxx,v 1.4.2.4.2.1 2001/12/01 01:54:30 matthiaswm Exp $".
+// End of "$Id: CubeView.cxx,v 1.4.2.4.2.2 2001/12/21 14:35:33 easysw Exp $".
 //
