@@ -1,9 +1,11 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fluid collapse triangle events were not offset by
+          horizontal scroll (STR #106)
 	- QuitAppleEvent now correctly returns from Fl::run()
-          instead of just exiting.
+          instead of just exiting (STR #??)
 	- Hiding the first created OpenGL context was not
-	  possible. FLTK now manages a list of contexts.
+	  possible. FLTK now manages a list of contexts (STR #??)
 	- FLUID didn't keep the double/single buffer type for
 	  windows.
 	- FLTK didn't work with Xft2.
