@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.33 2002/04/29 14:32:13 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.34 2002/04/29 21:04:12 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -74,6 +74,7 @@ CPPFILES =\
 	pack.cxx \
 	pixmap_browser.cxx \
 	pixmap.cxx \
+	preferences.cxx \
 	radio.cxx \
 	resizebox.cxx \
 	resize.cxx \
@@ -130,6 +131,7 @@ ALL =	\
 	pack$(EXEEXT) \
 	pixmap$(EXEEXT) \
 	pixmap_browser$(EXEEXT) \
+	preferences$(EXEEXT) \
 	radio$(EXEEXT) \
 	resize$(EXEEXT) \
 	resizebox$(EXEEXT) \
@@ -302,6 +304,8 @@ pixmap_browser$(EXEEXT): pixmap_browser.o
 	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
+preferences$(EXEEXT):	preferences.o
+
 radio$(EXEEXT): radio.o
 radio.cxx:	radio.fl
 
@@ -376,5 +380,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.33 2002/04/29 14:32:13 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.34 2002/04/29 21:04:12 easysw Exp $".
 #

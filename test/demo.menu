@@ -64,10 +64,11 @@
 @main:Other\nTests:@o
 	@o:Color Choosers:color_chooser r
 	@o:File Chooser:file_chooser
-	@o:XForms Emulation:forms
 	@o:Fonts:fonts
 	@o:HelpDialog:help
+	@o:Preferences:preferences
 	@o:Threading:threads
+	@o:XForms Emulation:forms
 
 @main:Tutorial\nfrom\nManual:@j
 	@j:ask\n(modified):ask

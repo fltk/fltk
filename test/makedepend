@@ -264,6 +264,14 @@ pixmap.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Button.H
 pixmap.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
 pixmap.o: porsche.xpm ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H
 pixmap.o: ../FL/Fl_Multi_Label.H
+preferences.o: preferences.h ../FL/Fl.H ../FL/Enumerations.H
+preferences.o: ../FL/Fl_Export.H ../FL/Fl_Preferences.H ../FL/Fl_Window.H
+preferences.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Button.H
+preferences.o: ../FL/Fl_Group.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+preferences.o: ../FL/Fl_Choice.H ../FL/Fl_Round_Button.H
+preferences.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Box.H
+preferences.o: ../FL/Fl_Check_Button.H ../FL/Fl_Value_Slider.H
+preferences.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/filename.H
 radio.o: radio.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 radio.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 radio.o: ../FL/Fl_Button.H ../FL/Fl_Return_Button.H ../FL/Fl_Button.H

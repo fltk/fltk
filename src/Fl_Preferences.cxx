@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.4 2002/04/29 20:57:31 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.5 2002/04/29 21:04:12 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ char Fl_Preferences::nameBuffer[];
  * i application: vendor unique application name, i.e. "PreferencesTest"
  *     multiple preferences files can be created per application.
  *     Must be a valid file name.
- * example: Fl_Preferences base( Fl_Preferences::USER, "matthiasm.com", "test01");
+ * example: Fl_Preferences base( Fl_Preferences::USER, "fltk.org", "test01");
  */
 Fl_Preferences::Fl_Preferences( enum Root root, const char *vendor, const char *application )
 {
@@ -935,5 +935,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.4 2002/04/29 20:57:31 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.5 2002/04/29 21:04:12 easysw Exp $".
 //
