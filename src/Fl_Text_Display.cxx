@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.18 2002/06/09 18:28:49 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.19 2002/06/10 21:04:19 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -887,6 +887,10 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   char *outPtr;
   const char *lineStr;
 
+//  printf("draw_vline(visLineNum=%d, leftClip=%d, rightClip=%d, leftCharIndex=%d, rightCharIndex=%d)\n",
+//         visLineNum, leftClip, rightClip, leftCharIndex, rightCharIndex);
+//  printf("nNVisibleLines=%d\n", mNVisibleLines);
+
   /* If line is not displayed, skip it */
   if ( visLineNum < 0 || visLineNum >= mNVisibleLines )
     return;
@@ -897,6 +901,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
 
   /* Get the text, length, and  buffer position of the line to display */
   lineStartPos = mLineStarts[ visLineNum ];
+//  printf("lineStartPos=%d\n", lineStartPos);
   if ( lineStartPos == -1 ) {
     lineLen = 0;
     lineStr = NULL;
@@ -1518,7 +1523,7 @@ void Fl_Text_Display::calc_line_starts( int startLine, int endLine ) {
      start of the next line in lineStarts */
   for ( line = startLine; line <= endLine; line++ ) {
     lineEnd = buffer()->line_end(startPos);
-    nextLineStart = min(buffer()->length(), lineEnd + 1);
+    nextLineStart = min(bufLen, lineEnd + 1);
     startPos = nextLineStart;
     if ( startPos >= bufLen ) {
       /* If the buffer ends with a newline or line break, put
@@ -1645,7 +1650,7 @@ int Fl_Text_Display::measure_vline( int visLineNum ) {
   int charCount = 0, lineStartPos = mLineStarts[ visLineNum ];
   char expandedChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
 
-  if (lineStartPos < 0) return 0;
+  if (lineStartPos < 0 || lineLen == 0) return 0;
   if ( mStyleBuffer == NULL ) {
     for ( i = 0; i < lineLen; i++ ) {
       len = mBuffer->expand_character( lineStartPos + i,
@@ -1959,5 +1964,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.18 2002/06/09 18:28:49 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.19 2002/06/10 21:04:19 easysw Exp $".
 //

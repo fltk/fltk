@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.7 2002/06/09 13:35:49 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.8 2002/06/10 21:04:19 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -202,7 +202,7 @@ char * Fl_Text_Buffer::text_range( int start, int end ) {
 ** Return the character at buffer position "pos".  Positions start at 0.
 */
 char Fl_Text_Buffer::character( int pos ) {
-  if ( pos < 0 || pos > mLength )
+  if ( pos < 0 || pos >= mLength )
     return '\0';
   if ( pos < mGapStart )
     return mBuf[ pos ];
@@ -631,15 +631,15 @@ void Fl_Text_Buffer::add_modify_callback( Fl_Text_Modify_Cb bufModifiedCB,
   newModifyProcs = new Fl_Text_Modify_Cb [ mNModifyProcs + 1 ];
   newCBArgs = new void * [ mNModifyProcs + 1 ];
   for ( i = 0; i < mNModifyProcs; i++ ) {
-    newModifyProcs[ i ] = mNodifyProcs[ i ];
-    newCBArgs[ i ] = mCbArgs[ i ];
+    newModifyProcs[ i + 1 ] = mNodifyProcs[ i ];
+    newCBArgs[ i + 1 ] = mCbArgs[ i ];
   }
   if ( mNModifyProcs != 0 ) {
     delete [] mNodifyProcs;
     delete [] mCbArgs;
   }
-  newModifyProcs[ mNModifyProcs ] = bufModifiedCB;
-  newCBArgs[ mNModifyProcs ] = cbArg;
+  newModifyProcs[ 0 ] = bufModifiedCB;
+  newCBArgs[ 0 ] = cbArg;
   mNModifyProcs++;
   mNodifyProcs = newModifyProcs;
   mCbArgs = newCBArgs;
@@ -2284,5 +2284,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.7 2002/06/09 13:35:49 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.8 2002/06/10 21:04:19 easysw Exp $".
 //

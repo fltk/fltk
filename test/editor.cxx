@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.9 2002/06/09 18:28:49 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.10 2002/06/10 21:04:20 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -287,11 +287,10 @@ style_init(void) {
   memset(style, 'A', textbuf->length());
   style[textbuf->length()] = '\0';
 
-  if (stylebuf) delete stylebuf;
+  if (!stylebuf) stylebuf = new Fl_Text_Buffer(textbuf->length());
 
   style_parse(text, style, textbuf->length());
 
-  stylebuf = new Fl_Text_Buffer(textbuf->length());
   stylebuf->text(style);
   delete[] style;
   free(text);
@@ -465,7 +464,6 @@ void load_file(char *newfile, int ipos) {
   else
     if (!insert) strcpy(filename, newfile);
   loading = 0;
-  style_init();
   textbuf->call_modify_callbacks();
 }
 
@@ -553,7 +551,6 @@ void new_cb(Fl_Widget*, void*) {
   filename[0] = '\0';
   textbuf->select(0, textbuf->length());
   textbuf->remove_selection();
-  style_init();
   changed = 0;
   textbuf->call_modify_callbacks();
 }
@@ -740,8 +737,8 @@ Fl_Window* new_view() {
   w->resizable(w->editor);
   w->callback((Fl_Callback *)close_cb, w);
 
-  textbuf->add_modify_callback(changed_cb, w);
   textbuf->add_modify_callback(style_update, w->editor);
+  textbuf->add_modify_callback(changed_cb, w);
   textbuf->call_modify_callbacks();
   num_windows++;
   return w;
@@ -761,5 +758,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.9 2002/06/09 18:28:49 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.10 2002/06/10 21:04:20 easysw Exp $".
 //
