@@ -36,6 +36,8 @@
 #include "Fluid_Image.h"
 #include <FL/fl_draw.H>
 
+void set_modflag(int mf);
+
 class Fl_Type {
 
   friend class Widget_Browser;
@@ -356,7 +358,6 @@ public:
 
 class Fl_Group_Type : public Fl_Widget_Type {
 public:
-  virtual void ideal_spacing(int &x, int &y) { x = y = 10; }
   virtual const char *type_name() {return "Fl_Group";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
     igroup *g = new igroup(X,Y,W,H); Fl_Group::current(0); return g;}
@@ -489,7 +490,7 @@ extern Fl_Menu_Item menu_item_type_menu[];
 class Fl_Menu_Item_Type : public Fl_Widget_Type {
 public:
   Fl_Menu_Item* subtypes() {return menu_item_type_menu;}
-  const char* type_name() {return "Menu_Item";}
+  const char* type_name() {return "MenuItem";}
   Fl_Type* make();
   int is_menu_item() const {return 1;}
   int is_button() const {return 1;} // this gets shortcut to work

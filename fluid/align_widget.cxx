@@ -66,7 +66,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(left, w->y(), w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -98,7 +98,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -127,7 +127,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(right-w->w(), w->y(), w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -155,7 +155,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), top, w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -187,7 +187,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -216,7 +216,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize( w->x(), bot-w->h(), w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -252,7 +252,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(left+wsum+wdt*cnt/n, w->y(), w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	  cnt++;
@@ -290,7 +290,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), top+hsum+hgt*cnt/n, w->w(), w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	  cnt++;
@@ -322,7 +322,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize(w->x(), w->y(), wdt, w->h());
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -350,7 +350,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize( w->x(), w->y(), w->w(), hgt);
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -380,7 +380,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	    // Otherwise, just do the widget...
 	    w->resize( w->x(), w->y(), wdt, hgt);
 	  }
-	  modflag=1;
+	  set_modflag(1);
 	  w->redraw();
 	  if (w->window()) w->window()->redraw();
 	}
@@ -405,7 +405,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	  // Otherwise, just do the widget...
 	  w->resize((center2-w->w())/2, w->y(), w->w(), w->h());
 	}
-	modflag=1;
+	set_modflag(1);
 	w->redraw();
 	if (w->window()) w->window()->redraw();
       }
@@ -429,7 +429,7 @@ void align_widget_cb(Fl_Widget*, long how)
 	  // Otherwise, just do the widget...
 	  w->resize(w->x(), (center2-w->h())/2, w->w(), w->h());
 	}
-	modflag=1;
+	set_modflag(1);
 	w->redraw();
 	if (w->window()) w->window()->redraw();
       }
@@ -455,7 +455,7 @@ void widget_size_cb(Fl_Widget *, long size) {
 
       w->redraw();
 
-      modflag = 1;
+      set_modflag(1);
     }
 }
 

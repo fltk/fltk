@@ -481,7 +481,7 @@ void Fl_Type::add(Fl_Type *p) {
   if (p) p->add_child(this,0);
   open_ = 1;
   fixvisible(this);
-  modflag = 1;
+  set_modflag(1);
   widget_browser->redraw();
 }
 
@@ -562,7 +562,7 @@ int storestring(const char *n, const char * & p, int nostrip) {
     strlcpy(q,n,length+1);
     p = q;
   }
-  modflag = 1;
+  set_modflag(1);
   return 1;
 }
 
@@ -604,7 +604,7 @@ Fl_Type::~Fl_Type() {
   if (prev) prev->next = next; else first = next;
   if (next) next->prev = prev; else last = prev;
   if (current == this) current = 0;
-  modflag = 1;
+  set_modflag(1);
   if (parent) parent->remove_child(this);
 }
 

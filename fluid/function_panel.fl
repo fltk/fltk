@@ -44,24 +44,24 @@ decl {extern void select_only(Fl_Type*);} {}
 Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
-    label {Function/Method} open
-    xywh {855 21 285 140} type Single resizable modal visible
+    label {Function/Method}
+    xywh {855 21 285 140} type Single hide resizable modal
   } {
     Fl_Light_Button f_public_button {
       label public
-      tooltip {Make the function or method publicly accessible.} xywh {10 10 58 20} labelsize 11 when 0
+      tooltip {Make the function or method publicly accessible.} xywh {10 10 54 20} labelsize 11 when 0
     }
     Fl_Light_Button f_c_button {
       label {C declaration}
-      tooltip {Declare with a C interface instead of C++.} xywh {73 10 94 20} labelsize 11
+      tooltip {Declare with a C interface instead of C++.} xywh {69 10 90 20} labelsize 11
     }
     Fl_Input f_name_input {
       label {Name(args): (blank for main())}
-      tooltip {The name of the function or method.} xywh {10 49 265 19} labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
+      tooltip {The name of the function or method.} xywh {10 49 265 19} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Input f_return_type_input {
       label {Return Type: (blank to return outermost widget)}
-      tooltip {The return type of the function or method.} xywh {10 87 265 19} labelsize 11 align 5 when 0 textfont 4 textsize 11
+      tooltip {The return type of the function or method.} xywh {10 87 265 19} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Return_Button f_panel_ok {
       label OK
@@ -77,11 +77,11 @@ Function {make_function_panel()} {open
 Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
-    label Code open
-    xywh {327 261 545 175} type Single labelsize 11 resizable modal visible
+    label Code
+    xywh {527 128 545 175} type Single labelsize 11 hide resizable modal
   } {
-    Fl_Text_Editor code_input {selected
-      xywh {12 12 523 123} box DOWN_BOX labelsize 11 textsize 11 resizable
+    Fl_Text_Editor code_input {
+      xywh {10 12 525 123} box DOWN_BOX labelsize 11 textsize 11 resizable
       code0 {o->buffer(new Fl_Text_Buffer);}
       code1 {o->textfont(FL_COURIER);}
       code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
@@ -107,26 +107,23 @@ Function {make_code_panel()} {open
 Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
-    label codeblock open
-    xywh {289 462 295 130} type Single hide resizable modal
+    label {Code Block}
+    xywh {845 158 295 100} type Single labelsize 11 hide resizable modal
   } {
     Fl_Input code_before_input {
-      tooltip {\#ifdef or similar conditional code block.} xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
-    }
-    Fl_Box {} {
-      label {"{...child code...}" is inserted here}
-      xywh {10 35 270 25} align 20
+      tooltip {\#ifdef or similar conditional code block.} xywh {10 10 275 20} labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Input code_after_input {
-      tooltip {\#endif or similar conditional code block.} xywh {10 60 275 25} labelsize 12 align 5 when 0 textfont 4
+      label {"{...child code...}" is inserted here}
+      tooltip {\#endif or similar conditional code block.} xywh {10 49 275 19} labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Return_Button codeblock_panel_ok {
       label OK
-      xywh {120 95 80 25} hotspot
+      xywh {164 73 60 20} labelsize 11 hotspot
     }
     Fl_Button codeblock_panel_cancel {
       label Cancel
-      xywh {205 95 80 25} shortcut 0xff1b
+      xywh {229 73 56 20} shortcut 0xff1b labelsize 11
     }
   }
 } 
@@ -134,30 +131,27 @@ Function {make_codeblock_panel()} {open
 Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
-    label {declaration block} open
-    xywh {184 572 295 155} type Single hide resizable modal
+    label {Declaration Block}
+    xywh {665 33 295 125} type Single labelsize 11 hide resizable modal
   } {
     Fl_Input decl_before_input {
-      tooltip {\#ifdef or similar conditional declaration block.} xywh {10 35 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
-    }
-    Fl_Box {} {
-      label {"\\n...child code...\\n" is inserted here}
-      xywh {10 60 275 25} align 20
+      tooltip {\#ifdef or similar conditional declaration block.} xywh {10 35 275 20} labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Input decl_after_input {
-      tooltip {\#endif or similar declaration code block.} xywh {10 85 275 25} labelsize 12 align 5 when 0 textfont 4
+      label {"\\n...child code...\\n" is inserted here}
+      tooltip {\#endif or similar declaration code block.} xywh {10 74 275 20} labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Return_Button declblock_panel_ok {
       label OK
-      xywh {120 120 80 25} hotspot
+      xywh {169 99 55 20} labelsize 11 hotspot
     }
     Fl_Button declblock_panel_cancel {
       label Cancel
-      xywh {205 120 80 25} shortcut 0xff1b
+      xywh {229 99 56 20} shortcut 0xff1b labelsize 11
     }
     Fl_Light_Button declblock_public_button {
       label public
-      tooltip {Make the declaration publicly accessible.} xywh {9 6 65 25} labelsize 10 when 0
+      tooltip {Make the declaration publicly accessible.} xywh {10 10 54 20} labelsize 11 when 0
     }
   }
 } 
@@ -165,24 +159,24 @@ Function {make_declblock_panel()} {open
 Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
-    label declaration open
-    xywh {393 601 290 180} type Single hide resizable
+    label Declaration
+    xywh {789 289 290 145} type Single hide resizable
   } {
     Fl_Light_Button decl_public_button {
       label public
-      tooltip {Make the declaration publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
+      tooltip {Make the declaration publicly accessible.} xywh {10 10 54 20} labelsize 11 when 0
     }
     Fl_Input decl_input {
       label {Can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
-      tooltip {Declaration text.} xywh {10 40 270 25} labelsize 12 align 134 when 0 textfont 4 resizable
+      tooltip {Declaration text.} xywh {10 35 270 19} labelsize 11 align 134 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Return_Button decl_panel_ok {
       label OK
-      xywh {115 145 80 25} hotspot
+      xywh {164 116 55 20} labelsize 11 hotspot
     }
     Fl_Button decl_panel_cancel {
       label Cancel
-      xywh {200 145 80 25} shortcut 0xff1b
+      xywh {224 116 56 20} shortcut 0xff1b labelsize 11
     }
   }
 } 
@@ -190,28 +184,28 @@ Function {make_decl_panel()} {open
 Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
-    label class open
-    xywh {517 797 285 170} type Single hide resizable modal
+    label Class
+    xywh {744 223 285 140} type Single labelsize 11 hide resizable modal
   } {
     Fl_Light_Button c_public_button {
       label public
-      tooltip {Make the class publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
+      tooltip {Make the class publicly accessible.} xywh {10 10 54 20} labelsize 11 when 0
     }
     Fl_Input c_name_input {
       label {Name:}
-      tooltip {Name of class.} xywh {10 55 265 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {Name of class.} xywh {10 49 265 19} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Input c_subclass_input {
       label {Subclass of (text between : and \{)}
-      tooltip {Name of subclass.} xywh {10 100 265 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {Name of subclass.} xywh {10 87 265 19} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Return_Button c_panel_ok {
       label OK
-      xywh {110 135 80 25} hotspot
+      xywh {159 111 55 20} labelsize 11 hotspot
     }
     Fl_Button c_panel_cancel {
       label Cancel
-      xywh {195 135 80 25} shortcut 0xff1b
+      xywh {219 111 56 20} shortcut 0xff1b labelsize 11
     }
   }
 } 
@@ -219,55 +213,51 @@ Function {make_class_panel()} {open
 Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
-    label comment open
-    xywh {328 152 545 290} type Single hide resizable modal
+    label Comment
+    xywh {328 152 545 285} type Single labelsize 11 hide resizable modal
   } {
-    Fl_Group {} {open
-      xywh {100 10 435 235} box DOWN_FRAME resizable
-    } {
-      Fl_Text_Editor comment_input {
-        xywh {102 12 431 231} box NO_BOX resizable
-        code0 {o->buffer(new Fl_Text_Buffer);}
-        code1 {o->textfont(FL_COURIER);}
-        code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
-      }
+    Fl_Text_Editor comment_input {
+      xywh {95 10 438 241} box DOWN_BOX labelsize 11 textsize 11 resizable
+      code0 {o->buffer(new Fl_Text_Buffer);}
+      code1 {o->textfont(FL_COURIER);}
+      code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
     }
     Fl_Group {} {open
-      xywh {368 255 167 25}
+      xywh {368 255 167 25} labelsize 11
     } {
       Fl_Return_Button comment_panel_ok {
         label OK
-        xywh {370 255 80 25} hotspot
+        xywh {419 255 55 20} labelsize 11 hotspot
       }
       Fl_Button comment_panel_cancel {
         label Cancel
-        xywh {455 255 80 25} shortcut 0xff1b
+        xywh {479 255 56 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {368 255 1 1} resizable
+        xywh {368 255 1 1} labelsize 11 resizable
       }
     }
     Fl_Group {} {open
-      xywh {10 10 80 127}
+      xywh {10 10 205 127} labelsize 11
     } {
       Fl_Light_Button comment_in_source {
-        label {in source}
-        tooltip {Put the comment into the source (.cxx) file.} xywh {10 10 80 25} labelsize 10 when 0
+        label {In Source}
+        tooltip {Put the comment into the source (.cxx) file.} xywh {10 10 80 20} labelsize 11 when 0
       }
       Fl_Light_Button comment_in_header {
-        label {in header}
-        tooltip {Put the comment into the header (.h) file.} xywh {10 40 80 25} labelsize 10 when 0
+        label {In Header}
+        tooltip {Put the comment into the header (.h) file.} xywh {10 35 80 20} labelsize 11 when 0
       }
       Fl_Menu_Button comment_predefined {
-        label predefined open
-        xywh {10 75 80 25} labelsize 10
+        label Predefined open
+        xywh {10 60 80 20} labelsize 11 textsize 11
       } {}
       Fl_Button comment_load {
-        label {load...}
-        xywh {10 110 80 25} labelsize 10
+        label {Import...}
+        xywh {10 85 80 22} labelsize 11
       }
       Fl_Box {} {
-        xywh {10 135 2 2} resizable
+        xywh {10 135 2 2} labelsize 11 resizable
       }
     }
   }
@@ -276,14 +266,14 @@ Function {make_comment_panel()} {open
 Function {type_make_cb(Fl_Widget*w,void*d)} {open return_type void
 } {
   code {Fl_Type *t = Fl_Type_make((char*)d);
-if (t) {select_only(t); modflag = 1; t->open();}} {}
+if (t) {select_only(t); set_modflag(1); t->open();}} {}
 } 
 
 Function {make_widgetbin()} {open
 } {
   Fl_Window widgetbin_panel {
-    label Bin open
-    xywh {325 137 468 100} type Single hide
+    label {Widget Bin} selected
+    xywh {325 137 465 100} type Single hide
     code0 {o->size(o->w(),80);} non_modal
   } {
     Fl_Group {} {

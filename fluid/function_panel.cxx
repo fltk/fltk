@@ -52,17 +52,18 @@ Fl_Window* make_function_panel() {
   Fl_Window* w;
   { Fl_Window* o = function_panel = new Fl_Window(285, 140, "Function/Method");
     w = o;
-    { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 58, 20, "public");
+    { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
       o->tooltip("Make the function or method publicly accessible.");
       o->labelsize(11);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Light_Button* o = f_c_button = new Fl_Light_Button(73, 10, 94, 20, "C declaration");
+    { Fl_Light_Button* o = f_c_button = new Fl_Light_Button(69, 10, 90, 20, "C declaration");
       o->tooltip("Declare with a C interface instead of C++.");
       o->labelsize(11);
     }
     { Fl_Input* o = f_name_input = new Fl_Input(10, 49, 265, 19, "Name(args): (blank for main())");
       o->tooltip("The name of the function or method.");
+      o->labelfont(1);
       o->labelsize(11);
       o->textfont(4);
       o->textsize(11);
@@ -72,6 +73,7 @@ Fl_Window* make_function_panel() {
     }
     { Fl_Input* o = f_return_type_input = new Fl_Input(10, 87, 265, 19, "Return Type: (blank to return outermost widget)");
       o->tooltip("The return type of the function or method.");
+      o->labelfont(1);
       o->labelsize(11);
       o->textfont(4);
       o->textsize(11);
@@ -107,7 +109,7 @@ Fl_Window* make_code_panel() {
   { Fl_Window* o = code_panel = new Fl_Window(545, 175, "Code");
     w = o;
     o->labelsize(11);
-    { Fl_Text_Editor* o = code_input = new Fl_Text_Editor(12, 12, 523, 123);
+    { Fl_Text_Editor* o = code_input = new Fl_Text_Editor(10, 12, 525, 123);
       o->box(FL_DOWN_BOX);
       o->labelsize(11);
       o->textsize(11);
@@ -150,31 +152,33 @@ Fl_Button *codeblock_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_codeblock_panel() {
   Fl_Window* w;
-  { Fl_Window* o = codeblock_panel = new Fl_Window(295, 130, "codeblock");
+  { Fl_Window* o = codeblock_panel = new Fl_Window(295, 100, "Code Block");
     w = o;
-    { Fl_Input* o = code_before_input = new Fl_Input(10, 10, 275, 25);
+    o->labelsize(11);
+    { Fl_Input* o = code_before_input = new Fl_Input(10, 10, 275, 20);
       o->tooltip("#ifdef or similar conditional code block.");
-      o->labelsize(12);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Box* o = new Fl_Box(10, 35, 270, 25, "\"{...child code...}\" is inserted here");
-      o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-    }
-    { Fl_Input* o = code_after_input = new Fl_Input(10, 60, 275, 25);
+    { Fl_Input* o = code_after_input = new Fl_Input(10, 49, 275, 19, "\"{...child code...}\" is inserted here");
       o->tooltip("#endif or similar conditional code block.");
-      o->labelsize(12);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Return_Button* o = codeblock_panel_ok = new Fl_Return_Button(120, 95, 80, 25, "OK");
+    { Fl_Return_Button* o = codeblock_panel_ok = new Fl_Return_Button(164, 73, 60, 20, "OK");
+      o->labelsize(11);
       w->hotspot(o);
     }
-    { Fl_Button* o = codeblock_panel_cancel = new Fl_Button(205, 95, 80, 25, "Cancel");
+    { Fl_Button* o = codeblock_panel_cancel = new Fl_Button(229, 73, 56, 20, "Cancel");
       o->shortcut(0xff1b);
+      o->labelsize(11);
     }
     o->set_modal();
     o->end();
@@ -196,35 +200,37 @@ Fl_Light_Button *declblock_public_button=(Fl_Light_Button *)0;
 
 Fl_Window* make_declblock_panel() {
   Fl_Window* w;
-  { Fl_Window* o = declblock_panel = new Fl_Window(295, 155, "declaration block");
+  { Fl_Window* o = declblock_panel = new Fl_Window(295, 125, "Declaration Block");
     w = o;
-    { Fl_Input* o = decl_before_input = new Fl_Input(10, 35, 275, 25);
+    o->labelsize(11);
+    { Fl_Input* o = decl_before_input = new Fl_Input(10, 35, 275, 20);
       o->tooltip("#ifdef or similar conditional declaration block.");
-      o->labelsize(12);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Box* o = new Fl_Box(10, 60, 275, 25, "\"\\n...child code...\\n\" is inserted here");
-      o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
-    }
-    { Fl_Input* o = decl_after_input = new Fl_Input(10, 85, 275, 25);
+    { Fl_Input* o = decl_after_input = new Fl_Input(10, 74, 275, 20, "\"\\n...child code...\\n\" is inserted here");
       o->tooltip("#endif or similar declaration code block.");
-      o->labelsize(12);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Return_Button* o = declblock_panel_ok = new Fl_Return_Button(120, 120, 80, 25, "OK");
+    { Fl_Return_Button* o = declblock_panel_ok = new Fl_Return_Button(169, 99, 55, 20, "OK");
+      o->labelsize(11);
       w->hotspot(o);
     }
-    { Fl_Button* o = declblock_panel_cancel = new Fl_Button(205, 120, 80, 25, "Cancel");
+    { Fl_Button* o = declblock_panel_cancel = new Fl_Button(229, 99, 56, 20, "Cancel");
       o->shortcut(0xff1b);
+      o->labelsize(11);
     }
-    { Fl_Light_Button* o = declblock_public_button = new Fl_Light_Button(9, 6, 65, 25, "public");
+    { Fl_Light_Button* o = declblock_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
       o->tooltip("Make the declaration publicly accessible.");
-      o->labelsize(10);
+      o->labelsize(11);
       o->when(FL_WHEN_NEVER);
     }
     o->set_modal();
@@ -245,28 +251,31 @@ Fl_Button *decl_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_decl_panel() {
   Fl_Window* w;
-  { Fl_Window* o = decl_panel = new Fl_Window(290, 180, "declaration");
+  { Fl_Window* o = decl_panel = new Fl_Window(290, 145, "Declaration");
     w = o;
-    { Fl_Light_Button* o = decl_public_button = new Fl_Light_Button(10, 10, 65, 25, "public");
+    { Fl_Light_Button* o = decl_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
       o->tooltip("Make the declaration publicly accessible.");
-      o->labelsize(10);
+      o->labelsize(11);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Input* o = decl_input = new Fl_Input(10, 40, 270, 25, "Can be any declaration, like \"int x;\", an external symbol like \"extern int\
+    { Fl_Input* o = decl_input = new Fl_Input(10, 35, 270, 19, "Can be any declaration, like \"int x;\", an external symbol like \"extern int\
  foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\" or\
  \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list;\".");
       o->tooltip("Declaration text.");
-      o->labelsize(12);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(134);
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Return_Button* o = decl_panel_ok = new Fl_Return_Button(115, 145, 80, 25, "OK");
+    { Fl_Return_Button* o = decl_panel_ok = new Fl_Return_Button(164, 116, 55, 20, "OK");
+      o->labelsize(11);
       w->hotspot(o);
     }
-    { Fl_Button* o = decl_panel_cancel = new Fl_Button(200, 145, 80, 25, "Cancel");
+    { Fl_Button* o = decl_panel_cancel = new Fl_Button(224, 116, 56, 20, "Cancel");
       o->shortcut(0xff1b);
+      o->labelsize(11);
     }
     o->end();
   }
@@ -287,33 +296,40 @@ Fl_Button *c_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_class_panel() {
   Fl_Window* w;
-  { Fl_Window* o = class_panel = new Fl_Window(285, 170, "class");
+  { Fl_Window* o = class_panel = new Fl_Window(285, 140, "Class");
     w = o;
-    { Fl_Light_Button* o = c_public_button = new Fl_Light_Button(10, 10, 65, 25, "public");
+    o->labelsize(11);
+    { Fl_Light_Button* o = c_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
       o->tooltip("Make the class publicly accessible.");
-      o->labelsize(10);
+      o->labelsize(11);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Input* o = c_name_input = new Fl_Input(10, 55, 265, 25, "Name:");
+    { Fl_Input* o = c_name_input = new Fl_Input(10, 49, 265, 19, "Name:");
       o->tooltip("Name of class.");
-      o->labelsize(12);
+      o->labelfont(1);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Input* o = c_subclass_input = new Fl_Input(10, 100, 265, 25, "Subclass of (text between : and {)");
+    { Fl_Input* o = c_subclass_input = new Fl_Input(10, 87, 265, 19, "Subclass of (text between : and {)");
       o->tooltip("Name of subclass.");
-      o->labelsize(12);
+      o->labelfont(1);
+      o->labelsize(11);
       o->textfont(4);
+      o->textsize(11);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Return_Button* o = c_panel_ok = new Fl_Return_Button(110, 135, 80, 25, "OK");
+    { Fl_Return_Button* o = c_panel_ok = new Fl_Return_Button(159, 111, 55, 20, "OK");
+      o->labelsize(11);
       w->hotspot(o);
     }
-    { Fl_Button* o = c_panel_cancel = new Fl_Button(195, 135, 80, 25, "Cancel");
+    { Fl_Button* o = c_panel_cancel = new Fl_Button(219, 111, 56, 20, "Cancel");
       o->shortcut(0xff1b);
+      o->labelsize(11);
     }
     o->set_modal();
     o->end();
@@ -339,50 +355,55 @@ Fl_Button *comment_load=(Fl_Button *)0;
 
 Fl_Window* make_comment_panel() {
   Fl_Window* w;
-  { Fl_Window* o = comment_panel = new Fl_Window(545, 290, "comment");
+  { Fl_Window* o = comment_panel = new Fl_Window(545, 285, "Comment");
     w = o;
-    { Fl_Group* o = new Fl_Group(100, 10, 435, 235);
-      o->box(FL_DOWN_FRAME);
-      { Fl_Text_Editor* o = comment_input = new Fl_Text_Editor(102, 12, 431, 231);
-        o->box(FL_NO_BOX);
-        Fl_Group::current()->resizable(o);
-        o->buffer(new Fl_Text_Buffer);
-        o->textfont(FL_COURIER);
-        o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
-      }
-      o->end();
+    o->labelsize(11);
+    { Fl_Text_Editor* o = comment_input = new Fl_Text_Editor(95, 10, 438, 241);
+      o->box(FL_DOWN_BOX);
+      o->labelsize(11);
+      o->textsize(11);
       Fl_Group::current()->resizable(o);
+      o->buffer(new Fl_Text_Buffer);
+      o->textfont(FL_COURIER);
+      o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
     }
     { Fl_Group* o = new Fl_Group(368, 255, 167, 25);
-      { Fl_Return_Button* o = comment_panel_ok = new Fl_Return_Button(370, 255, 80, 25, "OK");
+      o->labelsize(11);
+      { Fl_Return_Button* o = comment_panel_ok = new Fl_Return_Button(419, 255, 55, 20, "OK");
+        o->labelsize(11);
         w->hotspot(o);
       }
-      { Fl_Button* o = comment_panel_cancel = new Fl_Button(455, 255, 80, 25, "Cancel");
+      { Fl_Button* o = comment_panel_cancel = new Fl_Button(479, 255, 56, 20, "Cancel");
         o->shortcut(0xff1b);
+        o->labelsize(11);
       }
       { Fl_Box* o = new Fl_Box(368, 255, 1, 1);
+        o->labelsize(11);
         Fl_Group::current()->resizable(o);
       }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(10, 10, 80, 127);
-      { Fl_Light_Button* o = comment_in_source = new Fl_Light_Button(10, 10, 80, 25, "in source");
+    { Fl_Group* o = new Fl_Group(10, 10, 205, 127);
+      o->labelsize(11);
+      { Fl_Light_Button* o = comment_in_source = new Fl_Light_Button(10, 10, 80, 20, "In Source");
         o->tooltip("Put the comment into the source (.cxx) file.");
-        o->labelsize(10);
+        o->labelsize(11);
         o->when(FL_WHEN_NEVER);
       }
-      { Fl_Light_Button* o = comment_in_header = new Fl_Light_Button(10, 40, 80, 25, "in header");
+      { Fl_Light_Button* o = comment_in_header = new Fl_Light_Button(10, 35, 80, 20, "In Header");
         o->tooltip("Put the comment into the header (.h) file.");
-        o->labelsize(10);
+        o->labelsize(11);
         o->when(FL_WHEN_NEVER);
       }
-      { Fl_Menu_Button* o = comment_predefined = new Fl_Menu_Button(10, 75, 80, 25, "predefined");
-        o->labelsize(10);
+      { Fl_Menu_Button* o = comment_predefined = new Fl_Menu_Button(10, 60, 80, 20, "Predefined");
+        o->labelsize(11);
+        o->textsize(11);
       }
-      { Fl_Button* o = comment_load = new Fl_Button(10, 110, 80, 25, "load...");
-        o->labelsize(10);
+      { Fl_Button* o = comment_load = new Fl_Button(10, 85, 80, 22, "Import...");
+        o->labelsize(11);
       }
       { Fl_Box* o = new Fl_Box(10, 135, 2, 2);
+        o->labelsize(11);
         Fl_Group::current()->resizable(o);
       }
       o->end();
@@ -395,14 +416,14 @@ Fl_Window* make_comment_panel() {
 
 void type_make_cb(Fl_Widget*w,void*d) {
   Fl_Type *t = Fl_Type_make((char*)d);
-if (t) {select_only(t); modflag = 1; t->open();}
+if (t) {select_only(t); set_modflag(1); t->open();}
 }
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 Fl_Window* make_widgetbin() {
   Fl_Window* w;
-  { Fl_Window* o = widgetbin_panel = new Fl_Window(468, 100, "Bin");
+  { Fl_Window* o = widgetbin_panel = new Fl_Window(465, 100, "Widget Bin");
     w = o;
     { Fl_Group* o = new Fl_Group(3, 3, 74, 74);
       o->box(FL_THIN_DOWN_BOX);

@@ -85,6 +85,7 @@ void nyi(Fl_Widget *,void *) {
 
 static const char *filename;
 void set_filename(const char *c);
+void set_modflag(int mf);
 int modflag;
 
 static char* pwd;
@@ -145,19 +146,42 @@ Fl_Menu_Bar *main_menubar;
 void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
   if (v || !c || !*c) {
-    if (!(c=fl_file_chooser("Save to:", "FLUID Files (*.f[ld])", c))) return;
+    fl_ok = "Save";
+    c=fl_file_chooser("Save to:", "FLUID Files (*.f[ld])", c);
+    fl_ok = "OK";
+    if (!c) return;
+
+    if (!access(c, 0))
+    {
+      const char *basename;
+      if ((basename = strrchr(c, '/')) != NULL)
+        basename ++;
+#if defined(WIN32) || defined(__EMX__)
+      if ((basename = strrchr(c, '\\')) != NULL)
+        basename ++;
+#endif // WIN32 || __EMX__
+      else
+        basename = c;
+
+      if (fl_choice("The file \"%s\" already exists.\n"
+                    "Do you want to replace it?", "Cancel",
+		    "Replace", NULL, basename) == 0) return;
+    }
+
     set_filename(c);
   }
   if (!write_file(c)) {
     fl_message("Error writing %s: %s", c, strerror(errno));
     return;
   }
-  modflag = 0;
+  set_modflag(0);
 }
 
 void exit_cb(Fl_Widget *,void *) {
   if (modflag)
-    switch (fl_choice("Save changes before exiting?", "Cancel", "No", "Yes"))
+    switch (fl_choice("Do you want to save changes to this user\n"
+                      "interface before exiting?", "Cancel",
+                      "Don't Save", "Save"))
     {
       case 0 : /* Cancel */
           return;
@@ -185,7 +209,19 @@ void exit_cb(Fl_Widget *,void *) {
 
 void
 apple_open_cb(const char *c) {
-  if (modflag && !fl_ask("Discard changes?")) return;
+  if (modflag)
+  {
+    switch (fl_choice("Do you want to save changes to this user\n"
+                      "interface before opening another one?", "Cancel",
+                      "Don't Save", "Save"))
+    {
+      case 0 : /* Cancel */
+          return;
+      case 2 : /* Yes */
+          save_cb(NULL, NULL);
+	  if (modflag) return;	// Didn't save!
+    }
+  }
   const char *oldfilename;
   oldfilename = filename;
   filename    = NULL;
@@ -199,16 +235,31 @@ apple_open_cb(const char *c) {
   }
 
   // Loaded a file; free the old filename...
-  modflag = 0;
+  set_modflag(0);
   if (oldfilename) free((void *)oldfilename);
 }
 #endif // __APPLE__
 
 void open_cb(Fl_Widget *, void *v) {
-  if (!v && modflag && !fl_ask("Discard changes?")) return;
+  if (!v && modflag)
+  {
+    switch (fl_choice("Do you want to save changes to this user\n"
+                      "interface before opening another one?", "Cancel",
+                      "Don't Save", "Save"))
+    {
+      case 0 : /* Cancel */
+          return;
+      case 2 : /* Yes */
+          save_cb(NULL, NULL);
+	  if (modflag) return;	// Didn't save!
+    }
+  }
   const char *c;
   const char *oldfilename;
-  if (!(c = fl_file_chooser("Open:", "FLUID Files (*.f[ld])", filename))) return;
+  fl_ok = "Open";
+  c = fl_file_chooser("Open:", "FLUID Files (*.f[ld])", filename);
+  fl_ok = "OK";
+  if (!c) return;
   oldfilename = filename;
   filename    = NULL;
   set_filename(c);
@@ -221,19 +272,31 @@ void open_cb(Fl_Widget *, void *v) {
   }
   if (v) {
     // Inserting a file; restore the original filename...
-    modflag = 1;
+    set_modflag(1);
     free((void *)filename);
     filename = oldfilename;
     if (main_window) main_window->label(filename);
   } else {
     // Loaded a file; free the old filename...
-    modflag = 0;
+    set_modflag(0);
     if (oldfilename) free((void *)oldfilename);
   }
 }
 
 void open_history_cb(Fl_Widget *, void *v) {
-  if (modflag && !fl_ask("Discard changes?")) return;
+  if (modflag)
+  {
+    switch (fl_choice("Do you want to save changes to this user\n"
+                      "interface before opening another one?", "Cancel",
+                      "Don't Save", "Save"))
+    {
+      case 0 : /* Cancel */
+          return;
+      case 2 : /* Yes */
+          save_cb(NULL, NULL);
+	  if (modflag) return;	// Didn't save!
+    }
+  }
   const char *oldfilename = filename;
   filename = NULL;
   set_filename((char *)v);
@@ -244,17 +307,27 @@ void open_history_cb(Fl_Widget *, void *v) {
     if (main_window) main_window->label(filename);
     return;
   }
-  modflag = 0;
+  set_modflag(0);
   if (oldfilename) free((void *)oldfilename);
 }
 
 void new_cb(Fl_Widget *, void *v) {
-  if (!v && modflag && !fl_ask("Discard changes?")) return;
-  const char *c;
-  if (!(c = fl_file_chooser("New:", "FLUID Files (*.f[ld])", 0))) return;
+  if (!v && modflag)
+  {
+    switch (fl_choice("Do you want to save changes to this user\n"
+                      "interface before creating a new one?", "Cancel",
+                      "Don't Save", "Save"))
+    {
+      case 0 : /* Cancel */
+          return;
+      case 2 : /* Yes */
+          save_cb(NULL, NULL);
+	  if (modflag) return;	// Didn't save!
+    }
+  }
   delete_all();
-  set_filename(c);
-  modflag = 0;
+  set_filename(NULL);
+  set_modflag(0);
 }
 
 int compile_only = 0;
@@ -509,7 +582,7 @@ extern Fl_Menu_Item New_Menu[];
 
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
-  {"&New", 0, new_cb, 0},
+  {"&New", FL_CTRL+'n', new_cb, 0},
   {"&Open...", FL_CTRL+'o', open_cb, 0},
   {"Open &Previous",0,0,0,FL_SUBMENU},
     {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},
@@ -819,10 +892,33 @@ show_shell_window() {
 
 void set_filename(const char *c) {
   if (filename) free((void *)filename);
-  filename = strdup(c);
-  if (main_window) main_window->label(filename);
+  filename = c ? strdup(c) : NULL;
 
-  update_history(filename);
+  if (filename) update_history(filename);
+
+  set_modflag(modflag);
+}
+
+// Set the "modified" flag and update the title of the main window...
+void set_modflag(int mf) {
+  const char	*basename;
+  static char	title[1024];
+
+  modflag = mf;
+
+  if (main_window) {
+    if (!filename) basename = "Untitled.fl";
+    else if ((basename = strrchr(filename, '/')) != NULL) basename ++;
+#if defined(WIN32) || defined(__EMX__) 
+    else if ((basename = strrchr(filename, '\\')) != NULL) basename ++;
+#endif // WIN32 || __EMX__
+    else basename = filename;
+
+    if (modflag) {
+      snprintf(title, sizeof(title), "%s (modified)", basename);
+      main_window->label(title);
+    } else main_window->label(basename);
+  }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -914,7 +1010,7 @@ int main(int argc,char **argv) {
     write_cb(0,0);
     exit(0);
   }
-  modflag = 0;
+  set_modflag(0);
 #ifndef WIN32
   signal(SIGINT,sigint);
 #endif

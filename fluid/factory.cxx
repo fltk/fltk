@@ -855,7 +855,7 @@ static void cb(Fl_Widget *, void *v) {
       }
     }
     select_only(t);
-    modflag = 1;
+    set_modflag(1);
     t->open();
   }
 }

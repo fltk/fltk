@@ -28,7 +28,7 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {selected in_source in_header
+} {in_source in_header
 } 
 
 decl {void show_help(const char *name);} {public
@@ -38,35 +38,31 @@ Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {391 113 350 195} type Double color 50 selection_color 47 hotspot non_modal visible
+    xywh {391 113 315 175} type Double color 50 selection_color 47 hotspot non_modal visible
   } {
-    Fl_Group {} {open
-      xywh {10 10 330 141} box THIN_UP_BOX
-    } {
-      Fl_Box {} {
-        image {icons/fluid-96.xpm} xywh {20 20 116 121}
-      }
-      Fl_Box {} {
-        label {FLTK User
-Interface Designer
-Version 1.1.7}
-        xywh {146 20 184 69} color 12 selection_color 47 labelfont 1 labelsize 18 labelcolor 0 align 21
-      }
-      Fl_Box {} {
-        label {Copyright 1998-2005 by
-Bill Spitzak and others}
-        xywh {146 99 184 42} align 148
-      }
+    Fl_Box {} {selected
+      image {icons/fluid-96.xpm} xywh {10 10 115 120}
     }
-    Fl_Return_Button {} {
-      label Close
-      callback {((Fl_Window*)(o->parent()))->hide();}
-      xywh {271 161 69 25}
+    Fl_Box {} {
+      label {FLTK User
+Interface Designer
+Version 1.1.7} selected
+      xywh {135 10 170 69} color 12 selection_color 47 labelfont 1 labelsize 18 labelcolor 0 align 21
+    }
+    Fl_Box {} {
+      label {Copyright 1998-2005 by
+Bill Spitzak and others} selected
+      xywh {135 89 170 42} align 148
     }
     Fl_Button {} {
       label {View License...}
-      callback {show_help("license.html");}
-      xywh {146 161 115 25} labelcolor 136
+      callback {show_help("license.html");} selected
+      xywh {89 141 123 25} labelcolor 136
+    }
+    Fl_Return_Button {} {
+      label Close
+      callback {((Fl_Window*)(o->parent()))->hide();} selected
+      xywh {222 141 83 25}
     }
   }
 } 

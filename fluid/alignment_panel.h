@@ -70,15 +70,15 @@ extern Fl_Check_Button *prevpos_button;
 Fl_Double_Window* make_settings_window();
 extern Fl_Double_Window *shell_window;
 extern Fl_Input *shell_command_input;
-extern Fl_Check_Button *shell_savefl_button;
 extern Fl_Check_Button *shell_writecode_button;
 extern Fl_Check_Button *shell_writemsgs_button;
+extern Fl_Check_Button *shell_savefl_button;
 #include <FL/Fl_Return_Button.H>
 extern void do_shell_command(Fl_Return_Button*, void*);
 extern Fl_Double_Window *shell_run_window;
-extern Fl_Return_Button *shell_run_button;
 #include <FL/Fl_Text_Display.H>
 extern Fl_Text_Display *shell_run_display;
+extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 extern Fl_Double_Window *grid_window;
 extern void grid_cb(Fl_Input*, long);

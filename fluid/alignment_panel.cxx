@@ -167,10 +167,6 @@ Fl_Text_Buffer *shell_run_buffer;
 
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
 
-static void cb_Close1(Fl_Button*, void*) {
-  settings_window->hide();
-}
-
 Fl_Check_Button *tooltips_button=(Fl_Check_Button *)0;
 
 static void cb_tooltips_button(Fl_Check_Button*, void*) {
@@ -196,58 +192,46 @@ static void cb_prevpos_button(Fl_Check_Button*, void*) {
   fluid_prefs.set("prev_window_pos", prevpos_button->value());
 }
 
+static void cb_Close1(Fl_Button*, void*) {
+  settings_window->hide();
+}
+
 Fl_Double_Window* make_settings_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(215, 185, "GUI Settings");
+  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(235, 185, "GUI Settings");
     w = o;
-    o->labelsize(11);
-    { Fl_Button* o = new Fl_Button(163, 155, 42, 20, "Close");
-      o->tooltip("Close this dialog.");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_Close1);
+    { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(10, 10, 113, 25, "Show Tooltips");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_tooltips_button);
+      int b;
+      fluid_prefs.get("show_tooltips", b, 1);
+      tooltips_button->value(b);
+      Fl_Tooltip::enable(b);
     }
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 195, 135);
-      o->selection_color(FL_INACTIVE_COLOR);
-      o->labelsize(11);
-      { Fl_Group* o = new Fl_Group(10, 30, 195, 115, "GUI:");
-        o->labelsize(11);
-        o->align(FL_ALIGN_TOP_LEFT);
-        { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(20, 40, 97, 20, "Show Tooltips");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_tooltips_button);
-          int b;
-          fluid_prefs.get("show_tooltips", b, 1);
-          tooltips_button->value(b);
-          Fl_Tooltip::enable(b);
-        }
-        { Fl_Check_Button* o = completion_button = new Fl_Check_Button(20, 65, 152, 20, "Show Completion Dialogs");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_completion_button);
-          int b;
-          fluid_prefs.get("show_completion_dialogs", b, 1);
-          completion_button->value(b);
-        }
-        { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(20, 90, 175, 20, "Open Previous File on Startup");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_openlast_button);
-          int b;
-          fluid_prefs.get("open_previous_file", b, 0);
-          openlast_button->value(b);
-        }
-        { Fl_Check_Button* o = prevpos_button = new Fl_Check_Button(20, 115, 175, 20, "Remember Window Positions");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_prevpos_button);
-          int b;
-          fluid_prefs.get("prev_window_pos", b, 1);
-          prevpos_button->value(b);
-        }
-        o->end();
-      }
-      o->end();
+    { Fl_Check_Button* o = completion_button = new Fl_Check_Button(10, 45, 186, 25, "Show Completion Dialogs");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_completion_button);
+      int b;
+      fluid_prefs.get("show_completion_dialogs", b, 1);
+      completion_button->value(b);
+    }
+    { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(10, 80, 215, 25, "Open Previous File on Startup");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_openlast_button);
+      int b;
+      fluid_prefs.get("open_previous_file", b, 0);
+      openlast_button->value(b);
+    }
+    { Fl_Check_Button* o = prevpos_button = new Fl_Check_Button(10, 115, 210, 25, "Remember Window Positions");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_prevpos_button);
+      int b;
+      fluid_prefs.get("prev_window_pos", b, 1);
+      prevpos_button->value(b);
+    }
+    { Fl_Button* o = new Fl_Button(161, 150, 64, 25, "Close");
+      o->tooltip("Close this dialog.");
+      o->callback((Fl_Callback*)cb_Close1);
     }
     o->end();
   }
@@ -262,12 +246,6 @@ static void cb_shell_command_input(Fl_Input*, void*) {
   fluid_prefs.set("shell_command", shell_command_input->value());
 }
 
-Fl_Check_Button *shell_savefl_button=(Fl_Check_Button *)0;
-
-static void cb_shell_savefl_button(Fl_Check_Button*, void*) {
-  fluid_prefs.set("shell_savefl", shell_savefl_button->value());
-}
-
 Fl_Check_Button *shell_writecode_button=(Fl_Check_Button *)0;
 
 static void cb_shell_writecode_button(Fl_Check_Button*, void*) {
@@ -280,11 +258,19 @@ static void cb_shell_writemsgs_button(Fl_Check_Button*, void*) {
   fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());
 }
 
+Fl_Check_Button *shell_savefl_button=(Fl_Check_Button *)0;
+
+static void cb_shell_savefl_button(Fl_Check_Button*, void*) {
+  fluid_prefs.set("shell_savefl", shell_savefl_button->value());
+}
+
 static void cb_Cancel(Fl_Button*, void*) {
   shell_window->hide();
 }
 
 Fl_Double_Window *shell_run_window=(Fl_Double_Window *)0;
+
+Fl_Text_Display *shell_run_display=(Fl_Text_Display *)0;
 
 Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
 
@@ -292,79 +278,58 @@ static void cb_shell_run_button(Fl_Return_Button*, void*) {
   shell_run_window->hide();
 }
 
-Fl_Text_Display *shell_run_display=(Fl_Text_Display *)0;
-
 Fl_Double_Window* make_shell_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = shell_window = new Fl_Double_Window(335, 135, "Shell Command");
+  { Fl_Double_Window* o = shell_window = new Fl_Double_Window(365, 125, "Shell Command");
     w = o;
-    o->labelsize(11);
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 314, 85);
-      o->selection_color(FL_INACTIVE_COLOR);
-      o->labelsize(11);
-      { Fl_Group* o = new Fl_Group(10, 30, 314, 65, "Shell Command");
-        o->labelsize(11);
-        o->align(FL_ALIGN_TOP_LEFT);
-        { Fl_Input* o = shell_command_input = new Fl_Input(20, 40, 294, 21);
-          o->labelsize(11);
-          o->textsize(11);
-          o->callback((Fl_Callback*)cb_shell_command_input);
-          char buf[1024];
-          fluid_prefs.get("shell_command", buf, "", sizeof(buf));
-          shell_command_input->value(buf);
-        }
-        { Fl_Check_Button* o = shell_savefl_button = new Fl_Check_Button(20, 66, 93, 19, "Save .FL File");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_shell_savefl_button);
-          int b;
-          fluid_prefs.get("shell_savefl", b, 1);
-          shell_savefl_button->value(b);
-        }
-        { Fl_Check_Button* o = shell_writecode_button = new Fl_Check_Button(118, 66, 83, 19, "Write Code");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_shell_writecode_button);
-          int b;
-          fluid_prefs.get("shell_writecode", b, 1);
-          shell_writecode_button->value(b);
-        }
-        { Fl_Check_Button* o = shell_writemsgs_button = new Fl_Check_Button(206, 66, 108, 19, "Write Messages");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)cb_shell_writemsgs_button);
-          int b;
-          fluid_prefs.get("shell_writemsgs", b, 0);
-          shell_writemsgs_button->value(b);
-        }
-        o->end();
-      }
-      o->end();
+    { Fl_Input* o = shell_command_input = new Fl_Input(10, 27, 347, 25, "Command:");
+      o->labelfont(1);
+      o->callback((Fl_Callback*)cb_shell_command_input);
+      o->align(FL_ALIGN_TOP_LEFT);
+      char buf[1024];
+      fluid_prefs.get("shell_command", buf, "", sizeof(buf));
+      shell_command_input->value(buf);
     }
-    { Fl_Button* o = new Fl_Button(276, 105, 48, 20, "Cancel");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_Cancel);
+    { Fl_Check_Button* o = shell_writecode_button = new Fl_Check_Button(128, 61, 93, 19, "Write Code");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_shell_writecode_button);
+      int b;
+      fluid_prefs.get("shell_writecode", b, 1);
+      shell_writecode_button->value(b);
     }
-    { Fl_Return_Button* o = new Fl_Return_Button(162, 105, 109, 20, "Run Command");
-      o->labelsize(11);
+    { Fl_Check_Button* o = shell_writemsgs_button = new Fl_Check_Button(231, 61, 126, 19, "Write Messages");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_shell_writemsgs_button);
+      int b;
+      fluid_prefs.get("shell_writemsgs", b, 0);
+      shell_writemsgs_button->value(b);
+    }
+    { Fl_Check_Button* o = shell_savefl_button = new Fl_Check_Button(10, 62, 108, 19, "Save .FL File");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)cb_shell_savefl_button);
+      int b;
+      fluid_prefs.get("shell_savefl", b, 1);
+      shell_savefl_button->value(b);
+    }
+    { Fl_Return_Button* o = new Fl_Return_Button(132, 90, 143, 25, "Run Command");
       o->callback((Fl_Callback*)do_shell_command);
+    }
+    { Fl_Button* o = new Fl_Button(285, 90, 72, 25, "Cancel");
+      o->callback((Fl_Callback*)cb_Cancel);
     }
     o->end();
   }
   { Fl_Double_Window* o = shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
     w = o;
-    o->labelsize(11);
-    { Fl_Return_Button* o = shell_run_button = new Fl_Return_Button(486, 400, 59, 20, "Close");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_shell_run_button);
-    }
-    { Fl_Text_Display* o = shell_run_display = new Fl_Text_Display(10, 10, 530, 380);
-      o->labelsize(11);
+    { Fl_Text_Display* o = shell_run_display = new Fl_Text_Display(10, 10, 535, 375);
+      o->box(FL_DOWN_BOX);
       o->textfont(4);
-      o->textsize(11);
       Fl_Group::current()->resizable(o);
       shell_run_buffer = new Fl_Text_Buffer();
       shell_run_display->buffer(shell_run_buffer);
+    }
+    { Fl_Return_Button* o = shell_run_button = new Fl_Return_Button(468, 395, 77, 25, "Close");
+      o->callback((Fl_Callback*)cb_shell_run_button);
     }
     o->end();
   }
@@ -387,59 +352,39 @@ static void cb_Close2(Fl_Button*, void*) {
 
 Fl_Double_Window* make_grid_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(145, 180, "Grid");
+  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(145, 185, "Grid");
     w = o;
-    o->labelsize(11);
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 124, 131);
-      o->selection_color(FL_INACTIVE_COLOR);
-      o->labelsize(11);
-      o->align(FL_ALIGN_TOP_LEFT);
-      { Fl_Group* o = new Fl_Group(10, 30, 124, 111, "Grid");
-        o->labelsize(11);
-        o->align(FL_ALIGN_TOP_LEFT);
-        { Fl_Input* o = horizontal_input = new Fl_Input(84, 40, 40, 20, "Horizontal:");
-          o->tooltip("Horizontal grid spacing.");
-          o->type(2);
-          o->box(FL_THIN_DOWN_BOX);
-          o->labelfont(1);
-          o->labelsize(11);
-          o->textsize(11);
-          o->callback((Fl_Callback*)grid_cb, (void*)(1));
-          o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-        }
-        { Fl_Input* o = vertical_input = new Fl_Input(84, 65, 40, 20, "Vertical:");
-          o->tooltip("Vertical grid spacing.");
-          o->type(2);
-          o->box(FL_THIN_DOWN_BOX);
-          o->labelfont(1);
-          o->labelsize(11);
-          o->textsize(11);
-          o->callback((Fl_Callback*)grid_cb, (void*)(2));
-          o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-        }
-        { Fl_Input* o = snap_input = new Fl_Input(84, 90, 40, 20, "Snap:");
-          o->tooltip("Snap to grid within this many pixels.");
-          o->type(2);
-          o->box(FL_THIN_DOWN_BOX);
-          o->labelfont(1);
-          o->labelsize(11);
-          o->textsize(11);
-          o->callback((Fl_Callback*)grid_cb, (void*)(3));
-          o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-        }
-        { Fl_Check_Button* o = guides_toggle = new Fl_Check_Button(30, 115, 94, 16, "Show Guides");
-          o->tooltip("Show distance and alignment guides in overlay");
-          o->down_box(FL_DOWN_BOX);
-          o->labelsize(11);
-          o->callback((Fl_Callback*)guides_cb, (void*)(4));
-        }
-        o->end();
-      }
-      o->end();
+    { Fl_Input* o = horizontal_input = new Fl_Input(88, 10, 47, 25, "Horizontal:");
+      o->tooltip("Horizontal grid spacing.");
+      o->type(2);
+      o->box(FL_THIN_DOWN_BOX);
+      o->labelfont(1);
+      o->callback((Fl_Callback*)grid_cb, (void*)(1));
+      o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Button* o = new Fl_Button(92, 151, 42, 20, "Close");
+    { Fl_Input* o = vertical_input = new Fl_Input(88, 45, 47, 25, "Vertical:");
+      o->tooltip("Vertical grid spacing.");
+      o->type(2);
+      o->box(FL_THIN_DOWN_BOX);
+      o->labelfont(1);
+      o->callback((Fl_Callback*)grid_cb, (void*)(2));
+      o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
+    }
+    { Fl_Input* o = snap_input = new Fl_Input(88, 80, 47, 25, "Snap:");
+      o->tooltip("Snap to grid within this many pixels.");
+      o->type(2);
+      o->box(FL_THIN_DOWN_BOX);
+      o->labelfont(1);
+      o->callback((Fl_Callback*)grid_cb, (void*)(3));
+      o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
+    }
+    { Fl_Check_Button* o = guides_toggle = new Fl_Check_Button(27, 115, 108, 25, "Show Guides");
+      o->tooltip("Show distance and alignment guides in overlay");
+      o->down_box(FL_DOWN_BOX);
+      o->callback((Fl_Callback*)guides_cb, (void*)(4));
+    }
+    { Fl_Button* o = new Fl_Button(76, 150, 59, 25, "Close");
       o->tooltip("Close this dialog.");
-      o->labelsize(11);
       o->callback((Fl_Callback*)cb_Close2);
     }
     o->end();

@@ -34,132 +34,132 @@ comment {//
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
-    xywh {4 21 415 365} type Double labelsize 11 resizable hotspot visible
+    xywh {632 21 415 355} type Double labelsize 11 resizable hotspot visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
-      xywh {9 10 396 315} selection_color 8 labelsize 11 when 0 resizable
+      xywh {8 10 397 310} selection_color 8 labelsize 11 when 0 resizable
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load
-        xywh {9 30 395 295} labelsize 11 when 0 hide resizable
+        callback propagate_load selected
+        xywh {8 30 396 285} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           callback propagate_load open
-          xywh {85 40 314 285} labelsize 11 resizable
+          xywh {8 30 396 285} labelsize 11 resizable
         } {
           Fl_Group {} {
             callback propagate_load open
-            xywh {94 40 300 20} labelsize 11
+            xywh {90 30 309 30} labelsize 11
           } {
             Fl_Input {} {
               label {Label:}
               callback label_cb
-              tooltip {The label text for the widget.} xywh {94 40 195 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
+              tooltip {The label text for the widget.} xywh {90 35 199 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
             }
             Fl_Choice {} {
               callback labeltype_cb open
-              tooltip {The label style for the widget.} xywh {289 40 105 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
+              tooltip {The label style for the widget.} xywh {290 35 109 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
               code0 {extern Fl_Menu_Item labeltypemenu[];}
               code1 {o->menu(labeltypemenu);}
             } {}
           }
           Fl_Group {} {
             callback propagate_load open
-            xywh {94 65 300 20} labelsize 11
+            xywh {90 60 310 25} labelsize 11
           } {
             Fl_Input {} {
               label {Image:}
               callback image_cb
-              tooltip {The active image for the widget.} xywh {94 65 240 20} labelfont 1 labelsize 11 textsize 11 resizable
+              tooltip {The active image for the widget.} xywh {90 60 241 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
             Fl_Button {} {
               label {Browse...}
               callback image_browse_cb
-              tooltip {Click to choose the active image.} xywh {334 65 60 20} labelsize 11
+              tooltip {Click to choose the active image.} xywh {330 60 70 20} labelsize 11
             }
           }
           Fl_Group {} {
             callback propagate_load open
-            xywh {94 90 300 20} labelsize 11
+            xywh {89 85 310 25} labelsize 11
           } {
             Fl_Input {} {
               label {Inactive:}
               callback inactive_cb
-              tooltip {The inactive image for the widget.} xywh {94 90 240 20} labelfont 1 labelsize 11 textsize 11 resizable
+              tooltip {The inactive image for the widget.} xywh {90 85 240 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
             Fl_Button {} {
               label {Browse...}
               callback inactive_browse_cb
-              tooltip {Click to choose the inactive image.} xywh {334 90 60 20} labelsize 11
+              tooltip {Click to choose the inactive image.} xywh {329 85 70 20} labelsize 11
             }
           }
           Fl_Group {} {
             label {Alignment:}
             callback propagate_load open
-            xywh {95 114 304 21} labelfont 1 labelsize 11 align 4
+            xywh {90 111 309 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Button {} {
               label Clip
               user_data FL_ALIGN_CLIP
               callback align_cb
-              tooltip {Clip the label to the inside of the widget.} xywh {95 115 30 20} type Toggle labelsize 11
+              tooltip {Clip the label to the inside of the widget.} xywh {90 111 40 20} type Toggle selection_color 8 labelsize 11 align 16
             }
             Fl_Button {} {
               label Wrap
               user_data FL_ALIGN_WRAP
               callback align_cb
-              tooltip {Wrap the label text.} xywh {125 115 38 20} type Toggle labelsize 11
+              tooltip {Wrap the label text.} xywh {135 111 45 20} type Toggle selection_color 8 labelsize 11
             }
             Fl_Button {} {
               label {Text/Image}
               user_data FL_ALIGN_TEXT_OVER_IMAGE
               callback align_cb
-              tooltip {Show the label text over the image.} xywh {162 115 69 20} type Toggle labelsize 11
+              tooltip {Show the label text over the image.} xywh {185 111 69 20} type Toggle selection_color 8 labelsize 11
             }
             Fl_Button {} {
               label {@-1<-}
               user_data FL_ALIGN_LEFT
               callback align_cb
-              tooltip {Left-align the label.} xywh {234 115 20 20} type Toggle labelsize 11 labelcolor 8
+              tooltip {Left-align the label.} xywh {259 111 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
             }
             Fl_Button {} {
               label {@-1->}
               user_data FL_ALIGN_RIGHT
               callback align_cb
-              tooltip {Right-align the label.} xywh {254 115 20 20} type Toggle labelsize 11 labelcolor 8
+              tooltip {Right-align the label.} xywh {284 111 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
             }
             Fl_Button {} {
               label {@-18}
               user_data FL_ALIGN_TOP
               callback align_cb
-              tooltip {Top-align the label.} xywh {274 115 20 20} type Toggle labelsize 11 labelcolor 8
+              tooltip {Top-align the label.} xywh {309 111 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
             }
             Fl_Button {} {
               label {@-12}
               user_data FL_ALIGN_BOTTOM
               callback align_cb
-              tooltip {Bottom-align the label.} xywh {294 115 20 20} type Toggle labelsize 11 labelcolor 8
+              tooltip {Bottom-align the label.} xywh {334 111 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
             }
             Fl_Button {} {
               label {@-3square}
               user_data FL_ALIGN_INSIDE
               callback align_cb
-              tooltip {Show the label inside the widget.} xywh {314 115 20 20} type Toggle labelsize 11 labelcolor 8
+              tooltip {Show the label inside the widget.} xywh {359 111 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
             }
             Fl_Box {} {
-              xywh {376 115 18 20} labelsize 11 resizable
+              xywh {384 111 15 20} labelsize 11 resizable
             }
           }
           Fl_Value_Input widget_x_input {
             label {X:}
             callback x_cb
-            tooltip {The X position of the widget.} xywh {94 150 60 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The X position of the widget.} xywh {90 150 60 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Box {} {
             label {Position:}
-            xywh {94 150 0 20} labelfont 1 labelsize 11 align 24
+            xywh {29 150 61 20} labelfont 1 labelsize 11 align 24
           }
           Fl_Value_Input widget_y_input {
             label {Y:}
@@ -169,352 +169,343 @@ Function {make_widget_panel()} {open
           Fl_Value_Input widget_w_input {
             label {Width:}
             callback w_cb
-            tooltip {The width of the widget.} xywh {214 150 60 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The width of the widget.} xywh {219 150 60 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Value_Input widget_h_input {
             label {Height:}
             callback h_cb
-            tooltip {The height of the widget.} xywh {274 150 60 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            tooltip {The height of the widget.} xywh {284 150 60 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
           Fl_Box {} {
             label {Values:}
-            xywh {94 185 0 20} labelfont 1 labelsize 11 align 24
+            xywh {34 190 55 20} labelfont 1 labelsize 11 align 24
           }
           Fl_Value_Input {} {
             label {Size:}
             callback slider_size_cb
-            tooltip {The size of the slider.} xywh {94 185 60 20} labelsize 11 align 5 step 0.010101 textsize 11
+            tooltip {The size of the slider.} xywh {89 190 55 20} labelsize 11 align 5 step 0.010101 textsize 11
           }
           Fl_Value_Input {} {
             label {Minimum:}
             callback min_cb
-            tooltip {The minimum value of the widget.} xywh {154 185 60 20} labelsize 11 align 5 textsize 11
+            tooltip {The minimum value of the widget.} xywh {149 190 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Maximum:}
             callback max_cb
-            tooltip {The maximum value of the widget.} xywh {214 185 60 20} labelsize 11 align 5 value 1 textsize 11
+            tooltip {The maximum value of the widget.} xywh {209 190 55 20} labelsize 11 align 5 value 1 textsize 11
           }
           Fl_Value_Input {} {
             label {Step:}
             callback step_cb
-            tooltip {The resolution of the widget value.} xywh {274 185 60 20} labelsize 11 align 5 textsize 11
+            tooltip {The resolution of the widget value.} xywh {269 190 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Value_Input {} {
             label {Value:}
             callback value_cb
-            tooltip {The current widget value.} xywh {334 185 60 20} labelsize 11 align 5 textsize 11
+            tooltip {The current widget value.} xywh {329 190 55 20} labelsize 11 align 5 textsize 11
           }
           Fl_Button {} {
             label {Shortcut:}
             callback shortcut_in_cb
-            tooltip {The shortcut key for the widget.} xywh {94 210 300 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
+            tooltip {The shortcut key for the widget.} xywh {89 215 308 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
             code0 {\#include "Shortcut_Button.h"}
             class Shortcut_Button
           }
           Fl_Group {} {
             callback propagate_load open
-            xywh {94 235 300 21} labelsize 11
+            xywh {92 240 305 21} labelsize 11
           } {
             Fl_Input {} {
               label {X Class:}
               callback xclass_cb
-              tooltip {The X resource class.} xywh {94 235 115 20} labelfont 1 labelsize 11 textsize 11 resizable
+              tooltip {The X resource class.} xywh {92 241 101 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
             Fl_Light_Button {} {
               label Border
               callback border_cb
-              tooltip {Add a border around the window.} xywh {209 235 57 20} selection_color 1 labelsize 11
+              tooltip {Add a border around the window.} xywh {198 241 59 20} selection_color 1 labelsize 11
             }
             Fl_Light_Button {} {
               label Modal
               callback modal_cb
-              tooltip {Make the window modal.} xywh {266 235 54 20} selection_color 1 labelsize 11
+              tooltip {Make the window modal.} xywh {262 241 55 20} selection_color 1 labelsize 11
             }
             Fl_Light_Button {} {
               label Nonmodal
               callback non_modal_cb
-              tooltip {Make the window non-modal.} xywh {320 235 74 21} selection_color 1 labelsize 11 align 148
+              tooltip {Make the window non-modal.} xywh {322 240 75 21} selection_color 1 labelsize 11 align 148
             }
           }
           Fl_Group {} {
             callback propagate_load open
-            xywh {94 260 301 20} labelsize 11
+            xywh {92 265 307 20} labelsize 11
           } {
             Fl_Light_Button {} {
               label Visible
               callback visible_cb
-              tooltip {Show the widget.} xywh {94 260 55 20} selection_color 1 labelsize 11
+              tooltip {Show the widget.} xywh {92 265 57 20} selection_color 1 labelsize 11
             }
             Fl_Box {} {
               label {Attributes:}
-              xywh {94 260 0 20} labelfont 1 labelsize 11 align 4
+              xywh {92 265 6 20} labelfont 1 labelsize 11 align 4
             }
             Fl_Light_Button {} {
               label Active
               callback active_cb
-              tooltip {Activate the widget.} xywh {149 260 55 20} selection_color 1 labelsize 11
+              tooltip {Activate the widget.} xywh {154 265 56 20} selection_color 1 labelsize 11
             }
             Fl_Light_Button {} {
               label Resizable
               callback resizable_cb
-              tooltip {Make the widget resizable.} xywh {204 260 72 20} selection_color 1 labelsize 11 when 1
+              tooltip {Make the widget resizable.} xywh {215 265 74 20} selection_color 1 labelsize 11 when 1
             }
             Fl_Light_Button {} {
               label Hotspot
               callback hotspot_cb
-              tooltip {Center the window under this widget.} xywh {276 260 61 20} selection_color 1 labelsize 11 when 1
+              tooltip {Center the window under this widget.} xywh {294 265 64 20} selection_color 1 labelsize 11 when 1
             }
             Fl_Box {} {
-              xywh {375 260 20 20} labelsize 11 resizable
+              xywh {379 265 20 20} labelsize 11 resizable
             }
           }
           Fl_Input {} {
             label {Tooltip:}
             callback tooltip_cb
-            tooltip {The tooltip text for the widget.} xywh {94 285 300 20} labelfont 1 labelsize 11 textsize 11
+            tooltip {The tooltip text for the widget.} xywh {92 290 307 20} labelfont 1 labelsize 11 textsize 11
           }
           Fl_Box {} {
-            xywh {94 305 300 20} labelsize 11 resizable
+            xywh {94 310 305 5} labelsize 11 resizable
           }
         }
       }
       Fl_Group {} {
         label Style
         callback propagate_load
-        xywh {10 30 395 295} labelsize 11 when 0 hide
+        xywh {8 30 397 290} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           callback propagate_load open
-          xywh {100 40 295 276} labelsize 11 resizable
+          xywh {8 30 396 178} labelsize 11 resizable
         } {
           Fl_Group {} {
             callback propagate_load open
-            xywh {100 40 295 95} labelsize 11
+            xywh {100 35 300 100} labelsize 11
           } {
             Fl_Group {} {
               callback propagate_load open
-              xywh {100 40 295 20} labelsize 11
+              xywh {100 35 300 25} labelsize 11
             } {
               Fl_Choice {} {
                 label {Label Font:}
                 callback labelfont_cb open
-                tooltip {The style of the label text.} xywh {100 40 155 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+                tooltip {The style of the label text.} xywh {100 35 162 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
                 code0 {extern Fl_Menu_Item fontmenu[];}
                 code1 {o->menu(fontmenu);}
               } {}
               Fl_Value_Input {} {
                 callback labelsize_cb
-                tooltip {The size of the label text.} xywh {255 40 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+                tooltip {The size of the label text.} xywh {260 35 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
               }
               Fl_Button {} {
                 label {Label Color}
                 callback labelcolor_cb
-                tooltip {The color of the label text.} xywh {305 40 90 20} labelsize 11
+                tooltip {The color of the label text.} xywh {310 35 90 20} labelsize 11
               }
             }
             Fl_Group {} {
               callback propagate_load open
-              xywh {100 65 295 20} labelsize 11
+              xywh {100 60 300 25} labelsize 11
             } {
               Fl_Choice {} {
                 label {Box:}
                 callback box_cb open
-                tooltip {The "up" box of the widget.} xywh {100 65 205 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+                tooltip {The "up" box of the widget.} xywh {100 60 210 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
                 code0 {extern Fl_Menu_Item boxmenu[];}
                 code1 {o->menu(boxmenu);}
               } {}
               Fl_Button {} {
                 label Color
                 callback color_cb
-                tooltip {The background color of the widget.} xywh {305 65 90 20} labelsize 11
+                tooltip {The background color of the widget.} xywh {310 60 90 20} labelsize 11
               }
             }
             Fl_Group {} {
               callback propagate_load open
-              xywh {100 90 295 20} labelsize 11
+              xywh {100 85 300 25} labelsize 11
             } {
               Fl_Choice {} {
                 label {Down Box:}
                 callback down_box_cb open
-                tooltip {The "down" box of the widget.} xywh {100 90 205 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+                tooltip {The "down" box of the widget.} xywh {100 85 210 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
                 code0 {extern Fl_Menu_Item boxmenu[];}
                 code1 {o->menu(boxmenu);}
               } {}
               Fl_Button {} {
                 label {Select Color}
                 callback color2_cb
-                tooltip {The selection color of the widget.} xywh {305 90 90 20} labelsize 11
+                tooltip {The selection color of the widget.} xywh {310 85 90 20} labelsize 11
               }
             }
             Fl_Group {} {
               callback propagate_load open
-              xywh {100 115 295 20} labelsize 11
+              xywh {100 110 300 25} labelsize 11
             } {
               Fl_Choice {} {
                 label {Text Font:}
                 callback textfont_cb open
-                tooltip {The value text style.} xywh {100 115 155 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+                tooltip {The value text style.} xywh {100 110 160 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
                 code0 {extern Fl_Menu_Item fontmenu[];}
                 code1 {o->menu(fontmenu);}
               } {}
               Fl_Value_Input {} {
                 callback textsize_cb
-                tooltip {The value text size.} xywh {255 115 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
+                tooltip {The value text size.} xywh {260 110 50 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
               }
               Fl_Button {} {
                 label {Text Color}
                 callback textcolor_cb
-                tooltip {The value text color.} xywh {305 115 90 20} labelsize 11
+                tooltip {The value text color.} xywh {310 110 90 20} labelsize 11
               }
             }
           }
           Fl_Box {} {
-            xywh {100 304 295 12} labelsize 11 resizable
+            xywh {100 140 295 68} labelsize 11 resizable
           }
         }
       }
       Fl_Group {} {
         label {C++}
-        callback propagate_load selected
-        xywh {10 30 395 295} labelsize 11 when 0
+        callback propagate_load open
+        xywh {10 30 395 290} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           callback propagate_load open
-          xywh {100 40 295 132} labelsize 11
+          xywh {100 35 300 137} labelsize 11
         } {
           Fl_Group {} {
             callback propagate_load open
-            xywh {100 40 295 20} labelsize 11
+            xywh {100 35 300 25} labelsize 11
           } {
             Fl_Input {} {
               label {Class:}
               user_data 4
               callback subclass_cb
-              tooltip {The widget subclass.} xywh {100 40 160 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
+              tooltip {The widget subclass.} xywh {105 35 160 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
             Fl_Choice {} {
               callback subtype_cb open
-              tooltip {The widget subtype.} xywh {260 40 135 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11
+              tooltip {The widget subtype.} xywh {265 35 135 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11
             } {}
           }
           Fl_Group {} {
             callback propagate_load open
-            xywh {100 65 295 20} labelsize 11
+            xywh {100 60 300 25} labelsize 11
           } {
             Fl_Input {} {
               label {Name:}
               callback name_cb
-              tooltip {The name of the widget.} xywh {100 65 230 20} labelfont 1 labelsize 11 textsize 11 resizable
+              tooltip {The name of the widget.} xywh {105 60 241 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
             Fl_Light_Button {} {
               label public
               callback name_public_cb
-              tooltip {Make the widget publicly accessible.} xywh {330 65 65 20} selection_color 1 labelsize 11 when 1
+              tooltip {Make the widget publicly accessible.} xywh {346 60 54 20} selection_color 1 labelsize 11 when 1
             }
           }
           Fl_Input {v_input[0]} {
             label {Extra Code:}
             user_data 0
             callback v_input_cb
-            tooltip {Extra initialization code for the widget.} xywh {100 90 295 20} labelfont 1 labelsize 11 textfont 4 textsize 11
+            tooltip {Extra initialization code for the widget.} xywh {105 85 295 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
           Fl_Input {v_input[1]} {
             user_data 1
             callback v_input_cb
-            tooltip {Extra initialization code for the widget.} xywh {100 110 295 20} labelsize 11 textfont 4 textsize 11
+            tooltip {Extra initialization code for the widget.} xywh {105 105 295 20} labelsize 11 textfont 4 textsize 11
           }
           Fl_Input {v_input[2]} {
             user_data 2
             callback v_input_cb
-            tooltip {Extra initialization code for the widget.} xywh {100 130 295 20} labelsize 11 textfont 4 textsize 11
+            tooltip {Extra initialization code for the widget.} xywh {105 125 295 20} labelsize 11 textfont 4 textsize 11
           }
           Fl_Input {v_input[3]} {
             user_data 3
             callback v_input_cb
-            tooltip {Extra initialization code for the widget.} xywh {100 150 295 20} labelsize 11 textfont 4 textsize 11
+            tooltip {Extra initialization code for the widget.} xywh {105 147 295 20} labelsize 11 textfont 4 textsize 11
           }
+        }
+        Fl_Text_Editor {} {
+          label {Callback:}
+          callback callback_cb
+          tooltip {The callback function or code for the widget.} xywh {105 174 295 91} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11
+          code0 {o->buffer(new Fl_Text_Buffer());}
+          code1 {o->textfont(FL_COURIER);}
         }
         Fl_Group {} {
           callback propagate_load open
-          xywh {100 175 295 90} box DOWN_BOX labelsize 11 resizable
-        } {
-          Fl_Text_Editor {} {
-            label {Callback:}
-            callback callback_cb
-            tooltip {The callback function or code for the widget.} xywh {102 177 291 86} box NO_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
-            code0 {o->buffer(new Fl_Text_Buffer());}
-            code1 {o->textfont(FL_COURIER);}
-          }
-        }
-        Fl_Group {} {
-          callback propagate_load open
-          xywh {100 270 295 45} labelsize 11
+          xywh {100 270 303 45} labelsize 11
         } {
           Fl_Group {} {
             callback propagate_load open
-            xywh {100 270 295 20} labelsize 11
+            xywh {100 270 303 20} labelsize 11
           } {
             Fl_Input {} {
               label {User Data:}
               callback user_data_cb
-              tooltip {The user data to pass into the callback code.} xywh {100 270 140 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
+              tooltip {The user data to pass into the callback code.} xywh {105 270 140 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
             Fl_Choice {} {
               label {When:}
               callback when_cb open
-              tooltip {When to call the callback function.} xywh {290 270 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1
+              tooltip {When to call the callback function.} xywh {295 270 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1
               code0 {extern Fl_Menu_Item whenmenu[];}
               code1 {o->menu(whenmenu);}
             } {}
           }
           Fl_Group {} {
             callback propagate_load open
-            xywh {100 295 295 20} labelsize 11
+            xywh {100 295 300 20} labelsize 11
           } {
             Fl_Input {} {
               label {Type:}
               callback user_data_type_cb
-              tooltip {The type of the user data.} xywh {100 295 140 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
+              tooltip {The type of the user data.} xywh {105 295 140 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
             Fl_Light_Button {} {
               label {No Change}
               callback when_button_cb
-              tooltip {Call the callback even if the value has not changed.} xywh {290 295 105 20} selection_color 1 labelsize 11
+              tooltip {Call the callback even if the value has not changed.} xywh {295 295 105 20} selection_color 1 labelsize 11
             }
           }
-        }
-        Fl_Box {} {
-          label label
-          xywh {95 325 100 0} labelsize 11 hide deactivate
         }
       }
     }
     Fl_Group {} {
-      xywh {8 335 396 20} labelsize 11
+      xywh {8 326 396 19} labelsize 11
     } {
       Fl_Box {} {
-        xywh {8 335 20 0} labelsize 11 resizable
+        xywh {8 330 20 0} labelsize 11 resizable
       }
       Fl_Button {} {
         label {No &Overlay}
         callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {274 335 77 19} labelsize 11 labelcolor 1
+        tooltip {Hide the widget overlay box.} xywh {268 326 80 19} labelsize 11 labelcolor 1
       }
       Fl_Button {} {
         label Revert
         callback revert_cb
-        xywh {159 335 80 0} labelsize 11 hide
+        xywh {159 330 80 0} labelsize 11 hide
       }
       Fl_Return_Button {} {
         label OK
         callback ok_cb
-        xywh {356 335 48 19} labelsize 11
+        xywh {353 326 51 19} labelsize 11
       }
       Fl_Button {} {
         label Cancel
         callback cancel_cb
-        xywh {329 335 75 0} labelsize 11 hide
+        xywh {329 330 75 0} labelsize 11 hide
       }
     }
   }

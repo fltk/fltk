@@ -88,15 +88,15 @@ Function {make_project_window()} {open
           callback i18n_type_cb open
           tooltip {Type of internationalization to use.} xywh {80 42 100 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
         } {
-          menuitem {} {
+          Menu_Item {} {
             label None
             xywh {0 0 100 20} labelsize 11
           }
-          menuitem {} {
+          Menu_Item {} {
             label {GNU gettext}
             xywh {0 0 100 20} labelsize 11
           }
-          menuitem {} {
+          Menu_Item {} {
             label {POSIX catgets}
             xywh {0 0 100 20} labelsize 11
           }
@@ -138,56 +138,47 @@ decl {Fl_Text_Buffer *shell_run_buffer;} {public
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings} open
-    xywh {321 150 215 185} type Double labelsize 11 hide
+    label {GUI Settings}
+    xywh {321 150 235 185} type Double hide
   } {
+    Fl_Check_Button tooltips_button {
+      label {Show Tooltips}
+      callback {Fl_Tooltip::enable(tooltips_button->value());
+fluid_prefs.set("show_tooltips", tooltips_button->value());} selected
+      xywh {10 10 113 25} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("show_tooltips", b, 1);}
+      code2 {tooltips_button->value(b);}
+      code3 {Fl_Tooltip::enable(b);}
+    }
+    Fl_Check_Button completion_button {
+      label {Show Completion Dialogs}
+      callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());} selected
+      xywh {10 45 186 25} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
+      code2 {completion_button->value(b);}
+    }
+    Fl_Check_Button openlast_button {
+      label {Open Previous File on Startup}
+      callback {fluid_prefs.set("open_previous_file", openlast_button->value());} selected
+      xywh {10 80 215 25} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("open_previous_file", b, 0);}
+      code2 {openlast_button->value(b);}
+    }
+    Fl_Check_Button prevpos_button {
+      label {Remember Window Positions}
+      callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());} selected
+      xywh {10 115 210 25} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("prev_window_pos", b, 1);}
+      code2 {prevpos_button->value(b);}
+    }
     Fl_Button {} {
       label Close
-      callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {163 155 42 20} labelsize 11
-    }
-    Fl_Tabs {} {
-      xywh {10 10 195 135} selection_color 8 labelsize 11
-    } {
-      Fl_Group {} {
-        label {GUI:}
-        xywh {10 30 195 115} labelsize 11 align 5
-      } {
-        Fl_Check_Button tooltips_button {
-          label {Show Tooltips}
-          callback {Fl_Tooltip::enable(tooltips_button->value());
-fluid_prefs.set("show_tooltips", tooltips_button->value());}
-          xywh {20 40 97 20} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("show_tooltips", b, 1);}
-          code2 {tooltips_button->value(b);}
-          code3 {Fl_Tooltip::enable(b);}
-        }
-        Fl_Check_Button completion_button {
-          label {Show Completion Dialogs}
-          callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
-          xywh {20 65 152 20} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
-          code2 {completion_button->value(b);}
-        }
-        Fl_Check_Button openlast_button {
-          label {Open Previous File on Startup}
-          callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
-          xywh {20 90 175 20} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("open_previous_file", b, 0);}
-          code2 {openlast_button->value(b);}
-        }
-        Fl_Check_Button prevpos_button {
-          label {Remember Window Positions}
-          callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
-          xywh {20 115 175 20} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("prev_window_pos", b, 1);}
-          code2 {prevpos_button->value(b);}
-        }
-      }
+      callback {settings_window->hide();} selected
+      tooltip {Close this dialog.} xywh {161 150 64 25}
     }
   }
 } 
@@ -195,73 +186,65 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
 Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
-    label {Shell Command} open
-    xywh {588 153 335 135} type Double labelsize 11 hide
+    label {Shell Command}
+    xywh {588 153 365 125} type Double hide
   } {
-    Fl_Tabs {} {open
-      xywh {10 10 314 85} selection_color 8 labelsize 11
-    } {
-      Fl_Group {} {
-        label {Shell Command} open
-        xywh {10 30 314 65} labelsize 11 align 5
-      } {
-        Fl_Input shell_command_input {
-          callback {fluid_prefs.set("shell_command", shell_command_input->value());}
-          xywh {20 40 294 21} labelsize 11 textsize 11
-          code0 {char buf[1024];}
-          code1 {fluid_prefs.get("shell_command", buf, "", sizeof(buf));}
-          code2 {shell_command_input->value(buf);}
-        }
-        Fl_Check_Button shell_savefl_button {
-          label {Save .FL File}
-          callback {fluid_prefs.set("shell_savefl", shell_savefl_button->value());}
-          xywh {20 66 93 19} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("shell_savefl", b, 1);}
-          code2 {shell_savefl_button->value(b);}
-        }
-        Fl_Check_Button shell_writecode_button {
-          label {Write Code}
-          callback {fluid_prefs.set("shell_writecode", shell_writecode_button->value());}
-          xywh {118 66 83 19} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("shell_writecode", b, 1);}
-          code2 {shell_writecode_button->value(b);}
-        }
-        Fl_Check_Button shell_writemsgs_button {
-          label {Write Messages}
-          callback {fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());}
-          xywh {206 66 108 19} down_box DOWN_BOX labelsize 11
-          code0 {int b;}
-          code1 {fluid_prefs.get("shell_writemsgs", b, 0);}
-          code2 {shell_writemsgs_button->value(b);}
-        }
-      }
+    Fl_Input shell_command_input {
+      label {Command:}
+      callback {fluid_prefs.set("shell_command", shell_command_input->value());}
+      xywh {10 27 347 25} labelfont 1 align 5
+      code0 {char buf[1024];}
+      code1 {fluid_prefs.get("shell_command", buf, "", sizeof(buf));}
+      code2 {shell_command_input->value(buf);}
     }
-    Fl_Button {} {
-      label Cancel
-      callback {shell_window->hide();}
-      xywh {276 105 48 20} labelsize 11
+    Fl_Check_Button shell_writecode_button {
+      label {Write Code}
+      callback {fluid_prefs.set("shell_writecode", shell_writecode_button->value());}
+      xywh {128 61 93 19} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("shell_writecode", b, 1);}
+      code2 {shell_writecode_button->value(b);}
+    }
+    Fl_Check_Button shell_writemsgs_button {
+      label {Write Messages}
+      callback {fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());}
+      xywh {231 61 126 19} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("shell_writemsgs", b, 0);}
+      code2 {shell_writemsgs_button->value(b);}
+    }
+    Fl_Check_Button shell_savefl_button {
+      label {Save .FL File}
+      callback {fluid_prefs.set("shell_savefl", shell_savefl_button->value());}
+      xywh {10 62 108 19} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("shell_savefl", b, 1);}
+      code2 {shell_savefl_button->value(b);}
     }
     Fl_Return_Button {} {
       label {Run Command}
       callback do_shell_command
-      xywh {162 105 109 20} labelsize 11
+      xywh {132 90 143 25}
+    }
+    Fl_Button {} {
+      label Cancel
+      callback {shell_window->hide();}
+      xywh {285 90 72 25}
     }
   }
   Fl_Window shell_run_window {
-    label {Shell Command Output} open
-    xywh {592 332 555 430} type Double labelsize 11 resizable visible
+    label {Shell Command Output}
+    xywh {592 332 555 430} type Double hide resizable
   } {
+    Fl_Text_Display shell_run_display {
+      xywh {10 10 535 375} box DOWN_BOX textfont 4 resizable
+      code0 {shell_run_buffer = new Fl_Text_Buffer();}
+      code1 {shell_run_display->buffer(shell_run_buffer);}
+    }
     Fl_Return_Button shell_run_button {
       label Close
       callback {shell_run_window->hide();}
-      xywh {486 400 59 20} labelsize 11
-    }
-    Fl_Text_Display shell_run_display {selected
-      xywh {10 10 530 380} labelsize 11 textfont 4 textsize 11 resizable
-      code0 {shell_run_buffer = new Fl_Text_Buffer();}
-      code1 {shell_run_display->buffer(shell_run_buffer);}
+      xywh {468 395 77 25}
     }
   }
 } 
@@ -269,49 +252,40 @@ Function {make_shell_window()} {open
 Function {make_grid_window()} {open
 } {
   Fl_Window grid_window {
-    label Grid open
-    xywh {51 589 145 180} type Double labelsize 11 hide
+    label Grid
+    xywh {803 141 145 185} type Double hide
   } {
-    Fl_Tabs {} {
-      xywh {10 10 124 131} selection_color 8 labelsize 11 align 5
-    } {
-      Fl_Group {} {
-        label Grid
-        xywh {10 30 124 111} labelsize 11 align 5
-      } {
-        Fl_Input horizontal_input {
-          label {Horizontal:}
-          user_data 1 user_data_type long
-          callback grid_cb
-          tooltip {Horizontal grid spacing.} xywh {84 40 40 20} type Int box THIN_DOWN_BOX labelfont 1 labelsize 11 textsize 11
-          code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-        }
-        Fl_Input vertical_input {
-          label {Vertical:}
-          user_data 2 user_data_type long
-          callback grid_cb
-          tooltip {Vertical grid spacing.} xywh {84 65 40 20} type Int box THIN_DOWN_BOX labelfont 1 labelsize 11 textsize 11
-          code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-        }
-        Fl_Input snap_input {
-          label {Snap:}
-          user_data 3 user_data_type long
-          callback grid_cb
-          tooltip {Snap to grid within this many pixels.} xywh {84 90 40 20} type Int box THIN_DOWN_BOX labelfont 1 labelsize 11 textsize 11
-          code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-        }
-        Fl_Check_Button guides_toggle {
-          label {Show Guides}
-          user_data 4 user_data_type long
-          callback guides_cb
-          tooltip {Show distance and alignment guides in overlay} xywh {30 115 94 16} down_box DOWN_BOX labelsize 11
-        }
-      }
+    Fl_Input horizontal_input {
+      label {Horizontal:}
+      user_data 1 user_data_type long
+      callback grid_cb
+      tooltip {Horizontal grid spacing.} xywh {88 10 47 25} type Int box THIN_DOWN_BOX labelfont 1
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input vertical_input {
+      label {Vertical:}
+      user_data 2 user_data_type long
+      callback grid_cb
+      tooltip {Vertical grid spacing.} xywh {88 45 47 25} type Int box THIN_DOWN_BOX labelfont 1
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input snap_input {
+      label {Snap:}
+      user_data 3 user_data_type long
+      callback grid_cb
+      tooltip {Snap to grid within this many pixels.} xywh {88 80 47 25} type Int box THIN_DOWN_BOX labelfont 1
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Check_Button guides_toggle {
+      label {Show Guides}
+      user_data 4 user_data_type long
+      callback guides_cb
+      tooltip {Show distance and alignment guides in overlay} xywh {27 115 108 25} down_box DOWN_BOX
     }
     Fl_Button {} {
       label Close
       callback {grid_window->hide();}
-      tooltip {Close this dialog.} xywh {92 151 42 20} labelsize 11
+      tooltip {Close this dialog.} xywh {76 150 59 25}
     }
   }
 } 

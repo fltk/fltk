@@ -49,7 +49,6 @@ extern const char* i18n_include;
 extern const char* i18n_function;
 extern const char* i18n_file;
 extern const char* i18n_set;
-extern int modflag;
 
 extern Fl_Preferences	fluid_prefs;
 
@@ -144,7 +143,7 @@ void i18n_type_cb(Fl_Choice *c, void *) {
       break;
   }
 
-  modflag = 1;
+  set_modflag(1);
 }
 
 void i18n_text_cb(Fl_Input *i, void *) {
@@ -157,7 +156,7 @@ void i18n_text_cb(Fl_Input *i, void *) {
   else if (i == i18n_include_input)
     i18n_include = i->value();
 
-  modflag = 1;
+  set_modflag(1);
 }
 
 extern const char* header_file_name;
@@ -619,6 +618,7 @@ void Fl_Window_Type::draw_overlay() {
       if (!(myo->o->align() & FL_ALIGN_INSIDE)) {
         // Adjust top/bottom for top/bottom labels...
 	int ww, hh;
+	ww = myo->o->w();
 	hh = myo->o->labelsize();
 	myo->o->measure_label(ww, hh);
 	if (myo->o->align() & FL_ALIGN_TOP) y -= hh;
@@ -644,7 +644,7 @@ void Fl_Window_Type::draw_overlay() {
 
     if (drag) {
       // Check top spacing...
-      if (abs(d = myby - ysp) < 5) {
+      if (abs(d = myby - ysp) < 3) {
 	dy -= d;
 	if (drag & DRAG) mybt -= d;
 	myby -= d;
@@ -652,7 +652,7 @@ void Fl_Window_Type::draw_overlay() {
       }
 
       // Check bottom spacing...
-      if (abs(d = o->h() - mybt - ysp) < 5) {
+      if (abs(d = o->h() - mybt - ysp) < 3) {
 	dy += d;
 	if (drag & DRAG) myby += d;
 	mybt += d;
@@ -660,7 +660,7 @@ void Fl_Window_Type::draw_overlay() {
       }
 
       // Check left spacing...
-      if (abs(d = mybx - xsp) < 5) {
+      if (abs(d = mybx - xsp) < 3) {
         dx -= d;
 	if (drag & DRAG) mybr -= d;
 	mybx -= d;
@@ -668,7 +668,7 @@ void Fl_Window_Type::draw_overlay() {
       }
 
       // Check right spacing...
-      if (abs(d = o->w() - mybr - xsp) < 5) {
+      if (abs(d = o->w() - mybr - xsp) < 3) {
 	dx += d;
 	if (drag & DRAG) mybx += d;
 	mybr += d;
@@ -678,8 +678,10 @@ void Fl_Window_Type::draw_overlay() {
 
     if (numselected==1 && selection && !(drag & DRAG)) {
       // Check ideal sizes
-      int w = mybr-mybx;
-      int h = mybt-myby;
+      int x,y,r,t;
+      newposition(mysel,x,y,r,t);
+      int w = r-x;
+      int h = t-y;
       int iw = w, ih = h;
 
       mysel->ideal_size(iw, ih);
@@ -690,15 +692,17 @@ void Fl_Window_Type::draw_overlay() {
           // Resize height
 	  if (drag & TOP) {
 	    myby -= d;
+	    y -= d;
 	    dy -= d;
 	  } else {
 	    mybt += d;
+	    t += d;
 	    dy += d;
 	  }
 	}
 
 	// Draw height guide
-	draw_height(mybx < 50 ? mybx+10 : mybx-10, myby, mybt,
+	draw_height(mybx < 50 ? mybx+10 : mybx-10, y, t,
 	            mybx < 50 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
       }
 
@@ -716,8 +720,8 @@ void Fl_Window_Type::draw_overlay() {
 	}
 
 	// Draw width guide
-	draw_width(mybx, myby < 50 ? myby+10 : myby-10, mybr,
-	           myby < 50 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
+	draw_width(mybx, myby < 50 ? y+10 : y-10, mybr,
+	           y < 50 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
       }
     }
 
@@ -726,16 +730,31 @@ void Fl_Window_Type::draw_overlay() {
       for (Fl_Type *q=next; q && q->level>level; q = q->next)
 	if (q != selection && q->is_widget()) {
           Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
-
           // Only check visible widgets...
 	  if (!qw->o->visible_r()) continue;
 
-          // Do horizontal alignment when the widget is within 50
+          // Get bounding box of widget...
+	  int qx = qw->o->x();
+	  int qr = qw->o->x() + qw->o->w();
+	  int qy = qw->o->y();
+	  int qt = qw->o->y() + qw->o->h();
+
+	  if (!(qw->o->align() & FL_ALIGN_INSIDE)) {
+            // Adjust top/bottom for top/bottom labels...
+	    int ww, hh;
+	    ww = qw->o->w();
+	    hh = qw->o->labelsize();
+	    qw->o->measure_label(ww, hh);
+	    if (qw->o->align() & FL_ALIGN_TOP) qy -= hh;
+	    if (qw->o->align() & FL_ALIGN_BOTTOM) qt += hh;
+	  }
+
+          // Do horizontal alignment when the widget is within 25
 	  // pixels vertically...
-	  if (fl_min(abs(qw->o->y() - mysel->o->y() - mysel->o->h()),
-	             abs(mysel->o->y() - qw->o->y() - qw->o->h())) < 50) {
+	  if (fl_min(abs(qy - mysel->o->y() - mysel->o->h()),
+	             abs(mysel->o->y() - qt)) < 25) {
             // Align to left of other widget...
-            if ((drag & (LEFT | DRAG)) && abs(d = mybx - qw->o->x()) < 5) {
+            if ((drag & (LEFT | DRAG)) && abs(d = mybx - qx) < 3) {
 	      dx += d;
               mybx += d;
 	      if (drag & DRAG) mybr += d;
@@ -745,7 +764,7 @@ void Fl_Window_Type::draw_overlay() {
 
             // Align to right of other widget...
             if ((drag & (RIGHT | DRAG)) &&
-	        abs(d = qw->o->x() + qw->o->w() - mybr) < 5) {
+	        abs(d = qr - mybr) < 3) {
 	      dx += d;
               if (drag & DRAG) mybx += d;
 	      mybr += d;
@@ -755,7 +774,7 @@ void Fl_Window_Type::draw_overlay() {
           }
 
           // Align to top of other widget...
-          if ((drag & (TOP | DRAG)) && abs(d = myby - qw->o->y()) < 5) {
+          if ((drag & (TOP | DRAG)) && abs(d = myby - qy) < 3) {
 	    dy += d;
             myby += d;
 	    if (drag & DRAG) mybt += d;
@@ -764,7 +783,7 @@ void Fl_Window_Type::draw_overlay() {
 	  }
 
           // Align to bottom of other widget...
-          if ((drag & (BOTTOM | DRAG)) && abs(d = qw->o->y() + qw->o->h() - mybt) < 5) {
+          if ((drag & (BOTTOM | DRAG)) && abs(d = qt - mybt) < 3) {
 	    dy += d;
             if (drag & DRAG) myby += d;
 	    mybt += d;
@@ -776,118 +795,118 @@ void Fl_Window_Type::draw_overlay() {
 	  if (mysel->is_group()) mysel->ideal_spacing(xsp, ysp);
           else qw->ideal_spacing(xsp, ysp);
 
-          if ((qw->o->y()+qw->o->h())>=myby && qw->o->y()<=mybt) {
+          if ((qt)>=myby && qy<=mybt) {
             if (drag & (LEFT | DRAG)) {
 	      // Compare left of selected to left of current
-	      if (abs(d = qw->o->x() - mybx - xsp) >= 5)
-	        d = qw->o->x() - mybx + xsp;
+	      if (abs(d = qx - mybx - xsp) >= 3)
+	        d = qx - mybx + xsp;
 
-	      if (abs(d) < 5) {
+	      if (abs(d) < 3) {
 		dx += d;
         	mybx += d;
 		if (drag & DRAG) mybr += d;
 
         	// Draw left arrow
-		draw_h_arrow(mybx, (myby+mybt)/2, qw->o->x());
+		draw_h_arrow(mybx, (myby+mybt)/2, qx);
               }
 
 	      // Compare left of selected to right of current
-              if (abs(d = qw->o->x() + qw->o->w() - mybx - xsp) >= 5)
-	        d = qw->o->x() + qw->o->w() - mybx + xsp;
+              if (abs(d = qr - mybx - xsp) >= 3)
+	        d = qr - mybx + xsp;
 
-	      if (abs(d) < 5) {
+	      if (abs(d) < 3) {
 		dx += d;
         	mybx += d;
 		if (drag & DRAG) mybr += d;
 
         	// Draw left arrow
-		draw_h_arrow(mybx, (myby+mybt)/2, qw->o->x() + qw->o->w());
+		draw_h_arrow(mybx, (myby+mybt)/2, qr);
               }
 	    }
 
             if (drag & (RIGHT | DRAG)) {
 	      // Compare right of selected to left of current
-	      if (abs(d = qw->o->x() - mybr - xsp) >= 5)
-	        d = qw->o->x() - mybr + xsp;
+	      if (abs(d = qx - mybr - xsp) >= 3)
+	        d = qx - mybr + xsp;
 
-	      if (abs(d) < 5) {
+	      if (abs(d) < 3) {
 		dx += d;
         	if (drag & DRAG) mybx += d;
 		mybr += d;
 
         	// Draw right arrow
-		draw_h_arrow(mybr, (myby+mybt)/2, qw->o->x());
+		draw_h_arrow(mybr, (myby+mybt)/2, qx);
               }
 
 	      // Compare right of selected to right of current
-              if (abs(d = qw->o->x() + qw->o->w() - mybr + xsp) >= 5)
-	        d = qw->o->x() + qw->o->w() - mybr - xsp;
+              if (abs(d = qr - mybr + xsp) >= 3)
+	        d = qr - mybr - xsp;
 
-              if (abs(d) < 5) {
+              if (abs(d) < 3) {
 		dx += d;
         	if (drag & DRAG) mybx += d;
 		mybr += d;
 
         	// Draw right arrow
-		draw_h_arrow(mybr, (myby+mybt)/2, qw->o->x() + qw->o->w());
+		draw_h_arrow(mybr, (myby+mybt)/2, qr);
               }
             }
 	  }
 
-          if ((qw->o->x()+qw->o->w())>=mybx && qw->o->x()<=mybr) {
+          if (qr>=mybx && qx<=mybr) {
             // Compare top of selected to top of current
             if (drag & (TOP | DRAG)) {
-	      if (abs(d = qw->o->y() - myby - ysp) >= 5)
-	        d = qw->o->y() - myby + ysp;
+	      if (abs(d = qy - myby - ysp) >= 3)
+	        d = qy - myby + ysp;
 
-	      if (abs(d) < 5) {
+	      if (abs(d) < 3) {
 		dy += d;
 		myby += d;
 		if (drag & DRAG) mybt += d;
 
 		// Draw up arrow...
-		draw_v_arrow((mybx+mybr)/2, myby, qw->o->y());
+		draw_v_arrow((mybx+mybr)/2, myby, qy);
               }
 
               // Compare top of selected to bottom of current
-              if (abs(d = qw->o->y() + qw->o->h() - myby - ysp) >= 5)
-                d = qw->o->y() + qw->o->h() - myby + ysp;
+              if (abs(d = qt - myby - ysp) >= 3)
+                d = qt - myby + ysp;
 
-              if (abs(d) < 5) {
+              if (abs(d) < 3) {
 		dy += d;
 		myby += d;
 		if (drag & DRAG) mybt += d;
 
 		// Draw up arrow...
-		draw_v_arrow((mybx+mybr)/2, myby, qw->o->y()+qw->o->h());
+		draw_v_arrow((mybx+mybr)/2, myby, qt);
               }
 	    }
 
 	    // Compare bottom of selected to top of current
             if (drag & (BOTTOM | DRAG)) {
-	      if (abs(d = qw->o->y() - mybt - ysp) >= 5)
-	        d = qw->o->y() - mybt + ysp;
+	      if (abs(d = qy - mybt - ysp) >= 3)
+	        d = qy - mybt + ysp;
 
-	      if (abs(d) < 5) {
+	      if (abs(d) < 3) {
 		dy += d;
 		if (drag & DRAG) myby += d;
 		mybt += d;
 
 		// Draw down arrow...
-		draw_v_arrow((mybx+mybr)/2, mybt, qw->o->y());
+		draw_v_arrow((mybx+mybr)/2, mybt, qy);
               }
 
 	      // Compare bottom of selected to bottom of current
-              if (abs(d = qw->o->y() + qw->o->h() - mybt - ysp) >= 5)
-                d = qw->o->y() + qw->o->h() - mybt + ysp;
+              if (abs(d = qt - mybt - ysp) >= 3)
+                d = qt - mybt + ysp;
 
-              if (abs(d) < 5) {
+              if (abs(d) < 3) {
 		dy += d;
 		if (drag & DRAG) myby += d;
 		mybt += d;
 
 		// Draw down arrow...
-		draw_v_arrow((mybx+mybr)/2, mybt, qw->o->y() + qw->o->h());
+		draw_v_arrow((mybx+mybr)/2, mybt, qt);
               }
 	    }
           }
@@ -967,7 +986,7 @@ void Fl_Window_Type::moveallchildren()
   o->redraw();
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
-  modflag = 1;
+  set_modflag(1);
   dx = dy = 0;
 
   update_xywh();
