@@ -1,123 +1,307 @@
-Fast Light Tool Kit (fltk) Version 0.99
+README - Fast Light Tool Kit (FLTK) Version 1.0
+-----------------------------------------------
 
-----------------------------------------------------------------
-How to build and install fltk:
-----------------------------------------------------------------
+WHAT IS FLTK?
 
-See the file win32/README for information for Windoze95/NT.
+    FLTK (pronounced "fulltick") is a LGPL'd C++ graphical user
+    interface toolkit for X (UNIX(r)), OpenGL, and WIN32 (Microsoft(r)
+    Windows(r) NT 4.0, 95, or 98). It is currently maintained by a small
+    group of developers across the world with a central repository in
+    the US. 
 
-1. Type "./configure", and then examine config.h and makeinclude.
-1. Edit the file ./style.h to customize the appearance of fltk
-3. Type "make", or (Linux and gcc only) type "make shared" to make
-   a shared library.
-4. For shared libraries, type "setenv LD_LIBRARY_PATH $PWD/lib"
-5. Test it by running "test/demo".
+    FLTK was originally created to build in-house applications at
+    Digital Domain for image processing and 3D graphics. The original
+    author, Bill Spitzak, received permission from Digital Domain to
+    release it to the public domain in the hopes that it could be used
+    to make better, faster, and nicer-looking UNIX programs. Digital
+    Domain has since withdrawn support for FLTK, and Bill is no longer
+    able to actively develop it. 
 
-To install the new version of Fltk and fluid (this puts the library in
-/usr/local/lib, the include files in /usr/local/include/FL, and fluid
-into /usr/local/bin):
 
-1. If you made the shared version, type "unsetenv LD_LIBRARY_PATH"
-2. Type "su" and then your password
-3. Type "make install"
-4. If you made the shared version, type "/sbin/ldconfig"
-5. Type ^D to get out of su.
+FEATURES
 
-----------------------------------------------------------------
-On-line documentation:
-----------------------------------------------------------------
+    FLTK was designed to be statically linked. This was done by
+    splitting it into many small objects and desigining it so that
+    functions that are not used do not have pointers to them in the
+    parts that are used, and thus do not get linked in. This allows you
+    to make an easy-to-install program, or to modify FLTK to the exact
+    requirements of your appli- cation, without worrying about bloat.
+    FLTK works fine as a shared library, though, and has started being
+    included on Linux distribu- tions. 
 
-All the documentation is in html in the subdirectory "documentation".
-Use file:<here>/documentation/index.html to get started.  Install
-should put the documentation in /usr/doc/fltk but this is not yet
-implemented.
+    Here are some of the core features unique to FLTK: 
 
-These files are readable without a browser:
+	- sizeof(Fl_Widget) == 48.
 
-Change log is in documentation/CHANGES
-To Do list is in documentatoin/TODO.html
+	- The "core" (the "hello" program compiled & linked with a
+	  static FLTK library using gcc on a 486 and then stripped) is
+	  39.5K. 
 
-----------------------------------------------------------------
-WWW resources:
-----------------------------------------------------------------
+	- A program including every widget is less than 108K.  Does not
+	  use macros, templates, multiple inheritance, or exceptions. 
 
-The Fltk home page: http://www.cinenet.net/users/spitzak/fltk
+	- Written directly atop Xlib (or the WIN32 API) for maximum
+	  speed, and carefully optimized for code size and
+	  performance. 
 
-Mirror site: http://fltk.easysw.com
+	- Precise low-level compatability between the X and Windows
+	  version (only about 10% of the code is different). 
 
-To post to the fltk mailing list: fltk@easysw.com
+	- Interactive user interface builder program. Output is human-
+	  readable and editable C++ source code. 
 
-To subscribe, send "subscribe fltk" to majordomo@easysw.com
+	- Support for the X double buffering extension (emulation if
+	  not available and under Windows.)
 
-Send mail to Bill Spitzak (the author of fltk): spitzak@d2.com
+	- Support for X overlay hardware (emulation if none and under
+	  Windows.)
 
-Get Mesa (necessary to run OpenGl on most Linux machines):
-    http://www.ssec.wisc.edu/~brianp/Mesa.html
+	- Very small & fast portable 2-D drawing library to hide Xlib
+	  and WIN32.
 
-----------------------------------------------------------------
-Window managers
-----------------------------------------------------------------
+	- OpenGL/Mesa drawing area widget.
 
-Fltk now uses X transient windows for modal() windows.  This may
-confuse some window managers.  Mostly it causes them to not put
-any borders on the modal windows and prevent you from moving them.
+	- Support for OpenGL overlay hardware on both X and Windows.
+	  Emulation if none.
 
-For FVWM I recommend you put "DecorateTransients" into your .fvwmrc.
+	- Text input fields with Emacs key bindings, X cut & paste, and
+	  foreign letter compose!
 
-----------------------------------------------------------------
-Mesa:
-----------------------------------------------------------------
+	- Compatability header file for the Glut library.
 
-Currently the best way to get OpenGL on your Linux system is to use
-Mesa.  Fltk has been tested with Mesa on several machines (and also
-with "real" OpenGL on SGI machines).
+	- Compatability header file for the XForms library.
 
-Mesa is at:  http://www.ssec.wisc.edu/~brianp/Mesa.html
+	- Much too much to list here...
 
-./configure will not see Mesa unless it is installed as either libGL
-or libMesa.  If you don't want to do this you will have to edit
-config.h (set HAVE_GL to 1) and makeinclude (add the libraries).
 
-----------------------------------------------------------------
-How to write programs that use Fltk:
-----------------------------------------------------------------
+LICENSING
 
-The proper way to include Fltk header files is "#include <FL/Fl_xyz.H>".
-If Fltk is installed this will work without switches.  If not you will
-need to provide a -I switch pointing to this directory (all the
-headers are in ./FL).
+    FLTK comes with complete free source code. FLTK is available under
+    the terms of the GNU Library General Public License. Contrary to
+    popular belief, it can be used in commercial software! (Even Bill
+    Gates could use it.) 
 
-Linker switches will be something like "-lfltk -L/usr/X11R6/lib -lX11".
-Some programs may require -lXext or -lm.  If Fltk is not installed you
-will need to add a -L switch pointing at ./lib.
 
-If you wish to distribute a program (in source form) that uses Fltk,
-you are allowed by the license to directly include the portions of
-Fltk that you need.  This may make it easier for a user to compile
-your program since they don't need to install the library.  Please
-provide instructions for the user on how they can get the entire
-source of Fltk.
+WHAT DOES "FLTK" MEAN?
 
-If you wish to distribute a compiled program without source code: this
-is allowed.  See the license.
+    FLTK was originally designed to be compatable with the Forms
+    Library written for SGI machines. In that library all the functions
+    and structures started with "fl_". This naming was extended to all
+    new methods and widgets in the C++ library, and this prefix was
+    taken as the name of the library. It is almost impossible to search
+    for "FL" on the Internet, due to the fact that it is also the
+    abbreviation for Florida. After much debating and searching for a
+    new name for the toolkit, which was already in use by several
+    people, Bill came up with "FLTK", and even a bogus excuse that it
+    stands for "The Fast Light Tool Kit". 
 
-----------------------------------------------------------------
-Copyright (C) 1998 Bill Spitzak
-----------------------------------------------------------------
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Library General Public
-License as published by the Free Software Foundation; either
-version 2 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
+BUILDING AND INSTALLING FLTK UNDER UNIX
 
-You should have received a copy of the GNU Library General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-USA.
+    FLTK uses GNU autoconf to configure itself for your UNIX platform.
+    If you aren't using UNIX then you'll need to configure things
+    differently. See below for other operating system configurations.
 
-Written by Bill Spitzak		spitzak@d2.com
-----------------------------------------------------------------
+    Before you configure FLTK you'll want to make sure your environment
+    is setup properly.  Some variables of note are:
+
+	CC         - C compiler to use
+	CFLAGS     - C compiler options
+
+	CXX        - C++ compiler to use
+	CXXFLAGS   - C++ compiler options
+
+	LDFLAGS    - Linker options
+	LIBS       - Linker libraries
+
+    The main things that the configure script will look for are the
+    X11, OpenGL (or Mesa), and JPEG header and library files.  Make
+    sure that they are in the standard include/library locations, and
+    if not define one or more of the environment variables listed
+    above.
+
+    Once you have everything ready you can run the "configure" script
+    located in this directory.  The "--enable-windows-style" option to
+    configure will make the FLTK widgets look more like their Microsoft
+    Windows counterparts.  Other options include:
+
+	--enable-debug          - Enable debugging code & symbols
+	--enable-shared         - Enable generation of shared libraries
+	--enable-windows-style  - Enable the Microsoft Windows "look-n-feel"
+
+	--bindir=/path          - Set the location for executables
+                        	  [default = /usr/local/bin]
+	--libdir=/path          - Set the location for libraries
+                        	  [default = /usr/local/lib]
+	--includedir=/path      - Set the location for include files.
+                        	  [default = /usr/local/include]
+	--prefix=/dir           - Set the directory prefix for files
+                        	  [default = /usr/local]
+
+    When the configure script is done you can just run the "make"
+    command. This will build the library, FLUID tool, and all of the
+    test programs.
+
+    To install the library, become root and type "make install".  This
+    will copy the "fluid" executable to "bindir", the header files to
+    "includedir", and the library files to "libdir".
+
+
+BUILDING FLTK UNDER MICROSOFT WINDOWS
+
+    There are two ways to build FLTK under Microsoft Windows.  The
+    first is to use the 5.0 project files under the "visualc"
+    directory.  Just open (or double-click on) the "fltk.dsw" file to
+    get the whole shebang.
+
+    The second method is to use a GNU-based development tool with the
+    files in the "makefiles" directory.  To build using one of these
+    tools simply copy the appropriate makeinclude and config files to
+    the main directory and do a make:
+
+	cp makefiles/makeinclude.<env> makeinclude
+	cp makefiles/config.<env> config.h
+	make
+
+
+BUILDING FLTK UNDER OS/2
+
+    The current OS/2 build requires XFree86 for OS/2 to work.  A native
+    Presentation Manager version has not been implemented yet
+    (volunteers are welcome!).
+
+    To build the XFree86 version of FLTK for OS/2, copy the appropriate
+    makeinclude and config files to the main directory and do a make:
+
+	cp makefiles/makeinclude.os2x makeinclude
+	cp makefiles/config.os2x config.h
+	make
+
+
+ON-LINE DOCUMENTATION
+
+    All of the documentation is in HTML in the subdirectory
+    "documentation". The "index.html" file should be your starting
+    point.
+
+
+INTERNET RESOURCES
+
+    FLTK is available on the 'net in a bunch of locations:
+
+	- WWW:   http://fltk.easysw.com
+
+	- FTP:   ftp://ftp.easysw.com/pub/fltk
+        	 ftp://ftp.funet.fi/mirrors/ftp.easysw.com/pub/fltk
+
+	- EMail: fltk@easysw.com [see instructions below]
+        	 fltk-bugs@easysw.com [for reporting bugs]
+
+    To send a message to the FLTK mailing list ("fltk@easysw.com") you
+    must first join the list.  Non-member submissions are blocked to
+    avoid problems with SPAM...
+
+    To join the FLTK mailing list, send a message to
+    "majordomo@easysw.com" with "subscribe fltk" in the message body. 
+    A digest of this list is available by subscribing to the
+    "fltk-digest" mailing list.
+
+
+REPORTING BUGS
+
+    To report a bug in FLTK, send an email to "fltk-bugs@easysw.com".
+    Please include the FLTK version, operating system & version, and
+    compiler that you are using when describing the bug or problem.
+
+    For general support and questions, please use the FLTK mailing
+    list at "fltk@easysw.com".
+
+
+WINDOW MANAGERS
+
+    FLTK now uses X transient windows for modal() windows.  This may
+    confuse some window managers.  Mostly it causes them to not put any
+    borders on the modal windows and prevent you from moving them.
+
+    For FVWM I recommend you put "DecorateTransients" into your
+    ~/.fvwmrc file.
+
+
+MESA
+
+    Currently the best way to get OpenGL on your Linux system is to use
+    Mesa.  FLTK has been tested with Mesa on several machines (and also
+    with "real" OpenGL on SGI machines).
+
+    Mesa is available at "http://www.ssec.wisc.edu/~brianp/Mesa.html".
+
+    The configure script will not see Mesa unless it is installed as
+    either libGL or libMesa.  If you don't want to do this you will
+    have to edit config.h (set HAVE_GL to 1) and makeinclude (add the
+    libraries).
+
+
+HOW TO WRITE PROGRAMS THAT USE FLTK
+
+    The proper way to include FLTK header files is "#include
+    <FL/Fl_xyz.H>".  If FLTK is installed this will work without
+    switches.  If not you will need to provide a "-Idir" switch
+    pointing to this directory (all the headers are in ./FL).
+
+    Windows developers please note: case *is* significant under other
+    operating systems, and the C standard uses the forward slash (/) to
+    separate directories.  The following #include directives are *not*
+    recommended for portability reasons:
+
+        #include <fl\fl_xyz.h>
+	#include <fl/fl_xyz.h>
+	#include <FL\Fl_xyz.H>
+
+    Linker switches will be something like "-lfltk -L/usr/X11R6/lib
+    -lX11".  Some programs may require "-lXext" or "-lm".  If FLTK is
+    not installed you will need to add a "-Ldir" switch pointing at
+    ./lib.
+
+    If you wish to distribute a program (in source form) that uses
+    FLTK, you are allowed by the license to directly include the
+    portions of FLTK that you need.  This may make it easier for a user
+    to compile your program since they don't need to install the
+    library.  Please provide instructions for the user on how they can
+    get the entire source of FLTK.
+
+    If you wish to distribute a compiled program without source code,
+    this is allowed also.  See the file "COPYING" for details.
+
+
+TRADEMARKS
+
+    Microsoft and Windows are registered trademarks of Microsoft
+    Corportation. UNIX is a registered trademark of the X/Open Group,
+    Inc.
+
+
+COPYRIGHT
+
+    FLTK is copyright 1998 by Bill Spitzak (spitzak@d2.com) and others,
+    including:
+
+	Curtis Edwards (curtise@fa.disney.com)
+	Gustavo Hime (hime@centroin.com.br)
+	Vincent Penne (vincent.penne@infonie.fr)
+        Michael Sweet (mike@easysw.com)
+	Carl Thompson (clip@home.net)
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public License
+    as published by the Free Software Foundation; either version 2 of
+    the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+    USA.

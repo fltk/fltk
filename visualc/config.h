@@ -9,7 +9,7 @@
    (and KDE and Qt).  1 is a plausible future evolution...  Notice
    that this may be simulated at runtime by redefining the boxtypes
    using Fl::set_boxtype() */
-#define BORDER_WIDTH 3
+#define BORDER_WIDTH 2
 
 /* Do you have OpenGL?
    Set this to 0 if you don't plan to use OpenGL, and fltk will be smaller */

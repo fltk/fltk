@@ -1,3 +1,28 @@
+#
+# "$Id"
+#
+# for the Fast Light Tool Kit (FLTK).
+#
+# Copyright 1998 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@easysw.com".
+#
+
 # @configure_input@
 
 prefix		=@prefix@
@@ -9,24 +34,25 @@ srcdir		=@srcdir@
 VPATH		=@srcdir@
 
 # compiler names:
-CXX	=@CXX@
-CC	=@CC@
-MAKEDEPEND =@MAKEDEPEND@
+CXX		=@CXX@
+CC		=@CC@
+MAKEDEPEND	=@MAKEDEPEND@
 
 # flags for C++ compiler:
 CFLAGS		=@CFLAGS@
-CFLAGS_D	=@CFLAGS_D@
 CXXFLAGS	=@CXXFLAGS@ @X_CFLAGS@
-CXXFLAGS_D	=@CXXFLAGS_D@ @X_CFLAGS@
 
 # program to make the archive:
-LIBNAME		=libfltk.a
-LIBNAME_D	=libfltk_d.a
-AR		=ar rc
+LIBNAME		=@LIBNAME@
+LIBCOMMAND	=@LIBCOMMAND@
 RANLIB		=@RANLIB@
 
 # libraries to link with:
-LDLIBS	=@LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
+LDLIBS		=@LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 
 # libraries to link with when using GL:
-GLDLIBS	=@LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
+GLDLIBS		=@LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
+
+#
+# End of "$Id: makeinclude.in,v 1.2 1998/10/20 16:41:20 mike Exp $".
+#

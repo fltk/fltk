@@ -1,4 +1,5 @@
-How to compile for Windoze:
+README.win32 - How to compile for Windows
+-----------------------------------------
 
 Fltk has been reported to compile with GNU GCC compilers, with
 MicroSoft Visual C++ version 4 and 5, and with Borland's C++ compiler

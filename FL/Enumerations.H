@@ -26,7 +26,25 @@
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
-const double FL_VERSION = 0.99;
+//
+// The FLTK version number; this is changed slightly from the beta versions
+// because the old "const double" definition would not allow for conditional
+// compilation...
+//
+// FL_VERSION is a double that describes the major and minor version numbers.
+// Version 1.1 is actually stored as 1.01 to allow for more than 9 minor
+// releases.
+//
+// The FL_MAJOR_VERSION, FL_MINOR_VERSION, and FL_PATCH_VERSION constants
+// give the integral values for the major, minor, and patch releases
+// respectively.
+//
+
+#define FL_MAJOR_VERSION	1
+#define FL_MINOR_VERSION	0
+#define FL_PATCH_VERSION	0
+#define FL_VERSION		((double)FL_MAJOR_VERSION + \
+				 (double)FL_MINOR_VERSION * 0.01)
 
 typedef unsigned char uchar;
 typedef unsigned long ulong;
@@ -327,5 +345,5 @@ enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.3 1998/10/19 21:38:25 mike Exp $".
+// End of "$Id: Enumerations.H,v 1.4 1998/10/20 16:41:21 mike Exp $".
 //
