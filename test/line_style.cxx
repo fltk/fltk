@@ -115,7 +115,7 @@ void makeform(const char *) {
   form->end();
 }
 
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
   makeform(argv[0]);
   form->show(argc,argv);
   return Fl::run();
