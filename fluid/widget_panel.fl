@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 Function {make_widget_panel()} {open
@@ -13,8 +13,8 @@ Function {make_widget_panel()} {open
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load open
-        xywh {10 30 395 295} when 0 hide resizable
+        callback propagate_load open selected
+        xywh {10 30 395 295} when 0 resizable
       } {
         Fl_Group {} {
           callback propagate_load open
@@ -126,7 +126,7 @@ image}
           }
           Fl_Value_Input widget_x_input {
             label {X:}
-            callback x_cb selected
+            callback x_cb
             tooltip {The X position of the widget.} xywh {95 150 60 20} labelsize 10 align 5 maximum 2048 step 1
           }
           Fl_Box {} {
@@ -349,7 +349,7 @@ image}
       Fl_Group {} {
         label {C++}
         callback propagate_load
-        xywh {10 30 395 295} when 0
+        xywh {10 30 395 295} when 0 hide
       } {
         Fl_Group {} {
           callback propagate_load open

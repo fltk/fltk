@@ -486,10 +486,6 @@ static void draw_v_arrow(int x, int y1, int y2) {
   fl_xyline(x-4, y2, x+4);
   fl_line(x-2, y2-dy*5, x, y2-dy);
   fl_line(x+2, y2-dy*5, x, y2-dy);
-  char buf[16];
-  sprintf(buf, "%d", dy*(y2-y1));
-  fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, x+3, y1+(y2-y1)/2+3);
 }
 
 static void draw_h_arrow(int x1, int y, int x2) {
@@ -498,10 +494,6 @@ static void draw_h_arrow(int x1, int y, int x2) {
   fl_yxline(x2, y-4, y+4);
   fl_line(x2-dx*5, y-2, x2-dx, y);
   fl_line(x2-dx*5, y+2, x2-dx, y);
-  char buf[16];
-  sprintf(buf, "%d", dx*(x2-x1));
-  fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, x1+(x2-x1)/2-6, y+9);
 }
 
 static void draw_top_brace(const Fl_Widget *w) {
@@ -530,28 +522,73 @@ static void draw_bottom_brace(const Fl_Widget *w) {
   fl_xyline(w->x()-2, yy, w->x()+w->w()+1);
 }
 
-static void draw_height(int x, int y, int b) {
-  b--;
-  fl_yxline(x, y, y+8);
-  fl_yxline(x, b-8, b);
+static void draw_height(int x, int y, int b, Fl_Align a) {
+  char buf[16];
+  int h = b - y;
+  sprintf(buf, "%d", h);
+  fl_font(FL_HELVETICA, 9);
+  int lw = (int)fl_width(buf);
+  int lx;
+
+  b --;
+  if (h < 30) {
+    // Move height to the side...
+    if (a == FL_ALIGN_LEFT) lx = x - lw - 2;
+    else lx = x + 2;
+
+    fl_yxline(x, y, b);
+  } else {
+    // Put height inside the arrows...
+    lx = x - lw / 2;
+
+    fl_yxline(x, y, y + (h - 11) / 2);
+    fl_yxline(x, y + (h + 11) / 2, b);
+  }
+
+  // Draw the height...
+  fl_draw(buf, lx, y + (h + 9) / 2);
+
+  // Draw the arrowheads...
   fl_line(x-2, y+5, x, y+1, x+2, y+5);
   fl_line(x-2, b-5, x, b-1, x+2, b-5);
-  char buf[16];
-  sprintf(buf, "%d", b-y+1);
-  fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, x+3, b-3);
+
+  // Draw the end lines...
+  fl_xyline(x - 4, y, x + 4);
+  fl_xyline(x - 4, b, x + 4);
 }
 
-static void draw_width(int x, int y, int r) {
-  r--;
-  fl_xyline(x, y, x+8);
-  fl_xyline(r-8, y, r);
+static void draw_width(int x, int y, int r, Fl_Align a) {
+  char buf[16];
+  int w = r-x;
+  sprintf(buf, "%d", w);
+  fl_font(FL_HELVETICA, 9);
+  int lw = (int)fl_width(buf);
+  int ly = y + 4;
+
+  r --;
+
+  if (lw > (w - 20)) {
+    // Move width above/below the arrows...
+    if (a == FL_ALIGN_TOP) ly -= 10;
+    else ly += 10;
+
+    fl_xyline(x, y, r);
+  } else {
+    // Put width inside the arrows...
+    fl_xyline(x, y, x + (w - lw - 2) / 2);
+    fl_xyline(x + (w + lw + 2) / 2, y, r);
+  }
+
+  // Draw the width...
+  fl_draw(buf, x + (w - lw) / 2, ly);
+
+  // Draw the arrowheads...
   fl_line(x+5, y-2, x+1, y, x+5, y+2);
   fl_line(r-5, y-2, r-1, y, r-5, y+2);
-  char buf[16];
-  sprintf(buf, "%d", r-x+1);
-  fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, r-5-(int)fl_width(buf), y-1);
+
+  // Draw the end lines...
+  fl_yxline(x, y - 4, y + 4);
+  fl_yxline(r, y - 4, y + 4);
 }
 
 void Fl_Window_Type::draw_overlay() {
@@ -587,46 +624,42 @@ void Fl_Window_Type::draw_overlay() {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
-      fl_rect(x,y,r-x,t-y);
+      if (!show_guides || !drag || numselected != 1) fl_rect(x,y,r-x,t-y);
       if (x < mybx) mybx = x;
       if (y < myby) myby = y;
       if (r > mybr) mybr = r;
       if (t > mybt) mybt = t;
     }
   if (selected) return;
-  if (numselected>1) fl_rect(mybx,myby,mybr-mybx,mybt-myby);
-  fl_rectf(mybx,myby,5,5);
-  fl_rectf(mybr-5,myby,5,5);
-  fl_rectf(mybr-5,mybt-5,5,5);
-  fl_rectf(mybx,mybt-5,5,5);
 
   if (show_guides && drag) {
     // draw overlays for UI Guideline distances
     // - check for distance to the window edge
     //    * FLTK suggests 10 pixels from the edge
+    int d;
 
     if (drag & DRAG) {
-      if (abs(myby - 10) < 5) {
-	dy += 10 - myby;
-	mybt -= myby - 10;
+      if (abs(d = 10 - myby) < 5) {
+	dy += d;
+	mybt += d;
 	myby = 10;
 	draw_v_arrow(mybx+5, myby, 0);
       }
-      if (abs(o->h() - mybt - 10) < 5) {
-	dy += o->h() - 10 - mybt;
-	myby += o->h() - mybt - 10;
+      if (abs(d = o->h() - 10 - mybt) < 5) {
+	dy += d;
+	myby += d;
 	mybt = o->h()- 10;
 	draw_v_arrow(mybx+5, mybt, o->h());
       }
-      if (abs(mybx - 10) < 5) {
-        dx += 10 - mybx;
-	mybr -= mybx - 10;
+      if (abs(d = 10 - mybx) < 5) {
+        dx += d;
+	mybr += d;
 	mybx = 10;
 	draw_h_arrow(mybx, myby+5, 0);
       }
-      if (abs(o->w() - mybr - 10) < 5) {
-	dx += o->w() - 10 - mybr;
-	mybx += o->w() - mybr - 10;
+      if (abs(d = o->w() - 10 - mybr) < 5) {
+	dx += d;
+	mybx += d;
 	mybr = o->w()- 10;
 	draw_h_arrow(mybr, myby+5, o->w());
       }
@@ -637,21 +670,22 @@ void Fl_Window_Type::draw_overlay() {
       if (selection->is_button()) {
 	int w = mybr-mybx;
 	int h = mybt-myby;
-	if (abs(h-25) < 3) {
+	if (abs(d = h-25) < 4) {
 	  mybt = myby + 25;
-	  if (drag & TOP) dy += 25 - h;
-	  else dy += h - 25;
-	} else if (abs(h-20) < 3) {
+	  if (drag & TOP) dy -= d;
+	  else dy += d;
+	} else if (abs(d = h-20) < 4) {
 	  mybt = myby + 20;
-	  if (drag & TOP) dy += 20 - h;
-	  else dy += h - 20;
-	} else if (abs(h-15) < 3) {
+	  if (drag & TOP) dy -= d;
+	  else dy += d;
+	} else if (abs(d = h-15) < 4) {
 	  mybt = myby + 15;
-	  if (drag & TOP) dy += 15 - h;
-	  else dy += h - 15;
+	  if (drag & TOP) dy -= d;
+	  else dy += d;
 	}
 
-	draw_height(mybx < (o->w()/2) ? mybr : mybx-10, myby, mybt);
+	draw_height(mybx < 20 ? mybr+10 : mybx-10, myby, mybt,
+	            mybx < 20 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
 
 	int ww = 0, hh = 0;
 
@@ -659,56 +693,106 @@ void Fl_Window_Type::draw_overlay() {
 
         ww += 20;
 
-	if (abs(ww - w) < 5) {
+	if (abs(d = ww - w) < 5) {
 	  if (drag & LEFT) {
             mybx = mybr - ww;
-	    dx -= ww - w;
+	    dx -= d;
 	  } else {
             mybr = mybx + ww;
-	    dx += ww - w;
+	    dx += d;
 	  }
 	}
 
-	draw_width(mybx, myby < (o->h()/2) ? mybt : myby-10, mybx + ww);
+	draw_width(mybx, myby < 20 ? mybt+10 : myby-10, mybr,
+	           myby < 20 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
       }
     }
 
     // - check distances between individual widgets
-    if (drag) {
+    if (drag && selection->is_widget()) {
       for (Fl_Type *q=next; q && q->level>level; q = q->next)
-	if (q != selection) {
+	if (q != selection && q->is_widget()) {
           Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
+
+          // Only check visible widgets...
+	  if (!qw->o->visible_r()) continue;
+
           // - check horizontal and vertical alignment with other widgets
-          if (myby == qw->o->y()) draw_top_brace(qw->o);
-          if (mybx == qw->o->x()) draw_left_brace(qw->o);
-          if (mybr == qw->o->x()+qw->o->w()) draw_right_brace(qw->o);
-          if (mybt == qw->o->y()+qw->o->h()) draw_bottom_brace(qw->o);
-          if (selection->is_button()) {
-            // - check distances between buttons
-            if (q->is_button() && qw->o->y()==myby) {
-              // * horizontal button to button is 10 pixels
-              int xx = mybx - (qw->o->x()+qw->o->w());
-              if (abs(xx-10) < 5) {
-	        if (drag & (LEFT | DRAG)) dx += xx - 10;
-		else dx -= xx - 10;
+          if (abs(myby - qw->o->y()) < 3) draw_top_brace(qw->o);
+          if (abs(mybx - qw->o->x()) < 3) draw_left_brace(qw->o);
+          if (abs(mybr - qw->o->x() - qw->o->w()) < 3) draw_right_brace(qw->o);
+          if (abs(mybt - qw->o->y() - qw->o->h()) < 3) draw_bottom_brace(qw->o);
 
-		draw_h_arrow(mybx-1, myby+10, mybx-xx-1);
-              } else {
-        	xx = qw->o->x() - mybr;
-        	if (abs(xx-10) < 5) {
-	          if (drag & (LEFT | DRAG)) dx += xx - 10;
-		  else dx -= xx - 10;
+          // - check distances between widgets
+          // * horizontal and vertical widget to widget is 10 pixels
+          if (qw->o->y()>=myby && qw->o->y()<mybt) {
+	    // Compare left of selected to right of current
+            int xx = mybx - (qw->o->x()+qw->o->w());
+            if (abs(d = xx-10) < 5) {
+	      if (drag & (LEFT | DRAG)) dx += d;
+	      else dx -= d;
 
-		  draw_h_arrow(mybr, myby+10, mybr+xx);
-        	}
-	      }
-            }
+              mybx += d;
+	      mybr += d;
+
+              // Draw left arrow
+	      draw_h_arrow(mybx, (myby+mybt)/2, qw->o->x()+qw->o->w());
+            } else {
+	      // Compare right of selected to left of current
+              xx = qw->o->x() - mybr;
+              if (abs(d = xx-10) < 5) {
+	        if (drag & (LEFT | DRAG)) dx += d;
+		else dx -= d;
+
+                mybx += d;
+		mybr += d;
+
+                // Draw right arrow
+		draw_h_arrow(mybr, (myby+mybt)/2, qw->o->x());
+              }
+	    }
+	  }
+
+          if (qw->o->x()>=mybx && qw->o->x()<mybr) {
+            // Compare top of selected to bottom of current
+            int yy = myby - (qw->o->y()+qw->o->h());
+            if (abs(d = yy-10) < 5) {
+	      if (drag & (TOP | DRAG)) dy += d;
+	      else dy -= d;
+
+              myby += d;
+	      mybt += d;
+
+	      // Draw up arrow...
+	      draw_v_arrow((mybx+mybr)/2, myby, qw->o->y()+qw->o->h());
+            } else {
+	      // Compare bottom of selected to top of current
+              yy = qw->o->y() - mybt;
+              if (abs(d = yy-10) < 5) {
+	        if (drag & (TOP | DRAG)) dy += d;
+		else dy -= d;
+
+                myby += d;
+		mybt += d;
+
+	        // Draw down arrow...
+		draw_v_arrow((mybx+mybr)/2, mybt, qw->o->y());
+              }
+	    }
           }
 	}
     }
 
     // \todo add more cases, maybe an interpreter?
   }
+
+  // Draw selection box + resize handles...
+  fl_rect(mybx,myby,mybr-mybx,mybt-myby);
+  fl_rectf(mybx,myby,5,5);
+  fl_rectf(mybr-5,myby,5,5);
+  fl_rectf(mybr-5,mybt-5,5,5);
+  fl_rectf(mybx,mybt-5,5,5);
+
 }
 
 // Calculate new bounding box of selected widgets:
@@ -877,6 +961,7 @@ int Fl_Window_Type::handle(int event) {
       }
     }
     drag = 0;
+    ((Overlay_Window *)o)->redraw_overlay();
     return 1;
 
   case FL_KEYBOARD: {
