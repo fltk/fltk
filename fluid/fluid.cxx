@@ -181,12 +181,12 @@ void save_cb(Fl_Widget *, void *v) {
 void exit_cb(Fl_Widget *,void *) {
   if (modflag)
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before exiting?", "Cancel",
-                      "Don't Save", "Save"))
+                      "interface before exiting?", "Don't Save",
+                      "Save", "Cancel"))
     {
-      case 0 : /* Cancel */
+      case 2 : /* Cancel */
           return;
-      case 2 : /* Yes */
+      case 1 : /* Save */
           save_cb(NULL, NULL);
 	  if (modflag) return;	// Didn't save!
     }
@@ -213,12 +213,12 @@ apple_open_cb(const char *c) {
   if (modflag)
   {
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Cancel",
-                      "Don't Save", "Save"))
+                      "interface before opening another one?", "Don't Save",
+                      "Save", "Cancel"))
     {
-      case 0 : /* Cancel */
+      case 2 : /* Cancel */
           return;
-      case 2 : /* Yes */
+      case 1 : /* Save */
           save_cb(NULL, NULL);
 	  if (modflag) return;	// Didn't save!
     }
@@ -245,12 +245,12 @@ void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag)
   {
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Cancel",
-                      "Don't Save", "Save"))
+                      "interface before opening another one?", "Don't Save",
+                      "Save", "Cancel"))
     {
-      case 0 : /* Cancel */
+      case 2 : /* Cancel */
           return;
-      case 2 : /* Yes */
+      case 1 : /* Save */
           save_cb(NULL, NULL);
 	  if (modflag) return;	// Didn't save!
     }
@@ -288,12 +288,12 @@ void open_history_cb(Fl_Widget *, void *v) {
   if (modflag)
   {
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Cancel",
-                      "Don't Save", "Save"))
+                      "interface before opening another one?", "Don't Save",
+                      "Save", "Cancel"))
     {
-      case 0 : /* Cancel */
+      case 2 : /* Cancel */
           return;
-      case 2 : /* Yes */
+      case 1 : /* Save */
           save_cb(NULL, NULL);
 	  if (modflag) return;	// Didn't save!
     }
@@ -316,12 +316,12 @@ void new_cb(Fl_Widget *, void *v) {
   if (!v && modflag)
   {
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before creating a new one?", "Cancel",
-                      "Don't Save", "Save"))
+                      "interface before creating a new one?", "Don't Save",
+                      "Save", "Cancel"))
     {
-      case 0 : /* Cancel */
+      case 2 : /* Cancel */
           return;
-      case 2 : /* Yes */
+      case 1 : /* Save */
           save_cb(NULL, NULL);
 	  if (modflag) return;	// Didn't save!
     }
