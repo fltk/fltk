@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.6 1999/01/07 19:17:12 mike Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7 1999/03/04 18:45:31 mike Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -31,8 +31,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
-#include <malloc.h>
-#include <stdlib.h> // needed for DEC's Alpha cxx ?
+#include <stdlib.h>
 #include <FL/filename.H>
 
 extern void goto_source_dir(); // in fluid.C
@@ -406,5 +405,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.6 1999/01/07 19:17:12 mike Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7 1999/03/04 18:45:31 mike Exp $".
 //
