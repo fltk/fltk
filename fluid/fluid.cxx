@@ -54,6 +54,8 @@
 #  include <direct.h>
 #  include <windows.h>
 #  include <io.h>
+#  include <commdlg.h>
+#  include <FL/x.H>
 #else
 #  include <unistd.h>
 #endif
@@ -850,12 +852,242 @@ void manual_cb(Fl_Widget *, void *) {
 
 ////////////////////////////////////////////////////////////////
 
+#if defined(WIN32) && !defined(__CYGWIN__)
+// Draw a shaded box...
+static void win_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_color(c);
+  fl_rectf(x, y, w, h);
+  fl_color(FL_BLACK);
+  fl_rect(x, y, w, h);
+  fl_color(FL_LIGHT2);
+  fl_rectf(x + 1, y + 1, 4, h - 2);
+  fl_rectf(x + 1, y + 1, w - 2, 4);
+  fl_color(FL_DARK2);
+  fl_rectf(x + w - 5, y + 1, 4, h - 2);
+  fl_rectf(x + 1, y + h - 5, w - 2, 4);
+}
+
 // Load and show the print dialog...
 void print_menu_cb(Fl_Widget *, void *) {
-#if defined(WIN32) && !defined(__CYGWIN__)
-  fl_message("Sorry, printing is not yet implemented on Windows...");
+  PRINTDLG	dialog;			// Print dialog
+  DOCINFO	docinfo;		// Document info
+  int		first, last;		// First and last page
+  int		page;			// Current page
+  int		winpage;		// Current window page
+  int		num_pages;		// Number of pages
+  Fl_Type	*t;			// Current widget
+  int		num_windows;		// Number of windows
+  Fl_Window_Type *windows[1000];	// Windows to print
+
+
+  // Show print dialog...
+  for (t = Fl_Type::first, num_pages = 0; t; t = t->next) {
+    if (t->is_window()) num_pages ++;
+  }
+
+  memset(&dialog, 0, sizeof(dialog));
+  dialog.lStructSize = sizeof(dialog);
+  dialog.hwndOwner   = fl_xid(main_window);
+  dialog.Flags       = PD_ALLPAGES |
+                       PD_RETURNDC;
+  dialog.nFromPage   = 1;
+  dialog.nToPage     = num_pages;
+  dialog.nMinPage    = 1;
+  dialog.nMaxPage    = num_pages;
+  dialog.nCopies     = 1;
+
+  if (!PrintDlg(&dialog)) return;
+
+  // Get the base filename...
+  const char *basename = strrchr(filename, '/');
+  if (basename) basename ++;
+  else basename = filename;
+
+  // Do the print job...
+  memset(&docinfo, 0, sizeof(docinfo));
+  docinfo.cbSize      = sizeof(docinfo);
+  docinfo.lpszDocName = basename;
+
+  StartDoc(dialog.hDC, &docinfo);
+
+  // Figure out how many pages we'll have to print...
+  if (dialog.Flags & PD_PAGENUMS) {
+    // Get from and to page numbers...
+    first = dialog.nFromPage;
+    last  = dialog.nToPage;
+
+    if (first > last) {
+      // Swap first/last page
+      page  = first;
+      first = last;
+      last  = page;
+    }
+  } else {
+    // Print everything...
+    first = 1;
+    last  = dialog.nMaxPage;
+  }
+
+  for (t = Fl_Type::first, num_windows = 0, winpage = 0; t; t = t->next) {
+    if (t->is_window()) {
+      winpage ++;
+      windows[num_windows] = (Fl_Window_Type *)t;
+      num_windows ++;
+#if 0
+      if (dialog.Flags & PD_ALLPAGES) num_windows ++;
+      else if ((dialog.Flags & PD_PAGENUMS) && winpage >= first &&
+               winpage <= last) num_windows ++;
+      else if ((dialog.Flags & PD_SELECTION) && t->selected) num_windows ++;
+#endif // 0
+    }
+  }
+
+  num_pages = num_windows;
+
+  // Figure out the page size and margins...
+  int	width, length;			// Size of page
+  int   xdpi, ydpi;			// Output resolution
+  char	buffer[1024];
+
+  width  = GetDeviceCaps(dialog.hDC, HORZRES);
+  length = GetDeviceCaps(dialog.hDC, VERTRES);
+  xdpi   = GetDeviceCaps(dialog.hDC, LOGPIXELSX);
+  ydpi   = GetDeviceCaps(dialog.hDC, LOGPIXELSY);
+
+//  fl_message("width=%d, length=%d, xdpi=%d, ydpi=%d, num_windows=%d\n",
+//             width, length, xdpi, ydpi, num_windows);
+
+  HDC	save_dc = fl_gc;
+  int	fontsize = 14 * ydpi / 72;
+
+  fl_gc = dialog.hDC;
+  fl_push_no_clip();
+
+  // Get the time and date...
+  time_t curtime = time(NULL);
+  struct tm *curdate = localtime(&curtime);
+  char date[1024];
+
+  strftime(date, sizeof(date), "%c", curdate);
+    
+  // Print each of the windows...
+  for (winpage = 0; winpage < num_windows; winpage ++) {
+    // Draw header...
+    StartPage(dialog.hDC);
+
+    fl_font(FL_HELVETICA_BOLD, fontsize);
+    fl_color(FL_BLACK);
+
+    fl_draw(basename, 0, fontsize);
+
+    fl_draw(date, 0.5 * (width - fl_width(date)), fontsize);
+
+    sprintf(buffer, "%d/%d", winpage + 1, num_windows);
+    fl_draw(buffer, width - fl_width(buffer), fontsize);
+
+    // Get window image...
+    uchar	*pixels;		// Window image data
+    int		w, h;			// Window image dimensions
+    int		ww, hh;			// Scaled size
+    int		ulx, uly;		// Upper-lefthand corner
+    Fl_Window	*win;			// Window widget
+    BITMAPINFO	info;			// Bitmap information
+
+    win    = (Fl_Window *)(windows[winpage]->o);
+    pixels = windows[winpage]->read_image(w, h);
+
+    // Figure out the window size, first at 100 PPI and then scaled
+    // down if that is too big...
+    ww = w * xdpi / 100.0;
+    hh = h * ydpi / 100.0;
+
+    if (ww > width) {
+      ww = width;
+      hh = h * ww * ydpi / xdpi / w;
+    }
+
+    if (hh > (length - ydpi / 2)) {
+      hh = length - ydpi / 2;
+      ww = w * hh / h;
+    }
+
+    // Position the window in the center...
+    ulx = (width - ww) / 2;
+    uly = (length - hh) / 2;
+
+//    fl_message("winpage=%d, ulx=%d, uly=%d, ww=%d, hh=%d",
+//               winpage, ulx, uly, ww, hh);
+
+    // Draw a simulated window border...
+    int xborder = 4 * ww / w;
+    int yborder = 4 * hh / h;
+
+    win_box(ulx - xborder, uly - 5 * yborder,
+            ww + 2 * xborder, hh + 6 * yborder,
+            FL_GRAY);
+
+    fl_color(FL_BLUE);
+    fl_rectf(ulx, uly - 4 * yborder, ww, 4 * yborder);
+
+    fl_font(FL_HELVETICA_BOLD, 3 * yborder);
+    fl_color(FL_WHITE);
+    fl_draw(win->label() ? win->label() : "Window",
+            ulx + xborder, uly + yborder);
+
+    int x = ulx + ww - 4 * xborder;
+
+    win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder, FL_GRAY);
+    fl_color(FL_BLACK);
+    fl_line(x + xborder, uly + yborder,
+            x + 3 * xborder, uly + 3 * yborder);
+    fl_line(x + xborder, uly + 3 * yborder,
+            x + 3 * xborder, uly + yborder);
+    x -= 4 * xborder;
+
+    if (win->resizable()) {
+      win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder, FL_GRAY);
+      fl_color(FL_BLACK);
+      fl_rect(x + xborder, uly + yborder, 2 * xborder, 2 * yborder);
+      x -= 4 * xborder;
+    }
+
+    if (!win->modal()) {
+      win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder, FL_GRAY);
+      fl_color(FL_BLACK);
+      fl_line(x + xborder, uly + yborder, x + 3 * xborder, uly + yborder);
+      x -= 4 * xborder;
+    }
+
+    // Color image...
+    memset(&info, 0, sizeof(info));
+    info.bmiHeader.biSize        = sizeof(info);
+    info.bmiHeader.biWidth       = w;
+    info.bmiHeader.biHeight      = -h;
+    info.bmiHeader.biPlanes      = 1;
+    info.bmiHeader.biBitCount    = 24;
+    info.bmiHeader.biCompression = BI_RGB;
+
+    StretchDIBits(dialog.hDC, ulx, uly, ww, hh, 0, 0, w, h, pixels,
+                  &info, DIB_RGB_COLORS, SRCCOPY);
+
+    delete[] pixels;
+
+    // Show the page...
+    EndPage(dialog.hDC);
+  }
+
+  // Finish up...
+  EndDoc(dialog.hDC);
+
+  fl_gc = save_dc;
+  fl_pop_clip();
+
+  // Free the print DC and return...
+  DeleteDC(dialog.hDC);
 }
 #else
+// Load and show the print dialog...
+void print_menu_cb(Fl_Widget *, void *) {
   if (!print_panel) make_print_panel();
 
   print_load();
