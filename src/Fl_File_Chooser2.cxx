@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.30 2003/01/30 21:41:42 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.31 2003/05/26 01:39:53 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -403,6 +403,12 @@ Fl_File_Chooser::fileListCB()
     {
       // Change directories...
       directory(pathname);
+
+      // Reset the click count so that a click in the same spot won't
+      // be treated as a triple-click.  We use a value of -1 because
+      // the next click will increment click count to 0, which is what
+      // we really want...
+      Fl::event_clicks(-1);
     }
     else
     {
@@ -1159,5 +1165,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.30 2003/01/30 21:41:42 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.31 2003/05/26 01:39:53 easysw Exp $".
 //
