@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.8 1999/01/07 19:17:24 mike Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9 1999/02/16 15:10:53 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -66,8 +66,8 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_mask_bitmap = &bitmap;
     fl_draw_pixmap(data, 0, 0, FL_BLACK);
     fl_mask_bitmap = 0;
-#ifdef WIN32 // Matt: mask done
     if (bitmap) {
+#ifdef WIN32 // Matt: mask done
       // this won't work ehen the user changes display mode during run or
       // has two screens with differnet depths
       static uchar hiNibble[16] =
@@ -114,14 +114,12 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       }
       mask = (ulong)CreateBitmap(w, h, np, bpp, newarray);
       delete[] newarray;
-    }
 #else
-    if (bitmap) {
       mask = XCreateBitmapFromData(fl_display, fl_window,
 				(const char*)bitmap, (w+7)&-8, h);
+#endif
       delete[] bitmap;
     }
-#endif
     fl_end_offscreen();
   }
 #ifdef WIN32
@@ -196,5 +194,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.8 1999/01/07 19:17:24 mike Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9 1999/02/16 15:10:53 mike Exp $".
 //
