@@ -80,6 +80,10 @@ event.
 <P>To receive <CODE>FL_KEYBOARD</CODE> events you must also respond to the
 <CODE>FL_FOCUS</CODE> and <CODE>FL_UNFOCUS</CODE> events.
 
+<p>If you are writing a text-editing widget you may also want to call
+the <a href=#compose>Fl::compose()</a> function to translate
+individual keystrokes into foreign characters.
+
 <H3>FL_SHORTCUT</H3>
 If the <A href=functions.html#focus><TT>Fl::focus()</TT></A> widget is zero 
 or ignores an <TT>FL_KEYBOARD</TT> event then FLTK tries sending this 
@@ -102,7 +106,8 @@ active_r()</TT> to check this).
  This widget is now active, due to <A href=Fl_Widget.html#Fl_Widget.activate>
 <TT>activate()</TT></A> being called on it or one of its parents. 
 <H3>FL_HIDE</H3>
- This widget is no longer visible, due to <A #Fl_Widget.show" href="#Fl_Widget.hide><tt>hide()</tt></a> being called on it or one of its
+
+ This widget is no longer visible, due to <A href=Fl_Widget.html#Fl_Widget.hide><tt>hide()</tt></a> being called on it or one of its
 parents, or due to a parent window being minimized.  <tt>visible()</tt>
 may still be true after this, but the widget is visible only if
 <tt>visible()</tt> is true for it and all its parents (use
@@ -111,7 +116,7 @@ may still be true after this, but the widget is visible only if
 <h3>FL_SHOW</h3>
 
 This widget is visible again, due to <a
-href=">
+href=Fl_Widget.html#Fl_Widget.show>
 <TT>show()</TT></A> being called on it or one of its parents, or due to 
 a parent window being restored. <I>Child <TT>Fl_Window</TT>s respond to 
 this by actually creating the window if not done already, so if you 
@@ -128,7 +133,8 @@ Fl::event_length()</TT></A>.
  The <A href=functions.html#selection_owner>Fl::selection_owner()</A>
  will get this event before the selection is moved to another widget. 
  This indicates that some other widget or program has claimed the 
-selection. 
+selection.  Motif programs used this to clear the selection
+indication.  Most modern programs ignore this.
 <H2><A name=event_xxx>Fl::event_*() methods</A></H2>
  FLTK keeps the information about the most recent event in static 
 storage.  This information is good until the next event is processed. 
@@ -181,172 +187,45 @@ to leaf widgets.  These procedures control those leaf widgets: </P>
 
 <H2><A name=compose>FLTK Compose-Character Sequences</A></H2>
 
-The <A href="#Fl_Input"><tt>Fl_Input</tt></a> widget lets you type all the
-characters in the standard ISO-8859-1 character set.  Most fonts will
-display these characters correctly.
+The foreign-letter compose processing done by the <A
+href=Fl_Input.html#compose><tt>Fl_Input</tt></a> widget is provided in
+a function that you can call if you are writing your own text editor
+widget.
 
-<P>To insert them, type the [compose] key and then one or two
-characters.  The two characters can be in either order.  The [compose]
-key is any of: Ctrl+Q, the righthand control key, or any key your X server
-calls <TT>XK_Multi_key</TT>.
+<p>Fltk uses it's own compose processing to allow "preview" of the
+partially composed sequence, which is impossible with the usual
+"dead key" processing.
 
-<p><center><table border=1>
-<tr>
-	<th>Keys<th>Char<th>
-	<th>Keys<th>Char<th>
-	<th>Keys<th>Char<th>
-	<th>Keys<th>Char<th>
-	<th>Keys<th>Char<th>
-	<th>Keys<th>Char
-<tr>
-	<td align=center><small>space</small><td align=center><small>nbsp</small><td>
-	<td align=center><TT>*</TT><td align=center>°<td>
-	<td align=center><TT>A`</TT><td align=center>À<td>
-	<td align=center><TT>D-</TT><td align=center>Ð<td>
-	<td align=center><TT>a`</TT><td align=center>à<td>
-	<td align=center><TT>d-</TT><td align=center>ð
-<tr>
-	<td align=center><TT>!</TT><td align=center>¡<td>
-	<td align=center><TT>+-</TT><td align=center>±<td>
-	<td align=center><TT>A'</TT><td align=center>Á<td>
-	<td align=center><TT>N~</TT><td align=center>Ñ<td>
-	<td align=center><TT>a'</TT><td align=center>á<td>
-	<td align=center><TT>n~</TT><td align=center>ñ
-<tr>
-	<td align=center><TT>%</TT><td align=center>¢<td>
-	<td align=center><TT>2</TT><td align=center>²<td>
-	<td align=center><TT>A^</TT><td align=center>Â<td>
-	<td align=center><TT>O`</TT><td align=center>Ò<td>
-	<td align=center><TT>a^</TT><td align=center>â<td>
-	<td align=center><TT>o`</TT><td align=center>ò
-<tr>
-	<td align=center><TT>#</TT><td align=center>£<td>
-	<td align=center><TT>3</TT><td align=center>³<td>
-	<td align=center><TT>A~</TT><td align=center>Ã<td>
-	<td align=center><TT>O'</TT><td align=center>Ó<td>
-	<td align=center><TT>a~</TT><td align=center>ã<td>
-	<td align=center><TT>o'</TT><td align=center>ó
-<tr>
-	<td align=center><TT>$</TT><td align=center>¤<td>
-	<td align=center><TT>'</TT><td align=center>´<td>
-	<td align=center><TT>A:</TT><td align=center>Ä<td>
-	<td align=center><TT>O^</TT><td align=center>Ô<td>
-	<td align=center><TT>a:</TT><td align=center>ä<td>
-	<td align=center><TT>o^</TT><td align=center>ô
-<tr>
-	<td align=center><TT>y=</TT><td align=center>¥<td>
-	<td align=center><TT>u</TT><td align=center>µ<td>
-	<td align=center><TT>A*</TT><td align=center>Å<td>
-	<td align=center><TT>O~</TT><td align=center>Õ<td>
-	<td align=center><TT>a*</TT><td align=center>å<td>
-	<td align=center><TT>o~</TT><td align=center>õ
-<tr>
-	<td align=center><TT>|</TT><td align=center>¦<td>
-	<td align=center><TT>p</TT><td align=center>¶<td>
-	<td align=center><TT>AE</TT><td align=center>Æ<td>
-	<td align=center><TT>O:</TT><td align=center>Ö<td>
-	<td align=center><TT>ae</TT><td align=center>æ<td>
-	<td align=center><TT>o:</TT><td align=center>ö
-<tr>
-	<td align=center><TT>&amp;</TT><td align=center>§<td>
-	<td align=center><TT>.</TT><td align=center>·<td>
-	<td align=center><TT>C,</TT><td align=center>Ç<td>
-	<td align=center><TT>x</TT><td align=center>×<td>
-	<td align=center><TT>c,</TT><td align=center>ç<td>
-	<td align=center><TT>-:</TT><td align=center>÷
-<tr>
-	<td align=center><TT>:</TT><td align=center>¨<td>
-	<td align=center><TT>,</TT><td align=center>¸<td>
-	<td align=center><TT>E`</TT><td align=center>È<td>
-	<td align=center><TT>O/</TT><td align=center>Ø<td>
-	<td align=center><TT>e`</TT><td align=center>è<td>
-	<td align=center><TT>o/</TT><td align=center>ø
-<tr>
-	<td align=center><TT>c</TT><td align=center>©<td>
-	<td align=center><TT>1</TT><td align=center>¹<td>
-	<td align=center><TT>E'</TT><td align=center>É<td>
-	<td align=center><TT>U`</TT><td align=center>Ù<td>
-	<td align=center><TT>e'</TT><td align=center>é<td>
-	<td align=center><TT>u`</TT><td align=center>ù
-<tr>
-	<td align=center><TT>a</TT><td align=center>ª<td>
-	<td align=center><TT>o</TT><td align=center>º<td>
-	<td align=center><TT>E^</TT><td align=center>Ê<td>
-	<td align=center><TT>U'</TT><td align=center>Ú<td>
-	<td align=center><TT>e^</TT><td align=center>ê<td>
-	<td align=center><TT>u'</TT><td align=center>ú
-<tr>
-	<td align=center><TT>&lt;&lt;</TT><td align=center>«<td>
-	<td align=center><TT>>></TT><td align=center>»<td>
-	<td align=center><TT>E:</TT><td align=center>Ë<td>
-	<td align=center><TT>U^</TT><td align=center>Û<td>
-	<td align=center><TT>e:</TT><td align=center>ë<td>
-	<td align=center><TT>u^</TT><td align=center>û
-<tr>
-	<td align=center><TT>~</TT><td align=center>¬<td>
-	<td align=center><TT>14</TT><td align=center>¼<td>
-	<td align=center><TT>I`</TT><td align=center>Ì<td>
-	<td align=center><TT>U:</TT><td align=center>Ü<td>
-	<td align=center><TT>i`</TT><td align=center>ì<td>
-	<td align=center><TT>u:</TT><td align=center>ü
-<tr>
-	<td align=center><TT>-</TT><td align=center>­<td>
-	<td align=center><TT>12</TT><td align=center>½<td>
-	<td align=center><TT>I'</TT><td align=center>Í<td>
-	<td align=center><TT>Y'</TT><td align=center>Ý<td>
-	<td align=center><TT>i'</TT><td align=center>í<td>
-	<td align=center><TT>y'</TT><td align=center>ý
-<tr>
-	<td align=center><TT>r</TT><td align=center>®<td>
-	<td align=center><TT>34</TT><td align=center>¾<td>
-	<td align=center><TT>I^</TT><td align=center>Î<td>
-	<td align=center><TT>TH</TT><td align=center>Þ<td>
-	<td align=center><TT>i^</TT><td align=center>î<td>
-	<td align=center><TT>th</TT><td align=center>þ
-<tr>
-	<td align=center><TT>_</TT><td align=center>¯<td>
-	<td align=center><TT>?</TT><td align=center>¿<td>
-	<td align=center><TT>I:</TT><td align=center>Ï<td>
-	<td align=center><TT>ss</TT><td align=center>ß<td>
-	<td align=center><TT>i:</TT><td align=center>ï<td>
-	<td align=center><TT>y:</TT><td align=center>ÿ
-</table>
-</center>
+<p>Although currently only characters in the ISO-8859-1 character set are
+handled, you should call this in case any enhancements to the
+processing are done in the future.  The interface has been designed to
+handle arbitrary UTF-8 encoded text.
 
-<p>For instance, to type "á" type [compose][a]['] or [compose]['][a].
+<h4><tt>int Fl::compose(int&amp; del)</tt></h4>
 
-<P>The character "nbsp" (non-breaking space) is typed by using
-[compose][space].
+<p>Use of this function is very simple.  Any text editing widget should
+call this for each <tt>FL_KEYBOARD</tt> event.
 
-<P>The single-character sequences may be followed by a space if
-necessary to remove ambiguity.  For instance, if you really want to
-type "ª~" rather than "ã" you must type [compose][a][space][~].
+<p>If <i>true</i> is returned, then it has modified the
+Fl::event_text() and Fl::event_length() to a set of <i>bytes</i> to
+insert (it may be of zero length!).  In will also set the "del"
+parameter to the number of <i>bytes</i> to the left of the cursor to
+delete, this is used to delete the results of the previous call to
+Fl::compose().
 
-<P>If you wish to use the compose function in your own code, your
-widget's <tt>handle()</tt> method must call <tt>fl_compose()</tt>
-in response to <tt>FL_KEYPRESS</tt> events:
+<p>If <i>false</i> is returned, the keys should be treated as function
+keys, and del is set to zero.  You could insert the text anyways, if
+you don't know what else to do.
 
-<h4><TT>int fl_compose(int state, char c, int &amp;del, char *buffer, int &amp;ins)</TT></h4>
+<p>Though the current implementation returns immediately, future
+versions may take quite awhile, as they may pop up a window or do
+other user-interface things to allow characters to be selected.
 
-Starts or adds a single ASCII character to a compose sequence.  This
-will return the number of old bytes to delete and a set of new bytes to
-insert, and a new <tt>state</tt> value.  If this returns zero you can
-ignore the result (which just says to insert the character unchanged)
-and handle the keystroke yourself.
+<h4><tt>int Fl::compose_reset()</tt></h4>
 
-<P><tt>state</tt> must either be the return value of the last call to
-<tt>fl_compose()</tt> or zero to start a new compose sequence.  Be sure to reset
-to zero if the user ever moves the cursor.
+<p>If the user moves the cursor, be sure to call Fl::compose_reset().
+The next call to Fl::compose() will start out in an initial state.  In
+particular it will not set "del" to non-zero.  This call is very fast
+so it is ok to call it many times and in many places.
 
-<P><tt>c</tt> is the ASCII character that the user typed.
-
-<P><tt>del</tt> is set to the number of bytes to delete backwards.  This
-will always be less or equal to the <tt>ins</tt> from the last call to
-<tt>fl_compose()</tt>, and will be zero if <tt>state</tt> is zero.
-
-<P><tt>buffer</tt> will have the first <tt>ins</tt> bytes set to the data
-to insert and display (it is <I>not</I> nul-terminated).
-
-<P><tt>ins</tt> will be the number of characters to insert.
-
-</BODY></HTML>
+</body></html>

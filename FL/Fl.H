@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.1 1999/04/17 01:02:27 bill Exp $"
+// "$Id: Fl.H,v 1.8.2.2 2000/02/21 10:45:58 bill Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -57,6 +57,7 @@ public: // should be private!
   static FL_EXPORT Fl_Widget* selection_owner_;
   static FL_EXPORT Fl_Window* modal_;
   static FL_EXPORT Fl_Window* grab_;
+  static FL_EXPORT int compose_state;
 
   static void damage(int x) {damage_ = x;}
 
@@ -87,7 +88,7 @@ public:
   static FL_EXPORT int ready();
   static FL_EXPORT int run();
   static FL_EXPORT Fl_Widget* readqueue();
-  static FL_EXPORT void add_timeout(double t,void (*cb)(void*),void* = 0);
+  static FL_EXPORT void add_timeout(double t,void (*cb)(void*),void* v = 0);
   static FL_EXPORT void remove_timeout(void (*cb)(void*), void* = 0);
   static FL_EXPORT void add_fd(int fd, int when, void (*cb)(int,void*),void* =0);
   static FL_EXPORT void add_fd(int fd, void (*cb)(int, void*), void* = 0);
@@ -125,6 +126,8 @@ public:
   static FL_EXPORT int get_key(int);
   static FL_EXPORT const char* event_text() {return e_text;}
   static FL_EXPORT int event_length() {return e_length;}
+  static FL_EXPORT int compose(int &del);
+  static FL_EXPORT void compose_reset() {compose_state = 0;}
   static FL_EXPORT int event_inside(int,int,int,int);
   static FL_EXPORT int event_inside(const Fl_Widget*);
   static FL_EXPORT int test_shortcut(int);
@@ -205,5 +208,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.1 1999/04/17 01:02:27 bill Exp $".
+// End of "$Id: Fl.H,v 1.8.2.2 2000/02/21 10:45:58 bill Exp $".
 //
