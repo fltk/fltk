@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.5 2001/11/17 18:18:53 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.6 2001/11/17 18:20:09 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -93,9 +93,9 @@ public:
     int ox = Fl::event_x_root() + 10;
     int oy = Fl::event_y_root() + 10;
 
-    if (ox >= Fl::w())
+    if (ox >= (Fl::w() - ww - 6))
       ox = Fl::w() - ww - 6;
-    if (oy >= Fl::h())
+    if (oy >= (Fl::h() - hh - 6))
       oy = widgetWindow->y_root() + Fl_Tooltip::widget->y() - hh - 6;
     
     parent()->resize(ox, oy, ww+6, hh+6);
@@ -189,5 +189,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.5 2001/11/17 18:18:53 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.6 2001/11/17 18:20:09 easysw Exp $".
 //
