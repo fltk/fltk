@@ -111,16 +111,16 @@ is zero.
 <P>For precision the step is stored as the ratio of two integers, A/B. 
  You can set these integers directly.  Currently setting a floating 
 point value sets the nearest A/1 or 1/B value possible. </P>
-<H4><A name=Fl_Valuator.format>int Fl_Valuator::format(char*, double)</A>
+<H4><A name=Fl_Valuator.format>int Fl_Valuator::format(char *)</A>
 </H4>
- Format the passed value to show enough digits so that for the current 
+Format the passed value to show enough digits so that for the current 
 step value.  If the step has been set to zero then it does a <TT>%g</TT>
- format.  The characters are written into the passed buffer. 
+format.  The characters are written into the passed buffer. 
 <H4><A name=Fl_Valuator.round>double Fl_Valuator::round(double)</A></H4>
- Round the passed value to the nearest step increment.  Does nothing if 
+Round the passed value to the nearest step increment.  Does nothing if 
 step is zero. 
 <H4><A name=Fl_Valuator.clamp>double Fl_Valuator::clamp(double)</A></H4>
- Clamp the passed value to the valuator range. 
+Clamp the passed value to the valuator range. 
 <H4><A name=Fl_Valuator.increment>double 
 Fl_Valuator::increment(double,int n)</A></H4>
  Adds <TT>n</TT> times the step value to the passed value. If step was 
