@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.5 2000/06/05 21:20:37 mike Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.6 2000/10/17 06:33:59 spitzak Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -177,7 +177,6 @@ void Fl_Group_Type::add_child(Fl_Type* cc, Fl_Type* before) {
 
 void Fl_Tabs_Type::add_child(Fl_Type* c, Fl_Type* before) {
   Fl_Group_Type::add_child(c, before);
-  ((Fl_Tabs*)o)->value(0);
 }
 
 // This is called when o is deleted.  If it is in the tab group make
@@ -231,5 +230,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.5 2000/06/05 21:20:37 mike Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.6 2000/10/17 06:33:59 spitzak Exp $".
 //
