@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.3 1999/04/10 08:09:38 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.4 1999/04/17 01:02:28 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,8 @@
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
 #include <ctype.h>
+#include <malloc.h>
+#include <string.h>
 
 //
 // Globals...
@@ -68,31 +70,36 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 // Timeouts are insert-sorted into order.  This works good if there
 // are only a small number:
 
-#define MAXTIMEOUT 8
-
-static struct {
+static struct Timeout {
   double time;
   void (*cb)(void*);
   void* arg;
-} timeout[MAXTIMEOUT+1];
+} * timeout;
 static int numtimeouts;
+static int timeout_array_size;
 
 void Fl::add_timeout(double t, void (*cb)(void *), void *v) {
-  int i;
 
   fl_elapsed();
 
-  if (numtimeouts<MAXTIMEOUT) numtimeouts++;
-  for (i=0; i<(numtimeouts-1); i++) {
+  if (numtimeouts >= timeout_array_size) {
+    timeout_array_size = 2*timeout_array_size+1;
+    timeout = (Timeout*)realloc(timeout, timeout_array_size*sizeof(Timeout));
+  }
+
+  // insert-sort the new timeout:
+  int i;
+  for (i=0; i<numtimeouts; i++) {
     if (timeout[i].time > t) {
-      for (int j=numtimeouts-1; j>i; j--) timeout[j] = timeout[j-1];
+      for (int j=numtimeouts; j>i; j--) timeout[j] = timeout[j-1];
       break;
     }
   }
-
   timeout[i].time = t;
   timeout[i].cb = cb;
   timeout[i].arg = v;
+
+  numtimeouts++;
 }
 
 void Fl::remove_timeout(void (*cb)(void *), void *v) {
@@ -105,22 +112,16 @@ void Fl::remove_timeout(void (*cb)(void *), void *v) {
 }
 
 static void call_timeouts() {
-  if (timeout[0].time > 0) return;
-  struct {
-    void (*cb)(void *);
-    void *arg;
-  } temp[MAXTIMEOUT];
-  int i,j,k;
-  // copy all expired timeouts to temp array:
-  for (i=j=0; j<numtimeouts && timeout[j].time <= 0; i++,j++) {
-    temp[i].cb = timeout[j].cb;
-    temp[i].arg= timeout[j].arg;
+  while (numtimeouts) {
+    if (timeout[0].time > 0) break;
+    // we must remove timeout from array before doing the callback:
+    void (*cb)(void*) = timeout[0].cb;
+    void *arg = timeout[0].arg;
+    numtimeouts--;
+    if (numtimeouts) memmove(timeout, timeout+1, numtimeouts*sizeof(Timeout));
+    // now it is safe for the callback to do add_timeout:
+    cb(arg);
   }
-  // remove them from source array:
-  for (k=0; j<numtimeouts;) timeout[k++] = timeout[j++];
-  numtimeouts = k;
-  // and then call them:
-  for (k=0; k<i; k++) temp[k].cb(temp[k].arg);
 }
 
 void Fl::flush() {
@@ -695,5 +696,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.3 1999/04/10 08:09:38 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.4 1999/04/17 01:02:28 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.5 1999/04/10 08:09:38 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.6 1999/04/17 01:02:29 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -56,43 +56,60 @@
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
-struct pollfd {int fd; short events; short revents;};
 
-#define MAXFD 8
-static fd_set fdsets[3];
-static int nfds;
-static struct pollfd fds[MAXFD];
-static struct {
+static int nfds = 0;
+static int fd_array_size = 0;
+static struct FD {
+  int fd;
+  short events;
   void (*cb)(int, void*);
   void* arg;
-} fd[MAXFD];
+} *fd = 0;
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
-  int i;
-  if (nfds < MAXFD) {i = nfds; nfds++;} else {i = MAXFD-1;}
-  fds[i].fd = n;
-  fds[i].events = events;
+  remove_fd(n,events);
+  int i = nfds++;
+  if (i >= fd_array_size) {
+    fd_array_size = 2*fd_array_size+1;
+    fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+  }
+  fd[i].fd = n;
+  fd[i].events = events;
+  fd[i].cb = cb;
+  fd[i].arg = v;
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
-  fd[i].cb = cb;
-  fd[i].arg = v;
+  if (n > maxfd) maxfd = n;
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
-  Fl::add_fd(fd,POLLIN,cb,v);
+  Fl::add_fd(fd, POLLIN, cb, v);
+}
+
+void Fl::remove_fd(int n, int events) {
+  int i,j;
+  for (i=j=0; i<nfds; i++) {
+    if (fd[i].fd == n) {
+      int e = fd[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      fd[i].events = e;
+    }
+    // move it down in the array if necessary:
+    if (j<i) {
+      fd[j]=fd[i];
+    }
+    j++;
+  }
+  nfds = j;
+  if (events & POLLIN) FD_CLR(n, &fdsets[0]);
+  if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
+  if (events & POLLERR) FD_CLR(n, &fdsets[2]);
+  if (n == maxfd) maxfd--;
 }
 
 void Fl::remove_fd(int n) {
-  int i,j;
-  for (i=j=0; i<nfds; i++) {
-    if (fds[i].fd == n);
-    else {if (j<i) {fd[j]=fd[i]; fds[j]=fds[i];} j++;}
-  }
-  nfds = j;
-  FD_CLR(n, &fdsets[0]);
-  FD_CLR(n, &fdsets[1]);
-  FD_CLR(n, &fdsets[2]);
+  remove_fd(n, -1);
 }
 
 MSG fl_msg;
@@ -112,29 +129,28 @@ int fl_ready() {
 
 double fl_wait(int timeout_flag, double time) {
   int have_message;
-  timeval t;
-  fd_set fdt[3];
+  if (nfds) {
+    // For WIN32 we need to poll for socket input FIRST, since
+    // the event queue is not something we can select() on...
+    timeval t;
+    t.tv_sec = 0;
+    t.tv_usec = 0;
 
+    fd_set fdt[3];
+    fdt[0] = fdsets[0];
+    fdt[1] = fdsets[1];
+    fdt[2] = fdsets[2];
 
-  // For WIN32 we need to poll for socket input FIRST, since
-  // the event queue is not something we can select() on...
-
-  t.tv_sec = 0;
-  t.tv_usec = 0;
-
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-
-  if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
-    // We got something - do the callback!
-    for (int i = 0; i < nfds; i ++) {
-      int f = fds[i].fd;
-      short revents = 0;
-      if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
-      if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
-      if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
-      if (fds[i].events & revents) fd[i].cb(f, fd[i].arg);
+    if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
+      // We got something - do the callback!
+      for (int i = 0; i < nfds; i ++) {
+	int f = fd[i].fd;
+	short revents = 0;
+	if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
+	if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
+	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
+	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
+      }
     }
   }
 
@@ -905,5 +921,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.5 1999/04/10 08:09:38 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.6 1999/04/17 01:02:29 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.2 1999/04/10 08:09:39 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.3 1999/04/17 01:02:29 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,75 +41,101 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
-#if HAVE_SYS_SELECT_H
-#  include <sys/select.h>
-#endif /* HAVE_SYS_SELECT_H */
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
 #if HAVE_POLL
+
 #include <poll.h>
+static pollfd *pollfds = 0;
+
 #else
-struct pollfd {int fd; short events; short revents;};
+
+#if HAVE_SYS_SELECT_H
+#  include <sys/select.h>
+#endif /* HAVE_SYS_SELECT_H */
+
+// The following #define is only needed for HP-UX 9.x and earlier:
+//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
+
+static fd_set fdsets[3];
+static int maxfd;
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
 
-//
-// The following #define is only needed for HP-UX 9.x and earlier.  10.x
-// and beyond have the right stuff, and any good GCC distribution fixes
-// this, too!
-//
+#endif /* HAVE_POLL */
 
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
-
-#endif
-
-#define MAXFD 8
-#if !HAVE_POLL
-static fd_set fdsets[3];
-static int maxfd;
-#endif
-static int nfds;
-static struct pollfd fds[MAXFD];
-static struct {
+static int nfds = 0;
+static int fd_array_size = 0;
+static struct FD {
+  int fd;
+  short events;
   void (*cb)(int, void*);
   void* arg;
-} fd[MAXFD];
+} *fd = 0;
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
-  int i;
-  if (nfds < MAXFD) {i = nfds; nfds++;} else {i = MAXFD-1;}
+  remove_fd(n,events);
+  int i = nfds++;
+  if (i >= fd_array_size) {
+    fd_array_size = 2*fd_array_size+1;
+    fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+#if HAVE_POLL
+    pollfds = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
+#endif
+  }
+  fd[i].fd = n;
+  fd[i].events = events;
+  fd[i].cb = cb;
+  fd[i].arg = v;
+#if HAVE_POLL
   fds[i].fd = n;
   fds[i].events = events;
-#if !HAVE_POLL
+#else
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
   if (n > maxfd) maxfd = n;
 #endif
-  fd[i].cb = cb;
-  fd[i].arg = v;
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
-  Fl::add_fd(fd,POLLIN,cb,v);
+  Fl::add_fd(fd, POLLIN, cb, v);
 }
 
-void Fl::remove_fd(int n) {
+void Fl::remove_fd(int n, int events) {
   int i,j;
   for (i=j=0; i<nfds; i++) {
-    if (fds[i].fd == n);
-    else {if (j<i) {fd[j]=fd[i]; fds[j]=fds[i];} j++;}
+    if (fd[i].fd == n) {
+      int e = fd[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      fd[i].events = e;
+#if HAVE_POLL
+      fds[j].events = e;
+#endif
+    }
+    // move it down in the array if necessary:
+    if (j<i) {
+      fd[j]=fd[i];
+#if HAVE_POLL
+      fds[j]=fds[i];
+#endif
+    }
+    j++;
   }
   nfds = j;
 #if !HAVE_POLL
-  FD_CLR(n, &fdsets[0]);
-  FD_CLR(n, &fdsets[1]);
-  FD_CLR(n, &fdsets[2]);
+  if (events & POLLIN) FD_CLR(n, &fdsets[0]);
+  if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
+  if (events & POLLERR) FD_CLR(n, &fdsets[2]);
   if (n == maxfd) maxfd--;
 #endif
+}
+
+void Fl::remove_fd(int n) {
+  remove_fd(n, -1);
 }
 
 int fl_ready() {
@@ -185,14 +211,14 @@ double fl_wait(int timeout_flag, double time) {
   if (n > 0) {
     for (int i=0; i<nfds; i++) {
 #if HAVE_POLL
-      if (fds[i].revents) fd[i].cb(fds[i].fd, fd[i].arg);
+      if (fds[i].revents) fd[i].cb(fd[i].fd, fd[i].arg);
 #else
-      int f = fds[i].fd;
+      int f = fd[i].fd;
       short revents = 0;
       if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
       if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
       if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
-      if (fds[i].events & revents) fd[i].cb(f, fd[i].arg);
+      if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
 #endif
     }
   }
@@ -823,5 +849,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.2 1999/04/10 08:09:39 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.3 1999/04/17 01:02:29 bill Exp $".
 //
