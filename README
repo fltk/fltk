@@ -26,7 +26,7 @@ ON-LINE DOCUMENTATION
     point.  PostScript(tm) and PDF versions of this documentation is
     also available from the FLTK web site at:
 
-        http://fltk.easysw.com/documentation
+        http://fltk.easysw.com/documentation.html
 
 
 BUILDING AND INSTALLING FLTK UNDER UNIX
@@ -37,12 +37,12 @@ BUILDING AND INSTALLING FLTK UNDER UNIX
     FLTK uses GNU autoconf to configure itself for your UNIX platform.
     The main things that the configure script will look for are the
     X11, OpenGL (or Mesa), and JPEG header and library files.  Make
-    sure that they are in the standard include/library locations.
+    sure that they are in the standard include/library locations.  If
+    they aren't you need to define the CXXFLAGS and LDFLAGS
+    environment variables.
 
     You can run configure yourself to get the exact setup you need.
-    Type "./configure <options>".  The "--enable-windows-style" option
-    will make the FLTK widgets look more like their Microsoft Windows
-    counterparts.  Other options include:
+    Type "./configure <options>".  Options include:
 
 	--enable-debug          - Enable debugging code & symbols
 	--enable-shared         - Enable generation of shared libraries
@@ -104,6 +104,7 @@ INTERNET RESOURCES
 	- WWW:   http://fltk.easysw.com
 
 	- FTP:   ftp://ftp.easysw.com/pub/fltk
+                 ftp://ftp.northamerica.net/pub/ESP/fltk
         	 ftp://ftp.funet.fi/mirrors/ftp.easysw.com/pub/fltk
 
 	- EMail: fltk@easysw.com [see instructions below]
@@ -111,7 +112,7 @@ INTERNET RESOURCES
 
     To send a message to the FLTK mailing list ("fltk@easysw.com") you
     must first join the list.  Non-member submissions are blocked to
-    avoid problems with SPAM...
+    avoid problems with SPAM.
 
     To join the FLTK mailing list, send a message to
     "majordomo@easysw.com" with "subscribe fltk" in the message body. 
@@ -157,10 +158,10 @@ COPYRIGHT
 
 	Curtis Edwards (curtise@fa.disney.com)
 	Gustavo Hime (hime@centroin.com.br)
+	Matthias Melcher (matthias@mediaone.net)
 	Vincent Penne (vincent.penne@wanadoo.fr)
         Michael Sweet (mike@easysw.com)
 	Carl Thompson (clip@home.net)
-	Matthias Melcher (matthias@mediaone.net)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public License
