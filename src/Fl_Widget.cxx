@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.9 2001/12/07 16:28:38 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.10 2001/12/14 16:48:13 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -152,7 +152,7 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   // every other pixel around the focus area...
   //
   // Also, QuickDraw (MacOS) does not support line styles specifically,
-  // and the hack we use in fl_line_style() will not horizontal lines
+  // and the hack we use in fl_line_style() will not draw horizontal lines
   // on odd-numbered rows...
   int i, xx, yy;
 
@@ -248,5 +248,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.9 2001/12/07 16:28:38 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.10 2001/12/14 16:48:13 easysw Exp $".
 //

@@ -1,3 +1,18 @@
+CHANGES IN FLTK 1.1.0b8
+
+	- Cosmetic changes to plastic boxtypes.  Now look much
+	  better for large areas and the sides now have a much
+	  greater "3D" feeling to them.
+	- Added new Fl::draw_box_active() method so that
+	  boxtypes can find out if the widget they are drawing
+	  for is active or not.
+	- Fl_Button and its subclasses did not redraw the parent
+	  when the boxtype was FL_NO_BOX and they lost keyboard
+	  focus (the parent redraw clears the focus box.)
+	- Fixed the example program makefile - wasn't building
+	  the mandelbrot and shiny demos right.
+
+
 CHANGES IN FLTK 1.1.0b7
 
 	- More documentation updates...

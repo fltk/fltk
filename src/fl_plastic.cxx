@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.6 2001/12/14 03:45:37 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.7 2001/12/14 16:48:13 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -38,15 +38,17 @@
 extern uchar *fl_gray_ramp();
 
 inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
-  return fl_color_average((Fl_Color)gc, bc, 0.67f);
+  return fl_color_average((Fl_Color)gc, bc, 0.75f);
 }
 
 static void shade_frame(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar *g = fl_gray_ramp();
   int b = strlen(c) / 4 + 1;
 
-  for (x += b, y += b, w -= 2 * b, h -= 2 * b; b > 1; b --)
+  for (x += b, y += b, w -= 2 * b + 1, h -= 2 * b + 1; b > 1; b --)
   {
+    // Draw lines around the perimeter of the button, 4 colors per
+    // circuit.
     fl_color(shade_color(g[*c++], bc));
     fl_line(x, y + h + b, x + w - 1, y + h + b, x + w + b - 1, y + h);
     fl_color(shade_color(g[*c++], bc));
@@ -58,87 +60,88 @@ static void shade_frame(int x, int y, int w, int h, const char *c, Fl_Color bc) 
   }
 }
 
+
 static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
 {
   uchar		*g = fl_gray_ramp();
-  int		xoff, yoff;
-  int		cmod, cerr;
-  int		clen = strlen(c);
+  int		i, j;
+  int		clen = strlen(c) - 1;
+  int		chalf = clen / 2;
+  int		cstep = 1;
 
+  if (h < (w * 2)) {
+    // Horizontal shading...
+    if (clen >= h) cstep = 2;
 
-  if (h < (w * 2))
-  {
-    h ++;
-    cmod = clen % h;
-    cerr = 0;
+    for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
+      // Draw the top line and points...
+      fl_color(shade_color(g[c[i]], bc));
+      fl_xyline(x + 1, y + i, x + w - 1);
 
-    fl_color(shade_color(g[*c], bc));
+      fl_color(shade_color(g[c[i] - 8], bc));
+      fl_point(x, y + i);
+      fl_point(x + w - 1, y + i);
 
-    for (yoff = 0; yoff < h; yoff ++)
-    {
-      fl_xyline(x, y + yoff, x + w - 1);
+      // Draw the bottom line and points...
+      fl_color(shade_color(g[c[clen - i]], bc));
+      fl_xyline(x + 1, y + h - 1 - i, x + w - 1);
 
-      cerr += cmod;
-      if (cerr >= h)
-      {
-        cerr -= h;
-	c ++;
-
-        fl_color(shade_color(g[*c], bc));
-      }
+      fl_color(shade_color(g[c[clen - i] - 8], bc));
+      fl_point(x, y + h - i);
+      fl_point(x + w - 1, y + h - i);
     }
-  }
-  else
-  {
-    w ++;
-    cmod = clen % w;
-    cerr = 0;
 
-    fl_color(shade_color(g[*c], bc));
+    // Draw the interior and sides...
+    i = chalf / cstep;
 
-    for (xoff = 0; xoff < w; xoff ++)
-    {
-      fl_yxline(x + xoff, y, y + h - 1);
+    fl_color(shade_color(g[c[chalf]], bc));
+    fl_rectf(x + 1, y + i, w - 2, h - 2 * i);
 
-      cerr += cmod;
-      if (cerr >= w)
-      {
-        cerr -= w;
-	c ++;
+    fl_color(shade_color(g[c[chalf] - 8], bc));
+    fl_yxline(x, y + i, y + h - i);
+    fl_yxline(x + w - 1, y + i, y + h - i);
+  } else {
+    // Vertical shading...
+    if (clen >= w) cstep = 2;
 
-        fl_color(shade_color(g[*c], bc));
-      }
+    for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
+      // Draw the left line and points...
+      fl_color(shade_color(g[c[i]], bc));
+      fl_yxline(x + i, y + 1, y + h - 1);
+
+      fl_color(shade_color(g[c[i] - 8], bc));
+      fl_point(x + i, y);
+      fl_point(x + i, y + h - 1);
+
+      // Draw the right line and points...
+      fl_color(shade_color(g[c[clen - i]], bc));
+      fl_yxline(x + w - 1 - i, y + 1, y + h - 1);
+
+      fl_color(shade_color(g[c[clen - i] - 8], bc));
+      fl_point(x + w - 1 - i, y);
+      fl_point(x + w - 1 - i, y + h - 1);
     }
+
+    // Draw the interior, top, and bottom...
+    i = chalf / cstep;
+
+    fl_color(shade_color(g[c[chalf]], bc));
+    fl_rectf(x + i, y + 1, w - 2 * i, h - 2);
+
+    fl_color(shade_color(g[c[chalf] - 8], bc));
+    fl_xyline(x + i, y, x + w - i);
+    fl_xyline(x + i, y + h - 1, x + w - i);
   }
 }
 
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c) {
-  shade_frame(x, y, w, h, "RRSSDLNN", c);
+  shade_frame(x, y, w, h, "KLOPMNNO", c);
 }
 
 
 static void up_box(int x, int y, int w, int h, Fl_Color c) {
-  if (w > 30 && h > 30)
-  {
-    uchar *g = fl_gray_ramp();
-	if ( h<(w*2) )
-	{
-	  shade_rect(x + 2, y + 2, w - 4, 9, "VTR", c);
-      fl_color(shade_color(g['P'], c));
-      fl_rectf(x + 2, y + 11, w - 4, h - 25);
-      shade_rect(x + 2, y + h - 14, w - 4, 12, "RTVXX", c);
-	} 
-	else
-	{
-	  shade_rect(x + 2, y + 2, 9, h-4, "VTR", c);
-      fl_color(shade_color(g['P'], c));
-      fl_rectf(x + 11, y + 2, w - 25, h - 4);
-      shade_rect(x + w - 14, y + 2, 12, h-4, "RTVXX", c);
-	} 
-  }
-  else
-    shade_rect(x + 2, y + 2, w - 4, h - 4, "VTRPPRTVXX", c);
+  shade_rect(x + 2, y + 2, w - 4, h - 4, "QTXWVUTRSTUVWXS", c);
 
   up_frame(x, y, w, h, c);
 }
@@ -150,26 +153,7 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void down_box(int x, int y, int w, int h, Fl_Color c) {
-  if (w > 30 && h > 30)
-  {
-    uchar *g = fl_gray_ramp();
-	if ( w>=h )
-	{
-	  shade_rect(x + 2, y + 2, w - 4, 11, "STUV", c);
-      fl_color(shade_color(g['W'], c));
-      fl_rectf(x + 2, y + 13, w - 4, h - 21);
-      shade_rect(x + 2, y + h - 8, w - 4, 6, "VT", c);
-	} 
-	else
-	{
-	  shade_rect(x + 2, y + 2, 11, h-4, "STUV", c);
-      fl_color(shade_color(g['W'], c));
-      fl_rectf(x + 13, y + 2, w - 21, h - 4);
-      shade_rect(x + w - 8, y + 2, 6, h-4, "VT", c);
-	} 
-  }
-  else
-    shade_rect(x + 2, y + 2, w - 4, h - 4, "STUVWWWWVT", c);
+  shade_rect(x + 2, y + 2, w - 4, h - 4, "STUVWWWVT", c);
 
   down_frame(x, y, w, h, c);
 }
@@ -189,5 +173,5 @@ Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.6 2001/12/14 03:45:37 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.7 2001/12/14 16:48:13 easysw Exp $".
 //

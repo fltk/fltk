@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6.2.6 2001/12/11 16:03:11 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.7 2001/12/14 16:48:13 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -108,7 +108,8 @@ int Fl_Button::handle(int event) {
   case FL_FOCUS :
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
-      redraw();
+      if (event == FL_UNFOCUS && box() == FL_NO_BOX) parent()->redraw();
+      else redraw();
       return 1;
     } else return 0;
   case FL_KEYBOARD :
@@ -138,5 +139,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.6 2001/12/11 16:03:11 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.7 2001/12/14 16:48:13 easysw Exp $".
 //

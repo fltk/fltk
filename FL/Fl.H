@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.8 2001/12/11 16:03:11 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.9 2001/12/14 16:48:13 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -202,6 +202,7 @@ public:
   static FL_EXPORT int box_dy(Fl_Boxtype);
   static FL_EXPORT int box_dw(Fl_Boxtype);
   static FL_EXPORT int box_dh(Fl_Boxtype);
+  static FL_EXPORT int draw_box_active();
 
   // back compatability:
   static FL_EXPORT void set_abort(void (*f)(const char*,...)) {fatal = f;}
@@ -233,5 +234,5 @@ public:
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.8 2001/12/11 16:03:11 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.9 2001/12/14 16:48:13 easysw Exp $".
 //

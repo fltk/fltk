@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.18 2001/12/12 21:33:34 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.19 2001/12/14 16:48:13 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -181,10 +181,12 @@ keyboard$(EXEEXT): keyboard.o
 	$(POSTBUILD)
 keyboard.o: keyboard.cxx keyboard_ui.cxx
 
-mandelbrot$(EXEEXT): mandelbrot.o mandelbrot_ui.o
+mandelbrot$(EXEEXT): mandelbrot.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD)
+mandlebrot.o: mandelbrot.cxx mandelbrot_ui.cxx
+
 pixmap_browser$(EXEEXT): pixmap_browser.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
@@ -219,10 +221,12 @@ gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-shiny$(EXEEXT): shiny.o shiny_panel.o
+shiny$(EXEEXT): shiny.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
+shiny.o:	shiny.cxx shiny_panel.cxx
+
 shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
@@ -249,5 +253,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.18 2001/12/12 21:33:34 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.19 2001/12/14 16:48:13 easysw Exp $".
 #

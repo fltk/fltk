@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.4 2001/11/28 21:37:35 easysw Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.5 2001/12/14 16:48:13 easysw Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -49,6 +49,9 @@ static uchar inactive_ramp[24] = {
   49, 49, 50, 50,
   51, 51, 52, 52};
 static int draw_it_active = 1;
+
+int Fl::draw_box_active() { return draw_it_active; }
+
 uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
 
 void fl_frame(const char* s, int x, int y, int w, int h) {
@@ -219,10 +222,10 @@ static struct {
   {fl_border_box,	1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX,
   {fl_border_frame,	1,1,2,2,0}, // _FL_OVAL_FRAME
   {fl_rectf,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX,
-  {fl_up_box,		3,3,5,5,0}, // _FL_PLASTIC_UP_BOX,
-  {fl_down_box,		3,3,5,5,0}, // _FL_PLASTIC_DOWN_BOX,
-  {fl_up_frame,		3,3,5,5,0}, // _FL_PLASTIC_UP_FRAME,
-  {fl_down_frame,	3,3,5,5,0}, // _FL_PLASTIC_DOWN_FRAME,
+  {fl_up_box,		4,4,7,6,0}, // _FL_PLASTIC_UP_BOX,
+  {fl_down_box,		4,4,7,6,0}, // _FL_PLASTIC_DOWN_BOX,
+  {fl_up_frame,		4,4,7,6,0}, // _FL_PLASTIC_UP_FRAME,
+  {fl_down_frame,	4,4,7,6,0}, // _FL_PLASTIC_DOWN_FRAME,
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+0
   {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+1
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+2
@@ -288,5 +291,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.4 2001/11/28 21:37:35 easysw Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.5 2001/12/14 16:48:13 easysw Exp $".
 //
