@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- The Fl_JPEG_Image and Fl_PNG_Image classes did not
+	  trap errors from the corresponding image libraries
+	  (STR #168)
 	- Added "--with-links" configure option to control
 	  whether symlinks are created for the FLTK header files
 	  (STR #164)

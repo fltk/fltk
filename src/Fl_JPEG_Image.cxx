@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.7 2003/01/30 21:42:02 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.8 2003/09/15 23:52:37 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
@@ -56,6 +56,17 @@ extern "C"
 
 
 //
+// Error handler for JPEG files...
+//
+
+static void
+jpeg_error_handler(j_common_ptr)
+{
+  return;
+}
+
+
+//
 // 'Fl_JPEG_Image::Fl_JPEG_Image()' - Load a JPEG image file.
 //
 
@@ -71,6 +82,8 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   if ((fp = fopen(jpeg, "rb")) == NULL) return;
 
   cinfo.err = jpeg_std_error(&jerr);
+  jerr.error_exit = jpeg_error_handler;
+
   jpeg_create_decompress(&cinfo);
   jpeg_stdio_src(&cinfo, fp);
   jpeg_read_header(&cinfo, 1);
@@ -107,5 +120,5 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.7 2003/01/30 21:42:02 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.8 2003/09/15 23:52:37 easysw Exp $".
 //
