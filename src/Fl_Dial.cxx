@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.6 1999/02/16 17:23:55 mike Exp $"
+// "$Id: Fl_Dial.cxx,v 1.7 1999/02/22 20:58:23 mike Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -101,7 +101,7 @@ int Fl_Dial::handle(int event, int x, int y, int w, int h) {
     int mx = Fl::event_x()-x-w/2;
     int my = Fl::event_y()-y-h/2;
     if (!mx && !my) return 1;
-    angle = atan2(-my, -mx) + 0.25 * M_PI;
+    angle = atan2((float)-my, (float)-mx) + 0.25 * M_PI;
     if (angle<(-0.25*M_PI)) angle += 2.0*M_PI;
     val = minimum() + (maximum()-minimum())*angle/(1.5*M_PI);
     if (fabs(val-value()) < (maximum()-minimum())/2.0)
@@ -126,5 +126,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.6 1999/02/16 17:23:55 mike Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.7 1999/02/22 20:58:23 mike Exp $".
 //
