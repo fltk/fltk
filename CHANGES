@@ -1,5 +1,18 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- WIN32's scandir() emulation did not allocate enough
+	  memory for directory names (STR #263)
+	- Fl::compose() did not handle special keys like
+	  backspace properly (STR #293)
+	- Fl_Choice did not clip its text when drawing using the
+	  plastic scheme (STR #287)
+	- Fl_Group incorrectly mapped the emacs CTRL keys to
+	  keyboard navigation (STR #228)
+	- Fl_File_Browser::load() didn't handle a NULL directory
+	  name (STR #266)
+	- 64-bit library fixes (STR #261, )
+	- The Fl_Valuator::format() function did not limit the
+	  size of the number buffer (STR #268)
 	- The keypad Enter key works as the normal Enter/Return
 	  key in common widgets (STR #191)
 	- Doco fixes (STR #186)

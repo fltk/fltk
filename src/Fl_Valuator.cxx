@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.6 2003/01/30 21:42:53 easysw Exp $"
+// "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.7 2004/02/26 03:06:40 easysw Exp $"
 //
 // Valuator widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,7 @@
 #include <FL/Fl_Valuator.H>
 #include <FL/math.h>
 #include <stdio.h>
+#include "flstring.h"
 
 Fl_Valuator::Fl_Valuator(int X, int Y, int W, int H, const char* L)
   : Fl_Widget(X,Y,W,H,L) {
@@ -115,7 +116,8 @@ double Fl_Valuator::increment(double v, int n) {
 
 int Fl_Valuator::format(char* buffer) {
   double v = value();
-  if (!A) return sprintf(buffer, "%g", v);
+  // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
+  if (!A) return snprintf(buffer, 128, "%g", v);
   int i, X;
   double ba = B / A;
   for (X = 1, i = 0; X < ba; X *= 10) i++;
@@ -123,5 +125,5 @@ int Fl_Valuator::format(char* buffer) {
 }
 
 //
-// End of "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.6 2003/01/30 21:42:53 easysw Exp $".
+// End of "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.7 2004/02/26 03:06:40 easysw Exp $".
 //

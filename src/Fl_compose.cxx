@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_compose.cxx,v 1.1.2.7.2.4 2003/05/20 15:29:42 easysw Exp $"
+// "$Id: Fl_compose.cxx,v 1.1.2.7.2.5 2004/02/26 03:06:40 easysw Exp $"
 //
 // Character compose processing for the Fast Light Tool Kit (FLTK).
 //
@@ -91,6 +91,9 @@ int Fl::compose(int& del) {
       e_text[0] = char(0xA0);
       compose_state = 0;
       return 1;
+    } else if (ascii < ' ' || ascii == 127) {
+      compose_state = 0;
+      return 0;
     }
 
     // see if it is either character of any pair:
