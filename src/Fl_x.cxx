@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.18 1999/01/04 19:25:03 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.19 1999/01/05 17:53:00 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -281,23 +281,18 @@ ulong fl_event_time; // the last timestamp from an x event
 char fl_key_vector[32]; // used by Fl::get_key()
 
 // Record event mouse position and state from an XEvent:
-// Also fix buggy window managers: since we now have a window event
-// x/y and a root x/y we can figure out the real window position even
-// if the window manager sent an incorrect ConfigureNotify event.
 
 static int px, py;
 static ulong ptime;
 
-static void set_event_xy(Fl_Window* window) {
+static void set_event_xy() {
 #if CONSOLIDATE_MOTION
   send_motion = 0;
 #endif
   Fl::e_x_root = fl_xevent->xbutton.x_root;
   Fl::e_x = fl_xevent->xbutton.x;
-  Fl_X::x(window,Fl::e_x_root-Fl::e_x);
   Fl::e_y_root = fl_xevent->xbutton.y_root;
   Fl::e_y = fl_xevent->xbutton.y;
-  Fl_X::y(window,Fl::e_y_root-Fl::e_y);
   Fl::e_state = fl_xevent->xbutton.state << 16;
   fl_event_time = fl_xevent->xbutton.time;
 #ifdef __sgi
@@ -390,13 +385,13 @@ int fl_handle(const XEvent& xevent)
 
   case ButtonPress:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy(window); checkdouble();
+    set_event_xy(); checkdouble();
     Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
     event = FL_PUSH;
     break;
 
   case MotionNotify:
-    set_event_xy(window);
+    set_event_xy();
 #if CONSOLIDATE_MOTION
     send_motion = window;
     return 0;
@@ -407,7 +402,7 @@ int fl_handle(const XEvent& xevent)
 
   case ButtonRelease:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy(window);
+    set_event_xy();
     Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
     event = FL_RELEASE;
     break;
@@ -461,42 +456,43 @@ int fl_handle(const XEvent& xevent)
     Fl::e_keysym = int(keysym);
     Fl::e_text = buffer;
     Fl::e_length = len;
-    set_event_xy(window); Fl::e_is_click = 0;
+    set_event_xy(); Fl::e_is_click = 0;
     if (Fl::event_state(FL_CTRL) && keysym == '-') buffer[0] = 0x1f; // ^_
     event = FL_KEYBOARD;
     break;}
 
   case KeyRelease: {
     int i = xevent.xkey.keycode; fl_key_vector[i/8] &= ~(1 << (i%8));
-    set_event_xy(window);}
+    set_event_xy();}
     break;
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
     // XInstallColormap(fl_display, Fl_X::i(window)->colormap);
-    set_event_xy(window);
+    set_event_xy();
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
     break;
 
   case LeaveNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
-    set_event_xy(window);
+    set_event_xy();
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_LEAVE;
     break;
 
   case ConfigureNotify: {
-    int x = xevent.xconfigure.x;
-    int y = xevent.xconfigure.y;
-    // avoid bug (?) in 4DWM, it reports position of 0,0 on resize:
-    if (!x && !y) {
-      Window r, c; int X, Y; unsigned int m;
-      XQueryPointer(fl_display, fl_xid(window), &r, &c, &x, &y, &X, &Y, &m);
-      x = x-X; y = y-Y;
-    }
+    // We cannot rely on the x,y position in the configure notify event.
+    // I now think this is an unavoidable problem with X: it is impossible
+    // for a window manager to prevent the "real" notify event from being
+    // sent when it resizes the contents, even though it can send an
+    // artificial event with the correct position afterwards (and some
+    // window managers do not send this fake event anyway)
+    // So anyway, do a round trip to find the correct x,y:
+    Window r, c; int X, Y, wX, wY; unsigned int m;
+    XQueryPointer(fl_display, fl_xid(window), &r, &c, &X, &Y, &wX, &wY, &m);
     resize_bug_fix = window;
-    window->resize(x, y,
+    window->resize(X-wX, Y-wY,
 		   xevent.xconfigure.width, xevent.xconfigure.height);
     return 1;}
   }
@@ -827,5 +823,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.18 1999/01/04 19:25:03 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.19 1999/01/05 17:53:00 mike Exp $".
 //
