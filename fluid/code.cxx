@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.4 1998/10/21 16:28:58 mike Exp $"
+// "$Id: code.cxx,v 1.5 1998/11/25 15:54:43 mike Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -187,7 +187,7 @@ void write_cstring(const char *w, int length) {
     default:
       if (c < ' ' || c >= 127) {
       QUOTENEXT:
-	fprintf(code_file, "\\x%02x",c&255);
+	fprintf(code_file, "\\%03o",c&255);
 	linelength += 4;
 	c = *w;
 	if (w < e && (c>='0'&&c<='9' || c>='a'&&c<='f' || c>='A'&&c<='F')) {
@@ -290,5 +290,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.4 1998/10/21 16:28:58 mike Exp $".
+// End of "$Id: code.cxx,v 1.5 1998/11/25 15:54:43 mike Exp $".
 //
