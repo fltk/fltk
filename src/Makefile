@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.22 2001/11/28 21:37:35 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.23 2001/12/06 18:23:29 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -243,6 +243,8 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	-mkdir -p $(libdir)
 	rm -f $(libdir)/$(LIBNAME)
 	-cp $(LIBNAME) $(GLLIBNAME) $(libdir)
+	$(RANLIB) $(libdir)/$(LIBNAME)
+	$(RANLIB) $(libdir)/$(GLLIBNAME)
 	if test x$(DSONAME) = xlibfltk.so.1.1; then\
 		rm -f $(libdir)/libfltk.so*;\
 		cp libfltk.so.1.1 $(libdir); \
@@ -297,5 +299,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.22 2001/11/28 21:37:35 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.23 2001/12/06 18:23:29 easysw Exp $".
 #
