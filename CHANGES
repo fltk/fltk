@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.3
 
 	- Documentation updates.
+	- The FLUID widget panel wasn't sorted, so keyboard
+	  navigation was strange.
 	- Fl_Scroll didn't compute the location of labels to the
 	  right or below when determining the area to erase.
 	- Added backward-compatibility macro for

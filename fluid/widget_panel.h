@@ -17,13 +17,13 @@ extern void image_cb(Fl_Input*, void*);
 extern void image_browse_cb(Fl_Button*, void*);
 extern void inactive_cb(Fl_Input*, void*);
 extern void inactive_browse_cb(Fl_Button*, void*);
+extern void align_cb(Fl_Button*, void*);
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Value_Input.H>
 extern void x_cb(Fl_Value_Input*, void*);
 extern void y_cb(Fl_Value_Input*, void*);
 extern void w_cb(Fl_Value_Input*, void*);
 extern void h_cb(Fl_Value_Input*, void*);
-extern void align_cb(Fl_Button*, void*);
-#include <FL/Fl_Box.H>
 extern void slider_size_cb(Fl_Value_Input*, void*);
 extern void min_cb(Fl_Value_Input*, void*);
 extern void max_cb(Fl_Value_Input*, void*);
@@ -31,11 +31,11 @@ extern void step_cb(Fl_Value_Input*, void*);
 extern void value_cb(Fl_Value_Input*, void*);
 #include "Shortcut_Button.h"
 extern void shortcut_in_cb(Shortcut_Button*, void*);
+extern void xclass_cb(Fl_Input*, void*);
 #include <FL/Fl_Light_Button.H>
 extern void border_cb(Fl_Light_Button*, void*);
 extern void modal_cb(Fl_Light_Button*, void*);
 extern void non_modal_cb(Fl_Light_Button*, void*);
-extern void xclass_cb(Fl_Input*, void*);
 extern void visible_cb(Fl_Light_Button*, void*);
 extern void active_cb(Fl_Light_Button*, void*);
 extern void resizable_cb(Fl_Light_Button*, void*);
@@ -68,8 +68,8 @@ extern void user_data_type_cb(Fl_Input*, void*);
 extern void when_button_cb(Fl_Light_Button*, void*);
 extern void overlay_cb(Fl_Button*, void*);
 extern void revert_cb(Fl_Button*, void*);
-extern void cancel_cb(Fl_Button*, void*);
 #include <FL/Fl_Return_Button.H>
 extern void ok_cb(Fl_Return_Button*, void*);
+extern void cancel_cb(Fl_Button*, void*);
 Fl_Double_Window* make_widget_panel();
 #endif
