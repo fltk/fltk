@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.27 2003/03/09 02:00:06 spitzak Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.28 2003/04/03 04:28:15 matthiaswm Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1087,20 +1087,21 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     XChangeProperty(fl_display, xp->xid, fl_XdndAware,
 		    XA_ATOM, sizeof(int)*8, 0, (unsigned char*)&version, 1);
 
-    XWMHints hints;
-    hints.input = True;
-    hints.flags = InputHint;
+    XWMHints *hints = XAllocWMHints();
+    hints->input = True;
+    hints->flags = InputHint;
     if (fl_show_iconic) {
-      hints.flags |= StateHint;
-      hints.initial_state = IconicState;
+      hints->flags |= StateHint;
+      hints->initial_state = IconicState;
       fl_show_iconic = 0;
       showit = 0;
     }
     if (win->icon()) {
-      hints.icon_pixmap = (Pixmap)win->icon();
-      hints.flags       |= IconPixmapHint;
+      hints->icon_pixmap = (Pixmap)win->icon();
+      hints->flags       |= IconPixmapHint;
     }
-    XSetWMHints(fl_display, xp->xid, &hints);
+    XSetWMHints(fl_display, xp->xid, hints);
+    XFree(hints);
   }
 
   XMapWindow(fl_display, xp->xid);
@@ -1129,51 +1130,51 @@ void Fl_X::sendxjunk() {
     return; // because this recursively called here
   }
 
-  XSizeHints hints;
+  XSizeHints *hints = XAllocSizeHints();
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
-  hints.min_width = w->minw;
-  hints.min_height = w->minh;
-  hints.max_width = w->maxw;
-  hints.max_height = w->maxh;
-  hints.width_inc = w->dw;
-  hints.height_inc = w->dh;
-  hints.win_gravity = StaticGravity;
+  hints->min_width = w->minw;
+  hints->min_height = w->minh;
+  hints->max_width = w->maxw;
+  hints->max_height = w->maxh;
+  hints->width_inc = w->dw;
+  hints->height_inc = w->dh;
+  hints->win_gravity = StaticGravity;
 
   // see the file /usr/include/X11/Xm/MwmUtil.h:
   // fill all fields to avoid bugs in kwm and perhaps other window managers:
   // 0, MWM_FUNC_ALL, MWM_DECOR_ALL
   long prop[5] = {0, 1, 1, 0, 0};
 
-  if (hints.min_width != hints.max_width ||
-      hints.min_height != hints.max_height) { // resizable
-    hints.flags = PMinSize|PWinGravity;
-    if (hints.max_width >= hints.min_width ||
-	hints.max_height >= hints.min_height) {
-      hints.flags = PMinSize|PMaxSize|PWinGravity;
+  if (hints->min_width != hints->max_width ||
+      hints->min_height != hints->max_height) { // resizable
+    hints->flags = PMinSize|PWinGravity;
+    if (hints->max_width >= hints->min_width ||
+	hints->max_height >= hints->min_height) {
+      hints->flags = PMinSize|PMaxSize|PWinGravity;
       // unfortunately we can't set just one maximum size.  Guess a
       // value for the other one.  Some window managers will make the
       // window fit on screen when maximized, others will put it off screen:
-      if (hints.max_width < hints.min_width) hints.max_width = Fl::w();
-      if (hints.max_height < hints.min_height) hints.max_height = Fl::h();
+      if (hints->max_width < hints->min_width) hints->max_width = Fl::w();
+      if (hints->max_height < hints->min_height) hints->max_height = Fl::h();
     }
-    if (hints.width_inc && hints.height_inc) hints.flags |= PResizeInc;
+    if (hints->width_inc && hints->height_inc) hints->flags |= PResizeInc;
     if (w->aspect) {
       // stupid X!  It could insist that the corner go on the
       // straight line between min and max...
-      hints.min_aspect.x = hints.max_aspect.x = hints.min_width;
-      hints.min_aspect.y = hints.max_aspect.y = hints.min_height;
-      hints.flags |= PAspect;
+      hints->min_aspect.x = hints->max_aspect.x = hints->min_width;
+      hints->min_aspect.y = hints->max_aspect.y = hints->min_height;
+      hints->flags |= PAspect;
     }
   } else { // not resizable:
-    hints.flags = PMinSize|PMaxSize|PWinGravity;
+    hints->flags = PMinSize|PMaxSize|PWinGravity;
     prop[0] = 1; // MWM_HINTS_FUNCTIONS
     prop[1] = 1|2|16; // MWM_FUNC_ALL | MWM_FUNC_RESIZE | MWM_FUNC_MAXIMIZE
   }
 
   if (w->flags() & Fl_Window::FL_FORCE_POSITION) {
-    hints.flags |= USPosition;
-    hints.x = w->x();
-    hints.y = w->y();
+    hints->flags |= USPosition;
+    hints->x = w->x();
+    hints->y = w->y();
   }
 
   if (!w->border()) {
@@ -1181,10 +1182,11 @@ void Fl_X::sendxjunk() {
     prop[2] = 0; // no decorations
   }
 
-  XSetWMNormalHints(fl_display, xid, &hints);
+  XSetWMNormalHints(fl_display, xid, hints);
   XChangeProperty(fl_display, xid,
 		  fl_MOTIF_WM_HINTS, fl_MOTIF_WM_HINTS,
 		  32, 0, (unsigned char *)prop, 5);
+  XFree(hints);
 }
 
 void Fl_Window::size_range_() {
@@ -1264,5 +1266,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.27 2003/03/09 02:00:06 spitzak Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.28 2003/04/03 04:28:15 matthiaswm Exp $".
 //
