@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.7 1998/12/06 15:09:13 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.8 1998/12/06 15:16:23 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -134,7 +134,7 @@ void Fl_Function_Type::read_property(const char *c) {
   }
 }
 
-#include "function_panel.H"
+#include "function_panel.h"
 #include <FL/fl_ask.H>
 
 void Fl_Function_Type::open() {
@@ -685,5 +685,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.7 1998/12/06 15:09:13 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.8 1998/12/06 15:16:23 mike Exp $".
 //
