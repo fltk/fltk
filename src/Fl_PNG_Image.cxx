@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNG_Image.cxx,v 1.1.2.5 2002/04/24 18:29:05 easysw Exp $"
+// "$Id: Fl_PNG_Image.cxx,v 1.1.2.6 2002/05/24 14:19:19 easysw Exp $"
 //
 // Fl_PNG_Image routines.
 //
@@ -89,8 +89,8 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   if ((info->color_type & PNG_COLOR_MASK_ALPHA) || info->num_trans)
     channels ++;
 
-  w(info->width);
-  h(info->height);
+  w((int)(info->width));
+  h((int)(info->height));
   d(channels);
 
   if (info->bit_depth < 8)
@@ -135,5 +135,5 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 
 
 //
-// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.5 2002/04/24 18:29:05 easysw Exp $".
+// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.6 2002/05/24 14:19:19 easysw Exp $".
 //

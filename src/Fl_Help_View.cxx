@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.32 2002/05/21 11:14:57 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.33 2002/05/24 14:19:19 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2283,6 +2283,8 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   strcpy(filename_, f);
   strcpy(directory_, filename_);
 
+  // Note: We do not support Windows backslashes, since they are illegal
+  //       in URLs...
   if ((slash = strrchr(directory_, '/')) == NULL)
     directory_[0] = '\0';
   else if (slash > directory_ && slash[-1] != '/')
@@ -2623,5 +2625,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.32 2002/05/21 11:14:57 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.33 2002/05/24 14:19:19 easysw Exp $".
 //

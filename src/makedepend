@@ -244,7 +244,7 @@ Fl_Valuator.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/math.h
 Fl_Value_Input.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Value_Input.o: ../FL/Fl_Value_Input.H ../FL/Fl_Valuator.H
 Fl_Value_Input.o: ../FL/Fl_Widget.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
-Fl_Value_Input.o: ../FL/Fl_Group.H
+Fl_Value_Input.o: ../FL/Fl_Group.H ../FL/math.h
 Fl_Value_Output.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Value_Output.o: ../FL/Fl_Value_Output.H ../FL/Fl_Valuator.H
 Fl_Value_Output.o: ../FL/Fl_Widget.H ../FL/fl_draw.H

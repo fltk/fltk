@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.14 2002/05/21 11:14:59 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.15 2002/05/24 14:19:19 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -881,8 +881,8 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   Fl_Text_Buffer * buf = mBuffer;
   int i, X, Y, startX, charIndex, lineStartPos, lineLen, fontHeight;
   int stdCharWidth, charWidth, startIndex, charStyle, style;
-  int charLen, outStartIndex, outIndex, cursorX, hasCursor = 0;
-  int dispIndexOffset, cursorPos = mCursorPos;
+  int charLen, outStartIndex, outIndex;
+  int dispIndexOffset;
   char expandedChar[ FL_TEXT_MAX_EXP_CHAR_LEN ], outStr[ MAX_DISP_LINE_LEN ];
   char *outPtr;
   const char *lineStr;
@@ -960,16 +960,6 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   outIndex = outStartIndex;
   X = startX;
   for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
-    if ( lineStartPos + charIndex == cursorPos ) {
-      if ( charIndex < lineLen || ( charIndex == lineLen &&
-                                    cursorPos >= buf->length() ) ) {
-        hasCursor = 1;  // CET - FIXME
-        cursorX = X - 1;
-      } else if ( charIndex == lineLen ) {
-        hasCursor = 1;
-        cursorX = X - 1;
-      }
-    }
     charLen = charIndex >= lineLen ? 1 :
               Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
                                                 buf->tab_distance(), buf->null_substitution_character() );
@@ -1958,5 +1948,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.14 2002/05/21 11:14:59 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.15 2002/05/24 14:19:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.15 2002/05/16 12:47:42 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.16 2002/05/24 14:19:19 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -297,11 +297,9 @@ void name_public_cb(Fl_Light_Button* i, void* v) {
 
 static char* oldlabel;
 static unsigned oldlabellen;
-static Fl_Input *label_input;
 
 void label_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
-    label_input = i;
     i->static_value(current_widget->label());
     if (strlen(i->value()) >= oldlabellen) {
       oldlabellen = strlen(i->value())+128;
@@ -370,11 +368,8 @@ void inactive_browse_cb(Fl_Button* b, void *v) {
   }
 }
 
-static Fl_Input *tooltip_input;
-
 void tooltip_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
-    tooltip_input = i;
     if (current_widget->is_widget()) {
       i->activate();
       i->static_value(((Fl_Widget_Type*)current_widget)->tooltip());
@@ -1975,5 +1970,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.15 2002/05/16 12:47:42 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.16 2002/05/24 14:19:19 easysw Exp $".
 //

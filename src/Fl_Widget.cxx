@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.16 2002/04/12 20:16:07 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.17 2002/05/24 14:19:19 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -68,7 +68,7 @@ Fl_Widget *Fl::readqueue() {
     
 ////////////////////////////////////////////////////////////////
 
-int Fl_Widget::handle(int event) {
+int Fl_Widget::handle(int) {
   return 0;
 }
 
@@ -250,5 +250,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.16 2002/04/12 20:16:07 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.17 2002/05/24 14:19:19 easysw Exp $".
 //

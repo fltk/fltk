@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.8 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.9 2002/05/24 14:19:19 easysw Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -154,7 +154,7 @@ int Fl_Counter::handle(int event) {
       default:
         return 0;
     }
-    break;
+    // break not required because of switch...
   case FL_FOCUS :
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
@@ -188,5 +188,5 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.8 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.9 2002/05/24 14:19:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: symbols.cxx,v 1.4.2.3.2.3 2002/05/13 05:05:11 spitzak Exp $"
+// "$Id: symbols.cxx,v 1.4.2.3.2.4 2002/05/24 14:19:19 easysw Exp $"
 //
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
@@ -41,7 +41,7 @@ int N = 0;
 
 Fl_Window *window;
 
-void slider_cb(Fl_Widget *w, void *data) {
+void slider_cb(Fl_Widget *w, void *) {
   static char buf[80];
   int val = (int)(((Fl_Value_Slider*)w)->value());
   Fl_Window *win = (Fl_Window*)w->parent();       // get parent window
@@ -126,5 +126,5 @@ bt("@DnArrow");
 }
 
 //
-// End of "$Id: symbols.cxx,v 1.4.2.3.2.3 2002/05/13 05:05:11 spitzak Exp $".
+// End of "$Id: symbols.cxx,v 1.4.2.3.2.4 2002/05/24 14:19:19 easysw Exp $".
 //

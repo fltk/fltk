@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.2 2002/05/15 19:42:34 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.3 2002/05/24 14:19:19 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -75,7 +75,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 		count,		// Number of times to repeat
 		temp,		// Temporary color
 		align;		// Alignment bytes
-  long		offbits;	// Offset to image data
+  unsigned long	offbits;	// Offset to image data
   uchar		bit,		// Bit in image
 		byte;		// Byte in image
   uchar		*ptr;		// Pointer into pixels
@@ -137,6 +137,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   // Setup image and buffers...
   d(3);
+  fseek(fp, offbits, SEEK_SET);
 
   array = new uchar[w() * h() * d()];
 
@@ -369,5 +370,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.2 2002/05/15 19:42:34 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.3 2002/05/24 14:19:19 easysw Exp $".
 //
