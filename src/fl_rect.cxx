@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.15 2004/08/26 22:24:24 matthiaswm Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.16 2004/08/27 20:02:45 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -429,9 +429,6 @@ extern Fl_Region fl_window_region;
 #elif defined(__APPLE_QUARTZ__)
 #warning quartz
 extern Fl_Region fl_window_region;
-extern Fl_Color fl_color_;
-extern class Fl_FontSize *fl_fontsize;
-extern void fl_font(class Fl_FontSize*);
 #endif
 
 // undo any clobbering of clip done by your program:
@@ -472,17 +469,9 @@ void fl_restore_clip() {
       if ( r )
         SectRgn( portClip, r, portClip );
       Rect portRect; GetPortBounds(port, &portRect);
-      // remove all clipping
-#     warning : Quartz will now destroy all font, color and line settings
-      CGContextRestoreGState(fl_gc);
-      // get rid of the following call for performance reasons
+      Fl_X::q_clear_clipping();
       ClipCGContextToRegion(fl_gc, &portRect, portClip );
-      // restore settings lost by "Restore"
-      CGContextSaveGState(fl_gc);
-      CGContextTranslateCTM(fl_gc, 0.5, portRect.bottom-portRect.top-0.5f);
-      CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-      fl_font(fl_fontsize);
-      fl_color(fl_color_);
+      Fl_X::q_fill_context();
       DisposeRgn( portClip );
     }
   }
@@ -662,5 +651,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.15 2004/08/26 22:24:24 matthiaswm Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.16 2004/08/27 20:02:45 matthiaswm Exp $".
 //

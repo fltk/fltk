@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.60 2004/08/26 22:24:23 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.61 2004/08/27 20:02:44 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1820,6 +1820,9 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
  */
 void Fl_Window::make_current() 
 {
+#ifdef __APPLE_QUARTZ__
+  Fl_X::q_release_context();
+#endif
   if ( !fl_window_region )
     fl_window_region = NewRgn();
   fl_window = i->xid;
@@ -1857,14 +1860,13 @@ void Fl_Window::make_current()
 #ifdef __APPLE_QUARTZ__
 #warning : bracket all the QD stuff above with ifdefs!
 #warning : verbose copy of patch; please check code
+#if 0
   Rect portRect;
   GetPortBounds(GetWindowPort(i->xid), &portRect);
   short port_height = portRect.bottom - portRect.top;
   if (!i->gc) {
     //CreateCGContextForPort(GetWindowPort(i->xid), &i->gc);
     QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
-#warning : line capping should not be set. Check AA settings to make this work
-    CGContextSetLineCap(i->gc, kCGLineCapSquare);
     // save the unclipped state for later
     CGContextSaveGState(i->gc);
     // translate coordinate system to coorespond with fltk's.
@@ -1874,9 +1876,54 @@ void Fl_Window::make_current()
     CGContextSetTextMatrix(i->gc, font_mx);
   }
   fl_gc = i->gc;
+#else
+  QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
+  fl_gc = i->gc;
+  CGContextSaveGState(fl_gc);
+  Fl_X::q_fill_context();
+#endif
 #endif
   return;
 }
+
+// helper function to manage the current CGContext fl_gc
+#ifdef __APPLE_QUARTZ__
+extern Fl_Color fl_color_;
+extern class Fl_FontSize *fl_fontsize;
+extern void fl_font(class Fl_FontSize*);
+
+// FLTK has only on global graphics state. This function copies the FLTK state into the
+// current Quartz context
+void Fl_X::q_fill_context() {
+  if (!fl_gc) return;
+  Rect portRect; 
+  GetPortBounds(GetWindowPort( fl_window ), &portRect);
+  CGContextTranslateCTM(fl_gc, 0.5, portRect.bottom-portRect.top-0.5f);
+  CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+  static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+  CGContextSetTextMatrix(fl_gc, font_mx);
+  fl_font(fl_fontsize);
+  fl_color(fl_color_);
+}
+
+// The only way to reste clipping to its original state is to pop the current graphics
+// state and restore the global state.
+void Fl_X::q_clear_clipping() {
+  if (!fl_gc) return;
+  CGContextRestoreGState(fl_gc);
+  CGContextSaveGState(fl_gc);
+}
+
+// Give the Quartz context back to the system
+void Fl_X::q_release_context(Fl_X *x) {
+  if (x && x->gc!=fl_gc) return;
+  if (!fl_gc) return;
+  CGContextRestoreGState(fl_gc);
+  QDEndCGContext(GetWindowPort(fl_window), &fl_gc);
+  fl_gc = 0;
+}
+
+#endif
 
 ////////////////////////////////////////////////////////////////
 // Cut & paste.
@@ -1950,6 +1997,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.60 2004/08/26 22:24:23 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.61 2004/08/27 20:02:44 matthiaswm Exp $".
 //
 

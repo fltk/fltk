@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.12 2004/08/26 00:18:41 matthiaswm Exp $"
+// "$Id: mac.H,v 1.1.2.13 2004/08/27 20:02:43 matthiaswm Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -65,7 +65,6 @@ class Fl_X
 public:
   Window xid;              // Mac WindowPtr
   GWorldPtr other_xid;     // pointer for offscreen bitmaps (doublebuffer)
-  CGContextRef gc;         // Quartz: graphics context (NULL when using QD)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
   Fl_Region subRegion;     // region for this specific subwindow
@@ -78,6 +77,11 @@ public:
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static void make(Fl_Window*);
   void flush();
+  // Quartz additions:
+  CGContextRef gc;                 // graphics context (NULL when using QD)
+  static void q_fill_context();    // fill a Quartz context with current FLTK state
+  static void q_clear_clipping();  // remove all clipping from a Quartz context
+  static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
 };
 
 inline Window fl_xid(const Fl_Window*w) 
@@ -120,6 +124,6 @@ extern void fl_open_callback(void (*cb)(const char *));
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: mac.H,v 1.1.2.12 2004/08/26 00:18:41 matthiaswm Exp $".
+// End of "$Id: mac.H,v 1.1.2.13 2004/08/27 20:02:43 matthiaswm Exp $".
 //
 

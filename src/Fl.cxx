@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.64 2004/08/26 00:18:42 matthiaswm Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.65 2004/08/27 20:02:44 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -798,6 +798,7 @@ void Fl_Window::hide() {
     fl_window = 0;
 #elif defined(__APPLE_QUARTZ__)
 # warning quartz
+  Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window )
     fl_window = 0;
 #else
@@ -1027,5 +1028,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.64 2004/08/26 00:18:42 matthiaswm Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.65 2004/08/27 20:02:44 matthiaswm Exp $".
 //

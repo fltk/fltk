@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_mac.cxx,v 1.1.2.8 2004/08/26 00:18:43 matthiaswm Exp $"
+// "$Id: fl_color_mac.cxx,v 1.1.2.9 2004/08/27 20:02:44 matthiaswm Exp $"
 //
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -71,6 +71,7 @@ void fl_color(Fl_Color i) {
   rgb.blue  = (b<<8)|b;
   RGBForeColor(&rgb);
 #elif defined(__APPLE_QUARTZ__)
+  if (!fl_gc) return; // no context yet? We will assign the color later.
   float fr = r/255.0f;
   float fg = g/255.0f;
   float fb = b/255.0f;
@@ -107,5 +108,5 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 }
 
 //
-// End of "$Id: fl_color_mac.cxx,v 1.1.2.8 2004/08/26 00:18:43 matthiaswm Exp $".
+// End of "$Id: fl_color_mac.cxx,v 1.1.2.9 2004/08/27 20:02:44 matthiaswm Exp $".
 //
