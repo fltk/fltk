@@ -302,12 +302,8 @@ use:
 <ul><pre>
 #include "icon.xbm"
 
-Pixmap p = XCreatePixmapFromBitmapData(fl_display,
-               DefaultRootWindow(fl_display), icon_bits,
-	       icon_width, icon_height,
-	       BlackPixel(fl_display, DefaultScreen(fl_display)),
-	       WhitePixel(fl_display, DefaultScreen(fl_display)),
-	       DefaultDepth(fl_display, DefaultScreen(fl_display)))
+Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
+                                 icon_bits, icon_width, icon_height);
 
 window->icon((char *)p);
 </ul></pre>
