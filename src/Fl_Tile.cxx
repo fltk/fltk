@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tile.cxx,v 1.5.2.1 1999/05/25 05:33:56 bill Exp $"
+// "$Id: Fl_Tile.cxx,v 1.5.2.2 1999/11/16 07:39:59 bill Exp $"
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
@@ -187,6 +187,7 @@ int Fl_Tile::handle(int event) {
     } else
       newy = sy;
     position(sx,sy,newx,newy);
+    do_callback();
     return 1;}
 
   }
@@ -195,5 +196,5 @@ int Fl_Tile::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Tile.cxx,v 1.5.2.1 1999/05/25 05:33:56 bill Exp $".
+// End of "$Id: Fl_Tile.cxx,v 1.5.2.2 1999/11/16 07:39:59 bill Exp $".
 //
