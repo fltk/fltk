@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.32 2002/01/17 23:43:49 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.33 2002/02/15 18:15:46 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -282,7 +282,7 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 ################################################################
 
 install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
-	echo "Installing libraries..."
+	echo "Installing libraries in $(libdir)..."
 	-mkdir -p $(libdir)
 	rm -f $(libdir)/$(LIBNAME)
 	-cp $(LIBNAME) $(GLLIBNAME) $(libdir)
@@ -325,7 +325,6 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 		chmod 755 $(libdir)/libfltk_gl.a; \
 	fi
 
-
 uninstall:
 	echo "Uninstalling libraries..."
 	rm -f $(libdir)/$(LIBNAME)
@@ -353,5 +352,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.32 2002/01/17 23:43:49 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.33 2002/02/15 18:15:46 easysw Exp $".
 #

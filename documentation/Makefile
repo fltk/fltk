@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.10 2002/01/15 02:17:18 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.11 2002/02/15 18:15:45 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -158,9 +158,11 @@ depend:
 docdir = $(datadir)/doc/fltk
 
 install: $(MANPAGES)
+	echo "Installing documentation files in $(docdir)..."
 	-mkdir -p $(docdir)
 	cp $(HTMLFILES) *.gif *.jpg index.html $(docdir)
 	chmod 644 $(docdir)/*
+	echo "Installing man pages in $(mandir)..."
 	-mkdir -p $(mandir)/cat1
 	cp fluid.$(CAT1EXT) $(mandir)/cat1
 	chmod 644 $(mandir)/cat1/fluid.$(CAT1EXT)
@@ -206,5 +208,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) --verbose --batch fltk.book -f fltk.pdf
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.10 2002/01/15 02:17:18 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.11 2002/02/15 18:15:45 easysw Exp $".
 #

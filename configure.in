@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.50 2002/01/22 00:46:09 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.51 2002/02/15 18:15:45 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -622,11 +622,11 @@ else
         	if test "x$with_optim" != x; then
 		    OPTIM="$with_optim $OPTIM"
 		else
-        	    OPTIM="-O2 $OPTIM"
+        	    OPTIM="+O2 $OPTIM"
 		fi
 	    fi
 
-            if test "x$with_optim" != x; then
+            if test "x$with_optim" = x; then
 		OPTIM="$OPTIM +DAportable"
             fi
 
@@ -683,5 +683,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.50 2002/01/22 00:46:09 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.51 2002/02/15 18:15:45 easysw Exp $".
 dnl
