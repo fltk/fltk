@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.14 1999/01/13 15:53:57 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15 1999/02/19 16:21:50 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1168,7 +1168,11 @@ const char *array_name(Fl_Widget_Type *o) {
   }
   int num = atoi(d+1);
   int sawthis = 0;
-  for (Fl_Type *t = Fl_Type::first; t; t = t->next) {
+  Fl_Type *t = o->prev;
+  Fl_Type *tp = o;
+  const char *cn = o->class_name();
+  for (; t && t->class_name() == cn; tp = t, t = t->prev);
+  for (t = tp; t && t->class_name() == cn; t = t->next) {
     if (t == o) {sawthis=1; continue;}
     const char *e = t->name();
     if (!e) continue;
@@ -1701,5 +1705,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.14 1999/01/13 15:53:57 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15 1999/02/19 16:21:50 mike Exp $".
 //
