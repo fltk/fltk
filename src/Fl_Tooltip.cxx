@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.4 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.5 2001/11/17 18:18:53 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -110,7 +110,6 @@ public:
 // when the pointer enters them
 void
 Fl_Tooltip::enter(Fl_Widget *w) {
-//  printf("Fl_Tooltip::enter(%p)\n", w);
   if ((!w || !w->tooltip()) && tooltip_callback_ && window) {
     Fl::remove_timeout(tooltip_callback_);
     window->hide();
@@ -118,6 +117,7 @@ Fl_Tooltip::enter(Fl_Widget *w) {
     return;
   }
   if (!tooltip_callback_ || !w || !w->tooltip()) return;
+  Fl::remove_timeout(tooltip_callback_);
   Fl::add_timeout(delay_, tooltip_callback_, w);
 }
 
@@ -127,7 +127,7 @@ Fl_Tooltip::enter(Fl_Widget *w) {
 // the widget
 void
 Fl_Tooltip::exit(Fl_Widget *w) {
-//  printf("Fl_Tooltip::exit(%p)\n", w);
+  printf("Fl_Tooltip::exit(%p)\n", w);
   if (tooltip_exit_) tooltip_exit_(w);
 }
 
@@ -189,5 +189,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.4 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.5 2001/11/17 18:18:53 easysw Exp $".
 //

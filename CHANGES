@@ -30,6 +30,10 @@ CHANGES IN FLTK 1.1.0b6
 	  "-kbd" and "-nokbd" options in Fl::args() processing
 	  to control whether keyboard focus is shown and handled
 	  by non-text widgets.
+	- The wrong tooltip could be shown if the user moved the
+	  mouse over adjacent widgets with tooltips.
+	- The drop-down button on Fl_Choice widgets was not
+	  limited in width.
 
 
 CHANGES IN FLTK 1.1.0b5

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.3 2001/11/03 19:24:22 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.4 2001/11/17 18:18:53 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -38,13 +38,14 @@ void Fl_Choice::draw() {
   int dx = Fl::box_dx(FL_DOWN_BOX);
   int dy = Fl::box_dy(FL_DOWN_BOX);
   int H = h() - 2 * dy;
-  int X = x() + w() - h() + dx;
+  int W = (H > 20) ? 20 : H;
+  int X = x() + w() - W - dx;
   int Y = y() + dy;
-  int w1 = (H - 4) / 3; if (w1 < 1) w1 = 1;
-  int x1 = X + (H - 2 * w1 - 1) / 2;
+  int w1 = (W - 4) / 3; if (w1 < 1) w1 = 1;
+  int x1 = X + (W - 2 * w1 - 1) / 2;
   int y1 = Y + (H - w1 - 1) / 2;
 
-  draw_box(FL_UP_BOX,X,Y,H,H,FL_GRAY);
+  draw_box(FL_UP_BOX,X,Y,W,H,FL_GRAY);
 
   fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
   fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
@@ -52,9 +53,9 @@ void Fl_Choice::draw() {
   if (mvalue()) {
     Fl_Menu_Item m = *mvalue();
     if (active_r()) m.activate(); else m.deactivate();
-    fl_clip(x() + dx, y() + dy + 1, w() - h() - 2 * dx, H - 2);
+    fl_clip(x() + dx, y() + dy + 1, w() - W, H - 2);
     fl_draw_shortcut = 2; // hack value to make '&' disappear
-    m.draw(x() + dx, y() + dy + 1, w() - h() - 2 * dx, H - 2, this,
+    m.draw(x() + dx, y() + dy + 1, w() - W, H - 2, this,
            Fl::focus() == this);
     fl_draw_shortcut = 0;
     fl_pop_clip();
@@ -116,5 +117,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.3 2001/11/03 19:24:22 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.4 2001/11/17 18:18:53 easysw Exp $".
 //
