@@ -1,5 +1,5 @@
 //
-// "$Id: glpuzzle.cxx,v 1.4 1998/12/08 21:04:40 mike Exp $"
+// "$Id: glpuzzle.cxx,v 1.5 1998/12/29 13:34:35 mike Exp $"
 //
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
@@ -1267,7 +1267,10 @@ mouse(int b, int s, int x, int y)
       }
       left_mouse = GL_TRUE;
       sel_piece = selectPiece(mousex, mousey);
-      if (computeCoords(sel_piece, mousex, mousey, &selx, &sely)) {
+      if (!sel_piece) {
+      left_mouse = GL_FALSE;
+      middle_mouse = GL_TRUE; // let it rotate object
+      } else if (computeCoords(sel_piece, mousex, mousey, &selx, &sely)) {
         grabPiece(sel_piece, selx, sely);
       }
       glutPostRedisplay();
@@ -1278,16 +1281,13 @@ mouse(int b, int s, int x, int y)
       break;
     }
   } else {
-    switch (b) {
-    case GLUT_LEFT_BUTTON:
+    if (left_mouse) {
       left_mouse = GL_FALSE;
       dropSelection();
       glutPostRedisplay();
-      break;
-    case GLUT_MIDDLE_BUTTON:
+    } else if (middle_mouse) {
       middle_mouse = GL_FALSE;
       glutPostRedisplay();
-      break;
     }
   }
   motion(x, y);
@@ -1479,5 +1479,5 @@ main(int argc, char **argv)
 #endif // added for fltk's distribution
 
 //
-// End of "$Id: glpuzzle.cxx,v 1.4 1998/12/08 21:04:40 mike Exp $".
+// End of "$Id: glpuzzle.cxx,v 1.5 1998/12/29 13:34:35 mike Exp $".
 //
