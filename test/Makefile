@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.16 2001/12/06 02:20:36 matthiaswm Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.17 2001/12/08 16:23:51 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -83,6 +83,7 @@ CPPFILES =\
 	subwindow.cxx \
 	symbols.cxx \
 	tabs.cxx \
+	threads.cxx \
 	tile.cxx \
 	tiled_image.cxx \
 	valuators.cxx
@@ -135,6 +136,7 @@ ALL =	\
 	subwindow$(EXEEXT) \
 	symbols$(EXEEXT) \
 	tabs$(EXEEXT) \
+	threads$(EXEEXT) \
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
 	valuators$(EXEEXT)
@@ -245,5 +247,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.16 2001/12/06 02:20:36 matthiaswm Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.17 2001/12/08 16:23:51 easysw Exp $".
 #

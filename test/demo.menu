@@ -62,11 +62,12 @@
 	@e:Checkers:checkers
 
 @main:Other\nTests:@o
-	@o:color choosers:color_chooser r
-	@o:file chooser:file_chooser
+	@o:Color Choosers:color_chooser r
+	@o:File Chooser:file_chooser
 	@o:XForms Emulation:forms
-	@o:fonts:fonts
+	@o:Fonts:fonts
 	@o:HelpDialog:help
+	@o:Threading:threads
 
 @main:Tutorial\nfrom\nManual:@j
 	@j:ask\n(modified):ask
