@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.2 2001/09/29 22:59:45 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.3 2001/11/17 16:37:48 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -251,13 +251,6 @@ int Fl_Input::handle(int event) {
     if (Fl::focus() != this) {
       Fl::focus(this);
       handle(FL_FOCUS);
-#if 0 // Misguided attempt to simulate Windoze select-all-on-first-click
-      // that it does for *some* (but not all) text fields:
-      if (type() != FL_MULTILINE_INPUT) {
-        position(size(), 0); // select everything
-        return 1;
-      }
-#endif
     }
     break;
 
@@ -283,5 +276,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.2 2001/09/29 22:59:45 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.3 2001/11/17 16:37:48 easysw Exp $".
 //

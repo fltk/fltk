@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.2 2001/11/17 15:59:53 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.3 2001/11/17 16:37:48 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -435,7 +435,7 @@ Fl_File_Icon::load_png(const char *png)	// I - File to read from
 	case 3 :
             temp = fl_rgb_color(row[0], row[1], row[2]);
 	    break;
-	case 4 :
+	default :
 	    if (row[3] > 127)
               temp = fl_rgb_color(row[0], row[1], row[2]);
 	    else
@@ -1020,5 +1020,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.2 2001/11/17 15:59:53 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.3 2001/11/17 16:37:48 easysw Exp $".
 //

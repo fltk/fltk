@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.1 2001/11/17 16:37:48 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -134,13 +134,44 @@ const char* fl_ok = "OK";
 const char* fl_cancel= "Cancel";
 
 // fltk functions:
+void fl_beep(int type) {
+#ifdef WIN32
+  switch (type) {
+    case FL_BEEP_QUESTION :
+    case FL_BEEP_PASSWORD :
+      MessageBeep(MD_ICONQUESTION);
+      break;
+    case FL_BEEP_MESSAGE :
+      MessageBeep(MD_ICONASTERISK);
+      break;
+    case FL_BEEP_NOTIFICATION :
+      MessageBeep(MD_ICONASTERISK);
+      break;
+    default :
+      MessageBeep(MD_ICONERROR);
+      break;
+  }
+#else
+  switch (type) {
+    case FL_BEEP_DEFAULT :
+    case FL_BEEP_ERROR :
+      if (!fl_display) fl_open_display();
+
+      XBell(fl_display, 100);
+      break;
+    default :
+      if (!fl_display) fl_open_display();
+
+      XBell(fl_display, 50);
+      break;
+  }
+#endif // WIN32
+}
 
 void fl_message(const char *fmt, ...) {
   va_list ap;
 
-#ifdef WIN32
-  MessageBeep(MB_ICONASTERISK);
-#endif // WIN32
+  fl_beep(FL_BEEP_MESSAGE);
 
   va_start(ap, fmt);
   iconlabel = "i";
@@ -152,12 +183,7 @@ void fl_message(const char *fmt, ...) {
 void fl_alert(const char *fmt, ...) {
   va_list ap;
 
-#ifdef WIN32
-  MessageBeep(MB_ICONERROR);
-#else
-  if (!fl_display) fl_open_display();
-  XBell(fl_display, 100);
-#endif // WIN32
+  fl_beep(FL_BEEP_ERROR);
 
   va_start(ap, fmt);
   iconlabel = "!";
@@ -169,9 +195,7 @@ void fl_alert(const char *fmt, ...) {
 int fl_ask(const char *fmt, ...) {
   va_list ap;
 
-#ifdef WIN32
-  MessageBeep(MB_ICONQUESTION);
-#endif // WIN32
+  fl_beep(FL_BEEP_QUESTION);
 
   va_start(ap, fmt);
   int r = innards(fmt, ap, fl_no, fl_yes, 0);
@@ -183,9 +207,7 @@ int fl_ask(const char *fmt, ...) {
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_list ap;
 
-#ifdef WIN32
-  MessageBeep(MB_ICONQUESTION);
-#endif // WIN32
+  fl_beep(FL_BEEP_QUESTION);
 
   va_start(ap, b2);
   int r = innards(fmt, ap, b0, b1, b2);
@@ -214,6 +236,8 @@ static const char* input_innards(const char* fmt, va_list ap,
 }
 
 const char* fl_input(const char *fmt, const char *defstr, ...) {
+  fl_beep(FL_BEEP_QUESTION);
+
   va_list ap;
   va_start(ap, defstr);
   const char* r = input_innards(fmt, ap, defstr, FL_NORMAL_INPUT);
@@ -222,6 +246,8 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
 }
 
 const char *fl_password(const char *fmt, const char *defstr, ...) {
+  fl_beep(FL_BEEP_PASSWORD);
+
   va_list ap;
   va_start(ap, defstr);
   const char* r = input_innards(fmt, ap, defstr, FL_SECRET_INPUT);
@@ -230,5 +256,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.1 2001/11/17 16:37:48 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.2 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.3 2001/11/17 16:37:48 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Input_.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_ask.H>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -713,6 +714,23 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
     if (type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
+    if (type() == FL_INT_INPUT) {
+      const char *p = t;
+      while ((isdigit(*p) || *p == '+' || *p == '-') && p < e)
+        p ++;
+      if (p < e) {
+        fl_beep(FL_BEEP_ERROR);
+        return 1;
+      }
+    } else if (type() == FL_FLOAT_INPUT) {
+      const char *p = t;
+      while ((isdigit(*p) || *p == '+' || *p == '-' || *p == '.') && p < e)
+        p ++;
+      if (p < e) {
+        fl_beep(FL_BEEP_ERROR);
+        return 1;
+      }
+    }
     return replace(position(), mark(), t, e-t);}
 
   default:
@@ -821,5 +839,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.2 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.3 2001/11/17 16:37:48 easysw Exp $".
 //

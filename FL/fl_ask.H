@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.H,v 1.7.2.4 2001/05/11 18:37:08 easysw Exp $"
+// "$Id: fl_ask.H,v 1.7.2.4.2.1 2001/11/17 16:37:47 easysw Exp $"
 //
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,16 @@
 
 class Fl_Widget;
 
+enum {
+  FL_BEEP_DEFAULT = 0,
+  FL_BEEP_MESSAGE,
+  FL_BEEP_ERROR,
+  FL_BEEP_QUESTION,
+  FL_BEEP_PASSWORD,
+  FL_BEEP_NOTIFICATION
+};
+
+FL_EXPORT void fl_beep(int type = FL_BEEP_DEFAULT);
 FL_EXPORT void fl_message(const char *,...);
 FL_EXPORT void fl_alert(const char *,...);
 FL_EXPORT int fl_ask(const char *,...);
@@ -52,5 +62,5 @@ extern FL_EXPORT const char* fl_cancel;
 #endif
 
 //
-// End of "$Id: fl_ask.H,v 1.7.2.4 2001/05/11 18:37:08 easysw Exp $".
+// End of "$Id: fl_ask.H,v 1.7.2.4.2.1 2001/11/17 16:37:47 easysw Exp $".
 //
