@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.53 2003/08/02 13:49:17 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.54 2003/08/24 13:09:06 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -234,19 +234,19 @@ $(FLLIBNAME): $(FLOBJECTS)
 	$(LIBCOMMAND) $@ $(FLOBJECTS)
 	$(RANLIB) $@
 
-libfltk_forms.so.1.1: $(FLOBJECTS)
+libfltk_forms.so.1.1: $(FLOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS)
+	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
 	-$(RM) libfltk_forms.so
 	$(LN) libfltk_forms.so.1.1 libfltk_forms.so
 
-libfltk_forms.sl.1.1: $(FLOBJECTS)
+libfltk_forms.sl.1.1: $(FLOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS)
+	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
 	-$(RM) libfltk_forms.sl
 	$(LN) libfltk_forms.sl.1.1 libfltk_forms.sl
 
-libfltk_forms.1.1.dylib: $(FLOBJECTS)
+libfltk_forms.1.1.dylib: $(FLOBJECTS) libfltk.1.1.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
@@ -270,19 +270,19 @@ $(GLLIBNAME): $(GLOBJECTS)
 	$(LIBCOMMAND) $@ $(GLOBJECTS)
 	$(RANLIB) $@
 
-libfltk_gl.so.1.1: $(GLOBJECTS)
+libfltk_gl.so.1.1: $(GLOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(GLOBJECTS)
+	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
 	-$(RM) libfltk_gl.so
 	$(LN) libfltk_gl.so.1.1 libfltk_gl.so
 
-libfltk_gl.sl.1.1: $(GLOBJECTS)
+libfltk_gl.sl.1.1: $(GLOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(GLOBJECTS)
+	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
 	-$(RM) libfltk_gl.sl
 	$(LN) libfltk_gl.sl.1.1 libfltk_gl.sl
 
-libfltk_gl.1.1.dylib: $(GLOBJECTS)
+libfltk_gl.1.1.dylib: $(GLOBJECTS) libfltk.1.1.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
@@ -306,19 +306,19 @@ $(IMGLIBNAME): $(IMGOBJECTS)
 	$(LIBCOMMAND) $@ $(IMGOBJECTS)
 	$(RANLIB) $@
 
-libfltk_images.so.1.1: $(IMGOBJECTS)
+libfltk_images.so.1.1: $(IMGOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS)
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS) -L. -lfltk
 	-$(RM) libfltk_images.so
 	$(LN) libfltk_images.so.1.1 libfltk_images.so
 
-libfltk_images.sl.1.1: $(IMGOBJECTS)
+libfltk_images.sl.1.1: $(IMGOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS)
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS) -L. -lfltk
 	-$(RM) libfltk_images.sl
 	$(LN) libfltk_images.sl.1.1 libfltk_images.sl
 
-libfltk_images.1.1.dylib: $(IMGOBJECTS)
+libfltk_images.1.1.dylib: $(IMGOBJECTS) libfltk.1.1.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
@@ -582,5 +582,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.53 2003/08/02 13:49:17 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.54 2003/08/24 13:09:06 easysw Exp $".
 #

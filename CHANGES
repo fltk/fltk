@@ -1,5 +1,16 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Text_Display/Editor did not disable the current
+	  selection when focus was shifted to another widget
+	  (STR #131)
+	- Fl_Choice didn't use the normal focus box when the
+	  plastic scheme was in use (STR #129)
+	- Fl_Text_Editor didn't use selection_color()
+	  consistently (STR #130)
+	- The fltk_forms, fltk_gl, and fltk_images DSO's and
+	  HP-UX shared libraries are now linked against the fltk
+	  shared library to provide complete dependency
+	  resolution (STR #118)
 	- The configure.in file did not work with autoconf 2.57.
 	- FLUID didn't redraw widgets when changing the X, Y, W,
 	  or H values in the widget panel (STR #120)

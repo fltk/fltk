@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.45 2003/05/04 22:29:01 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.46 2003/08/24 13:09:06 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1580,12 +1580,12 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     font  = styleRec->font;
     fsize = styleRec->size;
 
-    if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) ) {
+    if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) && Fl::focus() == this) {
       background = selection_color();
     } else background = color();
 
     foreground = fl_contrast(styleRec->color, background);
-  } else if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) ) {
+  } else if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) && Fl::focus() == this ) {
     background = selection_color();
     foreground = fl_contrast(textcolor(), background);
   } else {
@@ -1628,11 +1628,14 @@ void Fl_Text_Display::clear_rect( int style, int X, int Y,
   if ( width == 0 )
     return;
 
-  if ( style & HIGHLIGHT_MASK ) {
+  if ( Fl::focus() != this ) {
+    fl_color( color() );
+    fl_rectf( X, Y, width, height );
+  } else if ( style & HIGHLIGHT_MASK ) {
     fl_color( fl_contrast(textcolor(), color()) );
     fl_rectf( X, Y, width, height );
   } else if ( style & PRIMARY_MASK ) {
-    fl_color( FL_SELECTION_COLOR );
+    fl_color( selection_color() );
     fl_rectf( X, Y, width, height );
   } else {
     fl_color( color() );
@@ -3042,6 +3045,12 @@ int Fl_Text_Display::handle(int event) {
 
     case FL_MOUSEWHEEL:
       return mVScrollBar->handle(event);
+
+    case FL_FOCUS:
+    case FL_UNFOCUS:
+      if (buffer()->primary_selection()->start() !=
+          buffer()->primary_selection()->end()) redraw(); // Redraw selections...
+      break;
   }
 
   return 0;
@@ -3049,5 +3058,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.45 2003/05/04 22:29:01 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.46 2003/08/24 13:09:06 easysw Exp $".
 //

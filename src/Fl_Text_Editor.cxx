@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.16 2003/05/27 20:20:20 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.17 2003/08/24 13:09:06 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -451,11 +451,15 @@ int Fl_Text_Editor::handle(int event) {
   switch (event) {
     case FL_FOCUS:
       show_cursor(mCursorOn); // redraws the cursor
+      if (buffer()->primary_selection()->start() !=
+          buffer()->primary_selection()->end()) redraw(); // Redraw selections...
       Fl::focus(this);
       return 1;
 
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
+      if (buffer()->primary_selection()->start() !=
+          buffer()->primary_selection()->end()) redraw(); // Redraw selections...
     case FL_HIDE:
       if (when() & FL_WHEN_RELEASE) maybe_do_callback();
       return 1;
@@ -486,5 +490,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.16 2003/05/27 20:20:20 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.17 2003/08/24 13:09:06 easysw Exp $".
 //

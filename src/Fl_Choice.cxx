@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.13 2003/01/30 21:41:34 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.14 2003/08/24 13:09:06 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -63,12 +63,33 @@ void Fl_Choice::draw() {
   if (mvalue()) {
     Fl_Menu_Item m = *mvalue();
     if (active_r()) m.activate(); else m.deactivate();
-    fl_clip(x() + dx, y() + dy + 1, w() - W, H - 2);
-    fl_draw_shortcut = 2; // hack value to make '&' disappear
-    m.draw(x() + dx, y() + dy + 1, w() - W, H - 2, this,
-           Fl::focus() == this);
-    fl_draw_shortcut = 0;
-    fl_pop_clip();
+
+    // ERCO
+    int xx = x() + dx, yy = y() + dy + 1, ww = w() - W, hh = H - 2;
+    if ( Fl::scheme() )
+    {
+        Fl_Label l;
+	l.value = m.text;
+	l.image = 0;
+	l.deimage = 0;
+	l.type = m.labeltype_;
+	l.font = m.labelsize_ || m.labelfont_ ? m.labelfont_ : uchar(textfont());
+	l.size = m.labelsize_ ? m.labelsize_ : textsize();
+	l.color= m.labelcolor_ ? m.labelcolor_ : textcolor();
+	if (!m.active()) l.color = fl_inactive((Fl_Color)l.color);
+	fl_draw_shortcut = 2; // hack value to make '&' disappear
+	l.draw(xx+3, yy, ww>6 ? ww-6 : 0, hh, FL_ALIGN_LEFT);
+	fl_draw_shortcut = 0;
+	if ( Fl::focus() == this ) draw_focus(box(), xx, yy, ww, hh);
+    }
+    else
+    {
+	fl_clip(xx, yy, ww, hh);
+	fl_draw_shortcut = 2; // hack value to make '&' disappear
+	m.draw(xx, yy, ww, hh, this, Fl::focus() == this);
+	fl_draw_shortcut = 0;
+	fl_pop_clip();
+    }
   }
 
   draw_label();
@@ -130,5 +151,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.13 2003/01/30 21:41:34 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.14 2003/08/24 13:09:06 easysw Exp $".
 //
