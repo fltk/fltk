@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.18 2002/09/04 20:33:17 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.19 2002/09/09 02:04:46 spitzak Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1491,11 +1491,9 @@ void Fl_Widget_Type::write_code1() {
   if (varused) write_c("{ %s* o = ", t);
   if (name()) write_c("%s = ", name());
   if (is_window()) {
-    // Handle special case of Fl_Group class type within a window -
-    // output constructor using x, y, w, h...
-    if (strcmp(t, "Fl_Group") == 0 ||
-        strcmp(t, "Fl_Tabs") == 0 ||
-	strcmp(t, "Fl_Tile") == 0)
+    // Handle special case where user is faking a Fl_Group type as a window,
+    // there is no 2-argument constructor in that case:
+    if (!strstr(t, "Window"))
       write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
     else
       write_c("new %s(%d, %d", t, o->w(), o->h());
@@ -1972,5 +1970,5 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.18 2002/09/04 20:33:17 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.19 2002/09/09 02:04:46 spitzak Exp $".
 //
