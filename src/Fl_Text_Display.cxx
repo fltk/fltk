@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.33 2002/10/23 13:21:14 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.34 2002/10/24 17:26:03 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -377,6 +377,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     /* reallocate and update the line starts array, which may have changed
        size and / or contents.  */
     int nvlines = (text_area.h + mMaxsize - 1) / mMaxsize;
+    if (nvlines < 1) nvlines = 1;
     if (mNVisibleLines != nvlines) {
       mNVisibleLines = nvlines;
       if (mLineStarts) delete[] mLineStarts;
@@ -3026,5 +3027,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.33 2002/10/23 13:21:14 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.34 2002/10/24 17:26:03 easysw Exp $".
 //

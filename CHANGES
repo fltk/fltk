@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- Fl_Text_Display didn't limit the resize height to 1
+	  line.
 	- Fl_Scrollbar widgets incorrectly took keyboard focus
 	  when clicked on. This caused widgets such as
 	  Fl_Text_Display to hide the cursor when you scrolled
