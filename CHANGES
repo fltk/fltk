@@ -1,7 +1,13 @@
+CHANGES IN FLTK 1.1.7
+
+	- Added missing Watcom makefile in the test directory
+	  (STR #636)
+	- Fl_Text_Display::word_left would hang if the cursor
+	  was at position 0 (STR #635)
+
+
 CHANGES IN FLTK 1.1.6
 
-	- Fl_Text_Display::word_left would hang if cursor was
-	  at pos 0
 	- Documentation updates (STR #552, STR #608)
 	- Added the 2.0 Fl_Widget::copy_label() method to
 	  allow FLTK 1.x applications to have their label
