@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Hold_Browser.H,v 1.4.2.3.2.1 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Hold_Browser.H,v 1.4.2.3.2.2 2002/08/09 22:56:59 easysw Exp $"
 //
 // Hold browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,12 +30,12 @@
 
 class Fl_Hold_Browser : public Fl_Browser {
 public:
-    Fl_Hold_Browser(int x,int y,int w,int h,const char *l=0)
-	: Fl_Browser(x,y,w,h,l) {type(FL_HOLD_BROWSER);}
+    Fl_Hold_Browser(int X,int Y,int W,int H,const char *l=0)
+	: Fl_Browser(X,Y,W,H,l) {type(FL_HOLD_BROWSER);}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Hold_Browser.H,v 1.4.2.3.2.1 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Hold_Browser.H,v 1.4.2.3.2.2 2002/08/09 22:56:59 easysw Exp $".
 //

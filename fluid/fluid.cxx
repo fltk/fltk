@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.29 2002/06/28 21:10:19 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.30 2002/08/09 22:57:00 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -93,7 +93,7 @@ void goto_source_dir() {
   const char *p = fl_filename_name(filename);
   if (p <= filename) return; // it is in the current directory
   char buffer[1024];
-  strcpy(buffer,filename);
+  strlcpy(buffer, filename, sizeof(buffer));
   int n = p-filename; if (n>1) n--; buffer[n] = 0;
   if (!pwd) {
     pwd = getcwd(0,1024);
@@ -218,24 +218,25 @@ void write_cb(Fl_Widget *, void *) {
   }
   char cname[1024];
   char hname[1024];
-  strcpy(i18n_program, fl_filename_name(filename));
-  fl_filename_setext(i18n_program, "");
+  strlcpy(i18n_program, fl_filename_name(filename), sizeof(i18n_program));
+  fl_filename_setext(i18n_program, sizeof(i18n_program), "");
   if (*code_file_name == '.' && strchr(code_file_name, '/') == NULL) {
-    strcpy(cname,fl_filename_name(filename));
-    fl_filename_setext(cname, code_file_name);
+    strlcpy(cname, fl_filename_name(filename), sizeof(cname));
+    fl_filename_setext(cname, sizeof(cname), code_file_name);
   } else {
-    strcpy(cname, code_file_name);
+    strlcpy(cname, code_file_name, sizeof(hname));
   }
   if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
-    strcpy(hname,fl_filename_name(filename));
-    fl_filename_setext(hname, header_file_name);
+    strlcpy(hname, fl_filename_name(filename), sizeof(hname));
+    fl_filename_setext(hname, sizeof(hname), header_file_name);
   } else {
-    strcpy(hname, header_file_name);
+    strlcpy(hname, header_file_name, sizeof(hname));
   }
   if (!compile_only) goto_source_dir();
   int x = write_code(cname,hname);
   if (!compile_only) leave_source_dir();
-  strcat(cname, " and "); strcat(cname,hname);
+  strlcat(cname, " and ", sizeof(cname));
+  strlcat(cname, hname, sizeof(cname));
   if (compile_only) {
     if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
   } else {
@@ -254,8 +255,8 @@ void write_strings_cb(Fl_Widget *, void *) {
     if (!filename) return;
   }
   char sname[1024];
-  strcpy(sname,fl_filename_name(filename));
-  fl_filename_setext(sname, exts[i18n_type]);
+  strlcpy(sname, fl_filename_name(filename), sizeof(sname));
+  fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
   if (!compile_only) goto_source_dir();
   int x = write_strings(sname);
   if (!compile_only) leave_source_dir();
@@ -365,7 +366,7 @@ void about_cb(Fl_Widget *, void *) {
 
 void show_help(const char *name) {
   const char	*docdir;
-  char		filename[1024];
+  char		helpname[1024];
   
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
@@ -374,16 +375,17 @@ void show_help(const char *name) {
     // Doesn't make sense to have a hardcoded fallback
     static char fltk_docdir[1024];
 
-    strcpy(fltk_docdir, __XOS2RedirRoot("/XFree86/lib/X11/fltk/doc"));
+    strlcpy(fltk_docdir, __XOS2RedirRoot("/XFree86/lib/X11/fltk/doc"),
+            sizeof(fltk_docdir));
 
     docdir = fltk_docdir;
 #else
     docdir = FLTK_DOCDIR;
 #endif // __EMX__
   }
-  snprintf(filename, sizeof(filename), "%s/%s", docdir, name);  
+  snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);  
 
-  help_dialog->load(filename);
+  help_dialog->load(helpname);
   help_dialog->show();
 }
 
@@ -539,11 +541,11 @@ void load_history() {
 }
 
 // Update file history from preferences...
-void update_history(const char *filename) {
+void update_history(const char *flname) {
   int	i;		// Looping var
   char	absolute[1024];
 
-  fl_filename_absolute(absolute, sizeof(absolute), filename);
+  fl_filename_absolute(absolute, sizeof(absolute), flname);
 
   for (i = 0; i < 10; i ++)
 #if defined(WIN32) || defined(__APPLE__)
@@ -556,7 +558,7 @@ void update_history(const char *filename) {
 
   if (i >= 10) i = 9;
 
-  // Move the other filenames down in the list...
+  // Move the other flnames down in the list...
   memmove(absolute_history + 1, absolute_history,
           i * sizeof(absolute_history[0]));
   memmove(relative_history + 1, relative_history,
@@ -795,5 +797,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.29 2002/06/28 21:10:19 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.30 2002/08/09 22:57:00 easysw Exp $".
 //

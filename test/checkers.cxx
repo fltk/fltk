@@ -1,5 +1,5 @@
 //
-// "$Id: checkers.cxx,v 1.9.2.7.2.2 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: checkers.cxx,v 1.9.2.7.2.3 2002/08/09 22:57:00 easysw Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -184,7 +184,7 @@ char check(int target,int direction) {
   int src = target+direction;
   if (tb[src] == FRIENDKING);
   else if (direction < 0 || tb[src] != FRIEND) return(0);
-  piece a = tb[target]; piece b = tb[src];
+  piece aa = tb[target]; piece bb = tb[src];
   tb[target] = EMPTY; tb[src] = EMPTY;
   int safe =
     (tb[src-4]&FRIEND && tb[src-8]&ENEMY
@@ -195,7 +195,7 @@ char check(int target,int direction) {
      ||tb[src+5]&FRIEND && tb[src+10]==ENEMYKING
      ||tb[dst+4]==ENEMYKING && !tb[dst-4]
      ||tb[dst+5]==ENEMYKING && !tb[dst-5]);
-  tb[target] = a; tb[src] = b;
+  tb[target] = aa; tb[src] = bb;
   return(safe);
 }
 
@@ -1355,5 +1355,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.9.2.7.2.2 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: checkers.cxx,v 1.9.2.7.2.3 2002/08/09 22:57:00 easysw Exp $".
 //

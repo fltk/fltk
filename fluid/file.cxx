@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.6.2.6 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: file.cxx,v 1.7.2.6.2.7 2002/08/09 22:57:00 easysw Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -465,9 +465,9 @@ static void read_children(Fl_Type *p, int paste) {
 
     t->open_ = 0;
     for (;;) {
-      const char *c = read_word();
-      if (!c || !strcmp(c,"}")) break;
-      t->read_property(c);
+      const char *cc = read_word();
+      if (!cc || !strcmp(cc,"}")) break;
+      t->read_property(cc);
     }
 
     if (!t->is_parent()) continue;
@@ -631,5 +631,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.6.2.6 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: file.cxx,v 1.7.2.6.2.7 2002/08/09 22:57:00 easysw Exp $".
 //

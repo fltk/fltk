@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.5 2002/04/27 18:34:11 easysw Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.6 2002/08/09 22:57:00 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -298,26 +298,26 @@ public:
 class igroup : public Fl_Group {
 public:
   void resize(int,int,int,int);
-  igroup(int x,int y,int w,int h) : Fl_Group(x,y,w,h) {Fl_Group::current(0);}
+  igroup(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) {Fl_Group::current(0);}
 };
 
 class itabs : public Fl_Tabs {
 public:
   void resize(int,int,int,int);
-  itabs(int x,int y,int w,int h) : Fl_Tabs(x,y,w,h) {}
+  itabs(int X,int Y,int W,int H) : Fl_Tabs(X,Y,W,H) {}
 };
 
 class iwizard : public Fl_Wizard {
 public:
   void resize(int,int,int,int);
-  iwizard(int x,int y,int w,int h) : Fl_Wizard(x,y,w,h) {}
+  iwizard(int X,int Y,int W,int H) : Fl_Wizard(X,Y,W,H) {}
 };
 
 class Fl_Group_Type : public Fl_Widget_Type {
 public:
   virtual const char *type_name() {return "Fl_Group";}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    igroup *g = new igroup(x,y,w,h); Fl_Group::current(0); return g;}
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    igroup *g = new igroup(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() {return new Fl_Group_Type();}
   Fl_Type *make();
   void write_code1();
@@ -344,8 +344,8 @@ extern const char tabs_type_name[];
 class Fl_Tabs_Type : public Fl_Group_Type {
 public:
   virtual const char *type_name() {return tabs_type_name;}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    itabs *g = new itabs(x,y,w,h); Fl_Group::current(0); return g;}
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    itabs *g = new itabs(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() {return new Fl_Tabs_Type();}
   Fl_Type* click_test(int,int);
   void add_child(Fl_Type*, Fl_Type*);
@@ -375,8 +375,8 @@ extern const char wizard_type_name[];
 class Fl_Wizard_Type : public Fl_Group_Type {
 public:
   virtual const char *type_name() {return wizard_type_name;}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    iwizard *g = new iwizard(x,y,w,h); Fl_Group::current(0); return g;}
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    iwizard *g = new iwizard(X,Y,W,H); Fl_Group::current(0); return g;}
   Fl_Widget_Type *_make() {return new Fl_Wizard_Type();}
 };
 
@@ -499,8 +499,8 @@ class Fl_Menu_Button_Type : public Fl_Menu_Type {
   Fl_Menu_Item *subtypes() {return button_type_menu;}
 public:
   virtual const char *type_name() {return "Fl_Menu_Button";}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    return new Fl_Menu_Button(x,y,w,h,"menu");}
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    return new Fl_Menu_Button(X,Y,W,H,"menu");}
   Fl_Widget_Type *_make() {return new Fl_Menu_Button_Type();}
 };
 
@@ -510,8 +510,8 @@ extern Fl_Menu_Item dummymenu[];
 class Fl_Choice_Type : public Fl_Menu_Type {
 public:
   virtual const char *type_name() {return "Fl_Choice";}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Choice *myo = new Fl_Choice(x,y,w,h,"choice:");
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    Fl_Choice *myo = new Fl_Choice(X,Y,W,H,"choice:");
     myo->menu(dummymenu);
     return myo;
   }
@@ -522,12 +522,12 @@ public:
 class Fl_Menu_Bar_Type : public Fl_Menu_Type {
 public:
   virtual const char *type_name() {return "Fl_Menu_Bar";}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    return new Fl_Menu_Bar(x,y,w,h);}
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    return new Fl_Menu_Bar(X,Y,W,H);}
   Fl_Widget_Type *_make() {return new Fl_Menu_Bar_Type();}
 };
 // object list operations:
-Fl_Widget *make_widget_browser(int x,int y,int w,int h);
+Fl_Widget *make_widget_browser(int X,int Y,int W,int H);
 extern int modflag;
 void delete_all(int selected_only=0);
 void selection_changed(Fl_Type* new_current);
@@ -567,5 +567,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.5 2002/04/27 18:34:11 easysw Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.6 2002/08/09 22:57:00 easysw Exp $".
 //

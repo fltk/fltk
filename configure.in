@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.83 2002/08/09 01:09:47 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.84 2002/08/09 22:56:59 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -614,8 +614,11 @@ if test -n "$GCC"; then
 
     CXX="$CC"
 
-    # Show all warnings when compiling...
-    OPTIM="-Wall -Wshadow -Wconversion -Winline $OPTIM"
+    # Show all standard warnings + unused variables when compiling...
+    OPTIM="-Wall -Wunused $OPTIM"
+
+    # The following additional warnings are useful for tracking down problems...
+    #OPTIM="-Wshadow -Wconversion -Winline $OPTIM"
 
     # Set the default compiler optimizations...
     if test -z "$DEBUGFLAG"; then
@@ -782,5 +785,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.83 2002/08/09 01:09:47 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.84 2002/08/09 22:56:59 easysw Exp $".
 dnl

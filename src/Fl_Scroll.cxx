@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.2 2002/08/09 22:57:00 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,9 +29,8 @@
 
 // Insure the scrollbars are the last children:
 void Fl_Scroll::fix_scrollbar_order() {
-  Fl_Widget*const* a = array();
+  Fl_Widget** a = (Fl_Widget**)array();
   if (a[children()-1] != &scrollbar) {
-    Fl_Widget** a = (Fl_Widget**)array();
     int i,j; for (i = j = 0; j < children(); j++)
       if (a[j] != &hscrollbar && a[j] != &scrollbar) a[i++] = a[j];
     a[i++] = &hscrollbar;
@@ -249,5 +248,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.2 2002/08/09 22:57:00 easysw Exp $".
 //

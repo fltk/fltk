@@ -1,5 +1,5 @@
 //
-// "$Id: bitmap.cxx,v 1.4.2.3.2.3 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: bitmap.cxx,v 1.4.2.3.2.4 2002/08/09 22:57:00 easysw Exp $"
 //
 // Bitmap label test program for the Fast Light Tool Kit (FLTK).
 //
@@ -117,9 +117,9 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 int main(int argc, char **argv) {
-  Fl_Window window(400,400); ::w = &window;
-  Fl_Button b(140,160,120,120,"Bitmap"); ::b = &b;
-  (new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height))->label(&b);
+  w = new Fl_Window(400,400);
+  b = new Fl_Button(140,160,120,120,"Bitmap");
+  b->image(new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height));
   leftb = new Fl_Toggle_Button(25,50,50,25,"left");
   leftb->callback(button_cb);
   rightb = new Fl_Toggle_Button(75,50,50,25,"right");
@@ -134,12 +134,12 @@ int main(int argc, char **argv) {
   overb->callback(button_cb);
   inactb = new Fl_Toggle_Button(125,75,100,25,"inactive");
   inactb->callback(button_cb);
-  window.resizable(window);
-  window.end();
-  window.show(argc, argv);
+  w->resizable(w);
+  w->end();
+  w->show(argc, argv);
   return Fl::run();
 }
 
 //
-// End of "$Id: bitmap.cxx,v 1.4.2.3.2.3 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: bitmap.cxx,v 1.4.2.3.2.4 2002/08/09 22:57:00 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.5 2002/05/16 12:47:42 easysw Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.6 2002/08/09 22:56:59 easysw Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -260,13 +260,13 @@ void Fl_Menu_Item_Type::write_item() {
 }
 
 void Fl_Menu_Item_Type::write_code1() {
-  int i; const char* name = menu_name(i);
+  int i; const char* mname = menu_name(i);
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
     if (class_name(1))
-      write_h("  static Fl_Menu_Item %s[];\n", name);
+      write_h("  static Fl_Menu_Item %s[];\n", mname);
     else
-      write_h("extern Fl_Menu_Item %s[];\n", name);
+      write_h("extern Fl_Menu_Item %s[];\n", mname);
   }
 
   const char *c = array_name(this);
@@ -275,7 +275,7 @@ void Fl_Menu_Item_Type::write_code1() {
       write_public(public_);
       write_h("  static Fl_Menu_Item *%s;\n", c);
     } else
-      write_h("#define %s (%s+%d)\n", c, name, i);
+      write_h("#define %s (%s+%d)\n", c, mname, i);
   }
 
   if (callback()) {
@@ -290,7 +290,7 @@ void Fl_Menu_Item_Type::write_code1() {
 
   int init = 0;
   if (image) {
-    write_c(" {Fl_Menu_Item* o = &%s[%d];\n", name, i);
+    write_c(" {Fl_Menu_Item* o = &%s[%d];\n", mname, i);
     init = 1;
     image->write_code();
   }
@@ -298,7 +298,7 @@ void Fl_Menu_Item_Type::write_code1() {
     if (extra_code(n) && !isdeclare(extra_code(n))) {
       if (!init) {
 	init = 1;
-	write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), name, i);
+	write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
       }
       write_c("%s  %s\n", indent(), extra_code(n));
     }
@@ -465,5 +465,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.5 2002/05/16 12:47:42 easysw Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.6 2002/08/09 22:56:59 easysw Exp $".
 //

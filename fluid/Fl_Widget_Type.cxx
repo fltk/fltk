@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.16 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.17 2002/08/09 22:57:00 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1878,9 +1878,9 @@ Fl_Menu_Item boxmenu1[] = {
 extern int fdesign_flip;
 int lookup_symbol(const char *, int &, int numberok = 0);
 
-int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
+int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
   int v;
-  if (!strcmp(name,"box")) {
+  if (!strcmp(propname,"box")) {
     float x,y,w,h;
     if (sscanf(value,"%f %f %f %f",&x,&y,&w,&h) == 4) {
       if (fdesign_flip) {
@@ -1892,39 +1892,39 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
       y += pasteoffset;
       o->resize(int(x),int(y),int(w),int(h));
     }
-  } else if (!strcmp(name,"label")) {
+  } else if (!strcmp(propname,"label")) {
     label(value);
-  } else if (!strcmp(name,"name")) {
+  } else if (!strcmp(propname,"name")) {
     this->name(value);
-  } else if (!strcmp(name,"callback")) {
+  } else if (!strcmp(propname,"callback")) {
     callback(value); user_data_type("long");
-  } else if (!strcmp(name,"argument")) {
+  } else if (!strcmp(propname,"argument")) {
     user_data(value);
-  } else if (!strcmp(name,"shortcut")) {
+  } else if (!strcmp(propname,"shortcut")) {
     if (value[0]) {
       char buf[128]; sprintf(buf,"o->shortcut(\"%s\");",value);
       extra_code(0,buf);
     }
-  } else if (!strcmp(name,"style")) {
+  } else if (!strcmp(propname,"style")) {
     if (!strncmp(value,"FL_NORMAL",9)) return 1;
     if (!lookup_symbol(value,v,1)) return 0;
     o->labelfont(v); o->labeltype((Fl_Labeltype)(v>>8));
-  } else if (!strcmp(name,"size")) {
+  } else if (!strcmp(propname,"size")) {
     if (!lookup_symbol(value,v,1)) return 0;
     o->labelsize(v);
-  } else if (!strcmp(name,"type")) {
+  } else if (!strcmp(propname,"type")) {
     if (!strncmp(value,"NORMAL",6)) return 1;
     if (lookup_symbol(value,v,1)) {o->type(v); return 1;}
     if (!strcmp(value+strlen(value)-5,"FRAME")) goto TRY_BOXTYPE;
     if (!strcmp(value+strlen(value)-3,"BOX")) goto TRY_BOXTYPE;
     return 0;
-  } else if (!strcmp(name,"lcol")) {
+  } else if (!strcmp(propname,"lcol")) {
     if (!lookup_symbol(value,v,1)) return 0;
     o->labelcolor(v);
-  } else if (!strcmp(name,"return")) {
+  } else if (!strcmp(propname,"return")) {
     if (!lookup_symbol(value,v,0)) return 0;
     o->when(v|FL_WHEN_RELEASE);
-  } else if (!strcmp(name,"alignment")) {
+  } else if (!strcmp(propname,"alignment")) {
     if (!lookup_symbol(value,v)) {
       // convert old numeric values:
       int v1 = atoi(value); if (v1 <= 0 && strcmp(value,"0")) return 0;
@@ -1940,9 +1940,9 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
       }
     }
     o->align(v);
-  } else if (!strcmp(name,"resizebox")) {
+  } else if (!strcmp(propname,"resizebox")) {
     resizable(1);
-  } else if (!strcmp(name,"colors")) {
+  } else if (!strcmp(propname,"colors")) {
     char* p = (char*)value;
     while (*p != ' ') {if (!*p) return 0; p++;}
     *p = 0;
@@ -1950,11 +1950,11 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
     if (!lookup_symbol(value,v,1) || !lookup_symbol(p+1,v1,1)) {
       *p=' '; return 0;}
     o->color(v,v1);
-  } else if (!strcmp(name,"resize")) {
+  } else if (!strcmp(propname,"resize")) {
     return !strcmp(value,"FL_RESIZE_ALL");
-  } else if (!strcmp(name,"gravity")) {
+  } else if (!strcmp(propname,"gravity")) {
     return !strcmp(value,"FL_NoGravity FL_NoGravity");
-  } else if (!strcmp(name,"boxtype")) {
+  } else if (!strcmp(propname,"boxtype")) {
   TRY_BOXTYPE:
     int x = boxnumber(value);
     if (!x) {x = item_number(boxmenu1, value); if (x < 0) return 0;}
@@ -1970,5 +1970,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.16 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.17 2002/08/09 22:57:00 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Shortcut_Button.h,v 1.3.2.3.2.1 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Shortcut_Button.h,v 1.3.2.3.2.2 2002/08/09 22:57:00 easysw Exp $"
 //
 // Shortcut header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,10 +30,10 @@ public:
   int svalue;
   int handle(int);
   void draw();
-  Shortcut_Button(int x, int y, int w, int h, const char* l = 0) :
-    Fl_Button(x,y,w,h,l) {svalue = 0;}
+  Shortcut_Button(int X,int Y,int W,int H, const char* l = 0) :
+    Fl_Button(X,Y,W,H,l) {svalue = 0;}
 };
 
 //
-// End of "$Id: Shortcut_Button.h,v 1.3.2.3.2.1 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Shortcut_Button.h,v 1.3.2.3.2.2 2002/08/09 22:57:00 easysw Exp $".
 //

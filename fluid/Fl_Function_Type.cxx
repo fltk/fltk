@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.7 2002/05/16 12:47:42 easysw Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.8 2002/08/09 22:56:59 easysw Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -258,25 +258,26 @@ void Fl_Function_Type::write_code1() {
       write_h("%s;\n", s);
       // skip all function default param. init in body:
       int skips=0,skipc=0;
-      int nc=0,level=0;
+      int nc=0,plevel=0;
       for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-	if (!skips && *nptr=='(') level++;
-	else if (!skips && *nptr==')') level--;
+	if (!skips && *nptr=='(') plevel++;
+	else if (!skips && *nptr==')') plevel--;
 	if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
 	  skips = skips ? 0 : 1;
 	else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
 	  skipc = skipc ? 0 : 1;
-	if(!skips && !skipc && level==1 && *nptr =='=' && 
+	if(!skips && !skipc && plevel==1 && *nptr =='=' && 
 	   !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
-	  while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || level!=1) )) {
+	  while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
 	    if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
 	      skips = skips ? 0 : 1;
 	    else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
 	      skipc = skipc ? 0 : 1;
-	    if (!skips && !skipc && *nptr=='(') level++;
-	    else if (!skips && *nptr==')') level--;
+	    if (!skips && !skipc && *nptr=='(') plevel++;
+	    else if (!skips && *nptr==')') plevel--;
 	  }
-	*sptr++ = *nptr;
+
+	if (sptr < (s + sizeof(s) - 1))	*sptr++ = *nptr;
       }
       *sptr = '\0';
  
@@ -599,11 +600,11 @@ const char* Fl_Type::class_name(const int need_nest) const {
       const char* q = 0;
       if(need_nest) q=p->class_name(need_nest);
       if (q) {
-	static char buffer[256];
-	if (q != buffer) strcpy(buffer, q);
-	strcat(buffer, "::");
-	strcat(buffer, p->name());
-	return buffer;
+	static char s[256];
+	if (q != s) strlcpy(s, q, sizeof(s));
+	strlcat(s, "::", sizeof(s));
+	strlcat(s, p->name(), sizeof(s));
+	return s;
       }
       return p->name();
     }
@@ -703,5 +704,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.7 2002/05/16 12:47:42 easysw Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.8 2002/08/09 22:56:59 easysw Exp $".
 //

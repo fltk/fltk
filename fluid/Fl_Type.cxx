@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.8 2002/05/16 12:47:42 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.9 2002/08/09 22:57:00 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -100,8 +100,8 @@ static void Widget_Browser_callback(Fl_Widget *o,void *) {
   ((Widget_Browser *)o)->callback();
 }
 
-Widget_Browser::Widget_Browser(int x,int y,int w,int h,const char*l)
-: Fl_Browser_(x,y,w,h,l) {
+Widget_Browser::Widget_Browser(int X,int Y,int W,int H,const char*l)
+: Fl_Browser_(X,Y,W,H,l) {
   type(FL_MULTI_BROWSER);
   Fl_Widget::callback(Widget_Browser_callback);
   when(FL_WHEN_RELEASE);
@@ -133,39 +133,39 @@ const char* Fl_Type::title() {
 
 extern const char* subclassname(Fl_Type*);
 
-void Widget_Browser::item_draw(void *v, int x, int y, int, int) const {
+void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
-  x += 3 + 16 + l->level * 10;
+  X += 3 + 16 + l->level * 10;
   if (l->new_selected) fl_color(fl_contrast(FL_BLACK,FL_SELECTION_COLOR));
   else fl_color(FL_BLACK);
-  if (l->is_public() == 0) lock_pixmap.draw(x - 16, y);
-  else if (l->is_public() > 0) unlock_pixmap.draw(x - 16, y);
+  if (l->is_public() == 0) lock_pixmap.draw(X - 16, Y);
+  else if (l->is_public() > 0) unlock_pixmap.draw(X - 16, Y);
   if (l->is_parent()) {
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
-	fl_loop(x,y+7,x+5,y+12,x+10,y+7);
+	fl_loop(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
-	fl_loop(x+2,y+2,x+7,y+7,x+2,y+12);
+	fl_loop(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     } else {
       if (l->open_!=(l==pushedtitle)) {
-	fl_polygon(x,y+7,x+5,y+12,x+10,y+7);
+	fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
-	fl_polygon(x+2,y+2,x+7,y+7,x+2,y+12);
+	fl_polygon(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     }
-    x += 10;
+    X += 10;
   }
   if (l->is_widget() || l->is_class()) {
     const char* c = subclassname(l);
     if (!strncmp(c,"Fl_",3)) c += 3;
     fl_font(textfont(), textsize());
-    fl_draw(c, x, y+13);
-    x += int(fl_width(c)+fl_width('n'));
+    fl_draw(c, X, Y+13);
+    X += int(fl_width(c)+fl_width('n'));
     c = l->name();
     if (c) {
       fl_font(textfont()|FL_BOLD, textsize());
-      fl_draw(c, x, y+13);
+      fl_draw(c, X, Y+13);
     } else if ((c=l->label())) {
       char buf[50]; char* p = buf;
       *p++ = '"';
@@ -176,7 +176,7 @@ void Widget_Browser::item_draw(void *v, int x, int y, int, int) const {
       if (*c) {strcpy(p,"..."); p+=3;}
       *p++ = '"';
       *p = 0;
-      fl_draw(buf, x, y+13);
+      fl_draw(buf, X, Y+13);
     }
   } else {
     const char* c = l->title();
@@ -188,7 +188,7 @@ void Widget_Browser::item_draw(void *v, int x, int y, int, int) const {
     if (*c) {strcpy(p,"..."); p+=3;}
     *p = 0;
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
-    fl_draw(buf, x, y+13);
+    fl_draw(buf, X, Y+13);
   }
 }
 
@@ -197,18 +197,18 @@ int Widget_Browser::item_width(void *v) const {
 
   if (!l->visible) return 0;
 
-  int w = 3 + 16 + l->level*10;
-  if (l->is_parent()) w += 10;
+  int W = 3 + 16 + l->level*10;
+  if (l->is_parent()) W += 10;
 
   if (l->is_widget() || l->is_class()) {
     const char* c = l->type_name();
     if (!strncmp(c,"Fl_",3)) c += 3;
     fl_font(textfont(), textsize());
-    w += int(fl_width(c) + fl_width('n'));
+    W += int(fl_width(c) + fl_width('n'));
     c = l->name();
     if (c) {
       fl_font(textfont()|FL_BOLD, textsize());
-      w += int(fl_width(c));
+      W += int(fl_width(c));
     } else if ((c=l->label())) {
       char buf[50]; char* p = buf;
       *p++ = '"';
@@ -219,7 +219,7 @@ int Widget_Browser::item_width(void *v) const {
       if (*c) {strcpy(p,"..."); p+=3;}
       *p++ = '"';
       *p = 0;
-      w += int(fl_width(buf));
+      W += int(fl_width(buf));
     }
   } else {
     const char* c = l->title();
@@ -231,10 +231,10 @@ int Widget_Browser::item_width(void *v) const {
     if (*c) {strcpy(p,"..."); p+=3;}
     *p = 0;
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
-    w += int(fl_width(buf));
+    W += int(fl_width(buf));
   }
 
-  return w;
+  return W;
 }
 
 void redraw_browser() {
@@ -680,5 +680,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.8 2002/05/16 12:47:42 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.9 2002/08/09 22:57:00 easysw Exp $".
 //

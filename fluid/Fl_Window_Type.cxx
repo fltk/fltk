@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.5 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.6 2002/08/09 22:57:00 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -213,7 +213,7 @@ class Overlay_Window : public Fl_Overlay_Window {
 public:
   Fl_Window_Type *window;
   int handle(int);
-  Overlay_Window(int w,int h) : Fl_Overlay_Window(w,h) {Fl_Group::current(0);}
+  Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {Fl_Group::current(0);}
   void resize(int,int,int,int);
 };
 void Overlay_Window::draw() {
@@ -222,11 +222,11 @@ void Overlay_Window::draw() {
   if ((damage()&FL_DAMAGE_ALL) &&
       (!box() || (box()>=4&&!(box()&2)) || box()>=_FL_ROUNDED_BOX)) {
     // if so, draw checkerboard so user can see what areas are clear:
-    for (int y = 0; y < h(); y += CHECKSIZE) 
-      for (int x = 0; x < w(); x += CHECKSIZE) {
-	fl_color(((y/(2*CHECKSIZE))&1) != ((x/(2*CHECKSIZE))&1) ?
+    for (int Y = 0; Y < h(); Y += CHECKSIZE) 
+      for (int X = 0; X < w(); X += CHECKSIZE) {
+	fl_color(((Y/(2*CHECKSIZE))&1) != ((X/(2*CHECKSIZE))&1) ?
 		 FL_WHITE : FL_BLACK);
-	fl_rectf(x,y,CHECKSIZE,CHECKSIZE);
+	fl_rectf(X,Y,CHECKSIZE,CHECKSIZE);
       }
   }
   Fl_Overlay_Window::draw();
@@ -539,9 +539,9 @@ void Fl_Window_Type::moveallchildren()
       for (p = myo->next; p && p->level>myo->level; p = p->next)
 	if (p->is_widget() && !p->is_menu_item()) {
 	  Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
-	  int x,y,r,t;
-	  newposition(myo2,x,y,r,t);
-	  myo2->o->resize(x,y,r-x,t-y);
+	  int X,Y,R,T;
+	  newposition(myo2,X,Y,R,T);
+	  myo2->o->resize(X,Y,R-X,T-Y);
 	}
       i = p;
     } else {
@@ -772,25 +772,25 @@ void Fl_Window_Type::read_property(const char *c) {
   }
 }
 
-int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
+int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
   int x;
   o->box(FL_NO_BOX); // because fdesign always puts an Fl_Box next
-  if (!strcmp(name,"Width")) {
+  if (!strcmp(propname,"Width")) {
     if (sscanf(value,"%d",&x) == 1) o->size(x,o->h());
-  } else if (!strcmp(name,"Height")) {
+  } else if (!strcmp(propname,"Height")) {
     if (sscanf(value,"%d",&x) == 1) o->size(o->w(),x);
-  } else if (!strcmp(name,"NumberofWidgets")) {
+  } else if (!strcmp(propname,"NumberofWidgets")) {
     return 1; // we can figure out count from file
-  } else if (!strcmp(name,"border")) {
+  } else if (!strcmp(propname,"border")) {
     if (sscanf(value,"%d",&x) == 1) ((Fl_Window*)o)->border(x);
-  } else if (!strcmp(name,"title")) {
+  } else if (!strcmp(propname,"title")) {
     label(value);
   } else {
-    return Fl_Widget_Type::read_fdesign(name,value);
+    return Fl_Widget_Type::read_fdesign(propname,value);
   }
   return 1;
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.5 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.6 2002/08/09 22:57:00 easysw Exp $".
 //

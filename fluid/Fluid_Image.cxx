@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.10 2002/06/07 15:06:32 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.11 2002/08/09 22:57:00 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -129,15 +129,15 @@ static Fluid_Image** images = 0; // sorted list
 static int numimages = 0;
 static int tablesize = 0;
 
-Fluid_Image* Fluid_Image::find(const char *name) {
-  if (!name || !*name) return 0;
+Fluid_Image* Fluid_Image::find(const char *iname) {
+  if (!iname || !*iname) return 0;
 
   // first search to see if it exists already:
   int a = 0;
   int b = numimages;
   while (a < b) {
     int c = (a+b)/2;
-    int i = strcmp(name,images[c]->name_);
+    int i = strcmp(iname,images[c]->name_);
     if (i < 0) b = c;
     else if (i > 0) a = c+1;
     else return images[c];
@@ -146,20 +146,20 @@ Fluid_Image* Fluid_Image::find(const char *name) {
   // no, so now see if the file exists:
 
   goto_source_dir();
-  FILE *f = fopen(name,"rb");
+  FILE *f = fopen(iname,"rb");
   if (!f) {
-    read_error("%s : %s",name,strerror(errno));
+    read_error("%s : %s",iname,strerror(errno));
     leave_source_dir();
     return 0;
   }
   fclose(f);
 
-  Fluid_Image *ret = new Fluid_Image(name);
+  Fluid_Image *ret = new Fluid_Image(iname);
 
   if (!ret->img->w() || !ret->img->h()) {
     delete ret;
     ret = 0;
-    read_error("%s : unrecognized image format", name);
+    read_error("%s : unrecognized image format", iname);
   }
   leave_source_dir();
   if (!ret) return 0;
@@ -177,11 +177,11 @@ Fluid_Image* Fluid_Image::find(const char *name) {
   return ret;
 }
 
-Fluid_Image::Fluid_Image(const char *name) {
-  name_ = strdup(name);
+Fluid_Image::Fluid_Image(const char *iname) {
+  name_ = strdup(iname);
   written = 0;
   refcount = 0;
-  img = Fl_Shared_Image::get(name);
+  img = Fl_Shared_Image::get(iname);
 }
 
 void Fluid_Image::increment() {
@@ -219,5 +219,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.10 2002/06/07 15:06:32 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.11 2002/08/09 22:57:00 easysw Exp $".
 //
