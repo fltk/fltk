@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.10 2002/05/03 20:30:19 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.11 2002/05/15 19:45:38 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -580,12 +580,8 @@ Fl_Preferences::Name::~Name()
 int Fl_Preferences::Node::lastEntrySet = -1;
 
 // recursively create a path in the file system
-static char makePath( const char *path )
-{
-  struct stat stats;
-  int ret = stat( path, &stats );
-  if ( ret )
-  {
+static char makePath( const char *path ) {
+  if (access(path, 0)) {
     const char *s = strrchr( path, '/' );
     if ( !s ) return 0;
     int len = s-path;
@@ -1084,5 +1080,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.10 2002/05/03 20:30:19 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.11 2002/05/15 19:45:38 easysw Exp $".
 //

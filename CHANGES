@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Preferences::makePath() now uses access() instead
+	  of stat() when checking to see if the destination
+	  directory already exists.
 	- Fl_BMP_Image now supports older BMP files with the 12
 	  byte header.
 	- Optimized the redrawing of tabs and radio/check
