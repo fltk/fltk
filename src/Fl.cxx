@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.7 1999/05/07 16:17:49 mike Exp $"
+// "$Id: Fl.cxx,v 1.24.2.8 1999/05/24 14:03:45 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -161,10 +161,10 @@ static double fl_elapsed() {
 
 #ifdef WIN32
 
-  unsigned long newclock = fl_msg.time; // NOT YET IMPLEMENTED!
+  unsigned long newclock = GetTickCount();
   const int TICKS_PER_SECOND = 1000; // divisor of the value to get seconds
   static unsigned long prevclock;
-  if (!initclock) {prevclock = newclock = GetTickCount(); initclock = 1; return 0.0;}
+  if (!initclock) {prevclock = newclock; initclock = 1; return 0.0;}
   else if (newclock < prevclock) return 0.0;
 
   double t = double(newclock-prevclock)/TICKS_PER_SECOND;
@@ -698,5 +698,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.7 1999/05/07 16:17:49 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.8 1999/05/24 14:03:45 mike Exp $".
 //

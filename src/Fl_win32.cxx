@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.10 1999/05/11 09:39:30 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.11 1999/05/24 14:03:46 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -772,7 +772,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
 ////////////////////////////////////////////////////////////////
 
-HINSTANCE fl_display = 0;
+HINSTANCE fl_display = GetModuleHandle(NULL);
 
 //
 // This WinMain() function can be overridden by an application and
@@ -794,7 +794,7 @@ HINSTANCE fl_display = 0;
 // Microsoft(r) Windows(r) that allows for it.
 //
 
-#ifndef FL_DLL
+#if !defined(FL_DLL) && !defined(__GNUC__)
 
 extern "C" int fl_call_main();
 
@@ -822,7 +822,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   return fl_call_main();
 }
 
-#endif /* !FL_DLL */
+#endif /* !FL_DLL && !__GNUC__ */
 
 ////////////////////////////////////////////////////////////////
 
@@ -940,5 +940,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.10 1999/05/11 09:39:30 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.11 1999/05/24 14:03:46 mike Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.1 1999/03/29 17:39:29 carl Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.2 1999/05/24 14:03:47 mike Exp $"
  *
  * Copyright 1998-1999 by Bill Spitzak and others.
  *
@@ -24,7 +24,7 @@
  * Please report all bugs and problems to "fltk-bugs@easysw.com".
  */
 
-#if defined(WIN32) && !defined(FL_DLL)
+#if defined(WIN32) && !defined(FL_DLL) && !defined(__GNUC__)
 extern int main(int, char *[]);
 extern int  __argc;
 extern char **__argv;
@@ -32,9 +32,9 @@ extern char **__argv;
 int fl_call_main() {
   return main(__argc, __argv);
 }
-#endif
+#endif /* WIN32 && !FL_DLL && !__GNUC__ */
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.1 1999/03/29 17:39:29 carl Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.2 1999/05/24 14:03:47 mike Exp $".
  */
 
