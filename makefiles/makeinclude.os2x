@@ -1,7 +1,8 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.3 2001/04/26 07:11:58 spitzak Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
+# Generated automatically from makeinclude.in by configure.
 #
 # Copyright 1998-2001 by Bill Spitzak and others.
 #
@@ -23,40 +24,49 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-prefix	= $(X11ROOT)/XFree86
-exec_prefix	= $(prefix)
-bindir	= $(exec_prefix)/bin
-includedir	= $(prefix)/include
-libdir	= $(exec_prefix)/lib
-srcdir	= .
-VPATH		= .
+prefix		=/usr/local
+exec_prefix	=${prefix}
+bindir		=${exec_prefix}/bin
+datadir		=${prefix}/share
+includedir	=${prefix}/include
+libdir		=${exec_prefix}/lib
+mandir		=${prefix}/man
+srcdir		=.
+
+# programs we use...
+HTMLDOC		=e:/XFree86/bin/htmldoc.exe
+NROFF		=e:/usr/local/bin/nroff
 
 # compiler names:
-CXX         = gcc
-CC          = gcc
-MAKEDEPEND  = gcc -MD
+CXX		=gcc.exe
+CC		=gcc.exe
+MAKEDEPEND	=$(CXX) -M
 
 # flags for C++ compiler:
-CFLAGS    = -Wall -O4 -mpentium -Zmt
-CXXFLAGS  = -Wall -O4 -mpentium -Zmt -fno-exceptions
-LDFLAGS	  = -Zexe -Zmt -Zcrtdll -s
+CFLAGS	= -O2 -Wall -O4 -mpentium -Zmt -fno-exceptions
+CXXFLAGS	= -O2 -Wall -O4 -mpentium -Zmt -fno-exceptions
+LDFLAGS	= -Zexe -Zmt -Zcrtdll -Zbsd-signals -Zbin-files
 
 # program to make the archive:
-LIBNAME	   = fltk.a
-LIBCOMMAND = ar rc
-RANLIB	   = ar s
-DSONAME    =
-DSOCOMMAND = echo
+LIBNAME		=fltk.a
+LIBCOMMAND	=ar cr
+RANLIB		=ar.exe s
+DSONAME		=
+DSOCOMMAND	=echo
 
 # libraries to link with:
-LDLIBS      = $(LDFLAGS) -lXext -lX11 -lExtensions
-GLDLIBS     = $(LDFLAGS) -lXext -lX11 -lExtensions
+LDLIBS		= $(LDFLAGS) -s -lX11 -lXext -lsocket  -lshm -lm
+GLDLIBS		= $(LDFLAGS) -s -lX11 -lXext -lsocket  -lshm -lm
+
+# Man page extensions...
+CAT1EXT		=1
+CAT3EXT		=3
 
 # Be quiet when building...
-#.SILENT:
+.SILENT:
 
 # Build commands and filename extensions...
-.SUFFIXES:	.c .cxx .h .fl .o
+.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z
 
 .cxx:
 	echo Compiling and linking $@...
@@ -64,14 +74,24 @@ GLDLIBS     = $(LDFLAGS) -lXext -lX11 -lExtensions
 
 .c.o:
 	echo Compiling $@...
-	$(CC) -I.. $(CXXFLAGS) $< -c
+	$(CC) -I.. $(CFLAGS) -c $<
 
 .cxx.o:
 	echo Compiling $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -c
+	$(CXX) -I.. $(CXXFLAGS) -c $<
+
+.man.0 .man.1 .man.3:
+	echo Formatting $<...
+	rm -f $@
+	$(NROFF) -man $< >$@
+
+.man.z:
+	echo Formatting $<...
+	rm -f $@ t.z
+	$(NROFF) -man $< >t
+	pack -f t
+	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.3 2001/04/26 07:11:58 spitzak Exp $".
 #
-
-export
