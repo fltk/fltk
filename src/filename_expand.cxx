@@ -1,5 +1,5 @@
 //
-// "$Id: filename_expand.cxx,v 1.4.2.4.2.4 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: filename_expand.cxx,v 1.4.2.4.2.5 2002/04/11 11:52:42 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 
 #include <FL/filename.H>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #if defined(WIN32) && !defined(__CYGWIN__)
 #else
 # include <unistd.h>
@@ -106,5 +106,5 @@ int fl_filename_expand(char *to,int tolen, const char *from) {
 
 
 //
-// End of "$Id: filename_expand.cxx,v 1.4.2.4.2.4 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: filename_expand.cxx,v 1.4.2.4.2.5 2002/04/11 11:52:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.5 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.6 2002/04/11 11:52:41 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -36,7 +36,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <ctype.h>
 
 
@@ -166,5 +166,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.5 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.6 2002/04/11 11:52:41 easysw Exp $".
 //

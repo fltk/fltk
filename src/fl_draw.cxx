@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.10 2002/01/23 16:58:01 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.11 2002/04/11 11:52:42 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
 
-#include <string.h>
+#include "flstring.h"
 #include <ctype.h>
 
 #define MAXBUF 1024
@@ -327,5 +327,5 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.10 2002/01/23 16:58:01 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.11 2002/04/11 11:52:42 easysw Exp $".
 //

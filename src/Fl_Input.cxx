@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.7 2002/03/07 19:22:56 spitzak Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.8 2002/04/11 11:52:41 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,12 +32,14 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
-#include <string.h>
+#include <FL/fl_ask.H>
+#include "flstring.h"
+#include <stdio.h>
 
 #define DND_OUT 1
 
 void Fl_Input::draw() {
-  if (type() == FL_HIDDEN_INPUT) return;
+  if (input_type() == FL_HIDDEN_INPUT) return;
   Fl_Boxtype b = box();
   if (damage() & FL_DAMAGE_ALL) draw_box(b, color());
   Fl_Input_::drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
@@ -70,22 +72,27 @@ int Fl_Input::handle_key() {
   if (Fl::compose(del)) {
 
     // Insert characters into numeric fields after checking for legality:
-    if (type() == FL_FLOAT_INPUT || type() == FL_INT_INPUT) {
+    if (input_type() == FL_FLOAT_INPUT || input_type() == FL_INT_INPUT) {
       Fl::compose_reset(); // ignore any foreign letters...
+
       // This is complex to allow "0xff12" hex to be typed:
       if (!position() && (ascii == '+' || ascii == '-') ||
 	  (ascii >= '0' && ascii <= '9') ||
 	  (position()==1 && index(0)=='0' && (ascii=='x' || ascii == 'X')) ||
 	  (position()>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
 	   && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')) ||
-	  type()==FL_FLOAT_INPUT && ascii && strchr(".eE+-", ascii))
-	replace(position(), mark(), &ascii, 1);
+	  input_type()==FL_FLOAT_INPUT && ascii && strchr(".eE+-", ascii)) {
+	if (readonly()) fl_beep();
+	else replace(position(), mark(), &ascii, 1);
+      }
       return 1;
     }
 
-    if (del || Fl::event_length())
-      replace(position(), del ? position()-del : mark(),
-	      Fl::event_text(), Fl::event_length());
+    if (del || Fl::event_length()) {
+      if (readonly()) fl_beep();
+      else replace(position(), del ? position()-del : mark(),
+	           Fl::event_text(), Fl::event_length());
+    }
     return 1;
   }
 
@@ -134,12 +141,12 @@ int Fl_Input::handle_key() {
       position(size(), 0);
       maybe_do_callback();
       return 1;
-    } else if (type() == FL_MULTILINE_INPUT)
+    } else if (input_type() == FL_MULTILINE_INPUT)
       return replace(position(), mark(), "\n", 1);
     else 
       return 0;	// reserved for shortcuts
   case FL_Tab:
-    if (Fl::event_state(FL_CTRL|FL_SHIFT) || type()!=FL_MULTILINE_INPUT) return 0;
+    if (Fl::event_state(FL_CTRL|FL_SHIFT) || input_type()!=FL_MULTILINE_INPUT || readonly()) return 0;
     return replace(position(), mark(), &ascii, 1);
   }
 
@@ -153,6 +160,10 @@ int Fl_Input::handle_key() {
     return copy(1);
   case ctrl('D'):
   case ctrl('?'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     if (mark() != position()) return cut();
     else return cut(1);
   case ctrl('E'):
@@ -160,10 +171,18 @@ int Fl_Input::handle_key() {
   case ctrl('F'):
     return shift_position(position()+1) + NORMAL_INPUT_MOVE;
   case ctrl('H'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     if (mark() != position()) cut();
     else cut(-1);
     return 1;
   case ctrl('K'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     if (position()>=size()) return 0;
     i = line_end(position());
     if (i == position() && i < size()) i++;
@@ -188,24 +207,44 @@ int Fl_Input::handle_key() {
     shift_up_down_position(line_start(i));
     return 1;
   case ctrl('U'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     return cut(0, size());
   case ctrl('V'):
   case ctrl('Y'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     Fl::paste(*this, 1);
     return 1;
   case ctrl('X'):
   case ctrl('W'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     copy(1);
     return cut();
   case ctrl('Z'):
   case ctrl('_'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     return undo();
   case ctrl('I'):
   case ctrl('J'):
   case ctrl('L'):
   case ctrl('M'):
+    if (readonly()) {
+      fl_beep();
+      return 1;
+    }
     // insert a few selected control characters literally:
-    if (type() != FL_FLOAT_INPUT && type() != FL_INT_INPUT)
+    if (input_type() != FL_FLOAT_INPUT && input_type() != FL_INT_INPUT)
       return replace(position(), mark(), &ascii, 1);
   }
 
@@ -260,7 +299,7 @@ int Fl_Input::handle(int event) {
 	w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b), 0);
       newpos = position(); 
       position( oldpos, oldmark );
-      if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && type()!=FL_SECRET_INPUT &&
+      if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
 	  (newpos >= mark() && newpos < position() ||
 	  newpos >= position() && newpos < mark())) {
 	// user clicked int the selection, may be trying to drag
@@ -354,5 +393,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.7 2002/03/07 19:22:56 spitzak Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.8 2002/04/11 11:52:41 easysw Exp $".
 //

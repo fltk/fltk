@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.10 2002/01/07 20:40:02 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.11 2002/04/11 11:52:41 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -35,7 +35,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 
 // Read a .gif file and convert it to a "xpm" format (actually my
 // modified one with compressed colormaps).
@@ -374,5 +374,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.10 2002/01/07 20:40:02 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.11 2002/04/11 11:52:41 easysw Exp $".
 //

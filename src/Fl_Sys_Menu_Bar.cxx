@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.4 2002/04/11 11:52:41 easysw Exp $"
 //
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -52,7 +52,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
 
-#include <string.h>
+#include "flstring.h"
 #include <stdio.h>
 #include <ctype.h>
 
@@ -310,5 +310,5 @@ int Fl_Menu_Bar::handle(int event) {
 */
 
 //
-// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.4 2002/04/11 11:52:41 easysw Exp $".
 //

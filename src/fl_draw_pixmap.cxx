@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.7 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.8 2002/04/11 11:52:42 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -39,7 +39,7 @@
 #include <FL/x.H>
 #include <ctype.h>
 #include <stdio.h>
-#include <string.h>
+#include "flstring.h"
 
 static int ncolors, chars_per_pixel;
 
@@ -262,5 +262,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.7 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.8 2002/04/11 11:52:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.5 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.6 2002/04/11 11:52:41 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Chart.H>
 #include <FL/fl_draw.H>
-#include <string.h>
+#include "flstring.h"
 #include <stdlib.h>
 
 #define ARCINC	(2.0*M_PI/360.0)
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.5 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.6 2002/04/11 11:52:41 easysw Exp $".
 //

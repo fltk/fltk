@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.2 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.3 2002/04/11 11:52:41 easysw Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_.H>
-#include <string.h>
+#include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -172,5 +172,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.2 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.3 2002/04/11 11:52:41 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.9 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.10 2002/04/11 11:52:41 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -33,7 +33,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <math.h>
-#include <string.h>
+#include "flstring.h"
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -61,7 +61,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
   int width_to_lastspace = 0;
   int word_count = 0;
 #endif
-  if (type()==FL_SECRET_INPUT) {
+  if (input_type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {*o++ = '*'; p++;}
   } else while (o<e) {
 #ifdef WORDWRAP
@@ -80,8 +80,8 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
     if (p >= value_+size_) break;
     int c = *p++ & 255;
     if (c < ' ' || c == 127) {
-      if (c=='\n' && type()==FL_MULTILINE_INPUT) {p--; break;}
-      if (c == '\t' && type()==FL_MULTILINE_INPUT) {
+      if (c=='\n' && input_type()==FL_MULTILINE_INPUT) {p--; break;}
+      if (c == '\t' && input_type()==FL_MULTILINE_INPUT) {
 	for (c = (o-buf)%8; c<8 && o<e; c++) *o++ = ' ';
       } else {
 	*o++ = '^';
@@ -114,11 +114,11 @@ double Fl_Input_::expandpos(
   int* returnn		// return offset into buf here
 ) const {
   int n = 0;
-  if (type()==FL_SECRET_INPUT) n = e-p;
+  if (input_type()==FL_SECRET_INPUT) n = e-p;
   else while (p<e) {
     int c = *p++ & 255;
     if (c < ' ' || c == 127) {
-      if (c == '\t' && type()==FL_MULTILINE_INPUT) n += 8-(n%8);
+      if (c == '\t' && input_type()==FL_MULTILINE_INPUT) n += 8-(n%8);
       else n += 2;
     } else if (c >= 128 && c < 0xA0) {
       n += 4;
@@ -185,7 +185,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
   setfont();
 #ifdef WORDWRAP
-  if (type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
+  if (input_type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
 #endif
 
   const char *p, *e;
@@ -225,7 +225,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   // adjust the scrolling:
-  if (type()==FL_MULTILINE_INPUT) {
+  if (input_type()==FL_MULTILINE_INPUT) {
     int newy = yscroll_;
     if (cury < newy) newy = cury;
     if (cury > newy+H-height) newy = cury-H+height;
@@ -304,7 +304,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   // for minimal update, erase all lines below last one if necessary:
-  if (type()==FL_MULTILINE_INPUT && do_mu && ypos<H
+  if (input_type()==FL_MULTILINE_INPUT && do_mu && ypos<H
       && (!erase_cursor_only || p <= value()+mu_p)) {
     if (ypos < 0) ypos = 0;
     fl_color(this->color());
@@ -319,14 +319,14 @@ static int isword(char c) {
 }
 
 int Fl_Input_::word_end(int i) const {
-  if (type() == FL_SECRET_INPUT) return size();
+  if (input_type() == FL_SECRET_INPUT) return size();
   //while (i < size() && !isword(index(i))) i++;
   while (i < size() && isword(index(i))) i++;
   return i;
 }
 
 int Fl_Input_::word_start(int i) const {
-  if (type() == FL_SECRET_INPUT) return 0;
+  if (input_type() == FL_SECRET_INPUT) return 0;
 //   if (i >= size() || !isword(index(i)))
 //     while (i > 0 && !isword(index(i-1))) i--;
   while (i > 0 && isword(index(i-1))) i--;
@@ -334,7 +334,7 @@ int Fl_Input_::word_start(int i) const {
 }
 
 int Fl_Input_::line_end(int i) const {
-  if (type() != FL_MULTILINE_INPUT) return size();
+  if (input_type() != FL_MULTILINE_INPUT) return size();
 #ifdef WORDWRAP
   // go to the start of the paragraph:
   int j = i;
@@ -355,7 +355,7 @@ int Fl_Input_::line_end(int i) const {
 }
 
 int Fl_Input_::line_start(int i) const {
-  if (type() != FL_MULTILINE_INPUT) return 0;
+  if (input_type() != FL_MULTILINE_INPUT) return 0;
   int j = i;
   while (j > 0 && index(j-1) != '\n') j--;
 #ifdef WORDWRAP
@@ -387,12 +387,12 @@ void Fl_Input_::handle_mouse(int X, int Y,
   const char *p, *e;
   char buf[MAXBUF];
 
-  int theline = (type()==FL_MULTILINE_INPUT) ?
+  int theline = (input_type()==FL_MULTILINE_INPUT) ?
     (Fl::event_y()-Y+yscroll_)/fl_height() : 0;
 
   int newpos = 0;
 #ifdef WORDWRAP
-  if (type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
+  if (input_type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
 #endif
   for (p=value();; ) {
     e = expand(p, buf);
@@ -481,7 +481,7 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
 
   setfont();
 #ifdef WORDWRAP
-  if (type()==FL_MULTILINE_INPUT)
+  if (input_type()==FL_MULTILINE_INPUT)
     wordwrap = w()-Fl::box_dw(box())-6;
   else wordwrap = 0;
 #endif
@@ -505,7 +505,7 @@ int Fl_Input_::copy(int clipboard) {
   int e = mark();
   if (b != e) {
     if (b > e) {b = mark(); e = position();}
-    if (type() == FL_SECRET_INPUT) e = b;
+    if (input_type() == FL_SECRET_INPUT) e = b;
     Fl::copy(value()+b, e-b, clipboard);
     return 1;
   }
@@ -575,7 +575,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
     size_ -= e-b;
     undowidget = this;
     undoat = b;
-    if (type() == FL_SECRET_INPUT) yankcut = 0; else yankcut = undocut;
+    if (input_type() == FL_SECRET_INPUT) yankcut = 0; else yankcut = undocut;
   }
 
   if (ilen) {
@@ -598,7 +598,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   // right after the whitespace before the current word.  This will
   // result in sub-optimal update when such wrapping does not happen
   // but it is too hard to figure out for now...
-  if (type() == FL_MULTILINE_INPUT)
+  if (input_type() == FL_MULTILINE_INPUT)
     while (b > 0 && !isspace(index(b))) b--;
 #endif
 
@@ -661,7 +661,7 @@ int Fl_Input_::yank() {
 
 int Fl_Input_::copy_cuts() {
   // put the yank buffer into the X clipboard
-  if (!yankcut || type()==FL_SECRET_INPUT) return 0;
+  if (!yankcut || input_type()==FL_SECRET_INPUT) return 0;
   Fl::copy(undobuffer, yankcut, 1);
   return 1;
 }
@@ -722,8 +722,8 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     // strip trailing control characters and spaces before pasting:
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
-    if (type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
-    if (type() == FL_INT_INPUT) {
+    if (input_type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
+    if (input_type() == FL_INT_INPUT) {
       while (isspace(*t) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
@@ -737,7 +737,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
         fl_beep(FL_BEEP_ERROR);
         return 1;
       } else return replace(0, size(), t, e - t);
-    } else if (type() == FL_FLOAT_INPUT) {
+    } else if (input_type() == FL_FLOAT_INPUT) {
       while (isspace(*t) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
@@ -864,5 +864,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.9 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.10 2002/04/11 11:52:41 easysw Exp $".
 //

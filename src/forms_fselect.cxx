@@ -1,5 +1,5 @@
 //
-// "$Id: forms_fselect.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: forms_fselect.cxx,v 1.4.2.3.2.3 2002/04/11 11:52:43 easysw Exp $"
 //
 // Forms file selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 // Emulate the Forms file chooser using the fltk file chooser.
 
 #include <FL/forms.H>
-#include <string.h>
+#include "flstring.h"
 
 static char fl_directory[1024];
 static const char *fl_pattern;  // assummed passed value is static
@@ -61,5 +61,5 @@ char*	fl_get_pattern() {return (char *)fl_pattern;}
 char*	fl_get_filename() {return fl_filename;}
 
 //
-// End of "$Id: forms_fselect.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: forms_fselect.cxx,v 1.4.2.3.2.3 2002/04/11 11:52:43 easysw Exp $".
 //

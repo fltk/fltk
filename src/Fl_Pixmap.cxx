@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.14 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.15 2002/04/11 11:52:41 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@
 #include <FL/Fl_Pixmap.H>
 
 #include <stdio.h>
-#include <string.h>
+#include "flstring.h"
 #include <ctype.h>
 
 extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
@@ -467,5 +467,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.14 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.15 2002/04/11 11:52:41 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.8 2002/03/29 11:59:56 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.9 2002/04/11 11:52:41 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Shared_Image.H>
@@ -455,5 +455,5 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler *f) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.8 2002/03/29 11:59:56 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.9 2002/04/11 11:52:41 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3.2.2 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.3 2002/04/11 11:52:43 easysw Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <string.h>
+#include "flstring.h"
 
 typedef struct {
   const char *name;
@@ -361,5 +361,5 @@ static void fl_init_symbols(void) {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.2 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.3 2002/04/11 11:52:43 easysw Exp $".
 //

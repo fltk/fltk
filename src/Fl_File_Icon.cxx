@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.9 2002/03/29 14:16:03 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.10 2002/04/11 11:52:41 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -42,7 +42,7 @@
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #ifdef HAVE_STRINGS_H
 #  include <strings.h>
 #endif // HAVE_STRINGS_H
@@ -471,5 +471,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.9 2002/03/29 14:16:03 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.10 2002/04/11 11:52:41 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_display.cxx,v 1.4.2.3.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_display.cxx,v 1.4.2.3.2.4 2002/04/11 11:52:42 easysw Exp $"
 //
 // Display function for the Fast Light Tool Kit (FLTK).
 //
@@ -28,7 +28,7 @@
 
 #include <FL/Fl.H>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 
 void Fl::display(const char *d) {
 #if defined(__APPLE__) || defined(WIN32)
@@ -49,5 +49,5 @@ void Fl::display(const char *d) {
 }
 
 //
-// End of "$Id: Fl_display.cxx,v 1.4.2.3.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_display.cxx,v 1.4.2.3.2.4 2002/04/11 11:52:42 easysw Exp $".
 //

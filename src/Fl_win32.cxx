@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.25 2002/04/10 15:01:20 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.26 2002/04/11 11:52:42 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 #include <FL/Fl.H>
 #include <FL/win32.H>
 #include <FL/Fl_Window.H>
-#include <string.h>
+#include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -1170,5 +1170,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.25 2002/04/10 15:01:20 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.26 2002/04/11 11:52:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.6 2002/04/10 15:01:22 easysw Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.7 2002/04/11 11:52:42 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #include <FL/Fl.H>
 #include <FL/win32.H>
 #include <FL/Fl_Window.H>
-#include <string.h>
+#include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -349,5 +349,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.6 2002/04/10 15:01:22 easysw Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.7 2002/04/11 11:52:42 easysw Exp $".
 //

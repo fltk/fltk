@@ -23,8 +23,8 @@ Fl_Menu_Type.o: ../FL/Fl_Menu_.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Bar.H
 Fl_Menu_Type.o: alignment_panel.h ../FL/Fl_Window.H ../FL/Fl_Box.H
 Fl_Menu_Type.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Button.H
 Fl_Menu_Type.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/fl_message.H
-Fl_Menu_Type.o: ../FL/fl_ask.H ../FL/Fl_Output.H Shortcut_Button.h
-Fl_Menu_Type.o: ../FL/fl_draw.H
+Fl_Menu_Type.o: ../FL/fl_ask.H ../FL/Fl_Output.H ../FL/Fl_Input.H
+Fl_Menu_Type.o: Shortcut_Button.h ../FL/fl_draw.H
 Fl_Group_Type.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Group_Type.o: ../FL/Fl_Group.H ../FL/fl_message.H ../FL/fl_ask.H
 Fl_Group_Type.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
@@ -114,7 +114,7 @@ factory.o: ../FL/fl_draw.H ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Editor.H
 factory.o: ../FL/Fl_Text_Display.H ../FL/Fl_Clock.H ../FL/Fl_Help_View.H
 factory.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Progress.H ../FL/Fl_Adjuster.H
 factory.o: ../FL/Fl_Dial.H ../FL/Fl_Roller.H ../FL/Fl_Scrollbar.H
-factory.o: ../FL/Fl_Output.H ../FL/Fl_Value_Input.H ../FL/Fl_Input.H
+factory.o: ../FL/Fl_Output.H ../FL/Fl_Input.H ../FL/Fl_Value_Input.H
 factory.o: ../FL/Fl_Value_Output.H ../FL/Fl_Value_Slider.H
 file.o: alignment_panel.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 file.o: ../FL/Fl_Window.H ../FL/Fl_Box.H ../FL/Fl_Input.H ../FL/Fl_Input_.H

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.5 2002/03/07 19:22:56 spitzak Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.6 2002/04/11 11:52:42 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -27,7 +27,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Editor.H>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <ctype.h>
 
 
@@ -439,5 +439,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.5 2002/03/07 19:22:56 spitzak Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.6 2002/04/11 11:52:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XPM_Image.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_XPM_Image.cxx,v 1.1.2.4 2002/04/11 11:52:42 easysw Exp $"
 //
 // Fl_XPM_Image routines.
 //
@@ -35,7 +35,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <ctype.h>
 
 
@@ -125,5 +125,5 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.4 2002/04/11 11:52:42 easysw Exp $".
 //

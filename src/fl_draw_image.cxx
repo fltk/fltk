@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.3 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.4 2002/04/11 11:52:42 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -61,7 +61,7 @@
 #  include <FL/fl_draw.H>
 #  include <FL/x.H>
 #  include "Fl_XColor.H"
-#  include <string.h>
+#  include "flstring.h"
 
 static XImage i;	// template used to pass info to X
 static int bytes_per_pixel;
@@ -570,5 +570,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.3 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.4 2002/04/11 11:52:42 easysw Exp $".
 //

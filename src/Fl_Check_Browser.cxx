@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Browser.cxx,v 1.1.2.3 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Check_Browser.cxx,v 1.1.2.4 2002/04/11 11:52:41 easysw Exp $"
 //
 // Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <FL/fl_draw.H>
 #include <FL/Fl_Check_Browser.H>
 
@@ -259,5 +259,5 @@ void Fl_Check_Browser::check_none() {
 
 
 //
-// End of "$Id: Fl_Check_Browser.cxx,v 1.1.2.3 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Check_Browser.cxx,v 1.1.2.4 2002/04/11 11:52:41 easysw Exp $".
 //

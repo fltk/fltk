@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.5 2002/01/15 01:33:16 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.6 2002/04/11 11:52:41 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -539,8 +539,8 @@ static Fl_Scrollbar_Type Fl_Scrollbar_type;
 
 #include <FL/Fl_Output.H>
 static Fl_Menu_Item output_type_menu[] = {
-  {"Normal",0,0,(void*)FL_NORMAL_INPUT},
-  {"Multiline",0,0,(void*)FL_MULTILINE_INPUT},
+  {"Normal",0,0,(void*)FL_NORMAL_OUTPUT},
+  {"Multiline",0,0,(void*)FL_MULTILINE_OUTPUT},
   {0}};
 class Fl_Output_Type : public Fl_Input_Type {
   Fl_Menu_Item *subtypes() {return output_type_menu;}
@@ -894,5 +894,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.5 2002/01/15 01:33:16 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.6 2002/04/11 11:52:41 easysw Exp $".
 //

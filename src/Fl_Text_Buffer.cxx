@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.4 2002/04/11 11:52:41 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <ctype.h>
 #include <FL/Fl_Text_Buffer.H>
 
@@ -2285,5 +2285,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.4 2002/04/11 11:52:41 easysw Exp $".
 //

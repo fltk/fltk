@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.12 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.13 2002/04/11 11:52:42 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -28,7 +28,7 @@
 #include <FL/Fl_Text_Display.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <limits.h>
 #include <ctype.h>
 
@@ -1958,5 +1958,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.12 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.13 2002/04/11 11:52:42 easysw Exp $".
 //

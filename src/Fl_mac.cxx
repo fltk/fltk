@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.18 2002/04/07 18:31:55 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.19 2002/04/11 11:52:42 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -50,7 +50,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #include <unistd.h>
 
 // external functions
@@ -1359,6 +1359,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.18 2002/04/07 18:31:55 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.19 2002/04/11 11:52:42 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.4 2002/03/05 10:42:13 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.5 2002/04/11 11:52:41 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Browser.H>
 #include <FL/fl_draw.H>
-#include <string.h>
+#include "flstring.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -495,5 +495,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.4 2002/03/05 10:42:13 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.5 2002/04/11 11:52:41 easysw Exp $".
 //

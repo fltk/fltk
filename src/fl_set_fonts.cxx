@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.4 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.5 2002/04/11 11:52:43 easysw Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -28,7 +28,7 @@
 #include <FL/x.H>
 #include "Fl_Font.H"
 #include <ctype.h>
-#include <string.h>
+#include "flstring.h"
 #include <stdlib.h>
 
 #ifdef WIN32
@@ -42,5 +42,5 @@
 #endif // WIN32
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.4 2002/03/06 18:11:01 easysw Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5.2.5 2002/04/11 11:52:43 easysw Exp $".
 //

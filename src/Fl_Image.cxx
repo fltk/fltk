@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.15 2002/01/07 20:40:02 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.16 2002/04/11 11:52:41 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
-#include <string.h>
+#include "flstring.h"
 
 
 void fl_restore_clip(); // in fl_rect.cxx
@@ -379,5 +379,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.15 2002/01/07 20:40:02 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.16 2002/04/11 11:52:41 easysw Exp $".
 //

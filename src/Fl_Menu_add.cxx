@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.2 2002/04/11 11:52:41 easysw Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 // string with a % sign in it!
 
 #include <FL/Fl_Menu_.H>
-#include <string.h>
+#include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -261,5 +261,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.2 2002/04/11 11:52:41 easysw Exp $".
 //

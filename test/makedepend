@@ -198,8 +198,9 @@ input.o: ../FL/Fl_Group.H ../FL/Fl_Box.H ../FL/Fl_Return_Button.H
 input.o: ../FL/Fl_Choice.H ../FL/Fl_Value_Input.H ../FL/Fl_Valuator.H
 keyboard.o: keyboard_ui.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 keyboard.o: keyboard.h ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-keyboard.o: ../FL/Fl_Button.H ../FL/Fl_Output.H ../FL/Fl_Input_.H
-keyboard.o: ../FL/Fl_Box.H ../FL/Fl_Dial.H ../FL/Fl_Valuator.H
+keyboard.o: ../FL/Fl_Button.H ../FL/Fl_Output.H ../FL/Fl_Input.H
+keyboard.o: ../FL/Fl_Input_.H ../FL/Fl_Box.H ../FL/Fl_Dial.H
+keyboard.o: ../FL/Fl_Valuator.H
 label.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 label.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 label.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Hor_Value_Slider.H

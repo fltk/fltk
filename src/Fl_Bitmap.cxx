@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.9 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.10 2002/04/11 11:52:41 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
-#include <string.h>
+#include "flstring.h"
 
 #ifdef __APPLE__ // MacOS bitmask functions
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
@@ -340,5 +340,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.9 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.10 2002/04/11 11:52:41 easysw Exp $".
 //
