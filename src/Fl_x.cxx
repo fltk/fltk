@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.4 2001/10/27 03:45:29 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.5 2001/11/19 18:28:55 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -476,6 +476,8 @@ int fl_handle(const XEvent& xevent)
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
     set_event_xy();
     Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
+    if (xevent.xbutton.button == Button4 ||
+        xevent.xbutton.button == Button5) return 0;
     event = FL_RELEASE;
     break;
 
@@ -934,5 +936,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.4 2001/10/27 03:45:29 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.5 2001/11/19 18:28:55 easysw Exp $".
 //
