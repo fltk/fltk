@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.4 1998/10/21 17:20:07 mike Exp $"
+# "$Id: Makefile,v 1.5 1998/10/21 17:24:50 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -83,5 +83,16 @@ uninstall:
 	-@ rm -f $(bindir)/$(PROGRAM)
 
 #
-# End of "$Id: Makefile,v 1.4 1998/10/21 17:20:07 mike Exp $".
+# Note: The rebuild target can only be used if you have the original .fl
+#       files.  This is normally only used by the FLTK maintainers...
+#
+
+rebuild:
+	./fluid -c about_panel.fl
+	./fluid -c alignment_panel.fl
+	./fluid -c function_panel.fl
+	./fluid -c widget_panel.fl
+
+#
+# End of "$Id: Makefile,v 1.5 1998/10/21 17:24:50 mike Exp $".
 #
