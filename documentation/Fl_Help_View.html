@@ -69,11 +69,23 @@ in the buffer.
 followed or a file is loaded (via
 <CODE>Fl_Help_View::load()</CODE>) that requires a different
 file or path. The callback function receives a pointer to the
-<CODE>Fl_Help_View</CODE> widget and the full pathname for the
-file in question and must return a pathname that can be opened
-as a local file. This can also be used to retrieve remote or
-virtual documents, returning the temporary file that contains
-the actual data.</P>
+<CODE>Fl_Help_View</CODE> widget and the URI or full pathname
+for the file in question. It must return a pathname that can be
+opened as a local file or <TT>NULL</TT>:</P>
+
+<UL><PRE>
+const char *fn(Fl_Widget *w, const char *uri);
+</PRE></UL>
+
+<P>The link function can be used to retrieve remote or virtual
+documents, returning a temporary file that contains the actual
+data. If the link function returns <TT>NULL</TT>, the value of
+the <TT>Fl_Help_View</TT> widget will remain unchanged.</P>
+
+<P>If the link callback cannot handle the URI scheme, it should
+return the <TT>uri</TT> value unchanged or set the <A
+HREF="Fl_Help_View.value"><TT>value()</TT></A> of the widget
+before returning <TT>NULL</TT>.</P>
 
 <H4><A NAME="Fl_Help_View.load">int load(const char *f)</A></H4>
 

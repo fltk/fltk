@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.7 2001/12/05 00:21:40 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.8 2001/12/17 14:27:03 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -819,6 +819,7 @@ load_kde_mimelnk(const char *filename)
     {
       if (!access("/usr/share/icons/hicolor", F_OK))
       {
+        // KDE 2.x icons
 	int		i;		// Looping var
 	static const char *paths[] = {	// Subdirs to look in...
 	  "32x32/actions",
@@ -849,10 +850,13 @@ load_kde_mimelnk(const char *filename)
 	}
 
         if (i >= (int)(sizeof(paths) / sizeof(paths[0]))) return;
-      }
-      else
+      } else {
+        // KDE 1.x icons
         snprintf(full_iconfilename, sizeof(full_iconfilename),
 	         "/usr/share/icons/%s", iconfilename);
+
+        if (access(full_iconfilename, F_OK)) return;
+      }
 
       if (strncmp(mimetype, "inode/", 6) == 0) {
 	if (strcmp(mimetype + 6, "directory") == 0)
@@ -926,5 +930,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.7 2001/12/05 00:21:40 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.8 2001/12/17 14:27:03 easysw Exp $".
 //

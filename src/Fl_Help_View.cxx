@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.18 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.19 2001/12/17 14:27:03 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2225,26 +2225,36 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   else
     localname = filename_;
 
-  if (localname != NULL &&
-      (strncmp(localname, "ftp:", 4) == 0 ||
-       strncmp(localname, "http:", 5) == 0 ||
-       strncmp(localname, "https:", 6) == 0 ||
-       strncmp(localname, "ipp:", 4) == 0 ||
-       strncmp(localname, "mailto:", 7) == 0 ||
-       strncmp(localname, "news:", 5) == 0))
-    localname = NULL;	// Remote link wasn't resolved...
-  else if (localname != NULL &&
-           strncmp(localname, "file:", 5) == 0)
-    localname += 5;	// Adjust for local filename...
-      
+  if (!localname)
+    return (0);
+
   if (value_ != NULL)
   {
     free((void *)value_);
     value_ = NULL;
   }
 
-  if (localname)
+  if (strncmp(localname, "ftp:", 4) == 0 ||
+      strncmp(localname, "http:", 5) == 0 ||
+      strncmp(localname, "https:", 6) == 0 ||
+      strncmp(localname, "ipp:", 4) == 0 ||
+      strncmp(localname, "mailto:", 7) == 0 ||
+      strncmp(localname, "news:", 5) == 0)
   {
+    // Remote link wasn't resolved...
+    snprintf(error, sizeof(error),
+             "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
+             "<BODY><H1>Error</H1>"
+	     "<P>Unable to follow the link \"%s\" - "
+	     "no handler exists for this URI scheme.</P></BODY>",
+	     localname);
+    value_ = strdup(error);
+  }
+  else
+  {
+    if (strncmp(localname, "file:", 5) == 0)
+      localname += 5;	// Adjust for local filename...
+
     if ((fp = fopen(localname, "rb")) != NULL)
     {
       fseek(fp, 0, SEEK_END);
@@ -2257,14 +2267,14 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     }
     else
     {
-      sprintf(error, "%s: %s\n", localname, strerror(errno));
+      snprintf(error, sizeof(error),
+               "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
+               "<BODY><H1>Error</H1>"
+	       "<P>Unable to follow the link \"%s\" - "
+	       "%s.</P></BODY>",
+	       localname, strerror(errno));
       value_ = strdup(error);
     }
-  }
-  else
-  {
-    sprintf(error, "%s: %s\n", filename_, strerror(errno));
-    value_ = strdup(error);
   }
 
   format();
@@ -2552,5 +2562,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.18 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.19 2001/12/17 14:27:03 easysw Exp $".
 //
