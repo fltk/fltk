@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.30 2004/07/27 16:02:21 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.31 2004/09/09 21:34:46 matthiaswm Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -39,6 +39,8 @@
 #include <ctype.h>
 
 #define MAXBUF 1024
+
+extern void fl_draw(const char*, int, float, float);
 
 ////////////////////////////////////////////////////////////////
 
@@ -222,7 +224,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   p = value();
   // visit each line and draw it:
   int desc = height-fl_descent();
-  int xpos = X - xscroll_ + 1;
+  float xpos = X - xscroll_ + 1;
   int ypos = -yscroll_;
   for (; ypos < H;) {
 
@@ -237,19 +239,19 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       if (readonly()) erase_cursor_only = 0; // this isn't the most efficient way
       if (erase_cursor_only && p > pp) goto CONTINUE2; // this line is after
       // calculate area to erase:
-      int r = X+W;
-      int xx;
+      float r = X+W;
+      float xx;
       if (p >= pp) {
 	xx = X;
 	if (erase_cursor_only) r = xpos+2;
 	else if (readonly()) xx -= 3;
       } else {
-	xx = xpos+(int)expandpos(p, pp, buf, 0);
+	xx = xpos+expandpos(p, pp, buf, 0);
 	if (erase_cursor_only) r = xx+2;
 	else if (readonly()) xx -= 3;
       }
       // clip to and erase it:
-      fl_push_clip(xx, Y+ypos, r-xx, height);
+      fl_push_clip((int)xx, Y+ypos, (int)(r-xx+1), height);
       draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
                W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
       // it now draws entire line over it
@@ -260,30 +262,30 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     // Draw selection area if required:
     if (selstart < selend && selstart <= e-value() && selend > p-value()) {
       const char* pp = value()+selstart;
-      int x1 = xpos;
+      float x1 = xpos;
       int offset1 = 0;
       if (pp > p) {
 	fl_color(tc);
-	x1 += int(expandpos(p, pp, buf, &offset1));
-	fl_draw(buf, offset1, xpos, Y+ypos+desc);
+	x1 += expandpos(p, pp, buf, &offset1);
+	fl_draw(buf, offset1, xpos, (float)(Y+ypos+desc));
       }
       pp = value()+selend;
-      int x2 = X+W;
+      float x2 = X+W;
       int offset2;
-      if (pp <= e) x2 = xpos+int(expandpos(p, pp, buf, &offset2));
+      if (pp <= e) x2 = xpos+expandpos(p, pp, buf, &offset2);
       else offset2 = strlen(buf);
       fl_color(selection_color());
-      fl_rectf(x1, Y+ypos, x2-x1, height);
+      fl_rectf((int)(x1+0.5), Y+ypos, (int)(x2-x1+0.5), height);
       fl_color(fl_contrast(textcolor(), selection_color()));
-      fl_draw(buf+offset1, offset2-offset1, x1, Y+ypos+desc);
+      fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
       if (pp < e) {
 	fl_color(tc);
-	fl_draw(buf+offset2, x2, Y+ypos+desc);
+	fl_draw(buf+offset2, strlen(buf+offset2), x2, (float)(Y+ypos+desc));
       }
     } else {
       // draw unselected text
       fl_color(tc);
-      fl_draw(buf, xpos, Y+ypos+desc);
+      fl_draw(buf, strlen(buf), xpos, (float)(Y+ypos+desc));
     }
 
     if (do_mu) fl_pop_clip();
@@ -294,11 +296,11 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 	position() >= p-value() && position() <= e-value()) {
       fl_color(cursor_color());
       if (readonly()) {
-        fl_line(xpos+curx-3, Y+ypos+height-1,
-	        xpos+curx, Y+ypos+height-4,
-	        xpos+curx+3, Y+ypos+height-1);
+        fl_line((int)(xpos+curx-2.5f), Y+ypos+height-1,
+	        (int)(xpos+curx+0.5f), Y+ypos+height-4,
+	        (int)(xpos+curx+3.5f), Y+ypos+height-1);
       } else {
-        fl_rectf(xpos+curx, Y+ypos, 2, height);
+        fl_rectf((int)(xpos+curx+0.5), Y+ypos, 2, height);
       }
     }
 
@@ -855,5 +857,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.30 2004/07/27 16:02:21 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.31 2004/09/09 21:34:46 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5.2.16 2004/08/31 22:00:49 matthiaswm Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.17 2004/09/09 21:34:48 matthiaswm Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -62,7 +62,16 @@ void  gl_font(int fontid, int size) {
     aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
                fl_fontsize->size, 0, 256, fl_fontsize->listbase);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz : add ATS font calls!
+    short font, face, size;
+    uchar fn[256]; 
+    fn[0]=strlen(fl_fontsize->q_name); 
+    strcpy((char*)(fn+1), fl_fontsize->q_name);
+    GetFNum(fn, &font);
+    face = 0;
+    size = fl_fontsize->size;
+    fl_fontsize->listbase = glGenLists(256);
+    aglUseFont(aglGetCurrentContext(), font, face,
+               size, 0, 256, fl_fontsize->listbase);
 #else
 #  if USE_XFT
     fl_xfont = fl_xxfont();
@@ -116,9 +125,17 @@ void gl_remove_displaylist_fonts()
 #endif
 }
 
+#ifdef __APPLE__
+const char *fl_iso2macRoman(const char*, int);
+#endif
 
 void gl_draw(const char* str, int n) {
+#ifdef __APPLE__
+  const char *txt = fl_iso2macRoman(str, n);
+  glCallLists(n, GL_UNSIGNED_BYTE, txt);
+#else
   glCallLists(n, GL_UNSIGNED_BYTE, str);
+#endif
 }
 
 void gl_draw(const char* str, int n, int x, int y) {
@@ -209,5 +226,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.16 2004/08/31 22:00:49 matthiaswm Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.17 2004/09/09 21:34:48 matthiaswm Exp $".
 //

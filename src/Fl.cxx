@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.66 2004/08/31 22:00:45 matthiaswm Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.67 2004/09/09 21:34:45 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,11 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
+
+// warning: the Apple Quartz version still uses some Quickdraw calls,
+//          mostly to get around the single active context in QD and 
+//          to implement clipping. This should be changed into pure
+//          Quartz calls in the near future.
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -320,7 +325,6 @@ Fl_Window* fl_find(Window xid) {
 #ifdef __APPLE_QD__
     if (window->xid == xid && !window->w->window()) {
 #elif defined(__APPLE_QUARTZ__)
-#   warning QUARTZ
     if (window->xid == xid && !window->w->window()) {
 #else
     if (window->xid == xid) {
@@ -747,7 +751,6 @@ void Fl_Window::hide() {
     if ( pc->xidChildren == ip ) pc->xidChildren = ip->xidNext;   
   }
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz
   // remove all childwindow links
   for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
   {
@@ -790,7 +793,6 @@ void Fl_Window::hide() {
   if ( ip->xid == fl_window )
     fl_window = 0;
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz
   Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window )
     fl_window = 0;
@@ -806,7 +808,6 @@ void Fl_Window::hide() {
     XDestroyWindow(fl_display, ip->xid);
   }
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz
   if ( !parent() ) // don't destroy shared windows!
   {
     //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
@@ -865,7 +866,6 @@ int Fl_Window::handle(int ev)
         hide();
 	set_visible();
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz
         hide();
         set_visible();
 #else
@@ -992,7 +992,6 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
       UnionRgn(R, i->region, i->region);
       DisposeRgn(R);
 #elif defined(__APPLE_QUARTZ__)
-#  warning quartz
       Fl_Region R = NewRgn();
       SetRectRgn(R, X, Y, X+W, Y+H);
       UnionRgn(R, i->region, i->region);
@@ -1021,5 +1020,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.66 2004/08/31 22:00:45 matthiaswm Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.67 2004/09/09 21:34:45 matthiaswm Exp $".
 //

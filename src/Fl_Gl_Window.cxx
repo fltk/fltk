@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.21 2004/08/25 00:20:25 matthiaswm Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.22 2004/09/09 21:34:46 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -109,7 +109,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 #elif defined(__APPLE_QD__)
     redraw();
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
     redraw();
 #else
     // under X, if the visual changes we must make a new X window (yuck!):
@@ -195,7 +195,7 @@ void Fl_Gl_Window::swap_buffers() {
 #elif defined(__APPLE_QD__)
   aglSwapBuffers((AGLContext)context_);
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   aglSwapBuffers((AGLContext)context_);
 #else
   glXSwapBuffers(fl_display, fl_xid(this));
@@ -219,7 +219,7 @@ void Fl_Gl_Window::flush() {
   ClipRect( &rect );
   SetPort( old );
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
   GrafPtr port = GetWindowPort( fl_xid(this) );
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
@@ -269,7 +269,7 @@ void Fl_Gl_Window::flush() {
 #ifdef __APPLE_QD__
       SWAP_TYPE = COPY;
 #elif defined __APPLE_QUARTZ__
-#warning quartz
+      // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
@@ -445,5 +445,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.21 2004/08/25 00:20:25 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.22 2004/09/09 21:34:46 matthiaswm Exp $".
 //

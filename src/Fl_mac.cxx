@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.63 2004/08/31 22:00:48 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.64 2004/09/09 21:34:46 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,10 @@
 // One Compile to copy them all and in the bundle bind them,
 // in the Land of MacOS X where the Drop-Shadows lie.
 
+// warning: the Apple Quartz version still uses some Quickdraw calls,
+//          mostly to get around the single active context in QD and 
+//          to implement clipping. This should be changed into pure
+//          Quartz calls in the near future.
 
 // we don't need the following definition because we deliver only
 // true mouse moves.  On very slow systems however, this flag may
@@ -55,10 +59,6 @@ extern "C" {
 #include <stdlib.h>
 #include "flstring.h"
 #include <unistd.h>
-
-#ifdef __APPLE_QUARTZ__
-#warning quartz
-#endif
 
 // #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT
@@ -1867,7 +1867,6 @@ void Fl_Window::make_current()
   fl_clip_region( 0 );
   SetPortClipRegion( GetWindowPort(i->xid), fl_window_region );
 #ifdef __APPLE_QUARTZ__
-#warning : bracket all the QD stuff above with ifdefs!
   QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
   fl_gc = i->gc;
   CGContextSaveGState(fl_gc);
@@ -2014,6 +2013,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.63 2004/08/31 22:00:48 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.64 2004/09/09 21:34:46 matthiaswm Exp $".
 //
 

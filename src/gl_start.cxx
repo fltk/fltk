@@ -1,5 +1,5 @@
 //
-// "$Id: gl_start.cxx,v 1.6.2.5.2.10 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: gl_start.cxx,v 1.6.2.5.2.11 2004/09/09 21:34:48 matthiaswm Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -69,7 +69,7 @@ void gl_start() {
     // \todo Mac : We need to check the code and verify it with Apple Sample code. The 'shiny'-test should at least work with the software OpenGL emulator
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #else
     context = fl_create_gl_context(fl_visual);
@@ -116,7 +116,7 @@ int Fl::gl_visual(int mode, int *alist) {
 #elif defined(__APPLE_QD__)
   gl_choice = c;
 #elif defined(__APPLE_QUARTZ__)
-#warning
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   gl_choice = c;
 #else
   fl_visual = c->vis;
@@ -128,5 +128,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.6.2.5.2.10 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: gl_start.cxx,v 1.6.2.5.2.11 2004/09/09 21:34:48 matthiaswm Exp $".
 //

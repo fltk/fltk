@@ -1,5 +1,5 @@
 //
-// "$Id: fl_read_image_mac.cxx,v 1.1.2.6 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_read_image_mac.cxx,v 1.1.2.7 2004/09/09 21:34:47 matthiaswm Exp $"
 //
 // WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
 //
@@ -25,9 +25,8 @@
 
 #include <config.h>
 
-#ifdef __APPLE_QUARTZ__
-#warning quartz
-#endif
+// warning: this function is only implemented in Quickdraw. The function
+//          below may not work If FLTK is compiled with Quartz enabled
 
 //
 // 'fl_read_image()' - Read an image from the current window.
@@ -122,5 +121,5 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
 
 //
-// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.6 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.7 2004/09/09 21:34:47 matthiaswm Exp $".
 //

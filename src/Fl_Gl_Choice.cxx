@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.20 2004/08/25 00:20:25 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.21 2004/09/09 21:34:46 matthiaswm Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,10 +33,7 @@
 #  include <FL/gl_draw.H>
 #  include "flstring.h"
 
-#  ifdef __APPLE_QD__
-#    include <FL/Fl_Window.H>
-#  elif defined(__APPLE_QUARTZ__)
-#warning quartz
+#  ifdef __APPLE__
 #    include <FL/Fl_Window.H>
 #  endif
 
@@ -102,7 +99,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   if (!fmt) return 0;
 
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   const int *blist;
   int list[32];
    
@@ -261,7 +258,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
 #  elif defined(__APPLE_QD__)
   g->pixelformat = fmt;
 #  elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   g->pixelformat = fmt;
 #  else
   g->vis = visp;
@@ -343,8 +340,8 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
     return (context);
 }
 #  elif defined(__APPLE_QUARTZ__)
-#warning quartz
-GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
+  GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
     GLContext context, shared_ctx = context_list ? context_list[0] : 0;
     context = aglCreateContext( g->pixelformat, shared_ctx);
     if (!context) return 0;
@@ -389,7 +386,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); 
     aglSetCurrentContext(context);
 #  elif defined(__APPLE_QUARTZ__)
-#warning
+    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
     if ( w->parent() ) { //: resize our GL buffer rectangle
       Rect wrect; GetWindowPortBounds( fl_xid(w), &wrect );
       GLint rect[] = { w->x(), wrect.bottom-w->h()-w->y(), w->w(), w->h() };
@@ -412,7 +409,7 @@ void fl_no_gl_context() {
 #  elif defined(__APPLE_QD__)
   aglSetCurrentContext(0);
 #  elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   aglSetCurrentContext(0);
 #  else
   glXMakeCurrent(fl_display, 0, 0);
@@ -428,7 +425,7 @@ void fl_delete_gl_context(GLContext context) {
   aglSetDrawable( context, NULL );    
   aglDestroyContext( context );
 #  elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   aglSetCurrentContext( NULL );
   aglSetDrawable( context, NULL );
   aglDestroyContext( context );
@@ -442,5 +439,5 @@ void fl_delete_gl_context(GLContext context) {
 
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.20 2004/08/25 00:20:25 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.21 2004/09/09 21:34:46 matthiaswm Exp $".
 //

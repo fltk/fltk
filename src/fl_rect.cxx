@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.17 2004/08/31 22:00:48 matthiaswm Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.18 2004/09/09 21:34:47 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -432,7 +432,9 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 #ifdef __APPLE_QD__
 extern Fl_Region fl_window_region;
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+// warning: the Quartz implementation currently uses Quickdraw calls to achieve
+//          clipping. A future version should instead use 'CGContectClipToRect'
+//          and friends.
 extern Fl_Region fl_window_region;
 #endif
 
@@ -464,7 +466,6 @@ void fl_restore_clip() {
   }
 #  endif
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
   if ( fl_window )
   {
     GrafPtr port = GetWindowPort( fl_window );
@@ -511,7 +512,6 @@ void fl_push_clip(int x, int y, int w, int h) {
 #elif defined(__APPLE_QD__)
       SectRgn(r, current, r); 
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
       SectRgn(r, current, r);
 #else
       Fl_Region temp = XCreateRegion();
@@ -527,7 +527,6 @@ void fl_push_clip(int x, int y, int w, int h) {
     r = NewRgn(); 
     SetEmptyRgn(r);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
     r = NewRgn();
     SetEmptyRgn(r);
 #else
@@ -569,7 +568,6 @@ int fl_not_clipped(int x, int y, int w, int h) {
   rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
   return RectInRgn(&rect, r);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
   if (!r) return 1;
   Rect rect;
   rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
@@ -620,7 +618,6 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   if ( h==H && w==W ) return 0;
   return 0;
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
   RgnHandle rr = NewRgn();
   SetRectRgn( rr, x, y, x+w, y+h );
   SectRgn( r, rr, rr );
@@ -656,5 +653,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.17 2004/08/31 22:00:48 matthiaswm Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.18 2004/09/09 21:34:47 matthiaswm Exp $".
 //

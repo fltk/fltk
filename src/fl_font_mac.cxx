@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.21 2004/09/09 00:55:41 matthiaswm Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.22 2004/09/09 21:34:47 matthiaswm Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -32,6 +32,10 @@
 //: SetFractEnable
 
 Fl_FontSize::Fl_FontSize(const char* name, int Size) {
+  next = 0;
+#  if HAVE_GL
+  listbase = 0;
+#  endif
 #ifdef __APPLE_QD__
   knowMetrics = 0;
   switch (*name++) {
@@ -49,9 +53,6 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   ascent = fOut->ascent;	//: the following three lines give only temporary aproimations
   descent = fOut->descent;
   for (int i=0; i<256; i++) width[i] = fOut->widMax;
-#if HAVE_GL
-  listbase = 0;
-#endif
   minsize = maxsize = size;
 #elif defined(__APPLE_QUARTZ__)
   q_name = strdup(name);
@@ -200,37 +201,6 @@ int fl_descent() {
   else return -1;
 }
 
-// TODO: the text has to be translated according to the macroman_lut to give
-// the correct result!
-double fl_width(const char* c, int n) {
-#ifdef __APPLE_QD__
-  return (double)TextWidth( c, 0, n );
-#else
-  if (!fl_gc) {
-    Fl_Window *w = Fl::first_window();
-    if (w) w->make_current();
-    if (!fl_gc) return -1;
-  }
-  // according to the Apple developer docs, this is the correct way to 
-  // find the length of a rendered text...
-  CGContextSetTextPosition(fl_gc, 0, 0);
-  CGContextSetTextDrawingMode(fl_gc, kCGTextInvisible);
-  CGContextShowText(fl_gc, c, n);
-  CGContextSetTextDrawingMode(fl_gc, kCGTextFill);
-  CGPoint p = CGContextGetTextPosition(fl_gc);
-  return p.x;
-#endif
-}
-
-// todo : fl_width returns wrong results for OS X
-double fl_width(uchar c) {
-#ifdef __APPLE_QD__
-  return (double)TextWidth( &c, 0, 1 );
-#else 
-  return fl_width((const char*)&c, 1);
-#endif
-}
-
 // MRS: The default character set is MacRoman, which is different from
 //      ISO-8859-1; in FLTK 2.0 we'll use UTF-8 with Quartz...
 
@@ -253,30 +223,78 @@ static uchar macroman_lut[256] = {
   240, 150, 152, 151, 153, 155, 154, 214, 191, 157, 156, 158, 159, 253, 254, 216
 };
 
-void fl_draw(const char* str, int n, int x, int y) {
-  int	i;				// Looping var
-  uchar	buf[1024],			// Temporary buffer
-	*bufptr;			// Pointer into buffer
+static char *iso_buf = 0;
+static int n_iso_buf = 0;
 
+// this function must be available for OpenGL character drawing as well
+const char *fl_iso2macRoman(const char *s, int n) {
+  if (n>n_iso_buf) {
+    if (iso_buf) free(iso_buf);
+    iso_buf = (char*)malloc(n+500);
+    n_iso_buf = n;
+  }
+  uchar *src = (uchar*)s;
+  uchar *dst = (uchar*)iso_buf;
+  for (;n--;) {
+    *dst++ = macroman_lut[*src++];
+  }
+  return iso_buf;
+}
 
-  // First convert string to MacRoman encoding...
-  if (n > (int)sizeof(buf))
-    n = (int)sizeof(buf);
-
-  for (i = n, bufptr = buf; i > 0; i --)
-    *bufptr++ = macroman_lut[*str++ & 255];
+double fl_width(const char* c, int n) {
 #ifdef __APPLE_QD__
-  // Then draw it...
+  return (double)TextWidth( c, 0, n );
+#else
+  if (!fl_gc) {
+    Fl_Window *w = Fl::first_window();
+    if (w) w->make_current();
+    if (!fl_gc) return -1;
+  }
+  const char *txt = fl_iso2macRoman(c, n);
+  // according to the Apple developer docs, this is the correct way to
+  // find the length of a rendered text...
+  CGContextSetTextPosition(fl_gc, 0, 0);
+  CGContextSetTextDrawingMode(fl_gc, kCGTextInvisible);
+  CGContextShowText(fl_gc, txt, n);
+  CGContextSetTextDrawingMode(fl_gc, kCGTextFill);
+  CGPoint p = CGContextGetTextPosition(fl_gc);
+  return p.x;
+#endif
+}
+
+double fl_width(uchar c) {
+#ifdef __APPLE_QD__
+  return (double)TextWidth((const char*)(macroman_lut + c), 0, 1 );
+#else
+  return fl_width((const char*)(&c), 1);
+#endif
+}
+
+void fl_draw(const char *str, int n, float x, float y);
+
+void fl_draw(const char* str, int n, int x, int y) {
+#ifdef __APPLE_QD__
+  const char *txt = fl_iso2macRoman(str, n);
   MoveTo(x, y);
   DrawText((const char *)buf, 0, n);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextShowTextAtPoint(fl_gc, (float)x, (float)y, (const char*)buf, n);
+  fl_draw(str, n, (float)x, (float)y);
 #else
 # error : neither Quartz no Quickdraw chosen
 #endif
 }
 
+void fl_draw(const char *str, int n, float x, float y) {
+#ifdef __APPLE_QD__
+  fl_draw(str, n, (int)x, (int)y);
+#elif defined(__APPLE_QUARTZ__)
+  const char *txt = fl_iso2macRoman(str, n);
+  CGContextShowTextAtPoint(fl_gc, x, y, txt, n);
+#else
+# error : neither Quartz no Quickdraw chosen
+#endif
+}
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.21 2004/09/09 00:55:41 matthiaswm Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.22 2004/09/09 21:34:47 matthiaswm Exp $".
 //

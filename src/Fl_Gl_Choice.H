@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.4 2004/08/25 00:20:25 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.5 2004/09/09 21:34:46 matthiaswm Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -62,7 +62,7 @@
 #  include <AGL/agl.h>
 #  define GLContext AGLContext
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+// warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 #  include <OpenGL/gl.h>
 #  include <AGL/agl.h>
 #  define GLContext AGLContext
@@ -83,7 +83,7 @@ public:
 #elif defined(__APPLE_QD__)
   AGLPixelFormat pixelformat;
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   AGLPixelFormat pixelformat;
 #else
   XVisualInfo *vis;	// the visual to use
@@ -106,7 +106,7 @@ GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+// warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
@@ -128,5 +128,5 @@ void fl_delete_gl_context(GLContext);
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.4 2004/08/25 00:20:25 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.5 2004/09/09 21:34:46 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_x.cxx,v 1.10.2.6 2004/09/07 20:59:17 easysw Exp $"
+// "$Id: fl_font_x.cxx,v 1.10.2.7 2004/09/09 21:34:47 matthiaswm Exp $"
 //
 // Standard X11 font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -252,7 +252,11 @@ void fl_draw(const char* str, int n, int x, int y) {
   }
   XDrawString(fl_display, fl_window, fl_gc, x, y, str, n);
 }
+  
+void fl_draw(const char* str, int n, float x, float y) {
+  return fl_draw(str, n, (int)x, (int)y);
+}
 
 //
-// End of "$Id: fl_font_x.cxx,v 1.10.2.6 2004/09/07 20:59:17 easysw Exp $".
+// End of "$Id: fl_font_x.cxx,v 1.10.2.7 2004/09/09 21:34:47 matthiaswm Exp $".
 //

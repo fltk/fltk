@@ -1,5 +1,5 @@
 //
-// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.7 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.8 2004/09/09 21:34:48 matthiaswm Exp $"
 //
 // Scrolling routines for the Fast Light Tool Kit (FLTK).
 //
@@ -111,7 +111,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   CopyBits( GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
             GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
 #elif defined(__APPLE_QUARTZ__)
-#warning
+  // warning: there does not seem to be an equivalent to this function in Quartz
   Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
   static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
@@ -136,5 +136,5 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 }
 
 //
-// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.7 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_scroll_area.cxx,v 1.4.2.3.2.8 2004/09/09 21:34:48 matthiaswm Exp $".
 //
