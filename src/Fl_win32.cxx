@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.38 2002/10/11 13:46:56 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.39 2002/10/22 17:39:12 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -584,21 +584,24 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
 
   case WM_PAINT: {
+    Fl_Region R;
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
-    // We need to merge this damage into fltk's damage.  I do this in
-    // reverse, telling Win32 about fltk's damage and then reading back
-    // the new accumulated region.
+    // We need to merge WIN32's damage into FLTK's damage.
+    R = CreateRectRgn(0,0,0,0);
+    GetUpdateRgn(hWnd,R,0);
     if (i->region) {
-      // If there is no region the entire window is damaged
-      if (window->damage()) InvalidateRgn(hWnd,i->region,FALSE);
-
-      GetUpdateRgn(hWnd,i->region,0);
+      // Also tell WIN32 that we are drawing someplace else as well...
+      InvalidateRgn(hWnd, i->region, FALSE);
+      CombineRgn(i->region, i->region, R, RGN_OR);
+      XDestroyRegion(R);
+    } else {
+      i->region = R;
     }
     ValidateRgn(hWnd,i->region);
     window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
     // These next two statements should not be here, so that all update
-    // is deferred until Fl::flush() is called during idle.  However Win32
+    // is deferred until Fl::flush() is called during idle.  However WIN32
     // apparently is very unhappy if we don't obey it and draw right now.
     // Very annoying!
     fl_GetDC(hWnd); // Make sure we have a DC for this window...
@@ -1183,5 +1186,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.38 2002/10/11 13:46:56 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.39 2002/10/22 17:39:12 easysw Exp $".
 //

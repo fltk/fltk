@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.54 2002/10/04 15:59:28 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.55 2002/10/22 17:39:11 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -865,7 +865,7 @@ void Fl_Widget::redraw_label() {
       // background...
       int X = x() > 0 ? x() - 1 : 0;
       int Y = y() > 0 ? y() - 1 : 0;
-      window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+      damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
     }
 
     if (align() && !(align() & FL_ALIGN_INSIDE) && window()->shown()) {
@@ -875,13 +875,13 @@ void Fl_Widget::redraw_label() {
       label_.measure(W, H);
 
       if (align() & FL_ALIGN_BOTTOM) {
-	window()->damage(FL_DAMAGE_EXPOSE, x(), y() + h(), w(), H);
+	damage(FL_DAMAGE_EXPOSE, x(), y() + h(), w(), H);
       } else if (align() & FL_ALIGN_TOP) {
-	window()->damage(FL_DAMAGE_EXPOSE, x(), y() - H, w(), H);
+	damage(FL_DAMAGE_EXPOSE, x(), y() - H, w(), H);
       } else if (align() & FL_ALIGN_LEFT) {
-	window()->damage(FL_DAMAGE_EXPOSE, x() - W, y(), W, h());
+	damage(FL_DAMAGE_EXPOSE, x() - W, y(), W, h());
       } else if (align() & FL_ALIGN_RIGHT) {
-	window()->damage(FL_DAMAGE_EXPOSE, x() + w(), y(), W, h());
+	damage(FL_DAMAGE_EXPOSE, x() + w(), y(), W, h());
       } else {
         damage(FL_DAMAGE_ALL);
       }
@@ -967,5 +967,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.54 2002/10/04 15:59:28 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.55 2002/10/22 17:39:11 easysw Exp $".
 //

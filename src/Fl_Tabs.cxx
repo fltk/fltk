@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.13 2002/09/09 02:04:46 spitzak Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.14 2002/10/22 17:39:12 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -126,9 +126,9 @@ int Fl_Tabs::handle(int event) {
   case FL_PUSH: {
     int H = tab_height();
     if (H >= 0) {
-      if (Fl::event_y() > y()+H) goto DEFAULT;
+      if (Fl::event_y() > y()+H) return Fl_Group::handle(event);
     } else {
-      if (Fl::event_y() < y()+h()+H) goto DEFAULT;
+      if (Fl::event_y() < y()+h()+H) return Fl_Group::handle(event);
     }}
     if (Fl::visible_focus()) Fl::focus(this);
   case FL_DRAG:
@@ -143,10 +143,10 @@ int Fl_Tabs::handle(int event) {
       int H = tab_height();
       if (H >= 0) {
         H += Fl::box_dy(box());
-	damage(FL_DAMAGE_EXPOSE, x(), y(), w(), H);
+	damage(FL_DAMAGE_SCROLL, x(), y(), w(), H);
       } else {
         H = Fl::box_dy(box()) - H;
-        damage(FL_DAMAGE_EXPOSE, x(), y() + h() - H, w(), H);
+        damage(FL_DAMAGE_SCROLL, x(), y() + h() - H, w(), H);
       }
       return 1;
     } else return 0;
@@ -173,7 +173,6 @@ int Fl_Tabs::handle(int event) {
         break;
     }
   default:
-  DEFAULT:
     return Fl_Group::handle(event);
 
   }
@@ -182,7 +181,7 @@ int Fl_Tabs::handle(int event) {
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
   if (push_ && !push_->visible() || o && !o->visible())
-    damage(FL_DAMAGE_EXPOSE);
+    redraw();
   push_ = o;
   return 1;
 }
@@ -232,7 +231,7 @@ void Fl_Tabs::draw() {
   } else { // redraw the child
     if (v) update_child(*v);
   }
-  if (damage() & (FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL)) {
+  if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
     int p[128]; int wp[128];
     int selected = tab_positions(p,wp);
     int i;
@@ -300,5 +299,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.13 2002/09/09 02:04:46 spitzak Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.14 2002/10/22 17:39:12 easysw Exp $".
 //
