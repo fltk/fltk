@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.7 2002/06/08 13:07:19 easysw Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.8 2002/11/09 22:59:06 easysw Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
@@ -110,7 +110,9 @@ void fl_font(int fnum, int size) {
     font->first = f;
   }
   fl_fontsize = f;
+#if XFT_MAJOR < 2
   fl_xfont    = f->font->u.core.font;
+#endif // XFT_MAJOR < 2
 }
 
 static XftFont* fontopen(const char* name, bool core) {
@@ -226,5 +228,5 @@ void fl_draw(const char *str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.7 2002/06/08 13:07:19 easysw Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.8 2002/11/09 22:59:06 easysw Exp $"
 //

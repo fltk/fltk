@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.2
 
+	- FLTK should now compile with Xft 2.0.
 	- Some versions of Tru64 4.0 have snprintf and
 	  vnsprintf, but don't have the prototypes for those
 	  functions.
