@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.H,v 1.1.2.1 2001/08/02 19:43:49 easysw Exp $"
+// "$Id: Fl_HelpView.H,v 1.1.2.2 2001/08/06 23:51:39 easysw Exp $"
 //
 //   Help Viewer widget definitions.
 //
@@ -92,8 +92,7 @@ struct Fl_HelpTarget
 // Fl_HelpImage structure...
 //
 
-struct Fl_Pixmap;
-struct Fl_Image;
+class Fl_Image;
 
 struct Fl_HelpImage 
 {
@@ -208,5 +207,5 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
 #endif // !_Fl_HelpView_H_
 
 //
-// End of "$Id: Fl_HelpView.H,v 1.1.2.1 2001/08/02 19:43:49 easysw Exp $".
+// End of "$Id: Fl_HelpView.H,v 1.1.2.2 2001/08/06 23:51:39 easysw Exp $".
 //

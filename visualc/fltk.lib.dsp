@@ -467,6 +467,18 @@ SOURCE=..\src\Fl_Tabs.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Text_Buffer.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Text_Display.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Text_Editor.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Tile.cxx
 # End Source File
 # Begin Source File

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.1 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.2 2001/08/06 23:51:39 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -33,7 +33,7 @@
 #include "Fl_Scrollbar.H"
 #include "Fl_Text_Buffer.H"
 
-class FL_EXPORT Fl_Text_Display: public Fl_Group {
+class Fl_Text_Display: public Fl_Group {
   public:
     enum {
       NORMAL_CURSOR, CARET_CURSOR, DIM_CURSOR,
@@ -60,30 +60,30 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
       int      size;
     };
 
-    Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
-    ~Fl_Text_Display();
+    FL_EXPORT Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
+    FL_EXPORT ~Fl_Text_Display();
 
-    virtual int handle(int e);
-    void buffer(Fl_Text_Buffer* buf);
+    FL_EXPORT virtual int handle(int e);
+    FL_EXPORT void buffer(Fl_Text_Buffer* buf);
     void buffer(Fl_Text_Buffer& buf) { buffer(&buf); }
     Fl_Text_Buffer* buffer() { return mBuffer; }
-    void redisplay_range(int start, int end);
-    void scroll(int topLineNum, int horizOffset);
-    void insert(const char* text);
-    void overstrike(const char* text);
-    void insert_position(int newPos);
+    FL_EXPORT void redisplay_range(int start, int end);
+    FL_EXPORT void scroll(int topLineNum, int horizOffset);
+    FL_EXPORT void insert(const char* text);
+    FL_EXPORT void overstrike(const char* text);
+    FL_EXPORT void insert_position(int newPos);
     int insert_position() { return mCursorPos; }
-    int in_selection(int x, int y);
-    void show_insert_position();
-    int move_right();
-    int move_left();
-    int move_up();
-    int move_down();
-    void next_word(void);
-    void previous_word(void);
-    void show_cursor(int b = 1);
+    FL_EXPORT int in_selection(int x, int y);
+    FL_EXPORT void show_insert_position();
+    FL_EXPORT int move_right();
+    FL_EXPORT int move_left();
+    FL_EXPORT int move_up();
+    FL_EXPORT int move_down();
+    FL_EXPORT void next_word(void);
+    FL_EXPORT void previous_word(void);
+    FL_EXPORT void show_cursor(int b = 1);
     void hide_cursor() { show_cursor(0); }
-    void cursor_style(int style);
+    FL_EXPORT void cursor_style(int style);
     int scrollbar_width() { return scrollbar_width_; }
     Fl_Align scrollbar_align() { return scrollbar_align_; }
     void scrollbar_width(int w) { scrollbar_width_ = w; }
@@ -92,13 +92,13 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int word_end(int pos) { return buffer()->word_end(pos); }
 
     
-    void highlight_data(Fl_Text_Buffer *styleBuffer,
+    FL_EXPORT void highlight_data(Fl_Text_Buffer *styleBuffer,
                         Style_Table_Entry *styleTable,
                         int nStyles, char unfinishedStyle,
                         Unfinished_Style_Cb unfinishedHighlightCB,
                         void *cbArg);
 
-    int position_style(int lineStartPos, int lineLen, int lineIndex,
+    FL_EXPORT int position_style(int lineStartPos, int lineLen, int lineIndex,
                        int dispIndex);
 
     Fl_Font textfont() const {return (Fl_Font)textfont_;}
@@ -107,62 +107,62 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     void textsize(uchar s) {textsize_ = s;}
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
     void textcolor(uchar n) {textcolor_ = n;}
-    
+
   protected:
     // Most (all?) of this stuff should only be called from resize() or
     // draw().
     // Anything with "vline" indicates thats it deals with currently
     // visible lines.
-    virtual void resize(int X, int Y, int W, int H);
+    FL_EXPORT virtual void resize(int X, int Y, int W, int H);
 
-    virtual void draw();
-    void draw_text(int X, int Y, int W, int H);
-    void draw_range(int start, int end);
-    void draw_cursor(int, int);
+    FL_EXPORT virtual void draw();
+    FL_EXPORT void draw_text(int X, int Y, int W, int H);
+    FL_EXPORT void draw_range(int start, int end);
+    FL_EXPORT void draw_cursor(int, int);
 
-    void draw_string(int style, int x, int y, int toX, const char *string,
+    FL_EXPORT void draw_string(int style, int x, int y, int toX, const char *string,
                      int nChars);
 
-    void draw_vline(int visLineNum, int leftClip, int rightClip,
+    FL_EXPORT void draw_vline(int visLineNum, int leftClip, int rightClip,
                     int leftCharIndex, int rightCharIndex);
 
-    void clear_rect(int style, int x, int y, int width, int height);
-    void display_insert();
+    FL_EXPORT void clear_rect(int style, int x, int y, int width, int height);
+    FL_EXPORT void display_insert();
 
-    void offset_line_starts(int newTopLineNum);
+    FL_EXPORT void offset_line_starts(int newTopLineNum);
 
-    void calc_line_starts(int startLine, int endLine);
+    FL_EXPORT void calc_line_starts(int startLine, int endLine);
 
-    void update_line_starts(int pos, int charsInserted, int charsDeleted,
+    FL_EXPORT void update_line_starts(int pos, int charsInserted, int charsDeleted,
                             int linesInserted, int linesDeleted, int *scrolled);
 
-    void calc_last_char();
+    FL_EXPORT void calc_last_char();
 
-    int position_to_line( int pos, int* lineNum );
-    int string_width(const char* string, int length, int style);
+    FL_EXPORT int position_to_line( int pos, int* lineNum );
+    FL_EXPORT int string_width(const char* string, int length, int style);
 
-    static void buffer_modified_cb(int pos, int nInserted, int nDeleted,
+    FL_EXPORT static void buffer_modified_cb(int pos, int nInserted, int nDeleted,
                                    int nRestyled, const char* deletedText,
                                    void* cbArg);
 
-    static void h_scrollbar_cb(Fl_Scrollbar* w, Fl_Text_Display* d);
-    static void v_scrollbar_cb( Fl_Scrollbar* w, Fl_Text_Display* d);
-    void update_v_scrollbar();
-    void update_h_scrollbar();
-    int measure_vline(int visLineNum);
-    int longest_vline();
-    int empty_vlines();
-    int vline_length(int visLineNum);
-    int xy_to_position(int x, int y, int PosType = CHARACTER_POS);
+    FL_EXPORT static void h_scrollbar_cb(Fl_Scrollbar* w, Fl_Text_Display* d);
+    FL_EXPORT static void v_scrollbar_cb( Fl_Scrollbar* w, Fl_Text_Display* d);
+    FL_EXPORT void update_v_scrollbar();
+    FL_EXPORT void update_h_scrollbar();
+    FL_EXPORT int measure_vline(int visLineNum);
+    FL_EXPORT int longest_vline();
+    FL_EXPORT int empty_vlines();
+    FL_EXPORT int vline_length(int visLineNum);
+    FL_EXPORT int xy_to_position(int x, int y, int PosType = CHARACTER_POS);
 
-    void xy_to_rowcol(int x, int y, int* row, int* column,
+    FL_EXPORT void xy_to_rowcol(int x, int y, int* row, int* column,
                       int PosType = CHARACTER_POS);
 
-    int position_to_xy(int pos, int* x, int* y);
-    int position_to_linecol(int pos, int* lineNum, int* column);
-    void scroll_(int topLineNum, int horizOffset);
+    FL_EXPORT int position_to_xy(int pos, int* x, int* y);
+    FL_EXPORT int position_to_linecol(int pos, int* lineNum, int* column);
+    FL_EXPORT void scroll_(int topLineNum, int horizOffset);
 
-    void extend_range_for_styles(int* start, int* end);
+    FL_EXPORT void extend_range_for_styles(int* start, int* end);
 
 
     int damage_range1_start, damage_range1_end;
@@ -225,5 +225,5 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.1 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.2 2001/08/06 23:51:39 easysw Exp $".
 //

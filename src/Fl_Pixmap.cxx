@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.2 2001/08/06 23:51:39 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -91,7 +91,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       int Bpr = (bpp*w()+7)/8;			//: bytes per row
       int pad = Bpr&1, w1 = (w()+7)/8, shr = ((w()-1)&7)+1;
       if (bpp==4) shr = (shr+1)/2;
-      uchar *newarray = new uchar[(Bpr+pad)*h], *dst = newarray, *src = bitmap;
+      uchar *newarray = new uchar[(Bpr+pad)*h()], *dst = newarray, *src = bitmap;
       for (int i=0; i<h(); i++) {
 	//: this is slooow, but we do it only once per pixmap
 	for (int j=w1; j>0; j--) {
@@ -178,5 +178,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* m) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.2 2001/08/06 23:51:39 easysw Exp $".
 //

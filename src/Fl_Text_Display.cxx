@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.1 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.2 2001/08/06 23:51:39 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -205,8 +205,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     mMaxsize = max(mMaxsize, fl_height(mStyleTable[i].font, mStyleTable[i].size));
 
   // did we have scrollbars initially?
-  bool hscrollbarvisible = mHScrollBar->visible();
-  bool vscrollbarvisible = mVScrollBar->visible();
+  int hscrollbarvisible = mHScrollBar->visible();
+  int vscrollbarvisible = mVScrollBar->visible();
 
   // try without scrollbars first
   mVScrollBar->clear_visible();
@@ -1948,5 +1948,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.1 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.2 2001/08/06 23:51:39 easysw Exp $".
 //
