@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.9 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.10 2002/01/03 18:28:37 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -921,6 +921,13 @@ void Fl_Window::label(const char *name,const char *iname) {
 static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}
 
 void Fl_Window::show() {
+  image(Fl::scheme_bg_);
+  if (Fl::scheme_bg_) {
+    labeltype(FL_NORMAL_LABEL);
+    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+  } else {
+    labeltype(FL_NO_LABEL);
+  }
   if (!shown()) {
     fl_open_display();
     if (can_boxcheat(box())) fl_background_pixel = int(fl_xpixel(color()));
@@ -947,5 +954,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.9 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.10 2002/01/03 18:28:37 easysw Exp $".
 //

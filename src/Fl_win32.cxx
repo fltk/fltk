@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.12 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.13 2002/01/03 18:28:36 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -978,6 +978,13 @@ void Fl_Window::label(const char *name,const char *iname) {
 //static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}
 
 void Fl_Window::show() {
+  image(Fl::scheme_bg_);
+  if (Fl::scheme_bg_) {
+    labeltype(FL_NORMAL_LABEL);
+    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+  } else {
+    labeltype(FL_NO_LABEL);
+  }
   if (!shown()) {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
     Fl_X::make(this);
@@ -1028,5 +1035,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.12 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.13 2002/01/03 18:28:36 easysw Exp $".
 //

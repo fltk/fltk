@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.12 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.13 2002/01/03 18:28:36 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1008,6 +1008,13 @@ void Fl_Window::label(const char *name,const char */*iname*/) {
  * make a window visible
  */
 void Fl_Window::show() {
+  image(Fl::scheme_bg_);
+  if (Fl::scheme_bg_) {
+    labeltype(FL_NORMAL_LABEL);
+    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+  } else {
+    labeltype(FL_NO_LABEL);
+  }
   if (!shown() || !i) {
     Fl_X::make(this);
   } else {
@@ -1089,6 +1096,6 @@ void Fl_Window::make_current()
 }
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.12 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.13 2002/01/03 18:28:36 easysw Exp $".
 //
 
