@@ -1,3 +1,10 @@
+CHANGES IN FLTK 1.1.0rc2
+
+	- Wide arcs would draw with "teeth".
+	- The preferences demo included Fl/Fl_Preferences.H
+	  instead of FL/Fl_Preferences.H.
+
+
 CHANGES IN FLTK 1.1.0rc1
 
 	- The fl_file_chooser() and fl_dir_chooser() functions
