@@ -2,6 +2,10 @@ CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
 	  STR #281, STR #328, STR #338)
+	- Added a new_directory_tooltip string pointer to allow
+	  localization of the file chooser's new directory
+	  button (STR #340)
+	- Added Fl_Menu_::find_item() method (STR #316)
 	- The Fl_Widget copy operator definitions were not
 	  conditionally compiled properly (STR #329)
 	- FLUID's Layout functionality did not move child

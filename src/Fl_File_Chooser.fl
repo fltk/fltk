@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0105 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 class FL_EXPORT Fl_File_Chooser {open
@@ -53,8 +53,9 @@ window->hide();} open
         } {}
         Fl_Button newButton {
           callback {newdir();}
-          tooltip {Create a new directory.} image {new.xbm} xywh {455 10 25 25} labelsize 8
+          image {new.xbm} xywh {455 10 25 25} labelsize 8
           code0 {\#include <FL/Fl_Preferences.H>}
+          code1 {o->tooltip(new_directory_tooltip);}
         }
       }
       Fl_Tile {} {
@@ -323,6 +324,8 @@ else
   decl {static const char *manage_favorites_label;} {public
   }
   decl {static const char *new_directory_label;} {public
+  }
+  decl {static const char *new_directory_tooltip;} {public
   }
   decl {static const char *preview_label;} {public
   }

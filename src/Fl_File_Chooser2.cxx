@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.33 2003/11/01 01:49:35 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.34 2004/04/06 19:33:11 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -89,6 +89,7 @@ const char	*Fl_File_Chooser::filesystems_label = "File Systems";
 #endif // WIN32
 const char	*Fl_File_Chooser::manage_favorites_label = "Manage Favorites";
 const char	*Fl_File_Chooser::new_directory_label = "New Directory?";
+const char	*Fl_File_Chooser::new_directory_tooltip = "Create a new directory.";
 const char	*Fl_File_Chooser::preview_label = "Preview";
 const char	*Fl_File_Chooser::show_label = "Show:";
 Fl_File_Sort_F	*Fl_File_Chooser::sort = fl_numericsort;
@@ -1163,5 +1164,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.33 2003/11/01 01:49:35 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.34 2004/04/06 19:33:11 easysw Exp $".
 //
