@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.2
 
+	- Fl_Text_Editor would cause a segfault if the user
+	  pressed CTRL-V (paste) without having any data in the
+	  clipboard...
+	- The tab key moved backwards in menus instead of
+	  forwards.  Shift-tab still moves backwards.
 	- The redraw_label() method didn't damage the parent
 	  window when the label was outside the widget's
 	  bounding box.
