@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.39 2002/10/22 17:39:12 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.40 2002/10/28 15:15:24 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -598,7 +598,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     } else {
       i->region = R;
     }
-    ValidateRgn(hWnd,i->region);
     window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
     // These next two statements should not be here, so that all update
     // is deferred until Fl::flush() is called during idle.  However WIN32
@@ -608,6 +607,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_save_pen();
     i->flush();
     fl_restore_pen();
+    ValidateRgn(hWnd,i->region);
     window->clear_damage();
     } return 0;
 
@@ -1186,5 +1186,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.39 2002/10/22 17:39:12 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.40 2002/10/28 15:15:24 easysw Exp $".
 //
