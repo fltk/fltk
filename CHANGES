@@ -1,5 +1,7 @@
 CHANGES SINCE FLTK 1.0.9
 
+	- Bug #115509: Fl_Scroll not repainting background.
+
 	- Updated the configure script and makeinclude.in file
 	  to work with the Sun PRO compilers.
 
