@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.56 2002/10/29 19:45:09 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.57 2002/10/30 01:26:03 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -811,27 +811,31 @@ Fl_Window::~Fl_Window() {
 
 int Fl_Window::handle(int ev)
 {
-  if (parent()) switch (ev) {
-  case FL_SHOW:
-    if (!shown()) show();
-    else XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
-    break;
-  case FL_HIDE:
-    if (shown()) {
-      // Find what really turned invisible, if is was a parent window
-      // we do nothing.  We need to avoid unnecessary unmap calls
-      // because they cause the display to blink when the parent is
-      // remapped.  However if this or any intermediate non-window
-      // widget has really had hide() called directly on it, we must
-      // unmap because when the parent window is remapped we don't
-      // want to reappear.
-      if (visible()) {
-       Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
-       if (p->type() >= FL_WINDOW) break; // don't do the unmap
+  if (parent()) {
+    switch (ev) {
+    case FL_SHOW:
+      if (!shown()) show();
+      else XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
+      break;
+    case FL_HIDE:
+      if (shown()) {
+	// Find what really turned invisible, if is was a parent window
+	// we do nothing.  We need to avoid unnecessary unmap calls
+	// because they cause the display to blink when the parent is
+	// remapped.  However if this or any intermediate non-window
+	// widget has really had hide() called directly on it, we must
+	// unmap because when the parent window is remapped we don't
+	// want to reappear.
+	if (visible()) {
+	 Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
+	 if (p->type() >= FL_WINDOW) break; // don't do the unmap
+	}
+	XUnmapWindow(fl_display, fl_xid(this));
       }
-      XUnmapWindow(fl_display, fl_xid(this));
+      break;
     }
-    break;
+//  } else if (ev == FL_FOCUS || ev == FL_UNFOCUS) {
+//    Fl_Tooltip::exit(Fl_Tooltip::current());
   }
 
   return Fl_Group::handle(ev);
@@ -969,5 +973,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.56 2002/10/29 19:45:09 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.57 2002/10/30 01:26:03 easysw Exp $".
 //
