@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.3 2000/04/11 08:11:52 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.4 2000/04/12 04:32:04 bill Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -148,7 +148,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
       x += 3;
       w -= 8;
     } else {
-      fl_draw_box(b, x+1, y-1, w-2, h+2, r);
+      fl_draw_box(b, x+1, y-(LEADING-2)/2, w-2, h+(LEADING-2), r);
     }
   }
 
@@ -249,7 +249,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
 
   if (!Wp) {if (X < 0) X = 0; if (X > Fl::w()-W) X= Fl::w()-W;}
   x(X); w(W);
-  h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+5);
+  h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0)
     Y = Y+(Hp-itemheight)/2-selected*itemheight-BW;
   else
@@ -296,12 +296,12 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int i, int erase) {
   int x = BW;
   int W = this->w();
   int w = W-2*BW-1;
-  int y = BW+2+i*itemheight;
+  int y = BW+1+i*itemheight;
   int h = itemheight - LEADING;
 
   if (erase && i != selected) {
     fl_color(button ? button->color() : FL_GRAY);
-    fl_rectf(x+1, y-1, w-2, h+2);
+    fl_rectf(x+1, y-(LEADING-2)/2, w-2, h+(LEADING-2));
   }
 
   m->draw(x, y, w, h, button, i==selected);
@@ -320,9 +320,9 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int i, int erase) {
 
   if (m->flags & FL_MENU_DIVIDER) {
     fl_color(FL_DARK3);
-    fl_xyline(BW-1, y+h+1, W-2*BW+2);
+    fl_xyline(BW-1, y+h+(LEADING-2)/2, W-2*BW+2);
     fl_color(FL_LIGHT3);
-    fl_xyline(BW-1, y+h+2, W-2*BW+2);
+    fl_xyline(BW-1, y+h+((LEADING-2)/2+1), W-2*BW+2);
   }
 
 }
@@ -736,5 +736,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.3 2000/04/11 08:11:52 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.4 2000/04/12 04:32:04 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.3 2000/03/05 06:51:07 bill Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.4 2000/04/12 04:32:05 bill Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -52,19 +52,19 @@ static Fl_Button *button[3];
 static Fl_Input *input;
 static char *iconlabel = "?";
 uchar fl_message_font_ = 0;
-uchar fl_message_size_ = FL_NORMAL_SIZE;
+uchar fl_message_size_ = 14;
 
 static Fl_Window *makeform() {
  if (message_form) {
-   message_form->size(410,105);
+   message_form->size(410,103);
    return message_form;
  }
- Fl_Window *w = message_form = new Fl_Window(410,105);
+ Fl_Window *w = message_form = new Fl_Window(410,103);
  // w->clear_border();
  // w->box(FL_UP_BOX);
  (message = new Fl_Box(60, 25, 340, 20))
    ->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
- (input = new Fl_Input(60,32,340,30))->hide();
+ (input = new Fl_Input(60, 37, 340, 23))->hide();
  {Fl_Box* o = icon = new Fl_Box(10, 10, 50, 50);
   o->box(FL_THIN_UP_BOX);
   o->labelfont(FL_TIMES_BOLD);
@@ -72,10 +72,10 @@ static Fl_Window *makeform() {
   o->color(FL_WHITE);
   o->labelcolor(FL_BLUE);
  }
- (button[0] = new Fl_Button(310, 70, 90, 25))->shortcut("^[");
- button[1] = new Fl_Return_Button(210, 70, 90, 25);
- button[2] = new Fl_Button(110, 70, 90, 25);
- w->resizable(new Fl_Box(60,10,110-60,22));
+ (button[0] = new Fl_Button(310, 70, 90, 23))->shortcut("^[");
+ button[1] = new Fl_Return_Button(210, 70, 90, 23);
+ button[2] = new Fl_Button(110, 70, 90, 23);
+ w->resizable(new Fl_Box(60,10,110-60,27));
  w->end();
  w->set_modal();
  return w;
@@ -90,8 +90,7 @@ int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 static int innards(const char* fmt, va_list ap,
   const char *b0,
   const char *b1,
-  const char *b2,
-  const char *l)
+  const char *b2)
 {
   makeform();
   char buffer[1024];
@@ -104,7 +103,7 @@ static int innards(const char* fmt, va_list ap,
   Fl_Font f = (Fl_Font)fl_message_font_;
   message->labelfont(f);
   message->labelsize(fl_message_size_);
-  if (b0) {button[0]->show();button[0]->label(b0);button[1]->position(210,70);}
+  if (b0) {button[0]->show(); button[0]->label(b0); button[1]->position(210,70);}
   else {button[0]->hide(); button[1]->position(310,70);}
   if (b1) {button[1]->show(); button[1]->label(b1);}
   else button[1]->hide();
@@ -113,7 +112,6 @@ static int innards(const char* fmt, va_list ap,
   const char* prev_icon_label = icon->label();
   if (!prev_icon_label) icon->label(iconlabel);
   message_form->hotspot(button[0]);
-  message_form->label(l);
   message_form->show();
   int r;
   for (;;) {
@@ -146,7 +144,7 @@ void fl_message(const char *fmt, ...) {
 
   va_start(ap, fmt);
   iconlabel = "i";
-  innards(fmt, ap, 0, fl_ok, 0, "Message");
+  innards(fmt, ap, 0, fl_ok, 0);
   va_end(ap);
   iconlabel = "?";
 }
@@ -163,7 +161,7 @@ void fl_alert(const char *fmt, ...) {
 
   va_start(ap, fmt);
   iconlabel = "!";
-  innards(fmt, ap, 0, fl_ok, 0, "Alert");
+  innards(fmt, ap, 0, fl_ok, 0);
   va_end(ap);
   iconlabel = "?";
 }
@@ -176,7 +174,7 @@ int fl_ask(const char *fmt, ...) {
 #endif // WIN32
 
   va_start(ap, fmt);
-  int r = innards(fmt, ap, fl_no, fl_yes, 0, "Question");
+  int r = innards(fmt, ap, fl_no, fl_yes, 0);
   va_end(ap);
 
   return r;
@@ -190,7 +188,7 @@ int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
 #endif // WIN32
 
   va_start(ap, b2);
-  int r = innards(fmt, ap, b0, b1, b2, "Choose");
+  int r = innards(fmt, ap, b0, b1, b2);
   va_end(ap);
   return r;
 }
@@ -209,7 +207,7 @@ static const char* input_innards(const char* fmt, va_list ap,
   MessageBeep(MB_ICONQUESTION);
 #endif // WIN32
 
-  int r = innards(fmt, ap, fl_cancel, fl_ok, 0, "Input");
+  int r = innards(fmt, ap, fl_cancel, fl_ok, 0);
   input->hide();
   message->position(60,25);
   return r ? input->value() : 0;
@@ -232,5 +230,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.3 2000/03/05 06:51:07 bill Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.4 2000/04/12 04:32:05 bill Exp $".
 //
