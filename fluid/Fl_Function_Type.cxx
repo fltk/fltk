@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.8 1999/08/05 09:01:24 bill Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.9 1999/08/17 05:33:12 bill Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -194,24 +194,23 @@ void Fl_Function_Type::write_code1() {
   if (ismain())
     write_c("int main(int argc, char **argv) {\n");
   else {
-    const char* t = return_type;
+    const char* rtype = return_type;
+    const char* star = "";
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
     int is_static = 0;
     int is_virtual = 0;
-    if (t) {
-      if (!strcmp(t,"static")) {is_static = 1; t = 0;}
-      else if (!strncmp(t,"static ",7)) {is_static = 1; t += 7;}
-      if (!strcmp(t,"virtual")) {is_virtual = 1; t = 0;}
-      else if (!strncmp(t,"virtual ",8)) {is_virtual = 1; t += 8;}
+    if (rtype) {
+      if (!strcmp(rtype,"static")) {is_static = 1; rtype = 0;}
+      else if (!strncmp(rtype, "static ",7)) {is_static = 1; rtype += 7;}
+      if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = 0;}
+      else if (!strncmp(rtype, "virtual ",8)) {is_virtual = 1; rtype += 8;}
     }
-    char buf[32];
-    if (!t) {
+    if (!rtype) {
       if (havewidgets) {
-	strcpy(buf,subclassname(child));
-	strcat(buf,"*");
-	t=buf;
-      } else t = "void";
+	rtype = subclassname(child);
+	star = "*";
+      } else rtype = "void";
     }
 
     const char* k = class_name();
@@ -224,11 +223,11 @@ void Fl_Function_Type::write_code1() {
 	if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
       }
       write_h("  ");
+      if (is_static) write_h("static ");
+      if (is_virtual) write_h("virtual ");
       if (!constructor) {
-	if (is_static) write_h("static ");
-	if (is_virtual) write_h("virtual ");
-        write_h("%s ", t);
-	write_c("%s ", t);
+        write_h("%s%s ", rtype, star);
+	write_c("%s%s ", rtype, star);
       }
 
       // if this is a subclass, only write_h() the part before the ':'
@@ -250,12 +249,12 @@ void Fl_Function_Type::write_code1() {
     } else {
       if (public_) {
 	if (cdecl_)
-	  write_h("extern \"C\" { %s %s; }\n", t, name());
+	  write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
 	else
-	  write_h("%s %s;\n", t, name());
+	  write_h("%s%s %s;\n", rtype, star, name());
       }
       else write_c("static ");
-      write_c("%s %s {\n", t, name());
+      write_c("%s%s %s {\n", rtype, star, name());
     }
   }
   if (havewidgets) write_c("  %s* w;\n",subclassname(child));
@@ -467,7 +466,7 @@ void Fl_Decl_Type::write_code1() {
   while (e>c && e[-1]==';') e--;
   if (class_name()) {
     write_public(public_);
-    write_h("  %.*s;", e-c, c);
+    write_h("  %.*s;\n", e-c, c);
   } else {
     if (public_) {
       write_h("extern %.*s;\n", e-c, c);
@@ -661,5 +660,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.8 1999/08/05 09:01:24 bill Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.9 1999/08/17 05:33:12 bill Exp $".
 //
