@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.10 2000/11/21 21:37:07 easysw Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.11 2001/01/21 07:36:45 spitzak Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -168,21 +168,19 @@ void Fl_Menu_Item_Type::write_static() {
   if (next && next->is_menu_item()) return;
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
-  int mylevel;
   const char* k = class_name(1);
   if (k) {
-    write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(level));
-  } else
-    write_c("\nFl_Menu_Item %s[] = {\n", menu_name(level));
+    int i; write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
+  } else {
+    int i; write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
+  }
   Fl_Type* t = prev; while (t && t->is_menu_item()) t = t->prev;
-  mylevel = t->level+1;
   for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
     ((Fl_Menu_Item_Type*)q)->write_item();
-    if (q->is_parent()) mylevel++;
-    int l1 =
-      (q->next && q->next->is_menu_item()) ? q->next->level : t->next->level;
-    while (mylevel > l1) {write_c(" {0},\n"); mylevel--;}
-    mylevel = l1;
+    int thislevel = q->level; if (q->is_parent()) thislevel++;
+    int nextlevel =
+      (q->next && q->next->is_menu_item()) ? q->next->level : t->level+1;
+    while (thislevel > nextlevel) {write_c(" {0},\n"); thislevel--;}
   }
   write_c(" {0}\n};\n");
 
@@ -462,5 +460,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.10 2000/11/21 21:37:07 easysw Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.11 2001/01/21 07:36:45 spitzak Exp $".
 //
