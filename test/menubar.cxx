@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.5 1999/01/07 19:17:58 mike Exp $"
+// "$Id: menubar.cxx,v 1.6 1999/02/25 19:09:11 bill Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -207,11 +207,12 @@ int main(int argc, char **argv) {
   Fl_Toggle_Button t(250,50,150,25,"MicroSoft Style");
   t.callback(button_cb);
   window.resizable(&mb);
+  window.size_range(300,20);
   window.end();
   window.show(argc, argv);
   return Fl::run();
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.5 1999/01/07 19:17:58 mike Exp $".
+// End of "$Id: menubar.cxx,v 1.6 1999/02/25 19:09:11 bill Exp $".
 //

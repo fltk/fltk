@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.16 1999/02/19 15:34:08 mike Exp $"
+// "$Id: Fl_Menu.cxx,v 1.17 1999/02/25 19:09:10 bill Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -92,7 +92,7 @@ public:
   const Fl_Menu_Item* menu;
   menuwindow(const Fl_Menu_Item* m, int X, int Y, int W, int H,
 	     const Fl_Menu_Item* picked, const Fl_Menu_Item* title,
-	     int menubar = 0);
+	     int menubar = 0, int menubar_title = 0);
   ~menuwindow();
   void set_selected(int);
   int find_selected(int mx, int my);
@@ -191,7 +191,7 @@ menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L) :
 
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
 		       const Fl_Menu_Item* picked, const Fl_Menu_Item* t, 
-		       int menubar)
+		       int menubar, int menubar_title)
   : Fl_Menu_Window(X, Y, Wp, Hp, 0)
 {
   end();
@@ -252,8 +252,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (m) y(Y-1); else {y(Y-3); w(1); h(1);}
 
   if (t) {
-    int ht = button && button->h() <= 100 ? button->h()-6
-      : Htitle+2*BW+3;
+    int ht = menubar_title ? button->h()-6 : Htitle+2*BW+3;
     title = new menutitle(X, Y-ht-3, Wtitle, ht, t);
   } else
     title = 0;
@@ -655,7 +654,8 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       } else {
 	// delete all the old menus and create new one:
 	while (p.nummenus > p.menu_number+1) delete p.p[--p.nummenus];
-	p.p[p.nummenus++]= new menuwindow(menutable,nX,nY,title?1:0,0,0,title);
+	p.p[p.nummenus++]= new menuwindow(menutable, nX, nY,
+					  title?1:0, 0, 0, title, 0, menubar);
       }
     } else { // !m->submenu():
       while (p.nummenus > p.menu_number+1) delete p.p[--p.nummenus];
@@ -664,7 +664,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	fakemenu = new menuwindow(0,
 				  cw.x()+cw.titlex(p.item_number),
 				  cw.y()+cw.h(), 0, 0,
-				  0, m);
+				  0, m, 0, 1);
 	fakemenu->title->show();
       }
     }
@@ -710,5 +710,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.16 1999/02/19 15:34:08 mike Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.17 1999/02/25 19:09:10 bill Exp $".
 //
