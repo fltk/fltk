@@ -71,7 +71,9 @@ static char *comment_text[] = {
     "// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n"
     "// USA.\n"
     "//\n"
-    "// Please report all bugs and problems to \"fltk-bugs@fltk.org\".\n"
+    "// Please report all bugs and problems on the following page:\n"
+    "//\n"
+    "//     http://www.fltk.org/str.php\n"
     "//\n",
   // FLTK/Footer
     "\n//\n"
