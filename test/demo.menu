@@ -32,10 +32,12 @@
 	@w:resize:resize
 
 @main:Drawing\nTests:@d
-	@d:Fl_Bitmap:bitmap
-	@d:Fl_Pixmap:pixmap
-	@d:Fl_Image:image
-	@d:pixmap\nbrowser:pixmap_browser
+	@d:Images:@di
+		@di:Fl_Bitmap:bitmap
+		@di:Fl_Pixmap:pixmap
+		@di:Fl_RGB\n_Image:image
+		@di:Fl_Shared\n_Image:pixmap_browser
+		@di:Fl_Tiled\n_Image:tiled_image
 	@d:cursor:cursor
 	@d:labels:label
 	@d:fl_arc:arc
