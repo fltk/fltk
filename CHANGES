@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0rc7
 
+	- Updated the Fl_Text_Buffer and Fl_Text_Display classes
+	  to be based on NEdit 5.3 (patch from George Garvey).
 	- Fixed a problem with Fl::wait(0.0) on MacOS X 10.2;
 	  this affected the fractals demo and other OpenGL
 	  applications.

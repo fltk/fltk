@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.H,v 1.3.2.4 2002/08/09 03:17:29 easysw Exp $"
+// "$Id: Fl_Text_Buffer.H,v 1.3.2.5 2002/09/20 19:59:45 easysw Exp $"
 //
 // Header file for Fl_Text_Buffer class.
 //
@@ -65,6 +65,7 @@ class FL_EXPORT Fl_Text_Selection {
 typedef void (*Fl_Text_Modify_Cb)(int pos, int nInserted, int nDeleted,
                                   int nRestyled, const char* deletedText,
                                   void* cbArg);
+typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
 
 class FL_EXPORT Fl_Text_Buffer {
   public:
@@ -142,6 +143,11 @@ class FL_EXPORT Fl_Text_Buffer {
 
     void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
 
+    void add_predelete_callback(Fl_Text_Predelete_Cb bufPredelCB, void* cbArg);
+    void remove_predelete_callback(Fl_Text_Predelete_Cb predelCB, void* cbArg);
+
+    void call_predelete_callbacks() { call_predelete_callbacks(0, 0); }
+
     char* line_text(int pos);
     int line_start(int pos);
     int line_end(int pos);
@@ -179,6 +185,7 @@ class FL_EXPORT Fl_Text_Buffer {
   protected:
     void call_modify_callbacks(int pos, int nDeleted, int nInserted,
                                int nRestyled, const char* deletedText);
+    void call_predelete_callbacks(int pos, int nDeleted);
 
     int insert_(int pos, const char* text);
     void remove_(int start, int end);
@@ -226,6 +233,10 @@ class FL_EXPORT Fl_Text_Buffer {
     Fl_Text_Modify_Cb*          /* procedures to call when buffer is */
     mNodifyProcs;               /* modified to redisplay contents */
     void** mCbArgs;             /* caller arguments for modifyProcs above */
+    int mNPredeleteProcs;	/* number of pre-delete procs attached */
+    Fl_Text_Predelete_Cb*	/* procedure to call before text is deleted */
+	 mPredeleteProcs;	/* from the buffer; at most one is supported. */
+    void **mPredeleteCbArgs;	/* caller argument for pre-delete proc above */
     int mCursorPosHint;         /* hint for reasonable cursor position after
                                    a buffer modification operation */
     char mNullSubsChar;         /* NEdit is based on C null-terminated strings,
@@ -238,5 +249,5 @@ class FL_EXPORT Fl_Text_Buffer {
 #endif
 
 //
-// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.4 2002/08/09 03:17:29 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.5 2002/09/20 19:59:45 easysw Exp $".
 //

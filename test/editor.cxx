@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.13 2002/07/14 21:25:39 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.14 2002/09/20 19:59:45 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -306,7 +306,7 @@ style_init(void) {
 //
 
 void
-style_unfinished_cb() {
+style_unfinished_cb(int, void*) {
 }
 
 
@@ -762,5 +762,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.13 2002/07/14 21:25:39 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.14 2002/09/20 19:59:45 easysw Exp $".
 //

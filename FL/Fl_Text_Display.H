@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.11 2002/08/14 16:49:38 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.12 2002/09/20 19:59:45 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -53,7 +53,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     };
     friend void fl_text_drag_me(int pos, Fl_Text_Display* d);
 
-    typedef void (*Unfinished_Style_Cb)();
+    typedef void (*Unfinished_Style_Cb)(int, void *);
 
     // style attributes - currently not implemented!
     enum {
@@ -88,6 +88,11 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int move_left();
     int move_up();
     int move_down();
+    int count_lines(int start, int end, bool start_pos_is_line_start);
+    int line_start(int pos);
+    int line_end(int pos, bool start_pos_is_line_start);
+    int skip_lines(int startPos, int nLines, bool startPosIsLineStart);
+    int rewind_lines(int startPos, int nLines);
     void next_word(void);
     void previous_word(void);
     void show_cursor(int b = 1);
@@ -117,6 +122,10 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
     void textcolor(unsigned n) {textcolor_ = n;}
 
+    int wrapped_column(int row, int column);
+    int wrapped_row(int row);
+    void wrap_mode(int wrap, int wrap_margin);
+
     virtual void resize(int X, int Y, int W, int H);
 
   protected:
@@ -136,6 +145,8 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     void draw_vline(int visLineNum, int leftClip, int rightClip,
                     int leftCharIndex, int rightCharIndex);
 
+    void draw_line_numbers(bool clearAll);
+
     void clear_rect(int style, int x, int y, int width, int height);
     void display_insert();
 
@@ -151,6 +162,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int position_to_line( int pos, int* lineNum );
     int string_width(const char* string, int length, int style);
 
+    static void buffer_predelete_cb(int pos, int nDeleted, void* cbArg);
     static void buffer_modified_cb(int pos, int nInserted, int nDeleted,
                                    int nRestyled, const char* deletedText,
                                    void* cbArg);
@@ -169,11 +181,31 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
                       int PosType = CHARACTER_POS);
 
     int position_to_xy(int pos, int* x, int* y);
+    void maintain_absolute_top_line_number(int state);
+    int get_absolute_top_line_number();
+    void absolute_top_line_number(int oldFirstChar);
+    int maintaining_absolute_top_line_number();
+    void reset_absolute_top_line_number();
     int position_to_linecol(int pos, int* lineNum, int* column);
     void scroll_(int topLineNum, int horizOffset);
 
     void extend_range_for_styles(int* start, int* end);
 
+    void find_wrap_range(const char *deletedText, int pos, int nInserted,
+                           int nDeleted, int *modRangeStart, int *modRangeEnd,
+                           int *linesInserted, int *linesDeleted);
+    void measure_deleted_lines(int pos, int nDeleted);
+    void wrapped_line_counter(Fl_Text_Buffer *buf, int startPos, int maxPos,
+                               int maxLines, bool startPosIsLineStart,
+                               int styleBufOffset, int *retPos, int *retLines,
+                               int *retLineStart, int *retLineEnd,
+                               bool countLastLineMissingNewLine = true);
+    void find_line_end(int pos, bool start_pos_is_line_start, int *lineEnd,
+                         int *nextLineStart);
+    int measure_proportional_character(char c, int colNum, int pos);
+    int wrap_uses_character(int lineEndPos);
+    int range_touches_selection(Fl_Text_Selection *sel, int rangeStart,
+                                 int rangeEnd);
 
     int damage_range1_start, damage_range1_end;
     int damage_range2_start, damage_range2_end;
@@ -194,9 +226,19 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
                                    displayed character (lastChar points
                                    either to a newline or one character
                                    beyond the end of the buffer) */
+    int mContinuousWrap;     	  /* Wrap long lines when displaying */
+    int mWrapMargin; 	    	  /* Margin in # of char positions for
+    	    	    	    	    	   wrapping in continuousWrap mode */
     int* mLineStarts;
     int mTopLineNum;            /* Line number of top displayed line
                                    of file (first line of file is 1) */
+    int mAbsTopLineNum;			/* In continuous wrap mode, the line
+    					   number of the top line if the text
+					   were not wrapped (note that this is
+					   only maintained as needed). */
+    int mNeedAbsTopLineNum;	/* Externally settable flag to continue
+    					   maintaining absTopLineNum even if
+					   it isn't needed for line # display */
     int mHorizOffset;           /* Horizontal scroll pos. in pixels */
     int mTopLineNumHint;        /* Line number of top displayed line
                                    of file (first line of file is 1) */
@@ -214,6 +256,13 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     int mFixedFontWidth;        /* Font width if all current fonts are
                                    fixed and match in width, else -1 */
+    int mSuppressResync;		/* Suppress resynchronization of line
+                                           starts during buffer updates */
+    int mNLinesDeleted;			/* Number of lines deleted during
+					   buffer modification (only used
+				           when resynchronization is suppressed) */
+    int mModifyingTabDistance;	/* Whether tab distance is being
+    					   modified */
 
     Fl_Color mCursor_color;
 
@@ -229,19 +278,15 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     uchar textsize_;
     unsigned textcolor_;
 
-    // The following are not presently used from the original NEdit
-    // code, but are being put here so that future versions of
-    // Fl_Text_Display can implement wrapping and line numbers
-    // without breaking binary compatibility.
+	 // The following are not presently used from the original NEdit code,
+	 // but are being put here so that future versions of Fl_Text_Display
+	 // can implement line numbers without breaking binary compatibility.
     int mLineNumLeft, mLineNumWidth;
 				/* Line number margin and width */
-    int mContinuousWrap;       	/* Wrap long lines when displaying */
-    int mWrapMargin; 	     	/* Margin in # of char positions for
-    	    	    	       	   wrapping in continuousWrap mode */
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.11 2002/08/14 16:49:38 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.12 2002/09/20 19:59:45 easysw Exp $".
 //
