@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.5 2001/12/03 20:14:30 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.6 2001/12/07 16:27:54 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -1773,7 +1773,7 @@ void Fl_Text_Display::draw(void) {
     if (mVScrollBar->visible() && mHScrollBar->visible())
       fl_rectf(mVScrollBar->x(), mHScrollBar->y(),
                mVScrollBar->w(), mHScrollBar->h(),
-               color());
+               FL_GRAY);
 
     // blank the previous cursor protrusions
   }
@@ -1955,5 +1955,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.5 2001/12/03 20:14:30 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.6 2001/12/07 16:27:54 easysw Exp $".
 //
