@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Menu_Button no longer responds to focus or keyboard
+	  events when box() is FL_NO_BOX.
 	- FLTK convenience dialogs put the buttons in the wrong
 	  order.
 	- Fl_BMP_Image didn't load 4-bit BMP files properly.

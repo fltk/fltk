@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.8.2.3 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: menubar.cxx,v 1.6.2.8.2.4 2002/09/01 22:39:33 easysw Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -189,6 +189,7 @@ int main(int argc, char **argv) {
   menus[2] = &ch;
   Fl_Menu_Button mb(0,0,WIDTH,400,"&popup");
   mb.type(Fl_Menu_Button::POPUP3);
+  mb.box(FL_NO_BOX);
   mb.menu(menutable);
   mb.remove(1); // delete the "File" submenu
   mb.callback(test_cb);
@@ -202,5 +203,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.8.2.3 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.8.2.4 2002/09/01 22:39:33 easysw Exp $".
 //
