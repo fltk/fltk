@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.6 1998/11/05 16:04:41 mike Exp $"
+// "$Id: x.H,v 1.7 1998/12/02 15:51:34 mike Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -56,6 +56,7 @@ extern Colormap fl_colormap;
 // drawing functions:
 extern GC fl_gc;
 extern Window fl_window;
+extern XFontStruct* fl_xfont;
 ulong fl_xpixel(Fl_Color i);
 ulong fl_xpixel(uchar r, uchar g, uchar b);
 void fl_clip_region(Region);
@@ -116,5 +117,5 @@ extern int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.6 1998/11/05 16:04:41 mike Exp $".
+// End of "$Id: x.H,v 1.7 1998/12/02 15:51:34 mike Exp $".
 //

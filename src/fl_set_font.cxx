@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_font.cxx,v 1.3 1998/10/21 14:20:58 mike Exp $"
+// "$Id: fl_set_font.cxx,v 1.4 1998/12/02 15:51:36 mike Exp $"
 //
 // Font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -35,13 +35,13 @@
 
 static int table_size;
 
-void Fl::set_font(Fl_Font fnum, const char *name) {
+void Fl::set_font(Fl_Font fnum, const char* name) {
   if (fnum >= table_size) {
     int i = table_size;
     if (!i) {	// don't realloc the built-in table
       table_size = 2*FL_FREE_FONT;
       i = FL_FREE_FONT;
-      Fl_Fontdesc *t = (Fl_Fontdesc*)malloc(table_size*sizeof(Fl_Fontdesc));
+      Fl_Fontdesc* t = (Fl_Fontdesc*)malloc(table_size*sizeof(Fl_Fontdesc));
       memcpy(t, fl_fonts, FL_FREE_FONT*sizeof(Fl_Fontdesc));
       fl_fonts = t;
     } else {
@@ -50,17 +50,14 @@ void Fl::set_font(Fl_Font fnum, const char *name) {
     }
     for (; i < table_size; i++) fl_fonts[i].name = 0;
   }
-  Fl_Fontdesc *s = fl_fonts+fnum;
+  Fl_Fontdesc* s = fl_fonts+fnum;
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}
 #ifndef WIN32
     if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
 #endif
-    for (Fl_XFont *f = s->first; f;) {
-#ifndef WIN32
-      if (f == fl_fixed_xfont) break;
-#endif
-      Fl_XFont *n = f->next; delete f; f = n;
+    for (Fl_FontSize* f = s->first; f;) {
+      Fl_FontSize* n = f->next; delete f; f = n;
     }
     s->first = 0;
   }
@@ -71,8 +68,8 @@ void Fl::set_font(Fl_Font fnum, const char *name) {
   s->first = 0;
 }
 
-const char *Fl::get_font(Fl_Font fnum) {return fl_fonts[fnum].name;}
+const char* Fl::get_font(Fl_Font fnum) {return fl_fonts[fnum].name;}
 
 //
-// End of "$Id: fl_set_font.cxx,v 1.3 1998/10/21 14:20:58 mike Exp $".
+// End of "$Id: fl_set_font.cxx,v 1.4 1998/12/02 15:51:36 mike Exp $".
 //

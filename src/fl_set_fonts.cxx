@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.3 1998/10/21 14:20:58 mike Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.4 1998/12/02 15:51:37 mike Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -137,6 +137,9 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   if (*x) {x++; *o++ = '('; while (*x) *o++ = *x++; *o++ = ')';}
 
   *o = 0;
+  if (type & FL_BOLD) {strcpy(o, " bold"); o += 5;}
+  if (type & FL_ITALIC) {strcpy(o, " italic"); o += 7;}
+
   if (ap) *ap = type;
 
   return buffer;
@@ -322,5 +325,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.3 1998/10/21 14:20:58 mike Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.4 1998/12/02 15:51:37 mike Exp $".
 //

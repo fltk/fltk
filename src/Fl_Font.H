@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.3 1998/10/21 14:20:03 mike Exp $"
+// "$Id: Fl_Font.H,v 1.4 1998/12/02 15:51:35 mike Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -25,47 +25,42 @@
 
 // Two internal fltk data structures:
 //
-// Fl_Fontdesc: an entry into the fl_font() table.  This entry may contain
-// several "fonts" according to the system, for instance under X all the
-// sizes are different X fonts, but only one fl_font.
+// Fl_Fontdesc: an entry into the fl_font() table.  There is one of these
+// for each fltk font number.
 //
-// Fl_XFont: a structure for an actual system font, with junk to help
-// choose it and info on character sizes.  Each Fl_Font has a linked
-// list of these.  These are created the first time each system font
-// is used.
+// Fl_FontSize: a structure for an actual system font, with junk to
+// help choose it and info on character sizes.  Each Fl_Fontdesc has a
+// linked list of these.  These are created the first time each system
+// font/size combination is used.
 
 #ifndef FL_FONT_
 #define FL_FONT_
 
-class Fl_XFont {
+class Fl_FontSize {
 public:
-  Fl_XFont *next;	// linked list of sizes of this style
+  Fl_FontSize *next;	// linked list for this Fl_Fontdesc
 #ifndef WIN32
-  XFontStruct* font;	// X font information, 0 for display list
-  XCharStruct* per_char;// modified from XFontStruct to have 0x20-0xff in it
-  XCharStruct* free_this; // pointer saved for delete[]
-  Fl_XFont(const char*, int);
+  XFontStruct* font;	// X font information
+  Fl_FontSize(const char* xfontname);
 #else
   HFONT fid;
   int width[256];
   TEXTMETRIC metr;
-  Fl_XFont(const char*, int, int);
+  Fl_FontSize(const char* fontname, int size);
 #endif
-  int number;		// which slot in FL's font table
   int minsize;		// smallest point size that should use this
   int maxsize;		// largest point size that should use this
 #if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
 #endif
-  ~Fl_XFont();
+  ~Fl_FontSize();
 };
 
-extern Fl_XFont *fl_current_xfont;
-extern Fl_XFont *fl_fixed_xfont;
+extern Fl_FontSize *fl_fontsize; // the currently selected one
 
 struct Fl_Fontdesc {
   const char *name;
-  Fl_XFont *first;	// linked list of sizes of this style
+  Fl_FontSize *first;	// linked list of sizes of this style
 #ifndef WIN32
   char **xlist;		// matched X font names
   int n;		// size of xlist, negative = don't free xlist!
@@ -80,11 +75,8 @@ const char* fl_font_word(const char *p, int n);
 char *fl_find_fontsize(char *name);
 #endif
 
-void fl_draw(const char *, int x, int y, int w, int h, Fl_Align,
-	     void (*callthis)(const char *, int n, int x, int y));
-
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.3 1998/10/21 14:20:03 mike Exp $".
+// End of "$Id: Fl_Font.H,v 1.4 1998/12/02 15:51:35 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_win32.cxx,v 1.6 1998/12/02 15:39:36 mike Exp $"
+// "$Id: fl_font_win32.cxx,v 1.7 1998/12/02 15:51:36 mike Exp $"
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Fl_XFont::Fl_XFont(const char *name, int size, int num) {
+Fl_FontSize::Fl_FontSize(const char* name, int size) {
   int weight = FW_NORMAL;
   int italic = 0;
   switch (*name++) {
@@ -68,13 +68,12 @@ Fl_XFont::Fl_XFont(const char *name, int size, int num) {
 #if HAVE_GL
   listbase = 0;
 #endif
-  number = num;
   minsize = maxsize = size;
 }
 
-Fl_XFont *fl_current_xfont;
+Fl_FontSize* fl_current_xfont;
 
-Fl_XFont::~Fl_XFont() {
+Fl_FontSize::~Fl_FontSize() {
 #if HAVE_GL
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
@@ -113,15 +112,15 @@ static Fl_Fontdesc built_in_table[] = {
 {" Wingdings"},
 };
 
-Fl_Fontdesc *fl_fonts = built_in_table;
+Fl_Fontdesc* fl_fonts = built_in_table;
 
-static Fl_XFont *find(int fnum, int size) {
-  Fl_Fontdesc *s = fl_fonts+fnum;
+static Fl_FontSize* find(int fnum, int size) {
+  Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
-  Fl_XFont *f;
+  Fl_FontSize* f;
   for (f = s->first; f; f = f->next)
     if (f->minsize <= size && f->maxsize >= size) return f;
-  f = new Fl_XFont(s->name, size, fnum);
+  f = new Fl_FontSize(s->name, size);
   f->next = s->first;
   s->first = f;
   return f;
@@ -148,13 +147,13 @@ int fl_descent() {
   return fl_current_xfont->metr.tmDescent;
 }
 
-double fl_width(const char *c) {
+double fl_width(const char* c) {
   double w = 0.0;
   while (*c) w += fl_current_xfont->width[uchar(*c++)];
   return w;
 }
 
-double fl_width(const char *c, int n) {
+double fl_width(const char* c, int n) {
   double w = 0.0;
   while (n--) w += fl_current_xfont->width[uchar(*c++)];
   return w;
@@ -164,16 +163,16 @@ double fl_width(uchar c) {
   return fl_current_xfont->width[c];
 }
 
-void fl_draw(const char *str, int n, int x, int y) {
+void fl_draw(const char* str, int n, int x, int y) {
   SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, fl_current_xfont->fid);
   TextOut(fl_gc, x, y, str, n);
 }
 
-void fl_draw(const char *str, int x, int y) {
+void fl_draw(const char* str, int x, int y) {
   fl_draw(str, strlen(str), x, y);
 }
 
 //
-// End of "$Id: fl_font_win32.cxx,v 1.6 1998/12/02 15:39:36 mike Exp $".
+// End of "$Id: fl_font_win32.cxx,v 1.7 1998/12/02 15:51:36 mike Exp $".
 //

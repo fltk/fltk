@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.4 1998/11/24 13:18:16 mike Exp $"
+// "$Id: gl_draw.cxx,v 1.5 1998/12/02 15:51:38 mike Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -32,19 +32,10 @@
 #include <FL/Fl.H>
 #include <FL/gl.h>
 #include <FL/x.H>
+#include <FL/fl_draw.H>
 #include "Fl_Gl_Choice.H"
 #include "Fl_Font.H"
 #include <string.h>
-
-// stuff from fl_draw.H:
-void  fl_font(int fontid, int size);
-int   fl_height();	// using "size" should work ok
-int   fl_descent();
-void fl_measure(const char*, int& x, int& y);
-double fl_width(const char*);
-double fl_width(const char*, int n);
-double fl_width(uchar);
-unsigned long fl_xpixel(uchar i);
 
 void  gl_font(int fontid, int size) {fl_font(fontid, size);}
 int   gl_height() {return fl_height();}
@@ -54,26 +45,22 @@ double gl_width(const char* s, int n) {return fl_width(s,n);}
 double gl_width(uchar c) {return fl_width(c);}
 
 void gl_draw(const char* str, int n) {
+  if (!fl_fontsize->listbase) {
 #ifdef WIN32
-  if (!fl_current_xfont->listbase) {
-    int base = fl_current_xfont->metr.tmFirstChar;
-    int size = fl_current_xfont->metr.tmLastChar-base+1;
-    HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_current_xfont->fid);
-    fl_current_xfont->listbase = glGenLists(size)-base;
-    wglUseFontBitmaps(fl_gc, base, size, fl_current_xfont->listbase+base); 
+    int base = fl_fontsize->metr.tmFirstChar;
+    int size = fl_fontsize->metr.tmLastChar-base+1;
+    HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
+    fl_fontsize->listbase = glGenLists(size)-base;
+    wglUseFontBitmaps(fl_gc, base, size, fl_fontsize->listbase+base); 
     SelectObject(fl_gc, oldFid);
-  }
 #else
-  if (!fl_current_xfont->listbase) {
-    int base = fl_current_xfont->font->min_char_or_byte2;
-    int size = fl_current_xfont->font->max_char_or_byte2-base+1;
-//  int base = 0; int size = 256;
-    fl_current_xfont->listbase = glGenLists(size)-base;
-    glXUseXFont(fl_current_xfont->font->fid, base, size, 
-		fl_current_xfont->listbase+base);
-  }
+    int base = fl_xfont->min_char_or_byte2;
+    int size = fl_xfont->max_char_or_byte2-base+1;
+    fl_fontsize->listbase = glGenLists(size)-base;
+    glXUseXFont(fl_xfont->fid, base, size, fl_fontsize->listbase+base);
 #endif
-  glListBase(fl_current_xfont->listbase);
+  }
+  glListBase(fl_fontsize->listbase);
   glCallLists(n, GL_UNSIGNED_BYTE, str);
 }
 
@@ -152,5 +139,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.4 1998/11/24 13:18:16 mike Exp $".
+// End of "$Id: gl_draw.cxx,v 1.5 1998/12/02 15:51:38 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.4 1998/12/02 15:39:28 mike Exp $"
+// "$Id: fl_draw.H,v 1.5 1998/12/02 15:51:33 mike Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -121,8 +121,10 @@ double fl_width(uchar);
 // draw using current font:
 void fl_draw(const char*, int x, int y);
 void fl_draw(const char*, int n, int x, int y);
-void fl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 void fl_measure(const char*, int& x, int& y);
+void fl_draw(const char*, int,int,int,int, Fl_Align);
+void fl_draw(const char*, int,int,int,int, Fl_Align,
+	     void (*callthis)(const char *, int n, int x, int y));
 
 // boxtypes:
 void fl_frame(const char* s, int x, int y, int w, int h);
@@ -156,5 +158,5 @@ int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scalable);
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.4 1998/12/02 15:39:28 mike Exp $".
+// End of "$Id: fl_draw.H,v 1.5 1998/12/02 15:51:33 mike Exp $".
 //

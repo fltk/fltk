@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.3 1998/10/21 14:20:59 mike Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.4 1998/12/02 15:51:37 mike Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -39,13 +39,19 @@
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   const char* p = fl_fonts[fnum].name;
   if (!p || !*p) {if (ap) *ap = 0; return "";}
-  if (ap) switch (*p) {
-  case 'B': *ap = FL_BOLD; break;
-  case 'I': *ap = FL_ITALIC; break;
-  case 'P': *ap = FL_BOLD | FL_ITALIC; break;
-  default:  *ap = 0; break;
+  int type;
+  switch (*p) {
+  case 'B': type = FL_BOLD; break;
+  case 'I': type = FL_ITALIC; break;
+  case 'P': type = FL_BOLD | FL_ITALIC; break;
+  default:  type = 0; break;
   }
-  return p+1;
+  if (!type) return p+1;
+  static char *buffer; if (!buffer) buffer = new char[128];
+  strcpy(buffer, p+1);
+  if (type & FL_BOLD) strcat(buffer, " bold");
+  if (type & FL_ITALIC) strcat(buffer, " italic");
+  return buffer;
 }
 
 static int fl_free_font = FL_FREE_FONT;
@@ -81,5 +87,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.3 1998/10/21 14:20:59 mike Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.4 1998/12/02 15:51:37 mike Exp $".
 //
