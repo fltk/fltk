@@ -1,173 +1,256 @@
-<HTML><BODY>
-<H1 ALIGN=RIGHT><A NAME=intro>1 - Introduction to FLTK</A></H1>
-The Fast Light Tool Kit (&quot;FLTK&quot;, pronounced &quot;fulltick&quot;) is a LGPL'd 
-C++ graphical user interface toolkit for X (UNIX&reg;), OpenGL&reg;, and 
-Microsoft&reg; Windows&reg; NT 4.0, 95, or 98. It was originally developed by 
-Mr. Bill Spitzak and is currently maintained by a small group of 
-developers across the world with a central repository in the US. 
+<HTML>
+<BODY>
+<H1 ALIGN="RIGHT"><A NAME="intro">1 - Introduction to FLTK</A></H1>
+
+<P>The Fast Light Tool Kit (&quot;FLTK&quot;, pronounced
+&quot;fulltick&quot;) is a LGPL'd C++ graphical user interface
+toolkit for X (UNIX&reg;), OpenGL&reg;, and Microsoft&reg;
+Windows&reg; NT 4.0, 95, or 98. It was originally developed by 
+Mr. Bill Spitzak and is currently maintained by a small group
+of developers across the world with a central repository in the
+US.</P>
+
 <H2>History of FLTK</H2>
-It has always been Bill's belief that the GUI API of all modern 
-systems is much too high level.  Toolkits (even FL) are <I>not</I> what 
-should be provided and documented as part of an operating system.  The 
+
+<P>It has always been Bill's belief that the GUI API of all modern 
+systems is much too high level. Toolkits (even FL) are <I>not</I> what 
+should be provided and documented as part of an operating system. The 
 system only has to provide arbitrary shaped but featureless windows, a 
 powerful set of graphics drawing calls, and a simple <I>unalterable</I>
-method of delivering events to the owners of the windows.  NeXT (if 
+method of delivering events to the owners of the windows. NeXT (if 
 you ignored NextStep) provided this, but they chose to hide it and 
-tried to push their own baroque toolkit instead... 
-<P>Many of the ideas in FLTK were developed on a NeXT (but <I>not</I>
-using NextStep) in 1987 in a C toolkit Bill called &quot;views&quot;.  Here he 
-came up with passing events downward in the tree and having the handle 
-routine return a value indicating the used the event, and the 
-table-driven menus.  In general he was trying to prove that complex UI 
-ideas could be entirely implemented in a user space toolkit, with no 
-knowledge or support by the system. </P>
-<P>After going to film school for a few years, Bill worked at Sun 
-Microsystems on the (doomed) NeWS project.  Here he found an even 
-better and cleaner windowing system, and he reimplemented &quot;views&quot; atop 
-that.  NeWS did have an unnecessarily complex method of delivering 
-events which hurt it.  But the designers did admit that perhaps the 
-user could write just as good of a button as they could, and officially 
-exposed the lower level interface. </P>
-<P>With the death of NeWS Bill realized that he would have to live with 
-X. The biggest problem with X is the &quot;window manager&quot;, which means 
-that the toolkit can no longer control the window borders or drag the 
-window around. </P>
-<P>At Digital Domain Bill discovered another toolkit, &quot;Forms&quot;.  Forms 
-was similar to his work, but provided many more widgets, since it was 
-used in many real applications, rather then as theoretical work.  He 
-decided to use Forms, except he integrated his table-driven menus into 
-it. Several very large programs were created using this version of 
-Forms. </P>
-<P>The need to switch to OpenGL and GLX, portability, and a desire to 
-use C++ subclassing required a rewrite of Forms.  This produced the 
-first version of FLTK.  The conversion to C++ required so many changes 
-it made it impossible to recompile any Forms objects.  Since it was 
-incompatible anyway, Bill decided to incorporate his older ideas as 
-much as possible by simplifying the lower level interface and the event 
-passing mechanisim. </P>
-<P>Bill received permission to release it for free on the Internet, 
-with the GNU general public license.  Response from Internet users 
-indicated that the Linux market dwarfed the SGI and high-speed GL 
-market, so he rewrote it to use X for all drawing, greatly speeding it 
-up on these machines.  That is the version you have now. </P>
-<P>Digital Domain has since withdrawn support for FLTK.  While Bill is 
-no longer able to actively develop it, he still contributes to FLTK in 
-his free time and is a part of the FLTK development team. </P>
+tried to push their own baroque toolkit instead...</P>
+
+<P>Many of the ideas in FLTK were developed on a NeXT (but
+<I>not</I> using NextStep) in 1987 in a C toolkit Bill called
+&quot;views&quot;. Here he  came up with passing events downward
+in the tree and having the handle  routine return a value
+indicating the used the event, and the  table-driven menus. In
+general he was trying to prove that complex UI ideas could be
+entirely implemented in a user space toolkit, with no knowledge
+or support by the system.</P>
+
+<P>After going to film school for a few years, Bill worked at
+Sun  Microsystems on the (doomed) NeWS project. Here he found an
+even  better and cleaner windowing system, and he reimplemented
+&quot;views&quot; atop  that. NeWS did have an unnecessarily
+complex method of delivering events which hurt it. But the
+designers did admit that perhaps the user could write just as
+good of a button as they could, and officially exposed the
+lower level interface.</P>
+
+<P>With the death of NeWS Bill realized that he would have to
+live with X. The biggest problem with X is the &quot;window
+manager&quot;, which means that the toolkit can no longer
+control the window borders or drag the window around.</P>
+
+<P>At Digital Domain Bill discovered another toolkit,
+&quot;Forms&quot;. Forms  was similar to his work, but provided
+many more widgets, since it was used in many real applications,
+rather then as theoretical work. He decided to use Forms, except
+he integrated his table-driven menus into it. Several very large
+programs were created using this version of Forms.</P>
+
+<P>The need to switch to OpenGL and GLX, portability, and a
+desire to use C++ subclassing required a rewrite of Forms. 
+This produced the first version of FLTK. The conversion to C++
+required so many changes it made it impossible to recompile any
+Forms objects. Since it was incompatible anyway, Bill decided
+to incorporate his older ideas as  much as possible by
+simplifying the lower level interface and the event passing
+mechanisim.</P>
+
+<P>Bill received permission to release it for free on the
+Internet, with the GNU general public license. Response from
+Internet users indicated that the Linux market dwarfed the SGI
+and high-speed GL market, so he rewrote it to use X for all
+drawing, greatly speeding it up on these machines. That is the
+version you have now.</P>
+
+<P>Digital Domain has since withdrawn support for FLTK. While
+Bill is no longer able to actively develop it, he still
+contributes to FLTK in his free time and is a part of the FLTK
+development team.</P>
+
 <H2>Features</H2>
- FLTK was designed to be statically linked. This was done by splitting 
-it into many small objects and desigining it so that functions that are 
-not used do not have pointers to them in the parts that are used, and 
-thus do not get linked in. This allows you to make an easy-to-install 
-program, or to modify FLTK to the exact requirements of your 
-application, without worrying about bloat. FLTK works fine as a shared 
-library, though, and has started being included on Linux distributions. 
-<P>Here are some of the core features unique to FLTK: </P>
+
+<P>FLTK was designed to be statically linked. This was done by
+splitting it into many small objects and designing it so that
+functions that are not used do not have pointers to them in the
+parts that are used, and thus do not get linked in. This allows
+you to make an easy-to-install program or to modify FLTK to
+the exact requirements of your application without worrying
+about bloat. FLTK works fine as a shared library, though, and
+is now included with several Linux distributions.</P>
+
+<P>Here are some of the core features unique to FLTK:</P>
+
 <UL>
-<LI>sizeof(Fl_Widget) == 40 to 48.</LI>
-<LI>The &quot;core&quot; (the &quot;hello&quot; program compiled &amp; linked with a static 
-FLTK  library using gcc on a 486 and then stripped) is 110K.</LI>
-<LI>The FLUID program (which includes every widget) is 372k.
-<LI>Written directly atop Xlib (or WIN32) for maximum speed,  and 
-carefully optimized for code size and performance.</LI>
-<LI>Precise low-level compatability between the X11 and WIN32  version 
-(only about 10% of the code is different).</LI>
-<LI>Interactive user interface builder program. Output is 
- human-readable and editable C++ source code.</LI>
-<LI>Support for X11 overlay hardware (emulation if none and  under 
-WIN32.)</LI>
-<LI>Very small &amp; fast portable 2-D drawing library to hide  Xlib and 
-WIN32.</LI>
-<LI>OpenGL/Mesa drawing area widget.</LI>
-<LI>Support for OpenGL overlay hardware on both X11 and WIN32. 
- Emulation if none.</LI>
-<LI>Text input fields with Emacs key bindings, X cut &amp;  paste, and 
-foreign letter compose!</LI>
-<LI>Compatibility header file for the GLUT library.</LI>
-<LI>Compatibility header file for the XForms library.</LI>
-<LI>Much too much to list here...</LI>
+
+	<LI>sizeof(Fl_Widget) == 64 to 92.</LI>
+
+	<LI>The &quot;core&quot; (the &quot;hello&quot; program
+	compiled &amp; linked with a static FLTK library using
+	gcc on a 486 and then stripped) is 114K.</LI>
+
+	<LI>The FLUID program (which includes every widget) is
+	538k.</LI>
+
+	<LI>Written directly atop Xlib (or WIN32) for maximum
+	speed, and carefully optimized for code size and
+	performance.</LI>
+
+	<LI>Precise low-level compatability between the X11 and
+	WIN32 version  (only about 10% of the code is
+	different).</LI>
+
+	<LI>Interactive user interface builder program. Output is 
+	human-readable and editable C++ source code.</LI>
+
+	<LI>Support for overlay hardware, with emulation if none
+	is available.</LI>
+
+	<LI>Very small &amp; fast portable 2-D drawing library
+	to hide Xlib and  WIN32.</LI>
+
+	<LI>OpenGL/Mesa drawing area widget.</LI>
+
+	<LI>Support for OpenGL overlay hardware on both X11 and
+	WIN32, with emulation if none is available.</LI>
+
+	<LI>Text widgets with Emacs key bindings, X cut &amp;
+	paste, and  foreign letter compose!</LI>
+
+	<LI>Compatibility header file for the GLUT library.</LI>
+
+	<LI>Compatibility header file for the XForms library.</LI>
+
 </UL>
+
 <H2>Licensing</H2>
- FLTK comes with complete free source code. FLTK is available under the 
-terms of the <A href="license.html">GNU Library General Public License</A>. 
-Contrary to popular belief, it can be used in commercial software! 
-(Even Bill Gates could use it.) 
+
+<P>FLTK comes with complete free source code. FLTK is available
+under the terms of the <A href="license.html">GNU Library
+General Public License</A> with ammendments that allow for
+static linking. Contrary to popular belief, it can be used in
+commercial software - even Bill Gates could use it!</P>
+
 <H2>What Does &quot;FLTK&quot; Mean?</H2>
- FLTK was originally designed to be compatible with the Forms Library 
-written for SGI machines. In that library all the functions and 
-structures started with &quot;fl_&quot;. This naming was extended to all new 
-methods and widgets in the C++ library, and this prefix was taken as 
-the name of the library. It is almost impossible to search for &quot;FL&quot; on 
-the Internet, due to the fact that it is also the abbreviation for 
-Florida. After much debating and searching for a new name for the 
-toolkit, which was already in use by several people, Bill came up with 
-&quot;FLTK&quot;, and even a bogus excuse that it stands for &quot;The Fast Light Tool 
-Kit&quot;. 
+
+<P>FLTK was originally designed to be compatible with the Forms
+Library written for SGI machines. In that library all the
+functions and structures started with &quot;fl_&quot;. This
+naming was extended to all new  methods and widgets in the C++
+library, and this prefix was taken as the name of the library.
+It is almost impossible to search for &quot;FL&quot; on the
+Internet, due to the fact that it is also the abbreviation for 
+Florida. After much debating and searching for a new name for
+the toolkit, which was already in use by several people, Bill
+came up with &quot;FLTK&quot;, including a bogus excuse that it
+stands for &quot;The Fast Light Toolkit&quot;.</P>
+
 <H2>Building and Installing FLTK Under UNIX</H2>
-In most cases you can just type &quot;make&quot;.  This will run configure with 
-the default of no options and then compile everything. 
-<P>FLTK uses GNU autoconf to configure itself for your UNIX platform. 
-The main things that the configure script will look for are the X11 and
-OpenGL (or Mesa) header and library files.  If these cannot be
-found in the standard include/library locations you'll need to define the
-<tt>CFLAGS</tt>, <tt>CXXFLAGS</tt>, and <tt>LDFLAGS</tt> environment
-variables. For the Bourne and Korn shells you'd use:</P>
+
+<P>In most cases you can just type &quot;make&quot;. This will
+run configure with the default of no options and then compile
+everything.</P>
+
+<P>FLTK uses GNU autoconf to configure itself for your UNIX
+platform. The main things that the configure script will look
+for are the X11 and OpenGL (or Mesa) header and library files. 
+If these cannot be found in the standard include/library
+locations you'll need to define the <tt>CFLAGS</tt>,
+<tt>CXXFLAGS</tt>, and <tt>LDFLAGS</tt> environment variables.
+For the Bourne and Korn shells you'd use:</P>
+
 <UL><PRE>
 CFLAGS=-I<I>includedir</I>; export CFLAGS
 CXXFLAGS=-I<I>includedir</I>; export CXXFLAGS
 LDFLAGS=-L<I>libdir</I>; export LDFLAGS
 </PRE></UL>
-For C shell and tcsh, use:
+
+<P>For C shell and tcsh, use:</P>
+
 <UL><PRE>
 setenv CFLAGS "-I<I>includedir</I>"
 setenv CXXFLAGS "-I<I>includedir</I>"
 setenv LDFLAGS "-L<I>libdir</I>"
 </PRE></UL>
-By default configure will look for a C++ compiler named <tt>CC</tt>, <tt>c++</tt>,
-<tt>g++</tt>, or <tt>gcc</tt> in that order. To use another compiler you need
-to set the <tt>CXX</tt> environment variable:
+
+<P>By default configure will look for a C++ compiler named
+<tt>CC</tt>, <tt>c++</tt>, <tt>g++</tt>, or <tt>gcc</tt> in that
+order. To use another compiler you need to set the <tt>CXX</tt>
+environment variable:</P>
+
 <UL><PRE>
-CXX=xlC; export xlC
+CXX=xlC; export CXX
 setenv CXX "xlC"
 </PRE></UL>
-The <tt>CC</tt> environment variable can also be used to override the
-default C compiler (<tt>cc</tt> or <tt>gcc</tt>), which is used for a
-few FLTK source files.
-<P>You can run configure yourself to get the exact setup you need. Type 
-&quot;./configure &lt;options&gt;&quot;, where options are: </P>
+
+<P>The <tt>CC</tt> environment variable can also be used to
+override the default C compiler (<tt>cc</tt> or <tt>gcc</tt>),
+which is used for a few FLTK source files.</P>
+
+<P>You can run configure yourself to get the exact setup you
+need. Type  &quot;./configure &lt;options&gt;&quot;, where
+options are:</P>
+
 <DL>
-<DT>--enable-debug</DT>
-<DD>Enable debugging code &amp; symbols</DD>
-<DT>--enable-shared</DT>
-<DD>Enable generation of shared libraries</DD>
-<DT>--bindir=/path</DT>
-<DD>Set the location for executables [default = /usr/local/bin]</DD>
-<DT>--libdir=/path</DT>
-<DD>Set the location for libraries [default = /usr/local/lib]</DD>
-<DT>--includedir=/path</DT>
-<DD>Set the location for include files. [default = /usr/local/include]</DD>
-<DT>--prefix=/dir</DT>
-<DD>Set the directory prefix for files [default = /usr/local]</DD>
+
+	<DT>--enable-debug</DT>
+	<DD>Enable debugging code &amp; symbols</DD>
+
+	<DT>--enable-shared</DT>
+	<DD>Enable generation of shared libraries</DD>
+
+	<DT>--bindir=/path</DT>
+	<DD>Set the location for executables [default = $prefix/bin]</DD>
+
+	<DT>--datadir=/path</DT>
+	<DD>Set the location for data files. [default = $prefix/share]</DD>
+
+	<DT>--libdir=/path</DT>
+	<DD>Set the location for libraries [default = $prefix/lib]</DD>
+
+	<DT>--includedir=/path</DT>
+	<DD>Set the location for include files. [default = $prefix/include]</DD>
+
+	<DT>--mandir=/path</DT>
+	<DD>Set the location for man pages. [default = $prefix/man]</DD>
+
+	<DT>--prefix=/dir</DT>
+	<DD>Set the directory prefix for files [default = /usr/local]</DD>
+
 </DL>
- When the configure script is done you can just run the &quot;make&quot; command. 
-This will build the library, FLUID tool, and all of the test programs. 
-<P>To install the library, become root and type &quot;make install&quot;.  This 
-will copy the &quot;fluid&quot; executable to &quot;bindir&quot;, the header files to 
-&quot;includedir&quot;, and the library files to &quot;libdir&quot;. </P>
+
+<P>When the configure script is done you can just run the
+&quot;make&quot; command. This will build the library, FLUID
+tool, and all of the test programs.</P>
+
+<P>To install the library, become root and type &quot;make
+install&quot;. This will copy the &quot;fluid&quot; executable
+to &quot;bindir&quot;, the header files to 
+&quot;includedir&quot;, and the library files to
+&quot;libdir&quot;.</P>
+
 <H2>Building FLTK Under Microsoft Windows</H2>
-There are two ways to build FLTK under Microsoft Windows.  The first 
-is to use the Visual C++ 5.0 project files under the &quot;visualc&quot; 
-directory.  Just open (or double-click on) the &quot;fltk.dsw&quot; file to get 
-the whole shebang. 
-<P>The second method is to use a GNU-based development tool with the 
-files in the &quot;makefiles&quot; directory.  To build using one of these tools 
-simply copy the appropriate makeinclude and config files to the main 
-directory and do a make: </P>
-<UL>
-<PRE>
+
+<P>There are two ways to build FLTK under Microsoft Windows. 
+The first is to use the Visual C++ 5.0 project files under the
+&quot;visualc&quot; directory. Just open (or double-click on)
+the &quot;fltk.dsw&quot; file to get the whole shebang.</P>
+
+<P>The second method is to use a GNU-based development tool with
+the  files in the &quot;makefiles&quot; directory. To build
+using one of these tools simply copy the appropriate
+makeinclude and config files to the main directory and do a
+make:</P>
+
+<UL><PRE>
 copy makefiles\Makefile.&lt;env&gt; Makefile
 make
-</PRE>
-</UL>
+</PRE></UL>
+
 <H3>Using the Visual C++ DLL Library</H3>
 The &quot;fltkdll.dsp&quot; project file builds a DLL-version of the FLTK
 library. Because of name mangling differences between PC compilers (even
