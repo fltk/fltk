@@ -1,13 +1,14 @@
 #!/bin/sh
 #
-# makedist - make an irix distribution.
+# makedist - make a linux distribution.
+#
+# Note: YOU MUST "MAKE INSTALL" FLTK PRIOR TO RUNNING THIS SCRIPT.
+#       This is because the developers of the RPM distribution
+#       format can't seem to realize that it would be nice to
+#       make a distribution *without* first installing it, which
+#       basically means you need to have two disks or systems in
+#       order to test your distribution.  Ya, I think RPM is just
+#       *great*...
 #
 
-if [ test `uname -r` =~ '5.*' ]; then
-	gendist -v -dist . -sbase ../.. -idb fltk5x.list -spec fltk.spec
-else
-	gendist -v -dist . -sbase ../.. -idb fltk.list -spec fltk.spec
-fi
-
-tar cvf fltk-1.0-irix-`uname -r`.tardist fltk fltk.idb fltk.man fltk.sw
-
+rpm -ba fltk.spec
