@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.5 1999/01/13 16:25:17 mike Exp $"
+# "$Id: Makefile.os2x,v 1.6 1999/02/01 20:27:15 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,9 +23,9 @@
 # Please report all bugs and problems to "fltk-bugs@easysw.com".
 #
 
-# SHELL=/bin/sh
+SHELL=cmd.exe
 
-all:
+all: makeinclude config.h
 	echo "=== making src ==="
 	touch src/makedepend
 	cd src & $(MAKE)
@@ -67,6 +67,12 @@ clean:
 	touch test/makedepend
 	cd test & $(MAKE) clean
 
+config.h: makefiles\config.os2x
+	copy $< $@
+
+makeinclude: makefiles\makeinclude.os2x
+	copy $< $@
+
 #
-# End of "$Id: Makefile.os2x,v 1.5 1999/01/13 16:25:17 mike Exp $".
+# End of "$Id: Makefile.os2x,v 1.6 1999/02/01 20:27:15 mike Exp $".
 #
