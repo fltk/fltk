@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.12 2002/04/14 02:43:48 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.13 2002/04/14 20:49:06 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -61,34 +61,7 @@ class Fl_Tooltip_Window : public Fl_Menu_Window {
     : Fl_Menu_Window(W,H,l) {}
   Fl_Tooltip_Window(int X, int Y, int W, int H, const char *l = 0)
     : Fl_Menu_Window(X,Y,W,H,l) {}
-
-  virtual FL_EXPORT int handle(int event);
 };
-
-
-int
-Fl_Tooltip_Window::handle(int event) {
-  switch (event) {
-    case FL_KEYUP :
-    case FL_KEYDOWN :
-    case FL_SHORTCUT :
-    case FL_PUSH :
-    case FL_DRAG :
-    case FL_RELEASE :
-    case FL_MOUSEWHEEL :
-      if (Fl_Tooltip::widget) {
-        // Pass events to widget...
-        Fl::belowmouse(Fl_Tooltip::widget);
-	// Update event_x() and event_y() to be relative to the
-	// widget's window, not the tooltip window...
-	Fl::e_x = Fl::e_x_root - Fl_Tooltip::widget->window()->x();
-	Fl::e_y = Fl::e_y_root - Fl_Tooltip::widget->window()->y();
-	return Fl_Tooltip::widget->handle(event);
-      } else return 0;
-    default :
-      return Fl_Menu_Window::handle(event);
-  }
-}
 
 
 //
@@ -250,5 +223,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.12 2002/04/14 02:43:48 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.13 2002/04/14 20:49:06 easysw Exp $".
 //
