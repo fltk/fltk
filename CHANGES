@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- The fl_file_chooser() and fl_dir_chooser() functions
+	  now support an optional "relative" argument to get
+	  relative pathnames; the default is to return absolute
+	  pathnames.
+	- The backspace and delete keys now work as expected in
+	  the file chooser when doing filename completion.
 	- FLUID now supports running shell commands.
 	- New Fl_File_Input widget that shows directory
 	  separators with filename in input field.

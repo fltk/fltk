@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_dir.cxx,v 1.1.2.9 2002/04/28 08:42:33 easysw Exp $"
+// "$Id: fl_file_dir.cxx,v 1.1.2.10 2002/05/01 12:41:21 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -43,9 +43,16 @@ void fl_file_chooser_callback(void (*cb)(const char*)) {
 }
 
 
-char* fl_file_chooser(const char* message, const char* pat, const char* fname)
-{
-  static char	retname[1024];
+//
+// 'fl_file_chooser()' - Show a file chooser dialog and get a filename.
+//
+
+char *					// O - Filename or NULL
+fl_file_chooser(const char *message,	// I - Message in titlebar
+                const char *pat,	// I - Filename pattern
+		const char *fname,	// I - Initial filename selection
+		int        relative) {	// I - 0 for absolute path
+  static char	retname[1024];		// Returned filename
 
   if (!fc) {
     if (!fname || !*fname) fname = ".";
@@ -88,17 +95,25 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
   while (fc->shown())
     Fl::wait();
 
-  if (fc->value()) {
+  if (fc->value() && relative) {
     fl_filename_relative(retname, sizeof(retname), fc->value());
 
     return retname;
-  } else return 0;
+  } else if (fc->value()) return fc->value();
+  else return 0;
 }
 
 
-char* fl_dir_chooser(const char* message, const char* fname)
+//
+// 'fl_dir_chooser()' - Show a file chooser dialog and get a directory.
+//
+
+char *					// O - Directory or NULL
+fl_dir_chooser(const char *message,	// I - Message for titlebar
+               const char *fname,	// I - Initial directory name
+	       int        relative)	// I - 0 for absolute
 {
-  static char	retname[1024];
+  static char	retname[1024];		// Returned directory name
 
   if (!fname || !*fname) fname = ".";
 
@@ -118,14 +133,15 @@ char* fl_dir_chooser(const char* message, const char* fname)
   while (fc->shown())
     Fl::wait();
 
-  if (fc->value()) {
+  if (fc->value() && relative) {
     fl_filename_relative(retname, sizeof(retname), fc->value());
 
     return retname;
-  } else return 0;
+  } else if (fc->value) return fc->value();
+  else return 0;
 }
 
 
 //
-// End of "$Id: fl_file_dir.cxx,v 1.1.2.9 2002/04/28 08:42:33 easysw Exp $".
+// End of "$Id: fl_file_dir.cxx,v 1.1.2.10 2002/05/01 12:41:21 easysw Exp $".
 //

@@ -17,6 +17,7 @@ A</A>.
 	<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
 	<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
 	<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+	<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
 	<LI><A HREF="#fl_filename_absolute"><TT>fl_filename_absolute</TT></A></LI>
@@ -50,6 +51,7 @@ A</A>.
 		<LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
 		<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
 		<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
+		<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
 		<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
 		<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
 		<LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
@@ -327,6 +329,44 @@ fl_color_cube(R * (FL_NUM_RED - 1) / 255,
 
 
 <!-- NEED 4in -->
+<H2><A NAME="fl_dir_chooser">fl_dir_chooser</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+char *fl_dir_chooser(const char * message, const char *fname, int relative = 0);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <tt>fl_dir_chooser()</tt> function displays a <A
+HREF="Fl_File_Chooser.html"><tt>Fl_File_Chooser</tt></A> dialog
+so that the user can choose a directory.
+
+<P><tt>message</tt> is a string used to title the window.
+
+<P><tt>fname</tt> is a default filename to fill in the chooser
+with. If this is <tt>NULL</tt> then the last filename that was
+choosen is used. The first time the file chooser is called this
+defaults to a blank string.
+
+<P><tt>relative</tt> specifies whether the returned filename
+should be relative (any non-zero value) or absolute (0). The
+default is to return absolute paths.
+
+<P>The returned value points at a static buffer that is only
+good until the next time <tt>fl_dir_chooser()</tt> is called.
+
+
+<!-- NEED 4in -->
 <H2><A NAME="fl_file_chooser2">fl_file_chooser</A></H2>
 
 <HR>
@@ -340,7 +380,7 @@ fl_color_cube(R * (FL_NUM_RED - 1) / 255,
 <H3>Prototype</H3>
 
 <UL><PRE>
-char *fl_file_chooser(const char * message, const char *pattern, const char *fname);
+char *fl_file_chooser(const char * message, const char *pattern, const char *fname, int relative = 0);
 </PRE></UL>
 
 <H3>Description</H3>
@@ -370,6 +410,10 @@ with. If this is <tt>NULL</tt> then the last filename that was
 choosen is used (unless that had a different pattern, in which
 case just the last directory with no name is used). The first
 time the file chooser is called this defaults to a blank string.
+
+<P><tt>relative</tt> specifies whether the returned filename
+should be relative (any non-zero value) or absolute (0). The
+default is to return absolute paths.
 
 <P>The returned value points at a static buffer that is only
 good until the next time <tt>fl_file_chooser()</tt> is called.

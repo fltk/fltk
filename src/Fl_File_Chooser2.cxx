@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.10 2002/05/01 08:51:59 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.11 2002/05/01 12:41:21 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -575,7 +575,8 @@ Fl_File_Chooser::fileNameCB()
       fl_alert("Please choose an existing file!");
     }
   }
-  else if (Fl::event_key() != FL_Delete)
+  else if (Fl::event_key() != FL_Delete &&
+           Fl::event_key() != FL_BackSpace)
   {
     // Check to see if the user has entered a directory...
     if ((slash = strrchr(pathname, '/')) == NULL)
@@ -673,17 +674,11 @@ Fl_File_Chooser::fileNameCB()
       fileName->replace(filename - pathname, filename - pathname + min_match,
                         matchname);
 
-      // Highlight it; if the user just pressed the backspace
-      // key, position the cursor at the start of the selection.
-      // Otherwise, put the cursor at the end of the selection so
+      // Highlight it with the cursor at the end of the selection so
       // s/he can press the right arrow to accept the selection
       // (Tab and End also do this for both cases.)
-      if (Fl::event_key() == FL_BackSpace)
-        fileName->position(filename - pathname + min_match - 1,
-	                   filename - pathname + max_match);
-      else
-        fileName->position(filename - pathname + max_match,
-	                   filename - pathname + min_match);
+      fileName->position(filename - pathname + max_match,
+	                 filename - pathname + min_match);
     }
     else if (max_match == 0) {
       fileList->deselect(0);
@@ -696,10 +691,15 @@ Fl_File_Chooser::fileNameCB()
       okButton->activate();
     else
       okButton->deactivate();
+  } else {
+    // FL_Delete or FL_BackSpace
+    fileList->deselect(0);
+    fileList->redraw();
+    okButton->deactivate();
   }
 }
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.10 2002/05/01 08:51:59 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.11 2002/05/01 12:41:21 easysw Exp $".
 //
