@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- Submenus now display to the left of the parent menu if
+	  they won't fit to the right.  Previously they would
+	  display right on top of the parent menu...
 	- Fl_Menu_:add() didn't handle a trailing "\" character
 	  gracefully.
 	- Clicking/dragging the middle mouse button in a

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.17 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.18 2002/10/02 20:09:12 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -93,7 +93,7 @@ public:
   const Fl_Menu_Item* menu;
   menuwindow(const Fl_Menu_Item* m, int X, int Y, int W, int H,
 	     const Fl_Menu_Item* picked, const Fl_Menu_Item* title,
-	     int menubar = 0, int menubar_title = 0);
+	     int menubar = 0, int menubar_title = 0, int right_edge = 0);
   ~menuwindow();
   void set_selected(int);
   int find_selected(int mx, int my);
@@ -226,9 +226,11 @@ menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L) :
 
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
 		       const Fl_Menu_Item* picked, const Fl_Menu_Item* t, 
-		       int menubar, int menubar_title)
+		       int menubar, int menubar_title, int right_edge)
   : Fl_Menu_Window(X, Y, Wp, Hp, 0)
 {
+  if (!right_edge) right_edge = Fl::w();
+
   end();
   set_modal();
   clear_border();
@@ -282,7 +284,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (Wp > W) W = Wp;
   if (Wtitle > W) W = Wtitle;
 
-  if (!Wp) {if (X < 0) X = 0; if (X > Fl::w()-W) X= Fl::w()-W;}
+  if (!Wp) {if (X < 0) X = 0; if (X > Fl::w()-W) X= right_edge-W;}
   x(X); w(W);
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0)
@@ -677,7 +679,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	title = 0;
       }
       if (initial_item) { // bring up submenu containing initial item:
-	menuwindow* n = new menuwindow(menutable,X,Y,W,H,initial_item,title);
+	menuwindow* n = new menuwindow(menutable,X,Y,W,H,initial_item,title,0,0,cw.x());
 	pp.p[pp.nummenus++] = n;
 	// move all earlier menus to line up with this new one:
 	if (n->selected>=0) {
@@ -701,7 +703,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	// delete all the old menus and create new one:
 	while (pp.nummenus > pp.menu_number+1) delete pp.p[--pp.nummenus];
 	pp.p[pp.nummenus++]= new menuwindow(menutable, nX, nY,
-					  title?1:0, 0, 0, title, 0, menubar);
+					  title?1:0, 0, 0, title, 0, menubar, cw.x());
       }
     } else { // !m->submenu():
       while (pp.nummenus > pp.menu_number+1) delete pp.p[--pp.nummenus];
@@ -774,5 +776,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.17 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.18 2002/10/02 20:09:12 easysw Exp $".
 //
