@@ -419,6 +419,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltkdll
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name CubeView
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name line_style
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -710,6 +716,18 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "line_style"=".\line_style.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
 }}}
 
 ###############################################################################
