@@ -7,7 +7,14 @@
 // call to list the visuals.  Fl.H must be included first to indicate this.
 
 #ifdef WIN32
-void list_visuals() {;}
+#include <FL/Fl.H>
+#include <FL/fl_message.H>
+
+int main(int, char**) {
+  fl_alert("Currently, this program works only under X.");
+  return 1;
+}
+
 #else
 
 #include <config.h>

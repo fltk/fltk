@@ -16,7 +16,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#ifndef WIN32
 #include "list_visuals.C"
+#endif
 
 int width = 75;
 int height = 75;

@@ -47,7 +47,9 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/x.H>
+#ifndef WIN32
 #include "list_visuals.C"
+#endif
 
 int visid = -1;
 int arg(int argc, char **argv, int &i) {
