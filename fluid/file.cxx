@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.6.2.7 2002/08/09 22:57:00 easysw Exp $"
+// "$Id: file.cxx,v 1.7.2.6.2.8 2003/01/28 20:51:13 easysw Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -458,6 +458,12 @@ static void read_children(Fl_Type *p, int paste) {
     t->name(read_word());
 
     c = read_word(1);
+    if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
+      ((Fl_Class_Type*)t)->prefix(t->name());
+      t->name(c);
+      c = read_word(1);
+    }
+
     if (strcmp(c,"{")) {
       read_error("Missing property list for %s\n",t->title());
       goto REUSE_C;
@@ -631,5 +637,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.6.2.7 2002/08/09 22:57:00 easysw Exp $".
+// End of "$Id: file.cxx,v 1.7.2.6.2.8 2003/01/28 20:51:13 easysw Exp $".
 //

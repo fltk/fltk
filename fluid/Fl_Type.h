@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.7 2002/10/30 21:06:14 matthiaswm Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.8 2003/01/28 20:51:11 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -230,6 +230,12 @@ public:
   int pixmapID() { return 12; }
   void write_properties();
   void read_property(const char *);
+
+  // class prefix attribute access
+  void prefix(const char* p);
+  const char*  prefix() const {return class_prefix;}
+private:
+  const char* class_prefix;
 };
 
 #define NUM_EXTRA_CODE 4
@@ -587,5 +593,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.7 2002/10/30 21:06:14 matthiaswm Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.8 2003/01/28 20:51:11 easysw Exp $".
 //

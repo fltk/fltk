@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.13 2002/11/19 18:41:15 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.14 2003/01/28 20:51:10 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -726,6 +726,13 @@ void later_cb(Fl_Widget*,void*) {
 void Fl_Type::write() {
     write_indent(level);
     write_word(type_name());
+    
+    if (is_class()) {
+      const char * p = 	((Fl_Class_Type*)this)->prefix();
+      if (p &&	strlen(p))
+	write_word(p);
+    }
+
     write_word(name());
     write_open(level);
     write_properties();
@@ -784,5 +791,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.13 2002/11/19 18:41:15 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.14 2003/01/28 20:51:10 easysw Exp $".
 //

@@ -1,12 +1,12 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0103 
 header_name {../FL/Fl_Help_Dialog.H} 
 code_name {.cxx}
 decl {\#include "flstring.h"} {} 
 
 decl {\#include <FL/fl_ask.H>} {} 
 
-class Fl_Help_Dialog {open
+class FL_EXPORT Fl_Help_Dialog {open selected
 } {
   decl {int index_;} {}
   decl {int max_;} {}
@@ -54,7 +54,7 @@ else if (view_->filename())
       } {}
       Fl_Button {} {
         label Close
-        callback {window_->hide();} selected
+        callback {window_->hide();}
         private xywh {425 350 95 25}
         code0 {o->label(fl_close);}
       }
