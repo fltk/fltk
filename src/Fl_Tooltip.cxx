@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.24 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.25 2002/10/29 19:45:10 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -55,7 +55,7 @@ public:
   }
 };
 
-static Fl_Widget* widget;
+Fl_Widget* Fl_Tooltip::widget_ = 0;
 static Fl_TooltipBox *window = 0;
 static int X,Y,W,H;
 
@@ -70,7 +70,7 @@ void Fl_TooltipBox::layout() {
   int ox = Fl::event_x_root();
   //int ox = X+W/2;
   int oy = Y + H+2;
-  for (Fl_Widget* p = widget; p; p = p->window()) {
+  for (Fl_Widget* p = Fl_Tooltip::current(); p; p = p->window()) {
     //ox += p->x();
     oy += p->y();
   }
@@ -105,19 +105,40 @@ static char recursion;
 static void tooltip_timeout(void*) {
   if (recursion) return;
   recursion = 1;
-  if (!tip || !*tip) return;
-  //if (Fl::grab()) return;
-  if (!window) window = new Fl_TooltipBox;
-  // this cast bypasses the normal Fl_Window label() code:
-  ((Fl_Widget*)window)->label(tip);
-  window->layout();
-  window->redraw();
-//  printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
-//         window, tip ? tip : "(null)");
-  window->show();
+  if (!tip || !*tip) {
+    if (window) window->hide();
+  } else {
+    //if (Fl::grab()) return;
+    if (!window) window = new Fl_TooltipBox;
+    // this cast bypasses the normal Fl_Window label() code:
+    ((Fl_Widget*)window)->label(tip);
+    window->layout();
+    window->redraw();
+//    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+//           window, tip ? tip : "(null)");
+    window->show();
+  }
+
   Fl::remove_timeout(recent_timeout);
   recent_tooltip = 1;
   recursion = 0;
+}
+
+// Acts as though enter(widget) was done but does not pop up a
+// tooltip.  This is useful to prevent a tooltip from reappearing when
+// a modal overlapping window is deleted. Fltk does this automatically
+// when you click the mouse button.
+void Fl_Tooltip::current(Fl_Widget* w) {
+  enter(0);
+  // find the enclosing group with a tooltip:
+  Fl_Widget* tw = w;
+  for (;;) {
+    if (!tw) return;
+    if (tw->tooltip()) break;
+    tw = tw->parent();
+  }
+  // act just like tt_enter() except we can remember a zero:
+  widget_ = w;
 }
 
 // This is called when a widget is destroyed:
@@ -126,7 +147,15 @@ tt_exit(Fl_Widget *w) {
 //  printf("tt_exit(w=%p)\n", w);
 //  printf("    widget=%p, window=%p\n", widget, window);
 
-  if (w && w == widget) Fl_Tooltip::enter_area(0,0,0,0,0,0);
+  if (!Fl_Tooltip::current()) return;
+  Fl_Tooltip::current(0);
+  Fl::remove_timeout(tooltip_timeout);
+  Fl::remove_timeout(recent_timeout);
+  if (window) window->hide();
+  if (recent_tooltip) {
+    if (Fl::event_state() & FL_BUTTONS) recent_tooltip = 0;
+    else Fl::add_timeout(.2f, recent_timeout);
+  }
 }
 
 static void
@@ -154,38 +183,29 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
 //  printf("    recursion=%d, window=%p\n", recursion, window);
 
   if (recursion) return;
-  if (t && *t && enabled()) { // there is a tooltip
-    // do nothing if it is the same:
-    if (wid==widget && x==X && y==Y && w==W && h==H && t==tip) return;
-    Fl::remove_timeout(tooltip_timeout);
-    Fl::remove_timeout(recent_timeout);
-    // remember it:
-    widget = wid; X = x; Y = y; W = w; H = h; tip = t;
-    if (recent_tooltip || Fl_Tooltip::delay() < .1) {
-      // switch directly from a previous tooltip to the new one:
-#ifdef WIN32
-      // possible fix for the Windows titlebar, it seems to want the
-      // window to be destroyed, moving it messes up the parenting:
-      if (window) window->hide();
-#endif
-      tooltip_timeout(0);
-    } else {
-      if (window) window->hide();
-      Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout);
-    }
-  } else { // no tooltip
-    if (!tip) return;
-    Fl::remove_timeout(tooltip_timeout);
-    Fl::remove_timeout(recent_timeout);
-    tip = 0;
-    widget = 0;
+  if (!t || !*t || !enabled()) {
     if (window) window->hide();
-    if (recent_tooltip) {
-      if (Fl::event_state() & 0x7f00000 /*FL_BUTTONS*/)
-	recent_tooltip = 0;
-      else
-	Fl::add_timeout(.2, recent_timeout);
-    }
+    Fl::remove_timeout(tooltip_timeout);
+    Fl::remove_timeout(recent_timeout);
+    return;
+  }
+  // do nothing if it is the same:
+  if (wid==widget_ && x==X && y==Y && w==W && h==H && t==tip) return;
+  Fl::remove_timeout(tooltip_timeout);
+  Fl::remove_timeout(recent_timeout);
+  // remember it:
+  widget_ = wid; X = x; Y = y; W = w; H = h; tip = t;
+  // popup the tooltip immediately if it was recently up:
+  if (recent_tooltip || Fl_Tooltip::delay() < .1) {
+#ifdef WIN32
+    // possible fix for the Windows titlebar, it seems to want the
+    // window to be destroyed, moving it messes up the parenting:
+    if (window) window->hide();
+#endif
+    tooltip_timeout(0);
+  } else {
+    if (window) window->hide();
+    Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout);
   }
 
 //  printf("    tip=\"%s\", window->shown()=%d\n", tip ? tip : "(null)",
@@ -203,5 +223,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.24 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.25 2002/10/29 19:45:10 easysw Exp $".
 //

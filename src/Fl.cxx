@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.55 2002/10/22 17:39:11 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.56 2002/10/29 19:45:09 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -533,6 +533,7 @@ void fl_throw_focus(Fl_Widget *o) {
   if (o->contains(Fl::belowmouse())) Fl::belowmouse_ = 0;
   if (o->contains(Fl::focus())) Fl::focus_ = 0;
   if (o == fl_xfocus) fl_xfocus = 0;
+  if (o == Fl_Tooltip::current()) Fl_Tooltip::current(0);
   if (o == fl_xmousewin) fl_xmousewin = 0;
   Fl_Tooltip::exit(o);
   fl_fix_focus();
@@ -579,10 +580,10 @@ int Fl::handle(int e, Fl_Window* window)
     return 1;
 
   case FL_PUSH:
-    Fl_Tooltip::enter((Fl_Widget*)0);
     if (grab()) wi = grab();
     else if (modal() && wi != modal()) return 0;
     pushed_ = wi;
+    Fl_Tooltip::current(wi);
     if (send(e, wi, window)) return 1;
     // raise windows that are clicked on:
     window->show();
@@ -686,6 +687,10 @@ int Fl::handle(int e, Fl_Window* window)
     return 1;
 
   case FL_LEAVE:
+    if (!pushed_) {
+      belowmouse(0);
+      Fl_Tooltip::enter(0);
+    }
     if (window == fl_xmousewin) {fl_xmousewin = 0; fl_fix_focus();}
     return 1;
 
@@ -790,9 +795,6 @@ void Fl_Window::hide() {
     Fl::first_window()->show();
 #endif
   delete ip;
-
-  // Hide any visible tooltips...
-  //Fl_Tooltip::enter(0);
 }
 
 Fl_Window::~Fl_Window() {
@@ -967,5 +969,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.55 2002/10/22 17:39:11 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.56 2002/10/29 19:45:09 easysw Exp $".
 //

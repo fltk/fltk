@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.28 2002/10/24 12:53:40 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.29 2002/10/29 19:45:08 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -145,6 +145,8 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_BUTTON1	0x01000000
 #define FL_BUTTON2	0x02000000
 #define FL_BUTTON3	0x04000000
+#define FL_BUTTONS	0x7f000000 // All possible buttons
+#define FL_BUTTON(n)	(0x00800000<<(n))
 
 enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   FL_NO_BOX = 0,	FL_FLAT_BOX,
@@ -406,5 +408,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.28 2002/10/24 12:53:40 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.29 2002/10/29 19:45:08 easysw Exp $".
 //
