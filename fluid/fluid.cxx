@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.11 1999/01/25 22:05:38 mike Exp $"
+// "$Id: fluid.cxx,v 1.12 1999/01/26 15:58:25 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -308,7 +308,7 @@ Fl_Menu_Item Main_Menu[] = {
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Help",0,0,0,FL_SUBMENU},
   {"About fluid",0,about_cb},
-  {"Manual",0,nyi},
+//{"Manual",0,nyi},
   {0},
 {0}};
 
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.11 1999/01/25 22:05:38 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.12 1999/01/26 15:58:25 mike Exp $".
 //
