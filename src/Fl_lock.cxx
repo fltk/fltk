@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_lock.cxx,v 1.13.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_lock.cxx,v 1.13.2.3 2002/07/01 20:14:08 easysw Exp $"
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
@@ -58,6 +58,7 @@
 #ifdef WIN32
 #  include <windows.h>
 #  include <process.h>
+#  include <FL/x.H>
 
 // These pointers are in Fl_win32.cxx:
 extern void (*fl_lock_function)();
@@ -117,7 +118,7 @@ void Fl::unlock() {
 //
 
 void Fl::awake(void* msg) {
-  PostThreadMessage( main_thread, WM_USER, (WPARAM)msg, 0);
+  PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -199,5 +200,5 @@ void Fl::awake(void* msg) {
 #endif
 
 //
-// End of "$Id: Fl_lock.cxx,v 1.13.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_lock.cxx,v 1.13.2.3 2002/07/01 20:14:08 easysw Exp $".
 //

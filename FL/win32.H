@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.15.2.3.2.7 2002/06/07 15:06:31 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.8 2002/07/01 20:14:08 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -87,6 +87,7 @@ public:
   static FL_EXPORT Fl_X* make(Fl_Window*);
 };
 extern FL_EXPORT HCURSOR fl_default_cursor;
+extern FL_EXPORT UINT fl_wake_msg;
 inline Window fl_xid(const Fl_Window*w) {return Fl_X::i(w)->xid;}
 FL_EXPORT Fl_Window* fl_find(Window xid);
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
@@ -134,5 +135,5 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: win32.H,v 1.15.2.3.2.7 2002/06/07 15:06:31 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.8 2002/07/01 20:14:08 easysw Exp $".
 //

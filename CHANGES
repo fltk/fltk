@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0
 
+	- Resource leak fixes under WIN32 from Ori Berger.
+	- Now register a WIN32 message for thread messages.
+	- Fl_Window didn't initialize the min and max window
+	  size fields.
 	- The JPEG and PNG image classes have been moved to the
 	  fltk_images library, a la FLTK 2.0.  You can register
 	  all image file formats provided in fltk_images using

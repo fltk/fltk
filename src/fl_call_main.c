@@ -1,5 +1,5 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.11.2.2 2002/06/29 00:10:04 matthiaswm Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.11.2.3 2002/07/01 20:14:08 easysw Exp $"
  *
  * Copyright 1998-2002 by Bill Spitzak and others.
  *
@@ -63,6 +63,8 @@ extern int main(int, char *[]);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                              LPSTR lpCmdLine, int nCmdShow) {
+  int rc;
+
 #ifdef _DEBUG
  /*
   * If we are using compiling in debug mode, open a console window so
@@ -81,7 +83,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif /* _DEBUG */
 
   /* Run the standard main entry point function... */
-  return main(__argc, __argv);
+  rc = main(__argc, __argv);
+
+#ifdef _DEBUG
+  fclose(stdin);
+  fclose(stdout);
+  fclose(stderr);
+#endif /* _DEBUG */
+
+  return rc;
 }
 
 #else
@@ -90,6 +100,6 @@ static void dummy(void) {dummy();}
 #endif
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.11.2.2 2002/06/29 00:10:04 matthiaswm Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.11.2.3 2002/07/01 20:14:08 easysw Exp $".
  */
 

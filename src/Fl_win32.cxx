@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.36 2002/06/07 16:37:48 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.37 2002/07/01 20:14:08 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -285,7 +285,7 @@ int fl_wait(double time_to_wait) {
     }
 #endif
 
-    if (fl_msg.message == WM_USER)  // Used for awaking wait() from another thread
+    if (fl_msg.message == fl_wake_msg)  // Used for awaking wait() from another thread
       thread_message_ = (void*)fl_msg.wParam;
 
     TranslateMessage(&fl_msg);
@@ -580,7 +580,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
 
   case WM_PAINT: {
-
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
     // We need to merge this damage into fltk's damage.  I do this in
@@ -598,6 +597,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // is deferred until Fl::flush() is called during idle.  However Win32
     // apparently is very unhappy if we don't obey it and draw right now.
     // Very annoying!
+    fl_GetDC(hWnd); // Make sure we have a DC for this window...
     fl_save_pen();
     i->flush();
     fl_restore_pen();
@@ -827,7 +827,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
   if (w->border() && !w->parent()) {
-    if (w->maxw != w->minw || w->maxh != w->minh) {
+    if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) {
       ret = 2;
       bx = GetSystemMetrics(SM_CXSIZEFRAME);
       by = GetSystemMetrics(SM_CYSIZEFRAME);
@@ -911,6 +911,7 @@ void fl_fix_focus(); // in Fl.cxx
 char fl_show_iconic;	// hack for Fl_Window::iconic()
 // int fl_background_pixel = -1; // color to use for background
 HCURSOR fl_default_cursor;
+UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
 Fl_X* Fl_X::make(Fl_Window* w) {
@@ -918,6 +919,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   const char* class_name = /*w->xclass();
   if (!class_name) class_name =*/ "FLTK"; // create a "FLTK" WNDCLASS
+
+  const char* message_name = "FLTK::ThreadWakeup";
 
   WNDCLASSEX wc;
   // Documentation states a device context consumes about 800 bytes
@@ -939,6 +942,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   wc.lpszClassName = class_name;
   wc.cbSize = sizeof(WNDCLASSEX);
   RegisterClassEx(&wc);
+  if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
 
   HWND parent;
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
@@ -1175,5 +1179,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.36 2002/06/07 16:37:48 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.37 2002/07/01 20:14:08 easysw Exp $".
 //
