@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list.in,v 1.1.2.6 2002/07/12 02:04:53 easysw Exp $"
+# "$Id: fltk.list.in,v 1.1.2.7 2002/07/14 19:24:36 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -49,9 +49,14 @@ $FLDSONAME=@FLDSONAME@
 $FLLIBNAME=@FLLIBNAME@
 $GLDSONAME=@GLDSONAME@
 $GLLIBNAME=@GLLIBNAME@
+$FLUID=@FLUID@
+
+%system darwin
+%postinstall $bindir/fltk-config -post $bindir/fluid
+%system all
 
 # FLUID
-f 0555 root sys $bindir/fluid fluid/fluid
+f 0555 root sys $bindir/fluid fluid/$FLUID
 f 0555 root sys $bindir/fltk-config fltk-config
 
 # Man pages
@@ -74,27 +79,40 @@ f 0555 root sys $libdir/libfltk_s.a src/libfltk_s.a
 %system hpux
 f 0555 root sys $libdir/libfltk.sl.@FL_API_VERSION@ src/libfltk.sl.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk.sl libfltk.sl.@FL_API_VERSION@
-%system darwin freebsd openbsd netbsd
+%system darwin
 f 0555 root sys $libdir/libfltk.dylib.@FL_API_VERSION@ src/libfltk.dylib.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk.dylib libfltk.dylib.@FL_API_VERSION@
-%system !aix !darwin !freebsd !openbsd !netbsd !hpux
+%system !aix !darwin !hpux
 f 0555 root sys $libdir/libfltk.so.@FL_API_VERSION@ src/libfltk.so.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk.so libfltk.so.@FL_API_VERSION@
 %system all
-%endif
 
 %system aix
 f 0555 root sys $libdir/libfltk_forms_s.a src/libfltk_forms_s.a
 %system hpux
 f 0555 root sys $libdir/libfltk_forms.sl.@FL_API_VERSION@ src/libfltk_forms.sl.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk_forms.sl libfltk_forms.sl.@FL_API_VERSION@
-%system darwin freebsd openbsd netbsd
+%system darwin
 f 0555 root sys $libdir/libfltk_forms.dylib.@FL_API_VERSION@ src/libfltk_forms.dylib.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk_forms.dylib libfltk_forms.dylib.@FL_API_VERSION@
-%system !aix !darwin !freebsd !openbsd !netbsd !hpux
+%system !aix !darwin !hpux
 f 0555 root sys $libdir/libfltk_forms.so.@FL_API_VERSION@ src/libfltk_forms.so.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk_forms.so libfltk_forms.so.@FL_API_VERSION@
 %system all
+
+%system aix
+f 0555 root sys $libdir/libfltk_images_s.a src/libfltk_images_s.a
+%system hpux
+f 0555 root sys $libdir/libfltk_images.sl.@FL_API_VERSION@ src/libfltk_images.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_images.sl libfltk_images.sl.@FL_API_VERSION@
+%system darwin
+f 0555 root sys $libdir/libfltk_images.dylib.@FL_API_VERSION@ src/libfltk_images.dylib.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_images.dylib libfltk_images.dylib.@FL_API_VERSION@
+%system !aix !darwin !hpux
+f 0555 root sys $libdir/libfltk_images.so.@FL_API_VERSION@ src/libfltk_images.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_images.so libfltk_images.so.@FL_API_VERSION@
+%system all
+%endif
 
 %if GLDSONAME
 %system aix
@@ -102,27 +120,14 @@ f 0555 root sys $libdir/libfltk_gl_s.a src/libfltk_gl_s.a
 %system hpux
 f 0555 root sys $libdir/libfltk_gl.sl.@FL_API_VERSION@ src/libfltk_gl.sl.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk_gl.sl libfltk_gl.sl.@FL_API_VERSION@
-%system darwin freebsd openbsd netbsd
+%system darwin
 f 0555 root sys $libdir/libfltk_gl.dylib.@FL_API_VERSION@ src/libfltk_gl.dylib.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk_gl.dylib libfltk_gl.dylib.@FL_API_VERSION@
-%system !aix !darwin !freebsd !openbsd !netbsd !hpux
+%system !aix !darwin !hpux
 f 0555 root sys $libdir/libfltk_gl.so.@FL_API_VERSION@ src/libfltk_gl.so.@FL_API_VERSION@
 l 0000 root sys $libdir/libfltk_gl.so libfltk_gl.so.@FL_API_VERSION@
 %system all
 %endif
-
-%system aix
-f 0555 root sys $libdir/libfltk_images_s.a src/libfltk_images_s.a
-%system hpux
-f 0555 root sys $libdir/libfltk_images.sl.@FL_API_VERSION@ src/libfltk_images.sl.@FL_API_VERSION@
-l 0000 root sys $libdir/libfltk_images.sl libfltk_images.sl.@FL_API_VERSION@
-%system darwin freebsd openbsd netbsd
-f 0555 root sys $libdir/libfltk_images.dylib.@FL_API_VERSION@ src/libfltk_images.dylib.@FL_API_VERSION@
-l 0000 root sys $libdir/libfltk_images.dylib libfltk_images.dylib.@FL_API_VERSION@
-%system !aix !darwin !freebsd !openbsd !netbsd !hpux
-f 0555 root sys $libdir/libfltk_images.so.@FL_API_VERSION@ src/libfltk_images.so.@FL_API_VERSION@
-l 0000 root sys $libdir/libfltk_images.so libfltk_images.so.@FL_API_VERSION@
-%system all
 
 # Header files
 f 0444 root sys $includedir/FL/ FL/*.[hH]
@@ -245,5 +250,5 @@ f 0444 root sys $datadir/doc/fltk/COPYING COPYING
 f 0444 root sys $datadir/doc/fltk/CHANGES CHANGES
 
 #
-# End of "$Id: fltk.list.in,v 1.1.2.6 2002/07/12 02:04:53 easysw Exp $".
+# End of "$Id: fltk.list.in,v 1.1.2.7 2002/07/14 19:24:36 easysw Exp $".
 #
