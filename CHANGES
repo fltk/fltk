@@ -1,6 +1,11 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- FL_MOUSEWHEEL events are now sent first to the widget
+	  under the mouse pointer and then to the first widget
+	  which accepts them. This is similar to the way
+	  shortcut events are handled and is consistent with the
+	  way the mouse wheel is handled by other toolkits.
 	- Fl::wait() could block on WIN32 if the window was
 	  deleted via Fl::delete_widget() (STR #679)
 	- Fl_Preferences::RootNode did not find the user's home

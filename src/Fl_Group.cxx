@@ -213,6 +213,19 @@ int Fl_Group::handle(int event) {
     }
     return 0;
 
+  case FL_MOUSEWHEEL:
+    for (i = children(); i--;) {
+      o = a[i];
+      if (o->takesevents() && Fl::event_inside(o) && send(o,FL_MOUSEWHEEL))
+	return 1;
+    }
+    for (i = children(); i--;) {
+      o = a[i];
+      if (o->takesevents() && !Fl::event_inside(o) && send(o,FL_MOUSEWHEEL))
+	return 1;
+    }
+    return 0;
+
   case FL_DEACTIVATE:
   case FL_ACTIVATE:
     for (i = children(); i--;) {

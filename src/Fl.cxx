@@ -757,9 +757,11 @@ int Fl::handle(int e, Fl_Window* window)
   case FL_MOUSEWHEEL:
     fl_xfocus = window; // this should not happen!  But maybe it does:
 
-    // Try it as keystroke, sending it to focus and all parents:
-    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
-      if (send(FL_MOUSEWHEEL, wi, window)) return 1;
+    // Try sending it to the grab and then the window:
+    if (grab()) {
+      if (send(FL_MOUSEWHEEL, grab(), window)) return 1;
+    }
+    if (send(FL_MOUSEWHEEL, window, window)) return 1;
   default:
     break;
   }
