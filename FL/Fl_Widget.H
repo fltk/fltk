@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.25 2004/09/24 16:00:08 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.26 2004/11/23 19:47:50 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -90,7 +90,7 @@ protected:
   void set_flag(int c) {flags_ |= c;}
   void clear_flag(int c) {flags_ &= ~c;}
   enum {INACTIVE=1, INVISIBLE=2, OUTPUT=4, SHORTCUT_LABEL=64,
-        CHANGED=128, VISIBLE_FOCUS=512};
+        CHANGED=128, VISIBLE_FOCUS=512, COPIED_LABEL = 1024};
 
   void draw_box() const;
   void draw_box(Fl_Boxtype, Fl_Color) const;
@@ -131,7 +131,8 @@ public:
   void selection_color(unsigned a) {color2_ = a;}
   void color(unsigned a, unsigned b) {color_=a; color2_=b;}
   const char* label() const {return label_.value;}
-  void label(const char* a) {label_.value=a; redraw_label();}
+  void label(const char* a);
+  void copy_label(const char* a);
   void label(Fl_Labeltype a,const char* b) {label_.type = a; label_.value = b;}
   Fl_Labeltype labeltype() const {return (Fl_Labeltype)label_.type;}
   void labeltype(Fl_Labeltype a) {label_.type = a;}
@@ -217,5 +218,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.25 2004/09/24 16:00:08 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.26 2004/11/23 19:47:50 easysw Exp $".
 //

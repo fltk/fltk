@@ -532,7 +532,16 @@ button-&gt;when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>Hint:</B>
+	<TD><B>Note:</B>
+
+	<P>You cannot delete a widget inside a callback, as the
+	widget may still be accessed by FLTK after your callback
+	is completed. Instead, use the <a
+	href='Fl.html#Fl.delete_widget'><tt>Fl::delete_widget()</tt></a>
+	method to mark your widget for deletion when it is safe
+	to do so.</p>
+
+	<p><B>Hint:</B>
 
 	<P>Many programmers new to FLTK or C++ try to use a
 	non-static class method instead of a static class method

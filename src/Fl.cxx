@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.69 2004/11/23 19:09:55 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.70 2004/11/23 19:47:51 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -236,6 +236,8 @@ extern int fl_wait(double time); // in Fl_<platform>.cxx
 static char in_idle;
 
 double Fl::wait(double time_to_wait) {
+  do_widget_deletions();
+
   if (first_timeout) {
     elapse_timeouts();
     Timeout *t;
@@ -1051,6 +1053,48 @@ void Fl_Window::flush() {
   draw();
 }
 
+
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.69 2004/11/23 19:09:55 easysw Exp $".
+// The following methods allow callbacks to schedule the deletion of
+// widgets at "safe" times.
+//
+
+static int		num_dwidgets = 0, alloc_dwidgets = 0;
+static Fl_Widget	**dwidgets = 0;
+
+void
+Fl::delete_widget(Fl_Widget *w) {
+  if (!w) return;
+
+  if (num_dwidgets >= alloc_dwidgets) {
+    Fl_Widget	**temp;
+
+    temp = new Fl_Widget *[alloc_dwidgets + 10];
+    if (alloc_dwidgets) {
+      memcpy(temp, dwidgets, alloc_dwidgets * sizeof(Fl_Widget *));
+      delete[] dwidgets;
+    }
+
+    dwidgets = temp;
+    alloc_dwidgets += 10;
+  }
+
+  dwidgets[num_dwidgets] = w;
+  num_dwidgets ++;
+}
+
+
+void
+Fl::do_widget_deletion() {
+  if (!num_dwidgets) return;
+
+  for (int i = 0; i < num_dwidgets; i ++)
+    delete dwidgets[i];
+
+  num_dwidgets = 0;
+}
+
+
+//
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.70 2004/11/23 19:47:51 easysw Exp $".
 //

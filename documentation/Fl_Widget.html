@@ -53,6 +53,7 @@ to call <TT>redraw()</TT> after these. </P>
 <UL>
 <LI><A href=#Fl_Widget.color>color</A></LI>
 <LI><A href=#Fl_Widget.contains>contains</A></LI>
+<LI><A href=#Fl_Widget.copy_label>copy_label</A></LI>
 <LI><A href=#Fl_Widget.damage>damage</A></LI>
 <LI><A href=#Fl_Widget.deactivate>deactivate</A></LI>
 <LI><A href=#Fl_Widget.default_callback>default_callback</A></LI>
@@ -64,10 +65,10 @@ to call <TT>redraw()</TT> after these. </P>
 <LI><A href=#Fl_Widget.image>image</A></LI>
 <LI><A href=#Fl_Widget.inside>inside</A></LI>
 <LI><A href=#Fl_Widget.label>label</A></LI>
-<LI><A href=#Fl_Widget.labelcolor>labelcolor</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Widget.labelcolor>labelcolor</A></LI>
 <LI><A href=#Fl_Widget.labelfont>labelfont</A></LI>
 <LI><A href=#Fl_Widget.labelsize>labelsize</A></LI>
 <LI><A href=#Fl_Widget.labeltype>labeltype</A></LI>
@@ -258,6 +259,14 @@ method for more information.
 equal to this widget. Returns 0 if <TT>b</TT> is <TT>NULL</TT>.
 
 
+<H4><A name='Fl_Widget.copy_label'>void Fl_Widget::copy_label(const char*)</A></H4>
+
+<P>Sets the current label. Unlike <a
+href='#Fl_Widget.label'><tt>label()</tt></a>, this method
+allocates a copy of the label string instead of using the
+original string pointer.</p>
+
+
 <H4><A name=Fl_Widget.damage>uchar Fl_Widget::damage() const<BR>
 void damage(uchar c);<BR>
 void damage(uchar c, int X, int Y, int W, int H);</A></H4>
@@ -329,7 +338,10 @@ equal to <TT>a</TT>. Returns 0 if <TT>a</TT> is <TT>NULL</TT>.
 somewhere on or next to the widget. The passed pointer is stored
 unchanged in the widget (the string is <I>not</I> copied), so if
 you need to set the label to a formatted value, make sure the
-buffer is <TT>static</TT>, global, or allocated.
+buffer is <TT>static</TT>, global, or allocated. The <a
+href='#Fl_Widget.copy_label'><tt>copy_label()</tt></a> method
+can be used to make a copy of the label string
+automatically.</p>
 
 
 <H4><A name=Fl_Widget.labelcolor>Fl_Color Fl_Widget::labelcolor() const

@@ -1,6 +1,11 @@
 CHANGES IN FLTK 1.1.6
 
 	- Documentation updates (STR #552, STR #608)
+	- Added the 2.0 Fl_Widget::copy_label() method to
+	  allow FLTK 1.x applications to have their label
+	  strings managed by FLTK (STR #630)
+	- Added Fl::delete_widget() method to safely delete
+	  widgets in callback methods (STR #629)
 	- Fl_Widget::damage(uchar,int,int,int,int) didn't clip
 	  the bounding box properly (STR #626)
 	- Windows could appear on the wrong screen on OSX (STR

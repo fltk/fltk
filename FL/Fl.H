@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.23 2004/04/11 04:38:53 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.24 2004/11/23 19:47:50 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -257,10 +257,14 @@ public:
   static void unlock();
   static void awake(void* message = 0);
   static void* thread_message();
+
+  // Widget deletion:
+  static void delete_widget(Fl_Widget *w);
+  static void do_widget_deletion();
 };
 
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.23 2004/04/11 04:38:53 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.24 2004/11/23 19:47:50 easysw Exp $".
 //

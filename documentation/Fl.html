@@ -49,6 +49,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.copy">copy</A></LI>
 	<LI><A HREF="#Fl.damage">damage</A></LI>
 	<LI><A HREF="#Fl.default_atclose">default_atclose</A></LI>
+	<LI><A HREF="#Fl.delete_widget">delete_widget</A></LI>
 	<LI><A HREF="#Fl.display">display</A></LI>
 	<LI><A HREF="#Fl.dnd">dnd</A></LI>
 	<LI><A HREF="#Fl.dnd_text_ops">dnd_text_ops</A></LI>
@@ -490,6 +491,16 @@ void damage(int x);</A></H4>
 <P>If true then <A href="#Fl.flush"><tt>flush()</tt></A> will do something.
 
 <H4><A NAME="Fl.default_atclose">void default_atclose(Fl_Window*,void*);</A></H4>
+
+<p>This is the default callback for window widgets. It hides the
+window and then calls the default widget callback.</p>
+
+<H4><A NAME="Fl.delete_widget">void delete_widget(Fl_Widget*);</A></H4>
+
+<p>Schedules a widget for deletion when it is safe to do so. Use
+this method to delete a widget inside a callback function. When
+deleting groups or windows, you must only delete the group or
+window widget and not the individual child widgets.</p>
 
 <H4><A NAME="Fl.display">void display(const char*);</A></H4>
 
