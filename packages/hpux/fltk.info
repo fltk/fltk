@@ -1,355 +1,348 @@
-product fltk
-    id "Fast Light Tool Kit, 1.0"
+product
+  tag			fltk
+  revision		1.0
+  title			Fast Light Tool Kit, 1.0
+  description		C++ GUI toolkit for UNIX and Microsoft Windows.
+  copyright		Copyright 1998-1999, see the GNU Library General Public License for details.
+  number		HP-FLTK
+  category		guidev
+  category_title	GUI Development Software
+  directory		/usr
+  is_locatable		true
+  os_release		*.10.*|*.11.*
 
-    image sw
-        id "FLTK Execution Environment, 1.0"
-        version 010000000
+  fileset
+    tag			dso
+    title		FLTK - Shared Libraries, 1.0
 
-        subsys eoe default
-            id "FLTK - Execution-Only Environment, 1.0"
-            exp fltk.sw.eoe
-        endsubsys
+    file -m 0000 -o root -g sys lib/libfltk.so /usr/lib/libfltk.so
+    file -m 0555 -o root -g sys lib/libfltk.so.1 /usr/lib/libfltk.so.1
+  end
 
-        subsys dev default
-            id "FLTK - Development Environment, 1.0"
-            exp fltk.sw.dev
-            prereq
-            (
-            	fltk.sw.eoe 010000000 010000000
-            )
-        endsubsys
-    endimage
+  fileset
+    tag			dev
+    title		FLTK - Development Software, 1.0
 
-    image man
-        id "FLTK Documentation, 1.0"
-        version 010000000
-
-        subsys eoe default
-            id "FLTK - Development Manuals, 1.0"
-            exp fltk.man.dev
-        endsubsys
-    endimage
-endproduct
-f 0444 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
-f 0444 root sys usr/catman/pman/cat1/fluid.z documentation/fluid.z fltk.man.dev
-f 0444 root sys usr/include/FL/Enumerations.H FL/Enumerations.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Enumerations.h - fltk.sw.dev symval("FL/Enumerations.H")
-f 0444 root sys usr/include/FL/Fl.H FL/Fl.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl.h - fltk.sw.dev symval("FL/Fl.H")
-f 0444 root sys usr/include/FL/Fl_Adjuster.H FL/Fl_Adjuster.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Adjuster.h - fltk.sw.dev symval("FL/Fl_Adjuster.H")
-f 0444 root sys usr/include/FL/Fl_Bitmap.H FL/Fl_Bitmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Bitmap.h - fltk.sw.dev symval("FL/Fl_Bitmap.H")
-f 0444 root sys usr/include/FL/Fl_Box.H FL/Fl_Box.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Box.h - fltk.sw.dev symval("FL/Fl_Box.H")
-f 0444 root sys usr/include/FL/Fl_Browser.H FL/Fl_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Browser.h - fltk.sw.dev symval("FL/Fl_Browser.H")
-f 0444 root sys usr/include/FL/Fl_Browser_.H FL/Fl_Browser_.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Browser_.h - fltk.sw.dev symval("FL/Fl_Browser_.H")
-f 0444 root sys usr/include/FL/Fl_Button.H FL/Fl_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Button.h - fltk.sw.dev symval("FL/Fl_Button.H")
-f 0444 root sys usr/include/FL/Fl_Chart.H FL/Fl_Chart.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Chart.h - fltk.sw.dev symval("FL/Fl_Chart.H")
-f 0444 root sys usr/include/FL/Fl_Check_Button.H FL/Fl_Check_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Check_Button.h - fltk.sw.dev symval("FL/Fl_Check_Button.H")
-f 0444 root sys usr/include/FL/Fl_Choice.H FL/Fl_Choice.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Choice.h - fltk.sw.dev symval("FL/Fl_Choice.H")
-f 0444 root sys usr/include/FL/Fl_Clock.H FL/Fl_Clock.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Clock.h - fltk.sw.dev symval("FL/Fl_Clock.H")
-f 0444 root sys usr/include/FL/Fl_Color_Chooser.H FL/Fl_Color_Chooser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Color_Chooser.h - fltk.sw.dev symval("FL/Fl_Color_Chooser.H")
-f 0444 root sys usr/include/FL/Fl_Counter.H FL/Fl_Counter.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Counter.h - fltk.sw.dev symval("FL/Fl_Counter.H")
-f 0444 root sys usr/include/FL/Fl_Dial.H FL/Fl_Dial.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Dial.h - fltk.sw.dev symval("FL/Fl_Dial.H")
-f 0444 root sys usr/include/FL/Fl_Double_Window.H FL/Fl_Double_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Double_Window.h - fltk.sw.dev symval("FL/Fl_Double_Window.H")
-f 0444 root sys usr/include/FL/Fl_Fill_Dial.H FL/Fl_Fill_Dial.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Fill_Dial.h - fltk.sw.dev symval("FL/Fl_Fill_Dial.H")
-f 0444 root sys usr/include/FL/Fl_Fill_Slider.H FL/Fl_Fill_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Fill_Slider.h - fltk.sw.dev symval("FL/Fl_Fill_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Float_Input.H FL/Fl_Float_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Float_Input.h - fltk.sw.dev symval("FL/Fl_Float_Input.H")
-f 0444 root sys usr/include/FL/Fl_FormsBitmap.H FL/Fl_FormsBitmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_FormsBitmap.h - fltk.sw.dev symval("FL/Fl_FormsBitmap.H")
-f 0444 root sys usr/include/FL/Fl_FormsPixmap.H FL/Fl_FormsPixmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_FormsPixmap.h - fltk.sw.dev symval("FL/Fl_FormsPixmap.H")
-f 0444 root sys usr/include/FL/Fl_Free.H FL/Fl_Free.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Free.h - fltk.sw.dev symval("FL/Fl_Free.H")
-f 0444 root sys usr/include/FL/Fl_Gl_Window.H FL/Fl_Gl_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Gl_Window.h - fltk.sw.dev symval("FL/Fl_Gl_Window.H")
-f 0444 root sys usr/include/FL/Fl_Group.H FL/Fl_Group.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Group.h - fltk.sw.dev symval("FL/Fl_Group.H")
-f 0444 root sys usr/include/FL/Fl_Hold_Browser.H FL/Fl_Hold_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hold_Browser.h - fltk.sw.dev symval("FL/Fl_Hold_Browser.H")
-f 0444 root sys usr/include/FL/Fl_Hor_Fill_Slider.H FL/Fl_Hor_Fill_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Fill_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Fill_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Hor_Nice_Slider.H FL/Fl_Hor_Nice_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Nice_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Nice_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Hor_Slider.H FL/Fl_Hor_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Hor_Value_Slider.H FL/Fl_Hor_Value_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Value_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Value_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Image.H FL/Fl_Image.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Image.h - fltk.sw.dev symval("FL/Fl_Image.H")
-f 0444 root sys usr/include/FL/Fl_Input.H FL/Fl_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Input.h - fltk.sw.dev symval("FL/Fl_Input.H")
-f 0444 root sys usr/include/FL/Fl_Input_.H FL/Fl_Input_.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Input_.h - fltk.sw.dev symval("FL/Fl_Input_.H")
-f 0444 root sys usr/include/FL/Fl_Int_Input.H FL/Fl_Int_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Int_Input.h - fltk.sw.dev symval("FL/Fl_Int_Input.H")
-f 0444 root sys usr/include/FL/Fl_Light_Button.H FL/Fl_Light_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Light_Button.h - fltk.sw.dev symval("FL/Fl_Light_Button.H")
-f 0444 root sys usr/include/FL/Fl_Line_Dial.H FL/Fl_Line_Dial.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Line_Dial.h - fltk.sw.dev symval("FL/Fl_Line_Dial.H")
-f 0444 root sys usr/include/FL/Fl_Menu.H FL/Fl_Menu.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu.h - fltk.sw.dev symval("FL/Fl_Menu.H")
-f 0444 root sys usr/include/FL/Fl_Menu_.H FL/Fl_Menu_.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_.h - fltk.sw.dev symval("FL/Fl_Menu_.H")
-f 0444 root sys usr/include/FL/Fl_Menu_Bar.H FL/Fl_Menu_Bar.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Bar.h - fltk.sw.dev symval("FL/Fl_Menu_Bar.H")
-f 0444 root sys usr/include/FL/Fl_Menu_Button.H FL/Fl_Menu_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Button.h - fltk.sw.dev symval("FL/Fl_Menu_Button.H")
-f 0444 root sys usr/include/FL/Fl_Menu_Item.H FL/Fl_Menu_Item.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Item.h - fltk.sw.dev symval("FL/Fl_Menu_Item.H")
-f 0444 root sys usr/include/FL/Fl_Menu_Window.H FL/Fl_Menu_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Window.h - fltk.sw.dev symval("FL/Fl_Menu_Window.H")
-f 0444 root sys usr/include/FL/Fl_Multi_Browser.H FL/Fl_Multi_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multi_Browser.h - fltk.sw.dev symval("FL/Fl_Multi_Browser.H")
-f 0444 root sys usr/include/FL/Fl_Multi_Label.H FL/Fl_Multi_Label.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multi_Label.h - fltk.sw.dev symval("FL/Fl_Multi_Label.H")
-f 0444 root sys usr/include/FL/Fl_Multiline_Input.H FL/Fl_Multiline_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multiline_Input.h - fltk.sw.dev symval("FL/Fl_Multiline_Input.H")
-f 0444 root sys usr/include/FL/Fl_Multiline_Output.H FL/Fl_Multiline_Output.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multiline_Output.h - fltk.sw.dev symval("FL/Fl_Multiline_Output.H")
-f 0444 root sys usr/include/FL/Fl_Nice_Slider.H FL/Fl_Nice_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Nice_Slider.h - fltk.sw.dev symval("FL/Fl_Nice_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Object.H FL/Fl_Object.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Object.h - fltk.sw.dev symval("FL/Fl_Object.H")
-f 0444 root sys usr/include/FL/Fl_Output.H FL/Fl_Output.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Output.h - fltk.sw.dev symval("FL/Fl_Output.H")
-f 0444 root sys usr/include/FL/Fl_Overlay_Window.H FL/Fl_Overlay_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Overlay_Window.h - fltk.sw.dev symval("FL/Fl_Overlay_Window.H")
-f 0444 root sys usr/include/FL/Fl_Pack.H FL/Fl_Pack.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Pack.h - fltk.sw.dev symval("FL/Fl_Pack.H")
-f 0444 root sys usr/include/FL/Fl_Pixmap.H FL/Fl_Pixmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Pixmap.h - fltk.sw.dev symval("FL/Fl_Pixmap.H")
-f 0444 root sys usr/include/FL/Fl_Positioner.H FL/Fl_Positioner.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Positioner.h - fltk.sw.dev symval("FL/Fl_Positioner.H")
-f 0444 root sys usr/include/FL/Fl_Radio_Button.H FL/Fl_Radio_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Radio_Button.h - fltk.sw.dev symval("FL/Fl_Radio_Button.H")
-f 0444 root sys usr/include/FL/Fl_Radio_Light_Button.H FL/Fl_Radio_Light_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Radio_Light_Button.h - fltk.sw.dev symval("FL/Fl_Radio_Light_Button.H")
-f 0444 root sys usr/include/FL/Fl_Radio_Round_Button.H FL/Fl_Radio_Round_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Radio_Round_Button.h - fltk.sw.dev symval("FL/Fl_Radio_Round_Button.H")
-f 0444 root sys usr/include/FL/Fl_Repeat_Button.H FL/Fl_Repeat_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Repeat_Button.h - fltk.sw.dev symval("FL/Fl_Repeat_Button.H")
-f 0444 root sys usr/include/FL/Fl_Return_Button.H FL/Fl_Return_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Return_Button.h - fltk.sw.dev symval("FL/Fl_Return_Button.H")
-f 0444 root sys usr/include/FL/Fl_Roller.H FL/Fl_Roller.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Roller.h - fltk.sw.dev symval("FL/Fl_Roller.H")
-f 0444 root sys usr/include/FL/Fl_Round_Button.H FL/Fl_Round_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Round_Button.h - fltk.sw.dev symval("FL/Fl_Round_Button.H")
-f 0444 root sys usr/include/FL/Fl_Round_Clock.H FL/Fl_Round_Clock.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Round_Clock.h - fltk.sw.dev symval("FL/Fl_Round_Clock.H")
-f 0444 root sys usr/include/FL/Fl_Scroll.H FL/Fl_Scroll.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Scroll.h - fltk.sw.dev symval("FL/Fl_Scroll.H")
-f 0444 root sys usr/include/FL/Fl_Scrollbar.H FL/Fl_Scrollbar.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Scrollbar.h - fltk.sw.dev symval("FL/Fl_Scrollbar.H")
-f 0444 root sys usr/include/FL/Fl_Secret_Input.H FL/Fl_Secret_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Secret_Input.h - fltk.sw.dev symval("FL/Fl_Secret_Input.H")
-f 0444 root sys usr/include/FL/Fl_Select_Browser.H FL/Fl_Select_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Select_Browser.h - fltk.sw.dev symval("FL/Fl_Select_Browser.H")
-f 0444 root sys usr/include/FL/Fl_Simple_Counter.H FL/Fl_Simple_Counter.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Simple_Counter.h - fltk.sw.dev symval("FL/Fl_Simple_Counter.H")
-f 0444 root sys usr/include/FL/Fl_Single_Window.H FL/Fl_Single_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Single_Window.h - fltk.sw.dev symval("FL/Fl_Single_Window.H")
-f 0444 root sys usr/include/FL/Fl_Slider.H FL/Fl_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Slider.h - fltk.sw.dev symval("FL/Fl_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Tabs.H FL/Fl_Tabs.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Tabs.h - fltk.sw.dev symval("FL/Fl_Tabs.H")
-f 0444 root sys usr/include/FL/Fl_Tile.H FL/Fl_Tile.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Tile.h - fltk.sw.dev symval("FL/Fl_Tile.H")
-f 0444 root sys usr/include/FL/Fl_Timer.H FL/Fl_Timer.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Timer.h - fltk.sw.dev symval("FL/Fl_Timer.H")
-f 0444 root sys usr/include/FL/Fl_Toggle_Button.H FL/Fl_Toggle_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Toggle_Button.h - fltk.sw.dev symval("FL/Fl_Toggle_Button.H")
-f 0444 root sys usr/include/FL/Fl_Toggle_Light_Button.H FL/Fl_Toggle_Light_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Toggle_Light_Button.h - fltk.sw.dev symval("FL/Fl_Toggle_Light_Button.H")
-f 0444 root sys usr/include/FL/Fl_Toggle_Round_Button.H FL/Fl_Toggle_Round_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Toggle_Round_Button.h - fltk.sw.dev symval("FL/Fl_Toggle_Round_Button.H")
-f 0444 root sys usr/include/FL/Fl_Valuator.H FL/Fl_Valuator.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Valuator.h - fltk.sw.dev symval("FL/Fl_Valuator.H")
-f 0444 root sys usr/include/FL/Fl_Value_Input.H FL/Fl_Value_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Value_Input.h - fltk.sw.dev symval("FL/Fl_Value_Input.H")
-f 0444 root sys usr/include/FL/Fl_Value_Output.H FL/Fl_Value_Output.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Value_Output.h - fltk.sw.dev symval("FL/Fl_Value_Output.H")
-f 0444 root sys usr/include/FL/Fl_Value_Slider.H FL/Fl_Value_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Value_Slider.h - fltk.sw.dev symval("FL/Fl_Value_Slider.H")
-f 0444 root sys usr/include/FL/Fl_Widget.H FL/Fl_Widget.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Widget.h - fltk.sw.dev symval("FL/Fl_Widget.H")
-f 0444 root sys usr/include/FL/Fl_Window.H FL/Fl_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Window.h - fltk.sw.dev symval("FL/Fl_Window.H")
-f 0444 root sys usr/include/FL/dirent.h FL/dirent.h fltk.sw.dev
-f 0444 root sys usr/include/FL/filename.H FL/filename.H fltk.sw.dev
-l 0000 root sys usr/include/FL/filename.h - fltk.sw.dev symval("FL/filename.H")
-f 0444 root sys usr/include/FL/fl_ask.H FL/fl_ask.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_ask.h - fltk.sw.dev symval("FL/fl_ask.H")
-f 0444 root sys usr/include/FL/fl_draw.H FL/fl_draw.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_draw.h - fltk.sw.dev symval("FL/fl_draw.H")
-f 0444 root sys usr/include/FL/fl_file_chooser.H FL/fl_file_chooser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_file_chooser.h - fltk.sw.dev symval("FL/fl_file_chooser.H")
-f 0444 root sys usr/include/FL/fl_message.H FL/fl_message.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_message.h - fltk.sw.dev symval("FL/fl_message.H")
-f 0444 root sys usr/include/FL/fl_show_colormap.H FL/fl_show_colormap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_show_colormap.h - fltk.sw.dev symval("FL/fl_show_colormap.H")
-f 0444 root sys usr/include/FL/fl_show_input.H FL/fl_show_input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_show_input.h - fltk.sw.dev symval("FL/fl_show_input.H")
-f 0444 root sys usr/include/FL/forms.H FL/forms.H fltk.sw.dev
-l 0000 root sys usr/include/FL/forms.h - fltk.sw.dev symval("FL/forms.H")
-f 0444 root sys usr/include/FL/gl.h FL/gl.h fltk.sw.dev
-f 0444 root sys usr/include/FL/gl2opengl.h FL/gl2opengl.h fltk.sw.dev
-f 0444 root sys usr/include/FL/gl_draw.H FL/gl_draw.H fltk.sw.dev
-l 0000 root sys usr/include/FL/gl_draw.h - fltk.sw.dev symval("FL/gl_draw.H")
-f 0444 root sys usr/include/FL/glut.H FL/glut.H fltk.sw.dev
-l 0000 root sys usr/include/FL/glut.h - fltk.sw.dev symval("FL/glut.H")
-f 0444 root sys usr/include/FL/math.h FL/math.h fltk.sw.dev
-f 0444 root sys usr/include/FL/menubar.h FL/menubar.h fltk.sw.dev
-f 0444 root sys usr/include/FL/win32.H FL/win32.H fltk.sw.dev
-l 0000 root sys usr/include/FL/win32.h - fltk.sw.dev symval("FL/win32.H")
-f 0444 root sys usr/include/FL/x.H FL/x.H fltk.sw.dev
-l 0000 root sys usr/include/FL/x.h - fltk.sw.dev symval("FL/x.H")
-l 0000 root sys usr/include/Fl - fltk.sw.dev symval("FL")
-f 0444 root sys usr/info/fltk/FL.gif documentation/FL.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Adjuster.html documentation/Fl_Adjuster.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Box.html documentation/Fl_Box.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Browser.html documentation/Fl_Browser.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Browser_.html documentation/Fl_Browser_.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Button.html documentation/Fl_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Chart.html documentation/Fl_Chart.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Check_Button.gif documentation/Fl_Check_Button.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Check_Button.html documentation/Fl_Check_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Choice.html documentation/Fl_Choice.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Clock.html documentation/Fl_Clock.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Color_Chooser.html documentation/Fl_Color_Chooser.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Counter.html documentation/Fl_Counter.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Dial.html documentation/Fl_Dial.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Double_Window.html documentation/Fl_Double_Window.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_End.html documentation/Fl_End.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Float_Input.html documentation/Fl_Float_Input.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Free.html documentation/Fl_Free.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Gl_Window.html documentation/Fl_Gl_Window.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Group.html documentation/Fl_Group.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Hold_Browser.html documentation/Fl_Hold_Browser.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Input.html documentation/Fl_Input.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Input_.html documentation/Fl_Input_.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Int_Input.html documentation/Fl_Int_Input.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Light_Button.gif documentation/Fl_Light_Button.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Light_Button.html documentation/Fl_Light_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Menu_.html documentation/Fl_Menu_.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Menu_Bar.html documentation/Fl_Menu_Bar.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Menu_Button.html documentation/Fl_Menu_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Menu_Item.html documentation/Fl_Menu_Item.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Menu_Window.html documentation/Fl_Menu_Window.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Multi_Browser.html documentation/Fl_Multi_Browser.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Multiline_Input.html documentation/Fl_Multiline_Input.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Multiline_Output.html documentation/Fl_Multiline_Output.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Output.html documentation/Fl_Output.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Overlay_Window.html documentation/Fl_Overlay_Window.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Pack.html documentation/Fl_Pack.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Positioner.html documentation/Fl_Positioner.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Repeat_Button.html documentation/Fl_Repeat_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Return_Button.gif documentation/Fl_Return_Button.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Return_Button.html documentation/Fl_Return_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Roller.gif documentation/Fl_Roller.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Roller.html documentation/Fl_Roller.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Round_Button.gif documentation/Fl_Round_Button.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Round_Button.html documentation/Fl_Round_Button.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Scroll.gif documentation/Fl_Scroll.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Scroll.html documentation/Fl_Scroll.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Scrollbar.html documentation/Fl_Scrollbar.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Secret_Input.html documentation/Fl_Secret_Input.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Select_Browser.html documentation/Fl_Select_Browser.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Single_Window.html documentation/Fl_Single_Window.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Slider.html documentation/Fl_Slider.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Tabs.html documentation/Fl_Tabs.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Tile.gif documentation/Fl_Tile.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Tile.html documentation/Fl_Tile.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Timer.html documentation/Fl_Timer.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Valuator.html documentation/Fl_Valuator.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Value_Input.gif documentation/Fl_Value_Input.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Value_Input.html documentation/Fl_Value_Input.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Value_Output.gif documentation/Fl_Value_Output.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Value_Output.html documentation/Fl_Value_Output.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Value_Slider.html documentation/Fl_Value_Slider.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Widget.html documentation/Fl_Widget.html fltk.man.dev
-f 0444 root sys usr/info/fltk/Fl_Window.html documentation/Fl_Window.html fltk.man.dev
-f 0444 root sys usr/info/fltk/adjuster1.gif documentation/adjuster1.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/ask.C.gif documentation/ask.C.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/basics.html documentation/basics.html fltk.man.dev
-f 0444 root sys usr/info/fltk/bglogo.gif documentation/bglogo.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/boxtypes.gif documentation/boxtypes.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/button.C.gif documentation/button.C.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/buttons.gif documentation/buttons.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/charts.gif documentation/charts.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/choice.gif documentation/choice.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/clock.gif documentation/clock.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/common.html documentation/common.html fltk.man.dev
-f 0444 root sys usr/info/fltk/counter.gif documentation/counter.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/cubeview.gif documentation/cubeview.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/dial.gif documentation/dial.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/drawing.html documentation/drawing.html fltk.man.dev
-f 0444 root sys usr/info/fltk/editor-replace.gif documentation/editor-replace.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/editor.gif documentation/editor.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/editor.html documentation/editor.html fltk.man.dev
-f 0444 root sys usr/info/fltk/enumerations.html documentation/enumerations.html fltk.man.dev
-f 0444 root sys usr/info/fltk/events.html documentation/events.html fltk.man.dev
-f 0444 root sys usr/info/fltk/filechooser.gif documentation/filechooser.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_alert.gif documentation/fl_alert.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_ask.gif documentation/fl_ask.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_choice.gif documentation/fl_choice.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_color_chooser.jpg documentation/fl_color_chooser.jpg fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_input.gif documentation/fl_input.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_message.gif documentation/fl_message.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_password.gif documentation/fl_password.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fl_show_colormap.gif documentation/fl_show_colormap.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid-org.gif documentation/fluid-org.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid.gif documentation/fluid.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid.html documentation/fluid.html fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid1.gif documentation/fluid1.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid2.gif documentation/fluid2.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid3.gif documentation/fluid3.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid4.gif documentation/fluid4.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid_main.gif documentation/fluid_main.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid_prefs.gif documentation/fluid_prefs.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/fluid_widget.gif documentation/fluid_widget.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/forms.html documentation/forms.html fltk.man.dev
-f 0444 root sys usr/info/fltk/functions.html documentation/functions.html fltk.man.dev
-f 0444 root sys usr/info/fltk/glut.html documentation/glut.html fltk.man.dev
-f 0444 root sys usr/info/fltk/hello.C.gif documentation/hello.C.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/index.html documentation/index.html fltk.man.dev
-f 0444 root sys usr/info/fltk/intro.html documentation/intro.html fltk.man.dev
-f 0444 root sys usr/info/fltk/license.html documentation/license.html fltk.man.dev
-f 0444 root sys usr/info/fltk/menu.gif documentation/menu.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/menu_button.gif documentation/menu_button.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/menubar.gif documentation/menubar.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/opengl.html documentation/opengl.html fltk.man.dev
-f 0444 root sys usr/info/fltk/osissues.html documentation/osissues.html fltk.man.dev
-f 0444 root sys usr/info/fltk/positioner.gif documentation/positioner.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/preface.html documentation/preface.html fltk.man.dev
-f 0444 root sys usr/info/fltk/resizebox1.gif documentation/resizebox1.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/resizebox2.gif documentation/resizebox2.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/round_clock.gif documentation/round_clock.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/scrollbar.gif documentation/scrollbar.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/shape.C.gif documentation/shape.C.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/slider.gif documentation/slider.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/subclassing.html documentation/subclassing.html fltk.man.dev
-f 0444 root sys usr/info/fltk/symbols.gif documentation/symbols.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/tabs.gif documentation/tabs.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/text.gif documentation/text.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/valuators.gif documentation/valuators.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/value_slider.gif documentation/value_slider.gif fltk.man.dev
-f 0444 root sys usr/info/fltk/widgets.html documentation/widgets.html fltk.man.dev
-f 0555 root sys usr/lib/libfltk.a lib/libfltk.a fltk.sw.dev
-l 0000 root sys usr/lib/libfltk.so - fltk.sw.eoe symval("libfltk.so.1")
-f 0555 root sys usr/lib/libfltk.so.1 lib/libfltk.so.1 fltk.sw.eoe
+    file -m 0444 -o root -g sys documentation/adjuster1.gif /usr/info/fltk/adjuster1.gif
+    file -m 0444 -o root -g sys documentation/ask.C.gif /usr/info/fltk/ask.C.gif
+    file -m 0444 -o root -g sys documentation/basics.html /usr/info/fltk/basics.html
+    file -m 0444 -o root -g sys documentation/bglogo.gif /usr/info/fltk/bglogo.gif
+    file -m 0444 -o root -g sys documentation/boxtypes.gif /usr/info/fltk/boxtypes.gif
+    file -m 0444 -o root -g sys documentation/buttons.gif /usr/info/fltk/buttons.gif
+    file -m 0444 -o root -g sys documentation/button.C.gif /usr/info/fltk/button.C.gif
+    file -m 0444 -o root -g sys documentation/charts.gif /usr/info/fltk/charts.gif
+    file -m 0444 -o root -g sys documentation/choice.gif /usr/info/fltk/choice.gif
+    file -m 0444 -o root -g sys documentation/clock.gif /usr/info/fltk/clock.gif
+    file -m 0444 -o root -g sys documentation/common.html /usr/info/fltk/common.html
+    file -m 0444 -o root -g sys documentation/counter.gif /usr/info/fltk/counter.gif
+    file -m 0444 -o root -g sys documentation/cubeview.gif /usr/info/fltk/cubeview.gif
+    file -m 0444 -o root -g sys documentation/dial.gif /usr/info/fltk/dial.gif
+    file -m 0444 -o root -g sys documentation/drawing.html /usr/info/fltk/drawing.html
+    file -m 0444 -o root -g sys documentation/editor-replace.gif /usr/info/fltk/editor-replace.gif
+    file -m 0444 -o root -g sys documentation/editor.gif /usr/info/fltk/editor.gif
+    file -m 0444 -o root -g sys documentation/editor.html /usr/info/fltk/editor.html
+    file -m 0444 -o root -g sys documentation/enumerations.html /usr/info/fltk/enumerations.html
+    file -m 0444 -o root -g sys documentation/events.html /usr/info/fltk/events.html
+    file -m 0444 -o root -g sys documentation/filechooser.gif /usr/info/fltk/filechooser.gif
+    file -m 0444 -o root -g sys documentation/fluid1.gif /usr/info/fltk/fluid1.gif
+    file -m 0444 -o root -g sys documentation/fluid2.gif /usr/info/fltk/fluid2.gif
+    file -m 0444 -o root -g sys documentation/fluid3.gif /usr/info/fltk/fluid3.gif
+    file -m 0444 -o root -g sys documentation/fluid4.gif /usr/info/fltk/fluid4.gif
+    file -m 0444 -o root -g sys documentation/fluid-org.gif /usr/info/fltk/fluid-org.gif
+    file -m 0444 -o root -g sys documentation/fluid.gif /usr/info/fltk/fluid.gif
+    file -m 0444 -o root -g sys documentation/fluid.html /usr/info/fltk/fluid.html
+    file -m 0444 -o root -g sys documentation/fluid.z /usr/catman/pman/cat1/fluid.z
+    file -m 0444 -o root -g sys documentation/fluid_main.gif /usr/info/fltk/fluid_main.gif
+    file -m 0444 -o root -g sys documentation/fluid_prefs.gif /usr/info/fltk/fluid_prefs.gif
+    file -m 0444 -o root -g sys documentation/fluid_widget.gif /usr/info/fltk/fluid_widget.gif
+    file -m 0444 -o root -g sys documentation/fl_alert.gif /usr/info/fltk/fl_alert.gif
+    file -m 0444 -o root -g sys documentation/fl_ask.gif /usr/info/fltk/fl_ask.gif
+    file -m 0444 -o root -g sys documentation/fl_choice.gif /usr/info/fltk/fl_choice.gif
+    file -m 0444 -o root -g sys documentation/fl_color_chooser.jpg /usr/info/fltk/fl_color_chooser.jpg
+    file -m 0444 -o root -g sys documentation/fl_input.gif /usr/info/fltk/fl_input.gif
+    file -m 0444 -o root -g sys documentation/fl_message.gif /usr/info/fltk/fl_message.gif
+    file -m 0444 -o root -g sys documentation/fl_password.gif /usr/info/fltk/fl_password.gif
+    file -m 0444 -o root -g sys documentation/fl_show_colormap.gif /usr/info/fltk/fl_show_colormap.gif
+    file -m 0444 -o root -g sys documentation/forms.html /usr/info/fltk/forms.html
+    file -m 0444 -o root -g sys documentation/functions.html /usr/info/fltk/functions.html
+    file -m 0444 -o root -g sys documentation/Fl_Adjuster.html /usr/info/fltk/Fl_Adjuster.html
+    file -m 0444 -o root -g sys documentation/Fl_Box.html /usr/info/fltk/Fl_Box.html
+    file -m 0444 -o root -g sys documentation/Fl_Browser.html /usr/info/fltk/Fl_Browser.html
+    file -m 0444 -o root -g sys documentation/Fl_Browser_.html /usr/info/fltk/Fl_Browser_.html
+    file -m 0444 -o root -g sys documentation/Fl_Button.html /usr/info/fltk/Fl_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Chart.html /usr/info/fltk/Fl_Chart.html
+    file -m 0444 -o root -g sys documentation/Fl_Check_Button.gif /usr/info/fltk/Fl_Check_Button.gif
+    file -m 0444 -o root -g sys documentation/Fl_Check_Button.html /usr/info/fltk/Fl_Check_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Choice.html /usr/info/fltk/Fl_Choice.html
+    file -m 0444 -o root -g sys documentation/Fl_Clock.html /usr/info/fltk/Fl_Clock.html
+    file -m 0444 -o root -g sys documentation/Fl_Color_Chooser.html /usr/info/fltk/Fl_Color_Chooser.html
+    file -m 0444 -o root -g sys documentation/Fl_Counter.html /usr/info/fltk/Fl_Counter.html
+    file -m 0444 -o root -g sys documentation/Fl_Dial.html /usr/info/fltk/Fl_Dial.html
+    file -m 0444 -o root -g sys documentation/Fl_Double_Window.html /usr/info/fltk/Fl_Double_Window.html
+    file -m 0444 -o root -g sys documentation/Fl_End.html /usr/info/fltk/Fl_End.html
+    file -m 0444 -o root -g sys documentation/Fl_Float_Input.html /usr/info/fltk/Fl_Float_Input.html
+    file -m 0444 -o root -g sys documentation/Fl_Free.html /usr/info/fltk/Fl_Free.html
+    file -m 0444 -o root -g sys documentation/Fl_Gl_Window.html /usr/info/fltk/Fl_Gl_Window.html
+    file -m 0444 -o root -g sys documentation/Fl_Group.html /usr/info/fltk/Fl_Group.html
+    file -m 0444 -o root -g sys documentation/Fl_Hold_Browser.html /usr/info/fltk/Fl_Hold_Browser.html
+    file -m 0444 -o root -g sys documentation/Fl_Input.html /usr/info/fltk/Fl_Input.html
+    file -m 0444 -o root -g sys documentation/Fl_Input_.html /usr/info/fltk/Fl_Input_.html
+    file -m 0444 -o root -g sys documentation/Fl_Int_Input.html /usr/info/fltk/Fl_Int_Input.html
+    file -m 0444 -o root -g sys documentation/Fl_Light_Button.gif /usr/info/fltk/Fl_Light_Button.gif
+    file -m 0444 -o root -g sys documentation/Fl_Light_Button.html /usr/info/fltk/Fl_Light_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Menu_Bar.html /usr/info/fltk/Fl_Menu_Bar.html
+    file -m 0444 -o root -g sys documentation/Fl_Menu_Button.html /usr/info/fltk/Fl_Menu_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Menu_Item.html /usr/info/fltk/Fl_Menu_Item.html
+    file -m 0444 -o root -g sys documentation/Fl_Menu_Window.html /usr/info/fltk/Fl_Menu_Window.html
+    file -m 0444 -o root -g sys documentation/Fl_Menu_.html /usr/info/fltk/Fl_Menu_.html
+    file -m 0444 -o root -g sys documentation/Fl_Multiline_Input.html /usr/info/fltk/Fl_Multiline_Input.html
+    file -m 0444 -o root -g sys documentation/Fl_Multiline_Output.html /usr/info/fltk/Fl_Multiline_Output.html
+    file -m 0444 -o root -g sys documentation/Fl_Multi_Browser.html /usr/info/fltk/Fl_Multi_Browser.html
+    file -m 0444 -o root -g sys documentation/Fl_Output.html /usr/info/fltk/Fl_Output.html
+    file -m 0444 -o root -g sys documentation/Fl_Overlay_Window.html /usr/info/fltk/Fl_Overlay_Window.html
+    file -m 0444 -o root -g sys documentation/Fl_Pack.html /usr/info/fltk/Fl_Pack.html
+    file -m 0444 -o root -g sys documentation/Fl_Positioner.html /usr/info/fltk/Fl_Positioner.html
+    file -m 0444 -o root -g sys documentation/Fl_Repeat_Button.html /usr/info/fltk/Fl_Repeat_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Return_Button.gif /usr/info/fltk/Fl_Return_Button.gif
+    file -m 0444 -o root -g sys documentation/Fl_Return_Button.html /usr/info/fltk/Fl_Return_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Roller.gif /usr/info/fltk/Fl_Roller.gif
+    file -m 0444 -o root -g sys documentation/Fl_Roller.html /usr/info/fltk/Fl_Roller.html
+    file -m 0444 -o root -g sys documentation/Fl_Round_Button.gif /usr/info/fltk/Fl_Round_Button.gif
+    file -m 0444 -o root -g sys documentation/Fl_Round_Button.html /usr/info/fltk/Fl_Round_Button.html
+    file -m 0444 -o root -g sys documentation/Fl_Scrollbar.html /usr/info/fltk/Fl_Scrollbar.html
+    file -m 0444 -o root -g sys documentation/Fl_Scroll.gif /usr/info/fltk/Fl_Scroll.gif
+    file -m 0444 -o root -g sys documentation/Fl_Scroll.html /usr/info/fltk/Fl_Scroll.html
+    file -m 0444 -o root -g sys documentation/Fl_Secret_Input.html /usr/info/fltk/Fl_Secret_Input.html
+    file -m 0444 -o root -g sys documentation/Fl_Select_Browser.html /usr/info/fltk/Fl_Select_Browser.html
+    file -m 0444 -o root -g sys documentation/Fl_Single_Window.html /usr/info/fltk/Fl_Single_Window.html
+    file -m 0444 -o root -g sys documentation/Fl_Slider.html /usr/info/fltk/Fl_Slider.html
+    file -m 0444 -o root -g sys documentation/Fl_Tabs.html /usr/info/fltk/Fl_Tabs.html
+    file -m 0444 -o root -g sys documentation/Fl_Tile.gif /usr/info/fltk/Fl_Tile.gif
+    file -m 0444 -o root -g sys documentation/Fl_Tile.html /usr/info/fltk/Fl_Tile.html
+    file -m 0444 -o root -g sys documentation/Fl_Timer.html /usr/info/fltk/Fl_Timer.html
+    file -m 0444 -o root -g sys documentation/Fl_Valuator.html /usr/info/fltk/Fl_Valuator.html
+    file -m 0444 -o root -g sys documentation/Fl_Value_Input.gif /usr/info/fltk/Fl_Value_Input.gif
+    file -m 0444 -o root -g sys documentation/Fl_Value_Input.html /usr/info/fltk/Fl_Value_Input.html
+    file -m 0444 -o root -g sys documentation/Fl_Value_Output.gif /usr/info/fltk/Fl_Value_Output.gif
+    file -m 0444 -o root -g sys documentation/Fl_Value_Output.html /usr/info/fltk/Fl_Value_Output.html
+    file -m 0444 -o root -g sys documentation/Fl_Value_Slider.html /usr/info/fltk/Fl_Value_Slider.html
+    file -m 0444 -o root -g sys documentation/Fl_Widget.html /usr/info/fltk/Fl_Widget.html
+    file -m 0444 -o root -g sys documentation/Fl_Window.html /usr/info/fltk/Fl_Window.html
+    file -m 0444 -o root -g sys documentation/FL.gif /usr/info/fltk/FL.gif
+    file -m 0444 -o root -g sys documentation/glut.html /usr/info/fltk/glut.html
+    file -m 0444 -o root -g sys documentation/hello.C.gif /usr/info/fltk/hello.C.gif
+    file -m 0444 -o root -g sys documentation/index.html /usr/info/fltk/index.html
+    file -m 0444 -o root -g sys documentation/intro.html /usr/info/fltk/intro.html
+    file -m 0444 -o root -g sys documentation/license.html /usr/info/fltk/license.html
+    file -m 0444 -o root -g sys documentation/menubar.gif /usr/info/fltk/menubar.gif
+    file -m 0444 -o root -g sys documentation/menu.gif /usr/info/fltk/menu.gif
+    file -m 0444 -o root -g sys documentation/menu_button.gif /usr/info/fltk/menu_button.gif
+    file -m 0444 -o root -g sys documentation/opengl.html /usr/info/fltk/opengl.html
+    file -m 0444 -o root -g sys documentation/osissues.html /usr/info/fltk/osissues.html
+    file -m 0444 -o root -g sys documentation/positioner.gif /usr/info/fltk/positioner.gif
+    file -m 0444 -o root -g sys documentation/preface.html /usr/info/fltk/preface.html
+    file -m 0444 -o root -g sys documentation/resizebox1.gif /usr/info/fltk/resizebox1.gif
+    file -m 0444 -o root -g sys documentation/resizebox2.gif /usr/info/fltk/resizebox2.gif
+    file -m 0444 -o root -g sys documentation/round_clock.gif /usr/info/fltk/round_clock.gif
+    file -m 0444 -o root -g sys documentation/scrollbar.gif /usr/info/fltk/scrollbar.gif
+    file -m 0444 -o root -g sys documentation/shape.C.gif /usr/info/fltk/shape.C.gif
+    file -m 0444 -o root -g sys documentation/slider.gif /usr/info/fltk/slider.gif
+    file -m 0444 -o root -g sys documentation/subclassing.html /usr/info/fltk/subclassing.html
+    file -m 0444 -o root -g sys documentation/symbols.gif /usr/info/fltk/symbols.gif
+    file -m 0444 -o root -g sys documentation/tabs.gif /usr/info/fltk/tabs.gif
+    file -m 0444 -o root -g sys documentation/text.gif /usr/info/fltk/text.gif
+    file -m 0444 -o root -g sys documentation/valuators.gif /usr/info/fltk/valuators.gif
+    file -m 0444 -o root -g sys documentation/value_slider.gif /usr/info/fltk/value_slider.gif
+    file -m 0444 -o root -g sys documentation/widgets.html /usr/info/fltk/widgets.html
+    file -m 0444 -o root -g sys fluid/fluid /usr/bin/X11/fluid
+    file -m 0444 -o root -g sys FL/dirent.h /usr/include/FL/dirent.h
+    file -m 0444 -o root -g sys FL/Enumerations.H /usr/include/FL/Enumerations.H
+    file -m 0444 -o root -g sys FL/filename.H /usr/include/FL/filename.H
+    file -m 0444 -o root -g sys FL/fl_ask.H /usr/include/FL/fl_ask.H
+    file -m 0444 -o root -g sys FL/fl_draw.H /usr/include/FL/fl_draw.H
+    file -m 0444 -o root -g sys FL/fl_file_chooser.H /usr/include/FL/fl_file_chooser.H
+    file -m 0444 -o root -g sys FL/fl_message.H /usr/include/FL/fl_message.H
+    file -m 0444 -o root -g sys FL/fl_show_colormap.H /usr/include/FL/fl_show_colormap.H
+    file -m 0444 -o root -g sys FL/fl_show_input.H /usr/include/FL/fl_show_input.H
+    file -m 0444 -o root -g sys FL/forms.H /usr/include/FL/forms.H
+    file -m 0444 -o root -g sys FL/Fl.H /usr/include/FL/Fl.H
+    file -m 0444 -o root -g sys FL/Fl_Adjuster.H /usr/include/FL/Fl_Adjuster.H
+    file -m 0444 -o root -g sys FL/Fl_Bitmap.H /usr/include/FL/Fl_Bitmap.H
+    file -m 0444 -o root -g sys FL/Fl_Box.H /usr/include/FL/Fl_Box.H
+    file -m 0444 -o root -g sys FL/Fl_Browser.H /usr/include/FL/Fl_Browser.H
+    file -m 0444 -o root -g sys FL/Fl_Browser_.H /usr/include/FL/Fl_Browser_.H
+    file -m 0444 -o root -g sys FL/Fl_Button.H /usr/include/FL/Fl_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Chart.H /usr/include/FL/Fl_Chart.H
+    file -m 0444 -o root -g sys FL/Fl_Check_Button.H /usr/include/FL/Fl_Check_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Choice.H /usr/include/FL/Fl_Choice.H
+    file -m 0444 -o root -g sys FL/Fl_Clock.H /usr/include/FL/Fl_Clock.H
+    file -m 0444 -o root -g sys FL/Fl_Color_Chooser.H /usr/include/FL/Fl_Color_Chooser.H
+    file -m 0444 -o root -g sys FL/Fl_Counter.H /usr/include/FL/Fl_Counter.H
+    file -m 0444 -o root -g sys FL/Fl_Dial.H /usr/include/FL/Fl_Dial.H
+    file -m 0444 -o root -g sys FL/Fl_Double_Window.H /usr/include/FL/Fl_Double_Window.H
+    file -m 0444 -o root -g sys FL/Fl_Fill_Dial.H /usr/include/FL/Fl_Fill_Dial.H
+    file -m 0444 -o root -g sys FL/Fl_Fill_Slider.H /usr/include/FL/Fl_Fill_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Float_Input.H /usr/include/FL/Fl_Float_Input.H
+    file -m 0444 -o root -g sys FL/Fl_FormsBitmap.H /usr/include/FL/Fl_FormsBitmap.H
+    file -m 0444 -o root -g sys FL/Fl_FormsPixmap.H /usr/include/FL/Fl_FormsPixmap.H
+    file -m 0444 -o root -g sys FL/Fl_Free.H /usr/include/FL/Fl_Free.H
+    file -m 0444 -o root -g sys FL/Fl_Gl_Window.H /usr/include/FL/Fl_Gl_Window.H
+    file -m 0444 -o root -g sys FL/Fl_Group.H /usr/include/FL/Fl_Group.H
+    file -m 0444 -o root -g sys FL/Fl_Hold_Browser.H /usr/include/FL/Fl_Hold_Browser.H
+    file -m 0444 -o root -g sys FL/Fl_Hor_Fill_Slider.H /usr/include/FL/Fl_Hor_Fill_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Hor_Nice_Slider.H /usr/include/FL/Fl_Hor_Nice_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Hor_Slider.H /usr/include/FL/Fl_Hor_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Hor_Value_Slider.H /usr/include/FL/Fl_Hor_Value_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Image.H /usr/include/FL/Fl_Image.H
+    file -m 0444 -o root -g sys FL/Fl_Input.H /usr/include/FL/Fl_Input.H
+    file -m 0444 -o root -g sys FL/Fl_Input_.H /usr/include/FL/Fl_Input_.H
+    file -m 0444 -o root -g sys FL/Fl_Int_Input.H /usr/include/FL/Fl_Int_Input.H
+    file -m 0444 -o root -g sys FL/Fl_Light_Button.H /usr/include/FL/Fl_Light_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Line_Dial.H /usr/include/FL/Fl_Line_Dial.H
+    file -m 0444 -o root -g sys FL/Fl_Menu.H /usr/include/FL/Fl_Menu.H
+    file -m 0444 -o root -g sys FL/Fl_Menu_Bar.H /usr/include/FL/Fl_Menu_Bar.H
+    file -m 0444 -o root -g sys FL/Fl_Menu_Button.H /usr/include/FL/Fl_Menu_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Menu_Item.H /usr/include/FL/Fl_Menu_Item.H
+    file -m 0444 -o root -g sys FL/Fl_Menu_Window.H /usr/include/FL/Fl_Menu_Window.H
+    file -m 0444 -o root -g sys FL/Fl_Menu_.H /usr/include/FL/Fl_Menu_.H
+    file -m 0444 -o root -g sys FL/Fl_Multiline_Input.H /usr/include/FL/Fl_Multiline_Input.H
+    file -m 0444 -o root -g sys FL/Fl_Multiline_Output.H /usr/include/FL/Fl_Multiline_Output.H
+    file -m 0444 -o root -g sys FL/Fl_Multi_Browser.H /usr/include/FL/Fl_Multi_Browser.H
+    file -m 0444 -o root -g sys FL/Fl_Multi_Label.H /usr/include/FL/Fl_Multi_Label.H
+    file -m 0444 -o root -g sys FL/Fl_Nice_Slider.H /usr/include/FL/Fl_Nice_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Object.H /usr/include/FL/Fl_Object.H
+    file -m 0444 -o root -g sys FL/Fl_Output.H /usr/include/FL/Fl_Output.H
+    file -m 0444 -o root -g sys FL/Fl_Overlay_Window.H /usr/include/FL/Fl_Overlay_Window.H
+    file -m 0444 -o root -g sys FL/Fl_Pack.H /usr/include/FL/Fl_Pack.H
+    file -m 0444 -o root -g sys FL/Fl_Pixmap.H /usr/include/FL/Fl_Pixmap.H
+    file -m 0444 -o root -g sys FL/Fl_Positioner.H /usr/include/FL/Fl_Positioner.H
+    file -m 0444 -o root -g sys FL/Fl_Radio_Button.H /usr/include/FL/Fl_Radio_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Radio_Light_Button.H /usr/include/FL/Fl_Radio_Light_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Radio_Round_Button.H /usr/include/FL/Fl_Radio_Round_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Repeat_Button.H /usr/include/FL/Fl_Repeat_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Return_Button.H /usr/include/FL/Fl_Return_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Roller.H /usr/include/FL/Fl_Roller.H
+    file -m 0444 -o root -g sys FL/Fl_Round_Button.H /usr/include/FL/Fl_Round_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Round_Clock.H /usr/include/FL/Fl_Round_Clock.H
+    file -m 0444 -o root -g sys FL/Fl_Scrollbar.H /usr/include/FL/Fl_Scrollbar.H
+    file -m 0444 -o root -g sys FL/Fl_Scroll.H /usr/include/FL/Fl_Scroll.H
+    file -m 0444 -o root -g sys FL/Fl_Secret_Input.H /usr/include/FL/Fl_Secret_Input.H
+    file -m 0444 -o root -g sys FL/Fl_Select_Browser.H /usr/include/FL/Fl_Select_Browser.H
+    file -m 0444 -o root -g sys FL/Fl_Simple_Counter.H /usr/include/FL/Fl_Simple_Counter.H
+    file -m 0444 -o root -g sys FL/Fl_Single_Window.H /usr/include/FL/Fl_Single_Window.H
+    file -m 0444 -o root -g sys FL/Fl_Slider.H /usr/include/FL/Fl_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Tabs.H /usr/include/FL/Fl_Tabs.H
+    file -m 0444 -o root -g sys FL/Fl_Tile.H /usr/include/FL/Fl_Tile.H
+    file -m 0444 -o root -g sys FL/Fl_Timer.H /usr/include/FL/Fl_Timer.H
+    file -m 0444 -o root -g sys FL/Fl_Toggle_Button.H /usr/include/FL/Fl_Toggle_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Toggle_Light_Button.H /usr/include/FL/Fl_Toggle_Light_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Toggle_Round_Button.H /usr/include/FL/Fl_Toggle_Round_Button.H
+    file -m 0444 -o root -g sys FL/Fl_Valuator.H /usr/include/FL/Fl_Valuator.H
+    file -m 0444 -o root -g sys FL/Fl_Value_Input.H /usr/include/FL/Fl_Value_Input.H
+    file -m 0444 -o root -g sys FL/Fl_Value_Output.H /usr/include/FL/Fl_Value_Output.H
+    file -m 0444 -o root -g sys FL/Fl_Value_Slider.H /usr/include/FL/Fl_Value_Slider.H
+    file -m 0444 -o root -g sys FL/Fl_Widget.H /usr/include/FL/Fl_Widget.H
+    file -m 0444 -o root -g sys FL/Fl_Window.H /usr/include/FL/Fl_Window.H
+    file -m 0444 -o root -g sys FL/gl2opengl.h /usr/include/FL/gl2opengl.h
+    file -m 0444 -o root -g sys FL/glut.H /usr/include/FL/glut.H
+    file -m 0444 -o root -g sys FL/gl.h /usr/include/FL/gl.h
+    file -m 0444 -o root -g sys FL/gl_draw.H /usr/include/FL/gl_draw.H
+    file -m 0444 -o root -g sys FL/math.h /usr/include/FL/math.h
+    file -m 0444 -o root -g sys FL/menubar.h /usr/include/FL/menubar.h
+    file -m 0444 -o root -g sys FL/win32.H /usr/include/FL/win32.H
+    file -m 0444 -o root -g sys FL/x.H /usr/include/FL/x.H
+    file -m 0444 -o root -g sys packages/hpux/links/Enumerations.h /usr/include/FL/Enumerations.h
+    file -m 0444 -o root -g sys packages/hpux/links/filename.h /usr/include/FL/filename.h
+    file -m 0444 -o root -g sys packages/hpux/links/fl_ask.h /usr/include/FL/fl_ask.h
+    file -m 0444 -o root -g sys packages/hpux/links/fl_draw.h /usr/include/FL/fl_draw.h
+    file -m 0444 -o root -g sys packages/hpux/links/fl_file_chooser.h /usr/include/FL/fl_file_chooser.h
+    file -m 0444 -o root -g sys packages/hpux/links/fl_message.h /usr/include/FL/fl_message.h
+    file -m 0444 -o root -g sys packages/hpux/links/fl_show_colormap.h /usr/include/FL/fl_show_colormap.h
+    file -m 0444 -o root -g sys packages/hpux/links/fl_show_input.h /usr/include/FL/fl_show_input.h
+    file -m 0444 -o root -g sys packages/hpux/links/forms.h /usr/include/FL/forms.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl.h /usr/include/FL/Fl.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Adjuster.h /usr/include/FL/Fl_Adjuster.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Bitmap.h /usr/include/FL/Fl_Bitmap.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Box.h /usr/include/FL/Fl_Box.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Browser.h /usr/include/FL/Fl_Browser.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Browser_.h /usr/include/FL/Fl_Browser_.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Button.h /usr/include/FL/Fl_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Chart.h /usr/include/FL/Fl_Chart.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Check_Button.h /usr/include/FL/Fl_Check_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Choice.h /usr/include/FL/Fl_Choice.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Clock.h /usr/include/FL/Fl_Clock.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Color_Chooser.h /usr/include/FL/Fl_Color_Chooser.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Counter.h /usr/include/FL/Fl_Counter.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Dial.h /usr/include/FL/Fl_Dial.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Double_Window.h /usr/include/FL/Fl_Double_Window.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Fill_Dial.h /usr/include/FL/Fl_Fill_Dial.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Fill_Slider.h /usr/include/FL/Fl_Fill_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Float_Input.h /usr/include/FL/Fl_Float_Input.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_FormsBitmap.h /usr/include/FL/Fl_FormsBitmap.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_FormsPixmap.h /usr/include/FL/Fl_FormsPixmap.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Free.h /usr/include/FL/Fl_Free.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Gl_Window.h /usr/include/FL/Fl_Gl_Window.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Group.h /usr/include/FL/Fl_Group.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Hold_Browser.h /usr/include/FL/Fl_Hold_Browser.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Hor_Fill_Slider.h /usr/include/FL/Fl_Hor_Fill_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Hor_Nice_Slider.h /usr/include/FL/Fl_Hor_Nice_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Hor_Slider.h /usr/include/FL/Fl_Hor_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Hor_Value_Slider.h /usr/include/FL/Fl_Hor_Value_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Image.h /usr/include/FL/Fl_Image.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Input.h /usr/include/FL/Fl_Input.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Input_.h /usr/include/FL/Fl_Input_.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Int_Input.h /usr/include/FL/Fl_Int_Input.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Light_Button.h /usr/include/FL/Fl_Light_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Line_Dial.h /usr/include/FL/Fl_Line_Dial.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Menu.h /usr/include/FL/Fl_Menu.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Menu_Bar.h /usr/include/FL/Fl_Menu_Bar.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Menu_Button.h /usr/include/FL/Fl_Menu_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Menu_Item.h /usr/include/FL/Fl_Menu_Item.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Menu_Window.h /usr/include/FL/Fl_Menu_Window.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Menu_.h /usr/include/FL/Fl_Menu_.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Multiline_Input.h /usr/include/FL/Fl_Multiline_Input.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Multiline_Output.h /usr/include/FL/Fl_Multiline_Output.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Multi_Browser.h /usr/include/FL/Fl_Multi_Browser.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Multi_Label.h /usr/include/FL/Fl_Multi_Label.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Nice_Slider.h /usr/include/FL/Fl_Nice_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Object.h /usr/include/FL/Fl_Object.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Output.h /usr/include/FL/Fl_Output.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Overlay_Window.h /usr/include/FL/Fl_Overlay_Window.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Pack.h /usr/include/FL/Fl_Pack.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Pixmap.h /usr/include/FL/Fl_Pixmap.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Positioner.h /usr/include/FL/Fl_Positioner.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Radio_Button.h /usr/include/FL/Fl_Radio_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Radio_Light_Button.h /usr/include/FL/Fl_Radio_Light_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Radio_Round_Button.h /usr/include/FL/Fl_Radio_Round_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Repeat_Button.h /usr/include/FL/Fl_Repeat_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Return_Button.h /usr/include/FL/Fl_Return_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Roller.h /usr/include/FL/Fl_Roller.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Round_Button.h /usr/include/FL/Fl_Round_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Round_Clock.h /usr/include/FL/Fl_Round_Clock.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Scrollbar.h /usr/include/FL/Fl_Scrollbar.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Scroll.h /usr/include/FL/Fl_Scroll.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Secret_Input.h /usr/include/FL/Fl_Secret_Input.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Select_Browser.h /usr/include/FL/Fl_Select_Browser.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Simple_Counter.h /usr/include/FL/Fl_Simple_Counter.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Single_Window.h /usr/include/FL/Fl_Single_Window.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Slider.h /usr/include/FL/Fl_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Tabs.h /usr/include/FL/Fl_Tabs.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Tile.h /usr/include/FL/Fl_Tile.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Timer.h /usr/include/FL/Fl_Timer.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Toggle_Button.h /usr/include/FL/Fl_Toggle_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Toggle_Light_Button.h /usr/include/FL/Fl_Toggle_Light_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Toggle_Round_Button.h /usr/include/FL/Fl_Toggle_Round_Button.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Valuator.h /usr/include/FL/Fl_Valuator.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Value_Input.h /usr/include/FL/Fl_Value_Input.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Value_Output.h /usr/include/FL/Fl_Value_Output.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Value_Slider.h /usr/include/FL/Fl_Value_Slider.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Widget.h /usr/include/FL/Fl_Widget.h
+    file -m 0444 -o root -g sys packages/hpux/links/Fl_Window.h /usr/include/FL/Fl_Window.h
+    file -m 0444 -o root -g sys packages/hpux/links/glut.h /usr/include/FL/glut.h
+    file -m 0444 -o root -g sys packages/hpux/links/gl_draw.h /usr/include/FL/gl_draw.h
+    file -m 0444 -o root -g sys packages/hpux/links/win32.h /usr/include/FL/win32.h
+    file -m 0444 -o root -g sys packages/hpux/links/x.h /usr/include/FL/x.h
+    file -m 0555 -o root -g sys lib/libfltk.a /usr/lib/libfltk.a
+    file -m 0555 -o root -g sys packages/hpux/links/Fl /usr/include/Fl
+  end
+end

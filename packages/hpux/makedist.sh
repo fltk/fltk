@@ -1,13 +1,28 @@
 #!/bin/sh
 #
-# makedist - make an irix distribution.
+# makedist - make an hp-ux distribution.
 #
 
-if [ test `uname -r` =~ '5.*' ]; then
-	gendist -v -dist . -sbase ../.. -idb fltk5x.list -spec fltk.spec
-else
-	gendist -v -dist . -sbase ../.. -idb fltk.list -spec fltk.spec
+#
+# Since the HP-UX software distribution stuff doesn't directly support
+# symbolic links, we have the option of making an installation script that
+# creates symbolic links, or include files that are symbolic links in the
+# distribution.  Since we want this distribution to be relocatable, the
+# script method probably won't work and we have to make dummy link files...
+#
+
+if [ !-d links ]; then
+	mkdir links
 fi
 
-tar cvf fltk-1.0-irix-`uname -r`.tardist fltk fltk.idb fltk.man fltk.sw
+for file in `cd ../../FL; ls *.H`; do
+	ln -sf $file links/`basename $file .h`
+done
 
+ln -sf FL links/Fl
+
+cd ../..
+
+/usr/sbin/swpackage -v -s packages/hpux/fltk.info \
+	-d packages/hpux/fltk-1.0-hpux.depot -x write_remote_files=true \
+	-x target_type=tape fltk
