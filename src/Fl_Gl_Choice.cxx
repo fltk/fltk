@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.13 2003/01/30 21:41:48 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.14 2003/07/17 05:52:47 matthiaswm Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -217,7 +217,31 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   return g;
 }
 
-static GLContext first_context;
+static GLContext *context_list = 0;
+static int nContext = 0, NContext = 0;
+
+static void add_context(GLContext ctx) {
+  if (!ctx) return;
+  if (nContext==NContext) {
+    if (!NContext) NContext = 8;
+    NContext *= 2;
+    context_list = (GLContext*)realloc(
+      context_list, NContext*sizeof(GLContext));
+  }
+  context_list[nContext++] = ctx;
+}
+
+static void del_context(GLContext ctx) {
+  int i; 
+  for (i=0; i<nContext; i++) {
+    if (context_list[i]==ctx) {
+      memmove(context_list+i, context_list+i+1,
+        (nContext-i-1) * sizeof(GLContext));
+      context_list[--nContext] = 0;
+      break;
+    }
+  }
+}
 
 #ifdef WIN32
 
@@ -234,17 +258,19 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   GLContext context =
     layer ? wglCreateLayerContext(hdc, layer) : wglCreateContext(hdc);
   if (context) {
-    if (first_context) wglShareLists(first_context, context);
-    else first_context = context;
+    if (context_list && context_list[0]) 
+      wglShareLists(context_list[0], context);
+    add_context(context);
   }
   return context;
 }
 
 #elif defined(__APPLE__)
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
-    GLContext context;
-    context = aglCreateContext( g->pixelformat, first_context);
-    if ( !first_context ) first_context = (GLContext)context;
+    GLContext context, shared_ctx = context_list ? context_list[0] : 0;
+    context = aglCreateContext( g->pixelformat, shared_ctx);
+    if (!context) return 0;
+    add_context((GLContext)context);
     if ( window->parent() ) {
       Rect wrect; GetWindowPortBounds( fl_xid(window), &wrect );
       GLint rect[] = { window->x(), wrect.bottom-window->h()-window->y(), window->w(), window->h() }; 
@@ -257,8 +283,10 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #else
 
 GLContext fl_create_gl_context(XVisualInfo* vis) {
-  GLContext context = glXCreateContext(fl_display, vis, first_context, 1);
-  if (!first_context) first_context = context;
+  GLContext shared_ctx = context_list ? context_list[0] : 0;
+  GLContext context = glXCreateContext(fl_display, vis, shared_ctx, 1);
+  if (context)
+    add_context(context);
   return context;
 }
 
@@ -302,21 +330,20 @@ void fl_no_gl_context() {
 
 void fl_delete_gl_context(GLContext context) {
   if (cached_context == context) fl_no_gl_context();
-  if (context != first_context) {
 #ifdef WIN32
-    wglDeleteContext(context);
+  wglDeleteContext(context);
 #elif defined(__APPLE__)
-    aglSetCurrentContext( NULL );
-    aglSetDrawable( context, NULL );    
-    aglDestroyContext( context );
+  aglSetCurrentContext( NULL );
+  aglSetDrawable( context, NULL );    
+  aglDestroyContext( context );
 #else
-    glXDestroyContext(fl_display, context);
+  glXDestroyContext(fl_display, context);
 #endif
-  }
+  del_context(context);
 }
 
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.13 2003/01/30 21:41:48 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.14 2003/07/17 05:52:47 matthiaswm Exp $".
 //
