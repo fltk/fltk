@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.26 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.27 2002/04/16 07:47:31 spitzak Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -549,7 +549,16 @@ extern void fl_restore_pen(void);
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  // Copy the message to fl_msg so add_handler code can see it, it is
+  // already there if this is called by DispatchMessage, but not if
+  // Windows calls this directly.
+  fl_msg.hwnd = hWnd;
   fl_msg.message = uMsg;
+  fl_msg.wParam = wParam;
+  fl_msg.lParam = lParam;
+  //fl_msg.time = ???
+  //fl_msg.pt = ???
+  //fl_msg.lPrivate = ???
 
   Fl_Window *window = fl_find(hWnd);
 
@@ -1170,5 +1179,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.26 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.27 2002/04/16 07:47:31 spitzak Exp $".
 //
