@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl::handle() didn't pass FL_RELEASE events to the
+	  grab() widget if pushed() was set (for proper menu
+	  handling...)
 	- DND events were being sent to the target window
 	  instead of the target widget under WIN32.
 	- The newest Cygwin needs the same scandir() handling as
