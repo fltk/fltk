@@ -12,9 +12,6 @@ CHANGES IN FLTK 1.1.0b3
 	- Now save and restore the GDI pen object when
 	  responding to WIN32 paint messages.
 
-	- fl_line_style() used different default cap and join
-	  options for WIN32 and X11.
-
 	- Documentation updates from A. Suatoni.
 
 

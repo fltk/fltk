@@ -7,8 +7,11 @@
 
 void fl_line_style(int style, int width, char* dashes) {
 #ifdef WIN32
+  // According to Bill, the "default" cap and join should be the
+  // "fastest" mode supported for the platform.  I don't know why
+  // they should be different (same graphics cards, etc., right?) MRS
   static DWORD Cap[4]= {PS_ENDCAP_FLAT, PS_ENDCAP_FLAT, PS_ENDCAP_ROUND, PS_ENDCAP_SQUARE};
-  static DWORD Join[4]={PS_JOIN_MITER, PS_JOIN_MITER, PS_JOIN_ROUND, PS_JOIN_BEVEL};
+  static DWORD Join[4]={PS_JOIN_ROUND, PS_JOIN_MITER, PS_JOIN_ROUND, PS_JOIN_BEVEL};
   int s1 = PS_GEOMETRIC | Cap[(style>>8)&3] | Join[(style>>12)&3];
   DWORD a[16]; int n = 0;
   if (dashes && dashes[0]) {
