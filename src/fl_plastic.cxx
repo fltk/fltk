@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.7 2001/12/14 16:48:13 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.8 2001/12/16 02:32:41 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -78,15 +78,15 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
       fl_color(shade_color(g[c[i]], bc));
       fl_xyline(x + 1, y + i, x + w - 1);
 
-      fl_color(shade_color(g[c[i] - 8], bc));
-      fl_point(x, y + i);
-      fl_point(x + w - 1, y + i);
+      fl_color(shade_color(g[c[i] - 2], bc));
+      fl_point(x, y + i + 1);
+      fl_point(x + w - 1, y + i + 1);
 
       // Draw the bottom line and points...
       fl_color(shade_color(g[c[clen - i]], bc));
       fl_xyline(x + 1, y + h - 1 - i, x + w - 1);
 
-      fl_color(shade_color(g[c[clen - i] - 8], bc));
+      fl_color(shade_color(g[c[clen - i] - 2], bc));
       fl_point(x, y + h - i);
       fl_point(x + w - 1, y + h - i);
     }
@@ -97,7 +97,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
     fl_color(shade_color(g[c[chalf]], bc));
     fl_rectf(x + 1, y + i, w - 2, h - 2 * i);
 
-    fl_color(shade_color(g[c[chalf] - 8], bc));
+    fl_color(shade_color(g[c[chalf] - 2], bc));
     fl_yxline(x, y + i, y + h - i);
     fl_yxline(x + w - 1, y + i, y + h - i);
   } else {
@@ -109,15 +109,15 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
       fl_color(shade_color(g[c[i]], bc));
       fl_yxline(x + i, y + 1, y + h - 1);
 
-      fl_color(shade_color(g[c[i] - 8], bc));
-      fl_point(x + i, y);
-      fl_point(x + i, y + h - 1);
+      fl_color(shade_color(g[c[i] - 2], bc));
+      fl_point(x + i + 1, y);
+      fl_point(x + i + 1, y + h - 1);
 
       // Draw the right line and points...
       fl_color(shade_color(g[c[clen - i]], bc));
       fl_yxline(x + w - 1 - i, y + 1, y + h - 1);
 
-      fl_color(shade_color(g[c[clen - i] - 8], bc));
+      fl_color(shade_color(g[c[clen - i] - 2], bc));
       fl_point(x + w - 1 - i, y);
       fl_point(x + w - 1 - i, y + h - 1);
     }
@@ -128,7 +128,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
     fl_color(shade_color(g[c[chalf]], bc));
     fl_rectf(x + i, y + 1, w - 2 * i, h - 2);
 
-    fl_color(shade_color(g[c[chalf] - 8], bc));
+    fl_color(shade_color(g[c[chalf] - 2], bc));
     fl_xyline(x + i, y, x + w - i);
     fl_xyline(x + i, y + h - 1, x + w - i);
   }
@@ -136,12 +136,12 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
 
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c) {
-  shade_frame(x, y, w, h, "KLOPMNNO", c);
+  shade_frame(x, y, w, h, "MNFKKLNO", c);
 }
 
 
 static void up_box(int x, int y, int w, int h, Fl_Color c) {
-  shade_rect(x + 2, y + 2, w - 4, h - 4, "QTXWVUTRSTUVWXS", c);
+  shade_rect(x + 2, y + 2, w - 4, h - 4, "TXSPPQQRSSTTUVS", c);
 
   up_frame(x, y, w, h, c);
 }
@@ -173,5 +173,5 @@ Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.7 2001/12/14 16:48:13 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.8 2001/12/16 02:32:41 easysw Exp $".
 //
