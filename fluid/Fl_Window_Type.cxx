@@ -52,6 +52,18 @@ extern int modflag;
 
 extern Fl_Preferences	fluid_prefs;
 
+#include "widget_panel.h"
+
+// Update the XYWH values in the widget panel...
+static void update_xywh() {
+  if (current_widget && current_widget->is_widget()) {
+    widget_x_input->value(((Fl_Widget_Type *)current_widget)->o->x());
+    widget_y_input->value(((Fl_Widget_Type *)current_widget)->o->y());
+    widget_w_input->value(((Fl_Widget_Type *)current_widget)->o->w());
+    widget_h_input->value(((Fl_Widget_Type *)current_widget)->o->h());
+  }
+}
+
 void grid_cb(Fl_Input *i, long v) {
   int n = atoi(i->value());
   if (n < 0) n = 0;
@@ -310,7 +322,6 @@ void Fl_Window_Type::open() {
 }
 
 // control panel items:
-#include "widget_panel.h"
 
 void modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
@@ -380,6 +391,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   Fl_Widget* t = resizable(); resizable(0);
   Fl_Overlay_Window::resize(X,Y,W,H);
   resizable(t);
+  update_xywh();
 //   // make sure new window size surrounds the widgets:
 //   int b = 0;
 //   int r = 0;
@@ -526,16 +538,6 @@ extern void fix_group_size(Fl_Type *t);
 
 extern Fl_Menu_Item Main_Menu[];
 extern Fl_Menu_Item New_Menu[];
-
-// Update the XYWH values in the widget panel...
-static void update_xywh() {
-  if (current_widget && current_widget->is_widget()) {
-    widget_x_input->value(((Fl_Widget_Type *)current_widget)->o->x());
-    widget_y_input->value(((Fl_Widget_Type *)current_widget)->o->y());
-    widget_w_input->value(((Fl_Widget_Type *)current_widget)->o->w());
-    widget_h_input->value(((Fl_Widget_Type *)current_widget)->o->h());
-  }
-}
 
 // move the selected children according to current dx,dy,drag state:
 void Fl_Window_Type::moveallchildren()

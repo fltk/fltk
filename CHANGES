@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
+	- FLUID didn't update the widget panel X/Y/W/H values
+	  when moving the selected window (STR #701)
 	- FLUID didn't use the label type constant names for
 	  menu items, causing them to be drawn using the normal
 	  label type (STR #668)
