@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.12 2000/06/20 07:56:08 bill Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.13 2000/10/17 07:23:42 spitzak Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -62,6 +62,8 @@ int Fl_Input::handle_key() {
 
   char ascii = Fl::event_text()[0];
 
+  int repeat_num=1;
+
   int del;
   if (Fl::compose(del)) {
 
@@ -85,20 +87,42 @@ int Fl_Input::handle_key() {
   }
 
   switch (Fl::event_key()) {
+  case FL_Insert:
+    if (Fl::event_state() & FL_CTRL) ascii = ctrl('C');
+    else if (Fl::event_state() & FL_SHIFT) ascii = ctrl('V');
+    break;
+  case FL_Delete:
+    if (Fl::event_state() & FL_SHIFT) ascii = ctrl('X');
+    else ascii = ctrl('D');
+    break;    
   case FL_Left:
     ascii = ctrl('B'); break;
   case FL_Right:
     ascii = ctrl('F'); break;
+  case FL_Page_Up:
+    repeat_num=5; //temporary hack
+                  //TODO: find number of lines in window and use it instead 5
   case FL_Up:
     ascii = ctrl('P'); break;
+  case FL_Page_Down:
+    repeat_num=5; //temporary hack
+                  //TODO: find number of lines in window and use it instead 5
   case FL_Down:
     ascii = ctrl('N'); break;
-  case FL_Delete:
-    ascii = ctrl('D'); break;
   case FL_Home:
-    ascii = ctrl('A'); break;
+    if (Fl::event_state() & FL_CTRL) {
+      shift_position(0);
+      return 1;
+    }
+    ascii = ctrl('A');
+    break;
   case FL_End:
+    if (Fl::event_state() & FL_CTRL) {
+      shift_position(size());
+      return 1;
+    }
     ascii = ctrl('E'); break;
+    
   case FL_BackSpace:
     ascii = ctrl('H'); break;
   case FL_Enter:
@@ -143,14 +167,22 @@ int Fl_Input::handle_key() {
     cut(position(), i);
     return copy_cuts();
   case ctrl('N'):
-    i = line_end(position());
-    if (i >= size()) return NORMAL_INPUT_MOVE;
-    shift_up_down_position(i+1);
+    i = position();
+    while (repeat_num--) {  
+      i = line_end(i);
+      if (i >= size()) return NORMAL_INPUT_MOVE;
+      i++;
+    }
+    shift_up_down_position(i);
     return 1;
   case ctrl('P'):
-    i = line_start(position());
-    if (!i) return NORMAL_INPUT_MOVE;
-    shift_up_down_position(line_start(i-1));
+    i = position();
+    while(repeat_num--) {
+      i = line_start(i);
+      if (!i) return NORMAL_INPUT_MOVE;
+      i--;
+    }
+    shift_up_down_position(line_start(i));
     return 1;
   case ctrl('U'):
     return cut(0, size());
@@ -244,5 +276,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.12 2000/06/20 07:56:08 bill Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.13 2000/10/17 07:23:42 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: cmap.cxx,v 1.4.2.3 2000/06/05 21:21:03 mike Exp $"
+// "$Id: cmap.cxx,v 1.4.2.4 2000/10/17 07:23:42 spitzak Exp $"
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
 // This program produces the contents of "fl_cmap.h" as stdout
@@ -51,7 +51,7 @@ static short cmap[256][3] = {
   {III,  0,III},	// magenta
   {  0,III,III},	// cyan
   {III,III,III},	// white
-// pastel versions of those colors:
+// pastel versions of those colors, from SGI's standard color map:
   { 85, 85, 85},	// 1/3 gray
   {198,113,113},	// salmon? pale red?
   {113,198,113},	// pale green
@@ -59,10 +59,14 @@ static short cmap[256][3] = {
   {113,113,198},	// pale blue
   {142, 56,142},	// purple, orchid, pale magenta
   { 56,142,142},	// cadet blue, aquamarine, pale cyan
-  {170,170,170},	// 2/3 gray
-// These next 16 are the FL_FREE_COLOR area.  For compatability with
-// some existing DD programs, I prefill them with the random colors
-// you get on a 5.3 machine:
+  {170,170,170},	// 2/3 gray (FL_SELECTION_COLOR location)
+// These next 16 are the FL_FREE_COLOR area. In some versions of fltk
+// these were filled with random colors that a Irix 5.3 machine placed
+// in these locations. Other versions of fltk filled this with the 1/3
+// gray above to discourage their use. This newest version uses colors
+// that NewTek has assigned for their GUI:
+#if 0
+  // The Irix 5.3 colors:
   { 16, 16, 16},
   {128, 40,128},
   {198, 30, 30},
@@ -79,6 +83,25 @@ static short cmap[256][3] = {
   { 80, 80, 10},
   {150,150, 20},
   {160, 10, 10},
+#else
+  // The NewTek colors: (from George Yohng)
+  {168,168,152},
+  {232,232,216},
+  {104,104, 88},
+  {152,168,168},
+  {216,232,232},
+  { 88,104,104},
+  {156,156,168},
+  {220,220,232},
+  { 92, 92,104},
+  {156,168,156},
+  {220,232,220},
+  { 92,104, 92},
+  {144,144,144},
+  {192,192,192},
+  { 80, 80, 80},
+  {160,160,160},
+#endif
 // The rest of the colormap is a gray ramp and table, filled in below:
 };
 
@@ -119,7 +142,7 @@ int main() {
 #endif
 // overwrite the X allocation area with one color so people are
 // discouraged from using it:
-  for (i=16; i<32; i++) {cmap[i][0]=cmap[i][1]=cmap[i][2] = 85;}
+  //for (i=16; i<32; i++) {cmap[i][0]=cmap[i][1]=cmap[i][2] = 85;}
 
   // fill in the gray ramp:
   background(0xc0, 0xc0, 0xc0); // microsoft colors
@@ -148,5 +171,5 @@ int main() {
 }
 
 //
-// End of "$Id: cmap.cxx,v 1.4.2.3 2000/06/05 21:21:03 mike Exp $".
+// End of "$Id: cmap.cxx,v 1.4.2.4 2000/10/17 07:23:42 spitzak Exp $".
 //
