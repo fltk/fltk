@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# makedist - make a distribution of FLTK.
+# makesrcdist - make a distribution of FLTK.
 #
 
 echo "Getting distribution..."
@@ -22,7 +22,7 @@ rm -rf fltk-$version
 mv fltk fltk-$version
 cd fltk-$version
 
-if test x$version != snapshot; then
+if test x$version != xsnapshot; then
 	echo "Tagging release..."
 
 	tag=`echo v$version | tr '.' '_'`
