@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- MacOS windows were resizable, even when size_range would
+	  not allow for resizing.
 	- Fl_Text_Editor now supports Shift+Delete, Ctrl+Insert,
 	  and Shift+Insert for cut, copy, and paste,
 	  respectively.
