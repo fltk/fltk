@@ -11,7 +11,7 @@ TODO	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
 
 TODO	- Added keyboard navigation to all widgets.
 
-CORE	- Added support for mouse wheels using the new
+	- Added support for mouse wheels using the new
 	  FL_MOUSEWHEEL event type.  Get the mouse wheel
 	  movement values from Fl::e_dx (horizontal) and
 	  Fl::e_dy (vertical).

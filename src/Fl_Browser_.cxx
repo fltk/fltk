@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.16 2001/07/05 00:20:41 uid28863 Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.1 2001/08/02 20:18:54 easysw Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -551,6 +551,10 @@ int Fl_Browser_::handle(int event) {
   static char whichway;
   static int py;
   switch (event) {
+  case FL_MOUSEWHEEL:
+    position(position() + Fl::e_dy * incr_height());
+    return (1);
+
   case FL_PUSH:
     if (!Fl::event_inside(X, Y, W, H)) return 0;
     my = py = Fl::event_y();
@@ -707,5 +711,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16 2001/07/05 00:20:41 uid28863 Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.1 2001/08/02 20:18:54 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.cxx,v 1.1.2.1 2001/08/02 19:43:49 easysw Exp $"
+// "$Id: Fl_HelpView.cxx,v 1.1.2.2 2001/08/02 20:18:54 easysw Exp $"
 //
 // Fl_HelpView widget routines.
 //
@@ -2199,23 +2199,14 @@ Fl_HelpView::handle(int event)	// I - Event to handle
   {
     case FL_MOVE :
     case FL_PUSH :
-        if (Fl::event_button() == 4)
-	{
-	  // XFree86 maps button 4 to the "wheel up" motion...
-	  topline(topline() - textsize_ * 3);
-	  return (1);
-	}
-	else if (Fl::event_button() == 5)
-	{
-	  // XFree86 maps button 5 to the "wheel down" motion...
-	  topline(topline() + textsize_ * 3);
-	  return (1);
-	}
-
         xx = Fl::event_x() - x();
 	yy = Fl::event_y() - y() + topline_;
         if (!scrollbar_.visible() || xx < (w() - 20))
 	  break;
+
+    case FL_MOUSEWHEEL :
+	topline(topline() + Fl::e_dy * textsize_ * 3);
+	return (1);
 
     default :
 	// Use the Fl_Group handler...
@@ -3135,5 +3126,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_HelpView.cxx,v 1.1.2.1 2001/08/02 19:43:49 easysw Exp $".
+// End of "$Id: Fl_HelpView.cxx,v 1.1.2.2 2001/08/02 20:18:54 easysw Exp $".
 //
