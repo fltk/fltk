@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.36 2002/11/12 22:48:36 matthiaswm Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.37 2002/11/14 21:05:22 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -31,6 +31,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Window.H>
 
 #undef min
 #undef max
@@ -2949,8 +2950,8 @@ int Fl_Text_Display::handle(int event) {
     case FL_ENTER:
     case FL_MOVE:
       if (active_r()) {
-        if (Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h)) fl_cursor(FL_CURSOR_INSERT);
-	else fl_cursor(FL_CURSOR_DEFAULT);
+        if (Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h)) window()->cursor(FL_CURSOR_INSERT);
+	else window()->cursor(FL_CURSOR_DEFAULT);
 	return 1;
       } else {
         return 0;
@@ -2959,7 +2960,7 @@ int Fl_Text_Display::handle(int event) {
     case FL_LEAVE:
     case FL_HIDE:
       if (active_r()) {
-        fl_cursor(FL_CURSOR_DEFAULT);
+        window()->cursor(FL_CURSOR_DEFAULT);
 
 	return 1;
       } else {
@@ -3029,5 +3030,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.36 2002/11/12 22:48:36 matthiaswm Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.37 2002/11/14 21:05:22 easysw Exp $".
 //

@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.2
 
+	- The cursor could be set for the wrong window in the
+	  text widgets.
+	- Fl_Check_Browser didn't provide const char * add
+	  methods as documented.
 	- Fl_Button, Fl_Choice, and Fl_Menu_Button incorrectly
 	  activated the button/menu when the spacebar was
 	  pressed in conjunction with shift, control, alt, or

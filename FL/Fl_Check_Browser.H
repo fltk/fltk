@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Browser.H,v 1.1.2.4 2002/08/14 16:49:37 easysw Exp $"
+// "$Id: Fl_Check_Browser.H,v 1.1.2.5 2002/11/14 21:05:20 easysw Exp $"
 //
 // Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -71,6 +71,11 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   int add(char *s);               // add an (unchecked) item
   int add(char *s, int b);        // add an item and set checked
 				  // both return the new nitems()
+
+  // inline const char * methods to avoid breaking binary compatibility...
+  int add(const char *s) { return add((char *)s); }
+  int add(const char *s, int b) { return add((char *)s, b); }
+
   void clear();                   // delete all items
   int nitems() const { return nitems_; }
   int nchecked() const { return nchecked_; }
@@ -86,6 +91,6 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
 #endif // Fl_Check_Browser_H
 
 //
-// End of "$Id: Fl_Check_Browser.H,v 1.1.2.4 2002/08/14 16:49:37 easysw Exp $".
+// End of "$Id: Fl_Check_Browser.H,v 1.1.2.5 2002/11/14 21:05:20 easysw Exp $".
 //
 
