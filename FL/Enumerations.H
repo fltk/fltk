@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.7 1999/12/17 18:51:23 mike Exp $"
+// "$Id: Enumerations.H,v 1.18.2.8 2000/02/25 03:44:19 mike Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -56,9 +56,10 @@
 
 #define FL_MAJOR_VERSION	1
 #define FL_MINOR_VERSION	0
-#define FL_PATCH_VERSION	7
+#define FL_PATCH_VERSION	8
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
-				 (double)FL_MINOR_VERSION * 0.01)
+				 (double)FL_MINOR_VERSION * 0.01 + \
+				 (double)FL_PATCH_VERSION * 0.0001)
 
 typedef unsigned char uchar;
 typedef unsigned long ulong;
@@ -365,5 +366,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.7 1999/12/17 18:51:23 mike Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.8 2000/02/25 03:44:19 mike Exp $".
 //

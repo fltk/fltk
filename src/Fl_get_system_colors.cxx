@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.1 1999/10/19 04:50:34 bill Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.2 2000/02/25 03:44:22 mike Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -121,16 +121,29 @@ getsyscolor(const char *arg, void (*func)(uchar,uchar,uchar)) {
   }
 }
 
+static const char *
+xdefaultcolor (const char *flcol, const char *key1, const char *key2)
+{
+  if (!flcol)
+    return XGetDefault (fl_display, key1, key2);
+  else
+    return flcol;
+}
+
 void Fl::get_system_colors()
 {
   fl_open_display();
+
+  fl_bg2 = xdefaultcolor (fl_bg2, "Entry", "background");
   getsyscolor(fl_bg2,Fl::background2);
+  fl_bg = xdefaultcolor (fl_bg, "*", "background");
   getsyscolor(fl_fg, Fl::foreground);
+  fl_fg = xdefaultcolor (fl_fg, "*", "foreground");
   getsyscolor(fl_bg, Fl::background);
 }
 
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.1 1999/10/19 04:50:34 bill Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.2 2000/02/25 03:44:22 mike Exp $".
 //

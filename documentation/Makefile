@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.2 1999/06/12 13:53:23 mike Exp $"
+# "$Id: Makefile,v 1.9.2.3 2000/02/25 03:44:20 mike Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,7 +23,7 @@
 # Please report all bugs and problems to "fltk-bugs@easysw.com".
 #
 
-# Where to find HTMLDOC...
+# Where to find HTMLDOC (http://www.easysw.com/htmldoc)...
 HTMLDOC		=	htmldoc
 
 # What media size to use:
@@ -130,17 +130,17 @@ fltk.d/index.html: $(HTMLFILES)
 	@echo "Generating HTML documentation..."
 	@-mkdir fltk.d
 	@-rm -f fltk.d/*
-	@$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --bodycolor white --title FL.gif $(HTMLFILES)
+	@$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --bodycolor white --titleimage FL.gif $(HTMLFILES)
 
 fltk.ps: $(HTMLFILES)
 	@echo "Generating PostScript documentation..."
-	@$(HTMLDOC) -f fltk.ps -t ps2 --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
+	@$(HTMLDOC) -f fltk.ps -t ps2 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 fltk.pdf: $(HTMLFILES)
 	@echo "Generating PDF documentation..."
 	@rm -f fltk.pdf
-	@$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
+	@$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.2 1999/06/12 13:53:23 mike Exp $".
+# End of "$Id: Makefile,v 1.9.2.3 2000/02/25 03:44:20 mike Exp $".
 #
