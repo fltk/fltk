@@ -216,6 +216,22 @@ CC ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
 gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
 </PRE></UL>
 
+<P>Aside from the "fltk" library, there is also a "fltk_forms"
+library for the XForms compatibility classes, "fltk_gl" for the
+OpenGL and GLUT classes, and "fltk_images" for the image file
+classes, <A
+HREF="Fl_Help_Dialog.html#Fl_Help_Dialog"><CODE>Fl_Help_Dialog</CODE></A>
+widget, and system icon support.
+
+<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="10" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>Note:</B>
+	<P>The libraries are named "fltk.lib", "fltkgl.lib", "fltkforms.lib",
+	and "fltkimages.lib", respectively under Windows.
+	</TD>
+</TR>
+</TABLE></CENTER>
+
 <P>As before, the <TT>fltk-config</TT> script included with FLTK can be
 used to get the options that are required by your linker:</P>
 

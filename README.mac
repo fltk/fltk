@@ -1,5 +1,5 @@
-README.mac - 12/20/2001 - Building FLTK under MacOS 8, 9, and X
----------------------------------------------------------------
+README.mac - 10/03/2002 - Building FLTK under MacOS X
+-----------------------------------------------------
 
 CONTENTS
 
@@ -14,22 +14,13 @@ CONTENTS
 
 INTRODUCTION
 
-    FLTK for MacOS X is in beta stage.  Expect rapid changes to
-    the source code and build environment. 
-
     FLTK currently supports the following development
     environments on the MacOS X platform:
 
 	- GCC
-	- (Metrowerks CodeWarrior - future releases)
+	- Metrowerks CodeWarrior
 	- (Apple Project Builder - future releases)
 	- (MPW - future releases)
-
-    FLTK for Mac is fully carbonized, i.e. all applications
-    should run  on MacOS 8.1 and higher and OS X without
-    changes.  Note, however, that applications compiled using
-    GCC will only run under MacOS X since they use a different
-    executable format.
 
 
 HOW TO BUILD USING GCC (MacOS X)
@@ -91,7 +82,6 @@ KNOWN MacFLTK BUGS
 	- Sub-sub-subwindow not tested.
 	- Image transparency is implemented as "screen-door" only
 	- The 'shiny' demo needs work (flush/aglFlush).
-	- Threads are not implemented.
 	- OpenGL subwindow during window resize changes position
 
 
@@ -139,5 +129,4 @@ FLTK 1.0.X FOR MAC
     5 and 6.
 
     FLTK 1.0.6 for Mac is not supported by the FLTK team and
-    will not be further developed by the author.  Instead it
-    will be replaced by FLTK 1.1.x for Mac in the near future.
+    will not be further developed by the author.
