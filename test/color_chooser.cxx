@@ -1,5 +1,5 @@
 //
-// "$Id: color_chooser.cxx,v 1.4 1998/10/21 14:21:20 mike Exp $"
+// "$Id: color_chooser.cxx,v 1.5 1998/12/06 15:46:13 mike Exp $"
 //
 // Color chooser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef WIN32
-#include "list_visuals.C"
+#include "list_visuals.cxx"
 #endif
 
 int width = 75;
@@ -146,5 +146,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: color_chooser.cxx,v 1.4 1998/10/21 14:21:20 mike Exp $".
+// End of "$Id: color_chooser.cxx,v 1.5 1998/12/06 15:46:13 mike Exp $".
 //
