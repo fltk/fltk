@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Preferences::entryExists() did not work properly.
+	- FLUID's image file chooser pattern was incorrect.
+	- Fl_File_Icon::load_system_icons() now detects KDE
+	  icons in /opt/kde, /usr/local, and /usr automatically,
+	  and supports the KDEDIR environment variable as well.
 	- Submenus now display to the left of the parent menu if
 	  they won't fit to the right.  Previously they would
 	  display right on top of the parent menu...

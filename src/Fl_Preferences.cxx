@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.20 2002/09/05 20:44:36 matthiaswm Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.21 2002/10/03 15:23:46 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -182,12 +182,12 @@ const char *Fl_Preferences::entry( int ix )
 
 
 /**
- * return 1, if a group with this name exists
+ * return 1, if an entry with this name exists
  * example: if ( buttonColor.entryExists( "red" ) ) ...
  */
 char Fl_Preferences::entryExists( const char *key )
 {
-  return node->getEntry( key ) ? 1 : 0 ;
+  return node->getEntry( key )>=0 ? 1 : 0 ;
 }
 
 
@@ -1113,5 +1113,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.20 2002/09/05 20:44:36 matthiaswm Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.21 2002/10/03 15:23:46 easysw Exp $".
 //

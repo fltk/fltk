@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.16 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.17 2002/10/03 15:23:46 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -78,6 +78,13 @@ static void	load_kde_icons(const char *directory);
 static void	load_kde_mimelnk(const char *filename);
 static char	*kde_to_fltk_pattern(const char *kdepattern);
 static char	*get_kde_val(char *str, const char *key);
+
+
+//
+// Local globals...
+//
+
+static const char *kdedir = NULL;
 
 
 //
@@ -576,6 +583,7 @@ void
 Fl_File_Icon::load_system_icons(void)
 {
   Fl_File_Icon	*icon;		// New icons
+  char		filename[1024];	// Filename
   static int	init = 0;	// Have the icons been initialized?
   static short	plain[] =	// Plain file icon
 		{
@@ -649,26 +657,46 @@ Fl_File_Icon::load_system_icons(void)
     // This method requires the images library...
     fl_register_images();
 
-    if (!access("/usr/share/mimelnk", F_OK))
+    if (!kdedir)
+    {
+      // Figure out where KDE is installed...
+      if ((kdedir = getenv("KDEDIR")) == NULL)
+      {
+        if (!access("/opt/kde", F_OK))
+	  kdedir = "/opt/kde";
+	else if (!access("/usr/local/share/mimelnk", F_OK))
+	  kdedir = "/usr/local";
+        else
+	  kdedir = "/usr";
+      }
+    }
+
+    snprintf(filename, sizeof(filename), "%s/share/mimelnk", kdedir);
+
+    if (!access(filename, F_OK))
     {
       // Load KDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
-      if (!access("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png", F_OK))
-        icon->load_image("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png");
-      else
-        icon->load_image("/usr/share/icons/unknown.xpm");
+
+      snprintf(filename, sizeof(filename),
+               "%s/share/icons/hicolor/16x16/mimetypes/unknown.png", kdedir);
+
+      if (access(filename, F_OK))
+	snprintf(filename, sizeof(filename), "%s/share/icons/unknown.xpm",
+	         kdedir);
+
+      icon->load_image(filename);
 
       icon = new Fl_File_Icon("*", Fl_File_Icon::LINK);
-      if (!access("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png", F_OK))
-        icon->load_image("/usr/share/icons/hicolor/16x16/mimetypes/unknown.png");
-      else
-        icon->load_image("/usr/share/icons/unknown.xpm");
-      if (!access("/usr/share/icons/hicolor/16x16/filesystems/link.png", F_OK))
-        icon->load_image("/usr/share/icons/hicolor/16x16/filesystems/link.png");
-      else
-        icon->load_image("/usr/share/icons/unknown.xpm");
 
-      load_kde_icons("/usr/share/mimelnk");
+      snprintf(filename, sizeof(filename),
+               "%s/share/icons/hicolor/16x16/filesystems/link.png", kdedir);
+
+      if (!access(filename, F_OK))
+        icon->load_image(filename);
+
+      snprintf(filename, sizeof(filename), "%s/share/mimelnk", kdedir);
+      load_kde_icons(filename);
     }
     else if (!access("/usr/share/icons/folder.xpm", F_OK))
     {
@@ -800,7 +828,7 @@ static void
 load_kde_mimelnk(const char *filename)
 {
   FILE		*fp;
-  char		tmp[256];
+  char		tmp[1024];
   char		iconfilename[1024];
   char		pattern[1024];
   char		mimetype[1024];
@@ -829,7 +857,9 @@ load_kde_mimelnk(const char *filename)
 
     if (iconfilename[0] && (pattern[0] || strncmp(mimetype, "inode/", 6) == 0))
     {
-      if (!access("/usr/share/icons/hicolor", F_OK))
+      snprintf(tmp, sizeof(tmp), "%s/share/icons/hicolor", kdedir);
+
+      if (!access(tmp, F_OK))
       {
         // KDE 2.x icons
 	int		i;		// Looping var
@@ -855,8 +885,7 @@ load_kde_mimelnk(const char *filename)
 
         for (i = 0; i < (int)(sizeof(paths) / sizeof(paths[0])); i ++) {
           snprintf(full_iconfilename, sizeof(full_iconfilename),
-	           "/usr/share/icons/hicolor/%s/%s.png", paths[i],
-		   iconfilename);
+	           "%s/%s/%s.png", tmp, paths[i], iconfilename);
 
           if (!access(full_iconfilename, F_OK)) break;
 	}
@@ -865,7 +894,7 @@ load_kde_mimelnk(const char *filename)
       } else {
         // KDE 1.x icons
         snprintf(full_iconfilename, sizeof(full_iconfilename),
-	         "/usr/share/icons/%s", iconfilename);
+	         "%s/%s", tmp, iconfilename);
 
         if (access(full_iconfilename, F_OK)) return;
       }
@@ -942,5 +971,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.16 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.17 2002/10/03 15:23:46 easysw Exp $".
 //
