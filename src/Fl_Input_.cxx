@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.15 2002/07/23 16:28:19 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.16 2002/07/29 22:55:33 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -690,6 +690,11 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     return 1;
 
   case FL_PASTE: {
+    if (readonly()) {
+      fl_beep(FL_BEEP_ERROR);
+      return 1;
+    }
+
     // strip trailing control characters and spaces before pasting:
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
@@ -835,5 +840,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.15 2002/07/23 16:28:19 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.16 2002/07/29 22:55:33 easysw Exp $".
 //

@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
+	- Fl_Output and Fl_Multiline_Output didn't prevent
+	  middle-mouse pastes.
 	- Fl_JPEG_Image didn't compile out-of-the-box with Cygwin
 	  due to a bug in the Cygwin JPEG library headers.
 	- Fl_BMP_Image still didn't work with some old BMP files.
