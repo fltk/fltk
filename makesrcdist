@@ -37,6 +37,7 @@ autoconf
 echo "Removing CVS directories..."
 
 rm -rf CVS */CVS */*/CVS
+rm -rf OpenGL config forms gl glut images packages themes
 rm makesrcdist
 
 echo "Generating .cxx and .h files for fluid demos..."
