@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.4 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.5 2001/09/29 14:38:59 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -25,13 +25,13 @@
 
 #include <config.h>
 #include <FL/fl_file_chooser.H>
-#include <FL/Fl_FileChooser.H>
+#include <FL/Fl_File_Chooser.H>
 
-static Fl_FileChooser	*fc = (Fl_FileChooser *)0;
+static Fl_File_Chooser	*fc = (Fl_File_Chooser *)0;
 static void		(*current_callback)(const char*) = 0;
 
 
-static void callback(Fl_FileChooser *, void*) {
+static void callback(Fl_File_Chooser *, void*) {
   if (current_callback)
     (*current_callback)(fc->value(0));
 }
@@ -47,9 +47,10 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
   if (!fname || !*fname) fname = ".";
 
   if (!fc) {
-    fc = new Fl_FileChooser(fname, pat, Fl_FileChooser::CREATE, message);
+    fc = new Fl_File_Chooser(fname, pat, Fl_File_Chooser::CREATE, message);
     fc->callback(callback, 0);
   } else {
+    fc->type(Fl_File_Chooser::CREATE);
     fc->filter(pat);
     fc->value(fname);
     fc->label(message);
@@ -64,6 +65,30 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 
+char* fl_dir_chooser(const char* message, const char* fname)
+{
+  if (!fname || !*fname) fname = ".";
+
+  if (!fc) {
+    fc = new Fl_File_Chooser(fname, "*", Fl_File_Chooser::CREATE |
+                                         Fl_File_Chooser::DIRECTORY, message);
+    fc->callback(callback, 0);
+  } else {
+    fc->type(Fl_File_Chooser::CREATE | Fl_File_Chooser::DIRECTORY);
+    fc->filter("*");
+    fc->value(fname);
+    fc->label(message);
+  }
+
+  fc->show();
+
+  while (fc->visible())
+    Fl::wait();
+
+  return ((char *)fc->value());
+}
+
+
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.4 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.10.2.5 2001/09/29 14:38:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_FileBrowser.H,v 1.4.2.3 2001/09/04 13:13:29 easysw Exp $"
+// "$Id: Fl_File_Browser.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $"
 //
 // FileBrowser definitions.
 //
@@ -27,21 +27,19 @@
 // Include necessary header files...
 //
 
-#ifndef _Fl_FileBrowser_H_
-#  define _Fl_FileBrowser_H_
+#ifndef _Fl_File_Browser_H_
+#  define _Fl_File_Browser_H_
 
 #  include "Fl_Browser.H"
-#  include "Fl_FileIcon.H"
+#  include "Fl_File_Icon.H"
 
 
 //
-// Fl_FileBrowser class...
+// Fl_File_Browser class...
 //
 
-class Fl_FileBrowser : public Fl_Browser
+class Fl_File_Browser : public Fl_Browser
 {
-  enum { FILES, DIRECTORIES };
-
   int		filetype_;
   const char	*directory_;
   uchar		iconsize_;
@@ -54,7 +52,9 @@ class Fl_FileBrowser : public Fl_Browser
   int		incr_height() const { return (item_height(0)); }
 
 public:
-  FL_EXPORT Fl_FileBrowser(int, int, int, int, const char * = 0);
+  enum { FILES, DIRECTORIES };
+
+  FL_EXPORT Fl_File_Browser(int, int, int, int, const char * = 0);
 
   uchar			iconsize() const { return (iconsize_); };
   void			iconsize(uchar s) { iconsize_ = s; redraw(); };
@@ -71,8 +71,8 @@ public:
   void			filetype(int t) { filetype_ = t; load(directory_); };
 };
 
-#endif // !_Fl_FileBrowser_H_
+#endif // !_Fl_File_Browser_H_
 
 //
-// End of "$Id: Fl_FileBrowser.H,v 1.4.2.3 2001/09/04 13:13:29 easysw Exp $".
+// End of "$Id: Fl_File_Browser.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $".
 //

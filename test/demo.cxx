@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.8.2.5.2.1 2001/08/01 21:24:49 easysw Exp $"
+// "$Id: demo.cxx,v 1.8.2.5.2.2 2001/09/29 14:38:59 easysw Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -313,6 +313,7 @@ int load_the_menu(const char* fname)
 }
 
 int main(int argc, char **argv) {
+  putenv("FLTK_DOCDIR=../documentation");
   create_the_forms();
   char buf[256];
   strcpy(buf, argv[0]);
@@ -334,6 +335,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.8.2.5.2.1 2001/08/01 21:24:49 easysw Exp $".
+// End of "$Id: demo.cxx,v 1.8.2.5.2.2 2001/09/29 14:38:59 easysw Exp $".
 //
 

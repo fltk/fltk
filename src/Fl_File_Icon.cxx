@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_FileIcon.cxx,v 1.10.2.1 2001/08/02 16:17:04 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
 //
-// Fl_FileIcon routines.
+// Fl_File_Icon routines.
 //
 // KDE icon code donated by Maarten De Boer.
 //
@@ -26,17 +26,17 @@
 //
 // Contents:
 //
-//   Fl_FileIcon::Fl_FileIcon()       - Create a new file icon.
-//   Fl_FileIcon::~Fl_FileIcon()      - Remove a file icon.
-//   Fl_FileIcon::add()               - Add data to an icon.
-//   Fl_FileIcon::find()              - Find an icon based upon a given file.
-//   Fl_FileIcon::draw()              - Draw an icon.
-//   Fl_FileIcon::label()             - Set the widgets label to an icon.
-//   Fl_FileIcon::labeltype()         - Draw the icon label.
-//   Fl_FileIcon::load()              - Load an icon file...
-//   Fl_FileIcon::load_fti()          - Load an SGI-format FTI file...
-//   Fl_FileIcon::load_xpm()          - Load an XPM icon file...
-//   Fl_FileIcon::load_system_icons() - Load the standard system icons/filetypes.
+//   Fl_File_Icon::Fl_File_Icon()       - Create a new file icon.
+//   Fl_File_Icon::~Fl_File_Icon()      - Remove a file icon.
+//   Fl_File_Icon::add()               - Add data to an icon.
+//   Fl_File_Icon::find()              - Find an icon based upon a given file.
+//   Fl_File_Icon::draw()              - Draw an icon.
+//   Fl_File_Icon::label()             - Set the widgets label to an icon.
+//   Fl_File_Icon::labeltype()         - Draw the icon label.
+//   Fl_File_Icon::load()              - Load an icon file...
+//   Fl_File_Icon::load_fti()          - Load an SGI-format FTI file...
+//   Fl_File_Icon::load_xpm()          - Load an XPM icon file...
+//   Fl_File_Icon::load_system_icons() - Load the standard system icons/filetypes.
 //
 
 //
@@ -63,7 +63,7 @@
 #  include <unistd.h>
 #endif /* WIN32 || __EMX__ */
 
-#include <FL/Fl_FileIcon.H>
+#include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
@@ -86,7 +86,7 @@
 // Icon cache...
 //
 
-Fl_FileIcon	*Fl_FileIcon::first_ = (Fl_FileIcon *)0;
+Fl_File_Icon	*Fl_File_Icon::first_ = (Fl_File_Icon *)0;
 
 
 //
@@ -100,10 +100,10 @@ static char	*get_kde_val(char *str, const char *key);
 
 
 //
-// 'Fl_FileIcon::Fl_FileIcon()' - Create a new file icon.
+// 'Fl_File_Icon::Fl_File_Icon()' - Create a new file icon.
 //
 
-Fl_FileIcon::Fl_FileIcon(const char *p,	/* I - Filename pattern */
+Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
                    int        t,	/* I - File type */
 		   int        nd,	/* I - Number of data values */
 		   short      *d)	/* I - Data values */
@@ -133,18 +133,18 @@ Fl_FileIcon::Fl_FileIcon(const char *p,	/* I - Filename pattern */
 
 
 //
-// 'Fl_FileIcon::~Fl_FileIcon()' - Remove a file icon.
+// 'Fl_File_Icon::~Fl_File_Icon()' - Remove a file icon.
 //
 
-Fl_FileIcon::~Fl_FileIcon()
+Fl_File_Icon::~Fl_File_Icon()
 {
-  Fl_FileIcon	*current,	// Current icon in list
+  Fl_File_Icon	*current,	// Current icon in list
 		*prev;		// Previous icon in list
 
 
   // Find the icon in the list...
-  for (current = first_, prev = (Fl_FileIcon *)0;
-       current != this && current != (Fl_FileIcon *)0;
+  for (current = first_, prev = (Fl_File_Icon *)0;
+       current != this && current != (Fl_File_Icon *)0;
        prev = current, current = current->next_);
 
   // Remove the icon from the list as needed...
@@ -163,11 +163,11 @@ Fl_FileIcon::~Fl_FileIcon()
 
 
 //
-// 'Fl_FileIcon::add()' - Add data to an icon.
+// 'Fl_File_Icon::add()' - Add data to an icon.
 //
 
 short *			// O - Pointer to new data value
-Fl_FileIcon::add(short d)	// I - Data to add
+Fl_File_Icon::add(short d)	// I - Data to add
 {
   short	*dptr;		// Pointer to new data value
 
@@ -197,14 +197,14 @@ Fl_FileIcon::add(short d)	// I - Data to add
 
 
 //
-// 'Fl_FileIcon::find()' - Find an icon based upon a given file.
+// 'Fl_File_Icon::find()' - Find an icon based upon a given file.
 //
 
-Fl_FileIcon *				// O - Matching file icon or NULL
-Fl_FileIcon::find(const char *filename,	// I - Name of file */
+Fl_File_Icon *				// O - Matching file icon or NULL
+Fl_File_Icon::find(const char *filename,	// I - Name of file */
                int        filetype)	// I - Enumerated file type
 {
-  Fl_FileIcon	*current;		// Current file in list
+  Fl_File_Icon	*current;		// Current file in list
   struct stat	fileinfo;		// Information on file
 
 
@@ -232,7 +232,7 @@ Fl_FileIcon::find(const char *filename,	// I - Name of file */
 
   // Loop through the available file types and return any match that
   // is found...
-  for (current = first_; current != (Fl_FileIcon *)0; current = current->next_)
+  for (current = first_; current != (Fl_File_Icon *)0; current = current->next_)
     if ((current->type_ == filetype || current->type_ == ANY) &&
         filename_match(filename, current->pattern_))
       break;
@@ -243,11 +243,11 @@ Fl_FileIcon::find(const char *filename,	// I - Name of file */
 
 
 //
-// 'Fl_FileIcon::draw()' - Draw an icon.
+// 'Fl_File_Icon::draw()' - Draw an icon.
 //
 
 void
-Fl_FileIcon::draw(int      x,	// I - Upper-lefthand X
+Fl_File_Icon::draw(int      x,	// I - Upper-lefthand X
                int      y,	// I - Upper-lefthand Y
 	       int      w,	// I - Width of bounding box
 	       int	h,	// I - Height of bounding box
@@ -434,11 +434,11 @@ Fl_FileIcon::draw(int      x,	// I - Upper-lefthand X
 
 
 //
-// 'Fl_FileIcon::label()' - Set the widget's label to an icon.
+// 'Fl_File_Icon::label()' - Set the widget's label to an icon.
 //
 
 void
-Fl_FileIcon::label(Fl_Widget *w)	// I - Widget to label
+Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
 {
   Fl::set_labeltype(_FL_ICON_LABEL, labeltype, 0);
   w->label(_FL_ICON_LABEL, (const char*)this);
@@ -446,41 +446,41 @@ Fl_FileIcon::label(Fl_Widget *w)	// I - Widget to label
 
 
 //
-// 'Fl_FileIcon::labeltype()' - Draw the icon label.
+// 'Fl_File_Icon::labeltype()' - Draw the icon label.
 //
 
 void
-Fl_FileIcon::labeltype(const Fl_Label *o,	// I - Label data
+Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
                     int            x,	// I - X position of label
 		    int            y,	// I - Y position of label
 		    int            w,	// I - Width of label
 		    int            h,	// I - Height of label
 		    Fl_Align       a)	// I - Label alignment (not used)
 {
-  Fl_FileIcon *icon;			// Pointer to icon data
+  Fl_File_Icon *icon;			// Pointer to icon data
 
 
   (void)a;
 
-  icon = (Fl_FileIcon *)(o->value);
+  icon = (Fl_File_Icon *)(o->value);
 
   icon->draw(x, y, w, h, (Fl_Color)(o->color));
 }
 
 
 //
-// 'Fl_FileIcon::load()' - Load an icon file...
+// 'Fl_File_Icon::load()' - Load an icon file...
 //
 
 void
-Fl_FileIcon::load(const char *f)	// I - File to read from
+Fl_File_Icon::load(const char *f)	// I - File to read from
 {
   const char	*ext;		// File extension
 
 
   if ((ext = filename_ext(f)) == NULL)
   {
-    fprintf(stderr, "Fl_FileIcon::load(): Unknown file type for \"%s\".\n", f);
+    fprintf(stderr, "Fl_File_Icon::load(): Unknown file type for \"%s\".\n", f);
     return;
   }
 
@@ -494,18 +494,18 @@ Fl_FileIcon::load(const char *f)	// I - File to read from
 #endif /* 0 */
   else
   {
-    fprintf(stderr, "Fl_FileIcon::load(): Unknown file type for \"%s\".\n", f);
+    fprintf(stderr, "Fl_File_Icon::load(): Unknown file type for \"%s\".\n", f);
     return;
   }
 }
 
 
 //
-// 'Fl_FileIcon::load_fti()' - Load an SGI-format FTI file...
+// 'Fl_File_Icon::load_fti()' - Load an SGI-format FTI file...
 //
 
 void
-Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
+Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 {
   FILE	*fp;			// File pointer
   int	ch;			// Current character
@@ -518,7 +518,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
   // Try to open the file...
   if ((fp = fopen(fti, "rb")) == NULL)
   {
-    fprintf(stderr, "Fl_FileIcon::load_fti(): Unable to open \"%s\" - %s\n",
+    fprintf(stderr, "Fl_File_Icon::load_fti(): Unable to open \"%s\" - %s\n",
             fti, strerror(errno));
     return;
   }
@@ -548,7 +548,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
     // OK, this character better be a letter...
     if (!isalpha(ch))
     {
-      fprintf(stderr, "Fl_FileIcon::load_fti(): Expected a letter at file position %ld (saw '%c')\n",
+      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a letter at file position %ld (saw '%c')\n",
               ftell(fp) - 1, ch);
       break;
     }
@@ -570,7 +570,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
     // Make sure we stopped on a parenthesis...
     if (ch != '(')
     {
-      fprintf(stderr, "Fl_FileIcon::load_fti(): Expected a ( at file position %ld (saw '%c')\n",
+      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a ( at file position %ld (saw '%c')\n",
               ftell(fp) - 1, ch);
       break;
     }
@@ -591,7 +591,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
     // Make sure we stopped on a parenthesis...
     if (ch != ')')
     {
-      fprintf(stderr, "Fl_FileIcon::load_fti(): Expected a ) at file position %ld (saw '%c')\n",
+      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a ) at file position %ld (saw '%c')\n",
               ftell(fp) - 1, ch);
       break;
     }
@@ -599,7 +599,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
     // Make sure the next character is a semicolon...
     if ((ch = getc(fp)) != ';')
     {
-      fprintf(stderr, "Fl_FileIcon::load_fti(): Expected a ; at file position %ld (saw '%c')\n",
+      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a ; at file position %ld (saw '%c')\n",
               ftell(fp) - 1, ch);
       break;
     }
@@ -613,7 +613,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
       //
       //     name           FLTK color
       //     -------------  ----------
-      //     iconcolor      256; mapped to the icon color in Fl_FileIcon::draw()
+      //     iconcolor      256; mapped to the icon color in Fl_File_Icon::draw()
       //     shadowcolor    FL_DARK3
       //     outlinecolor   FL_BLACK
       if (strcmp(params, "iconcolor") == 0)
@@ -690,7 +690,7 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
     }
     else
     {
-      fprintf(stderr, "Fl_FileIcon::load_fti(): Unknown command \"%s\" at file position %ld.\n",
+      fprintf(stderr, "Fl_File_Icon::load_fti(): Unknown command \"%s\" at file position %ld.\n",
               command, ftell(fp) - 1);
       break;
     }
@@ -708,11 +708,11 @@ Fl_FileIcon::load_fti(const char *fti)	// I - File to read from
 
 
 //
-// 'Fl_FileIcon::load_xpm()' - Load an XPM icon file...
+// 'Fl_File_Icon::load_xpm()' - Load an XPM icon file...
 //
 
 void
-Fl_FileIcon::load_xpm(const char *xpm)	// I - File to read from
+Fl_File_Icon::load_xpm(const char *xpm)	// I - File to read from
 {
   FILE		*fp;			// File pointer
   int		i, j;			// Looping vars
@@ -912,12 +912,12 @@ Fl_FileIcon::load_xpm(const char *xpm)	// I - File to read from
 
 
 //
-// 'Fl_FileIcon::load_system_icons()' - Load the standard system icons/filetypes.
+// 'Fl_File_Icon::load_system_icons()' - Load the standard system icons/filetypes.
 
 void
-Fl_FileIcon::load_system_icons(void)
+Fl_File_Icon::load_system_icons(void)
 {
-  Fl_FileIcon	*icon;		// New icons
+  Fl_File_Icon	*icon;		// New icons
   static int	init = 0;	// Have the icons been initialized?
   static short	plain[] =	// Plain file icon
 		{
@@ -991,7 +991,7 @@ Fl_FileIcon::load_system_icons(void)
     if (!access("/usr/share/mimelnk", F_OK))
     {
       // Load KDE icons...
-      icon = new Fl_FileIcon("*", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/share/icons/unknown.xpm");
 
       load_kde_icons("/usr/share/mimelnk");
@@ -999,82 +999,82 @@ Fl_FileIcon::load_system_icons(void)
     else if (!access("/usr/share/icons/folder.xpm", F_OK))
     {
       // Load GNOME icons...
-      icon = new Fl_FileIcon("*", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/share/icons/page.xpm");
 
-      icon = new Fl_FileIcon("*", Fl_FileIcon::DIRECTORY);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
       icon->load_xpm("/usr/share/icons/folder.xpm");
     }
     else if (!access("/usr/dt/appconfig/icons", F_OK))
     {
       // Load CDE icons...
-      icon = new Fl_FileIcon("*", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/dt/appconfig/icons/C/Dtdata.m.pm");
 
-      icon = new Fl_FileIcon("*", Fl_FileIcon::DIRECTORY);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
       icon->load_xpm("/usr/dt/appconfig/icons/C/DtdirB.m.pm");
 
-      icon = new Fl_FileIcon("core", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("core", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/dt/appconfig/icons/C/Dtcore.m.pm");
 
-      icon = new Fl_FileIcon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/dt/appconfig/icons/C/Dtimage.m.pm");
 
-      icon = new Fl_FileIcon("*.{eps|pdf|ps}", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*.{eps|pdf|ps}", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/dt/appconfig/icons/C/Dtps.m.pm");
 
-      icon = new Fl_FileIcon("*.ppd", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
       icon->load_xpm("/usr/dt/appconfig/icons/C/DtPrtpr.m.pm");
     }
     else if (!access("/usr/lib/filetype", F_OK))
     {
       // Load SGI icons...
-      icon = new Fl_FileIcon("*", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       icon->load_fti("/usr/lib/filetype/iconlib/generic.doc.fti");
 
-      icon = new Fl_FileIcon("*", Fl_FileIcon::DIRECTORY);
+      icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
       icon->load_fti("/usr/lib/filetype/iconlib/generic.folder.closed.fti");
 
-      icon = new Fl_FileIcon("core", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("core", Fl_File_Icon::PLAIN);
       icon->load_fti("/usr/lib/filetype/default/iconlib/CoreFile.fti");
 
-      icon = new Fl_FileIcon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_FileIcon::PLAIN);
+      icon = new Fl_File_Icon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN);
       icon->load_fti("/usr/lib/filetype/system/iconlib/ImageFile.fti");
 
       if (!access("/usr/lib/filetype/install/iconlib/acroread.doc.fti", F_OK))
       {
-	icon = new Fl_FileIcon("*.{eps|ps}", Fl_FileIcon::PLAIN);
+	icon = new Fl_File_Icon("*.{eps|ps}", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
 
-	icon = new Fl_FileIcon("*.pdf", Fl_FileIcon::PLAIN);
+	icon = new Fl_File_Icon("*.pdf", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/install/iconlib/acroread.doc.fti");
       }
       else
       {
-	icon = new Fl_FileIcon("*.{eps|pdf|ps}", Fl_FileIcon::PLAIN);
+	icon = new Fl_File_Icon("*.{eps|pdf|ps}", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/system/iconlib/PostScriptFile.closed.fti");
       }
 
       if (!access("/usr/lib/filetype/install/iconlib/html.fti", F_OK))
       {
-	icon = new Fl_FileIcon("*.{htm|html|shtml}", Fl_FileIcon::PLAIN);
+	icon = new Fl_File_Icon("*.{htm|html|shtml}", Fl_File_Icon::PLAIN);
         icon->load_fti("/usr/lib/filetype/iconlib/generic.doc.fti");
 	icon->load_fti("/usr/lib/filetype/install/iconlib/html.fti");
       }
 
       if (!access("/usr/lib/filetype/install/iconlib/color.ps.idle.fti", F_OK))
       {
-	icon = new Fl_FileIcon("*.ppd", Fl_FileIcon::PLAIN);
+	icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
 	icon->load_fti("/usr/lib/filetype/install/iconlib/color.ps.idle.fti");
       }
     }
     else
     {
       // Create the default icons...
-      new Fl_FileIcon("*", Fl_FileIcon::PLAIN, sizeof(plain) / sizeof(plain[0]), plain);
-      new Fl_FileIcon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_FileIcon::PLAIN,
+      new Fl_File_Icon("*", Fl_File_Icon::PLAIN, sizeof(plain) / sizeof(plain[0]), plain);
+      new Fl_File_Icon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN,
                    sizeof(image) / sizeof(image[0]), image);
-      new Fl_FileIcon("*", Fl_FileIcon::DIRECTORY, sizeof(dir) / sizeof(dir[0]), dir);
+      new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY, sizeof(dir) / sizeof(dir[0]), dir);
     }
 
     // Mark things as initialized...
@@ -1134,7 +1134,7 @@ load_kde_mimelnk(const char *filename)
   char		mimetype[1024];
   char		*val;
   char		full_iconfilename[1024];
-  Fl_FileIcon	*icon;
+  Fl_File_Icon	*icon;
 
 
   if ((fp = fopen(filename, "rb")) != NULL)
@@ -1154,9 +1154,9 @@ load_kde_mimelnk(const char *filename)
       sprintf(full_iconfilename, "/usr/share/icons/%s", iconfilename);
 
       if (strcmp(mimetype, "inode/directory") == 0)
-	icon = new Fl_FileIcon("*", Fl_FileIcon::DIRECTORY);
+	icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
       else
-        icon = new Fl_FileIcon(kde_to_fltk_pattern(pattern), Fl_FileIcon::PLAIN);
+        icon = new Fl_File_Icon(kde_to_fltk_pattern(pattern), Fl_File_Icon::PLAIN);
 
       icon->load_xpm(full_iconfilename);
     }
@@ -1221,5 +1221,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_FileIcon.cxx,v 1.10.2.1 2001/08/02 16:17:04 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
 //

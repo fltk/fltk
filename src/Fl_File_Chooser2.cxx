@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_FileChooser2.cxx,v 1.15.2.2 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
 //
-// More Fl_FileChooser routines.
+// More Fl_File_Chooser routines.
 //
 // Copyright 1999-2001 by Michael Sweet.
 //
@@ -24,22 +24,22 @@
 //
 // Contents:
 //
-//   Fl_FileChooser::directory()  - Set the directory in the file chooser.
-//   Fl_FileChooser::count()      - Return the number of selected files.
-//   Fl_FileChooser::value()      - Return a selected filename.
-//   Fl_FileChooser::up()         - Go up one directory.
-//   Fl_FileChooser::newdir()     - Make a new directory.
-//   Fl_FileChooser::rescan()     - Rescan the current directory.
-//   Fl_FileChooser::fileListCB() - Handle clicks (and double-clicks) in the
+//   Fl_File_Chooser::directory()  - Set the directory in the file chooser.
+//   Fl_File_Chooser::count()      - Return the number of selected files.
+//   Fl_File_Chooser::value()      - Return a selected filename.
+//   Fl_File_Chooser::up()         - Go up one directory.
+//   Fl_File_Chooser::newdir()     - Make a new directory.
+//   Fl_File_Chooser::rescan()     - Rescan the current directory.
+//   Fl_File_Chooser::fileListCB() - Handle clicks (and double-clicks) in the
 //                               FileBrowser.
-//   Fl_FileChooser::fileNameCB() - Handle text entry in the FileBrowser.
+//   Fl_File_Chooser::fileNameCB() - Handle text entry in the FileBrowser.
 //
 
 //
 // Include necessary headers.
 //
 
-#include <FL/Fl_FileChooser.H>
+#include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 #include <FL/x.H>
@@ -63,11 +63,11 @@
 
 
 //
-// 'Fl_FileChooser::directory()' - Set the directory in the file chooser.
+// 'Fl_File_Chooser::directory()' - Set the directory in the file chooser.
 //
 
 void
-Fl_FileChooser::directory(const char *d)	// I - Directory to change to
+Fl_File_Chooser::directory(const char *d)	// I - Directory to change to
 {
   char	pathname[1024],			// Full path of directory
 	*pathptr,			// Pointer into full path
@@ -75,7 +75,7 @@ Fl_FileChooser::directory(const char *d)	// I - Directory to change to
   int	levels;				// Number of levels in directory
 
 
-//  printf("Fl_FileChooser::directory(\"%s\")\n", d == NULL ? "(null)" : d);
+//  printf("Fl_File_Chooser::directory(\"%s\")\n", d == NULL ? "(null)" : d);
 
   // NULL == current directory
   if (d == NULL)
@@ -148,11 +148,11 @@ Fl_FileChooser::directory(const char *d)	// I - Directory to change to
 
 
 //
-// 'Fl_FileChooser::count()' - Return the number of selected files.
+// 'Fl_File_Chooser::count()' - Return the number of selected files.
 //
 
 int				// O - Number of selected files
-Fl_FileChooser::count()
+Fl_File_Chooser::count()
 {
   int		i;		// Looping var
   int		count;		// Number of selected files
@@ -160,7 +160,7 @@ Fl_FileChooser::count()
   char		pathname[1024];	// Full path to file
 
 
-  if (type_ != MULTI)
+  if (!(type_ & MULTI))
   {
     // Check to see if the file name input field is blank...
     filename = fileName->value();
@@ -204,11 +204,11 @@ Fl_FileChooser::count()
 
 
 //
-// 'Fl_FileChooser::value()' - Return a selected filename.
+// 'Fl_File_Chooser::value()' - Return a selected filename.
 //
 
 const char *			// O - Filename or NULL
-Fl_FileChooser::value(int f)	// I - File number
+Fl_File_Chooser::value(int f)	// I - File number
 {
   int		i;		// Looping var
   int		count;		// Number of selected files
@@ -216,7 +216,7 @@ Fl_FileChooser::value(int f)	// I - File number
   static char	pathname[1024];	// Filename + directory
 
 
-  if (type_ != MULTI)
+  if (!(type_ & MULTI))
   {
     name = fileName->value();
     if (name[0] == '\0')
@@ -247,11 +247,11 @@ Fl_FileChooser::value(int f)	// I - File number
 
 
 //
-// 'Fl_FileChooser::value()' - Set the current filename.
+// 'Fl_File_Chooser::value()' - Set the current filename.
 //
 
 void
-Fl_FileChooser::value(const char *filename)	// I - Filename + directory
+Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
 {
   int	i,					// Looping var
   	count;					// Number of items in list
@@ -259,7 +259,7 @@ Fl_FileChooser::value(const char *filename)	// I - Filename + directory
   char	pathname[1024];				// Local copy of filename
 
 
-//  printf("Fl_FileChooser::value(\"%s\")\n", filename == NULL ? "(null)" : filename);
+//  printf("Fl_File_Chooser::value(\"%s\")\n", filename == NULL ? "(null)" : filename);
 
   // See if the filename is actually a directory...
   if (filename == NULL || !filename[0] || filename_isdir(filename))
@@ -270,7 +270,7 @@ Fl_FileChooser::value(const char *filename)	// I - Filename + directory
   }
 
   // Switch to single-selection mode as needed
-  if (type_ == MULTI)
+  if (type_ & MULTI)
     type(SINGLE);
 
   // See if there is a directory in there...
@@ -307,11 +307,11 @@ Fl_FileChooser::value(const char *filename)	// I - Filename + directory
 
 
 //
-// 'Fl_FileChooser::up()' - Go up one directory.
+// 'Fl_File_Chooser::up()' - Go up one directory.
 //
 
 void
-Fl_FileChooser::up()
+Fl_File_Chooser::up()
 {
   char *slash;		// Trailing slash
 
@@ -335,11 +335,11 @@ Fl_FileChooser::up()
 
 
 //
-// 'Fl_FileChooser::newdir()' - Make a new directory.
+// 'Fl_File_Chooser::newdir()' - Make a new directory.
 //
 
 void
-Fl_FileChooser::newdir()
+Fl_File_Chooser::newdir()
 {
   const char	*dir;		// New directory name
   char		pathname[1024];	// Full path of directory
@@ -380,13 +380,13 @@ Fl_FileChooser::newdir()
 
 
 //
-// 'Fl_FileChooser::rescan()' - Rescan the current directory.
+// 'Fl_File_Chooser::rescan()' - Rescan the current directory.
 //
 
 void
-Fl_FileChooser::rescan()
+Fl_File_Chooser::rescan()
 {
-//  printf("Fl_FileChooser::rescan(); directory = \"%s\"\n", directory_);
+//  printf("Fl_File_Chooser::rescan(); directory = \"%s\"\n", directory_);
 
   // Clear the current filename
   fileName->value("");
@@ -398,12 +398,12 @@ Fl_FileChooser::rescan()
 
 
 //
-// 'Fl_FileChooser::fileListCB()' - Handle clicks (and double-clicks) in the
+// 'Fl_File_Chooser::fileListCB()' - Handle clicks (and double-clicks) in the
 //                               FileBrowser.
 //
 
 void
-Fl_FileChooser::fileListCB()
+Fl_File_Chooser::fileListCB()
 {
   char	*filename,		// New filename
 	pathname[1024];		// Full pathname to file
@@ -444,18 +444,18 @@ Fl_FileChooser::fileListCB()
   {
     fileName->value(filename);
 
-    if (!filename_isdir(pathname))
+    if (!filename_isdir(pathname) || (type_ & DIRECTORY))
       okButton->activate();
   }
 }
 
 
 //
-// 'Fl_FileChooser::fileNameCB()' - Handle text entry in the FileBrowser.
+// 'Fl_File_Chooser::fileNameCB()' - Handle text entry in the FileBrowser.
 //
 
 void
-Fl_FileChooser::fileNameCB()
+Fl_File_Chooser::fileNameCB()
 {
   char		*filename,	// New filename
 		*slash,		// Pointer to trailing slash
@@ -542,11 +542,11 @@ Fl_FileChooser::fileNameCB()
     if (filename_isdir(pathname))
 #endif /* WIN32 || __EMX__ */
       directory(pathname);
-    else if (type_ == CREATE || access(pathname, 0) == 0)
+    else if ((type_ & CREATE) || access(pathname, 0) == 0)
     {
       // New file or file exists...  If we are in multiple selection mode,
       // switch to single selection mode...
-      if (type_ == MULTI)
+      if (type_ & MULTI)
         type(SINGLE);
 
       // Do any callback that is registered...
@@ -559,13 +559,6 @@ Fl_FileChooser::fileNameCB()
     else
     {
       // File doesn't exist, so beep at and alert the user...
-      // TODO: NEED TO ADD fl_beep() FUNCTION TO 2.0!
-#ifdef WIN32
-      MessageBeep(MB_ICONEXCLAMATION);
-#else
-      XBell(fl_display, 100);
-#endif // WIN32
-
       fl_alert("Please choose an existing file!");
     }
   }
@@ -681,8 +674,8 @@ Fl_FileChooser::fileNameCB()
     // See if we need to enable the OK button...
     sprintf(pathname, "%s/%s", directory_, fileName->value());
 
-    if ((type_ == CREATE || access(pathname, 0) == 0) &&
-        !filename_isdir(pathname))
+    if ((type_ & CREATE || access(pathname, 0) == 0) &&
+        (!filename_isdir(pathname) || type_ & DIRECTORY))
       okButton->activate();
     else
       okButton->deactivate();
@@ -691,5 +684,5 @@ Fl_FileChooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_FileChooser2.cxx,v 1.15.2.2 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
 //

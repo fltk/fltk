@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_HelpView.cxx,v 1.1.2.5 2001/09/10 03:09:43 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
 //
-// Fl_HelpView widget routines.
+// Fl_Help_View widget routines.
 //
 // Copyright 1997-2001 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
@@ -25,32 +25,32 @@
 //
 // Contents:
 //
-//   Fl_HelpView::add_block()       - Add a text block to the list.
-//   Fl_HelpView::add_image()       - Add an image to the image cache.
-//   Fl_HelpView::add_link()        - Add a new link to the list.
-//   Fl_HelpView::add_target()      - Add a new target to the list.
-//   Fl_HelpView::compare_targets() - Compare two targets.
-//   Fl_HelpView::do_align()        - Compute the alignment for a line in
+//   Fl_Help_View::add_block()       - Add a text block to the list.
+//   Fl_Help_View::add_image()       - Add an image to the image cache.
+//   Fl_Help_View::add_link()        - Add a new link to the list.
+//   Fl_Help_View::add_target()      - Add a new target to the list.
+//   Fl_Help_View::compare_targets() - Compare two targets.
+//   Fl_Help_View::do_align()        - Compute the alignment for a line in
 //                                    a block.
-//   Fl_HelpView::draw()            - Draw the Fl_HelpView widget.
-//   Fl_HelpView::find_image()      - Find an image by name 
-//   Fl_HelpView::format()          - Format the help text.
-//   Fl_HelpView::format_table()    - Format a table...
-//   Fl_HelpView::get_align()       - Get an alignment attribute.
-//   Fl_HelpView::get_attr()        - Get an attribute value from the string.
-//   Fl_HelpView::get_color()       - Get an alignment attribute.
-//   Fl_HelpView::handle()          - Handle events in the widget.
-//   Fl_HelpView::Fl_HelpView()     - Build a Fl_HelpView widget.
-//   Fl_HelpView::~Fl_HelpView()    - Destroy a Fl_HelpView widget.
-//   Fl_HelpView::load()            - Load the specified file.
-//   Fl_HelpView::load_gif()        - Load a GIF image file...
-//   Fl_HelpView::load_jpeg()       - Load a JPEG image file.
-//   Fl_HelpView::load_png()        - Load a PNG image file.
-//   Fl_HelpView::resize()          - Resize the help widget.
-//   Fl_HelpView::topline()         - Set the top line to the named target.
-//   Fl_HelpView::topline()         - Set the top line by number.
-//   Fl_HelpView::value()           - Set the help text directly.
-//   Fl_HelpView::compare_blocks()  - Compare two blocks.
+//   Fl_Help_View::draw()            - Draw the Fl_Help_View widget.
+//   Fl_Help_View::find_image()      - Find an image by name 
+//   Fl_Help_View::format()          - Format the help text.
+//   Fl_Help_View::format_table()    - Format a table...
+//   Fl_Help_View::get_align()       - Get an alignment attribute.
+//   Fl_Help_View::get_attr()        - Get an attribute value from the string.
+//   Fl_Help_View::get_color()       - Get an alignment attribute.
+//   Fl_Help_View::handle()          - Handle events in the widget.
+//   Fl_Help_View::Fl_Help_View()     - Build a Fl_Help_View widget.
+//   Fl_Help_View::~Fl_Help_View()    - Destroy a Fl_Help_View widget.
+//   Fl_Help_View::load()            - Load the specified file.
+//   Fl_Help_View::load_gif()        - Load a GIF image file...
+//   Fl_Help_View::load_jpeg()       - Load a JPEG image file.
+//   Fl_Help_View::load_png()        - Load a PNG image file.
+//   Fl_Help_View::resize()          - Resize the help widget.
+//   Fl_Help_View::topline()         - Set the top line to the named target.
+//   Fl_Help_View::topline()         - Set the top line by number.
+//   Fl_Help_View::value()           - Set the help text directly.
+//   Fl_Help_View::compare_blocks()  - Compare two blocks.
 //   gif_read_cmap()                - Read the colormap from a GIF file...
 //   gif_get_block()                - Read a GIF data block...
 //   gif_get_code()                 - Get a LZW code from the file...
@@ -63,7 +63,7 @@
 // Include necessary header files...
 //
 
-#include <FL/Fl_HelpView.H>
+#include <FL/Fl_Help_View.H>
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -433,24 +433,24 @@ static int	gif_read_cmap(FILE *fp, int ncolors, gif_cmap_t cmap);
 static int	gif_get_block(FILE *fp, unsigned char *buffer);
 static int	gif_get_code (FILE *fp, int code_size, int first_time);
 static int	gif_read_lzw(FILE *fp, int first_time, int input_code_size);
-static int	gif_read_image(FILE *fp, Fl_HelpImage *img, gif_cmap_t cmap,
+static int	gif_read_image(FILE *fp, Fl_Help_Image *img, gif_cmap_t cmap,
 		               int interlace);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 
 
 //
-// 'Fl_HelpView::add_block()' - Add a text block to the list.
+// 'Fl_Help_View::add_block()' - Add a text block to the list.
 //
 
-Fl_HelpBlock *					// O - Pointer to new block
-Fl_HelpView::add_block(const char    *s,	// I - Pointer to start of block text
+Fl_Help_Block *					// O - Pointer to new block
+Fl_Help_View::add_block(const char    *s,	// I - Pointer to start of block text
                        int           xx,	// I - X position of block
 		       int           yy,	// I - Y position of block
 		       int           ww,	// I - Right margin of block
 		       int           hh,	// I - Height of block
 		       unsigned char border)	// I - Draw border?
 {
-  Fl_HelpBlock	*temp;				// New block
+  Fl_Help_Block	*temp;				// New block
 
 
 //  printf("add_block(s = %p, xx = %d, yy = %d, ww = %d, hh = %d, border = %d)\n",
@@ -461,9 +461,9 @@ Fl_HelpView::add_block(const char    *s,	// I - Pointer to start of block text
     ablocks_ += 16;
 
     if (ablocks_ == 16)
-      blocks_ = (Fl_HelpBlock *)malloc(sizeof(Fl_HelpBlock) * ablocks_);
+      blocks_ = (Fl_Help_Block *)malloc(sizeof(Fl_Help_Block) * ablocks_);
     else
-      blocks_ = (Fl_HelpBlock *)realloc(blocks_, sizeof(Fl_HelpBlock) * ablocks_);
+      blocks_ = (Fl_Help_Block *)realloc(blocks_, sizeof(Fl_Help_Block) * ablocks_);
   }
 
   temp = blocks_ + nblocks_;
@@ -480,16 +480,16 @@ Fl_HelpView::add_block(const char    *s,	// I - Pointer to start of block text
 
 
 //
-// 'Fl_HelpView::add_image()' - Add an image to the image cache.
+// 'Fl_Help_View::add_image()' - Add an image to the image cache.
 //
 
-Fl_HelpImage *					// O - Image or NULL if not found
-Fl_HelpView::add_image(const char *name,	// I - Path of image
+Fl_Help_Image *					// O - Image or NULL if not found
+Fl_Help_View::add_image(const char *name,	// I - Path of image
                        const char *wattr,	// I - Width attribute
 		       const char *hattr,	// I - Height attribute
                        int        make)		// I - Make the image?
 {
-  Fl_HelpImage	*img,				// New image
+  Fl_Help_Image	*img,				// New image
 		*orig;				// Original image
   FILE		*fp;				// File pointer
   unsigned char	header[16];			// First 16 bytes of file
@@ -503,7 +503,7 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
 
 
   // See if the image has already been loaded...
-  if ((img = find_image(name, wattr, hattr)) != (Fl_HelpImage *)0)
+  if ((img = find_image(name, wattr, hattr)) != (Fl_Help_Image *)0)
   {
     // Make the image if needed...
     if (!img->image)
@@ -521,9 +521,9 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
     aimage_ += 16;
 
     if (aimage_ == 16)
-      image_ = (Fl_HelpImage *)malloc(sizeof(Fl_HelpImage) * aimage_);
+      image_ = (Fl_Help_Image *)malloc(sizeof(Fl_Help_Image) * aimage_);
     else
-      image_ = (Fl_HelpImage *)realloc(image_, sizeof(Fl_HelpImage) * aimage_);
+      image_ = (Fl_Help_Image *)realloc(image_, sizeof(Fl_Help_Image) * aimage_);
   }
 
   img       = image_ + nimage_;
@@ -572,17 +572,17 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
       localname = name;
 
     if (!localname)
-      return ((Fl_HelpImage *)0);
+      return ((Fl_Help_Image *)0);
 
     if (strncmp(localname, "file:", 5) == 0)
       localname += 5;
 
     // Figure out the file type...
     if ((fp = fopen(localname, "rb")) == NULL)
-      return ((Fl_HelpImage *)0);
+      return ((Fl_Help_Image *)0);
 
     if (fread(header, 1, sizeof(header), fp) == 0)
-      return ((Fl_HelpImage *)0);
+      return ((Fl_Help_Image *)0);
 
     rewind(fp);
 
@@ -607,7 +607,7 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
     if (!status)
     {
       free(img->name);
-      return ((Fl_HelpImage *)0);
+      return ((Fl_Help_Image *)0);
     }
 
     img->wattr[0] = '\0';
@@ -619,7 +619,7 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
     if (aimage_ == nimage_)
     {
       aimage_ += 16;
-      image_  = (Fl_HelpImage *)realloc(image_, sizeof(Fl_HelpImage) * aimage_);
+      image_  = (Fl_Help_Image *)realloc(image_, sizeof(Fl_Help_Image) * aimage_);
     }
 
     orig      = image_ + nimage_ - 1;
@@ -756,17 +756,17 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
 
 
 //
-// 'Fl_HelpView::add_link()' - Add a new link to the list.
+// 'Fl_Help_View::add_link()' - Add a new link to the list.
 //
 
 void
-Fl_HelpView::add_link(const char *n,	// I - Name of link
+Fl_Help_View::add_link(const char *n,	// I - Name of link
                       int        xx,	// I - X position of link
 		      int        yy,	// I - Y position of link
 		      int        ww,	// I - Width of link text
 		      int        hh)	// I - Height of link text
 {
-  Fl_HelpLink	*temp;			// New link
+  Fl_Help_Link	*temp;			// New link
   char		*target;		// Pointer to target name
 
 
@@ -775,9 +775,9 @@ Fl_HelpView::add_link(const char *n,	// I - Name of link
     alinks_ += 16;
 
     if (alinks_ == 16)
-      links_ = (Fl_HelpLink *)malloc(sizeof(Fl_HelpLink) * alinks_);
+      links_ = (Fl_Help_Link *)malloc(sizeof(Fl_Help_Link) * alinks_);
     else
-      links_ = (Fl_HelpLink *)realloc(links_, sizeof(Fl_HelpLink) * alinks_);
+      links_ = (Fl_Help_Link *)realloc(links_, sizeof(Fl_Help_Link) * alinks_);
   }
 
   temp = links_ + nlinks_;
@@ -804,14 +804,14 @@ Fl_HelpView::add_link(const char *n,	// I - Name of link
 
 
 //
-// 'Fl_HelpView::add_target()' - Add a new target to the list.
+// 'Fl_Help_View::add_target()' - Add a new target to the list.
 //
 
 void
-Fl_HelpView::add_target(const char *n,	// I - Name of target
+Fl_Help_View::add_target(const char *n,	// I - Name of target
                 	int        yy)	// I - Y position of target
 {
-  Fl_HelpTarget	*temp;			// New target
+  Fl_Help_Target	*temp;			// New target
 
 
   if (ntargets_ >= atargets_)
@@ -819,9 +819,9 @@ Fl_HelpView::add_target(const char *n,	// I - Name of target
     atargets_ += 16;
 
     if (atargets_ == 16)
-      targets_ = (Fl_HelpTarget *)malloc(sizeof(Fl_HelpTarget) * atargets_);
+      targets_ = (Fl_Help_Target *)malloc(sizeof(Fl_Help_Target) * atargets_);
     else
-      targets_ = (Fl_HelpTarget *)realloc(targets_, sizeof(Fl_HelpTarget) * atargets_);
+      targets_ = (Fl_Help_Target *)realloc(targets_, sizeof(Fl_Help_Target) * atargets_);
   }
 
   temp = targets_ + ntargets_;
@@ -835,23 +835,23 @@ Fl_HelpView::add_target(const char *n,	// I - Name of target
 
 
 //
-// 'Fl_HelpView::compare_targets()' - Compare two targets.
+// 'Fl_Help_View::compare_targets()' - Compare two targets.
 //
 
 int							// O - Result of comparison
-Fl_HelpView::compare_targets(const Fl_HelpTarget *t0,	// I - First target
-                             const Fl_HelpTarget *t1)	// I - Second target
+Fl_Help_View::compare_targets(const Fl_Help_Target *t0,	// I - First target
+                             const Fl_Help_Target *t1)	// I - Second target
 {
   return (strcasecmp(t0->name, t1->name));
 }
 
 
 //
-// 'Fl_HelpView::do_align()' - Compute the alignment for a line in a block.
+// 'Fl_Help_View::do_align()' - Compute the alignment for a line in a block.
 //
 
 int						// O - New line
-Fl_HelpView::do_align(Fl_HelpBlock *block,	// I - Block to add to
+Fl_Help_View::do_align(Fl_Help_Block *block,	// I - Block to add to
                       int          line,	// I - Current line
 		      int          xx,		// I - Current X position
 		      int          a,		// I - Current alignment
@@ -890,14 +890,14 @@ Fl_HelpView::do_align(Fl_HelpBlock *block,	// I - Block to add to
 
 
 //
-// 'Fl_HelpView::draw()' - Draw the Fl_HelpView widget.
+// 'Fl_Help_View::draw()' - Draw the Fl_Help_View widget.
 //
 
 void
-Fl_HelpView::draw()
+Fl_Help_View::draw()
 {
   int			i;		// Looping var
-  const Fl_HelpBlock	*block;		// Pointer to current block
+  const Fl_Help_Block	*block;		// Pointer to current block
   const char		*ptr,		// Pointer to text in block
 			*attrs;		// Pointer to start of element attributes
   char			*s,		// Pointer into buffer
@@ -1185,7 +1185,7 @@ Fl_HelpView::draw()
 	  }
 	  else if (strcasecmp(buf, "IMG") == 0)
 	  {
-	    Fl_HelpImage	*img = (Fl_HelpImage *)0;
+	    Fl_Help_Image	*img = (Fl_Help_Image *)0;
 	    int		width = 16;
 	    int		height = 24;
 	    char	wattr[8], hattr[8];
@@ -1198,7 +1198,7 @@ Fl_HelpView::draw()
 	      if ((img = add_image(attr, wattr, hattr)) != NULL)
 	      {
 	        if (!img->image)
-	          img = (Fl_HelpImage *)0;
+	          img = (Fl_Help_Image *)0;
               }
 
 	    if (img)
@@ -1351,16 +1351,16 @@ Fl_HelpView::draw()
 
 
 //
-// 'Fl_HelpView::find_image()' - Find an image by name 
+// 'Fl_Help_View::find_image()' - Find an image by name 
 //
 
-Fl_HelpImage *					// O - Image or NULL if not found
-Fl_HelpView::find_image(const char *name,	// I - Path and name of image
+Fl_Help_Image *					// O - Image or NULL if not found
+Fl_Help_View::find_image(const char *name,	// I - Path and name of image
                 	const char *wattr,	// I - Width attribute of image
 			const char *hattr)	// I - Height attribute of image
 {
   int		i;				// Looping var
-  Fl_HelpImage	*img;				// Current image
+  Fl_Help_Image	*img;				// Current image
 
 
   for (i = nimage_, img = image_; i > 0; i --, img ++) 
@@ -1369,19 +1369,19 @@ Fl_HelpView::find_image(const char *name,	// I - Path and name of image
         strcmp(img->hattr, hattr) == 0)
       return (img);
 
-  return ((Fl_HelpImage *)0);
+  return ((Fl_Help_Image *)0);
 }
 
 
 //
-// 'Fl_HelpView::format()' - Format the help text.
+// 'Fl_Help_View::format()' - Format the help text.
 //
 
 void
-Fl_HelpView::format()
+Fl_Help_View::format()
 {
   int		i;		// Looping var
-  Fl_HelpBlock	*block,		// Current block
+  Fl_Help_Block	*block,		// Current block
 		*cell;		// Current table cell
   int		row;		// Current table row (block number)
   const char	*ptr,		// Pointer into block
@@ -1434,7 +1434,7 @@ Fl_HelpView::format()
       delete image_[i].image;
       nimage_ --;
       if (i < nimage_)
-        memcpy(image_ + i, image_ + i + 1, (nimage_ - i) * sizeof(Fl_HelpImage));
+        memcpy(image_ + i, image_ + i + 1, (nimage_ - i) * sizeof(Fl_Help_Image));
       i --;
     }
 
@@ -1864,7 +1864,7 @@ Fl_HelpView::format()
 	popfont(font, size);
       else if (strcasecmp(buf, "IMG") == 0)
       {
-	Fl_HelpImage	*img = (Fl_HelpImage *)0;
+	Fl_Help_Image	*img = (Fl_Help_Image *)0;
 	int		width = 16;
 	int		height = 24;
 
@@ -1873,9 +1873,9 @@ Fl_HelpView::format()
         get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
 
 	if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
-	  if ((img = add_image(attr, wattr, hattr)) != (Fl_HelpImage *)0 &&
+	  if ((img = add_image(attr, wattr, hattr)) != (Fl_Help_Image *)0 &&
 	      img->image == NULL)
-	    img = (Fl_HelpImage *)0;
+	    img = (Fl_Help_Image *)0;
 
 	if (img)
 	{
@@ -2016,11 +2016,11 @@ Fl_HelpView::format()
   size_      = yy + hh;
 
   if (ntargets_ > 1)
-    qsort(targets_, ntargets_, sizeof(Fl_HelpTarget),
+    qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
           (compare_func_t)compare_targets);
 
   if (nblocks_ > 1)
-    qsort(blocks_, nblocks_, sizeof(Fl_HelpBlock),
+    qsort(blocks_, nblocks_, sizeof(Fl_Help_Block),
           (compare_func_t)compare_blocks);
 
   if (size_ < (h() - 8))
@@ -2033,11 +2033,11 @@ Fl_HelpView::format()
 
 
 //
-// 'Fl_HelpView::format_table()' - Format a table...
+// 'Fl_Help_View::format_table()' - Format a table...
 //
 
 void
-Fl_HelpView::format_table(int        *table_width,	// O - Total table width
+Fl_Help_View::format_table(int        *table_width,	// O - Total table width
                           int        *columns,		// O - Column widths
 	                  const char *table)		// I - Pointer to start of table
 {
@@ -2308,16 +2308,16 @@ Fl_HelpView::format_table(int        *table_width,	// O - Total table width
 	popfont(font, size);
       else if (strcasecmp(buf, "IMG") == 0 && incell)
       {
-	Fl_HelpImage	*img = (Fl_HelpImage *)0;
+	Fl_Help_Image	*img = (Fl_Help_Image *)0;
 
 
         get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
         get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
 
         if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
-	  if ((img = add_image(attr, wattr, hattr)) != (Fl_HelpImage *)0 &&
+	  if ((img = add_image(attr, wattr, hattr)) != (Fl_Help_Image *)0 &&
 	      img->image == NULL)
-	    img = (Fl_HelpImage *)0;
+	    img = (Fl_Help_Image *)0;
 
 	if (img)
 	  temp_width = img->w;
@@ -2462,11 +2462,11 @@ Fl_HelpView::format_table(int        *table_width,	// O - Total table width
 
 
 //
-// 'Fl_HelpView::get_align()' - Get an alignment attribute.
+// 'Fl_Help_View::get_align()' - Get an alignment attribute.
 //
 
 int					// O - Alignment
-Fl_HelpView::get_align(const char *p,	// I - Pointer to start of attrs
+Fl_Help_View::get_align(const char *p,	// I - Pointer to start of attrs
                        int        a)	// I - Default alignment
 {
   char	buf[255];			// Alignment value
@@ -2485,11 +2485,11 @@ Fl_HelpView::get_align(const char *p,	// I - Pointer to start of attrs
 
 
 //
-// 'Fl_HelpView::get_attr()' - Get an attribute value from the string.
+// 'Fl_Help_View::get_attr()' - Get an attribute value from the string.
 //
 
 const char *					// O - Pointer to buf or NULL
-Fl_HelpView::get_attr(const char *p,		// I - Pointer to start of attributes
+Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
                       const char *n,		// I - Name of attribute
 		      char       *buf,		// O - Buffer for attribute value
 		      int        bufsize)	// I - Size of buffer
@@ -2560,11 +2560,11 @@ Fl_HelpView::get_attr(const char *p,		// I - Pointer to start of attributes
 
 
 //
-// 'Fl_HelpView::get_color()' - Get an alignment attribute.
+// 'Fl_Help_View::get_color()' - Get an alignment attribute.
 //
 
 Fl_Color				// O - Color value
-Fl_HelpView::get_color(const char *n,	// I - Color name
+Fl_Help_View::get_color(const char *n,	// I - Color name
                        Fl_Color   c)	// I - Default color value
 {
   int	rgb, r, g, b;			// RGB values
@@ -2627,15 +2627,15 @@ Fl_HelpView::get_color(const char *n,	// I - Color name
 
 
 //
-// 'Fl_HelpView::handle()' - Handle events in the widget.
+// 'Fl_Help_View::handle()' - Handle events in the widget.
 //
 
 int				// O - 1 if we handled it, 0 otherwise
-Fl_HelpView::handle(int event)	// I - Event to handle
+Fl_Help_View::handle(int event)	// I - Event to handle
 {
   int		i;		// Looping var
   int		xx, yy;		// Adjusted mouse position
-  Fl_HelpLink	*link;		// Current link
+  Fl_Help_Link	*link;		// Current link
   char		target[32];	// Current target
 
 
@@ -2727,10 +2727,10 @@ Fl_HelpView::handle(int event)	// I - Event to handle
 
 
 //
-// 'Fl_HelpView::Fl_HelpView()' - Build a Fl_HelpView widget.
+// 'Fl_Help_View::Fl_Help_View()' - Build a Fl_Help_View widget.
 //
 
-Fl_HelpView::Fl_HelpView(int        xx,	// I - Left position
+Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
                 	 int        yy,	// I - Top position
 			 int        ww,	// I - Width in pixels
 			 int        hh,	// I - Height in pixels
@@ -2738,29 +2738,29 @@ Fl_HelpView::Fl_HelpView(int        xx,	// I - Left position
     : Fl_Group(xx, yy, ww, hh, l),
       scrollbar_(xx + ww - 17, yy, 17, hh)
 {
-  link_        = (Fl_HelpFunc *)0;
+  link_        = (Fl_Help_Func *)0;
 
   filename_[0] = '\0';
   value_       = NULL;
 
   ablocks_     = 0;
   nblocks_     = 0;
-  blocks_      = (Fl_HelpBlock *)0;
+  blocks_      = (Fl_Help_Block *)0;
 
   nimage_      = 0;
   aimage_      = 0;
-  image_       = (Fl_HelpImage *)0;
+  image_       = (Fl_Help_Image *)0;
 
   if (!broken_image)
     broken_image = new Fl_Pixmap((char **)broken_xpm);
 
   alinks_      = 0;
   nlinks_      = 0;
-  links_       = (Fl_HelpLink *)0;
+  links_       = (Fl_Help_Link *)0;
 
   atargets_    = 0;
   ntargets_    = 0;
-  targets_     = (Fl_HelpTarget *)0;
+  targets_     = (Fl_Help_Target *)0;
 
   nfonts_      = 0;
   textfont_    = FL_TIMES;
@@ -2783,13 +2783,13 @@ Fl_HelpView::Fl_HelpView(int        xx,	// I - Left position
 
 
 //
-// 'Fl_HelpView::~Fl_HelpView()' - Destroy a Fl_HelpView widget.
+// 'Fl_Help_View::~Fl_Help_View()' - Destroy a Fl_Help_View widget.
 //
 
-Fl_HelpView::~Fl_HelpView()
+Fl_Help_View::~Fl_Help_View()
 {
   int		i;		// Looping var
-  Fl_HelpImage	*img;		// Current image
+  Fl_Help_Image	*img;		// Current image
 
 
   if (nblocks_)
@@ -2814,11 +2814,11 @@ Fl_HelpView::~Fl_HelpView()
 
 
 //
-// 'Fl_HelpView::load()' - Load the specified file.
+// 'Fl_Help_View::load()' - Load the specified file.
 //
 
 int				// O - 0 on success, -1 on error
-Fl_HelpView::load(const char *f)// I - Filename to load (may also have target)
+Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 {
   FILE		*fp;		// File to read from
   long		len;		// Length of file
@@ -2898,11 +2898,11 @@ Fl_HelpView::load(const char *f)// I - Filename to load (may also have target)
 
 
 //
-// 'Fl_HelpView::load_gif()' - Load a GIF image file...
+// 'Fl_Help_View::load_gif()' - Load a GIF image file...
 //
 
 int					// O - 0 = success, -1 = fail
-Fl_HelpView::load_gif(Fl_HelpImage *img,// I - Image pointer
+Fl_Help_View::load_gif(Fl_Help_Image *img,// I - Image pointer
         	      FILE         *fp)	// I - File to load from
 {
   unsigned char	buf[1024];		// Input buffer
@@ -2980,11 +2980,11 @@ Fl_HelpView::load_gif(Fl_HelpImage *img,// I - Image pointer
 
 #ifdef HAVE_LIBJPEG
 //
-// 'Fl_HelpView::load_jpeg()' - Load a JPEG image file.
+// 'Fl_Help_View::load_jpeg()' - Load a JPEG image file.
 //
 
 int						// O - 0 = success, -1 = fail
-Fl_HelpView::load_jpeg(Fl_HelpImage *img,	// I - Image pointer
+Fl_Help_View::load_jpeg(Fl_Help_Image *img,	// I - Image pointer
                        FILE         *fp)	// I - File to load from
 {
   struct jpeg_decompress_struct	cinfo;		// Decompressor info
@@ -3035,11 +3035,11 @@ Fl_HelpView::load_jpeg(Fl_HelpImage *img,	// I - Image pointer
 
 #ifdef HAVE_LIBPNG
 //
-// 'Fl_HelpView::load_png()' - Load a PNG image file.
+// 'Fl_Help_View::load_png()' - Load a PNG image file.
 //
 
 int					// O - 0 = success, -1 = fail
-Fl_HelpView::load_png(Fl_HelpImage *img,// I - Image pointer
+Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
         	      FILE         *fp)	// I - File to read from
 {
   int		i;			// Looping var
@@ -3122,11 +3122,11 @@ Fl_HelpView::load_png(Fl_HelpImage *img,// I - Image pointer
 
 
 //
-// 'Fl_HelpView::resize()' - Resize the help widget.
+// 'Fl_Help_View::resize()' - Resize the help widget.
 //
 
 void
-Fl_HelpView::resize(int xx,	// I - New left position
+Fl_Help_View::resize(int xx,	// I - New left position
                     int yy,	// I - New top position
 		    int ww,	// I - New width
 		    int hh)	// I - New height
@@ -3139,13 +3139,13 @@ Fl_HelpView::resize(int xx,	// I - New left position
 
 
 //
-// 'Fl_HelpView::topline()' - Set the top line to the named target.
+// 'Fl_Help_View::topline()' - Set the top line to the named target.
 //
 
 void
-Fl_HelpView::topline(const char *n)	// I - Target name
+Fl_Help_View::topline(const char *n)	// I - Target name
 {
-  Fl_HelpTarget	key,			// Target name key
+  Fl_Help_Target	key,			// Target name key
 		*target;		// Pointer to matching target
 
 
@@ -3155,7 +3155,7 @@ Fl_HelpView::topline(const char *n)	// I - Target name
   strncpy(key.name, n, sizeof(key.name) - 1);
   key.name[sizeof(key.name) - 1] = '\0';
 
-  target = (Fl_HelpTarget *)bsearch(&key, targets_, ntargets_, sizeof(Fl_HelpTarget),
+  target = (Fl_Help_Target *)bsearch(&key, targets_, ntargets_, sizeof(Fl_Help_Target),
                                  (compare_func_t)compare_targets);
 
   if (target != NULL)
@@ -3164,11 +3164,11 @@ Fl_HelpView::topline(const char *n)	// I - Target name
 
 
 //
-// 'Fl_HelpView::topline()' - Set the top line by number.
+// 'Fl_Help_View::topline()' - Set the top line by number.
 //
 
 void
-Fl_HelpView::topline(int t)	// I - Top line number
+Fl_Help_View::topline(int t)	// I - Top line number
 {
   if (!value_)
     return;
@@ -3190,11 +3190,11 @@ Fl_HelpView::topline(int t)	// I - Top line number
 
 
 //
-// 'Fl_HelpView::value()' - Set the help text directly.
+// 'Fl_Help_View::value()' - Set the help text directly.
 //
 
 void
-Fl_HelpView::value(const char *v)	// I - Text to view
+Fl_Help_View::value(const char *v)	// I - Text to view
 {
   if (!v)
     return;
@@ -3212,14 +3212,14 @@ Fl_HelpView::value(const char *v)	// I - Text to view
 
 
 //
-// 'Fl_HelpView::compare_blocks()' - Compare two blocks.
+// 'Fl_Help_View::compare_blocks()' - Compare two blocks.
 //
 
 int						// O - Result of comparison
-Fl_HelpView::compare_blocks(const void *a,	// I - First block
+Fl_Help_View::compare_blocks(const void *a,	// I - First block
                             const void *b)	// I - Second block
 {
-  return (((Fl_HelpBlock *)a)->y - ((Fl_HelpBlock *)b)->y);
+  return (((Fl_Help_Block *)a)->y - ((Fl_Help_Block *)b)->y);
 }
 
 
@@ -3503,7 +3503,7 @@ gif_read_lzw(FILE *fp,			// I - File to read from
 
 static int				// I - 0 = success, -1 = failure
 gif_read_image(FILE          *fp,	// I - Input file
-	       Fl_HelpImage  *img,	// I - Image pointer
+	       Fl_Help_Image  *img,	// I - Image pointer
 	       gif_cmap_t    cmap,	// I - Colormap
 	       int           interlace)	// I - Non-zero = interlaced image
 {
@@ -3575,10 +3575,10 @@ gif_read_image(FILE          *fp,	// I - Input file
 static void
 scrollbar_callback(Fl_Widget *s, void *)
 {
-  ((Fl_HelpView *)(s->parent()))->topline(int(((Fl_Scrollbar*)s)->value()));
+  ((Fl_Help_View *)(s->parent()))->topline(int(((Fl_Scrollbar*)s)->value()));
 }
 
 
 //
-// End of "$Id: Fl_HelpView.cxx,v 1.1.2.5 2001/09/10 03:09:43 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
 //

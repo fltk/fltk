@@ -1,17 +1,17 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
-header_name {../FL/Fl_HelpDialog.H} 
+header_name {../FL/Fl_Help_Dialog.H} 
 code_name {.cxx} 
 gridx 5 
 gridy 5 
 snap 3
-class Fl_HelpDialog {open
+class Fl_Help_Dialog {open
 } {
   decl {int index_;} {}
   decl {int max_;} {}
   decl {int line_[100];} {}
   decl {char file_[100][256];} {}
-  Function {Fl_HelpDialog()} {open
+  Function {Fl_Help_Dialog()} {open
   } {
     Fl_Window window_ {
       label {Help Dialog} open selected
@@ -50,8 +50,8 @@ else if (view_->filename())
   line_[index_] = view_->topline();
 }} open
         private xywh {10 10 510 330} box DOWN_BOX resizable
-        code0 {\#include <FL/Fl_HelpView.H>}
-        class Fl_HelpView
+        code0 {\#include <FL/Fl_Help_View.H>}
+        class Fl_Help_View
       } {}
       Fl_Button {} {
         label Close
@@ -117,7 +117,7 @@ forward_->deactivate();
 index_ = -1;
 max_  = 0;} {}
   }
-  Function {~Fl_HelpDialog()} {} {
+  Function {~Fl_Help_Dialog()} {} {
     code {delete window_;} {}
   }
   Function {h()} {return_type int

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.9 2001/08/11 14:49:51 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.10 2001/09/29 14:38:59 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -41,13 +41,13 @@ CPPFILES = \
 	Fl_Counter.cxx \
 	Fl_Dial.cxx \
 	Fl_Double_Window.cxx \
-	Fl_FileBrowser.cxx \
-	Fl_FileChooser.cxx \
-	Fl_FileChooser2.cxx \
-	Fl_FileIcon.cxx \
+	Fl_File_Browser.cxx \
+	Fl_File_Chooser.cxx \
+	Fl_File_Chooser2.cxx \
+	Fl_File_Icon.cxx \
 	Fl_Group.cxx \
-	Fl_HelpDialog.cxx \
-	Fl_HelpView.cxx \
+	Fl_Help_Dialog.cxx \
+	Fl_Help_View.cxx \
 	Fl_Image.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
@@ -258,5 +258,5 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.9 2001/08/11 14:49:51 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.10 2001/09/29 14:38:59 easysw Exp $".
 #

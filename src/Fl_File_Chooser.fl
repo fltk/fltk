@@ -1,15 +1,15 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
-header_name {../FL/Fl_FileChooser.H} 
+header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx} 
 gridx 5 
 gridy 5 
 snap 3
-class Fl_FileChooser {open
+class Fl_File_Chooser {open
 } {
-  decl {enum { SINGLE, MULTI, CREATE };} {public
+  decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {selected public
   }
-  Function {Fl_FileChooser(const char *d, const char *p, int t, const char *title)} {open
+  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
   } {
     Fl_Window window {
       label {Pick a File}
@@ -25,8 +25,8 @@ window->hide();} open
       Fl_Browser fileList {
         callback {fileListCB();}
         private xywh {10 45 355 180} type Hold resizable hotspot
-        code0 {\#include <FL/Fl_FileBrowser.H>}
-        class Fl_FileBrowser
+        code0 {\#include <FL/Fl_File_Browser.H>}
+        class Fl_File_Browser
       }
       Fl_Button {} {
         label Cancel
@@ -54,7 +54,7 @@ window->hide();}
         code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
       }
       Fl_Button upButton {
-        callback {up();} selected
+        callback {up();}
         private image {up.xbm} xywh {280 10 25 25} labelsize 8
       }
       Fl_Button newButton {
@@ -91,7 +91,7 @@ value(d);
 callback_ = 0;
 data_ = 0;} {}
   }
-  decl {void (*callback_)(Fl_FileChooser*, void *);} {}
+  decl {void (*callback_)(Fl_File_Chooser*, void *);} {}
   decl {void *data_;} {}
   decl {char directory_[1024];} {}
   decl {int type_;} {}
@@ -99,7 +99,7 @@ data_ = 0;} {}
   decl {void fileNameCB();} {}
   decl {void newdir();} {}
   decl {void up();} {}
-  Function {callback(void (*cb)(Fl_FileChooser *, void *), void *d)} {return_type void
+  Function {callback(void (*cb)(Fl_File_Chooser *, void *), void *d)} {return_type void
   } {
     code {callback_ = cb;
 data_     = d;} {}
@@ -182,14 +182,18 @@ fileList->deselect();} {}
   Function {type(int t)} {return_type void
   } {
     code {type_ = t;
-if (t == MULTI)
+if (t & MULTI)
   fileList->type(FL_MULTI_BROWSER);
 else
   fileList->type(FL_HOLD_BROWSER);
-if (t != CREATE)
+if (t & CREATE)
   newButton->deactivate();
 else
-  newButton->activate();} {}
+  newButton->activate();
+if (t & DIRECTORY)
+  fileList->filetype(Fl_File_Browser::DIRECTORIES);
+else
+  fileList->filetype(Fl_File_Browser::FILES);} {}
   }
   Function {type()} {return_type int
   } {

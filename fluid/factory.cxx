@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.1 2001/08/11 16:09:26 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.2 2001/09/29 14:38:59 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -174,7 +174,7 @@ extern int compile_only;
 
 #include <FL/Fl_Browser.H>
 #include <FL/Fl_Check_Browser.H>
-#include <FL/Fl_FileBrowser.H>
+#include <FL/Fl_File_Browser.H>
 
 static Fl_Menu_Item browser_type_menu[] = {
   {"No Select",0,0,(void*)FL_NORMAL_BROWSER},
@@ -250,30 +250,26 @@ int Fl_Check_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   return 1;
 }
 
-class Fl_FileBrowser_Type : public Fl_Widget_Type {
+class Fl_File_Browser_Type : public Fl_Widget_Type {
   Fl_Menu_Item *subtypes() {return browser_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
 public:
-  virtual const char *type_name() {return "Fl_FileBrowser";}
+  virtual const char *type_name() {return "Fl_File_Browser";}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_FileBrowser* b = new Fl_FileBrowser(x,y,w,h);
-    // Fl_FileBrowser::add calls fl_height(), which requires the X display open.
+    Fl_File_Browser* b = new Fl_File_Browser(x,y,w,h);
+    // Fl_File_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
     if (!compile_only) {
-      char buffer[20];
-      for (int i = 1; i <= 20; i++) {
-	sprintf(buffer,"Browser Line %d",i);
-	b->add(buffer);
-      }
+      b->load(".");
     }
     return b;
   }
-  Fl_Widget_Type *_make() {return new Fl_FileBrowser_Type();}
+  Fl_Widget_Type *_make() {return new Fl_File_Browser_Type();}
 };
-static Fl_FileBrowser_Type Fl_FileBrowser_type;
+static Fl_File_Browser_Type Fl_File_Browser_type;
 
-int Fl_FileBrowser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_FileBrowser *myo = (Fl_FileBrowser*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+int Fl_File_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_File_Browser *myo = (Fl_File_Browser*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
     case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -419,18 +415,18 @@ static Fl_Clock_Type Fl_Clock_type;
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_HelpView.H>
-class Fl_HelpView_Type : public Fl_Widget_Type {
+#include <FL/Fl_Help_View.H>
+class Fl_Help_View_Type : public Fl_Widget_Type {
 public:
-  virtual const char *type_name() {return "Fl_HelpView";}
+  virtual const char *type_name() {return "Fl_Help_View";}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_HelpView *myo = new Fl_HelpView(x,y,w,h);
-    myo->value("<HTML><BODY><H1>Fl_HelpView Widget</H1>"
-               "<P>This is a Fl_HelpView widget.</P></BODY></HTML>");
+    Fl_Help_View *myo = new Fl_Help_View(x,y,w,h);
+    myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
+               "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
     return myo;}
-  Fl_Widget_Type *_make() {return new Fl_HelpView_Type();}
+  Fl_Widget_Type *_make() {return new Fl_Help_View_Type();}
 };
-static Fl_HelpView_Type Fl_HelpView_type;
+static Fl_Help_View_Type Fl_Help_View_type;
 
 ////////////////////////////////////////////////////////////////
 
@@ -715,12 +711,12 @@ Fl_Menu_Item New_Menu[] = {
 {"browsers",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Browser_type},
   {0,0,cb,(void*)&Fl_Check_Browser_type},
-  {0,0,cb,(void*)&Fl_FileBrowser_type},
+  {0,0,cb,(void*)&Fl_File_Browser_type},
 {0},
 {"other",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Box_type},
   {0,0,cb,(void*)&Fl_Clock_type},
-  {0,0,cb,(void*)&Fl_HelpView_type},
+  {0,0,cb,(void*)&Fl_Help_View_type},
   {0,0,cb,(void*)&Fl_Progress_type},
 {0},
 {0}};
@@ -891,5 +887,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.1 2001/08/11 16:09:26 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.2 2001/09/29 14:38:59 easysw Exp $".
 //

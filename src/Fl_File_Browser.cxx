@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_FileBrowser.cxx,v 1.13.2.5 2001/09/04 13:13:29 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
 //
-// Fl_FileBrowser routines.
+// Fl_File_Browser routines.
 //
 // Copyright 1999-2001 by Michael Sweet.
 //
@@ -24,20 +24,20 @@
 //
 // Contents:
 //
-//   Fl_FileBrowser::full_height()    - Return the height of the list.
-//   Fl_FileBrowser::item_height()    - Return the height of a list item.
-//   Fl_FileBrowser::item_width()     - Return the width of a list item.
-//   Fl_FileBrowser::item_draw()      - Draw a list item.
-//   Fl_FileBrowser::Fl_FileBrowser() - Create a Fl_FileBrowser widget.
-//   Fl_FileBrowser::load()           - Load a directory into the browser.
-//   Fl_FileBrowser::filter()         - Set the filename filter.
+//   Fl_File_Browser::full_height()    - Return the height of the list.
+//   Fl_File_Browser::item_height()    - Return the height of a list item.
+//   Fl_File_Browser::item_width()     - Return the width of a list item.
+//   Fl_File_Browser::item_draw()      - Draw a list item.
+//   Fl_File_Browser::Fl_File_Browser() - Create a Fl_File_Browser widget.
+//   Fl_File_Browser::load()           - Load a directory into the browser.
+//   Fl_File_Browser::filter()         - Set the filename filter.
 //
 
 //
 // Include necessary header files...
 //
 
-#include <FL/Fl_FileBrowser.H>
+#include <FL/Fl_File_Browser.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
 #include <stdio.h>
@@ -82,11 +82,11 @@ struct FL_BLINE			// data is in a linked list of these
 
 
 //
-// 'Fl_FileBrowser::full_height()' - Return the height of the list.
+// 'Fl_File_Browser::full_height()' - Return the height of the list.
 //
 
 int					// O - Height in pixels
-Fl_FileBrowser::full_height() const
+Fl_File_Browser::full_height() const
 {
   int	i,				// Looping var
 	th;				// Total height of list.
@@ -100,11 +100,11 @@ Fl_FileBrowser::full_height() const
 
 
 //
-// 'Fl_FileBrowser::item_height()' - Return the height of a list item.
+// 'Fl_File_Browser::item_height()' - Return the height of a list item.
 //
 
 int					// O - Height in pixels
-Fl_FileBrowser::item_height(void *p) const	// I - List item data
+Fl_File_Browser::item_height(void *p) const	// I - List item data
 {
   FL_BLINE	*line;			// Pointer to line
   char		*text;			// Pointer into text
@@ -128,7 +128,7 @@ Fl_FileBrowser::item_height(void *p) const	// I - List item data
 	height += textheight;
 
   // If we have enabled icons then add space for them...
-  if (Fl_FileIcon::first() != NULL && height < iconsize_)
+  if (Fl_File_Icon::first() != NULL && height < iconsize_)
     height = iconsize_;
 
   // Add space for the selection border..
@@ -140,11 +140,11 @@ Fl_FileBrowser::item_height(void *p) const	// I - List item data
 
 
 //
-// 'Fl_FileBrowser::item_width()' - Return the width of a list item.
+// 'Fl_File_Browser::item_width()' - Return the width of a list item.
 //
 
 int					// O - Width in pixels
-Fl_FileBrowser::item_width(void *p) const	// I - List item data
+Fl_File_Browser::item_width(void *p) const	// I - List item data
 {
   int		i;			// Looping var
   FL_BLINE	*line;			// Pointer to line
@@ -228,7 +228,7 @@ Fl_FileBrowser::item_width(void *p) const	// I - List item data
   }
 
   // If we have enabled icons then add space for them...
-  if (Fl_FileIcon::first() != NULL)
+  if (Fl_File_Icon::first() != NULL)
     width += iconsize_ + 8;
 
   // Add space for the selection border..
@@ -240,11 +240,11 @@ Fl_FileBrowser::item_width(void *p) const	// I - List item data
 
 
 //
-// 'Fl_FileBrowser::item_draw()' - Draw a list item.
+// 'Fl_File_Browser::item_draw()' - Draw a list item.
 //
 
 void
-Fl_FileBrowser::item_draw(void *p,	// I - List item data
+Fl_File_Browser::item_draw(void *p,	// I - List item data
                 	  int  x,	// I - Upper-lefthand X coordinate
 			  int  y,	// I - Upper-lefthand Y coordinate
 			  int  w,	// I - Width of item
@@ -277,7 +277,7 @@ Fl_FileBrowser::item_draw(void *p,	// I - List item data
   else
     c = textcolor();
 
-  if (Fl_FileIcon::first() == NULL)
+  if (Fl_File_Icon::first() == NULL)
   {
     // No icons, just draw the text...
     x ++;
@@ -287,7 +287,7 @@ Fl_FileBrowser::item_draw(void *p,	// I - List item data
   {
     // Draw the icon if it is set...
     if (line->data)
-      ((Fl_FileIcon *)line->data)->draw(x, y, iconsize_, iconsize_,
+      ((Fl_File_Icon *)line->data)->draw(x, y, iconsize_, iconsize_,
                                 	(line->flags & SELECTED) ? FL_YELLOW :
 				                                   FL_LIGHT2,
 					active_r());
@@ -368,10 +368,10 @@ Fl_FileBrowser::item_draw(void *p,	// I - List item data
 
 
 //
-// 'Fl_FileBrowser::Fl_FileBrowser()' - Create a Fl_FileBrowser widget.
+// 'Fl_File_Browser::Fl_File_Browser()' - Create a Fl_File_Browser widget.
 //
 
-Fl_FileBrowser::Fl_FileBrowser(int        x,	// I - Upper-lefthand X coordinate
+Fl_File_Browser::Fl_File_Browser(int        x,	// I - Upper-lefthand X coordinate
                          int        y,	// I - Upper-lefthand Y coordinate
 			 int        w,	// I - Width in pixels
 			 int        h,	// I - Height in pixels
@@ -387,20 +387,20 @@ Fl_FileBrowser::Fl_FileBrowser(int        x,	// I - Upper-lefthand X coordinate
 
 
 //
-// 'Fl_FileBrowser::load()' - Load a directory into the browser.
+// 'Fl_File_Browser::load()' - Load a directory into the browser.
 //
 
 int				// O - Number of files loaded
-Fl_FileBrowser::load(const char *directory)// I - Directory to load
+Fl_File_Browser::load(const char *directory)// I - Directory to load
 {
   int		i;		// Looping var
   int		num_files;	// Number of files in directory
   int		num_dirs;	// Number of directories in list
   char		filename[4096];	// Current file
-  Fl_FileIcon	*icon;		// Icon to use
+  Fl_File_Icon	*icon;		// Icon to use
 
 
-//  printf("Fl_FileBrowser::load(\"%s\")\n", directory);
+//  printf("Fl_File_Browser::load(\"%s\")\n", directory);
 
   clear();
   directory_ = directory;
@@ -413,8 +413,8 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
     //
 
     num_files = 0;
-    if ((icon = Fl_FileIcon::find("any", Fl_FileIcon::DEVICE)) == NULL)
-      icon = Fl_FileIcon::find("any", Fl_FileIcon::DIRECTORY);
+    if ((icon = Fl_File_Icon::find("any", Fl_File_Icon::DEVICE)) == NULL)
+      icon = Fl_File_Icon::find("any", Fl_File_Icon::DIRECTORY);
 
 #if defined(WIN32)
     DWORD	drives;		// Drive available bits
@@ -478,7 +478,7 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
 
         strncat(filename, "/", sizeof(filename) - 1);
 
-//        printf("Fl_FileBrowser::load() - adding \"%s\" to list...\n", filename);
+//        printf("Fl_File_Browser::load() - adding \"%s\" to list...\n", filename);
         add(filename, icon);
 	num_files ++;
       }
@@ -530,11 +530,11 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
 	  snprintf(name, sizeof(name), "%s/", files[i]->d_name);
 
           num_dirs ++;
-          insert(num_dirs, name, Fl_FileIcon::find(filename));
+          insert(num_dirs, name, Fl_File_Icon::find(filename));
 	}
 	else if (filetype_ == FILES &&
 	         filename_match(files[i]->d_name, pattern_))
-          add(files[i]->d_name, Fl_FileIcon::find(filename));
+          add(files[i]->d_name, Fl_File_Icon::find(filename));
       }
 
       free(files[i]);
@@ -548,11 +548,11 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
 
 
 //
-// 'Fl_FileBrowser::filter()' - Set the filename filter.
+// 'Fl_File_Browser::filter()' - Set the filename filter.
 //
 
 void
-Fl_FileBrowser::filter(const char *pattern)	// I - Pattern string
+Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 {
   // If pattern is NULL set the pattern to "*"...
   if (pattern)
@@ -566,5 +566,5 @@ Fl_FileBrowser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.5 2001/09/04 13:13:29 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
 //

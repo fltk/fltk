@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_FileIcon.H,v 1.1.2.2 2001/08/11 14:49:51 easysw Exp $"
+// "$Id: Fl_File_Icon.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $"
 //
-// Fl_FileIcon definitions.
+// Fl_File_Icon definitions.
 //
 // Copyright 1999-2001 by Michael Sweet.
 //
@@ -27,20 +27,20 @@
 // Include necessary header files...
 //
 
-#ifndef _Fl_Fl_FileIcon_H_
-#  define _Fl_Fl_FileIcon_H_
+#ifndef _Fl_Fl_File_Icon_H_
+#  define _Fl_Fl_File_Icon_H_
 
 #  include "Fl.H"
 
 
 //
-// Fl_FileIcon class...
+// Fl_File_Icon class...
 //
 
-class Fl_FileIcon			//// Icon data
+class Fl_File_Icon			//// Icon data
 {
-  FL_EXPORT static Fl_FileIcon *first_;	// Pointer to first icon/filetype
-  Fl_FileIcon	*next_;		// Pointer to next icon/filetype
+  FL_EXPORT static Fl_File_Icon *first_;	// Pointer to first icon/filetype
+  Fl_File_Icon	*next_;		// Pointer to next icon/filetype
   const char	*pattern_;	// Pattern string
   int		type_;		// Match only if directory or file?
   int		num_data_;	// Number of data elements
@@ -70,8 +70,8 @@ class Fl_FileIcon			//// Icon data
     VERTEX			// Followed by scaled X,Y
   };
 
-  FL_EXPORT Fl_FileIcon(const char *p, int t, int nd = 0, short *d = 0);
-  FL_EXPORT ~Fl_FileIcon();
+  FL_EXPORT Fl_File_Icon(const char *p, int t, int nd = 0, short *d = 0);
+  FL_EXPORT ~Fl_File_Icon();
 
   FL_EXPORT short	*add(short d);
   short			*add_color(short c)
@@ -93,13 +93,13 @@ class Fl_FileIcon			//// Icon data
   int			type() { return (type_); }
   short			*value() { return (data_); }
 
-  FL_EXPORT static Fl_FileIcon *find(const char *filename, int filetype = ANY);
-  static Fl_FileIcon *first() { return (first_); }
+  FL_EXPORT static Fl_File_Icon *find(const char *filename, int filetype = ANY);
+  static Fl_File_Icon *first() { return (first_); }
   FL_EXPORT static void	load_system_icons(void);
 };
 
-#endif // !_Fl_Fl_FileIcon_H_
+#endif // !_Fl_Fl_File_Icon_H_
 
 //
-// End of "$Id: Fl_FileIcon.H,v 1.1.2.2 2001/08/11 14:49:51 easysw Exp $".
+// End of "$Id: Fl_File_Icon.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $".
 //

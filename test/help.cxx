@@ -1,7 +1,7 @@
 //
-// "$Id: help.cxx,v 1.1.2.1 2001/08/02 19:43:49 easysw Exp $"
+// "$Id: help.cxx,v 1.1.2.2 2001/09/29 14:38:59 easysw Exp $"
 //
-// Fl_HelpDialog test program.
+// Fl_Help_Dialog test program.
 //
 // Copyright 1999-2001 by Easy Software Products.
 //
@@ -31,7 +31,7 @@
 // Include necessary headers...
 //
 
-#include <FL/Fl_HelpDialog.H>
+#include <FL/Fl_Help_Dialog.H>
 
 
 //
@@ -42,10 +42,10 @@ int				// O - Exit status
 main(int  argc,			// I - Number of command-line arguments
      char *argv[])		// I - Command-line arguments
 {
-  Fl_HelpDialog	*help;		// Help dialog
+  Fl_Help_Dialog	*help;		// Help dialog
 
 
-  help = new Fl_HelpDialog;
+  help = new Fl_Help_Dialog;
 
   if (argc < 2)
     help->load("../documentation/index.html");
@@ -63,5 +63,5 @@ main(int  argc,			// I - Number of command-line arguments
 
 
 //
-// End of "$Id: help.cxx,v 1.1.2.1 2001/08/02 19:43:49 easysw Exp $".
+// End of "$Id: help.cxx,v 1.1.2.2 2001/09/29 14:38:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.H,v 1.1.2.3 2001/09/10 03:09:43 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $"
 //
 //   Help Viewer widget definitions.
 //
@@ -24,8 +24,8 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifndef _Fl_HelpView_H_
-#  define _Fl_HelpView_H_
+#ifndef _Fl_Help_View_H_
+#  define _Fl_Help_View_H_
 
 //
 // Include necessary header files...
@@ -39,18 +39,18 @@
 
 
 //
-// Fl_HelpFunc type - link callback function for files...
+// Fl_Help_Func type - link callback function for files...
 //
 
 
-typedef const char *(Fl_HelpFunc)(const char *);
+typedef const char *(Fl_Help_Func)(const char *);
 
 
 //
-// Fl_HelpBlock structure...
+// Fl_Help_Block structure...
 //
 
-struct Fl_HelpBlock
+struct Fl_Help_Block
 {
   const char	*start,		// Start of text
 		*end;		// End of text
@@ -65,10 +65,10 @@ struct Fl_HelpBlock
 };
 
 //
-// Fl_HelpLink structure...
+// Fl_Help_Link structure...
 //
 
-struct Fl_HelpLink
+struct Fl_Help_Link
 {
   char		filename[192],	// Reference filename
 		name[32];	// Link target (blank if none)
@@ -79,22 +79,22 @@ struct Fl_HelpLink
 };
 
 //
-// Fl_HelpTarget structure...
+// Fl_Help_Target structure...
 //
 
-struct Fl_HelpTarget
+struct Fl_Help_Target
 {
   char		name[32];	// Target name
   int		y;		// Y offset of target
 };
 
 //
-// Fl_HelpImage structure...
+// Fl_Help_Image structure...
 //
 
 class Fl_Image;
 
-struct Fl_HelpImage 
+struct Fl_Help_Image 
 {
   char		*name,		// Path and name of the image
 		wattr[8],	// Width attribute
@@ -106,10 +106,10 @@ struct Fl_HelpImage
 };
 
 //
-// Fl_HelpView class...
+// Fl_Help_View class...
 //
 
-class Fl_HelpView : public Fl_Group	//// Help viewer widget
+class Fl_Help_View : public Fl_Group	//// Help viewer widget
 {
   enum { RIGHT = -1, CENTER, LEFT };	// Alignments
 
@@ -124,20 +124,20 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
 
   int		nblocks_,		// Number of blocks/paragraphs
 		ablocks_;		// Allocated blocks
-  Fl_HelpBlock	*blocks_;		// Blocks
+  Fl_Help_Block	*blocks_;		// Blocks
 
   int		nfonts_;		// Number of fonts in stack
   uchar		fonts_[100][2];		// Font stack
 
-  Fl_HelpFunc	*link_;			// Link transform function
+  Fl_Help_Func	*link_;			// Link transform function
 
   int		nlinks_,		// Number of links
 		alinks_;		// Allocated links
-  Fl_HelpLink	*links_;		// Links
+  Fl_Help_Link	*links_;		// Links
 
   int		ntargets_,		// Number of targets
 		atargets_;		// Allocated targets
-  Fl_HelpTarget	*targets_;		// Targets
+  Fl_Help_Target	*targets_;		// Targets
 
   char		directory_[1024];	// Directory for current file
   char		filename_[1024];	// Current filename
@@ -147,22 +147,22 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
 
   int		nimage_,		// Number of images in a page
 		aimage_;		// Allocated blocks
-  Fl_HelpImage	*image_;		// list of image descriptors
+  Fl_Help_Image	*image_;		// list of image descriptors
 
-  Fl_HelpImage	*add_image(const char *name, const char *wattr,
+  Fl_Help_Image	*add_image(const char *name, const char *wattr,
 		           const char *hattr, int make = 1);
-  Fl_HelpImage	*find_image(const char *name, const char *wattr,
+  Fl_Help_Image	*find_image(const char *name, const char *wattr,
 		           const char *hattr);
-  int		load_gif(Fl_HelpImage *img, FILE *fp);
-  int		load_jpeg(Fl_HelpImage *img, FILE *fp);
-  int		load_png(Fl_HelpImage *img, FILE *fp);
+  int		load_gif(Fl_Help_Image *img, FILE *fp);
+  int		load_jpeg(Fl_Help_Image *img, FILE *fp);
+  int		load_png(Fl_Help_Image *img, FILE *fp);
 
-  Fl_HelpBlock	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
+  Fl_Help_Block	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   static int	compare_blocks(const void *a, const void *b);
   void		add_link(const char *n, int xx, int yy, int ww, int hh);
   void		add_target(const char *n, int yy);
-  static int	compare_targets(const Fl_HelpTarget *t0, const Fl_HelpTarget *t1);
-  int		do_align(Fl_HelpBlock *block, int line, int xx, int a, int &l);
+  static int	compare_targets(const Fl_Help_Target *t0, const Fl_Help_Target *t1);
+  int		do_align(Fl_Help_Block *block, int line, int xx, int a, int &l);
   void		draw();
   void		format();
   void		format_table(int *table_width, int *columns, const char *table);
@@ -183,13 +183,13 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
 
   public:
 
-  Fl_HelpView(int xx, int yy, int ww, int hh, const char *l = 0);
-  ~Fl_HelpView();
+  Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
+  ~Fl_Help_View();
   const char	*directory() const { if (directory_[0]) return (directory_);
   					else return ((const char *)0); }
   const char	*filename() const { if (filename_[0]) return (filename_);
   					else return ((const char *)0); }
-  void		link(Fl_HelpFunc *fn) { link_ = fn; }
+  void		link(Fl_Help_Func *fn) { link_ = fn; }
   int		load(const char *f);
   void		resize(int,int,int,int);
   int		size() const { return (size_); }
@@ -207,8 +207,8 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
   const char	*value() const { return (value_); }
 };
 
-#endif // !_Fl_HelpView_H_
+#endif // !_Fl_Help_View_H_
 
 //
-// End of "$Id: Fl_HelpView.H,v 1.1.2.3 2001/09/10 03:09:43 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: file_chooser.cxx,v 1.4.2.3.2.1 2001/08/03 18:46:57 easysw Exp $"
+// "$Id: file_chooser.cxx,v 1.4.2.3.2.2 2001/09/29 14:38:59 easysw Exp $"
 //
 // File chooser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -28,7 +28,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_file_chooser.H>
-#include <FL/Fl_FileIcon.H>
+#include <FL/Fl_File_Icon.H>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -43,7 +43,7 @@ void pickfile(Fl_Widget *) {
 }
 
 int main(int argc, char **argv) {
-  Fl_FileIcon::load_system_icons();
+  Fl_File_Icon::load_system_icons();
   Fl_Window window(310,110);
   pattern = new Fl_Input(100,10,200,25,"Pattern:");
   pattern->static_value("*");
@@ -56,5 +56,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.1 2001/08/03 18:46:57 easysw Exp $".
+// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.2 2001/09/29 14:38:59 easysw Exp $".
 //

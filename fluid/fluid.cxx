@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.5 2001/09/23 13:08:02 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.6 2001/09/29 14:38:59 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -48,7 +48,7 @@ const char *copyright =
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_HelpDialog.H>
+#include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Input.H>
@@ -81,7 +81,7 @@ extern int snprintf(char* str, size_t size, const char* fmt, ...);
 
 #include "Fl_Type.h"
 
-static Fl_HelpDialog *help_dialog = 0;
+static Fl_Help_Dialog *help_dialog = 0;
 
 
 ////////////////////////////////////////////////////////////////
@@ -350,7 +350,7 @@ void show_help(const char *name) {
   const char	*docdir;
   char		filename[1024];
   
-  if (!help_dialog) help_dialog = new Fl_HelpDialog();
+  if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
   if ((docdir = getenv("FLTK_DOCDIR")) == NULL)
     docdir = FLTK_DOCDIR;
@@ -518,5 +518,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.5 2001/09/23 13:08:02 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.6 2001/09/29 14:38:59 easysw Exp $".
 //
