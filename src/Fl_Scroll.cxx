@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.7 2004/04/06 02:47:26 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.8 2004/04/10 00:37:03 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -24,6 +24,7 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/Fl_Image.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_draw.H>
 
@@ -52,40 +53,39 @@ void Fl_Scroll::fix_scrollbar_order() {
 void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   fl_clip(X,Y,W,H);
   Fl_Scroll* s = (Fl_Scroll*)v;
-  // erase background if there is a boxtype:
-  if (s->box()) {
-    fl_color(s->color());
-    fl_rectf(X,Y,W,H);
+  // erase background as needed...
+  switch (s->box()) {
+    case FL_NO_BOX :
+    case FL_UP_FRAME :
+    case FL_DOWN_FRAME :
+    case FL_THIN_UP_FRAME :
+    case FL_THIN_DOWN_FRAME :
+    case FL_ENGRAVED_FRAME :
+    case FL_EMBOSSED_FRAME :
+    case FL_BORDER_FRAME :
+    case _FL_SHADOW_FRAME :
+    case _FL_ROUNDED_FRAME :
+    case _FL_OVAL_FRAME :
+    case _FL_PLASTIC_UP_FRAME :
+    case _FL_PLASTIC_DOWN_FRAME :
+        if (s->parent() == (Fl_Group *)s->window() && Fl::scheme_bg_) {
+	  Fl::scheme_bg_->draw(X-(X%Fl::scheme_bg_->w()),
+	                       Y-(Y%Fl::scheme_bg_->h()),
+	                       W+Fl::scheme_bg_->w(),
+			       H+Fl::scheme_bg_->h());
+	  break;
+        } else if (s->box() == FL_NO_BOX) break;
+
+    default :
+	fl_color(s->color());
+	fl_rectf(X,Y,W,H);
+	break;
   }
   Fl_Widget*const* a = s->array();
-  int R = X; int B = Y; // track bottom & right edge of all children
   for (int i=s->children()-2; i--;) {
     Fl_Widget& o = **a++;
-    int NR, NB;
     s->draw_child(o);
     s->draw_outside_label(o);
-    NR = o.x()+o.w();
-    NB = o.y()+o.h();
-    if ((o.align() & (FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT)) &&
-        !(o.align() & FL_ALIGN_INSIDE)) {
-      int LW = 0, LH = 0;
-      o.measure_label(LW, LH);
-      if (o.align() & FL_ALIGN_BOTTOM) NB += LH;
-      else NR += LW;
-    }
-    if (NR > R) R = NR;
-    if (NB > B) B = NB;
-  }
-  // fill any area to right & bottom of widgets:
-  if (s->box()) {
-    if (R < X+W && B > Y) {
-      fl_color(s->color());
-      fl_rectf(R,Y,X+W-R,B-Y);
-    }
-    if (B < Y+H) {
-      fl_color(s->color());
-      fl_rectf(X,B,W,Y+H-B);
-    }
   }
   fl_pop_clip();
 }
@@ -271,5 +271,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.7 2004/04/06 02:47:26 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.8 2004/04/10 00:37:03 easysw Exp $".
 //
