@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.no-cygwin,v 1.1.2.1 2000/06/20 05:47:36 bill Exp $"
+# "$Id: makeinclude.no-cygwin,v 1.1.2.2 2000/06/20 17:54:41 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -73,8 +73,9 @@ DSONAME		=
 DSOCOMMAND	= echo
 
 # libraries to link with (in addition to default libs):
-LDLIBS		=  -lm -lgdi32 -lwsock32 -mno-cygwin
-GLDLIBS		=  -lglu32 -lopengl32 -lm -lgdi32 -lwsock32 -mno-cygwin
+# (Note: -lm may be required with older versions of the Cygwin environment)
+LDLIBS		=  -lgdi32 -lwsock32 -mno-cygwin
+GLDLIBS		=  -lglu32 -lopengl32 -lgdi32 -lwsock32 -mno-cygwin
 
 # Be quiet when building...
 .SILENT:
@@ -95,5 +96,5 @@ GLDLIBS		=  -lglu32 -lopengl32 -lm -lgdi32 -lwsock32 -mno-cygwin
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.no-cygwin,v 1.1.2.1 2000/06/20 05:47:36 bill Exp $".
+# End of "$Id: makeinclude.no-cygwin,v 1.1.2.2 2000/06/20 17:54:41 mike Exp $".
 #
