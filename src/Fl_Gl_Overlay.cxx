@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.16 2001/03/15 22:39:56 easysw Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.17 2001/03/20 18:02:52 spitzak Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -126,13 +126,6 @@ void Fl_Gl_Window::make_overlay() {
 //static COLORREF *palette;
 extern int fl_overlay_depth;
 
-int Fl_Gl_Window::can_do_overlay() {
-  HDC hdc = Fl_X::i(this)->private_dc;
-  LAYERPLANEDESCRIPTOR pfd;
-
-  return (wglDescribeLayerPlane(hdc, g->pixelformat, 1, sizeof(pfd), &pfd));
-}
-
 void Fl_Gl_Window::make_overlay() {
   if (overlay) return;
 
@@ -166,6 +159,14 @@ void Fl_Gl_Window::make_overlay() {
   }
   valid(0);
   return;
+}
+
+int Fl_Gl_Window::can_do_overlay() {
+  if (!g) {
+    g = Fl_Gl_Choice::find(mode_,alist);
+    if (!g) return 0;
+  }
+  return (g->pfd.bReserved & 15) != 0;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -213,5 +214,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.16 2001/03/15 22:39:56 easysw Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.17 2001/03/20 18:02:52 spitzak Exp $".
 //

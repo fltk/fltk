@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.7 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8 2001/03/20 18:02:52 spitzak Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -147,8 +147,6 @@ void Fl_Window::show(int argc, char **argv) {
   // set colors first, so background_pixel is correct:
   static char beenhere;
   if (!beenhere) {
-    beenhere = 1;
-    Fl::get_system_colors(); // opens display!  May call Fl::fatal()
     if (geometry) {
       int flags = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
       flags = XParseGeometry(geometry, &gx, &gy, &gw, &gh);
@@ -168,11 +166,18 @@ void Fl_Window::show(int argc, char **argv) {
     }
   }
 
+  // set the class, which is used by X version of get_system_colors:
   if (name) {xclass(name); name = 0;}
   else if (!xclass()) xclass(filename_name(argv[0]));
+
   if (title) {label(title); title = 0;}
   else if (!label()) label(xclass());
   show();
+
+  if (!beenhere) {
+    beenhere = 1;
+    Fl::get_system_colors(); // opens display!  May call Fl::fatal()
+  }
 
 #ifndef WIN32
   // set the command string, used by state-saving window managers:
@@ -352,5 +357,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.7 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8 2001/03/20 18:02:52 spitzak Exp $".
 //

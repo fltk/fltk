@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.6 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7 2001/03/20 18:02:52 spitzak Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -58,6 +58,10 @@ const char *fl_fg;
 const char *fl_bg;
 const char *fl_bg2;
 
+static void set_selection_color(uchar r, uchar g, uchar b) {
+  Fl::set_color(FL_SELECTION_COLOR,r,g,b);
+}
+
 #ifdef WIN32
 
 #include <stdio.h>
@@ -103,48 +107,48 @@ void Fl::get_system_colors() {
   getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
   getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
   getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
+  getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
 }
 
 #else
 
-// For X we should do something. KDE and Gnome store these colors in
-// some standard places, where?
+// Read colors that KDE writes to the xrdb database.
+
+// XGetDefault does not do the expected thing: it does not like
+// periods in either word. Therefore it cannot match class.Text.background.
+// However *.Text.background is matched by pretending the program is "Text".
+// But this will also match *.background if there is no *.Text.background
+// entry, requiring users to put in both (unless they want the text fields
+// the same color as the windows).
 
 static void
-getsyscolor(const char *arg, void (*func)(uchar,uchar,uchar)) {
-  if (arg) {
-    XColor x;
-    if (!XParseColor(fl_display, fl_colormap, arg, &x))
-      Fl::error("Unknown color: %s", arg);
-    else
-      func(x.red>>8, x.green>>8, x.blue>>8);
-  }
-}
-
-static const char *
-xdefaultcolor (const char *flcol, const char *key1, const char *key2)
+getsyscolor(const char *key1, const char* key2, const char *arg, void (*func)(uchar,uchar,uchar))
 {
-  if (!flcol)
-    return XGetDefault (fl_display, key1, key2);
+  if (!arg) {
+    arg = XGetDefault (fl_display, key1, key2);
+    if (!arg) return;
+  }
+  XColor x;
+  if (!XParseColor(fl_display, fl_colormap, arg, &x))
+    Fl::error("Unknown color: %s", arg);
   else
-    return flcol;
-}
-
-static void set_selection_color(uchar r, uchar g, uchar b) {
-  Fl::set_color(FL_SELECTION_COLOR,r,g,b);
+    func(x.red>>8, x.green>>8, x.blue>>8);
 }
 
 void Fl::get_system_colors()
 {
   fl_open_display();
-  getsyscolor(xdefaultcolor(fl_bg2, "Entry", "background"), Fl::background2);
-  getsyscolor(xdefaultcolor(fl_bg, "*", "background"), Fl::background);
-  getsyscolor(xdefaultcolor(fl_fg, "*", "foreground"), Fl::foreground);
-  getsyscolor(xdefaultcolor(0,"Text","selectBackground"), set_selection_color);
+  const char* key1 = 0;
+  if (Fl::first_window()) key1 = Fl::first_window()->xclass();
+  if (!key1) key1 = "fltk";
+  getsyscolor(key1,  "background",	fl_bg,	Fl::background);
+  getsyscolor(key1,  "foreground",	fl_fg,	Fl::foreground);
+  getsyscolor("Text","background",	fl_bg2,	Fl::background2);
+  getsyscolor(key1,  "selectBackground",0,	set_selection_color);
 }
 
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.6 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7 2001/03/20 18:02:52 spitzak Exp $".
 //
