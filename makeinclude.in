@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.11.2.9 2001/11/29 21:24:49 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.11.2.10 2001/12/06 02:20:36 matthiaswm Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -70,6 +70,9 @@ GLDEMOS		=@GLDEMOS@
 # The extension to use for executables...
 EXEEXT		=@EXEEXT@
 
+# Possible steps after linking...
+POSTBUILD	=@POSTBUILD@
+
 # Man page extensions...
 CAT1EXT		=@CAT1EXT@
 CAT3EXT		=@CAT3EXT@
@@ -83,6 +86,7 @@ CAT3EXT		=@CAT3EXT@
 .o$(EXEEXT):
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(POSTBUILD)
 
 .c.o:
 	echo Compiling $@...
@@ -105,5 +109,5 @@ CAT3EXT		=@CAT3EXT@
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.11.2.9 2001/11/29 21:24:49 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.11.2.10 2001/12/06 02:20:36 matthiaswm Exp $".
 #

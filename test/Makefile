@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.15 2001/11/29 22:22:08 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.16 2001/12/06 02:20:36 matthiaswm Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -164,57 +164,72 @@ $(ALL):  ../lib/$(LIBNAME)
 editor$(EXEEXT): editor.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) editor.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(POSTBUILD)
 file_chooser$(EXEEXT): file_chooser.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) file_chooser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(POSTBUILD)
 help$(EXEEXT): help.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(POSTBUILD)
 keyboard$(EXEEXT): keyboard.cxx keyboard_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx $(LINKFLTK) $(LDLIBS) -o $@
+	$(POSTBUILD)
 mandelbrot$(EXEEXT): mandelbrot.cxx mandelbrot_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx $(LINKFLTK) $(LDLIBS) -o $@
+	$(POSTBUILD)
 pixmap_browser$(EXEEXT): pixmap_browser.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(POSTBUILD)
 
 # OpenGL demos...
 CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	echo Compiling and linking $@...
 	$(CXX) $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 
 cube$(EXEEXT): cube.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) cube.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 fractals$(EXEEXT): fractals.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fractals.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 fullscreen$(EXEEXT): fullscreen.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fullscreen.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 glpuzzle$(EXEEXT): glpuzzle.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) glpuzzle.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 gl_overlay$(EXEEXT): gl_overlay.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) gl_overlay.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 shiny$(EXEEXT): shiny.cxx shiny_panel.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 shape$(EXEEXT): shape.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shape.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(POSTBUILD)
 
 # If you have libjpeg installed, you might want to try this test program:
 
 jpeg_image$(EXEEXT): jpeg_image.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) jpeg_image.cxx $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
+	$(POSTBUILD)
 
 depend:
 #	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
@@ -230,5 +245,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.15 2001/11/29 22:22:08 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.16 2001/12/06 02:20:36 matthiaswm Exp $".
 #

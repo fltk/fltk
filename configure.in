@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.35 2001/12/04 19:57:45 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.36 2001/12/06 02:20:36 matthiaswm Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -258,6 +258,9 @@ AC_EXEEXT
 dnl Check for standard graphics API and OpenGL...
 HLINKS=
 
+dnl some environments need postprocessing (Darwin, MacOS)
+POSTBUILD=
+
 case $uname in
     CYGWIN*)
 	dnl Cygwin environment...
@@ -289,7 +292,7 @@ case $uname in
 	if test x$enable_gl != xno; then
             AC_DEFINE(HAVE_GL)
             AC_DEFINE(HAVE_GL_GLU_H)
-            GLLIB="-framework OpenGL"
+            GLLIB="-framework AGL -framework OpenGL"
         else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
@@ -298,6 +301,8 @@ case $uname in
         fi
 	# Don't make symlinks because HFS+ is not case sensitive...
 	HLINKS="#"
+	# Add a postbuild step after linking applications
+	POSTBUILD="/Developer/Tools/Rez -t APPL ../FL/mac.r -o \$@"
 	;;
     *)
 	dnl Check for X11...
@@ -371,6 +376,7 @@ esac
 AC_SUBST(HLINKS)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
+AC_SUBST(POSTBUILD)
 
 dnl Figure out the appropriate formatted man page extension...
 case "$uname" in
@@ -586,5 +592,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.35 2001/12/04 19:57:45 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.36 2001/12/06 02:20:36 matthiaswm Exp $".
 dnl
