@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.8 2000/06/20 07:56:09 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.9 2000/09/19 07:21:19 spitzak Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -675,6 +675,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       if (!(damage()&FL_DAMAGE_EXPOSE)) {minimal_update(position_); erase_cursor_only = 1;}
     } else //if (Fl::selection_owner() != this)
       minimal_update(mark_, position_);
+  case FL_HIDE:
     if (when() & FL_WHEN_RELEASE) maybe_do_callback();
     return 1;
 
@@ -809,5 +810,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.8 2000/06/20 07:56:09 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.9 2000/09/19 07:21:19 spitzak Exp $".
 //
