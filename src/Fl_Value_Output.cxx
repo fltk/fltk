@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Value_Output.cxx,v 1.5 1998/12/02 15:39:34 mike Exp $"
+// "$Id: Fl_Value_Output.cxx,v 1.6 1999/01/07 19:17:28 mike Exp $"
 //
 // Value output widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -94,5 +94,5 @@ Fl_Value_Output::Fl_Value_Output(int x,int y,int w,int h,const char *l)
 }
 
 //
-// End of "$Id: Fl_Value_Output.cxx,v 1.5 1998/12/02 15:39:34 mike Exp $".
+// End of "$Id: Fl_Value_Output.cxx,v 1.6 1999/01/07 19:17:28 mike Exp $".
 //

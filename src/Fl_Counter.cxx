@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.7 1998/12/02 18:55:57 mike Exp $"
+// "$Id: Fl_Counter.cxx,v 1.8 1999/01/07 19:17:19 mike Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -165,5 +165,5 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.7 1998/12/02 18:55:57 mike Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.8 1999/01/07 19:17:19 mike Exp $".
 //

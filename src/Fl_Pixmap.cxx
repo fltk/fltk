@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.7 1998/12/15 15:42:35 mike Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.8 1999/01/07 19:17:24 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -196,5 +196,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.7 1998/12/15 15:42:35 mike Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.8 1999/01/07 19:17:24 mike Exp $".
 //

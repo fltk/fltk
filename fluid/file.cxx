@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.5 1998/12/06 15:52:16 mike Exp $"
+// "$Id: file.cxx,v 1.6 1999/01/07 19:17:13 mike Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -8,7 +8,7 @@
 // They are somewhat similar to tcl, using matching { and }
 // to quote strings.
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -587,5 +587,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.5 1998/12/06 15:52:16 mike Exp $".
+// End of "$Id: file.cxx,v 1.6 1999/01/07 19:17:13 mike Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: scandir_win32.c,v 1.10 1999/01/04 19:25:06 mike Exp $"
+// "$Id: scandir_win32.c,v 1.11 1999/01/07 19:17:47 mike Exp $"
 //
 // WIN32 scandir function for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -98,5 +98,5 @@ int alphasort (struct dirent **a, struct dirent **b) {
 }
 
 //
-// End of "$Id: scandir_win32.c,v 1.10 1999/01/04 19:25:06 mike Exp $".
+// End of "$Id: scandir_win32.c,v 1.11 1999/01/07 19:17:47 mike Exp $".
 //

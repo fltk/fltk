@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.11 1998/11/09 13:53:38 mike Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12 1999/01/07 19:17:20 mike Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -328,5 +328,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.11 1998/11/09 13:53:38 mike Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12 1999/01/07 19:17:20 mike Exp $".
 //

@@ -1,10 +1,10 @@
 /*
- * "$Id: dummymain.c,v 1.1 1999/01/04 19:25:04 mike Exp $"
+ * "$Id: dummymain.c,v 1.2 1999/01/07 19:17:34 mike Exp $"
  *
  * Dummy main() entry routine for the Fast Light Tool Kit (FLTK).
  * This is only used to build the WIN32 DLL.
  *
- * Copyright 1998 by Bill Spitzak and others.
+ * Copyright 1998-1999 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,5 +29,5 @@ int main(int argc, char **argv) { return 0; }
 #endif /* WIN32 */
 
 /*
- * End of "$Id: dummymain.c,v 1.1 1999/01/04 19:25:04 mike Exp $".
+ * End of "$Id: dummymain.c,v 1.2 1999/01/07 19:17:34 mike Exp $".
  */

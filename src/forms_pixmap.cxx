@@ -1,9 +1,9 @@
 //
-// "$Id: forms_pixmap.cxx,v 1.3 1998/10/21 14:21:06 mike Exp $"
+// "$Id: forms_pixmap.cxx,v 1.4 1999/01/07 19:17:45 mike Exp $"
 //
 // Forms pixmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -46,5 +46,5 @@ void Fl_FormsPixmap::draw() {
 }
 
 //
-// End of "$Id: forms_pixmap.cxx,v 1.3 1998/10/21 14:21:06 mike Exp $".
+// End of "$Id: forms_pixmap.cxx,v 1.4 1999/01/07 19:17:45 mike Exp $".
 //

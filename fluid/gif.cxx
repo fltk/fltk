@@ -1,9 +1,9 @@
 //
-// "$Id: gif.cxx,v 1.2 1998/10/21 16:29:01 mike Exp $"
+// "$Id: gif.cxx,v 1.3 1999/01/07 19:17:14 mike Exp $"
 //
 // GIF support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -359,5 +359,5 @@ int gif2xpm(
 }
 
 //
-// End of "$Id: gif.cxx,v 1.2 1998/10/21 16:29:01 mike Exp $".
+// End of "$Id: gif.cxx,v 1.3 1999/01/07 19:17:14 mike Exp $".
 //

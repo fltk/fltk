@@ -1,9 +1,9 @@
 //
-// "$Id: gl_start.cxx,v 1.5 1998/10/21 14:21:08 mike Exp $"
+// "$Id: gl_start.cxx,v 1.6 1999/01/07 19:17:46 mike Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -121,5 +121,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.5 1998/10/21 14:21:08 mike Exp $".
+// End of "$Id: gl_start.cxx,v 1.6 1999/01/07 19:17:46 mike Exp $".
 //

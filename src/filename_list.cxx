@@ -1,9 +1,9 @@
 //
-// "$Id: filename_list.cxx,v 1.7 1998/11/08 15:34:18 mike Exp $"
+// "$Id: filename_list.cxx,v 1.8 1999/01/07 19:17:35 mike Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -55,5 +55,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.7 1998/11/08 15:34:18 mike Exp $".
+// End of "$Id: filename_list.cxx,v 1.8 1999/01/07 19:17:35 mike Exp $".
 //

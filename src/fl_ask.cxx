@@ -1,9 +1,9 @@
 //
-// "$Id: fl_ask.cxx,v 1.6 1998/12/02 15:39:35 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.7 1999/01/07 19:17:36 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -195,5 +195,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.6 1998/12/02 15:39:35 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.7 1999/01/07 19:17:36 mike Exp $".
 //

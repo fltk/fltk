@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_cutpaste.cxx,v 1.4 1998/12/07 13:36:22 mike Exp $"
+// "$Id: Fl_cutpaste.cxx,v 1.5 1999/01/07 19:17:31 mike Exp $"
 //
 // Cut/paste code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -149,5 +149,5 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
 #endif
 
 //
-// End of "$Id: Fl_cutpaste.cxx,v 1.4 1998/12/07 13:36:22 mike Exp $".
+// End of "$Id: Fl_cutpaste.cxx,v 1.5 1999/01/07 19:17:31 mike Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_XColor.H,v 1.3 1998/10/21 14:20:29 mike Exp $"
+// "$Id: Fl_XColor.H,v 1.4 1999/01/07 19:17:30 mike Exp $"
 //
 // X-specific color definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -39,5 +39,5 @@ extern unsigned char fl_redmask, fl_greenmask, fl_bluemask;
 extern int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
 
 //
-// End of "$Id: Fl_XColor.H,v 1.3 1998/10/21 14:20:29 mike Exp $".
+// End of "$Id: Fl_XColor.H,v 1.4 1999/01/07 19:17:30 mike Exp $".
 //

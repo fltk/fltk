@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_win32.cxx,v 1.23 1999/01/07 17:20:03 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.24 1999/01/07 19:17:33 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -862,5 +862,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.23 1999/01/07 17:20:03 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.24 1999/01/07 19:17:33 mike Exp $".
 //

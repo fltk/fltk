@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.h,v 1.2 1998/10/21 16:28:57 mike Exp $"
+// "$Id: Fluid_Image.h,v 1.3 1999/01/07 19:17:12 mike Exp $"
 //
 // Pixmap image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -9,7 +9,7 @@
 // in Fluid_Image.C for each type of image format.  Right now only xpm
 // files are supported.
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -51,5 +51,5 @@ public:
 Fluid_Image *ui_find_image(const char *);
 
 //
-// End of "$Id: Fluid_Image.h,v 1.2 1998/10/21 16:28:57 mike Exp $".
+// End of "$Id: Fluid_Image.h,v 1.3 1999/01/07 19:17:12 mike Exp $".
 //

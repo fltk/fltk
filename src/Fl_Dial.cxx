@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.4 1998/10/21 14:20:02 mike Exp $"
+// "$Id: Fl_Dial.cxx,v 1.5 1999/01/07 19:17:19 mike Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -134,5 +134,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.4 1998/10/21 14:20:02 mike Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.5 1999/01/07 19:17:19 mike Exp $".
 //

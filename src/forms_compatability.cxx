@@ -1,9 +1,9 @@
 //
-// "$Id: forms_compatability.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $"
+// "$Id: forms_compatability.cxx,v 1.5 1999/01/07 19:17:44 mike Exp $"
 //
 // Forms compatibility functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -204,5 +204,5 @@ char *fl_show_simple_input(const char *str1, const char *defstr) {
 }
 
 //
-// End of "$Id: forms_compatability.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $".
+// End of "$Id: forms_compatability.cxx,v 1.5 1999/01/07 19:17:44 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: subwindow.cxx,v 1.3 1998/10/21 14:21:43 mike Exp $"
+// "$Id: subwindow.cxx,v 1.4 1999/01/07 19:18:01 mike Exp $"
 //
 // Nested window test program for the Fast Light Tool Kit (FLTK).
 //
@@ -8,7 +8,7 @@
 // Buttons and pop-up menu should work, indicating that mouse positions
 // are being correctly translated.
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -132,5 +132,5 @@ int main(int, char **) {
 }
 
 //
-// End of "$Id: subwindow.cxx,v 1.3 1998/10/21 14:21:43 mike Exp $".
+// End of "$Id: subwindow.cxx,v 1.4 1999/01/07 19:18:01 mike Exp $".
 //

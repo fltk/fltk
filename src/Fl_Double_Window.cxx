@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.11 1999/01/07 16:47:41 mike Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12 1999/01/07 19:17:19 mike Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -192,5 +192,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.11 1999/01/07 16:47:41 mike Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12 1999/01/07 19:17:19 mike Exp $".
 //

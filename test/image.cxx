@@ -1,5 +1,5 @@
 //
-// "$Id: image.cxx,v 1.5 1998/12/06 15:57:03 mike Exp $"
+// "$Id: image.cxx,v 1.6 1999/01/07 19:17:55 mike Exp $"
 //
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -7,7 +7,7 @@
 // as an icon or postage stamp.  Use fl_draw_image to go directly
 // from an buffered image that changes often.
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -133,5 +133,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: image.cxx,v 1.5 1998/12/06 15:57:03 mike Exp $".
+// End of "$Id: image.cxx,v 1.6 1999/01/07 19:17:55 mike Exp $".
 //

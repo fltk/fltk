@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.14 1998/12/23 20:04:31 mike Exp $"
+# "$Id: Makefile,v 1.15 1999/01/07 19:17:48 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998 by Bill Spitzak and others.
+# Copyright 1998-1999 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -64,30 +64,10 @@ $(ALL):  ../lib/$(LIBNAME)
 	@../fluid/fluid -c $<
 	@$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
 
-# Programs needing the OpenGL libraries:
-cube: cube.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) cube.cxx -L../lib -lfltk $(GLDLIBS) -o $@
-fullscreen: fullscreen.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) fullscreen.cxx -L../lib -lfltk $(GLDLIBS) -o $@
-fractals: fractals.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) fractals.cxx -L../lib -lfltk $(GLDLIBS) -o $@
-gl_overlay: gl_overlay.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) gl_overlay.cxx -L../lib -lfltk $(GLDLIBS) -o $@
-glpuzzle: glpuzzle.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) glpuzzle.cxx -L../lib -lfltk $(GLDLIBS) -o $@
-shape: shape.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) shape.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+# Other programs needing special "help"...
 shiny: shiny.cxx shiny_panel.cxx
 	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(GLDLIBS) -o $@
-
-# Other programs needing special "help"...
+	@$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(LDLIBS) -o $@
 keyboard: keyboard.cxx keyboard_ui.cxx
 	@echo $@:
 	@$(CXX) -I.. $(CXXFLAGS) keyboard.cxx -L../lib -lfltk $(LDLIBS) -o $@
@@ -111,5 +91,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.14 1998/12/23 20:04:31 mike Exp $".
+# End of "$Id: Makefile,v 1.15 1999/01/07 19:17:48 mike Exp $".
 #

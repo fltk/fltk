@@ -1,9 +1,9 @@
 //
-// "$Id: x.H,v 1.8 1998/12/07 13:38:39 mike Exp $"
+// "$Id: x.H,v 1.9 1999/01/07 19:17:08 mike Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -118,5 +118,5 @@ extern int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.8 1998/12/07 13:38:39 mike Exp $".
+// End of "$Id: x.H,v 1.9 1999/01/07 19:17:08 mike Exp $".
 //

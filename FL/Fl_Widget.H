@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Widget.H,v 1.4 1998/12/02 15:39:27 mike Exp $"
+// "$Id: Fl_Widget.H,v 1.5 1999/01/07 19:17:05 mike Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -190,5 +190,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.4 1998/12/02 15:39:27 mike Exp $".
+// End of "$Id: Fl_Widget.H,v 1.5 1999/01/07 19:17:05 mike Exp $".
 //

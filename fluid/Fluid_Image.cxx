@@ -1,9 +1,9 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.5 1998/12/06 15:09:17 mike Exp $"
+// "$Id: Fluid_Image.cxx,v 1.6 1999/01/07 19:17:12 mike Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -406,5 +406,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.5 1998/12/06 15:09:17 mike Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.6 1999/01/07 19:17:12 mike Exp $".
 //

@@ -1,10 +1,10 @@
 #
-# "$Id: makeinclude.in,v 1.4 1998/10/21 14:18:55 mike Exp $"
+# "$Id: makeinclude.in,v 1.5 1999/01/07 19:16:49 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
 #
-# Copyright 1998 by Bill Spitzak and others.
+# Copyright 1998-1999 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -47,11 +47,8 @@ LIBCOMMAND	=@LIBCOMMAND@
 RANLIB		=@RANLIB@
 
 # libraries to link with:
-LDLIBS		=@LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
-
-# libraries to link with when using GL:
-GLDLIBS		=@LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
+LDLIBS		=@LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 
 #
-# End of "$Id: makeinclude.in,v 1.4 1998/10/21 14:18:55 mike Exp $".
+# End of "$Id: makeinclude.in,v 1.5 1999/01/07 19:16:49 mike Exp $".
 #

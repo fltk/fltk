@@ -1,9 +1,9 @@
 /*
- * "$Id: numericsort.c,v 1.8 1998/12/02 15:47:30 mike Exp $"
+ * "$Id: numericsort.c,v 1.9 1999/01/07 19:17:47 mike Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998 by Bill Spitzak and others.
+ * Copyright 1998-1999 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -84,5 +84,5 @@ int numericsort(struct dirent **A, struct dirent **B) {
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.8 1998/12/02 15:47:30 mike Exp $".
+ * End of "$Id: numericsort.c,v 1.9 1999/01/07 19:17:47 mike Exp $".
  */

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_draw.H,v 1.5 1998/12/02 15:51:33 mike Exp $"
+// "$Id: fl_draw.H,v 1.6 1999/01/07 19:17:06 mike Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -158,5 +158,5 @@ int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scalable);
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.5 1998/12/02 15:51:33 mike Exp $".
+// End of "$Id: fl_draw.H,v 1.6 1999/01/07 19:17:06 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: connect.cxx,v 1.3 1998/10/21 14:21:20 mike Exp $"
+// "$Id: connect.cxx,v 1.4 1999/01/07 19:17:51 mike Exp $"
 //
 // PPP example program for the Fast Light Tool Kit (FLTK).
 //
@@ -7,7 +7,7 @@
 // You must chmod +s /usr/sbin/pppd, and put all the options
 // into /etc/ppp/options.
 //
-// Copyright 1998 by Bill Spitzak and others.
+// Copyright 1998-1999 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -68,5 +68,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: connect.cxx,v 1.3 1998/10/21 14:21:20 mike Exp $".
+// End of "$Id: connect.cxx,v 1.4 1999/01/07 19:17:51 mike Exp $".
 //
