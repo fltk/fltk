@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.4 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.5 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -85,7 +85,7 @@ void Fl_Gl_Window::invalidate() {
 
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
-#if !defined(__APPLE__)
+#ifndef __APPLE__
   int oldmode = mode_;
   Fl_Gl_Choice* oldg = g;
 #endif
@@ -93,13 +93,14 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   mode_ = m; alist = a;
   if (shown()) {
     g = Fl_Gl_Choice::find(m, a);
-#ifdef WIN32
+#if defined(WIN32)
     if (!g || (oldmode^m)&FL_DOUBLE) {
       hide();
       show();
     }
-#endif
-#if !defined(WIN32) && !defined(__APPLE__)
+#elif defined(__APPLE__)
+    redraw();
+#else
     // under X, if the visual changes we must make a new X window (yuck!):
     if (!g || g->vis->visualid!=oldg->vis->visualid || (oldmode^m)&FL_DOUBLE) {
       hide();
@@ -170,6 +171,24 @@ int fl_overlay_depth = 0;
 void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
 
+#ifdef __APPLE__
+  // matt: I have no idea hw expensive the following code is, but we need to reset the buffer rect after
+  // every window-reconfiguration, especially after window resizes.
+  if ( parent() ) { //: resize our GL buffer rectangle
+    Rect wrect; GetWindowPortBounds( fl_xid(this), &wrect );
+    GLint rect[] = { x(), wrect.bottom-h()-y(), w(), h() };
+    aglSetInteger( context_, AGL_BUFFER_RECT, rect );
+    aglEnable( context_, AGL_BUFFER_RECT );
+  }
+  //: clear previous clipping in this shared port
+  GrafPtr port = GetWindowPort( fl_xid(this) );
+  Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
+  GrafPtr old; GetPort( &old );
+  SetPort( port );
+  ClipRect( &rect );
+  SetPort( old );
+#endif
+
 #if HAVE_GL_OVERLAY && defined(WIN32)
 
   bool fixcursor = false; // for fixing the SGI 320 bug
@@ -198,16 +217,6 @@ void Fl_Gl_Window::flush() {
       return;
     }
   }
-#endif
-
-#ifdef __APPLE__
-  //: clear previous clipping in this shared port
-  GrafPtr port = GetWindowPort( fl_xid(this) );
-  Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
-  GrafPtr old; GetPort( &old );
-  SetPort( port );
-  ClipRect( &rect );
-  SetPort( old );
 #endif
 
   make_current();
@@ -354,5 +363,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.4 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.5 2001/12/18 11:00:09 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.2 2001/12/06 00:17:47 matthiaswm Exp $"
+// "$Id: mac.H,v 1.1.2.3 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -95,7 +95,7 @@ extern struct Fl_XMap {
   ulong pen;
 } *fl_current_xmap;
 
-extern FL_EXPORT void *fl_display; //++ read yourself into multiple screen support!
+extern FL_EXPORT void *fl_display;
 extern FL_EXPORT Window fl_window;
 extern FL_EXPORT Handle fl_system_menu;
 extern FL_EXPORT class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
@@ -120,6 +120,6 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif // !FL_MAC_H
 
 //
-// End of "$Id: mac.H,v 1.1.2.2 2001/12/06 00:17:47 matthiaswm Exp $".
+// End of "$Id: mac.H,v 1.1.2.3 2001/12/18 11:00:09 matthiaswm Exp $".
 //
 

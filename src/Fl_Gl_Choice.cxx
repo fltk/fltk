@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.4 2001/12/09 12:52:13 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.5 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,10 +48,51 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
       return g;
 
 #ifdef __APPLE__
-
-  //++ later
-
+  const int *blist;
+  int list[32];
+    
+  if (alist)
+    blist = alist;
+  else {
+    int n = 0;
+    if (mode & FL_INDEX) {
+      list[n++] = AGL_BUFFER_SIZE;
+      list[n++] = 8; // glut tries many sizes, but this should work...
+    } else {
+      list[n++] = AGL_RGBA;
+      list[n++] = AGL_GREEN_SIZE;
+      list[n++] = (mode & FL_RGB8) ? 8 : 1;
+      if (mode & FL_ALPHA) {
+	list[n++] = AGL_ALPHA_SIZE;
+	list[n++] = 1;
+      }
+      if (mode & FL_ACCUM) {
+	list[n++] = AGL_ACCUM_GREEN_SIZE;
+	list[n++] = 1;
+	if (mode & FL_ALPHA) {
+	  list[n++] = AGL_ACCUM_ALPHA_SIZE;
+	  list[n++] = 1;
+	}
+      }
+    }
+    if (mode & FL_DOUBLE) {
+      list[n++] = AGL_DOUBLEBUFFER;
+    }
+    if (mode & FL_DEPTH) {
+      list[n++] = AGL_DEPTH_SIZE; list[n++] = 16;
+    }
+    if (mode & FL_STENCIL) {
+      list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
+    }
+    list[n] = AGL_NONE;
+    blist = list;
+  }
+  fl_open_display();
+  AGLPixelFormat fmt = aglChoosePixelFormat(NULL, 0, (GLint*)blist);
+  if (!fmt) return 0;
+  
 #elif !defined(WIN32)    
+
   const int *blist;
   int list[32];
     
@@ -151,7 +192,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
 #elif defined(__APPLE__)
-  //++ later
+  g->pixelformat = fmt;
 #else
   g->vis = vis;
 
@@ -193,15 +234,8 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #elif defined(__APPLE__)
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
     GLContext context;
-    GLint attrib[5] = {AGL_RGBA, //++ replace with requested data!
-      AGL_DOUBLEBUFFER,
-      AGL_DEPTH_SIZE, 16,
-      AGL_NONE };
-    AGLPixelFormat fmt;
-    fmt = aglChoosePixelFormat(NULL, 0, attrib);
-    context = aglCreateContext(fmt, first_context);
+    context = aglCreateContext( g->pixelformat, first_context);
     if ( !first_context ) first_context = (GLContext)context;
-    aglDestroyPixelFormat( fmt );
     if ( window->parent() ) {
       Rect wrect; GetWindowPortBounds( fl_xid(window), &wrect );
       GLint rect[] = { window->x(), wrect.bottom-window->h()-window->y(), window->w(), window->h() }; 
@@ -237,7 +271,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
       aglSetInteger( context, AGL_BUFFER_RECT, rect );
       aglEnable( context, AGL_BUFFER_RECT );
     }
-    aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); //++ here or in Fl_Gl_Window::make_current creation part?
+    aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); //++ Matt: this probably belongs only in create_gl_context
     aglSetCurrentContext(context);
 #else
     glXMakeCurrent(fl_display, fl_xid(w), context);
@@ -275,5 +309,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.4 2001/12/09 12:52:13 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.5 2001/12/18 11:00:09 matthiaswm Exp $".
 //

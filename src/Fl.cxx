@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.13 2001/12/17 13:48:59 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.14 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -696,12 +696,19 @@ void Fl_Window::hide() {
     fl_gc = 0;
   }
 #elif defined(__APPLE__)
-  //++ MacOS needs a simulation of focus events?! DONT!
+  //++ Matt: I have not checked yet what we need to do here
   Fl::handle(FL_UNFOCUS, this);
 #else
   if (x->region) XDestroyRegion(x->region);
 #endif
+
+#ifdef __APPLE__
+  if ( !parent() ) // don't destroy shared windows!
+    XDestroyWindow(fl_display, x->xid);
+#else
   XDestroyWindow(fl_display, x->xid);
+#endif
+  
 #ifdef WIN32
   // Try to stop the annoying "raise another program" behavior
   if (non_modal() && Fl::first_window() && Fl::first_window()->shown())
@@ -844,5 +851,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.13 2001/12/17 13:48:59 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.14 2001/12/18 11:00:09 matthiaswm Exp $".
 //

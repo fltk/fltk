@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.5 2001/12/14 19:34:30 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.6 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -397,7 +397,17 @@ OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef event, vo
   case kEventMouseDown:
     if ( btn==kEventMouseButtonPrimary && FindWindow( pos, &xid )!=inContent )
       return CallNextEventHandler( nextHandler, event ); // we won't handle this. The OS should do that.
-    if (xid!=FrontWindow()) SelectWindow( xid ); //{ SelectWindow(xid); return 1; } // do we want to keep this?!
+    //-- Matt: hmm, the following lines do not work the way I want: 'BringToFront' changes the window order only
+    // WITHIN the application, but not on the desktop, whereas 'SetFrontProcess' pulls ALL windows in this
+    // application to the front. Wanted: put only the clicked window in the front.
+    //if (xid!=FrontWindow()) {
+    SelectWindow( xid ); // <-- click througgh vs.  classic Mac--> { SelectWindow(xid); return 1; }
+    BringToFront( xid ); // (but behind modal windows!!!)
+    //}
+    ProcessSerialNumber psn;
+    GetCurrentProcess( &psn );
+    SetFrontProcess( &psn );
+    // normal handling of mouse-down follows
     sendEvent = FL_PUSH;
     Fl::e_is_click = 1; px = pos.h; py = pos.v;
     Fl::e_clicks = clickCount;
@@ -666,7 +676,7 @@ static void set_shift_states(const EventRecord &macevent)
   if (macevent.modifiers&optionKey) state |= FL_ALT;
   if (macevent.modifiers&cmdKey) state |= FL_CTRL;
   if (macevent.modifiers&alphaLock) state |= FL_CAPS_LOCK;
-  state |= FL_NUM_LOCK; //++ always num keypad on Mac?
+  state |= FL_NUM_LOCK; //++ always num keypad on Mac? - No, use Fn-F5 on iBooks and  NumLock on regular keyboards
   Fl::e_state = state;
 }
 
@@ -1277,7 +1287,7 @@ void Fl_X::make(Fl_Window* w)
     //++ hmmm, this should maybe set by the activate event?!
     Fl::handle(FL_FOCUS, w);
     //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
-    if ( ! Fl_X::first->next ) // if this is the first window, we need to bring the application to the front
+    if ( ! Fl_X::first->next ) // if this is the first window, we need to bring the application to the front //++ this fails if the first window is a child window...
     { 
       ProcessSerialNumber psn;
       OSErr err = GetCurrentProcess( &psn );
@@ -1352,8 +1362,13 @@ void Fl_Window::show() {
   if (!shown() || !i) {
     Fl_X::make(this);
   } else {
-	//++ do we need to do grab and icon handling here?
-	/*if (!fl_capture)*/ BringToFront(i->xid);      
+      if ( !parent() )
+      {
+        if ( IsWindowCollapsed( i->xid ) ) CollapseWindow( i->xid, false );
+        //++ do we need to do grab and icon handling here?
+        /*if (!fl_capture)*/ 
+          BringToFront(i->xid);
+      }
   }
 }
 
@@ -1509,6 +1524,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 */
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.5 2001/12/14 19:34:30 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.6 2001/12/18 11:00:09 matthiaswm Exp $".
 //
 

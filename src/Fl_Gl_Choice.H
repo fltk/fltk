@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.2 2001/12/06 00:17:47 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.3 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -76,7 +76,7 @@ public:
   int pixelformat;	// the visual to use
   PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
 #elif defined(__APPLE__)
-  //++
+  AGLPixelFormat pixelformat;
 #else
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
@@ -115,5 +115,5 @@ void fl_delete_gl_context(GLContext);
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.2 2001/12/06 00:17:47 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.3 2001/12/18 11:00:09 matthiaswm Exp $".
 //

@@ -15,9 +15,8 @@ CONTENTS
 INTRODUCTION
 ------------
 
-FLTK for Mac OS X is in pre-beta stage. Expect rapid changes to the 
-source code and build environment. Expect many crashes and funny
-blinking patterns.
+FLTK for Mac OS X is in beta stage. Expect rapid changes to the 
+source code and build environment. 
 
 FLTK currently supports the following development environment on the
 Mac OS X platform:
@@ -39,15 +38,12 @@ gcc (Carbon) - how to build
 
 Since the Max OS X command line build environment is based on BSD 
 Unix, the normal Unix build procedure as described in 'README' 
-applies. Compiled applications can only be started from within
-the terminal though.
+applies. 
 
-A 'resource fork' needs to be attached to applications to make
-them visible to the Finder. A sample resource file is ./FL/mac.r .
+A 'resource fork' will be attached to applications to make
+them visible in the Finder. Thedefault resource file is ./FL/mac.r .
 
-To make 'hello' a full application, compile and link 'hello', then 
-change into the test directory and type:
-
+A possible way to add a resource fork is:
 > Rez -t APPL -c Fltk ../FL/mac.r -o hello
 
 
@@ -82,14 +78,16 @@ echo "done."
 known MacFLTK bugs
 ------------------
 
-- OpenGL window resize
-- font support not finished
-- line styles missing
+- file handles not supported
+- timing not fully supported
+- line styles not fully supported
 - cut, copy, paste
-- mousewheel (Carbon Events)
-- sub-sub-subwindow
+- sub-sub-subwindow not tested
 - modal windows are not modal
-- makefiles supporting Rez
+- overlay not complete
+- image transparency not implemented
+- 'shiny' needs work (flush/aglFlush)
+- threads not implemented
 
 
 test suite status
@@ -99,14 +97,14 @@ OS X:
 
 CubeView(++), adjuster(++), arc(++), ask(++), bitmap(++), 
 boxtype(++), browser(++), button(++), buttons(++), checkers(++),
-clock(++), colbrowser(++), color_chooser(++), cube(++), cursor(+),
+clock(++), colbrowser(++), color_chooser(++), cube(++), cursor(++),
 curve(++), demo(++), doublebuffer(++), editor(++), fast_slow(++),
-file_chooser(++), fonts(++), forms(++), fractals(+), fullscreen(+),
-gl_overlay(o), glpuzzle(++), hello(++), help(++), iconize(+), image(+),
+file_chooser(++), fonts(++), forms(++), fractals(++), fullscreen(++),
+gl_overlay(-), glpuzzle(++), hello(++), help(++), iconize(++), image(+),
 inactive(++), input(++), keyboard(+), label(++), line_style(+),
 mandelbrot(++), menubar(++), message(++), minimum(++), navigation(++),
-output(++), overlay(o), pack(++), pixmap(++), pixmap_browser(++),
-radio(++), resizebox(++), scroll(++), shape(+), shiny(--), subwindow(++),
+output(++), overlay(-), pack(++), pixmap(++), pixmap_browser(++),
+radio(++), resizebox(++), scroll(++), shape(++), shiny(-), subwindow(++),
 symbols(++), tabs(++), tile(++), tiled_image(++), valuators(++), 
 fluid(++)
 

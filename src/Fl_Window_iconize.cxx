@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.3 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // Window minification code for the Fast Light Tool Kit (FLTK).
 //
@@ -35,9 +35,7 @@ void Fl_Window::iconize() {
 #ifdef WIN32
     ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
 #elif defined(__APPLE__)
-    //: http://developer.apple.com/techpubs/mac/Toolbox/Toolbox-254.html#HEADING254-0
-    //++ see iconize, above is the WRONG CALL
-    //++ call "hide all" ZoomWindow(i->xid, inZoomIn, 0);
+    CollapseWindow( i->xid, true );
 #else
     XIconifyWindow(fl_display, i->xid, fl_screen);
 #endif
@@ -45,5 +43,5 @@ void Fl_Window::iconize() {
 }
 
 //
-// End of "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.3 2001/12/18 11:00:09 matthiaswm Exp $".
 //

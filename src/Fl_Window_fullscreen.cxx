@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.2 2001/12/18 11:00:09 matthiaswm Exp $"
 //
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
@@ -48,7 +48,7 @@ void Fl_Window::border(int b) {
   // not yet implemented, but it's possible
   // for full fullscreen we have to make the window topmost as well
 #elif defined(__APPLE__)
-  //++
+  //++ Matt: I have not looked into this yet
 #else
   if (shown()) Fl_X::i(this)->sendxjunk();
 #endif
@@ -73,5 +73,5 @@ void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.2 2001/12/18 11:00:09 matthiaswm Exp $".
 //
