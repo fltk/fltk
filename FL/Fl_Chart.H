@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.H,v 1.6.2.3.2.3 2002/08/14 16:49:37 easysw Exp $"
+// "$Id: Fl_Chart.H,v 1.6.2.3.2.4 2002/09/04 20:33:17 easysw Exp $"
 //
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
@@ -63,6 +63,7 @@ protected:
     void draw();
 public:
     Fl_Chart(int,int,int,int,const char * = 0);
+    ~Fl_Chart();
     void clear();
     void add(double, const char * =0, unsigned=0);
     void insert(int, double, const char * =0, unsigned=0);
@@ -85,5 +86,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Chart.H,v 1.6.2.3.2.3 2002/08/14 16:49:37 easysw Exp $".
+// End of "$Id: Fl_Chart.H,v 1.6.2.3.2.4 2002/09/04 20:33:17 easysw Exp $".
 //

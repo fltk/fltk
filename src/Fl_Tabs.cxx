@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.11 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.12 2002/09/04 20:33:18 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -78,8 +78,10 @@ int Fl_Tabs::tab_positions(int* p, int* wp) {
     if (wp[i] > W) wp[i] = W;
   }
   // adjust edges according to visiblity:
-  for (i = children(); i > selected; i--) {
-    p[i] = p[i-1]+wp[i-1];
+  if (selected >= 0) {
+    for (i = children(); i > selected; i--) {
+      p[i] = p[i-1]+wp[i-1];
+    }
   }
   return selected;
 }
@@ -300,5 +302,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.11 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.12 2002/09/04 20:33:18 easysw Exp $".
 //

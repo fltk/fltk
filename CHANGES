@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0
 
+	- Small bug fixes for Fl_Chart, Fl_Scrollbar, Fl_Tabs,
+	  and FLUID from Matthew Morrise.
+	- Fl_Chart didn't have its own destructor, so data in
+	  the chart wasn't freed.
 	- Fl_Menu_Button no longer responds to focus or keyboard
 	  events when box() is FL_NO_BOX.
 	- FLTK convenience dialogs put the buttons in the wrong
