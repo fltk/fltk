@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.7 1999/02/19 15:34:07 mike Exp $"
+// "$Id: Fl.H,v 1.8 1999/02/23 22:12:38 mike Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -145,13 +145,13 @@ public:
   static FL_EXPORT void paste(Fl_Widget &receiver);
 
   // screen size:
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32)
   static FL_EXPORT int x();
   static FL_EXPORT int y();
 #else
   static FL_EXPORT int x() {return 0;}
   static FL_EXPORT int y() {return 0;}
-#endif /* WIN32 || __EMX__ */
+#endif /* WIN32 */
   static FL_EXPORT int w();
   static FL_EXPORT int h();
 
@@ -204,5 +204,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.7 1999/02/19 15:34:07 mike Exp $".
+// End of "$Id: Fl.H,v 1.8 1999/02/23 22:12:38 mike Exp $".
 //
