@@ -1,5 +1,5 @@
 //
-// "$Id: filename_ext.cxx,v 1.4.2.4.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: filename_ext.cxx,v 1.4.2.4.2.2 2002/03/25 21:08:42 easysw Exp $"
 //
 // Filename extension routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 
 #include <FL/filename.H>
 
-const char *filename_ext(const char *buf) {
+const char *fl_filename_ext(const char *buf) {
   const char *q = 0;
   const char *p = buf;
   for (p=buf; *p; p++) {
@@ -41,5 +41,5 @@ const char *filename_ext(const char *buf) {
 }
 
 //
-// End of "$Id: filename_ext.cxx,v 1.4.2.4.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: filename_ext.cxx,v 1.4.2.4.2.2 2002/03/25 21:08:42 easysw Exp $".
 //

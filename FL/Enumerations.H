@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.20 2002/03/25 16:41:01 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.21 2002/03/25 21:08:41 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -167,37 +167,37 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_PLASTIC_UP_FRAME,	_FL_PLASTIC_DOWN_FRAME,
   FL_FREE_BOXTYPE
 };
-extern FL_EXPORT Fl_Boxtype define_FL_ROUND_UP_BOX();
-#define FL_ROUND_UP_BOX define_FL_ROUND_UP_BOX()
-#define FL_ROUND_DOWN_BOX (Fl_Boxtype)(define_FL_ROUND_UP_BOX()+1)
-extern FL_EXPORT Fl_Boxtype define_FL_SHADOW_BOX();
-#define FL_SHADOW_BOX define_FL_SHADOW_BOX()
-#define FL_SHADOW_FRAME (Fl_Boxtype)(define_FL_SHADOW_BOX()+2)
-extern FL_EXPORT Fl_Boxtype define_FL_ROUNDED_BOX();
-#define FL_ROUNDED_BOX define_FL_ROUNDED_BOX()
-#define FL_ROUNDED_FRAME (Fl_Boxtype)(define_FL_ROUNDED_BOX()+2)
-extern FL_EXPORT Fl_Boxtype define_FL_RFLAT_BOX();
-#define FL_RFLAT_BOX define_FL_RFLAT_BOX()
-extern FL_EXPORT Fl_Boxtype define_FL_RSHADOW_BOX();
-#define FL_RSHADOW_BOX define_FL_RSHADOW_BOX()
-extern FL_EXPORT Fl_Boxtype define_FL_DIAMOND_BOX();
-#define FL_DIAMOND_UP_BOX define_FL_DIAMOND_BOX()
-#define FL_DIAMOND_DOWN_BOX (Fl_Boxtype)(define_FL_DIAMOND_BOX()+1)
-extern FL_EXPORT Fl_Boxtype define_FL_OVAL_BOX();
-#define FL_OVAL_BOX define_FL_OVAL_BOX()
-#define FL_OSHADOW_BOX (Fl_Boxtype)(define_FL_OVAL_BOX()+1)
-#define FL_OVAL_FRAME (Fl_Boxtype)(define_FL_OVAL_BOX()+2)
-#define FL_OFLAT_BOX (Fl_Boxtype)(define_FL_OVAL_BOX()+3)
+extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
+#define FL_ROUND_UP_BOX fl_define_FL_ROUND_UP_BOX()
+#define FL_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_ROUND_UP_BOX()+1)
+extern FL_EXPORT Fl_Boxtype fl_define_FL_SHADOW_BOX();
+#define FL_SHADOW_BOX fl_define_FL_SHADOW_BOX()
+#define FL_SHADOW_FRAME (Fl_Boxtype)(fl_define_FL_SHADOW_BOX()+2)
+extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUNDED_BOX();
+#define FL_ROUNDED_BOX fl_define_FL_ROUNDED_BOX()
+#define FL_ROUNDED_FRAME (Fl_Boxtype)(fl_define_FL_ROUNDED_BOX()+2)
+extern FL_EXPORT Fl_Boxtype fl_define_FL_RFLAT_BOX();
+#define FL_RFLAT_BOX fl_define_FL_RFLAT_BOX()
+extern FL_EXPORT Fl_Boxtype fl_define_FL_RSHADOW_BOX();
+#define FL_RSHADOW_BOX fl_define_FL_RSHADOW_BOX()
+extern FL_EXPORT Fl_Boxtype fl_define_FL_DIAMOND_BOX();
+#define FL_DIAMOND_UP_BOX fl_define_FL_DIAMOND_BOX()
+#define FL_DIAMOND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_DIAMOND_BOX()+1)
+extern FL_EXPORT Fl_Boxtype fl_define_FL_OVAL_BOX();
+#define FL_OVAL_BOX fl_define_FL_OVAL_BOX()
+#define FL_OSHADOW_BOX (Fl_Boxtype)(fl_define_FL_OVAL_BOX()+1)
+#define FL_OVAL_FRAME (Fl_Boxtype)(fl_define_FL_OVAL_BOX()+2)
+#define FL_OFLAT_BOX (Fl_Boxtype)(fl_define_FL_OVAL_BOX()+3)
 
-extern FL_EXPORT Fl_Boxtype define_FL_PLASTIC_UP_BOX();
-#define FL_PLASTIC_UP_BOX define_FL_PLASTIC_UP_BOX()
-#define FL_PLASTIC_DOWN_BOX (Fl_Boxtype)(define_FL_PLASTIC_UP_BOX()+1)
-#define FL_PLASTIC_UP_FRAME (Fl_Boxtype)(define_FL_PLASTIC_UP_BOX()+2)
-#define FL_PLASTIC_DOWN_FRAME (Fl_Boxtype)(define_FL_PLASTIC_UP_BOX()+3)
+extern FL_EXPORT Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX();
+#define FL_PLASTIC_UP_BOX fl_define_FL_PLASTIC_UP_BOX()
+#define FL_PLASTIC_DOWN_BOX (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+1)
+#define FL_PLASTIC_UP_FRAME (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+2)
+#define FL_PLASTIC_DOWN_FRAME (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+3)
 
 // conversions of box types to other boxtypes:
-inline Fl_Boxtype down(Fl_Boxtype b) {return (Fl_Boxtype)(b|1);}
-inline Fl_Boxtype frame(Fl_Boxtype b) {return (Fl_Boxtype)(b|2);}
+inline Fl_Boxtype fl_down(Fl_Boxtype b) {return (Fl_Boxtype)(b|1);}
+inline Fl_Boxtype fl_frame(Fl_Boxtype b) {return (Fl_Boxtype)(b|2);}
 
 // back-compatability box types:
 #define FL_FRAME FL_ENGRAVED_FRAME
@@ -217,12 +217,12 @@ enum Fl_Labeltype {	// labeltypes:
   FL_FREE_LABELTYPE
 };
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
-extern Fl_Labeltype FL_EXPORT define_FL_SHADOW_LABEL();
-#define FL_SHADOW_LABEL define_FL_SHADOW_LABEL()
-extern Fl_Labeltype FL_EXPORT define_FL_ENGRAVED_LABEL();
-#define FL_ENGRAVED_LABEL define_FL_ENGRAVED_LABEL()
-extern Fl_Labeltype FL_EXPORT define_FL_EMBOSSED_LABEL();
-#define FL_EMBOSSED_LABEL define_FL_EMBOSSED_LABEL()
+extern Fl_Labeltype FL_EXPORT fl_define_FL_SHADOW_LABEL();
+#define FL_SHADOW_LABEL fl_define_FL_SHADOW_LABEL()
+extern Fl_Labeltype FL_EXPORT fl_define_FL_ENGRAVED_LABEL();
+#define FL_ENGRAVED_LABEL fl_define_FL_ENGRAVED_LABEL()
+extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
+#define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
 
 enum Fl_Align {	// align() values
   FL_ALIGN_CENTER		= 0,
@@ -378,5 +378,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.20 2002/03/25 16:41:01 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.21 2002/03/25 21:08:41 easysw Exp $".
 //

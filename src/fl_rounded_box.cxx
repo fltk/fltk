@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rounded_box.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_rounded_box.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $"
 //
 // Rounded box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -76,22 +76,22 @@ static void fl_rshadow_box(int x, int y, int w, int h, Fl_Color c) {
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
 
-Fl_Boxtype define_FL_ROUNDED_BOX() {
+Fl_Boxtype fl_define_FL_ROUNDED_BOX() {
   fl_internal_boxtype(_FL_ROUNDED_FRAME, fl_rounded_frame);
   fl_internal_boxtype(_FL_ROUNDED_BOX, fl_rounded_box);
   return _FL_ROUNDED_BOX;
 }
 
-Fl_Boxtype define_FL_RFLAT_BOX() {
+Fl_Boxtype fl_define_FL_RFLAT_BOX() {
   fl_internal_boxtype(_FL_RFLAT_BOX, fl_rflat_box);
   return _FL_RFLAT_BOX;
 }
 
-Fl_Boxtype define_FL_RSHADOW_BOX() {
+Fl_Boxtype fl_define_FL_RSHADOW_BOX() {
   fl_internal_boxtype(_FL_RSHADOW_BOX, fl_rshadow_box);
   return _FL_RSHADOW_BOX;
 }
 
 //
-// End of "$Id: fl_rounded_box.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_rounded_box.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $".
 //

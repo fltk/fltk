@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.6 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -88,7 +88,7 @@ Fl_File_Chooser::directory(const char *d)	// I - Directory to change to
 #else
     if (d[0] != '/' && d[0] != '\\')
 #endif /* WIN32 || __EMX__ */
-      filename_absolute(directory_, d);
+      fl_filename_absolute(directory_, d);
     else
     {
       strncpy(directory_, d, sizeof(directory_) - 1);
@@ -175,7 +175,7 @@ Fl_File_Chooser::count()
       pathname[sizeof(pathname) - 1] = '\0';
     }
 
-    if (filename_isdir(pathname))
+    if (fl_filename_isdir(pathname))
       return (0);
     else
       return (1);
@@ -194,7 +194,7 @@ Fl_File_Chooser::count()
 	pathname[sizeof(pathname) - 1] = '\0';
       }
 
-      if (!filename_isdir(pathname))
+      if (!fl_filename_isdir(pathname))
 	count ++;
     }
 
@@ -244,7 +244,7 @@ Fl_File_Chooser::value(int f)	// I - File number
 	pathname[sizeof(pathname) - 1] = '\0';
       }
 
-      if (!filename_isdir(pathname))
+      if (!fl_filename_isdir(pathname))
       {
         // Nope, see if this this is "the one"...
 	count ++;
@@ -273,7 +273,7 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
 //  printf("Fl_File_Chooser::value(\"%s\")\n", filename == NULL ? "(null)" : filename);
 
   // See if the filename is actually a directory...
-  if (filename == NULL || !filename[0] || filename_isdir(filename))
+  if (filename == NULL || !filename[0] || fl_filename_isdir(filename))
   {
     // Yes, just change the current directory...
     directory(filename);
@@ -439,9 +439,9 @@ Fl_File_Chooser::fileListCB()
   {
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
-        filename_isdir(pathname))
+        fl_filename_isdir(pathname))
 #else
-    if (filename_isdir(pathname))
+    if (fl_filename_isdir(pathname))
 #endif /* WIN32 || __EMX__ */
     {
       directory(pathname);
@@ -461,7 +461,7 @@ Fl_File_Chooser::fileListCB()
   {
     fileName->value(filename);
 
-    if (!filename_isdir(pathname) || (type_ & DIRECTORY))
+    if (!fl_filename_isdir(pathname) || (type_ & DIRECTORY))
       okButton->activate();
   }
 }
@@ -554,9 +554,9 @@ Fl_File_Chooser::fileNameCB()
 
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
-        filename_isdir(pathname))
+        fl_filename_isdir(pathname))
 #else
-    if (filename_isdir(pathname))
+    if (fl_filename_isdir(pathname))
 #endif /* WIN32 || __EMX__ */
       directory(pathname);
     else if ((type_ & CREATE) || access(pathname, 0) == 0)
@@ -698,7 +698,7 @@ Fl_File_Chooser::fileNameCB()
     }
 
     if ((type_ & CREATE || access(pathname, 0) == 0) &&
-        (!filename_isdir(pathname) || type_ & DIRECTORY))
+        (!fl_filename_isdir(pathname) || type_ & DIRECTORY))
       okButton->activate();
     else
       okButton->deactivate();
@@ -707,5 +707,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.6 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $".
 //

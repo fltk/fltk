@@ -299,7 +299,7 @@ fl_ask.o: ../FL/Fl_Export.H ../FL/fl_ask.H ../FL/Fl_Box.H ../FL/Fl_Widget.H
 fl_ask.o: ../FL/Fl_Button.H ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
 fl_ask.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Input.H
 fl_ask.o: ../FL/Fl_Input_.H ../FL/Fl_Secret_Input.H ../FL/Fl_Input.H
-fl_ask.o: ../FL/x.H ../FL/Fl_Window.H
+fl_ask.o: ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
 fl_boxtype.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_boxtype.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../config.h
 fl_color.o: Fl_XColor.H ../config.h ../FL/Enumerations.H ../FL/Fl_Export.H

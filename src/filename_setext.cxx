@@ -1,5 +1,5 @@
 //
-// "$Id: filename_setext.cxx,v 1.4.2.3.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: filename_setext.cxx,v 1.4.2.3.2.3 2002/03/25 21:08:42 easysw Exp $"
 //
 // Filename extension routines for the Fast Light Tool Kit (FLTK).
 //
@@ -30,8 +30,8 @@
 #include <FL/filename.H>
 #include <string.h>
 
-char *filename_setext(char *buf, int buflen, const char *ext) {
-  char *q = (char *)filename_ext(buf);
+char *fl_filename_setext(char *buf, int buflen, const char *ext) {
+  char *q = (char *)fl_filename_ext(buf);
   if (ext) {
     strncpy(q,ext,buflen - (q - buf) - 1);
     buf[buflen - 1] = '\0';
@@ -41,5 +41,5 @@ char *filename_setext(char *buf, int buflen, const char *ext) {
 
 
 //
-// End of "$Id: filename_setext.cxx,v 1.4.2.3.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: filename_setext.cxx,v 1.4.2.3.2.3 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,11 +1,17 @@
 CHANGES IN FLTK 1.1.0b12
 
+	- Documentation updates.
+	- Renamed down() and frame() to fl_down() and
+	  fl_frame(), filename_xyz() to fl_filename_xyz(), and
+	  all of the define_FL_FOO() functions for the custom
+	  boxtypes to fl_define_FL_FOO() to avoid namespace
+	  clashes.
 	- Stereo OpenGL support (patch from Stuart Levy)
 	- All of the convenience functions defined in fl_ask.H
 	  now resize the widgets and dialog window as needed for
 	  the labels and prompt.
-	- Backported FLTK 2.0 dual cut/paste buffer.
-	- Added support for Xft library to support anti-aliased
+	- Backported FLTK 2.0 dual cut/paste buffer code.
+	- Added support for Xft library to provide anti-aliased
 	  text on X11.
 	- Fl_Help_View didn't keep track of the background color
 	  of cells properly.

@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.6 2002/01/22 00:46:09 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.7 2002/03/25 21:08:42 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -49,7 +49,7 @@ inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
-int filename_absolute(char *to, int tolen, const char *from) {
+int fl_filename_absolute(char *to, int tolen, const char *from) {
   if (isdirsep(*from) || *from == '|'
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
       || from[1]==':'
@@ -107,11 +107,11 @@ int filename_absolute(char *to, int tolen, const char *from) {
 }
 
 /*
- * 'filename_relative()' - Make a filename relative to the current working directory.
+ * 'fl_filename_relative()' - Make a filename relative to the current working directory.
  */
 
 int					// O - 0 if no change, 1 if changed
-filename_relative(char       *to,	// O - Relative filename
+fl_filename_relative(char       *to,	// O - Relative filename
                   int        tolen,	// I - Size of "to" buffer
                   const char *from) {	// I - Absolute filename
   const char	*newslash;		// Directory separator
@@ -175,5 +175,5 @@ filename_relative(char       *to,	// O - Relative filename
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.6 2002/01/22 00:46:09 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.7 2002/03/25 21:08:42 easysw Exp $".
 //

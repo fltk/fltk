@@ -1,5 +1,5 @@
 //
-// "$Id: fl_round_box.cxx,v 1.6.2.3.2.2 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_round_box.cxx,v 1.6.2.3.2.3 2002/03/25 21:08:42 easysw Exp $"
 //
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -109,12 +109,12 @@ void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
 }
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
-Fl_Boxtype define_FL_ROUND_UP_BOX() {
+Fl_Boxtype fl_define_FL_ROUND_UP_BOX() {
   fl_internal_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box);
   fl_internal_boxtype(_FL_ROUND_UP_BOX, fl_round_up_box);
   return _FL_ROUND_UP_BOX;
 }
 
 //
-// End of "$Id: fl_round_box.cxx,v 1.6.2.3.2.2 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_round_box.cxx,v 1.6.2.3.2.3 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.11 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.12 2002/03/25 21:08:41 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -82,7 +82,7 @@ static char in_source_dir;
 void goto_source_dir() {
   if (in_source_dir) return;
   if (!filename || !*filename) return;
-  const char *p = filename_name(filename);
+  const char *p = fl_filename_name(filename);
   if (p <= filename) return; // it is in the current directory
   char buffer[1024];
   strcpy(buffer,filename);
@@ -178,17 +178,17 @@ void write_cb(Fl_Widget *, void *) {
   }
   char cname[1024];
   char hname[1024];
-  strcpy(i18n_program, filename_name(filename));
-  filename_setext(i18n_program, "");
+  strcpy(i18n_program, fl_filename_name(filename));
+  fl_filename_setext(i18n_program, "");
   if (*code_file_name == '.' && strchr(code_file_name, '/') == NULL) {
-    strcpy(cname,filename_name(filename));
-    filename_setext(cname, code_file_name);
+    strcpy(cname,fl_filename_name(filename));
+    fl_filename_setext(cname, code_file_name);
   } else {
     strcpy(cname, code_file_name);
   }
   if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
-    strcpy(hname,filename_name(filename));
-    filename_setext(hname, header_file_name);
+    strcpy(hname,fl_filename_name(filename));
+    fl_filename_setext(hname, header_file_name);
   } else {
     strcpy(hname, header_file_name);
   }
@@ -214,8 +214,8 @@ void write_strings_cb(Fl_Widget *, void *) {
     if (!filename) return;
   }
   char sname[1024];
-  strcpy(sname,filename_name(filename));
-  filename_setext(sname, exts[i18n_type]);
+  strcpy(sname,fl_filename_name(filename));
+  fl_filename_setext(sname, exts[i18n_type]);
   if (!compile_only) goto_source_dir();
   int x = write_strings(sname);
   if (!compile_only) leave_source_dir();
@@ -267,7 +267,7 @@ static char* cutfname() {
 #else
   static char name[256] = "~/.fluid_cut_buffer";
   static char beenhere;
-  if (!beenhere) {beenhere = 1; filename_expand(name,name);}
+  if (!beenhere) {beenhere = 1; fl_filename_expand(name,name);}
   return name;
 #endif
 }
@@ -511,5 +511,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.11 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.12 2002/03/25 21:08:41 easysw Exp $".
 //

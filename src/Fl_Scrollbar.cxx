@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.7 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.8 2002/03/25 21:08:41 easysw Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -197,9 +197,9 @@ void Fl_Scrollbar::draw() {
     if (W < 3*H) {Fl_Slider::draw(X,Y,W,H); return;}
     Fl_Slider::draw(X+H,Y,W-2*H,H);
     if (damage()&FL_DAMAGE_ALL) {
-      draw_box((pushed_==1) ? down(slider()) : slider(),
+      draw_box((pushed_==1) ? fl_down(slider()) : slider(),
 	       X, Y, H, H, selection_color());
-      draw_box((pushed_==2) ? down(slider()) : slider(),
+      draw_box((pushed_==2) ? fl_down(slider()) : slider(),
 		  X+W-H, Y, H, H, selection_color());
       if (active_r())
         fl_color(labelcolor());
@@ -216,9 +216,9 @@ void Fl_Scrollbar::draw() {
     if (H < 3*W) {Fl_Slider::draw(X,Y,W,H); return;}
     Fl_Slider::draw(X,Y+W,W,H-2*W);
     if (damage()&FL_DAMAGE_ALL) {
-      draw_box((pushed_==1) ? down(slider()) : slider(),
+      draw_box((pushed_==1) ? fl_down(slider()) : slider(),
 	       X, Y, W, W, selection_color());
-      draw_box((pushed_==2) ? down(slider()) : slider(),
+      draw_box((pushed_==2) ? fl_down(slider()) : slider(),
 	       X, Y+H-W, W, W, selection_color());
       if (active_r())
         fl_color(labelcolor());
@@ -246,5 +246,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.7 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.8 2002/03/25 21:08:41 easysw Exp $".
 //

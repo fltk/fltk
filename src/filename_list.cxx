@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.11.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.11.2.2 2002/03/25 21:08:42 easysw Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -39,7 +39,7 @@ extern "C" {
 #endif
 }
 
-int filename_list(const char *d, dirent ***list) {
+int fl_filename_list(const char *d, dirent ***list) {
 #if defined(__hpux)
   // HP-UX defines the comparison function like this:
   return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))numericsort);
@@ -62,5 +62,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.11.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.11.2.2 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: forms_fselect.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: forms_fselect.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $"
 //
 // Forms file selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -47,7 +47,7 @@ char* fl_show_file_selector(const char *message,const char *dir,
   const char *q = fl_file_chooser(message,fl_pattern,fl_directory);
   if (!q) return 0;
   strcpy(fl_directory, q);
-  p = (char *)filename_name(fl_directory);
+  p = (char *)fl_filename_name(fl_directory);
   strcpy(fl_filename, p);
   if (p > fl_directory+1) p--;
   *p = 0;
@@ -61,5 +61,5 @@ char*	fl_get_pattern() {return (char *)fl_pattern;}
 char*	fl_get_filename() {return fl_filename;}
 
 //
-// End of "$Id: forms_fselect.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: forms_fselect.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.12 2002/01/06 17:51:12 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.13 2002/03/25 21:08:41 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -91,7 +91,7 @@ Fl_File_Icon::load(const char *f)	// I - File to read from
   const char	*ext;			// File extension
 
 
-  ext = filename_ext(f);
+  ext = fl_filename_ext(f);
 
   if (ext && strcmp(ext, ".fti") == 0)
     i = load_fti(f);
@@ -758,7 +758,7 @@ load_kde_icons(const char *directory)	// I - Directory to load
 
 
   entries = (dirent **)0;
-  n       = filename_list(directory, &entries);
+  n       = fl_filename_list(directory, &entries);
 
   for (i = 0; i < n; i ++)
   {
@@ -768,7 +768,7 @@ load_kde_icons(const char *directory)	// I - Directory to load
       strcat(full,"/");
       strcat(full, entries[i]->d_name);
 
-      if (filename_isdir(full))
+      if (fl_filename_isdir(full))
 	load_kde_icons(full);
       else
 	load_kde_mimelnk(full);				
@@ -931,5 +931,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.12 2002/01/06 17:51:12 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.13 2002/03/25 21:08:41 easysw Exp $".
 //

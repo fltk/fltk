@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.21 2002/03/25 19:35:13 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.22 2002/03/25 21:08:41 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1062,10 +1062,10 @@ void Fl_X::set_minmax(LPMINMAXINFO minmax)
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/filename.H> // need so FL_EXPORT filename_name works
+#include <FL/filename.H> // need so FL_EXPORT fl_filename_name works
 
 // returns pointer to the filename, or null if name ends with '/'
-const char *filename_name(const char *name) {
+const char *fl_filename_name(const char *name) {
   const char *p,*q;
   q = name;
   if (q[0] && q[1]==':') q += 2; // skip leading drive letter
@@ -1079,7 +1079,7 @@ void Fl_Window::label(const char *name,const char *iname) {
   if (shown() && !parent()) {
     if (!name) name = "";
     SetWindowText(i->xid, name);
-    // if (!iname) iname = filename_name(name);
+    // if (!iname) iname = fl_filename_name(name);
     // should do something with iname here...
   }
 }
@@ -1156,5 +1156,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.21 2002/03/25 19:35:13 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.22 2002/03/25 21:08:41 easysw Exp $".
 //

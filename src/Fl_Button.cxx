@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6.2.11 2002/03/05 00:46:39 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.12 2002/03/25 21:08:41 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ void Fl_Button::draw() {
   if (type() == FL_HIDDEN_BUTTON) return;
   Fl_Color col = value() ? selection_color() : color();
 //if (col == FL_GRAY && Fl::belowmouse()==this) col = FL_LIGHT1;
-  draw_box(value() ? (down_box()?down_box():down(box())) : box(), col);
+  draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);
   draw_label();
   if (Fl::focus() == this) draw_focus();
 }
@@ -149,5 +149,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.11 2002/03/05 00:46:39 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.12 2002/03/25 21:08:41 easysw Exp $".
 //

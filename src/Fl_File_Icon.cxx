@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.7 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.8 2002/03/25 21:08:41 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -220,7 +220,7 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
   // is found...
   for (current = first_; current != (Fl_File_Icon *)0; current = current->next_)
     if ((current->type_ == filetype || current->type_ == ANY) &&
-        filename_match(filename, current->pattern_))
+        fl_filename_match(filename, current->pattern_))
       break;
 
   // Return the match (if any)...
@@ -466,5 +466,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.7 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.8 2002/03/25 21:08:41 easysw Exp $".
 //

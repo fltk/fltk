@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.9 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.10 2002/03/25 21:08:42 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -162,7 +162,7 @@ static void down_box(int x, int y, int w, int h, Fl_Color c) {
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
 
 
-Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
+Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
   fl_internal_boxtype(_FL_PLASTIC_UP_BOX, up_box);
   fl_internal_boxtype(_FL_PLASTIC_DOWN_BOX, down_box);
   fl_internal_boxtype(_FL_PLASTIC_UP_FRAME, up_frame);
@@ -173,5 +173,5 @@ Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.9 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.10 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.14 2002/03/25 02:36:59 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.15 2002/03/25 21:08:42 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1147,7 +1147,7 @@ void Fl_Window::size_range_() {
 ////////////////////////////////////////////////////////////////
 
 // returns pointer to the filename, or null if name ends with '/'
-const char *filename_name(const char *name) {
+const char *fl_filename_name(const char *name) {
   const char *p,*q;
   for (p=q=name; *p;) if (*p++ == '/') q = p;
   return q;
@@ -1160,7 +1160,7 @@ void Fl_Window::label(const char *name,const char *iname) {
     if (!name) name = "";
     XChangeProperty(fl_display, i->xid, XA_WM_NAME,
 		    XA_STRING, 8, 0, (uchar*)name, strlen(name));
-    if (!iname) iname = filename_name(name);
+    if (!iname) iname = fl_filename_name(name);
     XChangeProperty(fl_display, i->xid, XA_WM_ICON_NAME, 
 		    XA_STRING, 8, 0, (uchar*)iname, strlen(iname));
   }
@@ -1215,5 +1215,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.14 2002/03/25 02:36:59 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.15 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.11.2.4.2.4 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: filename.H,v 1.11.2.4.2.5 2002/03/25 21:08:41 easysw Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,21 +30,21 @@
 
 #  define FL_PATH_MAX 256 // all buffers are this length
 
-FL_EXPORT const char *filename_name(const char *); // return pointer to name
-FL_EXPORT const char *filename_ext(const char *); // return pointer to .ext
-FL_EXPORT char *filename_setext(char *to, int tolen, const char *ext); // clobber .ext
-FL_EXPORT int filename_expand(char *to, int tolen, const char *from); // do $x and ~x
-FL_EXPORT int filename_absolute(char *to, int tolen, const char *from); // prepend getcwd()
-FL_EXPORT int filename_relative(char *to, int tolen, const char *from); // make local to getcwd()
-FL_EXPORT int filename_match(const char *name, const char *pattern); // glob match
-FL_EXPORT int filename_isdir(const char *name);
+FL_EXPORT const char *fl_filename_name(const char *); // return pointer to name
+FL_EXPORT const char *fl_filename_ext(const char *); // return pointer to .ext
+FL_EXPORT char *fl_filename_setext(char *to, int tolen, const char *ext); // clobber .ext
+FL_EXPORT int fl_filename_expand(char *to, int tolen, const char *from); // do $x and ~x
+FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from); // prepend getcwd()
+FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from); // make local to getcwd()
+FL_EXPORT int fl_filename_match(const char *name, const char *pattern); // glob match
+FL_EXPORT int fl_filename_isdir(const char *name);
 
 #  ifdef __cplusplus
 // Under WIN32, we include filename.H from numericsort.c; this should probably change
-inline char *filename_setext(char *to, const char *ext) { return filename_setext(to, FL_PATH_MAX, ext); }
-inline int filename_expand(char *to, const char *from) { return filename_expand(to, FL_PATH_MAX, from); }
-inline int filename_absolute(char *to, const char *from) { return filename_absolute(to, FL_PATH_MAX, from); }
-inline int filename_relative(char *to, const char *from) { return filename_relative(to, FL_PATH_MAX, from); }
+inline char *fl_filename_setext(char *to, const char *ext) { return fl_filename_setext(to, FL_PATH_MAX, ext); }
+inline int fl_filename_expand(char *to, const char *from) { return fl_filename_expand(to, FL_PATH_MAX, from); }
+inline int fl_filename_absolute(char *to, const char *from) { return fl_filename_absolute(to, FL_PATH_MAX, from); }
+inline int fl_filename_relative(char *to, const char *from) { return fl_filename_relative(to, FL_PATH_MAX, from); }
 #  endif // __cplusplus
 
 
@@ -69,10 +69,10 @@ struct dirent {char d_name[1];};
 
 #  endif
 
-FL_EXPORT int filename_list(const char *d, struct dirent ***list);
+FL_EXPORT int fl_filename_list(const char *d, struct dirent ***list);
 
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11.2.4.2.4 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: filename.H,v 1.11.2.4.2.5 2002/03/25 21:08:41 easysw Exp $".
 //

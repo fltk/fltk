@@ -1,5 +1,5 @@
 //
-// "$Id: fl_diamond_box.cxx,v 1.5.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_diamond_box.cxx,v 1.5.2.3.2.2 2002/03/25 21:08:42 easysw Exp $"
 //
 // Diamond box code for the Fast Light Tool Kit (FLTK).
 //
@@ -67,12 +67,12 @@ static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
 }
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
-Fl_Boxtype define_FL_DIAMOND_BOX() {
+Fl_Boxtype fl_define_FL_DIAMOND_BOX() {
   fl_internal_boxtype(_FL_DIAMOND_DOWN_BOX, fl_diamond_down_box);
   fl_internal_boxtype(_FL_DIAMOND_UP_BOX,fl_diamond_up_box);
   return _FL_DIAMOND_UP_BOX;
 }
 
 //
-// End of "$Id: fl_diamond_box.cxx,v 1.5.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_diamond_box.cxx,v 1.5.2.3.2.2 2002/03/25 21:08:42 easysw Exp $".
 //

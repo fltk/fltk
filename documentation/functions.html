@@ -128,8 +128,8 @@ or <tt>NULL</tt> if Cancel is chosen.
 <P><tt>message</tt> is a string used to title the window.
 
 <P><tt>pattern</tt> is used to limit the files listed in a directory to
-those matching the pattern.  This matching is done by <A href=#filename_match>
-<tt>filename_match()</tt></A>.  Use <tt>NULL</tt> to show all files.
+those matching the pattern.  This matching is done by <A href=#fl_filename_match>
+<tt>fl_filename_match()</tt></A>.  Use <tt>NULL</tt> to show all files.
 
 <P><tt>fname</tt> is a default filename to fill in the chooser with.
 If this is <tt>NULL</tt> then the last filename that was choosen is
@@ -148,7 +148,7 @@ currently popped-up file chooser.  This could be used to preview the
 contents of the file.  It has to be reasonably fast, and cannot create
 FLTK windows.
 
-<h3><A name=filename_list>int filename_list(const char *d, dirent
+<h3><A name=fl_filename_list>int fl_filename_list(const char *d, dirent
 ***list)</A></h3>
 
 This is a portable and const-correct wrapper for the
@@ -169,27 +169,27 @@ an attempt is made to put unpadded numbers in consecutive order.
 <ul><pre>for (int i = return_value; i &gt; 0;) free((void*)(list[--i]));
 free((void*)list);</pre></ul>
 
-<h3><A name=filename_isdir>int filename_isdir(const char *f)</A></h3>
+<h3><A name=fl_filename_isdir>int fl_filename_isdir(const char *f)</A></h3>
 
 Returns non-zero if the file exists and is a directory.
 
-<h3><A name=filename_name>const char *filename_name(const char *f)</A></h3>
+<h3><A name=fl_filename_name>const char *fl_filename_name(const char *f)</A></h3>
 
 Returns a pointer to the character after the last slash, or to the
 start of the filename if there is none.
 
-<h3><A name=filename_ext>const char *filename_ext(const char *f)</A></h3>
+<h3><A name=fl_filename_ext>const char *fl_filename_ext(const char *f)</A></h3>
 
-Returns a pointer to the last period in <tt>filename_name(f)</tt>, or
+Returns a pointer to the last period in <tt>fl_filename_name(f)</tt>, or
 a pointer to the trailing nul if none.
 
-<h3><A name=filename_setext>char *filename_setext(char *f, const char
+<h3><A name=fl_filename_setext>char *fl_filename_setext(char *f, const char
 *ext)</A></h3>
 
-Does <tt>strcpy(filename_ext(f), ext ? ext : &quot;&quot;)</tt>.  Returns a
+Does <tt>strcpy(fl_filename_ext(f), ext ? ext : &quot;&quot;)</tt>.  Returns a
 pointer to <tt>f</tt>.
 
-<h3><A name=filename_expand>int filename_expand(char *out, const char
+<h3><A name=fl_filename_expand>int fl_filename_expand(char *out, const char
 *in)</A></h3>
 
 Splits <tt>in</tt> at each slash character.  Replaces any occurrance
@@ -203,7 +203,7 @@ be the same buffer).  Returns non-zero if any changes were made. <I>In
 true retro programming style, it is up to you to provide a buffer big
 enough for the result.  1024 characters should be enough.</I>
 
-<h3><A name=filename_absolute>int filename_absolute(char *out, const
+<h3><A name=fl_filename_absolute>int fl_filename_absolute(char *out, const
 char *in)</A></h3>
 
 If <tt>in</tt> does not start with a slash, this prepends the current
@@ -214,7 +214,7 @@ changes were made. <I>In true retro programming style, it is up to you
 to provide a buffer big enough for the result.  1024 characters should
 be enough.</I>
 
-<h3><A name=filename_match>int filename_match(const char *f, const char
+<h3><A name=fl_filename_match>int fl_filename_match(const char *f, const char
 *pattern)</A></h3>
 
 Returns true if <tt>f</tt> matches <tt>pattern</tt>.  The following

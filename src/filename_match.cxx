@@ -1,5 +1,5 @@
 //
-// "$Id: filename_match.cxx,v 1.5.2.4.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: filename_match.cxx,v 1.5.2.4.2.3 2002/03/25 21:08:42 easysw Exp $"
 //
 // Pattern matching routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 #include <FL/filename.H>
 #include <ctype.h>
 
-int filename_match(const char *s, const char *p) {
+int fl_filename_match(const char *s, const char *p) {
   int matched;
 
   for (;;) {
@@ -39,7 +39,7 @@ int filename_match(const char *s, const char *p) {
 
     case '*' :	// match 0-n of any characters
       if (!*p) return 1; // do trailing * quickly
-      while (!filename_match(s, p)) if (!*s++) return 0;
+      while (!fl_filename_match(s, p)) if (!*s++) return 0;
       return 1;
 
     case '[': {	// match one character in set of form [abc-d] or [^a-b]
@@ -63,7 +63,7 @@ int filename_match(const char *s, const char *p) {
 
     case '{' : // {pattern1|pattern2|pattern3}
     NEXTCASE:
-    if (filename_match(s,p)) return 1;
+    if (fl_filename_match(s,p)) return 1;
     for (matched = 0;;) {
       switch (*p++) {
       case '\\': if (*p) p++; break;
@@ -104,5 +104,5 @@ int filename_match(const char *s, const char *p) {
 }
 
 //
-// End of "$Id: filename_match.cxx,v 1.5.2.4.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: filename_match.cxx,v 1.5.2.4.2.3 2002/03/25 21:08:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.7.2.3 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: forms.H,v 1.7.2.7.2.4 2002/03/25 21:08:41 easysw Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -669,7 +669,7 @@ inline int fl_show_choices(const char* c,int n,const char* b1,const char* b2,
 
 #include "filename.H"
 #include "Fl_File_Chooser.H"
-inline int do_matching(char* a, const char* b) {return filename_match(a,b);}
+inline int do_matching(char* a, const char* b) {return fl_filename_match(a,b);}
 
 // Forms-compatable file chooser (implementation in fselect.C):
 FL_EXPORT char* fl_show_file_selector(const char* message,const char* dir,
@@ -838,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.7.2.3 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: forms.H,v 1.7.2.7.2.4 2002/03/25 21:08:41 easysw Exp $".
 //

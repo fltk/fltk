@@ -1,5 +1,5 @@
 //
-// "$Id: filename_isdir.cxx,v 1.4.2.5.2.6 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: filename_isdir.cxx,v 1.4.2.5.2.7 2002/03/25 21:08:42 easysw Exp $"
 //
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
-int filename_isdir(const char* n) {
+int fl_filename_isdir(const char* n) {
   struct stat	s;
 
 #ifdef WIN32
@@ -68,5 +68,5 @@ int filename_isdir(const char* n) {
 }
 
 //
-// End of "$Id: filename_isdir.cxx,v 1.4.2.5.2.6 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: filename_isdir.cxx,v 1.4.2.5.2.7 2002/03/25 21:08:42 easysw Exp $".
 //

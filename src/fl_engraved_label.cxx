@@ -1,5 +1,5 @@
 //
-// "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $"
 //
 // Engraved label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -73,19 +73,19 @@ static void fl_embossed_label(
   innards(o, X, Y, W, H, align, data, 7);
 }
 
-Fl_Labeltype define_FL_SHADOW_LABEL() {
+Fl_Labeltype fl_define_FL_SHADOW_LABEL() {
   Fl::set_labeltype(_FL_SHADOW_LABEL, fl_shadow_label, 0);
   return _FL_SHADOW_LABEL;
 }
-Fl_Labeltype define_FL_ENGRAVED_LABEL() {
+Fl_Labeltype fl_define_FL_ENGRAVED_LABEL() {
   Fl::set_labeltype(_FL_ENGRAVED_LABEL, fl_engraved_label, 0);
   return _FL_ENGRAVED_LABEL;
 }
-Fl_Labeltype define_FL_EMBOSSED_LABEL() {
+Fl_Labeltype fl_define_FL_EMBOSSED_LABEL() {
   Fl::set_labeltype(_FL_EMBOSSED_LABEL, fl_embossed_label, 0);
   return _FL_EMBOSSED_LABEL;
 }
 
 //
-// End of "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $".
 //

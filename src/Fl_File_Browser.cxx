@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.6 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -500,9 +500,9 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
     else if (filename[i] != '/' && filename[i] != '\\')
       strcat(filename, "/");
 
-    num_files = filename_list(filename, &files);
+    num_files = fl_filename_list(filename, &files);
 #else
-    num_files = filename_list(directory_, &files);
+    num_files = fl_filename_list(directory_, &files);
 #endif /* WIN32 || __EMX__ */
 
     if (num_files <= 0)
@@ -516,7 +516,7 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
 	snprintf(filename, sizeof(filename), "%s/%s", directory_,
 	         files[i]->d_name);
 
-	if (filename_isdir(filename))
+	if (fl_filename_isdir(filename))
 	{
 	  char name[1024]; // Temporary directory name
 
@@ -526,7 +526,7 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
           insert(num_dirs, name, Fl_File_Icon::find(filename));
 	}
 	else if (filetype_ == FILES &&
-	         filename_match(files[i]->d_name, pattern_))
+	         fl_filename_match(files[i]->d_name, pattern_))
           add(files[i]->d_name, Fl_File_Icon::find(filename));
       }
 
@@ -559,5 +559,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.6 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $".
 //

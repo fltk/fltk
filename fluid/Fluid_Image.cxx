@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.7 2002/01/06 17:51:12 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.8 2002/03/25 21:08:41 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -59,7 +59,7 @@ void Fluid_Image::write_static() {
       pixmap_header_written = write_number;
     }
     write_c("static const char *%s[] = {\n",
-	    unique_id(this, "idata", filename_name(name()), 0));
+	    unique_id(this, "idata", fl_filename_name(name()), 0));
     write_cstring(img->data()[0], strlen(img->data()[0]));
 
     int i;
@@ -82,8 +82,8 @@ void Fluid_Image::write_static() {
     }
     write_c("\n};\n");
     write_c("static Fl_Pixmap %s(%s);\n",
-	    unique_id(this, "image", filename_name(name()), 0),
-	    unique_id(this, "idata", filename_name(name()), 0));
+	    unique_id(this, "image", fl_filename_name(name()), 0),
+	    unique_id(this, "idata", fl_filename_name(name()), 0));
   } else if (img->d() == 0) {
     // Write Bitmap data...
     write_c("\n");
@@ -92,12 +92,12 @@ void Fluid_Image::write_static() {
       bitmap_header_written = write_number;
     }
     write_c("static unsigned char %s[] =\n",
-	    unique_id(this, "idata", filename_name(name()), 0));
+	    unique_id(this, "idata", fl_filename_name(name()), 0));
     write_cstring(img->data()[0], ((img->w() + 7) / 8) * img->h());
     write_c(";\n");
     write_c("static Fl_Bitmap %s(%s, %d, %d);\n",
-	    unique_id(this, "image", filename_name(name()), 0),
-	    unique_id(this, "idata", filename_name(name()), 0),
+	    unique_id(this, "image", fl_filename_name(name()), 0),
+	    unique_id(this, "idata", fl_filename_name(name()), 0),
 	    img->w(), img->h());
   } else {
     // Write image data...
@@ -107,12 +107,12 @@ void Fluid_Image::write_static() {
       image_header_written = write_number;
     }
     write_c("static unsigned char %s[] =\n",
-	    unique_id(this, "idata", filename_name(name()), 0));
+	    unique_id(this, "idata", fl_filename_name(name()), 0));
     write_cstring(img->data()[0], (img->w() * img->d() + img->ld()) * img->h());
     write_c(";\n");
     write_c("static Fl_RGB_Image %s(%s, %d, %d, %d, %d);\n",
-	    unique_id(this, "image", filename_name(name()), 0),
-	    unique_id(this, "idata", filename_name(name()), 0),
+	    unique_id(this, "image", fl_filename_name(name()), 0),
+	    unique_id(this, "idata", fl_filename_name(name()), 0),
 	    img->w(), img->h(), img->d(), img->ld());
   }
 }
@@ -120,7 +120,7 @@ void Fluid_Image::write_static() {
 void Fluid_Image::write_code(int inactive) {
   if (!img) return;
   write_c("%so->%s(%s);\n", indent(), inactive ? "deimage" : "image",
-	  unique_id(this, "image", filename_name(name()), 0));
+	  unique_id(this, "image", fl_filename_name(name()), 0));
 }
 
 
@@ -220,5 +220,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.7 2002/01/06 17:51:12 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.8 2002/03/25 21:08:41 easysw Exp $".
 //
