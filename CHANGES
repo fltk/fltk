@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- Fl_File_Input didn't update the directory buttons if a
+	  callback was registered with the widget.
 	- The file chooser would return the last selected
 	  file(s) when cancel was pressed.
 	- The file chooser limited the resizing of the chooser
