@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.27 2003/08/02 21:17:30 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.28 2003/09/03 19:50:54 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1538,6 +1538,43 @@ void Fl_Widget_Type::write_code1() {
   if (varused) write_widget_code();
 }
 
+void Fl_Widget_Type::write_color(const char* field, Fl_Color color) {
+  const char* color_name = 0;
+  switch (color) {
+  case FL_FOREGROUND_COLOR:	color_name = "FL_FOREGROUND_COLOR";	break;
+  case FL_BACKGROUND2_COLOR:	color_name = "FL_BACKGROUND2_COLOR";	break;
+  case FL_INACTIVE_COLOR:	color_name = "FL_INACTIVE_COLOR";	break;
+  case FL_SELECTION_COLOR:	color_name = "FL_SELECTION_COLOR";	break;
+  case FL_GRAY0:		color_name = "FL_GRAY0";		break;
+  case FL_DARK3:		color_name = "FL_DARK3";		break;
+  case FL_DARK2:		color_name = "FL_DARK2";		break;
+  case FL_DARK1:		color_name = "FL_DARK1";		break;
+  case FL_BACKGROUND_COLOR:	color_name = "FL_BACKGROUND_COLOR";	break;
+  case FL_LIGHT1:		color_name = "FL_LIGHT1";		break;
+  case FL_LIGHT2:		color_name = "FL_LIGHT2";		break;
+  case FL_LIGHT3:		color_name = "FL_LIGHT3";		break;
+  case FL_BLACK:		color_name = "FL_BLACK";		break;
+  case FL_RED:			color_name = "FL_RED";			break;
+  case FL_GREEN:		color_name = "FL_GREEN";		break;
+  case FL_YELLOW:		color_name = "FL_YELLOW";		break;
+  case FL_BLUE:			color_name = "FL_BLUE";			break;
+  case FL_MAGENTA:		color_name = "FL_MAGENTA";		break;
+  case FL_CYAN:			color_name = "FL_CYAN";			break;
+  case FL_DARK_RED:		color_name = "FL_DARK_RED";		break;
+  case FL_DARK_GREEN:		color_name = "FL_DARK_GREEN";		break;
+  case FL_DARK_YELLOW:		color_name = "FL_DARK_YELLOW";		break;
+  case FL_DARK_BLUE:		color_name = "FL_DARK_BLUE";		break;
+  case FL_DARK_MAGENTA:		color_name = "FL_DARK_MAGENTA";		break;
+  case FL_DARK_CYAN:		color_name = "FL_DARK_CYAN";		break;
+  case FL_WHITE:		color_name = "FL_WHITE";		break;
+  }
+  if (color_name) {
+    write_c("%so->%s(%s);\n", indent(), field, color_name);
+  } else {
+    write_c("%so->%s((Fl_Color)%d);\n", indent(), field, color);
+  }
+}
+
 // this is split from write_code1() for Fl_Window_Type:
 void Fl_Widget_Type::write_widget_code() {
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
@@ -1580,9 +1617,9 @@ void Fl_Widget_Type::write_widget_code() {
 			       boxname(b->down_box()));
   }
   if (o->color() != tplate->color() || subclass())
-    write_c("%so->color(%d);\n", indent(), o->color());
+    write_color("color", o->color());
   if (o->selection_color() != tplate->selection_color() || subclass())
-    write_c("%so->selection_color(%d);\n", indent(), o->selection_color());
+    write_color("selection_color", o->selection_color());
   if (image) image->write_code();
   if (inactive) inactive->write_code(1);
   if (o->labeltype() != tplate->labeltype() || subclass())
@@ -1593,7 +1630,7 @@ void Fl_Widget_Type::write_widget_code() {
   if (o->labelsize() != tplate->labelsize() || subclass())
     write_c("%so->labelsize(%d);\n", indent(), o->labelsize());
   if (o->labelcolor() != tplate->labelcolor() || subclass())
-    write_c("%so->labelcolor(%d);\n", indent(), o->labelcolor());
+    write_color("labelcolor", o->labelcolor());
   if (is_valuator()) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* f = (Fl_Valuator*)(tplate);
@@ -1982,5 +2019,5 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.27 2003/08/02 21:17:30 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.28 2003/09/03 19:50:54 easysw Exp $".
 //
