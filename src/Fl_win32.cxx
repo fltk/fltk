@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.23 2002/04/07 18:31:55 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.24 2002/04/09 21:17:01 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -868,8 +868,12 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   int is_a_resize = (W != w() || H != h());
   int resize_from_program = (this != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-    else {if (!is_a_resize) return; flags |= SWP_NOMOVE;}
+  if (X != x() || Y != y()) {
+    set_flag(FL_FORCE_POSITION);
+  } else {
+    if (!is_a_resize) return;
+    flags |= SWP_NOMOVE;
+  }
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
     if (shown()) {redraw(); i->wait_for_expose = 1;}
@@ -879,6 +883,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   }
   if (!border()) flags |= SWP_NOACTIVATE;
   if (resize_from_program && shown()) {
+    if (!resizable()) size_range(w(),h(),w(),h());
     int dummy, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
     //specifically menus) can be moved offscreen.
@@ -1157,5 +1162,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.23 2002/04/07 18:31:55 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.24 2002/04/09 21:17:01 easysw Exp $".
 //

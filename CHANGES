@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- Windows resized by a program would revert to their
+	  original size when moved under WIN32.
 	- Cygwin can only compile the new WIN32 drag-n-drop code
 	  using GCC 3.x.
 	- Tooltips now appear for inactive and output widgets.
