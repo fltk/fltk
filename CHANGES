@@ -7,6 +7,9 @@ CHANGES IN FLTK 1.1.0b5
 	- Fl_Help_Func now takes a Fl_Widget pointer as well as
 	  a pathname.
 	- Added code to support FL_KEYUP events.
+	- The symbols demo didn't show the strings needed to
+	  show the corresponding symbol (the label string was
+	  not quoted...)
 
 
 CHANGES IN FLTK 1.1.0b4

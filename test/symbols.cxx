@@ -1,5 +1,5 @@
 //
-// "$Id: symbols.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: symbols.cxx,v 1.4.2.3.2.1 2001/10/27 16:38:36 easysw Exp $"
 //
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
@@ -23,8 +23,9 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Single_Window.H>
 #include <FL/Fl_Box.H>
@@ -41,14 +42,15 @@ Fl_Window *window;
 void bt(const char *name) {
   int x = N%COLS;
   int y = N/COLS;
+  char buf[255];
   N++;
   x = x*W+10;
   y = y*H+10;
-  Fl_Box *a = new Fl_Box(FL_NO_BOX,x,y,W-20,H-20,name);
+  sprintf(buf, "@%s", name);
+  Fl_Box *a = new Fl_Box(FL_NO_BOX,x,y,W-20,H-20,strdup(buf));
   a->align(FL_ALIGN_BOTTOM);
   a->labelsize(11);
   Fl_Box *b = new Fl_Box(FL_UP_BOX,x,y,W-20,H-20,name);
-  b->labeltype(FL_SYMBOL_LABEL);
   b->labelcolor(FL_DARK3);
 }
 
@@ -85,5 +87,5 @@ bt("@DnArrow");
 }
 
 //
-// End of "$Id: symbols.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: symbols.cxx,v 1.4.2.3.2.1 2001/10/27 16:38:36 easysw Exp $".
 //
