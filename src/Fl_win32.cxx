@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.27 2002/04/16 07:47:31 spitzak Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.28 2002/04/29 20:18:01 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -975,8 +975,10 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
     int xwm = xp , ywm = yp , bt, bx, by;
     switch (fake_X_wm(w, xwm, ywm, bt, bx, by)) {
-      // No border (user for menus)
-      case 0: style |= WS_POPUP; break;
+      // No border (used for menus)
+      case 0: style |= WS_POPUP;
+              styleEx != WS_EX_TOOLWINDOW;
+	      break;
 
       // Thin border and title bar
       case 1: style |= WS_DLGFRAME | WS_CAPTION; break;
@@ -1179,5 +1181,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.27 2002/04/16 07:47:31 spitzak Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.28 2002/04/29 20:18:01 easysw Exp $".
 //

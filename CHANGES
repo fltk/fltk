@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- Tooltip windows would show up in the task bar under
+	  WIN32.
 	- Now append trailing slash to directory names in names
 	  in WIN32 version of scandir().  This takes care of a
 	  file chooser performance problem with large
