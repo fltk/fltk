@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10 1999/01/07 21:22:28 mike Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.1 2000/04/04 17:57:03 bill Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -247,12 +247,12 @@ void FCB::set(const char* buf) {
   const char* c = buf;
   for (bufdirend=0; *c;) switch(*c++) {
   case '?': case '[': case '*': case '{': ispattern = 1; goto BREAK;
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
   case '\\':
 #endif
   case '/': bufdirend=c-buf; break;
   }
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
   if ((!bufdirend) && isalpha(buf[0]) && (buf[1]==':')) bufdirend = 2;
 #endif
  BREAK:
@@ -305,7 +305,7 @@ void FCB::set(const char* buf) {
       any = 1;
       const char* a = (*q)->d_name;
       const char* b = buf+bufdirend;
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
       while (*b && tolower(*a)==tolower(*b)) {a++; b++;}
 #else
       while (*b && *a==*b) {a++; b++;}
@@ -327,7 +327,7 @@ void FCB::set(const char* buf) {
       any = 1;
       const char* a = (*q)->d_name;
       const char* b = buf+bufdirend;
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
       while (*b && tolower(*a)==tolower(*b)) {a++; b++;}
 #else
       while (*b && *a==*b) {a++; b++;}
@@ -405,7 +405,7 @@ static void tab_cb(Fl_Widget*, void* v) {
   }
 }
 
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
 // ':' needs very special handling!
 static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #else
@@ -622,5 +622,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10 1999/01/07 21:22:28 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.1 2000/04/04 17:57:03 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.8 1999/02/22 21:09:13 mike Exp $"
+// "$Id: demo.cxx,v 1.8.2.1 2000/04/04 17:57:05 bill Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#if defined(WIN32) && !defined(CYGNUS)
+#if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #else
 #  include <unistd.h>
@@ -320,6 +320,7 @@ int main(int argc, char **argv) {
   if (!Fl::args(argc,argv,i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s",Fl::help);
   if (i < argc) fname = argv[i];
+
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
   strcpy(buf,fname);
   const char *c = filename_name(buf);
@@ -331,6 +332,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.8 1999/02/22 21:09:13 mike Exp $".
+// End of "$Id: demo.cxx,v 1.8.2.1 2000/04/04 17:57:05 bill Exp $".
 //
 

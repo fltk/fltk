@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.10 1999/03/08 14:53:44 mike Exp $"
+ * "$Id: numericsort.c,v 1.10.2.1 2000/04/04 17:57:04 bill Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 #include <FL/filename.H>
 #else
 #if HAVE_DIRENT_H
@@ -84,5 +84,5 @@ int numericsort(struct dirent **A, struct dirent **B) {
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.10 1999/03/08 14:53:44 mike Exp $".
+ * End of "$Id: numericsort.c,v 1.10.2.1 2000/04/04 17:57:04 bill Exp $".
  */

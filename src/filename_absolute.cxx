@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5 1999/01/13 16:56:05 mike Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.1 2000/04/04 17:57:03 bill Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 #include <FL/filename.H>
 #include <stdlib.h>
 #include <string.h>
-#if defined(WIN32) && !defined(CYGNUS)
+#if defined(WIN32) && !defined(__CYGWIN__)
 # include <direct.h>
 //# define getcwd(a,b) _getdcwd(0,a,b)
 #else
@@ -42,7 +42,7 @@
 # endif
 #endif
 
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
 inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #else
 #define isdirsep(c) ((c)=='/')
@@ -51,7 +51,7 @@ inline int isdirsep(char c) {return c=='/' || c=='\\';}
 int filename_absolute(char *to,const char *from) {
 
   if (isdirsep(*from) || *from == '|'
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
       || from[1]==':'
 #endif
       ) {
@@ -65,7 +65,7 @@ int filename_absolute(char *to,const char *from) {
   a = getenv("PWD");
   if (a) strncpy(temp,a,FL_PATH_MAX);
   else {a = getcwd(temp,FL_PATH_MAX); if (!a) return 0;}
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
   for (a = temp; *a; a++) if (*a=='\\') *a = '/'; // ha ha
 #else
   a = temp+strlen(temp);
@@ -92,5 +92,5 @@ int filename_absolute(char *to,const char *from) {
 }
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5 1999/01/13 16:56:05 mike Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.1 2000/04/04 17:57:03 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: filename_expand.cxx,v 1.4 1999/01/07 19:17:34 mike Exp $"
+// "$Id: filename_expand.cxx,v 1.4.2.1 2000/04/04 17:57:03 bill Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,13 +31,13 @@
 #include <FL/filename.H>
 #include <stdlib.h>
 #include <string.h>
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 #else
 # include <unistd.h>
 # include <pwd.h>
 #endif
 
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
 static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #else
 #define isdirsep(c) ((c)=='/')
@@ -76,7 +76,7 @@ int filename_expand(char *to,const char *from) {
     if (value) {
       // substitutions that start with slash delete everything before them:
       if (isdirsep(value[0])) start = a;
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
       // also if it starts with "A:"
       if (value[0] && value[1]==':') start = a;
 #endif
@@ -87,7 +87,7 @@ int filename_expand(char *to,const char *from) {
       ret++;
     } else {
       a = e+1;
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
       if (*e == '\\') {*e = '/'; ret++;} // ha ha!
 #endif
     }
@@ -97,5 +97,5 @@ int filename_expand(char *to,const char *from) {
 }
 
 //
-// End of "$Id: filename_expand.cxx,v 1.4 1999/01/07 19:17:34 mike Exp $".
+// End of "$Id: filename_expand.cxx,v 1.4.2.1 2000/04/04 17:57:03 bill Exp $".
 //

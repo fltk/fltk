@@ -16,7 +16,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 USA.  */
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 #include "scandir_win32.c"
 #else
 
