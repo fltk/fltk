@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="jpeg"
+	ProjectGUID="{08B82852-90B3-4767-A5D2-F0A4FCCB2377}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -928,25 +929,6 @@
 					AdditionalIncludeDirectories=""
 					PreprocessorDefinitions=""
 					RuntimeLibrary="0"/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\jpeg\jpegtran.c">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					FavorSizeOrSpeed="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""/>
 			</FileConfiguration>
 		</File>
 		<File

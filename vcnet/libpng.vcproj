@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="libpng"
+	ProjectGUID="{D640A221-F95A-40FF-AC0E-0E8B615C7681}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -284,25 +285,6 @@
 		</File>
 		<File
 			RelativePath="..\png\pngset.c">
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					FavorSizeOrSpeed="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\png\pngtest.c">
 			<FileConfiguration
 				Name="Release|Win32">
 				<Tool

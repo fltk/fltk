@@ -123,10 +123,6 @@ SOURCE=..\png\pngset.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\png\pngtest.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\png\pngtrans.c
 # End Source File
 # Begin Source File

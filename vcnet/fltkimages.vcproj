@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="fltkimages"
+	ProjectGUID="{50D3FAA9-C1AF-48E6-BCCB-5FED0610BF99}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>

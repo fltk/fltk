@@ -266,10 +266,6 @@ SOURCE=..\jpeg\jmemnobs.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\jpeg\jpegtran.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\jpeg\jquant1.c
 # End Source File
 # Begin Source File
