@@ -489,7 +489,7 @@ static void draw_v_arrow(int x, int y1, int y2) {
   char buf[16];
   sprintf(buf, "%d", dy*(y2-y1));
   fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, x+3, y1+0.5*(y2-y1)+3);
+  fl_draw(buf, x+3, y1+(y2-y1)/2+3);
 }
 
 static void draw_h_arrow(int x1, int y, int x2) {
@@ -501,7 +501,7 @@ static void draw_h_arrow(int x1, int y, int x2) {
   char buf[16];
   sprintf(buf, "%d", dx*(x2-x1));
   fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, x1+0.5*(x2-x1)-6, y+9);
+  fl_draw(buf, x1+(x2-x1)/2-6, y+9);
 }
 
 static void draw_top_brace(const Fl_Widget *w) {
@@ -551,7 +551,7 @@ static void draw_width(int x, int y, int r) {
   char buf[16];
   sprintf(buf, "%d", r-x+1);
   fl_font(FL_HELVETICA, 9);
-  fl_draw(buf, r-5-fl_width(buf), y-1);
+  fl_draw(buf, r-5-(int)fl_width(buf), y-1);
 }
 
 void Fl_Window_Type::draw_overlay() {
@@ -580,7 +580,7 @@ void Fl_Window_Type::draw_overlay() {
   if (!numselected) return;
   int mybx,myby,mybr,mybt;
   mybx = o->w(); myby = o->h(); mybr = 0; mybt = 0;
-  Fl_Type *selection = 0L; // used to store the one selcted widget (if n==1)
+  Fl_Type *selection = 0L; // used to store the one selected widget (if n==1)
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_widget() && !q->is_menu_item()) {
       selection = q;
@@ -600,29 +600,83 @@ void Fl_Window_Type::draw_overlay() {
   fl_rectf(mybr-5,mybt-5,5,5);
   fl_rectf(mybx,mybt-5,5,5);
 
-  if (show_guides) {
+  if (show_guides && drag) {
     // draw overlays for UI Guideline distances
     // - check for distance to the window edge
-    //    * Apple suggest 14 pixels from the top
-    if (myby==14) draw_v_arrow(mybx+5, myby, 0);
-    //    * Apple suggest 20 pixels from the top
-    if (o->h()-mybt-1==20) draw_v_arrow(mybx+5, mybt, o->h()-1);
-    //    * Apple suggest 20 pixels from the left
-    if (mybx==20) draw_h_arrow(mybx, myby+5, 0);
-    //    * Apple suggest 20 pixels from the right
-    if (o->w()-mybr-1==20) draw_h_arrow(mybr, myby+5, o->w()-1);
-    // - the following measuremetnt only apply to single selections
-    if (numselected==1 && selection) {
-      // check for Apple prefered button sizes
-      if (selection->is_button()) {
-        int h = mybt-myby;
-        if (h==20 || h==17 || h==15) draw_height(mybx+10, myby, mybt);
-        int w = mybr-mybx;
-        if (w==68) draw_width(mybx, myby+10, mybr);
+    //    * FLTK suggests 10 pixels from the edge
+
+    if (drag & DRAG) {
+      if (abs(myby - 10) < 5) {
+	dy += 10 - myby;
+	mybt -= myby - 10;
+	myby = 10;
+	draw_v_arrow(mybx+5, myby, 0);
       }
-      // - check distances between individual widgets
+      if (abs(o->h() - mybt - 10) < 5) {
+	dy += o->h() - 10 - mybt;
+	myby += o->h() - mybt - 10;
+	mybt = o->h()- 10;
+	draw_v_arrow(mybx+5, mybt, o->h());
+      }
+      if (abs(mybx - 10) < 5) {
+        dx += 10 - mybx;
+	mybr -= mybx - 10;
+	mybx = 10;
+	draw_h_arrow(mybx, myby+5, 0);
+      }
+      if (abs(o->w() - mybr - 10) < 5) {
+	dx += o->w() - 10 - mybr;
+	mybx += o->w() - mybr - 10;
+	mybr = o->w()- 10;
+	draw_h_arrow(mybr, myby+5, o->w());
+      }
+    } else if (numselected==1 && selection) {
+      // check for FLTK preferred sizes
+      Fl_Widget *myw = ((Fl_Widget_Type *)selection)->o;
+
+      if (selection->is_button()) {
+	int w = mybr-mybx;
+	int h = mybt-myby;
+	if (abs(h-25) < 3) {
+	  mybt = myby + 25;
+	  if (drag & TOP) dy += 25 - h;
+	  else dy += h - 25;
+	} else if (abs(h-20) < 3) {
+	  mybt = myby + 20;
+	  if (drag & TOP) dy += 20 - h;
+	  else dy += h - 20;
+	} else if (abs(h-15) < 3) {
+	  mybt = myby + 15;
+	  if (drag & TOP) dy += 15 - h;
+	  else dy += h - 15;
+	}
+
+	draw_height(mybx < (o->w()/2) ? mybr : mybx-10, myby, mybt);
+
+	int ww = 0, hh = 0;
+
+	myw->measure_label(ww, hh);
+
+        ww += 20;
+
+	if (abs(ww - w) < 5) {
+	  if (drag & LEFT) {
+            mybx = mybr - ww;
+	    dx -= ww - w;
+	  } else {
+            mybr = mybx + ww;
+	    dx += ww - w;
+	  }
+	}
+
+	draw_width(mybx, myby < (o->h()/2) ? mybt : myby-10, mybx + ww);
+      }
+    }
+
+    // - check distances between individual widgets
+    if (drag) {
       for (Fl_Type *q=next; q && q->level>level; q = q->next)
-        if (q != selection) {
+	if (q != selection) {
           Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
           // - check horizontal and vertical alignment with other widgets
           if (myby == qw->o->y()) draw_top_brace(qw->o);
@@ -632,15 +686,27 @@ void Fl_Window_Type::draw_overlay() {
           if (selection->is_button()) {
             // - check distances between buttons
             if (q->is_button() && qw->o->y()==myby) {
-              // * horizontal button to button is 12 or 24 pixels
-              int dx = mybx - (qw->o->x()+qw->o->w());
-              if (dx==12 || dx==24) draw_h_arrow(mybx-1, myby+10, mybx-dx-1);
-              dx = qw->o->x() - mybr;
-              if (dx==12 || dx==24) draw_h_arrow(mybr, myby+10, mybr+dx);
+              // * horizontal button to button is 10 pixels
+              int xx = mybx - (qw->o->x()+qw->o->w());
+              if (abs(xx-10) < 5) {
+	        if (drag & (LEFT | DRAG)) dx += xx - 10;
+		else dx -= xx - 10;
+
+		draw_h_arrow(mybx-1, myby+10, mybx-xx-1);
+              } else {
+        	xx = qw->o->x() - mybr;
+        	if (abs(xx-10) < 5) {
+	          if (drag & (LEFT | DRAG)) dx += xx - 10;
+		  else dx -= xx - 10;
+
+		  draw_h_arrow(mybr, myby+10, mybr+xx);
+        	}
+	      }
             }
           }
-        }
+	}
     }
+
     // \todo add more cases, maybe an interpreter?
   }
 }
@@ -779,7 +845,7 @@ int Fl_Window_Type::handle(int event) {
     if (!drag) return 0;
     mx = Fl::event_x();
     my = Fl::event_y();
-    newdx();
+//    newdx();
     if (drag != BOX && (dx || dy || !Fl::event_is_click())) {
       if (dx || dy) moveallchildren();
     } else if ((Fl::event_clicks() || Fl::event_state(FL_CTRL))) {
