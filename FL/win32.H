@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.14 1999/02/16 21:59:49 mike Exp $"
+// "$Id: win32.H,v 1.15 1999/03/09 18:16:45 mike Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -98,18 +98,18 @@ inline COLORREF fl_RGB() {return fl_current_xmap->rgb;}
 inline HPEN fl_pen() {return fl_current_xmap->pen;}
 FL_EXPORT HBRUSH fl_brush(); // allocates a brush if necessary
 
-extern HINSTANCE fl_display;
-extern Window fl_window;
-extern HDC fl_gc;
-extern HPALETTE fl_palette; // non-zero only on 8-bit displays!
-extern HDC fl_GetDC(Window);
-extern MSG fl_msg;
+extern FL_EXPORT HINSTANCE fl_display;
+extern FL_EXPORT Window fl_window;
+extern FL_EXPORT HDC fl_gc;
+extern FL_EXPORT HPALETTE fl_palette; // non-zero only on 8-bit displays!
+extern FL_EXPORT HDC fl_GetDC(Window);
+extern FL_EXPORT MSG fl_msg;
 
 // off-screen pixmaps: create, destroy, draw into, copy to window
 #define Fl_Offscreen HBITMAP
 #define fl_create_offscreen(w, h) CreateCompatibleBitmap(fl_gc, w, h)
 
-extern HDC fl_makeDC(HBITMAP);
+extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 #define fl_begin_offscreen(b) \
   HDC _sgc=fl_gc; Window _sw=fl_window; \
   fl_gc=fl_makeDC(b); fl_window=(HWND)b; fl_push_no_clip()
@@ -121,5 +121,5 @@ FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
 
 //
-// End of "$Id: win32.H,v 1.14 1999/02/16 21:59:49 mike Exp $".
+// End of "$Id: win32.H,v 1.15 1999/03/09 18:16:45 mike Exp $".
 //
