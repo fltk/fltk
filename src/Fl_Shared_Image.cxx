@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.12 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.13 2002/06/28 15:23:03 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -210,7 +210,7 @@ Fl_Shared_Image::reload() {
   // Load image from disk...
   int		i;		// Looping var
   FILE		*fp;		// File pointer
-  uchar		header[16];	// Buffer for auto-detecting files
+  uchar		header[64];	// Buffer for auto-detecting files
   Fl_Image	*img;		// New image
 
   if (!name_) return;
@@ -461,5 +461,5 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.12 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.13 2002/06/28 15:23:03 easysw Exp $".
 //

@@ -1,7 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
-	- Added Greg Ercolano's MacOS filedescriptor support.
-	- Fixed text width bug.
+	- Fl_XBM_Image didn't correctly load XBM files.
+	- MacOS: Added Greg Ercolano's file descriptor support.
+	- MacOS: Fixed text width bug.
 	- A change in fl_fix_focus() broken click-focus in FLWM.
 	- Cygwin with -mnocygwin didn't like the FL/math.h
 	  header file.

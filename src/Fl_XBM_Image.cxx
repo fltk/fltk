@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XBM_Image.cxx,v 1.1.2.5 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_XBM_Image.cxx,v 1.1.2.6 2002/06/28 15:23:03 easysw Exp $"
 //
 // Fl_XBM_Image routines.
 //
@@ -76,7 +76,7 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
   h(wh[1]);
 
   int n = ((wh[0]+7)/8)*wh[1];
-  array = new uchar[((w() + 7) / 8) * h()];
+  array = new uchar[n];
 
   // read the data:
   for (i = 0, data = (uchar *)array; i < n;) {
@@ -87,7 +87,10 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
     const char *a = buffer;
     while (*a && i<n) {
       int t;
-      if (sscanf(a," 0x%x",&t)>0) *data++ = t;
+      if (sscanf(a," 0x%x",&t)>0) {
+        *data++ = t;
+	i ++;
+      }
       while (*a && *a++ != ',');
     }
   }
@@ -97,5 +100,5 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
 
 //
-// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.5 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.6 2002/06/28 15:23:03 easysw Exp $".
 //
