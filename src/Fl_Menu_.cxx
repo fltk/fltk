@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.1 1999/03/16 08:44:48 bill Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -135,10 +135,11 @@ void Fl_Menu_::clear() {
       if (menu_[i].text) free((void*)menu_[i].text);
     delete[] menu_;
     menu_ = 0;
+    value_ = 0;
     alloc = 0;
   }
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.1 1999/03/16 08:44:48 bill Exp $".
 //
