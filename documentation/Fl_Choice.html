@@ -27,8 +27,11 @@ outside the box.  However, since the use of this is most often to
 control a single variable rather than do individual callbacks, some of
 the <TT>Fl_Menu_Button</TT> methods are redescribed here in those
 terms. </P>
-<P>When the user picks an item off the menu the <TT>value()</TT> is set
-to that item and then the callback is done. </P>
+<P>When the user picks an item off the menu the <TT>value()</TT>
+is set to that item and then the item's callback is done with
+the menu_button as the <TT>Fl_Widget*</TT> argument.  If the
+item does not have a callback the menu_button's callback is done
+instead. </P>
 <P>All three mouse buttons pop up the menu.  The Forms behavior of the
 first two buttons to increment/decrement the choice is not implemented.
  This could be added with a subclass, however. </P>

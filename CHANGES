@@ -1,6 +1,6 @@
 CHANGES IN FLTK 1.1.7
 
-	- Documentation fixes (STR #648)
+	- Documentation fixes (STR #648, STR #692)
 	- Fl_Check_Browser didn't draw properly when inactive
 	  (STR #681)
 	- Removed some redundant code in Fl_Group::handle() (STR
