@@ -864,6 +864,17 @@ you want the window to hide and then reappear at a new position,
 you should have your program set the hotspot itself just before
 <tt>show()</tt>.
 
+<P>The <B>Border</B> button turns the window manager border on
+or off. On most window managers you will have to close the
+window and reopen it to see the effect.
+
+<H4>X Class (text field)</H4>
+
+<P>The string typed into here is passed to the X window manager
+as the class. This can change the icon or window decorations. 
+On most (all?) window managers you will have to close the window
+and reopen it to see the effect.
+
 
 <P ALIGN="CENTER"><IMG src="fluid_widget_style.gif" ALT="The FLUID widget Style attributes."><BR>
 <I>Figure 9-9: The FLUID widget Style attributes.</I></P>
@@ -1103,126 +1114,113 @@ different.</P>
 it) is almost identical to the panel for any other Fl_Widget. 
 There are three extra items:</P>
 
-<H4>Border</H4>
+<H3><A name="images">Images</A></H3>
 
-<P>This button turns the window manager border on or off.  On
-most window managers you will have to close the window and
-reopen it to see the effect.
+<P>The <I>contents</I> of the image files in the <B>Image</B>
+and <B>Inactive</B> text fields are written to the <TT>.cxx</TT>
+file. If many widgets share the same image then only one copy is
+written. Since the image data is embedded in the generated
+source code, you need only distribute the C++ code and not the
+image files themselves.</P>
 
-<H4>xclass</H4>
-
-<P>The string typed into here is passed to the X window manager
-as the class.  This can change the icon or window decorations. 
-On most (all?) window managers you will have to close the window
-and reopen it to see the effect.
-
-<H3><A name="images">Image Labels</A></H3>
-
-<P>Selecting &quot;Image...&quot; off the label style pull-down
-menu will bring up a file chooser from which you pick the image
-file.  If an image has already been chosen, you can change the
-image used by picking &quot;Image...&quot; again.  The name of
-the image will appear in the &quot;label&quot; field, but you
-can't edit it.</P>
-
-<P>The <I>contents</I> of the image file are written to the
-<TT>.cxx</TT> file, so if you wish to distribute the C code, you
-only need to copy the <TT>.cxx</TT> file, not the images.  If
-many widgets share the same image then only one copy is
-written.</P>
-
-<P>However the <I>file name</I> is stored in the <TT>.fl</TT>
-file, so to read the <TT>.fl</TT> file you need the image files
-as well.  Filenames are relative to the location the
-<TT>.fl</TT> file is (not necessarily the current directory).  I
+<P>However, the <I>filenames</I> are stored in the <TT>.fl</TT>
+file so you will need the image files as well to read the
+<TT>.fl</TT> file. Filenames are relative to the location of the
+<TT>.fl</TT> file and not necessarily the current directory. We
 recommend you either put the images in the same directory as the
 <TT>.fl</TT> file, or use absolute path names.</P>
 
-<H4>Notes for all image types</H4>
+<H4>Notes for All Image Types</H4>
 
-<P>FLUID runs using the default visual of your X server.  This
-may be 8 bits, which will give you dithered images.  You may get
+<P>FLUID runs using the default visual of your X server. This
+may be 8 bits, which will give you dithered images. You may get
 better results in your actual program by adding the code
 &quot;Fl::visual(FL_RGB)&quot; to your code right before the
 first window is displayed.
 
 <P>All widgets with the same image on them share the same code
-and source X pixmap.  Thus once you have put an image on a
+and source X pixmap. Thus once you have put an image on a
 widget, it is nearly free to put the same image on many other
 widgets.</P>
 
-<P>If you are using a painting program to edit an image: the
-only way to convince FLUID to read the image file again is to
-remove the image from all widgets that are using it (including
-ones in closed windows), which will cause it to free its
-internal copy, and then set the image again.  You may find it
-easier to exit FLUID and run it again.</P>
+<P>If you edit an image at the same time you are using it in FLUID,
+the only way to convince FLUID to read the image file again is to
+remove the image from all widgets that are using it or re-load the
+<TT>.fl</TT> file.</P>
 
 <P>Don't rely on how FLTK crops images that are outside the
-widget, as this may change in future versions!  The cropping of
+widget, as this may change in future versions! The cropping of
 inside labels will probably be unchanged.</P>
 
 <P>To more accurately place images, make a new &quot;box&quot;
-widget and put the image in that as the label.  This is also how
-you can put both an image and text label on the same widget.  If
-your widget is a button, and you want the image inside it, you
-must change the button's boxtype to <TT>FL_UP_FRAME</TT> (or
-another frame), otherwise when it is pushed it will erase the
-image.</P>
+widget and put the image in that as the label.</P>
 
-<H4>XBM (X bitmap files)</H4>
+<H4>XBM (X Bitmap) Files</H4>
 
-<P>FLUID will read X bitmap files.  These files have C source
-code to define a bitmap.  Sometimes they are stored with the
-&quot;.h&quot; or &quot;.bm&quot; extension rather than the
-standard &quot;.xbm&quot;.
+<P>FLUID reads X bitmap files which use C source code to define
+a bitmap. Sometimes they are stored with the &quot;.h&quot; or
+&quot;.bm&quot; extension rather than the standard
+&quot;.xbm&quot; extension.
 
-<P>FLUID will output code to construct an Fl_Bitmap widget and
-use it to label the widget.  The '1' bits in the bitmap are
-drawn using the label color of the widget.  You can change the
-color in FLUID.  The '0' bits are transparent.</P>
+<P>FLUID writes code to construct an Fl_Bitmap image and use it
+to label the widget. The '1' bits in the bitmap are drawn using
+the label color of the widget. You can change this color in the
+FLUID widget attributes panel. The '0' bits are transparent.</P>
 
 <P>The program &quot;bitmap&quot; on the X distribution does an
-ok job of editing bitmaps.</P>
+adequate job of editing bitmaps.</P>
 
-<H4>XPM (X pixmap files)</H4>
+<H4>XPM (X Pixmap) Files</H4>
 
-<P>FLUID will read X pixmap files as used by the libxpm library.
-These files have C source code to define a pixmap.  The
-filenames usually have a &quot;.xpm&quot; extension.
+<P>FLUID reads X pixmap files as used by the <TT>libxpm</TT>
+library. These files use C source code to define a pixmap. The
+filenames usually have the &quot;.xpm&quot; extension.
 
-<P>FLUID will output code to construct an Fl_Pixmap widget and
-use it to label the widget.  The label color of the widget is
-ignored, even for 2-color images that could be a bitmap.</P>
+<P>FLUID writes code to construct an Fl_Pixmap image and use it
+to label the widget. The label color of the widget is ignored,
+even for 2-color images that could be a bitmap. XPM files can
+mark a single color as being transparent, and FLTK uses this
+information to generate a transparency mask for the image.</P>
 
-<P>XPM files can mark a single color as being transparent. 
-Currently FLTK and FLUID simulate this transparency rather
-badly.  It will use the color() of the widget as the background,
-and all widgets using the same pixmap are assumed to have the
-same color.  This may be fixed in the future or on non-X
-systems.</P>
+<P>We have not found any good editors for small iconic pictures.
+For pixmaps we have used <A
+href="http://home.worldonline.dk/~torsten/xpaint/index.html">XPaint</A>
+and the KDE icon editor.</P>
 
-<P>I have not found any good editors for small iconic pictures. 
-For pixmaps I have used <A
-href="http://home.worldonline.dk/~torsten/xpaint/index.html">XPaint</A>.
-This (and most other) painting programs are designed for large
-full color images and are difficult to use to edit an image of
-small size and few colors.</P>
+<H4>BMP Files</H4>
 
-<H4>GIF files</H4>
+<P>FLUID reads Windows BMP image files which are often used in
+WIN32 applications for icons. FLUID converts BMP files into
+(modified) XPM format and uses a Fl_BMP_Image image to label the
+widget. Transparency is handled the same as for XPM files. All
+image data is uncompressed when written to the source file, so
+the code may be much bigger than the <TT>.bmp</TT> file.</P>
 
-<P>FLUID will also read GIF image files.  These files are often
-used on html documents to make icons.  This lets you use nice
-icons that you steal off the net in your user interface.
+<H4>GIF Files</H4>
 
-<P>FLUID converts these into (modified) XPM format and uses an
-Fl_Pixmap widget to label the widget.  Transparency is handled
-the same as for XPM files.  Notice that the conversion removes
-the compression, so the code may be much bigger than the .gif
-file.  Only the first image of an animated gif file is used.</P>
+<P>FLUID reads GIF image files which are often used in HTML
+documents to make icons. FLUID converts GIF files into
+(modified) XPM format and uses a Fl_GIF_Image image to label the
+widget. Transparency is handled the same as for XPM files. All
+image data is uncompressed when written to the source file, so
+the code may be much bigger than the <TT>.gif</TT> file. Only
+the first image of an animated GIF file is used.</P>
 
-<P>Behavior and performance with large .gif files is not
-guaranteed! </P>
+<H4>JPEG Files</H4>
+
+<P>If FLTK is compiled with JPEG support, FLUID can read JPEG
+image files which are often used for digital photos. FLUID uses
+a Fl_JPEG_Image image to label the widget, and writes
+uncompressed RGB or grayscale data to the source file.
+
+<H4>PNG (Portable Network Graphics) Files</H4>
+
+<P>If FLTK is compiled with PNG support, FLUID can read PNG
+image files which are often used in HTML documents. FLUID uses a
+Fl_PNG_Image image to label the widget, and writes uncompressed
+RGB or grayscale data to the source file. PNG images can provide
+a full alpha channel for partial transparency, and FLTK supports
+this as best as possible on each platform.
 
 <H2><A NAME="I18N">Internationalization with FLUID</A></H2>
 
