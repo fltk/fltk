@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7 1999/01/07 19:17:26 mike Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.1 1999/05/14 09:07:07 bill Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -132,45 +132,50 @@ int Fl_Scrollbar::handle(int event) {
 }
 
 void Fl_Scrollbar::draw() {
+  if (damage()&FL_DAMAGE_ALL) draw_box();
+  int X = x()+Fl::box_dx(box());
+  int Y = y()+Fl::box_dy(box());
+  int W = w()-Fl::box_dw(box());
+  int H = h()-Fl::box_dh(box());
   if (horizontal()) {
-    if (w() < 3*h()) {Fl_Slider::draw(); return;}
-    Fl_Slider::draw(x()+h(), y(), w()-2*h(), h());
+    if (W < 3*H) {Fl_Slider::draw(X,Y,W,H); return;}
+    Fl_Slider::draw(X+H,Y,W-2*H,H);
     if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_&1) ? down(slider()) : slider(),
-	       x(), y(), h(), h(), selection_color());
+	       X, Y, H, H, selection_color());
       draw_box((pushed_&2) ? down(slider()) : slider(),
-		  x()+w()-h(), y(), h(), h(), selection_color());
+		  X+W-H, Y, H, H, selection_color());
       if (active_r())
         fl_color(labelcolor());
       else
         fl_color(inactive(labelcolor()));
-      int w1 = (h()-1)|1; // use odd sizes only
-      int Y = y()+w1/2;
-      int W = w1/3;
-      int X = x()+w1/2+W/2;
-      fl_polygon(X-W, Y, X, Y-W, X, Y+W);
-      X = x()+w()-(X-x())-1;
-      fl_polygon(X+W, Y, X, Y+W, X, Y-W);
+      int w1 = (H-1)|1; // use odd sizes only
+      int Y1 = Y+w1/2;
+      int W1 = w1/3;
+      int X1 = X+w1/2+W1/2;
+      fl_polygon(X1-W1, Y1, X1, Y1-W1, X1, Y1+W1);
+      X1 = X+W-(X1-X)-1;
+      fl_polygon(X1+W1, Y1, X1, Y1+W1, X1, Y1-W1);
     }
   } else { // vertical
-    if (h() < 3*w()) {Fl_Slider::draw(); return;}
-    Fl_Slider::draw(x(), y()+w(), w(), h()-2*w());
+    if (H < 3*W) {Fl_Slider::draw(X,Y,W,H); return;}
+    Fl_Slider::draw(X,Y+W,W,H-2*W);
     if (damage()&FL_DAMAGE_ALL) {
       draw_box((pushed_&1) ? down(slider()) : slider(),
-	       x(), y(), w(), w(), selection_color());
+	       X, Y, W, W, selection_color());
       draw_box((pushed_&2) ? down(slider()) : slider(),
-	       x(), y()+h()-w(), w(), w(), selection_color());
+	       X, Y+H-W, W, W, selection_color());
       if (active_r())
         fl_color(labelcolor());
       else
         fl_color(labelcolor() | 8);
-      int w1 = (w()-1)|1; // use odd sizes only
-      int X = x()+w1/2;
-      int W = w1/3;
-      int Y = y()+w1/2+W/2;
-      fl_polygon(X, Y-W, X+W, Y, X-W, Y);
-      Y = y()+h()-(Y-y())-1;
-      fl_polygon(X, Y+W, X-W, Y, X+W, Y);
+      int w1 = (W-1)|1; // use odd sizes only
+      int X1 = X+w1/2;
+      int W1 = w1/3;
+      int Y1 = Y+w1/2+W1/2;
+      fl_polygon(X1, Y1-W1, X1+W1, Y1, X1-W1, Y1);
+      Y1 = Y+H-(Y1-Y)-1;
+      fl_polygon(X1, Y1+W1, X1-W1, Y1, X1+W1, Y1);
     }
   }
 }
@@ -187,5 +192,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7 1999/01/07 19:17:26 mike Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.1 1999/05/14 09:07:07 bill Exp $".
 //
