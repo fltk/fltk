@@ -755,7 +755,8 @@ void Fl_Comment_Type::open() {
             db.deleteEntry(itempath);
             comment_predefined->remove(last_selected_item);
             Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
-            for (int i=4, n=0; i<comment_predefined->size(); i++) {
+            int i, n;
+            for (i=4, n=0; i<comment_predefined->size(); i++) {
               const Fl_Menu_Item *mi = comment_predefined->menu()+i;
               if (comment_predefined->item_pathname(itempath, 255, mi)==0) {
                 if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
