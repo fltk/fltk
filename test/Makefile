@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.31 2002/03/26 00:05:18 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.32 2002/03/28 13:20:11 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -158,6 +158,9 @@ gldemos:	$(GLALL)
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)
+
+# Automatically generated dependencies...
+include makedepend
 
 clean:
 	-@ rm -f $(ALL) $(GLALL) *.o core *~
@@ -369,5 +372,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.31 2002/03/26 00:05:18 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.32 2002/03/28 13:20:11 easysw Exp $".
 #
