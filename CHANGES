@@ -6,6 +6,7 @@ CHANGES IN FLTK 1.1.0b5
 	  those boxtypes causing them to be reset.
 	- Fl_Help_Func now takes a Fl_Widget pointer as well as
 	  a pathname.
+	- Added code to support FL_KEYUP events.
 
 
 CHANGES IN FLTK 1.1.0b4

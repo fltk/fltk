@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.4 2001/09/30 12:42:32 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.5 2001/10/27 03:45:29 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -576,7 +576,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
     Fl::e_state = state;
-    if (lParam & (1<<31)) goto DEFAULT; // ignore up events after fixing shift
+    if (lParam & (1<<31)) { // key up events.
+      if (Fl::handle(FL_KEYUP, window)) return 0;
+      break;
+    }
     static char buffer[2];
     if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
       buffer[0] = char(wParam);
@@ -998,5 +1001,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.4 2001/09/30 12:42:32 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.5 2001/10/27 03:45:29 easysw Exp $".
 //
