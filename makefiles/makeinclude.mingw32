@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw32,v 1.7 1999/02/16 14:28:01 mike Exp $"
+# "$Id: makeinclude.mingw32,v 1.8 1999/02/18 14:05:31 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -35,8 +35,8 @@ CXX		= g++
 CC		= gcc
 
 # flags for C++ compiler:
-CFLAGS		= -Wall -O2 -DWIN32 -mwindows
-CXXFLAGS	= -Wall -O2 -DWIN32 -mwindows
+CFLAGS		= -Wall -O2 -DWIN32 -mwindows -DFL_STATIC
+CXXFLAGS	= -Wall -O2 -DWIN32 -mwindows -DFL_STATIC
 
 # program to make the archive:
 LIBNAME		= libfltk.a
@@ -47,5 +47,5 @@ RANLIB		= ranlib
 LDLIBS		= -lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lwsock32 -lm
 
 #
-# End of "$Id: makeinclude.mingw32,v 1.7 1999/02/16 14:28:01 mike Exp $".
+# End of "$Id: makeinclude.mingw32,v 1.8 1999/02/18 14:05:31 mike Exp $".
 #
