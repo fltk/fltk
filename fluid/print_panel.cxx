@@ -239,6 +239,10 @@ static void cb_Cancel1(Fl_Button*, void*) {
 print_update_status();
 }
 
+static void cb_Use(Fl_Button*, void*) {
+  print_properties_panel->hide();
+}
+
 Fl_Double_Window* make_print_panel() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = print_panel = new Fl_Double_Window(465, 235, "Print");
@@ -496,6 +500,9 @@ Fl_Double_Window* make_print_panel() {
     }
     { Fl_Button* o = new Fl_Button(212, 95, 68, 25, "Cancel");
       o->callback((Fl_Callback*)cb_Cancel1);
+    }
+    { Fl_Button* o = new Fl_Button(60, 95, 53, 25, "Use");
+      o->callback((Fl_Callback*)cb_Use);
     }
     o->set_modal();
     o->end();

@@ -238,7 +238,7 @@ print_update_status();} open
       label {Output Mode:} open
       xywh {110 45 170 40} labelfont 1 align 4
     } {
-      Fl_Button {print_output_mode[0]} {selected
+      Fl_Button {print_output_mode[0]} {
         image {pixmaps/print_color.xpm} xywh {110 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX value 1 color 7 selection_color 0
       }
       Fl_Button {print_output_mode[1]} {
@@ -274,6 +274,11 @@ fluid_prefs.set(name, val);}
       callback {print_properties_panel->hide();
 print_update_status();}
       xywh {212 95 68 25}
+    }
+    Fl_Button {} {
+      label Use
+      callback {print_properties_panel->hide();} selected
+      xywh {60 95 53 25}
     }
   }
 } 
