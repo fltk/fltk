@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.7 2002/01/01 15:11:28 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.8 2002/01/06 13:40:32 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -139,7 +139,7 @@ HTMLFILES	= \
 			subclassing.html \
 			widgets.html
 
-MANPAGES =	fltk.$(CAT3EXT) fluid.$(CAT1EXT)
+MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT)
 
 all:	fltk.ps fltk.pdf $(MANPAGES)
 
@@ -165,12 +165,16 @@ install: $(MANPAGES)
 	-mkdir -p $(mandir)/cat1
 	cp fluid.$(CAT1EXT) $(mandir)/cat1
 	chmod 644 $(mandir)/cat1/fluid.$(CAT1EXT)
+	cp fltk-config.$(CAT1EXT) $(mandir)/cat1
+	chmod 644 $(mandir)/cat1/fltk-config.$(CAT1EXT)
 	-mkdir -p $(mandir)/cat3
 	cp fltk.$(CAT3EXT) $(mandir)/cat3
 	chmod 644 $(mandir)/cat3/fltk.$(CAT3EXT)
 	-mkdir -p $(mandir)/man1
 	cp fluid.man $(mandir)/man1/fluid.1
 	chmod 644 $(mandir)/man1/fluid.1
+	cp fltk-config.man $(mandir)/man1/fltk-config.1
+	chmod 644 $(mandir)/man1/fltk-config.1
 	-mkdir -p $(mandir)/man3
 	cp fltk.man $(mandir)/man3/fltk.3
 	chmod 644 $(mandir)/man3/fltk.3
@@ -203,5 +207,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) --verbose --batch fltk.book -f fltk.pdf
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.7 2002/01/01 15:11:28 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.8 2002/01/06 13:40:32 easysw Exp $".
 #

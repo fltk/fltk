@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.9 2002/01/01 15:11:27 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.10 2002/01/06 13:40:27 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -26,7 +26,7 @@
 include makeinclude
 
 SHELL	=	/bin/sh
-DIRS	=	src fluid test
+DIRS	=	src fluid test documentation
 
 all: makeinclude
 	@for dir in $(DIRS); do\
@@ -35,17 +35,17 @@ all: makeinclude
 	done
 
 install: makeinclude
-	@for dir in FL $(DIRS) documentation; do\
+	@for dir in FL $(DIRS); do\
 		echo "=== installing $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
 	done
 	-mkdir -p $(bindir)
 	rm -f $(bindir)/fltk-config
 	-cp fltk-config $(bindir)
-	-chmod +x $(bindir)/fltk-config
+	-chmod 755 $(bindir)/fltk-config
 
 uninstall: makeinclude
-	@for dir in FL $(DIRS) documentation; do\
+	@for dir in FL $(DIRS); do\
 		echo "=== uninstalling $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || break;\
 	done
@@ -74,10 +74,18 @@ makeinclude: configure configh.in makeinclude.in
 	else \
 		./configure; \
 	fi
+	touch config.h
 
 configure: configure.in
 	autoconf
 
+portable-dist:
+	epm -v fltk
+
+native-dist:
+	epm -v -f native fltk
+
+
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.9 2002/01/01 15:11:27 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.10 2002/01/06 13:40:27 easysw Exp $".
 #

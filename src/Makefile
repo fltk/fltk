@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.28 2002/01/01 15:11:31 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.29 2002/01/06 13:40:32 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -290,30 +290,36 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	if test x$(DSONAME) = xlibfltk.so.1.1; then\
 		rm -f $(libdir)/libfltk.so*;\
 		cp libfltk.so.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk.so.1.1; \
 		ln -s libfltk.so.1.1 $(libdir)/libfltk.so;\
 	fi
 	if test x$(DSONAME) = xlibfltk.sl.1.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
 		cp libfltk.sl.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk.sl.1.1; \
 		ln -s libfltk.sl.1.1 $(libdir)/libfltk.sl;\
 	fi
 	if test x$(DSONAME) = xlibfltk_s.a; then\
 		rm -f $(libdir)/libfltk_s.a;\
 		cp libfltk_s.a $(libdir); \
+		chmod 755 $(libdir)/libfltk_s.a; \
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.so.1.1; then\
 		rm -f $(libdir)/libfltk_gl.so*;\
 		cp libfltk_gl.so.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk_gl.so.1.1; \
 		ln -s libfltk_gl.so.1.1 $(libdir)/libfltk_gl.so;\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.1; then\
 		rm -f $(libdir)/libfltk_gl.sl*;\
 		cp libfltk_gl.sl.1.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk_gl.sl.1.1; \
 		ln -s libfltk_gl.sl.1.1 $(libdir)/libfltk_gl.sl;\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
 		rm -f $(libdir)/libfltk_gl_s.a;\
 		cp libfltk_gl_s.a $(libdir); \
+		chmod 755 $(libdir)/libfltk_gl.a; \
 	fi
 
 
@@ -344,5 +350,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.28 2002/01/01 15:11:31 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.29 2002/01/06 13:40:32 easysw Exp $".
 #

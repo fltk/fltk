@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.45 2002/01/01 15:11:27 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.46 2002/01/06 13:40:27 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -368,6 +368,7 @@ case $uname in
 	GLLIB=
 
 	if test x$enable_gl != xno; then
+	    AC_SEARCH_LIBS(dlopen, dl)
 	    AC_CHECK_HEADER(GL/gl.h,
 		AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB="-lGL", \
 		    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGL",,\
@@ -633,5 +634,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.45 2002/01/01 15:11:27 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.46 2002/01/06 13:40:27 easysw Exp $".
 dnl
