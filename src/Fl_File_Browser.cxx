@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.9 2002/04/14 12:51:55 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.10 2002/04/16 14:50:10 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -49,13 +49,19 @@
 #elif defined(WIN32)
 #  include <windows.h>
 #  include <direct.h>
-#endif /* __CYGWIN__ */
+#endif // __CYGWIN__
 
-#if defined(__EMX__)
+#ifdef __EMX__
 #  define  INCL_DOS
 #  define  INCL_DOSMISC
 #  include <os2.h>
-#endif /* __EMX__ */
+#endif // __EMX__
+
+#ifdef __APPLE__
+#  include <sys/param.h>
+#  include <sys/ucred.h>
+#  include <sys/mount.h>
+#endif // __APPLE__
 
 
 //
@@ -465,6 +471,32 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
 
 	num_files ++;
       }
+#elif defined(__APPLE__)
+    // MacOS X and Darwin use getfsstat() system call...
+    int			numfs;	// Number of file systems
+    struct statfs	*fs;	// Buffer for file system info
+
+
+    numfs = getfsstat(NULL, 0, MNT_NOWAIT);
+    if (numfs > 0) {
+      // We have file systems, get them...
+      fs = new struct statfs[numfs];
+      getfsstat(fs, sizeof(struct statfs) * numfs, MNT_NOWAIT);
+
+      // Add filesystems to the list...
+      for (i = 0; i < numfs; i ++) {
+        if (fs[i].f_mntonname[1]) {
+          snprintf(filename, sizeof(filename), "%s/", fs[i].f_mntonname);
+          add(filename, icon);
+        } else {
+          add("/", icon);
+        }
+        num_files ++;
+      }
+
+      // Free the memory used for the file system info array...
+      delete[] fs;
+    }
 #else
     //
     // UNIX code uses /etc/fstab or similar...
@@ -583,5 +615,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.9 2002/04/14 12:51:55 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.10 2002/04/16 14:50:10 easysw Exp $".
 //
