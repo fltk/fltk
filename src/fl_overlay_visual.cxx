@@ -1,5 +1,5 @@
 //
-// "$Id: fl_overlay_visual.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_overlay_visual.cxx,v 1.4.2.4 2001/05/05 23:39:01 spitzak Exp $"
 //
 // X overlay support for the Fast Light Tool Kit (FLTK).
 //
@@ -75,8 +75,8 @@ XVisualInfo *fl_find_overlay_visual() {
       templt.visualid = overlayInfo[i].overlay_visual;
       int num;
       XVisualInfo *v1=XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
-      if (v1->screen == fl_screen && 
-	  !v1->red_mask && (!v || v1->depth >= v->depth && v1->depth <= 8)) {
+      if (v1->screen == fl_screen && v1->c_class == PseudoColor
+	  && (!v || v1->depth >= v->depth && v1->depth <= 8)) {
 	if (v) XFree((char*)v);
 	v = v1;
 	fl_transparent_pixel = overlayInfo[i].value;
@@ -92,12 +92,12 @@ XVisualInfo *fl_find_overlay_visual() {
     }
   }
   XFree((char*)overlayInfo);
-  //  printf("overlay visual %d selected\n", fl_overlay_visual->visualid);
+  //printf("overlay visual %ld selected\n", fl_overlay_visual->visualid);
   return fl_overlay_visual;
 }
 
 #endif
 
 //
-// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.4 2001/05/05 23:39:01 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: cmap.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: cmap.cxx,v 1.4.2.6 2001/05/05 23:39:01 spitzak Exp $"
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
@@ -59,7 +59,11 @@ static short cmap[256][3] = {
   {113,113,198},	// pale blue
   {142, 56,142},	// purple, orchid, pale magenta
   { 56,142,142},	// cadet blue, aquamarine, pale cyan
-  {170,170,170},	// 2/3 gray (FL_SELECTION_COLOR location)
+// The next location is used for FL_SELECTION_COLOR. It formerly was 2/3 gray
+// but this is changed to be the Windows blue color. This allows the default
+// behavior on both X and Windows to match:
+  {  0,  0,128},
+//{170,170,170},	// old 2/3 gray color
 // These next 16 are the FL_FREE_COLOR area. In some versions of fltk
 // these were filled with random colors that a Irix 5.3 machine placed
 // in these locations. Other versions of fltk filled this with the 1/3
@@ -146,10 +150,10 @@ int main() {
 
   // fill in the gray ramp:
   background(0xc0, 0xc0, 0xc0); // microsoft colors
-  // background(cmap[15][0],cmap[15][1],cmap[15][2]); // old fltk colors
+  // background(170, 170, 170); // old fltk colors
   // copy the 1/3 and 2/3 gray to the closest locations in gray ramp:
-  cmap[39][0] = cmap[39][1] = cmap[39][2] = cmap[8][0];
-  cmap[47][0] = cmap[47][1] = cmap[47][2] = cmap[15][0];
+  cmap[39][0] = cmap[39][1] = cmap[39][2] = 85;
+  cmap[47][0] = cmap[47][1] = cmap[47][2] = 170;
 
   // fill in the color cube
   i = 56;
@@ -171,5 +175,5 @@ int main() {
 }
 
 //
-// End of "$Id: cmap.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: cmap.cxx,v 1.4.2.6 2001/05/05 23:39:01 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.17 2001/03/20 18:02:52 spitzak Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18 2001/05/05 23:39:01 spitzak Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -66,6 +66,7 @@ extern unsigned long fl_transparent_pixel;
 extern uchar fl_overlay;
 
 class _Fl_Gl_Overlay : public Fl_Gl_Window {
+  void flush();
   void draw();
 public:
   void show();
@@ -74,6 +75,22 @@ public:
     set_flag(INACTIVE);
   }
 };
+
+void _Fl_Gl_Overlay::flush() {
+  make_current();
+#ifdef BOXX_BUGS
+  // The BoXX overlay is broken and you must not call swap-buffers. This
+  // code will make it work, but we lose because machines that do support
+  // double-buffered overlays will blink when they don't have to
+  glDrawBuffer(GL_FRONT);
+  draw();
+#else
+  draw();
+  swap_buffers();
+#endif
+  glFlush();
+  valid(1);
+}
 
 void _Fl_Gl_Overlay::draw() {
   if (!valid_) glClearIndex((GLfloat)fl_transparent_pixel);
@@ -214,5 +231,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.17 2001/03/20 18:02:52 spitzak Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18 2001/05/05 23:39:01 spitzak Exp $".
 //

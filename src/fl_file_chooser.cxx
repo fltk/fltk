@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.9 2001/03/14 17:20:02 spitzak Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.10 2001/05/05 23:39:01 spitzak Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -435,8 +435,8 @@ static void input_cb(Fl_Widget*, void* v) {
   w->browser.set(buf);
 }
 
-static void up_cb(Fl_Widget*, void* v) { // the .. button
-  FCW* w = (FCW*)v;
+static void up_cb(Fl_Widget*wd, void*) { // the .. button
+  FCW* w = (FCW*)(wd->window());
   char* p;
   const char* newname;
   char buf[FL_PATH_MAX];
@@ -462,18 +462,16 @@ static void up_cb(Fl_Widget*, void* v) { // the .. button
 }
 
 static void dir_cb(Fl_Widget* obj, void* v) { // directory buttons
-  FCW* w = (FCW*)v;
-  const char* p = obj->label(); if (*p=='&') p++;
+  FCW* w = (FCW*)(obj->window());
   char buf[FL_PATH_MAX];
-  char* q; for (q=buf; *p && *p!=' '; *q++ = *p++); *q = 0;
-  filename_expand(buf, buf);
+  filename_expand(buf, (const char*)v);
   w->input.value(buf);
   w->input.position(10000);
   w->browser.set(buf);
 }
 
-static void working_cb(Fl_Widget*, void* v) { // directory buttons
-  FCW*w = (FCW*)v;
+static void working_cb(Fl_Widget* obj, void*) { // directory buttons
+  FCW* w = (FCW*)(obj->window());
   char buf[FL_PATH_MAX];
   filename_absolute(buf, "");
   w->input.value(buf);
@@ -482,15 +480,11 @@ static void working_cb(Fl_Widget*, void* v) { // directory buttons
 }
 
 static void files_cb(Fl_Widget* obj, void* v) { // file pattern buttons
-  FCW* w = (FCW*)v;
+  FCW* w = (FCW*)(obj->window());
   char buf[FL_PATH_MAX];
   strcpy(buf, w->input.value());
   char* q = buf+w->browser.dirend;
-  if (obj != w->normal_button) {	// tack on first word of label
-    const char* p = obj->label(); if (*p=='&') p++;
-    for (; *p && *p!=' '; *q++ = *p++);
-  }
-  *q = 0;
+  if (v) strcpy(q, (char*)v); else *q = 0;
   w->input.value(buf);
   w->input.position(10000, w->browser.dirend);
   w->browser.set(buf);
@@ -517,7 +511,9 @@ int FCW::handle(int event) {
 }
 
 // set this to make extra directory-jumping button:
+static Fl_Button* extra_button;
 const char* fl_file_chooser_button;
+const char* fl_file_chooser_data;
 extern const char* fl_ok;
 extern const char* fl_cancel;
 
@@ -544,41 +540,41 @@ FCW::FCW() : Fl_Window(WIDTH_BOX, HEIGHT_BOX),
   cancel_button->shortcut("^[");
 
   obj=new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT, "&Up one directory");
-  obj->callback(up_cb, this);
+  obj->callback(up_cb);
   but_y += HEIGHT_BUT;
 
-  obj = new Fl_Button(WIDTH_SPC, but_y, WIDTH_BUT, HEIGHT_BUT, "&~/ Home");
-  obj->callback(dir_cb, this);
+  obj = new Fl_Button(WIDTH_SPC, but_y, WIDTH_BUT, HEIGHT_BUT, "&~ Home");
+  obj->callback(dir_cb, (void*)"~/");
   but_y += HEIGHT_BUT;
 
   obj = new Fl_Button(WIDTH_SPC, but_y, WIDTH_BUT, HEIGHT_BUT, "&/ Root");
-  obj->callback(dir_cb, this);
+  obj->callback(dir_cb, (void*)"/");
   but_y += HEIGHT_BUT;
 
   obj=new Fl_Button(WIDTH_SPC, but_y, WIDTH_BUT, HEIGHT_BUT, "&Current dir");
-  obj->callback(working_cb, this);
+  obj->callback(working_cb);
   but_y += HEIGHT_BUT;
 
   if (fl_file_chooser_button) {
-    obj=new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT,fl_file_chooser_button);
-    obj->callback(dir_cb, this);
+    obj = extra_button = new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT,fl_file_chooser_button);
+    obj->callback(dir_cb, (void*)fl_file_chooser_button);
     but_y += HEIGHT_BUT;
   }
 
   normal_button = new Fl_Button(WIDTH_SPC, but_y, WIDTH_BUT, HEIGHT_BUT, "");
-  normal_button->callback(files_cb, this);
+  normal_button->callback(files_cb, 0);
   but_y += HEIGHT_BUT;
 
-  obj = new Fl_Button(WIDTH_SPC,but_y, WIDTH_BUT, HEIGHT_BUT, "* &All files");
-  obj->callback(files_cb, this);
+  obj = new Fl_Button(WIDTH_SPC,but_y, WIDTH_BUT, HEIGHT_BUT, "&All files");
+  obj->callback(files_cb, (void*)"*");
   but_y += HEIGHT_BUT;
 
-  obj = new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT, ". &Hidden files");
-  obj->callback(files_cb, this);
+  obj = new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT, "&Hidden files");
+  obj->callback(files_cb, (void*)".");
   but_y += HEIGHT_BUT;
 
-  obj = new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT, "*/ &Directories");
-  obj->callback(files_cb, this);
+  obj = new Fl_Button(WIDTH_SPC,but_y,WIDTH_BUT,HEIGHT_BUT, "&Directories");
+  obj->callback(files_cb, (void*)"*/");
   but_y += HEIGHT_BUT;
 
   resizable(new Fl_Box(browser.x(), but_y,
@@ -594,6 +590,10 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
   static FCW* f; if (!f) f = new FCW();
   f->ok_button->label(fl_ok);
   f->cancel_button->label(fl_cancel);
+  if (extra_button) {
+    extra_button->label(fl_file_chooser_button);
+    extra_button->user_data((void*)(fl_file_chooser_data ? fl_file_chooser_data : fl_file_chooser_button));
+  }
 
   if (pat && !*pat) pat = 0;
   if (fname && *fname) {
@@ -607,6 +607,7 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
   }
   f->browser.pattern = pat;
   f->normal_button->label(pat ? pat : "visible files");
+  f->normal_button->user_data((void*)(pat ? pat : 0));
   f->browser.set(f->input.value());
   f->input.position(10000, f->browser.dirend);
 
@@ -632,5 +633,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.9 2001/03/14 17:20:02 spitzak Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.10 2001/05/05 23:39:01 spitzak Exp $".
 //
