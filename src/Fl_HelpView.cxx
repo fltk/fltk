@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.cxx,v 1.1.2.2 2001/08/02 20:18:54 easysw Exp $"
+// "$Id: Fl_HelpView.cxx,v 1.1.2.3 2001/08/02 21:11:43 easysw Exp $"
 //
 // Fl_HelpView widget routines.
 //
@@ -2197,15 +2197,21 @@ Fl_HelpView::handle(int event)	// I - Event to handle
 
   switch (event)
   {
-    case FL_MOVE :
     case FL_PUSH :
+    case FL_MOVE :
         xx = Fl::event_x() - x();
 	yy = Fl::event_y() - y() + topline_;
         if (!scrollbar_.visible() || xx < (w() - 20))
 	  break;
 
     case FL_MOUSEWHEEL :
-	topline(topline() + Fl::e_dy * textsize_ * 3);
+	i = topline() + Fl::e_dy * textsize_ * 3;
+	if (i < 0)
+	  i = 0;
+	else if (i > (size_ - h()))
+	  i = size_ - h();
+
+        topline(i);
 	return (1);
 
     default :
@@ -3126,5 +3132,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_HelpView.cxx,v 1.1.2.2 2001/08/02 20:18:54 easysw Exp $".
+// End of "$Id: Fl_HelpView.cxx,v 1.1.2.3 2001/08/02 21:11:43 easysw Exp $".
 //

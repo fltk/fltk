@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.4 2001/08/02 19:43:49 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.5 2001/08/02 21:11:43 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -72,7 +72,6 @@ $(ALL):  ../lib/$(LIBNAME)
 # Programs needing special instructions...
 help: help.cxx
 	echo Compiling and linking $@...
-	echo $(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 keyboard: keyboard.cxx keyboard_ui.cxx
 	echo Compiling and linking $@...
@@ -128,5 +127,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.4 2001/08/02 19:43:49 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.5 2001/08/02 21:11:43 easysw Exp $".
 #
