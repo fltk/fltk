@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.20 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.21 2004/06/01 20:33:26 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -268,6 +268,11 @@ void Fl_Text_Buffer::replace( int start, int end, const char *s ) {
   const char * deletedText;
   int nInserted;
 
+  // Range check...
+  if (!s) return;
+  if (start < 0) start = 0;
+  if (end > mLength) end = mLength;
+
   call_predelete_callbacks( start, end-start );
   deletedText = text_range( start, end );
   remove_( start, end );
@@ -291,6 +296,8 @@ void Fl_Text_Buffer::remove( int start, int end ) {
   if ( start < 0 ) start = 0;
   if ( end > mLength ) end = mLength;
   if ( end < 0 ) end = 0;
+
+  if (start == end) return;
 
   call_predelete_callbacks( start, end-start );
   /* Remove and redisplay */
@@ -2510,5 +2517,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.20 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.21 2004/06/01 20:33:26 easysw Exp $".
 //
