@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.34 2002/06/02 17:52:36 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.35 2002/06/02 20:49:47 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -825,7 +825,7 @@ void Fl::paste(Fl_Widget &receiver) {
 #include <FL/fl_draw.H>
 
 void Fl_Widget::redraw() {
-  if (box() == FL_NO_BOX) {
+  if (window() && box() == FL_NO_BOX) {
     // Widgets with the FL_NO_BOX boxtype need a parent to
     // redraw, since it is responsible for redrawing the
     // background...
@@ -928,5 +928,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.34 2002/06/02 17:52:36 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.35 2002/06/02 20:49:47 easysw Exp $".
 //
