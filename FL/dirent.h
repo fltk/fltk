@@ -1,5 +1,5 @@
 //
-// "$Id: dirent.h,v 1.4 1999/01/07 19:17:05 mike Exp $"
+// "$Id: dirent.h,v 1.5 1999/02/09 13:41:11 mike Exp $"
 //
 // Directory header file for the Fast Light Tool Kit (FLTK).
 //
@@ -24,8 +24,8 @@
 //
 
 // this file is for back-compatability only
-#include "fl_scandir.H"
+#include "filename.H"
 
 //
-// End of "$Id: dirent.h,v 1.4 1999/01/07 19:17:05 mike Exp $".
+// End of "$Id: dirent.h,v 1.5 1999/02/09 13:41:11 mike Exp $".
 //
