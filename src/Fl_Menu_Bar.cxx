@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Bar.cxx,v 1.7.2.4 2000/07/30 00:31:44 spitzak Exp $"
+// "$Id: Fl_Menu_Bar.cxx,v 1.7.2.5 2000/09/23 08:21:52 spitzak Exp $"
 //
 // Menu bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,8 +32,9 @@ void Fl_Menu_Bar::draw() {
   const Fl_Menu_Item* m;
   int X = x()+6;
   for (m=menu(); m->text; m = m->next()) {
-    m->draw(X, y(), 0, h(), this);
-    X += m->measure(0,this) + 16;
+    int W = m->measure(0,this) + 16;
+    m->draw(X, y(), W, h(), this);
+    X += W;
   }
 }
 
@@ -60,5 +61,5 @@ int Fl_Menu_Bar::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Menu_Bar.cxx,v 1.7.2.4 2000/07/30 00:31:44 spitzak Exp $".
+// End of "$Id: Fl_Menu_Bar.cxx,v 1.7.2.5 2000/09/23 08:21:52 spitzak Exp $".
 //
