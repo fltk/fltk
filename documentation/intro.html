@@ -157,7 +157,7 @@ This will build the library, FLUID tool, and all of the test programs.
 will copy the &quot;fluid&quot; executable to &quot;bindir&quot;, the header files to 
 &quot;includedir&quot;, and the library files to &quot;libdir&quot;. </P>
 <H2>Building FLTK Under Microsoft Windows</H2>
- There are two ways to build FLTK under Microsoft Windows.  The first 
+There are two ways to build FLTK under Microsoft Windows.  The first 
 is to use the Visual C++ 5.0 project files under the &quot;visualc&quot; 
 directory.  Just open (or double-click on) the &quot;fltk.dsw&quot; file to get 
 the whole shebang. 
@@ -171,6 +171,14 @@ copy makefiles\Makefile.&lt;env&gt; Makefile
 make
 </PRE>
 </UL>
+<H3>Using the Visual C++ DLL Library</H3>
+The &quot;fltkdll.dsp&quot; project file builds a DLL-version of the FLTK
+library. Because of name mangling differences between PC compilers (even
+between different versions of Visual C++!) you can only use the DLL that
+is generated with the same version compiler that you built it with.
+<P>When compiling an application or DLL that uses the FLTK DLL, you will need
+to define the <tt>FL_DLL</tt> preprocessor symbol to get the correct linkage
+commands embedded within the FLTK header files.
 <H2>Building FLTK Under OS/2</H2>
 The current OS/2 build requires XFree86 for OS/2 to work.  A native 
 Presentation Manager version has not been implemented yet (volunteers 
