@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fixed a compiler warning in Fl_Window.H (STR #641)
+	- Tooltips disabled shortcut processing (STR #643)
 	- Fl::event_number() didn't always match the value sent
 	  to the handle() method (STR #634)
 	- Fl_Shared_Image::reload() didn't set the image_
