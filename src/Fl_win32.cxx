@@ -913,17 +913,19 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 
   //Proceed to positioning the window fully inside the screen, if possible
   //Make border's lower right corner visible
-  if (Fl::w() < X+W) X = Fl::w() - W;
-  if (Fl::h() < Y+H) Y = Fl::h() - H;
+  int scr_x, scr_y, scr_w, scr_h;
+  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+  if (scr_x+scr_w < X+W) X = scr_x+scr_x- W;
+  if (scr_y+scr_h < Y+H) Y = scr_y+scr_h - H;
   //Make border's upper left corner visible
-  if (X<0) X = 0;
-  if (Y<0) Y = 0;
+  if (X<scr_x) X = scr_x;
+  if (Y<scr_y) Y = scr_y;
   //Make client area's lower right corner visible
-  if (Fl::w() < X+dx+ w->w()) X = Fl::w() - w->w() - dx;
-  if (Fl::h() < Y+dy+ w->h()) Y = Fl::h() - w->h() - dy;
+  if (scr_x+scr_w < X+dx+ w->w()) X = scr_x+scr_w - w->w() - dx;
+  if (scr_y+scr_h < Y+dy+ w->h()) Y = scr_y+scr_h - w->h() - dy;
   //Make client area's upper left corner visible
-  if (X+xoff < 0) X = -xoff;
-  if (Y+yoff < 0) Y = -yoff;
+  if (X+xoff < scr_x) X = scr_x-xoff;
+  if (Y+yoff < scr_y) Y = scr_y-yoff;
   //Return the client area's top left corner in (X,Y)
   X+=xoff;
   Y+=yoff;

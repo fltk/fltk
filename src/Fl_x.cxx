@@ -1042,13 +1042,16 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     // center windows in case window manager does not do anything:
 #ifdef FL_CENTER_WINDOWS
     if (!(win->flags() & Fl_Window::FL_FORCE_POSITION)) {
-      win->x(X = (Fl::w()-W)/2);
-      win->y(Y = (Fl::h()-H)/2);
+      win->x(X = scr_x+(scr_w-W)/2);
+      win->y(Y = scr_y+(scr_h-H)/2);
     }
 #endif // FL_CENTER_WINDOWS
 
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
+    int scr_x, scr_y, scr_w, scr_h;
+    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+
     if (win->border()) {
       // ensure border is on screen:
       // (assumme extremely minimal dimensions for this border)
@@ -1056,16 +1059,16 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
       const int left = 1;
       const int right = 1;
       const int bottom = 1;
-      if (X+W+right > Fl::w()) X = Fl::w()-right-W;
-      if (X-left < 0) X = left;
-      if (Y+H+bottom > Fl::h()) Y = Fl::h()-bottom-H;
-      if (Y-top < 0) Y = top;
+      if (X+W+right > scr_x+scr_w) X = scr_x+scr_w-right-W;
+      if (X-left < scr_x) X = scr_x+left;
+      if (Y+H+bottom > scr_y+scr_h) Y = scr_y+scr_h-bottom-H;
+      if (Y-top < scr_y) Y = scr_y+top;
     }
     // now insure contents are on-screen (more important than border):
-    if (X+W > Fl::w()) X = Fl::w()-W;
-    if (X < 0) X = 0;
-    if (Y+H > Fl::h()) Y = Fl::h()-H;
-    if (Y < 0) Y = 0;
+    if (X+W > scr_x+scr_w) X = scr_x+scr_w-W;
+    if (X < scr_x) X = scr_x;
+    if (Y+H > scr_y+scr_h) Y = scr_y+scr_h-H;
+    if (Y < scr_y) Y = scr_y;
   }
 
   ulong root = win->parent() ?

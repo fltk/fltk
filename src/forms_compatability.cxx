@@ -95,8 +95,11 @@ void fl_show_form(Fl_Window *f,int place,int b,const char *n) {
 
   if (place & FL_PLACE_MOUSE) f->hotspot(f);
 
-  if (place & FL_PLACE_CENTER)
-    f->position((Fl::w()-f->w())/2, (Fl::h()-f->h())/2);
+  if (place & FL_PLACE_CENTER) {
+    int scr_x, scr_y, scr_w, scr_h;
+    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+    f->position(scr_x+(scr_w-f->w())/2, scr_y+(scr_h-f->h())/2);
+  }
 
   if (place & FL_PLACE_FULLSCREEN)
     f->fullscreen();

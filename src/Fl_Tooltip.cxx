@@ -75,15 +75,17 @@ void Fl_TooltipBox::layout() {
     //ox += p->x();
     oy += p->y();
   }
-  if (ox+ww > Fl::w()) ox = Fl::w() - ww;
-  if (ox < 0) ox = 0;
+  int scr_x, scr_y, scr_w, scr_h;
+  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+  if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
+  if (ox < scr_x) ox = scr_x;
   if (H > 30) {
     oy = Fl::event_y_root()+13;
-    if (oy+hh > Fl::h()) oy -= 23+hh;
+    if (oy+hh > scr_y+scr_h) oy -= 23+hh;
   } else {
-    if (oy+hh > Fl::h()) oy -= (4+hh+H);
+    if (oy+hh > scr_y+scr_h) oy -= (4+hh+H);
   }
-  if (oy < 0) oy = 0;
+  if (oy < scr_y) oy = scr_y;
 
   resize(ox, oy, ww, hh);
 }

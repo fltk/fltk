@@ -56,6 +56,23 @@ static void screen_init() {
     EnumDisplayMonitors(0,0,screen_cb,0);
   }
 }
+#elif defined(__APPLE__)
+XRectangle screens[16];
+
+static void screen_init() {
+  GDHandle gd;
+
+  for (gd = GetDeviceList(), num_screens = 0; gd; gd = GetNextDevice(gd)) {
+    GDPtr gp = *gd;
+    screens[num_screens].x      = gp->gdRect.left;
+    screens[num_screens].y      = gp->gdRect.top;
+    screens[num_screens].width  = gp->gdRect.right - gp->gdRect.left;
+    screens[num_screens].height = gp->gdRect.bottom - gp->gdRect.top;
+
+    num_screens ++;
+    if (num_screens >= 16) break;
+  }
+}
 #elif defined(HAVE_XINERAMA)
 #  include <X11/extensions/Xinerama.h>
 
@@ -103,6 +120,22 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
     }
   }
 #elif defined(__APPLE__)
+  if (num_screens > 0) {
+    int i;
+
+    for (i = 0; i < num_screens; i ++) {
+      if (mx >= screens[i].x &&
+	  mx < (screens[i].x + screens[i].width) &&
+	  my >= screens[i].y &&
+	  my < (screens[i].y + screens[i].height)) {
+	x = screens[i].x;
+	y = screens[i].y;
+	w = screens[i].width;
+	h = screens[i].height;
+	return;
+      }
+    }
+  }
 #elif defined(HAVE_XINERAMA)
   if (num_screens > 0) {
     int i;
@@ -141,6 +174,13 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
     return;
   }
 #elif defined(__APPLE__)
+  if (num_screens > 0 && n >= 0 && n < num_screens) {
+    x = screens[n].x;
+    y = screens[n].y;
+    w = screens[n].width;
+    h = screens[n].height;
+    return;
+  }
 #elif defined(HAVE_XINERAMA)
   if (num_screens > 0 && n >= 0 && n < num_screens) {
     x = screens[n].x_org;
