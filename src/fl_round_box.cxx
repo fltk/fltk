@@ -1,5 +1,5 @@
 //
-// "$Id: fl_round_box.cxx,v 1.5 1999/01/07 19:17:41 mike Exp $"
+// "$Id: fl_round_box.cxx,v 1.6 1999/02/22 21:01:59 mike Exp $"
 //
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -50,8 +50,8 @@ static void draw(int which, int x,int y,int w,int h, int inset, uchar color)
   int d = w <= h ? w : h;
   if (d <= 1) return;
   fl_color((Fl_Color)color);
-  void (*f)(int,int,int,int,double,double) =
-    (which==FILL) ? fl_pie : fl_arc_i;
+  void (*f)(int,int,int,int,double,double);
+  f = (which==FILL) ? fl_pie : fl_arc_i;
   if (which >= CLOSED) {
     f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
     f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
@@ -116,5 +116,5 @@ Fl_Boxtype define_FL_ROUND_UP_BOX() {
 }
 
 //
-// End of "$Id: fl_round_box.cxx,v 1.5 1999/01/07 19:17:41 mike Exp $".
+// End of "$Id: fl_round_box.cxx,v 1.6 1999/02/22 21:01:59 mike Exp $".
 //
