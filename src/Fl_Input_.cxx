@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.23 2002/08/13 15:42:44 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.24 2002/08/13 22:43:59 spitzak Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -709,6 +709,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
     if (input_type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
+    if (!t || e <= t) return 1; // Int/float stuff will crash without this test
     if (input_type() == FL_INT_INPUT) {
       while (isspace(*t) && t < e) t ++;
       const char *p = t;
@@ -850,5 +851,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.23 2002/08/13 15:42:44 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.24 2002/08/13 22:43:59 spitzak Exp $".
 //
