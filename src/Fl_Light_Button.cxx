@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.1 2001/08/04 16:43:31 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -36,21 +36,61 @@
 
 void Fl_Light_Button::draw() {
   if (box()) draw_box(this==Fl::pushed() ? down(box()) : box(), color());
-  Fl_Color col = value() ? selection_color() : color();
+  Fl_Color col = value() ? (active_r() ? selection_color() :
+                            fl_inactive(selection_color())) : color();
   int d = h()/6;
   int W = w()<h() ? w() : h();
   if (down_box()) {
     // draw other down_box() styles:
-    draw_box(down_box(), x()+d, y()+d+1, W-2*d-2, W-2*d-2, col);
+    switch (down_box()) {
+      case FL_DOWN_BOX :
+      case FL_UP_BOX :
+        // Check box...
+        draw_box(down_box(), x()+d + 1, y()+d+2, W-2*d-4, W-2*d-4, color());
+	if (value()) {
+	  fl_color(col);
+          fl_line_style(FL_SOLID, 2);
+	  fl_line(x() + W - d - 6, y() + d + 4,
+	          x() + W / 2 - 2, y() + W - d - 6,
+	          x() + d + 4, y() + W / 2 - 1);
+          fl_line_style(FL_SOLID);
+	}
+        break;
+      case _FL_ROUND_DOWN_BOX :
+      case _FL_ROUND_UP_BOX :
+        // Radio button...
+        draw_box(down_box(), x()+d + 1, y()+d+2, W-2*d-4, W-2*d-4, color());
+	if (value()) {
+	  int size = W - 2 * d - 4;
+	  fl_color(col);
+	  if (size > 14) {
+            fl_pie(x() + d + 5, y() + d + 6, size - 9, size - 9, 0.0, 360.0);
+	  } else {
+            // Small circles don't draw well with some X servers...
+	    fl_rectf(x() + d + 6, y() + d + 6, 2, 4);
+	    fl_rectf(x() + d + 5, y() + d + 7, 4, 2);
+	  }
+	}
+        break;
+      default :
+        draw_box(down_box(), x()+d + 1, y()+d+2, W-2*d-4, W-2*d-4, col);
+        break;
+    }
   } else {
     // if down_box() is zero, draw light button style:
-    int hh = h()-2*d;
+    int hh = h()-2*d - 2;
     int ww = hh/2+1;
     int xx = d*2;
     if (w()<ww+2*xx) xx = (w()-ww)/2;
-    draw_box(FL_THIN_DOWN_BOX, x()+xx, y()+d, ww, hh, col);
+    draw_box(FL_THIN_DOWN_BOX, x()+xx, y()+d+1, ww, hh, col);
   }
   draw_label(x()+W-d, y(), w()-W+d, h());
+  if (Fl::focus() == this) {
+    fl_line_style(FL_DASH);
+    fl_rect(x() + Fl::box_dx(box()), y() + Fl::box_dy(box()),
+            w() - Fl::box_dw(box()) - 1, h() - Fl::box_dh(box()) - 1);
+    fl_line_style(FL_SOLID);
+  }
 }
 
 int Fl_Light_Button::handle(int event) {
@@ -70,5 +110,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.1 2001/08/04 16:43:31 easysw Exp $".
 //
