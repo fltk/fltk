@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.11 2002/08/09 22:57:00 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.12 2002/08/16 20:10:21 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -156,7 +156,7 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
 
   Fluid_Image *ret = new Fluid_Image(iname);
 
-  if (!ret->img->w() || !ret->img->h()) {
+  if (!ret->img || !ret->img->w() || !ret->img->h()) {
     delete ret;
     ret = 0;
     read_error("%s : unrecognized image format", iname);
@@ -196,10 +196,12 @@ void Fluid_Image::decrement() {
 
 Fluid_Image::~Fluid_Image() {
   int a;
-  for (a = 0;; a++) if (images[a] == this) break;
-  numimages--;
-  for (; a < numimages; a++) images[a] = images[a+1];
-  img->release();
+  if (images) {
+    for (a = 0;; a++) if (images[a] == this) break;
+    numimages--;
+    for (; a < numimages; a++) images[a] = images[a+1];
+  }
+  if (img) img->release();
   free((void*)name_);
 }
 
@@ -219,5 +221,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.11 2002/08/09 22:57:00 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.12 2002/08/16 20:10:21 easysw Exp $".
 //

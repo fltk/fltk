@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- FLUID didn't register the image formats in the
+	  fltk_images library, and had some other image
+	  management problems.
 	- Fixed one more redraw bug in Fl_Browser_ where we
 	  weren't using the box function to erase empty space in
 	  the list.
