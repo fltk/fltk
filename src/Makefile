@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.11 2000/05/13 20:03:18 bill Exp $"
+# "$Id: Makefile,v 1.18.2.12 2000/06/04 20:57:34 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -184,28 +184,28 @@ install: $(LIBRARY) $(DSONAME)
 		rm -f $(libdir)/libfltk.so*;\
 		cp libfltk.so.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk.so.1; \
-		ln -s $(libdir)/libfltk.so.1 $(libdir)/libfltk.so;\
+		ln -s libfltk.so.1 $(libdir)/libfltk.so;\
 	fi
 	if test "$(DSONAME)" = libfltk.sl.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
 		cp libfltk.sl.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk.sl.1; \
-		ln -s $(libdir)/libfltk.sl.1 $(libdir)/libfltk.sl;\
+		ln -s libfltk.sl.1 $(libdir)/libfltk.sl;\
 	fi
 	echo "Installing include files..."
 	-mkdir -p $(includedir)
 	rm -rf $(includedir)/FL
 	mkdir $(includedir)/FL
-	cp ../FL/*.[hH] $(includedir)
+	cp ../FL/*.[hH] $(includedir)/FL
 	-chmod 755 $(includedir)/FL
 	-chmod 644 $(includedir)/FL/*
 	cd $(includedir)/FL;\
 	for file in *.H; do\
-		ln -s $$file `basename $$file H`h";\
+		ln -s $$file "`basename $$file H`h";\
 	done
 	rm -f $(includedir)/Fl
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.11 2000/05/13 20:03:18 bill Exp $".
+# End of "$Id: Makefile,v 1.18.2.12 2000/06/04 20:57:34 mike Exp $".
 #
