@@ -33,27 +33,18 @@ all FLTK widgets.</P>
 	<LI><A HREF="#Fl_Tooltip.enabled">enabled</A></LI>
 	<LI><A HREF="#Fl_Tooltip.enable">enable</A></LI>
 	<LI><A HREF="#Fl_Tooltip.enter">enter</A></LI>
+	<LI><A HREF="#Fl_Tooltip.enter_area">enter_area</A></LI>
 	<LI><A HREF="#Fl_Tooltip.exit">exit</A></LI>
 	<LI><A HREF="#Fl_Tooltip.font">font</A></LI>
 	<LI><A HREF="#Fl_Tooltip.size">size</A></LI>
+	<LI><A HREF="#Fl_Tooltip.textcolor">textcolor</A></LI>
 
 </UL>
-
-<H4><A NAME="Fl_Tooltip.color">void color(unsigned c);<BR>
-Fl_Color color();</A></H4>
-
-<P>Gets or sets the background color for tooltips. The label color is
-set to white or black depending on the background color. The default
-background color is a pale yellow.
 
 <H4><A NAME="Fl_Tooltip.delay">void delay(float f);<BR>
 float delay();</A></H4>
 
-<P>Gets or sets the tooltip delay. The default delay is 0.5 seconds.
-
-<H4><A NAME="Fl_Tooltip.disable">void disable();</A></H4>
-
-<P>Disables tooltips on all widgets.
+<P>Gets or sets the tooltip delay. The default delay is 1.0 seconds.
 
 <H4><A NAME="Fl_Tooltip.enabled">int enabled();</A></H4>
 
@@ -61,17 +52,45 @@ float delay();</A></H4>
 
 <H4><A NAME="Fl_Tooltip.enable">void enable(int b = 1);</A></H4>
 
-<P>Enables tooltips on all widgets.
+<P>Enables tooltips on all widgets (or disables if <i>b</i> is false).
+
+<H4><A NAME="Fl_Tooltip.disable">void disable();</A></H4>
+
+<P>Same as <tt>enable(0)</tt>, disables tooltips on all widgets.
 
 <H4><A NAME="Fl_Tooltip.enter">void enter(Fl_Widget *w);</A></H4>
 
 <P>This method is called when the mouse pointer enters a
 widget.
 
+<h4><a name="Fl_Tooltip.enter_area">void enter_area(Fl_Widget* widget, int x,int y,int w,int h, const char* tip)</a></h4>
+
+<p>You may be able to use this to provide tooltips for internal pieces
+of your widget. Call this after setting <tt>Fl::belowmouse()</tt> to
+your widget (because that calls the above enter() method). Then figure
+out what thing the mouse is pointing at, and call this with the widget
+(this pointer is used to remove the tooltip if the widget is deleted
+or hidden, and to locate the tooltip), the rectangle surrounding the
+area, relative to the top-left corner of the widget (used to calculate
+where to put the tooltip), and the text of the tooltip (which must be
+a pointer to static data as it is not copied).
+
 <H4><A NAME="Fl_Tooltip.exit">void exit(Fl_Widget *w);</A></H4>
 
 <P>This method is called when the mouse pointer leaves a
 widget.
+
+<H4><A NAME="Fl_Tooltip.color">void color(unsigned c);<BR>
+Fl_Color color();</A></H4>
+
+<P>Gets or sets the background color for tooltips. The default
+background color is a pale yellow.
+
+<H4><A NAME="Fl_Tooltip.textcolor">void textcolor(unsigned c);<BR>
+Fl_Color textcolor();</A></H4>
+
+<P>Gets or sets the color of the text in the tooltip. The default is
+black.
 
 <H4><A NAME="Fl_Tooltip.font">void font(int i);<BR>
 int font();</A></H4>
