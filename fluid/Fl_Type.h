@@ -561,6 +561,8 @@ public:
     Fl_Widget_Type::ideal_size(w, h);
     w += 2 * ((o->labelsize() - 3) & ~1) + o->labelsize() - 4;
     h = (h / 5) * 5;
+    if (h < 15) h = 15;
+    if (w < (15 + h)) w = 15 + h;
   }
   virtual const char *type_name() {return "Fl_Menu_Button";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
@@ -582,6 +584,8 @@ public:
     if (w1 < 1) w1 = 1;
     w += 2 * w1 + o->labelsize() - 4;
     h = (h / 5) * 5;
+    if (h < 15) h = 15;
+    if (w < (15 + h)) w = 15 + h;
   }
   virtual const char *type_name() {return "Fl_Choice";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
@@ -614,6 +618,8 @@ public:
     w = o->w() - 20 - Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + 20 + Fl::box_dw(o->box());
+    if (h < 15) h = 15;
+    if (w < (15 + h)) w = 15 + h;
   }
   virtual const char *type_name() {return "Fl_Input_Choice";}
   Fl_Widget *widget(int X,int Y,int W,int H) {

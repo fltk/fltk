@@ -45,6 +45,7 @@
 #include "../src/flstring.h"
 #include "alignment_panel.h"
 #include "function_panel.h"
+#include "template_panel.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -154,6 +155,21 @@ void save_position(Fl_Window *w, const char *prefsName) {
 Fl_Window *main_window;
 Fl_Menu_Bar *main_menubar;
 
+static char* cutfname(int which = 0) {
+  static char name[2][1024];
+  static char beenhere = 0;
+
+  if (!beenhere) {
+    beenhere = 1;
+    fluid_prefs.getUserdataPath(name[0], sizeof(name[0]));
+    strlcat(name[0], "cut_buffer", sizeof(name[0]));
+    fluid_prefs.getUserdataPath(name[1], sizeof(name[1]));
+    strlcat(name[1], "dup_buffer", sizeof(name[1]));
+  }
+
+  return name[which];
+}
+
 void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
   if (v || !c || !*c) {
@@ -189,9 +205,42 @@ void save_cb(Fl_Widget *, void *v) {
 }
 
 void save_template_cb(Fl_Widget *, void *) {
-  const char *c = fl_input("Template Name:");
-  if (!c) return;
+  // Setup the template panel...
+  if (!template_panel) make_template_panel();
 
+  template_clear();
+  template_browser->add("New Template");
+  template_load();
+
+  template_name->show();
+  template_name->value("");
+
+  template_instance->hide();
+
+  template_delete->show();
+  template_delete->deactivate();
+
+  template_submit->label("Save");
+  template_submit->deactivate();
+
+  template_panel->label("Save Template");
+
+  // Show the panel and wait for the user to do something...
+  template_panel->show();
+  while (template_panel->shown()) Fl::wait();
+
+  // Get the template name, return if it is empty...
+  const char *c = template_name->value();
+  if (!c || !*c) return;
+
+  // Convert template name to filename_with_underscores
+  char safename[1024], *safeptr;
+  strlcpy(safename, c, sizeof(safename));
+  for (safeptr = safename; *safeptr; safeptr ++) {
+    if (isspace(*safeptr)) *safeptr = '_';
+  }
+
+  // Find the templates directory...
   char filename[1024];
   fluid_prefs.getUserdataPath(filename, sizeof(filename));
 
@@ -199,7 +248,7 @@ void save_template_cb(Fl_Widget *, void *) {
   if (access(filename, 0)) mkdir(filename, 0777);
 
   strlcat(filename, "/", sizeof(filename));
-  strlcat(filename, c, sizeof(filename));
+  strlcat(filename, safename, sizeof(filename));
 
   char *ext = filename + strlen(filename);
   if (ext >= (filename + sizeof(filename) - 5)) {
@@ -207,9 +256,8 @@ void save_template_cb(Fl_Widget *, void *) {
     return;
   }
 
+  // Save the .fl file...
   strcpy(ext, ".fl");
-
-//  printf("save_template_cb: template filename=\"%s\"\n", filename);
 
   if (!access(filename, 0)) {
     if (fl_choice("The template \"%s\" already exists.\n"
@@ -240,12 +288,8 @@ void save_template_cb(Fl_Widget *, void *) {
 
   if ((pixels = wt->read_image(w, h)) == NULL) return;
 
-//  printf("save_template_cb: pixels=%p, w=%d, h=%d...\n", pixels, w, h);
-
   // Save to a PNG file...
   strcpy(ext, ".png");
-
-//  printf("save_template_cb: screenshot filename=\"%s\"\n", filename);
 
   FILE *fp;
 
@@ -290,10 +334,10 @@ void save_template_cb(Fl_Widget *, void *) {
 void exit_cb(Fl_Widget *,void *) {
   if (modflag)
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before exiting?", "Don't Save",
-                      "Save", "Cancel"))
+                      "interface before exiting?", "Cancel",
+                      "Save", "Don't Save"))
     {
-      case 2 : /* Cancel */
+      case 0 : /* Cancel */
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
@@ -327,7 +371,7 @@ apple_open_cb(const char *c) {
                       "interface before opening another one?", "Don't Save",
                       "Save", "Cancel"))
     {
-      case 2 : /* Cancel */
+      case 0 : /* Cancel */
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
@@ -360,10 +404,10 @@ void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag)
   {
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Don't Save",
-                      "Save", "Cancel"))
+                      "interface before opening another one?", "Cancel",
+                      "Save", "Don't Save"))
     {
-      case 2 : /* Cancel */
+      case 0 : /* Cancel */
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
@@ -408,10 +452,10 @@ void open_history_cb(Fl_Widget *, void *v) {
   if (modflag)
   {
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before opening another one?", "Don't Save",
-                      "Save", "Cancel"))
+                      "interface before opening another one?", "Cancel",
+                      "Save", "Don't Save"))
     {
-      case 2 : /* Cancel */
+      case 0 : /* Cancel */
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
@@ -438,21 +482,109 @@ void open_history_cb(Fl_Widget *, void *v) {
 }
 
 void new_cb(Fl_Widget *, void *v) {
+  // Check if the current file has been modified...
   if (!v && modflag)
   {
+    // Yes, ask the user what to do...
     switch (fl_choice("Do you want to save changes to this user\n"
-                      "interface before creating a new one?", "Don't Save",
-                      "Save", "Cancel"))
+                      "interface before creating a new one?", "Cancel",
+                      "Save", "Don't Save"))
     {
-      case 2 : /* Cancel */
+      case 0 : /* Cancel */
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
 	  if (modflag) return;	// Didn't save!
     }
   }
+
+  // Setup the template panel...
+  if (!template_panel) make_template_panel();
+
+  template_clear();
+  template_browser->add("Blank");
+  template_load();
+
+  template_name->hide();
+  template_name->value("");
+
+  template_instance->show();
+  template_instance->deactivate();
+  template_instance->value("");
+
+  template_delete->hide();
+
+  template_submit->label("New");
+  template_submit->deactivate();
+
+  template_panel->label("New");
+
+  // Show the panel and wait for the user to do something...
+  template_panel->show();
+  while (template_panel->shown()) Fl::wait();
+
+  // See if the user chose anything...
+  int item = template_browser->value();
+  if (item < 1) return;
+
+  // Clear the current data...
   delete_all();
   set_filename(NULL);
+
+  // Load the template, if any...
+  const char *tname = (const char *)template_browser->data(item);
+
+  if (tname) {
+    // Grab the instance name...
+    const char *iname = template_instance->value();
+
+    if (iname && *iname) {
+      // Copy the template to a temp file, then read it in...
+      char line[1024], *ptr, *next;
+      FILE *infile, *outfile;
+
+      if ((infile = fopen(tname, "r")) == NULL) {
+	fl_alert("Error reading template file \"%s\":\n%s", tname,
+        	 strerror(errno));
+	set_modflag(0);
+	undo_clear();
+	return;
+      }
+
+      if ((outfile = fopen(cutfname(1), "w")) == NULL) {
+	fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
+        	 strerror(errno));
+	fclose(infile);
+	set_modflag(0);
+	undo_clear();
+	return;
+      }
+
+      while (fgets(line, sizeof(line), infile)) {
+	// Replace @INSTANCE@ with the instance name...
+	for (ptr = line; (next = strstr(ptr, "@INSTANCE@")) != NULL; ptr = next + 10) {
+	  fwrite(ptr, next - ptr, 1, outfile);
+	  fputs(iname, outfile);
+	}
+
+	fputs(ptr, outfile);
+      }
+
+      fclose(infile);
+      fclose(outfile);
+
+      undo_suspend();
+      read_file(cutfname(1), 0);
+      unlink(cutfname(1));
+      undo_resume();
+    } else {
+      // No instance name, so read the template without replacements...
+      undo_suspend();
+      read_file(tname, 0);
+      undo_resume();
+    }
+  }
+
   set_modflag(0);
   undo_clear();
 }
@@ -550,21 +682,6 @@ void ungroup_cb(Fl_Widget *, void *);
 extern int pasteoffset;
 static int ipasteoffset;
 
-static char* cutfname(int which = 0) {
-  static char name[2][1024];
-  static char beenhere = 0;
-
-  if (!beenhere) {
-    beenhere = 1;
-    fluid_prefs.getUserdataPath(name[0], sizeof(name[0]));
-    strlcat(name[0], "cut_buffer", sizeof(name[0]));
-    fluid_prefs.getUserdataPath(name[1], sizeof(name[1]));
-    strlcat(name[1], "dup_buffer", sizeof(name[1]));
-  }
-
-  return name[which];
-}
-
 void copy_cb(Fl_Widget*, void*) {
   if (!Fl_Type::current) {
     fl_beep();
@@ -648,6 +765,7 @@ void duplicate_cb(Fl_Widget*, void*) {
   if (!read_file(cutfname(1), 1)) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
+  unlink(cutfname(1));
   undo_resume();
 
   force_parent = 0;
@@ -716,7 +834,7 @@ void toggle_widgetbin_cb(Fl_Widget *, void *);
 
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
-  {"&New", FL_CTRL+'n', new_cb, 0},
+  {"&New...", FL_CTRL+'n', new_cb, 0},
   {"&Open...", FL_CTRL+'o', open_cb, 0},
   {"Open Pre&vious",0,0,0,FL_SUBMENU},
     {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},

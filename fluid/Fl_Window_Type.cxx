@@ -663,13 +663,15 @@ void Fl_Window_Type::draw_overlay() {
       newposition(myo,x,y,r,t);
       if (!show_guides || !drag || numselected != 1) fl_rect(x,y,r-x,t-y);
       if (!(myo->o->align() & FL_ALIGN_INSIDE)) {
-        // Adjust top/bottom for top/bottom labels...
+        // Adjust left/right/top/bottom for top/bottom labels...
 	int ww, hh;
-	ww = myo->o->w();
+	ww = (myo->o->align() & FL_ALIGN_WRAP) ? myo->o->w() : 0;
 	hh = myo->o->labelsize();
 	myo->o->measure_label(ww, hh);
 	if (myo->o->align() & FL_ALIGN_TOP) y -= hh;
-	if (myo->o->align() & FL_ALIGN_BOTTOM) t += hh;
+	else if (myo->o->align() & FL_ALIGN_BOTTOM) t += hh;
+	else if (myo->o->align() & FL_ALIGN_LEFT) x -= ww + 4;
+	else if (myo->o->align() & FL_ALIGN_RIGHT) r += ww + 4;
       }
       if (x < mybx) mybx = x;
       if (y < myby) myby = y;
@@ -749,8 +751,8 @@ void Fl_Window_Type::draw_overlay() {
 	}
 
 	// Draw height guide
-	draw_height(mybx < 50 ? mybx+10 : mybx-10, y, t,
-	            mybx < 50 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
+	draw_height(x < 50 ? x+10 : x-10, y, t,
+	            x < 50 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
       }
 
       if (drag & (LEFT | RIGHT)) {
@@ -759,15 +761,17 @@ void Fl_Window_Type::draw_overlay() {
           // Resize width
           if (drag & LEFT) {
 	    mybx -= d;
+	    x -= d;
 	    dx -= d;
 	  } else {
 	    mybr += d;
+	    r += d;
 	    dx += d;
 	  }
 	}
 
 	// Draw width guide
-	draw_width(mybx, myby < 50 ? y+10 : y-10, mybr,
+	draw_width(x, y < 50 ? y+10 : y-10, r,
 	           y < 50 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
       }
     }

@@ -217,6 +217,8 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
         Fl::box_dh(o->box());
+    if (h < 30) h = 30;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Browser";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -262,6 +264,8 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
         Fl::box_dh(o->box());
+    if (h < 30) h = 30;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Check_Browser";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -307,6 +311,8 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
         Fl::box_dh(o->box());
+    if (h < 30) h = 30;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_File_Browser";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -388,6 +394,8 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
+    if (h < 15) h = 15;
+    if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Input";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -426,6 +434,8 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
+    if (h < 20) h = 20;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_File_Input";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -465,6 +475,8 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
         Fl::box_dh(o->box());
+    if (h < 30) h = 30;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Text_Display";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -503,6 +515,8 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
         Fl::box_dh(o->box());
+    if (h < 30) h = 30;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Text_Editor";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -553,6 +567,8 @@ public:
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
         Fl::box_dh(o->box());
+    if (h < 30) h = 30;
+    if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Help_View";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -688,6 +704,8 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
+    if (h < 15) h = 15;
+    if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Output";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -712,6 +730,8 @@ public:
     w -= Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
+    if (h < 15) h = 15;
+    if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Value_Input";}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
@@ -749,6 +769,8 @@ public:
     w = o->w() - Fl::box_dw(o->box());
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
+    if (h < 15) h = 15;
+    if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Value_Output";}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
