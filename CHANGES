@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Improved speed of Fl_Browser_::display() method with
+	  large lists (patch from Stephen Davies.)
 	- Fl_Help_View didn't properly handle NULL from the link
 	  callback (the original filename/directory name were
 	  not preserved...)

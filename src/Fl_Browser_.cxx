@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.12 2002/06/27 20:52:44 easysw Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.13 2002/07/18 15:43:48 easysw Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,8 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
+
+#define DISPLAY_SEARCH_BOTH_WAYS_AT_ONCE
 
 #include <stdio.h>
 #include <FL/Fl.H>
@@ -192,21 +194,62 @@ int Fl_Browser_::displayed(void* x) const {
   return 0;
 }
 
-// Insure this item is displayed:
+// Ensure this item is displayed:
 // Messy because we have no idea if it is before top or after bottom:
 void Fl_Browser_::display(void* x) {
+
+  // First special case - want to display first item in the list?
   update_top();
   if (x == item_first()) {position(0); return;}
-  int X, Y, W, H; bbox(X, Y, W, H);
+
+  int X, Y, W, H, Yp; bbox(X, Y, W, H);
   void* l = top_;
-  Y = -offset_;
-  // see if it is at the top or just above it:
+  Y = Yp = -offset_;
+  int h1;
+
+  // 2nd special case - want to display item already displayed at top of browser?
   if (l == x) {position(real_position_+Y); return;} // scroll up a bit
+
+  // 3rd special case - want to display item just above top of browser?
   void* lp = item_prev(l);
   if (lp == x) {position(real_position_+Y-item_quick_height(lp)); return;}
+
+#ifdef DISPLAY_SEARCH_BOTH_WAYS_AT_ONCE
+  // search for item.  We search both up and down the list at the same time,
+  // this evens up the execution time for the two cases - the old way was
+  // much slower for going up than for going down.
+  while (l || lp) {
+    if (l) {
+      h1 = item_quick_height(l);
+      if (l == x) {
+	if (Y <= H) { // it is visible or right at bottom
+	  Y = Y+h1-H; // find where bottom edge is
+	  if (Y > 0) position(real_position_+Y); // scroll down a bit
+	} else {
+	  position(real_position_+Y-(H-h1)/2); // center it
+	}
+	return;
+      }
+      Y += h1;
+      l = item_next(l);
+    }
+    if (lp) {
+      h1 = item_quick_height(lp);
+      Yp -= h1;
+      if (lp == x) {
+	if ((Yp + h1) >= 0) position(real_position_+Yp);
+	else position(real_position_+Yp-(H-h1)/2);
+	return;
+      }
+      lp = item_prev(lp);
+    }
+  }
+#else
+  // Old version went forwards and then backwards:
   // search forward for it:
+  l = top_;
   for (; l; l = item_next(l)) {
-    int h1 = item_quick_height(l);
+    h1 = item_quick_height(l);
     if (l == x) {
       if (Y <= H) { // it is visible or right at bottom
 	Y = Y+h1-H; // find where bottom edge is
@@ -222,7 +265,7 @@ void Fl_Browser_::display(void* x) {
   l = lp;
   Y = -offset_;
   for (; l; l = item_prev(l)) {
-    int h1 = item_quick_height(l);
+    h1 = item_quick_height(l);
     Y -= h1;
     if (l == x) {
       if ((Y + h1) >= 0) position(real_position_+Y);
@@ -230,6 +273,7 @@ void Fl_Browser_::display(void* x) {
       return;
     }
   }
+#endif
 }
 
 // redraw, has side effect of updating top and setting scrollbar:
@@ -711,5 +755,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.12 2002/06/27 20:52:44 easysw Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.13 2002/07/18 15:43:48 easysw Exp $".
 //
