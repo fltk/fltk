@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.6 2002/06/13 18:18:33 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.7 2002/06/24 02:04:54 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -85,8 +85,13 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   if ((fp = fopen(bmp, "rb")) == NULL) return;
 
   // Get the header...
-  getc(fp);			// Skip "BM" sync chars
-  getc(fp);
+  byte = getc(fp);		// Check "BM" sync chars
+  bit  = getc(fp);
+  if (byte != 'B' || bit != 'M') {
+    fclose(fp);
+    return;
+  }
+
   read_dword(fp);		// Skip size
   read_word(fp);		// Skip reserved stuff
   read_word(fp);
@@ -94,6 +99,8 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   // Then the bitmap information...
   info_size = read_dword(fp);
+
+//  printf("offbits = %ld, info_size = %d\n", offbits, info_size);
 
   if (info_size < 40) {
     // Old Windows/OS2 BMP header...
@@ -121,10 +128,19 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     count = info_size - 40;
   }
 
+//  printf("w() = %d, h() = %d, depth = %d, compression = %d, colors_used = %d, count = %d\n",
+//         w(), h(), depth, compression, colors_used, count);
+
   // Skip remaining header bytes...
   while (count > 0) {
     getc(fp);
     count --;
+  }
+
+  // Check header data...
+  if (!w() || !h() || !depth) {
+    fclose(fp);
+    return;
   }
 
   // Get colormap...
@@ -133,7 +149,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   for (count = 0; count < colors_used; count ++) {
     // Read BGR color...
-    fread(colormap[count], colors_used, 3, fp);
+    fread(colormap[count], 1, 3, fp);
 
     // Skip pad byte for new BMP files...
     if (info_size > 12) getc(fp);
@@ -141,7 +157,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   // Setup image and buffers...
   d(3);
-  fseek(fp, offbits, SEEK_SET);
+  if (offbits) fseek(fp, offbits, SEEK_SET);
 
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
@@ -187,58 +203,60 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
       case 4 : // 16-color
           for (x = w(), bit = 0xf0; x > 0; x --) {
 	    // Get a new count as needed...
-            if (compression != BI_RLE4 && count == 0) {
-	      count = 2;
-	      color = -1;
-            }
-
 	    if (count == 0) {
-	      while (align > 0) {
-	        align --;
-		getc(fp);
-              }
+              if (compression != BI_RLE4) {
+		count = 2;
+		color = -1;
+              } else {
+		while (align > 0) {
+	          align --;
+		  getc(fp);
+        	}
 
-	      if ((count = getc(fp)) == 0) {
 		if ((count = getc(fp)) == 0) {
-		  // End of line...
-                  x ++;
-		  continue;
-		} else if (count == 1) {
-                  // End of image...
-		  break;
-		} else if (count == 2) {
-		  // Delta...
-		  count = getc(fp) * getc(fp) * w();
-		  color = 0;
+		  if ((count = getc(fp)) == 0) {
+		    // End of line...
+                    x ++;
+		    continue;
+		  } else if (count == 1) {
+                    // End of image...
+		    break;
+		  } else if (count == 2) {
+		    // Delta...
+		    count = getc(fp) * getc(fp) * w();
+		    color = 0;
+		  } else {
+		    // Absolute...
+		    color = -1;
+		    align = ((4 - (count & 3)) / 2) & 1;
+		  }
 		} else {
-		  // Absolute...
-		  color = -1;
-		  align = ((4 - (count & 3)) / 2) & 1;
+	          color = getc(fp);
 		}
-	      } else {
-	        color = getc(fp);
 	      }
-            }
+	    }
 
             // Get a new color as needed...
 	    count --;
 
-            if (bit == 0xf0) {
-              if (color < 0) temp = getc(fp);
-	      else temp = color;
+	    // Get the next color byte as needed...
+            if (color < 0) color = getc(fp);
 
-              // Copy the color value...
-	      *ptr++ = colormap[temp >> 4][2];
-	      *ptr++ = colormap[temp >> 4][1];
-	      *ptr++ = colormap[temp >> 4][0];
-	      bit    = 0x0f;
-            } else {
-              // Copy the color value...
-	      *ptr++ = colormap[temp & 15][2];
-	      *ptr++ = colormap[temp & 15][1];
-	      *ptr++ = colormap[temp & 15][0];
-	      bit    = 0xf0;
+	    // Extract the next pixel...
+            if (bit == 0xf0) {
+	      temp = (color >> 4) & 15;
+	      bit  = 0x0f;
+	    } else {
+	      temp = color & 15;
+	      bit  = 0xf0;
 	    }
+
+//	    printf("temp = %d\n", temp);
+
+            // Copy the color value...
+	    *ptr++ = colormap[temp][2];
+	    *ptr++ = colormap[temp][1];
+	    *ptr++ = colormap[temp][0];
 	  }
 
 	  if (!compression) {
@@ -375,5 +393,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.6 2002/06/13 18:18:33 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.7 2002/06/24 02:04:54 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.21 2002/05/25 13:38:25 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.22 2002/06/24 02:04:54 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -693,10 +693,6 @@ int fl_handle(const XEvent& xevent)
     }
     break;}
 
-  case MapNotify:
-    event = FL_SHOW;
-    break;
-
   case UnmapNotify:
     event = FL_HIDE;
     break;
@@ -858,21 +854,31 @@ int fl_handle(const XEvent& xevent)
     fl_xmousewin = 0;
     break;
 
-  case ConfigureNotify: {
-    // We cannot rely on the x,y position in the configure notify event.
-    // I now think this is an unavoidable problem with X: it is impossible
-    // for a window manager to prevent the "real" notify event from being
-    // sent when it resizes the contents, even though it can send an
-    // artificial event with the correct position afterwards (and some
-    // window managers do not send this fake event anyway)
-    // So anyway, do a round trip to find the correct x,y:
-    Window r, c; int X, Y, wX, wY; unsigned int m;
-    XQueryPointer(fl_display, fl_xid(window), &r, &c, &X, &Y, &wX, &wY, &m);
-    resize_bug_fix = window;
-    window->resize(X-wX, Y-wY,
-		   xevent.xconfigure.width, xevent.xconfigure.height);
-    return 1;}
+  // We cannot rely on the x,y position in the configure notify event.
+  // I now think this is an unavoidable problem with X: it is impossible
+  // for a window manager to prevent the "real" notify event from being
+  // sent when it resizes the contents, even though it can send an
+  // artificial event with the correct position afterwards (and some
+  // window managers do not send this fake event anyway)
+  // So anyway, do a round trip to find the correct x,y:
+  case MapNotify:
+    event = FL_SHOW;
 
+  case ConfigureNotify: {
+    if (window->parent()) break; // ignore child windows
+
+    // figure out where OS really put window
+    XWindowAttributes actual;
+    XGetWindowAttributes(fl_display, fl_xid(window), &actual);
+    Window cr; int X, Y, W = actual.width, H = actual.height;
+    XTranslateCoordinates(fl_display, fl_xid(window), actual.root,
+                          0, 0, &X, &Y, &cr);
+
+    // tell Fl_Window about it and set flag to prevent echoing:
+    resize_bug_fix = window;
+    window->resize(X, Y, W, H);
+    break; // allow add_handler to do something too
+    }
   }
 
   return Fl::handle(event, window);
@@ -1227,5 +1233,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.21 2002/05/25 13:38:25 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.22 2002/06/24 02:04:54 easysw Exp $".
 //

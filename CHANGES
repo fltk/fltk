@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.0
 
+	- Now translate the window coordinates when a window is
+	  shown, moved, or resized.  This should fix the "menus
+	  showing up at the wrong position" bug under XFree86.
+	- Fixed some more problems with the Fl_BMP_Image file
+	  loader.
 	- BC++ fixes.
 	- The pixmap_browser demo didn't check for a NULL image
 	  pointer.
