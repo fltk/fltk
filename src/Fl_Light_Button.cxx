@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.7 2001/11/28 21:37:35 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.8 2001/12/16 13:05:39 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -38,8 +38,17 @@ void Fl_Light_Button::draw() {
   if (box()) draw_box(this==Fl::pushed() ? down(box()) : box(), color());
   Fl_Color col = value() ? (active_r() ? selection_color() :
                             fl_inactive(selection_color())) : color();
-  int W = labelsize() - 1;
-  int d = ((w()<h()?w():h()) - W) / 2;
+  int W;
+  int d;
+
+  if (w() < h()) {
+    d = (w() - labelsize() + 1) / 2;
+    W = w() - 2 * d;
+  } else {
+    d = (h() - labelsize() + 1) / 2;
+    W = h() - 2 * d;
+  }
+
   if (down_box()) {
     // draw other down_box() styles:
     switch (down_box()) {
@@ -64,12 +73,14 @@ void Fl_Light_Button::draw() {
         draw_box(down_box(), x()+d, y()+d+1, W, W, FL_WHITE);
 	if (value()) {
 	  fl_color(col);
-	  if (W > 12) {
-            fl_pie(x() + d + 4, y() + d + 5, W - 8, W - 8, 0.0, 360.0);
+	  W -= Fl::box_dw(down_box()) + 3;
+	  d += Fl::box_dx(down_box()) + 1;
+	  if (W > 4) {
+            fl_pie(x() + d, y() + d, W, W + 1, 0.0, 360.0);
 	  } else {
             // Small circles don't draw well with some X servers...
-	    fl_rectf(x() + d + 5, y() + d + 5, 2, 4);
-	    fl_rectf(x() + d + 4, y() + d + 6, 4, 2);
+	    fl_rectf(x() + d + 1, y() + d, 2, 4);
+	    fl_rectf(x() + d, y() + d + 1, 4, 2);
 	  }
 	}
         break;
@@ -107,5 +118,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.7 2001/11/28 21:37:35 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.8 2001/12/16 13:05:39 easysw Exp $".
 //

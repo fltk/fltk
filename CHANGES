@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Tweeked the radio button drawing code for better
+	  circles with different boxtypes.
 	- The Fl_File_Chooser widget did not provide a shown()
 	  method, and fl_file_chooser() and fl_dir_chooser() did
 	  not wait on shown(); this would cause them to return
