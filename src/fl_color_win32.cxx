@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.14.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_color_win32.cxx,v 1.14.2.3.2.1 2001/09/30 12:42:33 easysw Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -47,8 +47,18 @@ Fl_XMap fl_xmap[256];
 Fl_XMap* fl_current_xmap;
 
 HPALETTE fl_palette;
-HPEN tmppen=0;
-HBRUSH tmpbrush=0;
+static HPEN tmppen=0;
+static HBRUSH tmpbrush=0;
+static HPEN savepen=0;
+
+void fl_save_pen(void) {
+    if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
+    savepen = (HPEN)SelectObject(fl_gc, tmppen);
+}
+
+void fl_restore_pen(void) {
+    SelectObject(fl_gc, savepen);
+}
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
@@ -206,5 +216,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.14.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.14.2.3.2.1 2001/09/30 12:42:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.3 2001/08/03 15:48:20 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.4 2001/09/30 12:42:32 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -425,6 +425,9 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.C
 
 static Fl_Window* resize_bug_fix;
 
+extern void fl_save_pen(void);
+extern void fl_restore_pen(void);
+
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   // Matt: When dragging a full window, MSWindows on 'slow'
@@ -477,7 +480,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // is deferred until Fl::flush() is called during idle.  However Win32
     // apparently is very unhappy if we don't obey it and draw right now.
     // Very annoying!
+    fl_save_pen();
     i->flush();
+    fl_restore_pen();
     window->clear_damage();
     // This convinces MSWindows we have painted whatever they wanted
     // us to paint, and stops it from sending WM_PAINT messages:
@@ -993,5 +998,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.3 2001/08/03 15:48:20 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.4 2001/09/30 12:42:32 easysw Exp $".
 //
