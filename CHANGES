@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.0rc6
 
 	- Documentation updates.
+	- Fl::handle() didn't apply the modal tests for
+	  FL_RELEASE events, which caused Fl_Tabs to allow users
+	  to change tabs even when a modal window was open.
 	- Fl_Input_ now draws the box function to erase the
 	  background.  This fixes redraw problems noticed with
 	  the plastic scheme.
