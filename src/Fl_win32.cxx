@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.2 1999/03/25 13:32:52 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.3 1999/03/29 17:39:28 carl Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -335,7 +335,7 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.C
 
 static Fl_Window* resize_bug_fix;
 
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static char buffer[2];
   static int cnt=0;
@@ -344,7 +344,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if(cnt) {
       InvalidateRect(fl_window,0,FALSE);
       cnt = 0;
-    } else cnt = 1; 
+    } else cnt = 1;
   } else if (uMsg == WM_PAINT) cnt = 0;
 
   fl_msg.message = uMsg;
@@ -362,12 +362,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
 
   case WM_PAINT: {
- 
+
     // This might be a better alternative, where we fully ignore NT's
     // "facilities" for painting. MS expects applications to paint according
     // to a very restrictive paradigm, and this is the way I found of
     // working around it. In a sense, we are using WM_PAINT simply as an
-    // "exposure alert", like the X event. 
+    // "exposure alert", like the X event.
 
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
@@ -501,7 +501,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_GetDC(hWnd);
     if (fl_select_palette()) InvalidateRect(hWnd, NULL, FALSE);
     break;
-       
+
   case WM_PALETTECHANGED:
     fl_GetDC(hWnd);
     if ((HWND)wParam != hWnd && fl_select_palette()) UpdateColors(fl_gc);
@@ -526,7 +526,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 ////////////////////////////////////////////////////////////////
 // This function gets the dimensions of the top/left borders and
 // the title bar, if there is one, based on the FL_BORDER, FL_MODAL
-// and FL_NONMODAL flags, and on the window's size range. 
+// and FL_NONMODAL flags, and on the window's size range.
 // It returns the following values:
 //
 // value | border | title bar
@@ -547,7 +547,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
       bx = GetSystemMetrics(SM_CXFIXEDFRAME);
       by = GetSystemMetrics(SM_CYFIXEDFRAME);
     }
-    bt = GetSystemMetrics(SM_CYCAPTION); 
+    bt = GetSystemMetrics(SM_CYCAPTION);
   }
   //The coordinates of the whole window, including non-client area
   xoff = bx;
@@ -626,7 +626,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   WNDCLASSEX wc;
   // Documentation states a device context consumes about 800 bytes
-  // of memory... so who cares? If 800 bytes per window is what it 
+  // of memory... so who cares? If 800 bytes per window is what it
   // takes to speed things up, I'm game.
   //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
   wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
@@ -730,7 +730,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   w->redraw(); // force draw to happen
   // If we've captured the mouse, we dont want do activate any
   // other windows from the code, or we loose the capture.
-  ShowWindow(x->xid, fl_show_iconic ? SW_SHOWMINNOACTIVE : 
+  ShowWindow(x->xid, fl_show_iconic ? SW_SHOWMINNOACTIVE :
              fl_capture? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
   fl_show_iconic = 0;
   fl_fix_focus();
@@ -763,17 +763,7 @@ HINSTANCE fl_display = 0;
 
 #ifndef FL_DLL
 
-extern "C" {
-#ifdef BORLAND
-extern int  _argc;
-extern char **_argv;
-extern FL_EXPORT int OwlMain(int, char *[]);
-#else
-extern int  __argc;
-extern char **__argv;
-extern FL_EXPORT int main(int, char *[]);
-#endif
-};
+extern "C" int fl_call_main();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                              LPSTR lpCmdLine, int nCmdShow) {
@@ -796,11 +786,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif // _DEBUG
 
   // Run the standard main entry point function...
-#ifdef BORLAND
-  return OwlMain(_argc, _argv);
-#else
-  return main(__argc, __argv);
-#endif
+  return fl_call_main();
 }
 
 #endif /* !FL_DLL */
@@ -919,5 +905,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.2 1999/03/25 13:32:52 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.3 1999/03/29 17:39:28 carl Exp $".
 //

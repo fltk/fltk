@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.6 1999/03/26 12:46:25 mike Exp $"
+# "$Id: Makefile,v 1.18.2.7 1999/03/29 17:39:28 carl Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -138,7 +138,7 @@ CPPFILES = \
 	glut_compatability.cxx \
 	glut_font.cxx
 
-CFILES = scandir.c numericsort.c vsnprintf.c
+CFILES = fl_call_main.c scandir.c numericsort.c vsnprintf.c
 
 CLEAN =
 
@@ -209,5 +209,5 @@ install: $(LIBRARY) $(DSONAME)
 	@-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.6 1999/03/26 12:46:25 mike Exp $".
+# End of "$Id: Makefile,v 1.18.2.7 1999/03/29 17:39:28 carl Exp $".
 #

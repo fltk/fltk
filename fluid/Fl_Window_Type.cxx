@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13 1999/02/19 15:03:26 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.1 1999/03/29 17:39:26 carl Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -82,55 +82,10 @@ void include_H_from_C_button_cb(Fl_Light_Button* b, void*) {
 
 ////////////////////////////////////////////////////////////////
 
-static Fl_Menu_Item window_type_menu[] = {
+Fl_Menu_Item window_type_menu[] = {
   {"Single",0,0,(void*)FL_WINDOW},
   {"Double",0,0,(void*)(FL_WINDOW+1)},
   {0}};
-class Fl_Window_Type : public Fl_Widget_Type {
-  Fl_Menu_Item* subtypes() {return window_type_menu;}
-
-  friend class Overlay_Window;
-  int mx,my;		// mouse position during dragging
-  int x1,y1;		// initial position of selection box
-  int bx,by,br,bt;	// bounding box of selection
-  int dx,dy;
-  int drag;		// which parts of bbox are being moved
-  int numselected;	// number of children selected
-  enum {LEFT=1,RIGHT=2,BOTTOM=4,TOP=8,DRAG=16,BOX=32};
-  void draw_overlay();
-  void newdx();
-  void newposition(Fl_Widget_Type *,int &x,int &y,int &w,int &h);
-  int handle(int);
-  virtual void setlabel(const char *);
-  void write_code1();
-  void write_code2();
-  Fl_Widget_Type *_make() {return 0;} // we don't call this
-  Fl_Widget *widget(int,int,int,int) {return 0;}
-  int recalc;		// set by fix_overlay()
-
-public:
-
-  uchar modal, non_modal;
-
-  Fl_Type *make();
-  virtual const char *type_name() {return "Fl_Window";}
-
-  void open();
-
-  void fix_overlay();	// update the bounding box, etc
-
-  virtual void write_properties();
-  virtual void read_property(const char *);
-  virtual int read_fdesign(const char*, const char*);
-
-  void add_child(Fl_Type*, Fl_Type*);
-  void move_child(Fl_Type*, Fl_Type*);
-  void remove_child(Fl_Type*);
-
-  int is_parent() const {return 1;}
-  int is_group() const {return 1;}
-  int is_window() const {return 1;}
-};
 
 static int overlays_invisible;
 
@@ -697,5 +652,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13 1999/02/19 15:03:26 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.1 1999/03/29 17:39:26 carl Exp $".
 //

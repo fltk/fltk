@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.h,v 1.3 1999/01/07 19:17:12 mike Exp $"
+// "$Id: Fluid_Image.h,v 1.3.2.1 1999/03/29 17:39:26 carl Exp $"
 //
 // Pixmap image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,9 @@
 // Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
+#ifndef FLUID_IMAGE_H
+#define FLUID_IMAGE_H
+
 class Fluid_Image {
   const char *name_;
   int refcount;
@@ -50,6 +53,8 @@ public:
 // or zero for any errors:
 Fluid_Image *ui_find_image(const char *);
 
+#endif
+
 //
-// End of "$Id: Fluid_Image.h,v 1.3 1999/01/07 19:17:12 mike Exp $".
+// End of "$Id: Fluid_Image.h,v 1.3.2.1 1999/03/29 17:39:26 carl Exp $".
 //
