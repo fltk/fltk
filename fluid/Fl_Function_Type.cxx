@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.15 2004/04/11 04:38:55 easysw Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.16 2004/11/20 16:19:04 easysw Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -291,7 +291,35 @@ void Fl_Function_Type::write_code1() {
 	  write_h("%s%s %s;\n", rtype, star, name());
       }
       else write_c("static ");
-      write_c("%s%s %s {\n", rtype, star, name());
+
+      // write everything but the default parameters (if any)
+      char s[1024], *sptr;
+      char *nptr;
+      int skips=0,skipc=0;
+      int nc=0,plevel=0;
+      for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
+	if (!skips && *nptr=='(') plevel++;
+	else if (!skips && *nptr==')') plevel--;
+	if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
+	  skips = skips ? 0 : 1;
+	else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
+	  skipc = skipc ? 0 : 1;
+	if(!skips && !skipc && plevel==1 && *nptr =='=' && 
+	   !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
+	  while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
+	    if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
+	      skips = skips ? 0 : 1;
+	    else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
+	      skipc = skipc ? 0 : 1;
+	    if (!skips && !skipc && *nptr=='(') plevel++;
+	    else if (!skips && *nptr==')') plevel--;
+	  }
+
+	if (sptr < (s + sizeof(s) - 1))	*sptr++ = *nptr;
+      }
+      *sptr = '\0';
+ 
+      write_c("%s%s %s {\n", rtype, star, s);
     }
   }
   if (havewidgets) write_c("  %s* w;\n",subclassname(child));
@@ -761,5 +789,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.15 2004/04/11 04:38:55 easysw Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.16 2004/11/20 16:19:04 easysw Exp $".
 //
