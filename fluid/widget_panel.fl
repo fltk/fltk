@@ -1,11 +1,11 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0102 
+version 1.0103 
 header_name {.h} 
 code_name {.cxx}
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
-    xywh {318 157 415 370} type Double resizable hotspot visible
+    xywh {366 151 415 370} type Double resizable hotspot visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
@@ -417,6 +417,7 @@ image}
             tooltip {The callback function or code for the widget.} xywh {102 177 291 86} box NO_BOX align 4 textfont 4 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->textfont(FL_COURIER);}
+            code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
           }
         }
         Fl_Box {} {

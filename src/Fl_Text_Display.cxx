@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.39 2002/11/19 16:45:32 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.40 2002/12/26 01:15:32 matthiaswm Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2973,7 +2973,10 @@ int Fl_Text_Display::handle(int event) {
       }
 
     case FL_PUSH: {
-        Fl::focus(this); // Take focus from any child widgets...
+	if (Fl::focus() != this) {
+	  Fl::focus(this);
+	  handle(FL_FOCUS);
+	}
         if (Fl::event_state()&FL_SHIFT) return handle(FL_DRAG);
         dragging = 1;
         int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
@@ -3035,5 +3038,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.39 2002/11/19 16:45:32 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.40 2002/12/26 01:15:32 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0102 
+version 1.0103 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Pixmap.H>} {} 
@@ -54,10 +54,11 @@ Function {make_code_panel()} {open
     Fl_Group {} {open
       xywh {10 10 525 120} box DOWN_FRAME resizable
     } {
-      Fl_Text_Editor code_input {
+      Fl_Text_Editor code_input {selected
         xywh {12 12 521 116} box NO_BOX resizable
         code0 {o->buffer(new Fl_Text_Buffer);}
         code1 {o->textfont(FL_COURIER);}
+        code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
       }
     }
     Fl_Return_Button code_panel_ok {
@@ -399,7 +400,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"Fl_Output"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip Output xywh {284 4 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[27]);}
       }
