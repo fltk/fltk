@@ -432,7 +432,7 @@ Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 Fl_Window* make_widgetbin() {
   Fl_Window* w;
-  { Fl_Window* o = widgetbin_panel = new Fl_Window(485, 100, "Widget Bin");
+  { Fl_Window* o = widgetbin_panel = new Fl_Window(490, 100, "Widget Bin");
     w = o;
     { Fl_Group* o = new Fl_Group(3, 3, 74, 74);
       o->box(FL_THIN_DOWN_BOX);

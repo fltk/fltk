@@ -282,6 +282,8 @@ uchar *Overlay_Window::read_image(int &ww, int &hh) {
   // Redraw the window into the offscreen buffer...
   fl_begin_offscreen(offscreen);
 
+  if (!shown()) image(Fl::scheme_bg_);
+
   redraw();
   draw();
 
