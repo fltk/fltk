@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.12 1999/08/22 23:31:21 gustavo Exp $"
+// "$Id: Fl.cxx,v 1.24.2.13 1999/10/23 06:19:59 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -131,7 +131,7 @@ void Fl::flush() {
   if (damage()) {
     damage_ = 0;
     for (Fl_X* x = Fl_X::first; x; x = x->next) {
-      if (x->w->damage() && x->w->visible()) {
+      if (x->w->damage() && x->w->visible_r()) {
 	if (x->wait_for_expose) {
 	  // leave Fl::damage() set so programs can tell damage still exists
 	  damage_ = 1;
@@ -700,5 +700,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.12 1999/08/22 23:31:21 gustavo Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.13 1999/10/23 06:19:59 bill Exp $".
 //
