@@ -1,11 +1,8 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0104 
 header_name {.h} 
-code_name {.cxx} 
-gridx 10 
-gridy 10 
-snap 3
-decl {void show_help(const char *name);} {selected public
+code_name {.cxx}
+decl {void show_help(const char *name);} {public
 } 
 
 Function {make_about_panel()} {open
@@ -52,13 +49,13 @@ Function {make_about_panel()} {open
         label {FLTK User
 Interface
 Designer
-Version 1.1.0}
+Version 1.1.4}
         xywh {140 27 160 123} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
-        label {©1998-2002 by
+        label {©1998-2003 by
 Bill Spitzak and others}
-        callback {show_help("license.html");}
+        callback {show_help("license.html");} selected
         xywh {181 176 115 30} box THIN_UP_BOX labelsize 10 labelcolor 136
       }
     }
