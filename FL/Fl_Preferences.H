@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.1 2002/04/28 16:41:16 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.2 2002/04/29 20:56:19 easysw Exp $"
 //
-// Preferences header file for the Fast Light Tool Kit (FLTK).
+// Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002 by Matthias Melcher.
 //
@@ -20,19 +20,23 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@matthiasm.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef Fl_Preferences_H
-#define Fl_Preferences_H
+#  define Fl_Preferences_H
 
-#  include <stdio.h>
+#  ifdef WIN32
+#    include <windows.h>
+#  endif // WIN32
 
-/* missing functions:
+#include <stdio.h>
 
-  Fl_Preferences should return functions to create and access User Data directories
-  Fl_Preferences could offer functions that return the value instead off an error code to write directly into widgets
-*/
+
+// missing features:
+// - get and set binary data
+// - Fl_Preferences could offer functions that return the value instead off an error code to write directly into widgets
+
 
 /**
  * Preferences are a data tree containing a root, branches and leafs
@@ -52,35 +56,37 @@ public:
 
   FL_EXPORT int groups();
   FL_EXPORT const char *group( int );
-  FL_EXPORT int groupExists( const char *group );
-  FL_EXPORT int deleteGroup( const char *group );
+  FL_EXPORT char groupExists( const char *group );
+  FL_EXPORT char deleteGroup( const char *group );
 
   FL_EXPORT int entries();
   FL_EXPORT const char *entry( int );
-  FL_EXPORT int entryExists( const char *entry );
-  FL_EXPORT int deleteEntry( const char *entry );
+  FL_EXPORT char entryExists( const char *entry );
+  FL_EXPORT char deleteEntry( const char *entry );
 
-  FL_EXPORT int set( const char *entry, int value );
-  FL_EXPORT int set( const char *entry, float value );
-  FL_EXPORT int set( const char *entry, double value );
-  FL_EXPORT int set( const char *entry, const char *value );
-  // FL_EXPORT int set( const char *entry, const void *value, int size );
+  FL_EXPORT char set( const char *entry, char value );
+  FL_EXPORT char set( const char *entry, int value );
+  FL_EXPORT char set( const char *entry, float value );
+  FL_EXPORT char set( const char *entry, double value );
+  FL_EXPORT char set( const char *entry, const char *value );
+  // FL_EXPORT char set( const char *entry, const void *value, int size ); 
 
-  FL_EXPORT int get( const char *entry, int &value,    int defaultValue );
-  FL_EXPORT int get( const char *entry, float &value,  float defaultValue );
-  FL_EXPORT int get( const char *entry, double &value, double defaultValue );
-  FL_EXPORT int get( const char *entry, char *&value,  const char *defaultValue );
-  FL_EXPORT int get( const char *entry, char *value,   const char *defaultValue, int maxSize );
-  // FL_EXPORT int get( const char *entry, void *&value,  const char *defaultValue );
-  // FL_EXPORT int get( const char *entry, void *value,   const char *defaultValue, int maxSize );
+  FL_EXPORT char get( const char *entry, char &value,   char defaultValue );
+  FL_EXPORT char get( const char *entry, int &value,    int defaultValue );
+  FL_EXPORT char get( const char *entry, float &value,  float defaultValue );
+  FL_EXPORT char get( const char *entry, double &value, double defaultValue );
+  FL_EXPORT char get( const char *entry, char *&value,  const char *defaultValue );
+  FL_EXPORT char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
+  // FL_EXPORT char get( const char *entry, void *&value,  const char *defaultValue );
+  // FL_EXPORT char get( const char *entry, void *value,   const char *defaultValue, int maxSize );
   FL_EXPORT int size( const char *entry );
 
-  FL_EXPORT int getUserdataPath( char *path );
+  FL_EXPORT char getUserdataPath( char *path );
 
   FL_EXPORT void flush();
 
-  // FL_EXPORT int export( const char *filename, enum Type fileFormat );
-  // FL_EXPORT int import( const char *filename );
+  // FL_EXPORT char export( const char *filename, enum Type fileFormat );
+  // FL_EXPORT char import( const char *filename );
 
   // FL_EXPORT const char *namef( const char *, ... );
 
@@ -93,38 +99,41 @@ private:
     char *name, *value;
   };
 
-  class Node 
-  {
+  class Node // a node contains a list to all its entries 
+  {          // and all means to manage the tree structure
     Node *child_, *next_, *parent_;
     char *path_;
-    int dirty_;
+    char dirty_;
   public:
     Node( const char *path );
     ~Node();
+    // node methods
+    int write( FILE *f );
     Node *find( const char *path );
     Node *search( const char *path );
-    int write( FILE *f );
-    void setParent( Node *parent );
     Node *addChild( const char *path );
+    void setParent( Node *parent );
+    char remove();
+    char dirty();
+    // entry methods
+    int nChildren();
+    const char *child( int ix );
     void set( const char *name, const char *value );
     void set( const char *line );
     void add( const char *line );
     const char *get( const char *name );
     int getEntry( const char *name );
-    int deleteEntry( const char *name );
-    int remove();
-    int dirty();
-    int nChildren();
-    const char *child( int ix );
+    char deleteEntry( const char *name );
+    // public values
     Entry *entry;
     int nEntry, NEntry;
     static int lastEntrySet;
   };
   friend class Node;
 
-  class RootNode
+  class RootNode  // the root node manages file paths and basic reading and writing
   {
-    Fl_Preferences *prefs_; //++ maybe we should hold a reference to the first node
+    Fl_Preferences *prefs_;
     char *filename_;
     char *vendor_, *application_;
   public:
@@ -132,17 +141,18 @@ private:
     ~RootNode();
     int read();
     int write();
-    int getPath( char *path );
+    char getPath( char *path );
   };
   friend class RootNode;
 
   Node *node;
   RootNode *rootNode;
+  
 };
 
 
-#endif
+#endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.1 2002/04/28 16:41:16 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.2 2002/04/29 20:56:19 easysw Exp $".
 //

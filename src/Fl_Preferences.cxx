@@ -1,7 +1,7 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.2 2002/04/29 15:12:23 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.3 2002/04/29 20:56:19 easysw Exp $"
 //
-// Preferences file for the Fast Light Tool Kit (FLTK).
+// Preferences methods for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002 by Matthias Melcher.
 //
@@ -26,12 +26,21 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/filename.H>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "flstring.h"
-
 #include <sys/stat.h>
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+#  include <direct.h>
+#elif defined (__APPLE__)
+#  include <Carbon/Carbon.H>
+#else
+#  include <unistd.h>
+#endif
 
 
 char Fl_Preferences::nameBuffer[];
@@ -49,7 +58,7 @@ char Fl_Preferences::nameBuffer[];
  */
 Fl_Preferences::Fl_Preferences( enum Root root, const char *vendor, const char *application )
 {
-  node     = new Node( "." );
+  node = new Node( "." );
   rootNode = new RootNode( this, root, vendor, application );
 }
 
@@ -63,7 +72,7 @@ Fl_Preferences::Fl_Preferences( enum Root root, const char *vendor, const char *
 Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *key )
 {
   rootNode = 0;
-  node     = parent.node->addChild( key );
+  node = parent.node->addChild( key );
 }
 
 
@@ -76,7 +85,7 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *key )
 Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *key )
 {
   rootNode = 0;
-  node     = parent->node->addChild( key );
+  node = parent->node->addChild( key );
 }
 
 
@@ -118,7 +127,7 @@ const char *Fl_Preferences::group( int ix )
  * return 1, if a group with this name exists
  * example: if ( base.groupExists( "setup/colors" ) ) ...
  */
-int Fl_Preferences::groupExists( const char *key )
+char Fl_Preferences::groupExists( const char *key )
 {
   return node->search( key ) ? 1 : 0 ;
 }
@@ -128,7 +137,7 @@ int Fl_Preferences::groupExists( const char *key )
  * delete a group
  * example: setup.deleteGroup( "colors/buttons" );
  */
-int Fl_Preferences::deleteGroup( const char *key )
+char Fl_Preferences::deleteGroup( const char *key )
 {
   Node *nd = node->search( key );
   if ( nd ) return nd->remove();
@@ -162,7 +171,7 @@ const char *Fl_Preferences::entry( int ix )
  * return 1, if a group with this name exists
  * example: if ( buttonColor.entryExists( "red" ) ) ...
  */
-int Fl_Preferences::entryExists( const char *key )
+char Fl_Preferences::entryExists( const char *key )
 {
   return node->getEntry( key ) ? 1 : 0 ;
 }
@@ -172,7 +181,7 @@ int Fl_Preferences::entryExists( const char *key )
  * remove a single entry (name/value pair)
  * example: buttonColor.deleteEntry( "red" );
  */
-int Fl_Preferences::deleteEntry( const char *key )
+char Fl_Preferences::deleteEntry( const char *key )
 {
   return node->deleteEntry( key );
 }
@@ -185,18 +194,18 @@ int Fl_Preferences::deleteEntry( const char *key )
  * - the return value indicates, if the value was not available and the default was used (0)
  * example: button.get( "visible", b.visible, 1 );
  */
-int Fl_Preferences::get( const char *key, int &value, int defaultValue )
+char Fl_Preferences::get( const char *key, char &value, char defaultValue )
 {
   const char *v = node->get( key );
   value = v ? atoi( v ) : defaultValue;
-  return 0;
+  return ( v != 0 );
 }
 
 
 /**
  * set an entry (name/value pair)
  */
-int Fl_Preferences::set( const char *key, int value )
+char Fl_Preferences::set( const char *key, char value )
 {
   sprintf( nameBuffer, "%d", value );
   node->set( key, nameBuffer );
@@ -207,18 +216,40 @@ int Fl_Preferences::set( const char *key, int value )
 /**
  * read an entry from the group
  */
-int Fl_Preferences::get( const char *key, float &value, float defaultValue )
+char Fl_Preferences::get( const char *key, int &value, int defaultValue )
 {
   const char *v = node->get( key );
-  value = v ? (float)atof( v ) : defaultValue;
-  return 0;
+  value = v ? atoi( v ) : defaultValue;
+  return ( v != 0 );
 }
 
 
 /**
  * set an entry (name/value pair)
  */
-int Fl_Preferences::set( const char *key, float value )
+char Fl_Preferences::set( const char *key, int value )
+{
+  sprintf( nameBuffer, "%d", value );
+  node->set( key, nameBuffer );
+  return 1;
+}
+
+
+/**
+ * read an entry from the group
+ */
+char Fl_Preferences::get( const char *key, float &value, float defaultValue )
+{
+  const char *v = node->get( key );
+  value = v ? (float)atof( v ) : defaultValue;
+  return ( v != 0 );
+}
+
+
+/**
+ * set an entry (name/value pair)
+ */
+char Fl_Preferences::set( const char *key, float value )
 {
   sprintf( nameBuffer, "%g", value );
   node->set( key, nameBuffer );
@@ -229,22 +260,52 @@ int Fl_Preferences::set( const char *key, float value )
 /**
  * read an entry from the group
  */
-int Fl_Preferences::get( const char *key, double &value, double defaultValue )
+char Fl_Preferences::get( const char *key, double &value, double defaultValue )
 {
   const char *v = node->get( key );
   value = v ? atof( v ) : defaultValue;
-  return 0;
+  return ( v != 0 );
 }
 
 
 /**
  * set an entry (name/value pair)
  */
-int Fl_Preferences::set( const char *key, double value )
+char Fl_Preferences::set( const char *key, double value )
 {
   sprintf( nameBuffer, "%g", value );
   node->set( key, nameBuffer );
   return 1;
+}
+
+
+// remove control sequences from a string
+static char *decodeText( const char *src )
+{
+  int len = 0;
+  const char *s = src;
+  for ( ; *s; s++, len++ )
+  {
+    if ( *s == '\\' )
+      if ( isdigit( s[1] ) ) s+=3; else s+=1;
+  }
+  char *dst = (char*)malloc( len+1 ), *d = dst;
+  for ( s = src; *s; s++ )
+  {
+    char c = *s;
+    if ( c == '\\' )
+    {
+      if ( s[1] == '\\' ) { *d++ = c; s++; }
+      else if ( s[1] == 'n' ) { *d++ = '\n'; s++; }
+      else if ( s[1] == 'r' ) { *d++ = '\r'; s++; }
+      else if ( isdigit( s[1] ) ) { *d++ = ((s[1]-'0')<<6) + ((s[2]-'0')<<3) + (s[3]-'0'); s+=3; }
+      else s++; // error
+    }
+    else
+      *d++ = c;
+  }
+  *d = 0;
+  return dst;
 }
 
 
@@ -254,14 +315,21 @@ int Fl_Preferences::set( const char *key, double value )
  * - the text must not contain special characters
  * the text will be movet into the given text buffer
  */
-int Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize )
+char Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize )
 {
-  maxSize --;
   const char *v = node->get( key );
+  if ( v && strchr( v, '\\' ) )
+  {
+    char *w = decodeText( v );
+    strncpy( text, w, maxSize );
+    if ( (int)strlen(w) >= maxSize ) text[maxSize] = 0;
+    free( w );
+    return 1;
+  }    
   if ( !v ) v = defaultValue;
   strncpy( text, v, maxSize );
   if ( (int)strlen(v) >= maxSize ) text[maxSize] = 0;
-  return 0;
+  return ( v != defaultValue );
 }
 
 
@@ -272,21 +340,47 @@ int Fl_Preferences::get( const char *key, char *text, const char *defaultValue, 
  * 'text' will be changed to point to a new text buffer
  * the text buffer must be deleted with 'free(text)' by the user.
  */
-int Fl_Preferences::get( const char *key, char *&text, const char *defaultValue )
+char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue )
 {
   const char *v = node->get( key );
+  if ( v && strchr( v, '\\' ) )
+  {
+    text = decodeText( v );
+    return 1;
+  }    
   if ( !v ) v = defaultValue;
   text = strdup( v );
-  return 0;
+  return ( v != defaultValue );
 }
 
 
 /**
  * set an entry (name/value pair)
  */
-int Fl_Preferences::set( const char *key, const char *text )
+char Fl_Preferences::set( const char *key, const char *text )
 {
-  node->set( key, text );
+  const char *s = text;
+  int n=0, ns=0;
+  for ( ; *s; s++ ) { n++; if ( *s<32 || *s=='\\' || *s==0x7f ) ns+=4; }
+  if ( ns )
+  {
+    char *buffer = (char*)malloc( n+ns+1 ), *d = buffer;
+    for ( s=text; *s; ) 
+    { 
+      char c = *s;
+      if ( c=='\\' ) { *d++ = '\\'; *d++ = '\\'; s++; }
+      else if ( c=='\n' ) { *d++ = '\\'; *d++ = 'n'; s++; }
+      else if ( c=='\r' ) { *d++ = '\\'; *d++ = 'r'; s++; }
+      else if ( c<32 || c==0x7f ) 
+	{ *d++ = '\\'; *d++ = '0'+((c>>6)&3); *d++ = '0'+((c>>3)&7); *d++ = '0'+(c&7);  s++; }
+      else *d++ = *s++;
+    }
+    *d = 0;
+    node->set( key, buffer );
+    free( buffer );
+  }
+  else
+    node->set( key, text );
   return 1;
 }
 
@@ -308,13 +402,13 @@ int Fl_Preferences::size( const char *key )
  * - 'path' must be large enough to receive a complete file path
  * example:
  *   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
- *   char path[MAX_PATH];
+ *   char path[FL_PATH_MAX];
  *   prefs.getUserdataPath( path );
  * sample returns:
  *   Win32: c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
  *   prefs: c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
  */
-int Fl_Preferences::getUserdataPath( char *path )
+char Fl_Preferences::getUserdataPath( char *path )
 {
   if ( rootNode )
     return rootNode->getPath( path );
@@ -332,37 +426,14 @@ void Fl_Preferences::flush()
     rootNode->write();
 }
 
-/*
-int Fl_Preferences::export( const char *filename, enum Type type )
-{
-//#pragma message ( "TODO: implement Fl_Preferences::export(filepath)" )
-  switch ( type )
-  {
-  case win32:
-    break;
-  case macos:
-    break;
-  case fltk:
-    break;
-  }
-  return 0;
-}
-
-
-int Fl_Preferences::import( const char *filename )
-{
-//#pragma message ( "TODO: implement Fl_Preferences::import(filepath)" )
-  return 0;
-}
-*/
-
 //-----------------------------------------------------------------------------
-// internal methods, do not change or use as they will change without notice
+// internal methods, do not modify or use as they will change without notice
 //
 
 int Fl_Preferences::Node::lastEntrySet = -1;
 
-static int makePath( const char *path )
+// recursively create a path in the file system
+static char makePath( const char *path )
 {
   struct stat stats;
   int ret = stat( path, &stats );
@@ -376,11 +447,16 @@ static int makePath( const char *path )
     p[len] = 0;
     makePath( p );
     free( p );
+#ifdef WIN32
+    return ( mkdir( path ) == 0 );
+#else
     return ( mkdir( path, 0777 ) == 0 );
+#endif
   }
   return 1;
 }
 
+// strip the filename and create a path
 static void makePathForFile( const char *path )
 {
   char *s = strrchr( path, '/' );
@@ -397,55 +473,93 @@ static void makePathForFile( const char *path )
 // - construct the name of the file that will hold our preferences
 Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, enum Root root, const char *vendor, const char *application )
 {
-  const char	*home;		// Home directory
-  char		filename[1024];	// Filename
+  char filename[ FL_PATH_MAX ]; filename[0] = 0;
 #ifdef WIN32
-  HKEY		key;		// Registry key
-  DWORD		size;		// Size of string
-  char		data[1024];	// Home (profile) directory
-#endif // WIN32
+#  define FLPREFS_RESOURCE	"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+  int appDataLen = strlen(vendor) + strlen(application) + 8;
+  DWORD type, nn;
+  LONG err;
+  HKEY key;
 
-  // Find the home directory...
-#ifdef WIN32
-  // Open the registry...
-  if (RegOpenKeyEx(HKEY_CURRENT_USER,
-                   "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", 0,
-		   KEY_READ, &key)) {
-    data[0] = '\0';
-  } else {
-    // Grab the current user's AppData directory...
-    size = sizeof(data);
-    if (RegQueryValueEx(key, "AppData", NULL, NULL, (unsigned char *)data, &size))
-      data[0] = '\0';
-
-    RegCloseKey(key);
+  switch (root) {
+    case SYSTEM:
+      err = RegOpenKey( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCE, &key );
+      if (err == ERROR_SUCCESS) {
+	nn = FL_PATH_MAX - appDataLen;
+	err = RegQueryValueEx( key, "Common AppData", 0L, &type, (BYTE*)filename, &nn );
+	if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) )
+	  filename[0] = 0;
+      }
+      break;
+    case USER:
+      err = RegOpenKey( HKEY_CURRENT_USER, FLPREFS_RESOURCE, &key );
+      if (err == ERROR_SUCCESS) {
+	nn = FL_PATH_MAX - appDataLen;
+	err = RegQueryValueEx( key, "AppData", 0L, &type, (BYTE*)filename, &nn );
+	if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) )
+	  filename[0] = 0;
+      }
+      break;
   }
 
-  if (data[0])
-    home = data;
-  else
-    home = NULL;
+  if (!filename[0]) {
+    strcpy(filename, "C:\\FLTK");
+  }
+
+  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+           "/%s/%s.prefs", vendor, application);
+  for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
+#elif defined ( __APPLE__ )
+  FSSpec spec = { 0 };
+  FSRef ref;
+  OSErr err = fnfErr;
+  switch (root) {
+    case SYSTEM:
+      err = FindFolder( kLocalDomain, kPreferencesFolderType,
+			1, &spec.vRefNum, &spec.parID );
+      break;
+    case USER:
+      err = FindFolder( kUserDomain, kPreferencesFolderType, 
+			1, &spec.vRefNum, &spec.parID );
+      break;
+  }
+  FSpMakeFSRef( &spec, &ref );
+  FSRefMakePath( &ref, (UInt8*)filename, FL_PATH_MAX );
+  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+           "/%s/%s.prefs", vendor, application );
 #else
-  home = getenv("HOME");
-#endif // WIN32
+  const char *e;
+  switch (root) {
+    case USER:
+      if ((e = getenv("HOME")) != NULL) {
+	strncpy(filename, e, sizeof(filename) - 1);
+	filename[sizeof(filename) - 1] = '\0';
 
-  // Choose the appropriate path...
-  if (root == SYSTEM || !home) {
-    // Locate the preferences in the system data directory...
-    snprintf(filename, sizeof(filename),
-             FLTK_DATADIR "/%s/%s.prefs", vendor, application);
-  } else {
-    // Locate the preferences in the user data directory...
-    snprintf(filename, sizeof(filename),
-             "%s/.fltk/%s/%s.prefs", home, vendor, application);
+	if (filename[strlen(filename)-1] != '/') {
+	  strncat(filename, "/.fltk/", sizeof(filename) - 1);
+	} else {
+	  strncat(filename, ".fltk/", sizeof(filename) - 1);
+	}
+	break;
+      }
+
+    case SYSTEM:
+      strcpy(filename, "/etc/fltk/");
+      break;
   }
 
-  makePathForFile( filename );
-  prefs_ = prefs;
-  filename_ = strdup( filename );
-  vendor_ = strdup( vendor );
-  application_ = strdup( application );
-  read(); 
+  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+           "%s/%s.prefs", vendor, application);
+#endif
+
+  makePathForFile(filename);
+
+  prefs_       = prefs;
+  filename_    = strdup(filename);
+  vendor_      = strdup(vendor);
+  application_ = strdup(application);
+
+  read();
 }
 
 // destroy the root node and all depending nodes
@@ -516,16 +630,15 @@ int Fl_Preferences::RootNode::write()
 }
 
 // get the path to the preferences directory
-int Fl_Preferences::RootNode::getPath( char *path )
+char Fl_Preferences::RootNode::getPath( char *path )
 {
-  char *s;
-
   strcpy( path, filename_ );
+  char *s;
   for ( s = path; *s; s++ ) if ( *s == '\\' ) *s = '/';
   s = strrchr( path, '.' );
   if ( !s ) return 0;
   *s = 0;
-  int ret = makePath( path );
+  char ret = makePath( path );
   strcpy( s, "/" );
   return ret;
 }
@@ -560,7 +673,7 @@ Fl_Preferences::Node::~Node()
 }
 
 // recursively check if any entry is dirty (was changed after loading a fresh prefs file)
-int Fl_Preferences::Node::dirty()
+char Fl_Preferences::Node::dirty()
 {
   if ( dirty_ ) return 1;
   if ( next_ && next_->dirty() ) return 1;
@@ -659,7 +772,7 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
 // create or set a value (or annotation) from a single line in the file buffer
 void Fl_Preferences::Node::set( const char *line )
 {
-  int dirty = dirty_; // hmm. If we assume that we always read yhis file in the beginning, we can handle the dirty flag 'quick and dirty'
+  char dirty = dirty_; // hmm. If we assume that we always read yhis file in the beginning, we can handle the dirty flag 'quick and dirty'
   if ( line[0]==';' || line[0]==0 || line[0]=='#' )
   {
     set( line, 0 );
@@ -712,7 +825,7 @@ int Fl_Preferences::Node::getEntry( const char *name )
 }
 
 // remove one entry form this group
-int Fl_Preferences::Node::deleteEntry( const char *name )
+char Fl_Preferences::Node::deleteEntry( const char *name )
 {
   int ix = getEntry( name );
   if ( ix == -1 ) return 0;
@@ -761,9 +874,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path )
       return this;
     if ( path[ len ] == '/' )
     {
-      Node *nd;
-
-      for ( nd = child_; nd; nd = nd->next_ )
+      for ( Node *nd = child_; nd; nd = nd->next_ )
       {
 	Node *nn = nd->find( path );
 	if ( nn ) return nn;
@@ -800,13 +911,16 @@ const char *Fl_Preferences::Node::child( int ix )
 }
 
 // remove myself from the list and delete me (and all children)
-int Fl_Preferences::Node::remove()
+char Fl_Preferences::Node::remove()
 {
-  Node *nd, *np;
-  if ( parent_ ) {
-    nd = parent_->child_; np = 0;
-    for ( ; nd; nd = nd->next_ ) {
-      if ( nd == this ) {
+  Node *nd = 0, *np;
+  if ( parent_ )
+  {
+    nd = parent_->child_; np = 0L;
+    for ( ; nd; nd = nd->next_ )
+    {
+      if ( nd == this )
+      {
 	if ( np ) 
 	  np->next_ = nd->next_; 
 	else 
@@ -814,14 +928,12 @@ int Fl_Preferences::Node::remove()
 	break;
       }
     }
-  } else nd = 0;
-
+  }
   delete this;
-
   return ( nd != 0 );
 }
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.2 2002/04/29 15:12:23 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.3 2002/04/29 20:56:19 easysw Exp $".
 //
