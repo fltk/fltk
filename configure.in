@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.53 2002/03/06 19:42:29 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.54 2002/03/08 01:18:09 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -421,9 +421,9 @@ case $uname in
 	fi
 
 	dnl Check for the Xft library unless disabled...
-        AC_ARG_ENABLE(xft, [  --disable-xft           turn off Xft support [default=yes]])
+        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [default=no]])
 
-	if test x$enable_xft != xno; then
+	if test x$enable_xft = xyes; then
 	    AC_CHECK_HEADER(X11/Xft/Xft.h,
 		AC_CHECK_LIB(Xft, XftDrawCreate,
 	            AC_DEFINE(USE_XFT)
@@ -693,5 +693,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.53 2002/03/06 19:42:29 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.54 2002/03/08 01:18:09 easysw Exp $".
 dnl
