@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.10 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.11 2004/12/16 21:38:24 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
@@ -85,11 +85,14 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 
   cinfo.err = jpeg_std_error(&jerr);
   jerr.error_exit = jpeg_error_handler;
+  jerr.output_message = jpeg_error_handler;
 
   jpeg_create_decompress(&cinfo);
   jpeg_stdio_src(&cinfo, fp);
   jpeg_read_header(&cinfo, 1);
 
+  if (cinfo.err->msg_code) goto error_return;
+    
   cinfo.quantize_colors      = (boolean)FALSE;
   cinfo.out_color_space      = JCS_RGB;
   cinfo.out_color_components = 3;
@@ -108,6 +111,8 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 
   while (cinfo.output_scanline < cinfo.output_height)
   {
+    if (cinfo.err->msg_code) goto error_return;
+
     row = (JSAMPROW)(array +
                      cinfo.output_scanline * cinfo.output_width *
                      cinfo.output_components);
@@ -118,9 +123,27 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jpeg_destroy_decompress(&cinfo);
 
   fclose(fp);
+
+  // JPEG error handling...
+  error_return:
+
+  if (array) jpeg_finish_decompress(&cinfo);
+  jpeg_destroy_decompress(&cinfo);
+
+  fclose(fp);
+
+  if (array) {
+    w(0);
+    h(0);
+    d(0);
+
+    delete[] array;
+    array = 0;
+    alloc_array = 0;
+  }
 #endif // HAVE_LIBJPEG
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.10 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.11 2004/12/16 21:38:24 easysw Exp $".
 //
