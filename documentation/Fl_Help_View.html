@@ -66,12 +66,14 @@ in the buffer.
 <H4><A NAME="Fl_Help_View.link">void link(Fl_Help_Func *fn)</A></H4>
 
 <P>This method assigns a callback function to use when a link is
-followed or a file is loaded (via <CODE>Fl_Help_View::load()</CODE>) that
-requires a different file or path. The callback function receives the
-full pathname for the file in question and must return a pathname that
-can be opened as a local file. This is used by the
-<A HREF="Fl_Help_App.html"><CODE>Fl_Help_App</CODE></A> widget to support WWW
-addresses.
+followed or a file is loaded (via
+<CODE>Fl_Help_View::load()</CODE>) that requires a different
+file or path. The callback function receives a pointer to the
+<CODE>Fl_Help_View</CODE> widget and the full pathname for the
+file in question and must return a pathname that can be opened
+as a local file. This can also be used to retrieve remote or
+virtual documents, returning the temporary file that contains
+the actual data.</P>
 
 <H4><A NAME="Fl_Help_View.load">int load(const char *f)</A></H4>
 

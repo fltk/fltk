@@ -1,3 +1,13 @@
+CHANGES IN FLTK 1.1.0b5
+
+	- Fl::set_boxtype() and fl_internal_boxtype() now keep
+	  track of when a boxtype is changed; this allows you to
+	  override the "special" boxtypes without references to
+	  those boxtypes causing them to be reset.
+	- Fl_Help_Func now takes a Fl_Widget pointer as well as
+	  a pathname.
+
+
 CHANGES IN FLTK 1.1.0b4
 
 	**** NOTE: DUE TO CHANGES IN THE FL_WIDGET CLASS, ****

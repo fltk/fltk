@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.2 2001/10/27 03:29:25 easysw Exp $"
 //
 //   Help Viewer widget definitions.
 //
@@ -43,7 +43,7 @@
 //
 
 
-typedef const char *(Fl_Help_Func)(const char *);
+typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
 
 
 //
@@ -210,5 +210,5 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !_Fl_Help_View_H_
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.2 2001/10/27 03:29:25 easysw Exp $".
 //

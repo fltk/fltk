@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.7 2001/10/26 21:18:30 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.8 2001/10/27 03:29:25 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -547,7 +547,7 @@ Fl_Help_View::add_image(const char *name,	// I - Path of image
 	sprintf(temp, "%s/%s", directory_, name);
 
       if (link_)
-	localname = (*link_)(temp);
+	localname = (*link_)(this, temp);
       else
 	localname = temp;
     }
@@ -562,12 +562,12 @@ Fl_Help_View::add_image(const char *name,	// I - Path of image
       }
 
       if (link_)
-	localname = (*link_)(temp);
+	localname = (*link_)(this, temp);
       else
 	localname = temp;
     }
     else if (link_)
-      localname = (*link_)(name);
+      localname = (*link_)(this, name);
     else
       localname = name;
 
@@ -2840,7 +2840,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     *target++ = '\0';
 
   if (link_)
-    localname = (*link_)(filename_);
+    localname = (*link_)(this, filename_);
   else
     localname = filename_;
 
@@ -3584,5 +3584,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.7 2001/10/26 21:18:30 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.8 2001/10/27 03:29:25 easysw Exp $".
 //
