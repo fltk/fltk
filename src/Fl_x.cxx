@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.38 2004/09/11 19:32:43 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.39 2004/11/20 04:18:44 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -924,6 +924,8 @@ int fl_handle(const XEvent& thisevent)
 			  xevent.xreparent.x, xevent.xreparent.y,
 			  &xpos, &ypos, &junk);
 
+    // tell Fl_Window about it and set flag to prevent echoing:
+    resize_bug_fix = window;
     window->position(xpos, ypos);
     break;
     }
@@ -1016,10 +1018,13 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   if (H <= 0) H = 1; // X don't like zero...
   if (!win->parent() && !Fl::grab()) {
     // center windows in case window manager does not do anything:
+#ifdef FL_CENTER_WINDOWS
     if (!(win->flags() & Fl_Window::FL_FORCE_POSITION)) {
       win->x(X = (Fl::w()-W)/2);
       win->y(Y = (Fl::h()-H)/2);
     }
+#endif // FL_CENTER_WINDOWS
+
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
     if (win->border()) {
@@ -1294,5 +1299,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.38 2004/09/11 19:32:43 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.39 2004/11/20 04:18:44 easysw Exp $".
 //
