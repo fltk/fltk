@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.17 1998/11/08 17:02:39 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.18 1998/12/02 15:47:29 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -220,9 +220,9 @@ static int ms2fltk(int vk, int extended) {
     for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
       vklut[vktab[i].vk] = vktab[i].fltk;
       extendedlut[vktab[i].vk] = vktab[i].extended;
-  }
-    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
     }
+    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
+  }
   return extended ? extendedlut[vk] : vklut[vk];
 }
 
@@ -813,5 +813,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.17 1998/11/08 17:02:39 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.18 1998/12/02 15:47:29 mike Exp $".
 //

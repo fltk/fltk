@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.7 1998/11/09 16:25:59 mike Exp $"
+ * "$Id: numericsort.c,v 1.8 1998/12/02 15:47:30 mike Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -56,26 +56,33 @@ extern "C"
 int numericsort(struct dirent **A, struct dirent **B) {
   const char* a = (*A)->d_name;
   const char* b = (*B)->d_name;
-
+  int ret = 0;
   for (;;) {
     if (isdigit(*a) && isdigit(*b)) {
-      int anum = 0, bnum = 0;
-
-      while (isdigit(*a)) anum = anum * 10 + *a++ - '0';
-      while (isdigit(*b)) bnum = bnum * 10 + *b++ - '0';
-
-      if (anum < bnum) return (-1);
-      else if (anum > bnum) return (1);
-    } else if (tolower(*a) < tolower(*b)) return (-1);
-    else if (tolower(*a) > tolower(*b)) return (1);
-    else {
-      if (*a == '\0') return (0);
-      a++;
-      b++;
+      int diff,magdiff;
+      while (*a == '0') a++;
+      while (*b == '0') b++;
+      while (isdigit(*a) && *a == *b) {a++; b++;}
+      diff = (isdigit(*a) && isdigit(*b)) ? *a - *b : 0;
+      magdiff = 0;
+      while (isdigit(*a)) {magdiff++; a++;}
+      while (isdigit(*b)) {magdiff--; b++;}
+      if (magdiff) {ret = magdiff; break;} /* compare # of significant digits*/
+      if (diff) {ret = diff; break;}	/* compare first non-zero digit */
+    } else {
+#if 1
+      if ((ret = tolower(*a)-tolower(*b))) break; /* compare case-insensitve */
+#else
+      if ((ret = *a-*b)) break;	/* compare case-sensitive */
+#endif
+      if (!*a) break;
+      a++; b++;
     }
   }
+  if (!ret) return 0;
+  else return (ret < 0) ? -1 : 1;
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.7 1998/11/09 16:25:59 mike Exp $".
+ * End of "$Id: numericsort.c,v 1.8 1998/12/02 15:47:30 mike Exp $".
  */

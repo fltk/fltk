@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.5 1998/11/18 18:38:32 mike Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.6 1998/12/02 15:47:29 mike Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -153,12 +153,12 @@ void Fl_Scroll::draw() {
 
   scrollbar.resize(scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar.w() : X+W,
 		   Y, scrollbar.w(), H);
-  scrollbar.value(oldy = yposition_ = (Y-t), H, t, b-t);
+  scrollbar.value(oldy = yposition_ = (Y-t), H, 0, b-t);
 
   hscrollbar.resize(X,
 		    scrollbar.align()&FL_ALIGN_TOP ? Y-hscrollbar.h() : Y+H,
 		    W, hscrollbar.h());
-  hscrollbar.value(oldx = xposition_ = (X-l), W, l, r-l);
+  hscrollbar.value(oldx = xposition_ = (X-l), W, 0, r-l);
 
   // draw the scrollbars:
   if (d & FL_DAMAGE_ALL) {
@@ -231,5 +231,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.5 1998/11/18 18:38:32 mike Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.6 1998/12/02 15:47:29 mike Exp $".
 //
