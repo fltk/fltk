@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Increased the size of the background image used by
+	  the plastic scheme to reduce the CPU load of redraws
+	  (STR #769)
 	- Fixed a syntax highlighting bug in the editor demo.
 	- Fl_Progress now contrasts the label color with the bar
 	  color, so labels will be readable at all times.
@@ -9,7 +12,7 @@ CHANGES IN FLTK 1.1.7
 	  blue masks on XFree86.
 	- Fixed Quickdraw drawing of 3 and 4 sided polygons (STR
 	  #765)
-	- Fixed fl_message code so that it does not get
+	- Fixed fl_message() code so that it does not get
 	  accidentaly addded to the current group (STR #253)
 	- FLUID now highlights code in the widget callback and
 	  code editors.
