@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.4 1998/12/02 18:55:58 mike Exp $"
+// "$Id: fl_symbols.cxx,v 1.5 1998/12/08 21:04:38 mike Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -158,10 +158,10 @@ int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
 #define vv(x,y) fl_vertex(x,y)
 
 static void rectangle(double x,double y,double x2,double y2,Fl_Color c) {
-    fl_color(c);
-    BP; vv(x,y); vv(x2,y); vv(x2,y2); vv(x,y2); EP;
-    fl_color(FL_BLACK);
-    BC; vv(x,y); vv(x2,y); vv(x2,y2); vv(x,y2); EC;
+  fl_color(c);
+  BP; vv(x,y); vv(x2,y); vv(x2,y2); vv(x,y2); EP;
+  //fl_color(FL_BLACK);
+  //BC; vv(x,y); vv(x2,y); vv(x2,y2); vv(x,y2); EC;
 }
 
 /* The drawing routines */
@@ -203,6 +203,7 @@ static void draw_arrowbox(Fl_Color col)
 {
   fl_color(col);
   BP; vv(-0.6,0.8); vv(0.2,0.0); vv(-0.6,-0.8); EP;
+  BC; vv(0.2,0.8); vv(0.6,0.8); vv(0.6,-0.8); vv(0.2,-0.8); EC;
 }
 
 static void draw_bararrow(Fl_Color col)
@@ -247,6 +248,7 @@ static void draw_arrow(Fl_Color col)
 {
   fl_color(col);
   BP; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EP;
+  BL; vv(-1.0,0.0); vv(0.65,0.0); EL;
 }
 
 #if 0
@@ -353,5 +355,5 @@ void Fl::enable_symbols() {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.4 1998/12/02 18:55:58 mike Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.5 1998/12/08 21:04:38 mike Exp $".
 //

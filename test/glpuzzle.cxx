@@ -1,5 +1,5 @@
 //
-// "$Id: glpuzzle.cxx,v 1.3 1998/10/21 14:21:28 mike Exp $"
+// "$Id: glpuzzle.cxx,v 1.4 1998/12/08 21:04:40 mike Exp $"
 //
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
@@ -474,7 +474,7 @@ redraw(void)
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45, 1.0, 0.1, 100.0);
+  gluPerspective(45, viewport[2]*1.0/viewport[3], 0.1, 100.0);
 
   drawAll();
 
@@ -793,7 +793,7 @@ selectPiece(int mousex, int mousey)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPickMatrix(mousex, H - mousey, 4, 4, viewport);
-  gluPerspective(45, 1.0, 0.1, 100.0);
+  gluPerspective(45, viewport[2]*1.0/viewport[3], 0.1, 100.0);
 
   drawAll();
 
@@ -1479,5 +1479,5 @@ main(int argc, char **argv)
 #endif // added for fltk's distribution
 
 //
-// End of "$Id: glpuzzle.cxx,v 1.3 1998/10/21 14:21:28 mike Exp $".
+// End of "$Id: glpuzzle.cxx,v 1.4 1998/12/08 21:04:40 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.6 1998/12/02 15:47:30 mike Exp $"
+// "$Id: fl_boxtype.cxx,v 1.7 1998/12/08 21:04:37 mike Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,7 +48,7 @@ static uchar inactive_ramp[24] = {
   48, 48, 48, 49,
   49, 49, 50, 50,
   51, 51, 52, 52};
-static int draw_it_active;
+static int draw_it_active = 1;
 uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
 
 void fl_frame(const char* s, int x, int y, int w, int h) {
@@ -282,5 +282,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.6 1998/12/02 15:47:30 mike Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.7 1998/12/08 21:04:37 mike Exp $".
 //

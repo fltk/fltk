@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tile.cxx,v 1.3 1998/10/21 14:20:23 mike Exp $"
+// "$Id: Fl_Tile.cxx,v 1.4 1998/12/08 21:04:36 mike Exp $"
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
@@ -168,7 +168,8 @@ int Fl_Tile::handle(int event) {
     break;
 
   case FL_DRAG:
-    if (damage()) return 1; // don't fall behind
+    // This is necessary if CONSOLIDATE_MOTION in Fl_x.C is turned off:
+    // if (damage()) return 1; // don't fall behind
   case FL_RELEASE: {
     if (!sdrag) return 0; // should not happen
     Fl_Widget* r = resizable(); if (!r) r = this;
@@ -195,5 +196,5 @@ int Fl_Tile::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Tile.cxx,v 1.3 1998/10/21 14:20:23 mike Exp $".
+// End of "$Id: Fl_Tile.cxx,v 1.4 1998/12/08 21:04:36 mike Exp $".
 //
