@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10.2.6.2.22 2002/07/25 17:07:06 easysw Exp $"
+# "$Id: Makefile,v 1.10.2.6.2.23 2002/07/30 14:11:21 easysw Exp $"
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -72,7 +72,7 @@ depend:	$(CPPFILES)
 # Automatically generated dependencies...
 include makedepend
 
-install: $(PROGRAM)
+install: all
 	echo "Installing FLUID in $(bindir)..."
 	-$(MKDIR) $(bindir)
 	$(CP) $(FLUID) $(bindir)/fluid$(EXEEXT)
@@ -95,5 +95,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.6.2.22 2002/07/25 17:07:06 easysw Exp $".
+# End of "$Id: Makefile,v 1.10.2.6.2.23 2002/07/30 14:11:21 easysw Exp $".
 #
