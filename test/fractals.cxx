@@ -1,5 +1,5 @@
 //
-// "$Id: fractals.cxx,v 1.5.2.4 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fractals.cxx,v 1.5.2.5 2001/03/14 17:35:47 spitzak Exp $"
 //
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
@@ -62,6 +62,7 @@ int main(int, char**) {
  */
 
 #include <FL/glut.H>
+#include <GL/glu.h> // added for fltk
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -805,5 +806,5 @@ int main(int argc, char** argv)
 #endif
 
 //
-// End of "$Id: fractals.cxx,v 1.5.2.4 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fractals.cxx,v 1.5.2.5 2001/03/14 17:35:47 spitzak Exp $".
 //
