@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.3 1998/10/21 14:20:13 mike Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.4 1998/12/02 16:15:12 mike Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -47,6 +47,23 @@ int fl_old_shortcut(const char* s) {
   return n | *s;
 }
 
+// always allocate this much initially:
+#define INITIAL_MENU_SIZE 15
+
+// as menu array size passes through each power of two, the memory
+// array allocated is doubled in size:
+static Fl_Menu_Item* incr_array(Fl_Menu_Item* array, int size) {
+  if (size < INITIAL_MENU_SIZE) return array;
+  if ((size+1) & size) return array; // not a power of 2
+  Fl_Menu_Item* newarray = new Fl_Menu_Item[size*2+1];
+  for (int i = 0; i <= size; i++) newarray[i] = array[i];
+  delete[] array;
+  return newarray;
+}
+
+// if this local pointer is set, array is reallocated and put here:
+static Fl_Menu_Item** alloc;
+
 int Fl_Menu_Item::add(
   const char *text,
   int shortcut,
@@ -54,17 +71,15 @@ int Fl_Menu_Item::add(
   void *data,
   int flags)
 {
-  Fl_Menu_Item *m;
+  Fl_Menu_Item *array = this;
+  Fl_Menu_Item *m = this;
   const char *p;
   char *q;
   char buf[1024];
 
-  int size = this->size();
+  int size = array->size();
   int flags1 = 0;
   char* item;
-
-  m = this;
-
   for (;;) {    /* do all the supermenus: */
 
     /* fill in the buf with name, changing \x to x: */
@@ -82,7 +97,14 @@ int Fl_Menu_Item::add(
       if (m->flags&FL_SUBMENU && !strcmp(item,m->text)) break;
 
     if (!m->text) { /* create a new menu */
-      memmove(m+2,m,sizeof(Fl_Menu_Item)*(this+size-m));
+      if (alloc) {
+	int n = m-array;
+	array = incr_array(array,size);
+	array = incr_array(array,size+1);
+	*alloc = array;
+	m = array+n;
+      }
+      memmove(m+2,m,sizeof(Fl_Menu_Item)*(array+size-m));
       m->text = strdup(item);
       m->shortcut_ = 0;
       m->callback_ = 0;
@@ -101,7 +123,12 @@ int Fl_Menu_Item::add(
     if (!strcmp(m->text,item)) break;
 
   if (!m->text) {	/* add a new menu item */
-    memmove(m+1,m,sizeof(Fl_Menu_Item)*(this+size-m));
+    if (alloc) {
+      int n = m-array;
+      *alloc = array = incr_array(array,size);
+      m = array+n;
+    }
+    memmove(m+1,m,sizeof(Fl_Menu_Item)*(array+size-m));
     size++;
     m->text = strdup(item);
   }
@@ -113,19 +140,21 @@ int Fl_Menu_Item::add(
   m->flags = flags|flags1;
   m->labeltype_ = m->labelfont_ = m->labelsize_ = m->labelcolor_ = 0;
 
-  return m-this;
+  return m-array;
 }
 
-// this is really lame, it will crash if this many items are added:
-#define FL_MENU_MAXITEMS	128
-
 int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
+  int n = value_ ? value_ - menu_ : 0;
   if (!menu_) {
-    value_ = menu_ = new Fl_Menu_Item[FL_MENU_MAXITEMS+1];
     alloc = 1;
+    menu_ = new Fl_Menu_Item[INITIAL_MENU_SIZE];
     menu_[0].text = 0;
   }
-  return menu_->add(t,s,c,v,f);
+  if (alloc) ::alloc = &menu_;
+  int r = menu_->add(t,s,c,v,f);
+  ::alloc = 0;
+  if (value_) value_ = menu_+n;
+  return r;
 }
 
 int Fl_Menu_::add(const char *str) {
@@ -172,5 +201,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.3 1998/10/21 14:20:13 mike Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.4 1998/12/02 16:15:12 mike Exp $".
 //
