@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.4 2002/05/01 01:06:04 easysw Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.5 2002/05/15 23:20:51 easysw Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
@@ -217,14 +217,14 @@ void fl_draw(const char *str, int n, int x, int y) {
   XftColor color;
   color.pixel = fl_xpixel(fl_color_);
   uchar r,g,b; Fl::get_color(fl_color_, r,g,b);
-  color.color.red   = r*0x101;
-  color.color.green = g*0x101;
-  color.color.blue  = b*0x101;
+  color.color.red   = (int)r*0x101;
+  color.color.green = (int)g*0x101;
+  color.color.blue  = (int)b*0x101;
   color.color.alpha = 0xffff;
 
   XftDrawString8(draw, &color, current_font, x, y, (XftChar8 *)str, n);
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.4 2002/05/01 01:06:04 easysw Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.5 2002/05/15 23:20:51 easysw Exp $"
 //
