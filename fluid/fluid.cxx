@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.21 2002/05/01 19:17:24 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.22 2002/05/01 21:41:59 matthiaswm Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -162,12 +162,15 @@ void open_cb(Fl_Widget *, void *v) {
 
 void open_history_cb(Fl_Widget *, void *v) {
   if (modflag && !fl_ask("Discard changes?")) return;
-  set_filename((char *)v);
-  if (!read_file((char *)v, 0)) {
+  char *localcopy = strdup( (char*)v );
+  if (!read_file(localcopy, 0)) {
     fl_message("Can't read %s: %s", v, strerror(errno));
+    free(localcopy);
     return;
   }
+  set_filename(localcopy);
   modflag = 0;
+  free(localcopy);
 }
 
 void new_cb(Fl_Widget *, void *v) {
@@ -530,7 +533,7 @@ void update_history(const char *filename) {
 #if defined(WIN32) || defined(__APPLE__)
     if (!strcasecmp(absolute, absolute_history[i])) break;
 #else
-    if (!strcasecmp(absolute, absolute_history[i])) break;
+    if (!strcmp(absolute, absolute_history[i])) break;
 #endif // WIN32 || __APPLE__
 
   if (i == 0) return;
@@ -777,5 +780,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.21 2002/05/01 19:17:24 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.22 2002/05/01 21:41:59 matthiaswm Exp $".
 //
