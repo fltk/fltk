@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.7 1998/12/08 21:08:50 mike Exp $"
+// "$Id: Fl.cxx,v 1.8 1998/12/15 15:34:36 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -499,6 +499,7 @@ int Fl::handle(int event, Fl_Window* window)
 void fl_throw_focus(Fl_Widget*); // in Fl_x.C
 
 void Fl_Window::hide() {
+  clear_visible();
   if (!shown()) return;
 
   // remove from the list of windows:
@@ -659,5 +660,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.7 1998/12/08 21:08:50 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.8 1998/12/15 15:34:36 mike Exp $".
 //
