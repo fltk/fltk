@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.7 1999/02/22 22:13:55 mike Exp $"
+# "$Id: Makefile,v 1.8 1999/02/22 22:17:48 mike Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -134,13 +134,13 @@ fltk.d/index.html: $(HTMLFILES)
 
 fltk.ps: $(HTMLFILES)
 	@echo "Generating PostScript documentation..."
-	@$(HTMLDOC) -f fltk.ps --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
+	@$(HTMLDOC) -f fltk.ps --jpeg --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
 
 fltk.pdf: $(HTMLFILES)
 	@echo "Generating PDF documentation..."
 	@rm -f fltk.pdf
-	@$(HTMLDOC) -f fltk.pdf --compression=9 --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
+	@$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.7 1999/02/22 22:13:55 mike Exp $".
+# End of "$Id: Makefile,v 1.8 1999/02/22 22:17:48 mike Exp $".
 #
