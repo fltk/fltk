@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.21 2002/05/14 15:24:03 spitzak Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.22 2002/05/14 15:55:20 spitzak Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -154,11 +154,11 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
 //  printf("    recursion=%d, window=%p\n", recursion, window);
 
   if (recursion) return;
-  Fl::remove_timeout(tooltip_timeout);
-  Fl::remove_timeout(recent_timeout);
   if (t && *t && enabled()) { // there is a tooltip
     // do nothing if it is the same:
     if (wid==widget && x==X && y==Y && w==W && h==H && t==tip) return;
+    Fl::remove_timeout(tooltip_timeout);
+    Fl::remove_timeout(recent_timeout);
     // remember it:
     widget = wid; X = x; Y = y; W = w; H = h; tip = t;
     if (recent_tooltip || Fl_Tooltip::delay() < .1) {
@@ -174,6 +174,9 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
       Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout);
     }
   } else { // no tooltip
+    if (!tip) return;
+    Fl::remove_timeout(tooltip_timeout);
+    Fl::remove_timeout(recent_timeout);
     tip = 0;
     widget = 0;
     if (window) window->hide();
@@ -200,5 +203,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.21 2002/05/14 15:24:03 spitzak Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.22 2002/05/14 15:55:20 spitzak Exp $".
 //
