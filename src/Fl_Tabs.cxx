@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.1 2001/08/05 15:34:28 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,7 @@
 // Each child widget is a card, and it's label() is printed on the card tab.
 // Clicking the tab makes that card visible.
 
+#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/fl_draw.H>
@@ -126,6 +127,7 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
 int Fl_Tabs::handle(int event) {
 
   Fl_Widget *o;
+  int i;
 
   switch (event) {
 
@@ -136,13 +138,37 @@ int Fl_Tabs::handle(int event) {
     } else {
       if (Fl::event_y() < y()+h()+H) goto DEFAULT;
     }}
+    take_focus();
   case FL_DRAG:
   case FL_RELEASE:
     o = which(Fl::event_x(), Fl::event_y());
     if (event == FL_RELEASE) {push(0); if (o && value(o)) do_callback();}
     else push(o);
     return 1;
-
+  case FL_FOCUS:
+  case FL_UNFOCUS:
+    redraw();
+    return 1;
+  case FL_KEYBOARD:
+    switch (Fl::event_key()) {
+      case FL_Left:
+        if (child(0)->visible()) return 0;
+	for (i = 1; i < children(); i ++)
+	  if (child(i)->visible()) break;
+	value(child(i - 1));
+        return 1;
+      case FL_Right:
+        if (child(children() - 1)->visible()) return 0;
+	for (i = 0; i < children(); i ++)
+	  if (child(i)->visible()) break;
+	value(child(i + 1));
+        return 1;
+      case FL_Down:
+        redraw();
+        return Fl_Group::handle(FL_FOCUS);
+      default:
+        break;
+    }
   default:
   DEFAULT:
     return Fl_Group::handle(event);
@@ -261,10 +287,18 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     fl_color(!sel && o==push_ ? FL_DARK3 : FL_LIGHT3);
     fl_line(x1, y()+h()+H, x1+TABSLOPE, y()+h()-1);
   }
-  if (W > TABSLOPE+EXTRASPACE/2)
+  if (W > TABSLOPE+EXTRASPACE/2) {
     o->draw_label((what==LEFT ? x1 : x2-W)+(TABSLOPE+EXTRASPACE/2),
 		  y()+(H<0?h()+H-2:0), W-(TABSLOPE+EXTRASPACE/2),
 		  (H<0?-H:H)+3, FL_ALIGN_CENTER);
+
+    if (Fl::focus() == this && o->visible())
+      draw_focus(FL_FLAT_BOX,
+        	 (what==LEFT ? x1 : x2-W)+(TABSLOPE+EXTRASPACE/2),
+		  y()+(H<0?h()+H-2:0) + 3,
+		  W-(TABSLOPE+EXTRASPACE/2),
+		  (H<0?-H:H)-3);
+  }
 }
 
 Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
@@ -275,5 +309,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.1 2001/08/05 15:34:28 easysw Exp $".
 //

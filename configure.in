@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.3 2001/08/02 19:43:49 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.4 2001/08/05 15:34:28 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -77,10 +77,14 @@ if eval "test x$enable_shared = xyes"; then
             GLDSONAME="libfltkgl.sl.1.1"
 	    DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
 	    ;;
-	IRIX* | OSF1* | FreeBSD* | NetBSD* | OpenBSD*)
+	IRIX* | OSF1*)
             DSONAME="libfltk.so.1.1"
             GLDSONAME="libfltkgl.so.1.1"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	FreeBSD* | NetBSD* | OpenBSD*)
+            DSONAME="libfltk.so.1.1"
+            GLDSONAME="libfltkgl.so.1.1"
+            DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 	    ;;
 	AIX*)
             DSONAME="libfltk_s.a"
@@ -203,6 +207,7 @@ fi
 LIBS="$LIBS$X_LIBS"
 CFLAGS="$CFLAGS$X_CFLAGS"
 CXXFLAGS="$CXXFLAGS$X_CFLAGS"
+ac_cpp="$ac_cpp -I$x_includes"
 
 dnl Check for OpenGL unless disabled...
 GLLIB=
@@ -433,5 +438,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.3 2001/08/02 19:43:49 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.4 2001/08/05 15:34:28 easysw Exp $".
 dnl
