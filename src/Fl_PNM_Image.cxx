@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.8 2002/05/27 21:16:47 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.9 2002/09/17 20:27:18 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -83,6 +83,8 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
   format = atoi(lineptr);
   while (isdigit(*lineptr)) lineptr ++;
 
+  if (format == 7) lineptr = "";
+
   while (lineptr != NULL && w() == 0) {
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
@@ -155,6 +157,16 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
       case 6 :
           fread(ptr, w(), d(), fp);
           break;
+
+      case 7 : /* XV 3:3:2 thumbnail format */
+          for (x = w(); x > 0; x --) {
+	    byte = getc(fp);
+
+	    *ptr++ = 255 * ((byte >> 5) & 7) / 7;
+	    *ptr++ = 255 * ((byte >> 2) & 7) / 7;
+	    *ptr++ = 255 * (byte & 3) / 3;
+	  }
+          break;
     }
   }
 
@@ -163,5 +175,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.8 2002/05/27 21:16:47 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.9 2002/09/17 20:27:18 easysw Exp $".
 //

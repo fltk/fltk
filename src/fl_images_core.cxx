@@ -1,5 +1,5 @@
 //
-// "$Id: fl_images_core.cxx,v 1.1.2.3 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: fl_images_core.cxx,v 1.1.2.4 2002/09/17 20:27:19 easysw Exp $"
 //
 // FLTK images library core.
 //
@@ -75,7 +75,7 @@ fl_check_images(const char *name,		// I - Filename
   if (memcmp(header, "BM", 2) == 0)	// BMP file
     return new Fl_BMP_Image(name);
 
-  if (header[0] == 'P' && header[1] >= '1' && header[1] <= '6')
+  if (header[0] == 'P' && header[1] >= '1' && header[1] <= '7')
 					// Portable anymap
     return new Fl_PNM_Image(name);
 
@@ -97,5 +97,5 @@ fl_check_images(const char *name,		// I - Filename
 
 
 //
-// End of "$Id: fl_images_core.cxx,v 1.1.2.3 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: fl_images_core.cxx,v 1.1.2.4 2002/09/17 20:27:19 easysw Exp $".
 //
