@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.33.2.2 1999/04/30 06:41:11 bill Exp $"
+dnl# "$Id: configure.in,v 1.33.2.3 1999/05/14 09:08:05 bill Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -188,9 +188,10 @@ else
 		#     LD="ld -n32"
 		#     MAKEDEPEND="CC -M"
 
+		echo "FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI -n32"
         	# -woff 3322 is necessary due to errors in Xlib headers on IRIX
         	CFLAGS="-fullwarn $CFLAGS"
-        	CXXFLAGS="-fullwarn -woff 1685 -woff 3322 $CXXFLAGS"
+        	CXXFLAGS="-fullwarn -woff 1685,3322 $CXXFLAGS"
 	    else
         	CXXFLAGS="+w +pp $CXXFLAGS"
 	    fi
@@ -229,5 +230,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.33.2.2 1999/04/30 06:41:11 bill Exp $".
+dnl# End of "$Id: configure.in,v 1.33.2.3 1999/05/14 09:08:05 bill Exp $".
 dnl#
