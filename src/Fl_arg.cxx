@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.5 2000/06/08 12:30:36 mike Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.6 2000/11/20 19:02:20 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -176,15 +176,15 @@ void Fl_Window::show(int argc, char **argv) {
 
 #ifndef WIN32
   // set the command string, used by state-saving window managers:
-  int i;
-  int n=0; for (i=0; i<argc; i++) n += strlen(argv[i])+1;
+  int j;
+  int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
 #ifdef __GNUC__
   char buffer[n];
 #else
   char *buffer = new char[n];
 #endif
   char *p = buffer;
-  for (i=0; i<argc; i++) for (const char *q = argv[i]; (*p++ = *q++););
+  for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
   XChangeProperty(fl_display, fl_xid(this), XA_WM_COMMAND, XA_STRING, 8, 0,
 		  (unsigned char *)buffer, p-buffer-1);
 #ifndef __GNUC__
@@ -352,5 +352,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.5 2000/06/08 12:30:36 mike Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.6 2000/11/20 19:02:20 easysw Exp $".
 //

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.19 2000/11/20 15:44:17 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.20 2000/11/20 19:02:19 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -137,8 +137,8 @@ AC_CHECK_FUNC(snprintf,
     else
         AC_DEFINE(HAVE_SNPRINTF)
     fi)
-AC_CHECK_FUNC(vsprintf)
-AC_CHECK_FUNC(strcasecmp)
+AC_CHECK_FUNCS(vsprintf)
+AC_CHECK_FUNCS(strcasecmp)
 
 AC_PATH_XTRA
 dnl# echo "Ignoring libraries \"$X_PRE_LIBS\" requested by configure."
@@ -279,5 +279,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.19 2000/11/20 15:44:17 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.20 2000/11/20 19:02:19 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.21 2000/11/20 02:49:40 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.22 2000/11/20 19:02:20 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -242,19 +242,24 @@ static Atom wm_delete_window;
 static Atom wm_protocols;
 static Atom _motif_wm_hints;
 
-extern "C" {
-static void fd_callback(int,void *) {do_queued_events();}
-
-static int io_error_handler(Display*) {Fl::fatal("X I/O error"); return 0;}
+static void fd_callback(int,void *) {
+  do_queued_events();
 }
 
-static int xerror_handler(Display* d, XErrorEvent* e) {
-  char buf1[128], buf2[128];
-  sprintf(buf1, "XRequest.%d", e->request_code);
-  XGetErrorDatabaseText(d,"",buf1,buf1,buf2,128);
-  XGetErrorText(d, e->error_code, buf1, 128);
-  Fl::warning("%s: %s 0x%lx", buf2, buf1, e->resourceid);
-  return 0;
+extern "C" {
+  static int io_error_handler(Display*) {
+    Fl::fatal("X I/O error");
+    return 0;
+  }
+
+  static int xerror_handler(Display* d, XErrorEvent* e) {
+    char buf1[128], buf2[128];
+    sprintf(buf1, "XRequest.%d", e->request_code);
+    XGetErrorDatabaseText(d,"",buf1,buf1,buf2,128);
+    XGetErrorText(d, e->error_code, buf1, 128);
+    Fl::warning("%s: %s 0x%lx", buf2, buf1, e->resourceid);
+    return 0;
+  }
 }
 
 void fl_open_display() {
@@ -898,5 +903,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.21 2000/11/20 02:49:40 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.22 2000/11/20 19:02:20 easysw Exp $".
 //

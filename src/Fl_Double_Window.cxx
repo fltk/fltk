@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.2 2000/06/05 21:20:50 mike Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.3 2000/11/20 19:02:20 easysw Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -104,62 +104,62 @@ void Fl_Double_Window::flush() {flush(0);}
 
 void Fl_Double_Window::flush(int eraseoverlay) {
   make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(this);
-  if (!i->other_xid) {
+  Fl_X *myi = Fl_X::i(this);
+  if (!myi->other_xid) {
 #if USE_XDBE
-    if (can_xdbe()) i->other_xid =
+    if (can_xdbe()) myi->other_xid =
       XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeUndefined);
     else
 #endif
-      i->other_xid = fl_create_offscreen(w(), h());
+      myi->other_xid = fl_create_offscreen(w(), h());
     clear_damage(FL_DAMAGE_ALL);
   }
 #if USE_XDBE
   if (use_xdbe) {
     // if this is true, copy rather than swap so back buffer is preserved:
-    int copy = (i->region || eraseoverlay);
-    if (i->backbuffer_bad) { // make sure we do a complete redraw...
-      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+    int copy = (myi->region || eraseoverlay);
+    if (myi->backbuffer_bad) { // make sure we do a complete redraw...
+      if (myi->region) {XDestroyRegion(myi->region); myi->region = 0;}
       clear_damage(FL_DAMAGE_ALL);
     }
     if (damage()) {
-      fl_clip_region(i->region); i->region = 0;
-      fl_window = i->other_xid;
+      fl_clip_region(myi->region); myi->region = 0;
+      fl_window = myi->other_xid;
       draw();
-      fl_window = i->xid;
+      fl_window = myi->xid;
     }
     if (!copy) {
       XdbeSwapInfo s;
       s.swap_window = fl_xid(this);
       s.swap_action = XdbeUndefined;
       XdbeSwapBuffers(fl_display, &s, 1);
-      i->backbuffer_bad = 1;
+      myi->backbuffer_bad = 1;
       return;
     }
     // otherwise just use normal copy from back to front:
-    i->backbuffer_bad = 0; // which won't destroy the back buffer...
+    myi->backbuffer_bad = 0; // which won't destroy the back buffer...
   } else
 #endif
   if (damage() & ~FL_DAMAGE_EXPOSE) {
-    fl_clip_region(i->region); i->region = 0;
+    fl_clip_region(myi->region); myi->region = 0;
 #ifdef WIN32
     HDC _sgc = fl_gc;
-    fl_gc = fl_makeDC(i->other_xid);
+    fl_gc = fl_makeDC(myi->other_xid);
     fl_restore_clip(); // duplicate region into new gc
     draw();
     DeleteDC(fl_gc);
     fl_gc = _sgc;
 #else // X:
-    fl_window = i->other_xid;
+    fl_window = myi->other_xid;
     draw();
-    fl_window = i->xid;
+    fl_window = myi->xid;
 #endif
   }
   if (eraseoverlay) fl_clip_region(0);
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-  fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+  fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
@@ -169,20 +169,20 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
 #if USE_XDBE
   if (use_xdbe) return;
 #endif
-  Fl_X* i = Fl_X::i(this);
-  if (i && i->other_xid && (ow != w() || oh != h())) {
-    fl_delete_offscreen(i->other_xid);
-    i->other_xid = 0;
+  Fl_X* myi = Fl_X::i(this);
+  if (myi && myi->other_xid && (ow != w() || oh != h())) {
+    fl_delete_offscreen(myi->other_xid);
+    myi->other_xid = 0;
   }
 }
 
 void Fl_Double_Window::hide() {
-  Fl_X* i = Fl_X::i(this);
-  if (i && i->other_xid) {
+  Fl_X* myi = Fl_X::i(this);
+  if (myi && myi->other_xid) {
 #if USE_XDBE
     if (!use_xdbe)
 #endif
-      fl_delete_offscreen(i->other_xid);
+      fl_delete_offscreen(myi->other_xid);
   }
   Fl_Window::hide();
 }
@@ -192,5 +192,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.2 2000/06/05 21:20:50 mike Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.3 2000/11/20 19:02:20 easysw Exp $".
 //

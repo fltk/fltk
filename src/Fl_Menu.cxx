@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.10 2000/07/30 00:31:44 spitzak Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.11 2000/11/20 19:02:20 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -208,15 +208,15 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   }
   color(button ? button->color() : FL_GRAY);
   selected = -1;
-  {int i = 0;
-  if (m) for (const Fl_Menu_Item* m1=m; ; m1 = m1->next(), i++) {
+  {int j = 0;
+  if (m) for (const Fl_Menu_Item* m1=m; ; m1 = m1->next(), j++) {
     if (picked) {
-      if (m1 == picked) {selected = i; picked = 0;}
-      else if (m1 > picked) {selected = i-1; picked = 0; Wp = Hp = 0;}
+      if (m1 == picked) {selected = j; picked = 0;}
+      else if (m1 > picked) {selected = j-1; picked = 0; Wp = Hp = 0;}
     }
     if (!m1->text) break;
   }
-  numitems = i;}
+  numitems = j;}
 
   if (menubar) {
     itemheight = 0;
@@ -276,8 +276,8 @@ void menuwindow::position(int X, int Y) {
 }
 
 // scroll so item i is visible on screen
-void menuwindow::autoscroll(int i) {
-  int Y = y()+Fl::box_dx(box())+2+i*itemheight;
+void menuwindow::autoscroll(int n) {
+  int Y = y()+Fl::box_dx(box())+2+n*itemheight;
   if (Y <= Fl::y()) Y = Fl::y()-Y+10;
   else {
     Y = Y+itemheight-Fl::h()-Fl::y();
@@ -290,22 +290,22 @@ void menuwindow::autoscroll(int i) {
 
 ////////////////////////////////////////////////////////////////
 
-void menuwindow::drawentry(const Fl_Menu_Item* m, int i, int erase) {
+void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int erase) {
   if (!m) return; // this happens if -1 is selected item and redrawn
 
   int BW = Fl::box_dx(box());
   int x = BW;
   int W = this->w();
   int w = W-2*BW-1;
-  int y = BW+1+i*itemheight;
+  int y = BW+1+n*itemheight;
   int h = itemheight - LEADING;
 
-  if (erase && i != selected) {
+  if (erase && n != selected) {
     fl_color(button ? button->color() : FL_GRAY);
     fl_rectf(x+1, y-(LEADING-2)/2, w-2, h+(LEADING-2));
   }
 
-  m->draw(x, y, w, h, button, i==selected);
+  m->draw(x, y, w, h, button, n==selected);
 
   // the shortcuts and arrows assumme fl_color() was left set by draw():
   if (m->submenu()) {
@@ -337,8 +337,8 @@ void menuwindow::draw() {
   if (damage() != FL_DAMAGE_CHILD) {	// complete redraw
     fl_draw_box(box(), 0, 0, w(), h(), color());
     if (menu) {
-      const Fl_Menu_Item* m; int i;
-      for (m=menu, i=0; m->text; i++, m = m->next()) drawentry(m, i, 0);
+      const Fl_Menu_Item* m; int j;
+      for (m=menu, j=0; m->text; j++, m = m->next()) drawentry(m, j, 0);
     }
   } else {
     if (damage() & FL_DAMAGE_CHILD && selected!=drawn_selected) { // change selection
@@ -349,8 +349,8 @@ void menuwindow::draw() {
   drawn_selected = selected;
 }
 
-void menuwindow::set_selected(int i) {
-  if (i != selected) {selected = i; damage(FL_DAMAGE_CHILD);}
+void menuwindow::set_selected(int n) {
+  if (n != selected) {selected = n; damage(FL_DAMAGE_CHILD);}
 }
 
 ////////////////////////////////////////////////////////////////
@@ -361,26 +361,26 @@ int menuwindow::find_selected(int mx, int my) {
   my -= y();
   if (my < 0 || my >= h()) return -1;
   if (!itemheight) { // menubar
-    int x = 3; int i = 0;
+    int x = 3; int n = 0;
     const Fl_Menu_Item* m = menu;
-    for (; ; m = m->next(), i++) {
+    for (; ; m = m->next(), n++) {
       if (!m->text) return -1;
       x += m->measure(0, button) + 16;
       if (x > mx) break;
     }
-    return i;
+    return n;
   }
   if (mx < Fl::box_dx(box()) || mx >= w()) return -1;
-  int i = (my-Fl::box_dx(box())-1)/itemheight;
-  if (i < 0 || i>=numitems) return -1;
-  return i;
+  int n = (my-Fl::box_dx(box())-1)/itemheight;
+  if (n < 0 || n>=numitems) return -1;
+  return n;
 }
 
-// return horizontal position for item i in a menubar:
-int menuwindow::titlex(int i) {
+// return horizontal position for item n in a menubar:
+int menuwindow::titlex(int n) {
   const Fl_Menu_Item* m;
   int x = 3;
-  for (m=menu; i--; m = m->next()) x += m->measure(0, button) + 16;
+  for (m=menu; n--; m = m->next()) x += m->measure(0, button) + 16;
   return x;
 }
 
@@ -497,11 +497,11 @@ int menuwindow::handle(int e) {
     }
     break;
   case FL_SHORTCUT: {
-    for (int menu = p.nummenus; menu--;) {
-      menuwindow &mw = *(p.p[menu]);
+    for (int mymenu = p.nummenus; mymenu--;) {
+      menuwindow &mw = *(p.p[mymenu]);
       int item; const Fl_Menu_Item* m = mw.menu->find_shortcut(&item);
       if (m) {
-	setitem(m, menu, item);
+	setitem(m, mymenu, item);
 	if (!m->submenu()) p.state = DONE_STATE;
 	return 1;
       }
@@ -511,16 +511,16 @@ int menuwindow::handle(int e) {
   case FL_DRAG: {
     int mx = Fl::event_x_root();
     int my = Fl::event_y_root();
-    int item=0; int menu;
-    for (menu = p.nummenus-1; ; menu--) {
-      item = p.p[menu]->find_selected(mx, my);
+    int item=0; int mymenu;
+    for (mymenu = p.nummenus-1; ; mymenu--) {
+      item = p.p[mymenu]->find_selected(mx, my);
       if (item >= 0) break;
-      if (menu <= 0) break;
+      if (mymenu <= 0) break;
     }
-    setitem(menu, item);
+    setitem(mymenu, item);
     if (e == FL_PUSH) {
       if (p.current_item && p.current_item->submenu() // this is a menu title
-	  && item != p.p[menu]->selected // and it is not already on
+	  && item != p.p[mymenu]->selected // and it is not already on
 	  && !p.current_item->callback_) // and it does not have a callback
 	p.state = MENU_PUSH_STATE;
       else
@@ -743,5 +743,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.10 2000/07/30 00:31:44 spitzak Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.11 2000/11/20 19:02:20 easysw Exp $".
 //

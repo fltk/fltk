@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.8 2000/10/17 07:39:06 spitzak Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.9 2000/11/20 19:02:20 easysw Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -98,11 +98,11 @@ static int compare(const char* a, const char* b) {
 // produce submenus (actually a totally unnecessary feature as you can
 // now add submenu titles directly by setting SUBMENU in the flags):
 int Fl_Menu_Item::add(
-  const char *text,
+  const char *mytext,
   int shortcut,
   Fl_Callback *cb,	
   void *data,
-  int flags
+  int myflags
 ) {
   Fl_Menu_Item *array = this;
   Fl_Menu_Item *m = this;
@@ -117,13 +117,13 @@ int Fl_Menu_Item::add(
 
     /* fill in the buf with name, changing \x to x: */
     q = buf;
-    for (p=text; *p && *p != '/'; *q++ = *p++) if (*p=='\\') p++;
+    for (p=mytext; *p && *p != '/'; *q++ = *p++) if (*p=='\\') p++;
     *q = 0;
 
     item = buf;
     if (*item == '_') {item++; flags1 = FL_MENU_DIVIDER;}
     if (*p != '/') break; /* not a menu title */
-    text = p+1;	/* point at item title */
+    mytext = p+1;	/* point at item title */
 
     /* find a matching menu title: */
     for (; m->text; m = m->next())
@@ -147,7 +147,7 @@ int Fl_Menu_Item::add(
 
   if (!m->text) {	/* add a new menu item */
     int n = m-array;
-    array = insert(array, size, n, item, flags|flags1);
+    array = insert(array, size, n, item, myflags|flags1);
     size++;
     if (flags & FL_SUBMENU) { // add submenu delimiter
       array = insert(array, size, n+1, 0, 0);
@@ -160,7 +160,7 @@ int Fl_Menu_Item::add(
   m->shortcut_ = shortcut;
   m->callback_ = cb;
   m->user_data_ = data;
-  m->flags = flags|flags1;
+  m->flags = myflags|flags1;
 
   if (array == local_array) local_array_size = size;
   return m-array;
@@ -253,5 +253,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.8 2000/10/17 07:39:06 spitzak Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.9 2000/11/20 19:02:20 easysw Exp $".
 //

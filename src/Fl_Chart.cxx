@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.4 2000/06/05 21:20:49 mike Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.5 2000/11/20 19:02:20 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -357,9 +357,9 @@ void Fl_Chart::replace(int index,double val, const char *str, uchar col) {
   redraw();
 }
 
-void Fl_Chart::bounds(double min, double max) {
-  this->min = min;
-  this->max = max;
+void Fl_Chart::bounds(double mymin, double mymax) {
+  this->min = mymin;
+  this->max = mymax;
   redraw();
 }
 
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.4 2000/06/05 21:20:49 mike Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.5 2000/11/20 19:02:20 easysw Exp $".
 //
