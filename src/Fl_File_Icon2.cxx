@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.6 2001/12/05 00:19:26 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.7 2001/12/05 00:21:40 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -404,6 +404,7 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
   } else {
     int		i, j;			// Looping vars
     int		ch;			// Current character
+    int		newch;			// New character
     int		bg;			// Background color
     char	val[16];		// Color value
     const char	*lineptr,		// Pointer into line
@@ -925,5 +926,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.6 2001/12/05 00:19:26 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.7 2001/12/05 00:21:40 easysw Exp $".
 //
