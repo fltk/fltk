@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_file_chooser.H,v 1.3 1998/10/21 14:19:45 mike Exp $"
 //
 // File chooser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -32,5 +32,5 @@ void fl_file_chooser_callback(void (*cb)(const char *));
 #endif
 
 //
-// End of "$Id: fl_file_chooser.H,v 1.2 1998/10/19 21:39:22 mike Exp $".
+// End of "$Id: fl_file_chooser.H,v 1.3 1998/10/21 14:19:45 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: x.H,v 1.5 1998/10/21 14:19:51 mike Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -115,5 +115,5 @@ extern int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.4 1998/10/19 21:39:29 mike Exp $".
+// End of "$Id: x.H,v 1.5 1998/10/21 14:19:51 mike Exp $".
 //

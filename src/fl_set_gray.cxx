@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_set_gray.cxx,v 1.3 1998/10/21 14:20:59 mike Exp $"
 //
 // Background (gray) color routines for the Fast Light Tool Kit (FLTK).
 //
@@ -58,5 +58,5 @@ void Fl::background2(uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_set_gray.cxx,v 1.2 1998/10/19 20:46:46 mike Exp $".
+// End of "$Id: fl_set_gray.cxx,v 1.3 1998/10/21 14:20:59 mike Exp $".
 //

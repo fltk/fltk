@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Output.cxx,v 1.4 1998/10/21 14:20:15 mike Exp $"
 //
 // Output widget for the Fast Light Tool Kit (FLTK).
 //
@@ -46,5 +46,5 @@ int Fl_Output::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Output.cxx,v 1.3 1998/10/19 20:45:56 mike Exp $".
+// End of "$Id: Fl_Output.cxx,v 1.4 1998/10/21 14:20:15 mike Exp $".
 //

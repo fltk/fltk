@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: filename.H,v 1.3 1998/10/21 14:19:43 mike Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -61,5 +61,5 @@ int filename_list(const char *d, dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.2 1998/10/19 21:39:20 mike Exp $".
+// End of "$Id: filename.H,v 1.3 1998/10/21 14:19:43 mike Exp $".
 //

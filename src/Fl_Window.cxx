@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Window.cxx,v 1.3 1998/10/21 14:20:27 mike Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -101,5 +101,5 @@ void Fl_Window::default_callback(Fl_Window* window, void* v) {
 }
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.2 1998/10/19 20:46:09 mike Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.3 1998/10/21 14:20:27 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Dial.cxx,v 1.4 1998/10/21 14:20:02 mike Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -134,5 +134,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.3 1998/10/19 20:45:44 mike Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.4 1998/10/21 14:20:02 mike Exp $".
 //

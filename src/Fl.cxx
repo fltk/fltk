@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl.cxx,v 1.6 1998/10/21 14:19:54 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -585,5 +585,5 @@ void fl_throw_focus(Fl_Widget *o) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.5 1998/10/19 21:00:20 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.6 1998/10/21 14:19:54 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_font_win32.cxx,v 1.5 1998/10/21 14:20:52 mike Exp $"
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -180,5 +180,5 @@ void fl_draw(const char *str, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_win32.cxx,v 1.4 1998/10/19 20:46:38 mike Exp $".
+// End of "$Id: fl_font_win32.cxx,v 1.5 1998/10/21 14:20:52 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: filename_isdir.cxx,v 1.3 1998/10/21 14:20:40 mike Exp $"
 //
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -35,5 +35,5 @@ int filename_isdir(const char* n) {
 }
 
 //
-// End of "$Id: filename_isdir.cxx,v 1.2 1998/10/19 20:46:24 mike Exp $".
+// End of "$Id: filename_isdir.cxx,v 1.3 1998/10/21 14:20:40 mike Exp $".
 //

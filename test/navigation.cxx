@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: navigation.cxx,v 1.3 1998/10/21 14:21:36 mike Exp $"
 //
 // Navigation test program for the Fast Light Tool Kit (FLTK).
 //
@@ -66,5 +66,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: navigation.cxx,v 1.2 1998/10/20 13:25:16 mike Exp $".
+// End of "$Id: navigation.cxx,v 1.3 1998/10/21 14:21:36 mike Exp $".
 //

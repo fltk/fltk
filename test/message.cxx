@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: message.cxx,v 1.3 1998/10/21 14:21:35 mike Exp $"
 //
 // Message test program for the Fast Light Tool Kit (FLTK).
 //
@@ -43,5 +43,5 @@ int main(int, char **) {
 }
 
 //
-// End of "$Id: message.cxx,v 1.2 1998/10/20 13:25:14 mike Exp $".
+// End of "$Id: message.cxx,v 1.3 1998/10/21 14:21:35 mike Exp $".
 //

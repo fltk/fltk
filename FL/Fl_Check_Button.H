@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Check_Button.H,v 1.3 1998/10/21 14:19:02 mike Exp $"
 //
 // Check button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -36,5 +36,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Check_Button.H,v 1.2 1998/10/19 21:38:32 mike Exp $".
+// End of "$Id: Fl_Check_Button.H,v 1.3 1998/10/21 14:19:02 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: pixmap.cxx,v 1.3 1998/10/21 14:21:38 mike Exp $"
 //
 // Pixmap label test program for the Fast Light Tool Kit (FLTK).
 //
@@ -87,5 +87,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap.cxx,v 1.2 1998/10/20 13:25:18 mike Exp $".
+// End of "$Id: pixmap.cxx,v 1.3 1998/10/21 14:21:38 mike Exp $".
 //

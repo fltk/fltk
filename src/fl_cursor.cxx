@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_cursor.cxx,v 1.5 1998/10/21 14:20:46 mike Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -167,5 +167,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.4 1998/10/19 21:00:22 mike Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.5 1998/10/21 14:20:46 mike Exp $".
 //

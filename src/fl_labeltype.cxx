@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_labeltype.cxx,v 1.3 1998/10/21 14:20:53 mike Exp $"
 //
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -126,5 +126,5 @@ Fl_Font Fl_Input_::default_font_;
 int Fl_Input_::default_size_;
 
 //
-// End of "$Id: fl_labeltype.cxx,v 1.2 1998/10/19 20:46:39 mike Exp $".
+// End of "$Id: fl_labeltype.cxx,v 1.3 1998/10/21 14:20:53 mike Exp $".
 //

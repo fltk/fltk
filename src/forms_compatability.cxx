@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: forms_compatability.cxx,v 1.3 1998/10/21 14:21:05 mike Exp $"
 //
 // Forms compatibility functions for the Fast Light Tool Kit (FLTK).
 //
@@ -176,5 +176,5 @@ Fl_Button *fl_add_button(uchar t,int x,int y,int w,int h,const char *l) {
 }
 
 //
-// End of "$Id: forms_compatability.cxx,v 1.2 1998/10/19 20:46:51 mike Exp $".
+// End of "$Id: forms_compatability.cxx,v 1.3 1998/10/21 14:21:05 mike Exp $".
 //

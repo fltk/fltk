@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_color_win32.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -225,5 +225,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.2 1998/10/19 20:46:30 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $".
 //

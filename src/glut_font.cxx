@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: glut_font.cxx,v 1.3 1998/10/21 14:21:10 mike Exp $"
 //
 // GLUT bitmap font routines for the Fast Light Tool Kit (FLTK).
 //
@@ -54,5 +54,5 @@ int glutBitmapWidth(int font, int character) {
 #endif
 
 //
-// End of "$Id: glut_font.cxx,v 1.2 1998/10/19 20:46:57 mike Exp $".
+// End of "$Id: glut_font.cxx,v 1.3 1998/10/21 14:21:10 mike Exp $".
 //

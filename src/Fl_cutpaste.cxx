@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_cutpaste.cxx,v 1.3 1998/10/21 14:20:31 mike Exp $"
 //
 // Cut/paste code for the Fast Light Tool Kit (FLTK).
 //
@@ -149,5 +149,5 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
 #endif
 
 //
-// End of "$Id: Fl_cutpaste.cxx,v 1.2 1998/10/19 20:46:14 mike Exp $".
+// End of "$Id: Fl_cutpaste.cxx,v 1.3 1998/10/21 14:20:31 mike Exp $".
 //

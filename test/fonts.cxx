@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fonts.cxx,v 1.3 1998/10/21 14:21:25 mike Exp $"
 //
 // Font demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -150,5 +150,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: fonts.cxx,v 1.2 1998/10/20 13:25:03 mike Exp $".
+// End of "$Id: fonts.cxx,v 1.3 1998/10/21 14:21:25 mike Exp $".
 //

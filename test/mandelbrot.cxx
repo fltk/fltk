@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: mandelbrot.cxx,v 1.3 1998/10/21 14:21:33 mike Exp $"
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
@@ -225,5 +225,5 @@ void w_callback(Fl_Input* o, Drawing_Window* s) {
 }
 
 //
-// End of "$Id: mandelbrot.cxx,v 1.2 1998/10/20 13:25:12 mike Exp $".
+// End of "$Id: mandelbrot.cxx,v 1.3 1998/10/21 14:21:33 mike Exp $".
 //

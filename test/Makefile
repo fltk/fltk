@@ -1,5 +1,5 @@
 #
-# "$Id"
+# "$Id: Makefile,v 1.4 1998/10/21 14:21:12 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -76,5 +76,5 @@ clean:
 	-@ rm -f ${ALL} jpeg_image *.o core *~
 
 #
-# End of "$Id: Makefile,v 1.3 1998/10/20 21:06:19 mike Exp $".
+# End of "$Id: Makefile,v 1.4 1998/10/21 14:21:12 mike Exp $".
 #

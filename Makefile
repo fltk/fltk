@@ -1,5 +1,5 @@
 #
-# "$Id"
+# "$Id: Makefile,v 1.4 1998/10/21 14:18:53 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -56,5 +56,5 @@ clean:
 	done
 
 #
-# End of "$Id: Makefile,v 1.3 1998/10/21 14:00:51 mike Exp $".
+# End of "$Id: Makefile,v 1.4 1998/10/21 14:18:53 mike Exp $".
 #

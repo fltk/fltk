@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: gl_start.cxx,v 1.5 1998/10/21 14:21:08 mike Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -121,5 +121,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.4 1998/10/19 20:46:55 mike Exp $".
+// End of "$Id: gl_start.cxx,v 1.5 1998/10/21 14:21:08 mike Exp $".
 //

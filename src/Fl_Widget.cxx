@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Widget.cxx,v 1.3 1998/10/21 14:20:26 mike Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -184,5 +184,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.2 1998/10/19 20:46:08 mike Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.3 1998/10/21 14:20:26 mike Exp $".
 //

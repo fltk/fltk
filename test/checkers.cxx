@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: checkers.cxx,v 1.5 1998/10/21 14:21:18 mike Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -1014,8 +1014,8 @@ void Board::drag_piece(int i, int dx, int dy) {
     dragging = b[i];
   }
   if (dx != dragx || dy != dragy) {
-    damage(FL_DAMAGE_OVERLAY, dragx, dragy, ISIZE, ISIZE);
-    damage(FL_DAMAGE_OVERLAY, dx, dy, ISIZE, ISIZE);
+    damage(FL_DAMAGE_ALL, dragx, dragy, ISIZE, ISIZE);
+    damage(FL_DAMAGE_ALL, dx, dy, ISIZE, ISIZE);
   }
   dragx = dx;
   dragy = dy;
@@ -1029,8 +1029,8 @@ void Board::drop_piece(int i) {
   int x = squarex(i);
   int y = squarey(i);
   if (x != dragx || y != dragy) {
-    damage(FL_DAMAGE_OVERLAY, dragx, dragy, ISIZE, ISIZE);
-    damage(FL_DAMAGE_OVERLAY, x, y, ISIZE, ISIZE);
+    damage(4, dragx, dragy, ISIZE, ISIZE);
+    damage(4, x, y, ISIZE, ISIZE);
   }
 }
 
@@ -1366,5 +1366,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.4 1998/10/20 13:24:55 mike Exp $".
+// End of "$Id: checkers.cxx,v 1.5 1998/10/21 14:21:18 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_draw_image.cxx,v 1.3 1998/10/21 14:20:48 mike Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -627,5 +627,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.2 1998/10/19 20:46:33 mike Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.3 1998/10/21 14:20:48 mike Exp $".
 //

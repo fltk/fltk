@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: shiny.cxx,v 1.3 1998/10/21 14:21:42 mike Exp $"
 //
 // OpenGL "shiny buttons" test program for the Fast Light Tool Kit (FLTK).
 //
@@ -303,5 +303,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: shiny.cxx,v 1.2 1998/10/20 13:25:22 mike Exp $".
+// End of "$Id: shiny.cxx,v 1.3 1998/10/21 14:21:42 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_draw_pixmap.cxx,v 1.3 1998/10/21 14:20:50 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -244,5 +244,5 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.2 1998/10/19 20:46:35 mike Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.3 1998/10/21 14:20:50 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_abort.cxx,v 1.3 1998/10/21 14:20:29 mike Exp $"
 //
 // Warning/error message code for the Fast Light Tool Kit (FLTK).
 //
@@ -83,5 +83,5 @@ void (*Fl::error)(const char* format, ...) = ::error;
 void (*Fl::fatal)(const char* format, ...) = ::error;
 
 //
-// End of "$Id: Fl_abort.cxx,v 1.2 1998/10/19 20:46:12 mike Exp $".
+// End of "$Id: Fl_abort.cxx,v 1.3 1998/10/21 14:20:29 mike Exp $".
 //

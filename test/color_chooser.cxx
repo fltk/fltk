@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: color_chooser.cxx,v 1.4 1998/10/21 14:21:20 mike Exp $"
 //
 // Color chooser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -146,5 +146,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: color_chooser.cxx,v 1.3 1998/10/20 13:24:57 mike Exp $".
+// End of "$Id: color_chooser.cxx,v 1.4 1998/10/21 14:21:20 mike Exp $".
 //

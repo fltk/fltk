@@ -1,5 +1,5 @@
 #
-# "$Id"
+# "$Id: Makefile,v 1.3 1998/10/21 14:19:53 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -90,5 +90,5 @@ uninstall:
 	-@ rm -f $(bindir)/$(PROGRAM)
 
 #
-# End of "$Id: Makefile,v 1.2 1998/10/20 21:06:18 mike Exp $".
+# End of "$Id: Makefile,v 1.3 1998/10/21 14:19:53 mike Exp $".
 #

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_visual.cxx,v 1.5 1998/10/21 14:20:35 mike Exp $"
 //
 // Visual support for the Fast Light Tool Kit (FLTK).
 //
@@ -102,5 +102,5 @@ int Fl::visual(int flags) {
 #endif
 
 //
-// End of "$Id: Fl_visual.cxx,v 1.4 1998/10/19 20:46:19 mike Exp $".
+// End of "$Id: Fl_visual.cxx,v 1.5 1998/10/21 14:20:35 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_get_system_colors.cxx,v 1.3 1998/10/21 14:20:34 mike Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -89,5 +89,5 @@ void Fl::get_system_colors()
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.2 1998/10/19 20:46:17 mike Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.3 1998/10/21 14:20:34 mike Exp $".
 //

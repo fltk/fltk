@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_curve.cxx,v 1.3 1998/10/21 14:20:47 mike Exp $"
 //
 // Bezier curve functions for the Fast Light Tool Kit (FLTK).
 //
@@ -95,5 +95,5 @@ void fl_curve(double X0, double Y0,
 }
 
 //
-// End of "$Id: fl_curve.cxx,v 1.2 1998/10/19 20:46:31 mike Exp $".
+// End of "$Id: fl_curve.cxx,v 1.3 1998/10/21 14:20:47 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Window_iconize.cxx,v 1.4 1998/10/21 14:20:28 mike Exp $"
 //
 // Window minification code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,5 +41,5 @@ void Fl_Window::iconize() {
 }
 
 //
-// End of "$Id: Fl_Window_iconize.cxx,v 1.3 1998/10/19 20:46:11 mike Exp $".
+// End of "$Id: Fl_Window_iconize.cxx,v 1.4 1998/10/21 14:20:28 mike Exp $".
 //

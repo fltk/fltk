@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: forms.cxx,v 1.3 1998/10/21 14:21:26 mike Exp $"
 //
 // Another forms demo for the Fast Light Tool Kit (FLTK).
 //
@@ -229,5 +229,5 @@ main (int argc, char *argv[])
 }
 
 //
-// End of "$Id: forms.cxx,v 1.2 1998/10/20 13:25:04 mike Exp $".
+// End of "$Id: forms.cxx,v 1.3 1998/10/21 14:21:26 mike Exp $".
 //

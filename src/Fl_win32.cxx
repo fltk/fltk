@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_win32.cxx,v 1.10 1998/10/21 14:20:36 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -728,5 +728,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.9 1998/10/19 21:00:21 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.10 1998/10/21 14:20:36 mike Exp $".
 //

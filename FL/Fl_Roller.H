@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Roller.H,v 1.3 1998/10/21 14:19:30 mike Exp $"
 //
 // Roller header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,5 +40,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Roller.H,v 1.2 1998/10/19 21:39:04 mike Exp $".
+// End of "$Id: Fl_Roller.H,v 1.3 1998/10/21 14:19:30 mike Exp $".
 //

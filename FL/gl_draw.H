@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: gl_draw.H,v 1.3 1998/10/21 14:19:49 mike Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -26,5 +26,5 @@
 #include "gl.h"
 
 //
-// End of "$Id: gl_draw.H,v 1.2 1998/10/19 21:39:26 mike Exp $".
+// End of "$Id: gl_draw.H,v 1.3 1998/10/21 14:19:49 mike Exp $".
 //

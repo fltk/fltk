@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_x.cxx,v 1.7 1998/10/21 14:20:37 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -807,5 +807,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.6 1998/10/19 21:00:22 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.7 1998/10/21 14:20:37 mike Exp $".
 //

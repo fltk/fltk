@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: browserop.cxx,v 1.3 1998/10/21 14:21:16 mike Exp $"
 //
 // Browser operation test program for the Fast Light Tool Kit (FLTK).
 //
@@ -104,5 +104,5 @@ main(int argc, char *argv[])
 }
 
 //
-// End of "$Id: browserop.cxx,v 1.2 1998/10/20 13:24:53 mike Exp $".
+// End of "$Id: browserop.cxx,v 1.3 1998/10/21 14:21:16 mike Exp $".
 //

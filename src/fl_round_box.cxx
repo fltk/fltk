@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_round_box.cxx,v 1.4 1998/10/21 14:20:56 mike Exp $"
 //
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -116,5 +116,5 @@ Fl_Boxtype define_FL_ROUND_UP_BOX() {
 }
 
 //
-// End of "$Id: fl_round_box.cxx,v 1.3 1998/10/19 20:46:42 mike Exp $".
+// End of "$Id: fl_round_box.cxx,v 1.4 1998/10/21 14:20:56 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: style.C,v 1.3 1998/10/21 14:21:42 mike Exp $"
 //
 // Style demo for the Fast Light Tool Kit (FLTK).
 //
@@ -163,5 +163,5 @@ void defaults_cb(Fl_Button*, void*) {
 }
 
 //
-// End of "$Id: style.C,v 1.2 1998/10/20 13:25:23 mike Exp $".
+// End of "$Id: style.C,v 1.3 1998/10/21 14:21:42 mike Exp $".
 //

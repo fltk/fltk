@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Hor_Fill_Slider.H,v 1.3 1998/10/21 14:19:11 mike Exp $"
 //
 // Horizontal fill slider header file for the Fast Light Tool Kit (FLTK).
 //
@@ -36,5 +36,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Hor_Fill_Slider.H,v 1.2 1998/10/19 21:38:43 mike Exp $".
+// End of "$Id: Fl_Hor_Fill_Slider.H,v 1.3 1998/10/21 14:19:11 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_ask.cxx,v 1.3 1998/10/21 14:20:44 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -185,5 +185,5 @@ char *fl_show_simple_input(const char *str1, const char *defstr) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.2 1998/10/19 20:46:28 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.3 1998/10/21 14:20:44 mike Exp $".
 //

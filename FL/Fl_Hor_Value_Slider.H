@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Hor_Value_Slider.H,v 1.3 1998/10/21 14:19:13 mike Exp $"
 //
 // Horizontal value slider header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,5 +37,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Hor_Value_Slider.H,v 1.2 1998/10/19 21:38:44 mike Exp $".
+// End of "$Id: Fl_Hor_Value_Slider.H,v 1.3 1998/10/21 14:19:13 mike Exp $".
 //

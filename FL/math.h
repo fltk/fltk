@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: math.h,v 1.3 1998/10/21 14:19:50 mike Exp $"
 //
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
@@ -52,5 +52,5 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 #endif
 
 //
-// End of "$Id: math.h,v 1.2 1998/10/19 21:39:27 mike Exp $".
+// End of "$Id: math.h,v 1.3 1998/10/21 14:19:50 mike Exp $".
 //

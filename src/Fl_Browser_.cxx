@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Browser_.cxx,v 1.4 1998/10/21 14:19:57 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -95,8 +95,8 @@ void Fl_Browser_::resize(int X, int Y, int W, int H) {
 
 // Cause minimal update to redraw the given item:
 void Fl_Browser_::redraw_line(void* l) {
-  if (!redraw1 || redraw1 == l) {redraw1 = l; damage(FL_DAMAGE_LINE);}
-  else if (!redraw2 || redraw2 == l) {redraw2 = l; damage(FL_DAMAGE_LINE);}
+  if (!redraw1 || redraw1 == l) {redraw1 = l; damage(FL_DAMAGE_EXPOSE);}
+  else if (!redraw2 || redraw2 == l) {redraw2 = l; damage(FL_DAMAGE_EXPOSE);}
   else damage(FL_DAMAGE_SCROLL);
 }
 
@@ -627,5 +627,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.3 1998/10/19 20:45:38 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.4 1998/10/21 14:19:57 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Toggle_Light_Button.H,v 1.3 1998/10/21 14:19:38 mike Exp $"
 //
 // Toggle light button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,5 +31,5 @@
 #endif
 
 //
-// End of "$Id: Fl_Toggle_Light_Button.H,v 1.2 1998/10/19 21:39:13 mike Exp $".
+// End of "$Id: Fl_Toggle_Light_Button.H,v 1.3 1998/10/21 14:19:38 mike Exp $".
 //

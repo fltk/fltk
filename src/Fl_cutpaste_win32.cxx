@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.3 1998/10/21 14:20:32 mike Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
@@ -129,5 +129,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.2 1998/10/19 20:46:15 mike Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.3 1998/10/21 14:20:32 mike Exp $".
 //

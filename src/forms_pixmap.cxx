@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: forms_pixmap.cxx,v 1.3 1998/10/21 14:21:06 mike Exp $"
 //
 // Forms pixmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -46,5 +46,5 @@ void Fl_FormsPixmap::draw() {
 }
 
 //
-// End of "$Id: forms_pixmap.cxx,v 1.2 1998/10/19 20:46:53 mike Exp $".
+// End of "$Id: forms_pixmap.cxx,v 1.3 1998/10/21 14:21:06 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Single_Window.cxx,v 1.3 1998/10/21 14:20:21 mike Exp $"
 //
 // Single-buffered window for the Fast Light Tool Kit (FLTK).
 //
@@ -35,5 +35,5 @@ void Fl_Single_Window::show() {Fl_Window::show();}
 void Fl_Single_Window::flush() {Fl_Window::flush();}
 
 //
-// End of "$Id: Fl_Single_Window.cxx,v 1.2 1998/10/19 20:46:03 mike Exp $".
+// End of "$Id: Fl_Single_Window.cxx,v 1.3 1998/10/21 14:20:21 mike Exp $".
 //

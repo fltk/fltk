@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_arc.cxx,v 1.3 1998/10/21 14:20:42 mike Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
@@ -73,5 +73,5 @@ void fl_circle(double x,double y,double r) {
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.2 1998/10/19 20:46:26 mike Exp $".
+// End of "$Id: fl_arc.cxx,v 1.3 1998/10/21 14:20:42 mike Exp $".
 //

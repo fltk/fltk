@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Slider.cxx,v 1.4 1998/10/21 14:20:22 mike Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -227,5 +227,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.3 1998/10/19 20:46:03 mike Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.4 1998/10/21 14:20:22 mike Exp $".
 //

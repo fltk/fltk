@@ -1,5 +1,5 @@
 #
-# "$Id"
+# "$Id: makeinclude.in,v 1.4 1998/10/21 14:18:55 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -53,5 +53,5 @@ LDLIBS		=@LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 GLDLIBS		=@LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 
 #
-# End of "$Id: makeinclude.in,v 1.3 1998/10/21 14:00:53 mike Exp $".
+# End of "$Id: makeinclude.in,v 1.4 1998/10/21 14:18:55 mike Exp $".
 #

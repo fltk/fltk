@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Bitmap.cxx,v 1.4 1998/10/21 14:19:55 mike Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -125,5 +125,5 @@ void Fl_Bitmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.3 1998/10/19 20:45:36 mike Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.4 1998/10/21 14:19:55 mike Exp $".
 //

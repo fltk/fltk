@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Font.H,v 1.3 1998/10/21 14:20:03 mike Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -86,5 +86,5 @@ void fl_draw(const char *, int x, int y, int w, int h, Fl_Align,
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.2 1998/10/19 20:45:45 mike Exp $".
+// End of "$Id: Fl_Font.H,v 1.3 1998/10/21 14:20:03 mike Exp $".
 //

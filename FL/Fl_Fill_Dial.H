@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Fill_Dial.H,v 1.3 1998/10/21 14:19:06 mike Exp $"
 //
 // Filled dial header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,5 +37,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Fill_Dial.H,v 1.2 1998/10/19 21:38:37 mike Exp $".
+// End of "$Id: Fl_Fill_Dial.H,v 1.3 1998/10/21 14:19:06 mike Exp $".
 //

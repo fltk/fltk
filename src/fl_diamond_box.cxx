@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_diamond_box.cxx,v 1.4 1998/10/21 14:20:47 mike Exp $"
 //
 // Diamond box code for the Fast Light Tool Kit (FLTK).
 //
@@ -74,5 +74,5 @@ Fl_Boxtype define_FL_DIAMOND_BOX() {
 }
 
 //
-// End of "$Id: fl_diamond_box.cxx,v 1.3 1998/10/19 20:46:32 mike Exp $".
+// End of "$Id: fl_diamond_box.cxx,v 1.4 1998/10/21 14:20:47 mike Exp $".
 //

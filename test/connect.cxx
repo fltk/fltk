@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: connect.cxx,v 1.3 1998/10/21 14:21:20 mike Exp $"
 //
 // PPP example program for the Fast Light Tool Kit (FLTK).
 //
@@ -68,5 +68,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: connect.cxx,v 1.2 1998/10/20 13:24:58 mike Exp $".
+// End of "$Id: connect.cxx,v 1.3 1998/10/21 14:21:20 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Output.H,v 1.3 1998/10/21 14:19:24 mike Exp $"
 //
 // Output header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,5 +40,5 @@ public:
 #endif 
 
 //
-// End of "$Id: Fl_Output.H,v 1.2 1998/10/19 21:38:57 mike Exp $".
+// End of "$Id: Fl_Output.H,v 1.3 1998/10/21 14:19:24 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: glut.h,v 1.3 1998/10/21 14:19:52 mike Exp $"
 //
 // GLUT compatibility header for the Fast Light Tool Kit (FLTK).
 //
@@ -26,5 +26,5 @@
 #include <FL/glut.H>
 
 //
-// End of "$Id: glut.h,v 1.2 1998/10/20 16:41:22 mike Exp $".
+// End of "$Id: glut.h,v 1.3 1998/10/21 14:19:52 mike Exp $".
 //

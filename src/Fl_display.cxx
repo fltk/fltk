@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_display.cxx,v 1.3 1998/10/21 14:20:32 mike Exp $"
 //
 // Display function for the Fast Light Tool Kit (FLTK).
 //
@@ -39,5 +39,5 @@ void Fl::display(const char *d) {
 }
 
 //
-// End of "$Id: Fl_display.cxx,v 1.2 1998/10/19 20:46:15 mike Exp $".
+// End of "$Id: Fl_display.cxx,v 1.3 1998/10/21 14:20:32 mike Exp $".
 //

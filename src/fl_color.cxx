@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_color.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -331,5 +331,5 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 #endif
 
 //
-// End of "$Id: fl_color.cxx,v 1.2 1998/10/19 20:46:29 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Menu_add.cxx,v 1.3 1998/10/21 14:20:13 mike Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -172,5 +172,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.2 1998/10/19 20:45:54 mike Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.3 1998/10/21 14:20:13 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Clock.cxx,v 1.3 1998/10/21 14:20:00 mike Exp $"
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
@@ -159,5 +159,5 @@ int Fl_Clock::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Clock.cxx,v 1.2 1998/10/19 20:45:42 mike Exp $".
+// End of "$Id: Fl_Clock.cxx,v 1.3 1998/10/21 14:20:00 mike Exp $".
 //

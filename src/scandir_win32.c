@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: scandir_win32.c,v 1.6 1998/10/21 14:21:11 mike Exp $"
 //
 // WIN32 scandir function for the Fast Light Tool Kit (FLTK).
 //
@@ -105,5 +105,5 @@ int alphasort (struct dirent **a, struct dirent **b) {
 }
 
 //
-// End of "$Id: scandir_win32.c,v 1.5 1998/10/20 23:58:32 mike Exp $".
+// End of "$Id: scandir_win32.c,v 1.6 1998/10/21 14:21:11 mike Exp $".
 //

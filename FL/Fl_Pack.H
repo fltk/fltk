@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Pack.H,v 1.3 1998/10/21 14:19:25 mike Exp $"
 //
 // Pack header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,5 +45,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Pack.H,v 1.2 1998/10/19 21:38:58 mike Exp $".
+// End of "$Id: Fl_Pack.H,v 1.3 1998/10/21 14:19:25 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Light_Button.cxx,v 1.3 1998/10/21 14:20:10 mike Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -70,5 +70,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.2 1998/10/19 20:45:51 mike Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.3 1998/10/21 14:20:10 mike Exp $".
 //

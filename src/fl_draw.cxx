@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_draw.cxx,v 1.4 1998/10/21 14:20:48 mike Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -193,5 +193,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.3 1998/10/19 21:00:23 mike Exp $".
+// End of "$Id: fl_draw.cxx,v 1.4 1998/10/21 14:20:48 mike Exp $".
 //

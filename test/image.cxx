@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: image.cxx,v 1.4 1998/10/21 14:21:30 mike Exp $"
 //
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -133,5 +133,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: image.cxx,v 1.3 1998/10/20 13:25:09 mike Exp $".
+// End of "$Id: image.cxx,v 1.4 1998/10/21 14:21:30 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_FormsBitmap.H,v 1.3 1998/10/21 14:19:08 mike Exp $"
 //
 // Forms bitmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -42,5 +42,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_FormsBitmap.H,v 1.2 1998/10/19 21:38:39 mike Exp $".
+// End of "$Id: Fl_FormsBitmap.H,v 1.3 1998/10/21 14:19:08 mike Exp $".
 //

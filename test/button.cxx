@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: button.cxx,v 1.3 1998/10/21 14:21:17 mike Exp $"
 //
 // Button/callback test program for the Fast Light Tool Kit (FLTK).
 //
@@ -50,5 +50,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: button.cxx,v 1.2 1998/10/20 13:24:54 mike Exp $".
+// End of "$Id: button.cxx,v 1.3 1998/10/21 14:21:17 mike Exp $".
 //

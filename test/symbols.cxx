@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: symbols.cxx,v 1.3 1998/10/21 14:21:43 mike Exp $"
 //
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
@@ -85,5 +85,5 @@ bt("@DnArrow");
 }
 
 //
-// End of "$Id: symbols.cxx,v 1.2 1998/10/20 13:25:24 mike Exp $".
+// End of "$Id: symbols.cxx,v 1.3 1998/10/21 14:21:43 mike Exp $".
 //

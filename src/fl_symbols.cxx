@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_symbols.cxx,v 1.3 1998/10/21 14:21:02 mike Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -387,5 +387,5 @@ void Fl::enable_symbols() {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.2 1998/10/19 20:46:49 mike Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.3 1998/10/21 14:21:02 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Scrollbar.cxx,v 1.4 1998/10/21 14:20:21 mike Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -181,5 +181,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.3 1998/10/19 20:46:02 mike Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.4 1998/10/21 14:20:21 mike Exp $".
 //

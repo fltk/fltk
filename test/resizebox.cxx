@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: resizebox.cxx,v 1.3 1998/10/21 14:21:39 mike Exp $"
 //
 // Resize box test program for the Fast Light Tool Kit (FLTK).
 //
@@ -97,5 +97,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: resizebox.cxx,v 1.2 1998/10/20 13:25:20 mike Exp $".
+// End of "$Id: resizebox.cxx,v 1.3 1998/10/21 14:21:39 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: boxtype.cxx,v 1.3 1998/10/21 14:21:15 mike Exp $"
 //
 // Boxtype test program for the Fast Light Tool Kit (FLTK).
 //
@@ -89,5 +89,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: boxtype.cxx,v 1.2 1998/10/20 13:24:51 mike Exp $".
+// End of "$Id: boxtype.cxx,v 1.3 1998/10/21 14:21:15 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: overlay.cxx,v 1.3 1998/10/21 14:21:37 mike Exp $"
 //
 // Overlay window test program for the Fast Light Tool Kit (FLTK).
 //
@@ -80,5 +80,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: overlay.cxx,v 1.2 1998/10/20 13:25:17 mike Exp $".
+// End of "$Id: overlay.cxx,v 1.3 1998/10/21 14:21:37 mike Exp $".
 //

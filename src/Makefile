@@ -1,5 +1,5 @@
 #
-# "$Id"
+# "$Id: Makefile,v 1.4 1998/10/21 14:20:37 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -181,5 +181,5 @@ install: ../lib/$(LIBNAME)
 	@chmod -R a+r,u+w,g-w,o-w $(includedir)/FL
 
 #
-# End of "$Id: Makefile,v 1.3 1998/10/20 21:06:18 mike Exp $".
+# End of "$Id: Makefile,v 1.4 1998/10/21 14:20:37 mike Exp $".
 #

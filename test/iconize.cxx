@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: iconize.cxx,v 1.3 1998/10/21 14:21:29 mike Exp $"
 //
 // Iconize test program for the Fast Light Tool Kit (FLTK).
 //
@@ -77,5 +77,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: iconize.cxx,v 1.2 1998/10/20 13:25:08 mike Exp $".
+// End of "$Id: iconize.cxx,v 1.3 1998/10/21 14:21:29 mike Exp $".
 //

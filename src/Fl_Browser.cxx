@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Browser.cxx,v 1.3 1998/10/21 14:19:56 mike Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -441,5 +441,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.2 1998/10/19 20:45:37 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.3 1998/10/21 14:19:56 mike Exp $".
 //

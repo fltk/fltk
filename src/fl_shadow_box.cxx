@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_shadow_box.cxx,v 1.3 1998/10/21 14:21:00 mike Exp $"
 //
 // Shadow box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -50,5 +50,5 @@ Fl_Boxtype define_FL_SHADOW_BOX() {
 }
 
 //
-// End of "$Id: fl_shadow_box.cxx,v 1.2 1998/10/19 20:46:47 mike Exp $".
+// End of "$Id: fl_shadow_box.cxx,v 1.3 1998/10/21 14:21:00 mike Exp $".
 //

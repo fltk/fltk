@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_file_chooser.cxx,v 1.4 1998/10/21 14:20:51 mike Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -611,5 +611,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.3 1998/10/19 21:00:24 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.4 1998/10/21 14:20:51 mike Exp $".
 //

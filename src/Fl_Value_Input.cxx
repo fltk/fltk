@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Value_Input.cxx,v 1.4 1998/10/21 14:20:24 mike Exp $"
 //
 // Value input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -122,5 +122,5 @@ Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Value_Input.cxx,v 1.3 1998/10/19 20:46:06 mike Exp $".
+// End of "$Id: Fl_Value_Input.cxx,v 1.4 1998/10/21 14:20:24 mike Exp $".
 //

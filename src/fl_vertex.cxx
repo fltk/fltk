@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_vertex.cxx,v 1.3 1998/10/21 14:21:03 mike Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -223,5 +223,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.2 1998/10/19 20:46:50 mike Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.3 1998/10/21 14:21:03 mike Exp $".
 //

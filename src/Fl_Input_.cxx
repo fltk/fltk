@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Input_.cxx,v 1.4 1998/10/21 14:20:09 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -725,5 +725,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.3 1998/10/19 20:45:50 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.4 1998/10/21 14:20:09 mike Exp $".
 //

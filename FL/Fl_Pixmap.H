@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Pixmap.H,v 1.3 1998/10/21 14:19:26 mike Exp $"
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,5 +45,5 @@ struct Fl_Pixmap {
 #endif
 
 //
-// End of "$Id: Fl_Pixmap.H,v 1.2 1998/10/19 21:38:59 mike Exp $".
+// End of "$Id: Fl_Pixmap.H,v 1.3 1998/10/21 14:19:26 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Counter.H,v 1.3 1998/10/21 14:19:04 mike Exp $"
 //
 // Counter header file for the Fast Light Tool Kit (FLTK).
 //
@@ -69,5 +69,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Counter.H,v 1.2 1998/10/19 21:38:35 mike Exp $".
+// End of "$Id: Fl_Counter.H,v 1.3 1998/10/21 14:19:04 mike Exp $".
 //

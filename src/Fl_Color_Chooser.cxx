@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Color_Chooser.cxx,v 1.4 1998/10/21 14:20:01 mike Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -127,12 +127,12 @@ int Fl_Color_Chooser::rgb(double r, double g, double b) {
   set_valuators();
   if (value_ != pv) {
 #ifdef UPDATE_HUE_BOX
-    huebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
+    huebox.damage(FL_DAMAGE_SCROLL);
 #endif
     valuebox.damage(FL_DAMAGE_EXPOSE);}
   if (hue_ != ph || saturation_ != ps) {
     huebox.damage(FL_DAMAGE_EXPOSE); 
-    valuebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
+    valuebox.damage(FL_DAMAGE_SCROLL);
   }
   return 1;
 }
@@ -148,12 +148,12 @@ int Fl_Color_Chooser::hsv(double h, double s, double v) {
   hue_ = h; saturation_ = s; value_ = v;
   if (value_ != pv) {
 #ifdef UPDATE_HUE_BOX
-    huebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
+    huebox.damage(FL_DAMAGE_SCROLL);
 #endif
     valuebox.damage(FL_DAMAGE_EXPOSE);}
   if (hue_ != ph || saturation_ != ps) {
     huebox.damage(FL_DAMAGE_EXPOSE); 
-    valuebox.damage(FL_DAMAGE_EXPOSE|FL_DAMAGE_OVERLAY);
+    valuebox.damage(FL_DAMAGE_SCROLL);
   }
   hsv2rgb(h,s,v,r_,g_,b_);
   set_valuators();
@@ -426,5 +426,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.3 1998/10/19 20:45:42 mike Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.4 1998/10/21 14:20:01 mike Exp $".
 //

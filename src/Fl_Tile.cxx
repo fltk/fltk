@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Tile.cxx,v 1.3 1998/10/21 14:20:23 mike Exp $"
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
@@ -195,5 +195,5 @@ int Fl_Tile::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Tile.cxx,v 1.2 1998/10/19 20:46:05 mike Exp $".
+// End of "$Id: Fl_Tile.cxx,v 1.3 1998/10/21 14:20:23 mike Exp $".
 //

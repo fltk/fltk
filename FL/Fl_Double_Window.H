@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Double_Window.H,v 1.4 1998/10/21 14:19:05 mike Exp $"
 //
 // Double-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -44,5 +44,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Double_Window.H,v 1.3 1998/10/19 21:38:36 mike Exp $".
+// End of "$Id: Fl_Double_Window.H,v 1.4 1998/10/21 14:19:05 mike Exp $".
 //

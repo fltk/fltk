@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Group.cxx,v 1.4 1998/10/21 14:20:07 mike Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -465,5 +465,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.3 1998/10/19 20:45:48 mike Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.4 1998/10/21 14:20:07 mike Exp $".
 //

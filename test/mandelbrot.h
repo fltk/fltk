@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: mandelbrot.h,v 1.3 1998/10/21 14:21:34 mike Exp $"
 //
 // Mandelbrot set header file for the Fast Light Tool Kit (FLTK).
 //
@@ -79,5 +79,5 @@ public:
 };
 
 //
-// End of "$Id: mandelbrot.h,v 1.2 1998/10/20 13:25:13 mike Exp $".
+// End of "$Id: mandelbrot.h,v 1.3 1998/10/21 14:21:34 mike Exp $".
 //

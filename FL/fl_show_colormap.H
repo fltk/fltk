@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: fl_show_colormap.H,v 1.3 1998/10/21 14:19:46 mike Exp $"
 //
 // Colormap picker header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,5 +31,5 @@ Fl_Color fl_show_colormap(Fl_Color oldcol);
 #endif
 
 //
-// End of "$Id: fl_show_colormap.H,v 1.2 1998/10/19 21:39:23 mike Exp $".
+// End of "$Id: fl_show_colormap.H,v 1.3 1998/10/21 14:19:46 mike Exp $".
 //

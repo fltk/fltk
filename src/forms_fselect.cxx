@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: forms_fselect.cxx,v 1.3 1998/10/21 14:21:06 mike Exp $"
 //
 // Forms file selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -61,5 +61,5 @@ char*	fl_get_pattern() {return (char *)fl_pattern;}
 char*	fl_get_filename() {return fl_filename;}
 
 //
-// End of "$Id: forms_fselect.cxx,v 1.2 1998/10/19 20:46:53 mike Exp $".
+// End of "$Id: forms_fselect.cxx,v 1.3 1998/10/21 14:21:06 mike Exp $".
 //

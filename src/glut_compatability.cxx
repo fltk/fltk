@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: glut_compatability.cxx,v 1.3 1998/10/21 14:21:09 mike Exp $"
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
@@ -399,5 +399,5 @@ int glutLayerGet(GLenum type) {
 #endif
 
 //
-// End of "$Id: glut_compatability.cxx,v 1.2 1998/10/19 20:46:56 mike Exp $".
+// End of "$Id: glut_compatability.cxx,v 1.3 1998/10/21 14:21:09 mike Exp $".
 //

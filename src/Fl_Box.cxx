@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Box.cxx,v 1.3 1998/10/21 14:19:55 mike Exp $"
 //
 // Box widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,5 +34,5 @@ void Fl_Box::draw() {
 }
 
 //
-// End of "$Id: Fl_Box.cxx,v 1.2 1998/10/19 20:45:37 mike Exp $".
+// End of "$Id: Fl_Box.cxx,v 1.3 1998/10/21 14:19:55 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id: Fl_Scroll.cxx,v 1.4 1998/10/21 14:20:20 mike Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -93,7 +93,7 @@ void Fl_Scroll::draw() {
     draw_box(box(),x(),y(),w(),h(),color());
     draw_clip(this, X, Y, W, H);
   } else {
-    if (d & FL_DAMAGE_EXPOSE) { // scroll the contents:
+    if (d & FL_DAMAGE_SCROLL) { // scroll the contents:
       fl_scroll(X, Y, W, H, oldx-xposition_, oldy-yposition_, draw_clip, this);
     }
     if (d & FL_DAMAGE_CHILD) { // draw damaged children
@@ -198,7 +198,7 @@ void Fl_Scroll::position(int X, int Y) {
     if (o == &hscrollbar || o == &scrollbar) continue;
     o->position(o->x()+dx, o->y()+dy);
   }
-  damage(FL_DAMAGE_EXPOSE);
+  damage(FL_DAMAGE_SCROLL);
 }
 
 void Fl_Scroll::hscrollbar_cb(Fl_Widget* o, void*) {
@@ -231,5 +231,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.3 1998/10/19 20:46:02 mike Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.4 1998/10/21 14:20:20 mike Exp $".
 //
