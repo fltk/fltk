@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- Fl_Gl_Window widgets did not resize properly under
+	  MacOS X.
 	- The cursor could be set for the wrong window in the
 	  text widgets.
 	- Fl_Check_Browser didn't provide const char * add

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.13 2002/10/15 20:45:58 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.14 2002/11/15 16:17:41 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -184,14 +184,6 @@ void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
 
 #ifdef __APPLE__
-  // \todo Mac : matt: I have no idea how expensive the following code is, but we need to reset the buffer rect after
-  // every window-reconfiguration, especially after window resizes. aglUpdateContext(ctxt) may help here!
-  if ( parent() ) { //: resize our GL buffer rectangle
-    Rect wrect; GetWindowPortBounds( fl_xid(this), &wrect );
-    GLint rect[] = { x(), wrect.bottom-h()-y(), w(), h() };
-    aglSetInteger( context_, AGL_BUFFER_RECT, rect );
-    aglEnable( context_, AGL_BUFFER_RECT );
-  }
   //: clear previous clipping in this shared port
   GrafPtr port = GetWindowPort( fl_xid(this) );
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
@@ -325,12 +317,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
 #ifdef __APPLE__
-  if ( parent() ) { //: resize our GL buffer rectangle (see aglUpdateContext()
-    Rect wrect; GetWindowPortBounds( fl_xid(this), &wrect );
-    GLint rect[] = { X, wrect.bottom-h()-y(), W, H };
-    aglSetInteger( context_, AGL_BUFFER_RECT, rect );
-    aglEnable( context_, AGL_BUFFER_RECT );
-  }
+  aglUpdateContext(context_);
 #elif !defined(WIN32)
     if (!resizable() && overlay && overlay != this)
       ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
@@ -380,5 +367,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.13 2002/10/15 20:45:58 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.14 2002/11/15 16:17:41 easysw Exp $".
 //
