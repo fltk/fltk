@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.4 1998/12/02 15:39:29 mike Exp $"
+// "$Id: Fl_Browser.cxx,v 1.5 1998/12/02 15:48:42 mike Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -384,7 +384,7 @@ void Fl_Browser::clear() {
 
 void Fl_Browser::add(const char* newtext, void* data) {
   insert(lines+1, newtext, data);
-  Fl_Browser_::display(last);
+  //Fl_Browser_::display(last);
 }
 
 const char* Fl_Browser::text(int line) const {
@@ -440,5 +440,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.4 1998/12/02 15:39:29 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.5 1998/12/02 15:48:42 mike Exp $".
 //

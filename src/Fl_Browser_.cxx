@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.6 1998/12/02 15:39:29 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.7 1998/12/02 15:48:43 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -183,7 +183,7 @@ int Fl_Browser_::displayed(void* x) const {
 // Insure this item is displayed:
 // Messy because we have no idea if it is before top or after bottom:
 void Fl_Browser_::display(void* x) {
-  if (!top_) top_ = item_first();
+  update_top();
   if (x == item_first()) {position(0); return;}
   int X, Y, W, H; bbox(X, Y, W, H);
   void* l = top_;
@@ -221,6 +221,7 @@ void Fl_Browser_::display(void* x) {
 }
 
 // redraw, has side effect of updating top and setting scrollbar:
+
 void Fl_Browser_::draw() {
   int drawsquare = 0;
   if (damage() & FL_DAMAGE_ALL) { // redraw the box if full redraw
@@ -237,18 +238,24 @@ J1:
   // see if scrollbar needs to be switched on/off:
   if ((has_scrollbar_ & VERTICAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
-    if (!scrollbar.visible()) {scrollbar.show(); drawsquare = 1;}
+    if (!scrollbar.visible()) {scrollbar.set_visible(); drawsquare = 1;}
   } else {
     top_ = item_first(); real_position_ = offset_ = 0;
-    scrollbar.hide();
+    if (scrollbar.visible()) {
+      scrollbar.clear_visible();
+      clear_damage(damage()|FL_DAMAGE_SCROLL);
+    }
   }
 
   if ((has_scrollbar_ & HORIZONTAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_ > W)) {
-    if (!hscrollbar.visible()) {hscrollbar.show(); drawsquare = 1;}
+    if (!hscrollbar.visible()) {hscrollbar.set_visible(); drawsquare = 1;}
   } else {
     real_hposition_ = 0;
-    hscrollbar.hide();
+    if (hscrollbar.visible()) {
+      hscrollbar.clear_visible();
+      clear_damage(damage()|FL_DAMAGE_SCROLL);
+    }
   }
 
   bbox(X, Y, W, H);
@@ -626,5 +633,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.6 1998/12/02 15:39:29 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.7 1998/12/02 15:48:43 mike Exp $".
 //
