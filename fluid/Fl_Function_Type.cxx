@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.13 2003/08/02 21:17:30 easysw Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.14 2004/03/11 05:17:11 easysw Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -433,7 +433,16 @@ void Fl_CodeBlock_Type::write_code2() {
 
 ////////////////////////////////////////////////////////////////
 
-int Fl_Decl_Type::is_public() const {return public_;}
+int Fl_Decl_Type::is_public() const 
+{
+ Fl_Type *p = Fl_Type::current;
+ while (p && !p->is_decl_block()) p = p->parent;
+ if(p && p->is_public() && public_)
+   return public_;
+ else if(!p)
+   return public_;
+ return 0;
+}
 
 Fl_Type *Fl_Decl_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -525,11 +534,14 @@ void Fl_Decl_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
 
+int Fl_DeclBlock_Type::is_public() const {return public_;}
+
 Fl_Type *Fl_DeclBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
   o->name("#if 1");
+  o->public_ = 0;
   o->after = strdup("#endif");
   o->add(p);
   o->factory = this;
@@ -538,12 +550,15 @@ Fl_Type *Fl_DeclBlock_Type::make() {
 
 void Fl_DeclBlock_Type::write_properties() {
   Fl_Type::write_properties();
+  if (public_) write_string("public");
   write_string("after");
   write_word(after);
 }
 
 void Fl_DeclBlock_Type::read_property(const char *c) {
-  if (!strcmp(c,"after")) {
+  if(!strcmp(c,"public")) {
+    public_ = 1;
+  } else  if (!strcmp(c,"after")) {
     storestring(read_word(),after);
   } else {
     Fl_Type::read_property(c);
@@ -553,6 +568,7 @@ void Fl_DeclBlock_Type::read_property(const char *c) {
 void Fl_DeclBlock_Type::open() {
   if (!declblock_panel) make_declblock_panel();
   decl_before_input->static_value(name());
+  declblock_public_button->value(public_);
   decl_after_input->static_value(after);
   declblock_panel->show();
   const char* message = 0;
@@ -574,6 +590,7 @@ void Fl_DeclBlock_Type::open() {
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     if (message) continue;
     storestring(c,after);
+    public_ = declblock_public_button->value();
     break;
   }
  BREAK2:
@@ -584,12 +601,16 @@ Fl_DeclBlock_Type Fl_DeclBlock_type;
 
 void Fl_DeclBlock_Type::write_code1() {
   const char* c = name();
-  if (c) write_c("%s\n", c);
+  if (public_)
+     write_h("%s\n", c);
+  write_c("%s\n", c);
 }
 
 void Fl_DeclBlock_Type::write_code2() {
   const char* c = after;
-  if (c) write_c("%s\n", c);
+  if (public_)
+     write_h("%s\n", c);
+  write_c("%s\n", c);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -740,5 +761,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.13 2003/08/02 21:17:30 easysw Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.14 2004/03/11 05:17:11 easysw Exp $".
 //

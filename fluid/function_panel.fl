@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0105 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Pixmap.H>} {} 
@@ -16,7 +16,7 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {function/method} open
-    xywh {774 432 285 170} resizable modal visible
+    xywh {909 450 285 170} type Single hide resizable modal
   } {
     Fl_Light_Button f_public_button {
       label public
@@ -49,7 +49,7 @@ Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
     label code open
-    xywh {327 261 548 175} resizable modal visible
+    xywh {327 261 545 175} type Single hide resizable modal
   } {
     Fl_Group {} {open
       xywh {10 10 525 120} box DOWN_FRAME resizable
@@ -75,8 +75,8 @@ Function {make_code_panel()} {open
 Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
-    label codeblock open
-    xywh {289 462 295 130} resizable modal visible
+    label codeblock open selected
+    xywh {289 462 295 130} type Single hide resizable modal
   } {
     Fl_Input code_before_input {
       tooltip {\#ifdef or similar conditional code block.} xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
@@ -103,25 +103,29 @@ Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
     label {declaration block} open
-    xywh {184 572 295 130} resizable modal visible
+    xywh {184 572 295 155} type Single hide resizable modal
   } {
     Fl_Input decl_before_input {
-      tooltip {\#ifdef or similar conditional declaration block.} xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {\#ifdef or similar conditional declaration block.} xywh {10 35 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
     }
     Fl_Box {} {
       label {"\\n...child code...\\n" is inserted here}
-      xywh {10 35 275 25} align 20
+      xywh {10 60 275 25} align 20
     }
     Fl_Input decl_after_input {
-      tooltip {\#endif or similar declaration code block.} xywh {10 60 275 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {\#endif or similar declaration code block.} xywh {10 85 275 25} labelsize 12 align 5 when 0 textfont 4
     }
     Fl_Return_Button declblock_panel_ok {
       label OK
-      xywh {120 95 80 25} hotspot
+      xywh {120 120 80 25} hotspot
     }
     Fl_Button declblock_panel_cancel {
       label Cancel
-      xywh {205 95 80 25} shortcut 0xff1b
+      xywh {205 120 80 25} shortcut 0xff1b
+    }
+    Fl_Light_Button declblock_public_button {
+      label public
+      tooltip {Make the declaration publicly accessible.} xywh {9 6 65 25} labelsize 10 when 0
     }
   }
 } 
@@ -130,7 +134,7 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label declaration open
-    xywh {393 601 290 180} resizable visible
+    xywh {393 601 290 180} type Single hide resizable
   } {
     Fl_Light_Button decl_public_button {
       label public
@@ -155,7 +159,7 @@ Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
     label class open
-    xywh {517 797 285 170} resizable modal visible
+    xywh {517 797 285 170} type Single hide resizable modal
   } {
     Fl_Light_Button c_public_button {
       label public
@@ -190,10 +194,10 @@ Function {make_widgetbin()} {open
 } {
   Fl_Window widgetbin_panel {
     label Bin open
-    xywh {325 137 443 100} type Double
-    code0 {o->size(o->w(),80);} non_modal visible
+    xywh {325 137 440 100} type Single hide
+    code0 {o->size(o->w(),80);} non_modal
   } {
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {3 3 50 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -233,7 +237,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[11]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {55 3 74 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -279,7 +283,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[21]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {131 3 50 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -319,7 +323,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[4]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {183 3 74 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -377,7 +381,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[45]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {259 3 50 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -411,7 +415,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[30]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {311 3 50 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -445,7 +449,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[15]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {363 3 26 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -467,7 +471,7 @@ Function {make_widgetbin()} {open
         code0 {o->image(pixmap[33]);}
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {391 3 50 74} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -490,7 +494,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"Fl_Progress"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip Progress xywh {392 52 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[36]);}
       }

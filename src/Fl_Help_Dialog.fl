@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0105 
 header_name {../FL/Fl_Help_Dialog.H} 
 code_name {.cxx}
 decl {\#include "flstring.h"} {} 
@@ -17,7 +17,7 @@ class FL_EXPORT Fl_Help_Dialog {open
   } {
     Fl_Window window_ {
       label {Help Dialog} open
-      private xywh {398 65 530 385} type Double resizable visible
+      private xywh {398 65 530 385} type Double hide resizable
     } {
       Fl_Group view_ {
         callback {if (view_->changed())
@@ -48,7 +48,7 @@ else if (view_->filename())
 {
   strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
   line_[index_] = view_->topline();
-}} open
+}} open selected
         private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
         code0 {\#include <FL/Fl_Help_View.H>}
         class Fl_Help_View
@@ -69,10 +69,12 @@ if (index_ == 0)
 
 forward_->activate();
 
+int l = line_[index_];
+
 if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
-view_->topline(line_[index_]);}
+view_->topline(l);}
         private tooltip {Show the previous help page.} xywh {355 350 25 25} shortcut 0xff51 labelcolor 2
       }
       Fl_Button forward_ {
@@ -85,10 +87,12 @@ if (index_ >= max_)
 
 back_->activate();
 
+int l = view_->topline();
+
 if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
-view_->topline(line_[index_]);}
+view_->topline(l);}
         private tooltip {Show the next help page.} xywh {390 350 25 25} shortcut 0xff53 labelcolor 2
       }
       Fl_Button smaller_ {
@@ -112,7 +116,7 @@ smaller_->activate();}
         private tooltip {Make the help text larger.} xywh {320 350 25 25} labelfont 1 labelsize 16
       }
       Fl_Input find_ {
-        callback {find_pos_ = view_->find(find_->value(), find_pos_);} selected
+        callback {find_pos_ = view_->find(find_->value(), find_pos_);}
         private xywh {10 350 265 25} when 10
       }
     }

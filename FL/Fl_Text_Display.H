@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.13 2003/01/30 21:40:18 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.14 2004/03/11 05:17:11 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -98,6 +98,8 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     void show_cursor(int b = 1);
     void hide_cursor() { show_cursor(0); }
     void cursor_style(int style);
+    Fl_Color cursor_color() const {return mCursor_color;}
+    void cursor_color(Fl_Color n) {mCursor_color = n;}
     int scrollbar_width() { return scrollbar_width_; }
     Fl_Align scrollbar_align() { return scrollbar_align_; }
     void scrollbar_width(int W) { scrollbar_width_ = W; }
@@ -288,5 +290,5 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.13 2003/01/30 21:40:18 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.14 2004/03/11 05:17:11 easysw Exp $".
 //

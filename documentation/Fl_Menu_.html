@@ -45,6 +45,7 @@ be "private": a dynamically allocated array managed by the Fl_Menu_.
 <LI><A href=#Fl_Menu_.copy>copy</A></LI>
 <LI><A href=#Fl_Menu_.down_box>down_box</A></LI>
 <LI><A href=#Fl_Menu_.global>global</A></LI>
+<LI><A href=#Fl_Menu_.item_pathname>global</A></LI>
 <LI><A href=#Fl_Menu_.menu>menu</A></LI>
 </UL>
 </TD><TD align=left valign=top>
@@ -213,6 +214,25 @@ not have to be put in a window at all).
 <P>Currently there can be only one <TT>global()</TT>menu.  Setting a new
 one will replace the old one.  There is no way to remove the <TT>
 global()</TT> setting (so don't destroy the widget!)</P>
+
+<h4><a name='Fl_Menu_.item_pathnaem'>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
+int Fl_Menu_::item_pathname(char *name, int namelen,
+                            const Fl_Menu_Item *finditem) const;</h4>
+
+<p>Returns the 'menu pathname' (eg. "File/Quit") for the recently picked item in user supplied string 'name'. Useful in the callback function for a menu item, to determine the last picked item's 'menu pathname' string.
+
+<p>If finditem is specified, name will contain the 'menu pathname' for that item.
+
+<p>Returns:
+
+<ul>
+	<li>0 - OK: 'name' has the pathname, guaranteed not longer than namelen
+	<li>-1 - Failed: 'finditem' was not found in the menu
+	<li>-2 - Failed: 'name' is not large enough to handle the menu names
+</ul>
+
+<p>In the case of errors (-1 or -2), 'name' will be an empty string.
+
 <H4><A name=Fl_Menu_.text>const char* Fl_Menu_::text() const
 <BR> const char* Fl_Menu_::text(int i) const</A></H4>
  Returns the title of the last item chosen, or of item <TT>i</TT>.

@@ -2,6 +2,28 @@ CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
 	  STR #281)
+	- Fl_Value_Slider::draw_bg() didn't always apply the
+	  clipping rectangle (STR #235)
+	- fl_filename_relative() returned the wrong string if
+	  the absolute pathname was equal to the current working
+	  directory (STR #224)
+	- Fl_Help_Dialog didn't correctly restore the scroll
+	  position when going forward/back in the link history
+	  if the file changed (STR #218)
+	- glutGetModifiers() did not mask off extra state bits,
+	  confusing some GLUT-based applications (STR #213)
+	- Fixed mouse capture problems on MacOS X (STR #209, STR
+	  #229)
+	- Fl_Sys_Menu_Bar is now built into the library for
+	  MacOS X (STR #229)
+	- Fl_Menu_ now provides item_pathname() methods to get
+	  the "pathname" of a menu item, e.g. "File/Quit" (STR
+	  #283)
+	- Fl_Text_Display now provides cursor_color() methods to
+	  get and set the cursor color (STR #271)
+	- Fl_Scroll didn't honor FL_NO_BOX (STR #305)
+	- FLUID declaration blocks didn't support public/private
+	  definitions (STR #301)
 	- Fl_Preferences incorrectly created the preferences
 	  directory before necessary (STR #247)
 	- The WIN32 project files still defined the (obsolete)

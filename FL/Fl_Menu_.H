@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.H,v 1.7.2.4.2.7 2003/06/15 04:47:28 easysw Exp $"
+// "$Id: Fl_Menu_.H,v 1.7.2.4.2.8 2004/03/11 05:17:10 easysw Exp $"
 //
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,7 @@ protected:
   unsigned textcolor_;
 
 public:
+  int item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem=0) const;
   const Fl_Menu_Item* picked(const Fl_Menu_Item*);
 
   Fl_Menu_(int,int,int,int,const char * =0);
@@ -94,5 +95,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Menu_.H,v 1.7.2.4.2.7 2003/06/15 04:47:28 easysw Exp $".
+// End of "$Id: Fl_Menu_.H,v 1.7.2.4.2.8 2004/03/11 05:17:10 easysw Exp $".
 //

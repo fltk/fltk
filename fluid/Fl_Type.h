@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.10 2003/09/03 19:50:54 easysw Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.11 2004/03/11 05:17:11 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -197,6 +197,7 @@ public:
 
 class Fl_DeclBlock_Type : public Fl_Type {
   const char* after;
+  char public_;
 public:
   Fl_Type *make();
   void write_code1();
@@ -207,6 +208,7 @@ public:
   void read_property(const char *);
   int is_parent() const {return 1;}
   int is_decl_block() const {return 1;}
+  virtual int is_public() const;
   int pixmapID() { return 11; }
 };
 
@@ -594,5 +596,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.10 2003/09/03 19:50:54 easysw Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.11 2004/03/11 05:17:11 easysw Exp $".
 //
