@@ -38,7 +38,7 @@ static int num_screens = 0;
 static RECT screens[16];
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
-  if (num_screens >= 16) return;
+  if (num_screens >= 16) return TRUE;
 
   MONITORINFO mi;
   mi.cbSize = sizeof(mi);
@@ -46,6 +46,7 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
   GetMonitorInfo(mon, &mi);
   screens[num_screens] = mi.rcWork;
   num_screens ++;
+  return TRUE;
 }
 
 static void screen_init() {
