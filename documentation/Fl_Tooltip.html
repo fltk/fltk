@@ -36,6 +36,7 @@ all FLTK widgets.</P>
 	<LI><A HREF="#Fl_Tooltip.enter_area">enter_area</A></LI>
 	<LI><A HREF="#Fl_Tooltip.exit">exit</A></LI>
 	<LI><A HREF="#Fl_Tooltip.font">font</A></LI>
+	<LI><A HREF="#Fl_Tooltip.hoverdelay">hoverdelay</A></LI>
 	<LI><A HREF="#Fl_Tooltip.size">size</A></LI>
 	<LI><A HREF="#Fl_Tooltip.textcolor">textcolor</A></LI>
 
@@ -86,21 +87,27 @@ Fl_Color color();</A></H4>
 <P>Gets or sets the background color for tooltips. The default
 background color is a pale yellow.
 
-<H4><A NAME="Fl_Tooltip.textcolor">void textcolor(unsigned c);<BR>
-Fl_Color textcolor();</A></H4>
-
-<P>Gets or sets the color of the text in the tooltip. The default is
-black.
-
 <H4><A NAME="Fl_Tooltip.font">void font(int i);<BR>
 int font();</A></H4>
 
 <P>Gets or sets the typeface for the tooltip text.
 
+<H4><A NAME="Fl_Tooltip.hoverdelay">void hoverdelay(float f);<BR>
+float hoverdelay();</A></H4>
+
+<P>Gets or sets the tooltip hover delay, the delay between tooltips.
+The default delay is 0.2 seconds.
+
 <H4><A NAME="Fl_Tooltip.size">void size(int s);<BR>
 int size();</A></H4>
 
 <P>Gets or sets the size of the tooltip text.
+
+<H4><A NAME="Fl_Tooltip.textcolor">void textcolor(unsigned c);<BR>
+Fl_Color textcolor();</A></H4>
+
+<P>Gets or sets the color of the text in the tooltip. The default is
+black.
 
 </BODY>
 </HTML>

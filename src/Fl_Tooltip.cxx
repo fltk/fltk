@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.27 2003/01/30 21:42:53 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.28 2003/09/14 14:11:06 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,7 @@
 #include <stdio.h>
 
 float		Fl_Tooltip::delay_ = 1.0f;
+float		Fl_Tooltip::hoverdelay_ = 0.2f;
 int		Fl_Tooltip::enabled_ = 1;
 unsigned	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 		                                   FL_NUM_GREEN - 1,
@@ -156,7 +157,7 @@ tt_exit(Fl_Widget *w) {
   if (window) window->hide();
   if (recent_tooltip) {
     if (Fl::event_state() & FL_BUTTONS) recent_tooltip = 0;
-    else Fl::add_timeout(.2f, recent_timeout);
+    else Fl::add_timeout(Fl_Tooltip::hoverdelay(), recent_timeout);
   }
 }
 
@@ -203,7 +204,10 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
   // remember it:
   widget_ = wid; X = x; Y = y; W = w; H = h; tip = t;
   // popup the tooltip immediately if it was recently up:
-  if (recent_tooltip || Fl_Tooltip::delay() < .1) {
+  if (recent_tooltip) {
+    if (window) window->hide();
+    Fl::add_timeout(Fl_Tooltip::hoverdelay(), tooltip_timeout);
+  } else if (Fl_Tooltip::delay() < .1) {
 #ifdef WIN32
     // possible fix for the Windows titlebar, it seems to want the
     // window to be destroyed, moving it messes up the parenting:
@@ -232,5 +236,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.27 2003/01/30 21:42:53 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.28 2003/09/14 14:11:06 easysw Exp $".
 //
