@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.2 2001/08/02 15:31:59 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.3 2001/08/03 02:28:32 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ struct Fl_Label {
   FL_EXPORT void measure(int&, int&) const ;
 };
 
-FL_EXPORT class Fl_Widget {
+class FL_EXPORT Fl_Widget {
   friend class Fl_Group;
 
   Fl_Widget* parent_;
@@ -67,11 +67,11 @@ FL_EXPORT class Fl_Widget {
 
   // "de-implement" the copy constructors:
   Fl_Widget & operator=(const Fl_Widget &);
-  FL_EXPORT Fl_Widget(const Fl_Widget &);
+  Fl_Widget(const Fl_Widget &);
 
 protected:
 
-  FL_EXPORT Fl_Widget(int,int,int,int,const char* =0);
+  Fl_Widget(int,int,int,int,const char* =0);
 
   void x(int v) {x_ = v;}
   void y(int v) {y_ = v;}
@@ -83,11 +83,11 @@ protected:
   void clear_flag(int c) {flags_ &= ~c;}
   enum {INACTIVE=1, INVISIBLE=2, OUTPUT=4, SHORTCUT_LABEL=64, CHANGED=128};
 
-  FL_EXPORT void draw_box() const;
-  FL_EXPORT void draw_box(Fl_Boxtype, Fl_Color) const;
-  FL_EXPORT void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
-  FL_EXPORT void draw_label() const;
-  FL_EXPORT void draw_label(int, int, int, int) const;
+  void draw_box() const;
+  void draw_box(Fl_Boxtype, Fl_Color) const;
+  void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
+  void draw_label() const;
+  void draw_label(int, int, int, int) const;
 
 public:
 
@@ -195,5 +195,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.2 2001/08/02 15:31:59 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.3 2001/08/03 02:28:32 easysw Exp $".
 //

@@ -14,6 +14,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -208,6 +211,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
     End Project Dependency
 }}}
 
@@ -510,6 +516,30 @@ Package=<4>
 
 ###############################################################################
 
+Project: "fltkgl"=".\fltkgl.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "fltkgldll"=".\fltkgldll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "fluid"=".\fluid.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -566,6 +596,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -580,6 +613,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
     End Project Dependency
 }}}
 
@@ -596,6 +632,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -611,11 +650,29 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
+    End Project Dependency
 }}}
 
 ###############################################################################
 
 Project: "hello"=".\hello.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "help"=".\help.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -953,6 +1010,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -967,6 +1027,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkgl
     End Project Dependency
 }}}
 

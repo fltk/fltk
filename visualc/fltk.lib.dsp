@@ -255,6 +255,22 @@ SOURCE=..\src\fl_file_chooser.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_FileBrowser.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_FileChooser.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_FileChooser2.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_FileIcon.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_font.cxx
 # End Source File
 # Begin Source File
@@ -267,27 +283,19 @@ SOURCE=..\src\Fl_get_system_colors.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Gl_Choice.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_Gl_Choice.H
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_Gl_Overlay.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_Gl_Window.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_grab.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\Fl_Group.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_HelpDialog.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_HelpView.cxx
 # End Source File
 # Begin Source File
 
@@ -463,6 +471,10 @@ SOURCE=..\src\Fl_Tile.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Tooltip.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Valuator.cxx
 # End Source File
 # Begin Source File
@@ -507,6 +519,10 @@ SOURCE=..\src\Fl_Window_iconize.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Wizard.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_x.cxx
 # End Source File
 # Begin Source File
@@ -532,22 +548,6 @@ SOURCE=..\src\forms_pixmap.cxx
 # Begin Source File
 
 SOURCE=..\src\forms_timer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\gl_draw.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\gl_start.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\glut_compatability.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\glut_font.cxx
 # End Source File
 # Begin Source File
 
