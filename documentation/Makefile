@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10 2001/02/12 15:12:14 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.1 2001/10/24 17:04:30 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -119,6 +119,8 @@ MANPAGES =	fltk.$(CAT3EXT) fluid.$(CAT1EXT)
 
 all:	fltk.ps fltk.pdf $(MANPAGES)
 
+alldocs:	fltk.ps fltk.pdf fltk.d/index.html $(MANPAGES)
+
 clean:
 	rm -f fltk.ps
 	rm -f fltk.pdf
@@ -166,5 +168,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.10 2001/02/12 15:12:14 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.1 2001/10/24 17:04:30 easysw Exp $".
 #
