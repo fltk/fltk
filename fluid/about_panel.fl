@@ -36,7 +36,7 @@ Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
     label {about fluid} open
-    xywh {337 120 309 258} type Double box UP_BOX color 97 selection_color 47 hotspot non_modal visible
+    xywh {337 120 305 255} type Double box UP_BOX color 97 selection_color 47 hotspot non_modal visible
   } {
     Fl_Group display_group {open
       xywh {10 10 290 240}
@@ -76,11 +76,11 @@ Function {make_about_panel()} {open
         label {FLTK User
 Interface
 Designer
-Version 1.1.6}
+Version 1.1.7} selected
         xywh {140 27 160 123} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
-        label {©1998-2004 by
+        label {©1998-2005 by
 Bill Spitzak and others}
         callback {show_help("license.html");}
         xywh {181 176 115 30} box THIN_UP_BOX labelsize 10 labelcolor 136
@@ -97,5 +97,5 @@ Bill Spitzak and others}
 comment {
 //
 // End of "$Id$".
-//} {selected in_source in_header
+//} {in_source in_header
 } 

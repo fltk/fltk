@@ -42,7 +42,7 @@ static void cb_OK(Fl_Return_Button* o, void*) {
 
 Fl_Double_Window* make_about_panel() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = about_panel = new Fl_Double_Window(309, 258, "about fluid");
+  { Fl_Double_Window* o = about_panel = new Fl_Double_Window(305, 255, "about fluid");
     w = o;
     o->box(FL_UP_BOX);
     o->color((Fl_Color)97);
@@ -110,7 +110,7 @@ Fl_Double_Window* make_about_panel() {
         o->labelcolor(FL_BACKGROUND2_COLOR);
         o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
       }
-      { Fl_Box* o = new Fl_Box(140, 27, 160, 123, "FLTK User\nInterface\nDesigner\nVersion 1.1.6");
+      { Fl_Box* o = new Fl_Box(140, 27, 160, 123, "FLTK User\nInterface\nDesigner\nVersion 1.1.7");
         o->box(FL_OVAL_BOX);
         o->color((Fl_Color)12);
         o->selection_color(FL_DARK1);
@@ -119,7 +119,7 @@ Fl_Double_Window* make_about_panel() {
         o->labelsize(18);
         o->labelcolor(FL_BACKGROUND2_COLOR);
       }
-      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251""1998-2004 by\nBill Spitzak and others");
+      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251""1998-2005 by\nBill Spitzak and others");
         o->box(FL_THIN_UP_BOX);
         o->labelsize(10);
         o->labelcolor(FL_DARK_BLUE);
