@@ -39,7 +39,7 @@ CPP=cl.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /Os /Ob2 /I "." /I ".." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /TP /c
+# ADD CPP /nologo /MT /W1 /GX /Os /Ob1 /I "." /I ".." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /TP /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -60,7 +60,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MTd /W3 /GX /Z7 /Od /I "." /I ".." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /TP /c
+# ADD CPP /nologo /MTd /W1 /GX /Z7 /Od /I "." /I ".." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /TP /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -529,6 +529,10 @@ SOURCE=..\src\numericsort.c
 # Begin Source File
 
 SOURCE=..\src\scandir.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\vsnprintf.c
 # End Source File
 # End Target
 # End Project
