@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.1
 
+	- Fl::set_font() didn't 0-initialize all font descriptor
+	  data.
 	- Some OpenGL implementations don't support single-
 	  buffered visuals. The Fl_Gl_Window class now emulates
 	  single-buffered windows using double-buffered
