@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.H,v 1.5.2.3.2.3 2003/01/30 21:40:00 easysw Exp $"
+// "$Id: Fl_Scroll.H,v 1.5.2.3.2.4 2003/06/15 04:41:16 easysw Exp $"
 //
 // Scroll header file for the Fast Light Tool Kit (FLTK).
 //
@@ -67,10 +67,11 @@ public:
   int xposition() const {return xposition_;}
   int yposition() const {return yposition_;}
   void position(int, int);
+  void clear();
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Scroll.H,v 1.5.2.3.2.3 2003/01/30 21:40:00 easysw Exp $".
+// End of "$Id: Fl_Scroll.H,v 1.5.2.3.2.4 2003/06/15 04:41:16 easysw Exp $".
 //

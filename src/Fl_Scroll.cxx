@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.4 2003/01/30 21:42:37 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.5 2003/06/15 04:41:16 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,14 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_draw.H>
+
+// Clear all but the scrollbars...
+void Fl_Scroll::clear() {
+  for (int i=children() - 1; i >= 0; i --) {
+    Fl_Widget* o = child(i);
+    if (o != &hscrollbar && o != &scrollbar) delete o;
+  }
+}
 
 // Insure the scrollbars are the last children:
 void Fl_Scroll::fix_scrollbar_order() {
@@ -258,5 +266,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.4 2003/01/30 21:42:37 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.5 2003/06/15 04:41:16 easysw Exp $".
 //

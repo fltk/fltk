@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Scroll didn't provide its own clear() method, so
+	  calling clear() on a Fl_Scroll widget would also
+	  destroy the scrollbars (STR #75)
 	- Fl::event_text() was sometimes initialized to NULL
 	  instead of an empty string (STR #70)
 	- fl_draw() didn't properly handle a trailing escaped
