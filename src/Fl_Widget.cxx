@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.18 2002/06/02 17:52:36 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.19 2002/07/23 15:07:33 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -89,7 +89,7 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   callback_	 = default_callback;
   user_data_ 	 = 0;
   type_		 = 0;
-  flags_	 = 0;
+  flags_	 = VISIBLE_FOCUS;
   damage_	 = 0;
   box_		 = FL_NO_BOX;
   color_	 = FL_GRAY;
@@ -115,6 +115,7 @@ int Fl_Widget::damage_resize(int X, int Y, int W, int H) {
 
 int Fl_Widget::take_focus() {
   if (!takesevents()) return 0;
+  if (!visible_focus()) return 0;
   if (!handle(FL_FOCUS)) return 0; // see if it wants it
   if (contains(Fl::focus())) return 1; // it called Fl::focus for us
   Fl::focus(this);
@@ -241,5 +242,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.18 2002/06/02 17:52:36 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.19 2002/07/23 15:07:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.14 2002/05/13 05:05:11 spitzak Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.15 2002/07/23 15:07:32 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -85,7 +85,8 @@ protected:
   int flags() const {return flags_;}
   void set_flag(int c) {flags_ |= c;}
   void clear_flag(int c) {flags_ &= ~c;}
-  enum {INACTIVE=1, INVISIBLE=2, OUTPUT=4, SHORTCUT_LABEL=64, CHANGED=128};
+  enum {INACTIVE=1, INVISIBLE=2, OUTPUT=4, SHORTCUT_LABEL=64,
+        CHANGED=128, VISIBLE_FOCUS=512};
 
   FL_EXPORT void draw_box() const;
   FL_EXPORT void draw_box(Fl_Boxtype, Fl_Color) const;
@@ -174,6 +175,10 @@ public:
   void set_changed() {flags_ |= CHANGED;}
   void clear_changed() {flags_ &= ~CHANGED;}
   FL_EXPORT int take_focus();
+  void set_visible_focus() { flags_ |= VISIBLE_FOCUS; }
+  void clear_visible_focus() { flags_ &= ~VISIBLE_FOCUS; }
+  void visible_focus(int v) { if (v) set_visible_focus(); else clear_visible_focus(); }
+  int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
   FL_EXPORT static void default_callback(Fl_Widget*, void*);
   void do_callback() {callback_(this,user_data_);}
@@ -207,5 +212,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.14 2002/05/13 05:05:11 spitzak Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.15 2002/07/23 15:07:32 easysw Exp $".
 //

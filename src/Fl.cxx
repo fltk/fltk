@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.42 2002/07/11 01:10:15 matthiaswm Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.43 2002/07/23 15:07:33 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -419,6 +419,7 @@ static int send_handlers(int event) {
 Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
 
 void Fl::focus(Fl_Widget *o) {
+  if (o && !o->visible_focus()) return;
   if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = focus_;
   if (o != p) {
@@ -948,5 +949,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.42 2002/07/11 01:10:15 matthiaswm Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.43 2002/07/23 15:07:33 easysw Exp $".
 //

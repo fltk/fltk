@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.13 2002/07/20 05:56:44 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.14 2002/07/23 15:07:33 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -233,7 +233,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   p = value();
   // visit each line and draw it:
   int desc = height-fl_descent();
-  int xpos = X-xscroll_; if (W > 12) xpos += 3;
+  int xpos = X - xscroll_ + 1;
   int ypos = -yscroll_;
   for (; ypos < H;) {
 
@@ -872,5 +872,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.13 2002/07/20 05:56:44 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.14 2002/07/23 15:07:33 easysw Exp $".
 //
