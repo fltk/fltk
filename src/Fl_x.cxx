@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.15 1998/12/29 14:06:08 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.16 1998/12/29 14:07:14 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -330,8 +330,11 @@ static Fl_Window* resize_bug_fix;
 int fl_handle(const XEvent& xevent)
 {
   fl_xevent = &xevent;
+  Window xid = xevent.xany.window;
 
-  switch (xevent.type) { // events where we don't care about window
+  switch (xevent.type) {
+
+  // events where we don't care about window:
 
   case KeymapNotify:
     memcpy(fl_key_vector, xevent.xkeymap.key_vector, 32);
@@ -340,10 +343,25 @@ int fl_handle(const XEvent& xevent)
   case MappingNotify:
     XRefreshKeyboardMapping((XMappingEvent*)&xevent.xmapping);
     return 0;
+
+  // events where interesting window id is in a different place:
+  case CirculateNotify:
+  case CirculateRequest:
+  case ConfigureNotify:
+  case ConfigureRequest:
+  case CreateNotify:
+  case DestroyNotify:
+  case GravityNotify:
+  case MapNotify:
+  case MapRequest:
+  case ReparentNotify:
+  case UnmapNotify:
+    xid = xevent.xmaprequest.window;
+    break;
   }
 
   int event = 0;
-  Fl_Window* window = fl_find(xevent.xany.window);
+  Fl_Window* window = fl_find(xid);
 
   if (window) switch (xevent.type) {
 
@@ -522,10 +540,6 @@ Fl_X* Fl_X::set_xid(Fl_Window* w, Window xid) {
   x->region = 0;
   x->wait_for_expose = 1;
   Fl_X::first = x;
-  w->set_visible();
-  w->handle(FL_SHOW); // get child windows to appear
-  w->redraw();
-  fl_fix_focus(); // if this is modal we must fix focus now
   return x;
 }
 
@@ -608,6 +622,10 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 			     InputOutput,
 			     visual->visual,
 			     mask, &attr));
+  w->set_visible();
+  w->handle(FL_SHOW); // get child windows to appear
+  w->redraw();
+  fl_fix_focus(); // if this is modal we must fix focus now
   //XInstallColormap(fl_display, colormap);
 
   if (!w->parent() && !attr.override_redirect) {
@@ -798,5 +816,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.15 1998/12/29 14:06:08 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.16 1998/12/29 14:07:14 mike Exp $".
 //
