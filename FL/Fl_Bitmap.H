@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.9 2003/01/10 19:29:07 easysw Exp $"
+// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.10 2003/01/15 19:41:58 easysw Exp $"
 //
 // Bitmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -35,11 +35,11 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
 
   const uchar *array;
   int alloc_array; // Non-zero if data was allocated
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(WIN32)
   void *id; // for internal use
 #else
   unsigned id; // for internal use
-#endif // __APPLE__
+#endif // __APPLE__ || WIN32
   
   Fl_Bitmap(const uchar *bits, int W, int H) :
     Fl_Image(W,H,0), array(bits), alloc_array(0), id(0) {data((const char **)&array, 1);}
@@ -58,5 +58,5 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.9 2003/01/10 19:29:07 easysw Exp $".
+// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.10 2003/01/15 19:41:58 easysw Exp $".
 //

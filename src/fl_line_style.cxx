@@ -1,5 +1,5 @@
 //
-// "$Id: fl_line_style.cxx,v 1.3.2.3.2.11 2003/01/12 14:49:33 easysw Exp $"
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.12 2003/01/15 19:41:58 easysw Exp $"
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
@@ -23,6 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
+#include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include "flstring.h"
@@ -103,5 +104,5 @@ void fl_line_style(int style, int width, char* dashes) {
 
 
 //
-// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.11 2003/01/12 14:49:33 easysw Exp $".
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.12 2003/01/15 19:41:58 easysw Exp $".
 //

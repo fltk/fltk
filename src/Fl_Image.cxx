@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.27 2003/01/10 19:29:09 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.28 2003/01/15 19:41:58 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -327,7 +327,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     DeleteDC(new_gc);
   } else {
-    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
 #elif defined(__APPLE__)
   if (mask) {
@@ -392,5 +392,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.27 2003/01/10 19:29:09 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.28 2003/01/15 19:41:58 easysw Exp $".
 //
