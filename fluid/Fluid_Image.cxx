@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.3 1998/11/12 15:01:48 mike Exp $"
+// "$Id: Fluid_Image.cxx,v 1.4 1998/12/02 15:58:10 mike Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -98,7 +98,7 @@ static int hexdigit(int x) {
   return 20;
 }
 
-#define MAXSIZE 1024
+#define MAXSIZE 2048
 
 pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
   if (!f) return; // for subclasses
@@ -111,7 +111,7 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
     if (buffer[0] != '\"') continue;
     char *p = buffer;
     char *q = buffer+1;
-    while (*q != '\"') {
+    while (*q != '\"' && p < buffer+MAXSIZE) {
       if (*q == '\\') switch (*++q) {
       case '\n':
 	fgets(q,(buffer+MAXSIZE+20)-q,f); break;
@@ -406,5 +406,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.3 1998/11/12 15:01:48 mike Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.4 1998/12/02 15:58:10 mike Exp $".
 //
