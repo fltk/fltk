@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.1 1999/07/27 17:24:13 bill Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.2 1999/08/25 05:37:40 bill Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -55,20 +55,23 @@ int fl_measure_pixmap(/*const*/char * const *data, int &w, int &h) {
 // The callback from fl_draw_image to get a row of data passes this:
 struct pixmap_data {
   int w, h;
-  char*const* data;
-  U64 colors[256];
+  const uchar*const* data;
+  union {
+    U64 colors[256];
+    U64* byte1[256];
+  };
 };
 
 // callback for 1 byte per pixel:
 static void cb1(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
-  const char* p = d.data[y]+x;
+  const uchar* p = d.data[y]+x;
   U64* q = (U64*)buf;
   for (int X=(w+1)/2; X--; p += 2) {
 #if WORDS_BIGENDIAN
-    *q++ = (d.colors[p[0]&255]<<32) | d.colors[p[1]&255];
+    *q++ = (d.colors[p[0]]<<32) | d.colors[p[1]];
 #else
-    *q++ = (d.colors[p[1]&255]<<32) | d.colors[p[0]&255];
+    *q++ = (d.colors[p[1]]<<32) | d.colors[p[0]];
 #endif
   }
 }
@@ -76,15 +79,17 @@ static void cb1(void*v, int x, int y, int w, uchar* buf) {
 // callback for 2 bytes per pixel:
 static void cb2(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
-  const char* p = d.data[y]+2*x;
+  const uchar* p = d.data[y]+2*x;
   U64* q = (U64*)buf;
   for (int X=(w+1)/2; X--;) {
-    int index = *p++; int t = *p++; index += (t<<4)+(t>>4);
-    int index1= *p++; t = *p++; index1 += (t<<4)+(t>>4);
+    U64* colors = d.byte1[*p++];
+    int index = *p++;
+    U64* colors1 = d.byte1[*p++];
+    int index1 = *p++;
 #if WORDS_BIGENDIAN
-    *q++ = (d.colors[index&255]<<32) | d.colors[index1&255];
+    *q++ = (colors[index]<<32) | colors1[index1];
 #else
-    *q++ = (d.colors[index1&255]<<32) | d.colors[index&255];
+    *q++ = (colors1[index1]<<32) | colors[index];
 #endif
   }
 }
@@ -94,26 +99,29 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
 // The callback from fl_draw_image to get a row of data passes this:
 struct pixmap_data {
   int w, h;
-  char*const* data;
-  U32 colors[256];
+  const uchar*const* data;
+  union {
+    U32 colors[256];
+    U32* byte1[256];
+  };
 };
 
 // callback for 1 byte per pixel:
 static void cb1(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
-  const char* p = d.data[y]+x;
+  const uchar* p = d.data[y]+x;
   U32* q = (U32*)buf;
-  for (int X=w; X--;) *q++ = d.colors[(*p++)&255];
+  for (int X=w; X--;) *q++ = d.colors[*p++];
 }
 
 // callback for 2 bytes per pixel:
 static void cb2(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
-  const char* p = d.data[y]+2*x;
+  const uchar* p = d.data[y]+2*x;
   U32* q = (U32*)buf;
   for (int X=w; X--;) {
-    int index = *p++; int t = *p++; index += (t<<4)+(t>>4);
-    *q++ = d.colors[index&255];
+    U32* colors = d.byte1[*p++];
+    *q++ = colors[*p++];
   }
 }
 
@@ -126,15 +134,15 @@ extern int fl_parse_color(const char*, uchar&, uchar&, uchar&);
 
 uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
-int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
+int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
   pixmap_data d;
-  if (!fl_measure_pixmap(data, d.w, d.h)) return 0;
-  data++;
+  if (!fl_measure_pixmap(di, d.w, d.h)) return 0;
+  const uchar*const* data = (uchar**)(di+1);
   int transparent_index = -1;
 
   if (ncolors < 0) {	// fltk (non standard) compressed colormap
     ncolors = -ncolors;
-    const char *p = *data++;
+    const uchar *p = *data++;
     // if first color is ' ' it is transparent (put it later to make
     // it not be transparent):
     if (*p == ' ') {
@@ -152,7 +160,7 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
     }
     // read all the rest of the colors:
     for (int i=0; i < ncolors; i++) {
-      uchar* c = (uchar*)&d.colors[(*p++)&255];
+      uchar* c = (uchar*)&d.colors[*p++];
 #ifdef U64
       *(U64*)c = 0;
 #if WORDS_BIGENDIAN
@@ -165,15 +173,29 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
       *c = 0;
     }
   } else {	// normal XPM colormap with names
+    if (chars_per_pixel>1) memset(d.byte1, 0, sizeof(d.byte1));
     for (int i=0; i<ncolors; i++) {
-      const char *p = *data++;
+      const uchar *p = *data++;
       // the first 1 or 2 characters are the color index:
       int index = *p++;
-      if (chars_per_pixel>1) {int t = *p++; index += (t<<4)+(t>>4);}
+      uchar* c;
+      if (chars_per_pixel>1) {
+#ifdef U64
+	U64* colors = d.byte1[index];
+	if (!colors) colors = d.byte1[index] = new U64[256];
+#else
+	U32* colors = d.byte1[index];
+	if (!colors) colors = d.byte1[index] = new U32[256];
+#endif
+	c = (uchar*)&colors[*p];
+	index = (index<<8)+*p++;
+      } else {
+	c = (uchar *)&d.colors[index];
+      }
       // look for "c word", or last word if none:
-      const char *previous_word = p;
+      const uchar *previous_word = p;
       for (;;) {
-	while (*p && isspace(*p)) p++; char what = *p++;
+	while (*p && isspace(*p)) p++; uchar what = *p++;
 	while (*p && !isspace(*p)) p++;
 	while (*p && isspace(*p)) p++;
 	if (!*p) {p = previous_word; break;}
@@ -181,7 +203,6 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
 	previous_word = p;
 	while (*p && !isspace(*p)) p++;
       }
-      uchar *c = (uchar *)&d.colors[index&255];
 #ifdef U64
       *(U64*)c = 0;
 #if WORDS_BIGENDIAN
@@ -192,13 +213,13 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
       if (fl_parse_color(p, c[0], c[1], c[2])) {;
 #else
       XColor x;
-      if (XParseColor(fl_display, fl_colormap, p, &x)) {
+      if (XParseColor(fl_display, fl_colormap, (const char*)p, &x)) {
 	c[0] = x.red>>8; c[1] = x.green>>8; c[2] = x.blue>>8;
 #endif
       } else { // assumme "None" or "#transparent" for any errors
 	// this should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
-	transparent_index = index&255;
+	transparent_index = index;
       }
     }
   }
@@ -207,10 +228,10 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
   // build the mask bitmap used by Fl_Pixmap:
   if (fl_mask_bitmap && transparent_index >= 0) {
     int W = (d.w+7)/8;
-    uchar *bitmap = new uchar[W * d.h];
+    uchar* bitmap = new uchar[W * d.h];
     *fl_mask_bitmap = bitmap;
     for (int y = 0; y < d.h; y++) {
-      uchar* p = (uchar*)data[y];
+      const uchar* p = data[y];
       if (chars_per_pixel <= 1) {
 	for (int x = 0; x < W; x++) {
 	  int b = (*p++ != transparent_index);
@@ -227,8 +248,9 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
 	for (int x = 0; x < W; x++) {
 	  int b = 0;
 	  for (int i = 0; i < 8; i++) {
-	    int index = *p++; int t = *p++; index += (t<<4)+(t>>4);
-	    if ((index&255) != transparent_index) b |= (1<<i);
+	    int index = *p++;
+	    index = (index<<8) | (*p++);
+	    if (index != transparent_index) b |= (1<<i);
 	  }
 	  *bitmap++ = b;
 	}
@@ -237,9 +259,10 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
   }
 
   fl_draw_image(chars_per_pixel==1 ? cb1 : cb2, &d, x, y, d.w, d.h, 4);
+  if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete d.byte1[i];
   return 1;
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.1 1999/07/27 17:24:13 bill Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.2 1999/08/25 05:37:40 bill Exp $".
 //
