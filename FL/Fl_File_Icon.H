@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $"
+// "$Id: Fl_File_Icon.H,v 1.1.2.2 2001/10/29 03:44:31 easysw Exp $"
 //
 // Fl_File_Icon definitions.
 //
@@ -34,6 +34,13 @@
 
 
 //
+// Special color value for the icon color.
+//
+
+#  define FL_ICON_COLOR (Fl_Color)0xffffffff
+
+
+//
 // Fl_File_Icon class...
 //
 
@@ -62,11 +69,11 @@ class Fl_File_Icon			//// Icon data
   enum				// Data opcodes
   {
     END,			// End of primitive/icon
-    COLOR,			// Followed by color index
+    COLOR,			// Followed by color value (2 shorts)
     LINE,			// Start of line
     CLOSEDLINE,			// Start of closed line
     POLYGON,			// Start of polygon
-    OUTLINEPOLYGON,		// Followed by outline color
+    OUTLINEPOLYGON,		// Followed by outline color (2 shorts)
     VERTEX			// Followed by scaled X,Y
   };
 
@@ -74,8 +81,8 @@ class Fl_File_Icon			//// Icon data
   FL_EXPORT ~Fl_File_Icon();
 
   FL_EXPORT short	*add(short d);
-  short			*add_color(short c)
-			{ short *d = add(COLOR); add(c); return (d); }
+  short			*add_color(Fl_Color c)
+			{ short *d = add(COLOR); add(c >> 16); add(c); return (d); }
   short			*add_vertex(int x, int y)
 			{ short *d = add(VERTEX); add(x); add(y); return (d); }
   short			*add_vertex(float x, float y)
@@ -101,5 +108,5 @@ class Fl_File_Icon			//// Icon data
 #endif // !_Fl_Fl_File_Icon_H_
 
 //
-// End of "$Id: Fl_File_Icon.H,v 1.1.2.1 2001/09/29 14:38:58 easysw Exp $".
+// End of "$Id: Fl_File_Icon.H,v 1.1.2.2 2001/10/29 03:44:31 easysw Exp $".
 //

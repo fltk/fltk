@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.5.2.1 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: fl_color.cxx,v 1.12.2.5.2.2 2001/10/29 03:44:33 easysw Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -269,8 +269,13 @@ ulong fl_xpixel(Fl_Color i) {
 Fl_Color fl_color_;
 
 void fl_color(Fl_Color i) {
-  fl_color_ = i;
-  XSetForeground(fl_display, fl_gc, fl_xpixel(i));
+  if (i & 0xffffff00) {
+    unsigned rgb = (unsigned)i;
+    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
+  } else {
+    fl_color_ = i;
+    XSetForeground(fl_display, fl_gc, fl_xpixel(i));
+  }
 }
 
 void Fl::free_color(Fl_Color i, int overlay) {
@@ -305,38 +310,42 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 #endif // end of X-specific code
 
 unsigned Fl::get_color(Fl_Color i) {
-  return fl_cmap[i];
+  if (i & 0xffffff00) return (i);
+  else return fl_cmap[i];
 }
 
 void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
-  Fl::set_color(i,
+  Fl::set_color((Fl_Color)(i & 255),
 	((unsigned)red<<24)+((unsigned)green<<16)+((unsigned)blue<<8));
 }
 
 void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
-  unsigned c = fl_cmap[i];
+  unsigned c;
+
+  if (i & 0xffffff00) c = (unsigned)i;
+  else c = fl_cmap[i];
+
   red   = uchar(c>>24);
   green = uchar(c>>16);
   blue  = uchar(c>>8);
 }
 
 Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
-  Fl_Color avg;
-  unsigned rgb1 = fl_cmap[color1];
-  unsigned rgb2 = fl_cmap[color2];
+  unsigned rgb1;
+  unsigned rgb2;
   uchar r, g, b;
+
+  if (color1 & 0xffffff00) rgb1 = color1;
+  else rgb1 = fl_cmap[color1 & 255];
+
+  if (color2 & 0xffffff00) rgb2 = color2;
+  else rgb2 = fl_cmap[color2 & 255];
 
   r = (uchar)(((uchar)(rgb1>>24))*weight + ((uchar)(rgb2>>24))*(1-weight));
   g = (uchar)(((uchar)(rgb1>>16))*weight + ((uchar)(rgb2>>16))*(1-weight));
   b = (uchar)(((uchar)(rgb1>>8))*weight + ((uchar)(rgb2>>8))*(1-weight));
 
-  if (r == g && r == b) { // get it out of gray ramp
-    avg = fl_gray_ramp(r*FL_NUM_GRAY/256);
-  } else {		// get it out of color cube:
-    avg = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
-  }
-
-  return avg;
+  return fl_rgb_color(r, g, b);
 }
 
 Fl_Color fl_inactive(Fl_Color c) {
@@ -344,8 +353,14 @@ Fl_Color fl_inactive(Fl_Color c) {
 }
 
 Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
-  int c1 = int(fl_cmap[fg]);
-  int c2 = int(fl_cmap[bg]);
+  unsigned c1, c2;
+
+  if (fg & 0xffffff00) c1 = (unsigned)fg;
+  else c1 = fl_cmap[fg];
+
+  if (bg & 0xffffff00) c2 = (unsigned)bg;
+  else c2 = fl_cmap[bg];
+
   if ((c1^c2)&0x80800000)
     return fg;
   else if (c2&0x80800000)
@@ -355,5 +370,5 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.5.2.1 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: fl_color.cxx,v 1.12.2.5.2.2 2001/10/29 03:44:33 easysw Exp $".
 //

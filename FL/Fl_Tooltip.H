@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.H,v 1.16.2.3 2001/08/03 02:28:32 easysw Exp $"
+// "$Id: Fl_Tooltip.H,v 1.16.2.4 2001/10/29 03:44:31 easysw Exp $"
 //
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@ class FL_EXPORT Fl_Tooltip {
   static Fl_Menu_Window *window;
   static Fl_Widget *widget;
   static int shown;
-  static uchar color_;
+  static unsigned color_;
   static int font_;
   static int size_;
 
@@ -62,8 +62,8 @@ public:
   static int size() { return size_; }
   static void font(int i) { font_ = i; }
   static void size(int s) { size_ = s; }
-  static void color(uchar c) { color_ = c; }
-  static uchar color() { return color_; }
+  static void color(unsigned c) { color_ = c; }
+  static Fl_Color color() { return (Fl_Color)color_; }
 
   static void enter(Fl_Widget *w);
   static void exit(Fl_Widget *w);
@@ -76,5 +76,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Tooltip.H,v 1.16.2.3 2001/08/03 02:28:32 easysw Exp $".
+// End of "$Id: Fl_Tooltip.H,v 1.16.2.4 2001/10/29 03:44:31 easysw Exp $".
 //

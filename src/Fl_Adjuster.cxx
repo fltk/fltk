@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.1 2001/08/05 14:00:15 easysw Exp $"
+// "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.2 2001/10/29 03:44:32 easysw Exp $"
 //
 // Adjuster widget for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ void Fl_Adjuster::draw() {
   if (active_r())
     fl_color(selection_color());
   else
-    fl_color(inactive(selection_color()));
+    fl_color(fl_inactive(selection_color()));
   fastarrow.draw(x()+(W-fastarrow_width)/2,
 		 y()+2*dy+(H-fastarrow_height)/2, W, H);
   mediumarrow.draw(x()+dx+(W-mediumarrow_width)/2,
@@ -158,5 +158,5 @@ Fl_Adjuster::Fl_Adjuster(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.1 2001/08/05 14:00:15 easysw Exp $".
+// End of "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.2 2001/10/29 03:44:32 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -273,7 +273,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
     fl_font(textfont(), textsize());
 
   if (line->flags & SELECTED)
-    c = contrast(textcolor(), selection_color());
+    c = fl_contrast(textcolor(), selection_color());
   else
     c = textcolor();
 
@@ -316,7 +316,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
   if (active_r())
     fl_color(c);
   else
-    fl_color(inactive(c));
+    fl_color(fl_inactive(c));
 
   for (text = line->txt, ptr = fragment; *text != '\0'; text ++)
     if (*text == '\n')
@@ -566,5 +566,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Counter.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $"
 //
 // Counter header file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,8 @@
 
 class Fl_Counter : public Fl_Valuator {
 
-  uchar textfont_, textsize_, textcolor_;
+  uchar textfont_, textsize_;
+  unsigned textcolor_;
   double lstep_;
   uchar mouseobj;
   static FL_EXPORT void repeat_callback(void *);
@@ -62,12 +63,12 @@ public:
   uchar textsize() const {return textsize_;}
   void textsize(uchar s) {textsize_ = s;}
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-  void textcolor(uchar s) {textcolor_ = s;}
+  void textcolor(unsigned s) {textcolor_ = s;}
 
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Counter.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Counter.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $".
 //

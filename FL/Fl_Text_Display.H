@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.2 2001/08/06 23:51:39 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.3 2001/10/29 03:44:31 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -106,7 +106,7 @@ class Fl_Text_Display: public Fl_Group {
     uchar textsize() const {return textsize_;}
     void textsize(uchar s) {textsize_ = s;}
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-    void textcolor(uchar n) {textcolor_ = n;}
+    void textcolor(unsigned n) {textcolor_ = n;}
 
   protected:
     // Most (all?) of this stuff should only be called from resize() or
@@ -219,11 +219,11 @@ class Fl_Text_Display: public Fl_Group {
 
     uchar textfont_;
     uchar textsize_;
-    uchar textcolor_;
+    unsigned textcolor_;
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.2 2001/08/06 23:51:39 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.3 2001/10/29 03:44:31 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -104,9 +104,9 @@ static char	*get_kde_val(char *str, const char *key);
 //
 
 Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
-                   int        t,	/* I - File type */
-		   int        nd,	/* I - Number of data values */
-		   short      *d)	/* I - Data values */
+                	   int        t,	/* I - File type */
+			   int        nd,	/* I - Number of data values */
+			   short      *d)	/* I - Data values */
 {
   // Initialize the pattern and type...
   pattern_ = p;
@@ -166,10 +166,10 @@ Fl_File_Icon::~Fl_File_Icon()
 // 'Fl_File_Icon::add()' - Add data to an icon.
 //
 
-short *			// O - Pointer to new data value
+short *				// O - Pointer to new data value
 Fl_File_Icon::add(short d)	// I - Data to add
 {
-  short	*dptr;		// Pointer to new data value
+  short	*dptr;			// Pointer to new data value
 
 
   // Allocate/reallocate memory as needed
@@ -201,8 +201,8 @@ Fl_File_Icon::add(short d)	// I - Data to add
 //
 
 Fl_File_Icon *				// O - Matching file icon or NULL
-Fl_File_Icon::find(const char *filename,	// I - Name of file */
-               int        filetype)	// I - Enumerated file type
+Fl_File_Icon::find(const char *filename,// I - Name of file */
+                   int        filetype)	// I - Enumerated file type
 {
   Fl_File_Icon	*current;		// Current file in list
   struct stat	fileinfo;		// Information on file
@@ -247,14 +247,15 @@ Fl_File_Icon::find(const char *filename,	// I - Name of file */
 //
 
 void
-Fl_File_Icon::draw(int      x,	// I - Upper-lefthand X
-               int      y,	// I - Upper-lefthand Y
-	       int      w,	// I - Width of bounding box
-	       int	h,	// I - Height of bounding box
-               Fl_Color ic,	// I - Icon color...
-               int      active)	// I - Active or inactive?
+Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
+        	   int      y,		// I - Upper-lefthand Y
+		   int      w,		// I - Width of bounding box
+		   int      h,		// I - Height of bounding box
+        	   Fl_Color ic,		// I - Icon color...
+        	   int      active)	// I - Active or inactive?
 {
-  Fl_Color	c;		// Current color
+  Fl_Color	c,		// Current color
+		oc;		// Outline color
   short		*d;		// Pointer to data
   short		*prim;		// Pointer to start of primitive...
   double	scale;		// Scale of icon
@@ -280,7 +281,7 @@ Fl_File_Icon::draw(int      x,	// I - Upper-lefthand X
   if (active)
     fl_color(c);
   else
-    fl_color(inactive(c));
+    fl_color(fl_inactive(c));
 
   while (*d != END || prim)
     switch (*d)
@@ -303,24 +304,26 @@ Fl_File_Icon::draw(int      x,	// I - Upper-lefthand X
 	    case OUTLINEPOLYGON :
 		fl_end_polygon();
 
+        	oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
+	                	((unsigned short *)prim)[2]);
                 if (active)
 		{
-                  if (prim[1] == 256)
+                  if (oc == FL_ICON_COLOR)
 		    fl_color(ic);
 		  else
-		    fl_color((Fl_Color)prim[1]);
+		    fl_color(oc);
 		}
 		else
 		{
-                  if (prim[1] == 256)
-		    fl_color(inactive(ic));
+                  if (oc == FL_ICON_COLOR)
+		    fl_color(fl_inactive(ic));
 		  else
-		    fl_color(inactive((Fl_Color)prim[1]));
+		    fl_color(fl_inactive(oc));
 		}
 
 		fl_begin_loop();
 
-		prim += 2;
+		prim += 3;
 		while (*prim == VERTEX)
 		{
 		  fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
@@ -337,16 +340,17 @@ Fl_File_Icon::draw(int      x,	// I - Upper-lefthand X
 	  break;
 
       case COLOR :
-          if (d[1] == 256)
+          c = (Fl_Color)((((unsigned short *)d)[1] << 16) | 
+	                   ((unsigned short *)d)[2]);
+
+          if (c == FL_ICON_COLOR)
 	    c = ic;
-	  else
-	    c = (Fl_Color)d[1];
 
           if (!active)
-	    c = inactive(c);
+	    c = fl_inactive(c);
 
           fl_color(c);
-	  d += 2;
+	  d += 3;
 	  break;
 
       case LINE :
@@ -399,24 +403,26 @@ Fl_File_Icon::draw(int      x,	// I - Upper-lefthand X
       case OUTLINEPOLYGON :
 	  fl_end_polygon();
 
+          oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
+	                  ((unsigned short *)prim)[2]);
           if (active)
 	  {
-            if (prim[1] == 256)
+            if (oc == FL_ICON_COLOR)
 	      fl_color(ic);
 	    else
-	      fl_color((Fl_Color)prim[1]);
+	      fl_color(oc);
 	  }
 	  else
 	  {
-            if (prim[1] == 256)
-	      fl_color(inactive(ic));
+            if (oc == FL_ICON_COLOR)
+	      fl_color(fl_inactive(ic));
 	    else
-	      fl_color(inactive((Fl_Color)prim[1]));
+	      fl_color(fl_inactive(oc));
 	  }
 
 	  fl_begin_loop();
 
-	  prim += 2;
+	  prim += 3;
 	  while (*prim == VERTEX)
 	  {
 	    fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
@@ -451,11 +457,11 @@ Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
 
 void
 Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
-                    int            x,	// I - X position of label
-		    int            y,	// I - Y position of label
-		    int            w,	// I - Width of label
-		    int            h,	// I - Height of label
-		    Fl_Align       a)	// I - Label alignment (not used)
+                	int            x,	// I - X position of label
+			int            y,	// I - Y position of label
+			int            w,	// I - Width of label
+			int            h,	// I - Height of label
+			Fl_Align       a)	// I - Label alignment (not used)
 {
   Fl_File_Icon *icon;			// Pointer to icon data
 
@@ -475,7 +481,7 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 void
 Fl_File_Icon::load(const char *f)	// I - File to read from
 {
-  const char	*ext;		// File extension
+  const char	*ext;			// File extension
 
 
   if ((ext = filename_ext(f)) == NULL)
@@ -488,10 +494,8 @@ Fl_File_Icon::load(const char *f)	// I - File to read from
     load_fti(f);
   else if (strcmp(ext, ".xpm") == 0)
     load_xpm(f);
-#if 0
-  else if (strcmp(ext, ".png") == 0)
-    load_png(f);
-#endif /* 0 */
+//  else if (strcmp(ext, ".png") == 0)
+//    load_png(f);
   else
   {
     fprintf(stderr, "Fl_File_Icon::load(): Unknown file type for \"%s\".\n", f);
@@ -613,18 +617,19 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
       //
       //     name           FLTK color
       //     -------------  ----------
-      //     iconcolor      256; mapped to the icon color in Fl_File_Icon::draw()
+      //     iconcolor      FL_ICON_COLOR; mapped to the icon color in
+      //                    Fl_File_Icon::draw()
       //     shadowcolor    FL_DARK3
       //     outlinecolor   FL_BLACK
       if (strcmp(params, "iconcolor") == 0)
-        add_color(256);
+        add_color(FL_ICON_COLOR);
       else if (strcmp(params, "shadowcolor") == 0)
         add_color(FL_DARK3);
       else if (strcmp(params, "outlinecolor") == 0)
         add_color(FL_BLACK);
       else
       {
-        short c = atoi(params);	// Color value
+        int c = atoi(params);	// Color value
 
 
         if (c < 0)
@@ -635,7 +640,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 	                             (Fl_Color)(c & 15), 0.5));
 	}
 	else
-	  add_color(c);
+	  add_color((Fl_Color)c);
       }
     }
     else if (strcmp(command, "bgnline") == 0)
@@ -648,30 +653,37 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
     {
       add(OUTLINEPOLYGON);
       outline = add(0) - data_;
+      add(0);
     }
     else if (strcmp(command, "endoutlinepolygon") == 0 && outline)
     {
+      unsigned cval; // Color value
+
       // Set the outline color; see above for valid values...
       if (strcmp(params, "iconcolor") == 0)
-        data_[outline] = 256;
+        cval = FL_ICON_COLOR;
       else if (strcmp(params, "shadowcolor") == 0)
-        data_[outline] = FL_DARK3;
+        cval = FL_DARK3;
       else if (strcmp(params, "outlinecolor") == 0)
-        data_[outline] = FL_BLACK;
+        cval = FL_BLACK;
       else
       {
-        short c = atoi(params);	// Color value
+        int c = atoi(params);	// Color value
 
 
         if (c < 0)
 	{
 	  // Composite color; compute average...
 	  c = -c;
-	  data_[outline] = fl_color_average((Fl_Color)(c >> 4), (Fl_Color)(c & 15), 0.5);
+	  cval = fl_color_average((Fl_Color)(c >> 4), (Fl_Color)(c & 15), 0.5);
 	}
 	else
-	  data_[outline] = c;
+	  cval = c;
       }
+
+      // Store outline color...
+      data_[outline]     = cval >> 16;
+      data_[outline + 1] = cval;
 
       outline = 0;
       add(END);
@@ -725,7 +737,7 @@ Fl_File_Icon::load_xpm(const char *xpm)	// I - File to read from
   int		startx;			// Starting X coord
   int		width, height;		// Width and height of image
   int		ncolors;		// Number of colors
-  short		colors[256];		// Colors
+  Fl_Color	colors[256];		// Colors
   int		red, green, blue;	// Red, green, and blue values
 
 
@@ -828,12 +840,7 @@ Fl_File_Icon::load_xpm(const char *xpm)	// I - File to read from
 	    break;
       }
 
-      if (red == green && green == blue)
-        colors[ch] = FL_GRAY_RAMP + (FL_NUM_GRAY - 1) * red / 255;
-      else
-        colors[ch] = fl_color_cube((FL_NUM_RED - 1) * red / 255,
-	                           (FL_NUM_GREEN - 1) * green / 255,
-				   (FL_NUM_BLUE - 1) * blue / 255);
+      colors[ch] = fl_rgb_color(red, green, blue);
     }
     else
     {
@@ -921,13 +928,13 @@ Fl_File_Icon::load_system_icons(void)
   static int	init = 0;	// Have the icons been initialized?
   static short	plain[] =	// Plain file icon
 		{
-		  COLOR, 256, OUTLINEPOLYGON, FL_GRAY,
+		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
 		  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
 		  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
-		  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, FL_GRAY,
+		  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, 0, FL_GRAY,
 		  VERTEX, 6000, 9000, VERTEX, 6000, 7000,
 		  VERTEX, 8000, 7000, END,
-		  COLOR, FL_BLACK, LINE, VERTEX, 6000, 7000,
+		  COLOR, 0, FL_BLACK, LINE, VERTEX, 6000, 7000,
 		  VERTEX, 8000, 7000, VERTEX, 8000, 1000,
 		  VERTEX, 2000, 1000, END, LINE, VERTEX, 3000, 7000,
 		  VERTEX, 5000, 7000, END, LINE, VERTEX, 3000, 6000,
@@ -940,26 +947,26 @@ Fl_File_Icon::load_system_icons(void)
 		};
   static short	image[] =	// Image file icon
 		{
-		  COLOR, 256, OUTLINEPOLYGON, FL_GRAY,
+		  COLOR, -1, -1, OUTLINEPOLYGON, 0, FL_GRAY,
 		  VERTEX, 2000, 1000, VERTEX, 2000, 9000,
 		  VERTEX, 6000, 9000, VERTEX, 8000, 7000,
-		  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, FL_GRAY,
+		  VERTEX, 8000, 1000, END, OUTLINEPOLYGON, 0, FL_GRAY,
 		  VERTEX, 6000, 9000, VERTEX, 6000, 7000,
 		  VERTEX, 8000, 7000, END,
-		  COLOR, FL_BLACK, LINE, VERTEX, 6000, 7000,
+		  COLOR, 0, FL_BLACK, LINE, VERTEX, 6000, 7000,
 		  VERTEX, 8000, 7000, VERTEX, 8000, 1000,
 		  VERTEX, 2000, 1000, END,
-		  COLOR, FL_RED, POLYGON, VERTEX, 3500, 2500,
+		  COLOR, 0, FL_RED, POLYGON, VERTEX, 3500, 2500,
 		  VERTEX, 3000, 3000, VERTEX, 3000, 4000,
 		  VERTEX, 3500, 4500, VERTEX, 4500, 4500,
 		  VERTEX, 5000, 4000, VERTEX, 5000, 3000,
 		  VERTEX, 4500, 2500, END,
-		  COLOR, FL_GREEN, POLYGON, VERTEX, 5500, 2500,
+		  COLOR, 0, FL_GREEN, POLYGON, VERTEX, 5500, 2500,
 		  VERTEX, 5000, 3000, VERTEX, 5000, 4000,
 		  VERTEX, 5500, 4500, VERTEX, 6500, 4500,
 		  VERTEX, 7000, 4000, VERTEX, 7000, 3000,
 		  VERTEX, 6500, 2500, END,
-		  COLOR, FL_BLUE, POLYGON, VERTEX, 4500, 3500,
+		  COLOR, 0, FL_BLUE, POLYGON, VERTEX, 4500, 3500,
 		  VERTEX, 4000, 4000, VERTEX, 4000, 5000,
 		  VERTEX, 4500, 5500, VERTEX, 5500, 5500,
 		  VERTEX, 6000, 5000, VERTEX, 6000, 4000,
@@ -968,16 +975,16 @@ Fl_File_Icon::load_system_icons(void)
 		};
   static short	dir[] =		// Directory icon
 		{
-		  COLOR, 256, POLYGON, VERTEX, 1000, 1000,
+		  COLOR, -1, -1, POLYGON, VERTEX, 1000, 1000,
 		  VERTEX, 1000, 7500,  VERTEX, 9000, 7500,
 		  VERTEX, 9000, 1000, END,
 		  POLYGON, VERTEX, 1000, 7500, VERTEX, 2500, 9000,
 		  VERTEX, 5000, 9000, VERTEX, 6500, 7500, END,
-		  COLOR, FL_WHITE, LINE, VERTEX, 1500, 1500,
+		  COLOR, 0, FL_WHITE, LINE, VERTEX, 1500, 1500,
 		  VERTEX, 1500, 7000, VERTEX, 9000, 7000, END,
-		  COLOR, FL_BLACK, LINE, VERTEX, 9000, 7500,
+		  COLOR, 0, FL_BLACK, LINE, VERTEX, 9000, 7500,
 		  VERTEX, 9000, 1000, VERTEX, 1000, 1000, END,
-		  COLOR, FL_GRAY, LINE, VERTEX, 1000, 1000,
+		  COLOR, 0, FL_GRAY, LINE, VERTEX, 1000, 1000,
 		  VERTEX, 1000, 7500, VERTEX, 2500, 9000,
 		  VERTEX, 5000, 9000, VERTEX, 6500, 7500,
 		  VERTEX, 9000, 7500, END,
@@ -1221,5 +1228,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.1 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
 //

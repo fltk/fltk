@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Progress.cxx,v 1.1.2.1 2001/08/11 14:49:51 easysw Exp $"
+// "$Id: Fl_Progress.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
 //
 // Progress bar widget routines.
 //
@@ -73,7 +73,7 @@ void Fl_Progress::draw()
   {
     fl_clip(x() + bx, y() + by, w() - bw, h() - bh);
 
-    fl_color(active_r() ? color2() : inactive(color2()));
+    fl_color(active_r() ? color2() : fl_inactive(color2()));
     fl_polygon(x() + bx, y() + by,
                x() + bx, y() + h() - by,
 	       x() + 3 + progress - h() / 4, y() + h() - by,
@@ -104,5 +104,5 @@ Fl_Progress::Fl_Progress(int x, int y, int w, int h, const char* l)
 
 
 //
-// End of "$Id: Fl_Progress.cxx,v 1.1.2.1 2001/08/11 14:49:51 easysw Exp $".
+// End of "$Id: Fl_Progress.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
 //

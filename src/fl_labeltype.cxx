@@ -1,5 +1,5 @@
 //
-// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.3 2001/09/02 11:23:27 easysw Exp $"
+// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.4 2001/10/29 03:44:33 easysw Exp $"
 //
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -124,7 +124,7 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
   if (flags()&SHORTCUT_LABEL) fl_draw_shortcut = 1;
   Fl_Label l1 = label_;
   if (!active_r()) {
-    l1.color = inactive((Fl_Color)l1.color);
+    l1.color = fl_inactive((Fl_Color)l1.color);
     if (l1.deimage) l1.image = l1.deimage;
   }
   l1.draw(X,Y,W,H,a);
@@ -136,5 +136,5 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
 #include <FL/Fl_Input_.H>
 
 //
-// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.3 2001/09/02 11:23:27 easysw Exp $".
+// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.4 2001/10/29 03:44:33 easysw Exp $".
 //

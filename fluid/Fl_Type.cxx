@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.1 2001/10/29 03:44:32 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -130,7 +130,7 @@ extern const char* subclassname(Fl_Type*);
 void Widget_Browser::item_draw(void *v, int x, int y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
   x += 3 + l->level * 10;
-  if (l->new_selected) fl_color(contrast(FL_BLACK,FL_SELECTION_COLOR));
+  if (l->new_selected) fl_color(fl_contrast(FL_BLACK,FL_SELECTION_COLOR));
   else fl_color(FL_BLACK);
   if (l->is_parent()) {
     if (!l->next || l->next->level <= l->level) {
@@ -667,5 +667,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.1 2001/10/29 03:44:32 easysw Exp $".
 //

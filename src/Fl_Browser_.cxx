@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.6 2001/09/29 22:59:45 easysw Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.7 2001/10/29 03:44:32 easysw Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -309,7 +309,7 @@ J1:
     if (hh <= 0) continue;
     if ((damage()&(FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) || l == redraw1 || l == redraw2) {
       if (item_selected(l)) {
-	fl_color(active_r() ? selection_color() : inactive(selection_color()));
+	fl_color(active_r() ? selection_color() : fl_inactive(selection_color()));
 	fl_rectf(X, yy+Y, W, hh);
       } else if (!(damage()&FL_DAMAGE_ALL)) {
 	fl_color(color());
@@ -713,5 +713,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.6 2001/09/29 22:59:45 easysw Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.7 2001/10/29 03:44:32 easysw Exp $".
 //

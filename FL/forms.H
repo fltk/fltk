@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.7.2.1 2001/09/30 17:37:06 easysw Exp $"
+// "$Id: forms.H,v 1.7.2.7.2.2 2001/10/29 03:44:31 easysw Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -208,11 +208,11 @@ inline void fl_set_object_boxtype(Fl_Widget* o, Fl_Boxtype a) {o->box(a);}
 inline void fl_set_object_lsize(Fl_Widget* o,int s) {o->labelsize(s);}
 inline void fl_set_object_lstyle(Fl_Widget* o,int a) {
   o->labelfont((uchar)a); o->labeltype((Fl_Labeltype)(a>>8));}
-inline void fl_set_object_lcol(Fl_Widget* o, uchar a) {o->labelcolor(a);}
+inline void fl_set_object_lcol(Fl_Widget* o, unsigned a) {o->labelcolor(a);}
 #define fl_set_object_lcolor  fl_set_object_lcol
 inline void fl_set_object_lalign(Fl_Widget* o, Fl_Align a) {o->align(a);}
 #define fl_set_object_align fl_set_object_lalign
-inline void fl_set_object_color(Fl_Widget* o,uchar a,uchar b) {o->color(a,b);}
+inline void fl_set_object_color(Fl_Widget* o,unsigned a,unsigned b) {o->color(a,b);}
 inline void fl_set_object_label(Fl_Widget* o, const char* a) {o->label(a); o->redraw();}
 inline void fl_set_object_position(Fl_Widget*o,int x,int y) {o->position(x,y);}
 inline void fl_set_object_size(Fl_Widget* o, int w, int h) {o->size(w,h);}
@@ -528,7 +528,7 @@ inline void fl_set_chart_lstyle(Fl_Widget* o, Fl_Font v) {
   ((Fl_Chart*)o)->textfont(v);}
 inline void fl_set_chart_lsize(Fl_Widget* o, int v) {
   ((Fl_Chart*)o)->textsize(v);}
-inline void fl_set_chart_lcolor(Fl_Widget* o, uchar v) {
+inline void fl_set_chart_lcolor(Fl_Widget* o, unsigned v) {
   ((Fl_Chart*)o)->textcolor(v);}
 #define fl_set_chart_lcol   fl_set_chart_lcolor
 
@@ -684,7 +684,7 @@ inline void fl_set_input(Fl_Widget* o, const char* v) {
     ((Fl_Input*)o)->value(v);}
 inline void fl_set_input_return(Fl_Widget* o, int x) {
     ((Fl_Input*)o)->when((Fl_When)(x | FL_WHEN_RELEASE));}
-inline void fl_set_input_color(Fl_Widget* o, uchar a, uchar b) {
+inline void fl_set_input_color(Fl_Widget* o, unsigned a, unsigned b) {
     ((Fl_Input*)o)->textcolor(a);
     ((Fl_Input*)o)->cursor_color(b);
 }
@@ -838,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.7.2.1 2001/09/30 17:37:06 easysw Exp $".
+// End of "$Id: forms.H,v 1.7.2.7.2.2 2001/10/29 03:44:31 easysw Exp $".
 //

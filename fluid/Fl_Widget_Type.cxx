@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.5 2001/10/01 19:38:28 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.6 2001/10/29 03:44:32 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -846,7 +846,7 @@ void color_cb(Fl_Button* i, void *v) {
 	q->o->color(c); q->o->redraw();
     }
   }
-  i->color(c); i->labelcolor(contrast(FL_BLACK,c)); i->redraw();
+  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
 }
 
 void color2_cb(Fl_Button* i, void *v) {
@@ -863,7 +863,7 @@ void color2_cb(Fl_Button* i, void *v) {
 	q->o->selection_color(c); q->o->redraw();
     }
   }
-  i->color(c); i->labelcolor(contrast(FL_BLACK,c)); i->redraw();
+  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
 }
 
 void labelcolor_cb(Fl_Button* i, void *v) {
@@ -878,7 +878,7 @@ void labelcolor_cb(Fl_Button* i, void *v) {
 	q->o->labelcolor(c); q->redraw();
     }
   }
-  i->color(c); i->labelcolor(contrast(FL_BLACK,c)); i->redraw();
+  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
 }
 
 static Fl_Button* relative(Fl_Widget* o, int i) {
@@ -1078,7 +1078,7 @@ void textcolor_cb(Fl_Button* i, void* v) {
 	q->textstuff(3,n,s,c); q->o->redraw();
       }
   }
-  i->color(c); i->labelcolor(contrast(FL_BLACK,c)); i->redraw();
+  i->color(c); i->labelcolor(fl_contrast(FL_BLACK,c)); i->redraw();
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1957,5 +1957,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.5 2001/10/01 19:38:28 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.6 2001/10/29 03:44:32 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.3 2001/09/04 13:13:29 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.4 2001/10/29 03:44:32 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -132,21 +132,21 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
   l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
-  if (!active()) l.color = inactive((Fl_Color)l.color);
+  if (!active()) l.color = fl_inactive((Fl_Color)l.color);
   Fl_Color color = m ? m->color() : FL_GRAY;
   if (selected) {
     Fl_Color r = m ? m->selection_color() : FL_SELECTION_COLOR;
     Fl_Boxtype b = m && m->down_box() ? m->down_box() : FL_FLAT_BOX;
-    if (contrast(r,color)!=r) { // back compatability boxtypes
+    if (fl_contrast(r,color)!=r) { // back compatability boxtypes
       if (selected == 2) { // menu title
 	r = color;
 	b = m ? m->box() : FL_UP_BOX;
       } else {
 	r = (Fl_Color)(FL_COLOR_CUBE-1); // white
-	l.color = contrast((Fl_Color)labelcolor_, r);
+	l.color = fl_contrast((Fl_Color)labelcolor_, r);
       }
     } else {
-      l.color = contrast((Fl_Color)labelcolor_, r);
+      l.color = fl_contrast((Fl_Color)labelcolor_, r);
     }
     if (selected == 2) { // menu title
       fl_draw_box(b, x, y, w, h, r);
@@ -752,5 +752,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.3 2001/09/04 13:13:29 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.4 2001/10/29 03:44:32 easysw Exp $".
 //

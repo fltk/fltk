@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.2 2001/08/06 23:51:39 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.3 2001/10/29 03:44:32 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -1591,6 +1591,7 @@ void Fl_Text_Display::update_v_scrollbar() {
      bar maximum value is chosen to generally represent the size of the whole
      buffer, with minor adjustments to keep the scroll bar widget happy */
   mVScrollBar->value(mTopLineNum, mNVisibleLines, 1, mNBufferLines+2);
+  mVScrollBar->linesize(1);
 }
 
 /*
@@ -1877,6 +1878,7 @@ int Fl_Text_Display::handle(int event) {
 
   switch (event) {
     case FL_PUSH: {
+        Fl::focus(this); // Take focus from any child widgets...
         if (Fl::event_state()&FL_SHIFT) return handle(FL_DRAG);
         dragging = 1;
         int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
@@ -1948,5 +1950,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.2 2001/08/06 23:51:39 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.3 2001/10/29 03:44:32 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.2 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.3 2001/10/29 03:44:32 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -681,8 +681,8 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Return_Button_type},
   {0,0,cb,(void*)&Fl_Light_Button_type},
   {0,0,cb,(void*)&Fl_Check_Button_type},
-  {0,0,cb,(void*)&Fl_Round_Button_type},
   {0,0,cb,(void*)&Fl_Repeat_Button_type},
+  {0,0,cb,(void*)&Fl_Round_Button_type},
 {0},
 {"valuators",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Slider_type},
@@ -887,5 +887,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.2 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.3 2001/10/29 03:44:32 easysw Exp $".
 //

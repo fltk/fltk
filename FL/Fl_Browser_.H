@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.H,v 1.6.2.4 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Browser_.H,v 1.6.2.4.2.1 2001/10/29 03:44:31 easysw Exp $"
 //
 // Common browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -50,8 +50,9 @@ class Fl_Browser_ : public Fl_Group {
   int real_hposition_;	// the current horizontal scrolling position
   int offset_;		// how far down top_ item the real_position is
   int max_width;	// widest object seen so far
-  uchar textfont_, textsize_, textcolor_;
   uchar has_scrollbar_;	// which scrollbars are enabled
+  uchar textfont_, textsize_;
+  unsigned textcolor_;
   void* top_;		// which item scrolling position is in
   void* selection_;	// which is selected (except for FL_MULTI_BROWSER)
   void *redraw1,*redraw2; // minimal update pointers
@@ -132,7 +133,7 @@ public:
   uchar textsize() const {return textsize_;}
   void textsize(uchar s) {textsize_ = s;}
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-  void textcolor(uchar n) {textcolor_ = n;}
+  void textcolor(unsigned n) {textcolor_ = n;}
 
   static void scrollbar_width(int b) {scrollbar_width_ = b;}
   static int scrollbar_width() {return scrollbar_width_;}
@@ -146,5 +147,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser_.H,v 1.6.2.4 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Browser_.H,v 1.6.2.4.2.1 2001/10/29 03:44:31 easysw Exp $".
 //

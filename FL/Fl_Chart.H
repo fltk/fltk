@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.H,v 1.6.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Chart.H,v 1.6.2.3.2.1 2001/10/29 03:44:31 easysw Exp $"
 //
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@
 
 struct FL_CHART_ENTRY {
    float val;
-   uchar col;
+   unsigned col;
    char str[FL_CHART_LABEL_MAX+1];
 };
 
@@ -57,15 +57,16 @@ class Fl_Chart : public Fl_Widget {
     FL_CHART_ENTRY *entries;
     double min,max;
     uchar autosize_;
-    uchar textfont_,textsize_,textcolor_;
+    uchar textfont_,textsize_;
+    unsigned textcolor_;
 protected:
     FL_EXPORT void draw();
 public:
     FL_EXPORT Fl_Chart(int,int,int,int,const char * = 0);
     FL_EXPORT void clear();
-    FL_EXPORT void add(double, const char * =0, uchar=0);
-    FL_EXPORT void insert(int, double, const char * =0, uchar=0);
-    FL_EXPORT void replace(int, double, const char * =0, uchar=0);
+    FL_EXPORT void add(double, const char * =0, unsigned=0);
+    FL_EXPORT void insert(int, double, const char * =0, unsigned=0);
+    FL_EXPORT void replace(int, double, const char * =0, unsigned=0);
     void bounds(double *a,double *b) const {*a = min; *b = max;}
     FL_EXPORT void bounds(double a,double b);
     int size() const {return numb;}
@@ -76,7 +77,7 @@ public:
     uchar textsize() const {return textsize_;}
     void textsize(uchar s) {textsize_ = s;}
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-    void textcolor(uchar n) {textcolor_ = n;}
+    void textcolor(unsigned n) {textcolor_ = n;}
     uchar autosize() const {return autosize_;}
     void autosize(uchar n) {autosize_ = n;}
 };
@@ -84,5 +85,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Chart.H,v 1.6.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Chart.H,v 1.6.2.3.2.1 2001/10/29 03:44:31 easysw Exp $".
 //

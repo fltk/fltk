@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.8 2001/10/22 21:15:11 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.9 2001/10/29 03:44:31 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@ struct Fl_Label {
   uchar type;
   uchar font;
   uchar size;
-  uchar color;
+  unsigned color;
   FL_EXPORT void draw(int,int,int,int, Fl_Align) const ;
   FL_EXPORT void measure(int&, int&) const ;
 };
@@ -58,12 +58,12 @@ class Fl_Widget {
   void* user_data_;
   short x_,y_,w_,h_;
   Fl_Label label_;
-  uchar type_;
   int flags_;
+  unsigned color_;
+  unsigned color2_;
+  uchar type_;
   uchar damage_;
   uchar box_;
-  uchar color_;
-  uchar color2_;
   uchar align_;
   uchar when_;
 
@@ -121,17 +121,17 @@ public:
   Fl_Boxtype box() const {return (Fl_Boxtype)box_;}
   void box(Fl_Boxtype a) {box_ = a;}
   Fl_Color color() const {return (Fl_Color)color_;}
-  void color(uchar a) {color_ = a;}
+  void color(unsigned a) {color_ = a;}
   Fl_Color selection_color() const {return (Fl_Color)color2_;}
-  void selection_color(uchar a) {color2_ = a;}
-  void color(uchar a, uchar b) {color_=a; color2_=b;}
+  void selection_color(unsigned a) {color2_ = a;}
+  void color(unsigned a, unsigned b) {color_=a; color2_=b;}
   const char* label() const {return label_.value;}
   void label(const char* a) {label_.value=a;}
   void label(Fl_Labeltype a,const char* b) {label_.type = a; label_.value = b;}
   Fl_Labeltype labeltype() const {return (Fl_Labeltype)label_.type;}
   void labeltype(Fl_Labeltype a) {label_.type = a;}
   Fl_Color labelcolor() const {return (Fl_Color)label_.color;}
-  void labelcolor(uchar a) {label_.color=a;}
+  void labelcolor(unsigned a) {label_.color=a;}
   Fl_Font labelfont() const {return (Fl_Font)label_.font;}
   void labelfont(uchar a) {label_.font=a;}
   uchar labelsize() const {return label_.size;}
@@ -196,7 +196,7 @@ public:
 
   // back compatability only:
   Fl_Color color2() const {return (Fl_Color)color2_;}
-  void color2(uchar a) {color2_ = a;}
+  void color2(unsigned a) {color2_ = a;}
 };
 
 // reserved type numbers (necessary for my cheapo RTTI) start here.
@@ -207,5 +207,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.8 2001/10/22 21:15:11 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.9 2001/10/29 03:44:31 easysw Exp $".
 //

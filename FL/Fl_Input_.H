@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.6.2.4 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Input_.H,v 1.6.2.4.2.1 2001/10/29 03:44:31 easysw Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -50,11 +50,11 @@ class Fl_Input_ : public Fl_Widget {
   int mu_p;
   int maximum_size_;
 
+  uchar erase_cursor_only;
   uchar textfont_;
   uchar textsize_;
-  uchar textcolor_;
-  uchar cursor_color_;
-  uchar erase_cursor_only;
+  unsigned textcolor_;
+  unsigned cursor_color_;
 
   FL_EXPORT const char* expand(const char*, char*) const;
   FL_EXPORT double expandpos(const char*, const char*, const char*, int*) const;
@@ -114,13 +114,13 @@ public:
   uchar textsize() const {return textsize_;}
   void textsize(uchar s) {textsize_ = s;}
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-  void textcolor(uchar n) {textcolor_ = n;}
+  void textcolor(unsigned n) {textcolor_ = n;}
   Fl_Color cursor_color() const {return (Fl_Color)cursor_color_;}
-  void cursor_color(uchar n) {cursor_color_ = n;}
+  void cursor_color(unsigned n) {cursor_color_ = n;}
 };
 
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.6.2.4 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.1 2001/10/29 03:44:31 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: input.cxx,v 1.5.2.4 2001/05/05 23:39:01 spitzak Exp $"
+// "$Id: input.cxx,v 1.5.2.4.2.1 2001/10/29 03:44:33 easysw Exp $"
 //
 // Input field test program for the Fast Light Tool Kit (FLTK).
 //
@@ -67,7 +67,7 @@ void color_cb(Fl_Widget* button, void* v) {
   uchar r,g,b; Fl::get_color(c, r,g,b);
   if (fl_color_chooser(0,r,g,b)) {
     Fl::set_color(c,r,g,b); Fl::redraw();
-    button->labelcolor(contrast(FL_BLACK,c));
+    button->labelcolor(fl_contrast(FL_BLACK,c));
     button->redraw();
   }
 }
@@ -107,10 +107,10 @@ int main(int argc, char **argv) {
   b->color(input[0]->color()); b->callback(color_cb, (void*)0);
   b = new Fl_Button(220,y1,100,25,"selection_color"); y1 += 25;
   b->color(input[0]->selection_color()); b->callback(color_cb, (void*)1);
-  b->labelcolor(contrast(FL_BLACK,b->color()));
+  b->labelcolor(fl_contrast(FL_BLACK,b->color()));
   b = new Fl_Button(220,y1,100,25,"textcolor"); y1 += 25;
   b->color(input[0]->textcolor()); b->callback(color_cb, (void*)2);
-  b->labelcolor(contrast(FL_BLACK,b->color()));
+  b->labelcolor(fl_contrast(FL_BLACK,b->color()));
 
   window->end();
   window->show(argc,argv);
@@ -118,5 +118,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: input.cxx,v 1.5.2.4 2001/05/05 23:39:01 spitzak Exp $".
+// End of "$Id: input.cxx,v 1.5.2.4.2.1 2001/10/29 03:44:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Browser.cxx,v 1.1.2.1 2001/08/18 23:42:36 easysw Exp $"
+// "$Id: Fl_Check_Browser.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
 //
 // Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -131,7 +131,7 @@ void Fl_Check_Browser::item_draw(void *v, int x, int y, int, int) const {
 	}
 	fl_font(textfont(), size);
 	if (i->selected) {
-		col = contrast(col, selection_color());
+		col = fl_contrast(col, selection_color());
 	}
 	fl_color(col);
 	fl_draw(s, x + CHECK_SIZE + 8, y + size - 1);
@@ -259,5 +259,5 @@ void Fl_Check_Browser::check_none() {
 
 
 //
-// End of "$Id: Fl_Check_Browser.cxx,v 1.1.2.1 2001/08/18 23:42:36 easysw Exp $".
+// End of "$Id: Fl_Check_Browser.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.5 2001/08/06 03:17:43 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.6 2001/10/29 03:44:31 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -288,14 +288,14 @@ enum Fl_Color {	// standard colors
   FL_COLOR_CUBE		= 56
 };
 
-#define inactive fl_inactive
 FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
-#define contrast fl_contrast
 FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
-
+inline Fl_Color fl_rgb_color(uchar r, uchar g, uchar b) {
+  return (Fl_Color)(((((r << 8) | g) << 8) | b) << 8);
+}
 #define FL_NUM_GRAY	24
 inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 #define FL_NUM_RED	5
@@ -364,5 +364,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.5 2001/08/06 03:17:43 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.6 2001/10/29 03:44:31 easysw Exp $".
 //
