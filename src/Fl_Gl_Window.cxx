@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.14 2002/11/15 16:17:41 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.15 2002/12/04 04:44:54 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -360,6 +360,8 @@ void Fl_Gl_Window::init() {
   overlay  = 0;
   valid_   = 0;
   damage1_ = 0;
+
+  resize(x(), y(), w(), h());
 }
 
 void Fl_Gl_Window::draw_overlay() {}
@@ -367,5 +369,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.14 2002/11/15 16:17:41 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.15 2002/12/04 04:44:54 easysw Exp $".
 //
