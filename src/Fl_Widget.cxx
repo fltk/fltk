@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.25 2004/11/23 19:47:52 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.26 2004/11/23 19:51:03 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -28,6 +28,8 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
+#include <stdlib.h>
+#include "flstring.h"
 
 
 ////////////////////////////////////////////////////////////////
@@ -129,7 +131,7 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 // However, it is only legal to destroy a "root" such as an Fl_Window,
 // and automatic destructors may be called.
 Fl_Widget::~Fl_Widget() {
-  if (flags() & COPIED_LABEL) free(label_.value);
+  if (flags() & COPIED_LABEL) free((void *)(label_.value));
   parent_ = 0; // Don't throw focus to a parent widget.
   fl_throw_focus(this);
 }
@@ -249,7 +251,7 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 void
 Fl_Widget::label(const char *a) {
   if (flags() & COPIED_LABEL) {
-    free(label_.value);
+    free((void *)(label_.value));
     clear_flag(COPIED_LABEL);
   }
   label_.value=a;
@@ -259,7 +261,7 @@ Fl_Widget::label(const char *a) {
 
 void
 Fl_Widget::copy_label(const char *a) {
-  if (flags() & COPIED_LABEL) free(label_.value);
+  if (flags() & COPIED_LABEL) free((void *)(label_.value));
   set_flag(COPIED_LABEL);
   label_.value=strdup(a);
   redraw_label();
@@ -267,5 +269,5 @@ Fl_Widget::copy_label(const char *a) {
 
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.25 2004/11/23 19:47:52 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.26 2004/11/23 19:51:03 easysw Exp $".
 //
