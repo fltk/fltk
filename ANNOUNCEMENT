@@ -118,7 +118,7 @@ Changes since FLTK 1.1.4 include:
 	  size of the number buffer (STR #268)
 	- The keypad Enter key works as the normal Enter/Return
 	  key in common widgets (STR #191)
-	- Fixed some OS/2-specific build problems (STR #185 and
+	- Fixed some OS/2-specific build problems (STR #185, STR
 	  #197)
 	- Calling Fl_Text_Display::buffer() with the same buffer
 	  would cause an application to lockup (STR #196)
@@ -264,8 +264,8 @@ exceptions that allow for static linking.
 	size of the number buffer (<a href='http://www.fltk.org/str.php?L268'>STR #268</a>)
 	<li>The keypad Enter key works as the normal Enter/Return
 	key in common widgets (<a href='http://www.fltk.org/str.php?L191'>STR #191</a>)
-	<li>Fixed some OS/2-specific build problems (<a href='http://www.fltk.org/str.php?L185'>STR #185</a> and
-	#197)
+	<li>Fixed some OS/2-specific build problems (<a href='http://www.fltk.org/str.php?L185'>STR #185</a>,
+	<a href='http://www.fltk.org/str.php?L197'>STR #197</a>)
 	<li>Calling Fl_Text_Display::buffer() with the same buffer
 	would cause an application to lockup (<a href='http://www.fltk.org/str.php?L196'>STR #196</a>)
 	<li>Some of the widgets could crash an application if the
