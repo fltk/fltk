@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.13 1998/11/08 14:36:56 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.14 1998/11/08 14:39:09 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -252,16 +252,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_PAINT: {
  
-#if USE_COLORMAP
-    // Before we do a paint we need to tell Windows what color palette to
-    // use.  This is because Windows will map our color indices to the
-    // correct colors in the current hardware color palette.  This is
-    // confusing to say the least, but that's Winders for ya!
-
-    fl_GetDC(hWnd);
-    fl_select_palette();
-#endif
-
     // This might be a better alternative, where we fully ignore NT's
     // "facilities" for painting. MS expects applications to paint according
     // to a very restrictive paradigm, and this is the way I found of
@@ -755,6 +745,16 @@ HDC fl_GetDC(HWND w) {
 // make X drawing go into this window (called by subclass flush() impl.)
 void Fl_Window::make_current() {
   fl_GetDC(fl_xid(this));
+
+#if USE_COLORMAP
+  // Windows maintains a hardware and software color palette; the
+  // SelectPalette() call updates the current soft->hard mapping
+  // for all drawing calls, so we must select it here before any
+  // code does any drawing...
+
+  fl_select_palette();
+#endif // USE_COLORMAP
+
   current_ = this;
   fl_clip_region(0);
 }
@@ -813,5 +813,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.13 1998/11/08 14:36:56 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.14 1998/11/08 14:39:09 mike Exp $".
 //
