@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.2 2001/10/30 17:40:02 easysw Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.3 2001/12/17 01:02:16 easysw Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -149,7 +149,14 @@ void Fl_Menu_Item_Type::write_static() {
     write_c(", %s", ut);
     if (use_v) write_c(" v");
     write_c(") {\n  %s", callback());
-    if (*(d-1) != ';') write_c(";");
+    if (*(d-1) != ';') {
+      const char *p = strrchr(callback(), '\n');
+      if (p) p ++;
+      else p = callback();
+      // Only add trailing semicolon if the last line is not a preprocessor
+      // statement...
+      if (*p != '#' && *p) write_c(";");
+    }
     write_c("\n}\n");
     if (k) {
       write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
@@ -460,5 +467,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.2 2001/10/30 17:40:02 easysw Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.3 2001/12/17 01:02:16 easysw Exp $".
 //

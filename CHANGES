@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Updated FLUID to only append a trailing semicolon to
+	  code lines in a callback (so "#include" and friends
+	  will work...)
 	- The Fl_Color_Chooser widget now supports keyboard
 	  navigation.
 	- Fixed button and valuator widgets to call Fl::focus()
