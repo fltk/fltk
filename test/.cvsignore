@@ -82,3 +82,4 @@ valuators
 valuators.cxx
 valuators.h
 *.bck
+*.exe
