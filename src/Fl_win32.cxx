@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.1 1999/03/18 20:04:13 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.2 1999/03/25 13:32:52 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -143,8 +143,10 @@ double fl_wait(int timeout_flag, double time) {
     GetMessage(&fl_msg, NULL, 0, 0);
     have_message = 1;
   } else {
-    if (time >= 0.001) {
-      int timerid = SetTimer(NULL, 0, int(time*1000), NULL);
+    if (time >= 0.0) {
+      int t = (int)(time * 1000.0);
+      if (t <= 0) t = 1;
+      int timerid = SetTimer(NULL, 0, t, NULL);
       GetMessage(&fl_msg, NULL, 0, 0);
       KillTimer(NULL, timerid);
       have_message = 1;
@@ -917,5 +919,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.1 1999/03/18 20:04:13 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.2 1999/03/25 13:32:52 mike Exp $".
 //
