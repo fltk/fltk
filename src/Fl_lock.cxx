@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_lock.cxx,v 1.13.2.5 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: Fl_lock.cxx,v 1.13.2.6 2004/09/12 03:46:21 easysw Exp $"
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
@@ -127,21 +127,25 @@ void Fl::awake(void* msg) {
 #  include <unistd.h>
 #  include <pthread.h>
 
-#  ifdef PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+#  if defined (PTHREAD_MUTEX_RECURSIVE_NP)
 // Linux supports recursive locks, use them directly:
 
-static pthread_mutex_t fltk_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+static bool minit;
+static pthread_mutex_t fltk_mutex;
+// this is needed for the Fl_Mutex constructor:
+pthread_mutexattr_t Fl_Mutex_attrib = {PTHREAD_MUTEX_RECURSIVE_NP};
 
 static void lock_function() {
+  if (!minit) {
+    pthread_mutex_init(&fltk_mutex, &Fl_Mutex_attrib);
+    minit = true;
+  }
   pthread_mutex_lock(&fltk_mutex);
 }
 
 void Fl::unlock() {
   pthread_mutex_unlock(&fltk_mutex);
 }
-
-// this is needed for the Fl_Mutex constructor:
-pthread_mutexattr_t Fl_Mutex_attrib = {PTHREAD_MUTEX_RECURSIVE_NP};
 
 #  else
 // Make a recursive lock out of the pthread mutex:
@@ -200,5 +204,5 @@ void Fl::awake(void* msg) {
 #endif
 
 //
-// End of "$Id: Fl_lock.cxx,v 1.13.2.5 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: Fl_lock.cxx,v 1.13.2.6 2004/09/12 03:46:21 easysw Exp $".
 //

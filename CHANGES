@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.5rc3
 	- Documentation updates (STR #505, STR #513)
 	- Updated PNG library source to 1.2.6 + wutil patch.
 	- Updated ZLIB library source to 1.2.1.
+	- Fixed a compile problem with the Linux 2.6 threading
+	  support (STR #483)
 	- Fixed problems with 2-byte Xpm files on 64-bit
 	  platforms (STR #525)
 	- FLTK didn't handle the ReparentNotify event on X11
