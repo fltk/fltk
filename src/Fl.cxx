@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.10 1999/07/22 21:37:03 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.11 1999/07/27 17:24:13 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -508,7 +508,8 @@ int Fl::handle(int event, Fl_Window* window)
 
     // make Escape key close windows:
     if (event_key()==FL_Escape) {
-      window->do_callback();
+      w = modal(); if (!w) w = window;
+      w->do_callback();
       return 1;
     }
 
@@ -694,5 +695,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.10 1999/07/22 21:37:03 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.11 1999/07/27 17:24:13 bill Exp $".
 //

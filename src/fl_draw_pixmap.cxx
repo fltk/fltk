@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4 1999/01/07 19:17:38 mike Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.1 1999/07/27 17:24:13 bill Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -181,9 +181,6 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
 	previous_word = p;
 	while (*p && !isspace(*p)) p++;
       }
-      // copy the color name and look it up:
-      char name[256];
-      char *q; for (q = name; *p && !isspace(*p); *q++ = *p++); *q++ = 0;
       uchar *c = (uchar *)&d.colors[index&255];
 #ifdef U64
       *(U64*)c = 0;
@@ -192,10 +189,10 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
 #endif
 #endif
 #ifdef WIN32
-      if (fl_parse_color(name, c[0], c[1], c[2])) {;
+      if (fl_parse_color(p, c[0], c[1], c[2])) {;
 #else
       XColor x;
-      if (XParseColor(fl_display, fl_colormap, name, &x)) {
+      if (XParseColor(fl_display, fl_colormap, p, &x)) {
 	c[0] = x.red>>8; c[1] = x.green>>8; c[2] = x.blue>>8;
 #endif
       } else { // assumme "None" or "#transparent" for any errors
@@ -244,5 +241,5 @@ int fl_draw_pixmap(/*const*/char*const* data, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4 1999/01/07 19:17:38 mike Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.1 1999/07/27 17:24:13 bill Exp $".
 //
