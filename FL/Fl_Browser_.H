@@ -86,7 +86,7 @@ protected:
   void new_list(); // completely clobber all data, as though list replaced
   void deleting(void *a); // get rid of any pointers to a
   void replacing(void *a,void *b); // change a pointers to b
-  void inserting(void *a,void *b); // insert a before b
+  void inserting(void *a,void *b); // insert b near a
   int displayed(void *) const ; // true if this line is visible
   void redraw_line(void *); // minimal update, no change in size
   void redraw_lines() {damage(FL_DAMAGE_SCROLL);} // redraw all of them

@@ -1,7 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
-	- Documentation fixes (STR #648, STR #692, STR #744, STR
-	  #745)
+	- Documentation fixes (STR #648, STR #692, STR #730, STR
+	  #744, STR #745)
 	- The keyboard shortcut handling code did not handle
 	  8-bit characters properly (STR #731)
 	- Fl_JPEG_Image could still crash an app with a corrupt
