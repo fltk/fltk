@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.3 1998/10/21 14:21:03 mike Exp $"
+// "$Id: fl_vertex.cxx,v 1.4 1998/12/21 13:54:02 mike Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ void fl_rotate(double d) {
   }
 }
 
-static XPoint *p;
+static XPoint *p = (XPoint *)0;
 // typedef what the x,y fields in a point are:
 #ifdef WIN32
 typedef int COORD_T;
@@ -223,5 +223,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.3 1998/10/21 14:21:03 mike Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.4 1998/12/21 13:54:02 mike Exp $".
 //
