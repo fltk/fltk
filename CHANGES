@@ -1,7 +1,40 @@
 CHANGES SINCE FLTK 1.0.10
 
+	- CHANGED THE DEFAULT RUN-TIME LINKING TO "MULTITHREADED
+	  DLL". You'll need to change your project settings to
+	  use this as well or you'll get errors.
+
+	- Check for OpenGL headers before checking to see if
+	  OpenGL is supported.  This should eliminate compile
+	  errors due to missing non-FLTK header files...
+
 	- Add -D_INCLUDE_POSIX_SOURCE option when compiling with
 	  the HP compilers.
+
+
+	- Replaced remaining _WIN32 symbols with WIN32
+
+	- Removed reference to unused GL/glu.h header file, which is missing on
+	  some Linux systems.
+
+	- Fl_Gl_Window has a new method to allow you to get and set the context:
+
+	      void Fl_Gl_Window::context(void*, int destroy = 0)
+	      void* Fl_Gl_Window::context() const;
+
+	  Return or set a pointer to the GLContext that this window is
+	  using. This is a system-dependent structure, but it is portable to
+	  copy the context from one window to another. You can also set it to
+	  NULL, which will force FLTK to recreate the context the next time
+	  make_current() is called, this is useful for getting around bugs in
+	  OpenGL implementations.
+
+	  If destroy_flag is true the context will be destroyed by fltk when
+	  the window is destroyed, or when the mode() is changed, or the next
+	  time context(x) is called.
+
+	- Some cleanup of Fl_Gl_Choice to move most of the system dependent
+	  #ifdefs into Fl_Gl_Choice.cxx.
 
 	- Fl_Gl_Window does not set drawbuffer(BACKBUFFER) for
 	  single-buffered windows.
@@ -38,6 +71,8 @@ CHANGES SINCE FLTK 1.0.10
 	  until you type a composed character.
 
 	- Added simple FLTK and FLUID manual pages.
+
+	- Fl_Gl_Window leaked memory under WIN32.
 
 
 CHANGES SINCE FLTK 1.0.9
