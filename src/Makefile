@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.16 1999/03/04 14:54:18 mike Exp $"
+# "$Id: Makefile,v 1.17 1999/03/09 18:32:44 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -150,10 +150,16 @@ LIBRARY = ../lib/$(LIBNAME)
 
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 
-$(LIBRARY) : $(OBJECTS)
-	@echo $(LIBCOMMAND) $(LIBRARY) ...
-	@$(LIBCOMMAND) $(LIBRARY) $(OBJECTS)
-	@$(RANLIB) $(LIBRARY)
+all:	$(LIBRARY) ../lib/libfltk.a
+
+../lib/libfltk.a: $(OBJECTS)
+	@echo $(LIBCOMMAND) ../lib/libfltk.a ...
+	@$(LIBCOMMAND) ../lib/libfltk.a $(OBJECTS)
+	@$(RANLIB) ../lib/libfltk.a
+
+../lib/libfltk.sl.1 ../lib/libfltk.so.1: $(OBJECTS)
+	@echo $(DSOCOMMAND) $(LIBRARY) ...
+	@$(DSOCOMMAND) $(LIBRARY) $(OBJECTS)
 
 .SUFFIXES:	.cxx .h .o
 
@@ -195,5 +201,5 @@ install: ../lib/$(LIBNAME)
 	-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.16 1999/03/04 14:54:18 mike Exp $".
+# End of "$Id: Makefile,v 1.17 1999/03/09 18:32:44 mike Exp $".
 #
