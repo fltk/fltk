@@ -69,22 +69,26 @@ void Fl_Progress::draw()
   else
     progress = 0;
 
-  // Draw the box...
-  if (progress > 0)
-  {
+  // Draw the box and label...
+  if (progress > 0) {
+    Fl_Color c = labelcolor();
+    labelcolor(fl_contrast(labelcolor(), color2()));
+
     fl_clip(x(), y(), progress + bx, h());
       draw_box(box(), x(), y(), w(), h(), active_r() ? color2() : fl_inactive(color2()));
+      draw_label(tx, y() + by, tw, h() - bh);
     fl_pop_clip();
+
+    labelcolor(c);
 
     fl_clip(tx + progress, y(), w() - progress, h());
       draw_box(box(), x(), y(), w(), h(), active_r() ? color() : fl_inactive(color()));
+      draw_label(tx, y() + by, tw, h() - bh);
     fl_pop_clip();
-  }
-  else
+  } else {
     draw_box(box(), x(), y(), w(), h(), color());
-
-  // Finally, the label...
-  draw_label(tx, y() + by, tw, h() - bh);
+    draw_label(tx, y() + by, tw, h() - bh);
+  }
 }
 
 
