@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.13 2000/05/16 12:26:03 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.14 2000/05/26 08:46:17 bill Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1332,8 +1332,6 @@ void Fl_Widget_Type::write_code1() {
       write_c("new %s(0, 0, %d, %d", t, o->w(), o->h());
     else
       write_c("new %s(%d, %d", t, o->w(), o->h());
-    // prevent type() code from being emitted:
-    ((Fl_Widget_Type*)factory)->o->type(o->type());
   } else {
     write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
   }
@@ -1365,7 +1363,7 @@ void Fl_Widget_Type::write_code1() {
 // this is split from write_code1() for Fl_Window_Type:
 void Fl_Widget_Type::write_widget_code() {
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
-  if (o->type() != tplate->type())
+  if (o->type() != tplate->type() && !is_window())
     write_c("%so->type(%d);\n", indent(), o->type());
   if (o->box() != tplate->box())
     write_c("%so->box(FL_%s);\n", indent(), boxname(o->box()));
@@ -1768,5 +1766,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.13 2000/05/16 12:26:03 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.14 2000/05/26 08:46:17 bill Exp $".
 //
