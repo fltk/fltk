@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.36 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.37 2004/08/31 22:00:47 matthiaswm Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -381,7 +381,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #elif defined(__APPLE_QUARTZ__)
   if (id && fl_gc) {
     CGRect rect = { X, Y, W, H };
-    Fl_X::q_begin_image(rect, cx, cy);
+    Fl_X::q_begin_image(rect, cx, cy, w(), h());
     CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
     Fl_X::q_end_image();
   }
@@ -418,5 +418,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.36 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.37 2004/08/31 22:00:47 matthiaswm Exp $".
 //

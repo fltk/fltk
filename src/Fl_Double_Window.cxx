@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.11 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.12 2004/08/31 22:00:47 matthiaswm Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -166,7 +166,7 @@ extern void fl_restore_clip();
 #elif defined(__APPLE_QUARTZ__)
 
 Fl_Offscreen fl_create_offscreen(int w, int h) {
-  void *data = malloc(w*h*4);
+  void *data = calloc(w*h,4);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   CGContextRef ctx = CGBitmapContextCreate(
     data, w, h, 8, w*4, lut, kCGImageAlphaNoneSkipLast);
@@ -174,19 +174,28 @@ Fl_Offscreen fl_create_offscreen(int w, int h) {
   return (Fl_Offscreen)ctx;
 }
 
+Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
+  void *data = calloc(w*h,4);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  CGContextRef ctx = CGBitmapContextCreate(
+    data, w, h, 8, w*4, lut, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(lut);
+  return (Fl_Offscreen)ctx;
+}
+
 void fl_copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
-#warning : test this implementation!
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);
   int sh = CGBitmapContextGetHeight(src);
+  CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   CGDataProviderRef src_bytes = CGDataProviderCreateWithData( 0L, data, sw*sh*4, 0L);
-  CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, kCGImageAlphaNoneSkipLast,
+  CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
     src_bytes, 0L, false, kCGRenderingIntentDefault);
   // fl_push_clip();
   CGRect rect = { x, y, w, h };
-  Fl_X::q_begin_image(rect, srcx, srcy);
+  Fl_X::q_begin_image(rect, srcx, srcy, sw, sh);
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
   CGImageRelease(img);
@@ -242,21 +251,10 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     else
 #endif
 #ifdef __APPLE_QD__
-    // the Apple OS X window manager double buffers ALL windows
-    // anyway, so there is no need to waste memory and time.
-    //
-    // BTW: Windows2000 and later also forces doublebuffering if
-    // transparent windows are beeing used (alpha channel)
     if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) || force_doublebuffering_ )
       myi->other_xid = fl_create_offscreen(w(), h());
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-    // the Apple OS X window manager double buffers ALL windows
-    // anyway, so there is no need to waste memory and time.
-    //
-    // BTW: Windows2000 and later also forces doublebuffering if
-    // transparent windows are beeing used (alpha channel)
-    if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) || force_doublebuffering_ )
+    if (force_doublebuffering_)
       myi->other_xid = fl_create_offscreen(w(), h());
 #else
     myi->other_xid = fl_create_offscreen(w(), h());
@@ -298,20 +296,10 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     draw();
     DeleteDC(fl_gc);
     fl_gc = _sgc;
-#elif defined(__APPLE_QD__)
+#elif defined(__APPLE__)
     if ( myi->other_xid ) {
       fl_begin_offscreen( myi->other_xid );
       fl_clip_region( 0 );   
-      draw();
-      fl_end_offscreen();
-    } else {
-      draw();
-    }
-#elif defined(__APPLE_QUARTZ__)
-#warning quartz
-    if ( myi->other_xid ) {
-      fl_begin_offscreen( myi->other_xid );
-      fl_clip_region( 0 );
       draw();
       fl_end_offscreen();
     } else {
@@ -327,10 +315,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-#ifdef __APPLE_QD__
-  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
-#elif defined(__APPLE_QUARTZ__)
-#warning quartz
+#ifdef __APPLE__
   if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
 #else
   fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
@@ -367,5 +352,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.11 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.12 2004/08/31 22:00:47 matthiaswm Exp $".
 //

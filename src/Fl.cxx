@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.65 2004/08/27 20:02:44 matthiaswm Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.66 2004/08/31 22:00:45 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -371,21 +371,14 @@ void Fl::flush() {
 
 #ifdef WIN32
   GdiFlush();
-#elif defined (__APPLE_QD__)
-  GrafPtr port; GetPort( &port );
-  if ( port ) 
-  {
-    QDFlushPortBuffer( port, 0 );
-  }
-#elif defined (__APPLE_QUARTZ__)
-# warning quartz: remove this 
-  GrafPtr port; GetPort( &port );
+#elif defined(__APPLE_QD__)
+  GrafPtr port;
+  GetPort( &port );
   if ( port )
-  {
     QDFlushPortBuffer( port, 0 );
-  }
-// end remove
-  if (fl_gc) CGContextSynchronize(fl_gc);
+#elif defined (__APPLE_QUARTZ__)
+  if (fl_gc)
+    CGContextFlush(fl_gc);
 #else
   if (fl_display) XFlush(fl_display);
 #endif
@@ -1028,5 +1021,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.65 2004/08/27 20:02:44 matthiaswm Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.66 2004/08/31 22:00:45 matthiaswm Exp $".
 //

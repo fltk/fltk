@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.25 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.26 2004/08/31 22:00:47 matthiaswm Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -393,7 +393,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!id) id = fl_create_bitmask(w(), h(), array);
   if (id && fl_gc) {
     CGRect rect = { X, Y, W, H };
-    Fl_X::q_begin_image(rect, cx, cy);
+    Fl_X::q_begin_image(rect, cx, cy, w(), h());
     CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
     Fl_X::q_end_image();
   }
@@ -501,5 +501,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.25 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.26 2004/08/31 22:00:47 matthiaswm Exp $".
 //

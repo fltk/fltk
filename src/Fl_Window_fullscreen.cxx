@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.7 2004/08/25 00:20:26 matthiaswm Exp $"
+// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.8 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
@@ -52,9 +52,9 @@ void Fl_Window::border(int b) {
   // not yet implemented, but it's possible
   // for full fullscreen we have to make the window topmost as well
 #elif defined(__APPLE_QD__)
-  // \todo Mac : not yet implemeted
+  // warning: not implemented in Quickdraw/Carbon
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+  // warning: not implemented in Quartz/Carbon
 #else
   if (shown()) Fl_X::i(this)->sendxjunk();
 #endif
@@ -79,5 +79,5 @@ void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.7 2004/08/25 00:20:26 matthiaswm Exp $".
+// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.3.2.8 2004/08/31 22:00:48 matthiaswm Exp $".
 //

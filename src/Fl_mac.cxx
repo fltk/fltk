@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.62 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.63 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1256,6 +1256,15 @@ unsigned short mac2fltk(ulong macKey)
 void Fl_X::flush()
 {
   w->flush();
+#ifdef __APPLE_QD__
+  GrafPtr port; 
+  GetPort( &port );
+  if ( port )
+    QDFlushPortBuffer( port, 0 );
+#elif defined (__APPLE_QUARTZ__)
+  if (fl_gc) 
+    CGContextFlush(fl_gc);
+#endif          
   SetOrigin( 0, 0 );
 }
 
@@ -1502,7 +1511,7 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
  */
 void Fl_X::make(Fl_Window* w)
 {
-  static int xyPos = 50;
+  static int xyPos = 100;
   if ( w->parent() ) // create a subwindow
   {
     Fl_Group::current(0);
@@ -1578,7 +1587,7 @@ void Fl_X::make(Fl_Window* w)
       w->x(xyPos+Fl::x());
       w->y(xyPos+Fl::y());
       xyPos += 25;
-      if (xyPos>200) xyPos = 25;
+      if (xyPos>200) xyPos = 100;
     } else {
       if (!Fl::grab()) {
         xp = xwm; yp = ywm;
@@ -1912,15 +1921,19 @@ void Fl_X::q_release_context(Fl_X *x) {
   fl_gc = 0;
 }
 
-void Fl_X::q_begin_image(CGRect &rect, int cx, int cy) {
+void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   CGContextSaveGState(fl_gc);
   CGAffineTransform mx = CGContextGetCTM(fl_gc);
-  mx.d = -1.0;
+  CGRect r2 = rect;
+  r2.origin.x -= 0.5f;
+  r2.origin.y -= 0.5f;
+  CGContextClipToRect(fl_gc, r2);
+  mx.d = -1.0; mx.tx = -mx.tx;
   CGContextConcatCTM(fl_gc, mx);
-  rect.origin.y = (mx.ty-0.5f) - rect.origin.y - rect.size.height + 1;
-#warning : quartz - this needs to be fixed!
-  // this version will scale images into some position. Instead, it should clip them!
-  // we probably need the image size as an additional argument!
+  rect.origin.x = rect.origin.x - cx;
+  rect.origin.y = (mx.ty+0.5f) - rect.origin.y - h + cy;
+  rect.size.width = w;
+  rect.size.height = h;
 }
 
 void Fl_X::q_end_image() {
@@ -2001,6 +2014,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.62 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.63 2004/08/31 22:00:48 matthiaswm Exp $".
 //
 

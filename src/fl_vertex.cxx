@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.11 2004/08/26 18:24:11 easysw Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.12 2004/08/31 22:00:49 matthiaswm Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -83,6 +83,7 @@ typedef int COORD_T;
 typedef float COORD_T;
 typedef struct { float x; float y; } QPoint;
 #  define XPOINT QPoint
+extern float fl_quartz_line_width_;
 #else
 typedef short COORD_T;
 #  define XPOINT XPoint
@@ -141,11 +142,13 @@ void fl_end_points() {
 #elif defined(__APPLE_QD__)
   for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); } 
 #elif defined(__APPLE_QUARTZ__)
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   for (int i=0; i<n; i++) { 
     CGContextMoveToPoint(fl_gc, p[i].x, p[i].y);
     CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
     CGContextStrokePath(fl_gc);
   }
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
 #endif
@@ -295,7 +298,7 @@ void fl_circle(double x, double y,double r) {
   Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
   (what == POLYGON ? PaintOval : FrameOval)(&rt);
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz : cicle won_t scale to current matrix!
+  // Quartz warning : circle won't scale to current matrix!
   CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 1);
   (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
 #else
@@ -305,5 +308,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.11 2004/08/26 18:24:11 easysw Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.12 2004/08/31 22:00:49 matthiaswm Exp $".
 //

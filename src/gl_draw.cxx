@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5.2.15 2004/08/26 00:18:43 matthiaswm Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.16 2004/08/31 22:00:49 matthiaswm Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -62,7 +62,7 @@ void  gl_font(int fontid, int size) {
     aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
                fl_fontsize->size, 0, 256, fl_fontsize->listbase);
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
+#warning quartz : add ATS font calls!
 #else
 #  if USE_XFT
     fl_xfont = fl_xxfont();
@@ -209,5 +209,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.15 2004/08/26 00:18:43 matthiaswm Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.16 2004/08/31 22:00:49 matthiaswm Exp $".
 //

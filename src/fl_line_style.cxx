@@ -1,5 +1,5 @@
 //
-// "$Id: fl_line_style.cxx,v 1.3.2.3.2.16 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.17 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #include <stdio.h>
 
 #ifdef __APPLE_QUARTZ__
-static float fl_quartz_line_width_ = 1.0f;
+float fl_quartz_line_width_ = 1.0f;
 static enum CGLineCap fl_quartz_line_cap_ = kCGLineCapButt;
 static enum CGLineJoin fl_quartz_line_join_ = kCGLineJoinMiter;
 static float *fl_quartz_line_pattern = 0;
@@ -158,5 +158,5 @@ void fl_line_style(int style, int width, char* dashes) {
 
 
 //
-// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.16 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.17 2004/08/31 22:00:48 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_overlay.cxx,v 1.4.2.3.2.5 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_overlay.cxx,v 1.4.2.3.2.6 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // Overlay support for the Fast Light Tool Kit (FLTK).
 //
@@ -46,10 +46,9 @@ static void draw_current_rect() {
   fl_rect(px, py, pw, ph);
   PenMode( patCopy );
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  PenMode( patXor );
+  // warning: Quartz does not support xor drawing
+  // Use the Fl_Overlay_Window instead.
   fl_rect(px, py, pw, ph);
-  PenMode( patCopy );
 #else
   XSetFunction(fl_display, fl_gc, GXxor);
   XSetForeground(fl_display, fl_gc, 0xffffffff);
@@ -74,5 +73,5 @@ void fl_overlay_rect(int x, int y, int w, int h) {
 }
 
 //
-// End of "$Id: fl_overlay.cxx,v 1.4.2.3.2.5 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_overlay.cxx,v 1.4.2.3.2.6 2004/08/31 22:00:48 matthiaswm Exp $".
 //

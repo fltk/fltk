@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_mac.cxx,v 1.1.2.8 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: fl_draw_image_mac.cxx,v 1.1.2.9 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,10 +29,6 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
-
-#ifdef __APPLE_QUARTZ__
-#warning quartz
-#endif
 
 #define MAXBUFFER 0x40000 // 256k
 
@@ -169,6 +165,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     }
   }
 #elif defined(__APPLE_QUARTZ__)
+#warning : quartz - this function is *terribly* slow. Please replace!!!!
   // following the very save (and very slow) way to write the image into the give port
   CGContextSetShouldAntialias(fl_gc, false);
   if ( cb )
@@ -181,12 +178,13 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       for ( int j=0; j<W; j++ )
       {
         if ( mono )
-          { fl_color( src[0], src[0], src[0] ); src++; }
+          { fl_color( src[0], src[0], src[0] ); }
         else
-          { fl_color( src[0], src[1], src[2] ); src+=4; }
+          { fl_color( src[0], src[1], src[2] ); }
         CGContextMoveToPoint(fl_gc, X+j, Y+i);
         CGContextAddLineToPoint(fl_gc, X+j, Y+i);
         CGContextStrokePath(fl_gc);
+        src+=delta;
       }
     }
     delete[] tmpBuf;
@@ -213,94 +211,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 #else
 # error : you must defined __APPLE_QD__ or __APPLE_QUARTZ__
 #endif
-// \todo Mac : the above function does not support subregions yet
-#ifdef later_we_do_this
-// \todo Mac : the following code is taken from fl_draw_image_win32 and needs to be modified for Mac Carbon
-//  if (!linedelta) linedelta = W*delta;
-
-  int x, y, w, h;
-  fl_clip_box(X,Y,W,H,x,y,w,h);
-  if (w<=0 || h<=0) return;
-  if (buf) buf += (x-X)*delta + (y-Y)*linedelta;
-
-//  static U32 bmibuffer[256+12];
-//  BITMAPINFO &bmi = *((BITMAPINFO*)bmibuffer);
-//  if (!bmi.bmiHeader.biSize) {
-//    bmi.bmiHeader.biSize = sizeof(bmi)-4; // does it use this to determine type?
-//    bmi.bmiHeader.biPlanes = 1;
-//    bmi.bmiHeader.biCompression = BI_RGB;
-//    bmi.bmiHeader.biXPelsPerMeter = 0;
-//    bmi.bmiHeader.biYPelsPerMeter = 0;
-//    bmi.bmiHeader.biClrUsed = 0;
-//    bmi.bmiHeader.biClrImportant = 0;
-//  }
-//  if (mono) {
-//    for (int i=0; i<256; i++) {
-//      bmi.bmiColors[i].rgbBlue = i;
-//      bmi.bmiColors[i].rgbGreen = i;
-//      bmi.bmiColors[i].rgbRed = i;
-//      bmi.bmiColors[i].rgbReserved = i;
-//    }
-//  }
-//  bmi.bmiHeader.biWidth = w;
-//  bmi.bmiHeader.biBitCount = mono ? 8 : 24;
-  int pixelsize = mono ? 1 : 3;
-  int linesize = (pixelsize*w+3)&~3;
-  
-  static U32* buffer;
-  int blocking = h;
-  {int size = linesize*h;
-  if (size > MAXBUFFER) {
-    size = MAXBUFFER;
-    blocking = MAXBUFFER/linesize;
-  }
-  static long buffer_size;
-  if (size > buffer_size) {
-    delete[] buffer;
-    buffer_size = size;
-    buffer = new U32[(size+3)/4];
-  }}
-//  bmi.bmiHeader.biHeight = blocking;
-  static U32* line_buffer;
-  if (!buf) {
-    int size = W*delta;
-    static int line_buf_size;
-    if (size > line_buf_size) {
-      delete[] line_buffer;
-      line_buf_size = size;
-      line_buffer = new U32[(size+3)/4];
-    }
-  }
-  for (int j=0; j<h; ) {
-    int k;
-    for (k = 0; j<h && k<blocking; k++, j++) {
-      const uchar* from;
-      if (!buf) { // run the converter:
-	cb(userdata, x-X, y-Y+j, w, (uchar*)line_buffer);
-	from = (uchar*)line_buffer;
-      } else {
-	from = buf;
-	buf += linedelta;
-      }
-      uchar *to = (uchar*)buffer+(blocking-k-1)*linesize;
-      if (mono) {
-	for (int i=w; i--; from += delta) *to++ = *from;
-      } else {
-	for (int i=w; i--; from += delta, to += 3) {
-	  uchar r = from[0];
-	  to[0] = from[2];
-	  to[1] = from[1];
-	  to[2] = r;
-        }
-      }
-    }
-//    SetDIBitsToDevice(fl_gc, x, y+j-k, w, k, 0, 0, 0, k,
-//		      (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
-//		      &bmi,
-//		      DIB_RGB_COLORS
-//		      );
-  }
-#endif
 }
 
 void fl_draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
@@ -324,5 +234,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.8 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.9 2004/08/31 22:00:48 matthiaswm Exp $".
 //

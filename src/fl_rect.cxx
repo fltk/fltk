@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.16 2004/08/27 20:02:45 matthiaswm Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.17 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,10 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
+#ifdef __APPLE_QUARTZ__
+extern float fl_quartz_line_width_;
+#endif
+
 void fl_rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
 #ifdef WIN32
@@ -46,10 +50,10 @@ void fl_rect(int x, int y, int w, int h) {
   SetRect(&rect, x, y, x+w, y+h);
   FrameRect(&rect);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
 #endif
@@ -67,10 +71,10 @@ void fl_rectf(int x, int y, int w, int h) {
   SetRect(&rect, x, y, x+w, y+h);
   PaintRect(&rect);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextFillRect(fl_gc, rect);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (w && h) XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
 #endif
@@ -82,11 +86,11 @@ void fl_xyline(int x, int y, int x1) {
 #elif defined(__APPLE_QD__)
   MoveTo(x, y); LineTo(x1, y);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
 #endif
@@ -104,12 +108,12 @@ void fl_xyline(int x, int y, int x1, int y2) {
   LineTo(x1, y);
   LineTo(x1, y2);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -132,13 +136,13 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(x1, y2);
   LineTo(x3, y2);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
   CGContextAddLineToPoint(fl_gc, x3, y2);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XPoint p[4];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -156,11 +160,11 @@ void fl_yxline(int x, int y, int y1) {
 #elif defined(__APPLE_QD__)
   MoveTo(x, y); LineTo(x, y1);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
 #endif
@@ -178,12 +182,12 @@ void fl_yxline(int x, int y, int y1, int x2) {
   LineTo(x, y1);
   LineTo(x2, y1);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XPoint p[3];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -206,13 +210,13 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(x2, y1);
   LineTo(x2, y3);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
   CGContextAddLineToPoint(fl_gc, x2, y3);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XPoint p[4];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -233,11 +237,12 @@ void fl_line(int x, int y, int x1, int y1) {
   MoveTo(x, y); 
   LineTo(x1, y1);
 #elif defined(__APPLE_QUARTZ__)
-  if ( x==x1 || y==y1 ) CGContextSetShouldAntialias(fl_gc, false);
+  if (( x==x1 || y==y1 ) && fl_quartz_line_width_!=1.0f )  
+    CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
 #endif
@@ -394,11 +399,11 @@ void fl_point(int x, int y) {
 #elif defined(__APPLE_QD__)
   MoveTo(x, y); Line(0, 0); 
 #elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y);
   CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XDrawPoint(fl_display, fl_window, fl_gc, x, y);
 #endif
@@ -651,5 +656,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.16 2004/08/27 20:02:45 matthiaswm Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.17 2004/08/31 22:00:48 matthiaswm Exp $".
 //

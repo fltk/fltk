@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.31 2004/08/31 01:29:54 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.32 2004/08/31 22:00:47 matthiaswm Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,6 +41,10 @@
 #include "flstring.h"
 #include <ctype.h>
 
+#ifdef __APPLE_QUARTZ__
+extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
+#endif
+
 extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
 void fl_restore_clip(); // in fl_rect.cxx
 
@@ -80,7 +84,12 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
   if (!id) {
-//#warning : to enable masking in Quartz, write our own version of this little function!
+#ifdef __APPLE_QUARTZ__
+    id = fl_create_offscreen_with_alpha(w(), h());
+    fl_begin_offscreen((Fl_Offscreen)id);
+    fl_draw_pixmap(data(), 0, 0, FL_GREEN);
+    fl_end_offscreen();
+#else
     id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
     uchar *bitmap = 0;
@@ -91,8 +100,8 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       mask = fl_create_bitmask(w(), h(), bitmap);
       delete[] bitmap;
     }
-
     fl_end_offscreen();
+#endif
   }
 #ifdef WIN32
   if (mask) {
@@ -464,5 +473,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.31 2004/08/31 01:29:54 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.32 2004/08/31 22:00:47 matthiaswm Exp $".
 //

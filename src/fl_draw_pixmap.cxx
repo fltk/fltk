@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.14 2004/08/31 01:29:55 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.15 2004/08/31 22:00:48 matthiaswm Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -108,6 +108,8 @@ struct pixmap_data {
   };
 };
 
+#ifndef __APPLE_QUARTZ__
+
 // callback for 1 byte per pixel:
 static void cb1(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
@@ -126,6 +128,8 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
     *q++ = colors[*p++];
   }
 }
+
+#endif
 
 #endif
 
@@ -171,7 +175,11 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       *c++ = *p++;
       *c++ = *p++;
       *c++ = *p++;
+#ifdef __APPLE_QUARTZ__
+      *c = 255;
+#else
       *c = 0;
+#endif
     }
   } else {	// normal XPM colormap with names
     if (chars_per_pixel>1) memset(d.byte1, 0, sizeof(d.byte1));
@@ -211,15 +219,23 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       c += 4;
 #  endif
 #endif
+#ifdef __APPLE_QUARTZ__
+      c[3] = 255;
+#endif
       if (!fl_parse_color((const char*)p, c[0], c[1], c[2])) {
         // assume "None" or "#transparent" for any errors
 	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
+#ifdef __APPLE_QUARTZ__
+        c[3] = 0;
+#endif
 	transparent_index = ind;
       }
     }
   }
   d.data = data;
+
+#ifndef __APPLE_QUARTZ__
 
   // build the mask bitmap used by Fl_Pixmap:
   if (fl_mask_bitmap && transparent_index >= 0) {
@@ -255,10 +271,46 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
   }
 
   fl_draw_image(chars_per_pixel==1 ? cb1 : cb2, &d, x, y, d.w, d.h, 4);
+
+#else // __APPLE_QUARTZ__
+
+  bool transparent = (transparent_index>=0);
+  transparent = true;
+  U32 *array = new U32[d.w * d.h], *q = array;
+  for (int Y = 0; Y < d.h; Y++) {
+    const uchar* p = data[Y];
+    if (chars_per_pixel <= 1) {
+      for (int X = 0; X < d.w; X++) {
+        *q++ = d.colors[*p++];
+      }
+    } else {
+      for (int X = 0; X < d.w; X++) {
+        U32* colors = d.byte1[*p++];
+        *q++ = colors[*p++];
+      }
+    }
+  }
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, d.w * d.h * 4, 0L);
+  CGImageRef img = CGImageCreate(d.w, d.h, 8, 4*8, 4*d.w,
+        lut, transparent?kCGImageAlphaLast:kCGImageAlphaNoneSkipLast,
+        src, 0L, false, kCGRenderingIntentDefault);
+  CGColorSpaceRelease(lut);
+  CGDataProviderRelease(src);
+  CGRect rect = { x, y, d.w, d.h };
+  Fl_X::q_begin_image(rect, x, y, d.w, d.h);
+  CGContextDrawImage(fl_gc, rect, img);
+  Fl_X::q_end_image();
+  CGContextFlush(fl_gc);
+  CGImageRelease(img);
+  delete array;
+
+#endif // __APPLE_QUARTZ__
+
   if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete[] d.byte1[i];
   return 1;
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.14 2004/08/31 01:29:55 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.15 2004/08/31 22:00:48 matthiaswm Exp $".
 //
