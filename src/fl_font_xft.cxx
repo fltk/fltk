@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.8 2002/11/09 22:59:06 easysw Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.9 2002/11/12 20:35:17 easysw Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
@@ -209,10 +209,8 @@ void fl_draw(const char *str, int n, int x, int y) {
     XftDrawChange(draw, draw_window = fl_window);
 
   Region region = fl_clip_region();
-  if (region) {
-    if (XEmptyRegion(region)) return;
-    XftDrawSetClip(draw, region);
-  }
+  if (region && XEmptyRegion(region)) return;
+  XftDrawSetClip(draw, region);
 
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
@@ -228,5 +226,5 @@ void fl_draw(const char *str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.8 2002/11/09 22:59:06 easysw Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.9 2002/11/12 20:35:17 easysw Exp $"
 //
