@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Return_Button.cxx,v 1.4 1999/01/07 19:17:25 mike Exp $"
+// "$Id: Fl_Return_Button.cxx,v 1.5 1999/01/19 19:26:46 mike Exp $"
 //
 // Return button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -39,7 +39,7 @@ int fl_return_arrow(int x, int y, int w, int h) {
   fl_yxline(x1, y0+d, y0+t, x1+d+2*t, y0-d);
   fl_yxline(x1, y0-t, y0-d);
   fl_color(fl_gray_ramp(0));
-  fl_line(x0, y0, x1+1, y0-d-1);
+  fl_line(x0, y0, x1, y0-d);
   fl_color(FL_DARK3);
   fl_xyline(x1+1, y0-t, x1+d, y0-d, x1+d+2*t);
   return 1;
@@ -65,5 +65,5 @@ int Fl_Return_Button::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Return_Button.cxx,v 1.4 1999/01/07 19:17:25 mike Exp $".
+// End of "$Id: Fl_Return_Button.cxx,v 1.5 1999/01/19 19:26:46 mike Exp $".
 //
