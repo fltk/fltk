@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.2 2000/04/25 22:15:42 mike Exp $"
+# "$Id: makeinclude.in,v 1.7.2.3 2000/06/03 12:04:08 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -70,15 +70,6 @@ GLDLIBS		=@LDFLAGS@ @LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 	echo Compiling $@...
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
-.fl.cxx .fl.h:
-	echo Generating $<...
-	../fluid/fluid -c $<
-
-.fl:
-	echo Generating, compiling, and linking $@...
-	../fluid/fluid -c $<
-	$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
-
 #
-# End of "$Id: makeinclude.in,v 1.7.2.2 2000/04/25 22:15:42 mike Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.3 2000/06/03 12:04:08 mike Exp $".
 #

@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw32,v 1.9.2.2 2000/04/25 22:16:06 mike Exp $"
+# "$Id: makeinclude.mingw32,v 1.9.2.3 2000/06/03 12:04:11 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -49,6 +49,24 @@ DSOCOMMAND	= echo
 LDLIBS		= -lgdi32 -luser32 -lmsvcrt -lwsock32 -lm
 GLDLIBS		= -lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lwsock32 -lm
 
+# Be quiet when building...
+.SILENT:
+
+# Build commands and filename extensions...
+.SUFFIXES:	.c .cxx .h .fl .o
+
+.cxx:
+	echo Compiling and linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -L../lib -lfltk $(LDLIBS) -o $@
+
+.c.o:
+	echo Compiling $@...
+	$(CC) -I.. $(CXXFLAGS) $< -c
+
+.cxx.o:
+	echo Compiling $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -c
+
 #
-# End of "$Id: makeinclude.mingw32,v 1.9.2.2 2000/04/25 22:16:06 mike Exp $".
+# End of "$Id: makeinclude.mingw32,v 1.9.2.3 2000/06/03 12:04:11 mike Exp $".
 #
