@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.6 1998/11/06 20:14:41 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.7 1998/11/10 14:40:56 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -504,16 +504,15 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   }
 
   if (ilen) {
-    size_ += ilen;
     if (undowidget == this && b == undoat)
       undoinsert += ilen;
     else {
       undocut = 0;
       undoinsert = ilen;
     }
-    int i;
-    for (i=size_; i>b; i--) buffer[i] = buffer[i-ilen];
-    for (i=0; i<ilen; i++) buffer[b+i] = text[i];
+    memcpy(buffer+b+ilen, buffer+b, size_-b+1);
+    memcpy(buffer+b, text, ilen);
+    size_ += ilen;
   }
   undowidget = this;
   mark_ = position_ = undoat = b+ilen;
@@ -535,10 +534,10 @@ int Fl_Input_::undo() {
   put_in_buffer(size_+ilen);
 
   if (ilen) {
+    memcpy(buffer+b+ilen, buffer+b, size_-b+1);
+    memcpy(buffer+b, undobuffer, ilen);
     size_ += ilen;
-    int i;
-    for (i=size_; i>b; i--) buffer[i] = buffer[i-ilen];
-    for (i=0; i<ilen; i++) buffer[b++] = undobuffer[i];
+    b += ilen;
   }
 
   if (xlen) {
@@ -647,7 +646,10 @@ Fl_Input_::Fl_Input_(int x, int y, int w, int h, const char* l)
 }
 
 void Fl_Input_::put_in_buffer(int len) {
-  if (value_ == buffer && bufsize > len) return;
+  if (value_ == buffer && bufsize > len) {
+    buffer[size_] = 0;
+    return;
+  }
   if (!bufsize) {
     if (len > size_) len += 9; // let a few characters insert before realloc
     bufsize = len+1; 
@@ -725,5 +727,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.6 1998/11/06 20:14:41 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.7 1998/11/10 14:40:56 mike Exp $".
 //
