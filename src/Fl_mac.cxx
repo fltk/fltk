@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.16 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.17 2002/03/26 17:35:18 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1290,9 +1290,10 @@ void Fl_Window::make_current()
 ////////////////////////////////////////////////////////////////
 // Cut & paste.
 
-static char *selection_buffer[2];
-static int selection_length[2];
-static int selection_buffer_length[2];
+Fl_Widget *fl_selection_requestor = 0;
+char *fl_selection_buffer[2];
+int fl_selection_length[2];
+int fl_selection_buffer_length[2];
 static ScrapRef myScrap = 0;
 
 /**
@@ -1303,14 +1304,14 @@ static ScrapRef myScrap = 0;
  */
 void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
-  if (len+1 > selection_buffer_length[clipboard]) {
-    delete[] selection_buffer[clipboard];
-    selection_buffer[clipboard] = new char[len+100];
-    selection_buffer_length[clipboard] = len+100;
+  if (len+1 > fl_selection_buffer_length[clipboard]) {
+    delete[] fl_selection_buffer[clipboard];
+    fl_selection_buffer[clipboard] = new char[len+100];
+    fl_selection_buffer_length[clipboard] = len+100;
   }
-  memcpy(selection_buffer[clipboard], stuff, len);
-  selection_buffer[clipboard][len] = 0; // needed for direct paste
-  selection_length[clipboard] = len;
+  memcpy(fl_selection_buffer[clipboard], stuff, len);
+  fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
+  fl_selection_length[clipboard] = len;
   if (clipboard) {
     ClearCurrentScrap();
     OSStatus ret = GetCurrentScrap( &myScrap );
@@ -1334,8 +1335,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     Size len = 0;
     if (GetCurrentScrap(&scrap) == noErr && scrap != myScrap &&
 	GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
-      if ( len > selection_buffer_length[1] ) {
-	selection_buffer_length[1] = len + 32;
+      if ( len > fl_selection_buffer_length[1] ) {
+	fl_selection_buffer_length[1] = len + 32;
 	delete[] fl_selection_buffer[1];
 	fl_selection_buffer[1] = new char[len];
       }
@@ -1345,18 +1346,18 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
       // turn all \r characters into \n:
       for (int x = 0; x < len; x++) {
 	if (fl_selection_buffer[1][x] == '\r')
-	  fl_selection_buffer[1][x] == '\n';
+	  fl_selection_buffer[1][x] = '\n';
       }
     }
   }
-  Fl::e_text = selection_buffer[clipboard];
-  Fl::e_length = selection_length[clipboard];
+  Fl::e_text = fl_selection_buffer[clipboard];
+  Fl::e_length = fl_selection_length[clipboard];
   receiver.handle(FL_PASTE);
   return;
 }
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.16 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.17 2002/03/26 17:35:18 easysw Exp $".
 //
 
