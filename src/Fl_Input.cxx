@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.15 2002/10/30 14:23:15 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.16 2002/12/08 06:31:48 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -344,6 +344,9 @@ int Fl_Input::handle(int event) {
       // user clicked in the field and wants to reset the cursor position...
       position(drag_start, drag_start);
       drag_start = -1;
+    } else if (Fl::event_clicks()) {
+      // user double or triple clicked to select word or whole text
+      copy(0);
     }
     // For output widgets, do the callback so the app knows the user
     // did something with the mouse...
@@ -404,5 +407,5 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.15 2002/10/30 14:23:15 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.16 2002/12/08 06:31:48 easysw Exp $".
 //
