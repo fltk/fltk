@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.5 1998/11/08 16:37:21 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.6 1998/11/08 17:02:40 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -47,9 +47,6 @@ Fl_XMap fl_xmap[256];
 Fl_XMap* fl_current_xmap;
 
 HPALETTE fl_palette;
-#if HAVE_GL
-HPALETTE fl_gl_palette;
-#endif // HAVE_GL
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
@@ -187,12 +184,10 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 // Thanks to Michael Sweet @ Easy Software Products for this
 
 HPALETTE
-fl_select_palette(int gl)
+fl_select_palette(void)
 {
   static char beenhere;
   if (!beenhere) {
-    int i;
-
     beenhere = 1;
 
     //if (GetDeviceCaps(fl_gc, BITSPIXEL) > 8) return NULL;
@@ -210,7 +205,7 @@ fl_select_palette(int gl)
 
     // Build 256 colors from the standard FLTK colormap...
 
-    for (i = 0; i < nColors; i ++) {
+    for (int i = 0; i < nColors; i ++) {
       pPal->palPalEntry[i].peRed   = (fl_cmap[i] >> 24) & 255;
       pPal->palPalEntry[i].peGreen = (fl_cmap[i] >> 16) & 255;
       pPal->palPalEntry[i].peBlue  = (fl_cmap[i] >>  8) & 255;
@@ -219,33 +214,10 @@ fl_select_palette(int gl)
 
     // Create the palette:
     fl_palette = CreatePalette(pPal);
-
-#if HAVE_GL
-    // Now do the OpenGL palette...  Any 8-bit display will want 3:3:2 RGB,
-    // and doing OpenGL on anything less than 8-bits is just asking for
-    // disappointment!
-
-    for (i = 0; i < nColors; i ++) {
-      pPal->palPalEntry[i].peRed   = 255 * ((i >> 5) & 7) / 7;
-      pPal->palPalEntry[i].peGreen = 255 * ((i >> 2) & 7) / 7;
-      pPal->palPalEntry[i].peBlue  = 255 * (i & 3) / 3;
-      pPal->palPalEntry[i].peFlags = 0;
-    };
-
-    fl_gl_palette = CreatePalette(pPal);
-#endif // HAVE_GL
   }
-  if (gl) {
-    if (fl_gl_palette) {
-      SelectPalette(fl_gc, fl_gl_palette, FALSE);
-      RealizePalette(fl_gc);
-    }
-  }
-  else {
-    if (fl_palette) {
-      SelectPalette(fl_gc, fl_palette, FALSE);
-      RealizePalette(fl_gc);
-    }
+  if (fl_palette) {
+    SelectPalette(fl_gc, fl_palette, FALSE);
+    RealizePalette(fl_gc);
   }
   return fl_palette;
 }
@@ -253,5 +225,5 @@ fl_select_palette(int gl)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.5 1998/11/08 16:37:21 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.6 1998/11/08 17:02:40 mike Exp $".
 //
