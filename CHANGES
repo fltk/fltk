@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- Clicking/dragging the middle mouse button in a
+	  scrollbar now moves directly to that scroll position,
+	  matching the behavior of other toolkits.
 	- Added some more range checking to the Fl_Text_Display
 	  widget.
 	- The editor demo did not correctly update the style
