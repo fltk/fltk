@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Help_View didn't properly handle NULL from the link
+	  callback (the original filename/directory name were
+	  not preserved...)
+	- Fl_Help_View didn't use the boxtype border values when
+	  clipping the page that was displayed.
 	- Added first steps to CodeWarrior/OS_X support (see
 	  fltk-1.1.x/CodeWarrior/OS_X.sit)
 	- Cleaned up the WIN32 export definitions for some of

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.36 2002/06/10 17:21:53 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.37 2002/07/18 15:27:21 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -355,7 +355,8 @@ Fl_Help_View::draw()
     return;
 
   // Clip the drawing to the inside of the box...
-  fl_push_clip(x() + 4, y() + 4, ww - 8, hh - 8);
+  fl_push_clip(x() + Fl::box_dx(b), y() + Fl::box_dy(b),
+               ww - Fl::box_dw(b), hh - Fl::box_dh(b));
   fl_color(textcolor_);
 
   // Draw all visible blocks...
@@ -2291,10 +2292,23 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		*slash;		// Directory separator
   const char	*localname;	// Local filename
   char		error[1024];	// Error buffer
+  char		newname[1024];	// New filename buffer
 
 
-  strcpy(filename_, f);
-  strcpy(directory_, filename_);
+  strlcpy(newname, f, sizeof(newname));
+  if ((target = strrchr(newname, '#')) != NULL)
+    *target++ = '\0';
+
+  if (link_)
+    localname = (*link_)(this, newname);
+  else
+    localname = filename_;
+
+  if (!localname)
+    return (0);
+
+  strlcpy(filename_, newname, sizeof(filename_));
+  strlcpy(directory_, newname, sizeof(directory_));
 
   // Note: We do not support Windows backslashes, since they are illegal
   //       in URLs...
@@ -2302,17 +2316,6 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     directory_[0] = '\0';
   else if (slash > directory_ && slash[-1] != '/')
     *slash = '\0';
-
-  if ((target = strrchr(filename_, '#')) != NULL)
-    *target++ = '\0';
-
-  if (link_)
-    localname = (*link_)(this, filename_);
-  else
-    localname = filename_;
-
-  if (!localname)
-    return (0);
 
   if (value_ != NULL)
   {
@@ -2638,5 +2641,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.36 2002/06/10 17:21:53 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.37 2002/07/18 15:27:21 easysw Exp $".
 //
