@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /Os /Ob2 /I "." /I ".." /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /c
+# ADD CPP /nologo /MD /W3 /GX /Os /Ob2 /I "." /I ".." /I "..\zlib" /I "..\png" /I "..\jpeg" /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o /win32 "NUL"
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o /win32 "NUL"
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /machine:I386
-# ADD LINK32 jpeg.lib png.lib z.lib opengl32.lib wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdll.pdb" /machine:I386 /nodefaultlib:"libcd" /nodefaultlib:"libcmt" /out:"fltkdll.dll"
+# ADD LINK32 jpeg.lib png.lib z.lib opengl32.lib wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdll.pdb" /machine:I386 /nodefaultlib:"libcmt" /nodefaultlib:"msvcrt" /out:"fltkdll.dll"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "fltkdll - Win32 Debug"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MDd /GX /ZI /Od /I "." /I ".." /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /c
+# ADD CPP /nologo /MDd /GX /ZI /Od /I "." /I ".." /I "..\zlib" /I "..\png" /I "..\jpeg" /D "FL_DLL" /D "FL_LIBRARY" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o /win32 "NUL"
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o /win32 "NUL"
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 jpeg.lib png.lib z.lib opengl32.lib wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdlld.pdb" /debug /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcd" /nodefaultlib:"libcmt" /nodefaultlib:"libcmtd" /out:"fltkdlld.dll" /pdbtype:sept
+# ADD LINK32 jpeg.lib png.lib z.lib opengl32.lib wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdlld.pdb" /debug /machine:I386 /nodefaultlib:"libcmtd" /nodefaultlib:"msvcrt" /out:"fltkdlld.dll" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none /incremental:no
 
 !ENDIF 
@@ -252,6 +252,7 @@ SOURCE=..\src\fl_arci.cxx
 DEP_CPP_FL_ARC=\
 	"..\FL\math.h"\
 	"..\fl\x.h"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl_draw.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
@@ -988,6 +989,7 @@ DEP_CPP_FL_GE=\
 	"..\fl\x.h"\
 	"..\src\Fl_get_key_mac.cxx"\
 	"..\src\fl_get_key_win32.cxx"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
@@ -1043,6 +1045,7 @@ DEP_CPP_FL_GI=\
 SOURCE=..\src\Fl_Gl_Choice.cxx
 DEP_CPP_FL_GL=\
 	"..\FL\gl.h"\
+	"..\fl\gl_draw.h"\
 	"..\fl\x.h"\
 	"..\src\Fl_Gl_Choice.H"\
 	"..\src\flstring.h"\
@@ -1249,15 +1252,15 @@ DEP_CPP_FL_INP=\
 SOURCE=..\src\Fl_JPEG_Image.cxx
 DEP_CPP_FL_JP=\
 	"..\fl\fl_jpeg_image.h"\
+	"..\jpeg\jpeglib.h"\
 	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
 	{$(INCLUDE)}"fl\fl_image.h"\
-	{$(INCLUDE)}"jconfig.h"\
-	{$(INCLUDE)}"jerror.h"\
-	{$(INCLUDE)}"jmorecfg.h"\
-	{$(INCLUDE)}"jpegint.h"\
-	{$(INCLUDE)}"jpeglib.h"\
+	{$(INCLUDE)}"jpeg\jconfig.h"\
+	{$(INCLUDE)}"jpeg\jerror.h"\
+	{$(INCLUDE)}"jpeg\jmorecfg.h"\
+	{$(INCLUDE)}"jpeg\jpegint.h"\
 	
 # End Source File
 # Begin Source File
@@ -1458,6 +1461,7 @@ DEP_CPP_FL_OV=\
 SOURCE=..\src\fl_overlay.cxx
 DEP_CPP_FL_OVE=\
 	"..\fl\x.h"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl_draw.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
@@ -1570,18 +1574,18 @@ DEP_CPP_FL_PL=\
 SOURCE=..\src\Fl_PNG_Image.cxx
 DEP_CPP_FL_PN=\
 	"..\fl\fl_png_image.h"\
+	"..\png\png.h"\
+	"..\zlib\zlib.h"\
 	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
 	{$(INCLUDE)}"fl\fl_image.h"\
-	{$(INCLUDE)}"png.h"\
-	{$(INCLUDE)}"pngconf.h"\
-	{$(INCLUDE)}"zconf.h"\
-	{$(INCLUDE)}"zlib.h"\
+	{$(INCLUDE)}"png\pngconf.h"\
+	{$(INCLUDE)}"zlib\zconf.h"\
 	
 NODEP_CPP_FL_PN=\
-	"..\..\htmldoc-1.8\png\alloc.h"\
+	"..\png\pngusr.h"\
 	
 # End Source File
 # Begin Source File
@@ -1642,6 +1646,7 @@ DEP_CPP_FL_PRO=\
 SOURCE=..\src\fl_rect.cxx
 DEP_CPP_FL_RE=\
 	"..\fl\x.h"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl_draw.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
@@ -1728,6 +1733,7 @@ DEP_CPP_FL_ROUND=\
 SOURCE=..\src\Fl_Scroll.cxx
 DEP_CPP_FL_SC=\
 	"..\fl\fl_scroll.h"\
+	"..\fl\fl_tiled_image.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl.h"\
 	{$(INCLUDE)}"fl\fl_draw.h"\
@@ -1745,7 +1751,9 @@ DEP_CPP_FL_SC=\
 SOURCE=..\src\fl_scroll_area.cxx
 DEP_CPP_FL_SCR=\
 	"..\fl\x.h"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
+	{$(INCLUDE)}"fl\fl.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
 	{$(INCLUDE)}"fl\fl_group.h"\
 	{$(INCLUDE)}"fl\fl_widget.h"\
@@ -2083,6 +2091,7 @@ SOURCE=..\src\fl_vertex.cxx
 DEP_CPP_FL_VE=\
 	"..\FL\math.h"\
 	"..\fl\x.h"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl_draw.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\
@@ -2142,6 +2151,7 @@ DEP_CPP_FL_WIN=\
 SOURCE=..\src\Fl_Window_fullscreen.cxx
 DEP_CPP_FL_WIND=\
 	"..\fl\x.h"\
+	".\config.h"\
 	{$(INCLUDE)}"fl\enumerations.h"\
 	{$(INCLUDE)}"fl\fl.h"\
 	{$(INCLUDE)}"fl\fl_export.h"\

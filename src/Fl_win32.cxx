@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.50 2004/10/18 20:22:24 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.51 2004/10/19 18:21:52 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/Enumerations.H>
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -737,34 +738,34 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	Fl::e_length = 0;
 	switch (Fl::e_keysym) {
 	  case FL_KP + '0' :
-	    Fl::e_keysym = Fl_Insert;
+	    Fl::e_keysym = FL_Insert;
 	    break;
 	  case FL_KP + '1' :
-	    Fl::e_keysym = Fl_End;
+	    Fl::e_keysym = FL_End;
 	    break;
 	  case FL_KP + '2' :
-	    Fl::e_keysym = Fl_Down;
+	    Fl::e_keysym = FL_Down;
 	    break;
 	  case FL_KP + '3' :
-	    Fl::e_keysym = Fl_Page_Down;
+	    Fl::e_keysym = FL_Page_Down;
 	    break;
 	  case FL_KP + '4' :
-	    Fl::e_keysym = Fl_Left;
+	    Fl::e_keysym = FL_Left;
 	    break;
 	  case FL_KP + '6' :
-	    Fl::e_keysym = Fl_Right;
+	    Fl::e_keysym = FL_Right;
 	    break;
 	  case FL_KP + '7' :
-	    Fl::e_keysym = Fl_Home;
+	    Fl::e_keysym = FL_Home;
 	    break;
 	  case FL_KP + '8' :
-	    Fl::e_keysym = Fl_Up;
+	    Fl::e_keysym = FL_Up;
 	    break;
 	  case FL_KP + '9' :
-	    Fl::e_keysym = Fl_Page_Up;
+	    Fl::e_keysym = FL_Page_Up;
 	    break;
 	  case FL_KP + '.' :
-	    Fl::e_keysym = Fl_Delete;
+	    Fl::e_keysym = FL_Delete;
 	    break;
 	  case FL_KP + '/' :
 	  case FL_KP + '*' :
@@ -1241,5 +1242,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.50 2004/10/18 20:22:24 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.51 2004/10/19 18:21:52 easysw Exp $".
 //
