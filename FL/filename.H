@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.10 1999/02/19 13:52:33 mike Exp $"
+// "$Id: filename.H,v 1.11 1999/02/22 22:10:14 mike Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -33,14 +33,11 @@
 #if defined(FL_DLL) && defined(_MSC_VER)
 #  ifdef FL_LIBRARY
 #    define FL_EXPORT	__declspec(dllexport)
-#    define FL_IMPORT	__declspec(dllimport)
 #  else
 #    define FL_EXPORT	__declspec(dllimport)
-#    define FL_IMPORT	__declspec(dllexport)
 #  endif /* FL_LIBRARY */
 #else
 #  define FL_EXPORT
-#  define FL_IMPORT
 #endif /* FL_DLL && _MSC_VER */
 
 #define FL_PATH_MAX 256 // all buffers are this length
@@ -79,5 +76,5 @@ FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.10 1999/02/19 13:52:33 mike Exp $".
+// End of "$Id: filename.H,v 1.11 1999/02/22 22:10:14 mike Exp $".
 //
