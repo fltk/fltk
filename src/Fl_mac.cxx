@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.58 2004/08/26 00:18:42 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.59 2004/08/26 06:18:12 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1863,10 +1863,10 @@ void Fl_Window::make_current()
   if (!i->gc) {
     //CreateCGContextForPort(GetWindowPort(i->xid), &i->gc);
     QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
-    // set clipping region
-    //ClipCGContextToRegion (i->gc, &portRect, fl_window_region );  
+    // save the unclipped state for later
+    CGContextSaveGState(i->gc);
     // translate coordinate system to coorespond with fltk's.
-    CGContextTranslateCTM(i->gc, -0.5f, port_height+0.5f);
+    CGContextTranslateCTM(i->gc, 0.5f, port_height-0.5f);
     CGContextScaleCTM(i->gc, 1.0f, -1.0f);
     static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
     CGContextSetTextMatrix(i->gc, font_mx);
@@ -1948,6 +1948,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.58 2004/08/26 00:18:42 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.59 2004/08/26 06:18:12 matthiaswm Exp $".
 //
 

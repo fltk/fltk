@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.17 2004/08/26 00:18:43 matthiaswm Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.18 2004/08/26 06:18:12 matthiaswm Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -130,6 +130,7 @@ void fl_font(Fl_FontSize* s) {
     fl_fontsize->knowMetrics = 1;
   }
 #elif defined(__APPLE_QUARTZ__)
+  if (!s) return;
   CGContextSelectFont(fl_gc, s->q_name, (float)s->size, kCGEncodingMacRoman);
 #else
 # error : need to defined either Quartz or Quickdraw
@@ -224,5 +225,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.17 2004/08/26 00:18:43 matthiaswm Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.18 2004/08/26 06:18:12 matthiaswm Exp $".
 //

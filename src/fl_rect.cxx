@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.13 2004/08/26 00:18:43 matthiaswm Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.14 2004/08/26 06:18:12 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ void fl_rect(int x, int y, int w, int h) {
   SetRect(&rect, x, y, x+w, y+h);
   FrameRect(&rect);
 #elif defined(__APPLE_QUARTZ__)
-  CGRect rect = CGRectMake(x, y, w, h);
+  CGRect rect = CGRectMake(x-1.0f, y-1.0f, w, h);
   CGContextStrokeRect(fl_gc, rect);
 #else
   XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
@@ -65,7 +65,7 @@ void fl_rectf(int x, int y, int w, int h) {
   SetRect(&rect, x, y, x+w, y+h);
   PaintRect(&rect);
 #elif defined(__APPLE_QUARTZ__)
-  CGRect rect = CGRectMake(x, y, w, h);
+  CGRect rect = CGRectMake(x-1.0f, y-1.0f, w, h);
   CGContextFillRect(fl_gc, rect);
 #else
   if (w && h) XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
@@ -409,6 +409,9 @@ extern Fl_Region fl_window_region;
 #elif defined(__APPLE_QUARTZ__)
 #warning quartz
 extern Fl_Region fl_window_region;
+extern Fl_Color fl_color_;
+extern class Fl_FontSize *fl_fontsize;
+extern void fl_font(class Fl_FontSize*);
 #endif
 
 // undo any clobbering of clip done by your program:
@@ -448,18 +451,18 @@ void fl_restore_clip() {
       CopyRgn( fl_window_region, portClip ); // changed
       if ( r )
         SectRgn( portClip, r, portClip );
-      //SetPortClipRegion( port, portClip );
-      // the following code is inefficient and should be replaced with 
-      // Carbon clipping - which unfortunatly has some problems on its own...
       Rect portRect; GetPortBounds(port, &portRect);
+      // remove all clipping
+#     warning : Quartz will now destroy all font, color and line settings
+      CGContextRestoreGState(fl_gc);
+      // get rid of the following call for performance reasons
+      ClipCGContextToRegion(fl_gc, &portRect, portClip );
+      // restore settings lost by "Restore"
       CGContextSaveGState(fl_gc);
-      CGAffineTransform tf = CGContextGetCTM(fl_gc);
-      tf.d = -1.0f; tf.tx = -tf.tx; tf.ty = tf.ty;  
-      //CGContextConcatCTM(fl_gc, tf);
-      tf = CGContextGetCTM(fl_gc);
-      tf.a = 1;
-      ClipCGContextToRegion(fl_gc, &portRect, portClip ); // this call uses transformed coords!
-      CGContextRestoreGState(fl_gc); // DOH! Restores the clipping region!
+      CGContextTranslateCTM(fl_gc, 0.5, portRect.bottom-portRect.top-0.5f);
+      CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+      fl_font(fl_fontsize);
+      fl_color(fl_color_);
       DisposeRgn( portClip );
     }
   }
@@ -639,5 +642,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.13 2004/08/26 00:18:43 matthiaswm Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.14 2004/08/26 06:18:12 matthiaswm Exp $".
 //
