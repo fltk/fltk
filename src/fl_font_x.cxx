@@ -1,9 +1,9 @@
 //
-// "$Id: fl_font_x.cxx,v 1.10.2.8 2004/09/11 18:06:29 easysw Exp $"
+// "$Id$"
 //
 // Standard X11 font selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -258,5 +258,5 @@ void fl_draw(const char* str, int n, float x, float y) {
 }
 
 //
-// End of "$Id: fl_font_x.cxx,v 1.10.2.8 2004/09/11 18:06:29 easysw Exp $".
+// End of "$Id$".
 //

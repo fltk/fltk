@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Check_Button.cxx,v 1.4.2.3.2.6 2004/04/11 04:38:57 easysw Exp $"
+// "$Id$"
 //
 // Check button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

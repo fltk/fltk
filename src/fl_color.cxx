@@ -1,9 +1,9 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.5.2.9 2004/04/11 04:38:59 easysw Exp $"
+// "$Id$"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -377,5 +377,5 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.5.2.9 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id$".
 //

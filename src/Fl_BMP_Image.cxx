@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.14 2004/04/11 04:38:57 easysw Exp $"
+// "$Id$"
 //
 // Fl_BMP_Image routines.
 //
-// Copyright 1997-2004 by Easy Software Products.
+// Copyright 1997-2005 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
 //
 // This library is free software; you can redistribute it and/or
@@ -450,5 +450,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.14 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id$".
 //

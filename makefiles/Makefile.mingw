@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.mingw,v 1.1.2.2.2.1 2004/10/18 20:22:22 easysw Exp $"
+# "$Id$"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -110,5 +110,5 @@ makeinclude: makefiles/makeinclude.mingw
 	cp $< $@
 
 #
-# End of "$Id: Makefile.mingw,v 1.1.2.2.2.1 2004/10/18 20:22:22 easysw Exp $".
+# End of "$Id$".
 #

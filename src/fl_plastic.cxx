@@ -1,12 +1,12 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.20 2004/04/11 04:39:00 easysw Exp $"
+// "$Id$"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // These box types provide a cross between Aqua and KDE buttons; kindof
 // like translucent plastic buttons...
 //
-// Copyright 2001-2004 by Michael Sweet.
+// Copyright 2001-2005 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -226,5 +226,5 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.20 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id$".
 //

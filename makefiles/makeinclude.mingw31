@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw31,v 1.1.2.4 2004/07/23 19:26:26 easysw Exp $"
+# "$Id$"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # (this file for MingW using GCC 3.1.x)
@@ -123,5 +123,5 @@ THREADS		=threads
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw31,v 1.1.2.4 2004/07/23 19:26:26 easysw Exp $".
+# End of "$Id$".
 #

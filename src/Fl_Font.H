@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Font.H,v 1.6.2.3.2.8 2004/09/09 00:55:41 matthiaswm Exp $"
+// "$Id$"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -101,5 +101,5 @@ FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.6.2.3.2.8 2004/09/09 00:55:41 matthiaswm Exp $".
+// End of "$Id$".
 //

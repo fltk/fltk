@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Multi_Label.H,v 1.5.2.3.2.4 2004/04/11 04:38:54 easysw Exp $"
+// "$Id$"
 //
 // Multi-label header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -41,5 +41,5 @@ struct FL_EXPORT Fl_Multi_Label {
 #endif
 
 //
-// End of "$Id: Fl_Multi_Label.H,v 1.5.2.3.2.4 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id$".
 //

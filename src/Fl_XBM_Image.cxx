@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_XBM_Image.cxx,v 1.1.2.10 2004/04/11 04:38:58 easysw Exp $"
+// "$Id$"
 //
 // Fl_XBM_Image routines.
 //
-// Copyright 1997-2004 by Bill Spitzak and others.
+// Copyright 1997-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -100,5 +100,5 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
 
 //
-// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.10 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id$".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: mac.H,v 1.1.2.16 2004/09/09 00:55:41 matthiaswm Exp $"
+// "$Id$"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -128,6 +128,6 @@ extern void fl_open_callback(void (*cb)(const char *));
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: mac.H,v 1.1.2.16 2004/09/09 00:55:41 matthiaswm Exp $".
+// End of "$Id$".
 //
 

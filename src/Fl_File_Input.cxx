@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.12 2004/07/27 16:02:20 easysw Exp $"
+// "$Id$"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 // Original version Copyright 1998 by Curtis Edwards.
 //
 // This library is free software; you can redistribute it and/or
@@ -271,5 +271,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.12 2004/07/27 16:02:20 easysw Exp $".
+// End of "$Id$".
 //

@@ -120,5 +120,5 @@ fl_scandir(const char *dir, struct dirent ***namelist,
 #endif
 
 /*
- * End of "$Id: scandir.c,v 1.4.2.1.2.2 2002/05/04 12:37:41 easysw Exp $".
+ * End of "$Id$".
  */

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.5 2004/09/09 21:34:46 matthiaswm Exp $"
+// "$Id$"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -128,5 +128,5 @@ void fl_delete_gl_context(GLContext);
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.5 2004/09/09 21:34:46 matthiaswm Exp $".
+// End of "$Id$".
 //

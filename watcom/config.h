@@ -1,9 +1,9 @@
 /*
- * "$Id: config.h,v 1.1.2.2 2004/11/23 18:48:10 easysw Exp $"
+ * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Watcom C++ 1.3
  *
- * Copyright 1998-2004 by Bill Spitzak and others.
+ * Copyright 1998-2005 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -218,5 +218,5 @@
 
 
 /*
- * End of "$Id: config.h,v 1.1.2.2 2004/11/23 18:48:10 easysw Exp $".
+ * End of "$Id$".
  */

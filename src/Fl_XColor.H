@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XColor.H,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id$"
 //
 // X-specific color definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -40,5 +40,5 @@ extern unsigned char fl_redmask, fl_greenmask, fl_bluemask;
 extern int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
 
 //
-// End of "$Id: Fl_XColor.H,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id$".
 //

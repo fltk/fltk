@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Tiled_Image.H,v 1.1.2.6 2004/04/11 04:38:54 easysw Exp $"
+// "$Id$"
 //
 // Tiled image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -53,5 +53,5 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
 #endif // !Fl_Tiled_Image_H
 
 //
-// End of "$Id: Fl_Tiled_Image.H,v 1.1.2.6 2004/04/11 04:38:54 easysw Exp $"
+// End of "$Id$"
 //

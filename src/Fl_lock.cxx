@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_lock.cxx,v 1.13.2.6 2004/09/12 03:46:21 easysw Exp $"
+// "$Id$"
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -204,5 +204,5 @@ void Fl::awake(void* msg) {
 #endif
 
 //
-// End of "$Id: Fl_lock.cxx,v 1.13.2.6 2004/09/12 03:46:21 easysw Exp $".
+// End of "$Id$".
 //

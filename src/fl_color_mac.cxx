@@ -1,9 +1,9 @@
 //
-// "$Id: fl_color_mac.cxx,v 1.1.2.9 2004/08/27 20:02:44 matthiaswm Exp $"
+// "$Id$"
 //
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -108,5 +108,5 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 }
 
 //
-// End of "$Id: fl_color_mac.cxx,v 1.1.2.9 2004/08/27 20:02:44 matthiaswm Exp $".
+// End of "$Id$".
 //

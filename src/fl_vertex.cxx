@@ -1,9 +1,9 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.12 2004/08/31 22:00:49 matthiaswm Exp $"
+// "$Id$"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -308,5 +308,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.12 2004/08/31 22:00:49 matthiaswm Exp $".
+// End of "$Id$".
 //

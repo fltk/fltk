@@ -1,9 +1,9 @@
 //
-// "$Id: threads.h,v 1.1.2.8 2004/11/20 03:44:18 easysw Exp $"
+// "$Id$"
 //
 // Simple threading API for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -76,5 +76,5 @@ static int fl_create_thread(Fl_Thread& t, void *(*f) (void *), void* p) {
 #endif // !Threads_h
 
 //
-// End of "$Id: threads.h,v 1.1.2.8 2004/11/20 03:44:18 easysw Exp $".
+// End of "$Id$".
 //

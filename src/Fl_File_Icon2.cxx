@@ -1,11 +1,11 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.20 2004/02/29 12:47:36 easysw Exp $"
+// "$Id$"
 //
 // Fl_File_Icon system icon routines.
 //
 // KDE icon code donated by Maarten De Boer.
 //
-// Copyright 1999-2004 by Michael Sweet.
+// Copyright 1999-2005 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1027,5 +1027,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.20 2004/02/29 12:47:36 easysw Exp $".
+// End of "$Id$".
 //

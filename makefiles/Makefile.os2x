@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.6.2.7 2001/04/26 07:11:58 spitzak Exp $"
+# "$Id$"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -74,5 +74,5 @@ makeinclude: makefiles/makeinclude.os2x
 	cp $< $@
 
 #
-# End of "$Id: Makefile.os2x,v 1.6.2.7 2001/04/26 07:11:58 spitzak Exp $".
+# End of "$Id$".
 #

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_overlay.cxx,v 1.4.2.3.2.6 2004/08/31 22:00:48 matthiaswm Exp $"
+// "$Id$"
 //
 // Overlay support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -73,5 +73,5 @@ void fl_overlay_rect(int x, int y, int w, int h) {
 }
 
 //
-// End of "$Id: fl_overlay.cxx,v 1.4.2.3.2.6 2004/08/31 22:00:48 matthiaswm Exp $".
+// End of "$Id$".
 //

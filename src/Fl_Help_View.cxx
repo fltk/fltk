@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.55 2004/12/03 02:48:21 easysw Exp $"
+// "$Id$"
 //
 // Fl_Help_View widget routines.
 //
-// Copyright 1997-2004 by Easy Software Products.
+// Copyright 1997-2005 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
 //
 // This library is free software; you can redistribute it and/or
@@ -2800,5 +2800,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.55 2004/12/03 02:48:21 easysw Exp $".
+// End of "$Id$".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.8 2004/11/23 00:28:35 matthiaswm Exp $"
+// "$Id$"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -81,5 +81,5 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
 
 
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.8 2004/11/23 00:28:35 matthiaswm Exp $".
+// End of "$Id$".
 //

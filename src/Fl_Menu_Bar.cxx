@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Menu_Bar.cxx,v 1.7.2.6.2.5 2004/06/07 19:23:12 matthiaswm Exp $"
+// "$Id$"
 //
 // Menu bar widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2004 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -72,5 +72,5 @@ int Fl_Menu_Bar::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Menu_Bar.cxx,v 1.7.2.6.2.5 2004/06/07 19:23:12 matthiaswm Exp $".
+// End of "$Id$".
 //

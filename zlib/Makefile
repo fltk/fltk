@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.1.2.6 2004/09/08 16:04:42 easysw Exp $"
+# "$Id$"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1997-2004 by Easy Software Products.
+# Copyright 1997-2005 by Easy Software Products.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -103,5 +103,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.6 2004/09/08 16:04:42 easysw Exp $".
+# End of "$Id$".
 #
