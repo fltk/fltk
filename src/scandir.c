@@ -115,7 +115,7 @@ scandir (const char *dir, struct dirent ***namelist,
   errno = save;
 
   /* Sort the list if we have a comparison function to sort with.  */
-  if (compar) qsort (v, i, sizeof (*v), compar);
+  if (compar) qsort (v, i, sizeof (*v), (int (*)(const void *, const void *))compar);
   *namelist = v;
   return i;
 }
