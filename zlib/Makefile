@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.4 2004/07/29 18:13:11 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.5 2004/09/06 11:20:53 easysw Exp $"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -63,6 +63,9 @@ install: $(LIBZ)
 	$(RM) $(libdir)/libfltk_z$(LIBEXT)
 	$(CP) $(LIBZ) $(libdir)
 	$(RANLIB) $(libdir)/libfltk_z$(LIBEXT)
+	echo "Installing zlib headers in $(includedir)/FL/images..."
+	-$(MKDIR) $(includedir)/FL/images
+	$(CP) zconf.h zlib.h zutil.h $(includedir)/FL/images
 
 
 #
@@ -72,6 +75,10 @@ install: $(LIBZ)
 uninstall:
 	echo "Uninstalling libfltk_z$(LIBEXT) in $(libdir)..."
 	$(RM) $(libdir)/libfltk_z$(LIBEXT)
+	echo "Uninstalling zlib headers in $(includedir)/FL/images..."
+	$(RM) $(includedir)/FL/images/zconf.h
+	$(RM) $(includedir)/FL/images/zlib.h
+	$(RM) $(includedir)/FL/images/zutil.h
 
 
 #
@@ -97,5 +104,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.4 2004/07/29 18:13:11 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.5 2004/09/06 11:20:53 easysw Exp $".
 #

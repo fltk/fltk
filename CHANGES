@@ -1,9 +1,13 @@
 CHANGES IN FLTK 1.1.5rc3
 
-	- added test/unittests to verify pixel drawing and 
+	- Added test/unittests to verify pixel drawing and 
 	  alignment across platforms
 	- Fl_Menu_::find_item() didn't determine the menu path
 	  properly (STR #481)
+	- The build system now installs image library header
+	  files in FL/images/filename.h so that FLTK programs
+	  will use the same header files as the FLTK image
+	  libraries.
 	- The build system now creates image libraries named
 	  "libfltk_name.a" instead of "libname.a" to avoid
 	  clobbering an existing installed library (STR #480)

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.25 2004/08/05 20:20:51 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.26 2004/09/06 11:20:52 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -54,6 +54,11 @@ CFLAGS="@CFLAGS@"
 CXXFLAGS="@CXXFLAGS@"
 LDFLAGS="@LDFLAGS@"
 LDLIBS="@LIBS@"
+
+if test -d $includedir/FL/images; then
+	CFLAGS="-I$includedir/FL/images $CFLAGS"
+	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
+fi
 
 # libraries to link with:
 LIBNAME="@LIBNAME@"
@@ -266,5 +271,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.25 2004/08/05 20:20:51 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.26 2004/09/06 11:20:52 easysw Exp $".
 #
