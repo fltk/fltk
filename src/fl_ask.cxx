@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8 1999/03/05 05:55:27 bill Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.1 1999/11/18 16:33:01 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,8 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Secret_Input.H>
+#include <FL/x.H>
+
 static Fl_Window *message_form;
 static Fl_Box *message;
 static Fl_Box *icon;
@@ -84,7 +86,8 @@ int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 static int innards(const char* fmt, va_list ap,
   const char *b0,
   const char *b1,
-  const char *b2)
+  const char *b2,
+  const char *l)
 {
   makeform();
   char buffer[1024];
@@ -106,6 +109,7 @@ static int innards(const char* fmt, va_list ap,
   const char* prev_icon_label = icon->label();
   if (!prev_icon_label) icon->label(iconlabel);
   message_form->hotspot(button[0]);
+  message_form->label(l);
   message_form->show();
   int r;
   for (;;) {
@@ -131,34 +135,57 @@ const char* fl_cancel= "Cancel";
 
 void fl_message(const char *fmt, ...) {
   va_list ap;
+
+#ifdef WIN32
+  MessageBeep(MB_ICONASTERISK);
+#endif // WIN32
+
   va_start(ap, fmt);
   iconlabel = "i";
-  innards(fmt, ap, 0, fl_ok, 0);
+  innards(fmt, ap, 0, fl_ok, 0, "Message");
   va_end(ap);
   iconlabel = "?";
 }
 
 void fl_alert(const char *fmt, ...) {
   va_list ap;
+
+#ifdef WIN32
+  MessageBeep(MB_ICONERROR);
+#else
+  XBell(fl_display, 100);
+#endif // WIN32
+
   va_start(ap, fmt);
   iconlabel = "!";
-  innards(fmt, ap, 0, fl_ok, 0);
+  innards(fmt, ap, 0, fl_ok, 0, "Alert");
   va_end(ap);
   iconlabel = "?";
 }
 
 int fl_ask(const char *fmt, ...) {
   va_list ap;
+
+#ifdef WIN32
+  MessageBeep(MB_ICONQUESTION);
+#endif // WIN32
+
   va_start(ap, fmt);
-  int r = innards(fmt, ap, fl_no, fl_yes, 0);
+  int r = innards(fmt, ap, fl_no, fl_yes, 0, "Question");
   va_end(ap);
+
   return r;
 }
 
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_list ap;
+
+#ifdef WIN32
+  MessageBeep(MB_ICONQUESTION);
+#endif // WIN32
+
   va_start(ap, b2);
-  int r = innards(fmt, ap, b0, b1, b2);
+  int r = innards(fmt, ap, b0, b1, b2, "Choose");
   va_end(ap);
   return r;
 }
@@ -172,7 +199,12 @@ static const char* input_innards(const char* fmt, va_list ap,
   input->type(type);
   input->show();
   input->value(defstr);
-  int r = innards(fmt, ap, fl_cancel, fl_ok, 0);
+
+#ifdef WIN32
+  MessageBeep(MB_ICONQUESTION);
+#endif // WIN32
+
+  int r = innards(fmt, ap, fl_cancel, fl_ok, 0, "Input");
   input->hide();
   message->position(60,25);
   return r ? input->value() : 0;
@@ -195,5 +227,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8 1999/03/05 05:55:27 bill Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.1 1999/11/18 16:33:01 mike Exp $".
 //
