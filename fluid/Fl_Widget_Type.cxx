@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.20 2002/11/01 14:17:36 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.21 2002/11/03 00:01:19 matthiaswm Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -251,6 +251,8 @@ Fl_Type *sort(Fl_Type *parent) {
 #include "widget_panel.h"
 #include <FL/fl_show_colormap.H>
 
+static Fl_Window *the_panel;
+
 // All the callbacks use the argument to indicate whether to load or store.
 // This avoids the need for pointers to all the widgets, and keeps the
 // code localized in the callbacks.
@@ -267,12 +269,12 @@ void name_cb(Fl_Input* o, void *v) {
     if (numselected != 1) {
       static char buf[16];
       sprintf(buf,"(%d widgets)",numselected);
-      ((Fl_Window*)(o->parent()->parent()->parent()))->label(buf);
+      the_panel->label(buf);
       o->hide();
     } else {
       o->static_value(current_widget->name());
       o->show();
-      ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
+      the_panel->label(current_widget->title());
     }
   } else {
     if (numselected == 1) {
@@ -939,11 +941,12 @@ void align_cb(Fl_Button* i, void *v) {
 
 ////////////////////////////////////////////////////////////////
 
-void callback_cb(Fl_Input* i, void *v) {
+void callback_cb(Fl_Text_Editor* i, void *v) {
   if (v == LOAD) {
-    i->static_value(current_widget->callback());
+    const char *cbtext = current_widget->callback();
+    i->buffer()->text( cbtext ? cbtext : "" );
   } else {
-    const char *c = i->value();
+    const char *c = i->buffer()->text();
     const char *d = c_check(c);
     if (d) {fl_message("Error in callback: %s",d); haderror = 1; return;}
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) if (o->selected) {
@@ -1215,8 +1218,6 @@ void subtype_cb(Fl_Choice* i, void* v) {
 }
 
 ////////////////////////////////////////////////////////////////
-
-static Fl_Window *the_panel;
 
 void propagate_load(Fl_Group* g, void* v) {
   if (v == LOAD) {
@@ -1970,5 +1971,5 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.20 2002/11/01 14:17:36 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.21 2002/11/03 00:01:19 matthiaswm Exp $".
 //

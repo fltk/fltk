@@ -49,10 +49,15 @@ Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
     label code open
-    xywh {260 242 548 175} resizable modal visible
+    xywh {327 261 548 175} resizable modal visible
   } {
-    Fl_Input code_input {
-      tooltip {C/C++ code.} xywh {10 10 525 120} type Multiline labelsize 12 align 0 when 0 textfont 4 resizable
+    Fl_Group {} {open
+      xywh {10 10 525 120} box DOWN_FRAME resizable
+    } {
+      Fl_Text_Editor code_input {selected
+        xywh {12 12 521 116} box NO_BOX resizable
+        code0 {o->buffer(new Fl_Text_Buffer);}
+      }
     }
     Fl_Return_Button code_panel_ok {
       label OK
@@ -471,7 +476,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"Fl_Help_View"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip {Help Browser} xywh {392 28 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[35]);}
       }

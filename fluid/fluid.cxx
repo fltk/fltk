@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.35 2002/11/01 00:32:05 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.36 2002/11/03 00:01:20 matthiaswm Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -112,17 +112,21 @@ void leave_source_dir() {
   in_source_dir = 0;
 }
   
-void position_window(Fl_Window *w, const char *prefsName, int X, int Y, int W=0, int H=0 ) {
+char position_window(Fl_Window *w, const char *prefsName, int Visible, int X, int Y, int W=0, int H=0 ) {
   Fl_Preferences pos(fluid_prefs, prefsName);
-  pos.get("x", X, X);
-  pos.get("y", Y, Y);
-  if ( W!=0 ) {
-    pos.get("w", W, W);
-    pos.get("h", H, H);
-    w->resize( X, Y, W, H );
+  if (prevpos_button->value()) {
+    pos.get("x", X, X);
+    pos.get("y", Y, Y);
+    if ( W!=0 ) {
+      pos.get("w", W, W);
+      pos.get("h", H, H);
+      w->resize( X, Y, W, H );
+    }
+    else
+      w->position( X, Y );
   }
-  else
-    w->position( X, Y );
+  pos.get("visible", Visible, Visible);
+  return Visible;
 }
 
 void save_position(Fl_Window *w, const char *prefsName) {
@@ -131,6 +135,7 @@ void save_position(Fl_Window *w, const char *prefsName) {
   pos.set("y", w->y());
   pos.set("w", w->w());
   pos.set("h", w->h());
+  pos.set("visible", w->shown() && w->visible() );
 }
 
 Fl_Window *main_window;
@@ -428,7 +433,7 @@ void manual_cb(Fl_Widget *, void *) {
 void toggle_widgetbin_cb(Fl_Widget *, void *) {
   if ( !widgetbin_panel ) {
     make_widgetbin();
-    position_window(widgetbin_panel,"widgetbin_pos", 320, 30);
+    if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
   }
   if ( widgetbin_panel->visible() )
     widgetbin_panel->hide();
@@ -817,11 +822,9 @@ int main(int argc,char **argv) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
-    if (prevpos_button->value()) 
-      position_window(main_window,"main_window_pos", 10, 30, WINWIDTH, WINHEIGHT );
+    position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
     main_window->show(argc,argv);
-    if (openbin_button->value()) 
-      toggle_widgetbin_cb(0,0);
+    toggle_widgetbin_cb(0,0);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
       open_history_cb(0, absolute_history[0]);
@@ -850,5 +853,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.35 2002/11/01 00:32:05 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.36 2002/11/03 00:01:20 matthiaswm Exp $".
 //

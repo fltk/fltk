@@ -36,7 +36,6 @@ extern Fl_Window *settings_window;
 extern Fl_Check_Button *tooltips_button;
 extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
-extern Fl_Check_Button *openbin_button;
 extern Fl_Check_Button *prevpos_button;
 Fl_Window* make_settings_window();
 extern Fl_Window *shell_window;

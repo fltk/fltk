@@ -65,7 +65,7 @@ Fl_Window* make_function_panel() {
 
 Fl_Window *code_panel=(Fl_Window *)0;
 
-Fl_Input *code_input=(Fl_Input *)0;
+Fl_Text_Editor *code_input=(Fl_Text_Editor *)0;
 
 Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
 
@@ -75,13 +75,14 @@ Fl_Window* make_code_panel() {
   Fl_Window* w;
   { Fl_Window* o = code_panel = new Fl_Window(548, 175, "code");
     w = o;
-    { Fl_Input* o = code_input = new Fl_Input(10, 10, 525, 120);
-      o->tooltip("C/C++ code.");
-      o->type(4);
-      o->labelsize(12);
-      o->textfont(4);
-      o->align(FL_ALIGN_CENTER);
-      o->when(FL_WHEN_NEVER);
+    { Fl_Group* o = new Fl_Group(10, 10, 525, 120);
+      o->box(FL_DOWN_FRAME);
+      { Fl_Text_Editor* o = code_input = new Fl_Text_Editor(12, 12, 521, 116);
+        o->box(FL_NO_BOX);
+        Fl_Group::current()->resizable(o);
+        o->buffer(new Fl_Text_Buffer);
+      }
+      o->end();
       Fl_Group::current()->resizable(o);
     }
     { Fl_Return_Button* o = code_panel_ok = new Fl_Return_Button(370, 140, 80, 25, "OK");

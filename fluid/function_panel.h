@@ -17,7 +17,9 @@ extern Fl_Return_Button *f_panel_ok;
 extern Fl_Button *f_panel_cancel;
 Fl_Window* make_function_panel();
 extern Fl_Window *code_panel;
-extern Fl_Input *code_input;
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Text_Editor.H>
+extern Fl_Text_Editor *code_input;
 extern Fl_Return_Button *code_panel_ok;
 extern Fl_Button *code_panel_cancel;
 Fl_Window* make_code_panel();
@@ -50,7 +52,6 @@ Fl_Window* make_class_panel();
 void type_make_cb(Fl_Widget*w,void*d);
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *widgetbin_panel;
-#include <FL/Fl_Group.H>
 extern void type_make_cb(Fl_Button*, void*);
 Fl_Double_Window* make_widgetbin();
 #endif
