@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- The fl_msg structure now contains all data passed to
+	  the WndProc function under WIN32.
 	- Fixed some window focus/positioning problems under
 	  MacOS X.
 	- Added fl_create_alphamask() function to create an alpha
