@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arci.cxx,v 1.4 1999/01/07 19:17:36 mike Exp $"
+// "$Id: fl_arci.cxx,v 1.4.2.1 1999/11/09 16:40:05 mike Exp $"
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
-  Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
+  Arc(fl_gc, x, y, x+w+1, y+h+1, xa, ya, xb, yb); 
 #else
   XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 #endif
@@ -61,12 +61,12 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
   SelectObject(fl_gc, fl_brush());
-  Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
+  Pie(fl_gc, x, y, x+w+1, y+h+1, xa, ya, xb, yb); 
 #else
   XFillArc(fl_display, fl_window, fl_gc, x,y,w,h, int(a1*64),int((a2-a1)*64));
 #endif
 }
 
 //
-// End of "$Id: fl_arci.cxx,v 1.4 1999/01/07 19:17:36 mike Exp $".
+// End of "$Id: fl_arci.cxx,v 1.4.2.1 1999/11/09 16:40:05 mike Exp $".
 //
