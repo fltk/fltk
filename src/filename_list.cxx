@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.10 2001/04/13 19:13:14 easysw Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.11 2001/05/11 18:37:08 easysw Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -46,7 +46,7 @@ int filename_list(const char *d, dirent ***list) {
 #elif defined(__osf__)
   // OSF, DU 4.0x
   return scandir(d, list, 0, (int(*)(dirent **, dirent **))numericsort);
-#elif defined(__aix)
+#elif defined(_AIX)
   // AIX is almost standard...
   return scandir(d, list, 0, (int(*)(void*, void*))numericsort);
 #elif HAVE_SCANDIR && !defined(__sgi)
@@ -62,5 +62,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.10 2001/04/13 19:13:14 easysw Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.11 2001/05/11 18:37:08 easysw Exp $".
 //
