@@ -1,5 +1,5 @@
 //
-// "$Id: doublebuffer.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: doublebuffer.cxx,v 1.4.2.3.2.1 2001/12/23 03:40:51 easysw Exp $"
 //
 // Double-buffering test program for the Fast Light Tool Kit (FLTK).
 //
@@ -91,7 +91,7 @@ public:
     : Fl_Double_Window(x,y,w,h,l) {resizable(this);}
 };
 
-int main() {
+int main(int argc, char **argv) {
   if (!Fl::visual(FL_DOUBLE))
     printf("Xdbe not supported, faking double buffer with pixmaps.\n");
   Fl_Window w01(420,420,"Fl_Single_Window"); w01.box(FL_FLAT_BOX);
@@ -114,7 +114,7 @@ int main() {
   slider1.callback(slider_cb, 1);
   w2.end();
   w02.end();
-  w01.show();
+  w01.show(argc, argv);
   w1.show();
   w02.show();
   w2.show();
@@ -122,5 +122,5 @@ int main() {
 }
 
 //
-// End of "$Id: doublebuffer.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: doublebuffer.cxx,v 1.4.2.3.2.1 2001/12/23 03:40:51 easysw Exp $".
 //

@@ -42,6 +42,7 @@ public:
   void position(int xx, int yy);
   void resize(int xx, int yy, int ww, int hh);
   void show();
+  void show(int argc, char **argv);
   void textsize(uchar s);
   uchar textsize();
   void topline(const char *n);

@@ -182,6 +182,10 @@ void Fl_Help_Dialog::show() {
   window_->show();
 }
 
+void Fl_Help_Dialog::show(int argc, char **argv) {
+  window_->show(argc, argv);
+}
+
 void Fl_Help_Dialog::textsize(uchar s) {
   view_->textsize(s);
 

@@ -1,10 +1,19 @@
-CHANGES IN FLTK 1.1.0b8
+CHANGES IN FLTK 1.1.0b9
 
+	- Demo cleanup - made sure they all worked with
+	  schemes.
+	- Fl_Tabs no longer clears the unused area of the
+	  tab bar.
+	- Added show(argc, argv) method to Fl_Help_Dialog.
 	- MacOS: implemented cut/copy/paste.
 	- MacOS: improved keyboard handling, fixed keyboard
 	  focus handling, fixed get_key, modified 'keyboard'
 	  demo to show second mouse wheel and additional keys
 	  'help' and FL_NK+'='
+
+
+CHANGES IN FLTK 1.1.0b8
+
 	- OS/2 build fixes.
 	- fl_draw() didn't ignore symbol escapes properly for
 	  the browsers...

@@ -14,7 +14,7 @@ class Fl_Help_Dialog {open
   Function {Fl_Help_Dialog()} {open
   } {
     Fl_Window window_ {
-      label {Help Dialog} open selected
+      label {Help Dialog} open
       private xywh {470 380 530 385} type Double resizable
       code0 {\#include <string.h>} visible
     } {
@@ -72,7 +72,7 @@ if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
 view_->topline(line_[index_]);}
-        tooltip {Show the previous help page.} private xywh {365 350 25 25} shortcut 0xff51 labelcolor 2
+        private tooltip {Show the previous help page.} xywh {365 350 25 25} shortcut 0xff51 labelcolor 2
       }
       Fl_Button forward_ {
         label {@->}
@@ -88,7 +88,7 @@ if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
 view_->topline(line_[index_]);}
-        tooltip {Show the next help page.} private xywh {395 350 25 25} shortcut 0xff53 labelcolor 2
+        private tooltip {Show the next help page.} xywh {395 350 25 25} shortcut 0xff53 labelcolor 2
       }
       Fl_Button smaller_ {
         label F
@@ -98,7 +98,7 @@ view_->topline(line_[index_]);}
 if (view_->textsize() <= 8)
   smaller_->deactivate();
 larger_->activate();}
-        tooltip {Make the help text smaller.} private xywh {305 350 25 25} labelfont 1 labelsize 10
+        private tooltip {Make the help text smaller.} xywh {305 350 25 25} labelfont 1 labelsize 10
       }
       Fl_Button larger_ {
         label F
@@ -108,7 +108,7 @@ larger_->activate();}
 if (view_->textsize() >= 18)
   larger_->deactivate();
 smaller_->activate();}
-        tooltip {Make the help text larger.} private xywh {335 350 25 25} labelfont 1 labelsize 16
+        private tooltip {Make the help text larger.} xywh {335 350 25 25} labelfont 1 labelsize 16
       }
     }
     code {back_->deactivate();
@@ -145,6 +145,11 @@ window_->label(view_->title());} {}
   Function {show()} {return_type void
   } {
     code {window_->show();} {}
+  }
+  Function {show(int argc, char **argv)} {open return_type void
+  } {
+    code {window_->show(argc, argv);} {selected
+    }
   }
   Function {textsize(uchar s)} {return_type void
   } {

@@ -10,7 +10,7 @@ class CubeViewUI {open
   Function {CubeViewUI()} {open
   } {
     Fl_Window mainWindow {
-      label CubeView open selected
+      label CubeView open
       private xywh {428 124 419 406} box UP_BOX labelsize 12 resizable visible
     } {
       Fl_Group {} {open
@@ -71,8 +71,8 @@ cube->redraw();}
       }
     }
   }
-  Function {show()} {open
+  Function {show(int argc, char **argv)} {open selected
   } {
-    code {mainWindow->show();} {}
+    code {mainWindow->show(argc, argv);} {}
   }
 } 

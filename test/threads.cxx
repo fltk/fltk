@@ -1,5 +1,5 @@
 //
-// "$Id: threads.cxx,v 1.10.2.1 2001/12/08 16:23:51 easysw Exp $"
+// "$Id: threads.cxx,v 1.10.2.2 2001/12/23 03:40:51 easysw Exp $"
 //
 // Threading example program for the Fast Light Tool Kit (FLTK).
 //
@@ -77,14 +77,14 @@ void* prime_func(void* p)
   return 0;
 }
 
-int main()
+int main(int argc, char **argv)
 {
   Fl_Window* w = new Fl_Window(200, 200, "Single Thread");
   browser1 = new Fl_Browser(0, 0, 200, 175);
   w->resizable(browser1);
   value1 = new Fl_Value_Output(100, 175, 200, 25, "Max Prime:");
   w->end();
-  w->show();
+  w->show(argc, argv);
   w = new Fl_Window(200, 200, "Six Threads");
   browser2 = new Fl_Browser(0, 0, 200, 175);
   w->resizable(browser2);
@@ -126,5 +126,5 @@ int main() {
 
 
 //
-// End of "$Id: threads.cxx,v 1.10.2.1 2001/12/08 16:23:51 easysw Exp $".
+// End of "$Id: threads.cxx,v 1.10.2.2 2001/12/23 03:40:51 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: navigation.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: navigation.cxx,v 1.5.2.3.2.1 2001/12/23 03:40:51 easysw Exp $"
 //
 // Navigation test program for the Fast Light Tool Kit (FLTK).
 //
@@ -61,10 +61,10 @@ int main(int argc, char **argv) {
     if (n < window.children()) continue;
     window.insert(*(new Fl_Input(x,y,w,h)),j);
   }
-  window.show();
+  window.show(argc, argv);
   return Fl::run();
 }
 
 //
-// End of "$Id: navigation.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: navigation.cxx,v 1.5.2.3.2.1 2001/12/23 03:40:51 easysw Exp $".
 //
