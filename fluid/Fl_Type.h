@@ -530,6 +530,10 @@ extern Fl_Menu_Item button_type_menu[];
 class Fl_Menu_Button_Type : public Fl_Menu_Type {
   Fl_Menu_Item *subtypes() {return button_type_menu;}
 public:
+  virtual void ideal_size(int &w, int &h) {
+    Fl_Widget_Type::ideal_size(w, h);
+    w += 20;
+  }
   virtual const char *type_name() {return "Fl_Menu_Button";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
     return new Fl_Menu_Button(X,Y,W,H,"menu");}
@@ -542,6 +546,10 @@ extern Fl_Menu_Item dummymenu[];
 #include <FL/Fl_Choice.H>
 class Fl_Choice_Type : public Fl_Menu_Type {
 public:
+  virtual void ideal_size(int &w, int &h) {
+    Fl_Widget_Type::ideal_size(w, h);
+    w += 20;
+  }
   virtual const char *type_name() {return "Fl_Choice";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
     Fl_Choice *myo = new Fl_Choice(X,Y,W,H,"choice:");
@@ -566,6 +574,14 @@ class Fl_Input_Choice_Type : public Fl_Menu_Type {
     return 1;
   }
 public:
+  virtual void ideal_size(int &w, int &h) {
+    Fl_Input_Choice *myo = (Fl_Input_Choice *)o;
+    fl_font(myo->textfont(), myo->textsize());
+    h = fl_height() + myo->textsize() - 6;
+    w = o->w() - 20 - Fl::box_dw(o->box());
+    int ww = (int)fl_width('m');
+    w = ((w + ww - 1) / ww) * ww + 20 + Fl::box_dw(o->box());
+  }
   virtual const char *type_name() {return "Fl_Input_Choice";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
     Fl_Input_Choice *myo = new Fl_Input_Choice(X,Y,W,H,"input choice:");

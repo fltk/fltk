@@ -614,33 +614,31 @@ void Fl_Window_Type::draw_overlay() {
     // - check for distance to the window edge
     //    * FLTK suggests 10 pixels from the edge
     int d;
-    int xsp, xdl, ydl, ysp;
+    int xsp, ysp;
 
 
     ideal_spacing(xsp, ysp);
-    xdl = (xsp + 1) / 2;
-    ydl = (ysp + 1) / 2;
 
     if (drag & DRAG) {
-      if (abs(d = ysp - myby) < ydl) {
+      if (abs(d = ysp - myby) < 5) {
 	dy += d;
 	mybt += d;
 	myby = ysp;
 	draw_v_arrow(mybx+5, myby, 0);
       }
-      if (abs(d = o->h() - ysp - mybt) < ydl) {
+      if (abs(d = o->h() - ysp - mybt) < 5) {
 	dy += d;
 	myby += d;
 	mybt = o->h()- ysp;
 	draw_v_arrow(mybx+5, mybt, o->h());
       }
-      if (abs(d = xsp - mybx) < xdl) {
+      if (abs(d = xsp - mybx) < 5) {
         dx += d;
 	mybr += d;
 	mybx = xsp;
 	draw_h_arrow(mybx, myby+5, 0);
       }
-      if (abs(d = o->w() - xsp - mybr) < xdl) {
+      if (abs(d = o->w() - xsp - mybr) < 5) {
 	dx += d;
 	mybx += d;
 	mybr = o->w()- xsp;
@@ -649,12 +647,11 @@ void Fl_Window_Type::draw_overlay() {
     } else if (numselected==1 && selection) {
       // check for FLTK preferred sizes
       Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
-      int iw, ih;
-
-      mysel->ideal_size(iw, ih);
-
       int w = mybr-mybx;
       int h = mybt-myby;
+      int iw = w, ih = h;
+
+      mysel->ideal_size(iw, ih);
 
       if (abs(d = h-ih) < 4) {
 	mybt = myby + ih;
@@ -689,21 +686,49 @@ void Fl_Window_Type::draw_overlay() {
 	  if (!qw->o->visible_r()) continue;
 
           qw->ideal_spacing(xsp, ysp);
-	  xdl = (xsp + 1) / 2;
-	  ydl = (ysp + 1) / 2;
 
           // - check horizontal and vertical alignment with other widgets
-          if (abs(myby - qw->o->y()) < 3) draw_top_brace(qw->o);
-          if (abs(mybx - qw->o->x()) < 3) draw_left_brace(qw->o);
-          if (abs(mybr - qw->o->x() - qw->o->w()) < 3) draw_right_brace(qw->o);
-          if (abs(mybt - qw->o->y() - qw->o->h()) < 3) draw_bottom_brace(qw->o);
+          if (abs(d = qw->o->y() - myby) < 5) {
+	    if (drag & (TOP | DRAG)) dy += d;
+	    else dy -= d;
+
+            myby += d;
+	    mybt += d;
+
+	    draw_top_brace(qw->o);
+	  }
+          if (abs(d = qw->o->x() - mybx) < 5) {
+	    if (drag & (LEFT | DRAG)) dx += d;
+	    else dx -= d;
+
+            mybx += d;
+	    mybr += d;
+
+	    draw_left_brace(qw->o);
+	  }
+          if (abs(d = qw->o->x() + qw->o->w() - mybr) < 5) {
+	    if (drag & (LEFT | DRAG)) dx += d;
+	    else dx -= d;
+
+            mybx += d;
+	    mybr += d;
+
+	    draw_right_brace(qw->o);
+	  }
+          if (abs(d = qw->o->y() + qw->o->h() - mybt) < 5) {
+	    if (drag & (TOP | DRAG)) dy += d;
+	    else dy -= d;
+
+            myby += d;
+	    mybt += d;
+
+	    draw_bottom_brace(qw->o);
+	  }
 
           // - check distances between widgets
-          // * horizontal and vertical widget to widget is 10 pixels
-          if (qw->o->y()>=myby && qw->o->y()<mybt) {
+          if ((qw->o->y()+qw->o->h())>=myby && qw->o->y()<=mybt) {
 	    // Compare left of selected to right of current
-            int xx = mybx - (qw->o->x()+qw->o->w());
-            if (abs(d = xx-xsp) < xdl) {
+            if (abs(d = xsp - (mybx - qw->o->x() - qw->o->w())) < 5) {
 	      if (drag & (LEFT | DRAG)) dx += d;
 	      else dx -= d;
 
@@ -714,8 +739,7 @@ void Fl_Window_Type::draw_overlay() {
 	      draw_h_arrow(mybx, (myby+mybt)/2, qw->o->x()+qw->o->w());
             } else {
 	      // Compare right of selected to left of current
-              xx = qw->o->x() - mybr;
-              if (abs(d = xx-xsp) < xdl) {
+              if (abs(d = xsp - (qw->o->x() - mybr)) < 5) {
 	        if (drag & (LEFT | DRAG)) dx += d;
 		else dx -= d;
 
@@ -728,10 +752,9 @@ void Fl_Window_Type::draw_overlay() {
 	    }
 	  }
 
-          if (qw->o->x()>=mybx && qw->o->x()<mybr) {
+          if ((qw->o->x()+qw->o->w())>=mybx && qw->o->x()<=mybr) {
             // Compare top of selected to bottom of current
-            int yy = myby - (qw->o->y()+qw->o->h());
-            if (abs(d = yy-ysp) < ydl) {
+            if (abs(d = ysp - (myby - qw->o->y() - qw->o->h())) < 5) {
 	      if (drag & (TOP | DRAG)) dy += d;
 	      else dy -= d;
 
@@ -742,8 +765,7 @@ void Fl_Window_Type::draw_overlay() {
 	      draw_v_arrow((mybx+mybr)/2, myby, qw->o->y()+qw->o->h());
             } else {
 	      // Compare bottom of selected to top of current
-              yy = qw->o->y() - mybt;
-              if (abs(d = yy-ydl) < ydl) {
+              if (abs(d = ysp - (qw->o->y() - mybt)) < 5) {
 	        if (drag & (TOP | DRAG)) dy += d;
 		else dy -= d;
 

@@ -71,14 +71,14 @@ Fl_Widget_Type::ideal_size(int &w, int &h) {
   h = o->labelsize();
   o->measure_label(w, h);
 
-  h += o->labelsize() - 3; 
+  h += o->labelsize() - 6; 
   w += 2 * (o->labelsize() - 4);
 }
 
 // Return the ideal widget spacing...
 void
 Fl_Widget_Type::ideal_spacing(int &x, int &y) {
-  if (o->labelsize() < 9)
+  if (o->labelsize() < 10)
     x = y = 0;
   else if (o->labelsize() < 14)
     x = y = 5;
