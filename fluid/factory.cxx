@@ -869,6 +869,7 @@ extern class Fl_DeclBlock_Type Fl_DeclBlock_type;
 extern class Fl_Comment_Type Fl_Comment_type;
 extern class Fl_Class_Type Fl_Class_type;
 extern class Fl_Window_Type Fl_Window_type;
+extern class Fl_Widget_Class_Type Fl_Widget_Class_type;
 extern class Fl_Group_Type Fl_Group_type;
 extern class Fl_Pack_Type Fl_Pack_type;
 extern class Fl_Tabs_Type Fl_Tabs_type;
@@ -934,6 +935,7 @@ Fl_Menu_Item New_Menu[] = {
   {"Declaration",0,cb,(void*)&Fl_Decl_type},
   {"Declaration Block",0,cb,(void*)&Fl_DeclBlock_type},
   {"Class",0,cb,(void*)&Fl_Class_type},
+  {"Widget Class",0,cb,(void*)&Fl_Widget_Class_type},
   {"Comment",0,cb,(void*)&Fl_Comment_type},
 {0},
 {"Group",0,0,0,FL_SUBMENU},

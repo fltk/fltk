@@ -437,6 +437,8 @@ public:
 extern Fl_Menu_Item window_type_menu[];
 
 class Fl_Window_Type : public Fl_Widget_Type {
+protected:
+
   Fl_Menu_Item* subtypes() {return window_type_menu;}
 
   friend class Overlay_Window;
@@ -485,6 +487,18 @@ public:
   int is_group() const {return 1;}
   int is_window() const {return 1;}
 };
+
+class Fl_Widget_Class_Type : private Fl_Window_Type {
+public:
+  void write_code1();
+  void write_code2();
+  Fl_Type *make();
+  virtual const char *type_name() {return "widget_class";}
+  int is_parent() const {return 1;}
+  int is_decl_block() const {return 1;}
+  int is_class() const {return 1;}
+};
+
 
 extern Fl_Menu_Item menu_item_type_menu[];
 

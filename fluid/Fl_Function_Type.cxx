@@ -750,7 +750,9 @@ void Fl_Comment_Type::open() {
           // remove the last selected comment from the database
           if (itempath[0]==0 || last_selected_item==0) {
             fl_message("Please select an entry form this menu first.");
-          } else if (fl_ask("Are you sure that you want to delete the entry\n\"%s\"\nfrom the database?", itempath)) {
+          } else if (fl_choice("Are you sure that you want to delete the entry\n"
+	                       "\"%s\"\nfrom the database?", "Cancel", "Delete",
+			       NULL, itempath)) {
             Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
             db.deleteEntry(itempath);
             comment_predefined->remove(last_selected_item);

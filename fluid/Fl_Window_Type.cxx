@@ -1288,6 +1288,60 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
   return 1;
 }
 
+///////////////////////////////////////////////////////////////////////
+
+Fl_Widget_Class_Type Fl_Widget_Class_type;
+
+Fl_Type *Fl_Widget_Class_Type::make() {
+  Fl_Type *p = Fl_Type::current;
+  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();
+  myo->name("UserInterface");
+
+  if (!this->o) {// template widget
+    this->o = new Fl_Window(100,100);
+    Fl_Group::current(0);
+  }
+  // Set the size ranges for this window; in order to avoid opening the
+  // X display we use an arbitrary maximum size...
+  ((Fl_Window *)(this->o))->size_range(gridx, gridy,
+                                       3072, 2048,
+                                       gridx, gridy, 0);
+  myo->factory = this;
+  myo->drag = 0;
+  myo->numselected = 0;
+  Overlay_Window *w = new Overlay_Window(100,100);
+  w->window = myo;
+  myo->o = w;
+  myo->add(p);
+  myo->modal = 0;
+  myo->non_modal = 0;
+
+  return myo;
+}
+
+
+void Fl_Widget_Class_Type::write_code1() {
+  Fl_Widget_Type::write_code1();
+}
+
+void Fl_Widget_Class_Type::write_code2() {
+  write_extra_code();
+  if (modal) write_c("%so->set_modal();\n", indent());
+  else if (non_modal) write_c("%so->set_non_modal();\n", indent());
+  if (!((Fl_Window*)o)->border()) write_c("%so->clear_border();\n", indent());
+  if (xclass) {
+    write_c("%so->xclass(", indent());
+    write_cstring(xclass);
+    write_c(");\n");
+  }
+  write_c("%so->end();\n", indent());
+  if (((Fl_Window*)o)->resizable() == o)
+    write_c("%so->resizable(o);\n", indent());
+  write_block_close();
+}
+
+
 //
 // End of "$Id$".
 //
