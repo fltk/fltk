@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9.2.6.2.6 2002/06/11 20:58:12 easysw Exp $"
+// "$Id: fl_draw.H,v 1.9.2.6.2.7 2002/08/20 19:42:14 easysw Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -180,8 +180,8 @@ FL_EXPORT int fl_draw_pixmap(const char* const* data, int x,int y,Fl_Color=FL_GR
 FL_EXPORT int fl_measure_pixmap(const char* const* data, int &w, int &h);
 
 // other:
-extern FL_EXPORT void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
-	                        void (*draw_area)(void*, int,int,int,int), void* data);
+FL_EXPORT void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
+                         void (*draw_area)(void*, int,int,int,int), void* data);
 FL_EXPORT const char* fl_shortcut_label(int);
 FL_EXPORT void fl_overlay_rect(int,int,int,int);
 FL_EXPORT void fl_overlay_clear();
@@ -194,5 +194,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9.2.6.2.6 2002/06/11 20:58:12 easysw Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.6.2.7 2002/08/20 19:42:14 easysw Exp $".
 //

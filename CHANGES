@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0
 
+	- Minor tweeks to the WIN32 DLL support.
 	- Fl_Text_Display::resize() could go into an infinite
 	  loop if the buffer is emptied.
 	- Fl::handle() didn't pass FL_RELEASE events to the
