@@ -389,7 +389,7 @@ int fl_handle(const XEvent& xevent)
     }
     // ignore all effects of shift on the keysyms (makes it a lot
     // easier to program shortcuts!)
-    keysym = XKeycodeToKeysym(fl_display, i, 0);
+    if (keysym < 0x400) keysym = XKeycodeToKeysym(fl_display, i, 0);
 #ifdef __sgi
     // get some missing PC keyboard keys:
     if (!keysym) switch(i) {
