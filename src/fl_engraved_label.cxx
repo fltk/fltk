@@ -1,9 +1,9 @@
 //
-// "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.3 2003/01/30 21:43:45 easysw Exp $"
 //
 // Engraved label drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -87,5 +87,5 @@ Fl_Labeltype fl_define_FL_EMBOSSED_LABEL() {
 }
 
 //
-// End of "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.2 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: fl_engraved_label.cxx,v 1.4.2.3.2.3 2003/01/30 21:43:45 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3.2.4 2002/11/19 16:37:36 easysw Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.5 2003/01/30 21:44:25 easysw Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -361,5 +361,5 @@ static void fl_init_symbols(void) {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.4 2002/11/19 16:37:36 easysw Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.5 2003/01/30 21:44:25 easysw Exp $".
 //

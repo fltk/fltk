@@ -1,9 +1,9 @@
 /*
- * "$Id: config.mingw,v 1.1.2.3.2.9 2002/08/05 17:50:24 easysw Exp $"
+ * "$Id: config.mingw,v 1.1.2.3.2.10 2003/01/30 21:41:07 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2002 by Bill Spitzak and others.
+ * Copyright 1998-2003 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -215,5 +215,5 @@
 
 
 /*
- * End of "$Id: config.mingw,v 1.1.2.3.2.9 2002/08/05 17:50:24 easysw Exp $".
+ * End of "$Id: config.mingw,v 1.1.2.3.2.10 2003/01/30 21:41:07 easysw Exp $".
  */

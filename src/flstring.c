@@ -1,9 +1,9 @@
 /*
- * "$Id: flstring.c,v 1.1.2.2 2002/05/17 11:31:09 easysw Exp $"
+ * "$Id: flstring.c,v 1.1.2.3 2003/01/30 21:44:26 easysw Exp $"
  *
  * BSD string functions for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2002 by Bill Spitzak and others.
+ * Copyright 1998-2003 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -101,5 +101,5 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
 
 
 /*
- * End of "$Id: flstring.c,v 1.1.2.2 2002/05/17 11:31:09 easysw Exp $".
+ * End of "$Id: flstring.c,v 1.1.2.3 2003/01/30 21:44:26 easysw Exp $".
  */

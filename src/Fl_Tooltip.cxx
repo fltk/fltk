@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.26 2002/10/30 01:26:05 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.27 2003/01/30 21:42:53 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -232,5 +232,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.26 2002/10/30 01:26:05 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.27 2003/01/30 21:42:53 easysw Exp $".
 //

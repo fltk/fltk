@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_get_key_mac.cxx,v 1.1.2.5 2002/06/07 16:56:15 easysw Exp $"
+// "$Id: Fl_get_key_mac.cxx,v 1.1.2.6 2003/01/30 21:43:05 easysw Exp $"
 //
 // MacOS keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -99,5 +99,5 @@ int Fl::get_key(int k) {
 }
 
 //
-// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.5 2002/06/07 16:56:15 easysw Exp $".
+// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.6 2003/01/30 21:43:05 easysw Exp $".
 //

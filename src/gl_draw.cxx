@@ -1,9 +1,9 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5.2.9 2002/08/09 22:57:00 easysw Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.10 2003/01/30 21:44:33 easysw Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -159,5 +159,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.9 2002/08/09 22:57:00 easysw Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.10 2003/01/30 21:44:33 easysw Exp $".
 //

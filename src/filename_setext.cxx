@@ -1,9 +1,9 @@
 //
-// "$Id: filename_setext.cxx,v 1.4.2.3.2.5 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: filename_setext.cxx,v 1.4.2.3.2.6 2003/01/30 21:43:23 easysw Exp $"
 //
 // Filename extension routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -40,5 +40,5 @@ char *fl_filename_setext(char *buf, int buflen, const char *ext) {
 
 
 //
-// End of "$Id: filename_setext.cxx,v 1.4.2.3.2.5 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: filename_setext.cxx,v 1.4.2.3.2.6 2003/01/30 21:43:23 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.26 2003/01/15 19:41:58 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.27 2003/01/30 21:42:27 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -461,5 +461,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.26 2003/01/15 19:41:58 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.27 2003/01/30 21:42:27 easysw Exp $".
 //

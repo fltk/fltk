@@ -1,9 +1,9 @@
 //
-// "$Id: fl_font_win32.cxx,v 1.9.2.3.2.4 2002/06/08 13:07:19 easysw Exp $"
+// "$Id: fl_font_win32.cxx,v 1.9.2.3.2.5 2003/01/30 21:43:50 easysw Exp $"
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -156,5 +156,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_win32.cxx,v 1.9.2.3.2.4 2002/06/08 13:07:19 easysw Exp $".
+// End of "$Id: fl_font_win32.cxx,v 1.9.2.3.2.5 2003/01/30 21:43:50 easysw Exp $".
 //

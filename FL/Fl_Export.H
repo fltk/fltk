@@ -1,9 +1,9 @@
 /*
- * "$Id: Fl_Export.H,v 1.3.2.5 2002/07/14 17:03:30 easysw Exp $"
+ * "$Id: Fl_Export.H,v 1.3.2.6 2003/01/30 21:38:57 easysw Exp $"
  *
  * WIN32 DLL export definitions for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2002 by Bill Spitzak and others.
+ * Copyright 1998-2003 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,5 +43,5 @@
 #endif /* !Fl_Export_H */
 
 /*
- * End of "$Id: Fl_Export.H,v 1.3.2.5 2002/07/14 17:03:30 easysw Exp $".
+ * End of "$Id: Fl_Export.H,v 1.3.2.6 2003/01/30 21:38:57 easysw Exp $".
  */

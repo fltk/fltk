@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.12 2003/01/21 14:51:54 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.13 2003/01/30 21:39:52 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2002 by Matthias Melcher.
+// Copyright 2002-2003 by Matthias Melcher.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -157,5 +157,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.12 2003/01/21 14:51:54 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.13 2003/01/30 21:39:52 easysw Exp $".
 //

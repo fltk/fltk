@@ -1,9 +1,9 @@
 //
-// "$Id: fl_draw_image_mac.cxx,v 1.1.2.4 2002/06/27 04:29:39 matthiaswm Exp $"
+// "$Id: fl_draw_image_mac.cxx,v 1.1.2.5 2003/01/30 21:43:42 easysw Exp $"
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -275,5 +275,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.4 2002/06/27 04:29:39 matthiaswm Exp $".
+// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.5 2003/01/30 21:43:42 easysw Exp $".
 //

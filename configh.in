@@ -1,10 +1,10 @@
 /*
- * "$Id: configh.in,v 1.11.2.11.2.15 2002/10/23 15:18:56 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.16 2003/01/30 21:38:17 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
  *
- * Copyright 1998-2002 by Bill Spitzak and others.
+ * Copyright 1998-2003 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -220,5 +220,5 @@
 
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11.2.15 2002/10/23 15:18:56 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11.2.16 2003/01/30 21:38:17 easysw Exp $".
  */

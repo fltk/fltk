@@ -1,9 +1,9 @@
 //
-// "$Id: message.cxx,v 1.5.2.3.2.4 2002/03/25 21:55:41 easysw Exp $"
+// "$Id: message.cxx,v 1.5.2.3.2.5 2003/01/30 21:45:55 easysw Exp $"
 //
 // Message test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -55,5 +55,5 @@ int main(int, char **) {
 }
 
 //
-// End of "$Id: message.cxx,v 1.5.2.3.2.4 2002/03/25 21:55:41 easysw Exp $".
+// End of "$Id: message.cxx,v 1.5.2.3.2.5 2003/01/30 21:45:55 easysw Exp $".
 //

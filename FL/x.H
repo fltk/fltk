@@ -1,9 +1,9 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.11 2002/08/14 16:49:38 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.12 2003/01/30 21:40:58 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -138,5 +138,5 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.11 2002/08/14 16:49:38 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.12 2003/01/30 21:40:58 easysw Exp $".
 //

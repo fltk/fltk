@@ -1,9 +1,9 @@
 //
-// "$Id: symbols.cxx,v 1.4.2.3.2.4 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: symbols.cxx,v 1.4.2.3.2.5 2003/01/30 21:46:03 easysw Exp $"
 //
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -126,5 +126,5 @@ bt("@DnArrow");
 }
 
 //
-// End of "$Id: symbols.cxx,v 1.4.2.3.2.4 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: symbols.cxx,v 1.4.2.3.2.5 2003/01/30 21:46:03 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18.2.2 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18.2.3 2003/01/30 21:41:48 easysw Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -231,5 +231,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18.2.2 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18.2.3 2003/01/30 21:41:48 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.24 2002/11/19 16:37:34 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.25 2003/01/30 21:41:41 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
-// Copyright 1999-2002 by Michael Sweet.
+// Copyright 1999-2003 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -643,5 +643,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.24 2002/11/19 16:37:34 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.25 2003/01/30 21:41:41 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_dnd.cxx,v 1.3.2.2 2002/02/24 17:52:18 matthiaswm Exp $"
+// "$Id: fl_dnd.cxx,v 1.3.2.3 2003/01/30 21:43:36 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -32,5 +32,5 @@
 #endif
 
 //
-// End of "$Id: fl_dnd.cxx,v 1.3.2.2 2002/02/24 17:52:18 matthiaswm Exp $".
+// End of "$Id: fl_dnd.cxx,v 1.3.2.3 2003/01/30 21:43:36 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_JPEG_Image.H,v 1.1.2.3 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_JPEG_Image.H,v 1.1.2.4 2003/01/30 21:39:25 easysw Exp $"
 //
 // JPEG image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -37,5 +37,5 @@ class FL_EXPORT Fl_JPEG_Image : public Fl_RGB_Image {
 #endif
 
 //
-// End of "$Id: Fl_JPEG_Image.H,v 1.1.2.3 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.H,v 1.1.2.4 2003/01/30 21:39:25 easysw Exp $".
 //

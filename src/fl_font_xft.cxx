@@ -1,9 +1,9 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.9 2002/11/12 20:35:17 easysw Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.10 2003/01/30 21:43:54 easysw Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2001-2002 Bill Spitzak and others.
+// Copyright 2001-2003 Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -226,5 +226,5 @@ void fl_draw(const char *str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.9 2002/11/12 20:35:17 easysw Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.10 2003/01/30 21:43:54 easysw Exp $"
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.37 2003/01/14 21:30:15 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.38 2003/01/30 21:43:07 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1758,6 +1758,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.37 2003/01/14 21:30:15 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.38 2003/01/30 21:43:07 easysw Exp $".
 //
 

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.29 2003/01/28 20:42:11 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.30 2003/01/30 21:41:42 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
-// Copyright 1999-2002 by Michael Sweet.
+// Copyright 1999-2003 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1159,5 +1159,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.29 2003/01/28 20:42:11 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.30 2003/01/30 21:41:42 easysw Exp $".
 //
