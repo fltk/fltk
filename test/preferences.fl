@@ -12,6 +12,8 @@ decl {\#include <stdlib.h>} {}
 
 decl {\#include <FL/filename.H>} {} 
 
+decl {\#include <FL/fl_ask.H>} {} 
+
 decl {void readPrefs();} {public
 } 
 
@@ -294,9 +296,26 @@ Function {writePrefs()} {open return_type void
 
     eat.set( Fl_Preferences::Name( 3 ), "Test3" );
 
-  /** sample code only:
+  /* sample: create a sub-sub-group */
+  Fl_Preferences eatMore( eat, "More" );
+
+    eatMore.set( "more", "stuff" );
+
+  /* all the following searches should return 1 */
+  int sum = 0;
+  sum += app.groupExists( "Breakfast" ); /* find 'eat' relative to 'app' */
+  sum += app.groupExists( "Breakfast/More" ); /* find 'eat.eatMore' relative to 'app' */
+  sum += app.groupExists( "./Breakfast/More" ); /* find 'eat.eatMore' relative to Preferences */
+  sum += eat.groupExists( "More" ); /* find 'eatMore' relative to 'eat' */
+  sum += eat.groupExists( "./Breakfast/More" ); /* find 'eat.eatMore' relative to Preferences */
+  sum += eat.groupExists( "." ); /* find myself ('eat') */
+  sum += eat.groupExists( "./" ); /* find the topmost group ('app') */
+  if ( sum != 7 )
+    fl_message( "Assertion failed:\\nNot all group entries were found!" );
+
+  /* sample code only: */
     unsigned int hex = 0x2387efcd;
     eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-    eat.set( "binFoo2", (void*)&writePrefs, 1024 );
-  **/} {}
+  eat.set( "binFoo2", (void*)&writePrefs, 256 );
+  } {}
 } 

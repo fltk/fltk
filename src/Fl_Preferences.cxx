@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.19 2002/08/27 03:03:37 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.20 2002/09/05 20:44:36 matthiaswm Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -1013,19 +1013,48 @@ Fl_Preferences::Node *Fl_Preferences::Node::find( const char *path )
 }
 
 // find a group somewhere in the tree starting here
+// caller must not set 'offset' argument
 // - if the node does not exist, 'search' returns NULL
-Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path )
+// - if the pathname is "." (current node) return this node
+// - if the pathname is "./" (root node) return the topmost node
+// - if the pathname starts with "./", start the search at the root node instead
+Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset )
 {
-  int len = strlen( path_ );
-  if ( strncmp( path, path_, len ) == 0 )
+
+  if ( offset == 0 )
   {
-    if ( path[ len ] == 0 ) 
+    if ( path[0] == '.' )
+    {
+      if ( path[1] == 0 )
+      {
+	return this; // user was searching for current node
+      }
+      else if ( path[1] == '/' )
+      {
+	Node *nn = this;
+	while ( nn->parent_ ) nn = nn->parent_;
+	if ( path[2]==0 )
+	{ // user is searching for root ( "./" )
+	  return nn;
+	}
+	return nn->search( path+2, 2 ); // do a relative search on the root node
+      }
+    }
+    offset = strlen( path_ ) + 1;
+  }
+  
+  int len = strlen( path_ );
+  if ( len < offset-1 ) return 0;
+  len -= offset;
+  if ( ( len <= 0 ) || ( strncmp( path, path_+offset, len ) == 0 ) )
+  {
+    if ( len > 0 && path[ len ] == 0 ) 
       return this;
-    if ( path[ len ] == '/' )
+    if ( len <= 0 || path[ len ] == '/' )
     {
       for ( Node *nd = child_; nd; nd = nd->next_ )
       {
-	Node *nn = nd->find( path );
+	Node *nn = nd->search( path, offset );
 	if ( nn ) return nn;
       }
       return 0;
@@ -1084,5 +1113,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.19 2002/08/27 03:03:37 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.20 2002/09/05 20:44:36 matthiaswm Exp $".
 //

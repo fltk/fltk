@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.10 2002/08/27 03:03:34 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.11 2002/09/05 20:44:35 matthiaswm Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -112,7 +112,7 @@ private:
     // node methods
     int write( FILE *f );
     Node *find( const char *path );
-    Node *search( const char *path );
+    Node *search( const char *path, int offset=0 );
     Node *addChild( const char *path );
     void setParent( Node *parent );
     char remove();
@@ -157,5 +157,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.10 2002/08/27 03:03:34 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.11 2002/09/05 20:44:35 matthiaswm Exp $".
 //

@@ -161,6 +161,9 @@ by <tt>groups()</tt>.
 <H4><a name="Fl_Preferences.groupExists">int Fl_Preferences::groupExists(const char *groupname)</a></H4>
 
 <P>Returns non-zero if a group with this name exists.
+Groupnames are relative to the Preferences node and can contain a path.
+<tt>"."</tt> describes the current node, <tt>"./"</tt> describes the topmost node.
+By preceding a groupname with a <tt>"./"</tt>, its path becomes relative to the topmost node.
 
 <H4><a name="Fl_Preferences.groups">int Fl_Preferences::groups()</a></H4>
 
