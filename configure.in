@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.34 2001/12/03 18:57:45 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.35 2001/12/04 19:57:45 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -264,7 +264,7 @@ case $uname in
 	LIBS="$LIBS -mwindows -lwsock32"
 	CFLAGS="$CFLAGS -mwindows -DWIN32"
 	CXXFLAGS="$CXXFLAGS -mwindows -DWIN32"
-	HLINKS="#"
+
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
 	        AC_DEFINE(HAVE_GL)
@@ -278,10 +278,14 @@ case $uname in
 	    GLDSONAME=""
 	    GLDEMOS=""
 	fi
+
+	# Don't make symlinks since Windows is not case sensitive.
+	HLINKS="#"
 	;;
     Darwin*)
         # MacOS X uses Carbon for graphics...
         LIBS="$LIBS -framework Carbon -framework ApplicationServices"
+
 	if test x$enable_gl != xno; then
             AC_DEFINE(HAVE_GL)
             AC_DEFINE(HAVE_GL_GLU_H)
@@ -292,6 +296,8 @@ case $uname in
 	    GLDSONAME=""
 	    GLDEMOS=""
         fi
+	# Don't make symlinks because HFS+ is not case sensitive...
+	HLINKS="#"
 	;;
     *)
 	dnl Check for X11...
@@ -580,5 +586,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.34 2001/12/03 18:57:45 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.35 2001/12/04 19:57:45 easysw Exp $".
 dnl
