@@ -255,7 +255,7 @@ SOURCE=..\src\fl_engraved_label.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_file_chooser.cxx
+SOURCE=..\src\fl_file_dir.cxx
 # End Source File
 # Begin Source File
 

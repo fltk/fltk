@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.5 2001/09/29 15:57:32 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.6 2001/09/30 12:30:13 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -22,6 +22,8 @@
 #
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
+
+include makeinclude
 
 SHELL	=	/bin/sh
 DIRS	=	src fluid test
@@ -71,5 +73,5 @@ configure: configure.in
 	autoconf
 
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.5 2001/09/29 15:57:32 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.6 2001/09/30 12:30:13 easysw Exp $".
 #

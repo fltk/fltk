@@ -645,7 +645,7 @@ DEP_CPP_FL_EN=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_file_chooser.cxx
+SOURCE=..\src\fl_file_dir.cxx
 DEP_CPP_FL_FI=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
