@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.4 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.5 2002/10/01 18:37:27 easysw Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -125,7 +125,7 @@ int Fl_Menu_Item::add(
 
     // copy to buf, changing \x to x:
     q = buf;
-    for (p=mytext; *p && *p != '/'; *q++ = *p++) if (*p=='\\') p++;
+    for (p=mytext; *p && *p != '/'; *q++ = *p++) if (*p=='\\' && p[1]) p++;
     *q = 0;
 
     item = buf;
@@ -262,5 +262,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.4 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.5 2002/10/01 18:37:27 easysw Exp $".
 //
