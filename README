@@ -245,8 +245,8 @@ HOW TO WRITE PROGRAMS THAT USE FLTK
 
     Linker switches will be something like "-lfltk -L/usr/X11R6/lib
     -lX11".  Some programs may require "-lXext" or "-lm".  If FLTK is
-    not installed you will need to add a "-Ldir" switch pointing at
-    ./lib.
+    not installed in a standard location you will need to add a "-Ldir"
+    switch to point to the proper directory.
 
     If you wish to distribute a program (in source form) that uses
     FLTK, you are allowed by the license to directly include the
@@ -276,6 +276,7 @@ COPYRIGHT
 	Vincent Penne (vincent.penne@wanadoo.fr)
         Michael Sweet (mike@easysw.com)
 	Carl Thompson (clip@home.net)
+	Matthias ??? (matthias@mediaone.net)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public License
