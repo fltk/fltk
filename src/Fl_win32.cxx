@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.8 1999/04/23 06:55:53 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.9 1999/05/09 14:49:14 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -129,7 +129,10 @@ int fl_ready() {
 }
 
 double fl_wait(int timeout_flag, double time) {
-  int have_message;
+  int have_message = 0;
+  int timerid;
+
+
   if (nfds) {
     // For WIN32 we need to poll for socket input FIRST, since
     // the event queue is not something we can select() on...
@@ -145,8 +148,8 @@ double fl_wait(int timeout_flag, double time) {
     if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i ++) {
-	int f = fd[i].fd;
-	short revents = 0;
+        int f = fd[i].fd;
+        short revents = 0;
 	if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
 	if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
 	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
@@ -157,18 +160,32 @@ double fl_wait(int timeout_flag, double time) {
 
   // get the first message by waiting the correct amount of time:
   if (!timeout_flag) {
-    GetMessage(&fl_msg, NULL, 0, 0);
+    // If we are monitoring sockets we need to check them periodically,
+    // so set a timer in this case...
+    if (nfds) {
+      // First see if there is a message waiting...
+      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+      if (!have_message) {
+        // If not then set a 1ms timer...
+	timerid = SetTimer(NULL, 0, 1, NULL);
+        GetMessage(&fl_msg, NULL, 0, 0);
+        KillTimer(NULL, timerid);
+      }
+    } else
+      // Wait for a message...
+      GetMessage(&fl_msg, NULL, 0, 0);
+
     have_message = 1;
   } else {
-    if (time > 0.0) {
+    // Perform the requested timeout...
+    have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+    if (!have_message && time > 0.0) {
       int t = (int)(time * 1000.0);
       if (t <= 0) t = 1;
-      int timerid = SetTimer(NULL, 0, t, NULL);
+      timerid = SetTimer(NULL, 0, t, NULL);
       GetMessage(&fl_msg, NULL, 0, 0);
       KillTimer(NULL, timerid);
       have_message = 1;
-    } else {
-      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
     }
   }
 
@@ -922,5 +939,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.8 1999/04/23 06:55:53 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.9 1999/05/09 14:49:14 mike Exp $".
 //
