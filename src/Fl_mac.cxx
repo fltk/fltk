@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.6 2001/12/18 11:00:09 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.7 2001/12/19 09:10:00 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,6 +48,7 @@ static unsigned short macKeyLookUp[];
 static Fl_Window* resize_from_system;
 Fl_Window* fl_find(Window);
 int fl_handle(const EventRecord &event);
+void handleUpdateEvent( WindowPtr xid );
 
 int fl_screen;
 Handle fl_system_menu;
@@ -337,11 +338,70 @@ static OSErr QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* repl
     return noErr;
 }
 
+
+//        { kEventClassWindow, kEventWindowDrawContent } };
+/**
+ * Carbon Window handler
+ * This needs to be linked into all new window event handlers
+ */
+pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+{
+  UInt32 kind = GetEventKind( event );
+  OSStatus ret = eventNotHandledErr;
+  Fl_Window *window = (Fl_Window*)userData;
+
+  Rect currentBounds, originalBounds;
+  
+  switch ( kind )
+  {
+  case kEventWindowDrawContent:
+    handleUpdateEvent( fl_xid( window ) );
+    ret = noErr;
+    break;
+  case kEventWindowBoundsChanged: {
+    GetEventParameter( event, kEventParamCurrentBounds, typeQDRectangle, NULL, sizeof(Rect), NULL, &currentBounds );
+    GetEventParameter( event, kEventParamOriginalBounds, typeQDRectangle, NULL, sizeof(Rect), NULL, &originalBounds );
+    int X = currentBounds.left, W = currentBounds.right-X;
+    int Y = currentBounds.top, H = currentBounds.bottom-Y;
+    resize_from_system = window;
+    window->resize( X, Y, W, H );
+    if ( ( originalBounds.right - originalBounds.left != W ) 
+      || ( originalBounds.bottom - originalBounds.top != H ) )
+    {
+      if ( window->shown() ) 
+        handleUpdateEvent( fl_xid( window ) );
+    } 
+    break; }
+  case kEventWindowShown:
+    if ( !window->parent() ) Fl::handle( FL_SHOW, window);
+    break;
+  case kEventWindowHidden:
+    if ( !window->parent() ) Fl::handle( FL_HIDE, window);
+    break;
+  case kEventWindowActivated:
+    if ( !window->parent() ) Fl::handle(FL_FOCUS, window);
+    break;
+  case kEventWindowDeactivated:
+    if ( !window->parent() ) Fl::handle(FL_UNFOCUS, window);
+    break;
+  case kEventWindowClose:
+    //printf("Close\n");
+    Fl::handle( FL_CLOSE, window );
+      // if there are no more windows, send a high-level quit event
+    if (!Fl_X::first) QuitAppleEventHandler( 0, 0, 0 );
+    ret = noErr;
+    break;
+  }
+  
+  return ret;
+}
+
+
 /**
  * Carbon Mousewheel handler
  * This needs to be linked into all new window event handlers
  */
-OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   Fl_Window *window = (Fl_Window*)userData;
   EventMouseWheelAxis axis;
@@ -358,6 +418,7 @@ OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef even
     Fl::e_dy = -delta;
     if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
   }
+  else return eventNotHandledErr;
   return noErr;
 }
 
@@ -377,7 +438,7 @@ static void chord_to_e_state( UInt32 chord )
 /**
  * Carbon Mouse Button Handler
  */
-OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
   static int px, py;
@@ -390,23 +451,17 @@ OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, EventRef event, vo
   GetEventParameter( event, kEventParamClickCount, typeUInt32, NULL, sizeof(UInt32), NULL, &clickCount );
   UInt32 chord;
   GetEventParameter( event, kEventParamMouseChord, typeUInt32, NULL, sizeof(UInt32), NULL, &chord );
-  WindowRef xid = fl_xid(window);
-  int sendEvent = 0;
+  WindowRef xid = fl_xid(window), tempXid;
+  int sendEvent = 0, part;
   switch ( GetEventKind( event ) )
   {
   case kEventMouseDown:
-    if ( btn==kEventMouseButtonPrimary && FindWindow( pos, &xid )!=inContent )
-      return CallNextEventHandler( nextHandler, event ); // we won't handle this. The OS should do that.
-    //-- Matt: hmm, the following lines do not work the way I want: 'BringToFront' changes the window order only
-    // WITHIN the application, but not on the desktop, whereas 'SetFrontProcess' pulls ALL windows in this
-    // application to the front. Wanted: put only the clicked window in the front.
-    //if (xid!=FrontWindow()) {
-    SelectWindow( xid ); // <-- click througgh vs.  classic Mac--> { SelectWindow(xid); return 1; }
-    BringToFront( xid ); // (but behind modal windows!!!)
-    //}
-    ProcessSerialNumber psn;
-    GetCurrentProcess( &psn );
-    SetFrontProcess( &psn );
+    //printf("mouse down window %08x (%08x) [%08x]\n", window, xid, nextHandler );
+    part = FindWindow( pos, &tempXid );
+    if ( part != inContent )
+      return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+    if ( !IsWindowActive( xid ) )
+      CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
     // normal handling of mouse-down follows
     sendEvent = FL_PUSH;
     Fl::e_is_click = 1; px = pos.h; py = pos.v;
@@ -474,7 +529,7 @@ static void mods_to_e_keysym( UInt32 mods )
 /**
  * handle carbon keyboard events
  */
-OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   static char buffer[5];
   int sendEvent = 0;
@@ -522,8 +577,8 @@ OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef event,
     break; }
   }
   while (window->parent()) window = window->window();
-  if (sendEvent && Fl::handle(sendEvent,window)) return noErr;
-  return noErr; // for testing
+  if (sendEvent && Fl::handle(sendEvent,window)) return noErr; // return noErr if FLTK handled the event
+  //return noErr; // for testing
   return CallNextEventHandler( nextHandler, event );;
 }
 
@@ -859,7 +914,7 @@ void handleUpdateEvent( WindowPtr xid )
     DisposeRgn( i->region );
     i->region = 0;
   }
-  BeginUpdate( xid );
+//  BeginUpdate( xid );
   
   //DrawControls(xid);  // do we need this?
   //DrawGrowIcon(xid);  // do we need this?
@@ -873,7 +928,7 @@ void handleUpdateEvent( WindowPtr xid )
   i->flush();
   window->clear_damage();
 
-  EndUpdate( xid );
+//  EndUpdate( xid );
   //QDFlushPortBuffer( GetWindowPort(xid), 0 ); // should not be needed here!
   //printf("DBG: handleUpdate::flush\n");  
   SetPort( oldPort );
@@ -912,16 +967,17 @@ int fl_handle(const EventRecord &macevent)
   //printMacEvent( macevent );
   switch (macevent.what) 
   {
+
   case mouseDown: {
     // handle the different mouseDown events in various areas of the screen
     int part = FindWindow(macevent.where, &xid);
     //printf("mousedown in part %d\n", part );
-    prevMouseDownXid = xid;
+//    prevMouseDownXid = xid;
     switch (part) {
-    case inDesk: break;
-    case inMenuBar: HandleMenu(MenuSelect(macevent.where)); break;
+//    case inDesk: break;
+    case inMenuBar: HandleMenu(MenuSelect(macevent.where)); break; //++ I just can't get Carbon to handle my menu events :-(
 //    case inSysWindow: SystemClick(&macevent, xid); break;
-    case inContent: {
+/*    case inContent: {
       if (xid!=FrontWindow()) SelectWindow( xid ); //{ SelectWindow(xid); return 1; }
       window = fl_find(xid);
       if (!window) break;
@@ -941,8 +997,10 @@ int fl_handle(const EventRecord &macevent)
     case inZoomIn: case inZoomOut:
 //      if (TrackBox(xid, event.where, part)) DoZoomWindow(xid, part); 
       break;
-    }
-    break; }
+*/
+    } // switch part
+    break; } // mouseDown
+/*
   case mouseUp: {
       xid = FrontWindow();
       window = fl_find( xid );
@@ -954,11 +1012,15 @@ int fl_handle(const EventRecord &macevent)
       Fl::e_state &= ~(FL_BUTTON1|FL_BUTTON3);
 //    if (!Fl::grab()) ReleaseCapture();
       return Fl::handle(FL_RELEASE, window); }
+      */
+      /*
   case nullEvent: { //: idle events - who came up with that idea?
     if (macevent.modifiers&0xff00 == prevMod) break;
     int ret = Fl_X::MacModifiers(macevent, prevMod);
     prevMod = macevent.modifiers&0xff00;
     return ret; }
+    */
+    /*
   case keyUp:    
     //: bit0..7 message = keycode, 8..15 virtual, 16..23 ADB
     //:: keyup does NOT GET CALLED in CW debug mode!!
@@ -992,6 +1054,7 @@ int fl_handle(const EventRecord &macevent)
     }
     break;
     }
+    */ /*
   case activateEvt:
     window = fl_find((WindowPtr)(macevent.message));
     if (!window) break;
@@ -1000,14 +1063,14 @@ int fl_handle(const EventRecord &macevent)
     } else { 
       return Fl::handle(FL_UNFOCUS, window);
     }
-    break;
-  case updateEvt:
+    break; */
+/*  case updateEvt: // done in Carbon
     xid = (WindowPtr)macevent.message;
     if (xid) handleUpdateEvent( xid );
-    break;
-  case diskEvt:
-    break;
-  case osEvt: //: contains mouse move events
+    break; */
+/*  case diskEvt:
+    break; */
+/*  case osEvt: //: contains mouse move events
     switch ( (macevent.message>>24)&0xff ) {
  	case suspendResumeMessage: 
       window = fl_find(FrontWindow());
@@ -1035,10 +1098,10 @@ int fl_handle(const EventRecord &macevent)
       #endif
 //      if (!Fl::grab()) ReleaseCapture();
     }
-    break;
+    break; */
   //++ get null events to grab changes in the modifier keys (shift down, etc.)
   case kHighLevelEvent:
-    AEProcessAppleEvent(&macevent);
+    //AEProcessAppleEvent(&macevent);
     break;
   }
 #endif // 0
@@ -1106,7 +1169,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 ////////////////////////////////////////////////////////////////
 // Innards of Fl_Window::create()
 
-bool fl_show_iconic;		// true if called from iconize()
+bool fl_show_iconic;		//++ Implement: true if called from iconize()
 int fl_disable_transient_for;	// secret method of removing TRANSIENT_FOR
 const Fl_Window* fl_modal_for;	// parent of modal() window
 
@@ -1162,8 +1225,9 @@ void Fl_X::make(Fl_Window* w)
     int winclass = kDocumentWindowClass;
     int winattr = kWindowCloseBoxAttribute 
                 | kWindowCollapseBoxAttribute 
-                //| kWindowLiveResizeAttribute // activate this as soon as we ported to Carbon Events!
-                //| kWindowStandardHandlerAttribute
+                | kWindowLiveResizeAttribute // activate this as soon as we ported to Carbon Events!
+                | kWindowStandardHandlerAttribute
+                //| kWindowInWindowMenuAttribute
                 ;
 //    int winattr = kWindowStandardHandlerAttribute;
 //    int winattr = 0;
@@ -1198,7 +1262,7 @@ void Fl_X::make(Fl_Window* w)
       hp += 2*by+bt;
     }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
-      w->x(xyPos+Fl::x()); w->y(xyPos+Fl::y());
+      w->x(xyPos+Fl::x()); w->y(xyPos+Fl::y()); //+ there is a Carbon function for default window positioning
       xyPos += 24;
       if (xyPos>200) xyPos = 24;
     } else {
@@ -1248,45 +1312,36 @@ void Fl_X::make(Fl_Window* w)
     { // Install Carbon Event handlers 
       OSStatus ret;
       EventHandlerUPP mousewheelHandler = NewEventHandlerUPP( carbonMousewheelHandler ); // will not be disposed by Carbon...
-      EventTypeSpec mousewheelEvents[1];
-      mousewheelEvents[0].eventClass = kEventClassMouse;
-      mousewheelEvents[0].eventKind = kEventMouseWheelMoved;
-      ret = InstallWindowEventHandler( x->xid, mousewheelHandler, 2, mousewheelEvents, w, 0L );
+      static EventTypeSpec mousewheelEvents[] = {
+        { kEventClassMouse, kEventMouseWheelMoved } };
+      ret = InstallWindowEventHandler( x->xid, mousewheelHandler, 1, mousewheelEvents, w, 0L );
       EventHandlerUPP mouseHandler = NewEventHandlerUPP( carbonMouseHandler ); // will not be disposed by Carbon...
-      EventTypeSpec mouseEvents[4];
-      mouseEvents[0].eventClass = kEventClassMouse;
-      mouseEvents[0].eventKind = kEventMouseDown;
-      mouseEvents[1].eventClass = kEventClassMouse;
-      mouseEvents[1].eventKind = kEventMouseUp;
-      mouseEvents[2].eventClass = kEventClassMouse;
-      mouseEvents[2].eventKind = kEventMouseMoved;
-      mouseEvents[3].eventClass = kEventClassMouse;
-      mouseEvents[3].eventKind = kEventMouseDragged;
+      static EventTypeSpec mouseEvents[] = {
+        { kEventClassMouse, kEventMouseDown },
+        { kEventClassMouse, kEventMouseUp },
+        { kEventClassMouse, kEventMouseMoved },
+        { kEventClassMouse, kEventMouseDragged } };
       ret = InstallWindowEventHandler( x->xid, mouseHandler, 4, mouseEvents, w, 0L );
       EventHandlerUPP keyboardHandler = NewEventHandlerUPP( carbonKeyboardHandler ); // will not be disposed by Carbon...
-      EventTypeSpec keyboardEvents[4];
-      keyboardEvents[0].eventClass = kEventClassKeyboard;
-      keyboardEvents[0].eventKind = kEventRawKeyDown;
-      keyboardEvents[1].eventClass = kEventClassKeyboard;
-      keyboardEvents[1].eventKind = kEventRawKeyRepeat;
-      keyboardEvents[2].eventClass = kEventClassKeyboard;
-      keyboardEvents[2].eventKind = kEventRawKeyUp;
-      keyboardEvents[3].eventClass = kEventClassKeyboard;
-      keyboardEvents[3].eventKind = kEventRawKeyModifiersChanged;
+      static EventTypeSpec keyboardEvents[] = {
+        { kEventClassKeyboard, kEventRawKeyDown },
+        { kEventClassKeyboard, kEventRawKeyRepeat },
+        { kEventClassKeyboard, kEventRawKeyUp },
+        { kEventClassKeyboard, kEventRawKeyModifiersChanged } };
       ret = InstallWindowEventHandler( x->xid, keyboardHandler, 4, keyboardEvents, w, 0L );
-      //EventTargetRef winTarget = GetWindowEventTarget( x->xid );
-      //InstallStandardEventHandler( winTarget ); // it would be useful to call this, but we must make sure that ALL other events are Carbonized first
+      EventHandlerUPP windowHandler = NewEventHandlerUPP( carbonWindowHandler ); // will not be disposed by Carbon...
+      static EventTypeSpec windowEvents[] = {
+        { kEventClassWindow, kEventWindowDrawContent },
+        { kEventClassWindow, kEventWindowShown },
+        { kEventClassWindow, kEventWindowHidden },
+        { kEventClassWindow, kEventWindowActivated },
+        { kEventClassWindow, kEventWindowDeactivated },
+        { kEventClassWindow, kEventWindowClose },
+        { kEventClassWindow, kEventWindowBoundsChanged } };
+      ret = InstallWindowEventHandler( x->xid, windowHandler, 7, windowEvents, w, 0L );
     }
     #endif
 
-    w->handle(FL_SHOW);
-    w->redraw(); // force draw to happen
-    //TransitionWindow( x->xid, kWindowZoomTransitionEffect, kWindowShowTransitionAction, 0 );
-    ShowWindow( x->xid );
-    fl_show_iconic = 0;
-    //++ hmmm, this should maybe set by the activate event?!
-    Fl::handle(FL_FOCUS, w);
-    //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
     if ( ! Fl_X::first->next ) // if this is the first window, we need to bring the application to the front //++ this fails if the first window is a child window...
     { 
       ProcessSerialNumber psn;
@@ -1294,6 +1349,17 @@ void Fl_X::make(Fl_Window* w)
       if ( err==noErr ) SetFrontProcess( &psn );
       // or 'BringToFront'
     }
+
+    w->handle(FL_SHOW);
+    w->redraw(); // force draw to happen
+
+    //TransitionWindow( x->xid, kWindowZoomTransitionEffect, kWindowShowTransitionAction, 0 );
+    ShowWindow( x->xid );
+
+    fl_show_iconic = 0;
+    //++ hmmm, this should maybe set by the activate event?!
+    Fl::handle(FL_FOCUS, w);
+    //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
   }
 }
 
@@ -1378,7 +1444,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
   else if (!is_a_resize) return;
   // change the viewport first, so children (namely OpenGL) can resize correctly
-  if ( (!parent()) && shown()) {
+  if ( (resize_from_system!=this) && (!parent()) && shown()) {
     MoveWindow(i->xid, X, Y, 0);
     if (is_a_resize) {
       SizeWindow(i->xid, W>0 ? W : 1, H>0 ? H : 1, 1);
@@ -1386,9 +1452,10 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       InvalWindowRect( i->xid, &all );    
     }
   }
+  resize_from_system = 0;
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
-    if (shown()) {redraw(); if (!parent()) i->wait_for_expose = 1; }
+    if (shown()) { redraw(); if (!parent()) i->wait_for_expose = 1; }
   } else {
     x(X); y(Y); 
   }
@@ -1524,6 +1591,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 */
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.6 2001/12/18 11:00:09 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.7 2001/12/19 09:10:00 matthiaswm Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.5 2001/12/18 11:00:09 matthiaswm Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.6 2001/12/19 09:10:00 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@
 #define COPY 3		// unchanged
 #define NODAMAGE 4	// unchanged even by X expose() events
 
-static char SWAP_TYPE; // 0 = determine it from environment variable
+static char SWAP_TYPE = 0 ; // 0 = determine it from environment variable
 
 ////////////////////////////////////////////////////////////////
 
@@ -226,11 +226,16 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
+#ifdef __APPLE__
+      SWAP_TYPE = COPY;
+#else
       SWAP_TYPE = UNDEFINED;
+#endif
       const char* c = getenv("GL_SWAP_TYPE");
       if (c) {
 	if (!strcmp(c,"COPY")) SWAP_TYPE = COPY;
 	else if (!strcmp(c, "NODAMAGE")) SWAP_TYPE = NODAMAGE;
+	else if (!strcmp(c, "SWAP")) SWAP_TYPE = SWAP;
       }
     }
 
@@ -363,5 +368,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.5 2001/12/18 11:00:09 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.6 2001/12/19 09:10:00 matthiaswm Exp $".
 //

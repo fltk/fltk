@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- MacOS: opaque window resizing, all events except 
+	  Mac menus are now handled using Carbon, window 
+	  activation fixed, GL_SWAP_TYPE default changed to 
+	  make gl_overlay work.
 	- Fl_Help_View::resize() didn't resize the horizontal
 	  scrollbar.
 	- MacOS: list all fonts, fixed clipping and mouse
