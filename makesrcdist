@@ -37,7 +37,7 @@ autoconf
 echo "Removing CVS directories..."
 
 rm -rf CVS */CVS */*/CVS
-rm -rf OpenGL bc5 borlandc config forms gl glut images packages themes
+rm -rf OpenGL bc5 config forms gl glut images packages themes
 rm makesrcdist
 
 cd ..
