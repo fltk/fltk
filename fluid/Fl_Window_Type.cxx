@@ -1350,7 +1350,7 @@ void Fl_Widget_Class_Type::write_code1() {
 
     write_c("%s::%s(int W, int H, const char *L)\n", name(), name());
     write_c("  : %s(0, 0, W, H, L) {\n", c);
-    write_c("  clear_flag(FL_FORCE_POSITION);\n");
+    write_c("  clear_flag(16);\n");
     write_c("  _%s();\n", name());
     write_c("}\n\n");
 
