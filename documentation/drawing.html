@@ -88,9 +88,16 @@ in the gray ramp or color cube is used.
 
 <h4>void fl_line_style(int style, int width=0, char* dashes=0)</h4>
 
-Set how to draw lines (the "pen").  If you change this it is your
+<P>Set how to draw lines (the "pen").  If you change this it is your
 responsibility to set it back to the default with
 <tt>fl_line_style(0)</tt>.
+
+<BLOCKQUOTE>
+<B>Note:</B> Because of how line styles are implemented on WIN32 systems,
+you <I>must</I> set the line style <I>after</I> setting the drawing color.
+If you set the color after the line style you will lose the line style
+settings!
+</BLOCKQUOTE>
 
 <p><i>style</i> is a bitmask in which you 'or' the following values.  If
 you don't specify a dash type you will get a solid line.  If you don't
