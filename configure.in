@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.74 2002/06/25 13:36:27 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.75 2002/06/26 12:03:27 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -47,8 +47,12 @@ AC_SUBST(FL_API_VERSION)
 dnl Get the operating system and version number...
 uname=`uname`
 uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
-if test $uname = IRIX64; then
+if test x$uname = xIRIX64; then
     uname="IRIX"
+fi
+if test x$uname = x; then
+    # MingW doesn't provide any output when uname is run, even with "-s"...
+    uname="CYGWIN"
 fi
 
 dnl Don't automatically add "-g" to compiler options...
@@ -748,5 +752,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.74 2002/06/25 13:36:27 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.75 2002/06/26 12:03:27 easysw Exp $".
 dnl
