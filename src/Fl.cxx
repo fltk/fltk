@@ -842,9 +842,9 @@ void Fl_Window::hide() {
   Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window )
     fl_window = 0;
-#else
-  if (ip->region) XDestroyRegion(ip->region);
 #endif
+
+  if (ip->region) XDestroyRegion(ip->region);
 
 #ifdef __APPLE_QD__
   if ( !parent() ) // don't destroy shared windows!

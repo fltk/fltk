@@ -1,7 +1,10 @@
 CHANGES IN FLTK 1.1.7
 
-	- Removed a few warnings when compiling on OS X
 	- Documentation fixes (STR #648, STR #692)
+	- Fl_Window::hide() didn't delete the current clipping
+	  region on WIN32, causing a GDI resource leak in some
+	  situations (STR #723)
+	- Removed a few warnings when compiling on OS X
 	- Fl_Menu now draws the arrow more like other toolkits
 	  and 2.0 (STR #651)
 	- Fixed a VC++ compiler error in Fl_JPEG_Image.cxx (STR
