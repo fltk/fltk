@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.49 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.50 2004/07/04 23:27:48 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -782,8 +782,8 @@ Fl_Help_View::find(const char *s,		// I - String to find
 		*sp;				// Search string pointer
 
 
-  // Range check input...
-  if (!s) return -1;
+  // Range check input and value...
+  if (!s || !value_) return -1;
 
   if (p < 0 || p >= (int)strlen(value_)) p = 0;
   else if (p > 0) p ++;
@@ -2795,5 +2795,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.49 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.50 2004/07/04 23:27:48 easysw Exp $".
 //

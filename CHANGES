@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365, STR #399, STR #412)
+	- Fl_Help_View::find() did not check for a NULL value
+	  (STR #442)
 	- Added search symbol to the search field of
 	  Fl_Help_Dialog (STR #417)
 	- Added two new symbols, @search and @FLTK, which can be
