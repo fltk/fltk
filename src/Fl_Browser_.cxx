@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.3 1999/09/15 15:18:11 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.4 1999/11/07 08:33:36 bill Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -75,10 +75,12 @@ void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
     W -= scrollbar_width_;
     if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollbar_width_;
   }
+  if (W < 0) W = 0;
   if (hscrollbar.visible()) {
     H -= scrollbar_width_;
     if (scrollbar.align() & FL_ALIGN_TOP) Y += scrollbar_width_;
   }
+  if (H < 0) H = 0;
 }
 
 int Fl_Browser_::leftedge() const {
@@ -665,5 +667,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.3 1999/09/15 15:18:11 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.4 1999/11/07 08:33:36 bill Exp $".
 //
