@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.19 1999/02/22 21:19:19 mike Exp $"
+// "$Id: Fl.cxx,v 1.20 1999/02/26 07:07:55 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -577,6 +577,8 @@ int Fl_Window::handle(int event) {
 void Fl::selection_owner(Fl_Widget *owner) {
   if (selection_owner_ && owner != selection_owner_)
     selection_owner_->handle(FL_SELECTIONCLEAR);
+  if (focus_ && owner != focus_ && focus_ != selection_owner_)
+    focus_->handle(FL_SELECTIONCLEAR); // clear non-X-selection highlight
   selection_owner_ = owner;
 }
 
@@ -679,5 +681,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.19 1999/02/22 21:19:19 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.20 1999/02/26 07:07:55 bill Exp $".
 //

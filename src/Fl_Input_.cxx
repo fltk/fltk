@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.17 1999/02/25 22:34:12 carl Exp $"
+// "$Id: Fl_Input_.cxx,v 1.18 1999/02/26 07:07:56 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -396,20 +396,13 @@ int Fl_Input_::position(int p, int m) {
   if (p == position_ && m == mark_) return 0;
   if (Fl::selection_owner() == this) Fl::selection_owner(0);
   if (p != m) {
-    // new position is a selection
-// This if doesn't seem to always work.  I think that the position should
-// should be updated even if the input isn't the focus widget widget or
-// pushed(?).  This change fixes the redraw bug in the editor demo after
-// a find.
-//  if (Fl::focus()==this || Fl::pushed()==this) {
-      if (p != position_) minimal_update(position_, p);
-      if (m != mark_) minimal_update(mark_, m);
-//  }
-  } else if (Fl::focus() == this) {
+    if (p != position_) minimal_update(position_, p);
+    if (m != mark_) minimal_update(mark_, m);
+  } else {
     // new position is a cursor
     if (position_ == mark_) {
       // old position was just a cursor
-      if (!(damage()&FL_DAMAGE_EXPOSE)) {
+      if (Fl::focus() == this && !(damage()&FL_DAMAGE_EXPOSE)) {
 	minimal_update(position_); erase_cursor_only = 1;
       }
     } else { // old position was a selection
@@ -625,7 +618,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
 
   case FL_SELECTIONCLEAR:
     minimal_update(mark_, position_);
-    // mark_ = position_;
+    mark_ = position_;
     return 1;
 
   case FL_PASTE: {
@@ -740,5 +733,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.17 1999/02/25 22:34:12 carl Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.18 1999/02/26 07:07:56 bill Exp $".
 //
