@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.1
 
+	- fl_filename_match() was inconsistently doing case-
+	  insensitive matching.
 	- Fl_Button redraw fix for bug #620979 (focus boxes and
 	  check buttons).
 	- Fl_Text_Display fix for bug #620633 (crash on
