@@ -250,8 +250,26 @@ static Fl_Type* write_code(Fl_Type* p) {
   if (!(p==Fl_Type::last && p->is_comment()))
     p->write_code1();
   Fl_Type* q;
-  for (q = p->next; q && q->level > p->level;) q = write_code(q);
-  p->write_code2();
+  if (p->is_widget() && p->is_class()) {
+    // Handle widget classes specially
+    for (q = p->next; q && q->level > p->level;) {
+      if (strcmp(q->type_name(), "Function")) q = write_code(q);
+      else q = q->next;
+    }
+
+    p->write_code2();
+
+    for (q = p->next; q && q->level > p->level;) {
+      if (!strcmp(q->type_name(), "Function")) q = write_code(q);
+      else q = q->next;
+    }
+
+    write_h("};\n");
+  } else {
+    for (q = p->next; q && q->level > p->level;) q = write_code(q);
+
+    p->write_code2();
+  }
   return q;
 }
 
