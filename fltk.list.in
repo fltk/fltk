@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list.in,v 1.1.2.11 2003/06/01 00:31:31 easysw Exp $"
+# "$Id: fltk.list.in,v 1.1.2.12 2003/06/05 22:06:41 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -144,6 +144,7 @@ l 0000 root sys $libdir/libfltk_gl.so libfltk_gl.so.@FL_API_VERSION@
 # Header files
 f 0444 root sys $includedir/FL/ FL/*.[hH]
 
+%system !darwin
 # Symlinks to handle common case problems...
 l 0000 root sys $includedir/Fl FL
 l 0000 root sys $includedir/FL/Enumerations.h Enumerations.H
@@ -253,6 +254,7 @@ l 0000 root sys $includedir/FL/gl_draw.h gl_draw.H
 l 0000 root sys $includedir/FL/glut.h glut.H
 l 0000 root sys $includedir/FL/win32.h win32.H
 l 0000 root sys $includedir/FL/x.h x.H
+%system all
 
 # Documentation
 f 0444 root sys $datadir/doc/fltk/ documentation/*.gif
@@ -262,5 +264,5 @@ f 0444 root sys $datadir/doc/fltk/COPYING COPYING
 f 0444 root sys $datadir/doc/fltk/CHANGES CHANGES
 
 #
-# End of "$Id: fltk.list.in,v 1.1.2.11 2003/06/01 00:31:31 easysw Exp $".
+# End of "$Id: fltk.list.in,v 1.1.2.12 2003/06/05 22:06:41 easysw Exp $".
 #
