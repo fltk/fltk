@@ -485,7 +485,7 @@ Fl_Window* make_widgetbin() {
         o->image(pixmap[11]);
       }
       { Fl_Button* o = new Fl_Button(52, 4, 24, 24);
-        o->tooltip("Function");
+        o->tooltip("Comment");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("comment"));
         o->image(pixmap[46]);

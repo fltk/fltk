@@ -327,7 +327,7 @@ Function {make_widgetbin()} {open
       Fl_Button {} {
         user_data {"comment"}
         callback type_make_cb
-        tooltip Function xywh {52 4 24 24} box THIN_UP_BOX
+        tooltip Comment xywh {52 4 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[46]);}
       }
     }
