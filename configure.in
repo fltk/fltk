@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.12 2000/04/27 00:17:51 mike Exp $"
+dnl "$Id: configure.in,v 1.33.2.13 2000/06/03 13:21:13 mike Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -188,9 +188,6 @@ if test -n "$GXX"; then
     	CXXFLAGS="-fPIC $CXXFLAGS"
     fi
 
-    CFLAGS="-fno-rtti $CFLAGS"
-    CXXFLAGS="-fno-rtti $CXXFLAGS"
-
     # See if GCC supports -fno-exceptions...
     echo "Testing if GCC supports -fno-exceptions..."
     OLDCFLAGS="$CFLAGS"
@@ -280,5 +277,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.12 2000/04/27 00:17:51 mike Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.13 2000/06/03 13:21:13 mike Exp $".
 dnl
