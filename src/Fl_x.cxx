@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.9 2000/01/11 08:19:59 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.10 2000/01/23 01:56:42 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -271,6 +271,10 @@ void fl_open_display() {
   templt.visualid = XVisualIDFromVisual(DefaultVisual(fl_display,fl_screen));
   fl_visual = XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
   fl_colormap = DefaultColormap(fl_display,fl_screen);
+
+#if !USE_COLORMAP
+  Fl::visual(FL_RGB);
+#endif
 }
 
 void fl_close_display() {
@@ -873,5 +877,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.9 2000/01/11 08:19:59 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.10 2000/01/23 01:56:42 bill Exp $".
 //
