@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.15 1998/11/08 16:37:20 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.16 1998/11/08 16:47:44 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -755,7 +755,7 @@ void Fl_Window::make_current() {
   // for all drawing calls, so we must select it here before any
   // code does any drawing...
 
-  fl_select_palette();
+  fl_select_palette(type() == FL_GL_WINDOW);
 #endif // USE_COLORMAP
 
   current_ = this;
@@ -816,5 +816,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.15 1998/11/08 16:37:20 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.16 1998/11/08 16:47:44 mike Exp $".
 //
