@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.5 1998/11/12 14:16:57 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,11 @@
 // The three-message fl_show_x functions are for forms compatibility
 // mostly.  In most cases it is easier to get a multi-line message
 // by putting newlines in the message.
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <config.h>
 
 #include <FL/Fl.H>
 
@@ -70,9 +75,6 @@ static Fl_Window *makeform() {
  return w;
 }
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 #if !HAVE_VSNPRINTF
 extern "C" {
 int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
@@ -194,5 +196,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.4 1998/11/05 16:04:51 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.5 1998/11/12 14:16:57 mike Exp $".
 //
