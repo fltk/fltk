@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0b6
 
 	- Documentation updates...
+	- The configure script now works within the CygWin
+	  environment.
 	- Implemented the Fl_File_Icon::load_png() method.
 	- The Fl_File_Icon::load_system_icons() method now
 	  supports KDE 2.x icons.

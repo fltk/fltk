@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.21 2001/11/17 15:27:14 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.22 2001/11/17 15:55:36 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -208,78 +208,102 @@ AC_CHECK_HEADER(png.h,
 dnl Restore original LIBS settings...
 LIBS="$SAVELIBS"
 
-dnl Check for X11...
-AC_PATH_XTRA
-
-if test x$no_x = xyes; then
-    AC_MSG_ERROR(Configure could not find required X11 libraries, aborting.)
-fi
-
-if test "x$X_PRE_LIBS" != x; then
-    AC_MSG_WARN(Ignoring libraries \"$X_PRE_LIBS\" requested by configure.)
-fi
-
-LIBS="$LIBS$X_LIBS"
-CFLAGS="$CFLAGS$X_CFLAGS"
-CXXFLAGS="$CXXFLAGS$X_CFLAGS"
-
-if test "x$x_includes" != x; then
-    ac_cpp="$ac_cpp -I$x_includes"
-fi
-
-dnl Check for OpenGL unless disabled...
-GLLIB=
-
-if test x$enable_gl != xno; then
-    AC_CHECK_HEADER(GL/gl.h,
-	AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB="-lGL", \
-	    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGL",,\
-		-lX11 -lXext $X_EXTRA_LIBS -lm), \
-	    -lX11 -lXext $X_EXTRA_LIBS -lm)
-    )
-    AC_CHECK_HEADER(GL/glu.h,
-        AC_DEFINE(HAVE_GL_GLU_H)
-	if test x$ac_cv_lib_GL_glXMakeCurrent = xyes; then
-	    GLLIB="-lGLU $GLLIB"
-	fi
-	if test x$ac_cv_lib_MesaGL_glXMakeCurrent = xyes; then
-	    GLLIB="-lMesaGLU $GLLIB"
-	fi
-    )
-
-    if test x$ac_cv_lib_GL_glXMakeCurrent = xno; then
+case $uname in
+    CYGWIN*)
+	dnl Cygwin environment...
+	LIBS="$LIBS -lgdi32 -lwsock32"
+	CFLAGS="$CFLAGS -DWIN32"
+	CXXFLAGS="$CXXFLAGS -DWIN32"
+	if test x$enable_gl != xno; then
+	    AC_CHECK_HEADER(GL/gl.h,
+	        AC_DEFINE(HAVE_GL)
+		GLLIB="-lopengl32")
+	    AC_CHECK_HEADER(GL/glu.h,
+        	AC_DEFINE(HAVE_GL_GLU_H)
+		GLLIB="-lglu32 $GLLIB")
+	else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
 	    GLDSONAME=""
 	    GLDEMOS=""
-    fi
-else
-    LINKFLTKGL=""
-    GLLIBNAME=""
-    GLDSONAME=""
-    GLDEMOS=""
-fi
+	fi
+	;;
+    *)
+	dnl Check for X11...
+	AC_PATH_XTRA
+
+	if test x$no_x = xyes; then
+	    AC_MSG_ERROR(Configure could not find required X11 libraries, aborting.)
+	fi
+
+	if test "x$X_PRE_LIBS" != x; then
+	    AC_MSG_WARN(Ignoring libraries \"$X_PRE_LIBS\" requested by configure.)
+	fi
+
+	LIBS="$LIBS -lXext -lX11 $X_EXTRA_LIBS"
+	CFLAGS="$CFLAGS$X_CFLAGS"
+	CXXFLAGS="$CXXFLAGS$X_CFLAGS"
+	LDFLAGS="$X_LIBS $LDFLAGS"
+
+	if test "x$x_includes" != x; then
+	    ac_cpp="$ac_cpp -I$x_includes"
+	fi
+
+	dnl Check for OpenGL unless disabled...
+	GLLIB=
+
+	if test x$enable_gl != xno; then
+	    AC_CHECK_HEADER(GL/gl.h,
+		AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB="-lGL", \
+		    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGL",,\
+			-lm), \
+		    -lm)
+	    )
+	    AC_CHECK_HEADER(GL/glu.h,
+        	AC_DEFINE(HAVE_GL_GLU_H)
+		if test x$ac_cv_lib_GL_glXMakeCurrent = xyes; then
+		    GLLIB="-lGLU $GLLIB"
+		fi
+		if test x$ac_cv_lib_MesaGL_glXMakeCurrent = xyes; then
+		    GLLIB="-lMesaGLU $GLLIB"
+		fi
+	    )
+
+	    if test x$ac_cv_lib_GL_glXMakeCurrent = xno; then
+		    LINKFLTKGL=""
+		    GLLIBNAME=""
+		    GLDSONAME=""
+		    GLDEMOS=""
+	    fi
+	else
+	    LINKFLTKGL=""
+	    GLLIBNAME=""
+	    GLDSONAME=""
+	    GLDEMOS=""
+	fi
+
+	dnl Check for the Xdbe extension...
+	AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
+	    if test "$uname" != "SunOS"; then
+        	AC_DEFINE(HAVE_XDBE)
+	    fi)
+
+	dnl Check for overlay visuals...
+	AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
+	    if xprop -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
+        	ac_cv_have_overlay=yes
+	    else
+        	ac_cv_have_overlay=no
+	    fi)
+
+	if test x$ac_cv_have_overlay = xyes; then
+	    AC_DEFINE(HAVE_OVERLAY)
+	fi
+	;;
+esac
 
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
-
-dnl Check for the Xdbe extension...
-AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
-    if test "$uname" != "SunOS"; then
-        AC_DEFINE(HAVE_XDBE)
-    fi)
-
-dnl Check for overlay visuals...
-AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
-    if xprop -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
-        ac_cv_have_overlay=yes
-    else
-        ac_cv_have_overlay=no
-    fi)
-
-if test x$ac_cv_have_overlay = xyes; then
-    AC_DEFINE(HAVE_OVERLAY)
-fi
 
 dnl Figure out the appropriate formatted man page extension...
 case "$uname" in
@@ -494,5 +518,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.21 2001/11/17 15:27:14 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.22 2001/11/17 15:55:36 easysw Exp $".
 dnl
