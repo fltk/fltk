@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.11 1998/11/05 16:04:50 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.12 1998/11/06 14:32:17 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -251,6 +251,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
 
   case WM_PAINT: {
+#if USE_COLORMAP
+    // Before we do a paint we need to tell Windows what color palette to
+    // use.  This is because Windows will map our color indices to the
+    // correct colors in the current hardware color palette.  This is
+    // confusing to say the least, but that's Winders for ya!
+
+    fl_GetDC(hWnd);
+    fl_select_palette();
  
     // This might be a better alternative, where we fully ignore NT's
     // "facilities" for painting. MS expects applications to paint according
@@ -775,5 +783,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.11 1998/11/05 16:04:50 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.12 1998/11/06 14:32:17 mike Exp $".
 //
