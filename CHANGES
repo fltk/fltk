@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Some of the widgets could crash an application if the
+	  cursor was changed after a window was deleted (STR
+	  #181)
 	- The Fl_Gl_Window WIN32 pixel format code did not
 	  choose the pixel format with the largest depth buffer
 	  (STR #175)

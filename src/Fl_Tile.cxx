@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tile.cxx,v 1.5.2.5.2.4 2003/01/30 21:42:51 easysw Exp $"
+// "$Id: Fl_Tile.cxx,v 1.5.2.5.2.5 2003/11/01 01:07:07 easysw Exp $"
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
@@ -96,7 +96,7 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
 
 static void set_cursor(Fl_Tile*t, Fl_Cursor c) {
   static Fl_Cursor cursor;
-  if (cursor == c) return;
+  if (cursor == c || !t->window()) return;
   cursor = c;
 #ifdef __sgi
   t->window()->cursor(c,FL_RED,FL_WHITE);
@@ -196,5 +196,5 @@ int Fl_Tile::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Tile.cxx,v 1.5.2.5.2.4 2003/01/30 21:42:51 easysw Exp $".
+// End of "$Id: Fl_Tile.cxx,v 1.5.2.5.2.5 2003/11/01 01:07:07 easysw Exp $".
 //

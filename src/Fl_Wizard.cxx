@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Wizard.cxx,v 1.1.2.5 2003/01/30 21:43:00 easysw Exp $"
+// "$Id: Fl_Wizard.cxx,v 1.1.2.6 2003/11/01 01:07:07 easysw Exp $"
 //
 // Fl_Wizard widget routines.
 //
@@ -199,10 +199,10 @@ Fl_Wizard::value(Fl_Widget *kid)
   // This will restore the mouse pointer to the window's default cursor
   // whenever the wizard pane is changed.  Otherwise text widgets that
   // show the next pane may leave the cursor set to the I beam, etc...
-  window()->cursor(FL_CURSOR_DEFAULT);
+  if (window()) window()->cursor(FL_CURSOR_DEFAULT);
 }
 
 
 //
-// End of "$Id: Fl_Wizard.cxx,v 1.1.2.5 2003/01/30 21:43:00 easysw Exp $".
+// End of "$Id: Fl_Wizard.cxx,v 1.1.2.6 2003/11/01 01:07:07 easysw Exp $".
 //
