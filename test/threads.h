@@ -1,5 +1,5 @@
 //
-// "$Id: threads.h,v 1.1.2.2 2001/12/09 20:26:24 easysw Exp $"
+// "$Id: threads.h,v 1.1.2.3 2001/12/14 21:02:24 easysw Exp $"
 //
 // Simple threading API for the Fast Light Tool Kit (FLTK).
 //
@@ -118,7 +118,7 @@ public:
 
 #    endif
 
-#  else // Use Windows threading...
+#  elif defined(WIN32) // Use Windows threading...
 
 #    include <windows.h>
 #    include <process.h>
@@ -129,7 +129,7 @@ static int fl_create_thread(Fl_Thread& t, void *(*f) (void *), void* p) {
   return t = (Fl_Thread)_beginthread((void( __cdecl * )( void * ))f, 0, p);
 }
 
-class FL_API Fl_Mutex {
+class Fl_Mutex {
   friend class Fl_SignalMutex;
   CRITICAL_SECTION cs;
   Fl_Mutex(const Fl_Mutex&);
@@ -141,7 +141,7 @@ public:
   ~Fl_Mutex() {DeleteCriticalSection(&cs);}
 };
 
-class FL_API Fl_SignalMutex : public Fl_Mutex {
+class Fl_SignalMutex : public Fl_Mutex {
   HANDLE event;
 public:
   Fl_SignalMutex() : Fl_Mutex() {event = CreateEvent(0, FALSE, FALSE, 0);}
@@ -156,9 +156,9 @@ public:
   }
 };
 
-#  endif // !WIN32
+#  endif // !HAVE_PTHREAD_H
 #endif // !Threads_h
 
 //
-// End of "$Id: threads.h,v 1.1.2.2 2001/12/09 20:26:24 easysw Exp $".
+// End of "$Id: threads.h,v 1.1.2.3 2001/12/14 21:02:24 easysw Exp $".
 //

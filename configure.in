@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.40 2001/12/14 19:34:29 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.41 2001/12/14 21:02:24 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -159,7 +159,7 @@ AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [defau
 		;;
 	esac
     fi])
-AC_ARG_ENABLE(threads, [  --disable-threads       disable multi-threading support],,enable_threads=yes)
+AC_ARG_ENABLE(threads, [  --enable-threads       enable multi-threading support],,enable_threads=no)
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -263,10 +263,12 @@ dnl some environments need postprocessing (Darwin, MacOS)
 POSTBUILD=:
 
 dnl Check for pthreads for multi-threaded apps...
-if test "$enable_threads" = yes; then
+if test x"$enable_threads" = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
     AC_SEARCH_LIBS(pthread_create, pthread)
 fi
+
+THREADS=""
 
 case $uname in
     CYGWIN*)
@@ -289,8 +291,9 @@ case $uname in
 	    GLDEMOS=""
 	fi
 
-	if test "x$ac_cv_search_pthread_create" != xno; then
+	if test "x$ac_cv_search_pthread_create" != xno -a x"$enable_threads" = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
+	    THREADS="threads.exe"
 	fi
 
 	# Don't make symlinks since Windows is not case sensitive.
@@ -319,8 +322,9 @@ case $uname in
 	;;
     *)
 
-	if test "x$ac_cv_search_pthread_create" != xno; then
+	if test "x$ac_cv_search_pthread_create" != xno -a x"$enable_threads" = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
+	    THREADS="threads"
 	fi
 
 	dnl Check for X11...
@@ -395,6 +399,7 @@ AC_SUBST(HLINKS)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
 AC_SUBST(POSTBUILD)
+AC_SUBST(THREADS)
 
 dnl Figure out the appropriate formatted man page extension...
 case "$uname" in
@@ -610,5 +615,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.40 2001/12/14 19:34:29 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.41 2001/12/14 21:02:24 easysw Exp $".
 dnl
