@@ -969,11 +969,14 @@ void Fl_Class_Type::open() {
 Fl_Class_Type Fl_Class_type;
 
 static Fl_Class_Type *current_class;
+extern Fl_Widget_Class_Type *current_widget_class;
 extern int varused_test;
 void write_public(int state) {
-  if (!current_class || varused_test) return;
-  if (current_class->write_public_state == state) return;
-  current_class->write_public_state = state;
+  if ((!current_class && !current_widget_class) || varused_test) return;
+  if (current_class && current_class->write_public_state == state) return;
+  if (current_widget_class && current_widget_class->write_public_state == state) return;
+  if (current_class) current_class->write_public_state = state;
+  if (current_widget_class) current_widget_class->write_public_state = state;
   write_h(state ? "public:\n" : "private:\n");
 }
 

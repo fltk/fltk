@@ -62,6 +62,7 @@ const char* subclassname(Fl_Type* l) {
     Fl_Widget_Type* p = (Fl_Widget_Type*)l;
     const char* c = p->subclass();
     if (c) return c;
+    if (l->is_class()) return "Fl_Group";
     if (p->o->type() == FL_WINDOW+1) return "Fl_Double_Window";
   }
   return l->type_name();
@@ -1454,7 +1455,7 @@ void Fl_Widget_Type::write_static() {
 		  user_data_type() ? user_data_type() : "void*");
   const char* c = array_name(this);
   const char* k = class_name(1);
-  if (c && !k) {
+  if (c && !k && !is_class()) {
     write_c("\n");
     if (!public_) write_c("static ");
     else write_h("extern %s *%s;\n", t, c);

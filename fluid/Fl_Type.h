@@ -490,6 +490,9 @@ public:
 
 class Fl_Widget_Class_Type : private Fl_Window_Type {
 public:
+  // state variables for output:
+  char write_public_state; // true when public: has been printed
+
   void write_code1();
   void write_code2();
   Fl_Type *make();

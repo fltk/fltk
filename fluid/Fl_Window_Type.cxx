@@ -1291,6 +1291,7 @@ int Fl_Window_Type::read_fdesign(const char* propname, const char* value) {
 ///////////////////////////////////////////////////////////////////////
 
 Fl_Widget_Class_Type Fl_Widget_Class_type;
+Fl_Widget_Class_Type *current_widget_class = 0;
 
 Fl_Type *Fl_Widget_Class_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -1322,23 +1323,68 @@ Fl_Type *Fl_Widget_Class_Type::make() {
 
 
 void Fl_Widget_Class_Type::write_code1() {
+#if 0
   Fl_Widget_Type::write_code1();
+#endif // 0
+
+  current_widget_class = this;
+  write_public_state = 1;
+
+  const char *c = subclass();
+  if (!c) c = "Fl_Group";
+
+  write_h("\nclass %s : public %s {\n", name(), c);
+  if (!strcmp(c, "Fl_Window") ||
+      !strcmp(c, "Fl_Double_Window") ||
+      !strcmp(c, "Fl_Gl_Window") ||
+      !strcmp(c, "Fl_Overlay_Window")) {
+    write_h("  void _%s();\n", name());
+    write_h("public:\n");
+    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
+    write_h("  %s(int W, int H, const char *L = 0);\n");
+
+    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
+    write_c("  : %s(X, Y, W, H, L) {\n", c);
+    write_c("  _%s();\n", name());
+    write_c("}\n\n");
+
+    write_c("%s::%s(int W, int H, const char *L)\n", name(), name());
+    write_c("  : %s(0, 0, W, H, L) {\n", c);
+    write_c("  clear_flag(FL_FORCE_POSITION);\n");
+    write_c("  _%s();\n", name());
+    write_c("}\n\n");
+
+    write_c("void %s::_%s() {\n", name(), name());
+    write_c("  %s *w = this;\n", name());
+  } else {
+    write_h("public:\n");
+    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
+
+    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
+    write_c("  : %s(X, Y, W, H, L) {\n", c);
+  }
+
+  write_c("  %s *o = this;\n", name());
+
+  write_widget_code();
 }
 
 void Fl_Widget_Class_Type::write_code2() {
   write_extra_code();
-  if (modal) write_c("%so->set_modal();\n", indent());
-  else if (non_modal) write_c("%so->set_non_modal();\n", indent());
-  if (!((Fl_Window*)o)->border()) write_c("%so->clear_border();\n", indent());
+  if (modal) write_c("%sset_modal();\n", indent());
+  else if (non_modal) write_c("%sset_non_modal();\n", indent());
+  if (!((Fl_Window*)o)->border()) write_c("%sclear_border();\n", indent());
   if (xclass) {
-    write_c("%so->xclass(", indent());
+    write_c("%sxclass(", indent());
     write_cstring(xclass);
     write_c(");\n");
   }
-  write_c("%so->end();\n", indent());
+  write_c("%send();\n", indent());
   if (((Fl_Window*)o)->resizable() == o)
-    write_c("%so->resizable(o);\n", indent());
-  write_block_close();
+    write_c("%sresizable(this);\n", indent());
+  write_c("}\n");
+
+  write_h("};\n");
 }
 
 
