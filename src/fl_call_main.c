@@ -1,5 +1,5 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.4 1999/10/25 20:32:49 mike Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.5 1999/11/30 13:14:27 carl Exp $"
  *
  * Copyright 1998-1999 by Bill Spitzak and others.
  *
@@ -44,12 +44,16 @@
  * Microsoft(r) Windows(r) that allows for it.
  */
 
-#if defined(WIN32) && !defined(FL_DLL)
+#if defined(WIN32) && !defined(FL_DLL) && !defined (__GNUC__)
 
 #include <windows.h>
 #include <stdio.h>
 
 extern int main(int, char *[]);
+#ifdef BORLAND5
+#define __argc _argc
+#define __argv _argv
+#endif
 extern int  __argc;
 extern char **__argv;
 
@@ -79,6 +83,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.4 1999/10/25 20:32:49 mike Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.5 1999/11/30 13:14:27 carl Exp $".
  */
 
