@@ -418,7 +418,6 @@ void align_widget_cb(Fl_Widget *, long);
 
 void about_cb(Fl_Widget *, void *) {
   if (!about_panel) make_about_panel();
-  display_group->show();
   about_panel->show();
 }
 

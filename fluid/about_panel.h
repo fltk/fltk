@@ -32,7 +32,6 @@ extern void show_help(const char *name);
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *about_panel;
 #include <FL/Fl_Group.H>
-extern Fl_Group *display_group;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>
