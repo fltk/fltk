@@ -4,14 +4,18 @@
  methods. For a description of the FLTK widgets, see <A href=widgets.html#widgets>
 Appendix A</A>. 
 <H2>Functions</H2>
+
 <H3><A name="fl_color_chooser_func">int fl_color_chooser(const char *title, double 
 &amp;r, double &amp;g, double &amp;b)
 <BR> int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A>
 </H3>
+
 The double version takes RGB values in the range 0.0 to 1.0.  The 
 uchar version takes RGB values in the range 0 to 255. The <TT>title</TT>
 argument specifies the label (title) for the window.
+
 <P ALIGN=CENTER><IMG src="fl_color_chooser.jpg"></P>
+
 <P><TT>fl_color_chooser()</TT> pops up a window to let the user pick an 
 arbitrary RGB color.  They can pick the hue and saturation in the &quot;hue 
 box&quot; on the left (hold down CTRL to just change the saturation), and 
