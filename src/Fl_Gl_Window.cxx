@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.21 2001/03/14 17:20:01 spitzak Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22 2001/07/18 08:11:02 spitzak Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -163,14 +163,16 @@ void Fl_Gl_Window::flush() {
 
 #if HAVE_GL_OVERLAY && defined(WIN32)
 
-  // SGI 320 messes up overlay with user-defined cursors:
-  bool fixcursor =
-    Fl_X::i(this)->cursor && Fl_X::i(this)->cursor != fl_default_cursor;
-  if (fixcursor) SetCursor(0);
+  bool fixcursor = false; // for fixing the SGI 320 bug
 
-  // Draw into hardware overlay planes:
+  // Draw into hardware overlay planes if they are damaged:
   if (overlay && overlay != this
       && (damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE) || !save_valid)) {
+    // SGI 320 messes up overlay with user-defined cursors:
+    if (Fl_X::i(this)->cursor && Fl_X::i(this)->cursor != fl_default_cursor) {
+      fixcursor = true; // make it restore cursor later
+      SetCursor(0);
+    }
     fl_set_gl_context(this, (GLContext)overlay);
     if (fl_overlay_depth)
       wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
@@ -181,7 +183,8 @@ void Fl_Gl_Window::flush() {
     fl_overlay = 0;
     valid(save_valid);
     wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_OVERLAY1);
-    if (damage() == FL_DAMAGE_OVERLAY) { // main layer is undamaged
+    // if only the overlay was damaged we are done, leave main layer alone:
+    if (damage() == FL_DAMAGE_OVERLAY) {
       if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
       return;
     }
@@ -245,11 +248,9 @@ void Fl_Gl_Window::flush() {
 	damage1_ = 0;
 
       } else {
-
 	damage1_ = damage();
 	clear_damage(~0); draw();
 	swap_buffers();
-
       }
 
     }
@@ -324,5 +325,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.21 2001/03/14 17:20:01 spitzak Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22 2001/07/18 08:11:02 spitzak Exp $".
 //
