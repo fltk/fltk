@@ -1,5 +1,5 @@
 //
-// "$Id: filename_isdir.cxx,v 1.4.2.2 2000/06/05 21:21:04 mike Exp $"
+// "$Id: filename_isdir.cxx,v 1.4.2.3 2000/06/06 15:25:20 mike Exp $"
 //
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -28,12 +28,24 @@
 #include <config.h>
 #include <FL/filename.H>
 #include <sys/stat.h>
+#include <string.h>
 
 int filename_isdir(const char* n) {
-  struct stat s;
-  return !stat(n, &s) && (s.st_mode&0170000)==0040000;
+  char		fn[1024];
+  int		length;
+  struct stat	s;
+
+  // This workaround brought to you by the fine folks at Microsoft!
+  // (read lots of sarcasm in that...)
+  strncpy(fn, n, sizeof(fn) - 1);
+  fn[sizeof(fn) - 1] = '\0';
+  length = strlen(fn);
+  if (length > 0 && (fn[length - 1] == '/' || fn[length - 1] == '\\'))
+    fn[length - 1] = '\0'; // Strip trailing slash...
+
+  return !stat(fn, &s) && (s.st_mode&0170000)==0040000;
 }
 
 //
-// End of "$Id: filename_isdir.cxx,v 1.4.2.2 2000/06/05 21:21:04 mike Exp $".
+// End of "$Id: filename_isdir.cxx,v 1.4.2.3 2000/06/06 15:25:20 mike Exp $".
 //
