@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.1 1999/11/18 16:33:01 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.2 1999/12/30 17:37:05 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -153,6 +153,7 @@ void fl_alert(const char *fmt, ...) {
 #ifdef WIN32
   MessageBeep(MB_ICONERROR);
 #else
+  if (!fl_display) fl_open_display();
   XBell(fl_display, 100);
 #endif // WIN32
 
@@ -227,5 +228,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.1 1999/11/18 16:33:01 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.2 1999/12/30 17:37:05 mike Exp $".
 //

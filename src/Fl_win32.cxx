@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.18 1999/12/29 03:14:38 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.19 1999/12/30 17:37:04 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -68,9 +68,15 @@
 
 // fd's are only implemented for sockets.  Microsoft Windows does not
 // have a unified IO system, so it doesn't support select() on files,
-// devices, or pipes...  Also, Microsoft provides an asynchronous
+// devices, or pipes...
+//
+// Microsoft provides the Berkeley select() call and an asynchronous
 // select function that sends a WIN32 message when the select condition
 // exists...
+
+#ifndef USE_ASYNC_SELECT
+static fd_set fdsets[3];
+#endif // !USE_ASYNC_SELECT
 
 #define POLLIN 1
 #define POLLOUT 4
@@ -86,7 +92,6 @@ static struct FD {
 } *fd = 0;
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
-  int mask;
   remove_fd(n,events);
   int i = nfds++;
   if (i >= fd_array_size) {
@@ -97,11 +102,18 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   fd[i].events = events;
   fd[i].cb = cb;
   fd[i].arg = v;
-  mask = 0;
+
+#ifdef USE_ASYNC_SELECT
+  int mask = 0;
   if (events & POLLIN) mask |= FD_READ;
   if (events & POLLOUT) mask |= FD_WRITE;
   if (events & POLLERR) mask |= FD_CLOSE;
   WSAAsyncSelect(n, fl_window, WM_FLSELECT, mask);
+#else
+  if (events & POLLIN) FD_SET(n, &fdsets[0]);
+  if (events & POLLOUT) FD_SET(n, &fdsets[1]);
+  if (events & POLLERR) FD_SET(n, &fdsets[2]);
+#endif // USE_ASYNC_SELECT
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
@@ -141,17 +153,75 @@ MSG fl_msg;
 
 int fl_ready() {
   if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
-  else return (0);
+
+#ifdef USE_ASYNC_SELECT
+  return (0);
+#else
+  timeval t;
+  t.tv_sec = 0;
+  t.tv_usec = 0;
+  fd_set fdt[3];
+  fdt[0] = fdsets[0];
+  fdt[1] = fdsets[1];
+  fdt[2] = fdsets[2];
+  return ::select(0,&fdt[0],&fdt[1],&fdt[2],&t);
+#endif // USE_ASYNC_SELECT
 }
 
 double fl_wait(int timeout_flag, double time) {
   int have_message = 0;
   int timerid;
 
+#ifndef USE_ASYNC_SELECT
+  if (nfds) {
+    // For WIN32 we need to poll for socket input FIRST, since
+    // the event queue is not something we can select() on...
+    timeval t;
+    t.tv_sec = 0;
+    t.tv_usec = 0;
+
+    fd_set fdt[3];
+    fdt[0] = fdsets[0];
+    fdt[1] = fdsets[1];
+    fdt[2] = fdsets[2];
+
+    if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
+      // We got something - do the callback!
+      for (int i = 0; i < nfds; i ++) {
+	int f = fd[i].fd;
+	short revents = 0;
+	if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
+	if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
+	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
+	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
+      }
+    }
+  }
+#endif // USE_ASYNC_SELECT
+
   // get the first message by waiting the correct amount of time:
   if (!timeout_flag) {
+#ifdef USE_ASYNC_SELECT
     // Wait for a message...
     have_message = GetMessage(&fl_msg, NULL, 0, 0);
+#else
+    // If we are monitoring sockets we need to check them periodically,
+    // so set a timer in this case...
+    if (nfds) {
+      // First see if there is a message waiting...
+      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+      if (!have_message) {
+	// If not then set a 1ms timer...
+	timerid = SetTimer(NULL, 0, 1, NULL);
+	GetMessage(&fl_msg, NULL, 0, 0);
+	KillTimer(NULL, timerid);
+      }
+    } else {
+      // Wait for a message...
+      GetMessage(&fl_msg, NULL, 0, 0);
+    }
+    have_message = 1;
+#endif // USE_ASYNC_SELECT
   } else {
     // Perform the requested timeout...
     have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
@@ -883,5 +953,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.18 1999/12/29 03:14:38 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.19 1999/12/30 17:37:04 mike Exp $".
 //
