@@ -1,6 +1,10 @@
 CHANGES IN FLTK 1.1.6
 
 	- Documentation updates (STR #552, STR #608)
+	- Fl_Widget::damage(uchar,int,int,int,int) didn't clip
+	  the bounding box properly (STR #626)
+	- Windows could appear on the wrong screen on OSX (STR
+	  #628)
 	- Fl_Double_Window produced an error on resize with X11
 	- FLUID didn't display menu items using images properly
 	  (STR #564)

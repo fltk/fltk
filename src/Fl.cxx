@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.68 2004/09/12 20:26:23 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.69 2004/11/23 19:09:55 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -998,18 +998,18 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
   Fl_X* i = Fl_X::i((Fl_Window*)wi);
   if (!i) return; // window not mapped, so ignore it
 
-  if (X<=0 && Y<=0 && W>=wi->w() && H>=wi->h()) {
-    // if damage covers entire window delete region:
-    wi->damage(fl);
-    return;
-  }
-
   // clip the damage to the window and quit if none:
   if (X < 0) {W += X; X = 0;}
   if (Y < 0) {H += Y; Y = 0;}
   if (W > wi->w()-X) W = wi->w()-X;
   if (H > wi->h()-Y) H = wi->h()-Y;
   if (W <= 0 || H <= 0) return;
+
+  if (!X && !Y && W==wi->w() && H==wi->h()) {
+    // if damage covers entire window delete region:
+    wi->damage(fl);
+    return;
+  }
 
   if (wi->damage()) {
     // if we already have damage we must merge with existing region:
@@ -1052,5 +1052,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.68 2004/09/12 20:26:23 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.69 2004/11/23 19:09:55 easysw Exp $".
 //
