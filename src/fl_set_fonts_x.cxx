@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_x.cxx,v 1.1.2.4 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: fl_set_fonts_x.cxx,v 1.1.2.5 2002/08/12 19:42:55 easysw Exp $"
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -116,7 +116,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
       return p;
     }
     const char *e = fl_font_word(x,1);
-    if ((e - x) < (sizeof(f->fontname) - 1)) {
+    if ((e - x) < (int)(sizeof(f->fontname) - 1)) {
       // MRS: we want strncpy here, not strlcpy...
       strncpy(o,x,e-x);
       o += e-x;
@@ -132,8 +132,8 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
       if (*e) e++; x = e; e = fl_font_word(x,1);
       int t = attribute(n,x);
       if (t < 0) {
-	if (o < (f->fontname + sizeof(f->fontname) - 1) *o++ = ' ';
-	if ((e - x) < (sizeof(f->fontname) - (o - f->fontname) - 1)) {
+	if (o < (f->fontname + sizeof(f->fontname) - 1)) *o++ = ' ';
+	if ((e - x) < (int)(sizeof(f->fontname) - (o - f->fontname) - 1)) {
 	  // MRS: we want strncpy here, not strlcpy...
 	  strncpy(o,x,e-x);
 	  o += e-x;
@@ -342,5 +342,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.4 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.5 2002/08/12 19:42:55 easysw Exp $".
 //

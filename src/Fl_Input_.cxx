@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.21 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.22 2002/08/12 19:42:54 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -152,8 +152,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
   if (Fl::focus()!=this && !size()) {
     if (do_mu) { // we have to erase it if cursor was there
-      fl_color(color());
-      fl_rectf(X, Y, W, H);
+      draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
+               W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
     }
     return;
   }
@@ -248,9 +248,9 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 	else if (readonly()) xx -= 3;
       }
       // clip to and erase it:
-      fl_color(color());
-      fl_rectf(xx, Y+ypos, r-xx, height);
       fl_push_clip(xx, Y+ypos, r-xx, height);
+      draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
+               W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
       // it now draws entire line over it
       // this should not draw letters to left of erased area, but
       // that is nyi.
@@ -312,8 +312,10 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   if (input_type()==FL_MULTILINE_INPUT && do_mu && ypos<H
       && (!erase_cursor_only || p <= value()+mu_p)) {
     if (ypos < 0) ypos = 0;
-    fl_color(this->color());
-    fl_rectf(X, Y+ypos, W, H-ypos);
+    fl_push_clip(X, Y+ypos, W, H-ypos);
+    draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
+             W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
+    fl_pop_clip();
   }
 
   fl_pop_clip();
@@ -848,5 +850,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.21 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.22 2002/08/12 19:42:54 easysw Exp $".
 //

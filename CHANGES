@@ -1,6 +1,9 @@
-CHANGES IN FLTK 1.1.0
+CHANGES IN FLTK 1.1.0rc6
 
 	- Documentation updates.
+	- Fl_Input_ now draws the box function to erase the
+	  background.  This fixes redraw problems noticed with
+	  the plastic scheme.
 	- More snprintf/strlcpy/strlcat changes where needed.
 	- Fl::get_font_name() would leak 128 bytes.
 	- Eliminated most of the "shadowed" variables to avoid
