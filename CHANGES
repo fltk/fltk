@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.1
 
+	- Fl_Text_Display didn't always show the cursor.
 	- Fl_Tabs now only redraws the tabs themselves when
 	  making focus changes.  This reduces flicker in tabbed
 	  interfaces.

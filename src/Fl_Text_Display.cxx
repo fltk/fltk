@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.32 2002/10/23 12:23:39 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.33 2002/10/23 13:21:14 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -736,13 +736,30 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) {
   char expandedChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
   const char *lineStr;
 
+//  printf("position_to_xy(pos=%d, X=%p, Y=%p)\n", pos, X, Y);
+
   /* If position is not displayed, return false */
-  if (pos < mFirstChar || (pos > mLastChar && !empty_vlines()))
+  if (pos < mFirstChar || (pos > mLastChar && !empty_vlines())) {
+//    printf("    returning 0\n"
+//           "    mFirstChar=%d, mLastChar=%d, empty_vlines()=0\n",
+//	   mFirstChar, mLastChar);
     return 0;
+  }
 
   /* Calculate Y coordinate */
-  if (!position_to_line(pos, &visLineNum)) return 0;
-  if (visLineNum < 0 || visLineNum >= mNBufferLines) return 0;
+  if (!position_to_line(pos, &visLineNum)) {
+//    puts("    returning 0\n"
+//         "    position_to_line()=0");
+    return 0;
+  }
+
+  if (visLineNum < 0 || visLineNum > mNBufferLines) {
+//    printf("    returning 0\n"
+//           "    visLineNum=%d, mNBufferLines=%d\n",
+//	   visLineNum, mNBufferLines);
+    return 0;
+  }
+
   fontHeight = mMaxsize;
   *Y = text_area.y + visLineNum * fontHeight;
 
@@ -2878,6 +2895,7 @@ void Fl_Text_Display::draw(void) {
 
     int X, Y;
     if (position_to_xy(mCursorPos, &X, &Y)) draw_cursor(X, Y);
+//    else puts("position_to_xy() failed - unable to draw cursor!");
     //printf("drew cursor at pos: %d (%d,%d)\n", mCursorPos, X, Y);
     mCursorOldY = Y;
     fl_pop_clip();
@@ -3008,5 +3026,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.32 2002/10/23 12:23:39 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.33 2002/10/23 13:21:14 easysw Exp $".
 //
