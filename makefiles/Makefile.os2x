@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.1 1998/11/05 18:37:06 mike Exp $"
+# "$Id: Makefile.os2x,v 1.2 1998/12/02 17:22:54 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,50 +23,50 @@
 # Please report all bugs and problems to "fltk-bugs@easysw.com".
 #
 
-SHELL=/bin/sh
+# SHELL=/bin/sh
 
 all:
 	echo "=== making src ==="
 	touch src/makedepend
-	(cd src;$(MAKE))
+	cd src & $(MAKE)
 	echo "=== making fluid ==="
 	touch fluid/makedepend
-	(cd fluid;$(MAKE))
+	cd fluid & $(MAKE)
 	echo "=== making test ==="
 	touch test/makedepend
-	(cd test;$(MAKE))
+	cd test & $(MAKE)
 
 install:
 	echo "=== installing src ==="
 	touch src/makedepend
-	(cd src;$(MAKE) install)
+	cd src & $(MAKE) install
 	echo "=== installing fluid ==="
 	touch fluid/makedepend
-	(cd fluid;$(MAKE) install)
+	cd fluid & $(MAKE) install
 
 depend:
 	echo "=== making src dependencies ==="
 	touch src/makedepend
-	(cd src;$(MAKE) depend)
+	cd src & $(MAKE) depend
 	echo "=== making fluid dependencies ==="
 	touch fluid/makedepend
-	(cd fluid;$(MAKE) depend)
+	cd fluid & $(MAKE) depend
 	echo "=== making test dependencies ==="
 	touch test/makedepend
-	(cd test;$(MAKE) depend)
+	cd test & $(MAKE) depend
 
 clean:
 	-@ rm -f core config.cache *.o *.bck
 	echo "=== cleaning src ==="
 	touch src/makedepend
-	(cd src;$(MAKE) clean)
+	cd src & $(MAKE) clean
 	echo "=== cleaning fluid ==="
 	touch fluid/makedepend
-	(cd fluid;$(MAKE) clean)
+	cd fluid & $(MAKE) clean
 	echo "=== cleaning test ==="
 	touch test/makedepend
-	(cd test;$(MAKE) clean)
+	cd test & $(MAKE) clean
 
 #
-# End of "$Id: Makefile.os2x,v 1.1 1998/11/05 18:37:06 mike Exp $".
+# End of "$Id: Makefile.os2x,v 1.2 1998/12/02 17:22:54 mike Exp $".
 #
