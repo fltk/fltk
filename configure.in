@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.22 2001/11/17 15:55:36 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.23 2001/11/18 12:48:38 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -208,12 +208,14 @@ AC_CHECK_HEADER(png.h,
 dnl Restore original LIBS settings...
 LIBS="$SAVELIBS"
 
+EXEEXT=
 case $uname in
     CYGWIN*)
 	dnl Cygwin environment...
 	LIBS="$LIBS -lgdi32 -lwsock32"
 	CFLAGS="$CFLAGS -DWIN32"
 	CXXFLAGS="$CXXFLAGS -DWIN32"
+	EXEEXT=".exe"
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
 	        AC_DEFINE(HAVE_GL)
@@ -302,6 +304,7 @@ case $uname in
 	;;
 esac
 
+AC_SUBST(EXEEXT)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
 
@@ -518,5 +521,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.22 2001/11/17 15:55:36 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.23 2001/11/18 12:48:38 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.7 2001/11/17 15:27:15 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.8 2001/11/18 12:48:38 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -41,16 +41,66 @@ CPPFILES =\
 	valuators.cxx fast_slow.cxx resize.cxx pack.cxx \
 	inactive.cxx line_style.cxx
 
-ALL =	adjuster arc ask bitmap boxtype browser button buttons \
-	checkers clock colbrowser color_chooser cursor curve \
-	demo doublebuffer editor file_chooser fonts forms hello \
-	help iconize image input keyboard label list_visuals \
-	mandelbrot menubar message minimum navigation output \
-	overlay pixmap pixmap_browser radio resizebox scroll \
-	subwindow symbols tabs tile valuators fast_slow resize \
-	pack inactive line_style
+ALL =	\
+	adjuster$(EXEEXT) \
+	arc$(EXEEXT) \
+	ask$(EXEEXT) \
+	bitmap$(EXEEXT) \
+	boxtype$(EXEEXT) \
+	browser$(EXEEXT) \
+	button$(EXEEXT) \
+	buttons$(EXEEXT) \
+	checkers$(EXEEXT) \
+	clock$(EXEEXT) \
+	colbrowser$(EXEEXT) \
+	color_chooser$(EXEEXT) \
+	cursor$(EXEEXT) \
+	curve$(EXEEXT) \
+	demo$(EXEEXT) \
+	doublebuffer$(EXEEXT) \
+	editor$(EXEEXT) \
+	fast_slow$(EXEEXT) \
+	file_chooser$(EXEEXT) \
+	fonts$(EXEEXT) \
+	forms$(EXEEXT) \
+	hello$(EXEEXT) \
+	help$(EXEEXT) \
+	iconize$(EXEEXT) \
+	image$(EXEEXT) \
+	inactive$(EXEEXT) \
+	input$(EXEEXT) \
+	keyboard$(EXEEXT) \
+	label$(EXEEXT) \
+	line_style$(EXEEXT) \
+	list_visuals$(EXEEXT) \
+	mandelbrot$(EXEEXT) \
+	menubar$(EXEEXT) \
+	message$(EXEEXT) \
+	minimum$(EXEEXT) \
+	navigation$(EXEEXT) \
+	output$(EXEEXT) \
+	overlay$(EXEEXT) \
+	pack$(EXEEXT) \
+	pixmap$(EXEEXT) \
+	pixmap_browser$(EXEEXT) \
+	radio$(EXEEXT) \
+	resizebox$(EXEEXT) \
+	scroll$(EXEEXT) \
+	subwindow$(EXEEXT) \
+	symbols$(EXEEXT) \
+	tabs$(EXEEXT) \
+	tile$(EXEEXT) \
+	valuators$(EXEEXT)
 
-GLALL =	CubeView cube fullscreen fractals gl_overlay glpuzzle shiny shape
+GLALL = \
+	cube$(EXEEXT) \
+	CubeView$(EXEEXT) \
+	fractals$(EXEEXT) \
+	fullscreen$(EXEEXT) \
+	gl_overlay$(EXEEXT) \
+	glpuzzle$(EXEEXT) \
+	shape$(EXEEXT) \
+	shiny$(EXEEXT) \
 
 all:	$(ALL) $(GLDEMOS)
 
@@ -61,7 +111,7 @@ gldemos:	$(GLALL)
 	echo Generating $<...
 	../fluid/fluid -c $<
 
-.fl:
+$(EXEEXT).fl:
 	echo Generating, compiling, and linking $@...
 	../fluid/fluid -c $<
 	$(CXX) -I.. $(CXXFLAGS) $@.cxx $(LINKFLTK) $(LDLIBS) -o $@
@@ -70,60 +120,60 @@ gldemos:	$(GLALL)
 $(ALL):  ../lib/$(LIBNAME)
 
 # Programs needing special instructions...
-editor: editor.cxx
+editor$(EXEEXT): editor.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) editor.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-file_chooser: file_chooser.cxx
+file_chooser$(EXEEXT): file_chooser.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) file_chooser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-help: help.cxx
+help$(EXEEXT): help.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-keyboard: keyboard.cxx keyboard_ui.cxx
+keyboard$(EXEEXT): keyboard.cxx keyboard_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx $(LINKFLTK) $(LDLIBS) -o $@
-mandelbrot: mandelbrot.cxx mandelbrot_ui.cxx
+mandelbrot$(EXEEXT): mandelbrot.cxx mandelbrot_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx $(LINKFLTK) $(LDLIBS) -o $@
-pixmap_browser: pixmap_browser.cxx
+pixmap_browser$(EXEEXT): pixmap_browser.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 
 # OpenGL demos...
-CubeView: CubeMain.o CubeView.o CubeViewUI.o
+CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	echo Compiling and linking $@...
 	$(CXX) $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 
-cube: cube.cxx
+cube$(EXEEXT): cube.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) cube.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-fractals: fractals.cxx
+fractals$(EXEEXT): fractals.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fractals.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-fullscreen: fullscreen.cxx
+fullscreen$(EXEEXT): fullscreen.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) fullscreen.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-glpuzzle: glpuzzle.cxx
+glpuzzle$(EXEEXT): glpuzzle.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) glpuzzle.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-gl_overlay: gl_overlay.cxx
+gl_overlay$(EXEEXT): gl_overlay.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) gl_overlay.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-shiny: shiny.cxx shiny_panel.cxx
+shiny$(EXEEXT): shiny.cxx shiny_panel.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
-shape: shape.cxx
+shape$(EXEEXT): shape.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shape.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 
 # If you have libjpeg installed, you might want to try this test program:
 
-jpeg_image: jpeg_image.cxx
+jpeg_image$(EXEEXT): jpeg_image.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.cxx $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
+	$(CXX) -I.. $(CXXFLAGS) jpeg_image.cxx $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
 
 depend:
 #	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
@@ -136,5 +186,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.7 2001/11/17 15:27:15 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.8 2001/11/18 12:48:38 easysw Exp $".
 #

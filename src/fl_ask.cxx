@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8.2.1 2001/11/17 16:37:48 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.2 2001/11/18 12:48:38 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -127,7 +127,7 @@ static int innards(const char* fmt, va_list ap,
   return r;
 }
 
-// pointers you can use to change fltk to a foreign language:
+// pointers you can use to change FLTK to a foreign language:
 const char* fl_no = "No";
 const char* fl_yes= "Yes";
 const char* fl_ok = "OK";
@@ -139,16 +139,16 @@ void fl_beep(int type) {
   switch (type) {
     case FL_BEEP_QUESTION :
     case FL_BEEP_PASSWORD :
-      MessageBeep(MD_ICONQUESTION);
+      MessageBeep(MB_ICONQUESTION);
       break;
     case FL_BEEP_MESSAGE :
-      MessageBeep(MD_ICONASTERISK);
+      MessageBeep(MB_ICONASTERISK);
       break;
     case FL_BEEP_NOTIFICATION :
-      MessageBeep(MD_ICONASTERISK);
+      MessageBeep(MB_ICONASTERISK);
       break;
     default :
-      MessageBeep(MD_ICONERROR);
+      MessageBeep(MB_ICONERROR);
       break;
   }
 #else
@@ -256,5 +256,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.1 2001/11/17 16:37:48 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.2 2001/11/18 12:48:38 easysw Exp $".
 //
