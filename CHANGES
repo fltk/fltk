@@ -65,6 +65,9 @@ CHANGES IN FLTK 1.1.0b7
 	  right shading for narrow, but horizontal buttons.
 	- Fl_Progress now shades the bounding box instead of
 	  drawing a polygon inside it.
+	- Fl::warning() under WIN32 defaults to no action. This
+	  avoids warning dialogs when an image file cannot be
+	  loaded.
 
 
 CHANGES IN FLTK 1.1.0b6
