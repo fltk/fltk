@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- The configure script didn't include the -mwindows or
+	  -DWIN32 compiler options in the output of fltk-config
+	  when using the Cygwin tools.
 	- Fl_Output didn't take input focus when needed, so it
 	  was unable to support CTRL-C for copying text in the
 	  field and did not unhighlight selections when the
