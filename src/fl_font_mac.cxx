@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.13 2003/05/21 13:23:40 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.14 2003/05/26 14:19:50 easysw Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -182,8 +182,8 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
   // First convert string to MacRoman encoding...
-  if (n > sizeof(buf))
-    n = sizeof(buf);
+  if (n > (int)sizeof(buf))
+    n = (int)sizeof(buf);
 
   for (i = n, bufptr = buf; i > 0; i --)
     *bufptr++ = macroman_lut[*str++ & 255];
@@ -195,5 +195,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.13 2003/05/21 13:23:40 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.14 2003/05/26 14:19:50 easysw Exp $".
 //
