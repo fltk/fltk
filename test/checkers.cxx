@@ -1,5 +1,5 @@
 //
-// "$Id: checkers.cxx,v 1.6 1998/12/02 16:04:03 mike Exp $"
+// "$Id: checkers.cxx,v 1.7 1998/12/02 17:35:59 mike Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -922,8 +922,8 @@ void draw_piece(int which, int x, int y) {
   default: return;
   }
   fl_color(0, 1, 0); bm[which][0]->draw(x, y);
-  fl_color(200, 100, 2000); bm[which][1]->draw(x, y);
-  fl_color(100, 100, 200);bm[which][2]->draw(x, y);
+  fl_color(200, 100, 200); bm[which][1]->draw(x, y);
+  fl_color(100, 100, 200); bm[which][2]->draw(x, y);
   fl_color(200, 200, 100); bm[which][3]->draw(x, y);
 }
 
@@ -1366,5 +1366,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.6 1998/12/02 16:04:03 mike Exp $".
+// End of "$Id: checkers.cxx,v 1.7 1998/12/02 17:35:59 mike Exp $".
 //
