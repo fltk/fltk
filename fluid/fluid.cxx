@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.12 1999/01/26 15:58:25 mike Exp $"
+// "$Id: fluid.cxx,v 1.13 1999/01/26 21:40:28 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -206,7 +206,7 @@ static int ipasteoffset;
 
 static char* cutfname() {
 #ifdef WIN32
-  return ".fluid_cut_buffer";
+  return "\\.fluid_cut_buffer";
 #else
   static char name[256] = "~/.fluid_cut_buffer";
   static char beenhere;
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.12 1999/01/26 15:58:25 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.13 1999/01/26 21:40:28 mike Exp $".
 //
