@@ -37,11 +37,11 @@ extern void goto_source_dir(); // in fluid.C
 extern void leave_source_dir(); // in fluid.C
 
 void Fluid_Image::image(Fl_Widget *o) {
-  o->image(img);
+  if (o->window() != o) o->image(img);
 }
 
 void Fluid_Image::deimage(Fl_Widget *o) {
-  o->deimage(img);
+  if (o->window() != o) o->deimage(img);
 }
 
 static int pixmap_header_written = 0;

@@ -332,6 +332,7 @@ void Fl_Window_Type::open() {
     w->resizable(p);
   }
 
+  w->image(Fl::scheme_bg_);
   w->size_range(gridx, gridy, Fl::w(), Fl::h(), gridx, gridy, 0);
 }
 

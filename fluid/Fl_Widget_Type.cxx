@@ -169,7 +169,7 @@ Fl_Type *Fl_Widget_Type::make() {
 #include "Fluid_Image.h"
 
 void Fl_Widget_Type::setimage(Fluid_Image *i) {
-  if (i == image) return;
+  if (i == image || is_window()) return;
   if (image) image->decrement();
   if (i) i->increment();
   image = i;
@@ -179,7 +179,7 @@ void Fl_Widget_Type::setimage(Fluid_Image *i) {
 }
 
 void Fl_Widget_Type::setinactive(Fluid_Image *i) {
-  if (i == inactive) return;
+  if (i == inactive || is_window()) return;
   if (inactive) inactive->decrement();
   if (i) i->increment();
   inactive = i;

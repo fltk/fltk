@@ -61,13 +61,17 @@ extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern void i18n_cb(Fl_Choice *,void *);
 extern Fl_Preferences fluid_prefs;
 extern Fl_Text_Buffer *shell_run_buffer;
+extern void scheme_cb(Fl_Choice *, void *);
 extern Fl_Double_Window *settings_window;
+extern void scheme_cb(Fl_Choice*, void*);
+extern Fl_Choice *scheme_choice;
 #include <FL/Fl_Check_Button.H>
 extern Fl_Check_Button *tooltips_button;
 extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
 extern Fl_Check_Button *prevpos_button;
 Fl_Double_Window* make_settings_window();
+extern Fl_Menu_Item menu_scheme_choice[];
 extern Fl_Double_Window *shell_window;
 extern Fl_Input *shell_command_input;
 extern Fl_Check_Button *shell_writecode_button;

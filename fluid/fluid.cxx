@@ -661,6 +661,22 @@ Fl_Menu_Item Main_Menu[] = {
 
 extern void fill_in_New_Menu();
 
+void scheme_cb(Fl_Choice *, void *) {
+  switch (scheme_choice->value()) {
+    case 0 : // Default
+      Fl::scheme(NULL);
+      break;
+    case 1 : // None
+      Fl::scheme("none");
+      break;
+    case 2 : // Plastic
+      Fl::scheme("plastic");
+      break;
+  }
+
+  fluid_prefs.set("scheme", scheme_choice->value());
+}
+
 void toggle_widgetbin_cb(Fl_Widget *, void *) {
   if (!widgetbin_panel) {
     make_widgetbin();
@@ -981,8 +997,6 @@ int main(int argc,char **argv) {
   const char *c = argv[i];
 
   fl_register_images();
-
-  if (!compile_only) Fl::scheme(NULL);
 
   make_main_window();
 

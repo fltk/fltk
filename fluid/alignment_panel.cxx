@@ -164,8 +164,18 @@ Fl_Double_Window* make_project_window() {
   return w;
 }
 Fl_Text_Buffer *shell_run_buffer;
+void scheme_cb(Fl_Choice *, void *);
 
 Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
+
+Fl_Choice *scheme_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_scheme_choice[] = {
+ {"Default", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
+ {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
+ {"Plastic", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
+ {0,0,0,0,0,0,0,0,0}
+};
 
 Fl_Check_Button *tooltips_button=(Fl_Check_Button *)0;
 
@@ -198,38 +208,53 @@ static void cb_Close1(Fl_Button*, void*) {
 
 Fl_Double_Window* make_settings_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(235, 185, "GUI Settings");
+  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(300, 190, "GUI Settings");
     w = o;
-    { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(10, 10, 113, 25, "Show Tooltips");
-      o->down_box(FL_DOWN_BOX);
-      o->callback((Fl_Callback*)cb_tooltips_button);
-      int b;
-      fluid_prefs.get("show_tooltips", b, 1);
-      tooltips_button->value(b);
-      Fl_Tooltip::enable(b);
+    { Fl_Choice* o = scheme_choice = new Fl_Choice(75, 10, 115, 25, "Scheme:");
+      o->down_box(FL_BORDER_BOX);
+      o->labelfont(1);
+      o->callback((Fl_Callback*)scheme_cb);
+      o->menu(menu_scheme_choice);
+      int s;
+      fluid_prefs.get("scheme", s, 0);
+      scheme_choice->value(s);
+      scheme_cb(0, 0);
     }
-    { Fl_Check_Button* o = completion_button = new Fl_Check_Button(10, 45, 186, 25, "Show Completion Dialogs");
-      o->down_box(FL_DOWN_BOX);
-      o->callback((Fl_Callback*)cb_completion_button);
-      int b;
-      fluid_prefs.get("show_completion_dialogs", b, 1);
-      completion_button->value(b);
+    { Fl_Group* o = new Fl_Group(75, 45, 215, 100, "Options:\n\n\n\n\n");
+      o->labelfont(1);
+      o->align(FL_ALIGN_LEFT);
+      { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(75, 45, 113, 25, "Show Tooltips");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_tooltips_button);
+        int b;
+        fluid_prefs.get("show_tooltips", b, 1);
+        tooltips_button->value(b);
+        Fl_Tooltip::enable(b);
+      }
+      { Fl_Check_Button* o = completion_button = new Fl_Check_Button(75, 70, 186, 25, "Show Completion Dialogs");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_completion_button);
+        int b;
+        fluid_prefs.get("show_completion_dialogs", b, 1);
+        completion_button->value(b);
+      }
+      { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(75, 95, 215, 25, "Open Previous File on Startup");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_openlast_button);
+        int b;
+        fluid_prefs.get("open_previous_file", b, 0);
+        openlast_button->value(b);
+      }
+      { Fl_Check_Button* o = prevpos_button = new Fl_Check_Button(75, 120, 210, 25, "Remember Window Positions");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_prevpos_button);
+        int b;
+        fluid_prefs.get("prev_window_pos", b, 1);
+        prevpos_button->value(b);
+      }
+      o->end();
     }
-    { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(10, 80, 215, 25, "Open Previous File on Startup");
-      o->down_box(FL_DOWN_BOX);
-      o->callback((Fl_Callback*)cb_openlast_button);
-      int b;
-      fluid_prefs.get("open_previous_file", b, 0);
-      openlast_button->value(b);
-    }
-    { Fl_Check_Button* o = prevpos_button = new Fl_Check_Button(10, 115, 210, 25, "Remember Window Positions");
-      o->down_box(FL_DOWN_BOX);
-      o->callback((Fl_Callback*)cb_prevpos_button);
-      int b;
-      fluid_prefs.get("prev_window_pos", b, 1);
-      prevpos_button->value(b);
-    }
-    { Fl_Button* o = new Fl_Button(161, 150, 64, 25, "Close");
+    { Fl_Button* o = new Fl_Button(226, 155, 64, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close1);
     }
