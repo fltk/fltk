@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.11 2002/07/17 06:09:26 matthiaswm Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.12 2002/07/17 15:23:58 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -34,9 +34,9 @@
 #include <FL/Fl_Tiled_Image.H>
 #include "tile.xpm"
 
-#if defined __APPLE__ && defined __MWERKS__
-  extern "C" int putenv(const char*);
-#endif
+#if defined(__APPLE__) && defined(__MWERKS__)
+extern "C" int putenv(const char*);
+#endif // __APPLE__ && __MWERKS__
 
 
 void Fl::background(uchar r, uchar g, uchar b) {
@@ -317,5 +317,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.11 2002/07/17 06:09:26 matthiaswm Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.12 2002/07/17 15:23:58 easysw Exp $".
 //

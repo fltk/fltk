@@ -1,5 +1,5 @@
 //
-// "$Id: math.h,v 1.4.2.4.2.4 2002/07/17 06:09:25 matthiaswm Exp $"
+// "$Id: math.h,v 1.4.2.4.2.5 2002/07/17 15:23:58 easysw Exp $"
 //
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,31 +29,20 @@
 #  include <math.h>
 
 
-#  if defined __APPLE__ && defined __MWERKS__
-
+#  ifndef M_PI
 #    define M_PI            3.14159265358979323846
 #    define M_PI_2          1.57079632679489661923
 #    define M_PI_4          0.78539816339744830962
 #    define M_1_PI          0.31830988618379067154
 #    define M_2_PI          0.63661977236758134308
+#  endif // !M_PI
+
+#  ifndef M_SQRT2
 #    define M_SQRT2         1.41421356237309504880
 #    define M_SQRT1_2       0.70710678118654752440
+#  endif // !M_SQRT2
 
-#  endif
-
-
-#  ifdef WIN32
-// things missing from <math.h>:
-
-#    define M_PI            3.14159265358979323846
-#    define M_PI_2          1.57079632679489661923
-#    define M_PI_4          0.78539816339744830962
-#    define M_1_PI          0.31830988618379067154
-#    define M_2_PI          0.63661977236758134308
-#    define M_SQRT2         1.41421356237309504880
-#    define M_SQRT1_2       0.70710678118654752440
-
-#  elif defined(__EMX__)
+#  ifdef __EMX__
 #    include <float.h>
 #  endif
 
@@ -68,5 +57,5 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 
 
 //
-// End of "$Id: math.h,v 1.4.2.4.2.4 2002/07/17 06:09:25 matthiaswm Exp $".
+// End of "$Id: math.h,v 1.4.2.4.2.5 2002/07/17 15:23:58 easysw Exp $".
 //

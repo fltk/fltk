@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.19 2002/07/17 06:09:25 matthiaswm Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.20 2002/07/17 15:23:58 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -62,12 +62,13 @@
 #  include <os2.h>
 #endif // __EMX__
 
-// CodeWarrior (__MWERKS__) gets its include paths confused, so we temporarily disable this
+// CodeWarrior (__MWERKS__) gets its include paths confused, so we
+// temporarily disable this...
 #if defined(__APPLE__) && !defined(__MWERKS__)
 #  include <sys/param.h>
 #  include <sys/ucred.h>
 #  include <sys/mount.h>
-#endif // __APPLE__
+#endif // __APPLE__ && !__MWERKS__
 
 
 //
@@ -644,5 +645,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.19 2002/07/17 06:09:25 matthiaswm Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.20 2002/07/17 15:23:58 easysw Exp $".
 //

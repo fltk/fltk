@@ -1,5 +1,5 @@
 /*
- * "$Id: flstring.h,v 1.1.2.9 2002/07/17 06:09:26 matthiaswm Exp $"
+ * "$Id: flstring.h,v 1.1.2.10 2002/07/17 15:23:58 easysw Exp $"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
@@ -53,19 +53,21 @@
 #    define strncasecmp(s,t,n)	strnicmp((s), (t), (n))
 #  endif /* WIN32 */
 
-// MetroWerks' CodeWarrior put thes "non-standard" functions int <extras.h>
-// which unfortunatly does not play well otherwise when included - to be resolved
-#  if defined __APPLE__ && defined __MWERKS__
-     extern "C" {
-       int strcasecmp(const char*,const char*);
-       int strncasecmp(const char*,const char*,int);
-       char *strdup(const char*);
-     }
-#  endif
-
 #  ifdef __cplusplus
 extern "C" {
 #  endif /* __cplusplus */
+
+/*
+ * MetroWerks' CodeWarrior put thes "non-standard" functions in
+ * <extras.h> which unfortunatly does not play well otherwise
+ * when included - to be resolved...
+ */
+
+#  if defined(__APPLE__) && defined(__MWERKS__)
+int strcasecmp(const char*,const char*);
+int strncasecmp(const char*,const char*,int);
+char *strdup(const char*);
+#  endif
 
 #  if !HAVE_SNPRINTF
 FL_EXPORT extern int fl_snprintf(char *, size_t, const char *, ...);
@@ -97,6 +99,7 @@ FL_EXPORT extern size_t fl_strlcpy(char *, const char *, size_t);
 #  endif /* __cplusplus */
 #endif /* !flstring_h */
 
+
 /*
- * End of "$Id: flstring.h,v 1.1.2.9 2002/07/17 06:09:26 matthiaswm Exp $".
+ * End of "$Id: flstring.h,v 1.1.2.10 2002/07/17 15:23:58 easysw Exp $".
  */
