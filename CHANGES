@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- Now conditionally use the WIN32 TrackMouseEvent API
+	  (default is no...)
 	- Fixed a table rendering bug in the Fl_Help_View
 	  widget.
 	- The fltk-config script now recognizes all common C++

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.16 2002/01/23 16:58:01 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.17 2002/02/20 19:29:57 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -50,9 +50,23 @@
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 //
+// This currently doesn't appear to work; needs to be fixed!
+//
 
-// MRS - this currently doesn't appear to work anymore; needs to be fixed!
 //#define USE_ASYNC_SELECT
+
+
+//
+// USE_TRACK_MOUSE - define it if you have TrackMouseEvent()...
+//
+// Apparently, at least some versions of Cygwin/MingW don't provide
+// the TrackMouseEvent() function.  You can define this by hand
+// if you have it - this is only needed to support subwindow
+// enter/leave notification under Windows.
+//
+
+//#define USE_TRACK_MOUSE
+
 
 //
 // WM_SYNCPAINT is an "undocumented" message, which is finally defined in
@@ -531,6 +545,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
 
   case WM_MOUSEMOVE:
+#ifdef USE_TRACK_MOUSE
       if (Fl::belowmouse() != window) {
         TRACKMOUSEEVENT tme;
 
@@ -540,6 +555,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         _TrackMouseEvent(&tme);
       }
+#endif // USE_TRACK_MOUSE
 
       mouse_event(window, 3, 0, wParam, lParam);
       return 0;
@@ -1049,5 +1065,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.16 2002/01/23 16:58:01 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.17 2002/02/20 19:29:57 easysw Exp $".
 //
