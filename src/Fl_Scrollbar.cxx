@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.6 2000/01/17 20:40:12 bill Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.7 2000/01/20 06:14:32 bill Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,17 +32,22 @@
 #define REPEAT .05
 
 void Fl_Scrollbar::increment_cb() {
+  int ls = maximum()>=minimum() ? linesize_ : -linesize_;
   int i;
-  int W = horizontal() ? w() : h();
-  int S = int(slider_size()*W+.5);
-
   switch (pushed_) {
-  case 1: i = -linesize_; break;
-  default:i =  linesize_; break;
-  case 5: i = -int(S * (maximum() - minimum()) / W); break;
-  case 6: i =  int(S * (maximum() - minimum()) / W); break;
+  case 1:
+    i = -ls;
+    break;
+  default:
+    i =  ls;
+    break;
+  case 5:
+    i = -int((maximum()-minimum())*slider_size()/(1.0-slider_size())) + ls;
+    break;
+  case 6:
+    i =  int((maximum()-minimum())*slider_size()/(1.0-slider_size())) - ls;
+    break;
   }
-  if (maximum() < minimum() && pushed_ < 3) i = -i;
   handle_drag(clamp(value() + i));
 }
 
@@ -56,7 +61,6 @@ int Fl_Scrollbar::handle(int event) {
   // area of scrollbar:
   int area;
   int X=x(); int Y=y(); int W=w(); int H=h();
-  int SX = X; int SY = Y; int SW = W; int SH = H;
 
   // adjust slider area to be inside the arrow buttons:
   if (horizontal()) {
@@ -66,49 +70,35 @@ int Fl_Scrollbar::handle(int event) {
   }
 
   // which widget part is highlighted?
-  int mx = Fl::event_x();
-  int my = Fl::event_y();
-  if (!Fl::event_inside(SX, SY, SW, SH)) area = 0;
-  else if (horizontal()) {
-    if (mx < X) area = 1;
-    else if (mx >= X+W) area = 2;
-    else {
-      int sliderx;
-      int S = int(slider_size()*W+.5);
-      double val;
-      if (minimum() == maximum())
-	val = 0.5;
-      else
-	val = (value()-minimum())/(maximum()-minimum());
-      if (val >= 1.0) sliderx = W-S;
-      else if (val <= 0.0) sliderx = 0;
-      else sliderx = int(val*(W-S)+.5);
-
-      if (mx < X+sliderx) area = 5;
-      else if (mx >= X+sliderx+S) area = 6;
-      else area = 8;
-    }
+  int relx;
+  int ww;
+  if (horizontal()) {
+    relx = Fl::event_x()-X;
+    ww = W;
   } else {
-    if (mx < X || mx >= X+W) area = 0;
-    else if (my < Y) area = 1;
-    else if (my >= Y+H) area = 2;
-    else {
-      int slidery;
-      int S = int(slider_size()*H+.5);
-      double val;
-      if (minimum() == maximum())
-	val = 0.5;
-      else
-	val = (value()-minimum())/(maximum()-minimum());
-      if (val >= 1.0) slidery = H-S;
-      else if (val <= 0.0) slidery = 0;
-      else slidery = int(val*(H-S)+.5);
-
-      if (my < Y+slidery) area = 5;
-      else if (my >= Y+slidery+S) area = 6;
-      else area = 8;
-    }
+    relx = Fl::event_y()-Y;
+    ww = H;
   }
+  if (relx < 0) area = 1;
+  else if (relx >= ww) area = 2;
+  else {
+    int S = int(slider_size()*ww+.5);
+    int T = (horizontal() ? H : W)/2+1;
+    if (S < T) S = T;
+    double val;
+    if (minimum() == maximum())
+      val = 0.5;
+    else
+      val = (value()-minimum())/(maximum()-minimum());
+    int sliderx;
+    if (val >= 1.0) sliderx = ww-S;
+    else if (val <= 0.0) sliderx = 0;
+    else sliderx = int(val*(ww-S)+.5);
+    if (relx < sliderx) area = 5;
+    else if (relx >= sliderx+S) area = 6;
+    else area = 8;
+  }
+
   switch (event) {
   case FL_ENTER:
   case FL_LEAVE:
@@ -249,5 +239,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.6 2000/01/17 20:40:12 bill Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.7 2000/01/20 06:14:32 bill Exp $".
 //

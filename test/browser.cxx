@@ -1,5 +1,5 @@
 //
-// "$Id: browser.cxx,v 1.5.2.1 1999/04/26 06:45:28 bill Exp $"
+// "$Id: browser.cxx,v 1.5.2.2 2000/01/20 06:14:34 bill Exp $"
 //
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -80,6 +80,7 @@ int main(int argc, char **argv) {
   window.box(FL_NO_BOX); // because it is filled with browser
   Fl_Select_Browser browser(0,0,400,400,0);
   browser.type(FL_MULTI_BROWSER);
+  //browser.type(FL_HOLD_BROWSER);
   //browser.color(42);
   browser.callback(b_cb);
   // browser.scrollbar_right();
@@ -95,6 +96,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: browser.cxx,v 1.5.2.1 1999/04/26 06:45:28 bill Exp $".
+// End of "$Id: browser.cxx,v 1.5.2.2 2000/01/20 06:14:34 bill Exp $".
 //
 

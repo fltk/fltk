@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.7 1999/12/19 05:32:33 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.8 2000/01/20 06:14:31 bill Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -547,24 +547,48 @@ int Fl_Browser_::handle(int event) {
   switch (event) {
   case FL_PUSH:
     if (!Fl::event_inside(X, Y, W, H)) return 0;
-    if (type() == FL_SELECT_BROWSER) deselect();
     my = py = Fl::event_y();
     change = 0;
     if (type() == FL_NORMAL_BROWSER || !top_)
       ;
-    else if (type() == FL_MULTI_BROWSER) {
+    else if (type() != FL_MULTI_BROWSER) {
+      change = select_only(find_item(my), when() & FL_WHEN_CHANGED);
+    } else {
       void* l = find_item(my);
       whichway = 1;
-      if (Fl::event_state(FL_SHIFT|FL_CTRL)) { // toggle selection:
+      if (Fl::event_state(FL_CTRL)) { // toggle selection:
 	if (l) {
 	  whichway = !item_selected(l);
 	  change = select(l, whichway, when() & FL_WHEN_CHANGED);
 	}
-      } else {
+      } else if (Fl::event_state(FL_SHIFT)) { // extend selection:
+	change = 0;
+	if (selection_ && l != selection_) {
+	  void *m = l;
+	  int down = 0;
+	  whichway = item_selected(selection_);
+	  for (m = selection_; m; m = item_next(m)) {
+	    if (m == l) down = 1;
+	  }
+	  void *n;
+	  if (down) {
+	    m = selection_;
+	    n = l;
+	  } else {
+	    m = l;
+	    n = selection_;
+	  }
+	  while (m != n) {
+	    select(m, whichway, when() & FL_WHEN_CHANGED);
+	    m = item_next(m);
+	  }
+	  select(n, whichway, when() & FL_WHEN_CHANGED);
+	  select(l, whichway, when() & FL_WHEN_CHANGED);
+	  change = 1;
+	}
+      } else { // select only this item
 	change = select_only(l, when() & FL_WHEN_CHANGED);
       }
-    } else {
-      change = select_only(find_item(my), when() & FL_WHEN_CHANGED);
     }
     return 1;
   case FL_DRAG:
@@ -676,5 +700,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.7 1999/12/19 05:32:33 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.8 2000/01/20 06:14:31 bill Exp $".
 //
