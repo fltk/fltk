@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.14 1999/01/07 19:17:21 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.15 1999/01/13 15:57:38 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -230,8 +230,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   fl_clip(X, Y, W, H);
-  Fl_Color color =
-    active_r() ? contrast(textcolor(),this->color()) : inactive(textcolor());
+  Fl_Color color = active_r() ? textcolor() : inactive(textcolor());
 
   p = value();
   // visit each line and draw it:
@@ -736,5 +735,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.14 1999/01/07 19:17:21 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.15 1999/01/13 15:57:38 mike Exp $".
 //

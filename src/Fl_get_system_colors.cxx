@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.5 1999/01/07 19:17:32 mike Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6 1999/01/13 15:57:38 mike Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -44,21 +44,13 @@ void Fl::background(uchar r, uchar g, uchar b) {
   }
 }
 
-static void set_others() {
-  uchar r,g,b; Fl::get_color(FL_BLACK,r,g,b);
-  uchar r1,g1,b1; Fl::get_color(FL_WHITE,r1,g1,b1);
-  Fl::set_color(FL_INACTIVE_COLOR,(2*r+r1)/3, (2*g+g1)/3, (2*b+b1)/3);
-  Fl::set_color(FL_SELECTION_COLOR,(2*r1+r)/3, (2*g1+g)/3, (2*b1+b)/3);
-}
-
 void Fl::foreground(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_BLACK,r,g,b);
-  set_others();
 }
 
 void Fl::background2(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_WHITE,r,g,b);
-  set_others();
+  Fl::set_color(FL_BLACK,get_color(contrast(FL_BLACK,FL_WHITE)));
 }
 
 // these are set by Fl::args() and override any system colors:
@@ -103,9 +95,9 @@ getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
 }
 
 void Fl::get_system_colors() {
+  getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
   getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
   getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
-  getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
 }
 
 #else
@@ -127,13 +119,13 @@ getsyscolor(const char *arg, void (*func)(uchar,uchar,uchar)) {
 void Fl::get_system_colors()
 {
   fl_open_display();
+  getsyscolor(fl_bg2,Fl::background2);
   getsyscolor(fl_fg, Fl::foreground);
   getsyscolor(fl_bg, Fl::background);
-  getsyscolor(fl_bg2,Fl::background2);
 }
 
 #endif
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.5 1999/01/07 19:17:32 mike Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6 1999/01/13 15:57:38 mike Exp $".
 //
