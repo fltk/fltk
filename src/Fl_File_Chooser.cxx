@@ -246,7 +246,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
   }
   callback_ = 0;
 data_ = 0;
-directory_[0] = '
+directory_[0] = '\0';
 }
 
 Fl_File_Chooser::~Fl_File_Chooser() {
