@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.1 2001/11/26 00:15:06 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.2 2001/11/26 19:41:57 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -32,6 +32,7 @@
 #include <FL/filename.H>
 #include <stdlib.h>
 #include "flstring.h"
+#include <ctype.h>
 #if defined(WIN32) && !defined(__CYGWIN__)
 # include <direct.h>
 //# define getcwd(a,b) _getdcwd(0,a,b)
@@ -172,5 +173,5 @@ filename_relative(char       *to,		// O - Relative filename
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.1 2001/11/26 00:15:06 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.2 2001/11/26 19:41:57 easysw Exp $".
 //
