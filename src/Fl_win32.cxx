@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.32 2002/05/01 23:45:52 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.33 2002/05/06 21:15:48 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -593,10 +593,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (i->region) {
 	InvalidateRgn(hWnd,i->region,FALSE);
 	GetUpdateRgn(hWnd,i->region,0);
+	ValidateRgn(hWnd,i->region);
       }
     } else {
       if (!i->region) i->region = CreateRectRgn(0,0,0,0);
       GetUpdateRgn(hWnd,i->region,0);
+      ValidateRgn(hWnd,i->region);
     }
     window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
     // These next two statements should not be here, so that all update
@@ -607,9 +609,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     i->flush();
     fl_restore_pen();
     window->clear_damage();
-    // This convinces MSWindows we have painted whatever they wanted
-    // us to paint, and stops it from sending WM_PAINT messages:
-    ValidateRgn(hWnd,NULL);
     } return 0;
 
   case WM_LBUTTONDOWN:  mouse_event(window, 0, 1, wParam, lParam); return 0;
@@ -1183,5 +1182,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.32 2002/05/01 23:45:52 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.33 2002/05/06 21:15:48 easysw Exp $".
 //
