@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.9 2001/04/27 14:39:27 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.10 2001/04/27 17:00:23 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -122,26 +122,26 @@
  * Where is <dirent.h> (used only by fl_file_chooser and scandir).
  */
 
-#define HAVE_DIRENT_H 1
-#define HAVE_SYS_NDIR_H 0
-#define HAVE_SYS_DIR_H 0
-#define HAVE_NDIR_H 0
-#define HAVE_SCANDIR 0
+#undef HAVE_DIRENT_H
+#undef HAVE_SYS_NDIR_H
+#undef HAVE_SYS_DIR_H
+#undef HAVE_NDIR_H
+#undef HAVE_SCANDIR
 
 /*
  * Possibly missing sprintf-style functions:
  */
 
-#define HAVE_VSNPRINTF 0
-#define HAVE_SNPRINTF 0
-#define HAVE_VSPRINTF 0
+#undef HAVE_VSNPRINTF
+#undef HAVE_SNPRINTF
+#undef HAVE_VSPRINTF
 
 /*
  * String functions and headers...
  */
 
-#define HAVE_STRINGS_H 0
-#define HAVE_STRCASECMP 0
+#undef HAVE_STRINGS_H
+#undef HAVE_STRCASECMP
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -149,7 +149,7 @@
  * Whether or not select() call has its own header file.
  */
 
-#define HAVE_SYS_SELECT_H 0
+#undef HAVE_SYS_SELECT_H
 
 /*
  * HAVE_SYS_STDTYPES_H:
@@ -157,7 +157,7 @@
  * Whether or not we have the <sys/stdtypes.h> header file.
  */
 
-#define HAVE_SYS_STDTYPES_H 0
+#undef HAVE_SYS_STDTYPES_H
 
 /*
  * USE_POLL:
@@ -168,5 +168,5 @@
 #define USE_POLL 0
 
 /*
- * End of "$Id: configh.in,v 1.11.2.9 2001/04/27 14:39:27 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.10 2001/04/27 17:00:23 easysw Exp $".
  */
