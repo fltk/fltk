@@ -1,5 +1,5 @@
 //
-// "$Id: bitmap.cxx,v 1.4.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: bitmap.cxx,v 1.4.2.3.2.2 2001/11/19 01:06:45 easysw Exp $"
 //
 // Bitmap label test program for the Fast Light Tool Kit (FLTK).
 //
@@ -98,7 +98,7 @@ static uchar sorceress_bits[] = {
 
 #include <FL/Fl_Toggle_Button.H>
 
-Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*overb;
+Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*overb,*inactb;
 Fl_Button *b;
 Fl_Window *w;
 
@@ -111,6 +111,8 @@ void button_cb(Fl_Widget *,void *) {
   if (insideb->value()) i |= FL_ALIGN_INSIDE;
   if (overb->value()) i |= FL_ALIGN_TEXT_OVER_IMAGE;
   b->align(i);
+  if (inactb->value()) b->deactivate();
+  else b->activate();
   w->redraw();
 }
 
@@ -118,18 +120,20 @@ int main(int argc, char **argv) {
   Fl_Window window(400,400); ::w = &window;
   Fl_Button b(140,160,120,120,"Bitmap"); ::b = &b;
   (new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height))->label(&b);
-  leftb = new Fl_Toggle_Button(25,75,50,25,"left");
+  leftb = new Fl_Toggle_Button(25,50,50,25,"left");
   leftb->callback(button_cb);
-  rightb = new Fl_Toggle_Button(75,75,50,25,"right");
+  rightb = new Fl_Toggle_Button(75,50,50,25,"right");
   rightb->callback(button_cb);
-  topb = new Fl_Toggle_Button(125,75,50,25,"top");
+  topb = new Fl_Toggle_Button(125,50,50,25,"top");
   topb->callback(button_cb);
-  bottomb = new Fl_Toggle_Button(175,75,50,25,"bottom");
+  bottomb = new Fl_Toggle_Button(175,50,50,25,"bottom");
   bottomb->callback(button_cb);
-  insideb = new Fl_Toggle_Button(225,75,50,25,"inside");
+  insideb = new Fl_Toggle_Button(225,50,50,25,"inside");
   insideb->callback(button_cb);
-  overb = new Fl_Toggle_Button(275,75,100,25,"text over");
+  overb = new Fl_Toggle_Button(25,75,100,25,"text over");
   overb->callback(button_cb);
+  inactb = new Fl_Toggle_Button(125,75,100,25,"inactive");
+  inactb->callback(button_cb);
   window.resizable(window);
   window.end();
   window.show(argc, argv);
@@ -137,5 +141,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: bitmap.cxx,v 1.4.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: bitmap.cxx,v 1.4.2.3.2.2 2001/11/19 01:06:45 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.1 2001/11/18 20:52:28 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.2 2001/11/19 01:06:45 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,7 +48,7 @@ int fl_measure_pixmap(/*const*/ char* const* data, int &w, int &h) {
 }
 
 int fl_measure_pixmap(const char * const *data, int &w, int &h) {
-  int i = sscanf(data[0],"%d %d %d %d",&w,&h,&ncolors,&chars_per_pixel);
+  int i = sscanf(data[0],"%d%d%d%d",&w,&h,&ncolors,&chars_per_pixel);
   if (i<4 || w<=0 || h<=0 ||
       chars_per_pixel!=1 && chars_per_pixel!=2) return w=0;
   return 1;
@@ -203,7 +203,8 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       // look for "c word", or last word if none:
       const uchar *previous_word = p;
       for (;;) {
-	while (*p && isspace(*p)) p++; uchar what = *p++;
+	while (*p && isspace(*p)) p++;
+	uchar what = *p++;
 	while (*p && !isspace(*p)) p++;
 	while (*p && isspace(*p)) p++;
 	if (!*p) {p = previous_word; break;}
@@ -224,7 +225,7 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       if (XParseColor(fl_display, fl_colormap, (const char*)p, &x)) {
 	c[0] = x.red>>8; c[1] = x.green>>8; c[2] = x.blue>>8;
 #endif
-      } else { // assumme "None" or "#transparent" for any errors
+      } else { // assume "None" or "#transparent" for any errors
 	// this should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
 	transparent_index = index;
@@ -272,5 +273,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.1 2001/11/18 20:52:28 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.2 2001/11/19 01:06:45 easysw Exp $".
 //

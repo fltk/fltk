@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.2 2001/11/18 20:52:27 easysw Exp $"
+// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $"
 //
 // Bitmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,13 +34,16 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
   public:
 
   const uchar *array;
+  int alloc_array; // Non-zero if data was allocated
   Fl_Bitmask id; // for internal use
 
   Fl_Bitmap(const uchar *bits, int W, int H) :
-    Fl_Image(W,H), array(bits), id(0) {}
+    Fl_Image(W,H), array(bits), alloc_array(0), id(0) {}
   Fl_Bitmap(const char *bits, int W, int H) :
-    Fl_Image(W,H), array((const uchar *)bits), id(0) {}
+    Fl_Image(W,H), array((const uchar *)bits), alloc_array(0), id(0) {}
   virtual ~Fl_Bitmap();
+  virtual Fl_Image *copy(int W, int H);
+  Fl_Image *copy() { return copy(w(), h()); }
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
   virtual void label(Fl_Widget*w);
@@ -50,5 +53,5 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.2 2001/11/18 20:52:27 easysw Exp $".
+// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $".
 //

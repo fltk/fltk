@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.H,v 1.6.2.8.2.3 2001/11/18 20:52:27 easysw Exp $"
+// "$Id: Fl_Pixmap.H,v 1.6.2.8.2.4 2001/11/19 01:06:45 easysw Exp $"
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -36,19 +36,26 @@ struct Fl_Menu_Item;
 #  endif // __sgi && !_COMPILER_VERSION
 
 class FL_EXPORT Fl_Pixmap : public Fl_Image {
+  void copy_data();
+  void delete_data();
   void measure();
 
   public:
 
   const char * const * data;
+  int alloc_data; // Non-zero if data was allocated
   Fl_Offscreen id; // for internal use
   Fl_Bitmask mask; // for internal use (mask bitmap)
 
-  explicit Fl_Pixmap(char * const * d) : Fl_Image(-1,0), data((const char*const*)d), id(0),mask(0) {measure();}
-  explicit Fl_Pixmap(uchar* const * d) : Fl_Image(-1,0), data((const char*const*)d), id(0),mask(0) {measure();}
-  explicit Fl_Pixmap(const char * const * d) : Fl_Image(-1,0), data(d), id(0),mask(0) {measure();}
-  explicit Fl_Pixmap(const uchar* const * d) : Fl_Image(-1,0), data((const char*const*)d), id(0),mask(0) {measure();}
+  explicit Fl_Pixmap(char * const * d) : Fl_Image(-1,0), data((const char*const*)d), alloc_data(0), id(0), mask(0) {measure();}
+  explicit Fl_Pixmap(uchar* const * d) : Fl_Image(-1,0), data((const char*const*)d), alloc_data(0), id(0), mask(0) {measure();}
+  explicit Fl_Pixmap(const char * const * d) : Fl_Image(-1,0), data(d), alloc_data(0), id(0), mask(0) {measure();}
+  explicit Fl_Pixmap(const uchar* const * d) : Fl_Image(-1,0), data((const char*const*)d), alloc_data(0), id(0), mask(0) {measure();}
   virtual ~Fl_Pixmap();
+  virtual Fl_Image *copy(int W, int H);
+  Fl_Image *copy() { return copy(w(), h()); }
+  virtual void color_average(Fl_Color c, float i);
+  virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
   virtual void label(Fl_Widget*w);
@@ -58,5 +65,5 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Pixmap.H,v 1.6.2.8.2.3 2001/11/18 20:52:27 easysw Exp $".
+// End of "$Id: Fl_Pixmap.H,v 1.6.2.8.2.4 2001/11/19 01:06:45 easysw Exp $".
 //

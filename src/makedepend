@@ -90,6 +90,9 @@ Fl_File_Icon.o: ../FL/fl_draw.H ../FL/filename.H
 Fl_File_Icon2.o: ../config.h ../FL/Fl_File_Icon.H ../FL/Fl.H
 Fl_File_Icon2.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Widget.H
 Fl_File_Icon2.o: ../FL/fl_draw.H ../FL/filename.H
+Fl_GIF_Image.o: ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
+Fl_GIF_Image.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_GIF_Image.o: ../FL/Fl_Window.H ../config.h
 Fl_Group.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Group.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Group.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Tooltip.H
@@ -112,6 +115,9 @@ Fl_Input.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_draw.H
 Fl_Input_.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Input_.o: ../FL/Fl_Input_.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Input_.o: ../FL/fl_ask.H
+Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H ../FL/x.H
+Fl_JPEG_Image.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
+Fl_JPEG_Image.o: ../config.h
 Fl_Light_Button.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Light_Button.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 Fl_Light_Button.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
@@ -150,6 +156,9 @@ Fl_Pixmap.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Pixmap.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Widget.H
 Fl_Pixmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Pixmap.H
 Fl_Pixmap.o: ../FL/Fl_Image.H ../FL/x.H
+Fl_PNG_Image.o: ../FL/Fl_PNG_Image.H ../FL/Fl_Image.H ../FL/x.H
+Fl_PNG_Image.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
+Fl_PNG_Image.o: ../config.h
 Fl_Positioner.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Positioner.o: ../FL/Fl_Positioner.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Progress.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H

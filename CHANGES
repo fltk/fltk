@@ -5,6 +5,10 @@ CHANGES IN FLTK 1.1.0b6
 	  environment.
 	- Added new fl_beep() function to do audible
 	  notifications of various types.
+	- Added new Fl_GIF_Image, Fl_PNG_Image, and
+	  Fl_JPEG_Image classes.
+	- Added new copy(), desaturate(), inactive(), and
+	  color_average() methods to the Fl_Image classes.
 	- Fl_Float_Input and Fl_Int_Input no longer accept
 	  pasted text that is not a floating point or integer
 	  value.  Pasted numbers now replace text in these

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3.2.2 2001/11/18 20:52:27 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,11 @@ class FL_EXPORT Fl_Image {
 
   Fl_Image(int W, int H) {w_ = W; h_ = H;}
   virtual ~Fl_Image();
+  virtual Fl_Image *copy(int W, int H);
+  Fl_Image *copy() { return copy(w(), h()); }
+  virtual void color_average(Fl_Color c, float i);
+  void inactive() { color_average(FL_GRAY, .33f); }
+  virtual void desaturate();
   virtual void label(Fl_Widget*w);
   virtual void label(Fl_Menu_Item*m);
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
@@ -53,13 +58,18 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   public:
 
   const uchar *array;
+  int alloc_array; // Non-zero if array was allocated
   int d, ld;
   Fl_Offscreen id; // for internal use
   Fl_Bitmask mask; // for internal use (mask bitmap)
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
-    Fl_Image(W,H), array(bits), d(D), ld(LD), id(0) {}
+    Fl_Image(W,H), array(bits), alloc_array(0), d(D), ld(LD), id(0) {}
   virtual ~Fl_RGB_Image();
+  virtual Fl_Image *copy(int W, int H);
+  Fl_Image *copy() { return copy(w(), h()); }
+  virtual void color_average(Fl_Color c, float i);
+  virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
   virtual void label(Fl_Widget*w);
@@ -69,5 +79,5 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3.2.2 2001/11/18 20:52:27 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $".
 //

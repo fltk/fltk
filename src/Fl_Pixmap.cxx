@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.3 2001/11/18 20:52:28 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.4 2001/11/19 01:06:45 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -38,6 +38,8 @@
 #include <FL/Fl_Pixmap.H>
 
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
 void fl_restore_clip(); // in fl_rect.cxx
@@ -172,6 +174,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 Fl_Pixmap::~Fl_Pixmap() {
   if (id) fl_delete_offscreen(id);
   if (mask) fl_delete_bitmask(mask);
+  delete_data();
 }
 
 void Fl_Pixmap::label(Fl_Widget* w) {
@@ -181,6 +184,316 @@ void Fl_Pixmap::label(Fl_Widget* w) {
 void Fl_Pixmap::label(Fl_Menu_Item* m) {
 }
 
+void Fl_Pixmap::copy_data() {
+  if (alloc_data) return;
+
+  char		**new_data,	// New data array
+		**new_row;	// Current row in image
+  int		i,		// Looping var
+		ncolors,	// Number of colors in image
+		chars_per_pixel,// Characters per color
+		chars_per_line;	// Characters per line 
+
+  // Figure out how many colors there are, and how big they are...
+  sscanf(data[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
+  chars_per_line = chars_per_pixel * w() + 1;
+
+  // Allocate memory for the new array...
+  new_data    = new char *[h() + ncolors + 1];
+  new_data[0] = new char[strlen(data[0]) + 1];
+  strcpy(new_data[0], data[0]);
+
+  // Copy colors...
+  if (ncolors < 0) {
+    // Copy FLTK colormap values...
+    ncolors = -ncolors;
+    for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
+      *new_row = new char[4];
+      memcpy(*new_row, data[i + 1], 4);
+    }
+  } else {
+    // Copy standard XPM colormap values...
+    for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
+      *new_row = new char[strlen(data[i + 1]) + 1];
+      strcpy(*new_row, data[i + 1]);
+    }
+  }
+
+  // Copy image data...
+  for (i = 0; i < h(); i ++, new_row ++) {
+    *new_row = new char[chars_per_line];
+    memcpy(*new_row, data[i + ncolors + 1], chars_per_line);
+  }
+
+  // Update pointers...
+  data       = new_data;
+  alloc_data = 1;  
+}
+
+Fl_Image *Fl_Pixmap::copy(int W, int H) {
+  // Optimize the simple copy where the width and height are the same...
+  if (W == w() && H == h()) return new Fl_Pixmap(data);
+
+  // OK, need to resize the image data; allocate memory and 
+  Fl_Pixmap	*new_image;	// New pixmap
+  char		**new_data,	// New array for image data
+		**new_row,	// Pointer to row in image data
+		*new_ptr,	// Pointer into new array
+		new_info[255];	// New information line
+  const char	*old_ptr;	// Pointer into old array
+  int		i,		// Looping var
+		c,		// Channel number
+		sy,		// Source coordinate
+		dx, dy,		// Destination coordinates
+		xerr, yerr,	// X & Y errors
+		xmod, ymod,	// X & Y moduli
+		xstep, ystep;	// X & Y step increments
+  int		ncolors,	// Number of colors in image
+		chars_per_pixel,// Characters per color
+		chars_per_line;	// Characters per line 
+
+  // Figure out how many colors there are, and how big they are...
+  sscanf(data[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
+  chars_per_line = chars_per_pixel * W + 1;
+
+  sprintf(new_info, "%d %d %d %d", W, H, ncolors, chars_per_pixel);
+
+  // Figure out Bresenheim step/modulus values...
+  xmod   = w() % W;
+  xstep  = (w() / W) * chars_per_pixel;
+  ymod   = h() % H;
+  ystep  = h() / H;
+
+  // Allocate memory for the new array...
+  new_data    = new char *[H + ncolors + 1];
+  new_data[0] = new char[strlen(new_info) + 1];
+  strcpy(new_data[0], new_info);
+
+  // Copy colors...
+  if (ncolors < 0) {
+    // Copy FLTK colormap values...
+    ncolors = -ncolors;
+    for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
+      *new_row = new char[4];
+      memcpy(*new_row, data[i + 1], 4);
+    }
+  } else {
+    // Copy standard XPM colormap values...
+    for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
+      *new_row = new char[strlen(data[i + 1]) + 1];
+      strcpy(*new_row, data[i + 1]);
+    }
+  }
+
+  // Copy image data...
+  for (i = 0; i < h(); i ++, new_row ++) {
+    *new_row = new char[chars_per_line];
+    memcpy(*new_row, data[i + ncolors + 1], chars_per_line);
+  }
+  // Scale the image using a nearest-neighbor algorithm...
+  for (dy = h(), sy = 0, yerr = H / 2; dy > 0; dy --, new_row ++) {
+    *new_row = new char[chars_per_line];
+    new_ptr  = *new_row;
+
+    for (dx = w(), xerr = W / 2, old_ptr = data[sy + ncolors + 1];
+	 dx > 0;
+	 dx --) {
+      for (c = 0; c < chars_per_pixel; c ++) *new_ptr++ = old_ptr[c];
+
+      old_ptr += xstep;
+      xerr    -= xmod;
+
+      if (xerr <= 0) {
+	xerr    += W;
+	old_ptr += chars_per_pixel;
+      }
+    }
+
+    *new_ptr = '\0';
+    sy       += ystep;
+    yerr     -= ymod;
+    if (yerr <= 0) {
+      yerr += H;
+      sy ++;
+    }
+  }
+
+  new_image = new Fl_Pixmap((const char * const *)data);
+  new_image->alloc_data = 1;
+
+  return new_image;
+}
+
+void Fl_Pixmap::color_average(Fl_Color c, float i) {
+  // Delete any existing pixmap/mask objects...
+  if (id) {
+    fl_delete_offscreen(id);
+    id = 0;
+  }
+
+  if (mask) {
+    fl_delete_bitmask(mask);
+    mask = 0;
+  }
+
+  // Allocate memory as needed...
+  copy_data();
+
+  // Get the color to blend with...
+  uchar		r, g, b;
+  unsigned	ia, ir, ig, ib;
+
+  Fl::get_color(c, r, g, b);
+  if (i < 0.0f) i = 0.0f;
+  else if (i > 1.0f) i = 1.0f;
+
+  ia = (unsigned)(256 * i);
+  ir = r * (256 - ia);
+  ig = g * (256 - ia);
+  ib = b * (256 - ia);
+
+  // Update the colormap to do the blend...
+  char		line[255];	// New colormap line
+  int		color,		// Looping var
+		ncolors,	// Number of colors in image
+		chars_per_pixel;// Characters per color
+
+
+  sscanf(data[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
+
+  if (ncolors < 0) {
+    // Update FLTK colormap...
+    ncolors = -ncolors;
+    for (color = 0; color < ncolors; color ++) {
+      ((char *)data[color + 1])[1] = (ia * data[color + 1][1] + ir) >> 8;
+      ((char *)data[color + 1])[2] = (ia * data[color + 1][2] + ig) >> 8;
+      ((char *)data[color + 1])[3] = (ia * data[color + 1][3] + ib) >> 8;
+    }
+  } else {
+    // Update standard XPM colormap...
+    for (color = 0; color < ncolors; color ++) {
+      // look for "c word", or last word if none:
+      const char *p = data[color + 1] + chars_per_pixel + 1;
+      const char *previous_word = p;
+      for (;;) {
+	while (*p && isspace(*p)) p++;
+	char what = *p++;
+	while (*p && !isspace(*p)) p++;
+	while (*p && isspace(*p)) p++;
+	if (!*p) {p = previous_word; break;}
+	if (what == 'c') break;
+	previous_word = p;
+	while (*p && !isspace(*p)) p++;
+      }
+
+#ifdef WIN32
+      if (fl_parse_color(p, r, g, b) {
+#else
+      XColor x;
+      if (XParseColor(fl_display, fl_colormap, p, &x)) {
+	r = x.red>>8;
+	g = x.green>>8;
+	b = x.blue>>8;
+#endif
+
+        r = (ia * r + ir) >> 8;
+        g = (ia * g + ig) >> 8;
+        b = (ia * b + ib) >> 8;
+
+        if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X",
+	                                 data[color + 1][0],
+	                                 data[color + 1][1], r, g, b);
+        else sprintf(line, "%c c #%02X%02X%02X", data[color + 1][0], r, g, b);
+
+        delete[] data[color + 1];
+	((char **)data)[color + 1] = new char[strlen(line) + 1];
+	strcpy((char *)data[color + 1], line);
+      }
+    }
+  }
+}
+
+void Fl_Pixmap::delete_data() {
+  if (alloc_data) {
+    for (int i = 0; data[i]; i ++) delete[] data[i];
+    delete[] data;
+  }
+}
+
+void Fl_Pixmap::desaturate() {
+  // Delete any existing pixmap/mask objects...
+  if (id) {
+    fl_delete_offscreen(id);
+    id = 0;
+  }
+
+  if (mask) {
+    fl_delete_bitmask(mask);
+    mask = 0;
+  }
+
+  // Allocate memory as needed...
+  copy_data();
+
+  // Update the colormap to grayscale...
+  char		line[255];	// New colormap line
+  int		i,		// Looping var
+		ncolors,	// Number of colors in image
+		chars_per_pixel;// Characters per color
+  uchar		r, g, b;
+
+  sscanf(data[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
+
+  if (ncolors < 0) {
+    // Update FLTK colormap...
+    ncolors = -ncolors;
+    for (i = 0; i < ncolors; i ++) {
+      g = (data[i + 1][1] * 31 + data[i + 1][2] * 61 + data[i + 1][3] * 8) / 100;
+      ((char *)data[i + 1])[1] =
+      ((char *)data[i + 1])[2] =
+      ((char *)data[i + 1])[3] = g;
+    }
+  } else {
+    // Update standard XPM colormap...
+    for (i = 0; i < ncolors; i ++) {
+      // look for "c word", or last word if none:
+      const char *p = data[i + 1] + chars_per_pixel + 1;
+      const char *previous_word = p;
+      for (;;) {
+	while (*p && isspace(*p)) p++;
+	char what = *p++;
+	while (*p && !isspace(*p)) p++;
+	while (*p && isspace(*p)) p++;
+	if (!*p) {p = previous_word; break;}
+	if (what == 'c') break;
+	previous_word = p;
+	while (*p && !isspace(*p)) p++;
+      }
+
+#ifdef WIN32
+      if (fl_parse_color(p, r, g, b) {
+#else
+      XColor x;
+      if (XParseColor(fl_display, fl_colormap, p, &x)) {
+	r = x.red>>8;
+	g = x.green>>8;
+	b = x.blue>>8;
+#endif
+
+        g = (r * 31 + g * 61 + b * 8) / 100;
+
+        if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X", data[i + 1][0],
+	                                 data[i + 1][1], g, g, g);
+        else sprintf(line, "%c c #%02X%02X%02X", data[i + 1][0], g, g, g);
+
+        delete[] data[i + 1];
+	((char **)data)[i + 1] = new char[strlen(line) + 1];
+	strcpy((char *)data[i + 1], line);
+      }
+    }
+  }
+}
+
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.3 2001/11/18 20:52:28 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.4 2001/11/19 01:06:45 easysw Exp $".
 //
