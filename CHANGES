@@ -34,6 +34,9 @@ CHANGES IN FLTK 1.1.0b6
 	  mouse over adjacent widgets with tooltips.
 	- The drop-down button on Fl_Choice widgets was not
 	  limited in width.
+	- Tooltips could appear off the screen.
+	- Mouse wheel events are now sent to the focus widget
+	  first, then to any other interested widget.
 
 
 CHANGES IN FLTK 1.1.0b5

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7 2001/05/19 21:30:23 spitzak Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.1 2001/11/17 18:29:05 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -166,11 +166,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   HDC hdc = i->private_dc;
   if (!hdc) {
     hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
-#if 0 // this cast to PIXELFORMATDESCRIPTOR* is needed for cygwin?
     SetPixelFormat(i->private_dc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
-#else
-    SetPixelFormat(i->private_dc, g->pixelformat, &g->pfd);
-#endif
 #if USE_COLORMAP
     if (fl_palette) SelectPalette(i->private_dc, fl_palette, FALSE);
 #endif
@@ -233,5 +229,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7 2001/05/19 21:30:23 spitzak Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.1 2001/11/17 18:29:05 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.5 2001/11/03 05:11:34 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.6 2001/11/17 18:29:05 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -604,6 +604,12 @@ int Fl::handle(int event, Fl_Window* window)
     if (window == fl_xmousewin) {fl_xmousewin = 0; fl_fix_focus();}
     return 1;
 
+  case FL_MOUSEWHEEL:
+    fl_xfocus = window; // this should not happen!  But maybe it does:
+
+    // Try it as keystroke, sending it to focus and all parents:
+    for (w = grab() ? grab() : focus(); w; w = w->parent())
+      if (send(FL_MOUSEWHEEL, w, window)) return 1;
   default:
     break;
   }
@@ -792,5 +798,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.5 2001/11/03 05:11:34 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.6 2001/11/17 18:29:05 easysw Exp $".
 //
