@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.2 2001/12/04 04:12:58 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -85,7 +85,7 @@ void Fl_Gl_Window::invalidate() {
 
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(__APPLE__)
   int oldmode = mode_;
   Fl_Gl_Choice* oldg = g;
 #endif
@@ -93,6 +93,12 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   mode_ = m; alist = a;
   if (shown()) {
     g = Fl_Gl_Choice::find(m, a);
+#ifdef WIN32
+    if (!g || (oldmode^m)&FL_DOUBLE) {
+      hide();
+      show();
+    }
+#endif
 #if !defined(WIN32) && !defined(__APPLE__)
     // under X, if the visual changes we must make a new X window (yuck!):
     if (!g || g->vis->visualid!=oldg->vis->visualid || (oldmode^m)&FL_DOUBLE) {
@@ -144,7 +150,8 @@ void Fl_Gl_Window::swap_buffers() {
 #ifdef WIN32
 #  if HAVE_GL_OVERLAY
   // Do not swap the overlay, to match GLX:
-  wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
+  BOOL ret = wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
+  DWORD err = GetLastError();;
 #  else
   SwapBuffers(Fl_X::i(this)->private_dc);
 #  endif
@@ -340,5 +347,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.2 2001/12/04 04:12:58 matthiaswm Exp $".
 //
