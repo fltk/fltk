@@ -127,7 +127,6 @@ BUILDING AND INSTALLING FLTK UNDER UNIX
 
 	--enable-debug          - Enable debugging code & symbols
 	--enable-shared         - Enable generation of shared libraries
-	--enable-windows-style  - Enable the Microsoft Windows "look-n-feel"
 
 	--bindir=/path          - Set the location for executables
                         	  [default = /usr/local/bin]
