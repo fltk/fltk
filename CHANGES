@@ -1,6 +1,10 @@
-CHANGES IN FLTK 1.1.0
+CHANGES IN FLTK 1.1.0b6
 
-	- Now use -lsupc++ for Red Hat's GCC 2.96.
+	- Documentation updates...
+	- Implemented the Fl_File_Icon::load_png() method.
+	- The Fl_File_Icon::load_system_icons() method now
+	  supports KDE 2.x icons.
+	- Fixed PNG support in Fl_Help_View.
 	- Removed the "Microsoft" mode button from the menubar
 	  demo.
 	- The browser demo now makes sure that the input field

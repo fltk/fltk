@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.H,v 1.1.2.2 2001/10/29 03:44:31 easysw Exp $"
+// "$Id: Fl_File_Icon.H,v 1.1.2.3 2001/11/17 15:27:14 easysw Exp $"
 //
 // Fl_File_Icon definitions.
 //
@@ -94,6 +94,7 @@ class Fl_File_Icon			//// Icon data
   FL_EXPORT static void	labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a);
   FL_EXPORT void	load(const char *f);
   FL_EXPORT void	load_fti(const char *fti);
+  FL_EXPORT void	load_png(const char *png);
   FL_EXPORT void	load_xpm(const char *xpm);
   const char		*pattern() { return (pattern_); }
   int			size() { return (num_data_); }
@@ -108,5 +109,5 @@ class Fl_File_Icon			//// Icon data
 #endif // !_Fl_Fl_File_Icon_H_
 
 //
-// End of "$Id: Fl_File_Icon.H,v 1.1.2.2 2001/10/29 03:44:31 easysw Exp $".
+// End of "$Id: Fl_File_Icon.H,v 1.1.2.3 2001/11/17 15:27:14 easysw Exp $".
 //

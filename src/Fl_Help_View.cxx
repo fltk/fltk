@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.9 2001/10/29 21:59:15 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.10 2001/11/17 15:27:15 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2903,7 +2903,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 
 int					// O - 0 = success, -1 = fail
 Fl_Help_View::load_gif(Fl_Help_Image *img,// I - Image pointer
-        	      FILE         *fp)	// I - File to load from
+        	       FILE         *fp)// I - File to load from
 {
   unsigned char	buf[1024];		// Input buffer
   gif_cmap_t	cmap;			// Colormap
@@ -3062,22 +3062,18 @@ Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
   if (info->color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(pp);
 
-  if (info->color_type == PNG_COLOR_TYPE_GRAY)
-    img->d = 1;
-  else
+  if (info->color_type & PNG_COLOR_MASK_COLOR)
     img->d = 3;
+  else
+    img->d = 1;
 
-  img->w    = (int)info->width;
-  img->h    = (int)info->height;
-  img->data = (unsigned char *)malloc(img->w * img->h * 3);
+  if ((info->color_type & PNG_COLOR_MASK_ALPHA) || info->num_trans)
+    img->d ++;
 
   if (info->bit_depth < 8)
   {
     png_set_packing(pp);
     png_set_expand(pp);
-
-    if (info->valid & PNG_INFO_sBIT)
-      png_set_shift(pp, &(info->sig_bit));
   }
   else if (info->bit_depth == 16)
     png_set_strip_16(pp);
@@ -3087,6 +3083,10 @@ Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
   if (png_get_valid(pp, info, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(pp);
 #endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
+
+  img->w    = (int)info->width;
+  img->h    = (int)info->height;
+  img->data = (unsigned char *)malloc(img->w * img->h * img->d);
 
   // Background color...
   unsigned	rgba = fltk_colors[bgcolor_];
@@ -3101,10 +3101,7 @@ Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
   rows = (png_bytep *)calloc(info->height, sizeof(png_bytep));
 
   for (i = 0; i < (int)info->height; i ++)
-    if (info->color_type == PNG_COLOR_TYPE_GRAY)
-      rows[i] = img->data + i * img->w;
-    else
-      rows[i] = img->data + i * img->w * 3;
+    rows[i] = img->data + i * img->w * img->d;
 
   // Read the image, handling interlacing as needed...
   for (i = png_set_interlace_handling(pp); i > 0; i --)
@@ -3584,5 +3581,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.9 2001/10/29 21:59:15 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.10 2001/11/17 15:27:15 easysw Exp $".
 //

@@ -87,6 +87,9 @@ Fl_File_Chooser2.o: ../FL/Fl_Window.H
 Fl_File_Icon.o: ../config.h ../FL/Fl_File_Icon.H ../FL/Fl.H
 Fl_File_Icon.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Widget.H
 Fl_File_Icon.o: ../FL/fl_draw.H ../FL/filename.H
+Fl_File_Icon2.o: ../config.h ../FL/Fl_File_Icon.H ../FL/Fl.H
+Fl_File_Icon2.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Widget.H
+Fl_File_Icon2.o: ../FL/fl_draw.H ../FL/filename.H
 Fl_Group.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Group.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Group.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Tooltip.H

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.6 2001/08/05 16:28:03 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.7 2001/11/17 15:27:15 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -70,6 +70,12 @@ gldemos:	$(GLALL)
 $(ALL):  ../lib/$(LIBNAME)
 
 # Programs needing special instructions...
+editor: editor.cxx
+	echo Compiling and linking $@...
+	$(CXX) -I.. $(CXXFLAGS) editor.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+file_chooser: file_chooser.cxx
+	echo Compiling and linking $@...
+	$(CXX) -I.. $(CXXFLAGS) file_chooser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 help: help.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
@@ -79,6 +85,9 @@ keyboard: keyboard.cxx keyboard_ui.cxx
 mandelbrot: mandelbrot.cxx mandelbrot_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx $(LINKFLTK) $(LDLIBS) -o $@
+pixmap_browser: pixmap_browser.cxx
+	echo Compiling and linking $@...
+	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 
 # OpenGL demos...
 CubeView: CubeMain.o CubeView.o CubeViewUI.o
@@ -127,5 +136,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.6 2001/08/05 16:28:03 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.7 2001/11/17 15:27:15 easysw Exp $".
 #
