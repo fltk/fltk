@@ -44,8 +44,8 @@ extern Fl_Return_Button *f_panel_ok;
 extern Fl_Button *f_panel_cancel;
 Fl_Window* make_function_panel();
 extern Fl_Window *code_panel;
-#include <FL/Fl_Text_Editor.H>
-extern Fl_Text_Editor *code_input;
+#include "CodeEditor.h"
+extern CodeEditor *code_input;
 #include <FL/Fl_Group.H>
 extern Fl_Return_Button *code_panel_ok;
 extern Fl_Button *code_panel_cancel;
@@ -78,7 +78,7 @@ extern Fl_Return_Button *c_panel_ok;
 extern Fl_Button *c_panel_cancel;
 Fl_Window* make_class_panel();
 extern Fl_Window *comment_panel;
-extern Fl_Text_Editor *comment_input;
+extern CodeEditor *comment_input;
 extern Fl_Return_Button *comment_panel_ok;
 extern Fl_Button *comment_panel_cancel;
 extern Fl_Light_Button *comment_in_source;

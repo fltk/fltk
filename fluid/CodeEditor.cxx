@@ -138,8 +138,18 @@ void CodeEditor::style_parse(const char *text, char *style, int length) {
 		*bufptr;
   const char	*temp;
 
+  // Style letters:
+  //
+  // A - Plain
+  // B - Line comments
+  // C - Block comments
+  // D - Strings
+  // E - Directives
+  // F - Types
+  // G - Keywords
+
   for (current = *style, col = 0, last = 0; length > 0; length --, text ++) {
-    if (current == 'B') current = 'A';
+    if (current == 'B' || current == 'F' || current == 'G') current = 'A';
     if (current == 'A') {
       // Check for directives, comments, strings, and keywords...
       if (col == 0 && *text == '#') {
@@ -162,13 +172,13 @@ void CodeEditor::style_parse(const char *text, char *style, int length) {
 	continue;
       } else if (*text == '\"') {
         current = 'D';
-      } else if (!last && islower(*text)) {
+      } else if (!last && (islower(*text) || *text == '_')) {
         // Might be a keyword...
 	for (temp = text, bufptr = buf;
-	     islower(*temp) && bufptr < (buf + sizeof(buf) - 1);
+	     (islower(*temp) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
 	     *bufptr++ = *temp++);
 
-        if (!islower(*temp)) {
+        if (!islower(*temp) && *temp != '_') {
 	  *bufptr = '\0';
 
           bufptr = buf;
@@ -237,7 +247,7 @@ void CodeEditor::style_parse(const char *text, char *style, int length) {
     else *style++ = current;
     col ++;
 
-    last = isalnum(*text) || *text == '.';
+    last = isalnum(*text) || *text == '_' || *text == '.';
 
     if (*text == '\n') {
       // Reset column and possibly reset the style

@@ -172,8 +172,18 @@ style_parse(const char *text,
              *bufptr;
   const char *temp;
 
+  // Style letters:
+  //
+  // A - Plain
+  // B - Line comments
+  // C - Block comments
+  // D - Strings
+  // E - Directives
+  // F - Types
+  // G - Keywords
+
   for (current = *style, col = 0, last = 0; length > 0; length --, text ++) {
-    if (current == 'B') current = 'A';
+    if (current == 'B' || current == 'F' || current == 'G') current = 'A';
     if (current == 'A') {
       // Check for directives, comments, strings, and keywords...
       if (col == 0 && *text == '#') {
@@ -196,13 +206,13 @@ style_parse(const char *text,
 	continue;
       } else if (*text == '\"') {
         current = 'D';
-      } else if (!last && islower(*text)) {
+      } else if (!last && (islower(*text) || *text == '_')) {
         // Might be a keyword...
 	for (temp = text, bufptr = buf;
-	     islower(*temp) && bufptr < (buf + sizeof(buf) - 1);
+	     (islower(*temp) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
 	     *bufptr++ = *temp++);
 
-        if (!islower(*temp)) {
+        if (!islower(*temp) && *temp != '_') {
 	  *bufptr = '\0';
 
           bufptr = buf;
@@ -271,7 +281,7 @@ style_parse(const char *text,
     else *style++ = current;
     col ++;
 
-    last = isalnum(*text) || *text == '.';
+    last = isalnum(*text) || *text == '_' || *text == '.';
 
     if (*text == '\n') {
       // Reset column and possibly reset the style
@@ -357,11 +367,12 @@ style_update(int        pos,		// I - Position of update
   stylebuf->select(pos, pos + nInserted - nDeleted);
 
   // Re-parse the changed region; we do this by parsing from the
-  // beginning of the line of the changed region to the end of
+  // beginning of the previous line of the changed region to the end of
   // the line of the changed region...  Then we check the last
   // style character and keep updating if we have a multi-line
   // comment character...
   start = textbuf->line_start(pos);
+//  if (start > 0) start = textbuf->line_start(start - 1);
   end   = textbuf->line_end(pos + nInserted);
   text  = textbuf->text_range(start, end);
   style = stylebuf->text_range(start, end);
@@ -453,7 +464,7 @@ int check_save(void) {
 
   int r = fl_choice("The current file has not been saved.\n"
                     "Would you like to save it now?",
-                    "Cancel", "Save", "Discard");
+                    "Cancel", "Save", "Don't Save");
 
   if (r == 1) {
     save_cb(); // Save the file...

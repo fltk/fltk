@@ -83,10 +83,10 @@ Function {make_code_panel()} {open
     xywh {527 128 545 175} type Single labelsize 11 hide resizable modal
   } {
     Fl_Text_Editor code_input {
-      xywh {10 12 525 123} box DOWN_BOX labelsize 11 textsize 11 resizable
-      code0 {o->buffer(new Fl_Text_Buffer);}
-      code1 {o->textfont(FL_COURIER);}
-      code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+      xywh {10 12 525 123} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
+      code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+      code1 {\#include "CodeEditor.h"}
+      class CodeEditor
     }
     Fl_Group {} {open
       xywh {12 145 523 20} labelsize 11
@@ -218,11 +218,10 @@ Function {make_comment_panel()} {open
     label {Comment Properties}
     xywh {328 152 545 285} type Single labelsize 11 hide resizable modal
   } {
-    Fl_Text_Editor comment_input {
-      xywh {95 10 438 241} box DOWN_BOX labelsize 11 textsize 11 resizable
-      code0 {o->buffer(new Fl_Text_Buffer);}
-      code1 {o->textfont(FL_COURIER);}
-      code2 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+    Fl_Text_Editor comment_input {selected
+      xywh {95 10 438 241} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
+      code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
+      class CodeEditor
     }
     Fl_Group {} {open
       xywh {368 255 167 25} labelsize 11
@@ -283,8 +282,8 @@ Function {make_widgetbin()} {open
 } {
   Fl_Window widgetbin_panel {
     label {Widget Bin} open
-    xywh {385 53 485 100} type Single
-    code0 {o->size(o->w(),80);} non_modal visible
+    xywh {385 53 485 100} type Single hide
+    code0 {o->size(o->w(),80);} non_modal
   } {
     Fl_Group {} {open
       xywh {3 3 74 74} box THIN_DOWN_BOX
@@ -551,7 +550,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"Fl_Input_Choice"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip {Input Choice} xywh {384 4 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[15]);}
       }

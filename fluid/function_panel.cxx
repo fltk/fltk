@@ -99,7 +99,7 @@ Fl_Window* make_function_panel() {
 
 Fl_Window *code_panel=(Fl_Window *)0;
 
-Fl_Text_Editor *code_input=(Fl_Text_Editor *)0;
+CodeEditor *code_input=(CodeEditor *)0;
 
 Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
 
@@ -110,13 +110,19 @@ Fl_Window* make_code_panel() {
   { Fl_Window* o = code_panel = new Fl_Window(545, 175, "Code Properties");
     w = o;
     o->labelsize(11);
-    { Fl_Text_Editor* o = code_input = new Fl_Text_Editor(10, 12, 525, 123);
+    { CodeEditor* o = code_input = new CodeEditor(10, 12, 525, 123);
       o->box(FL_DOWN_BOX);
+      o->color(FL_BACKGROUND2_COLOR);
+      o->selection_color(FL_SELECTION_COLOR);
+      o->labeltype(FL_NORMAL_LABEL);
+      o->labelfont(0);
       o->labelsize(11);
+      o->labelcolor(FL_BLACK);
+      o->textfont(4);
       o->textsize(11);
+      o->align(FL_ALIGN_TOP);
+      o->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(o);
-      o->buffer(new Fl_Text_Buffer);
-      o->textfont(FL_COURIER);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
     }
     { Fl_Group* o = new Fl_Group(12, 145, 523, 20);
@@ -340,7 +346,7 @@ Fl_Window* make_class_panel() {
 
 Fl_Window *comment_panel=(Fl_Window *)0;
 
-Fl_Text_Editor *comment_input=(Fl_Text_Editor *)0;
+CodeEditor *comment_input=(CodeEditor *)0;
 
 Fl_Return_Button *comment_panel_ok=(Fl_Return_Button *)0;
 
@@ -359,13 +365,19 @@ Fl_Window* make_comment_panel() {
   { Fl_Window* o = comment_panel = new Fl_Window(545, 285, "Comment Properties");
     w = o;
     o->labelsize(11);
-    { Fl_Text_Editor* o = comment_input = new Fl_Text_Editor(95, 10, 438, 241);
+    { CodeEditor* o = comment_input = new CodeEditor(95, 10, 438, 241);
       o->box(FL_DOWN_BOX);
+      o->color(FL_BACKGROUND2_COLOR);
+      o->selection_color(FL_SELECTION_COLOR);
+      o->labeltype(FL_NORMAL_LABEL);
+      o->labelfont(0);
       o->labelsize(11);
+      o->labelcolor(FL_BLACK);
+      o->textfont(4);
       o->textsize(11);
+      o->align(FL_ALIGN_TOP);
+      o->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(o);
-      o->buffer(new Fl_Text_Buffer);
-      o->textfont(FL_COURIER);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
     }
     { Fl_Group* o = new Fl_Group(368, 255, 167, 25);
@@ -432,7 +444,7 @@ Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 Fl_Window* make_widgetbin() {
   Fl_Window* w;
-  { Fl_Window* o = widgetbin_panel = new Fl_Window(490, 100, "Widget Bin");
+  { Fl_Window* o = widgetbin_panel = new Fl_Window(485, 100, "Widget Bin");
     w = o;
     { Fl_Group* o = new Fl_Group(3, 3, 74, 74);
       o->box(FL_THIN_DOWN_BOX);
