@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.16 1999/02/25 20:05:29 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.17 1999/02/25 22:34:12 carl Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -397,10 +397,14 @@ int Fl_Input_::position(int p, int m) {
   if (Fl::selection_owner() == this) Fl::selection_owner(0);
   if (p != m) {
     // new position is a selection
-    if (Fl::focus()==this || Fl::pushed()==this) {
+// This if doesn't seem to always work.  I think that the position should
+// should be updated even if the input isn't the focus widget widget or
+// pushed(?).  This change fixes the redraw bug in the editor demo after
+// a find.
+//  if (Fl::focus()==this || Fl::pushed()==this) {
       if (p != position_) minimal_update(position_, p);
       if (m != mark_) minimal_update(mark_, m);
-    }
+//  }
   } else if (Fl::focus() == this) {
     // new position is a cursor
     if (position_ == mark_) {
@@ -736,5 +740,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.16 1999/02/25 20:05:29 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.17 1999/02/25 22:34:12 carl Exp $".
 //
