@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.15 2002/12/04 04:44:54 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.16 2003/01/14 20:17:00 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -317,6 +317,12 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
 #ifdef __APPLE__
+  GLint xywh[4];
+  xywh[0] = X;
+  xywh[1] = window()->h() - Y - H;
+  xywh[2] = W;
+  xywh[3] = H;
+  aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
   aglUpdateContext(context_);
 #elif !defined(WIN32)
     if (!resizable() && overlay && overlay != this)
@@ -361,7 +367,9 @@ void Fl_Gl_Window::init() {
   valid_   = 0;
   damage1_ = 0;
 
-  resize(x(), y(), w(), h());
+  int H = h();
+  h(1); // Make sure we actually do something in resize()...
+  resize(x(), y(), w(), H);
 }
 
 void Fl_Gl_Window::draw_overlay() {}
@@ -369,5 +377,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.15 2002/12/04 04:44:54 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.16 2003/01/14 20:17:00 easysw Exp $".
 //

@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.3
 
 	- Documentation updates.
+	- OpenGL windows didn't resize correctly on MacOS X.
+          [SF Bug #667855]
 	- The menus incorrectly used the overlay visual when one
 	  or more menu items contained an image. [SF Bug #653846]
 	- Changed some error messages to use Fl::error() instead
