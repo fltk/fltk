@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.8.2.1 2001/11/02 20:38:15 easysw Exp $"
+// "$Id: menubar.cxx,v 1.6.2.8.2.2 2001/11/28 13:46:34 easysw Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <FL/fl_draw.H>
+
+void window_cb(Fl_Widget* w, void*) {
+  puts("window callback called");
+  ((Fl_Window *)w)->hide();
+}
 
 void test_cb(Fl_Widget* w, void*) {
   Fl_Menu_* mw = (Fl_Menu_*)w;
@@ -172,6 +177,7 @@ int main(int argc, char **argv) {
     hugemenu[i].text = strdup(buf);
   }
   Fl_Window window(WIDTH,400);
+  window.callback(window_cb);
   Fl_Menu_Bar menubar(0,0,WIDTH,30); menubar.menu(menutable);
   menubar.callback(test_cb);
   menus[0] = &menubar;
@@ -196,5 +202,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.8.2.1 2001/11/02 20:38:15 easysw Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.8.2.2 2001/11/28 13:46:34 easysw Exp $".
 //
