@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.9 1999/01/19 19:10:38 mike Exp $"
+// "$Id: code.cxx,v 1.9.2.1 1999/07/31 08:00:09 bill Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -158,7 +158,6 @@ void write_cstring(const char *w, int length) {
   int linelength = 1;
   putc('\"', code_file);
   for (; w < e;) {
-    if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
     int c = *w++;
     switch (c) {
     case '\b': c = 'b'; goto QUOTED;
@@ -170,32 +169,45 @@ void write_cstring(const char *w, int length) {
     case '\'':
     case '\\':
     QUOTED:
-      putc('\\',code_file);
-      putc(c,code_file);
+      if (linelength >= 77) {fputs("\\\n",code_file); linelength = 0;}
+      putc('\\', code_file);
+      putc(c, code_file);
       linelength += 2;
       break;
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-      if (*w < '0' || *w > '9') {c += '0'; goto QUOTED;}
+    case '?': // prevent trigraphs by writing ?? as ?\?
+      if (*(w-2) == '?') goto QUOTED;
       // else fall through:
     default:
-      if (c < ' ' || c >= 127) {
-      QUOTENEXT:
-	fprintf(code_file, "\\%03o",c&255);
-	linelength += 4;
-	c = *w;
-	if (w < e && (c>='0'&&c<='9' || c>='a'&&c<='f' || c>='A'&&c<='F')) {
-	  w++; goto QUOTENEXT;
-	}
-      } else {
-	putc(c,code_file);
+      if (c >= ' ' && c < 127) {
+	// a legal ASCII character
+	if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
+	putc(c, code_file);
 	linelength++;
+	break;
+      }
+      // otherwise we must print it as an octal constant:
+      c &= 255;
+      if (c < 8) {
+	if (linelength >= 76) {fputs("\\\n",code_file); linelength = 0;}
+	fprintf(code_file, "\\%o",c);
+	linelength += 2;
+      } else if (c < 64) {
+	if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
+	fprintf(code_file, "\\%o",c);
+	linelength += 3;
+      } else {
+	if (linelength >= 74) {fputs("\\\n",code_file); linelength = 0;}
+	fprintf(code_file, "\\%o",c);
+	linelength += 4;
+      }
+      // We must not put more numbers after it, because some C compilers
+      // consume them as part of the quoted sequence.  Use string constant
+      // pasting to avoid this:
+      c = *w;
+      if (w < e && (c>='0'&&c<='9' || c>='a'&&c<='f' || c>='A'&&c<='F')) {
+	putc('\"', code_file); linelength++;
+	if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
+	putc('\"', code_file); linelength++;
       }
       break;
     }
@@ -301,5 +313,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.9 1999/01/19 19:10:38 mike Exp $".
+// End of "$Id: code.cxx,v 1.9.2.1 1999/07/31 08:00:09 bill Exp $".
 //
