@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.38 2002/11/19 16:37:35 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.39 2002/11/19 16:45:32 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2278,7 +2278,12 @@ int Fl_Text_Display::empty_vlines() {
 ** entries in the line starts array rather than by scanning for newlines
 */
 int Fl_Text_Display::vline_length( int visLineNum ) {
-  int nextLineStart, lineStartPos = mLineStarts[ visLineNum ];
+  int nextLineStart, lineStartPos;
+
+  if (visLineNum < 0 || visLineNum >= mNVisibleLines)
+    return (0);
+
+  lineStartPos = mLineStarts[ visLineNum ];
 
   if ( lineStartPos == -1 )
     return 0;
@@ -3030,5 +3035,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.38 2002/11/19 16:37:35 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.39 2002/11/19 16:45:32 easysw Exp $".
 //
