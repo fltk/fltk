@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.3
 
 	- Documentation updates.
+	- Fl_Slider didn't call the callback function when the
+	  user changed the value using the keyboard and the
+	  "when" condition was FL_WHEN_RELEASE. [SF Bug #647072]
 	- Lines with less than 2 unique vertices and polygons
 	  with less the 3 unique vertices were not drawn
 	  properly. [SF Bug #647067]
