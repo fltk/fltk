@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.9 2001/10/29 21:59:14 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.10 2001/12/21 18:16:50 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -76,6 +76,9 @@ extern int snprintf(char* str, size_t size, const char* fmt, ...);
 #  include <windows.h>
 #else
 #  include <unistd.h>
+#endif
+#ifdef __EMX__
+#  include <X11/Xlibint.h>
 #endif
 
 #include "about_panel.h"
@@ -353,9 +356,18 @@ void show_help(const char *name) {
   
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
-  if ((docdir = getenv("FLTK_DOCDIR")) == NULL)
-    docdir = FLTK_DOCDIR;
+  if ((docdir = getenv("FLTK_DOCDIR")) == NULL) {
+#ifdef __EMX__
+    // Doesn't make sense to have a hardcoded fallback
+    static char fltk_docdir[1024];
 
+    strcpy(fltk_docdir, __XOS2RedirRoot("/XFree86/lib/X11/fltk/doc"));
+
+    docdir = fltk_docdir;
+#else
+    docdir = FLTK_DOCDIR;
+#endif // __EMX__
+  }
   snprintf(filename, sizeof(filename), "%s/%s", docdir, name);  
 
   help_dialog->load(filename);
@@ -521,5 +533,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.9 2001/10/29 21:59:14 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.10 2001/12/21 18:16:50 easysw Exp $".
 //
