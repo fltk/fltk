@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.5 2000/06/05 21:21:22 mike Exp $"
+// "$Id: menubar.cxx,v 1.6.2.6 2000/07/11 05:36:39 spitzak Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -85,7 +85,7 @@ Fl_Menu_Item menutable[] = {
       {"after submenu"},
       {0},
     {0},
-  {"&Edit",0,0,0,FL_SUBMENU},
+  {"&Edit",FL_F+2,0,0,FL_SUBMENU},
     {"Undo",	FL_ALT+'z',	0},
     {"Redo",	FL_ALT+'r',	0, 0, FL_MENU_DIVIDER},
     {"Cut",	FL_ALT+'x',	0},
@@ -97,7 +97,7 @@ Fl_Menu_Item menutable[] = {
     {"Preferences",0,	0},
     {"Size",	0,	0},
     {0},
-  {"&Checkbox",0,0,0,FL_SUBMENU},
+  {"&Checkbox",FL_F+3,0,0,FL_SUBMENU},
     {"&Alpha",	FL_F+2,	0, (void *)1, FL_MENU_TOGGLE},
     {"&Beta",	0,	0, (void *)2, FL_MENU_TOGGLE},
     {"&Gamma",	0,	0, (void *)3, FL_MENU_TOGGLE},
@@ -216,5 +216,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.5 2000/06/05 21:21:22 mike Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.6 2000/07/11 05:36:39 spitzak Exp $".
 //
