@@ -4,11 +4,11 @@ static char *lock_xpm[] = {
 "16 16 6 1",
 /* colors */
 "` c #000000",
-"a c #00FFFF",
-"b c #80FFFF",
+"a c #FF0000",
+"b c #FF4040",
 "c c none",
-"d c #FFFFFF",
-"e c #0000FF",
+"d c #FF8080",
+"e c #800000",
 /* pixels */
 "cccccccccccccccc",
 "cccccccccccccccc",
