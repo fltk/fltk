@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.34 2002/10/31 18:48:58 matthiaswm Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.35 2002/11/01 00:32:05 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -623,7 +623,7 @@ void update_history(const char *flname) {
 // Shell command support...
 #if !defined(WIN32) || defined(__CYGWIN__)
 // Support the full piped shell command...
-static FILE *shell_pipe;
+static FILE *shell_pipe = 0;
 
 void
 shell_pipe_cb(int, void*) {
@@ -649,6 +649,11 @@ do_shell_command(Fl_Return_Button*, void*) {
 
 
   shell_window->hide();
+
+  if (shell_pipe) {
+    fl_alert("Previous shell command still running!");
+    return;
+  }
 
   if ((command = shell_command_input->value()) == NULL || !*command) {
     fl_alert("No shell command entered!");
@@ -845,5 +850,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.34 2002/10/31 18:48:58 matthiaswm Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.35 2002/11/01 00:32:05 easysw Exp $".
 //
