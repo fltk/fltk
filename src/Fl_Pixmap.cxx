@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.4 1998/10/21 14:20:16 mike Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.5 1998/12/03 13:28:21 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,10 @@ void fl_restore_clip(); // in fl_rect.C
 
 void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // ignore empty or bad pixmap data:
-  if (w<0) fl_measure_pixmap(data, w, h);
+  if (w<0) {
+    fl_measure_pixmap(data, w, h);
+    if (WP==-1) { WP = w; HP = h; } // correct the default setting
+  }
   if (!w) return;
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
@@ -140,5 +143,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.4 1998/10/21 14:20:16 mike Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.5 1998/12/03 13:28:21 mike Exp $".
 //
