@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.19 2002/06/29 00:10:04 matthiaswm Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.20 2002/08/05 17:50:25 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -146,9 +146,20 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 }
 
 Fl_Pixmap::~Fl_Pixmap() {
-  if (id) fl_delete_offscreen(id);
-  if (mask) fl_delete_bitmask(mask);
+  uncache();
   delete_data();
+}
+
+void Fl_Pixmap::uncache() {
+  if (id) {
+    fl_delete_offscreen(id);
+    id = 0;
+  }
+
+  if (mask) {
+    fl_delete_bitmask(mask);
+    mask = 0;
+  }
 }
 
 void Fl_Pixmap::label(Fl_Widget* w) {
@@ -302,15 +313,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
 
 void Fl_Pixmap::color_average(Fl_Color c, float i) {
   // Delete any existing pixmap/mask objects...
-  if (id) {
-    fl_delete_offscreen(id);
-    id = 0;
-  }
-
-  if (mask) {
-    fl_delete_bitmask(mask);
-    mask = 0;
-  }
+  uncache();
 
   // Allocate memory as needed...
   copy_data();
@@ -402,15 +405,7 @@ void Fl_Pixmap::set_data(const char * const * p) {
 
 void Fl_Pixmap::desaturate() {
   // Delete any existing pixmap/mask objects...
-  if (id) {
-    fl_delete_offscreen(id);
-    id = 0;
-  }
-
-  if (mask) {
-    fl_delete_bitmask(mask);
-    mask = 0;
-  }
+  uncache();
 
   // Allocate memory as needed...
   copy_data();
@@ -465,5 +460,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.19 2002/06/29 00:10:04 matthiaswm Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.20 2002/08/05 17:50:25 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.21 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.22 2002/08/05 17:50:25 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -39,6 +39,9 @@ void fl_restore_clip(); // from fl_rect.cxx
 //
 
 Fl_Image::~Fl_Image() {
+}
+
+void Fl_Image::uncache() {
 }
 
 void Fl_Image::draw(int XP, int YP, int, int, int, int) {
@@ -116,9 +119,20 @@ Fl_Image::measure(const Fl_Label *lo,		// I - Label
 //
 
 Fl_RGB_Image::~Fl_RGB_Image() {
-  if (id) fl_delete_offscreen((Fl_Offscreen)id);
-  if (mask) fl_delete_bitmask(mask);
+  uncache();
   if (alloc_array) delete[] (uchar *)array;
+}
+
+void Fl_RGB_Image::uncache() {
+  if (id) {
+    fl_delete_offscreen(id);
+    id = 0;
+  }
+
+  if (mask) {
+    fl_delete_bitmask(mask);
+    mask = 0;
+  }
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
@@ -185,15 +199,7 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   if (!w() || !h() || !d() || !array) return;
 
   // Delete any existing pixmap/mask objects...
-  if (id) {
-    fl_delete_offscreen(id);
-    id = 0;
-  }
-
-  if (mask) {
-    fl_delete_bitmask(mask);
-    mask = 0;
-  }
+  uncache();
 
   // Allocate memory as needed...
   uchar		*new_array,
@@ -254,15 +260,7 @@ void Fl_RGB_Image::desaturate() {
   if (d() < 3) return;
 
   // Delete any existing pixmap/mask objects...
-  if (id) {
-    fl_delete_offscreen(id);
-    id = 0;
-  }
-
-  if (mask) {
-    fl_delete_bitmask(mask);
-    mask = 0;
-  }
+  uncache();
 
   // Allocate memory for a grayscale image...
   uchar		*new_array,
@@ -393,5 +391,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.21 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.22 2002/08/05 17:50:25 easysw Exp $".
 //

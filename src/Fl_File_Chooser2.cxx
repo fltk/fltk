@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.21 2002/07/30 18:33:49 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.22 2002/08/05 17:50:25 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -783,7 +783,7 @@ Fl_File_Chooser::rescan()
 
   // Clear the current filename
   strlcpy(pathname, directory_, sizeof(pathname));
-  if (pathname[strlen(pathname) - 1] != '/') {
+  if (pathname[0] && pathname[strlen(pathname) - 1] != '/') {
     strlcat(pathname, "/", sizeof(pathname));
   }
   fileName->value(pathname);
@@ -1143,5 +1143,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.21 2002/07/30 18:33:49 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.22 2002/08/05 17:50:25 easysw Exp $".
 //

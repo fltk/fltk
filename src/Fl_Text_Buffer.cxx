@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.8 2002/06/10 21:04:19 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.9 2002/08/05 17:50:25 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1967,6 +1967,11 @@ int Fl_Text_Buffer::findchar_forward( int startPos, char searchChar,
                                     int *foundPos ) {
   int pos, gapLen = mGapEnd - mGapStart;
 
+  if (pos < 0 || pos >= mLength) {
+    *foundPos = mLength;
+    return 0;
+  }
+
   pos = startPos;
   while ( pos < mGapStart ) {
     if ( mBuf[ pos ] == searchChar ) {
@@ -2284,5 +2289,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.8 2002/06/10 21:04:19 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.9 2002/08/05 17:50:25 easysw Exp $".
 //

@@ -166,7 +166,9 @@ window->hide();}
     }
     code {callback_ = 0;
 data_ = 0;
+directory_[0] = '\0';
 window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
+type(t);
 filter(p);
 update_favorites();
 value(d);

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNG_Image.cxx,v 1.1.2.7 2002/05/25 02:56:59 easysw Exp $"
+// "$Id: Fl_PNG_Image.cxx,v 1.1.2.8 2002/08/05 17:50:25 easysw Exp $"
 //
 // Fl_PNG_Image routines.
 //
@@ -124,11 +124,7 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   delete[] rows;
 
   png_read_end(pp, info);
-#  ifdef HAVE_PNG_READ_DESTROY
-  png_read_destroy(pp, info, NULL);
-#  else
   png_destroy_read_struct(&pp, &info, NULL);
-#  endif // HAVE_PNG_READ_DESTROY
 
   fclose(fp);
 #endif // HAVE_LIBPNG && HAVE_LIBZ
@@ -136,5 +132,5 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 
 
 //
-// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.7 2002/05/25 02:56:59 easysw Exp $".
+// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.8 2002/08/05 17:50:25 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.7 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.8 2002/08/05 17:50:22 easysw Exp $"
 //
 // Bitmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -48,10 +48,11 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
   virtual void label(Fl_Widget*w);
   virtual void label(Fl_Menu_Item*m);
+  virtual void uncache();
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.7 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.8 2002/08/05 17:50:22 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.11.2.12 2002/05/16 12:47:42 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.13 2002/08/05 17:50:21 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -210,7 +210,6 @@
 
 #undef HAVE_PNG_GET_VALID
 #undef HAVE_PNG_SET_TRNS_TO_ALPHA
-#undef HAVE_PNG_READ_DESTROY
 
 /*
  * Do we have POSIX threading?
@@ -221,5 +220,5 @@
 
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11.2.12 2002/05/16 12:47:42 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11.2.13 2002/08/05 17:50:21 easysw Exp $".
  */

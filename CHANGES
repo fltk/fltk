@@ -1,7 +1,14 @@
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
-	- Added image() methods() to Fl_Menu_Item.
+	- Fixed some memory/initialization bugs in
+	  Fl_File_Chooser that valgrind caught.
+	- The PNG library png_read_destroy() is deprecated and
+	  does not free all of the memory allocated by
+	  png_create_read_struct(). This caused a memory leak in
+	  FLTK apps that loaded PNG images.
+	- Added uncache() method to Fl_Image and friends.
+	- Added image() methods to Fl_Menu_Item.
 	- Added default_cursor() method and data to Fl_Window.
 	- Fl_Group would send FL_ENTER events before FL_LEAVE
 	  events, causing problems with adjacent widgets.

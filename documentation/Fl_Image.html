@@ -69,6 +69,8 @@ a box with an X in it being drawn instead.</P>
 
 	<LI><A href="#Fl_Image.ld">ld</A></LI>
 
+	<LI><A href="#Fl_Image.uncache">uncache</A></LI>
+
 	<LI><A href="#Fl_Image.w">w</A></LI>
 
 </UL>
@@ -185,6 +187,12 @@ after each line of color image data and is normally not present.</P>
 
 <P>The second form is a protected method that sets the current
 line data size in bytes.</P>
+
+<H4><A NAME="Fl_Image.uncache">void uncache();</A></H4>
+
+<P>If the image has been cached for display, delete the cache
+data. This allows you to change the data used for the image and
+then redraw it without recreating an image object.
 
 <H4><A NAME="Fl_Image.w">int w();<BR>
 protected void w(int W);</A></H4>

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.cxx,v 1.6.2.3.2.8 2002/08/01 02:15:43 easysw Exp $"
+// "$Id: Fl_Window.cxx,v 1.6.2.3.2.9 2002/08/05 17:50:25 easysw Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -64,6 +64,10 @@ Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l)
 Fl_Window::Fl_Window(int W, int H, const char *l)
 // fix common user error of a missing end() with current(0):
   : Fl_Group((Fl_Group::current(0),0), 0, W, H, l) {
+  cursor_default = FL_CURSOR_DEFAULT;
+  cursor_fg      = FL_BLACK;
+  cursor_bg      = FL_WHITE;
+
   _Fl_Window();
   clear_visible();
 }
@@ -123,5 +127,5 @@ Fl_Window *Fl_Window::current() {
 
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.8 2002/08/01 02:15:43 easysw Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.9 2002/08/05 17:50:25 easysw Exp $".
 //
