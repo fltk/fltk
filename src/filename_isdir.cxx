@@ -1,5 +1,5 @@
 //
-// "$Id: filename_isdir.cxx,v 1.4.2.5.2.4 2001/12/20 19:43:17 easysw Exp $"
+// "$Id: filename_isdir.cxx,v 1.4.2.5.2.5 2001/12/21 14:17:00 easysw Exp $"
 //
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,7 @@
 // Used by fl_file_chooser
 
 #include "flstring.h"
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
 #include <FL/filename.H>
@@ -67,5 +68,5 @@ int filename_isdir(const char* n) {
 }
 
 //
-// End of "$Id: filename_isdir.cxx,v 1.4.2.5.2.4 2001/12/20 19:43:17 easysw Exp $".
+// End of "$Id: filename_isdir.cxx,v 1.4.2.5.2.5 2001/12/21 14:17:00 easysw Exp $".
 //

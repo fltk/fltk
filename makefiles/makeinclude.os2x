@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4.2.2 2001/10/27 03:33:25 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.3 2001/12/21 14:17:00 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # Generated automatically from makeinclude.in by configure.
@@ -42,6 +42,7 @@ RM		=del
 CXX		=gcc.exe
 CC		=gcc.exe
 MAKEDEPEND	=$(CXX) -M
+POSTBUILD	=echo
 
 # flags for C++ compiler:
 CFLAGS		=-Wall -O4 -mpentium -Zmt -fno-exceptions
@@ -57,8 +58,8 @@ DSONAME		=
 DSOCOMMAND	=echo
 
 # libraries to link with:
-LDLIBS		=-lX11 -lXext -lsocket -lshm -lm
-GLDLIBS		=-lX11 -lXext -lsocket -lshm -lm
+LDLIBS		=-lX11 -lXext -lsocket
+GLDLIBS		=-lX11 -lXext -lsocket
 LINKFLTK	=-L../lib -lfltk
 LINKFLTKGL	=-L../lib -lfltk_gl
 IMAGELIBS	=
@@ -98,5 +99,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.2 2001/10/27 03:33:25 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.3 2001/12/21 14:17:00 easysw Exp $".
 #

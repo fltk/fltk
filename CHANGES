@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- OS/2 build fixes.
+	- fl_draw() didn't ignore symbol escapes properly for
+	  the browsers...
 	- New Fl::scheme() methods from FLTK 2.0; currently only
 	  the standard ("") and plastic ("plastic") methods are
 	  supported.  Schemes can be set on the command-line

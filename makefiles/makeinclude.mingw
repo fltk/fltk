@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.3.2.2 2001/10/27 03:33:25 easysw Exp $"
+# "$Id: makeinclude.mingw,v 1.1.2.3.2.3 2001/12/21 14:17:00 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -56,6 +56,8 @@ srcdir          = .
 # compiler names:
 CXX		= g++
 CC		= gcc
+MAKEDEPEND	= $(CXX) -M
+POSTBUILD	= echo
 
 # flags for C++ compiler:
 CFLAGS		= -Wall -O2 -DWIN32
@@ -96,5 +98,5 @@ IMAGELIBS	=
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.2 2001/10/27 03:33:25 easysw Exp $".
+# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.3 2001/12/21 14:17:00 easysw Exp $".
 #
