@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.8 2001/12/17 14:27:03 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.9 2002/01/01 13:11:29 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -40,6 +40,7 @@
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
+#include <FL/math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #if defined(WIN32) && ! defined(__CYGWIN__)
@@ -299,7 +300,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
       if (sscanf(params, "%f,%f", &x, &y) != 2)
         break;
 
-      add_vertex((short)(x * 100.0 + 0.5), (short)(y * 100.0 + 0.5));
+      add_vertex((short)(int)rint(x * 100.0), (short)(int)rint(y * 100.0));
     }
     else
     {
@@ -313,9 +314,9 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
   fclose(fp);
 
 #ifdef DEBUG
-  printf("Icon File \"%s\":\n", fti);
+  p(int)rintf("Icon File \"%s\":\n", fti);
   for (int i = 0; i < num_data_; i ++)
-    printf("    %d,\n", data_[i]);
+    p(int)rintf("    %d,\n", data_[i]);
 #endif /* DEBUG */
 
   return 0;
@@ -559,9 +560,9 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
   img->release();
 
 #ifdef DEBUG
-  printf("Icon File \"%s\":\n", xpm);
+  p(int)rintf("Icon File \"%s\":\n", xpm);
   for (i = 0; i < num_data_; i ++)
-    printf("    %d,\n", data_[i]);
+    p(int)rintf("    %d,\n", data_[i]);
 #endif // DEBUG
 
   return 0;
@@ -930,5 +931,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.8 2001/12/17 14:27:03 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.9 2002/01/01 13:11:29 easysw Exp $".
 //

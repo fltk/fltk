@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.12 2001/12/21 20:45:43 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.13 2002/01/01 13:11:29 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -365,16 +365,7 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
 	while (*p && !isspace(*p)) p++;
       }
 
-#if defined(WIN32) || defined(__APPLE__)
       if (fl_parse_color(p, r, g, b)) {
-#else
-      XColor x;
-      if (XParseColor(fl_display, fl_colormap, p, &x)) {
-	r = x.red>>8;
-	g = x.green>>8;
-	b = x.blue>>8;
-#endif
-
         r = (ia * r + ir) >> 8;
         g = (ia * g + ig) >> 8;
         b = (ia * b + ib) >> 8;
@@ -460,16 +451,7 @@ void Fl_Pixmap::desaturate() {
 	while (*p && !isspace(*p)) p++;
       }
 
-#if defined(WIN32) || defined(__APPLE__)
       if (fl_parse_color(p, r, g, b)) {
-#else
-      XColor x;
-      if (XParseColor(fl_display, fl_colormap, p, &x)) {
-	r = x.red>>8;
-	g = x.green>>8;
-	b = x.blue>>8;
-#endif
-
         g = (r * 31 + g * 61 + b * 8) / 100;
 
         if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X", data()[i + 1][0],
@@ -485,5 +467,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.12 2001/12/21 20:45:43 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.13 2002/01/01 13:11:29 easysw Exp $".
 //

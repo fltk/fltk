@@ -1,5 +1,12 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- Update the plastic scheme to not override the default
+	  colors - move the color code to the MacOS-specific
+	  code.  Also updates the tile image colormap to match
+	  the current background color.
+	- Add fl_parse_color() to X11 as well, removing a bunch
+	  of conditional code and providing a common interface
+	  for looking up color values.
 	- Fixed the make problems in the test directory - some
 	  make programs had trouble handling the recursive
 	  dependencies on the FLUID files...

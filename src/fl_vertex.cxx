@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.3 2001/12/28 21:57:41 easysw Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.4 2002/01/01 13:11:29 easysw Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -228,10 +228,10 @@ void fl_circle(double x, double y,double r) {
   double yt = fl_transform_y(x,y);
   double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
   double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
-  int llx = int(xt-rx+.5);
-  int w = int(xt+rx+.5)-llx;
-  int lly = int(yt-ry+.5);
-  int h = int(yt+ry+.5)-lly;
+  int llx = (int)rint(xt-rx);
+  int w = (int)rint(xt+rx)-llx;
+  int lly = (int)rint(yt-ry);
+  int h = (int)rint(yt+ry)-lly;
 #ifdef WIN32
   if (what==POLYGON) {
     SelectObject(fl_gc, fl_brush());
@@ -248,5 +248,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.3 2001/12/28 21:57:41 easysw Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.4 2002/01/01 13:11:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.3 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.4 2002/01/01 13:11:29 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -53,9 +53,9 @@ static void draw_barchart(int x,int y,int w,int h,
       incr = (h - lh + min*incr)/(max-min);
       zeroh = int(y+h-lh);
   } else {
-      zeroh = int(y+h+min * incr + .5);
+      zeroh = (int)rint(y+h+min * incr);
   }
-  int bwidth = int(w/double(autosize?numb:maxnumb)+.5);
+  int bwidth = (int)rint(w/double(autosize?numb:maxnumb));
   /* Draw base line */
   fl_color(textcolor);
   fl_line(x, zeroh, x+w, zeroh);
@@ -63,7 +63,7 @@ static void draw_barchart(int x,int y,int w,int h,
   int i;
   /* Draw the bars */
   for (i=0; i<numb; i++) {
-      int h = int(entries[i].val*incr+.5);
+      int h = (int)rint(entries[i].val*incr);
       if (h < 0)
 	fl_rectbound(x+i*bwidth,zeroh,bwidth+1,-h+1, (Fl_Color)entries[i].col);
       else if (h > 0)
@@ -98,18 +98,18 @@ static void draw_horbarchart(int x,int y,int w,int h,
   else incr = w/(max-min);
   if ( (-min*incr) < lw) {
       incr = (w - lw + min*incr)/(max-min);
-      zeroh = x+int(lw+.5);
+      zeroh = x+(int)rint(lw);
   } else {
-      zeroh = int(x-min * incr + .5);
+      zeroh = (int)rint(x-min * incr);
   }
-  int bwidth = int(h/double(autosize?numb:maxnumb)+.5);
+  int bwidth = (int)rint(h/double(autosize?numb:maxnumb));
   /* Draw base line */
   fl_color(textcolor);
   fl_line(zeroh, y, zeroh, y+h);
   if (min == 0.0 && max == 0.0) return; /* Nothing else to draw */
   /* Draw the bars */
   for (i=0; i<numb; i++) {
-      int w = int(entries[i].val*incr+.5);
+      int w = (int)rint(entries[i].val*incr);
       if (w > 0)
 	fl_rectbound(zeroh,y+i*bwidth,w+1,bwidth+1, (Fl_Color)entries[i].col);
       else if (w < 0)
@@ -135,14 +135,14 @@ static void draw_linechart(int type, int x,int y,int w,int h,
   double incr;
   if (max == min) incr = h-2.0*lh;
   else incr = (h-2.0*lh)/ (max-min);
-  int zeroh = int(y+h-lh+min * incr + .5);
+  int zeroh = (int)rint(y+h-lh+min * incr);
   double bwidth = w/double(autosize?numb:maxnumb);
   /* Draw the values */
   for (i=0; i<numb; i++) {
-      int x0 = x + int((i-.5)*bwidth+.5);
-      int x1 = x + int((i+.5)*bwidth+.5);
-      int y0 = i ? zeroh - int(entries[i-1].val*incr+.5) : 0;
-      int y1 = zeroh - int(entries[i].val*incr+.5);
+      int x0 = x + (int)rint((i-.5)*bwidth);
+      int x1 = x + (int)rint((i+.5)*bwidth);
+      int y0 = i ? zeroh - (int)rint(entries[i-1].val*incr) : 0;
+      int y1 = zeroh - (int)rint(entries[i].val*incr);
       if (type == FL_SPIKE_CHART) {
 	  fl_color((Fl_Color)entries[i].col);
 	  fl_line(x1, zeroh, x1, y1);
@@ -153,7 +153,7 @@ static void draw_linechart(int type, int x,int y,int w,int h,
 	  fl_color((Fl_Color)entries[i-1].col);
 	  if ((entries[i-1].val>0.0)!=(entries[i].val>0.0)) {
 	      double ttt = entries[i-1].val/(entries[i-1].val-entries[i].val);
-	      int xt = x + int((i-.5+ttt)*bwidth+.5);
+	      int xt = x + (int)rint((i-.5+ttt)*bwidth);
 	      fl_polygon(x0,zeroh, x0,y0, xt,zeroh);
 	      fl_polygon(xt,zeroh, x1,y1, x1,zeroh);
 	  } else {
@@ -169,7 +169,7 @@ static void draw_linechart(int type, int x,int y,int w,int h,
   /* Draw the labels */
   for (i=0; i<numb; i++)
       fl_draw(entries[i].str,
-	      x+int((i+.5)*bwidth+.5), zeroh - int(entries[i].val*incr+.5),0,0,
+	      x+(int)rint((i+.5)*bwidth), zeroh - (int)rint(entries[i].val*incr),0,0,
 	      entries[i].val>=0 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
 }
 
@@ -220,8 +220,8 @@ static void draw_piechart(int x,int y,int w,int h,
       /* draw the label */
       double xl = txc + 1.1*rad*cos(ARCINC*curang);
       fl_draw(entries[i].str,
-	      int(xl+.5),
-	      int(tyc - 1.1*rad*sin(ARCINC*curang)+.5),
+	      (int)rint(xl),
+	      (int)rint(tyc - 1.1*rad*sin(ARCINC*curang)),
 	      0, 0,
 	      xl<txc ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
       curang += 0.5 * incr * entries[i].val;
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.3 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.4 2002/01/01 13:11:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.5 2001/12/03 18:29:49 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.6 2002/01/01 13:11:29 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -72,11 +72,11 @@ static void cb1(void*v, int x, int y, int w, uchar* buf) {
   const uchar* p = d.data[y]+x;
   U64* q = (U64*)buf;
   for (int X=(w+1)/2; X--; p += 2) {
-#if WORDS_BIGENDIAN
+#  if WORDS_BIGENDIAN
     *q++ = (d.colors[p[0]]<<32) | d.colors[p[1]];
-#else
+#  else
     *q++ = (d.colors[p[1]]<<32) | d.colors[p[0]];
-#endif
+#  endif
   }
 }
 
@@ -90,11 +90,11 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
     int index = *p++;
     U64* colors1 = d.byte1[*p++];
     int index1 = *p++;
-#if WORDS_BIGENDIAN
+#  if WORDS_BIGENDIAN
     *q++ = (colors[index]<<32) | colors1[index1];
-#else
+#  else
     *q++ = (colors1[index1]<<32) | colors[index];
-#endif
+#  endif
   }
 }
 
@@ -131,11 +131,6 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
 
 #endif
 
-#if defined(WIN32) || defined(__APPLE__)
-// this is in Fl_arg.cxx:
-extern int fl_parse_color(const char*, uchar&, uchar&, uchar&);
-#endif
-
 uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
 int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
@@ -157,9 +152,9 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       uchar* c = (uchar*)&d.colors[' '];
 #ifdef U64
       *(U64*)c = 0;
-#if WORDS_BIGENDIAN
+#  if WORDS_BIGENDIAN
       c += 4;
-#endif
+#  endif
 #endif
       transparent_index = ' ';
       Fl::get_color(bg, c[0], c[1], c[2]); c[3] = 0;
@@ -171,9 +166,9 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       uchar* c = (uchar*)&d.colors[*p++];
 #ifdef U64
       *(U64*)c = 0;
-#if WORDS_BIGENDIAN
+#  if WORDS_BIGENDIAN
       c += 4;
-#endif
+#  endif
 #endif
       *c++ = *p++;
       *c++ = *p++;
@@ -214,19 +209,13 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       }
 #ifdef U64
       *(U64*)c = 0;
-#if WORDS_BIGENDIAN
+#  if WORDS_BIGENDIAN
       c += 4;
+#  endif
 #endif
-#endif
-#if defined(WIN32) || defined(__APPLE__)
-      if (fl_parse_color((const char*)p, c[0], c[1], c[2])) {;
-#else
-      XColor x;
-      if (XParseColor(fl_display, fl_colormap, (const char*)p, &x)) {
-	c[0] = x.red>>8; c[1] = x.green>>8; c[2] = x.blue>>8;
-#endif
-      } else { // assume "None" or "#transparent" for any errors
-	// this should be transparent...
+      if (!fl_parse_color((const char*)p, c[0], c[1], c[2])) {
+        // assume "None" or "#transparent" for any errors
+	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
 	transparent_index = index;
       }
@@ -273,5 +262,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.5 2001/12/03 18:29:49 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.6 2002/01/01 13:11:29 easysw Exp $".
 //

@@ -77,11 +77,6 @@ cube.o: ../FL/Fl_Button.H ../FL/Fl_Radio_Light_Button.H
 cube.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Slider.H
 cube.o: ../FL/Fl_Valuator.H ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H ../FL/gl.h
 CubeMain.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-CubeMain.o: CubeViewUI.h ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-CubeMain.o: ../FL/Fl_Group.H ../FL/Fl_Roller.H ../FL/Fl_Valuator.H
-CubeMain.o: ../FL/Fl_Slider.H ../FL/Fl_Box.H CubeView.h ../FL/Fl_Gl_Window.H
-CubeMain.o: ../FL/Fl_Window.H ../FL/gl.h ../FL/Fl_Value_Slider.H
-CubeMain.o: ../FL/Fl_Slider.H
 CubeView.o: CubeView.h ../config.h ../FL/Fl.H ../FL/Enumerations.H
 CubeView.o: ../FL/Fl_Export.H ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
 CubeView.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/gl.h
@@ -197,9 +192,6 @@ input.o: ../FL/Fl_Multiline_Input.H ../FL/Fl_Button.H
 input.o: ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H ../FL/Fl_Color_Chooser.H
 input.o: ../FL/Fl_Group.H ../FL/Fl_Box.H ../FL/Fl_Return_Button.H
 input.o: ../FL/Fl_Choice.H ../FL/Fl_Value_Input.H ../FL/Fl_Valuator.H
-keyboard.o: keyboard_ui.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-keyboard.o: ../FL/Fl_Button.H ../FL/Fl_Output.H ../FL/Fl_Input_.H
-keyboard.o: ../FL/Fl_Box.H ../FL/Fl_Dial.H ../FL/Fl_Valuator.H
 label.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 label.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 label.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Hor_Value_Slider.H
@@ -281,12 +273,8 @@ shape.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 shape.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 shape.o: ../FL/Fl_Hor_Slider.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 shape.o: ../FL/math.h ../FL/gl.h ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
-shiny.o: ../config.h shiny_panel.h ../FL/Fl.H ../FL/Enumerations.H
-shiny.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-shiny.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Group.H ../FL/Fl_Button.H
-shiny.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-shiny.o: ../FL/Fl_Slider.H ../FL/fl_message.H ../FL/fl_ask.H ../FL/fl_draw.H
-shiny.o: ../FL/gl.h
+shiny.o: ../config.h ../FL/fl_message.H ../FL/fl_ask.H ../FL/Enumerations.H
+shiny.o: ../FL/Fl_Export.H ../FL/fl_draw.H ../FL/gl.h
 subwindow.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 subwindow.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 subwindow.o: ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H

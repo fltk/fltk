@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.24 2001/12/30 05:16:10 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.25 2002/01/01 13:11:29 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -180,11 +180,13 @@ keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
+keyboard_ui.o:	keyboard_ui.h ../fluid/fluid
 
 mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
+mandelbrot_ui.o:	mandelbrot_ui.h ../fluid/fluid
 
 pixmap_browser$(EXEEXT): pixmap_browser.o
 	echo Linking $@...
@@ -199,6 +201,7 @@ CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	$(POSTBUILD) $@ ../FL/mac.r
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
+CubeViewUI.o:	CubeViewUI.h ../fluid/fluid
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...
@@ -224,11 +227,19 @@ shiny$(EXEEXT): shiny_panel.o shiny.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.o shiny_panel.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
+shiny_panel.o:	shiny_panel.h ../fluid/fluid
 
 shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
+
+fast_slow.cxx:	../fluid/fluid
+inactive.cxx:	../fluid/fluid
+radio.cxx:	../fluid/fluid
+resize.cxx:	../fluid/fluid
+tabs.cxx:	../fluid/fluid
+valuators.cxx:	../fluid/fluid
 
 # If you have libjpeg installed, you might want to try this test program:
 
@@ -250,5 +261,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.24 2001/12/30 05:16:10 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.25 2002/01/01 13:11:29 easysw Exp $".
 #
