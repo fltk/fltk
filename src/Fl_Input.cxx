@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.11 2002/05/14 15:24:03 spitzak Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.12 2002/07/20 05:56:44 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,8 @@ void Fl_Input::draw() {
   if (input_type() == FL_HIDDEN_INPUT) return;
   Fl_Boxtype b = box();
   if (damage() & FL_DAMAGE_ALL) draw_box(b, color());
-  Fl_Input_::drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
-		      w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b));
+  Fl_Input_::drawtext(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+		      w()-Fl::box_dw(b), h()-Fl::box_dh(b));
 }
 
 // kludge so shift causes selection to extend:
@@ -291,8 +291,8 @@ int Fl_Input::handle(int event) {
       int oldpos = position(), oldmark = mark();
       Fl_Boxtype b = box();
       Fl_Input_::handle_mouse(
-	x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
-	w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b), 0);
+	x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+	w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
       newpos = position(); 
       position( oldpos, oldmark );
       if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
@@ -361,8 +361,8 @@ int Fl_Input::handle(int event) {
     {
       Fl_Boxtype b = box();
       Fl_Input_::handle_mouse(
-	x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
-	w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b), 0);
+	x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+	w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
     }
     return 1;
 
@@ -384,8 +384,8 @@ int Fl_Input::handle(int event) {
   }
   Fl_Boxtype b = box();
   return Fl_Input_::handletext(event,
-	x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
-	w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b));
+	x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+	w()-Fl::box_dw(b), h()-Fl::box_dh(b));
 }
 
 Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
@@ -393,5 +393,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.11 2002/05/14 15:24:03 spitzak Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.12 2002/07/20 05:56:44 easysw Exp $".
 //

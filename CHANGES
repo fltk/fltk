@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- Removed extra 3 pixel border around input fields.
+	- No longer quote characters from 0x80 to 0x9f in input
+	  fields.
 	- Improved speed of Fl_Browser_::display() method with
 	  large lists (patch from Stephen Davies.)
 	- Fl_Help_View didn't properly handle NULL from the link
