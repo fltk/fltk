@@ -73,19 +73,19 @@ scandir (const char *dir, struct dirent ***namelist,
 
       if (i == vsize)
         {
-          struct dirent **new;
+          struct dirent **newv;
           if (vsize == 0)
             vsize = 10;
           else
             vsize *= 2;
-          new = (struct dirent **) realloc (v, vsize * sizeof (*v));
-          if (new == NULL)
+          newv = (struct dirent **) realloc (v, vsize * sizeof (*v));
+          if (newv == NULL)
             {
             lose:
               errno = ENOMEM;
               break;
             }
-          v = new;
+          v = newv;
         }
 
 #define _D_EXACT_NAMLEN(d) (strlen ((d)->d_name))
