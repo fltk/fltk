@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.27 2001/04/25 13:34:43 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.28 2001/04/27 14:39:27 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -136,6 +136,7 @@ fi
 
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h)
+AC_CHECK_HEADER(sys/stdtypes.h)
 AC_CHECK_FUNC(scandir,
     if test "$uname" = SunOS -o "$uname" = QNX; then
         echo Not using $uname scandir emulation function.
@@ -371,5 +372,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.27 2001/04/25 13:34:43 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.28 2001/04/27 14:39:27 easysw Exp $".
 dnl

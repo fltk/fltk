@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.23 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24 2001/04/27 14:39:27 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -69,23 +69,38 @@ static int maxfd;
 
 static int nfds = 0;
 static int fd_array_size = 0;
-static struct FD {
+struct FD {
 #if !USE_POLL
   int fd;
   short events;
 #endif
   void (*cb)(int, void*);
   void* arg;
-} *fd = 0;
+};
+
+static FD *fd = 0;
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   remove_fd(n,events);
   int i = nfds++;
   if (i >= fd_array_size) {
+    FD *temp;
     fd_array_size = 2*fd_array_size+1;
-    fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+
+    if (!fd) temp = (FD*)malloc(fd_array_size*sizeof(FD));
+    else temp = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+
+    if (!temp) return;
+    fd = temp;
+
 #if USE_POLL
-    pollfds = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
+    pollfd *tpoll;
+
+    if (!pollfds) tpoll = (pollfd*)malloc(fd_array_size*sizeof(pollfd));
+    else tpoll = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
+
+    if (!tpoll) return;
+    pollfds = tpoll;
 #endif
   }
   fd[i].cb = cb;
@@ -903,5 +918,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.23 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24 2001/04/27 14:39:27 easysw Exp $".
 //

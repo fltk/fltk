@@ -18,6 +18,11 @@ CHANGES SINCE FLTK 1.0.10
 
 	- Added support for AIX (static library only).
 
+	- Added support for SunOS 4.x
+
+	- Now process WIN32 WM_ACTIVATEAPP message to reset the
+	  key and button states in Fl::e_state.
+
 	- Fl_has_idle only tested N-1 callbacks and missed one.
 
 	- Restored WM_SYNCPAINT handling under WIN32; this fixed

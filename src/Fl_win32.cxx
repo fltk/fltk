@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.33 2001/04/22 16:54:23 spitzak Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.34 2001/04/27 14:39:27 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -418,8 +418,6 @@ static Fl_Window* resize_bug_fix;
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
-#if 1
   // Matt: When dragging a full window, MSWindows on 'slow'
   // machines can lose track of the window refresh area. It sends some kind
   // of panic message to the desktop that in turn sends this message on to
@@ -434,7 +432,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       cnt = 0;
     } else cnt = 1;
   } else if (uMsg == WM_PAINT) cnt = 0;
-#endif
 
   fl_msg.message = uMsg;
 
@@ -507,6 +504,30 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_SHOWWINDOW:
     if (!window->parent()) {
       Fl::handle(wParam ? FL_SHOW : FL_HIDE, window);
+    }
+    break;
+
+  case WM_ACTIVATEAPP:
+    // From eric@vfx.sel.sony.com, we should process WM_ACTIVATEAPP
+    // messages to restore the correct state of the shift/ctrl/alt/lock
+    // keys...  Added control, shift, alt, and meta keys, mouse buttons,
+    // and changed to use GetAsyncKeyState...
+    if (!wParam)
+    {
+      ulong state = 0;
+      if (GetAsyncKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
+      if (GetAsyncKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
+      if (GetAsyncKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
+      if (GetAsyncKeyState(VK_CONTROL)) state |= FL_CTRL;
+      if (GetAsyncKeyState(VK_SHIFT)) state |= FL_SHIFT;
+      if (GetAsyncKeyState(VK_MENU)) state |= FL_ALT;
+      if (GetAsyncKeyState(VK_LWIN) ||
+          GetAsyncKeyState(VK_RWIN)) state |= FL_META;
+      if (GetAsyncKeyState(VK_LBUTTON)) state |= FL_BUTTON1;
+      if (GetAsyncKeyState(VK_MBUTTON)) state |= FL_BUTTON2;
+      if (GetAsyncKeyState(VK_RBUTTON)) state |= FL_BUTTON3;
+      Fl::e_state = state;
+      return 0;
     }
     break;
 
@@ -955,5 +976,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.33 2001/04/22 16:54:23 spitzak Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.34 2001/04/27 14:39:27 easysw Exp $".
 //
