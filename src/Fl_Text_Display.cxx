@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.55 2004/07/23 21:12:24 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.56 2004/07/27 18:40:29 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -47,11 +47,13 @@
 
 /* Masks for text drawing methods.  These are or'd together to form an
    integer which describes what drawing calls to use to draw a string */
-#define FILL_MASK 0x100
-#define SECONDARY_MASK 0x200
-#define PRIMARY_MASK 0x400
-#define HIGHLIGHT_MASK 0x800
-#define STYLE_LOOKUP_MASK 0xff
+#define FILL_MASK         0x0100
+#define SECONDARY_MASK    0x0200
+#define PRIMARY_MASK      0x0400
+#define HIGHLIGHT_MASK    0x0800
+#define BG_ONLY_MASK      0x1000
+#define TEXT_ONLY_MASK    0x2000
+#define STYLE_LOOKUP_MASK   0xff
 
 /* Maximum displayable line length (how many characters will fit across the
    widest window).  This amount of memory is temporarily allocated from the
@@ -1497,6 +1499,9 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
      draw parts whenever the style changes (also note if the cursor is on
      this line, and where it should be drawn to take advantage of the x
      position which we've gone to so much trouble to calculate) */
+  /* since characters between style may overlap, we draw the full 
+     background first */
+  int sX = startX;
   outPtr = outStr;
   outIndex = outStartIndex;
   X = startX;
@@ -1511,7 +1516,41 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
         charStyle = position_style( lineStartPos, lineLen,
                                     charIndex, outIndex + dispIndexOffset );
       if ( charStyle != style ) {
-        draw_string( style, startX, Y, X, outStr, outPtr - outStr );
+        draw_string( style|BG_ONLY_MASK, sX, Y, X, outStr, outPtr - outStr );
+        outPtr = outStr;
+        sX = X;
+        style = charStyle;
+      }
+      if ( charIndex < lineLen ) {
+        *outPtr = expandedChar[ i ];
+        charWidth = string_width( &expandedChar[ i ], 1, charStyle );
+      } else
+        charWidth = stdCharWidth;
+      outPtr++;
+      X += charWidth;
+      outIndex++;
+    }
+    if ( outPtr - outStr + FL_TEXT_MAX_EXP_CHAR_LEN >= MAX_DISP_LINE_LEN || X >= rightClip )
+      break;
+  }
+  draw_string( style|BG_ONLY_MASK, sX, Y, X, outStr, outPtr - outStr );
+
+  /* now draw the text over the previously erased background */
+  outPtr = outStr;
+  outIndex = outStartIndex;
+  X = startX;
+  for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
+    charLen = charIndex >= lineLen ? 1 :
+              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+                                                buf->tab_distance(), buf->null_substitution_character() );
+    charStyle = position_style( lineStartPos, lineLen, charIndex,
+                                outIndex + dispIndexOffset );
+    for ( i = 0; i < charLen; i++ ) {
+      if ( i != 0 && charIndex < lineLen && lineStr[ charIndex ] == '\t' )
+        charStyle = position_style( lineStartPos, lineLen,
+                                    charIndex, outIndex + dispIndexOffset );
+      if ( charStyle != style ) {
+        draw_string( style|TEXT_ONLY_MASK, startX, Y, X, outStr, outPtr - outStr );
         outPtr = outStr;
         startX = X;
         style = charStyle;
@@ -1530,7 +1569,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   }
 
   /* Draw the remaining style segment */
-  draw_string( style, startX, Y, X, outStr, outPtr - outStr );
+  draw_string( style|TEXT_ONLY_MASK, startX, Y, X, outStr, outPtr - outStr );
 
   /* Draw the cursor if part of it appeared on the redisplayed part of
      this line.  Also check for the cases which are not caught as the
@@ -1571,6 +1610,7 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
 
   /* Draw blank area rather than text, if that was the request */
   if ( style & FILL_MASK ) {
+    if (style & TEXT_ONLY_MASK) return;
     clear_rect( style, X, Y, toX - X, mMaxsize );
     return;
   }
@@ -1609,11 +1649,15 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     background = color();
   }
 
-  fl_color( background );
-  fl_rectf( X, Y, toX - X, mMaxsize );
-  fl_color( foreground );
-  fl_font( font, fsize );
-  fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
+  if (!(style & TEXT_ONLY_MASK)) {
+    fl_color( background );
+    fl_rectf( X, Y, toX - X, mMaxsize );
+  }
+  if (!(style & BG_ONLY_MASK)) {
+    fl_color( foreground );
+    fl_font( font, fsize );
+    fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
+  }
 
   // CET - FIXME
   /* If any space around the character remains unfilled (due to use of
@@ -1851,10 +1895,9 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) {
     outIndex += charLen;
   }
 
-  free((char *)lineStr);
-
   /* If the X position was beyond the end of the line, return the position
      of the newline at the end of the line */
+  free((char *)lineStr);
   return lineStart + lineLen;
 }
 
@@ -3088,5 +3131,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.55 2004/07/23 21:12:24 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.56 2004/07/27 18:40:29 easysw Exp $".
 //

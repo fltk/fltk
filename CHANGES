@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365, STR #399, STR #407,
 	  STR #412, STR #414, STR #452, STR #462)
+	- Fl_Text_Display did not handle drawing of overlapping
+	  text (italic next to plain, etc.) properly (STR #381)
 	- All of the core widgets now consistently set changed()
 	  before calling the callback function for a change in
 	  value; this allows programs to check the changed()
