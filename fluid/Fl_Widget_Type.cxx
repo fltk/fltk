@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.10 2000/03/06 14:45:54 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.11 2000/04/24 18:22:48 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 #include "Fl_Widget_Type.h"
+#include "alignment_panel.h"
 #include <FL/fl_message.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Window.H>
@@ -45,6 +46,12 @@ extern int reading_file;
 int force_parent;
 extern int gridx;
 extern int gridy;
+extern int msgnum;
+extern int i18n_type;
+extern const char* i18n_include;
+extern const char* i18n_function;
+extern const char* i18n_file;
+extern const char* i18n_set;
 
 int Fl_Widget_Type::is_widget() const {return 1;}
 
@@ -1333,7 +1340,21 @@ void Fl_Widget_Type::write_code1() {
   }
   if (!image && label() && *label()) {
     write_c(", ");
-    write_cstring(label());
+    switch (i18n_type) {
+    case 0 : /* None */
+        write_cstring(label());
+        break;
+    case 1 : /* GNU gettext */
+        write_c("%s(", i18n_function);
+        write_cstring(label());
+	write_c(")");
+        break;
+    case 2 : /* POSIX catgets */
+        write_c("catgets(%s,%s,%d,", i18n_file, i18n_set, msgnum ++);
+        write_cstring(label());
+	write_c(")");
+        break;
+    }
   }
   write_c(");\n");
   indentation += 2;
@@ -1747,5 +1768,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.10 2000/03/06 14:45:54 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.11 2000/04/24 18:22:48 mike Exp $".
 //

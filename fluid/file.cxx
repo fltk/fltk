@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.1 2000/02/25 03:44:22 mike Exp $"
+// "$Id: file.cxx,v 1.7.2.2 2000/04/24 18:22:50 mike Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -305,6 +305,11 @@ const char *read_word(int wantbrace) {
 
 // global int variables:
 extern int gridx, gridy, snap;
+extern int i18n_type;
+extern const char* i18n_include;
+extern const char* i18n_function;
+extern const char* i18n_file;
+extern const char* i18n_set;
 static struct {const char* name; int* value;} inttable[] = {
   {"gridx", &gridx},
   {"gridy", &gridy},
@@ -323,6 +328,19 @@ int write_file(const char *filename, int selected_only) {
 	       "version %.4f",FL_VERSION);
   if(!include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
+  if (i18n_type) {
+    write_string("\ni18n_type %d", i18n_type);
+    write_string("\ni18n_include %s", i18n_include);
+    switch (i18n_type) {
+    case 1 : /* GNU gettext */
+	write_string("\ni18n_function %s", i18n_function);
+        break;
+    case 2 : /* POSIX catgets */
+	write_string("\ni18n_file %s", i18n_file);
+	write_string("\ni18n_set %s", i18n_set);
+        break;
+    }
+  }
   if (!selected_only) {
     write_string("\nheader_name"); write_word(header_file_name);
     write_string("\ncode_name"); write_word(code_file_name);
@@ -390,9 +408,38 @@ static void read_children(Fl_Type *p, int paste) {
       continue;
     }
 
-    if (!strcmp(c,"do_not_include_H_from_C"))
-    {
+    if (!strcmp(c,"do_not_include_H_from_C")) {
       include_H_from_C=0;
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_type")) {
+      i18n_type = atoi(read_word());
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_function")) {
+      i18n_function = strdup(read_word());
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_file")) {
+      i18n_file = strdup(read_word());
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_set")) {
+      i18n_set = strdup(read_word());
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_include")) {
+      i18n_include = strdup(read_word());
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_type"))
+    {
+      i18n_type = atoi(read_word());
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"i18n_type"))
+    {
+      i18n_type = atoi(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"header_name")) {
@@ -592,5 +639,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.1 2000/02/25 03:44:22 mike Exp $".
+// End of "$Id: file.cxx,v 1.7.2.2 2000/04/24 18:22:50 mike Exp $".
 //

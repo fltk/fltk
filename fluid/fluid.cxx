@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.3 2000/04/04 17:57:01 bill Exp $"
+// "$Id: fluid.cxx,v 1.15.2.4 2000/04/24 18:22:50 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -163,6 +163,11 @@ int header_file_set = 0;
 int code_file_set = 0;
 const char* header_file_name = ".h";
 const char* code_file_name = ".cxx";
+int i18n_type = 0;
+const char* i18n_include = "";
+const char* i18n_function = "";
+const char* i18n_file = "";
+const char* i18n_set = "";
 
 void write_cb(Fl_Widget *, void *) {
   if (!filename) {
@@ -194,6 +199,29 @@ void write_cb(Fl_Widget *, void *) {
       fl_message("Can't write %s: %s", cname, strerror(errno));
     } else {
       fl_message("Wrote %s", cname, 0);
+    }
+  }
+}
+
+void write_strings_cb(Fl_Widget *, void *) {
+  static char *exts[] = { ".txt", ".po", ".msg" };
+  if (!filename) {
+    save_cb(0,0);
+    if (!filename) return;
+  }
+  char sname[1024];
+  strcpy(sname,filename_name(filename));
+  filename_setext(sname, exts[i18n_type]);
+  if (!compile_only) goto_source_dir();
+  int x = write_strings(sname);
+  if (!compile_only) leave_source_dir();
+  if (compile_only) {
+    if (x) {fprintf(stderr,"%s : %s\n",sname,strerror(errno)); exit(1);}
+  } else {
+    if (x) {
+      fl_message("Can't write %s: %s", sname, strerror(errno));
+    } else {
+      fl_message("Wrote %s", sname);
     }
   }
 }
@@ -297,6 +325,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Save As...", FL_ALT+'S', save_cb, (void*)1},
   {"Merge...", FL_ALT+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
   {"Write code", FL_ALT+'C', write_cb, 0},
+  {"Write strings", FL_ALT+'W', write_strings_cb, 0},
   {"Quit", FL_ALT+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
@@ -428,5 +457,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.3 2000/04/04 17:57:01 bill Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.4 2000/04/24 18:22:50 mike Exp $".
 //

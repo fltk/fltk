@@ -19,5 +19,14 @@ extern Fl_Input *code_file_input;
 #include <FL/Fl_Light_Button.H>
 extern void include_H_from_C_button_cb(Fl_Light_Button*, void*);
 extern Fl_Light_Button *include_H_from_C_button;
+#include <FL/Fl_Choice.H>
+extern void i18n_type_cb(Fl_Choice*, void*);
+extern Fl_Choice *i18n_type_chooser;
+extern void i18n_text_cb(Fl_Input*, void*);
+extern Fl_Input *i18n_include_input;
+extern Fl_Input *i18n_file_input;
+extern Fl_Input *i18n_set_input;
+extern Fl_Input *i18n_function_input;
 Fl_Window* make_alignment_window();
+extern Fl_Menu_Item menu_i18n_type_chooser[];
 #endif

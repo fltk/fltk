@@ -8,63 +8,107 @@ snap 3
 Function {make_alignment_window()} {open
 } {
   Fl_Window alignment_window {
-    label Preferences open selected
-    xywh {658 262 210 320} modal visible
+    label Preferences open
+    xywh {473 284 365 340} hide modal
   } {
     Fl_Box {} {
       label {Alignment:}
-      xywh {10 25 190 100} box ENGRAVED_FRAME labelsize 12 align 5
+      xywh {10 25 130 130} box ENGRAVED_FRAME labelsize 12 align 5
     }
     Fl_Input horizontal_input {
       label {Horizontal:}
       user_data 1 user_data_type long
       callback alignment_cb
-      xywh {90 35 100 20} type Int box THIN_DOWN_BOX
+      xywh {90 35 40 20} type Int box THIN_DOWN_BOX
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Input vertical_input {
       label {Vertical:}
       user_data 2 user_data_type long
       callback alignment_cb
-      xywh {90 65 100 20} type Int box THIN_DOWN_BOX
+      xywh {90 65 40 20} type Int box THIN_DOWN_BOX
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Input snap_input {
       label {Snap:}
       user_data 3 user_data_type long
       callback alignment_cb
-      xywh {90 95 100 20} type Int box THIN_DOWN_BOX
+      xywh {90 95 40 20} type Int box THIN_DOWN_BOX
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Button {} {
       label Close
       callback {alignment_window->hide();}
-      xywh {140 285 60 25}
+      xywh {295 305 60 25}
     }
     Fl_Box {} {
       label {Output File Names:}
-      xywh {10 145 190 130} box ENGRAVED_FRAME labelsize 12 align 5
+      xywh {10 175 345 120} box ENGRAVED_FRAME labelsize 12 align 5
     }
     Fl_Box {} {
       label {Use "name.ext" to set name or just ".ext" to set only extension.}
-      xywh {20 155 170 30} labelsize 10 align 148
+      xywh {20 185 325 15} labelsize 10 align 148
     }
     Fl_Input header_file_input {
       label {Header File:}
       user_data 1 user_data_type {void*}
       callback header_input_cb
-      xywh {100 185 90 20} box THIN_DOWN_BOX when 1
+      xywh {100 205 245 20} box THIN_DOWN_BOX when 1 textfont 4
     }
     Fl_Input code_file_input {
       label {Code File:}
       user_data 1 user_data_type {void*}
       callback code_input_cb
-      xywh {100 215 90 20} box THIN_DOWN_BOX when 1
+      xywh {100 235 245 20} box THIN_DOWN_BOX when 1 textfont 4
     }
     Fl_Light_Button include_H_from_C_button {
       label {Include Header from Code}
       callback include_H_from_C_button_cb
-      xywh {20 245 170 20} value 1 labelsize 12
+      xywh {100 265 170 20} value 1 labelsize 12
+    }
+    Fl_Box {} {
+      label {Internationalization:}
+      xywh {150 25 205 130} box ENGRAVED_FRAME labelsize 12 align 5
+    }
+    Fl_Choice i18n_type_chooser {
+      label {Use:}
+      callback i18n_type_cb open
+      xywh {220 35 125 20} box THIN_UP_BOX
+    } {
+      menuitem {} {
+        label None
+        xywh {0 0 100 20}
+      }
+      menuitem {} {
+        label {GNU gettext}
+        xywh {0 0 100 20}
+      }
+      menuitem {} {
+        label {POSIX catgets}
+        xywh {0 0 100 20}
+      }
+    }
+    Fl_Input i18n_include_input {
+      label {\#include:}
+      callback i18n_text_cb selected
+      xywh {220 65 125 20} box THIN_DOWN_BOX textfont 4 hide
+    }
+    Fl_Input i18n_file_input {
+      label {File:}
+      callback i18n_text_cb
+      xywh {220 95 125 20} box THIN_DOWN_BOX textfont 4 hide
+    }
+    Fl_Input i18n_set_input {
+      label {Set:}
+      callback i18n_text_cb
+      xywh {220 125 125 20} type Int box THIN_DOWN_BOX textfont 4 hide
+    }
+    Fl_Input i18n_function_input {
+      label {Function:}
+      callback i18n_text_cb
+      xywh {220 95 125 20} box THIN_DOWN_BOX textfont 4 hide
     }
   }
 } 
+
+decl {extern void i18n_cb(Fl_Choice *,void *);} {} 

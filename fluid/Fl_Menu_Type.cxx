@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.5 2000/02/05 09:20:45 bill Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.6 2000/04/24 18:22:47 mike Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 
 #include <FL/Fl.H>
 #include "Fl_Widget_Type.h"
+#include "alignment_panel.h"
 #include <FL/fl_message.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Button.H>
@@ -46,6 +47,12 @@ Fl_Menu_Item menu_item_type_menu[] = {
 
 extern int reading_file;
 extern int force_parent;
+extern int msgnum;
+extern int i18n_type;
+extern const char* i18n_include;
+extern const char* i18n_function;
+extern const char* i18n_file;
+extern const char* i18n_set;
 
 static char submenuflag;
 
@@ -209,7 +216,23 @@ int Fl_Menu_Item_Type::flags() {
 void Fl_Menu_Item_Type::write_item() {
   write_c(" {");
   if (image) write_c("0");
-  else if (label()) write_cstring(label());
+  else if (label()) {
+    switch (i18n_type) {
+    case 0 : /* None */
+        write_cstring(label());
+        break;
+    case 1 : /* GNU gettext */
+        write_c("%s(", i18n_function);
+        write_cstring(label());
+	write_c(")");
+        break;
+    case 2 : /* POSIX catgets */
+        write_c("catgets(%s,%s,%d,", i18n_file, i18n_set, msgnum ++);
+        write_cstring(label());
+	write_c(")");
+        break;
+    }
+  }
   else write_c("\"\"");
   if (((Fl_Button*)o)->shortcut())
     write_c(", 0x%x, ", ((Fl_Button*)o)->shortcut());
@@ -439,5 +462,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.5 2000/02/05 09:20:45 bill Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.6 2000/04/24 18:22:47 mike Exp $".
 //
