@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8 1999/01/26 21:37:14 mike Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.3 1999/08/09 06:19:32 bill Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -255,18 +255,22 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
 }
 
 void Fl_Group::clear() {
-  Fl_Widget*const* a = array();
-  for (int i=children(); i--;) {
+  Fl_Widget*const* old_array = array();
+  int old_children = children();
+  // clear everything now, in case fl_fix_focus recursively calls us:
+  children_ = 0;
+  // array_ = 0; dont do this, it will clobber old_array if only one child
+  savedfocus_ = 0;
+  resizable_ = this;
+  init_sizes();
+  // okay, now it is safe to destroy the children:
+  Fl_Widget*const* a = old_array;
+  for (int i=old_children; i--;) {
     Fl_Widget* o = *a++;
     // test the parent to see if child already destructed:
     if (o->parent() == this) delete o;
   }
-  if (children() > 1) free((void*)array_);
-  children_ = 0;
-  array_ = 0;
-  savedfocus_ = 0;
-  resizable_ = this;
-  init_sizes();
+  if (old_children > 1) free((void*)old_array);
 }
 
 Fl_Group::~Fl_Group() {clear();}
@@ -395,7 +399,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
     Fl_Widget*const* a = array();
     for (int i=children_; i--;) {
       Fl_Widget* o = *a++;
-
+#if 1
       int X = *p++;
       if (X >= IR) X += dw;
       else if (X > IX) X = IX+((X-IX)*(IR+dw-IX)+(IR-IX)/2)/(IR-IX);
@@ -409,7 +413,21 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
       int B = *p++;
       if (B >= IB) B += dh;
       else if (B > IY) B = IY+((B-IY)*(IB+dh-IY)+(IB-IY)/2)/(IB-IY);
+#else // much simpler code from Francois Ostiguy:
+      int X = *p++;
+      if (X >= IR) X += dw;
+      else if (X > IX) X = X + dw * (X-IX)/(IR-IX);
+      int R = *p++;
+      if (R >= IR) R += dw;
+      else if (R > IX) R = R + dw * (R-IX)/(IR-IX);
 
+      int Y = *p++;
+      if (Y >= IB) Y += dh;
+      else if (Y > IY) Y = Y + dh*(Y-IY)/(IB-IY);
+      int B = *p++;
+      if (B >= IB) B += dh;
+      else if (B > IY) B = B + dh*(B-IY)/(IB-IY);
+#endif
       o->resize(X+dx, Y+dy, R-X, B-Y);
     }
   }
@@ -485,5 +503,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8 1999/01/26 21:37:14 mike Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.3 1999/08/09 06:19:32 bill Exp $".
 //

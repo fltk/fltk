@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15 1999/02/19 14:53:04 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.9 1999/08/17 05:33:12 bill Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -103,26 +103,6 @@ const char *c_check(const char *c, int type) {
 
 ////////////////////////////////////////////////////////////////
 
-class Fl_Function_Type : public Fl_Type {
-  const char* return_type;
-  char public_, constructor, havewidgets;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  int ismain() {return name_ == 0;}
-  virtual const char *type_name() {return "Function";}
-  virtual const char *title() {
-    return name() ? name() : "main()";
-  }
-  int is_parent() const {return 1;}
-  int is_code_block() const {return 1;}
-  void write_properties();
-  void read_property(const char *);
-};
-
 Fl_Type *Fl_Function_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -132,12 +112,14 @@ Fl_Type *Fl_Function_Type::make() {
   o->add(p);
   o->factory = this;
   o->public_ = 1;
+  o->cdecl_ = 0;
   return o;
 }
 
 void Fl_Function_Type::write_properties() {
   Fl_Type::write_properties();
   if (!public_) write_string("private");
+  if (cdecl_) write_string("C");
   if (return_type) {
     write_string("return_type");
     write_word(return_type);
@@ -147,6 +129,8 @@ void Fl_Function_Type::write_properties() {
 void Fl_Function_Type::read_property(const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
+  } else if (!strcmp(c,"C")) {
+    cdecl_ = 1;
   } else if (!strcmp(c,"return_type")) {
     storestring(read_word(),return_type);
   } else {
@@ -162,6 +146,7 @@ void Fl_Function_Type::open() {
   f_return_type_input->static_value(return_type);
   f_name_input->static_value(name());
   f_public_button->value(public_);
+  f_c_button->value(cdecl_);
   function_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -185,6 +170,7 @@ void Fl_Function_Type::open() {
     name(f_name_input->value());
     storestring(c, return_type);
     public_ = f_public_button->value();
+    cdecl_ = f_c_button->value();
     break;
   }
  BREAK2:
@@ -192,10 +178,6 @@ void Fl_Function_Type::open() {
 }
 
 Fl_Function_Type Fl_Function_type;
-
-void Fl_Function_Type::write_declare() {
-  ::write_declare("#include <FL/Fl.H>");
-}
 
 extern const char* subclassname(Fl_Type*);
 
@@ -212,20 +194,23 @@ void Fl_Function_Type::write_code1() {
   if (ismain())
     write_c("int main(int argc, char **argv) {\n");
   else {
-    const char* t = return_type;
+    const char* rtype = return_type;
+    const char* star = "";
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
     int is_static = 0;
     int is_virtual = 0;
-    if (t) {
-      if (!strcmp(t,"static")) {is_static = 1; t = 0;}
-      else if (!strncmp(t,"static ",7)) {is_static = 1; t += 7;}
-      if (!strcmp(t,"virtual")) {is_virtual = 1; t = 0;}
-      else if (!strncmp(t,"virtual ",8)) {is_virtual = 1; t += 8;}
+    if (rtype) {
+      if (!strcmp(rtype,"static")) {is_static = 1; rtype = 0;}
+      else if (!strncmp(rtype, "static ",7)) {is_static = 1; rtype += 7;}
+      if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = 0;}
+      else if (!strncmp(rtype, "virtual ",8)) {is_virtual = 1; rtype += 8;}
     }
-    if (!t) {
-      if (havewidgets) t = "Fl_Window*";
-      else t = "void";
+    if (!rtype) {
+      if (havewidgets) {
+	rtype = subclassname(child);
+	star = "*";
+      } else rtype = "void";
     }
 
     const char* k = class_name();
@@ -238,29 +223,41 @@ void Fl_Function_Type::write_code1() {
 	if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
       }
       write_h("  ");
+      if (is_static) write_h("static ");
+      if (is_virtual) write_h("virtual ");
       if (!constructor) {
-	if (is_static) write_h("static ");
-	if (is_virtual) write_h("virtual ");
-        write_h("%s ", t);
-	write_c("%s ", t);
+        write_h("%s%s ", rtype, star);
+	write_c("%s%s ", rtype, star);
       }
 
       // if this is a subclass, only write_h() the part before the ':'
       char s[1024], *sptr = s;
       char *nptr = (char *)name();
 
-      while (*nptr && *nptr != ':') *sptr++ = *nptr++;
+      while (*nptr) {
+        if (*nptr == ':') {
+	  if (nptr[1] != ':') break;
+	  // Copy extra ":" for "class::member"...
+          *sptr++ = *nptr++;
+        }	  
+        *sptr++ = *nptr++;
+      }
       *sptr = '\0';
 
       write_h("%s;\n", s);
       write_c("%s::%s {\n", k, name());
     } else {
-      if (public_) write_h("%s %s;\n", t, name());
+      if (public_) {
+	if (cdecl_)
+	  write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
+	else
+	  write_h("%s%s %s;\n", rtype, star, name());
+      }
       else write_c("static ");
-      write_c("%s %s {\n", t, name());
+      write_c("%s%s %s {\n", rtype, star, name());
     }
   }
-  if (havewidgets) write_c("  Fl_Window* w;\n");
+  if (havewidgets) write_c("  %s* w;\n",subclassname(child));
   indentation += 2;
 }
 
@@ -275,17 +272,6 @@ void Fl_Function_Type::write_code2() {
 }
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_Code_Type : public Fl_Type {
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "code";}
-  int is_code_block() const {return 0;}
-};
 
 Fl_Type *Fl_Code_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -325,8 +311,6 @@ void Fl_Code_Type::open() {
 
 Fl_Code_Type Fl_Code_type;
 
-void Fl_Code_Type::write_declare() {}
-
 void Fl_Code_Type::write_code1() {
   const char* c = name();
   if (!c) return;
@@ -336,21 +320,6 @@ void Fl_Code_Type::write_code1() {
 void Fl_Code_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_CodeBlock_Type : public Fl_Type {
-  const char* after;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "codeblock";}
-  int is_code_block() const {return 1;}
-  int is_parent() const {return 1;}
-  void write_properties();
-  void read_property(const char *);
-};
 
 Fl_Type *Fl_CodeBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -411,8 +380,6 @@ void Fl_CodeBlock_Type::open() {
 
 Fl_CodeBlock_Type Fl_CodeBlock_type;
 
-void Fl_CodeBlock_Type::write_declare() {}
-
 void Fl_CodeBlock_Type::write_code1() {
   const char* c = name();
   write_c("%s%s {\n", indent(), c ? c : "");
@@ -426,19 +393,6 @@ void Fl_CodeBlock_Type::write_code2() {
 }
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_Decl_Type : public Fl_Type {
-  char public_;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "decl";}
-  void write_properties();
-  void read_property(const char *);
-};
 
 Fl_Type *Fl_Decl_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -492,13 +446,15 @@ void Fl_Decl_Type::open() {
 
 Fl_Decl_Type Fl_Decl_type;
 
-void Fl_Decl_Type::write_declare() {}
-
 void Fl_Decl_Type::write_code1() {
   const char* c = name();
   if (!c) return;
   // handle putting #include or extern into decl:
-  if (!isalpha(*c) || !strncmp(c,"extern",6)) {
+  if (!isalpha(*c) && *c != '~'
+      || !strncmp(c,"extern",6) && isspace(c[6])
+      || !strncmp(c,"class",5) && isspace(c[5])
+//    || !strncmp(c,"struct",6) && isspace(c[6])
+      ) {
     if (public_)
       write_h("%s\n", c);
     else
@@ -524,21 +480,6 @@ void Fl_Decl_Type::write_code1() {
 void Fl_Decl_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_DeclBlock_Type : public Fl_Type {
-  const char* after;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "declblock";}
-  void write_properties();
-  void read_property(const char *);
-  int is_parent() const {return 1;}
-  int is_decl_block() const {return 1;}
-};
 
 Fl_Type *Fl_DeclBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -597,8 +538,6 @@ void Fl_DeclBlock_Type::open() {
 
 Fl_DeclBlock_Type Fl_DeclBlock_type;
 
-void Fl_DeclBlock_Type::write_declare() {}
-
 void Fl_DeclBlock_Type::write_code1() {
   const char* c = name();
   if (c) write_c("%s\n", c);
@@ -611,30 +550,24 @@ void Fl_DeclBlock_Type::write_code2() {
 
 ////////////////////////////////////////////////////////////////
 
-class Fl_Class_Type : public Fl_Type {
-  const char* subclass_of;
-  char public_;
-public:
-  // state variables for output:
-  char write_public_state; // true when public: has been printed
-  Fl_Class_Type* parent_class; // save class if nested
-//
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "class";}
-  int is_parent() const {return 1;}
-  int is_decl_block() const {return 1;}
-  int is_class() const {return 1;}
-  void write_properties();
-  void read_property(const char *);
-};
-
 const char* Fl_Type::class_name() const {
   Fl_Type* p = parent;
-  while (p) {if (p->is_class()) return p->name(); p = p->parent;}
+  while (p) {
+    if (p->is_class()) {
+      // see if we are nested in another class, we must fully-qualify name:
+      // this is lame but works...
+      const char* q = p->class_name();
+      if (q) {
+	static char buffer[256];
+	if (q != buffer) strcpy(buffer, q);
+	strcat(buffer, "::");
+	strcat(buffer, p->name());
+	return buffer;
+      }
+      return p->name();
+    }
+    p = p->parent;
+  }
   return 0;
 }
 
@@ -703,8 +636,6 @@ void Fl_Class_Type::open() {
 
 Fl_Class_Type Fl_Class_type;
 
-void Fl_Class_Type::write_declare() {}
-
 static Fl_Class_Type *current_class;
 extern int varused_test;
 void write_public(int state) {
@@ -729,5 +660,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15 1999/02/19 14:53:04 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.9 1999/08/17 05:33:12 bill Exp $".
 //

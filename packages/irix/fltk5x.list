@@ -1,192 +1,192 @@
-f 0444 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
+f 0555 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
 f 0444 root sys usr/catman/pman/cat1/fluid.z documentation/fluid.z fltk.man.dev
 f 0444 root sys usr/include/FL/Enumerations.H FL/Enumerations.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Enumerations.h - fltk.sw.dev symval("FL/Enumerations.H")
+l 0000 root sys usr/include/FL/Enumerations.h - fltk.sw.dev symval("Enumerations.H")
 f 0444 root sys usr/include/FL/Fl.H FL/Fl.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl.h - fltk.sw.dev symval("FL/Fl.H")
+l 0000 root sys usr/include/FL/Fl.h - fltk.sw.dev symval("Fl.H")
 f 0444 root sys usr/include/FL/Fl_Adjuster.H FL/Fl_Adjuster.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Adjuster.h - fltk.sw.dev symval("FL/Fl_Adjuster.H")
+l 0000 root sys usr/include/FL/Fl_Adjuster.h - fltk.sw.dev symval("Fl_Adjuster.H")
 f 0444 root sys usr/include/FL/Fl_Bitmap.H FL/Fl_Bitmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Bitmap.h - fltk.sw.dev symval("FL/Fl_Bitmap.H")
+l 0000 root sys usr/include/FL/Fl_Bitmap.h - fltk.sw.dev symval("Fl_Bitmap.H")
 f 0444 root sys usr/include/FL/Fl_Box.H FL/Fl_Box.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Box.h - fltk.sw.dev symval("FL/Fl_Box.H")
+l 0000 root sys usr/include/FL/Fl_Box.h - fltk.sw.dev symval("Fl_Box.H")
 f 0444 root sys usr/include/FL/Fl_Browser.H FL/Fl_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Browser.h - fltk.sw.dev symval("FL/Fl_Browser.H")
+l 0000 root sys usr/include/FL/Fl_Browser.h - fltk.sw.dev symval("Fl_Browser.H")
 f 0444 root sys usr/include/FL/Fl_Browser_.H FL/Fl_Browser_.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Browser_.h - fltk.sw.dev symval("FL/Fl_Browser_.H")
+l 0000 root sys usr/include/FL/Fl_Browser_.h - fltk.sw.dev symval("Fl_Browser_.H")
 f 0444 root sys usr/include/FL/Fl_Button.H FL/Fl_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Button.h - fltk.sw.dev symval("FL/Fl_Button.H")
+l 0000 root sys usr/include/FL/Fl_Button.h - fltk.sw.dev symval("Fl_Button.H")
 f 0444 root sys usr/include/FL/Fl_Chart.H FL/Fl_Chart.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Chart.h - fltk.sw.dev symval("FL/Fl_Chart.H")
+l 0000 root sys usr/include/FL/Fl_Chart.h - fltk.sw.dev symval("Fl_Chart.H")
 f 0444 root sys usr/include/FL/Fl_Check_Button.H FL/Fl_Check_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Check_Button.h - fltk.sw.dev symval("FL/Fl_Check_Button.H")
+l 0000 root sys usr/include/FL/Fl_Check_Button.h - fltk.sw.dev symval("Fl_Check_Button.H")
 f 0444 root sys usr/include/FL/Fl_Choice.H FL/Fl_Choice.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Choice.h - fltk.sw.dev symval("FL/Fl_Choice.H")
+l 0000 root sys usr/include/FL/Fl_Choice.h - fltk.sw.dev symval("Fl_Choice.H")
 f 0444 root sys usr/include/FL/Fl_Clock.H FL/Fl_Clock.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Clock.h - fltk.sw.dev symval("FL/Fl_Clock.H")
+l 0000 root sys usr/include/FL/Fl_Clock.h - fltk.sw.dev symval("Fl_Clock.H")
 f 0444 root sys usr/include/FL/Fl_Color_Chooser.H FL/Fl_Color_Chooser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Color_Chooser.h - fltk.sw.dev symval("FL/Fl_Color_Chooser.H")
+l 0000 root sys usr/include/FL/Fl_Color_Chooser.h - fltk.sw.dev symval("Fl_Color_Chooser.H")
 f 0444 root sys usr/include/FL/Fl_Counter.H FL/Fl_Counter.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Counter.h - fltk.sw.dev symval("FL/Fl_Counter.H")
+l 0000 root sys usr/include/FL/Fl_Counter.h - fltk.sw.dev symval("Fl_Counter.H")
 f 0444 root sys usr/include/FL/Fl_Dial.H FL/Fl_Dial.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Dial.h - fltk.sw.dev symval("FL/Fl_Dial.H")
+l 0000 root sys usr/include/FL/Fl_Dial.h - fltk.sw.dev symval("Fl_Dial.H")
 f 0444 root sys usr/include/FL/Fl_Double_Window.H FL/Fl_Double_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Double_Window.h - fltk.sw.dev symval("FL/Fl_Double_Window.H")
+l 0000 root sys usr/include/FL/Fl_Double_Window.h - fltk.sw.dev symval("Fl_Double_Window.H")
 f 0444 root sys usr/include/FL/Fl_Fill_Dial.H FL/Fl_Fill_Dial.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Fill_Dial.h - fltk.sw.dev symval("FL/Fl_Fill_Dial.H")
+l 0000 root sys usr/include/FL/Fl_Fill_Dial.h - fltk.sw.dev symval("Fl_Fill_Dial.H")
 f 0444 root sys usr/include/FL/Fl_Fill_Slider.H FL/Fl_Fill_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Fill_Slider.h - fltk.sw.dev symval("FL/Fl_Fill_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Fill_Slider.h - fltk.sw.dev symval("Fl_Fill_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Float_Input.H FL/Fl_Float_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Float_Input.h - fltk.sw.dev symval("FL/Fl_Float_Input.H")
+l 0000 root sys usr/include/FL/Fl_Float_Input.h - fltk.sw.dev symval("Fl_Float_Input.H")
 f 0444 root sys usr/include/FL/Fl_FormsBitmap.H FL/Fl_FormsBitmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_FormsBitmap.h - fltk.sw.dev symval("FL/Fl_FormsBitmap.H")
+l 0000 root sys usr/include/FL/Fl_FormsBitmap.h - fltk.sw.dev symval("Fl_FormsBitmap.H")
 f 0444 root sys usr/include/FL/Fl_FormsPixmap.H FL/Fl_FormsPixmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_FormsPixmap.h - fltk.sw.dev symval("FL/Fl_FormsPixmap.H")
+l 0000 root sys usr/include/FL/Fl_FormsPixmap.h - fltk.sw.dev symval("Fl_FormsPixmap.H")
 f 0444 root sys usr/include/FL/Fl_Free.H FL/Fl_Free.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Free.h - fltk.sw.dev symval("FL/Fl_Free.H")
+l 0000 root sys usr/include/FL/Fl_Free.h - fltk.sw.dev symval("Fl_Free.H")
 f 0444 root sys usr/include/FL/Fl_Gl_Window.H FL/Fl_Gl_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Gl_Window.h - fltk.sw.dev symval("FL/Fl_Gl_Window.H")
+l 0000 root sys usr/include/FL/Fl_Gl_Window.h - fltk.sw.dev symval("Fl_Gl_Window.H")
 f 0444 root sys usr/include/FL/Fl_Group.H FL/Fl_Group.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Group.h - fltk.sw.dev symval("FL/Fl_Group.H")
+l 0000 root sys usr/include/FL/Fl_Group.h - fltk.sw.dev symval("Fl_Group.H")
 f 0444 root sys usr/include/FL/Fl_Hold_Browser.H FL/Fl_Hold_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hold_Browser.h - fltk.sw.dev symval("FL/Fl_Hold_Browser.H")
+l 0000 root sys usr/include/FL/Fl_Hold_Browser.h - fltk.sw.dev symval("Fl_Hold_Browser.H")
 f 0444 root sys usr/include/FL/Fl_Hor_Fill_Slider.H FL/Fl_Hor_Fill_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Fill_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Fill_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Hor_Fill_Slider.h - fltk.sw.dev symval("Fl_Hor_Fill_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Hor_Nice_Slider.H FL/Fl_Hor_Nice_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Nice_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Nice_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Hor_Nice_Slider.h - fltk.sw.dev symval("Fl_Hor_Nice_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Hor_Slider.H FL/Fl_Hor_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Hor_Slider.h - fltk.sw.dev symval("Fl_Hor_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Hor_Value_Slider.H FL/Fl_Hor_Value_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Hor_Value_Slider.h - fltk.sw.dev symval("FL/Fl_Hor_Value_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Hor_Value_Slider.h - fltk.sw.dev symval("Fl_Hor_Value_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Image.H FL/Fl_Image.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Image.h - fltk.sw.dev symval("FL/Fl_Image.H")
+l 0000 root sys usr/include/FL/Fl_Image.h - fltk.sw.dev symval("Fl_Image.H")
 f 0444 root sys usr/include/FL/Fl_Input.H FL/Fl_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Input.h - fltk.sw.dev symval("FL/Fl_Input.H")
+l 0000 root sys usr/include/FL/Fl_Input.h - fltk.sw.dev symval("Fl_Input.H")
 f 0444 root sys usr/include/FL/Fl_Input_.H FL/Fl_Input_.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Input_.h - fltk.sw.dev symval("FL/Fl_Input_.H")
+l 0000 root sys usr/include/FL/Fl_Input_.h - fltk.sw.dev symval("Fl_Input_.H")
 f 0444 root sys usr/include/FL/Fl_Int_Input.H FL/Fl_Int_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Int_Input.h - fltk.sw.dev symval("FL/Fl_Int_Input.H")
+l 0000 root sys usr/include/FL/Fl_Int_Input.h - fltk.sw.dev symval("Fl_Int_Input.H")
 f 0444 root sys usr/include/FL/Fl_Light_Button.H FL/Fl_Light_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Light_Button.h - fltk.sw.dev symval("FL/Fl_Light_Button.H")
+l 0000 root sys usr/include/FL/Fl_Light_Button.h - fltk.sw.dev symval("Fl_Light_Button.H")
 f 0444 root sys usr/include/FL/Fl_Line_Dial.H FL/Fl_Line_Dial.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Line_Dial.h - fltk.sw.dev symval("FL/Fl_Line_Dial.H")
+l 0000 root sys usr/include/FL/Fl_Line_Dial.h - fltk.sw.dev symval("Fl_Line_Dial.H")
 f 0444 root sys usr/include/FL/Fl_Menu.H FL/Fl_Menu.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu.h - fltk.sw.dev symval("FL/Fl_Menu.H")
+l 0000 root sys usr/include/FL/Fl_Menu.h - fltk.sw.dev symval("Fl_Menu.H")
 f 0444 root sys usr/include/FL/Fl_Menu_.H FL/Fl_Menu_.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_.h - fltk.sw.dev symval("FL/Fl_Menu_.H")
+l 0000 root sys usr/include/FL/Fl_Menu_.h - fltk.sw.dev symval("Fl_Menu_.H")
 f 0444 root sys usr/include/FL/Fl_Menu_Bar.H FL/Fl_Menu_Bar.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Bar.h - fltk.sw.dev symval("FL/Fl_Menu_Bar.H")
+l 0000 root sys usr/include/FL/Fl_Menu_Bar.h - fltk.sw.dev symval("Fl_Menu_Bar.H")
 f 0444 root sys usr/include/FL/Fl_Menu_Button.H FL/Fl_Menu_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Button.h - fltk.sw.dev symval("FL/Fl_Menu_Button.H")
+l 0000 root sys usr/include/FL/Fl_Menu_Button.h - fltk.sw.dev symval("Fl_Menu_Button.H")
 f 0444 root sys usr/include/FL/Fl_Menu_Item.H FL/Fl_Menu_Item.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Item.h - fltk.sw.dev symval("FL/Fl_Menu_Item.H")
+l 0000 root sys usr/include/FL/Fl_Menu_Item.h - fltk.sw.dev symval("Fl_Menu_Item.H")
 f 0444 root sys usr/include/FL/Fl_Menu_Window.H FL/Fl_Menu_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Menu_Window.h - fltk.sw.dev symval("FL/Fl_Menu_Window.H")
+l 0000 root sys usr/include/FL/Fl_Menu_Window.h - fltk.sw.dev symval("Fl_Menu_Window.H")
 f 0444 root sys usr/include/FL/Fl_Multi_Browser.H FL/Fl_Multi_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multi_Browser.h - fltk.sw.dev symval("FL/Fl_Multi_Browser.H")
+l 0000 root sys usr/include/FL/Fl_Multi_Browser.h - fltk.sw.dev symval("Fl_Multi_Browser.H")
 f 0444 root sys usr/include/FL/Fl_Multi_Label.H FL/Fl_Multi_Label.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multi_Label.h - fltk.sw.dev symval("FL/Fl_Multi_Label.H")
+l 0000 root sys usr/include/FL/Fl_Multi_Label.h - fltk.sw.dev symval("Fl_Multi_Label.H")
 f 0444 root sys usr/include/FL/Fl_Multiline_Input.H FL/Fl_Multiline_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multiline_Input.h - fltk.sw.dev symval("FL/Fl_Multiline_Input.H")
+l 0000 root sys usr/include/FL/Fl_Multiline_Input.h - fltk.sw.dev symval("Fl_Multiline_Input.H")
 f 0444 root sys usr/include/FL/Fl_Multiline_Output.H FL/Fl_Multiline_Output.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Multiline_Output.h - fltk.sw.dev symval("FL/Fl_Multiline_Output.H")
+l 0000 root sys usr/include/FL/Fl_Multiline_Output.h - fltk.sw.dev symval("Fl_Multiline_Output.H")
 f 0444 root sys usr/include/FL/Fl_Nice_Slider.H FL/Fl_Nice_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Nice_Slider.h - fltk.sw.dev symval("FL/Fl_Nice_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Nice_Slider.h - fltk.sw.dev symval("Fl_Nice_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Object.H FL/Fl_Object.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Object.h - fltk.sw.dev symval("FL/Fl_Object.H")
+l 0000 root sys usr/include/FL/Fl_Object.h - fltk.sw.dev symval("Fl_Object.H")
 f 0444 root sys usr/include/FL/Fl_Output.H FL/Fl_Output.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Output.h - fltk.sw.dev symval("FL/Fl_Output.H")
+l 0000 root sys usr/include/FL/Fl_Output.h - fltk.sw.dev symval("Fl_Output.H")
 f 0444 root sys usr/include/FL/Fl_Overlay_Window.H FL/Fl_Overlay_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Overlay_Window.h - fltk.sw.dev symval("FL/Fl_Overlay_Window.H")
+l 0000 root sys usr/include/FL/Fl_Overlay_Window.h - fltk.sw.dev symval("Fl_Overlay_Window.H")
 f 0444 root sys usr/include/FL/Fl_Pack.H FL/Fl_Pack.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Pack.h - fltk.sw.dev symval("FL/Fl_Pack.H")
+l 0000 root sys usr/include/FL/Fl_Pack.h - fltk.sw.dev symval("Fl_Pack.H")
 f 0444 root sys usr/include/FL/Fl_Pixmap.H FL/Fl_Pixmap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Pixmap.h - fltk.sw.dev symval("FL/Fl_Pixmap.H")
+l 0000 root sys usr/include/FL/Fl_Pixmap.h - fltk.sw.dev symval("Fl_Pixmap.H")
 f 0444 root sys usr/include/FL/Fl_Positioner.H FL/Fl_Positioner.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Positioner.h - fltk.sw.dev symval("FL/Fl_Positioner.H")
+l 0000 root sys usr/include/FL/Fl_Positioner.h - fltk.sw.dev symval("Fl_Positioner.H")
 f 0444 root sys usr/include/FL/Fl_Radio_Button.H FL/Fl_Radio_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Radio_Button.h - fltk.sw.dev symval("FL/Fl_Radio_Button.H")
+l 0000 root sys usr/include/FL/Fl_Radio_Button.h - fltk.sw.dev symval("Fl_Radio_Button.H")
 f 0444 root sys usr/include/FL/Fl_Radio_Light_Button.H FL/Fl_Radio_Light_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Radio_Light_Button.h - fltk.sw.dev symval("FL/Fl_Radio_Light_Button.H")
+l 0000 root sys usr/include/FL/Fl_Radio_Light_Button.h - fltk.sw.dev symval("Fl_Radio_Light_Button.H")
 f 0444 root sys usr/include/FL/Fl_Radio_Round_Button.H FL/Fl_Radio_Round_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Radio_Round_Button.h - fltk.sw.dev symval("FL/Fl_Radio_Round_Button.H")
+l 0000 root sys usr/include/FL/Fl_Radio_Round_Button.h - fltk.sw.dev symval("Fl_Radio_Round_Button.H")
 f 0444 root sys usr/include/FL/Fl_Repeat_Button.H FL/Fl_Repeat_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Repeat_Button.h - fltk.sw.dev symval("FL/Fl_Repeat_Button.H")
+l 0000 root sys usr/include/FL/Fl_Repeat_Button.h - fltk.sw.dev symval("Fl_Repeat_Button.H")
 f 0444 root sys usr/include/FL/Fl_Return_Button.H FL/Fl_Return_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Return_Button.h - fltk.sw.dev symval("FL/Fl_Return_Button.H")
+l 0000 root sys usr/include/FL/Fl_Return_Button.h - fltk.sw.dev symval("Fl_Return_Button.H")
 f 0444 root sys usr/include/FL/Fl_Roller.H FL/Fl_Roller.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Roller.h - fltk.sw.dev symval("FL/Fl_Roller.H")
+l 0000 root sys usr/include/FL/Fl_Roller.h - fltk.sw.dev symval("Fl_Roller.H")
 f 0444 root sys usr/include/FL/Fl_Round_Button.H FL/Fl_Round_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Round_Button.h - fltk.sw.dev symval("FL/Fl_Round_Button.H")
+l 0000 root sys usr/include/FL/Fl_Round_Button.h - fltk.sw.dev symval("Fl_Round_Button.H")
 f 0444 root sys usr/include/FL/Fl_Round_Clock.H FL/Fl_Round_Clock.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Round_Clock.h - fltk.sw.dev symval("FL/Fl_Round_Clock.H")
+l 0000 root sys usr/include/FL/Fl_Round_Clock.h - fltk.sw.dev symval("Fl_Round_Clock.H")
 f 0444 root sys usr/include/FL/Fl_Scroll.H FL/Fl_Scroll.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Scroll.h - fltk.sw.dev symval("FL/Fl_Scroll.H")
+l 0000 root sys usr/include/FL/Fl_Scroll.h - fltk.sw.dev symval("Fl_Scroll.H")
 f 0444 root sys usr/include/FL/Fl_Scrollbar.H FL/Fl_Scrollbar.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Scrollbar.h - fltk.sw.dev symval("FL/Fl_Scrollbar.H")
+l 0000 root sys usr/include/FL/Fl_Scrollbar.h - fltk.sw.dev symval("Fl_Scrollbar.H")
 f 0444 root sys usr/include/FL/Fl_Secret_Input.H FL/Fl_Secret_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Secret_Input.h - fltk.sw.dev symval("FL/Fl_Secret_Input.H")
+l 0000 root sys usr/include/FL/Fl_Secret_Input.h - fltk.sw.dev symval("Fl_Secret_Input.H")
 f 0444 root sys usr/include/FL/Fl_Select_Browser.H FL/Fl_Select_Browser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Select_Browser.h - fltk.sw.dev symval("FL/Fl_Select_Browser.H")
+l 0000 root sys usr/include/FL/Fl_Select_Browser.h - fltk.sw.dev symval("Fl_Select_Browser.H")
 f 0444 root sys usr/include/FL/Fl_Simple_Counter.H FL/Fl_Simple_Counter.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Simple_Counter.h - fltk.sw.dev symval("FL/Fl_Simple_Counter.H")
+l 0000 root sys usr/include/FL/Fl_Simple_Counter.h - fltk.sw.dev symval("Fl_Simple_Counter.H")
 f 0444 root sys usr/include/FL/Fl_Single_Window.H FL/Fl_Single_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Single_Window.h - fltk.sw.dev symval("FL/Fl_Single_Window.H")
+l 0000 root sys usr/include/FL/Fl_Single_Window.h - fltk.sw.dev symval("Fl_Single_Window.H")
 f 0444 root sys usr/include/FL/Fl_Slider.H FL/Fl_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Slider.h - fltk.sw.dev symval("FL/Fl_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Slider.h - fltk.sw.dev symval("Fl_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Tabs.H FL/Fl_Tabs.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Tabs.h - fltk.sw.dev symval("FL/Fl_Tabs.H")
+l 0000 root sys usr/include/FL/Fl_Tabs.h - fltk.sw.dev symval("Fl_Tabs.H")
 f 0444 root sys usr/include/FL/Fl_Tile.H FL/Fl_Tile.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Tile.h - fltk.sw.dev symval("FL/Fl_Tile.H")
+l 0000 root sys usr/include/FL/Fl_Tile.h - fltk.sw.dev symval("Fl_Tile.H")
 f 0444 root sys usr/include/FL/Fl_Timer.H FL/Fl_Timer.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Timer.h - fltk.sw.dev symval("FL/Fl_Timer.H")
+l 0000 root sys usr/include/FL/Fl_Timer.h - fltk.sw.dev symval("Fl_Timer.H")
 f 0444 root sys usr/include/FL/Fl_Toggle_Button.H FL/Fl_Toggle_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Toggle_Button.h - fltk.sw.dev symval("FL/Fl_Toggle_Button.H")
+l 0000 root sys usr/include/FL/Fl_Toggle_Button.h - fltk.sw.dev symval("Fl_Toggle_Button.H")
 f 0444 root sys usr/include/FL/Fl_Toggle_Light_Button.H FL/Fl_Toggle_Light_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Toggle_Light_Button.h - fltk.sw.dev symval("FL/Fl_Toggle_Light_Button.H")
+l 0000 root sys usr/include/FL/Fl_Toggle_Light_Button.h - fltk.sw.dev symval("Fl_Toggle_Light_Button.H")
 f 0444 root sys usr/include/FL/Fl_Toggle_Round_Button.H FL/Fl_Toggle_Round_Button.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Toggle_Round_Button.h - fltk.sw.dev symval("FL/Fl_Toggle_Round_Button.H")
+l 0000 root sys usr/include/FL/Fl_Toggle_Round_Button.h - fltk.sw.dev symval("Fl_Toggle_Round_Button.H")
 f 0444 root sys usr/include/FL/Fl_Valuator.H FL/Fl_Valuator.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Valuator.h - fltk.sw.dev symval("FL/Fl_Valuator.H")
+l 0000 root sys usr/include/FL/Fl_Valuator.h - fltk.sw.dev symval("Fl_Valuator.H")
 f 0444 root sys usr/include/FL/Fl_Value_Input.H FL/Fl_Value_Input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Value_Input.h - fltk.sw.dev symval("FL/Fl_Value_Input.H")
+l 0000 root sys usr/include/FL/Fl_Value_Input.h - fltk.sw.dev symval("Fl_Value_Input.H")
 f 0444 root sys usr/include/FL/Fl_Value_Output.H FL/Fl_Value_Output.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Value_Output.h - fltk.sw.dev symval("FL/Fl_Value_Output.H")
+l 0000 root sys usr/include/FL/Fl_Value_Output.h - fltk.sw.dev symval("Fl_Value_Output.H")
 f 0444 root sys usr/include/FL/Fl_Value_Slider.H FL/Fl_Value_Slider.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Value_Slider.h - fltk.sw.dev symval("FL/Fl_Value_Slider.H")
+l 0000 root sys usr/include/FL/Fl_Value_Slider.h - fltk.sw.dev symval("Fl_Value_Slider.H")
 f 0444 root sys usr/include/FL/Fl_Widget.H FL/Fl_Widget.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Widget.h - fltk.sw.dev symval("FL/Fl_Widget.H")
+l 0000 root sys usr/include/FL/Fl_Widget.h - fltk.sw.dev symval("Fl_Widget.H")
 f 0444 root sys usr/include/FL/Fl_Window.H FL/Fl_Window.H fltk.sw.dev
-l 0000 root sys usr/include/FL/Fl_Window.h - fltk.sw.dev symval("FL/Fl_Window.H")
+l 0000 root sys usr/include/FL/Fl_Window.h - fltk.sw.dev symval("Fl_Window.H")
 f 0444 root sys usr/include/FL/dirent.h FL/dirent.h fltk.sw.dev
 f 0444 root sys usr/include/FL/filename.H FL/filename.H fltk.sw.dev
-l 0000 root sys usr/include/FL/filename.h - fltk.sw.dev symval("FL/filename.H")
+l 0000 root sys usr/include/FL/filename.h - fltk.sw.dev symval("filename.H")
 f 0444 root sys usr/include/FL/fl_ask.H FL/fl_ask.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_ask.h - fltk.sw.dev symval("FL/fl_ask.H")
+l 0000 root sys usr/include/FL/fl_ask.h - fltk.sw.dev symval("fl_ask.H")
 f 0444 root sys usr/include/FL/fl_draw.H FL/fl_draw.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_draw.h - fltk.sw.dev symval("FL/fl_draw.H")
+l 0000 root sys usr/include/FL/fl_draw.h - fltk.sw.dev symval("fl_draw.H")
 f 0444 root sys usr/include/FL/fl_file_chooser.H FL/fl_file_chooser.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_file_chooser.h - fltk.sw.dev symval("FL/fl_file_chooser.H")
+l 0000 root sys usr/include/FL/fl_file_chooser.h - fltk.sw.dev symval("fl_file_chooser.H")
 f 0444 root sys usr/include/FL/fl_message.H FL/fl_message.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_message.h - fltk.sw.dev symval("FL/fl_message.H")
+l 0000 root sys usr/include/FL/fl_message.h - fltk.sw.dev symval("fl_message.H")
 f 0444 root sys usr/include/FL/fl_show_colormap.H FL/fl_show_colormap.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_show_colormap.h - fltk.sw.dev symval("FL/fl_show_colormap.H")
+l 0000 root sys usr/include/FL/fl_show_colormap.h - fltk.sw.dev symval("fl_show_colormap.H")
 f 0444 root sys usr/include/FL/fl_show_input.H FL/fl_show_input.H fltk.sw.dev
-l 0000 root sys usr/include/FL/fl_show_input.h - fltk.sw.dev symval("FL/fl_show_input.H")
+l 0000 root sys usr/include/FL/fl_show_input.h - fltk.sw.dev symval("fl_show_input.H")
 f 0444 root sys usr/include/FL/forms.H FL/forms.H fltk.sw.dev
-l 0000 root sys usr/include/FL/forms.h - fltk.sw.dev symval("FL/forms.H")
+l 0000 root sys usr/include/FL/forms.h - fltk.sw.dev symval("forms.H")
 f 0444 root sys usr/include/FL/gl.h FL/gl.h fltk.sw.dev
 f 0444 root sys usr/include/FL/gl2opengl.h FL/gl2opengl.h fltk.sw.dev
 f 0444 root sys usr/include/FL/gl_draw.H FL/gl_draw.H fltk.sw.dev
-l 0000 root sys usr/include/FL/gl_draw.h - fltk.sw.dev symval("FL/gl_draw.H")
+l 0000 root sys usr/include/FL/gl_draw.h - fltk.sw.dev symval("gl_draw.H")
 f 0444 root sys usr/include/FL/glut.H FL/glut.H fltk.sw.dev
-l 0000 root sys usr/include/FL/glut.h - fltk.sw.dev symval("FL/glut.H")
+l 0000 root sys usr/include/FL/glut.h - fltk.sw.dev symval("glut.H")
 f 0444 root sys usr/include/FL/math.h FL/math.h fltk.sw.dev
 f 0444 root sys usr/include/FL/menubar.h FL/menubar.h fltk.sw.dev
 f 0444 root sys usr/include/FL/win32.H FL/win32.H fltk.sw.dev
-l 0000 root sys usr/include/FL/win32.h - fltk.sw.dev symval("FL/win32.H")
+l 0000 root sys usr/include/FL/win32.h - fltk.sw.dev symval("win32.H")
 f 0444 root sys usr/include/FL/x.H FL/x.H fltk.sw.dev
-l 0000 root sys usr/include/FL/x.h - fltk.sw.dev symval("FL/x.H")
+l 0000 root sys usr/include/FL/x.h - fltk.sw.dev symval("x.H")
 l 0000 root sys usr/include/Fl - fltk.sw.dev symval("FL")
 f 0444 root sys usr/info/fltk/FL.gif documentation/FL.gif fltk.man.dev
 f 0444 root sys usr/info/fltk/Fl_Adjuster.html documentation/Fl_Adjuster.html fltk.man.dev
@@ -320,4 +320,4 @@ f 0444 root sys usr/info/fltk/value_slider.gif documentation/value_slider.gif fl
 f 0444 root sys usr/info/fltk/widgets.html documentation/widgets.html fltk.man.dev
 f 0555 root sys usr/lib/libfltk.a lib/libfltk.a fltk.sw.dev
 l 0000 root sys usr/lib/libfltk.so - fltk.sw.eoe symval("libfltk.so.1")
-f 0555 root sys usr/lib/libfltk.so.1 lib/libfltk.so.1 fltk.sw.eoe
+f 0555 root sys usr/lib/libfltk.so.1 src/libfltk.so.1 fltk.sw.eoe

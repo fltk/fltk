@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_grab.cxx,v 1.1 1999/02/03 08:43:33 bill Exp $"
+// "$Id: Fl_grab.cxx,v 1.1.2.1 1999/04/10 08:09:38 bill Exp $"
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
@@ -35,7 +35,7 @@
 // This also modifies how Fl_Window::show() works, on X it turns on
 // override_redirect, it does similar things on WIN32.
 
-extern void fl_send_extra_move(); // in Fl.cxx
+extern void fl_fix_focus(); // in Fl.cxx
 
 #ifdef WIN32
 // We have to keep track of whether we have captured the mouse, since
@@ -83,11 +83,11 @@ void Fl::grab(Fl_Window* w) {
       XFlush(fl_display);
 #endif
       grab_ = 0;
-      fl_send_extra_move();
+      fl_fix_focus();
     }
   }
 }
 
 //
-// End of "$Id: Fl_grab.cxx,v 1.1 1999/02/03 08:43:33 bill Exp $".
+// End of "$Id: Fl_grab.cxx,v 1.1.2.1 1999/04/10 08:09:38 bill Exp $".
 //

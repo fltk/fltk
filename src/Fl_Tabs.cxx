@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6 1999/01/07 19:17:27 mike Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.2 1999/07/22 07:27:11 bill Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -53,6 +53,7 @@ int Fl_Tabs::tab_positions(int* p, int* w) {
     if (o->label()) {
       int wt = 0; int ht = 0; o->measure_label(wt,ht);
       w[i] = wt+TABSLOPE;
+      if (2*TABSLOPE > w[i]) w[i] = 2*TABSLOPE;
     } else 
       w[i] = 2*TABSLOPE;
     p[i+1] = p[i]+w[i];
@@ -174,9 +175,10 @@ Fl_Widget* Fl_Tabs::value() {
 
 int Fl_Tabs::value(Fl_Widget *o) {
   if (value_ == o) return 0;
-  if (o) o->show();
-  if (value_) value_->hide();
+  Fl_Widget* oldvalue = value_;
   value_ = o;
+  if (o) o->show();
+  if (oldvalue) oldvalue->hide();
   redraw();
   do_callback();
   return 1;
@@ -246,7 +248,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     fl_color(!sel && o==push_ ? FL_DARK3 : FL_LIGHT3);
     fl_line(x1, y()+h()+H, x1+TABSLOPE, y()+h()-1);
   }
-  if (x2-x1 > 2*TABSLOPE)
+  if (W > TABSLOPE)
     o->draw_label(what==LEFT ? x1+TABSLOPE : x2-W+TABSLOPE,
 		  y()+(H<0?h()+H-3:0), W-TABSLOPE,
 		  (H<0?-H:H)+3, FL_ALIGN_CENTER);
@@ -259,5 +261,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6 1999/01/07 19:17:27 mike Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.2 1999/07/22 07:27:11 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fractals.cxx,v 1.5 1999/01/19 19:10:39 mike Exp $"
+// "$Id: fractals.cxx,v 1.5.2.1 1999/03/25 13:37:00 mike Exp $"
 //
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
@@ -399,6 +399,8 @@ void CreateTreeLists(void)
   glPopAttrib();
   glPopMatrix();
   glEndList();
+
+  gluDeleteQuadric(cylquad);
 }
 
  /*
@@ -803,5 +805,5 @@ int main(int argc, char** argv)
 #endif
 
 //
-// End of "$Id: fractals.cxx,v 1.5 1999/01/19 19:10:39 mike Exp $".
+// End of "$Id: fractals.cxx,v 1.5.2.1 1999/03/25 13:37:00 mike Exp $".
 //
