@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.5 1998/10/21 14:20:10 mike Exp $"
+// "$Id: Fl_Menu.cxx,v 1.6 1998/11/10 14:40:17 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -101,12 +101,7 @@ public:
   void position(int x, int y);
 };
 
-#define BW	3 // border thickness
-#define LEFT	6 // between left edge of item and edge of box
-#define RIGHT	8 // between right edge of item and edge of box
-#define BOTTOM	4 // between bottom item and bottom of box
 #define LEADING 4 // extra vertical leading
-#define TOP	5 // between top item and top of box
 
 extern char fl_draw_shortcut;
 
@@ -154,10 +149,10 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
     }
     if (selected == 2) {
       fl_draw_box(b, x, y, w, h, r);
-      x += LEFT;
-      w -= LEFT+RIGHT;
+      x += 3;
+      w -= 8;
     } else {
-      fl_draw_box(b, x-2, y-1, w+7, h+2, r);
+      fl_draw_box(b, x+1, y-1, w-2, h+2, r);
     }
   }
 
@@ -165,27 +160,27 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
     int y1 = y+(h-14)/2;
     fl_color(FL_DARK3);
     if (flags & FL_MENU_RADIO) {
-      fl_line(x-1, y1+7, x+5, y1+1, x+11, y1+7);
+      fl_line(x+2, y1+7, x+8, y1+1, x+14, y1+7);
       if (selected) {
 	fl_color(color); 
-	fl_polygon(x, y1+7, x+5, y1+2, x+10, y1+7, x+5, y1+12);
+	fl_polygon(x+3, y1+7, x+8, y1+2, x+13, y1+7, x+8, y1+12);
       }
-      fl_color(FL_LIGHT3); fl_line(x+11, y1+7, x+5, y1+13, x-1, y1+7);
+      fl_color(FL_LIGHT3); fl_line(x+14, y1+7, x+8, y1+13, x+2, y1+7);
       if (value()) {
 	fl_color(FL_BLACK); 
-	fl_polygon(x+1, y1+7, x+5, y1+3, x+9, y1+7, x+5, y1+11);
+	fl_polygon(x+4, y1+7, x+8, y1+3, x+12, y1+7, x+8, y1+11);
       }
     } else {
-      fl_yxline(x, y1+11, y1+2, x+9);
-      if (selected) {fl_color(color); fl_rectf(x+1, y1+3, 9, 9);}
-      fl_color(FL_LIGHT3); fl_xyline(x+1, y1+12, x+10, y1+3);
-      if (value()) {fl_color(FL_BLACK); fl_rectf(x+2, y1+4, 7, 7);}
+      fl_yxline(x+3, y1+11, y1+2, x+12);
+      if (selected) {fl_color(color); fl_rectf(x+4, y1+3, 9, 9);}
+      fl_color(FL_LIGHT3); fl_xyline(x+4, y1+12, x+13, y1+3);
+      if (value()) {fl_color(FL_BLACK); fl_rectf(x+5, y1+4, 7, 7);}
     }
     x += 14; w -= 14;
   }
 
   fl_draw_shortcut = 1;
-  l.draw(x, y, w, h, FL_ALIGN_LEFT);
+  l.draw(x+3, y, w>6 ? w-6 : 0, h, FL_ALIGN_LEFT);
   fl_draw_shortcut = 0;
 }
 
@@ -196,7 +191,6 @@ menutitle::menutitle(int X, int Y, int W, int H, const Fl_Menu_Item* L) :
   clear_border();
   menu = L;
   if (L->labelcolor_) clear_overlay();
-  box(FL_NO_BOX);
 }
 
 menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
@@ -209,7 +203,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   clear_border();
   menu = m;
   drawn_selected = -1;
-  box(FL_NO_BOX);
+  box(button && button->box() ? button->box() : FL_UP_BOX);
+  color(button ? button->color() : FL_GRAY);
   selected = -1;
   {int i = 0;
   if (m) for (const Fl_Menu_Item* m1=m; ; m1 = m1->next(), i++) {
@@ -232,8 +227,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   int hotKeysw = 0;
   int Wtitle = 0;
   int Htitle = 0;
-  if (t) Wtitle = t->measure(&Htitle, button);
-  int W = Wtitle;
+  if (t) Wtitle = t->measure(&Htitle, button) + 12;
+  int W = 0;
   if (m) for (; m->text; m = m->next()) {
     int h; int w1 = m->measure(&h, button);
     if (h+LEADING>itemheight) itemheight = h+LEADING;
@@ -246,21 +241,24 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
     if (m->labelcolor_) clear_overlay();
   }
   if (selected >= 0 && !Wp) X -= W/2;
-  W += hotKeysw+LEFT+RIGHT; if (Wp > W) W = Wp;
+  int BW = Fl::box_dx(box());
+  W += hotKeysw+2*BW+7;
+  if (Wp > W) W = Wp;
+  if (Wtitle > W) W = Wtitle;
 
   if (!Wp) {if (X < 0) X = 0; if (X > Fl::w()-W) X= Fl::w()-W;}
   x(X); w(W);
-  h((numitems ? itemheight*numitems-LEADING : 0)+TOP+BOTTOM+1);
+  h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+5);
   if (selected >= 0)
-    Y = Y+(Hp-itemheight)/2-selected*itemheight-2;
+    Y = Y+(Hp-itemheight)/2-selected*itemheight-BW+1;
   else
     Y = Y+Hp;
   if (m) y(Y-1); else {y(Y-3); w(1); h(1);}
 
   if (t) {
-    int ht = button && button->h() <= 50 ? button->h()-6
-      : Htitle+TOP+BOTTOM-1;
-    title = new menutitle(X, Y-ht-3, Wtitle+LEFT+RIGHT, ht, t);
+    int ht = button && button->h() <= 100 ? button->h()-6
+      : Htitle+2*BW+3;
+    title = new menutitle(X, Y-ht-3, Wtitle, ht, t);
   } else
     title = 0;
 }
@@ -277,7 +275,7 @@ void menuwindow::position(int X, int Y) {
 
 // scroll so item i is visible on screen
 void menuwindow::autoscroll(int i) {
-  int Y = y()+h()-(BOTTOM + (numitems-i)*itemheight - LEADING + 1);
+  int Y = y()+h()-(Fl::box_dx(box()) + (numitems-i)*itemheight - LEADING + 1);
   if (Y <= 0) Y = -Y+10;
   else {
     Y = Y+itemheight-Fl::h();
@@ -293,23 +291,24 @@ void menuwindow::autoscroll(int i) {
 void menuwindow::drawentry(const Fl_Menu_Item* m, int i, int erase) {
   if (!m) return; // this happens if -1 is selected item and redrawn
 
-  int x = LEFT-3;
+  int BW = Fl::box_dx(box());
+  int x = BW;
   int W = this->w();
-  int w = W-(LEFT+RIGHT-6);
-  int y = h()-(BOTTOM + (numitems-i)*itemheight - LEADING + 1);
+  int w = W-2*BW-1;
+  int y = BW+2+i*itemheight;
   int h = itemheight - LEADING;
 
   if (erase && i != selected) {
     fl_color(button ? button->color() : FL_GRAY);
-    fl_rectf(x+1, y-1, w+1, h+2);
+    fl_rectf(x+1, y-1, w-2, h+2);
   }
 
-  m->draw(x+3, y, w-6, h, button, i==selected);
+  m->draw(x, y, w, h, button, i==selected);
 
   // the shortcuts and arrows assumme fl_color() was left set by draw():
   if (m->submenu()) {
     int y1 = y+(h-14)/2;
-    fl_polygon(x+w-10, y1+2, x+w-10, y1+2+10, x+w, y1+2+5);
+    fl_polygon(x+w-13, y1+2, x+w-13, y1+2+10, x+w-3, y1+2+5);
   } else if (m->shortcut_) {
     Fl_Font f = button ? button->textfont() : FL_HELVETICA;
     fl_font(f, button ? button->textsize() : FL_NORMAL_SIZE,
@@ -319,9 +318,9 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int i, int erase) {
 
   if (m->flags & FL_MENU_DIVIDER) {
     fl_color(FL_DARK3);
-    fl_xyline(BW-1, y+h+1, W-BW);
+    fl_xyline(BW-1, y+h+1, W-2*BW+2);
     fl_color(FL_LIGHT3);
-    fl_xyline(BW, y+h+2, W-BW);
+    fl_xyline(BW-1, y+h+2, W-2*BW+2);
   }
 
 }
@@ -333,10 +332,8 @@ void menutitle::draw() {
 void menuwindow::draw() {
 
   if (damage() != FL_DAMAGE_CHILD) {	// complete redraw
+    fl_draw_box(box(), 0, 0, w(), h(), color());
     if (menu) {
-      fl_draw_box(button&&button->box() ? button->box() : FL_UP_BOX,
-		  0, 0, w(), h(),
-		  button ? button->color() : FL_GRAY);
       const Fl_Menu_Item* m; int i;
       for (m=menu, i=0; m->text; i++, m = m->next()) drawentry(m, i, 0);
     }
@@ -361,7 +358,7 @@ int menuwindow::find_selected(int mx, int my) {
   my -= y();
   if (my < 0 || my >= h()) return -1;
   if (!itemheight) { // menubar
-    int x = BW; int i = 0;
+    int x = 3; int i = 0;
     const Fl_Menu_Item* m = menu;
     for (; ; m = m->next(), i++) {
       if (!m->text) return -1;
@@ -371,7 +368,7 @@ int menuwindow::find_selected(int mx, int my) {
     return i;
   }
   if (mx < 0 || mx >= w()) return -1;
-  int i = (my-(TOP-1))/itemheight;
+  int i = (my-Fl::box_dx(box())-1)/itemheight;
   if (i>=numitems) i = numitems-1;
   else if (i < 0) i = 0;
   return i;
@@ -380,7 +377,7 @@ int menuwindow::find_selected(int mx, int my) {
 // return horizontal position for item i in a menubar:
 int menuwindow::titlex(int i) {
   const Fl_Menu_Item* m;
-  int x = BW;
+  int x = 3;
   for (m=menu; i--; m = m->next()) x += m->measure(0, button) + 16;
   return x;
 }
@@ -711,5 +708,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.5 1998/10/21 14:20:10 mike Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.6 1998/11/10 14:40:17 mike Exp $".
 //
