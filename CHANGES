@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.5rc3
 
+	- added test/unittests to verify pixel drawing and 
+	  alignment across platforms
 	- Fl_Menu_::find_item() didn't determine the menu path
 	  properly (STR #481)
 	- The build system now creates image libraries named

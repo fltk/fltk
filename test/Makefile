@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.41 2004/04/11 04:39:00 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.42 2004/08/26 22:24:24 matthiaswm Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -26,6 +26,7 @@
 include ../makeinclude
 
 CPPFILES =\
+	unittests.cxx \
 	adjuster.cxx \
 	arc.cxx \
 	ask.cxx \
@@ -89,6 +90,7 @@ CPPFILES =\
 	valuators.cxx
 
 ALL =	\
+	unittests$(EXEEXT) \
 	adjuster$(EXEEXT) \
 	arc$(EXEEXT) \
 	ask$(EXEEXT) \
@@ -181,6 +183,8 @@ uninstall:
 $(ALL): ../lib/$(LIBNAME)
 
 # General demos...
+unittests$(EXEEXT): unittests.o
+
 adjuster$(EXEEXT): adjuster.o
 
 arc$(EXEEXT): arc.o
@@ -372,5 +376,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.41 2004/04/11 04:39:00 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.42 2004/08/26 22:24:24 matthiaswm Exp $".
 #
