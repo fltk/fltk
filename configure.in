@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.48 2002/01/11 21:42:04 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.49 2002/01/13 19:17:36 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -55,6 +55,9 @@ dnl Don't automatically add "-g" to compiler options...
 CFLAGS="${CFLAGS:=}"
 CPPFLAGS="${CPPFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
+OPTIM="${OPTIM:=}"
+
+AC_SUBST(OPTIM)
 
 dnl Handle Cygwin option *first*, before all other tests.
 case $uname in
@@ -165,7 +168,9 @@ AC_SUBST(DSOLINK)
 AC_SUBST(DSONAME)
 AC_SUBST(GLDSONAME)
 
-AC_ARG_ENABLE(threads, [  --enable-threads       enable multi-threading support])
+AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support])
+
+AC_ARG_WITH(optim, [  --with-optim=\"flags\"    use custom optimization flags])
 
 dnl Find commands...
 AC_PROG_CC
@@ -308,9 +313,8 @@ THREADS=
 case $uname in
     CYGWIN*)
 	dnl Cygwin environment...
-	LIBS="$LIBS -mwindows -lcomctl32 -lwsock32"
-	CFLAGS="$CFLAGS -mwindows -DWIN32"
-	CXXFLAGS="$CXXFLAGS -mwindows -DWIN32"
+	LIBS="$LIBS -lcomctl32 -lwsock32"
+	OPTIM="$OPTIM -mwindows -DWIN32"
 
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
@@ -423,12 +427,17 @@ case $uname in
 	    fi)
 
 	dnl Check for overlay visuals...
-	AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
+	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,
 	    if xprop -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
         	ac_cv_have_overlay=yes
 	    else
         	ac_cv_have_overlay=no
 	    fi)
+
+        if test x$ac_cv_have_overlay = xyes; then
+	    AC_DEFINE(HAVE_OVERLAY)
+	fi
+	;;
 esac
 
 AC_SUBST(GLDEMOS)
@@ -520,8 +529,10 @@ if test -n "$GXX"; then
 
     CXX="$CC"
 
-    CFLAGS="-Wall $CFLAGS"
-    CXXFLAGS="-Wall $CXXFLAGS"
+    # Show all warnings when compiling...
+    OPTIM="-Wall $OPTIM"
+
+    # Set the default compiler optimizations...
     if test -z "$DEBUGFLAG"; then
     	#
 	# Note: Can't use -fomit-frame-pointer - prevents tools like
@@ -536,12 +547,17 @@ if test -n "$GXX"; then
 	#       difference in the speed of the code, but does bloat the
 	#       library 10+%.
 	#
-        CFLAGS="-O2 $CFLAGS"
-        CXXFLAGS="-O2 $CXXFLAGS"
+
+        if test "x$with_optim" != x; then
+	    OPTIM="$with_optim $OPTIM"
+	else
+            OPTIM="-O2 $OPTIM"
+	fi
     fi
+
+    # Generate position-independent code when needed...
     if test $PICFLAG = 1; then
-    	CFLAGS="-fPIC $CFLAGS"
-    	CXXFLAGS="-fPIC $CXXFLAGS"
+    	OPTIM="$OPTIM -fPIC"
     fi
 
     # See if GCC supports -fno-exceptions...
@@ -549,13 +565,18 @@ if test -n "$GXX"; then
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
     AC_TRY_COMPILE(,,
-	CXXFLAGS="$CXXFLAGS -fno-exceptions"
+	OPTIM="$OPTIM -fno-exceptions"
 	AC_MSG_RESULT(yes),
-	CFLAGS="$OLDCFLAGS"
 	AC_MSG_RESULT(no))
     CFLAGS="$OLDCFLAGS"
 
     # See if we are running Solaris; if so, try the -fpermissive option...
+    # This option is required on some versions of Solaris to work around
+    # bugs in the X headers up through Solaris 7.
+    #
+    # Unlike the other compiler/optimization settings, this one is placed
+    # in CFLAGS and CXXFLAGS so that fltk-config will provide the option
+    # to clients - otherwise client apps will not compile properly...
     if test "$uname" = SunOS; then
 	AC_MSG_CHECKING(if GCC supports -fpermissive)
 
@@ -585,41 +606,55 @@ else
 			AC_MSG_WARN(FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI \"-n32 -mips3\")
 		fi
 
-        	CFLAGS="-fullwarn $CFLAGS"
-        	CXXFLAGS="-fullwarn $CXXFLAGS"
-	    else
-        	CXXFLAGS="+w +pp $CXXFLAGS"
+        	OPTIM="-fullwarn $OPTIM"
 	    fi
 	    if test -z "$DEBUGFLAG"; then
-        	CFLAGS="-O2 $CFLAGS"
-        	CXXFLAGS="-O2 $CXXFLAGS"
+        	if test "x$with_optim" != x; then
+		    OPTIM="$with_optim $OPTIM"
+		else
+        	    OPTIM="-O2 $OPTIM"
+		fi
 	    fi
 	    ;;
 	HP-UX*)
 	    # Running HP-UX; these options should work for the HP compilers.
 	    if test -z "$DEBUGFLAG"; then
-		CFLAGS="+O2 $CFLAGS"
-		CXXFLAGS="+O2 +W336,501,736,740,749,829 $CXXFLAGS"
+        	if test "x$with_optim" != x; then
+		    OPTIM="$with_optim $OPTIM"
+		else
+        	    OPTIM="-O2 $OPTIM"
+		fi
 	    fi
-	    CFLAGS="+DAportable $CFLAGS"
-	    CXXFLAGS="+DAportable $CXXFLAGS"
+
+            if test "x$with_optim" != x; then
+		OPTIM="$OPTIM +DAportable"
+            fi
+
+	    OPTIM="$OPTIM +W336,501,736,740,749,829"
 	    ;;
 	SunOS*)
 	    # Solaris
 	    if test -z "$DEBUGFLAG"; then
-		CFLAGS="-xO3"
-		CXXFLAGS="-xO3"
+        	if test "x$with_optim" != x; then
+		    OPTIM="$with_optim $OPTIM"
+		else
+        	    OPTIM="-xO3 $OPTIM"
+		fi
 	    fi
+
 	    if test $PICFLAG = 1; then
-		CFLAGS="-KPIC $CFLAGS"
-		CXXFLAGS="-PIC $CXXFLAGS"
+		OPTIM="-KPIC $OPTIM"
 	    fi
 	    ;;
 	AIX*)
 	    if test -z "$DEBUGFLAG"; then
-        	CFLAGS="-O2 $CFLAGS"
-        	CXXFLAGS="-O2 $CXXFLAGS"
+        	if test "x$with_optim" != x; then
+		    OPTIM="$with_optim $OPTIM"
+		else
+        	    OPTIM="-O2 $OPTIM"
+		fi
 	    fi
+
 	    AC_MSG_WARN(The AIX C and C++ compilers are known not to correctly compile the FLTK library.)
 	    ;;
 	*)
@@ -631,8 +666,7 @@ else
     esac
 fi
 
-CFLAGS="$DEBUGFLAG $CFLAGS"
-CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
+OPTIM="$DEBUGFLAG $OPTIM"
 
 dnl Define the FLTK documentation directory...
 if test x$prefix = xNONE; then
@@ -649,5 +683,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.48 2002/01/11 21:42:04 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.49 2002/01/13 19:17:36 easysw Exp $".
 dnl

@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- Updated the test makefile to work with more versions
+	  of "make".
+	- Added new "--with-optim" configure option to set the
+	  optimization flags to use when compiling FLTK.
+	- The fltk-config script no longer reports the
+	  optimization flags that were used to compile FLTK.
 	- Initial port of FLTK 2.0 drag-and-drop support.
 
 
