@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.10 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.11 2001/01/28 06:57:33 spitzak Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 const char *copyright =
-"The FLTK user interface designer version 1.0\n"
+"The FLTK user interface designer version 1.0.11\n"
 "Copyright 1998-2001 by Bill Spitzak and others.\n"
 "\n"
 "This library is free software; you can redistribute it and/or "
@@ -465,5 +465,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.10 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.11 2001/01/28 06:57:33 spitzak Exp $".
 //

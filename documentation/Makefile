@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.8 2001/01/22 15:13:38 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.9 2001/01/28 06:57:32 spitzak Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -118,26 +118,40 @@ HTMLFILES	= \
 		osissues.html \
 		license.html
 
-all:	fltk.ps fltk.pdf fltk.d/index.html
+all:	fltk.ps fltk.pdf
 
 clean:
-	rm -rf fltk.d
 	rm -f fltk.ps
 	rm -f fltk.pdf
 
 depend:
 
-install:
-	-mkdir -p $(prefix)/share/doc/fltk
-	cp $(HTMLFILES) index.html $(prefix)/share/doc/fltk
-	cp *.gif *.jpg $(prefix)/share/doc/fltk
-	chmod 644 $(prefix)/share/doc/fltk/*
+# According to FHS this should be:
+# htmldir = $(prefix)/share/doc/html/en/fltk
+# Possibly the "en/" can be removed, it is not clear.
+# KDE uses "HTML" instead of "html", which is correct?
+htmldir = $(prefix)/share/doc/fltk
 
-fltk.d/index.html: $(HTMLFILES)
-	echo "Generating HTML documentation..."
-	-mkdir fltk.d
-	-rm -f fltk.d/*
-	$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --bodycolor white --titleimage FL.gif $(HTMLFILES)
+# According to FHS this should be:
+# mandir = $(prefix)/share/man/en/man
+# they say the "en/" is optional
+mandir = $(prefix)/man/man
+
+install:
+	-mkdir -p $(htmldir)
+	cp $(HTMLFILES) *.gif *.jpg index.html $(htmldir)
+	chmod 644 $(htmldir)/*
+	-mkdir -p $(mandir)1
+	cp *.1 $(mandir)1
+	-mkdir -p $(mandir)3
+	cp *.3 $(mandir)3
+
+# Base html files are now the readable ones, this is not done:
+#fltk.d/index.html: $(HTMLFILES)
+#	echo "Generating HTML documentation..."
+#	-mkdir fltk.d
+#	-rm -f fltk.d/*
+#	$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --bodycolor white --titleimage FL.gif $(HTMLFILES)
 
 fltk.ps: $(HTMLFILES)
 	echo "Generating PostScript documentation..."
@@ -149,5 +163,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.8 2001/01/22 15:13:38 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.9 2001/01/28 06:57:32 spitzak Exp $".
 #
