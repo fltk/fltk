@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.7 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.8 2001/04/13 19:07:40 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -112,9 +112,9 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
   int i = 0;
   while (fgets(buffer,MAXSIZE+20,f)) {
     if (buffer[0] != '\"') continue;
-    char *p = buffer;
+    char *myp = buffer;
     char *q = buffer+1;
-    while (*q != '\"' && p < buffer+MAXSIZE) {
+    while (*q != '\"' && myp < buffer+MAXSIZE) {
       if (*q == '\\') switch (*++q) {
       case '\n':
 	fgets(q,(buffer+MAXSIZE+20)-q,f); break;
@@ -129,7 +129,7 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
 	  n = (n<<4)+d;
 	  q++;
 	}
-	*p++ = n;
+	*myp++ = n;
       } break;
       default: {
 	int c = *q++;
@@ -142,13 +142,13 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
 	    q++;
 	  }
 	}
-	*p++ = c;
+	*myp++ = c;
       } break;
       } else {
-	*p++ = *q++;
+	*myp++ = *q++;
       }
     }
-    *p++ = 0;
+    *myp++ = 0;
     if (i >= malloc_size) {
       malloc_size = 2*malloc_size;
       if (data == local_data) {
@@ -161,9 +161,9 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
 	length = (int*)realloc(length, malloc_size*sizeof(int));
       }
     }
-    data[i] = new char[p-buffer];
-    memcpy(data[i], buffer,p-buffer);
-    length[i] = p-buffer-1;
+    data[i] = new char[myp-buffer];
+    memcpy(data[i], buffer,myp-buffer);
+    length[i] = myp-buffer-1;
     i++;
   }
 
@@ -436,5 +436,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.7 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.8 2001/04/13 19:07:40 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.7 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8 2001/04/13 19:07:40 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,11 @@
 
 static int ncolors, chars_per_pixel;
 
-int fl_measure_pixmap(/*const*/char * const *data, int &w, int &h) {
+int fl_measure_pixmap(/*const*/ char* const* data, int &w, int &h) {
+  return fl_measure_pixmap((const char*const*)data,w,h);
+}
+
+int fl_measure_pixmap(const char * const *data, int &w, int &h) {
   int i = sscanf(data[0],"%d %d %d %d",&w,&h,&ncolors,&chars_per_pixel);
   if (i<4 || w<=0 || h<=0 ||
       chars_per_pixel!=1 && chars_per_pixel!=2) return w=0;
@@ -134,7 +138,11 @@ extern int fl_parse_color(const char*, uchar&, uchar&, uchar&);
 
 uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
-int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
+int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
+  return fl_draw_pixmap((const char*const*)data,x,y,bg);
+}
+
+int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
   pixmap_data d;
   if (!fl_measure_pixmap(di, d.w, d.h)) return 0;
   const uchar*const* data = (const uchar*const*)(di+1);
@@ -264,5 +272,5 @@ int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.7 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8 2001/04/13 19:07:40 easysw Exp $".
 //

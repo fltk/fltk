@@ -1,5 +1,5 @@
 //
-// "$Id: mandelbrot.cxx,v 1.8.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: mandelbrot.cxx,v 1.8.2.4 2001/04/13 19:07:40 easysw Exp $"
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
@@ -171,9 +171,9 @@ int Drawing_Area::handle(int event) {
       }
       jbrot.d->jX = X + (ix-x()-W/2)*scale/W;
       jbrot.d->jY = Y + (H/2-iy+y())*scale/W;
-      static char buffer[128];
-      sprintf(buffer, "Julia %.7f %.7f",jbrot.d->jX,jbrot.d->jY);
-      jbrot.window->label(buffer);
+      static char s[128];
+      sprintf(s, "Julia %.7f %.7f",jbrot.d->jX,jbrot.d->jY);
+      jbrot.window->label(s);
       jbrot.window->show();
       jbrot.d->new_display();
     }
@@ -187,15 +187,15 @@ void Drawing_Area::new_display() {
   set_idle();
 }
 
-void Drawing_Area::resize(int X,int Y,int W,int H) {
-  if (W != w() || H != h()) {
-    this->W = W-6;
-    this->H = H-8;
+void Drawing_Area::resize(int XX,int YY,int WW,int HH) {
+  if (WW != w() || HH != h()) {
+    W = WW-6;
+    H = HH-8;
     if (buffer) {delete[] buffer; buffer = 0; new_display();}
   }
-  Fl_Box::resize(X,Y,W,H);
+  Fl_Box::resize(XX,YY,WW,HH);
 }
 
 //
-// End of "$Id: mandelbrot.cxx,v 1.8.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: mandelbrot.cxx,v 1.8.2.4 2001/04/13 19:07:40 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 /* XPM */
-static char * porsche_xpm[] = {
+static const char * porsche_xpm[] = {
 "64 64 4 1",
 " 	c #background",
 ".	c #000000000000",

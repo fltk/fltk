@@ -1,5 +1,5 @@
 //
-// "$Id: checkers.cxx,v 1.9.2.6 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: checkers.cxx,v 1.9.2.7 2001/04/13 19:07:40 easysw Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -966,8 +966,8 @@ void Board::draw() {
     fl_rectf(x*BOXSIZE,0,BORDER,h());
     fl_rectf(0,x*BOXSIZE,w(),BORDER);
   }
-  for (int i = 5; i < 40; i++) if (i != erase_this) {
-    draw_piece(b[i], squarex(i), squarey(i));
+  for (int j = 5; j < 40; j++) if (j != erase_this) {
+    draw_piece(b[j], squarex(j), squarey(j));
   }
   if (showlegal) {
     fl_color(FL_WHITE);
@@ -1004,13 +1004,13 @@ void Board::draw() {
 }
 
 // drag the piece on square i to dx dy, or undo drag if i is zero:
-void Board::drag_piece(int i, int dx, int dy) {
+void Board::drag_piece(int j, int dx, int dy) {
   dy = (dy&-2) | dx&1; // make halftone shadows line up
-  if (i != erase_this) drop_piece(erase_this); // should not happen
+  if (j != erase_this) drop_piece(erase_this); // should not happen
   if (!erase_this) { // pick up old piece
-    dragx = squarex(i); dragy = squarey(i);
-    erase_this = i;
-    dragging = b[i];
+    dragx = squarex(j); dragy = squarey(j);
+    erase_this = j;
+    dragging = b[j];
   }
   if (dx != dragx || dy != dragy) {
     damage(FL_DAMAGE_ALL, dragx, dragy, ISIZE, ISIZE);
@@ -1021,12 +1021,12 @@ void Board::drag_piece(int i, int dx, int dy) {
 }
 
 // drop currently dragged piece on square i
-void Board::drop_piece(int i) {
+void Board::drop_piece(int j) {
   if (!erase_this) return; // should not happen!
   erase_this = 0;
   dragging = 0;
-  int x = squarex(i);
-  int y = squarey(i);
+  int x = squarex(j);
+  int y = squarey(j);
   if (x != dragx || y != dragy) {
     damage(4, dragx, dragy, ISIZE, ISIZE);
     damage(4, x, y, ISIZE, ISIZE);
@@ -1045,9 +1045,9 @@ void Board::animate(node* move, int backwards) {
   int x2 = squarex(t);
   int y2 = squarey(t);
   const int STEPS=35;
-  for (int i=0; i<STEPS; i++) {
-    int x = x1+(x2-x1)*i/STEPS;
-    int y = y1+(y2-y1)*i/STEPS;
+  for (int j=0; j<STEPS; j++) {
+    int x = x1+(x2-x1)*j/STEPS;
+    int y = y1+(y2-y1)*j/STEPS;
     drag_piece(move->from,x,y);
     Fl::flush();
   }
@@ -1365,5 +1365,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.9.2.6 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: checkers.cxx,v 1.9.2.7 2001/04/13 19:07:40 easysw Exp $".
 //

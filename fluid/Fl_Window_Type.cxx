@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.9 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10 2001/04/13 19:07:40 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -211,21 +211,21 @@ Fl_Type *Fl_Window_Type::make() {
     fl_message("Please select a function");
     return 0;
   }
-  Fl_Window_Type *o = new Fl_Window_Type();
+  Fl_Window_Type *myo = new Fl_Window_Type();
   if (!this->o) {// template widget
     this->o = new Fl_Window(100,100);
     Fl_Group::current(0);
   }
-  o->factory = this;
-  o->drag = 0;
-  o->numselected = 0;
+  myo->factory = this;
+  myo->drag = 0;
+  myo->numselected = 0;
   Overlay_Window *w = new Overlay_Window(100,100);
-  w->window = o;
-  o->o = w;
-  o->add(p);
-  o->modal = 0;
-  o->non_modal = 0;
-  return o;
+  w->window = myo;
+  myo->o = w;
+  myo->add(p);
+  myo->modal = 0;
+  myo->non_modal = 0;
+  return myo;
 }
 
 void Fl_Window_Type::add_child(Fl_Type* cc, Fl_Type* before) {
@@ -356,42 +356,42 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
 // calculate actual move by moving mouse position (mx,my) to
 // nearest multiple of gridsize, and snap to original position
 void Fl_Window_Type::newdx() {
-  int dx, dy;
+  int mydx, mydy;
   if (Fl::event_state(FL_ALT)) {
-    dx = mx-x1;
-    dy = my-y1;
+    mydx = mx-x1;
+    mydy = my-y1;
   } else {
     int dx0 = mx-x1;
     int ix = (drag&RIGHT) ? br : bx;
-    dx = gridx ? ((ix+dx0+gridx/2)/gridx)*gridx - ix : dx0;
+    mydx = gridx ? ((ix+dx0+gridx/2)/gridx)*gridx - ix : dx0;
     if (dx0 > snap) {
-      if (dx < 0) dx = 0;
+      if (mydx < 0) mydx = 0;
     } else if (dx0 < -snap) {
-      if (dx > 0) dx = 0;
+      if (mydx > 0) mydx = 0;
     } else 
-      dx = 0;
+      mydx = 0;
     int dy0 = my-y1;
     int iy = (drag&BOTTOM) ? by : bt;
-    dy = gridy ? ((iy+dy0+gridy/2)/gridy)*gridy - iy : dy0;
+    mydy = gridy ? ((iy+dy0+gridy/2)/gridy)*gridy - iy : dy0;
     if (dy0 > snap) {
-      if (dy < 0) dy = 0;
+      if (mydy < 0) mydy = 0;
     } else if (dy0 < -snap) {
-      if (dy > 0) dy = 0;
+      if (mydy > 0) mydy = 0;
     } else 
-      dy = 0;
+      mydy = 0;
   }
-  if (this->dx != dx || this->dy != dy) {
-    this->dx = dx; this->dy = dy;
-    ((Overlay_Window *)(this->o))->redraw_overlay();
+  if (dx != mydx || dy != mydy) {
+    dx = mydx; dy = mydy;
+    ((Overlay_Window *)o)->redraw_overlay();
   }
 }
 
 // Move a widget according to dx and dy calculated above
-void Fl_Window_Type::newposition(Fl_Widget_Type *o,int &X,int &Y,int &R,int &T) {
-  X = o->o->x();
-  Y = o->o->y();
-  R = X+o->o->w();
-  T = Y+o->o->h();
+void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T) {
+  X = myo->o->x();
+  Y = myo->o->y();
+  R = X+myo->o->w();
+  T = Y+myo->o->h();
   if (!drag) return;
   if (drag&DRAG) {
     X += dx;
@@ -415,11 +415,11 @@ void Fl_Window_Type::draw_overlay() {
     for (Fl_Type *q=next; q && q->level>level; q=q->next)
       if (q->selected && q->is_widget() && !q->is_menu_item()) {
 	numselected++;
-	Fl_Widget_Type* o = (Fl_Widget_Type*)q;
-	if (o->o->x() < bx) bx = o->o->x();
-	if (o->o->y() < by) by = o->o->y();
-	if (o->o->x()+o->o->w() > br) br = o->o->x()+o->o->w();
-	if (o->o->y()+o->o->h() > bt) bt = o->o->y()+o->o->h();
+	Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
+	if (myo->o->x() < bx) bx = myo->o->x();
+	if (myo->o->y() < by) by = myo->o->y();
+	if (myo->o->x()+myo->o->w() > br) br = myo->o->x()+myo->o->w();
+	if (myo->o->y()+myo->o->h() > bt) bt = myo->o->y()+myo->o->h();
       }
     recalc = 0;
   }
@@ -432,25 +432,25 @@ void Fl_Window_Type::draw_overlay() {
   if (overlays_invisible && !drag) return;
   if (selected) fl_rect(0,0,o->w(),o->h());
   if (!numselected) return;
-  int bx,by,br,bt;
-  bx = o->w(); by = o->h(); br = 0; bt = 0;
+  int mybx,myby,mybr,mybt;
+  mybx = o->w(); myby = o->h(); mybr = 0; mybt = 0;
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_widget() && !q->is_menu_item()) {
-      Fl_Widget_Type* o = (Fl_Widget_Type*)q;
+      Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
-      newposition(o,x,y,r,t);
+      newposition(myo,x,y,r,t);
       fl_rect(x,y,r-x,t-y);
-      if (x < bx) bx = x;
-      if (y < by) by = y;
-      if (r > br) br = r;
-      if (t > bt) bt = t;
+      if (x < mybx) mybx = x;
+      if (y < myby) myby = y;
+      if (r > mybr) mybr = r;
+      if (t > mybt) mybt = t;
     }
   if (selected) return;
-  if (numselected>1) fl_rect(bx,by,br-bx,bt-by);
-  fl_rectf(bx,by,5,5);
-  fl_rectf(br-5,by,5,5);
-  fl_rectf(br-5,bt-5,5,5);
-  fl_rectf(bx,bt-5,5,5);
+  if (numselected>1) fl_rect(mybx,myby,mybr-mybx,mybt-myby);
+  fl_rectf(mybx,myby,5,5);
+  fl_rectf(mybr-5,myby,5,5);
+  fl_rectf(mybr-5,mybt-5,5,5);
+  fl_rectf(mybx,mybt-5,5,5);
 }
 
 // Calculate new bounding box of selected widgets:
@@ -490,18 +490,18 @@ void Fl_Window_Type::moveallchildren()
   Fl_Type *i;
   for (i=next; i && i->level>level;) {
     if (i->selected && i->is_widget() && !i->is_menu_item()) {
-      Fl_Widget_Type* o = (Fl_Widget_Type*)i;
+      Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       int x,y,r,t;
-      newposition(o,x,y,r,t);
-      o->o->resize(x,y,r-x,t-y);
+      newposition(myo,x,y,r,t);
+      myo->o->resize(x,y,r-x,t-y);
       // move all the children, whether selected or not:
       Fl_Type* p;
-      for (p = o->next; p && p->level>o->level; p = p->next)
+      for (p = myo->next; p && p->level>myo->level; p = p->next)
 	if (p->is_widget() && !p->is_menu_item()) {
-	  Fl_Widget_Type* o = (Fl_Widget_Type*)p;
+	  Fl_Widget_Type* myo2 = (Fl_Widget_Type*)p;
 	  int x,y,r,t;
-	  newposition(o,x,y,r,t);
-	  o->o->resize(x,y,r-x,t-y);
+	  newposition(myo2,x,y,r,t);
+	  myo2->o->resize(x,y,r-x,t-y);
 	}
       i = p;
     } else {
@@ -527,9 +527,9 @@ int Fl_Window_Type::handle(int event) {
     // test for popup menu:
     if (Fl::event_button() >= 3) {
       in_this_only = this; // modifies how some menu items work.
-      static const Fl_Menu_Item* prev;
-      const Fl_Menu_Item* m = New_Menu->popup(mx,my,"New",prev);
-      if (m && m->callback()) {prev = m; m->do_callback(this->o);}
+      static const Fl_Menu_Item* myprev;
+      const Fl_Menu_Item* m = New_Menu->popup(mx,my,"New",myprev);
+      if (m && m->callback()) {myprev = m; m->do_callback(this->o);}
       in_this_only = 0;
       return 1;
     }
@@ -537,10 +537,10 @@ int Fl_Window_Type::handle(int event) {
     selection = this;
     {for (Fl_Type* i=next; i && i->level>level; i=i->next)
       if (i->is_widget() && !i->is_menu_item()) {
-      Fl_Widget_Type* o = (Fl_Widget_Type*)i;
-      for (Fl_Widget *o1 = o->o; o1; o1 = o1->parent())
+      Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
+      for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
 	if (!o1->visible()) goto CONTINUE2;
-      if (Fl::event_inside(o->o)) selection = o;
+      if (Fl::event_inside(myo->o)) selection = myo;
     CONTINUE2:;
     }}
     // see if user grabs edges of selected region:
@@ -600,14 +600,14 @@ int Fl_Window_Type::handle(int event) {
       // select everything in box:
       for (Fl_Type*i=next; i&&i->level>level; i=i->next)
 	if (i->is_widget() && !i->is_menu_item()) {
-	Fl_Widget_Type* o = (Fl_Widget_Type*)i;
-	for (Fl_Widget *o1 = o->o; o1; o1 = o1->parent())
+	Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
+	for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
 	  if (!o1->visible()) goto CONTINUE;
-	if (Fl::event_inside(o->o)) selection = o;
-	if (o->o->x()>=x1 && o->o->y()>y1 &&
-	    o->o->x()+o->o->w()<mx && o->o->y()+o->o->h()<my) {
+	if (Fl::event_inside(myo->o)) selection = myo;
+	if (myo->o->x()>=x1 && myo->o->y()>y1 &&
+	    myo->o->x()+myo->o->w()<mx && myo->o->y()+myo->o->h()<my) {
 	  n++;
-	  select(o, toggle ? !o->selected : 1);
+	  select(myo, toggle ? !myo->selected : 1);
 	}
       CONTINUE:;
       }
@@ -752,5 +752,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.9 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10 2001/04/13 19:07:40 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.10 2001/02/12 15:12:14 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11 2001/04/13 19:07:40 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -202,13 +202,13 @@ public:
 static Fl_Browser_Type Fl_Browser_type;
 
 int Fl_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_Browser *o = (Fl_Browser*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+  Fl_Browser *myo = (Fl_Browser*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
   }
   return 1;
 }
@@ -233,13 +233,13 @@ public:
 static Fl_Counter_Type Fl_Counter_type;
 
 int Fl_Counter_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_Counter *o = (Fl_Counter*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+  Fl_Counter *myo = (Fl_Counter*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
   }
   return 1;
 }
@@ -260,22 +260,22 @@ class Fl_Input_Type : public Fl_Widget_Type {
 public:
   virtual const char *type_name() {return "Fl_Input";}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Input *o = new Fl_Input(x,y,w,h,"input:");
-    o->value("Text Input");
-    return o;
+    Fl_Input *myo = new Fl_Input(x,y,w,h,"input:");
+    myo->value("Text Input");
+    return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Input_Type();}
 };
 static Fl_Input_Type Fl_Input_type;
 
 int Fl_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_Input_ *o = (Fl_Input_*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+  Fl_Input_ *myo = (Fl_Input_*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
   }
   return 1;
 }
@@ -390,9 +390,9 @@ class Fl_Output_Type : public Fl_Input_Type {
 public:
   virtual const char *type_name() {return "Fl_Output";}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Output *o = new Fl_Output(x,y,w,h,"output:");
-    o->value("Text Output");
-    return o;
+    Fl_Output *myo = new Fl_Output(x,y,w,h,"output:");
+    myo->value("Text Output");
+    return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Output_Type();}
 };
@@ -407,21 +407,21 @@ public:
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int is_valuator() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Value_Input *o = new Fl_Value_Input(x,y,w,h,"value:");
-    return o;
+    Fl_Value_Input *myo = new Fl_Value_Input(x,y,w,h,"value:");
+    return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Value_Input_Type();}
 };
 static Fl_Value_Input_Type Fl_Value_Input_type;
 
 int Fl_Value_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_Value_Input *o = (Fl_Value_Input*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+  Fl_Value_Input *myo = (Fl_Value_Input*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
   }
   return 1;
 }
@@ -435,21 +435,21 @@ public:
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int is_valuator() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Value_Output *o = new Fl_Value_Output(x,y,w,h,"value:");
-    return o;
+    Fl_Value_Output *myo = new Fl_Value_Output(x,y,w,h,"value:");
+    return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Value_Output_Type();}
 };
 static Fl_Value_Output_Type Fl_Value_Output_type;
 
 int Fl_Value_Output_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_Value_Output *o = (Fl_Value_Output*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+  Fl_Value_Output *myo = (Fl_Value_Output*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
   }
   return 1;
 }
@@ -468,13 +468,13 @@ public:
 static Fl_Value_Slider_Type Fl_Value_Slider_type;
 
 int Fl_Value_Slider_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-  Fl_Value_Slider *o = (Fl_Value_Slider*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+  Fl_Value_Slider *myo = (Fl_Value_Slider*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
   }
   return 1;
 }
@@ -727,5 +727,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.10 2001/02/12 15:12:14 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11 2001/04/13 19:07:40 easysw Exp $".
 //
