@@ -2,6 +2,7 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- added zlib path to fluid (STR #783)
 	- Menus and other pop-up windows now obey screen
 	  boundaries on multi-screen displays (STR #781)
 	- Fl_Chart would draw outside its bounding box (STR #780)
