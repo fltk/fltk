@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.17 2003/01/30 21:41:49 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.18 2003/03/31 17:27:35 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -128,6 +128,18 @@ void Fl_Gl_Window::make_current() {
     mode_ &= ~NON_LOCAL_CONTEXT;
     context_ = fl_create_gl_context(this, g);
     valid(0);
+
+#ifdef __APPLE__
+    if (window()) {
+      GLint xywh[4];
+      xywh[0] = x();
+      xywh[1] = window()->h() - y() - h();
+      xywh[2] = w();
+      xywh[3] = h();
+      aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
+      aglUpdateContext(context_);
+    }
+#endif // __APPLE__
   }
   fl_set_gl_context(this, context_);
 #if defined(WIN32) && USE_COLORMAP
@@ -317,13 +329,15 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
 #ifdef __APPLE__
-  GLint xywh[4];
-  xywh[0] = X;
-  xywh[1] = window()->h() - Y - H;
-  xywh[2] = W;
-  xywh[3] = H;
-  aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
-  aglUpdateContext(context_);
+    if (window()) {
+      GLint xywh[4];
+      xywh[0] = X;
+      xywh[1] = window()->h() - Y - H;
+      xywh[2] = W;
+      xywh[3] = H;
+      aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
+      aglUpdateContext(context_);
+    }
 #elif !defined(WIN32)
     if (!resizable() && overlay && overlay != this)
       ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
@@ -377,5 +391,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.17 2003/01/30 21:41:49 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.18 2003/03/31 17:27:35 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Gl_Window could cause a bus error on MacOS X if the
+	  parent window was not yet shown.
 	- FLUID could crash after displaying a syntax error
 	  dialog for the callback code.
 	- FLUID would reset the callback code if you opened the
