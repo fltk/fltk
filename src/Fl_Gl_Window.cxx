@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.7 1998/10/21 14:20:06 mike Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.8 1998/11/08 15:55:22 mike Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -57,6 +57,14 @@
 #define SWAP_TYPE NODAMAGE
 #else
 #define SWAP_TYPE SWAP
+#endif
+
+//
+// Windows may need a different color palette...
+//
+
+#if defined(WIN32) && HAVE_GL
+extern HPALETTE fl_gl_palette;
 #endif
 
 ////////////////////////////////////////////////////////////////
@@ -123,6 +131,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 void Fl_Gl_Window::make_current() {
 #ifdef WIN32
   HDC hdc = fl_private_dc(this, mode_,&g);
+
   if (!context) {
     context = wglCreateContext(hdc);
     if (fl_first_context) wglShareLists(fl_first_context, (GLXContext)context);
@@ -138,6 +147,14 @@ void Fl_Gl_Window::make_current() {
   }
   glXMakeCurrent(fl_display, fl_xid(this), (GLXContext)context);
 #endif
+
+#  if USE_COLORMAP
+  if (fl_gl_palette) {
+    SelectPalette(fl_gc, fl_gl_palette, FALSE);
+    RealizePalette(fl_gc);
+  }
+#  endif // USE_COLORMAP
+
   glDrawBuffer(GL_BACK);
 }
 
@@ -310,5 +327,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.7 1998/10/21 14:20:06 mike Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.8 1998/11/08 15:55:22 mike Exp $".
 //

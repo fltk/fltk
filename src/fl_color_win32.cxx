@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.4 1998/11/08 15:55:23 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -47,6 +47,9 @@ Fl_XMap fl_xmap[256];
 Fl_XMap* fl_current_xmap;
 
 HPALETTE fl_palette;
+#if HAVE_GL
+HPALETTE fl_gl_palette;
+#endif // HAVE_GL
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
@@ -214,6 +217,21 @@ fl_select_palette(void)
 
     // Create the palette:
     fl_palette = CreatePalette(pPal);
+
+#if HAVE_GL
+    // Now do the OpenGL palette...  Any 8-bit display will want 3:3:2 RGB,
+    // and doing OpenGL on anything less than 8-bits is just asking for
+    // disappointment!
+
+    for (int i = 0; i < nColors; i ++) {
+      pPal->palPalEntry[i].peRed   = 255 * ((i >> 5) & 7) / 7;
+      pPal->palPalEntry[i].peGreen = 255 * ((i >> 2) & 7) / 7;
+      pPal->palPalEntry[i].peBlue  = 255 * (i & 3) / 3;
+      pPal->palPalEntry[i].peFlags = 0;
+    };
+
+    fl_gl_palette = CreatePalette(pPal);
+#endif // HAVE_GL
   }
   if (fl_palette) {
     SelectPalette(fl_gc, fl_palette, FALSE);
@@ -225,5 +243,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.4 1998/11/08 15:55:23 mike Exp $".
 //
