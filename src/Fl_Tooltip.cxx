@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.18 2002/05/13 14:00:46 spitzak Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.19 2002/05/13 15:43:10 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,8 +29,8 @@
 
 #include <stdio.h>
 
-float Fl_Tooltip::delay_ = 1.0f;
-int Fl_Tooltip::enabled_ = 1;
+float		Fl_Tooltip::delay_ = 1.0f;
+int		Fl_Tooltip::enabled_ = 1;
 unsigned	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 		                                   FL_NUM_GREEN - 1,
 						   FL_NUM_BLUE - 2);
@@ -172,5 +172,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.18 2002/05/13 14:00:46 spitzak Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.19 2002/05/13 15:43:10 easysw Exp $".
 //

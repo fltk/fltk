@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc2
 
 	- Portability fixes.
+	- Backported 2.0 tooltip changes.
 	- Several of the valuators did not support tooltips.
 	- The last menu item in a menu didn't pick up on font
 	  changes.

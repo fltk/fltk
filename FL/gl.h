@@ -1,5 +1,5 @@
 //
-// "$Id: gl.h,v 1.6.2.4.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: gl.h,v 1.6.2.4.2.3 2002/05/13 15:43:09 easysw Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,26 +30,26 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifndef gl_draw_H
-#define gl_draw_H
+#ifndef FL_gl_H
+#  define FL_gl_H
 
-#include "Enumerations.H" // for color names
-#ifdef _WIN32
-# include <windows.h>
-#endif
-#ifndef APIENTRY
-# if defined(__CYGWIN__)
-#  define APIENTRY __attribute__ ((__stdcall__))
-# else
-#  define APIENTRY
-# endif
-#endif
+#  include "Enumerations.H" // for color names
+#  ifdef WIN32
+#    include <windows.h>
+#  endif
+#  ifndef APIENTRY
+#    if defined(__CYGWIN__)
+#      define APIENTRY __attribute__ ((__stdcall__))
+#    else
+#      define APIENTRY
+#    endif
+#  endif
 
-#ifdef __APPLE__
-# include <OpenGL/gl.h>
-#else
-# include <GL/gl.h>
-#endif
+#  ifdef __APPLE__
+#    include <OpenGL/gl.h>
+#  else
+#    include <GL/gl.h>
+#  endif
 
 FL_EXPORT void gl_start();
 FL_EXPORT void gl_finish();
@@ -78,8 +78,8 @@ FL_EXPORT void gl_measure(const char*, int& x, int& y);
 
 FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 
-#endif
+#endif // !FL_gl_H
 
 //
-// End of "$Id: gl.h,v 1.6.2.4.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: gl.h,v 1.6.2.4.2.3 2002/05/13 15:43:09 easysw Exp $".
 //

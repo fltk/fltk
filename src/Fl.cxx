@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.27 2002/05/13 05:05:11 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.28 2002/05/13 15:43:09 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -672,7 +672,7 @@ int Fl::handle(int event, Fl_Window* window)
 ////////////////////////////////////////////////////////////////
 // hide() destroys the X window, it does not do unmap!
 
-#if !defined(_WIN32) && USE_XFT
+#if !defined(WIN32) && USE_XFT
 extern void fl_destroy_xft_draw(Window);
 #endif
 
@@ -892,5 +892,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.27 2002/05/13 05:05:11 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.28 2002/05/13 15:43:09 easysw Exp $".
 //
