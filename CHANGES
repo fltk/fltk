@@ -1,3 +1,16 @@
+CHANGES IN FLTK 1.1.0b7
+
+	- More documentation updates...
+	- Fl_Help_View could get in an infinitely loop when
+	  determining the maximum width of the page; this
+	  was due to a bug in the get_length() method with
+	  percentages (100% width would cause the bug.)
+	- Don't need -lgdi32 for CygWin, since -mwindows
+	  does this for us.
+	- The WIN32 event handler did not properly handle
+	  WM_SYNCPAINT messages.
+
+
 CHANGES IN FLTK 1.1.0b6
 
 	- Documentation updates...

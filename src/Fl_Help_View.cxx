@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.16 2001/11/26 20:13:29 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.17 2001/11/30 16:10:08 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -745,6 +745,7 @@ Fl_Help_View::format()
   int		column,		// Current table column number
 		columns[MAX_COLUMNS];
 				// Column widths
+
 
   // Reset document width...
   hsize_ = w() - 24;
@@ -2006,7 +2007,12 @@ Fl_Help_View::get_length(const char *l) {	// I - Value
   if (!l[0]) return 0;
 
   val = atoi(l);
-  if (l[strlen(l) - 1] == '%') val = val * hsize_ / 100;
+  if (l[strlen(l) - 1] == '%') {
+    if (val > 100) val = 100;
+    else if (val < 0) val = 0;
+
+    val = val * (hsize_ - 24) / 100;
+  }
 
   return val;
 }
@@ -2543,5 +2549,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.16 2001/11/26 20:13:29 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.17 2001/11/30 16:10:08 easysw Exp $".
 //

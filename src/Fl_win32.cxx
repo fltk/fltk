@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.8 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.9 2001/11/30 16:10:08 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -435,21 +435,6 @@ extern void fl_restore_pen(void);
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  // Matt: When dragging a full window, MSWindows on 'slow'
-  // machines can lose track of the window refresh area. It sends some kind
-  // of panic message to the desktop that in turn sends this message on to
-  // all applications.
-  static int cnt=0;
-  if (uMsg == WM_SYNCPAINT) {
-    MSG msg;
-    if ( PeekMessage( &msg, hWnd, WM_PAINT, WM_PAINT, false )==0 )
-      InvalidateRect(hWnd,0,FALSE);
-    if (cnt) {
-      InvalidateRect(fl_window,0,FALSE);
-      cnt = 0;
-    } else cnt = 1;
-  } else if (uMsg == WM_PAINT) cnt = 0;
-
   fl_msg.message = uMsg;
 
   Fl_Window *window = fl_find(hWnd);
@@ -462,6 +447,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_CLOSE: // user clicked close box
     Fl::handle(FL_CLOSE, window);
     return 0;
+
+  case WM_SYNCPAINT :
+  case WM_NCPAINT :
+  case WM_ERASEBKGND :
+    // Andreas Weitl - WM_SYNCPAINT needs to be passed to DefWindowProc
+    // so that Windows can generate the proper paint messages...
+    // Similarly, WM_NCPAINT and WM_ERASEBKGND need this, too...
+    break;
 
   case WM_PAINT: {
 
@@ -655,7 +648,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_GetDC(hWnd);
     fl_select_palette();
     break;
-
 #endif
 
   default:
@@ -1005,5 +997,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.8 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.9 2001/11/30 16:10:08 easysw Exp $".
 //
