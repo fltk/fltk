@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.0
 
+	- When installing shared libraries, FLUID is now linked
+	  against the shared libraries.
+	- MacOS: missing compile rule for .dylib files.
+	- Fl_Group::current(), Fl_Group::begin(), and
+	  Fl_Group::end() are no longer inlined so that they are
+	  properly exported in DLLs under WIN32.
 	- MacOS: support for Mac system menu (Fl_Sys_Menu_Bar)
 	- MacOS: wait(0) would not handle all pending events
 	- Added new makeinclude file for MingW using GCC 3.1.x.

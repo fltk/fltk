@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.1.2.5 2002/02/15 18:15:45 easysw Exp $"
+# "$Id: Makefile.in,v 1.1.2.6 2002/07/14 17:03:30 easysw Exp $"
 #
 # Header makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -29,30 +29,30 @@ all:
 
 install:
 	echo "Installing include files in $(includedir)..."
-	-mkdir -p $(includedir)
-	rm -rf $(includedir)/FL
-	mkdir $(includedir)/FL
-	chmod 755 $(includedir)/FL
-	cp ../FL/*.[hHr] $(includedir)/FL
-	chmod 644 $(includedir)/FL/*.[hHr]
+	-$(MKDIR) -p $(includedir)
+	$(RMDIR) $(includedir)/FL
+	$(MKDIR) $(includedir)/FL
+	$(CHMOD) 755 $(includedir)/FL
+	$(CP) ../FL/*.[hHr] $(includedir)/FL
+	$(CHMOD) 644 $(includedir)/FL/*.[hHr]
 @HLINKS@	cd $(includedir)/FL;\
 @HLINKS@	for file in *.H; do\
-@HLINKS@		rm -f "`basename $$file H`h";\
-@HLINKS@		ln -s $$file "`basename $$file H`h";\
+@HLINKS@		$(RM) "`basename $$file H`h";\
+@HLINKS@		$(LN) $$file "`basename $$file H`h";\
 @HLINKS@	done
-@HLINKS@	rm -f $(includedir)/FL/fl_file_chooser.H
-@HLINKS@	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.H
-@HLINKS@	rm -f $(includedir)/FL/fl_file_chooser.h
-@HLINKS@	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.h
-@HLINKS@	rm -f $(includedir)/Fl
-@HLINKS@	ln -s FL $(includedir)/Fl
+@HLINKS@	$(RM) $(includedir)/FL/fl_file_chooser.H
+@HLINKS@	$(LN) Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.H
+@HLINKS@	$(RM) $(includedir)/FL/fl_file_chooser.h
+@HLINKS@	$(LN) Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.h
+@HLINKS@	$(RM) $(includedir)/Fl
+@HLINKS@	$(LN) FL $(includedir)/Fl
 
 uninstall:
 	echo "Uninstalling include files..."
-	rm -rf $(includedir)/FL
-@HLINKS@	rm -f $(includedir)/Fl
+	$(RMDIR) $(includedir)/FL
+@HLINKS@	$(RM) $(includedir)/Fl
 
 
 #
-# End of "$Id: Makefile.in,v 1.1.2.5 2002/02/15 18:15:45 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.1.2.6 2002/07/14 17:03:30 easysw Exp $".
 #

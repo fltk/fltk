@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.13 2002/07/11 10:37:49 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.14 2002/07/14 17:03:30 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -60,6 +60,7 @@ LIBNAME="@LIBNAME@"
 DSONAME="@DSONAME@"
 DSOLINK="@DSOLINK@"
 IMAGELIBS="@IMAGELIBS@"
+SHAREDSUFFIX="@SHAREDSUFFIX@"
 
 usage ()
 {
@@ -100,12 +101,6 @@ no_plugins=no
 compile=
 post=
 debug=
-
-# AIX has very poor handling of static and shared libraries; always use
-# the image libraries under AIX...
-if test `uname` = AIX; then
-    use_images=yes
-fi
 
 # Parse command line options
 while test $# -gt 0 
@@ -199,21 +194,21 @@ fi
 
 # Calculate needed libraries
 LDSTATIC="$libdir/libfltk.a $LDLIBS"
-LDLIBS="$libs -lfltk $LDLIBS"
+LDLIBS="$libs -lfltk$SHAREDSUFFIX $LDLIBS"
 LIBS="$LIBS $libdir/libfltk.a"
 
 if test x$use_forms = xyes; then
-    LDLIBS="-lfltk_forms $LDLIBS"
+    LDLIBS="-lfltk_forms$SHAREDSUFFIX $LDLIBS"
     LDSTATIC="$libdir/libfltk_forms.a $LDSTATIC"
     LIBS="$LIBS $libdir/libfltk_forms.a"
 fi
 if test x$use_gl = xyes; then
-    LDLIBS="-lfltk_gl @GLLIB@ $LDLIBS"
+    LDLIBS="-lfltk_gl$SHAREDSUFFIX @GLLIB@ $LDLIBS"
     LDSTATIC="$libdir/libfltk_gl.a @GLLIB@ $LDSTATIC"
     LIBS="$LIBS $libdir/libfltk_gl.a"
 fi
 if test x$use_images = xyes; then
-    LDLIBS="-lfltk_images $IMAGELIBS $LDLIBS"
+    LDLIBS="-lfltk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"
     LDSTATIC="$libdir/libfltk_images.a $IMAGELIBS $LDSTATIC"
 fi
 
@@ -297,5 +292,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.13 2002/07/11 10:37:49 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.14 2002/07/14 17:03:30 easysw Exp $".
 #

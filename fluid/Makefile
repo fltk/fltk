@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10.2.6.2.20 2002/06/28 21:04:36 easysw Exp $"
+# "$Id: Makefile,v 1.10.2.6.2.21 2002/07/14 17:03:31 easysw Exp $"
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,8 +23,6 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-PROGRAM = fluid$(EXEEXT)
-
 CPPFILES = \
 	Fl_Function_Type.cxx \
 	Fl_Menu_Type.cxx \
@@ -47,18 +45,26 @@ CPPFILES = \
 
 OBJECTS = $(CPPFILES:.cxx=.o)
 
-CLEAN	= core
+CLEAN	= core*
 
 include ../makeinclude
 
-$(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
+all:	$(FLUID) fluid$(EXEEXT)
+
+fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
+			../lib/$(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $(OBJECTS) $(LINKFLTKFORMS) \
-		-lfltk_images $(IMAGELIBS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) -lfltk_images $(IMAGELIBS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
+
+fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
+			../src/$(IMGDSONAME)
+	echo Linking $@...
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 clean :
-	-@ rm -f *.o $(PROGRAM) $(CLEAN)
+	-@ $(RM) *.o fluid$(EXEEXT) fluid-shared$(EXEEXT) $(CLEAN)
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)
@@ -68,14 +74,14 @@ include makedepend
 
 install: $(PROGRAM)
 	echo "Installing FLUID in $(bindir)..."
-	-mkdir -p $(bindir)
-	cp $(PROGRAM) $(bindir)
-	strip $(bindir)/$(PROGRAM)
-	$(bindir)/fltk-config --post $(bindir)/$(PROGRAM)
-	chmod 755 $(bindir)/$(PROGRAM)
+	-$(MKDIR) $(bindir)
+	$(CP) $(FLUID) $(bindir)/fluid
+	$(STRIP) $(bindir)/fluid
+	$(bindir)/fltk-config --post $(bindir)/fluid
+	$(CHMOD) 755 $(bindir)/fluid
 
 uninstall:
-	rm -f $(bindir)/$(PROGRAM)
+	$(RM) $(bindir)/fluid
 
 #
 # Note: The rebuild target can only be used if you have the original .fl
@@ -89,5 +95,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.6.2.20 2002/06/28 21:04:36 easysw Exp $".
+# End of "$Id: Makefile,v 1.10.2.6.2.21 2002/07/14 17:03:31 easysw Exp $".
 #

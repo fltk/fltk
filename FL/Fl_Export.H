@@ -1,5 +1,5 @@
 /*
- * "$Id: Fl_Export.H,v 1.3.2.4 2002/07/11 22:43:52 matthiaswm Exp $"
+ * "$Id: Fl_Export.H,v 1.3.2.5 2002/07/14 17:03:30 easysw Exp $"
  *
  * WIN32 DLL export definitions for the Fast Light Tool Kit (FLTK).
  *
@@ -27,11 +27,10 @@
 #  define Fl_Export_H
 
 /*
- * The following is only used when building DLLs under WIN32 with Visual C++
- * or CodeWarrior...
+ * The following is only used when building DLLs under WIN32...
  */
 
-#  if defined(FL_DLL) && ( defined(_MSC_VER) || defined(__MWERKS__) )
+#  if defined(FL_DLL) && (defined(_MSC_VER) || defined(__MWERKS__) || defined(__BORLANDC__) || __GNUC__ >= 3)
 #    ifdef FL_LIBRARY
 #      define FL_EXPORT	__declspec(dllexport)
 #    else
@@ -39,10 +38,10 @@
 #    endif /* FL_LIBRARY */
 #  else
 #    define FL_EXPORT
-#  endif /* FL_DLL && ( _MSC_VER || __MWERKS__ ) */
+#  endif /* FL_DLL */
 
 #endif /* !Fl_Export_H */
 
 /*
- * End of "$Id: Fl_Export.H,v 1.3.2.4 2002/07/11 22:43:52 matthiaswm Exp $".
+ * End of "$Id: Fl_Export.H,v 1.3.2.5 2002/07/14 17:03:30 easysw Exp $".
  */

@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.11.2.19 2002/06/28 21:04:35 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.11.2.20 2002/07/14 17:03:30 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -24,68 +24,78 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-prefix		=@prefix@
-exec_prefix	=@exec_prefix@
-bindir		=@bindir@
-datadir		=@datadir@
-includedir	=@includedir@
-libdir		=@libdir@
-mandir		=@mandir@
-srcdir		=@srcdir@
-VPATH		=@srcdir@
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+bindir		= @bindir@
+datadir		= @datadir@
+includedir	= @includedir@
+libdir		= @libdir@
+mandir		= @mandir@
+srcdir		= @srcdir@
+VPATH		= @srcdir@
 
 # programs we use...
-HTMLDOC		=@HTMLDOC@
-NROFF		=@NROFF@
-RM		=/bin/rm -f
+CHMOD		= chmod
+CP		= cp
+HTMLDOC		= @HTMLDOC@
+LN		= ln -s
+MKDIR		= mkdir -p
+NROFF		= @NROFF@
+RM		= rm -f
+RMDIR		= rm -rf
+STRIP		= strip
 
 # compiler names:
-CXX		=@CXX@
-CC		=@CC@
-MAKEDEPEND	=@MAKEDEPEND@
+CXX		= @CXX@
+CC		= @CC@
+MAKEDEPEND	= @MAKEDEPEND@
 
 # flags for C++ compiler:
-OPTIM		=@OPTIM@
-CFLAGS		=$(OPTIM) @CFLAGS@
-CXXFLAGS	=$(OPTIM) @CXXFLAGS@
+OPTIM		= @OPTIM@
+CFLAGS		= $(OPTIM) @CFLAGS@
+CXXFLAGS	= $(OPTIM) @CXXFLAGS@
 
 # program to make the archive:
-LIBNAME		=@LIBNAME@
-FLLIBNAME	=@FLLIBNAME@
-GLLIBNAME	=@GLLIBNAME@
-IMGLIBNAME	=@IMGLIBNAME@
-LIBCOMMAND	=@LIBCOMMAND@
-RANLIB		=@RANLIB@
-DSONAME		=@DSONAME@
-FLDSONAME	=@FLDSONAME@
-GLDSONAME	=@GLDSONAME@
-IMGDSONAME	=@IMGDSONAME@
-DSOCOMMAND	=@DSOCOMMAND@
+LIBNAME		= @LIBNAME@
+FLLIBNAME	= @FLLIBNAME@
+GLLIBNAME	= @GLLIBNAME@
+IMGLIBNAME	= @IMGLIBNAME@
+LIBCOMMAND	= @LIBCOMMAND@
+RANLIB		= @RANLIB@
+DSONAME		= @DSONAME@
+FLDSONAME	= @FLDSONAME@
+GLDSONAME	= @GLDSONAME@
+IMGDSONAME	= @IMGDSONAME@
+DSOCOMMAND	= @DSOCOMMAND@
 
 # libraries to link with:
-LDLIBS		=@LDFLAGS@ @LIBS@ $(LDFLAGS_MIPSPRO)
-GLDLIBS		=@LDFLAGS@ @GLLIB@ @LIBS@ $(LDFLAGS_MIPSPRO)
-LINKFLTK	=-L../lib @LINKFLTK@
-LINKFLTKGL	=-L../lib @LINKFLTKGL@
-LINKFLTKFORMS	=-L../lib -lfltk_forms @LINKFLTK@
-LINKFLTKIMG	=-L../lib -lfltk_images @LINKFLTK@ $(IMAGELIBS)
-IMAGELIBS	=@IMAGELIBS@
+LDLIBS		= @LDFLAGS@ @LIBS@ $(LDFLAGS_MIPSPRO)
+GLDLIBS		= @LDFLAGS@ @GLLIB@ @LIBS@ $(LDFLAGS_MIPSPRO)
+LINKFLTK	= -L../lib @LINKFLTK@
+LINKFLTKGL	= -L../lib @LINKFLTKGL@
+LINKFLTKFORMS	= -L../lib -lfltk_forms @LINKFLTK@
+LINKFLTKIMG	= -L../lib -lfltk_images @LINKFLTK@ $(IMAGELIBS)
+LINKSHARED	= @LINKSHARED@ $(IMAGELIBS)
+ IMAGELIBS	= @IMAGELIBS@
 
 # Do we build the OpenGL demos?
-GLDEMOS		=@GLDEMOS@
+GLDEMOS		= @GLDEMOS@
 
 # Do we build the threads demo?
-THREADS		=@THREADS@
+THREADS		= @THREADS@
+
+# Name of FLUID executable we install
+FLUID		= @FLUID@
 
 # The extension to use for executables...
-EXEEXT		=@EXEEXT@
+EXEEXT		= @EXEEXT@
 
 # Possible steps after linking...
-POSTBUILD	=@POSTBUILD@
+POSTBUILD	= @POSTBUILD@
 
 # Man page extensions...
-CAT1EXT		=@CAT1EXT@
-CAT3EXT		=@CAT3EXT@
+CAT1EXT		= @CAT1EXT@
+CAT3EXT		= @CAT3EXT@
 
 # Be quiet when building...
 .SILENT:
@@ -119,5 +129,5 @@ CAT3EXT		=@CAT3EXT@
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.11.2.19 2002/06/28 21:04:35 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.11.2.20 2002/07/14 17:03:30 easysw Exp $".
 #

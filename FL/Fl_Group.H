@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.H,v 1.6.2.4.2.3 2002/07/11 22:43:52 matthiaswm Exp $"
+// "$Id: Fl_Group.H,v 1.6.2.4.2.4 2002/07/14 17:03:30 easysw Exp $"
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
@@ -52,15 +52,10 @@ protected:
 public:
 
   FL_EXPORT int handle(int);
-#ifdef __MWERKS__
   FL_EXPORT void begin();
   FL_EXPORT void end();
-#else
-  void begin() {current_ = this;}
-  void end() {current_ = (Fl_Group*)parent();}
-#endif
-  static Fl_Group *current() {return current_;}
-  static void current(Fl_Group *g) {current_ = g;}
+  FL_EXPORT static Fl_Group *current();
+  FL_EXPORT static void current(Fl_Group *g);
 
   int children() const {return children_;}
   Fl_Widget* child(int n) const {return array()[n];}
@@ -101,5 +96,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Group.H,v 1.6.2.4.2.3 2002/07/11 22:43:52 matthiaswm Exp $".
+// End of "$Id: Fl_Group.H,v 1.6.2.4.2.4 2002/07/14 17:03:30 easysw Exp $".
 //

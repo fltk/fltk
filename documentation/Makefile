@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.17 2002/06/07 17:21:43 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.18 2002/07/14 17:03:30 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -211,9 +211,9 @@ all:	$(MANPAGES)
 alldocs:	fltk.ps fltk.pdf fltk.d/index.html $(MANPAGES)
 
 clean:
-	rm -f fltk.ps
-	rm -f fltk.pdf
-	rm -rf fltk.d
+	$(RM) fltk.ps
+	$(RM) fltk.pdf
+	$(RMDIR) fltk.d
 
 depend:
 
@@ -225,54 +225,54 @@ docdir = $(datadir)/doc/fltk
 
 install: $(MANPAGES)
 	echo "Installing documentation files in $(docdir)..."
-	-mkdir -p $(docdir)
-	cp $(HTMLFILES) *.gif *.jpg index.html $(docdir)
-	chmod 644 $(docdir)/*
+	-$(MKDIR) $(docdir)
+	$(CP) $(HTMLFILES) *.gif *.jpg index.html $(docdir)
+	$(CHMOD) 644 $(docdir)/*
 	echo "Installing man pages in $(mandir)..."
-	-mkdir -p $(mandir)/cat1
-	cp fluid.$(CAT1EXT) $(mandir)/cat1
-	chmod 644 $(mandir)/cat1/fluid.$(CAT1EXT)
-	cp fltk-config.$(CAT1EXT) $(mandir)/cat1
-	chmod 644 $(mandir)/cat1/fltk-config.$(CAT1EXT)
-	-mkdir -p $(mandir)/cat3
-	cp fltk.$(CAT3EXT) $(mandir)/cat3
-	chmod 644 $(mandir)/cat3/fltk.$(CAT3EXT)
-	-mkdir -p $(mandir)/man1
-	cp fluid.man $(mandir)/man1/fluid.1
-	chmod 644 $(mandir)/man1/fluid.1
-	cp fltk-config.man $(mandir)/man1/fltk-config.1
-	chmod 644 $(mandir)/man1/fltk-config.1
-	-mkdir -p $(mandir)/man3
-	cp fltk.man $(mandir)/man3/fltk.3
-	chmod 644 $(mandir)/man3/fltk.3
+	-$(MKDIR) $(mandir)/cat1
+	$(CP) fluid.$(CAT1EXT) $(mandir)/cat1
+	$(CHMOD) 644 $(mandir)/cat1/fluid.$(CAT1EXT)
+	$(CP) fltk-config.$(CAT1EXT) $(mandir)/cat1
+	$(CHMOD) 644 $(mandir)/cat1/fltk-config.$(CAT1EXT)
+	-$(MKDIR) $(mandir)/cat3
+	$(CP) fltk.$(CAT3EXT) $(mandir)/cat3
+	$(CHMOD) 644 $(mandir)/cat3/fltk.$(CAT3EXT)
+	-$(MKDIR) $(mandir)/man1
+	$(CP) fluid.man $(mandir)/man1/fluid.1
+	$(CHMOD) 644 $(mandir)/man1/fluid.1
+	$(CP) fltk-config.man $(mandir)/man1/fltk-config.1
+	$(CHMOD) 644 $(mandir)/man1/fltk-config.1
+	-$(MKDIR) $(mandir)/man3
+	$(CP) fltk.man $(mandir)/man3/fltk.3
+	$(CHMOD) 644 $(mandir)/man3/fltk.3
 
 
 uninstall:
-	rm -rf $(docdir)
-	rm -f $(mandir)/cat1/fluid.$(CAT1EXT)
-	rm -f $(mandir)/man1/fluid.1
-	rm -f $(mandir)/cat3/fltk.$(CAT3EXT)
-	rm -f $(mandir)/man3/fltk.3
+	$(RMDIR) $(docdir)
+	$(RM) $(mandir)/cat1/fluid.$(CAT1EXT)
+	$(RM) $(mandir)/man1/fluid.1
+	$(RM) $(mandir)/cat3/fltk.$(CAT3EXT)
+	$(RM) $(mandir)/man3/fltk.3
 
 
 # Base html files are now the readable ones, so this target is not make by
 # default...
 fltk.d/index.html: $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating HTML documentation..."
-	-mkdir fltk.d
-	-rm -f fltk.d/*
+	-$(RMDIR) fltk.d
+	-$(MKDIR) fltk.d
 	$(HTMLDOC) --verbose --batch fltk.book -d fltk.d -t html
 
 fltk.ps: $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating PostScript documentation..."
-	rm -f fltk.ps
+	$(RM) fltk.ps
 	$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
 
 fltk.pdf: $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating PDF documentation..."
-	rm -f fltk.pdf
+	$(RM) fltk.pdf
 	$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.pdf
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.17 2002/06/07 17:21:43 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.18 2002/07/14 17:03:30 easysw Exp $".
 #
