@@ -1,10 +1,12 @@
 CHANGES IN FLTK 1.1.0
 
-	- Implemented full alpha blending under MacOS X.
+	- Fixed some window focus/positioning problems under
+	  MacOS X.
 	- Added fl_create_alphamask() function to create an alpha
-	  mask from 8-bit data; under MacOS X this creates an
-	  8-bit bitmask, while other OS's currently get 1-bit
-	  screen-door bitmasks.
+	  mask from 8-bit data; currently this always generates a
+	  1-bit screen-door bitmask, however in the future it will
+	  allow us to generate N-bit masks as needed by various
+	  OS's.
 	- Fl_File_Browser::load() didn't properly show drives
 	  when compiled in Cygwin mode.
 	- Now pass correctly pass keyboard and mouse events to

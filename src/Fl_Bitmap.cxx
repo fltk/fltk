@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.13 2002/04/15 17:18:48 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.14 2002/04/15 20:52:26 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -165,6 +165,7 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
   return id;
 }
 
+#if 0 // This doesn't appear to be used anywhere...
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data, int for_mask) {
   // we need to pad the lines out to words & swap the bits
   // in each byte.
@@ -191,6 +192,7 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data, int for_mask) {
 
   return (id);
 }
+#  endif // 0
 
 void fl_delete_bitmask(Fl_Bitmask bm) {
   DeleteObject((HGDIOBJ)bm);
@@ -308,7 +310,7 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
   // for more info on XRender...
   //
   // MacOS already provides alpha blending support and has its own
-  // fl_create_deepmask() function...
+  // fl_create_alphamask() function...
   memset(bitmap, 0, bmw * h);
 
   for (dataptr = array + d - 1, y = 0; y < h; y ++, dataptr += ld)
@@ -462,5 +464,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.13 2002/04/15 17:18:48 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.14 2002/04/15 20:52:26 easysw Exp $".
 //
