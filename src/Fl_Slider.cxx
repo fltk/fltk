@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.1 2001/08/05 14:00:15 easysw Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.2 2001/10/18 23:41:04 easysw Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -272,6 +272,9 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
   case FL_UNFOCUS :
     damage(FL_DAMAGE_ALL);
     return 1;
+  case FL_ENTER :
+  case FL_LEAVE :
+    return 1;
   default:
     return 0;
   }
@@ -286,5 +289,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.1 2001/08/05 14:00:15 easysw Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.2 2001/10/18 23:41:04 easysw Exp $".
 //

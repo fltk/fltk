@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.4 2001/09/30 22:40:56 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.5 2001/10/18 23:41:04 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -62,8 +62,8 @@ void Fl_Light_Button::draw() {
         draw_box(down_box(), x()+d, y()+d+1, W, W, color());
 	if (value()) {
 	  fl_color(col);
-	  if (W > 14) {
-            fl_pie(x() + d + 4, y() + d + 5, W - 9, W - 9, 0.0, 360.0);
+	  if (W > 12) {
+            fl_pie(x() + d + 4, y() + d + 5, W - 8, W - 8, 0.0, 360.0);
 	  } else {
             // Small circles don't draw well with some X servers...
 	    fl_rectf(x() + d + 5, y() + d + 5, 2, 4);
@@ -105,5 +105,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.4 2001/09/30 22:40:56 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.5 2001/10/18 23:41:04 easysw Exp $".
 //
