@@ -1,4 +1,4 @@
-README - Fast Light Tool Kit (FLTK) Version 1.1.5
+README - Fast Light Tool Kit (FLTK) Version 1.1.6
 -------------------------------------------------
 
 WHAT IS FLTK?
@@ -122,51 +122,33 @@ INTERNET RESOURCES
     FLTK is available on the 'net in a bunch of locations:
 
 	- WWW:   http://www.fltk.org
+	         http://www.fltk.org/str.php [for reporting bugs]
 	         http://fltk.sourceforge.net
 
-	- FTP:   ftp://ftp.easysw.com/pub/fltk
+	- FTP:   http://ftp.easysw.com/pub/fltk
                  ftp://ftp2.easysw.com/pub/fltk
-                 ftp://ftp.northamerica.net/pub/ESP/fltk
+                 ftp://ftp3.easysw.com/pub/fltk
         	 ftp://ftp.funet.fi/mirrors/ftp.easysw.com/pub/fltk
 
 	- EMail: fltk@fltk.org [see instructions below]
-        	 fltk-bugs@fltk.org [for reporting bugs]
 
     To send a message to the FLTK mailing list ("fltk@fltk.org")
     you must first join the list.  Non-member submissions are
     blocked to avoid problems with SPAM.
 
-    To join the FLTK mailing list, send a message to
-    "majordomo@fltk.org" with "subscribe fltk" in the message
-    body.  A digest of this list is available by subscribing to
-    the "fltk-digest" mailing list.
+    To join the FLTK mailing list, go the following web page:
+
+        http://lists.easysw.com/listinfo/fltk
 
 
 REPORTING BUGS
 
-    To report a bug in FLTK, send an email to
-    "fltk-bugs@fltk.org". Please include the FLTK version,
-    operating system & version, and compiler that you are using
-    when describing the bug or problem.  You can also submit a
-    bug on the SourceForge pages.
+    To report a bug in FLTK, use the form at:
+
+        http://www.fltk.org/str.php
 
     For general support and questions, please use the FLTK
     mailing list at "fltk@fltk.org".
-
-
-MESA
-
-    Currently the best way to get OpenGL on your Linux system is
-    to use Mesa.  FLTK has been tested with Mesa on several
-    machines (and also with "real" OpenGL on SGI machines). Mesa
-    is available at:
-
-        http://www.mesa3d.org
-
-    The configure script will not see Mesa unless it is
-    installed as either libGL or libMesaGL.  If you don't want
-    to do this you will have to edit config.h (set HAVE_GL to 1)
-    and makeinclude (add the libraries).
 
 
 TRADEMARKS

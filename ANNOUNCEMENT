@@ -1,632 +1,119 @@
-----TEXT----
-
-The third release candidate for FLTK 1.1.5 is now available for
-download and testing.  You now have until October 8th, 2004 to
-report any problems with this release candidate using the
-software trouble report form at the following URL:
-
-    http://www.fltk.org/str.php
-
-If no priority 4 or 5 STRs are received and confirmed before
-this date, FLTK 1.1.5 will be released.
-
-Note: Since problems reported on the FLTK newsgroups or mailing
-lists are *not* automatically entered as STRs, it is imperative
-that you report any problems using the STR form.
-
----- Draft FLTK 1.1.5 Release Announcement ----
-
-The FLTK Team is proud to announce the release of FLTK 1.1.5,
+The FLTK Team is proud to announce the release of FLTK 1.1.6,
 a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
 Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
 modern GUI functionality without the bloat and supports 3D
 graphics via OpenGL(r) and its built-in GLUT emulation.
 
-The FLTK 1.1.5 release is primarily a bug-fix release including
-documentation updates, fixes for 64-bit platforms, FLUID,
-several widgets, and GLUT emulation, and fixes for several
-platform-specific issues. The new release also adds project
-files for Visual C++.NET and supports KDE 3.x icons.
+FLTK 1.1.6 fixes bugs in the Visual C++ and Watcom support
+files, a crash bug on Windows, default parameter support and
+widget position information in FLUID, window positioning
+problems with with newer releases of KDE and OSX, copy shortcuts
+in the Fl_Text_Display widget, and a side-effect in the
+Fl_Browser::remove_() method. The new release also adds the 2.0
+copy_label() method for widgets and a delete_widget() method for
+callbacks.
 
 FLTK is provided under the GNU Library Public License with
 exceptions that allow for static linking.
 
-Changes since FLTK 1.1.4 include:
+Changes since FLTK 1.1.5 include:
 
-	- Documentation updates (STR #568, STR #570)
-	- Shortcuts were incorrectly underlined in multi-line
-	  labels (STR #566)
-	- More CMake updates (STR #499)
-	- The Watcom C++ compiler needed a small change (STR
-	  #567)
-	- Added DESTDIR support and now remove all man pages for
-	  the "uninstall" target (STR #545)
-	- Fix PNG drawing on buggy WIN32 graphics cards (STR
-	  #548)
-	- The configure script didn't propagate the CPPFLAGS
-	  environment variable (STR #549)
-	- The numpad keys didn't work properly on WIN32 (STR
-	  #502)
-	- fl_input() and friends now set the input focus to the
-	  text field when the dialog is shown (STR #553)
-	- Fixed background color mixup when drawing Fl_Choice
-	  menus (STR #544)
-	- Fixed MingW makefiles (STR #550)
-	- More VC++ project file tweaking (STR #559)
-	- Fl_PNG_Image didn't use the png_set_trns_to_alpha
-	  function when available (STR #547)
-	- The FL_UNFOCUS event wasn't always sent when switching
-	  tabs (STR #558)
-
-	[1.1.5rc3]
-	- Documentation updates (STR #505, STR #513)
-	- Updated PNG library source to 1.2.7.
-	- Updated ZLIB library source to 1.2.1.
-	- Fixed VC++ project file problems (STR #476, STR #478,
-	  STR #520, STR #527, STR #537)
-	- Now look for 8 bits of alpha when the developer has
-	  requested FL_RGB8 (STR #541)
-	- The last line in an Fl_Help_View widget was not
-	  aligned properly (STR #536)
-	- The "search" symbol looked like a Q (STR #536)
-	- Changed Fl_Help_View::get_color() to use a lookup
-	  table to avoid serious Borland C++ 5.5 compiler bugs
-	  (STR #533)
-	- Fixed Watcom compiler warnings with FL/Fl_Widget.H
-	  (STR #540)
-	- The image class copy() methods did not always make a
-	  separate copy of the image data (STR #539)
-	- Fixed an edge case in fl_old_shortcut() that could
-	  cause it to read beyond then end of the shortcut
-	  string (used for XForms named shortcuts)
-	- Added (unsupported) CMake files (STR #499)
-	- Tooltips would not reappear on the same widget, and
-	  the initial tooltip delay was not used after a tooltip
-	  was shown (STR #465)
-	- Fixed a compile problem with the Linux 2.6 threading
-	  support (STR #483)
-	- Fixed problems with 2-byte Xpm files on 64-bit
-	  platforms (STR #525)
-	- FLTK didn't handle the ReparentNotify event on X11
-	  (STR #524)
-	- The old source file "fl_set_gray.cxx" is not needed
-	  (STR #516)
-	- Fl_Text_Display still called delete[] instead of
-	  free() in one place (STR #503)
-	- The symbol test program did not handle the @+ symbol
-	  properly (STR #490)
-	- Fl_File_Chooser didn't correctly call isprint() and
-	  isspace() when checking to see if the current file was
-	  text that can be previewed (STR #517)
-	- FLUID didn't compile with Borland C++ due to a
-	  compiler bug (STR #496)
-	- Fl_Positioner did not handle reversed min and max
-	  values (STR #510)
-	- fl_descent(), fl_height(), and fl_width() would crash
-	  a program if you didn't call fl_font() first; they now
-	  return -1 if no font is set (STR #500)
-	- Added test/unittests to verify pixel drawing and 
-	  alignment across platforms
-	- Fl_Menu_::find_item() didn't determine the menu path
-	  properly (STR #481)
-	- The build system now installs image library header
-	  files in FL/images/filename.h so that FLTK programs
-	  will use the same header files as the FLTK image
-	  libraries.
-	- The build system now creates image libraries named
-	  "libfltk_name.a" instead of "libname.a" to avoid
-	  clobbering an existing installed library (STR #480)
-
-	[1.1.5rc2]
-	- Documentation updates (STR #365, STR #399, STR #407,
-	  STR #412, STR #414, STR #452, STR #462)
-	- Fl_Text_Display did not handle drawing of overlapping
-	  text (italic next to plain, etc.) properly (STR #381)
-	- All of the core widgets now consistently set changed()
-	  before calling the callback function for a change in
-	  value; this allows programs to check the changed()
-	  state in a callback to see why they are being called
-	  (STR #475)
-	- Fl_File_Chooser did not handle some cases for filename
-	  completion (STR #376)
-	- Fl_Help_View didn't properly compute the default
-	  maximum width of the page properly, resulting in
-	  non-wrapped text in table cells (STR #464)
-	- Fl_Text_Editor no longer tries to emulate the Emacs
-	  CTRL-A shortcut to move to the first column, since
-	  there is a key for that and the widget does not
-	  emulate any other Emacs keys (STR #421)
-	- Fl_File_Chooser always disabled the OK button when the
-	  user pressed DELETE or BACKSPACE (STR #397)
-	- Added Fl_Browser::swap() methods (STR #459)
-	- Fl_Counter didn't use a thin down box for the text
-	  field if the box type was set to FL_THIN_UP_BOX (STR
-	  #467)
-	- Fl_Help_View now resets the scrollbars if they go
-	  outside the current view (STR #464)
-	- fl_dir_chooser() did not show the previous selection
-	  as documented (STR #443)
-	- Fl_Text_Display used delete[] instead of free() in
-	  some places (STR #466)
-	- FLTK now includes copies of the PNG, JPEG, and ZLIB
-	  libraries for platforms that do not have them (STR
-	  #441)
-	- The fltk-config script did not include the
-	  "-mno-cygwin" option under CygWin (STR #434)
-	- Fl_Help_View::find() did not check for a NULL value
-	  (STR #442)
-	- Added search symbol to the search field of
-	  Fl_Help_Dialog (STR #417)
-	- Added two new symbols, @search and @FLTK, which can be
-	  used in labels.
-	- MacOS X: fixed NumLock mixup, added support for
-	  FL_Menu and FL_Delete keys on external (PC) keyboards
-	  (STR #445)
-	- Fl_File_Icon::draw() did not support drawing of complex
-	  polygons in icon descriptions (STR #474)
-	- The configure script now offers options for JPEG, PNG,
-	  and ZLIB libraries (STR #416)
-	- The first menu item in a list would not go invisible 
-	  (STR #406)
-	- Fl_Text_Buffer::replace() now range checks its input
-	  (STR #385)
-	- FLTK now builds with the current release of MinGW (STR
-	  #325, STR #401, STR #402)
-	- FLTK now honors the numlock key state (STR #369)
-	- The Fl_Text_Display widget did not redraw selections
-	  when focus changed (STR #390)
-	- The plastic background image is now less contrasty
-	  (STR #394)
-	- Fl_Scroll now uses a full redraw when the scheme is
-	  set to plastic and the box type is a frame (STR #205)
-	- Fl_Window::resize() did not work properly with KDE 3.2
-	  (STR #356)
-	- FLTK didn't delete font bitmaps when the last OpenGL
-	  window was deleted, preventing future text from
-	  displaying (STR #310)
-	- FLUID didn't include a full initialization record for
-	  the trailing NULL menu items (STR #375)
-	- Fl_Browser::item_width() did not properly handle
-	  format modifiers (STR #372)
-	- Fl_Browser::item_height() did not handle columns
-	  properly (STR #371)
-	- Fl_Gl_Window's on WIN32 now prefer accelerated pixel
-	  formats over generic formats (STR #382)
-	- Fl_Window::resize() did not work on some systems if
-	  the window was not shown (STR #373)
-	- FLUID did not write the user_data type if the
-	  user_data field was empty (STR #374)
-	- The value(const Fl_Menu_Item*) method was not
-	  implemented for Fl_Choice (STR #366)
-        - Fl_Pack didn't draw child widget labels the same way
-          as Fl_Group, causing display problems (STR #360)
-        - fl_read_image() didn't work when reading from an
-          offscreen buffer with some X11 servers (STR #364)
-
-	[1.1.5rc1]
-	- Documentation updates (STR #186, STR #245, STR #250,
-	  STR #277, STR #281, STR #328, STR #338)
-	- fl_scroll() did not handle scrolling from off-screen on
-	  WIN32 (STR #315)
-	- Fl_File_Chooser did not allow manual entry of a drive
-	  letter (STR #339)
-	- Fl_Menu now uses the boxtype to redraw the menu
-	  background (STR #204)
-	- Fl_Scroll now shows the background image when a framed
-	  box type is used and the Fl_Scroll is a direct
-	  decendent of a window (STR #205)
-	- Added a new_directory_tooltip string pointer to allow
-	  localization of the file chooser's new directory
-	  button (STR #340)
-	- Added Fl_Menu_::find_item() method (STR #316)
-	- The Fl_Widget copy operator definitions were not
-	  conditionally compiled properly (STR #329)
-	- FLUID's Layout functionality did not move child
-	  widgets when laying out group widgets (STR #319)
-	- FLUID's Layout->Center In Group functionality did not
-	  properly handle widgets that were children of a
-	  Fl_Window widget (STR #318)
-	- The Fl_Text_Display destructor did not remove the
-	  predelete callback associated with the current buffer
-	  (STR #332)
-	- Fixed several bugs in the MacOS X Fl::add_fd()
-	  handling (STR #333, STR #337)
-	- The Fl_Text_Display widget did not display selections
-	  set by the application (STR #322)
-	- FLUID crashed if you did layout with a window widget
-	  (STR #317)
-	- Fl_Scroll::clear() didn't remove the child widget from
-	  the Fl_Scroll widget (STR #327)
-	- Fl_Value_Slider::draw_bg() didn't always apply the
-	  clipping rectangle (STR #235)
-	- fl_filename_relative() returned the wrong string if
-	  the absolute pathname was equal to the current working
-	  directory (STR #224)
-	- Fl_Help_Dialog didn't correctly restore the scroll
-	  position when going forward/back in the link history
-	  if the file changed (STR #218)
-	- glutGetModifiers() did not mask off extra state bits,
-	  confusing some GLUT-based applications (STR #213)
-	- Fixed mouse capture problems on MacOS X (STR #209, STR
-	  #229)
-	- Fl_Sys_Menu_Bar is now built into the library for
-	  MacOS X (STR #229)
-	- Fl_Menu_ now provides item_pathname() methods to get
-	  the "pathname" of a menu item, e.g. "File/Quit" (STR
-	  #283)
-	- Fl_Text_Display now provides cursor_color() methods to
-	  get and set the cursor color (STR #271)
-	- Fl_Scroll didn't honor FL_NO_BOX (STR #305)
-	- FLUID declaration blocks didn't support public/private
-	  definitions (STR #301)
-	- Fl_Preferences incorrectly created the preferences
-	  directory before necessary (STR #247)
-	- The WIN32 project files still defined the (obsolete)
-	  FL_STATIC constant (STR #279)
-	- Fl_Text_Display::buffer() did not support NULL values,
-	  making it impossible to clean up text buffers from a
-	  subclass (STR #295)
-	- Fl_Text_Display did not support a NULL
-	  unfinishedStyleCB function (STR #241)
-	- Fl::background2() incorrectly marked the foreground
-	  color as initialized (STR #255)
-	- Fixed the X11 CTRL + "-" detection code to properly
-	  track the state of the CTRL key (STR #264)
-	- Fl_File_Icon::load_system_icons() didn't support KDE
-	  3.x (STR #299)
-	- WIN32's scandir() emulation did not allocate enough
-	  memory for directory names (STR #263)
-	- Fl::compose() did not handle special keys like
-	  backspace properly (STR #293)
-	- Fl_Choice did not clip its text when drawing using the
-	  plastic scheme (STR #287)
-	- Fl_Group incorrectly mapped the emacs CTRL keys to
-	  keyboard navigation (STR #228)
-	- Fl_File_Browser::load() didn't handle a NULL directory
-	  name (STR #266)
-	- 64-bit library fixes (STR #261)
-	- The Fl_Valuator::format() function did not limit the
-	  size of the number buffer (STR #268)
-	- The keypad Enter key works as the normal Enter/Return
-	  key in common widgets (STR #191)
-	- Fixed some OS/2-specific build problems (STR #185, STR
-	  #197)
-	- Calling Fl_Text_Display::buffer() with the same buffer
-	  would cause an application to lockup (STR #196)
-	- Some of the widgets could crash an application if the
-	  cursor was changed after a window was deleted (STR
-	  #181)
-	- The Fl_Gl_Window WIN32 pixel format code did not
-	  choose the pixel format with the largest depth buffer
-	  (STR #175)
-	- The configure script didn't leave space between the
-	  CFLAGS/CXXFLAGS and X_CFLAGS variables (STR #174)
-	- The Fl_JPEG_Image and Fl_PNG_Image classes did not
-	  trap errors from the corresponding image libraries
-	  (STR #168)
-	- Added "--with-links" configure option to control
-	  whether symlinks are created for the FLTK header files
-	  (STR #164)
-	- Added new hoverdelay() to Fl_Tooltip to control how
-	  quickly recent tooltips appear (STR #126)
-	- FLUID now sets the size range when a window is shown.
-	  This seems to be necessary with some window managers
-	  (STR #166)
+	- Documentation updates (STR #552, STR #608)
+	- Added the 2.0 Fl_Widget::copy_label() method to
+	  allow FLTK 1.x applications to have their label
+	  strings managed by FLTK (STR #630)
+	- Added Fl::delete_widget() method to safely delete
+	  widgets in callback methods (STR #629)
+	- Fl_Widget::damage(uchar,int,int,int,int) didn't clip
+	  the bounding box properly (STR #626)
+	- Windows could appear on the wrong screen on OSX (STR
+	  #628)
+	- Fl_Double_Window produced an error on resize with X11
+	- FLUID didn't display menu items using images properly
+	  (STR #564)
+	- Fl_Sys_Menu_Bar didn't compile on case-sensitive
+	  file-systems (STR #622)
+	- FLUID didn't handle default function parameters
+	  properly (STR #579)
+	- Moving or resizing widgets in FLUID didn't always
+	  update the widget panel (STR #600)
+	- FLTK windows could appear off-screen on X11 (STR #586)
+	- The configure script did not support
+	  --disable-localfoo to completely disable image file
+	  support (STR #582)
+	- The Visual C++ 6.0 project files still listed the old
+	  JPEG, PNG, and ZLIB library names (STR #577)
+	- Fixed the scandir() conditional code for HP-UX 11i
+	  (STR #585)
+	- Fl_Text_Display didn't support CTRL/CMD-A/C (STR #601)
+	- Watcom fixes (STR #581, STR #584, STR #594, STR #595,
+	  STR #623, STR #627)
+	- Fixed library include order when building DSOs on
+	  MacOS X (STR #596)
+	- fl_xid() could cause a WIN32 application to crash (STR
+	  #560, STR #576, STR #618)
+	- Fl_Browser::remove_() removed the item from the list
+	  before computing the item height, which caused
+	  problems with some programs (STR #613)
 
 ----HTML----
 
-<P>The third release candidate for FLTK 1.1.5 is now available
-for download and testing. You now have until Ocotber 8th, 2004 to
-report any problems with this release candidate using the
-software trouble report form at the following URL:</P>
-
-<PRE>
-    <A HREF="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A>
-</PRE>
-
-<P>If no priority 4 or 5 STRs are received and confirmed before
-this date, 1.1.5 will be released.
-
-<P>Note: Since problems reported on the FLTK newsgroups or
-mailing lists are <I>not</I> automatically entered as STRs, it
-is imperative that you report any problems using the STR form.
-
-<P ALIGN="CENTER">---- Draft FLTK 1.1.5 Release Announcement ----</P>
-
-<P>The FLTK Team is proud to announce the release of FLTK 1.1.5,
+<P>The FLTK Team is proud to announce the release of FLTK 1.1.6,
 a cross-platform C++ GUI toolkit for UNIX&reg;/Linux&reg; (X11),
 Microsoft&reg; Windows&reg;, and MacOS&reg; X. FLTK provides
 modern GUI functionality without the bloat and supports 3D
 graphics via OpenGL&reg; and its built-in GLUT emulation.
 
-<P>The FLTK 1.1.5 release is primarily a bug-fix release
-including documentation updates, fixes for 64-bit platforms,
-FLUID, several widgets, and GLUT emulation, and fixes for
-several platform-specific issues. The new release also adds
-project files for Visual C++.NET and supports KDE 3.x icons.
+<P>FLTK 1.1.6 fixes bugs in the Visual C++ and Watcom support
+files, a crash bug on Windows, default parameter support and
+widget position information in FLUID, window positioning
+problems with with newer releases of KDE and OSX, copy shortcuts
+in the Fl_Text_Display widget, and a side-effect in the
+Fl_Browser::remove_() method. The new release also adds the 2.0
+copy_label() method for widgets and a delete_widget() method for
+callbacks.
 
 <P>FLTK is provided under the GNU Library Public License with
 exceptions that allow for static linking.
 
-<P>Changes since FLTK 1.1.4 include:
+<P>Changes since FLTK 1.1.5 include:
 
 <UL>
 
-	<li>Documentation updates (<a href='str.php?L568'>STR #568</a>, <a href='str.php?L570'>STR #570</a>)
-	<li>Shortcuts were incorrectly underlined in multi-line
-	labels (<a href='str.php?L566'>STR #566</a>)
-	<li>More CMake updates (<a href='str.php?L499'>STR #499</a>)
-	<li>The Watcom C++ compiler needed a small change (<a href='str.php?L567'>STR #567</a>)
-	<li>Added DESTDIR support and now remove all man pages for
-	the "uninstall" target (<a href='str.php?L545'>STR #545</a>)
-	<li>Fix PNG drawing on buggy WIN32 graphics cards (<a href='str.php?L548'>STR #548</a>)
-	<li>The configure script didn't propagate the CPPFLAGS
-	environment variable (<a href='str.php?L549'>STR #549</a>)
-	<li>The numpad keys didn't work properly on WIN32 (<a href='str.php?L502'>STR #502</a>)
-	<li>fl_input() and friends now set the input focus to the
-	text field when the dialog is shown (<a href='str.php?L553'>STR #553</a>)
-	<li>Fixed background color mixup when drawing Fl_Choice
-	menus (<a href='str.php?L544'>STR #544</a>)
-	<li>Fixed MingW makefiles (<a href='str.php?L550'>STR #550</a>)
-	<li>More VC++ project file tweaking (<a href='str.php?L559'>STR #559</a>)
-	<li>Fl_PNG_Image didn't use the png_set_trns_to_alpha
-	function when available (<a href='str.php?L547'>STR #547</a>)
-	<li>The FL_UNFOCUS event wasn't always sent when switching
-	tabs (<a href='str.php?L558'>STR #558</a>)
-
-	<br /><i>[1.1.5rc3]</i>
-
-	<li>Documentation updates (<a href='http://www.fltk.org/str.php?L505'>STR #505</a>, <a href='http://www.fltk.org/str.php?L513'>STR #513</a>)
-	<li>Updated PNG library source to 1.2.7.
-	<li>Updated ZLIB library source to 1.2.1.
-	<li>Fixed VC++ project file problems (<a href='http://www.fltk.org/str.php?L476'>STR #476</a>, <a href='http://www.fltk.org/str.php?L478'>STR #478</a>,
-	<a href='http://www.fltk.org/str.php?L520'>STR #520</a>, <a href='http://www.fltk.org/str.php?L527'>STR #527</a>, <a href='http://www.fltk.org/str.php?L537'>STR #537</a>)
-	<li>Now look for 8 bits of alpha when the developer has
-	requested FL_RGB8 (<a href='http://www.fltk.org/str.php?L541'>STR #541</a>)
-	<li>The last line in an Fl_Help_View widget was not
-	aligned properly (<a href='http://www.fltk.org/str.php?L536'>STR #536</a>)
-	<li>The "search" symbol looked like a Q (<a href='http://www.fltk.org/str.php?L536'>STR #536</a>)
-	<li>Changed Fl_Help_View::get_color() to use a lookup
-	table to avoid serious Borland C++ 5.5 compiler bugs
-	(<a href='http://www.fltk.org/str.php?L533'>STR #533</a>)
-	<li>Fixed Watcom compiler warnings with FL/Fl_Widget.H
-	(<a href='http://www.fltk.org/str.php?L540'>STR #540</a>)
-	<li>The image class copy() methods did not always make a
-	separate copy of the image data (<a href='http://www.fltk.org/str.php?L539'>STR #539</a>)
-	<li>Fixed an edge case in fl_old_shortcut() that could
-	cause it to read beyond then end of the shortcut
-	string (used for XForms named shortcuts)
-	<li>Added (unsupported) CMake files (<a href='http://www.fltk.org/str.php?L499'>STR #499</a>)
-	<li>Tooltips would not reappear on the same widget, and
-	the initial tooltip delay was not used after a tooltip
-	was shown (<a href='http://www.fltk.org/str.php?L465'>STR #465</a>)
-	<li>Fixed a compile problem with the Linux 2.6 threading
-	support (<a href='http://www.fltk.org/str.php?L483'>STR #483</a>)
-	<li>Fixed problems with 2-byte Xpm files on 64-bit
-	platforms (<a href='http://www.fltk.org/str.php?L525'>STR #525</a>)
-	<li>FLTK didn't handle the ReparentNotify event on X11
-	(<a href='http://www.fltk.org/str.php?L524'>STR #524</a>)
-	<li>The old source file "fl_set_gray.cxx" is not needed
-	(<a href='http://www.fltk.org/str.php?L516'>STR #516</a>)
-	<li>Fl_Text_Display still called delete[] instead of
-	free() in one place (<a href='http://www.fltk.org/str.php?L503'>STR #503</a>)
-	<li>The symbol test program did not handle the @+ symbol
-	properly (<a href='http://www.fltk.org/str.php?L490'>STR #490</a>)
-	<li>Fl_File_Chooser didn't correctly call isprint() and
-	isspace() when checking to see if the current file was
-	text that can be previewed (<a href='http://www.fltk.org/str.php?L517'>STR #517</a>)
-	<li>FLUID didn't compile with Borland C++ due to a
-	compiler bug (<a href='http://www.fltk.org/str.php?L496'>STR #496</a>)
-	<li>Fl_Positioner did not handle reversed min and max
-	values (<a href='http://www.fltk.org/str.php?L510'>STR #510</a>)
-	<li>fl_descent(), fl_height(), and fl_width() would crash
-	a program if you didn't call fl_font() first; they now
-	return -1 if no font is set (<a href='http://www.fltk.org/str.php?L500'>STR #500</a>)
-	<li>Added test/unittests to verify pixel drawing and 
-	alignment across platforms
-	<li>Fl_Menu_::find_item() didn't determine the menu path
-	properly (<a href='http://www.fltk.org/str.php?L481'>STR #481</a>)
-	<li>The build system now installs image library header
-	files in FL/images/filename.h so that FLTK programs
-	will use the same header files as the FLTK image
-	libraries.
-	<li>The build system now creates image libraries named
-	"libfltk_name.a" instead of "libname.a" to avoid
-	clobbering an existing installed library (<a href='http://www.fltk.org/str.php?L480'>STR #480</a>)
-
-	<br /><i>[1.1.5rc2]</i>
-
-	<li>Documentation updates (<a href='http://www.fltk.org/str.php?L365'>STR #365</a>, <a href='http://www.fltk.org/str.php?L399'>STR #399</a>, <a href='http://www.fltk.org/str.php?L407'>STR #407</a>,
-	<a href='http://www.fltk.org/str.php?L412'>STR #412</a>, <a href='http://www.fltk.org/str.php?L414'>STR #414</a>, <a href='http://www.fltk.org/str.php?L452'>STR #452</a>, <a href='http://www.fltk.org/str.php?L462'>STR #462</a>)
-	<li>Fl_Text_Display did not handle drawing of overlapping
-	text (italic next to plain, etc.) properly (<a href='http://www.fltk.org/str.php?L381'>STR #381</a>)
-	<li>All of the core widgets now consistently set changed()
-	before calling the callback function for a change in
-	value; this allows programs to check the changed()
-	state in a callback to see why they are being called
-	(<a href='http://www.fltk.org/str.php?L475'>STR #475</a>)
-	<li>Fl_File_Chooser did not handle some cases for filename
-	completion (<a href='http://www.fltk.org/str.php?L376'>STR #376</a>)
-	<li>Fl_Help_View didn't properly compute the default
-	maximum width of the page properly, resulting in
-	non-wrapped text in table cells (<a href='http://www.fltk.org/str.php?L464'>STR #464</a>)
-	<li>Fl_Text_Editor no longer tries to emulate the Emacs
-	CTRL-A shortcut to move to the first column, since
-	there is a key for that and the widget does not
-	emulate any other Emacs keys (<a href='http://www.fltk.org/str.php?L421'>STR #421</a>)
-	<li>Fl_File_Chooser always disabled the OK button when the
-	user pressed DELETE or BACKSPACE (<a href='http://www.fltk.org/str.php?L397'>STR #397</a>)
-	<li>Added Fl_Browser::swap() methods (<a href='http://www.fltk.org/str.php?L459'>STR #459</a>)
-	<li>Fl_Counter didn't use a thin down box for the text
-	field if the box type was set to FL_THIN_UP_BOX (<a href='http://www.fltk.org/str.php?L467'>STR
-	#467</a>)
-	<li>Fl_Help_View now resets the scrollbars if they go
-	outside the current view (<a href='http://www.fltk.org/str.php?L464'>STR #464</a>)
-	<li>fl_dir_chooser() did not show the previous selection
-	as documented (<a href='http://www.fltk.org/str.php?L443'>STR #443</a>)
-	<li>Fl_Text_Display used delete[] instead of free() in
-	some places (<a href='http://www.fltk.org/str.php?L466'>STR #466</a>)
-	<li>FLTK now includes copies of the PNG, JPEG, and ZLIB
-	libraries for platforms that do not have them (<a href='http://www.fltk.org/str.php?L441'>STR
-	#441</a>)
-	<li>The fltk-config script did not include the
-	"-mno-cygwin" option under CygWin (<a href='http://www.fltk.org/str.php?L434'>STR #434</a>)
-	<li>Fl_Help_View::find() did not check for a NULL value
-	(<a href='http://www.fltk.org/str.php?L442'>STR #442</a>)
-	<li>Added search symbol to the search field of
-	Fl_Help_Dialog (<a href='http://www.fltk.org/str.php?L417'>STR #417</a>)
-	<li>Added two new symbols, @search and @FLTK, which can be
-	used in labels.
-	<li>MacOS X: fixed NumLock mixup, added support for
-	FL_Menu and FL_Delete keys on external (PC) keyboards
-	(<a href='http://www.fltk.org/str.php?L445'>STR #445</a>)
-	<li>Fl_File_Icon::draw() did not support drawing of complex
-	polygons in icon descriptions (<a href='http://www.fltk.org/str.php?L474'>STR #474</a>)
-	<li>The configure script now offers options for JPEG, PNG,
-	and ZLIB libraries (<a href='http://www.fltk.org/str.php?L416'>STR #416</a>)
-	<li>The first menu item in a list would not go invisible 
-	(<a href='http://www.fltk.org/str.php?L406'>STR #406</a>)
-	<li>Fl_Text_Buffer::replace() now range checks its input
-	(<a href='http://www.fltk.org/str.php?L385'>STR #385</a>)
-	<li>FLTK now builds with the current release of MinGW (<a href='http://www.fltk.org/str.php?L325'>STR
-	#325</a>, <a href='http://www.fltk.org/str.php?L401'>STR #401</a>, <a href='http://www.fltk.org/str.php?L402'>STR #402</a>)
-	<li>FLTK now honors the numlock key state (<a href='http://www.fltk.org/str.php?L369'>STR #369</a>)
-	<li>The Fl_Text_Display widget did not redraw selections
-	when focus changed (<a href='http://www.fltk.org/str.php?L390'>STR #390</a>)
-	<li>The plastic background image is now less contrasty
-	(<a href='http://www.fltk.org/str.php?L394'>STR #394</a>)
-	<li>Fl_Scroll now uses a full redraw when the scheme is
-	set to plastic and the box type is a frame (<a href='http://www.fltk.org/str.php?L205'>STR #205</a>)
-	<li>Fl_Window::resize() did not work properly with KDE 3.2
-	(<a href='http://www.fltk.org/str.php?L356'>STR #356</a>)
-	<li>FLTK didn't delete font bitmaps when the last OpenGL
-	window was deleted, preventing future text from
-	displaying (<a href='http://www.fltk.org/str.php?L310'>STR #310</a>)
-	<li>FLUID didn't include a full initialization record for
-	the trailing NULL menu items (<a href='http://www.fltk.org/str.php?L375'>STR #375</a>)
-	<li>Fl_Browser::item_width() did not properly handle
-	format modifiers (<a href='http://www.fltk.org/str.php?L372'>STR #372</a>)
-	<li>Fl_Browser::item_height() did not handle columns
-	properly (<a href='http://www.fltk.org/str.php?L371'>STR #371</a>)
-	<li>Fl_Gl_Window's on WIN32 now prefer accelerated pixel
-	formats over generic formats (<a href='http://www.fltk.org/str.php?L382'>STR #382</a>)
-	<li>Fl_Window::resize() did not work on some systems if
-	the window was not shown (<a href='http://www.fltk.org/str.php?L373'>STR #373</a>)
-	<li>FLUID did not write the user_data type if the
-	user_data field was empty (<a href='http://www.fltk.org/str.php?L374'>STR #374</a>)
-	<li>The value(const Fl_Menu_Item*) method was not
-	implemented for Fl_Choice (<a href='http://www.fltk.org/str.php?L366'>STR #366</a>)
-        - Fl_Pack didn't draw child widget labels the same way
-          as Fl_Group, causing display problems (<a href='http://www.fltk.org/str.php?L360'>STR #360</a>)
-        - fl_read_image() didn't work when reading from an
-          offscreen buffer with some X11 servers (<a href='http://www.fltk.org/str.php?L364'>STR #364</a>)
-
-	<br /><i>[1.1.5rc1]</i>
-
-	<li>Documentation updates (<a href='http://www.fltk.org/str.php?L186'>STR #186</a>, <a href='http://www.fltk.org/str.php?L245'>STR #245</a>, <a href='http://www.fltk.org/str.php?L250'>STR #250</a>,
-	<a href='http://www.fltk.org/str.php?L277'>STR #277</a>, <a href='http://www.fltk.org/str.php?L281'>STR #281</a>, <a href='http://www.fltk.org/str.php?L328'>STR #328</a>, <a href='http://www.fltk.org/str.php?L338'>STR #338</a>)
-	<li>fl_scroll() did not handle scrolling from off-screen on
-	WIN32 (<a href='http://www.fltk.org/str.php?L315'>STR #315</a>)
-	<li>Fl_File_Chooser did not allow manual entry of a drive
-	letter (<a href='http://www.fltk.org/str.php?L339'>STR #339</a>)
-	<li>Fl_Menu now uses the boxtype to redraw the menu
-	background (<a href='http://www.fltk.org/str.php?L204'>STR #204</a>)
-	<li>Fl_Scroll now shows the background image when a framed
-	box type is used and the Fl_Scroll is a direct
-	decendent of a window (<a href='http://www.fltk.org/str.php?L205'>STR #205</a>)
-	<li>Added a new_directory_tooltip string pointer to allow
-	localization of the file chooser's new directory
-	button (<a href='http://www.fltk.org/str.php?L340'>STR #340</a>)
-	<li>Added Fl_Menu_::find_item() method (<a href='http://www.fltk.org/str.php?L316'>STR #316</a>)
-	<li>The Fl_Widget copy operator definitions were not
-	conditionally compiled properly (<a href='http://www.fltk.org/str.php?L329'>STR #329</a>)
-	<li>FLUID's Layout functionality did not move child
-	widgets when laying out group widgets (<a href='http://www.fltk.org/str.php?L319'>STR #319</a>)
-	<li>FLUID's Layout->Center In Group functionality did not
-	properly handle widgets that were children of a
-	Fl_Window widget (<a href='http://www.fltk.org/str.php?L318'>STR #318</a>)
-	<li>The Fl_Text_Display destructor did not remove the
-	predelete callback associated with the current buffer
-	(<a href='http://www.fltk.org/str.php?L332'>STR #332</a>)
-	<li>Fixed several bugs in the MacOS X Fl::add_fd()
-	handling (<a href='http://www.fltk.org/str.php?L333'>STR #333</a>, <a href='http://www.fltk.org/str.php?L337'>STR #337</a>)
-	<li>The Fl_Text_Display widget did not display selections
-	set by the application (<a href='http://www.fltk.org/str.php?L322'>STR #322</a>)
-	<li>FLUID crashed if you did layout with a window widget
-	(<a href='http://www.fltk.org/str.php?L317'>STR #317</a>)
-	<li>Fl_Scroll::clear() didn't remove the child widget from
-	the Fl_Scroll widget (<a href='http://www.fltk.org/str.php?L327'>STR #327</a>)
-	<li>Fl_Value_Slider::draw_bg() didn't always apply the
-	clipping rectangle (<a href='http://www.fltk.org/str.php?L235'>STR #235</a>)
-	<li>fl_filename_relative() returned the wrong string if
-	the absolute pathname was equal to the current working
-	directory (<a href='http://www.fltk.org/str.php?L224'>STR #224</a>)
-	<li>Fl_Help_Dialog didn't correctly restore the scroll
-	position when going forward/back in the link history
-	if the file changed (<a href='http://www.fltk.org/str.php?L218'>STR #218</a>)
-	<li>glutGetModifiers() did not mask off extra state bits,
-	confusing some GLUT-based applications (<a href='http://www.fltk.org/str.php?L213'>STR #213</a>)
-	<li>Fixed mouse capture problems on MacOS X (<a href='http://www.fltk.org/str.php?L209'>STR #209</a>, <a href='http://www.fltk.org/str.php?L229'>STR #229</a>)
-	<li>Fl_Sys_Menu_Bar is now built into the library for
-	MacOS X (<a href='http://www.fltk.org/str.php?L229'>STR #229</a>)
-	<li>Fl_Menu_ now provides item_pathname() methods to get
-	the "pathname" of a menu item, e.g. "File/Quit" (<a href='http://www.fltk.org/str.php?L283'>STR #283</a>)
-	<li>Fl_Text_Display now provides cursor_color() methods to
-	get and set the cursor color (<a href='http://www.fltk.org/str.php?L271'>STR #271</a>)
-	<li>Fl_Scroll didn't honor FL_NO_BOX (<a href='http://www.fltk.org/str.php?L305'>STR #305</a>)
-	<li>FLUID declaration blocks didn't support public/private
-	definitions (<a href='http://www.fltk.org/str.php?L301'>STR #301</a>)
-	<li>Fl_Preferences incorrectly created the preferences
-	directory before necessary (<a href='http://www.fltk.org/str.php?L247'>STR #247</a>)
-	<li>The WIN32 project files still defined the (obsolete)
-	FL_STATIC constant (<a href='http://www.fltk.org/str.php?L279'>STR #279</a>)
-	<li>Fl_Text_Display::buffer() did not support NULL values,
-	making it impossible to clean up text buffers from a
-	subclass (<a href='http://www.fltk.org/str.php?L295'>STR #295</a>)
-	<li>Fl_Text_Display did not support a NULL
-	unfinishedStyleCB function (<a href='http://www.fltk.org/str.php?L241'>STR #241</a>)
-	<li>Fl::background2() incorrectly marked the foreground
-	color as initialized (<a href='http://www.fltk.org/str.php?L255'>STR #255</a>)
-	<li>Fixed the X11 CTRL + "-" detection code to properly
-	track the state of the CTRL key (<a href='http://www.fltk.org/str.php?L264'>STR #264</a>)
-	<li>Fl_File_Icon::load_system_icons() didn't support KDE
-	3.x (<a href='http://www.fltk.org/str.php?L299'>STR #299</a>)
-	<li>WIN32's scandir() emulation did not allocate enough
-	memory for directory names (<a href='http://www.fltk.org/str.php?L263'>STR #263</a>)
-	<li>Fl::compose() did not handle special keys like
-	backspace properly (<a href='http://www.fltk.org/str.php?L293'>STR #293</a>)
-	<li>Fl_Choice did not clip its text when drawing using the
-	plastic scheme (<a href='http://www.fltk.org/str.php?L287'>STR #287</a>)
-	<li>Fl_Group incorrectly mapped the emacs CTRL keys to
-	keyboard navigation (<a href='http://www.fltk.org/str.php?L228'>STR #228</a>)
-	<li>Fl_File_Browser::load() didn't handle a NULL directory
-	name (<a href='http://www.fltk.org/str.php?L266'>STR #266</a>)
-	<li>64-bit library fixes (<a href='http://www.fltk.org/str.php?L261'>STR #261</a>)
-	<li>The Fl_Valuator::format() function did not limit the
-	size of the number buffer (<a href='http://www.fltk.org/str.php?L268'>STR #268</a>)
-	<li>The keypad Enter key works as the normal Enter/Return
-	key in common widgets (<a href='http://www.fltk.org/str.php?L191'>STR #191</a>)
-	<li>Fixed some OS/2-specific build problems (<a href='http://www.fltk.org/str.php?L185'>STR #185</a>,
-	<a href='http://www.fltk.org/str.php?L197'>STR #197</a>)
-	<li>Calling Fl_Text_Display::buffer() with the same buffer
-	would cause an application to lockup (<a href='http://www.fltk.org/str.php?L196'>STR #196</a>)
-	<li>Some of the widgets could crash an application if the
-	cursor was changed after a window was deleted (<a href='http://www.fltk.org/str.php?L181'>STR #181</a>)
-	<li>The Fl_Gl_Window WIN32 pixel format code did not
-	choose the pixel format with the largest depth buffer
-	(<a href='http://www.fltk.org/str.php?L175'>STR #175</a>)
-	<li>The configure script didn't leave space between the
-	CFLAGS/CXXFLAGS and X_CFLAGS variables (<a href='http://www.fltk.org/str.php?L174'>STR #174</a>)
-	<li>The Fl_JPEG_Image and Fl_PNG_Image classes did not
-	trap errors from the corresponding image libraries
-	(<a href='http://www.fltk.org/str.php?L168'>STR #168</a>)
-	<li>Added "--with-links" configure option to control
-	whether symlinks are created for the FLTK header files
-	(<a href='http://www.fltk.org/str.php?L164'>STR #164</a>)
-	<li>Added new hoverdelay() to Fl_Tooltip to control how
-	quickly recent tooltips appear (<a href='http://www.fltk.org/str.php?L126'>STR #126</a>)
-	<li>FLUID now sets the size range when a window is shown.
-	This seems to be necessary with some window managers
-	(<a href='http://www.fltk.org/str.php?L166'>STR #166</a>)
+	<li>Documentation updates (<a href='str.php?L552'>STR #552</a>, <a href='str.php?L608'>STR #608</a>)
+	<li>Added the 2.0 Fl_Widget::copy_label() method to
+	allow FLTK 1.x applications to have their label
+	strings managed by FLTK (<a href='str.php?L630'>STR #630</a>)
+	<li>Added Fl::delete_widget() method to safely delete
+	widgets in callback methods (<a href='str.php?L629'>STR #629</a>)
+	<li>Fl_Widget::damage(uchar,int,int,int,int) didn't clip
+	the bounding box properly (<a href='str.php?L626'>STR #626</a>)
+	<li>Windows could appear on the wrong screen on OSX (<a href='str.php?L628'>STR #628</a>)
+	<li>Fl_Double_Window produced an error on resize with X11
+	<li>FLUID didn't display menu items using images properly
+	(<a href='str.php?L564'>STR #564</a>)
+	<li>Fl_Sys_Menu_Bar didn't compile on case-sensitive
+	file-systems (<a href='str.php?L622'>STR #622</a>)
+	<li>FLUID didn't handle default function parameters
+	properly (<a href='str.php?L579'>STR #579</a>)
+	<li>Moving or resizing widgets in FLUID didn't always
+	update the widget panel (<a href='str.php?L600'>STR #600</a>)
+	<li>FLTK windows could appear off-screen on X11 (<a href='str.php?L586'>STR #586</a>)
+	<li>The configure script did not support
+	--disable-localfoo to completely disable image file
+	support (<a href='str.php?L582'>STR #582</a>)
+	<li>The Visual C++ 6.0 project files still listed the old
+	JPEG, PNG, and ZLIB library names (<a href='str.php?L577'>STR #577</a>)
+	<li>Fixed the scandir() conditional code for HP-UX 11i
+	(<a href='str.php?L585'>STR #585</a>)
+	<li>Fl_Text_Display didn't support CTRL/CMD-A/C (<a href='str.php?L601'>STR #601</a>)
+	<li>Watcom fixes (<a href='str.php?L581'>STR #581</a>, <a href='str.php?L584'>STR #584</a>, <a href='str.php?L594'>STR #594</a>, <a href='str.php?L595'>STR #595</a>,
+	<a href='str.php?L623'>STR #623</a>, <a href='str.php?L627'>STR #627</a>)
+	<li>Fixed library include order when building DSOs on
+	MacOS X (<a href='str.php?L596'>STR #596</a>)
+	<li>fl_xid() could cause a WIN32 application to crash (<a href='str.php?L560'>STR #560</a>, <a href='str.php?L576'>STR #576</a>, <a href='str.php?L618'>STR #618</a>)
+	<li>Fl_Browser::remove_() removed the item from the list
+	before computing the item height, which caused
+	problems with some programs (<a href='str.php?L613'>STR #613</a>)
 
 </UL>
