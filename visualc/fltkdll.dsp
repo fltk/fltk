@@ -105,6 +105,8 @@ SOURCE=..\src\filename_expand.cxx
 DEP_CPP_FILENA=\
 	"..\fl\filename.h"\
 	"..\fl\fl_export.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -148,6 +150,8 @@ SOURCE=..\src\filename_setext.cxx
 DEP_CPP_FILENAME_S=\
 	"..\fl\filename.h"\
 	"..\fl\fl_export.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -165,6 +169,8 @@ DEP_CPP_FL_CX=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -246,11 +252,14 @@ DEP_CPP_FL_ARG=\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
+	"..\fl\fl_tooltip.h"\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -295,6 +304,8 @@ DEP_CPP_FL_BI=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -351,6 +362,8 @@ DEP_CPP_FL_BR=\
 	"..\fl\fl_slider.h"\
 	"..\fl\fl_valuator.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -409,6 +422,8 @@ DEP_CPP_FL_CH=\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_widget.h"\
 	"..\FL\math.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -426,6 +441,8 @@ DEP_CPP_FL_CHE=\
 	"..\fl\fl_slider.h"\
 	"..\fl\fl_valuator.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -591,6 +608,8 @@ DEP_CPP_FL_DIS=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_export.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -609,6 +628,7 @@ DEP_CPP_FL_DN=\
 	"..\src\fl_dnd_mac.cxx"\
 	"..\src\fl_dnd_win32.cxx"\
 	"..\src\fl_dnd_x.cxx"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -644,6 +664,8 @@ DEP_CPP_FL_DR=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -663,6 +685,7 @@ DEP_CPP_FL_DRA=\
 	"..\src\fl_draw_image_mac.cxx"\
 	"..\src\fl_draw_image_win32.cxx"\
 	"..\src\Fl_XColor.H"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -680,6 +703,7 @@ DEP_CPP_FL_DRAW=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -732,6 +756,7 @@ DEP_CPP_FL_FIL=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_image.h"\
 	"..\fl\fl_input.h"\
@@ -765,6 +790,7 @@ DEP_CPP_FL_FILE=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_input.h"\
 	"..\fl\fl_input_.h"\
@@ -799,6 +825,7 @@ DEP_CPP_FL_FILE_=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_input.h"\
 	"..\fl\fl_input_.h"\
@@ -824,6 +851,7 @@ DEP_CPP_FL_FILE_I=\
 	"..\fl\fl_export.h"\
 	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -852,6 +880,22 @@ DEP_CPP_FL_FILE_IC=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_File_Input.cxx
+DEP_CPP_FL_FILE_IN=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_file_input.h"\
+	"..\fl\fl_input.h"\
+	"..\fl\fl_input_.h"\
+	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_font.cxx
 DEP_CPP_FL_FO=\
 	"..\fl\enumerations.h"\
@@ -869,6 +913,7 @@ DEP_CPP_FL_FO=\
 	"..\src\fl_font_win32.cxx"\
 	"..\src\fl_font_x.cxx"\
 	"..\src\fl_font_xft.cxx"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -928,6 +973,7 @@ DEP_CPP_FL_GI=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -984,6 +1030,7 @@ DEP_CPP_FL_GL_W=\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
 	"..\src\Fl_Gl_Choice.H"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -1083,6 +1130,8 @@ DEP_CPP_FL_IM=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1091,11 +1140,14 @@ SOURCE=..\src\Fl_Input.cxx
 DEP_CPP_FL_IN=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
+	"..\fl\fl_ask.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_input.h"\
 	"..\fl\fl_input_.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1109,6 +1161,8 @@ DEP_CPP_FL_INP=\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_input_.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1172,6 +1226,8 @@ DEP_CPP_FL_LIN=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1211,6 +1267,8 @@ DEP_CPP_FL_MEN=\
 	"..\fl\fl_menu_.h"\
 	"..\fl\fl_menu_item.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1222,6 +1280,8 @@ DEP_CPP_FL_MENU=\
 	"..\fl\fl_menu_.h"\
 	"..\fl\fl_menu_item.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1400,6 +1460,8 @@ DEP_CPP_FL_PI=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1410,6 +1472,8 @@ DEP_CPP_FL_PL=\
 	"..\fl\fl.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1444,6 +1508,7 @@ DEP_CPP_FL_PNM=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -1461,8 +1526,21 @@ DEP_CPP_FL_PO=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Progress.cxx
+SOURCE=..\src\Fl_Preferences.cxx
 DEP_CPP_FL_PR=\
+	"..\fl\enumerations.h"\
+	"..\fl\filename.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_preferences.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Progress.cxx
+DEP_CPP_FL_PRO=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_draw.h"\
@@ -1615,6 +1693,7 @@ DEP_CPP_FL_SE=\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
 	"..\src\fl_font.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -1636,6 +1715,7 @@ DEP_CPP_FL_SET=\
 	"..\src\fl_set_fonts_win32.cxx"\
 	"..\src\fl_set_fonts_x.cxx"\
 	"..\src\fl_set_fonts_xft.cxx"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -1673,6 +1753,8 @@ DEP_CPP_FL_SHA=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1690,6 +1772,8 @@ DEP_CPP_FL_SHO=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1741,6 +1825,8 @@ DEP_CPP_FL_SY=\
 	"..\fl\fl.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1762,6 +1848,8 @@ SOURCE=..\src\Fl_Text_Buffer.cxx
 DEP_CPP_FL_TE=\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_text_buffer.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1779,6 +1867,8 @@ DEP_CPP_FL_TEX=\
 	"..\fl\fl_text_display.h"\
 	"..\fl\fl_valuator.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1797,6 +1887,8 @@ DEP_CPP_FL_TEXT=\
 	"..\fl\fl_text_editor.h"\
 	"..\fl\fl_valuator.h"\
 	"..\fl\fl_widget.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1983,7 +2075,9 @@ DEP_CPP_FL_WINDO=\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
+	"..\fl\mac.H"\
 	"..\fl\win32.h"\
+	"..\fl\x.h"\
 	
 # End Source File
 # Begin Source File
@@ -2026,6 +2120,7 @@ DEP_CPP_FL_X_=\
 	"..\fl\fl_menu_bar.h"\
 	"..\fl\fl_menu_item.h"\
 	"..\FL\Fl_Sys_Menu_Bar.H"\
+	"..\fl\fl_tooltip.h"\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
 	"..\fl\mac.H"\
@@ -2033,6 +2128,7 @@ DEP_CPP_FL_X_=\
 	"..\fl\x.h"\
 	"..\src\Fl_mac.cxx"\
 	"..\src\fl_win32.cxx"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -2052,6 +2148,7 @@ DEP_CPP_FL_XB=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -2071,6 +2168,7 @@ DEP_CPP_FL_XP=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -2098,6 +2196,7 @@ DEP_CPP_FORMS=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -2151,6 +2250,7 @@ DEP_CPP_FORMS_=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -2216,6 +2316,7 @@ DEP_CPP_FORMS_FS=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -2243,6 +2344,8 @@ DEP_CPP_FORMS_FS=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -2269,6 +2372,7 @@ DEP_CPP_FORMS_P=\
 	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
 	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_file_input.h"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -2327,6 +2431,7 @@ DEP_CPP_GL_DR=\
 	"..\fl\x.h"\
 	"..\src\fl_font.h"\
 	"..\src\Fl_Gl_Choice.H"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -2404,12 +2509,8 @@ DEP_CPP_SCAND=\
 
 SOURCE=..\src\vsnprintf.c
 DEP_CPP_VSNPR=\
+	"..\src\flstring.h"\
 	".\config.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_Preferences.cxx
 	
 # End Source File
 # End Target

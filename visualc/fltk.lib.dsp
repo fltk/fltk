@@ -283,6 +283,10 @@ SOURCE=..\src\Fl_File_Icon2.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_File_Input.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_font.cxx
 # End Source File
 # Begin Source File
@@ -420,6 +424,10 @@ SOURCE=..\src\Fl_PNM_Image.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_Positioner.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Preferences.cxx
 # End Source File
 # Begin Source File
 
@@ -600,10 +608,6 @@ SOURCE=..\src\scandir.c
 # Begin Source File
 
 SOURCE=..\src\vsnprintf.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\Fl_Preferences.cxx
 # End Source File
 # End Target
 # End Project
