@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.6.2.1 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: file.cxx,v 1.7.2.6.2.2 2002/04/30 18:11:49 easysw Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -304,17 +304,11 @@ const char *read_word(int wantbrace) {
 #include "Fl_Widget_Type.h"
 
 // global int variables:
-extern int gridx, gridy, snap;
 extern int i18n_type;
 extern const char* i18n_include;
 extern const char* i18n_function;
 extern const char* i18n_file;
 extern const char* i18n_set;
-static struct {const char* name; int* value;} inttable[] = {
-  {"gridx", &gridx},
-  {"gridy", &gridy},
-  {"snap", &snap}
-};
 
 
 extern int header_file_set;
@@ -344,8 +338,6 @@ int write_file(const char *filename, int selected_only) {
   if (!selected_only) {
     write_string("\nheader_name"); write_word(header_file_name);
     write_string("\ncode_name"); write_word(code_file_name);
-    for (unsigned int i=0; i<sizeof(inttable)/sizeof(*inttable); i++)
-      write_string("\n%s %d",inttable[i].name, *inttable[i].value);
   }
   for (Fl_Type *p = Fl_Type::first; p;) {
     if (!selected_only || p->selected) {
@@ -372,7 +364,6 @@ extern Fl_Type *Fl_Type_make(const char *tn);
 static void read_children(Fl_Type *p, int paste) {
   Fl_Type::current = p;
   for (;;) {
-    unsigned int i;
     const char *c = read_word();
   REUSE_C:
     if (!c) {
@@ -454,12 +445,10 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
 
-    for (i=0; i<sizeof(inttable)/sizeof(*inttable); i++) {
-      if (!strcmp(c,inttable[i].name)) {
-	c = read_word();
-	*inttable[i].value = atoi(c);
-	goto CONTINUE;
-      }
+    if (!strcmp(c, "snap") || !strcmp(c, "gridx") || !strcmp(c, "gridy")) {
+      // grid settings are now global
+      read_word();
+      goto CONTINUE;
     }
 
     {Fl_Type *t = Fl_Type_make(c);
@@ -639,5 +628,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.6.2.1 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: file.cxx,v 1.7.2.6.2.2 2002/04/30 18:11:49 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- FLUID now keeps track of grid, tooltip, and other
+	  GUI options, along with the last 10 files opened.
 	- Tooltip windows would show up in the task bar under
 	  WIN32.
 	- Now append trailing slash to directory names in names

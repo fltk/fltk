@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.1 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.2 2002/04/30 18:11:49 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -38,9 +38,9 @@
 #include "alignment_panel.h"
 #include <stdio.h>
 
-int gridx = 5;
-int gridy = 5;
-int snap = 3;
+extern int gridx;
+extern int gridy;
+extern int snap;
 
 int include_H_from_C = 1;
 extern int i18n_type;
@@ -50,15 +50,25 @@ extern const char* i18n_file;
 extern const char* i18n_set;
 extern int modflag;
 
-void alignment_cb(Fl_Input *i, long v) {
+extern Fl_Preferences	fluid_prefs;
+
+void grid_cb(Fl_Input *i, long v) {
   int n = atoi(i->value());
   if (n < 0) n = 0;
   switch (v) {
-  case 1: gridx = n; break;
-  case 2: gridy = n; break;
-  case 3: snap  = n; break;
+    case 1:
+      gridx = n;
+      fluid_prefs.set("gridx", n);
+      break;
+    case 2:
+      gridy = n;
+      fluid_prefs.set("gridy", n);
+      break;
+    case 3:
+      snap = n;
+      fluid_prefs.set("snap", n);
+      break;
   }
-  modflag = 1;
 }
 
 void i18n_type_cb(Fl_Choice *c, void *) {
@@ -117,10 +127,6 @@ void show_alignment_cb(Fl_Widget *, void *) {
   include_H_from_C_button->value(include_H_from_C);
   header_file_input->value(header_file_name);
   code_file_input->value(code_file_name);
-  char buf[128];
-  sprintf(buf,"%d",gridx); horizontal_input->value(buf);
-  sprintf(buf,"%d",gridy); vertical_input->value(buf);
-  sprintf(buf,"%d",snap); snap_input->value(buf);
   i18n_type_chooser->value(i18n_type);
   i18n_function_input->value(i18n_function);
   i18n_file_input->value(i18n_file);
@@ -147,6 +153,14 @@ void show_alignment_cb(Fl_Widget *, void *) {
       break;
   }
   alignment_window->show();
+}
+
+void show_settings_cb(Fl_Widget *, void *) {
+  char buf[128];
+  sprintf(buf,"%d",gridx); horizontal_input->value(buf);
+  sprintf(buf,"%d",gridy); vertical_input->value(buf);
+  sprintf(buf,"%d",snap); snap_input->value(buf);
+  settings_window->show();
 }
 
 void header_input_cb(Fl_Input* i, void*) {
@@ -752,5 +766,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.1 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.2 2002/04/30 18:11:49 easysw Exp $".
 //

@@ -1,44 +1,16 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {.h} 
-code_name {.cxx} 
-gridx 5 
-gridy 5 
-snap 3
+code_name {.cxx}
 Function {make_alignment_window()} {open
 } {
   Fl_Window alignment_window {
     label Preferences open
     xywh {469 112 365 340} modal visible
   } {
-    Fl_Box {} {
-      label {Grid:}
-      xywh {10 25 130 130} box ENGRAVED_FRAME labelsize 12 align 5
-    }
-    Fl_Input horizontal_input {
-      label {Horizontal:}
-      user_data 1 user_data_type long
-      callback alignment_cb
-      tooltip {Horizontal grid spacing.} xywh {90 35 40 20} type Int box THIN_DOWN_BOX
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Input vertical_input {
-      label {Vertical:}
-      user_data 2 user_data_type long
-      callback alignment_cb
-      tooltip {Vertical grid spacing.} xywh {90 65 40 20} type Int box THIN_DOWN_BOX
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Input snap_input {
-      label {Snap:}
-      user_data 3 user_data_type long
-      callback alignment_cb
-      tooltip {Snap to grid within this many pixels.} xywh {90 95 40 20} type Int box THIN_DOWN_BOX
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
     Fl_Button {} {
       label Close
-      callback {alignment_window->hide();} selected
+      callback {alignment_window->hide();}
       tooltip {Close this dialog.} xywh {295 305 60 25}
     }
     Fl_Box {} {
@@ -68,12 +40,12 @@ Function {make_alignment_window()} {open
     }
     Fl_Box {} {
       label {Internationalization:}
-      xywh {150 25 205 130} box ENGRAVED_FRAME labelsize 12 align 5
+      xywh {10 25 345 130} box ENGRAVED_FRAME labelsize 12 align 5
     }
     Fl_Choice i18n_type_chooser {
       label {Use:}
       callback i18n_type_cb open
-      tooltip {Type of internationalization to use.} xywh {220 35 125 20} box THIN_UP_BOX down_box BORDER_BOX
+      tooltip {Type of internationalization to use.} xywh {100 35 125 20} box THIN_UP_BOX down_box BORDER_BOX
     } {
       menuitem {} {
         label None
@@ -91,24 +63,97 @@ Function {make_alignment_window()} {open
     Fl_Input i18n_include_input {
       label {\#include:}
       callback i18n_text_cb
-      tooltip {The include file for internationalization.} xywh {220 65 125 20} box THIN_DOWN_BOX textfont 4 hide
+      tooltip {The include file for internationalization.} xywh {100 65 245 20} box THIN_DOWN_BOX textfont 4 hide
     }
     Fl_Input i18n_file_input {
       label {File:}
       callback i18n_text_cb
-      tooltip {The name of the message catalog.} xywh {220 95 125 20} box THIN_DOWN_BOX textfont 4 hide
+      tooltip {The name of the message catalog.} xywh {100 95 245 20} box THIN_DOWN_BOX textfont 4 hide
     }
     Fl_Input i18n_set_input {
       label {Set:}
       callback i18n_text_cb
-      tooltip {The message set number.} xywh {220 125 125 20} type Int box THIN_DOWN_BOX textfont 4 hide
+      tooltip {The message set number.} xywh {100 125 245 20} type Int box THIN_DOWN_BOX textfont 4 hide
     }
     Fl_Input i18n_function_input {
       label {Function:}
       callback i18n_text_cb
-      tooltip {The function to call to internationalize the labels and tooltips.} xywh {220 95 125 20} box THIN_DOWN_BOX textfont 4 hide
+      tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 95 245 20} box THIN_DOWN_BOX textfont 4 hide
     }
   }
 } 
 
 decl {extern void i18n_cb(Fl_Choice *,void *);} {} 
+
+decl {extern Fl_Preferences fluid_prefs;} {} 
+
+Function {make_settings_window()} {open
+} {
+  Fl_Window settings_window {
+    label Settings open
+    xywh {376 480 400 175}
+    code0 {\#include <FL/Fl_Preferences.H>}
+    code1 {\#include <FL/Fl_Tooltip.H>} visible
+  } {
+    Fl_Button {} {
+      label Close
+      callback {settings_window->hide();}
+      tooltip {Close this dialog.} xywh {330 140 60 25}
+    }
+    Fl_Box {} {
+      label {Grid:}
+      xywh {15 30 130 100} box ENGRAVED_FRAME labelsize 12 align 5
+    }
+    Fl_Input horizontal_input {
+      label {Horizontal:}
+      user_data 1 user_data_type long
+      callback grid_cb
+      tooltip {Horizontal grid spacing.} xywh {95 40 40 20} type Int box THIN_DOWN_BOX
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input vertical_input {
+      label {Vertical:}
+      user_data 2 user_data_type long
+      callback grid_cb
+      tooltip {Vertical grid spacing.} xywh {95 70 40 20} type Int box THIN_DOWN_BOX
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input snap_input {
+      label {Snap:}
+      user_data 3 user_data_type long
+      callback grid_cb
+      tooltip {Snap to grid within this many pixels.} xywh {95 100 40 20} type Int box THIN_DOWN_BOX
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Box {} {
+      label {GUI:}
+      xywh {155 30 235 100} box ENGRAVED_FRAME labelsize 12 align 5
+    }
+    Fl_Check_Button tooltips_button {
+      label {Show Tooltips}
+      callback {Fl_Tooltip::enable(tooltips_button->value());
+fluid_prefs.set("show_tooltips", tooltips_button->value());} selected
+      xywh {165 40 215 20} down_box DOWN_BOX
+      code0 {char b;}
+      code1 {fluid_prefs.get("show_tooltips", b, 1);}
+      code2 {tooltips_button->value(b);}
+      code3 {Fl_Tooltip::enable(b);}
+    }
+    Fl_Check_Button completion_button {
+      label {Show Completion Dialogs}
+      callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
+      xywh {165 70 215 20} down_box DOWN_BOX
+      code0 {char b;}
+      code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
+      code2 {completion_button->value(b);}
+    }
+    Fl_Check_Button openlast_button {
+      label {Open Previous File on Startup}
+      callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
+      xywh {165 100 215 20} down_box DOWN_BOX
+      code0 {char b;}
+      code1 {fluid_prefs.get("open_previous_file", b, 0);}
+      code2 {openlast_button->value(b);}
+    }
+  }
+} 

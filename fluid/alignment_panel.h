@@ -5,13 +5,9 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 extern Fl_Window *alignment_window;
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Input.H>
-extern void alignment_cb(Fl_Input*, long);
-extern Fl_Input *horizontal_input;
-extern Fl_Input *vertical_input;
-extern Fl_Input *snap_input;
-#include <FL/Fl_Button.H>
 extern void header_input_cb(Fl_Input*, void*);
 extern Fl_Input *header_file_input;
 extern void code_input_cb(Fl_Input*, void*);
@@ -29,4 +25,16 @@ extern Fl_Input *i18n_set_input;
 extern Fl_Input *i18n_function_input;
 Fl_Window* make_alignment_window();
 extern Fl_Menu_Item menu_i18n_type_chooser[];
+#include <FL/Fl_Preferences.H>
+#include <FL/Fl_Tooltip.H>
+extern Fl_Window *settings_window;
+extern void grid_cb(Fl_Input*, long);
+extern Fl_Input *horizontal_input;
+extern Fl_Input *vertical_input;
+extern Fl_Input *snap_input;
+#include <FL/Fl_Check_Button.H>
+extern Fl_Check_Button *tooltips_button;
+extern Fl_Check_Button *completion_button;
+extern Fl_Check_Button *openlast_button;
+Fl_Window* make_settings_window();
 #endif

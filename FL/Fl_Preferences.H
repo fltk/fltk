@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.3 2002/04/29 20:57:29 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.4 2002/04/30 18:11:49 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -81,7 +81,7 @@ public:
   // FL_EXPORT char get( const char *entry, void *value,   const char *defaultValue, int maxSize );
   FL_EXPORT int size( const char *entry );
 
-  FL_EXPORT char getUserdataPath( char *path );
+  FL_EXPORT char getUserdataPath( char *path, int pathlen );
 
   FL_EXPORT void flush();
 
@@ -141,7 +141,7 @@ private:
     ~RootNode();
     int read();
     int write();
-    char getPath( char *path );
+    char getPath( char *path, int pathlen );
   };
   friend class RootNode;
 
@@ -154,5 +154,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.3 2002/04/29 20:57:29 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.4 2002/04/30 18:11:49 easysw Exp $".
 //

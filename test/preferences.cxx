@@ -172,7 +172,7 @@ double doubleValue;
 Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
 
   char path[ FL_PATH_MAX ];
-  app.getUserdataPath( path );
+  app.getUserdataPath( path, sizeof(path) );
 
   Fl_Preferences bed( app, "Bed" );
     bed.get( "alarm", buffer, "8:00", 80 );

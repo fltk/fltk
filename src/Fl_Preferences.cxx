@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.6 2002/04/30 15:34:58 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.7 2002/04/30 18:11:49 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -408,10 +408,10 @@ int Fl_Preferences::size( const char *key )
  *   Win32: c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
  *   prefs: c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
  */
-char Fl_Preferences::getUserdataPath( char *path )
+char Fl_Preferences::getUserdataPath( char *path, int pathlen )
 {
   if ( rootNode )
-    return rootNode->getPath( path );
+    return rootNode->getPath( path, pathlen );
   return 0;
 }
 
@@ -630,9 +630,11 @@ int Fl_Preferences::RootNode::write()
 }
 
 // get the path to the preferences directory
-char Fl_Preferences::RootNode::getPath( char *path )
+char Fl_Preferences::RootNode::getPath( char *path, int pathlen )
 {
-  strcpy( path, filename_ );
+  strncpy( path, filename_, pathlen - 1 );
+  path[pathlen - 1] = '\0';
+
   char *s;
   for ( s = path; *s; s++ ) if ( *s == '\\' ) *s = '/';
   s = strrchr( path, '.' );
@@ -935,5 +937,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.6 2002/04/30 15:34:58 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.7 2002/04/30 18:11:49 easysw Exp $".
 //

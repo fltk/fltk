@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.14 2002/04/28 10:12:41 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.15 2002/04/30 18:11:49 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -44,6 +44,7 @@
 #include <errno.h>
 
 #include "../src/flstring.h"
+#include "alignment_panel.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -60,6 +61,18 @@
 #include "Fl_Type.h"
 
 static Fl_Help_Dialog *help_dialog = 0;
+
+Fl_Preferences	fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
+int gridx;
+int gridy;
+int snap;
+
+// File history info...
+char	absolute_history[10][1024];
+char	relative_history[10][1024];
+
+void load_history();
+void update_history(const char *);
 
 
 ////////////////////////////////////////////////////////////////
@@ -144,6 +157,16 @@ void open_cb(Fl_Widget *, void *v) {
   else modflag = 1;
 }
 
+void open_history_cb(Fl_Widget *, void *v) {
+  if (modflag && !fl_ask("Discard changes?")) return;
+  if (!read_file((char *)v, 0)) {
+    fl_message("Can't read %s: %s", v, strerror(errno));
+    return;
+  }
+  set_filename((char *)v);
+  modflag = 0;
+}
+
 void new_cb(Fl_Widget *, void *v) {
   if (!v && modflag && !fl_ask("Discard changes?")) return;
   const char *c;
@@ -196,7 +219,7 @@ void write_cb(Fl_Widget *, void *) {
   } else {
     if (!x) {
       fl_message("Can't write %s: %s", cname, strerror(errno));
-    } else {
+    } else if (completion_button->value()) {
       fl_message("Wrote %s", cname, 0);
     }
   }
@@ -219,7 +242,7 @@ void write_strings_cb(Fl_Widget *, void *) {
   } else {
     if (x) {
       fl_message("Can't write %s: %s", sname, strerror(errno));
-    } else {
+    } else if (completion_button->value()) {
       fl_message("Wrote %s", sname);
     }
   }
@@ -245,26 +268,17 @@ extern int pasteoffset;
 static int ipasteoffset;
 
 static char* cutfname() {
-#if defined WIN32 && ! defined(__CYGWIN__)
-#  ifndef MAX_PATH
-#    define MAX_PATH 256
-#  endif // !MAX_PATH
+  static char name[1024];
+  static char beenhere = 0;
 
-  static char name[MAX_PATH+16] = "";
-
-  if (!name[0]) {
-    if (!GetTempPath(sizeof(name), name)) strcpy(name,"\\"); // failure
-
-    strcat(name, ".fluidcutbuffer");
+  if (!beenhere) {
+    beenhere = 1;
+    fluid_prefs.getUserdataPath(name, sizeof(name));
+    strncat(name, "cut_buffer", sizeof(name) - 1);
+    // getUserdataPath zeros the "name" buffer...
   }
 
   return name;
-#else
-  static char name[256] = "~/.fluid_cut_buffer";
-  static char beenhere;
-  if (!beenhere) {beenhere = 1; fl_filename_expand(name,name);}
-  return name;
-#endif
 }
 
 void copy_cb(Fl_Widget*, void*) {
@@ -316,6 +330,7 @@ static void sort_cb(Fl_Widget *,void *) {
 }
 
 void show_alignment_cb(Fl_Widget *, void *);
+void show_settings_cb(Fl_Widget *, void *);
 
 void about_cb(Fl_Widget *, void *) {
   if (!about_panel) make_about_panel();
@@ -363,6 +378,18 @@ Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
   {"New", 0, new_cb, 0},
   {"Open...", FL_CTRL+'o', open_cb, 0},
+  {"Open Previous",0,0,0,FL_SUBMENU},
+    {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},
+    {relative_history[1], FL_CTRL+'1', open_history_cb, absolute_history[1]},
+    {relative_history[2], FL_CTRL+'2', open_history_cb, absolute_history[2]},
+    {relative_history[3], FL_CTRL+'3', open_history_cb, absolute_history[3]},
+    {relative_history[4], FL_CTRL+'4', open_history_cb, absolute_history[4]},
+    {relative_history[5], FL_CTRL+'5', open_history_cb, absolute_history[5]},
+    {relative_history[6], FL_CTRL+'6', open_history_cb, absolute_history[6]},
+    {relative_history[7], FL_CTRL+'7', open_history_cb, absolute_history[7]},
+    {relative_history[8], FL_CTRL+'8', open_history_cb, absolute_history[8]},
+    {relative_history[9], FL_CTRL+'9', open_history_cb, absolute_history[9]},
+    {0},
   {"Save", FL_CTRL+'s', save_cb, 0},
   {"Save As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
   {"Merge...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
@@ -388,6 +415,7 @@ Fl_Menu_Item Main_Menu[] = {
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
   {"Overlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
   {"Preferences",FL_CTRL+'p',show_alignment_cb},
+  {"Settings",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Help",0,0,0,FL_SUBMENU},
@@ -406,6 +434,21 @@ Fl_Menu_Item Main_Menu[] = {
 extern void fill_in_New_Menu();
 
 void make_main_window() {
+  int i;
+
+  fluid_prefs.get("snap", i, 1);
+  snap = i;
+
+  fluid_prefs.get("gridx", i, 5);
+  gridx = i;
+
+  fluid_prefs.get("gridy", i, 5);
+  gridy = i;
+
+  load_history();
+
+  make_settings_window();
+
   if (!main_window) {
     Fl_Widget *o;
     main_window = new Fl_Double_Window(WINWIDTH,WINHEIGHT,"fluid");
@@ -422,10 +465,75 @@ void make_main_window() {
   }
 }
 
+// Load file history from preferences...
+void load_history() {
+  int	i;		// Looping var
+  char	name[32];	// Variable name
+
+  for (i = 0; i < 10; i ++) {
+    sprintf(name, "file%d", i);
+    fluid_prefs.get(name, absolute_history[i], "", sizeof(absolute_history[i]));
+    if (absolute_history[i][0]) {
+      // Make a relative version of the filename for the menu...
+      fl_filename_relative(relative_history[i], sizeof(relative_history[i]),
+                           absolute_history[i]);
+
+      Main_Menu[i + 4].flags = 0;
+    } else Main_Menu[i + 4].flags = FL_MENU_INVISIBLE;
+  }
+
+  if (!absolute_history[0][0]) Main_Menu[3].flags |= FL_MENU_INACTIVE;
+}
+
+// Update file history from preferences...
+void update_history(const char *filename) {
+  int	i;		// Looping var
+  char	name[32];	// Variable name
+  char	absolute[1024];
+
+  fl_filename_absolute(absolute, sizeof(absolute), filename);
+
+  for (i = 0; i < 10; i ++)
+#if defined(WIN32) || defined(__APPLE__)
+    if (!strcasecmp(absolute, absolute_history[i])) break;
+#else
+    if (!strcasecmp(absolute, absolute_history[i])) break;
+#endif // WIN32 || __APPLE__
+
+  if (i == 0) return;
+
+  if (i >= 10) i = 9;
+
+  // Move the other filenames down in the list...
+  memmove(absolute_history + 1, absolute_history,
+          i * sizeof(absolute_history[0]));
+  memmove(relative_history + 1, relative_history,
+          i * sizeof(relative_history[0]));
+
+  // Put the new file at the top...
+  strncpy(absolute_history[0], absolute, sizeof(absolute_history[0]) - 1);
+  absolute_history[0][sizeof(absolute_history[0]) - 1] = '\0';
+
+  fl_filename_relative(relative_history[0], sizeof(relative_history[0]),
+                       absolute_history[0]);
+
+  // Update the menu items as needed...
+  for (i = 0; i < 10; i ++) {
+    sprintf(name, "file%d", i);
+    fluid_prefs.set(name, absolute_history[i]);
+    if (absolute_history[i][0]) Main_Menu[i + 4].flags = 0;
+    else Main_Menu[i + 4].flags = FL_MENU_INVISIBLE;
+  }
+
+  Main_Menu[3].flags &= ~FL_MENU_INACTIVE;
+}
+
 void set_filename(const char *c) {
   if (filename) free((void *)filename);
   filename = strdup(c);
   if (main_window) main_window->label(filename);
+
+  update_history(filename);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -488,6 +596,10 @@ int main(int argc,char **argv) {
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
     main_window->show(argc,argv);
+    if (!c && openlast_button->value() && absolute_history[0][0]) {
+      // Open previous file when no file specified...
+      open_history_cb(0, absolute_history[0]);
+    }
   }
   if (c && !read_file(c,0)) {
     if (compile_only) {
@@ -506,5 +618,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.14 2002/04/28 10:12:41 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.15 2002/04/30 18:11:49 easysw Exp $".
 //
