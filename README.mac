@@ -94,6 +94,8 @@ KNOWN MacFLTK BUGS
 	- The 'shiny' demo needs work (flush/aglFlush).
 	- Threads are not implemented.
 	- OpenGL subwindow during window resize changes position
+	- OpenGL text and font support
+	- fl_measure returns wrong width (about 10% short)
 
 
 TEST SUITE STATUS

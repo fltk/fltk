@@ -1,5 +1,5 @@
 //
-// "$Id: glut_compatability.cxx,v 1.4.2.5.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: glut_compatability.cxx,v 1.4.2.5.2.2 2002/06/26 14:52:33 matthiaswm Exp $"
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
@@ -47,6 +47,7 @@ void (*glut_menustate_function)(int);
 void (*glut_menustatus_function)(int,int,int);
 
 static void default_reshape(int w, int h) {glViewport(0,0,w,h);}
+static void default_display() {}
 
 void Fl_Glut_Window::make_current() {
   glut_window = this;
@@ -153,6 +154,8 @@ void Fl_Glut_Window::_init() {
   windows[number] = this;
   menu[0] = menu[1] = menu[2] = 0;
   reshape = default_reshape;
+  display = default_display;
+  overlaydisplay = default_display;
   keyboard = 0;
   mouse = 0;
   motion = 0;
@@ -399,5 +402,5 @@ int glutLayerGet(GLenum type) {
 #endif
 
 //
-// End of "$Id: glut_compatability.cxx,v 1.4.2.5.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: glut_compatability.cxx,v 1.4.2.5.2.2 2002/06/26 14:52:33 matthiaswm Exp $".
 //
