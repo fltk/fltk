@@ -41,6 +41,7 @@ very well for single-buffered. </P>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Gl_Window.context>context</A></LI>
 <LI><A href=#Fl_Gl_Window.draw>draw</A></LI>
 <LI><A href=#Fl_Gl_Window.draw_overlay>draw_overlay</A></LI>
 <LI><A href=#Fl_Gl_Window.handle>handle</A></LI>
@@ -120,6 +121,22 @@ window a child of another window if you wish to do this! </P>
 <BR> int Fl_Gl_Window::can_do() const</A></H4>
  Returns non-zero if the hardware supports the given or current OpenGL 
 mode. 
+
+<h4><a name=Fl_Gl_Window.context>void* Fl_Gl_Window::context() const;
+<br>void Fl_Gl_Window::context(void*, int destroy_flag = false);</a></h4>
+
+Return or set a pointer to the GLContext that this window is
+using. This is a system-dependent structure, but it is portable to copy
+the context from one window to another. You can also set it to NULL,
+which will force FLTK to recreate the context the next time <a
+href=#make_current><tt>make_current()</tt></a> is called, this is
+useful for getting around bugs in OpenGL implementations.
+
+<p>If <i>destroy_flag</i> is true the context will be destroyed by
+fltk when the window is destroyed, or when the <a
+href=#mode><tt>mode()</tt></a> is changed, or the next time
+<tt>context(x)</tt> is called.
+
 <H4><A name=Fl_Gl_Window.valid>char Fl_Gl_Window::valid() const
 <BR> void Fl_Gl_Window::valid(char i)</A></H4>
 <TT>Fl_Gl_Window::valid()</TT> is turned off when FLTK creates a new 

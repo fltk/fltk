@@ -1,5 +1,5 @@
 //
-// "$Id: gl_start.cxx,v 1.6.2.4 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: gl_start.cxx,v 1.6.2.5 2001/03/14 17:20:02 spitzak Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
 // You MUST use gl_visual() to select the default visual before doing
@@ -42,35 +42,27 @@
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
-
 #include "Fl_Gl_Choice.H"
 
-extern GLXContext fl_first_context; // in Fl_Gl_Choice.C
 extern int fl_clip_state_number; // in fl_rect.C
 
-static GLXContext context;
+static GLContext context;
 static int clip_state_number=-1;
 static int pw, ph;
 
 #ifdef WIN32
-static int default_mode;
+static Fl_Gl_Choice* gl_choice;
 #endif
 
 Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
 
 void gl_start() {
-#ifdef WIN32
-  HDC hdc = fl_private_dc(Fl_Window::current(), default_mode,0);
-#endif
   if (!context) {
 #ifdef WIN32
-    context = wglCreateContext(hdc);
-    if (!fl_first_context) fl_first_context = context;
-    else wglShareLists(fl_first_context, context);
+    if (!gl_choice) Fl::gl_visual(0);
+    context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #else
-    context = glXCreateContext(fl_display, fl_visual, fl_first_context, 1);
-    if (!context) Fl::fatal("OpenGL does not support this visual");
-    if (!fl_first_context) fl_first_context = context;
+    context = fl_create_gl_context(fl_visual);
 #endif
   }
   fl_set_gl_context(Fl_Window::current(), context);
@@ -100,19 +92,18 @@ void gl_start() {
 }
 
 void gl_finish() {
-#ifdef WIN32
   glFlush();
-#else
+#ifndef WIN32
   glXWaitGL();
 #endif
 }
 
 int Fl::gl_visual(int mode, int *alist) {
-#ifdef WIN32
-  default_mode = mode;
-#else
   Fl_Gl_Choice *c = Fl_Gl_Choice::find(mode,alist);
   if (!c) return 0;
+#ifdef WIN32
+  gl_choice = c;
+#else
   fl_visual = c->vis;
   fl_colormap = c->colormap;
 #endif
@@ -122,5 +113,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.6.2.4 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: gl_start.cxx,v 1.6.2.5 2001/03/14 17:20:02 spitzak Exp $".
 //

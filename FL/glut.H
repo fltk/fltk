@@ -1,5 +1,5 @@
 //
-// "$Id: glut.H,v 1.6.2.9 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: glut.H,v 1.6.2.10 2001/03/14 17:20:01 spitzak Exp $"
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@
 #define __glut_h__
 
 #include <FL/gl.h>
-#include <GL/glu.h>
+//#include <GL/glu.h>
 
 ////////////////////////////////////////////////////////////////
 // Glut is emulated using this window class and these static variables
@@ -431,7 +431,7 @@ extern "C" {
 extern int APIENTRY glutExtensionSupported(char *name);
 
 /* Stroke font constants (use these in GLUT program). */
-#if defined(_WIN32) || defined(WIN32)
+#ifdef WIN32
 # define GLUT_STROKE_ROMAN		((void*)0)
 # define GLUT_STROKE_MONO_ROMAN		((void*)1)
 #else
@@ -470,5 +470,5 @@ extern void APIENTRY glutSolidIcosahedron();
 #endif                  /* __glut_h__ */
 
 //
-// End of "$Id: glut.H,v 1.6.2.9 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: glut.H,v 1.6.2.10 2001/03/14 17:20:01 spitzak Exp $".
 //

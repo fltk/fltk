@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.8 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.9 2001/03/14 17:20:02 spitzak Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -231,7 +231,7 @@ int FCB::get(char* buf) {
       for (dirent** r = q+1; n && r < last; r++) {
 	if (!item_height(*r, 0)) continue;
 	int i;
-#if defined(_WIN32) || defined(WIN32)
+#ifdef WIN32
 	for (i=0; i<n && tolower((*q)->d_name[i])==tolower((*r)->d_name[i]); i++) {}
 #else
 	for (i=0; i<n && (*q)->d_name[i]==(*r)->d_name[i]; i++) {}
@@ -632,5 +632,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.8 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.9 2001/03/14 17:20:02 spitzak Exp $".
 //

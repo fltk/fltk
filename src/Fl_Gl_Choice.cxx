@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.5 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.6 2001/03/14 17:20:01 spitzak Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
 #include <config.h>
@@ -32,7 +32,6 @@
 #include "Fl_Gl_Choice.H"
 
 static Fl_Gl_Choice *first;
-GLXContext fl_first_context;
 
 // this assummes one of the two arguments is zero:
 // We keep the list system in Win32 to stay compatible and interpret
@@ -143,16 +142,8 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
 #ifdef WIN32
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
-  g->d = ((mode&FL_DOUBLE) != 0);
-  g->r = (mode & FL_INDEX);
-  g->o = 0; // not an overlay
 #else
   g->vis = vis;
-  g->colormap = 0;
-  int i;
-  glXGetConfig(fl_display, vis, GLX_DOUBLEBUFFER, &i); g->d = i;
-  glXGetConfig(fl_display, vis, GLX_RGBA, &i); g->r = i;
-  glXGetConfig(fl_display, vis, GLX_LEVEL, &i); g->o = i;
 
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
       vis->visualid == fl_visual->visualid &&
@@ -166,36 +157,50 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
   return g;
 }
 
+static GLContext first_context;
+
 #ifdef WIN32
 
-HDC fl_private_dc(Fl_Window* w, int mode, Fl_Gl_Choice **gp) {
-  Fl_X* i = Fl_X::i(w);
-  if (!i->private_dc) {
-    i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
-    Fl_Gl_Choice *g = Fl_Gl_Choice::find(mode, 0);
-    if (gp) *gp = g;
+GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
+  Fl_X* i = Fl_X::i(window);
+  HDC hdc = i->private_dc;
+  if (!hdc) {
+    hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
     SetPixelFormat(i->private_dc, g->pixelformat, &g->pfd);
 #if USE_COLORMAP
     if (fl_palette) SelectPalette(i->private_dc, fl_palette, FALSE);
 #endif
   }
-  return i->private_dc;
+  GLContext context =
+    layer ? wglCreateLayerContext(hdc, layer) : wglCreateContext(hdc);
+  if (context) {
+    if (first_context) wglShareLists(first_context, context);
+    else first_context = context;
+  }
+  return context;
+}
+
+#else
+
+GLContext fl_create_gl_context(XVisualInfo* vis) {
+  GLContext context = glXCreateContext(fl_display, vis, first_context, 1);
+  if (!first_context) first_context = context;
+  return context;
 }
 
 #endif
 
-static GLXContext cached_context;
-
+static GLContext cached_context;
 static Fl_Window* cached_window;
 
-void fl_set_gl_context(Fl_Window* w, GLXContext c) {
-  if (c != cached_context || w != cached_window) {
-    cached_context = c;
+void fl_set_gl_context(Fl_Window* w, GLContext context) {
+  if (context != cached_context || w != cached_window) {
+    cached_context = context;
     cached_window = w;
 #ifdef WIN32
-    wglMakeCurrent(Fl_X::i(w)->private_dc, c);
+    wglMakeCurrent(Fl_X::i(w)->private_dc, context);
 #else
-    glXMakeCurrent(fl_display, fl_xid(w), c);
+    glXMakeCurrent(fl_display, fl_xid(w), context);
 #endif
   }
 }
@@ -210,8 +215,19 @@ void fl_no_gl_context() {
 #endif
 }
 
+void fl_delete_gl_context(GLContext context) {
+  if (cached_context == context) fl_no_gl_context();
+  if (context != first_context) {
+#ifdef WIN32
+    wglDeleteContext(context);
+#else
+    glXDestroyContext(fl_display, context);
+#endif
+  }
+}
+
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.5 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.6 2001/03/14 17:20:01 spitzak Exp $".
 //

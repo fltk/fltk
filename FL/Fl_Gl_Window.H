@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.H,v 1.7.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Gl_Window.H,v 1.7.2.4 2001/03/14 17:20:01 spitzak Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,10 @@
 
 #include "Fl_Window.H"
 
+#ifndef GLContext
+typedef void* GLContext; // actually a GLXContext or HGLDC
+#endif
+
 class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
 
 class Fl_Gl_Window : public Fl_Window {
@@ -34,7 +38,7 @@ class Fl_Gl_Window : public Fl_Window {
   int mode_;
   const int *alist;
   Fl_Gl_Choice *g;
-  void * context; // actually a GLXContext
+  GLContext context_;
   char valid_;
   char damage1_; // damage() of back buffer
   virtual FL_EXPORT void draw_overlay();
@@ -66,14 +70,16 @@ public:
   int mode(int a) {return mode(a,0);}
   int mode(const int *a) {return mode(0, a);}
 
+  void* context() const {return context_;}
+  FL_EXPORT void context(void*, int destroy_flag = false);
+  FL_EXPORT void make_current();
+  FL_EXPORT void swap_buffers();
+  FL_EXPORT void ortho();
+
   FL_EXPORT int can_do_overlay();
   FL_EXPORT void redraw_overlay();
   FL_EXPORT void hide_overlay();
-
-  FL_EXPORT void make_current();
   FL_EXPORT void make_overlay_current();
-  FL_EXPORT void swap_buffers();
-  FL_EXPORT void ortho();
 
   FL_EXPORT ~Fl_Gl_Window();
   Fl_Gl_Window(int W, int H, const char *l=0) : Fl_Window(W,H,l) {init();}
@@ -84,5 +90,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.H,v 1.7.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.H,v 1.7.2.4 2001/03/14 17:20:01 spitzak Exp $".
 //

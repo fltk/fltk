@@ -1,5 +1,5 @@
 //
-// "$Id: cube.cxx,v 1.4.2.4 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: cube.cxx,v 1.4.2.5 2001/03/14 17:20:02 spitzak Exp $"
 //
 // Another forms test program for the Fast Light Tool Kit (FLTK).
 //
@@ -152,6 +152,16 @@ int main(int argc, char **argv) {
   form->show(argc,argv);
   cube->show();
   cube2->show();
+#if 0
+  // This demonstrates how to manipulate OpenGL contexts.
+  // In this case the same context is used by multiple windows (I'm not
+  // sure if this is allowed on Win32, can somebody check?).
+  // This fixes a bug on the XFree86 3.0 OpenGL where only one context
+  // per program seems to work, but there are probably better uses for
+  // this!
+  cube->make_current(); // causes context to be created
+  cube2->context(cube->context()); // share the contexts
+#endif
   for (;;) {
     if (form->visible() && speed->value())
       {if (!Fl::check()) break;}	// returns immediately
@@ -169,5 +179,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: cube.cxx,v 1.4.2.4 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: cube.cxx,v 1.4.2.5 2001/03/14 17:20:02 spitzak Exp $".
 //

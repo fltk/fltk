@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.20 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.21 2001/03/14 17:20:01 spitzak Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -28,8 +28,8 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
+#include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
 #include <string.h>
 
@@ -63,66 +63,65 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 }
 
 void Fl_Gl_Window::show() {
-#if !defined(_WIN32) && !defined(WIN32)
   if (!shown()) {
     if (!g) {
       g = Fl_Gl_Choice::find(mode_,alist);
       if (!g) {Fl::error("Insufficient GL support"); return;}
     }
+#ifndef WIN32
     Fl_X::make_xid(this, g->vis, g->colormap);
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
-  }
 #endif
+  }
   Fl_Window::show();
 }
 
 void Fl_Gl_Window::invalidate() {
   valid(0);
-#if !defined(_WIN32) && !defined(WIN32)
+#ifndef WIN32
   if (overlay) ((Fl_Gl_Window*)overlay)->valid(0);
 #endif
 }
 
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
-  mode_ = m; alist = a;
-#if defined(_WIN32) || defined(WIN32)
-  // destroy context and g:
-  if (shown()) {hide(); show();}
-#else
-  // under X, if the visual changes we must make a new X window (!):
-  if (shown()) {
-    Fl_Gl_Choice *g1 = g;
-    g = Fl_Gl_Choice::find(mode_,alist);
-    if (!g || g->vis->visualid != g1->vis->visualid || g->d != g1->d) {
-      hide(); show();
-    }
-  }
+#ifndef WIN32
+  int oldmode = mode_;
+  Fl_Gl_Choice* oldg = g;
 #endif
+  context(0);
+  mode_ = m; alist = a;
+  if (shown()) {
+    g = Fl_Gl_Choice::find(m, a);
+#ifndef WIN32
+    // under X, if the visual changes we must make a new X window (yuck!):
+    if (!g || g->vis->visualid!=oldg->vis->visualid || (oldmode^m)&FL_DOUBLE) {
+      hide();
+      show();
+    }
+#endif
+  } else {
+    g = 0;
+  }
   return 1;
 }
 
+#define NON_LOCAL_CONTEXT 0x80000000
+
 void Fl_Gl_Window::make_current() {
-  if (!context) {
-#if defined(_WIN32) || defined(WIN32)
-    context = wglCreateContext(fl_private_dc(this, mode_,&g));
-    if (fl_first_context) wglShareLists(fl_first_context, (GLXContext)context);
-    else fl_first_context = (GLXContext)context;
-#else
-    context = glXCreateContext(fl_display, g->vis, fl_first_context, 1);
-    if (!fl_first_context) fl_first_context = (GLXContext)context;
-#endif
+  if (!context_) {
+    mode_ &= ~NON_LOCAL_CONTEXT;
+    context_ = fl_create_gl_context(this, g);
     valid(0);
   }
-  fl_set_gl_context(this, (GLXContext)context);
-#if (defined(_WIN32) || defined(WIN32)) && USE_COLORMAP
+  fl_set_gl_context(this, context_);
+#if defined(WIN32) && USE_COLORMAP
   if (fl_palette) {
     fl_GetDC(fl_xid(this));
     SelectPalette(fl_gc, fl_palette, FALSE);
     RealizePalette(fl_gc);
   }
 #endif // USE_COLORMAP
-  if (g->d) glDrawBuffer(GL_BACK);
   current_ = this;
 }
 
@@ -142,7 +141,7 @@ void Fl_Gl_Window::ortho() {
 }
 
 void Fl_Gl_Window::swap_buffers() {
-#if defined(_WIN32) || defined(WIN32)
+#ifdef WIN32
 #if HAVE_GL_OVERLAY
   // Do not swap the overlay, to match GLX:
   wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
@@ -154,25 +153,25 @@ void Fl_Gl_Window::swap_buffers() {
 #endif
 }
 
-#if HAVE_GL_OVERLAY && defined(_WIN32)
+#if HAVE_GL_OVERLAY && defined(WIN32)
 uchar fl_overlay; // changes how fl_color() works
 int fl_overlay_depth = 0;
 #endif
 
 void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
-#if defined(_WIN32) || defined(WIN32)
+
+#if HAVE_GL_OVERLAY && defined(WIN32)
+
   // SGI 320 messes up overlay with user-defined cursors:
   bool fixcursor =
     Fl_X::i(this)->cursor && Fl_X::i(this)->cursor != fl_default_cursor;
   if (fixcursor) SetCursor(0);
-#endif
 
-#if HAVE_GL_OVERLAY && (defined(_WIN32) || defined(WIN32))
   // Draw into hardware overlay planes:
   if (overlay && overlay != this
       && (damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE) || !save_valid)) {
-    fl_set_gl_context(this, (GLXContext)overlay);
+    fl_set_gl_context(this, (GLContext)overlay);
     if (fl_overlay_depth)
       wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
     glDisable(GL_SCISSOR_TEST);
@@ -191,7 +190,9 @@ void Fl_Gl_Window::flush() {
 
   make_current();
 
-  if (g->d) {
+  if (mode_ & FL_DOUBLE) {
+
+    glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
       SWAP_TYPE = UNDEFINED;
@@ -224,16 +225,10 @@ void Fl_Gl_Window::flush() {
 	if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
 	// we use a seperate context for the copy because rasterpos must be 0
 	// and depth test needs to be off:
-	static GLXContext ortho_context = 0;
+	static GLContext ortho_context = 0;
 	static Fl_Gl_Window* ortho_window = 0;
 	int init = !ortho_context;
-	if (init) {
-#if defined(_WIN32) || defined(WIN32)
-	  ortho_context = wglCreateContext(Fl_X::i(this)->private_dc);
-#else
-	  ortho_context =glXCreateContext(fl_display,g->vis,fl_first_context,1);
-#endif
-	}
+	if (init) ortho_context = fl_create_gl_context(this, g);
 	fl_set_gl_context(this, ortho_context);
 	if (init || !save_valid || ortho_window != this) {
 	  glDisable(GL_DEPTH_TEST);
@@ -274,7 +269,7 @@ void Fl_Gl_Window::flush() {
 
   }
 
-#if defined(_WIN32) || defined(WIN32)
+#if HAVE_GL_OVERLAY && defined(WIN32)
   if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
 #endif
   valid(1);
@@ -283,7 +278,7 @@ void Fl_Gl_Window::flush() {
 void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
-#if !defined(_WIN32) && !defined(WIN32)
+#ifndef WIN32
     if (!resizable() && overlay && overlay != this)
       ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
 #endif
@@ -291,26 +286,18 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   Fl_Window::resize(X,Y,W,H);
 }
 
+void Fl_Gl_Window::context(void* v, int destroy_flag) {
+  if (context_ && !(mode_&NON_LOCAL_CONTEXT)) fl_delete_gl_context(context_);
+  context_ = (GLContext)v;
+  if (destroy_flag) mode_ &= ~NON_LOCAL_CONTEXT;
+  else mode_ |= NON_LOCAL_CONTEXT;
+}    
+
 void Fl_Gl_Window::hide() {
-  if (context) {
-    fl_no_gl_context();
-    if (context != fl_first_context) {
-#if defined(_WIN32) || defined(WIN32)
-      wglDeleteContext((GLXContext)context);
-#else
-      glXDestroyContext(fl_display, (GLXContext)context);
-#endif
-    }
-// This causes incompatibility with some OpenGL libraries
-// I don't think this is not necessary in any case, right?
-//#ifdef GLX_MESA_release_buffers
-//    glXReleaseBuffersMESA(fl_display, fl_xid(this));
-//#endif
-    context = 0;
-  }
-#if HAVE_GL_OVERLAY && (defined(_WIN32) || defined(WIN32))
-  if (overlay && overlay != this && (GLXContext)overlay != fl_first_context) {
-    wglDeleteContext((GLXContext)overlay);
+  context(0);
+#if HAVE_GL_OVERLAY && defined(WIN32)
+  if (overlay && overlay != this) {
+    fl_delete_gl_context((GLContext)overlay);
     overlay = 0;
   }
 #endif
@@ -327,7 +314,7 @@ void Fl_Gl_Window::init() {
   box(FL_NO_BOX);
   mode_ = FL_RGB | FL_DEPTH | FL_DOUBLE;
   alist = 0;
-  context = 0;
+  context_ = 0;
   g = 0;
   overlay = 0;
 }
@@ -337,5 +324,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.20 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.21 2001/03/14 17:20:01 spitzak Exp $".
 //

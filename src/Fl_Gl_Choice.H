@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.5 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.6 2001/03/14 17:20:01 spitzak Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -20,42 +20,49 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
 // Internal interface to set up OpenGL.
 //
-// A "Fl_Gl_Choice" is used to cache results of calling the
-// OpenGL code for system-specific information needed to
-// implement a "mode".
-// For X this is a visual, and this must be called *before*
-// the X window is created.
-// For win32 this can be delayed to a more convienent time,
-// as it only returns information for modifying a device
-// context.
-// This is used by Fl_Gl_Window, gl_start(), and gl_visual()
+// A "Fl_Gl_Choice" is created from an OpenGL mode and holds information
+// necessary to create a window (on X) and to create an OpenGL "context"
+// (on both X and Win32).
+//
+// fl_create_gl_context takes a window (necessary only on Win32) and an
+// Fl_Gl_Choice and returns a new OpenGL context. All contexts share
+// display lists with each other.
+//
+// On X another fl_create_gl_context is provided to create it for any
+// X visual.
+//
+// fl_set_gl_context makes the given OpenGL context current and makes
+// it draw into the passed window. It tracks the current one context
+// to avoid calling the context switching code when the same context
+// is used, though it is a mystery to me why the GLX/WGL libraries
+// don't do this themselves...
+//
+// fl_no_gl_context clears that cache so the next fl_set_gl_context is
+// guaranteed to work.
+//
+// fl_delete_gl_context destroys the context.
+//
+// This code is used by Fl_Gl_Window, gl_start(), and gl_visual()
 
 #ifndef Fl_Gl_Choice_H
 #define Fl_Gl_Choice_H
 
+// Warning: whatever GLContext is defined to must take exactly the same
+// space in a structure as a void*!!!
 #ifdef WIN32
-# include <windows.h>
 # include <FL/gl.h>
-# define GLXContext HGLRC
-# define GLX_BUFFER_SIZE      1
-# define GLX_RGBA	      2
-# define GLX_GREEN_SIZE	      3
-# define GLX_ALPHA_SIZE	      4
-# define GLX_ACCUM_GREEN_SIZE 5
-# define GLX_ACCUM_ALPHA_SIZE 6
-# define GLX_DOUBLEBUFFER     7
-# define GLX_DEPTH_SIZE	      8
-# define GLX_STENCIL_SIZE     9
+# define GLContext HGLRC
 #else
 # include <GL/glx.h>
+# define GLContext GLXContext
 #endif
 
-// one of these structures is returned:
+// Describes crap needed to create a GLContext.
 class Fl_Gl_Choice {
   int mode;
   const int *alist;
@@ -68,28 +75,35 @@ public:
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
 #endif
-  uchar r,d,o;		// rgb mode, double buffered, overlay flags
   // Return one of these structures for a given gl mode.
   // The second argument is a glX attribute list, and is used if mode is
   // zero.  This is not supported on Win32:
   static Fl_Gl_Choice *find(int mode, const int *);
 };
 
-extern GLXContext fl_first_context; // used to make all contexts share
-extern GLXContext fl_current_context;
-
 class Fl_Window;
 
 #ifdef WIN32
-// This must be called before fl_set_gl_context works:
-HDC fl_private_dc(Fl_Window*, int, Fl_Gl_Choice **gp);
+
+GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
+
+#else
+
+GLContext fl_create_gl_context(XVisualInfo* vis);
+
+static inline
+GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice* g) {
+  return fl_create_gl_context(g->vis);
+}
+
 #endif
 
-void fl_set_gl_context(Fl_Window*, GLXContext);
+void fl_set_gl_context(Fl_Window*, GLContext);
 void fl_no_gl_context();
+void fl_delete_gl_context(GLContext);
 
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.5 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6 2001/03/14 17:20:01 spitzak Exp $".
 //
