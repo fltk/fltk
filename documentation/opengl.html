@@ -17,13 +17,31 @@ include the file <TT>&lt;GL/gl.h&gt;</TT>, define some extra drawing
 functions provided by FLTK, and include the <TT>&lt;windows.h&gt;</TT> header 
 file needed by WIN32 applications. </P>
 <H2>Making a Subclass of Fl_Gl_Window</H2>
- To make a subclass of Fl_Gl_Window, you must provide: 
+To make a subclass of Fl_Gl_Window, you must provide: 
 <UL>
 <LI>A class definition. </LI>
 <LI>A <TT>draw()</TT> method. </LI>
 <LI>A <TT>handle()</TT> method (if you need to recieve input from  the 
 user). </LI>
 </UL>
+If your subclass provides static controls in the window, they must be
+redrawn whenever the <tt>FL_DAMAGE_ALL</tt> bit is set in the value
+returned by <tt>damage()</tt>.  For double-buffered windows you will
+need to surround the drawing code with the following code to make sure
+that both buffers are redrawn:
+<ul><pre>
+#ifndef MESA
+glDrawBuffer(GL_FRONT_AND_BACK);
+#endif // !MESA
+... draw stuff here ...
+#ifndef MESA
+glDrawBuffer(GL_BACK);
+#endif // !MESA
+</pre></ul>
+<B>Note:</B> If you are using the Mesa graphics library, the call to
+<tt>glDrawBuffer()</tt> is not required and will slow down drawing
+considerably. The preprocessor instructions shown above will optimize
+your code based upon the graphics library used.
 <H3>Defining the Subclass</H3>
 To define the subclass you just subclass the <TT>Fl_Gl_Window</TT> class: 
 <UL>
@@ -163,12 +181,11 @@ for maximum portability: </P>
 <UL>
 <LI>You must choose a default visual with <A href=functions.html#gl_visual>
 <TT>Fl::gl_visual()</TT></A>. </LI>
-<LI>You cannot pass <TT>FL_DOUBLE</TT> to <TT>Fl::gl_visual()</TT>. </LI>
-<LI>You cannot use <TT>Fl_Double_Window</TT> or <TT>Fl_Overlay_Window</TT>
-. </LI>
+<LI>You cannot pass <TT>FL_DOUBLE</TT> to <TT>Fl::gl_visual()</TT>.</LI>
+<LI>You cannot use <TT>Fl_Double_Window</TT> or <TT>Fl_Overlay_Window</TT>.</LI>
 </UL>
 Do <I>not</I> call <TT>gl_start()</TT> or <TT>gl_finish()</TT> when 
-drawing into an <TT>Fl_Gl_Window</TT>! 
+drawing into an <TT>Fl_Gl_Window</TT>!
 <H2>OpenGL Drawing Functions</H2>
 FLTK provides some useful OpenGL drawing functions.  They can be 
 freely mixed with any OpenGL calls, and are defined by including <TT>
