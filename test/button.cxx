@@ -1,5 +1,5 @@
 //
-// "$Id: button.cxx,v 1.4 1999/01/07 19:17:50 mike Exp $"
+// "$Id: button.cxx,v 1.4.2.1 1999/04/17 01:02:30 bill Exp $"
 //
 // Button/callback test program for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,15 @@ void exitcb(Fl_Widget *, void *) {
   exit(0);
 }
 
+#if 0
+// test Fl::add_fd()...
+void stdin_cb(int, void*) {
+  char buf[1000];
+  gets(buf);
+  printf("stdin callback\n");
+}
+#endif
+
 int main(int argc, char ** argv) {
   Fl_Window *window = new Fl_Window(320,65);
   Fl_Button *b1 = new Fl_Button(20, 20, 80, 25, "&Beep");
@@ -46,9 +55,12 @@ int main(int argc, char ** argv) {
   b3->callback(exitcb,0);
   window->end();
   window->show(argc,argv);
+#if 0
+  Fl::add_fd(0, stdin_cb);
+#endif
   return Fl::run();
 }
 
 //
-// End of "$Id: button.cxx,v 1.4 1999/01/07 19:17:50 mike Exp $".
+// End of "$Id: button.cxx,v 1.4.2.1 1999/04/17 01:02:30 bill Exp $".
 //

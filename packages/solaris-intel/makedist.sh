@@ -22,10 +22,10 @@ cd packages/solaris-intel
 
 echo "Packing distribution..."
 
-pkgtrans -s . fltk-1.0-solaris-intel.pkg fltk
+pkgtrans -s . fltk-1.0.3-solaris-intel.pkg fltk
 rm -rf fltk
 
 echo "Compressing distribution..."
 
-rm -f fltk-1.0-solaris-intel.pkg.gz
-gzip -9 fltk-1.0-solaris-intel.pkg
+rm -f fltk-1.0.3-solaris-intel.pkg.gz
+gzip -9 fltk-1.0.3-solaris-intel.pkg

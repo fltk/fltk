@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15 1999/02/19 14:53:04 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.2 1999/04/30 16:29:40 gustavo Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -103,26 +103,6 @@ const char *c_check(const char *c, int type) {
 
 ////////////////////////////////////////////////////////////////
 
-class Fl_Function_Type : public Fl_Type {
-  const char* return_type;
-  char public_, constructor, havewidgets;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  int ismain() {return name_ == 0;}
-  virtual const char *type_name() {return "Function";}
-  virtual const char *title() {
-    return name() ? name() : "main()";
-  }
-  int is_parent() const {return 1;}
-  int is_code_block() const {return 1;}
-  void write_properties();
-  void read_property(const char *);
-};
-
 Fl_Type *Fl_Function_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -223,9 +203,13 @@ void Fl_Function_Type::write_code1() {
       if (!strcmp(t,"virtual")) {is_virtual = 1; t = 0;}
       else if (!strncmp(t,"virtual ",8)) {is_virtual = 1; t += 8;}
     }
+    char buf[32];
     if (!t) {
-      if (havewidgets) t = "Fl_Window*";
-      else t = "void";
+      if (havewidgets) {
+	strcpy(buf,subclassname(child));
+	strcat(buf,"*");
+	t=buf;
+      } else t = "void";
     }
 
     const char* k = class_name();
@@ -260,7 +244,7 @@ void Fl_Function_Type::write_code1() {
       write_c("%s %s {\n", t, name());
     }
   }
-  if (havewidgets) write_c("  Fl_Window* w;\n");
+  if (havewidgets) write_c("  %s* w;\n",subclassname(child));
   indentation += 2;
 }
 
@@ -275,17 +259,6 @@ void Fl_Function_Type::write_code2() {
 }
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_Code_Type : public Fl_Type {
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "code";}
-  int is_code_block() const {return 0;}
-};
 
 Fl_Type *Fl_Code_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -336,21 +309,6 @@ void Fl_Code_Type::write_code1() {
 void Fl_Code_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_CodeBlock_Type : public Fl_Type {
-  const char* after;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "codeblock";}
-  int is_code_block() const {return 1;}
-  int is_parent() const {return 1;}
-  void write_properties();
-  void read_property(const char *);
-};
 
 Fl_Type *Fl_CodeBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -426,19 +384,6 @@ void Fl_CodeBlock_Type::write_code2() {
 }
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_Decl_Type : public Fl_Type {
-  char public_;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "decl";}
-  void write_properties();
-  void read_property(const char *);
-};
 
 Fl_Type *Fl_Decl_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -525,21 +470,6 @@ void Fl_Decl_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
 
-class Fl_DeclBlock_Type : public Fl_Type {
-  const char* after;
-public:
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "declblock";}
-  void write_properties();
-  void read_property(const char *);
-  int is_parent() const {return 1;}
-  int is_decl_block() const {return 1;}
-};
-
 Fl_Type *Fl_DeclBlock_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -610,27 +540,6 @@ void Fl_DeclBlock_Type::write_code2() {
 }
 
 ////////////////////////////////////////////////////////////////
-
-class Fl_Class_Type : public Fl_Type {
-  const char* subclass_of;
-  char public_;
-public:
-  // state variables for output:
-  char write_public_state; // true when public: has been printed
-  Fl_Class_Type* parent_class; // save class if nested
-//
-  Fl_Type *make();
-  void write_declare();
-  void write_code1();
-  void write_code2();
-  void open();
-  virtual const char *type_name() {return "class";}
-  int is_parent() const {return 1;}
-  int is_decl_block() const {return 1;}
-  int is_class() const {return 1;}
-  void write_properties();
-  void read_property(const char *);
-};
 
 const char* Fl_Type::class_name() const {
   Fl_Type* p = parent;
@@ -729,5 +638,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15 1999/02/19 14:53:04 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.2 1999/04/30 16:29:40 gustavo Exp $".
 //

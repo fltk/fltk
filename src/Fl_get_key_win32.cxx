@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key_win32.cxx,v 1.4 1999/01/07 19:17:32 mike Exp $"
+// "$Id: Fl_get_key_win32.cxx,v 1.4.2.1 1999/05/06 06:20:47 bill Exp $"
 //
 // WIN32 keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -70,6 +70,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   {0xc0,	'~'},
   {VK_BACK,	FL_BackSpace},
   {VK_TAB,	FL_Tab},
+  {VK_CLEAR,	0xff0b/*XK_Clear*/},
   {VK_RETURN,	FL_Enter},
   {VK_PAUSE,	FL_Pause},
   {VK_SCROLL,	FL_Scroll_Lock},
@@ -131,5 +132,5 @@ int Fl::get_key(int k) {
 }
 
 //
-// End of "$Id: Fl_get_key_win32.cxx,v 1.4 1999/01/07 19:17:32 mike Exp $".
+// End of "$Id: Fl_get_key_win32.cxx,v 1.4.2.1 1999/05/06 06:20:47 bill Exp $".
 //

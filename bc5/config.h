@@ -1,8 +1,7 @@
 /*
- * "$Id: configh.in,v 1.11.2.1 1999/03/25 22:19:30 mike Exp $"
+ * "$Id: config.h,v 1.1.2.1 1999/03/29 17:39:22 carl Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
- * @configure_input@
  *
  * Copyright 1998-1999 by Bill Spitzak and others.
  *
@@ -47,7 +46,7 @@
  * OpenGL, and FLTK will be smaller.
  */
 
-#define HAVE_GL 0
+#define HAVE_GL 1
 
 /*
  * USE_COLORMAP:
@@ -110,9 +109,9 @@
  * U16 is optional but FLTK will work better with it!
  */
 
-#undef U16
-#undef U32
-#undef U64
+#define U16 unsigned short
+#define U32 unsigned
+/* #undef U64 */
 
 /*
  * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H, HAVE_SCANDIR:
@@ -132,7 +131,7 @@
 
 #define HAVE_VSNPRINTF 0
 #define HAVE_SNPRINTF 0
-#define HAVE_VSPRINTF 0
+#define HAVE_VSPRINTF 1
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -151,5 +150,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: configh.in,v 1.11.2.1 1999/03/25 22:19:30 mike Exp $".
+ * End of "$Id: config.h,v 1.1.2.1 1999/03/29 17:39:22 carl Exp $".
  */

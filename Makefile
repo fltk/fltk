@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12 1999/02/25 19:45:04 carl Exp $"
+# "$Id: Makefile,v 1.12.2.1 1999/03/25 15:44:12 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -44,12 +44,6 @@ install: makeinclude
 		fi;\
 		(cd $$dir;$(MAKE) install);\
 	done
-	@if test "$(LIBNAME)" = libfltk.so.1; then\
-		ln -s libfltk.so.1 $(libdir)/libfltk.so;\
-	fi
-	@if test "$(LIBNAME)" = libfltk.sl.1; then\
-		ln -s libfltk.sl.1 $(libdir)/libfltk.sl;\
-	fi
 
 depend: makeinclude
 	@for dir in $(DIRS); do\
@@ -74,5 +68,5 @@ makeinclude: configure configh.in makeinclude.in
 	./configure
 
 #
-# End of "$Id: Makefile,v 1.12 1999/02/25 19:45:04 carl Exp $".
+# End of "$Id: Makefile,v 1.12.2.1 1999/03/25 15:44:12 mike Exp $".
 #
