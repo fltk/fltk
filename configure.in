@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.5 2001/08/05 16:10:09 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.6 2001/08/08 12:47:59 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -388,8 +388,8 @@ else
 		CFLAGS="+O2 $CFLAGS"
 		CXXFLAGS="+O2 +W336,501,736,740,749,829 $CXXFLAGS"
 	    fi
-	    CFLAGS="+DAportable -D_INCLUDE_POSIX_SOURCE $CFLAGS"
-	    CXXFLAGS="+DAportable -D_INCLUDE_POSIX_SOURCE $CXXFLAGS"
+	    CFLAGS="+DAportable $CFLAGS"
+	    CXXFLAGS="+DAportable $CXXFLAGS"
 	    ;;
 	SunOS*)
 	    # Solaris
@@ -439,5 +439,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.5 2001/08/05 16:10:09 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.6 2001/08/08 12:47:59 easysw Exp $".
 dnl
