@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.H,v 1.5 1999/02/16 21:59:37 mike Exp $"
+// "$Id: Fl_Dial.H,v 1.6 1999/03/08 21:44:28 carl Exp $"
 //
 // Dial header file for the Fast Light Tool Kit (FLTK).
 //
@@ -54,7 +54,7 @@ public:
 
   FL_EXPORT int handle(int);
   FL_EXPORT Fl_Dial(int x,int y,int w,int h, const char *l = 0);
-  void angles(short a, short b) {a1=a; a2=b;}
+  void angles(short a, short b);
   void direction(uchar d) {direction_ = d;}
   uchar direction() const {return direction_;}
 
@@ -63,5 +63,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Dial.H,v 1.5 1999/02/16 21:59:37 mike Exp $".
+// End of "$Id: Fl_Dial.H,v 1.6 1999/03/08 21:44:28 carl Exp $".
 //
