@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_xft.cxx,v 1.1.2.3 2003/01/30 21:44:17 easysw Exp $"
+// "$Id: fl_set_fonts_xft.cxx,v 1.1.2.4 2003/03/09 00:22:20 spitzak Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,12 @@
 // and to sort them so the first 4 in a family are normal, bold, italic,
 // and bold italic.
 
+// Bug: older versions calculated the value for *ap as a side effect of
+// making the name, and then forgot about it. To avoid having to change
+// the header files I decided to store this value in the last character
+// of the font name array.
+#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
+
 // turn a stored font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
@@ -42,12 +48,12 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
     case 'P': type = FL_BOLD | FL_ITALIC; break;
     default:  type = 0; break;
     }
-    if (ap) {*ap = type; return p+1;}
-    if (!type) {return p+1;}
-    strlcpy(f->fontname, p+1, sizeof(f->fontname));
-    if (type & FL_BOLD) strlcat(f->fontname, " bold", sizeof(f->fontname));
-    if (type & FL_ITALIC) strlcat(f->fontname, " italic", sizeof(f->fontname));
+    strlcpy(f->fontname, p+1, ENDOFBUFFER);
+    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
+    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
+    f->fontname[ENDOFBUFFER] = (char)type;
   }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
   return f->fontname;
 }
 
@@ -118,5 +124,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_xft.cxx,v 1.1.2.3 2003/01/30 21:44:17 easysw Exp $".
+// End of "$Id: fl_set_fonts_xft.cxx,v 1.1.2.4 2003/03/09 00:22:20 spitzak Exp $".
 //

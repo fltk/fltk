@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_x.cxx,v 1.1.2.6 2003/01/30 21:44:17 easysw Exp $"
+// "$Id: fl_set_fonts_x.cxx,v 1.1.2.7 2003/03/09 00:22:20 spitzak Exp $"
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -79,10 +79,17 @@ static int use_registry(const char *p) {
   return *p && *p!='*' && strcmp(p,fl_encoding);
 }
 
+// Bug: older versions calculated the value for *ap as a side effect of
+// making the name, and then forgot about it. To avoid having to change
+// the header files I decided to store this value in the last character
+// of the font name array.
+#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
+
 // turn a stored (with *'s) X font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
+    int type = 0;
     const char* p = f->name;
     if (!p) {
       if (ap) *ap = 0;
@@ -91,70 +98,65 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
     char *o = f->fontname;
 
     if (*p != '-') { // non-standard font, just replace * with spaces:
-      if (ap) {
-	int type = 0;
-	if (strstr(p,"bold")) type = FL_BOLD;
-	if (strstr(p,"ital")) type |= FL_ITALIC;
-	*ap = type;
-      }
+      if (strstr(p,"bold")) type = FL_BOLD;
+      if (strstr(p,"ital")) type |= FL_ITALIC;
       for (;*p; p++) {
 	if (*p == '*' || *p == ' ' || *p == '-') {
 	  do p++; while (*p == '*' || *p == ' ' || *p == '-');
 	  if (!*p) break;
-	  if (o < (f->fontname + sizeof(f->fontname) - 1)) *o++ = ' ';
+	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
 	}
-	if (o < (f->fontname + sizeof(f->fontname) - 1)) *o++ = *p;
+	if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = *p;
       }
       *o = 0;
-      return f->fontname;
+
+    } else { // standard dash-seperated font:
+
+      // get the family:
+      const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;
+      if (!*x) {
+	if (ap) *ap = 0;
+	return p;
+      }
+      const char *e = fl_font_word(x,1);
+      if ((e - x) < (int)(ENDOFBUFFER - 1)) {
+	// MRS: we want strncpy here, not strlcpy...
+	strncpy(o,x,e-x);
+	o += e-x;
+      } else {
+	strlcpy(f->fontname, x, ENDOFBUFFER);
+	o = f->fontname+ENDOFBUFFER-1;
+      }
+
+      // collect all the attribute words:
+      for (int n = 3; n <= 6; n++) {
+	// get the next word:
+	if (*e) e++; x = e; e = fl_font_word(x,1);
+	int t = attribute(n,x);
+	if (t < 0) {
+	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
+	  if ((e - x) < (int)(ENDOFBUFFER - (o - f->fontname) - 1)) {
+	    // MRS: we want strncpy here, not strlcpy...
+	    strncpy(o,x,e-x);
+	    o += e-x;
+	  } else {
+	    strlcpy(o,x, ENDOFBUFFER - (o - f->fontname) - 1);
+	    o = f->fontname+ENDOFBUFFER-1;
+	  }
+	} else type |= t;
+      }
+
+      // skip over the '*' for the size and get the registry-encoding:
+      x = fl_font_word(e,2);
+      if (*x) {x++; *o++ = '('; while (*x) *o++ = *x++; *o++ = ')';}
+
+      *o = 0;
+      if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
+      if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
     }
-
-    // get the family:
-    const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;
-    if (!*x) {
-      if (ap) *ap = 0;
-      return p;
-    }
-    const char *e = fl_font_word(x,1);
-    if ((e - x) < (int)(sizeof(f->fontname) - 1)) {
-      // MRS: we want strncpy here, not strlcpy...
-      strncpy(o,x,e-x);
-      o += e-x;
-    } else {
-      strlcpy(f->fontname,x,sizeof(f->fontname));
-      return f->fontname;
-    }
-
-    // collect all the attribute words:
-    int type = 0;
-    for (int n = 3; n <= 6; n++) {
-      // get the next word:
-      if (*e) e++; x = e; e = fl_font_word(x,1);
-      int t = attribute(n,x);
-      if (t < 0) {
-	if (o < (f->fontname + sizeof(f->fontname) - 1)) *o++ = ' ';
-	if ((e - x) < (int)(sizeof(f->fontname) - (o - f->fontname) - 1)) {
-	  // MRS: we want strncpy here, not strlcpy...
-	  strncpy(o,x,e-x);
-	  o += e-x;
-	} else {
-	  strlcpy(o,x,sizeof(f->fontname) - (o - f->fontname) - 1);
-	  return f->fontname;
-	}
-      } else type |= t;
-    }
-
-    // skip over the '*' for the size and get the registry-encoding:
-    x = fl_font_word(e,2);
-    if (*x) {x++; *o++ = '('; while (*x) *o++ = *x++; *o++ = ')';}
-
-    *o = 0;
-    if (type & FL_BOLD) strlcat(f->fontname, " bold", sizeof(f->fontname));
-    if (type & FL_ITALIC) strlcat(f->fontname, " italic", sizeof(f->fontname));
-
-    if (ap) *ap = type;
+    f->fontname[ENDOFBUFFER] = (char)type;
   }
-
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
   return f->fontname;
 }
 
@@ -342,5 +344,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.6 2003/01/30 21:44:17 easysw Exp $".
+// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.7 2003/03/09 00:22:20 spitzak Exp $".
 //
