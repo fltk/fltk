@@ -7,6 +7,7 @@
 extern Fl_Window *function_panel;
 #include <FL/Fl_Light_Button.H>
 extern Fl_Light_Button *f_public_button;
+extern Fl_Light_Button *f_c_button;
 #include <FL/Fl_Input.H>
 extern Fl_Input *f_name_input;
 extern Fl_Input *f_return_type_input;
@@ -17,6 +18,7 @@ extern Fl_Button *f_panel_cancel;
 Fl_Window* make_function_panel();
 extern Fl_Window *function_panel;
 extern Fl_Light_Button *f_public_button;
+extern Fl_Light_Button *f_c_button;
 extern Fl_Input *f_name_input;
 extern Fl_Input *f_return_type_input;
 extern Fl_Return_Button *f_panel_ok;

@@ -6,6 +6,8 @@ Fl_Window *function_panel=(Fl_Window *)0;
 
 Fl_Light_Button *f_public_button=(Fl_Light_Button *)0;
 
+Fl_Light_Button *f_c_button=(Fl_Light_Button *)0;
+
 Fl_Input *f_name_input=(Fl_Input *)0;
 
 Fl_Input *f_return_type_input=(Fl_Input *)0;
@@ -21,6 +23,9 @@ Fl_Window* make_function_panel() {
     { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 15, 65, 25, "public");
       o->labelsize(10);
       o->when(FL_WHEN_NEVER);
+    }
+    { Fl_Light_Button* o = f_c_button = new Fl_Light_Button(90, 15, 90, 25, "C declaration");
+      o->labelsize(10);
     }
     { Fl_Input* o = f_name_input = new Fl_Input(10, 60, 270, 25, "Name(args): (blank for main())");
       o->labelsize(12);

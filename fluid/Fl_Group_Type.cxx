@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.2 1999/04/18 14:10:55 gustavo Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.3 1999/08/05 09:01:24 bill Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -129,6 +129,17 @@ void Fl_Group_Type::write_code2() {
 
 ////////////////////////////////////////////////////////////////
 
+const char pack_type_name[] = "Fl_Pack";
+
+Fl_Menu_Item pack_type_menu[] = {
+  {"HORIZONTAL", 0, 0, (void*)Fl_Pack::HORIZONTAL},
+  {"VERTICAL", 0, 0, (void*)Fl_Pack::VERTICAL},
+  {0}};
+
+Fl_Pack_Type Fl_Pack_type;	// the "factory"
+
+////////////////////////////////////////////////////////////////
+
 const char tabs_type_name[] = "Fl_Tabs";
 
 // Override group's resize behavior to do nothing to children:
@@ -220,5 +231,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.2 1999/04/18 14:10:55 gustavo Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.3 1999/08/05 09:01:24 bill Exp $".
 //

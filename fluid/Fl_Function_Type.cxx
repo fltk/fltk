@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.7 1999/08/05 08:01:35 bill Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.8 1999/08/05 09:01:24 bill Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -112,12 +112,14 @@ Fl_Type *Fl_Function_Type::make() {
   o->add(p);
   o->factory = this;
   o->public_ = 1;
+  o->cdecl_ = 0;
   return o;
 }
 
 void Fl_Function_Type::write_properties() {
   Fl_Type::write_properties();
   if (!public_) write_string("private");
+  if (cdecl_) write_string("C");
   if (return_type) {
     write_string("return_type");
     write_word(return_type);
@@ -127,6 +129,8 @@ void Fl_Function_Type::write_properties() {
 void Fl_Function_Type::read_property(const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
+  } else if (!strcmp(c,"C")) {
+    cdecl_ = 1;
   } else if (!strcmp(c,"return_type")) {
     storestring(read_word(),return_type);
   } else {
@@ -142,6 +146,7 @@ void Fl_Function_Type::open() {
   f_return_type_input->static_value(return_type);
   f_name_input->static_value(name());
   f_public_button->value(public_);
+  f_c_button->value(cdecl_);
   function_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -165,6 +170,7 @@ void Fl_Function_Type::open() {
     name(f_name_input->value());
     storestring(c, return_type);
     public_ = f_public_button->value();
+    cdecl_ = f_c_button->value();
     break;
   }
  BREAK2:
@@ -242,7 +248,12 @@ void Fl_Function_Type::write_code1() {
       write_h("%s;\n", s);
       write_c("%s::%s {\n", k, name());
     } else {
-      if (public_) write_h("%s %s;\n", t, name());
+      if (public_) {
+	if (cdecl_)
+	  write_h("extern \"C\" { %s %s; }\n", t, name());
+	else
+	  write_h("%s %s;\n", t, name());
+      }
       else write_c("static ");
       write_c("%s %s {\n", t, name());
     }
@@ -650,5 +661,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.7 1999/08/05 08:01:35 bill Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.8 1999/08/05 09:01:24 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.3 1999/08/05 08:01:36 bill Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.4 1999/08/05 09:01:25 bill Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -128,7 +128,7 @@ public:
 
 class Fl_Function_Type : public Fl_Type {
   const char* return_type;
-  char public_, constructor, havewidgets;
+  char public_, cdecl_, constructor, havewidgets;
 public:
   Fl_Type *make();
   void write_code1();
@@ -271,6 +271,7 @@ public:
 };
 
 #include <FL/Fl_Tabs.H>
+#include <FL/Fl_Pack.H>
 
 class igroup : public Fl_Group {
 public:
@@ -298,6 +299,16 @@ public:
   void remove_child(Fl_Type*);
   int is_parent() const {return 1;}
   int is_group() const {return 1;}
+};
+
+extern const char pack_type_name[];
+extern Fl_Menu_Item pack_type_menu[];
+
+class Fl_Pack_Type : public Fl_Group_Type {
+  Fl_Menu_Item *subtypes() {return pack_type_menu;}
+public:
+  virtual const char *type_name() {return pack_type_name;}
+  Fl_Widget_Type *_make() {return new Fl_Pack_Type();}
 };
 
 extern const char tabs_type_name[];
@@ -516,5 +527,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.3 1999/08/05 08:01:36 bill Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.4 1999/08/05 09:01:25 bill Exp $".
 //

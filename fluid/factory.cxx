@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.2 1999/04/03 15:51:39 carl Exp $"
+// "$Id: factory.cxx,v 1.4.2.3 1999/08/05 09:01:25 bill Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -449,6 +449,7 @@ extern class Fl_DeclBlock_Type Fl_DeclBlock_type;
 extern class Fl_Class_Type Fl_Class_type;
 extern class Fl_Window_Type Fl_Window_type;
 extern class Fl_Group_Type Fl_Group_type;
+extern class Fl_Pack_Type Fl_Pack_type;
 extern class Fl_Tabs_Type Fl_Tabs_type;
 extern class Fl_Scroll_Type Fl_Scroll_type;
 extern class Fl_Tile_Type Fl_Tile_type;
@@ -478,6 +479,7 @@ Fl_Menu_Item New_Menu[] = {
 {"group",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Window_type},
   {0,0,cb,(void*)&Fl_Group_type},
+  {0,0,cb,(void*)&Fl_Pack_type},
   {0,0,cb,(void*)&Fl_Tabs_type},
   {0,0,cb,(void*)&Fl_Scroll_type},
   {0,0,cb,(void*)&Fl_Tile_type},
@@ -685,5 +687,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.2 1999/04/03 15:51:39 carl Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.3 1999/08/05 09:01:25 bill Exp $".
 //
