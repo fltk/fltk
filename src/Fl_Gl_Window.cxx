@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.5 1999/12/19 05:32:34 bill Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.6 2000/01/12 06:06:24 bill Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -199,8 +199,10 @@ void Fl_Gl_Window::flush() {
 
     if (overlay == this) { // Use CopyPixels to act like SWAP_TYPE == COPY
 
+      uchar save_valid = valid_;
       // don't draw if only the overlay is damaged:
       if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !valid()) draw();
+
       // we use a seperate context for the copy because rasterpos must be 0
       // and depth test needs to be off:
       static GLXContext ortho_context;
@@ -212,10 +214,14 @@ void Fl_Gl_Window::flush() {
 	ortho_context = glXCreateContext(fl_display,g->vis,fl_first_context,1);
 #endif
       fl_set_gl_context(this, ortho_context);
-      if (init) {
+      if (init || !save_valid) {
 	glDisable(GL_DEPTH_TEST);
 	glReadBuffer(GL_BACK);
 	glDrawBuffer(GL_FRONT);
+	glLoadIdentity();
+	glViewport(0, 0, w(), h());
+	glOrtho(0, w(), 0, h(), -1, 1);
+	glRasterPos2i(0,0);
       }
       glCopyPixels(0,0,w(),h(),GL_COLOR);
       make_current(); // set current context back to draw overlay
@@ -316,5 +322,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.5 1999/12/19 05:32:34 bill Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.6 2000/01/12 06:06:24 bill Exp $".
 //
