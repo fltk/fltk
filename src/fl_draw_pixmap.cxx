@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.3 1999/09/16 05:34:27 bill Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.4 1999/10/16 19:58:21 bill Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -137,7 +137,7 @@ uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
   pixmap_data d;
   if (!fl_measure_pixmap(di, d.w, d.h)) return 0;
-  const uchar*const* data = (uchar**)(di+1);
+  const uchar*const* data = (const uchar*const*)(di+1);
   int transparent_index = -1;
 
   if (ncolors < 0) {	// fltk (non standard) compressed colormap
@@ -264,5 +264,5 @@ int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.3 1999/09/16 05:34:27 bill Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.4 1999/10/16 19:58:21 bill Exp $".
 //
