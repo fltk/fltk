@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.14 2002/01/07 20:40:02 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.15 2002/01/09 15:23:09 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,9 +41,10 @@
 #  include <unistd.h>
 #else
 #  include <winsock.h>
-//#  include <winuser.h>
 #endif
 #include <ctype.h>
+#include <winuser.h>
+#include <commctrl.h>
 
 
 //
@@ -537,7 +538,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         tme.dwFlags   = TME_LEAVE;
         tme.hwndTrack = hWnd;
 
-        TrackMouseEvent(&tme);
+        _TrackMouseEvent(&tme);
       }
 
       mouse_event(window, 3, 0, wParam, lParam);
@@ -1048,5 +1049,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.14 2002/01/07 20:40:02 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.15 2002/01/09 15:23:09 easysw Exp $".
 //

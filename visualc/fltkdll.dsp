@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /machine:I386
-# ADD LINK32 opengl32.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdll.pdb" /machine:I386 /out:"fltkdll.dll"
+# ADD LINK32 opengl32.lib wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdll.pdb" /machine:I386 /out:"fltkdll.dll"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "fltkdll - Win32 Debug"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 opengl32.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdlld.pdb" /debug /machine:I386 /out:"fltkdlld.dll" /pdbtype:sept
+# ADD LINK32 opengl32.lib wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltkdlld.pdb" /debug /machine:I386 /out:"fltkdlld.dll" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none /incremental:no
 
 !ENDIF 
@@ -121,6 +121,7 @@ SOURCE=..\src\filename_isdir.cxx
 DEP_CPP_FILENAME=\
 	"..\fl\filename.h"\
 	"..\fl\fl_export.h"\
+	"..\src\flstring.h"\
 	".\config.h"\
 	
 # End Source File
@@ -298,6 +299,18 @@ DEP_CPP_FL_BI=\
 # Begin Source File
 
 SOURCE=..\src\Fl_BMP_Image.cxx
+DEP_CPP_FL_BM=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl_bmp_image.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_image.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\fl\mac.H"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -381,6 +394,7 @@ DEP_CPP_FL_BU=\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
 	
 # End Source File
 # Begin Source File
@@ -826,6 +840,7 @@ DEP_CPP_FL_FILE_IC=\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
 	"..\fl\mac.H"\
+	"..\FL\math.h"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
 	"..\src\flstring.h"\
@@ -875,14 +890,21 @@ SOURCE=..\src\Fl_get_system_colors.cxx
 DEP_CPP_FL_GET=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
+	"..\fl\fl_image.h"\
+	"..\fl\fl_pixmap.h"\
+	"..\fl\fl_tiled_image.h"\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
 	"..\fl\mac.H"\
 	"..\FL\math.h"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\flstring.h"\
+	"..\src\tile.xpm"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1026,6 +1048,7 @@ DEP_CPP_FL_HEL=\
 	"..\fl\fl_group.h"\
 	"..\FL\Fl_Help_View.H"\
 	"..\fl\fl_image.h"\
+	"..\fl\fl_pixmap.h"\
 	"..\fl\fl_scrollbar.h"\
 	"..\fl\fl_shared_image.h"\
 	"..\fl\fl_slider.h"\
@@ -1149,16 +1172,11 @@ DEP_CPP_FL_LIN=\
 # Begin Source File
 
 SOURCE=..\src\Fl_lock.cxx
-DEP_CPP_FL_LOC=\
+DEP_CPP_FL_LO=\
 	"..\fl\enumerations.h"\
-	"..\fl\fl_draw.h"\
+	"..\fl\fl.h"\
 	"..\fl\fl_export.h"\
-	"..\fl\fl_group.h"\
-	"..\fl\fl_widget.h"\
-	"..\fl\fl_window.h"\
-	"..\fl\mac.H"\
-	"..\fl\win32.h"\
-	"..\fl\x.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -1643,6 +1661,7 @@ DEP_CPP_FL_SHA=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_bitmap.h"\
+	"..\fl\fl_bmp_image.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_gif_image.h"\
 	"..\fl\fl_group.h"\
