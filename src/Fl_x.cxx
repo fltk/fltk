@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.21 1999/01/13 15:45:50 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.22 1999/01/27 17:52:25 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -39,6 +39,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
+#if HAVE_SYS_SELECT_H
+#  include <sys/select.h>
+#endif /* HAVE_SYS_SELECT_H */
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -50,10 +53,6 @@ struct pollfd {int fd; short events; short revents;};
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
-
-#ifdef __sgi // fix bugs in Irix's select header:
-extern "C" int	select( int, fd_set *, fd_set *, fd_set *, struct timeval * );
-#endif
 
 //
 // The following #define is only needed for HP-UX 9.x and earlier.  10.x
@@ -819,5 +818,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.21 1999/01/13 15:45:50 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.22 1999/01/27 17:52:25 mike Exp $".
 //
