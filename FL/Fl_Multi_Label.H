@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Multi_Label.H,v 1.4 1999/01/07 19:16:58 mike Exp $"
+// "$Id: Fl_Multi_Label.H,v 1.5 1999/02/16 21:59:40 mike Exp $"
 //
 // Multi-label header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,12 +34,12 @@ struct Fl_Multi_Label {
   const char* labelb;
   uchar typea;
   uchar typeb;
-  void label(Fl_Widget*);
-  void label(Fl_Menu_Item*);
+  FL_EXPORT void label(Fl_Widget*);
+  FL_EXPORT void label(Fl_Menu_Item*);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Multi_Label.H,v 1.4 1999/01/07 19:16:58 mike Exp $".
+// End of "$Id: Fl_Multi_Label.H,v 1.5 1999/02/16 21:59:40 mike Exp $".
 //

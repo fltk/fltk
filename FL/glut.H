@@ -1,5 +1,5 @@
 //
-// "$Id: glut.H,v 1.5 1999/01/07 19:17:08 mike Exp $"
+// "$Id: glut.H,v 1.6 1999/02/16 21:59:49 mike Exp $"
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -55,16 +55,16 @@
 #include "Fl_Gl_Window.H"
 
 class Fl_Glut_Window : public Fl_Gl_Window {
-  void _init();
+  FL_EXPORT void _init();
   int mouse_down;
 protected:
-  void draw();
-  void draw_overlay();
-  int handle(int);
+  FL_EXPORT void draw();
+  FL_EXPORT void draw_overlay();
+  FL_EXPORT int handle(int);
 public: // so the inline functions work
   int number;
   int menu[3];
-  void make_current();
+  FL_EXPORT void make_current();
   void (*display)();
   void (*overlaydisplay)();
   void (*reshape)(int w, int h);
@@ -75,26 +75,26 @@ public: // so the inline functions work
   void (*entry)(int);
   void (*visibility)(int);
   void (*special)(int, int x, int y);
-  Fl_Glut_Window(int w, int h, const char *);
-  Fl_Glut_Window(int x, int y, int w, int h, const char *);
-  ~Fl_Glut_Window();
+  FL_EXPORT Fl_Glut_Window(int w, int h, const char *);
+  FL_EXPORT Fl_Glut_Window(int x, int y, int w, int h, const char *);
+  FL_EXPORT ~Fl_Glut_Window();
 };
 
-extern Fl_Glut_Window *glut_window;	// the current window
-extern int glut_menu;			// the current menu
+extern FL_EXPORT Fl_Glut_Window *glut_window;	// the current window
+extern FL_EXPORT int glut_menu;			// the current menu
 
 // function pointers that are not per-window:
-extern void (*glut_idle_function)();
-extern void (*glut_menustate_function)(int);
-extern void (*glut_menustatus_function)(int,int,int);
+extern FL_EXPORT void (*glut_idle_function)();
+extern FL_EXPORT void (*glut_menustate_function)(int);
+extern FL_EXPORT void (*glut_menustatus_function)(int,int,int);
 
 ////////////////////////////////////////////////////////////////
 
 //#define GLUT_API_VERSION This does not match any version of Glut exactly...
 
-void glutInit(int *argcp, char **argv); // creates first window
+FL_EXPORT void glutInit(int *argcp, char **argv); // creates first window
 
-void glutInitDisplayMode(unsigned int mode);
+FL_EXPORT void glutInitDisplayMode(unsigned int mode);
 // the FL_ symbols have the same value as the GLUT ones:
 #define GLUT_RGB	FL_RGB
 #define GLUT_RGBA	FL_RGB
@@ -109,25 +109,25 @@ void glutInitDisplayMode(unsigned int mode);
 // #define GLUT_STEREO			256
 // #define GLUT_LUMINANCE		512
 
-void glutInitWindowPosition(int x, int y);
+FL_EXPORT void glutInitWindowPosition(int x, int y);
 
-void glutInitWindowSize(int w, int h);
+FL_EXPORT void glutInitWindowSize(int w, int h);
 
-void glutMainLoop();
+FL_EXPORT void glutMainLoop();
 
-int glutCreateWindow(char *title);
+FL_EXPORT int glutCreateWindow(char *title);
 
-int glutCreateSubWindow(int win, int x, int y, int width, int height);
+FL_EXPORT int glutCreateSubWindow(int win, int x, int y, int width, int height);
 
-void glutDestroyWindow(int win);
+FL_EXPORT void glutDestroyWindow(int win);
 
 inline void glutPostRedisplay() {glut_window->redraw();}
 
-void glutSwapBuffers();
+FL_EXPORT void glutSwapBuffers();
 
 inline int glutGetWindow() {return glut_window->number;}
 
-void glutSetWindow(int win);
+FL_EXPORT void glutSetWindow(int win);
 
 inline void glutSetWindowTitle(char *t) {glut_window->label(t);}
 
@@ -191,23 +191,23 @@ inline void glutShowOverlay() {glut_window->redraw_overlay();}
 
 inline void glutHideOverlay() {glut_window->hide_overlay();}
 
-int glutCreateMenu(void (*)(int));
+FL_EXPORT int glutCreateMenu(void (*)(int));
 
-void glutDestroyMenu(int menu);
+FL_EXPORT void glutDestroyMenu(int menu);
 
 inline int glutGetMenu() {return glut_menu;}
 
 inline void glutSetMenu(int m) {glut_menu = m;}
 
-void glutAddMenuEntry(char *label, int value);
+FL_EXPORT void glutAddMenuEntry(char *label, int value);
 
-void glutAddSubMenu(char *label, int submenu);
+FL_EXPORT void glutAddSubMenu(char *label, int submenu);
 
-void glutChangeToMenuEntry(int item, char *label, int value);
+FL_EXPORT void glutChangeToMenuEntry(int item, char *label, int value);
 
-void glutChangeToSubMenu(int item, char *label, int submenu);
+FL_EXPORT void glutChangeToSubMenu(int item, char *label, int submenu);
 
-void glutRemoveMenuItem(int item);
+FL_EXPORT void glutRemoveMenuItem(int item);
 
 inline void glutAttachMenu(int b) {glut_window->menu[b] = glut_menu;}
 
@@ -417,8 +417,8 @@ extern struct Glut_Bitmap_Font {uchar font; int size;}
 #define GLUT_BITMAP_HELVETICA_12        (&glutBitmapHelvetica12)
 #define GLUT_BITMAP_HELVETICA_18        (&glutBitmapHelvetica18)
 
-void glutBitmapCharacter(void *font, int character);
-int glutBitmapWidth(void *font, int character);
+FL_EXPORT void glutBitmapCharacter(void *font, int character);
+FL_EXPORT int glutBitmapWidth(void *font, int character);
 
 ////////////////////////////////////////////////////////////////
 // Glut drawing functions.  These are NOT emulated but you can
@@ -467,5 +467,5 @@ extern void glutSolidIcosahedron();
 #endif                  /* __glut_h__ */
 
 //
-// End of "$Id: glut.H,v 1.5 1999/01/07 19:17:08 mike Exp $".
+// End of "$Id: glut.H,v 1.6 1999/02/16 21:59:49 mike Exp $".
 //

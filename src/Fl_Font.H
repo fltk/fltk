@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.5 1999/01/07 19:17:19 mike Exp $"
+// "$Id: Fl_Font.H,v 1.6 1999/02/16 21:59:50 mike Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -41,22 +41,22 @@ public:
   Fl_FontSize *next;	// linked list for this Fl_Fontdesc
 #ifndef WIN32
   XFontStruct* font;	// X font information
-  Fl_FontSize(const char* xfontname);
+  FL_EXPORT Fl_FontSize(const char* xfontname);
 #else
   HFONT fid;
   int width[256];
   TEXTMETRIC metr;
-  Fl_FontSize(const char* fontname, int size);
+  FL_EXPORT Fl_FontSize(const char* fontname, int size);
 #endif
   int minsize;		// smallest point size that should use this
   int maxsize;		// largest point size that should use this
 #if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
 #endif
-  ~Fl_FontSize();
+  FL_EXPORT ~Fl_FontSize();
 };
 
-extern Fl_FontSize *fl_fontsize; // the currently selected one
+extern FL_EXPORT Fl_FontSize *fl_fontsize; // the currently selected one
 
 struct Fl_Fontdesc {
   const char *name;
@@ -67,16 +67,16 @@ struct Fl_Fontdesc {
 #endif
 };
 
-extern Fl_Fontdesc *fl_fonts; // the table
+extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
 #ifndef WIN32
 // functions for parsing X font names:
-const char* fl_font_word(const char *p, int n);
-char *fl_find_fontsize(char *name);
+FL_EXPORT const char* fl_font_word(const char *p, int n);
+FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.5 1999/01/07 19:17:19 mike Exp $".
+// End of "$Id: Fl_Font.H,v 1.6 1999/02/16 21:59:50 mike Exp $".
 //

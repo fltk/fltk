@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.H,v 1.4 1999/01/07 19:16:52 mike Exp $"
+// "$Id: Fl_Color_Chooser.H,v 1.5 1999/02/16 21:59:36 mike Exp $"
 //
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,8 +37,8 @@
 #include <FL/Fl_Value_Input.H>
 
 class Flcc_HueBox : public Fl_Widget {
-  int handle(int);
-  void draw();
+  FL_EXPORT int handle(int);
+  FL_EXPORT void draw();
   int px, py;
 public:
   Flcc_HueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
@@ -46,8 +46,8 @@ public:
 };
 
 class Flcc_ValueBox : public Fl_Widget {
-  int handle(int);
-  void draw();
+  FL_EXPORT int handle(int);
+  FL_EXPORT void draw();
   int py;
 public:
   Flcc_ValueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
@@ -56,7 +56,7 @@ public:
 
 class Flcc_Value_Input : public Fl_Value_Input {
 public:
-  int format(char*);
+  FL_EXPORT int format(char*);
   Flcc_Value_Input(int X, int Y, int W, int H) : Fl_Value_Input(X,Y,W,H) {}
 };
 
@@ -70,9 +70,9 @@ class Fl_Color_Chooser : public Fl_Group {
   Fl_Box resize_box;
   double hue_, saturation_, value_;
   double r_, g_, b_;
-  void set_valuators();
-  static void rgb_cb(Fl_Widget*, void*);
-  static void mode_cb(Fl_Widget*, void*);
+  FL_EXPORT void set_valuators();
+  static FL_EXPORT void rgb_cb(Fl_Widget*, void*);
+  static FL_EXPORT void mode_cb(Fl_Widget*, void*);
 public:
   int mode() {return choice.value();}
   double hue() const {return hue_;}
@@ -81,18 +81,18 @@ public:
   double r() const {return r_;}
   double g() const {return g_;}
   double b() const {return b_;}
-  int hsv(double,double,double);
-  int rgb(double,double,double);
-  static void hsv2rgb(double, double, double,double&,double&,double&);
-  static void rgb2hsv(double, double, double,double&,double&,double&);
-  Fl_Color_Chooser(int,int,int,int,const char* = 0);
+  FL_EXPORT int hsv(double,double,double);
+  FL_EXPORT int rgb(double,double,double);
+  static FL_EXPORT void hsv2rgb(double, double, double,double&,double&,double&);
+  static FL_EXPORT void rgb2hsv(double, double, double,double&,double&,double&);
+  FL_EXPORT Fl_Color_Chooser(int,int,int,int,const char* = 0);
 };
 
-int fl_color_chooser(const char* name, double& r, double& g, double& b);
-int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b);
+FL_EXPORT int fl_color_chooser(const char* name, double& r, double& g, double& b);
+FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b);
 
 #endif
 
 //
-// End of "$Id: Fl_Color_Chooser.H,v 1.4 1999/01/07 19:16:52 mike Exp $".
+// End of "$Id: Fl_Color_Chooser.H,v 1.5 1999/02/16 21:59:36 mike Exp $".
 //

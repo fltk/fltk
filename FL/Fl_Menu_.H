@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.H,v 1.6 1999/02/03 08:43:30 bill Exp $"
+// "$Id: Fl_Menu_.H,v 1.7 1999/02/16 21:59:39 mike Exp $"
 //
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@ class Fl_Menu_ : public Fl_Widget {
 
 protected:
 
-  const Fl_Menu_Item* picked(const Fl_Menu_Item*);
+  FL_EXPORT const Fl_Menu_Item* picked(const Fl_Menu_Item*);
   uchar down_box_;
   uchar textfont_;
   uchar textsize_;
@@ -47,30 +47,30 @@ protected:
 
 public:
 
-  Fl_Menu_(int,int,int,int,const char * =0);
-  ~Fl_Menu_();
+  FL_EXPORT Fl_Menu_(int,int,int,int,const char * =0);
+  FL_EXPORT ~Fl_Menu_();
 
   const Fl_Menu_Item* test_shortcut() {return picked(menu()->test_shortcut());}
-  void global();
+  FL_EXPORT void global();
 
   const Fl_Menu_Item *menu() const {return menu_;}
-  void menu(const Fl_Menu_Item *m);
-  void copy(const Fl_Menu_Item *m, void* user_data = 0);
-  int  add(const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);
+  FL_EXPORT void menu(const Fl_Menu_Item *m);
+  FL_EXPORT void copy(const Fl_Menu_Item *m, void* user_data = 0);
+  FL_EXPORT int  add(const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);
   int  add(const char* a, const char* b, Fl_Callback* c,
 	  void* d = 0, int e = 0) {return add(a,fl_old_shortcut(b),c,d,e);}
-  int  size() const ;
-  void clear();
-  int  add(const char *);
-  void replace(int,const char *);
-  void remove(int);
+  FL_EXPORT int  size() const ;
+  FL_EXPORT void clear();
+  FL_EXPORT int  add(const char *);
+  FL_EXPORT void replace(int,const char *);
+  FL_EXPORT void remove(int);
   void shortcut(int i, int s) {menu_[i].shortcut(s);}
   void mode(int i,int x) {menu_[i].flags = x;}
   int  mode(int i) const {return menu_[i].flags;}
 
   const Fl_Menu_Item *mvalue() const {return value_;}
   int value() const {return value_-menu_;}
-  int value(const Fl_Menu_Item*);
+  FL_EXPORT int value(const Fl_Menu_Item*);
   int value(int i) {return value(menu_+i);}
   const char *text() const {return value_ ? value_->text : 0;}
   const char *text(int i) const {return menu_[i].text;}
@@ -93,5 +93,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Menu_.H,v 1.6 1999/02/03 08:43:30 bill Exp $".
+// End of "$Id: Fl_Menu_.H,v 1.7 1999/02/16 21:59:39 mike Exp $".
 //

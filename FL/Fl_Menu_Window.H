@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.H,v 1.4 1999/01/07 19:16:58 mike Exp $"
+// "$Id: Fl_Menu_Window.H,v 1.5 1999/02/16 21:59:40 mike Exp $"
 //
 // Menu window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,14 +31,14 @@
 class Fl_Menu_Window : public Fl_Single_Window {
   enum {NO_OVERLAY = 128};
 public:
-  void show();
-  void erase();
-  void flush();
-  void hide();
+  FL_EXPORT void show();
+  FL_EXPORT void erase();
+  FL_EXPORT void flush();
+  FL_EXPORT void hide();
   int overlay() {return !(flags()&NO_OVERLAY);}
   void set_overlay() {clear_flag(NO_OVERLAY);}
   void clear_overlay() {set_flag(NO_OVERLAY);}
-  ~Fl_Menu_Window();
+  FL_EXPORT ~Fl_Menu_Window();
   Fl_Menu_Window(int W, int H, const char *l = 0)
     : Fl_Single_Window(W,H,l) {}
   Fl_Menu_Window(int X, int Y, int W, int H, const char *l = 0)
@@ -48,5 +48,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Window.H,v 1.4 1999/01/07 19:16:58 mike Exp $".
+// End of "$Id: Fl_Menu_Window.H,v 1.5 1999/02/16 21:59:40 mike Exp $".
 //

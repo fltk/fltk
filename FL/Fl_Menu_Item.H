@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Item.H,v 1.4 1999/01/07 19:16:58 mike Exp $"
+// "$Id: Fl_Menu_Item.H,v 1.5 1999/02/16 21:59:40 mike Exp $"
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@ enum { // values for flags:
   FL_MENU_HORIZONTAL = 0x100
 };
 
-extern int fl_old_shortcut(const char*);
+extern FL_EXPORT int fl_old_shortcut(const char*);
 
 class Fl_Menu_;
 
@@ -59,7 +59,7 @@ struct Fl_Menu_Item {
   uchar labelcolor_;
 
   // advance N items, skipping submenus:
-  const Fl_Menu_Item *next(int=1) const;
+  FL_EXPORT const Fl_Menu_Item *next(int=1) const;
   Fl_Menu_Item *next(int i=1) {
     return (Fl_Menu_Item*)(((const Fl_Menu_Item*)this)->next(i));}
 
@@ -92,7 +92,7 @@ struct Fl_Menu_Item {
   int value() const {return flags&FL_MENU_VALUE;}
   void set() {flags |= FL_MENU_VALUE;}
   void clear() {flags &= ~FL_MENU_VALUE;}
-  void setonly();
+  FL_EXPORT void setonly();
   int visible() const {return !(flags&FL_MENU_INVISIBLE);}
   void show() {flags &= ~FL_MENU_INVISIBLE;}
   void hide() {flags |= FL_MENU_INVISIBLE;}
@@ -102,23 +102,23 @@ struct Fl_Menu_Item {
   int activevisible() const {return !(flags&0x11);}
 
   // used by menubar:
-  int measure(int* h, const Fl_Menu_*) const;
-  void draw(int x, int y, int w, int h, const Fl_Menu_*, int t=0) const;
+  FL_EXPORT int measure(int* h, const Fl_Menu_*) const;
+  FL_EXPORT void draw(int x, int y, int w, int h, const Fl_Menu_*, int t=0) const;
 
   // popup menus without using an Fl_Menu_ widget:
-  const Fl_Menu_Item* popup(
+  FL_EXPORT const Fl_Menu_Item* popup(
     int X, int Y,
     const char *title = 0,
     const Fl_Menu_Item* picked=0,
     const Fl_Menu_* = 0) const;
-  const Fl_Menu_Item* pulldown(
+  FL_EXPORT const Fl_Menu_Item* pulldown(
     int X, int Y, int W, int H,
     const Fl_Menu_Item* picked = 0,
     const Fl_Menu_* = 0,
     const Fl_Menu_Item* title = 0,
     int menubar=0) const;
-  const Fl_Menu_Item* test_shortcut() const;
-  const Fl_Menu_Item* find_shortcut(int *ip=0) const;
+  FL_EXPORT const Fl_Menu_Item* test_shortcut() const;
+  FL_EXPORT const Fl_Menu_Item* find_shortcut(int *ip=0) const;
 
   void do_callback(Fl_Widget* o) const {callback_(o, user_data_);}
   void do_callback(Fl_Widget* o,void* arg) const {callback_(o, arg);}
@@ -128,11 +128,11 @@ struct Fl_Menu_Item {
   int checked() const {return flags&FL_MENU_VALUE;}
   void check() {flags |= FL_MENU_VALUE;}
   void uncheck() {flags &= ~FL_MENU_VALUE;}
-  int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
+  FL_EXPORT int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
   int add(const char*a, const char* b, Fl_Callback* c,
 	  void* d = 0, int e = 0) {
     return add(a,fl_old_shortcut(b),c,d,e);}
-  int size() const ;
+  FL_EXPORT int size() const ;
 };
 
 typedef Fl_Menu_Item Fl_Menu; // back compatability
@@ -153,5 +153,5 @@ enum {	// back-compatability enum:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Item.H,v 1.4 1999/01/07 19:16:58 mike Exp $".
+// End of "$Id: Fl_Menu_Item.H,v 1.5 1999/02/16 21:59:40 mike Exp $".
 //

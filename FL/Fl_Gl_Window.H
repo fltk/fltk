@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.H,v 1.6 1999/01/07 19:16:54 mike Exp $"
+// "$Id: Fl_Gl_Window.H,v 1.7 1999/02/16 21:59:38 mike Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,27 +37,27 @@ class Fl_Gl_Window : public Fl_Window {
   void * context; // actually a GLXContext
   char valid_;
   char damage1_; // damage() of back buffer
-  virtual void draw_overlay();
-  void init();
+  virtual FL_EXPORT void draw_overlay();
+  FL_EXPORT void init();
 
   void *overlay;
-  void make_overlay();
+  FL_EXPORT void make_overlay();
   friend class _Fl_Gl_Overlay;
 
-  static int can_do(int, const int *);
-  int mode(int, const int *);
+  static FL_EXPORT int can_do(int, const int *);
+  FL_EXPORT int mode(int, const int *);
 
 public:
 
-  void show();
+  FL_EXPORT void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  void flush();
-  void hide();
-  void resize(int,int,int,int);
+  FL_EXPORT void flush();
+  FL_EXPORT void hide();
+  FL_EXPORT void resize(int,int,int,int);
 
   char valid() const {return valid_;}
   void valid(char i) {valid_ = i;}
-  void invalidate();
+  FL_EXPORT void invalidate();
 
   static int can_do(int i) {return can_do(i,0);}
   static int can_do(const int *i) {return can_do(0, i);}
@@ -66,16 +66,16 @@ public:
   int mode(int a) {return mode(a,0);}
   int mode(const int *a) {return mode(0, a);}
 
-  int can_do_overlay();
-  void redraw_overlay();
-  void hide_overlay();
+  FL_EXPORT int can_do_overlay();
+  FL_EXPORT void redraw_overlay();
+  FL_EXPORT void hide_overlay();
 
-  void make_current();
-  void make_overlay_current();
-  void swap_buffers();
-  void ortho();
+  FL_EXPORT void make_current();
+  FL_EXPORT void make_overlay_current();
+  FL_EXPORT void swap_buffers();
+  FL_EXPORT void ortho();
 
-  ~Fl_Gl_Window();
+  FL_EXPORT ~Fl_Gl_Window();
   Fl_Gl_Window(int W, int H, const char *l=0) : Fl_Window(W,H,l) {init();}
   Fl_Gl_Window(int X, int Y, int W, int H, const char *l=0)
     : Fl_Window(X,Y,W,H,l) {init();}
@@ -84,5 +84,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.H,v 1.6 1999/01/07 19:16:54 mike Exp $".
+// End of "$Id: Fl_Gl_Window.H,v 1.7 1999/02/16 21:59:38 mike Exp $".
 //

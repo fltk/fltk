@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.27 1999/02/03 08:43:33 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.28 1999/02/16 21:59:51 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -106,7 +106,6 @@ double fl_wait(int timeout_flag, double time) {
   int have_message;
   timeval t;
   fd_set fdt[3];
-  int n;
 
 
   // For WIN32 we need to poll for socket input FIRST, since
@@ -700,20 +699,17 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
 HINSTANCE fl_display = 0;
 
-extern "C" {
-extern int  __argc;
-extern char **__argv;
-extern int  main(int argc, char *argv[]);
-extern int  WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                           LPSTR lpCmdLine, int nCmdShow);
-}
-
 //
 // This WinMain() function can be overridden by an application and
 // is provided for compatibility with programs written for other
 // operating systems that conform to the ANSI standard entry point
 // "main()".  This will allow you to build a WIN32 Application
 // without any special settings.
+//
+// Because of problems with the Microsoft Visual C++ header files
+// and/or compiler, you cannot have a WinMain function in a DLL.
+// I don't know why.  Thus, this nifty feature is only available
+// if you link to the static library.
 //
 // Currently the debug version of this library will create a
 // console window for your application so you can put printf()
@@ -723,8 +719,15 @@ extern int  WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 // Microsoft(r) Windows(r) that allows for it.
 //
 
+#ifndef FL_DLL
+extern "C" {
+extern int  __argc;
+extern char **__argv;
+extern FL_EXPORT int main(int argc, char *argv[]);
+};
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                   LPSTR lpCmdLine, int nCmdShow) {
+                             LPSTR lpCmdLine, int nCmdShow) {
   // Save the current instance in the fl_display variable...
   fl_display = hInstance;
 
@@ -747,6 +750,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   return main(__argc, __argv);
 }
+#endif /* !FL_DLL */
+
 
 ////////////////////////////////////////////////////////////////
 
@@ -862,5 +867,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.27 1999/02/03 08:43:33 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.28 1999/02/16 21:59:51 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.9 1999/01/07 19:17:08 mike Exp $"
+// "$Id: x.H,v 1.10 1999/02/16 21:59:49 mike Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -44,30 +44,30 @@
 #include <X11/Xatom.h>
 #include "Fl_Window.H"
 
-void fl_open_display();
-void fl_close_display();
+FL_EXPORT void fl_open_display();
+FL_EXPORT void fl_close_display();
 
 // constant info about the X server connection:
-extern Display *fl_display;
-extern int fl_screen;
-extern XVisualInfo *fl_visual;
-extern Colormap fl_colormap;
+extern FL_EXPORT Display *fl_display;
+extern FL_EXPORT int fl_screen;
+extern FL_EXPORT XVisualInfo *fl_visual;
+extern FL_EXPORT Colormap fl_colormap;
 
 // drawing functions:
-extern GC fl_gc;
-extern Window fl_window;
-extern XFontStruct* fl_xfont;
-ulong fl_xpixel(Fl_Color i);
-ulong fl_xpixel(uchar r, uchar g, uchar b);
-void fl_clip_region(Region);
-Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
+extern FL_EXPORT GC fl_gc;
+extern FL_EXPORT Window fl_window;
+extern FL_EXPORT XFontStruct* fl_xfont;
+FL_EXPORT ulong fl_xpixel(Fl_Color i);
+FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);
+FL_EXPORT void fl_clip_region(Region);
+FL_EXPORT Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 // feed events into fltk:
-int fl_handle(const XEvent&);
+FL_EXPORT int fl_handle(const XEvent&);
 
 // you can use these in Fl::add_handler() to look at events:
-extern const XEvent* fl_xevent;
-extern ulong fl_event_time;
+extern FL_EXPORT const XEvent* fl_xevent;
+extern FL_EXPORT ulong fl_event_time;
 
 // off-screen pixmaps: create, destroy, draw into, copy to window:
 #define Fl_Offscreen ulong
@@ -95,28 +95,28 @@ public:
   Fl_X *next;
   char wait_for_expose;
   char backbuffer_bad; // used for XDBE
-  static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return w->i;}
-  void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
-  void sendxjunk();
-  static void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);
-  static Fl_X* set_xid(Fl_Window*, Window);
+  static FL_EXPORT Fl_X* first;
+  static FL_EXPORT Fl_X* i(const Fl_Window* w) {return w->i;}
+  FL_EXPORT void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
+  FL_EXPORT void sendxjunk();
+  static FL_EXPORT void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);
+  static FL_EXPORT Fl_X* set_xid(Fl_Window*, Window);
   // kludges to get around protection:
-  void flush() {w->flush();}
-  static void x(Fl_Window* w, int X) {w->x(X);}
-  static void y(Fl_Window* w, int Y) {w->y(Y);}
+  FL_EXPORT void flush() {w->flush();}
+  static FL_EXPORT void x(Fl_Window* w, int X) {w->x(X);}
+  static FL_EXPORT void y(Fl_Window* w, int Y) {w->y(Y);}
 };
 
 // convert xid <-> Fl_Window:
 inline Window fl_xid(const Fl_Window*w) {return Fl_X::i(w)->xid;}
-Fl_Window* fl_find(Window xid);
+FL_EXPORT Fl_Window* fl_find(Window xid);
 
-extern char fl_override_redirect; // hack into Fl_X::make_xid()
-extern int fl_background_pixel;  // hack into Fl_X::make_xid()
+extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
+extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
 #endif
 #endif
 
 //
-// End of "$Id: x.H,v 1.9 1999/01/07 19:17:08 mike Exp $".
+// End of "$Id: x.H,v 1.10 1999/02/16 21:59:49 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.H,v 1.4 1999/01/07 19:16:56 mike Exp $"
+// "$Id: Fl_Light_Button.H,v 1.5 1999/02/16 21:59:39 mike Exp $"
 //
 // Lighted button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,14 +30,14 @@
 
 class Fl_Light_Button : public Fl_Button {
 protected:
-    virtual void draw();
+    virtual FL_EXPORT void draw();
 public:
-    virtual int handle(int);
-    Fl_Light_Button(int x,int y,int w,int h,const char *l = 0);
+    virtual FL_EXPORT int handle(int);
+    FL_EXPORT Fl_Light_Button(int x,int y,int w,int h,const char *l = 0);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Light_Button.H,v 1.4 1999/01/07 19:16:56 mike Exp $".
+// End of "$Id: Fl_Light_Button.H,v 1.5 1999/02/16 21:59:39 mike Exp $".
 //

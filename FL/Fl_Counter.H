@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.H,v 1.4 1999/01/07 19:16:53 mike Exp $"
+// "$Id: Fl_Counter.H,v 1.5 1999/02/16 21:59:36 mike Exp $"
 //
 // Counter header file for the Fast Light Tool Kit (FLTK).
 //
@@ -41,19 +41,19 @@ class Fl_Counter : public Fl_Valuator {
   uchar textfont_, textsize_, textcolor_;
   double lstep_;
   uchar mouseobj;
-  static void repeat_callback(void *);
-  int calc_mouseobj();
-  void increment_cb();
+  static FL_EXPORT void repeat_callback(void *);
+  FL_EXPORT int calc_mouseobj();
+  FL_EXPORT void increment_cb();
 
 protected:
 
-  void draw();
+  FL_EXPORT void draw();
 
 public:
 
-  int handle(int);
-  Fl_Counter(int,int,int,int,const char * = 0);
-  ~Fl_Counter();
+  FL_EXPORT int handle(int);
+  FL_EXPORT Fl_Counter(int,int,int,int,const char * = 0);
+  FL_EXPORT ~Fl_Counter();
   void lstep(double a) {lstep_ = a;}
   void step(double a,double b) {Fl_Valuator::step(a); lstep_ = b;}
   void step(double a) {Fl_Valuator::step(a);}
@@ -69,5 +69,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Counter.H,v 1.4 1999/01/07 19:16:53 mike Exp $".
+// End of "$Id: Fl_Counter.H,v 1.5 1999/02/16 21:59:36 mike Exp $".
 //

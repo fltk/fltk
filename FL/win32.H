@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.13 1999/01/07 19:17:08 mike Exp $"
+// "$Id: win32.H,v 1.14 1999/02/16 21:59:49 mike Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@ typedef HWND Window;
 typedef POINT XPoint;
 struct XRectangle {int x, y, width, height;};
 typedef HRGN Region;
-void fl_clip_region(Region);
+FL_EXPORT void fl_clip_region(Region);
 inline Region XRectangleRegion(int x, int y, int w, int h) {
     return CreateRectRgn(x,y,x+w,y+h);
 }
@@ -72,31 +72,31 @@ public:
   int wait_for_expose;
   HDC private_dc; // used for OpenGL
   HCURSOR cursor;
-  static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return w->i;}
-  static int fake_X_wm(const Fl_Window* w,int &X, int &Y,
-		     int &bt,int &bx,int &by);
-  void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
-  void flush() {w->flush();}
-  void set_minmax(LPMINMAXINFO minmax);
-  void mapraise();
-  static Fl_X* make(Fl_Window*);
+  static FL_EXPORT Fl_X* first;
+  static FL_EXPORT Fl_X* i(const Fl_Window* w) {return w->i;}
+  static FL_EXPORT int fake_X_wm(const Fl_Window* w,int &X, int &Y,
+		                 int &bt,int &bx,int &by);
+  FL_EXPORT void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
+  FL_EXPORT void flush() {w->flush();}
+  FL_EXPORT void set_minmax(LPMINMAXINFO minmax);
+  FL_EXPORT void mapraise();
+  static FL_EXPORT Fl_X* make(Fl_Window*);
 };
-extern HCURSOR fl_default_cursor;
+extern FL_EXPORT HCURSOR fl_default_cursor;
 inline Window fl_xid(const Fl_Window*w) {return Fl_X::i(w)->xid;}
-Fl_Window* fl_find(Window xid);
-extern char fl_override_redirect; // hack into Fl_Window::make_xid()
-extern int fl_background_pixel;  // hack into Fl_Window::make_xid()
+FL_EXPORT Fl_Window* fl_find(Window xid);
+extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
+extern FL_EXPORT int fl_background_pixel;  // hack into Fl_Window::make_xid()
 
 // most recent fl_color() or fl_rgbcolor() points at one of these:
-extern struct Fl_XMap {
+extern FL_EXPORT struct Fl_XMap {
   COLORREF rgb;	// this should be the type the RGB() macro returns
   HPEN pen;	// pen, 0 if none created yet
   int brush;	// ref to solid brush, 0 if none created yet
 } *fl_current_xmap;
 inline COLORREF fl_RGB() {return fl_current_xmap->rgb;}
 inline HPEN fl_pen() {return fl_current_xmap->pen;}
-HBRUSH fl_brush(); // allocates a brush if necessary
+FL_EXPORT HBRUSH fl_brush(); // allocates a brush if necessary
 
 extern HINSTANCE fl_display;
 extern Window fl_window;
@@ -117,9 +117,9 @@ extern HDC fl_makeDC(HBITMAP);
 #define fl_end_offscreen() \
   fl_pop_clip(); DeleteDC(fl_gc); fl_window=_sw; fl_gc = _sgc
 
-void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
+FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
 
 //
-// End of "$Id: win32.H,v 1.13 1999/01/07 19:17:08 mike Exp $".
+// End of "$Id: win32.H,v 1.14 1999/02/16 21:59:49 mike Exp $".
 //

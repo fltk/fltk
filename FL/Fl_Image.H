@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.4 1999/01/07 19:16:56 mike Exp $"
+// "$Id: Fl_Image.H,v 1.5 1999/02/16 21:59:38 mike Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -33,17 +33,17 @@ struct Fl_Image {
   const uchar *array;
   int w, h, d, ld;
   ulong id; // for internal use
-  Fl_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
+  FL_EXPORT Fl_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
     array(bits), w(W), h(H), d(D), ld(LD), id(0) {}
-  ~Fl_Image();
-  void label(Fl_Widget*);
-  void label(Fl_Menu_Item*);
-  void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
-  void draw(int X, int Y) {draw(X, Y, w, h, 0, 0);}
+  FL_EXPORT ~Fl_Image();
+  FL_EXPORT void label(Fl_Widget*);
+  FL_EXPORT void label(Fl_Menu_Item*);
+  FL_EXPORT void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
+  FL_EXPORT void draw(int X, int Y) {draw(X, Y, w, h, 0, 0);}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.4 1999/01/07 19:16:56 mike Exp $".
+// End of "$Id: Fl_Image.H,v 1.5 1999/02/16 21:59:38 mike Exp $".
 //

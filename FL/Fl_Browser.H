@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.7 1999/01/30 00:39:26 carl Exp $"
+// "$Id: Fl_Browser.H,v 1.8 1999/02/16 21:59:35 mike Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,16 +37,16 @@ struct FL_BLINE;
 class Fl_Browser : public Fl_Browser_ {
 
   // required routines for Fl_Browser_ subclass:
-  void* item_first() const ;
-  void* item_next(void*) const ;
-  void* item_prev(void*) const ;
-  int item_selected(void*) const ;
-  void item_select(void*, int);
-  int item_height(void*) const ;
-  int item_width(void*) const ;
-  void item_draw(void*, int, int, int, int) const ;
-  int full_height() const ;
-  int incr_height() const ;
+  FL_EXPORT void* item_first() const ;
+  FL_EXPORT void* item_next(void*) const ;
+  FL_EXPORT void* item_prev(void*) const ;
+  FL_EXPORT int item_selected(void*) const ;
+  FL_EXPORT void item_select(void*, int);
+  FL_EXPORT int item_height(void*) const ;
+  FL_EXPORT int item_width(void*) const ;
+  FL_EXPORT void item_draw(void*, int, int, int, int) const ;
+  FL_EXPORT int full_height() const ;
+  FL_EXPORT int incr_height() const ;
 
   FL_BLINE *first;		// the array of lines
   FL_BLINE *last;
@@ -57,44 +57,44 @@ class Fl_Browser : public Fl_Browser_ {
   const int* column_widths_;
   char format_char_;		// alternative to @-sign
   char column_char_;		// alternative to tab
-  FL_BLINE* find_line(int) const ;
-  FL_BLINE* _remove(int) ;
-  void insert(int, FL_BLINE*);
-  int lineno(void*) const ;
+  FL_EXPORT FL_BLINE* find_line(int) const ;
+  FL_EXPORT FL_BLINE* _remove(int) ;
+  FL_EXPORT void insert(int, FL_BLINE*);
+  FL_EXPORT int lineno(void*) const ;
 
 public:
 
-  void remove(int);
-  void add(const char*, void* = 0);
-  void insert(int, const char*, void* = 0);
-  void move(int to, int from);
-  int  load(const char* filename);
-  void clear();
+  FL_EXPORT void remove(int);
+  FL_EXPORT void add(const char*, void* = 0);
+  FL_EXPORT void insert(int, const char*, void* = 0);
+  FL_EXPORT void move(int to, int from);
+  FL_EXPORT int  load(const char* filename);
+  FL_EXPORT void clear();
 
   int size() const {return lines;}
   
-  int topline() const ;
+  FL_EXPORT int topline() const ;
   enum Fl_Line_Position { TOP, BOTTOM, MIDDLE };
-  void lineposition(int, Fl_Line_Position);
+  FL_EXPORT void lineposition(int, Fl_Line_Position);
   void topline(int l) { lineposition(l, TOP); }
   void bottomline(int l) { lineposition(l, BOTTOM); }
   void middleline(int l) { lineposition(l, MIDDLE); }
 
-  int select(int, int=1);
-  int selected(int) const ;
-  void show(int n);
-  void hide(int n);
+  FL_EXPORT int select(int, int=1);
+  FL_EXPORT int selected(int) const ;
+  FL_EXPORT void show(int n);
+  FL_EXPORT void hide(int n);
   void hide() {Fl_Widget::hide();}
-  int visible(int n) const ;
+  FL_EXPORT int visible(int n) const ;
 
-  int value() const ;
+  FL_EXPORT int value() const ;
   void value(int v) {select(v);}
-  const char* text(int) const ;
-  void text(int, const char*);
-  void* data(int) const ;
-  void data(int, void* v);
+  FL_EXPORT const char* text(int) const ;
+  FL_EXPORT void text(int, const char*);
+  FL_EXPORT void* data(int) const ;
+  FL_EXPORT void data(int, void* v);
 
-  Fl_Browser(int, int, int, int, const char* = 0);
+  FL_EXPORT Fl_Browser(int, int, int, int, const char* = 0);
 
   char format_char() const {return format_char_;}
   void format_char(char c) {format_char_ = c;}
@@ -107,11 +107,11 @@ public:
 
   // for back compatability only:
   void replace(int a, const char* b) {text(a, b);}
-  void display(int, int=1);
+  FL_EXPORT void display(int, int=1);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.7 1999/01/30 00:39:26 carl Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8 1999/02/16 21:59:35 mike Exp $".
 //

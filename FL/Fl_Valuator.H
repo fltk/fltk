@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.H,v 1.4 1999/01/07 19:17:04 mike Exp $"
+// "$Id: Fl_Valuator.H,v 1.5 1999/02/16 21:59:45 mike Exp $"
 //
 // Valuator header file for the Fast Light Tool Kit (FLTK).
 //
@@ -44,14 +44,14 @@ class Fl_Valuator : public Fl_Widget {
 protected:
 
   int horizontal() const {return type()&1;}
-  Fl_Valuator(int X, int Y, int W, int H, const char* L);
+  FL_EXPORT Fl_Valuator(int X, int Y, int W, int H, const char* L);
 
   double previous_value() const {return previous_value_;}
   void handle_push() {previous_value_ = value_;}
-  double softclamp(double);
-  void handle_drag(double newvalue);
-  void handle_release(); // use drag() value
-  virtual void value_damage(); // cause damage() due to value() changing
+  FL_EXPORT double softclamp(double);
+  FL_EXPORT void handle_drag(double newvalue);
+  FL_EXPORT void handle_release(); // use drag() value
+  virtual FL_EXPORT void value_damage(); // cause damage() due to value() changing
 
 public:
 
@@ -63,21 +63,21 @@ public:
   void range(double a, double b) {min = a; max = b;}
   void step(int a) {A = a; B = 1;}
   void step(double a, int b) {A = a; B = b;}
-  void step(double s);
+  FL_EXPORT void step(double s);
   double step() const {return A/B;}
-  void precision(int);
+  FL_EXPORT void precision(int);
 
   double value() const {return value_;}
-  int value(double);
+  FL_EXPORT int value(double);
 
   virtual int format(char*);
-  double round(double); // round to nearest multiple of step
-  double clamp(double); // keep in range
-  double increment(double, int); // add n*step to value
+  FL_EXPORT double round(double); // round to nearest multiple of step
+  FL_EXPORT double clamp(double); // keep in range
+  FL_EXPORT double increment(double, int); // add n*step to value
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Valuator.H,v 1.4 1999/01/07 19:17:04 mike Exp $".
+// End of "$Id: Fl_Valuator.H,v 1.5 1999/02/16 21:59:45 mike Exp $".
 //

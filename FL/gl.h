@@ -1,5 +1,5 @@
 //
-// "$Id: gl.h,v 1.5 1999/01/07 19:17:07 mike Exp $"
+// "$Id: gl.h,v 1.6 1999/02/16 21:59:48 mike Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -39,35 +39,35 @@
 #endif
 #include <GL/gl.h>
 
-void gl_start();
-void gl_finish();
+FL_EXPORT void gl_start();
+FL_EXPORT void gl_finish();
 
-void gl_color(Fl_Color);
+FL_EXPORT void gl_color(Fl_Color);
 inline void gl_color(int c) {gl_color((Fl_Color)c);} // back compatability
 
-void gl_rect(int x,int y,int w,int h);
+FL_EXPORT void gl_rect(int x,int y,int w,int h);
 inline void gl_rectf(int x,int y,int w,int h) {glRecti(x,y,x+w,y+h);}
 
-void gl_font(int fontid, int size);
-int  gl_height();
-int  gl_descent();
-double gl_width(const char *);
-double gl_width(const char *, int n);
-double gl_width(uchar);
+FL_EXPORT void gl_font(int fontid, int size);
+FL_EXPORT int  gl_height();
+FL_EXPORT int  gl_descent();
+FL_EXPORT double gl_width(const char *);
+FL_EXPORT double gl_width(const char *, int n);
+FL_EXPORT double gl_width(uchar);
 
-void gl_draw(const char*);
-void gl_draw(const char*, int n);
-void gl_draw(const char*, int x, int y);
-void gl_draw(const char*, float x, float y);
-void gl_draw(const char*, int n, int x, int y);
-void gl_draw(const char*, int n, float x, float y);
-void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
-void gl_measure(const char*, int& x, int& y);
+FL_EXPORT void gl_draw(const char*);
+FL_EXPORT void gl_draw(const char*, int n);
+FL_EXPORT void gl_draw(const char*, int x, int y);
+FL_EXPORT void gl_draw(const char*, float x, float y);
+FL_EXPORT void gl_draw(const char*, int n, int x, int y);
+FL_EXPORT void gl_draw(const char*, int n, float x, float y);
+FL_EXPORT void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
+FL_EXPORT void gl_measure(const char*, int& x, int& y);
 
-void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
+FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 
 #endif
 
 //
-// End of "$Id: gl.h,v 1.5 1999/01/07 19:17:07 mike Exp $".
+// End of "$Id: gl.h,v 1.6 1999/02/16 21:59:48 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.5 1999/01/07 19:17:05 mike Exp $"
+// "$Id: filename.H,v 1.6 1999/02/16 21:59:47 mike Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -23,17 +23,35 @@
 // Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
-#ifndef FL_PATH_MAX
+#ifndef FL_FILENAME_H
+#define FL_FILENAME_H
+
+//
+// The following is only used when building DLLs under WIN32 or OS/2...
+//
+
+#if defined(WIN32) || defined(__EMX__)
+#  ifdef FL_DLL
+#    define FL_EXPORT	__declspec(dllexport)
+#    define FL_IMPORT	__declspec(dllimport)
+#  else
+#    define FL_EXPORT	__declspec(dllimport)
+#    define FL_IMPORT	__declspec(dllexport)
+#  endif /* FL_DLL */
+#else
+#  define FL_EXPORT
+#  define FL_IMPORT
+#endif /* WIN32 || __EMX__ */
 
 #define FL_PATH_MAX 256 // all buffers are this length
 
-const char *filename_name(const char *); // return pointer to name
-const char *filename_ext(const char *); // return pointer to .ext
-char *filename_setext(char *,const char *ext); // clobber .ext
-int filename_expand(char *, const char *from); // do $x and ~x
-int filename_absolute(char *, const char *from); // prepend getcwd()
-int filename_match(const char *, const char *pattern); // glob match
-int filename_isdir(const char*);
+FL_EXPORT const char *filename_name(const char *); // return pointer to name
+FL_EXPORT const char *filename_ext(const char *); // return pointer to .ext
+FL_EXPORT char *filename_setext(char *,const char *ext); // clobber .ext
+FL_EXPORT int filename_expand(char *, const char *from); // do $x and ~x
+FL_EXPORT int filename_absolute(char *, const char *from); // prepend getcwd()
+FL_EXPORT int filename_match(const char *, const char *pattern); // glob match
+FL_EXPORT int filename_isdir(const char*);
 
 // Portable "scandir" function.  Ugly but apparently necessary...
 
@@ -56,10 +74,10 @@ struct dirent {char d_name[1];};
 
 #endif
 
-int filename_list(const char *d, struct dirent ***list);
+FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 
 #endif
 
 //
-// End of "$Id: filename.H,v 1.5 1999/01/07 19:17:05 mike Exp $".
+// End of "$Id: filename.H,v 1.6 1999/02/16 21:59:47 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.H,v 1.5 1999/02/01 20:14:58 mike Exp $"
+// "$Id: Fl_Chart.H,v 1.6 1999/02/16 21:59:35 mike Exp $"
 //
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
@@ -59,18 +59,18 @@ class Fl_Chart : public Fl_Widget {
     uchar autosize_;
     uchar textfont_,textsize_,textcolor_;
 protected:
-    void draw();
+    FL_EXPORT void draw();
 public:
-    Fl_Chart(int,int,int,int,const char * = 0);
-    void clear();
-    void add(double, const char * =0, uchar=0);
-    void insert(int, double, const char * =0, uchar=0);
-    void replace(int, double, const char * =0, uchar=0);
+    FL_EXPORT Fl_Chart(int,int,int,int,const char * = 0);
+    FL_EXPORT void clear();
+    FL_EXPORT void add(double, const char * =0, uchar=0);
+    FL_EXPORT void insert(int, double, const char * =0, uchar=0);
+    FL_EXPORT void replace(int, double, const char * =0, uchar=0);
     void bounds(double *a,double *b) const {*a = min; *b = max;}
-    void bounds(double a,double b);
+    FL_EXPORT void bounds(double a,double b);
     int size() const {return numb;}
     int maxsize() const {return maxnumb;}
-    void maxsize(int);
+    FL_EXPORT void maxsize(int);
     Fl_Font textfont() const {return (Fl_Font)textfont_;}
     void textfont(uchar s) {textfont_ = s;}
     uchar textsize() const {return textsize_;}
@@ -84,5 +84,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Chart.H,v 1.5 1999/02/01 20:14:58 mike Exp $".
+// End of "$Id: Fl_Chart.H,v 1.6 1999/02/16 21:59:35 mike Exp $".
 //

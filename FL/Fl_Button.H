@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.H,v 1.4 1999/01/07 19:16:51 mike Exp $"
+// "$Id: Fl_Button.H,v 1.5 1999/02/16 21:59:35 mike Exp $"
 //
 // Button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -35,7 +35,7 @@
 #define FL_RADIO_BUTTON		(FL_RESERVED_TYPE+2)
 #define FL_HIDDEN_BUTTON	3 // for Forms compatability
 
-extern int fl_old_shortcut(const char*);
+extern FL_EXPORT int fl_old_shortcut(const char*);
 
 class Fl_Button : public Fl_Widget {
 
@@ -46,17 +46,17 @@ class Fl_Button : public Fl_Widget {
 
 protected:
 
-  virtual void draw();
+  virtual FL_EXPORT void draw();
 
 public:
 
-  virtual int handle(int);
-  Fl_Button(int,int,int,int,const char * = 0);
-  int value(int);
+  virtual FL_EXPORT int handle(int);
+  FL_EXPORT Fl_Button(int,int,int,int,const char * = 0);
+  FL_EXPORT int value(int);
   char value() const {return value_;}
   int set() {return value(1);}
   int clear() {return value(0);}
-  void setonly(); // this should only be called on FL_RADIO_BUTTONs
+  FL_EXPORT void setonly(); // this should only be called on FL_RADIO_BUTTONs
   int shortcut() const {return shortcut_;}
   void shortcut(int s) {shortcut_ = s;}
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
@@ -71,5 +71,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Button.H,v 1.4 1999/01/07 19:16:51 mike Exp $".
+// End of "$Id: Fl_Button.H,v 1.5 1999/02/16 21:59:35 mike Exp $".
 //

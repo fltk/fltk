@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.11 1999/01/25 20:43:03 mike Exp $"
+// "$Id: Enumerations.H,v 1.12 1999/02/16 21:59:33 mike Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -25,6 +25,23 @@
 
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
+
+//
+// The following is only used when building DLLs under WIN32 or OS/2...
+//
+
+#if defined(WIN32) || defined(__EMX__)
+#  ifdef FL_DLL
+#    define FL_EXPORT	__declspec(dllexport)
+#    define FL_IMPORT	__declspec(dllimport)
+#  else
+#    define FL_EXPORT	__declspec(dllimport)
+#    define FL_IMPORT	__declspec(dllexport)
+#  endif /* FL_DLL */
+#else
+#  define FL_EXPORT
+#  define FL_IMPORT
+#endif /* WIN32 || __EMX__ */
 
 //
 // The FLTK version number; this is changed slightly from the beta versions
@@ -148,23 +165,23 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_OVAL_FRAME,	_FL_OFLAT_BOX,
   FL_FREE_BOXTYPE
 };
-extern Fl_Boxtype define_FL_ROUND_UP_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_ROUND_UP_BOX();
 #define FL_ROUND_UP_BOX define_FL_ROUND_UP_BOX()
 #define FL_ROUND_DOWN_BOX (Fl_Boxtype)(define_FL_ROUND_UP_BOX()+1)
-extern Fl_Boxtype define_FL_SHADOW_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_SHADOW_BOX();
 #define FL_SHADOW_BOX define_FL_SHADOW_BOX()
 #define FL_SHADOW_FRAME (Fl_Boxtype)(define_FL_SHADOW_BOX()+2)
-extern Fl_Boxtype define_FL_ROUNDED_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_ROUNDED_BOX();
 #define FL_ROUNDED_BOX define_FL_ROUNDED_BOX()
 #define FL_ROUNDED_FRAME (Fl_Boxtype)(define_FL_ROUNDED_BOX()+2)
-extern Fl_Boxtype define_FL_RFLAT_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_RFLAT_BOX();
 #define FL_RFLAT_BOX define_FL_RFLAT_BOX()
-extern Fl_Boxtype define_FL_RSHADOW_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_RSHADOW_BOX();
 #define FL_RSHADOW_BOX define_FL_RSHADOW_BOX()
-extern Fl_Boxtype define_FL_DIAMOND_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_DIAMOND_BOX();
 #define FL_DIAMOND_UP_BOX define_FL_DIAMOND_BOX()
 #define FL_DIAMOND_DOWN_BOX (Fl_Boxtype)(define_FL_DIAMOND_BOX()+1)
-extern Fl_Boxtype define_FL_OVAL_BOX();
+extern FL_EXPORT Fl_Boxtype define_FL_OVAL_BOX();
 #define FL_OVAL_BOX define_FL_OVAL_BOX()
 #define FL_OSHADOW_BOX (Fl_Boxtype)(define_FL_OVAL_BOX()+1)
 #define FL_OVAL_FRAME (Fl_Boxtype)(define_FL_OVAL_BOX()+2)
@@ -193,13 +210,13 @@ enum Fl_Labeltype {	// labeltypes:
   _FL_MULTI_LABEL,
   FL_FREE_LABELTYPE
 };
-extern Fl_Labeltype define_FL_SYMBOL_LABEL();
+extern Fl_Labeltype FL_EXPORT define_FL_SYMBOL_LABEL();
 #define FL_SYMBOL_LABEL define_FL_SYMBOL_LABEL()
-extern Fl_Labeltype define_FL_SHADOW_LABEL();
+extern Fl_Labeltype FL_EXPORT define_FL_SHADOW_LABEL();
 #define FL_SHADOW_LABEL define_FL_SHADOW_LABEL()
-extern Fl_Labeltype define_FL_ENGRAVED_LABEL();
+extern Fl_Labeltype FL_EXPORT define_FL_ENGRAVED_LABEL();
 #define FL_ENGRAVED_LABEL define_FL_ENGRAVED_LABEL()
-extern Fl_Labeltype define_FL_EMBOSSED_LABEL();
+extern Fl_Labeltype FL_EXPORT define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL define_FL_EMBOSSED_LABEL()
 
 enum Fl_Align {	// align() values
@@ -277,9 +294,9 @@ enum Fl_Color {	// standard colors
   FL_COLOR_CUBE		= 56
 };
 
-Fl_Color inactive(Fl_Color c);
-Fl_Color contrast(Fl_Color fg, Fl_Color bg);
-Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
+FL_EXPORT Fl_Color inactive(Fl_Color c);
+FL_EXPORT Fl_Color contrast(Fl_Color fg, Fl_Color bg);
+FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
 
@@ -351,5 +368,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.11 1999/01/25 20:43:03 mike Exp $".
+// End of "$Id: Enumerations.H,v 1.12 1999/02/16 21:59:33 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Free.H,v 1.4 1999/01/07 19:16:54 mike Exp $"
+// "$Id: Fl_Free.H,v 1.5 1999/02/16 21:59:37 mike Exp $"
 //
 // Forms free header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,12 +40,12 @@ typedef int (*FL_HANDLEPTR)(Fl_Widget *, int , float, float, char);
 
 class Fl_Free : public Fl_Widget {
     FL_HANDLEPTR hfunc;
-    static void step(void *);
-    void draw();
-    int handle(int);
+    static FL_EXPORT void step(void *);
+    FL_EXPORT void draw();
+    FL_EXPORT int handle(int);
 public:
-    Fl_Free(uchar t,int x,int y,int w,int h,const char *l,FL_HANDLEPTR hdl);
-    ~Fl_Free();
+    FL_EXPORT Fl_Free(uchar t,int x,int y,int w,int h,const char *l,FL_HANDLEPTR hdl);
+    FL_EXPORT ~Fl_Free();
 };
 
 // old event names for compatability:
@@ -59,5 +59,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Free.H,v 1.4 1999/01/07 19:16:54 mike Exp $".
+// End of "$Id: Fl_Free.H,v 1.5 1999/02/16 21:59:37 mike Exp $".
 //

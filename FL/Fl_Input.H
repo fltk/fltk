@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.H,v 1.4 1999/01/07 19:16:56 mike Exp $"
+// "$Id: Fl_Input.H,v 1.5 1999/02/16 21:59:38 mike Exp $"
 //
 // Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,18 +29,18 @@
 #include "Fl_Input_.H"
 
 class Fl_Input : public Fl_Input_ {
-  int handle_key();
-  int shift_position(int p);
-  int shift_up_down_position(int p);
-  void handle_mouse(int keepmark=0);
+  FL_EXPORT int handle_key();
+  FL_EXPORT int shift_position(int p);
+  FL_EXPORT int shift_up_down_position(int p);
+  FL_EXPORT void handle_mouse(int keepmark=0);
 public:
-  void draw();
-  int handle(int);
-  Fl_Input(int,int,int,int,const char * = 0);
+  FL_EXPORT void draw();
+  FL_EXPORT int handle(int);
+  FL_EXPORT Fl_Input(int,int,int,int,const char * = 0);
 };
 
 #endif 
 
 //
-// End of "$Id: Fl_Input.H,v 1.4 1999/01/07 19:16:56 mike Exp $".
+// End of "$Id: Fl_Input.H,v 1.5 1999/02/16 21:59:38 mike Exp $".
 //

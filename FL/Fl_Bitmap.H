@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.H,v 1.4 1999/01/07 19:16:50 mike Exp $"
+// "$Id: Fl_Bitmap.H,v 1.5 1999/02/16 21:59:34 mike Exp $"
 //
 // Bitmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -33,19 +33,19 @@ struct Fl_Bitmap {
   const uchar *array;
   int w, h;
   ulong id; // for internal use
-  Fl_Bitmap(const uchar *bits, int W, int H) :
+  FL_EXPORT Fl_Bitmap(const uchar *bits, int W, int H) :
     array(bits), w(W), h(H), id(0) {}
-  Fl_Bitmap(const char *bits, int W, int H) :
+  FL_EXPORT Fl_Bitmap(const char *bits, int W, int H) :
     array((const uchar *)bits), w(W), h(H), id(0) {}
-  ~Fl_Bitmap();
-  void label(Fl_Widget*);
-  void label(Fl_Menu_Item*);
-  void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
-  void draw(int X, int Y) {draw(X, Y, w, h, 0, 0);}
+  FL_EXPORT ~Fl_Bitmap();
+  FL_EXPORT void label(Fl_Widget*);
+  FL_EXPORT void label(Fl_Menu_Item*);
+  FL_EXPORT void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
+  FL_EXPORT void draw(int X, int Y) {draw(X, Y, w, h, 0, 0);}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Bitmap.H,v 1.4 1999/01/07 19:16:50 mike Exp $".
+// End of "$Id: Fl_Bitmap.H,v 1.5 1999/02/16 21:59:34 mike Exp $".
 //

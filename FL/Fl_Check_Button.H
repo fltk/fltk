@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Button.H,v 1.4 1999/01/07 19:16:52 mike Exp $"
+// "$Id: Fl_Check_Button.H,v 1.5 1999/02/16 21:59:35 mike Exp $"
 //
 // Check button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,11 +30,11 @@
 
 class Fl_Check_Button : public Fl_Light_Button {
 public:
-  Fl_Check_Button(int x,int y,int w,int h,const char *l = 0);
+  FL_EXPORT Fl_Check_Button(int x,int y,int w,int h,const char *l = 0);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Check_Button.H,v 1.4 1999/01/07 19:16:52 mike Exp $".
+// End of "$Id: Fl_Check_Button.H,v 1.5 1999/02/16 21:59:35 mike Exp $".
 //
