@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- Update CygWin support for Fl::add_fd().
 	- Update the plastic scheme to not override the default
 	  colors - move the color code to the MacOS-specific
 	  code.  Also updates the tile image colormap to match

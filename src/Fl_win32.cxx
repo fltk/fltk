@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.10 2001/12/06 22:16:49 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.11 2002/01/01 14:14:34 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -36,13 +36,14 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <time.h>
-#if defined(__CYGWIN__)
-#include <sys/time.h>
-#include <unistd.h>
+#ifdef __CYGWIN__
+#  include <sys/time.h>
+#  include <unistd.h>
 #else
-#include <winsock.h>
+#  include <winsock.h>
 #endif
 #include <ctype.h>
+
 
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
@@ -55,6 +56,7 @@
 // WM_SYNCPAINT is an "undocumented" message, which is finally defined in
 // VC++ 6.0.
 //
+
 #ifndef WM_SYNCPAINT
 #  define WM_SYNCPAINT 0x0088
 #endif /* !WM_SYNCPAINT */
@@ -71,12 +73,14 @@
 #	define WHEEL_DELTA 120	// according to MSDN.
 #endif
 
+
 //
 // WM_FLSELECT is the user-defined message that we get when one of
 // the sockets has pending data, etc.
 //
 
 #define WM_FLSELECT	(WM_USER+0x0400)
+
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -88,7 +92,7 @@
 // Microsoft provides the Berkeley select() call and an asynchronous
 // select function that sends a WIN32 message when the select condition
 // exists...
-
+static int maxfd = 0;
 #ifndef USE_ASYNC_SELECT
 static fd_set fdsets[3];
 #endif // !USE_ASYNC_SELECT
@@ -128,6 +132,7 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
+  if (n > maxfd) maxfd = n;
 #endif // USE_ASYNC_SELECT
 }
 
@@ -199,8 +204,7 @@ int fl_wait(double time_to_wait) {
     fdt[0] = fdsets[0];
     fdt[1] = fdsets[1];
     fdt[2] = fdsets[2];
-
-    if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
+    if (::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i ++) {
 	int f = fd[i].fd;
@@ -211,10 +215,14 @@ int fl_wait(double time_to_wait) {
 	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
       }
       time_to_wait = 0.0; // just peek for any messages
+#ifdef __CYGWIN__
+    }
+#else
     } else {
       // we need to check them periodically, so set a short timeout:
       if (time_to_wait > .001) time_to_wait = .001;
     }
+#endif
   }
 #endif // USE_ASYNC_SELECT
 
@@ -1020,5 +1028,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.10 2001/12/06 22:16:49 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.11 2002/01/01 14:14:34 easysw Exp $".
 //
