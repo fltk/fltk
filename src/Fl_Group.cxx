@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.14 2002/05/13 05:05:11 spitzak Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.15 2002/07/11 22:43:52 matthiaswm Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -48,6 +48,12 @@ int Fl_Group::find(const Fl_Widget* o) const {
   int i; for (i=0; i < children_; i++) if (*a++ == o) break;
   return i;
 }
+
+// Kludge: Metrowerks CodeWarrior can't export static class member: current_
+#ifdef __MWERKS__
+void Fl_Group::begin() {current_ = this;}
+void Fl_Group::end() {current_ = (Fl_Group*)parent();}
+#endif
 
 extern Fl_Widget* fl_oldfocus; // set by Fl::focus
 
@@ -580,5 +586,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.14 2002/05/13 05:05:11 spitzak Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.15 2002/07/11 22:43:52 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.11 2002/06/29 00:10:05 matthiaswm Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.12 2002/07/11 22:43:53 matthiaswm Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+
+#ifdef __MWERKS__
+# define FL_DLL
+#endif
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
@@ -758,5 +762,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.11 2002/06/29 00:10:05 matthiaswm Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.12 2002/07/11 22:43:53 matthiaswm Exp $".
 //
