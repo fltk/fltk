@@ -29,6 +29,10 @@ Fl_Button.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Button.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H ../FL/Fl_Group.H
 Fl_Chart.o: ../FL/math.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Chart.o: ../FL/Fl_Chart.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_Check_Browser.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Check_Browser.o: ../FL/Fl_Check_Browser.H ../FL/Fl.H ../FL/Fl_Browser_.H
+Fl_Check_Browser.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
+Fl_Check_Browser.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Check_Button.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Check_Button.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 Fl_Check_Button.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H
@@ -57,7 +61,7 @@ Fl_FileBrowser.o: ../FL/Fl_FileBrowser.H ../FL/Fl_Browser.H
 Fl_FileBrowser.o: ../FL/Fl_Browser_.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 Fl_FileBrowser.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Scrollbar.H
 Fl_FileBrowser.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_FileIcon.H
-Fl_FileBrowser.o: ../FL/Fl.H ../FL/fl_draw.H ../FL/filename.H
+Fl_FileBrowser.o: ../FL/Fl.H ../FL/fl_draw.H ../FL/filename.H ../config.h
 Fl_FileChooser.o: ../FL/Fl_FileChooser.H ../FL/Fl.H ../FL/Enumerations.H
 Fl_FileChooser.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_FileChooser.o: ../FL/Fl_Widget.H ../FL/Fl_FileBrowser.H ../FL/Fl_Browser.H
@@ -141,6 +145,8 @@ Fl_Pixmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Pixmap.H
 Fl_Pixmap.o: ../FL/Fl_Image.H
 Fl_Positioner.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Positioner.o: ../FL/Fl_Positioner.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_Progress.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Progress.o: ../FL/Fl_Progress.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Repeat_Button.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Repeat_Button.o: ../FL/Fl_Repeat_Button.H ../FL/Fl.H ../FL/Fl_Button.H
 Fl_Repeat_Button.o: ../FL/Fl_Widget.H
