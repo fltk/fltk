@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.32 2002/07/17 06:09:26 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.33 2002/09/19 02:32:44 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -261,11 +261,12 @@ void Fl::remove_fd(int n)
 }
 
 /**
- * \todo check if there is actually a message pending!
+ * Check if there is actually a message pending!
  */
 int fl_ready()
 {
-  return 1;
+  if (GetNumEventsInQueue(GetCurrentEventQueue()) > 0) return 1;
+  return 0;
 }
 
 // CHECK IF USER DATA READY
@@ -1744,6 +1745,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.32 2002/07/17 06:09:26 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.33 2002/09/19 02:32:44 easysw Exp $".
 //
 
