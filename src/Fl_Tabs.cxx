@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.3 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.4 2001/12/01 13:59:50 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,14 +34,13 @@
 #include <FL/Fl_Tabs.H>
 #include <FL/fl_draw.H>
 
-#define BORDER 10
-#define TABSLOPE 5
-#define EXTRASPACE 5
+#define BORDER 2
+#define EXTRASPACE 10
 
 // return the left edges of each tab (plus a fake left edge for a tab
 // past the right-hand one).  These position are actually of the left
 // edge of the slope.  They are either seperated by the correct distance
-// or by TABSLOPE or by zero.
+// or by EXTRASPACE or by zero.
 // Return value is the index of the selected item.
 
 int Fl_Tabs::tab_positions(int* p, int* w) {
@@ -54,29 +53,28 @@ int Fl_Tabs::tab_positions(int* p, int* w) {
     if (o->visible()) selected = i;
     if (o->label()) {
       int wt = 0; int ht = 0; o->measure_label(wt,ht);
-      w[i] = wt+TABSLOPE+EXTRASPACE;
-      //if (2*TABSLOPE > w[i]) w[i] = 2*TABSLOPE;
+      w[i] = wt+EXTRASPACE;
     } else 
-      w[i] = 2*TABSLOPE;
-    p[i+1] = p[i]+w[i];
+      w[i] = EXTRASPACE;
+    p[i+1] = p[i]+w[i]+BORDER;
   }
-  int r = this->w()-TABSLOPE-1;
+  int r = this->w();
   if (p[i] <= r) return selected;
   // uh oh, they are too big:
   // pack them against right edge:
   p[i] = r;
   for (i = children(); i--;) {
     int l = r-w[i];
-    if (p[i+1]-TABSLOPE < l) l = p[i+1]-TABSLOPE;
+    if (p[i+1] < l) l = p[i+1];
     if (p[i] <= l) break;
     p[i] = l;
-    r -= TABSLOPE;
+    r -= EXTRASPACE;
   }
   // pack them against left edge and truncate width if they still don't fit:
   for (i = 0; i<children(); i++) {
-    if (p[i] >= i*TABSLOPE) break;
-    p[i] = i*TABSLOPE;
-    int W = this->w()-1-TABSLOPE*(children()-i) - p[i];
+    if (p[i] >= i*EXTRASPACE) break;
+    p[i] = i*EXTRASPACE;
+    int W = this->w()-1-EXTRASPACE*(children()-i) - p[i];
     if (w[i] > W) w[i] = W;
   }
   // adjust edges according to visiblity:
@@ -97,13 +95,8 @@ int Fl_Tabs::tab_height() {
     if (o->y()+o->h() > H2) H2 = o->y()+o->h();
   }
   H2 = y()+h()-H2;
-  if (H2 > H) {
-    H = H2-Fl::box_dy(box());
-    return (H <= 0) ? 0 : -H;
-  } else {
-    H = H-Fl::box_dy(box());
-    return (H <= 0) ? 0 : H;
-  }
+  if (H2 > H) return (H2 <= 0) ? 0 : -H2;
+  else return (H <= 0) ? 0 : H;
 }
 
 // this is used by fluid to pick tabs:
@@ -116,10 +109,9 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   }
   if (event_x < x()) return 0;
   int p[128], w[128];
-  int selected = tab_positions(p, w);
-  int d = (event_y-(H>=0?y():y()+h()))*TABSLOPE/H;
+  tab_positions(p, w);
   for (int i=0; i<children(); i++) {
-    if (event_x < x()+p[i+1]+(i<selected ? TABSLOPE-d : d)) return child(i);
+    if (event_x < x()+p[i+1]) return child(i);
   }
   return 0;
 }
@@ -226,12 +218,11 @@ enum {LEFT, RIGHT, SELECTED};
 void Fl_Tabs::draw() {
   Fl_Widget *v = value();
   int H = tab_height();
+
   if (damage() & FL_DAMAGE_ALL) { // redraw the entire thing:
     fl_color(color());
     fl_rectf(x(), y()+(H>=0?0:h()+H), w(), H>=0?H:-H);
-    fl_clip(x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H));
-    draw_box(box(), x(), y(), w(), h(), v ? v->color() : color());
-    fl_pop_clip();
+    draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H), v ? v->color() : color());
     if (v) draw_child(*v);
   } else { // redraw the child
     if (v) update_child(*v);
@@ -248,60 +239,47 @@ void Fl_Tabs::draw() {
     if (v) {
       i = selected;
       draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], SELECTED);
-    } else {
-      // draw the edge when no selection:
-      fl_color(H >= 0 ? FL_LIGHT3 : FL_DARK3);
-      fl_xyline(x(), H >= 0 ? y()+H : y()+h()+H, x()+this->w());
     }
   }
 }
 
 void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
-  if (x2 < x1+W) {
-    if (what == LEFT) {
-      if (x1+W < x2+TABSLOPE) x2 = x1+W;
-      else x2 += TABSLOPE;
-    } else {
-      if (x1+W < x2+TABSLOPE) x1 = x2-W;
-      else x1 -= TABSLOPE;
-    }
-  }
   int sel = (what == SELECTED);
-  fl_color(o->color());
+  int dh = Fl::box_dh(box());
+  int dy = Fl::box_dy(box());
+
+  if ((x2 < x1+W) && what == RIGHT) x1 = x2 - W;
+
   if (H >= 0) {
-    fl_polygon(x1, y()+H+sel, x1+TABSLOPE, y(), x2, y(),
-	       x2+TABSLOPE, y()+H+sel);
-    fl_color(!sel && o==push_ ? FL_DARK3 : FL_LIGHT3);
-    fl_line(x1, y()+H, x1+TABSLOPE, y(), x2, y());
-    if (sel) {
-      if (x1>x()) fl_xyline(x(), y()+H, x1);
-      if (x2+TABSLOPE < x()+w()-1) fl_xyline(x2+TABSLOPE, y()+H, x()+w()-1);
-    }
-    fl_color(!sel && o==push_ ? FL_LIGHT3 : FL_DARK3);
-    fl_line(x2, y(), x2+TABSLOPE, y()+H);
-  } else {
-    fl_polygon(x1, y()+h()+H-sel, x1+TABSLOPE, y()+h(), x2, y()+h(),
-	       x2+TABSLOPE, y()+h()+H-sel);
-    fl_color(!sel && o==push_ ? FL_LIGHT3 : FL_DARK3);
-    fl_line(x1+TABSLOPE, y()+h()-1, x2, y()+h()-1, x2+TABSLOPE, y()+h()+H);
-    if (sel) {
-      if (x1>x()) fl_xyline(x(), y()+h()+H, x1);
-      if (x2+TABSLOPE < x()+w()-1) fl_xyline(x2+TABSLOPE, y()+h()+H,x()+w()-1);
-    }
-    fl_color(!sel && o==push_ ? FL_DARK3 : FL_LIGHT3);
-    fl_line(x1, y()+h()+H, x1+TABSLOPE, y()+h()-1);
-  }
-  if (W > TABSLOPE+EXTRASPACE/2) {
-    o->draw_label((what==LEFT ? x1 : x2-W)+(TABSLOPE+EXTRASPACE/2),
-		  y()+(H<0?h()+H-2:0), W-(TABSLOPE+EXTRASPACE/2),
-		  (H<0?-H:H)+3, FL_ALIGN_CENTER);
+    if (sel) fl_clip(x1, y(), x2 - x1, H + dh - dy);
+    else fl_clip(x1, y(), x2 - x1, H);
+
+    H += dh;
+
+    draw_box(box(), x1, y(), W, H, o->color());
+
+    o->draw_label(x1, y(), W, H, FL_ALIGN_CENTER);
 
     if (Fl::focus() == this && o->visible())
-      draw_focus(FL_FLAT_BOX,
-        	 (what==LEFT ? x1 : x2-W)+(TABSLOPE+EXTRASPACE/2),
-		  y()+(H<0?h()+H-2:0) + 3,
-		  W-(TABSLOPE+EXTRASPACE/2),
-		  (H<0?-H:H)-3);
+      draw_focus(box(), x1, y(), W, H);
+
+    fl_pop_clip();
+  } else {
+    H = -H;
+
+    if (sel) fl_clip(x1, y() + h() - H - dy, x2 - x1, H + dy);
+    else fl_clip(x1, y() + h() - H, x2 - x1, H);
+
+    H += dh;
+
+    draw_box(box(), x1, y() + h() - H, W, H, o->color());
+
+    o->draw_label(x1, y() + h() - H, W, H, FL_ALIGN_CENTER);
+
+    if (Fl::focus() == this && o->visible())
+      draw_focus(box(), x1, y() + h() - H, W, H);
+
+    fl_pop_clip();
   }
 }
 
@@ -313,5 +291,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.3 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.4 2001/12/01 13:59:50 easysw Exp $".
 //

@@ -40,20 +40,6 @@ rm -rf CVS */CVS */*/CVS
 rm -rf OpenGL config forms gl glut images packages themes
 rm makesrcdist
 
-echo "Generating .cxx and .h files for fluid demos..."
-
-cd test
-cp demo.menu demod.menu
-
-for file in *.fl; do
-	echo $file
-	fluid -c $file
-	if test $? != 0; then
-		echo Error executing fluid: $?
-		exit 1
-	fi
-done
-
 cd ..
 
 echo "Making UNIX distribution..."

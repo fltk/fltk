@@ -9,6 +9,18 @@ CHANGES IN FLTK 1.1.0b7
 	  does this for us.
 	- The WIN32 event handler did not properly handle
 	  WM_SYNCPAINT messages.
+	- Fl_Tabs now uses the boxtype exclusively to draw
+	  both the tabs and surrounding box, so alternate
+	  box types actually work and the look is a little
+	  nicer.
+	- Fixed the drawing of large areas with the new
+	  plastic boxtypes.
+	- Updated the Visual C++ demo projects to use fluid
+	  to generate the GUI files as needed.
+	- The demo program didn't load the right menu file
+	  when compiled for debugging under WIN32.
+	- Added plastic box types to forms demo.
+	- Added mousewheel to keyboard demo.
 
 
 CHANGES IN FLTK 1.1.0b6

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.1 2001/11/28 21:37:35 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.2 2001/12/01 13:59:50 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -119,7 +119,8 @@ static void up_frame(int x, int y, int w, int h, Fl_Color c) {
 static void up_box(int x, int y, int w, int h, Fl_Color c) {
   if (w > 30 && h > 30)
   {
-    fl_color(c);
+    uchar *g = fl_gray_ramp();
+    fl_color(shade_color(g['W'], c));
     fl_rectf(x + 2, y + 2, w - 4, h - 4);
   }
   else
@@ -137,7 +138,8 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c) {
 static void down_box(int x, int y, int w, int h, Fl_Color c) {
   if (w > 30 && h > 30)
   {
-    fl_color(c);
+    uchar *g = fl_gray_ramp();
+    fl_color(shade_color(g['T'], c));
     fl_rectf(x + 2, y + 2, w - 4, h - 4);
   }
   else
@@ -161,5 +163,5 @@ Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.1 2001/11/28 21:37:35 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.2 2001/12/01 13:59:50 easysw Exp $".
 //
