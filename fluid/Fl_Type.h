@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.11 2004/03/11 05:17:11 easysw Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.12 2004/04/06 18:32:52 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -315,18 +315,21 @@ public:
 class igroup : public Fl_Group {
 public:
   void resize(int,int,int,int);
+  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
   igroup(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) {Fl_Group::current(0);}
 };
 
 class itabs : public Fl_Tabs {
 public:
   void resize(int,int,int,int);
+  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
   itabs(int X,int Y,int W,int H) : Fl_Tabs(X,Y,W,H) {}
 };
 
 class iwizard : public Fl_Wizard {
 public:
   void resize(int,int,int,int);
+  void full_resize(int X, int Y, int W, int H) { Fl_Group::resize(X, Y, W, H); }
   iwizard(int X,int Y,int W,int H) : Fl_Wizard(X,Y,W,H) {}
 };
 
@@ -596,5 +599,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.11 2004/03/11 05:17:11 easysw Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.12 2004/04/06 18:32:52 easysw Exp $".
 //
