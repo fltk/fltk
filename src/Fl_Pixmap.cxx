@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.30 2004/08/31 00:27:40 matthiaswm Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.31 2004/08/31 01:29:54 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -80,7 +80,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
   if (!id) {
-#warning : to enable masking in Quartz, write our own version of this little function!
+//#warning : to enable masking in Quartz, write our own version of this little function!
     id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
     uchar *bitmap = 0;
@@ -464,5 +464,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.30 2004/08/31 00:27:40 matthiaswm Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.31 2004/08/31 01:29:54 easysw Exp $".
 //
