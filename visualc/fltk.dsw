@@ -402,9 +402,6 @@ Package=<4>
     Project_Dep_Name shape
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name shiny
-    End Project Dependency
-    Begin Project Dependency
     Project_Dep_Name subwindow
     End Project Dependency
     Begin Project Dependency
@@ -1108,27 +1105,6 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name fltkgl
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "shiny"=".\shiny.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name fltk
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name fltkgl
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name fluid
     End Project Dependency
 }}}
 
