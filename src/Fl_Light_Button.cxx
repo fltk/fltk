@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.16 2002/04/30 15:34:57 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.17 2002/05/03 14:59:31 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -44,7 +44,7 @@ void Fl_Light_Button::draw() {
   W  = labelsize();
   dx = Fl::box_dx(box()) + 2;
   dy = (h() - W) / 2;
-  if (dy < 0) dy = 0;         // no negative values (?)
+  // if (dy < 0) dy = 0;         // neg. offset o.k. for vertical centering
 
   if (down_box()) {
     // draw other down_box() styles:
@@ -70,9 +70,10 @@ void Fl_Light_Button::draw() {
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
 	  fl_color(col);
-	  int tW = W - Fl::box_dw(down_box()) - 2;
-	  int tdx = dx + Fl::box_dx(down_box()) + 1;
-	  int tdy = dy + Fl::box_dy(down_box()) + 1;
+	  int tW = (W - Fl::box_dw(down_box())) / 2 + 1;
+	  if ((W - tW) & 1) tW++; // Make sure difference is even to center
+	  int tdx = dx + (W - tW) / 2;
+	  int tdy = dy + (W - tW) / 2;
 
 	  switch (tW) {
 	    // Larger circles draw fine...
@@ -141,5 +142,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.16 2002/04/30 15:34:57 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.17 2002/05/03 14:59:31 easysw Exp $".
 //

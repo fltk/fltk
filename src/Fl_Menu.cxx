@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.11 2002/04/30 15:34:58 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.12 2002/05/03 14:59:31 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -166,7 +166,8 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
       fl_draw_box(FL_ROUND_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
 	fl_color(labelcolor_);
-	int tW = W - Fl::box_dw(FL_ROUND_DOWN_BOX) - 2;
+	int tW = (W - Fl::box_dw(FL_ROUND_DOWN_BOX)) / 2 + 1;
+	if ((W - tW) & 1) tW++;	// Make sure difference is even to center
 	int td = Fl::box_dx(FL_ROUND_DOWN_BOX) + 1;
 	switch (tW) {
 	  // Larger circles draw fine...
@@ -774,5 +775,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.11 2002/04/30 15:34:58 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.12 2002/05/03 14:59:31 easysw Exp $".
 //
