@@ -11,24 +11,24 @@ MAINTAINER=easysw
 cd /tmp
 cvs -d$MAINTAINER@cvs.fltk.sourceforge.net:/cvsroot/fltk get -r v1_1 fltk >& /dev/null
 
-if ($#argv == 0) then
+if test $# = 0; then
 	echo -n "Version number for distribution? "
-	set version = $<
+	read version
 else
-	set version = $1
-endif
+	version=$1
+fi
 
 rm -rf fltk-$version
 mv fltk fltk-$version
 cd fltk-$version
 
-if ("$version" != "snapshot") then
+if test x$version != snapshot; then
 	echo "Tagging release..."
 
 	set tag = `echo v$version | tr '.' '_'`
 
 	cvs tag -F $tag
-endif
+fi
 
 echo "Making configuration script..."
 
@@ -44,14 +44,15 @@ echo "Generating .cxx and .h files for fluid demos..."
 cd test
 cp demo.menu demod.menu
 
-foreach file (*.fl)
+for file in *.fl; do
 	echo $file
-	fluid -c $file
-	if ($status != 0) then
-		echo Error executing fluid: $status
+	/usr/local/src/fltk-1.1/fluid/fluid -c $file
+	if test $? != 0; then
+		echo Error executing fluid: $?
 		exit 1
-	endif
-end
+	fi
+done
+
 cd ..
 
 echo "Making UNIX distribution..."
