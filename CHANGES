@@ -1,11 +1,14 @@
 CHANGES IN FLTK 1.1.7
 
-	- Added Comment Type to Fluid. This is useful to generate
-	  Copyright notices in the source and header files.
-	- Fl_Valuator would not format text output with decimal 
-	  point when the step value was fractional, but above 1
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fl_Clock_Output::value() did not return the previously
+	  set value (STR #748)
+	- Added comment type to FLUID. This is useful for
+	  generating copyright notices in the source and header
+	  files.
+	- Fl_Valuator would not format text output with decimal 
+	  point when the step value was fractional, but above 1.
 	- fl_filename_relative() didn't compare drive letters in
 	  a case-insensitive way (STR #741)
 	- Fixed menu item width calculations with symbols (STR

@@ -107,11 +107,13 @@ void Fl_Clock_Output::draw() {
 void Fl_Clock_Output::value(int H, int m, int s) {
   if (H!=hour_ || m!=minute_ || s!=second_) {
     hour_ = H; minute_ = m; second_ = s;
+    value_ = (H * 60 + m) * 60 + s;
     damage(FL_DAMAGE_CHILD);
   }
 }
 
 void Fl_Clock_Output::value(ulong v) {
+  value_ = v;
   struct tm *timeofday;
   timeofday = localtime((const time_t *)&v);
   value(timeofday->tm_hour, timeofday->tm_min, timeofday->tm_sec);
@@ -140,17 +142,8 @@ Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char *l)
 }
 
 static void tick(void *v) {
-#ifdef WIN32
   ((Fl_Clock*)v)->value(time(0));
   Fl::add_timeout(1.0, tick, v);
-#else
-  struct timeval t;
-  gettimeofday(&t, 0);
-  ((Fl_Clock*)v)->value(t.tv_sec);
-  double delay = 1.0-t.tv_usec*.000001;
-  if (delay < .1 || delay > .9) delay = 1.0;
-  Fl::add_timeout(delay, tick, v);
-#endif
 }
 
 int Fl_Clock::handle(int event) {
