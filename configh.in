@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.7 1998/11/05 16:04:36 mike Exp $"
+ * "$Id: configh.in,v 1.8 1998/11/25 14:10:54 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -28,13 +28,17 @@
  * BORDER_WIDTH:
  *
  * Thickness of FL_UP_BOX and FL_DOWN_BOX.  Current 1,2, and 3 are
- * supported.  3 is the historic FLTK look.  2 looks more like Microsoft
- * Windows, KDE, and Qt, and is the default when building for Windows.
- * 1 is a plausible future evolution...  Note that this may be simulated
- * at runtime by redefining the boxtypes using Fl::set_boxtype().
+ * supported.
+ *
+ * 3 is the historic FLTK look.
+ * 2 is the default and looks like Microsoft Windows, KDE, and Qt.
+ * 1 is a plausible future evolution...
+ *
+ * Note that this may be simulated at runtime by redefining the boxtypes
+ * using Fl::set_boxtype().
  */
 
-#define BORDER_WIDTH 3
+#define BORDER_WIDTH 2
 
 /*
  * HAVE_GL:
@@ -147,5 +151,5 @@
 #define HAVE_LIBJPEG 0
 
 /*
- * End of "$Id: configh.in,v 1.7 1998/11/05 16:04:36 mike Exp $".
+ * End of "$Id: configh.in,v 1.8 1998/11/25 14:10:54 mike Exp $".
  */
