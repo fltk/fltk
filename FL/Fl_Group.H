@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.H,v 1.6.2.4.2.4 2002/07/14 17:03:30 easysw Exp $"
+// "$Id: Fl_Group.H,v 1.6.2.4.2.5 2002/07/14 19:08:25 easysw Exp $"
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #include "Fl_Widget.H"
 #endif
 
-class Fl_Group : public Fl_Widget {
+class FL_EXPORT Fl_Group : public Fl_Widget {
 
   Fl_Widget** array_;
   Fl_Widget* savedfocus_;
@@ -39,7 +39,7 @@ class Fl_Group : public Fl_Widget {
   short *sizes_; // remembered initial sizes of children
 
   int navigation(int);
-  FL_EXPORT static Fl_Group *current_;
+  static Fl_Group *current_;
 
 protected:
 
@@ -51,39 +51,39 @@ protected:
 
 public:
 
-  FL_EXPORT int handle(int);
-  FL_EXPORT void begin();
-  FL_EXPORT void end();
-  FL_EXPORT static Fl_Group *current();
-  FL_EXPORT static void current(Fl_Group *g);
+  int handle(int);
+  void begin();
+  void end();
+  static Fl_Group *current();
+  static void current(Fl_Group *g);
 
   int children() const {return children_;}
   Fl_Widget* child(int n) const {return array()[n];}
-  FL_EXPORT int find(const Fl_Widget*) const;
+  int find(const Fl_Widget*) const;
   int find(const Fl_Widget& o) const {return find(&o);}
-  FL_EXPORT Fl_Widget* const* array() const;
+  Fl_Widget* const* array() const;
 
-  FL_EXPORT void resize(int,int,int,int);
-  FL_EXPORT Fl_Group(int,int,int,int, const char * = 0);
-  FL_EXPORT virtual ~Fl_Group();
-  FL_EXPORT void add(Fl_Widget&);
+  void resize(int,int,int,int);
+  Fl_Group(int,int,int,int, const char * = 0);
+  virtual ~Fl_Group();
+  void add(Fl_Widget&);
   void add(Fl_Widget* o) {add(*o);}
-  FL_EXPORT void insert(Fl_Widget&, int i);
+  void insert(Fl_Widget&, int i);
   void insert(Fl_Widget& o, Fl_Widget* before) {insert(o,find(before));}
-  FL_EXPORT void remove(Fl_Widget&);
+  void remove(Fl_Widget&);
   void remove(Fl_Widget* o) {remove(*o);}
-  FL_EXPORT void clear();
+  void clear();
 
   void resizable(Fl_Widget& o) {resizable_ = &o;}
   void resizable(Fl_Widget* o) {resizable_ = o;}
   Fl_Widget* resizable() const {return resizable_;}
   void add_resizable(Fl_Widget& o) {resizable_ = &o; add(o);}
-  FL_EXPORT void init_sizes();
+  void init_sizes();
 
   // back compatability function:
   void focus(Fl_Widget* o) {o->take_focus();}
   Fl_Widget* & _ddfdesign_kludge() {return resizable_;}
-  FL_EXPORT void forms_end();
+  void forms_end();
 };
 
 // dummy class used to end child groups in constructors for complex
@@ -96,5 +96,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Group.H,v 1.6.2.4.2.4 2002/07/14 17:03:30 easysw Exp $".
+// End of "$Id: Fl_Group.H,v 1.6.2.4.2.5 2002/07/14 19:08:25 easysw Exp $".
 //

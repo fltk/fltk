@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.9 2002/03/05 11:26:41 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.10 2002/07/14 19:08:25 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -92,7 +92,7 @@ struct Fl_Help_Target
 // Fl_Help_View class...
 //
 
-class Fl_Help_View : public Fl_Group	//// Help viewer widget
+class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 {
   enum { RIGHT = -1, CENTER, LEFT };	// Alignments
 
@@ -187,5 +187,5 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.9 2002/03/05 11:26:41 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.10 2002/07/14 19:08:25 easysw Exp $".
 //

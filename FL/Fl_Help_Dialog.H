@@ -7,7 +7,7 @@
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Button.H>
 
-class Fl_Help_Dialog {
+class FL_EXPORT Fl_Help_Dialog {
   int index_;
   int max_;
   int line_[100];

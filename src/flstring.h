@@ -1,5 +1,5 @@
 /*
- * "$Id: flstring.h,v 1.1.2.7 2002/05/19 17:44:56 easysw Exp $"
+ * "$Id: flstring.h,v 1.1.2.8 2002/07/14 19:08:25 easysw Exp $"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
@@ -26,6 +26,7 @@
 #ifndef flstring_h
 #  define flstring_h
 
+#  include <FL/Fl_Export.H>
 #  include <config.h>
 #  include <stdarg.h>
 #  include <string.h>
@@ -57,12 +58,12 @@ extern "C" {
 #  endif /* __cplusplus */
 
 #  if !HAVE_SNPRINTF
-extern int fl_snprintf(char *, size_t, const char *, ...);
+FL_EXPORT extern int fl_snprintf(char *, size_t, const char *, ...);
 #    define snprintf fl_snprintf
 #  endif /* !HAVE_SNPRINTF */
 
 #  if !HAVE_VSNPRINTF
-extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
+FL_EXPORT extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
 #    define vsnprintf fl_vsnprintf
 #  endif /* !HAVE_VSNPRINTF */
 
@@ -72,12 +73,12 @@ extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
  */
 
 #  if !HAVE_STRLCAT
-extern size_t fl_strlcat(char *, const char *, size_t);
+FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t);
 #    define strlcat fl_strlcat
 #  endif /* !HAVE_STRLCAT */
 
 #  if !HAVE_STRLCPY
-extern size_t fl_strlcpy(char *, const char *, size_t);
+FL_EXPORT extern size_t fl_strlcpy(char *, const char *, size_t);
 #    define strlcpy fl_strlcpy
 #  endif /* !HAVE_STRLCPY */
 
@@ -87,5 +88,5 @@ extern size_t fl_strlcpy(char *, const char *, size_t);
 #endif /* !flstring_h */
 
 /*
- * End of "$Id: flstring.h,v 1.1.2.7 2002/05/19 17:44:56 easysw Exp $".
+ * End of "$Id: flstring.h,v 1.1.2.8 2002/07/14 19:08:25 easysw Exp $".
  */
