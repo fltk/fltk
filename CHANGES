@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.1
 
-	- The WIN32 port needed to handle WM_MOUSELEAVE events
+	- Bug #621737: Fl_Bitmap::copy(), Fl_Pixmap::copy(), and
+	  Fl_RGB_Image::copy() now range-check the new width and
+	  height to make sure they are positive integers.
+	- Bug #621740: the WIN32 port needed to handle WM_MOUSELEAVE events
 	  in order to avoid problems with tooltips.
 	- Fl_PNM_Image didn't set the "alloc" flag for the data,
 	  which could lead to a memory leak.

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.21 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.22 2002/10/11 13:54:10 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -223,6 +223,7 @@ void Fl_Pixmap::copy_data() {
 Fl_Image *Fl_Pixmap::copy(int W, int H) {
   // Optimize the simple copy where the width and height are the same...
   if (W == w() && H == h()) return new Fl_Pixmap(data());
+  if (W <= 0 || H <= 0) return 0;
 
   // OK, need to resize the image data; allocate memory and 
   Fl_Pixmap	*new_image;	// New pixmap
@@ -460,5 +461,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.21 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.22 2002/10/11 13:54:10 easysw Exp $".
 //
