@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.9 2004/04/11 01:39:57 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.10 2004/04/11 03:50:38 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Image.H>
+#include <FL/Fl_Tiled_Image.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_draw.H>
 
@@ -69,10 +69,10 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
     case _FL_PLASTIC_UP_FRAME :
     case _FL_PLASTIC_DOWN_FRAME :
         if (s->parent() == (Fl_Group *)s->window() && Fl::scheme_bg_) {
-	  Fl::scheme_bg_->draw(X-(X%Fl::scheme_bg_->w()),
-	                       Y-(Y%Fl::scheme_bg_->h()),
-	                       W+Fl::scheme_bg_->w(),
-			       H+Fl::scheme_bg_->h());
+	  Fl::scheme_bg_->draw(X-(X%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w()),
+	                       Y-(Y%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h()),
+	                       W+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w(),
+			       H+((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h());
 	  break;
         }
 
@@ -115,8 +115,27 @@ void Fl_Scroll::draw() {
     draw_box(box(),x(),y(),w(),h(),color());
     draw_clip(this, X, Y, W, H);
   } else {
-    if (d & FL_DAMAGE_SCROLL) { // scroll the contents:
+    if (d & FL_DAMAGE_SCROLL) {
+      // scroll the contents:
       fl_scroll(X, Y, W, H, oldx-xposition_, oldy-yposition_, draw_clip, this);
+
+      // Erase the background as needed...
+      Fl_Widget*const* a = array();
+      int L, R, T, B;
+      L = 999999;
+      R = 0;
+      T = 999999;
+      B = 0;
+      for (int i=children()-2; i--; a++) {
+        if ((*a)->x() < L) L = (*a)->x();
+	if (((*a)->x() + (*a)->w()) > R) R = (*a)->x() + (*a)->w();
+        if ((*a)->y() < T) T = (*a)->y();
+	if (((*a)->y() + (*a)->h()) > B) B = (*a)->y() + (*a)->h();
+      }
+      if (L > X) draw_clip(this, X, Y, L - X, H);
+      if (R < (X + W)) draw_clip(this, R, Y, X + W - R, H);
+      if (T > Y) draw_clip(this, X, Y, W, T - Y);
+      if (B < (Y + H)) draw_clip(this, X, B, W, Y + H - B);
     }
     if (d & FL_DAMAGE_CHILD) { // draw damaged children
       fl_clip(X, Y, W, H);
@@ -271,5 +290,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.9 2004/04/11 01:39:57 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.10 2004/04/11 03:50:38 easysw Exp $".
 //

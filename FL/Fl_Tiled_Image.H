@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tiled_Image.H,v 1.1.2.4 2003/01/30 21:40:24 easysw Exp $"
+// "$Id: Fl_Tiled_Image.H,v 1.1.2.5 2004/04/11 03:50:37 easysw Exp $"
 //
 // Tiled image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -47,10 +47,11 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx, int cy);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
+  Fl_Image *image() { return image_; }
 };
 
 #endif // !Fl_Tiled_Image_H
 
 //
-// End of "$Id: Fl_Tiled_Image.H,v 1.1.2.4 2003/01/30 21:40:24 easysw Exp $"
+// End of "$Id: Fl_Tiled_Image.H,v 1.1.2.5 2004/04/11 03:50:37 easysw Exp $"
 //
