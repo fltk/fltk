@@ -39,7 +39,7 @@ CPP=cl.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MT /W1 /GX /Os /Ob1 /I "." /I ".." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /TP /c
+# ADD CPP /nologo /MT /W1 /GX /Os /Ob1 /I "." /I ".." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -60,7 +60,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MTd /W1 /GX /Z7 /Od /I "." /I ".." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /TP /c
+# ADD CPP /nologo /MTd /W1 /GX /Z7 /Od /I "." /I ".." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -76,179 +76,179 @@ LIB32=link.exe -lib
 # Name "fltk - Win32 Debug"
 # Begin Source File
 
-SOURCE=..\src\filename_absolute.C
+SOURCE=..\src\filename_absolute.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\filename_expand.C
+SOURCE=..\src\filename_expand.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\filename_ext.C
+SOURCE=..\src\filename_ext.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\filename_isdir.C
+SOURCE=..\src\filename_isdir.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\filename_list.C
+SOURCE=..\src\filename_list.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\filename_match.C
+SOURCE=..\src\filename_match.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\filename_setext.C
+SOURCE=..\src\filename_setext.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl.C
+SOURCE=..\src\Fl.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_abort.C
+SOURCE=..\src\Fl_abort.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Adjuster.C
+SOURCE=..\src\Fl_Adjuster.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_arc.C
+SOURCE=..\src\fl_arc.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_arci.C
+SOURCE=..\src\fl_arci.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_arg.C
+SOURCE=..\src\Fl_arg.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_ask.C
+SOURCE=..\src\fl_ask.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Bitmap.C
+SOURCE=..\src\Fl_Bitmap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Box.C
+SOURCE=..\src\Fl_Box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_boxtype.C
+SOURCE=..\src\fl_boxtype.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Browser.C
+SOURCE=..\src\Fl_Browser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Browser_.C
+SOURCE=..\src\Fl_Browser_.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Browser_load.C
+SOURCE=..\src\Fl_Browser_load.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Button.C
+SOURCE=..\src\Fl_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Chart.C
+SOURCE=..\src\Fl_Chart.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Check_Button.C
+SOURCE=..\src\Fl_Check_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Choice.C
+SOURCE=..\src\Fl_Choice.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Clock.C
+SOURCE=..\src\Fl_Clock.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_color.C
+SOURCE=..\src\fl_color.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Color_Chooser.C
+SOURCE=..\src\Fl_Color_Chooser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Counter.C
+SOURCE=..\src\Fl_Counter.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_cursor.C
+SOURCE=..\src\fl_cursor.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_curve.C
+SOURCE=..\src\fl_curve.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_cutpaste.C
+SOURCE=..\src\Fl_cutpaste.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Dial.C
+SOURCE=..\src\Fl_Dial.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_diamond_box.C
+SOURCE=..\src\fl_diamond_box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_display.C
+SOURCE=..\src\Fl_display.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Double_Window.C
+SOURCE=..\src\Fl_Double_Window.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_draw.C
+SOURCE=..\src\fl_draw.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_draw_image.C
+SOURCE=..\src\fl_draw_image.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_draw_pixmap.C
+SOURCE=..\src\fl_draw_pixmap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_engraved_label.C
+SOURCE=..\src\fl_engraved_label.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_file_chooser.C
+SOURCE=..\src\fl_file_chooser.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_font.C
+SOURCE=..\src\fl_font.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_get_key.C
+SOURCE=..\src\Fl_get_key.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_get_system_colors.C
+SOURCE=..\src\Fl_get_system_colors.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Gl_Choice.C
+SOURCE=..\src\Fl_Gl_Choice.cxx
 # End Source File
 # Begin Source File
 
@@ -256,271 +256,271 @@ SOURCE=..\src\Fl_Gl_Choice.H
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Gl_Overlay.C
+SOURCE=..\src\Fl_Gl_Overlay.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Gl_Window.C
+SOURCE=..\src\Fl_Gl_Window.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Group.C
+SOURCE=..\src\Fl_Group.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Image.C
+SOURCE=..\src\Fl_Image.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Input.C
+SOURCE=..\src\Fl_Input.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Input_.C
+SOURCE=..\src\Fl_Input_.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_labeltype.C
+SOURCE=..\src\fl_labeltype.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Light_Button.C
+SOURCE=..\src\Fl_Light_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu.C
+SOURCE=..\src\Fl_Menu.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu_.C
+SOURCE=..\src\Fl_Menu_.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu_add.C
+SOURCE=..\src\Fl_Menu_add.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu_Bar.C
+SOURCE=..\src\Fl_Menu_Bar.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu_Button.C
+SOURCE=..\src\Fl_Menu_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu_global.C
+SOURCE=..\src\Fl_Menu_global.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Menu_Window.C
+SOURCE=..\src\Fl_Menu_Window.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Multi_Label.C
+SOURCE=..\src\Fl_Multi_Label.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Output.C
+SOURCE=..\src\Fl_Output.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_oval_box.C
+SOURCE=..\src\fl_oval_box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_overlay.C
+SOURCE=..\src\fl_overlay.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_overlay_visual.C
+SOURCE=..\src\fl_overlay_visual.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Overlay_Window.C
+SOURCE=..\src\Fl_Overlay_Window.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_own_colormap.C
+SOURCE=..\src\Fl_own_colormap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Pack.C
+SOURCE=..\src\Fl_Pack.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Pixmap.C
+SOURCE=..\src\Fl_Pixmap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Positioner.C
+SOURCE=..\src\Fl_Positioner.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_rect.C
+SOURCE=..\src\fl_rect.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Repeat_Button.C
+SOURCE=..\src\Fl_Repeat_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Return_Button.C
+SOURCE=..\src\Fl_Return_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Roller.C
+SOURCE=..\src\Fl_Roller.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_round_box.C
+SOURCE=..\src\fl_round_box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Round_Button.C
+SOURCE=..\src\Fl_Round_Button.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_rounded_box.C
+SOURCE=..\src\fl_rounded_box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Scroll.C
+SOURCE=..\src\Fl_Scroll.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_scroll_area.C
+SOURCE=..\src\fl_scroll_area.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Scrollbar.C
+SOURCE=..\src\Fl_Scrollbar.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_set_font.C
+SOURCE=..\src\fl_set_font.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_set_fonts.C
+SOURCE=..\src\fl_set_fonts.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_shadow_box.C
+SOURCE=..\src\fl_shadow_box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_shortcut.C
+SOURCE=..\src\fl_shortcut.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_show_colormap.C
+SOURCE=..\src\fl_show_colormap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Single_Window.C
+SOURCE=..\src\Fl_Single_Window.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Slider.C
+SOURCE=..\src\Fl_Slider.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_symbols.C
+SOURCE=..\src\fl_symbols.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Tabs.C
+SOURCE=..\src\Fl_Tabs.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Tile.C
+SOURCE=..\src\Fl_Tile.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Valuator.C
+SOURCE=..\src\Fl_Valuator.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Value_Input.C
+SOURCE=..\src\Fl_Value_Input.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Value_Output.C
+SOURCE=..\src\Fl_Value_Output.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Value_Slider.C
+SOURCE=..\src\Fl_Value_Slider.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_vertex.C
+SOURCE=..\src\fl_vertex.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_visual.C
+SOURCE=..\src\Fl_visual.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Widget.C
+SOURCE=..\src\Fl_Widget.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Window.C
+SOURCE=..\src\Fl_Window.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Window_fullscreen.C
+SOURCE=..\src\Fl_Window_fullscreen.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Window_hotspot.C
+SOURCE=..\src\Fl_Window_hotspot.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Window_iconize.C
+SOURCE=..\src\Fl_Window_iconize.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_x.C
+SOURCE=..\src\Fl_x.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_bitmap.C
+SOURCE=..\src\forms_bitmap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_compatability.C
+SOURCE=..\src\forms_compatability.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_free.C
+SOURCE=..\src\forms_free.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_fselect.C
+SOURCE=..\src\forms_fselect.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_pixmap.C
+SOURCE=..\src\forms_pixmap.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_timer.C
+SOURCE=..\src\forms_timer.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\gl_draw.C
+SOURCE=..\src\gl_draw.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\gl_start.C
+SOURCE=..\src\gl_start.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\glut_compatability.C
+SOURCE=..\src\glut_compatability.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\glut_font.C
+SOURCE=..\src\glut_font.cxx
 # End Source File
 # Begin Source File
 

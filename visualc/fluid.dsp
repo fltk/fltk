@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MT /W1 /GX /Os /Ob1 /I ".." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /TP /c
+# ADD CPP /nologo /MT /W1 /GX /Os /Ob1 /I ".." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MTd /W1 /Gm /GX /Zi /Od /I ".." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /TP /c
+# ADD CPP /nologo /MTd /W1 /Gm /GX /Zi /Od /I ".." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -90,67 +90,67 @@ LINK32=link.exe
 # Name "fluid - Win32 Debug"
 # Begin Source File
 
-SOURCE=..\fluid\about_panel.C
+SOURCE=..\fluid\about_panel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\alignment_panel.C
+SOURCE=..\fluid\alignment_panel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\code.C
+SOURCE=..\fluid\code.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\factory.C
+SOURCE=..\fluid\factory.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\file.C
+SOURCE=..\fluid\file.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fl_Function_Type.C
+SOURCE=..\fluid\Fl_Function_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fl_Group_Type.C
+SOURCE=..\fluid\Fl_Group_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fl_Menu_Type.C
+SOURCE=..\fluid\Fl_Menu_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fl_Type.C
+SOURCE=..\fluid\Fl_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fl_Widget_Type.C
+SOURCE=..\fluid\Fl_Widget_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fl_Window_Type.C
+SOURCE=..\fluid\Fl_Window_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\fluid.C
+SOURCE=..\fluid\fluid.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\Fluid_Image.C
+SOURCE=..\fluid\Fluid_Image.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\function_panel.C
+SOURCE=..\fluid\function_panel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\gif.C
+SOURCE=..\fluid\gif.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\fluid\widget_panel.C
+SOURCE=..\fluid\widget_panel.cxx
 # End Source File
 # End Target
 # End Project
