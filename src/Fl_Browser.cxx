@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.6 1999/01/07 19:17:16 mike Exp $"
+// "$Id: Fl_Browser.cxx,v 1.7 1999/01/30 00:39:28 carl Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -356,14 +356,25 @@ Fl_Browser::Fl_Browser(int x, int y, int w, int h, const char*l)
   first = last = cache = 0;
 }
 
-void Fl_Browser::topline(int line) {
+void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
   if (line<1) line = 1;
   if (line>lines) line = lines;
   int p = 0;
   for (FL_BLINE* l=first; l&& line>1; l = l->next) {
     line--; p += item_height(l);
   }
-  position(p);
+
+  int final = p, X, Y, W, H;
+  bbox(X, Y, W, H);
+
+  switch(pos) {
+    case TOP: break;
+    case BOTTOM: final -= H; break;
+    case MIDDLE: final -= H/2; break;
+  }
+  
+  if (final > (full_height() - H)) final = full_height() -H;
+  position(final);
 }
 
 int Fl_Browser::topline() const {
@@ -440,5 +451,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.6 1999/01/07 19:17:16 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.7 1999/01/30 00:39:28 carl Exp $".
 //

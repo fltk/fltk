@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.6 1999/01/07 19:16:51 mike Exp $"
+// "$Id: Fl_Browser.H,v 1.7 1999/01/30 00:39:26 carl Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -72,8 +72,13 @@ public:
   void clear();
 
   int size() const {return lines;}
+  
   int topline() const ;
-  void topline(int);
+  enum Fl_Line_Position { TOP, BOTTOM, MIDDLE };
+  void lineposition(int, Fl_Line_Position);
+  void topline(int l) { lineposition(l, TOP); }
+  void bottomline(int l) { lineposition(l, BOTTOM); }
+  void middleline(int l) { lineposition(l, MIDDLE); }
 
   int select(int, int=1);
   int selected(int) const ;
@@ -108,5 +113,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.6 1999/01/07 19:16:51 mike Exp $".
+// End of "$Id: Fl_Browser.H,v 1.7 1999/01/30 00:39:26 carl Exp $".
 //
