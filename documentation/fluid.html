@@ -68,50 +68,66 @@ save-as to write it to a file).
 -fg color
 -bg color
 -bg2 color
+-scheme schemename
 </PRE>
 </UL>
- Changing the colors may be useful to see what your interface will look
-at if the user calls it with the same switches.
-<P>In the current version, if you don't go into the background (with
-'&amp;') then you will be able to abort FLUID by typing ^C on the terminal. It
-will exit immediately, losing any changes. </P>
+
+<P>Changing the colors may be useful to see what your interface
+will look at if the user calls it with the same switches.
+Similarly, using "-scheme plastic" will show how the interface
+will look using the "plastic" scheme.
+
+<P>In the current version, if you don't put FLUID into the
+background with '&amp;' then you will be able to abort FLUID by
+typing <KBD>CTRL-C</KBD> on the terminal. It will exit
+immediately, losing any changes. </P>
+
 <H2>Running FLUID Under Microsoft Windows</H2>
-To run FLUID under WIN32, double-click on the <I>FLUID.exe</I> file.
-You can also run FLUID from the Command Prompt window (FLUID always
-runs in the background under WIN32).
+
+<P>To run FLUID under WIN32, double-click on the <I>FLUID.exe</I>
+file. You can also run FLUID from the Command Prompt window.
+FLUID always runs in the background under WIN32.
+
 <H2>Compiling <TT>.fl</TT> files</H2>
- FLUID can also be called as a command-line &quot;compiler&quot; to create the
-<TT>.cxx</TT> and <TT>.h</TT> file from a <TT>.fl</TT> file.  To do this type:
+
+<P>FLUID can also be called as a command-line
+&quot;compiler&quot; to create the <TT>.cxx</TT> and <TT>.h</TT>
+file from a <TT>.fl</TT> file.  To do this type:
+
 <UL><PRE>
 fluid -c <I>filename.fl</I>
 </PRE></UL>
-This will read the <TT>filename.fl</TT> file and write <I>filename.cxx</I> and <I>
-filename.h</I>. The directory will be stripped, so they are written to
-the current directory always.  If there are any errors reading or
-writing the files it will print the error and exit with a non-zero
-code.  In a makefile you can use a line like this:
-<UL>
-<PRE>
+
+<P>This will read the <TT>filename.fl</TT> file and write
+<I>filename.cxx</I> and <I> filename.h</I>. Any leading
+directory on <TT>filename.fl</TT> will be stripped, so they are
+always written to the current directory. If there are any errors
+reading or writing the files, FLUID will print the error and
+exit with a non-zero code. You can use the following lines in a
+makefile to automate the creation of the source and header
+files:
+
+<UL><PRE>
 my_panels.h my_panels.cxx: my_panels.fl
 	fluid -c my_panels.fl
-</PRE>
-</UL>
- Some versions of make will accept rules like this to allow all <TT>.fl</TT>
-files found to be compiled:
-<UL>
-<PRE>
+</PRE></UL>
+
+<P>Some versions of make will accept rules that allow all
+<TT>.fl</TT> files found to be compiled:
+
+<UL><PRE>
 .SUFFIXES: .fl .cxx .h
 .fl.h .fl.cxx:
 	fluid -c $&lt;
-</PRE>
-</UL>
+</PRE></UL>
+
 <H2>A Short Tutorial</H2>
 
-FLUID is an amazingly powerful little program. However, this power
-comes at a price as it is not always obvious how to accomplish seemingly
-simple tasks with it. This tutorial will show you how to generate a
-complete user interface class with FLUID that is used for the CubeView
-program provided with FLTK.
+<P>FLUID is an amazingly powerful little program. However, this
+power comes at a price as it is not always obvious how to
+accomplish seemingly simple tasks with it. This tutorial will
+show you how to generate a complete user interface class with
+FLUID that is used for the CubeView program provided with FLTK.
 
 <P ALIGN=CENTER><IMG SRC="cubeview.gif" ALT="CubeView demo."></P>
 
@@ -373,7 +389,7 @@ Code:&quot; field enter <tt>#include &quot;CubeView.h&quot;</tt>
 CubeView as a member of CubeViewUI, so any public CubeView methods are
 now available to CubeViewUI.
 
-<p align=center><img src="fluid3.gif" ALT="CubeView methods."></p>
+<p align=center><img src="fluid3-cxx.gif" ALT="CubeView methods."></p>
 
 <h4><a name="defcall">Defining the Callbacks</a></h4>
 Each of the widgets we defined before adding CubeView can have
@@ -636,7 +652,7 @@ You pick the subtype off of this menu.
 The boxtype to draw as a background for the widget.
 </TD>
 <TD>&nbsp;&nbsp;&nbsp;</TD>
-<TD VALIGN=TOP WIDTH=378><IMG src="fluid_widget.gif" ALT="The FLUID widget dialog."></TD>
+<TD VALIGN=TOP WIDTH=378><IMG src="fluid_widget_gui.gif" ALT="The FLUID widget dialog."></TD>
 </TR>
 </TABLE>
 <P>Many widgets will work, and draw faster, with a &quot;frame&quot; instead of a
