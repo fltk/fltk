@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9 1998/10/21 18:15:03 mike Exp $"
+# "$Id: Makefile,v 1.10 1998/10/21 20:10:23 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -59,6 +59,11 @@ $(ALL):  ../lib/$(LIBNAME)
 	@echo $@:
 	@../fluid/fluid -c $<
 
+.fl:
+	@echo $@:
+	@../fluid/fluid -c $<
+	@$(CXX) -I.. $(CXXFLAGS) $@.C -L../lib -lfltk $(LDLIBS) -o $@
+
 # Programs needing the OpenGL libraries:
 cube: cube.C
 	@echo $@:
@@ -106,5 +111,5 @@ clean:
 	-@ rm -f $(ALL) jpeg_image *.o core *~
 
 #
-# End of "$Id: Makefile,v 1.9 1998/10/21 18:15:03 mike Exp $".
+# End of "$Id: Makefile,v 1.10 1998/10/21 20:10:23 mike Exp $".
 #
