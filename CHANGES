@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.2
 
+	- Some versions of Tru64 4.0 have snprintf and
+	  vnsprintf, but don't have the prototypes for those
+	  functions.
 	- FLTK had trouble doing character composition with some
 	  keyboard layouts under X11 (in particular, Belgian).
 	- Fl_Text_Editor would cause a segfault if the user

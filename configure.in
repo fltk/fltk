@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.91 2002/10/24 12:53:40 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.92 2002/11/08 19:50:35 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -308,18 +308,50 @@ AC_CHECK_FUNC(scandir,
     else
         AC_DEFINE(HAVE_SCANDIR)
     fi)
-AC_CHECK_FUNC(vsnprintf,
-    if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	AC_MSG_WARN(Not using built-in vsnprintf function because you are running HP-UX 10.20.)
-    else
-        AC_DEFINE(HAVE_VSNPRINTF)
-    fi)
-AC_CHECK_FUNC(snprintf,
-    if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	AC_MSG_WARN(Not using built-in snprintf function because you are running HP-UX 10.20.)
-    else
-        AC_DEFINE(HAVE_SNPRINTF)
-    fi)
+AC_CHECK_FUNC(vsnprintf,[
+    case $uname in
+    	HP-UX*)
+	    if test "$uversion" = "1020"; then
+	        AC_MSG_WARN(Not using built-in vsnprintf function because you are running HP-UX 10.20.)
+	    else
+        	AC_DEFINE(HAVE_VSNPRINTF)
+	    fi
+	    ;;
+
+    	OSF1*)
+	    if test "$uversion" = "40"; then
+                AC_MSG_WARN(Not using built-in vsnprintf function because you are running Tru64 4.0.)
+	    else
+        	AC_DEFINE(HAVE_VSNPRINTF)
+	    fi
+	    ;;
+
+        *)
+            AC_DEFINE(HAVE_VSNPRINTF)
+	    ;;
+    esac])
+AC_CHECK_FUNC(snprintf,[
+    case $uname in
+    	HP-UX*)
+	    if test "$uversion" = "1020"; then
+	        AC_MSG_WARN(Not using built-in snprintf function because you are running HP-UX 10.20.)
+	    else
+        	AC_DEFINE(HAVE_SNPRINTF)
+	    fi
+	    ;;
+
+    	OSF1*)
+	    if test "$uversion" = "40"; then
+                AC_MSG_WARN(Not using built-in snprintf function because you are running Tru64 4.0.)
+	    else
+        	AC_DEFINE(HAVE_SNPRINTF)
+	    fi
+	    ;;
+
+        *)
+            AC_DEFINE(HAVE_SNPRINTF)
+	    ;;
+    esac])
 AC_CHECK_HEADER(strings.h, AC_DEFINE(HAVE_STRINGS_H))
 AC_CHECK_FUNCS(strcasecmp strlcat strlcpy)
 
@@ -805,5 +837,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.91 2002/10/24 12:53:40 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.92 2002/11/08 19:50:35 easysw Exp $".
 dnl
