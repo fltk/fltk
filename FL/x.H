@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.3 2001/11/27 17:48:16 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -50,7 +50,7 @@
 #    include "Fl_Window.H"
 
 // Mirror X definition of Region to Fl_Region, for portability...
-typedef Region Fl_Region
+typedef Region Fl_Region;
 
 FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);
@@ -133,5 +133,5 @@ extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.3 2001/11/27 17:48:16 easysw Exp $".
 //
