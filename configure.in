@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.26 1999/02/25 19:47:31 carl Exp $"
+dnl# "$Id: configure.in,v 1.27 1999/03/04 14:48:07 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -48,6 +48,7 @@ dnl# Clear debugging flags and only enable debugging if the user asks for
 dnl# it.
 
 DEBUGFLAG=""
+PICFLAG=0
 CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 
@@ -57,10 +58,11 @@ fi])
 AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]],[
 if eval "test x$enable_shared = xyes"; then
   RANLIB=":"
+  PICFLAG=1
   case $uname in
       SunOS* | UNIX_S*)
           LIBNAME="libfltk.so.1"
-	  LIBCOMMAND="\$(CXX) -G $DEBUGFLAG -o"
+	  LIBCOMMAND="\$(CXX) -Wl,-soname,$LIBNAME $(LDLIBS) -G $DEBUGFLAG -o"
 	  ln -s libfltk.so.1 lib/libfltk.so
 	  ;;
       HP-UX*)
@@ -70,14 +72,14 @@ if eval "test x$enable_shared = xyes"; then
 	  ;;
       OSF1* | IRIX*)
           LIBNAME="libfltk.so.1"
-          LIBCOMMAND="\$(CXX) -shared $DEBUGFLAG -o"
+          LIBCOMMAND="\$(CXX) -soname $LIBNAME $(LDLIBS) -shared $DEBUGFLAG -o"
 	  ln -s libfltk.so.1 lib/libfltk.so
 	  ;;
       *)
           echo "Warning: shared libraries may not be supported.  Trying -shared"
 	  echo "         option to compiler."
           LIBNAME="libfltk.so.1"
-          LIBCOMMAND="\$(CXX) -shared $DEBUGFLAG -o"
+          LIBCOMMAND="\$(CXX) -Wl,-soname,$LIBNAME $(LDLIBS) -shared $DEBUGFLAG -o"
 	  ln -s libfltk.so.1 lib/libfltk.so
 	  ;;
   esac
@@ -170,6 +172,10 @@ if test -n "$GXX"; then
         CFLAGS="-O2 $CFLAGS"
         CXXFLAGS="-O2 $CXXFLAGS"
     fi
+    if test $PICFLAG = 1; then
+    	CFLAGS="-fPIC $CFLAGS"
+    	CXXFLAGS="-fPIC $CXXFLAGS"
+    fi
 else
     case `(uname) 2>/dev/null` in
         IRIX*)
@@ -223,5 +229,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.26 1999/02/25 19:47:31 carl Exp $".
+dnl# End of "$Id: configure.in,v 1.27 1999/03/04 14:48:07 mike Exp $".
 dnl#
