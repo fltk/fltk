@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.12 2002/04/03 22:46:04 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.13 2002/04/20 21:07:18 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -201,13 +201,13 @@ fltk.d/index.html: $(HTMLFILES)
 fltk.ps: $(HTMLFILES)
 	echo "Generating PostScript documentation..."
 	rm -f fltk.ps
-	$(HTMLDOC) --verbose --batch fltk.book -f fltk.ps
+	$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
 
 fltk.pdf: $(HTMLFILES)
 	echo "Generating PDF documentation..."
 	rm -f fltk.pdf
-	$(HTMLDOC) --verbose --batch fltk.book -f fltk.pdf
+	$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.pdf
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.12 2002/04/03 22:46:04 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.13 2002/04/20 21:07:18 easysw Exp $".
 #
