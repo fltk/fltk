@@ -22,10 +22,10 @@ cd packages/solaris-sparc
 
 echo "Packing distribution..."
 
-pkgtrans -s . fltk-1.0.4-solaris-sparc.pkg fltk
+pkgtrans -s . fltk-1.0.5-solaris-sparc.pkg fltk
 rm -rf fltk
 
 echo "Compressing distribution..."
 
-rm -f fltk-1.0.4-solaris-sparc.pkg.gz
-gzip -9 fltk-1.0.4-solaris-sparc.pkg
+rm -f fltk-1.0.5-solaris-sparc.pkg.gz
+gzip -9 fltk-1.0.5-solaris-sparc.pkg

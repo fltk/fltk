@@ -1,3 +1,60 @@
+CHANGES SINCE FLTK 1.0.4
+
+    - Fl_Roller didn't handle a width and height of 0.
+    - filename_list() fix for FreeBSD.
+    - Fixed RPM install docos - needed "--install" option...
+    - Fl_Browser_ wouldn't draw the vertical scrollbar right away if it
+      added a horizontal one which covered the last line.
+    - Fl_Tabs problems - single-character labels don't show up (problem in
+      measure_tabs() or measure_label() methods?), and doesn't clear top
+      tab area before drawing tabs.
+    - Fl_Browser needs a destructor.
+    - fl_draw_label() quoted characters between 0x80 and 0xa0, which
+      caused problems for some programs using the WinANSI character set.
+    - FLUID didn't handle declared class destructors.
+    - Fixed another WIN32 cut/paste bug.
+    - Fl_Tabs didn't work properly when there was only 1 tab.
+    - Fl_Menu::add() didn't delete the old array.
+    - Fl_Repeat_Button didn't delete its timeout when disabled.
+    - fl_draw() would crash if no font was set (now defaults to
+      a 14-pixel Helvetica font)
+    - Can't forward declare classes; need to check for "class ", "struct ",
+      "union ", etc.  See Bill's message
+    - Added #pragma around xlib.h for IRIX
+    - FL_KEYBOARD events have the correct x/y when sent to child X
+      windows. Note that if you worked around this bug by adjusting the
+      x/y yourself you will have to change your code. In addition all
+      events have the correct x/y when sent to the grab() widget.  And
+      the code to do all this was simplified a lot.
+    - The XPM code didn't handle named colors with spaces in the names.
+    - Pressing ESCape closed the window with pointer focus, even if there
+      was a modal window open (now closes the modal window).
+    - Fluid no longer produces trigraphs accidentally in the image data.
+    - Fluid uses string constant concatenation to produce shorter image
+      data.
+    - The Fl_Group deletion code crashed if there was exactly one child
+      widget.
+    - Simulated overlays in single-buffered Fl_Gl_Windows now draw
+      correctly (though very slowly as it requires the entire window to
+      be redrawn to erase the overlay).  This fix ported our Digital
+      Domain programs better to systems with no overlay hardware.
+    - Added support for extern "C" declarations in FLUID.
+    - Added Fl_Pack support to FLUID.
+    - Fixed the order of #include's in FLUID generated header files.
+    - Fixed detection of vsnprintf and snprintf under HP-UX 10.20 once
+      and for all.
+    - The checkers demo did not compile with GCC 2.95
+    - FLUID didn't output virtual destructors properly.
+    - Added inline "make_visible()" method to Fl_Browser.
+    - Fl::wait() now returns immediately if any timeouts are
+      called.
+    - 16-bit XPM files are now properly handled.
+    - Fl_Window::resize() was missing FL_EXPORT (caused problems
+      with Windows DLLs)
+    - FLUID was writing extern declarations twice.
+    - New FLUID arrow key functionality: arrows move by one pixel, shift+arrow
+      resizes, ctrl+arrow steps by grid
+
 CHANGES SINCE FLTK 1.0.3
 
     - Documentation updates
