@@ -1,18 +1,27 @@
-// Fl_Value_Input.H
-
-// Edit text or drag to adjust floating point value.
-// as suggested by Pierre Jasmin
-
-// Current behavior:
-// Dragging left mouse moves by step()
-// Middle mouse is 5*step()
-// Right mouse is 20*step()
-// clicking any mouse button puts insertion cursor there
-// You can also navigate there with tab
-
-// Bugs (?):
-// No way to select region of text
-// Hard to paste in new values
+//
+// "$Id"
+//
+// Value input header file for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #ifndef Fl_Value_Input_H
 #define Fl_Value_Input_H
@@ -48,3 +57,7 @@ public:
 };
 
 #endif
+
+//
+// End of "$Id: Fl_Value_Input.H,v 1.2 1998/10/19 21:39:16 mike Exp $".
+//

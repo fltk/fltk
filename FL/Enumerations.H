@@ -1,3 +1,28 @@
+//
+// "$Id"
+//
+// Enumerations for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
+
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
@@ -292,11 +317,15 @@ enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
 
 // damage masks
 
-const uchar FL_DAMAGE_CHILD    = 0x01;
-const uchar FL_DAMAGE_EXPOSE   = 0x02;
-const uchar FL_DAMAGE_LINE     = 0x02;
-const uchar FL_DAMAGE_SCROLL   = 0x04;
-const uchar FL_DAMAGE_OVERLAY  = 0x04|0x08;
-const uchar FL_DAMAGE_ALL      = 0x80;
+#define FL_DAMAGE_CHILD		0x01
+#define FL_DAMAGE_EXPOSE	0x02
+#define FL_DAMAGE_LINE		0x02
+#define FL_DAMAGE_SCROLL	0x04
+#define FL_DAMAGE_OVERLAY 	0x0c
+#define FL_DAMAGE_ALL		0x80
 
 #endif
+
+//
+// End of "$Id: Enumerations.H,v 1.3 1998/10/19 21:38:25 mike Exp $".
+//
