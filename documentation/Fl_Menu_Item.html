@@ -47,10 +47,8 @@ enum { // values for flags:
 };
 </PRE>
 </UL>
- Typically menu items are statically defined; for example: 
-<TABLE>
-<TR valign=top><TD><IMG align=left src=./menu.gif></TD><TD>
-<PRE>
+Typically menu items are statically defined; for example: 
+<UL><PRE>
 Fl_Menu_Item popup[] = {
   {&quot;&amp;alpha&quot;,   FL_ALT+'a', the_cb, (void*)1},
   {&quot;&amp;beta&quot;,    FL_ALT+'b', the_cb, (void*)2},
@@ -69,15 +67,16 @@ Fl_Menu_Item popup[] = {
   {&quot;check&quot;,    FL_ALT+'i', 0, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
   {&quot;box&quot;,      FL_ALT+'i', 0, 0, FL_MENU_TOGGLE},
 {0}};
-	</PRE>
-</TD></TR>
-</TABLE>
- A submenu title is identified by the bit <TT>FL_SUBMENU</TT> in the <TT>
-flags</TT> field, and ends with a <TT>label()</TT> that is <TT>NULL</TT>
-.  You can nest menus to any depth.  A pointer to the first item in the 
+</PRE></UL>
+produces:
+<P ALIGN=CENTER><IMG src="menu.gif"></P>
+
+A submenu title is identified by the bit <TT>FL_SUBMENU</TT> in the <TT>
+flags</TT> field, and ends with a <TT>label()</TT> that is <TT>NULL</TT>.
+You can nest menus to any depth.  A pointer to the first item in the 
 submenu can be treated as an <TT>Fl_Menu</TT> array itself.  It is also 
 possible to make seperate submenu arrays with <TT>FL_SUBMENU_POINTER</TT>
- flags. 
+flags. 
 <P>You should use the method functions to access structure members and 
 not access them directly to avoid compatibility problems with future 
 releases of FLTK. </P>
