@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.4 1998/10/21 14:20:19 mike Exp $"
+// "$Id: Fl_Roller.cxx,v 1.5 1998/12/02 18:43:27 mike Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -69,27 +69,29 @@ void Fl_Roller::draw() {
       fl_rectf(X+W-h1,Y,h1-h2,H);
       h1 = h2;
     }
-    // draw ridges:
-    double junk;
-    for (double y = -ARC+modf(offset*sin(ARC)/(W/2)/delta,&junk)*delta;;
-	 y += delta) {
-      int y1 = int((sin(y)/sin(ARC)+1)*W/2);
-      if (y1 <= 0) continue; else if (y1 >= W-1) break;
-      fl_color(FL_DARK3); fl_yxline(X+y1,Y+1,Y+H-1);
-      if (y < 0) y1--; else y1++;
-      fl_color(FL_LIGHT1);fl_yxline(X+y1,Y+1,Y+H-1);
+    if (active_r()) {
+      // draw ridges:
+      double junk;
+      for (double y = -ARC+modf(offset*sin(ARC)/(W/2)/delta,&junk)*delta;;
+	   y += delta) {
+	int y1 = int((sin(y)/sin(ARC)+1)*W/2);
+	if (y1 <= 0) continue; else if (y1 >= W-1) break;
+	fl_color(FL_DARK3); fl_yxline(X+y1,Y+1,Y+H-1);
+	if (y < 0) y1--; else y1++;
+	fl_color(FL_LIGHT1);fl_yxline(X+y1,Y+1,Y+H-1);
+      }
+      // draw edges:
+      h1 = W/8+1; // distance from end the color inverts
+      fl_color(FL_DARK2);
+      fl_xyline(X+h1,Y+H-1,X+W-h1);
+      fl_color(FL_DARK3);
+      fl_yxline(X,Y+H,Y,X+h1);
+      fl_xyline(X+W-h1,Y,X+W);
+      fl_color(FL_LIGHT2);
+      fl_xyline(X+h1,Y-1,X+W-h1);
+      fl_yxline(X+W,Y,Y+H,X+W-h1);
+      fl_xyline(X+h1,Y+H,X);
     }
-    // draw edges:
-    h1 = W/8+1; // distance from end the color inverts
-    fl_color(FL_DARK2);
-    fl_xyline(X+h1,Y+H-1,X+W-h1);
-    fl_color(FL_DARK3);
-    fl_yxline(X,Y+H,Y,X+h1);
-    fl_xyline(X+W-h1,Y,X+W);
-    fl_color(FL_LIGHT2);
-    fl_xyline(X+h1,Y-1,X+W-h1);
-    fl_yxline(X+W,Y,Y+H,X+W-h1);
-    fl_xyline(X+h1,Y+H,X);
   } else { // vertical one
     // draw shaded ends of wheel:
     int h1 = H/4+1; // distance from end that shading starts
@@ -101,27 +103,29 @@ void Fl_Roller::draw() {
       fl_rectf(X,Y+H-h1,W,h1-h2);
       h1 = h2;
     }
-    // draw ridges:
-    double junk;
-    for (double y = -ARC+modf(offset*sin(ARC)/(H/2)/delta,&junk)*delta;
-	 ; y += delta) {
-      int y1 = int((sin(y)/sin(ARC)+1)*H/2);
-      if (y1 <= 0) continue; else if (y1 >= H-1) break;
-      fl_color(FL_DARK3); fl_xyline(X+1,Y+y1,X+W-1);
-      if (y < 0) y1--; else y1++;
-      fl_color(FL_LIGHT1);fl_xyline(X+1,Y+y1,X+W-1);
+    if (active_r()) {
+      // draw ridges:
+      double junk;
+      for (double y = -ARC+modf(offset*sin(ARC)/(H/2)/delta,&junk)*delta;
+	   ; y += delta) {
+	int y1 = int((sin(y)/sin(ARC)+1)*H/2);
+	if (y1 <= 0) continue; else if (y1 >= H-1) break;
+	fl_color(FL_DARK3); fl_xyline(X+1,Y+y1,X+W-1);
+	if (y < 0) y1--; else y1++;
+	fl_color(FL_LIGHT1);fl_xyline(X+1,Y+y1,X+W-1);
+      }
+      // draw edges:
+      h1 = H/8+1; // distance from end the color inverts
+      fl_color(FL_DARK2);
+      fl_yxline(X+W-1,Y+h1,Y+H-h1);
+      fl_color(FL_DARK3);
+      fl_xyline(X+W,Y,X,Y+h1);
+      fl_yxline(X,Y+H-h1,Y+H);
+      fl_color(FL_LIGHT2);
+      fl_yxline(X,Y+h1,Y+H-h1);
+      fl_xyline(X,Y+H,X+W,Y+H-h1);
+      fl_yxline(X+W,Y+h1,Y);
     }
-    // draw edges:
-    h1 = H/8+1; // distance from end the color inverts
-    fl_color(FL_DARK2);
-    fl_yxline(X+W-1,Y+h1,Y+H-h1);
-    fl_color(FL_DARK3);
-    fl_xyline(X+W,Y,X,Y+h1);
-    fl_yxline(X,Y+H-h1,Y+H);
-    fl_color(FL_LIGHT2);
-    fl_yxline(X,Y+h1,Y+H-h1);
-    fl_xyline(X,Y+H,X+W,Y+H-h1);
-    fl_yxline(X+W,Y+h1,Y);
   }
 }
 
@@ -132,5 +136,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.4 1998/10/21 14:20:19 mike Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.5 1998/12/02 18:43:27 mike Exp $".
 //

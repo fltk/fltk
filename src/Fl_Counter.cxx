@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.5 1998/12/02 15:39:30 mike Exp $"
+// "$Id: Fl_Counter.cxx,v 1.6 1998/12/02 18:43:27 mike Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,7 @@
 
 void Fl_Counter::draw() {
   int i; Fl_Boxtype boxtype[5];
+  Fl_Color selcolor;
 
   boxtype[0] = box();
   if (boxtype[0] == FL_UP_BOX) boxtype[0] = FL_DOWN_BOX;
@@ -60,17 +61,22 @@ void Fl_Counter::draw() {
   fl_draw(str, xx[0], y(), ww[0], h(), FL_ALIGN_CENTER);
   if (!(damage()&FL_DAMAGE_ALL)) return; // only need to redraw text
 
+  if (active_r())
+    selcolor = selection_color();
+  else
+    selcolor = inactive(selection_color());
+
   if (type() == FL_NORMAL_COUNTER) {
     draw_box(boxtype[1], xx[1], y(), ww[1], h(), color());
-    fl_draw_symbol("@-4<<", xx[1], y(), ww[1], h(), selection_color());
+    fl_draw_symbol("@-4<<", xx[1], y(), ww[1], h(), selcolor);
   }
   draw_box(boxtype[2], xx[2], y(), ww[2], h(), color());
-  fl_draw_symbol("@-4<",  xx[2], y(), ww[2], h(), selection_color());
+  fl_draw_symbol("@-4<",  xx[2], y(), ww[2], h(), selcolor);
   draw_box(boxtype[3], xx[3], y(), ww[3], h(), color());
-  fl_draw_symbol("@-4>",  xx[3], y(), ww[3], h(), selection_color());
+  fl_draw_symbol("@-4>",  xx[3], y(), ww[3], h(), selcolor);
   if (type() == FL_NORMAL_COUNTER) {
     draw_box(boxtype[4], xx[4], y(), ww[4], h(), color());
-    fl_draw_symbol("@-4>>", xx[4], y(), ww[4], h(), selection_color());
+    fl_draw_symbol("@-4>>", xx[4], y(), ww[4], h(), selcolor);
   }
 }
 
@@ -159,5 +165,5 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.5 1998/12/02 15:39:30 mike Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.6 1998/12/02 18:43:27 mike Exp $".
 //

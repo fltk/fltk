@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Adjuster.cxx,v 1.3 1998/10/21 14:19:54 mike Exp $"
+// "$Id: Fl_Adjuster.cxx,v 1.4 1998/12/02 18:43:26 mike Exp $"
 //
 // Adjuster widget for the Fast Light Tool Kit (FLTK).
 //
@@ -51,7 +51,10 @@ void Fl_Adjuster::draw() {
   draw_box(drag==1?FL_DOWN_BOX:box(), x(),  y()+2*dy, W, H, color());
   draw_box(drag==2?FL_DOWN_BOX:box(), x()+dx, y()+dy, W, H, color());
   draw_box(drag==3?FL_DOWN_BOX:box(), x()+2*dx,  y(), W, H, color());
-  fl_color(selection_color());
+  if (active_r())
+    fl_color(selection_color());
+  else
+    fl_color(inactive(selection_color()));
   fastarrow.draw(x()+(W-fastarrow_width)/2,
 		 y()+2*dy+(H-fastarrow_height)/2, W, H);
   mediumarrow.draw(x()+dx+(W-mediumarrow_width)/2,
@@ -127,5 +130,5 @@ Fl_Adjuster::Fl_Adjuster(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Adjuster.cxx,v 1.3 1998/10/21 14:19:54 mike Exp $".
+// End of "$Id: Fl_Adjuster.cxx,v 1.4 1998/12/02 18:43:26 mike Exp $".
 //
