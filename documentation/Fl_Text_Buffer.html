@@ -203,6 +203,9 @@ other control characters are given special treatment.
 <H4><A NAME="Fl_Text_Buffer.findchars_forward">int findchars_forward(int startPos, const char* searchChars, int* foundPos);</A></H4>
 
 <P>Finds the next occurrence of the specified characters.
+Search forwards in buffer for characters in <i>searchChars</i>, starting
+with the character <i>startPos</i>, and returning the result in <i>foundPos</i>
+returns 1 if found, 0 if not.
 
 <H4><A NAME="Fl_Text_Buffer.highlight">void highlight(int start, int end);</A></H4>
 
