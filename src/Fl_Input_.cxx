@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.7 2000/06/08 07:38:29 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.8 2000/06/20 07:56:09 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,10 +40,8 @@
 
 ////////////////////////////////////////////////////////////////
 
-// Wordwrap kludge.  It "sort of" works but there are lots of bugs.
-// Really the whole multi-line-input should be moved to a seperate
-// (and much more complex) subclass.  Single-line and multi-line
-// input are really a *lot* different!
+// Wordwrap kludge.  This works ok but is commented out because
+// we want to move multi-line functionality to it's own subclass.
 // To try the wordwrap define this:
 //#define WORDWRAP
 #ifdef WORDWRAP
@@ -60,17 +58,19 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
   const char* lastspace = p;
   char* lastspace_out = o;
   int width_to_lastspace = 0;
+  int word_count = 0;
 #endif
   if (type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {*o++ = '*'; p++;}
   } else while (o<e) {
 #ifdef WORDWRAP
-    if (wordwrap && (p >= value_+size_ || *p==' ' || *p=='\n')) {
-      width_to_lastspace += fl_width(lastspace, p-lastspace);
+    if (wordwrap && (p >= value_+size_ || isspace(*p))) {
+      width_to_lastspace += (int)fl_width(lastspace_out, o-lastspace_out);
       if (p > lastspace+1) {
-	if (width_to_lastspace > wordwrap) {
+	if (word_count && width_to_lastspace > wordwrap) {
 	  p = lastspace; o = lastspace_out; break;
 	}
+	word_count++;
       }
       lastspace = p;
       lastspace_out = o;
@@ -216,8 +216,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     }
     lines++;
     if (e >= value_+size_) break;
-    if (*e == '\n' || *e == ' ') e++;
-    p = e;
+    p = e+1;
   }
 
   // adjust the scrolling:
@@ -296,8 +295,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   CONTINUE:
     ypos += height;
     if (e >= value_+size_) break;
-    if (*e == '\n' || *e == ' ') e++;
-    p = e;
+    p = e+1;
   }
 
   // for minimal update, erase all lines below last one if necessary:
@@ -315,15 +313,59 @@ static int isword(char c) {
   return (c&128 || isalnum(c) || strchr("#%&-/@\\_~", c));
 }
 
-int Fl_Input_::wordboundary(int i) const {
-  if (i<=0 || i>=size()) return 1;
-  return isword(index(i-1)) != isword(index(i));
+int Fl_Input_::word_end(int i) const {
+  if (type() == FL_SECRET_INPUT) return size();
+  //while (i < size() && !isword(index(i))) i++;
+  while (i < size() && isword(index(i))) i++;
+  return i;
 }
 
-int Fl_Input_::lineboundary(int i) const {
-  if (i<=0 || i>=size()) return 1;
+int Fl_Input_::word_start(int i) const {
+  if (type() == FL_SECRET_INPUT) return 0;
+//   if (i >= size() || !isword(index(i)))
+//     while (i > 0 && !isword(index(i-1))) i--;
+  while (i > 0 && isword(index(i-1))) i--;
+  return i;
+}
+
+int Fl_Input_::line_end(int i) const {
+  if (type() != FL_MULTILINE_INPUT) return size();
+#ifdef WORDWRAP
+  // go to the start of the paragraph:
+  int j = i;
+  while (j > 0 && index(j-1) != '\n') j--;
+  // now measure lines until we get past i, end of that line is real eol:
+  wordwrap = w()-Fl::box_dw(box())-6;
+  setfont();
+  for (const char* p=value()+j; ;) {
+    char buf[MAXBUF];
+    p = expand(p, buf);
+    if (p-value() >= i) return p-value();
+    p++;
+  }
+#else
+  while (i < size() && index(i) != '\n') i++;
+  return i;
+#endif
+}
+
+int Fl_Input_::line_start(int i) const {
   if (type() != FL_MULTILINE_INPUT) return 0;
-  return index(i-1) == '\n' || index(i) == '\n';
+  int j = i;
+  while (j > 0 && index(j-1) != '\n') j--;
+#ifdef WORDWRAP
+  // now measure lines until we get past i, start of that line is real eol:
+  wordwrap = w()-Fl::box_dw(box())-6;
+  setfont();
+  for (const char* p=value()+j; ;) {
+    char buf[MAXBUF];
+    const char* e = expand(p, buf);
+    if (e-value() >= i) return p-value();
+    p = e+1;
+  }
+#else
+  return j;
+#endif
 }
 
 void Fl_Input_::handle_mouse(int X, int Y,
@@ -350,9 +392,8 @@ void Fl_Input_::handle_mouse(int X, int Y,
   for (p=value();; ) {
     e = expand(p, buf);
     theline--; if (theline < 0) break;
-    if (*e == '\n' || *e == ' ') e++;
-    p = e;
     if (e >= value_+size_) break;
+    p = e+1;
   }
   const char *l, *r, *t; double f0 = Fl::event_x()-X+xscroll_;
   for (l = p, r = e; l<r; ) {
@@ -375,18 +416,20 @@ void Fl_Input_::handle_mouse(int X, int Y,
 	if (newpos < size()) newpos++;
 	else newmark--;
       }
-      if (Fl::event_clicks()>1 || type()==FL_SECRET_INPUT) {
-	while (!lineboundary(newpos)) newpos++;
-	while (!lineboundary(newmark)) newmark--;
+      if (Fl::event_clicks() > 1) {
+	newpos = line_end(newpos);
+	newmark = line_start(newmark);
       } else {
-	while (!wordboundary(newpos)) newpos++;
-	while (!wordboundary(newmark)) newmark--;
+	newpos = word_end(newpos);
+	newmark = word_start(newmark);
       }
     } else {
-      if (Fl::event_clicks()>1 || type()==FL_SECRET_INPUT) {
-	while (!lineboundary(newpos)) newpos--;
+      if (Fl::event_clicks() > 1) {
+	newpos = line_start(newpos);
+	newmark = line_end(newmark);
       } else {
-	while (!wordboundary(newpos)) newpos--;
+	newpos = word_start(newpos);
+	newmark = word_end(newmark);
       }
     }
     // if the multiple click does not increase the selection, revert
@@ -429,16 +472,25 @@ int Fl_Input_::position(int p, int m) {
 }
 
 int Fl_Input_::up_down_position(int i, int keepmark) {
-  while (i > 0 && index(i-1) != '\n') i--;	// go to start of line
-  double oldwid = 0.0;
+  // unlike before, i must be at the start of the line already!
+
   setfont();
-  while (index(i) && index(i)!='\n') {
-    double tt = oldwid + fl_width(index(i));
-    if ((oldwid+tt)/2 >= up_down_pos) break;
-    oldwid = tt;
-    i++;
+#ifdef WORDWRAP
+  if (type()==FL_MULTILINE_INPUT)
+    wordwrap = w()-Fl::box_dw(box())-6;
+  else wordwrap = 0;
+#endif
+  char buf[MAXBUF];
+  const char* p = value()+i;
+  const char* e = expand(p, buf);
+  const char *l, *r, *t;
+  for (l = p, r = e; l<r; ) {
+    t = l+(r-l+1)/2;
+    int f = (int)expandpos(p, t, buf, 0);
+    if (f <= up_down_pos) l = t; else r = t-1;
   }
-  int j = position(i, keepmark ? mark_ : i);
+  int j = l-value();
+  j = position(j, keepmark ? mark_ : j);
   was_up_down = 1;
   return j;
 }
@@ -536,6 +588,16 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   undowidget = this;
   mark_ = position_ = undoat = b+ilen;
 
+#ifdef WORDWRAP
+  // Insertions into the word at the end of the line will cause it to
+  // wrap to the next line, so we must indicate that the changes may start
+  // right after the whitespace before the current word.  This will
+  // result in sub-optimal update when such wrapping does not happen
+  // but it is too hard to figure out for now...
+  if (type() == FL_MULTILINE_INPUT)
+    while (b > 0 && !isspace(index(b))) b--;
+#endif
+ 
   minimal_update(b);
   if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
   return 1;
@@ -638,7 +700,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     // strip trailing control characters and spaces before pasting:
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
-    if (type()!=FL_MULTILINE_INPUT) while (e > t && *(uchar*)(e-1) <= ' ') e--;
+    if (type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
     return replace(position(), mark(), t, e-t);}
 
   default:
@@ -747,5 +809,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.7 2000/06/08 07:38:29 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.8 2000/06/20 07:56:09 bill Exp $".
 //

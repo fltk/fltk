@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.6.2.2 2000/06/05 21:20:24 mike Exp $"
+// "$Id: Fl_Input_.H,v 1.6.2.3 2000/06/20 07:56:06 bill Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -66,8 +66,10 @@ class Fl_Input_ : public Fl_Widget {
 
 protected:
 
-  FL_EXPORT int wordboundary(int i) const;
-  FL_EXPORT int lineboundary(int i) const;
+  FL_EXPORT int word_start(int i) const;
+  FL_EXPORT int word_end(int i) const;
+  FL_EXPORT int line_start(int i) const;
+  FL_EXPORT int line_end(int i) const;
   FL_EXPORT void drawtext(int, int, int, int);
   FL_EXPORT int up_down_position(int, int keepmark=0);
   FL_EXPORT void handle_mouse(int, int, int, int, int keepmark=0);
@@ -120,5 +122,5 @@ public:
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.6.2.2 2000/06/05 21:20:24 mike Exp $".
+// End of "$Id: Fl_Input_.H,v 1.6.2.3 2000/06/20 07:56:06 bill Exp $".
 //
