@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.2 2001/12/03 18:29:49 easysw Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.3 2001/12/19 18:15:34 easysw Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -60,10 +60,10 @@ static int fl_free_font = FL_FREE_FONT;
 static int CALLBACK
 enumcb(CONST LOGFONT    *lpelf,
        CONST TEXTMETRIC *lpntm,
-       int              FontType,
+       DWORD            FontType,
        LPARAM           p) {
   if (!p && lpelf->lfCharSet != ANSI_CHARSET) return 1;
-  char *n = (char*)(lpelf->lfFaceName);
+  const char *n = lpelf->lfFaceName;
   for (int i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
     if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) return 1;
   char buffer[LF_FACESIZE + 1];
@@ -80,7 +80,7 @@ enumcb(CONST LOGFONT    *lpelf,
 Fl_Font Fl::set_fonts(const char* xstarname) {
   if (fl_free_font == FL_FREE_FONT) {// if not already been called
     if (!fl_gc) fl_GetDC(0);
-    EnumFontFamilies(fl_gc, NULL, (FONTENUMPROC)enumcb, xstarname != 0);
+    EnumFontFamilies(fl_gc, NULL, enumcb, xstarname != 0);
   }
   return (Fl_Font)fl_free_font;
 }
@@ -142,5 +142,5 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.2 2001/12/03 18:29:49 easysw Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.3 2001/12/19 18:15:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.10 2001/12/14 16:48:13 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.11 2001/12/19 18:15:34 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -126,7 +126,7 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 // However, it is only legal to destroy a "root" such as an Fl_Window,
 // and automatic destructors may be called.
 Fl_Widget::~Fl_Widget() {
-  parent_ = 0; // kludge to prevent ~Fl_Group from destroying again
+  if (parent_) parent_->remove(this);
   fl_throw_focus(this);
 }
 
@@ -248,5 +248,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.10 2001/12/14 16:48:13 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.11 2001/12/19 18:15:34 easysw Exp $".
 //

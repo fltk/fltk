@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.8 2001/12/17 15:01:38 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.9 2001/12/19 18:15:34 easysw Exp $"
 //
 // Copyright Mark Edel.  Permission to distribute under the LGPL for
 // the FLTK library granted by Mark Edel.
@@ -127,9 +127,6 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 ** freed, nor are the style buffer or style table.
 */
 Fl_Text_Display::~Fl_Text_Display() {
-  delete mVScrollBar;
-  delete mHScrollBar;
-
   if (mBuffer) mBuffer->remove_modify_callback(buffer_modified_cb, this);
   delete[] mLineStarts;
 }
@@ -1960,5 +1957,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.8 2001/12/17 15:01:38 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.9 2001/12/19 18:15:34 easysw Exp $".
 //

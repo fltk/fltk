@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.3 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.4 2001/12/19 18:15:34 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -68,6 +68,7 @@ int filename_absolute(char *to, int tolen, const char *from) {
   if (!a) {
     strncpy(to, from, tolen - 1);
     to[tolen - 1] = '\0';
+    delete[] temp;
     return 0;
   }
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
@@ -134,7 +135,11 @@ filename_relative(char       *to,	// O - Relative filename
        *slash != '\0' && *newslash != '\0';
        slash ++, newslash ++)
     if (isdirsep(*slash) && isdirsep(*newslash)) continue;
+#if defined(WIN32) || defined(__EMX__) || defined(__APPLE__)
+    else if (tolower(*slash) != tolower(*newslash)) break;
+#else
     else if (*slash != *newslash) break;
+#endif // WIN32 || __EMX__ || __APPLE__
 
   while (!isdirsep(*slash) && slash > from) slash --;
 
@@ -167,5 +172,5 @@ filename_relative(char       *to,	// O - Relative filename
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.3 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.4 2001/12/19 18:15:34 easysw Exp $".
 //

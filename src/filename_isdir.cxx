@@ -1,5 +1,5 @@
 //
-// "$Id: filename_isdir.cxx,v 1.4.2.5.2.2 2001/12/04 19:04:15 easysw Exp $"
+// "$Id: filename_isdir.cxx,v 1.4.2.5.2.3 2001/12/19 18:15:34 easysw Exp $"
 //
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -41,15 +41,17 @@ int filename_isdir(const char* n) {
   // (read lots of sarcasm in that...)
   length = strlen(n);
   if (length < (int)(sizeof(fn) - 1)) {
-    if (length < 4 && isalpha(n[0]) && n[1] == ':') {
+    if (length < 4 && isalpha(n[0]) && n[1] == ':' &&
+        (isdirsep(n[2]) || !n[2])) {
       // Always use D:/ for drive letters
       fn[0] = n[0];
       strcpy(fn + 1, ":/");
       n = fn;
-    } else if (length > 0 && (n[length - 1] == '/' || n[length - 1] == '\\')) {
+    } else if (length > 0 && isdirsep(n[length - 1])) {
       // Strip trailing slash from name...
-      strncpy(fn, n, sizeof(fn) - 1);
-      fn[length - 1] = '\0';
+      length --;
+      memcpy(fn, n, length);
+      fn[length] = '\0';
       n = fn;
     }
   }
@@ -59,5 +61,5 @@ int filename_isdir(const char* n) {
 }
 
 //
-// End of "$Id: filename_isdir.cxx,v 1.4.2.5.2.2 2001/12/04 19:04:15 easysw Exp $".
+// End of "$Id: filename_isdir.cxx,v 1.4.2.5.2.3 2001/12/19 18:15:34 easysw Exp $".
 //

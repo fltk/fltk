@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.5 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.6 2001/12/19 18:15:34 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -306,8 +306,7 @@ void Fl_Group::clear() {
   Fl_Widget*const* a = old_array;
   for (int i=old_children; i--;) {
     Fl_Widget* o = *a++;
-    // test the parent to see if child already destructed:
-    if (o->parent() == this) delete o;
+    delete o;
   }
   if (old_children > 1) free((void*)old_array);
 }
@@ -552,5 +551,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.5 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.6 2001/12/19 18:15:34 easysw Exp $".
 //

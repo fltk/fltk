@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.22 2001/12/19 15:59:51 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.23 2001/12/19 18:15:34 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -94,7 +94,7 @@ static void	hscrollbar_callback(Fl_Widget *s, void *);
 //
 
 Fl_Help_Block *					// O - Pointer to new block
-Fl_Help_View::add_block(const char    *s,	// I - Pointer to start of block text
+Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
                        int           xx,	// I - X position of block
 		       int           yy,	// I - Y position of block
 		       int           ww,	// I - Right margin of block
@@ -118,7 +118,9 @@ Fl_Help_View::add_block(const char    *s,	// I - Pointer to start of block text
   }
 
   temp = blocks_ + nblocks_;
+  memset(temp, 0, sizeof(Fl_Help_Block));
   temp->start  = s;
+  temp->end    = s;
   temp->x      = xx;
   temp->y      = yy;
   temp->w      = ww;
@@ -2567,5 +2569,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.22 2001/12/19 15:59:51 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.23 2001/12/19 18:15:34 easysw Exp $".
 //

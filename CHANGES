@@ -1,5 +1,29 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Fl_JPEG_Image and friends didn't set the depth if the
+	  image file couldn't be loaded; since Fl_RGB_Image
+	  didn't check for this, it could fail when displaying
+	  or copying these images.
+	- filename_absolute() did not always free its temporary
+	  buffer.
+	- filename_relative() did not do a case-insensitive
+	  comparison under MacOS, OS/2, and Windows.
+	- filename_isdir() didn't properly handle "D:L" under
+	  WIN32.
+	- Fl_Shared_Image::get() did not check to see if the
+	  image could not be loaded.
+	- Fixed Fl_Widget::~Fl_Widget() so that "delete widget"
+	  will remove the widget from the parent.  Otherwise
+	  the Fl_Group destructor will try to access freed memory...
+	- Fl_Help_View didn't clear the line array in the
+	  Fl_Help_Block structure; this causes erratic
+	  formatting for some pages.
+	- The font and size members of Fl_Help_Block were never
+	  used.
+	- The threading functions (Fl::lock() and friends) were
+	  not exported under WIN32.
+	- The Fl_Text_Display destructor deleted the scrollbars
+	  twice...
 	- Fl_Help_View didn't reset the horizontal scroll
 	  position when showing a new page.
 	- Fl_Pack now allows any child widget to be the

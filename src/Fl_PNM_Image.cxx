@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.3 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.4 2001/12/19 18:15:34 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -75,8 +75,8 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
   lineptr = fgets(line, sizeof(line), fp);
   if (!lineptr) {
-    Fl::error("Early end-of-file in PNM file \"%s\"!", name);
     fclose(fp);
+    Fl::error("Early end-of-file in PNM file \"%s\"!", name);
     return;
   }
 
@@ -166,5 +166,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.3 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.4 2001/12/19 18:15:34 easysw Exp $".
 //

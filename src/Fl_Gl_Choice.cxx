@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.5 2001/12/18 11:00:09 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.6 2001/12/19 18:15:34 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -160,7 +160,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (!DescribePixelFormat(fl_gc, i, sizeof(pfd), &pfd)) break;
     // continue if it does not satisfy our requirements:
     if (~pfd.dwFlags & (PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL)) continue;
-    if (pfd.iPixelType != ((mode&FL_INDEX)?1:0)) continue;
+    if (pfd.iPixelType != ((mode&FL_INDEX)?PFD_TYPE_COLORINDEX:PFD_TYPE_RGBA)) continue;
     if ((mode & FL_ALPHA) && !pfd.cAlphaBits) continue;
     if ((mode & FL_ACCUM) && !pfd.cAccumBits) continue;
     if ((!(mode & FL_DOUBLE)) != (!(pfd.dwFlags & PFD_DOUBLEBUFFER))) continue;
@@ -217,9 +217,9 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   HDC hdc = i->private_dc;
   if (!hdc) {
     hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
-    SetPixelFormat(i->private_dc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
+    SetPixelFormat(hdc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
 #if USE_COLORMAP
-    if (fl_palette) SelectPalette(i->private_dc, fl_palette, FALSE);
+    if (fl_palette) SelectPalette(hdc, fl_palette, FALSE);
 #endif
   }
   GLContext context =
@@ -309,5 +309,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.5 2001/12/18 11:00:09 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.6 2001/12/19 18:15:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.11 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.12 2001/12/19 18:15:34 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -73,8 +73,12 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
-  // Optimize the simple copy where the width and height are the same...
-  if (W == w() && H == h()) return new Fl_RGB_Image(array, w(), h(), d(), ld());
+  // Optimize the simple copy where the width and height are the same,
+  // or when we are copying an empty image...
+  if ((W == w() && H == h()) ||
+      !w() || !h() || !d() || !array) {
+    return new Fl_RGB_Image(array, w(), h(), d(), ld());
+  }
 
   // OK, need to resize the image data; allocate memory and 
   Fl_RGB_Image	*new_image;	// New RGB image
@@ -128,6 +132,9 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 }
 
 void Fl_RGB_Image::color_average(Fl_Color c, float i) {
+  // Don't average an empty image...
+  if (!w() || !h() || !d() || !array) return;
+
   // Delete any existing pixmap/mask objects...
   if (id) {
     fl_delete_offscreen(id);
@@ -191,6 +198,9 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
 }
 
 void Fl_RGB_Image::desaturate() {
+  // Don't desaturate an empty image...
+  if (!w() || !h() || !d() || !array) return;
+
   // Can only desaturate color images...
   if (d() < 3) return;
 
@@ -234,7 +244,8 @@ void Fl_RGB_Image::desaturate() {
 }
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
-  if (!array) {
+  // Don't draw an empty image...
+  if (!d() || !array) {
     draw_empty(XP, YP);
     return;
   }
@@ -367,5 +378,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.11 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.12 2001/12/19 18:15:34 easysw Exp $".
 //
