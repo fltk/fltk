@@ -77,7 +77,7 @@ inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
 }
 
 
-static void shade_frame(int x, int y, int w, int h, const char *c, Fl_Color bc) {
+static void frame_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar *g = fl_gray_ramp();
   int b = strlen(c) / 4 + 1;
 
@@ -97,8 +97,27 @@ static void shade_frame(int x, int y, int w, int h, const char *c, Fl_Color bc) 
 }
 
 
-static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
-{
+static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
+  uchar *g = fl_gray_ramp();
+  int b = strlen(c) / 4 + 1;
+
+  for (x += b, y += b, w -= 2 * b, h -= 2 * b; b > 1; b --)
+  {
+    // Draw lines around the perimeter of the button, 4 colors per
+    // circuit.
+    fl_color(shade_color(g[*c++], bc));
+    fl_line(x, y + h + b, x + w - 1, y + h + b, x + w + b - 1, y + h);
+    fl_color(shade_color(g[*c++], bc));
+    fl_line(x + w + b - 1, y + h, x + w + b - 1, y, x + w - 1, y - b);
+    fl_color(shade_color(g[*c++], bc));
+    fl_line(x + w - 1, y - b, x, y - b, x - b, y);
+    fl_color(shade_color(g[*c++], bc));
+    fl_line(x - b, y, x - b, y + h, x, y + h + b);
+  }
+}
+
+
+static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar		*g = fl_gray_ramp();
   int		i, j;
   int		clen = strlen(c) - 1;
@@ -170,9 +189,47 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
   }
 }
 
+static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
+  uchar		*g = fl_gray_ramp();
+  int		i, j;
+  int		clen = strlen(c) - 1;
+  int		chalf = clen / 2;
+  int		cstep = 1;
+
+  if (clen >= h) cstep = 2;
+
+  for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
+    // Draw the top line and points...
+    fl_color(shade_color(g[c[i]], bc));
+    fl_xyline(x + 1, y + i, x + w - 1);
+
+    fl_color(shade_color(g[c[i] - 2], bc));
+    fl_point(x, y + i + 1);
+    fl_point(x + w - 1, y + i + 1);
+
+    // Draw the bottom line and points...
+    fl_color(shade_color(g[c[clen - i]], bc));
+    fl_xyline(x + 1, y + h - i, x + w - 1);
+
+    fl_color(shade_color(g[c[clen - i] - 2], bc));
+    fl_point(x, y + h - i);
+    fl_point(x + w - 1, y + h - i);
+  }
+
+  // Draw the interior and sides...
+  i = chalf / cstep;
+
+  fl_color(shade_color(g[c[chalf]], bc));
+  fl_rectf(x + 1, y + i, w - 2, h - 2 * i + 1);
+
+  fl_color(shade_color(g[c[chalf] - 2], bc));
+  fl_yxline(x, y + i, y + h - i);
+  fl_yxline(x + w - 1, y + i, y + h - i);
+}
+
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c) {
-  shade_frame(x, y, w, h - 1, "KLDIIJLM", c);
+  frame_rect(x, y, w, h - 1, "KLDIIJLM", c);
 }
 
 
@@ -182,7 +239,7 @@ static void up_box(int x, int y, int w, int h, Fl_Color c) {
   up_frame(x, y, w, h, c);
 #else
   shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
-  shade_frame(x, y, w, h - 1, "IJLM", c);
+  frame_rect(x, y, w, h - 1, "IJLM", c);
 #endif // USE_OLD_PLASTIC_BOX
 }
 
@@ -193,17 +250,36 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
   up_frame(x, y, w, h, c);
 #else
   shade_rect(x + 1, y + 1, w - 2, h - 3, "RQOQSUWQ", c);
-  shade_frame(x, y, w, h - 1, "IJLM", c);
+  frame_rect(x, y, w, h - 1, "IJLM", c);
+#endif // USE_OLD_PLASTIC_BOX
+}
+
+
+static void up_round(int x, int y, int w, int h, Fl_Color c) {
+#ifdef USE_OLD_PLASTIC_BOX
+  shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
+  up_frame(x, y, w, h, c);
+#else
+  shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
+  frame_rect(x, y, w, h - 1, "IJLM", c);
 #endif // USE_OLD_PLASTIC_BOX
 }
 
 
 static void down_frame(int x, int y, int w, int h, Fl_Color c) {
-  shade_frame(x, y, w, h - 1, "LLRRTTLL", c);
+  frame_rect(x, y, w, h - 1, "LLRRTTLL", c);
 }
 
 
 static void down_box(int x, int y, int w, int h, Fl_Color c) {
+  shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
+
+
+  down_frame(x, y, w, h, c);
+}
+
+
+static void down_round(int x, int y, int w, int h, Fl_Color c) {
   shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
 
   down_frame(x, y, w, h, c);
@@ -220,6 +296,8 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
   fl_internal_boxtype(_FL_PLASTIC_DOWN_FRAME, down_frame);
   fl_internal_boxtype(_FL_PLASTIC_THIN_UP_BOX, thin_up_box);
   fl_internal_boxtype(_FL_PLASTIC_THIN_DOWN_BOX, down_box);
+  fl_internal_boxtype(_FL_PLASTIC_ROUND_UP_BOX, up_round);
+  fl_internal_boxtype(_FL_PLASTIC_ROUND_DOWN_BOX, down_round);
 
   return _FL_PLASTIC_UP_BOX;
 }
