@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.20 2002/05/13 17:23:10 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.21 2002/05/14 15:24:03 spitzak Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -133,7 +133,6 @@ static void
 tt_enter(Fl_Widget* widget) {
 //  printf("tt_enter(widget=%p)\n", widget);
 //  printf("    window=%p\n", window);
-
   // find the enclosing group with a tooltip:
   Fl_Widget* w = widget;
   while (w && !w->tooltip()) {
@@ -164,6 +163,11 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
     widget = wid; X = x; Y = y; W = w; H = h; tip = t;
     if (recent_tooltip || Fl_Tooltip::delay() < .1) {
       // switch directly from a previous tooltip to the new one:
+#ifdef WIN32
+      // possible fix for the Windows titlebar, it seems to want the
+      // window to be destroyed, moving it messes up the parenting:
+      if (window) window->hide();
+#endif
       tooltip_timeout(0);
     } else {
       if (window) window->hide();
@@ -173,7 +177,12 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
     tip = 0;
     widget = 0;
     if (window) window->hide();
-    if (recent_tooltip) Fl::add_timeout(.2, recent_timeout);
+    if (recent_tooltip) {
+      if (Fl::event_state() & 0x7f00000 /*FL_BUTTONS*/)
+	recent_tooltip = 0;
+      else
+	Fl::add_timeout(.2, recent_timeout);
+    }
   }
 
 //  printf("    tip=\"%s\", window->shown()=%d\n", tip ? tip : "(null)",
@@ -191,5 +200,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.20 2002/05/13 17:23:10 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.21 2002/05/14 15:24:03 spitzak Exp $".
 //

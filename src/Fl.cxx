@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.28 2002/05/13 15:43:09 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.29 2002/05/14 15:24:02 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -424,7 +424,6 @@ void Fl::belowmouse(Fl_Widget *o) {
   Fl_Widget *p = belowmouse_;
   if (o != p) {
     belowmouse_ = o;
-    if (!dnd_flag) Fl_Tooltip::enter(o);
     for (; p && !p->contains(o); p = p->parent()) {
       p->handle(dnd_flag ? FL_DND_LEAVE : FL_LEAVE);
     }
@@ -468,15 +467,15 @@ void fl_fix_focus() {
   } else
     Fl::focus(0);
 
-  if (!Fl::pushed()) {
+  if (!(Fl::event_state() & 0x7f00000 /*FL_BUTTONS*/)) {
 
     // set belowmouse based on Fl::modal() and fl_xmousewin:
     w = fl_xmousewin;
     if (w) {
       if (Fl::modal()) w = Fl::modal();
       if (!w->contains(Fl::belowmouse())) {
-	Fl::belowmouse(w);
 	w->handle(FL_ENTER);
+	if (!w->contains(Fl::belowmouse())) Fl::belowmouse(w);
       } else {
 	// send a FL_MOVE event so the enter/leave state is up to date
 	Fl::e_x = Fl::e_x_root-fl_xmousewin->x();
@@ -485,6 +484,7 @@ void fl_fix_focus() {
       }
     } else {
       Fl::belowmouse(0);
+      Fl_Tooltip::enter(0);
     }
   }
 }
@@ -534,9 +534,10 @@ static int send(int event, Fl_Widget* to, Fl_Window* window) {
 
 int Fl::handle(int event, Fl_Window* window)
 {
-  Fl_Widget* w = window;
-
   e_number = event;
+  if (fl_local_grab) return fl_local_grab(event);
+
+  Fl_Widget* w = window;
 
   switch (event) {
 
@@ -648,6 +649,7 @@ int Fl::handle(int event, Fl_Window* window)
   case FL_ENTER:
     fl_xmousewin = window;
     fl_fix_focus();
+    Fl_Tooltip::enter(belowmouse());
     return 1;
 
   case FL_LEAVE:
@@ -663,10 +665,13 @@ int Fl::handle(int event, Fl_Window* window)
   default:
     break;
   }
-  if (w && send(event, w, window)) return 1;
-  int ret = send_handlers(event);
+  if (w && send(event, w, window)) {
+    dnd_flag = 0;
+    if (event == FL_MOVE) Fl_Tooltip::enter(belowmouse());
+    return 1;
+  }
   dnd_flag = 0;
-  return ret;
+  return send_handlers(event);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -892,5 +897,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.28 2002/05/13 15:43:09 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.29 2002/05/14 15:24:02 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.10 2002/05/06 04:15:21 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.11 2002/05/14 15:24:03 spitzak Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,8 +34,6 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include "flstring.h"
-#include <stdio.h>
-
 
 void Fl_Input::draw() {
   if (input_type() == FL_HIDDEN_INPUT) return;
@@ -395,5 +393,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.10 2002/05/06 04:15:21 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.11 2002/05/14 15:24:03 spitzak Exp $".
 //
