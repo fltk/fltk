@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.22 2002/08/09 23:49:52 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.23 2002/08/13 15:42:44 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -256,7 +256,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
                  	   int  X,	// I - Upper-lefthand X coordinate
 		 	   int  Y,	// I - Upper-lefthand Y coordinate
 		 	   int  W,	// I - Width of item
-			   int  H) const// I - Height of item
+			   int) const	// I - Height of item
 {
   int		i;			// Looping var
   FL_BLINE	*line;			// Pointer to line
@@ -643,5 +643,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.22 2002/08/09 23:49:52 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.23 2002/08/13 15:42:44 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.9 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.10 2002/08/13 15:42:44 easysw Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -84,8 +84,13 @@ int Fl_Slider::scrollvalue(int p, int W, int t, int l) {
 
 void Fl_Slider::draw_bg(int X, int Y, int W, int H) {
   if (!(damage()&FL_DAMAGE_ALL)) { // not a complete redraw
+    fl_push_clip(X, Y, W, H);
+    draw_box();
+    fl_pop_clip();
+  } else {
     draw_box();
   }
+
   Fl_Color black = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
   if (type() == FL_VERT_NICE_SLIDER) {
     draw_box(FL_THIN_DOWN_BOX, X+W/2-2, Y, 4, H, black);
@@ -131,22 +136,7 @@ void Fl_Slider::draw(int X, int Y, int W, int H) {
     wsl = W;
   }
 
-  if (damage()&FL_DAMAGE_ALL) { // complete redraw
-    draw_bg(X, Y, W, H);
-  } else { // partial redraw, clip off new position of slider
-    if (xx > 0) {
-      if (horizontal()) fl_clip(X, ysl, xx, hsl);
-      else fl_clip(xsl, Y, wsl, xx);
-      draw_bg(X, Y, W, H);
-      fl_pop_clip();
-    }
-    if (xx+S < W) {
-      if (horizontal()) fl_clip(xsl+wsl, ysl, X+W-xsl-wsl, hsl);
-      else fl_clip(xsl, ysl+hsl, wsl, Y+H-ysl-hsl);
-      draw_bg(X, Y, W, H);
-      fl_pop_clip();
-    }
-  }
+  draw_bg(X, Y, W, H);
 
   Fl_Boxtype box1 = slider();
   if (!box1) {box1 = (Fl_Boxtype)(box()&-2); if (!box1) box1 = FL_UP_BOX;}
@@ -295,5 +285,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.9 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.10 2002/08/13 15:42:44 easysw Exp $".
 //
