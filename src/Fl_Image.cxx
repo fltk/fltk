@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.30 2003/07/29 02:12:36 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.31 2003/08/04 19:20:50 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -338,7 +338,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 //    dst.left = X; dst.right = X+w();
 //    dst.top = Y; dst.bottom = Y+h();
     src.left = cx; src.right = cx+W;
-    src.top = cx; src.bottom = cy+H;
+    src.top = cy; src.bottom = cy+H;
     dst.left = X; dst.right = X+W;
     dst.top = Y; dst.bottom = Y+H;
     RGBColor rgb;
@@ -397,5 +397,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.30 2003/07/29 02:12:36 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.31 2003/08/04 19:20:50 easysw Exp $".
 //
