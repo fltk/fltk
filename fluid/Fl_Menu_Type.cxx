@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.4 1999/08/09 13:53:54 mike Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.5 2000/02/05 09:20:45 bill Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -132,7 +132,7 @@ void Fl_Menu_Item_Type::write_static() {
       while (*d && !is_id(*d)) d++;
     }
     const char* cn = callback_name();
-    const char* k = class_name();
+    const char* k = class_name(1);
     if (k) {
       write_c("\ninline void %s::%s_i(Fl_Menu_*", k, cn);
     } else {
@@ -163,7 +163,7 @@ void Fl_Menu_Item_Type::write_static() {
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
   int level;
-  const char* k = class_name();
+  const char* k = class_name(1);
   if (k) {
     write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(level));
   } else
@@ -216,7 +216,7 @@ void Fl_Menu_Item_Type::write_item() {
   else
     write_c(", 0, ");
   if (callback()) {
-    const char* k = is_name(callback()) ? 0 : class_name();
+    const char* k = is_name(callback()) ? 0 : class_name(1);
     if (k) {
       write_c(" (Fl_Callback*)%s::%s,", k, callback_name());
     } else {
@@ -237,7 +237,7 @@ void Fl_Menu_Item_Type::write_code1() {
   int i; const char* name = menu_name(i);
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
-    if (class_name())
+    if (class_name(1))
       write_h("  static Fl_Menu_Item %s[];\n", name);
     else
       write_h("extern Fl_Menu_Item %s[];\n", name);
@@ -245,7 +245,7 @@ void Fl_Menu_Item_Type::write_code1() {
 
   const char *c = array_name(this);
   if (c) {
-    if (class_name()) {
+    if (class_name(1)) {
       write_public(public_);
       write_h("  static Fl_Menu_Item *%s;\n", c);
     } else
@@ -253,7 +253,7 @@ void Fl_Menu_Item_Type::write_code1() {
   }
 
   if (callback()) {
-    if (!is_name(callback()) && class_name()) {
+    if (!is_name(callback()) && class_name(1)) {
       const char* cn = callback_name();
       const char* ut = user_data_type() ? user_data_type() : "void*";
       write_public(0);
@@ -439,5 +439,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.4 1999/08/09 13:53:54 mike Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.5 2000/02/05 09:20:45 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.8 1999/12/17 18:34:56 bill Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.9 2000/02/05 09:20:46 bill Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1198,9 +1198,9 @@ const char *array_name(Fl_Widget_Type *o) {
   int sawthis = 0;
   Fl_Type *t = o->prev;
   Fl_Type *tp = o;
-  const char *cn = o->class_name();
-  for (; t && t->class_name() == cn; tp = t, t = t->prev);
-  for (t = tp; t && t->class_name() == cn; t = t->next) {
+  const char *cn = o->class_name(1);
+  for (; t && t->class_name(1) == cn; tp = t, t = t->prev);
+  for (t = tp; t && t->class_name(1) == cn; t = t->next) {
     if (t == o) {sawthis=1; continue;}
     const char *e = t->name();
     if (!e) continue;
@@ -1234,7 +1234,7 @@ void Fl_Widget_Type::write_static() {
     write_declare("extern void %s(%s*, %s);", callback(), t,
 		  user_data_type() ? user_data_type() : "void*");
   const char* c = array_name(this);
-  const char* k = class_name();
+  const char* k = class_name(1);
   if (c && !k) {
     write_c("\n");
     if (!public_) write_c("static ");
@@ -1293,12 +1293,12 @@ void Fl_Widget_Type::write_code1() {
   const char* t = subclassname(this);
   const char *c = array_name(this);
   if (c) {
-    if (class_name()) {
+    if (class_name(1)) {
       write_public(public_);
       write_h("  %s *%s;\n", t, c);
     }
   }
-  if (class_name() && callback() && !is_name(callback())) {
+  if (class_name(1) && callback() && !is_name(callback())) {
     const char* cn = callback_name();
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_public(0);
@@ -1399,7 +1399,7 @@ void Fl_Widget_Type::write_widget_code() {
     if (c != fc) write_c("%so->textcolor(%d);\n",indent(), c);
   }}
   const char* ud = user_data();
-  if (class_name() && !parent->is_widget()) ud = "this";
+  if (class_name(1) && !parent->is_widget()) ud = "this";
   if (callback()) {
     write_c("%so->callback((Fl_Callback*)%s", indent(), callback_name());
     if (ud)
@@ -1746,5 +1746,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.8 1999/12/17 18:34:56 bill Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.9 2000/02/05 09:20:46 bill Exp $".
 //
