@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.7 1998/10/21 14:20:37 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.8 1998/11/08 15:28:42 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,13 +48,19 @@ struct pollfd {int fd; short events; short revents;};
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
+
 #ifdef __sgi // fix bugs in Irix's select header:
-//inline static void bzero(void *b, int l) {memset(b,0,l);}
 extern "C" int	select( int, fd_set *, fd_set *, fd_set *, struct timeval * );
 #endif
-#ifdef hpux // fix from wm2:
-#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
-#endif
+
+//
+// The following #define is only needed for HP-UX 9.x and earlier.  10.x
+// and beyond have the right stuff, and any good GCC distribution fixes
+// this, too!
+//
+
+//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
+
 #ifdef __EMX__
 #include <sys/select.h>
 #endif
@@ -807,5 +813,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.7 1998/10/21 14:20:37 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.8 1998/11/08 15:28:42 mike Exp $".
 //
