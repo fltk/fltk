@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.6 1999/11/16 14:44:43 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.7 1999/12/19 05:32:33 bill Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -88,11 +88,19 @@ int Fl_Browser_::leftedge() const {
   return X;
 }
 
-// the scrollbars are resized & placed by draw(), since each one's size
+// The scrollbars may be moved again by draw(), since each one's size
 // depends on whether the other is visible or not.  This skips over
 // Fl_Group::resize since it moves the scrollbars uselessly.
 void Fl_Browser_::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X, Y, W, H);
+  // move the scrollbars so they can respond to events:
+  bbox(X,Y,W,H);
+  scrollbar.resize(
+	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar_width_ : X+W,
+	Y, scrollbar_width_, H);
+  hscrollbar.resize(
+	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollbar_width_ : Y+H,
+	W, scrollbar_width_);
 }
 
 // Cause minimal update to redraw the given item:
@@ -668,5 +676,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.6 1999/11/16 14:44:43 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.7 1999/12/19 05:32:33 bill Exp $".
 //

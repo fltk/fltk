@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.2 1999/10/30 20:21:30 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.3 1999/12/19 05:32:34 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -197,19 +197,18 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       curx = int(expandpos(p, value()+position(), buf, 0)+.5);
       if (Fl::focus()==this && !was_up_down) up_down_pos = curx;
       cury = lines*height;
-      if (Fl::focus()==this) {
-	int fullw = int(expandpos(p, e, buf, 0));
-	if (curx > xscroll_+W-20) {
-	  xscroll_ = curx+20-W;
-	  if (xscroll_ > fullw-W+2) xscroll_ = fullw-W+2;
-	  mu_p = 0; erase_cursor_only = 0;
-	}
-	if (curx < xscroll_+20 && xscroll_) {
-	  if (fullw > W-2) xscroll_ = curx-20;
-	  else xscroll_ = 0;
-	  mu_p = 0; erase_cursor_only = 0;
-	}
-	if (xscroll_ < 0) xscroll_ = 0;
+      int newscroll = xscroll_;
+      if (expandpos(p, e, buf, 0) < W-1) {
+	newscroll = 0;
+      } else if (curx > newscroll+W-20) {
+	newscroll = curx+20-W;
+      } else if (curx < newscroll+20) {
+	newscroll = curx-20;
+      }
+      if (newscroll < 0) newscroll = 0;
+      if (newscroll != xscroll_) {
+	xscroll_ = newscroll;
+	mu_p = 0; erase_cursor_only = 0;
       }
     }
     lines++;
@@ -745,5 +744,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.2 1999/10/30 20:21:30 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.3 1999/12/19 05:32:34 bill Exp $".
 //
