@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.5 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.6 2003/01/15 00:14:46 easysw Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -187,6 +187,15 @@ extern void fl_restore_clip();
 void Fl_Double_Window::flush() {flush(0);}
 
 void Fl_Double_Window::flush(int eraseoverlay) {
+#ifdef WIN32
+  // Windows seems to have trouble doing the double-buffer thing in sub-
+  // windows, so only create the backbuffer stuff for top-level windows.
+  if (parent()) {
+    Fl_Window::flush();
+    return;
+  }
+#endif // WIN32
+
   make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
   if (!myi->other_xid) {
@@ -196,8 +205,11 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     else
 #endif
 #ifdef __APPLE__
-    // the Apple OS X window manager double buffers ALL windows anyway, so there is no need to waste memory and time
-    // BTW: Windows2000 and later also forces doublebuffering if transparent windows are beeing used (alpha channel)
+    // the Apple OS X window manager double buffers ALL windows
+    // anyway, so there is no need to waste memory and time.
+    //
+    // BTW: Windows2000 and later also forces doublebuffering if
+    // transparent windows are beeing used (alpha channel)
     if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) || force_doublebuffering_ )
       myi->other_xid = fl_create_offscreen(w(), h());
 #else
@@ -296,5 +308,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.5 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.6 2003/01/15 00:14:46 easysw Exp $".
 //
