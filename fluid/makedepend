@@ -136,10 +136,10 @@ fluid.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_ask.H ../FL/fl_draw.H
 fluid.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Window.H ../FL/Fl_File_Browser.H
 fluid.o: ../FL/Fl_File_Icon.H ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
 fluid.o: ../FL/Fl_Choice.H ../FL/fl_message.H ../FL/fl_ask.H ../FL/filename.H
-fluid.o: ../config.h about_panel.h ../FL/Fl_Group.H Fl_Type.h
-fluid.o: ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H Fluid_Image.h
-fluid.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Tabs.H
-fluid.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+fluid.o: ../src/flstring.h ../config.h about_panel.h ../FL/Fl_Group.H
+fluid.o: Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
+fluid.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H
+fluid.o: ../FL/Fl_Tabs.H ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
 fluid.o: ../FL/Fl_Menu_Button.H
 about_panel.o: about_panel.h ../FL/Fl.H ../FL/Enumerations.H
 about_panel.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Group.H

@@ -2,7 +2,8 @@
 
 Fl.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 Fl.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H ../FL/Fl_Window.H
-Fl.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H flstring.h ../config.h
+Fl.o: ../FL/fl_draw.H
 Fl_Adjuster.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Adjuster.o: ../FL/Fl_Adjuster.H ../FL/Fl_Valuator.H ../FL/Fl_Widget.H
 Fl_Adjuster.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
@@ -335,7 +336,7 @@ fl_file_dir.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Choice.H
 fl_file_dir.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
 fl_font.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_font.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H Fl_Font.H
-fl_font.o: fl_font_x.cxx
+fl_font.o: fl_font_xft.cxx
 fl_labeltype.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_labeltype.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/fl_draw.H
 fl_labeltype.o: ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
@@ -358,7 +359,7 @@ fl_rounded_box.o: ../FL/fl_draw.H
 fl_set_font.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_set_font.o: ../FL/x.H ../FL/Fl_Window.H Fl_Font.H
 fl_set_fonts.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-fl_set_fonts.o: ../FL/x.H ../FL/Fl_Window.H Fl_Font.H fl_set_fonts_x.cxx
+fl_set_fonts.o: ../FL/x.H ../FL/Fl_Window.H Fl_Font.H fl_set_fonts_xft.cxx
 fl_scroll_area.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_scroll_area.o: ../FL/Fl_Window.H
 fl_shadow_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
