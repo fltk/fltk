@@ -13,9 +13,9 @@ A</A>.
 
 	<LI><A HREF="#fl_alert"><TT>fl_alert</TT></A></LI>
 	<LI><A HREF="#fl_ask"><TT>fl_ask</TT></A></LI>
-	<LI><A HREF="#fl_average_color"><TT>fl_average_color</TT></A></LI>
 	<LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
 	<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
+	<LI><A HREF="#fl_color_average"><TT>fl_color_average</TT></A></LI>
 	<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
 	<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
 	<LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
@@ -72,7 +72,7 @@ A</A>.
 	<LI>Drawing Functions
 	<UL>
 
-		<LI><A HREF="#fl_average_color"><TT>fl_average_color</TT></A></LI>
+		<LI><A HREF="#fl_color_average"><TT>fl_color_average</TT></A></LI>
 		<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
 		<LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
 		<LI><A HREF="#fl_cursor"><TT>fl_cursor</TT></A></LI>
@@ -159,37 +159,6 @@ a shortcut for No.
 
 
 <!-- NEED 4in -->
-<H2><A NAME="fl_average_color">fl_average_color</A></H2>
-
-<HR>
-
-<H3>Include Files</H3>
-
-<UL><PRE>
-#include &lt;FL/Enumerations.H&gt;
-</PRE></UL>
-
-<H3>Prototype</H3>
-
-<UL><PRE>
-Fl_Color fl_average_color(Fl_Color c1, Fl_Color c2, float weight);
-</PRE></UL>
-
-<H3>Description</H3>
-
-<P>Returns the weighted average color between the two colors.
-The red, green, and blue values are averaged using the following
-formula:
-
-<UL><PRE>
-color = c1 * weight + c2 * (1 - weight)
-</PRE></UL>
-
-<P>Thus, a <CODE>weight</CODE> value of 1.0 will return the
-first color, while a value of 0.0 will return the second color.
-
-
-<!-- NEED 4in -->
 <H2><A name="fl_beep">fl_beep</A></H2>
 
 <HR>
@@ -261,6 +230,37 @@ the buttons are positioned &quot;backwards&quot;. You can hide
 buttons by passing <tt>NULL</tt> as their labels.
 
 <P ALIGN="CENTER"><IMG SRC="fl_choice.gif" ALT="The fl_choice window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_color_average">fl_color_average</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the weighted average color between the two colors.
+The red, green, and blue values are averaged using the following
+formula:
+
+<UL><PRE>
+color = c1 * weight + c2 * (1 - weight)
+</PRE></UL>
+
+<P>Thus, a <CODE>weight</CODE> value of 1.0 will return the
+first color, while a value of 0.0 will return the second color.
 
 
 <!-- NEED 4in -->
