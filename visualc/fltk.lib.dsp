@@ -528,7 +528,7 @@ SOURCE=..\src\numericsort.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\scandir_win32.cxx
+SOURCE=..\src\scandir.c
 # End Source File
 # Begin Source File
 
