@@ -1,9 +1,9 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.7 2000/07/30 00:31:44 spitzak Exp $"
+// "$Id: menubar.cxx,v 1.6.2.8 2001/01/22 15:13:41 easysw Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -216,5 +216,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.7 2000/07/30 00:31:44 spitzak Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.8 2001/01/22 15:13:41 easysw Exp $".
 //

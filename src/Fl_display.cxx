@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_display.cxx,v 1.4.2.2 2000/06/05 21:21:01 mike Exp $"
+// "$Id: Fl_display.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
 //
 // Display function for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -39,5 +39,5 @@ void Fl::display(const char *d) {
 }
 
 //
-// End of "$Id: Fl_display.cxx,v 1.4.2.2 2000/06/05 21:21:01 mike Exp $".
+// End of "$Id: Fl_display.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
 //

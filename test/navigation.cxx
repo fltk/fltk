@@ -1,12 +1,12 @@
 //
-// "$Id: navigation.cxx,v 1.5.2.2 2000/06/05 21:21:23 mike Exp $"
+// "$Id: navigation.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
 //
 // Navigation test program for the Fast Light Tool Kit (FLTK).
 //
 // Silly test of navigation keys. This is not a recommended method of
 // laying out your panels!
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -66,5 +66,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: navigation.cxx,v 1.5.2.2 2000/06/05 21:21:23 mike Exp $".
+// End of "$Id: navigation.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
 //

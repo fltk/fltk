@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.5 2000/11/20 15:30:54 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6 2001/01/22 15:13:40 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -249,5 +249,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.5 2000/11/20 15:30:54 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6 2001/01/22 15:13:40 easysw Exp $".
 //

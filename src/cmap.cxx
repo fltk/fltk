@@ -1,9 +1,9 @@
 //
-// "$Id: cmap.cxx,v 1.4.2.4 2000/10/17 07:23:42 spitzak Exp $"
+// "$Id: cmap.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $"
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -171,5 +171,5 @@ int main() {
 }
 
 //
-// End of "$Id: cmap.cxx,v 1.4.2.4 2000/10/17 07:23:42 spitzak Exp $".
+// End of "$Id: cmap.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $".
 //

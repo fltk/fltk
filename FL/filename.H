@@ -1,9 +1,9 @@
 //
-// "$Id: filename.H,v 1.11.2.3 2000/06/05 21:20:32 mike Exp $"
+// "$Id: filename.H,v 1.11.2.4 2001/01/22 15:13:38 easysw Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -76,5 +76,5 @@ FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11.2.3 2000/06/05 21:20:32 mike Exp $".
+// End of "$Id: filename.H,v 1.11.2.4 2001/01/22 15:13:38 easysw Exp $".
 //

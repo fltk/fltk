@@ -1,9 +1,9 @@
 //
-// "$Id: glut.H,v 1.6.2.8 2000/12/12 08:57:30 spitzak Exp $"
+// "$Id: glut.H,v 1.6.2.9 2001/01/22 15:13:38 easysw Exp $"
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -470,5 +470,5 @@ extern void APIENTRY glutSolidIcosahedron();
 #endif                  /* __glut_h__ */
 
 //
-// End of "$Id: glut.H,v 1.6.2.8 2000/12/12 08:57:30 spitzak Exp $".
+// End of "$Id: glut.H,v 1.6.2.9 2001/01/22 15:13:38 easysw Exp $".
 //

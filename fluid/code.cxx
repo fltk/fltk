@@ -1,9 +1,9 @@
 //
-// "$Id: code.cxx,v 1.9.2.8 2000/06/16 07:08:16 bill Exp $"
+// "$Id: code.cxx,v 1.9.2.9 2001/01/22 15:13:39 easysw Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -405,5 +405,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.9.2.8 2000/06/16 07:08:16 bill Exp $".
+// End of "$Id: code.cxx,v 1.9.2.9 2001/01/22 15:13:39 easysw Exp $".
 //

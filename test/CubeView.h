@@ -1,9 +1,9 @@
 //
-// "$Id: CubeView.h,v 1.4.2.2 2000/06/05 21:21:15 mike Exp $"
+// "$Id: CubeView.h,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
 //
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -119,5 +119,5 @@ private:
 #endif
 
 //
-// End of "$Id: CubeView.h,v 1.4.2.2 2000/06/05 21:21:15 mike Exp $".
+// End of "$Id: CubeView.h,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
 //

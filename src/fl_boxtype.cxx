@@ -1,9 +1,9 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.3 2000/06/05 21:21:05 mike Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.4 2001/01/22 15:13:40 easysw Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -282,5 +282,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.3 2000/06/05 21:21:05 mike Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.4 2001/01/22 15:13:40 easysw Exp $".
 //

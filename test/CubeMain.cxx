@@ -1,9 +1,9 @@
 //
-// "$Id: CubeMain.cxx,v 1.2.2.3 2000/08/20 04:35:17 spitzak Exp $"
+// "$Id: CubeMain.cxx,v 1.2.2.4 2001/01/22 15:13:41 easysw Exp $"
 //
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -43,5 +43,5 @@ main(int /*argc*/, char **/*argv*/) {
 
 
 //
-// End of "$Id: CubeMain.cxx,v 1.2.2.3 2000/08/20 04:35:17 spitzak Exp $".
+// End of "$Id: CubeMain.cxx,v 1.2.2.4 2001/01/22 15:13:41 easysw Exp $".
 //

@@ -1,4 +1,4 @@
-README - Fast Light Tool Kit (FLTK) Version 1.0.10
+README - Fast Light Tool Kit (FLTK) Version 1.0.11
 --------------------------------------------------
 
 WHAT IS FLTK?
@@ -134,7 +134,8 @@ REPORTING BUGS
     To report a bug in FLTK, send an email to
     "fltk-bugs@fltk.org". Please include the FLTK version,
     operating system & version, and compiler that you are using
-    when describing the bug or problem.
+    when describing the bug or problem.  You can also submit a
+    bug on the SourceForge pages.
 
     For general support and questions, please use the FLTK
     mailing list at "fltk@fltk.org".
@@ -165,7 +166,7 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2000 by Bill Spitzak (spitzak@d2.com)
+    FLTK is copyright 1998-2001 by Bill Spitzak (spitzak@d2.com)
     and others, including:
 
         Craig P. Earls (cpearls@mit.edu)

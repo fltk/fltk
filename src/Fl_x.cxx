@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.22 2000/11/20 19:02:20 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.23 2001/01/22 15:13:40 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -903,5 +903,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.22 2000/11/20 19:02:20 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.23 2001/01/22 15:13:40 easysw Exp $".
 //

@@ -1,10 +1,10 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.7 2000/11/20 15:10:00 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.8 2001/01/22 15:13:37 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
 #
-# Copyright 1998-2000 by Bill Spitzak and others.
+# Copyright 1998-2001 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -71,5 +71,5 @@ GLDLIBS		=@LDFLAGS@ @LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.7 2000/11/20 15:10:00 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.8 2001/01/22 15:13:37 easysw Exp $".
 #

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl.H,v 1.8.2.10 2000/12/12 08:57:29 spitzak Exp $"
+// "$Id: Fl.H,v 1.8.2.11 2001/01/22 15:13:37 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -217,5 +217,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.10 2000/12/12 08:57:29 spitzak Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11 2001/01/22 15:13:37 easysw Exp $".
 //

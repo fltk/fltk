@@ -1,9 +1,9 @@
 //
-// "$Id: filename_match.cxx,v 1.5.2.3 2000/06/05 21:21:05 mike Exp $"
+// "$Id: filename_match.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $"
 //
 // Pattern matching routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -109,5 +109,5 @@ int filename_match(const char *s, const char *p) {
 }
 
 //
-// End of "$Id: filename_match.cxx,v 1.5.2.3 2000/06/05 21:21:05 mike Exp $".
+// End of "$Id: filename_match.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $".
 //

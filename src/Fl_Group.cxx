@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.7 2000/10/21 20:01:56 spitzak Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8 2001/01/22 15:13:39 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -513,5 +513,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.7 2000/10/21 20:01:56 spitzak Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8 2001/01/22 15:13:39 easysw Exp $".
 //

@@ -1,3 +1,28 @@
+CHANGES SINCE FLTK 1.0.10
+
+	- Fl_Gl_Window does not set drawbuffer(BACKBUFFER) for
+	  single-buffered windows.
+
+	- Fl_Input::replace(...) correctly updates the display
+	  if the replaced region does not include the mark,
+	  point, or selected region.
+
+	- Added Fl::add_check(...), Fl::remove_check, and
+	  Fl::has_check. These are similar to idle callbacks but
+	  are only called just before it waits for new events.
+	  They can be used to watch for changes in global state
+	  and respond to them.
+
+	- "accu-timer": some changes to repeat_timeout that seem
+	  to make it accurate on Unix and Win32 at speeds up to
+	  500000 timeouts/second (and 700000 on Linux), and
+	  within about .001% as accurate as the system clock.
+
+	- Fix to Fl_Valuator::step() by Guillermo Andrade.
+
+	- Fixed the write-menu bug introduced in 1.0.10
+
+
 CHANGES SINCE FLTK 1.0.9
 
 	- Added a strcasecmp() function to FLUID; AIX doesn't

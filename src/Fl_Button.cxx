@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.5 2000/07/07 08:38:58 spitzak Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6 2001/01/22 15:13:39 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -118,5 +118,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.5 2000/07/07 08:38:58 spitzak Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6 2001/01/22 15:13:39 easysw Exp $".
 //

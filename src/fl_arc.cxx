@@ -1,9 +1,9 @@
 //
-// "$Id: fl_arc.cxx,v 1.4.2.2 2000/06/05 21:21:05 mike Exp $"
+// "$Id: fl_arc.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -73,5 +73,5 @@ void fl_circle(double x,double y,double r) {
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.4.2.2 2000/06/05 21:21:05 mike Exp $".
+// End of "$Id: fl_arc.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
 //

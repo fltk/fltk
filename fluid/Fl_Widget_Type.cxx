@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.15 2000/06/05 21:20:39 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16 2001/01/22 15:13:38 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1766,5 +1766,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.15 2000/06/05 21:20:39 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16 2001/01/22 15:13:38 easysw Exp $".
 //

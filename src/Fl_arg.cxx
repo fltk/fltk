@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.6 2000/11/20 19:02:20 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.7 2001/01/22 15:13:40 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -352,5 +352,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.6 2000/11/20 19:02:20 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.7 2001/01/22 15:13:40 easysw Exp $".
 //

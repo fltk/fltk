@@ -1,9 +1,9 @@
 /*
- * "$Id: config.cygwin,v 1.1.2.2 2000/11/20 15:44:18 easysw Exp $"
+ * "$Id: config.cygwin,v 1.1.2.3 2001/01/22 15:13:39 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2000 by Bill Spitzak and others.
+ * Copyright 1998-2001 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -159,5 +159,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.cygwin,v 1.1.2.2 2000/11/20 15:44:18 easysw Exp $".
+ * End of "$Id: config.cygwin,v 1.1.2.3 2001/01/22 15:13:39 easysw Exp $".
  */

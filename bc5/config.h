@@ -1,9 +1,9 @@
 /*
- * "$Id: config.h,v 1.1.2.2 2000/04/25 22:16:01 mike Exp $"
+ * "$Id: config.h,v 1.1.2.3 2001/01/22 15:13:38 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2000 by Bill Spitzak and others.
+ * Copyright 1998-2001 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -150,5 +150,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.h,v 1.1.2.2 2000/04/25 22:16:01 mike Exp $".
+ * End of "$Id: config.h,v 1.1.2.3 2001/01/22 15:13:38 easysw Exp $".
  */

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.5 2000/07/07 08:38:58 spitzak Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.6 2001/01/22 15:13:40 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -573,5 +573,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.5 2000/07/07 08:38:58 spitzak Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.6 2001/01/22 15:13:40 easysw Exp $".
 //

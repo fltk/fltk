@@ -1,9 +1,9 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.2 2000/06/20 18:47:33 carl Exp $"
+# "$Id: makeinclude.mingw,v 1.1.2.3 2001/01/22 15:13:39 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2000 by Bill Spitzak and others.
+# Copyright 1998-2001 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -91,5 +91,5 @@ GLDLIBS		= -lglu32 -lopengl32 -lgdi32 -lwsock32
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.2 2000/06/20 18:47:33 carl Exp $".
+# End of "$Id: makeinclude.mingw,v 1.1.2.3 2001/01/22 15:13:39 easysw Exp $".
 #

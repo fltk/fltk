@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile.cygwin,v 1.1.2.1 2000/06/20 18:47:31 carl Exp $"
+# "$Id: Makefile.cygwin,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2000 by Bill Spitzak and others.
+# Copyright 1998-2001 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -92,5 +92,5 @@ makeinclude: makefiles/makeinclude.cygwin
 	cp $< $@
 
 #
-# End of "$Id: Makefile.cygwin,v 1.1.2.1 2000/06/20 18:47:31 carl Exp $".
+# End of "$Id: Makefile.cygwin,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $".
 #

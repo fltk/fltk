@@ -1,9 +1,9 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.14.2.2 2000/06/05 21:21:06 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.14.2.3 2001/01/22 15:13:40 easysw Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -206,5 +206,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.14.2.2 2000/06/05 21:21:06 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.14.2.3 2001/01/22 15:13:40 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.1 2000/08/19 19:03:46 spitzak Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2000 by Bill Spitzak and others.
+# Copyright 1998-2001 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -71,7 +71,7 @@ GLDLIBS     = $(LDFLAGS) -lXext -lX11 -lExtensions
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.1 2000/08/19 19:03:46 spitzak Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $".
 #
 
 export

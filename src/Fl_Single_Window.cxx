@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Single_Window.cxx,v 1.4.2.2 2000/06/05 21:20:57 mike Exp $"
+// "$Id: Fl_Single_Window.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
 //
 // Single-buffered window for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -35,5 +35,5 @@ void Fl_Single_Window::show() {Fl_Window::show();}
 void Fl_Single_Window::flush() {Fl_Window::flush();}
 
 //
-// End of "$Id: Fl_Single_Window.cxx,v 1.4.2.2 2000/06/05 21:20:57 mike Exp $".
+// End of "$Id: Fl_Single_Window.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.7 2000/06/05 21:21:01 mike Exp $"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.8 2001/01/22 15:13:40 easysw Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -135,5 +135,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.7 2000/06/05 21:21:01 mike Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.8 2001/01/22 15:13:40 easysw Exp $".
 //

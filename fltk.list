@@ -1,11 +1,11 @@
 #
-# "$Id: fltk.list,v 1.1.2.4 2000/12/06 13:59:46 easysw Exp $"
+# "$Id: fltk.list,v 1.1.2.5 2001/01/22 15:13:37 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
 # (EPM can be found at http://www.easysw.com/epm)
 #
-# Copyright 1998-2000 by Bill Spitzak and others.
+# Copyright 1998-2001 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -26,7 +26,7 @@
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2000 by Bill Spitzak and others.
+%copyright 1998-2001 by Bill Spitzak and others.
 %vendor LGPL
 %license COPYING
 %readme README
@@ -381,5 +381,5 @@ f 0444 root sys /usr/share/doc/fltk/value_slider.gif documentation/value_slider.
 f 0444 root sys /usr/share/doc/fltk/widgets.html documentation/widgets.html
 
 #
-# End of "$Id: fltk.list,v 1.1.2.4 2000/12/06 13:59:46 easysw Exp $".
+# End of "$Id: fltk.list,v 1.1.2.5 2001/01/22 15:13:37 easysw Exp $".
 #

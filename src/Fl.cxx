@@ -1,9 +1,9 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.38 2001/01/21 06:00:58 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.39 2001/01/22 15:13:39 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -781,5 +781,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.38 2001/01/21 06:00:58 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.39 2001/01/22 15:13:39 easysw Exp $".
 //

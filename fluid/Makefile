@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.10.2.5 2000/06/05 21:20:41 mike Exp $"
+# "$Id: Makefile,v 1.10.2.6 2001/01/22 15:13:38 easysw Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2000 by Bill Spitzak and others.
+# Copyright 1998-2001 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -83,5 +83,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.5 2000/06/05 21:20:41 mike Exp $".
+# End of "$Id: Makefile,v 1.10.2.6 2001/01/22 15:13:38 easysw Exp $".
 #

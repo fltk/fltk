@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Browser_.H,v 1.6.2.3 2000/06/10 19:29:59 carl Exp $"
+// "$Id: Fl_Browser_.H,v 1.6.2.4 2001/01/22 15:13:37 easysw Exp $"
 //
 // Common browser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -146,5 +146,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser_.H,v 1.6.2.3 2000/06/10 19:29:59 carl Exp $".
+// End of "$Id: Fl_Browser_.H,v 1.6.2.4 2001/01/22 15:13:37 easysw Exp $".
 //

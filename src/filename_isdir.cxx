@@ -1,9 +1,9 @@
 //
-// "$Id: filename_isdir.cxx,v 1.4.2.4 2000/06/08 08:12:38 bill Exp $"
+// "$Id: filename_isdir.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $"
 //
 // Directory detection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -48,5 +48,5 @@ int filename_isdir(const char* n) {
 }
 
 //
-// End of "$Id: filename_isdir.cxx,v 1.4.2.4 2000/06/08 08:12:38 bill Exp $".
+// End of "$Id: filename_isdir.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $".
 //

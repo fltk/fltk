@@ -1,9 +1,9 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.6.2.4 2000/08/20 04:35:16 spitzak Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.6.2.5 2001/01/22 15:13:41 easysw Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -329,5 +329,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.6.2.4 2000/08/20 04:35:16 spitzak Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.6.2.5 2001/01/22 15:13:41 easysw Exp $".
 //

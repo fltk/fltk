@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.4 2000/06/05 21:20:51 mike Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.5 2001/01/22 15:13:39 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2000 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -213,5 +213,5 @@ void fl_no_gl_context() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.4 2000/06/05 21:20:51 mike Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.5 2001/01/22 15:13:39 easysw Exp $".
 //
