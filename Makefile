@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.3 2000/06/05 21:20:16 mike Exp $"
+# "$Id: Makefile,v 1.12.2.4 2000/06/30 04:23:12 spitzak Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -33,7 +33,7 @@ all: makeinclude
 		if test ! -f $$dir/makedepend; then\
 			touch $$dir/makedepend;\
 		fi;\
-		(cd $$dir; $(MAKE) -$(MAKEFLAGS)) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS)) || break;\
 	done
 
 install: makeinclude
@@ -42,9 +42,9 @@ install: makeinclude
 		if test ! -f $$dir/makedepend; then\
 			touch $$dir/makedepend;\
 		fi;\
-		(cd $$dir; $(MAKE) -$(MAKEFLAGS) install) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
 	done
-	(cd documentation; $(MAKE) -$(MAKEFLAGS) install)
+	(cd documentation; $(MAKE) $(MFLAGS) install)
 
 depend: makeinclude
 	@for dir in $(DIRS); do\
@@ -52,14 +52,14 @@ depend: makeinclude
 		if test ! -f $$dir/makedepend; then\
 			touch $$dir/makedepend;\
 		fi;\
-		(cd $$dir; $(MAKE) -$(MAKEFLAGS) depend) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) depend) || break;\
 	done
 
 clean:
 	-@ rm -f core config.cache *.o *.bck
 	@for dir in $(DIRS); do\
 		echo "=== cleaning $$dir ===";\
-		(cd $$dir; $(MAKE) -$(MAKEFLAGS) clean) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) clean) || break;\
 	done
 
 distclean: clean
@@ -69,5 +69,5 @@ makeinclude: configure configh.in makeinclude.in
 	./configure
 
 #
-# End of "$Id: Makefile,v 1.12.2.3 2000/06/05 21:20:16 mike Exp $".
+# End of "$Id: Makefile,v 1.12.2.4 2000/06/30 04:23:12 spitzak Exp $".
 #

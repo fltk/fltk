@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.13 2000/06/05 21:20:48 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.14 2000/06/30 04:23:13 spitzak Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -397,14 +397,20 @@ void Fl_Browser_::new_list() {
 // Tell it that this item is going away, and that this must remove
 // all pointers to it:
 void Fl_Browser_::deleting(void* l) {
-  if (displayed(l)) redraw_lines();
-  if (l == selection_) selection_ = 0;
-  if (l == top_) {
-    real_position_ -= offset_;
-    offset_ = 0;
-    top_ = item_next(l);
-    if (!top_) top_ = item_prev(l);
+  if (displayed(l)) {
+    redraw_lines();
+    if (l == top_) {
+      real_position_ -= offset_;
+      offset_ = 0;
+      top_ = item_next(l);
+      if (!top_) top_ = item_prev(l);
+    }
+  } else {
+    // we don't know where this item is, recalculate top...
+    real_position_ = 0;
+    top_ = 0;
   }
+  if (l == selection_) selection_ = 0;
   if (l == max_width_item) {max_width_item = 0; max_width = 0;}
 }
 
@@ -700,5 +706,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.13 2000/06/05 21:20:48 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.14 2000/06/30 04:23:13 spitzak Exp $".
 //
