@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fixed some case problems in includes for the MacOS X
+	  code.
 	- Fl_Widget::handle() returned 1 for FL_ENTER and
 	  FL_LEAVE events, which caused some compatibility
 	  problems with 1.0 code.

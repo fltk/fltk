@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.19 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.20 2002/04/13 20:28:51 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -839,7 +839,7 @@ static int FSSpec2UnixPath( FSSpec *fs, char *dst )
 }
  
 Fl_Window *fl_dnd_target_window = 0;
-#include <Fl/fl_draw.h>
+#include <FL/fl_draw.H>
 /**
  * Drag'n'drop tracking handler
  */
@@ -1359,6 +1359,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.19 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.20 2002/04/13 20:28:51 easysw Exp $".
 //
 

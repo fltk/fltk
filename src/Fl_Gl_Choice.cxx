@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.9 2002/03/25 16:41:01 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.10 2002/04/13 20:28:51 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 #include "Fl_Gl_Choice.H"
 
 #ifdef __APPLE__
-# include <Fl/Fl_Window.H>
+#  include <FL/Fl_Window.H>
 #endif
 
 static Fl_Gl_Choice *first;
@@ -84,11 +84,11 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (mode & FL_STENCIL) {
       list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
     }
-#ifdef AGL_STEREO  /* is there such a thing as AGL_STEREO? */
+#  ifdef AGL_STEREO  /* is there such a thing as AGL_STEREO? */
     if (mode & FL_STEREO) {
       list[n++] = AGL_STEREO;
     }
-#endif
+#  endif
     list[n] = AGL_NONE;
     blist = list;
   }
@@ -137,12 +137,12 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (mode & FL_STEREO) {
       list[n++] = GLX_STEREO;
     }
-#if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
+#  if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
     if (mode & FL_MULTISAMPLE) {
       list[n++] = GLX_SAMPLES_SGIS;
       list[n++] = 4; // value Glut uses
     }
-#endif
+#  endif
     list[n] = 0;
     blist = list;
   }
@@ -150,9 +150,9 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
   fl_open_display();
   XVisualInfo *vis = glXChooseVisual(fl_display, fl_screen, (int *)blist);
   if (!vis) {
-# if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
+#  if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
     if (mode&FL_MULTISAMPLE) return find(mode&~FL_MULTISAMPLE,0);
-# endif
+#  endif
     return 0;
   }
 
@@ -227,9 +227,9 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   if (!hdc) {
     hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
     SetPixelFormat(hdc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
-#if USE_COLORMAP
+#  if USE_COLORMAP
     if (fl_palette) SelectPalette(hdc, fl_palette, FALSE);
-#endif
+#  endif
   }
   GLContext context =
     layer ? wglCreateLayerContext(hdc, layer) : wglCreateContext(hdc);
@@ -318,5 +318,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.9 2002/03/25 16:41:01 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.10 2002/04/13 20:28:51 easysw Exp $".
 //
