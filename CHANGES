@@ -1,11 +1,13 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fixed handling of nested double-buffered windows (STR
+	  #1)
 	- Showing a subwindow inside a hidden window would crash
 	  the application (STR #23)
 	- OSX users couldn't enter some special chars when using
 	  some foreign key layouts (STR #32)
 	- Hiding subwindows on OSX would hide the parent window
-          (STR #22)
+	  (STR #22)
 	- Added thin plastic box types.
 	- Fl_Pack ignored the box() setting and cleared any
 	  unused areas to the widget color; it now only does so

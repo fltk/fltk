@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.7 2003/01/30 21:41:40 easysw Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.8 2003/05/20 19:09:32 easysw Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -187,15 +187,6 @@ extern void fl_restore_clip();
 void Fl_Double_Window::flush() {flush(0);}
 
 void Fl_Double_Window::flush(int eraseoverlay) {
-#ifdef WIN32
-  // Windows seems to have trouble doing the double-buffer thing in sub-
-  // windows, so only create the backbuffer stuff for top-level windows.
-  if (parent()) {
-    Fl_Window::flush();
-    return;
-  }
-#endif // WIN32
-
   make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
   if (!myi->other_xid) {
@@ -308,5 +299,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.7 2003/01/30 21:41:40 easysw Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.8 2003/05/20 19:09:32 easysw Exp $".
 //
