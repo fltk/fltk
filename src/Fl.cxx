@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.23 1999/03/04 18:24:44 mike Exp $"
+// "$Id: Fl.cxx,v 1.24 1999/03/05 05:52:42 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -223,10 +223,9 @@ double Fl::wait(double time) {
 int Fl::check() {
   callidle();
   if (numtimeouts) {fl_elapsed(); call_timeouts();}
-  flush();
-  if (!Fl_X::first) return 0; // no windows
   fl_wait(1, 0.0);
-  return 1;
+  flush();
+  return !Fl_X::first; // no windows
 }
 
 int Fl::ready() {
@@ -683,5 +682,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.23 1999/03/04 18:24:44 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.24 1999/03/05 05:52:42 bill Exp $".
 //
