@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.12 1999/06/07 07:03:32 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.13 1999/07/22 07:27:11 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -46,6 +46,10 @@
 #ifndef WM_SYNCPAINT
 #  define WM_SYNCPAINT 0x0088
 #endif /* !WM_SYNCPAINT */
+
+#ifndef WM_MOUSELEAVE
+#  define WM_MOUSE_LEAVE 0x02a3
+#endif
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -433,6 +437,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RBUTTONDBLCLK:mouse_event(window, 1, 3, wParam, lParam); return 0;
   case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
   case WM_MOUSEMOVE:    mouse_event(window, 3, 0, wParam, lParam); return 0;
+
+  case WM_MOUSELEAVE:
+    Fl::handle(FL_LEAVE, window);
+    break;
 
   case WM_SETFOCUS:
     Fl::handle(FL_FOCUS, window);
@@ -941,5 +949,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.12 1999/06/07 07:03:32 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.13 1999/07/22 07:27:11 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8 1999/01/26 21:37:14 mike Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.1 1999/07/22 07:27:11 bill Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -255,18 +255,22 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
 }
 
 void Fl_Group::clear() {
-  Fl_Widget*const* a = array();
-  for (int i=children(); i--;) {
-    Fl_Widget* o = *a++;
-    // test the parent to see if child already destructed:
-    if (o->parent() == this) delete o;
-  }
-  if (children() > 1) free((void*)array_);
+  Fl_Widget*const* old_array = array();
+  int old_children = children();
+  // clear everything now, in case fl_fix_focus recursively calls us:
   children_ = 0;
   array_ = 0;
   savedfocus_ = 0;
   resizable_ = this;
   init_sizes();
+  // okay, now it is safe to destroy the children:
+  Fl_Widget*const* a = old_array;
+  for (int i=old_children; i--;) {
+    Fl_Widget* o = *a++;
+    // test the parent to see if child already destructed:
+    if (o->parent() == this) delete o;
+  }
+  if (old_children > 1) free((void*)old_array);
 }
 
 Fl_Group::~Fl_Group() {clear();}
@@ -485,5 +489,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8 1999/01/26 21:37:14 mike Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.1 1999/07/22 07:27:11 bill Exp $".
 //
