@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.111 2004/07/05 13:20:28 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.112 2004/07/06 00:18:48 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -362,54 +362,57 @@ IMAGELIBS=""
 
 AC_SUBST(IMAGELIBS)
 
-AC_ARG_ENABLE(jpeg, [  --enable-jpeg           enable JPEG image support])
-AC_ARG_WITH(jpeg-libs, [  --with-jpeg-libs        set directory for JPEG library],
-    LDFLAGS="-L$withval $LDFLAGS",)
-AC_ARG_WITH(jpeg-includes, [  --with-jpeg-includes    set directory for JPEG includes],
-    CFLAGS="-I$withval $CFLAGS"
-    CXXFLAGS="-I$withval $CXXFLAGS"
-    CPPFLAGS="-I$withval $CPPFLAGS",)
+AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library, default=auto],
+    [if eval "test x$enable_localjpeg = xyes"; then
+	ac_cv_lib_jpeg_jpeg_CreateCompress=no
+    fi])
 
-if test "x$ac_enable_jpeg" != xno; then
-    AC_CHECK_HEADER(jpeglib.h,
-	AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
-	    AC_DEFINE(HAVE_LIBJPEG)
-	    IMAGELIBS="$IMAGELIBS -ljpeg"))
-fi
+AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
+    JPEGINC=""
+    JPEG=""
+    IMAGELIBS="-ljpeg $IMAGELIBS",
+    JPEGINC="-I../jpeg"
+    JPEG="jpeg"
+    IMAGELIBS="../jpeg/libjpeg.a $IMAGELIBS")
 
-AC_ARG_ENABLE(png, [  --enable-png            enable PNG image support])
-AC_ARG_WITH(png-libs, [  --with-png-libs         set directory for PNG library],
-    LDFLAGS="-L$withval $LDFLAGS",)
-AC_ARG_WITH(png-includes, [  --with-png-includes     set directory for PNG includes],
-    CFLAGS="-I$withval $CFLAGS"
-    CXXFLAGS="-I$withval $CXXFLAGS"
-    CPPFLAGS="-I$withval $CPPFLAGS",)
+AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library, default=auto],
+    [if eval "test x$enable_localzlib = xyes"; then
+	ac_cv_lib_z_gzgets=no
+    fi])
 
-AC_ARG_WITH(zlib-libs, [  --with-zlib-libs        set directory for ZLIB library],
-    LDFLAGS="-L$withval $LDFLAGS",)
-AC_ARG_WITH(zlib-includes, [  --with-zlib-includes    set directory for ZLIB includes],
-    CFLAGS="-I$withval $CFLAGS"
-    CXXFLAGS="-I$withval $CXXFLAGS"
-    CPPFLAGS="-I$withval $CPPFLAGS",)
+AC_CHECK_LIB(z,gzgets,
+    ZLIBINC=""
+    ZLIB=""
+    LIBS="-lz $LIBS"
+    IMAGELIBS="-lz $IMAGELIBS",
+    ZLIBINC="-I../zlib"
+    ZLIB="zlib"
+    LIBS="../zlib/libz.a $LIBS"
+    IMAGELIBS="../zlib/libz.a $IMAGELIBS")
 
-if test "x$ac_enable_png" != xno; then
-    AC_CHECK_HEADER(zlib.h,
-	AC_CHECK_LIB(z, gzopen,
-	    AC_DEFINE(HAVE_LIBZ)
-	    IMAGELIBS="$IMAGELIBS -lz"
-	    LIBS="$LIBS -lz"))
+AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto],
+    [if eval "test x$enable_localpng = xyes"; then
+	ac_cv_lib_png_png_set_tRNS_to_alpha=no
+    fi])
 
-    AC_CHECK_HEADER(png.h, AC_DEFINE(HAVE_PNG_H))
-    AC_CHECK_HEADER(libpng/png.h, AC_DEFINE(HAVE_LIBPNG_PNG_H))
+AC_CHECK_LIB(png,png_set_tRNS_to_alpha,
+    PNGINC=""
+    PNG=""
+    IMAGELIBS="-lpng $IMAGELIBS",
+    PNGINC="-I../png"
+    PNG="png"
+    IMAGELIBS="../png/libpng.a $IMAGELIBS")
 
-    if test x$ac_cv_header_png_h = xyes -o x$ac_cv_header_libpng_png_h = xyes; then
-	AC_CHECK_LIB(png, png_read_rows,
-	    [AC_DEFINE(HAVE_LIBPNG)
-	    IMAGELIBS="-lpng $IMAGELIBS"
-	    LIBS="-lpng $LIBS"
-	    AC_CHECK_FUNCS(png_get_valid png_set_tRNS_to_alpha)])
-    fi
-fi
+AC_SUBST(JPEG)
+AC_SUBST(JPEGINC)
+AC_SUBST(PNG)
+AC_SUBST(PNGINC)
+AC_SUBST(ZLIB)
+AC_SUBST(ZLIBINC)
+
+AC_DEFINE(HAVE_LIBJPEG)
+AC_DEFINE(HAVE_LIBPNG)
+AC_DEFINE(HAVE_LIBZ)
 
 dnl Restore original LIBS settings...
 LIBS="$SAVELIBS"
@@ -891,5 +894,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.111 2004/07/05 13:20:28 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.112 2004/07/06 00:18:48 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.1 2004/07/05 14:12:37 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:49 easysw Exp $"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -52,6 +52,26 @@ clean:
 
 
 #
+# Install everything...
+#
+
+install: libz.a
+	echo "Installing libz.a in $(libdir)..."
+	-$(MKDIR) $(libdir)
+	$(RM) $(libdir)/libz.a
+	-$(CP) libz.a $(libdir)
+
+
+#
+# Uninstall everything...
+#
+
+uninstall:
+	echo "Uninstalling libz.a in $(libdir)..."
+	$(RM) $(libdir)/libz.a
+
+
+#
 # libz.a
 #
 
@@ -74,5 +94,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.1 2004/07/05 14:12:37 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:49 easysw Exp $".
 #
