@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.32 2002/03/28 13:20:11 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.33 2002/04/29 14:32:13 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -173,7 +173,7 @@ uninstall:
 
 
 # FLUID file rules
-.fl.cxx .fl.h:
+.fl.cxx .fl.h:	../fluid/fluid$(EXEEXT)
 	echo Generating $<...
 	../fluid/fluid$(EXEEXT) -c $<
 
@@ -225,7 +225,7 @@ editor$(EXEEXT): editor.o
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fast_slow$(EXEEXT): fast_slow.o
-fast_slow.cxx:	../fluid/fluid$(EXEEXT)
+fast_slow.cxx:	fast_slow.fl
 
 file_chooser$(EXEEXT): file_chooser.o
 	echo Linking $@...
@@ -251,7 +251,7 @@ iconize$(EXEEXT): iconize.o
 image$(EXEEXT): image.o
 
 inactive$(EXEEXT): inactive.o
-inactive.cxx:	../fluid/fluid$(EXEEXT)
+inactive.cxx:	inactive.fl
 
 input$(EXEEXT): input.o
 
@@ -259,7 +259,8 @@ keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
-keyboard_ui.o:	keyboard_ui.h ../fluid/fluid$(EXEEXT)
+keyboard_ui.o:	keyboard_ui.h
+keyboard_ui.cxx:	keyboard_ui.fl
 
 label$(EXEEXT): label.o
 	echo Linking $@...
@@ -274,7 +275,8 @@ mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
-mandelbrot_ui.o:	mandelbrot_ui.h ../fluid/fluid$(EXEEXT)
+mandelbrot_ui.o:	mandelbrot_ui.h
+mandelbrot_ui.cxx:	mandelbrot_ui.fl
 
 menubar$(EXEEXT): menubar.o
 
@@ -301,10 +303,10 @@ pixmap_browser$(EXEEXT): pixmap_browser.o
 	$(POSTBUILD) $@ ../FL/mac.r
 
 radio$(EXEEXT): radio.o
-radio.cxx:	../fluid/fluid$(EXEEXT)
+radio.cxx:	radio.fl
 
 resize$(EXEEXT): resize.o
-resize.cxx:	../fluid/fluid$(EXEEXT)
+resize.cxx:	resize.fl
 
 resizebox$(EXEEXT): resizebox.o
 
@@ -315,7 +317,7 @@ subwindow$(EXEEXT): subwindow.o
 symbols$(EXEEXT): symbols.o
 
 tabs$(EXEEXT): tabs.o
-tabs.cxx:	../fluid/fluid$(EXEEXT)
+tabs.cxx:	tabs.fl
 
 threads$(EXEEXT): threads.o
 
@@ -324,7 +326,7 @@ tile$(EXEEXT): tile.o
 tiled_image$(EXEEXT): tiled_image.o
 
 valuators$(EXEEXT): valuators.o
-valuators.cxx:	../fluid/fluid$(EXEEXT)
+valuators.cxx:	valuators.fl
 
 # All OpenGL demos depend on the FLTK and FLTK_GL libraries...
 $(GLALL): ../lib/$(LIBNAME) ../lib/$(GLLIBNAME)
@@ -337,7 +339,8 @@ CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	$(POSTBUILD) $@ ../FL/mac.r
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
-CubeViewUI.o:	CubeViewUI.h ../fluid/fluid$(EXEEXT)
+CubeViewUI.o:	CubeViewUI.h
+CubeViewUI.cxx:	CubeViewUI.fl
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...
@@ -363,7 +366,8 @@ shiny$(EXEEXT): shiny_panel.o shiny.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) shiny.o shiny_panel.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
-shiny_panel.o:	shiny_panel.h ../fluid/fluid$(EXEEXT)
+shiny_panel.o:	shiny_panel.h
+shiny_panel.cxx:	shiny_panel.fl
 
 shape$(EXEEXT): shape.o
 	echo Linking $@...
@@ -372,5 +376,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.32 2002/03/28 13:20:11 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.33 2002/04/29 14:32:13 easysw Exp $".
 #
