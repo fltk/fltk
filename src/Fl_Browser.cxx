@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.8 2000/01/11 16:03:55 mike Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.9 2000/03/17 09:38:17 bill Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -369,9 +369,9 @@ void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
     }
   BREAK:
     fl_font(font, size);
-    if (!active_r()) lcol = inactive(lcol);
     if (((FL_BLINE*)v)->flags & SELECTED)
       lcol = contrast(lcol, selection_color());
+    if (!active_r()) lcol = inactive(lcol);
     fl_color(lcol);
     fl_draw(str, x+3, y, w1-6, h, e ? Fl_Align(align|FL_ALIGN_CLIP) : align);
     if (!e) break; // no more fields...
@@ -493,5 +493,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.8 2000/01/11 16:03:55 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.9 2000/03/17 09:38:17 bill Exp $".
 //
