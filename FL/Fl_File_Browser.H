@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.H,v 1.1.2.2 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_File_Browser.H,v 1.1.2.3 2002/05/02 14:31:10 easysw Exp $"
 //
 // FileBrowser definitions.
 //
@@ -32,6 +32,7 @@
 
 #  include "Fl_Browser.H"
 #  include "Fl_File_Icon.H"
+#  include "filename.H"
 
 
 //
@@ -62,7 +63,7 @@ public:
   FL_EXPORT void	filter(const char *pattern);
   const char		*filter() const { return (pattern_); };
 
-  FL_EXPORT int		load(const char *directory);
+  FL_EXPORT int		load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
 
   uchar			textsize() const { return (Fl_Browser::textsize()); };
   void			textsize(uchar s) { Fl_Browser::textsize(s); iconsize_ = 3 * s / 2; };
@@ -74,5 +75,5 @@ public:
 #endif // !_Fl_File_Browser_H_
 
 //
-// End of "$Id: Fl_File_Browser.H,v 1.1.2.2 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_File_Browser.H,v 1.1.2.3 2002/05/02 14:31:10 easysw Exp $".
 //

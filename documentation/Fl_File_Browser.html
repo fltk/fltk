@@ -69,10 +69,13 @@ int filetype() const</A></H4>
 files and directories are shown. Otherwise only directories are
 shown.
 
-<H4><A NAME="Fl_File_Browser.load">int load(const char *directory)</A></H4>
+<H4><A NAME="Fl_File_Browser.load">int load(const char *directory, Fl_File_Sort_F *sort = fl_numeric_sort)</A></H4>
 
 <P>Loads the specified directory into the browser. If icons have been
 loaded then the correct icon is associated with each file in the list.
+
+<P>The <tt>sort</tt> argument specifies a sort function to be used with
+<A HREF="functions.html#fl_filename_list"><tt>fl_filename_list()</tt></A>.
 
 </BODY>
 </HTML>

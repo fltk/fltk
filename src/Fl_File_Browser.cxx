@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.13 2002/05/01 20:05:19 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.14 2002/05/02 14:31:10 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -24,13 +24,13 @@
 //
 // Contents:
 //
-//   Fl_File_Browser::full_height()    - Return the height of the list.
-//   Fl_File_Browser::item_height()    - Return the height of a list item.
-//   Fl_File_Browser::item_width()     - Return the width of a list item.
-//   Fl_File_Browser::item_draw()      - Draw a list item.
+//   Fl_File_Browser::full_height()     - Return the height of the list.
+//   Fl_File_Browser::item_height()     - Return the height of a list item.
+//   Fl_File_Browser::item_width()      - Return the width of a list item.
+//   Fl_File_Browser::item_draw()       - Draw a list item.
 //   Fl_File_Browser::Fl_File_Browser() - Create a Fl_File_Browser widget.
-//   Fl_File_Browser::load()           - Load a directory into the browser.
-//   Fl_File_Browser::filter()         - Set the filename filter.
+//   Fl_File_Browser::load()            - Load a directory into the browser.
+//   Fl_File_Browser::filter()          - Set the filename filter.
 //
 
 //
@@ -394,14 +394,15 @@ Fl_File_Browser::Fl_File_Browser(int        x,	// I - Upper-lefthand X coordinat
 // 'Fl_File_Browser::load()' - Load a directory into the browser.
 //
 
-int				// O - Number of files loaded
-Fl_File_Browser::load(const char *directory)// I - Directory to load
+int						// O - Number of files loaded
+Fl_File_Browser::load(const char     *directory,// I - Directory to load
+                      Fl_File_Sort_F *sort)	// I - Sort function to use
 {
-  int		i;		// Looping var
-  int		num_files;	// Number of files in directory
-  int		num_dirs;	// Number of directories in list
-  char		filename[4096];	// Current file
-  Fl_File_Icon	*icon;		// Icon to use
+  int		i;				// Looping var
+  int		num_files;			// Number of files in directory
+  int		num_dirs;			// Number of directories in list
+  char		filename[4096];			// Current file
+  Fl_File_Icon	*icon;				// Icon to use
 
 
 //  printf("Fl_File_Browser::load(\"%s\")\n", directory);
@@ -559,9 +560,9 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
     else if (filename[i] != '/' && filename[i] != '\\')
       strcat(filename, "/");
 
-    num_files = fl_filename_list(filename, &files);
+    num_files = fl_filename_list(filename, &files, sort);
 #else
-    num_files = fl_filename_list(directory_, &files);
+    num_files = fl_filename_list(directory_, &files, sort);
 #endif /* WIN32 || __EMX__ */
 
     if (num_files <= 0)
@@ -626,5 +627,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.13 2002/05/01 20:05:19 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.14 2002/05/02 14:31:10 easysw Exp $".
 //

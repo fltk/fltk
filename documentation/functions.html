@@ -579,7 +579,7 @@ int fl_filename_isdir(const char *f);
 <H3>Prototype</H3>
 
 <UL><PRE>
-int fl_filename_list(const char *d, dirent ***list);
+int fl_filename_list(const char *d, dirent ***list, Fl_File_Sort_F *sort = fl_numericsort);
 </PRE></UL>
 
 <H3>Description</H3>
@@ -595,9 +595,37 @@ pointer to the array is returned in <tt>*list</tt>. The number
 of entries is given as a return value. If there is an error
 reading the directory a number less than zero is returned, and
 <tt>errno</tt> has the reason; <tt>errno</tt> does not work
-under WIN32. The files are sorted in &quot;alphanumeric&quot;
-order, where an attempt is made to put unpadded numbers in
-consecutive order.
+under WIN32.
+
+<P>The <tt>sort</tt> argument specifies a sort function to be used
+when on the array of filenames. The following standard sort functions
+are provided with FLTK:
+
+<UL>
+
+	<LI><TT>fl_alphasort</tt> - The files are sorted in
+	ascending alphabetical order; upper- and lowercase
+	letters are compared according to their ASCII ordering -
+	uppercase before lowercase.
+
+	<LI><TT>fl_casealphasort</tt> - The files are sorted in
+	ascending alphabetical order; upper- and lowercase
+	letters are compared equally - case is not significant.
+
+	<LI><TT>fl_casenumericsort</TT> - The files are sorted
+	in ascending &quot;alphanumeric&quot; order, where an
+	attempt is made to put unpadded numbers in consecutive
+	order; upper- and lowercase letters are compared equally
+	- case is not significant.
+
+	<LI><TT>fl_numericsort</TT> - The files are sorted in
+	ascending &quot;alphanumeric&quot; order, where an
+	attempt is made to put unpadded numbers in consecutive
+	order; upper- and lowercase letters are compared
+	according to their ASCII ordering - uppercase before
+	lowercase.
+
+</UL>
 
 <P>You can free the returned list of files with the following
 code:
