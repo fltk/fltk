@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.47 2002/01/07 20:40:02 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.48 2002/01/11 21:42:04 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -44,19 +44,31 @@ AC_SUBST(FL_PATCH_VERSION)
 AC_SUBST(FL_RELEASE_VERSION)
 AC_SUBST(FL_API_VERSION)
 
-dnl How do we make libraries?
-AC_PROG_RANLIB
-AC_PATH_PROG(AR, ar)
-
-if test "$RANLIB" != ":"; then
-    LIBCOMMAND="$AR cr"
-else
-    LIBCOMMAND="$AR crs"
+dnl Get the operating system and version number...
+uname=`uname`
+uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
+if test $uname = IRIX64; then
+    uname="IRIX"
 fi
 
-DSOCOMMAND="echo"
-DSONAME=""
+dnl Don't automatically add "-g" to compiler options...
+CFLAGS="${CFLAGS:=}"
+CPPFLAGS="${CPPFLAGS:=}"
+CXXFLAGS="${CXXFLAGS:=}"
 
+dnl Handle Cygwin option *first*, before all other tests.
+case $uname in
+    CYGWIN*)
+	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=no]])
+	if test x$enable_cygwin != xyes; then
+	    CFLAGS="$CFLAGS -mno-cygwin"
+	    CPPFLAGS="$CPPFLAGS -mno-cygwin"
+	    CXXFLAGS="$CXXFLAGS -mno-cygwin"
+	fi
+	;;
+esac
+
+dnl Define the libraries and link options we'll need.
 LINKFLTK="-lfltk"
 LINKFLTKGL="-lfltk_gl"
 GLDEMOS="gldemos"
@@ -64,103 +76,98 @@ GLDEMOS="gldemos"
 LIBNAME="../lib/libfltk.a"
 GLLIBNAME="../lib/libfltk_gl.a"
 
-dnl Get the operating system and version number...
+AC_SUBST(GLDEMOS)
+AC_SUBST(GLLIBNAME)
+AC_SUBST(LIBNAME)
+AC_SUBST(LINKFLTK)
+AC_SUBST(LINKFLTKGL)
 
-uname=`uname`
-uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
-if test $uname = IRIX64; then
-    uname="IRIX"
+dnl Handle compile-time options...
+AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]])
+if test x$enable_debug = xyes; then
+    DEBUGFLAG="-g "
+else
+    DEBUGFLAG=""
 fi
 
-dnl Clear debugging flags and only enable debugging if the user asks for
-dnl it.
-
-DEBUGFLAG=""
-PICFLAG=0
-CFLAGS="${CFLAGS:=}"
-CXXFLAGS="${CXXFLAGS:=}"
-
-case $uname in
-    CYGWIN*)
-	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=yes]],
-	    [if test x$enable_cygwin = xno; then
-	        CPPFLAGS="$CPPFLAGS -mno-cygwin"
-	        CFLAGS="$CFLAGS -mno-cygwin"
-	        CXXFLAGS="$CXXFLAGS -mno-cygwin"
-	    fi])
-	;;
-esac
-
-AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]],
-    [if eval "test x$enable_debug = xyes"; then
-    DEBUGFLAG="-g "
-    fi])
 AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [default=yes]])
-AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]],[
+
+AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]])
+if test x$enable_shared = xyes; then
+    PICFLAG=1
+    case $uname in
+	*BSD* | Darwin*)
+            DSONAME="libfltk.$FL_API_VERSION.dylib"
+            GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
+	    DSOCOMMAND="ld $DSOFLAGS -dylib /usr/lib/dylib1.o -lc"
+	    if test "$libdir" != "/usr/lib"; then
+		    DSOLINK="-Wl,-rpath,$libdir"
+            fi
+	    ;;
+
+	SunOS* | UNIX_S*)
+            DSONAME="libfltk.so.$FL_API_VERSION"
+            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+	    DSOCOMMAND="\$(CXX) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
+	    if test "$libdir" != "/usr/lib"; then
+		    DSOLINK="-R$libdir"
+            fi
+	    ;;
+	HP-UX*)
+            DSONAME="libfltk.sl.$FL_API_VERSION"
+            GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
+	    DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
+	    if test "$libdir" != "/usr/lib"; then
+		    DSOLINK="-Wl,-rpath,$libdir"
+            fi
+	    ;;
+	IRIX* | OSF1*)
+            DSONAME="libfltk.so.$FL_API_VERSION"
+            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
+		    DSOLINK="-Wl,-rpath,$libdir"
+            fi
+	    ;;
+	Linux*)
+            DSONAME="libfltk.so.$FL_API_VERSION"
+            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
+	    if test "$libdir" != "/usr/lib"; then
+		    DSOLINK="-Wl,-rpath,$libdir"
+            fi
+	    ;;
+	AIX*)
+            DSONAME="libfltk_s.a"
+            GLDSONAME="libfltk_gl_s.a"
+            DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
+            ;;
+        CYGWIN*)
+            AC_MSG_WARN(Shared libraries are not supported under CygWin.)
+	    ;;
+	*)
+            AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)
+            DSONAME="libfltk.so.$FL_API_VERSION"
+            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
+            DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    ;;
+    esac
+else
+    DSOCOMMAND="echo"
     DSOLINK=""
-    AC_SUBST(DSOLINK)
-    if test x$enable_shared = xyes; then
-	PICFLAG=1
-	case $uname in
-	    *BSD* | Darwin*)
-        	DSONAME="libfltk.$FL_API_VERSION.dylib"
-        	GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
-		DSOCOMMAND="ld $DSOFLAGS -dylib /usr/lib/dylib1.o -lc"
-		if test "$libdir" != "/usr/lib"; then
-			DSOLINK="-Wl,-rpath,$libdir"
-        	fi
-		;;
+    DSONAME=""
+    GLDSONAME=""
+    PICFLAG=0
+fi
 
-	    SunOS* | UNIX_S*)
-        	DSONAME="libfltk.so.$FL_API_VERSION"
-        	GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-		DSOCOMMAND="\$(CXX) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
-		if test "$libdir" != "/usr/lib"; then
-			DSOLINK="-R$libdir"
-        	fi
-		;;
-	    HP-UX*)
-        	DSONAME="libfltk.sl.$FL_API_VERSION"
-        	GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
-		DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
-		if test "$libdir" != "/usr/lib"; then
-			DSOLINK="-Wl,-rpath,$libdir"
-        	fi
-		;;
-	    IRIX* | OSF1*)
-        	DSONAME="libfltk.so.$FL_API_VERSION"
-        	GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-        	DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
-		if test "$libdir" != "/usr/lib" - a "$libdir" != "/usr/lib32"; then
-			DSOLINK="-Wl,-rpath,$libdir"
-        	fi
-		;;
-	    Linux*)
-        	DSONAME="libfltk.so.$FL_API_VERSION"
-        	GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-        	DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
-		if test "$libdir" != "/usr/lib"; then
-			DSOLINK="-Wl,-rpath,$libdir"
-        	fi
-		;;
-	    AIX*)
-        	DSONAME="libfltk_s.a"
-        	GLDSONAME="libfltk_gl_s.a"
-        	DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
-        	;;
-            CYGWIN*)
-        	AC_MSG_WARN(Shared libraries are not supported under CygWin.)
-		;;
-	    *)
-        	AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)
-        	DSONAME="libfltk.so.$FL_API_VERSION"
-        	GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-        	DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
-		;;
-	esac
-    fi])
-AC_ARG_ENABLE(threads, [  --enable-threads       enable multi-threading support],,enable_threads=no)
+AC_SUBST(DSOCOMMAND)
+AC_SUBST(DSOLINK)
+AC_SUBST(DSONAME)
+AC_SUBST(GLDSONAME)
 
+AC_ARG_ENABLE(threads, [  --enable-threads       enable multi-threading support])
+
+dnl Find commands...
 AC_PROG_CC
 AC_PROG_CXX
 dnl AC_PROG_INSTALL
@@ -175,6 +182,19 @@ if test "$NROFF" = ""; then
 fi
 AC_PATH_PROG(HTMLDOC,htmldoc)
 
+dnl How do we make libraries?
+AC_PROG_RANLIB
+AC_PATH_PROG(AR, ar)
+
+if test "$RANLIB" != ":"; then
+    LIBCOMMAND="$AR cr"
+else
+    LIBCOMMAND="$AR crs"
+fi
+
+AC_SUBST(LIBCOMMAND)
+
+dnl Architecture checks...
 AC_C_BIGENDIAN
 
 AC_CHECK_SIZEOF(short, 2)
@@ -198,6 +218,7 @@ else
     fi
 fi
 
+dnl Standard headers and functions...
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_HEADER(sys/stdtypes.h,AC_DEFINE(HAVE_SYS_SELECT_H))
@@ -256,20 +277,14 @@ LIBS="$SAVELIBS"
 dnl See if we need a .exe extension on executables...
 AC_EXEEXT
 
-dnl Check for standard graphics API and OpenGL...
-HLINKS=
-
-dnl some environments need postprocessing (Darwin, MacOS)
-POSTBUILD=:
-
 dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
 
 if test x"$enable_threads" = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
-    AC_SEARCH_LIBS(pthread_create, pthread)
+    AC_CHECK_LIB(pthread, pthread_create)
 
-    if test x"$ac_cv_search_pthread_create" = xyes -a x$ac_cv_header_pthread_h = xyes; then
+    if test x"$ac_cv_lib_pthread_pthread_create" = xyes -a x$ac_cv_header_pthread_h = xyes; then
         have_pthread=yes
     else
         dnl *BSD uses -pthread option...
@@ -285,12 +300,15 @@ if test x"$enable_threads" = xyes; then
     fi
 fi
 
-THREADS=""
+dnl Define OS-specific stuff...
+HLINKS=
+POSTBUILD=:
+THREADS=
 
 case $uname in
     CYGWIN*)
 	dnl Cygwin environment...
-	LIBS="$LIBS -mwindows -lwsock32"
+	LIBS="$LIBS -mwindows -lcomctl32 -lwsock32"
 	CFLAGS="$CFLAGS -mwindows -DWIN32"
 	CXXFLAGS="$CXXFLAGS -mwindows -DWIN32"
 
@@ -308,7 +326,7 @@ case $uname in
 	    GLDEMOS=""
 	fi
 
-	if test "x$ac_cv_search_pthread_create" != xno -a x"$enable_threads" = xyes; then
+	if test $have_pthread = yes; then
 	    AC_DEFINE(HAVE_PTHREAD)
 	    THREADS="threads.exe"
 	fi
@@ -413,9 +431,9 @@ case $uname in
 	    fi)
 esac
 
-AC_SUBST(HLINKS)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
+AC_SUBST(HLINKS)
 AC_SUBST(POSTBUILD)
 AC_SUBST(THREADS)
 
@@ -468,9 +486,13 @@ if test "$uname" = "IRIX" -a $uversion -ge 62 -a "$libdir" = "\${exec_prefix}/li
     libdir="/usr/lib32"
 fi
 
+dnl Define the command used to update the dependencies (this option
+dnl mainly for FLTK core developers - not necessary for users)
+MAKEDEPEND="\$(CXX) -M"
+AC_SUBST(MAKEDEPEND)
+
 dnl Add warnings to compiler switches:
 dnl do this last so messing with switches does not break tests
-MAKEDEPEND="\$(CXX) -M"
 
 if test -n "$GXX"; then
     # Starting with GCC 3.0, you must link C++ programs against either
@@ -511,7 +533,7 @@ if test -n "$GXX"; then
         #
 	#       "-O2" seems to be the best compromise between speed and
 	#       code size.  "-O3" and higher seem to make no effective
-	#       different in the speed of the code, but does bloat the
+	#       difference in the speed of the code, but does bloat the
 	#       library 10+%.
 	#
         CFLAGS="-O2 $CFLAGS"
@@ -612,27 +634,20 @@ fi
 CFLAGS="$DEBUGFLAG $CFLAGS"
 CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
 
-AC_SUBST(DSOCOMMAND)
-AC_SUBST(DSONAME)
-AC_SUBST(GLDSONAME)
-AC_SUBST(GLLIBNAME)
-AC_SUBST(LIBCOMMAND)
-AC_SUBST(LIBNAME)
-AC_SUBST(LINKFLTKGL)
-AC_SUBST(LINKFLTK)
-AC_SUBST(MAKEDEPEND)
-
+dnl Define the FLTK documentation directory...
 if test x$prefix = xNONE; then
     AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "/usr/local/share/doc/fltk")
 else
     AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
 fi
 
+dnl Write all of the files...
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 
+dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.47 2002/01/07 20:40:02 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.48 2002/01/11 21:42:04 easysw Exp $".
 dnl

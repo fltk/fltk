@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.3.2.3 2001/12/21 14:17:00 easysw Exp $"
+# "$Id: makeinclude.mingw,v 1.1.2.3.2.4 2002/01/11 21:42:05 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -73,8 +73,8 @@ DSONAME		=
 DSOCOMMAND	= echo
 
 # libraries to link with (in addition to default libs):
-LDLIBS		= -lgdi32 -lwsock32
-GLDLIBS		= -lglu32 -lopengl32 -lgdi32 -lwsock32
+LDLIBS		= -lgdi32 -lcomctl32 -lwsock32
+GLDLIBS		= -lglu32 -lopengl32 -lgdi32 -lcomctl32 -lwsock32
 LINKFLTK	=-L../lib -lfltk
 LINKFLTKGL	=-L../lib -lfltk_gl
 IMAGELIBS	=
@@ -98,5 +98,5 @@ IMAGELIBS	=
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.3 2001/12/21 14:17:00 easysw Exp $".
+# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.4 2002/01/11 21:42:05 easysw Exp $".
 #
