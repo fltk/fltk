@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.2 1999/03/13 20:07:20 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.3 1999/04/10 08:09:38 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -127,9 +127,14 @@ void Fl::flush() {
   if (damage()) {
     damage_ = 0;
     for (Fl_X* x = Fl_X::first; x; x = x->next) {
-      if (!x->wait_for_expose && x->w->damage() && x->w->visible()) {
-	x->flush();
-	x->w->clear_damage();
+      if (x->w->damage() && x->w->visible()) {
+	if (x->wait_for_expose) {
+	  // leave Fl::damage() set so programs can tell damage still exists
+	  damage_ = 1;
+	} else {
+	  x->flush();
+	  x->w->clear_damage();
+	}
       }
     }
   }
@@ -335,27 +340,25 @@ void Fl::pushed(Fl_Widget *o) {
 }
 
 Fl_Window *fl_xfocus;	// which window X thinks has focus
-Fl_Window *fl_xmousewin; // which window X thinks has FL_ENTER
+Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
 Fl_Window *Fl::grab_;	// most recent Fl::grab()
-Fl_Window *Fl::modal_;
+Fl_Window *Fl::modal_;	// topmost modal() window
 
-// Update modal(), focus() and other state according to system state.
+// Update modal(), focus() and other state according to system state,
+// and send FL_ENTER, FL_LEAVE, FL_FOCUS, and/or FL_UNFOCUS events.
+// This is the only function that produces these events in response
+// to system activity.
 // This is called whenever a window is added or hidden, and whenever
-// X says the focus or mouse window have changed, and when grab_ is
-// changed.
+// X says the focus or mouse window have changed.
+
 void fl_fix_focus() {
 
   if (Fl::grab()) return; // don't do anything while grab is on.
 
-  // set Fl::modal() based on any modal windows displayed:
-  Fl_Window* w = Fl::first_window();
-  while (w && w->parent()) w = Fl::next_window(w);
-  Fl::modal_ = (w && w->modal()) ? w : 0;
-
   // set focus based on Fl::modal() and fl_xfocus
-  w = fl_xfocus;
-  while (w && w->parent()) w = w->window();
+  Fl_Widget* w = fl_xfocus;
   if (w) {
+    while (w->parent()) w = w->parent();
     if (Fl::modal()) w = Fl::modal();
     if (!w->contains(Fl::focus()))
       if (!w->take_focus()) Fl::focus(w);
@@ -369,22 +372,44 @@ void fl_fix_focus() {
     if (w) {
       if (Fl::modal()) w = Fl::modal();
       if (!w->contains(Fl::belowmouse())) {
-	Fl::belowmouse(w); w->handle(FL_ENTER);}
-    } else
+	Fl::belowmouse(w);
+	w->handle(FL_ENTER);
+      } else {
+	// send a FL_MOVE event so the enter/leave state is up to date
+	Fl::e_x = Fl::e_x_root-fl_xmousewin->x();
+	Fl::e_y = Fl::e_y_root-fl_xmousewin->y();
+	w->handle(FL_MOVE);
+      }
+    } else {
       Fl::belowmouse(0);
+    }
   }
+}
+
+#ifndef WIN32
+Fl_Widget *fl_selection_requestor; // from Fl_cutpaste.C
+#endif
+
+// This function is called by ~Fl_Widget() and by Fl_Widget::deactivate
+// and by Fl_Widget::hide().  It indicates that the widget does not want
+// to receive any more events, and also removes all global variables that
+// point at the widget.
+// I changed this from the 1.0.1 behavior, the older version could send
+// FL_LEAVE or FL_UNFOCUS events to the widget.  This appears to not be
+// desirable behavior and caused flwm to crash.
+
+void fl_throw_focus(Fl_Widget *o) {
+  if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
+  if (o->contains(Fl::selection_owner())) Fl::selection_owner_ = 0;
+#ifndef WIN32
+  if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
+#endif
+  if (o->contains(Fl::belowmouse())) Fl::belowmouse_ = 0;
+  if (o->contains(Fl::focus())) Fl::focus_ = 0;
+  fl_fix_focus();
 }
 
 ////////////////////////////////////////////////////////////////
-
-void fl_send_extra_move() {
-  // send a FL_MOVE event so the enter/leave state is up to date
-  if (fl_xmousewin && !Fl::grab()) {
-    Fl::e_x = Fl::e_x_root-fl_xmousewin->x();
-    Fl::e_y = Fl::e_y_root-fl_xmousewin->y();
-    fl_xmousewin->handle(FL_MOVE);
-  }
-}
 
 int Fl::handle(int event, Fl_Window* window)
 {
@@ -440,7 +465,6 @@ int Fl::handle(int event, Fl_Window* window)
     if (grab()) w = grab();
     int r = w->handle(event);
     fl_fix_focus();
-    fl_send_extra_move();
     return r;}
 
   case FL_UNFOCUS:
@@ -490,8 +514,8 @@ int Fl::handle(int event, Fl_Window* window)
     return 0;
 
   case FL_ENTER:
-    fl_xmousewin = window; fl_fix_focus();
-    fl_send_extra_move();
+    fl_xmousewin = window;
+    fl_fix_focus();
     return 1;
 
   case FL_LEAVE:
@@ -507,8 +531,6 @@ int Fl::handle(int event, Fl_Window* window)
 
 ////////////////////////////////////////////////////////////////
 // hide() destroys the X window, it does not do unmap!
-
-void fl_throw_focus(Fl_Widget*); // in Fl_x.C
 
 void Fl_Window::hide() {
   clear_visible();
@@ -529,6 +551,13 @@ void Fl_Window::hide() {
       W->set_visible();
       w = Fl_X::first;
     } else w = w->next;
+  }
+
+  if (this == Fl::modal_) { // we are closing the modal window, find next one:
+    Fl_Window* w;
+    for (w = Fl::first_window(); w; w = Fl::next_window(w))
+      if (w->modal()) break;
+    Fl::modal_ = w;
   }
 
   // Make sure no events are sent to this window:
@@ -581,22 +610,6 @@ void Fl::selection_owner(Fl_Widget *owner) {
   if (focus_ && owner != focus_ && focus_ != selection_owner_)
     focus_->handle(FL_SELECTIONCLEAR); // clear non-X-selection highlight
   selection_owner_ = owner;
-}
-
-#ifndef WIN32
-Fl_Widget *fl_selection_requestor; // from Fl_cutpaste.C
-#endif
-
-void fl_throw_focus(Fl_Widget *o) {
-  if (o->contains(Fl::pushed())) Fl::pushed(0);
-  if (o->contains(Fl::selection_owner())) Fl::selection_owner(0);
-#ifndef WIN32
-  if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
-#endif
-  int fix = 0;
-  if (o->contains(Fl::belowmouse())) {Fl::belowmouse(0); fix = 1;}
-  if (o->contains(Fl::focus())) {Fl::focus(0); fix = 1;}
-  if (fix) fl_fix_focus();
 }
 
 #include <FL/fl_draw.H>
@@ -682,5 +695,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.2 1999/03/13 20:07:20 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.3 1999/04/10 08:09:38 bill Exp $".
 //
