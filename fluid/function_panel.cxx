@@ -198,13 +198,13 @@ Fl_Window* make_decl_panel() {
       o->labelsize(10);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Input* o = decl_input = new Fl_Input(10, 40, 270, 25, "Can be any declaration, like \"int x;\",\nan external symbol like \"extern in\
-t foo();\",\na #directive like \"#include <foo.h>\",\nor a comment like \"//fo\
-o\" or \"/*foo*/\",\nor typedef like \"typedef char byte;\"");
+    { Fl_Input* o = decl_input = new Fl_Input(10, 40, 270, 25, "Can be any declaration, like \"int x;\", an external symbol like \"extern int\
+ foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\" or\
+ \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list;\".");
       o->tooltip("Declaration text.");
       o->labelsize(12);
       o->textfont(4);
-      o->align(FL_ALIGN_BOTTOM_LEFT);
+      o->align(134);
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }

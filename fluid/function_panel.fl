@@ -48,11 +48,11 @@ Function {make_code_panel()} {open
       tooltip {C/C++ code.} xywh {10 10 525 120} type Multiline labelsize 12 align 0 when 0 textfont 4 resizable
     }
     Fl_Return_Button code_panel_ok {
-      label OK selected
+      label OK
       xywh {370 140 80 25} hotspot
     }
     Fl_Button code_panel_cancel {
-      label Cancel selected
+      label Cancel
       xywh {455 140 80 25} shortcut 0xff1b
     }
   }
@@ -123,12 +123,8 @@ Function {make_decl_panel()} {open
       tooltip {Make the declaration publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
     }
     Fl_Input decl_input {
-      label {Can be any declaration, like "int x;",
-an external symbol like "extern int foo();",
-a \#directive like "\#include <foo.h>",
-or a comment like "//foo" or "/*foo*/",
-or typedef like "typedef char byte;"}
-      tooltip {Declaration text.} xywh {10 40 270 25} labelsize 12 align 6 when 0 textfont 4 resizable
+      label {Can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".} selected
+      tooltip {Declaration text.} xywh {10 40 270 25} labelsize 12 align 134 when 0 textfont 4 resizable
     }
     Fl_Return_Button decl_panel_ok {
       label OK
