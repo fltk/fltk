@@ -597,6 +597,11 @@ int menuwindow::handle(int e) {
   case FL_MOVE:
   case FL_PUSH:
   case FL_DRAG: {
+#ifdef __QNX__
+    // STR 704: workaround QNX X11 bug - in QNX an event FL_MOVE is sent
+    // right after FL_RELEASE...
+    if (pp.state == DONE_STATE) return 1;
+#endif // __QNX__
     int mx = Fl::event_x_root();
     int my = Fl::event_y_root();
     int item=0; int mymenu;

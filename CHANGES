@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Added QNX bug workaround for menu handling (STR #704)
 	- Added Greg Ercolano's simple Fl_Input_Choice widget
 	  which is a combination of the Fl_Input and
 	  Fl_Menu_Button widgets (STR #650)
