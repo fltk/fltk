@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.14 1999/02/18 14:26:36 mike Exp $"
+// "$Id: Enumerations.H,v 1.15 1999/02/18 22:07:38 mike Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -30,21 +30,18 @@
 // The following is only used when building DLLs under WIN32 or OS/2...
 //
 
-#ifdef _MSC_VER
-#  ifdef FL_DLL
+#ifdef FL_DLL
+#  ifdef FL_LIBRARY
 #    define FL_EXPORT	__declspec(dllexport)
 #    define FL_IMPORT	__declspec(dllimport)
-#  elif defined(FL_STATIC)
-#    define FL_EXPORT
-#    define FL_IMPORT
 #  else
 #    define FL_EXPORT	__declspec(dllimport)
 #    define FL_IMPORT	__declspec(dllexport)
-#  endif /* FL_DLL */
+#  endif /* FL_LIBRARY */
 #else
 #  define FL_EXPORT
 #  define FL_IMPORT
-#endif /* _MSC_VER */
+#endif /* FL_DLL */
 
 //
 // The FLTK version number; this is changed slightly from the beta versions
@@ -371,5 +368,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.14 1999/02/18 14:26:36 mike Exp $".
+// End of "$Id: Enumerations.H,v 1.15 1999/02/18 22:07:38 mike Exp $".
 //
