@@ -68,7 +68,7 @@ Fl_Window* make_alignment_window() {
       o->callback((Fl_Callback*)code_input_cb, (void*)(1));
       o->when(1);
     }
-    { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(60, 250, 140, 20, "Include .H from .C");
+    { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(60, 250, 140, 20, "Include .h from .cxx");
       o->value(1);
       o->callback((Fl_Callback*)include_H_from_C_button_cb);
     }

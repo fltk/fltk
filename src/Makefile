@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.6 1998/11/05 16:04:50 mike Exp $"
+# "$Id: Makefile,v 1.7 1998/12/06 14:59:14 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -24,118 +24,118 @@
 #
 
 CPPFILES = \
-	Fl.C \
-	Fl_Adjuster.C \
-	Fl_Bitmap.C \
-	Fl_Browser.C \
-	Fl_Browser_.C \
-	Fl_Browser_load.C \
-	Fl_Box.C \
-	Fl_Button.C \
-	Fl_Chart.C \
-	Fl_Check_Button.C \
-	Fl_Choice.C \
-	Fl_Clock.C \
-	Fl_Color_Chooser.C \
-	Fl_Counter.C \
-	Fl_Dial.C \
-	Fl_Double_Window.C \
-	Fl_Gl_Choice.C \
-	Fl_Gl_Overlay.C \
-	Fl_Gl_Window.C \
-	Fl_Group.C \
-	Fl_Image.C \
-	Fl_Input.C \
-	Fl_Input_.C \
-	Fl_Light_Button.C \
-	Fl_Menu.C \
-	Fl_Menu_.C \
-	Fl_Menu_Bar.C \
-	Fl_Menu_Button.C \
-	Fl_Menu_Window.C \
-	Fl_Menu_add.C \
-	Fl_Menu_global.C \
-	Fl_Multi_Label.C \
-	Fl_Output.C \
-	Fl_Overlay_Window.C \
-	Fl_Pack.C \
-	Fl_Pixmap.C \
-	Fl_Positioner.C \
-	Fl_Repeat_Button.C \
-	Fl_Return_Button.C \
-	Fl_Roller.C \
-	Fl_Round_Button.C \
-	Fl_Scroll.C \
-	Fl_Scrollbar.C \
-	Fl_Single_Window.C \
-	Fl_Slider.C \
-	Fl_Tabs.C \
-	Fl_Tile.C \
-	Fl_Valuator.C \
-	Fl_Value_Input.C \
-	Fl_Value_Output.C \
-	Fl_Value_Slider.C \
-	Fl_Widget.C \
-	Fl_Window.C \
-	Fl_Window_fullscreen.C \
-	Fl_Window_hotspot.C \
-	Fl_Window_iconize.C \
-	Fl_abort.C \
-	Fl_add_idle.C \
-	Fl_arg.C \
-	Fl_cutpaste.C \
-	Fl_display.C \
-	Fl_get_key.C \
-	Fl_get_system_colors.C \
-	Fl_own_colormap.C \
-	Fl_visual.C \
-	Fl_x.C \
-	filename_absolute.C \
-	filename_expand.C \
-	filename_ext.C \
-	filename_isdir.C \
-	filename_list.C \
-	filename_match.C \
-	filename_setext.C \
-	fl_arc.C \
-	fl_arci.C \
-	fl_ask.C \
-	fl_boxtype.C \
-	fl_color.C \
-	fl_cursor.C \
-	fl_curve.C \
-	fl_diamond_box.C \
-	fl_draw.C \
-	fl_draw_image.C \
-	fl_draw_pixmap.C \
-	fl_engraved_label.C \
-	fl_file_chooser.C \
-	fl_font.C \
-	fl_labeltype.C \
-	fl_oval_box.C \
-	fl_overlay.C \
-	fl_overlay_visual.C \
-	fl_rect.C \
-	fl_round_box.C \
-	fl_rounded_box.C \
-	fl_set_font.C \
-	fl_set_fonts.C \
-	fl_scroll_area.C \
-	fl_shadow_box.C \
-	fl_shortcut.C \
-	fl_show_colormap.C \
-	fl_symbols.C \
-	fl_vertex.C \
-	forms_compatability.C \
-	forms_bitmap.C \
-	forms_free.C \
-	forms_fselect.C \
-	forms_pixmap.C \
-	forms_timer.C \
-	gl_draw.C \
-	gl_start.C \
-	glut_compatability.C \
-	glut_font.C
+	Fl.cxx \
+	Fl_Adjuster.cxx \
+	Fl_Bitmap.cxx \
+	Fl_Browser.cxx \
+	Fl_Browser_.cxx \
+	Fl_Browser_load.cxx \
+	Fl_Box.cxx \
+	Fl_Button.cxx \
+	Fl_Chart.cxx \
+	Fl_Check_Button.cxx \
+	Fl_Choice.cxx \
+	Fl_Clock.cxx \
+	Fl_Color_Chooser.cxx \
+	Fl_Counter.cxx \
+	Fl_Dial.cxx \
+	Fl_Double_Window.cxx \
+	Fl_Gl_Choice.cxx \
+	Fl_Gl_Overlay.cxx \
+	Fl_Gl_Window.cxx \
+	Fl_Group.cxx \
+	Fl_Image.cxx \
+	Fl_Input.cxx \
+	Fl_Input_.cxx \
+	Fl_Light_Button.cxx \
+	Fl_Menu.cxx \
+	Fl_Menu_.cxx \
+	Fl_Menu_Bar.cxx \
+	Fl_Menu_Button.cxx \
+	Fl_Menu_Window.cxx \
+	Fl_Menu_add.cxx \
+	Fl_Menu_global.cxx \
+	Fl_Multi_Label.cxx \
+	Fl_Output.cxx \
+	Fl_Overlay_Window.cxx \
+	Fl_Pack.cxx \
+	Fl_Pixmap.cxx \
+	Fl_Positioner.cxx \
+	Fl_Repeat_Button.cxx \
+	Fl_Return_Button.cxx \
+	Fl_Roller.cxx \
+	Fl_Round_Button.cxx \
+	Fl_Scroll.cxx \
+	Fl_Scrollbar.cxx \
+	Fl_Single_Window.cxx \
+	Fl_Slider.cxx \
+	Fl_Tabs.cxx \
+	Fl_Tile.cxx \
+	Fl_Valuator.cxx \
+	Fl_Value_Input.cxx \
+	Fl_Value_Output.cxx \
+	Fl_Value_Slider.cxx \
+	Fl_Widget.cxx \
+	Fl_Window.cxx \
+	Fl_Window_fullscreen.cxx \
+	Fl_Window_hotspot.cxx \
+	Fl_Window_iconize.cxx \
+	Fl_abort.cxx \
+	Fl_add_idle.cxx \
+	Fl_arg.cxx \
+	Fl_cutpaste.cxx \
+	Fl_display.cxx \
+	Fl_get_key.cxx \
+	Fl_get_system_colors.cxx \
+	Fl_own_colormap.cxx \
+	Fl_visual.cxx \
+	Fl_x.cxx \
+	filename_absolute.cxx \
+	filename_expand.cxx \
+	filename_ext.cxx \
+	filename_isdir.cxx \
+	filename_list.cxx \
+	filename_match.cxx \
+	filename_setext.cxx \
+	fl_arc.cxx \
+	fl_arci.cxx \
+	fl_ask.cxx \
+	fl_boxtype.cxx \
+	fl_color.cxx \
+	fl_cursor.cxx \
+	fl_curve.cxx \
+	fl_diamond_box.cxx \
+	fl_draw.cxx \
+	fl_draw_image.cxx \
+	fl_draw_pixmap.cxx \
+	fl_engraved_label.cxx \
+	fl_file_chooser.cxx \
+	fl_font.cxx \
+	fl_labeltype.cxx \
+	fl_oval_box.cxx \
+	fl_overlay.cxx \
+	fl_overlay_visual.cxx \
+	fl_rect.cxx \
+	fl_round_box.cxx \
+	fl_rounded_box.cxx \
+	fl_set_font.cxx \
+	fl_set_fonts.cxx \
+	fl_scroll_area.cxx \
+	fl_shadow_box.cxx \
+	fl_shortcut.cxx \
+	fl_show_colormap.cxx \
+	fl_symbols.cxx \
+	fl_vertex.cxx \
+	forms_compatability.cxx \
+	forms_bitmap.cxx \
+	forms_free.cxx \
+	forms_fselect.cxx \
+	forms_pixmap.cxx \
+	forms_timer.cxx \
+	gl_draw.cxx \
+	gl_start.cxx \
+	glut_compatability.cxx \
+	glut_font.cxx
 
 CFILES = scandir.c numericsort.c vsnprintf.c
 
@@ -147,14 +147,14 @@ include ../makeinclude
 
 LIBRARY = ../lib/$(LIBNAME)
 
-OBJECTS = $(CPPFILES:.C=.o) $(CFILES:.c=.o)
+OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 
 $(LIBRARY) : $(OBJECTS)
 	@echo Building $(LIBRARY)
 	@$(LIBCOMMAND) $(LIBRARY) $(OBJECTS)
 	@$(RANLIB) $(LIBRARY)
 
-.C.o :
+.cxx.o :
 	@echo $<:
 	@$(CXX) -I.. $(CXXFLAGS) -c $<
 .c.o :
@@ -182,5 +182,5 @@ install: ../lib/$(LIBNAME)
 	@chmod -R a+r,u+w,g-w,o-w $(includedir)/FL
 
 #
-# End of "$Id: Makefile,v 1.6 1998/11/05 16:04:50 mike Exp $".
+# End of "$Id: Makefile,v 1.7 1998/12/06 14:59:14 mike Exp $".
 #

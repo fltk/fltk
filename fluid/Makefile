@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.5 1998/10/21 17:24:50 mike Exp $"
+# "$Id: Makefile,v 1.6 1998/12/06 14:59:12 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -26,38 +26,38 @@
 PROGRAM = fluid
 
 CPPFILES = \
-	Fl_Function_Type.C \
-	Fl_Menu_Type.C \
-	Fl_Group_Type.C \
-	Fl_Widget_Type.C \
-	Fl_Type.C \
-	Fl_Window_Type.C \
-	Fluid_Image.C \
-	code.C \
-	factory.C \
-	file.C \
-	fluid.C \
-	about_panel.C \
-	widget_panel.C \
-	alignment_panel.C \
-	function_panel.C \
-	gif.C
+	Fl_Function_Type.cxx \
+	Fl_Menu_Type.cxx \
+	Fl_Group_Type.cxx \
+	Fl_Widget_Type.cxx \
+	Fl_Type.cxx \
+	Fl_Window_Type.cxx \
+	Fluid_Image.cxx \
+	code.cxx \
+	factory.cxx \
+	file.cxx \
+	fluid.cxx \
+	about_panel.cxx \
+	widget_panel.cxx \
+	alignment_panel.cxx \
+	function_panel.cxx \
+	gif.cxx
 
 ################################################################
 
-OBJECTS = $(CPPFILES:.C=.o)
+OBJECTS = $(CPPFILES:.cxx=.o)
 
 include ../makeinclude
 
-.SUFFIXES : .C .c .o
+.SUFFIXES : .cxx .c .o
 
-.C.o :
+.cxx.o :
 	@echo $<:
 	@$(CXX) -I.. $(CXXFLAGS) -c $<
 .c.o :
 	@echo $<:
 	@$(CC) -I.. $(CFLAGS) -c $<
-.C :
+.cxx :
 	@echo $@:
 	@$(CXX) -I.. $(CXXFLAGS) -o $@ $< -L../lib -lfltk $(LDLIBS)
 
@@ -94,5 +94,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.5 1998/10/21 17:24:50 mike Exp $".
+# End of "$Id: Makefile,v 1.6 1998/12/06 14:59:12 mike Exp $".
 #

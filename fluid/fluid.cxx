@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.6 1998/11/05 16:04:44 mike Exp $"
+// "$Id: fluid.cxx,v 1.7 1998/12/06 14:59:13 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -150,8 +150,8 @@ void new_cb(Fl_Widget *, void *v) {
 
 static int compile_only;
 
-const char* header_file_name = ".H";
-const char* code_file_name = ".C";
+const char* header_file_name = ".h";
+const char* code_file_name = ".cxx";
 
 void write_cb(Fl_Widget *, void *) {
   if (!filename) {
@@ -377,9 +377,9 @@ int main(int argc,char **argv) {
   int i = 1;
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
     fprintf(stderr,"usage: %s <switches> name.fl\n"
-" -c : write .C and .H and exit\n"
-" -o <name> : .C output filename, or extension if <name> starts with '.'\n"
-" -h <name> : .H output filename, or extension if <name> starts with '.'\n"
+" -c : write .cxx and .h and exit\n"
+" -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
+" -h <name> : .h output filename, or extension if <name> starts with '.'\n"
 "%s\n", argv[0], Fl::help);
     return 1;
   }
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.6 1998/11/05 16:04:44 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.7 1998/12/06 14:59:13 mike Exp $".
 //
