@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.7 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.8 2002/10/23 12:23:40 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -23,12 +23,12 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-
-#include <FL/Fl.H>
-#include <FL/Fl_Text_Editor.H>
+#include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
 #include <ctype.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Text_Editor.H>
 
 
 Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
@@ -439,5 +439,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.7 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.8 2002/10/23 12:23:40 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.31 2002/10/10 20:02:58 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.32 2002/10/23 12:23:39 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -23,14 +23,14 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <FL/Fl.H>
-#include <FL/Fl_Text_Buffer.H>
-#include <FL/Fl_Text_Display.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
 #include <limits.h>
 #include <ctype.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Display.H>
 
 #undef min
 #undef max
@@ -3008,5 +3008,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.31 2002/10/10 20:02:58 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.32 2002/10/23 12:23:39 easysw Exp $".
 //
