@@ -6,6 +6,12 @@ CHANGES IN FLTK 1.1.0b4
 	- Updated the config.h files for all platforms for the
 	  image and FLTK documentation defines.
 
+	- FLUID would crash if you cleared an image for a
+	  widget.
+
+	- Fl_Help_View::add_image() did not initialize the image
+	  member of the base (unscaled) image.
+
 
 CHANGES IN FLTK 1.1.0b3
 
