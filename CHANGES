@@ -58,6 +58,13 @@ CHANGES IN FLTK 1.1.0b7
 	  selection and text as Fl_Input_ and friends.
 	- Changed the default line scrolling in Fl_Text_Display
 	  to 3 lines for the mouse wheel and scrollbar arrows.
+	- Fl_Check_Button and Fl_Round_Button now use the
+	  FL_NO_BOX box type to show the background of the
+	  parent widget.
+	- Tweeked the plastic boxtype code to draw with the
+	  right shading for narrow, but horizontal buttons.
+	- Fl_Progress now shades the bounding box instead of
+	  drawing a polygon inside it.
 
 
 CHANGES IN FLTK 1.1.0b6

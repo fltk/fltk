@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Progress.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Progress.cxx,v 1.1.2.3 2001/12/06 18:12:35 easysw Exp $"
 //
 // Progress bar widget routines.
 //
@@ -51,6 +51,7 @@ void Fl_Progress::draw()
 {
   int	progress;	// Size of progress bar...
   int	bx, by, bw, bh;	// Box areas...
+  int	tx, tw;		// Temporary X + width
 
 
   // Get the box borders...
@@ -59,31 +60,31 @@ void Fl_Progress::draw()
   bw = Fl::box_dw(box());
   bh = Fl::box_dh(box());
 
-  // Draw the box...
-  draw_box(box(), x(), y(), w(), h(), color());
+  tx = x() + bx;
+  tw = w() - bw;
 
   // Draw the progress bar...
   if (maximum_ > minimum_)
-    progress = (int)((w() - bw) * (value_ - minimum_) /
-                                  (maximum_ - minimum_) + 0.5f);
+    progress = (int)(tw * (value_ - minimum_) / (maximum_ - minimum_) + 0.5f);
   else
     progress = 0;
 
+  // Draw the box...
   if (progress > 0)
   {
-    fl_clip(x() + bx, y() + by, w() - bw, h() - bh);
+    fl_clip(x(), y(), progress + bx, h());
+      draw_box(box(), x(), y(), w(), h(), active_r() ? color2() : fl_inactive(color2()));
+    fl_pop_clip();
 
-    fl_color(active_r() ? color2() : fl_inactive(color2()));
-    fl_polygon(x() + bx, y() + by,
-               x() + bx, y() + h() - by,
-	       x() + 3 + progress - h() / 4, y() + h() - by,
-               x() + 1 + progress + h() / 4, y() + by);
-
+    fl_clip(tx + progress, y(), w() - progress, h());
+      draw_box(box(), x(), y(), w(), h(), active_r() ? color() : fl_inactive(color()));
     fl_pop_clip();
   }
+  else
+    draw_box(box(), x(), y(), w(), h(), color());
 
   // Finally, the label...
-  draw_label(x() + bx, y() + by, w() - bw, h() - bh);
+  draw_label(tx, y() + by, tw, h() - bh);
 }
 
 
@@ -104,5 +105,5 @@ Fl_Progress::Fl_Progress(int x, int y, int w, int h, const char* l)
 
 
 //
-// End of "$Id: Fl_Progress.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Progress.cxx,v 1.1.2.3 2001/12/06 18:12:35 easysw Exp $".
 //

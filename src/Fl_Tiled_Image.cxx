@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tiled_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $"
+// "$Id: Fl_Tiled_Image.cxx,v 1.1.2.2 2001/12/06 18:12:35 easysw Exp $"
 //
 // Tiled image code for the Fast Light Tool Kit (FLTK).
 //
@@ -113,6 +113,8 @@ Fl_Tiled_Image::draw(int X,	// I - Starting X position
   if (W == 0) W = Fl::w();
   if (H == 0) H = Fl::h();
 
+  fl_clip(X, Y, W, H);
+
   X += cx;
   Y += cy;
 
@@ -125,9 +127,11 @@ Fl_Tiled_Image::draw(int X,	// I - Starting X position
   for (int yy = Y; yy < H; yy += image_->h())
     for (int xx = X; xx < W; xx += image_->w())
       image_->draw(xx, yy);
+
+  fl_pop_clip();
 }
 
 
 //
-// End of "$Id: Fl_Tiled_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $".
+// End of "$Id: Fl_Tiled_Image.cxx,v 1.1.2.2 2001/12/06 18:12:35 easysw Exp $".
 //
