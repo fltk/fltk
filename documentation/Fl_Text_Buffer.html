@@ -108,157 +108,320 @@ excellent NEdit text editor engine - see
 
 <H4><A NAME="Fl_Text_Buffer.Fl_Text_Buffer">Fl_Text_Buffer(int requestedSize = 0);</A></H4>
 
+<P>Creates a new text buffer of the specified initial size.
+
 <H4><A NAME="Fl_Text_Buffer.~Fl_Text_Buffer">~Fl_Text_Buffer();</A></H4>
+
+<P>Destroys a text buffer.
 
 <H4><A NAME="Fl_Text_Buffer.add_modify_callback">void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);</A></H4>
 
+<P>Adds a callback function that is called whenever the text buffer is
+modified. The callback function is declared as follows:
+
+<UL><PRE>
+typedef void (*Fl_Text_Modify_Cb)(int pos, int nInserted, int nDeleted,
+                                  int nRestyled, const char* deletedText,
+                                  void* cbArg);
+</PRE></UL>
+
 <H4><A NAME="Fl_Text_Buffer.append">void append(const char* text);</A></H4>
+
+<P>Appends the text string to the end of the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.appendfile">int appendfile(const char *file, int buflen = 128*1024);</A></H4>
 
+<P>Appends the named file to the end of the buffer.
+
 <H4><A NAME="Fl_Text_Buffer.call_modify_callbacks">void call_modify_callbacks();</A></H4>
+
+<P>Calls all modify callbacks that have been registered using
+the <A
+HREF="#Fl_Text_Buffer.add_modify_callback"><TT>add_modify_callback()</TT></A>
+method.
 
 <H4><A NAME="Fl_Text_Buffer.character">char character(int pos);</A></H4>
 
+<P>Returns the character at the specified position in the buffer.
+
 <H4><A NAME="Fl_Text_Buffer.character_width">static int character_width(char c, int indent, int tabDist, char nullSubsChar);</A></H4>
+
+<P>Returns the column width of the specified character. The
+<TT>indent</TT> argument specifies the current column position,
+and <TT>tabDist</TT> specifies the number of columns to use for
+each tab.
+
+<P>The <TT>nullSubsChar</TT> argument specifies the current
+<TT>nul</TT> character.
 
 <H4><A NAME="Fl_Text_Buffer.clear_rectangular">void clear_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
+<P>Clears text in the specified area.
+
 <H4><A NAME="Fl_Text_Buffer.copy">void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);</A></H4>
+
+<P>Copies text from one buffer to this one; <TT>fromBuf</TT> may
+be the same as <TT>this</TT>.
 
 <H4><A NAME="Fl_Text_Buffer.count_displayed_characters">int count_displayed_characters(int lineStartPos, int targetPos);</A></H4>
 
+<P>Determines the number of characters that will be displayed
+between <TT>lineStartPos</TT> and <TT>targetPos</TT>.
+
 <H4><A NAME="Fl_Text_Buffer.count_lines">int count_lines(int startPos, int endPos);</A></H4>
+
+<P>Determines the number of lines between <TT>startPos</TT> and
+<TT>endPos</TT>.
 
 <H4><A NAME="Fl_Text_Buffer.expand_character">int expand_character(int pos, int indent, char *outStr);<BR>
 static int expand_character(char c, int indent, char* outStr, int tabDist,
 char nullSubsChar);</A></H4>
 
+<P>Expands the given character to a displayable format. Tabs and
+other control characters are given special treatment.
+
 <H4><A NAME="Fl_Text_Buffer.findchar_backward">int findchar_backward(int startPos, char searchChar, int* foundPos);</A></H4>
+
+<P>Finds the previous occurrence of the specified character.
 
 <H4><A NAME="Fl_Text_Buffer.findchar_forward">int findchar_forward(int startPos, char searchChar, int* foundPos);</A></H4>
 
+<P>Finds the next occurrence of the specified character.
+
 <H4><A NAME="Fl_Text_Buffer.findchars_backward">int findchars_backward(int startPos, const char* searchChars, int* foundPos);</A></H4>
+
+<P>Finds the previous occurrence of the specified characters.
 
 <H4><A NAME="Fl_Text_Buffer.findchars_forward">int findchars_forward(int startPos, const char* searchChars, int* foundPos);</A></H4>
 
+<P>Finds the next occurrence of the specified characters.
+
 <H4><A NAME="Fl_Text_Buffer.highlight">void highlight(int start, int end);</A></H4>
+
+<P>Highlights the specified text within the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.highlight_position">int highlight_position(int* start, int* end, int* isRect, int* rectStart,
 int* rectEnd);</A></H4>
 
+<P>Returns the current highlight positions.
+
 <H4><A NAME="Fl_Text_Buffer.highlight_rectangular">void highlight_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
+
+<P>Highlights the specified rectangle of text within the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.highlight_selection">Fl_Text_Selection* highlight_selection();</A></H4>
 
+<P>Returns the current highlight selection.
+
 <H4><A NAME="Fl_Text_Buffer.highlight_text">const char* highlight_text();</A></H4>
+
+<P>Returns the highlighted text.
 
 <H4><A NAME="Fl_Text_Buffer.insert_column">void insert_column(int column, int startPos, const char* text,
 int* charsInserted, int* charsDeleted);</A></H4>
 
+<P>Inserts a column of text without calling the modify callbacks.
+
 <H4><A NAME="Fl_Text_Buffer.insertfile">int insertfile(const char *file, int pos, int buflen = 128*1024);</A></H4>
+
+<P>Inserts a file at the specified position.
 
 <H4><A NAME="Fl_Text_Buffer.insert">void insert(int pos, const char* text);</A></H4>
 
+<P>Inserts text at the specified position.
+
 <H4><A NAME="Fl_Text_Buffer.length">int length();</A></H4>
+
+<P>Returns the number of characters in the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.line_end">int line_end(int pos);</A></H4>
 
+<P>Returns the end position of the line.
+
 <H4><A NAME="Fl_Text_Buffer.line_start">int line_start(int pos);</A></H4>
+
+<P>Returns the start position of the line.
 
 <H4><A NAME="Fl_Text_Buffer.line_text">const char* line_text(int pos);</A></H4>
 
+<P>Returns the text for the line containing the specified
+character position.
+
 <H4><A NAME="Fl_Text_Buffer.loadfile">int loadfile(const char *file, int buflen = 128*1024);</A></H4>
+
+<P>Replaces the current buffer with the contents of a file.
 
 <H4><A NAME="Fl_Text_Buffer.null_substitution_character">char null_substitution_character();</A></H4>
 
+<P>Returns the current <TT>nul</TT> substitution character.
+
 <H4><A NAME="Fl_Text_Buffer.outputfile">int outputfile(const char *file, int start, int end, int buflen = 128*1024);</A></H4>
+
+<P>Writes the specified portions of the file to a file.
 
 <H4><A NAME="Fl_Text_Buffer.overlay_rectangular">void overlay_rectangular(int startPos, int rectStart, int rectEnd,
 const char* text, int* charsInserted, int* charsDeleted);</A></H4>
 
+<P>Replaces a rectangular region of text with the given text.
+
 <H4><A NAME="Fl_Text_Buffer.primary_selection">Fl_Text_Selection* primary_selection();</A></H4>
+
+<P>Returns the primary selection.
 
 <H4><A NAME="Fl_Text_Buffer.remove_modify_callback">void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);</A></H4>
 
+<P>Removes a modify callback.
+
 <H4><A NAME="Fl_Text_Buffer.remove_rectangular">void remove_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
+
+<P>Deletes a rectangular area of text in the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.remove">void remove(int start, int end);</A></H4>
 
+<P>Deletes a range of characters in the buffer.
+
 <H4><A NAME="Fl_Text_Buffer.remove_secondary_selection">void remove_secondary_selection();</A></H4>
 
+<P>Removes the text in the secondary selection.
+
 <H4><A NAME="Fl_Text_Buffer.remove_selection">void remove_selection();</A></H4>
+
+<P>Removes the text in the primary selection.
 
 <H4><A NAME="Fl_Text_Buffer.replace_rectangular">void replace_rectangular(int start, int end, int rectStart, int rectEnd,
 const char* text);</A></H4>
 
+<P>Replaces the text in a rectangular area.
+
 <H4><A NAME="Fl_Text_Buffer.replace">void replace(int start, int end, const char *text);</A></H4>
+
+<P>Replaces the text in the specified range of characters in the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.replace_secondary_selection">void replace_secondary_selection(const char* text);</A></H4>
 
+<P>Replaces the text in the secondary selection.
+
 <H4><A NAME="Fl_Text_Buffer.replace_selection">void replace_selection(const char* text);</A></H4>
+
+<P>Replaces the text in the primary selection.
 
 <H4><A NAME="Fl_Text_Buffer.rewind_lines">int rewind_lines(int startPos, int nLines);</A></H4>
 
+<P>Returns the buffer position for the Nth previous line.
+
 <H4><A NAME="Fl_Text_Buffer.savefile">int savefile(const char *file, int buflen = 128*1024);</A></H4>
+
+<P>Saves the entire buffer to a file.
 
 <H4><A NAME="Fl_Text_Buffer.search_backward">int search_backward(int startPos, const char* searchString, int* foundPos,
 int matchCase = 0);</A></H4>
 
+<P>Searches backwards for the specified string.
+
 <H4><A NAME="Fl_Text_Buffer.search_forward">int search_forward(int startPos, const char* searchString, int* foundPos,
 int matchCase = 0);</A></H4>
+
+<P>Searches forwards for the specified string.
 
 <H4><A NAME="Fl_Text_Buffer.secondary_selection_position">int secondary_selection_position(int* start, int* end, int* isRect,
 int* rectStart, int* rectEnd);</A></H4>
 
 <H4><A NAME="Fl_Text_Buffer.secondary_selection">Fl_Text_Selection* secondary_selection();</A></H4>
 
+<P>Returns the secondary selection.
+
 <H4><A NAME="Fl_Text_Buffer.secondary_selection_text">const char* secondary_selection_text();</A></H4>
+
+<P>Returns the text in the secondary selection.
 
 <H4><A NAME="Fl_Text_Buffer.secondary_select_rectangular">void secondary_select_rectangular(int start, int end, int rectStart,
 int rectEnd);</A></H4>
 
+<P>Selects a rectangle of characters in the secondary selection.
+
 <H4><A NAME="Fl_Text_Buffer.secondary_select">void secondary_select(int start, int end);</A></H4>
+
+<P>Selects a range of characters in the secondary selection.
 
 <H4><A NAME="Fl_Text_Buffer.secondary_unselect">void secondary_unselect();</A></H4>
 
+<P>Turns the secondary selection off.
+
 <H4><A NAME="Fl_Text_Buffer.selected">int selected();</A></H4>
+
+<P>Returns a non-zero number if any text has been selected, or 0
+if no text is selected.
 
 <H4><A NAME="Fl_Text_Buffer.selection_position">int selection_position(int* start, int* end);<BR>
 int selection_position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd);</A></H4>
 
+<P>Returns the current selection.
+
 <H4><A NAME="Fl_Text_Buffer.selection_text">const char* selection_text();</A></H4>
+
+<P>Returns the currently selected text.
 
 <H4><A NAME="Fl_Text_Buffer.select_rectangular">void select_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
+<P>Selects a rectangle of characters in the buffer.
+
 <H4><A NAME="Fl_Text_Buffer.select">void select(int start, int end);</A></H4>
+
+<P>Selects a range of characters in the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.skip_displayed_characters">int skip_displayed_characters(int lineStartPos, int nChars);</A></H4>
 
+<P>Skips forward the indicated number of characters in the
+buffer from the start position.
+
 <H4><A NAME="Fl_Text_Buffer.skip_lines">int skip_lines(int startPos, int nLines);</A></H4>
 
+<P>Returns the buffer position for the Nth line after the start
+position.
+
 <H4><A NAME="Fl_Text_Buffer.substitute_null_characters">int substitute_null_characters(char* string, int length);</A></H4>
+
+<P>Replaces <TT>nul</TT> characters in the given string with the
+<TT>nul</TT> substitution character.
 
 <H4><A NAME="Fl_Text_Buffer.tab_distance">int tab_distance();<BR>
 void tab_distance(int tabDist);</A></H4>
 
+<P>Gets or sets the tab width.
+
 <H4><A NAME="Fl_Text_Buffer.text_in_rectangle">const char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);</A></H4>
 
+<P>Returns the text from the given rectangle.
+
 <H4><A NAME="Fl_Text_Buffer.text_range">const char* text_range(int start, int end);</A></H4>
+
+<P>Returns the text from the range of characters.
 
 <H4><A NAME="Fl_Text_Buffer.text">const char* text();<BR>
 void text(const char* text);</A></H4>
 
+<P>Gets or sets the text in the buffer.
+
 <H4><A NAME="Fl_Text_Buffer.unhighlight">void unhighlight();</A></H4>
+
+<P>Unhighlights text in the buffer.
 
 <H4><A NAME="Fl_Text_Buffer.unselect">void unselect();</A></H4>
 
+<P>Unselects text in the buffer.
+
 <H4><A NAME="Fl_Text_Buffer.unsubstitute_null_characters">void unsubstitute_null_characters(char* string);</A></H4>
+
+<P>Replaces the <TT>nul</TT> substitution characters in the
+provided string with the <TT>nul</TT> character.
 
 <H4><A NAME="Fl_Text_Buffer.word_end">int word_end(int pos);</A></H4>
 
+<P>Returns the position for the end of the word.
+
 <H4><A NAME="Fl_Text_Buffer.word_start">int word_start(int pos);</A></H4>
 
+<P>Returns the position for the start of the word.
 
 </BODY>
 </HTML>

@@ -132,6 +132,7 @@ FL_KEYBOARD</TT> and <TT>FL_SHORTCUT</TT> events:
 <LI><TT>FL_BUTTON2</TT> - Mouse button 2 is pushed. </LI>
 <LI><TT>FL_BUTTON3</TT> - Mouse button 3 is pushed. </LI>
 </UL>
+<!-- NEED 4in -->
 <H2><a name=align>Alignment Values</A></H2>
  The following constants define bits that can be used with <A href=Fl_Widget.html#Fl_Widget.align>
 <TT>Fl_Widget::align()</TT></A> to control the positioning of the
@@ -230,42 +231,10 @@ FLTK standard color cube:
 
 </UL>
 
-<P>The inline methods for getting a grayscale, color cube, or RGB color
-value are described next.
-
-<H3>Color Functions</H3>
-
-<H4>Fl_Color fl_gray_ramp(int i)</H4>
-
-<P>Returns a gray color value from black (<TT>i == 0</TT>) to
-white (<TT>i == FL_NUM_GRAY - 1</TT>). <TT>FL_NUM_GRAY</TT> is
-defined to be 24 in the current FLTK release. To get the closest
-FLTK gray value to an 8-bit grayscale color 'I' use:
-
-<UL><PRE>
-fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
-</PRE></UL>
-
-<H4>Fl_Color fl_color_cube(int r, int g, int b)</H4>
-
-<P>Returns a color out of the color cube.
-<tt>r</tt> must be in the range 0 to FL_NUM_RED (5) minus 1.
-<tt>g</tt> must be in the range 0 to FL_NUM_GREEN (8) minus 1.
-<tt>b</tt> must be in the range 0 to FL_NUM_BLUE (5) minus 1.
-
-<P>To get the closest color to a 8-bit set of R,G,B values use:
-
-<UL><PRE>
-fl_color_cube(R * (FL_NUM_RED - 1) / 255,
-              G * (FL_NUM_GREEN - 1) / 255,
-              B * (FL_NUM_BLUE - 1) / 255);
-</PRE></UL>
-
-<H4><a name="fl_rgb_color">Fl_Color fl_rgb_color(uchar r, uchar g, uchar b)<BR>
-Fl_Color fl_rgb_color(uchar g)</a></H4>
-
-<P>Returns the 24-bit RGB color value for the specified 8-bit
-RGB or grayscale values.
+<P>The inline methods for getting a grayscale, color cube, or
+RGB color value are described in <A
+HREF="functions.html#functions">Appendix B - Function
+Reference</A>.
 
 <H2><a name=cursor>Cursors</A></H2>
 

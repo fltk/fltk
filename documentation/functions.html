@@ -1,14 +1,194 @@
-<html><body>
+<HTML>
+<BODY>
 
-<h1 align=right><a name=functions>B - Function Reference</A></h1>
+<H1 ALIGN="RIGHT"><A NAME="functions">B - Function Reference</A></H1>
 
-This appendix describes all of the <tt>fl_</tt> functions. For a
+<P>This appendix describes all of the <tt>fl_</tt> functions. For a
 description of the FLTK classes, see <A href="widgets.html">Appendix
 A</A>.
 
-<h2>Functions</h2>
+<H2>Function List by Name</H2>
 
-<h3><A name="fl_beep">void fl_beep(int type = FL_BEEP_DEFAULT)</A></h3>
+<UL>
+
+	<LI><A HREF="#fl_alert"><TT>fl_alert</TT></A></LI>
+	<LI><A HREF="#fl_ask"><TT>fl_ask</TT></A></LI>
+	<LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
+	<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
+	<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
+	<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+	<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
+	<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
+	<LI><A HREF="#fl_filename_absolute"><TT>fl_filename_absolute</TT></A></LI>
+	<LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
+	<LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
+	<LI><A HREF="#fl_filename_isdir"><TT>fl_filename_isdir</TT></A></LI>
+	<LI><A HREF="#fl_filename_list"><TT>fl_filename_list</TT></A></LI>
+	<LI><A HREF="#fl_filename_match"><TT>fl_filename_match</TT></A></LI>
+	<LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
+	<LI><A HREF="#fl_filename_relative"><TT>fl_filename_relative</TT></A></LI>
+	<LI><A HREF="#fl_filename_setext"><TT>fl_filename_setext</TT></A></LI>
+	<LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
+	<LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
+	<LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
+	<LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
+	<LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
+	<LI><A HREF="#fl_password"><TT>fl_password</TT></A></LI>
+	<LI><A HREF="#fl_rgb_color"><TT>fl_rgb_color</TT></A></LI>
+	<LI><A HREF="#fl_show_colormap"><TT>fl_show_colormap</TT></A></LI>
+
+</UL>
+
+<H2>Function List by Category</H2>
+
+<UL>
+
+	<LI>Dialog Functions
+	<UL>
+		<LI><A HREF="#fl_alert"><TT>fl_alert</TT></A></LI>
+		<LI><A HREF="#fl_ask"><TT>fl_ask</TT></A></LI>
+		<LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
+		<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
+		<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
+		<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
+		<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
+		<LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
+		<LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
+		<LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
+		<LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
+		<LI><A HREF="#fl_password"><TT>fl_password</TT></A></LI>
+		<LI><A HREF="#fl_show_colormap"><TT>fl_show_colormap</TT></A></LI>
+	</UL>
+	</LI>
+
+	<LI>Drawing Functions
+	<UL>
+
+		<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+		<LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
+		<LI><A HREF="#fl_rgb_color"><TT>fl_rgb_color</TT></A></LI>
+
+	</UL>
+	</LI>
+
+	<LI>Filename Functions
+	<UL>
+		<LI><A HREF="#fl_filename_absolute"><TT>fl_filename_absolute</TT></A></LI>
+		<LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
+		<LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
+		<LI><A HREF="#fl_filename_isdir"><TT>fl_filename_isdir</TT></A></LI>
+		<LI><A HREF="#fl_filename_list"><TT>fl_filename_list</TT></A></LI>
+		<LI><A HREF="#fl_filename_match"><TT>fl_filename_match</TT></A></LI>
+		<LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
+		<LI><A HREF="#fl_filename_relative"><TT>fl_filename_relative</TT></A></LI>
+		<LI><A HREF="#fl_filename_setext"><TT>fl_filename_setext</TT></A></LI>
+	</UL>
+	</LI>
+
+</UL>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_alert">fl_alert</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_alert(const char *, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Same as <tt>fl_message()</tt> except for the &quot;!&quot; symbol.
+
+<P ALIGN=CENTER><IMG src="fl_alert.gif" ALT="The fl_alert window">
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_ask">fl_ask</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_ask(const char *, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Displays a printf-style message in a pop-up box with an
+&quot;Yes&quot; and &quot;No&quot; button and waits for the user
+to hit a button. The return value is 1 if the user hits Yes, 0
+if they pick No. The enter key is a shortcut for Yes and ESC is
+a shortcut for No.
+
+<P ALIGN="CENTER"><IMG SRC="fl_ask.gif" ALT="The fl_ask window.">
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_beep">fl_beep</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_beep(int type = FL_BEEP_DEFAULT)
+</PRE></UL>
+
+<H3>Description</H3>
 
 <P>Sounds an audible notification; the default <CODE>type</CODE> argument
 sounds a simple "beep" sound. Other values for <CODE>type</CODE> may use
@@ -35,233 +215,700 @@ a system or user-defined sound file:
 
 </UL>
 
-<h3><A name="fl_color_chooser_func">int fl_color_chooser(const char
-*title, double &amp;r, double &amp;g, double &amp;b)
-<br>int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A></h3>
+
+<!-- NEED 4in -->
+<H2><A name="fl_choice2">fl_choice</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_choice(const char *q, const char *b0, const char *b1, const char *b2, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Shows the message with three buttons below it marked with the
+strings <tt> b0</tt>, <tt>b1</tt>, and <tt>b2</tt>. Returns 0,
+1, or 2 depending on which button is hit. ESC is a shortcut for
+button 0 and the enter key is a shortcut for button 1. Notice
+the buttons are positioned &quot;backwards&quot;. You can hide
+buttons by passing <tt>NULL</tt> as their labels.
+
+<P ALIGN="CENTER"><IMG SRC="fl_choice.gif" ALT="The fl_choice window.">
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_color_chooser_func">fl_color_chooser</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Color_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_color_chooser(const char *title, double &amp;r, double &amp;g, double &amp;b);
+int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b);
+</PRE></UL>
+
+<H3>Description</H3>
 
 <P>The <CODE>double</CODE> version takes RGB values in the range
 0.0 to 1.0.  The <CODE>uchar</CODE> version takes RGB values in
 the range 0 to 255. The <tt>title</tt> argument specifies the
 label (title) for the window.
 
-<p align=center><img src="fl_color_chooser.jpg" ALT="The fl_color_chooser dialog.">
+<P ALIGN="CENTER"><IMG SRC="fl_color_chooser.jpg" ALT="The fl_color_chooser dialog."></P>
 
-<P><tt>fl_color_chooser()</tt> pops up a window to let the user pick an
-arbitrary RGB color.  They can pick the hue and saturation in the &quot;hue
-box&quot; on the left (hold down CTRL to just change the saturation), and
-the brighness using the vertical slider.  Or they can type the 8-bit
-numbers into the RGB <A href=Fl_Value_Input.html#Fl_Value_Input><tt>
-Fl_Value_Input</tt></A> fields, or drag the mouse across them to adjust
-them.  The pull-down menu lets the user set the input fields to show
-RGB, HSV, or 8-bit RGB (0 to 255).
+<P><tt>fl_color_chooser()</tt> pops up a window to let the user
+pick an arbitrary RGB color.  They can pick the hue and
+saturation in the &quot;hue box&quot; on the left (hold down
+CTRL to just change the saturation), and the brighness using the
+vertical slider.  Or they can type the 8-bit numbers into the
+RGB <A href=Fl_Value_Input.html#Fl_Value_Input><tt>
+Fl_Value_Input</tt></A> fields, or drag the mouse across them to
+adjust them.  The pull-down menu lets the user set the input
+fields to show RGB, HSV, or 8-bit RGB (0 to 255).
 
-<P>This returns non-zero if the user picks ok, and updates the RGB
-values.  If the user picks cancel or closes the window this returns
-zero and leaves RGB unchanged.
+<P>This returns non-zero if the user picks ok, and updates the
+RGB values.  If the user picks cancel or closes the window this
+returns zero and leaves RGB unchanged.
 
-<P>If you use the color chooser on an 8-bit screen, it will allocate
-all the available colors, leaving you no space to exactly represent the
-color the user picks!  You can however use <A href="drawing.html#fast"><tt>
-fl_rectf()</tt></A> to fill a region with a simulated color using
-dithering.
+<P>If you use the color chooser on an 8-bit screen, it will
+allocate all the available colors, leaving you no space to
+exactly represent the color the user picks!  You can however use
+<A href="drawing.html#fast"><tt> fl_rectf()</tt></A> to fill a
+region with a simulated color using dithering.
 
-<h3><A name=fl_show_colormap>int fl_show_colormap(int oldcol)</A></h3>
 
-<tt>fl_show_colormap()</tt> pops up a panel of the 256 colors you can
-access with <A href="drawing.html#fl_color"><tt>fl_color()</tt></A> and lets the user
-pick one of them.  It returns the new color index, or the old one if
-the user types ESC or clicks outside the window.
-<P ALIGN=CENTER><IMG src="fl_show_colormap.gif" ALT="The fl_show_colormap dialog">
+<!-- NEED 4in -->
+<H2><A NAME="fl_color_cube">fl_color_cube</A></H2>
 
-<h3><A name=fl_message>void fl_message(const char *, ...)</A></h3>
+<HR>
 
-Displays a printf-style message in a pop-up box with an &quot;OK&quot; button,
-waits for the user to hit the button.  The message will wrap to fit the
-window, or may be many lines by putting <tt>\n</tt> characters into it.
-The enter key is a shortcut for the OK button.
-<P ALIGN=CENTER><IMG src="fl_message.gif" ALT="The fl_message window.">
+<H3>Include File</H3>
 
-<h3><A name="fl_alert">void fl_alert(const char *, ...)</A></h3>
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
 
-Same as <tt>fl_message()</tt> except for the &quot;!&quot; symbol.
-<P ALIGN=CENTER><IMG src="fl_alert.gif" ALT="The fl_alert window">
+<H3>Prototype</H3>
 
-<h3><A name=fl_ask>int fl_ask(const char *, ...)</A></h3>
+<UL><PRE>
+Fl_Color fl_color_cube(int r, int g, int b);
+</PRE></UL>
 
-Displays a printf-style message in a pop-up box with an
-&quot;Yes&quot; and &quot;No&quot; button and waits for the user to
-hit a button.  The return value is 1 if the user hits Yes, 0 if they
-pick No.  The enter key is a shortcut for Yes and ESC is a shortcut
-for No.
+<H3>Description</H3>
 
-<p align=center><img src="fl_ask.gif" ALT="The fl_ask window.">
+<P>Returns a color out of the color cube. <tt>r</tt> must be in
+the range 0 to FL_NUM_RED (5) minus 1. <tt>g</tt> must be in the
+range 0 to FL_NUM_GREEN (8) minus 1. <tt>b</tt> must be in the
+range 0 to FL_NUM_BLUE (5) minus 1.
 
-<h3><A name=fl_choice2>int fl_choice(const char *q, const char *b0,
-const char *b1, const char *b2, ...)</A></h3>
+<P>To get the closest color to a 8-bit set of R,G,B values use:
 
-Shows the message with three buttons below it marked with the strings
-<tt> b0</tt>, <tt>b1</tt>, and <tt>b2</tt>.  Returns 0, 1, or 2
-depending on which button is hit. ESC is a shortcut for button 0 and
-the enter key is a shortcut for button 1.  Notice the buttons are
-positioned &quot;backwards&quot; You can hide buttons by passing
-<tt>NULL</tt> as their labels.
+<UL><PRE>
+fl_color_cube(R * (FL_NUM_RED - 1) / 255,
+              G * (FL_NUM_GREEN - 1) / 255,
+              B * (FL_NUM_BLUE - 1) / 255);
+</PRE></UL>
 
-<p align=center><img src="fl_choice.gif" ALT="The fl_choice window.">
 
-<h3><A name=fl_input2>const char *fl_input(const char *label, const char
-*deflt = 0, ...)</A></h3>
+<!-- NEED 4in -->
+<H2><A NAME="fl_file_chooser2">fl_file_chooser</A></H2>
 
-Pops up a window displaying a string, lets the user edit it, and
-return the new value.  The cancel button returns <tt>NULL</tt>. <I>The
-returned pointer is only valid until the next time <tt>fl_input()</tt>
-is called</I>.  Due to back-compatability, the arguments to any printf
-commands in the label are after the default value.
+<HR>
 
-<p align=center><img src="fl_input.gif" ALT="The fl_input window.">
+<H3>Include Files</H3>
 
-<h3><A name=fl_password>const char *fl_password(const char *label,
-const char *deflt = 0, ...)</A></h3>
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
 
-Same as <tt>fl_input()</tt> except an <A
-href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A> field is used.
+<H3>Prototype</H3>
 
-<p align=center><img src="fl_password.gif" ALT="The fl_password window.">
+<UL><PRE>
+char *fl_file_chooser(const char * message, const char *pattern, const char *fname);
+</PRE></UL>
 
-<h3><A name=fl_message_font>void fl_message_font(Fl_Font fontid, uchar
-size)</A></h3>
+<H3>Description</H3>
 
-Change the font and font size used for the messages in all the popups.
+<P>FLTK provides a &quot;tab completion&quot; file chooser that
+makes it easy to choose files from large directories.  This file
+chooser has several unique features, the major one being that
+the Tab key completes filenames like it does in Emacs or tcsh,
+and the list always shows all possible completions.
 
-<h3><A name=fl_message_icon>Fl_Widget *fl_message_icon()</A></h3>
+<P ALIGN="CENTER"><IMG SRC="filechooser.gif" ALT="The fl_file_chooser window.">
 
-Returns a pointer to the box at the left edge of all the popups.  You
-can alter the font, color, or label (including making it a Pixmap),
-before calling the functions.
-
-<h3><A name=fl_file_chooser>char *fl_file_chooser(const char * message,
-const char *pattern, const char *fname)</A></h3>
-
-FLTK provides a &quot;tab completion&quot; file chooser that makes it easy to
-choose files from large directories.  This file chooser has several
-unique features, the major one being that the Tab key completes
-filenames like it does in Emacs or tcsh, and the list always shows all
-possible completions.
-
-<p align=center><img src="filechooser.gif" ALT="The fl_file_chooser window.">
-
-<tt>fl_file_chooser()</tt> pops up the file chooser, waits for the user
-to pick a file or Cancel, and then returns a pointer to that filename
-or <tt>NULL</tt> if Cancel is chosen.
+<P><tt>fl_file_chooser()</tt> pops up the file chooser, waits
+for the user to pick a file or Cancel, and then returns a
+pointer to that filename or <tt>NULL</tt> if Cancel is chosen.
 
 <P><tt>message</tt> is a string used to title the window.
 
-<P><tt>pattern</tt> is used to limit the files listed in a directory to
-those matching the pattern.  This matching is done by <A href=#fl_filename_match>
-<tt>fl_filename_match()</tt></A>.  Use <tt>NULL</tt> to show all files.
+<P><tt>pattern</tt> is used to limit the files listed in a
+directory to those matching the pattern. This matching is done
+by <A
+href="#fl_filename_match"><tt>fl_filename_match()</tt></A>. Use
+<tt>NULL</tt> to show all files.
 
-<P><tt>fname</tt> is a default filename to fill in the chooser with.
-If this is <tt>NULL</tt> then the last filename that was choosen is
-used (unless that had a different pattern, in which case just the last
-directory with no name is used).  The first time the file chooser is
-called this defaults to a blank string.
+<P><tt>fname</tt> is a default filename to fill in the chooser
+with. If this is <tt>NULL</tt> then the last filename that was
+choosen is used (unless that had a different pattern, in which
+case just the last directory with no name is used). The first
+time the file chooser is called this defaults to a blank string.
 
-<P>The returned value points at a static buffer that is only good until
-the next time <tt>fl_file_chooser()</tt> is called.
+<P>The returned value points at a static buffer that is only
+good until the next time <tt>fl_file_chooser()</tt> is called.
 
-<h3><A name=fl_file_chooser_callback>void fl_file_chooser_callback(void
-(*cb)(const char *))</A></h3>
 
-Set a function that is called every time the user clicks a file in the
-currently popped-up file chooser.  This could be used to preview the
-contents of the file.  It has to be reasonably fast, and cannot create
-FLTK windows.
+<!-- NEED 4in -->
+<H2><A NAME="fl_file_chooser_callback">fl_file_chooser_callback</A></H2>
 
-<h3><A name=fl_filename_list>int fl_filename_list(const char *d, dirent
-***list)</A></h3>
+<HR>
 
-This is a portable and const-correct wrapper for the
-<tt>fl_scandir</tt> function. <tt>d</tt> is the name of a directory
-(it does not matter if it has a trailing slash or not).  For each file
-in that directory a &quot;dirent&quot; structure is created.  The only
-portable thing about a dirent is that dirent.d_name is the
-nul-terminated file name.  An array of pointers to these dirents is
-created and a pointer to the array is returned in <tt>*list</tt>.  The
-number of entries is given as a return value.  If there is an error
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_file_chooser_callback(void (*cb)(const char *));
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sets a function that is called every time the user clicks a
+file in the currently popped-up file chooser. This could be used
+to preview the contents of the file. It has to be reasonably
+fast, and cannot create FLTK windows.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_absolute">fl_filename_absolute</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_absolute(char *to, int tolen, const char *from);
+int fl_filename_absolute(char *to, const char *from);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Converts a relative pathname to an absolute pathname. If
+<tt>from</tt> does not start with a slash, the current working
+directory is prepended to <tt>from</tt> with any occurances of
+<tt>.</tt> and <tt>x/..</TT> deleted from the result. The
+absolute pathname is copied to <tt>to</tt>; <tt>from</tt> and
+<tt>to</tt> may point to the  same buffer.
+<TT>fl_filename_absolute</TT> returns non-zero if any changes
+were made.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_expand">fl_filename_expand</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_expand(char *to, int tolen, const char *from);
+int fl_filename_expand(char *to, const char *from);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>This function replaces environment variables and home
+directories with the corresponding strings. Any occurrence of
+<tt>$X</tt> is replaced by <tt>getenv(&quot;X&quot;)</tt>; if
+<TT>$X</TT> is not defined in the environment, the occurrence is
+not replaced. Any occurence of <tt>~X</tt> is replaced by user
+<tt>X</tt>'s home directory; if user <TT>X</TT> does not exist,
+the occurrence is not replaced. Any resulting double slashes
+cause everything before the second slash to be deleted.
+
+<P>The result is copied to <TT>to</TT>, and <TT>from</TT> and
+<TT>to</TT> may point to the same buffer.
+<TT>fl_filename_expand()</TT> returns non-zero if any changes
+were made.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_ext">fl_filename_ext</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_filename_ext(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a pointer to the last period in
+<tt>fl_filename_name(f)</tt>, or a pointer to the trailing
+<TT>nul</TT> if none is found.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_isdir">fl_filename_isdir</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_isdir(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns non-zero if the file exists and is a directory.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_list">fl_filename_list</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_list(const char *d, dirent ***list);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>This is a portable and const-correct wrapper for the
+<tt>scandir()</tt> function. <tt>d</tt> is the name of a
+directory; it does not matter if it has a trailing slash or not.
+For each file in that directory a &quot;dirent&quot; structure
+is created. The only portable thing about a dirent is that
+<TT>dirent.d_name</TT> is the <TT>nul</TT>-terminated file name.
+An array of pointers to these <TT>dirent</TT>'s is created and a
+pointer to the array is returned in <tt>*list</tt>. The number
+of entries is given as a return value. If there is an error
 reading the directory a number less than zero is returned, and
-<tt>errno</tt> has the reason (<tt>errno</tt> does not work under
-WIN32).  The files are sorted in &quot;alphanumeric&quot; order, where
-an attempt is made to put unpadded numbers in consecutive order.
+<tt>errno</tt> has the reason; <tt>errno</tt> does not work
+under WIN32. The files are sorted in &quot;alphanumeric&quot;
+order, where an attempt is made to put unpadded numbers in
+consecutive order.
 
-<P>You can free the returned list of files with the following code:
+<P>You can free the returned list of files with the following
+code:
 
-<ul><pre>for (int i = return_value; i &gt; 0;) free((void*)(list[--i]));
-free((void*)list);</pre></ul>
+<UL><PRE>
+for (int i = return_value; i &gt; 0;) {
+  free((void*)(list[--i]));
+}
 
-<h3><A name=fl_filename_isdir>int fl_filename_isdir(const char *f)</A></h3>
+free((void*)list);
+</PRE></UL>
 
-Returns non-zero if the file exists and is a directory.
 
-<h3><A name=fl_filename_name>const char *fl_filename_name(const char *f)</A></h3>
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_match">fl_filename_match</A></H2>
 
-Returns a pointer to the character after the last slash, or to the
-start of the filename if there is none.
+<HR>
 
-<h3><A name=fl_filename_ext>const char *fl_filename_ext(const char *f)</A></h3>
+<H3>Include Files</H3>
 
-Returns a pointer to the last period in <tt>fl_filename_name(f)</tt>, or
-a pointer to the trailing nul if none.
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
 
-<h3><A name=fl_filename_setext>char *fl_filename_setext(char *f, const char
-*ext)</A></h3>
+<H3>Prototype</H3>
 
-Does <tt>strcpy(fl_filename_ext(f), ext ? ext : &quot;&quot;)</tt>.  Returns a
-pointer to <tt>f</tt>.
+<UL><PRE>
+int fl_filename_match(const char *f, const char *pattern);
+</PRE></UL>
 
-<h3><A name=fl_filename_expand>int fl_filename_expand(char *out, const char
-*in)</A></h3>
+<H3>Description</H3>
 
-Splits <tt>in</tt> at each slash character.  Replaces any occurrance
-of <tt>$X</tt> with <tt>getenv(&quot;X&quot;)</tt> (leaving it as
-<tt>$X</tt> if the environment variable does not exist).  Replaces any
-occurances of <tt> ~X</tt> with user <tt>X</tt>'s home directory
-(leaving it as <tt>~X</tt> if the user does not exist).  Any resulting
-double slashes cause everything before the second slash to be deleted.
-Copies the result to <tt> out</tt> (<tt>in</tt> and <tt>out</tt> may
-be the same buffer).  Returns non-zero if any changes were made. <I>In
-true retro programming style, it is up to you to provide a buffer big
-enough for the result.  1024 characters should be enough.</I>
-
-<h3><A name=fl_filename_absolute>int fl_filename_absolute(char *out, const
-char *in)</A></h3>
-
-If <tt>in</tt> does not start with a slash, this prepends the current
-working directory to <tt>in</tt> and then deletes any occurances of <tt>
-.</tt> and x/.. from the result, which it copies to <tt>out</tt> (<tt>in</tt>
-and <tt>out</tt> may be the same buffer).  Returns non-zero if any
-changes were made. <I>In true retro programming style, it is up to you
-to provide a buffer big enough for the result.  1024 characters should
-be enough.</I>
-
-<h3><A name=fl_filename_match>int fl_filename_match(const char *f, const char
-*pattern)</A></h3>
-
-Returns true if <tt>f</tt> matches <tt>pattern</tt>.  The following
-syntax is used by <tt>pattern</tt>:
+<P>Returns non-zero if <tt>f</tt> matches <tt>pattern</tt>. The
+following syntax is used by <tt>pattern</tt>:
 
 <UL>
-<LI><tt>*</tt> matches any sequence of 0 or more characters. </LI>
-<LI><tt>?</tt> matches any single character. </LI>
-<LI><tt>[set]</tt> matches any character in the set.  Set  can contain
-any single characters, or a-z to represent a range.  To  match ] or -
-they must be the first characters.  To match ^ or ! they  must not be
-the first characters. </LI>
-<LI><tt>[^set] or <B>[!set]</B></tt> matches any character  not in the
-set. </LI>
-<LI><tt>{X|Y|Z} or <B>{X,Y,Z}</B></tt> matches any one of  the
-subexpressions literally. </LI>
-<LI><tt>\x</tt> quotes the character x so it has no special  meaning. </LI>
-<LI><tt>x</tt> all other characters must be matched exactly. </LI>
+
+	<LI><tt>*</tt> matches any sequence of 0 or more
+	characters.</LI>
+
+	<LI><tt>?</tt> matches any single character.</LI>
+
+	<LI><tt>[set]</tt> matches any character in the set. Set
+	can contain any single characters, or a-z to represent a
+	range. To match ] or - they must be the first
+	characters. To match ^ or ! they must not be the first
+	characters.</LI>
+
+	<LI><tt>[^set] or <B>[!set]</B></tt> matches any
+	character not in the set.</LI>
+
+	<LI><tt>{X|Y|Z} or <B>{X,Y,Z}</B></tt> matches any one of the
+	subexpressions literally.</LI>
+
+	<LI><tt>\x</tt> quotes the character x so it has no
+	special meaning.</LI>
+
+	<LI><tt>x</tt> all other characters must be matched
+	exactly.</LI>
+
 </UL>
 
-</body>
-</html>
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_name">fl_filename_name</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_filename_name(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a pointer to the character after the last slash, or
+to the start of the filename if there is none.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_relative">fl_filename_relative</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_relative(char *to, int tolen, const char *from);
+int fl_filename_relative(char *to, const char *from);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Converts an absolute pathname to an relative pathname. The
+relative pathname is copied to <tt>to</tt>; <tt>from</tt> and
+<tt>to</tt> may point to the same buffer.
+<TT>fl_filename_relative</TT> returns non-zero if any changes
+were made.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_setext">fl_filename_setext</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+char *fl_filename_setext(char *to, int tolen, const char *ext);
+char *fl_filename_setext(char *to, const char *ext);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Replaces the extension in <TT>to</TT> with the extension in
+<TT>ext</TT>. Returns a pointer to <tt>to</tt>.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_gray_ramp">fl_gray_ramp</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_gray_ramp(int i);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a gray color value from black (<TT>i == 0</TT>) to
+white (<TT>i == FL_NUM_GRAY - 1</TT>). <TT>FL_NUM_GRAY</TT> is
+defined to be 24 in the current FLTK release. To get the closest
+FLTK gray value to an 8-bit grayscale color 'I' use:
+
+<UL><PRE>
+fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
+</PRE></UL>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_input2">fl_input</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_input(const char *label, const char *deflt = 0, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Pops up a window displaying a string, lets the user edit it,
+and return the new value. The cancel button returns
+<tt>NULL</tt>. <I>The returned pointer is only valid until the
+next time <tt>fl_input()</tt> is called</I>. Due to
+back-compatability, the arguments to any printf commands in the
+label are after the default value.
+
+<P ALIGN=CENTER><IMG SRC="fl_input.gif" ALT="The fl_input window.">
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_message">fl_message</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_message(const char *, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Displays a printf-style message in a pop-up box with an
+&quot;OK&quot; button, waits for the user to hit the button. 
+The message will wrap to fit the window, or may be many lines by
+putting <tt>\n</tt> characters into it. The enter key is a
+shortcut for the OK button.
+
+<P ALIGN="CENTER"><IMG src="fl_message.gif" ALT="The fl_message window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_message_font">fl_message_font</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_message_font(Fl_Font fontid, uchar size);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Changes the font and font size used for the messages in all
+the popups.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_message_icon">fl_message_icon</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Widget *fl_message_icon();
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a pointer to the box at the left edge of all the
+popups. You can alter the font, color, label, or image before
+calling the functions.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_password">fl_password</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_password(const char *label, const char *deflt = 0, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Same as <tt>fl_input()</tt>, except an <A
+href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A> field is
+used.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_rgb_color">fl_rgb_color</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_rgb_color(uchar r, uchar g, uchar b);
+Fl_Color fl_rgb_color(uchar g);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the 24-bit RGB color value for the specified 8-bit
+RGB or grayscale values.
+
+
+<!-- NEED 8in -->
+<H2><A name="fl_show_colormap">fl_show_colormap</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_show_colormap.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_show_colormap(int oldcol)
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P><tt>fl_show_colormap()</tt> pops up a panel of the 256 colors
+you can access with <A
+href="drawing.html#fl_color"><tt>fl_color()</tt></A> and lets
+the user pick one of them. It returns the new color index, or
+the old one if the user types ESC or clicks outside the window.
+
+<P ALIGN="CENTER"><IMG src="fl_show_colormap.gif" ALT="The fl_show_colormap dialog">
+
+
+</BODY>
+</HTML>
