@@ -5,12 +5,12 @@ widgets in FLTK.
 <H2>Subclassing</H2>
  New widgets are created by <I>subclassing</I> an existing FLTK widget, 
 typically <TT>Fl_Widget</TT> for controls and <TT>Fl_Group</TT> for 
-containers. 
+composite widgets. 
 <P>A control widget typically interacts with the user to receive and/or 
 display a value of some sort. </P>
-<P>A container widget holds a list of child widgets and handles moving, 
+<P>A composite widget widget holds a list of child widgets and handles moving, 
 sizing, showing, or hiding them as needed. <TT>Fl_Group</TT> is the 
-main container widget class in FLTK, and all of the other containers (<TT>
+main composite widget widget class in FLTK, and all of the other composite widgets (<TT>
 Fl_Pack</TT>, <TT>Fl_Scroll</TT>, <TT>Fl_Tabs</TT>, <TT>Fl_Tile</TT>, 
 and <TT>Fl_Window</TT>) are subclasses of it. </P>
 <P>You can also subclass other existing widgets to provide a different 
@@ -23,13 +23,13 @@ the face of the button. </P>
 subclass of <TT>Fl_Widget</TT>. <TT>Fl_Widget</TT> has only four 
 virtual methods, and overriding some or all of these may be necessary. 
 <H2>The Constructor</H2>
- The constructor should access the following arguments: 
+ The constructor should have the following arguments: 
 <UL>
 <PRE>
 MyClass(int x, int y, int w, int h, const char *label = 0);
 </PRE>
 </UL>
- This will allow the class to be used in <A href=fluid.html#fluid>Fluid</A>
+ This will allow the class to be used in <A href=fluid.html#fluid>FLUID</A>
  without problems. 
 <P>The constructor must call the constructor for the base class and 
 pass the same arguments: </P>
@@ -41,8 +41,8 @@ MyClass::MyClass(int x, int y, int w, int h, const char *label)
 }
 </PRE>
 </UL>
-<TT>Fl_Widget</TT>'s protected constructor sets <TT>x()</TT>, <TT>y()</TT>
-, <TT>w()</TT>, <TT>h()</TT>, and <TT>label()</TT> to the passed values 
+<TT>Fl_Widget</TT>'s protected constructor sets <TT>x()</TT>, <TT>y()</TT>,
+<TT>w()</TT>, <TT>h()</TT>, and <TT>label()</TT> to the passed values 
 and initializes the other instance variables to: 
 <UL>
 <PRE>
@@ -62,14 +62,14 @@ flags(ACTIVE|VISIBLE);
 <H2>Protected Methods of Fl_Widget</H2>
  The following methods are provided for subclasses to use: 
 <UL>
-<LI><A name=#clear_visible>clear_visible</A></LI>
-<LI><A name=#damage>damage</A></LI>
-<LI><A name=#draw_box>draw_box</A></LI>
-<LI><A name=#draw_label>draw_label</A></LI>
-<LI><A name=#set_flag>set_flag</A></LI>
-<LI><A name=#set_visible>set_visible</A></LI>
-<LI><A name=#test_shortcut>test_shortcut</A></LI>
-<LI><A name=#type>type</A></LI>
+<LI><A href=#clear_visible><TT>Fl_Widget::clear_visible</TT></A></LI>
+<LI><A href=#damage><TT>Fl_Widget::damage</TT></A></LI>
+<LI><A href=#draw_box><TT>Fl_Widget::draw_box</TT></A></LI>
+<LI><A href=#draw_label><TT>Fl_Widget::draw_label</TT></A></LI>
+<LI><A href=#set_flag><TT>Fl_Widget::set_flag</TT></A></LI>
+<LI><A href=#set_visible><TT>Fl_Widget::set_visible</TT></A></LI>
+<LI><A href=#test_shortcut><TT>Fl_Widget::test_shortcut</TT></A></LI>
+<LI><A href=#type><TT>Fl_Widget::type</TT></A></LI>
 </UL>
 <H3><A name=damage>void Fl_Widget::damage(uchar mask)
 <BR> void Fl_Widget::damage(uchar mask, int x, int y, int w, int h)
@@ -84,9 +84,31 @@ your widget can call the private <TT>damage(n)</TT>.
 calls are done in a window (no calls to <TT>damage(n)</TT>) then FLTK 
 will clip to the union of all these calls before drawing anything. 
  This can greatly speed up incremental displays.  The mask bits are 
-or'd into <TT>damage()</TT> unless this is a <TT>Fl_Window</TT> widget. </P>
+OR'd into <TT>damage()</TT> unless this is a <TT>Fl_Window</TT> widget. </P>
 <P>The third form returns the bitwise-OR of all <TT>damage(n)</TT>
 calls done since the last <TT>draw()</TT>.</P>
+<P><I>When redrawing your widgets you should look at the damage bits to
+see what parts of your widget need redrawing.</I> The <tt>handle()</tt>
+method can then set individual damage bits to limit the amount of drawing
+that needs to be done:
+<UL><PRE>
+MyClass::handle(int event) {
+  ...
+  if (change_to_part1) damage(1);
+  if (change_to_part2) damage(2);
+  if (change_to_part3) damage(4);
+}
+
+MyClass::draw() {
+  if (damage() & FL_DAMAGE_ALL) {
+    ... draw frame/box and other static stuff ...
+  }
+
+  if (damage() & (FL_DAMAGE_ALL | 1)) draw_part1();
+  if (damage() & (FL_DAMAGE_ALL | 2)) draw_part2();
+  if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
+}
+</PRE></UL>
 <H3><A name=draw_box>void Fl_Widget::draw_box() const
 <BR></A>void Fl_Widget::draw_box(Fl_Boxtype b, ulong c) const</H3>
  The first form draws this widget's <TT>box()</TT>, using the 
@@ -102,15 +124,14 @@ to be outside the box (on the assumption that the enclosing group will
 draw those labels). 
 <P>The second form uses the passed bounding box instead of the widget's 
 bounding box. This is useful so &quot;centered&quot; labels are aligned with some 
-feature, such as a moving slider. </P>
+feature, like a moving slider. </P>
 <P>The third form draws the label anywhere. It acts as though <TT>
-FL_ALIGN_INSIDE</TT> has been forced on, the label will appear inside 
+FL_ALIGN_INSIDE</TT> has been forced on so the label will appear inside 
 the passed bounding box. This is designed for parent groups to draw 
 labels with. </P>
 <H3><A name=set_flag>void Fl_Widget::set_flag(SHORTCUT_LABEL)</A></H3>
- If your constructor calls this it modifies <TT>draw_label()</TT> so 
-that '&amp;' characters cause an underscore to be printed under the next 
-letter. 
+Modifies <TT>draw_label()</TT> so that '&amp;' characters cause an underscore
+to be printed under the next letter. 
 <H3><A name=set_visible>void Fl_Widget::set_visible()</A>
 <BR><A name=clear_visible>void Fl_Widget::clear_visible()</A></H3>
  Fast inline versions of <TT>Fl_Widget::hide()</TT> and <TT>
@@ -137,7 +158,7 @@ to not interfere with reserved values.
 portability.  But this may change in the near future if RTTI becomes 
 standard everywhere. </P>
 <P>If you don't have RTTI you can use the clumsy FLTK mechanisim, by 
-having <TT>type()</TT> have a unique value.  These unique values must 
+having <TT>type()</TT> use a unique value.  These unique values must 
 be greater than the symbol <TT>FL_RESERVED_TYPE</TT> (which is 100). 
 Look through the header files for <TT>FL_RESERVED_TYPE</TT> to find an 
 unused number.  If you make a subclass of <TT>Fl_Window</TT>
@@ -215,13 +236,13 @@ be called from non-drawing code.
  calls to this widget since it was last drawn.  This can be used for 
 minimal update, by only redrawing the parts whose bits are set.  FLTK 
 will turn on the <TT>FL_DAMAGE_ALL</TT> bit if it thinks the entire widget
-must be redrawn (for instance due to an expose event). </P>
+must be redrawn (e.g. for an expose event). </P>
 <P>Expose events (and the above <TT>damage(b,x,y,w,h)</TT>) will cause <TT>
 draw()</TT> to be called with FLTK's <A href=drawing.html#clipping>
 clipping</A> turned on.  You can greatly speed up redrawing in some 
 cases by testing <TT>fl_clipped</TT> and <TT>fl_current_clip</TT> and 
 skipping invisible parts. </P>
-<P>Besides the protected methods described above, FLTK provide a large 
+<P>Besides the protected methods described above, FLTK provides a large 
 number of basic drawing functions, which are described <A href=drawing.html#drawing>
 below</A>. </P>
 <H2>Resizing the Widget</H2>
@@ -232,12 +253,12 @@ and <TT>h()</TT> still remain the old size.  You must call <TT>resize()</TT>
  on your base class with the same arguments to get the widget size to 
 actually change. 
 <P>This should <I>not</I> call <TT>redraw()</TT>, at least if only the <TT>
-x()</TT> and <TT>y()</TT> change.  This is because group objects like <A href=Fl_Scroll.html#Fl_Scroll>
+x()</TT> and <TT>y()</TT> change.  This is because composite widgets like <A href=Fl_Scroll.html#Fl_Scroll>
 <TT>Fl_Scroll</TT></A> may have a more efficient way of drawing the new 
 position. </P>
-<H2>Making a Composite/Group Widget</H2>
- A &quot;composite&quot; widget contains one or more &quot;child&quot; widgets.  To do this 
-you should subclass <A href=Fl_Group.html#Fl_Group><TT>Fl_Group</TT></A>
+<H2>Making a Composite Widget</H2>
+ A &quot;composite&quot; widget contains one or more &quot;child&quot; widgets.
+ To make a composite widget you should subclass <A href=Fl_Group.html#Fl_Group><TT>Fl_Group</TT></A>
 . It is possible to make a composite object that is not a subclass of <TT>
 Fl_Group</TT>, but you'll have to duplicate the code in <TT>Fl_Group</TT>
  anyways. 
@@ -335,7 +356,7 @@ Fl_Group::draw_outside_label(Fl_Widget&amp;) const</A></H3>
 draw_label()</TT></A>.  If you want more control over the label 
 positions you might want to call <TT>child-&gt;draw_label(x,y,w,h,a)</TT>. 
 <H3><A name=update_child>void Fl_Group::update_child(Fl_Widget&amp;)</A></H3>
- Draws the child only if it's <TT>damage()</TT> is non-zero.  You 
+ Draws the child only if its <TT>damage()</TT> is non-zero.  You 
 should call this on all the children if your own damage is equal to 
 FL_DAMAGE_CHILD.  Nothing is done if the child is not <TT>visible()</TT>
  or if it is clipped. 
@@ -343,10 +364,10 @@ FL_DAMAGE_CHILD.  Nothing is done if the child is not <TT>visible()</TT>
  FLTK provides routines to cut and paste ASCII text (in the future this 
 may be UTF-8) between applications: 
 <UL>
-<LI><A href=functions.html#paste>Fl::paste</A></LI>
-<LI><A href=functions.html#selection>Fl::selection</A></LI>
-<LI><A href=#selection_length>Fl::selection_length</A></LI>
-<LI><A href=functions.html#selection_owner>Fl::selection_owner</A></LI>
+<LI><A href=functions.html#paste><TT>Fl::paste</TT></A></LI>
+<LI><A href=functions.html#selection><TT>Fl::selection</TT></A></LI>
+<LI><A href=#selection_length><TT>Fl::selection_length</TT></A></LI>
+<LI><A href=functions.html#selection_owner><TT>Fl::selection_owner</TT></A></LI>
 </UL>
  It may be possible to cut/paste non-ASCII data by using <A href=osissues.html#add_handler>
 <TT>Fl::add_handler()</TT></A>. 
@@ -354,21 +375,21 @@ may be UTF-8) between applications:
  You may want your widget to be a subclass of <TT>Fl_Window</TT>.  This 
 can be useful if your widget wants to occupy an entire window, and can 
 also be used to take advantage of system-provided clipping, or to work 
-with a library that expects a system window id to indicate where to 
+with a library that expects a system window ID to indicate where to 
 draw. 
 <P>Subclassing <TT>Fl_Window</TT> is almost exactly like subclassing <TT>
-Fl_Widget</TT>, in fact you can easily switch a subclass back and 
+Fl_Widget</TT>, and in fact you can easily switch a subclass back and 
 forth.  Watch out for the following differences: </P>
 <OL>
 <LI><TT>Fl_Window</TT> is a subclass of <TT>Fl_Group</TT> so <I>make 
 sure your constructor calls <TT>end()</TT></I> (unless  you actually 
 want children added to your window). </LI>
 <LI>When handling events and drawing, the upper-left corner is  at 0,0, 
-not <TT>x(),y()</TT> as in other <TT>Fl_Widget</TT>s.  For instance, to 
+not <TT>x(),y()</TT> as in other <TT>Fl_Widget</TT>'s.  For instance, to 
 draw a box around the widget, call <TT>draw_box(0, 0, w(), h())</TT>, 
-rather than <TT>draw_box( x(), y(), w(), h())</TT>. </LI>
+rather than <TT>draw_box(x(), y(), w(), h())</TT>. </LI>
 </OL>
  You may also want to subclass <TT>Fl_Window</TT> in order to get 
 access to different visuals or to change other attributes of the 
-windows.  See <A href=osissues.html#osissues>Appendix F - Operating 
-System Issues</A> for more information. </BODY></HTML>
+windows.  See <A href=osissues.html#osissues>"Appendix F - Operating 
+System Issues"</A> for more information. </BODY></HTML>

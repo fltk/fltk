@@ -95,7 +95,7 @@ terms of the <A href=#licensing>GNU Library General Public License</A>.
 Contrary to popular belief, it can be used in commercial software! 
 (Even Bill Gates could use it.) 
 <H2>What Does &quot;FLTK&quot; Mean?</H2>
- FLTK was originally designed to be compatable with the Forms Library 
+ FLTK was originally designed to be compatible with the Forms Library 
 written for SGI machines. In that library all the functions and 
 structures started with &quot;fl_&quot;. This naming was extended to all new 
 methods and widgets in the C++ library, and this prefix was taken as 
@@ -110,8 +110,30 @@ Kit&quot;.
 the default of no options and then compile everything. 
 <P>FLTK uses GNU autoconf to configure itself for your UNIX platform. 
 The main things that the configure script will look for are the X11, 
-OpenGL (or Mesa), and JPEG header and library files.  Make sure that 
-they are in the standard include/library locations. </P>
+OpenGL (or Mesa), and JPEG header and library files.  If these cannot be
+found in the standard include/library locations you'll need to define the
+<tt>CFLAGS</tt>, <tt>CXXFLAGS</tt>, and <tt>LDFLAGS</tt> environment
+variables. For the Bourne and Korn shells you'd use:</P>
+<UL><PRE>
+CFLAGS=-I<I>includedir</I>; export CFLAGS
+CXXFLAGS=-I<I>includedir</I>; export CXXFLAGS
+LDFLAGS=-L<I>libdir</I>; export LDFLAGS
+</PRE></UL>
+For C shell and tcsh, use:
+<UL><PRE>
+setenv CFLAGS "-I<I>includedir</I>"
+setenv CXXFLAGS "-I<I>includedir</I>"
+setenv LDFLAGS "-L<I>libdir</I>"
+</PRE></UL>
+By default configure will look for a C++ compiler named <tt>CC</tt>, <tt>c++</tt>,
+<tt>g++</tt>, or <tt>gcc</tt> in that order. To use another compiler you need
+to set the <tt>CXX</tt> environment variable:
+<UL><PRE>
+CXX=xlC; export xlC
+setenv CXX "xlC"
+</PRE></UL>
+The <tt>CC</tt> environment variable can also be used to override the default
+C compiler, which is used for a few FLTK source files.
 <P>You can run configure yourself to get the exact setup you need. Type 
 &quot;./configure &lt;options&gt;&quot;, where options are: </P>
 <DL>
@@ -184,7 +206,7 @@ reporting bugs]</DD>
 </DL>
  To send a message to the FLTK mailing list (&quot;fltk@easysw.com&quot;) you 
 must first join the list.  Non-member submissions are blocked to avoid 
-problems with SPAM... 
+problems with unsolicited email.
 <P>To join the FLTK mailing list, send a message to 
 &quot;majordomo@easysw.com&quot; with &quot;subscribe fltk&quot; in the message body. A 
 digest of this list is available by subscribing to the &quot;fltk-digest&quot; 

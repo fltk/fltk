@@ -3,7 +3,7 @@
  This chapter describes many of the widgets that are provided with FLTK 
 and covers how to query and set the standard attributes. 
 <H2>Buttons</H2>
- FLTK provides many types of buttons: 
+ FLTK provides many types of buttons:
 <UL>
 <LI><TT>Fl_Button</TT> - A standard push button. </LI>
 <LI><TT>Fl_Check_Button</TT> - A button with a check box. </LI>
@@ -13,7 +13,8 @@ and covers how to query and set the standard attributes.
 Enter key. </LI>
 <LI><TT>Fl_Round_Button</TT> - A button with a check circle. </LI>
 </UL>
- For all of these buttons you just need to include the corresponding <TT>
+<P ALIGN=CENTER><IMG SRC="buttons.gif"></P>
+For all of these buttons you just need to include the corresponding <TT>
 &lt;FL/Fl_xyz_Button.H&gt;</TT> header file.  The constructor takes the 
 bounding box of the button and optionally a label string: 
 <UL>
@@ -39,7 +40,7 @@ rbutton-&gt;type(FL_RADIO_BUTTON);
 <TT>clear()</TT></A> methods can be used on toggle buttons to turn a 
 toggle button on or off, respectively.  Radio buttons can be turned on 
 with the <A href=#Fl_Widget.setonly><TT>setonly()</TT></A> method; this 
-will also turn off other radio buttons in the current group. 
+will also turn off other radio buttons in the same group. 
 <H2>Text</H2>
  FLTK provides several text widgets for displaying and receiving text: 
 <UL>
@@ -74,7 +75,8 @@ strings. FLTK provides the following valuators:
 <LI><TT>Fl_Slider</TT> - A scrollbar with a knob. </LI>
 <LI><TT>Fl_Value_Slider</TT> - A slider that shows the current value. </LI>
 </UL>
- The <A href=Fl_Valuator.html#Fl_Valuator.value><TT>value()</TT></A>
+<P ALIGN=CENTER><IMG SRC="valuators.gif"></P>
+The <A href=Fl_Valuator.html#Fl_Valuator.value><TT>value()</TT></A>
  method gets and sets the current value of the widget.  The <A href=Fl_Valuator.html#Fl_Valuator.minimum>
 <TT>minimum()</TT></A> and <A href=Fl_Valuator.html#Fl_Valuator.maximum><TT>
 maximum()</TT></A> methods set the range of values that are reported by 
@@ -144,11 +146,11 @@ button-&gt;labelcolor(FL_WHITE);
 <P ALIGN=CENTER><IMG src="boxtypes.gif"></P>
 <P><TT>FL_NO_BOX</TT> means nothing is drawn at all, so whatever is 
 already on the screen remains.  The <TT>FL_..._FRAME</TT> types only 
-draw their edges, leaving the center unchanged.  In the above diagram 
+draw their edges, leaving the interior unchanged.  In the above diagram 
 the blue color is the area that is not drawn by the box. </P>
 <H3>Making your own Boxtypes</H3>
  You can define your own boxtypes by making a small function that draws 
-the box and adding a pointer to it to a table of boxtypes. 
+the box and adding it to the table of boxtypes. 
 <H4>The Drawing Function</H4>
  The drawing function is passed the bounding box and background color 
 for the widget: 
@@ -183,9 +185,9 @@ Fl::set_boxtype(XYZ_BOX, xyz_draw, 1, 1, 2, 2);
 </UL>
  The last 4 arguments to <TT>Fl::set_boxtype()</TT> are the offsets for 
 the bounding box that should be subtracted when drawing the label 
-inside the box. 
+inside the box.
 <H2><A NAME=labels>Labels and Label Types</A></H2>
- The <TT>label()</TT>, <TT>align</TT>, <TT>labelfont()</TT>, <TT>
+ The <TT>label()</TT>, <TT>align()</TT>, <TT>labelfont()</TT>, <TT>
 labelsize()</TT>, and <TT>labeltype()</TT> methods control the labeling 
 of widgets. 
 <H3>label()</H3>
@@ -226,7 +228,7 @@ raised </LI>
 <TT>Fl_Bitmap</TT></A> or <A href=drawing.html#Fl_Pixmap><TT>Fl_Pixmap</TT>
 </A> objects. 
 <H4>Making Your Own Label Types</H4>
- Label types are actually indexes into a table of functions to draw 
+ Label types are actually indexes into a table of functions that draw 
 them.  The primary purpose of this is to let you reuse the <TT>label()</TT>
  pointer as a pointer to arbitrary data such as a bitmap or pixmap. You 
 can also use this to draw the labels in ways inaccessible through the <TT>
@@ -252,7 +254,7 @@ label value is <TT>NULL</TT>.
 Fl_Label</TT></A> structure and references to the width and height: </P>
 <UL>
 <PRE>
-void xyz_measure(Fl_Label *label, int w int h {
+void xyz_measure(Fl_Label *label, int &amp;w, int &amp;h) {
 ...
 }
 </PRE>
@@ -276,9 +278,9 @@ type.
 <P>The <TT>Fl::set_labeltype</TT> method can also be used to overload 
 an existing label type such as <TT>FL_NORMAL_LABEL</TT>. </P>
 <H4><A name=symbols>Symbol Labels</A></H4>
-<P>The <TT>FL_SYMBOL_LABEL</TT> label type uses the <TT>label()</TT>
+The <TT>FL_SYMBOL_LABEL</TT> label type uses the <TT>label()</TT>
  string to look up a small drawing procedure in a hash table.  For 
-historical reasons the string always starts with '@', if it starts with 
+historical reasons the string always starts with '@'; if it starts with 
 something else (or the symbol is not found) the label is drawn 
 normally: 
 <CENTER><IMG src=./symbols.gif></CENTER>

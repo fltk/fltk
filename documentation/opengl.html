@@ -2,16 +2,16 @@
 <H1 ALIGN=RIGHT><A NAME=opengl>9 - Using OpenGL</A></H1>
  This chapter discusses using FLTK for your OpenGL applications. 
 <H2>Using OpenGL in FLTK</H2>
- The easiest way to make an OpenGL display is to subclass <A href=Fl_Gl_Window.html#Fl_Gl_Window>
+The easiest way to make an OpenGL display is to subclass <A href=Fl_Gl_Window.html#Fl_Gl_Window>
 <TT>Fl_Gl_Window</TT></A>. Your subclass must implement a <TT>draw()</TT>
- method which uses OpenGL calls to draw the display.  Your main program 
+method which uses OpenGL calls to draw the display.  Your main program 
 should call <TT>redraw()</TT> when the display needs to change, and 
 (somewhat later) FLTK will call <TT>draw()</TT>. 
 <P>With a bit of care you can also use OpenGL to draw into normal FLTK 
-windows.  This is mostly useful because you can use Gourand shading for 
+windows.  This allows you to use Gouraud shading for 
 drawing your widgets.  To do this you use the <A href=#gl_start><TT>
 gl_start()</TT></A> and <A href=#gl_finish><TT>gl_finish()</TT></A>
- functions around your OpenGL code. </P>
+functions around your OpenGL code. </P>
 <P>You must include FLTK's <TT>&lt;FL/gl.h&gt;</TT> header file.  It will 
 include the file <TT>&lt;GL/gl.h&gt;</TT>, define some extra drawing 
 functions provided by FLTK, and include the <TT>&lt;windows.h&gt;</TT> header 
@@ -25,7 +25,7 @@ file needed by WIN32 applications. </P>
 user). </LI>
 </UL>
 <H3>Defining the Subclass</H3>
- To define the subclass you just subclass <TT>Fl_Gl_Window</TT> class: 
+To define the subclass you just subclass the <TT>Fl_Gl_Window</TT> class: 
 <UL>
 <PRE>
 class MyWindow : public Fl_Gl_Window {
@@ -81,6 +81,10 @@ int MyWindow::handle(int event) {
     ... keypress, key is in Fl::event_key(), ascii in Fl::event_text()
     ... Return 1 if you understand/use the keyboard event, 0 otherwise...
     return 1;
+  case FL_SHORTCUT:
+    ... shortcut, key is in Fl::event_key(), ascii in Fl::event_text()
+    ... Return 1 if you understand/use the shortcut event, 0 otherwise...
+    return 1;
   default:
     // tell FLTK that I don't understand other events
     return 0;
@@ -88,11 +92,11 @@ int MyWindow::handle(int event) {
 }
 </PRE>
 </UL>
- When <TT>handle()</TT> is called, the OpenGL context is not set up! 
- If your display changes, you should call <TT>redraw()</TT> and let <TT>
+When <TT>handle()</TT> is called, the OpenGL context is not set up! 
+If your display changes, you should call <TT>redraw()</TT> and let <TT>
 draw()</TT> do the work. Don't call any OpenGL drawing functions from 
 inside <TT>handle()</TT>! 
-<P>You can call some OpenGL stuff like hit detection and texture 
+<P>You can call <I>some</I> OpenGL stuff like hit detection and texture 
 loading functions by doing: </P>
 <UL>
 <PRE>
@@ -106,25 +110,25 @@ loading functions by doing: </P>
     detection, loading textures, etc...
 </PRE>
 </UL>
- Your main program can now create one of your windows by doing <TT>new 
-MyWindow(...)</TT>.  You can also use <A href=fluid.html#fluid>fluid</A>
- by: 
+Your main program can now create one of your windows by doing <TT>new 
+MyWindow(...)</TT>.  You can also use <A href=FLUID.html#FLUID>FLUID</A>
+by: 
 <OL>
-<LI>Put your class definition in a MyWindow.H file. </LI>
-<LI>In fluid create a box object, resize place where you want. </LI>
-<LI>In the control panel, fill in the &quot;class&quot; field with MyWindow.H. 
- This will make fluid produce constructors for your new class. </LI>
-<LI>In the &quot;extra code&quot; put <TT>#include &quot;MyWindow.H&quot;</TT>, so  that 
-the fluid output file will compile. </LI>
+<LI>Putting your class definition in a <tt>MyWindow.H</tt> file. </LI>
+<LI>Creating a <tt>Fl_Box</tt> widget in FLUID.</LI>
+<LI>In the widget panel fill in the &quot;class&quot; field with <tt>MyWindow</tt>. 
+This will make FLUID produce constructors for your new class. </LI>
+<LI>In the &quot;Extra Code&quot; field put <TT>#include &quot;MyWindow.H&quot;</TT>, so  that 
+the FLUID output file will compile. </LI>
 </OL>
- You must put <TT>glwindow-&gt;show()</TT> in your main code after calling <TT>
+You must put <TT>glwindow-&gt;show()</TT> in your main code after calling <TT>
 show()</TT> on the window containing the OpenGL window. 
 <H2>Using OpenGL in Normal FLTK Windows</H2>
- You can put OpenGL code into an <A href=#draw><TT>Fl_Widget::draw()</TT>
+You can put OpenGL code into an <A href=#draw><TT>Fl_Widget::draw()</TT>
 </A> method or into the code for a <A href=common.html#boxtypes>boxtype</A>
- or other places with some care. 
-<P>Most important, before you show <I>any</I> windows (including those 
-that don't have OpenGL drawing) you must initialize FLTK so that it 
+or other places with some care. 
+<P>Most importantly, before you show <I>any</I> windows (including those 
+that don't have OpenGL drawing) you <B>must</B> initialize FLTK so that it 
 knows it is going to use OpenGL.  You may use any of the symbols 
 described for <A href=Fl_Gl_Window.html#Fl_Gl_Window.mode><TT>
 Fl_Gl_Window::mode()</TT></A> to describe how you intend to use OpenGL: </P>
@@ -133,7 +137,7 @@ Fl_Gl_Window::mode()</TT></A> to describe how you intend to use OpenGL: </P>
 Fl::gl_visual(FL_RGB);
 </PRE>
 </UL>
- You can then put OpenGL drawing code anywhere you can draw normally by 
+You can then put OpenGL drawing code anywhere you can draw normally by 
 surrounding it with: 
 <UL>
 <PRE>
@@ -153,7 +157,7 @@ projection transformation or anything else you should use <TT>
 glPushMatrix()</TT> and <TT>glPopMatrix()</TT> functions to put the 
 state back before calling <TT>gl_finish()</TT>. </P>
 <P>You may want to use <TT>Fl_Window::current()-&gt;h()</TT> to get the 
-drawable height so you can flip the Y coordinates. </P>
+drawable height so that you can flip the Y coordinates. </P>
 <P>Unfortunately, there are a bunch of limitations you must adhere to 
 for maximum portability: </P>
 <UL>
@@ -163,24 +167,25 @@ for maximum portability: </P>
 <LI>You cannot use <TT>Fl_Double_Window</TT> or <TT>Fl_Overlay_Window</TT>
 . </LI>
 </UL>
- Do <I>not</I> call <TT>gl_start()</TT> or <TT>gl_finish()</TT> when 
+Do <I>not</I> call <TT>gl_start()</TT> or <TT>gl_finish()</TT> when 
 drawing into an <TT>Fl_Gl_Window</TT>! 
-<H2>OpenGL drawing functions</H2>
- FLTK provides some useful OpenGL drawing functions.  They can be 
+<H2>OpenGL Drawing Functions</H2>
+FLTK provides some useful OpenGL drawing functions.  They can be 
 freely mixed with any OpenGL calls, and are defined by including <TT>
 &lt;FL/gl.H&gt;</TT> (which you should include instead of the OpenGL header <TT>
 &lt;GL/gl.h&gt;</TT>). 
 <H3>void gl_color(Fl_Color)</H3>
- Set the current color to a FLTK color index. <I>For color-index modes 
+Set the current color to a FLTK color. <I>For color-index modes 
 it will use <TT>fl_xpixel(c)</TT>, which is only right if this window 
 uses the default colormap!</I>
 <H3>void gl_rect(int x, int y, int w, int h)
 <BR> void gl_rectf(int x, int y, int w, int h)</H3>
- Outline or fill a rectangle with the current color.  If <TT>ortho()</TT>
- has been called, then the rectangle will exactly fill the pixel 
+Outline or fill a rectangle with the current color.  If
+<A HREF="Fl_Gl_Window.html#Fl_Gl_Window.ortho"><TT>Fl_Gl_Window::ortho()</TT></A>
+has been called, then the rectangle will exactly fill the pixel 
 rectangle passed. 
 <H3>void gl_font(Fl_Font fontid, int size)</H3>
- Set the &quot;current OpenGL font&quot; to the same font you get by calling <A href=drawing.html#fl_font>
+Set the current OpenGL font to the same font you get by calling <A href=drawing.html#fl_font>
 <TT>fl_font()</TT></A>. 
 <H3>int gl_height()
 <BR> int gl_descent()
@@ -190,8 +195,8 @@ rectangle passed.
  Return information about the current OpenGL font. 
 <H3>void gl_draw(const char *)
 <BR> void gl_draw(const char *, int n)</H3>
- Draw a nul-terminated string or an array of <TT>n</TT> characters in 
-the current OpenGL font at the current <TT>glRasterPos</TT>. 
+Draw a nul-terminated string or an array of <TT>n</TT> characters in 
+the current OpenGL font at the current raster position.
 <H3>void gl_draw(const char *, int x, int y)
 <BR> void gl_draw(const char *, int n, int x, int y)
 <BR> void gl_draw(const char *, float x, float y)

@@ -6,7 +6,7 @@ editor.
  Since this will be the first big project you'll be doing with FLTK, 
 lets define what we want our text editor to do: 
 <OL>
-<LI>Menu_Bar/menus for all functions. </LI>
+<LI>Menubar/menus for all functions. </LI>
 <LI>Edit a single text file. </LI>
 <LI>Load from a file. </LI>
 <LI>Save to a file. </LI>
@@ -31,7 +31,7 @@ things:
 <UL>
 <PRE>
 Fl_Window          *window;
-Fl_Menu_Bar         *menubar;
+Fl_Menu_Bar        *menubar;
 Fl_Multiline_Input *input;
 Fl_Window          *replace_dlg;
 Fl_Input           *replace_find;
@@ -48,7 +48,7 @@ char               search[256] = &quot;&quot;;
  The <TT>window</TT> variable is our top-level window described 
 previously. We'll cover the other variables as we build the 
 application. 
-<H2>Menu_Bars and Menus</H2>
+<H2>Menubars and Menus</H2>
  The first goal requires us to use a menubar and menus that define each 
 function the editor needs to perform.  The <A href=Fl_Menu_Item.html#Fl_Menu_Item>
 <TT>Fl_Menu_Item</TT></A> structure is used to define the menus and 
@@ -83,7 +83,7 @@ Fl_Menu_Item menuitems[] = {
 };
 </PRE>
 </UL>
- Once we have the menus defined we can create the <TT>Fl_Menu_Bar</TT>
+Once we have the menus defined we can create the <TT>Fl_Menu_Bar</TT>
  widget and assign the menus to it with: 
 <UL>
 <PRE>

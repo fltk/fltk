@@ -57,11 +57,12 @@ FLTK header files.  This can be done by selecting &quot;Settings&quot; from the
 WIN32 applications.  If you want to use the standard C <TT>main()</TT>
  function as the entry point, FLTK includes a <TT>WinMain()</TT>
  function that will call your <TT>main()</TT> function for you. </P>
-<P><I>Note: The Visual C++ optimizer is known to cause problems with 
+<P><I>Note: The Visual C++ 5.0 optimizer is known to cause problems with 
 many programs.  We only recommend using the &quot;Favor Small Code&quot; 
-optimization setting.</I></P>
+optimization setting.</I> The Visual C++ 6.0 optimizer seems to be much
+better and can be used with the "optimized for speed" setting.</P>
 <H2>Writing Your First FLTK Program</H2>
- All programs must include the file <TT>&lt;FL/Fl.H In addition the 
+ All programs must include the file <TT>&lt;FL/Fl.H&gt;</TT>. In addition the 
 program must include a header file for each FLTK class it uses. 
  Listing 1 shows a simple &quot;Hello, World!&quot; program that uses FLTK to 
 display the window. 

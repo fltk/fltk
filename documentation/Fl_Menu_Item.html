@@ -52,14 +52,14 @@ enum { // values for flags:
 <TR valign=top><TD><IMG align=left src=./menu.gif></TD><TD>
 <PRE>
 Fl_Menu_Item popup[] = {
-  {&quot;,   FL_ALT+'a', the_cb, (void*)1},
-  {&quot;,    FL_ALT+'b', the_cb, (void*)2},
+  {&quot;&amp;alpha&quot;,   FL_ALT+'a', the_cb, (void*)1},
+  {&quot;&amp;beta&quot;,    FL_ALT+'b', the_cb, (void*)2},
   {&quot;gamma&quot;,    FL_ALT+'c', the_cb, (void*)3, FL_MENU_DIVIDER},
-  {&quot;,  0,   strange_cb},
-  {&quot;,    0,   charm_cb},
-  {&quot;,    0,   truth_cb},
-  {&quot;b,   0,   beauty_cb},
-  {&quot;sub,	0,   0, 0, FL_SUBMENU},
+  {&quot;&amp;strange&quot;,  0,   strange_cb},
+  {&quot;&amp;charm&quot;,    0,   charm_cb},
+  {&quot;&amp;truth&quot;,    0,   truth_cb},
+  {&quot;b&amp;eauty&quot;,   0,   beauty_cb},
+  {&quot;sub&amp;menu&quot;,	0,   0, 0, FL_SUBMENU},
     {&quot;one&quot;},
     {&quot;two&quot;},
     {&quot;three&quot;},
