@@ -48,7 +48,7 @@ until they complete.  In particular if a callback pops up a modal
 window (by calling <A href=functions.html#fl_ask><TT>fl_ask()</TT></A>, 
 for instance) it will not return until the modal function returns. </P>
 <H3>Drawing using Xlib</H3>
- The following global variables are set before <TT>Fl_Widget::draw()</TT>
+ The following global variables are set before <A HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A>
  is called, or by <A href=Fl_Window.html#Fl_Window.make_current><TT>
 Fl_Window::make_current()</TT></A>: 
 <UL>
@@ -75,12 +75,12 @@ Fl_Window</TT> being drawn.
 <H4><A name=fl_xpixel>unsigned long fl_xpixel(Fl_Color i)
 <BR> unsigned long fl_xpixel(uchar r, uchar g, uchar b)</A></H4>
  Returns the X pixel number used to draw the given FLTK color index or 
-RGB color. This is the X pixel that <A href=#fl_color><TT>fl_color()</TT>
+RGB color. This is the X pixel that <A href="drawing.html#fl_color"><TT>fl_color()</TT>
 </A> would use. 
 <H4><A name=fl_xfont>extern XFontStruct *fl_xfont</A></H4>
  Points at the font selected by the most recent <A href=drawing.html#fl_font>
 <TT>fl_font()</TT></A>.  This is not necessarily the current font of <TT>
-fl_gc</TT>, which is not set until <A href=#fl_draw><TT>fl_draw()</TT></A>
+fl_gc</TT>, which is not set until <A href="drawing.html#text"><TT>fl_draw()</TT></A>
  is called. 
 <H3>Changing the Display, Screen, or X Visual</H3>
  FLTK uses only a single display, screen, X visual, and X colormap. 
@@ -296,7 +296,7 @@ shown()</TT>.
 handle, or <TT>NULL</TT> if not found.  This uses a cache so it is 
 slightly faster than iterating through the windows yourself. 
 <H3>Drawing Things Using the WIN32 GDI</H3>
- When the virtual function <TT>Fl_Widget::draw()</TT> is called, FLTK 
+ When the virtual function <A HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> is called, FLTK 
 has stashed in some global variables all the silly extra arguments you 
 need to make a proper GDI call.  These are: 
 <UL>

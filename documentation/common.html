@@ -36,10 +36,10 @@ rbutton-&gt;type(FL_RADIO_BUTTON);
 </UL>
  For toggle and radio buttons, the <A href=Fl_Button.html#Fl_Button.value>
 <TT>value()</TT></A> method returns the current button state (0 = off, 
-1 = on).  The <A href=#Fl_Widget.set><TT>set()</TT></A> and <A href=#Fl_Widget.clear>
+1 = on).  The <A href="Fl_Button.html#Fl_Button.set"><TT>set()</TT></A> and <A href="Fl_Button.html#Fl_Button.clear">
 <TT>clear()</TT></A> methods can be used on toggle buttons to turn a 
 toggle button on or off, respectively.  Radio buttons can be turned on 
-with the <A href=#Fl_Widget.setonly><TT>setonly()</TT></A> method; this 
+with the <A href="Fl_Button.html#Fl_Button.setonly"><TT>setonly()</TT></A> method; this 
 will also turn off other radio buttons in the same group. 
 <H2>Text</H2>
  FLTK provides several text widgets for displaying and receiving text: 
@@ -211,7 +211,7 @@ widget. </LI>
 box. </LI>
 <LI><TT>FL_ALIGN_WRAP</TT> - wrap the label text as needed. </LI>
 </UL>
-<H3>labeltype()</H3>
+<H3><A NAME="labeltypes">labeltype()</A></H3>
  The <TT>labeltype()</TT> method sets the type of the label.  The 
 following standard label types are included: 
 <UL>
@@ -239,7 +239,7 @@ program-generated letters or symbology.
 <H5>Label Type Functions</H5>
  To setup your own label type you will need to write two functions to 
 draw and measure the label.  The draw function is called with a pointer 
-to a <A href=#Fl_Label><TT>Fl_Label</TT></A> structure containing the 
+to a <TT>Fl_Label</TT> structure containing the 
 label information, the bounding box for the label, and the label 
 alignment: 
 <UL>
@@ -252,8 +252,8 @@ void xyz_draw(Fl_Label *label, int x, int y, int w, int h, Fl_Align align) {
  The label should be drawn <I>inside</I> this bounding box, even if <TT>
 FL_ALIGN_INSIDE</TT> is not enabled.  The function is not called if the 
 label value is <TT>NULL</TT>. 
-<P>The measure function is called with a pointer to a <A href=#Fl_Label><TT>
-Fl_Label</TT></A> structure and references to the width and height: </P>
+<P>The measure function is called with a pointer to a <TT>Fl_Label</TT>
+structure and references to the width and height: </P>
 <UL>
 <PRE>
 void xyz_measure(Fl_Label *label, int &amp;w, int &amp;h) {

@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.3 2001/01/22 15:13:39 easysw Exp $"
+# "$Id: makeinclude.mingw,v 1.1.2.3.2.1 2001/10/16 20:19:22 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -62,7 +62,8 @@ CFLAGS		= -Wall -O2 -DWIN32
 CXXFLAGS	= -Wall -O2 -DWIN32
 
 # program to make the archive:
-LIBNAME		= libfltk.a
+LIBNAME		= ../lib/libfltk.a
+GLLIBNAME	= ../lib/libfltk_gl.a
 LIBCOMMAND	= ar -ruv
 RANLIB		= ranlib
 DSONAME		=
@@ -71,6 +72,9 @@ DSOCOMMAND	= echo
 # libraries to link with (in addition to default libs):
 LDLIBS		= -lgdi32 -lwsock32
 GLDLIBS		= -lglu32 -lopengl32 -lgdi32 -lwsock32
+LINKFLTK	=-L../lib -lfltk
+LINKFLTKGL	=-L../lib -lfltk_gl
+IMAGELIBS	=
 
 # Be quiet when building...
 .SILENT:
@@ -80,7 +84,7 @@ GLDLIBS		= -lglu32 -lopengl32 -lgdi32 -lwsock32
 
 .cxx:
 	echo Compiling and linking $@...
-	$(CXX) -I.. -L../lib $(CXXFLAGS) $< -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 
 .c.o:
 	echo Compiling $@...
@@ -91,5 +95,5 @@ GLDLIBS		= -lglu32 -lopengl32 -lgdi32 -lwsock32
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.3 2001/01/22 15:13:39 easysw Exp $".
+# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.1 2001/10/16 20:19:22 easysw Exp $".
 #

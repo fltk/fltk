@@ -1,5 +1,5 @@
 //
-// "$Id: buttons.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: buttons.cxx,v 1.4.2.3.2.1 2001/08/01 21:24:49 easysw Exp $"
 //
 // Another button test program for the Fast Light Tool Kit (FLTK).
 //
@@ -33,10 +33,11 @@
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Round_Button.H>
+#include <FL/Fl_Tooltip.H>
 
 int main(int argc, char ** argv) {
   Fl_Window *window = new Fl_Window(320,130);
-  new Fl_Button(10, 10, 130, 30, "Fl_Button");
+  (new Fl_Button(10, 10, 130, 30, "Fl_Button"))->tooltip("This is a Tooltip.");
   new Fl_Return_Button(150, 10, 160, 30, "Fl_Return_Button");
   new Fl_Repeat_Button(10,50,130,30,"Fl_Repeat_Button");
   new Fl_Light_Button(10,90,130,30,"Fl_Light_Button");
@@ -48,5 +49,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: buttons.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: buttons.cxx,v 1.4.2.3.2.1 2001/08/01 21:24:49 easysw Exp $".
 //

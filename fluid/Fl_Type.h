@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.2 2001/09/29 06:20:15 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -227,6 +227,9 @@ class Fl_Widget_Type : public Fl_Type {
 
   const char *extra_code_[NUM_EXTRA_CODE];
   const char *subclass_;
+  const char *tooltip_;
+  const char *image_name_;
+  const char *inactive_name_;
   uchar hotspot_;
 
 protected:
@@ -246,6 +249,8 @@ public:
 
   Fluid_Image *image;
   void setimage(Fluid_Image *);
+  Fluid_Image *inactive;
+  void setinactive(Fluid_Image *);
 
   Fl_Widget_Type();
   Fl_Type *make();
@@ -255,6 +260,12 @@ public:
   void extra_code(int n,const char *);
   const char *subclass() const {return subclass_;}
   void subclass(const char *);
+  const char *tooltip() const {return tooltip_;}
+  void tooltip(const char *);
+  const char *image_name() const {return image_name_;}
+  void image_name(const char *);
+  const char *inactive_name() const {return inactive_name_;}
+  void inactive_name(const char *);
   uchar hotspot() const {return hotspot_;}
   void hotspot(uchar v) {hotspot_ = v;}
   uchar resizable() const;
@@ -275,6 +286,7 @@ public:
 
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Wizard.H>
 
 class igroup : public Fl_Group {
 public:
@@ -286,6 +298,12 @@ class itabs : public Fl_Tabs {
 public:
   void resize(int,int,int,int);
   itabs(int x,int y,int w,int h) : Fl_Tabs(x,y,w,h) {}
+};
+
+class iwizard : public Fl_Wizard {
+public:
+  void resize(int,int,int,int);
+  iwizard(int x,int y,int w,int h) : Fl_Wizard(x,y,w,h) {}
 };
 
 class Fl_Group_Type : public Fl_Widget_Type {
@@ -343,6 +361,16 @@ class Fl_Tile_Type : public Fl_Group_Type {
 public:
   virtual const char *type_name() {return tile_type_name;}
   Fl_Widget_Type *_make() {return new Fl_Tile_Type();}
+};
+
+extern const char wizard_type_name[];
+
+class Fl_Wizard_Type : public Fl_Group_Type {
+public:
+  virtual const char *type_name() {return wizard_type_name;}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    iwizard *g = new iwizard(x,y,w,h); Fl_Group::current(0); return g;}
+  Fl_Widget_Type *_make() {return new Fl_Wizard_Type();}
 };
 
 extern Fl_Menu_Item window_type_menu[];
@@ -532,5 +560,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.2 2001/09/29 06:20:15 easysw Exp $".
 //

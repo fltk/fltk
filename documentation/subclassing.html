@@ -164,7 +164,7 @@ Look through the header files for <TT>FL_RESERVED_TYPE</TT> to find an
 unused number.  If you make a subclass of <TT>Fl_Window</TT>
 you must use <TT>FL_WINDOW + n</TT> (<TT>n</tt> must be in the 
 range 1 to 7). </P>
-<H2>Handling Events</H2>
+<H2><A NAME="handle">Handling Events</A></H2>
  The virtual method <TT>int Fl_Widget::handle(int event)</TT> is called 
 to handle each event passed to the widget. It can: 
 <UL>
@@ -173,7 +173,7 @@ to handle each event passed to the widget. It can:
 </A> if the widget needs to be redisplayed. </LI>
 <LI>Call <A href=Fl_Widget.html#Fl_Widget.damage><TT>
 Fl_Widget::damage(n)</TT></A> if  the widget needs a partial-update 
-(assumming you provide  support for this in your <TT>Fl_Widget::draw()</TT>
+(assuming you provide  support for this in your <A HREF="#draw"><TT>Fl_Widget::draw()</TT></A>
  method). </LI>
 <LI>Call <A href=Fl_Widget.html#Fl_Widget.do_callback><TT>
 Fl_Widget::do_callback()</TT></A> if a callback should be generated. </LI>
@@ -226,7 +226,7 @@ int MyClass::handle(int event) {
  You must return non-zero if your <TT>handle()</TT> method uses the 
 event. If you return zero it indicates to the parent widget that it can 
 try sending the event to another widget. 
-<H2>Drawing the Widget</H2>
+<H2><A NAME="draw">Drawing the Widget</A></H2>
  The <TT>draw()</TT> virtual method is called when FLTK wants you to 
 redraw your widget.  It will be called if and only if <TT>damage()</TT>
  is non-zero, and <TT>damage()</TT> will be cleared to zero after it 
@@ -366,7 +366,7 @@ may be UTF-8) between applications:
 <UL>
 <LI><A href=functions.html#paste><TT>Fl::paste</TT></A></LI>
 <LI><A href=functions.html#selection><TT>Fl::selection</TT></A></LI>
-<LI><A href=#selection_length><TT>Fl::selection_length</TT></A></LI>
+<LI><A href=functions.html#selection_length><TT>Fl::selection_length</TT></A></LI>
 <LI><A href=functions.html#selection_owner><TT>Fl::selection_owner</TT></A></LI>
 </UL>
 It may be possible to cut/paste non-text data by using <A href=osissues.html#add_handler>

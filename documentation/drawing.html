@@ -6,15 +6,15 @@
 Calling these functions at other places will result in undefined 
 behavior! 
 <UL>
-<LI>The most common is inside the virtual method <A href=#draw><TT>
-Fl_Widget::draw()</TT></A>.  To write code  here, you must subclass one 
+<LI>The most common is inside the virtual method <A href="subclassing.html#draw"><TT>
+Fl_Widget::draw()</TT></A>.  To write code here, you must subclass one 
 of the existing <TT>Fl_Widget</TT> classes and implement your own 
 version of <TT>draw()</TT>. </LI>
-<LI>You can also write <A href=common.html#boxtypes>boxtypes</A> and <A href=#labeltypes>
+<LI>You can also write <A href=common.html#boxtypes>boxtypes</A> and <A href="common.html#labeltypes">
 labeltypes</A>.  These are small procedures  that can be called by 
-existing <TT>Fl_Widget::draw()</TT> methods.  These &quot;types&quot; are 
-identified by an  8-bit index that is stored in the widget's <TT>box()</TT>
-, <TT>labeltype()</TT>, and possibly other properties. </LI>
+existing <A HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> methods.  These &quot;types&quot; are 
+identified by an  8-bit index that is stored in the widget's <TT>box()</TT>,
+<TT>labeltype()</TT>, and possibly other properties. </LI>
 <LI>You can call <A href=Fl_Window.html#Fl_Window.make_current><TT>
 Fl_Window::make_current()</TT></A> to do incremental update of a 
 widget. Use <A href=Fl_Widget.html#Fl_Widget.window><TT>
@@ -134,7 +134,7 @@ Windows 95/98, use the dash styles instead.</i>
  These are used to draw almost all the FLTK widgets.  They draw on 
 exact pixel boundaries and are as fast as possible, and their behavior 
 will be duplicated exactly on any platform FLTK is ported to.  It is 
-undefined whether these are affected by the <A href=#complex_shapes>
+undefined whether these are affected by the <A href=#complex>
 transformation matrix</A>, so you should only call these while it is 
 the identity. 
 <H4>void fl_point(int x, int y)</H4>
@@ -237,7 +237,7 @@ fl_gap()</TT> with <TT>fl_end_loop();fl_begin_loop()</TT>.</P>
 y2, float x3, float y3)</H4>
  Add a series of points on a Bezier curve to the path.  The curve ends 
 (and two of the points) are at <TT>x,y</TT> and <TT>x3,y3</TT>. 
-<H4>void fl_arc(float x, float y, float r, float start, float end)</H4>
+<H4><A NAME="fl_arc">void fl_arc(float x, float y, float r, float start, float end)</A></H4>
  Add a series of points to the current path on the arc of a circle (you 
 can get elliptical paths by using scale and rotate before calling 
 this). <TT>x,y</TT> are the center of the circle, and <TT>r</TT> is its 
@@ -337,10 +337,10 @@ thus redrawing is <I>much</I> faster.
  It is undefined whether the location or drawing of the image is 
 affected by the current transformation, so you should only call these 
 when it is the identity. 
-<H4>void fl_draw_image(const uchar *, int X, int Y, int W, int H, int D 
+<H4><A NAME="fl_draw_image">void fl_draw_image(const uchar *, int X, int Y, int W, int H, int D 
 = 3, int LD = 0)
 <BR> void fl_draw_image_mono(const uchar *, int X, int Y, int W, int H, 
-int D = 1, int LD = 0)</H4>
+int D = 1, int LD = 0)</A></H4>
  Draw an 8-bit per color RGB or luminance image.  The pointer points at 
 the &quot;r&quot; data of the top-left pixel.  Data must be in <TT>r,g,b</TT>
  order. <TT>X,Y</TT> are where to put the top-left corner. <TT>W</TT>

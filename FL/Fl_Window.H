@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.12.2.6 2001/05/11 18:37:08 easysw Exp $"
+// "$Id: Fl_Window.H,v 1.12.2.6.2.1 2001/10/18 18:53:20 easysw Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -49,7 +49,8 @@ class Fl_Window : public Fl_Group {
     FL_MODAL = 64,
     FL_NOBORDER = 8,
     FL_FORCE_POSITION = 16,
-    FL_NON_MODAL = 32
+    FL_NON_MODAL = 32,
+    FL_OVERRIDE = 256
   };
   FL_EXPORT void _Fl_Window(); // constructor innards
 
@@ -71,10 +72,12 @@ public:
   FL_EXPORT void border(int b);
   void clear_border()	{set_flag(FL_NOBORDER);}
   int border() const	{return !(flags() & FL_NOBORDER);}
+  void set_override()	{set_flag(FL_NOBORDER|FL_OVERRIDE);}
+  int override() const  { return flags()&FL_OVERRIDE; }
   void set_modal()	{set_flag(FL_MODAL);}
-  uchar modal() const	{return flags() & FL_MODAL;}
+  int modal() const	{return flags() & FL_MODAL;}
   void set_non_modal()	{set_flag(FL_NON_MODAL);}
-  uchar non_modal() const {return flags() & (FL_NON_MODAL|FL_MODAL);}
+  int non_modal() const {return flags() & (FL_NON_MODAL|FL_MODAL);}
 
   FL_EXPORT void hotspot(int x, int y, int offscreen = 0);
   FL_EXPORT void hotspot(const Fl_Widget*, int offscreen = 0);
@@ -116,5 +119,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.12.2.6 2001/05/11 18:37:08 easysw Exp $".
+// End of "$Id: Fl_Window.H,v 1.12.2.6.2.1 2001/10/18 18:53:20 easysw Exp $".
 //

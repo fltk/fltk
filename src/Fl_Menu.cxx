@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.3 2001/09/04 13:13:29 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -108,11 +108,13 @@ extern char fl_draw_shortcut;
 // width of label, including effect of & characters:
 int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   Fl_Label l;
-  l.value = text;
-  l.type = labeltype_;
-  l.font = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
-  l.size = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
-  l.color = FL_BLACK; // this makes no difference?
+  l.value   = text;
+  l.image   = 0;
+  l.deimage = 0;
+  l.type    = labeltype_;
+  l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
+  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
+  l.color   = FL_BLACK; // this makes no difference?
   fl_draw_shortcut = 1;
   int w = 0; int h = 0; l.measure(w, hp ? *hp : h);
   fl_draw_shortcut = 0;
@@ -123,11 +125,13 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
 void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 			int selected) const {
   Fl_Label l;
-  l.value = text;
-  l.type = labeltype_;
-  l.font = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
-  l.size = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
-  l.color = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
+  l.value   = text;
+  l.image   = 0;
+  l.deimage = 0;
+  l.type    = labeltype_;
+  l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
+  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
+  l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
   if (!active()) l.color = inactive((Fl_Color)l.color);
   Fl_Color color = m ? m->color() : FL_GRAY;
   if (selected) {
@@ -154,26 +158,33 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   }
 
   if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) {
-    int y1 = y+(h-14)/2;
-    fl_color(FL_DARK3);
+    int size = 12;
+    int y1 = y + (h - size) / 2;
+    int x1 = x + 2;
+
     if (flags & FL_MENU_RADIO) {
-      fl_line(x+2, y1+7, x+8, y1+1, x+14, y1+7);
-      if (selected) {
-	fl_color(color); 
-	fl_polygon(x+3, y1+7, x+8, y1+2, x+13, y1+7, x+8, y1+12);
-      }
-      fl_color(FL_LIGHT3); fl_line(x+14, y1+7, x+8, y1+13, x+2, y1+7);
+      fl_color(FL_DARK3);
+      fl_arc(x1, y1, size, size, 45.0, 225.0);
+      fl_color(FL_LIGHT3);
+      fl_arc(x1, y1, size, size, 225.0, 405.0);
+
       if (value()) {
-	fl_color(FL_BLACK); 
-	fl_polygon(x+4, y1+7, x+8, y1+3, x+12, y1+7, x+8, y1+11);
+	fl_color(FL_BLACK);
+	fl_pie(x1 + 3, y1 + 3, size - 7, size - 7, 0.0, 360.0);
       }
     } else {
-      fl_yxline(x+3, y1+11, y1+2, x+12);
-      if (selected) {fl_color(color); fl_rectf(x+4, y1+3, 9, 9);}
-      fl_color(FL_LIGHT3); fl_xyline(x+4, y1+12, x+13, y1+3);
-      if (value()) {fl_color(FL_BLACK); fl_rectf(x+5, y1+4, 7, 7);}
+      fl_draw_box(FL_THIN_DOWN_FRAME, x1, y1, size, size, color);
+      if (value()) {
+	fl_color(FL_BLACK);
+	fl_line_style(FL_SOLID, 2);
+	fl_line(x1 + size - 3, y1 + 2,
+	        x1 + size / 2 - 1, y1 + size - 4,
+	        x1 + 3, y1 + size / 2);
+	fl_line_style(FL_SOLID);
+      }
     }
-    x += 14; w -= 14;
+    x += size + 3;
+    w -= size + 3;
   }
 
   if (!fl_draw_shortcut) fl_draw_shortcut = 1;
@@ -460,9 +471,6 @@ int menuwindow::handle(int e) {
     switch (Fl::event_key()) {
     case FL_Tab:
       if (Fl::event_shift()&FL_SHIFT) goto BACKTAB;
-    case ' ':
-      if (!forward(p.menu_number)) {p.item_number = -1; forward(p.menu_number);}
-      return 1;
     case FL_BackSpace:
     case 0xFE20: // backtab
     BACKTAB:
@@ -488,6 +496,7 @@ int menuwindow::handle(int e) {
 	setitem(p.menu_number-1, p.p[p.menu_number-1]->selected);
       return 1;
     case FL_Enter:
+    case ' ':
       p.state = DONE_STATE;
       return 1;
     case FL_Escape:
@@ -743,5 +752,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.3 2001/09/04 13:13:29 easysw Exp $".
 //

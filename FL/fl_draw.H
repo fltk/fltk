@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9.2.6 2001/04/13 19:07:40 easysw Exp $"
+// "$Id: fl_draw.H,v 1.9.2.6.2.2 2001/08/05 23:58:54 easysw Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,12 @@
 #define fl_draw_H
 
 #include "Enumerations.H"  // for the color names
+
+// Image class...
+class Fl_Image;
+
+// Label flags...
+FL_EXPORT extern char fl_draw_shortcut;
 
 // Colors:
 FL_EXPORT void	fl_color(Fl_Color); // select indexed color
@@ -66,7 +72,9 @@ enum {
 
 // rectangles tweaked to exactly fill the pixel rectangle:
 FL_EXPORT void fl_rect(int x, int y, int w, int h);
+inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 FL_EXPORT void fl_rectf(int x, int y, int w, int h);
+inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
 // line segments:
 FL_EXPORT void fl_line(int,int, int,int);
@@ -134,6 +142,7 @@ inline int fl_size() {return fl_size_;}
 
 // information you can get about the current font:
 FL_EXPORT int   fl_height();	// using "size" should work ok
+inline int fl_height(int, int size) {return size;}
 FL_EXPORT int   fl_descent();
 FL_EXPORT double fl_width(const char*);
 FL_EXPORT double fl_width(const char*, int n);
@@ -143,9 +152,10 @@ FL_EXPORT double fl_width(uchar);
 FL_EXPORT void fl_draw(const char*, int x, int y);
 FL_EXPORT void fl_draw(const char*, int n, int x, int y);
 FL_EXPORT void fl_measure(const char*, int& x, int& y);
-FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align);
+FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align, Fl_Image* img=0);
 FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align,
-	               void (*callthis)(const char *, int n, int x, int y));
+	               void (*callthis)(const char *, int n, int x, int y),
+		       Fl_Image* img=0);
 
 // boxtypes:
 FL_EXPORT void fl_frame(const char* s, int x, int y, int w, int h);
@@ -181,5 +191,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9.2.6 2001/04/13 19:07:40 easysw Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.6.2.2 2001/08/05 23:58:54 easysw Exp $".
 //

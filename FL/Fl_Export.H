@@ -1,7 +1,7 @@
 //
-// "$Id: fl_file_chooser.H,v 1.5.2.3 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fl_Export.H,v 1.3.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
-// File chooser header file for the Fast Light Tool Kit (FLTK).
+// WIN32 DLL export definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2001 by Bill Spitzak and others.
 //
@@ -23,16 +23,25 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifndef fl_file_chooser_H
-#define fl_file_chooser_H
-
-#include "Enumerations.H"
-
-FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname);
-FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char *));
-
-#endif
+#ifndef Fl_Export_H
+#define Fl_Export_H
 
 //
-// End of "$Id: fl_file_chooser.H,v 1.5.2.3 2001/01/22 15:13:38 easysw Exp $".
+// The following is only used when building DLLs under WIN32 with Visual C++...
+//
+
+#if defined(FL_DLL) && defined(_MSC_VER)
+#  ifdef FL_LIBRARY
+#    define FL_EXPORT	__declspec(dllexport)
+#  else
+#    define FL_EXPORT	__declspec(dllimport)
+#  endif /* FL_LIBRARY */
+#else
+#  define FL_EXPORT
+#endif /* FL_DLL && _MSC_VER */
+
+#endif // !Fl_Export_H
+
+//
+// End of "$Id: Fl_Export.H,v 1.3.2.1 2001/08/04 12:21:33 easysw Exp $".
 //
