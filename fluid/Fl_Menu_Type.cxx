@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.9 2004/05/15 22:58:18 easysw Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.10 2004/11/21 14:53:48 easysw Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -339,11 +339,14 @@ void Fl_Menu_Type::build_menu() {
     int lvl = level+1;
     for (q = next; q && q->level > level; q = q->next) {
       Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
-      m->label(i->o->label());
+      if (i->o->image()) i->o->image()->label(m);
+      else {
+        m->label(i->o->label() ? i->o->label() : "(nolabel)");
+        m->labeltype(i->o->labeltype());
+      }
       m->shortcut(((Fl_Button*)(i->o))->shortcut());
       m->callback(0,(void*)i);
       m->flags = i->flags();
-      m->labeltype(i->o->labeltype());
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());
@@ -465,5 +468,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.9 2004/05/15 22:58:18 easysw Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.10 2004/11/21 14:53:48 easysw Exp $".
 //
