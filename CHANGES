@@ -1,5 +1,16 @@
 CHANGES IN FLTK 1.1.0b4
 
+	**** NOTE: DUE TO CHANGES IN THE FL_WIDGET CLASS, ****
+	****       YOU MUST RECOMPILE ALL SOURCE FILES    ****
+	****       THAT USE FLTK!!!                       ****
+
+	- Updated the flags_ member of Fl_Widget to be an
+	  integer instead of uchar, to support the new
+	  FL_OVERRIDE flag for Fl_Window.
+
+	- Fl_Window now provides the FLTK 2.0 "override()" and
+	  "set_override()" methods for windows.
+
 	- Updated the configure script to check for the
 	  png_set_tRNS_to_alpha() function.
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.2 2001/08/02 15:31:59 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.3 2001/10/18 18:53:20 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,9 @@ Fl_TooltipBox	*Fl_Tooltip::box = 0;
 Fl_Menu_Window	*Fl_Tooltip::window = 0;
 Fl_Widget	*Fl_Tooltip::widget = 0;
 int		Fl_Tooltip::shown = 0;
-uchar		Fl_Tooltip::color_ = FL_YELLOW;
+uchar		Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
+		                                   FL_NUM_GREEN - 1,
+						   FL_NUM_BLUE - 2);
 int		Fl_Tooltip::font_ = FL_HELVETICA;
 int		Fl_Tooltip::size_ = FL_NORMAL_SIZE;
 
@@ -88,11 +90,9 @@ public:
     fl_measure(Fl_Tooltip::widget->tooltip(), ww, hh);
     label(Fl_Tooltip::widget->tooltip());
 
-    int ox = 
-      widgetWindow->x_root() + Fl_Tooltip::widget->x() + Fl_Tooltip::widget->w()/2;
-    int oy = 
-      widgetWindow->y_root() + Fl_Tooltip::widget->y() + Fl_Tooltip::widget->h() + 10;
-    
+    int ox = Fl::event_x_root() + 10;
+    int oy = Fl::event_y_root() + 10;
+
     if (ox >= Fl::w())
       ox = Fl::w() - ww - 6;
     if (oy >= Fl::h())
@@ -156,6 +156,7 @@ Fl_Tooltip::tooltip_timeout(void *v) {
     window = new Fl_Menu_Window(0, 0, 10, 10, 0);
     window->clear_border();
     window->box(FL_NO_BOX);
+    window->set_override();
 
     window->begin();
     box = new Fl_TooltipBox;
@@ -188,5 +189,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.2 2001/08/02 15:31:59 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.3 2001/10/18 18:53:20 easysw Exp $".
 //

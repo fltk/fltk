@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.9 2001/10/01 16:49:29 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.10 2001/10/18 18:53:20 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -318,6 +318,11 @@ if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	esac
 fi
 
+dnl Fix "libdir" variable...
+if test "$uname" = "IRIX" -a $uversion -ge 62 -a "$libdir" = "\${exec_prefix}/lib" -a "$exec_prefix" = "/usr"; then
+	libdir="/usr/lib32"
+fi
+
 dnl Add warnings to compiler switches:
 dnl do this last so messing with switches does not break tests
 MAKEDEPEND="\$(CXX) -M"
@@ -461,5 +466,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.9 2001/10/01 16:49:29 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.10 2001/10/18 18:53:20 easysw Exp $".
 dnl

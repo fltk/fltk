@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.2 2001/08/02 21:11:43 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.3 2001/10/18 18:53:20 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -702,7 +702,11 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
   attr.colormap = colormap;
   attr.border_pixel = 0;
   attr.bit_gravity = 0; // StaticGravity;
-  attr.override_redirect = 0;
+  if (w->override()) {
+    attr.override_redirect = 1;
+    attr.save_under = 1;
+    mask |= CWOverrideRedirect | CWSaveUnder;
+  } else attr.override_redirect = 0;
   if (Fl::grab()) {
     attr.save_under = 1; mask |= CWSaveUnder;
     if (!w->border()) {attr.override_redirect = 1; mask |= CWOverrideRedirect;}
@@ -786,7 +790,7 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 // Send X window stuff that can be changed over time:
 
 void Fl_X::sendxjunk() {
-  if (w->parent()) return; // it's not a window manager window!
+  if (w->parent() || w->override()) return; // it's not a window manager window!
 
   if (!w->size_range_set) { // default size_range based on resizable():
     if (w->resizable()) {
@@ -927,5 +931,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.2 2001/08/02 21:11:43 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.3 2001/10/18 18:53:20 easysw Exp $".
 //
