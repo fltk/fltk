@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6.2.7 2001/12/14 16:48:13 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.8 2001/12/16 12:37:02 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Window.H>
 
 // There are a lot of subclasses, named Fl_*_Button.  Some of
 // them are implemented by setting the type() value and testing it
@@ -108,7 +109,16 @@ int Fl_Button::handle(int event) {
   case FL_FOCUS :
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
-      if (event == FL_UNFOCUS && box() == FL_NO_BOX) parent()->redraw();
+      if (event == FL_UNFOCUS && box() == FL_NO_BOX) {
+        // Buttons with the FL_NO_BOX boxtype need a parent to
+	// redraw, since it is responsible for redrawing the
+	// background...
+        Fl_Widget *p;
+        for (p = parent(); p; p = p->parent())
+	  if (p->box() != FL_NO_BOX) break;
+	if (p) p->redraw();
+	else window()->redraw();
+      }
       else redraw();
       return 1;
     } else return 0;
@@ -139,5 +149,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.7 2001/12/14 16:48:13 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.8 2001/12/16 12:37:02 easysw Exp $".
 //

@@ -27,6 +27,7 @@ Fl_Box.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Widget.H
 Fl_Box.o: ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Button.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Button.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H ../FL/Fl_Group.H
+Fl_Button.o: ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Chart.o: ../FL/math.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Chart.o: ../FL/Fl_Chart.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Check_Browser.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
