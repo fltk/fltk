@@ -210,11 +210,11 @@ Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
     if ( side == 1 ) wLeft->value( 1 );
     if ( side == 2 ) wRight->value( 1 );
 
-    int todo;
-    bed.get( "todoFlags", todo, 0x05 );
-    if ( todo & 0x01 ) wShower->value( 1 );
-    if ( todo & 0x02 ) wShave->value( 1 );
-    if ( todo & 0x04 ) wBrush->value( 1 );
+    int tasks;
+    bed.get( "taskFlags", tasks, 0x05 );
+    if ( tasks & 0x01 ) wShower->value( 1 );
+    if ( tasks & 0x02 ) wShave->value( 1 );
+    if ( tasks & 0x04 ) wBrush->value( 1 );
 
   Fl_Preferences eat( app, "Breakfast" );
 
@@ -276,11 +276,11 @@ Function {writePrefs()} {open return_type void
     if ( wRight->value() ) side = 2;
     bed.set( "side", side );
 
-    int todo = 0;
-    if ( wShower->value() ) todo |= 0x01;
-    if ( wShave->value() ) todo |= 0x02;
-    if ( wBrush->value() ) todo |= 0x04;
-    bed.set( "todoFlags", todo );
+    int tasks = 0;
+    if ( wShower->value() ) tasks |= 0x01;
+    if ( wShave->value() ) tasks |= 0x02;
+    if ( wBrush->value() ) tasks |= 0x04;
+    bed.set( "taskFlags", tasks );
 
   Fl_Preferences eat( app, "Breakfast" );
 

@@ -1,5 +1,5 @@
 //
-// "$Id: cube.cxx,v 1.4.2.5.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: cube.cxx,v 1.4.2.5.2.2 2002/06/26 02:01:33 matthiaswm Exp $"
 //
 // Another forms test program for the Fast Light Tool Kit (FLTK).
 //
@@ -104,6 +104,7 @@ void cube_box::draw() {
     glEnable(GL_DEPTH_TEST);
     glFrustum(-1,1,-1,1,2,10000);
     glTranslatef(0,0,-10);
+    gl_font(FL_HELVETICA_BOLD, 16 );
   }
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glPushMatrix();
@@ -114,6 +115,10 @@ void cube_box::draw() {
   glScalef(float(size),float(size),float(size));
   drawcube(wire);
   glPopMatrix();
+  gl_color(FL_GRAY);
+  glDisable(GL_DEPTH_TEST);
+  gl_draw(wire ? "Cube: wire" : "Cube: flat", -4.5f, -4.5f );
+  glEnable(GL_DEPTH_TEST);
 }
 
 #endif
@@ -179,5 +184,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: cube.cxx,v 1.4.2.5.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: cube.cxx,v 1.4.2.5.2.2 2002/06/26 02:01:33 matthiaswm Exp $".
 //
