@@ -1,5 +1,8 @@
 CHANGES SINCE FLTK 1.0.10
 
+	- Add -D_INCLUDE_POSIX_SOURCE option when compiling with
+	  the HP compilers.
+
 	- Fl_Gl_Window does not set drawbuffer(BACKBUFFER) for
 	  single-buffered windows.
 
