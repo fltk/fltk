@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.39 2004/11/20 04:18:44 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.40 2004/11/20 13:52:47 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -941,8 +941,8 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   int is_a_resize = (W != w() || H != h());
   int resize_from_program = (this != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  else if (!is_a_resize) return;
+  if (is_a_move && resize_from_program) set_flag(FL_FORCE_POSITION);
+  else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
     if (shown()) {redraw(); i->wait_for_expose = 1;}
@@ -1299,5 +1299,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.39 2004/11/20 04:18:44 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.40 2004/11/20 13:52:47 easysw Exp $".
 //
