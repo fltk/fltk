@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.86 2002/09/17 20:27:17 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.87 2002/09/26 20:27:16 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -35,7 +35,7 @@ dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
 FL_PATCH_VERSION=0
-FL_RELEASE_VERSION=rc7
+FL_RELEASE_VERSION=
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)
@@ -785,5 +785,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.86 2002/09/17 20:27:17 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.87 2002/09/26 20:27:16 easysw Exp $".
 dnl

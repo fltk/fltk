@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.9.2.16 2002/09/17 20:27:17 easysw Exp $"
+# "$Id: fltk.spec,v 1.1.2.9.2.17 2002/09/26 20:27:16 easysw Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -23,7 +23,7 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-%define version 1.1.0rc7
+%define version 1.1.0
 %define release 0
 %define prefix /usr
 
@@ -97,5 +97,5 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.9.2.16 2002/09/17 20:27:17 easysw Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.9.2.17 2002/09/26 20:27:16 easysw Exp $".
 #

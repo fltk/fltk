@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.28 2002/09/20 19:59:45 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.29 2002/09/26 20:27:16 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -742,6 +742,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) {
 
   /* Calculate Y coordinate */
   if (!position_to_line(pos, &visLineNum)) return 0;
+  if (visLineNum < 0 || visLineNum >= nNBufferLines) return 0;
   fontHeight = mMaxsize;
   *Y = text_area.y + visLineNum * fontHeight;
 
@@ -1332,8 +1333,8 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
 int Fl_Text_Display::position_to_line( int pos, int *lineNum ) {
   int i;
 
-  if ( pos < mFirstChar )
-    return 0;
+  *lineNum = 0;
+  if ( pos < mFirstChar ) return 0;
   if ( pos > mLastChar ) {
     if ( empty_vlines() ) {
       if ( mLastChar < mBuffer->length() ) {
@@ -3007,5 +3008,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.28 2002/09/20 19:59:45 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.29 2002/09/26 20:27:16 easysw Exp $".
 //
