@@ -1,47 +1,47 @@
-//
-// "$Id: Fl_Export.H,v 1.3.2.2 2002/01/01 15:11:27 easysw Exp $"
-//
-// WIN32 DLL export definitions for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2002 by Bill Spitzak and others.
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
-//
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
-//
+/*
+ * "$Id: Fl_Export.H,v 1.3.2.3 2002/05/03 20:30:19 easysw Exp $"
+ *
+ * WIN32 DLL export definitions for the Fast Light Tool Kit (FLTK).
+ *
+ * Copyright 1998-2002 by Bill Spitzak and others.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "fltk-bugs@fltk.org".
+ */
 
 #ifndef Fl_Export_H
-#define Fl_Export_H
+#  define Fl_Export_H
 
-//
-// The following is only used when building DLLs under WIN32 with Visual C++...
-//
+/*
+ * The following is only used when building DLLs under WIN32 with Visual C++...
+ */
 
-#if defined(FL_DLL) && defined(_MSC_VER)
-#  ifdef FL_LIBRARY
-#    define FL_EXPORT	__declspec(dllexport)
+#  if defined(FL_DLL) && defined(_MSC_VER)
+#    ifdef FL_LIBRARY
+#      define FL_EXPORT	__declspec(dllexport)
+#    else
+#      define FL_EXPORT	__declspec(dllimport)
+#    endif /* FL_LIBRARY */
 #  else
-#    define FL_EXPORT	__declspec(dllimport)
-#  endif /* FL_LIBRARY */
-#else
-#  define FL_EXPORT
-#endif /* FL_DLL && _MSC_VER */
+#    define FL_EXPORT
+#  endif /* FL_DLL && _MSC_VER */
 
-#endif // !Fl_Export_H
+#endif /* !Fl_Export_H */
 
-//
-// End of "$Id: Fl_Export.H,v 1.3.2.2 2002/01/01 15:11:27 easysw Exp $".
-//
+/*
+ * End of "$Id: Fl_Export.H,v 1.3.2.3 2002/05/03 20:30:19 easysw Exp $".
+ */

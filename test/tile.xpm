@@ -1,5 +1,5 @@
 /* XPM */
-static char * tile_xpm[] = {
+static const char * tile_xpm[] = {
 "100 100 17 1",
 " 	c None",
 ".	c #DCDCDC",

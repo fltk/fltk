@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.5 2002/04/30 22:25:18 matthiaswm Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.6 2002/05/03 20:30:19 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@ public:
   typedef enum { SYSTEM=0, USER } Root;
   // typedef enum { win32, macos, fltk } Type;
 
-  FL_EXPORT Fl_Preferences( enum Root root, const char *vendor, const char *application );
+  FL_EXPORT Fl_Preferences( Root root, const char *vendor, const char *application );
   FL_EXPORT Fl_Preferences( Fl_Preferences&, const char *group );
   FL_EXPORT Fl_Preferences( Fl_Preferences*, const char *group );
   FL_EXPORT ~Fl_Preferences();
@@ -81,7 +81,7 @@ public:
 
   FL_EXPORT void flush();
 
-  // FL_EXPORT char export( const char *filename, enum Type fileFormat );
+  // FL_EXPORT char export( const char *filename, Type fileFormat );
   // FL_EXPORT char import( const char *filename );
 
   class Name {
@@ -93,14 +93,14 @@ public:
     FL_EXPORT ~Name();
   };
 
-private:
-
-  static char nameBuffer[128];
-
   struct Entry
   {
     char *name, *value;
   };
+
+private:
+
+  static char nameBuffer[128];
 
   class Node // a node contains a list to all its entries 
   {          // and all means to manage the tree structure
@@ -140,7 +140,7 @@ private:
     char *filename_;
     char *vendor_, *application_;
   public:
-    RootNode( Fl_Preferences *, enum Root root, const char *vendor, const char *application );
+    RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
     ~RootNode();
     int read();
     int write();
@@ -157,5 +157,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.5 2002/04/30 22:25:18 matthiaswm Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.6 2002/05/03 20:30:19 easysw Exp $".
 //

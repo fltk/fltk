@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.4 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.5 2002/05/03 20:30:19 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -364,7 +364,7 @@ void Fl_Text_Buffer::replace_rectangular( int start, int end, int rectStart,
     int rectEnd, const char *text ) {
   char *insPtr;
   const char *deletedText;
-  char *insText = "";
+  char *insText = (char *)"";
   int i, nInsertedLines, nDeletedLines, insLen, hint;
   int insertDeleted, insertInserted, deleteInserted;
   int linesPadded = 0;
@@ -2285,5 +2285,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.4 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.5 2002/05/03 20:30:19 easysw Exp $".
 //

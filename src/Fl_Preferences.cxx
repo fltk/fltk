@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.9 2002/05/01 00:03:35 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.10 2002/05/03 20:30:19 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@
 #endif
 
 
-char Fl_Preferences::nameBuffer[];
+char Fl_Preferences::nameBuffer[128];
 
 
 /**
@@ -56,7 +56,7 @@ char Fl_Preferences::nameBuffer[];
  *     Must be a valid file name.
  * example: Fl_Preferences base( Fl_Preferences::USER, "fltk.org", "test01");
  */
-Fl_Preferences::Fl_Preferences( enum Root root, const char *vendor, const char *application )
+Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application )
 {
   node = new Node( "." );
   rootNode = new RootNode( this, root, vendor, application );
@@ -586,7 +586,7 @@ static char makePath( const char *path )
   int ret = stat( path, &stats );
   if ( ret )
   {
-    char *s = strrchr( path, '/' );
+    const char *s = strrchr( path, '/' );
     if ( !s ) return 0;
     int len = s-path;
     char *p = (char*)malloc( len+1 );
@@ -606,7 +606,7 @@ static char makePath( const char *path )
 // strip the filename and create a path
 static void makePathForFile( const char *path )
 {
-  char *s = strrchr( path, '/' );
+  const char *s = strrchr( path, '/' );
   if ( !s ) return;
   int len = s-path;
   char *p = (char*)malloc( len+1 );
@@ -618,7 +618,7 @@ static void makePathForFile( const char *path )
 
 // create the root node
 // - construct the name of the file that will hold our preferences
-Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, enum Root root, const char *vendor, const char *application )
+Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char *vendor, const char *application )
 {
   char filename[ FL_PATH_MAX ]; filename[0] = 0;
 #ifdef WIN32
@@ -928,7 +928,7 @@ void Fl_Preferences::Node::set( const char *line )
   }
   else
   {
-    char *c = strchr( line, ':' );
+    const char *c = strchr( line, ':' );
     if ( c )
     {
       strncpy( nameBuffer, line, c-line );
@@ -1084,5 +1084,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.9 2002/05/01 00:03:35 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.10 2002/05/03 20:30:19 easysw Exp $".
 //
