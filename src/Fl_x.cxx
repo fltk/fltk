@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.12 2002/02/19 20:21:10 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.13 2002/03/07 19:22:57 spitzak Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -260,14 +260,16 @@ int fl_ready() {
 ////////////////////////////////////////////////////////////////
 
 Display *fl_display;
+Window fl_message_window;
 int fl_screen;
 XVisualInfo *fl_visual;
 Colormap fl_colormap;
-extern Fl_Widget *fl_selection_requestor; // widget doing request_paste()
 
-static Atom wm_delete_window;
-static Atom wm_protocols;
-static Atom _motif_wm_hints;
+static Atom WM_DELETE_WINDOW;
+static Atom WM_PROTOCOLS;
+static Atom fl_MOTIF_WM_HINTS;
+static Atom TARGETS;
+static Atom CLIPBOARD;
 Atom fl_XdndAware;
 Atom fl_XdndSelection;
 Atom fl_XdndEnter;
@@ -279,32 +281,6 @@ Atom fl_XdndStatus;
 Atom fl_XdndActionCopy;
 Atom fl_XdndFinished;
 //Atom fl_XdndProxy;
-
-Window fl_dnd_source_window;
-Atom *fl_dnd_source_types; // null-terminated list of data types being supplied
-Atom fl_dnd_type;
-Atom fl_dnd_source_action;
-Atom fl_dnd_action;
-
-void fl_sendClientMessage(Window window, Atom message,
-                                 unsigned long d0,
-                                 unsigned long d1=0,
-                                 unsigned long d2=0,
-                                 unsigned long d3=0,
-                                 unsigned long d4=0)
-{
-  XEvent e;
-  e.xany.type = ClientMessage;
-  e.xany.window = window;
-  e.xclient.message_type = message;
-  e.xclient.format = 32;
-  e.xclient.data.l[0] = (long)d0;
-  e.xclient.data.l[1] = (long)d1;
-  e.xclient.data.l[2] = (long)d2;
-  e.xclient.data.l[3] = (long)d3;
-  e.xclient.data.l[4] = (long)d4;
-  XSendEvent(fl_display, window, 0, 0, &e);
-}
 
 
 static void fd_callback(int,void *) {
@@ -342,10 +318,11 @@ void fl_open_display() {
 void fl_open_display(Display* d) {
   fl_display = d;
 
-  wm_delete_window      = XInternAtom(d,"WM_DELETE_WINDOW",0);
-  wm_protocols          = XInternAtom(d,"WM_PROTOCOLS",0);
-  _motif_wm_hints       = XInternAtom(d,"_MOTIF_WM_HINTS",0);
-
+  WM_DELETE_WINDOW      = XInternAtom(d, "WM_DELETE_WINDOW",	0);
+  WM_PROTOCOLS          = XInternAtom(d, "WM_PROTOCOLS",	0);
+  fl_MOTIF_WM_HINTS     = XInternAtom(d, "_MOTIF_WM_HINTS",	0);
+  TARGETS               = XInternAtom(d, "TARGETS",		0);
+  CLIPBOARD		= XInternAtom(d, "CLIPBOARD",		0);
   fl_XdndAware          = XInternAtom(d, "XdndAware",		0);
   fl_XdndSelection      = XInternAtom(d, "XdndSelection",	0);
   fl_XdndEnter          = XInternAtom(d, "XdndEnter",		0);
@@ -360,16 +337,20 @@ void fl_open_display(Display* d) {
 
   Fl::add_fd(ConnectionNumber(d), POLLIN, fd_callback);
 
-  fl_screen = DefaultScreen(fl_display);
+  fl_screen = DefaultScreen(d);
+
+  fl_message_window =
+    XCreateSimpleWindow(d, RootWindow(d,fl_screen), 0,0,1,1,0, 0, 0);
+
 // construct an XVisualInfo that matches the default Visual:
   XVisualInfo templt; int num;
-  templt.visualid = XVisualIDFromVisual(DefaultVisual(fl_display,fl_screen));
-  fl_visual = XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
-  fl_colormap = DefaultColormap(fl_display,fl_screen);
+  templt.visualid = XVisualIDFromVisual(DefaultVisual(d, fl_screen));
+  fl_visual = XGetVisualInfo(d, VisualIDMask, &templt, &num);
+  fl_colormap = DefaultColormap(d, fl_screen);
 
-#  if !USE_COLORMAP
+#if !USE_COLORMAP
   Fl::visual(FL_RGB);
-#  endif
+#endif
 }
 
 void fl_close_display() {
@@ -394,6 +375,77 @@ void Fl::get_mouse(int &x, int &y) {
   XQueryPointer(fl_display,root,&root,&c,&mx,&my,&cx,&cy,&mask);
   x = mx;
   y = my;
+}
+
+////////////////////////////////////////////////////////////////
+// Code used for paste and DnD into the program:
+
+Fl_Widget *fl_selection_requestor;
+static char *selection_buffer[2];
+static int selection_length[2];
+static int selection_buffer_length[2];
+char fl_i_own_selection[2];
+
+// Call this when a "paste" operation happens:
+void Fl::paste(Fl_Widget &receiver, int clipboard) {
+  if (fl_i_own_selection[clipboard]) {
+    // We already have it, do it quickly without window server.
+    // Notice that the text is clobbered if set_selection is
+    // called in response to FL_PASTE!
+    Fl::e_text = selection_buffer[clipboard];
+    Fl::e_length = selection_length[clipboard];
+    receiver.handle(FL_PASTE);
+    return;
+  }
+  // otherwise get the window server to return it:
+  fl_selection_requestor = &receiver;
+  Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
+  XConvertSelection(fl_display, property, XA_STRING, property,
+		    fl_xid(Fl::first_window()), fl_event_time);
+}
+
+Window fl_dnd_source_window;
+Atom *fl_dnd_source_types; // null-terminated list of data types being supplied
+Atom fl_dnd_type;
+Atom fl_dnd_source_action;
+Atom fl_dnd_action;
+
+void fl_sendClientMessage(Window window, Atom message,
+                                 unsigned long d0,
+                                 unsigned long d1=0,
+                                 unsigned long d2=0,
+                                 unsigned long d3=0,
+                                 unsigned long d4=0)
+{
+  XEvent e;
+  e.xany.type = ClientMessage;
+  e.xany.window = window;
+  e.xclient.message_type = message;
+  e.xclient.format = 32;
+  e.xclient.data.l[0] = (long)d0;
+  e.xclient.data.l[1] = (long)d1;
+  e.xclient.data.l[2] = (long)d2;
+  e.xclient.data.l[3] = (long)d3;
+  e.xclient.data.l[4] = (long)d4;
+  XSendEvent(fl_display, window, 0, 0, &e);
+}
+
+////////////////////////////////////////////////////////////////
+// Code for copying to clipboard and DnD out of the program:
+
+void Fl::copy(const char *stuff, int len, int clipboard) {
+  if (!stuff || len<0) return;
+  if (len+1 > selection_buffer_length[clipboard]) {
+    delete[] selection_buffer[clipboard];
+    selection_buffer[clipboard] = new char[len+100];
+    selection_buffer_length[clipboard] = len+100;
+  }
+  memcpy(selection_buffer[clipboard], stuff, len);
+  selection_buffer[clipboard][len] = 0; // needed for direct paste
+  selection_length[clipboard] = len;
+  fl_i_own_selection[clipboard] = 1;
+  Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
+  XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -452,8 +504,6 @@ int fl_handle(const XEvent& xevent)
 
   switch (xevent.type) {
 
-  // events where we don't care about window:
-
   case KeymapNotify:
     memcpy(fl_key_vector, xevent.xkeymap.key_vector, 32);
     return 0;
@@ -461,6 +511,81 @@ int fl_handle(const XEvent& xevent)
   case MappingNotify:
     XRefreshKeyboardMapping((XMappingEvent*)&xevent.xmapping);
     return 0;
+
+  case SelectionNotify: {
+    if (!fl_selection_requestor) return 0;
+    static unsigned char* buffer;
+    if (buffer) {XFree(buffer); buffer = 0;}
+    long read = 0;
+    if (fl_xevent->xselection.property) for (;;) {
+      // The Xdnd code pastes 64K chunks together, possibly to avoid
+      // bugs in X servers, or maybe to avoid an extra round-trip to
+      // get the property length.  I copy this here:
+      Atom actual; int format; unsigned long count, remaining;
+      unsigned char* portion;
+      if (XGetWindowProperty(fl_display,
+			     fl_xevent->xselection.requestor,
+			     fl_xevent->xselection.property,
+			     read/4, 65536, 1, 0,
+			     &actual, &format, &count, &remaining,
+			     &portion)) break; // quit on error
+      if (read) { // append to the accumulated buffer
+	buffer = (unsigned char*)realloc(buffer, read+count*format/8+remaining);
+	memcpy(buffer+read, portion, count*format/8);
+	XFree(portion);
+      } else {	// Use the first section without moving the memory:
+	buffer = portion;
+      }
+      read += count*format/8;
+      if (!remaining) break;
+    }
+    Fl::e_text = (char*)buffer;
+    Fl::e_length = read;
+    fl_selection_requestor->handle(FL_PASTE);
+    // Detect if this paste is due to Xdnd by the property name (I use
+    // XA_SECONDARY for that) and send an XdndFinished message. It is not
+    // clear if this has to be delayed until now or if it can be done
+    // immediatly after calling XConvertSelection.
+    if (fl_xevent->xselection.property == XA_SECONDARY &&
+	fl_dnd_source_window) {
+      fl_sendClientMessage(fl_dnd_source_window, fl_XdndFinished,
+                           fl_xevent->xselection.requestor);
+      fl_dnd_source_window = 0; // don't send a second time
+    }
+    return 1;}
+
+  case SelectionClear: {
+    int clipboard = fl_xevent->xselectionclear.selection == CLIPBOARD;
+    fl_i_own_selection[clipboard] = 0;
+    return 1;}
+
+  case SelectionRequest: {
+    XSelectionEvent e;
+    e.type = SelectionNotify;
+    e.requestor = fl_xevent->xselectionrequest.requestor;
+    e.selection = fl_xevent->xselectionrequest.selection;
+    int clipboard = e.selection == CLIPBOARD;
+    e.target = fl_xevent->xselectionrequest.target;
+    e.time = fl_xevent->xselectionrequest.time;
+    e.property = fl_xevent->xselectionrequest.property;
+    if (e.target == TARGETS) {
+      Atom a = XA_STRING;
+      XChangeProperty(fl_display, e.requestor, e.property,
+		      XA_ATOM, sizeof(Atom)*8, 0, (unsigned char*)&a,
+		      sizeof(Atom));
+    } else if (/*e.target == XA_STRING &&*/ selection_length[clipboard]) {
+      XChangeProperty(fl_display, e.requestor, e.property,
+		      e.target, 8, 0,
+		      (unsigned char *)selection_buffer[clipboard],
+		      selection_length[clipboard]);
+    } else {
+//    char* x = XGetAtomName(fl_display,e.target);
+//    fprintf(stderr,"selection request of %s\n",x);
+//    XFree(x);
+      e.property = 0;
+    }
+    XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);}
+    return 1;
 
   // events where interesting window id is in a different place:
   case CirculateNotify:
@@ -486,7 +611,7 @@ int fl_handle(const XEvent& xevent)
   case ClientMessage: {
     Atom message = fl_xevent->xclient.message_type;
     const long* data = fl_xevent->xclient.data.l;
-    if ((Atom)(data[0]) == wm_delete_window) {
+    if ((Atom)(data[0]) == WM_DELETE_WINDOW) {
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
       fl_dnd_source_window = data[0];
@@ -736,6 +861,7 @@ int fl_handle(const XEvent& xevent)
     window->resize(X-wX, Y-wY,
 		   xevent.xconfigure.width, xevent.xconfigure.height);
     return 1;}
+
   }
 
   return Fl::handle(event, window);
@@ -879,8 +1005,8 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 
     w->label(w->label(), w->iconlabel());
 
-    XChangeProperty(fl_display, x->xid, wm_protocols,
- 		    XA_ATOM, 32, 0, (uchar*)&wm_delete_window, 1);
+    XChangeProperty(fl_display, x->xid, WM_PROTOCOLS,
+ 		    XA_ATOM, 32, 0, (uchar*)&WM_DELETE_WINDOW, 1);
 
     // send size limits and border:
     x->sendxjunk();
@@ -1004,7 +1130,7 @@ void Fl_X::sendxjunk() {
 
   XSetWMNormalHints(fl_display, xid, &hints);
   XChangeProperty(fl_display, xid,
-		  _motif_wm_hints, _motif_wm_hints,
+		  fl_MOTIF_WM_HINTS, fl_MOTIF_WM_HINTS,
 		  32, 0, (unsigned char *)prop, 5);
 }
 
@@ -1084,5 +1210,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.12 2002/02/19 20:21:10 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.13 2002/03/07 19:22:57 spitzak Exp $".
 //

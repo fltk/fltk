@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.18 2002/02/24 17:52:17 matthiaswm Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.19 2002/03/07 19:22:57 spitzak Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -77,7 +77,7 @@
 
 #ifndef WM_SYNCPAINT
 #  define WM_SYNCPAINT 0x0088
-#endif /* !WM_SYNCPAINT */
+#endif
 
 #ifndef WM_MOUSELEAVE
 #  define WM_MOUSELEAVE 0x02a3
@@ -88,7 +88,7 @@
 #endif
 
 #ifndef WHEEL_DELTA
-#	define WHEEL_DELTA 120	// according to MSDN.
+#  define WHEEL_DELTA 120	// according to MSDN.
 #endif
 
 
@@ -352,6 +352,65 @@ void Fl::get_mouse(int &x, int &y) {
 }
 
 ////////////////////////////////////////////////////////////////
+// code used for selections:
+
+static char *selection_buffer[2];
+static int selection_length[2];
+static int selection_buffer_length[2];
+static char i_own_selection;
+
+// call this when you create a selection:
+void Fl::copy(const char *stuff, int len, int clipboard) {
+  if (!stuff || len<0) return;
+  if (len+1 > selection_buffer_length[clipboard]) {
+    delete[] selection_buffer[clipboard];
+    selection_buffer[clipboard] = new char[len+100];
+    selection_buffer_length[clipboard] = len+100;
+  }
+  memcpy(selection_buffer[clipboard], stuff, len);
+  selection_buffer[clipboard][len] = 0; // needed for direct paste
+  selection_length[clipboard] = len;
+  if (clipboard) {
+    // set up for "delayed rendering":
+    if (OpenClipboard(fl_xid(Fl::first_window()))) {
+      EmptyClipboard();
+      SetClipboardData(CF_TEXT, NULL);
+      CloseClipboard();
+    }
+    i_own_selection = true;
+  }
+}
+
+// Call this when a "paste" operation happens:
+void Fl::paste(Fl_Widget &receiver, int clipboard) {
+  if (!clipboard || i_own_selection) {
+    // We already have it, do it quickly without window server.
+    // Notice that the text is clobbered if set_selection is
+    // called in response to FL_PASTE!
+    Fl::e_text = selection_buffer[clipboard];
+    Fl::e_length = selection_length[clipboard];
+    receiver.handle(FL_PASTE);
+  } else {
+    if (!OpenClipboard(NULL)) return;
+    HANDLE h = GetClipboardData(CF_TEXT);
+    if (h) {
+      Fl::e_text = (LPSTR)GlobalLock(h);
+      LPSTR a,b;
+      a = b = Fl::e_text;
+      while (*a) { // strip the CRLF pairs ($%$#@^)
+	if (*a == '\r' && a[1] == '\n') a++;
+	else *b++ = *a++;
+      }
+      *b = 0;
+      Fl::e_length = b - Fl::e_text;
+      receiver.handle(FL_PASTE);
+      GlobalUnlock(h);
+    }
+    CloseClipboard();
+  }
+}
+
+////////////////////////////////////////////////////////////////
 
 HWND fl_capture;
 
@@ -550,19 +609,16 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_MOUSEMOVE:
 #ifdef USE_TRACK_MOUSE
-      if (Fl::belowmouse() != window) {
-        TRACKMOUSEEVENT tme;
-
-        tme.cbSize    = sizeof(TRACKMOUSEEVENT);
-        tme.dwFlags   = TME_LEAVE;
-        tme.hwndTrack = hWnd;
-
-        _TrackMouseEvent(&tme);
-      }
+    if (Fl::belowmouse() != window) {
+      TRACKMOUSEEVENT tme;
+      tme.cbSize    = sizeof(TRACKMOUSEEVENT);
+      tme.dwFlags   = TME_LEAVE;
+      tme.hwndTrack = hWnd;
+      _TrackMouseEvent(&tme);
+    }
 #endif // USE_TRACK_MOUSE
-
-      mouse_event(window, 3, 0, wParam, lParam);
-      return 0;
+    mouse_event(window, 3, 0, wParam, lParam);
+    return 0;
 
   case WM_MOUSELEAVE:
     Fl::belowmouse(0);
@@ -714,6 +770,32 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_select_palette();
     break;
 #endif
+
+  case WM_DESTROYCLIPBOARD:
+    i_own_selection = false;
+    return 1;
+
+  case WM_RENDERALLFORMATS:
+    i_own_selection = false;
+    // Windoze seems unhappy unless I do these two steps. Documentation
+    // seems to vary on whether opening the clipboard is necessary or
+    // is in fact wrong:
+    CloseClipboard();
+    OpenClipboard(NULL);
+    // fall through...
+  case WM_RENDERFORMAT: {
+    HANDLE h = GlobalAlloc(GHND, selection_length[1]+1);
+    if (h) {
+      LPSTR p = (LPSTR)GlobalLock(h);
+      memcpy(p, selection_buffer[1], selection_length[1]);
+      p[selection_length[1]] = 0;
+      GlobalUnlock(h);
+      SetClipboardData(CF_TEXT, h);
+    }
+    // Windoze also seems unhappy if I don't do this. Documentation very
+    // unclear on what is correct:
+    if (fl_msg.message == WM_RENDERALLFORMATS) CloseClipboard();
+    return 1;}
 
   default:
     if (Fl::handle(0,0)) return 0;
@@ -1074,5 +1156,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.18 2002/02/24 17:52:17 matthiaswm Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.19 2002/03/07 19:22:57 spitzak Exp $".
 //

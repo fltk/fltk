@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.6 2002/03/06 18:11:00 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.7 2002/03/07 19:22:56 spitzak Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -58,6 +58,7 @@ FL_EXPORT void fl_close_display();
 
 // constant info about the X server connection:
 extern FL_EXPORT Display *fl_display;
+extern FL_EXPORT Window fl_message_window;
 extern FL_EXPORT int fl_screen;
 extern FL_EXPORT XVisualInfo *fl_visual;
 extern FL_EXPORT Colormap fl_colormap;
@@ -136,5 +137,5 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.6 2002/03/06 18:11:00 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.7 2002/03/07 19:22:56 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.10 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.11 2002/03/07 19:22:56 spitzak Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1932,7 +1932,7 @@ int Fl_Text_Display::handle(int event) {
         dragType = DRAG_CHAR;
 
         const char* copy = buffer()->selection_text();
-        if (*copy) Fl::selection(*this, copy, strlen(copy));
+        if (*copy) Fl::copy(copy, strlen(copy), 0);
         free((void*)copy);
         return 1;
       }
@@ -1958,5 +1958,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.10 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.11 2002/03/07 19:22:56 spitzak Exp $".
 //

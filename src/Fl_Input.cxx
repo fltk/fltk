@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.6 2002/02/24 17:52:17 matthiaswm Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.7 2002/03/07 19:22:56 spitzak Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -150,7 +150,7 @@ int Fl_Input::handle_key() {
   case ctrl('B'):
     return shift_position(position()-1) + NORMAL_INPUT_MOVE;
   case ctrl('C'): // copy
-    return copy();
+    return copy(1);
   case ctrl('D'):
   case ctrl('?'):
     if (mark() != position()) return cut();
@@ -191,11 +191,11 @@ int Fl_Input::handle_key() {
     return cut(0, size());
   case ctrl('V'):
   case ctrl('Y'):
-    Fl::paste(*this);
+    Fl::paste(*this, 1);
     return 1;
   case ctrl('X'):
   case ctrl('W'):
-    copy();
+    copy(1);
     return cut();
   case ctrl('Z'):
   case ctrl('_'):
@@ -284,7 +284,7 @@ int Fl_Input::handle(int event) {
       dnd_save_position = position();
       dnd_save_mark = mark();
       // drag the data:
-      copy(); Fl::dnd();
+      copy(0); Fl::dnd();
       return 1;
     }
 #endif
@@ -293,10 +293,10 @@ int Fl_Input::handle(int event) {
   case FL_RELEASE:
     if (Fl::event_button() == 2) {
       Fl::event_is_click(0); // stop double click from picking a word
-      Fl::paste(*this);
+      Fl::paste(*this, 0);
     } else if (!Fl::event_is_click()) {
       // copy drag-selected text to the clipboard.
-      copy();
+      copy(0);
     }
     return 1;
 
@@ -354,5 +354,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.6 2002/02/24 17:52:17 matthiaswm Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.7 2002/03/07 19:22:56 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.14 2002/02/26 00:34:55 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.15 2002/03/07 19:22:57 spitzak Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1287,7 +1287,76 @@ void Fl_Window::make_current()
   return;
 }
 
+////////////////////////////////////////////////////////////////
+// Cut & paste.
+
+static char *selection_buffer[2];
+static int selection_length[2];
+static int selection_buffer_length[2];
+static ScrapRef myScrap = 0;
+
+/**
+ * create a selection
+ * owner: widget that created the selection
+ * stuff: pointer to selected data
+ * size of selected data
+ */
+void Fl::copy(const char *stuff, int len, int clipboard) {
+  if (!stuff || len<0) return;
+  if (len+1 > selection_buffer_length[clipboard]) {
+    delete[] selection_buffer[clipboard];
+    selection_buffer[clipboard] = new char[len+100];
+    selection_buffer_length[clipboard] = len+100;
+  }
+  memcpy(selection_buffer[clipboard], stuff, len);
+  selection_buffer[clipboard][len] = 0; // needed for direct paste
+  selection_length[clipboard] = len;
+  if (clipboard) {
+    ClearCurrentScrap();
+    OSStatus ret = GetCurrentScrap( &myScrap );
+    if ( ret != noErr ) {
+      myScrap = 0;
+      return;
+    }
+    // Previous version changed \n to \r before sending the text, but I would
+    // prefer to leave the local buffer alone, so a copied buffer may be
+    // needed. Check to see if this is necessary on OS/X.
+    PutScrapFlavor( myScrap, kScrapFlavorTypeText, 0,
+		    len, fl_selection_buffer[1] );
+  }
+}
+
+// Call this when a "paste" operation happens:
+void Fl::paste(Fl_Widget &receiver, int clipboard) {
+  if (clipboard) {
+    // see if we own the selection, if not go get it:
+    ScrapRef scrap = 0;
+    Size len = 0;
+    if (GetCurrentScrap(&scrap) == noErr && scrap != myScrap &&
+	GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
+      if ( len > selection_buffer_length[1] ) {
+	selection_buffer_length[1] = len + 32;
+	delete[] fl_selection_buffer[1];
+	fl_selection_buffer[1] = new char[len];
+      }
+      GetScrapFlavorData( scrap, kScrapFlavorTypeText, &len,
+			  fl_selection_buffer[1] );
+      fl_selection_length[1] = len;
+      // turn all \r characters into \n:
+      for (int x = 0; x < len; x++) {
+	if (fl_selection_buffer[1][x] == '\r')
+	  fl_selection_buffer[1][x] == '\n';
+      }
+    }
+  }
+  Fl::e_text = selection_buffer[clipboard];
+  Fl::e_length = selection_length[clipboard];
+  receiver.handle(FL_PASTE);
+  return;
+}
+
+
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.14 2002/02/26 00:34:55 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.15 2002/03/07 19:22:57 spitzak Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.6 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.7 2002/03/07 19:22:56 spitzak Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -500,14 +500,13 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
   return j;
 }
 
-int Fl_Input_::copy() {
-  if (mark() != position()) {
-    int b, e; if (position() < mark()) {
-      b = position(); e = mark();
-    } else {
-      e = position(); b = mark();
-    }
-    Fl::selection(*this, value()+b, (type()!=FL_SECRET_INPUT) ? e-b : 0);
+int Fl_Input_::copy(int clipboard) {
+  int b = position();
+  int e = mark();
+  if (b != e) {
+    if (b > e) {b = mark(); e = position();}
+    if (type() == FL_SECRET_INPUT) e = b;
+    Fl::copy(value()+b, e-b, clipboard);
     return 1;
   }
   return 0;
@@ -662,8 +661,8 @@ int Fl_Input_::yank() {
 
 int Fl_Input_::copy_cuts() {
   // put the yank buffer into the X clipboard
-  if (!yankcut) return 0;
-  Fl::selection(*this, undobuffer, yankcut);
+  if (!yankcut || type()==FL_SECRET_INPUT) return 0;
+  Fl::copy(undobuffer, yankcut, 1);
   return 1;
 }
 
@@ -705,7 +704,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
 
   case FL_RELEASE:
 //  handle_mouse(X, Y, W, H, 1);
-    copy();
+    copy(0);
     return 1;
 
 //   case FL_SELECTIONCLEAR:
@@ -859,5 +858,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.6 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.7 2002/03/07 19:22:56 spitzak Exp $".
 //

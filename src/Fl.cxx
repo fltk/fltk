@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.21 2002/02/26 00:34:55 matthiaswm Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.22 2002/03/07 19:22:56 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -485,7 +485,7 @@ void fl_fix_focus() {
 }
 
 #ifndef WIN32
-Fl_Widget *fl_selection_requestor; // from Fl_cutpaste.cxx
+extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 #endif
 
 // This function is called by ~Fl_Widget() and by Fl_Widget::deactivate
@@ -498,7 +498,6 @@ Fl_Widget *fl_selection_requestor; // from Fl_cutpaste.cxx
 
 void fl_throw_focus(Fl_Widget *o) {
   if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
-  if (o->contains(Fl::selection_owner())) Fl::selection_owner_ = 0;
 #ifndef WIN32
   if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
 #endif
@@ -761,7 +760,8 @@ Fl_Window::~Fl_Window() {
 // Fl_Window::show() or Fl_Window::hide() is called, or in response to
 // iconize/deiconize events from the system.
 
-int Fl_Window::handle(int event) {
+int Fl_Window::handle(int event)
+{
   if (parent()) switch (event) {
   case FL_SHOW:
     if (!shown()) show();
@@ -788,18 +788,20 @@ int Fl_Window::handle(int event) {
 }
 
 ////////////////////////////////////////////////////////////////
-// ~Fl_Widget() calls this: this function must get rid of any
-// global pointers to the widget.  This is also called by hide()
-// and deactivate().
+// Back compatability cut & paste functions for fltk 1.1 only:
 
-// call this to free a selection (or change the owner):
-void Fl::selection_owner(Fl_Widget *owner) {
-  if (selection_owner_ && owner != selection_owner_)
-    selection_owner_->handle(FL_SELECTIONCLEAR);
-  if (focus_ && owner != focus_ && focus_ != selection_owner_)
-    focus_->handle(FL_SELECTIONCLEAR); // clear non-X-selection highlight
-  selection_owner_ = owner;
+void Fl::selection_owner(Fl_Widget *owner) {selection_owner_ = owner;}
+
+void Fl::selection(Fl_Widget &owner, const char* text, int len) {
+  selection_owner_ = &owner;
+  Fl::copy(text, len, 0);
 }
+
+void Fl::paste(Fl_Widget &receiver) {
+  Fl::paste(receiver, 0);
+}
+
+////////////////////////////////////////////////////////////////
 
 #include <FL/fl_draw.H>
 
@@ -880,5 +882,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.21 2002/02/26 00:34:55 matthiaswm Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.22 2002/03/07 19:22:56 spitzak Exp $".
 //

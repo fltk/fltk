@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.4 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.5 2002/03/07 19:22:56 spitzak Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -344,7 +344,7 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected()) return 1;
   const char *copy = e->buffer()->selection_text();
-  if (*copy) Fl::selection(*e, copy, strlen(copy));
+  if (*copy) Fl::copy(copy, strlen(copy), 1);
   free((void*)copy);
   e->show_insert_position();
   return 1;
@@ -358,7 +358,7 @@ int Fl_Text_Editor::kf_cut(int c, Fl_Text_Editor* e) {
 
 int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
   kill_selection(e);
-  Fl::paste(*e);
+  Fl::paste(*e, 1);
   e->show_insert_position();
   return 1;
 }
@@ -402,7 +402,7 @@ int Fl_Text_Editor::handle(int event) {
 
   if (event == FL_PUSH && Fl::event_button() == 2) {
     dragType = -1;
-    Fl::paste(*this);
+    Fl::paste(*this, 0);
     Fl::focus(this);
     return 1;
   }
@@ -439,5 +439,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.4 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.5 2002/03/07 19:22:56 spitzak Exp $".
 //

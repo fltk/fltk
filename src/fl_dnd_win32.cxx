@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.2 2002/02/24 17:52:18 matthiaswm Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.3 2002/03/07 19:22:58 spitzak Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -307,7 +307,7 @@ public:
 /**
  * drag and drop whatever is in the cut-copy-paste buffer
  * - create a selection first using: 
- *     Fl::selection(Fl_Widget &owner, const char *stuff, int len)
+ *     Fl::copy(const char *stuff, int len, 0)
  */
 int Fl::dnd()
 {
@@ -336,5 +336,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.2 2002/02/24 17:52:18 matthiaswm Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.3 2002/03/07 19:22:58 spitzak Exp $".
 //

@@ -39,7 +39,7 @@ extern int fl_selection_length;
 /**
  * drag and drop whatever is in the cut-copy-paste buffer
  * - create a selection first using: 
- *     Fl::selection(Fl_Widget &owner, const char *stuff, int len)
+ *     Fl::copy(const char *stuff, int len, 0)
  */
 int Fl::dnd()
 {
