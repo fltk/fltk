@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.7 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.8 2001/11/23 12:06:36 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -56,13 +56,19 @@ void Fl_Pixmap::measure() {
 
 void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // ignore empty or bad pixmap data:
-  if (!data()) return;
+  if (!data()) {
+    draw_empty(XP, YP);
+    return;
+  }
   if (w()<0) measure();
   if (WP==-1) {
     WP = w();
     HP = h();
   }
-  if (!w()) return;
+  if (!w()) {
+    draw_empty(XP, YP);
+    return;
+  }
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
@@ -461,5 +467,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.7 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.8 2001/11/23 12:06:36 easysw Exp $".
 //

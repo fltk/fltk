@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.6 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.7 2001/11/23 12:06:36 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,16 @@ Fl_Image::~Fl_Image() {
 }
 
 void Fl_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
+  draw_empty(XP, YP);
+}
+
+void Fl_Image::draw_empty(int X, int Y) {
+  if (w() > 0 && h() > 0) {
+    fl_color(FL_BLACK);
+    fl_rect(X, Y, w(), h());
+    fl_line(X, Y, X + w() - 1, Y + h() - 1);
+    fl_line(X, Y + h() - 1, X + w() - 1, Y);
+  }
 }
 
 Fl_Image *Fl_Image::copy(int W, int H) {
@@ -222,6 +232,11 @@ void Fl_RGB_Image::desaturate() {
 }
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
+  if (!array) {
+    draw_empty(XP, YP);
+    return;
+  }
+
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
@@ -341,5 +356,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.6 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.7 2001/11/23 12:06:36 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.4 2001/11/19 20:59:59 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.5 2001/11/23 12:06:36 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -161,6 +161,11 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 #endif // WIN32
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
+  if (!array) {
+    draw_empty(XP, YP);
+    return;
+  }
+
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
@@ -273,5 +278,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.4 2001/11/19 20:59:59 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.5 2001/11/23 12:06:36 easysw Exp $".
 //
