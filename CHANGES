@@ -24,6 +24,7 @@ CHANGES IN FLTK 1.1.0b5
 	  show the corresponding symbol (the label string was
 	  not quoted...)
 	- FLTK should now compile with Cygwin cleanly.
+	- Shortcut changes were not being saved by FLUID.
 
 
 CHANGES IN FLTK 1.1.0b4
