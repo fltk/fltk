@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.1 2001/08/02 15:31:59 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Tooltip.H>
+
 
 ////////////////////////////////////////////////////////////////
 // for compatability with Forms, all widgets without callbacks are
@@ -91,6 +93,11 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
+}
+
+void Fl_Widget::tooltip(const char *t) {
+  Fl_Tooltip::enable();
+  tooltip_ = t;
 }
 
 void Fl_Widget::resize(int X, int Y, int W, int H) {
@@ -198,5 +205,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.1 2001/08/02 15:31:59 easysw Exp $".
 //

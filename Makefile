@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.1 2001/08/01 21:24:48 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.2 2001/08/02 15:31:59 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -29,18 +29,12 @@ DIRS	=	src fluid test
 all: makeinclude
 	@for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
-		if test ! -f $$dir/makedepend; then\
-			touch $$dir/makedepend;\
-		fi;\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || break;\
 	done
 
 install: makeinclude
 	@for dir in $(DIRS); do\
 		echo "=== installing $$dir ===";\
-		if test ! -f $$dir/makedepend; then\
-			touch $$dir/makedepend;\
-		fi;\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
 	done
 	(cd documentation; $(MAKE) $(MFLAGS) install)
@@ -48,9 +42,6 @@ install: makeinclude
 depend: makeinclude
 	@for dir in $(DIRS); do\
 		echo "=== making dependencies in $$dir ===";\
-		if test ! -f $$dir/makedepend; then\
-			touch $$dir/makedepend;\
-		fi;\
 		(cd $$dir; $(MAKE) $(MFLAGS) depend) || break;\
 	done
 
@@ -75,5 +66,5 @@ configure: configure.in
 	autoconf
 
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.1 2001/08/01 21:24:48 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.2 2001/08/02 15:31:59 easysw Exp $".
 #

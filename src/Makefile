@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.1 2001/08/01 21:24:49 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.2 2001/08/02 15:31:59 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -169,7 +169,8 @@ clean :
 	touch makedepend
 
 depend:
-	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+#	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+	makedepend -Y -I.. -f makedepend $(CPPFILES) $(CFILES)
 
 include makedepend
 
@@ -208,5 +209,5 @@ install: $(LIBRARY) $(DSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.1 2001/08/01 21:24:49 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.2 2001/08/02 15:31:59 easysw Exp $".
 #

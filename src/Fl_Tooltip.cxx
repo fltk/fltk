@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.1 2001/08/01 21:24:49 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.2 2001/08/02 15:31:59 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Tooltip.H>
 
 #include <stdio.h>
 
@@ -71,7 +72,7 @@ public:
     Fl_Window *widgetWindow = Fl_Tooltip::widget->window();
     
     if (!widgetWindow) {
-      printf("!widgetWindow\n");
+//      printf("!widgetWindow\n");
       return;
     }
     
@@ -109,6 +110,13 @@ public:
 // when the pointer enters them
 void
 Fl_Tooltip::enter(Fl_Widget *w) {
+//  printf("Fl_Tooltip::enter(%p)\n", w);
+  if ((!w || !w->tooltip()) && tooltip_callback_ && window) {
+    Fl::remove_timeout(tooltip_callback_);
+    window->hide();
+    shown = 0;
+    return;
+  }
   if (!tooltip_callback_ || !w || !w->tooltip()) return;
   Fl::add_timeout(delay_, tooltip_callback_, w);
 }
@@ -119,14 +127,21 @@ Fl_Tooltip::enter(Fl_Widget *w) {
 // the widget
 void
 Fl_Tooltip::exit(Fl_Widget *w) {
-  if (tooltip_exit_ && w && w->tooltip()) tooltip_exit_(w);
+//  printf("Fl_Tooltip::exit(%p)\n", w);
+  if (tooltip_exit_) tooltip_exit_(w);
 }
 
 void
 Fl_Tooltip::tooltip_exit(Fl_Widget *w) {
-  Fl::remove_timeout(tooltip_callback_, w);
-  if ((w == widget || (widget && w == widget->window())) && shown && window) {
-    widget = 0;
+//  printf("Fl_Tooltip::tooltip_exit(%p), widget = %p, window = %p, shown = %d\n",
+//         w, widget, window, shown);
+  if (!w || w != widget) return;
+
+  Fl::remove_timeout(tooltip_callback_);
+
+  widget = 0;
+
+  if (window) {
     window->hide();
     shown = 0;
   }
@@ -134,6 +149,7 @@ Fl_Tooltip::tooltip_exit(Fl_Widget *w) {
 
 void 
 Fl_Tooltip::tooltip_timeout(void *v) {
+//  printf("Fl_Tooltip::tooltip_timeout(%p)\n", v);
   if (!window) {
     Fl_Group* saveCurrent = Fl_Group::current();
     Fl_Group::current(0);
@@ -172,5 +188,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.1 2001/08/01 21:24:49 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.2 2001/08/02 15:31:59 easysw Exp $".
 //

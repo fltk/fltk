@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.H,v 1.16.2.1 2001/08/01 21:24:48 easysw Exp $"
+// "$Id: Fl_Tooltip.H,v 1.16.2.2 2001/08/02 15:31:59 easysw Exp $"
 //
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
@@ -56,8 +56,8 @@ FL_EXPORT class Fl_Tooltip {
 public:
 
   // These functions are user-called functions
-  static float tooltip_delay() { return delay_; }
-  static void tooltip_delay(float f) { delay_ = (f < 0.1) ? 0.1 : f; }
+  static float delay() { return delay_; }
+  static void delay(float f) { delay_ = (f < 0.1) ? 0.1 : f; }
   static int font() { return font_; }
   static int size() { return size_; }
   static void font(int i) { font_ = i; }
@@ -67,13 +67,14 @@ public:
 
   static void enter(Fl_Widget *w);
   static void exit(Fl_Widget *w);
-  static void enable() {tooltip_callback_ = tooltip_timeout; tooltip_exit_ = (void (*)(void *))tooltip_exit;}
-  static void disable() {tooltip_callback_ = 0; tooltip_exit_ = 0;}
+  static int enabled() {return tooltip_callback_ != 0;}
+  static void enable(int b = 1) {if (!b) enter(0); tooltip_callback_ = b ? tooltip_timeout : 0; tooltip_exit_ = b ? (void (*)(void *))tooltip_exit : 0;}
+  static void disable() {enter(0); tooltip_callback_ = 0; tooltip_exit_ = 0;}
 };
 
 
 #endif
 
 //
-// End of "$Id: Fl_Tooltip.H,v 1.16.2.1 2001/08/01 21:24:48 easysw Exp $".
+// End of "$Id: Fl_Tooltip.H,v 1.16.2.2 2001/08/02 15:31:59 easysw Exp $".
 //
