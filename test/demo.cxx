@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.3 1998/10/21 14:21:23 mike Exp $"
+// "$Id: demo.cxx,v 1.4 1998/12/02 15:52:41 mike Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -255,7 +255,7 @@ int main(int argc, char **argv) {
   create_the_forms();
   char buf[256];
   strcpy(buf, argv[0]);
-  strcat(buf, ".menu");
+  filename_setext(buf,".menu");
   const char *fname = buf;
   int i = 0;
   if (!Fl::args(argc,argv,i) || i < argc-1)
@@ -272,5 +272,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.3 1998/10/21 14:21:23 mike Exp $".
+// End of "$Id: demo.cxx,v 1.4 1998/12/02 15:52:41 mike Exp $".
 //
