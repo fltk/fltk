@@ -909,7 +909,7 @@ void print_cb(Fl_Return_Button *, void *) {
   print_progress->show();
 
   // Figure out how many pages we'll have to print...
-  if (print_collate_button->value()) copies = print_copies->value();
+  if (print_collate_button->value()) copies = (int)print_copies->value();
   else copies = 1;
 
   if (print_pages->value()) {
@@ -958,8 +958,8 @@ void print_cb(Fl_Return_Button *, void *) {
     // Pipe the output into the lp command...
     const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
 
-    snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
-             printer, print_collate_button->value() ? 1 : print_copies->value(),
+    snprintf(command, sizeof(command), "lp -s -d %s -n %.0f -t '%s' -o media=%s",
+             printer, print_collate_button->value() ? 1.0 : print_copies->value(),
 	     basename, print_page_size->text(print_page_size->value()));
     outfile = popen(command, "w");
   } else {
@@ -1483,7 +1483,8 @@ void load_history() {
       fl_filename_relative(relative_history[i], sizeof(relative_history[i]),
                            absolute_history[i]);
 
-      Main_Menu[i + HISTORY_ITEM].flags = 0;
+      if (i == 9) Main_Menu[i + HISTORY_ITEM].flags = FL_MENU_DIVIDER;
+      else Main_Menu[i + HISTORY_ITEM].flags = 0;
     } else break;
   }
 
@@ -1531,8 +1532,10 @@ void update_history(const char *flname) {
   // Update the menu items as needed...
   for (i = 0; i < max_files; i ++) {
     fluid_prefs.set( Fl_Preferences::Name("file%d", i), absolute_history[i]);
-    if (absolute_history[i][0]) Main_Menu[i + HISTORY_ITEM].flags = 0;
-    else break;
+    if (absolute_history[i][0]) {
+      if (i == 9) Main_Menu[i + HISTORY_ITEM].flags = FL_MENU_DIVIDER;
+      else Main_Menu[i + HISTORY_ITEM].flags = 0;
+    } else break;
   }
 
   for (; i < 10; i ++) {

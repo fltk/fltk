@@ -109,8 +109,8 @@ print_to->deactivate();}
   print_collate_button->activate();
   print_collate_group[0]->activate();
   print_collate_group[1]->activate();
-}}
-          xywh {326 96 40 25} when 1
+}} selected
+          xywh {321 96 45 25} when 1
         }
         Fl_Check_Button print_collate_button {
           label Collate
@@ -277,7 +277,7 @@ print_update_status();}
     }
     Fl_Button {} {
       label Use
-      callback {print_properties_panel->hide();} selected
+      callback {print_properties_panel->hide();}
       xywh {60 95 53 25}
     }
   }

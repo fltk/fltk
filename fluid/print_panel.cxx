@@ -296,7 +296,7 @@ Fl_Double_Window* make_print_panel() {
         o->box(FL_THIN_DOWN_BOX);
         o->labelfont(1);
         o->align(FL_ALIGN_TOP_LEFT);
-        { Fl_Spinner* o = print_copies = new Fl_Spinner(326, 96, 40, 25, "# Copies:");
+        { Fl_Spinner* o = print_copies = new Fl_Spinner(321, 96, 45, 25, "# Copies:");
           o->callback((Fl_Callback*)cb_print_copies);
           o->when(FL_WHEN_CHANGED);
         }

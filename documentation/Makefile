@@ -119,6 +119,7 @@ HTMLFILES	= \
 		Fl_Shared_Image.html \
 		Fl_Single_Window.html \
 		Fl_Slider.html \
+		Fl_Spinner.html \
 		Fl_Tabs.html \
 		Fl_Text_Buffer.html \
 		Fl_Text_Display.html \
