@@ -67,7 +67,7 @@
 @main:Tutorial\nfrom\nManual:@j
 	@j:ask\n(modified):ask
 	@j:button:button
-	@j:editor:editor
+	@j:editor:editor editor.cxx
 	@j:hello:hello
 	@j:shape:shape
 
