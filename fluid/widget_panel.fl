@@ -33,7 +33,7 @@ comment {//
 
 Function {make_widget_panel()} {open
 } {
-  Fl_Window {} {open selected
+  Fl_Window {} {open
     xywh {632 21 405 345} type Double labelsize 11 resizable hotspot visible
   } {
     Fl_Tabs {} {
@@ -437,10 +437,10 @@ Function {make_widget_panel()} {open
         }
         Fl_Text_Editor {} {
           label {Callback:}
-          callback callback_cb
+          callback callback_cb selected
           tooltip {The callback function or code for the widget.} xywh {100 169 295 91} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11
-          code0 {o->buffer(new Fl_Text_Buffer());}
-          code1 {o->textfont(FL_COURIER);}
+          code0 {\#include "CodeEditor.h"}
+          class CodeEditor
         }
         Fl_Group {} {
           callback propagate_load open

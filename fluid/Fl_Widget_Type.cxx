@@ -979,7 +979,7 @@ void align_cb(Fl_Button* i, void *v) {
 
 ////////////////////////////////////////////////////////////////
 
-void callback_cb(Fl_Text_Editor* i, void *v) {
+void callback_cb(CodeEditor* i, void *v) {
   if (v == LOAD) {
     const char *cbtext = current_widget->callback();
     i->buffer()->text( cbtext ? cbtext : "" );

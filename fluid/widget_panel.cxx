@@ -578,17 +578,20 @@ Fl_Double_Window* make_widget_panel() {
           }
           o->end();
         }
-        { Fl_Text_Editor* o = new Fl_Text_Editor(100, 169, 295, 91, "Callback:");
+        { CodeEditor* o = new CodeEditor(100, 169, 295, 91, "Callback:");
           o->tooltip("The callback function or code for the widget.");
           o->box(FL_DOWN_BOX);
+          o->color(FL_BACKGROUND2_COLOR);
+          o->selection_color(FL_SELECTION_COLOR);
+          o->labeltype(FL_NORMAL_LABEL);
           o->labelfont(1);
           o->labelsize(11);
+          o->labelcolor(FL_BLACK);
           o->textfont(4);
           o->textsize(11);
           o->callback((Fl_Callback*)callback_cb);
           o->align(FL_ALIGN_LEFT);
-          o->buffer(new Fl_Text_Buffer());
-          o->textfont(FL_COURIER);
+          o->when(FL_WHEN_RELEASE);
         }
         { Fl_Group* o = new Fl_Group(95, 265, 303, 45);
           o->labelsize(11);

@@ -90,8 +90,8 @@ extern void name_cb(Fl_Input*, void*);
 extern void name_public_cb(Fl_Light_Button*, void*);
 extern void v_input_cb(Fl_Input*, void*);
 extern Fl_Input *v_input[4];
-#include <FL/Fl_Text_Editor.H>
-extern void callback_cb(Fl_Text_Editor*, void*);
+#include "CodeEditor.h"
+extern void callback_cb(CodeEditor*, void*);
 extern void user_data_cb(Fl_Input*, void*);
 extern Fl_Menu_Item whenmenu[];
 extern void when_cb(Fl_Choice*, void*);
