@@ -1,5 +1,5 @@
 /*
- * "$Id: config.os2x,v 1.1.2.4.2.1 2001/10/01 16:49:29 easysw Exp $"
+ * "$Id: config.os2x,v 1.1.2.4.2.2 2001/10/19 14:04:08 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -176,8 +176,9 @@
 
 #undef HAVE_PNG_GET_VALID
 #undef HAVE_PNG_SET_TRNS_TO_ALPHA
+#undef HAVE_PNG_READ_DESTROY
 
 
 /*
- * End of "$Id: config.os2x,v 1.1.2.4.2.1 2001/10/01 16:49:29 easysw Exp $".
+ * End of "$Id: config.os2x,v 1.1.2.4.2.2 2001/10/19 14:04:08 easysw Exp $".
  */

@@ -38,6 +38,10 @@ CHANGES IN FLTK 1.1.0b4
 	- The editor demo had the save and discard button
 	  actions reversed.
 
+	- The Fl_Help_View widget now uses
+	  png_destroy_read_struct() if the older
+	  png_read_destroy() function is not available.
+
 
 CHANGES IN FLTK 1.1.0b3
 
