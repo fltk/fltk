@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.28 2002/01/13 18:38:24 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.29 2002/01/15 01:33:16 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -212,7 +212,7 @@ doublebuffer$(EXEEXT): doublebuffer.o
 
 editor$(EXEEXT): editor.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fast_slow$(EXEEXT): fast_slow.o
@@ -220,7 +220,7 @@ fast_slow.cxx:	../fluid/fluid
 
 file_chooser$(EXEEXT): file_chooser.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fonts$(EXEEXT): fonts.o
@@ -231,7 +231,7 @@ hello$(EXEEXT): hello.o
 
 help$(EXEEXT): help.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 iconize$(EXEEXT): iconize.o
@@ -279,7 +279,7 @@ pixmap$(EXEEXT): pixmap.o
 
 pixmap_browser$(EXEEXT): pixmap_browser.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 radio$(EXEEXT): radio.o
@@ -354,5 +354,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.28 2002/01/13 18:38:24 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.29 2002/01/15 01:33:16 easysw Exp $".
 #

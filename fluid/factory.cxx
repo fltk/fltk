@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.4 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.5 2002/01/15 01:33:16 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -42,6 +42,13 @@
 #ifdef HAVE_STRINGS_H
 #  include <strings.h>
 #endif // HAVE_STRINGS_H
+
+// Apparently Unixware defines "index" to strchr (!) rather than
+// providing a proper entry point or not providing the (obsolete)
+// BSD function.  Make sure index is not defined...
+#ifdef index
+#  undef index
+#endif // index
 
 #if defined(WIN32) || defined(__EMX__)
 #define strcasecmp stricmp
@@ -887,5 +894,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.4 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.5 2002/01/15 01:33:16 easysw Exp $".
 //

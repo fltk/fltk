@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.3 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.4 2002/01/15 01:33:16 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
@@ -64,7 +64,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jpeg_stdio_src(&cinfo, fp);
   jpeg_read_header(&cinfo, 1);
 
-  cinfo.quantize_colors      = 0;
+  cinfo.quantize_colors      = (boolean)FALSE;
   cinfo.out_color_space      = JCS_RGB;
   cinfo.out_color_components = 3;
   cinfo.output_components    = 3;
@@ -95,5 +95,5 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.3 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.4 2002/01/15 01:33:16 easysw Exp $".
 //
