@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.8 2002/05/01 20:05:19 easysw Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.9 2002/05/16 07:43:59 spitzak Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -127,7 +127,7 @@ public:
     }
     // Fl_Group will change DND_DRAG into DND_ENTER and DND_LEAVE if needed
     if ( Fl::handle( FL_DND_DRAG, fl_dnd_target_window ) )
-      *pdwEffect = DROPEFFECT_MOVE|DROPEFFECT_COPY|DROPEFFECT_LINK;
+      *pdwEffect = DROPEFFECT_MOVE|DROPEFFECT_COPY; //|DROPEFFECT_LINK;
     else 
       *pdwEffect = DROPEFFECT_NONE;
     px = pt.x; py = pt.y;
@@ -351,5 +351,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.8 2002/05/01 20:05:19 easysw Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.9 2002/05/16 07:43:59 spitzak Exp $".
 //
