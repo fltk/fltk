@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.22 2002/10/11 13:54:10 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.23 2002/11/19 16:37:35 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -425,7 +425,7 @@ void Fl_Pixmap::desaturate() {
     ncolors = -ncolors;
     uchar *cmap = (uchar *)(data()[1]);
     for (i = 0; i < ncolors; i ++, cmap += 4) {
-      g = (cmap[1] * 31 + cmap[2] * 61 + cmap[3] * 8) / 100;
+      g = (uchar)((cmap[1] * 31 + cmap[2] * 61 + cmap[3] * 8) / 100);
       cmap[1] = cmap[2] = cmap[3] = g;
     }
   } else {
@@ -446,7 +446,7 @@ void Fl_Pixmap::desaturate() {
       }
 
       if (fl_parse_color(p, r, g, b)) {
-        g = (r * 31 + g * 61 + b * 8) / 100;
+        g = (uchar)((r * 31 + g * 61 + b * 8) / 100);
 
         if (chars_per_pixel > 1) sprintf(line, "%c%c c #%02X%02X%02X", data()[i + 1][0],
 	                                 data()[i + 1][1], g, g, g);
@@ -461,5 +461,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.22 2002/10/11 13:54:10 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.23 2002/11/19 16:37:35 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.17 2002/10/03 15:23:46 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.18 2002/11/19 16:37:34 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -246,7 +246,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 	  // Composite color; compute average...
 	  c = -c;
 	  add_color(fl_color_average((Fl_Color)(c >> 4),
-	                             (Fl_Color)(c & 15), 0.5));
+	                             (Fl_Color)(c & 15), 0.5f));
 	}
 	else
 	  add_color((Fl_Color)c);
@@ -284,7 +284,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 	{
 	  // Composite color; compute average...
 	  c = -c;
-	  cval = fl_color_average((Fl_Color)(c >> 4), (Fl_Color)(c & 15), 0.5);
+	  cval = fl_color_average((Fl_Color)(c >> 4), (Fl_Color)(c & 15), 0.5f);
 	}
 	else
 	  cval = c;
@@ -509,7 +509,7 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 		break;
 	  }
 
-	  colors[ch] = fl_rgb_color(red, green, blue);
+	  colors[ch] = fl_rgb_color((uchar)red, (uchar)green, (uchar)blue);
 	} else {
 	  // Read a color name...
 	  if (strncasecmp(lineptr + 2, "white", 5) == 0) colors[ch] = FL_WHITE;
@@ -971,5 +971,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.17 2002/10/03 15:23:46 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.18 2002/11/19 16:37:34 easysw Exp $".
 //

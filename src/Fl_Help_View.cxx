@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.43 2002/10/11 20:48:14 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.44 2002/11/19 16:37:34 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -529,11 +529,11 @@ Fl_Help_View::draw()
             if (tolower(buf[0]) == 'h')
 	    {
 	      font  = FL_HELVETICA_BOLD;
-	      fsize = textsize_ + '7' - buf[1];
+	      fsize = (uchar)(textsize_ + '7' - buf[1]);
 	    }
 	    else if (strcasecmp(buf, "DT") == 0)
 	    {
-	      font  = textfont_ | FL_ITALIC;
+	      font  = (uchar)(textfont_ | FL_ITALIC);
 	      fsize = textsize_;
 	    }
 	    else if (strcasecmp(buf, "PRE") == 0)
@@ -1051,7 +1051,7 @@ Fl_Help_View::format()
           else if (strcasecmp(buf, "TABLE") == 0)
 	  {
 	    if (get_attr(attrs, "BORDER", attr, sizeof(attr)))
-	      border = atoi(attr);
+	      border = (uchar)atoi(attr);
 	    else
 	      border = 0;
 
@@ -1088,11 +1088,11 @@ Fl_Help_View::format()
           if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
 	  {
 	    font  = FL_HELVETICA_BOLD;
-	    fsize = textsize_ + '7' - buf[1];
+	    fsize = (uchar)(textsize_ + '7' - buf[1]);
 	  }
 	  else if (strcasecmp(buf, "DT") == 0)
 	  {
-	    font  = textfont_ | FL_ITALIC;
+	    font  = (uchar)(textfont_ | FL_ITALIC);
 	    fsize = textsize_;
 	  }
 	  else if (strcasecmp(buf, "PRE") == 0)
@@ -1273,7 +1273,7 @@ Fl_Help_View::format()
 	  block->h   += hh;
 
           if (strcasecmp(buf, "TH") == 0)
-	    font = textfont_ | FL_BOLD;
+	    font = (uchar)(textfont_ | FL_BOLD);
 	  else
 	    font = textfont_;
 
@@ -1629,11 +1629,11 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
         if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
 	{
 	  font  = FL_HELVETICA_BOLD;
-	  fsize = textsize_ + '7' - buf[1];
+	  fsize = (uchar)(textsize_ + '7' - buf[1]);
 	}
 	else if (strcasecmp(buf, "DT") == 0)
 	{
-	  font  = textfont_ | FL_ITALIC;
+	  font  = (uchar)(textfont_ | FL_ITALIC);
 	  fsize = textsize_;
 	}
 	else if (strcasecmp(buf, "PRE") == 0)
@@ -1743,7 +1743,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	incell    = 1;
 
         if (strcasecmp(buf, "TH") == 0)
-	  font = textfont_ | FL_BOLD;
+	  font = (uchar)(textfont_ | FL_BOLD);
 	else
 	  font = textfont_;
 
@@ -2061,7 +2061,7 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
     g = (rgb >> 8) & 255;
     b = rgb & 255;
 
-    return (fl_rgb_color(r, g, b));
+    return (fl_rgb_color((uchar)r, (uchar)g, (uchar)b));
   }
   else if (strcasecmp(n, "black") == 0)
     return (FL_BLACK);
@@ -2730,5 +2730,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.43 2002/10/11 20:48:14 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.44 2002/11/19 16:37:34 easysw Exp $".
 //

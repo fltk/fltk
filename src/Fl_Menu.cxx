@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.20 2002/11/08 15:57:10 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.21 2002/11/19 16:37:35 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -114,7 +114,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   l.deimage = 0;
   l.type    = labeltype_;
   l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
-  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
+  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : (uchar)FL_NORMAL_SIZE;
   l.color   = FL_BLACK; // this makes no difference?
   fl_draw_shortcut = 1;
   int w = 0; int h = 0; l.measure(w, hp ? *hp : h);
@@ -131,7 +131,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.deimage = 0;
   l.type    = labeltype_;
   l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
-  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
+  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : (uchar)FL_NORMAL_SIZE;
   l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
   if (!active()) l.color = fl_inactive((Fl_Color)l.color);
   Fl_Color color = m ? m->color() : FL_GRAY;
@@ -502,9 +502,13 @@ int menuwindow::handle(int e) {
       if (!backward(pp.menu_number)) {pp.item_number = -1;backward(pp.menu_number);}
       return 1;
     case FL_Up:
-      if (pp.menubar && pp.menu_number == 0) ;
-      else if (backward(pp.menu_number));
-      else if (pp.menubar && pp.menu_number==1) setitem(0, pp.p[0]->selected);
+      if (pp.menubar && pp.menu_number == 0) {
+        // Do nothing...
+      } else if (backward(pp.menu_number)) {
+        // Do nothing...
+      } else if (pp.menubar && pp.menu_number==1) {
+        setitem(0, pp.p[0]->selected);
+      }
       return 1;
     case FL_Tab:
       if (Fl::event_shift()) goto BACKTAB;
@@ -780,5 +784,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.20 2002/11/08 15:57:10 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.21 2002/11/19 16:37:35 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.10 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.11 2002/11/19 16:37:36 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -230,7 +230,7 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
       const uchar* p = data[Y];
       if (chars_per_pixel <= 1) {
 	for (int X = 0; X < W; X++) {
-	  int b = (*p++ != transparent_index);
+	  uchar b = (*p++ != transparent_index);
 	  if (*p++ != transparent_index) b |= 2;
 	  if (*p++ != transparent_index) b |= 4;
 	  if (*p++ != transparent_index) b |= 8;
@@ -242,7 +242,7 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 	}
       } else {
 	for (int X = 0; X < W; X++) {
-	  int b = 0;
+	  uchar b = 0;
 	  for (int i = 0; i < 8; i++) {
 	    int ind = *p++;
 	    ind = (ind<<8) | (*p++);
@@ -260,5 +260,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.10 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.11 2002/11/19 16:37:36 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $"
+// "$Id: Fl_File_Browser.H,v 1.1.2.5 2002/11/19 16:37:33 easysw Exp $"
 //
 // FileBrowser definitions.
 //
@@ -57,23 +57,23 @@ public:
 
   Fl_File_Browser(int, int, int, int, const char * = 0);
 
-  uchar			iconsize() const { return (iconsize_); };
-  void			iconsize(uchar s) { iconsize_ = s; redraw(); };
+  uchar		iconsize() const { return (iconsize_); };
+  void		iconsize(uchar s) { iconsize_ = s; redraw(); };
 
   void	filter(const char *pattern);
-  const char		*filter() const { return (pattern_); };
+  const char	*filter() const { return (pattern_); };
 
   int		load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
 
-  uchar			textsize() const { return (Fl_Browser::textsize()); };
-  void			textsize(uchar s) { Fl_Browser::textsize(s); iconsize_ = 3 * s / 2; };
+  uchar		textsize() const { return (Fl_Browser::textsize()); };
+  void		textsize(uchar s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); };
 
-  int			filetype() const { return (filetype_); };
-  void			filetype(int t) { filetype_ = t; load(directory_); };
+  int		filetype() const { return (filetype_); };
+  void		filetype(int t) { filetype_ = t; load(directory_); };
 };
 
 #endif // !_Fl_File_Browser_H_
 
 //
-// End of "$Id: Fl_File_Browser.H,v 1.1.2.4 2002/08/14 16:49:38 easysw Exp $".
+// End of "$Id: Fl_File_Browser.H,v 1.1.2.5 2002/11/19 16:37:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.24 2002/10/11 13:54:10 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.25 2002/11/19 16:37:35 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -277,7 +277,7 @@ void Fl_RGB_Image::desaturate() {
 
   for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
     for (x = 0; x < w(); x ++, old_ptr += d()) {
-      *new_ptr++ = (31 * old_ptr[0] + 61 * old_ptr[1] + 8 * old_ptr[2]) / 100;
+      *new_ptr++ = (uchar)((31 * old_ptr[0] + 61 * old_ptr[1] + 8 * old_ptr[2]) / 100);
       if (d() > 3) *new_ptr++ = old_ptr[3];
     }
 
@@ -392,5 +392,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.24 2002/10/11 13:54:10 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.25 2002/11/19 16:37:35 easysw Exp $".
 //

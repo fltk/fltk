@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.16 2002/08/16 19:51:31 easysw Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.17 2002/11/19 16:37:34 easysw Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -304,7 +304,7 @@ J1:
     top_ = item_first(); real_position_ = offset_ = 0;
     if (scrollbar.visible()) {
       scrollbar.clear_visible();
-      clear_damage(damage()|FL_DAMAGE_SCROLL);
+      clear_damage((uchar)(damage()|FL_DAMAGE_SCROLL));
     }
   }
 
@@ -319,7 +319,7 @@ J1:
     real_hposition_ = 0;
     if (hscrollbar.visible()) {
       hscrollbar.clear_visible();
-      clear_damage(damage()|FL_DAMAGE_SCROLL);
+      clear_damage((uchar)(damage()|FL_DAMAGE_SCROLL));
     }
   }
 
@@ -337,7 +337,7 @@ J1:
     top_ = item_first(); real_position_ = offset_ = 0;
     if (scrollbar.visible()) {
       scrollbar.clear_visible();
-      clear_damage(damage()|FL_DAMAGE_SCROLL);
+      clear_damage((uchar)(damage()|FL_DAMAGE_SCROLL));
     }
   }
 
@@ -722,7 +722,7 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* l)
   hscrollbar.callback(hscrollbar_callback);
   hscrollbar.type(FL_HORIZONTAL);
   textfont_ = FL_HELVETICA;
-  textsize_ = FL_NORMAL_SIZE;
+  textsize_ = (uchar)FL_NORMAL_SIZE;
   textcolor_ = FL_FOREGROUND_COLOR;
   has_scrollbar_ = BOTH;
   max_width = 0;
@@ -757,5 +757,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.16 2002/08/16 19:51:31 easysw Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.17 2002/11/19 16:37:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.18 2002/10/11 13:54:10 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.19 2002/11/19 16:37:34 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -94,8 +94,8 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
 
   for (int y=0; y < h; y++) {
     for (int n = 0; n < w1; n++, src++)
-      *dest++ = (reverse[*src & 0x0f] & 0xf0) |
-	        (reverse[(*src >> 4) & 0x0f] & 0x0f);
+      *dest++ = (uchar)((reverse[*src & 0x0f] & 0xf0) |
+	                (reverse[(*src >> 4) & 0x0f] & 0x0f));
     dest += w2-w1;
   }
 
@@ -131,10 +131,10 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
     for (int j=w1; j>0; j--) {
       uchar b = *src++;
       if (bpp==1) {
-        *dst++ = ( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
+        *dst++ = (uchar)( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
       } else if (bpp==4) {
         for (int k=(j==1)?shr:4; k>0; k--) {
-          *dst++ = "\377\360\017\000"[b&3];
+          *dst++ = (uchar)("\377\360\017\000"[b&3]);
           b = b >> 2;
         }
       } else {
@@ -441,7 +441,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
     for (dx = W, xerr = W / 2, old_ptr = array + sy * (w() + 7) / 8, sx = 0, new_bit = 128;
 	 dx > 0;
 	 dx --) {
-      old_bit = 128 >> (sx & 7);
+      old_bit = (uchar)(128 >> (sx & 7));
       if (old_ptr[sx / 8] & old_bit) *new_ptr |= new_bit;
 
       if (new_bit > 1) new_bit >>= 1;
@@ -474,5 +474,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.18 2002/10/11 13:54:10 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.19 2002/11/19 16:37:34 easysw Exp $".
 //

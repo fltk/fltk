@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.41 2002/10/29 20:18:55 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.42 2002/11/19 16:37:36 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -146,7 +146,7 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
     fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
   }
   fd[i].fd = n;
-  fd[i].events = events;
+  fd[i].events = (short)events;
   fd[i].cb = cb;
   fd[i].arg = v;
 
@@ -172,7 +172,7 @@ void Fl::remove_fd(int n, int events) {
   int i,j;
   for (i=j=0; i<nfds; i++) {
     if (fd[i].fd == n) {
-      int e = fd[i].events & ~events;
+      short e = fd[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
       fd[i].events = e;
     }
@@ -604,7 +604,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         i->region = R;
       }
     }
-    window->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
+    window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
     // These next two statements should not be here, so that all update
     // is deferred until Fl::flush() is called during idle.  However WIN32
     // apparently is very unhappy if we don't obey it and draw right now.
@@ -1192,5 +1192,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.41 2002/10/29 20:18:55 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.42 2002/11/19 16:37:36 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.11 2002/10/10 19:26:33 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.12 2002/11/19 16:37:33 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -88,8 +88,8 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   if ((fp = fopen(bmp, "rb")) == NULL) return;
 
   // Get the header...
-  byte = getc(fp);		// Check "BM" sync chars
-  bit  = getc(fp);
+  byte = (uchar)getc(fp);	// Check "BM" sync chars
+  bit  = (uchar)getc(fp);
   if (byte != 'B' || bit != 'M') {
     fclose(fp);
     return;
@@ -189,7 +189,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     {
       case 1 : // Bitmap
           for (x = w(), bit = 128; x > 0; x --) {
-	    if (bit == 128) byte = getc(fp);
+	    if (bit == 128) byte = (uchar)getc(fp);
 
 	    if (byte & bit) {
 	      *ptr++ = colormap[1][2];
@@ -342,16 +342,16 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
       case 16 : // 16-bit 5:5:5 RGB
           for (x = w(); x > 0; x --, ptr += bDepth) {
-	    char b = getc(fp), a = getc(fp) ;
-	    #ifdef USE_5_6_5 // Green as the brightes color should ahve one bit more 5:6:5
-	    ptr[0] = ( b << 3 ) & 0xf8 ;
-	    ptr[1] = ( ( a << 5 ) & 0xe0 ) | ( ( b >> 3) & 0x1c );
-	    ptr[2] = a & 0xf8 ;
-	    #else // this is the default wasting one bit: 5:5:5
-	    ptr[2] = ( b << 3 ) & 0xf8 ;
-	    ptr[1] = ( ( a << 6 ) & 0xc0 ) | ( ( b >> 2) & 0x38 );
-	    ptr[0] = (a<<1) & 0xf8 ;
-	    #endif
+	    uchar b = getc(fp), a = getc(fp) ;
+#ifdef USE_5_6_5 // Green as the brightest color should have one bit more 5:6:5
+	    ptr[0] = (uchar)(( b << 3 ) & 0xf8);
+	    ptr[1] = (uchar)(((a << 5) & 0xe0) | ((b >> 3) & 0x1c));
+	    ptr[2] = (uchar)(a & 0xf8);
+#else // this is the default wasting one bit: 5:5:5
+	    ptr[2] = (uchar)((b << 3) & 0xf8);
+	    ptr[1] = (uchar)(((a << 6) & 0xc0) | ((b >> 2) & 0x38));
+	    ptr[0] = (uchar)((a<<1) & 0xf8);
+#endif
 	  }
 
           // Read remaining bytes to align to 32 bits...
@@ -362,9 +362,9 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
       case 24 : // 24-bit RGB
           for (x = w(); x > 0; x --, ptr += bDepth) {
-	    ptr[2] = getc(fp);
-	    ptr[1] = getc(fp);
-	    ptr[0] = getc(fp);
+	    ptr[2] = (uchar)getc(fp);
+	    ptr[1] = (uchar)getc(fp);
+	    ptr[0] = (uchar)getc(fp);
 	  }
 
           // Read remaining bytes to align to 32 bits...
@@ -379,7 +379,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     for (y = h() - 1; y >= 0; y --) {
       ptr = (uchar *)array + y * w() * d() + 3;
       for (x = w(), bit = 128; x > 0; x --, ptr+=bDepth) {
-	if (bit == 128) byte = getc(fp);
+	if (bit == 128) byte = (uchar)getc(fp);
 	if (byte & bit)
 	  *ptr = 0;
 	else
@@ -408,8 +408,8 @@ static unsigned short	// O - 16-bit unsigned integer
 read_word(FILE *fp) {	// I - File to read from
   unsigned char b0, b1;	// Bytes from file
 
-  b0 = getc(fp);
-  b1 = getc(fp);
+  b0 = (uchar)getc(fp);
+  b1 = (uchar)getc(fp);
 
   return ((b1 << 8) | b0);
 }
@@ -423,10 +423,10 @@ static unsigned int		// O - 32-bit unsigned integer
 read_dword(FILE *fp) {		// I - File to read from
   unsigned char b0, b1, b2, b3;	// Bytes from file
 
-  b0 = getc(fp);
-  b1 = getc(fp);
-  b2 = getc(fp);
-  b3 = getc(fp);
+  b0 = (uchar)getc(fp);
+  b1 = (uchar)getc(fp);
+  b2 = (uchar)getc(fp);
+  b3 = (uchar)getc(fp);
 
   return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
 }
@@ -440,15 +440,15 @@ static int			// O - 32-bit signed integer
 read_long(FILE *fp) {		// I - File to read from
   unsigned char b0, b1, b2, b3;	// Bytes from file
 
-  b0 = getc(fp);
-  b1 = getc(fp);
-  b2 = getc(fp);
-  b3 = getc(fp);
+  b0 = (uchar)getc(fp);
+  b1 = (uchar)getc(fp);
+  b2 = (uchar)getc(fp);
+  b3 = (uchar)getc(fp);
 
   return ((int)(((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
 }
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.11 2002/10/10 19:26:33 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.12 2002/11/19 16:37:33 easysw Exp $".
 //

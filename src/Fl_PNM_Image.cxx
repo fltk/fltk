@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.10 2002/10/11 02:30:20 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.11 2002/11/19 16:37:35 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -130,26 +130,26 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
       case 1 :
       case 2 :
           for (x = w(); x > 0; x --)
-            if (fscanf(fp, "%d", &val) == 1) *ptr++ = 255 * val / maxval;
+            if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * val / maxval);
           break;
 
       case 3 :
           for (x = w(); x > 0; x --) {
-            if (fscanf(fp, "%d", &val) == 1) *ptr++ = 255 * val / maxval;
-            if (fscanf(fp, "%d", &val) == 1) *ptr++ = 255 * val / maxval;
-            if (fscanf(fp, "%d", &val) == 1) *ptr++ = 255 * val / maxval;
+            if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * val / maxval);
+            if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * val / maxval);
+            if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * val / maxval);
           }
           break;
 
       case 4 :
-          for (x = w(), byte = getc(fp), bit = 128; x > 0; x --) {
+          for (x = w(), byte = (uchar)getc(fp), bit = 128; x > 0; x --) {
 	    if (byte & bit) *ptr++ = 255;
 	    else *ptr++ = 0;
 
             if (bit > 1) bit >>= 1;
             else {
               bit  = 128;
-              byte = getc(fp);
+              byte = (uchar)getc(fp);
             }
           }
           break;
@@ -161,11 +161,11 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
       case 7 : /* XV 3:3:2 thumbnail format */
           for (x = w(); x > 0; x --) {
-	    byte = getc(fp);
+	    byte = (uchar)getc(fp);
 
-	    *ptr++ = 255 * ((byte >> 5) & 7) / 7;
-	    *ptr++ = 255 * ((byte >> 2) & 7) / 7;
-	    *ptr++ = 255 * (byte & 3) / 3;
+	    *ptr++ = (uchar)(255 * ((byte >> 5) & 7) / 7);
+	    *ptr++ = (uchar)(255 * ((byte >> 2) & 7) / 7);
+	    *ptr++ = (uchar)(255 * (byte & 3) / 3);
 	  }
           break;
     }
@@ -176,5 +176,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.10 2002/10/11 02:30:20 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.11 2002/11/19 16:37:35 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- Eliminate some compiler warnings with CodeWarrier
+	  under WIN32 (Paul Chambers)
 	- Fl_Gl_Window widgets did not resize properly under
 	  MacOS X.
 	- The cursor could be set for the wrong window in the

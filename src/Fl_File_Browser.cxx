@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.23 2002/08/13 15:42:44 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.24 2002/11/19 16:37:34 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -398,7 +398,7 @@ Fl_File_Browser::Fl_File_Browser(int        X,  // I - Upper-lefthand X coordina
   // Initialize the filter pattern, current directory, and icon size...
   pattern_   = "*";
   directory_ = "";
-  iconsize_  = 3 * textsize() / 2;
+  iconsize_  = (uchar)(3 * textsize() / 2);
   filetype_  = FILES;
 }
 
@@ -643,5 +643,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.23 2002/08/13 15:42:44 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.24 2002/11/19 16:37:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.7 2002/11/14 21:05:21 easysw Exp $"
+// "$Id: Fl_File_Input.cxx,v 1.1.2.8 2002/11/19 16:37:34 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -128,7 +128,7 @@ Fl_File_Input::update_buttons() {
 
     end ++;
 
-    buttons_[i] = (int)fl_width(start, end - start);
+    buttons_[i] = (short)fl_width(start, end - start);
     if (!i) buttons_[i] += Fl::box_dx(box()) + 6;
   }
 
@@ -235,7 +235,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
   // Redraw the directory bar...
   if (event == FL_RELEASE) pressed_ = -1;
-  else pressed_ = i;
+  else pressed_ = (short)i;
 
   draw_buttons();
 
@@ -271,5 +271,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.7 2002/11/14 21:05:21 easysw Exp $".
+// End of "$Id: Fl_File_Input.cxx,v 1.1.2.8 2002/11/19 16:37:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.22 2002/10/07 13:19:22 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.23 2002/11/19 16:37:35 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -381,13 +381,13 @@ static void *decodeHex( const char *src, int &size )
 
   for ( i=size; i>0; i-- )
   {
-    unsigned char v = 0;
+    int v;
     char x = tolower(*s++);
     if ( x >= 'a' ) v = x-'a'+10; else v = x-'0';
     v = v<<4;
     x = tolower(*s++);
     if ( x >= 'a' ) v += x-'a'+10; else v += x-'0';
-    *d++ = v;
+    *d++ = (uchar)v;
   }
 
   return (void*)data;
@@ -1116,5 +1116,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.22 2002/10/07 13:19:22 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.23 2002/11/19 16:37:35 easysw Exp $".
 //

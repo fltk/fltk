@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.20 2002/10/04 15:59:29 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.21 2002/11/19 16:37:35 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -83,7 +83,7 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   label_.deimage = 0;
   label_.type	 = FL_NORMAL_LABEL;
   label_.font	 = FL_HELVETICA;
-  label_.size	 = FL_NORMAL_SIZE;
+  label_.size	 = (uchar)FL_NORMAL_SIZE;
   label_.color	 = FL_BLACK;
   tooltip_       = 0;
   callback_	 = default_callback;
@@ -245,5 +245,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.20 2002/10/04 15:59:29 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.21 2002/11/19 16:37:35 easysw Exp $".
 //

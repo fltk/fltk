@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.13 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.14 2002/11/19 16:37:35 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -97,7 +97,7 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   case 3: R >>= 4; G >>= 4; B >>= 4; break;
   case 4: R >>= 8; G >>= 8; B >>= 8; break;
   }
-  r = R; g = G; b = B;
+  r = (uchar)R; g = (uchar)G; b = (uchar)B;
   return 1;
 }
 #else
@@ -106,9 +106,9 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   XColor x;
   if (!fl_display) fl_open_display();
   if (XParseColor(fl_display, fl_colormap, p, &x)) {
-    r = x.red>>8;
-    g = x.green>>8;
-    b = x.blue>>8;
+    r = (uchar)(x.red>>8);
+    g = (uchar)(x.green>>8);
+    b = (uchar)(x.blue>>8);
     return 1;
   } else return 0;
 }
@@ -317,5 +317,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.13 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.14 2002/11/19 16:37:35 easysw Exp $".
 //

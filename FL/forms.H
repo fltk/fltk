@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.7.2.6 2002/08/14 16:49:38 easysw Exp $"
+// "$Id: forms.H,v 1.7.2.7.2.7 2002/11/19 16:37:33 easysw Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -615,7 +615,7 @@ inline void fl_get_dial_bounds(Fl_Widget* o, float* a, float* b) {
 inline void fl_set_dial_return(Fl_Widget* o, int i) {
   ((Fl_Dial*)o)->when((Fl_When)(i|FL_WHEN_RELEASE));}
 inline void fl_set_dial_angles(Fl_Widget* o, int a, int b) {
-  ((Fl_Dial*)o)->angles(a, b);}
+  ((Fl_Dial*)o)->angles((short)a, (short)b);}
 //inline void fl_set_dial_cross(Fl_Widget* o, int);
 // inline void fl_set_dial_direction(Fl_Widget* o, uchar d) {
 //   ((Fl_Dial*)o)->direction(d);}
@@ -838,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.7.2.6 2002/08/14 16:49:38 easysw Exp $".
+// End of "$Id: forms.H,v 1.7.2.7.2.7 2002/11/19 16:37:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.6.2.4.2.6 2002/08/14 16:49:38 easysw Exp $"
+// "$Id: Fl_Input_.H,v 1.6.2.4.2.7 2002/11/19 16:37:33 easysw Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -126,17 +126,17 @@ public:
   void cursor_color(unsigned n) {cursor_color_ = n;}
 
   int input_type() const {return type() & FL_INPUT_TYPE; }
-  void input_type(int t) { type(t | readonly()); }
+  void input_type(int t) { type((uchar)(t | readonly())); }
   int readonly() const { return type() & FL_INPUT_READONLY; }
-  void readonly(int b) { if (b) type(type() | FL_INPUT_READONLY);
-                         else type(type() & ~FL_INPUT_READONLY); }
+  void readonly(int b) { if (b) type((uchar)(type() | FL_INPUT_READONLY));
+                         else type((uchar)(type() & ~FL_INPUT_READONLY)); }
   int wrap() const { return type() & FL_INPUT_WRAP; }
-  void wrap(int b) { if (b) type(type() | FL_INPUT_WRAP);
-                         else type(type() & ~FL_INPUT_WRAP); }
+  void wrap(int b) { if (b) type((uchar)(type() | FL_INPUT_WRAP));
+                         else type((uchar)(type() & ~FL_INPUT_WRAP)); }
 };
 
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.6 2002/08/14 16:49:38 easysw Exp $".
+// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.7 2002/11/19 16:37:33 easysw Exp $".
 //

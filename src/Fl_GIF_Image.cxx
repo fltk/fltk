@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.13 2002/11/19 16:37:34 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -73,7 +73,7 @@
 
 typedef unsigned char uchar;
 
-#define NEXTBYTE getc(GifFile)
+#define NEXTBYTE (uchar)getc(GifFile)
 #define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
 
 Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
@@ -124,7 +124,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   } else {
     Fl::warning("%s does not have a colormap.", infname);
     for (int i = 0; i < ColorMapSize; i++)
-      Red[i] = Green[i] = Blue[i] = 255 * i / (ColorMapSize-1);
+      Red[i] = Green[i] = Blue[i] = (uchar)(255 * i / (ColorMapSize-1));
   }
 
   int CodeSize;		/* Code size, init from GIF header, increases... */
@@ -256,7 +256,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     uchar *tp = OutCode;
     int i;
     if (CurCode < FreeCode) i = CurCode;
-    else if (CurCode == FreeCode) {*tp++ = FinChar; i = OldCode;}
+    else if (CurCode == FreeCode) {*tp++ = (uchar)FinChar; i = OldCode;}
     else {fprintf(stderr,"%s : LZW Barf!\n",infname); break;}
 
     while (i >= ColorMapSize) {*tp++ = Suffix[i]; i = Prefix[i];}
@@ -278,7 +278,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     } while (tp > OutCode);
 
     if (OldCode != ClearCode) {
-      Prefix[FreeCode] = OldCode;
+      Prefix[FreeCode] = (short)OldCode;
       Suffix[FreeCode] = FinChar;
       FreeCode++;
       if (FreeCode > ReadMask) {
@@ -333,7 +333,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   int base = has_transparent && used[0] ? ' ' : ' '+1;
   int numcolors = 0;
   for (i = 0; i < ColorMapSize; i++) if (used[i]) {
-    remap[i] = base++;
+    remap[i] = (uchar)(base++);
     numcolors++;
   }
 
@@ -373,5 +373,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.12 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.13 2002/11/19 16:37:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.26 2002/10/29 20:12:36 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.27 2002/11/19 16:37:34 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -949,7 +949,7 @@ Fl_File_Chooser::update_preview()
       previewBox->label(preview_text_);
       previewBox->align((Fl_Align)(FL_ALIGN_CLIP | FL_ALIGN_INSIDE |
                                    FL_ALIGN_LEFT | FL_ALIGN_TOP));
-      previewBox->labelsize(size);
+      previewBox->labelsize((uchar)size);
       previewBox->labelfont(FL_COURIER);
     }
   } else {
@@ -1152,5 +1152,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.26 2002/10/29 20:12:36 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.27 2002/11/19 16:37:34 easysw Exp $".
 //
