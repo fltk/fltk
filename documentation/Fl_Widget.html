@@ -219,7 +219,7 @@ response to an &quot;OK&quot; button.
 the program sets the stored value. </P>
 
 
-<H4><A NAME="Fl_Widget.clear_visible">void Fl_Window::clear_visible();</A></H4>
+<H4><A NAME="Fl_Widget.clear_visible">void Fl_Widget::clear_visible();</A></H4>
 
 <P>Hides the widget; you must still redraw the parent to see a
 change in the window. Normally you want to use the <A
@@ -482,7 +482,7 @@ widget.  Note: for an <TT>Fl_Window</TT> widget, this returns
 its <I>parent</I> window (if any), not <I>this</I> window.
 
 
-<H4><A NAME="Fl_Widget.set_visible">void Fl_Window::set_visible();</A></H4>
+<H4><A NAME="Fl_Widget.set_visible">void Fl_Widget::set_visible();</A></H4>
 
 <P>Makes the widget visible; you must still redraw the parent
 widget to see a change in the window. Normally you want to use
@@ -490,7 +490,7 @@ the <A HREF="#Fl_Widget.show"><CODE>show()</CODE> method
 instead.
 
 
-<H4><A NAME="Fl_Widget.set_visible_focus">void Fl_Window::set_visible_focus();</A></H4>
+<H4><A NAME="Fl_Widget.set_visible_focus">void Fl_Widget::set_visible_focus();</A></H4>
 
 <P>Enables keyboard focus navigation with this widget; note,
 however, that this will not necessarily mean that the widget
@@ -516,7 +516,7 @@ visible, as this will send false <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT>
  events to the widget</I>. <TT>redraw()</TT> is called if necessary on
 this or the parent.
 
-<H4><A NAME="Fl_Widget.visible_focus">void Fl_Window::visible_focus();</A></H4>
+<H4><A NAME="Fl_Widget.visible_focus">void Fl_Widget::visible_focus();</A></H4>
 
 <P>Returns non-zero if this widget will participate in keyboard
 focus navigation.
