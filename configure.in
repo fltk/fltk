@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.57 2002/04/09 18:18:25 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.58 2002/04/09 20:36:27 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -327,8 +327,8 @@ case $uname in
 	CFLAGS="-mwindows -DWIN32 $CFLAGS"
 	CXXFLAGS="-mwindows -DWIN32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
-	LIBS="$LIBS -lcomctl32 -lwsock32"
-	OPTIM="$OPTIM -fvtable-thunks"
+	LIBS="$LIBS -lole32 -luuid -lcomctl32 -lwsock32"
+	OPTIM="$OPTIM"
 
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
@@ -707,5 +707,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.57 2002/04/09 18:18:25 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.58 2002/04/09 20:36:27 easysw Exp $".
 dnl

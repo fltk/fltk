@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.4 2002/03/25 19:17:05 easysw Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.5 2002/04/09 20:36:28 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -52,6 +52,9 @@ extern int fl_selection_buffer_length[2];
 extern char fl_i_own_selection[2];
 
 Fl_Window *fl_dnd_target_window = 0;
+
+// All of the following code requires GCC 3.x or a non-GNU compiler...
+#if !defined(__GNUC__) || __GNUC__ >= 3
 
 /**
  * subclass the IDropTarget to receive data from DnD operations
@@ -333,11 +336,18 @@ int Fl::dnd()
     w->handle( FL_RELEASE );
     Fl::pushed( 0 );
   }
-  if ( ret==DRAGDROP_S_DROP ) return true; // or DD_S_CANCEL
-  return false;
+  if ( ret==DRAGDROP_S_DROP ) return 1; // or DD_S_CANCEL
+  return 0;
 }
+#else
+int Fl::dnd()
+{
+  // Always indicate DnD failed when using GCC < 3...
+  return 1;
+}
+#endif // !__GNUC__ || __GNUC__ >= 3
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.4 2002/03/25 19:17:05 easysw Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.5 2002/04/09 20:36:28 easysw Exp $".
 //
