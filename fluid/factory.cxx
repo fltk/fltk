@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.6 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.7 2002/05/01 08:51:59 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -344,6 +344,35 @@ static Fl_Input_Type Fl_Input_type;
 
 int Fl_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   Fl_Input_ *myo = (Fl_Input_*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  switch (w) {
+    case 4:
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+  }
+  return 1;
+}
+
+////////////////////////////////////////////////////////////////
+
+#include <FL/Fl_File_Input.H>
+class Fl_File_Input_Type : public Fl_Widget_Type {
+  Fl_Menu_Item *subtypes() {return 0;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
+public:
+  virtual const char *type_name() {return "Fl_File_Input";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_File_Input *myo = new Fl_File_Input(x,y,w,h,"file:");
+    myo->value("/now/is/the/time/for/a/filename.ext");
+    return myo;
+  }
+  Fl_Widget_Type *_make() {return new Fl_File_Input_Type();}
+};
+static Fl_File_Input_Type Fl_File_Input_type;
+
+int Fl_File_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_File_Input *myo = (Fl_File_Input*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
     case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -703,6 +732,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Value_Output_type},
 {0},
 {"text",0,0,0,FL_SUBMENU},
+  {0,0,cb,(void*)&Fl_File_Input_type},
   {0,0,cb,(void*)&Fl_Input_type},
   {0,0,cb,(void*)&Fl_Output_type},
   {0,0,cb,(void*)&Fl_Text_Display_type},
@@ -894,5 +924,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.6 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.7 2002/05/01 08:51:59 easysw Exp $".
 //

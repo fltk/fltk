@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.16 2002/04/30 22:25:18 matthiaswm Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.17 2002/05/01 08:51:59 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -149,21 +149,22 @@ void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag && !fl_ask("Discard changes?")) return;
   const char *c;
   if (!(c = fl_file_chooser("Open:", "*.f[ld]", filename))) return;
+  if (!v) {set_filename(c);}
   if (!read_file(c, v!=0)) {
     fl_message("Can't read %s: %s", c, strerror(errno));
     return;
   }
-  if (!v) {set_filename(c); modflag = 0;}
+  if (!v) {modflag = 0;}
   else modflag = 1;
 }
 
 void open_history_cb(Fl_Widget *, void *v) {
   if (modflag && !fl_ask("Discard changes?")) return;
+  set_filename((char *)v);
   if (!read_file((char *)v, 0)) {
     fl_message("Can't read %s: %s", v, strerror(errno));
     return;
   }
-  set_filename((char *)v);
   modflag = 0;
 }
 
@@ -614,5 +615,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.16 2002/04/30 22:25:18 matthiaswm Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.17 2002/05/01 08:51:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.9 2002/05/01 08:28:59 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.10 2002/05/01 08:51:59 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -228,7 +228,10 @@ Fl_File_Chooser::value(int f)	// I - File number
   {
     name = fileName->value();
     if (name[0] == '\0') return NULL;
-    else return name;
+    else if (fl_filename_isdir(name)) {
+      if (type_ & DIRECTORY) return name;
+      else return NULL;
+    } else return name;
   }
 
   for (i = 1, count = 0; i <= fileList->size(); i ++)
@@ -698,5 +701,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.9 2002/05/01 08:28:59 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.10 2002/05/01 08:51:59 easysw Exp $".
 //

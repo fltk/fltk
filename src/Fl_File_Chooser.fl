@@ -55,14 +55,12 @@ if ((f = fl_input(filter_label,
         code0 {\#include <FL/Fl_File_Browser.H>}
         class Fl_File_Browser
       }
-      Fl_Input fileName {
+      Fl_File_Input fileName {
         label {Filename:}
         callback {fileNameCB();}
         private xywh {10 245 355 35} align 5 when 8
         code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
         code1 {fileName->label(filename_label);}
-        code2 {\#include <FL/Fl_File_Input.H>}
-        class Fl_File_Input
       }
       Fl_Return_Button okButton {
         label OK
