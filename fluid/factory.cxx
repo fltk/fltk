@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.6 2000/06/05 21:20:42 mike Exp $"
+// "$Id: factory.cxx,v 1.4.2.7 2000/11/20 15:44:18 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -42,6 +42,34 @@
 #endif
 
 #include "Fl_Widget_Type.h"
+
+#if !HAVE_STRCASECMP
+#  include <ctype.h>
+
+//
+// 'strcasecmp()' - Do a case-insensitive compare...
+//
+
+static int
+strcasecmp(const char *s, const char *t) {
+  while (*s != '\0' && *t != '\0') {
+    if (tolower(*s) < tolower(*t))
+      return (-1);
+    else if (tolower(*s) > tolower(*t))
+      return (1);
+
+    s ++;
+    t ++;
+  }
+
+  if (*s == '\0' && *t == '\0')
+    return (0);
+  else if (*s != '\0')
+    return (1);
+  else
+    return (-1);
+}
+#endif // !HAVE_STRCASECMP
 
 ////////////////////////////////////////////////////////////////
 
@@ -693,5 +721,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.6 2000/06/05 21:20:42 mike Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.7 2000/11/20 15:44:18 easysw Exp $".
 //

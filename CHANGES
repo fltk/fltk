@@ -1,5 +1,8 @@
 CHANGES SINCE FLTK 1.0.9
 
+	- Added a strcasecmp() function to FLUID; AIX doesn't
+	  have it.
+
 	- Bug #115509: Fl_Scroll not repainting background.
 
 	- Updated the configure script and makeinclude.in file

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.5.2.2 2000/06/07 12:11:53 mike Exp $"
+ * "$Id: config.h,v 1.5.2.3 2000/11/20 15:44:19 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -122,12 +122,18 @@
 #define HAVE_SCANDIR 0
 
 /*
- * possibly missing sprintf-style functions:
+ * Possibly missing sprintf-style functions:
  */
 
 #define HAVE_VSNPRINTF 0
 #define HAVE_SNPRINTF 0
 #define HAVE_VSPRINTF 1
+
+/*
+ * String functions...
+ */
+
+#define HAVE_STRCASECMP	1
 
 /*
  * HAVE_POLL:
@@ -138,5 +144,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.h,v 1.5.2.2 2000/06/07 12:11:53 mike Exp $".
+ * End of "$Id: config.h,v 1.5.2.3 2000/11/20 15:44:19 easysw Exp $".
  */

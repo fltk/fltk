@@ -1,5 +1,5 @@
 /*
- * "$Id: config.os2x,v 1.1.2.1 2000/08/19 19:03:46 spitzak Exp $"
+ * "$Id: config.os2x,v 1.1.2.2 2000/11/20 15:44:18 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -126,12 +126,18 @@
 #define HAVE_SCANDIR 1
 
 /*
- * possibly missing sprintf-style functions:
+ * Possibly missing sprintf-style functions:
  */
 
 #define HAVE_VSNPRINTF 1
 #define HAVE_SNPRINTF 1
 #define HAVE_VSPRINTF 1
+
+/*
+ * String functions...
+ */
+
+#define HAVE_STRCASECMP 1
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -150,5 +156,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.os2x,v 1.1.2.1 2000/08/19 19:03:46 spitzak Exp $".
+ * End of "$Id: config.os2x,v 1.1.2.2 2000/11/20 15:44:18 easysw Exp $".
  */
