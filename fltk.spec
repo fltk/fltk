@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.9.2.12 2002/07/12 02:04:53 easysw Exp $"
+# "$Id: fltk.spec,v 1.1.2.9.2.13 2002/07/12 02:06:38 easysw Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -60,7 +60,7 @@ dynamically linked applications.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --enable-shared
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --mandir=%{_mandir} --enable-shared
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -71,7 +71,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
-make -e prefix=$RPM_BUILD_ROOT/%{prefix} install
+make -e prefix=$RPM_BUILD_ROOT/%{prefix} mandir=$RPM_BUILD_ROOT/%{_mandir} install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -91,13 +91,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{prefix}/lib
 %{prefix}/lib/libfltk*.so
 %{prefix}/lib/libfltk*.a
-%dir %{prefix}/share
-%dir %{prefix}/share/man
-%{prefix}/share/man/*
-%dir %{prefix}/share/doc
+%dir %{_mandir}
+%{_mandir}/*
 %dir %{prefix}/share/doc/fltk
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.9.2.12 2002/07/12 02:04:53 easysw Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.9.2.13 2002/07/12 02:06:38 easysw Exp $".
 #
