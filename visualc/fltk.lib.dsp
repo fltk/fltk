@@ -199,6 +199,10 @@ SOURCE=..\src\Fl_Color_Chooser.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_compose.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Counter.cxx
 # End Source File
 # Begin Source File
