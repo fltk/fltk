@@ -1,4 +1,27 @@
-// Fl_arg.C
+//
+// "$Id"
+//
+// Optional argument initialization code for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 // OPTIONAL initialization code for a program using fltk.
 // You do not need to call this!  Feel free to make up your own switches.
@@ -23,7 +46,7 @@ int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #define YNegative 	0x0020
 #endif
 
-static int match(const char *a, const char *match, int atleast = 1) {
+static int match(const char *a, const char *match, int atleast = 2) {
   const char *b = match;
   while (*a && (*a == *b || tolower(*a) == *b)) {a++; b++;}
   return !*a && b >= match+atleast;
@@ -52,11 +75,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   // a program.  Return 0 to indicate that we don't understand the
   // word, but set a flag (return_i) so that args() will return at
   // that point:
-  if (s[0] != '-' || !s[1]) {return_i = 1; return 0;}
-  if (s[1] == '-') {
-    if (!s[2]) {i++; return_i = 1; return 0;}
-    s++; // make "--word" work the same as "-word" for Gnu compatability
-  }
+  if (s[0] != '-' || s[1] == '-' || !s[1]) {return_i = 1; return 0;}
   s++; // point after the dash
 
   if (match(s, "iconic")) {
@@ -221,11 +240,11 @@ void Fl_Window::show(int argc, char **argv) {
 
 static const char * const helpmsg =
 "options are:\n"
-" -display host:n.n\n"
-" -geometry WxH+X+Y\n"
-" -title windowtitle\n"
-" -name classname\n"
-" -iconic\n"
+" -di[splay] host:n.n\n"
+" -ge[ometry] WxH+X+Y\n"
+" -ti[tle] windowtitle\n"
+" -na[me] classname\n"
+" -ic[onic]\n"
 " -fg color\n"
 " -bg color\n"
 " -bg2 color";
@@ -374,4 +393,6 @@ int XParseGeometry(const char* string, int* x, int* y,
 
 #endif // ifdef WIN32
 
-// end of Fl_Window_arg.C
+//
+// End of "$Id: Fl_arg.cxx,v 1.2 1998/10/19 20:46:13 mike Exp $".
+//

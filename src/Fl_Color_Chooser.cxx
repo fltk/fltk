@@ -1,4 +1,33 @@
-// Fl_Color_Chooser.C
+//
+// "$Id"
+//
+// Color chooser for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
+
+#include <FL/Fl.H>
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/fl_draw.H>
+#include <FL/math.h>
+#include <stdio.h>
 
 // Besides being a useful object on it's own, the Fl_Color_Chooser was
 // an attempt to make a complex composite object that could be easily
@@ -8,12 +37,6 @@
 // The function fl_color_chooser() creates a window containing a color
 // chooser and a few buttons and current-color indicators.  It is an
 // easier interface for simple programs that just need a color.
-
-#include <FL/Fl.H>
-#include <FL/Fl_Color_Chooser.H>
-#include <FL/fl_draw.H>
-#include <FL/math.h>
-#include <stdio.h>
 
 // The "hue box" can be a circle or rectilinear.
 // You get a circle by defining this:
@@ -229,7 +252,7 @@ int Flcc_ValueBox::handle(int e) {
   case FL_DRAG: {
     double Yf;
     Yf = 1-(Fl::event_y()-y()-Fl::box_dy(box()))/double(h()-Fl::box_dh(box()));
-    if (fabs(Yf-iv)<3*1.0/h()) Yf = iv;
+    if (fabs(Yf-iv)<(3*1.0/h())) Yf = iv;
     if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback();
     } return 1;
   default:
@@ -401,3 +424,7 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
   }
   return 0;
 }
+
+//
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.3 1998/10/19 20:45:42 mike Exp $".
+//

@@ -1,4 +1,27 @@
-// fl_symbols.C
+//
+// "$Id"
+//
+// Symbol drawing code for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 // These are small graphics drawn by the normal label-drawing
 // code when the string starts with an '@' sign.
@@ -362,3 +385,7 @@ Fl_Labeltype define_FL_SYMBOL_LABEL() {
 void Fl::enable_symbols() {
   Fl::set_labeltype(FL_NORMAL_LABEL, fl_symbol_label, 0);
 }
+
+//
+// End of "$Id: fl_symbols.cxx,v 1.2 1998/10/19 20:46:49 mike Exp $".
+//

@@ -1,16 +1,39 @@
-// fl_shortcut.C
+//
+// "$Id"
+//
+// Shortcut support routines for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 // Code to test and parse fltk shortcut numbers.
-
+//
 // A shortcut is a keysym or'd with shift flags.  In the simplest
 // sense a shortcut is matched if the shift state is exactly as
 // given and the key returning that keysym is pressed.
-
+//
 // To make it easier to match some things it is more complex:
-
+//
 // Only FL_META, FL_ALT, FL_SHIFT, and FL_CTRL must be "off".  A
 // zero in the other shift flags indicates "dont care".
-
+//
 // It also checks against the first character of Fl::event_text(),
 // and zero for FL_SHIFT means "don't care".
 // This allows punctuation shortcuts like "#" to work (rather than
@@ -98,3 +121,7 @@ int Fl_Widget::test_shortcut() {
   if (!(flags()&SHORTCUT_LABEL)) return 0;
   return test_shortcut(label());
 }
+
+//
+// End of "$Id: fl_shortcut.cxx,v 1.2 1998/10/19 20:46:47 mike Exp $".
+//

@@ -1,7 +1,35 @@
-// Fl_Browser.C
+//
+// "$Id"
+//
+// Browser widget for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
-// Forms-compatable browser.  Probably useful for other lists of
-// textual data.
+#include <FL/Fl.H>
+#include <FL/Fl_Browser.H>
+#include <FL/fl_draw.H>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <FL/Fl_Input_.H> // for default_font
 
 // I modified this from the original Forms data to use a linked list
 // so that the number of items in the browser and size of those items
@@ -12,14 +40,6 @@
 
 // Also added the ability to "hide" a line.  This set's it's height to
 // zero, so the Fl_Browser_ cannot pick it.
-
-#include <FL/Fl.H>
-#include <FL/Fl_Browser.H>
-#include <FL/fl_draw.H>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <FL/Fl_Input_.H> // for default_font
 
 #define SELECTED 1
 #define NOTDISPLAYED 2
@@ -50,9 +70,9 @@ void Fl_Browser::item_select(void* l, int v) {
 FL_BLINE* Fl_Browser::find_line(int line) const {
   int n; FL_BLINE* l;
   if (line == cacheline) return cache;
-  if (cacheline && line > cacheline/2 && line < (cacheline+lines)/2) {
+  if (cacheline && line > (cacheline/2) && line < ((cacheline+lines)/2)) {
     n = cacheline; l = cache;
-  } else if (line <= lines/2) {
+  } else if (line <= (lines/2)) {
     n = 1; l = first;
   } else {
     n = lines; l = last;
@@ -213,6 +233,8 @@ int Fl_Browser::item_width(void* v) const {
   int size = textsize();
   Fl_Font font = textfont();
   int done = 0;
+
+  // MRS - might this cause problems on some platforms - order of operations?
 
   while (*str == format_char_ && *++str && *str != format_char_) {
     switch (*str++) {
@@ -418,4 +440,6 @@ int Fl_Browser::value() const {
   return lineno(selection());
 }
 
-// end of Fl_Browser.C
+//
+// End of "$Id: Fl_Browser.cxx,v 1.2 1998/10/19 20:45:37 mike Exp $".
+//

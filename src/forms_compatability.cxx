@@ -1,4 +1,27 @@
-// forms.C
+//
+// "$Id"
+//
+// Forms compatibility functions for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 // Forms library compatability functions.
 // Many more functions are defined as inlines in forms.h!
@@ -151,3 +174,7 @@ Fl_Button *fl_add_button(uchar t,int x,int y,int w,int h,const char *l) {
   }
   return b;
 }
+
+//
+// End of "$Id: forms_compatability.cxx,v 1.2 1998/10/19 20:46:51 mike Exp $".
+//

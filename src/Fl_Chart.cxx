@@ -1,9 +1,27 @@
-// Fl_Chart.C
-
-// Emulation of the Forms Chart widget.
-// I did not try to improve this much, as I doubt it is used.
-
-// display code Written by: Mark Overmars
+//
+// "$Id"
+//
+// Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/math.h>
 #include <FL/Fl.H>
@@ -28,7 +46,7 @@ static void draw_barchart(int x,int y,int w,int h,
   double incr = h/(max-min);
   int zeroh;
   double lh = fl_height();
-  if ( -min*incr < lh) {
+  if ( (-min*incr) < lh) {
       incr = (h - lh + min*incr)/(max-min);
       zeroh = int(y+h-lh);
   } else {
@@ -73,7 +91,7 @@ static void draw_horbarchart(int x,int y,int w,int h,
   if (lw > 0.0) lw += 4.0;
   double incr = w/(max-min);
   int zeroh;
-  if ( -min*incr < lw) {
+  if ( (-min*incr) < lw) {
       incr = (w - lw + min*incr)/(max-min);
       zeroh = x+int(lw+.5);
   } else {
@@ -342,3 +360,7 @@ void Fl_Chart::maxsize(int m) {
 	redraw();
     }
 }
+
+//
+// End of "$Id: Fl_Chart.cxx,v 1.2 1998/10/19 20:45:40 mike Exp $".
+//

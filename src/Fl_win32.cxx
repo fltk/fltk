@@ -1,24 +1,27 @@
-// Fl_win32.C
-
-// fltk (Fast Light Tool Kit) version 0.99
-// Copyright (C) 1998 Bill Spitzak
-
+//
+// "$Id"
+//
+// WIN32-specific code for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
 // License as published by the Free Software Foundation; either
 // version 2 of the License, or (at your option) any later version.
-
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Library General Public License for more details.
-
+//
 // You should have received a copy of the GNU Library General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
-
-// Written by Bill Spitzak spitzak@d2.com
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 // This file contains win32-specific code for fltk which is always linked
 // in.  Search other files for "WIN32" or filenames ending in _win32.C
@@ -733,4 +736,6 @@ void Fl_Window::flush() {
   draw();
 }
 
-// End of Fl_win32.C //
+//
+// End of "$Id: Fl_win32.cxx,v 1.8 1998/10/19 20:46:19 mike Exp $".
+//

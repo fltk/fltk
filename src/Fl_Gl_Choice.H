@@ -1,5 +1,30 @@
-// Internal interface to set up OpenGL.
+//
+// "$Id"
+//
+// OpenGL definitions for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
+// Internal interface to set up OpenGL.
+//
 // A "Fl_Gl_Choice" is used to cache results of calling the
 // OpenGL code for system-specific information needed to
 // implement a "mode".
@@ -55,3 +80,7 @@ HDC fl_private_dc(Fl_Window*, int, Fl_Gl_Choice **gp);
 #endif
 
 #endif
+
+//
+// End of "$Id: Fl_Gl_Choice.H,v 1.2 1998/10/19 20:45:46 mike Exp $".
+//

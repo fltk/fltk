@@ -1,4 +1,33 @@
-// Fl_Clock.C
+//
+// "$Id"
+//
+// Clock widget for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
+
+#include <FL/Fl.H>
+#include <FL/Fl_Clock.H>
+#include <FL/fl_draw.H>
+#include <math.h>
+#include <time.h>
 
 // There really should be a way to make this display something other
 // than the current time...
@@ -6,12 +35,6 @@
 // Original clock display written by Paul Haeberli at SGI.
 // Modifications by Mark Overmars for Forms
 // Further changes by Bill Spitzak for fltk
-
-#include <FL/Fl.H>
-#include <FL/Fl_Clock.H>
-#include <FL/fl_draw.H>
-#include <math.h>
-#include <time.h>
 
 const float hourhand[4][2] = {{-0.5f, 0}, {0, 1.5f}, {0.5f, 0}, {0, -7.0f}};
 const float  minhand[4][2] = {{-0.5f, 0}, {0, 1.5f}, {0.5f, 0}, {0, -11.5f}};
@@ -134,3 +157,7 @@ int Fl_Clock::handle(int event) {
   }
   return 0;
 }
+
+//
+// End of "$Id: Fl_Clock.cxx,v 1.2 1998/10/19 20:45:42 mike Exp $".
+//

@@ -1,47 +1,63 @@
-// Fl.C
-
-// fltk (Fast Light Tool Kit) version 0.99
-// Copyright (C) 1998 Bill Spitzak
-
+//
+// "$Id"
+//
+// Main event handling code for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
 // License as published by the Free Software Foundation; either
 // version 2 of the License, or (at your option) any later version.
-
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Library General Public License for more details.
-
+//
 // You should have received a copy of the GNU Library General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
-
-// Written by Bill Spitzak spitzak@d2.com
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
 #include <ctype.h>
 
-int Fl::damage_;
-Fl_Widget *Fl::belowmouse_;
-Fl_Widget *Fl::pushed_;
-Fl_Widget *Fl::focus_;
-Fl_Widget *Fl::selection_owner_;
-int Fl::e_x, Fl::e_y, Fl::e_x_root, Fl::e_y_root;
-int Fl::e_state;
-int Fl::e_clicks;
-int Fl::e_is_click;
-int Fl::e_keysym;
-char *Fl::e_text;
-int Fl::e_length;
+//
+// Globals...
+//
+
+Fl_Widget	*Fl::belowmouse_,
+		*Fl::pushed_,
+		*Fl::focus_,
+		*Fl::selection_owner_;
+int		Fl::damage_,
+		Fl::e_x,
+		Fl::e_y,
+		Fl::e_x_root,
+		Fl::e_y_root,
+		Fl::e_state,
+		Fl::e_clicks,
+		Fl::e_is_click,
+		Fl::e_keysym;
+char		*Fl::e_text;
+int		Fl::e_length;
+
+
+//
+// 'Fl:event_inside()' - Return whether or not the mouse event is inside
+//                       the given rectangle.
+//
 
 int Fl::event_inside(int x,int y,int w,int h) /*const*/ {
-  int mx = event_x();
-  int my = event_y();
-  return (mx >= x && mx < x+w && my >= y && my < y+h);
+  int mx = event_x() - x;
+  int my = event_y() - y;
+  return (mx >= 0 && mx < w && my >= 0 && my < h);
 }
 
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
@@ -63,7 +79,7 @@ static int numtimeouts;
 void Fl::add_timeout(double t, void (*cb)(void *), void *v) {
   int i;
   if (numtimeouts<MAXTIMEOUT) numtimeouts++;
-  for (i=0; i<numtimeouts-1; i++) {
+  for (i=0; i<(numtimeouts-1); i++) {
     if (timeout[i].time > t) {
       for (int j=numtimeouts-1; j>i; j--) timeout[j] = timeout[j-1];
       break;
@@ -128,7 +144,7 @@ static int initclock; // if false we didn't call fl_elapsed() last time
 
 // fl_elapsed must return the amount of time since the last time it was
 // called.  To reduce the number of system calls the to get the
-// current time, the "initclock" symbol is turned on by an indefinate
+// current time, the "initclock" symbol is turned on by an indefinite
 // wait.  This should then reset the measured-from time and return zero
 static double fl_elapsed() {
 
@@ -145,7 +161,7 @@ static double fl_elapsed() {
 
   static struct timeval prevclock;
   struct timeval newclock;
-  gettimeofday(&newclock, 0);
+  gettimeofday(&newclock, NULL);
   if (!initclock) {
     prevclock.tv_sec = newclock.tv_sec;
     prevclock.tv_usec = newclock.tv_usec;
@@ -567,4 +583,6 @@ void fl_throw_focus(Fl_Widget *o) {
   if (fix) fl_fix_focus();
 }
 
-// End of Fl.C //
+//
+// End of "$Id: Fl.cxx,v 1.4 1998/10/19 20:45:34 mike Exp $".
+//

@@ -1,8 +1,27 @@
-/*	Fl_Bitmap.C
-
-	Draw a bitmap in a box.
-
-*/
+//
+// "$Id"
+//
+// Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -17,10 +36,10 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if (cx+W > w) W = w-cx;
+  if ((cx+W) > w) W = w-cx;
   if (W <= 0) return;
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if (cy+H > h) H = h-cy;
+  if ((cy+H) > h) H = h-cy;
   if (H <= 0) return;
 #ifdef WIN32
   if (!id) {
@@ -31,19 +50,13 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     uchar* newarray = new uchar[w2*h];
     const uchar* src = array;
     uchar* dest = newarray;
+    static uchar reverse[16] =	/* Bit reversal lookup table */
+  		{ 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+		  0x11, 0x99, 0x55, 0xdd, 0x22, 0xbb, 0x77, 0xff };
     for (int y=0; y < h; y++) {
-      for (int n = 0; n < w1; n++) {
-	*dest++ =
-	  ((*src&0x01) << 7) +
-	  ((*src&0x02) << 5) +
-	  ((*src&0x04) << 3) +
-	  ((*src&0x08) << 1) +
-	  ((*src&0x10) >> 1) +
-	  ((*src&0x20) >> 3) +
-	  ((*src&0x40) >> 5) +
-	  ((*src&0x80) >> 7);
-	src++;
-      }
+      for (int n = 0; n < w1; n++, src++)
+	*dest++ = (reverse[*src & 0x0f] & 0xf0) |
+	          (reverse[(*src >> 4) & 0x0f] & 0x0f);
       dest += w2-w1;
     }
     id = (ulong)CreateBitmap(w, h, 1, 1, newarray);
@@ -110,3 +123,7 @@ void Fl_Bitmap::label(Fl_Menu_Item* o) {
   Fl::set_labeltype(_FL_BITMAP_LABEL, bitmap_labeltype, bitmap_measure);
   o->label(_FL_BITMAP_LABEL, (const char*)this);
 }
+
+//
+// End of "$Id: Fl_Bitmap.cxx,v 1.3 1998/10/19 20:45:36 mike Exp $".
+//

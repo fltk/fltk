@@ -1,4 +1,33 @@
-// Fl_Browser_.C
+//
+// "$Id"
+//
+// Base Browser widget class for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
+
+#include <FL/Fl.H>
+#include <FL/Fl_Widget.H>
+#include <FL/Fl_Browser_.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Input_.H> // for default_font
 
 // This is the base class for browsers.  To be useful it must be
 // subclassed and several virtual functions defined.  The
@@ -18,12 +47,6 @@
 // done for the file chooser, because the height requires doing stat()
 // to see if the file is a directory, which can be annoyingly slow
 // over the network.
-
-#include <FL/Fl.H>
-#include <FL/Fl_Widget.H>
-#include <FL/Fl_Browser_.H>
-#include <FL/fl_draw.H>
-#include <FL/Fl_Input_.H> // for default_font
 
 /* redraw bits:
    1 = redraw children (the scrollbar)
@@ -85,7 +108,7 @@ void Fl_Browser_::update_top() {
     int ly;
     int y = position_;
     // start from either head or current position, whichever is closer:
-    if (!top_ || y <= real_position_/2) {
+    if (!top_ || y <= (real_position_/2)) {
       l = item_first();
       ly = 0;
     } else {
@@ -106,7 +129,7 @@ void Fl_Browser_::update_top() {
 	h = item_quick_height(l);
 	ly -= h;
       }
-      while (ly+h <= y) {
+      while ((ly+h) <= y) {
 	void* l1 = item_next(l);
 	if (!l1) {y = ly+h-1; break;}
 	l = l1;
@@ -116,7 +139,7 @@ void Fl_Browser_::update_top() {
       // top item must *really* be visible, use slow height:
       for (;;) {
 	h = item_height(l);
-	if (ly+h > y) break; // it is big enough to see
+	if ((ly+h) > y) break; // it is big enough to see
 	// go up to top of previous item:
 	void* l1 = item_prev(l);
 	if (!l1) {ly = y = 0; break;} // hit the top
@@ -191,7 +214,7 @@ void Fl_Browser_::display(void* x) {
     int h1 = item_quick_height(l);
     Y -= h1;
     if (l == x) {
-      if (Y + h1 >= 0) position(real_position_+Y);
+      if ((Y + h1) >= 0) position(real_position_+Y);
       else position(real_position_+Y-(H-h1)/2);
       return;
     }
@@ -358,7 +381,7 @@ void* Fl_Browser_::find_item(int my) {
   for (l = top_; l; l = item_next(l)) {
     int hh = item_height(l); if (hh <= 0) continue;
     yy += hh;
-    if (my <= yy || yy>=Y+H) return l;
+    if (my <= yy || yy>=(Y+H)) return l;
   }
   return 0;
 }
@@ -503,7 +526,7 @@ int Fl_Browser_::handle(int event) {
       int p = real_position_+my-Y;
       if (p<0) p = 0;
       position(p);
-    } else if (my > Y+H && my > py) {
+    } else if (my > (Y+H) && my > py) {
       int p = real_position_+my-(Y+H);
       int h = full_height()-H; if (p > h) p = h;
       if (p<0) p = 0;
@@ -603,4 +626,6 @@ void Fl_Browser_::item_select(void*, int) {}
 
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
-// end of Fl_Browser_.C
+//
+// End of "$Id: Fl_Browser_.cxx,v 1.3 1998/10/19 20:45:38 mike Exp $".
+//
