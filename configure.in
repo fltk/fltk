@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.18 2001/11/01 16:43:38 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.19 2001/11/01 16:55:12 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -46,8 +46,8 @@ DSONAME=""
 dnl Get the operating system and version number...
 
 uname=`uname`
-uversion=`uname -r | sed -e 's/-.*$//g;s/[\.]//g'`
-if test "$uname" = "IRIX64"; then
+uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
+if test x$uname = xIRIX64; then
     uname="IRIX"
 fi
 
@@ -494,5 +494,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.18 2001/11/01 16:43:38 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.19 2001/11/01 16:55:12 easysw Exp $".
 dnl
