@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.26 2003/01/31 15:50:28 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.27 2003/03/09 02:00:06 spitzak Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -159,24 +159,26 @@ void Fl::remove_fd(int n) {
   remove_fd(n, -1);
 }
 
-#  if CONSOLIDATE_MOTION
+#if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
-#  endif
+#endif
+static bool in_a_window; // true if in any of our windows, even destroyed ones
 static void do_queued_events() {
- while (XEventsQueued(fl_display,QueuedAfterReading)) {
+  in_a_window = true;
+  while (XEventsQueued(fl_display,QueuedAfterReading)) {
     XEvent xevent;
     XNextEvent(fl_display, &xevent);
     fl_handle(xevent);
   }
   // we send FL_LEAVE only if the mouse did not enter some other window:
-  if (!fl_xmousewin) Fl::handle(FL_LEAVE, 0);
-#  if CONSOLIDATE_MOTION
+  if (!in_a_window) Fl::handle(FL_LEAVE, 0);
+#if CONSOLIDATE_MOTION
   else if (send_motion == fl_xmousewin) {
     send_motion = 0;
     Fl::handle(FL_MOVE, fl_xmousewin);
   }
-#  endif
+#endif
 }
 
 // these pointers are set by the Fl::lock() function:
@@ -625,6 +627,7 @@ int fl_handle(const XEvent& thisevent)
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
       fl_xmousewin = window;
+      in_a_window = true;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
       if (data[1]&1) {
@@ -656,6 +659,7 @@ int fl_handle(const XEvent& thisevent)
 
     } else if (message == fl_XdndPosition) {
       fl_xmousewin = window;
+      in_a_window = true;
       fl_dnd_source_window = data[0];
       Fl::e_x_root = data[2]>>16;
       Fl::e_y_root = data[2]&0xFFFF;
@@ -682,6 +686,7 @@ int fl_handle(const XEvent& thisevent)
 
     } else if (message == fl_XdndDrop) {
       fl_xmousewin = window;
+      in_a_window = true;
       fl_dnd_source_window = data[0];
       fl_event_time = data[2];
       Window to_window = fl_xevent->xclient.window;
@@ -832,16 +837,19 @@ int fl_handle(const XEvent& thisevent)
     }
 
     fl_xmousewin = window;
+    in_a_window = true;
     break;
 
   case MotionNotify:
     set_event_xy();
 #  if CONSOLIDATE_MOTION
     send_motion = fl_xmousewin = window;
+    in_a_window = true;
     return 0;
 #  else
     event = FL_MOVE;
     fl_xmousewin = window;
+    in_a_window = true;
     break;
 #  endif
 
@@ -854,6 +862,7 @@ int fl_handle(const XEvent& thisevent)
     event = FL_RELEASE;
 
     fl_xmousewin = window;
+    in_a_window = true;
     break;
 
   case EnterNotify:
@@ -864,15 +873,16 @@ int fl_handle(const XEvent& thisevent)
     event = FL_ENTER;
 
     fl_xmousewin = window;
+    in_a_window = true;
     break;
 
   case LeaveNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
     set_event_xy();
     Fl::e_state = xevent.xcrossing.state << 16;
-//    event = FL_LEAVE;
     fl_xmousewin = 0;
-    break;
+    in_a_window = false; // make do_queued_events produce FL_LEAVE event
+    return 0;
 
   // We cannot rely on the x,y position in the configure notify event.
   // I now think this is an unavoidable problem with X: it is impossible
@@ -1254,5 +1264,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.26 2003/01/31 15:50:28 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.27 2003/03/09 02:00:06 spitzak Exp $".
 //
