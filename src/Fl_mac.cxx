@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.28 2002/06/27 23:18:12 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.29 2002/06/28 00:28:09 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -108,7 +108,7 @@ enum { kEventFLTKBreakLoop = 1, kEventFLTKDataReady };
 static unsigned short macKeyLookUp[128] =
 {
     'a', 's', 'd', 'f', 'h', 'g', 'z', 'x',
-    'c', 'v', 0/*ISO extra (u-umlaut?)*/, 'b', 'q', 'w', 'e', 'r',
+    'c', 'v', 0/*ISO extra ('#' on German keyboard)*/, 'b', 'q', 'w', 'e', 'r',
 
     'y', 't', '1', '2', '3', '4', '6', '5',
     '=', '9', '7', '-', '8', '0', ']', 'o',
@@ -521,7 +521,7 @@ static double do_queued_events( double time = 0.0 )
   if ( time > 0.0 ) 
   {
     SetEventLoopTimerNextFireTime( timer, time );
-    RunApplicationEventLoop(); // wil return after the previously set time
+    RunApplicationEventLoop(); // will return after the previously set time
     if ( dataready_tid != 0 )
     {
         DEBUGMSG("*** CANCEL THREAD: ");
@@ -1683,6 +1683,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.28 2002/06/27 23:18:12 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.29 2002/06/28 00:28:09 matthiaswm Exp $".
 //
 
