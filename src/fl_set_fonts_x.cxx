@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_x.cxx,v 1.1.2.1 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: fl_set_fonts_x.cxx,v 1.1.2.2 2002/03/06 19:42:30 easysw Exp $"
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -321,8 +321,6 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return numsizes;
 }
 
-#endif
-
 //
-// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.1 2002/03/06 18:11:01 easysw Exp $".
+// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.2 2002/03/06 19:42:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_x.cxx,v 1.10.2.1 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: fl_font_x.cxx,v 1.10.2.2 2002/03/06 19:42:30 easysw Exp $"
 //
 // Standard X11 font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -101,13 +101,13 @@ char* fl_find_fontsize(char* name) {
   return r;
 }
 
-const char* fl_encoding_ = "iso8859-1";
+const char* fl_encoding = "iso8859-1";
 
 // return true if this matches fl_encoding:
 int fl_correct_encoding(const char* name) {
   if (*name != '-') return 0;
   const char* c = fl_font_word(name,13);
-  return (*c++ && !strcmp(c,fl_encoding_));
+  return (*c++ && !strcmp(c,fl_encoding));
 }
 
 // locate or create an Fl_FontSize for a given Fl_Fontdesc and size:
@@ -250,5 +250,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_x.cxx,v 1.10.2.1 2002/03/06 18:11:01 easysw Exp $".
+// End of "$Id: fl_font_x.cxx,v 1.10.2.2 2002/03/06 19:42:30 easysw Exp $".
 //
