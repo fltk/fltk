@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.7 1999/01/30 00:39:28 carl Exp $"
+// "$Id: Fl_Browser.cxx,v 1.8 1999/03/07 08:51:41 bill Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -206,13 +206,43 @@ int Fl_Browser::item_height(void* lv) const {
   FL_BLINE* l = (FL_BLINE*)lv;
   if (l->flags & NOTDISPLAYED) return 0;
   char* str = l->txt;
-  int t = textsize()+2;
-  if (*str == format_char()) switch (*(str+1)) {
-  case 'l': case 'L': t = 26; break;
-  case 'm': case 'M': t = 20; break;
-  case 's': case 'S': t = 13; break;
+  Fl_Font font;
+  int size;
+  int w, h;
+  int hmax = 0;
+
+  for(;*str;str++)
+  {
+    w = 0; // no wrap
+    font = Fl_Font(0); // default font
+    size = textsize(); // default size
+    while(*str==format_char())
+    {
+      str++;
+      switch (*str++) {
+      case 'l': case 'L': size = 24; break;
+      case 'm': case 'M': size = 18; break;
+      case 's': size = 11; break;
+      case 'b': font = (Fl_Font)(font|FL_BOLD); break;
+      case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
+      case 'f': case 't': font = FL_COURIER; break;
+      case 'S': size = strtol(str,&str,10); break;
+      case 'F': font = (Fl_Font)strtol(str,&str,10); break;
+      case 0: case '@': str--; 
+      case '.': goto END_FORMAT;
+      } 
+    }
+    END_FORMAT:
+    char* ptr = str;
+    for(;*str && (*str!=column_char());str++) ;
+    char prev = *str;
+    *str = 0;
+    fl_font(font,size);
+    fl_measure(ptr,w,h);
+    *str = prev;
+    if(h>hmax) hmax=h;
   }
-  return t;
+  return hmax+2;
 }
 
 int Fl_Browser::item_width(void* v) const {
@@ -334,7 +364,7 @@ void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
     if (((FL_BLINE*)v)->flags & SELECTED)
       lcol = contrast(lcol, selection_color());
     fl_color(lcol);
-    fl_draw(str, x+3, y, w1-6, h, align);
+    fl_draw(str, x+3, y, w1-6, h, e ? Fl_Align(align|FL_ALIGN_CLIP) : align);
     if (!e) break; // no more fields...
     *e = column_char(); // put the seperator back
     x += w1;
@@ -451,5 +481,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.7 1999/01/30 00:39:28 carl Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.8 1999/03/07 08:51:41 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.6 1999/01/13 15:47:27 mike Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.7 1999/03/07 08:51:43 bill Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -402,8 +402,9 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   window.show();
   while (window.shown()) {
     Fl::wait();
-    Fl_Widget* o;
-    while ((o = Fl::readqueue())) {
+    for (;;) {
+      Fl_Widget* o = Fl::readqueue();
+      if (!o) break;
       if (o == &ok_button) {
 	r = chooser.r();
 	g = chooser.g();
@@ -430,5 +431,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.6 1999/01/13 15:47:27 mike Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.7 1999/03/07 08:51:43 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.9 1999/02/23 14:01:17 mike Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10 1999/03/07 08:51:42 bill Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -38,12 +38,14 @@ void Fl_Choice::draw() {
   if (box() == FL_FLAT_BOX) return; // for XForms compatability
   int H = labelsize()/2+1;
   draw_box(FL_THIN_UP_BOX,x()+w()-3*H,y()+(h()-H)/2,2*H,H,color());
-  fl_font(textfont(),textsize());
-  fl_color(active_r() ? textcolor() : inactive(textcolor()));
-  fl_draw_shortcut = 2; // hack value to make '&' disappear
-  int BW = Fl::box_dx(box());
-  if (mvalue()) mvalue()->draw( x()+BW+3, y(), w()-2*BW-2-3*H, h(), this);
-  fl_draw_shortcut = 0;
+  if (mvalue()) {
+    Fl_Menu_Item m = *mvalue();
+    if (active_r()) m.activate(); else m.deactivate();
+    fl_draw_shortcut = 2; // hack value to make '&' disappear
+    int BW = Fl::box_dx(box());
+    m.draw( x()+BW+3, y(), w()-2*BW-2-3*H, h(), this);
+    fl_draw_shortcut = 0;
+  }
   draw_label();
 }
 
@@ -86,5 +88,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.9 1999/02/23 14:01:17 mike Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10 1999/03/07 08:51:42 bill Exp $".
 //
