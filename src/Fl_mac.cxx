@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.38 2003/01/30 21:43:07 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.39 2003/05/20 17:53:26 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1376,17 +1376,19 @@ void Fl_X::make(Fl_Window* w)
     x->cursor = fl_default_cursor;
     Fl_Window *win = w->window();
     Fl_X *xo = Fl_X::i(win);
-    x->xidNext = xo->xidChildren;
-    x->xidChildren = 0L;
-    xo->xidChildren = x;
-    x->xid = fl_xid(win);
-    x->w = w; w->i = x;
-    x->wait_for_expose = 0;
-    x->next = Fl_X::first; // must be in the list for ::flush()
-    Fl_X::first = x;
     w->set_visible();
-    w->handle(FL_SHOW);
-    w->redraw(); // force draw to happen
+    if (xo) {
+      x->xidNext = xo->xidChildren;
+      x->xidChildren = 0L;
+      xo->xidChildren = x;
+      x->xid = fl_xid(win);
+      x->w = w; w->i = x;
+      x->wait_for_expose = 0;
+      x->next = Fl_X::first; // must be in the list for ::flush()
+      Fl_X::first = x;
+      w->handle(FL_SHOW);
+      w->redraw(); // force draw to happen
+    }
     fl_show_iconic = 0;
   }
   else // create a desktop window
@@ -1758,6 +1760,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.38 2003/01/30 21:43:07 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.39 2003/05/20 17:53:26 easysw Exp $".
 //
 
