@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.7 1998/12/02 16:04:02 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.8 1998/12/07 13:36:24 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@
 #include <FL/fl_draw.H>
 
 static unsigned fl_cmap[256] = {
-#include "fl_cmap.h" // this is a file produced by "cmap.C":
+#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
 };
 
 // Translations to win32 data structures:
@@ -233,5 +233,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.7 1998/12/02 16:04:02 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.8 1998/12/07 13:36:24 mike Exp $".
 //

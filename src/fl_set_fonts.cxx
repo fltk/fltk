@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.4 1998/12/02 15:51:37 mike Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.5 1998/12/07 13:36:26 mike Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,7 @@
 // and bold italic.
 
 #ifdef WIN32
-#include "fl_set_fonts_win32.C"
+#include "fl_set_fonts_win32.cxx"
 #else
 
 // Standard X fonts are matched by a pattern that is always of
@@ -325,5 +325,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.4 1998/12/02 15:51:37 mike Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.5 1998/12/07 13:36:26 mike Exp $".
 //

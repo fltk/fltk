@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key.cxx,v 1.3 1998/10/21 14:20:33 mike Exp $"
+// "$Id: Fl_get_key.cxx,v 1.4 1998/12/07 13:36:23 mike Exp $"
 //
 // Keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 #ifdef WIN32
-#include "Fl_get_key_win32.C"
+#include "Fl_get_key_win32.cxx"
 #else
 
 // Return the current state of a key.  This is the X version.  I identify
@@ -60,5 +60,5 @@ int Fl::get_key(int k) {
 #endif
 
 //
-// End of "$Id: Fl_get_key.cxx,v 1.3 1998/10/21 14:20:33 mike Exp $".
+// End of "$Id: Fl_get_key.cxx,v 1.4 1998/12/07 13:36:23 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $"
+// "$Id: fl_color.cxx,v 1.4 1998/12/07 13:36:24 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 // Implementation of fl_color(i), fl_color(r,g,b).
 
 #ifdef WIN32
-#include "fl_color_win32.C"
+#include "fl_color_win32.cxx"
 #else
 
 // Also code to look at the X visual and figure out the best way to turn
@@ -331,5 +331,5 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 #endif
 
 //
-// End of "$Id: fl_color.cxx,v 1.3 1998/10/21 14:20:45 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.4 1998/12/07 13:36:24 mike Exp $".
 //

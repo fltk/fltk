@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.10 1998/12/07 13:34:27 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.11 1998/12/07 13:36:23 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 #ifdef WIN32
-#include "Fl_win32.C"
+#include "Fl_win32.cxx"
 #else
 
 #define CONSOLIDATE_MOTION 1
@@ -858,5 +858,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.10 1998/12/07 13:34:27 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.11 1998/12/07 13:36:23 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.3 1998/10/21 14:20:48 mike Exp $"
+// "$Id: fl_draw_image.cxx,v 1.4 1998/12/07 13:36:25 mike Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 // defeat some of the shortcuts in translating the image for X.
 
 #ifdef WIN32
-#include "fl_draw_image_win32.C"
+#include "fl_draw_image_win32.cxx"
 #else
 
 // A list of assumptions made about the X display:
@@ -627,5 +627,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.3 1998/10/21 14:20:48 mike Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.4 1998/12/07 13:36:25 mike Exp $".
 //
