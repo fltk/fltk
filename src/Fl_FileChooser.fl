@@ -1,0 +1,208 @@
+# data file for the FLTK User Interface Designer (FLUID)
+version 2.0000 
+images_dir ./ 
+do_not_include_H_from_C 
+header_name {.H} 
+code_name {.cxx} 
+gridx 5 
+gridy 5 
+snap 3
+decl {\#include <fltk/Fl_FileChooser.h>} {} 
+
+decl {\#include <config.h>} {} 
+
+class Fl_FileChooser {open
+} {
+  decl {enum { SINGLE, MULTI, CREATE };} {public
+  }
+  Function {Fl_FileChooser(const char *d, const char *p, int t, const char *title)} {open
+  } {
+    Fl_Window window {
+      label {Pick a File}
+      callback {fileList->deselect();
+fileName->value("");
+window->hide();} open
+      xywh {269 372 375 315} resizable hotspot
+      code0 {if (title) window->label(title);}
+      code1 {\#include <stdio.h>}
+      code2 {\#include <stdlib.h>}
+      code3 {\#include <string.h>} modal visible
+    } {
+      Fl_Choice dirMenu {
+        label {Directory:}
+        callback {if (dirMenu->value())
+  directory(dirMenu->text(dirMenu->value()));
+else
+  directory("");} open
+        tooltip {Click to access directory tree.}
+        private xywh {65 10 210 25}
+        code0 {o->set_flag(FL_ALIGN_LEFT | FL_ALIGN_RIGHT);
+        o->align(FL_ALIGN_LEFT | FL_ALIGN_RIGHT);}
+      } {}
+      Fl_Button upButton {
+        callback {up();}
+        tooltip {Click to display parent directory.}
+        private xywh {280 10 25 25} image not_inlined {up.xbm} labelsize 8
+      }
+      Fl_Button newButton {
+        callback {newdir();}
+        tooltip {Click to create a new directory.}
+        private xywh {310 10 25 25} image not_inlined {new.xbm} labelsize 8
+      }
+      Fl_Button {} {
+        callback {fileList->filter("*");;
+rescan();}
+        tooltip {Click to show all files.}
+        private xywh {340 10 25 25} align 524304 image not_inlined {allfiles.xbm} labelcolor 4 labelsize 28
+      }
+      Fl_Browser fileList {
+        callback {fileListCB();}
+        tooltip {Double-click to change directories.}
+        private xywh {10 45 355 180} resizable
+        code0 {\#include "filename.H"}
+        code1 {\#include <fltk/Fl_FileBrowser.h>}
+        class Fl_FileBrowser
+      }
+      Fl_Input fileName {
+        label {Filename:}
+        callback {fileNameCB();} selected
+        tooltip {Type a filename or directory name here.}
+        private xywh {10 245 355 25} align 5 when 8
+        code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
+        code1 {\#include <fltk/Fl_FileInput.h>}
+        class Fl_FileInput
+      }
+      Fl_Return_Button okButton {
+        label OK
+        callback {char pathname[1024];
+
+snprintf(pathname, sizeof(pathname), "%s/%s",
+               fileList->directory(), fileName->value());
+if (filename_isdir(pathname))
+  directory(pathname);
+else
+  window->hide();}
+        private xywh {240 280 55 25} shortcut 0xff0d
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {fileList->deselect();
+fileName->value("");
+window->hide();}
+        private xywh {300 280 65 25}
+      }
+    }
+    code {window->size_range(345, 270, 345);
+fileList->filter(p);
+type(t);
+value(d);} {}
+  }
+  decl {char directory_[1024];} {}
+  decl {int type_;} {}
+  decl {void fileListCB();} {}
+  decl {void fileNameCB();} {}
+  decl {void newdir();} {}
+  decl {void up();} {}
+  Function {color(Fl_Color c)} {} {
+    code {fileList->color(c);} {}
+  }
+  Function {color()} {return_type Fl_Color
+  } {
+    code {return (fileList->color());} {}
+  }
+  decl {int count();} {public
+  }
+  decl {void directory(const char *d);} {public
+  }
+  Function {directory()} {return_type {char *}
+  } {
+    code {return directory_;} {}
+  }
+  Function {filter(const char *p)} {return_type void
+  } {
+    code {fileList->filter(p);
+rescan();} {}
+  }
+  Function {filter()} {return_type {const char *}
+  } {
+    code {return (fileList->filter());} {}
+  }
+  Function {hide()} {return_type void
+  } {
+    code {window->hide();} {}
+  }
+  Function {iconsize(uchar s)} {return_type void
+  } {
+    code {fileList->iconsize(s);} {}
+  }
+  Function {iconsize()} {return_type uchar
+  } {
+    code {return (fileList->iconsize());} {}
+  }
+  Function {label(const char *l)} {return_type void
+  } {
+    code {window->label(l);} {}
+  }
+  Function {label()} {return_type {const char *}
+  } {
+    code {return (window->label());} {}
+  }
+  decl {void rescan();} {public
+  }
+  Function {exec()} {return_type void
+  } {
+    code {window->exec();
+fileList->deselect();} {}
+  }
+  Function {textcolor(Fl_Color c)} {return_type void
+  } {
+    code {fileList->textcolor(c);
+    fileList->text_color(c);} {}
+  }
+  Function {textcolor()} {return_type Fl_Color
+  } {
+    code {return (fileList->textcolor());
+    return (fileList->textcolor());} {}
+  }
+  Function {textfont(Fl_Font f)} {return_type void
+  } {
+    code {fileList->text_font(f);} {}
+  }
+  Function {textfont()} {return_type Fl_Font
+  } {
+    code {return (fileList->text_font());
+    return (fileList->textfont());} {}
+  }
+  Function {textsize(uchar s)} {return_type void
+  } {
+    code {fileList->text_size(s);} {}
+  }
+  Function {textsize()} {return_type uchar
+  } {
+    code {return (fileList->textsize());} {}
+  }
+  Function {type(int t)} {return_type void
+  } {
+    code {type_ = t;
+if (t == MULTI)
+  fileList->type(FL_MULTI_BROWSER);
+else
+  fileList->type(FL_HOLD_BROWSER);
+if (t != CREATE)
+  newButton->deactivate();
+else
+  newButton->activate();} {}
+  }
+  Function {type()} {return_type int
+  } {
+    code {return (type_);} {}
+  }
+  decl {const char *value(int f = 1);} {public
+  }
+  decl {void value(const char *filename);} {public
+  }
+  Function {visible()} {return_type int
+  } {
+    code {return window->visible();} {}
+  }
+} 

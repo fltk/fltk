@@ -1,0 +1,142 @@
+<head><title>Fl_Image</title></head><body bgcolor=white>
+
+<h1>class Fl_Image</h1>
+
+This class holds an image, normally used to label a widget.  The
+subclasses define how the data is interpreted, and usually store
+server-side cached versions of the image.  All the current types
+define pixel arrays, but other types of images, such as vector
+graphics, can be defined.
+
+<h2>Methods</h2>
+
+<h4>ulong id, mask;<br>
+void _draw(int X, int Y, int W, int H, int cx, int cy);</h4>
+
+Subclasses may use these <i>protected</i> members of the base class to
+draw a cached pixel array.  They must first set <tt>id</tt> and
+<tt>mask</tt> to the color and transparency offscreen windows, using
+system-specific code.  Then they can call <tt>_draw()</tt> to draw
+them.
+
+<h4>int w,h</h4>
+
+These members hold the width and height of the image.  They are not
+correct until <tt>measure()</tt> is called.  These are public instance
+variables for back comptability, but you should never set them.
+
+<h4>virtual void Fl_Image::measure(int W, int H);</h4>
+
+Measure how big the image will be if it is drawn inside a W,H
+rectangle and put the result into w,h.  For most image types this does
+nothing and w,h are set by the constructor.  This may be used to
+initialize the scaling for variable-sized images.
+
+<h4>virtual void Fl_Image::draw(int x,int y,int w,int h, int cx,int
+cy);</h4>
+
+Draw the image so the point <i>cx,cy</i> of the image is at
+<i>x,y</i>.  The image may be scaled or clipped to fit in the <i>w,h</i>
+rectangle, but this is not necessary (although obeying the current
+fl_clip value is!).
+
+<h4>void Fl_Image::draw(int x,int y,int w,int h, Fl_Flags align);</h4>
+
+This <i>non-virtual</i> function uses <tt>measure()</tt> and the
+<i>align</i> flags to figure out <i>cx,cy</i> and call the normal draw
+function.  This allows you to center or align any edge of the image
+with a bounding box.
+
+<h4>virtual Fl_Image::~Fl_Image();</h4>
+
+The destructor throws away any server-cached information, but in most
+cases does not destroy the local data passed to a constructor.
+
+<H2><A name=Fl_Bitmap>class Fl_Bitmap : public Fl_Image</A></H2>
+ This object encapsulates the width, height, and bits of an X bitmap 
+(XBM), and allows you to make an <TT>Fl_Widget</TT> use a bitmap as a 
+label, or to just draw the bitmap directly.
+
+<H4>Fl_Bitmap(const char *bits, int W, int H)
+<BR> Fl_Bitmap(const uchar *bits, int W, int H)</H4>
+Construct using an X bitmap.  The bits pointer is simply copied to the 
+object, so it must point at persistent storage.  The two constructors 
+are provided because various X implementations disagree about the type 
+of bitmap data.  To use an XBM file use: 
+<UL>
+<PRE>
+#include &quot;foo.xbm&quot;
+...
+Fl_Bitmap bitmap = new Fl_Bitmap(foo_bits, foo_width, foo_height);
+</PRE>
+</UL>
+<H4>~Fl_Bitmap()</H4>
+ The destructor will destroy any X pixmap created.  It does not do 
+anything to the bits data. 
+<H4>void draw(int x, int y, int w, int h, int ox = 0, int oy = 0)</H4>
+1 bits are drawn with the current color, 0 bits 
+are unchanged.
+The image is clipped to the destination rectangle: the area
+<TT>ox,oy,w,h</TT> is copied to <TT>x,y,w,h</TT>.
+<H4>void draw(int x, int y)</H4>
+Draws the bitmap with the upper-left corner at <TT>x,y</TT>.  This is 
+the same as doing <TT>draw(x,y,this-&gt;w,this-&gt;h,0,0)</TT>. 
+
+<H2><A name=Fl_Pixmap>class Fl_Pixmap : public Fl_Image</A></H2>
+
+This object encapsulates the data from an XPM image, and allows you to
+make an <TT>Fl_Widget</TT> use a pixmap as a label, or to just draw
+the pixmap directly.
+
+<H4>Fl_Pixmap(char *const* data)</H4>
+ Construct using XPM data.  The data pointer is simply copied to the 
+object, so it must point at persistent storage.  To use an XPM file do: 
+<UL>
+<PRE>
+#include &lt;fltk/Fl_Pixmap.h&gt;
+#include &quot;foo.xpm&quot;
+...
+Fl_Pixmap pixmap = new Fl_Pixmap(foo);
+</PRE>
+</UL>
+<H4>~Fl_Pixmap()</H4>
+ The destructor will destroy any X pixmap created.  It does not do 
+anything to the data. 
+
+<H4>void draw(int x, int y, int w, int h, int ox = 0, int oy = 0)</H4>
+The image is clipped to the destination rectangle: the area
+<TT>ox,oy,w,h</TT> is copied to <TT>x,y,w,h</TT>.  The current
+implementation converts the pixmap to 24-bit RGB data and uses <A
+href=#fl_draw_image><TT>fl_draw_image()</TT></A> to draw it.  Thus you
+will get dithered colors on an 8 bit screen. </P>
+
+<H4>void draw(int x, int y)</H4>
+ Draws the image with the upper-left corner at <TT>x,y</TT>.  This is 
+the same as doing <TT>draw(x,y,this-&gt;w,this-&gt;h,0,0)</TT>.
+
+<H2><A name=Fl_RGB_Image>class Fl_RGB_Image</A></H2>
+
+This object encapsulates a full-color RGB image, and allows you to 
+make an <TT>Fl_Widget</TT> use an image as a label, or to just draw the 
+image directly.
+
+<H4>Fl_RGB_Image(const uchar *data, int W, int H, int D = 3, int LD = 0)</H4>
+ Construct using a pointer to RGB data. <TT>W</TT> and <TT>H</TT> are 
+the size of the image in pixels. <TT>D</TT> is the delta between pixels 
+(it may be more than 3 to skip alpha or other data, or negative to flip 
+the image left/right). <TT>LD</TT> is the delta between lines (it may 
+be more than <TT>D * W</TT> to crop images, or negative to flip the 
+image vertically).  The data pointer is simply copied to the object, so 
+it must point at persistent storage. 
+<H4>~Fl_RGB_Image()</H4>
+ The destructor will destroy any X pixmap created.  It does not do 
+anything to the data. 
+<H4>void draw(int x, int y, int w, int h, int ox = 0, int oy = 0)</H4>
+The image is clipped to the destination rectangle: the area
+<TT>ox,oy,w,h</TT> is copied to <TT>x,y,w,h</TT>.
+<H4>void draw(int x, int y)</H4>
+ Draws the image with the upper-left corner at <TT>x,y</TT>.  This is 
+the same as doing <TT>draw(x,y,this-&gt;w,this-&gt;h,0,0)</TT>. 
+
+</body></html>
+
