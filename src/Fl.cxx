@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.59 2003/01/30 21:41:14 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.60 2003/04/09 03:57:06 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -545,8 +545,13 @@ void fl_throw_focus(Fl_Widget *o) {
 // values to account for nested X windows. 'window' is the outermost
 // window the event was posted to by X:
 static int send(int event, Fl_Widget* to, Fl_Window* window) {
-  int dx = window->x();
-  int dy = window->y();
+  int dx, dy;
+  if (window) {
+    dx = window->x();
+    dy = window->y();
+  } else {
+    dx = dy = 0;
+  }
   for (const Fl_Widget* w = to; w; w = w->parent())
     if (w->type()>=FL_WINDOW) {dx -= w->x(); dy -= w->y();}
   int save_x = Fl::e_x; Fl::e_x += dx;
@@ -975,5 +980,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.59 2003/01/30 21:41:14 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.60 2003/04/09 03:57:06 easysw Exp $".
 //
