@@ -1,4 +1,212 @@
-CHANGES SINCE FLTK 1.0.11
+CHANGES IN FLTK 1.1.0b5
+
+	**** NOTE: DUE TO CHANGES IN THE WIDGET CLASSES,  ****
+	****       YOU MUST RECOMPILE ALL SOURCE FILES    ****
+	****       THAT USE FLTK!!!                       ****
+
+	- All FLTK color values are now 32-bits and support
+	  both the legacy 8-bit color values as well as 24-bit
+	  RGB values (0xRRGGBB00 for 24-bit RGB, 0x000000II
+	  for indexed color).
+	- Fl::set_boxtype() and fl_internal_boxtype() now keep
+	  track of when a boxtype is changed; this allows you to
+	  override the "special" boxtypes without references to
+	  those boxtypes causing them to be reset.
+	- Fl_Help_Func now takes a Fl_Widget pointer as well as
+	  a pathname.
+	- Added code to support FL_KEYUP events.
+	- Focus did not return to the Fl_Text_Display and Editor
+	  widgets when scrolling and then clicking inside the
+	  editor window.
+	- Now set the line size of the vertical scrollbar in the
+	  text editor to 1.
+	- The symbols demo didn't show the strings needed to
+	  show the corresponding symbol (the label string was
+	  not quoted...)
+	- FLTK should now compile with Cygwin cleanly.
+	- Shortcut changes were not being saved by FLUID.
+	- FLUID didn't write the deimage() static data.
+
+
+CHANGES IN FLTK 1.1.0b4
+
+	**** NOTE: DUE TO CHANGES IN THE FL_WIDGET CLASS, ****
+	****       YOU MUST RECOMPILE ALL SOURCE FILES    ****
+	****       THAT USE FLTK!!!                       ****
+
+	- Updated the flags_ member of Fl_Widget to be an
+	  integer instead of uchar, to support the new
+	  FL_OVERRIDE flag for Fl_Window.
+
+	- The parent() method of Fl_Widget now uses pointers to
+	  Fl_Group instead of Fl_Widget.
+
+	- Fl_Window now provides the FLTK 2.0 "override()" and
+	  "set_override()" methods for windows.
+
+	- Added a configure check (and warning) for GCC 3.0.x.
+
+	- Updated the configure script to check for the
+	  png_set_tRNS_to_alpha() function.
+
+	- Updated the config.h files for all platforms for the
+	  image and FLTK documentation defines.
+
+	- Updated the makeinclude files for all platforms to
+	  match the current makeinclude.in file.
+
+	- FLUID would crash if you cleared an image for a
+	  widget.
+
+	- Fl_Help_View::add_image() did not initialize the image
+	  member of the base (unscaled) image.
+
+	- Fl_Help_View didn't support A elements with both a
+	  NAME and HREF attribute - the HREF was ignored.
+
+	- Miscellaneous compile warning fixes.
+
+	- Tooltips were being reset by Fl::belowmouse(), which
+	  caused problems with the FLUID main window (flashing
+	  tooltip windows and serious problems with KDE 2.2)
+
+	- The editor demo had the save and discard button
+	  actions reversed.
+
+	- The Fl_Help_View widget now uses
+	  png_destroy_read_struct() if the older
+	  png_read_destroy() function is not available.
+
+	- The WIN32 DLL library now includes the OpenGL widgets.
+	  This is a simpler solution for the export/import
+	  dillemma under WIN32, as OpenGL and non-OpenGL symbols
+	  need to be exported at different times with the
+	  separate library scheme.  Since OpenGL is standard
+	  under Windows, this is less of a problem than under
+	  UNIX...
+
+
+CHANGES IN FLTK 1.1.0b3
+
+	- The top-level makefile did not include the makeinclude
+	  file, causing the fltk-config installation commands to
+	  fail.
+
+	- The fl_file_chooser.cxx source file conflicted with
+	  Fl_File_Chooser.cxx under Windows.  Similarly, the
+	  fl_file_chooser.H header file conflicts with the
+	  Fl_File_Chooser.H header file.
+
+	- Now save and restore the GDI pen object when
+	  responding to WIN32 paint messages.
+
+	- Documentation updates from A. Suatoni.
+
+
+CHANGES IN FLTK 1.1.0b2
+
+	- New fltk-config script.
+
+	- Fixed image/text label handling; in b1 the label
+	  needed a non-blank text string to display the image. 
+	  This bug also caused all sorts of crashes and display
+	  problems.
+
+	- Added new filetype() method to Fl_FileBrowser to allow
+	  for file or directory browsing.
+
+	- Fixed the drawing of the focus box around
+	  Fl_Return_Button.
+
+	- Fixed menu item measurement bug (wasn't initializing
+	  image pointers to 0...)
+
+	- Radio and checkbox menu items now draw with the new
+	  style (round radio buttons with dots and square check
+	  buttons with check marks.)
+
+	- Improved the appearance of Fl_Check_Button.
+
+	- Improved the Fl_HelpView table formatting code; now
+	  dynamically sizes the table columns, and supports
+	  COLSPAN.
+
+	- The FLUID keyboard shortcuts now work as expected
+	  (CTRL-C copies, SHIFT-CTRL-C writes code, etc.)
+
+	- The FLTK_DOCDIR environment variable can now be
+	  used to tell FLUID where to find the on-line
+	  documentation files.
+
+	- FLUID now supports image labels in addition to text
+	  labels + text over image alignment.
+
+	- FLUID now supports tooltips.
+
+	- The widget panel in FLUID is now tabbed, a la FLTK
+	  2.0.
+
+	- The FLUID pixmap destructor tried to free 1 too many
+	  lines of image data.
+
+	- FLUID now provides on-line help.
+
+	- Changed Fl_FileXYZ to Fl_File_XYZ.
+
+	- Changed Fl_HelpXYZ to Fl_Help_XYZ.
+
+	- Tooltip fixes for Fl_Browser_, Fl_Choice, and Fl_Input_.
+
+	- Added tooltips to FLUID, help dialog, and file chooser.
+
+	- Now load system icons in FLUID.
+
+
+CHANGES IN FLTK 1.1.0b1
+
+	- Added new image() and deimage() methods to support
+	  image + text labels more easily.
+
+	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
+
+	- Added tooltip support using Jacques Tremblay's tooltip
+	  patch.
+
+	- Added keyboard navigation to all widgets.
+
+	- Added support for mouse wheels using the new
+	  FL_MOUSEWHEEL event type.  Get the mouse wheel
+	  movement values from Fl::e_dx (horizontal) and
+	  Fl::e_dy (vertical).
+
+	- Added the Fl_Check_Browser, Fl_FileBrowser,
+	  Fl_FileChooser, Fl_FileIcon, Fl_HelpDialog,
+	  Fl_HelpView, Fl_Progress, and Fl_Wizard widgets from
+	  the bazaar.
+
+	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
+	  based on NEdit.
+
+	- The Fl_Choice widget now looks more line a combo box
+	  than a Motif option menu.
+
+	- Moved the OpenGL widgets into a separate library
+	  called fltkgl - this eliminates shared library
+	  dependencies on OpenGL when no OpenGL functionality is
+	  used/required.
+
+	- FLUID now supports the new Fl_CheckBrowser,
+	  Fl_FileBrowser, Fl_FileIcon, Fl_HelpView,
+	  Fl_Text_Display, Fl_Text_Editor, and Fl_Wizard
+	  widgets.
+
+	- Updated configure stuff to support shared libraries
+	  under AIX (link to -lfltk_s)
+
+	- Symbol labels can now contain regular text.
+
+	- FLUID now supports relative filenames for the source
+	  and header files you generate.
 
 	- Fl_Menu_Item::add() didn't use the flags that were
 	  passed in.
@@ -27,6 +235,11 @@ CHANGES SINCE FLTK 1.0.11
 	  changes make the menus compatable with fltk 2.0.
 
 	- Another little fix for the BoXX OpenGL overlays.
+
+	- Fl_Gl_Window no longer blanks the mouse pointer on
+	  WIN32 unless an OpenGL overlay is being used.  This
+	  should make non-overlay displays faster when a cursor
+	  is set.
 
 
 CHANGES SINCE FLTK 1.0.10

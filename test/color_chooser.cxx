@@ -1,5 +1,5 @@
 //
-// "$Id: color_chooser.cxx,v 1.6.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: color_chooser.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
 //
 // Color chooser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -105,7 +105,7 @@ int main(int argc, char ** argv) {
   b2.callback(cb2,&box);
   Fl_Box image_box(140,200,120,120,0);
   make_image();
-  (new Fl_Image(image, width, height))->label(&image_box);
+  (new Fl_RGB_Image(image, width, height))->label(&image_box);
   Fl_Box b(140,320,120,0,"Example of fl_draw_image()");
   Pens p(80,200,3*8,120,"lines");
   p.align(FL_ALIGN_TOP);
@@ -146,5 +146,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: color_chooser.cxx,v 1.6.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: color_chooser.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
 //

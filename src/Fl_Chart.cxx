@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.1 2001/10/29 03:44:32 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -298,7 +298,7 @@ void Fl_Chart::clear() {
   redraw();
 }
 
-void Fl_Chart::add(double val, const char *str, uchar col) {
+void Fl_Chart::add(double val, const char *str, unsigned col) {
   /* Allocate more entries if required */
   if (numb >= sizenumb) {
     sizenumb += FL_CHART_MAX;
@@ -321,7 +321,7 @@ void Fl_Chart::add(double val, const char *str, uchar col) {
   redraw();
 }
 
-void Fl_Chart::insert(int index, double val, const char *str, uchar col) {
+void Fl_Chart::insert(int index, double val, const char *str, unsigned col) {
   int i;
   if (index < 1 || index > numb+1) return;
   /* Allocate more entries if required */
@@ -344,7 +344,7 @@ void Fl_Chart::insert(int index, double val, const char *str, uchar col) {
   redraw();
 }
 
-void Fl_Chart::replace(int index,double val, const char *str, uchar col) {
+void Fl_Chart::replace(int index,double val, const char *str, unsigned col) {
   if (index < 1 || index > numb) return;
   entries[index-1].val = float(val);
   entries[index-1].col = col;
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.1 2001/10/29 03:44:32 easysw Exp $".
 //

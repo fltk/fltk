@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.8.2.3 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.3 2001/10/29 03:44:32 easysw Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -56,15 +56,16 @@ void Fl_Counter::draw() {
 
   draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_WHITE);
   fl_font(textfont(), textsize());
-  fl_color(active_r() ? textcolor() : inactive(textcolor()));
+  fl_color(active_r() ? textcolor() : fl_inactive(textcolor()));
   char str[128]; format(str);
   fl_draw(str, xx[0], y(), ww[0], h(), FL_ALIGN_CENTER);
+  if (Fl::focus() == this) draw_focus(boxtype[0], xx[0], y(), ww[0], h());
   if (!(damage()&FL_DAMAGE_ALL)) return; // only need to redraw text
 
   if (active_r())
     selcolor = labelcolor();
   else
-    selcolor = inactive(labelcolor());
+    selcolor = fl_inactive(labelcolor());
 
   if (type() == FL_NORMAL_COUNTER) {
     draw_box(boxtype[1], xx[1], y(), ww[1], h(), color());
@@ -130,6 +131,7 @@ int Fl_Counter::handle(int event) {
     handle_release();
     return 1;
   case FL_PUSH:
+    take_focus();
     handle_push();
   case FL_DRAG:
     i = calc_mouseobj();
@@ -140,6 +142,25 @@ int Fl_Counter::handle(int event) {
       increment_cb();
       redraw();
     }
+    return 1;
+  case FL_KEYBOARD :
+    switch (Fl::event_key()) {
+      case FL_Left:
+	handle_drag(clamp(increment(value(),-1)));
+	return 1;
+      case FL_Right:
+	handle_drag(clamp(increment(value(),1)));
+	return 1;
+      default:
+        return 0;
+    }
+    break;
+  case FL_FOCUS :
+  case FL_UNFOCUS :
+    damage(FL_DAMAGE_ALL);
+    return 1;
+  case FL_ENTER :
+  case FL_LEAVE :
     return 1;
   default:
     return 0;
@@ -165,5 +186,5 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.8.2.3 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.3 2001/10/29 03:44:32 easysw Exp $".
 //

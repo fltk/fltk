@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Input.H,v 1.5.2.3 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fl_Value_Input.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $"
 //
 // Value input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -50,14 +50,14 @@ public:
   uchar textsize() const {return input.textsize();}
   void textsize(uchar s) {input.textsize(s);}
   Fl_Color textcolor() const {return input.textcolor();}
-  void textcolor(uchar n) {input.textcolor(n);}
+  void textcolor(unsigned n) {input.textcolor(n);}
   Fl_Color cursor_color() const {return input.cursor_color();}
-  void cursor_color(uchar n) {input.cursor_color(n);}
+  void cursor_color(unsigned n) {input.cursor_color(n);}
 
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Value_Input.H,v 1.5.2.3 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fl_Value_Input.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $".
 //

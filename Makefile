@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6 2001/03/14 17:20:01 spitzak Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.6 2001/09/30 12:30:13 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,35 +23,31 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-SHELL=/bin/sh
+include makeinclude
 
+SHELL	=	/bin/sh
 DIRS	=	src fluid test
 
 all: makeinclude
 	@for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
-		if test ! -f $$dir/makedepend; then\
-			touch $$dir/makedepend;\
-		fi;\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || break;\
 	done
 
 install: makeinclude
 	@for dir in $(DIRS); do\
 		echo "=== installing $$dir ===";\
-		if test ! -f $$dir/makedepend; then\
-			touch $$dir/makedepend;\
-		fi;\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
 	done
 	(cd documentation; $(MAKE) $(MFLAGS) install)
+	-mkdir -p $(bindir)
+	rm -f $(bindir)/fltk-config
+	-cp fltk-config $(bindir)
+	-chmod +x $(bindir)/fltk-config
 
 depend: makeinclude
 	@for dir in $(DIRS); do\
 		echo "=== making dependencies in $$dir ===";\
-		if test ! -f $$dir/makedepend; then\
-			touch $$dir/makedepend;\
-		fi;\
 		(cd $$dir; $(MAKE) $(MFLAGS) depend) || break;\
 	done
 
@@ -66,11 +62,16 @@ distclean: clean
 	rm -f config.log config.h config.status makeinclude
 
 makeinclude: configure configh.in makeinclude.in
-	./configure
+	if test -f config.status; then \
+		./config.status --recheck; \
+		./config.status; \
+	else \
+		./configure; \
+	fi
 
 configure: configure.in
 	autoconf
 
 #
-# End of "$Id: Makefile,v 1.12.2.6 2001/03/14 17:20:01 spitzak Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.6 2001/09/30 12:30:13 easysw Exp $".
 #

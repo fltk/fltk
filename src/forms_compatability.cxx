@@ -1,5 +1,5 @@
 //
-// "$Id: forms_compatability.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: forms_compatability.cxx,v 1.5.2.3.2.1 2001/08/06 03:17:43 easysw Exp $"
 //
 // Forms compatibility functions for the Fast Light Tool Kit (FLTK).
 //
@@ -88,8 +88,6 @@ void fl_initialize(int *argc, char **argv, const char *, FL_CMD_OPT *, int) {
 char fl_modal_next; // set by fl_freeze_forms()
 
 void fl_show_form(Fl_Window *f,int place,int b,const char *n) {
-
-  Fl::enable_symbols();
 
   f->label(n);
   if (!b) f->clear_border();
@@ -204,5 +202,5 @@ char *fl_show_simple_input(const char *str1, const char *defstr) {
 }
 
 //
-// End of "$Id: forms_compatability.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: forms_compatability.cxx,v 1.5.2.3.2.1 2001/08/06 03:17:43 easysw Exp $".
 //

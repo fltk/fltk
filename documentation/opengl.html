@@ -21,7 +21,7 @@ To make a subclass of Fl_Gl_Window, you must provide:
 <UL>
 <LI>A class definition. </LI>
 <LI>A <TT>draw()</TT> method. </LI>
-<LI>A <TT>handle()</TT> method (if you need to recieve input from  the 
+<LI>A <TT>handle()</TT> method (if you need to receive input from  the 
 user). </LI>
 </UL>
 If your subclass provides static controls in the window, they must be
@@ -142,7 +142,7 @@ the FLUID output file will compile. </LI>
 You must put <TT>glwindow-&gt;show()</TT> in your main code after calling <TT>
 show()</TT> on the window containing the OpenGL window. 
 <H2>Using OpenGL in Normal FLTK Windows</H2>
-You can put OpenGL code into an <A href=#draw><TT>Fl_Widget::draw()</TT>
+You can put OpenGL code into an <A href="subclassing.html#draw"><TT>Fl_Widget::draw()</TT>
 </A> method or into the code for a <A href=common.html#boxtypes>boxtype</A>
 or other places with some care. 
 <P>Most importantly, before you show <I>any</I> windows (including those 
@@ -223,7 +223,7 @@ the current OpenGL font at the given position.
 <H4>void gl_draw(const char *, int x, int y, int w, int h, Fl_Align)</H4>
  Draw a string formatted into a box, with newlines and tabs expanded, 
 other control characters changed to ^X, and aligned with the edges or 
-center.  Exactly the same output as <A href=#fl_draw><TT>fl_draw()</TT></A>
+center.  Exactly the same output as <A href="drawing.html#text"><TT>fl_draw()</TT></A>
 . 
 
 

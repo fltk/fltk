@@ -1,4 +1,27 @@
-// fl_line_style.cxx
+//
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.5 2001/10/19 17:02:57 easysw Exp $"
+//
+// Line style code for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2001 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
+//
 
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -7,7 +30,10 @@
 
 void fl_line_style(int style, int width, char* dashes) {
 #ifdef WIN32
-  static DWORD Cap[4]= {PS_ENDCAP_ROUND, PS_ENDCAP_FLAT, PS_ENDCAP_ROUND, PS_ENDCAP_SQUARE};
+  // According to Bill, the "default" cap and join should be the
+  // "fastest" mode supported for the platform.  I don't know why
+  // they should be different (same graphics cards, etc., right?) MRS
+  static DWORD Cap[4]= {PS_ENDCAP_FLAT, PS_ENDCAP_FLAT, PS_ENDCAP_ROUND, PS_ENDCAP_SQUARE};
   static DWORD Join[4]={PS_JOIN_ROUND, PS_JOIN_MITER, PS_JOIN_ROUND, PS_JOIN_BEVEL};
   int s1 = PS_GEOMETRIC | Cap[(style>>8)&3] | Join[(style>>12)&3];
   DWORD a[16]; int n = 0;
@@ -61,3 +87,8 @@ void fl_line_style(int style, int width, char* dashes) {
   if (ndashes) XSetDashes(fl_display, fl_gc, 0, dashes, ndashes);
 #endif
 }
+
+
+//
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.5 2001/10/19 17:02:57 easysw Exp $".
+//

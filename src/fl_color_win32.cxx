@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.14.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_color_win32.cxx,v 1.14.2.3.2.2 2001/10/29 03:44:33 easysw Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -47,8 +47,18 @@ Fl_XMap fl_xmap[256];
 Fl_XMap* fl_current_xmap;
 
 HPALETTE fl_palette;
-HPEN tmppen=0;
-HBRUSH tmpbrush=0;
+static HPEN tmppen=0;
+static HBRUSH tmpbrush=0;
+static HPEN savepen=0;
+
+void fl_save_pen(void) {
+    if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
+    savepen = (HPEN)SelectObject(fl_gc, tmppen);
+}
+
+void fl_restore_pen(void) {
+    SelectObject(fl_gc, savepen);
+}
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
@@ -73,22 +83,27 @@ static void set_xmap(Fl_XMap& xmap, COLORREF c) {
 Fl_Color fl_color_;
 
 void fl_color(Fl_Color i) {
-  fl_color_ = i;
-  Fl_XMap &xmap = fl_xmap[i];
-  if (!xmap.pen) {
+  if (i & 0xffffff00) {
+    unsigned rgb = (unsigned)i;
+    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
+  } else {
+    fl_color_ = i;
+    Fl_XMap &xmap = fl_xmap[i];
+    if (!xmap.pen) {
 #if USE_COLORMAP
-    if (fl_palette) {
-      set_xmap(xmap, PALETTEINDEX(i));
-    } else {
+      if (fl_palette) {
+	set_xmap(xmap, PALETTEINDEX(i));
+      } else {
 #endif
-      unsigned c = fl_cmap[i];
-      set_xmap(xmap, RGB(uchar(c>>24), uchar(c>>16), uchar(c>>8)));
+	unsigned c = fl_cmap[i];
+	set_xmap(xmap, RGB(uchar(c>>24), uchar(c>>16), uchar(c>>8)));
 #if USE_COLORMAP
+      }
+#endif
     }
-#endif
+    fl_current_xmap = &xmap;
+    SelectObject(fl_gc, (HGDIOBJ)(xmap.pen));
   }
-  fl_current_xmap = &xmap;
-  SelectObject(fl_gc, (HGDIOBJ)(xmap.pen));
 }
 
 void fl_color(uchar r, uchar g, uchar b) {
@@ -206,5 +221,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.14.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.14.2.3.2.2 2001/10/29 03:44:33 easysw Exp $".
 //

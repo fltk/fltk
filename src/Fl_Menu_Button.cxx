@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Button.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Menu_Button.cxx,v 1.4.2.3.2.1 2001/08/04 20:17:10 easysw Exp $"
 //
 // Menu button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -31,12 +31,15 @@ void Fl_Menu_Button::draw() {
   if (!box() || type()) return;
   draw_box(box(), color());
   draw_label();
+  if (Fl::focus() == this) draw_focus();
   if (box() == FL_FLAT_BOX) return; // for XForms compatability
   int H = (labelsize()-3)&-2;
   int X = x()+w()-H*2;
   int Y = y()+(h()-H)/2;
-  fl_color(FL_DARK3); fl_line(X+H/2, Y+H, X, Y, X+H, Y);
-  fl_color(FL_LIGHT3); fl_line(X+H, Y, X+H/2, Y+H);
+  fl_color(active_r() ? FL_DARK3 : fl_inactive(FL_DARK3));
+  fl_line(X+H/2, Y+H, X, Y, X+H, Y);
+  fl_color(active_r() ? FL_LIGHT3 : fl_inactive(FL_LIGHT3));
+  fl_line(X+H, Y, X+H/2, Y+H);
 }
 
 const Fl_Menu_Item* Fl_Menu_Button::popup() {
@@ -62,11 +65,23 @@ int Fl_Menu_Button::handle(int e) {
     } else if (type()) {
       if (!(type() & (1 << (Fl::event_button()-1)))) return 0;
     }
+    take_focus();
     popup();
     return 1;
+  case FL_KEYBOARD:
+    if (Fl::event_key() == ' ') {
+      popup();
+      return 1;
+    } else return 0;
   case FL_SHORTCUT:
     if (Fl_Widget::test_shortcut()) {popup(); return 1;}
     return test_shortcut() != 0;
+  case FL_FOCUS:
+  case FL_UNFOCUS:
+    if (box()) {
+      redraw();
+      return 1;
+    }
   default:
     return 0;
   }
@@ -78,5 +93,5 @@ Fl_Menu_Button::Fl_Menu_Button(int X,int Y,int W,int H,const char *l)
 }
 
 //
-// End of "$Id: Fl_Menu_Button.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Menu_Button.cxx,v 1.4.2.3.2.1 2001/08/04 20:17:10 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41 2001/02/26 00:19:02 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.4 2001/10/18 00:24:19 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
+#include <FL/Fl_Tooltip.H>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,6 +45,8 @@ int		Fl::damage_,
 		Fl::e_y,
 		Fl::e_x_root,
 		Fl::e_y_root,
+		Fl::e_dx,
+		Fl::e_dy,
 		Fl::e_state,
 		Fl::e_clicks,
 		Fl::e_is_click,
@@ -149,7 +152,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void *arg) {
   // This may change in the future.
   for (Timeout** p = &first_timeout; *p;) {
     Timeout* t = *p;
-    if (t->cb == cb && t->arg == arg) {
+    if (t->cb == cb && (t->arg == arg || !arg)) {
       *p = t->next;
       t->next = free_timeout;
       free_timeout = t;
@@ -390,6 +393,7 @@ void Fl::belowmouse(Fl_Widget *o) {
   if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = belowmouse_;
   if (o != p) {
+    Fl_Tooltip::enter(o);
     belowmouse_ = o;
     for (; p && !p->contains(o); p = p->parent()) p->handle(FL_LEAVE);
   }
@@ -469,6 +473,7 @@ void fl_throw_focus(Fl_Widget *o) {
   if (o->contains(Fl::focus())) Fl::focus_ = 0;
   if (o == fl_xfocus) fl_xfocus = 0;
   if (o == fl_xmousewin) fl_xmousewin = 0;
+  Fl_Tooltip::exit(o);
   fl_fix_focus();
 }
 
@@ -510,6 +515,7 @@ int Fl::handle(int event, Fl_Window* window)
     return 1;
 
   case FL_PUSH:
+    if (!pushed()) Fl_Tooltip::enter(0);
     if (grab()) w = grab();
     else if (modal() && w != modal()) return 0;
     pushed_ = w;
@@ -548,6 +554,8 @@ int Fl::handle(int event, Fl_Window* window)
     return 1;
 
   case FL_KEYBOARD:
+    Fl_Tooltip::enter((Fl_Widget*)0);
+
     fl_xfocus = window; // this should not happen!  But maybe it does:
 
     // Try it as keystroke, sending it to focus and all parents:
@@ -565,6 +573,7 @@ int Fl::handle(int event, Fl_Window* window)
     event = FL_SHORTCUT;
 
   case FL_SHORTCUT:
+    Fl_Tooltip::enter((Fl_Widget*)0);
 
     if (grab()) {w = grab(); break;} // send it to grab window
 
@@ -605,6 +614,7 @@ int Fl::handle(int event, Fl_Window* window)
 
 void Fl_Window::hide() {
   clear_visible();
+
   if (!shown()) return;
 
   // remove from the list of windows:
@@ -780,5 +790,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41 2001/02/26 00:19:02 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.4 2001/10/18 00:24:19 easysw Exp $".
 //

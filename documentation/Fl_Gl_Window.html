@@ -5,11 +5,9 @@
 <H3>Class Hierarchy</H3>
 <UL>
 <PRE>
-<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+<A href=Fl_Window.html#Fl_Window>Fl_Window</A>
    |
    +----<B>Fl_Gl_Window</B>
-           |
-           +----<A href=Fl_Pack.html#Fl_Pack>Fl_Pack</A>, <A href=Fl_Scroll.html#Fl_Scroll>Fl_Scroll</A>, <A href=Fl_Tabs.html#Fl_Tabs>Fl_Tabs</A>, <A href=Fl_Tile.html#Fl_Tile>Fl_Tile</A>, <A href=Fl_Window.html#Fl_Window>Fl_Window</A>
 </PRE>
 </UL>
 <H3>Include Files</H3>
@@ -44,7 +42,6 @@ very well for single-buffered. </P>
 <LI><A href=#Fl_Gl_Window.context>context</A></LI>
 <LI><A href=#Fl_Gl_Window.draw>draw</A></LI>
 <LI><A href=#Fl_Gl_Window.draw_overlay>draw_overlay</A></LI>
-<LI><A href=#Fl_Gl_Window.handle>handle</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
@@ -129,12 +126,12 @@ Return or set a pointer to the GLContext that this window is
 using. This is a system-dependent structure, but it is portable to copy
 the context from one window to another. You can also set it to NULL,
 which will force FLTK to recreate the context the next time <a
-href=#make_current><tt>make_current()</tt></a> is called, this is
+href=#Fl_Gl_Window.make_current><tt>make_current()</tt></a> is called, this is
 useful for getting around bugs in OpenGL implementations.
 
 <p>If <i>destroy_flag</i> is true the context will be destroyed by
 fltk when the window is destroyed, or when the <a
-href=#mode><tt>mode()</tt></a> is changed, or the next time
+href=#Fl_Gl_Window.mode><tt>mode()</tt></a> is changed, or the next time
 <tt>context(x)</tt> is called.
 
 <H4><A name=Fl_Gl_Window.valid>char Fl_Gl_Window::valid() const

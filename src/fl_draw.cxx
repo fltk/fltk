@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.5 2001/10/16 20:25:25 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -31,11 +31,16 @@
 // Aligns them against the inside of the box.
 
 #include <FL/fl_draw.H>
+#include <FL/Fl_Image.H>
+
 #include <string.h>
+#include <ctype.h>
 
 #define MAXBUF 1024
+#define min(a,b) ((a)<(b)?(a):(b))
 
-char fl_draw_shortcut;	// set by fl_labeltypes.C
+char fl_draw_shortcut;	// set by fl_labeltypes.cxx
+
 static char* underline_at;
 
 // Copy p to buf, replacing unprintable characters with ^X and \nnn
@@ -81,34 +86,20 @@ expand(const char* from, char* buf, double maxw, int& n, double &width, int wrap
 
     if (c == '\t') {
       for (c = (o-buf)%8; c<8 && o<e; c++) *o++ = ' ';
-
     } else if (c == '&' && fl_draw_shortcut && *(p+1)) {
       if (*(p+1) == '&') {p++; *o++ = '&';}
       else if (fl_draw_shortcut != 2) underline_at = o;
-
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
-
-   /*
-    * mike@fltk.org - The following escaping code causes problems when
-    * using the PostScript ISOLatin1 and WinANSI encodings, because these
-    * map to I18N characters...
-    */
-#if 0
-    } else if (c >= 128 && c < 0xA0) { // \nnn
-      *o++ = '\\';
-      *o++ = (c>>6)+'0';
-      *o++ = ((c>>3)&7)+'0';
-      *o++ = (c&7)+'0';
-#endif /* 0 */
-
     } else if (c == 0xA0) { // non-breaking space
       *o++ = ' ';
-
+    } else if (c == '@') { // Symbol???
+      if (p[1] && p[1] != '@')  break;
+      *o++ = c;
+      if (p[1]) p++;
     } else {
       *o++ = c;
-
     }
   }
 
@@ -122,65 +113,161 @@ void fl_draw(
     const char* str,	// the (multi-line) string
     int x, int y, int w, int h,	// bounding box
     Fl_Align align,
-    void (*callthis)(const char*,int,int,int)
-) {
+    void (*callthis)(const char*,int,int,int),
+    Fl_Image* img) {
   const char* p;
   const char* e;
   char buf[MAXBUF];
   int buflen;
+  char symbol[2][255], *symptr;
+  int symwidth[2], symoffset, symtotal;
 
   // count how many lines and put the last one into the buffer:
   int lines;
   double width;
-  for (p=str,lines=0; ;) {
-    e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
-    lines++;
-    if (!*e) break;
-    p = e;
+
+  symbol[0][0] = '\0';
+  symwidth[0]  = 0;
+
+  symbol[1][0] = '\0';
+  symwidth[1]  = 0;
+
+  if (str && str[0] == '@' && str[1] && str[1] != '@') {
+    // Start with a symbol...
+    for (symptr = symbol[0];
+         *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
+         *symptr++ = *str++);
+    *symptr = '\0';
+    if (isspace(*str)) str++;
+    symwidth[0] = min(w,h);
   }
 
+  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
+    strncpy(symbol[1], p, sizeof(symbol[1]) - 1);
+    symbol[1][sizeof(symbol[1]) - 1] = '\0';
+    symwidth[1] = min(w,h);
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+
+  if (str) {
+    for (p = str, lines=0; p;) {
+      e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP);
+      lines++;
+      if (!*e || *e == '@') break;
+      p = e;
+    }
+  } else lines = 0;
+
+  if ((symwidth[0] || symwidth[1]) && lines) {
+    if (symwidth[0]) symwidth[0] = lines * fl_height();
+    if (symwidth[1]) symwidth[1] = lines * fl_height();
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+  
   // figure out vertical position of the first line:
+  int xpos;
   int ypos;
   int height = fl_height();
-  if (align & FL_ALIGN_BOTTOM) ypos = y+h-(lines-1)*height;
+  int imgh = img ? img->h() : 0;
+
+  symoffset = 0;
+
+  if (align & FL_ALIGN_BOTTOM) ypos = y+h-(lines-1)*height-imgh;
   else if (align & FL_ALIGN_TOP) ypos = y+height;
-  else ypos = y+(h-lines*height)/2+height;
+  else ypos = y+(h-lines*height-imgh)/2+height;
 
-  // now draw all the lines:
-  int desc = fl_descent();
-  for (p=str; ; ypos += height) {
-    if (lines>1) e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
+  // draw the image unless the "text over image" alignment flag is set...
+  if (img && !(align & FL_ALIGN_TEXT_OVER_IMAGE)) {
+    if (img->w() > symoffset) symoffset = img->w();
 
-    int xpos;
-    if (align & FL_ALIGN_LEFT) xpos = x;
-    else if (align & FL_ALIGN_RIGHT) xpos = x+w-int(width+.5);
-    else xpos = x+int((w-width)/2);
+    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - img->w() - symwidth[1];
+    else xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
 
-    callthis(buf,buflen,xpos,ypos-desc);
-
-    if (underline_at)
-      callthis("_",1,xpos+int(fl_width(buf,underline_at-buf)),ypos-desc);
-
-    if (!*e) break;
-    p = e;
+    img->draw(xpos, ypos - height);
+    ypos += img->h();
   }
 
+  // now draw all the lines:
+  if (str) {
+    int desc = fl_descent();
+    for (p=str; ; ypos += height) {
+      if (lines>1) e = expand(p, buf, w - symtotal, buflen, width,
+                              align&FL_ALIGN_WRAP);
+      else e = "";
+
+      if (width > symoffset) symoffset = (int)(width + 0.5);
+
+      if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+      else if (align & FL_ALIGN_RIGHT) xpos = x + w - (int)(width + .5) - symwidth[1];
+      else xpos = x + (w - (int)(width + .5) - symtotal) / 2 + symwidth[0];
+
+      callthis(buf,buflen,xpos,ypos-desc);
+
+      if (underline_at)
+	callthis("_",1,xpos+int(fl_width(buf,underline_at-buf)),ypos-desc);
+
+      if (!*e || *e == '@') break;
+      p = e;
+    }
+  }
+
+  // draw the image if the "text over image" alignment flag is set...
+  if (img && (align & FL_ALIGN_TEXT_OVER_IMAGE)) {
+    if (img->w() > symoffset) symoffset = img->w();
+
+    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - img->w() - symwidth[1];
+    else xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
+
+    img->draw(xpos, ypos);
+  }
+
+  // draw the symbols, if any...
+  if (symwidth[0]) {
+    // draw to the left
+    if (align & FL_ALIGN_LEFT) xpos = x;
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - symtotal - symoffset;
+    else xpos = x + (w - symoffset - symtotal) / 2;
+
+    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth[0];
+    else if (align & FL_ALIGN_TOP) ypos = y;
+    else ypos = y + (h - symwidth[0]) / 2;
+
+    fl_draw_symbol(symbol[0], xpos, ypos, symwidth[0], symwidth[0], fl_color());
+  }
+
+  if (symwidth[1]) {
+    // draw to the right
+    if (align & FL_ALIGN_LEFT) xpos = x + symoffset + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth[1];
+    else xpos = x + (w - symoffset - symtotal) / 2 + symoffset + symwidth[0];
+
+    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth[1];
+    else if (align & FL_ALIGN_TOP) ypos = y;
+    else ypos = y + (h - symwidth[1]) / 2;
+
+    fl_draw_symbol(symbol[1], xpos, ypos, symwidth[1], symwidth[1], fl_color());
+  }
 }
 
 void fl_draw(
   const char* str,	// the (multi-line) string
   int x, int y, int w, int h,	// bounding box
-  Fl_Align align) {
-  if (!str || !*str) return;
+  Fl_Align align,
+  Fl_Image* img) {
+  if ((!str || !*str) && !img) return;
   if (w && h && !fl_not_clipped(x, y, w, h)) return;
   if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
-  fl_draw(str, x, y, w, h, align, fl_draw);
+  fl_draw(str, x, y, w, h, align, fl_draw, img);
   if (align & FL_ALIGN_CLIP) fl_pop_clip();
 }
 
 void fl_measure(const char* str, int& w, int& h) {
+  if (!str || !*str) {w = 0; h = 0; return;}
   h = fl_height();
-  if (!str || !*str) {w = 0; return;}
   const char* p;
   const char* e;
   char buf[MAXBUF];
@@ -188,17 +275,53 @@ void fl_measure(const char* str, int& w, int& h) {
   int lines;
   double width;
   int W = 0;
-  for (p=str,lines=0; ;) {
-    e = expand(p, buf, w, buflen, width, w!=0);
+  char symbol[2][255], *symptr;
+  int symwidth[2], symtotal;
+
+  // count how many lines and put the last one into the buffer:
+  symbol[0][0] = '\0';
+  symwidth[0]  = 0;
+
+  symbol[1][0] = '\0';
+  symwidth[1]  = 0;
+
+  if (str && str[0] == '@' && str[1] && str[1] != '@') {
+    // Start with a symbol...
+    for (symptr = symbol[0];
+         *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
+         *symptr++ = *str++);
+    *symptr = '\0';
+    if (isspace(*str)) str++;
+    symwidth[0] = min(w,h);
+  }
+
+  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
+    strncpy(symbol[1], p, sizeof(symbol[1]) - 1);
+    symbol[1][sizeof(symbol[1]) - 1] = '\0';
+    symwidth[1] = min(w,h);
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+  
+  for (p = str, lines=0; p;) {
+    e = expand(p, buf, w - symtotal, buflen, width, w != 0);
     if (int(width) > W) W = int(width);
     lines++;
-    if (!*e) break;
+    if (!*e || *e == '@') break;
     p = e;
   }
-  w = W;
+
+  if ((symwidth[0] || symwidth[1]) && lines) {
+    if (symwidth[0]) symwidth[0] = lines * fl_height();
+    if (symwidth[1]) symwidth[1] = lines * fl_height();
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+  
+  w = W + symtotal;
   h = lines*h;
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.5 2001/10/16 20:25:25 easysw Exp $".
 //

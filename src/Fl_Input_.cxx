@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.2 2001/10/29 03:44:32 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -231,7 +231,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   fl_clip(X, Y, W, H);
-  Fl_Color color = active_r() ? textcolor() : inactive(textcolor());
+  Fl_Color color = active_r() ? textcolor() : fl_inactive(textcolor());
 
   p = value();
   // visit each line and draw it:
@@ -276,7 +276,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       else offset2 = strlen(buf);
       fl_color(selection_color());
       fl_rectf(X+int(x1+.5), Y+ypos, int(x2-x1), height);
-      fl_color(contrast(textcolor(), selection_color()));
+      fl_color(fl_contrast(textcolor(), selection_color()));
       fl_draw(buf+offset1, offset2-offset1, X+x1, Y+ypos+desc);
       if (pp < e) {
 	fl_color(color);
@@ -670,6 +670,10 @@ void Fl_Input_::maybe_do_callback() {
 int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
   switch (event) {
 
+  case FL_ENTER:
+  case FL_LEAVE:
+    return 1;
+
   case FL_FOCUS:
     if (mark_ == position_) {
       minimal_update(size()+1);
@@ -817,5 +821,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.2 2001/10/29 03:44:32 easysw Exp $".
 //

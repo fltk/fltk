@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24 2001/04/27 14:39:27 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.4 2001/10/27 03:45:29 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -448,9 +448,18 @@ int fl_handle(const XEvent& xevent)
 
   case ButtonPress:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy(); checkdouble();
-    Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
-    event = FL_PUSH;
+    set_event_xy();
+    if (xevent.xbutton.button == Button4) {
+      Fl::e_dy = -1; // Up
+      event = FL_MOUSEWHEEL;
+    } else if (xevent.xbutton.button == Button5) {
+      Fl::e_dy = +1; // Down
+      event = FL_MOUSEWHEEL;
+    } else {
+      Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
+      event = FL_PUSH;
+      checkdouble();
+    }
     break;
 
   case MotionNotify:
@@ -478,19 +487,33 @@ int fl_handle(const XEvent& xevent)
     event = FL_UNFOCUS;
     break;
 
-  case KeyPress: {
+  case KeyPress:
+  case KeyRelease: {
     int keycode = xevent.xkey.keycode;
     fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char buffer[21];
+    int len;
     KeySym keysym;
-    //static XComposeStatus compose;
-    int len = XLookupString((XKeyEvent*)&(xevent.xkey),
-			    buffer, 20, &keysym, 0/*&compose*/);
-    if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
-      // force it to type a character (not sure if this ever is needed):
-      if (!len) {buffer[0] = char(keysym); len = 1;}
-      // ignore all effects of shift on the keysyms, which makes it a lot
-      // easier to program shortcuts and is Windoze-compatable:
+    if (xevent.type == KeyPress) {
+      event = FL_KEYDOWN;
+      //static XComposeStatus compose;
+      len = XLookupString((XKeyEvent*)&(xevent.xkey),
+	                  buffer, 20, &keysym, 0/*&compose*/);
+      if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
+	// force it to type a character (not sure if this ever is needed):
+	if (!len) {buffer[0] = char(keysym); len = 1;}
+	// ignore all effects of shift on the keysyms, which makes it a lot
+	// easier to program shortcuts and is Windoze-compatable:
+	keysym = XKeycodeToKeysym(fl_display, keycode, 0);
+      }
+      if (Fl::event_state(FL_CTRL) && keysym == '-') buffer[0] = 0x1f; // ^_
+      buffer[len] = 0;
+      Fl::e_text = buffer;
+      Fl::e_length = len;
+    } else {
+      event = FL_KEYUP;
+      fl_key_vector[keycode/8] &= ~(1 << (keycode%8));
+      // keyup events just get the unshifted keysym:
       keysym = XKeycodeToKeysym(fl_display, keycode, 0);
     }
 #ifdef __sgi
@@ -536,21 +559,10 @@ int fl_handle(const XEvent& xevent)
 	keysym = table[keysym-0xff91];
       }
     }
-    buffer[len] = 0;
     Fl::e_keysym = int(keysym);
-    Fl::e_text = buffer;
-    Fl::e_length = len;
     set_event_xy();
     Fl::e_is_click = 0;
-    if (Fl::event_state(FL_CTRL) && keysym == '-') buffer[0] = 0x1f; // ^_
-    event = FL_KEYBOARD;
     break;}
-
-  case KeyRelease: {
-    int keycode = xevent.xkey.keycode;
-    fl_key_vector[keycode/8] &= ~(1 << (keycode%8));
-    set_event_xy();}
-    break;
 
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
@@ -693,7 +705,11 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
   attr.colormap = colormap;
   attr.border_pixel = 0;
   attr.bit_gravity = 0; // StaticGravity;
-  attr.override_redirect = 0;
+  if (w->override()) {
+    attr.override_redirect = 1;
+    attr.save_under = 1;
+    mask |= CWOverrideRedirect | CWSaveUnder;
+  } else attr.override_redirect = 0;
   if (Fl::grab()) {
     attr.save_under = 1; mask |= CWSaveUnder;
     if (!w->border()) {attr.override_redirect = 1; mask |= CWOverrideRedirect;}
@@ -777,7 +793,7 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 // Send X window stuff that can be changed over time:
 
 void Fl_X::sendxjunk() {
-  if (w->parent()) return; // it's not a window manager window!
+  if (w->parent() || w->override()) return; // it's not a window manager window!
 
   if (!w->size_range_set) { // default size_range based on resizable():
     if (w->resizable()) {
@@ -918,5 +934,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24 2001/04/27 14:39:27 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.4 2001/10/27 03:45:29 easysw Exp $".
 //

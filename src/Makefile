@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14 2001/01/22 15:13:40 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.15 2001/10/27 03:33:25 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -33,6 +33,7 @@ CPPFILES = \
 	Fl_Box.cxx \
 	Fl_Button.cxx \
 	Fl_Chart.cxx \
+	Fl_Check_Browser.cxx \
 	Fl_Check_Button.cxx \
 	Fl_Choice.cxx \
 	Fl_Clock.cxx \
@@ -40,10 +41,13 @@ CPPFILES = \
 	Fl_Counter.cxx \
 	Fl_Dial.cxx \
 	Fl_Double_Window.cxx \
-	Fl_Gl_Choice.cxx \
-	Fl_Gl_Overlay.cxx \
-	Fl_Gl_Window.cxx \
+	Fl_File_Browser.cxx \
+	Fl_File_Chooser.cxx \
+	Fl_File_Chooser2.cxx \
+	Fl_File_Icon.cxx \
 	Fl_Group.cxx \
+	Fl_Help_Dialog.cxx \
+	Fl_Help_View.cxx \
 	Fl_Image.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
@@ -61,6 +65,7 @@ CPPFILES = \
 	Fl_Pack.cxx \
 	Fl_Pixmap.cxx \
 	Fl_Positioner.cxx \
+	Fl_Progress.cxx \
 	Fl_Repeat_Button.cxx \
 	Fl_Return_Button.cxx \
 	Fl_Roller.cxx \
@@ -70,7 +75,11 @@ CPPFILES = \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
 	Fl_Tabs.cxx \
+	Fl_Text_Buffer.cxx \
+	Fl_Text_Display.cxx \
+	Fl_Text_Editor.cxx \
 	Fl_Tile.cxx \
+	Fl_Tooltip.cxx \
 	Fl_Valuator.cxx \
 	Fl_Value_Input.cxx \
 	Fl_Value_Output.cxx \
@@ -80,6 +89,7 @@ CPPFILES = \
 	Fl_Window_fullscreen.cxx \
 	Fl_Window_hotspot.cxx \
 	Fl_Window_iconize.cxx \
+	Fl_Wizard.cxx \
 	Fl_abort.cxx \
 	Fl_add_idle.cxx \
 	Fl_arg.cxx \
@@ -111,7 +121,7 @@ CPPFILES = \
 	fl_draw_image.cxx \
 	fl_draw_pixmap.cxx \
 	fl_engraved_label.cxx \
-	fl_file_chooser.cxx \
+	fl_file_dir.cxx \
 	fl_font.cxx \
 	fl_labeltype.cxx \
 	fl_line_style.cxx \
@@ -134,7 +144,12 @@ CPPFILES = \
 	forms_free.cxx \
 	forms_fselect.cxx \
 	forms_pixmap.cxx \
-	forms_timer.cxx \
+	forms_timer.cxx
+
+GLCPPFILES = \
+	Fl_Gl_Choice.cxx \
+	Fl_Gl_Overlay.cxx \
+	Fl_Gl_Window.cxx \
 	gl_draw.cxx \
 	gl_start.cxx \
 	glut_compatability.cxx \
@@ -148,64 +163,109 @@ CLEAN =
 
 include ../makeinclude
 
-LIBRARY = ../lib/$(LIBNAME)
-
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
+GLOBJECTS = $(GLCPPFILES:.cxx=.o)
 
-all:	$(LIBRARY) $(DSONAME)
+all:	$(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 
-$(LIBRARY): $(OBJECTS)
+$(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
+	-$(RM) $@
 	$(LIBCOMMAND) $@ $(OBJECTS)
 	$(RANLIB) $@
 
-libfltk.so.1 libfltk.sl.1: $(OBJECTS)
+libfltk.so.1.1 libfltk.sl.1.1: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(OBJECTS)
+	$(DSOCOMMAND) $@ $(OBJECTS) $(IMAGELIBS)
+
+libfltk_s.a: $(OBJECTS)
+	echo $(DSOCOMMAND) libfltk_s.o ...
+	$(DSOCOMMAND) libfltk_s.o $(OBJECTS) $(IMAGELIBS)
+	echo $(LIBCOMMAND) libfltk_s.a libfltk_s.o
+	-$(RM) $@
+	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
+	chmod +x libfltk_s.a
+
+$(GLLIBNAME): $(GLOBJECTS)
+	echo $(LIBCOMMAND) $@ ...
+	-$(RM) $@
+	$(LIBCOMMAND) $@ $(GLOBJECTS)
+	$(RANLIB) $@
+
+libfltk_gl.so.1.1 libfltk_gl.sl.1.1: $(GLOBJECTS)
+	echo $(DSOCOMMAND) $@ ...
+	$(DSOCOMMAND) $@ $(GLOBJECTS)
+
+libfltk_gl_s.a: $(GLOBJECTS)
+	echo $(DSOCOMMAND) libfltk_gl_s.o ...
+	$(DSOCOMMAND) libfltk_gl_s.o $(GLOBJECTS)
+	echo $(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
+	-$(RM) $@
+	$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
+	chmod +x libfltk_gl_s.a
 
 clean :
 	-@ rm -f *.o *.do $(DSONAME) $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
 	touch makedepend
 
 depend:
-	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+#	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+	makedepend -Y -I.. -f makedepend $(CPPFILES) $(GLCPPFILES) $(CFILES)
 
 include makedepend
 
 ################################################################
 
-install: $(LIBRARY) $(DSONAME)
+install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	echo "Installing libraries..."
 	-mkdir -p $(libdir)
 	rm -f $(libdir)/$(LIBNAME)
-	-cp $(LIBRARY) $(libdir)
-	-chmod 644 $(libdir)/$(LIBNAME)
-	if test "$(DSONAME)" = libfltk.so.1; then\
+	-cp $(LIBNAME) $(GLLIBNAME) $(libdir)
+	if test x$(DSONAME) = xlibfltk.so.1.1; then\
 		rm -f $(libdir)/libfltk.so*;\
-		cp libfltk.so.1 $(libdir); \
-		chmod 755 $(libdir)/libfltk.so.1; \
-		ln -s libfltk.so.1 $(libdir)/libfltk.so;\
+		cp libfltk.so.1.1 $(libdir); \
+		ln -s libfltk.so.1.1 $(libdir)/libfltk.so;\
 	fi
-	if test "$(DSONAME)" = libfltk.sl.1; then\
+	if test x$(DSONAME) = xlibfltk.sl.1.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
-		cp libfltk.sl.1 $(libdir); \
-		chmod 755 $(libdir)/libfltk.sl.1; \
-		ln -s libfltk.sl.1 $(libdir)/libfltk.sl;\
+		cp libfltk.sl.1.1 $(libdir); \
+		ln -s libfltk.sl.1.1 $(libdir)/libfltk.sl;\
+	fi
+	if test x$(DSONAME) = xlibfltk_s.a; then\
+		rm -f $(libdir)/libfltk_s.a;\
+		cp libfltk_s.a $(libdir); \
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl.so.1.1; then\
+		rm -f $(libdir)/libfltk_gl.so*;\
+		cp libfltk_gl.so.1.1 $(libdir); \
+		ln -s libfltk_gl.so.1.1 $(libdir)/libfltk_gl.so;\
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.1; then\
+		rm -f $(libdir)/libfltk_gl.sl*;\
+		cp libfltk_gl.sl.1.1 $(libdir); \
+		ln -s libfltk_gl.sl.1.1 $(libdir)/libfltk_gl.sl;\
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
+		rm -f $(libdir)/libfltk_gl_s.a;\
+		cp libfltk_gl_s.a $(libdir); \
 	fi
 	echo "Installing include files..."
 	-mkdir -p $(includedir)
 	rm -rf $(includedir)/FL
 	mkdir $(includedir)/FL
 	cp ../FL/*.[hH] $(includedir)/FL
-	-chmod 755 $(includedir)/FL
-	-chmod 644 $(includedir)/FL/*
 	cd $(includedir)/FL;\
 	for file in *.H; do\
+		rm -f "`basename $$file H`h";\
 		ln -s $$file "`basename $$file H`h";\
 	done
+	rm -f $(includedir)/FL/fl_file_chooser.H
+	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.H
+	rm -f $(includedir)/FL/fl_file_chooser.h
+	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.h
 	rm -f $(includedir)/Fl
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14 2001/01/22 15:13:40 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.15 2001/10/27 03:33:25 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Button.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $"
 //
 // Button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -65,11 +65,11 @@ public:
   // back compatability:
   void shortcut(const char *s) {shortcut(fl_old_shortcut(s));}
   Fl_Color down_color() const {return selection_color();}
-  void down_color(uchar c) {selection_color(c);}
+  void down_color(unsigned c) {selection_color(c);}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Button.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Button.H,v 1.5.2.3.2.1 2001/10/29 03:44:31 easysw Exp $".
 //
