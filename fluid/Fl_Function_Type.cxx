@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.10 1999/12/17 18:34:55 bill Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.11 2000/01/05 03:17:26 bill Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -66,9 +66,13 @@ const char *_c_check(const char * & c, int type) {
       while ((*c != '*' || c[1] != '/') && *c) c++;
       if (*c == '*') c+=2;
       else {
-        return "unterminated /* ... */ comment";
+        return "missing '*/'";
       }
     }
+    break;
+  case '#':
+    // treat cpp directives as a comment:
+    while (*c != '\n' && *c) c++;
     break;
   case '{':
     if (type==')') goto UNEXPECTED;
@@ -89,7 +93,6 @@ const char *_c_check(const char * & c, int type) {
     break;
   case '}':
   case ')':
-  case '#':
   UNEXPECTED:
     if (type == *(c-1)) return 0;
     sprintf(buffer, "unexpected %c", *(c-1));
@@ -661,5 +664,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.10 1999/12/17 18:34:55 bill Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.11 2000/01/05 03:17:26 bill Exp $".
 //

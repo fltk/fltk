@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Repeat_Button.H,v 1.5.2.1 1999/07/10 23:16:13 mike Exp $"
+// "$Id: Fl_Repeat_Button.H,v 1.5.2.2 2000/01/05 03:17:24 bill Exp $"
 //
 // Repeat button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -25,6 +25,7 @@
 
 #ifndef Fl_Repeat_Button_H
 #define Fl_Repeat_Button_H
+#include "Fl.H"
 #include "Fl_Button.H"
 
 class Fl_Repeat_Button : public Fl_Button {
@@ -42,5 +43,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Repeat_Button.H,v 1.5.2.1 1999/07/10 23:16:13 mike Exp $".
+// End of "$Id: Fl_Repeat_Button.H,v 1.5.2.2 2000/01/05 03:17:24 bill Exp $".
 //
