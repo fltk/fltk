@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.6 1999/01/07 19:17:42 mike Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.6.2.1 2000/02/21 10:30:00 bill Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -239,6 +239,8 @@ static int to_canonical(char *to, const char *from) {
 static int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
+  if (fl_free_font > FL_FREE_FONT) // already been here
+    return (Fl_Font)fl_free_font;
   fl_open_display();
   int xlistsize;
   char buf[20];
@@ -325,5 +327,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.6 1999/01/07 19:17:42 mike Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.6.2.1 2000/02/21 10:30:00 bill Exp $".
 //
