@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.58 2004/10/18 20:22:25 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.59 2004/11/20 03:19:58 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -253,7 +253,7 @@ libfltk_forms.1.1.dylib: $(FLOBJECTS) libfltk.1.1.dylib
 		-install_name $(libdir)/$@ \
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
-		$(FLOBJECTS) $(LDLIBS) -L. -lfltk
+		$(FLOBJECTS) -L. $(LDLIBS) -lfltk
 	$(RM) libfltk_forms.dylib
 	$(LN) libfltk_forms.1.1.dylib libfltk_forms.dylib
 
@@ -289,7 +289,7 @@ libfltk_gl.1.1.dylib: $(GLOBJECTS) libfltk.1.1.dylib
 		-install_name $(libdir)/$@ \
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
-		$(GLOBJECTS) $(GLDLIBS) -L. -lfltk
+		$(GLOBJECTS) -L. $(GLDLIBS) -lfltk
 	$(RM) libfltk_gl.dylib
 	$(LN) libfltk_gl.1.1.dylib libfltk_gl.dylib
 
@@ -325,7 +325,7 @@ libfltk_images.1.1.dylib: $(IMGOBJECTS) libfltk.1.1.dylib
 		-install_name $(libdir)/$@ \
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
-		$(IMGOBJECTS) $(LDLIBS) $(IMAGELIBS) -L. -lfltk
+		$(IMGOBJECTS) $(LDLIBS) -L. $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.dylib
 	$(LN) libfltk_images.1.1.dylib libfltk_images.dylib
 
@@ -583,5 +583,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.58 2004/10/18 20:22:25 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.59 2004/11/20 03:19:58 easysw Exp $".
 #

@@ -85,7 +85,7 @@ Fl_Window* make_about_panel() {
         o->labelcolor(7);
         o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
       }
-      { Fl_Box* o = new Fl_Box(140, 27, 160, 123, "FLTK User\nInterface\nDesigner\nVersion 1.1.5");
+      { Fl_Box* o = new Fl_Box(140, 27, 160, 123, "FLTK User\nInterface\nDesigner\nVersion 1.1.6");
         o->box(FL_OVAL_BOX);
         o->color(12);
         o->selection_color(47);

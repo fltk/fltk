@@ -1,3 +1,15 @@
+CHANGES IN FLTK 1.1.6
+
+	- Watcom fixes (STR #584, STR #594, STR #595)
+	- Fixed library include order when building DSOs on
+	  MacOS X (STR #596)
+	- fl_xid() could cause a WIN32 application to crash (STR
+	  #560, STR #576, STR #618)
+	- Fl_Browser::remove_() removed the item from the list
+	  before computing the item height, which caused
+	  problems with some programs (STR #613)
+
+
 CHANGES IN FLTK 1.1.5
 
 	- Documentation updates (STR #568, STR #570)

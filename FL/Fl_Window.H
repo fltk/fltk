@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.12.2.6.2.8 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Window.H,v 1.12.2.6.2.9 2004/11/20 03:19:57 easysw Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -88,7 +88,7 @@ public:
   void hotspot(const Fl_Widget& p, int offscreen = 0) {hotspot(&p,offscreen);}
   void free_position()	{clear_flag(FL_FORCE_POSITION);}
   void size_range(int a, int b, int c=0, int d=0, int e=0, int f=0, int g=0) {
-    minw=a; minh=b; maxw=c; maxh=d; dw=e; dh=f; aspect=g; size_range_();}
+    minw=(short)a; minh=(short)b; maxw=(short)c; maxh=(short)d; dw=(short)e; dh=(short)f; aspect=(short)g; size_range_();}
 
   const char* label() const	{return Fl_Widget::label();}
   const char* iconlabel() const	{return iconlabel_;}
@@ -124,5 +124,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.12.2.6.2.8 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Window.H,v 1.12.2.6.2.9 2004/11/20 03:19:57 easysw Exp $".
 //

@@ -267,5 +267,5 @@ int main(int argc, char **argv) {
   createMenuPage();
   win->end();
   win->show(argc, argv);
-  Fl::run();
+  return Fl::run();
 }

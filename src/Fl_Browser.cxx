@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.12 2004/07/26 20:52:50 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.13 2004/11/20 03:19:58 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -116,13 +116,13 @@ FL_BLINE* Fl_Browser::_remove(int line) {
 
   cacheline = line-1;
   cache = ttt->prev;
+  lines--;
+  full_height_ -= item_height(ttt);
   if (ttt->prev) ttt->prev->next = ttt->next;
   else first = ttt->next;
   if (ttt->next) ttt->next->prev = ttt->prev;
   else last = ttt->prev;
 
-  lines--;
-  full_height_ -= item_height(ttt);
   return(ttt);
 }
 
@@ -546,5 +546,5 @@ void Fl_Browser::swap(int ai, int bi) {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.12 2004/07/26 20:52:50 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.13 2004/11/20 03:19:58 easysw Exp $".
 //
