@@ -2,6 +2,10 @@
 
 #include "../FL/Fl_File_Chooser.H"
 
+const char *Fl_File_Chooser::directory_label = "Directory:";
+const char *Fl_File_Chooser::filename_label = "Filename:";
+const char *Fl_File_Chooser::filter_label = "New Filter?";
+
 inline void Fl_File_Chooser::cb_window_i(Fl_Window*, void*) {
   fileList->deselect();
 fileName->value("");
@@ -11,38 +15,17 @@ void Fl_File_Chooser::cb_window(Fl_Window* o, void* v) {
   ((Fl_File_Chooser*)(o->user_data()))->cb_window_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_fileList_i(Fl_File_Browser*, void*) {
-  fileListCB();
-}
-void Fl_File_Chooser::cb_fileList(Fl_File_Browser* o, void* v) {
-  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_fileList_i(o,v);
-}
+inline void Fl_File_Chooser::cb_dirMenu_i(Fl_Choice*, void*) {
+  char pathname[1024];
+int i;
 
-inline void Fl_File_Chooser::cb_Cancel_i(Fl_Button*, void*) {
-  fileList->deselect();
-fileName->value("");
-window->hide();
+pathname[0] = '\0';
+for (i = 1; i <= dirMenu->value(); i ++)
+  strcat(pathname, dirMenu->text(i));
+directory(pathname);
 }
-void Fl_File_Chooser::cb_Cancel(Fl_Button* o, void* v) {
-  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_Cancel_i(o,v);
-}
-
-inline void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
-  // Do any callback that is registered...
-if (callback_)
-  (*callback_)(this, data_);
-
-window->hide();
-}
-void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
-  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_okButton_i(o,v);
-}
-
-inline void Fl_File_Chooser::cb_fileName_i(Fl_Input*, void*) {
-  fileNameCB();
-}
-void Fl_File_Chooser::cb_fileName(Fl_Input* o, void* v) {
-  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_fileName_i(o,v);
+void Fl_File_Chooser::cb_dirMenu(Fl_Choice* o, void* v) {
+  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_dirMenu_i(o,v);
 }
 
 inline void Fl_File_Chooser::cb_upButton_i(Fl_Button*, void*) {
@@ -70,22 +53,9 @@ static unsigned char idata_new[] =
 \200\1\200\377\377\0\0";
 static Fl_Bitmap image_new(idata_new, 16, 16);
 
-inline void Fl_File_Chooser::cb_dirMenu_i(Fl_Choice*, void*) {
-  char pathname[1024];
-int i;
-
-pathname[0] = '\0';
-for (i = 1; i <= dirMenu->value(); i ++)
-  strcat(pathname, dirMenu->text(i));
-directory(pathname);
-}
-void Fl_File_Chooser::cb_dirMenu(Fl_Choice* o, void* v) {
-  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_dirMenu_i(o,v);
-}
-
 inline void Fl_File_Chooser::cb__i(Fl_Button*, void*) {
   const char *f;
-if ((f = fl_input("New Filter?",
+if ((f = fl_input(filter_label,
                   fileList->filter())) != NULL)
 {
   fileList->filter(f);
@@ -100,30 +70,50 @@ static unsigned char idata_allfiles[] =
 "\374?\4 \4 \4 \204!\244%\304#\364/\364/\304#\244%\204!\4 \4 \4 \374?";
 static Fl_Bitmap image_allfiles(idata_allfiles, 16, 16);
 
+inline void Fl_File_Chooser::cb_fileList_i(Fl_File_Browser*, void*) {
+  fileListCB();
+}
+void Fl_File_Chooser::cb_fileList(Fl_File_Browser* o, void* v) {
+  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_fileList_i(o,v);
+}
+
+inline void Fl_File_Chooser::cb_fileName_i(Fl_Input*, void*) {
+  fileNameCB();
+}
+void Fl_File_Chooser::cb_fileName(Fl_Input* o, void* v) {
+  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_fileName_i(o,v);
+}
+
+inline void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
+  // Do any callback that is registered...
+if (callback_)
+  (*callback_)(this, data_);
+
+window->hide();
+}
+void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
+  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_okButton_i(o,v);
+}
+
+inline void Fl_File_Chooser::cb_Cancel_i(Fl_Button*, void*) {
+  fileList->deselect();
+fileName->value("");
+window->hide();
+}
+void Fl_File_Chooser::cb_Cancel(Fl_Button* o, void* v) {
+  ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_Cancel_i(o,v);
+}
+
 Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
   Fl_Window* w;
   { Fl_Window* o = window = new Fl_Window(375, 315, "Pick a File");
     w = o;
     o->callback((Fl_Callback*)cb_window, (void*)(this));
-    { Fl_File_Browser* o = fileList = new Fl_File_Browser(10, 45, 355, 180);
-      o->type(2);
-      o->callback((Fl_Callback*)cb_fileList);
-      Fl_Group::current()->resizable(o);
-      w->hotspot(o);
-    }
-    { Fl_Button* o = new Fl_Button(285, 280, 80, 25, "Cancel");
-      o->callback((Fl_Callback*)cb_Cancel);
-      o->label(fl_cancel);
-    }
-    { Fl_Return_Button* o = okButton = new Fl_Return_Button(200, 280, 75, 25, "OK");
-      o->callback((Fl_Callback*)cb_okButton);
-      okButton->label(fl_ok);
-    }
-    { Fl_Input* o = fileName = new Fl_Input(10, 245, 355, 25, "Filename:");
-      o->callback((Fl_Callback*)cb_fileName);
-      o->align(FL_ALIGN_TOP_LEFT);
-      o->when(FL_WHEN_ENTER_KEY);
-      fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
+    { Fl_Choice* o = dirMenu = new Fl_Choice(95, 10, 180, 25, "Directory:");
+      o->tooltip("Choose a parent directory.");
+      o->down_box(FL_BORDER_BOX);
+      o->callback((Fl_Callback*)cb_dirMenu);
+      dirMenu->label(directory_label);
     }
     { Fl_Button* o = upButton = new Fl_Button(280, 10, 25, 25);
       o->tooltip("Show the parent directory.");
@@ -137,11 +127,6 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       o->labelsize(8);
       o->callback((Fl_Callback*)cb_newButton);
     }
-    { Fl_Choice* o = dirMenu = new Fl_Choice(95, 10, 180, 25, "Directory:");
-      o->tooltip("Choose a parent directory.");
-      o->down_box(FL_BORDER_BOX);
-      o->callback((Fl_Callback*)cb_dirMenu);
-    }
     { Fl_Button* o = new Fl_Button(340, 10, 25, 25);
       o->tooltip("Change the filename filter.");
       o->image(image_allfiles);
@@ -149,6 +134,27 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       o->labelcolor(4);
       o->callback((Fl_Callback*)cb_);
       o->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
+    }
+    { Fl_File_Browser* o = fileList = new Fl_File_Browser(10, 45, 355, 180);
+      o->type(2);
+      o->callback((Fl_Callback*)cb_fileList);
+      Fl_Group::current()->resizable(o);
+      w->hotspot(o);
+    }
+    { Fl_Input* o = fileName = new Fl_Input(10, 245, 355, 25, "Filename:");
+      o->callback((Fl_Callback*)cb_fileName);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_ENTER_KEY);
+      fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
+      fileName->label(filename_label);
+    }
+    { Fl_Return_Button* o = okButton = new Fl_Return_Button(200, 280, 75, 25, "OK");
+      o->callback((Fl_Callback*)cb_okButton);
+      okButton->label(fl_ok);
+    }
+    { Fl_Button* o = new Fl_Button(285, 280, 80, 25, "Cancel");
+      o->callback((Fl_Callback*)cb_Cancel);
+      o->label(fl_cancel);
     }
     if (title) window->label(title);
     o->set_modal();

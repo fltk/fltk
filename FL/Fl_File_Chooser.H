@@ -7,12 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <FL/Fl_File_Browser.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Return_Button.H>
-#include <FL/fl_ask.H>
-#include <FL/Fl_Input.H>
 #include <FL/Fl_Choice.H>
+#include <FL/Fl_Button.H>
+#include <FL/fl_ask.H>
+#include <FL/Fl_File_Browser.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Return_Button.H>
 
 class Fl_File_Chooser {
 public:
@@ -22,28 +22,28 @@ private:
   Fl_Window *window;
   inline void cb_window_i(Fl_Window*, void*);
   static void cb_window(Fl_Window*, void*);
-  Fl_File_Browser *fileList;
-  inline void cb_fileList_i(Fl_File_Browser*, void*);
-  static void cb_fileList(Fl_File_Browser*, void*);
-  inline void cb_Cancel_i(Fl_Button*, void*);
-  static void cb_Cancel(Fl_Button*, void*);
-  Fl_Return_Button *okButton;
-  inline void cb_okButton_i(Fl_Return_Button*, void*);
-  static void cb_okButton(Fl_Return_Button*, void*);
-  Fl_Input *fileName;
-  inline void cb_fileName_i(Fl_Input*, void*);
-  static void cb_fileName(Fl_Input*, void*);
+  Fl_Choice *dirMenu;
+  inline void cb_dirMenu_i(Fl_Choice*, void*);
+  static void cb_dirMenu(Fl_Choice*, void*);
   Fl_Button *upButton;
   inline void cb_upButton_i(Fl_Button*, void*);
   static void cb_upButton(Fl_Button*, void*);
   Fl_Button *newButton;
   inline void cb_newButton_i(Fl_Button*, void*);
   static void cb_newButton(Fl_Button*, void*);
-  Fl_Choice *dirMenu;
-  inline void cb_dirMenu_i(Fl_Choice*, void*);
-  static void cb_dirMenu(Fl_Choice*, void*);
   inline void cb__i(Fl_Button*, void*);
   static void cb_(Fl_Button*, void*);
+  Fl_File_Browser *fileList;
+  inline void cb_fileList_i(Fl_File_Browser*, void*);
+  static void cb_fileList(Fl_File_Browser*, void*);
+  Fl_Input *fileName;
+  inline void cb_fileName_i(Fl_Input*, void*);
+  static void cb_fileName(Fl_Input*, void*);
+  Fl_Return_Button *okButton;
+  inline void cb_okButton_i(Fl_Return_Button*, void*);
+  static void cb_okButton(Fl_Return_Button*, void*);
+  inline void cb_Cancel_i(Fl_Button*, void*);
+  static void cb_Cancel(Fl_Button*, void*);
   void (*callback_)(Fl_File_Chooser*, void *);
   void *data_;
   char directory_[1024];
@@ -80,6 +80,9 @@ public:
   const char *value(int f = 1);
   void value(const char *filename);
   int visible();
+  static const char *directory_label;
+  static const char *filename_label;
+  static const char *filter_label;
 };
 extern FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname);
 extern FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname);

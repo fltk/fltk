@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Progress.H,v 1.1.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Progress.H,v 1.1.2.3 2002/04/18 20:37:29 easysw Exp $"
 //
 // Progress bar widget definitions.
 //
@@ -40,8 +40,8 @@
 class Fl_Progress : public Fl_Widget
 {
   float	value_,
-	      minimum_,
-	      maximum_;
+	minimum_,
+	maximum_;
 
   protected:
 
@@ -64,5 +64,5 @@ class Fl_Progress : public Fl_Widget
 #endif // !_Fl_Progress_H_
 
 //
-// End of "$Id: Fl_Progress.H,v 1.1.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Progress.H,v 1.1.2.3 2002/04/18 20:37:29 easysw Exp $".
 //

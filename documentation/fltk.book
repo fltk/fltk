@@ -1,4 +1,4 @@
-#HTMLDOC 1.8.17
+#HTMLDOC 1.8.19
 -t pdf13 -f fltk.pdf --book --toclevels 2 --no-numbered --toctitle "Table of Contents" --title --titleimage FL.gif --linkstyle underline --size Universal --left 1.00in --right 0.50in --top 0.50in --bottom 0.50in --header .t. --footer h.1 --tocheader .t. --tocfooter ..i --duplex --portrait --color --no-pscommands --no-xrxcomments --compression=9 --jpeg=50 --fontsize 11.0 --fontspacing 1.2 --headingfont Helvetica --bodyfont Times --headfootsize 11.0 --headfootfont Helvetica --charset 8859-1 --links --no-truetype --pagemode outline --pagelayout single --firstpage c1 --pageeffect none --pageduration 10 --effectduration 1.0 --no-encryption --permissions all  --owner-password ""  --user-password "" --browserwidth 680
 preface.html
 intro.html
@@ -60,6 +60,7 @@ Fl_Pixmap.html
 Fl_PNG_Image.html
 Fl_PNM_Image.html
 Fl_Positioner.html
+Fl_Progress.html
 Fl_Repeat_Button.html
 Fl_RGB_Image.html
 Fl_Return_Button.html

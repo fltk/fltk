@@ -22,19 +22,49 @@ window->hide();} open
       code2 {\#include <stdlib.h>}
       code3 {\#include <string.h>} modal visible
     } {
+      Fl_Choice dirMenu {
+        label {Directory:}
+        callback {char pathname[1024];
+int i;
+
+pathname[0] = '\\0';
+for (i = 1; i <= dirMenu->value(); i ++)
+  strcat(pathname, dirMenu->text(i));
+directory(pathname);} open
+        private tooltip {Choose a parent directory.} xywh {95 10 180 25} down_box BORDER_BOX
+        code0 {dirMenu->label(directory_label);}
+      } {}
+      Fl_Button upButton {
+        callback {up();}
+        private tooltip {Show the parent directory.} image {up.xbm} xywh {280 10 25 25} labelsize 8
+      }
+      Fl_Button newButton {
+        callback {newdir();}
+        private tooltip {Create a new directory.} image {new.xbm} xywh {310 10 25 25} labelsize 8
+      }
+      Fl_Button {} {
+        callback {const char *f;
+if ((f = fl_input(filter_label,
+                  fileList->filter())) != NULL)
+{
+  fileList->filter(f);
+  rescan();
+}}
+        private tooltip {Change the filename filter.} image {allfiles.xbm} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
+        code0 {\#include <FL/fl_ask.H>}
+      }
       Fl_Browser fileList {
         callback {fileListCB();}
         private xywh {10 45 355 180} type Hold resizable hotspot
         code0 {\#include <FL/Fl_File_Browser.H>}
         class Fl_File_Browser
       }
-      Fl_Button {} {
-        label Cancel
-        callback {fileList->deselect();
-fileName->value("");
-window->hide();}
-        private xywh {285 280 80 25}
-        code0 {o->label(fl_cancel);}
+      Fl_Input fileName {
+        label {Filename:}
+        callback {fileNameCB();}
+        private xywh {10 245 355 25} align 5 when 8
+        code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
+        code1 {fileName->label(filename_label);}
       }
       Fl_Return_Button okButton {
         label OK
@@ -47,41 +77,13 @@ window->hide();}
         code0 {\#include <FL/fl_ask.H>}
         code1 {okButton->label(fl_ok);}
       }
-      Fl_Input fileName {
-        label {Filename:}
-        callback {fileNameCB();}
-        private xywh {10 245 355 25} align 5 when 8
-        code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
-      }
-      Fl_Button upButton {
-        callback {up();}
-        private tooltip {Show the parent directory.} image {up.xbm} xywh {280 10 25 25} labelsize 8
-      }
-      Fl_Button newButton {
-        callback {newdir();}
-        private tooltip {Create a new directory.} image {new.xbm} xywh {310 10 25 25} labelsize 8
-      }
-      Fl_Choice dirMenu {
-        label {Directory:}
-        callback {char pathname[1024];
-int i;
-
-pathname[0] = '\\0';
-for (i = 1; i <= dirMenu->value(); i ++)
-  strcat(pathname, dirMenu->text(i));
-directory(pathname);} open
-        private tooltip {Choose a parent directory.} xywh {95 10 180 25} down_box BORDER_BOX
-      } {}
       Fl_Button {} {
-        callback {const char *f;
-if ((f = fl_input("New Filter?",
-                  fileList->filter())) != NULL)
-{
-  fileList->filter(f);
-  rescan();
-}}
-        private tooltip {Change the filename filter.} image {allfiles.xbm} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
-        code0 {\#include <FL/fl_ask.H>}
+        label Cancel
+        callback {fileList->deselect();
+fileName->value("");
+window->hide();}
+        private xywh {285 280 80 25}
+        code0 {o->label(fl_cancel);}
       }
     }
     code {window->size_range(375, 315, 375);
@@ -154,8 +156,7 @@ rescan();} {}
   } {
     code {window->hotspot(fileList);
 window->show();
-fileList->deselect();} {selected
-    }
+fileList->deselect();} {}
   }
   Function {shown()} {return_type int
   } {
@@ -212,6 +213,12 @@ else
   Function {visible()} {return_type int
   } {
     code {return window->visible();} {}
+  }
+  decl {static const char *directory_label = "Directory:";} {public
+  }
+  decl {static const char *filename_label = "Filename:";} {public
+  }
+  decl {static const char *filter_label = "New Filter?";} {selected public
   }
 } 
 
