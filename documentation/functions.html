@@ -303,23 +303,25 @@ Add a one-shot timeout callback.  The function will be called by
 <tt>Fl::wait()</tt> at <i>t</i> seconds after this function is called.
 The optional <tt>void*</tt> argument is passed to the callback.
 
-<h3><A name=add_interval_timeout>static void Fl::add_interval_timeout(float t, void (*cb)(void*),void*v=0)</A></h3>
+<h3><A name=repeat_timeout>static void Fl::repeat_timeout(float t, void (*cb)(void*),void*v=0)</A></h3>
 
-Add a one-shot timeout callback.  The difference from <a
-href=#add_timeout>add_timeout</a> is that the time is measured from
-when the last timeout callback was called, rather than from the moment
-this function is called (if no timeout has been called recently the
-time is measured from the next call to Fl::wait).  This is designed
-for making regularly-spaced timeouts at high speed (like for movie
-playback), it also has slightly less system-call overhead than
-add_timeout.
+Inside a timeout callback you can call this to add another timeout.
+Rather than the time being measured from "now", it is measured from
+when the system call elapsed that caused this timeout to be called.  This
+will result in far more accurate spacing of the timeout callbacks, it
+also has slightly less system call overhead.  (It will also use all
+your machine time if your timeout code and fltk's overhead take more
+than <i>t</i> seconds, as the real timeout will be reduced to zero).
+
+<p>It is undefined what this does if called from outside a timeout
+callback.
 
 <P>This code will print &quot;TICK&quot; each second on stdout, with a
 fair degree of accuracy:
 
 <UL><PRE>void callback(void*) {
   printf(&quot;TICK\n&quot;);
-  Fl::add_interval_timeout(1.0,callback);
+  Fl::repeat_timeout(1.0,callback);
 }
 
 main() {
