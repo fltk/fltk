@@ -1,5 +1,43 @@
 CHANGES SINCE FLTK 1.0.8
 
+	  [changes in snapshot 2]
+
+	- fl_old_shortcut() wasn't being exported in the WIN32 DLL
+	  project.
+	- Updated Cygwin and Mingw makefiles.
+	- Updated the BC++ project file.
+	- You can no longer insert control chars into Fl_Int/Float_Input.
+	- Fl_Multiline_Input now resets the horizontal position when
+	  focus is changed; this caused problems when multiple multiline
+	  widgets were used in an application.
+	- All handle() methods are now public, and all draw() methods are
+	  now protected in FLTK widgets.
+	- More fixes to the OpenGL overlay code on win32.  This now
+	  seems to work quite reliably on several different pieces of
+	  hardware. Apparently doing SetLayerPaletteEntries with a
+	  palette larger than the overlay size caused the drivers to
+	  screw up in unpredictable ways. Also SwapBuffers swapped both
+	  the overlay and main window, which is not what fltk's
+	  interface wanted, this was easy to fix however.
+	- Patch for full scrollbars so that clicking on them does not
+	  move anything.
+	- Documentation fixes.
+	- Better horizontal scrolling of Fl_Input when cursor is near
+	  the end of the line.
+	- Fl_Input::value(x) selects all text.
+	- Fl_Output and Fl_Multiline_Output would scroll to the end
+	  of the text.
+	- filename_isdir() now drops any trailing slash from the
+	  filename (needed for Windows)
+	- Added return type for main() function in line_style demo.
+	- Running FLUID with the "-cs" option writes the I18N message
+	  file.
+	- The WIN32 version of XParseGeometry() didn't initialize some
+	  variables.  This caused a compiler warning but did not affect
+	  the actual code.
+
+	  [changes in snapshot 1]
+
 	- EMail changes - fltk-bugs@easysw.com now officially
 	  fltk-bugs@fltk.org.
 	- The FLTK DLL project file didn't include fl_compose.cxx
