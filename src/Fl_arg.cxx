@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.1 1999/12/01 15:49:28 carl Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.2 1999/12/03 18:11:05 bill Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -141,7 +141,7 @@ int Fl::args(int argc, char** argv, int& i, int (*cb)(int,char**,int&)) {
 
 // show a main window, use any parsed arguments
 void Fl_Window::show(int argc, char **argv) {
-  if (!argc) return show();
+  if (!argc) {show(); return;}
   if (!arg_called) Fl::args(argc,argv);
 
   // set colors first, so background_pixel is correct:
@@ -352,5 +352,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.1 1999/12/01 15:49:28 carl Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.2 1999/12/03 18:11:05 bill Exp $".
 //
