@@ -1,5 +1,5 @@
 //
-// "$Id: filename_match.cxx,v 1.4 1999/01/07 19:17:35 mike Exp $"
+// "$Id: filename_match.cxx,v 1.5 1999/01/07 21:22:28 mike Exp $"
 //
 // Pattern matching routines for the Fast Light Tool Kit (FLTK).
 //
@@ -25,6 +25,7 @@
 
 /* Adapted from Rich Salz. */
 #include <FL/filename.H>
+#include <ctype.h>
 
 int filename_match(const char *s, const char *p) {
   int matched;
@@ -88,15 +89,25 @@ int filename_match(const char *s, const char *p) {
     case 0:	// end of pattern
       return !*s;
 
+#ifdef WIN32
     case '\\':	// quote next character
       if (*p) p++;
-    default  :	// other characters
       if (*s++ != *(p-1)) return 0;
       break;
+    default:
+      if (tolower(*s) != tolower(*(p-1))) return 0;
+      s++;
+#else
+    case '\\':	// quote next character
+      if (*p) p++;
+    default  :
+      if (*s++ != *(p-1)) return 0;
+      break;
+#endif
     }
   }
 }
 
 //
-// End of "$Id: filename_match.cxx,v 1.4 1999/01/07 19:17:35 mike Exp $".
+// End of "$Id: filename_match.cxx,v 1.5 1999/01/07 21:22:28 mike Exp $".
 //
