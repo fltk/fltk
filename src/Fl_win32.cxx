@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.35 2001/04/27 14:55:33 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.36 2001/04/27 15:21:33 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -515,16 +515,16 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (!wParam)
     {
       ulong state = 0;
-      if (GetAsyncKeyState(VK_CAPITAL)&~1) state |= FL_CAPS_LOCK;
-      if (GetAsyncKeyState(VK_NUMLOCK)&~1) state |= FL_NUM_LOCK;
-      if (GetAsyncKeyState(VK_SCROLL)&~1) state |= FL_SCROLL_LOCK;
+      if (GetAsyncKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
+      if (GetAsyncKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
+      if (GetAsyncKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
       if (GetAsyncKeyState(VK_CONTROL)&~1) state |= FL_CTRL;
       if (GetAsyncKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
-      if (GetAsyncKeyState(VK_MENU)&~1) state |= FL_ALT;
-      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1) state |= FL_META;
-      if (GetAsyncKeyState(VK_LBUTTON)&~1) state |= FL_BUTTON1;
-      if (GetAsyncKeyState(VK_MBUTTON)&~1) state |= FL_BUTTON2;
-      if (GetAsyncKeyState(VK_RBUTTON)&~1) state |= FL_BUTTON3;
+      if (GetAsyncKeyState(VK_MENU)) state |= FL_ALT;
+      if (GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN)) state |= FL_META;
+      if (GetAsyncKeyState(VK_LBUTTON)) state |= FL_BUTTON1;
+      if (GetAsyncKeyState(VK_MBUTTON)) state |= FL_BUTTON2;
+      if (GetAsyncKeyState(VK_RBUTTON)) state |= FL_BUTTON3;
       Fl::e_state = state;
       return 0;
     }
@@ -549,20 +549,20 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     ulong state = Fl::e_state & 0xff000000; // keep the mouse button state
     // if GetKeyState is expensive we might want to comment some of these out:
     if (GetKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
-    if (GetKeyState(VK_CAPITAL)&~1) state |= FL_CAPS_LOCK;
+    if (GetKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
     if (GetKeyState(VK_CONTROL)&~1) state |= FL_CTRL;
     // Alt gets reported for the Alt-GR switch on foreign keyboards.
     // so we need to check the event as well to get it right:
     if ((lParam&(1<<29)) //same as GetKeyState(VK_MENU)
 	&& uMsg != WM_CHAR) state |= FL_ALT;
-    if (GetKeyState(VK_NUMLOCK)&~1) state |= FL_NUM_LOCK;
-    if (GetKeyState(VK_LWIN)&~1 || GetKeyState(VK_RWIN)&~1) {
+    if (GetKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
+    if (GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) {
       // WIN32 bug?  GetKeyState returns garbage if the user hit the
       // meta key to pop up start menu.  Sigh.
-      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1)
+      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN)))
 	state |= FL_META;
     }
-    if (GetKeyState(VK_SCROLL)&~1) state |= FL_SCROLL_LOCK;
+    if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
     Fl::e_state = state;
     if (lParam & (1<<31)) goto DEFAULT; // ignore up events after fixing shift
     static char buffer[2];
@@ -975,5 +975,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.35 2001/04/27 14:55:33 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.36 2001/04/27 15:21:33 easysw Exp $".
 //
