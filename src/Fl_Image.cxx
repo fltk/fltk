@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.26 2002/12/19 21:34:25 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.27 2003/01/10 19:29:09 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -125,12 +125,12 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 
 void Fl_RGB_Image::uncache() {
   if (id) {
-    fl_delete_offscreen(id);
+    fl_delete_offscreen((Fl_Offscreen)id);
     id = 0;
   }
 
   if (mask) {
-    fl_delete_bitmask(mask);
+    fl_delete_bitmask((Fl_Bitmask)mask);
     mask = 0;
   }
 }
@@ -310,7 +310,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (H <= 0) return;
   if (!id) {
     id = fl_create_offscreen(w(), h());
-    fl_begin_offscreen(id);
+    fl_begin_offscreen((Fl_Offscreen)id);
     fl_draw_image(array, 0, 0, w(), h(), d(), ld());
     fl_end_offscreen();
 
@@ -357,7 +357,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
              &src, &src, &dst);
 #endif // 0
   } else {
-    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
 #else
   if (mask) {
@@ -392,5 +392,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.26 2002/12/19 21:34:25 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.27 2003/01/10 19:29:09 easysw Exp $".
 //

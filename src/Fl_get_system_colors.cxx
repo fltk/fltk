@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.14 2002/11/19 16:37:35 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.15 2003/01/10 19:29:09 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -260,15 +260,7 @@ int Fl::reload_scheme() {
     sprintf(tile_cmap[2], ". c #%02x%02x%02x", 0xd8 * (int)r / 0xf0,
             0xd8 * (int)g / 0xf0, 0xd8 * (int)b / 0xf0);
 
-    if (tile.id) {
-      fl_delete_offscreen(tile.id);
-      tile.id = 0;
-    }
-
-    if (tile.mask) {
-      fl_delete_bitmask(tile.mask);
-      tile.mask = 0;
-    }
+    tile.uncache();
 
     if (!scheme_bg_) scheme_bg_ = new Fl_Tiled_Image(&tile, w(), h());
 
@@ -317,5 +309,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.14 2002/11/19 16:37:35 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.15 2003/01/10 19:29:09 easysw Exp $".
 //

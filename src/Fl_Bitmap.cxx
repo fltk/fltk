@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.20 2002/12/19 21:34:25 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.21 2003/01/10 19:29:08 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -361,10 +361,10 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   GrafPtr dstPort;
   GetPort( &dstPort );
   Rect src, dst;
-  GetPortBounds( id, &src );
+  GetPortBounds( (Fl_Offscreen)id, &src );
   SetRect( &src, cx, cy, cx+W, cy+H );
   SetRect( &dst, X, Y, X+W, Y+H );
-  CopyBits(GetPortBitMapForCopyBits(id),	// srcBits
+  CopyBits(GetPortBitMapForCopyBits((Fl_Offscreen)id),	// srcBits
 	   GetPortBitMapForCopyBits(dstPort),	// dstBits
 	   &src,		 		// src bounds
 	   &dst, 				// dst bounds
@@ -390,7 +390,7 @@ Fl_Bitmap::~Fl_Bitmap() {
 
 void Fl_Bitmap::uncache() {
   if (id) {
-    fl_delete_bitmask(id);
+    fl_delete_bitmask((Fl_Offscreen)id);
     id = 0;
   }
 }
@@ -474,5 +474,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.20 2002/12/19 21:34:25 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.21 2003/01/10 19:29:08 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-//
+// "$Id: align_widget.cxx,v 1.1.2.2 2003/01/10 19:29:08 easysw Exp $"
 //
 // alignment code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,6 +24,7 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include "Fl_Widget_Type.h"
 
 /**
@@ -322,3 +323,9 @@ void align_widget_cb(Fl_Widget*, long how)
     break;
   }
 }
+
+
+//
+// End of "$Id: align_widget.cxx,v 1.1.2.2 2003/01/10 19:29:08 easysw Exp $".
+//
+

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.24 2002/12/19 21:34:26 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.25 2003/01/10 19:29:09 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -81,7 +81,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (H <= 0) return;
   if (!id) {
     id = fl_create_offscreen(w(), h());
-    fl_begin_offscreen(id);
+    fl_begin_offscreen((Fl_Offscreen)id);
     uchar *bitmap = 0;
     fl_mask_bitmap = &bitmap;
     fl_draw_pixmap(data(), 0, 0, FL_BLACK);
@@ -121,7 +121,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
              &src, &src, &dst);
   } else {
-    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
 #else
   if (mask) {
@@ -152,12 +152,12 @@ Fl_Pixmap::~Fl_Pixmap() {
 
 void Fl_Pixmap::uncache() {
   if (id) {
-    fl_delete_offscreen(id);
+    fl_delete_offscreen((Fl_Offscreen)id);
     id = 0;
   }
 
   if (mask) {
-    fl_delete_bitmask(mask);
+    fl_delete_bitmask((Fl_Bitmask)mask);
     mask = 0;
   }
 }
@@ -461,5 +461,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.24 2002/12/19 21:34:26 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.25 2003/01/10 19:29:09 easysw Exp $".
 //
