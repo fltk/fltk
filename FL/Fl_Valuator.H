@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.H,v 1.5.2.3 2000/06/05 21:20:31 mike Exp $"
+// "$Id: Fl_Valuator.H,v 1.5.2.4 2000/07/29 23:52:04 spitzak Exp $"
 //
 // Valuator header file for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ public:
   double value() const {return value_;}
   FL_EXPORT int value(double);
 
-  virtual int format(char*);
+  virtual FL_EXPORT int format(char*);
   FL_EXPORT double round(double); // round to nearest multiple of step
   FL_EXPORT double clamp(double); // keep in range
   FL_EXPORT double increment(double, int); // add n*step to value
@@ -80,5 +80,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Valuator.H,v 1.5.2.3 2000/06/05 21:20:31 mike Exp $".
+// End of "$Id: Fl_Valuator.H,v 1.5.2.4 2000/07/29 23:52:04 spitzak Exp $".
 //
