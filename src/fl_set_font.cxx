@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_font.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_set_font.cxx,v 1.5.2.3.2.3 2001/12/14 16:54:31 easysw Exp $"
 //
 // Font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -68,8 +68,12 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
   s->first = 0;
 }
 
+void Fl::set_font(Fl_Font fnum, Fl_Font from) {
+  Fl::set_font(fnum, get_font(from));
+}
+
 const char* Fl::get_font(Fl_Font fnum) {return fl_fonts[fnum].name;}
 
 //
-// End of "$Id: fl_set_font.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_set_font.cxx,v 1.5.2.3.2.3 2001/12/14 16:54:31 easysw Exp $".
 //
