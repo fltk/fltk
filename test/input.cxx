@@ -1,5 +1,5 @@
 //
-// "$Id: input.cxx,v 1.5.2.4.2.2 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: input.cxx,v 1.5.2.4.2.3 2002/05/13 05:05:11 spitzak Exp $"
 //
 // Input field test program for the Fast Light Tool Kit (FLTK).
 //
@@ -77,13 +77,18 @@ int main(int argc, char **argv) {
 
   int y = 10;
   input[0] = new Fl_Input(70,y,300,30,"Normal:"); y += 35;
+  input[0]->tooltip("Normal input field");
   // input[0]->cursor_color(FL_SELECTION_COLOR);
   //  input[0]->maximum_size(20);
   // input[0]->static_value("this is a testgarbage");
   input[1] = new Fl_Float_Input(70,y,300,30,"Float:"); y += 35;
+  input[1]->tooltip("Input field for floating-point number");
   input[2] = new Fl_Int_Input(70,y,300,30,"Int:"); y += 35;
+  input[2]->tooltip("Input field for integer number");
   input[3] = new Fl_Secret_Input(70,y,300,30,"Secret:"); y += 35;
+  input[3]->tooltip("Input field for password");
   input[4] = new Fl_Multiline_Input(70,y,300,100,"Multiline:"); y += 105;
+  input[4]->tooltip("Input field for short text with newlines");
 
   for (int i = 0; i < 4; i++) {
     input[i]->when(0); input[i]->callback(cb);
@@ -93,24 +98,32 @@ int main(int argc, char **argv) {
   Fl_Button *b;
   b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&CHANGED");
   b->callback(toggle_cb, FL_WHEN_CHANGED); y += 25;
+  b->tooltip("Do callback each time the text changes");
   b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&RELEASE");
   b->callback(toggle_cb, FL_WHEN_RELEASE); y += 25;
+  b->tooltip("Do callback when widget loses focus");
   b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&ENTER_KEY");
   b->callback(toggle_cb, FL_WHEN_ENTER_KEY); y += 25;
+  b->tooltip("Do callback when user hits Enter key");
   b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&NOT_CHANGED");
   b->callback(toggle_cb, FL_WHEN_NOT_CHANGED); y += 25;
+  b->tooltip("Do callback even if the text is not changed");
   y += 5;
   b = new Fl_Button(10,y,200,25,"&print changed()");
   b->callback(button_cb);
+  b->tooltip("Print widgets that have changed() flag set");
 
   b = new Fl_Button(220,y1,100,25,"color"); y1 += 25;
   b->color(input[0]->color()); b->callback(color_cb, (void*)0);
+  b->tooltip("Color behind the text");
   b = new Fl_Button(220,y1,100,25,"selection_color"); y1 += 25;
   b->color(input[0]->selection_color()); b->callback(color_cb, (void*)1);
   b->labelcolor(fl_contrast(FL_BLACK,b->color()));
+  b->tooltip("Color behind selected text");
   b = new Fl_Button(220,y1,100,25,"textcolor"); y1 += 25;
   b->color(input[0]->textcolor()); b->callback(color_cb, (void*)2);
   b->labelcolor(fl_contrast(FL_BLACK,b->color()));
+  b->tooltip("Color of the text");
 
   window->end();
   window->show(argc,argv);
@@ -118,5 +131,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: input.cxx,v 1.5.2.4.2.2 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: input.cxx,v 1.5.2.4.2.3 2002/05/13 05:05:11 spitzak Exp $".
 //

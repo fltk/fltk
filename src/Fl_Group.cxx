@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.13 2002/05/10 00:18:37 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.14 2002/05/13 05:05:11 spitzak Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
-#include <FL/Fl_Tooltip.H>    // tooltip
 
 Fl_Group* Fl_Group::current_;
 
@@ -139,11 +138,9 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_KEYBOARD:
-    Fl_Tooltip::exit(this);    // tooltip
     return navigation(navkey());
 
   case FL_SHORTCUT:
-    Fl_Tooltip::exit(this);    // tooltip
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o) && send(o,FL_SHORTCUT))
@@ -158,8 +155,6 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_ENTER:
-    Fl_Tooltip::enter(this);    // tooltip
-
   case FL_MOVE:
     for (i = children(); i--;) {
       o = a[i];
@@ -192,7 +187,6 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_PUSH:
-    Fl_Tooltip::exit(this);   // tooltip
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o)) {
@@ -234,9 +228,6 @@ int Fl_Group::handle(int event) {
       if (o->visible()) o->handle(event);
     }
     return 1;
-
-  case FL_LEAVE:              // tooltip
-    Fl_Tooltip::exit(this);   // tooltip
 
   default:
     // For all other events, try to give to each child, starting at focus:
@@ -589,5 +580,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.13 2002/05/10 00:18:37 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.14 2002/05/13 05:05:11 spitzak Exp $".
 //

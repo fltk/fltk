@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.26 2002/04/13 22:17:46 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.27 2002/05/13 05:05:11 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -423,8 +423,8 @@ void Fl::belowmouse(Fl_Widget *o) {
   if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = belowmouse_;
   if (o != p) {
-    if (!dnd_flag) Fl_Tooltip::enter(o);
     belowmouse_ = o;
+    if (!dnd_flag) Fl_Tooltip::enter(o);
     for (; p && !p->contains(o); p = p->parent()) {
       p->handle(dnd_flag ? FL_DND_LEAVE : FL_LEAVE);
     }
@@ -439,6 +439,10 @@ Fl_Window *fl_xfocus;	// which window X thinks has focus
 Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
 Fl_Window *Fl::grab_;	// most recent Fl::grab()
 Fl_Window *Fl::modal_;	// topmost modal() window
+
+static void nothing(Fl_Widget *) {}
+void (*Fl_Tooltip::enter)(Fl_Widget *) = nothing;
+void (*Fl_Tooltip::exit)(Fl_Widget *) = nothing;
 
 // Update modal(), focus() and other state according to system state,
 // and send FL_ENTER, FL_LEAVE, FL_FOCUS, and/or FL_UNFOCUS events.
@@ -550,7 +554,7 @@ int Fl::handle(int event, Fl_Window* window)
     return 1;
 
   case FL_PUSH:
-    if (!pushed()) Fl_Tooltip::enter(0);
+    Fl_Tooltip::enter((Fl_Widget*)0);
     if (grab()) w = grab();
     else if (modal() && w != modal()) return 0;
     pushed_ = w;
@@ -623,8 +627,6 @@ int Fl::handle(int event, Fl_Window* window)
     e_number = event = FL_SHORTCUT;
 
   case FL_SHORTCUT:
-    Fl_Tooltip::enter((Fl_Widget*)0);
-
     if (grab()) {w = grab(); break;} // send it to grab window
 
     // Try it as shortcut, sending to mouse widget and all parents:
@@ -753,7 +755,7 @@ void Fl_Window::hide() {
   delete x;
 
   // Hide any visible tooltips...
-  Fl_Tooltip::enter(0);
+  //Fl_Tooltip::enter(0);
 }
 
 Fl_Window::~Fl_Window() {
@@ -890,5 +892,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.26 2002/04/13 22:17:46 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.27 2002/05/13 05:05:11 spitzak Exp $".
 //

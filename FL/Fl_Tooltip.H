@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.H,v 1.16.2.7 2002/04/14 02:43:48 easysw Exp $"
+// "$Id: Fl_Tooltip.H,v 1.16.2.8 2002/05/13 05:05:11 spitzak Exp $"
 //
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
@@ -23,59 +23,42 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifndef _Fl_Tooltip_H_
-#define _Fl_Tooltip_H_
+#ifndef Fl_Tooltip_H
+#define Fl_Tooltip_H
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 
-
-class Fl_Tooltip_Box;
-class Fl_Tooltip_Window;
-
 class FL_EXPORT Fl_Tooltip {
-
-  friend class Fl_Tooltip_Box;
-  friend class Fl_Tooltip_Window;
-  friend class Fl_Widget;
-
-  static float delay_;
-  static Fl_Tooltip_Box *box;
-  static Fl_Tooltip_Window *window;
-  static Fl_Widget *widget;
-  static int shown;
-  static unsigned color_;
-  static int font_;
-  static int size_;
-
-  static void tooltip_timeout(void *);
-  static void tooltip_exit(Fl_Widget *);
-
-  static void (*tooltip_callback_)(void *);
-  static void (*tooltip_exit_)(void *);
-
 public:
-
-  // These functions are user-called functions
   static float delay() { return delay_; }
-  static void delay(float f) { delay_ = (f < 0.1f) ? 0.1f : f; }
+  static void delay(float f) { delay_ = f; }
+  static int enabled() { return enabled_; }
+  static void enable(int b = 1) { enabled_ = b;}
+  static void disable() { enabled_ = 0; }
+  static void (*enter)(Fl_Widget* w);
+  static void enter_area(Fl_Widget* w, int X, int Y, int W, int H, const char* tip);
+  static void (*exit)(Fl_Widget *w);
+
   static int font() { return font_; }
   static int size() { return size_; }
   static void font(int i) { font_ = i; }
   static void size(int s) { size_ = s; }
   static void color(unsigned c) { color_ = c; }
   static Fl_Color color() { return (Fl_Color)color_; }
-
-  static void enter(Fl_Widget *w);
-  static void exit(Fl_Widget *w);
-  static int enabled() {return tooltip_callback_ != 0;}
-  static void enable(int b = 1) {if (!b) enter(0); tooltip_callback_ = b ? tooltip_timeout : 0; tooltip_exit_ = b ? (void (*)(void *))tooltip_exit : 0;}
-  static void disable() {enter(0); tooltip_callback_ = 0; tooltip_exit_ = 0;}
+  static void textcolor(unsigned c) { textcolor_ = c; }
+  static Fl_Color textcolor() { return (Fl_Color)textcolor_; }
+private:
+  static float delay_;
+  static int enabled_;
+  static unsigned color_;
+  static unsigned textcolor_;
+  static int font_;
+  static int size_;
 };
-
 
 #endif
 
 //
-// End of "$Id: Fl_Tooltip.H,v 1.16.2.7 2002/04/14 02:43:48 easysw Exp $".
+// End of "$Id: Fl_Tooltip.H,v 1.16.2.8 2002/05/13 05:05:11 spitzak Exp $".
 //
