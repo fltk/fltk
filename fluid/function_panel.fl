@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0008 
+version 1.0100 
 header_name {.h} 
 code_name {.cxx} 
 gridx 5 
@@ -42,18 +42,18 @@ Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
     label code open
-    xywh {260 242 290 175} resizable modal visible
+    xywh {260 242 548 175} resizable modal visible
   } {
     Fl_Input code_input {
-      tooltip {C/C++ code.} xywh {10 10 270 120} type Multiline labelsize 12 align 0 when 0 textfont 4 resizable
+      tooltip {C/C++ code.} xywh {10 10 525 120} type Multiline labelsize 12 align 0 when 0 textfont 4 resizable
     }
     Fl_Return_Button code_panel_ok {
-      label OK
-      xywh {115 140 80 25} hotspot
+      label OK selected
+      xywh {370 140 80 25} hotspot
     }
     Fl_Button code_panel_cancel {
-      label Cancel
-      xywh {200 140 80 25} shortcut 0xff1b
+      label Cancel selected
+      xywh {455 140 80 25} shortcut 0xff1b
     }
   }
 } 
@@ -89,7 +89,7 @@ Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
     label {declaration block} open
-    xywh {314 255 295 130} resizable modal visible
+    xywh {184 572 295 130} resizable modal visible
   } {
     Fl_Input decl_before_input {
       tooltip {\#ifdef or similar conditional declaration block.} xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
@@ -144,7 +144,7 @@ or typedef like "typedef char byte;"}
 Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
-    label class open selected
+    label class open
     xywh {517 813 285 170} resizable modal visible
   } {
     Fl_Light_Button c_public_button {

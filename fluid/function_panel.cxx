@@ -68,9 +68,9 @@ Fl_Button *code_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_code_panel() {
   Fl_Window* w;
-  { Fl_Window* o = code_panel = new Fl_Window(290, 175, "code");
+  { Fl_Window* o = code_panel = new Fl_Window(548, 175, "code");
     w = o;
-    { Fl_Input* o = code_input = new Fl_Input(10, 10, 270, 120);
+    { Fl_Input* o = code_input = new Fl_Input(10, 10, 525, 120);
       o->tooltip("C/C++ code.");
       o->type(4);
       o->labelsize(12);
@@ -79,10 +79,10 @@ Fl_Window* make_code_panel() {
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Return_Button* o = code_panel_ok = new Fl_Return_Button(115, 140, 80, 25, "OK");
+    { Fl_Return_Button* o = code_panel_ok = new Fl_Return_Button(370, 140, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = code_panel_cancel = new Fl_Button(200, 140, 80, 25, "Cancel");
+    { Fl_Button* o = code_panel_cancel = new Fl_Button(455, 140, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->set_modal();
