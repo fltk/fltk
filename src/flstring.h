@@ -1,5 +1,5 @@
 /*
- * "$Id: flstring.h,v 1.1.2.3 2002/03/25 21:55:05 easysw Exp $"
+ * "$Id: flstring.h,v 1.1.2.4 2002/03/28 16:57:41 easysw Exp $"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
@@ -33,9 +33,12 @@
 #    include <strings.h>
 #  endif /* HAVE_STRINGS_H */
 
-// Apparently Unixware defines "index" to strchr (!) rather than
-// providing a proper entry point or not providing the (obsolete)
-// BSD function.  Make sure index is not defined...
+/*
+ * Apparently Unixware defines "index" to strchr (!) rather than
+ * providing a proper entry point or not providing the (obsolete)
+ * BSD function.  Make sure index is not defined...
+ */
+
 #  ifdef index
 #    undef index
 #  endif // index
@@ -68,5 +71,5 @@ extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
 #endif /* !flstring_h */
 
 /*
- * End of "$Id: flstring.h,v 1.1.2.3 2002/03/25 21:55:05 easysw Exp $".
+ * End of "$Id: flstring.h,v 1.1.2.4 2002/03/28 16:57:41 easysw Exp $".
  */
