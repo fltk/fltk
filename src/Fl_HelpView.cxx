@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.cxx,v 1.1.2.4 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: Fl_HelpView.cxx,v 1.1.2.5 2001/09/10 03:09:43 easysw Exp $"
 //
 // Fl_HelpView widget routines.
 //
@@ -35,6 +35,7 @@
 //   Fl_HelpView::draw()            - Draw the Fl_HelpView widget.
 //   Fl_HelpView::find_image()      - Find an image by name 
 //   Fl_HelpView::format()          - Format the help text.
+//   Fl_HelpView::format_table()    - Format a table...
 //   Fl_HelpView::get_align()       - Get an alignment attribute.
 //   Fl_HelpView::get_attr()        - Get an attribute value from the string.
 //   Fl_HelpView::get_color()       - Get an alignment attribute.
@@ -49,6 +50,7 @@
 //   Fl_HelpView::topline()         - Set the top line to the named target.
 //   Fl_HelpView::topline()         - Set the top line by number.
 //   Fl_HelpView::value()           - Set the help text directly.
+//   Fl_HelpView::compare_blocks()  - Compare two blocks.
 //   gif_read_cmap()                - Read the colormap from a GIF file...
 //   gif_get_block()                - Read a GIF data block...
 //   gif_get_code()                 - Get a LZW code from the file...
@@ -98,6 +100,9 @@ extern "C"
 #  include <jpeglib.h>
 #endif // HAVE_LIBJPEG
 }
+
+#define MAX_COLUMNS	200
+
 
 //
 // Typedef the C API sort function type the only way I know how...
@@ -437,16 +442,19 @@ static void	scrollbar_callback(Fl_Widget *s, void *);
 // 'Fl_HelpView::add_block()' - Add a text block to the list.
 //
 
-Fl_HelpBlock *				// O - Pointer to new block
-Fl_HelpView::add_block(const char *s,	// I - Pointer to start of block text
-                    int        xx,	// I - X position of block
-		    int        yy,	// I - Y position of block
-		    int        ww,	// I - Right margin of block
-		    int        hh,	// I - Height of block
-		    unsigned char      border)	// I - Draw border?
+Fl_HelpBlock *					// O - Pointer to new block
+Fl_HelpView::add_block(const char    *s,	// I - Pointer to start of block text
+                       int           xx,	// I - X position of block
+		       int           yy,	// I - Y position of block
+		       int           ww,	// I - Right margin of block
+		       int           hh,	// I - Height of block
+		       unsigned char border)	// I - Draw border?
 {
-  Fl_HelpBlock	*temp;			// New block
+  Fl_HelpBlock	*temp;				// New block
 
+
+//  printf("add_block(s = %p, xx = %d, yy = %d, ww = %d, hh = %d, border = %d)\n",
+//         s, xx, yy, ww, hh, border);
 
   if (nblocks_ >= ablocks_)
   {
@@ -475,23 +483,23 @@ Fl_HelpView::add_block(const char *s,	// I - Pointer to start of block text
 // 'Fl_HelpView::add_image()' - Add an image to the image cache.
 //
 
-Fl_HelpImage *				// O - Image or NULL if not found
+Fl_HelpImage *					// O - Image or NULL if not found
 Fl_HelpView::add_image(const char *name,	// I - Path of image
-                    const char *wattr,	// I - Width attribute
-		    const char *hattr,	// I - Height attribute
-                    int        make)	// I - Make the image?
+                       const char *wattr,	// I - Width attribute
+		       const char *hattr,	// I - Height attribute
+                       int        make)		// I - Make the image?
 {
-  Fl_HelpImage	*img,			// New image
-		*orig;			// Original image
-  FILE		*fp;			// File pointer
-  unsigned char	header[16];		// First 16 bytes of file
-  int		status;			// Status of load...
-  const char	*localname;		// Local filename
-  char		dir[1024];		// Current directory
-  char		temp[1024],		// Temporary filename
-		*tempptr;		// Pointer into temporary name
-  int		width,			// Desired width of image
-		height;			// Desired height of image
+  Fl_HelpImage	*img,				// New image
+		*orig;				// Original image
+  FILE		*fp;				// File pointer
+  unsigned char	header[16];			// First 16 bytes of file
+  int		status;				// Status of load...
+  const char	*localname;			// Local filename
+  char		dir[1024];			// Current directory
+  char		temp[1024],			// Temporary filename
+		*tempptr;			// Pointer into temporary name
+  int		width,				// Desired width of image
+		height;				// Desired height of image
 
 
   // See if the image has already been loaded...
@@ -511,11 +519,16 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
   if (aimage_ == nimage_)
   {
     aimage_ += 16;
-    image_  = (Fl_HelpImage *)realloc(image_, sizeof(Fl_HelpImage) * aimage_);
+
+    if (aimage_ == 16)
+      image_ = (Fl_HelpImage *)malloc(sizeof(Fl_HelpImage) * aimage_);
+    else
+      image_ = (Fl_HelpImage *)realloc(image_, sizeof(Fl_HelpImage) * aimage_);
   }
 
   img       = image_ + nimage_;
   img->name = strdup(name);
+  img->copy = 0;
 
   if (!orig)
   {
@@ -614,11 +627,15 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
     img->name = strdup(name);
   }
 
+//  printf("orig->data = %p, width = %d, height = %d\n", orig->data,
+//         orig->w, orig->h);
+
   // Copy image data from original image...
   img->data = orig->data;
   img->w    = orig->w;
   img->h    = orig->h;
   img->d    = orig->d;
+  img->copy = 1;
 
   // Figure out the size of the image...
   if (wattr[0])
@@ -674,6 +691,8 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
 
      if ((scaled = (unsigned char *)malloc(width * height * img->d)) != NULL)
      {
+       img->copy = 0;
+
        // Scale the image...
        for (dy = height, sy = 0, yerr = height / 2, dptr = scaled; dy > 0; dy --)
        {
@@ -729,6 +748,9 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
 
   nimage_ ++;
 
+//  printf("img->data = %p, width = %d, height = %d\n", img->data,
+//         img->w, img->h);
+
   return (img);
 }
 
@@ -739,10 +761,10 @@ Fl_HelpView::add_image(const char *name,	// I - Path of image
 
 void
 Fl_HelpView::add_link(const char *n,	// I - Name of link
-                   int        xx,	// I - X position of link
-		   int        yy,	// I - Y position of link
-		   int        ww,	// I - Width of link text
-		   int        hh)	// I - Height of link text
+                      int        xx,	// I - X position of link
+		      int        yy,	// I - Y position of link
+		      int        ww,	// I - Width of link text
+		      int        hh)	// I - Height of link text
 {
   Fl_HelpLink	*temp;			// New link
   char		*target;		// Pointer to target name
@@ -787,7 +809,7 @@ Fl_HelpView::add_link(const char *n,	// I - Name of link
 
 void
 Fl_HelpView::add_target(const char *n,	// I - Name of target
-                     int        yy)	// I - Y position of target
+                	int        yy)	// I - Y position of target
 {
   Fl_HelpTarget	*temp;			// New target
 
@@ -816,9 +838,9 @@ Fl_HelpView::add_target(const char *n,	// I - Name of target
 // 'Fl_HelpView::compare_targets()' - Compare two targets.
 //
 
-int						// O - Result of comparison
+int							// O - Result of comparison
 Fl_HelpView::compare_targets(const Fl_HelpTarget *t0,	// I - First target
-                          const Fl_HelpTarget *t1)	// I - Second target
+                             const Fl_HelpTarget *t1)	// I - Second target
 {
   return (strcasecmp(t0->name, t1->name));
 }
@@ -828,14 +850,14 @@ Fl_HelpView::compare_targets(const Fl_HelpTarget *t0,	// I - First target
 // 'Fl_HelpView::do_align()' - Compute the alignment for a line in a block.
 //
 
-int					// O - New line
+int						// O - New line
 Fl_HelpView::do_align(Fl_HelpBlock *block,	// I - Block to add to
-                   int       line,	// I - Current line
-		   int       xx,	// I - Current X position
-		   int       a,		// I - Current alignment
-		   int       &l)	// IO - Starting link
+                      int          line,	// I - Current line
+		      int          xx,		// I - Current X position
+		      int          a,		// I - Current alignment
+		      int          &l)		// IO - Starting link
 {
-  int	offset;				// Alignment offset
+  int	offset;					// Alignment offset
 
 
   switch (a)
@@ -874,21 +896,21 @@ Fl_HelpView::do_align(Fl_HelpBlock *block,	// I - Block to add to
 void
 Fl_HelpView::draw()
 {
-  int		i;		// Looping var
-  const Fl_HelpBlock *block;	// Pointer to current block
-  const char	*ptr,		// Pointer to text in block
-		*attrs;		// Pointer to start of element attributes
-  char		*s,		// Pointer into buffer
-		buf[1024],	// Text buffer
-		attr[1024];	// Attribute buffer
-  int		xx, yy, ww, hh;	// Current positions and sizes
-  int		line;		// Current line
+  int			i;		// Looping var
+  const Fl_HelpBlock	*block;		// Pointer to current block
+  const char		*ptr,		// Pointer to text in block
+			*attrs;		// Pointer to start of element attributes
+  char			*s,		// Pointer into buffer
+			buf[1024],	// Text buffer
+			attr[1024];	// Attribute buffer
+  int			xx, yy, ww, hh;	// Current positions and sizes
+  int			line;		// Current line
   unsigned char		font, size;	// Current font and size
-  int		head, pre,	// Flags for text
-		needspace;	// Do we need whitespace?
-  Fl_Boxtype	b = box() ? box() : FL_DOWN_BOX;
-				// Box to draw...
-  Fl_Color	tc, c;		// Table/cell background color
+  int			head, pre,	// Flags for text
+			needspace;	// Do we need whitespace?
+  Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
+					// Box to draw...
+  Fl_Color		tc, c;		// Table/cell background color
 
 
   // Draw the scrollbar and box first...
@@ -1173,8 +1195,11 @@ Fl_HelpView::draw()
             get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
 
 	    if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
-	      if ((img = find_image(attr, wattr, hattr)) != NULL && !img->image)
-	        img = (Fl_HelpImage *)0;
+	      if ((img = add_image(attr, wattr, hattr)) != NULL)
+	      {
+	        if (!img->image)
+	          img = (Fl_HelpImage *)0;
+              }
 
 	    if (img)
 	    {
@@ -1329,13 +1354,13 @@ Fl_HelpView::draw()
 // 'Fl_HelpView::find_image()' - Find an image by name 
 //
 
-Fl_HelpImage *				// O - Image or NULL if not found
+Fl_HelpImage *					// O - Image or NULL if not found
 Fl_HelpView::find_image(const char *name,	// I - Path and name of image
-                     const char *wattr,	// I - Width attribute of image
-		     const char	*hattr)	// I - Height attribute of image
+                	const char *wattr,	// I - Width attribute of image
+			const char *hattr)	// I - Height attribute of image
 {
-  int		i;			// Looping var
-  Fl_HelpImage	*img;			// Current image
+  int		i;				// Looping var
+  Fl_HelpImage	*img;				// Current image
 
 
   for (i = nimage_, img = image_; i > 0; i --, img ++) 
@@ -1380,7 +1405,8 @@ Fl_HelpView::format()
 		needspace;	// Do we need whitespace?
   int		table_width;	// Width of table
   int		column,		// Current table column number
-		columns[200];	// Column widths
+		columns[MAX_COLUMNS];
+				// Column widths
 
 
   // Reset state variables...
@@ -1444,6 +1470,9 @@ Fl_HelpView::format()
 
         if (needspace && xx > block->x)
 	  ww += (int)fl_width(' ');
+
+//        printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
+//	       line, xx, ww, block->x, block->w);
 
         if ((xx + ww) > block->w)
 	{
@@ -1510,6 +1539,8 @@ Fl_HelpView::format()
 
       *s = '\0';
       s = buf;
+
+//      puts(buf);
 
       attrs = ptr;
       while (*ptr && *ptr != '>')
@@ -1584,18 +1615,12 @@ Fl_HelpView::format()
         xx         = block->x;
         block->h   += hh;
 
-        if (!block->h && nblocks_ > 1)
-	{
-	  nblocks_ --;
-	  block --;
-	}
-
         if (strcasecmp(buf, "UL") == 0 ||
 	    strcasecmp(buf, "OL") == 0 ||
 	    strcasecmp(buf, "DL") == 0)
-	{
-	  xx += 4 * size;
+        {
 	  block->h += size + 2;
+	  xx       += 4 * size;
 	}
         else if (strcasecmp(buf, "TABLE") == 0)
 	{
@@ -1606,18 +1631,7 @@ Fl_HelpView::format()
 
 	  block->h += size + 2;
 
-          if (get_attr(attrs, "WIDTH", attr, sizeof(attr)))
-	  {
-	    if (attr[strlen(attr) - 1] == '%')
-	      table_width = atoi(attr) * w() / 100;
-	    else
-	      table_width = atoi(attr);
-	  }
-	  else
-	    table_width = w();
-
-          for (column = 0; column < 200; column ++)
-	    columns[column] = table_width / 3;
+          format_table(&table_width, columns, start);
 
 	  column = 0;
 	}
@@ -1652,8 +1666,6 @@ Fl_HelpView::format()
         if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
 	    strcasecmp(buf, "DD") == 0 ||
 	    strcasecmp(buf, "DT") == 0 ||
-	    strcasecmp(buf, "UL") == 0 ||
-	    strcasecmp(buf, "OL") == 0 ||
 	    strcasecmp(buf, "P") == 0)
           yy += size + 2;
 	else if (strcasecmp(buf, "HR") == 0)
@@ -1663,7 +1675,7 @@ Fl_HelpView::format()
 	}
 
         if (row)
-	  block = add_block(start, block->x, yy, block->w, 0);
+	  block = add_block(start, xx, yy, block->w, 0);
 	else
 	  block = add_block(start, xx, yy, w() - 24, 0);
 
@@ -1710,7 +1722,7 @@ Fl_HelpView::format()
 	else if (strcasecmp(buf, "/CENTER") == 0)
 	  align = LEFT;
 
-        initfont(font, size);
+        popfont(font, size);
 
         while (isspace(*ptr))
 	  ptr ++;
@@ -1721,7 +1733,11 @@ Fl_HelpView::format()
         if (tolower(buf[2]) == 'l')
           yy += size + 2;
 
-        block     = add_block(ptr, xx, yy, w() - 24, 0);
+        if (row)
+	  block = add_block(ptr, xx, yy, block->w, 0);
+	else
+	  block = add_block(ptr, xx, yy, w() - 24, 0);
+
 	needspace = 0;
 	hh        = 0;
 	line      = 0;
@@ -1764,12 +1780,6 @@ Fl_HelpView::format()
 
         xx = blocks_[row].x;
 
-        if (block->end == block->start && nblocks_ > 1)
-	{
-	  nblocks_ --;
-	  block --;
-	}
-
         yy = blocks_[row].y + blocks_[row].h;
 
 	for (cell = blocks_ + row + 1; cell <= block; cell ++)
@@ -1790,6 +1800,9 @@ Fl_HelpView::format()
       else if ((strcasecmp(buf, "TD") == 0 ||
                 strcasecmp(buf, "TH") == 0) && row)
       {
+        int	colspan;		// COLSPAN attribute
+
+
         line       = do_align(block, line, xx, newalign, links);
         block->end = start;
 	block->h   += hh;
@@ -1801,10 +1814,17 @@ Fl_HelpView::format()
 
         size = textsize_;
 
-        if (column == 0)
-          xx = block->x + size + 3;
+        xx = blocks_[row].x + size + 3;
+	for (i = 0; i < column; i ++)
+	  xx += columns[i] + 6;
+
+        if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != NULL)
+	  colspan = atoi(attr);
 	else
-          xx = block->w + 6;
+	  colspan = 1;
+
+        for (i = 0, ww = 0; i < colspan; i ++)
+	  ww += columns[column + i];
 
         if (block->end == block->start && nblocks_ > 1)
 	{
@@ -1813,18 +1833,6 @@ Fl_HelpView::format()
 	}
 
 	pushfont(font, size);
-
-        if (get_attr(attrs, "WIDTH", attr, sizeof(attr)) != NULL)
-	{
-	  ww = atoi(attr);
-
-	  if (attr[strlen(attr) - 1] == '%')
-	    ww = ww * w() / 100;
-
-          columns[column] = ww;
-	}
-	else
-	  ww = columns[column];
 
 	yy        = blocks_[row].y;
 	hh        = 0;
@@ -1979,6 +1987,9 @@ Fl_HelpView::format()
     *s = '\0';
     ww = (int)fl_width(buf);
 
+//    printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
+//	   line, xx, ww, block->x, block->w);
+
     if (needspace && xx > block->x)
       ww += (int)fl_width(' ');
 
@@ -2008,6 +2019,10 @@ Fl_HelpView::format()
     qsort(targets_, ntargets_, sizeof(Fl_HelpTarget),
           (compare_func_t)compare_targets);
 
+  if (nblocks_ > 1)
+    qsort(blocks_, nblocks_, sizeof(Fl_HelpBlock),
+          (compare_func_t)compare_blocks);
+
   if (size_ < (h() - 8))
     scrollbar_.hide();
   else
@@ -2018,12 +2033,441 @@ Fl_HelpView::format()
 
 
 //
+// 'Fl_HelpView::format_table()' - Format a table...
+//
+
+void
+Fl_HelpView::format_table(int        *table_width,	// O - Total table width
+                          int        *columns,		// O - Column widths
+	                  const char *table)		// I - Pointer to start of table
+{
+  int		column,					// Current column
+		num_columns,				// Number of columns
+		colspan,				// COLSPAN attribute
+		width,					// Current width
+		temp_width,				// Temporary width
+		max_width,				// Maximum width
+		incell,					// In a table cell?
+		pre,					// <PRE> text?
+		needspace;				// Need whitespace?
+  char		*s,					// Pointer into buffer
+		buf[1024],				// Text buffer
+		attr[1024],				// Other attribute
+		wattr[1024],				// WIDTH attribute
+		hattr[1024];				// HEIGHT attribute
+  const char	*ptr,					// Pointer into table
+		*attrs,					// Pointer to attributes
+		*start;					// Start of element
+  int		minwidths[MAX_COLUMNS];			// Minimum widths for each column
+  unsigned char	font, size;				// Current font and size
+
+
+  // Clear widths...
+  *table_width = 0;
+  for (column = 0; column < MAX_COLUMNS; column ++)
+  {
+    columns[column]   = 0;
+    minwidths[column] = 0;
+  }
+
+  num_columns = 0;
+  colspan     = 0;
+  max_width   = 0;
+  pre         = 0;
+
+  // Scan the table...
+  for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)
+  {
+    if ((*ptr == '<' || isspace(*ptr)) && s > buf && incell)
+    {
+      // Check width...
+      if (needspace)
+      {
+        *s++      = ' ';
+	needspace = 0;
+      }
+
+      *s         = '\0';
+      temp_width = (int)fl_width(buf);
+      s          = buf;
+
+      if (temp_width > minwidths[column])
+        minwidths[column] = temp_width;
+
+      width += temp_width;
+
+      if (width > max_width)
+        max_width = width;
+    }
+
+    if (*ptr == '<')
+    {
+      start = ptr;
+
+      for (s = buf, ptr ++; *ptr && *ptr != '>' && !isspace(*ptr);)
+        if (s < (buf + sizeof(buf) - 1))
+          *s++ = *ptr++;
+	else
+	  ptr ++;
+
+      *s = '\0';
+      s = buf;
+
+      attrs = ptr;
+      while (*ptr && *ptr != '>')
+        ptr ++;
+
+      if (*ptr == '>')
+        ptr ++;
+
+      if (strcasecmp(buf, "BR") == 0 ||
+	  strcasecmp(buf, "HR") == 0)
+      {
+        width     = 0;
+	needspace = 0;
+      }
+      else if (strcasecmp(buf, "TABLE") == 0 && start > table)
+        break;
+      else if (strcasecmp(buf, "CENTER") == 0 ||
+               strcasecmp(buf, "P") == 0 ||
+               strcasecmp(buf, "H1") == 0 ||
+	       strcasecmp(buf, "H2") == 0 ||
+	       strcasecmp(buf, "H3") == 0 ||
+	       strcasecmp(buf, "H4") == 0 ||
+	       strcasecmp(buf, "H5") == 0 ||
+	       strcasecmp(buf, "H6") == 0 ||
+	       strcasecmp(buf, "UL") == 0 ||
+	       strcasecmp(buf, "OL") == 0 ||
+	       strcasecmp(buf, "DL") == 0 ||
+	       strcasecmp(buf, "LI") == 0 ||
+	       strcasecmp(buf, "DD") == 0 ||
+	       strcasecmp(buf, "DT") == 0 ||
+	       strcasecmp(buf, "PRE") == 0)
+      {
+        width     = 0;
+	needspace = 0;
+
+        if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+	{
+	  font = FL_HELVETICA_BOLD;
+	  size = textsize_ + '7' - buf[1];
+	}
+	else if (strcasecmp(buf, "DT") == 0)
+	{
+	  font = textfont_ | FL_ITALIC;
+	  size = textsize_;
+	}
+	else if (strcasecmp(buf, "PRE") == 0)
+	{
+	  font = FL_COURIER;
+	  size = textsize_;
+	  pre  = 1;
+	}
+	else if (strcasecmp(buf, "LI") == 0)
+	{
+	  width += 4 * size;
+	  font  = textfont_;
+	  size  = textsize_;
+	}
+	else
+	{
+	  font = textfont_;
+	  size = textsize_;
+	}
+
+	pushfont(font, size);
+      }
+      else if (strcasecmp(buf, "/CENTER") == 0 ||
+	       strcasecmp(buf, "/P") == 0 ||
+	       strcasecmp(buf, "/H1") == 0 ||
+	       strcasecmp(buf, "/H2") == 0 ||
+	       strcasecmp(buf, "/H3") == 0 ||
+	       strcasecmp(buf, "/H4") == 0 ||
+	       strcasecmp(buf, "/H5") == 0 ||
+	       strcasecmp(buf, "/H6") == 0 ||
+	       strcasecmp(buf, "/PRE") == 0 ||
+	       strcasecmp(buf, "/UL") == 0 ||
+	       strcasecmp(buf, "/OL") == 0 ||
+	       strcasecmp(buf, "/DL") == 0)
+      {
+        width     = 0;
+	needspace = 0;
+
+        popfont(font, size);
+      }
+      else if (strcasecmp(buf, "TR") == 0 || strcasecmp(buf, "/TR") == 0 ||
+               strcasecmp(buf, "/TABLE") == 0)
+      {
+//        printf("%s column = %d, colspan = %d, num_columns = %d\n",
+//	       buf, column, colspan, num_columns);
+
+        if (column >= 0)
+	{
+	  // This is a hack to support COLSPAN...
+	  max_width /= colspan;
+
+	  while (colspan > 0)
+	  {
+	    if (max_width > columns[column])
+	      columns[column] = max_width;
+
+	    column ++;
+	    colspan --;
+	  }
+	}
+
+	if (strcasecmp(buf, "/TABLE") == 0)
+	  break;
+
+	needspace = 0;
+	column    = -1;
+	width     = 0;
+	max_width = 0;
+	incell    = 0;
+      }
+      else if (strcasecmp(buf, "TD") == 0 ||
+               strcasecmp(buf, "TH") == 0)
+      {
+//        printf("BEFORE column = %d, colspan = %d, num_columns = %d\n",
+//	       column, colspan, num_columns);
+
+        if (column >= 0)
+	{
+	  // This is a hack to support COLSPAN...
+	  max_width /= colspan;
+
+	  while (colspan > 0)
+	  {
+	    if (max_width > columns[column])
+	      columns[column] = max_width;
+
+	    column ++;
+	    colspan --;
+	  }
+	}
+	else
+	  column ++;
+
+        if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != NULL)
+	  colspan = atoi(attr);
+	else
+	  colspan = 1;
+
+//        printf("AFTER column = %d, colspan = %d, num_columns = %d\n",
+//	       column, colspan, num_columns);
+
+        if ((column + colspan) >= num_columns)
+	  num_columns = column + colspan;
+
+	needspace = 0;
+	width     = 0;
+	incell    = 1;
+
+        if (strcasecmp(buf, "TH") == 0)
+	  font = textfont_ | FL_BOLD;
+	else
+	  font = textfont_;
+
+        size = textsize_;
+
+	pushfont(font, size);
+
+        if (get_attr(attrs, "WIDTH", attr, sizeof(attr)) != NULL)
+	{
+	  max_width = atoi(attr);
+
+	  if (attr[strlen(attr) - 1] == '%')
+	    max_width = max_width * w() / 100;
+	}
+	else
+	  max_width = 0;
+
+//        printf("max_width = %d\n", max_width);
+      }
+      else if (strcasecmp(buf, "/TD") == 0 ||
+               strcasecmp(buf, "/TH") == 0)
+      {
+	incell = 0;
+        popfont(font, size);
+      }
+      else if (strcasecmp(buf, "B") == 0)
+	pushfont(font |= FL_BOLD, size);
+      else if (strcasecmp(buf, "I") == 0)
+	pushfont(font |= FL_ITALIC, size);
+      else if (strcasecmp(buf, "CODE") == 0)
+	pushfont(font = FL_COURIER, size);
+      else if (strcasecmp(buf, "KBD") == 0)
+	pushfont(font = FL_COURIER_BOLD, size);
+      else if (strcasecmp(buf, "VAR") == 0)
+	pushfont(font = FL_COURIER_ITALIC, size);
+      else if (strcasecmp(buf, "/B") == 0 ||
+	       strcasecmp(buf, "/I") == 0 ||
+	       strcasecmp(buf, "/CODE") == 0 ||
+	       strcasecmp(buf, "/KBD") == 0 ||
+	       strcasecmp(buf, "/VAR") == 0)
+	popfont(font, size);
+      else if (strcasecmp(buf, "IMG") == 0 && incell)
+      {
+	Fl_HelpImage	*img = (Fl_HelpImage *)0;
+
+
+        get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
+        get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+
+        if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
+	  if ((img = add_image(attr, wattr, hattr)) != (Fl_HelpImage *)0 &&
+	      img->image == NULL)
+	    img = (Fl_HelpImage *)0;
+
+	if (img)
+	  temp_width = img->w;
+	else
+	  temp_width = 16;
+
+	if (temp_width > minwidths[column])
+          minwidths[column] = temp_width;
+
+        width += temp_width;
+	if (needspace)
+	  width += (int)fl_width(' ');
+
+	if (width > max_width)
+          max_width = width;
+
+	needspace = 0;
+      }
+    }
+    else if (*ptr == '\n' && pre)
+    {
+      width     = 0;
+      needspace = 0;
+      ptr ++;
+    }
+    else if (isspace(*ptr))
+    {
+      needspace = 1;
+
+      ptr ++;
+    }
+    else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
+    {
+      ptr ++;
+
+      if (strncasecmp(ptr, "amp;", 4) == 0)
+      {
+        *s++ = '&';
+	ptr += 4;
+      }
+      else if (strncasecmp(ptr, "lt;", 3) == 0)
+      {
+        *s++ = '<';
+	ptr += 3;
+      }
+      else if (strncasecmp(ptr, "gt;", 3) == 0)
+      {
+        *s++ = '>';
+	ptr += 3;
+      }
+      else if (strncasecmp(ptr, "nbsp;", 5) == 0)
+      {
+        *s++ = '\240';
+	ptr += 5;
+      }
+      else if (strncasecmp(ptr, "copy;", 5) == 0)
+      {
+        *s++ = '\251';
+	ptr += 5;
+      }
+      else if (strncasecmp(ptr, "reg;", 4) == 0)
+      {
+        *s++ = '\256';
+	ptr += 4;
+      }
+      else if (strncasecmp(ptr, "quot;", 5) == 0)
+      {
+        *s++ = '\"';
+	ptr += 5;
+      }
+    }
+    else
+    {
+      if (s < (buf + sizeof(buf) - 1))
+        *s++ = *ptr++;
+      else
+        ptr ++;
+    }
+  }
+
+  // Now that we have scanned the entire table, adjust the table and
+  // cell widths to fit on the screen...
+  if (get_attr(table + 6, "WIDTH", attr, sizeof(attr)))
+  {
+    if (attr[strlen(attr) - 1] == '%')
+      *table_width = atoi(attr) * w() / 100;
+    else
+      *table_width = atoi(attr);
+  }
+  else
+    *table_width = 0;
+
+//  printf("num_columns = %d, table_width = %d\n", num_columns, *table_width);
+
+  if (num_columns == 0)
+    return;
+
+  // Add up the widths...
+  for (column = 0, width = 0; column < num_columns; column ++)
+    width += columns[column];
+
+//  printf("width = %d, w() = %d\n", width, w());
+//  for (column = 0; column < num_columns; column ++)
+//    printf("    columns[%d] = %d, minwidths[%d] = %d\n", column, columns[column],
+//           column, minwidths[column]);
+
+  // Adjust the width if needed...
+  int scale_width = *table_width;
+
+  if (scale_width == 0 && width > w())
+    scale_width = width;
+
+  if (width > scale_width)
+  {
+    *table_width = 0;
+
+    for (column = 0; column < num_columns; column ++)
+    {
+      if (width > 0)
+      {
+        temp_width = scale_width * columns[column] / width;
+
+	if (temp_width < minwidths[column])
+	  temp_width = minwidths[column];
+      }
+      else
+        temp_width = minwidths[column];
+
+      width           -= columns[column];
+      scale_width     -= temp_width;
+      columns[column] = temp_width;
+      (*table_width)  += temp_width;
+    }
+  }
+  else if (*table_width == 0)
+    *table_width = width;
+
+//  printf("FINAL table_width = %d\n", *table_width);
+//  for (column = 0; column < num_columns; column ++)
+//    printf("    columns[%d] = %d\n", column, columns[column]);
+}
+
+
+//
 // 'Fl_HelpView::get_align()' - Get an alignment attribute.
 //
 
 int					// O - Alignment
 Fl_HelpView::get_align(const char *p,	// I - Pointer to start of attrs
-                    int        a)	// I - Default alignment
+                       int        a)	// I - Default alignment
 {
   char	buf[255];			// Alignment value
 
@@ -2044,15 +2488,15 @@ Fl_HelpView::get_align(const char *p,	// I - Pointer to start of attrs
 // 'Fl_HelpView::get_attr()' - Get an attribute value from the string.
 //
 
-const char *				// O - Pointer to buf or NULL
-Fl_HelpView::get_attr(const char *p,	// I - Pointer to start of attributes
-                   const char *n,	// I - Name of attribute
-		   char       *buf,	// O - Buffer for attribute value
-		   int        bufsize)	// I - Size of buffer
+const char *					// O - Pointer to buf or NULL
+Fl_HelpView::get_attr(const char *p,		// I - Pointer to start of attributes
+                      const char *n,		// I - Name of attribute
+		      char       *buf,		// O - Buffer for attribute value
+		      int        bufsize)	// I - Size of buffer
 {
-  char	name[255],			// Name from string
-	*ptr,				// Pointer into name or value
-	quote;				// Quote
+  char	name[255],				// Name from string
+	*ptr,					// Pointer into name or value
+	quote;					// Quote
 
 
   buf[0] = '\0';
@@ -2121,7 +2565,7 @@ Fl_HelpView::get_attr(const char *p,	// I - Pointer to start of attributes
 
 Fl_Color				// O - Color value
 Fl_HelpView::get_color(const char *n,	// I - Color name
-                    Fl_Color   c)	// I - Default color value
+                       Fl_Color   c)	// I - Default color value
 {
   int	rgb, r, g, b;			// RGB values
 
@@ -2198,24 +2642,15 @@ Fl_HelpView::handle(int event)	// I - Event to handle
   switch (event)
   {
     case FL_PUSH :
+	if (Fl_Group::handle(event))
+	  return (1);
+
     case FL_MOVE :
         xx = Fl::event_x() - x();
 	yy = Fl::event_y() - y() + topline_;
-        if (!scrollbar_.visible() || xx < (w() - 20))
-	  break;
-
-    case FL_MOUSEWHEEL :
-	i = topline() + Fl::e_dy * textsize_ * 3;
-	if (i < 0)
-	  i = 0;
-	else if (i > (size_ - h()))
-	  i = size_ - h();
-
-        topline(i);
-	return (1);
+	break;
 
     default :
-	// Use the Fl_Group handler...
 	return (Fl_Group::handle(event));
   }
 
@@ -2296,10 +2731,10 @@ Fl_HelpView::handle(int event)	// I - Event to handle
 //
 
 Fl_HelpView::Fl_HelpView(int        xx,	// I - Left position
-                   int        yy,	// I - Top position
-		   int        ww,	// I - Width in pixels
-		   int        hh,	// I - Height in pixels
-		   const char *l)
+                	 int        yy,	// I - Top position
+			 int        ww,	// I - Width in pixels
+			 int        hh,	// I - Height in pixels
+			 const char *l)
     : Fl_Group(xx, yy, ww, hh, l),
       scrollbar_(xx + ww - 17, yy, 17, hh)
 {
@@ -2370,7 +2805,8 @@ Fl_HelpView::~Fl_HelpView()
     for (i = nimage_, img = image_; i > 0; i --, img ++)
     {
       delete img->image;
-      free(img->data);
+      if (!img->copy)
+        free(img->data);
       free(img->name);
     }
   }
@@ -2382,7 +2818,7 @@ Fl_HelpView::~Fl_HelpView()
 //
 
 int				// O - 0 on success, -1 on error
-Fl_HelpView::load(const char *f)	// I - Filename to load (may also have target)
+Fl_HelpView::load(const char *f)// I - Filename to load (may also have target)
 {
   FILE		*fp;		// File to read from
   long		len;		// Length of file
@@ -2466,8 +2902,8 @@ Fl_HelpView::load(const char *f)	// I - Filename to load (may also have target)
 //
 
 int					// O - 0 = success, -1 = fail
-Fl_HelpView::load_gif(Fl_HelpImage *img,	// I - Image pointer
-        	   FILE      *fp)	// I - File to load from
+Fl_HelpView::load_gif(Fl_HelpImage *img,// I - Image pointer
+        	      FILE         *fp)	// I - File to load from
 {
   unsigned char	buf[1024];		// Input buffer
   gif_cmap_t	cmap;			// Colormap
@@ -2547,13 +2983,13 @@ Fl_HelpView::load_gif(Fl_HelpImage *img,	// I - Image pointer
 // 'Fl_HelpView::load_jpeg()' - Load a JPEG image file.
 //
 
-int					// O - 0 = success, -1 = fail
+int						// O - 0 = success, -1 = fail
 Fl_HelpView::load_jpeg(Fl_HelpImage *img,	// I - Image pointer
-                    FILE      *fp)	// I - File to load from
+                       FILE         *fp)	// I - File to load from
 {
-  struct jpeg_decompress_struct	cinfo;	// Decompressor info
-  struct jpeg_error_mgr		jerr;	// Error handler info
-  JSAMPROW			row;	// Sample row pointer
+  struct jpeg_decompress_struct	cinfo;		// Decompressor info
+  struct jpeg_error_mgr		jerr;		// Error handler info
+  JSAMPROW			row;		// Sample row pointer
 
 
   cinfo.err = jpeg_std_error(&jerr);
@@ -2603,8 +3039,8 @@ Fl_HelpView::load_jpeg(Fl_HelpImage *img,	// I - Image pointer
 //
 
 int					// O - 0 = success, -1 = fail
-Fl_HelpView::load_png(Fl_HelpImage *img,	// I - Image pointer
-        	   FILE      *fp)	// I - File to read from
+Fl_HelpView::load_png(Fl_HelpImage *img,// I - Image pointer
+        	      FILE         *fp)	// I - File to read from
 {
   int		i;			// Looping var
   png_structp	pp;			// PNG read pointer
@@ -2691,9 +3127,9 @@ Fl_HelpView::load_png(Fl_HelpImage *img,	// I - Image pointer
 
 void
 Fl_HelpView::resize(int xx,	// I - New left position
-                 int yy,	// I - New top position
-		 int ww,	// I - New width
-		 int hh)	// I - New height
+                    int yy,	// I - New top position
+		    int ww,	// I - New width
+		    int hh)	// I - New height
 {
   Fl_Widget::resize(xx, yy, ww, hh);
   scrollbar_.resize(xx + ww - 17, yy, 17, hh);
@@ -2772,6 +3208,18 @@ Fl_HelpView::value(const char *v)	// I - Text to view
 
   set_changed();
   topline(0);
+}
+
+
+//
+// 'Fl_HelpView::compare_blocks()' - Compare two blocks.
+//
+
+int						// O - Result of comparison
+Fl_HelpView::compare_blocks(const void *a,	// I - First block
+                            const void *b)	// I - Second block
+{
+  return (((Fl_HelpBlock *)a)->y - ((Fl_HelpBlock *)b)->y);
 }
 
 
@@ -3054,10 +3502,10 @@ gif_read_lzw(FILE *fp,			// I - File to read from
 //
 
 static int				// I - 0 = success, -1 = failure
-gif_read_image(FILE       *fp,		// I - Input file
-	       Fl_HelpImage  *img,		// I - Image pointer
-	       gif_cmap_t cmap,		// I - Colormap
-	       int        interlace)	// I - Non-zero = interlaced image
+gif_read_image(FILE          *fp,	// I - Input file
+	       Fl_HelpImage  *img,	// I - Image pointer
+	       gif_cmap_t    cmap,	// I - Colormap
+	       int           interlace)	// I - Non-zero = interlaced image
 {
   unsigned char	code_size,		// Code size
 		*temp;			// Current pixel
@@ -3132,5 +3580,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_HelpView.cxx,v 1.1.2.4 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: Fl_HelpView.cxx,v 1.1.2.5 2001/09/10 03:09:43 easysw Exp $".
 //

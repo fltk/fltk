@@ -288,7 +288,7 @@ fl_font.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_font.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H Fl_Font.H
 fl_labeltype.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_labeltype.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/fl_draw.H
-fl_labeltype.o: ../FL/Fl_Input_.H ../FL/Fl_Widget.H
+fl_labeltype.o: ../FL/Fl_Image.H ../FL/Fl_Input_.H ../FL/Fl_Widget.H
 fl_line_style.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_line_style.o: ../FL/x.H ../FL/Fl_Window.H
 fl_oval_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_HelpView.H,v 1.1.2.2 2001/08/06 23:51:39 easysw Exp $"
+// "$Id: Fl_HelpView.H,v 1.1.2.3 2001/09/10 03:09:43 easysw Exp $"
 //
 //   Help Viewer widget definitions.
 //
@@ -101,6 +101,7 @@ struct Fl_HelpImage
 		hattr[8];	// Height attribute
   Fl_Image	*image;		// FLTK image representation
   unsigned char	*data;		// Raw image data
+  int		copy;		// Data is a copy?
   int		w, h, d;	// Image size & depth
 };
 
@@ -157,12 +158,14 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
   int		load_png(Fl_HelpImage *img, FILE *fp);
 
   Fl_HelpBlock	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
+  static int	compare_blocks(const void *a, const void *b);
   void		add_link(const char *n, int xx, int yy, int ww, int hh);
   void		add_target(const char *n, int yy);
   static int	compare_targets(const Fl_HelpTarget *t0, const Fl_HelpTarget *t1);
   int		do_align(Fl_HelpBlock *block, int line, int xx, int a, int &l);
   void		draw();
   void		format();
+  void		format_table(int *table_width, int *columns, const char *table);
   int		get_align(const char *p, int a);
   const char	*get_attr(const char *p, const char *n, char *buf, int bufsize);
   Fl_Color	get_color(const char *n, Fl_Color c);
@@ -207,5 +210,5 @@ class Fl_HelpView : public Fl_Group	//// Help viewer widget
 #endif // !_Fl_HelpView_H_
 
 //
-// End of "$Id: Fl_HelpView.H,v 1.1.2.2 2001/08/06 23:51:39 easysw Exp $".
+// End of "$Id: Fl_HelpView.H,v 1.1.2.3 2001/09/10 03:09:43 easysw Exp $".
 //

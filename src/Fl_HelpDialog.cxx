@@ -106,8 +106,8 @@ void Fl_HelpDialog::cb_larger_(Fl_Button* o, void* v) {
 }
 
 Fl_HelpDialog::Fl_HelpDialog() {
-  Fl_Window* w;
-  { Fl_Window* o = window_ = new Fl_Window(530, 385, "Help Dialog");
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = window_ = new Fl_Double_Window(530, 385, "Help Dialog");
     w = o;
     o->user_data((void*)(this));
     { Fl_HelpView* o = view_ = new Fl_HelpView(10, 10, 510, 330);
@@ -121,13 +121,11 @@ Fl_HelpDialog::Fl_HelpDialog() {
     }
     { Fl_Button* o = back_ = new Fl_Button(365, 350, 25, 25, "@<-");
       o->shortcut(0xff51);
-      o->labeltype(FL_SYMBOL_LABEL);
       o->labelcolor(2);
       o->callback((Fl_Callback*)cb_back_);
     }
     { Fl_Button* o = forward_ = new Fl_Button(395, 350, 25, 25, "@->");
       o->shortcut(0xff53);
-      o->labeltype(FL_SYMBOL_LABEL);
       o->labelcolor(2);
       o->callback((Fl_Callback*)cb_forward_);
     }

@@ -3,7 +3,7 @@
 #ifndef Fl_HelpDialog_H
 #define Fl_HelpDialog_H
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <string.h>
 #include <FL/Fl_HelpView.H>
 #include <FL/Fl_Button.H>
@@ -16,7 +16,7 @@ class Fl_HelpDialog {
 public:
   Fl_HelpDialog();
 private:
-  Fl_Window *window_;
+  Fl_Double_Window *window_;
   Fl_HelpView *view_;
   inline void cb_view__i(Fl_HelpView*, void*);
   static void cb_view_(Fl_HelpView*, void*);

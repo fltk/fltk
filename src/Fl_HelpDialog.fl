@@ -14,8 +14,8 @@ class Fl_HelpDialog {open
   Function {Fl_HelpDialog()} {open
   } {
     Fl_Window window_ {
-      label {Help Dialog} open
-      private xywh {470 402 530 385} resizable
+      label {Help Dialog} open selected
+      private xywh {470 380 530 385} type Double resizable
       code0 {\#include <string.h>} visible
     } {
       Fl_Group view_ {
@@ -72,7 +72,7 @@ if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
 view_->topline(line_[index_]);}
-        private xywh {365 350 25 25} shortcut 0xff51 labeltype SYMBOL_LABEL labelcolor 2
+        private xywh {365 350 25 25} shortcut 0xff51 labelcolor 2
       }
       Fl_Button forward_ {
         label {@->}
@@ -88,7 +88,7 @@ if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
 view_->topline(line_[index_]);}
-        private xywh {395 350 25 25} shortcut 0xff53 labeltype SYMBOL_LABEL labelcolor 2
+        private xywh {395 350 25 25} shortcut 0xff53 labelcolor 2
       }
       Fl_Button smaller_ {
         label F
@@ -117,8 +117,7 @@ forward_->deactivate();
 index_ = -1;
 max_  = 0;} {}
   }
-  Function {~Fl_HelpDialog()} {selected
-  } {
+  Function {~Fl_HelpDialog()} {} {
     code {delete window_;} {}
   }
   Function {h()} {return_type int

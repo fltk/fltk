@@ -22,6 +22,9 @@ CHANGES IN FLTK 1.1.0b2
 	  style (round radio buttons with dots and square check
 	  buttons with check marks.)
 	- Improved the appearance of Fl_Check_Button.
+	- Improved the Fl_HelpView table formatting code; now
+	  dynamically sizes the table columns, and supports
+	  COLSPAN.
 
 
 CHANGES IN FLTK 1.1.0b1
