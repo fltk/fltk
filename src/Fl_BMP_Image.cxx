@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.10 2002/08/30 16:58:16 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.11 2002/10/10 19:26:33 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -68,18 +68,21 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   FILE		*fp;		// File pointer
   int		info_size,	// Size of info header
 		depth,		// Depth of image (bits)
+		bDepth = 3,	// Depth of image (bytes)
 		compression,	// Type of compression
 		colors_used,	// Number of colors used
 		x, y,		// Looping vars
 		color,		// Color of RLE pixel
 		repcount,	// Number of times to repeat
 		temp,		// Temporary color
-		align;		// Alignment bytes
+		align,		// Alignment bytes
+		dataSize;	// number of bytes in image data set
   long		offbits;	// Offset to image data
   uchar		bit,		// Bit in image
 		byte;		// Byte in image
   uchar		*ptr;		// Pointer into pixels
   uchar		colormap[256][3];// Colormap
+  uchar		mask = 0;	// single bit mask follows image data
 
   // Open the file...
   if ((fp = fopen(bmp, "rb")) == NULL) return;
@@ -119,13 +122,23 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     read_word(fp);
     depth = read_word(fp);
     compression = read_dword(fp);
-    read_dword(fp);
+    dataSize = read_dword(fp);
     read_long(fp);
     read_long(fp);
     colors_used = read_dword(fp);
     read_dword(fp);
 
     repcount = info_size - 40;
+
+    if (!compression && depth>=8 && w()>32/depth) {
+      int Bpp = depth/8;
+      int maskSize = (((w()*Bpp+3)&~3)*h()) + (((((w()+7)/8)+3)&~3)*h());
+      if (maskSize==2*dataSize) {
+        mask = 1;
+	h(h()/2);
+	bDepth = 4;
+      }
+    }
   }
 
 //  printf("w() = %d, h() = %d, depth = %d, compression = %d, colors_used = %d, repcount = %d\n",
@@ -156,7 +169,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   }
 
   // Setup image and buffers...
-  d(3);
+  d(bDepth);
   if (offbits) fseek(fp, offbits, SEEK_SET);
 
   array = new uchar[w() * h() * d()];
@@ -316,6 +329,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 	    *ptr++ = colormap[temp][2];
 	    *ptr++ = colormap[temp][1];
 	    *ptr++ = colormap[temp][0];
+	    if (mask) ptr++;
 	  }
 
 	  if (!compression) {
@@ -326,8 +340,28 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 	  }
           break;
 
+      case 16 : // 16-bit 5:5:5 RGB
+          for (x = w(); x > 0; x --, ptr += bDepth) {
+	    char b = getc(fp), a = getc(fp) ;
+	    #ifdef USE_5_6_5 // Green as the brightes color should ahve one bit more 5:6:5
+	    ptr[0] = ( b << 3 ) & 0xf8 ;
+	    ptr[1] = ( ( a << 5 ) & 0xe0 ) | ( ( b >> 3) & 0x1c );
+	    ptr[2] = a & 0xf8 ;
+	    #else // this is the default wasting one bit: 5:5:5
+	    ptr[2] = ( b << 3 ) & 0xf8 ;
+	    ptr[1] = ( ( a << 6 ) & 0xc0 ) | ( ( b >> 2) & 0x38 );
+	    ptr[0] = (a<<1) & 0xf8 ;
+	    #endif
+	  }
+
+          // Read remaining bytes to align to 32 bits...
+	  for (temp = w() * 3; temp & 3; temp ++) {
+	    getc(fp);
+	  }
+          break;
+
       case 24 : // 24-bit RGB
-          for (x = w(); x > 0; x --, ptr += 3) {
+          for (x = w(); x > 0; x --, ptr += bDepth) {
 	    ptr[2] = getc(fp);
 	    ptr[1] = getc(fp);
 	    ptr[0] = getc(fp);
@@ -338,6 +372,26 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 	    getc(fp);
 	  }
           break;
+    }
+  }
+  
+  if (mask) {
+    for (y = h() - 1; y >= 0; y --) {
+      ptr = (uchar *)array + y * w() * d() + 3;
+      for (x = w(), bit = 128; x > 0; x --, ptr+=bDepth) {
+	if (bit == 128) byte = getc(fp);
+	if (byte & bit)
+	  *ptr = 0;
+	else
+	  *ptr = 255;
+	if (bit > 1)
+	  bit >>= 1;
+	else
+	  bit = 128;
+      }
+      // Read remaining bytes to align to 32 bits...
+      for (temp = (w() + 7) / 8; temp & 3; temp ++)
+	getc(fp);
     }
   }
 
@@ -396,5 +450,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.10 2002/08/30 16:58:16 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.11 2002/10/10 19:26:33 easysw Exp $".
 //

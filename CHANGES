@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.1
 
+	- The Fl_BMP_Image class now handles 16-bit BMP files
+	  and BMP files with a transparency mask.
 	- The fltk-config script didn't add the required include
 	  path, if any, when compiling a program.
 	- Added a license clarification that the FLTK manual is
