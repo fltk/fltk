@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.40 2002/08/16 11:36:08 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.41 2002/08/17 21:28:54 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -799,7 +799,8 @@ Fl_Help_View::format()
 		head,		// In the <HEAD> section?
 		pre,		// <PRE> text?
 		needspace;	// Do we need whitespace?
-  int		table_width;	// Width of table
+  int		table_width,	// Width of table
+		table_offset;	// Offset of table
   int		column,		// Current table column number
 		columns[MAX_COLUMNS];
 				// Column widths
@@ -1066,6 +1067,21 @@ Fl_Help_View::format()
 	      break;
 	    }
 
+            switch (get_align(attrs, talign))
+	    {
+	      default :
+	          table_offset = 0;
+	          break;
+
+	      case CENTER :
+	          table_offset = (hsize_ - table_width) / 2 - textsize_;
+	          break;
+
+	      case RIGHT :
+	          table_offset = hsize_ - table_width - textsize_;
+	          break;
+	    }
+
 	    column = 0;
 	  }
 
@@ -1263,7 +1279,7 @@ Fl_Help_View::format()
 
           fsize = textsize_;
 
-          xx = blocks_[row].x + fsize + 3;
+          xx = blocks_[row].x + fsize + 3 + table_offset;
 	  for (i = 0; i < column; i ++)
 	    xx += columns[i] + 6;
 
@@ -2669,5 +2685,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.40 2002/08/16 11:36:08 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.41 2002/08/17 21:28:54 easysw Exp $".
 //
