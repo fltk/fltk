@@ -1,7 +1,7 @@
 ----TEXT----
 
-The second release candidate for FLTK 1.1.5 is now available for
-download and testing.  You now have until August 10th, 2004 to
+The third release candidate for FLTK 1.1.5 is now available for
+download and testing.  You now have until October 1st, 2004 to
 report any problems with this release candidate using the
 software trouble report form at the following URL:
 
@@ -33,6 +33,65 @@ exceptions that allow for static linking.
 
 Changes since FLTK 1.1.4 include:
 
+	- Documentation updates (STR #505, STR #513)
+	- Updated PNG library source to 1.2.7.
+	- Updated ZLIB library source to 1.2.1.
+	- Fixed VC++ project file problems (STR #476, STR #478,
+	  STR #520, STR #527, STR #537)
+	- Now look for 8 bits of alpha when the developer has
+	  requested FL_RGB8 (STR #541)
+	- The last line in an Fl_Help_View widget was not
+	  aligned properly (STR #536)
+	- The "search" symbol looked like a Q (STR #536)
+	- Changed Fl_Help_View::get_color() to use a lookup
+	  table to avoid serious Borland C++ 5.5 compiler bugs
+	  (STR #533)
+	- Fixed Watcom compiler warnings with FL/Fl_Widget.H
+	  (STR #540)
+	- The image class copy() methods did not always make a
+	  separate copy of the image data (STR #539)
+	- Fixed an edge case in fl_old_shortcut() that could
+	  cause it to read beyond then end of the shortcut
+	  string (used for XForms named shortcuts)
+	- Added (unsupported) CMake files (STR #499)
+	- Tooltips would not reappear on the same widget, and
+	  the initial tooltip delay was not used after a tooltip
+	  was shown (STR #465)
+	- Fixed a compile problem with the Linux 2.6 threading
+	  support (STR #483)
+	- Fixed problems with 2-byte Xpm files on 64-bit
+	  platforms (STR #525)
+	- FLTK didn't handle the ReparentNotify event on X11
+	  (STR #524)
+	- The old source file "fl_set_gray.cxx" is not needed
+	  (STR #516)
+	- Fl_Text_Display still called delete[] instead of
+	  free() in one place (STR #503)
+	- The symbol test program did not handle the @+ symbol
+	  properly (STR #490)
+	- Fl_File_Chooser didn't correctly call isprint() and
+	  isspace() when checking to see if the current file was
+	  text that can be previewed (STR #517)
+	- FLUID didn't compile with Borland C++ due to a
+	  compiler bug (STR #496)
+	- Fl_Positioner did not handle reversed min and max
+	  values (STR #510)
+	- fl_descent(), fl_height(), and fl_width() would crash
+	  a program if you didn't call fl_font() first; they now
+	  return -1 if no font is set (STR #500)
+	- Added test/unittests to verify pixel drawing and 
+	  alignment across platforms
+	- Fl_Menu_::find_item() didn't determine the menu path
+	  properly (STR #481)
+	- The build system now installs image library header
+	  files in FL/images/filename.h so that FLTK programs
+	  will use the same header files as the FLTK image
+	  libraries.
+	- The build system now creates image libraries named
+	  "libfltk_name.a" instead of "libname.a" to avoid
+	  clobbering an existing installed library (STR #480)
+
+	[1.1.5rc2]
 	- Documentation updates (STR #365, STR #399, STR #407,
 	  STR #412, STR #414, STR #452, STR #462)
 	- Fl_Text_Display did not handle drawing of overlapping
@@ -230,8 +289,8 @@ Changes since FLTK 1.1.4 include:
 
 ----HTML----
 
-<P>The second release candidate for FLTK 1.1.5 is now available
-for download and testing. You now have until August 10th, 2004 to
+<P>The third release candidate for FLTK 1.1.5 is now available
+for download and testing. You now have until Ocotber 1st, 2004 to
 report any problems with this release candidate using the
 software trouble report form at the following URL:</P>
 
@@ -266,6 +325,66 @@ exceptions that allow for static linking.
 <P>Changes since FLTK 1.1.4 include:
 
 <UL>
+
+	<li>Documentation updates (<a href='http://www.fltk.org/str.php?L505'>STR #505</a>, <a href='http://www.fltk.org/str.php?L513'>STR #513</a>)
+	<li>Updated PNG library source to 1.2.7.
+	<li>Updated ZLIB library source to 1.2.1.
+	<li>Fixed VC++ project file problems (<a href='http://www.fltk.org/str.php?L476'>STR #476</a>, <a href='http://www.fltk.org/str.php?L478'>STR #478</a>,
+	<a href='http://www.fltk.org/str.php?L520'>STR #520</a>, <a href='http://www.fltk.org/str.php?L527'>STR #527</a>, <a href='http://www.fltk.org/str.php?L537'>STR #537</a>)
+	<li>Now look for 8 bits of alpha when the developer has
+	requested FL_RGB8 (<a href='http://www.fltk.org/str.php?L541'>STR #541</a>)
+	<li>The last line in an Fl_Help_View widget was not
+	aligned properly (<a href='http://www.fltk.org/str.php?L536'>STR #536</a>)
+	<li>The "search" symbol looked like a Q (<a href='http://www.fltk.org/str.php?L536'>STR #536</a>)
+	<li>Changed Fl_Help_View::get_color() to use a lookup
+	table to avoid serious Borland C++ 5.5 compiler bugs
+	(<a href='http://www.fltk.org/str.php?L533'>STR #533</a>)
+	<li>Fixed Watcom compiler warnings with FL/Fl_Widget.H
+	(<a href='http://www.fltk.org/str.php?L540'>STR #540</a>)
+	<li>The image class copy() methods did not always make a
+	separate copy of the image data (<a href='http://www.fltk.org/str.php?L539'>STR #539</a>)
+	<li>Fixed an edge case in fl_old_shortcut() that could
+	cause it to read beyond then end of the shortcut
+	string (used for XForms named shortcuts)
+	<li>Added (unsupported) CMake files (<a href='http://www.fltk.org/str.php?L499'>STR #499</a>)
+	<li>Tooltips would not reappear on the same widget, and
+	the initial tooltip delay was not used after a tooltip
+	was shown (<a href='http://www.fltk.org/str.php?L465'>STR #465</a>)
+	<li>Fixed a compile problem with the Linux 2.6 threading
+	support (<a href='http://www.fltk.org/str.php?L483'>STR #483</a>)
+	<li>Fixed problems with 2-byte Xpm files on 64-bit
+	platforms (<a href='http://www.fltk.org/str.php?L525'>STR #525</a>)
+	<li>FLTK didn't handle the ReparentNotify event on X11
+	(<a href='http://www.fltk.org/str.php?L524'>STR #524</a>)
+	<li>The old source file "fl_set_gray.cxx" is not needed
+	(<a href='http://www.fltk.org/str.php?L516'>STR #516</a>)
+	<li>Fl_Text_Display still called delete[] instead of
+	free() in one place (<a href='http://www.fltk.org/str.php?L503'>STR #503</a>)
+	<li>The symbol test program did not handle the @+ symbol
+	properly (<a href='http://www.fltk.org/str.php?L490'>STR #490</a>)
+	<li>Fl_File_Chooser didn't correctly call isprint() and
+	isspace() when checking to see if the current file was
+	text that can be previewed (<a href='http://www.fltk.org/str.php?L517'>STR #517</a>)
+	<li>FLUID didn't compile with Borland C++ due to a
+	compiler bug (<a href='http://www.fltk.org/str.php?L496'>STR #496</a>)
+	<li>Fl_Positioner did not handle reversed min and max
+	values (<a href='http://www.fltk.org/str.php?L510'>STR #510</a>)
+	<li>fl_descent(), fl_height(), and fl_width() would crash
+	a program if you didn't call fl_font() first; they now
+	return -1 if no font is set (<a href='http://www.fltk.org/str.php?L500'>STR #500</a>)
+	<li>Added test/unittests to verify pixel drawing and 
+	alignment across platforms
+	<li>Fl_Menu_::find_item() didn't determine the menu path
+	properly (<a href='http://www.fltk.org/str.php?L481'>STR #481</a>)
+	<li>The build system now installs image library header
+	files in FL/images/filename.h so that FLTK programs
+	will use the same header files as the FLTK image
+	libraries.
+	<li>The build system now creates image libraries named
+	"libfltk_name.a" instead of "libname.a" to avoid
+	clobbering an existing installed library (<a href='http://www.fltk.org/str.php?L480'>STR #480</a>)
+
+	<br /><i>[1.1.5rc2]</i>
 
 	<li>Documentation updates (<a href='http://www.fltk.org/str.php?L365'>STR #365</a>, <a href='http://www.fltk.org/str.php?L399'>STR #399</a>, <a href='http://www.fltk.org/str.php?L407'>STR #407</a>,
 	<a href='http://www.fltk.org/str.php?L412'>STR #412</a>, <a href='http://www.fltk.org/str.php?L414'>STR #414</a>, <a href='http://www.fltk.org/str.php?L452'>STR #452</a>, <a href='http://www.fltk.org/str.php?L462'>STR #462</a>)
