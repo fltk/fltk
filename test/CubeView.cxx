@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.cxx,v 1.2 1999/03/04 20:11:48 mike Exp $"
+// "$Id: CubeView.cxx,v 1.3 1999/03/04 20:26:00 mike Exp $"
 //
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
@@ -27,8 +27,13 @@
 #include <math.h>
 
 
+#if HAVE_GL
 CubeView::CubeView(int x,int y,int w,int h,const char *l)
             : Fl_Gl_Window(x,y,w,h,l)
+#else
+CubeView::CubeView(int x,int y,int w,int h,const char *l)
+            : Fl_Box(x,y,w,h,l)
+#endif /* HAVE_GL */
 {
     vAng = 0.0;
     hAng=0.0;
@@ -45,13 +50,18 @@ CubeView::CubeView(int x,int y,int w,int h,const char *l)
     boxv5[0] =  0.5; boxv5[1] = -0.5; boxv5[2] =  0.5;
     boxv6[0] =  0.5; boxv6[1] =  0.5; boxv6[2] =  0.5;
     boxv7[0] = -0.5; boxv7[1] =  0.5; boxv7[2] =  0.5;
+
+#if !HAVE_GL
+    label("OpenGL is required for this demo to operate.");
+    align(FL_ALIGN_WRAP | FL_ALIGN_INSIDE);
+#endif /* !HAVE_GL */
 };
 
 // The color used for the edges of the bounding cube.
 #define CUBECOLOR 255,255,255,255
 
+#if HAVE_GL
 void CubeView::drawCube() {
-#ifdef HAVE_GL
 /* Draw a colored cube */
     glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0); v3f(boxv1); v3f(boxv2); v3f(boxv3); glEnd();
     glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv5); v3f(boxv4); v3f(boxv7); v3f(boxv6); glEnd();
@@ -66,11 +76,9 @@ void CubeView::drawCube() {
     glBegin(GL_QUADS); glColor4ub(255,   0,   0, ALPHA); v3f(boxv4); v3f(boxv5); v3f(boxv6); v3f(boxv7); glEnd();
     glBegin(GL_QUADS); glColor4ub(255,   0, 255, ALPHA); v3f(boxv0); v3f(boxv3); v3f(boxv7); v3f(boxv4); glEnd();
     glBegin(GL_QUADS); glColor4ub(  0, 255,   0, ALPHA); v3f(boxv1); v3f(boxv5); v3f(boxv6); v3f(boxv2); glEnd();
-#endif /* HAVE_GL */
 };//drawCube
 
 void CubeView::draw() {
-#ifdef HAVE_GL
     if (!valid()) {
         glLoadIdentity();
         glViewport(0,0,w(),h());
@@ -90,9 +98,9 @@ void CubeView::draw() {
     drawCube();
     
     glPopMatrix();
-#endif /* HAVE_GL */
 };
+#endif /* HAVE_GL */
 
 //
-// End of "$Id: CubeView.cxx,v 1.2 1999/03/04 20:11:48 mike Exp $".
+// End of "$Id: CubeView.cxx,v 1.3 1999/03/04 20:26:00 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.h,v 1.2 1999/03/04 20:11:49 mike Exp $"
+// "$Id: CubeView.h,v 1.3 1999/03/04 20:26:00 mike Exp $"
 //
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -27,10 +27,12 @@
 #define CUBEVIEW_H 1
 #include <config.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Gl_Window.H>
-#ifdef HAVE_GL
+#if HAVE_GL
+#  include <FL/Fl_Gl_Window.H>
 #  include <FL/gl.h>
 #  include <GL/glu.h>
+#else
+#  include <FL/Fl_Box.H>
 #endif /* HAVE_GL */
 
 #include <stdlib.h>
@@ -38,8 +40,11 @@
 // shorthand to save some bits.
 #define v3f(x) glVertex3fv(x)
 
-
+#if HAVE_GL
 class CubeView : public Fl_Gl_Window {
+#else
+class CubeView : public Fl_Box {
+#endif /* HAVE_GL */
 
 public:
     // this value determines the scaling factor used to draw the cube.
@@ -81,6 +86,7 @@ public:
      */
     void pany(float y){yshift=y;};
 
+#if HAVE_GL
     /*The widget class draw() override.
      *
      *The draw() function initialize Gl for another round o f drawing
@@ -89,6 +95,7 @@ public:
      *
      */
     void draw();    
+#endif /* HAVE_GL */
 private:
 
     /*  Draw the cube boundaries
@@ -96,7 +103,11 @@ private:
      *Draw the faces of the cube using the boxv[] vertices, using
      * GL_LINE_LOOP for the faces. The color is \#defined by CUBECOLOR.
      */
+#if HAVE_GL
     void drawCube();
+#else
+    void drawCube() { }
+#endif /* HAVE_GL */
     
     float vAng,hAng;
     float xshift,yshift;
@@ -111,5 +122,5 @@ private:
 #endif
 
 //
-// End of "$Id: CubeView.h,v 1.2 1999/03/04 20:11:49 mike Exp $".
+// End of "$Id: CubeView.h,v 1.3 1999/03/04 20:26:00 mike Exp $".
 //
