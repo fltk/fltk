@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.42 2001/12/17 15:36:28 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.43 2001/12/19 19:23:30 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -526,8 +526,9 @@ if test -n "$GXX"; then
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
     AC_TRY_COMPILE(,,
-	OPTIM="$OPTIM -fno-exceptions"
+	CXXFLAGS="$CXXFLAGS -fno-exceptions"
 	AC_MSG_RESULT(yes),
+	CFLAGS="$OLDCFLAGS"
 	AC_MSG_RESULT(no))
     CFLAGS="$OLDCFLAGS"
 
@@ -538,10 +539,10 @@ if test -n "$GXX"; then
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fpermissive"
 	AC_TRY_COMPILE(,,
-	    OPTIM="$OPTIM -fpermissive"
+	    CXXFLAGS="$CXXFLAGS -fpermissive"
 	    AC_MSG_RESULT(yes),
+	    CFLAGS="$OLDCFLAGS"
 	    AC_MSG_RESULT(no))
-	CFLAGS="$OLDCFLAGS"
     fi
 else
     case `(uname) 2>/dev/null` in
@@ -632,5 +633,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.42 2001/12/17 15:36:28 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.43 2001/12/19 19:23:30 easysw Exp $".
 dnl

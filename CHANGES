@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- The configure script wasn't using the -fpermissive or
+	  -fno-exceptions options with GCC.
 	- Fl_JPEG_Image and friends didn't set the depth if the
 	  image file couldn't be loaded; since Fl_RGB_Image
 	  didn't check for this, it could fail when displaying

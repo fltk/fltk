@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.21 2001/12/14 21:02:24 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.22 2001/12/19 19:23:31 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -239,8 +239,7 @@ jpeg_image$(EXEEXT): jpeg_image.o
 	$(CXX) -I.. $(CXXFLAGS) jpeg_image.o $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 
-depend:
-#	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
+depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)
 
 clean:
@@ -253,5 +252,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.21 2001/12/14 21:02:24 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.22 2001/12/19 19:23:31 easysw Exp $".
 #
