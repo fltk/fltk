@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Wizard.cxx,v 1.1.2.3 2002/10/04 02:30:34 easysw Exp $"
+// "$Id: Fl_Wizard.cxx,v 1.1.2.4 2002/10/04 02:50:50 easysw Exp $"
 //
 // Fl_Wizard widget routines.
 //
@@ -37,6 +37,7 @@
 //
 
 #include <FL/Fl_Wizard.H>
+#include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 
 
@@ -203,5 +204,5 @@ Fl_Wizard::value(Fl_Widget *kid)
 
 
 //
-// End of "$Id: Fl_Wizard.cxx,v 1.1.2.3 2002/10/04 02:30:34 easysw Exp $".
+// End of "$Id: Fl_Wizard.cxx,v 1.1.2.4 2002/10/04 02:50:50 easysw Exp $".
 //
