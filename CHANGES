@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.2
 
+	- MacOS keyboard modifiers mapping corrections. Cmd and
+	  Control are no longer swapped, event_key and event_text
+	  return (mostly) the same values as on other platforms.
 	- The Fl_Tabs widget should no longer be a focus hog;
 	  previously it would take focus from child widgets.
 	- The file chooser now activates the OK button when

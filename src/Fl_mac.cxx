@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.35 2002/10/29 19:23:55 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.36 2002/10/30 01:01:52 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -860,9 +860,9 @@ static void mods_to_e_state( UInt32 mods )
 {
   long state = 0;
   if ( mods & kEventKeyModifierNumLockMask ) state |= FL_NUM_LOCK;
-  if ( mods & cmdKey ) state |= FL_CTRL;
+  if ( mods & cmdKey ) state |= FL_META;
   if ( mods & (optionKey|rightOptionKey) ) state |= FL_ALT;
-  if ( mods & (controlKey|rightControlKey) ) state |= FL_META;
+  if ( mods & (controlKey|rightControlKey) ) state |= FL_CTRL;
   if ( mods & (shiftKey|rightShiftKey) ) state |= FL_SHIFT;
   if ( mods & alphaLock ) state |= FL_CAPS_LOCK;
   Fl::e_state = ( Fl::e_state & 0xff000000 ) | state;
@@ -875,18 +875,36 @@ static void mods_to_e_state( UInt32 mods )
  */
 static void mods_to_e_keysym( UInt32 mods )
 {
-  if ( mods & cmdKey ) Fl::e_keysym = FL_Control_L;
+  if ( mods & cmdKey ) Fl::e_keysym = FL_Meta_L;
   else if ( mods & kEventKeyModifierNumLockMask ) Fl::e_keysym = FL_Num_Lock;
   else if ( mods & optionKey ) Fl::e_keysym = FL_Alt_L;
   else if ( mods & rightOptionKey ) Fl::e_keysym = FL_Alt_R;
-  else if ( mods & controlKey ) Fl::e_keysym = FL_Meta_L;
-  else if ( mods & rightControlKey ) Fl::e_keysym = FL_Meta_R;
+  else if ( mods & controlKey ) Fl::e_keysym = FL_Control_L;
+  else if ( mods & rightControlKey ) Fl::e_keysym = FL_Control_R;
   else if ( mods & shiftKey ) Fl::e_keysym = FL_Shift_L;
   else if ( mods & rightShiftKey ) Fl::e_keysym = FL_Shift_R;
   else if ( mods & alphaLock ) Fl::e_keysym = FL_Caps_Lock;
   else Fl::e_keysym = 0;
 }
 
+/**
+ * convert the keyboard return code into the symbol on the keycaps
+ */
+static unsigned short keycode_to_sym( UInt32 keyCode, UInt32 mods, unsigned short deflt )
+{
+  static Ptr map = 0;
+  UInt32 state = 0;
+  if (!map) {
+    map = (Ptr)GetScriptManagerVariable(smKCHRCache);
+    if (!map) {
+      long kbID = GetScriptManagerVariable(smKeyScript);
+      map = *GetResource('KCHR', kbID);
+    }
+  }
+  if (map)
+    return KeyTranslate(map, keyCode|mods, &state );
+  return deflt;
+}
 
 /**
  * handle carbon keyboard events
@@ -917,7 +935,15 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
     // fall through
   case kEventRawKeyUp:
     if ( !sendEvent ) sendEvent = FL_KEYUP;
-    sym = macKeyLookUp[ keyCode & 0x7f ];
+    // if the user pressed alt/option, event_key should have the keycap, but event_text should generate the international symbol
+    if ( isalpha(key) )
+      sym = tolower(key);
+    else if ( Fl::e_state&FL_CTRL && key<32 )
+      sym = key+96;
+    else if ( Fl::e_state&FL_ALT )
+      sym = keycode_to_sym( keyCode & 0x7f, 0, macKeyLookUp[ keyCode & 0x7f ] ); // find the keycap of this key
+    else
+      sym = macKeyLookUp[ keyCode & 0x7f ];
     Fl::e_keysym = sym;
     if ( keyCode==0x4c ) key=0x0d;
     if ( ( (sym>=FL_KP) && (sym<=FL_KP_Last) ) || ((sym&0xff00)==0) || (sym==FL_Tab) ) {
@@ -1724,6 +1750,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.35 2002/10/29 19:23:55 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.36 2002/10/30 01:01:52 matthiaswm Exp $".
 //
 

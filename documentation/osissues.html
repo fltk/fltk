@@ -591,6 +591,15 @@ the above systems without changes. The OS X GNU (gcc) compiler,
 however, creates Mach-O binaries which are not supported by
 MacOS 9 and earlier.
 
+<H4>control, option and command modifier keys</H4>
+
+<P>FLTK maps the Mac 'control' key to FL_CTRL, the 'option' key
+to FL_ALT and the 'Apple' key to FL_META. Keyboard events return
+the key name in Fl::event_key and the keystroke translation in
+Fl::event_text. For example, typing Option-Y on a Mac keyboard
+will set FL_ALT in Fl::event_state, set Fl::event_key to 'y'
+and return the Yen symbol in Fl::event_text.
+
 <H4>WindowRef fl_xid(const Fl_Window *)</H4>
 
 <P>Returns the window reference for an <tt>Fl_Window</tt>, or
