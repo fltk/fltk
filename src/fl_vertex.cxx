@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.10 2004/08/26 00:18:43 matthiaswm Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.11 2004/08/26 18:24:11 easysw Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -78,14 +78,14 @@ void fl_rotate(double d) {
 // typedef what the x,y fields in a point are:
 #ifdef WIN32
 typedef int COORD_T;
-#define XPOINT XPoint
+#  define XPOINT XPoint
 #elif defined(__APPLE_QUARTZ__)
 typedef float COORD_T;
 typedef struct { float x; float y; } QPoint;
-#define XPOINT QPoint
+#  define XPOINT QPoint
 #else
 typedef short COORD_T;
-#define XPOINT XPoint;
+#  define XPOINT XPoint
 #endif
 
 static XPOINT *p = (XPOINT *)0;
@@ -305,5 +305,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.10 2004/08/26 00:18:43 matthiaswm Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.11 2004/08/26 18:24:11 easysw Exp $".
 //
