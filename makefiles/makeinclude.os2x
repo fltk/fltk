@@ -1,0 +1,77 @@
+#
+# "$Id: makeinclude.os2x,v 1.1.2.1 2000/08/19 19:03:46 spitzak Exp $"
+#
+# Make include file for the Fast Light Tool Kit (FLTK).
+#
+# Copyright 1998-2000 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
+#
+
+prefix	= $(X11ROOT)/XFree86
+exec_prefix	= $(prefix)
+bindir	= $(exec_prefix)/bin
+includedir	= $(prefix)/include
+libdir	= $(exec_prefix)/lib
+srcdir	= .
+VPATH		= .
+
+# compiler names:
+CXX         = gcc
+CC          = gcc
+MAKEDEPEND  = gcc -MD
+
+# flags for C++ compiler:
+CFLAGS    = -Wall -O4 -mpentium -Zmt
+CXXFLAGS  = -Wall -O4 -mpentium -Zmt -fno-exceptions
+LDFLAGS	  = -Zexe -Zmt -Zcrtdll -s
+
+# program to make the archive:
+LIBNAME	   = fltk.a
+LIBCOMMAND = ar rc
+RANLIB	   = ar s
+DSONAME    =
+DSOCOMMAND = echo
+
+# libraries to link with:
+LDLIBS      = $(LDFLAGS) -lXext -lX11 -lExtensions
+GLDLIBS     = $(LDFLAGS) -lXext -lX11 -lExtensions
+
+# Be quiet when building...
+#.SILENT:
+
+# Build commands and filename extensions...
+.SUFFIXES:	.c .cxx .h .fl .o
+
+.cxx:
+	echo Compiling and linking $@...
+	$(CXX) -I.. -L../lib $(CXXFLAGS) $< -lfltk $(LDLIBS) -o $@
+
+.c.o:
+	echo Compiling $@...
+	$(CC) -I.. $(CXXFLAGS) $< -c
+
+.cxx.o:
+	echo Compiling $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -c
+
+#
+# End of "$Id: makeinclude.os2x,v 1.1.2.1 2000/08/19 19:03:46 spitzak Exp $".
+#
+
+export

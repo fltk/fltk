@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.6.2.3 2000/06/20 18:47:31 carl Exp $"
+# "$Id: Makefile.os2x,v 1.6.2.4 2000/08/19 19:03:46 spitzak Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,7 +23,7 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-SHELL=cmd.exe
+# SHELL=cmd.exe
 
 all: makeinclude config.h
 	echo "=== making src ==="
@@ -74,5 +74,5 @@ makeinclude: makefiles/makeinclude.os2x
 	cp $< $@
 
 #
-# End of "$Id: Makefile.os2x,v 1.6.2.3 2000/06/20 18:47:31 carl Exp $".
+# End of "$Id: Makefile.os2x,v 1.6.2.4 2000/08/19 19:03:46 spitzak Exp $".
 #

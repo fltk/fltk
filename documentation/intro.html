@@ -176,18 +176,28 @@ is generated with the same version compiler that you built it with.
 <P>When compiling an application or DLL that uses the FLTK DLL, you will need
 to define the <tt>FL_DLL</tt> preprocessor symbol to get the correct linkage
 commands embedded within the FLTK header files.
+
 <H2>Building FLTK Under OS/2</H2>
+
 The current OS/2 build requires XFree86 for OS/2 to work.  A native 
 Presentation Manager version has not been implemented yet (volunteers 
 are welcome!). 
+
+<p>The current set of Makefiles/configuration failes assumes that
+EMX 0.9d and libExt
+(from <A HREF="http://posix2.sourceforge.net">posix2.sourceforge.net</A>)
+is installed.
+
 <P>To build the XFree86 version of FLTK for OS/2, copy the appropriate 
 makeinclude and config files to the main directory and do a make: </P>
+
 <UL>
 <PRE>
 copy makefiles\Makefile.os2x Makefile
 make
 </PRE>
 </UL>
+
 <H2>Internet Resources</H2>
 FLTK is available on the 'net in a bunch of locations: 
 <DL>
