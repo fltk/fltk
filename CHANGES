@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0
 
+	- Added casts in fl_set_fonts_win32.cxx for VC++ 5.0.
 	- Fl_File_Icon::find() did not check the basename of a
 	  filename for a match; this caused matches for a
 	  specific filename (e.g. "fluid") to fail.
