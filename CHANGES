@@ -50,6 +50,7 @@ CHANGES IN FLTK 1.1.0b6
 	  bitmap drawing.
 	- Was sending FL_RELEASE events for buttons 4 and 5
 	  under X11, which are only for FL_MOUSEWHEEL.
+	- Fl_Help_View now supports the EM and STRONG elements.
 
 
 CHANGES IN FLTK 1.1.0b5

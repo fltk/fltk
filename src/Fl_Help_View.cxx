@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.11 2001/11/17 15:59:53 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.12 2001/11/22 13:56:10 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1121,7 +1121,8 @@ Fl_Help_View::draw()
 	    fl_color(linkcolor_);
 	  else if (strcasecmp(buf, "/A") == 0)
 	    fl_color(textcolor_);
-	  else if (strcasecmp(buf, "B") == 0)
+	  else if (strcasecmp(buf, "B") == 0 ||
+	           strcasecmp(buf, "STRONG") == 0)
 	    pushfont(font |= FL_BOLD, size);
 	  else if (strcasecmp(buf, "TABLE") == 0)
             tc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
@@ -1149,7 +1150,8 @@ Fl_Help_View::draw()
 	              block->y - topline_ + y() - size - 3,
 		      block->w - block->x + 7, block->h + size - 5);
 	  }
-	  else if (strcasecmp(buf, "I") == 0)
+	  else if (strcasecmp(buf, "I") == 0 ||
+                   strcasecmp(buf, "EM") == 0)
 	    pushfont(font |= FL_ITALIC, size);
 	  else if (strcasecmp(buf, "CODE") == 0)
 	    pushfont(font = FL_COURIER, size);
@@ -1166,7 +1168,9 @@ Fl_Help_View::draw()
 		   strcasecmp(buf, "/H5") == 0 ||
 		   strcasecmp(buf, "/H6") == 0 ||
 		   strcasecmp(buf, "/B") == 0 ||
+		   strcasecmp(buf, "/STRONG") == 0 ||
 		   strcasecmp(buf, "/I") == 0 ||
+		   strcasecmp(buf, "/EM") == 0 ||
 		   strcasecmp(buf, "/CODE") == 0 ||
 		   strcasecmp(buf, "/KBD") == 0 ||
 		   strcasecmp(buf, "/VAR") == 0)
@@ -1845,9 +1849,11 @@ Fl_Help_View::format()
       else if ((strcasecmp(buf, "/TD") == 0 ||
                 strcasecmp(buf, "/TH") == 0) && row)
         popfont(font, size);
-      else if (strcasecmp(buf, "B") == 0)
+      else if (strcasecmp(buf, "B") == 0 ||
+               strcasecmp(buf, "STRONG") == 0)
 	pushfont(font |= FL_BOLD, size);
-      else if (strcasecmp(buf, "I") == 0)
+      else if (strcasecmp(buf, "I") == 0 ||
+               strcasecmp(buf, "EM") == 0)
 	pushfont(font |= FL_ITALIC, size);
       else if (strcasecmp(buf, "CODE") == 0)
 	pushfont(font = FL_COURIER, size);
@@ -1856,7 +1862,9 @@ Fl_Help_View::format()
       else if (strcasecmp(buf, "VAR") == 0)
 	pushfont(font = FL_COURIER_ITALIC, size);
       else if (strcasecmp(buf, "/B") == 0 ||
+	       strcasecmp(buf, "/STRONG") == 0 ||
 	       strcasecmp(buf, "/I") == 0 ||
+	       strcasecmp(buf, "/EM") == 0 ||
 	       strcasecmp(buf, "/CODE") == 0 ||
 	       strcasecmp(buf, "/KBD") == 0 ||
 	       strcasecmp(buf, "/VAR") == 0)
@@ -2290,9 +2298,11 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	incell = 0;
         popfont(font, size);
       }
-      else if (strcasecmp(buf, "B") == 0)
+      else if (strcasecmp(buf, "B") == 0 ||
+               strcasecmp(buf, "STRONG") == 0)
 	pushfont(font |= FL_BOLD, size);
-      else if (strcasecmp(buf, "I") == 0)
+      else if (strcasecmp(buf, "I") == 0 ||
+               strcasecmp(buf, "EM") == 0)
 	pushfont(font |= FL_ITALIC, size);
       else if (strcasecmp(buf, "CODE") == 0)
 	pushfont(font = FL_COURIER, size);
@@ -2301,7 +2311,9 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
       else if (strcasecmp(buf, "VAR") == 0)
 	pushfont(font = FL_COURIER_ITALIC, size);
       else if (strcasecmp(buf, "/B") == 0 ||
+	       strcasecmp(buf, "/STRONG") == 0 ||
 	       strcasecmp(buf, "/I") == 0 ||
+	       strcasecmp(buf, "/EM") == 0 ||
 	       strcasecmp(buf, "/CODE") == 0 ||
 	       strcasecmp(buf, "/KBD") == 0 ||
 	       strcasecmp(buf, "/VAR") == 0)
@@ -3581,5 +3593,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.11 2001/11/17 15:59:53 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.12 2001/11/22 13:56:10 easysw Exp $".
 //

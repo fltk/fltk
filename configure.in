@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.25 2001/11/20 20:10:58 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.26 2001/11/22 13:56:10 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -47,7 +47,7 @@ dnl Get the operating system and version number...
 
 uname=`uname`
 uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
-if test x$uname = xIRIX64; then
+if test $uname = IRIX64; then
     uname="IRIX"
 fi
 
@@ -59,7 +59,15 @@ PICFLAG=0
 CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 
-AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=yes]])
+case $uname in
+    CYGWIN*)
+	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=yes]],,
+	    CPPFLAGS="$CPPFLAGS -mno-cygwin"
+	    CFLAGS="$CFLAGS -mno-cygwin"
+	    CXXFLAGS="$CXXFLAGS -mno-cygwin")
+	;;
+esac
+
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]],[if eval "test x$enable_debug = xyes"; then
     DEBUGFLAG="-g "
 fi])
@@ -107,9 +115,11 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl_s.a"
             DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             ;;
+        CYGWIN*)
+            AC_MSG_WARN(Shared libraries are not supported under CygWin.)
+	    ;;
 	*)
-            echo "Warning: shared libraries may not be supported.  Trying -shared"
-	    echo "         option with compiler."
+            AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)
             DSONAME="libfltk.so.1.1"
             GLDSONAME="libfltk_gl.so.1.1"
             DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
@@ -159,19 +169,19 @@ AC_CHECK_HEADER(sys/select.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_HEADER(sys/stdtypes.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_FUNC(scandir,
     if test "$uname" = SunOS -o "$uname" = QNX; then
-        echo Not using $uname scandir emulation function.
+        AC_MSG_WARN(Not using $uname scandir emulation function.)
     else
         AC_DEFINE(HAVE_SCANDIR)
     fi)
 AC_CHECK_FUNC(vsnprintf,
     if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	echo Not using built-in vsnprintf function because you are running HP-UX 10.20.
+	AC_MSG_WARN(Not using built-in vsnprintf function because you are running HP-UX 10.20.)
     else
         AC_DEFINE(HAVE_VSNPRINTF)
     fi)
 AC_CHECK_FUNC(snprintf,
     if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	echo Not using built-in snprintf function because you are running HP-UX 10.20.
+	AC_MSG_WARN(Not using built-in snprintf function because you are running HP-UX 10.20.)
     else
         AC_DEFINE(HAVE_SNPRINTF)
     fi)
@@ -180,7 +190,7 @@ AC_CHECK_HEADER(strings.h,AC_DEFINE(HAVE_STRINGS_H))
 AC_CHECK_FUNCS(strcasecmp)
 
 dnl FLTK library uses math library functions...
-AC_CHECK_LIB(m, pow)
+AC_SEARCH_LIBS(pow, m)
 
 dnl Check for image libraries...
 SAVELIBS="$LIBS"
@@ -220,10 +230,6 @@ case $uname in
 	CXXFLAGS="$CXXFLAGS -DWIN32"
 	EXEEXT=".exe"
 	HLINKS="#"
-	if test x$enable_cygwin = xno; then
-	    CFLAGS="$CFLAGS -mno-cygwin"
-	    CXXFLAGS="$CXXFLAGS -mno-cygwin"
-	fi
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
 	        AC_DEFINE(HAVE_GL)
@@ -490,17 +496,13 @@ else
         	CFLAGS="-O2 $CFLAGS"
         	CXXFLAGS="-O2 $CXXFLAGS"
 	    fi
-	    echo "WARNING: The AIX C and C++ compilers are known not to correctly"
-	    echo "         compile the FLTK library.  We recommend using GCC 2.95.2"
-	    echo "         under AIX."
+	    AC_MSG_WARN(The AIX C and C++ compilers are known not to correctly compile the FLTK library.)
 	    ;;
 	*)
 	    # Running some other operating system; inform the user they
 	    # should contribute the necessary options to fltk-bugs@fltk.org...
-	    echo "Building FLTK with default compiler optimizations; contact"
-	    echo "fltk-bugs@fltk.org with uname and compiler options needed"
-	    echo "for your platform, or set the CFLAGS and CXXFLAGS options"
-	    echo "before running configure."
+	    AC_MSG_WARN(Building FLTK with default compiler optimizations)
+	    AC_MSG_WARN(Contact fltk-bugs@fltk.org with uname and compiler options.)
 	    ;;
     esac
 fi
@@ -530,5 +532,5 @@ AC_OUTPUT(makeinclude fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.25 2001/11/20 20:10:58 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.26 2001/11/22 13:56:10 easysw Exp $".
 dnl
