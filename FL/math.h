@@ -1,5 +1,5 @@
 //
-// "$Id: math.h,v 1.4.2.4.2.8 2003/01/30 21:40:55 easysw Exp $"
+// "$Id: math.h,v 1.4.2.4.2.9 2003/08/02 05:54:43 matthiaswm Exp $"
 //
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,16 @@
 #ifndef fl_math_h
 #  define fl_math_h
 
-#  include <math.h>
+// Apple's ProjectBuilder has the nasty habit of including recursively
+// down the file tree. To avoid re-including <FL/math.h> we must 
+// directly include the systems math file. (Plus, I could not find a 
+// predefined macro for ProjectBuilder builds, so we have to define it 
+// in the project)
+#  if defined(__APPLE__) && defined(__PROJECTBUILDER__)
+#    include "/usr/include/math.h"
+#  else
+#    include <math.h>
+#  endif
 
 
 #  ifndef M_PI
@@ -57,5 +66,5 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 
 
 //
-// End of "$Id: math.h,v 1.4.2.4.2.8 2003/01/30 21:40:55 easysw Exp $".
+// End of "$Id: math.h,v 1.4.2.4.2.9 2003/08/02 05:54:43 matthiaswm Exp $".
 //

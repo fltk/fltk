@@ -1,5 +1,5 @@
 /*
- * "$Id: filename.H,v 1.11.2.4.2.12 2003/01/30 21:40:42 easysw Exp $"
+ * "$Id: filename.H,v 1.11.2.4.2.13 2003/08/02 05:54:43 matthiaswm Exp $"
  *
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
@@ -54,6 +54,16 @@ inline int fl_filename_relative(char *to, const char *from) { return fl_filename
 #  if defined(WIN32) && !defined(__CYGWIN__)
 
 struct dirent {char d_name[1];};
+
+#  elif defined(__APPLE__) && defined(__PROJECTBUILDER__)
+
+// Apple's ProjectBuilder has the nasty habit of including recursively
+// down the file tree. To avoid re-including <FL/dirent.h> we must 
+// directly include the systems math file. (Plus, I could not find a 
+// predefined macro for ProjectBuilder builds, so we have to define it 
+// in the project)
+#    include <sys/types.h>
+#    include "/usr/include/dirent.h"
 
 #  else
 /*
@@ -117,5 +127,5 @@ FL_EXPORT int fl_filename_list(const char *d, struct dirent ***l,
 #endif /* FL_FILENAME_H */
 
 /*
- * End of "$Id: filename.H,v 1.11.2.4.2.12 2003/01/30 21:40:42 easysw Exp $".
+ * End of "$Id: filename.H,v 1.11.2.4.2.13 2003/08/02 05:54:43 matthiaswm Exp $".
  */

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.50 2003/07/21 05:38:16 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.51 2003/08/02 05:54:43 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -666,6 +666,10 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
   
   switch ( kind )
   {
+  case kEventWindowBoundsChanging:
+    GetEventParameter( event, kEventParamCurrentBounds, typeQDRectangle, NULL, sizeof(Rect), NULL, &currentBounds );
+    GetEventParameter( event, kEventParamOriginalBounds, typeQDRectangle, NULL, sizeof(Rect), NULL, &originalBounds );
+    break;
   case kEventWindowDrawContent:
     handleUpdateEvent( fl_xid( window ) );
     ret = noErr;
@@ -1615,8 +1619,9 @@ void Fl_X::make(Fl_Window* w)
         { kEventClassWindow, kEventWindowActivated },
         { kEventClassWindow, kEventWindowDeactivated },
         { kEventClassWindow, kEventWindowClose },
+        { kEventClassWindow, kEventWindowBoundsChanging },
         { kEventClassWindow, kEventWindowBoundsChanged } };
-      ret = InstallWindowEventHandler( x->xid, windowHandler, 7, windowEvents, w, 0L );
+      ret = InstallWindowEventHandler( x->xid, windowHandler, 8, windowEvents, w, 0L );
       ret = InstallTrackingHandler( dndTrackingHandler, x->xid, w );
       ret = InstallReceiveHandler( dndReceiveHandler, x->xid, w );
     }
@@ -1636,6 +1641,11 @@ void Fl_X::make(Fl_Window* w)
     }
 
     ShowWindow(x->xid);
+
+    Rect rect;
+    GetWindowBounds(x->xid, kWindowContentRgn, &rect);
+    w->x(rect.left); w->y(rect.top);
+    w->w(rect.right-rect.left); w->h(rect.bottom-rect.top);
 
     w->handle(FL_SHOW);
     w->redraw(); // force draw to happen
@@ -1867,6 +1877,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.50 2003/07/21 05:38:16 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.51 2003/08/02 05:54:43 matthiaswm Exp $".
 //
 
