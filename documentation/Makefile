@@ -86,6 +86,7 @@ HTMLFILES	= \
 		Fl_Image.html \
 		Fl_Input.html \
 		Fl_Input_.html \
+		Fl_Input_Choice.html \
 		Fl_Int_Input.html \
 		Fl_JPEG_Image.html \
 		Fl_Light_Button.html \
