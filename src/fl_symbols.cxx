@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.7 1999/01/27 08:45:11 bill Exp $"
+// "$Id: fl_symbols.cxx,v 1.8 1999/02/22 22:09:17 mike Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -280,18 +280,6 @@ static void draw_arrow(Fl_Color col)
   BC; vv(0.65,0.1); vv(1.0,0.0); vv(0.65,-0.1); EC;
 }
 
-#if 0
-static void fl_draw_returnarrow(Fl_Color col) {
-    fl_color(col);
-    fl_begin_polygon();
-    vv(-0.8,0.0); vv(-0.1,0.7); vv(-0.1,-0.7);
-    fl_end_polygon();
-    set_outline_color(col);
-    fl_begin_loop(); vv(-0.8,0.0); vv(-0.1,0.7); vv(-0.1,-0.7);fl_end_loop();
-    fl_begin_line(); vv(-0.1,0.0); vv(0.8,0.0); vv(0.8,-0.7); fl_end_line();
-}
-#endif
-
 static void draw_square(Fl_Color col)
   { rectangle(-1,-1,1,1,col); }
 
@@ -395,5 +383,5 @@ void Fl::enable_symbols() {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.7 1999/01/27 08:45:11 bill Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8 1999/02/22 22:09:17 mike Exp $".
 //
