@@ -50,16 +50,17 @@ type()</TT> to one of the following values: </P>
 <LI><A href=#Fl_Input_.cut>cut</A></LI>
 <LI><A href=#Fl_Input_.drawtext>drawtext</A></LI>
 <LI><A href=#Fl_Input_.handletext>handletext</A></LI>
+<LI><A href=#Fl_Input_.insert>insert</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Input_.insert>insert</A></LI>
 <LI><A href=#Fl_Input_.lineboundary>lineboundary</A></LI>
 <LI><A href=#Fl_Input_.mark>mark</A></LI>
+<LI><A href=#Fl_Input_.maybe_do_callback>maybe_do_callback</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Input_.maybe_do_callback>maybe_do_callback</A></LI>
+<LI><A href=#Fl_Input_.maximum_size>maximum_size</A></LI>
 <LI><A href=#Fl_Input_.position>position</A></LI>
 <LI><A href=#Fl_Input_.replace>replace</A></LI>
 </UL>
@@ -109,6 +110,9 @@ Fl_Input_::maybe_do_callback()</A></H4>
  Does the callback if <TT>changed()</TT> is true or if <TT>when() 
 FL_WHEN_NOT_CHANGED</TT> is non-zero.  You should call this at any 
 point you think you should generate a callback. 
+<H4><A name="Fl_Input_.maximum_size">void Fl_Input_::maximum_size(int m)<BR>
+int Fl_Input_::maximum_size() const</A></H4>
+<P>Sets or returns the maximum length of the input field.
 <H4><A name=Fl_Input_.position>int Fl_Input_::position() const
 <BR> int Fl_Input_::position(int new_position, int new_mark)
 <BR> int Fl_Input_::position(int new_position_and_new_mark)</A></H4>

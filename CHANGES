@@ -1,5 +1,49 @@
 CHANGES SINCE FLTK 1.0.8
 
+	- More documentation fixes.
+	- Added Fl::has_timeout() and Fl::has_idle() functions.
+	- Added new Fl::add_interval_timeout() method that
+	  measures time from when the last timeout was called. 
+	  This has slightly less overhead and allows accurate
+	  spacing of timeouts.
+	- More Cygwin changes
+	- FLUID could crash with identifiers with trailing
+	  whitespace.
+	- Fixed the XPM loading code in FLUID to handle files
+	  longer than 2048 lines.
+	- Added a bunch of missing FL_EXTERN's to glut.h to
+	  eliminate GLUT linking errors under WIN32.
+	- Fix for sliders so that clicking on one with a small
+	  (or zero) slider_size will not move the slider.
+	- fl_shortcut.cxx didn't export fl_old_shortcut() in the
+	  WIN32 DLL.
+	- Fixed xpaint link in the documentation.
+	- Included Fl_Input word-wrap fixes from Alexander Rabi
+	  Beels. This will not affect things much because
+	  word-wrap is normally disabled.
+	- Patch from Stuart Levy so the *last* widget in an
+	  Fl_Pack may be resizable.  This should be compatable
+	  because resizable didn't do anything before so there
+	  was no reason to set it.
+	- Cleaned up the timeout and Fl::wait() code.  The new
+	  code calls the clock function less than half as much,
+	  which results in a noticable performance improvement
+	  in some apps.
+	- Fl::wait(time) with a time greater than the system can
+	  handle (24.855 days on NT, the same on some Unix
+	  systems) will now act as though the time is infinity. 
+	  Before it would do unpredictable things.
+	- "USE_POLL" now compiles and works, although it is
+	  disabled by default. poll() is an alternative to the
+	  UNIX select() call which is available on some version
+	  of UNIX and may be faster depending on the platform;
+	  try it by editing config.h.
+	- The WIN32 USE_ASYNC_SELECT code now does translation
+	  and dispatching of the select events; this makes
+	  Windows a lot happier.
+	- Added a check for an open display in Fl::wait() so
+	  that you don't need an open window under X to call it.
+
 	  [changes in snapshot 2]
 
 	- fl_old_shortcut() wasn't being exported in the WIN32 DLL
