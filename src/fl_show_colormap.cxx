@@ -1,5 +1,5 @@
 //
-// "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.2 2002/08/09 03:17:30 easysw Exp $"
 //
 // Colormap color selection dialog for the Fast Light Tool Kit (FLTK).
 //
@@ -56,14 +56,14 @@ ColorMenu::ColorMenu(Fl_Color oldcol) :
 
 void ColorMenu::drawbox(Fl_Color c) {
   if (c < 0 || c > 255) return;
-  int x = (c%8)*BOXSIZE+BORDER;
-  int y = (c/8)*BOXSIZE+BORDER;
+  int X = (c%8)*BOXSIZE+BORDER;
+  int Y = (c/8)*BOXSIZE+BORDER;
 #if BORDER_WIDTH < 3
-  if (c == which) fl_draw_box(FL_DOWN_BOX, x+1, y+1, BOXSIZE-1, BOXSIZE-1, c);
-  else fl_draw_box(FL_BORDER_BOX, x, y, BOXSIZE+1, BOXSIZE+1, c);
+  if (c == which) fl_draw_box(FL_DOWN_BOX, X+1, Y+1, BOXSIZE-1, BOXSIZE-1, c);
+  else fl_draw_box(FL_BORDER_BOX, X, Y, BOXSIZE+1, BOXSIZE+1, c);
 #else
   fl_draw_box(c == which ? FL_DOWN_BOX : FL_BORDER_BOX,
-	      x, y, BOXSIZE+1, BOXSIZE+1, c);
+	      X, Y, BOXSIZE+1, BOXSIZE+1, c);
 #endif
 }
 
@@ -150,5 +150,5 @@ Fl_Color fl_show_colormap(Fl_Color oldcol) {
 }
 
 //
-// End of "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_show_colormap.cxx,v 1.5.2.4.2.2 2002/08/09 03:17:30 easysw Exp $".
 //

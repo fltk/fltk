@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.12 2002/07/17 15:23:58 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.13 2002/08/09 03:17:30 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -245,7 +245,7 @@ int Fl::scheme(const char *s) {
 }
 
 int Fl::reload_scheme() {
-  Fl_Window *w;
+  Fl_Window *win;
 
   get_system_colors();
 
@@ -270,7 +270,7 @@ int Fl::reload_scheme() {
       tile.mask = 0;
     }
 
-    if (!scheme_bg_) scheme_bg_ = new Fl_Tiled_Image(&tile, Fl::w(), Fl::h());
+    if (!scheme_bg_) scheme_bg_ = new Fl_Tiled_Image(&tile, w(), h());
 
     // Load plastic buttons, etc...
     set_boxtype(FL_UP_FRAME,        FL_PLASTIC_UP_FRAME);
@@ -305,11 +305,11 @@ int Fl::reload_scheme() {
   }
 
   // Set (or clear) the background tile for all windows...
-  for (w = first_window(); w; w = next_window(w)) {
-    w->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
-    w->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
-    w->image(scheme_bg_);
-    w->redraw();
+  for (win = first_window(); win; win = next_window(win)) {
+    win->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
+    win->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+    win->image(scheme_bg_);
+    win->redraw();
   }
 
   return 1;
@@ -317,5 +317,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.12 2002/07/17 15:23:58 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.13 2002/08/09 03:17:30 easysw Exp $".
 //

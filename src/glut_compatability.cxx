@@ -1,5 +1,5 @@
 //
-// "$Id: glut_compatability.cxx,v 1.4.2.5.2.2 2002/06/26 14:52:33 matthiaswm Exp $"
+// "$Id: glut_compatability.cxx,v 1.4.2.5.2.3 2002/08/09 03:17:30 easysw Exp $"
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
@@ -127,9 +127,9 @@ int Fl_Glut_Window::handle(int event) {
       break;
     } else {
       if (special) {
-	int i = Fl::event_key();
-	if (i > FL_F && i <= FL_F_Last) i = i-FL_F;
-	special(i,ex,ey);
+	int k = Fl::event_key();
+	if (k > FL_F && k <= FL_F_Last) k -= FL_F;
+	special(k,ex,ey);
 	return 1;
       }
       break;
@@ -167,11 +167,11 @@ void Fl_Glut_Window::_init() {
   mode(glut_mode);
 }
 
-Fl_Glut_Window::Fl_Glut_Window(int w, int h, const char *t) :
-  Fl_Gl_Window(w,h,t) {_init();}
+Fl_Glut_Window::Fl_Glut_Window(int W, int H, const char *t) :
+  Fl_Gl_Window(W,H,t) {_init();}
 
-Fl_Glut_Window::Fl_Glut_Window(int x,int y,int w,int h, const char *t) :
-  Fl_Gl_Window(x,y,w,h,t) {_init();}
+Fl_Glut_Window::Fl_Glut_Window(int X,int Y,int W,int H, const char *t) :
+  Fl_Gl_Window(X,Y,W,H,t) {_init();}
 
 static int initargc;
 static char **initargv;
@@ -402,5 +402,5 @@ int glutLayerGet(GLenum type) {
 #endif
 
 //
-// End of "$Id: glut_compatability.cxx,v 1.4.2.5.2.2 2002/06/26 14:52:33 matthiaswm Exp $".
+// End of "$Id: glut_compatability.cxx,v 1.4.2.5.2.3 2002/08/09 03:17:30 easysw Exp $".
 //

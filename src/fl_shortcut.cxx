@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.6 2002/06/26 02:01:33 matthiaswm Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -181,14 +181,14 @@ int fl_old_shortcut(const char* s) {
 
 // Tests for &x shortcuts in button labels:
 
-int Fl_Widget::test_shortcut(const char *label) {
+int Fl_Widget::test_shortcut(const char *l) {
   char c = Fl::event_text()[0];
-  if (!c || !label) return 0;
+  if (!c || !l) return 0;
   for (;;) {
-    if (!*label) return 0;
-    if (*label++ == '&' && *label) {
-      if (*label == '&') label++;
-      else if (*label == c) return 1;
+    if (!*l) return 0;
+    if (*l++ == '&' && *l) {
+      if (*l == '&') l++;
+      else if (*l == c) return 1;
       else return 0;
     }
   }
@@ -200,5 +200,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.6 2002/06/26 02:01:33 matthiaswm Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.7 2002/08/09 03:17:30 easysw Exp $".
 //

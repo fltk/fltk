@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XPM_Image.cxx,v 1.1.2.6 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_XPM_Image.cxx,v 1.1.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Fl_XPM_Image routines.
 //
@@ -77,9 +77,9 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
 	q++;
 	int n = 0;
 	for (int x = 0; x < 3; x++) {
-	  int d = hexdigit(*q);
-	  if (d > 15) break;
-	  n = (n<<4)+d;
+	  int xd = hexdigit(*q);
+	  if (xd > 15) break;
+	  n = (n<<4)+xd;
 	  q++;
 	}
 	*myp++ = n;
@@ -89,9 +89,9 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
 	if (c>='0' && c<='7') {
 	  c -= '0';
 	  for (int x=0; x<2; x++) {
-	    int d = hexdigit(*q);
-	    if (d>7) break;
-	    c = (c<<3)+d;
+	    int xd = hexdigit(*q);
+	    if (xd>7) break;
+	    c = (c<<3)+xd;
 	    q++;
 	  }
 	}
@@ -125,5 +125,5 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.6 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.7 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Output.H,v 1.5.2.3.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Value_Output.H,v 1.5.2.3.2.3 2002/08/09 03:17:29 easysw Exp $"
 //
 // Value output header file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@ public:
   FL_EXPORT void draw();
   FL_EXPORT Fl_Value_Output(int x,int y,int w,int h,const char *l=0);
 
-  void soft(uchar x) {soft_ = x;}
+  void soft(uchar s) {soft_ = s;}
   uchar soft() const {return soft_;}
 
   Fl_Font textfont() const {return (Fl_Font)textfont_;}
@@ -52,5 +52,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Value_Output.H,v 1.5.2.3.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Value_Output.H,v 1.5.2.3.2.3 2002/08/09 03:17:29 easysw Exp $".
 //

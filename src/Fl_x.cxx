@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.22 2002/06/24 02:04:54 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.23 2002/08/09 03:17:30 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -117,8 +117,8 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
 #  endif
 }
 
-void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
-  Fl::add_fd(fd, POLLIN, cb, v);
+void Fl::add_fd(int n, void (*cb)(int, void*), void* v) {
+  Fl::add_fd(n, POLLIN, cb, v);
 }
 
 void Fl::remove_fd(int n, int events) {
@@ -368,13 +368,13 @@ int Fl::w() {
   return DisplayWidth(fl_display,fl_screen);
 }
 
-void Fl::get_mouse(int &x, int &y) {
+void Fl::get_mouse(int &xx, int &yy) {
   fl_open_display();
   Window root = RootWindow(fl_display, fl_screen);
   Window c; int mx,my,cx,cy; unsigned int mask;
   XQueryPointer(fl_display,root,&root,&c,&mx,&my,&cx,&cy,&mask);
-  x = mx;
-  y = my;
+  xx = mx;
+  yy = my;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -516,7 +516,7 @@ int fl_handle(const XEvent& xevent)
     if (!fl_selection_requestor) return 0;
     static unsigned char* buffer;
     if (buffer) {XFree(buffer); buffer = 0;}
-    long read = 0;
+    long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
       // The Xdnd code pastes 64K chunks together, possibly to avoid
       // bugs in X servers, or maybe to avoid an extra round-trip to
@@ -526,21 +526,21 @@ int fl_handle(const XEvent& xevent)
       if (XGetWindowProperty(fl_display,
 			     fl_xevent->xselection.requestor,
 			     fl_xevent->xselection.property,
-			     read/4, 65536, 1, 0,
+			     bytesread/4, 65536, 1, 0,
 			     &actual, &format, &count, &remaining,
 			     &portion)) break; // quit on error
-      if (read) { // append to the accumulated buffer
-	buffer = (unsigned char*)realloc(buffer, read+count*format/8+remaining);
-	memcpy(buffer+read, portion, count*format/8);
+      if (bytesread) { // append to the accumulated buffer
+	buffer = (unsigned char*)realloc(buffer, bytesread+count*format/8+remaining);
+	memcpy(buffer+bytesread, portion, count*format/8);
 	XFree(portion);
       } else {	// Use the first section without moving the memory:
 	buffer = portion;
       }
-      read += count*format/8;
+      bytesread += count*format/8;
       if (!remaining) break;
     }
     Fl::e_text = (char*)buffer;
-    Fl::e_length = read;
+    Fl::e_length = bytesread;
     fl_selection_requestor->handle(FL_PASTE);
     // Detect if this paste is due to Xdnd by the property name (I use
     // XA_SECONDARY for that) and send an XdndFinished message. It is not
@@ -914,17 +914,17 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 
 void fl_fix_focus(); // in Fl.cxx
 
-Fl_X* Fl_X::set_xid(Fl_Window* w, Window xid) {
-  Fl_X* x = new Fl_X;
-  x->xid = xid;
-  x->other_xid = 0;
-  x->setwindow(w);
-  x->next = Fl_X::first;
-  x->region = 0;
-  x->wait_for_expose = 1;
-  Fl_X::first = x;
-  if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
-  return x;
+Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
+  Fl_X* xp = new Fl_X;
+  xp->xid = winxid;
+  xp->other_xid = 0;
+  xp->setwindow(win);
+  xp->next = Fl_X::first;
+  xp->region = 0;
+  xp->wait_for_expose = 1;
+  Fl_X::first = xp;
+  if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
+  return xp;
 }
 
 // More commonly a subclass calls this, because it hides the really
@@ -945,25 +945,25 @@ ExposureMask|StructureNotifyMask
 |EnterWindowMask|LeaveWindowMask
 |PointerMotionMask;
 
-void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
+void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
-  int X = w->x();
-  int Y = w->y();
-  int W = w->w();
+  int X = win->x();
+  int Y = win->y();
+  int W = win->w();
   if (W <= 0) W = 1; // X don't like zero...
-  int H = w->h();
+  int H = win->h();
   if (H <= 0) H = 1; // X don't like zero...
-  if (!w->parent() && !Fl::grab()) {
+  if (!win->parent() && !Fl::grab()) {
     // center windows in case window manager does not do anything:
-    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
-      w->x(X = (Fl::w()-W)/2);
-      w->y(Y = (Fl::h()-H)/2);
+    if (!(win->flags() & Fl_Window::FL_FORCE_POSITION)) {
+      win->x(X = (Fl::w()-W)/2);
+      win->y(Y = (Fl::h()-H)/2);
     }
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
-    if (w->border()) {
+    if (win->border()) {
       // ensure border is on screen:
       // (assumme extremely minimal dimensions for this border)
       const int top = 20;
@@ -982,23 +982,23 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
     if (Y < 0) Y = 0;
   }
 
-  ulong root = w->parent() ?
-    fl_xid(w->window()) : RootWindow(fl_display, fl_screen);
+  ulong root = win->parent() ?
+    fl_xid(win->window()) : RootWindow(fl_display, fl_screen);
 
   XSetWindowAttributes attr;
   int mask = CWBorderPixel|CWColormap|CWEventMask|CWBitGravity;
-  attr.event_mask = w->parent() ? childEventMask : XEventMask;
+  attr.event_mask = win->parent() ? childEventMask : XEventMask;
   attr.colormap = colormap;
   attr.border_pixel = 0;
   attr.bit_gravity = 0; // StaticGravity;
-  if (w->override()) {
+  if (win->override()) {
     attr.override_redirect = 1;
     attr.save_under = 1;
     mask |= CWOverrideRedirect | CWSaveUnder;
   } else attr.override_redirect = 0;
   if (Fl::grab()) {
     attr.save_under = 1; mask |= CWSaveUnder;
-    if (!w->border()) {attr.override_redirect = 1; mask |= CWOverrideRedirect;}
+    if (!win->border()) {attr.override_redirect = 1; mask |= CWOverrideRedirect;}
   }
   if (fl_background_pixel >= 0) {
     attr.background_pixel = fl_background_pixel;
@@ -1006,54 +1006,54 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
     mask |= CWBackPixel;
   }
 
-  Fl_X* x =
-    set_xid(w, XCreateWindow(fl_display,
-			     root,
-			     X, Y, W, H,
-			     0, // borderwidth
-			     visual->depth,
-			     InputOutput,
-			     visual->visual,
-			     mask, &attr));
+  Fl_X* xp =
+    set_xid(win, XCreateWindow(fl_display,
+			       root,
+			       X, Y, W, H,
+			       0, // borderwidth
+			       visual->depth,
+			       InputOutput,
+			       visual->visual,
+			       mask, &attr));
   int showit = 1;
 
-  if (!w->parent() && !attr.override_redirect) {
+  if (!win->parent() && !attr.override_redirect) {
     // Communicate all kinds 'o junk to the X Window Manager:
 
-    w->label(w->label(), w->iconlabel());
+    win->label(win->label(), win->iconlabel());
 
-    XChangeProperty(fl_display, x->xid, WM_PROTOCOLS,
+    XChangeProperty(fl_display, xp->xid, WM_PROTOCOLS,
  		    XA_ATOM, 32, 0, (uchar*)&WM_DELETE_WINDOW, 1);
 
     // send size limits and border:
-    x->sendxjunk();
+    xp->sendxjunk();
 
     // set the class property, which controls the icon used:
-    if (w->xclass()) {
+    if (win->xclass()) {
       char buffer[1024];
       char *p; const char *q;
       // truncate on any punctuation, because they break XResource lookup:
-      for (p = buffer, q = w->xclass(); isalnum(*q)||(*q&128);) *p++ = *q++;
+      for (p = buffer, q = win->xclass(); isalnum(*q)||(*q&128);) *p++ = *q++;
       *p++ = 0;
       // create the capitalized version:
       q = buffer;
       *p = toupper(*q++); if (*p++ == 'X') *p++ = toupper(*q++);
       while ((*p++ = *q++));
-      XChangeProperty(fl_display, x->xid, XA_WM_CLASS, XA_STRING, 8, 0,
+      XChangeProperty(fl_display, xp->xid, XA_WM_CLASS, XA_STRING, 8, 0,
 		      (unsigned char *)buffer, p-buffer-1);
     }
 
-    if (w->non_modal() && x->next && !fl_disable_transient_for) {
+    if (win->non_modal() && xp->next && !fl_disable_transient_for) {
       // find some other window to be "transient for":
-      Fl_Window* w = x->next->w;
-      while (w->parent()) w = w->window();
-      XSetTransientForHint(fl_display, x->xid, fl_xid(w));
-      if (!w->visible()) showit = 0; // guess that wm will not show it
+      Fl_Window* wp = xp->next->w;
+      while (wp->parent()) wp = wp->window();
+      XSetTransientForHint(fl_display, xp->xid, fl_xid(wp));
+      if (!wp->visible()) showit = 0; // guess that wm will not show it
     }
 
     // Make it receptive to DnD:
     int version = 4;
-    XChangeProperty(fl_display, x->xid, fl_XdndAware,
+    XChangeProperty(fl_display, xp->xid, fl_XdndAware,
 		    XA_ATOM, sizeof(int)*8, 0, (unsigned char*)&version, 1);
 
     XWMHints hints;
@@ -1065,18 +1065,18 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
       fl_show_iconic = 0;
       showit = 0;
     }
-    if (w->icon()) {
-      hints.icon_pixmap = (Pixmap)w->icon();
+    if (win->icon()) {
+      hints.icon_pixmap = (Pixmap)win->icon();
       hints.flags       |= IconPixmapHint;
     }
-    XSetWMHints(fl_display, x->xid, &hints);
+    XSetWMHints(fl_display, xp->xid, &hints);
   }
 
-  XMapWindow(fl_display, x->xid);
+  XMapWindow(fl_display, xp->xid);
   if (showit) {
-    w->set_visible();
-    w->handle(FL_SHOW); // get child windows to appear
-    w->redraw();
+    win->set_visible();
+    win->handle(FL_SHOW); // get child windows to appear
+    win->redraw();
   }
 }
 
@@ -1233,5 +1233,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.22 2002/06/24 02:04:54 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.23 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.H,v 1.7.2.5.2.1 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Gl_Window.H,v 1.7.2.5.2.2 2002/08/09 03:17:29 easysw Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -60,11 +60,11 @@ public:
   FL_EXPORT void resize(int,int,int,int);
 
   char valid() const {return valid_;}
-  void valid(char i) {valid_ = i;}
+  void valid(char v) {valid_ = v;}
   FL_EXPORT void invalidate();
 
-  static int can_do(int i) {return can_do(i,0);}
-  static int can_do(const int *i) {return can_do(0, i);}
+  static int can_do(int m) {return can_do(m,0);}
+  static int can_do(const int *m) {return can_do(0, m);}
   int can_do() {return can_do(mode_,alist);}
   Fl_Mode mode() const {return (Fl_Mode)mode_;}
   int mode(int a) {return mode(a,0);}
@@ -90,5 +90,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.H,v 1.7.2.5.2.1 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.H,v 1.7.2.5.2.2 2002/08/09 03:17:29 easysw Exp $".
 //

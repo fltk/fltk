@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Select_Browser.H,v 1.4.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Select_Browser.H,v 1.4.2.3.2.2 2002/08/09 03:17:29 easysw Exp $"
 //
 // Select browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,12 +30,12 @@
 
 class Fl_Select_Browser : public Fl_Browser {
 public:
-    Fl_Select_Browser(int x,int y,int w,int h,const char *l=0)
-	: Fl_Browser(x,y,w,h,l) {type(FL_SELECT_BROWSER);}
+    Fl_Select_Browser(int X,int Y,int W,int H,const char *l=0)
+	: Fl_Browser(X,Y,W,H,l) {type(FL_SELECT_BROWSER);}
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Select_Browser.H,v 1.4.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Select_Browser.H,v 1.4.2.3.2.2 2002/08/09 03:17:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.10 2002/05/15 16:50:27 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.11 2002/08/09 03:17:30 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@
 // or by EXTRASPACE or by zero.
 // Return value is the index of the selected item.
 
-int Fl_Tabs::tab_positions(int* p, int* w) {
+int Fl_Tabs::tab_positions(int* p, int* wp) {
   int selected = -1;
   Fl_Widget*const* a = array();
   int i;
@@ -55,16 +55,16 @@ int Fl_Tabs::tab_positions(int* p, int* w) {
     int wt = 0; int ht = 0;
     o->measure_label(wt,ht);
 
-    w[i]   = wt+EXTRASPACE;
-    p[i+1] = p[i]+w[i]+BORDER;
+    wp[i]  = wt+EXTRASPACE;
+    p[i+1] = p[i]+wp[i]+BORDER;
   }
-  int r = this->w();
+  int r = w();
   if (p[i] <= r) return selected;
   // uh oh, they are too big:
   // pack them against right edge:
   p[i] = r;
   for (i = children(); i--;) {
-    int l = r-w[i];
+    int l = r-wp[i];
     if (p[i+1] < l) l = p[i+1];
     if (p[i] <= l) break;
     p[i] = l;
@@ -74,12 +74,12 @@ int Fl_Tabs::tab_positions(int* p, int* w) {
   for (i = 0; i<children(); i++) {
     if (p[i] >= i*EXTRASPACE) break;
     p[i] = i*EXTRASPACE;
-    int W = this->w()-1-EXTRASPACE*(children()-i) - p[i];
-    if (w[i] > W) w[i] = W;
+    int W = w()-1-EXTRASPACE*(children()-i) - p[i];
+    if (wp[i] > W) wp[i] = W;
   }
   // adjust edges according to visiblity:
   for (i = children(); i > selected; i--) {
-    p[i] = p[i-1]+w[i-1];
+    p[i] = p[i-1]+wp[i-1];
   }
   return selected;
 }
@@ -108,8 +108,8 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
     if (event_y > y()+H || event_y < y()) return 0;
   }
   if (event_x < x()) return 0;
-  int p[128], w[128];
-  tab_positions(p, w);
+  int p[128], wp[128];
+  tab_positions(p, wp);
   for (int i=0; i<children(); i++) {
     if (event_x < x()+p[i+1]) return child(i);
   }
@@ -233,17 +233,17 @@ void Fl_Tabs::draw() {
     if (v) update_child(*v);
   }
   if (damage() & (FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL)) {
-    int p[128]; int w[128];
-    int selected = tab_positions(p,w);
+    int p[128]; int wp[128];
+    int selected = tab_positions(p,wp);
     int i;
     Fl_Widget*const* a = array();
     for (i=0; i<selected; i++)
-      draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], LEFT);
+      draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], LEFT);
     for (i=children()-1; i > selected; i--)
-      draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], RIGHT);
+      draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], RIGHT);
     if (v) {
       i = selected;
-      draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], SELECTED);
+      draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], SELECTED);
     }
   }
 }
@@ -300,5 +300,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.10 2002/05/15 16:50:27 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.11 2002/08/09 03:17:30 easysw Exp $".
 //

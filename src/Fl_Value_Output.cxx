@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Output.cxx,v 1.6.2.3.2.4 2002/07/20 05:56:44 easysw Exp $"
+// "$Id: Fl_Value_Output.cxx,v 1.6.2.3.2.5 2002/08/09 03:17:30 easysw Exp $"
 //
 // Value output widget for the Fast Light Tool Kit (FLTK).
 //
@@ -86,8 +86,8 @@ int Fl_Value_Output::handle(int event) {
   }
 }
 
-Fl_Value_Output::Fl_Value_Output(int x,int y,int w,int h,const char *l)
-: Fl_Valuator(x,y,w,h,l) {
+Fl_Value_Output::Fl_Value_Output(int X, int Y, int W, int H,const char *l)
+: Fl_Valuator(X,Y,W,H,l) {
   box(FL_NO_BOX);
   align(FL_ALIGN_LEFT);
   textfont_ = FL_HELVETICA;
@@ -97,5 +97,5 @@ Fl_Value_Output::Fl_Value_Output(int x,int y,int w,int h,const char *l)
 }
 
 //
-// End of "$Id: Fl_Value_Output.cxx,v 1.6.2.3.2.4 2002/07/20 05:56:44 easysw Exp $".
+// End of "$Id: Fl_Value_Output.cxx,v 1.6.2.3.2.5 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Output.H,v 1.5.2.3.2.2 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Output.H,v 1.5.2.3.2.3 2002/08/09 03:17:29 easysw Exp $"
 //
 // Output header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,12 +30,12 @@
 
 class Fl_Output : public Fl_Input {
 public:
-  Fl_Output(int x, int y, int w, int h, const char *l = 0)
-    : Fl_Input(x, y, w, h, l) {type(FL_NORMAL_OUTPUT);}
+  Fl_Output(int X,int Y,int W,int H, const char *l = 0)
+    : Fl_Input(X, Y, W, H, l) {type(FL_NORMAL_OUTPUT);}
 };
 
 #endif 
 
 //
-// End of "$Id: Fl_Output.H,v 1.5.2.3.2.2 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Output.H,v 1.5.2.3.2.3 2002/08/09 03:17:29 easysw Exp $".
 //

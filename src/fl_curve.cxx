@@ -1,5 +1,5 @@
 //
-// "$Id: fl_curve.cxx,v 1.4.2.4.2.3 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_curve.cxx,v 1.4.2.4.2.4 2002/08/09 03:17:30 easysw Exp $"
 //
 // Bezier curve functions for the Fast Light Tool Kit (FLTK).
 //
@@ -44,15 +44,15 @@ void fl_curve(double X0, double Y0,
   fl_transformed_vertex(x,y);
 
   double x1 = fl_transform_x(X1,Y1);
-  double y1 = fl_transform_y(X1,Y1);
+  double yy1 = fl_transform_y(X1,Y1);
   double x2 = fl_transform_x(X2,Y2);
   double y2 = fl_transform_y(X2,Y2);
   double x3 = fl_transform_x(X3,Y3);
   double y3 = fl_transform_y(X3,Y3);
 
   // find the area:
-  double a = fabs((x-x2)*(y3-y1)-(y-y2)*(x3-x1));
-  double b = fabs((x-x3)*(y2-y1)-(y-y3)*(x2-x1));
+  double a = fabs((x-x2)*(y3-yy1)-(y-y2)*(x3-x1));
+  double b = fabs((x-x3)*(y2-yy1)-(y-y3)*(x2-x1));
   if (b > a) a = b;
 
   // use that to guess at the number of segments:
@@ -72,9 +72,9 @@ void fl_curve(double X0, double Y0,
     double dx2 = dx3 + 2*xb*e*e;
 
     // calculate the coefficients of 3rd order equation:
-    double ya = (y3-3*y2+3*y1-y);
-    double yb = 3*(y2-2*y1+y);
-    double yc = 3*(y1-y);
+    double ya = (y3-3*y2+3*yy1-y);
+    double yb = 3*(y2-2*yy1+y);
+    double yc = 3*(yy1-y);
     // calculate the forward differences:
     double dy1 = ((ya*e+yb)*e+yc)*e;
     double dy3 = 6*ya*e*e*e;
@@ -100,5 +100,5 @@ void fl_curve(double X0, double Y0,
 }
 
 //
-// End of "$Id: fl_curve.cxx,v 1.4.2.4.2.3 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_curve.cxx,v 1.4.2.4.2.4 2002/08/09 03:17:30 easysw Exp $".
 //

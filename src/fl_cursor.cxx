@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.6.2.6 2002/08/05 17:50:25 easysw Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.6.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -265,7 +265,7 @@ static struct TableEntry {
 
 void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
   if (!shown()) return;
-  Cursor cursor;
+  Cursor xc;
   int deleteit = 0;
   if (c == FL_CURSOR_DEFAULT) {
     c  = cursor_default;
@@ -274,7 +274,7 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
   }
 
   if (!c) {
-    cursor = None;
+    xc = None;
   } else {
     if (c >= FL_CURSOR_NS) {
       TableEntry *q = (c > FL_CURSOR_NESW) ? table+4 : table+(c-FL_CURSOR_NS);
@@ -291,9 +291,9 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 	XFreePixmap(fl_display, m);
 	XFreePixmap(fl_display, p);
       }
-      cursor = q->cursor;
+      xc = q->cursor;
     } else {
-      cursor = XCreateFontCursor(fl_display, (c-1)*2);
+      xc = XCreateFontCursor(fl_display, (c-1)*2);
       deleteit = 1;
     }
     XColor fgc;
@@ -303,14 +303,14 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
     XColor bgc;
     Fl::get_color(bg,r,g,b);
     bgc.red = r<<8; bgc.green = g<<8; bgc.blue = b<<8;
-    XRecolorCursor(fl_display, cursor, &fgc, &bgc);
+    XRecolorCursor(fl_display, xc, &fgc, &bgc);
   }
-  XDefineCursor(fl_display, fl_xid(this), cursor);
-  if (deleteit) XFreeCursor(fl_display, cursor);
+  XDefineCursor(fl_display, fl_xid(this), xc);
+  if (deleteit) XFreeCursor(fl_display, xc);
 }
 
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.6 2002/08/05 17:50:25 easysw Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.7 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tile.cxx,v 1.5.2.5.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Tile.cxx,v 1.5.2.5.2.3 2002/08/09 03:17:30 easysw Exp $"
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
@@ -82,15 +82,15 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
   p += 8;
   for (int i=children(); i--;) {
     Fl_Widget* o = *a++;
-    int X = o->x()+dx;
-    int R = X+o->w();
-    if (*p++ >= OR) X += dw; else if (X > NR) X = NR;
+    int xx = o->x()+dx;
+    int R = xx+o->w();
+    if (*p++ >= OR) xx += dw; else if (xx > NR) xx = NR;
     if (*p++ >= OR) R += dw; else if (R > NR) R = NR;
-    int Y = o->y()+dy;
-    int B = Y+o->h();
-    if (*p++ >= OB) Y += dh; else if (Y > NB) Y = NB;
+    int yy = o->y()+dy;
+    int B = yy+o->h();
+    if (*p++ >= OB) yy += dh; else if (yy > NB) yy = NB;
     if (*p++ >= OB) B += dh; else if (B > NB) B = NB;
-    o->resize(X,Y,R-X,B-Y); o->redraw();
+    o->resize(xx,yy,R-xx,B-yy); o->redraw();
   }
 }
 
@@ -196,5 +196,5 @@ int Fl_Tile::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Tile.cxx,v 1.5.2.5.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Tile.cxx,v 1.5.2.5.2.3 2002/08/09 03:17:30 easysw Exp $".
 //

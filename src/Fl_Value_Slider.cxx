@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Slider.cxx,v 1.5.2.4.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Value_Slider.cxx,v 1.5.2.4.2.3 2002/08/09 03:17:30 easysw Exp $"
 //
 // Value slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -28,8 +28,8 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 
-Fl_Value_Slider::Fl_Value_Slider(int x,int y,int w,int h, const char*l)
-: Fl_Slider(x,y,w,h,l) {
+Fl_Value_Slider::Fl_Value_Slider(int X, int Y, int W, int H, const char*l)
+: Fl_Slider(X,Y,W,H,l) {
   step(1,100);
   textfont_ = FL_HELVETICA;
   textsize_ = 10;
@@ -72,5 +72,5 @@ int Fl_Value_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Value_Slider.cxx,v 1.5.2.4.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Value_Slider.cxx,v 1.5.2.4.2.3 2002/08/09 03:17:30 easysw Exp $".
 //

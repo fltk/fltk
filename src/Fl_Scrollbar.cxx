@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.8 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.9 2002/08/09 03:17:30 easysw Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -207,10 +207,10 @@ void Fl_Scrollbar::draw() {
         fl_color(fl_inactive(labelcolor()));
       int w1 = (H-4)/3; if (w1 < 1) w1 = 1;
       int x1 = X+(H-w1-1)/2;
-      int y1 = Y+(H-2*w1-1)/2;
-      fl_polygon(x1, y1+w1, x1+w1, y1+2*w1, x1+w1, y1);
+      int yy1 = Y+(H-2*w1-1)/2;
+      fl_polygon(x1, yy1+w1, x1+w1, yy1+2*w1, x1+w1, yy1);
       x1 += (W-H);
-      fl_polygon(x1, y1, x1, y1+2*w1, x1+w1, y1+w1);
+      fl_polygon(x1, yy1, x1, yy1+2*w1, x1+w1, yy1+w1);
     }
   } else { // vertical
     if (H < 3*W) {Fl_Slider::draw(X,Y,W,H); return;}
@@ -226,10 +226,10 @@ void Fl_Scrollbar::draw() {
         fl_color(labelcolor() | 8);
       int w1 = (W-4)/3; if (w1 < 1) w1 = 1;
       int x1 = X+(W-2*w1-1)/2;
-      int y1 = Y+(W-w1-1)/2;
-      fl_polygon(x1, y1+w1, x1+2*w1, y1+w1, x1+w1, y1);
-      y1 += H-W;
-      fl_polygon(x1, y1, x1+w1, y1+w1, x1+2*w1, y1);
+      int yy1 = Y+(W-w1-1)/2;
+      fl_polygon(x1, yy1+w1, x1+2*w1, yy1+w1, x1+w1, yy1);
+      yy1 += H-W;
+      fl_polygon(x1, yy1, x1+w1, yy1+w1, x1+2*w1, yy1);
     }
   }
 }
@@ -246,5 +246,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.8 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.14.2.9 2002/08/09 03:17:30 easysw Exp $".
 //

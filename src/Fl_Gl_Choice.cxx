@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.10 2002/04/13 20:28:51 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.11 2002/08/09 03:17:29 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -40,52 +40,52 @@ static Fl_Gl_Choice *first;
 // this assummes one of the two arguments is zero:
 // We keep the list system in Win32 to stay compatible and interpret
 // the list later...
-Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
+Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   Fl_Gl_Choice *g;
   
   for (g = first; g; g = g->next)
-    if (g->mode == mode && g->alist == alist) 
+    if (g->mode == m && g->alist == alistp) 
       return g;
 
 #ifdef __APPLE__
   const int *blist;
   int list[32];
     
-  if (alist)
-    blist = alist;
+  if (alistp)
+    blist = alistp;
   else {
     int n = 0;
-    if (mode & FL_INDEX) {
+    if (m & FL_INDEX) {
       list[n++] = AGL_BUFFER_SIZE;
       list[n++] = 8; // glut tries many sizes, but this should work...
     } else {
       list[n++] = AGL_RGBA;
       list[n++] = AGL_GREEN_SIZE;
-      list[n++] = (mode & FL_RGB8) ? 8 : 1;
-      if (mode & FL_ALPHA) {
+      list[n++] = (m & FL_RGB8) ? 8 : 1;
+      if (m & FL_ALPHA) {
 	list[n++] = AGL_ALPHA_SIZE;
 	list[n++] = 1;
       }
-      if (mode & FL_ACCUM) {
+      if (m & FL_ACCUM) {
 	list[n++] = AGL_ACCUM_GREEN_SIZE;
 	list[n++] = 1;
-	if (mode & FL_ALPHA) {
+	if (m & FL_ALPHA) {
 	  list[n++] = AGL_ACCUM_ALPHA_SIZE;
 	  list[n++] = 1;
 	}
       }
     }
-    if (mode & FL_DOUBLE) {
+    if (m & FL_DOUBLE) {
       list[n++] = AGL_DOUBLEBUFFER;
     }
-    if (mode & FL_DEPTH) {
+    if (m & FL_DEPTH) {
       list[n++] = AGL_DEPTH_SIZE; list[n++] = 16;
     }
-    if (mode & FL_STENCIL) {
+    if (m & FL_STENCIL) {
       list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
     }
 #  ifdef AGL_STEREO  /* is there such a thing as AGL_STEREO? */
-    if (mode & FL_STEREO) {
+    if (m & FL_STEREO) {
       list[n++] = AGL_STEREO;
     }
 #  endif
@@ -101,44 +101,44 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
   const int *blist;
   int list[32];
     
-  if (alist)
-    blist = alist;
+  if (alistp)
+    blist = alistp;
   else {
     int n = 0;
-    if (mode & FL_INDEX) {
+    if (m & FL_INDEX) {
       list[n++] = GLX_BUFFER_SIZE;
       list[n++] = 8; // glut tries many sizes, but this should work...
     } else {
       list[n++] = GLX_RGBA;
       list[n++] = GLX_GREEN_SIZE;
-      list[n++] = (mode & FL_RGB8) ? 8 : 1;
-      if (mode & FL_ALPHA) {
+      list[n++] = (m & FL_RGB8) ? 8 : 1;
+      if (m & FL_ALPHA) {
 	list[n++] = GLX_ALPHA_SIZE;
 	list[n++] = 1;
       }
-      if (mode & FL_ACCUM) {
+      if (m & FL_ACCUM) {
 	list[n++] = GLX_ACCUM_GREEN_SIZE;
 	list[n++] = 1;
-	if (mode & FL_ALPHA) {
+	if (m & FL_ALPHA) {
 	  list[n++] = GLX_ACCUM_ALPHA_SIZE;
 	  list[n++] = 1;
 	}
       }
     }
-    if (mode & FL_DOUBLE) {
+    if (m & FL_DOUBLE) {
       list[n++] = GLX_DOUBLEBUFFER;
     }
-    if (mode & FL_DEPTH) {
+    if (m & FL_DEPTH) {
       list[n++] = GLX_DEPTH_SIZE; list[n++] = 1;
     }
-    if (mode & FL_STENCIL) {
+    if (m & FL_STENCIL) {
       list[n++] = GLX_STENCIL_SIZE; list[n++] = 1;
     }
-    if (mode & FL_STEREO) {
+    if (m & FL_STEREO) {
       list[n++] = GLX_STEREO;
     }
 #  if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
-    if (mode & FL_MULTISAMPLE) {
+    if (m & FL_MULTISAMPLE) {
       list[n++] = GLX_SAMPLES_SGIS;
       list[n++] = 4; // value Glut uses
     }
@@ -148,10 +148,10 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
   }
     
   fl_open_display();
-  XVisualInfo *vis = glXChooseVisual(fl_display, fl_screen, (int *)blist);
-  if (!vis) {
+  XVisualInfo *visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
+  if (!visp) {
 #  if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
-    if (mode&FL_MULTISAMPLE) return find(mode&~FL_MULTISAMPLE,0);
+    if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE,0);
 #  endif
     return 0;
   }
@@ -168,13 +168,13 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (!DescribePixelFormat(fl_gc, i, sizeof(pfd), &pfd)) break;
     // continue if it does not satisfy our requirements:
     if (~pfd.dwFlags & (PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL)) continue;
-    if (pfd.iPixelType != ((mode&FL_INDEX)?PFD_TYPE_COLORINDEX:PFD_TYPE_RGBA)) continue;
-    if ((mode & FL_ALPHA) && !pfd.cAlphaBits) continue;
-    if ((mode & FL_ACCUM) && !pfd.cAccumBits) continue;
-    if ((!(mode & FL_DOUBLE)) != (!(pfd.dwFlags & PFD_DOUBLEBUFFER))) continue;
-    if ((!(mode & FL_STEREO)) != (!(pfd.dwFlags & PFD_STEREO))) continue;
-    if ((mode & FL_DEPTH) && !pfd.cDepthBits) continue;
-    if ((mode & FL_STENCIL) && !pfd.cStencilBits) continue;
+    if (pfd.iPixelType != ((m&FL_INDEX)?PFD_TYPE_COLORINDEX:PFD_TYPE_RGBA)) continue;
+    if ((m & FL_ALPHA) && !pfd.cAlphaBits) continue;
+    if ((m & FL_ACCUM) && !pfd.cAccumBits) continue;
+    if ((!(m & FL_DOUBLE)) != (!(pfd.dwFlags & PFD_DOUBLEBUFFER))) continue;
+    if ((!(m & FL_STEREO)) != (!(pfd.dwFlags & PFD_STEREO))) continue;
+    if ((m & FL_DEPTH) && !pfd.cDepthBits) continue;
+    if ((m & FL_STENCIL) && !pfd.cStencilBits) continue;
     // see if better than the one we have already:
     if (pixelformat) {
       // offering overlay is better:
@@ -192,8 +192,8 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
 #endif
 
   g = new Fl_Gl_Choice;
-  g->mode = mode;
-  g->alist = alist;
+  g->mode = m;
+  g->alist = alistp;
   g->next = first;
   first = g;
 
@@ -203,15 +203,15 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
 #elif defined(__APPLE__)
   g->pixelformat = fmt;
 #else
-  g->vis = vis;
+  g->vis = visp;
 
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
-      vis->visualid == fl_visual->visualid &&
+      visp->visualid == fl_visual->visualid &&
       !getenv("MESA_PRIVATE_CMAP"))
     g->colormap = fl_colormap;
   else
     g->colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
-				  vis->visual, AllocNone);
+				  visp->visual, AllocNone);
 #endif
 
   return g;
@@ -318,5 +318,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.10 2002/04/13 20:28:51 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.11 2002/08/09 03:17:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.H,v 1.3.2.3 2002/06/09 13:35:49 easysw Exp $"
+// "$Id: Fl_Text_Buffer.H,v 1.3.2.4 2002/08/09 03:17:29 easysw Exp $"
 //
 // Header file for Fl_Text_Buffer class.
 //
@@ -78,7 +78,7 @@ class FL_EXPORT Fl_Text_Buffer {
     char character(int pos);
     char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
     void insert(int pos, const char* text);
-    void append(const char* text) { insert(length(), text); }
+    void append(const char* t) { insert(length(), t); }
     void remove(int start, int end);
     void replace(int start, int end, const char *text);
     void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
@@ -238,5 +238,5 @@ class FL_EXPORT Fl_Text_Buffer {
 #endif
 
 //
-// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.3 2002/06/09 13:35:49 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.4 2002/08/09 03:17:29 easysw Exp $".
 //

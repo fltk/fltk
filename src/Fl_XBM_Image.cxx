@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XBM_Image.cxx,v 1.1.2.6 2002/06/28 15:23:03 easysw Exp $"
+// "$Id: Fl_XBM_Image.cxx,v 1.1.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Fl_XBM_Image routines.
 //
@@ -43,7 +43,7 @@
 
 Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
   FILE	*f;
-  uchar	*data;
+  uchar	*ptr;
 
   if ((f = fopen(name, "rb")) == NULL) return;
 
@@ -79,7 +79,7 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
   array = new uchar[n];
 
   // read the data:
-  for (i = 0, data = (uchar *)array; i < n;) {
+  for (i = 0, ptr = (uchar *)array; i < n;) {
     if (!fgets(buffer,1024,f)) {
       fclose(f);
       return;
@@ -88,7 +88,7 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
     while (*a && i<n) {
       int t;
       if (sscanf(a," 0x%x",&t)>0) {
-        *data++ = t;
+        *ptr++ = t;
 	i ++;
       }
       while (*a && *a++ != ',');
@@ -100,5 +100,5 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
 
 
 //
-// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.6 2002/06/28 15:23:03 easysw Exp $".
+// End of "$Id: Fl_XBM_Image.cxx,v 1.1.2.7 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.6 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -113,34 +113,34 @@ void Fl_Text_Editor::add_default_key_bindings(Key_Binding** list) {
 
 Fl_Text_Editor::Key_Func
 Fl_Text_Editor::bound_key_function(int key, int state, Key_Binding* list) {
-  Key_Binding* current;
-  for (current = list; current; current = current->next)
-    if (current->key == key)
-      if (current->state == FL_TEXT_EDITOR_ANY_STATE || current->state == state)
+  Key_Binding* cur;
+  for (cur = list; cur; cur = cur->next)
+    if (cur->key == key)
+      if (cur->state == FL_TEXT_EDITOR_ANY_STATE || cur->state == state)
         break;
-  if (!current) return 0;
-  return current->function;
+  if (!cur) return 0;
+  return cur->function;
 }
 
 void
 Fl_Text_Editor::remove_all_key_bindings(Key_Binding** list) {
-  Key_Binding *current, *next;
-  for (current = *list; current; current = next) {
-    next = current->next;
-    delete current;
+  Key_Binding *cur, *next;
+  for (cur = *list; cur; cur = next) {
+    next = cur->next;
+    delete cur;
   }
   *list = 0;
 }
 
 void
 Fl_Text_Editor::remove_key_binding(int key, int state, Key_Binding** list) {
-  Key_Binding *current, *last = 0;
-  for (current = *list; current; last = current, current = current->next)
-    if (current->key == key && current->state == state) break;
-  if (!current) return;
-  if (last) last->next = current->next;
-  else *list = current->next;
-  delete current;
+  Key_Binding *cur, *last = 0;
+  for (cur = *list; cur; last = cur, cur = cur->next)
+    if (cur->key == key && cur->state == state) break;
+  if (!cur) return;
+  if (last) last->next = cur->next;
+  else *list = cur->next;
+  delete cur;
 }
 
 void
@@ -439,5 +439,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.6 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.7 2002/08/09 03:17:30 easysw Exp $".
 //

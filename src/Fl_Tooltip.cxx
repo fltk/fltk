@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.23 2002/05/15 16:37:06 spitzak Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.24 2002/08/09 03:17:30 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -130,11 +130,11 @@ tt_exit(Fl_Widget *w) {
 }
 
 static void
-tt_enter(Fl_Widget* widget) {
+tt_enter(Fl_Widget* wp) {
 //  printf("tt_enter(widget=%p)\n", widget);
 //  printf("    window=%p\n", window);
   // find the enclosing group with a tooltip:
-  Fl_Widget* w = widget;
+  Fl_Widget* w = wp;
   while (w && !w->tooltip()) {
     //if (w == window) return; // don't do anything if pointed at tooltip
     w = w->parent();
@@ -142,7 +142,7 @@ tt_enter(Fl_Widget* widget) {
   if (!w) {
     Fl_Tooltip::enter_area(0, 0, 0, 0, 0, 0);
   } else {
-    Fl_Tooltip::enter_area(widget,0,0,widget->w(), widget->h(), w->tooltip());
+    Fl_Tooltip::enter_area(wp,0,0,wp->w(), wp->h(), w->tooltip());
   }
 }
 
@@ -203,5 +203,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.23 2002/05/15 16:37:06 spitzak Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.24 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.23 2002/07/30 18:40:50 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.24 2002/08/09 03:17:30 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -347,20 +347,20 @@ void Fl_Text_Display::draw_text( int left, int top, int width, int height ) {
   fl_pop_clip();
 }
 
-void Fl_Text_Display::redisplay_range(int start, int end) {
+void Fl_Text_Display::redisplay_range(int startpos, int endpos) {
   if (damage_range1_start == -1 && damage_range1_end == -1) {
-    damage_range1_start = start;
-    damage_range1_end = end;
-  } else if ((start >= damage_range1_start && start <= damage_range1_end) ||
-             (end >= damage_range1_start && end <= damage_range1_end)) {
-    damage_range1_start = min(damage_range1_start, start);
-    damage_range1_end = max(damage_range1_end, end);
+    damage_range1_start = startpos;
+    damage_range1_end = endpos;
+  } else if ((startpos >= damage_range1_start && startpos <= damage_range1_end) ||
+             (endpos >= damage_range1_start && endpos <= damage_range1_end)) {
+    damage_range1_start = min(damage_range1_start, startpos);
+    damage_range1_end = max(damage_range1_end, endpos);
   } else if (damage_range2_start == -1 && damage_range2_end == -1) {
-    damage_range2_start = start;
-    damage_range2_end = end;
+    damage_range2_start = startpos;
+    damage_range2_end = endpos;
   } else {
-    damage_range2_start = min(damage_range2_start, start);
-    damage_range2_end = max(damage_range2_end, end);
+    damage_range2_start = min(damage_range2_start, startpos);
+    damage_range2_end = max(damage_range2_end, endpos);
   }
   damage(FL_DAMAGE_SCROLL);
 }
@@ -371,29 +371,28 @@ void Fl_Text_Display::redisplay_range(int start, int end) {
 ** after pos, including blank lines which are not technically part of
 ** any range of characters.
 */
-void Fl_Text_Display::draw_range(int start, int end) {
+void Fl_Text_Display::draw_range(int startpos, int endpos) {
   int i, startLine, lastLine, startIndex, endIndex;
 
   /* If the range is outside of the displayed text, just return */
-  if ( end < mFirstChar || ( start > mLastChar &&
-                             !empty_vlines() ) )
-    return;
+  if ( endpos < mFirstChar || ( startpos > mLastChar &&
+       !empty_vlines() ) ) return;
 
   /* Clean up the starting and ending values */
-  if ( start < 0 ) start = 0;
-  if ( start > mBuffer->length() ) start = mBuffer->length();
-  if ( end < 0 ) end = 0;
-  if ( end > mBuffer->length() ) end = mBuffer->length();
+  if ( startpos < 0 ) startpos = 0;
+  if ( startpos > mBuffer->length() ) startpos = mBuffer->length();
+  if ( endpos < 0 ) endpos = 0;
+  if ( endpos > mBuffer->length() ) endpos = mBuffer->length();
 
   /* Get the starting and ending lines */
-  if ( start < mFirstChar )
-    start = mFirstChar;
-  if ( !position_to_line( start, &startLine ) )
+  if ( startpos < mFirstChar )
+    startpos = mFirstChar;
+  if ( !position_to_line( startpos, &startLine ) )
     startLine = mNVisibleLines - 1;
-  if ( end >= mLastChar ) {
+  if ( endpos >= mLastChar ) {
     lastLine = mNVisibleLines - 1;
   } else {
-    if ( !position_to_line( end, &lastLine ) ) {
+    if ( !position_to_line( endpos, &lastLine ) ) {
       /* shouldn't happen */
       lastLine = mNVisibleLines - 1;
     }
@@ -401,13 +400,13 @@ void Fl_Text_Display::draw_range(int start, int end) {
 
   /* Get the starting and ending positions within the lines */
   startIndex = mLineStarts[ startLine ] == -1 ? 0 :
-               start - mLineStarts[ startLine ];
-  if ( end >= mLastChar )
+               startpos - mLineStarts[ startLine ];
+  if ( endpos >= mLastChar )
     endIndex = INT_MAX;
   else if ( mLineStarts[ lastLine ] == -1 )
     endIndex = 0;
   else
-    endIndex = end - mLineStarts[ lastLine ];
+    endIndex = endpos - mLineStarts[ lastLine ];
 
   /* If the starting and ending lines are the same, redisplay the single
      line between "start" and "end" */
@@ -1045,7 +1044,7 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
      configured here, on the fly. */
 
   Fl_Font font = textfont();
-  int size = textsize();
+  int fsize = textsize();
   Fl_Color foreground;
   Fl_Color background;
 
@@ -1055,8 +1054,8 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     else if (si >= mNStyles) si = mNStyles - 1;
 
     styleRec = mStyleTable + si;
-    font = styleRec->font;
-    size = styleRec->size;
+    font  = styleRec->font;
+    fsize = styleRec->size;
 
     if ( style & (HIGHLIGHT_MASK | PRIMARY_MASK) ) {
       background = selection_color();
@@ -1074,7 +1073,7 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
   fl_color( background );
   fl_rectf( X, Y, toX - X, mMaxsize );
   fl_color( foreground );
-  fl_font( font, size );
+  fl_font( font, fsize );
   fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
 
   // CET - FIXME
@@ -1240,20 +1239,20 @@ int Fl_Text_Display::position_style( int lineStartPos,
 */
 int Fl_Text_Display::string_width( const char *string, int length, int style ) {
   Fl_Font font;
-  int size;
+  int fsize;
 
   if ( style & STYLE_LOOKUP_MASK ) {
     int si = (style & STYLE_LOOKUP_MASK) - 'A';
     if (si < 0) si = 0;
     else if (si >= mNStyles) si = mNStyles - 1;
 
-    font = mStyleTable[si].font;
-    size = mStyleTable[si].size;
+    font  = mStyleTable[si].font;
+    fsize = mStyleTable[si].size;
   } else {
-    font = textfont();
-    size = textsize();
+    font  = textfont();
+    fsize = textsize();
   }
-  fl_font( font, size );
+  fl_font( font, fsize );
 
   return ( int ) ( fl_width( string, length ) );
 }
@@ -1712,7 +1711,7 @@ int Fl_Text_Display::vline_length( int visLineNum ) {
 ** redraw requests resulting from changes to the attached style buffer (which
 ** contains auxiliary information for coloring or styling text).
 */
-void Fl_Text_Display::extend_range_for_styles( int *start, int *end ) {
+void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
   Fl_Text_Selection * sel = mStyleBuffer->primary_selection();
   int extended = 0;
 
@@ -1727,12 +1726,12 @@ void Fl_Text_Display::extend_range_for_styles( int *start, int *end ) {
      tells the text display's buffer modify callback to extend it's redraw
      range to show the text color/and font changes as well. */
   if ( sel->selected() ) {
-    if ( sel->start() < *start ) {
-      *start = sel->start();
+    if ( sel->start() < *startpos ) {
+      *startpos = sel->start();
       extended = 1;
     }
-    if ( sel->end() > *end ) {
-      *end = sel->end();
+    if ( sel->end() > *endpos ) {
+      *endpos = sel->end();
       extended = 1;
     }
   }
@@ -1741,7 +1740,7 @@ void Fl_Text_Display::extend_range_for_styles( int *start, int *end ) {
      fonts don't match in spacing, extend redraw area to end of line to
      redraw characters exposed by possible font size changes */
   if ( mFixedFontWidth == -1 && extended )
-    * end = mBuffer->line_end( *end ) + 1;
+    *endpos = mBuffer->line_end( *endpos ) + 1;
 }
 
 // The draw() method.  It tries to minimize what is draw as much as possible.
@@ -1962,5 +1961,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.23 2002/07/30 18:40:50 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.24 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.cxx,v 1.6.2.3.2.9 2002/08/05 17:50:25 easysw Exp $"
+// "$Id: Fl_Window.cxx,v 1.6.2.3.2.10 2002/08/09 03:17:30 easysw Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -117,8 +117,8 @@ void Fl::default_atclose(Fl_Window* window, void* v) {
 
 void (*Fl::atclose)(Fl_Window*, void*) = default_atclose;
 
-void Fl_Window::default_callback(Fl_Window* window, void* v) {
-  Fl::atclose(window, v);
+void Fl_Window::default_callback(Fl_Window* win, void* v) {
+  Fl::atclose(win, v);
 }
 
 Fl_Window *Fl_Window::current() {
@@ -127,5 +127,5 @@ Fl_Window *Fl_Window::current() {
 
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.9 2002/08/05 17:50:25 easysw Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.10 2002/08/09 03:17:30 easysw Exp $".
 //

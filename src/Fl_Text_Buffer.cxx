@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.10 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.11 2002/08/09 03:17:30 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -130,7 +130,7 @@ char * Fl_Text_Buffer::text() {
 ** Replace the entire contents of the text buffer
 */
 void Fl_Text_Buffer::text( const char *t ) {
-  int length, deletedLength;
+  int insertedLength, deletedLength;
   const char *deletedText;
 
   /* Save information for redisplay, and get rid of the old buffer */
@@ -139,13 +139,13 @@ void Fl_Text_Buffer::text( const char *t ) {
   free( (void *)mBuf );
 
   /* Start a new buffer with a gap of PREFERRED_GAP_SIZE in the center */
-  length = strlen( t );
-  mBuf = (char *)malloc( length + PREFERRED_GAP_SIZE );
-  mLength = length;
-  mGapStart = length / 2;
+  insertedLength = strlen( t );
+  mBuf = (char *)malloc( insertedLength + PREFERRED_GAP_SIZE );
+  mLength = insertedLength;
+  mGapStart = insertedLength / 2;
   mGapEnd = mGapStart + PREFERRED_GAP_SIZE;
   memcpy( mBuf, t, mGapStart );
-  memcpy( &mBuf[ mGapEnd ], &t[ mGapStart ], length - mGapStart );
+  memcpy( &mBuf[ mGapEnd ], &t[ mGapStart ], insertedLength - mGapStart );
 #ifdef PURIFY
 { int i; for ( i = mGapStart; i < mGapEnd; i++ ) mBuf[ i ] = '.'; }
 #endif
@@ -154,7 +154,7 @@ void Fl_Text_Buffer::text( const char *t ) {
   update_selections( 0, deletedLength, 0 );
 
   /* Call the saved display routine(s) to update the screen */
-  call_modify_callbacks( 0, deletedLength, length, 0, deletedText );
+  call_modify_callbacks( 0, deletedLength, insertedLength, 0, deletedText );
   free( (void *)deletedText );
 }
 
@@ -164,15 +164,15 @@ void Fl_Text_Buffer::text( const char *t ) {
 ** include the character pointed to by "end"
 */
 char * Fl_Text_Buffer::text_range( int start, int end ) {
-  char * text;
-  int length, part1Length;
+  char * s;
+  int copiedLength, part1Length;
 
   /* Make sure start and end are ok, and allocate memory for returned string.
      If start is bad, return "", if end is bad, adjust it. */
   if ( start < 0 || start > mLength ) {
-    text = (char *)malloc( 1 );
-    text[ 0 ] = '\0';
-    return text;
+    s = (char *)malloc( 1 );
+    s[ 0 ] = '\0';
+    return s;
   }
   if ( end < start ) {
     int temp = start;
@@ -181,21 +181,21 @@ char * Fl_Text_Buffer::text_range( int start, int end ) {
   }
   if ( end > mLength )
     end = mLength;
-  length = end - start;
-  text = (char *)malloc( length + 1 );
+  copiedLength = end - start;
+  s = (char *)malloc( copiedLength + 1 );
 
   /* Copy the text from the buffer to the returned string */
   if ( end <= mGapStart ) {
-    memcpy( text, &mBuf[ start ], length );
+    memcpy( s, &mBuf[ start ], copiedLength );
   } else if ( start >= mGapStart ) {
-    memcpy( text, &mBuf[ start + ( mGapEnd - mGapStart ) ], length );
+    memcpy( s, &mBuf[ start + ( mGapEnd - mGapStart ) ], copiedLength );
   } else {
     part1Length = mGapStart - start;
-    memcpy( text, &mBuf[ start ], part1Length );
-    memcpy( &text[ part1Length ], &mBuf[ mGapEnd ], length - part1Length );
+    memcpy( s, &mBuf[ start ], part1Length );
+    memcpy( &s[ part1Length ], &mBuf[ mGapEnd ], copiedLength - part1Length );
   }
-  text[ length ] = '\0';
-  return text;
+  s[ copiedLength ] = '\0';
+  return s;
 }
 
 /*
@@ -213,7 +213,7 @@ char Fl_Text_Buffer::character( int pos ) {
 /*
 ** Insert null-terminated string "text" at position "pos" in "buf"
 */
-void Fl_Text_Buffer::insert( int pos, const char *text ) {
+void Fl_Text_Buffer::insert( int pos, const char *s ) {
   int nInserted;
 
   /* if pos is not contiguous to existing text, make it */
@@ -221,7 +221,7 @@ void Fl_Text_Buffer::insert( int pos, const char *text ) {
   if ( pos < 0 ) pos = 0;
 
   /* insert and redisplay */
-  nInserted = insert_( pos, text );
+  nInserted = insert_( pos, s );
   mCursorPosHint = pos + nInserted;
   call_modify_callbacks( pos, 0, nInserted, 0, NULL );
 }
@@ -230,13 +230,13 @@ void Fl_Text_Buffer::insert( int pos, const char *text ) {
 ** Delete the characters between "start" and "end", and insert the
 ** null-terminated string "text" in their place in in "buf"
 */
-void Fl_Text_Buffer::replace( int start, int end, const char *text ) {
+void Fl_Text_Buffer::replace( int start, int end, const char *s ) {
   const char * deletedText;
   int nInserted;
 
   deletedText = text_range( start, end );
   remove_( start, end );
-  nInserted = insert_( start, text );
+  nInserted = insert_( start, s );
   mCursorPosHint = start + nInserted;
   call_modify_callbacks( start, end - start, nInserted, 0, deletedText );
   free( (void *)deletedText );
@@ -266,7 +266,7 @@ void Fl_Text_Buffer::remove( int start, int end ) {
 
 void Fl_Text_Buffer::copy( Fl_Text_Buffer *fromBuf, int fromStart,
                            int fromEnd, int toPos ) {
-  int length = fromEnd - fromStart;
+  int copiedLength = fromEnd - fromStart;
   int part1Length;
 
   /* Prepare the buffer to receive the new text.  If the new text fits in
@@ -274,27 +274,27 @@ void Fl_Text_Buffer::copy( Fl_Text_Buffer *fromBuf, int fromStart,
      the text should be inserted.  If the new text is too large, reallocate
      the buffer with a gap large enough to accomodate the new text and a
      gap of PREFERRED_GAP_SIZE */
-  if ( length > mGapEnd - mGapStart )
-    reallocate_with_gap( toPos, length + PREFERRED_GAP_SIZE );
+  if ( copiedLength > mGapEnd - mGapStart )
+    reallocate_with_gap( toPos, copiedLength + PREFERRED_GAP_SIZE );
   else if ( toPos != mGapStart )
     move_gap( toPos );
 
   /* Insert the new text (toPos now corresponds to the start of the gap) */
   if ( fromEnd <= fromBuf->mGapStart ) {
-    memcpy( &mBuf[ toPos ], &fromBuf->mBuf[ fromStart ], length );
+    memcpy( &mBuf[ toPos ], &fromBuf->mBuf[ fromStart ], copiedLength );
   } else if ( fromStart >= fromBuf->mGapStart ) {
     memcpy( &mBuf[ toPos ],
             &fromBuf->mBuf[ fromStart + ( fromBuf->mGapEnd - fromBuf->mGapStart ) ],
-            length );
+            copiedLength );
   } else {
     part1Length = fromBuf->mGapStart - fromStart;
     memcpy( &mBuf[ toPos ], &fromBuf->mBuf[ fromStart ], part1Length );
     memcpy( &mBuf[ toPos + part1Length ], &fromBuf->mBuf[ fromBuf->mGapEnd ],
-            length - part1Length );
+            copiedLength - part1Length );
   }
-  mGapStart += length;
-  mLength += length;
-  update_selections( toPos, 0, length );
+  mGapStart += copiedLength;
+  mLength += copiedLength;
+  update_selections( toPos, 0, copiedLength );
 }
 
 /*
@@ -305,17 +305,17 @@ void Fl_Text_Buffer::copy( Fl_Text_Buffer *fromBuf, int fromStart,
 ** number of characters inserted and deleted in the operation (beginning
 ** at startPos) are returned in these arguments
 */
-void Fl_Text_Buffer::insert_column( int column, int startPos, const char *text,
+void Fl_Text_Buffer::insert_column( int column, int startPos, const char *s,
                                     int *charsInserted, int *charsDeleted ) {
   int nLines, lineStartPos, nDeleted, insertDeleted, nInserted;
   const char *deletedText;
 
-  nLines = countLines( text );
+  nLines = countLines( s );
   lineStartPos = line_start( startPos );
   nDeleted = line_end( skip_lines( startPos, nLines ) ) -
              lineStartPos;
   deletedText = text_range( lineStartPos, lineStartPos + nDeleted );
-  insert_column_( column, lineStartPos, text, &insertDeleted, &nInserted,
+  insert_column_( column, lineStartPos, s, &insertDeleted, &nInserted,
                   &mCursorPosHint );
   if ( nDeleted != insertDeleted )
     fprintf( stderr, "internal consistency check ins1 failed" );
@@ -334,16 +334,16 @@ void Fl_Text_Buffer::insert_column( int column, int startPos, const char *text,
 ** in the operation (beginning at startPos) are returned in these arguments.
 */
 void Fl_Text_Buffer::overlay_rectangular( int startPos, int rectStart,
-    int rectEnd, const char *text, int *charsInserted, int *charsDeleted ) {
+    int rectEnd, const char *s, int *charsInserted, int *charsDeleted ) {
   int nLines, lineStartPos, nDeleted, insertDeleted, nInserted;
   const char *deletedText;
 
-  nLines = countLines( text );
+  nLines = countLines( s );
   lineStartPos = line_start( startPos );
   nDeleted = line_end( skip_lines( startPos, nLines ) ) -
              lineStartPos;
   deletedText = text_range( lineStartPos, lineStartPos + nDeleted );
-  overlay_rectangular_( lineStartPos, rectStart, rectEnd, text, &insertDeleted,
+  overlay_rectangular_( lineStartPos, rectStart, rectEnd, s, &insertDeleted,
                         &nInserted, &mCursorPosHint );
   if ( nDeleted != insertDeleted )
     fprintf( stderr, "internal consistency check ovly1 failed" );
@@ -361,7 +361,7 @@ void Fl_Text_Buffer::overlay_rectangular( int startPos, int rectStart,
 ** rectangle, add extra lines to make room for it.
 */
 void Fl_Text_Buffer::replace_rectangular( int start, int end, int rectStart,
-    int rectEnd, const char *text ) {
+    int rectEnd, const char *s ) {
   char *insPtr;
   const char *deletedText;
   char *insText = (char *)"";
@@ -380,12 +380,12 @@ void Fl_Text_Buffer::replace_rectangular( int start, int end, int rectStart,
      column.  If more lines will be inserted than deleted, insert extra
      lines in the buffer at the end of the rectangle to make room for the
      additional lines in "text" */
-  nInsertedLines = countLines( text );
+  nInsertedLines = countLines( s );
   nDeletedLines = count_lines( start, end );
   if ( nInsertedLines < nDeletedLines ) {
-    insLen = strlen( text );
+    insLen = strlen( s );
     insText = (char *)malloc( insLen + nDeletedLines - nInsertedLines + 1 );
-    strcpy( insText, text );
+    strcpy( insText, s );
     insPtr = insText + insLen;
     for ( i = 0; i < nDeletedLines - nInsertedLines; i++ )
       *insPtr++ = '\n';
@@ -543,8 +543,8 @@ void Fl_Text_Buffer::remove_selection() {
   remove_selection_( &mPrimary );
 }
 
-void Fl_Text_Buffer::replace_selection( const char *text ) {
-  replace_selection_( &mPrimary, text );
+void Fl_Text_Buffer::replace_selection( const char *s ) {
+  replace_selection_( &mPrimary, s );
 }
 
 void Fl_Text_Buffer::secondary_select( int start, int end ) {
@@ -583,8 +583,8 @@ void Fl_Text_Buffer::remove_secondary_selection() {
   remove_selection_( &mSecondary );
 }
 
-void Fl_Text_Buffer::replace_secondary_selection( const char *text ) {
-  replace_selection_( &mSecondary, text );
+void Fl_Text_Buffer::replace_secondary_selection( const char *s ) {
+  replace_selection_( &mSecondary, s );
 }
 
 void Fl_Text_Buffer::highlight( int start, int end ) {
@@ -1063,11 +1063,11 @@ int Fl_Text_Buffer::findchars_backward( int startPos, const char *searchChars,
 ** substitution.  Returns 0, if substitution is no longer possible
 ** because all non-printable characters are already in use.
 */
-int Fl_Text_Buffer::substitute_null_characters( char *string, int length ) {
+int Fl_Text_Buffer::substitute_null_characters( char *string, int len ) {
   char histogram[ 256 ];
 
   /* Find out what characters the string contains */
-  histogramCharacters( string, length, histogram, 1 );
+  histogramCharacters( string, len, histogram, 1 );
 
   /* Does the string contain the null-substitute character?  If so, re-
      histogram the buffer text to find a character which is ok in both the
@@ -1091,7 +1091,7 @@ int Fl_Text_Buffer::substitute_null_characters( char *string, int length ) {
   /* If the string contains null characters, substitute them with the
      buffer's null substitution character */
   if ( histogram[ 0 ] != 0 )
-    subsChars( string, length, '\0', mNullSubsChar );
+    subsChars( string, len, '\0', mNullSubsChar );
   return 1;
 }
 
@@ -1163,26 +1163,26 @@ static char chooseNullSubsChar( char hist[ 256 ] ) {
 ** on to call redisplay).  pos must be contiguous with the existing text in
 ** the buffer (i.e. not past the end).
 */
-int Fl_Text_Buffer::insert_( int pos, const char *text ) {
-  int length = strlen( text );
+int Fl_Text_Buffer::insert_( int pos, const char *s ) {
+  int insertedLength = strlen( s );
 
   /* Prepare the buffer to receive the new text.  If the new text fits in
      the current buffer, just move the gap (if necessary) to where
      the text should be inserted.  If the new text is too large, reallocate
      the buffer with a gap large enough to accomodate the new text and a
      gap of PREFERRED_GAP_SIZE */
-  if ( length > mGapEnd - mGapStart )
-    reallocate_with_gap( pos, length + PREFERRED_GAP_SIZE );
+  if ( insertedLength > mGapEnd - mGapStart )
+    reallocate_with_gap( pos, insertedLength + PREFERRED_GAP_SIZE );
   else if ( pos != mGapStart )
     move_gap( pos );
 
   /* Insert the new text (pos now corresponds to the start of the gap) */
-  memcpy( &mBuf[ pos ], text, length );
-  mGapStart += length;
-  mLength += length;
-  update_selections( pos, 0, length );
+  memcpy( &mBuf[ pos ], s, insertedLength );
+  mGapStart += insertedLength;
+  mLength += insertedLength;
+  update_selections( pos, 0, insertedLength );
 
-  return length;
+  return insertedLength;
 }
 
 /*
@@ -1304,7 +1304,7 @@ void Fl_Text_Buffer::remove_rectangular_( int start, int end, int rectStart,
     int rectEnd, int *replaceLen, int *endPos ) {
   int nLines, lineStart, lineEnd, len, endOffset;
   char *outStr, *outPtr, *expText;
-  const char *text, *line;
+  const char *s, *line;
 
   /* allocate a buffer for the replacement string large enough to hold
      possibly expanded tabs as well as an additional  FL_TEXT_MAX_EXP_CHAR_LEN * 2
@@ -1313,9 +1313,9 @@ void Fl_Text_Buffer::remove_rectangular_( int start, int end, int rectStart,
   start = line_start( start );
   end = line_end( end );
   nLines = count_lines( start, end ) + 1;
-  text = text_range( start, end );
-  expText = expandTabs( text, 0, mTabDist, mNullSubsChar, &len );
-  free( (void *) text );
+  s = text_range( start, end );
+  expText = expandTabs( s, 0, mTabDist, mNullSubsChar, &len );
+  free( (void *) s );
   free( (void *) expText );
   outStr = (char *)malloc( len + nLines * FL_TEXT_MAX_EXP_CHAR_LEN * 2 + 1 );
 
@@ -1666,39 +1666,39 @@ static void overlayRectInLine( const char *line, char *insLine, int rectStart,
   *outLen = ( outPtr - outStr ) + strlen( linePtr );
 }
 
-void Fl_Text_Selection::set( int start, int end ) {
-  mSelected = start != end;
+void Fl_Text_Selection::set( int startpos, int endpos ) {
+  mSelected = startpos != endpos;
   mRectangular = 0;
-  mStart = min( start, end );
-  mEnd = max( start, end );
+  mStart = min( startpos, endpos );
+  mEnd = max( startpos, endpos );
 }
 
-void Fl_Text_Selection::set_rectangular( int start, int end,
+void Fl_Text_Selection::set_rectangular( int startpos, int endpos,
     int rectStart, int rectEnd ) {
   mSelected = rectStart < rectEnd;
   mRectangular = 1;
-  mStart = start;
-  mEnd = end;
+  mStart = startpos;
+  mEnd = endpos;
   mRectStart = rectStart;
   mRectEnd = rectEnd;
 }
 
-int Fl_Text_Selection::position( int *start, int *end ) {
+int Fl_Text_Selection::position( int *startpos, int *endpos ) {
   if ( !mSelected )
     return 0;
-  *start = mStart;
-  *end = mEnd;
+  *startpos = mStart;
+  *endpos = mEnd;
 
   return 1;
 }
 
-int Fl_Text_Selection::position( int *start, int *end,
+int Fl_Text_Selection::position( int *startpos, int *endpos,
                                  int *isRect, int *rectStart, int *rectEnd ) {
   if ( !mSelected )
     return 0;
   *isRect = mRectangular;
-  *start = mStart;
-  *end = mEnd;
+  *startpos = mStart;
+  *endpos = mEnd;
   if ( mRectangular ) {
     *rectStart = mRectStart;
     *rectEnd = mRectEnd;
@@ -1722,13 +1722,13 @@ int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) {
 
 char * Fl_Text_Buffer::selection_text_( Fl_Text_Selection *sel ) {
   int start, end, isRect, rectStart, rectEnd;
-  char *text;
+  char *s;
 
   /* If there's no selection, return an allocated empty string */
   if ( !sel->position( &start, &end, &isRect, &rectStart, &rectEnd ) ) {
-    text = (char *)malloc( 1 );
-    *text = '\0';
-    return text;
+    s = (char *)malloc( 1 );
+    *s = '\0';
+    return s;
   }
 
   /* If the selection is not rectangular, return the selected range */
@@ -1750,7 +1750,7 @@ void Fl_Text_Buffer::remove_selection_( Fl_Text_Selection *sel ) {
     remove( start, end );
 }
 
-void Fl_Text_Buffer::replace_selection_( Fl_Text_Selection *sel, const char *text ) {
+void Fl_Text_Buffer::replace_selection_( Fl_Text_Selection *sel, const char *s ) {
   int start, end, isRect, rectStart, rectEnd;
   Fl_Text_Selection oldSelection = *sel;
 
@@ -1760,9 +1760,9 @@ void Fl_Text_Buffer::replace_selection_( Fl_Text_Selection *sel, const char *tex
 
   /* Do the appropriate type of replace */
   if ( isRect )
-    replace_rectangular( start, end, rectStart, rectEnd, text );
+    replace_rectangular( start, end, rectStart, rectEnd, s );
   else
-    replace( start, end, text );
+    replace( start, end, s );
 
   /* Unselect (happens automatically in BufReplace, but BufReplaceRect
      can't detect when the contents of a selection goes away) */
@@ -2289,5 +2289,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.10 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.11 2002/08/09 03:17:30 easysw Exp $".
 //

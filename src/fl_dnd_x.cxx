@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_x.cxx,v 1.5.2.4 2002/04/10 19:22:45 easysw Exp $"
+// "$Id: fl_dnd_x.cxx,v 1.5.2.5 2002/08/09 03:17:30 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -86,7 +86,7 @@ int Fl::dnd() {
   fl_local_grab = grabfunc;
   Window target_window = 0;
   Fl_Window* local_window = 0;
-  int version = 4; int dest_x, dest_y;
+  int dndversion = 4; int dest_x, dest_y;
   XSetSelectionOwner(fl_display, fl_XdndSelection, fl_message_window, fl_event_time);
 
   while (Fl::pushed()) {
@@ -110,25 +110,25 @@ int Fl::dnd() {
     if (new_window != target_window) {
       if (local_window) {
 	local_handle(FL_DND_LEAVE, local_window);
-      } else if (version) {
+      } else if (dndversion) {
 	fl_sendClientMessage(target_window, fl_XdndLeave, source_window);
       }
-      version = new_version;
+      dndversion = new_version;
       target_window = new_window;
       local_window = new_local_window;
       if (local_window) {
 	local_handle(FL_DND_ENTER, local_window);
-      } else if (version) {
+      } else if (dndversion) {
 	fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-			  version<<24, XA_STRING, 0, 0);
+			     dndversion<<24, XA_STRING, 0, 0);
       }
     }
     if (local_window) {
       local_handle(FL_DND_DRAG, local_window);
-    } else if (version) {
+    } else if (dndversion) {
       fl_sendClientMessage(target_window, fl_XdndPosition, source_window,
-			0, (e_x_root<<16)|e_y_root, fl_event_time,
-			fl_XdndActionCopy);
+			   0, (e_x_root<<16)|e_y_root, fl_event_time,
+			   fl_XdndActionCopy);
     }
     Fl::wait();
   }
@@ -136,9 +136,9 @@ int Fl::dnd() {
   if (local_window) {
     fl_i_own_selection[0] = 1;
     if (local_handle(FL_DND_RELEASE, local_window)) paste(*belowmouse(), 0);
-  } else if (version) {
+  } else if (dndversion) {
     fl_sendClientMessage(target_window, fl_XdndDrop, source_window,
-		      0, fl_event_time);
+			 0, fl_event_time);
   } else if (target_window) {
     // fake a drop by clicking the middle mouse button:
     XButtonEvent msg;
@@ -167,5 +167,5 @@ int Fl::dnd() {
 
 
 //
-// End of "$Id: fl_dnd_x.cxx,v 1.5.2.4 2002/04/10 19:22:45 easysw Exp $".
+// End of "$Id: fl_dnd_x.cxx,v 1.5.2.5 2002/08/09 03:17:30 easysw Exp $".
 //

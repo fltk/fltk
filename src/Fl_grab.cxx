@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_grab.cxx,v 1.1.2.4.2.6 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: Fl_grab.cxx,v 1.1.2.4.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
@@ -49,8 +49,8 @@ extern HWND fl_capture;
 extern WindowRef fl_capture;
 #endif
 
-void Fl::grab(Fl_Window* w) {
-  if (w) {
+void Fl::grab(Fl_Window* win) {
+  if (win) {
     if (!grab_) {
 #ifdef WIN32
       SetActiveWindow(fl_capture = fl_xid(first_window()));
@@ -77,7 +77,7 @@ void Fl::grab(Fl_Window* w) {
 		    fl_event_time);
 #endif
     }
-    grab_ = w;
+    grab_ = win;
   } else {
     if (grab_) {
 #ifdef WIN32
@@ -100,5 +100,5 @@ void Fl::grab(Fl_Window* w) {
 }
 
 //
-// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.6 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.7 2002/08/09 03:17:30 easysw Exp $".
 //

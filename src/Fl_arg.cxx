@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.11 2002/04/14 12:51:56 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.12 2002/08/09 03:17:30 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -47,10 +47,10 @@ int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #  define YNegative 	0x0020
 #endif
 
-static int match(const char *a, const char *match, int atleast = 1) {
-  const char *b = match;
+static int fl_match(const char *a, const char *s, int atleast = 1) {
+  const char *b = s;
   while (*a && (*a == *b || tolower(*a) == *b)) {a++; b++;}
-  return !*a && b >= match+atleast;
+  return !*a && b >= s+atleast;
 }
 
 // flags set by previously parsed arguments:
@@ -80,31 +80,31 @@ int Fl::arg(int argc, char **argv, int &i) {
   if (s[0] != '-' || s[1] == '-' || !s[1]) {return_i = 1; return 0;}
   s++; // point after the dash
 
-  if (match(s, "iconic")) {
+  if (fl_match(s, "iconic")) {
     fl_show_iconic = 1;
     i++;
     return 1;
-  } else if (match(s, "kbd")) {
+  } else if (fl_match(s, "kbd")) {
     Fl::visible_focus(1);
     i++;
     return 1;
-  } else if (match(s, "nokbd", 3)) {
+  } else if (fl_match(s, "nokbd", 3)) {
     Fl::visible_focus(0);
     i++;
     return 1;
-  } else if (match(s, "dnd", 2)) {
+  } else if (fl_match(s, "dnd", 2)) {
     Fl::dnd_text_ops(1);
     i++;
     return 1;
-  } else if (match(s, "nodnd", 3)) {
+  } else if (fl_match(s, "nodnd", 3)) {
     Fl::dnd_text_ops(0);
     i++;
     return 1;
-  } else if (match(s, "tooltips", 2)) {
+  } else if (fl_match(s, "tooltips", 2)) {
     Fl_Tooltip::enable();
     i++;
     return 1;
-  } else if (match(s, "notooltips", 3)) {
+  } else if (fl_match(s, "notooltips", 3)) {
     Fl_Tooltip::disable();
     i++;
     return 1;
@@ -114,7 +114,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   if (i >= argc-1 || !v)
     return 0;	// all the rest need an argument, so if missing it is an error
 
-  if (match(s, "geometry")) {
+  if (fl_match(s, "geometry")) {
 
     int flags, gx, gy; unsigned int gw, gh;
     flags = XParseGeometry(v, &gx, &gy, &gw, &gh);
@@ -122,26 +122,26 @@ int Fl::arg(int argc, char **argv, int &i) {
     geometry = v;
 
 #if !defined(WIN32) && !defined(__APPLE__)
-  } else if (match(s, "display", 2)) {
+  } else if (fl_match(s, "display", 2)) {
     Fl::display(v);
 #endif
 
-  } else if (match(s, "title", 2)) {
+  } else if (fl_match(s, "title", 2)) {
     title = v;
 
-  } else if (match(s, "name", 2)) {
+  } else if (fl_match(s, "name", 2)) {
     name = v;
 
-  } else if (match(s, "bg2", 3) || match(s, "background2", 11)) {
+  } else if (fl_match(s, "bg2", 3) || fl_match(s, "background2", 11)) {
     fl_bg2 = v;
 
-  } else if (match(s, "bg", 2) || match(s, "background", 10)) {
+  } else if (fl_match(s, "bg", 2) || fl_match(s, "background", 10)) {
     fl_bg = v;
 
-  } else if (match(s, "fg", 2) || match(s, "foreground", 10)) {
+  } else if (fl_match(s, "fg", 2) || fl_match(s, "foreground", 10)) {
     fl_fg = v;
 
-  } else if (match(s, "scheme", 1)) {
+  } else if (fl_match(s, "scheme", 1)) {
     Fl::scheme(v);
 
   } else return 0; // unrecognized
@@ -203,17 +203,17 @@ void Fl_Window::show(int argc, char **argv) {
   static char beenhere;
   if (!beenhere) {
     if (geometry) {
-      int flags = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
-      flags = XParseGeometry(geometry, &gx, &gy, &gw, &gh);
-      if (flags & XNegative) gx = Fl::w()-w()+gx;
-      if (flags & YNegative) gy = Fl::h()-h()+gy;
+      int fl = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
+      fl = XParseGeometry(geometry, &gx, &gy, &gw, &gh);
+      if (fl & XNegative) gx = Fl::w()-w()+gx;
+      if (fl & YNegative) gy = Fl::h()-h()+gy;
       //  int mw,mh; minsize(mw,mh);
       //  if (mw > gw) gw = mw;
       //  if (mh > gh) gh = mh;
       Fl_Widget *r = resizable();
       if (!r) resizable(this);
       // for WIN32 we assumme window is not mapped yet:
-      if (flags & (XValue | YValue))
+      if (fl & (XValue | YValue))
 	x(-1), resize(gx,gy,gw,gh);
       else
 	size(gw,gh);
@@ -412,5 +412,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.11 2002/04/14 12:51:56 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.12 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.8 2002/06/29 00:10:04 matthiaswm Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.9 2002/08/09 03:17:30 easysw Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -33,14 +33,14 @@ void Fl_Slider::_Fl_Slider() {
   slider_ = 0; // FL_UP_BOX;
 }
 
-Fl_Slider::Fl_Slider(int x, int y, int w, int h, const char* l)
-: Fl_Valuator(x, y, w, h, l) {
+Fl_Slider::Fl_Slider(int X, int Y, int W, int H, const char* l)
+: Fl_Valuator(X, Y, W, H, l) {
   box(FL_DOWN_BOX);
   _Fl_Slider();
 }
 
-Fl_Slider::Fl_Slider(uchar t, int x, int y, int w, int h, const char* l)
-  : Fl_Valuator(x, y, w, h, l) {
+Fl_Slider::Fl_Slider(uchar t, int X, int Y, int W, int H, const char* l)
+  : Fl_Valuator(X, Y, W, H, l) {
   type(t);
   box(t==FL_HOR_NICE_SLIDER || t==FL_VERT_NICE_SLIDER ?
       FL_FLAT_BOX : FL_DOWN_BOX);
@@ -63,15 +63,15 @@ void Fl_Slider::bounds(double a, double b) {
   }
 }
 
-int Fl_Slider::scrollvalue(int p, int w, int t, int l) {
+int Fl_Slider::scrollvalue(int p, int W, int t, int l) {
 //	p = position, first line displayed
 //	w = window, number of lines displayed
 //	t = top, number of first line
 //	l = length, total number of lines
   step(1, 1);
-  if (p+w > t+l) l = p+w-t;
-  slider_size(w >= l ? 1.0 : double(w)/double(l));
-  bounds(t, l-w+t);
+  if (p+W > t+l) l = p+W-t;
+  slider_size(W >= l ? 1.0 : double(W)/double(l));
+  bounds(t, l-W+t);
   return value(p);
 }
 
@@ -82,19 +82,19 @@ int Fl_Slider::scrollvalue(int p, int w, int t, int l) {
 // position on the widget itself covers a wider range than 0-1,
 // actually it ranges from 0 to 1/(1-size).
 
-void Fl_Slider::draw_bg(int x, int y, int w, int h) {
+void Fl_Slider::draw_bg(int X, int Y, int W, int H) {
   if (!(damage()&FL_DAMAGE_ALL)) { // not a complete redraw
     draw_box();
   }
   Fl_Color black = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
   if (type() == FL_VERT_NICE_SLIDER) {
-    draw_box(FL_THIN_DOWN_BOX, x+w/2-2, y, 4, h, black);
+    draw_box(FL_THIN_DOWN_BOX, X+W/2-2, Y, 4, H, black);
   } else if (type() == FL_HOR_NICE_SLIDER) {
-    draw_box(FL_THIN_DOWN_BOX, x, y+h/2-2, w, 4, black);
+    draw_box(FL_THIN_DOWN_BOX, X, Y+H/2-2, W, 4, black);
   }
 }
 
-void Fl_Slider::draw(int x, int y, int w, int h) {
+void Fl_Slider::draw(int X, int Y, int W, int H) {
 
   double val;
   if (minimum() == maximum())
@@ -105,45 +105,45 @@ void Fl_Slider::draw(int x, int y, int w, int h) {
     else if (val < 0.0) val = 0.0;
   }
 
-  int W = (horizontal() ? w : h);
-  int X, S;
+  int ww = (horizontal() ? W : H);
+  int xx, S;
   if (type()==FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
-    S = int(val*W+.5);
-    if (minimum()>maximum()) {S = W-S; X = W-S;}
-    else X = 0;
+    S = int(val*ww+.5);
+    if (minimum()>maximum()) {S = ww-S; xx = ww-S;}
+    else xx = 0;
   } else {
-    S = int(slider_size_*W+.5);
-    int T = (horizontal() ? h : w)/2+1;
+    S = int(slider_size_*ww+.5);
+    int T = (horizontal() ? H : W)/2+1;
     if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
     if (S < T) S = T;
-    X = int(val*(W-S)+.5);
+    xx = int(val*(ww-S)+.5);
   }
   int xsl, ysl, wsl, hsl;
   if (horizontal()) {
-    xsl = x+X;
+    xsl = X+xx;
     wsl = S;
-    ysl = y;
-    hsl = h;
+    ysl = Y;
+    hsl = H;
   } else {
-    ysl = y+X;
+    ysl = Y+xx;
     hsl = S;
-    xsl = x;
-    wsl = w;
+    xsl = X;
+    wsl = W;
   }
 
   if (damage()&FL_DAMAGE_ALL) { // complete redraw
-    draw_bg(x, y, w, h);
+    draw_bg(X, Y, W, H);
   } else { // partial redraw, clip off new position of slider
-    if (X > 0) {
-      if (horizontal()) fl_clip(x, ysl, X, hsl);
-      else fl_clip(xsl, y, wsl, X);
-      draw_bg(x, y, w, h);
+    if (xx > 0) {
+      if (horizontal()) fl_clip(X, ysl, xx, hsl);
+      else fl_clip(xsl, Y, wsl, xx);
+      draw_bg(X, Y, W, H);
       fl_pop_clip();
     }
-    if (X+S < W) {
-      if (horizontal()) fl_clip(xsl+wsl, ysl, x+w-xsl-wsl, hsl);
-      else fl_clip(xsl, ysl+hsl, wsl, y+h-ysl-hsl);
-      draw_bg(x, y, w, h);
+    if (xx+S < W) {
+      if (horizontal()) fl_clip(xsl+wsl, ysl, X+W-xsl-wsl, hsl);
+      else fl_clip(xsl, ysl+hsl, wsl, Y+H-ysl-hsl);
+      draw_bg(X, Y, W, H);
       fl_pop_clip();
     }
   }
@@ -177,10 +177,10 @@ void Fl_Slider::draw() {
        h()-Fl::box_dh(box()));
 }
 
-int Fl_Slider::handle(int event, int x, int y, int w, int h) {
+int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
   switch (event) {
   case FL_PUSH:
-    if (!Fl::event_inside(x, y, w, h)) return 0;
+    if (!Fl::event_inside(X, Y, W, H)) return 0;
     if (Fl::visible_focus()) Fl::focus(this);
     handle_push();
   case FL_DRAG: {
@@ -194,8 +194,8 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
       else if (val < 0.0) val = 0.0;
     }
 
-    int W = (horizontal() ? w : h);
-    int mx = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y);
+    int ww = (horizontal() ? W : H);
+    int mx = (horizontal() ? Fl::event_x()-X : Fl::event_y()-Y);
     int S;
     static int offcenter;
 
@@ -203,41 +203,41 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
 
       S = 0;
       if (event == FL_PUSH) {
-	int X = int(val*W+.5);
-	offcenter = mx-X;
+	int xx = int(val*ww+.5);
+	offcenter = mx-xx;
 	if (offcenter < -10 || offcenter > 10) offcenter = 0;
 	else return 1;
       }
 
     } else {
 
-      S = int(slider_size_*W+.5); if (S >= W) return 0;
-      int T = (horizontal() ? h : w)/2+1;
+      S = int(slider_size_*ww+.5); if (S >= ww) return 0;
+      int T = (horizontal() ? H : W)/2+1;
       if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
       if (S < T) S = T;
       if (event == FL_PUSH) {
-	int X = int(val*(W-S)+.5);
-	offcenter = mx-X;
+	int xx = int(val*(ww-S)+.5);
+	offcenter = mx-xx;
 	if (offcenter < 0) offcenter = 0;
 	else if (offcenter > S) offcenter = S;
 	else return 1;
       }
     }
 
-    int X = mx-offcenter;
+    int xx = mx-offcenter;
     double v;
     char tryAgain = 1;
     while (tryAgain)
     {
       tryAgain = 0;
-      if (X < 0) {
-        X = 0;
+      if (xx < 0) {
+        xx = 0;
         offcenter = mx; if (offcenter < 0) offcenter = 0;
-      } else if (X > (W-S)) {
-        X = W-S;
-        offcenter = mx-X; if (offcenter > S) offcenter = S;
+      } else if (xx > (ww-S)) {
+        xx = ww-S;
+        offcenter = mx-xx; if (offcenter > S) offcenter = S;
       }
-      v = round(X*(maximum()-minimum())/(W-S) + minimum());
+      v = round(xx*(maximum()-minimum())/(ww-S) + minimum());
       // make sure a click outside the sliderbar moves it:
       if (event == FL_PUSH && v == value()) {
         offcenter = S/2;
@@ -295,5 +295,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.8 2002/06/29 00:10:04 matthiaswm Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.9 2002/08/09 03:17:30 easysw Exp $".
 //

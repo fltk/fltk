@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.7.2.4 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: forms.H,v 1.7.2.7.2.5 2002/08/09 03:17:29 easysw Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -812,8 +812,8 @@ class Fl_FormsText : public Fl_Widget {
 protected:
     FL_EXPORT void draw();
 public:
-    Fl_FormsText(Fl_Boxtype b, int x, int y, int w, int h, const char* l=0)
-	: Fl_Widget(x,y,w,h,l) {box(b); align(FL_ALIGN_LEFT);}
+    Fl_FormsText(Fl_Boxtype b, int X, int Y, int W, int H, const char* l=0)
+	: Fl_Widget(X,Y,W,H,l) {box(b); align(FL_ALIGN_LEFT);}
 };
 #define FL_NORMAL_TEXT FL_NO_BOX
 forms_constructorb(Fl_FormsText, fl_add_text)
@@ -838,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.7.2.4 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: forms.H,v 1.7.2.7.2.5 2002/08/09 03:17:29 easysw Exp $".
 //

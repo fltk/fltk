@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.11 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.12 2002/08/09 03:17:30 easysw Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -262,10 +262,10 @@ void Fl_Gl_Window::flush() {
 	// and depth test needs to be off:
 	static GLContext ortho_context = 0;
 	static Fl_Gl_Window* ortho_window = 0;
-	int init = !ortho_context;
-	if (init) ortho_context = fl_create_gl_context(this, g);
+	int orthoinit = !ortho_context;
+	if (orthoinit) ortho_context = fl_create_gl_context(this, g);
 	fl_set_gl_context(this, ortho_context);
-	if (init || !save_valid || ortho_window != this) {
+	if (orthoinit || !save_valid || ortho_window != this) {
 	  glDisable(GL_DEPTH_TEST);
 	  glReadBuffer(GL_BACK);
 	  glDrawBuffer(GL_FRONT);
@@ -367,5 +367,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.11 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.12 2002/08/09 03:17:30 easysw Exp $".
 //

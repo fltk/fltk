@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.20 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.21 2002/08/09 03:17:30 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -237,20 +237,20 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       if (erase_cursor_only && p > pp) goto CONTINUE2; // this line is after
       // calculate area to erase:
       int r = X+W;
-      int x;
+      int xx;
       if (p >= pp) {
-	x = X;
+	xx = X;
 	if (erase_cursor_only) r = xpos+2;
-	else if (readonly()) x -= 3;
+	else if (readonly()) xx -= 3;
       } else {
-	x = xpos+(int)expandpos(p, pp, buf, 0);
-	if (erase_cursor_only) r = x+2;
-	else if (readonly()) x -= 3;
+	xx = xpos+(int)expandpos(p, pp, buf, 0);
+	if (erase_cursor_only) r = xx+2;
+	else if (readonly()) xx -= 3;
       }
       // clip to and erase it:
       fl_color(color());
-      fl_rectf(x, Y+ypos, r-x, height);
-      fl_push_clip(x, Y+ypos, r-x, height);
+      fl_rectf(xx, Y+ypos, r-xx, height);
+      fl_push_clip(xx, Y+ypos, r-xx, height);
       // it now draws entire line over it
       // this should not draw letters to left of erased area, but
       // that is nyi.
@@ -848,5 +848,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.20 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.21 2002/08/09 03:17:30 easysw Exp $".
 //

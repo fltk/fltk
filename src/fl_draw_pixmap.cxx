@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.9 2002/05/25 13:38:25 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.10 2002/08/09 03:17:30 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -178,20 +178,20 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
     for (int i=0; i<ncolors; i++) {
       const uchar *p = *data++;
       // the first 1 or 2 characters are the color index:
-      int index = *p++;
+      int ind = *p++;
       uchar* c;
       if (chars_per_pixel>1) {
 #ifdef U64
-	U64* colors = d.byte1[index];
-	if (!colors) colors = d.byte1[index] = new U64[256];
+	U64* colors = d.byte1[ind];
+	if (!colors) colors = d.byte1[ind] = new U64[256];
 #else
-	U32* colors = d.byte1[index];
-	if (!colors) colors = d.byte1[index] = new U32[256];
+	U32* colors = d.byte1[ind];
+	if (!colors) colors = d.byte1[ind] = new U32[256];
 #endif
 	c = (uchar*)&colors[*p];
-	index = (index<<8)+*p++;
+	ind = (ind<<8)+*p++;
       } else {
-	c = (uchar *)&d.colors[index];
+	c = (uchar *)&d.colors[ind];
       }
       // look for "c word", or last word if none:
       const uchar *previous_word = p;
@@ -215,7 +215,7 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
         // assume "None" or "#transparent" for any errors
 	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
-	transparent_index = index;
+	transparent_index = ind;
       }
     }
   }
@@ -226,10 +226,10 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
     int W = (d.w+7)/8;
     uchar* bitmap = new uchar[W * d.h];
     *fl_mask_bitmap = bitmap;
-    for (int y = 0; y < d.h; y++) {
-      const uchar* p = data[y];
+    for (int Y = 0; Y < d.h; Y++) {
+      const uchar* p = data[Y];
       if (chars_per_pixel <= 1) {
-	for (int x = 0; x < W; x++) {
+	for (int X = 0; X < W; X++) {
 	  int b = (*p++ != transparent_index);
 	  if (*p++ != transparent_index) b |= 2;
 	  if (*p++ != transparent_index) b |= 4;
@@ -241,12 +241,12 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 	  *bitmap++ = b;
 	}
       } else {
-	for (int x = 0; x < W; x++) {
+	for (int X = 0; X < W; X++) {
 	  int b = 0;
 	  for (int i = 0; i < 8; i++) {
-	    int index = *p++;
-	    index = (index<<8) | (*p++);
-	    if (index != transparent_index) b |= (1<<i);
+	    int ind = *p++;
+	    ind = (ind<<8) | (*p++);
+	    if (ind != transparent_index) b |= (1<<i);
 	  }
 	  *bitmap++ = b;
 	}
@@ -260,5 +260,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.9 2002/05/25 13:38:25 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.10 2002/08/09 03:17:30 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.4 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.5 2002/08/09 03:17:30 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -63,7 +63,7 @@
 #  include "Fl_XColor.H"
 #  include "flstring.h"
 
-static XImage i;	// template used to pass info to X
+static XImage xi;	// template used to pass info to X
 static int bytes_per_pixel;
 static int scanline_add;
 static int scanline_mask;
@@ -358,16 +358,16 @@ static void figure_out_visual() {
   XPixmapFormatValues *pfv;
   for (pfv = pfvlist; pfv < pfvlist+FL_NUM_pfv; pfv++)
     if (pfv->depth == fl_visual->depth) break;
-  i.format = ZPixmap;
-  i.byte_order = ImageByteOrder(fl_display);
+  xi.format = ZPixmap;
+  xi.byte_order = ImageByteOrder(fl_display);
 //i.bitmap_unit = 8;
 //i.bitmap_bit_order = MSBFirst;
 //i.bitmap_pad = 8;
-  i.depth = fl_visual->depth;
-  i.bits_per_pixel = pfv->bits_per_pixel;
+  xi.depth = fl_visual->depth;
+  xi.bits_per_pixel = pfv->bits_per_pixel;
 
-  if (i.bits_per_pixel & 7) bytes_per_pixel = 0; // produce fatal error
-  else bytes_per_pixel = i.bits_per_pixel/8;
+  if (xi.bits_per_pixel & 7) bytes_per_pixel = 0; // produce fatal error
+  else bytes_per_pixel = xi.bits_per_pixel/8;
 
   unsigned int n = pfv->scanline_pad/8;
   if (pfv->scanline_pad & 7 || (n&(n-1)))
@@ -383,7 +383,7 @@ static void figure_out_visual() {
     return;
   }
   if (!fl_visual->red_mask)
-    Fl::fatal("Can't do %d bits_per_pixel colormap",i.bits_per_pixel);
+    Fl::fatal("Can't do %d bits_per_pixel colormap",xi.bits_per_pixel);
 #  endif
 
   // otherwise it is a TrueColor visual:
@@ -398,9 +398,9 @@ static void figure_out_visual() {
     // All 16-bit TrueColor visuals are supported on any machine with
     // 24 or more bits per integer.
 #  ifdef U16
-    ::i.byte_order = WORDS_BIGENDIAN;
+    xi.byte_order = WORDS_BIGENDIAN;
 #  else
-    ::i.byte_order = 1;
+    xi.byte_order = 1;
 #  endif
     if (rs == 11 && gs == 6 && bs == 0 && fl_extrashift == 3) {
       converter = c565_converter;
@@ -412,7 +412,7 @@ static void figure_out_visual() {
     break;
 
   case 3:
-    if (::i.byte_order) {rs = 16-rs; gs = 16-gs; bs = 16-bs;}
+    if (xi.byte_order) {rs = 16-rs; gs = 16-gs; bs = 16-bs;}
     if (rs == 0 && gs == 8 && bs == 16) {
       converter = rgb_converter;
       mono_converter = rrr_converter;
@@ -425,7 +425,7 @@ static void figure_out_visual() {
     break;
 
   case 4:
-    if ((::i.byte_order!=0) != WORDS_BIGENDIAN)
+    if ((xi.byte_order!=0) != WORDS_BIGENDIAN)
       {rs = 24-rs; gs = 24-gs; bs = 24-bs;}
     if (rs == 0 && gs == 8 && bs == 16) {
       converter = xbgr_converter;
@@ -440,14 +440,14 @@ static void figure_out_visual() {
       converter = xrgb_converter;
       mono_converter = xrrr_converter;
     } else {
-      ::i.byte_order = WORDS_BIGENDIAN;
+      xi.byte_order = WORDS_BIGENDIAN;
       converter = color32_converter;
       mono_converter = mono32_converter;
     }
     break;
 
   default:
-    Fl::fatal("Can't do %d bits_per_pixel",i.bits_per_pixel);
+    Fl::fatal("Can't do %d bits_per_pixel",xi.bits_per_pixel);
   }
 
 }
@@ -467,8 +467,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   dy -= Y;
 
   if (!bytes_per_pixel) figure_out_visual();
-  i.width = w;
-  i.height = h;
+  xi.width = w;
+  xi.height = h;
 
   void (*conv)(const uchar *from, uchar *to, int w, int delta) = converter;
   if (mono) conv = mono_converter;
@@ -491,8 +491,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 #  endif
       conv == rgb_converter && delta==3
       ) && !(linedelta&scanline_add)) {
-    i.data = (char *)(buf+delta*dx+linedelta*dy);
-    i.bytes_per_line = linedelta;
+    xi.data = (char *)(buf+delta*dx+linedelta*dy);
+    xi.bytes_per_line = linedelta;
 
   } else {
     int linesize = ((w*bytes_per_pixel+scanline_add)&scanline_mask)/sizeof(STORETYPE);
@@ -509,8 +509,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       buffer_size = size;
       buffer = new STORETYPE[size];
     }}
-    i.data = (char *)buffer;
-    i.bytes_per_line = linesize*sizeof(STORETYPE);
+    xi.data = (char *)buffer;
+    xi.bytes_per_line = linesize*sizeof(STORETYPE);
     if (buf) {
       buf += delta*dx+linedelta*dy;
       for (int j=0; j<h; ) {
@@ -521,7 +521,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	  buf += linedelta;
 	  to += linesize;
 	}
-	XPutImage(fl_display,fl_window,fl_gc, &i, 0, 0, X+dx, Y+dy+j-k, w, k);
+	XPutImage(fl_display,fl_window,fl_gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
     } else {
       STORETYPE* linebuf = new STORETYPE[(W*delta+(sizeof(STORETYPE)-1))/sizeof(STORETYPE)];
@@ -533,7 +533,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	  conv((uchar*)linebuf, (uchar*)to, w, delta);
 	  to += linesize;
 	}
-	XPutImage(fl_display,fl_window,fl_gc, &i, 0, 0, X+dx, Y+dy+j-k, w, k);
+	XPutImage(fl_display,fl_window,fl_gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
 
       delete[] linebuf;
@@ -570,5 +570,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.4 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.5 2002/08/09 03:17:30 easysw Exp $".
 //

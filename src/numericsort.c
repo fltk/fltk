@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.10.2.4.2.5 2002/05/04 18:41:55 easysw Exp $"
+ * "$Id: numericsort.c,v 1.10.2.4.2.6 2002/08/09 03:17:30 easysw Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -60,15 +60,15 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
   const char* b = (*B)->d_name;
   int ret = 0;
   for (;;) {
-    if (isdigit((unsigned)*a) && isdigit((unsigned)*b)) {
+    if (isdigit(*a & 255) && isdigit(*b & 255)) {
       int diff,magdiff;
       while (*a == '0') a++;
       while (*b == '0') b++;
-      while (isdigit((unsigned)*a) && *a == *b) {a++; b++;}
-      diff = (isdigit((unsigned)*a) && isdigit((unsigned)*b)) ? *a - *b : 0;
+      while (isdigit(*a & 255) && *a == *b) {a++; b++;}
+      diff = (isdigit(*a & 255) && isdigit(*b & 255)) ? *a - *b : 0;
       magdiff = 0;
-      while (isdigit((unsigned)*a)) {magdiff++; a++;}
-      while (isdigit((unsigned)*b)) {magdiff--; b++;}
+      while (isdigit(*a & 255)) {magdiff++; a++;}
+      while (isdigit(*b & 255)) {magdiff--; b++;}
       if (magdiff) {ret = magdiff; break;} /* compare # of significant digits*/
       if (diff) {ret = diff; break;}	/* compare first non-zero digit */
     } else {
@@ -77,7 +77,7 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
 	if ((ret = *a-*b)) break;
       } else {
 	/* compare case-insensitve */
-	if ((ret = tolower((unsigned)*a)-tolower((unsigned)*b))) break;
+	if ((ret = tolower(*a & 255)-tolower(*b & 255))) break;
       }
 
       if (!*a) break;
@@ -105,5 +105,5 @@ int fl_numericsort(struct dirent **A, struct dirent **B) {
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.10.2.4.2.5 2002/05/04 18:41:55 easysw Exp $".
+ * End of "$Id: numericsort.c,v 1.10.2.4.2.6 2002/08/09 03:17:30 easysw Exp $".
  */

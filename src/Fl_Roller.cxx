@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.6 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.7 2002/08/09 03:17:30 easysw Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -105,13 +105,13 @@ void Fl_Roller::draw() {
     if (active_r()) {
       // draw ridges:
       double junk;
-      for (double y = -ARC+modf(offset*sin(ARC)/(W/2)/delta,&junk)*delta;;
-	   y += delta) {
-	int y1 = int((sin(y)/sin(ARC)+1)*W/2);
-	if (y1 <= 0) continue; else if (y1 >= W-1) break;
-	fl_color(FL_DARK3); fl_yxline(X+y1,Y+1,Y+H-1);
-	if (y < 0) y1--; else y1++;
-	fl_color(FL_LIGHT1);fl_yxline(X+y1,Y+1,Y+H-1);
+      for (double yy = -ARC+modf(offset*sin(ARC)/(W/2)/delta,&junk)*delta;;
+	   yy += delta) {
+	int yy1 = int((sin(yy)/sin(ARC)+1)*W/2);
+	if (yy1 <= 0) continue; else if (yy1 >= W-1) break;
+	fl_color(FL_DARK3); fl_yxline(X+yy1,Y+1,Y+H-1);
+	if (yy < 0) yy1--; else yy1++;
+	fl_color(FL_LIGHT1);fl_yxline(X+yy1,Y+1,Y+H-1);
       }
       // draw edges:
       h1 = W/8+1; // distance from end the color inverts
@@ -139,13 +139,13 @@ void Fl_Roller::draw() {
     if (active_r()) {
       // draw ridges:
       double junk;
-      for (double y = -ARC+modf(offset*sin(ARC)/(H/2)/delta,&junk)*delta;
-	   ; y += delta) {
-	int y1 = int((sin(y)/sin(ARC)+1)*H/2);
-	if (y1 <= 0) continue; else if (y1 >= H-1) break;
-	fl_color(FL_DARK3); fl_xyline(X+1,Y+y1,X+W-1);
-	if (y < 0) y1--; else y1++;
-	fl_color(FL_LIGHT1);fl_xyline(X+1,Y+y1,X+W-1);
+      for (double yy = -ARC+modf(offset*sin(ARC)/(H/2)/delta,&junk)*delta;
+	   ; yy += delta) {
+	int yy1 = int((sin(yy)/sin(ARC)+1)*H/2);
+	if (yy1 <= 0) continue; else if (yy1 >= H-1) break;
+	fl_color(FL_DARK3); fl_xyline(X+1,Y+yy1,X+W-1);
+	if (yy < 0) yy1--; else yy1++;
+	fl_color(FL_LIGHT1);fl_xyline(X+1,Y+yy1,X+W-1);
       }
       // draw edges:
       h1 = H/8+1; // distance from end the color inverts
@@ -171,5 +171,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.6 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.7 2002/08/09 03:17:30 easysw Exp $".
 //
