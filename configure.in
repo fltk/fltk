@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.15 2001/10/25 17:13:26 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.16 2001/10/25 17:25:11 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -222,7 +222,10 @@ fi
 LIBS="$LIBS$X_LIBS"
 CFLAGS="$CFLAGS$X_CFLAGS"
 CXXFLAGS="$CXXFLAGS$X_CFLAGS"
-ac_cpp="$ac_cpp -I$x_includes"
+
+if test "x$x_includes" != x; then
+    ac_cpp="$ac_cpp -I$x_includes"
+fi
 
 dnl Check for OpenGL unless disabled...
 GLLIB=
@@ -488,5 +491,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.15 2001/10/25 17:13:26 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.16 2001/10/25 17:25:11 easysw Exp $".
 dnl
