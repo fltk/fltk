@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
-	- Fl::get_key(x) would mix up Ctrl and Meta on OS X
+	- Fl::get_key(x) would mix up Ctrl and Meta on OS X (STR
+	  #55)
 	- The configure script used the wrong dynamic library
 	  linking command for OSX (STR #51)
 	- The Fl_Text_Editor widget did not set changed() nor
