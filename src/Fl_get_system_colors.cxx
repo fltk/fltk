@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.7 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.8 2002/04/13 22:17:46 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -163,7 +163,7 @@ static void
 getsyscolor(const char *key1, const char* key2, const char *arg, const char *defarg, void (*func)(uchar,uchar,uchar))
 {
   if (!arg) {
-    arg = XGetDefault (fl_display, key1, key2);
+    arg = XGetDefault(fl_display, key1, key2);
     if (!arg) arg = defarg;
   }
   XColor x;
@@ -210,7 +210,18 @@ Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;
 static Fl_Pixmap	tile(tile_xpm);
 
 int Fl::scheme(const char *s) {
-  if (!s) s = getenv("FLTK_SCHEME");
+  if (!s) {
+    if ((s = getenv("FLTK_SCHEME")) == NULL) {
+#if !defined(WIN32) && !defined(__APPLE__)
+      const char* key = 0;
+      if (Fl::first_window()) key = Fl::first_window()->xclass();
+      if (!key) key = "fltk";
+      fl_open_display();
+      s = XGetDefault(fl_display, key, "scheme");
+#endif // !WIN32 && !__APPLE__
+    }
+  }
+
   if (s) {
     if (!strcasecmp(s, "none") || !*s) s = 0;
     else s = strdup(s);
@@ -305,5 +316,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.7 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.8 2002/04/13 22:17:46 easysw Exp $".
 //

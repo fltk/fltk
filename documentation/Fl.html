@@ -50,6 +50,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.default_atclose">default_atclose</A></LI>
 	<LI><A HREF="#Fl.display">display</A></LI>
 	<LI><A HREF="#Fl.dnd">dnd</A></LI>
+	<LI><A HREF="#Fl.dnd_text_ops">dnd_text_ops</A></LI>
 	<LI><A HREF="#Fl.error">error</A></LI>
 	<LI><A HREF="#Fl.event">event</A></LI>
 	<LI><A HREF="#Fl.event_alt">event_alt</A></LI>
@@ -417,9 +418,18 @@ and does nothing useful under WIN32.
 
 <H4><A NAME="Fl.dnd">int dnd();</A></H4>
 
-<P>Initiate a Drag And Drop operation. The clipboard should be filled
-with relevant data before calling this method. FLTK will then initiate
-the system wide drag'n'drop handling. Dropped data will be marked as <i>text</i>.
+<P>Initiate a Drag And Drop operation. The clipboard should be
+filled with relevant data before calling this method. FLTK will
+then initiate the system wide drag and drop handling. Dropped data
+will be marked as <i>text</i>.
+
+<H4><A NAME="Fl.dnd_text_ops">void dnd_text_ops(int d);<BR>
+int dnd_text_ops();</A></H4>
+
+<P>Gets or sets whether drag and drop text operations are
+supported. This specifically affects whether selected text can
+be dragged from text fields or dragged within a text field as a
+cut/paste shortcut.
 
 <H4><A NAME="Fl.error">void (*error)(const char*, ...);</A></H4>
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.8 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.9 2002/04/13 22:17:46 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -36,7 +36,6 @@
 #include "flstring.h"
 #include <stdio.h>
 
-#define DND_OUT 1
 
 void Fl_Input::draw() {
   if (input_type() == FL_HIDDEN_INPUT) return;
@@ -290,8 +289,7 @@ int Fl_Input::handle(int event) {
     } else return handle_key();
 
   case FL_PUSH:
-#if DND_OUT
-    {
+    if (Fl::dnd_text_ops()) {
       int oldpos = position(), oldmark = mark();
       Fl_Boxtype b = box();
       Fl_Input_::handle_mouse(
@@ -302,13 +300,13 @@ int Fl_Input::handle(int event) {
       if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
 	  (newpos >= mark() && newpos < position() ||
 	  newpos >= position() && newpos < mark())) {
-	// user clicked int the selection, may be trying to drag
+	// user clicked in the selection, may be trying to drag
 	drag_start = newpos;
 	return 1;
       }
       drag_start = -1;
     }
-#endif
+
     if (Fl::focus() != this) {
       Fl::focus(this);
       handle(FL_FOCUS);
@@ -316,17 +314,17 @@ int Fl_Input::handle(int event) {
     break;
 
   case FL_DRAG:
-#if DND_OUT
-    if (drag_start >= 0) {
-      if (Fl::event_is_click()) return 1; // debounce the mouse
-      // save the position because sometimes we don't get DND_ENTER:
-      dnd_save_position = position();
-      dnd_save_mark = mark();
-      // drag the data:
-      copy(0); Fl::dnd();
-      return 1;
+    if (Fl::dnd_text_ops()) {
+      if (drag_start >= 0) {
+	if (Fl::event_is_click()) return 1; // debounce the mouse
+	// save the position because sometimes we don't get DND_ENTER:
+	dnd_save_position = position();
+	dnd_save_mark = mark();
+	// drag the data:
+	copy(0); Fl::dnd();
+	return 1;
+      }
     }
-#endif
     break;
 
   case FL_RELEASE:
@@ -336,6 +334,10 @@ int Fl_Input::handle(int event) {
     } else if (!Fl::event_is_click()) {
       // copy drag-selected text to the clipboard.
       copy(0);
+    } else if (Fl::event_is_click() && drag_start >= 0) {
+      // user clicked in the field and wants to reset the cursor position...
+      position(drag_start, drag_start);
+      drag_start = -1;
     }
     return 1;
 
@@ -393,5 +395,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.8 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.9 2002/04/13 22:17:46 easysw Exp $".
 //

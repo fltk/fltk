@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.8 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.9 2002/04/13 22:17:46 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -91,6 +91,14 @@ int Fl::arg(int argc, char **argv, int &i) {
     Fl::visible_focus(0);
     i++;
     return 1;
+  } else if (match(s, "dnd")) {
+    Fl::dnd_text_ops(1);
+    i++;
+    return 1;
+  } else if (match(s, "nodnd", 3)) {
+    Fl::dnd_text_ops(0);
+    i++;
+    return 1;
   }
 
   const char *v = argv[i+1];
@@ -153,7 +161,29 @@ int Fl::args(int argc, char** argv, int& i, int (*cb)(int,char**,int&)) {
 // show a main window, use any parsed arguments
 void Fl_Window::show(int argc, char **argv) {
   if (!argc) {show(); return;}
-  if (!arg_called) Fl::args(argc,argv);
+  if (!arg_called) {
+#if !defined(WIN32) && !defined(__APPLE__)
+    // Get defaults for drag-n-drop and focus...
+    const char *key = 0, *val;
+
+    fl_open_display();
+
+    if (Fl::first_window()) key = Fl::first_window()->xclass();
+    if (!key) key = "fltk";
+
+    val = XGetDefault(fl_display, key, "dndTextOps");
+    if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
+                              strcasecmp(val, "on") == 0 ||
+                              strcasecmp(val, "yes") == 0);
+
+    val = XGetDefault(fl_display, key, "visibleFocus");
+    if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
+                               strcasecmp(val, "on") == 0 ||
+                               strcasecmp(val, "yes") == 0);
+#endif // !WIN32 && !__APPLE__
+
+    Fl::args(argc,argv);
+  }
 
   // set colors first, so background_pixel is correct:
   static char beenhere;
@@ -200,7 +230,7 @@ void Fl_Window::show(int argc, char **argv) {
   XChangeProperty(fl_display, fl_xid(this), XA_WM_COMMAND, XA_STRING, 8, 0,
 		  (unsigned char *)buffer, p-buffer-1);
   delete[] buffer;
-#endif
+#endif // !WIN32 && !__APPLE__
 }
 
 // Calls useful for simple demo programs, with automatic help message:
@@ -364,5 +394,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.8 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.9 2002/04/13 22:17:46 easysw Exp $".
 //

@@ -366,6 +366,45 @@ window-&gt;icon((char *)p);
 </TR>
 </TABLE></CENTER>
 
+<H3>X Resources</H3>
+
+<P>When the <A
+HREF="Fl_Window.html#Fl_Window.show"><TT>Fl_Window::show(argc,
+argv)</TT></A> method is called, FLTK looks for the following X
+resources:
+
+<UL>
+
+	<LI><TT>background</TT> - The default background color
+	for widgets (color).
+
+	<LI><TT>dndTextOps</TT> - The default setting for
+	drag and drop text operations (boolean).
+
+	<LI><TT>foreground</TT> - The default foreground (label)
+	color for widgets (color).
+
+	<LI><TT>scheme</TT> - The default scheme to use
+	(string).
+
+	<LI><TT>selectBackground</TT> - The default selection
+	color for menus, etc. (color).
+
+	<LI><TT>Text.background</TT> - The default background
+	color for text fields (color).
+
+	<LI><TT>visibleFocus</TT> - The default setting for
+	visible keyboard focus on non-text widgets (boolean).
+
+</UL>
+
+<P>Resources associated with the first window's <A
+HREF="Fl_Window.html#Fl_Window.xclass"><TT>Fl_Window::xclass()</TT></A>
+string are queried first, or if no class has been specified then
+the class "fltk" is used (e.g. <TT>fltk.background</TT>). If no
+match is found, a global search is done (e.g.
+<TT>*background</TT>).
+
 <H2>The Windows (WIN32) Interface</H2>
 
 <P>The Windows interface provides access to the WIN32 GDI
