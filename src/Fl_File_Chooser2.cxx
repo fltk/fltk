@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.25 2002/10/29 20:07:34 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.26 2002/10/29 20:12:36 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -779,13 +779,18 @@ Fl_File_Chooser::rescan()
 {
   char	pathname[1024];		// New pathname for filename field
 
+
   // Clear the current filename
   strlcpy(pathname, directory_, sizeof(pathname));
   if (pathname[0] && pathname[strlen(pathname) - 1] != '/') {
     strlcat(pathname, "/", sizeof(pathname));
   }
   fileName->value(pathname);
-  okButton->deactivate();
+
+  if (type_ & DIRECTORY)
+    okButton->activate();
+  else
+    okButton->deactivate();
 
   // Build the file list...
   fileList->load(directory_, sort);
@@ -1147,5 +1152,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.25 2002/10/29 20:07:34 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.26 2002/10/29 20:12:36 easysw Exp $".
 //

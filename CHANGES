@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- The file chooser now activates the OK button when
+	  opening a directory in directory selection mode.
 	- Fixed a bug in the file chooser when entering an
 	  absolute path.
 	- Back-ported some FLTK 2.0 tooltip changes to eliminate
