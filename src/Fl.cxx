@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.37 2002/06/07 16:57:21 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.38 2002/06/11 16:17:41 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -221,7 +221,7 @@ void Fl::remove_check(Fl_Timeout_Handler cb, void *arg) {
 
 void (*Fl::idle)(); // see Fl_add_idle.cxx for the add/remove functions
 
-extern int fl_wait(double time); // in Fl_x.cxx or Fl_win32.cxx
+extern int fl_wait(double time); // in Fl_<platform>.cxx
 
 static char in_idle;
 
@@ -931,5 +931,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.37 2002/06/07 16:57:21 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.38 2002/06/11 16:17:41 easysw Exp $".
 //

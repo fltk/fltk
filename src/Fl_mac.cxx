@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.24 2002/06/03 16:09:27 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.25 2002/06/11 16:17:41 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -77,6 +77,7 @@ Fl_Window *Fl_Window::current_;
 EventRef fl_os_event;		// last (mouse) event
 
 // forward declarations of variables in this file
+static int got_events = 0;
 static Fl_Window* resize_from_system;
 static CursPtr default_cursor_ptr;
 static Cursor default_cursor;
@@ -190,6 +191,8 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
 
   fl_lock_function();
 
+  got_event = 1;
+
   switch ( GetEventClass( event ) )
   {
   case kEventClassMouse:
@@ -300,14 +303,14 @@ static double do_queued_events( double time = 0.0 )
     ret = InstallEventLoopTimer( GetMainEventLoop(), 0, 0, NewEventLoopTimerUPP( timerProcCB ), 0, &timer );
   }
 
+  got_event = 0;
+
+  fl_unlock_function();
+
   if ( time > 0.0 ) 
   {
-    fl_unlock_function();
-
     SetEventLoopTimerNextFireTime( timer, time );
     RunApplicationEventLoop(); // will return after the previously set time
-
-    fl_lock_function();
   }
   else
   {
@@ -318,6 +321,8 @@ static double do_queued_events( double time = 0.0 )
     ReleaseEvent( breakEvent );
   }
   
+  fl_lock_function();
+
 #if CONSOLIDATE_MOTION
   if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
@@ -331,14 +336,15 @@ static double do_queued_events( double time = 0.0 )
 
 /**
  * This public function handles all events. It wait a maximum of 
- * 'time' secods for an event. It returns the same time that was given
- * in the argument!
+ * 'time' secods for an event. This version returns 1 if events
+ * other than the timeout timer were processed.
  *
  * \todo there is no socket handling in this code whatsoever
  */
-double fl_wait( double time ) 
+int fl_wait( double time ) 
 {
-  return do_queued_events( time );
+  do_queued_events( time );
+  return (got_events);
 }
 
 
@@ -1426,6 +1432,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.24 2002/06/03 16:09:27 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.25 2002/06/11 16:17:41 easysw Exp $".
 //
 
