@@ -47,7 +47,7 @@ cp demo.menu demod.menu
 
 for file in *.fl; do
 	echo $file
-	/usr/local/src/fltk-1.1/fluid/fluid -c $file
+	fluid -c $file
 	if test $? != 0; then
 		echo Error executing fluid: $?
 		exit 1
