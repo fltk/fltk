@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.6.2.3.2.7 2004/08/26 00:18:42 matthiaswm Exp $"
+// "$Id: Fl_Font.H,v 1.6.2.3.2.8 2004/09/09 00:55:41 matthiaswm Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -57,7 +57,6 @@ public:
   short width[256];
   bool knowMetrics;
 #  elif defined(__APPLE_QUARTZ__)
-#warning : minimal quartz, use ATS instead!
   FL_EXPORT Fl_FontSize(const char* fontname, int size);
   char *q_name;
   int size;
@@ -102,5 +101,5 @@ FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.6.2.3.2.7 2004/08/26 00:18:42 matthiaswm Exp $".
+// End of "$Id: Fl_Font.H,v 1.6.2.3.2.8 2004/09/09 00:55:41 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.11 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.12 2004/09/09 00:55:41 matthiaswm Exp $"
 //
 // MacOS font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -25,10 +25,6 @@
 
 #include <config.h>
 
-#ifdef __APPLE_QUARTZ__
-#warning quartz
-#endif
-
 // This function fills in the fltk font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
 // and to sort them so the first 4 in a family are normal, bold, italic,
@@ -42,6 +38,7 @@
 
 // turn a stored font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
+#ifdef __APPLE_QD__
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     const char* p = f->name;
@@ -60,12 +57,27 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   }
   if (ap) *ap = f->fontname[ENDOFBUFFER];
   return f->fontname;
+#elif defined(__APPLE_QUARTZ__)
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  if (!f->fontname[0]) {
+    const char* p = f->name;
+    if (!p || !*p) {if (ap) *ap = 0; return "";}
+    strlcpy(f->fontname, p, ENDOFBUFFER);
+    int type = 0;
+    if (strstr(f->name, "Bold")) type |= FL_BOLD;
+    if (strstr(f->name, "Italic")) type |= FL_ITALIC;
+    f->fontname[ENDOFBUFFER] = (char)type;
+  }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
+  return f->fontname;
+#endif
 }
 
 static int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
 #pragma unused ( xstarname )
+#ifdef __APPLE_QD__
   if (fl_free_font != FL_FREE_FONT) 
     return (Fl_Font)fl_free_font;
   static char styleLU[] = " BIP";
@@ -113,13 +125,35 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
   }
   FMDisposeFontFamilyIterator( &ffIterator );
   return (Fl_Font)fl_free_font;
+#elif defined(__APPLE_QUARTZ__)
+  ATSFontIterator it;
+  ATSFontIteratorCreate(kATSFontContextGlobal, 0L, 0L, kATSOptionFlagsRestrictedScope, &it);  
+  for (;;) {
+    ATSFontRef font;
+    CFStringRef fname = 0;
+    OSStatus err = ATSFontIteratorNext(it, &font);
+    if (err!=noErr) break;
+    ATSFontGetName(font, kATSOptionFlagsDefault, &fname);
+    char buf[1024];
+    CFStringGetCString(fname, buf, 1024, kCFStringEncodingASCII);
+    int i;
+    for (i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
+      if (!strcmp(Fl::get_font_name((Fl_Font)i),buf)) break;
+    if ( i < FL_FREE_FONT ) continue;
+    Fl::set_font((Fl_Font)(fl_free_font++), strdup((char*)buf));
+  }
+  ATSFontIteratorRelease(&it);
+  return (Fl_Font)fl_free_font;
+#endif
 }
 
 static int array[128];
 int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+  int cnt = 0;
 
+#ifdef __APPLE_QD__
   Str255 name;
   int len = strlen( s->name );
   memcpy(((char*)name)+1, s->name+1, len );
@@ -147,7 +181,6 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   FMFontSize size, pSize = -1;
   FMFontFamilyInstanceIterator ffiIterator;
   FMCreateFontFamilyInstanceIterator( family, &ffiIterator );
-  int cnt = 0;
   OSStatus listInstances;
   for (;;)
   {
@@ -163,10 +196,16 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
     }
   }
   FMDisposeFontFamilyInstanceIterator( &ffiIterator );
+#elif defined(__APPLE_QUARTZ__)
+  // ATS supports all font size 
+  array[0] = 0;
+  sizep = array;
+  cnt = 1;
+#endif
 
   return cnt;
 }
 
 //
-// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.11 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.12 2004/09/09 00:55:41 matthiaswm Exp $".
 //

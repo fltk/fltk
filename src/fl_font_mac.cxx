@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.20 2004/09/07 20:59:17 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.21 2004/09/09 00:55:41 matthiaswm Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -24,10 +24,6 @@
 //
 
 #include <config.h>
-
-#ifdef __APPLE_QUARTZ__
-#warning quartz
-#endif
 
 //: MeasureText, FontMetrics, WidthTabHandle, GetSysFont, SysFontSize
 //: TextSize, TextFont
@@ -58,12 +54,24 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
 #endif
   minsize = maxsize = size;
 #elif defined(__APPLE_QUARTZ__)
-  q_name = strdup(name+1);
+  q_name = strdup(name);
   size = Size;
   ascent = Size*3/4;
   descent = Size-ascent;
   q_width = Size*2/3;
   minsize = maxsize = Size;
+  // Using ATS to get the genral Glyph size information
+  CFStringRef cfname = CFStringCreateWithCString(0L, q_name, kCFStringEncodingASCII);
+  ATSFontRef font = ATSFontFindFromName(cfname, kATSOptionFlagsDefault);
+  if (font) {
+    ATSFontMetrics m = { 0 };
+    ATSFontGetHorizontalMetrics(font, kATSOptionFlagsDefault, &m);
+    if (m.avgAdvanceWidth) q_width = int(m.avgAdvanceWidth*size);
+    // playing with the offsets a little to make standard sizes fit
+    if (m.ascent) ascent  = int(m.ascent*size-0.5f);
+    if (m.descent) descent = -int(m.descent*size-1.5f);
+  }
+  CFRelease(cfname);
 #endif
 }
 
@@ -93,6 +101,7 @@ Fl_FontSize::~Fl_FontSize() {
 ////////////////////////////////////////////////////////////////
 
 static Fl_Fontdesc built_in_table[] = {
+#ifdef __APPLE_QD__
 {" Arial"},
 {"BArial"},
 {"IArial"},
@@ -109,6 +118,24 @@ static Fl_Fontdesc built_in_table[] = {
 {" Chicago"},
 {"BChicago"},
 {" Webdings"},
+#elif defined(__APPLE_QUARTZ__)
+{"Arial"},
+{"Arial Bold"},
+{"Arial Italic"},
+{"Arial Bold Italic"},
+{"Courier New"},
+{"Courier New Bold"},
+{"Courier New Italic"},
+{"Courier New Bold Italic"},
+{"Times New Roman"},
+{"Times New Roman Bold"},
+{"Times New Roman Italic"},
+{"Times New Roman Bold Italic"},
+{"Symbol"},
+{"Monaco"},
+{"Andale Mono"}, // there is no bold Monaco font on standard Mac
+{"Webdings"},
+#endif
 };
 
 Fl_Fontdesc* fl_fonts = built_in_table;
@@ -120,7 +147,8 @@ void fl_font(Fl_FontSize* s) {
   TextFont(fl_fontsize->font);	//: select font into current QuickDraw GC
   TextFace(fl_fontsize->face);
   TextSize(fl_fontsize->size);
-  if (!fl_fontsize->knowMetrics) {	//: get the true metrics for the currnet GC (fails on multiple monitors with different dpi's!)
+  if (!fl_fontsize->knowMetrics) {	//: get the true metrics for the currnet GC 
+                                        //: (fails on multiple monitors with different dpi's!)
     FontInfo fi; GetFontInfo(&fi);
     fl_fontsize->ascent = fi.ascent;
     fl_fontsize->descent = fi.descent;
@@ -172,13 +200,35 @@ int fl_descent() {
   else return -1;
 }
 
+// TODO: the text has to be translated according to the macroman_lut to give
+// the correct result!
 double fl_width(const char* c, int n) {
+#ifdef __APPLE_QD__
   return (double)TextWidth( c, 0, n );
+#else
+  if (!fl_gc) {
+    Fl_Window *w = Fl::first_window();
+    if (w) w->make_current();
+    if (!fl_gc) return -1;
+  }
+  // according to the Apple developer docs, this is the correct way to 
+  // find the length of a rendered text...
+  CGContextSetTextPosition(fl_gc, 0, 0);
+  CGContextSetTextDrawingMode(fl_gc, kCGTextInvisible);
+  CGContextShowText(fl_gc, c, n);
+  CGContextSetTextDrawingMode(fl_gc, kCGTextFill);
+  CGPoint p = CGContextGetTextPosition(fl_gc);
+  return p.x;
+#endif
 }
 
 // todo : fl_width returns wrong results for OS X
 double fl_width(uchar c) {
+#ifdef __APPLE_QD__
   return (double)TextWidth( &c, 0, 1 );
+#else 
+  return fl_width((const char*)&c, 1);
+#endif
 }
 
 // MRS: The default character set is MacRoman, which is different from
@@ -228,5 +278,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.20 2004/09/07 20:59:17 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.21 2004/09/09 00:55:41 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fonts.cxx,v 1.5.2.3.2.4 2004/04/11 04:39:01 easysw Exp $"
+// "$Id: fonts.cxx,v 1.5.2.3.2.5 2004/09/09 00:55:41 matthiaswm Exp $"
 //
 // Font demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -133,7 +133,11 @@ void create_the_forms() {
 int main(int argc, char **argv) {
   Fl::scheme(NULL);
   create_the_forms();
+#ifdef __APPLE__
+  int i = 0;
+#else
   int i = fl_choice("Which fonts:","-*","iso8859","All");
+#endif
   int k = Fl::set_fonts(i ? (i>1 ? "*" : 0) : "-*");
   for (i = 0; i < k; i++) {
     int t; const char *name = Fl::get_font_name((Fl_Font)i,&t);
@@ -165,5 +169,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: fonts.cxx,v 1.5.2.3.2.4 2004/04/11 04:39:01 easysw Exp $".
+// End of "$Id: fonts.cxx,v 1.5.2.3.2.5 2004/09/09 00:55:41 matthiaswm Exp $".
 //
