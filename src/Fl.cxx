@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.71 2004/11/23 19:50:58 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.72 2004/12/03 03:14:15 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -447,10 +447,13 @@ void Fl::focus(Fl_Widget *o) {
     Fl::compose_reset();
     focus_ = o;
     fl_oldfocus = 0;
+    int old_event = e_number;
+    e_number = FL_UNFOCUS;
     for (; p; p = p->parent()) {
       p->handle(FL_UNFOCUS);
       fl_oldfocus = p;
     }
+    e_number = old_event;
   }
 }
 
@@ -461,9 +464,12 @@ void Fl::belowmouse(Fl_Widget *o) {
   Fl_Widget *p = belowmouse_;
   if (o != p) {
     belowmouse_ = o;
+    int old_event = e_number;
+    e_number = dnd_flag ? FL_DND_LEAVE : FL_LEAVE;
     for (; p && !p->contains(o); p = p->parent()) {
-      p->handle(dnd_flag ? FL_DND_LEAVE : FL_LEAVE);
+      p->handle(e_number);
     }
+    e_number = old_event;
   }
 }
 
@@ -516,13 +522,17 @@ void fl_fix_focus() {
     if (w) {
       if (Fl::modal()) w = Fl::modal();
       if (!w->contains(Fl::belowmouse())) {
-	w->handle(FL_ENTER);
+        int old_event = Fl::e_number;
+	w->handle(Fl::e_number = FL_ENTER);
+	Fl::e_number = old_event;
 	if (!w->contains(Fl::belowmouse())) Fl::belowmouse(w);
       } else {
 	// send a FL_MOVE event so the enter/leave state is up to date
 	Fl::e_x = Fl::e_x_root-fl_xmousewin->x();
 	Fl::e_y = Fl::e_y_root-fl_xmousewin->y();
-	w->handle(FL_MOVE);
+        int old_event = Fl::e_number;
+	w->handle(Fl::e_number = FL_MOVE);
+	Fl::e_number = old_event;
       }
     } else {
       Fl::belowmouse(0);
@@ -568,6 +578,7 @@ void fl_throw_focus(Fl_Widget *o) {
 // window the event was posted to by X:
 static int send(int event, Fl_Widget* to, Fl_Window* window) {
   int dx, dy;
+  int old_event = Fl::e_number;
   if (window) {
     dx = window->x();
     dy = window->y();
@@ -578,7 +589,8 @@ static int send(int event, Fl_Widget* to, Fl_Window* window) {
     if (w->type()>=FL_WINDOW) {dx -= w->x(); dy -= w->y();}
   int save_x = Fl::e_x; Fl::e_x += dx;
   int save_y = Fl::e_y; Fl::e_y += dy;
-  int ret = to->handle(event);
+  int ret = to->handle(Fl::e_number = event);
+  Fl::e_number = old_event;
   Fl::e_y = save_y;
   Fl::e_x = save_x;
   return ret;
@@ -1096,5 +1108,5 @@ Fl::do_widget_deletion() {
 
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.71 2004/11/23 19:50:58 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.72 2004/12/03 03:14:15 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.65 2004/11/23 00:28:35 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.66 2004/12/03 03:14:16 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1548,7 +1548,9 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
 //  if ( Fl::e_text[Fl::e_length-1]==0 ) Fl::e_length--; // modify, if trailing 0 is part of string
   Fl::e_length = dst - Fl::e_text - 1;
 //  printf("Sending following text to widget %p:\n%s\n", Fl::belowmouse(), Fl::e_text);
-  target->handle(FL_PASTE);
+  int old_event = Fl::e_number;
+  target->handle(Fl::e_number = FL_PASTE);
+  Fl::e_number = old_event;
   free( Fl::e_text );
 
   fl_dnd_target_window = 0L;
@@ -1591,7 +1593,9 @@ void Fl_X::make(Fl_Window* w)
       x->wait_for_expose = 0;
       x->next = Fl_X::first; // must be in the list for ::flush()
       Fl_X::first = x;
-      w->handle(FL_SHOW);
+      int old_event = Fl::e_number;
+      w->handle(Fl::e_number = FL_SHOW);
+      Fl::e_number = old_event;
       w->redraw(); // force draw to happen
     }
     fl_show_iconic = 0;
@@ -1760,7 +1764,9 @@ void Fl_X::make(Fl_Window* w)
     w->x(rect.left); w->y(rect.top);
     w->w(rect.right-rect.left); w->h(rect.bottom-rect.top);
 
-    w->handle(FL_SHOW);
+    int old_event = Fl::e_number;
+    w->handle(Fl::e_number = FL_SHOW);
+    Fl::e_number = old_event;
     w->redraw(); // force draw to happen
     w->set_visible();
     
@@ -2065,6 +2071,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.65 2004/11/23 00:28:35 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.66 2004/12/03 03:14:16 easysw Exp $".
 //
 

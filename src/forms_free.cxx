@@ -1,5 +1,5 @@
 //
-// "$Id: forms_free.cxx,v 1.4.2.4.2.4 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: forms_free.cxx,v 1.4.2.4.2.5 2004/12/03 03:14:17 easysw Exp $"
 //
 // Forms free widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -33,7 +33,9 @@
 
 void Fl_Free::step(void *v) {
   Fl_Free *f = (Fl_Free *)v;
-  f->handle(FL_STEP);
+  int old_event = Fl::e_number;
+  f->handle(Fl::e_number == FL_STEP);
+  Fl::e_number = old_event;
   Fl::add_timeout(.01,step,v);
 }
 
@@ -73,5 +75,5 @@ int Fl_Free::handle(int e) {
 }
 
 //
-// End of "$Id: forms_free.cxx,v 1.4.2.4.2.4 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: forms_free.cxx,v 1.4.2.4.2.5 2004/12/03 03:14:17 easysw Exp $".
 //
