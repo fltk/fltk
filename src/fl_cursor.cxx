@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6.2.6.2.4 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.6.2.5 2002/08/01 02:15:43 easysw Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -41,6 +41,16 @@ void fl_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
   if (Fl::first_window()) Fl::first_window()->cursor(c,fg,bg);
 }
 
+void Fl_Window::default_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
+  if (c == FL_CURSOR_DEFAULT) c = FL_CURSOR_ARROW;
+
+  cursor_default = c;
+  cursor_fg      = fg;
+  cursor_bg      = bg;
+
+  cursor(c, fg, bg);
+}
+
 #ifdef WIN32
 
 #  ifndef IDC_HAND
@@ -49,6 +59,9 @@ void fl_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 
 void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   if (!shown()) return;
+  if (c == FL_CURSOR_DEFAULT) {
+    c = cursor_default;
+  }
   if (c > FL_CURSOR_NESW) {
     i->cursor = 0;
   } else if (c == FL_CURSOR_DEFAULT) {
@@ -173,6 +186,9 @@ static Cursor crsrARROW =
 
 void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   if (!shown()) return;
+  if (c == FL_CURSOR_DEFAULT) {
+    c = cursor_default;
+  }
   switch (c) {
   case FL_CURSOR_CROSS:     i->cursor = GetCursor( crossCursor ); break;
   case FL_CURSOR_WAIT:      i->cursor = GetCursor( watchCursor ); break;
@@ -251,6 +267,11 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
   if (!shown()) return;
   Cursor cursor;
   int deleteit = 0;
+  if (c == FL_CURSOR_DEFAULT) {
+    c  = cursor_default;
+    fg = cursor_fg;
+    bg = cursor_bg;
+  }
   if (!c) {
     cursor = None;
   } else {
@@ -290,5 +311,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.4 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.6.2.5 2002/08/01 02:15:43 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.cxx,v 1.6.2.3.2.7 2002/07/14 21:25:39 easysw Exp $"
+// "$Id: Fl_Window.cxx,v 1.6.2.3.2.8 2002/08/01 02:15:43 easysw Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -53,6 +53,10 @@ void Fl_Window::_Fl_Window() {
 
 Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l)
 : Fl_Group(X, Y, W, H, l) {
+  cursor_default = FL_CURSOR_DEFAULT;
+  cursor_fg      = FL_BLACK;
+  cursor_bg      = FL_WHITE;
+
   _Fl_Window();
   set_flag(FL_FORCE_POSITION);
 }
@@ -119,5 +123,5 @@ Fl_Window *Fl_Window::current() {
 
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.7 2002/07/14 21:25:39 easysw Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.8 2002/08/01 02:15:43 easysw Exp $".
 //
