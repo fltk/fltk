@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.6 1999/04/17 01:02:29 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.7 1999/04/18 19:17:03 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -51,8 +51,11 @@
 
 // fd's are only implemented for sockets.  Microsoft Windows does not
 // have a unified IO system, so it doesn't support select() on files,
-// devices, or pipes...
+// devices, or pipes...  Also, unlike UNIX the Windows select() call
+// doesn't use the nfds parameter, so we don't need to keep track of
+// the maximum FD number...
 
+static fd_set fdsets[3];
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
@@ -80,7 +83,6 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
-  if (n > maxfd) maxfd = n;
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
@@ -105,7 +107,6 @@ void Fl::remove_fd(int n, int events) {
   if (events & POLLIN) FD_CLR(n, &fdsets[0]);
   if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
   if (events & POLLERR) FD_CLR(n, &fdsets[2]);
-  if (n == maxfd) maxfd--;
 }
 
 void Fl::remove_fd(int n) {
@@ -921,5 +922,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.6 1999/04/17 01:02:29 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.7 1999/04/18 19:17:03 mike Exp $".
 //
