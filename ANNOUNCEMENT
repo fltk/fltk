@@ -1,0 +1,89 @@
+<P>The FLTK Team is proud to announce the release of FLTK 1.1.3,
+a cross-platform C++ GUI toolkit for UNIX&reg;/Linux&reg; (X11),
+Microsoft&reg; Windows&reg;, and MacOS&reg; X. FLTK provides
+modern GUI functionality without the bloat and supports 3D
+graphics via OpenGL&reg; and its built-in GLUT emulation.
+
+<P>The FLTK 1.1.3 release is primarily a bug-fix release
+including several MacOS X drawing and OpenGL bugs. The new
+release also adds support for up to 2 additional qualifiers
+before a class name in FLUID.
+
+<P>FLTK is provided under the GNU Library Public License with
+exceptions that allow for static linking.
+
+<P>Changes since FLTK 1.1.2 include:
+
+<UL>
+
+	<LI>Documentation updates.
+
+	<LI>FLTK now ignores KeyRelease events when X11 sends them
+	for repeating keys.
+
+	<LI>FLUID now supports up to two additional qualifiers
+	before a class name (FL_EXPORT, etc.) to aide in
+	developing DLL interfaces for WIN32.
+
+	<LI>Additional NULL checks in Fl_Button,
+	fl_draw_boxtype(), Fl_File_Chooser, and
+	Fl_Window::hotspot().
+
+	<LI>The Fl_Preferences header file needed to FL_EXPORT all
+	of the nested classes for WIN32.
+
+	<LI>Fl_Double_Window couldn't be nested on WIN32. [SF Bug
+	#658219]
+
+	<LI>Fl_Slider didn't call the callback function when the
+	user changed the value using the keyboard and the
+	"when" condition was FL_WHEN_RELEASE. [SF Bug #647072]
+
+	<LI>Lines with less than 2 unique vertices and polygons
+	with less the 3 unique vertices were not drawn
+	properly. [SF Bug #647067]
+
+	<LI>The size_range() values were not honored under MacOS
+	X. [SF Bug #647074]
+
+	<LI>OpenGL windows didn't resize correctly on MacOS X.
+	[SF Bug #667855]
+
+	<LI>The menus incorrectly used the overlay visual when one
+	or more menu items contained an image. [SF Bug #653846]
+
+	<LI>Changed some error messages to use Fl::error() instead
+	of fprintf()...
+
+	<LI>Fl_Text_Buffer and Fl_Text_Display used free to free
+	memory that was allocated using the new operator.
+
+	<LI>Tweeked the plastic scheme under MacOSX to better
+	match the colors.
+
+	<LI>The Fl_Image.H always included the x.H header file,
+	which included many system headers that could
+	interfere with normal GUI applications.  It now uses
+	the corresponding based types for the image id and
+	mask to avoid this.
+
+	<LI>The FLUID widget panel wasn't sorted, so keyboard
+	navigation was strange. [SF Bug #647069]
+
+	<LI>Fl_Scroll didn't compute the location of labels to the
+	right or below when determining the area to erase.
+
+	<LI>Added backward-compatibility macro for
+	filename_setext().
+
+	<LI>Fl_Bitmap::copy(), Fl_Pixmap::copy(), and
+	Fl_RGB_Image::copy() all could overflow the source
+	image when scaling the image.
+
+	<LI>Double/triple clicks in Fl_Input fields didn't copy
+	the expanded selection to the clipboard.
+
+	<LI>Fl_Glut_Window and Fl_Gl_Window didn't always initialize
+	the OpenGL context on MacOS.
+
+</UL>
