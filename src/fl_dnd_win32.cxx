@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.11 2002/06/07 16:37:48 easysw Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.12 2002/06/29 00:10:04 matthiaswm Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -82,7 +82,7 @@ public:
       delete this;
     return nTemp;
   }
-  HRESULT STDMETHODCALLTYPE DragEnter( IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD *pdwEffect) {
+  HRESULT STDMETHODCALLTYPE DragEnter( IDataObject *pDataObj, DWORD /*grfKeyState*/, POINTL pt, DWORD *pdwEffect) {
     if( !pDataObj ) return E_INVALIDARG;
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
@@ -105,7 +105,7 @@ public:
     lastEffect = *pdwEffect;
     return S_OK;
   }
-  HRESULT STDMETHODCALLTYPE DragOver( DWORD grfKeyState, POINTL pt, DWORD *pdwEffect) {
+  HRESULT STDMETHODCALLTYPE DragOver( DWORD /*grfKeyState*/, POINTL pt, DWORD *pdwEffect) {
     if ( px==pt.x && py==pt.y ) 
     {
       *pdwEffect = lastEffect;
@@ -140,7 +140,7 @@ public:
     }
     return S_OK;
   }
-  HRESULT STDMETHODCALLTYPE Drop( IDataObject *data, DWORD grfKeyState, POINTL pt, DWORD *pdwEffect) {
+  HRESULT STDMETHODCALLTYPE Drop( IDataObject *data, DWORD /*grfKeyState*/, POINTL pt, DWORD* /*pdwEffect*/) {
     if ( !fl_dnd_target_window )
       return S_OK;
     Fl_Window *target = fl_dnd_target_window;
@@ -299,14 +299,14 @@ public:
     return DV_E_FORMATETC;	
   }  
   // all the following methods are not really needed for a DnD object
-  HRESULT STDMETHODCALLTYPE GetDataHere( FORMATETC *pformatetcIn, STGMEDIUM *pmedium) { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE GetCanonicalFormatEtc( FORMATETC *in, FORMATETC *out) { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE SetData( FORMATETC *pformatetc, STGMEDIUM *pmedium, BOOL fRelease) { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE EnumFormatEtc( DWORD dir, IEnumFORMATETC **ppenumFormatEtc) { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE DAdvise( FORMATETC *pformatetc, DWORD advf,
-      IAdviseSink *pAdvSink, DWORD *pdwConnection) { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE DUnadvise( DWORD dwConnection) { return E_NOTIMPL; }
-  HRESULT STDMETHODCALLTYPE EnumDAdvise( IEnumSTATDATA **ppenumAdvise) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE GetDataHere( FORMATETC* /*pformatetcIn*/, STGMEDIUM* /*pmedium*/) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE GetCanonicalFormatEtc( FORMATETC* /*in*/, FORMATETC* /*out*/) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE SetData( FORMATETC* /*pformatetc*/, STGMEDIUM* /*pmedium*/, BOOL /*fRelease*/) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE EnumFormatEtc( DWORD /*dir*/, IEnumFORMATETC** /*ppenumFormatEtc*/) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE DAdvise( FORMATETC* /*pformatetc*/, DWORD /*advf*/,
+      IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE DUnadvise( DWORD /*dwConnection*/) { return E_NOTIMPL; }
+  HRESULT STDMETHODCALLTYPE EnumDAdvise( IEnumSTATDATA** /*ppenumAdvise*/) { return E_NOTIMPL; }
 };
 
 
@@ -349,5 +349,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.11 2002/06/07 16:37:48 easysw Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.12 2002/06/29 00:10:04 matthiaswm Exp $".
 //

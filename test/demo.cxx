@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.8.2.5.2.6 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: demo.cxx,v 1.8.2.5.2.7 2002/06/29 00:10:05 matthiaswm Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -317,7 +317,7 @@ int main(int argc, char **argv) {
   create_the_forms();
   char buf[256];
   strcpy(buf, argv[0]);
-#if defined _MSC_VER && defined _DEBUG
+#if ( defined _MSC_VER || defined __MWERKS__ ) && defined _DEBUG
   // MS_VisualC appends a 'd' to debugging executables. remove it.
   fl_filename_setext( buf, "" );
   buf[ strlen(buf)-1 ] = 0;
@@ -340,6 +340,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.8.2.5.2.6 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: demo.cxx,v 1.8.2.5.2.7 2002/06/29 00:10:05 matthiaswm Exp $".
 //
 

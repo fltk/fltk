@@ -1,5 +1,5 @@
 //
-// "$Id: fl_images_core.cxx,v 1.1.2.1 2002/06/28 21:19:42 easysw Exp $"
+// "$Id: fl_images_core.cxx,v 1.1.2.2 2002/06/29 00:10:04 matthiaswm Exp $"
 //
 // FLTK images library core.
 //
@@ -68,6 +68,8 @@ fl_check_images(const char *name,		// I - Filename
 #ifdef HAVE_LIBPNG
   if (memcmp(header, "\211PNG", 4) == 0)	// PNG header
     return new Fl_PNG_Image(name);
+#else
+  header = header; name = name; headerlen = headerlen; // avoid warnings
 #endif // HAVE_LIBPNG
 
 #ifdef HAVE_LIBJPEG
@@ -75,6 +77,8 @@ fl_check_images(const char *name,		// I - Filename
 	   header[3] >= 0xe0 && header[3] <= 0xef)
 	   					// APPn
     return new Fl_JPEG_Image(name);
+#else
+  header = header; name = name; headerlen = headerlen; // avoid warnings
 #endif // HAVE_LIBJPEG
 
   return 0;
@@ -82,5 +86,5 @@ fl_check_images(const char *name,		// I - Filename
 
 
 //
-// End of "$Id: fl_images_core.cxx,v 1.1.2.1 2002/06/28 21:19:42 easysw Exp $".
+// End of "$Id: fl_images_core.cxx,v 1.1.2.2 2002/06/29 00:10:04 matthiaswm Exp $".
 //

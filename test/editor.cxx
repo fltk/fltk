@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.10 2002/06/10 21:04:20 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.11 2002/06/29 00:10:05 matthiaswm Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -314,8 +314,8 @@ void
 style_update(int        pos,		// I - Position of update
              int        nInserted,	// I - Number of inserted chars
 	     int        nDeleted,	// I - Number of deleted chars
-             int        nRestyled,	// I - Number of restyled chars
-	     const char *deletedText,	// I - Text that was deleted
+             int        /*nRestyled*/,	// I - Number of restyled chars
+	     const char * /*deletedText*/,	// I - Text that was deleted
              void       *cbArg) {	// I - Callback data
   int	start,				// Start of text
 	end;				// End of text
@@ -758,5 +758,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.10 2002/06/10 21:04:20 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.11 2002/06/29 00:10:05 matthiaswm Exp $".
 //

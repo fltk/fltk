@@ -1,5 +1,5 @@
 //
-// "$Id: tile.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: tile.cxx,v 1.4.2.3.2.2 2002/06/29 00:10:05 matthiaswm Exp $"
 //
 // Tile test program for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
   box0.align(FL_ALIGN_CLIP);
   Fl_Window w1(150,0,150,150,"1");
   w1.box(FL_NO_BOX);
-  Fl_Box box1(0,0,150,150,"1\nThis is a\nchild\nX window");
+  Fl_Box box1(0,0,150,150,"1\nThis is a\nchild\nwindow");
   box1.box(FL_DOWN_BOX);
   box1.color(19);
   box1.labelsize(18);
@@ -86,5 +86,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: tile.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: tile.cxx,v 1.4.2.3.2.2 2002/06/29 00:10:05 matthiaswm Exp $".
 //

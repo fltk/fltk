@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.7 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.8 2002/06/29 00:10:04 matthiaswm Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -226,20 +226,24 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
 
     int X = mx-offcenter;
     double v;
-  TRY_AGAIN:
-    if (X < 0) {
-      X = 0;
-      offcenter = mx; if (offcenter < 0) offcenter = 0;
-    } else if (X > (W-S)) {
-      X = W-S;
-      offcenter = mx-X; if (offcenter > S) offcenter = S;
-    }
-    v = round(X*(maximum()-minimum())/(W-S) + minimum());
-    // make sure a click outside the sliderbar moves it:
-    if (event == FL_PUSH && v == value()) {
-      offcenter = S/2;
-      event = FL_DRAG;
-      goto TRY_AGAIN;
+    char tryAgain = 1;
+    while (tryAgain)
+    {
+      tryAgain = 0;
+      if (X < 0) {
+        X = 0;
+        offcenter = mx; if (offcenter < 0) offcenter = 0;
+      } else if (X > (W-S)) {
+        X = W-S;
+        offcenter = mx-X; if (offcenter > S) offcenter = S;
+      }
+      v = round(X*(maximum()-minimum())/(W-S) + minimum());
+      // make sure a click outside the sliderbar moves it:
+      if (event == FL_PUSH && v == value()) {
+        offcenter = S/2;
+        event = FL_DRAG;
+        tryAgain = 1;
+      }
     }
     handle_drag(clamp(v));
     } return 1;
@@ -291,5 +295,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.7 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.8 2002/06/29 00:10:04 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.6 2002/04/01 15:42:17 easysw Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.7 2002/06/29 00:10:04 matthiaswm Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -52,8 +52,8 @@ static int fl_free_font = FL_FREE_FONT;
 
 static int CALLBACK
 enumcb(CONST LOGFONT    *lpelf,
-       CONST TEXTMETRIC *lpntm,
-       DWORD            FontType,
+       CONST TEXTMETRIC * /*lpntm*/,
+       DWORD            /*FontType*/,
        LPARAM           p) {
   if (!p && lpelf->lfCharSet != ANSI_CHARSET) return 1;
   const char *n = lpelf->lfFaceName;
@@ -84,10 +84,10 @@ static int cyPerInch;
 static int sizes[128];
 
 static int CALLBACK
-EnumSizeCb(CONST LOGFONT    *lpelf,
+EnumSizeCb(CONST LOGFONT    * /*lpelf*/,
            CONST TEXTMETRIC *lpntm,
 	   DWORD            fontType,
-	   LPARAM           p) {
+	   LPARAM           /*p*/) {
   if ((fontType & RASTER_FONTTYPE) == 0) {
     sizes[0] = 0;
     nbSize = 1;
@@ -135,5 +135,5 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.6 2002/04/01 15:42:17 easysw Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.7 2002/06/29 00:10:04 matthiaswm Exp $".
 //

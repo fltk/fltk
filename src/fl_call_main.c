@@ -1,5 +1,5 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.11.2.1 2002/01/01 15:11:32 easysw Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.11.2.2 2002/06/29 00:10:04 matthiaswm Exp $"
  *
  * Copyright 1998-2002 by Bill Spitzak and others.
  *
@@ -50,10 +50,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef __MWERKS__
+# include <crtl.h>
+#endif
+
 extern int main(int, char *[]);
+
 #ifdef BORLAND5
-#define __argc _argc
-#define __argv _argv
+# define __argc _argc
+# define __argv _argv
 #endif
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -85,6 +90,6 @@ static void dummy(void) {dummy();}
 #endif
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.11.2.1 2002/01/01 15:11:32 easysw Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.11.2.2 2002/06/29 00:10:04 matthiaswm Exp $".
  */
 
