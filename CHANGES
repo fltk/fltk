@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- The shiny demo didn't work on some systems (no
+	  single-buffered OpenGL visual), and the new box types
+	  were reset when show(argc, argv) was called.
 	- Fl::scheme() didn't update windows that were not
 	  shown.
 	- The fractals demo would get far ahead of the UI with

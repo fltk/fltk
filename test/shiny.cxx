@@ -1,5 +1,5 @@
 //
-// "$Id: shiny.cxx,v 1.5.2.3.2.2 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: shiny.cxx,v 1.5.2.3.2.3 2002/01/04 18:22:27 easysw Exp $"
 //
 // OpenGL "shiny buttons" test program for the Fast Light Tool Kit (FLTK).
 //
@@ -264,8 +264,8 @@ void invisible_box(int x, int y, int w, int h, Fl_Color c) {
   fl_pop_clip();
 }
 
-#define SHINY_BOX (Fl_Boxtype)30
-#define INVISIBLE_BOX (Fl_Boxtype)31
+#define SHINY_BOX (Fl_Boxtype)(FL_FREE_BOXTYPE + 0)
+#define INVISIBLE_BOX (Fl_Boxtype)(FL_FREE_BOXTYPE + 1)
 
 int main(int argc, char **argv) {
   window = make_panels();
@@ -294,14 +294,14 @@ int main(int argc, char **argv) {
   int i = 0;
   if (Fl::args(argc,argv,i) < argc) Fl::fatal(Fl::help);
 #if HAVE_GL
-  if (!Fl::gl_visual(FL_RGB)) Fl::fatal("Display does not do OpenGL");
+  if (!Fl::gl_visual(FL_RGB | FL_DOUBLE)) Fl::fatal("Display does not do OpenGL");
 #else
   fl_message("This demo does not work without OpenGL");
 #endif
-  window->show(argc,argv);
+  window->show();
   return Fl::run();
 }
 
 //
-// End of "$Id: shiny.cxx,v 1.5.2.3.2.2 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: shiny.cxx,v 1.5.2.3.2.3 2002/01/04 18:22:27 easysw Exp $".
 //
