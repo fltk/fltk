@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.8 2000/01/20 06:14:31 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.9 2000/03/15 19:14:57 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -319,6 +319,7 @@ J1:
 	fl_rect(X+1, yy+Y, W-2, hh);
       }
       item_draw(l, X-hposition_, yy+Y, W+hposition_, hh);
+      if (l == selection_) fl_rect(X, yy+Y, W, hh);
       int w = item_width(l);
       if (w > max_width) {max_width = w; max_width_item = l;}
     }
@@ -700,5 +701,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.8 2000/01/20 06:14:31 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.9 2000/03/15 19:14:57 mike Exp $".
 //
