@@ -107,10 +107,12 @@ global()</TT> setting (including destroying the menu). </TT></P>
 <BR> const char* Fl_Menu_::text(int i) const</A></H4>
  Returns the title of the last item chosen, or of item <TT>i</TT>. 
 <H4><A name=Fl_Menu_.size>int Fl_Menu_::size() const</A></H4>
- This returns <TT>menu()-&gt;size()</TT>, which is how many entries are in 
-the array, not counting the <TT>NULL</TT> ending, but including all 
-submenus titles and the <TT>NULL</TT>'s that end them.  If the menu is <TT>
-NULL</TT> this returns zero. 
+ This returns <TT>menu()-&gt;size()</TT>, which is
+the number of Fl_Menu_Item structures that make up this menu,
+correctly counting submenus.  This includes the "terminator" item at
+the end.  So to copy a menu you need to copy
+<tt>size()*sizeof(Fl_Menu_Item)</tt> bytes.  If the menu is <TT>
+NULL</TT> this returns zero (an empty menu will return 1).
 <H4><A name=Fl_Menu_.add>int Fl_Menu_::add(const char *,const char 
 *,Fl_Callback *,void *v=0,int f=0)
 <BR> int Fl_Menu_::add(const char *)</A></H4>
