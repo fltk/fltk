@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.H,v 1.7.2.4 2001/03/14 17:20:01 spitzak Exp $"
+// "$Id: Fl_Gl_Window.H,v 1.7.2.5 2001/04/18 15:45:48 easysw Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ public:
   int mode(const int *a) {return mode(0, a);}
 
   void* context() const {return context_;}
-  FL_EXPORT void context(void*, int destroy_flag = false);
+  FL_EXPORT void context(void*, int destroy_flag = 0);
   FL_EXPORT void make_current();
   FL_EXPORT void swap_buffers();
   FL_EXPORT void ortho();
@@ -90,5 +90,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.H,v 1.7.2.4 2001/03/14 17:20:01 spitzak Exp $".
+// End of "$Id: Fl_Gl_Window.H,v 1.7.2.5 2001/04/18 15:45:48 easysw Exp $".
 //
