@@ -591,7 +591,8 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 	         files[i]->d_name);
 
         icon = Fl_File_Icon::find(filename);
-	if (icon->type() == Fl_File_Icon::DIRECTORY) {
+	if ((icon && icon->type() == Fl_File_Icon::DIRECTORY) ||
+	     fl_filename_isdir(filename)) {
           num_dirs ++;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
