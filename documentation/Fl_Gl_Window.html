@@ -124,7 +124,7 @@ mode.
 <BR> void Fl_Gl_Window::valid(char i)</A></H4>
 <TT>Fl_Gl_Window::valid()</TT> is turned off when FLTK creates a new 
 context for this window or when the window resizes, and is turned on <I>
-after</I><TT>draw()</TT> is called.  You can use this inside your <TT>
+after</I> <TT>draw()</TT> is called.  You can use this inside your <TT>
 draw()</TT> method to avoid unneccessarily initializing the OpenGL 
 context.  Just do this: 
 <UL><PRE>
@@ -134,24 +134,6 @@ void mywindow::draw() {
     glFrustum(...);
     glLight(...);
     ...other initialization...
-  }
-  ... draw your geometry here ...
-}
-</PRE></UL>
-
-<TT>Fl_Gl_Window::valid()</TT> is turned off when FLTK creates a
-new context for this window and by the window resizing, and is turned
-on <I>after</I> draw() is called.  You can use this inside your draw()
-method to avoid unneccessarily initializing the OpenGL context.  Just
-do this:
-
-<UL><PRE>
-void mywindow::draw() {
-  if (!valid()) {
-    glViewport(0,0,w(),h());
-    glFrustum(...);
-    glLight(...);
-    ...other initilization...
   }
   ... draw your geometry here ...
 }

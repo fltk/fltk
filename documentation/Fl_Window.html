@@ -81,8 +81,7 @@ exit(0)</TT> if this is the last top-level window. </P>
 </TD></TR>
 </TABLE>
 </CENTER>
-<H4><A name=Fl_Window.Fl_Window>Fl_Window::Fl_Window(int w, int h, const char *title = 0)<BR>
-Fl_Window::Fl_Window(int x, int y, int w, int h, const char *title = 0)</A></H4>
+<H4><A name=Fl_Window.Fl_Window>Fl_Window::Fl_Window(int w, int h, const char *title = 0)</H4>
 
 The first form of the constructor should be used for a "top-level" window
 (that is, one that is not inside another window).  It correctly sets
@@ -92,13 +91,15 @@ place to show the window or allow the user to pick a location.  If you want to
 force a position you should call <tt>position(x,y)</tt> or <tt>hotspot()</tt>
 before calling <tt>show()</tt>.
 
-<P>The second form of the constructor is for creating child windows.  It
-leaves <tt>visible()</tt> set to true.
-
 <P><TT>Fl_Widget::box()</TT> is set to <TT>FL_FLAT_BOX</TT>.  If you 
 plan to completely fill the window with children widgets you should 
 change this to <TT>FL_NO_BOX</TT>. If you turn the window border off 
 you may want to change this to <TT>FL_UP_BOX</TT>. </P>
+
+<h4>Fl_Window::Fl_Window(int x, int y, int w, int h, const char *title = 0)</A></H4>
+
+<P>The second form of the constructor is for creating child windows.  It
+leaves <tt>visible()</tt> set to true.
 
 <H4><A name=Fl_Window.~Fl_Window>virtual Fl_Window::~Fl_Window()</A></H4>
  The destructor <I>also deletes all the children</I>. This allows a 
@@ -121,10 +122,11 @@ that direction such that the  window will fill the screen. </LI>
 <LI><TT>dw</TT> and <TT>dh</TT> are size increments.  The  window will 
 be constrained to widths of <TT>minw + N * dw</TT>,  where <TT>N</TT>
  is any non-negative integer.  If these are  less or equal to 1 they 
-are ignored. </LI>
+are ignored.  (this is ignored on WIN32)</LI>
 <LI><TT>aspect</TT> is a flag that indicates that the window should 
  preserve it's aspect ratio.  This only works if both the maximum and 
- minimum have the same aspect ratio. </LI>
+ minimum have the same aspect ratio.  (ignored on WIN32 and by many X
+ window managers)</LI>
 </UL>
  If this function is not called, FLTK tries to figure out the range 
 from the setting of <A href=#Fl_Group.resizable><TT>resizeable()</TT></A>
@@ -250,7 +252,9 @@ non-alphanumeric character and capitalizing the first character, and
 the second one if the first is 'x'.  Thus &quot;foo&quot; turns into &quot;foo, Foo&quot;, 
 and &quot;xprog.1&quot; turns into &quot;xprog, XProg&quot;.</I> This only works if called <I>
 before</I> calling <TT>show()</TT>. 
-<P>This method has no effect under Microsoft Windows. </P>
+<P>Under Microsoft Windows this string is used as the name of the
+WNDCLASS structure, though it is not clear if this can have any
+visible effect. </P>
 <H4><A name=Fl_Window.make_current>void Fl_Window::make_current()</A></H4>
 <TT>make_current()</TT> sets things up so that the drawing functions in <A
 href=drawing.html#Drawing><TT>&lt;FL/fl_draw.H&gt;</TT></A> will go into this 

@@ -26,7 +26,7 @@ control exactly when and how by changing the values for <TT>type()</TT>
 <P>Buttons can also generate callbacks in response to <TT>FL_SHORTCUT</TT>
  events.  The button can either have an explicit <A href=#Fl_Button.shortcut>
 <TT>shortcut()</TT></A> value or a letter shortcut can be indicated in 
-the <TT>label()</TT> with an ''character before it.  For the label 
+the <TT>label()</TT> with an '&amp;' character before it.  For the label 
 shortcut it does not matter if <I>Alt</I> is held down, but if you have 
 an input field in the same window, the user will have to hold down the <I>
 Alt</I> key so that the input field does not eat the event first as an <TT>
@@ -86,7 +86,7 @@ group (calling <TT>value(1)</TT> or <TT>set()</TT> does not do this).
 <BR> void Fl_Button::shortcut(ulong key)</A></H4>
  The first form returns the current shortcut key for the button. 
 <P>The second form sets the shortcut key to <TT>key</TT>. Setting this 
-overrides the use of ''in the <TT>label()</TT>.  The value is a bitwise 
+overrides the use of '&amp;' in the <TT>label()</TT>.  The value is a bitwise 
 OR of a key and a set of shift flags, for example <CODE>FL_ALT | 'a'</CODE>
 , <CODE>FL_ALT | (FL_F + 10)</CODE>, or just <CODE>'a'</CODE>.  A value 
 of 0 disables the shortcut. </P>

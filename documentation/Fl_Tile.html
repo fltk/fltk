@@ -21,7 +21,7 @@
 <H3>Description</H3>
  The <TT>Fl_Tile</TT> class lets you resize the children by dragging 
 the border between them: 
-<P ALIGN=CENTER><IMG src=Fl_Tile.gif></P>
+<P ALIGN=CENTER><IMG src=Fl_Tile.gif border=1></P>
 <P><TT>Fl_Tile</TT> allows objects to be resized to zero dimensions. 
  To prevent this you can use the <TT>resizable()</TT> to limit where 
 corners can be dragged to. </P>
@@ -30,7 +30,8 @@ initially have non-zero sizes so the <TT>Fl_Tile</TT> can figure out
 their layout.  If desired, call <TT>position()</TT> after creating the 
 children but before displaying the window to set the borders where you 
 want. </P>
-<P>The &quot;borders&quot; are part of the children, an <TT>Fl_Tile</TT>does not 
+<P>The &quot;borders&quot; are part of the children, an
+ <TT>Fl_Tile</TT> does not 
 draw any graphics of it's own.  In the above example all the final 
 children have <TT>FL_DOWN_BOX</TT> types, and the &quot;ridges&quot; you see are 
 two adjacent <TT>FL_DOWN_BOX</TT>'s drawn next to each other. </P>
@@ -50,7 +51,7 @@ and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
 whole tree to be deleted at once, without having to keep a pointer to 
 all the children in the user code. A kludge has been done so the <TT>
 Fl_Tile</TT> and all of it's children can be automatic (local) 
-variables, but you must declare the <TT>Fl_Tile</TT><I>first</I>, so 
+variables, but you must declare the <TT>Fl_Tile</TT> <I>first</I>, so 
 that it is destroyed last. 
 <H4><A name=Fl_Tile.position>void Fl_Tile::position(from_x, from_y, 
 to_x, to_y)</A></H4>

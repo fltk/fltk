@@ -38,25 +38,27 @@ the user types ESC or clicks outside the window.
 waits for the user to hit the button.  The message will wrap to fit the 
 window, or may be many lines by putting <TT>\n</TT> characters into it. 
  The enter key is a shortcut for the OK button. 
-<P ALIGN=CENTER><IMG src=./fl_message.gif></P>
+<P ALIGN=CENTER><IMG src=./fl_message.gif border=1></P>
 <H3><A name=fl_>void fl_alert(const char *, ...)</A></H3>
  Same as <TT>fl_message()</TT> except for the &quot;!&quot; symbol. 
-<P ALIGN=CENTER><IMG src=./fl_alert.gif></P>
+<P ALIGN=CENTER><IMG src=./fl_alert.gif border=1></P>
 <H3><A name=fl_ask>int fl_ask(const char *, ...)</A></H3>
  Displays a printf-style message in a pop-up box with an &quot;Yes&quot; and &quot;No&quot; 
 button and waits for the user to hit a button.  The return value is 1 
 if the user hits Yes, 0 if they pick No.  The enter key is a shortcut 
 for Yes and ESC is a shortcut for No. 
-<P ALIGN=CENTER><IMG src=./fl_ask.gif></P>
+<P ALIGN=CENTER><IMG src=./fl_ask.gif border=1></P>
 <H3><A name=fl_choice>int fl_choice(const char *q, const char *b0, 
 const char *b1, const char *b2, ...)</A></H3>
- Shows the message with three buttons below it marked with the strings <TT>
-b0</TT>, <TT>b1</TT>, and <TT>b2</TT>.  Returns 0, 1, or 2 depending on 
-which button is hit. ESC is a shortcut for button 0 and the enter key 
-is a shortcut for button 1.  Notice the &quot;misordered&quot; position of the 
-buttons.  You can hide buttons by passing <TT>NULL</TT> as their 
-labels. 
-<P ALIGN=CENTER><IMG src=./fl_choice.gif></P>
+
+ Shows the message with three buttons below it marked with the strings
+<TT> b0</TT>, <TT>b1</TT>, and <TT>b2</TT>.  Returns 0, 1, or 2
+depending on which button is hit. ESC is a shortcut for button 0 and
+the enter key is a shortcut for button 1.  Notice the buttons are
+positioned &quot;backwards&quot; You can hide buttons by passing
+<TT>NULL</TT> as their labels.
+
+<P ALIGN=CENTER><IMG src=./fl_choice.gif border=1></P>
 <H3><A name=fl_input>const char *fl_input(const char *label, const char 
 *deflt = 0, ...)</A></H3>
  Pops up a window displaying a string, lets the user edit it, and 
@@ -64,12 +66,12 @@ return the new value.  The cancel button returns <TT>NULL</TT>. <I>The
 returned pointer is only valid until the next time <TT>fl_input()</TT>
  is called</I>.  Due to back-compatability, the arguments to any printf 
 commands in the label are after the default value. 
-<P ALIGN=CENTER><IMG src=./fl_input.gif></P>
+<P ALIGN=CENTER><IMG src=./fl_input.gif border=1></P>
 <H3><A name=fl_password>const char *fl_password(const char *label, 
 const char *deflt = 0, ...)</A></H3>
  Same as <TT>fl_input()</TT> except an <A href=Fl_Secret_Input.html#Fl_Secret_Input>
 <TT>Fl_Secret_Input</TT></A> field is used. 
-<P ALIGN=CENTER><IMG src=./fl_password.gif></P>
+<P ALIGN=CENTER><IMG src=./fl_password.gif border=1></P>
 <H3><A name=fl_message_font>void fl_message_font(Fl_Font fontid, uchar 
 size)</A></H3>
  Change the font and font size used for the messages in all the popups. 
@@ -269,7 +271,9 @@ index of each word. The callback should return zero if the switch is
 unrecognized, and not change <TT>i</TT>.  It should return non-zero if 
 the switch is recognized, and add at least 1 to <TT>i</TT> (it can add 
 more to consume words after the switch).  This function is called 
-before any other tests, so you can override any FLTK switch. </P>
+<i>before</i> any other tests, so <i>you can override any FLTK
+switch</i> (this is why fltk can use very short switches instead of
+the long ones all other toolkits force you to use).</P>
 <P>On return <TT>i</TT> is set to the index of the first non-switch. 
 This is either: </P>
 <UL>
@@ -282,7 +286,7 @@ This is either: </P>
 in which case it is zero.  If your program takes no arguments other 
 than switches you should produce an error if the return value is less 
 than <TT>argc</TT>. 
-<P>All switches may be abbreviated to two letters and case is ignored: </P>
+<P>All switches except -bg2 may be abbreviated one letter and case is ignored: </P>
 <UL>
 <LI><TT>-display host:n.n</TT> The X display to use (ignored  under 
 WIN32). </LI>
@@ -354,8 +358,10 @@ windows are displayed.
 <H3><A name=damage>static int Fl::damage()</A></H3>
  If true then <A href=#flush><TT>flush()</TT></A> will do something. 
 <H3><A name=display>static void Fl::display(const char *)</A></H3>
- Sets the X display to use for all windows.  This function is ignored 
-under WIN32. 
+ Sets the X display to use for all windows.  Actually this just sets
+ the environment variable $DISPLAY to the passed string, so this only
+ works before you show() the first window or otherwise open the display,
+ and does nothing useful under WIN32. 
 <H3><A name=enable_symbols>static void Fl::enable_symbols()</A></H3>
  Enables the symbol drawing code. 
 <H3><A name=event_button>static int Fl::event_button()</A></H3>
@@ -501,10 +507,10 @@ colormap.
 <BR> static void Fl::get_color(Fl_Color, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A>
 </H3>
  Returns the color index or RGB value for the given FLTK color index. 
-<H3><A name=get_font>static const char *Fl::get_font(int face) Get the 
+<H3><A name=get_font>static const char *Fl::get_font(int face)</H3> Get the 
 string for this face.  This string is different for each face. Under X 
 this value is passed to XListFonts to get all the sizes of this face. </A>
-</H3>
+
 <H3><A name=get_font_name>static const char *Fl::get_font_name(int 
 face, int *attributes = 0)</A></H3>
  Get a human-readable string describing the family of this face.  This 
@@ -550,8 +556,8 @@ call this so your X windows use the same visual as an <A href=Fl_Gl_Window.html#
 flashing. 
 <P>See <A href=Fl_Gl_Window.html#Fl_Gl_Window.mode><TT>Fl_Gl_Window</TT></A>
  for a list of additional values for the argument. </P>
-<H3><A name=grab>static void Fl::grab(Fl_Window static Fl_Window 
-*Fl::grab()</A></H3>
+<H3><A name=grab>static void Fl::grab(Fl_Window&amp;)
+<br>static Fl_Window* Fl::grab()</A></H3>
  This is used when pop-up menu systems are active.  Send all events to 
 the passed window no matter where the pointer or focus is (including in 
 other programs).  The window <I>does not have to be <TT>shown()</TT></I>
@@ -575,13 +581,14 @@ widget uses the event.
  This is the usage string that is displayed if <TT>Fl::args()</TT>
  detects an invalid argument on the command-line. 
 <H3><A name=modal>static Fl_Window *Fl::modal()</A></H3>
- The <TT>modal()</TT> window has its <TT>handle()</TT> method called 
-for all events, and no other windows will have <TT>handle()</TT>
- called.  If <A href=#grab><TT>grab()</TT></A> has been done then this 
-is equal to <TT>grab()</TT>. Otherwise this is the most recently <TT>
+Returns the top-most <tt>modal()</tt> window currently shown.
+This is the most recently <TT>
 shown()</TT> window with <A href=Fl_Window.html#Fl_Window.modal><TT>
 modal()</TT></A> true, or <TT>NULL</TT> if there are no <TT>modal()</TT>
- windows <TT>shown()</TT>. 
+windows <TT>shown()</TT>. 
+The <TT>modal()</TT> window has its <TT>handle()</TT> method called 
+for all events, and no other windows will have <TT>handle()</TT>
+called (<A href=#grab><TT>grab()</TT></A> overrides this).
 <H3><A name=next_window>static Fl_Window *Fl::next_window(Fl_Window *)</A>
 </H3>
  Returns the next top-level window in the widget hierarchy. 

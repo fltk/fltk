@@ -39,14 +39,13 @@ to call <TT>redraw()</TT> after these. </P>
 <LI><A href=#Fl_Widget.activate>activate</A></LI>
 <LI><A href=#Fl_Widget.active>active</A></LI>
 <LI><A href=#Fl_Widget.active_r>active_r</A></LI>
-<LI><A href=#Fl_Widget.activevisible>activevisible</A></LI>
 <LI><A href=#Fl_Widget.align>align</A></LI>
 <LI><A href=#Fl_Widget.argument>argument</A></LI>
 <LI><A href=#Fl_Widget.box>box</A></LI>
+<LI><A href=#Fl_Widget.callback>callback</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Widget.callback>callback</A></LI>
 <LI><A href=#Fl_Widget.changed>changed</A></LI>
 <LI><A href=#Fl_Widget.clear_changed>clear_changed</A></LI>
 <LI><A href=#Fl_Widget.color>color</A></LI>
@@ -55,10 +54,10 @@ to call <TT>redraw()</TT> after these. </P>
 <LI><A href=#Fl_Widget.deactivate>deactivate</A></LI>
 <LI><A href=#Fl_Widget.default_callback>default_callback</A></LI>
 <LI><A href=#Fl_Widget.do_callback>do_callback</A></LI>
+<LI><A href=#Fl_Widget.h>h</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Widget.h>h</A></LI>
 <LI><A href=#Fl_Widget.hide>hide</A></LI>
 <LI><A href=#Fl_Widget.inside>inside</A></LI>
 <LI><A href=#Fl_Widget.label>label</A></LI>
@@ -66,6 +65,7 @@ to call <TT>redraw()</TT> after these. </P>
 <LI><A href=#Fl_Widget.labelfont>labelfont</A></LI>
 <LI><A href=#Fl_Widget.labelsize>labelsize</A></LI>
 <LI><A href=#Fl_Widget.labeltype>labeltype</A></LI>
+<LI><A href=#Fl_Widget.output>output</A></LI>
 <LI><A href=#Fl_Widget.parent>parent</A></LI>
 </UL>
 </TD><TD align=left valign=top>
@@ -78,10 +78,11 @@ to call <TT>redraw()</TT> after these. </P>
 <LI><A href=#Fl_Widget.show>show</A></LI>
 <LI><A href=#Fl_Widget.size>size</A></LI>
 <LI><A href=#Fl_Widget.take_focus>take_focus</A></LI>
-<LI><A href=#Fl_Widget.type>type</A></LI>
+<LI><A href=#Fl_Widget.takesevents>takesevents</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Widget.type>type</A></LI>
 <LI><A href=#Fl_Widget.user_data>user_data</A></LI>
 <LI><A href=#Fl_Widget.visible>visible</A></LI>
 <LI><A href=#Fl_Widget.visible_r>visible_r</A></LI>
@@ -113,9 +114,9 @@ destroy that group <I>immediately</I> after destroying the children.
 Fl_Window (<I>not</I> its parent if that is not an Fl_Window), and its 
 width and height. 
 <H4><A name=Fl_Widget.resize>virtual void 
-Fl_Widget::resize(int,int,int,int)</A>
-<BR><A name=Fl_Widget.position>void Fl_Widget::position(short x,short y)</A>
-<BR><A name=Fl_Widget.size>void Fl_Widget::size(short w,short h)</A></H4>
+Fl_Widget::resize(int x, int y, int w, int h)</A>
+<BR><A name=Fl_Widget.position>void Fl_Widget::position(short x, short y)</A>
+<BR><A name=Fl_Widget.size>void Fl_Widget::size(short w, short h)</A></H4>
  Change the size or position of the widget.  This is a virtual function 
 so the widget may implement its own handling of resizing.  The default 
 version does <I>not</I> do redraw(), that is the parent widget's 
@@ -269,9 +270,19 @@ true on it <I>and all of its parents</I>.
 <P>Changing this value will send <TT>FL_ACTIVATE</TT> or <TT>
 FL_DEACTIVATE</TT> to the widget if <tt>active_r()</tt> is true.
 <P>Currently you cannot deactivate <TT>Fl_Window</TT> widgets. </P>
-<H4><A name=Fl_Widget.activevisible>int Fl_Widget::activevisible() const</A>
+
+<H4><A name=Fl_Widget.output>int Fl_Widget::output() const</A><BR>
+<A name=Fl_Widget.set_output>void Fl_Widget::set_output()</A></BR>
+<A name=Fl_Widget.clear_output>void Fl_Widget::clear_output()</A></H4>
+<tt>output()</tt> means the same as <tt>!active()</tt> except it does
+not change how the widget is drawn.  The widget will not recieve any
+events.  This is useful for making scrollbars or buttons that work as
+displays rather than input devices.
+
+<H4><A name=Fl_Widget.takesevents>int Fl_Widget::takesevents() const</A>
 </H4>
- This is the same as <TT>active() &amp;&amp; visible()</TT> but is faster. 
+This is the same as <TT>(active() &amp;&amp; visible() &amp;&amp;
+!output())</TT> but is faster.
 <H4><A name=Fl_Widget.redraw>void Fl_Widget::redraw()</A></H4>
  Mark the widget as needing its <TT>draw()</TT> routine called. 
 <H4><A name=Fl_Widget.damage>uchar Fl_Widget::damage() const</A></H4>

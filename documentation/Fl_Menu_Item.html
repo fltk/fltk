@@ -5,9 +5,7 @@
 <H3>Class Hierarchy</H3>
 <UL>
 <PRE>
-<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
-   |
-   +----<B>Fl_Menu_Item</B>----<A href=Fl_Menu_.html#Fl_Menu_>Fl_Menu_</A>
+<B>struct Fl_Menu_Item</B>
 </PRE>
 </UL>
 <H3>Include Files</H3>
@@ -17,9 +15,11 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- The <TT>Fl_Menu_Item</TT> structure defines a single menu item that is 
-used by the <TT>Fl_Menu_</TT> class. This structure is defined in <TT>
-&lt;FL/Fl_Menu_Item.H&gt;</TT>
+
+The <TT>Fl_Menu_Item</TT> structure defines a single menu item that
+is used by the <A href=Fl_Menu_.html#Fl_Menu_>Fl_Menu_</A> class. This
+structure is defined in <TT> &lt;FL/Fl_Menu_Item.H&gt;</TT>
+
 <UL>
 <PRE>
 struct Fl_Menu_Item {
@@ -134,9 +134,10 @@ releases of FLTK. </P>
 <BR> void Fl_Menu_Item::label(const char*)
 <BR> void Fl_Menu_Item::label(Fl_Labeltype, const char*)</A></H4>
  This is the title of the item.  A <TT>NULL</TT> here indicates the end 
-of the menu (or of a submenu).  A ''in the item will print an 
+of the menu (or of a submenu).  A '&amp;' in the item will print an 
 underscore under the next letter, and if the menu is popped up that 
-letter will be a &quot;shortcut&quot; to pick that item.  To get a real ''put two 
+letter will be a &quot;shortcut&quot; to pick that item.  To get a
+real '&amp;' put two 
 in a row. 
 <H4><A name=Fl_Menu_Item.labeltype>Fl_Labeltype 
 Fl_Menu_Item::labeltype() const
@@ -208,8 +209,8 @@ setting). </P>
 <H4><A name=Fl_Menu_Item.submenu>int Fl_Menu_Item::submenu() const</A></H4>
  Returns true if either <TT>FL_SUBMENU</TT> or <TT>FL_SUBMENU_POINTER</TT>
  is on in the flags. <TT>FL_SUBMENU</TT> indicates an embedded submenu 
-that goes from the next item through the next one with a <TT>NULL</TT><TT>
-label()</TT>. <TT>FL_SUBMENU_POINTER</TT> indicates that <TT>user_data()</TT>
+that goes from the next item through the next one with a <TT>NULL</TT>
+<TT>label()</TT>. <TT>FL_SUBMENU_POINTER</TT> indicates that <TT>user_data()</TT>
  is a pointer to another menu array. 
 <H4><A name=Fl_Menu_Item.checkbox>int Fl_Menu_Item::checkbox() const</A></H4>
  Returns true if a checkbox will be drawn next to this item.  This is 
