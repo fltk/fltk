@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.6 2000/06/05 21:21:10 mike Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.7 2000/06/14 19:57:20 mike Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -47,6 +47,8 @@
 #ifndef WIN32
 #include <FL/x.H>
 #endif
+
+extern FL_EXPORT int fl_old_shortcut(const char*);
 
 int Fl::test_shortcut(int shortcut) {
   if (!shortcut) return 0;
@@ -191,5 +193,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.6 2000/06/05 21:21:10 mike Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.7 2000/06/14 19:57:20 mike Exp $".
 //
