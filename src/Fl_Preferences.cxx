@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.15 2002/05/17 21:17:05 matthiaswm Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.16 2002/05/31 19:27:56 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -186,32 +186,6 @@ char Fl_Preferences::entryExists( const char *key )
 char Fl_Preferences::deleteEntry( const char *key )
 {
   return node->deleteEntry( key );
-}
-
-
-
-/**
- * read an entry from the group
- * - a default value must be supplied
- * - the return value indicates, if the value was not available and the default was used (0)
- * example: button.get( "visible", b.visible, 1 );
- */
-char Fl_Preferences::get( const char *key, char &value, char defaultValue )
-{
-  const char *v = node->get( key );
-  value = v ? atoi( v ) : defaultValue;
-  return ( v != 0 );
-}
-
-
-/**
- * set an entry (name/value pair)
- */
-char Fl_Preferences::set( const char *key, char value )
-{
-  sprintf( nameBuffer, "%d", value );
-  node->set( key, nameBuffer );
-  return 1;
 }
 
 
@@ -1076,5 +1050,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.15 2002/05/17 21:17:05 matthiaswm Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.16 2002/05/31 19:27:56 easysw Exp $".
 //

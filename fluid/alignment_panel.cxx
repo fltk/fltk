@@ -138,7 +138,7 @@ static void cb_openlast_button(Fl_Check_Button*, void*) {
 
 Fl_Window* make_settings_window() {
   Fl_Window* w;
-  { Fl_Window* o = settings_window = new Fl_Window(255, 179, "GUI Settings");
+  { Fl_Window* o = settings_window = new Fl_Window(255, 175, "GUI Settings");
     w = o;
     { Fl_Button* o = new Fl_Button(185, 145, 60, 25, "Close");
       o->tooltip("Close this dialog.");
@@ -150,7 +150,7 @@ Fl_Window* make_settings_window() {
         { Fl_Check_Button* o = tooltips_button = new Fl_Check_Button(20, 45, 215, 20, "Show Tooltips");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)cb_tooltips_button);
-          char b;
+          int b;
           fluid_prefs.get("show_tooltips", b, 1);
           tooltips_button->value(b);
           Fl_Tooltip::enable(b);
@@ -158,14 +158,14 @@ Fl_Window* make_settings_window() {
         { Fl_Check_Button* o = completion_button = new Fl_Check_Button(20, 75, 215, 20, "Show Completion Dialogs");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)cb_completion_button);
-          char b;
+          int b;
           fluid_prefs.get("show_completion_dialogs", b, 1);
           completion_button->value(b);
         }
         { Fl_Check_Button* o = openlast_button = new Fl_Check_Button(20, 105, 215, 20, "Open Previous File on Startup");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)cb_openlast_button);
-          char b;
+          int b;
           fluid_prefs.get("open_previous_file", b, 0);
           openlast_button->value(b);
         }
@@ -234,21 +234,21 @@ Fl_Window* make_shell_window() {
         { Fl_Check_Button* o = shell_savefl_button = new Fl_Check_Button(20, 65, 110, 20, "Save .FL File");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)cb_shell_savefl_button);
-          char b;
+          int b;
           fluid_prefs.get("shell_savefl", b, 1);
           shell_savefl_button->value(b);
         }
         { Fl_Check_Button* o = shell_writecode_button = new Fl_Check_Button(140, 65, 95, 20, "Write Code");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)cb_shell_writecode_button);
-          char b;
+          int b;
           fluid_prefs.get("shell_writecode", b, 1);
           shell_writecode_button->value(b);
         }
         { Fl_Check_Button* o = shell_writemsgs_button = new Fl_Check_Button(245, 65, 130, 20, "Write Messages");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)cb_shell_writemsgs_button);
-          char b;
+          int b;
           fluid_prefs.get("shell_writemsgs", b, 0);
           shell_writemsgs_button->value(b);
         }

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.7 2002/05/07 00:43:20 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.8 2002/05/31 19:27:56 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -60,14 +60,12 @@ public:
   FL_EXPORT char entryExists( const char *entry );
   FL_EXPORT char deleteEntry( const char *entry );
 
-  FL_EXPORT char set( const char *entry, char value );
   FL_EXPORT char set( const char *entry, int value );
   FL_EXPORT char set( const char *entry, float value );
   FL_EXPORT char set( const char *entry, double value );
   FL_EXPORT char set( const char *entry, const char *value );
   FL_EXPORT char set( const char *entry, const void *value, int size ); 
 
-  FL_EXPORT char get( const char *entry, char &value,   char defaultValue );
   FL_EXPORT char get( const char *entry, int &value,    int defaultValue );
   FL_EXPORT char get( const char *entry, float &value,  float defaultValue );
   FL_EXPORT char get( const char *entry, double &value, double defaultValue );
@@ -157,5 +155,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.7 2002/05/07 00:43:20 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.8 2002/05/31 19:27:56 easysw Exp $".
 //

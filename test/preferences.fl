@@ -185,7 +185,7 @@ Function {} {open return_type int
 
 Function {readPrefs()} {open return_type void
 } {
-  code {char boolValue;
+  code {int boolValue;
 int intValue;
 char buffer[80];
 double doubleValue;
