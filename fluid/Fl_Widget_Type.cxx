@@ -423,7 +423,11 @@ void x_cb(Fl_Value_Input *i, void *v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize((int)i->value(), w->y(), w->w(), w->h());
-	if (w->window()) w->window()->redraw();
+	if (w->window()) w->window();
+	if (o->is_window()) {
+          ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
+                                       gridx, gridy, 0);
+	}
       }
   }
 }
@@ -441,6 +445,10 @@ void y_cb(Fl_Value_Input *i, void *v) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize(w->x(), (int)i->value(), w->w(), w->h());
 	if (w->window()) w->window()->redraw();
+	if (o->is_window()) {
+          ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
+                                       gridx, gridy, 0);
+	}
       }
   }
 }
@@ -458,6 +466,10 @@ void w_cb(Fl_Value_Input *i, void *v) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize(w->x(), w->y(), (int)i->value(), w->h());
 	if (w->window()) w->window()->redraw();
+	if (o->is_window()) {
+          ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
+                                       gridx, gridy, 0);
+	}
       }
   }
 }
@@ -475,6 +487,10 @@ void h_cb(Fl_Value_Input *i, void *v) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize(w->x(), w->y(), w->w(), (int)i->value());
 	if (w->window()) w->window()->redraw();
+	if (o->is_window()) {
+          ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
+                                       gridx, gridy, 0);
+	}
       }
   }
 }
