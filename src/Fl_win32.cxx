@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.15 2002/01/09 15:23:09 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.16 2002/01/23 16:58:01 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -518,7 +518,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // This convinces MSWindows we have painted whatever they wanted
     // us to paint, and stops it from sending WM_PAINT messages:
     ValidateRgn(hWnd,NULL);
-    } break;
+    } return 0;
 
   case WM_LBUTTONDOWN:  mouse_event(window, 0, 1, wParam, lParam); return 0;
   case WM_LBUTTONDBLCLK:mouse_event(window, 1, 1, wParam, lParam); return 0;
@@ -1049,5 +1049,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.15 2002/01/09 15:23:09 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.16 2002/01/23 16:58:01 easysw Exp $".
 //

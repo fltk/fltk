@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- The WIN32 code didn't return 0 from the window
+	  procedure after handling WM_PAINT messages.
+	- fl_draw() would incorrectly test the clipping of
+	  labels the lay outside the bounding box.
 	- filename_relative() didn't always return the correct
 	  relative path.
 	- Updated the test makefile to work with more versions
