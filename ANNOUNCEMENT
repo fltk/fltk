@@ -1,7 +1,7 @@
 ----TEXT----
 
-The first release candidate for FLTK 1.1.4 is now available for
-download and testing.  You now have until June 9th, 2003 to
+The second release candidate for FLTK 1.1.4 is now available for
+download and testing.  You now have until August 12th, 2003 to
 report any problems with this release candidate using the
 software trouble report form at the following URL:
 
@@ -32,6 +32,83 @@ exceptions that allow for static linking.
 
 Changes since FLTK 1.1.3 include:
 
+	- Fl_Window::show(argc,argv) incorrectly opened the
+	  display prior to parsing the arguments; this prevented
+	  the "-display foo" option from working (STR #111)
+	- Images were not clipped properly on MacOS X (STR #114)
+	- Fl::reload_scheme() and Fl::scheme("foo") incorrectly
+	  called Fl::get_system_colors().  This prevented an
+	  application from setting its own color preferences
+	  (STR #115)
+	- The 'Enter' key event on OS X would not set Fl::e_text
+	  (STR #???)
+	- Changed behaviour of fluid to always paste into
+	  a selected group (STR #88)
+	- Menuitem now changes font, even if fontsize
+	  is not set (STR #110)
+	- Swapped shortcut labels in OS X (STR #86)
+	- Non-square Fl_Dial would calculate angle from user
+	  input wrong (STR #101)
+	- Updated documentatiopn of fl_draw (STR #94)
+	  and Fl_Menu_::add() (STR #99)
+	- Fluid collapse triangle events were not offset by
+          horizontal scroll (STR #106)
+	- QuitAppleEvent now correctly returns from Fl::run()
+          instead of just exiting (STR #87)
+	- Hiding the first created OpenGL context was not
+	  possible. FLTK now manages a list of contexts (STR #77)
+	- FLUID didn't keep the double/single buffer type for
+	  windows.
+	- FLTK didn't work with Xft2.
+	- OSX window resizing didn't work (STR #64)
+	- Fixed MacOS X shared library generation (STR #51)
+	- Several widgets defined their own size() method but
+	  didn't provide an inline method that mapped to the
+	  Fl_Widget::size() method (STR #62)
+	- Fl_Scroll didn't provide its own clear() method, so
+	  calling clear() on a Fl_Scroll widget would also
+	  destroy the scrollbars (STR #75)
+	- Fl::event_text() was sometimes initialized to NULL
+	  instead of an empty string (STR #70)
+	- fl_draw() didn't properly handle a trailing escaped
+	  "@" character (STR #84)
+	- Added documentation for all forms of
+	  Fl_Widget::damage() (STR #61)
+	- Fl_Double_Window now has a type() value of
+	  FL_DOUBLE_WINDOW, to allow double-buffered windows to
+	  process redraws properly on WIN32 (STR #46)
+	- Added FL_DAMAGE_USER1 and FL_DAMAGE_USER2 damage bits
+	  for use by widget developers (STR #57)
+	- Fl_Help_View didn't support numeric character entities
+	  (STR #66)
+	- Menu shortcuts didn't use the Mac key names under
+	  MacOS X (STR #71)
+	- CodeWarrior Mac OS X updated to work with current
+	  CW8.3 (STR #34)
+	- Apple-C/X/V/Z didn't work in the Fl_Input widget due
+	  to a bad mapping to control keys (STR #79)
+	- Added the OSX-specific fl_open_callback() function to
+	  handle Open Documents messages from the Finder (STR
+	  #80)
+	- The configure script contained erroneous whitespace in
+	  various tests which caused errors on some platforms
+	  (STR #60)
+	- The fltk-config script still supported the deprecated
+	  --prefix and --exec-prefix options; dropped them since
+	  they serve no useful purpose and would never have
+	  worked for the intended purpose anyways... (STR #56)
+	- fl_filename_list returned 0 on Win32 if no directory
+	  existed (STR #54)
+	- Pressing 'home' after the last letter in a Text_Editor
+	  would move the cursor to pos 0 (STR #39)
+	- Fl::get_key(x) would mix up Ctrl and Meta on OS X (STR
+	  #55)
+	- The configure script used the wrong dynamic library
+	  linking command for OSX (STR #51)
+	- The Fl_Text_Editor widget did not set changed() nor
+	  did it call the widget's callback function for
+	  FL_WHEN_CHANGED when processing characters that
+	  Fl::compose() handles (STR #52)
 	- The file chooser did not reset the click count when
 	  changing directories; if you clicked on a file in the
 	  same position after changing directories with a
@@ -118,8 +195,8 @@ Changes since FLTK 1.1.3 include:
 
 ----HTML----
 
-<P>The first release candidate for FLTK 1.1.4 is now available
-for download and testing. You now have until June 9th, 2003 to
+<P>The second release candidate for FLTK 1.1.4 is now available
+for download and testing. You now have until August 12th, 2003 to
 report any problems with this release candidate using the
 software trouble report form at the following URL:</P>
 
@@ -154,6 +231,83 @@ exceptions that allow for static linking.
 
 <UL>
 
+	<LI>Fl_Window::show(argc,argv) incorrectly opened the
+	display prior to parsing the arguments; this prevented
+	the "-display foo" option from working (STR #111)
+	<LI>Images were not clipped properly on MacOS X (STR #114)
+	<LI>Fl::reload_scheme() and Fl::scheme("foo") incorrectly
+	called Fl::get_system_colors().  This prevented an
+	application from setting its own color preferences
+	(STR #115)
+	<LI>The 'Enter' key event on OS X would not set Fl::e_text
+	(STR #???)
+	<LI>Changed behaviour of fluid to always paste into
+	a selected group (STR #88)
+	<LI>Menuitem now changes font, even if fontsize
+	is not set (STR #110)
+	<LI>Swapped shortcut labels in OS X (STR #86)
+	<LI>Non-square Fl_Dial would calculate angle from user
+	input wrong (STR #101)
+	<LI>Updated documentatiopn of fl_draw (STR #94)
+	and Fl_Menu_::add() (STR #99)
+	<LI>Fluid collapse triangle events were not offset by
+	horizontal scroll (STR #106)
+	<LI>QuitAppleEvent now correctly returns from Fl::run()
+	instead of just exiting (STR #87)
+	<LI>Hiding the first created OpenGL context was not
+	possible. FLTK now manages a list of contexts (STR #77)
+	<LI>FLUID didn't keep the double/single buffer type for
+	windows.
+	<LI>FLTK didn't work with Xft2.
+	<LI>OSX window resizing didn't work (STR #64)
+	<LI>Fixed MacOS X shared library generation (STR #51)
+	<LI>Several widgets defined their own size() method but
+	didn't provide an inline method that mapped to the
+	Fl_Widget::size() method (STR #62)
+	<LI>Fl_Scroll didn't provide its own clear() method, so
+	calling clear() on a Fl_Scroll widget would also
+	destroy the scrollbars (STR #75)
+	<LI>Fl::event_text() was sometimes initialized to NULL
+	instead of an empty string (STR #70)
+	<LI>fl_draw() didn't properly handle a trailing escaped
+	"@" character (STR #84)
+	<LI>Added documentation for all forms of
+	Fl_Widget::damage() (STR #61)
+	<LI>Fl_Double_Window now has a type() value of
+	FL_DOUBLE_WINDOW, to allow double-buffered windows to
+	process redraws properly on WIN32 (STR #46)
+	<LI>Added FL_DAMAGE_USER1 and FL_DAMAGE_USER2 damage bits
+	for use by widget developers (STR #57)
+	<LI>Fl_Help_View didn't support numeric character entities
+	(STR #66)
+	<LI>Menu shortcuts didn't use the Mac key names under
+	MacOS X (STR #71)
+	<LI>CodeWarrior Mac OS X updated to work with current
+	CW8.3 (STR #34)
+	<LI>Apple-C/X/V/Z didn't work in the Fl_Input widget due
+	to a bad mapping to control keys (STR #79)
+	<LI>Added the OSX-specific fl_open_callback() function to
+	handle Open Documents messages from the Finder (STR
+	#80)
+	<LI>The configure script contained erroneous whitespace in
+	various tests which caused errors on some platforms
+	(STR #60)
+	<LI>The fltk-config script still supported the deprecated
+	--prefix and --exec-prefix options; dropped them since
+	they serve no useful purpose and would never have
+	worked for the intended purpose anyways... (STR #56)
+	<LI>fl_filename_list returned 0 on Win32 if no directory
+	existed (STR #54)
+	<LI>Pressing 'home' after the last letter in a Text_Editor
+	would move the cursor to pos 0 (STR #39)
+	<LI>Fl::get_key(x) would mix up Ctrl and Meta on OS X (STR
+	#55)
+	<LI>The configure script used the wrong dynamic library
+	linking command for OSX (STR #51)
+	<LI>The Fl_Text_Editor widget did not set changed() nor
+	did it call the widget's callback function for
+	FL_WHEN_CHANGED when processing characters that
+	Fl::compose() handles (STR #52)
 	<LI>The file chooser did not reset the click count when
 	changing directories; if you clicked on a file in the
 	same position after changing directories with a

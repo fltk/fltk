@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.14 2003/01/30 21:43:03 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.15 2003/07/29 15:12:36 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -179,6 +179,8 @@ int Fl::args(int argc, char** argv, int& i, int (*cb)(int,char**,int&)) {
 void Fl_Window::show(int argc, char **argv) {
   if (!argc) {show(); return;}
   if (!arg_called) {
+    Fl::args(argc,argv);
+
 #if !defined(WIN32) && !defined(__APPLE__)
     // Get defaults for drag-n-drop and focus...
     const char *key = 0, *val;
@@ -203,8 +205,6 @@ void Fl_Window::show(int argc, char **argv) {
                                strcasecmp(val, "on") == 0 ||
                                strcasecmp(val, "yes") == 0);
 #endif // !WIN32 && !__APPLE__
-
-    Fl::args(argc,argv);
   }
 
   // set colors first, so background_pixel is correct:
@@ -420,5 +420,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.14 2003/01/30 21:43:03 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.15 2003/07/29 15:12:36 easysw Exp $".
 //

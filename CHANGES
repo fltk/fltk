@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4rc2
 
+	- Fl_Window::show(argc,argv) incorrectly opened the
+	  display prior to parsing the arguments; this prevented
+	  the "-display foo" option from working (STR #111)
 	- Images were not clipped properly on MacOS X (STR #114)
 	- Fl::reload_scheme() and Fl::scheme("foo") incorrectly
 	  called Fl::get_system_colors().  This prevented an
