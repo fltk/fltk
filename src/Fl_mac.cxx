@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.30 2002/07/11 01:10:15 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.31 2002/07/11 04:11:41 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -300,6 +300,54 @@ static void HandleDataReady(fd_set& r, fd_set& w, fd_set& x)
   }
 }
 
+
+/**
+ * handle Apple Menu items (can be created using the Fl_Sys_Menu_Bar
+ * returns eventNotHandledErr if the menu item could not be handled
+ */
+OSStatus HandleMenu( HICommand *cmd )
+{
+  OSStatus ret = eventNotHandledErr;
+  // attributes, commandIDm menu.menuRef, menu.menuItemIndex
+  UInt32 ref;
+  OSErr rrc = GetMenuItemRefCon( cmd->menu.menuRef, cmd->menu.menuItemIndex, &ref );
+  //printf( "%d, %08x, %08x, %d, %d, %8x\n", rrc, cmd->attributes, cmd->commandID, cmd->menu.menuRef, cmd->menu.menuItemIndex, rrc );
+  if ( rrc==noErr && ref )
+  {
+    Fl_Menu_Item *m = (Fl_Menu_Item*)ref;
+    //printf( "Menu: %s\n", m->label() );
+    fl_sys_menu_bar->picked( m );
+    if ( m->flags & FL_MENU_TOGGLE ) // update the menu toggle symbol
+      SetItemMark( cmd->menu.menuRef, cmd->menu.menuItemIndex, (m->flags & FL_MENU_VALUE ) ? 0x12 : 0 );
+    if ( m->flags & FL_MENU_RADIO ) // update all radio buttons in this menu
+    {
+      Fl_Menu_Item *j = m;
+      int i = cmd->menu.menuItemIndex;
+      for (;;)
+      {
+        if ( j->flags & FL_MENU_DIVIDER )
+          break;
+        j++; i++;
+        if ( !j->text || !j->radio() )
+          break;
+        SetItemMark( cmd->menu.menuRef, i, ( j->flags & FL_MENU_VALUE ) ? 0x13 : 0 );
+      }
+      j = m-1; i = cmd->menu.menuItemIndex-1;
+      for ( ; i>0; j--, i-- )
+      {
+        if ( !j->text || j->flags&FL_MENU_DIVIDER || !j->radio() )
+          break;
+        SetItemMark( cmd->menu.menuRef, i, ( j->flags & FL_MENU_VALUE ) ? 0x13 : 0 );
+      }
+      SetItemMark( cmd->menu.menuRef, cmd->menu.menuItemIndex, ( m->flags & FL_MENU_VALUE ) ? 0x13 : 0 );
+    }
+    ret = noErr; // done handling this event
+  }
+  HiliteMenu(0);
+  return ret;
+}
+
+
 /**
  * We can make every event pass through this function
  * - mouse events need to be manipulated to use a mouse focus window
@@ -309,6 +357,7 @@ static void HandleDataReady(fd_set& r, fd_set& w, fd_set& x)
 static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   OSStatus ret = eventNotHandledErr;
+  HICommand cmd;
 
   fl_lock_function();
 
@@ -327,6 +376,15 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
       else if ( fl_os_capture )
         ret = SendEventToEventTarget( event, GetWindowEventTarget( fl_os_capture ) );
       break;
+    }
+    break;
+  case kEventClassCommand:
+    switch (GetEventKind( event ) )
+    {
+      case kEventCommandProcess:
+        GetEventParameter( event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd );
+        ret = HandleMenu( &cmd );
+        break;
     }
     break;
   case kEventClassFLTK:
@@ -493,7 +551,10 @@ static double do_queued_events( double time = 0.0 )
         { kEventClassMouse, kEventMouseDragged },
         { kEventClassFLTK, kEventFLTKBreakLoop },
         { kEventClassFLTK, kEventFLTKDataReady } };
-    ret = InstallEventHandler( target, dispatchHandler, 16, dispatchEvents, 0, 0L );
+    ret = InstallEventHandler( target, dispatchHandler, GetEventTypeCount(dispatchEvents), dispatchEvents, 0, 0L );
+    static EventTypeSpec appEvents[] = {
+        { kEventClassCommand, kEventCommandProcess } };
+    ret = InstallApplicationEventHandler( dispatchHandler, GetEventTypeCount(appEvents), appEvents, 0, 0L );
     ret = InstallEventLoopTimer( GetMainEventLoop(), 0, 0, NewEventLoopTimerUPP( timerProcCB ), 0, &timer );
   }
 
@@ -1683,6 +1744,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.30 2002/07/11 01:10:15 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.31 2002/07/11 04:11:41 matthiaswm Exp $".
 //
 

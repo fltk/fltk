@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.4 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.5 2002/07/11 04:11:41 matthiaswm Exp $"
 //
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -117,21 +117,26 @@ enum {
     kMenuNoCommandModifier  = (1 << 3)
 }; 
  */
-static void setShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
+static void setMenuShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
 {
   if ( !m->shortcut_ ) 
+    return;
+  if ( m->flags & FL_SUBMENU )
+    return;
+  if ( m->flags & FL_SUBMENU_POINTER )
     return;
   char key = m->shortcut_ & 0xff;
   if ( !isalnum( key ) )
     return;
-  char mod = m->shortcut_ & 0xff00;
   
   long macMod = kMenuNoModifiers;
-  if ( mod & FL_SHIFT ) macMod |= kMenuShiftModifier;
-  if ( mod & FL_CTRL ) macMod |= kMenuOptionModifier;
-  if ( !(mod & FL_ALT) ) macMod |= kMenuNoCommandModifier;
+  if ( m->shortcut_ & FL_SHIFT || isupper(key) ) macMod |= kMenuShiftModifier;
+  if ( m->shortcut_ & FL_ALT ) macMod |= kMenuOptionModifier;
+  if ( m->shortcut_ & FL_META ) macMod |= kMenuControlModifier;
+  if ( !(m->shortcut_ & FL_CTRL) ) macMod |= kMenuNoCommandModifier;
   
-  SetItemCmd( mh, miCnt, key );
+  //SetMenuItemKeyGlyph( mh, miCnt, key );
+  SetItemCmd( mh, miCnt, toupper(key) );
   SetMenuItemModifiers( mh, miCnt, macMod );
 }
 
@@ -144,7 +149,7 @@ static void catMenuShortcut( const Fl_Menu_Item *m, char *dst )
     return;
   while ( *dst ) 
     dst++;
-  if ( m->shortcut_ & FL_ALT )
+  if ( m->shortcut_ & FL_CTRL )
   {
     sprintf( dst, "/%c", toupper( c ) );
   }
@@ -184,7 +189,7 @@ static void createSubMenu( MenuHandle mh, int &cnt, pFl_Menu_Item &mm )
     MenuHandle smh;
     buf[1] = 0;
     catMenuFont( mm, buf+1 );
-    catMenuShortcut( mm, buf+1 );
+    //catMenuShortcut( mm, buf+1 );
     catMenuText( mm->text, buf+1 );
     catMenuFlags( mm, buf+1 );
     if ( mm->flags & (FL_SUBMENU | FL_SUBMENU_POINTER) )
@@ -199,6 +204,7 @@ static void createSubMenu( MenuHandle mh, int &cnt, pFl_Menu_Item &mm )
     AppendMenu( mh, (unsigned char*)buf );
     // insert Appearanc manager functions here!
     setMenuFlags( mh, miCnt, mm );
+    setMenuShortcut( mh, miCnt, mm );
     SetMenuItemRefCon( mh, miCnt, (UInt32)mm );
     miCnt++;
     if ( mm->flags & FL_MENU_DIVIDER )
@@ -310,5 +316,5 @@ int Fl_Menu_Bar::handle(int event) {
 */
 
 //
-// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.4 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.5 2002/07/11 04:11:41 matthiaswm Exp $".
 //

@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0
 
+	- MacOS: support for Mac system menu (Fl_Sys_Menu_Bar)
 	- MacOS: wait(0) would not handle all pending events
 	- Added new makeinclude file for MingW using GCC 3.1.x.
 	- Fl_Choice::value(n) didn't range check "n".
