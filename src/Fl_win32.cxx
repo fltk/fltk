@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.13 2002/01/03 18:28:36 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.14 2002/01/07 20:40:02 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,6 +41,7 @@
 #  include <unistd.h>
 #else
 #  include <winsock.h>
+//#  include <winuser.h>
 #endif
 #include <ctype.h>
 
@@ -527,13 +528,25 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RBUTTONDOWN:  mouse_event(window, 0, 3, wParam, lParam); return 0;
   case WM_RBUTTONDBLCLK:mouse_event(window, 1, 3, wParam, lParam); return 0;
   case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
-  case WM_MOUSEMOVE:    mouse_event(window, 3, 0, wParam, lParam); return 0;
 
-#ifdef WM_MOUSELEAVE
+  case WM_MOUSEMOVE:
+      if (Fl::belowmouse() != window) {
+        TRACKMOUSEEVENT tme;
+
+        tme.cbSize    = sizeof(TRACKMOUSEEVENT);
+        tme.dwFlags   = TME_LEAVE;
+        tme.hwndTrack = hWnd;
+
+        TrackMouseEvent(&tme);
+      }
+
+      mouse_event(window, 3, 0, wParam, lParam);
+      return 0;
+
   case WM_MOUSELEAVE:
-    Fl::handle(FL_LEAVE, window);
+    Fl::belowmouse(0);
+//    Fl::handle(FL_LEAVE, window);
     break;
-#endif /* WM_MOUSELEAVE */
 
   case WM_SETFOCUS:
     Fl::handle(FL_FOCUS, window);
@@ -1035,5 +1048,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.13 2002/01/03 18:28:36 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.14 2002/01/07 20:40:02 easysw Exp $".
 //

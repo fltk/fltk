@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- Better FL_LEAVE event handling for WIN32.
+	- The alpha mask was bit-reversed.
 	- Fl::scheme() applied the scheme tile image to overlay
 	  and menu windows, which caused problems when the
 	  overlay planes were in use.

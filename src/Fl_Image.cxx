@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.14 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.15 2002/01/07 20:40:02 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -69,6 +69,7 @@ void Fl_Image::label(Fl_Menu_Item* m) {
 
 Fl_RGB_Image::~Fl_RGB_Image() {
   if (id) fl_delete_offscreen((Fl_Offscreen)id);
+  if (mask) fl_delete_bitmask(mask);
   if (alloc_array) delete[] (uchar *)array;
 }
 
@@ -319,12 +320,12 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       memset(bitmap, 0, bmw * h());
 
       for (dataptr = array + d() - 1, y = 0; y < h(); y ++, dataptr += ld())
-        for (bitptr = bitmap + y * bmw, bit = 128, x = 0; x < w(); x ++, dataptr += d()) {
+        for (bitptr = bitmap + y * bmw, bit = 1, x = 0; x < w(); x ++, dataptr += d()) {
 	  if (*dataptr > dither[x & 15][y & 15])
 	    *bitptr |= bit;
-	  if (bit > 1) bit >>= 1;
+	  if (bit < 128) bit <<= 1;
 	  else {
-	    bit = 128;
+	    bit = 1;
 	    bitptr ++;
 	  }
 	}
@@ -378,5 +379,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.14 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.15 2002/01/07 20:40:02 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3.2.10 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.11 2002/01/07 20:40:02 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,10 @@ struct Fl_Menu_Item;
 class FL_EXPORT Fl_Image {
   int w_, h_, d_, ld_, count_;
   const char * const *data_;
+
+  // Forbid use of copy contructor and assign operator
+  Fl_Image & operator=(const Fl_Image &);
+  Fl_Image(const Fl_Image &);
 
   protected:
 
@@ -91,5 +95,5 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3.2.10 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.11 2002/01/07 20:40:02 easysw Exp $".
 //

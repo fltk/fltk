@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.9 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.10 2002/01/07 20:40:02 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -173,7 +173,8 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
       Interlace = ((ch & 0x40) != 0);
       if (ch&0x80) { 
 	// read local color map
-	int n = 1<<((ch&7)+1); // does this replace ColorMapSize ??
+	int n = 2<<(ch&7);
+	if (n > ColorMapSize) ColorMapSize = n;
 	for (i=0; i < n; i++) {	
 	  Red[i] = NEXTBYTE;
 	  Green[i] = NEXTBYTE;
@@ -261,7 +262,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
     while (i >= ColorMapSize) {*tp++ = Suffix[i]; i = Prefix[i];}
     *tp++ = FinChar = i;
-    while (tp > OutCode) {
+    do {
       *p++ = *--tp;
       if (p >= eol) {
 	if (!Interlace) YC++;
@@ -275,7 +276,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 	p = Image + YC*Width;
 	eol = p+Width;
       }
-    }
+    } while (tp > OutCode);
 
     if (OldCode != ClearCode) {
       Prefix[FreeCode] = OldCode;
@@ -373,5 +374,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.9 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.10 2002/01/07 20:40:02 easysw Exp $".
 //
