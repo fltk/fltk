@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.10.2.4.2.2 2002/01/01 15:11:32 easysw Exp $"
+ * "$Id: numericsort.c,v 1.10.2.4.2.3 2002/05/02 11:11:01 easysw Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -49,9 +49,15 @@
 #endif
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
-int numericsort(struct dirent **A, struct dirent **B) {
+
+/*
+ * 'numericsort()' - Compare two directory entries, possibly with
+ *                   a case-insensitive comparison...
+ */
+
+static int numericsort(struct dirent **A, struct dirent **B, int cs) {
   const char* a = (*A)->d_name;
   const char* b = (*B)->d_name;
   int ret = 0;
@@ -68,11 +74,14 @@ int numericsort(struct dirent **A, struct dirent **B) {
       if (magdiff) {ret = magdiff; break;} /* compare # of significant digits*/
       if (diff) {ret = diff; break;}	/* compare first non-zero digit */
     } else {
-#if 1
-      if ((ret = tolower((unsigned)*a)-tolower((unsigned)*b))) break; /* compare case-insensitve */
-#else
-      if ((ret = *a-*b)) break;	/* compare case-sensitive */
-#endif
+      if (cs) {
+      	/* compare case-sensitive */
+	if ((ret = *a-*b)) break;
+      } else {
+	/* compare case-insensitve */
+	if ((ret = tolower((unsigned)*a)-tolower((unsigned)*b))) break;
+      }
+
       if (!*a) break;
       a++; b++;
     }
@@ -82,5 +91,25 @@ int numericsort(struct dirent **A, struct dirent **B) {
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.10.2.4.2.2 2002/01/01 15:11:32 easysw Exp $".
+ * 'fl_casenumericsort()' - Compare directory entries with case-sensitivity.
+ */
+
+int fl_casenumericsort(struct dirent **A, struct dirent **B) {
+  return numericsort(A, B, 0);
+}
+
+/*
+ * 'fl_numericsort()' - Compare directory entries with case-sensitivity.
+ */
+
+int fl_numericsort(struct dirent **A, struct dirent **B) {
+  return numericsort(A, B, 1);
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+/*
+ * End of "$Id: numericsort.c,v 1.10.2.4.2.3 2002/05/02 11:11:01 easysw Exp $".
  */

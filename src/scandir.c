@@ -49,9 +49,9 @@ USA.  */
 #endif
 
 int
-scandir (const char *dir, struct dirent ***namelist,
-	 int (*select)(struct dirent *),
-	 int (*compar)(struct dirent **, struct dirent **))
+fl_scandir(const char *dir, struct dirent ***namelist,
+	   int (*select)(struct dirent *),
+	   int (*compar)(struct dirent **, struct dirent **))
 {
   DIR *dp = opendir (dir);
   struct dirent **v = NULL;
@@ -118,10 +118,6 @@ scandir (const char *dir, struct dirent ***namelist,
   if (compar) qsort (v, i, sizeof (*v), (int (*)(const void *, const void *))compar);
   *namelist = v;
   return i;
-}
-
-int alphasort (struct dirent **a, struct dirent **b) {
-  return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
 #endif

@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.11.2.2 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.11.2.3 2002/05/02 11:11:01 easysw Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,40 +27,50 @@
 
 #include <config.h>
 #include <FL/filename.H>
+#include "flstring.h"
+
 
 extern "C" {
-  int numericsort(dirent **, dirent **);
-#if HAVE_SCANDIR
-#else
-  int alphasort(dirent **, dirent **);
-  int scandir (const char *dir, dirent ***namelist,
-	       int (*select)(dirent *),
-	       int (*compar)(dirent **, dirent **));
+#ifndef HAVE_SCANDIR
+  int fl_scandir (const char *dir, dirent ***namelist,
+	          int (*select)(dirent *),
+	          int (*compar)(dirent **, dirent **));
+#  define scandir	fl_scandir
 #endif
 }
 
-int fl_filename_list(const char *d, dirent ***list) {
+int fl_alphasort(struct dirent **a, struct dirent **b) {
+  return strcmp((*a)->d_name, (*b)->d_name);
+}
+
+int fl_casealphasort(struct dirent **a, struct dirent **b) {
+  return strcasecmp((*a)->d_name, (*b)->d_name);
+}
+
+
+int fl_filename_list(const char *d, dirent ***list,
+                     Fl_File_Sort_F *sort) {
 #if defined(__hpux)
   // HP-UX defines the comparison function like this:
-  return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))numericsort);
+  return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
   // OSF, DU 4.0x
-  return scandir(d, list, 0, (int(*)(dirent **, dirent **))numericsort);
+  return scandir(d, list, 0, (int(*)(dirent **, dirent **))sort);
 #elif defined(_AIX)
   // AIX is almost standard...
-  return scandir(d, list, 0, (int(*)(void*, void*))numericsort);
+  return scandir(d, list, 0, (int(*)(void*, void*))sort);
 #elif HAVE_SCANDIR && !defined(__sgi)
   // The vast majority of Unix systems want the sort function to have this
   // prototype, most likely so that it can be passed to qsort without any
   // changes:
-  return scandir(d, list, 0, (int(*)(const void*,const void*))numericsort);
+  return scandir(d, list, 0, (int(*)(const void*,const void*))sort);
 #else
   // This version is when we define our own scandir (WIN32 and perhaps
   // some Unix systems) and apparently on Irix:
-  return scandir(d, list, 0, numericsort);
+  return scandir(d, list, 0, sort);
 #endif
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.11.2.2 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.11.2.3 2002/05/02 11:11:01 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.11.2.4.2.5 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: filename.H,v 1.11.2.4.2.6 2002/05/02 11:11:00 easysw Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -69,10 +69,21 @@ struct dirent {char d_name[1];};
 
 #  endif
 
-FL_EXPORT int fl_filename_list(const char *d, struct dirent ***list);
+extern "C" {
+  FL_EXPORT int fl_alphasort(dirent **, dirent **);
+  FL_EXPORT int fl_casealphasort(dirent **, dirent **);
+  FL_EXPORT int fl_casenumericsort(dirent **, dirent **);
+  FL_EXPORT int fl_numericsort(dirent **, dirent **);
+
+  typedef int (Fl_File_Sort_F)(dirent **, dirent **);
+}
+
+FL_EXPORT int fl_filename_list(const char *d, struct dirent ***list,
+                               Fl_File_Sort_F *sort = fl_numericsort);
+
 
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11.2.4.2.5 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: filename.H,v 1.11.2.4.2.6 2002/05/02 11:11:00 easysw Exp $".
 //
