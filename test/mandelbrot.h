@@ -1,5 +1,5 @@
 //
-// "$Id: mandelbrot.h,v 1.3 1998/10/21 14:21:34 mike Exp $"
+// "$Id: mandelbrot.h,v 1.4 1998/10/21 16:35:18 mike Exp $"
 //
 // Mandelbrot set header file for the Fast Light Tool Kit (FLTK).
 //
@@ -28,8 +28,6 @@
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
-
-class Drawing_Window;
 
 class Drawing_Area : public Fl_Box {
   void draw();
@@ -69,15 +67,6 @@ public:
   int idle();
 };
 
-class Drawing_Window {
-public:
-  Drawing_Area *d;
-  Fl_Slider *gamma_slider;
-  Fl_Input *x_input, *y_input, *w_input;
-  Fl_Window *window;
-  void update_label();
-};
-
 //
-// End of "$Id: mandelbrot.h,v 1.3 1998/10/21 14:21:34 mike Exp $".
+// End of "$Id: mandelbrot.h,v 1.4 1998/10/21 16:35:18 mike Exp $".
 //

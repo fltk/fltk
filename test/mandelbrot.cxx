@@ -1,5 +1,5 @@
 //
-// "$Id: mandelbrot.cxx,v 1.3 1998/10/21 14:21:33 mike Exp $"
+// "$Id: mandelbrot.cxx,v 1.4 1998/10/21 16:35:17 mike Exp $"
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,7 @@ void set_idle() {
 static void window_callback(Fl_Widget*, void*) {exit(0);}
 
 int main(int argc, char **argv) {
-  make_window(mbrot);
+  mbrot.make_window();
   mbrot.d->X = -.75;
   mbrot.d->scale = 2.5;
   mbrot.update_label();
@@ -162,7 +162,7 @@ int Drawing_Area::handle(int event) {
       new_display();
     } else if (!julia) {
       if (!jbrot.d) {
-	make_window(jbrot);
+	jbrot.make_window();
 	jbrot.d->julia = 1;
 	jbrot.d->X = 0;
 	jbrot.d->Y = 0;
@@ -196,34 +196,6 @@ void Drawing_Area::resize(int X,int Y,int W,int H) {
   Fl_Box::resize(X,Y,W,H);
 }
 
-void brightness_slider_cb(Fl_Slider* o, Drawing_Window* s) {
-  s->d->brightness = int(o->value());
-  s->d->new_display();
-}
-
-void iterations_slider_cb(Fl_Slider* o, Drawing_Window* s) {
-  s->d->iterations = 1<<int(o->value());
-  s->d->new_display();
-}
-
-void x_callback(Fl_Input* o, Drawing_Window* s) {
-  double v = atof(o->value());
-  s->d->X = v;
-  s->d->new_display();
-}
-
-void y_callback(Fl_Input* o, Drawing_Window* s) {
-  double v = atof(o->value());
-  s->d->Y = v;
-  s->d->new_display();
-}
-
-void w_callback(Fl_Input* o, Drawing_Window* s) {
-  double v = atof(o->value());
-  s->d->scale = v;
-  s->d->new_display();
-}
-
 //
-// End of "$Id: mandelbrot.cxx,v 1.3 1998/10/21 14:21:33 mike Exp $".
+// End of "$Id: mandelbrot.cxx,v 1.4 1998/10/21 16:35:17 mike Exp $".
 //

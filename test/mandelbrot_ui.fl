@@ -1,63 +1,74 @@
-# data file for FL User Interface Designer (fluid)
+# data file for the Fltk User Interface Designer (fluid)
 version 0.99 
+header_name {.H} 
+code_name {.C} 
 gridx 10 
 gridy 10 
 snap 3
-Function {make_window(Drawing_Window& s)} {open
+decl {\#include "mandelbrot.H"} {public
+} 
+
+decl {\#include <stdlib.h>} {} 
+
+class Drawing_Window {open
 } {
-  Fl_Window {s.window} {open
-    xywh {92 109 429 510}
-    code0 {o->size_range(220,220);}
+  Function {make_window()} {open return_type void
   } {
-    Fl_Box {s.d} {
-      user_data {&s} user_data_type {Drawing_Window*} open
-      xywh {10 70 410 430} box 3 color {0 47} resizable
-      code0 {\#include "mandelbrot.H"}
-      class Drawing_Area
+    Fl_Window window {open
+      xywh {178 479 450 520} resizable
+      code0 {o->size_range(220,220);} visible
+    } {
+      Fl_Box d {
+        user_data this user_data_type {void*} selected
+        xywh {20 80 410 430} box DOWN_BOX color 0 selection_color 47 resizable
+        class Drawing_Area
+      }
+      Fl_Input x_input {
+        label {x:}
+        callback {d->X = atof(o->value());;
+d->new_display();}
+        xywh {30 15 125 30} type Float box THIN_DOWN_BOX color 8 selection_color 7 labelfont 11 labelsize 20 textfont 11 textsize 20
+        code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
+      }
+      Fl_Input y_input {
+        label {y:}
+        callback {d->Y = atof(o->value());
+d->new_display();}
+        xywh {175 15 125 30} type Float box THIN_DOWN_BOX color 8 selection_color 7 labelfont 11 labelsize 20 textfont 11 textsize 20
+        code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
+      }
+      Fl_Input w_input {
+        label {w:}
+        callback {d->scale = atof(o->value());
+d->new_display();}
+        xywh {325 15 105 30} type Float box THIN_DOWN_BOX color 8 selection_color 7 labelfont 11 labelsize 20 textfont 11 textsize 20
+        code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
+      }
+      Fl_Slider {} {
+        label {brightness:}
+        callback {d->brightness = int(o->value());
+d->new_display();}
+        xywh {80 50 160 15} type Horizontal box THIN_DOWN_BOX labelsize 10 align 4 step 1 slider_size 0.1
+        code0 {o->bounds(0,d->MAX_BRIGHTNESS);}
+        code2 {o->value(d->DEFAULT_BRIGHTNESS);}
+        code3 {o->slider(FL_UP_BOX);}
+      }
+      Fl_Box {} {
+        label {left: click = zoom out, drag = zoom in
+right click: Julia set}
+        xywh {240 50 190 30} labelsize 10 align 24 deactivate
+      }
+      Fl_Slider {} {
+        label {iterations:}
+        callback {d->iterations = 1<<int(o->value());
+d->new_display();}
+        xywh {80 65 160 15} type Horizontal box THIN_DOWN_BOX labelsize 10 align 4 step 1 slider_size 0.1
+        code0 {o->bounds(1,d->MAX_ITERATIONS);}
+        code2 {o->value(d->DEFAULT_ITERATIONS);}
+        code3 {o->slider(FL_UP_BOX);}
+      }
     }
-    Fl_Input {s.x_input} {
-      label {x:}
-      user_data {&s} user_data_type {Drawing_Window*}
-      callback x_callback open
-      xywh {20 5 125 30} type 1 box 7 color {8 7} labelfont 11 labelsize 20 textfont 11 textsize 20
-      code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
-    }
-    Fl_Input {s.y_input} {
-      label {y:}
-      user_data {&s} user_data_type {Drawing_Window*}
-      callback y_callback open
-      xywh {165 5 125 30} type 1 box 7 color {8 7} labelfont 11 labelsize 20 textfont 11 textsize 20
-      code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
-    }
-    Fl_Input {s.w_input} {
-      label {w:}
-      user_data {&s} user_data_type {Drawing_Window*}
-      callback w_callback open
-      xywh {315 5 105 30} type 1 box 7 color {8 7} labelfont 11 labelsize 20 textfont 11 textsize 20
-      code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
-    }
-    Fl_Slider {} {
-      label {brightness:}
-      user_data {&s} user_data_type {Drawing_Window*}
-      callback brightness_slider_cb open
-      xywh {70 40 160 15} type 1 box 7 labelsize 10 align 4 step 1 slider_size 0.1
-      code0 {o->bounds(0,s.d->MAX_BRIGHTNESS);}
-      code2 {o->value(s.d->DEFAULT_BRIGHTNESS);}
-      code3 {o->slider(FL_UP_BOX);}
-    }
-    Fl_Box {} {
-      label {left: click = zoom out, drag = zoom in
-right click: Julia set} open
-      xywh {230 40 190 30} labelsize 10 align 24 deactivate
-    }
-    Fl_Slider {} {
-      label {iterations:}
-      user_data {&s} user_data_type {Drawing_Window*}
-      callback iterations_slider_cb open selected
-      xywh {70 55 160 15} type 1 box 7 labelsize 10 align 4 step 1 slider_size 0.1
-      code0 {o->bounds(1,s.d->MAX_ITERATIONS);}
-      code2 {o->value(s.d->DEFAULT_ITERATIONS);}
-      code3 {o->slider(FL_UP_BOX);}
-    }
+  }
+  decl {void update_label();} {public
   }
 } 
