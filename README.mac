@@ -89,7 +89,6 @@ KNOWN MacFLTK BUGS
 
 	- File handles (Fl::add_fd) are not implemented.
 	- Line styles are not fully implemented.
-	- Cut, copy, and paste are not implemented.
 	- Sub-sub-subwindow not tested.
 	- Image transparency is not implemented.
 	- The 'shiny' demo needs work (flush/aglFlush).
