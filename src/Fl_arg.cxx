@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.4 2000/06/05 21:21:00 mike Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.5 2000/06/08 12:30:36 mike Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -270,8 +270,8 @@ int XParseGeometry(const char* string, int* x, int* y,
 {
   int mask = NoValue;
   register char *strind;
-  unsigned int tempWidth, tempHeight;
-  int tempX, tempY;
+  unsigned int tempWidth = 0, tempHeight = 0;
+  int tempX = 0, tempY = 0;
   char *nextCharacter;
 
   if ( (string == NULL) || (*string == '\0')) return(mask);
@@ -352,5 +352,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.4 2000/06/05 21:21:00 mike Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.5 2000/06/08 12:30:36 mike Exp $".
 //
