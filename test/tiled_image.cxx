@@ -1,5 +1,5 @@
 //
-// "$Id: tiled_image.cxx,v 1.1.2.3 2001/11/29 00:24:43 easysw Exp $"
+// "$Id: tiled_image.cxx,v 1.1.2.4 2001/11/29 21:49:00 easysw Exp $"
 //
 // Fl_Tiled_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 
   Fl_Window window(400,400); ::w = &window;
   Fl_Group group(0,0,400,400);
-  group.image(new Fl_Tiled_Image(new Fl_Pixmap(tile_xpm)));
+  group.image(new Fl_Tiled_Image(new Fl_Pixmap((const char * const *)tile_xpm)));
   group.align(FL_ALIGN_INSIDE);
 
   Fl_Button b(340,365,50,25,"Close"); ::b = &b;
@@ -100,5 +100,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: tiled_image.cxx,v 1.1.2.3 2001/11/29 00:24:43 easysw Exp $".
+// End of "$Id: tiled_image.cxx,v 1.1.2.4 2001/11/29 21:49:00 easysw Exp $".
 //
