@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Button.cxx,v 1.4.2.3 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Check_Button.cxx,v 1.4.2.3.2.1 2001/08/04 16:43:31 easysw Exp $"
 //
 // Check button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 
 Fl_Check_Button::Fl_Check_Button(int x, int y, int w, int h, const char *l)
 : Fl_Light_Button(x, y, w, h, l) {
-  box(FL_NO_BOX);
-  down_box(FL_DIAMOND_DOWN_BOX);
-  selection_color(FL_RED);
+  box(FL_FLAT_BOX);
+  down_box(FL_DOWN_BOX);
+  selection_color(FL_BLACK);
 }

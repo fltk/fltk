@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.11.2.4 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: filename.H,v 1.11.2.4.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -26,19 +26,7 @@
 #ifndef FL_FILENAME_H
 #define FL_FILENAME_H
 
-//
-// The following is only used when building DLLs under WIN32 with Visual C++...
-//
-
-#if defined(FL_DLL) && defined(_MSC_VER)
-#  ifdef FL_LIBRARY
-#    define FL_EXPORT	__declspec(dllexport)
-#  else
-#    define FL_EXPORT	__declspec(dllimport)
-#  endif /* FL_LIBRARY */
-#else
-#  define FL_EXPORT
-#endif /* FL_DLL && _MSC_VER */
+#  include "Fl_Export.H"
 
 #define FL_PATH_MAX 256 // all buffers are this length
 
@@ -76,5 +64,5 @@ FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11.2.4 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: filename.H,v 1.11.2.4.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: resizebox.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: resizebox.cxx,v 1.4.2.3.2.1 2001/08/06 15:19:20 easysw Exp $"
 //
 // Resize box test program for the Fast Light Tool Kit (FLTK).
 //
@@ -77,7 +77,6 @@ int main(int argc, char **argv) {
   n = new Fl_Box(FL_FRAME_BOX,W1+B+B,W1+B+B,2*W1+B,2*W1+B,0);
   n->color(8);
 
-  Fl::enable_symbols();
   Fl_Button *b = new Fl_Radio_Button(W1+B+50,W1+B+30,20,20,"@6>");
   b->callback(b_cb,6);
   (new Fl_Radio_Button(W1+B+30,W1+B+10,20,20,"@8>"))->callback(b_cb,8);
@@ -97,5 +96,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: resizebox.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: resizebox.cxx,v 1.4.2.3.2.1 2001/08/06 15:19:20 easysw Exp $".
 //

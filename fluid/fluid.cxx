@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13 2001/03/15 22:39:56 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.7 2001/09/29 22:59:45 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 const char *copyright =
-"The FLTK user interface designer version 1.0.11\n"
+"The FLTK user interface designer version 1.1.0\n"
 "Copyright 1998-2001 by Bill Spitzak and others.\n"
 "\n"
 "This library is free software; you can redistribute it and/or "
@@ -48,6 +48,8 @@ const char *copyright =
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_File_Icon.H>
+#include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Input.H>
@@ -61,6 +63,13 @@ const char *copyright =
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <config.h>
+
+#if !HAVE_SNPRINTF
+extern "C" {
+extern int snprintf(char* str, size_t size, const char* fmt, ...);
+}
+#endif // !HAVE_SNPRINTF
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -72,6 +81,9 @@ const char *copyright =
 #include "about_panel.h"
 
 #include "Fl_Type.h"
+
+static Fl_Help_Dialog *help_dialog = 0;
+
 
 ////////////////////////////////////////////////////////////////
 
@@ -135,6 +147,11 @@ void exit_cb(Fl_Widget *,void *) {
 	  if (modflag) return;	// Didn't save!
     }
 
+  if (about_panel)
+    delete about_panel;
+  if (help_dialog)
+    delete help_dialog;
+
   exit(0);
 }
 
@@ -181,13 +198,13 @@ void write_cb(Fl_Widget *, void *) {
   char hname[1024];
   strcpy(i18n_program, filename_name(filename));
   filename_setext(i18n_program, "");
-  if (*code_file_name == '.') {
+  if (*code_file_name == '.' && strchr(code_file_name, '/') == NULL) {
     strcpy(cname,filename_name(filename));
     filename_setext(cname, code_file_name);
   } else {
     strcpy(cname, code_file_name);
   }
-  if (*header_file_name == '.') {
+  if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
     strcpy(hname,filename_name(filename));
     filename_setext(hname, header_file_name);
   } else {
@@ -196,7 +213,7 @@ void write_cb(Fl_Widget *, void *) {
   if (!compile_only) goto_source_dir();
   int x = write_code(cname,hname);
   if (!compile_only) leave_source_dir();
-  strcat(cname, "/"); strcat(cname,header_file_name);
+  strcat(cname, " and "); strcat(cname,hname);
   if (compile_only) {
     if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
   } else {
@@ -252,6 +269,10 @@ static int ipasteoffset;
 
 static char* cutfname() {
 #ifdef WIN32
+#  ifndef MAX_PATH
+#    define MAX_PATH 256
+#  endif // !MAX_PATH
+
   static char name[MAX_PATH+16] = "";
 
   if (!name[0]) {
@@ -326,6 +347,29 @@ void about_cb(Fl_Widget *, void *) {
   about_panel->show();
 }
 
+void show_help(const char *name) {
+  const char	*docdir;
+  char		filename[1024];
+  
+  if (!help_dialog) help_dialog = new Fl_Help_Dialog();
+
+  if ((docdir = getenv("FLTK_DOCDIR")) == NULL)
+    docdir = FLTK_DOCDIR;
+
+  snprintf(filename, sizeof(filename), "%s/%s", docdir, name);  
+
+  help_dialog->load(filename);
+  help_dialog->show();
+}
+
+void help_cb(Fl_Widget *, void *) {
+  show_help("fluid.html");
+}
+
+void manual_cb(Fl_Widget *, void *) {
+  show_help("index.html");
+}
+
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -333,20 +377,20 @@ extern Fl_Menu_Item New_Menu[];
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
   {"New", 0, new_cb, 0},
-  {"Open...", FL_ALT+'o', open_cb, 0},
-  {"Save", FL_ALT+'s', save_cb, 0},
-  {"Save As...", FL_ALT+'S', save_cb, (void*)1},
-  {"Merge...", FL_ALT+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
-  {"Write code", FL_ALT+'C', write_cb, 0},
-  {"Write strings", FL_ALT+'W', write_strings_cb, 0},
-  {"Quit", FL_ALT+'q', exit_cb},
+  {"Open...", FL_CTRL+'o', open_cb, 0},
+  {"Save", FL_CTRL+'s', save_cb, 0},
+  {"Save As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
+  {"Merge...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
+  {"Write code", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
+  {"Write strings", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0},
+  {"Quit", FL_CTRL+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
-  {"Undo", FL_ALT+'z', nyi},
-  {"Cut", FL_ALT+'x', cut_cb},
-  {"Copy", FL_ALT+'c', copy_cb},
-  {"Paste", FL_ALT+'v', paste_cb},
-  {"Select All", FL_ALT+'a', select_all_cb, 0, FL_MENU_DIVIDER},
+  {"Undo", FL_CTRL+'z', nyi},
+  {"Cut", FL_CTRL+'x', cut_cb},
+  {"Copy", FL_CTRL+'c', copy_cb},
+  {"Paste", FL_CTRL+'v', paste_cb},
+  {"Select All", FL_CTRL+'a', select_all_cb, 0, FL_MENU_DIVIDER},
   {"Open...", FL_F+1, openwidget_cb},
   {"Sort",0,sort_cb},
   {"Earlier", FL_F+2, earlier_cb},
@@ -357,13 +401,14 @@ Fl_Menu_Item Main_Menu[] = {
   {"Ungroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
-  {"Overlays on/off",FL_ALT+'O',toggle_overlays},
-  {"Preferences",FL_ALT+'p',show_alignment_cb},
+  {"Overlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
+  {"Preferences",FL_CTRL+'p',show_alignment_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Help",0,0,0,FL_SUBMENU},
-  {"About fluid",0,about_cb},
-//{"Manual",0,nyi},
+  {"About FLUID...",0,about_cb},
+  {"On FLUID...",0,help_cb},
+  {"Manual...",0,manual_cb},
   {0},
 {0}};
 
@@ -382,6 +427,7 @@ void make_main_window() {
     main_window->box(FL_NO_BOX);
     o = make_widget_browser(0,MENUHEIGHT,BROWSERWIDTH,BROWSERHEIGHT);
     o->box(FL_FLAT_BOX);
+    o->tooltip("Double-click to view or change an item.");
     main_window->resizable(o);
     Fl_Menu_Bar *m = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
     m->menu(Main_Menu);
@@ -454,6 +500,7 @@ int main(int argc,char **argv) {
   if (c) set_filename(c);
   if (!compile_only) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
+    Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
     main_window->show(argc,argv);
   }
@@ -474,5 +521,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13 2001/03/15 22:39:56 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.7 2001/09/29 22:59:45 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.10 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.10.2.1 2001/08/05 14:00:15 easysw Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -163,6 +163,10 @@ void Fl_Slider::draw(int x, int y, int w, int h) {
   }
 
   draw_label(xsl, ysl, wsl, hsl);
+  if (Fl::focus() == this) {
+    if (type() == FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) draw_focus();
+    else draw_focus(box1, xsl, ysl, wsl, hsl);
+  }
 }
 
 void Fl_Slider::draw() {
@@ -177,6 +181,7 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
   switch (event) {
   case FL_PUSH:
     if (!Fl::event_inside(x, y, w, h)) return 0;
+    take_focus();
     handle_push();
   case FL_DRAG: {
 
@@ -241,6 +246,32 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
   case FL_RELEASE:
     handle_release();
     return 1;
+  case FL_KEYBOARD :
+    switch (Fl::event_key()) {
+      case FL_Up:
+        if (horizontal()) return 0;
+	handle_drag(clamp(increment(value(),-1)));
+	return 1;
+      case FL_Down:
+        if (horizontal()) return 0;
+	handle_drag(clamp(increment(value(),1)));
+	return 1;
+      case FL_Left:
+        if (!horizontal()) return 0;
+	handle_drag(clamp(increment(value(),-1)));
+	return 1;
+      case FL_Right:
+        if (!horizontal()) return 0;
+	handle_drag(clamp(increment(value(),1)));
+	return 1;
+      default:
+        return 0;
+    }
+    break;
+  case FL_FOCUS :
+  case FL_UNFOCUS :
+    damage(FL_DAMAGE_ALL);
+    return 1;
   default:
     return 0;
   }
@@ -255,5 +286,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.10 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.10.2.1 2001/08/05 14:00:15 easysw Exp $".
 //

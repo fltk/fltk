@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37 2001/04/27 15:43:38 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.3 2001/08/03 15:48:20 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -56,6 +56,14 @@
 
 #ifndef WM_MOUSELEAVE
 #  define WM_MOUSELEAVE 0x02a3
+#endif
+
+#ifndef WM_MOUSEWHEEL
+#  define WM_MOUSEWHEEL 0x020a
+#endif
+
+#ifndef WHEEL_DELTA
+#	define WHEEL_DELTA 120	// according to MSDN.
 #endif
 
 //
@@ -581,6 +589,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (Fl::handle(FL_KEYBOARD,window)) return 0;
     break;}
 
+  case WM_MOUSEWHEEL: {
+    static int delta = 0; // running total of all motion
+    delta += (SHORT)(HIWORD(wParam));
+    Fl::e_dy = -delta / WHEEL_DELTA;
+    delta += Fl::e_dy * WHEEL_DELTA;
+    if (Fl::e_dy) Fl::handle(FL_MOUSEWHEEL, window);
+    return 0;
+  }
+
   case WM_GETMINMAXINFO:
     Fl_X::i(window)->set_minmax((LPMINMAXINFO)lParam);
     break;
@@ -709,6 +726,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     x(X); y(Y);
     flags |= SWP_NOSIZE;
   }
+  if (!border()) flags |= SWP_NOACTIVATE;
   if (resize_from_program && shown()) {
     int dummy, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
@@ -820,7 +838,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
       while (w->parent()) w = w->window();
       parent = fl_xid(w);
       if (!w->visible()) showit = 0;
-    }
+    } else if (Fl::grab()) parent = fl_xid(Fl::grab());
   }
 
   Fl_X* x = new Fl_X;
@@ -851,7 +869,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // If we've captured the mouse, we dont want do activate any
   // other windows from the code, or we loose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
-	     fl_capture? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
+	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
+
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
 }
@@ -974,5 +993,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37 2001/04/27 15:43:38 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.3 2001/08/03 15:48:20 easysw Exp $".
 //
