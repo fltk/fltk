@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.0
 
 	- Fl_Text_Display::buffer() now calls resize() to show
 	  the buffer.
+	- Fl_Help_View didn't support HTML comments.
+	- Fl_Help_View didn't include the extra cellpadding when
+	  handling colspan attributes in cells.
 
 
 CHANGES IN FLTK 1.1.0rc6

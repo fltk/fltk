@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.38 2002/08/09 01:09:49 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.39 2002/08/15 19:38:53 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -459,6 +459,20 @@ Fl_Help_View::draw()
 	if (*ptr == '<')
 	{
 	  ptr ++;
+
+          if (strncmp(ptr, "!--", 3) == 0)
+	  {
+	    // Comment...
+	    ptr += 3;
+	    if ((ptr = strstr(ptr, "-->")) != NULL)
+	    {
+	      ptr += 3;
+	      continue;
+	    }
+	    else
+	      break;
+	  }
+
 	  while (*ptr && *ptr != '>' && !isspace(*ptr))
             if (s < (buf + sizeof(buf) - 1))
 	      *s++ = *ptr++;
@@ -930,6 +944,20 @@ Fl_Help_View::format()
       {
 	start = ptr;
 	ptr ++;
+
+        if (strncmp(ptr, "!--", 3) == 0)
+	{
+	  // Comment...
+	  ptr += 3;
+	  if ((ptr = strstr(ptr, "-->")) != NULL)
+	  {
+	    ptr += 3;
+	    continue;
+	  }
+	  else
+	    break;
+	}
+
 	while (*ptr && *ptr != '>' && !isspace(*ptr))
           if (s < (buf + sizeof(buf) - 1))
             *s++ = *ptr++;
@@ -1244,8 +1272,8 @@ Fl_Help_View::format()
 	  else
 	    colspan = 1;
 
-          for (i = 0, ww = 0; i < colspan; i ++)
-	    ww += columns[column + i];
+          for (i = 0, ww = -6; i < colspan; i ++)
+	    ww += columns[column + i] + 6;
 
           if (block->end == block->start && nblocks_ > 1)
 	  {
@@ -2648,5 +2676,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.38 2002/08/09 01:09:49 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.39 2002/08/15 19:38:53 easysw Exp $".
 //
