@@ -65,6 +65,7 @@ Fl_Preferences	fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
 int gridx = 5;
 int gridy = 5;
 int snap = 1;
+int show_guides = 1;
 
 // File history info...
 char	absolute_history[10][1024];
@@ -558,16 +559,11 @@ Fl_Menu_Item Main_Menu[] = {
 extern void fill_in_New_Menu();
 
 void make_main_window() {
-  int i;
 
-  fluid_prefs.get("snap", i, 1);
-  snap = i;
-
-  fluid_prefs.get("gridx", i, 5);
-  gridx = i;
-
-  fluid_prefs.get("gridy", i, 5);
-  gridy = i;
+  fluid_prefs.get("snap", snap, 1);
+  fluid_prefs.get("gridx", gridx, 5);
+  fluid_prefs.get("gridy", gridy, 5);
+  fluid_prefs.get("show_guides", show_guides, 0);
 
   load_history();
 

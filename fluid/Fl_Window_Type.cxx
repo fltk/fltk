@@ -38,9 +38,12 @@
 #include "alignment_panel.h"
 #include <stdio.h>
 
+#define DRAW_GUIDES 
+
 extern int gridx;
 extern int gridy;
 extern int snap;
+extern int show_guides;
 
 int include_H_from_C = 1;
 extern int i18n_type;
@@ -61,6 +64,18 @@ static void update_xywh() {
     widget_y_input->value(((Fl_Widget_Type *)current_widget)->o->y());
     widget_w_input->value(((Fl_Widget_Type *)current_widget)->o->w());
     widget_h_input->value(((Fl_Widget_Type *)current_widget)->o->h());
+  }
+}
+
+void guides_cb(Fl_Check_Button *i, long) {
+  show_guides = i->value();
+  fluid_prefs.set("show_guides", show_guides);
+
+  for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
+    if (p->is_window()) {
+      Fl_Window_Type *w = (Fl_Window_Type *)p;
+      ((Fl_Overlay_Window *)(w->o))->redraw_overlay();
+    }
   }
 }
 
@@ -187,6 +202,7 @@ void show_grid_cb(Fl_Widget *, void *) {
   sprintf(buf,"%d",gridx); horizontal_input->value(buf);
   sprintf(buf,"%d",gridy); vertical_input->value(buf);
   sprintf(buf,"%d",snap); snap_input->value(buf);
+  guides_toggle->value(show_guides);
   grid_window->hotspot(grid_window);
   grid_window->show();
 }
@@ -463,6 +479,81 @@ void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T
   if (T<Y) {int n = Y; Y = T; T = n;}
 }
 
+// draw a vertical arrow pointing toward y2
+static void draw_v_arrow(int x, int y1, int y2) {
+  int dy = (y1>y2) ? -1 : 1 ;
+  fl_yxline(x, y1, y2);
+  fl_xyline(x-4, y2, x+4);
+  fl_line(x-2, y2-dy*5, x, y2-dy);
+  fl_line(x+2, y2-dy*5, x, y2-dy);
+  char buf[16];
+  sprintf(buf, "%d", dy*(y2-y1));
+  fl_font(FL_HELVETICA, 9);
+  fl_draw(buf, x+3, y1+0.5*(y2-y1)+3);
+}
+
+static void draw_h_arrow(int x1, int y, int x2) {
+  int dx = (x1>x2) ? -1 : 1 ;
+  fl_xyline(x1, y, x2);
+  fl_yxline(x2, y-4, y+4);
+  fl_line(x2-dx*5, y-2, x2-dx, y);
+  fl_line(x2-dx*5, y+2, x2-dx, y);
+  char buf[16];
+  sprintf(buf, "%d", dx*(x2-x1));
+  fl_font(FL_HELVETICA, 9);
+  fl_draw(buf, x1+0.5*(x2-x1)-6, y+9);
+}
+
+static void draw_top_brace(const Fl_Widget *w) {
+  fl_yxline(w->x(), w->y()-2, w->y()+6);
+  fl_yxline(w->x()+w->w()-1, w->y()-2, w->y()+6);
+  fl_xyline(w->x()-2, w->y(), w->x()+w->w()+1);
+}
+
+static void draw_left_brace(const Fl_Widget *w) {
+  fl_xyline(w->x()-2, w->y(), w->x()+6);
+  fl_xyline(w->x()-2, w->y()+w->h()-1, w->x()+6);
+  fl_yxline(w->x(), w->y()-2, w->y()+w->h()+1);
+}
+
+static void draw_right_brace(const Fl_Widget *w) {
+  int xx = w->x() + w->w() - 1;
+  fl_xyline(xx-6, w->y(), xx+2);
+  fl_xyline(xx-6, w->y()+w->h()-1, xx+2);
+  fl_yxline(xx, w->y()-2, w->y()+w->h()+1);
+}
+
+static void draw_bottom_brace(const Fl_Widget *w) {
+  int yy = w->y() + w->h() - 1;
+  fl_yxline(w->x(), yy-6, yy+2);
+  fl_yxline(w->x()+w->w()-1, yy-6, yy+2);
+  fl_xyline(w->x()-2, yy, w->x()+w->w()+1);
+}
+
+static void draw_height(int x, int y, int b) {
+  b--;
+  fl_yxline(x, y, y+8);
+  fl_yxline(x, b-8, b);
+  fl_line(x-2, y+5, x, y+1, x+2, y+5);
+  fl_line(x-2, b-5, x, b-1, x+2, b-5);
+  char buf[16];
+  sprintf(buf, "%d", b-y+1);
+  fl_font(FL_HELVETICA, 9);
+  fl_draw(buf, x+3, b-3);
+}
+
+static void draw_width(int x, int y, int r) {
+  r--;
+  fl_xyline(x, y, x+8);
+  fl_xyline(r-8, y, r);
+  fl_line(x+5, y-2, x+1, y, x+5, y+2);
+  fl_line(r-5, y-2, r-1, y, r-5, y+2);
+  char buf[16];
+  sprintf(buf, "%d", r-x+1);
+  fl_font(FL_HELVETICA, 9);
+  fl_draw(buf, r-5-fl_width(buf), y-1);
+}
+
 void Fl_Window_Type::draw_overlay() {
   if (recalc) {
     bx = o->w(); by = o->h(); br = 0; bt = 0;
@@ -489,8 +580,10 @@ void Fl_Window_Type::draw_overlay() {
   if (!numselected) return;
   int mybx,myby,mybr,mybt;
   mybx = o->w(); myby = o->h(); mybr = 0; mybt = 0;
+  Fl_Type *selection = 0L; // used to store the one selcted widget (if n==1)
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_widget() && !q->is_menu_item()) {
+      selection = q;
       Fl_Widget_Type* myo = (Fl_Widget_Type*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
@@ -506,6 +599,50 @@ void Fl_Window_Type::draw_overlay() {
   fl_rectf(mybr-5,myby,5,5);
   fl_rectf(mybr-5,mybt-5,5,5);
   fl_rectf(mybx,mybt-5,5,5);
+
+  if (show_guides) {
+    // draw overlays for UI Guideline distances
+    // - check for distance to the window edge
+    //    * Apple suggest 14 pixels from the top
+    if (myby==14) draw_v_arrow(mybx+5, myby, 0);
+    //    * Apple suggest 20 pixels from the top
+    if (o->h()-mybt-1==20) draw_v_arrow(mybx+5, mybt, o->h()-1);
+    //    * Apple suggest 20 pixels from the left
+    if (mybx==20) draw_h_arrow(mybx, myby+5, 0);
+    //    * Apple suggest 20 pixels from the right
+    if (o->w()-mybr-1==20) draw_h_arrow(mybr, myby+5, o->w()-1);
+    // - the following measuremetnt only apply to single selections
+    if (numselected==1 && selection) {
+      // check for Apple prefered button sizes
+      if (selection->is_button()) {
+        int h = mybt-myby;
+        if (h==20 || h==17 || h==15) draw_height(mybx+10, myby, mybt);
+        int w = mybr-mybx;
+        if (w==68) draw_width(mybx, myby+10, mybr);
+      }
+      // - check distances between individual widgets
+      for (Fl_Type *q=next; q && q->level>level; q = q->next)
+        if (q != selection) {
+          Fl_Widget_Type *qw = (Fl_Widget_Type*)q;
+          // - check horizontal and vertical alignment with other widgets
+          if (myby == qw->o->y()) draw_top_brace(qw->o);
+          if (mybx == qw->o->x()) draw_left_brace(qw->o);
+          if (mybr == qw->o->x()+qw->o->w()) draw_right_brace(qw->o);
+          if (mybt == qw->o->y()+qw->o->h()) draw_bottom_brace(qw->o);
+          if (selection->is_button()) {
+            // - check distances between buttons
+            if (q->is_button() && qw->o->y()==myby) {
+              // * horizontal button to button is 12 or 24 pixels
+              int dx = mybx - (qw->o->x()+qw->o->w());
+              if (dx==12 || dx==24) draw_h_arrow(mybx-1, myby+10, mybx-dx-1);
+              dx = qw->o->x() - mybr;
+              if (dx==12 || dx==24) draw_h_arrow(mybr, myby+10, mybr+dx);
+            }
+          }
+        }
+    }
+    // \todo add more cases, maybe an interpreter?
+  }
 }
 
 // Calculate new bounding box of selected widgets:

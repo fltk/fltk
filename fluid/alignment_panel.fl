@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0103 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Text_Buffer.H>} {public
@@ -12,7 +12,7 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {469 112 365 210}
+    xywh {217 589 365 210} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -103,14 +103,14 @@ decl {extern void i18n_cb(Fl_Choice *,void *);} {public
 decl {extern Fl_Preferences fluid_prefs;} {public
 } 
 
-decl {Fl_Text_Buffer *shell_run_buffer;} {selected public
+decl {Fl_Text_Buffer *shell_run_buffer;} {public
 } 
 
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {340 243 255 210} visible
+    xywh {321 150 255 210} type Double visible
   } {
     Fl_Button {} {
       label Close
@@ -167,7 +167,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {630 219 450 145} visible
+    xywh {588 153 450 145} type Double visible
   } {
     Fl_Tabs {} {open
       xywh {10 10 430 90}
@@ -222,7 +222,7 @@ Function {make_shell_window()} {open
   }
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {693 386 555 435} resizable visible
+    xywh {592 332 555 435} type Double resizable visible
   } {
     Fl_Return_Button shell_run_button {
       label Close
@@ -241,14 +241,14 @@ Function {make_grid_window()} {open
 } {
   Fl_Window grid_window {
     label Grid open
-    xywh {1120 236 155 175} visible
+    xywh {51 589 155 208} type Double visible
   } {
     Fl_Tabs {} {
-      xywh {10 10 135 120} align 5
+      xywh {10 10 135 150} align 5
     } {
       Fl_Group {} {
         label Grid
-        xywh {10 30 135 100} align 5
+        xywh {10 30 135 130} align 5
       } {
         Fl_Input horizontal_input {
           label {Horizontal:}
@@ -271,12 +271,18 @@ Function {make_grid_window()} {open
           tooltip {Snap to grid within this many pixels.} xywh {95 100 40 20} type Int box THIN_DOWN_BOX
           code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
         }
+        Fl_Check_Button guides_toggle {
+          label {Show Guides}
+          user_data 4 user_data_type long
+          callback guides_cb selected
+          tooltip {Show distance and alignment guides in overlay} xywh {30 125 105 25} down_box DOWN_BOX
+        }
       }
     }
     Fl_Button {} {
       label Close
       callback {grid_window->hide();}
-      tooltip {Close this dialog.} xywh {85 140 60 25}
+      tooltip {Close this dialog.} xywh {85 170 60 25}
     }
   }
 } 
