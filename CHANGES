@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b12
 
+	- Fl_Button didn't check to see if the widget could
+	  accept focus before taking input focus.
 	- Fl_Help_View didn't preserve target names (e.g.
 	  "filename.html#target") when following links.
 	- Drag-and-drop support for MacOS.
