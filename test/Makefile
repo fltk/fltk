@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.34 2002/04/29 21:04:12 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.35 2002/05/01 15:55:06 matthiaswm Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -305,6 +305,7 @@ pixmap_browser$(EXEEXT): pixmap_browser.o
 	$(POSTBUILD) $@ ../FL/mac.r
 
 preferences$(EXEEXT):	preferences.o
+preferences.cxx:	preferences.fl
 
 radio$(EXEEXT): radio.o
 radio.cxx:	radio.fl
@@ -380,5 +381,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.34 2002/04/29 21:04:12 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.35 2002/05/01 15:55:06 matthiaswm Exp $".
 #

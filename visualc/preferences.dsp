@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\preferences.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\preferences.fl
+
+!IF  "$(CFG)" == "preferences - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\preferences.fl
+
+"..\test\preferences.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c preferences.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "preferences - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\preferences.fl
+
+"..\test\preferences.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c preferences.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project
