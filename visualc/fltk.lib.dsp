@@ -179,6 +179,10 @@ SOURCE=..\src\Fl_Chart.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Check_Browser.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Check_Button.cxx
 # End Source File
 # Begin Source File

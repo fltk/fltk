@@ -379,6 +379,19 @@ DEP_CPP_FL_CH=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Check_Browser.cxx
+DEP_CPP_FL_CHE=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_button.h"\
+	"..\fl\fl_check_browser.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_light_button.h"\
+	"..\fl\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Check_Button.cxx
 DEP_CPP_FL_CHE=\
 	"..\fl\enumerations.h"\

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.5.2.5.2.1 2001/08/03 02:28:32 easysw Exp $"
+ * "$Id: config.h,v 1.5.2.5.2.2 2001/08/19 00:14:11 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -22,6 +22,8 @@
  *
  * Please report all bugs and problems to "fltk-bugs@fltk.org".
  */
+
+#define FLTK_DOCDIR	"C:/FLTK/DOC"
 
 /*
  * BORDER_WIDTH:
@@ -167,5 +169,5 @@
 #undef HAVE_PNG_GET_VALID
 
 /*
- * End of "$Id: config.h,v 1.5.2.5.2.1 2001/08/03 02:28:32 easysw Exp $".
+ * End of "$Id: config.h,v 1.5.2.5.2.2 2001/08/19 00:14:11 easysw Exp $".
  */
