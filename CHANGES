@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.4
 
+	- VC++ 7.1 didn't like how the copy operators were
+	  disabled for the Fl_Widget class; now include inline
+	  code which will never be used but makes VC++ happy
+	  (STR #156)
 	- Fixed an IRIX compile problem caused by a missing
 	  #include (STR #157)
 	- FLUID didn't write color/selection_color() calls using
