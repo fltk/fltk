@@ -60,4 +60,4 @@ echo "Removing distribution directory..."
 
 rm -rf fltk-$version
 
-echo "Done\!"
+echo "Done!"
