@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.9 2001/12/17 01:02:16 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.10 2001/12/17 13:48:59 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -501,6 +501,8 @@ Fl_Menu_Item boxmenu[] = {
 {"OVAL_BOX",0,0,(void *)FL_OVAL_BOX},
 {"OSHADOW_BOX",0,0,(void *)FL_OSHADOW_BOX},
 {"OFLAT_BOX",0,0,(void *)FL_OFLAT_BOX},
+{"PLASTIC_UP_BOX",0,0,(void *)FL_PLASTIC_UP_BOX},
+{"PLASTIC_DOWN_BOX",0,0,(void *)FL_PLASTIC_DOWN_BOX},
 {0},
 {"frames",0,0,0,FL_SUBMENU},
 {"UP_FRAME",0,0,(void *)FL_UP_FRAME},
@@ -513,6 +515,8 @@ Fl_Menu_Item boxmenu[] = {
 {"SHADOW_FRAME",0,0,(void *)FL_SHADOW_FRAME},
 {"ROUNDED_FRAME",0,0,(void *)FL_ROUNDED_FRAME},
 {"OVAL_FRAME",0,0,(void *)FL_OVAL_FRAME},
+{"PLASTIC_UP_FRAME",0,0,(void *)FL_PLASTIC_UP_FRAME},
+{"PLASTIC_DOWN_FRAME",0,0,(void *)FL_PLASTIC_DOWN_FRAME},
 {0},
 {0}};
 
@@ -1970,5 +1974,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.9 2001/12/17 01:02:16 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.10 2001/12/17 13:48:59 easysw Exp $".
 //

@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- FLUID didn't list the plastic box and frame types.
 	- Now hide the tooltip window whenever a window is
 	  hidden.  Otherwise a tooltip window could keep an
 	  application running.

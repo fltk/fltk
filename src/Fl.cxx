@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.12 2001/12/17 01:16:48 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.13 2001/12/17 13:48:59 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -650,9 +650,6 @@ void Fl_Window::hide() {
 
   if (!shown()) return;
 
-  // Hide any visible tooltips...
-  Fl_Tooltip::enter(0);
-
   // remove from the list of windows:
   Fl_X* x = i;
   Fl_X** pp = &Fl_X::first;
@@ -711,6 +708,9 @@ void Fl_Window::hide() {
     Fl::first_window()->show();
 #endif
   delete x;
+
+  // Hide any visible tooltips...
+  Fl_Tooltip::enter(0);
 }
 
 Fl_Window::~Fl_Window() {
@@ -844,5 +844,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.12 2001/12/17 01:16:48 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.13 2001/12/17 13:48:59 easysw Exp $".
 //
