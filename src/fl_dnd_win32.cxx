@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.12 2002/06/29 00:10:04 matthiaswm Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.13 2002/08/20 15:29:25 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -172,7 +172,7 @@ public:
       //long len = GlobalSize( medium.hGlobal );
       Fl::e_length = strlen( (char*)stuff ); // min(strlen, len)
       Fl::e_text = (char*)stuff;
-      target->handle(FL_PASTE); // e_text will be invalid after this call
+      Fl::belowmouse()->handle(FL_PASTE); // e_text will be invalid after this call
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
       SetForegroundWindow( hwnd );
@@ -197,7 +197,7 @@ public:
 	if ( i<nf-1 ) *dst++ = '\n';
       }
       *dst = 0;
-      target->handle(FL_PASTE);
+      Fl::belowmouse()->handle(FL_PASTE);
       free( Fl::e_text );
       ReleaseStgMedium( &medium );
       SetForegroundWindow( hwnd );
@@ -349,5 +349,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.12 2002/06/29 00:10:04 matthiaswm Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.13 2002/08/20 15:29:25 easysw Exp $".
 //
