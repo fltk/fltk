@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.5.2.6 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: fl_color.cxx,v 1.12.2.5.2.7 2002/05/16 02:16:17 easysw Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -136,6 +136,7 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
 }
 
 void fl_color(uchar r,uchar g,uchar b) {
+  fl_color_ = fl_rgb_color(r, g, b);
   XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));
 }
 
@@ -165,6 +166,10 @@ static inline uchar realcolor(uchar color, uchar mask) {
 }
 
 ulong fl_xpixel(Fl_Color i) {
+  if (i & 0xffffff00) {
+    return fl_xpixel((i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255);
+  }
+
   Fl_XColor &xmap = fl_xmap[fl_overlay][i];
   if (xmap.mapped) return xmap.pixel;
 
@@ -372,5 +377,5 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.5.2.6 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: fl_color.cxx,v 1.12.2.5.2.7 2002/05/16 02:16:17 easysw Exp $".
 //

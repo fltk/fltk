@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.14.2.3.2.3 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_color_win32.cxx,v 1.14.2.3.2.4 2002/05/16 02:16:17 easysw Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -109,6 +109,7 @@ void fl_color(Fl_Color i) {
 void fl_color(uchar r, uchar g, uchar b) {
   static Fl_XMap xmap;
   COLORREF c = RGB(r,g,b);
+  fl_color_ = fl_rgb_color(r, g, b);
   if (!xmap.pen || c != xmap.rgb) {
     clear_xmap(xmap);
     set_xmap(xmap, c);
@@ -221,5 +222,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.14.2.3.2.3 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.14.2.3.2.4 2002/05/16 02:16:17 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_mac.cxx,v 1.1.2.2 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_color_mac.cxx,v 1.1.2.3 2002/05/16 02:16:17 easysw Exp $"
 //
 // MacOS color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -72,6 +72,7 @@ void fl_color(Fl_Color i) {
 
 void fl_color(uchar r, uchar g, uchar b) {
   RGBColor rgb; 
+  fl_color_ = fl_rgb_color(r, g, b);
   rgb.red   = (r<<8)|r;
   rgb.green = (g<<8)|g;
   rgb.blue  = (b<<8)|b;
@@ -85,5 +86,5 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 }
 
 //
-// End of "$Id: fl_color_mac.cxx,v 1.1.2.2 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_color_mac.cxx,v 1.1.2.3 2002/05/16 02:16:17 easysw Exp $".
 //
