@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.9 2002/08/09 22:57:00 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.10 2002/10/30 21:06:11 matthiaswm Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -46,10 +46,112 @@
 
 #include <FL/Fl_Pixmap.H>
 #include "lock.xpm"
-#include "unlock.xpm"
+//#include "unlock.xpm"
 
 static Fl_Pixmap	lock_pixmap(lock_xpm);
-static Fl_Pixmap	unlock_pixmap(unlock_xpm);
+//static Fl_Pixmap	unlock_pixmap(unlock_xpm);
+
+#include "flWindow.xpm"
+#include "flButton.xpm"
+#include "flCheckButton.xpm"
+#include "flRoundButton.xpm"
+#include "flBox.xpm"
+#include "flGroup.xpm"
+#include "flFunction.xpm"
+#include "flCode.xpm"
+#include "flCodeBlock.xpm"
+#include "flDeclaration.xpm"
+#include "flDeclarationBlock.xpm"
+#include "flClass.xpm"
+#include "flTabs.xpm"
+#include "flInput.xpm"
+#include "flChoice.xpm"
+#include "flMenuitem.xpm"
+#include "flMenubar.xpm"
+#include "flSubmenu.xpm"
+#include "flScroll.xpm"
+#include "flTile.xpm"
+#include "flWizard.xpm"
+#include "flPack.xpm"
+#include "flReturnButton.xpm"
+#include "flLightButton.xpm"
+#include "flRepeatButton.xpm"
+#include "flMenuButton.xpm"
+#include "flOutput.xpm"
+#include "flTextDisplay.xpm"
+#include "flTextEdit.xpm"
+#include "flFileInput.xpm"
+#include "flBrowser.xpm"
+#include "flCheckBrowser.xpm"
+#include "flFileBrowser.xpm"
+#include "flClock.xpm"
+#include "flHelp.xpm"
+#include "flProgress.xpm"
+#include "flSlider.xpm"
+#include "flScrollBar.xpm"
+#include "flValueSlider.xpm"
+#include "flAdjuster.xpm"
+#include "flCounter.xpm"
+#include "flDial.xpm"
+#include "flRoller.xpm"
+#include "flValueInput.xpm"
+#include "flValueOutput.xpm"
+
+static Fl_Pixmap	window_pixmap(flWindow_xpm);
+static Fl_Pixmap	button_pixmap(flButton_xpm);
+static Fl_Pixmap	checkbutton_pixmap(flCheckButton_xpm);
+static Fl_Pixmap	roundbutton_pixmap(flRoundButton_xpm);
+static Fl_Pixmap	box_pixmap(flBox_xpm);
+static Fl_Pixmap	group_pixmap(flGroup_xpm);
+static Fl_Pixmap	function_pixmap(flFunction_xpm);
+static Fl_Pixmap	code_pixmap(flCode_xpm);
+static Fl_Pixmap	codeblock_pixmap(flCodeBlock_xpm);
+static Fl_Pixmap	declaration_pixmap(flDeclaration_xpm);
+static Fl_Pixmap	declarationblock_pixmap(flDeclarationBlock_xpm);
+static Fl_Pixmap	class_pixmap(flClass_xpm);
+static Fl_Pixmap	tabs_pixmap(flTabs_xpm);
+static Fl_Pixmap	input_pixmap(flInput_xpm);
+static Fl_Pixmap	choice_pixmap(flChoice_xpm);
+static Fl_Pixmap	menuitem_pixmap(flMenuitem_xpm);
+static Fl_Pixmap	menubar_pixmap(flMenubar_xpm);
+static Fl_Pixmap	submenu_pixmap(flSubmenu_xpm);
+static Fl_Pixmap	scroll_pixmap(flScroll_xpm);
+static Fl_Pixmap	tile_pixmap(flTile_xpm);
+static Fl_Pixmap	wizard_pixmap(flWizard_xpm);
+static Fl_Pixmap	pack_pixmap(flPack_xpm);
+static Fl_Pixmap	returnbutton_pixmap(flReturnButton_xpm);
+static Fl_Pixmap	lightbutton_pixmap(flLightButton_xpm);
+static Fl_Pixmap	repeatbutton_pixmap(flRepeatButton_xpm);
+static Fl_Pixmap	menubutton_pixmap(flMenuButton_xpm);
+static Fl_Pixmap	output_pixmap(flOutput_xpm);
+static Fl_Pixmap	textdisplay_pixmap(flTextDisplay_xpm);
+static Fl_Pixmap	textedit_pixmap(flTextEdit_xpm);
+static Fl_Pixmap	fileinput_pixmap(flFileInput_xpm);
+static Fl_Pixmap	browser_pixmap(flBrowser_xpm);
+static Fl_Pixmap	checkbrowser_pixmap(flCheckBrowser_xpm);
+static Fl_Pixmap	filebrowser_pixmap(flFileBrowser_xpm);
+static Fl_Pixmap	clock_pixmap(flClock_xpm);
+static Fl_Pixmap	help_pixmap(flHelp_xpm);
+static Fl_Pixmap	progress_pixmap(flProgress_xpm);
+static Fl_Pixmap	slider_pixmap(flSlider_xpm);
+static Fl_Pixmap	scrollbar_pixmap(flScrollBar_xpm);
+static Fl_Pixmap	valueslider_pixmap(flValueSlider_xpm);
+static Fl_Pixmap	adjuster_pixmap(flAdjuster_xpm);
+static Fl_Pixmap	counter_pixmap(flCounter_xpm);
+static Fl_Pixmap	dial_pixmap(flDial_xpm);
+static Fl_Pixmap	roller_pixmap(flRoller_xpm);
+static Fl_Pixmap	valueinput_pixmap(flValueInput_xpm);
+static Fl_Pixmap	valueoutput_pixmap(flValueOutput_xpm);
+
+Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, &roundbutton_pixmap, /* 0..4 */
+ &box_pixmap, &group_pixmap, &function_pixmap, &code_pixmap, &codeblock_pixmap, &declaration_pixmap, /* 5..10 */ 
+ &declarationblock_pixmap, &class_pixmap, &tabs_pixmap, &input_pixmap, &choice_pixmap,               /* 11..15 */
+ &menuitem_pixmap, &menubar_pixmap, &submenu_pixmap, &scroll_pixmap, &tile_pixmap, &wizard_pixmap,   /* 16..21 */
+ &pack_pixmap, &returnbutton_pixmap, &lightbutton_pixmap, &repeatbutton_pixmap, &menubutton_pixmap,  /* 22..26 */
+ &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
+ &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	     /* 33..36 */
+ &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
+ &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, /* 42..45*/ };
 
 ////////////////////////////////////////////////////////////////
 
@@ -135,11 +237,13 @@ extern const char* subclassname(Fl_Type*);
 
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
-  X += 3 + 16 + l->level * 10;
+  X += 3 + 18 + l->level * 12;
   if (l->new_selected) fl_color(fl_contrast(FL_BLACK,FL_SELECTION_COLOR));
   else fl_color(FL_BLACK);
-  if (l->is_public() == 0) lock_pixmap.draw(X - 16, Y);
-  else if (l->is_public() > 0) unlock_pixmap.draw(X - 16, Y);
+  Fl_Pixmap *pm = pixmap[l->pixmapID()];
+  if (pm) pm->draw(X-18, Y);
+  if (l->is_public() == 0) lock_pixmap.draw(X - 17, Y);
+  else if (l->is_public() > 0) ; //unlock_pixmap.draw(X - 17, Y);
   if (l->is_parent()) {
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
@@ -680,5 +784,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.9 2002/08/09 22:57:00 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.10 2002/10/30 21:06:11 matthiaswm Exp $".
 //

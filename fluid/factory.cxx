@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.8 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.9 2002/10/30 21:06:18 matthiaswm Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,10 +34,13 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Pixmap.H>
 #include <stdio.h>
 #include "../src/flstring.h"
 
 #include "Fl_Widget_Type.h"
+
+extern Fl_Pixmap *pixmap[];
 
 #if !HAVE_STRCASECMP
 //
@@ -74,6 +77,7 @@ public:
   Fl_Widget *widget(int x,int y,int w, int h) {
     return new Fl_Box(x,y,w,h,"label");}
   Fl_Widget_Type *_make() {return new Fl_Box_Type();}
+  int pixmapID() { return 5; }
 };
 static Fl_Box_Type Fl_Box_type;
 
@@ -93,6 +97,7 @@ public:
     return new Fl_Button(x,y,w,h,"button");}
   Fl_Widget_Type *_make() {return new Fl_Button_Type();}
   int is_button() const {return 1;}
+  int pixmapID() { return 2; }
 };
 static Fl_Button_Type Fl_Button_type;
 
@@ -105,6 +110,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Return_Button(x,y,w,h,0);}
   Fl_Widget_Type *_make() {return new Fl_Return_Button_Type();}
+  int pixmapID() { return 23; }
 };
 static Fl_Return_Button_Type Fl_Return_Button_type;
 
@@ -117,6 +123,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Repeat_Button(x,y,w,h,0);}
   Fl_Widget_Type *_make() {return new Fl_Repeat_Button_Type();}
+  int pixmapID() { return 25; }
 };
 static Fl_Repeat_Button_Type Fl_Repeat_Button_type;
 
@@ -129,6 +136,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Light_Button(x,y,w,h,"button");}
   Fl_Widget_Type *_make() {return new Fl_Light_Button_Type();}
+  int pixmapID() { return 24; }
 };
 static Fl_Light_Button_Type Fl_Light_Button_type;
 
@@ -141,6 +149,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Check_Button(x,y,w,h,"button");}
   Fl_Widget_Type *_make() {return new Fl_Check_Button_Type();}
+  int pixmapID() { return 3; }
 };
 static Fl_Check_Button_Type Fl_Check_Button_type;
 
@@ -153,6 +162,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Round_Button(x,y,w,h,"button");}
   Fl_Widget_Type *_make() {return new Fl_Round_Button_Type();}
+  int pixmapID() { return 4; }
 };
 static Fl_Round_Button_Type Fl_Round_Button_type;
 
@@ -189,6 +199,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() {return new Fl_Browser_Type();}
+  int pixmapID() { return 31; }
 };
 static Fl_Browser_Type Fl_Browser_type;
 
@@ -223,6 +234,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() {return new Fl_Check_Browser_Type();}
+  int pixmapID() { return 32; }
 };
 static Fl_Check_Browser_Type Fl_Check_Browser_type;
 
@@ -253,6 +265,7 @@ public:
     return b;
   }
   Fl_Widget_Type *_make() {return new Fl_File_Browser_Type();}
+  int pixmapID() { return 33; }
 };
 static Fl_File_Browser_Type Fl_File_Browser_type;
 
@@ -279,6 +292,7 @@ class Fl_Counter_Type : public Fl_Widget_Type {
   Fl_Menu_Item *subtypes() {return counter_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int is_valuator() const {return 1;}
+  int pixmapID() { return 41; }
 public:
   virtual const char *type_name() {return "Fl_Counter";}
   Fl_Widget *widget(int x,int y,int w,int h) {
@@ -320,6 +334,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Input_Type();}
+  int pixmapID() { return 14; }
 };
 static Fl_Input_Type Fl_Input_type;
 
@@ -349,6 +364,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_File_Input_Type();}
+  int pixmapID() { return 30; }
 };
 static Fl_File_Input_Type Fl_File_Input_type;
 
@@ -376,6 +392,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Text_Display_Type();}
+  int pixmapID() { return 28; }
 };
 static Fl_Text_Display_Type Fl_Text_Display_type;
 
@@ -403,6 +420,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Text_Editor_Type();}
+  int pixmapID() { return 29; }
 };
 static Fl_Text_Editor_Type Fl_Text_Editor_type;
 
@@ -427,6 +445,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Clock(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Clock_Type();}
+  int pixmapID() { return 34; }
 };
 static Fl_Clock_Type Fl_Clock_type;
 
@@ -442,6 +461,7 @@ public:
                "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
     return myo;}
   Fl_Widget_Type *_make() {return new Fl_Help_View_Type();}
+  int pixmapID() { return 35; }
 };
 static Fl_Help_View_Type Fl_Help_View_type;
 
@@ -456,6 +476,7 @@ public:
     myo->value(50);
     return myo;}
   Fl_Widget_Type *_make() {return new Fl_Progress_Type();}
+  int pixmapID() { return 36; }
 };
 static Fl_Progress_Type Fl_Progress_type;
 
@@ -469,6 +490,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Adjuster(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Adjuster_Type();}
+  int pixmapID() { return 40; }
 };
 static Fl_Adjuster_Type Fl_Adjuster_type;
 
@@ -488,6 +510,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Dial(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Dial_Type();}
+  int pixmapID() { return 42; }
 };
 static Fl_Dial_Type Fl_Dial_type;
 
@@ -506,6 +529,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Roller(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Roller_Type();}
+  int pixmapID() { return 43; }
 };
 static Fl_Roller_Type Fl_Roller_type;
 
@@ -528,6 +552,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Slider(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Slider_Type();}
+  int pixmapID() { return 37; }
 };
 static Fl_Slider_Type Fl_Slider_type;
 
@@ -542,6 +567,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Scrollbar(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Scrollbar_Type();}
+  int pixmapID() { return 38; }
 };
 static Fl_Scrollbar_Type Fl_Scrollbar_type;
 
@@ -562,6 +588,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Output_Type();}
+  int pixmapID() { return 27; }
 };
 static Fl_Output_Type Fl_Output_type;
 
@@ -578,6 +605,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Value_Input_Type();}
+  int pixmapID() { return 44; }
 };
 static Fl_Value_Input_Type Fl_Value_Input_type;
 
@@ -606,6 +634,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Value_Output_Type();}
+  int pixmapID() { return 45; }
 };
 static Fl_Value_Output_Type Fl_Value_Output_type;
 
@@ -631,6 +660,7 @@ public:
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Value_Slider(x,y,w,h);}
   Fl_Widget_Type *_make() {return new Fl_Value_Slider_Type();}
+  int pixmapID() { return 39; }
 };
 static Fl_Value_Slider_Type Fl_Value_Slider_type;
 
@@ -739,13 +769,40 @@ Fl_Menu_Item New_Menu[] = {
 {0},
 {0}};
 
+#include <FL/Fl_Multi_Label.H>
+
+// modify a menuitem to display an icon in front of the label
+static void make_iconlabel( Fl_Menu_Item *mi, Fl_Image *ic, const char *txt )
+{
+  if (ic) {
+    char *t1 = new char (strlen(txt)+2);
+    strcpy( t1, " " );
+    strcat( t1, txt );
+    mi->image( ic );
+    Fl_Multi_Label *ml = new Fl_Multi_Label;
+    ml->labela = (char*)ic;
+    ml->labelb = t1;
+    ml->typea = _FL_IMAGE_LABEL;
+    ml->typeb = FL_NORMAL_LABEL;
+    ml->label( mi );
+  }
+  else
+    mi->label(txt);
+}
+
 void fill_in_New_Menu() {
   for (unsigned i = 0; i < sizeof(New_Menu)/sizeof(*New_Menu); i++) {
     Fl_Menu_Item *m = New_Menu+i;
-    if (m->user_data() && !m->text) {
-      const char *n = ((Fl_Type*)(m->user_data()))->type_name();
-      if (!strncmp(n,"Fl_",3)) n += 3;
-      m->text = n;
+    if (m->user_data()) {
+      if (m->text) {
+	make_iconlabel( New_Menu+i, pixmap[ ((Fl_Type*)(New_Menu[i].user_data_))->pixmapID() ], New_Menu[i].label() );
+      }
+      else {
+	Fl_Type *t = (Fl_Type*)m->user_data();
+	const char *n = t->type_name();
+	if (!strncmp(n,"Fl_",3)) n += 3;
+	make_iconlabel( m, pixmap[t->pixmapID()], n );
+      }
     }
   }
 }
@@ -905,5 +962,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.8 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.9 2002/10/30 21:06:18 matthiaswm Exp $".
 //

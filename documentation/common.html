@@ -451,7 +451,7 @@ structure containing the label information, the bounding box for
 the label, and the label alignment:</P>
 
 <UL><PRE>
-void xyz_draw(Fl_Label *label, int x, int y, int w, int h, Fl_Align align) {
+void xyz_draw(const Fl_Label *label, int x, int y, int w, int h, Fl_Align align) {
 ...
 }
 </PRE></UL>
@@ -465,7 +465,7 @@ is not called if the label value is <TT>NULL</TT>.</P>
 height:</P>
 
 <UL><PRE>
-void xyz_measure(Fl_Label *label, int &amp;w, int &amp;h) {
+void xyz_measure(const Fl_Label *label, int &amp;w, int &amp;h) {
 ...
 }
 </PRE></UL>

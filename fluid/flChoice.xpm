@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flChoice_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c #606060",
+". c #000000",
+"c c none",
+"d c #b0b0b0",
+"e c #ffffff",
+"f c #d0d0d0",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ffffffffffffffff",
+"feeeeeafddddddda",
+"feeeeeafddddddda",
+"feeeeeaf.......a",
+"feeeeeafd.....da",
+"feeeeeafdd...dda",
+"feeeeeafddd.ddda",
+"feeeeeafddddddda",
+"feeeeeafddddddda",
+"aaaaaaaaaaaaaaaa",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc"
+};

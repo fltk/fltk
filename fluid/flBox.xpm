@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flBox_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c #606060",
+"b c #2020ff",
+"c c none",
+"d c #c0c0c0",
+"e c #909090",
+"f c #000000",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"dddddddddddddddc",
+"dddddddddddddddc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"deeeeeeeeeeeeedc",
+"dddddddddddddddc",
+"dddddddddddddddc",
+"cccccccccccccccc",
+"cccccccccccccccc"
+};

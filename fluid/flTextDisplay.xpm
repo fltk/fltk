@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flTextDisplay_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"f c #606060",
+". c #000000",
+"c c none",
+"d c #d0d0d0",
+"e c #8080ff",
+"a c #d0d0d0",
+/* pixels */
+"cccccccccccccccc",
+"ffffffffffffffff",
+"fdddddddddddddda",
+"fdd...ddddddddda",
+"fd.ddd.dddddddda",
+"fd.ddd.dddddddda",
+"fd.....dddddddda",
+"fd.ddd.dddddddda",
+"fd.ddd.dddddddda",
+"fdddddddddddddda",
+"fdddddddddddddda",
+"fdddddddddddddda",
+"fdddddddddddddda",
+"fdddddddddddddda",
+"aaaaaaaaaaaaaaaa",
+"cccccccccccccccc"
+};
