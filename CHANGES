@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- fl_file_chooser() didn't highlight the requested file
+	  the second time the file chooser dialog was shown.
 	- Fixed rendering of Fl_Light_Button with the plastic
 	  scheme.
 	- Fixed a bug in the MacOS font enumeration code.
