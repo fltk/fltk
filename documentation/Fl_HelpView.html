@@ -1,0 +1,130 @@
+<HTML>
+<HEAD>
+	<TITLE>HelpView - ESP Widget Set for FLTK</TITLE>
+	<LINK REL="STYLESHEET" TYPE="text/css" HREF="fltk.css">
+</HEAD>
+
+<BODY BGCOLOR="#ccccff">
+
+<!-- NEW PAGE -->
+<H2>class HelpView</H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+Fl_Group
+   |
+   +----<B>HelpView</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include "HelpView.h"
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>HelpView</CODE> widget displays HTML text. Most HTML 2.0
+elements are supported, as well as a primitive implementation of tables.
+GIF, JPEG, and PNG images are displayed inline.
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#HelpView.HelpView">HelpView</A>
+	<LI><A HREF="#HelpView.~HelpView">~HelpView</A>
+	<LI><A HREF="#HelpView.directory">directory</A>
+	<LI><A HREF="#HelpView.filename">filename</A>
+	<LI><A HREF="#HelpView.link">link</A>
+	<LI><A HREF="#HelpView.load">load</A>
+	<LI><A HREF="#HelpView.size">size</A>
+	<LI><A HREF="#HelpView.textcolor">textcolor</A>
+	<LI><A HREF="#HelpView.textfont">textfont</A>
+	<LI><A HREF="#HelpView.textsize">textsize</A>
+	<LI><A HREF="#HelpView.title">title</A>
+	<LI><A HREF="#HelpView.topline">topline</A>
+	<LI><A HREF="#HelpView.value">value</A>
+
+</UL>
+
+<H4><A NAME="HelpView.HelpView">HelpView(int xx, int yy, int ww, int hh, const char *l = 0)</A></H4>
+
+<P>The constructor creates the <CODE>HelpView</CODE> widget at the specified
+position and size.
+
+<H4><A NAME="HelpView.~HelpView">~HelpView()</A></H4>
+
+<P>The destructor destroys the widget and frees all memory that has been
+allocated for the current file.
+
+<H4><A NAME="HelpView.directory">const char *directory() const</A></H4>
+
+<P>This method returns the current directory (base) path for the file
+in the buffer.
+
+<H4><A NAME="HelpView.filename">const char *filename() const</A></H4>
+
+<P>This method returns the current filename for the text in the buffer.
+
+<H4><A NAME="HelpView.link">void link(HelpFunc *fn)</A></H4>
+
+<P>This method assigns a callback function to use when a link is
+followed or a file is loaded (via <CODE>HelpView::load()</CODE>) that
+requires a different file or path. The callback function receives the
+full pathname for the file in question and must return a pathname that
+can be opened as a local file. This is used by the
+<A HREF="HelpApp.html"><CODE>HelpApp</CODE></A> widget to support WWW
+addresses.
+
+<H4><A NAME="HelpView.load">int load(const char *f)</A></H4>
+
+<P>This method loads the specified file or URL.
+
+<H4><A NAME="HelpView.size">int size() const</A></H4>
+
+<P>This method returns the length of the buffer text in pixels.
+
+<H4><A NAME="HelpView.textcolor">void textcolor(Fl_Color c)<BR>
+Fl_Color textcolor() const</A></H4>
+
+<P>The first form sets the default text color. The second returns
+the current default text color.
+
+<H4><A NAME="HelpView.textfont">void textfont(uchar f)<BR>
+uchar textfont() const</A></H4>
+
+<P>The first form sets the default text font. The second returns
+the current default text font.
+
+<H4><A NAME="HelpView.textsize">void textsize(uchar s)<BR>
+uchar textsize() const</A></H4>
+
+<P>The first form sets the default text size. The second returns
+the current default text size.
+
+<H4><A NAME="HelpView.title">const char *title()</A></H4>
+
+<P>This method returns the current document title, or NULL if there
+is no title.
+
+<H4><A NAME="HelpView.topline">void topline(const char *n)<BR>
+void topline(int)<BR>
+int topline() const</A></H4>
+
+<P>The first two forms scroll the text to the indicated position, either
+with a named destination or by pixel line.
+
+<P>The second form returns the current top line in pixels.
+
+<H4><A NAME="HelpView.value">void value(const char *v)<BR>
+const char *value() const</A></H4>
+
+<P>The first form sets the current buffer to the string provided and
+reformats the text. The second form returns the current buffer contents.
+
+</BODY>
+</HTML>
