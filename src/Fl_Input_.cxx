@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.6 2000/06/06 18:42:08 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.7 2000/06/08 07:38:29 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -198,10 +198,13 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       if (Fl::focus()==this && !was_up_down) up_down_pos = curx;
       cury = lines*height;
       int newscroll = xscroll_;
-      if (expandpos(p, e, buf, 0) < W-1) {
-	newscroll = 0;
-      } else if (curx > newscroll+W-20) {
+      if (curx > newscroll+W-20) {
+	// figure out scrolling so there is space after the cursor:
 	newscroll = curx+20-W;
+	// figure out the furthest left we ever want to scroll:
+	int ex = int(expandpos(p, e, buf, 0))+2-W;
+	// use minimum of both amounts:
+	if (ex < newscroll) newscroll = ex;
       } else if (curx < newscroll+20) {
 	newscroll = curx-20;
       }
@@ -714,7 +717,7 @@ int Fl_Input_::static_value(const char* str, int len) {
     xscroll_ = yscroll_ = 0;
     minimal_update(0);
   }
-  position(0, 0);
+  position(0, size());
   return 1;
 }
 
@@ -744,5 +747,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.6 2000/06/06 18:42:08 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.7 2000/06/08 07:38:29 bill Exp $".
 //
