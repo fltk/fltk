@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.11.2.10 2001/12/06 02:20:36 matthiaswm Exp $"
+# "$Id: makeinclude.in,v 1.7.2.11.2.11 2001/12/12 21:57:17 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -89,11 +89,11 @@ CAT3EXT		=@CAT3EXT@
 	$(POSTBUILD)
 
 .c.o:
-	echo Compiling $@...
+	echo Compiling $<...
 	$(CC) -I.. $(CFLAGS) -c $<
 
 .cxx.o:
-	echo Compiling $@...
+	echo Compiling $<...
 	$(CXX) -I.. $(CXXFLAGS) -c $<
 
 .man.0 .man.1 .man.3:
@@ -109,5 +109,5 @@ CAT3EXT		=@CAT3EXT@
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.11.2.10 2001/12/06 02:20:36 matthiaswm Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.11.2.11 2001/12/12 21:57:17 easysw Exp $".
 #
