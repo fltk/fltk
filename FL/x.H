@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.1 1999/07/22 07:27:07 bill Exp $"
+// "$Id: x.H,v 1.10.2.2 1999/08/09 13:53:21 mike Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -39,15 +39,9 @@
 
 #else
 
-#ifdef __sgi
-#pragma set woff 3322
-#endif
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
-#ifdef __sgi
-#pragma reset woff 3322
-#endif
 #include "Fl_Window.H"
 
 FL_EXPORT void fl_open_display();
@@ -124,5 +118,5 @@ extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.1 1999/07/22 07:27:07 bill Exp $".
+// End of "$Id: x.H,v 1.10.2.2 1999/08/09 13:53:21 mike Exp $".
 //
