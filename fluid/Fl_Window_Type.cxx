@@ -335,6 +335,7 @@ Fl_Type *Fl_Window_Type::make() {
 }
 
 void Fl_Window_Type::add_child(Fl_Type* cc, Fl_Type* before) {
+  if (!cc->is_widget()) return;
   Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
   Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
   ((Fl_Window*)o)->insert(*(c->o), b);
