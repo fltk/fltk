@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.2 2001/08/02 15:31:59 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.3 2001/08/02 18:08:36 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -57,7 +57,7 @@ distclean: clean
 
 makeinclude: configure configh.in makeinclude.in
 	if test -f config.status; then \
-		./config.status --recheck; \
+		./config.status; \
 	else \
 		./configure; \
 	fi
@@ -66,5 +66,5 @@ configure: configure.in
 	autoconf
 
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.2 2001/08/02 15:31:59 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.3 2001/08/02 18:08:36 easysw Exp $".
 #

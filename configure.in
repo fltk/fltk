@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31 2001/05/07 14:34:22 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.1 2001/08/02 18:08:36 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -29,7 +29,11 @@ AC_INIT(src/Fl.cxx)
 
 AC_PROG_RANLIB
 
-LIBNAME="libfltk.a"
+LINKFLTK="-lfltk"
+LINKFLTKGL="-lfltkgl"
+
+LIBNAME="../lib/libfltk.a"
+GLLIBNAME="../lib/libfltkgl.a"
 if test "$RANLIB" != ":"; then
   LIBCOMMAND="ar cr"
 else
@@ -55,46 +59,41 @@ CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]],[if eval "test x$enable_debug = xyes"; then
-  DEBUGFLAG="-g "
+    DEBUGFLAG="-g "
 fi])
 AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [default=yes]])
 AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]],[
 if eval "test x$enable_shared = xyes"; then
-  PICFLAG=1
-  case $uname in
-      SunOS* | UNIX_S*)
-          DSONAME="libfltk.so.1"
-	  DSOCOMMAND="\$(CXX) -h libfltk.so.1 \$(LDLIBS) -G $DEBUGFLAG -o"
-	  ;;
-      HP-UX*)
-          DSONAME="libfltk.sl.1"
-	  DSOCOMMAND="ld -b -z +h libfltk.sl.1 $DEBUGFLAG -o"
-	  ;;
-      OSF1*)
-          DSONAME="libfltk.so.1"
-          DSOCOMMAND="\$(CXX) -Wl,-soname,libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
-	  ;;
-      IRIX*)
-          DSONAME="libfltk.so.1"
-          DSOCOMMAND="\$(CXX) -soname libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
-	  ;;
-      FreeBSD* | NetBSD* | OpenBSD*)
-          DSONAME="libfltk.so.1"
-	  DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ -shared \$(OPTIM) -o"
-	  ;;
-      AIX*)
-          PICFLAG=0
-
-          echo "Warning: shared libraries are not currently supported under AIX."
-	  echo "         Building static libraries."
-	  ;;
-      *)
-          echo "Warning: shared libraries may not be supported.  Trying -shared"
-	  echo "         option with compiler."
-          DSONAME="libfltk.so.1"
-          DSOCOMMAND="\$(CXX) -Wl,-soname,libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
-	  ;;
-  esac
+    PICFLAG=1
+    case $uname in
+	SunOS* | UNIX_S*)
+            DSONAME="libfltk.so.1.1"
+            GLDSONAME="libfltkgl.so.1.1"
+	    DSOCOMMAND="\$(CXX) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
+	    ;;
+	HP-UX*)
+            DSONAME="libfltk.sl.1.1"
+            GLDSONAME="libfltkgl.sl.1.1"
+	    DSOCOMMAND="ld -b -z +h \$@ $DEBUGFLAG -o"
+	    ;;
+	IRIX* | OSF1* | FreeBSD* | NetBSD* | OpenBSD*)
+            DSONAME="libfltk.so.1.1"
+            GLDSONAME="libfltkgl.so.1.1"
+            DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    ;;
+	AIX*)
+            DSONAME="libfltk_s.a"
+            GLDSONAME="libfltkgl_s.a"
+            DSOCOMMAND="\$(CXX) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
+            ;;
+	*)
+            echo "Warning: shared libraries may not be supported.  Trying -shared"
+	    echo "         option with compiler."
+            DSONAME="libfltk.so.1.1"
+            GLDSONAME="libfltkgl.so.1.1"
+            DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    ;;
+    esac
 fi])
 
 AC_PROG_CC
@@ -193,6 +192,16 @@ if test x$enable_gl != xno; then
 	    GLLIB="-lMesaGLU $GLLIB"
 	fi
     )
+
+    if test x$ac_cv_lib_GL_glXMakeCurrent = xno; then
+	    LINKFLTKGL=""
+	    GLLIBNAME=""
+	    GLDSONAME=""
+    fi
+else
+    LINKFLTKGL=""
+    GLLIBNAME=""
+    GLDSONAME=""
 fi
 
 AC_SUBST(GLLIB)
@@ -261,7 +270,8 @@ MAKEDEPEND="\$(CXX) -M"
 
 if test -n "$GXX"; then
     # Use gcc instead of c++ or g++, since we don't need the C++
-    # library to depend on...
+    # library to depend on...  Note that this doesn't work with
+    # GCC 3.0, but then again not much *does* work with GCC 3.0...
     CXX="$CC"
     CFLAGS="-Wall $CFLAGS"
     CXXFLAGS="-Wall $CXXFLAGS"
@@ -357,6 +367,9 @@ else
         	CFLAGS="-O2 $CFLAGS"
         	CXXFLAGS="-O2 $CXXFLAGS"
 	    fi
+	    echo "WARNING: The AIX C and C++ compilers are known not to correctly"
+	    echo "         compile the FLTK library.  We recommend using GCC 2.95.2"
+	    echo "         under AIX."
 	    ;;
 	*)
 	    # Running some other operating system; inform the user they
@@ -372,14 +385,19 @@ fi
 CFLAGS="$DEBUGFLAG $CFLAGS"
 CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
 
-AC_SUBST(DSONAME)
 AC_SUBST(DSOCOMMAND)
-AC_SUBST(LIBNAME)
+AC_SUBST(DSONAME)
+AC_SUBST(GLDSONAME)
+AC_SUBST(GLLIBNAME)
 AC_SUBST(LIBCOMMAND)
+AC_SUBST(LIBNAME)
+AC_SUBST(LINKFLTKGL)
+AC_SUBST(LINKFLTK)
 AC_SUBST(MAKEDEPEND)
+
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31 2001/05/07 14:34:22 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.1 2001/08/02 18:08:36 easysw Exp $".
 dnl

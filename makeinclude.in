@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.11 2001/04/14 11:11:43 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.11.2.1 2001/08/02 18:08:36 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -49,14 +49,18 @@ CXXFLAGS	=@CPPFLAGS@ @CXXFLAGS@
 
 # program to make the archive:
 LIBNAME		=@LIBNAME@
+GLLIBNAME	=@GLLIBNAME@
 LIBCOMMAND	=@LIBCOMMAND@
 RANLIB		=@RANLIB@
 DSONAME		=@DSONAME@
+GLDSONAME	=@DSONAME@
 DSOCOMMAND	=@DSOCOMMAND@
 
 # libraries to link with:
 LDLIBS		=@LDFLAGS@ @LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 GLDLIBS		=@LDFLAGS@ @LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
+LINKFLTK	=-L../lib @LINKFLTK@
+LINKFLTKGL	=-L../lib @LINKFLTKGL@
 
 # Man page extensions...
 CAT1EXT		=@CAT1EXT@
@@ -70,7 +74,7 @@ CAT3EXT		=@CAT3EXT@
 
 .cxx:
 	echo Compiling and linking $@...
-	$(CXX) -I.. -L../lib $(CXXFLAGS) $< -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 
 .c.o:
 	echo Compiling $@...
@@ -93,5 +97,5 @@ CAT3EXT		=@CAT3EXT@
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.11 2001/04/14 11:11:43 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.11.2.1 2001/08/02 18:08:36 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.3 2001/08/02 16:17:04 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.4 2001/08/02 18:08:36 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -44,9 +44,6 @@ CPPFILES = \
 	Fl_FileChooser.cxx \
 	Fl_FileChooser2.cxx \
 	Fl_FileIcon.cxx \
-	Fl_Gl_Choice.cxx \
-	Fl_Gl_Overlay.cxx \
-	Fl_Gl_Window.cxx \
 	Fl_Group.cxx \
 	Fl_Image.cxx \
 	Fl_Input.cxx \
@@ -139,7 +136,12 @@ CPPFILES = \
 	forms_free.cxx \
 	forms_fselect.cxx \
 	forms_pixmap.cxx \
-	forms_timer.cxx \
+	forms_timer.cxx
+
+GLCPPFILES = \
+	Fl_Gl_Choice.cxx \
+	Fl_Gl_Overlay.cxx \
+	Fl_Gl_Window.cxx \
 	gl_draw.cxx \
 	gl_start.cxx \
 	glut_compatability.cxx \
@@ -153,20 +155,42 @@ CLEAN =
 
 include ../makeinclude
 
-LIBRARY = ../lib/$(LIBNAME)
-
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
+GLOBJECTS = $(GLCPPFILES:.cxx=.o)
 
-all:	$(LIBRARY) $(DSONAME)
+all:	$(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 
-$(LIBRARY): $(OBJECTS)
+$(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
 	$(LIBCOMMAND) $@ $(OBJECTS)
 	$(RANLIB) $@
 
-libfltk.so.1 libfltk.sl.1: $(OBJECTS)
+libfltk.so.1.1 libfltk.sl.1.1: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(OBJECTS)
+
+libfltk_s.a: $(OBJECTS)
+	echo $(DSOCOMMAND) libfltk_s.o ...
+	$(DSOCOMMAND) libfltk_s.o $(OBJECTS)
+	echo $(LIBCOMMAND) libfltk_s.a libfltk_s.o
+	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
+	chmod +x libfltk_s.a
+
+$(GLLIBNAME): $(GLOBJECTS)
+	echo $(LIBCOMMAND) $@ ...
+	$(LIBCOMMAND) $@ $(GLOBJECTS)
+	$(RANLIB) $@
+
+libfltkgl.so.1.1 libfltkgl.sl.1.1: $(GLOBJECTS)
+	echo $(DSOCOMMAND) $@ ...
+	$(DSOCOMMAND) $@ $(GLOBJECTS)
+
+libfltkgl_s.a: $(GLOBJECTS)
+	echo $(DSOCOMMAND) libfltkgl_s.o ...
+	$(DSOCOMMAND) libfltkgl_s.o $(GLOBJECTS)
+	echo $(LIBCOMMAND) libfltkgl_s.a libfltkgl_s.o
+	$(LIBCOMMAND) libfltkgl_s.a libfltkgl_s.o
+	chmod +x libfltkgl_s.a
 
 clean :
 	-@ rm -f *.o *.do $(DSONAME) $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
@@ -180,31 +204,44 @@ include makedepend
 
 ################################################################
 
-install: $(LIBRARY) $(DSONAME)
+install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	echo "Installing libraries..."
 	-mkdir -p $(libdir)
 	rm -f $(libdir)/$(LIBNAME)
-	-cp $(LIBRARY) $(libdir)
-	-chmod 644 $(libdir)/$(LIBNAME)
-	if test "$(DSONAME)" = libfltk.so.1; then\
+	-cp $(LIBNAME) $(GLLIBNAME) $(libdir)
+	if test x$(DSONAME) = xlibfltk.so.1.1; then\
 		rm -f $(libdir)/libfltk.so*;\
-		cp libfltk.so.1 $(libdir); \
-		chmod 755 $(libdir)/libfltk.so.1; \
-		ln -s libfltk.so.1 $(libdir)/libfltk.so;\
+		cp libfltk.so.1.1 $(libdir); \
+		ln -s libfltk.so.1.1 $(libdir)/libfltk.so;\
 	fi
-	if test "$(DSONAME)" = libfltk.sl.1; then\
+	if test x$(DSONAME) = xlibfltk.sl.1.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
-		cp libfltk.sl.1 $(libdir); \
-		chmod 755 $(libdir)/libfltk.sl.1; \
-		ln -s libfltk.sl.1 $(libdir)/libfltk.sl;\
+		cp libfltk.sl.1.1 $(libdir); \
+		ln -s libfltk.sl.1.1 $(libdir)/libfltk.sl;\
+	fi
+	if test x$(DSONAME) = xlibfltk_s.a; then\
+		rm -f $(libdir)/libfltk_s.a;\
+		cp libfltk_s.a $(libdir); \
+	fi
+	if test x$(GLDSONAME) = xlibfltkgl.so.1.1; then\
+		rm -f $(libdir)/libfltkgl.so*;\
+		cp libfltkgl.so.1.1 $(libdir); \
+		ln -s libfltkgl.so.1.1 $(libdir)/libfltkgl.so;\
+	fi
+	if test x$(GLDSONAME) = xlibfltkgl.sl.1.1; then\
+		rm -f $(libdir)/libfltkgl.sl*;\
+		cp libfltkgl.sl.1.1 $(libdir); \
+		ln -s libfltkgl.sl.1.1 $(libdir)/libfltkgl.sl;\
+	fi
+	if test x$(GLDSONAME) = xlibfltkgl_s.a; then\
+		rm -f $(libdir)/libfltkgl_s.a;\
+		cp libfltkgl_s.a $(libdir); \
 	fi
 	echo "Installing include files..."
 	-mkdir -p $(includedir)
 	rm -rf $(includedir)/FL
 	mkdir $(includedir)/FL
 	cp ../FL/*.[hH] $(includedir)/FL
-	-chmod 755 $(includedir)/FL
-	-chmod 644 $(includedir)/FL/*
 	cd $(includedir)/FL;\
 	for file in *.H; do\
 		ln -s $$file "`basename $$file H`h";\
@@ -213,5 +250,5 @@ install: $(LIBRARY) $(DSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.3 2001/08/02 16:17:04 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.4 2001/08/02 18:08:36 easysw Exp $".
 #
