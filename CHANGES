@@ -3,7 +3,7 @@ CHANGES IN FLTK 1.1.4rc1
 	- The file chooser did not reset the click count when
 	  changing directories; if you clicked on a file in the
 	  same position after changing directories with a
-	  double- click, the chooser treated it as a triple
+	  double-click, the chooser treated it as a triple
 	  click (STR #27)
 	- Symbols with outlines did not get drawn inactive.
 	- The Fl_Help_View widget now provides a find() method

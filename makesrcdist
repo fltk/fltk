@@ -9,7 +9,7 @@ CVS_RSH=ssh; export CVS_RSH
 MAINTAINER=easysw
 
 cd /tmp
-cvs -q -d$MAINTAINER@cvs.fltk.sourceforge.net:/cvsroot/fltk get -r v1_1 fltk
+cvs -q -d$MAINTAINER@cvs.fltk.sourceforge.net:/cvsroot/fltk get -P -r v1_1 fltk
 
 if test $# = 0; then
 	echo -n "Version number for distribution? "
@@ -40,7 +40,7 @@ find . -name .cvsignore -exec rm -f '{}' \;
 find . -name CVS -exec rm -rf '{}' \;
 
 rm -rf OpenGL autom4te* bc5 config forms gl glut images packages themes
-rm makesrcdist
+rm -f makesrcdist
 
 cd ..
 

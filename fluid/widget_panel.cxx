@@ -449,7 +449,6 @@ Fl_Double_Window* make_widget_panel() {
             o->textfont(4);
             o->callback((Fl_Callback*)callback_cb);
             o->align(FL_ALIGN_LEFT);
-            o->when(FL_WHEN_CHANGED);
             Fl_Group::current()->resizable(o);
             o->buffer(new Fl_Text_Buffer());
             o->textfont(FL_COURIER);

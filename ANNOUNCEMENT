@@ -1,89 +1,241 @@
-<P>The FLTK Team is proud to announce the release of FLTK 1.1.3,
+----TEXT----
+
+The first release candidate for FLTK 1.1.4 is now available for
+download and testing.  You now have until June 9th, 2003 to
+report any problems with this release candidate using the
+software trouble report form at the following URL:
+
+    http://www.fltk.org/str.php
+
+If no priority 4 or 5 STRs are received and confirmed before
+this date, FLTK 1.1.4 will be released.
+
+Note: Since problems reported on the FLTK newsgroups or mailing
+lists are *not* automatically entered as STRs, it is important
+that you report any problems using the STR form.
+
+---- Draft FLTK 1.1.4 Release Announcement ----
+
+The FLTK Team is proud to announce the release of FLTK 1.1.4,
+a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
+Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+modern GUI functionality without the bloat and supports 3D
+graphics via OpenGL(r) and its built-in GLUT emulation.
+
+The FLTK 1.1.4 release is primarily a bug-fix release including
+fixes to FLUID and the Fl_File_Chooser, Fl_Help_View,
+Fl_Text_Display, and Fl_Text_Editor widgets.  The new release
+also adds a find method to Fl_Help_View.
+
+FLTK is provided under the GNU Library Public License with
+exceptions that allow for static linking.
+
+Changes since FLTK 1.1.3 include:
+
+	- The file chooser did not reset the click count when
+	  changing directories; if you clicked on a file in the
+	  same position after changing directories with a
+	  double- click, the chooser treated it as a triple
+	  click (STR #27)
+	- Symbols with outlines did not get drawn inactive.
+	- The Fl_Help_View widget now provides a find() method
+	  to search for text within the page.
+	- The Fl_Help_Dialog widget now provides a search box
+	  for entering text to search for.
+	- The default font encoding on OSX did not match the
+	  default on WIN32 or X11.
+	- Menu items were not drawn using the font specified in
+	  the Fl_Menu_Item structure (STR #30)
+	- Long menus that were aligned such that the top of an
+	  item was exactly at the top of the screen would not
+	  scroll (STR #33)
+	- The OS issues appendix incorrectly stated that MacOS
+	  8.6 and 9 were supported; they are not (STR #28)
+	- Fixed handling of nested double-buffered windows (STR
+	  #1)
+	- Showing a subwindow inside a hidden window would crash
+	  the application (STR #23)
+	- OSX users couldn't enter some special chars when using
+	  some foreign key layouts (STR #32)
+	- Hiding subwindows on OSX would hide the parent window
+	  (STR #22)
+	- Added thin plastic box types.
+	- Fl_Pack ignored the box() setting and cleared any
+	  unused areas to the widget color; it now only does so
+	  if the box() is set to something other than FL_NO_BOX.
+	- Updated the Fl_Tabs widget to offset the first tab by
+	  the box dx value to avoid visual errors.
+	- Updated the plastic up box to draw only a single
+	  border frame instead of the old double one for
+	  improved appearance.
+	- Updated the default background color on OSX to provide
+	  better contrast.
+	- Fl_Text_Display and friends now look for the next
+	  non-punctuation/space character for word boundaries
+	  (STR #26)
+	- gl_font() didn't work properly for X11 when Xft was
+	  used (STR #12)
+	- Fl_File_Browser incorrectly included "." on WIN32 (STR
+	  #9)
+	- Include shellapi.h instead of ShellAPI.h in the WIN32
+	  drag-n-drop code in order to work with the MingW cross
+	  compiler (STR #6)
+	- The cursor was not properly restored when doing
+	  drag-n-drop on X11 (STR #4)
+	- Fl::remove_fd() didn't recalculate the highest file
+	  descriptor properly (STR #20)
+	- Fl_Preferences::deleteGroup() didn't work properly
+	  (STR #13)
+	- Fixed the fl_show_file_selector() function - it was
+	  copying using the wrong string size (STR #14)
+	- fl_font() and fl_size() were not implemented on MacOS
+	  X.
+	- Sorted the icon menu bar in fluid.
+	- Fixed minor memory access complaints from Valgrind
+	- Compiling src/flstring.h on OS X with BSD header would
+	  fail.
+	- Fl_Text_Editor didn't scroll the buffer when the user
+	  pressed Ctrl+End or Ctrl+Home.
+	- Fl_Text_Editor didn't show its cursor when the mouse
+	  was moved inside the window.
+	- FLUID now uses an Fl_Text_Display widget for command
+	  output, which allows you to copy and paste text from
+	  command output into other windows.
+	- Fl_Gl_Window could cause a bus error on MacOS X if the
+	  parent window was not yet shown.
+	- FLUID could crash after displaying a syntax error
+	  dialog for the callback code.
+	- FLUID would reset the callback code if you opened the
+	  widget panel for multiple widgets.
+	- Added a NULL check to Fl_Text_Display (SF Bug #706921).
+	- The fltk-config script placed the LDFLAGS at the wrong
+	  place in the linker options.
+	- Fl_Text_Display didn't draw the outer box in the right
+	  dimensions, so it was invisible.
+	- Fl_Help_Dialog used the same color for links as for
+	  the background, causing links to be invisible on pages
+	  without a background color set.
+
+----HTML----
+
+<P>The first release candidate for FLTK 1.1.4 is now available
+for download and testing. You now have until June 9th, 2003 to
+report any problems with this release candidate using the
+software trouble report form at the following URL:</P>
+
+<PRE>
+    <A HREF="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A>
+</PRE>
+
+<P>If no priority 4 or 5 STRs are received and confirmed before
+this date, 1.1.4 will be released.
+
+<P>Note: Since problems reported on the FLTK newsgroups or
+mailing lists are <I>not</I> automatically entered as STRs, it
+is important that you report any problems using the STR form.
+
+<P ALIGN="CENTER">---- Draft FLTK 1.1.4 Release Announcement ----</P>
+
+<P>The FLTK Team is proud to announce the release of FLTK 1.1.4,
 a cross-platform C++ GUI toolkit for UNIX&reg;/Linux&reg; (X11),
 Microsoft&reg; Windows&reg;, and MacOS&reg; X. FLTK provides
 modern GUI functionality without the bloat and supports 3D
 graphics via OpenGL&reg; and its built-in GLUT emulation.
 
-<P>The FLTK 1.1.3 release is primarily a bug-fix release
-including several MacOS X drawing and OpenGL bugs. The new
-release also adds support for up to 2 additional qualifiers
-before a class name in FLUID.
+<P>The FLTK 1.1.4 release is primarily a bug-fix release
+including fixes to FLUID and the Fl_File_Chooser, Fl_Help_View,
+Fl_Text_Display, and Fl_Text_Editor widgets. The new release
+also adds a find method to Fl_Help_View.
 
 <P>FLTK is provided under the GNU Library Public License with
 exceptions that allow for static linking.
 
-<P>Changes since FLTK 1.1.2 include:
+<P>Changes since FLTK 1.1.3 include:
 
 <UL>
 
-	<LI>Documentation updates.
-
-	<LI>FLTK now ignores KeyRelease events when X11 sends them
-	for repeating keys.
-
-	<LI>FLUID now supports up to two additional qualifiers
-	before a class name (FL_EXPORT, etc.) to aide in
-	developing DLL interfaces for WIN32.
-
-	<LI>Additional NULL checks in Fl_Button,
-	fl_draw_boxtype(), Fl_File_Chooser, and
-	Fl_Window::hotspot().
-
-	<LI>The Fl_Preferences header file needed to FL_EXPORT all
-	of the nested classes for WIN32.
-
-	<LI>Fl_Double_Window couldn't be nested on WIN32. [SF Bug
-	#658219]
-
-	<LI>Fl_Slider didn't call the callback function when the
-	user changed the value using the keyboard and the
-	"when" condition was FL_WHEN_RELEASE. [SF Bug #647072]
-
-	<LI>Lines with less than 2 unique vertices and polygons
-	with less the 3 unique vertices were not drawn
-	properly. [SF Bug #647067]
-
-	<LI>The size_range() values were not honored under MacOS
-	X. [SF Bug #647074]
-
-	<LI>OpenGL windows didn't resize correctly on MacOS X.
-	[SF Bug #667855]
-
-	<LI>The menus incorrectly used the overlay visual when one
-	or more menu items contained an image. [SF Bug #653846]
-
-	<LI>Changed some error messages to use Fl::error() instead
-	of fprintf()...
-
-	<LI>Fl_Text_Buffer and Fl_Text_Display used free to free
-	memory that was allocated using the new operator.
-
-	<LI>Tweeked the plastic scheme under MacOSX to better
-	match the colors.
-
-	<LI>The Fl_Image.H always included the x.H header file,
-	which included many system headers that could
-	interfere with normal GUI applications.  It now uses
-	the corresponding based types for the image id and
-	mask to avoid this.
-
-	<LI>The FLUID widget panel wasn't sorted, so keyboard
-	navigation was strange. [SF Bug #647069]
-
-	<LI>Fl_Scroll didn't compute the location of labels to the
-	right or below when determining the area to erase.
-
-	<LI>Added backward-compatibility macro for
-	filename_setext().
-
-	<LI>Fl_Bitmap::copy(), Fl_Pixmap::copy(), and
-	Fl_RGB_Image::copy() all could overflow the source
-	image when scaling the image.
-
-	<LI>Double/triple clicks in Fl_Input fields didn't copy
-	the expanded selection to the clipboard.
-
-	<LI>Fl_Glut_Window and Fl_Gl_Window didn't always initialize
-	the OpenGL context on MacOS.
+	<LI>The file chooser did not reset the click count when
+	changing directories; if you clicked on a file in the
+	same position after changing directories with a
+	double<LI>click, the chooser treated it as a triple
+	click (STR #27)
+	<LI>Symbols with outlines did not get drawn inactive.
+	<LI>The Fl_Help_View widget now provides a find() method
+	to search for text within the page.
+	<LI>The Fl_Help_Dialog widget now provides a search box
+	for entering text to search for.
+	<LI>The default font encoding on OSX did not match the
+	default on WIN32 or X11.
+	<LI>Menu items were not drawn using the font specified in
+	the Fl_Menu_Item structure (STR #30)
+	<LI>Long menus that were aligned such that the top of an
+	item was exactly at the top of the screen would not
+	scroll (STR #33)
+	<LI>The OS issues appendix incorrectly stated that MacOS
+	8.6 and 9 were supported; they are not (STR #28)
+	<LI>Fixed handling of nested double-buffered windows (STR
+	#1)
+	<LI>Showing a subwindow inside a hidden window would crash
+	the application (STR #23)
+	<LI>OSX users couldn't enter some special chars when using
+	some foreign key layouts (STR #32)
+	<LI>Hiding subwindows on OSX would hide the parent window
+	(STR #22)
+	<LI>Added thin plastic box types.
+	<LI>Fl_Pack ignored the box() setting and cleared any
+	unused areas to the widget color; it now only does so
+	if the box() is set to something other than FL_NO_BOX.
+	<LI>Updated the Fl_Tabs widget to offset the first tab by
+	the box dx value to avoid visual errors.
+	<LI>Updated the plastic up box to draw only a single
+	border frame instead of the old double one for
+	improved appearance.
+	<LI>Updated the default background color on OSX to provide
+	better contrast.
+	<LI>Fl_Text_Display and friends now look for the next
+	non-punctuation/space character for word boundaries
+	(STR #26)
+	<LI>gl_font() didn't work properly for X11 when Xft was
+	used (STR #12)
+	<LI>Fl_File_Browser incorrectly included "." on WIN32 (STR
+	#9)
+	<LI>Include shellapi.h instead of ShellAPI.h in the WIN32
+	drag-n-drop code in order to work with the MingW cross
+	compiler (STR #6)
+	<LI>The cursor was not properly restored when doing
+	drag-n-drop on X11 (STR #4)
+	<LI>Fl::remove_fd() didn't recalculate the highest file
+	descriptor properly (STR #20)
+	<LI>Fl_Preferences::deleteGroup() didn't work properly
+	(STR #13)
+	<LI>Fixed the fl_show_file_selector() function <LI>it was
+	copying using the wrong string size (STR #14)
+	<LI>fl_font() and fl_size() were not implemented on MacOS
+	X.
+	<LI>Sorted the icon menu bar in fluid.
+	<LI>Fixed minor memory access complaints from Valgrind
+	<LI>Compiling src/flstring.h on OS X with BSD header would
+	fail.
+	<LI>Fl_Text_Editor didn't scroll the buffer when the user
+	pressed Ctrl+End or Ctrl+Home.
+	<LI>Fl_Text_Editor didn't show its cursor when the mouse
+	was moved inside the window.
+	<LI>FLUID now uses an Fl_Text_Display widget for command
+	output, which allows you to copy and paste text from
+	command output into other windows.
+	<LI>Fl_Gl_Window could cause a bus error on MacOS X if the
+	parent window was not yet shown.
+	<LI>FLUID could crash after displaying a syntax error
+	dialog for the callback code.
+	<LI>FLUID would reset the callback code if you opened the
+	widget panel for multiple widgets.
+	<LI>Added a NULL check to Fl_Text_Display (SF Bug #706921).
+	<LI>The fltk-config script placed the LDFLAGS at the wrong
+	place in the linker options.
+	<LI>Fl_Text_Display didn't draw the outer box in the right
+	dimensions, so it was invisible.
+	<LI>Fl_Help_Dialog used the same color for links as for
+	the background, causing links to be invisible on pages
+	without a background color set.
 
 </UL>
