@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.5 1999/11/16 07:39:57 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.6 1999/11/16 14:44:43 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -300,14 +300,14 @@ J1:
     if (hh <= 0) continue;
     if ((damage()&(FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) || l == redraw1 || l == redraw2) {
       if (item_selected(l)) {
-	fl_color(selection_color());
+	fl_color(active_r() ? selection_color() : inactive(selection_color()));
 	fl_rectf(X, yy+Y, W, hh);
       } else if (!(damage()&FL_DAMAGE_ALL)) {
-	fl_color(color());
+	fl_color(active_r() ? color() : inactive(color()));
 	fl_rectf(X, yy+Y, W, hh);
       }
       if (type() == FL_MULTI_BROWSER && l == selection_) {
-	fl_color(textcolor());
+	fl_color(active_r() ? textcolor() : inactive(textcolor()));
 	fl_rect(X+1, yy+Y, W-2, hh);
       }
       item_draw(l, X-hposition_, yy+Y, W+hposition_, hh);
@@ -318,7 +318,7 @@ J1:
   }
   // erase the area below last line:
   if (!(damage()&FL_DAMAGE_ALL) && yy < H) {
-    fl_color(color());
+    fl_color(active_r() ? color() : inactive(color()));
     fl_rectf(X, yy+Y, W, H-yy);
   }
   fl_pop_clip();
@@ -668,5 +668,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.5 1999/11/16 07:39:57 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.6 1999/11/16 14:44:43 mike Exp $".
 //
