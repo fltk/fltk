@@ -355,9 +355,9 @@ if (t & MULTI)
 else
   fileList->type(FL_HOLD_BROWSER);
 if (t & CREATE)
-  newButton->deactivate();
-else
   newButton->activate();
+else
+  newButton->deactivate();
 if (t & DIRECTORY)
   fileList->filetype(Fl_File_Browser::DIRECTORIES);
 else

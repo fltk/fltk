@@ -79,7 +79,7 @@ window->hide();} open
         } {
           Fl_Check_Button previewButton {
             label Preview
-            callback {preview(previewButton->value());} selected
+            callback {preview(previewButton->value());}
             xywh {10 275 170 20} down_box DOWN_BOX shortcut 0x80070 value 1
             code0 {previewButton->label(preview_label);}
           }
@@ -278,7 +278,7 @@ fileName->take_focus();} {}
   } {
     code {return (fileList->textsize());} {}
   }
-  Function {type(int t)} {return_type void
+  Function {type(int t)} {open return_type void
   } {
     code {type_ = t;
 if (t & MULTI)
@@ -286,13 +286,14 @@ if (t & MULTI)
 else
   fileList->type(FL_HOLD_BROWSER);
 if (t & CREATE)
-  newButton->deactivate();
-else
   newButton->activate();
+else
+  newButton->deactivate();
 if (t & DIRECTORY)
   fileList->filetype(Fl_File_Browser::DIRECTORIES);
 else
-  fileList->filetype(Fl_File_Browser::FILES);} {}
+  fileList->filetype(Fl_File_Browser::FILES);} {selected
+    }
   }
   Function {type()} {return_type int
   } {
