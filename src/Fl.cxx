@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.17 1999/01/29 16:56:47 carl Exp $"
+// "$Id: Fl.cxx,v 1.18 1999/02/19 14:26:30 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,6 +48,7 @@ int		Fl::damage_,
 char		*Fl::e_text = "";
 int		Fl::e_length;
 
+static double fl_elapsed();
 
 //
 // 'Fl:event_inside()' - Return whether or not the mouse event is inside
@@ -88,6 +89,8 @@ void Fl::add_timeout(double t, void (*cb)(void *), void *v) {
   timeout[i].time = t;
   timeout[i].cb = cb;
   timeout[i].arg = v;
+
+  fl_elapsed();
 }
 
 void Fl::remove_timeout(void (*cb)(void *), void *v) {
@@ -675,5 +678,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.17 1999/01/29 16:56:47 carl Exp $".
+// End of "$Id: Fl.cxx,v 1.18 1999/02/19 14:26:30 mike Exp $".
 //
