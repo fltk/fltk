@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_mac.cxx,v 1.1.2.3 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: fl_draw_image_mac.cxx,v 1.1.2.4 2002/06/27 04:29:39 matthiaswm Exp $"
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@
  *   buf:       pointer to first byte in image source
  *   x, y:      position in buffer
  *   w:         width (in bytes?)
- *   dst:       destinaation buffer
+ *   dst:       destination buffer
  * userdata:  ?
  */
 static void innards(const uchar *buf, int X, int Y, int W, int H,
@@ -122,6 +122,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     DisposeGWorld( gw );
   }
 
+  // great. We were able to write the pixels directly into memory, so we can return now.
   if ( direct )
     return;
 
@@ -274,5 +275,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.3 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.4 2002/06/27 04:29:39 matthiaswm Exp $".
 //

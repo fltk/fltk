@@ -90,12 +90,11 @@ KNOWN MacFLTK BUGS
 	- File handles (Fl::add_fd) are not implemented.
 	- Line styles are not fully implemented.
 	- Sub-sub-subwindow not tested.
-	- Image transparency is not implemented.
+	- Image transparency is implemented as "screen-door" only
 	- The 'shiny' demo needs work (flush/aglFlush).
 	- Threads are not implemented.
 	- OpenGL subwindow during window resize changes position
-	- OpenGL text and font support
-	- fl_measure returns wrong width (about 10% short)
+	- fl_measure returns wrong width (wrong current font?)
 
 
 TEST SUITE STATUS

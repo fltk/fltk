@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5.2.7 2002/05/25 13:38:25 easysw Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.8 2002/06/27 04:29:39 matthiaswm Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -53,8 +53,10 @@ void  gl_font(int fontid, int size) {
     wglUseFontBitmaps(fl_gc, base, size, fl_fontsize->listbase+base); 
     SelectObject(fl_gc, oldFid);
 #elif defined(__APPLE__)
-    // \todo Mac : Insert MacOS/AGL font handling here (aglUseFont)
-    // aglUseFont( context, fontID/GetFNum(), Style[norma, bold, italic], size, first, count, base );
+    // undefined characters automatically receive an empty GL LIst in aglUseFont
+    fl_fontsize->listbase = glGenLists(256);
+    aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
+               fl_fontsize->size, 0, 256, fl_fontsize->listbase);
 #else
     int base = fl_xfont->min_char_or_byte2;
     int size = fl_xfont->max_char_or_byte2-base+1;
@@ -157,5 +159,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.7 2002/05/25 13:38:25 easysw Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.8 2002/06/27 04:29:39 matthiaswm Exp $".
 //

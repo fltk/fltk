@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.8 2002/06/08 15:37:11 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.9 2002/06/27 04:29:39 matthiaswm Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -56,6 +56,7 @@ Fl_FontSize* fl_fontsize = 0L;
 Fl_FontSize::~Fl_FontSize() {
 /*
 #if HAVE_GL
+ // ++ todo: remove OpenGL font alocations
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
 // of "free" routine pointer, or a subclass?
@@ -147,6 +148,7 @@ double fl_width(const char* c, int n) {
   return (double)TextWidth( c, 0, n );
 }
 
+// todo : fl_width returns wrong results for OS X
 double fl_width(uchar c) {
   return (double)TextWidth( &c, 0, 1 );
 }
@@ -157,5 +159,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.8 2002/06/08 15:37:11 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.9 2002/06/27 04:29:39 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.17 2002/04/26 11:32:37 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.18 2002/06/27 04:29:39 matthiaswm Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -107,10 +107,10 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #elif defined(__APPLE__)
   if (mask) {
     Rect src, dst;
-    src.left = 0; src.right = w();
-    src.top = 0; src.bottom = h();
-    dst.left = X; dst.right = X+w();
-    dst.top = Y; dst.bottom = Y+h();
+    src.left = cx; src.right = cx+W;
+    src.top = cy; src.bottom = cy+H;
+    dst.left = X; dst.right = X+W;
+    dst.top = Y; dst.bottom = Y+H;
     RGBColor rgb;
     rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
     RGBBackColor(&rgb);
@@ -465,5 +465,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.17 2002/04/26 11:32:37 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.18 2002/06/27 04:29:39 matthiaswm Exp $".
 //

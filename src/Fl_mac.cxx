@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.26 2002/06/11 18:44:07 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.27 2002/06/27 04:29:39 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -409,7 +409,15 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
     } 
     break; }
   case kEventWindowShown:
-    if ( !window->parent() ) Fl::handle( FL_SHOW, window);
+    if ( !window->parent() )
+    {
+      GetWindowClass( fl_xid( window ), &winClass );
+      if ( winClass != kHelpWindowClass ) {	// help windows can't get the focus!
+        Fl::handle( FL_FOCUS, window);
+        activeWindow = window;
+      }
+      Fl::handle( FL_SHOW, window);
+    }
     break;
   case kEventWindowHidden:
     if ( !window->parent() ) Fl::handle( FL_HIDE, window);
@@ -547,7 +555,7 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     // fall through
   case kEventMouseDragged:
     if ( !sendEvent ) {
-      sendEvent = FL_DRAG;
+      sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
       if (abs(pos.h-px)>5 || abs(pos.v-py)>5) 
         Fl::e_is_click = 0;
     }
@@ -1087,16 +1095,13 @@ void Fl_X::make(Fl_Window* w)
     Fl_Group::current(0);
     fl_open_display();
     int winclass = kDocumentWindowClass;
-    int winattr = kWindowCloseBoxAttribute 
-                | kWindowCollapseBoxAttribute 
-                | kWindowStandardHandlerAttribute
-                ;
+    int winattr = kWindowStandardHandlerAttribute | kWindowCloseBoxAttribute | kWindowCollapseBoxAttribute;
     int xp = w->x();
     int yp = w->y();
     int wp = w->w();
     int hp = w->h();
     if (w->size_range_set) {
-      winattr |= kWindowFullZoomAttribute | kWindowResizableAttribute;
+      winattr |= kWindowFullZoomAttribute | kWindowResizableAttribute | kWindowLiveResizeAttribute;
     } else {
       if (w->resizable()) {
         Fl_Widget *o = w->resizable();
@@ -1111,16 +1116,14 @@ void Fl_X::make(Fl_Window* w)
     int xwm = xp, ywm = yp, bt, bx, by;
     if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) 
       { winclass = kHelpWindowClass; winattr = 0; } // menu windows and tooltips
-    else if (w->modal()) 
-      winclass = kFloatingWindowClass; // basically fine, but not modal! The modal window however does not show
-    else if (w->non_modal()) 
-      winclass = kFloatingWindowClass; // we need to call 'InitFloatingWindows for OS 8, 9
+    else if (w->modal())
+      winclass = kMovableModalWindowClass;
     if (by+bt) {
       wp += 2*bx;
       hp += 2*by+bt;
     }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
-      w->x(xyPos+Fl::x()); w->y(xyPos+Fl::y()); // \todo use the Carbon function for default window positioning
+      w->x(xyPos+Fl::x()); w->y(xyPos+Fl::y()); // use the Carbon functions below for default window positioning
       xyPos += 25;
       if (xyPos>200) xyPos = 25;
     } else {
@@ -1135,7 +1138,7 @@ void Fl_X::make(Fl_Window* w)
     if (w->non_modal() && Fl_X::first && !fl_disable_transient_for) {
       // find some other window to be "transient for":
       Fl_Window* w = Fl_X::first->w;
-      while (w->parent()) w = w->window();
+      while (w->parent()) w = w->window(); // todo: this code does not make any sense! (w!=w??)
     }
 
     Rect wRect;
@@ -1156,8 +1159,23 @@ void Fl_X::make(Fl_Window* w)
     x->cursor = fl_default_cursor;
     x->xidChildren = 0;
     x->xidNext = 0;
+
+    winattr &= GetAvailableWindowAttributes( winclass );	// make sure that the window will open
     CreateNewWindow( winclass, winattr, &wRect, &(x->xid) );
     SetWTitle(x->xid, pTitle);
+    MoveWindow(x->xid, wRect.left, wRect.top, 1);	// avoid Carbon Bug on old OS
+    if (w->non_modal() && !w->modal())
+      SetWindowClass(x->xid, kFloatingWindowClass );	// Major kludge: this is to have the regular look, but stay above the document windows
+    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION))
+    {
+      WindowRef pw = Fl_X::first ? Fl_X::first->xid : 0 ;
+      if ( w->modal() )
+        RepositionWindow( x->xid, pw, kWindowAlertPositionOnParentWindowScreen );
+      else if ( w->non_modal() )
+        RepositionWindow( x->xid, pw, kWindowCenterOnParentWindowScreen );
+      else
+        RepositionWindow( x->xid, pw, kWindowCascadeOnParentWindowScreen );
+    }
     x->w = w; w->i = x;
     x->wait_for_expose = 1;
     x->next = Fl_X::first;
@@ -1329,7 +1347,7 @@ void Fl_Window::make_current()
   fl_window = i->xid;
   current_ = this;
 
-  SetPort( GetWindowPort(i->xid) ); // \todo check for the handling of doublebuffered winows
+  SetPort( GetWindowPort(i->xid) ); // \todo check for the handling of doublebuffered windows
 
   int xp = 0, yp = 0;
   Fl_Window *win = this;
@@ -1432,6 +1450,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.26 2002/06/11 18:44:07 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.27 2002/06/27 04:29:39 matthiaswm Exp $".
 //
 

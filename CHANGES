@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- MacOS: Pixmap draw fix, gl_font implemented
+	  FL_FOCUS fix, window type fix for modal and nonmodal
+	  windows, glut uninitialised 'display' proc fix
 	- Now support FLTK_1_0_COMPAT symbol to define
 	  compatibility macros for the old FLTK 1.0.x function
 	  names to the 1.1.x names.
