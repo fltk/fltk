@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.8 1999/01/07 19:17:41 mike Exp $"
+// "$Id: fl_rect.cxx,v 1.9 1999/02/01 01:59:13 mike Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -136,6 +136,9 @@ void fl_line(int x, int y, int x1, int y1) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x1, y1);
+  // Draw the last point *again* because the GDI line drawing
+  // functions will not draw the last point ("it's a feature!"...)
+  LineTo(fl_gc, x1, y1);
 #else
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
 #endif
@@ -145,6 +148,9 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x1, y1);
+  LineTo(fl_gc, x2, y2);
+  // Draw the last point *again* because the GDI line drawing
+  // functions will not draw the last point ("it's a feature!"...)
   LineTo(fl_gc, x2, y2);
 #else
   XPoint p[3];
@@ -373,5 +379,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.8 1999/01/07 19:17:41 mike Exp $".
+// End of "$Id: fl_rect.cxx,v 1.9 1999/02/01 01:59:13 mike Exp $".
 //
