@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.H,v 1.7.2.4.2.6 2003/01/30 21:39:32 easysw Exp $"
+// "$Id: Fl_Menu_.H,v 1.7.2.4.2.7 2003/06/15 04:47:28 easysw Exp $"
 //
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -60,6 +60,7 @@ public:
   int  add(const char* a, const char* b, Fl_Callback* c,
 	  void* d = 0, int e = 0) {return add(a,fl_old_shortcut(b),c,d,e);}
   int  size() const ;
+  void size(int W, int H) { Fl_Widget::size(W, H); }
   void clear();
   int  add(const char *);
   void replace(int,const char *);
@@ -93,5 +94,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Menu_.H,v 1.7.2.4.2.6 2003/01/30 21:39:32 easysw Exp $".
+// End of "$Id: Fl_Menu_.H,v 1.7.2.4.2.7 2003/06/15 04:47:28 easysw Exp $".
 //

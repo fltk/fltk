@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.12 2003/05/21 16:12:14 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.13 2003/06/15 04:47:27 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -169,6 +169,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   int		load(const char *f);
   void		resize(int,int,int,int);
   int		size() const { return (size_); }
+  void		size(int W, int H) { Fl_Widget::size(W, H); }
   void		textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
   Fl_Color	textcolor() const { return (defcolor_); }
   void		textfont(uchar f) { textfont_ = f; format(); }
@@ -188,5 +189,5 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.12 2003/05/21 16:12:14 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.13 2003/06/15 04:47:27 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.8.2.7.2.4 2003/01/30 21:38:41 easysw Exp $"
+// "$Id: Fl_Browser.H,v 1.8.2.7.2.5 2003/06/15 04:47:27 easysw Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -75,7 +75,8 @@ public:
   void clear();
 
   int size() const {return lines;}
-  
+  void size(int W, int H) { Fl_Widget::size(W, H); }
+
   int topline() const ;
   enum Fl_Line_Position { TOP, BOTTOM, MIDDLE };
   void lineposition(int, Fl_Line_Position);
@@ -123,5 +124,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.8.2.7.2.4 2003/01/30 21:38:41 easysw Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8.2.7.2.5 2003/06/15 04:47:27 easysw Exp $".
 //

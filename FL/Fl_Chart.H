@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.H,v 1.6.2.3.2.5 2003/01/30 21:38:47 easysw Exp $"
+// "$Id: Fl_Chart.H,v 1.6.2.3.2.6 2003/06/15 04:47:27 easysw Exp $"
 //
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
@@ -71,6 +71,7 @@ public:
     void bounds(double *a,double *b) const {*a = min; *b = max;}
     void bounds(double a,double b);
     int size() const {return numb;}
+    void size(int W, int H) { Fl_Widget::size(W, H); }
     int maxsize() const {return maxnumb;}
     void maxsize(int);
     Fl_Font textfont() const {return (Fl_Font)textfont_;}
@@ -86,5 +87,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Chart.H,v 1.6.2.3.2.5 2003/01/30 21:38:47 easysw Exp $".
+// End of "$Id: Fl_Chart.H,v 1.6.2.3.2.6 2003/06/15 04:47:27 easysw Exp $".
 //

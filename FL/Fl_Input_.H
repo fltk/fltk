@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.6.2.4.2.8 2003/01/30 21:39:23 easysw Exp $"
+// "$Id: Fl_Input_.H,v 1.6.2.4.2.9 2003/06/15 04:47:28 easysw Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -99,6 +99,7 @@ public:
   const char* value() const {return value_;}
   char index(int i) const {return value_[i];}
   int size() const {return size_;}
+  void size(int W, int H) { Fl_Widget::size(W, H); }
   int maximum_size() const {return maximum_size_;}
   void maximum_size(int m) {maximum_size_ = m;}
 
@@ -138,5 +139,5 @@ public:
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.8 2003/01/30 21:39:23 easysw Exp $".
+// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.9 2003/06/15 04:47:28 easysw Exp $".
 //

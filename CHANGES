@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- Several widgets defined their own size() method but
+	  didn't provide an inline method that mapped to the
+	  Fl_Widget::size() method (STR #62)
 	- Fl_Scroll didn't provide its own clear() method, so
 	  calling clear() on a Fl_Scroll widget would also
 	  destroy the scrollbars (STR #75)
