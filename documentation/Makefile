@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.6 2000/06/05 21:20:35 mike Exp $"
+# "$Id: Makefile,v 1.9.2.7 2000/12/21 18:15:14 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -129,8 +129,8 @@ depend:
 
 install:
 	-mkdir -p $(prefix)/share/doc/fltk
-	cp -f $(HTMLFILES) index.html $(prefix)/share/doc/fltk
-	cp -f *.gif *.jpg $(prefix)/share/doc/fltk
+	cp $(HTMLFILES) index.html $(prefix)/share/doc/fltk
+	cp *.gif *.jpg $(prefix)/share/doc/fltk
 	chmod 644 $(prefix)/share/doc/fltk/*
 
 fltk.d/index.html: $(HTMLFILES)
@@ -149,5 +149,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.6 2000/06/05 21:20:35 mike Exp $".
+# End of "$Id: Makefile,v 1.9.2.7 2000/12/21 18:15:14 easysw Exp $".
 #
