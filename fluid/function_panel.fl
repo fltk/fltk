@@ -9,14 +9,14 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {function/method} open
-    xywh {975 642 287 173} resizable modal visible
+    xywh {774 432 287 173} hide resizable modal
   } {
     Fl_Light_Button f_public_button {
       label public
       xywh {10 15 65 25} labelsize 10 when 0
     }
     Fl_Light_Button f_c_button {
-      label {C declaration} selected
+      label {C declaration}
       xywh {90 15 90 25} labelsize 10
     }
     Fl_Input f_name_input {
@@ -116,7 +116,7 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label declaration open
-    xywh {282 823 290 176} hide resizable
+    xywh {282 823 290 176} resizable visible
   } {
     Fl_Light_Button decl_public_button {
       label public
@@ -126,7 +126,8 @@ Function {make_decl_panel()} {open
       label {can be any declartion, like "int x;",
 an external symbol like "extern int foo();",
 a \#directive like "\#include <foo.h>",
-or a comment like "//foo" or "/*foo*/"}
+or a comment like "//foo" or "/*foo*/",
+or typedef like "typedef char byte;"}
       xywh {10 50 270 25} labelsize 12 align 6 when 0 resizable
     }
     Fl_Return_Button decl_panel_ok {

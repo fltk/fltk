@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.7 1999/09/08 06:05:00 bill Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.8 1999/12/17 18:34:56 bill Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1219,6 +1219,7 @@ int isdeclare(const char *c) {
   while (isspace(*c)) c++;
   if (*c == '#') return 1;
   if (!strncmp(c,"extern",6)) return 1;
+  if (!strncmp(c,"typedef",7)) return 1;
   return 0;
 }
 
@@ -1745,5 +1746,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.7 1999/09/08 06:05:00 bill Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.8 1999/12/17 18:34:56 bill Exp $".
 //

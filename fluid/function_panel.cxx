@@ -181,7 +181,7 @@ Fl_Window* make_decl_panel() {
     }
     { Fl_Input* o = decl_input = new Fl_Input(10, 50, 270, 25, "can be any declartion, like \"int x;\",\nan external symbol like \"extern int\
  foo();\",\na #directive like \"#include <foo.h>\",\nor a comment like \"//foo\
-\" or \"/*foo*/\"");
+\" or \"/*foo*/\",\nor typedef like \"typedef char byte;\"");
       o->labelsize(12);
       o->align(FL_ALIGN_BOTTOM_LEFT);
       o->when(FL_WHEN_NEVER);
