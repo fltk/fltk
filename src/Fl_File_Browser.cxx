@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -45,7 +45,7 @@
 #include <string.h>
 #include <config.h>
 
-#if defined(WIN32)
+#if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <windows.h>
 #  include <direct.h>
 #endif /* WIN32 */
@@ -416,7 +416,7 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
     if ((icon = Fl_File_Icon::find("any", Fl_File_Icon::DEVICE)) == NULL)
       icon = Fl_File_Icon::find("any", Fl_File_Icon::DIRECTORY);
 
-#if defined(WIN32)
+#if defined(WIN32) && ! defined (__CYGWIN__)
     DWORD	drives;		// Drive available bits
 
 
@@ -496,7 +496,7 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
     // Build the file list...
     //
 
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     strncpy(filename, directory_, sizeof(filename) - 1);
     filename[sizeof(filename) - 1] = '\0';
     i = strlen(filename) - 1;
@@ -566,5 +566,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.3 2001/10/29 15:40:49 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.4 2001/10/29 21:59:14 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -54,7 +54,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
 #  include <io.h>
 #  define F_OK	0
 #  define strcasecmp stricmp
@@ -1234,5 +1234,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.3 2001/10/29 15:40:49 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.4 2001/10/29 21:59:14 easysw Exp $".
 //

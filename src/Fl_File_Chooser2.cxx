@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.2 2001/09/29 22:59:45 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -53,7 +53,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#if defined(WIN32)
+#if defined(WIN32) && ! defined (__CYGWIN__)
 #  include <direct.h>
 #  include <io.h>
 #else
@@ -84,7 +84,7 @@ Fl_File_Chooser::directory(const char *d)	// I - Directory to change to
   if (d[0] != '\0')
   {
     // Make the directory absolute...
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__))|| defined(__EMX__)
     if (d[0] != '/' && d[0] != '\\' && d[1] != ':')
 #else
     if (d[0] != '/' && d[0] != '\\')
@@ -108,7 +108,7 @@ Fl_File_Chooser::directory(const char *d)	// I - Directory to change to
 
   // Clear the directory menu and fill it as needed...
   dirMenu->clear();
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
   dirMenu->add("My Computer");
 #else
   dirMenu->add("File Systems");
@@ -353,7 +353,7 @@ Fl_File_Chooser::newdir()
     return;
 
   // Make it relative to the current directory as needed...
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined (__CYGWIN__)) || defined(__EMX__)
   if (dir[0] != '/' && dir[0] != '\\' && dir[1] != ':')
 #else
   if (dir[0] != '/' && dir[0] != '\\')
@@ -366,7 +366,7 @@ Fl_File_Chooser::newdir()
   }
 
   // Create the directory; ignore EEXIST errors...
-#if defined(WIN32)
+#if defined(WIN32) && ! defined (__CYGWIN__)
   if (mkdir(pathname))
 #else
   if (mkdir(pathname, 0777))
@@ -423,7 +423,7 @@ Fl_File_Chooser::fileListCB()
 
   if (Fl::event_clicks())
   {
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
         filename_isdir(pathname))
 #else
@@ -480,7 +480,7 @@ Fl_File_Chooser::fileNameCB()
     return;
   }
 
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
   if (directory_[0] != '\0' &&
       filename[0] != '/' &&
       filename[0] != '\\' &&
@@ -538,7 +538,7 @@ Fl_File_Chooser::fileNameCB()
   {
     // Enter pressed - select or change directory...
 
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
         filename_isdir(pathname))
 #else
@@ -607,7 +607,7 @@ Fl_File_Chooser::fileNameCB()
     {
       file = fileList->text(i);
 
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
       if (strnicmp(filename, file, min_match) == 0)
 #else
       if (strncmp(filename, file, min_match) == 0)
@@ -636,7 +636,7 @@ Fl_File_Chooser::fileNameCB()
 	{
 	  // Succeeding match; compare to find maximum string match...
 	  while (max_match > min_match)
-#if defined(WIN32) || defined(__EMX__)
+#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
 	    if (strnicmp(file, pathname, max_match) == 0)
 #else
 	    if (strncmp(file, pathname, max_match) == 0)
@@ -687,5 +687,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.2 2001/09/29 22:59:45 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $".
 //

@@ -23,6 +23,7 @@ CHANGES IN FLTK 1.1.0b5
 	- The symbols demo didn't show the strings needed to
 	  show the corresponding symbol (the label string was
 	  not quoted...)
+	- FLTK should now compile with Cygwin cleanly.
 
 
 CHANGES IN FLTK 1.1.0b4

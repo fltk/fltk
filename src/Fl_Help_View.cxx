@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.8 2001/10/27 03:29:25 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.9 2001/10/29 21:59:15 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -77,7 +77,7 @@
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Pixmap.H>
 
-#if defined(WIN32)
+#if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
 #  include <direct.h>
 #  define strcasecmp(s,t)	stricmp((s), (t))
@@ -3584,5 +3584,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.8 2001/10/27 03:29:25 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.9 2001/10/29 21:59:15 easysw Exp $".
 //

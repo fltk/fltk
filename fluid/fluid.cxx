@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.8 2001/09/30 17:37:06 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.9 2001/10/29 21:59:14 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -268,7 +268,7 @@ extern int pasteoffset;
 static int ipasteoffset;
 
 static char* cutfname() {
-#ifdef WIN32
+#if defined WIN32 && ! defined(__CYGWIN__)
 #  ifndef MAX_PATH
 #    define MAX_PATH 256
 #  endif // !MAX_PATH
@@ -463,7 +463,7 @@ static int arg(int argc, char** argv, int& i) {
   return 0;
 }
 
-#ifndef WIN32
+#if ! (defined(WIN32) && !defined (__CYGWIN__))
 
 #include <signal.h>
 #ifdef _sigargs
@@ -521,5 +521,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.8 2001/09/30 17:37:06 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.9 2001/10/29 21:59:14 easysw Exp $".
 //
