@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.9.2.17 2002/09/26 20:27:16 easysw Exp $"
+# "$Id: fltk.spec,v 1.1.2.9.2.18 2002/10/04 21:01:36 easysw Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -41,11 +41,10 @@ BuildRoot: /var/tmp/fltk-%{PACKAGE_VERSION}
 
 %description
 The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
-LGPL'd C++ graphical user interface toolkit for X (UNIX(r)),
-OpenGL(r), and Microsoft(r) Windows(r). It was originally
-developed by Mr. Bill Spitzak and is currently maintained by a
-small group of developers across the world with a central
-repository in the US (SourceForge).
+cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
+Microsoft(r) Windows(r), and MacOS(r) X.  FLTK provides modern
+GUI functionality without the bloat and supports 3D graphics via
+OpenGL(r) and its built-in GLUT emulation.
 
 %package devel
 Summary: FLTK - development environment
@@ -60,7 +59,7 @@ dynamically linked applications.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --mandir=%{_mandir} --enable-shared
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --mandir=%{_mandir} --enable-shared --enable-xft --enable-xdbe
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -97,5 +96,5 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.9.2.17 2002/09/26 20:27:16 easysw Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.9.2.18 2002/10/04 21:01:36 easysw Exp $".
 #
