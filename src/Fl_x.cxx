@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.31 2004/02/26 03:06:41 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.32 2004/02/29 22:16:11 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -756,7 +756,9 @@ int fl_handle(const XEvent& thisevent)
 	// easier to program shortcuts and is Windoze-compatable:
 	keysym = XKeycodeToKeysym(fl_display, keycode, 0);
       }
-      if (Fl::event_state(FL_CTRL) && keysym == '-') buffer[0] = 0x1f; // ^_
+      // MRS: Can't use Fl::event_state(FL_CTRL) since the state is not
+      //      set until set_event_xy() is called later...
+      if ((xevent.xkey.state & ControlMask) && keysym == '-') buffer[0] = 0x1f; // ^_
       buffer[len] = 0;
       Fl::e_text = buffer;
       Fl::e_length = len;
@@ -1268,5 +1270,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.31 2004/02/26 03:06:41 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.32 2004/02/29 22:16:11 easysw Exp $".
 //
