@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.4 1998/10/21 14:20:21 mike Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.5 1998/10/21 17:53:13 mike Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -140,7 +140,10 @@ void Fl_Scrollbar::draw() {
 	       x(), y(), h(), h(), selection_color());
       draw_box((pushed_&2) ? down(slider()) : slider(),
 		  x()+w()-h(), y(), h(), h(), selection_color());
-      fl_color(labelcolor());
+      if (active_r())
+        fl_color(labelcolor());
+      else
+        fl_color(labelcolor() | 8);
       int w1 = (h()-1)|1; // use odd sizes only
       int Y = y()+w1/2;
       int W = w1/3;
@@ -157,7 +160,10 @@ void Fl_Scrollbar::draw() {
 	       x(), y(), w(), w(), selection_color());
       draw_box((pushed_&2) ? down(slider()) : slider(),
 	       x(), y()+h()-w(), w(), w(), selection_color());
-      fl_color(labelcolor());
+      if (active_r())
+        fl_color(labelcolor());
+      else
+        fl_color(labelcolor() | 8);
       int w1 = (w()-1)|1; // use odd sizes only
       int X = x()+w1/2;
       int W = w1/3;
@@ -181,5 +187,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.4 1998/10/21 14:20:21 mike Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.5 1998/10/21 17:53:13 mike Exp $".
 //
