@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.24 2002/05/02 04:23:33 matthiaswm Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.25 2002/05/02 10:08:44 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -150,27 +150,45 @@ void exit_cb(Fl_Widget *,void *) {
 void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag && !fl_ask("Discard changes?")) return;
   const char *c;
+  const char *oldfilename;
   if (!(c = fl_file_chooser("Open:", "*.f[ld]", filename))) return;
-  if (!v) {set_filename(c);}
+  oldfilename = filename;
+  filename    = NULL;
+  set_filename(c);
   if (!read_file(c, v!=0)) {
     fl_message("Can't read %s: %s", c, strerror(errno));
+    free((void *)filename);
+    filename = oldfilename;
+    if (main_window) main_window->label(filename);
     return;
   }
-  if (!v) {modflag = 0;}
-  else modflag = 1;
+  if (v) {
+    // Inserting a file; restore the original filename...
+    modflag = 1;
+    free((void *)filename);
+    filename = oldfilename;
+    if (main_window) main_window->label(filename);
+  } else {
+    // Loaded a file; free the old filename...
+    modflag = 0;
+    if (oldfilename) free((void *)oldfilename);
+  }
 }
 
 void open_history_cb(Fl_Widget *, void *v) {
   if (modflag && !fl_ask("Discard changes?")) return;
-  char *localcopy = strdup( (char*)v );
-  set_filename(localcopy);
-  if (!read_file(localcopy, 0)) {
-    fl_message("Can't read %s: %s", localcopy, strerror(errno));
-    free(localcopy);
+  const char *oldfilename = filename;
+  filename = NULL;
+  set_filename((char *)v);
+  if (!read_file(filename, 0)) {
+    fl_message("Can't read %s: %s", filename, strerror(errno));
+    free((void *)filename);
+    filename = oldfilename;
+    if (main_window) main_window->label(filename);
     return;
   }
   modflag = 0;
-  free(localcopy);
+  if (oldfilename) free((void *)oldfilename);
 }
 
 void new_cb(Fl_Widget *, void *v) {
@@ -780,5 +798,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.24 2002/05/02 04:23:33 matthiaswm Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.25 2002/05/02 10:08:44 easysw Exp $".
 //
