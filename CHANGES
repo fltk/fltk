@@ -1,3 +1,9 @@
+CHANGES IN FLTK 1.1.1
+
+	- Vertical scrollbars did not draw the arrows inactive
+	  when the scrollbar was inactive.
+
+
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
