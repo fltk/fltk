@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.3 1998/10/21 14:20:04 mike Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.4 1998/11/20 20:00:29 mike Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -105,8 +105,8 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
 
   PIXELFORMATDESCRIPTOR pfd = { 
     sizeof(PIXELFORMATDESCRIPTOR), 1, 
-    PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL /*| PFD_DEPTH_DONTCARE*/,
-    PFD_TYPE_RGBA, 24 };
+    PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL,
+    PFD_TYPE_RGBA, 8 };
 
   if (mode & FL_INDEX) {
     pfd.iPixelType = PFD_TYPE_COLORINDEX;
@@ -115,12 +115,12 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (mode & FL_ALPHA) pfd.cAlphaBits = 8;
     if (mode & FL_ACCUM) {
       pfd.cAccumBits = 6;	// Wonko: I didn't find any documentation on those bits
-      pfd.cAccumGreenBits = 1;// Wonko: They don't seem to get anny support yet (4/98)
+      pfd.cAccumGreenBits = 1;	// Wonko: They don't seem to get any support yet (4/98)
       if (mode & FL_ALPHA) pfd.cAccumAlphaBits = 1;
     }
   }
   if (mode & FL_DOUBLE) pfd.dwFlags |= PFD_DOUBLEBUFFER;
-  // if (!(mode & FL_DEPTH)) pfd.dwFlags = PFD_DEPTH_DONTCARE;
+  if (mode & FL_DEPTH) pfd.cDepthBits = 16;
   if (mode & FL_STENCIL) pfd.cStencilBits = 1;
   pfd.bReserved = 1; // always ask for overlay
 
@@ -179,5 +179,5 @@ HDC fl_private_dc(Fl_Window* w, int mode, Fl_Gl_Choice **gp) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.3 1998/10/21 14:20:04 mike Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.4 1998/11/20 20:00:29 mike Exp $".
 //
