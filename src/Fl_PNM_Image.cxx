@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNM_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $"
+// "$Id: Fl_PNM_Image.cxx,v 1.1.2.2 2001/11/28 18:09:08 easysw Exp $"
 //
 // Fl_PNM_Image routines.
 //
@@ -56,6 +56,8 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 		val,		// Pixel value
 		maxval;		// Maximum pixel value
 
+
+  if ((fp = fopen(name, "rb")) == NULL) return;
 
   //
   // Read the file header in the format:
@@ -157,5 +159,5 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 
 //
-// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.1 2001/11/24 18:07:57 easysw Exp $".
+// End of "$Id: Fl_PNM_Image.cxx,v 1.1.2.2 2001/11/28 18:09:08 easysw Exp $".
 //
