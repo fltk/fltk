@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fixed Quickdraw drawing of 3 and 4 sided polygons (STR #765)
+	- Fixed fl_message code so that it does not get accidentaly
+	  addded to the current group (STR #253)
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
 	- FLUID now highlights code in the widget callback and

@@ -59,6 +59,11 @@ static Fl_Window *makeform() {
    message_form->size(410,103);
    return message_form;
  }
+ // make sure that the dialog does not become the child of some 
+ // current group
+ Fl_Group *previously_current_group = Fl_Group::current();
+ Fl_Group::current(0);
+ // create a new top level window
  Fl_Window *w = message_form = new Fl_Window(410,103,"");
  // w->clear_border();
  // w->box(FL_UP_BOX);
@@ -82,6 +87,7 @@ static Fl_Window *makeform() {
  w->resizable(new Fl_Box(60,10,110-60,27));
  w->end();
  w->set_modal();
+ Fl_Group::current(previously_current_group);
  return w;
 }
 

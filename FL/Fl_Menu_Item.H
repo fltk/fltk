@@ -29,7 +29,7 @@
 #  include "Fl_Widget.H"
 #  include "Fl_Image.H"
 
-#  if defined(__APPLE__) && defined(__MWERKS__) && defined(check)
+#  if defined(__APPLE__) && defined(check)
 #    undef check
 #  endif
 

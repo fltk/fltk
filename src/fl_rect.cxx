@@ -346,8 +346,10 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
   MoveTo(x, y);
   LineTo(x1, y1);
   LineTo(x2, y2);
+  LineTo(x, y);
   ClosePoly();
   PaintPoly(poly);
+  FramePoly(poly);
   KillPoly(poly);
 #elif defined(__APPLE_QUARTZ__)
   CGContextMoveToPoint(fl_gc, x, y);
@@ -377,8 +379,10 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   LineTo(x1, y1);
   LineTo(x2, y2);
   LineTo(x3, y3);
+  LineTo(x, y);
   ClosePoly();
   PaintPoly(poly);
+  FramePoly(poly);
   KillPoly(poly);
 #elif defined(__APPLE_QUARTZ__)
   CGContextMoveToPoint(fl_gc, x, y);
