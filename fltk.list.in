@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list.in,v 1.1.2.9 2003/01/30 21:38:22 easysw Exp $"
+# "$Id: fltk.list.in,v 1.1.2.10 2003/06/01 00:23:56 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -52,8 +52,18 @@ $GLLIBNAME=@GLLIBNAME@
 $FLUID=@FLUID@
 
 %system darwin
-%postinstall $bindir/fltk-config -post $bindir/fluid
 f 0444 root sys $includedir/FL/mac.r FL/mac.r
+
+d 0555 root sys /Applications/fluid.app -
+d 0555 root sys /Applications/fluid.app/Contents -
+f 0444 root sys /Applications/fluid.app/Info.plist fluid/fluid.plist
+f 0444 root sys /Applications/fluid.app/PkgInfo fluid/fluid.info
+d 0555 root sys /Applications/fluid.app/Contents/MacOS -
+l 0555 root sys /Applications/fluid.app/Contents/MacOS/fluid $bindir/fluid
+d 0555 root sys /Applications/fluid.app/Contents/Resources -
+f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/fluid.icns
+%postinstall $bindir/fltk-config --post $bindir/fluid
+%postremove /bin/rm -rf /Applications/fluid.app
 %system all
 
 # FLUID
@@ -251,5 +261,5 @@ f 0444 root sys $datadir/doc/fltk/COPYING COPYING
 f 0444 root sys $datadir/doc/fltk/CHANGES CHANGES
 
 #
-# End of "$Id: fltk.list.in,v 1.1.2.9 2003/01/30 21:38:22 easysw Exp $".
+# End of "$Id: fltk.list.in,v 1.1.2.10 2003/06/01 00:23:56 easysw Exp $".
 #

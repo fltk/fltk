@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.44 2003/05/30 07:03:09 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.45 2003/06/01 00:23:57 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1026,10 +1026,10 @@ static OSErr OpenAppleEventHandler(const AppleEvent *appleEvt,
   fl_lock_function();
 
   // Open the documents via the callback...
-  if (AECountItems(theDocuments, &n) == noErr) {
+  if (AECountItems(&documents, &n) == noErr) {
     for (i = 1; i <= n; i ++) {
       // Get the next FSSpec record...
-      AEGetNthPtr(theDocuments, i, typeFSS, &keyWd, &typeCd,
+      AEGetNthPtr(&documents, i, typeFSS, &keyWd, &typeCd,
                   (Ptr)&fileSpec, sizeof(fileSpec),
 		  (actSz = sizeof(fileSpec), &actSz));
 
@@ -1861,6 +1861,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.44 2003/05/30 07:03:09 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.45 2003/06/01 00:23:57 easysw Exp $".
 //
 

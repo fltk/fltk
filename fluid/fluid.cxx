@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.37 2003/04/01 19:58:08 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.38 2003/06/01 00:23:57 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -177,6 +177,30 @@ void exit_cb(Fl_Widget *,void *) {
 
   exit(0);
 }
+
+#ifdef __APPLE__
+#  include <FL/x.H>
+
+void
+apple_open_cb(const char *c) {
+  if (modflag && !fl_ask("Discard changes?")) return;
+  const char *oldfilename;
+  oldfilename = filename;
+  filename    = NULL;
+  set_filename(c);
+  if (!read_file(c, 0)) {
+    fl_message("Can't read %s: %s", c, strerror(errno));
+    free((void *)filename);
+    filename = oldfilename;
+    if (main_window) main_window->label(filename);
+    return;
+  }
+
+  // Loaded a file; free the old filename...
+  modflag = 0;
+  if (oldfilename) free((void *)oldfilename);
+}
+#endif // __APPLE__
 
 void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag && !fl_ask("Discard changes?")) return;
@@ -820,6 +844,10 @@ int main(int argc,char **argv) {
 
   make_main_window();
 
+#ifdef __APPLE__
+  fl_open_callback(apple_open_cb);
+#endif // __APPLE__
+
   if (c) set_filename(c);
   if (!compile_only) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
@@ -856,5 +884,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.37 2003/04/01 19:58:08 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.38 2003/06/01 00:23:57 easysw Exp $".
 //
