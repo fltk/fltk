@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.2 2002/04/29 20:56:19 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.3 2002/04/29 20:57:29 easysw Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -154,5 +154,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.2 2002/04/29 20:56:19 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.3 2002/04/29 20:57:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.3 2002/04/29 20:56:19 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.4 2002/04/29 20:57:31 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -935,5 +935,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.3 2002/04/29 20:56:19 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.4 2002/04/29 20:57:31 easysw Exp $".
 //
