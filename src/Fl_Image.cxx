@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.37 2004/08/31 22:00:47 matthiaswm Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.38 2004/09/24 16:00:10 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -141,18 +141,28 @@ void Fl_RGB_Image::uncache() {
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
+  Fl_RGB_Image	*new_image;	// New RGB image
+  uchar		*new_array;	// New array for image data
+
   // Optimize the simple copy where the width and height are the same,
   // or when we are copying an empty image...
   if ((W == w() && H == h()) ||
       !w() || !h() || !d() || !array) {
-    return new Fl_RGB_Image(array, w(), h(), d(), ld());
+    if (array) {
+      // Make a copy of the image data and return a new Fl_RGB_Image...
+      new_array = new uchar[w() * h() * d()];
+      memcpy(new_array, array, w() * h() * d());
+
+      new_image = new Fl_RGB_Image(new_array, w(), h(), d(), ld());
+      new_image->alloc_array = 1;
+
+      return new_image;
+    } else return new Fl_RGB_Image(array, w(), h(), d(), ld());
   }
   if (W <= 0 || H <= 0) return 0;
 
   // OK, need to resize the image data; allocate memory and 
-  Fl_RGB_Image	*new_image;	// New RGB image
-  uchar		*new_array,	// New array for image data
-		*new_ptr;	// Pointer into new array
+  uchar		*new_ptr;	// Pointer into new array
   const uchar	*old_ptr;	// Pointer into old array
   int		c,		// Channel number
 		sy,		// Source coordinate
@@ -418,5 +428,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.37 2004/08/31 22:00:47 matthiaswm Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.38 2004/09/24 16:00:10 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3.2.10 2004/07/04 23:21:52 easysw Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.11 2004/09/24 16:00:11 easysw Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -213,7 +213,7 @@ static void draw_search(Fl_Color col)
   BP; vv(.4, .13); vv(1.0, .73); vv(.73, 1.0); vv(.13, .4); EP;
   set_outline_color(col);
   fl_line_style(FL_SOLID, 3, 0);
-  BC; fl_circle(-.2, -.2, .8); EC;
+  BC; fl_circle(-.2, -.2, .7); EC;
   fl_line_style(FL_SOLID, 1, 0);
   BC; vv(.4, .13); vv(1.0, .73); vv(.73, 1.0); vv(.13, .4); EC;
 }
@@ -410,5 +410,5 @@ static void fl_init_symbols(void) {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.10 2004/07/04 23:21:52 easysw Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.11 2004/09/24 16:00:11 easysw Exp $".
 //

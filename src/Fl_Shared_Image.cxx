@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.20 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.21 2004/09/24 16:00:11 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -269,12 +269,6 @@ Fl_Shared_Image::copy(int W, int H) {
   Fl_Image		*temp_image;	// New image file
   Fl_Shared_Image	*temp_shared;	// New shared image
 
-  // See if the new and old sizes are the same...
-  if (image_ && image_->w() == W && image_->h() == H) {
-    refcount_ ++;
-    return (this);
-  }
-
   // Make a copy of the image we're sharing...
   if (!image_) temp_image = 0;
   else temp_image = image_->copy(W, H);
@@ -466,5 +460,5 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.20 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.21 2004/09/24 16:00:11 easysw Exp $".
 //

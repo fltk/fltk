@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.21 2004/09/09 21:34:46 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.22 2004/09/24 16:00:10 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -66,7 +66,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
       list[n++] = (m & FL_RGB8) ? 8 : 1;
       if (m & FL_ALPHA) {
 	list[n++] = AGL_ALPHA_SIZE;
-	list[n++] = 1;
+	list[n++] = (m & FL_RGB8) ? 8 : 1;
       }
       if (m & FL_ACCUM) {
 	list[n++] = AGL_ACCUM_GREEN_SIZE;
@@ -116,7 +116,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
       list[n++] = (m & FL_RGB8) ? 8 : 1;
       if (m & FL_ALPHA) {
         list[n++] = AGL_ALPHA_SIZE;
-        list[n++] = 1;
+        list[n++] = (m & FL_RGB8) ? 8 : 1;
       }
       if (m & FL_ACCUM) {
         list[n++] = AGL_ACCUM_GREEN_SIZE;
@@ -166,7 +166,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
       list[n++] = (m & FL_RGB8) ? 8 : 1;
       if (m & FL_ALPHA) {
 	list[n++] = GLX_ALPHA_SIZE;
-	list[n++] = 1;
+	list[n++] = (m & FL_RGB8) ? 8 : 1;
       }
       if (m & FL_ACCUM) {
 	list[n++] = GLX_ACCUM_GREEN_SIZE;
@@ -439,5 +439,5 @@ void fl_delete_gl_context(GLContext context) {
 
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.21 2004/09/09 21:34:46 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.22 2004/09/24 16:00:10 easysw Exp $".
 //

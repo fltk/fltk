@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.53 2004/07/27 16:02:20 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.54 2004/09/24 16:00:10 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1508,7 +1508,7 @@ Fl_Help_View::format()
       }
     }
 
-    if (s > buf && !pre && !head)
+    if (s > buf && !head)
     {
       *s = '\0';
       ww = (int)fl_width(buf);
@@ -1538,15 +1538,14 @@ Fl_Help_View::format()
 	add_link(linkdest, xx, yy - fsize, ww, fsize);
 
       xx += ww;
-      if ((fsize + 2) > hh)
-	hh = fsize + 2;
-
-      needspace = 0;
     }
+
+    do_align(block, line, xx, newalign, links);
 
     block->end = ptr;
     size_      = yy + hh;
   }
+
 
   if (ntargets_ > 1)
     qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
@@ -2125,66 +2124,57 @@ Fl_Color				// O - Color value
 Fl_Help_View::get_color(const char *n,	// I - Color name
                         Fl_Color   c)	// I - Default color value
 {
+  int	i;				// Looping var
   int	rgb, r, g, b;			// RGB values
+  static const struct {			// Color name table
+    const char *name;
+    int r, g, b;
+  }	colors[] = {
+    { "black",		0x00, 0x00, 0x00 },
+    { "red",		0xff, 0x00, 0x00 },
+    { "green",		0x00, 0x80, 0x00 },
+    { "yellow",		0xff, 0xff, 0x00 },
+    { "blue",		0x00, 0x00, 0xff },
+    { "magenta",	0xff, 0x00, 0xff },
+    { "fuchsia",	0xff, 0x00, 0xff },
+    { "cyan",		0x00, 0xff, 0xff },
+    { "aqua",		0x00, 0xff, 0xff },
+    { "white",		0xff, 0xff, 0xff },
+    { "gray",		0x80, 0x80, 0x80 },
+    { "grey",		0x80, 0x80, 0x80 },
+    { "lime",		0x00, 0xff, 0x00 },
+    { "maroon",		0x80, 0x00, 0x00 },
+    { "navy",		0x00, 0x00, 0x80 },
+    { "olive",		0x80, 0x80, 0x00 },
+    { "purple",		0x80, 0x00, 0x80 },
+    { "silver",		0xc0, 0xc0, 0xc0 },
+    { "teal",		0x00, 0x80, 0x80 }
+  };
 
 
-  if (!n || !n[0])
-    return (c);
+  if (!n || !n[0]) return c;
 
-  if (n[0] == '#')
-  {
+  if (n[0] == '#') {
     // Do hex color lookup
     rgb = strtol(n + 1, NULL, 16);
 
-    r = rgb >> 16;
-    g = (rgb >> 8) & 255;
-    b = rgb & 255;
-
+    if (strlen(n) > 4) {
+      r = rgb >> 16;
+      g = (rgb >> 8) & 255;
+      b = rgb & 255;
+    } else {
+      r = (rgb >> 8) * 17;
+      g = ((rgb >> 4) & 15) * 17;
+      b = (rgb & 15) * 17;
+    }
     return (fl_rgb_color((uchar)r, (uchar)g, (uchar)b));
+  } else {
+    for (i = 0; i < (int)(sizeof(colors) / sizeof(colors[0])); i ++)
+      if (!strcasecmp(n, colors[i].name)) {
+        return fl_rgb_color(colors[i].r, colors[i].g, colors[i].b);
+      }
+    return c;
   }
-  else if (strcasecmp(n, "black") == 0)
-    return (FL_BLACK);
-  else if (strcasecmp(n, "red") == 0)
-    return (FL_RED);
-#ifdef __BORLANDC__ // Workaround for compiler bug...
-  else if (strcasecmp(n, "green") == 0) {
-    r = 0;
-    g = 0x80;
-    b = 0;
-    return (fl_rgb_color(r, g, b));
-  }
-#else
-  else if (strcasecmp(n, "green") == 0)
-    return (fl_rgb_color(0, 0x80, 0));
-#endif // __BORLANDC__
-  else if (strcasecmp(n, "yellow") == 0)
-    return (FL_YELLOW);
-  else if (strcasecmp(n, "blue") == 0)
-    return (FL_BLUE);
-  else if (strcasecmp(n, "magenta") == 0 || strcasecmp(n, "fuchsia") == 0)
-    return (FL_MAGENTA);
-  else if (strcasecmp(n, "cyan") == 0 || strcasecmp(n, "aqua") == 0)
-    return (FL_CYAN);
-  else if (strcasecmp(n, "white") == 0)
-    return (FL_WHITE);
-  else if (strcasecmp(n, "gray") == 0 || strcasecmp(n, "grey") == 0)
-    return (fl_rgb_color(0x80, 0x80, 0x80));
-  else if (strcasecmp(n, "lime") == 0)
-    return (FL_GREEN);
-  else if (strcasecmp(n, "maroon") == 0)
-    return (fl_rgb_color(0x80, 0, 0));
-  else if (strcasecmp(n, "navy") == 0)
-    return (fl_rgb_color(0, 0, 0x80));
-  else if (strcasecmp(n, "olive") == 0)
-    return (fl_rgb_color(0x80, 0x80, 0));
-  else if (strcasecmp(n, "purple") == 0)
-    return (fl_rgb_color(0x80, 0, 0x80));
-  else if (strcasecmp(n, "silver") == 0)
-    return (fl_rgb_color(0xc0, 0xc0, 0xc0));
-  else if (strcasecmp(n, "teal") == 0)
-    return (fl_rgb_color(0, 0x80, 0x80));
-  else
-    return (c);
 }
 
 
@@ -2811,5 +2801,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.53 2004/07/27 16:02:20 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.54 2004/09/24 16:00:10 easysw Exp $".
 //

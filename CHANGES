@@ -3,6 +3,20 @@ CHANGES IN FLTK 1.1.5rc3
 	- Documentation updates (STR #505, STR #513)
 	- Updated PNG library source to 1.2.7.
 	- Updated ZLIB library source to 1.2.1.
+	- Fixed VC++ project file problems (STR #476, STR #478,
+	  STR #520, STR #527, STR #537)
+	- Now look for 8 bits of alpha when the developer has
+	  requested FL_RGB8 (STR #541)
+	- The last line in an Fl_Help_View widget was not
+	  aligned properly (STR #536)
+	- The "search" symbol looked like a Q (STR #536)
+	- Changed Fl_Help_View::get_color() to use a lookup
+	  table to avoid serious Borland C++ 5.5 compiler bugs
+	  (STR #533)
+	- Fixed Watcom compiler warnings with FL/Fl_Widget.H
+	  (STR #540)
+	- The image class copy() methods did not always make a
+	  separate copy of the image data (STR #539)
 	- Fixed an edge case in fl_old_shortcut() that could
 	  cause it to read beyond then end of the shortcut
 	  string (used for XForms named shortcuts)
