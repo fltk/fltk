@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.12 2000/02/05 09:20:44 bill Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.13 2000/04/25 01:57:48 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+
+extern int i18n_type;
+extern const char* i18n_include;
+extern const char* i18n_function;
+extern const char* i18n_file;
+extern const char* i18n_set;
+extern char i18n_program[];
 
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
@@ -262,6 +269,11 @@ void Fl_Function_Type::write_code1() {
   }
   if (havewidgets) write_c("  %s* w;\n",subclassname(child));
   indentation += 2;
+
+  if (i18n_type == 2 && !i18n_file[0])
+    // Initialize _catalog as needed...
+    write_c("  if (_catalog == (nl_catd)-1) _catalog = catopen(\"%s\", 0);\n",
+            i18n_program);
 }
 
 void Fl_Function_Type::write_code2() {
@@ -665,5 +677,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.12 2000/02/05 09:20:44 bill Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.13 2000/04/25 01:57:48 mike Exp $".
 //

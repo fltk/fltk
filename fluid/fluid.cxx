@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.4 2000/04/24 18:22:50 mike Exp $"
+// "$Id: fluid.cxx,v 1.15.2.5 2000/04/25 01:57:51 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -168,6 +168,7 @@ const char* i18n_include = "";
 const char* i18n_function = "";
 const char* i18n_file = "";
 const char* i18n_set = "";
+char i18n_program[1024] = "";
 
 void write_cb(Fl_Widget *, void *) {
   if (!filename) {
@@ -176,6 +177,8 @@ void write_cb(Fl_Widget *, void *) {
   }
   char cname[1024];
   char hname[1024];
+  strcpy(i18n_program, filename_name(filename));
+  filename_setext(i18n_program, "");
   if (*code_file_name == '.') {
     strcpy(cname,filename_name(filename));
     filename_setext(cname, code_file_name);
@@ -457,5 +460,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.4 2000/04/24 18:22:50 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.5 2000/04/25 01:57:51 mike Exp $".
 //

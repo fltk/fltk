@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.2 2000/04/24 18:22:50 mike Exp $"
+// "$Id: file.cxx,v 1.7.2.3 2000/04/25 01:57:51 mike Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -336,7 +336,7 @@ int write_file(const char *filename, int selected_only) {
 	write_string("\ni18n_function %s", i18n_function);
         break;
     case 2 : /* POSIX catgets */
-	write_string("\ni18n_file %s", i18n_file);
+        if (i18n_file[0]) write_string("\ni18n_file %s", i18n_file);
 	write_string("\ni18n_set %s", i18n_set);
         break;
     }
@@ -639,5 +639,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.2 2000/04/24 18:22:50 mike Exp $".
+// End of "$Id: file.cxx,v 1.7.2.3 2000/04/25 01:57:51 mike Exp $".
 //

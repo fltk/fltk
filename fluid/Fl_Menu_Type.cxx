@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.6 2000/04/24 18:22:47 mike Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.7 2000/04/25 01:57:49 mike Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -227,7 +227,8 @@ void Fl_Menu_Item_Type::write_item() {
 	write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", i18n_file, i18n_set, msgnum ++);
+        write_c("catgets(%s,%s,%d,", i18n_file[0] ? i18n_file : "_catalog",
+	        i18n_set, msgnum ++);
         write_cstring(label());
 	write_c(")");
         break;
@@ -462,5 +463,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.6 2000/04/24 18:22:47 mike Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.7 2000/04/25 01:57:49 mike Exp $".
 //

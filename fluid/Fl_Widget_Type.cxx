@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.11 2000/04/24 18:22:48 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.12 2000/04/25 01:57:49 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1350,7 +1350,8 @@ void Fl_Widget_Type::write_code1() {
 	write_c(")");
         break;
     case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", i18n_file, i18n_set, msgnum ++);
+        write_c("catgets(%s,%s,%d,", i18n_file[0] ? i18n_file : "_catalog",
+	        i18n_set, msgnum ++);
         write_cstring(label());
 	write_c(")");
         break;
@@ -1768,5 +1769,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.11 2000/04/24 18:22:48 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.12 2000/04/25 01:57:49 mike Exp $".
 //
