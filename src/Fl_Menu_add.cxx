@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.2 1999/07/06 16:16:38 mike Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.3 1999/07/12 11:59:03 mike Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -57,7 +57,7 @@ static Fl_Menu_Item* insert(
   const char *text,
   int flags
 ) {
-  if (array == local_array && size >= local_array_alloc) {
+  if (array == local_array && size >= (local_array_alloc - 1)) {
     local_array_alloc = 2*size;
     Fl_Menu_Item* newarray = new Fl_Menu_Item[local_array_alloc];
     memmove(newarray, array, size*sizeof(Fl_Menu_Item));
@@ -229,5 +229,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.2 1999/07/06 16:16:38 mike Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.3 1999/07/12 11:59:03 mike Exp $".
 //
