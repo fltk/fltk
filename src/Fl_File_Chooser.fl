@@ -166,7 +166,7 @@ window->hide();}
     }
     code {callback_ = 0;
 data_ = 0;
-directory_[0] = '} {}
+directory_[0] = '\0';} {}
   }
   Function {~Fl_File_Chooser()} {open
   } {
