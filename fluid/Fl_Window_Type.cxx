@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.10 1998/12/06 15:09:16 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.11 1998/12/06 15:49:29 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -232,7 +232,7 @@ void Fl_Window_Type::open() {
 }
 
 // control panel items:
-#include "widget_panel.H"
+#include "widget_panel.h"
 
 void modal_cb(Fl_Light_Button* i, void* v) {
   if (v == LOAD) {
@@ -697,5 +697,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.10 1998/12/06 15:09:16 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.11 1998/12/06 15:49:29 mike Exp $".
 //

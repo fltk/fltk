@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.11 1998/12/06 15:09:16 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.12 1998/12/06 15:47:37 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -132,7 +132,7 @@ Fl_Type *Fl_Widget_Type::make() {
   return t;
 }
 
-#include "Fluid_Image.H"
+#include "Fluid_Image.h"
 
 void Fl_Widget_Type::setimage(Fluid_Image *i) {
   if (i == image) return;
@@ -218,7 +218,7 @@ Fl_Type *sort(Fl_Type *parent) {
 ////////////////////////////////////////////////////////////////
 // The control panels!
 
-#include "widget_panel.H"
+#include "widget_panel.h"
 #include <FL/fl_show_colormap.H>
 
 // All the callbacks use the argument to indicate whether to load or store.
@@ -1701,5 +1701,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.11 1998/12/06 15:09:16 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.12 1998/12/06 15:47:37 mike Exp $".
 //

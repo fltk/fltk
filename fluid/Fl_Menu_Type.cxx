@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.5 1998/12/06 15:09:14 mike Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.6 1998/12/06 15:45:26 mike Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -149,7 +149,7 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
   return unique_id(t, "menu", t->name(), t->label());
 }
 
-#include "Fluid_Image.H"
+#include "Fluid_Image.h"
 
 void Fl_Menu_Item_Type::write_static() {
   if (callback() && !is_name(callback())) {
@@ -477,7 +477,7 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 // Shortcut entry item in panel:
 
 #include <FL/Fl_Output.H>
-#include "Shortcut_Button.H"
+#include "Shortcut_Button.h"
 #include <FL/fl_draw.H>
 
 void Shortcut_Button::draw() {
@@ -529,5 +529,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.5 1998/12/06 15:09:14 mike Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.6 1998/12/06 15:45:26 mike Exp $".
 //
