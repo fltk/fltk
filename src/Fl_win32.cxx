@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.27 2000/06/18 00:38:40 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.28 2000/06/20 05:47:38 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -151,8 +151,6 @@ void Fl::remove_fd(int n) {
 
 MSG fl_msg;
 
-#define FOREVER 1e20
-
 // This is never called with time_to_wait < 0.0.
 // It *should* return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.  This version only
@@ -233,7 +231,7 @@ int fl_wait(double time_to_wait) {
 int fl_ready() {
   if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
 #ifdef USE_ASYNC_SELECT
-  return (0);
+  return 0;
 #else
   timeval t;
   t.tv_sec = 0;
@@ -953,5 +951,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.27 2000/06/18 00:38:40 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.28 2000/06/20 05:47:38 bill Exp $".
 //

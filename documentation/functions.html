@@ -282,8 +282,10 @@ in future versions, however. </LI>
 
 Adds a callback function that is called every time by
 <tt>Fl::wait()</tt> and also makes it act as though the timeout is
-zero (so it just checks for events and returns immediately).  This can
-be used to get background processing done.
+zero (this makes <tt>Fl::wait()</tt> return immediately, so if it is
+in a loop it is called repeatedly, and thus the idle fucntion is
+called repeatedly).  The idle function can be used to get background
+processing done.
 
 <P>You can have multiple idle callbacks. To remove an idle callback use <A
 href=#remove_idle><tt>Fl::remove_idle()</tt></A>.
@@ -295,26 +297,34 @@ but <tt>Fl::ready()</tt> does not.
 <tt>Fl::wait()</tt>, <tt>Fl::check()</tt>, and <tt>Fl::ready()</tt>.
 Fltk will not recursively call the idle callback.
 
-<h3><A name=add_timeout>static void Fl::add_timeout(float t, void
-(*cb)(void*),void*v=0)</A></h3>
+<h3><A name=add_timeout>static void Fl::add_timeout(float t, void (*cb)(void*),void*v=0)</A></h3>
 
 Add a one-shot timeout callback.  The function will be called by
-<tt>Fl::wait()</tt> at <i>t</i> seconds after this function is called
-(except if you call this inside a timeout callback, then the time is
-measured from when the callback was done, to allow accurate repeating
-events).  The optional <tt>void*</tt> argument is passed to the
-callback.
+<tt>Fl::wait()</tt> at <i>t</i> seconds after this function is called.
+The optional <tt>void*</tt> argument is passed to the callback.
 
-<P>This code will print &quot;TICK&quot; each second on stdout:
+<h3><A name=add_interval_timeout>static void Fl::add_interval_timeout(float t, void (*cb)(void*),void*v=0)</A></h3>
+
+Add a one-shot timeout callback.  The difference from <a
+href=#add_timeout>add_timeout</a> is that the time is measured from
+when the last timeout callback was called, rather than from the moment
+this function is called (if no timeout has been called recently the
+time is measured from the next call to Fl::wait).  This is designed
+for making regularly-spaced timeouts at high speed (like for movie
+playback), it also has slightly less system-call overhead than
+add_timeout.
+
+<P>This code will print &quot;TICK&quot; each second on stdout, with a
+fair degree of accuracy:
 
 <UL><PRE>void callback(void*) {
- printf(&quot;TICK\n&quot;);
- Fl::add_timeout(1.0,callback);
+  printf(&quot;TICK\n&quot;);
+  Fl::add_interval_timeout(1.0,callback);
 }
 
 main() {
- Fl::add_timeout(1.0,callback);
- Fl::run();
+  Fl::add_timeout(1.0,callback);
+  for (;;) Fl::wait();
 }</PRE></UL>
 
 <h3><A name=arg>static int Fl::arg(int argc, char **argv, int &amp;i)</A></h3>
@@ -509,7 +519,7 @@ pick an item with a single click.  Don't pass non-zero to this.
 <br><A name=get_key>int Fl::get_key(int)</A></h3>
 
 <tt>Fl::event_key()</tt> returns which key on the keyboard was last
-pushed.
+pushed.  It returns zero if the last event was not a key press or release.
 
 <P><tt>Fl::event_key(int)</tt> returns true if the given key was held
 down (or pressed) <I>during</I> the last event.  This is constant until
@@ -955,9 +965,9 @@ Fl_Widget::test_shortcut()</tt></A>.
 
 <h3><A name=visual>static int Fl::visual(int)</A></h3>
 
-Selects a visual so that your graphics are drawn correctly.  You must
-do this before calling show() on any windows.  This does nothing if
-the default visual satisfies the capabilities, or if no visual
+Selects a visual so that your graphics are drawn correctly.  This is
+only allowed before you call show() on any windows.  This does nothing
+if the default visual satisfies the capabilities, or if no visual
 satisfies the capabilities, or on systems that don't have such
 brain-dead notions.
 

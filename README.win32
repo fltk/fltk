@@ -1,6 +1,13 @@
-README.win32 - 06/13/2000 - Building FLTK under Windows
+README.win32 - 06/15/2000 - Building FLTK under Windows
 -------------------------------------------------------
 
+This document is split into two main sections.
+The first describes several possible build environments,
+whilst the second describes some of the issues associated with
+using the GNU-like build configurations in the makefiles/
+subdirectory.
+
+-------------------------------------------------------
 
 INTRODUCTION
 
@@ -40,7 +47,7 @@ These supplementary files (headers and replacement libraries) can be
 found at the Mingw home page along with its native toolkit.
 
 If you are not familiar with these GNU-like toolkits please refer to
-the links section later in this document.  In particular, check out
+the links section later in this section.  In particular, check out
 their license conditions carefully before use.
 
 
@@ -52,35 +59,41 @@ cygnus: Built natively under the Cygwin toolset and using the Un*x
         compatibility layer provided by CYGWIN1.DLL
 
 mingw:  Mainly based upon the Mingw utilities, compiler and tools but
-	currently needs supplementing by additional tools such as
-	make.exe. Consequently the Makefiles provided do require the
-	Cygwin toolset as a convenient way of obtaining some of the
-	build utilities but generates code not using CYGWIN1.DLL.
+        currently needs supplementing by additional tools such as
+        make.exe. Consequently the Makefiles provided do require the
+        Cygwin toolset as a convenient way of obtaining some of the
+        build utilities but generates code not using CYGWIN1.DLL.
 
 It is also possible to build an executable using the Mingw toolset and
-other windows-native tools (rather than using Cygwin).  At present such
-tools do exist  but are spread widely over the net and of differing
-versions.
+other windows-native tools (rather than using Cygwin for supplementary
+tools like make).  At present although such tools do exist, they are
+spread widely over the net and of differing versions.
 
-The advantage of this approach would be no necessity to download the
-Cygwin tools.  At this time it is felt that the maintenance costs of
-this approach outweigh any benefits however.
+The advantage of this approach though would be no necessity to download
+and configure the Cygwin tools.
+At this time it is felt that the maintenance costs of this approach
+outweigh any benefits however.
 
-It is intended that the Cygwin tools themselves provide a basic Mingw
-alternate compilation mode through the compile/link flag -mno-cygwin.
+
+By design, the Cygwin tools themselves are supposed to provide a basic
+Mingw alternate compilation mode through the compile/link
+flag -mno-cygwin.
 
 At the time of writing v1.1.2 of Cygwin has just been released and
 still has some serious configuration issues for Mingw compilation and
 so cannot be recommended.
 
-This Cygwin-only method has a number of deficiencies that prevent many
-modern programs from compiling unless further headers and replacement
-libraries are added.
+This Cygwin-only method also has a number of deficiencies that prevent
+many modern programs from compiling unless further headers and
+replacement libraries are added (even if basic mingw compilation did
+work OK).
 
-These additions are also available at the Mingw site mentioned above.
+These additions are also available at the Mingw site mentioned in the
+links section. I refer to these as the mingw supplementary files as
+opposed to the full toolset.
 
 As you can see there are many ways to configure the various bits of
-Cygwin and Mingw. In order to set up development refer to the links
+Cygwin and Mingw. In order to set up development, refer to the links
 section below for more guidance.
 
 
@@ -118,7 +131,7 @@ Our recommendation is to:
 
 2) Get the latest Cygwin toolset.
    Get the latest full Mingw toolset.
-  
+ 
    Configure your PATH to find the Mingw tools first but also have the
    Cygwin supplementary tools on your PATH for commands like make.
 
@@ -126,23 +139,29 @@ Our recommendation is to:
 
    Produce executables dependent on CYGWIN1.DLL (Check licensing).
    i.e. No supplementary Mingw files required.
-  
+
+1) and 2) provide windows-native executables whilst 3) has a un*x
+portability layer but is reliant on a proprietary DLL.
+ 
 See the later sections for detailed information about using one of
 these configurations.
 
 Other options:
-  
+ 
 4) When the Cygwin tools are fixed...
-   
+  
    Get the latest Cygwin toolset.
    Get the latest Mingw supplementary files for Cygwin.
-  
+ 
    This would be a good long-term solution since this would allow
    Cygwin native or Cygwin-hosted Mingw compilation without the
    confusion of two versions of some of the tools.
 
+   This is in fact how things are intended when the two toolsets are in
+   step.
+
 5) Get the latest full Mingw toolset.
-   Get the necessary supplementary tools for native versions of make etc  
+   Get the necessary supplementary tools for native versions of make etc 
 
    Again a good long-term solution but currently difficult to maintain
    due to the diversity of tools and versions.
@@ -168,7 +187,7 @@ LINKS
    In particular the insights and recommendations for using Cygwin for Mingw
    compilation are very useful:
 
-   http://www.xraylith.wisc.edu/~khan/software/gnu-win32/mno-cygwin-howto.txt
+  http://www.xraylith.wisc.edu/~khan/software/gnu-win32/mno-cygwin-howto.txt
 
 4) Check out the FLTK mailing list at the FLTK homepage:
 
@@ -186,6 +205,15 @@ LINKS
 
    http://www.carlthompson.net/cygwin/
 
+6) GCC compiler homepage
+
+   http://gcc.gnu.org/
+  
+7) OpenGL page - for OpenGL and GLUT libs
+
+   http://www.opengl.org/
+  
+------------------------------------------------------------------
 
 BUILDING FLTK WITH CYGWIN OR MINGW
 
@@ -199,7 +227,7 @@ a) Cygwin 'native' system (intend building an executable using CYGWIN1.DLL)
 
    Having read the Cygwin documentation and happily compiled and linked your
 own small test programs (see below)...
-  
+ 
 i) Copy makefiles/Makefile.cygnus to top level FLTK directory.
 
 ii) Backup existing Makefile and rename top level copy of Makefile.cygnus to
@@ -208,7 +236,7 @@ ii) Backup existing Makefile and rename top level copy of Makefile.cygnus to
 iii) Type make
 
 The first time it is run it will copy other configuration files from the
-makefiles directory and then begin building FLTK, Fluid and the test examples.
+makefiles directory and then begin building FLTK, Fluid and the test examples
 
 iv) The build process will produce libraries in the lib directory and various
     executables.
@@ -217,8 +245,7 @@ v) Read the rest of this document to learn how to troubleshoot your setup or
    change various configuration settings.
 
 
-b) For a combination Cygwin + full Mingw solution as described in 'Win32 build
-   environments.txt'
+b) For a combination Cygwin + full Mingw solution
 
 Download the Cygwin tools and Mingw tools.
 Set the PATH to find the Mingw tools first and then the Cygwin ones.
@@ -231,22 +258,36 @@ c) For a Cygwin solution with only supplementary libraries/headers from Mingw
 
 At the time of writing, Cygwin 1.1.2 does not work with early June 2000 gcc
 tools to produce Mingw executables.
+[For the truly adventurous it can be made to work by following the
+instructions from Dale Goudney on the cygwin mailing list dated June 13 or
+subsequent updated gcc distribution for cygwin.]
 
-As such this is not currently supported via a Makefile, but here are some tips:
+As such this is not currently supported via a supported set of configuration
+files, but a preliminary (largely untested) set are provided as *.no-cygwin.
 
-The compiler and linker option -mno-Cygwin SHOULD be all that's necessary to
-add to makeinclude.cygnus as the toolset should then pull in the correct
-alternate files.
+The files are a hybrid of the cygnus and mingw-native files.
 
-I would strongly recommend you read the insights into this process described by
-Mumit Khan (see links section of 'Win32 build environments.txt' )
+Here's a 'recipe' to derive *.no-cygwin from *.cygnus and *.mingw.
+The compiler and linker option -mno-cygwin should be added to
+makeinclude.cygnus as the toolset should then pull in the correct alternate
+files. (creating makeinclude.no-cygwin)
+
+Because we are using a basic mingw arrangement, config.mingw is copied to
+config.no-cygwin.
+
+Makefile.no-cygwin is created from a copy of Makefile.cygnus with a minor
+change towards the bottom of the Makefile where config.cygnus and
+makeinclude.cygnus should be replaced by equivalent *.no-cygwin.
+
+
+I would strongly recommend you read the insights into this process described
+by Mumit Khan (see links section of the first part of this document above.)
 
 
 1.2  How do I set up Cygwin and/or Mingw
 
-See the links provided in the 'Win32 build environments.txt' document
-supplementing this one.
-This isn't really an FLTK issue and is adequately diescribed at the linked
+See the links section provided in the first part of this document.
+This isn't really an FLTK issue and is adequately described at the linked
 sites.
 
 
@@ -258,8 +299,8 @@ sites.
 There are many reasons for a failed compilation, including an incorrect
 development toolset.
 
-If you haven't regularly used the environment before, try compiling a few basic
-programs directly.
+If you haven't regularly used the environment before, try compiling a few
+basic programs directly.
 
 e.g. 1
 
@@ -315,8 +356,8 @@ int main()
 
 gcc hello.cxx
 
-Default compilation with gcc will probably no longer work complaining it can't
-find 'cout' etc.
+Default compilation with gcc will probably no longer work complaining it
+can't find 'cout' etc.
 
 
 Hopefully g++ will though!
@@ -325,7 +366,7 @@ g++ hello.cxx
 
 Although gcc and g++ end up calling the same common code, they often differ
 by what default libraries they include, hence the failure for gcc and success
-for g++.
+for g++. (g++ additionally adds the standard C++ libs)
 
 
 Once again you can try adding the -v option or looking at the file with
@@ -337,6 +378,10 @@ ld --help
 
 
 Hopefully if all goes well, you should be set to try compilation for real.
+If these don't compile then it would be prudent to check the latest info
+for the compiler you're using (maybe a newer version is available?) or
+look for additional information at the compiler home page.
+e.g. http://gcc.gnu.org/  for gcc details and documentation
 
 
 2.2  Make errors
@@ -349,14 +394,16 @@ For example the type of 'end of line' characters can cause problems.
 
 a) Basic advice:
 
- Check that the environment is set correctly. You may need to set MAKE_MODE to
-  unix for instance.
+ Check that the environment is set correctly. You may need to set MAKE_MODE
+  to unix for instance. ( SET MAKE_MODE=unix  in DOS window )
 
- Try and get a newer version of make ( make v3.79 at time of writing).
+ Try and get a newer version of make ( make v3.79 at time of writing). Prior
+  versions particularly some patch levels for v3.77 didn't cope as well with
+  mixed EOL characters (unix vs Windows)
 
  Check for incorrect end of line characters.
 
- Check that your build environment is correctly mapping text files.
+ Check that your build environment is correctly mapping text files correctly.
 
   [Cygwin has a text mode and binary mode for mount points.
    Typically files should be mounted on a drive in text mode.
@@ -374,12 +421,12 @@ b) Check the correct Makefile is in the top level directory
 3.1  Getting rid of that peskey console window in the background!
 3.2 Slimming down an executable
 
-By default the configuration leaves an executable suitable for debugging. That
-means it is not stripped of debugging symbols, but also that it needs to put
-those error messages somewhere.
+By default the configuration leaves an executable suitable for debugging.
+That means it is not stripped of debugging symbols, but also that it needs
+to put those error messages somewhere.
 
-Take a look at the 'makeinclude.<env>' file for your environment and there are
-a few notes on how to avoid the console window and how to slim down the
+Take a look at the 'makeinclude.<env>' file for your environment and there
+are a few notes on how to avoid the console window and how to slim down the
 executable.
 
 
@@ -397,11 +444,11 @@ By default this is set to 0 to disable Open GL operation.
 will change this to compile and link in OpenGL.
 
 
-In order for it to work you will need a few OpenGL headers for both Cygwin and
-Mingw. These are not part of the official distributions of Cygwin or Mingw, so 
-need to be added.
+In order for it to work you will need a few OpenGL headers for both Cygwin
+and Mingw. These are not part of the official distributions of Cygwin or
+Mingw, so need to be added.
 
-http://www.carlthompson.net/fltk/ 
+http://www.carlthompson.net/fltk/
 
 has a small zip file called MingwGL.zip which contains the necessary headers.
 
@@ -409,17 +456,17 @@ Normally these are put in FLTK's Gl directory.
 
 You will also need an opengl library and an additional set of GLUT libraries.
 
-The opengl files are most likely already part of your operating system, and the
-GLUT libraries may be found by searching at
+The opengl files are most likely already part of your operating system, and
+the GLUT libraries may be found by searching at
 
 http://www.opengl.org/
 
-Do a search for 'GLUT windows' and the first couple of results will take you to
-the latest GLUT and OpenGL libs for windows.
+Do a search for 'GLUT windows' and the first couple of results will take you
+to the latest GLUT and OpenGL libs for windows.
 
 The binaries (DLLs normally) need to be put somewhere on the system PATH.
 Consult the install documentation on the site for info.
 
-Many programs use OpenGL and GLUT so you may already have them on your system.
+Many programs use OpenGL and GLUT so you may already have them on your system
 
-[ I have compiled/tested with OpenGL 1.1 and GLUT DLLs version 3.7 ]
+[ FLTK compiled/tested with OpenGL 1.1 and GLUT DLLs version 3.7 ]
