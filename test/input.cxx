@@ -1,0 +1,92 @@
+/* 	Test input fields	*/
+
+#include <stdio.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Float_Input.H>
+#include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Secret_Input.H>
+#include <FL/Fl_Multiline_Input.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Toggle_Button.H>
+#include <FL/Fl_Color_Chooser.H>
+
+void cb(Fl_Widget *ob) {
+  printf("Callback for %s\n",ob->label());
+}
+
+int when = 0;
+Fl_Input *input[5];
+
+void toggle_cb(Fl_Widget *o, long v) {
+  if (((Fl_Toggle_Button*)o)->value()) when |= v; else when &= ~v;
+  for (int i=0; i<5; i++) input[i]->when(when);
+}
+
+void test(Fl_Input *i) {
+  if (i->changed()) {i->clear_changed(); printf("%s\n",i->label());}
+}
+
+void button_cb(Fl_Widget *,void *) {
+  for (int i=0; i<5; i++) test(input[i]);
+}
+
+void color_cb(Fl_Widget* button, void* v) {
+  Fl_Color c;
+  switch ((int)v) {
+  case 0: c = FL_WHITE; break;
+  case 1: c = FL_SELECTION_COLOR; break;
+  default: c = FL_BLACK; break;
+  }
+  uchar r,g,b; Fl::get_color(c, r,g,b);
+  if (fl_color_chooser(0,r,g,b)) {
+    Fl::set_color(c,r,g,b); Fl::redraw();
+    button->labelcolor(contrast(FL_BLACK,c));
+    button->redraw();
+  }
+}
+
+int main(int argc, char **argv) {
+  Fl_Window *window = new Fl_Window(400,400);
+
+  int y = 10;
+  input[0] = new Fl_Input(70,y,300,30,"Normal:"); y += 35;
+  // input[0]->cursor_color(FL_SELECTION_COLOR);
+  //  input[0]->maximum_size(20);
+  // input[0]->static_value("this is a testgarbage");
+  input[1] = new Fl_Float_Input(70,y,300,30,"Float:"); y += 35;
+  input[2] = new Fl_Int_Input(70,y,300,30,"Int:"); y += 35;
+  input[3] = new Fl_Secret_Input(70,y,300,30,"Secret:"); y += 35;
+  input[4] = new Fl_Multiline_Input(70,y,300,100,"Multiline:"); y += 105;
+
+  for (int i = 0; i < 4; i++) {
+    input[i]->when(0); input[i]->callback(cb);
+  }
+  int y1 = y;
+
+  Fl_Button *b;
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&CHANGED");
+  b->callback(toggle_cb, FL_WHEN_CHANGED); y += 25;
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&RELEASE");
+  b->callback(toggle_cb, FL_WHEN_RELEASE); y += 25;
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&ENTER_KEY");
+  b->callback(toggle_cb, FL_WHEN_ENTER_KEY); y += 25;
+  b = new Fl_Toggle_Button(10,y,200,25,"FL_WHEN_&NOT_CHANGED");
+  b->callback(toggle_cb, FL_WHEN_NOT_CHANGED); y += 25;
+  y += 5;
+  b = new Fl_Button(10,y,200,25,"&print changed()");
+  b->callback(button_cb);
+
+  b = new Fl_Button(220,y1,100,25,"color"); y1 += 25;
+  b->color(input[0]->color()); b->callback(color_cb, (void*)0);
+  b = new Fl_Button(220,y1,100,25,"selection_color"); y1 += 25;
+  b->color(input[0]->selection_color()); b->callback(color_cb, (void*)1);
+  b = new Fl_Button(220,y1,100,25,"textcolor"); y1 += 25;
+  b->color(input[0]->textcolor()); b->callback(color_cb, (void*)2);
+  b->labelcolor(contrast(FL_BLACK,b->color()));
+
+  window->end();
+  window->show(argc,argv);
+  return Fl::run();
+}

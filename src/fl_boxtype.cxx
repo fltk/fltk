@@ -1,0 +1,256 @@
+// fl_boxtype.c
+
+// Box drawing code for the common box types and the table of
+// boxtypes.  Other box types are in seperate files so they are not
+// linked in if not used.
+
+#include <FL/Fl.H>
+#include <FL/Fl_Widget.H>
+#include <FL/fl_draw.H>
+#include <config.h>
+
+////////////////////////////////////////////////////////////////
+
+static uchar active_ramp[24] = {
+  FL_GRAY_RAMP+0, FL_GRAY_RAMP+1, FL_GRAY_RAMP+2, FL_GRAY_RAMP+3,
+  FL_GRAY_RAMP+4, FL_GRAY_RAMP+5, FL_GRAY_RAMP+6, FL_GRAY_RAMP+7,
+  FL_GRAY_RAMP+8, FL_GRAY_RAMP+9, FL_GRAY_RAMP+10,FL_GRAY_RAMP+11,
+  FL_GRAY_RAMP+12,FL_GRAY_RAMP+13,FL_GRAY_RAMP+14,FL_GRAY_RAMP+15,
+  FL_GRAY_RAMP+16,FL_GRAY_RAMP+17,FL_GRAY_RAMP+18,FL_GRAY_RAMP+19,
+  FL_GRAY_RAMP+20,FL_GRAY_RAMP+21,FL_GRAY_RAMP+22,FL_GRAY_RAMP+23};
+static uchar inactive_ramp[24] = {
+  43, 43, 44, 44,
+  44, 45, 45, 46,
+  46, 46, 47, 47,
+  48, 48, 48, 49,
+  49, 49, 50, 50,
+  51, 51, 52, 52};
+uchar* Fl_Gray_Ramp = (uchar*)active_ramp-'A';
+
+void fl_frame(const char* s, int x, int y, int w, int h) {
+  if (h > 0 && w > 0) for (;*s;) {
+    // draw top line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_xyline(x, y, x+w-1);
+    y++; if (--h <= 0) break;
+    // draw left line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_yxline(x, y+h-1, y);
+    x++; if (--w <= 0) break;
+    // draw bottom line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_xyline(x, y+h-1, x+w-1);
+    if (--h <= 0) break;
+    // draw right line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_yxline(x+w-1, y+h-1, y);
+    if (--w <= 0) break;
+  }
+}
+
+void fl_frame2(const char* s, int x, int y, int w, int h) {
+  if (h > 0 && w > 0) for (;*s;) {
+    // draw bottom line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_xyline(x, y+h-1, x+w-1);
+    if (--h <= 0) break;
+    // draw right line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_yxline(x+w-1, y+h-1, y);
+    if (--w <= 0) break;
+    // draw top line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_xyline(x, y, x+w-1);
+    y++; if (--h <= 0) break;
+    // draw left line:
+    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_yxline(x, y+h-1, y);
+    x++; if (--w <= 0) break;
+  }
+}
+
+void fl_no_box(int, int, int, int, Fl_Color) {}
+
+void fl_thin_down_frame(int x, int y, int w, int h, Fl_Color) {
+  fl_frame2("WWHH",x,y,w,h);
+}
+
+void fl_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_thin_down_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+1, y+1, w-2, h-2);
+}
+
+void fl_thin_up_frame(int x, int y, int w, int h, Fl_Color) {
+  fl_frame2("HHWW",x,y,w,h);
+}
+
+void fl_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_thin_up_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+1, y+1, w-2, h-2);
+}
+
+void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
+#if BORDER_WIDTH == 1
+  fl_frame2("HHWW",x,y,w,h);
+#else
+#if BORDER_WIDTH == 2
+  fl_frame2("AAPPMMWU",x,y,w,h);
+#else
+  fl_frame("AAAAWUJJUSNN",x,y,w,h);
+#endif
+#endif
+}
+
+#define D1 BORDER_WIDTH
+#define D2 (BORDER_WIDTH+BORDER_WIDTH)
+
+void fl_up_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_up_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+D1, y+D1, w-D2, h-D2);
+}
+
+void fl_down_frame(int x, int y, int w, int h, Fl_Color) {
+#if BORDER_WIDTH == 1
+  fl_frame2("WWHH",x,y,w,h);
+#else
+#if BORDER_WIDTH == 2
+  fl_frame2("UWMMPPAA",x,y,w,h);
+#else
+  fl_frame("NNSUJJUWAAAA",x,y,w,h);
+#endif
+#endif
+}
+
+void fl_down_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_down_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+D1, y+D1, w-D2, h-D2);
+}
+
+void fl_engraved_frame(int x, int y, int w, int h, Fl_Color) {
+  fl_frame("HHWWWWHH",x,y,w,h);
+}
+
+void fl_engraved_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_engraved_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+2, y+2, w-4, h-4);
+}
+
+void fl_embossed_frame(int x, int y, int w, int h, Fl_Color) {
+  fl_frame("WWHHHHWW",x,y,w,h);
+}
+
+void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_embossed_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+2, y+2, w-4, h-4);
+}
+
+void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
+  fl_color(FL_BLACK); fl_rect(x, y, w, h);
+  fl_color(bgcolor); fl_rectf(x+1, y+1, w-2, h-2);
+}
+#define fl_border_box fl_rectbound
+
+void fl_rectf(int x, int y, int w, int h, Fl_Color c) {
+  fl_color(c);
+  fl_rectf(x, y, w, h);
+}
+
+void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
+  fl_color(c);
+  fl_rect(x, y, w, h);
+}
+
+////////////////////////////////////////////////////////////////
+
+static struct {
+  Fl_Box_Draw_F *f;
+  uchar dx, dy, dw, dh;
+} fl_box_table[] = {
+// must match list in Enumerations.H!!!
+  {fl_no_box,		0,0,0,0},		
+  {fl_rectf,		0,0,0,0}, // FL_FLAT_BOX
+  {fl_up_box,		D1,D1,D2,D2},
+  {fl_down_box,		D1,D1,D2,D2},
+  {fl_up_frame,		D1,D1,D2,D2},
+  {fl_down_frame,	D1,D1,D2,D2},
+  {fl_thin_up_box,	1,1,2,2},
+  {fl_thin_down_box,	1,1,2,2},
+  {fl_thin_up_frame,	1,1,2,2},
+  {fl_thin_down_frame,	1,1,2,2},
+  {fl_engraved_box,	2,2,4,4},
+  {fl_embossed_box,	2,2,4,4},
+  {fl_engraved_frame,	2,2,4,4},
+  {fl_embossed_frame,	2,2,4,4},
+  {fl_border_box,	1,1,2,2},
+  {fl_border_box,	1,1,2,2}, // _FL_SHADOW_BOX,
+  {fl_border_frame,	1,1,2,2},
+  {fl_border_frame,	1,1,2,2}, // _FL_SHADOW_FRAME,
+  {fl_border_box,	1,1,2,2}, // _FL_ROUNDED_BOX,
+  {fl_border_box,	1,1,2,2}, // _FL_RSHADOW_BOX,
+  {fl_border_frame,	1,1,2,2}, // _FL_ROUNDED_FRAME
+  {fl_rectf,		0,0,0,0}, // _FL_RFLAT_BOX,
+  {fl_up_box,		3,3,6,6}, // _FL_ROUND_UP_BOX
+  {fl_down_box,		3,3,6,6}, // _FL_ROUND_DOWN_BOX,
+  {fl_up_box,		0,0,0,0}, // _FL_DIAMOND_UP_BOX
+  {fl_down_box,		0,0,0,0}, // _FL_DIAMOND_DOWN_BOX
+  {fl_border_box,	1,1,2,2}, // _FL_OVAL_BOX,
+  {fl_border_box,	1,1,2,2}, // _FL_OVAL_SHADOW_BOX,
+  {fl_border_frame,	1,1,2,2}, // _FL_OVAL_FRAME
+  {fl_rectf,		0,0,0,0}, // _FL_OVAL_FLAT_BOX,
+  {fl_up_box,		3,3,6,6}, // FL_FREE_BOX+0
+  {fl_down_box,		3,3,6,6}, // FL_FREE_BOX+1
+  {fl_up_box,		3,3,6,6}, // FL_FREE_BOX+2
+  {fl_down_box,		3,3,6,6}, // FL_FREE_BOX+3
+  {fl_up_box,		3,3,6,6}, // FL_FREE_BOX+4
+  {fl_down_box,		3,3,6,6}, // FL_FREE_BOX+5
+  {fl_up_box,		3,3,6,6}, // FL_FREE_BOX+6
+  {fl_down_box,		3,3,6,6}, // FL_FREE_BOX+7
+};
+
+int Fl::box_dx(Fl_Boxtype t) {return fl_box_table[t].dx;}
+int Fl::box_dy(Fl_Boxtype t) {return fl_box_table[t].dy;}
+int Fl::box_dw(Fl_Boxtype t) {return fl_box_table[t].dw;}
+int Fl::box_dh(Fl_Boxtype t) {return fl_box_table[t].dh;}
+
+void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {fl_box_table[t].f=f;}
+
+void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
+		      uchar a, uchar b, uchar c, uchar d) {
+  fl_box_table[t].f=f;
+  fl_box_table[t].dx = a;
+  fl_box_table[t].dy = b;
+  fl_box_table[t].dw = c;
+  fl_box_table[t].dh = d;
+}
+
+void Fl::set_boxtype(Fl_Boxtype t, Fl_Boxtype f) {
+  fl_box_table[t] = fl_box_table[f];
+}
+
+void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
+  if (t) fl_box_table[t].f(x,y,w,h,c);
+}
+
+//extern Fl_Widget *fl_boxcheat; // hack set by Fl_Window.C
+
+void Fl_Widget::draw_box() const {
+  int t = box_;
+  if (!t) return;
+//   if (this == fl_boxcheat) {
+//     fl_boxcheat = 0;
+//     if (t == FL_FLAT_BOX) return;
+//     t += 2; // convert box to frame
+//   }
+  draw_box((Fl_Boxtype)t, x_, y_, w_, h_, (Fl_Color)color_);
+}
+
+void Fl_Widget::draw_box(Fl_Boxtype b, Fl_Color c) const {
+  draw_box(b, x_, y_, w_, h_, c);
+}
+
+void Fl_Widget::draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c)
+const {
+  if (!active_r()) Fl_Gray_Ramp = inactive_ramp-'A';
+  fl_box_table[b].f(x, y, w, h, c);
+  Fl_Gray_Ramp = active_ramp-'A';
+}

@@ -1,0 +1,283 @@
+// fl_font.C
+
+// Select fonts from the fltk font table.
+
+#ifdef WIN32
+#include "fl_font_win32.C"
+#else
+
+#include <config.h>
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
+#include "Fl_Font.H"
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+Fl_XFont::Fl_XFont(const char *name, int num) 
+  : number(num)
+{
+  font = XLoadQueryFont(fl_display, name);
+  if (!font) {
+    Fl::warning("bad font: %s", name);
+    font = XLoadQueryFont(fl_display, "fixed"); // if fixed fails we crash
+  }
+  XCharStruct *p = font->per_char;
+  if (!p) {
+    free_this = per_char = 0;
+  } else if (font->min_char_or_byte2>0x20 || font->max_char_or_byte2<0xff) {
+    // fill in short fonts so fl_width does not crash:
+    XCharStruct *q = free_this = new XCharStruct[0xff-0x20+1];
+    per_char = q - 0x20;
+    unsigned int i = 0x20;
+    for (; i<font->min_char_or_byte2; i++, q++)
+      q->width = font->min_bounds.width;
+    for (; i<=font->max_char_or_byte2; i++)
+      *q++ = *p++;
+    for (; i<=0xff; i++)
+      q->width = font->min_bounds.width;
+  } else {
+    free_this = 0;
+    per_char = p - font->min_char_or_byte2;
+  }
+#if HAVE_GL
+  listbase = 0;
+#endif
+}
+
+Fl_XFont *fl_current_xfont;
+Fl_XFont *fl_fixed_xfont;
+
+Fl_XFont::~Fl_XFont() {
+#if HAVE_GL
+// Delete list created by gl_draw().  This is not done by this code
+// as it will link in GL unnecessarily.  There should be some kind
+// of "free" routine pointer, or a subclass?
+// if (listbase) {
+//  int base = font->min_char_or_byte2;
+//  int size = font->max_char_or_byte2-base+1;
+//  int base = 0; int size = 256;
+//  glDeleteLists(listbase+base,size);
+// }
+#endif
+  if (this == fl_current_xfont) fl_current_xfont = 0;
+  delete[] free_this;
+  XFreeFont(fl_display, font);
+}
+
+////////////////////////////////////////////////////////////////
+
+// WARNING: if you add to this table, you must redefine FL_FREE_FONT
+// in Enumerations.H & recompile!!
+static Fl_Fontdesc built_in_table[] = {
+{"-*-helvetica-medium-r-normal--*"},
+{"-*-helvetica-bold-r-normal--*"},
+{"-*-helvetica-medium-o-normal--*"},
+{"-*-helvetica-bold-o-normal--*"},
+{"-*-courier-medium-r-normal--*"},
+{"-*-courier-bold-r-normal--*"},
+{"-*-courier-medium-o-normal--*"},
+{"-*-courier-bold-o-normal--*"},
+{"-*-times-medium-r-normal--*"},
+{"-*-times-bold-r-normal--*"},
+{"-*-times-medium-i-normal--*"},
+{"-*-times-bold-i-normal--*"},
+{"-*-symbol-*"},
+{"-*-lucidatypewriter-medium-r-normal-sans-*"},
+{"-*-lucidatypewriter-bold-r-normal-sans-*"},
+{"-*-*zapf dingbats-*"}
+};
+
+Fl_Fontdesc *fl_fonts = built_in_table;
+
+#define MAXSIZE 32767
+
+// return dash number N, or pointer to ending null if none:
+const char* fl_font_word(const char *p, int n) {
+  while (*p) {if (*p=='-') {if (!--n) break;} p++;}
+  return p;
+}
+
+// return a pointer to a number we think is "point size":
+char *fl_find_fontsize(char* name) {
+  char *c = name;
+  // for standard x font names, try after 7th dash:
+  if (*c == '-') {
+    c = (char*)fl_font_word(c,7);
+    if (*c++ && isdigit(*c)) return c;
+    return 0; // malformed x font name?
+  }
+  char *r = 0;
+  // find last set of digits:
+  for (c++; *c; c++)
+    if (isdigit(*c) && !isdigit(*(c-1))) r = c;
+  return r;
+}
+
+const char* fl_encoding = "iso8859-1";
+
+// return true if this matches fl_encoding:
+int fl_correct_encoding(const char* name) {
+  if (*name != '-') return 0;
+  const char* c = fl_font_word(name,13);
+  return (*c++ && !strcmp(c,fl_encoding));
+}
+
+// locate or create an Fl_XFont for a given Fl_Fontdesc and size:
+static Fl_XFont *find(int fnum, int size) {
+  Fl_Fontdesc *s = fl_fonts+fnum;
+  if (!s->name) s = fl_fonts; // use font 0 if still undefined
+  Fl_XFont *f;
+  for (f = s->first; f; f = f->next)
+    if (f->minsize <= size && f->maxsize >= size) return f;
+  fl_open_display();
+  if (!s->xlist) {
+    s->xlist = XListFonts(fl_display, s->name, 100, &(s->n));
+    if (!s->xlist) {	// use fixed if no matching font...
+      if (!fl_fixed_xfont) {
+	fl_fixed_xfont = new Fl_XFont("fixed",fnum);
+	fl_fixed_xfont->minsize = 0;
+	fl_fixed_xfont->maxsize = 32767;
+      }
+      s->first = fl_fixed_xfont;
+      return fl_fixed_xfont;
+    }
+  }
+  // search for largest <= font size:
+  char *name = s->xlist[0]; int ptsize = 0;	// best one found so far
+  int matchedlength = 32767;
+  char namebuffer[1024];	// holds scalable font name
+  int found_encoding = 0;
+  int m = s->n; if (m<0) m = -m;
+  for (int n=0; n < m; n++) {
+
+    char *thisname = s->xlist[n];
+    if (fl_correct_encoding(thisname)) {
+      if (!found_encoding) ptsize = 0; // force it to choose this
+      found_encoding = 1;
+    } else {
+      if (found_encoding) continue;
+    }
+    char *c = fl_find_fontsize(thisname);
+    int thissize = c ? atoi(c) : MAXSIZE;
+    int thislength = strlen(thisname);
+    if (thissize == size && thislength < matchedlength) {
+      // exact match, use it:
+      name = thisname;
+      ptsize = size;
+      matchedlength = thislength;
+    } else if (!thissize && ptsize!=size) {
+      // whoa!  A scalable font!  Use unless exact match found:
+      int l = c-thisname;
+      memcpy(namebuffer,thisname,l);
+#if 1 // this works if you don't want stdio
+      if (size>=100) namebuffer[l++] = size/100+'0';
+      if (size>=10) namebuffer[l++] = (size/10)%10+'0';
+      namebuffer[l++] = (size%10)+'0';
+#else
+      //for some reason, sprintf fails to return the right value under Solaris.
+      l += sprintf(namebuffer+l,"%d",size);
+#endif
+      while (*c == '0') c++;
+      strcpy(namebuffer+l,c);
+      name = namebuffer;
+      ptsize = size;
+    } else if (!ptsize ||	// no fonts yet
+	       thissize < ptsize && ptsize > size || // current font too big
+	       thissize > ptsize && thissize <= size // current too small
+      ) {
+      name = thisname; ptsize = thissize;
+      matchedlength = thislength;
+    }
+  }
+
+  if (ptsize != size) { // see if we already found this unscalable font:
+    for (f = s->first; f; f = f->next) {
+      if (f->minsize <= ptsize && f->maxsize >= ptsize) {
+	if (f->minsize > size) f->minsize = size;
+	if (f->maxsize < size) f->maxsize = size;
+	return f;
+      }
+    }
+  }
+
+  // okay, we definately have some name, make the font:
+  f = new Fl_XFont(name,fnum);
+  if (ptsize < size) {f->minsize = ptsize; f->maxsize = size;}
+  else {f->minsize = size; f->maxsize = ptsize;}
+  f->next = s->first;
+  s->first = f;
+  return f;
+
+}
+
+////////////////////////////////////////////////////////////////
+// Public interface:
+
+int fl_font_;
+int fl_size_;
+static GC font_gc;
+
+void fl_font(int fnum, int size) {
+  if (fnum == fl_font_ && size == fl_size_) return;
+  fl_font_ = fnum; fl_size_ = size;
+  Fl_XFont *f = find(fnum, size);
+  if (f != fl_current_xfont) {fl_current_xfont = f; font_gc = 0;}
+}
+
+void fl_font(int fnum, int size, Fl_Font default_font, int default_size) {
+  if (fnum<4) fnum |= default_font;
+  fl_font(fnum, size + default_size);
+}
+
+int fl_height() {
+  return (fl_current_xfont->font->ascent + fl_current_xfont->font->descent);
+}
+
+int fl_descent() {
+  return fl_current_xfont->font->descent;
+}
+
+double fl_width(const char *c) {
+  XCharStruct *p = fl_current_xfont->per_char;
+  if (!p) return strlen(c)*fl_current_xfont->font->min_bounds.width;
+  int w = 0;
+  while (*c)
+    if (*c >= ' ')
+      w += p[(uchar)(*c++)].width;
+    else
+      c ++;
+
+  return w;
+}
+
+double fl_width(const char *c, int n) {
+  XCharStruct *p = fl_current_xfont->per_char;
+  if (!p) return n*fl_current_xfont->font->min_bounds.width;
+  int w = 0;
+  while (n--) w += p[(uchar)(*c++)].width;
+  return w;
+}
+
+double fl_width(uchar c) {
+  XCharStruct *p = fl_current_xfont->per_char;
+  if (!p) return fl_current_xfont->font->min_bounds.width;
+  return p[c].width;
+}
+
+void fl_draw(const char *str, int n, int x, int y) {
+  if (font_gc != fl_gc) {
+    font_gc = fl_gc;
+    XSetFont(fl_display, fl_gc, fl_current_xfont->font->fid);
+  }
+  XDrawString(fl_display, fl_window, fl_gc, x, y, str, n);
+}
+
+void fl_draw(const char *str, int x, int y) {
+  fl_draw(str, strlen(str), x, y);
+}
+
+#endif
+// end of fl_font.C

@@ -1,0 +1,300 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 0.99 
+header_name {.H} 
+code_name {.C} 
+gridx 10 
+gridy 5 
+snap 3
+Function {make_widget_panel()} {open
+} {
+  Fl_Window {} {open
+    xywh {189 164 370 480} hotspot visible
+  } {
+    Fl_Input {} {
+      label {name:}
+      callback name_cb
+      xywh {90 10 210 20} box THIN_UP_BOX when 0
+    }
+    Fl_Light_Button {} {
+      label public
+      callback name_public_cb
+      xywh {300 10 60 20} box THIN_UP_BOX color {49 1} labelsize 10 when 1
+    }
+    Fl_Input {} {
+      label {class:}
+      user_data 4
+      callback subclass_cb
+      xywh {90 35 170 20} box THIN_UP_BOX when 0
+    }
+    Fl_Choice {} {
+      callback subtype_cb
+      xywh {260 35 100 20} box THIN_UP_BOX
+    } {}
+    Fl_Input {} {
+      label {label:}
+      callback label_cb
+      xywh {90 60 270 20} box THIN_UP_BOX when 1
+    }
+    Fl_Choice {} {
+      label {labeltype:}
+      callback labeltype_cb
+      xywh {90 80 150 20} box THIN_UP_BOX
+      code0 {extern Fl_Menu_Item labeltypemenu[];}
+      code1 {o->menu(labeltypemenu);}
+    } {}
+    Fl_Button {} {
+      label {@-1<-}
+      user_data FL_ALIGN_LEFT
+      callback align_cb
+      xywh {240 80 20 20} type Toggle box THIN_UP_BOX labeltype SYMBOL_LABEL labelcolor 8
+    }
+    Fl_Button {} {
+      label {@-1->}
+      user_data FL_ALIGN_RIGHT
+      callback align_cb
+      xywh {260 80 20 20} type Toggle box THIN_UP_BOX labeltype SYMBOL_LABEL labelcolor 8
+    }
+    Fl_Button {} {
+      label {@-18}
+      user_data FL_ALIGN_TOP
+      callback align_cb
+      xywh {280 80 20 20} type Toggle box THIN_UP_BOX labeltype SYMBOL_LABEL labelcolor 8
+    }
+    Fl_Button {} {
+      label {@-12}
+      user_data FL_ALIGN_BOTTOM
+      callback align_cb
+      xywh {300 80 20 20} type Toggle box THIN_UP_BOX labeltype SYMBOL_LABEL labelcolor 8
+    }
+    Fl_Button {} {
+      label {@-3square}
+      user_data FL_ALIGN_INSIDE
+      callback align_cb
+      xywh {320 80 20 20} type Toggle box THIN_UP_BOX labeltype SYMBOL_LABEL labelcolor 8
+    }
+    Fl_Button {} {
+      label wrap
+      user_data FL_ALIGN_WRAP
+      callback align_cb
+      xywh {340 80 20 10} type Toggle box THIN_UP_BOX labelsize 8
+    }
+    Fl_Button {} {
+      label clip
+      user_data FL_ALIGN_CLIP
+      callback align_cb
+      xywh {340 90 20 10} type Toggle box THIN_UP_BOX labelsize 8
+    }
+    Fl_Choice {} {
+      label {labelfont:}
+      callback labelfont_cb
+      xywh {90 100 170 20} box THIN_UP_BOX
+      code0 {extern Fl_Menu_Item fontmenu[];}
+      code1 {o->menu(fontmenu);}
+    } {}
+    Fl_Value_Input {} {
+      callback labelsize_cb
+      xywh {260 100 50 20} box THIN_UP_BOX maximum 100 step 1 value 14
+    }
+    Fl_Button {} {
+      label labelcolor
+      callback labelcolor_cb
+      xywh {310 100 50 20} box THIN_UP_BOX labelsize 8
+    }
+    Fl_Choice {} {
+      label {box:}
+      callback box_cb
+      xywh {90 125 220 20} box THIN_UP_BOX
+      code0 {extern Fl_Menu_Item boxmenu[];}
+      code1 {o->menu(boxmenu);}
+    } {}
+    Fl_Button {} {
+      label color
+      callback color_cb
+      xywh {310 125 50 20} box THIN_UP_BOX labelsize 8
+    }
+    Fl_Choice {} {
+      label {down_box:}
+      callback down_box_cb
+      xywh {90 145 220 20} box THIN_UP_BOX
+      code0 {extern Fl_Menu_Item boxmenu[];}
+      code1 {o->menu(boxmenu);}
+    } {}
+    Fl_Button {} {
+      label {select color}
+      callback color2_cb
+      xywh {310 145 50 20} box THIN_UP_BOX labelsize 8
+    }
+    Fl_Choice {} {
+      label {textfont:}
+      callback textfont_cb selected
+      xywh {90 170 170 20} box THIN_UP_BOX hide
+      code0 {extern Fl_Menu_Item fontmenu[];}
+      code1 {o->menu(fontmenu);}
+    } {}
+    Fl_Input {} {
+      label {xclass:}
+      callback xclass_cb
+      xywh {90 170 170 20} box THIN_UP_BOX when 0
+    }
+    Fl_Button {} {
+      label {shortcut:}
+      callback shortcut_in_cb
+      xywh {90 170 270 20} box THIN_UP_BOX color {7 7} align 4
+      code0 {\#include "Shortcut_Button.H"}
+      class Shortcut_Button
+    }
+    Fl_Value_Input {} {
+      callback textsize_cb
+      xywh {260 170 50 20} box THIN_UP_BOX maximum 100 step 1 value 14 hide
+    }
+    Fl_Button {} {
+      label textcolor
+      callback textcolor_cb
+      xywh {310 170 50 20} box THIN_UP_BOX labelsize 8 hide
+    }
+    Fl_Value_Input {} {
+      label {size:}
+      callback slider_size_cb
+      xywh {20 205 60 20} box THIN_UP_BOX labelsize 10 align 5 step 0.010101
+    }
+    Fl_Value_Input {} {
+      label {minimum:}
+      callback min_cb
+      xywh {90 205 60 20} box THIN_UP_BOX labelsize 10 align 5
+    }
+    Fl_Value_Input {} {
+      label {maximum:}
+      callback max_cb
+      xywh {160 205 60 20} box THIN_UP_BOX labelsize 10 align 5 value 1
+    }
+    Fl_Value_Input {} {
+      label {step:}
+      callback step_cb
+      xywh {230 205 60 20} box THIN_UP_BOX labelsize 10 align 5
+    }
+    Fl_Value_Input {} {
+      label {value:}
+      callback value_cb
+      xywh {300 205 60 20} box THIN_UP_BOX labelsize 10 align 5
+    }
+    Fl_Group {} {
+      callback propagate_load open
+      xywh {20 230 340 20} align 5
+    } {
+      Fl_Light_Button {} {
+        label non_modal
+        callback non_modal_cb
+        xywh {20 230 70 20} box THIN_UP_BOX color {49 1} labelsize 9 align 148
+      }
+      Fl_Light_Button {} {
+        label visible
+        callback visible_cb
+        xywh {90 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+      }
+      Fl_Light_Button {} {
+        label modal
+        callback modal_cb
+        xywh {90 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+      }
+      Fl_Light_Button {} {
+        label active
+        callback active_cb
+        xywh {160 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+      }
+      Fl_Light_Button {} {
+        label border
+        callback border_cb
+        xywh {160 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+      }
+      Fl_Light_Button {} {
+        label resizable
+        callback resizable_cb
+        xywh {230 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10 when 1
+      }
+      Fl_Light_Button {} {
+        label hotspot
+        callback hotspot_cb
+        xywh {300 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10 when 1
+      }
+    }
+    Fl_Input {v_input[0]} {
+      label {extra code:}
+      user_data 0
+      callback v_input_cb
+      xywh {90 260 270 20} box THIN_UP_BOX when 0
+    }
+    Fl_Input {v_input[1]} {
+      user_data 1
+      callback v_input_cb
+      xywh {90 280 270 20} box THIN_UP_BOX when 0
+    }
+    Fl_Input {v_input[2]} {
+      user_data 2
+      callback v_input_cb
+      xywh {90 300 270 20} box THIN_UP_BOX when 0
+    }
+    Fl_Input {v_input[3]} {
+      user_data 3
+      callback v_input_cb
+      xywh {90 320 270 20} box THIN_UP_BOX when 0
+    }
+    Fl_Box {} {
+      label {callback:}
+      xywh {0 350 90 20} align 24
+    }
+    Fl_Input {} {
+      callback callback_cb
+      xywh {90 350 270 50} type Multiline box THIN_UP_BOX when 0
+    }
+    Fl_Box {} {
+      label label
+      xywh {90 370 100 30} hide deactivate resizable
+    }
+    Fl_Input {} {
+      label {user_data:}
+      callback user_data_cb
+      xywh {90 400 170 20} box THIN_UP_BOX when 0
+    }
+    Fl_Input {} {
+      label {type:}
+      callback user_data_type_cb
+      xywh {300 400 60 20} box THIN_UP_BOX when 0
+    }
+    Fl_Choice {} {
+      label {when:}
+      callback when_cb
+      xywh {90 420 100 20} box THIN_UP_BOX when 0
+      code0 {extern Fl_Menu_Item whenmenu[];}
+      code1 {o->menu(whenmenu);}
+    } {}
+    Fl_Light_Button {} {
+      label {no change}
+      callback when_button_cb
+      xywh {190 420 70 20} box THIN_UP_BOX color {49 1} labelsize 10 when 0
+    }
+    Fl_Group {} {open
+      xywh {10 450 350 20}
+    } {
+      Fl_Button {} {
+        label {no &overlay}
+        callback overlay_cb
+        xywh {10 450 80 20} labelcolor 1
+      }
+      Fl_Button {} {
+        label Revert
+        callback revert_cb
+        xywh {100 450 80 20}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback cancel_cb
+        xywh {190 450 80 20}
+      }
+      Fl_Return_Button {} {
+        label OK
+        callback ok_cb
+        xywh {280 450 80 20}
+      }
+    }
+  }
+} 

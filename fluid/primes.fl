@@ -1,0 +1,22 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 0.99 
+gridx 10 
+gridy 10 
+snap 3
+decl {// This is a demo of fluid used to write a normal C program} {} 
+
+decl {\#include <stdio.h>} {} 
+
+Function {main()} {open selected
+} {
+  code {printf("%d ", 2);} {}
+  codeblock {for (int x=3; x < 10000; x += 2)} {open
+  } {
+    code {for (int y=3; x%y; y += 2)} {}
+    codeblock {if (y*y > x)} {open
+    } {
+      code {printf("%d ", x);
+break;} {}
+    }
+  }
+} 

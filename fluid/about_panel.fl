@@ -1,0 +1,71 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 0.99 
+gridx 2 
+gridy 2 
+snap 3
+Function {make_about_panel(const char *copyright)} {open
+} {
+  Fl_Window about_panel {
+    label {about fluid} open
+    xywh {345 417 309 221} box UP_BOX color {97 47} hide hotspot non_modal noborder
+  } {
+    Fl_Group display_group {open
+      xywh {24 14 275 186}
+    } {
+      Fl_Box {} {
+        xywh {64 14 50 126} box ROUND_UP_BOX color {14 47} labelcolor 6
+      }
+      Fl_Box {} {
+        xywh {54 14 70 16} box FLAT_BOX color {97 47}
+      }
+      Fl_Box {} {
+        xywh {68 30 42 50} box DOWN_BOX color {6 47}
+      }
+      Fl_Box {} {
+        xywh {54 20 70 20} box ROUND_UP_BOX color {6 47} labelcolor 6 align 16
+      }
+      Fl_Box {} {
+        label fluid
+        xywh {24 110 130 90} box ROUND_UP_BOX color {14 47} labeltype SHADOW_LABEL labelfont 1 labelsize 40 labelcolor 6
+      }
+      Fl_Box {} {
+        xywh {67 110 44 10} box FLAT_BOX color {14 47}
+      }
+      Fl_Box {} {
+        label {` }
+        xywh {84 120 15 15} box OVAL_BOX color {6 47} labelsize 20 labelcolor 7 align 17
+      }
+      Fl_Box {} {
+        label {` }
+        xywh {75 105 15 15} box OVAL_BOX color {6 47} labelsize 20 labelcolor 7 align 17
+      }
+      Fl_Box {} {
+        label {` }
+        xywh {89 85 15 15} box OVAL_BOX color {6 47} labelsize 20 labelcolor 7 align 17
+      }
+      Fl_Box {} {
+        label {Fltk User
+Interface
+Designer
+Version 1.00}
+        xywh {159 27 131 95} box OVAL_BOX color {12 47} labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
+      }
+      Fl_Button {} {
+        label {©1998 Bill Spitzak
+(click here)}
+        callback {display_group->hide();
+copyright_box->show();}
+        xywh {169 138 115 30} box THIN_UP_BOX labelsize 10 labelcolor 136
+      }
+    }
+    Fl_Box copyright_box {selected
+      xywh {5 5 300 210} labelsize 8 labelcolor 6 align 148 hide
+      code0 {o->label(copyright);}
+    }
+    Fl_Return_Button {} {
+      label OK
+      callback {((Fl_Window*)(o->parent()))->hide();}
+      xywh {168 182 116 22} labelsize 10
+    }
+  }
+} 

@@ -1,0 +1,106 @@
+dnl# -*- sh -*-
+dnl# the "configure" script is made from this by running GNU "autoconf"
+
+AC_INIT(src/Fl.C)
+AC_PROG_CC
+AC_PROG_CXX
+dnl# AC_PROG_INSTALL
+
+AC_C_BIGENDIAN
+
+AC_CHECK_SIZEOF(short, 2)
+AC_CHECK_SIZEOF(int, 4)
+AC_CHECK_SIZEOF(long, 4)
+if test $ac_cv_sizeof_short -eq 2; then
+AC_DEFINE(U16,unsigned short)
+fi
+if test $ac_cv_sizeof_int -eq 4; then
+AC_DEFINE(U32,unsigned)
+else
+if test $ac_cv_sizeof_long -eq 4; then
+AC_DEFINE(U32,unsigned long)
+fi
+fi
+if test $ac_cv_sizeof_int -eq 8; then
+AC_DEFINE(U64,unsigned)
+else
+if test $ac_cv_sizeof_long -eq 8; then
+AC_DEFINE(U64,unsigned long)
+fi
+fi
+
+AC_HEADER_DIRENT
+
+AC_CHECK_FUNCS(scandir)
+
+AC_PROG_RANLIB
+
+AC_PATH_XTRA
+echo "Ignoring libraries \"$X_PRE_LIBS\" requested by configure."
+dnl# LIBS="$LIBS$X_LIBS$X_PRE_LIBS"
+LIBS="$LIBS$X_LIBS"
+CFLAGS="$CFLAGS $X_CFLAGS"
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+
+dnl# My test to see if OpenGL is on this machine:
+GLLIB=
+AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
+    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGLU -lMesaGL",,\
+	-lX11 -lXext $X_EXTRA_LIBS -lm), \
+    -lX11 -lXext $X_EXTRA_LIBS -lm)
+AC_SUBST(GLLIB)
+
+AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE))
+
+AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
+if xprop -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
+    ac_cv_have_overlay=yes
+else
+    ac_cv_have_overlay=no
+fi)
+if test "$ac_cv_have_overlay" = yes; then
+    AC_DEFINE(HAVE_OVERLAY)
+fi
+
+MAKEDEPEND="\$(CXX) -M"
+
+dnl# add warnings and optimization to compiler switches:
+dnl# do this last so messing with switches does not break tests
+if test -n "$GXX"; then
+    CFLAGS="-Wall -O2"
+    CFLAGS_D="-Wall -Wno-return-type -g -DDEBUG"
+    CXXFLAGS="-Wall -Wno-return-type -O2"
+    CXXFLAGS_D="-Wall -Wno-return-type -g -DDEBUG"
+else
+if test "`(uname) 2>/dev/null`" = IRIX; then
+  if expr "`(uname -r)`" \>= 6.2; then
+    # compiler names:
+    CXX="CC -n32"
+    CC="cc -n32"
+    LD="ld -n32"
+    MAKEDEPEND="CC -M"
+    # -woff 3322 is necessary due to errors in Xlib headers on IRIX
+    CFLAGS="-fullwarn -O2"
+    CFLAGS_D="-fullwarn -gslim -DDEBUG"
+    CXXFLAGS="-fullwarn -woff 1685 -woff 3322 -O2"
+    CXXFLAGS_D="-fullwarn -woff 1685 -woff 3322 -gslim -DDEBUG"
+  else
+    CFLAGS="-O2"
+    CFLAGS_D="-g -DDEBUG"
+    CXXFLAGS="+w +pp -O2"
+    CXXFLAGS_D="+w +pp -g -DDEBUG"
+  fi
+else
+    CFLAGS="-O"
+    CFLAGS_D="-g -DDEBUG"
+    CXXFLAGS="-O"
+    CXXFLAGS_D="-g -DDEBUG"
+fi
+fi
+AC_SUBST(MAKEDEPEND)
+AC_SUBST(CFLAGS_D)
+AC_SUBST(CXXFLAGS_D)
+AC_CONFIG_HEADER(config.h:configh.in)
+AC_OUTPUT(makeinclude )
+
+dnl# end of configure.in

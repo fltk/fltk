@@ -1,0 +1,123 @@
+Fast Light Tool Kit (fltk) Version 0.99
+
+----------------------------------------------------------------
+How to build and install fltk:
+----------------------------------------------------------------
+
+See the file win32/README for information for Windoze95/NT.
+
+1. Type "./configure", and then examine config.h and makeinclude.
+1. Edit the file ./style.h to customize the appearance of fltk
+3. Type "make", or (Linux and gcc only) type "make shared" to make
+   a shared library.
+4. For shared libraries, type "setenv LD_LIBRARY_PATH $PWD/lib"
+5. Test it by running "test/demo".
+
+To install the new version of Fltk and fluid (this puts the library in
+/usr/local/lib, the include files in /usr/local/include/FL, and fluid
+into /usr/local/bin):
+
+1. If you made the shared version, type "unsetenv LD_LIBRARY_PATH"
+2. Type "su" and then your password
+3. Type "make install"
+4. If you made the shared version, type "/sbin/ldconfig"
+5. Type ^D to get out of su.
+
+----------------------------------------------------------------
+On-line documentation:
+----------------------------------------------------------------
+
+All the documentation is in html in the subdirectory "documentation".
+Use file:<here>/documentation/index.html to get started.  Install
+should put the documentation in /usr/doc/fltk but this is not yet
+implemented.
+
+These files are readable without a browser:
+
+Change log is in documentation/CHANGES
+To Do list is in documentatoin/TODO.html
+
+----------------------------------------------------------------
+WWW resources:
+----------------------------------------------------------------
+
+The Fltk home page: http://www.cinenet.net/users/spitzak/fltk
+
+Mirror site: http://fltk.easysw.com
+
+To post to the fltk mailing list: fltk@easysw.com
+
+To subscribe, send "subscribe fltk" to majordomo@easysw.com
+
+Send mail to Bill Spitzak (the author of fltk): spitzak@d2.com
+
+Get Mesa (necessary to run OpenGl on most Linux machines):
+    http://www.ssec.wisc.edu/~brianp/Mesa.html
+
+----------------------------------------------------------------
+Window managers
+----------------------------------------------------------------
+
+Fltk now uses X transient windows for modal() windows.  This may
+confuse some window managers.  Mostly it causes them to not put
+any borders on the modal windows and prevent you from moving them.
+
+For FVWM I recommend you put "DecorateTransients" into your .fvwmrc.
+
+----------------------------------------------------------------
+Mesa:
+----------------------------------------------------------------
+
+Currently the best way to get OpenGL on your Linux system is to use
+Mesa.  Fltk has been tested with Mesa on several machines (and also
+with "real" OpenGL on SGI machines).
+
+Mesa is at:  http://www.ssec.wisc.edu/~brianp/Mesa.html
+
+./configure will not see Mesa unless it is installed as either libGL
+or libMesa.  If you don't want to do this you will have to edit
+config.h (set HAVE_GL to 1) and makeinclude (add the libraries).
+
+----------------------------------------------------------------
+How to write programs that use Fltk:
+----------------------------------------------------------------
+
+The proper way to include Fltk header files is "#include <FL/Fl_xyz.H>".
+If Fltk is installed this will work without switches.  If not you will
+need to provide a -I switch pointing to this directory (all the
+headers are in ./FL).
+
+Linker switches will be something like "-lfltk -L/usr/X11R6/lib -lX11".
+Some programs may require -lXext or -lm.  If Fltk is not installed you
+will need to add a -L switch pointing at ./lib.
+
+If you wish to distribute a program (in source form) that uses Fltk,
+you are allowed by the license to directly include the portions of
+Fltk that you need.  This may make it easier for a user to compile
+your program since they don't need to install the library.  Please
+provide instructions for the user on how they can get the entire
+source of Fltk.
+
+If you wish to distribute a compiled program without source code: this
+is allowed.  See the license.
+
+----------------------------------------------------------------
+Copyright (C) 1998 Bill Spitzak
+----------------------------------------------------------------
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Library General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+USA.
+
+Written by Bill Spitzak		spitzak@d2.com
+----------------------------------------------------------------

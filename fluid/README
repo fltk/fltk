@@ -1,0 +1,214 @@
+Fluid (the FL User Interface Designer) is a graphical editor that
+is used to produce FL source code.
+
+Fluid edits and saves it's state in ".fl" files.  These files are
+text, and you could (with care) edit them in a text editor, perhaps to
+get some special effects.
+
+When asked to "compile", fluid outputs a .C source file and a .H
+header file: The .C file contains one or more public functions, each
+of which will create one or more FL windows and all the objects in
+those windows.  The .H file declares (as externs) all the functions
+and named objects created by the .C file, and includes all the
+necessary FL header files for those objects.
+
+The C file must be compiled and linked with a "main" source file(s)
+that you write.  This source code must include the .H output, and
+should call the functions in the .C file to create windows.  The main
+code must do show() on the windows and run the Fl::wait() loop.
+
+                               _________
+                              /        /
+    __________            +->/.C file /--------+
+   /         /           /  /________/         |
+  /.fl file /<==>[fluid]<     #include         |
+ /_________/             \     ___v_____       |
+                          \   /        /       |
+                           +>/.H file /        |
+                            /________/         |
+                                  ^            |
+                              #include         |
+                               ___|_____       |          __________
+                              /        /       V         /         /
+                             / main.C /--->[c++,link]-->/ program /
+                            /________/                 /_________/
+
+
+Objects created by fluid are either "named" or "unnamed".  If they
+are named, the .C file will declare a global variable with that name
+of type "<type>*".  This pointer has a value of zero until the fluid
+function is called, the fluid function will set it to the instance of
+the .  Unnamed objects are only accessible through
+pointers from other objects.
+
+Windows may be named or unnamed.  Named windows are only created
+once even if you call the function several times (fluid outputs "if
+(!name) {...}" around the code that creates the window).  Unnamed
+windows lets you create many instances of the same window structure, a
+pointer to the unnamed window is returned from the fluid function (you
+can only put one unnamed window in a function).
+
+Objects may either call a named callback function that you write in
+another source file, or you can supply a small piece of C++ source and
+fluid will write a private callback function into the .C file.
+
+================================================================
+Worlds shortest tutorial:
+================================================================
+
+Type "fluid&"
+
+Pick "New/Function" off the menu.
+
+Delete the function name in the popup window and hit OK.  The text
+"main()" with a triangle next to it should appear highlighted in the
+main window.
+
+Pick "New/Window" off the menu.
+
+Move the window and resize it to the size you want.
+
+Pick "New/buttons/Button" off the menu.
+
+Hit the "OK" button to dismiss the panel that appears.
+
+In the window you created, try moving the button by dragging it
+around.  Notice that it "snaps" to fixed locations.  If you want to
+drag it smoothly, hold down Alt.  You can also change the size of the
+steps with Edit/Preferences.
+
+Try resizing the object by dragging the edges and corners.
+
+Type Alt+c to copy the object.
+
+Type Alt+v to paste a copy into the window.
+
+Type Alt+v several times.
+
+Drag the objects and resize them so they don't overlap.  Notice
+that you have to click an object to pick it first, then drag it.
+
+Try selecting several objects by dragging a box around them.  Check
+what happens when you move them, or when you drag an edge to resize
+them.
+
+You can also use Shift+click to toggle objects on and off.
+
+You can also select objects by clicking on them in the list in the
+main window, try that.
+
+Double-click one of the buttons.  You will get a control panel.
+
+Try changing the "label".  Try changing other items near the top of
+the panel.  To see any changes to the box type clearer, type "Alt+o"
+to make the red overlay disappear.
+
+Type "#include <stdlib.h>" into the first line of "extra code:".
+
+Type "exit(0);" into the "callback:".
+
+Hit OK.
+
+Pick "File/Save As" off the menu.
+
+Type "test.fl" into the file chooser and hit return.
+
+Pick "File/Write Code" off the menu.
+
+Go back to your terminal window.  Type "more test.C" and "more
+test.H" and you can see the code it made.
+
+Type "make test" (you may have to add libaries to your Makefile).
+
+Type "./test" to run your program.
+
+Try the buttons.  The one you put the code into will exit the
+program.
+
+Type "Alt+Q" to exit fluid.
+
+Ok, now try to make a real program.
+
+================================================================
+
+This code is quite a kludge and probably impossible to figure out.  I
+hope it will be fixed someday, but my intention was to make FL itself
+clean and simple, even if the user interface designer is forced to be
+more complex as a result.
+
+An object in fluid is represented by a subclass of "Fl_Type".
+
+Creating a new instance of an object is done by calling the virtual
+method "make()" on Fl_Type.  To allow an initial version of each type
+to be created, there is a static "factory" instance of every subclass
+of Fl_Type.  For now, make() is only called on these.  The intention
+was to use make() to copy objects, but that did not happen.  Instead I
+write the descriptions and read them back from a file in /usr/tmp,
+which is much more reliable because the read/write code is tested
+every time a file is saved!
+
+The (non-factory) instances are linked into a list by the previous and
+next pointers.  The "hierarchy" is stored by a "level" number on each
+object, and an "isparent" flag on the parent.  To find the "brother"
+of an object, code must search forward for the next object whose level
+is equal to this one.  A null pointer or an object with a lower level
+number indicates no brother.
+
+If the type is a subclass of Fl_Object, the "o" pointer points at an
+Fl_Object.  This allows the code in FL to be used to draw the object.
+The user_data() field on the Fl_Object is used as a back pointer to
+the Fl_Type.  The "factory" has an "o" pointer that points at the
+"template object".  This is an Fl_Object created the first time make()
+is called and is used to figure out what the default values for the
+fields are for the object.
+
+This "o" pointer exists in all Fl_Type objects, even the base class.
+If this is not an Fl_Object item, then the "o" pointer is zero.  This
+avoided a lot of virtual functions, but is mostly for historical
+reasons.  Rather than RTTI, I use some tests to determine subclasses:
+
+       if (o && level == 1)
+	  this is an Fl_Window_Type
+       else if (o && isparent)
+	  this is a Fl_Group_Type
+       else if (o)
+	  this is a Fl_Object_Type
+       else if (!level)
+          this is a function
+       else
+          this is a menu item or something
+	  (none of these implemented yet)
+
+
+  Fl_Type::first
+    |
+    |  NULL
+    |   ^
+    V   |
+  +---------+              +-----------+
+  | Fl_Type |------ o ---> | Fl_Window |
+  | level=0 |<-user_data()-|           |
+  |isparent |<-+           +-----------+
+  +---------+  |             |     ^
+    |   ^     parent       first   |
+  next prev   /              |   parent
+    V   |    /               V     |
+  +---------+              +-----------+
+  | Fl_Type |------ o ---> | Fl_Object |
+  | level=1 |              |           |
+  |         |<-user_data()-|           |
+  |         |              +-----------+
+  |         |          +---------+
+  |         |-factory->| Fl_Type |---- o ---->[Fl_Object]
+  +---------+          |         |           template object
+    |   ^              +---------+
+  next prev            (next,prev=NULL)
+    V   |
+  +---------+
+  | Fl_Type |
+  +---------+
+    |   ^
+    V   |
+   NULL |
+        |
+    Fl_Type::last

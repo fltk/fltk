@@ -1,0 +1,72 @@
+# data file for FL User Interface Designer (fluid)
+version 0.99 
+gridx 10 
+gridy 5 
+snap 3
+Function {} {open
+} {
+  Fl_Window {} {open selected
+    xywh {447 255 462 453}
+  } {
+    Fl_Button {} {
+      label Fl_Button open
+      xywh {20 10 160 30}
+    }
+    Fl_Return_Button {} {
+      label Fl_Return_Button open
+      xywh {20 50 160 30}
+    }
+    Fl_Light_Button {} {
+      label Fl_Light_Button open
+      xywh {20 90 160 30}
+    }
+    Fl_Check_Button {} {
+      label Fl_Check_Button open
+      xywh {20 130 160 30} box 2
+    }
+    Fl_Round_Button {} {
+      label Fl_Round_Button open
+      xywh {20 170 160 30} box 2
+    }
+    Fl_Group {} {
+      xywh {190 10 70 120} box 8
+    } {
+      Fl_Check_Button {} {
+        label radio open
+        xywh {190 10 70 30} type 102
+      }
+      Fl_Check_Button {} {
+        label radio open
+        xywh {190 40 70 30} type 102
+      }
+      Fl_Check_Button {} {
+        label radio open
+        xywh {190 70 70 30} type 102
+      }
+      Fl_Check_Button {} {
+        label radio open
+        xywh {190 100 70 30} type 102
+      }
+    }
+    Fl_Group {} {open
+      xywh {270 10 90 115} box 6
+    } {
+      Fl_Button {} {
+        label radio open
+        xywh {280 20 20 20} type 102 color {47 1} align 8
+      }
+      Fl_Button {} {
+        label radio open
+        xywh {280 45 20 20} type 102 color {47 1} align 8
+      }
+      Fl_Button {} {
+        label radio open
+        xywh {280 70 20 20} type 102 color {47 1} align 8
+      }
+      Fl_Button {} {
+        label radio open
+        xywh {280 95 20 20} type 102 color {47 1} align 8
+      }
+    }
+  }
+} 

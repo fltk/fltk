@@ -1,0 +1,48 @@
+# data file for FL User Interface Designer (fluid)
+version 0.99 
+gridx 10 
+gridy 10 
+snap 3
+Function {} {open
+} {
+  Fl_Window {} {open selected
+    xywh {490 248 366 261} resizable
+  } {
+    Fl_Button {} {
+      label {@<-}
+      callback {Fl_Window* w = o->window();
+w->position(w->x()-50,w->y());} open
+      xywh {20 40 40 40} labeltype 2
+    }
+    Fl_Button {} {
+      label {@2->}
+      callback {Fl_Window* w = o->window();
+w->position(w->x(),w->y()+50);} open
+      xywh {60 80 40 40} labeltype 2
+    }
+    Fl_Button {} {
+      label {@->}
+      callback {Fl_Window* w = o->window();
+w->position(w->x()+50,w->y());} open
+      xywh {100 40 40 40} labeltype 2
+    }
+    Fl_Button {} {
+      label {@8->}
+      callback {Fl_Window* w = o->window();
+w->position(w->x(),w->y()-50);} open
+      xywh {60 0 40 40} labeltype 2
+    }
+    Fl_Button {} {
+      label grow
+      callback {Fl_Window* w = o->window();
+w->size(w->w()+50, w->h()+50);} open
+      xywh {30 130 110 40} labeltype 2 labelfont 1 labelsize 18
+    }
+    Fl_Button {} {
+      label shrink
+      callback {Fl_Window* w = o->window();
+w->size(w->w()/2+1, w->h()/2+1);} open
+      xywh {30 190 110 40} labeltype 2 labelfont 1 labelsize 18
+    }
+  }
+} 

@@ -1,0 +1,32 @@
+# @configure_input@
+
+prefix		=@prefix@
+exec_prefix	=@exec_prefix@
+bindir		=@bindir@
+includedir	=@includedir@
+libdir		=@libdir@
+srcdir		=@srcdir@
+VPATH		=@srcdir@
+
+# compiler names:
+CXX	=@CXX@
+CC	=@CC@
+MAKEDEPEND =@MAKEDEPEND@
+
+# flags for C++ compiler:
+CFLAGS		=@CFLAGS@
+CFLAGS_D	=@CFLAGS_D@
+CXXFLAGS	=@CXXFLAGS@ @X_CFLAGS@
+CXXFLAGS_D	=@CXXFLAGS_D@ @X_CFLAGS@
+
+# program to make the archive:
+LIBNAME		=libfltk.a
+LIBNAME_D	=libfltk_d.a
+AR		=ar rc
+RANLIB		=@RANLIB@
+
+# libraries to link with:
+LDLIBS	=@LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
+
+# libraries to link with when using GL:
+GLDLIBS	=@LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm

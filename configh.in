@@ -1,0 +1,53 @@
+/* configh.in: this file is read by ./configure to produce config.h */
+
+/* Thickness of FL_UP_BOX and FL_DOWN_BOX.  Current 1,2, and 3 are
+   supported.  3 is the historic fltk look.  2 looks more like windoze
+   (and KDE and Qt).  1 is a plausible future evolution...  Notice
+   that this may be simulated at runtime by redefining the boxtypes
+   using Fl::set_boxtype() */
+#define BORDER_WIDTH 3
+
+/* Do you have OpenGL?
+   Set this to 0 if you don't plan to use OpenGL, and fltk will be smaller */
+#define HAVE_GL 0
+
+/* Use XAllocColor
+   Setting this to zero will save a good deal of code (esp for
+   fl_draw_image), but fltk will only work on TrueColor visuals. */
+#define USE_COLORMAP 1
+
+/* Do we have the X double-buffer extension? */
+#define HAVE_XDBE 0
+
+/* Actually try to use the double-buffer extension?
+   Set this to zero disable use of XDBE without breaking the
+   list_visuals program: */
+#define USE_XDBE HAVE_XDBE
+
+/* Use the X overlay extension?  Fltk will try to use an overlay
+   visual for Fl_Overlay_Window, the Gl_Window overlay, and for the
+   menus.  Setting this to zero will remove a substatial amount of
+   code from fltk.  Overlays have only been tested on SGI servers! */
+#define HAVE_OVERLAY 0
+/* It is possible your GL has an overlay even if X does not, if so
+   turn this on: */
+#define HAVE_GL_OVERLAY HAVE_OVERLAY
+
+/* Byte order of your machine: */
+#define WORDS_BIGENDIAN 0
+
+/* Types used by fl_draw_image.  One of U32 or U64 must be defined.
+   U16 is optional but fltk will work better with it! */
+#undef U16
+#undef U32
+#undef U64
+
+/* Where is <dirent.h> (used only by fl_file_chooser and scandir): */
+#define HAVE_DIRENT_H 1
+#define HAVE_SYS_NDIR_H 0
+#define HAVE_SYS_DIR_H 0
+#define HAVE_NDIR_H 0
+#define HAVE_SCANDIR 0
+
+/* use poll() instead of select(): */
+#define HAVE_POLL 0

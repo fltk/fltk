@@ -1,0 +1,96 @@
+# data file for FL User Interface Designer (fluid)
+version 0.97
+Function {make_panels()} {open
+} {
+  Fl_Window {} {open
+    xywh {594 419 452 320}
+  } {
+    Fl_Box {test_box[0]} {
+      label label open
+      xywh {130 80 180 30} box 2
+    }
+    Fl_Box {test_box[1]} {
+      label label open
+      xywh {130 120 180 30} box 2
+    }
+    Fl_Box {test_box[2]} {
+      label label open
+      xywh {130 150 180 70} box 2 resizable
+    }
+    Fl_Group {} {open
+      xywh {10 70 80 80}
+    } {
+      Fl_Button {} {
+        label {@7->}
+        user_data 3 user_data_type long
+        callback which_cb open
+        xywh {10 70 40 40} type 102 labeltype 2
+      }
+      Fl_Button {} {
+        label {@9->}
+        user_data 2 user_data_type long
+        callback which_cb open
+        xywh {50 70 40 40} type 102 labeltype 2
+      }
+      Fl_Button {} {
+        label {@1->}
+        user_data 0 user_data_type long
+        callback which_cb open
+        xywh {10 110 40 40} type 102 labeltype 2
+        code0 {o->set();}
+      }
+      Fl_Button {} {
+        label {@3->}
+        user_data 1 user_data_type long
+        callback which_cb open
+        xywh {50 110 40 40} type 102 labeltype 2
+      }
+    }
+    Fl_Button {} {
+      label INSIDE
+      callback inside_cb open
+      xywh {10 150 80 40} type 1
+    }
+    Fl_Value_Slider {color_slider[0]} {
+      user_data 0 user_data_type long
+      callback color_slider_cb open
+      xywh {320 0 30 320} type 4 box 1 color {7 47}
+      code0 {o->minimum(255); o->maximum(0);;}
+      code1 {o->precision(0);}
+    }
+    Fl_Value_Slider {color_slider[1]} {
+      user_data 1 user_data_type long
+      callback color_slider_cb open
+      xywh {350 0 30 320} type 4 box 1 color {9 47}
+      code0 {o->minimum(255); o->maximum(0);;}
+      code1 {o->precision(0);}
+    }
+    Fl_Value_Slider {color_slider[2]} {
+      user_data 2 user_data_type long
+      callback color_slider_cb open
+      xywh {380 0 30 320} type 4 box 1 color {10 47}
+      code0 {o->minimum(255); o->maximum(0);;}
+      code1 {o->precision(0);}
+    }
+    Fl_Value_Slider {color_slider[3]} {
+      user_data 3 user_data_type long
+      callback color_slider_cb open
+      xywh {410 0 30 320} type 4 box 1 color {12 47}
+      code0 {o->minimum(255); o->maximum(0);;}
+      code1 {o->precision(0);}
+    }
+    Fl_Slider thickness_slider {
+      label thickness
+      callback thickness_cb open
+      xywh {130 240 180 30} type 5 box 1
+      code0 {o->minimum(1);}
+      code1 {o->maximum(10);}
+      code2 {o->step(1);}
+    }
+    Fl_Button {} {
+      label dump
+      callback dump_cb open selected
+      xywh {10 230 80 30}
+    }
+  }
+} 

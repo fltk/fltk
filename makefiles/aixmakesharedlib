@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# aixmakesharedlib - a simple script for AIX shared lib creation from a
+#                    non shared library
+#
+# Notes:
+#   - Should work for both AIX 3.2.x & 4.1.x
+#   - Copies original (non shared) lib to be lib.NS
+#   - May require slight modifications for different uses (this was written
+#     with the FL library in mind)
+#
+
+/bin/rm -f shr.o syms.exp
+
+# create the exports list:
+echo "#!" > syms.exp
+dump -g $1 | egrep -e '[ \t]*[0-9]+' | sed 's/^[ \t]*[0-9][0-9]*[ \t]*[^ \t]//' | sed 's/^\.//' | sort | uniq >> syms.exp
+
+xlC -o shr.o $1 -bM:SRE -bE:syms.exp -bnoentry -lc -lm -lX11
+
+mv $1 $1.NS
+
+ar ruv $1 shr.o syms.exp
+/bin/rm -f shr.o syms.exp

@@ -1,0 +1,141 @@
+// More complex and hacked pixmap demo.
+
+// On purpose, I do NOT provide a fltk method to turn a file
+// into a pixmap.  This program uses a rather simplistic one.
+
+#include <FL/Fl.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Pixmap.H>
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <FL/fl_file_chooser.H>
+#include <FL/fl_message.H>
+
+Fl_Box *b;
+Fl_Window *w;
+
+char **data;
+int sizeofdata;
+int numlines;
+
+static int hexdigit(int x) {
+  if (isdigit(x)) return x-'0';
+  if (isupper(x)) return x-'A'+10;
+  if (islower(x)) return x-'a'+10;
+  return 20;
+}
+
+int load_file(const char *name) {
+  FILE *f = fopen(name,"r");
+  if (!f) {
+    fl_show_message("Can't open",name,strerror(errno));
+    return 0;
+  }
+  if (data) {
+    for (int i=numlines; i--;) delete[] data[i];
+  }
+  char buffer[1024];
+  int i = 0;
+  while (fgets(buffer,1024,f)) {
+    if (buffer[0] != '\"') continue;
+    char *p = buffer;
+    char *q = buffer+1;
+    while (*q != '\"') {
+      if (*q == '\\') switch (*++q) {
+      case '\n':
+	fgets(q,(buffer+1024)-q,f); break;
+      case 0:
+	break;
+      case 'x': {
+	q++;
+	int n = 0;
+	for (int x = 0; x < 3; x++) {
+	  int d = hexdigit(*q);
+	  if (d > 15) break;
+	  n = (n<<4)+d;
+	  q++;
+	}
+	*p++ = n;
+      } break;
+      default: {
+	int c = *q++;
+	if (c>='0' && c<='7') {
+	  c -= '0';
+	  for (int x=0; x<2; x++) {
+	    int d = hexdigit(*q);
+	    if (d>7) break;
+	    c = (c<<3)+d;
+	    q++;
+	  }
+	}
+	*p++ = c;
+      } break;
+      } else {
+	*p++ = *q++;
+      }
+    }
+    *p++ = 0;
+    if (i >= sizeofdata) {
+      sizeofdata = 2*sizeofdata+100;
+      char **newdata = new char *[sizeofdata];
+      for (int j=0; j<i; j++) newdata[j] = data[j];
+      delete[] data;
+      data = newdata;
+    }
+    data[i] = new char[p-buffer];
+    memcpy(data[i],buffer,p-buffer);
+    i++;
+  }
+  numlines = i;
+  fclose(f);
+  return i;
+}
+
+Fl_Pixmap *pixmap;
+void newpixmap() {
+  delete pixmap;
+  pixmap = new Fl_Pixmap(data);
+  pixmap->label(b);
+  w->redraw();
+}
+
+static char name[1024];
+
+void file_cb(const char *n) {
+  if (!strcmp(name,n)) return;
+  if (!load_file(n)) return;
+  strcpy(name,n);
+  w->label(name);
+  newpixmap();
+}
+
+void button_cb(Fl_Widget *,void *) {
+  fl_file_chooser_callback(file_cb);
+  fl_file_chooser("XPM file","*.xpm",name);
+  fl_file_chooser_callback(0);
+}
+
+int dvisual = 0;
+int arg(int, char **argv, int &i) {
+  if (argv[i][1] == '8') {dvisual = 1; i++; return 1;}
+  return 0;
+}
+
+int main(int argc, char **argv) {
+  int i = 1;
+  if (Fl::args(argc,argv,i,arg) < argc)
+    Fl::fatal(" -8 # : use default visual\n%s\n",Fl::help);
+
+  Fl_Window window(400,400); ::w = &window;
+  Fl_Box b(0,0,window.w(),window.h()); ::b = &b;
+  Fl_Button button(5,5,100,35,"load");
+  button.callback(button_cb);
+  if (!dvisual) Fl::visual(FL_RGB);
+  window.resizable(window);
+  window.show(argc,argv);
+  return Fl::run();
+}

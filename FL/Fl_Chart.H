@@ -1,0 +1,65 @@
+/*	Fl_Chart.H
+
+	Emulation of the Forms Chart widget.
+	I did not try to improve this much, as I doubt it is used.
+
+*/
+
+#ifndef Fl_Chart_H
+#define Fl_Chart_H
+
+#ifndef Fl_Widget_H
+#include "Fl_Widget.H"
+#endif
+
+// values for type()
+#define FL_BAR_CHART		0
+#define FL_HORBAR_CHART		1
+#define FL_LINE_CHART		2
+#define FL_FILL_CHART		3
+#define FL_SPIKE_CHART		4
+#define FL_PIE_CHART		5
+#define FL_SPECIALPIE_CHART	6
+
+#define FL_FILLED_CHART  FL_FILL_CHART	// compatibility
+
+#define FL_CHART_MAX		128
+#define FL_CHART_LABEL_MAX	18
+
+struct FL_CHART_ENTRY {
+   float val;
+   uchar col;
+   char str[FL_CHART_LABEL_MAX+1];
+};
+
+class Fl_Chart : public Fl_Widget {
+    int numb;
+    int maxnumb;
+    FL_CHART_ENTRY entries[FL_CHART_MAX+1];
+    double min,max;
+    uchar autosize_;
+    uchar textfont_,textsize_,textcolor_;
+protected:
+    void draw();
+public:
+    Fl_Chart(int,int,int,int,const char * = 0);
+    void clear();
+    void add(double, const char * =0, uchar=0);
+    void insert(int, double, const char * =0, uchar=0);
+    void replace(int, double, const char * =0, uchar=0);
+    void bounds(double *a,double *b) const {*a = min; *b = max;}
+    void bounds(double a,double b);
+    int size() const {return numb;}
+    int maxsize() const {return maxnumb;}
+    void maxsize(int);
+    Fl_Font textfont() const {return (Fl_Font)textfont_;}
+    void textfont(uchar s) {textfont_ = s;}
+    uchar textsize() const {return textsize_;}
+    void textsize(uchar s) {textsize_ = s;}
+    Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    void textcolor(uchar n) {textcolor_ = n;}
+    uchar autosize() const {return autosize_;}
+    void autosize(uchar n) {autosize_ = n;}
+};
+
+#endif

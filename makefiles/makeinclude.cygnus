@@ -1,0 +1,43 @@
+# !!!! YOU PROBABLY WANT TO USE makeinclude.mingw32 INSTEAD !!!!
+
+# Makeinclude file for the Cygwin B19 release of GCC for Windoze
+#
+# This will try to use Cygwin's Unix emulation as much as possible,
+# which means it will link in Cygwin's libraries.  This seems to
+# result in much slower performance, and the only real difference
+# is that the file chooser uses cygwin's scandir implementation
+# rather than my own.  To compile with direct windoze calls
+# use the file makeinclude.mingw32.
+
+# Copy this file to .. and run make.
+# Thanks to Philipp Knirsch at Lucent and Carl Thompson
+
+prefix          =/usr/local
+exec_prefix     =${prefix}
+bindir          =${exec_prefix}/bin
+includedir      =${prefix}/include
+libdir          =${exec_prefix}/lib
+srcdir          =.
+
+# compiler names:
+CXX     =g++
+CC      =gcc
+
+# flags for C++ compiler:
+CFLAGS          =-Wall -O2 -DCYGNUS
+CXXFLAGS        =-Wall -O2 -DCYGNUS
+CXXFLAGS_D      =-Wall -g -DDEBUG -DCYGNUS
+
+# program to make the archive:
+LIBNAME         =libfltk.a
+LIBNAME_D       =libfltk_d.a
+AR              =ar -ruv
+RANLIB          =ranlib
+
+# libraries to link with:
+LDLIBS  =-lgdi32 -luser32 -lm
+
+# libraries to link with when using GL:
+GLDLIBS =-lgdi32 -luser32 -lglu32 -lopengl32 -lm
+
+INSTALL =/CYGNUS/B19/H-I386~1/BIN/install -c

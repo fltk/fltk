@@ -1,0 +1,65 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 0.99 
+header_name {.H} 
+code_name {.C} 
+gridx 10 
+gridy 10 
+snap 3
+Function {make_alignment_window()} {open
+} {
+  Fl_Window alignment_window {
+    label {fluid Preferences} open selected
+    xywh {303 187 210 282} visible
+  } {
+    Fl_Box {} {
+      label {ALIGNMENT:}
+      xywh {10 20 190 100} box ENGRAVED_FRAME labelsize 10 align 5
+    }
+    Fl_Input horizontal_input {
+      label {horizontal:}
+      user_data 1 user_data_type long
+      callback alignment_cb
+      xywh {90 30 100 20} type Int box THIN_DOWN_BOX
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input vertical_input {
+      label {vertical:}
+      user_data 2 user_data_type long
+      callback alignment_cb
+      xywh {90 60 100 20} type Int box THIN_DOWN_BOX
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input snap_input {
+      label {snap:}
+      user_data 3 user_data_type long
+      callback alignment_cb
+      xywh {90 90 100 20} type Int box THIN_DOWN_BOX
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Button {} {
+      label close
+      callback {alignment_window->hide();}
+      xywh {10 250 190 20} hotspot
+    }
+    Fl_Box {} {
+      label {OUTPUT FILE NAMES:}
+      xywh {10 140 190 100} box ENGRAVED_FRAME labelsize 10 align 5
+    }
+    Fl_Box {} {
+      label {Use "name.ext" to set name, use just ".ext" to set only extension.}
+      xywh {10 140 190 40} labelsize 10 align 128
+    }
+    Fl_Input header_file_input {
+      label {header file:}
+      user_data 1 user_data_type {void*}
+      callback header_input_cb
+      xywh {90 180 100 20} box THIN_DOWN_BOX when 1
+    }
+    Fl_Input code_file_input {
+      label {code file:}
+      user_data 1 user_data_type {void*}
+      callback code_input_cb
+      xywh {90 210 100 20} box THIN_DOWN_BOX when 1
+    }
+  }
+} 

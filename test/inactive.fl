@@ -1,0 +1,99 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 0.99 
+header_name {.H} 
+code_name {.C} 
+gridx 5 
+gridy 5 
+snap 3
+Function {} {open
+} {
+  Fl_Window {} {open
+    xywh {470 454 420 295} visible
+  } {
+    Fl_Group the_group {
+      label {activate()/deactivate() called on this Fl_Group} open
+      xywh {25 25 375 235} box ENGRAVED_FRAME align 17
+    } {
+      Fl_Button {} {
+        label button
+        xywh {50 50 105 25}
+      }
+      Fl_Group {} {
+        label {Child group} open
+        xywh {50 100 105 85} box DOWN_FRAME
+      } {
+        Fl_Check_Button {} {
+          label red
+          xywh {50 100 105 25} type Radio down_box DIAMOND_DOWN_BOX labelcolor 1
+        }
+        Fl_Check_Button {} {
+          label green
+          xywh {50 120 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 2 labelcolor 2
+        }
+        Fl_Check_Button {} {
+          label blue
+          xywh {50 140 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 4 labelcolor 4
+        }
+        Fl_Check_Button {} {
+          label white
+          xywh {50 160 105 25} type Radio down_box DIAMOND_DOWN_BOX selection_color 7 labelcolor 7
+        }
+      }
+      Fl_Slider {} {
+        label Fl_Slider
+        xywh {165 50 24 150} value 0.5
+      }
+      Fl_Input {} {
+        xywh {195 50 195 30}
+        code0 {o->static_value("Fl_Input");}
+      }
+      Fl_Menu_Button {} {
+        label menu open
+        xywh {235 105 110 30}
+      } {
+        menuitem {} {
+          label item
+          xywh {0 0 100 20}
+        }
+        menuitem {} {
+          label item
+          xywh {10 10 100 20}
+        }
+        menuitem {} {
+          label item
+          xywh {20 20 100 20}
+        }
+        menuitem {} {
+          label item
+          xywh {30 30 100 20}
+        }
+        menuitem {} {
+          label item
+          xywh {40 40 100 20}
+        }
+      }
+      Fl_Box {} {
+        label Fl_Box
+        xywh {240 205 145 50} box EMBOSSED_FRAME labeltype SHADOW_LABEL labelfont 3 labelsize 38
+      }
+      Fl_Value_Output {} {
+        label {value:}
+        xywh {255 165 130 30} maximum 10000 step 1 textfont 5 textsize 24 textcolor 4
+      }
+      Fl_Scrollbar {} {
+        label scrollbar selected
+        xywh {40 220 180 20} type Horizontal maximum 100
+      }
+    }
+    Fl_Button {} {
+      label active
+      callback {the_group->activate();}
+      xywh {25 265 185 25} type Radio value 1
+    }
+    Fl_Button {} {
+      label inactive
+      callback {the_group->deactivate();}
+      xywh {220 265 180 25} type Radio
+    }
+  }
+} 

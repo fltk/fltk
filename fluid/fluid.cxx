@@ -1,0 +1,387 @@
+// fluid.C
+
+// Please see README for some information about the construction of this
+// rather nasty piece of code.
+
+const char *copyright =
+"The FLTK user interface designer version 0.99\n"
+"Copyright \xa9 1998 Bill Spitzak\n"
+"\n"
+"This library is free software; you can redistribute it and/or "
+"modify it under the terms of the GNU Library General Public "
+"License as published by the Free Software Foundation; either "
+"version 2 of the License, or (at your option) any later version.\n"
+"\n"
+"This library is distributed in the hope that it will be useful, "
+"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. "
+"See the GNU Library General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU Library General Public "
+"License along with this library; if not, write to the Free Software "
+"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 "
+"USA.\n"
+"\n"
+"Written by Bill Spitzak spitzak@d2.com\n";
+
+#include <FL/Fl.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Input.H>
+#include <FL/fl_ask.H>
+#include <FL/fl_draw.H>
+#include <FL/fl_file_chooser.H>
+#include <FL/fl_message.H>
+#include <FL/filename.H>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+
+#if defined(WIN32) && !defined(CYGNUS)
+# include <direct.h>
+#else
+# include <unistd.h>
+#endif
+
+#include "about_panel.H"
+
+#include "Fl_Type.H"
+
+////////////////////////////////////////////////////////////////
+
+void nyi(Fl_Widget *,void *) {
+    fl_message("That's not yet implemented, sorry");
+}
+
+static const char *filename;
+void set_filename(const char *c);
+int modflag;
+
+static char* pwd;
+static char in_source_dir;
+void goto_source_dir() {
+  if (in_source_dir) return;
+  if (!filename || !*filename) return;
+  const char *p = filename_name(filename);
+  if (p <= filename) return; // it is in the current directory
+  char buffer[1024];
+  strcpy(buffer,filename);
+  int n = p-filename; if (n>1) n--; buffer[n] = 0;
+  if (!pwd) {
+    pwd = getcwd(0,1024);
+    if (!pwd) {fprintf(stderr,"getwd : %s\n",strerror(errno)); return;}
+  }
+  if (chdir(buffer)<0) {fprintf(stderr, "Can't chdir to %s : %s\n",
+				buffer, strerror(errno)); return;}
+  in_source_dir = 1;
+}
+
+void leave_source_dir() {
+  if (!in_source_dir) return;
+  if (chdir(pwd)<0) {fprintf(stderr, "Can't chdir to %s : %s\n",
+				pwd, strerror(errno));}
+  in_source_dir = 0;
+}
+  
+Fl_Window *main_window;
+
+void exit_cb(Fl_Widget *,void *) {
+  if (!modflag || fl_ask("Exit without saving changes?")) exit(0);
+}
+
+void save_cb(Fl_Widget *, void *v) {
+  const char *c = filename;
+  if (v || !c || !*c) {
+    if (!(c=fl_file_chooser("Save to:", "*.f[ld]", c))) return;
+    set_filename(c);
+  }
+  if (!write_file(c)) {
+    fl_show_message("Error writing", c, strerror(errno));
+    return;
+  }
+  modflag = 0;
+}
+
+void open_cb(Fl_Widget *, void *v) {
+  if (!v && modflag && !fl_ask("Discard changes?")) return;
+  const char *c;
+  if (!(c = fl_file_chooser("Open:", "*.f[ld]", filename))) return;
+  if (!read_file(c, v!=0)) {
+    fl_show_message("Can't read", c, strerror(errno));
+    return;
+  }
+  if (!v) {set_filename(c); modflag = 0;}
+  else modflag = 1;
+}
+
+void new_cb(Fl_Widget *, void *v) {
+  if (!v && modflag && !fl_ask("Discard changes?")) return;
+  const char *c;
+  if (!(c = fl_file_chooser("New:", "*.f[ld]", 0))) return;
+  delete_all();
+  set_filename(c);
+  modflag = 0;
+}
+
+static int compile_only;
+
+const char* header_file_name = ".H";
+const char* code_file_name = ".C";
+
+void write_cb(Fl_Widget *, void *) {
+  if (!filename) {
+    save_cb(0,0);
+    if (!filename) return;
+  }
+  char cname[1024];
+  char hname[1024];
+  if (*code_file_name == '.') {
+    strcpy(cname,filename_name(filename));
+    filename_setext(cname, code_file_name);
+  } else {
+    strcpy(cname, code_file_name);
+  }
+  if (*header_file_name == '.') {
+    strcpy(hname,filename_name(filename));
+    filename_setext(hname, header_file_name);
+  } else {
+    strcpy(hname, header_file_name);
+  }
+  int x = write_code(cname,hname);
+  strcat(cname, "/"); strcat(cname,header_file_name);
+  if (compile_only) {
+    if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
+  } else {
+    if (!x) {
+      fl_show_message("Can't write", cname, strerror(errno));
+    } else {
+      fl_show_message("Wrote", cname, 0);
+    }
+  }
+}
+
+void openwidget_cb(Fl_Widget *, void *) {
+  if (!Fl_Type::current) {
+    fl_message("Please select a widget");
+    return;
+  }
+  Fl_Type::current->open();
+}
+
+void toggle_overlays(Fl_Widget *,void *);
+
+void select_all_cb(Fl_Widget *,void *);
+
+void group_cb(Fl_Widget *, void *);
+
+void ungroup_cb(Fl_Widget *, void *);
+
+extern int pasteoffset;
+static int ipasteoffset;
+
+static char* cutfname() {
+#ifdef WIN32
+  return ".fluid_cut_buffer";
+#else
+  static char name[256] = "~/.fluid_cut_buffer";
+  static char beenhere;
+  if (!beenhere) {beenhere = 1; filename_expand(name,name);}
+  return name;
+#endif
+}
+
+void copy_cb(Fl_Widget*, void*) {
+  if (!Fl_Type::current) return;
+  ipasteoffset = 10;
+  if (!write_file(cutfname(),1)) {
+    fl_show_message("Can't write", cutfname(), strerror(errno));
+    return;
+  }
+}
+
+extern void select_only(Fl_Type *);
+void cut_cb(Fl_Widget *, void *) {
+  if (!Fl_Type::current) return;
+  ipasteoffset = 0;
+  Fl_Type *p = Fl_Type::current->parent;
+  while (p && p->selected) p = p->parent;
+  if (!write_file(cutfname(),1)) {
+    fl_show_message("Can't write", cutfname(), strerror(errno));
+    return;
+  }
+  delete_all(1);
+  if (p) select_only(p);
+}
+
+extern int force_parent, gridx, gridy;
+
+void paste_cb(Fl_Widget*, void*) {
+  if (ipasteoffset) force_parent = 1;
+  pasteoffset = ipasteoffset;
+  if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
+  if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
+  if (!read_file(cutfname(), 1)) {
+    fl_show_message("Can't read", cutfname(), strerror(errno));
+  }
+  pasteoffset = 0;
+  ipasteoffset += 10;
+  force_parent = 0;
+}
+
+void earlier_cb(Fl_Widget*,void*);
+
+void later_cb(Fl_Widget*,void*);
+
+Fl_Type *sort(Fl_Type *parent);
+
+static void sort_cb(Fl_Widget *,void *) {
+  sort((Fl_Type*)0);
+}
+
+void show_alignment_cb(Fl_Widget *, void *);
+
+void about_cb(Fl_Widget *, void *) {
+  if (!about_panel) make_about_panel(copyright);
+  copyright_box->hide();
+  display_group->show();
+  about_panel->show();
+}
+
+////////////////////////////////////////////////////////////////
+
+extern Fl_Menu_Item New_Menu[];
+
+Fl_Menu_Item Main_Menu[] = {
+{"File",0,0,0,FL_SUBMENU},
+  {"New", FL_ALT+'N', new_cb, 0},
+  {"Open...", FL_ALT+'O', open_cb, 0},
+  {"Save", FL_ALT+'s', save_cb, 0},
+  {"Save As...", FL_ALT+'S', save_cb, (void*)1},
+  {"Merge...", FL_ALT+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
+  {"Write code", FL_ALT+'C', write_cb, 0},
+  {"Quit", FL_ALT+'q', exit_cb},
+  {0},
+{"Edit",0,0,0,FL_SUBMENU},
+  {"Undo", FL_ALT+'z', nyi},
+  {"Cut", FL_ALT+'x', cut_cb},
+  {"Copy", FL_ALT+'c', copy_cb},
+  {"Paste", FL_ALT+'v', paste_cb},
+  {"Select All", FL_ALT+'a', select_all_cb, 0, FL_MENU_DIVIDER},
+  {"Open...", FL_F+1, openwidget_cb},
+  {"Sort",0,sort_cb},
+  {"Earlier", FL_F+2, earlier_cb},
+  {"Later", FL_F+3, later_cb},
+//{"Show", FL_F+5, show_cb},
+//{"Hide", FL_F+6, hide_cb},
+  {"Group", FL_F+7, group_cb},
+  {"Ungroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
+//{"Deactivate", 0, nyi},
+//{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
+  {"Overlays on/off",FL_ALT+'o',toggle_overlays},
+  {"Preferences",FL_ALT+'p',show_alignment_cb},
+  {0},
+{"New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
+{"Help",0,0,0,FL_SUBMENU},
+  {"About fluid",0,about_cb},
+  {"Manual",0,nyi},
+  {0},
+{0}};
+
+#define BROWSERWIDTH 300
+#define BROWSERHEIGHT 500
+#define WINWIDTH 300
+#define MENUHEIGHT 30
+#define WINHEIGHT (BROWSERHEIGHT+MENUHEIGHT)
+
+extern void fill_in_New_Menu();
+
+void make_main_window() {
+  if (!main_window) {
+    Fl_Widget *o;
+    main_window = new Fl_Double_Window(WINWIDTH,WINHEIGHT,"fluid");
+    main_window->box(FL_NO_BOX);
+    o = make_widget_browser(0,MENUHEIGHT,BROWSERWIDTH,BROWSERHEIGHT);
+    o->box(FL_FLAT_BOX);
+    main_window->resizable(o);
+    Fl_Menu_Bar *m = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
+    m->menu(Main_Menu);
+    m->global();
+    fill_in_New_Menu();
+    main_window->end();
+  }
+}
+
+void set_filename(const char *c) {
+  if (filename) free((void *)filename);
+  filename = strdup(c);
+  if (main_window) main_window->label(filename);
+}
+
+////////////////////////////////////////////////////////////////
+
+static int arg(int argc, char** argv, int& i) {
+  if (argv[i][1] == 'c' && !argv[i][2]) {compile_only = 1; i++; return 1;}
+  if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
+    code_file_name = argv[i+1]; i += 2; return 2;}
+  if (argv[i][1] == 'h' && !argv[i][2]) {
+    header_file_name = argv[i+1]; i += 2; return 2;}
+  return 0;
+}
+
+#ifndef WIN32
+
+#include <signal.h>
+#ifdef _sigargs
+#define SIGARG _sigargs
+#else
+#ifdef __sigargs
+#define SIGARG __sigargs
+#else
+#define SIGARG int // you may need to fix this for older systems
+#endif
+#endif
+
+static void sigint(SIGARG) {
+  signal(SIGINT,sigint);
+  exit_cb(0,0);
+}
+
+#endif
+
+int main(int argc,char **argv) {
+  int i = 1;
+  if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
+    fprintf(stderr,"usage: %s <switches> name.fl\n"
+" -c : write .C and .H and exit\n"
+" -o <name> : .C output filename, or extension if <name> starts with '.'\n"
+" -h <name> : .H output filename, or extension if <name> starts with '.'\n"
+"%s\n", argv[0], Fl::help);
+    return 1;
+  }
+  const char *c = argv[i];
+  make_main_window();
+  if (c) set_filename(c);
+  if (!compile_only) {
+    Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
+    main_window->callback(exit_cb);
+    main_window->show(argc,argv);
+  }
+  if (c && !read_file(c,0)) {
+    if (compile_only) {
+      fprintf(stderr,"%s : %s\n", c, strerror(errno));
+      exit(1);
+    }
+    fl_show_message("Can't read", c, strerror(errno));
+  }
+  if (compile_only) {write_cb(0,0); exit(0);}
+  modflag = 0;
+#ifndef WIN32
+  signal(SIGINT,sigint);
+#endif
+  return Fl::run();
+}

@@ -1,0 +1,36 @@
+# Makeinclude file for the Cygwin B19 release of GCC for Windoze
+
+# This will compile the code to directly call Windows interfaces
+# and does not use the CYGWIN library.
+
+# Thanks to Philipp Knirsch at Lucent and Carl Thompson
+
+prefix          =/usr/local
+exec_prefix     =${prefix}
+bindir          =${exec_prefix}/bin
+includedir      =${prefix}/include
+libdir          =${exec_prefix}/lib
+srcdir          =.
+
+# compiler names:
+CXX     =g++
+CC      =g++
+
+# flags for C++ compiler:
+CFLAGS          =-Wall -O2 -DWIN32
+CXXFLAGS        =-Wall -O2 -DWIN32
+CXXFLAGS_D      =-Wall -g -DDEBUG -DWIN32
+
+# program to make the archive:
+LIBNAME         =libfltk.a
+LIBNAME_D       =libfltk_d.a
+AR              =ar -ruv
+RANLIB          =ranlib
+
+# libraries to link with:
+LDLIBS  =-lgdi32 -luser32 -lm -mwindows
+
+# libraries to link with when using GL:
+GLDLIBS =-lgdi32 -luser32 -lglu32 -lopengl32 -lm -mwindows
+
+INSTALL =/CYGNUS/B19/H-I386~1/BIN/install -c

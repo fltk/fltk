@@ -1,0 +1,67 @@
+/* expand a file name by prepending current directory, deleting . and
+   .. (not really correct for symbolic links) between the prepended
+   current directory.  Use $PWD if it exists.
+   Returns true if any changes were made.
+*/
+
+#include <FL/filename.H>
+#include <stdlib.h>
+#include <string.h>
+#if defined(WIN32) && !defined(CYGNUS)
+# include <direct.h>
+# define getcwd(a,b) _getdcwd(0,a,b)
+#else
+# include <unistd.h>
+# ifdef __EMX__
+#  define getcwd _getcwd2
+# endif
+#endif
+
+#if defined(WIN32) || defined(__EMX__)
+inline int isdirsep(char c) {return c=='/' || c=='\\';}
+#else
+#define isdirsep(c) ((c)=='/')
+#endif
+
+int filename_absolute(char *to,const char *from) {
+
+  if (isdirsep(*from) || *from == '|'
+#if defined(WIN32) || defined(__EMX__)
+      || from[1]==':'
+#endif
+      ) {
+    strcpy(to,from);
+    return 0;
+  }
+
+  char *a,temp[FL_PATH_MAX];
+  const char *start = from;
+
+  a = getenv("PWD");
+  if (a) strncpy(temp,a,FL_PATH_MAX);
+  else {a = getcwd(temp,FL_PATH_MAX); if (!a) return 0;}
+#if defined(WIN32) || defined(__EMX__)
+  for (a = temp; *a; a++) if (*a=='\\') *a = '/'; // ha ha
+#else
+  a = temp+strlen(temp);
+#endif
+  if (isdirsep(*(a-1))) a--;
+  /* remove intermediate . and .. names: */
+  while (*start == '.') {
+    if (start[1]=='.' && isdirsep(start[2])) {
+      char *b;
+      for (b = a-1; b >= temp && !isdirsep(*b); b--);
+      if (b < temp) break;
+      a = b;
+      start += 3;
+    } else if (isdirsep(start[1])) {
+      start += 2;
+    } else
+      break;
+  }
+  *a++ = '/';
+  strcpy(a,start);
+  strcpy(to,temp);
+  return 1;
+
+}
