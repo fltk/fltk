@@ -20,7 +20,7 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/fl_ask.H>
 
-class Fl_File_Chooser {
+class FL_EXPORT Fl_File_Chooser {
 public:
   enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };
 private:

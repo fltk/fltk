@@ -12,7 +12,9 @@ CHANGES IN FLTK 1.1.0
 	- MacOS: missing compile rule for .dylib files.
 	- Fl_Group::current(), Fl_Group::begin(), and
 	  Fl_Group::end() are no longer inlined so that they are
-	  properly exported in DLLs under WIN32.
+	  properly exported in DLLs under WIN32.  Similar
+	  changes for all static inline methods in other
+	  classes.
 	- MacOS: support for Mac system menu (Fl_Sys_Menu_Bar)
 	- MacOS: wait(0) would not handle all pending events
 	- Added new makeinclude file for MingW using GCC 3.1.x.

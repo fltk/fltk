@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tiled_Image.H,v 1.1.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Tiled_Image.H,v 1.1.2.3 2002/07/14 21:25:39 easysw Exp $"
 //
 // Tiled image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 
 
 // Tiled image class. 
-class Fl_Tiled_Image : public Fl_Image {
+class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   protected:
 
   Fl_Image	*image_;		// The image that is shared
@@ -52,5 +52,5 @@ class Fl_Tiled_Image : public Fl_Image {
 #endif // !Fl_Tiled_Image_H
 
 //
-// End of "$Id: Fl_Tiled_Image.H,v 1.1.2.2 2002/01/01 15:11:28 easysw Exp $"
+// End of "$Id: Fl_Tiled_Image.H,v 1.1.2.3 2002/07/14 21:25:39 easysw Exp $"
 //

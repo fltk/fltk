@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.H,v 1.22.2.5 2002/06/28 21:04:35 easysw Exp $"
+// "$Id: Fl_Shared_Image.H,v 1.22.2.6 2002/07/14 21:25:39 easysw Exp $"
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -53,11 +53,11 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
   static int	compare(Fl_Shared_Image **i0, Fl_Shared_Image **i1);
 
   // Use get() and release() to load/delete images in memory...
-  Fl_Shared_Image();
-  Fl_Shared_Image(const char *n, Fl_Image *img = 0);
-  virtual ~Fl_Shared_Image();
-  void		add();
-  void		update();
+  FL_EXPORT Fl_Shared_Image();
+  FL_EXPORT Fl_Shared_Image(const char *n, Fl_Image *img = 0);
+  FL_EXPORT virtual ~Fl_Shared_Image();
+  FL_EXPORT void add();
+  FL_EXPORT void update();
 
   public:
 
@@ -75,8 +75,8 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
 
   static Fl_Shared_Image *find(const char *n, int W = 0, int H = 0);
   static Fl_Shared_Image *get(const char *n, int W = 0, int H = 0);
-  static Fl_Shared_Image **images() { return images_; }
-  static int		num_images() { return num_images_; }
+  static Fl_Shared_Image **images();
+  static int		num_images();
   static void		add_handler(Fl_Shared_Handler f);
   static void		remove_handler(Fl_Shared_Handler f);
 };
@@ -87,10 +87,10 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
 // of the core FLTK library...
 //
 
-FL_EXPORT void fl_register_images();
+FL_EXPORT extern void fl_register_images();
 
 #endif // !Fl_Shared_Image_H
 
 //
-// End of "$Id: Fl_Shared_Image.H,v 1.22.2.5 2002/06/28 21:04:35 easysw Exp $"
+// End of "$Id: Fl_Shared_Image.H,v 1.22.2.6 2002/07/14 21:25:39 easysw Exp $"
 //

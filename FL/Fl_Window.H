@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.H,v 1.12.2.6.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Window.H,v 1.12.2.6.2.3 2002/07/14 21:25:39 easysw Exp $"
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 
 class Fl_X;
 
-class Fl_Window : public Fl_Group {
+class FL_EXPORT Fl_Window : public Fl_Group {
 
   friend class Fl_X;
   Fl_X *i; // points at the system-specific stuff
@@ -62,14 +62,14 @@ protected:
 
 public:
 
-  FL_EXPORT Fl_Window(int,int,int,int, const char* = 0);
-  FL_EXPORT Fl_Window(int,int, const char* = 0);
-  virtual FL_EXPORT ~Fl_Window();
+  Fl_Window(int,int,int,int, const char* = 0);
+  Fl_Window(int,int, const char* = 0);
+  virtual ~Fl_Window();
 
-  virtual FL_EXPORT int handle(int);
+  virtual int handle(int);
 
-  virtual FL_EXPORT void resize(int,int,int,int);
-  FL_EXPORT void border(int b);
+  virtual void resize(int,int,int,int);
+  void border(int b);
   void clear_border()	{set_flag(FL_NOBORDER);}
   int border() const	{return !(flags() & FL_NOBORDER);}
   void set_override()	{set_flag(FL_NOBORDER|FL_OVERRIDE);}
@@ -79,8 +79,8 @@ public:
   void set_non_modal()	{set_flag(FL_NON_MODAL);}
   int non_modal() const {return flags() & (FL_NON_MODAL|FL_MODAL);}
 
-  FL_EXPORT void hotspot(int x, int y, int offscreen = 0);
-  FL_EXPORT void hotspot(const Fl_Widget*, int offscreen = 0);
+  void hotspot(int x, int y, int offscreen = 0);
+  void hotspot(const Fl_Widget*, int offscreen = 0);
   void hotspot(const Fl_Widget& p, int offscreen = 0) {hotspot(&p,offscreen);}
   void free_position()	{clear_flag(FL_FORCE_POSITION);}
   void size_range(int a, int b, int c=0, int d=0, int e=0, int f=0, int g=0) {
@@ -88,36 +88,36 @@ public:
 
   const char* label() const	{return Fl_Widget::label();}
   const char* iconlabel() const	{return iconlabel_;}
-  FL_EXPORT void label(const char*);
-  FL_EXPORT void iconlabel(const char*);
-  FL_EXPORT void label(const char* label, const char* iconlabel);
+  void label(const char*);
+  void iconlabel(const char*);
+  void label(const char* label, const char* iconlabel);
   const char* xclass() const	{return xclass_;}
   void xclass(const char* c)	{xclass_ = c;}
   const void* icon() const	{return icon_;}
   void icon(const void * ic)	{icon_ = ic;}
 
   int shown() {return i != 0;}
-  virtual FL_EXPORT void show();
-  virtual FL_EXPORT void hide();
-  FL_EXPORT void show(int, char**);
-  FL_EXPORT void fullscreen();
-  FL_EXPORT void fullscreen_off(int,int,int,int);
-  FL_EXPORT void iconize();
+  virtual void show();
+  virtual void hide();
+  void show(int, char**);
+  void fullscreen();
+  void fullscreen_off(int,int,int,int);
+  void iconize();
 
-  FL_EXPORT int x_root() const ;
-  FL_EXPORT int y_root() const ;
+  int x_root() const ;
+  int y_root() const ;
 
-  static Fl_Window *current() {return current_;}
-  FL_EXPORT void make_current();
+  static Fl_Window *current();
+  void make_current();
 
   // for back-compatability only:
-  FL_EXPORT void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
-  static FL_EXPORT void default_callback(Fl_Window*, void* v);
+  void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
+  static void default_callback(Fl_Window*, void* v);
 
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Window.H,v 1.12.2.6.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Window.H,v 1.12.2.6.2.3 2002/07/14 21:25:39 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.12 2002/07/11 22:43:53 matthiaswm Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.13 2002/07/14 21:25:39 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -62,13 +62,13 @@ Fl_Text_Buffer     *textbuf = 0;
 Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
                    styletable[] = {	// Style table
-		     { FL_BLACK,      FL_COURIER,        FL_NORMAL_SIZE }, // A - Plain
-		     { FL_DARK_GREEN, FL_COURIER_ITALIC, FL_NORMAL_SIZE }, // B - Line comments
-		     { FL_DARK_GREEN, FL_COURIER_ITALIC, FL_NORMAL_SIZE }, // C - Block comments
-		     { FL_BLUE,       FL_COURIER,        FL_NORMAL_SIZE }, // D - Strings
-		     { FL_DARK_RED,   FL_COURIER,        FL_NORMAL_SIZE }, // E - Directives
-		     { FL_DARK_RED,   FL_COURIER_BOLD,   FL_NORMAL_SIZE }, // F - Types
-		     { FL_BLUE,       FL_COURIER_BOLD,   FL_NORMAL_SIZE }  // G - Keywords
+		     { FL_BLACK,      FL_COURIER,        14 }, // A - Plain
+		     { FL_DARK_GREEN, FL_COURIER_ITALIC, 14 }, // B - Line comments
+		     { FL_DARK_GREEN, FL_COURIER_ITALIC, 14 }, // C - Block comments
+		     { FL_BLUE,       FL_COURIER,        14 }, // D - Strings
+		     { FL_DARK_RED,   FL_COURIER,        14 }, // E - Directives
+		     { FL_DARK_RED,   FL_COURIER_BOLD,   14 }, // F - Types
+		     { FL_BLUE,       FL_COURIER_BOLD,   14 }  // G - Keywords
 		   };
 const char         *code_keywords[] = {	// List of known C/C++ keywords...
 		     "and",
@@ -762,5 +762,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.12 2002/07/11 22:43:53 matthiaswm Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.13 2002/07/14 21:25:39 easysw Exp $".
 //

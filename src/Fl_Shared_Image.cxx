@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.14 2002/06/28 21:04:36 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.15 2002/07/14 21:25:39 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -57,6 +57,17 @@ int	Fl_Shared_Image::alloc_handlers_;	// Allocated format handlers
 
 extern "C" {
   typedef int (*compare_func_t)(const void *, const void *);
+}
+
+
+// Static methods that really should be inline, but some WIN32 compilers
+// can't handle it...
+Fl_Shared_Image **Fl_Shared_Image::images() {
+  return images_;
+}
+
+int Fl_Shared_Image::num_images() {
+  return num_images_;
 }
 
 
@@ -456,5 +467,5 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.14 2002/06/28 21:04:36 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.15 2002/07/14 21:25:39 easysw Exp $".
 //
