@@ -3,8 +3,8 @@
 # makedist - make a digital unix distribution.
 #
 
-rm -rf fltk-1.0.2-dunix
-mkdir fltk-1.0.2-dunix
+rm -rf fltk-1.0.3-dunix
+mkdir fltk-1.0.3-dunix
 
 echo "Building distribution tree..."
 rm -rf usr
@@ -40,16 +40,16 @@ for file in *.H; do
 done
 cd ../../..
 
-kits fltk.key . fltk-1.0.2-dunix
+kits fltk.key . fltk-1.0.3-dunix
 
 echo "Archiving distribution..."
 
-tar cf fltk-1.0.2-dunix.tar fltk-1.0.2-dunix
+tar cf fltk-1.0.3-dunix.tar fltk-1.0.3-dunix
 
 echo "Compressing distribution..."
-rm -f fltk-1.0.2-dunix.tar.gz
-gzip -9 fltk-1.0.2-dunix.tar
+rm -f fltk-1.0.3-dunix.tar.gz
+gzip -9 fltk-1.0.3-dunix.tar
 
 echo "Removing temporary distribution files..."
-rm -rf fltk-1.0.2-dunix
+rm -rf fltk-1.0.3-dunix
 rm -rf usr

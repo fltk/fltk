@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.4 1999/04/23 06:55:53 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.5 1999/05/01 15:08:22 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -158,7 +158,7 @@ int fl_ready() {
 static Fl_Window* send_motion;
 #endif
 static void do_queued_events() {
-  while (XEventsQueued(fl_display,QueuedAfterReading)) {
+ while (XEventsQueued(fl_display,QueuedAfterReading)) {
     XEvent xevent;
     XNextEvent(fl_display, &xevent);
     fl_handle(xevent);
@@ -865,5 +865,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.4 1999/04/23 06:55:53 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.5 1999/05/01 15:08:22 mike Exp $".
 //

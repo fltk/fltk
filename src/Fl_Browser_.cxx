@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10 1999/03/09 06:46:36 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.1 1999/05/01 15:08:22 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
+
 
 // This is the base class for browsers.  To be useful it must be
 // subclassed and several virtual functions defined.  The
@@ -238,7 +239,11 @@ J1:
   // see if scrollbar needs to be switched on/off:
   if ((has_scrollbar_ & VERTICAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
-    if (!scrollbar.visible()) {scrollbar.set_visible(); drawsquare = 1;}
+    if (!scrollbar.visible()) {
+      scrollbar.set_visible();
+      drawsquare = 1;
+      bbox(X, Y, W, H);
+    }
   } else {
     top_ = item_first(); real_position_ = offset_ = 0;
     if (scrollbar.visible()) {
@@ -249,7 +254,11 @@ J1:
 
   if ((has_scrollbar_ & HORIZONTAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_ > W)) {
-    if (!hscrollbar.visible()) {hscrollbar.set_visible(); drawsquare = 1;}
+    if (!hscrollbar.visible()) {
+      hscrollbar.set_visible();
+      drawsquare = 1;
+      bbox(X, Y, W, H);
+    }
   } else {
     real_hposition_ = 0;
     if (hscrollbar.visible()) {
@@ -634,5 +643,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10 1999/03/09 06:46:36 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.1 1999/05/01 15:08:22 mike Exp $".
 //

@@ -1,4 +1,4 @@
-README - Fast Light Tool Kit (FLTK) Version 1.0.2
+README - Fast Light Tool Kit (FLTK) Version 1.0.3
 -------------------------------------------------
 
 WHAT IS FLTK?
@@ -164,7 +164,7 @@ COPYRIGHT
 	Matthias Melcher (matthias@mediaone.net)
 	Vincent Penne (vincent.penne@wanadoo.fr)
         Michael Sweet (mike@easysw.com)
-	Carl Thompson (clip@home.net)
+	Carl Thompson (cet@elinix.net)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public License
