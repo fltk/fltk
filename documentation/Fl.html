@@ -209,7 +209,7 @@ called repeatedly).  The idle function can be used to get background
 processing done.
 
 <P>You can have multiple idle callbacks. To remove an idle callback use <A
-href=#remove_idle><tt>Fl::remove_idle()</tt></A>.
+href="#Fl.remove_idle"><tt>Fl::remove_idle()</tt></A>.
 
 <P><tt>Fl::wait()</tt> and <tt>Fl::check()</tt> call idle callbacks,
 but <tt>Fl::ready()</tt> does not.
@@ -400,7 +400,7 @@ so it is ok to call it many times and in many places.
 <H4><A NAME="Fl.damage">int damage();<BR>
 void damage(int x);</A></H4>
 
-<P>If true then <A href=#flush><tt>flush()</tt></A> will do something.
+<P>If true then <A href="#Fl.flush"><tt>flush()</tt></A> will do something.
 
 <H4><A NAME="Fl.default_atclose">void default_atclose(Fl_Window*,void*);</A></H4>
 
@@ -510,7 +510,7 @@ FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
 FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
 FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter</tt>.  Be
 careful not to confuse these with the very similar, but all-caps,
-symbols used by <A href="#event_state"><tt>Fl::event_state()</tt>
+symbols used by <a href="Fl.html#Fl.event_state"><tt>Fl::event_state()</tt>
 </A>. </LI>
 </UL>
 
@@ -781,7 +781,7 @@ modal()</tt></A> true, or <tt>NULL</tt> if there are no <tt>modal()</tt>
 windows <tt>shown()</tt>.
 The <tt>modal()</tt> window has its <tt>handle()</tt> method called
 for all events, and no other windows will have <tt>handle()</tt>
-called (<A href=#grab><tt>grab()</tt></A> overrides this).
+called (<A href="#Fl.grab"><tt>grab()</tt></A> overrides this).
 
 <H4><A NAME="Fl.next_window">Fl_Window* next_window(const Fl_Window*);</A></H4>
 
