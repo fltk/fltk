@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.1 2001/12/12 21:33:34 easysw Exp $"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,17 +27,21 @@
 #include <FL/Fl_Window.H>
 
 #ifdef WIN32
-#include <FL/win32.H>
+#  include <FL/win32.H>
 #endif
 
-void Fl_Window::hotspot(int X, int Y, int /*offscreen*/) {
-  int mx,my; Fl::get_mouse(mx,my);
+void Fl_Window::hotspot(int X, int Y, int offscreen) {
+  int mx,my;
+
+  // Update the screen position based on the mouse position.
+  Fl::get_mouse(mx,my);
   X = mx-X; Y = my-Y;
-#if 0
-  // Both the WIN32 and X versions do this to all windows all the time...
+
+  // If offscreen is 0 (the default), make sure that the window
+  // stays on the screen, if possible.
   if (!offscreen) {
 #ifdef WIN32
-    //These will be used by reference, so we must passed different variables
+    // These will be used by reference, so we must passed different variables
     int bt,bx,by;
     x(X);y(Y);
     Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
@@ -45,24 +49,25 @@ void Fl_Window::hotspot(int X, int Y, int /*offscreen*/) {
     if (X==x()) x(X-1);
 #else
     if (border()) {
-      // ensure border is on screen:
+      // Ensure border is on screen; these values are generic enough
+      // to work with many window managers, and are based on KDE defaults.
       const int top = 20;
-      const int left = 1;
-      const int right = 1;
-      const int bottom = 1;
-      if (X+w()+right > Fl::w()) X = Fl::w()-right-w();
-      if (X-left < 0) X = left;
-      if (Y+h()+bottom > Fl::h()) Y = Fl::h()-bottom-h();
-      if (Y-top < 0) Y = top;
+      const int left = 4;
+      const int right = 4;
+      const int bottom = 8;
+      if (X+w()+right > Fl::w()-Fl::x()) X = Fl::w()-Fl::x()-right-w();
+      if (X-left < Fl::x()) X = left;
+      if (Y+h()+bottom > Fl::h()-Fl::y()) Y = Fl::h()-Fl::y()-bottom-h();
+      if (Y-top < Fl::y()) Y = top;
     }
     // now insure contents are on-screen (more important than border):
-    if (X+w() > Fl::w()) X = Fl::w()-w();
-    if (X < 0) X = 0;
-    if (Y+h() > Fl::h()) Y = Fl::h()-h();
-    if (Y < 0) Y = 0;
+    if (X+w() > Fl::w()-Fl::x()) X = Fl::w()-Fl::x()-w();
+    if (X < Fl::x()) X = Fl::x();
+    if (Y+h() > Fl::h()-Fl::y()) Y = Fl::h()-Fl::y()-h();
+    if (Y < Fl::y()) Y = Fl::y();
 #endif
   }
-#endif
+
   position(X,Y);
 }
 
@@ -76,6 +81,7 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
   hotspot(X,Y,offscreen);
 }
 
+
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.1 2001/12/12 21:33:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.5 2001/12/09 12:52:13 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.6 2001/12/12 21:33:34 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -78,10 +78,10 @@ class EditorWindow : public Fl_Double_Window {
 
 EditorWindow::EditorWindow(int w, int h, const char* t) : Fl_Double_Window(w, h, t) {
   replace_dlg = new Fl_Window(300, 105, "Replace");
-    replace_find = new Fl_Input(70, 10, 210, 25, "Find:");
+    replace_find = new Fl_Input(80, 10, 210, 25, "Find:");
     replace_find->align(FL_ALIGN_LEFT);
 
-    replace_with = new Fl_Input(70, 40, 210, 25, "Replace:");
+    replace_with = new Fl_Input(80, 40, 210, 25, "Replace:");
     replace_with->align(FL_ALIGN_LEFT);
 
     replace_all = new Fl_Button(10, 70, 90, 25, "Replace All");
@@ -419,5 +419,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.5 2001/12/09 12:52:13 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.6 2001/12/12 21:33:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.1 2001/12/12 21:33:34 easysw Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,7 @@
 
 // The "hue box" can be a circle or rectilinear.
 // You get a circle by defining this:
-// #define CIRCLE 1
+#define CIRCLE 1
 // And the "hue box" can auto-update when the value changes
 // you get this by defining this:
 #define UPDATE_HUE_BOX 1
@@ -320,14 +320,14 @@ void Fl_Color_Chooser::mode_cb(Fl_Widget* o, void*) {
 ////////////////////////////////////////////////////////////////
 
 Fl_Color_Chooser::Fl_Color_Chooser(int X, int Y, int W, int H, const char* L)
-  : Fl_Group(0,0,180,100,L),
-    huebox(0,0,100,100),
-    valuebox(100,0,20,100),
-    choice(120,0,60,20),
-    rvalue(120,20,60,23),
-    gvalue(120,43,60,23),
-    bvalue(120,66,60,23),
-    resize_box(0,89,100,9)
+  : Fl_Group(0,0,195,115,L),
+    huebox(0,0,115,115),
+    valuebox(115,0,20,115),
+    choice(140,0,55,25),
+    rvalue(140,30,55,25),
+    gvalue(140,60,55,25),
+    bvalue(140,90,55,25),
+    resize_box(0,0,115,115)
 {
   end();
   resizable(resize_box);
@@ -384,15 +384,15 @@ extern const char* fl_ok;
 extern const char* fl_cancel;
 
 int fl_color_chooser(const char* name, double& r, double& g, double& b) {
-  Fl_Window window(210,153,name);
-  Fl_Color_Chooser chooser(5, 5, 200, 95);
-  ColorChip ok_color(5, 105, 95, 23);
-  Fl_Return_Button ok_button(5, 128, 95, 23, fl_ok);
-  ColorChip cancel_color(110, 105, 95, 23);
+  Fl_Window window(215,200,name);
+  Fl_Color_Chooser chooser(10, 10, 195, 115);
+  ColorChip ok_color(10, 130, 95, 25);
+  Fl_Return_Button ok_button(10, 165, 95, 25, fl_ok);
+  ColorChip cancel_color(110, 130, 95, 25);
   cancel_color.r = uchar(255*r+.5); ok_color.r = cancel_color.r;
   ok_color.g = cancel_color.g = uchar(255*g+.5);
   ok_color.b = cancel_color.b = uchar(255*b+.5);
-  Fl_Button cancel_button(110, 128, 95, 23, fl_cancel);
+  Fl_Button cancel_button(110, 165, 95, 25, fl_cancel);
   window.resizable(chooser);
   chooser.rgb(r,g,b);
   chooser.callback(chooser_cb, &ok_color);
@@ -431,5 +431,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.1 2001/12/12 21:33:34 easysw Exp $".
 //

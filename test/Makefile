@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.17 2001/12/08 16:23:51 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.18 2001/12/12 21:33:34 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -163,74 +163,76 @@ gldemos:	$(GLALL)
 $(ALL):  ../lib/$(LIBNAME)
 
 # Programs needing special instructions...
-editor$(EXEEXT): editor.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) editor.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+editor$(EXEEXT): editor.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) editor.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD)
-file_chooser$(EXEEXT): file_chooser.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) file_chooser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+file_chooser$(EXEEXT): file_chooser.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) file_chooser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD)
-help$(EXEEXT): help.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+help$(EXEEXT): help.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD)
-keyboard$(EXEEXT): keyboard.cxx keyboard_ui.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx $(LINKFLTK) $(LDLIBS) -o $@
+keyboard$(EXEEXT): keyboard.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) keyboard.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD)
-mandelbrot$(EXEEXT): mandelbrot.cxx mandelbrot_ui.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx $(LINKFLTK) $(LDLIBS) -o $@
+keyboard.o: keyboard.cxx keyboard_ui.cxx
+
+mandelbrot$(EXEEXT): mandelbrot.o mandelbrot_ui.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) mandelbrot.o $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD)
-pixmap_browser$(EXEEXT): pixmap_browser.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+pixmap_browser$(EXEEXT): pixmap_browser.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) pixmap_browser.o -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 	$(POSTBUILD)
 
 # OpenGL demos...
 CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
-	echo Compiling and linking $@...
+	echo Linking $@...
 	$(CXX) $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 
-cube$(EXEEXT): cube.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) cube.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+cube$(EXEEXT): cube.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-fractals$(EXEEXT): fractals.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fractals.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+fractals$(EXEEXT): fractals.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) fractals.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-fullscreen$(EXEEXT): fullscreen.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fullscreen.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+fullscreen$(EXEEXT): fullscreen.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-glpuzzle$(EXEEXT): glpuzzle.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) glpuzzle.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+glpuzzle$(EXEEXT): glpuzzle.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-gl_overlay$(EXEEXT): gl_overlay.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) gl_overlay.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+gl_overlay$(EXEEXT): gl_overlay.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-shiny$(EXEEXT): shiny.cxx shiny_panel.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) shiny.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+shiny$(EXEEXT): shiny.o shiny_panel.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) shiny.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
-shape$(EXEEXT): shape.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) shape.cxx $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+shape$(EXEEXT): shape.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD)
 
 # If you have libjpeg installed, you might want to try this test program:
 
-jpeg_image$(EXEEXT): jpeg_image.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) jpeg_image.cxx $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
+jpeg_image$(EXEEXT): jpeg_image.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) jpeg_image.o $(LINKFLTK) $(LDLIBS) -ljpeg -lXext -o $@
 	$(POSTBUILD)
 
 depend:
@@ -247,5 +249,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.17 2001/12/08 16:23:51 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.18 2001/12/12 21:33:34 easysw Exp $".
 #
