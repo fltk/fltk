@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0rc2
 
 	- Portability fixes.
+	- Eliminated multiple definitions of dirent structure
+	  when compiling under WIN32.
 	- Adjusted the size of the circle that is drawn inside
 	  radio buttons to scale better for larger labels.
 	- FLUID was opening the display when it shouldn't have.

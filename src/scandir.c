@@ -17,36 +17,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 USA.  */
 
 #if defined(WIN32) && !defined(__CYGWIN__)
-#include "scandir_win32.c"
+#  include "scandir_win32.c"
 #else
 
-#include <config.h>
+#  include "flstring.h"
 
-#if HAVE_SCANDIR
-#else
+#  if !HAVE_SCANDIR
+#    include <stdlib.h>
+#    include <sys/types.h>
+#    include <errno.h>
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <string.h>
-#include <errno.h>
-
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-# define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
+#    if HAVE_DIRENT_H
+#      include <dirent.h>
+#      define NAMLEN(dirent) strlen((dirent)->d_name)
+#    else
+#      define dirent direct
+#      define NAMLEN(dirent) (dirent)->d_namlen
+#      if HAVE_SYS_NDIR_H
+#        include <sys/ndir.h>
+#      endif
+#      if HAVE_SYS_DIR_H
+#        include <sys/dir.h>
+#      endif
+#      if HAVE_NDIR_H
+#        include <ndir.h>
+#      endif
+#    endif
 
 int
 fl_scandir(const char *dir, struct dirent ***namelist,
@@ -88,8 +84,8 @@ fl_scandir(const char *dir, struct dirent ***namelist,
           v = newv;
         }
 
-#define _D_EXACT_NAMLEN(d) (strlen ((d)->d_name))
-#define _D_ALLOC_NAMLEN(d) (sizeof (d)->d_name > 1 ? sizeof (d)->d_name : \
+#    define _D_EXACT_NAMLEN(d) (strlen ((d)->d_name))
+#    define _D_ALLOC_NAMLEN(d) (sizeof (d)->d_name > 1 ? sizeof (d)->d_name : \
                               _D_EXACT_NAMLEN (d) + 1)
 
       dsize = &d->d_name[_D_ALLOC_NAMLEN (d)] - (char *) d;
@@ -120,5 +116,9 @@ fl_scandir(const char *dir, struct dirent ***namelist,
   return i;
 }
 
+#  endif
 #endif
-#endif
+
+/*
+ * End of "$Id: scandir.c,v 1.4.2.1.2.2 2002/05/04 12:37:41 easysw Exp $".
+ */
