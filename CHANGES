@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Text_Display didn't draw the outer box in the right
+	  dimensions, so it was invisible.
 	- Fl_Help_Dialog used the same color for links as for
 	  the background, causing links to be invisible on pages
 	  without a background color set.

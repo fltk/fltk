@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.42 2003/01/30 21:42:48 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.43 2003/03/17 18:31:16 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2810,10 +2810,16 @@ void Fl_Text_Display::draw(void) {
 
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
-    //printf("drawing all\n");
+//    printf("drawing all (box = %d)\n", box());
     // draw the box()
-    draw_box(box(), text_area.x, text_area.y, text_area.w, text_area.h,
-             color());
+    int W = w(), H = h();
+
+    if (mHScrollBar->visible())
+      W -= scrollbar_width();
+    if (mVScrollBar->visible())
+      H -= scrollbar_width();
+
+    draw_box(box(), x(), y(), W, H, color());
 
     // left margin
     fl_rectf(text_area.x-LEFT_MARGIN, text_area.y-TOP_MARGIN,
@@ -2842,7 +2848,7 @@ void Fl_Text_Display::draw(void) {
     // blank the previous cursor protrusions
   }
   else if (damage() & (FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)) {
-    //printf("blanking previous cursor extrusions at Y: %d\n", mCursorOldY);
+//    printf("blanking previous cursor extrusions at Y: %d\n", mCursorOldY);
     // CET - FIXME - save old cursor position instead and just draw side needed?
     fl_push_clip(text_area.x-LEFT_MARGIN,
                  text_area.y,
@@ -3038,5 +3044,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.42 2003/01/30 21:42:48 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.43 2003/03/17 18:31:16 easysw Exp $".
 //
