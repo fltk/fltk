@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.25 2002/08/12 20:24:31 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.26 2002/08/15 17:26:46 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -150,6 +150,9 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
 
   /* Update the display */
   buffer_modified_cb( 0, buf->length(), 0, 0, 0, this );
+
+  /* Resize the widget to update the screen... */
+  resize(x(), y(), w(), h());
 }
 
 /*
@@ -193,7 +196,7 @@ int Fl_Text_Display::longest_vline() {
 */
 void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X,Y,W,H);
-  if (!buffer() || !visible_r()) return;
+  if (!buffer()) return;
   X += Fl::box_dx(box());
   Y += Fl::box_dy(box());
   W -= Fl::box_dw(box());
@@ -1973,5 +1976,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.25 2002/08/12 20:24:31 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.26 2002/08/15 17:26:46 easysw Exp $".
 //
