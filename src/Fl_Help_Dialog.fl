@@ -2,7 +2,9 @@
 version 1.0100 
 header_name {../FL/Fl_Help_Dialog.H} 
 code_name {.cxx}
-decl {\#include "flstring.h"} {selected
+decl {\#include "flstring.h"} {} 
+
+decl {\#include <FL/fl_ask.H>} {selected
 } 
 
 class Fl_Help_Dialog {open
@@ -15,8 +17,7 @@ class Fl_Help_Dialog {open
   } {
     Fl_Window window_ {
       label {Help Dialog} open
-      private xywh {470 380 530 385} type Double resizable
-      visible
+      private xywh {470 380 530 385} type Double resizable visible
     } {
       Fl_Group view_ {
         callback {if (view_->changed())
@@ -56,6 +57,7 @@ else if (view_->filename())
         label Close
         callback {window_->hide();}
         xywh {425 350 95 25}
+        code0 {o->label(fl_close);}
       }
       Fl_Button back_ {
         label {@<-}

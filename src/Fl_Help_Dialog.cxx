@@ -2,6 +2,7 @@
 
 #include "../FL/Fl_Help_Dialog.H"
 #include "flstring.h"
+#include <FL/fl_ask.H>
 
 inline void Fl_Help_Dialog::cb_view__i(Fl_Help_View*, void*) {
   if (view_->changed())
@@ -118,6 +119,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
     }
     { Fl_Button* o = new Fl_Button(425, 350, 95, 25, "Close");
       o->callback((Fl_Callback*)cb_Close);
+      o->label(fl_close);
     }
     { Fl_Button* o = back_ = new Fl_Button(365, 350, 25, 25, "@<-");
       o->tooltip("Show the previous help page.");

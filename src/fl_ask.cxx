@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8.2.9 2002/06/06 14:22:05 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.10 2002/08/30 16:58:16 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -72,7 +72,8 @@ static Fl_Window *makeform() {
   o->color(FL_WHITE);
   o->labelcolor(FL_BLUE);
  }
- (button[0] = new Fl_Button(310, 70, 90, 23))->shortcut("^[");
+ button[0] = new Fl_Button(310, 70, 90, 23);
+ button[0]->shortcut("^[");
  button[0]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  button[1] = new Fl_Return_Button(210, 70, 90, 23);
  button[1]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
@@ -149,11 +150,15 @@ void resizeform() {
   icon->labelsize(icon_size - 10);
   input->resize(20 + icon_size, 10 + message_h, message_w, 25);
 
-  for (x = w, i = 2; i >= 0; i --)
+  for (x = w, i = 0; i < 3; i ++)
     if (button_w[i])
     {
       x -= button_w[i];
       button[i]->resize(x, h - 10 - max_h, button_w[i] - 10, max_h);
+
+//      printf("button %d (%s) is %dx%d+%d,%d\n", i, button[i]->label(),
+//             button[i]->w(), button[i]->h(),
+//	     button[i]->x(), button[i]->y());
     }
 }
 
@@ -206,6 +211,7 @@ const char* fl_no = "No";
 const char* fl_yes= "Yes";
 const char* fl_ok = "OK";
 const char* fl_cancel= "Cancel";
+const char* fl_close= "Close";
 
 // fltk functions:
 void fl_beep(int type) {
@@ -311,10 +317,6 @@ static const char* input_innards(const char* fmt, va_list ap,
   input->show();
   input->value(defstr);
 
-#ifdef WIN32
-  MessageBeep(MB_ICONQUESTION);
-#endif // WIN32
-
   int r = innards(fmt, ap, fl_cancel, fl_ok, 0);
   input->hide();
   message->position(60,25);
@@ -342,5 +344,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.9 2002/06/06 14:22:05 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.10 2002/08/30 16:58:16 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.9 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.10 2002/08/30 16:58:16 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -239,24 +239,27 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
             // Get a new color as needed...
 	    repcount --;
 
-	    // Get the next color byte as needed...
-            if (color < 0) color = getc(fp);
-
 	    // Extract the next pixel...
             if (bit == 0xf0) {
-	      temp = (color >> 4) & 15;
+	      // Get the next color byte as needed...
+              if (color < 0) temp = getc(fp);
+	      else temp = color;
+
+              // Copy the color value...
+	      *ptr++ = colormap[(temp >> 4) & 15][2];
+	      *ptr++ = colormap[(temp >> 4) & 15][1];
+	      *ptr++ = colormap[(temp >> 4) & 15][0];
+
 	      bit  = 0x0f;
 	    } else {
-	      temp = color & 15;
 	      bit  = 0xf0;
+
+              // Copy the color value...
+	      *ptr++ = colormap[temp & 15][2];
+	      *ptr++ = colormap[temp & 15][1];
+	      *ptr++ = colormap[temp & 15][0];
 	    }
 
-//	    printf("temp = %d\n", temp);
-
-            // Copy the color value...
-	    *ptr++ = colormap[temp][2];
-	    *ptr++ = colormap[temp][1];
-	    *ptr++ = colormap[temp][0];
 	  }
 
 	  if (!compression) {
@@ -393,5 +396,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.9 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.10 2002/08/30 16:58:16 easysw Exp $".
 //

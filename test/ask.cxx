@@ -1,5 +1,5 @@
 //
-// "$Id: ask.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: ask.cxx,v 1.4.2.3.2.2 2002/08/30 16:58:16 easysw Exp $"
 //
 // Standard dialog test program for the Fast Light Tool Kit (FLTK).
 //
@@ -38,48 +38,26 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>
 
-int get_string(char*buffer) {
-  Fl_Window window(320,75);
-  Fl_Input input(60, 10, 250, 25, "Input:");
-  input.value(buffer);
-  Fl_Button cancel(60, 40, 80, 25, "cancel");
-  Fl_Return_Button ok(150, 40, 80, 25, "OK");
-  window.hotspot(&cancel); // you must position modal windows
-  window.end();
-  window.set_modal();
-  window.show();
-  for (;;) {
-    Fl::wait();
-    Fl_Widget *o;
-    while ((o = Fl::readqueue())) {
-      if (o == &ok) {
-	strcpy(buffer,input.value());
-	return 1;
-      } else if (o == &cancel || o == &window) {
-	return 0;
-      }
-    }
-  }
-}
-
-void rename_me(Fl_Widget*o) {
-  if (get_string((char*)(o->label()))) o->redraw();
-}
-
-#if 1
 #include <FL/fl_ask.H>
 #include <stdlib.h>
+
+void rename_me(Fl_Widget*o) {
+  const char *input = fl_input("Input:", o->label());
+
+  if (input) {
+    o->label(input);
+    o->redraw();
+  }
+}
 
 void window_callback(Fl_Widget*, void*) {
   if (!fl_ask("Are you sure you want to quit?")) return;
   exit(0);
 }
-#endif
 
 int main(int argc, char **argv) {
   char buffer[128] = "test text";
 
-#if 1
 // this is a test to make sure automatic destructors work.  Pop up
 // the question dialog several times and make sure it don't crash.
 
@@ -93,22 +71,8 @@ int main(int argc, char **argv) {
   window.callback(window_callback);
 
   return Fl::run();
-
-#else
-// This is the demo as written in the documentation, it only creates
-// the popup window once:
-
-  if (get_string(buffer)) {
-    puts(buffer);
-  } else {
-    puts("cancel");
-  }
-  return 0;
-
-#endif
-
 }
     
 //
-// End of "$Id: ask.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: ask.cxx,v 1.4.2.3.2.2 2002/08/30 16:58:16 easysw Exp $".
 //

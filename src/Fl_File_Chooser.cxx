@@ -173,7 +173,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     }
     { Fl_Group* o = new Fl_Group(0, 275, 480, 95);
       { Fl_Group* o = new Fl_Group(10, 275, 470, 20);
-        { Fl_Check_Button* o = previewButton = new Fl_Check_Button(405, 275, 75, 20, "Preview");
+        { Fl_Check_Button* o = previewButton = new Fl_Check_Button(10, 275, 170, 20, "Preview");
           o->down_box(FL_DOWN_BOX);
           o->value(1);
           o->shortcut(0x80070);
@@ -246,16 +246,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
   }
   callback_ = 0;
 data_ = 0;
-directory_[0] = '\0';
-window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
-type(t);
-filter(p);
-update_favorites();
-value(d);
-type(t);
-int e;
-prefs_.get("preview", e, 1);
-preview(e);
+directory_[0] = '
 }
 
 Fl_File_Chooser::~Fl_File_Chooser() {

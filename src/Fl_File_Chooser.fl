@@ -52,7 +52,7 @@ window->hide();} open
           code0 {favoritesButton->label(favorites_label);}
         } {}
         Fl_Button newButton {
-          callback {newdir();} selected
+          callback {newdir();}
           tooltip {Create a new directory.} image {new.xbm} xywh {455 10 25 25} labelsize 8
           code0 {\#include <FL/Fl_Preferences.H>}
         }
@@ -79,8 +79,8 @@ window->hide();} open
         } {
           Fl_Check_Button previewButton {
             label Preview
-            callback {preview(previewButton->value());}
-            xywh {405 275 75 20} down_box DOWN_BOX shortcut 0x80070 value 1
+            callback {preview(previewButton->value());} selected
+            xywh {10 275 170 20} down_box DOWN_BOX shortcut 0x80070 value 1
             code0 {previewButton->label(preview_label);}
           }
           Fl_Box {} {
@@ -166,16 +166,7 @@ window->hide();}
     }
     code {callback_ = 0;
 data_ = 0;
-directory_[0] = '\0';
-window->size_range(window->w(), window->h(), Fl::w(), Fl::h());
-type(t);
-filter(p);
-update_favorites();
-value(d);
-type(t);
-int e;
-prefs_.get("preview", e, 1);
-preview(e);} {}
+directory_[0] = '} {}
   }
   Function {~Fl_File_Chooser()} {open
   } {

@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- FLTK convenience dialogs put the buttons in the wrong
+	  order.
+	- Fl_BMP_Image didn't load 4-bit BMP files properly.
 	- Minor tweeks to the WIN32 DLL support.
 	- Fl_Text_Display::resize() could go into an infinite
 	  loop if the buffer is emptied.
