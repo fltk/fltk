@@ -1,5 +1,5 @@
 //
-// "$Id: math.h,v 1.4 1999/01/07 19:17:08 mike Exp $"
+// "$Id: math.h,v 1.4.2.1 1999/04/07 14:22:21 gustavo Exp $"
 //
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
@@ -22,6 +22,9 @@
 //
 // Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
+
+#ifndef fl_math_h
+#define fl_math_h
 
 #include <math.h>
 
@@ -51,6 +54,8 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 
 #endif
 
+#endif
+
 //
-// End of "$Id: math.h,v 1.4 1999/01/07 19:17:08 mike Exp $".
+// End of "$Id: math.h,v 1.4.2.1 1999/04/07 14:22:21 gustavo Exp $".
 //
