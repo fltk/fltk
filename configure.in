@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.16 2000/10/21 20:01:55 spitzak Exp $"
+dnl "$Id: configure.in,v 1.33.2.17 2000/11/09 21:53:00 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -247,8 +247,8 @@ else
 	SunOS*)
 	    # Solaris
 	    if test -z "$DEBUGFLAG"; then
-		CFLAGS="-O"
-		CXXFLAGS="-O"
+		CFLAGS="-xO3"
+		CXXFLAGS="-xO3"
 	    fi
 	    if test $PICFLAG = 1; then
 		CFLAGS="-KPIC $CFLAGS"
@@ -278,5 +278,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.16 2000/10/21 20:01:55 spitzak Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.17 2000/11/09 21:53:00 easysw Exp $".
 dnl
