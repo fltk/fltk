@@ -1,5 +1,5 @@
 //
-// "$Id: gl.h,v 1.6.2.4 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: gl.h,v 1.6.2.4.2.1 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -44,7 +44,12 @@
 #  define APIENTRY
 # endif
 #endif
-#include <GL/gl.h>
+
+#ifdef __APPLE__
+# include <OpenGL/gl.h>
+#else
+# include <GL/gl.h>
+#endif
 
 FL_EXPORT void gl_start();
 FL_EXPORT void gl_finish();
@@ -76,5 +81,5 @@ FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, in
 #endif
 
 //
-// End of "$Id: gl.h,v 1.6.2.4 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: gl.h,v 1.6.2.4.2.1 2001/12/06 00:17:47 matthiaswm Exp $".
 //

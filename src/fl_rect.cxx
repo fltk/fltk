@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.3 2001/12/04 03:03:17 matthiaswm Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.4 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -340,9 +340,13 @@ void fl_restore_clip() {
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE__)
 #  if 1
-  CopyRgn( fl_window_region, GetPortClipRegion( GetWindowPort(fl_window), 0) ); // changed
+  RgnHandle portClip = NewRgn();
+  GrafPtr port = GetWindowPort( fl_window );
+  CopyRgn( fl_window_region, portClip ); // changed
   if ( r ) 
-    SectRgn( GetPortClipRegion( GetWindowPort(fl_window), 0), r, GetPortClipRegion( GetWindowPort(fl_window), 0) );
+    SectRgn( portClip, r, portClip );
+  SetPortClipRegion( port, portClip );
+  DisposeRgn( portClip );
 #  else
   if (r) SetClip(r);
   else {
@@ -462,11 +466,11 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   RgnHandle rr = NewRgn();
   SetRectRgn( rr, x, y, x+w, y+h );
   SectRgn( r, rr, rr );
-  Rect *rp = GetRegionBounds(rr, 0);
-  X = rp->left;
-  Y = rp->top;
-  W = rp->right - X;
-  H = rp->bottom - Y;
+  Rect rp; GetRegionBounds(rr, &rp);
+  X = rp.left;
+  Y = rp.top;
+  W = rp.right - X;
+  H = rp.bottom - Y;
   DisposeRgn( rr );
   if ( H==0 ) return 2;
   if ( h==H && w==W ) return 0;
@@ -494,5 +498,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.3 2001/12/04 03:03:17 matthiaswm Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.4 2001/12/06 00:17:47 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.2 2001/12/04 03:03:17 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,8 @@
 // true mouse moves.  On very slow systems however, this flag may
 // still be useful.
 #define CONSOLIDATE_MOTION 0
+
+// use TARGET_API_MAC_CARBON if needed
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -164,6 +166,13 @@ int fl_ready()
 
 
 /**
+ */
+void printMacEvent( const EventRecord &ev )
+{
+printf("Event: w:0x%04x m:0x%08x mod:0x%04x flags:%08x x:%d, y:%d\n", ev.what, ev.message, ev.modifiers, 0, ev.where.h, ev.where.v );
+}
+
+/**
  * This function iss the central event handler.
  * It reads events from the event queue using the given maximum time
  * Funny enough, it returns the same time that it got as the argument. 
@@ -206,7 +215,7 @@ static double do_queued_events( double time = 0.0 )
 #else
   EventRecord ev;
   unsigned long ticks = (int)(time*60.0);
-  while ( WaitNextEvent(everyEvent, &ev, ticks, rgn) )
+  if ( WaitNextEvent(everyEvent, &ev, ticks, rgn) )
   {
     fl_handle(ev); //: handle the nullEvent to get mouse up events
     SetRectRgn(rgn, ev.where.h, ev.where.v, ev.where.h+1, ev.where.v+1 );
@@ -448,7 +457,7 @@ static void set_shift_states(const EventRecord &macevent)
 {
   ulong state = Fl::e_state & 0xff000000;
   if (macevent.modifiers&shiftKey) state |= FL_SHIFT;
-  if ( (macevent.modifiers&controlKey) && (macevent.modifiers&btnState) ) state |= FL_META; // try to fetch the right mouse button
+  if ( (macevent.modifiers&controlKey) && (!Button()) ) state |= FL_META; // try to fetch the right mouse button
   if (macevent.modifiers&optionKey) state |= FL_ALT;
   if (macevent.modifiers&cmdKey) state |= FL_CTRL;
   if (macevent.modifiers&alphaLock) state |= FL_CAPS_LOCK;
@@ -610,6 +619,8 @@ void Fl_X::flush()
 {
   w->flush();
   SetOrigin( 0, 0 );
+  //QDFlushPortBuffer( GetWindowPort(xid), 0 ); // easy way out - remove!
+  //printf("DBG: Fl_X::flush\n");
 }
 
 
@@ -639,8 +650,8 @@ void handleUpdateEvent( WindowPtr xid )
   }
   BeginUpdate( xid );
   
-  DrawControls(xid);  // do we need this?
-  DrawGrowIcon(xid);  // do we need this?
+  //DrawControls(xid);  // do we need this?
+  //DrawGrowIcon(xid);  // do we need this?
   for ( Fl_X *cx = i->xidChildren; cx; cx = cx->xidNext )
   {
     cx->w->clear_damage(window->damage()|FL_DAMAGE_EXPOSE);
@@ -652,6 +663,8 @@ void handleUpdateEvent( WindowPtr xid )
   window->clear_damage();
 
   EndUpdate( xid );
+  //QDFlushPortBuffer( GetWindowPort(xid), 0 ); // should not be needed here!
+  //printf("DBG: handleUpdate::flush\n");  
   SetPort( oldPort );
 }     
 
@@ -685,12 +698,13 @@ int fl_handle(const EventRecord &macevent)
   WindowPtr xid;
   int event = 0;
   Fl_Window *window = 0L;
+  //printMacEvent( macevent );
   switch (macevent.what) 
   {
   case mouseDown: {
     // handle the differnt mouseDown events in various areas of the screen
     int part = FindWindow(macevent.where, &xid);
-    printf("mousedown in part %d\n", part );
+    //printf("mousedown in part %d\n", part );
     prevMouseDownXid = xid;
     switch (part) {
     case inDesk: break;
@@ -701,9 +715,10 @@ int fl_handle(const EventRecord &macevent)
       window = fl_find(xid);
       if (!window) break;
       SetPort( GetWindowPort(xid) ); SetOrigin(0, 0);
-      Fl::e_keysym = FL_Button+((macevent.modifiers&controlKey)?3:1); //++ simulate three button using modifiers
+      //printMacEvent( macevent );
+      Fl::e_keysym = FL_Button+((macevent.modifiers&0x1000)?3:1); //++ simulate three button using modifiers
       set_event_xy(macevent); checkdouble();
-	  Fl::e_state |= ((macevent.modifiers&controlKey)?FL_BUTTON3:FL_BUTTON1);
+	  Fl::e_state |= ((macevent.modifiers&0x1000)?FL_BUTTON3:FL_BUTTON1);
       return Fl::handle(FL_PUSH, window); }
     case inDrag: Fl_X::MacDragWindow(xid, macevent); break;
     case inGrow: Fl_X::MacGrowWindow(xid, macevent); break;
@@ -805,7 +820,7 @@ int fl_handle(const EventRecord &macevent)
         send_motion = fl_xmousewin = window;
         return 0;
       #else
-        return Fl::handle( (macevent.modifiers & btnState)?FL_MOVE:FL_DRAG, window); 
+        return Fl::handle( Button()?FL_DRAG:FL_MOVE, window); 
       #endif
 //      if (!Fl::grab()) ReleaseCapture();
     }
@@ -936,6 +951,7 @@ void Fl_X::make(Fl_Window* w)
     int winclass = kDocumentWindowClass;
     int winattr = kWindowCloseBoxAttribute 
                 | kWindowCollapseBoxAttribute 
+                //| kWindowLiveResizeAttribute // activate this as soon as we ported to Carbon Events!
                 //| kWindowStandardHandlerAttribute
                 ;
 //    int winattr = kWindowStandardHandlerAttribute;
@@ -944,7 +960,9 @@ void Fl_X::make(Fl_Window* w)
     int yp = w->y();
     int wp = w->w();
     int hp = w->h();
-    if (!w->size_range_set) {
+    if (w->size_range_set) {
+      winattr |= kWindowFullZoomAttribute | kWindowResizableAttribute;
+    } else {
       if (w->resizable()) {
         Fl_Widget *o = w->resizable();
         int minw = o->w(); if (minw > 100) minw = 100;
@@ -957,9 +975,28 @@ void Fl_X::make(Fl_Window* w)
       }
     }
     int xwm = xp, ywm = yp, bt, bx, by;
-    if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) winclass = kFloatingWindowClass;
-    else if (w->modal()) winclass = kModalWindowClass;
-    else if (w->non_modal()) winclass = kToolbarWindowClass;
+    // classes:
+    // kAlertWindowClass: small up frame - nice
+    // kModalWindowClass: as above
+    // kFloatingWindowClass: does not deactivate app window, but has small title bar (medium decoration)
+    // kDocumentWindowClass: transparent huge upper title (large decoration) -- last standard definition
+    // kUtilityWindowClass: like 'floating (small decoration)
+    // kHelpWindowClass: perfect: no decoration, keeps master active, stays on top of ALL windows, not modal though
+    // kSheetWindowClass: no deco, deactivates parent
+    // kToolbarWindowClass: no deco, passive, under other menues
+    // kPlainWindowClass: no deco, active, under
+    // kOverlayWindowClass: invisible!
+    // kSheetAlertWindowClass: no deco, active, under
+    // kAltPlainWindowClass: no deco, active, under
+    // attributes:
+    // kWindowCloseBoxAttribute, HorizontalZoom, VerticalZoom, FullZoom, CollapsBox, Resizable,
+    // SideTitlebar(floatin only), NoUpdates, NoActivates, Macros: StandardDocument, StandardFloating
+    if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) 
+      { winclass = kHelpWindowClass; winattr = 0; }
+    else if (w->modal()) 
+      winclass = kFloatingWindowClass; // basically fine, but not modal! The modal window however does nor show
+    else if (w->non_modal()) 
+      winclass = kFloatingWindowClass; // we need to call 'InitFloatingWindows for OS 8, 9
     if (by+bt) {
       //++ if (!w->non_modal()) style |= WS_SYSMENU | WS_MINIMIZEBOX;
       wp += 2*bx;
@@ -1003,7 +1040,7 @@ void Fl_X::make(Fl_Window* w)
     x->cursor = fl_default_cursor;
     x->xidChildren = 0;
     x->xidNext = 0;
-    CreateNewWindow(winclass, winattr, &wRect, &(x->xid));
+    CreateNewWindow( winclass, winattr, &wRect, &(x->xid) );
     SetWTitle(x->xid, pTitle);
     x->w = w; w->i = x;
     x->wait_for_expose = 1;
@@ -1013,12 +1050,19 @@ void Fl_X::make(Fl_Window* w)
     w->set_visible();
     w->handle(FL_SHOW);
     w->redraw(); // force draw to happen
-    TransitionWindow( x->xid, kWindowZoomTransitionEffect, kWindowShowTransitionAction, 0 );
+    //TransitionWindow( x->xid, kWindowZoomTransitionEffect, kWindowShowTransitionAction, 0 );
     ShowWindow( x->xid );
     fl_show_iconic = 0;
     //++ hmmm, this should maybe set by the activate event?!
     Fl::handle(FL_FOCUS, w);
     //++ if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    if ( ! Fl_X::first->next ) // if this is the first window, we need to bring the application to the front
+    { 
+      ProcessSerialNumber psn;
+      OSErr err = GetCurrentProcess( &psn );
+      if ( err==noErr ) SetFrontProcess( &psn );
+      // or 'BringToFront'
+    }
   }
 }
 
@@ -1102,8 +1146,8 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     MoveWindow(i->xid, X, Y, 0);
     if (is_a_resize) {
       SizeWindow(i->xid, W>0 ? W : 1, H>0 ? H : 1, 1);
-//      Rect all; all.top=-32000; all.bottom=32000; all.left=-32000; all.right=32000;
-//      InvalRect(&all);    
+      Rect all; all.top=-32000; all.bottom=32000; all.left=-32000; all.right=32000;
+      InvalWindowRect( i->xid, &all );    
     }
   }
   if (is_a_resize) {
@@ -1158,7 +1202,8 @@ void Fl_Window::make_current()
   }
   
   fl_clip_region( 0 );
-  CopyRgn( fl_window_region, GetPortClipRegion( GetWindowPort(i->xid), 0) ); // for Fl_GL_Window
+  SetPortClipRegion( GetWindowPort(i->xid), fl_window_region );
+  //CopyRgn( fl_window_region, GetPortClipRegion( GetWindowPort(i->xid), 0) ); // for Fl_GL_Window
   return;
 }
 
@@ -1223,6 +1268,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 */
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.2 2001/12/04 03:03:17 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
 //
 

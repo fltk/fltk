@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.7 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.8 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -34,49 +34,48 @@
 #ifdef __APPLE__ // MacOS bitmask functions
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
   Rect srcRect;
-  RgnHandle r = NewRgn();
   srcRect.left = 0; srcRect.right = w;
   srcRect.top = 0; srcRect.bottom = h;
   GrafPtr savePort;
-  GrafPtr newPort;
 
   GetPort(&savePort); // remember the current port
 
-  newPort = CreateNewPort();
-
-  SetPortBounds(newPort, &srcRect);    // make bitmap the size of the bounds that caller supplied 
-  RectRgn( GetPortClipRegion(newPort, r), &srcRect );
-  RectRgn( GetPortVisibleRegion(newPort, r), &srcRect );
-  DisposeRgn(r);
-
-  //++ rowBytes is size of row, it must be rounded up to an even number of bytes 
-//  int rowBytes = newPort->portBits.rowBytes = (( w + 15 ) >> 4 ) << 1;
-//  int rowBytesSrc = (( w + 7 ) >> 3 );
-//  newPort->portBits.baseAddr = NewPtr( rowBytes * h );
-//  if ( !newPort->portBits.baseAddr ) 
-//  {
-//    SetPort(savePort);
-//    ClosePort(newPort);
-//    DisposePtr((Ptr)newPort);
-//    return 0L;
-//  }
-//
-//  static uchar reverse[16] =	/* Bit reversal lookup table */
-//    { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-//      0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-//  uchar *dst = (uchar*)newPort->portBits.baseAddr;
-//  const uchar *src = array;
-//  int rowPatch = ( rowBytes!=rowBytesSrc ) ? 1 : 0 ;
-//  for ( int j=0; j<h; j++,dst+=rowPatch )
-//    for ( int i=0; i<rowBytesSrc; i++,src++ )
-//      *dst++ = (reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f);
+  Fl_Bitmask gw;
+  NewGWorld( &gw, 1, &srcRect, 0L, 0L, 0 );
+  PixMapHandle pm = GetGWorldPixMap( gw );
+  if ( pm ) 
+  {
+    LockPixels( pm );
+    if ( *pm ) 
+    {
+      uchar *base = (uchar*)GetPixBaseAddr( pm );
+      if ( base ) 
+      {
+        PixMapPtr pmp = *pm;
+        // verify the parameters for direct memory write
+        if ( pmp->pixelType == 0 || pmp->pixelSize == 1 || pmp->cmpCount == 1 || pmp->cmpSize == 1 ) 
+        {
+          static uchar reverse[16] =	/* Bit reversal lookup table */
+          { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee, 0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+          uchar *dst = base;
+          const uchar *src = array;
+          int rowBytesSrc = (w+7)>>3 ;
+          int rowPatch = (pmp->rowBytes&0x3fff) - rowBytesSrc;
+          for ( int j=0; j<h; j++,dst+=rowPatch )
+            for ( int i=0; i<rowBytesSrc; i++,src++ )
+              *dst++ = (reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f);
+        }
+      }
+      UnlockPixels( pm );
+    }
+  }
 
   SetPort(savePort);
-  return newPort;               /* tell caller we succeeded! */
+  return gw;               /* tell caller we succeeded! */
 }
 
 void fl_delete_bitmask(Fl_Bitmask id) {
-  if (id) DisposePort(id);
+  if (id) DisposeGWorld(id);
 }
 #elif defined(WIN32) // Windows bitmask functions...
 // 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
@@ -236,16 +235,17 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!id) id = fl_create_bitmask(w(), h(), array);
   GrafPtr dstPort;
   GetPort( &dstPort );
-  Rect dst;
-  dst.left = X; dst.right = X+W;
-  dst.top = Y; dst.bottom = Y+H;
+  Rect src, dst;
+  GetPortBounds( id, &src );
+  SetRect( &src, cx, cy, cx+W, cy+H );
+  SetRect( &dst, X, Y, X+W, Y+H );
   CopyBits(
-    GetPortBitMapForCopyBits((GrafPtr)id), 
-    GetPortBitMapForCopyBits(dstPort),
-    GetPortBounds((GrafPtr)id, 0), 
-    &dst, 
-    srcOr, 
-    0L);
+    GetPortBitMapForCopyBits(id),		// srcBits
+    GetPortBitMapForCopyBits(dstPort),	// dstBits
+    &src,		 			// src bounds
+    &dst, 				// dst bounds
+    srcOr, 				// mode
+    0L);					// mask region
 #else
   if (!id) id = fl_create_bitmask(w(), h(), array);
 
@@ -340,5 +340,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.7 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.8 2001/12/06 00:17:47 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.2 2001/12/04 03:03:17 matthiaswm Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -103,7 +103,7 @@ GWorldPtr fl_create_offscreen(int w, int h) {
   GWorldPtr gw;
   Rect bounds;
   bounds.left=0; bounds.right=w; bounds.top=0; bounds.bottom=h;
-  QDErr err = NewGWorld(&gw, 0, &bounds, 0L, 0L, useTempMem);
+  QDErr err = NewGWorld(&gw, 0, &bounds, 0L, 0L, 0); // 'useTempMem' should not be used (says the Carbon port manual)
   if ( err == -108 )
     { }
 //    fl_message( "The application memory is low. Please increase the initial memory assignment.\n" ); 
@@ -116,6 +116,7 @@ GWorldPtr fl_create_offscreen(int w, int h) {
  */
 void fl_copy_offscreen(int x,int y,int w,int h,GWorldPtr gWorld,int srcx,int srcy) {
   Rect src;
+  if ( !gWorld ) return;
   src.top = srcy; src.left = srcx; src.bottom = srcy+h; src.right = srcx+w;
   Rect dst;
   GrafPtr dstPort; GetPort(&dstPort);
@@ -145,11 +146,10 @@ void fl_begin_offscreen(GWorldPtr gWorld) {
   GetGWorld( &prevPort, &prevGD );
   if ( gWorld )
   {
-    SetGWorld( gWorld, 0L );
+    SetGWorld( gWorld, 0L ); // sets the correct port
     PixMapHandle pm = GetGWorldPixMap(gWorld);
     LockPixels(pm);
-    fl_window = (Window)prevPort;
-    SetPort( GetWindowPort(fl_window) );
+    fl_window = GetWindowFromPort( gWorld );
   }
   fl_push_no_clip();
 }
@@ -164,8 +164,8 @@ void fl_end_offscreen() {
   fl_pop_clip();
   PixMapHandle pm = GetGWorldPixMap(currPort);
   UnlockPixels(pm);
-  fl_window = (Window)prevPort;
   SetGWorld( prevPort, prevGD );
+  fl_window = GetWindowFromPort( prevPort );
 }
 
 extern void fl_restore_clip();
@@ -187,7 +187,14 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeUndefined);
     else
 #endif
+#ifdef __APPLE__
+    // the Apple OS X window manager double buffers ALL windows anyway, so there is no need to waste memory and time
+    // BTW: Windows2000 and later also forces doublebuffering if transparent windows are beeing used (alpha channel)
+    if ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) )
       myi->other_xid = fl_create_offscreen(w(), h());
+#else
+    myi->other_xid = fl_create_offscreen(w(), h());
+#endif
     clear_damage(FL_DAMAGE_ALL);
   }
 #if USE_XDBE
@@ -242,7 +249,11 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+#ifdef __APPLE__
+  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+#else
   fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+#endif
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
@@ -275,5 +286,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.2 2001/12/04 03:03:17 matthiaswm Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
 //

@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b7
 
+	- Some Win32 drivers would draw into wrong buffers
+	  after OpenGL mode change
+	- Mac OS X support works 95%
 	- More documentation updates...
 	- The file chooser would cause a segfault if you
 	  clicked in an empty area of the file list.

@@ -1,5 +1,5 @@
 //
-// "$Id: fractals.cxx,v 1.5.2.6.2.1 2001/11/29 21:24:49 easysw Exp $"
+// "$Id: fractals.cxx,v 1.5.2.6.2.2 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
@@ -62,7 +62,11 @@ int main(int, char**) {
  */
 
 #include <FL/glut.H>
-#include <GL/glu.h> // added for fltk
+#ifdef __APPLE__
+# include <OpenGL/glu.h>
+#else
+# include <GL/glu.h> // added for fltk
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,8 +79,11 @@ int main(int, char**) {
 #include "fracviewer.c" // changed from .h for fltk
 
 #if defined(WIN32) || defined(__EMX__)
-#define drand48() (((float) rand())/((float) RAND_MAX))
-#define srand48(x) (srand((x)))
+# define drand48() (((float) rand())/((float) RAND_MAX))
+# define srand48(x) (srand((x)))
+#elif defined __APPLE__
+# define drand48() (((float) rand())/((float) RAND_MAX))
+# define srand48(x) (srand((x)))
 #endif
 
 typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF, 
@@ -806,5 +813,5 @@ int main(int argc, char** argv)
 #endif
 
 //
-// End of "$Id: fractals.cxx,v 1.5.2.6.2.1 2001/11/29 21:24:49 easysw Exp $".
+// End of "$Id: fractals.cxx,v 1.5.2.6.2.2 2001/12/06 00:17:47 matthiaswm Exp $".
 //

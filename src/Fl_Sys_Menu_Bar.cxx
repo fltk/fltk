@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.2 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 /**
- * Tis code is a quick hack! It was written as a proove of concept.
+ * This code is a quick hack! It was written as a proof of concept.
  * It has been tested on the "menubar" sample program and provides
  * basic functionality. 
  * 
@@ -252,7 +252,7 @@ void Fl_Sys_Menu_Bar::menu(const Fl_Menu_Item *m)
     }
     
     InsertMenu( mh, 0 );
-    if ( mm->flags & FL_MENU_INACTIVE ) DisableItem( mh, 0 );
+    if ( mm->flags & FL_MENU_INACTIVE ) DisableMenuItem( mh, 0 );
     mm++;
   }
   DrawMenuBar();
@@ -310,5 +310,5 @@ int Fl_Menu_Bar::handle(int event) {
 */
 
 //
-// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.2 2001/12/06 00:17:47 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,10 @@
 #include <FL/x.H>
 #include <stdlib.h>
 #include "Fl_Gl_Choice.H"
+
+#ifdef __APPLE__
+# include <Fl/Fl_Window.H>
+#endif
 
 static Fl_Gl_Choice *first;
 
@@ -195,16 +199,16 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
       AGL_NONE };
     AGLPixelFormat fmt;
     fmt = aglChoosePixelFormat(NULL, 0, attrib);
-    context = aglCreateContext(fmt, fl_first_context);
-    if ( !fl_first_context ) fl_first_context = (GLXContext)context;
+    context = aglCreateContext(fmt, first_context);
+    if ( !first_context ) first_context = (GLContext)context;
     aglDestroyPixelFormat( fmt );
-    if ( parent() ) {
-      CGrafPort *port = (CGrafPort*)fl_xid(this);
-      GLint rect[] = { x(), port->portRect.bottom-h()-y(), w(), h() }; 
-      aglSetInteger( (GLXContext)context, AGL_BUFFER_RECT, rect );
-      aglEnable( (GLXContext)context, AGL_BUFFER_RECT );
+    if ( window->parent() ) {
+      Rect wrect; GetWindowPortBounds( fl_xid(window), &wrect );
+      GLint rect[] = { window->x(), wrect.bottom-window->h()-window->y(), window->w(), window->h() }; 
+      aglSetInteger( (GLContext)context, AGL_BUFFER_RECT, rect );
+      aglEnable( (GLContext)context, AGL_BUFFER_RECT );
     }
-    aglSetDrawable((GLXContext)context, (CGrafPort*)fl_xid(window));
+    aglSetDrawable( context, GetWindowPort( fl_xid(window) ) );
     return (context);
 }
 #else
@@ -228,13 +232,13 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
 #elif defined(__APPLE__)
     if ( w->parent() ) { //: resize our GL buffer rectangle
-      CGrafPort *port = (CGrafPort*)fl_xid(w);
-      GLint rect[] = { w->x(), port->portRect.bottom-w->h()-w->y(), w->w(), w->h() };
-      aglSetInteger( c, AGL_BUFFER_RECT, rect );
-      aglEnable( c, AGL_BUFFER_RECT );
+      Rect wrect; GetWindowPortBounds( fl_xid(w), &wrect );
+      GLint rect[] = { w->x(), wrect.bottom-w->h()-w->y(), w->w(), w->h() };
+      aglSetInteger( context, AGL_BUFFER_RECT, rect );
+      aglEnable( context, AGL_BUFFER_RECT );
     }
-    aglSetDrawable(c, (CGrafPort*)fl_xid(w)); //++ here or in Fl_Gl_Window::make_current creation part?
-    aglSetCurrentContext(c);
+    aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); //++ here or in Fl_Gl_Window::make_current creation part?
+    aglSetCurrentContext(context);
 #else
     glXMakeCurrent(fl_display, fl_xid(w), context);
 #endif
@@ -258,10 +262,10 @@ void fl_delete_gl_context(GLContext context) {
   if (context != first_context) {
 #ifdef WIN32
     wglDeleteContext(context);
-#elif defined(__APPLE)
-    aglSetCurrentContext(NULL);
-    aglSetDrawable((AGLContext)context, NULL);    
-    aglDestroyContext((AGLContext)context);
+#elif defined(__APPLE__)
+    aglSetCurrentContext( NULL );
+    aglSetDrawable( context, NULL );    
+    aglDestroyContext( context );
 #else
     glXDestroyContext(fl_display, context);
 #endif
@@ -271,5 +275,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
 //

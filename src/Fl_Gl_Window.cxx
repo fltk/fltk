@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.2 2001/12/04 04:12:58 matthiaswm Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -202,8 +202,12 @@ void Fl_Gl_Window::flush() {
 
 #ifdef __APPLE__
   //: clear previous clipping in this shared port
-  CGrafPort *port = (CGrafPort*)fl_xid(this);
-  SetRectRgn( port->clipRgn, 0, 0, 0x7fff, 0x7fff );
+  GrafPtr port = GetWindowPort( fl_xid(this) );
+  Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
+  GrafPtr old; GetPort( &old );
+  SetPort( port );
+  ClipRect( &rect );
+  SetPort( old );
 #endif
 
   make_current();
@@ -296,10 +300,10 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
     valid(0);
 #ifdef __APPLE__
   if ( parent() ) { //: resize our GL buffer rectangle
-    CGrafPort *port = (CGrafPort*)fl_xid(this);
-    GLint rect[] = { X, port->portRect.bottom-h()-y(), W, H };
-    aglSetInteger( (GLXContext)context_, AGL_BUFFER_RECT, rect );
-    aglEnable( (GLXContext)context_, AGL_BUFFER_RECT );
+    Rect wrect; GetWindowPortBounds( fl_xid(this), &wrect );
+    GLint rect[] = { X, wrect.bottom-h()-y(), W, H };
+    aglSetInteger( context_, AGL_BUFFER_RECT, rect );
+    aglEnable( context_, AGL_BUFFER_RECT );
   }
 #elif !defined(WIN32)
     if (!resizable() && overlay && overlay != this)
@@ -347,5 +351,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.2 2001/12/04 04:12:58 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
 //

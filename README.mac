@@ -1,13 +1,23 @@
 README.mac - 12/03/2001 - Building FLTK under MacOS and OS X
 ------------------------------------------------------------
 
-
+CONTENTS
+--------
+  - Introduction
+  - gcc (Carbon) - how to build
+  - scripts
+  - known MacFLTK bugs
+  - test suite status
+  - other stuff
+  - FLTK 1.0.x for Mac
+  
+  
 INTRODUCTION
 ------------
 
 FLTK for Mac OS X is in pre-beta stage. Expect rapid changes to the 
 source code and build environment. Expect many crashes and funny
-bliking patterns.
+blinking patterns.
 
 FLTK currently supports the following development environment on the
 Mac OS X platform:
@@ -20,11 +30,11 @@ Mac OS X platform:
 
     - (MPW - future releases)
 
-FLTK for Mac is carbonized, i.e. all applicatiosn should run on Mac
+FLTK for Mac is carbonized, i.e. all applications should run on Mac
 OS 8.1 and higher and OS X without changes.
 
 
-gcc (Carbon) - how to buid
+gcc (Carbon) - how to build
 --------------------------
 
 Since the Max OS X command line build environment is based on BSD 
@@ -69,15 +79,53 @@ find . -name 'Make*' -exec $SET_MAC_TYPE {} \;
 echo "done."
 
 
+known MacFLTK bugs
+------------------
+
+- OpenGL window resize
+- font support not finished
+- line styles missing
+- cut, copy, paste
+- mousewheel (Carbon Events)
+- sub-sub-subwindow
+- modal windows are not modal
+- makefiles supporting Rez
+
+
+test suite status
+-----------------
+
+OS X:
+
+CubeView(++), adjuster(++), arc(++), ask(++), bitmap(++), 
+boxtype(++), browser(++), button(++), buttons(++), checkers(++),
+clock(++), colbrowser(++), color_chooser(++), cube(++), cursor(+),
+curve(++), demo(++), doublebuffer(++), editor(++), fast_slow(++),
+file_chooser(++), fonts(++), forms(++), fractals(+), fullscreen(+),
+gl_overlay(o), glpuzzle(++), hello(++), help(++), iconize(+), image(+),
+inactive(++), input(++), keyboard(+), label(++), line_style(+),
+mandelbrot(++), menubar(++), message(++), minimum(++), navigation(++),
+output(++), overlay(o), pack(++), pixmap(++), pixmap_browser(++),
+radio(++), resizebox(++), scroll(++), shape(+), shiny(--), subwindow(++),
+symbols(++), tabs(++), tile(++), tiled_image(++), valuators(++), 
+fluid(++)
+
+(o)=minor bugs, (+)=usable, (++)=running perfectly, (-)=major 
+bugs, (--)=crashes  
+
+
 other stuff
 -----------
 
 The following creator ID's 'FLTK', 'Fltk', 'FLID' and 'Flid' are
-officially registered with Aplle Computers and can be used for
+officially registered with Apple Computers and can be used for
 FLTK applications ('FLTK') and fluid files ('Flid').
 
-All applications shout be ended with exit(0); or they might 
+All applications should be ended with exit(0); or they might 
 hang until killed.
+
+Under OS X, all windows are doublebuffered anyway. Using Fl_Window
+has the same effect as using Fl_Double_Window on OS X.
 
 
 FLTK 1.0.x for Mac

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.2 2001/12/06 00:17:47 matthiaswm Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -58,8 +58,9 @@
 #  include <FL/gl.h>
 #  define GLContext HGLRC
 #elif defined(__APPLE__)
-#  include <OpenGL.h>
-#  define GLContext CGLContextObj
+#  include <OpenGL/gl.h>
+#  include <AGL/agl.h>
+#  define GLContext AGLContext
 #else
 #  include <GL/glx.h>
 #  define GLContext GLXContext
@@ -94,7 +95,7 @@ GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
 #elif defined(__APPLE__)
 
-//++
+GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
 #else
 
@@ -114,5 +115,5 @@ void fl_delete_gl_context(GLContext);
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.6.2.2 2001/12/06 00:17:47 matthiaswm Exp $".
 //
