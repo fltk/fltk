@@ -1,256 +1,179 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Input">class Fl_Input</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Input_">Fl_Input_</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Input>class Fl_Input</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Input_.html#Fl_Input_>Fl_Input_</A>
    |
-   +----<b>Fl_Input</b>
+   +----<B>Fl_Input</B>
            |
-           +----<a href="#Fl_Float_Input">Fl_Float_Input</a>, <a href="#Fl_Int_Input">Fl_Int_Input</a>,
-                <a href="#Fl_Multiline_Input">Fl_Multiline_Input</a>, <a href="#Fl_Secret_Input">Fl_Secret_Input</a>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Input.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-This is the FLTK text input widget.  It displays a single line of text
-and lets the user edit it.  Normally it is drawn with an inset box and
-a white background.  The text may contain any characters (even 0), and
-will correctly display anything, using ^X notation for unprintable
-control characters and \nnn notation for unprintable characters with
-the high bit set. It assummes the font can draw any characters in the
-ISO8859-1 character set.
-
-<table border=1>
-
-<tr><td><b>Mouse button 1</b></td>
-<td>Moves the cursor to this point.  Drag selects characters.  Double
-click selects words.  Triple click selects all text.  Shift+click
-extends the selection.</td>
-
-<tr><td><b>Mouse button 2</b></td>
-<td>Insert the current X selection at the cursor (unlike Motif this
-does not move the insertion point to the mouse).  If the widget does
-not have the input focus (and thus no cursor) it puts the cursor where
-clicked and inserts the selection there.</td>
-
-<tr><td><b>Mouse button 3</b></td>
-<td>Currently acts like button 1.</td>
-
-<tr><td><b>Backspace</b></td>
-<td>Deletes one character to the left, or deletes the
-selected region.</td>
-
-<tr><td><b>Enter</b></td>
-<td>May cause the callback, see when().</td>
-
-<tr><td><b>^A or Home</b></td>
-<td>Go to start of line.</td>
-
-<tr><td><b>^B or Left</b></td>
-<td>Move left</td>
-
-<tr><td><b>^C</b></td>
-<td>Copy the selection to the clipboard</td>
-
-<tr><td><b>^D or Delete</b></td>
-<td>Deletes one character to the right or deletes the selected region.
-<i>Due to silly historical X problems, the Delete key will act like
-Backspace until you type a "real" backspace.</i></td>
-
-<tr><td><b>^E or End</b></td>
-<td>Go to the end of line.</td>
-
-<tr><td><b>^F or Right</b></td>
-<td>Move right</td>
-
-<tr><td><b>^K</b></td>
-<td>Delete to the end of line (next \n character) or deletes
-a single \n character.  These deletions are all concatenated into the
-clipboard.</td>
-
-<tr><td><b>^N or Down</b></td>
-<td>Move down (for Fl_Multiline_Input only, otherwise it moves to the
-next input field).</td>
-
-<tr><td><b>^P or Up</b></td>
-<td>Move up (for Fl_Multiline_Input only, otherwise it moves to the
-previous input field).</td>
-
-<tr><td><b>^Q or<br>RightCtrl or<br>Compose</b></td>
-<td>Start a <a href=compose.html>compose-character</a> sequence.  The
-next one or two keys typed define the character to insert.  This also
-can be used to "quote" control characters.</td>
-
-<tr><td><b>^U</b></td>
-<td>Delete everything.</td>
-
-<tr><td><b>^V or ^Y</b></td>
-<td>Paste the clipboard</td>
-
-<tr><td><b>^X or ^W</b></td>
-<td>Copy the region to the clipboard and delete it.</td>
-
-<tr><td><b>^Z or ^_</b></td>
-<td>Undo.  This is a single-level undo mechanism, but all adjacent
-deletions and insertions are concatenated into a single "undo".  Often
-this will undo a lot more than you expected.</td>
-
-<tr><td><b>Shift+move</b></td>
-<td>Move the cursor but also extend the selection.</td>
-
-</table>
-
-<h3>Methods</h3>
-
-<center>
-<table width=90%>
-<tr>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Input.Fl_Input">Fl_Input</a>
-	<li><a href="#Fl_Input.~Fl_Input">~Fl_Input</a>
-	<li><a href="#Fl_Input.cursor_color">cursor_color</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Input.index">index</a>
-	<li><a href="#Fl_Input.size">size</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Input.static_value">static_value</a>
-	<li><a href="#Fl_Input.textcolor">textcolor</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Input.textfont">textfont</a>
-	<li><a href="#Fl_Input.textsize">textsize</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Input.value">value</a>
-	<li><a href="#Fl_Input.when">when</a>
-</ul>
-</td>
-</tr>
-</table>
-</center>
-
-<h4><a name="Fl_Input.Fl_Input">Fl_Input::Fl_Input(int x, int y, int w, int h, const char *label = 0)</a></h4>
-
-Creates a new <tt>Fl_Input</tt> widget using the given position, size, and
-label string. The default boxtype is <tt>FL_DOWN_BOX</tt>.
-
-<h4><a name="Fl_Input.~Fl_Input">virtual Fl_Input::~Fl_Input()</a></h4>
-
-Destroys the widget and any value associated with it.
-
-<h4><a name="Fl_Input.value">const char *Fl_Input::value() const<br>
-int Fl_Input::value(const char*)<br>
-int Fl_Input::value(const char*, int)</a></h4>
-
-The first form returns the current value, which is a pointer to the
-internal buffer and is valid only until the next event is
-handled.
-
-<p>The second two forms change the text and set the mark and the point
-to the end of it. The string is copied to the internal buffer.  Passing
-<tt>NULL</tt> is the same as "".  This returns non-zero if the new
-value is different than the current one.  You can use the second
-version to directly set the length if you know it already or want to
-put nul's in the text.
-
-<h4><a name="Fl_Input.static_value">int Fl_Input::static_value(const char*)<br>
-int Fl_Input::static_value(const char*, int)</a></h4>
-
-Change the text and set the mark and the point to the end of it.  The
-string is <i>not</i> copied.  If the user edits the string it is copied
-to the internal buffer then.  This can save a great deal of time and
-memory if your program is rapidly changing the values of text fields,
-but this will only work if the passed string remains unchanged until
-either the <tt>Fl_Input</tt> is destroyed or <tt>value()</tt> is called
-again.
-
-<h4><a name="Fl_Input.size">int Fl_Input::size() const</a></h4>
-
-Returns the number of characters in <tt>value()</tt>.  This may be greater than
-<tt>strlen(value())</tt> if there are nul characters in it.
-
-<h4><a name="Fl_Input.index">char Fl_Input::index(int) const</a></h4>
-
-Same as <tt>value()[n]</tt>, but may be faster in plausible implementations.
-No bounds checking is done.
-
-<h4><a name="Fl_Input.when">Fl_When Fl_Widget::when() const<br>
-void Fl_Widget::when(Fl_When)</a></h4>
-
-Controls when callbacks are done.  The following values are useful,
-the default value is <tt>FL_WHEN_RELEASE</tt>:
-
-<ul>
-	<li><tt>0</tt>: The callback is not done, but <tt>changed()</tt> is
-	turned on.
-
-	<li><tt>FL_WHEN_CHANGED</tt>: The callback is done each time the
-	text is changed by the user.
-
-	<li><tt>FL_WHEN_RELEASE</tt>: The callback will
-	be done when this widget loses the focus, including when the window is
-	unmapped.  This is a useful value for text fields in a panel where
-	doing the callback on every change is wasteful.  However the callback
-	will also happen if the mouse is moved out of the window, which means
-	it should not do anything visible (like pop up an error message).  You
-	might do better setting this to zero, and scanning all the items for
-	<tt>changed()</tt> when the OK button on a panel is pressed.
-
-	<li><tt>FL_WHEN_ENTER_KEY</tt>: If the user types the Enter
-	key, the entire text is selected, and the callback is done if
-	the text has changed.  Normally the Enter key will navigate to
-	the next field (or insert a newline for a
-	<tt>Fl_Mulitline_Input</tt>), this changes the behavior.
-
-	<li><tt>FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED</tt>: The Enter key
-	will do the callback even if the text has not changed.  Useful for
-	command fields.
-</ul>
-
-<h4><a name="Fl_Input.textcolor">Fl_Color Fl_Input::textcolor() const<br>
-void Fl_Input::textcolor(Fl_Color)</a></h4>
-
-Gets or sets the color of the text in the input field.
-
-<h4><a name="Fl_Input.textfont">Fl_Font Fl_Input::textfont() const<br>
-void Fl_Input::textfont(Fl_Font)</a></h4>
-
-Gets or sets the font of the text in the input field.
-
-<h4><a name="Fl_Input.textsize">uchar Fl_Input::textsize() const<br>
-void Fl_Input::textsize(uchar)</a></h4>
-
-Gets or sets the size of the text in the input field.
-
-<h4><a name="Fl_Input.cursor_color">Fl_Color Fl_Input::cursor_color() const<br>
-void Fl_Input::cursor_color(Fl_Color)</a></h4>
-
-Get or set the color of the cursor.  This is black by default.
-
-</body>
-</html>
+           +----<A href=Fl_Float_Input.html#Fl_Float_Input>Fl_Float_Input</A>, <A href=Fl_Int_Input.html#Fl_Int_Input>Fl_Int_Input</A>,
+                <A href=Fl_Multiline_Input.html#Fl_Multiline_Input>Fl_Multiline_Input</A>, <A href=Fl_Secret_Input.html#Fl_Secret_Input>Fl_Secret_Input</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Input.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This is the FLTK text input widget.  It displays a single line of text 
+and lets the user edit it.  Normally it is drawn with an inset box and 
+a white background.  The text may contain any characters (even 0), and 
+will correctly display anything, using ^X notation for unprintable 
+control characters and \nnn notation for unprintable characters with 
+the high bit set. It assummes the font can draw any characters in the 
+ISO8859-1 character set. 
+<TABLE border=1>
+<TR><TD><B>Mouse button 1</B></TD><TD>Moves the cursor to this point. 
+ Drag selects characters.  Double click selects words.  Triple click 
+selects all text.  Shift+click extends the selection.</TD></TR>
+<TR><TD><B>Mouse button 2</B></TD><TD>Insert the current X selection at 
+the cursor (unlike Motif this does not move the insertion point to the 
+mouse).  If the widget does not have the input focus (and thus no 
+cursor) it puts the cursor where clicked and inserts the selection 
+there.</TD></TR>
+<TR><TD><B>Mouse button 3</B></TD><TD>Currently acts like button 1.</TD></TR>
+<TR><TD><B>Backspace</B></TD><TD>Deletes one character to the left, or 
+deletes the selected region.</TD></TR>
+<TR><TD><B>Enter</B></TD><TD>May cause the callback, see when().</TD></TR>
+<TR><TD><B>^A or Home</B></TD><TD>Go to start of line.</TD></TR>
+<TR><TD><B>^B or Left</B></TD><TD>Move left</TD></TR>
+<TR><TD><B>^C</B></TD><TD>Copy the selection to the clipboard</TD></TR>
+<TR><TD><B>^D or Delete</B></TD><TD>Deletes one character to the right 
+or deletes the selected region. <I>Due to silly historical X problems, 
+the Delete key will act like Backspace until you type a &quot;real&quot; 
+backspace.</I></TD></TR>
+<TR><TD><B>^E or End</B></TD><TD>Go to the end of line.</TD></TR>
+<TR><TD><B>^F or Right</B></TD><TD>Move right</TD></TR>
+<TR><TD><B>^K</B></TD><TD>Delete to the end of line (next \n character) 
+or deletes a single \n character.  These deletions are all concatenated 
+into the clipboard.</TD></TR>
+<TR><TD><B>^N or Down</B></TD><TD>Move down (for Fl_Multiline_Input 
+only, otherwise it moves to the next input field).</TD></TR>
+<TR><TD><B>^P or Up</B></TD><TD>Move up (for Fl_Multiline_Input only, 
+otherwise it moves to the previous input field).</TD></TR>
+<TR><TD><B>^Q or
+<BR>RightCtrl or
+<BR>Compose</B></TD><TD>Start a <A href=compose.html>compose-character</A>
+ sequence.  The next one or two keys typed define the character to 
+insert.  This also can be used to &quot;quote&quot; control characters.</TD></TR>
+<TR><TD><B>^U</B></TD><TD>Delete everything.</TD></TR>
+<TR><TD><B>^V or ^Y</B></TD><TD>Paste the clipboard</TD></TR>
+<TR><TD><B>^X or ^W</B></TD><TD>Copy the region to the clipboard and 
+delete it.</TD></TR>
+<TR><TD><B>^Z or ^_</B></TD><TD>Undo.  This is a single-level undo 
+mechanism, but all adjacent deletions and insertions are concatenated 
+into a single &quot;undo&quot;.  Often this will undo a lot more than you 
+expected.</TD></TR>
+<TR><TD><B>Shift+move</B></TD><TD>Move the cursor but also extend the 
+selection.</TD></TR>
+</TABLE>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90%>
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Input.Fl_Input>Fl_Input</A></LI>
+<LI><A href=#Fl_Input.~Fl_Input>~Fl_Input</A></LI>
+<LI><A href=#Fl_Input.cursor_color>cursor_color</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Input.index>index</A></LI>
+<LI><A href=#Fl_Input.size>size</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Input.static_value>static_value</A></LI>
+<LI><A href=#Fl_Input.textcolor>textcolor</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Input.textfont>textfont</A></LI>
+<LI><A href=#Fl_Input.textsize>textsize</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Input.value>value</A></LI>
+<LI><A href=#Fl_Input.when>when</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+<H4><A name=Fl_Input.Fl_Input>Fl_Input::Fl_Input(int x, int y, int w, 
+int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Input</TT> widget using the given position, size, 
+and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>. 
+<H4><A name=Fl_Input.~Fl_Input>virtual Fl_Input::~Fl_Input()</A></H4>
+ Destroys the widget and any value associated with it. 
+<H4><A name=Fl_Input.value>const char *Fl_Input::value() const
+<BR> int Fl_Input::value(const char*)
+<BR> int Fl_Input::value(const char*, int)</A></H4>
+ The first form returns the current value, which is a pointer to the 
+internal buffer and is valid only until the next event is handled. 
+<P>The second two forms change the text and set the mark and the point 
+to the end of it. The string is copied to the internal buffer.  Passing <TT>
+NULL</TT> is the same as &quot;&quot;.  This returns non-zero if the new value is 
+different than the current one.  You can use the second version to 
+directly set the length if you know it already or want to put nul's in 
+the text. </P>
+<H4><A name=Fl_Input.static_value>int Fl_Input::static_value(const 
+char*)
+<BR> int Fl_Input::static_value(const char*, int)</A></H4>
+ Change the text and set the mark and the point to the end of it.  The 
+string is <I>not</I> copied.  If the user edits the string it is copied 
+to the internal buffer then.  This can save a great deal of time and 
+memory if your program is rapidly changing the values of text fields, 
+but this will only work if the passed string remains unchanged until 
+either the <TT>Fl_Input</TT> is destroyed or <TT>value()</TT> is called 
+again. 
+<H4><A name=Fl_Input.size>int Fl_Input::size() const</A></H4>
+ Returns the number of characters in <TT>value()</TT>.  This may be 
+greater than <TT>strlen(value())</TT> if there are nul characters in 
+it. 
+<H4><A name=Fl_Input.index>char Fl_Input::index(int) const</A></H4>
+ Same as <TT>value()[n]</TT>, but may be faster in plausible 
+implementations. No bounds checking is done. 
+<H4><A name=Fl_Input.when>Fl_When Fl_Widget::when() const
+<BR> void Fl_Widget::when(Fl_When)</A></H4>
+ Controls when callbacks are done.  The following values are useful, 
+the default value is <TT>FL_WHEN_RELEASE</TT>: 
+<UL>
+<LI><TT>0</TT>: The callback is not done, but <TT>changed()</TT> is 
+ turned on. </LI>
+<LI><TT>FL_WHEN_CHANGED</TT>: The callback is done each time the  text 
+is changed by the user. </LI>
+<LI><TT>FL_WHEN_RELEASE</TT>: The callback will  be done when this 
+widget loses the focus, including when the window is  unmapped.  This 
+is a useful value for text fields in a panel where  doing the callback 
+on every change is wasteful.  However the callback  will also happen if 
+the mouse is moved out of the window, which means  it should not do 
+anything visible (like pop up an error message).  You  might do better 
+setting this to zero, and scanning all the items for <TT>changed()</TT>
+ when the OK button on a panel is pressed. </LI>
+<LI><TT>FL_WHEN_ENTER_KEY</TT>: If the user types the Enter  key, the 
+entire text is selected, and the callback is done if  the text has 
+changed.  Normally the Enter key will navigate to  the next field (or 
+insert a newline for a <TT>Fl_Mulitline_Input</TT>), this changes the 
+behavior. </LI>
+<LI><TT>FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED</TT>: The Enter key  will 
+do the callback even if the text has not changed.  Useful for  command 
+fields. </LI>
+</UL>
+<H4><A name=Fl_Input.textcolor>Fl_Color Fl_Input::textcolor() const
+<BR> void Fl_Input::textcolor(Fl_Color)</A></H4>
+ Gets or sets the color of the text in the input field. 
+<H4><A name=Fl_Input.textfont>Fl_Font Fl_Input::textfont() const
+<BR> void Fl_Input::textfont(Fl_Font)</A></H4>
+ Gets or sets the font of the text in the input field. 
+<H4><A name=Fl_Input.textsize>uchar Fl_Input::textsize() const
+<BR> void Fl_Input::textsize(uchar)</A></H4>
+ Gets or sets the size of the text in the input field. 
+<H4><A name=Fl_Input.cursor_color>Fl_Color Fl_Input::cursor_color() 
+const
+<BR> void Fl_Input::cursor_color(Fl_Color)</A></H4>
+ Get or set the color of the cursor.  This is black by default. </BODY></HTML>

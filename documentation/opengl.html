@@ -1,48 +1,33 @@
-<HTML>
-<BODY>
-
-<H1 ALIGN=RIGHT><A NAME="opengl">9 - Using OpenGL</A></H1>
-
-This chapter discusses using FLTK for your OpenGL applications.
-
-<h2>Using OpenGL in FLTK</h2>
-
-The easiest way to make an OpenGL display is to subclass <a
-href="#Fl_Gl_Window"><tt>Fl_Gl_Window</tt></a>. Your subclass must
-implement a <tt>draw()</tt> method which uses OpenGL calls to draw the
-display.  Your main program should call <tt>redraw()</tt> when the
-display needs to change, and (somewhat later) FLTK will call
-<tt>draw()</tt>.
-
-<p>With a bit of care you can also use OpenGL to draw into normal FLTK
-windows.  This is mostly useful because you can use Gourand shading for
-drawing your widgets.  To do this you use the <a
-href="#gl_start"><tt>gl_start()</tt></a> and <a
-href="#gl_finish"><tt>gl_finish()</tt></a> functions around your OpenGL
-code.
-
-<p>You must include FLTK's <tt>&lt;FL/gl.h></tt> header file.  It will include
-the file <tt>&lt;GL/gl.h></tt>, define some extra drawing functions
-provided by FLTK, and include the <tt>&lt;windows.h></tt> header file needed
-by WIN32 applications.
-
-<h2>Making a Subclass of Fl_Gl_Window</h2>
-
-To make a subclass of Fl_Gl_Window, you must provide:
-
-<ul>
-
-	<li>A class definition.
-	<li>A <tt>draw()</tt> method.
-	<li>A <tt>handle()</tt> method (if you need to recieve input from
-	the user).
-</ul>
-
-<h3>Defining the Subclass</h3>
-
-To define the subclass you just subclass <tt>Fl_Gl_Window</tt> class:
-
-<ul><pre>
+<HTML><BODY>
+<H1 ALIGN=RIGHT><A NAME=opengl>9 - Using OpenGL</A></H1>
+ This chapter discusses using FLTK for your OpenGL applications. 
+<H2>Using OpenGL in FLTK</H2>
+ The easiest way to make an OpenGL display is to subclass <A href=Fl_Gl_Window.html#Fl_Gl_Window>
+<TT>Fl_Gl_Window</TT></A>. Your subclass must implement a <TT>draw()</TT>
+ method which uses OpenGL calls to draw the display.  Your main program 
+should call <TT>redraw()</TT> when the display needs to change, and 
+(somewhat later) FLTK will call <TT>draw()</TT>. 
+<P>With a bit of care you can also use OpenGL to draw into normal FLTK 
+windows.  This is mostly useful because you can use Gourand shading for 
+drawing your widgets.  To do this you use the <A href=#gl_start><TT>
+gl_start()</TT></A> and <A href=#gl_finish><TT>gl_finish()</TT></A>
+ functions around your OpenGL code. </P>
+<P>You must include FLTK's <TT>&lt;FL/gl.h&gt;</TT> header file.  It will 
+include the file <TT>&lt;GL/gl.h&gt;</TT>, define some extra drawing 
+functions provided by FLTK, and include the <TT>&lt;windows.h&gt;</TT> header 
+file needed by WIN32 applications. </P>
+<H2>Making a Subclass of Fl_Gl_Window</H2>
+ To make a subclass of Fl_Gl_Window, you must provide: 
+<UL>
+<LI>A class definition. </LI>
+<LI>A <TT>draw()</TT> method. </LI>
+<LI>A <TT>handle()</TT> method (if you need to recieve input from  the 
+user). </LI>
+</UL>
+<H3>Defining the Subclass</H3>
+ To define the subclass you just subclass <TT>Fl_Gl_Window</TT> class: 
+<UL>
+<PRE>
 class MyWindow : public Fl_Gl_Window {
   void draw();
   int handle(int);
@@ -51,17 +36,16 @@ public:
   MyWindow(int X, int Y, int W, int H, const char *L)
     : Fl_Gl_Window(X, Y, W, H, L) {}
 };
-</pre></ul>
-
-The <tt>draw()</tt> and <tt>handle()</tt> methods are described below.  Like
-any widget, you can include additional private and public data in your class
-(such as scene graph information, etc.)
-
-<h3>The draw() Method</H3>
-
-The <tt>draw()</tt> method is where you actually do your OpenGL drawing:
-
-<ul><pre>
+</PRE>
+</UL>
+ The <TT>draw()</TT> and <TT>handle()</TT> methods are described below. 
+ Like any widget, you can include additional private and public data in 
+your class (such as scene graph information, etc.) 
+<H3>The draw() Method</H3>
+ The <TT>draw()</TT> method is where you actually do your OpenGL 
+drawing: 
+<UL>
+<PRE>
 void MyWindow::draw() {
   if (!valid()) {
     ... set up projection, viewport, etc ...
@@ -70,14 +54,13 @@ void MyWindow::draw() {
   }
   ... draw ...
 }
-</pre></ul>
-
-<h3>The handle() Method</h3>
-
-The <tt>handle()</tt> method handles mouse and keyboard events for the
-window:
-
-<ul><pre>
+</PRE>
+</UL>
+<H3>The handle() Method</H3>
+ The <TT>handle()</TT> method handles mouse and keyboard events for the 
+window: 
+<UL>
+<PRE>
 int MyWindow::handle(int event) {
   switch(event) {
   case FL_PUSH:
@@ -103,16 +86,16 @@ int MyWindow::handle(int event) {
     return 0;
   }
 }
-</pre></ul>
-
-When <tt>handle()</tt> is called, the OpenGL context is not set up!  If your
-display changes, you should call <tt>redraw()</tt> and let <tt>draw()</tt> do the work.
-Don't call any OpenGL drawing functions from inside <tt>handle()</tt>!
-
-<p>You can call some OpenGL stuff like hit detection and texture loading
-functions by doing:
-
-<ul><pre>
+</PRE>
+</UL>
+ When <TT>handle()</TT> is called, the OpenGL context is not set up! 
+ If your display changes, you should call <TT>redraw()</TT> and let <TT>
+draw()</TT> do the work. Don't call any OpenGL drawing functions from 
+inside <TT>handle()</TT>! 
+<P>You can call some OpenGL stuff like hit detection and texture 
+loading functions by doing: </P>
+<UL>
+<PRE>
   case FL_PUSH:
     make_current(); // make OpenGL context current
     if (!valid()) {
@@ -121,154 +104,116 @@ functions by doing:
     }
     ... ok to call NON-DRAWING OpenGL code here, such as hit
     detection, loading textures, etc...
-</pre></ul>
-
-Your main program can now create one of your windows by doing <tt>new
-MyWindow(...)</tt>.  You can also use <a href="#fluid">fluid</a> by:
-
-<ol>
-	<li>Put your class definition in a MyWindow.H file.
-
-	<li>In fluid create a box object, resize & place where you want.
-
-	<li>In the control panel, fill in the "class" field with MyWindow.H.
-	This will make fluid produce constructors for your new class.
-
-	<li>In the "extra code" put <tt>#include "MyWindow.H"</tt>, so
-	that the fluid output file will compile.
-
-</ol>
-
-You must put <tt>glwindow->show()</tt> in your main code after calling
-<tt>show()</tt> on the window containing the OpenGL window.
-
-<h2>Using OpenGL in Normal FLTK Windows</h2>
-
-You can put OpenGL code into an <a
-href="#draw"><tt>Fl_Widget::draw()</tt></a> method or into the code for
-a <a href="#boxtypes">boxtype</a> or other places with some care.
-
-<p>Most important, before you show <i>any</i> windows (including those
-that don't have OpenGL drawing) you must initialize FLTK so that it
-knows it is going to use OpenGL.  You may use any of the symbols
-described for <a
-href="#Fl_Gl_Window.mode"><tt>Fl_Gl_Window::mode()</tt></a> to describe
-how you intend to use OpenGL:
-
-<ul><pre>
+</PRE>
+</UL>
+ Your main program can now create one of your windows by doing <TT>new 
+MyWindow(...)</TT>.  You can also use <A href=fluid.html#fluid>fluid</A>
+ by: 
+<OL>
+<LI>Put your class definition in a MyWindow.H file. </LI>
+<LI>In fluid create a box object, resize place where you want. </LI>
+<LI>In the control panel, fill in the &quot;class&quot; field with MyWindow.H. 
+ This will make fluid produce constructors for your new class. </LI>
+<LI>In the &quot;extra code&quot; put <TT>#include &quot;MyWindow.H&quot;</TT>, so  that 
+the fluid output file will compile. </LI>
+</OL>
+ You must put <TT>glwindow-&gt;show()</TT> in your main code after calling <TT>
+show()</TT> on the window containing the OpenGL window. 
+<H2>Using OpenGL in Normal FLTK Windows</H2>
+ You can put OpenGL code into an <A href=#draw><TT>Fl_Widget::draw()</TT>
+</A> method or into the code for a <A href=common.html#boxtypes>boxtype</A>
+ or other places with some care. 
+<P>Most important, before you show <I>any</I> windows (including those 
+that don't have OpenGL drawing) you must initialize FLTK so that it 
+knows it is going to use OpenGL.  You may use any of the symbols 
+described for <A href=Fl_Gl_Window.html#Fl_Gl_Window.mode><TT>
+Fl_Gl_Window::mode()</TT></A> to describe how you intend to use OpenGL: </P>
+<UL>
+<PRE>
 Fl::gl_visual(FL_RGB);
-</pre></ul>
-
-You can then put OpenGL drawing code anywhere you can draw normally
-by surrounding it with:
-
-<ul><pre>
+</PRE>
+</UL>
+ You can then put OpenGL drawing code anywhere you can draw normally by 
+surrounding it with: 
+<UL>
+<PRE>
 gl_start();
 ... put your OpenGL code here ...
 gl_finish();
-</pre></ul>
-
-<a name="gl_start"><tt>gl_start()</tt></a> and <a
-name="gl_finish"><tt>gl_finish()</tt></a> set up an OpenGL context with
-an orthographic projection so that 0,0 is the lower-left corner of the
-window and each pixel is one unit.  The current clipping is reproduced
-with OpenGL <tt>glScissor()</tt> commands.  These also synchronize the
-OpenGL graphics stream with the drawing done by other X, WIN32, or FLTK
-functions.
-
-<p>The same context is reused each time.  If your code changes the
-projection transformation or anything else you should use
-<tt>glPushMatrix()</tt> and <tt>glPopMatrix()</tt> functions to put the
-state back before calling <tt>gl_finish()</tt>.
-
-<p>You may want to use <tt>Fl_Window::current()->h()</tt> to get
-the drawable height so you can flip the Y coordinates.
-
-<p>Unfortunately, there are a bunch of limitations you must adhere to for
-maximum portability:
-
-<ul>
-
-	<li>You must choose a default visual with <a
-	href="#gl_visual"><tt>Fl::gl_visual()</tt></a>.
-
-	<li>You cannot pass <tt>FL_DOUBLE</tt> to <tt>Fl::gl_visual()</tt>.
-
-	<li>You cannot use <tt>Fl_Double_Window</tt> or
-	<tt>Fl_Overlay_Window</tt>.
-
-</ul>
-
-Do <i>not</i> call <tt>gl_start()</tt> or <tt>gl_finish()</tt> when drawing
-into an <tt>Fl_Gl_Window</tt>!
-
-<h2>OpenGL drawing functions</h2>
-
-FLTK provides some useful OpenGL drawing functions.  They can be freely
-mixed with any OpenGL calls, and are defined by including
-<tt>&lt;FL/gl.H></tt> (which you should include instead of the OpenGL
-header <tt>&lt;GL/gl.h></tt>).
-
-<h3>void gl_color(Fl_Color)</h3>
-
-Set the current color to a FLTK color index.  <i>For color-index modes
-it will use <tt>fl_xpixel(c)</tt>, which is only right if this window
-uses the default colormap!</i>
-
-<h3>void gl_rect(int x, int y, int w, int h)<br>
-void gl_rectf(int x, int y, int w, int h)</h3>
-
-Outline or fill a rectangle with the current color.  If
-<tt>ortho()</tt> has been called, then the rectangle will exactly fill
-the pixel rectangle passed.
-
-<h3>void gl_font(Fl_Font fontid, int size)</h3>
-
-Set the "current OpenGL font" to the same font you get by calling
-<a href="#fl_font"><tt>fl_font()</tt></a>.
-
-<h3>int gl_height()<br>
-int gl_descent()<br>
-float gl_width(const char *)<br>
-float gl_width(const char *, int n)<br>
-float gl_width(uchar)</h3>
-
-Return information about the current OpenGL font.
-
-<h3>void gl_draw(const char *)<br>
-void gl_draw(const char *, int n)</h3>
-
-Draw a nul-terminated string or an array of <tt>n</tt> characters in
-the current OpenGL font at the current <tt>glRasterPos</tt>.
-
-<h3>void gl_draw(const char *, int x, int y)<br>
-void gl_draw(const char *, int n, int x, int y)<br>
-void gl_draw(const char *, float x, float y)<br>
-void gl_draw(const char *, int n, float x, float y)</h3>
-
-Draw a nul-terminated string or an array of <tt>n</tt> characters in
-the current OpenGL font at the given position.
-
-<h3>void gl_draw(const char *, int x, int y, int w, int h, Fl_Align)</h3>
-
-Draw a string formatted into a box, with newlines and tabs expanded,
-other control characters changed to ^X, and aligned with the edges or
-center.  Exactly the same output as <a href="#fl_draw"><tt>fl_draw()</tt></a>.
-
-<h2>Using OpenGL Optimizer with FLTK</h2>
-
-<a href="http://www.sgi.com/software/optimizer">OpenGL Optimizer</a> is
-a scene graph toolkit for OpenGL available from Silicon Graphics for
-IRIX and Microsoft Windows.  Versions are in the works for Solaris and
-HP-UX.  It allows you to view large scenes without writing a lot of
-OpenGL code.
-
-<h3>OptimizerWindow Class Definition</h3>
-
-To use OpenGL Optimizer with FLTK you'll need to create a subclass of
-<tt>Fl_Gl_Widget</tt> that includes several state variables:
-
-<ul><pre>
+</PRE>
+</UL>
+<A name=gl_start><TT>gl_start()</TT></A> and <A name=gl_finish><TT>
+gl_finish()</TT></A> set up an OpenGL context with an orthographic 
+projection so that 0,0 is the lower-left corner of the window and each 
+pixel is one unit.  The current clipping is reproduced with OpenGL <TT>
+glScissor()</TT> commands.  These also synchronize the OpenGL graphics 
+stream with the drawing done by other X, WIN32, or FLTK functions. 
+<P>The same context is reused each time.  If your code changes the 
+projection transformation or anything else you should use <TT>
+glPushMatrix()</TT> and <TT>glPopMatrix()</TT> functions to put the 
+state back before calling <TT>gl_finish()</TT>. </P>
+<P>You may want to use <TT>Fl_Window::current()-&gt;h()</TT> to get the 
+drawable height so you can flip the Y coordinates. </P>
+<P>Unfortunately, there are a bunch of limitations you must adhere to 
+for maximum portability: </P>
+<UL>
+<LI>You must choose a default visual with <A href=functions.html#gl_visual>
+<TT>Fl::gl_visual()</TT></A>. </LI>
+<LI>You cannot pass <TT>FL_DOUBLE</TT> to <TT>Fl::gl_visual()</TT>. </LI>
+<LI>You cannot use <TT>Fl_Double_Window</TT> or <TT>Fl_Overlay_Window</TT>
+. </LI>
+</UL>
+ Do <I>not</I> call <TT>gl_start()</TT> or <TT>gl_finish()</TT> when 
+drawing into an <TT>Fl_Gl_Window</TT>! 
+<H2>OpenGL drawing functions</H2>
+ FLTK provides some useful OpenGL drawing functions.  They can be 
+freely mixed with any OpenGL calls, and are defined by including <TT>
+&lt;FL/gl.H&gt;</TT> (which you should include instead of the OpenGL header <TT>
+&lt;GL/gl.h&gt;</TT>). 
+<H3>void gl_color(Fl_Color)</H3>
+ Set the current color to a FLTK color index. <I>For color-index modes 
+it will use <TT>fl_xpixel(c)</TT>, which is only right if this window 
+uses the default colormap!</I>
+<H3>void gl_rect(int x, int y, int w, int h)
+<BR> void gl_rectf(int x, int y, int w, int h)</H3>
+ Outline or fill a rectangle with the current color.  If <TT>ortho()</TT>
+ has been called, then the rectangle will exactly fill the pixel 
+rectangle passed. 
+<H3>void gl_font(Fl_Font fontid, int size)</H3>
+ Set the &quot;current OpenGL font&quot; to the same font you get by calling <A href=drawing.html#fl_font>
+<TT>fl_font()</TT></A>. 
+<H3>int gl_height()
+<BR> int gl_descent()
+<BR> float gl_width(const char *)
+<BR> float gl_width(const char *, int n)
+<BR> float gl_width(uchar)</H3>
+ Return information about the current OpenGL font. 
+<H3>void gl_draw(const char *)
+<BR> void gl_draw(const char *, int n)</H3>
+ Draw a nul-terminated string or an array of <TT>n</TT> characters in 
+the current OpenGL font at the current <TT>glRasterPos</TT>. 
+<H3>void gl_draw(const char *, int x, int y)
+<BR> void gl_draw(const char *, int n, int x, int y)
+<BR> void gl_draw(const char *, float x, float y)
+<BR> void gl_draw(const char *, int n, float x, float y)</H3>
+ Draw a nul-terminated string or an array of <TT>n</TT> characters in 
+the current OpenGL font at the given position. 
+<H3>void gl_draw(const char *, int x, int y, int w, int h, Fl_Align)</H3>
+ Draw a string formatted into a box, with newlines and tabs expanded, 
+other control characters changed to ^X, and aligned with the edges or 
+center.  Exactly the same output as <A href=#fl_draw><TT>fl_draw()</TT></A>
+. 
+<H2>Using OpenGL Optimizer with FLTK</H2>
+<A href=http://www.sgi.com/software/optimizer>OpenGL Optimizer</A> is a 
+scene graph toolkit for OpenGL available from Silicon Graphics for IRIX 
+and Microsoft Windows.  Versions are in the works for Solaris and 
+HP-UX.  It allows you to view large scenes without writing a lot of 
+OpenGL code. 
+<H3>OptimizerWindow Class Definition</H3>
+ To use OpenGL Optimizer with FLTK you'll need to create a subclass of <TT>
+Fl_Gl_Widget</TT> that includes several state variables: 
+<UL>
+<PRE>
 class OptimizerWindow : public Fl_Gl_Window {
   csContext *context_; // Initialized to 0 and set by draw()...
   csDrawAction *draw_action_; // Draw action...
@@ -291,33 +236,34 @@ public:
   void camera(csCamera *c) {
     camera_ = c;
     if (context_) {
-      draw_action_->setCamera(camera_);
-      camera_->draw(draw_action_);
+      draw_action_-&gt;setCamera(camera_);
+      camera_-&gt;draw(draw_action_);
       redraw();
     }
   }
 };
-</ul><pre>
+</PRE>
+</UL>
+<PRE>
 
+</PRE>
 <H3>The camera() Method</H3>
-
-The <tt>camera()</tt> method sets the camera (projection and viewpoint)
-to use when drawing the scene. The scene is redrawn after this call.
-
-<h3>The draw() Method</h3>
-
-The <tt>draw()</tt> method performs the needed initialization
-and does the actual drawing:
-
-<ul><pre>
+ The <TT>camera()</TT> method sets the camera (projection and 
+viewpoint) to use when drawing the scene. The scene is redrawn after 
+this call. 
+<H3>The draw() Method</H3>
+ The <TT>draw()</TT> method performs the needed initialization and does 
+the actual drawing: 
+<UL>
+<PRE>
 void OptimizerWindow::draw() {
   if (!context_) {
     // This is the first time we've been asked to draw; create the
     // Optimizer context for the scene...
 
     context_ = new csContext(fl_display, fl_visual);
-    context_->ref();
-    context_->makeCurrent(fl_display, fl_window);
+    context_-&gt;ref();
+    context_-&gt;makeCurrent(fl_display, fl_window);
 
     ... perform other context setup as desired ...    
 
@@ -325,19 +271,19 @@ void OptimizerWindow::draw() {
 
     draw_action_ = new csDrawAction;
     if (camera_) {
-      draw_action_->setCamera(camera_);
-      camera_->draw(draw_action_);
+      draw_action_-&gt;setCamera(camera_);
+      camera_-&gt;draw(draw_action_);
     }
   }
 
   if (!valid()) {
     // Update the viewport for this context...
-    context_->setViewport(0, 0, w(), h());
+    context_-&gt;setViewport(0, 0, w(), h());
   }
 
   // Clear the window...
 
-  context_->clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
+  context_-&gt;clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
                   0.0f,		// Red
 		  0.0f,		// Green
 		  0.0f,		// Blue
@@ -346,15 +292,11 @@ void OptimizerWindow::draw() {
   // Then draw the scene (if any)...
 
   if (scene_)
-    draw_action_->apply(scene_);
+    draw_action_-&gt;apply(scene_);
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>The scene() Method</H3>
-
-The <tt>scene()</tt> method sets the scene to be drawn.  The scene is
-a collection of 3D objects in a <tt>csGroup</tt>.  The scene is redrawn
-after this call.
-
-</BODY>
-</HTML>
+ The <TT>scene()</TT> method sets the scene to be drawn.  The scene is 
+a collection of 3D objects in a <TT>csGroup</TT>.  The scene is redrawn 
+after this call. </BODY></HTML>

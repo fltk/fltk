@@ -1,103 +1,80 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Pack">class Fl_Pack</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Group">Fl_Group</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Pack>class Fl_Pack</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>
    |
-   +----<b>Fl_Pack</b>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Pack.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-This widget was designed to add the functionality of compressing
-and aligning widgets.
-
-<p>If <tt>type()</tt> is <tt>FL_HORIZONTAL</tt> all the children are resized to the
-height of the <tt>Fl_Pack</tt>, and are moved next to each other horizontally.
-If <tt>type()</tt> is not <tt>FL_HORIZONTAL</tt> then the children are resized to the
-width and are stacked below each other.  Then the <tt>Fl_Pack</tt> resizes
-itself to surround the child widgets.
-
-<p>This widget is needed for the <a href="#Fl_Tab"><tt>Fl_Tab</tt></a>.  In
-addition you may want to put the <tt>Fl_Pack</tt> inside an
-<a href="#Fl_Scroll"><tt>Fl_Scroll</tt></a>.
-
-<h3>Methods</h3>
-
-<center>
-<table width=90%>
-<tr>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Pack.Fl_Pack">Fl_Pack</a>
-	<li><a href="#Fl_Pack.~Fl_Pack">~Fl_Pack</a>
-	<li><a href="#Fl_Pack.add">add</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Pack.add_resizeable">add_resizeable</a>
-	<li><a href="#Fl_Pack.array">array</a>
-	<li><a href="#Fl_Pack.begin">begin</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Pack.child">child</a>
-	<li><a href="#Fl_Pack.children">children</a>
-	<li><a href="#Fl_Pack.current">current</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Pack.end">end</a>
-	<li><a href="#Fl_Pack.find">find</a>
-	<li><a href="#Fl_Pack.insert">insert</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Pack.remove">remove</a>
-	<li><a href="#Fl_Pack.resizeable">resizeable</a>
-</ul>
-</td>
-</tr>
-</table>
-</center>
-
-<h4><a name="Fl_Pack.Fl_Pack">Fl_Pack::Fl_Pack(int x, int y, int w, int h, const char *label = 0)</a></h4>
-
-Creates a new <tt>Fl_Pack</tt> widget using the given position, size, and
-label string. The default boxtype is <tt>FL_NO_BOX</tt>.
-
-<h4><a name="Fl_Pack.~Fl_Pack">virtual Fl_Pack::~Fl_Pack()</a></h4>
-
-The destructor <i>also deletes all the children</i>. This allows a
-whole tree to be deleted at once, without having to keep a pointer to all
-the children in the user code. A kludge has been done so the
-<tt>Fl_Pack</tt> and all of it's children can be automatic (local)
-variables, but you must declare the <tt>Fl_Pack</tt> <i>first</i>, so
-that it is destroyed last.
-
-<h4><a name="Fl_Pack.spacing">int Fl_Pack::spacing() const<br>
-void Fl_Pack::spacing(int)</a></h4>
-
-Gets or sets the number of extra pixels of blank space that are added between
-the children.
-
-</body>
-</html>
+   +----<B>Fl_Pack</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Pack.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This widget was designed to add the functionality of compressing and 
+aligning widgets. 
+<P>If <TT>type()</TT> is <TT>FL_HORIZONTAL</TT> all the children are 
+resized to the height of the <TT>Fl_Pack</TT>, and are moved next to 
+each other horizontally. If <TT>type()</TT> is not <TT>FL_HORIZONTAL</TT>
+ then the children are resized to the width and are stacked below each 
+other.  Then the <TT>Fl_Pack</TT> resizes itself to surround the child 
+widgets. </P>
+<P>This widget is needed for the <A href=#Fl_Tab><TT>Fl_Tab</TT></A>. 
+ In addition you may want to put the <TT>Fl_Pack</TT> inside an <A href=Fl_Scroll.html#Fl_Scroll>
+<TT>Fl_Scroll</TT></A>. </P>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90%>
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Pack.Fl_Pack>Fl_Pack</A></LI>
+<LI><A href=#Fl_Pack.~Fl_Pack>~Fl_Pack</A></LI>
+<LI><A href=#Fl_Pack.add>add</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Pack.add_resizeable>add_resizeable</A></LI>
+<LI><A href=#Fl_Pack.array>array</A></LI>
+<LI><A href=#Fl_Pack.begin>begin</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Pack.child>child</A></LI>
+<LI><A href=#Fl_Pack.children>children</A></LI>
+<LI><A href=#Fl_Pack.current>current</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Pack.end>end</A></LI>
+<LI><A href=#Fl_Pack.find>find</A></LI>
+<LI><A href=#Fl_Pack.insert>insert</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Pack.remove>remove</A></LI>
+<LI><A href=#Fl_Pack.resizeable>resizeable</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+<H4><A name=Fl_Pack.Fl_Pack>Fl_Pack::Fl_Pack(int x, int y, int w, int 
+h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Pack</TT> widget using the given position, size, 
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+<H4><A name=Fl_Pack.~Fl_Pack>virtual Fl_Pack::~Fl_Pack()</A></H4>
+ The destructor <I>also deletes all the children</I>. This allows a 
+whole tree to be deleted at once, without having to keep a pointer to 
+all the children in the user code. A kludge has been done so the <TT>
+Fl_Pack</TT> and all of it's children can be automatic (local) 
+variables, but you must declare the <TT>Fl_Pack</TT><I>first</I>, so 
+that it is destroyed last. 
+<H4><A name=Fl_Pack.spacing>int Fl_Pack::spacing() const
+<BR> void Fl_Pack::spacing(int)</A></H4>
+ Gets or sets the number of extra pixels of blank space that are added 
+between the children. </BODY></HTML>

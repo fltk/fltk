@@ -1,166 +1,134 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Gl_Window">class Fl_Gl_Window</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Widget">Fl_Widget</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Gl_Window>class Fl_Gl_Window</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
    |
-   +----<b>Fl_Gl_Window</b>
+   +----<B>Fl_Gl_Window</B>
            |
-           +----<a href="#Fl_Pack">Fl_Pack</a>, <a href="#Fl_Scroll">Fl_Scroll</a>, <a href="#Fl_Tabs">Fl_Tabs</a>, <a href="#Fl_Tile">Fl_Tile</a>, <a href="#Fl_Window">Fl_Window</a>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Gl_Window.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-The <tt>Fl_Gl_Window</tt> widget sets things up so OpenGL works, and
-also keeps an OpenGL "context" for that window, so that changes to the
-lighting and projection may be reused between redraws. 
-</tt>Fl_Gl_Window</tt> also flushes the OpenGL streams and swaps
-buffers after <tt>draw()</tt> returns.
-
-<p>OpenGL hardware typically provides some overlay bit planes, which
-are very useful for drawing UI controls atop your 3D graphics.  If the
-overlay hardware is not provided, FLTK tries to simulate the overlay,
-This works pretty well if your graphics are double buffered, but not
-very well for single-buffered.
-
-<h3>Methods</h3>
-
-
-<center>
-<table width=90%>
-<tr>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Gl_Window.Fl_Gl_Window">Fl_Gl_Window</a>
-	<li><a href="#Fl_Gl_Window.~Fl_Gl_Window">~Fl_Gl_Window</a>
-	<li><a href="#Fl_Gl_Window.can_do">can_do</a>
-	<li><a href="#Fl_Gl_Window.can_do_overlay">can_do_overlay</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Gl_Window.draw">draw</a>
-	<li><a href="#Fl_Gl_Window.draw_overlay">draw_overlay</a>
-	<li><a href="#Fl_Gl_Window.handle">handle</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Gl_Window.hide">hide</a>
-	<li><a href="#Fl_Gl_Window.invalidate">invalidate</a>
-	<li><a href="#Fl_Gl_Window.make_current">make_current</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Gl_Window.make_overlay_current">make_overlay_current</a>
-	<li><a href="#Fl_Gl_Window.mode">mode</a>
-	<li><a href="#Fl_Gl_Window.ortho">ortho</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Gl_Window.redraw_overlay">redraw_overlay</a>
-	<li><a href="#Fl_Gl_Window.swap_buffers">swap_buffers</a>
-	<li><a href="#Fl_Gl_Window.valid">valid</a>
-</ul>
-</td>
-</tr>
-</table>
-</center>
-
-<h4><a name="Fl_Gl_Window.Fl_Gl_Window">Fl_Gl_Window::Fl_Gl_Window(int x, int y, int w, int h, const char *label = 0)</a></h4>
-
-Creates a new <tt>Fl_Gl_Window</tt> widget using the given position, size, and
-label string. The default boxtype is <tt>FL_NO_BOX</tt>. The default mode is
-<tt>FL_RGB|FL_DOUBLE|FL_DEPTH</tt>.
-
-<h4><a name="Fl_Gl_Window.~Fl_Gl_Window">virtual Fl_Gl_Window::~Fl_Gl_Window()</a></h4>
-
-The destructor removes the widget and destroys the OpenGL context associated
-with it.
-
-<h4><a name="Fl_Gl_Window.draw">virtual void Fl_Gl_Window::draw(void)</a></h4>
-
-<tt>Fl_Gl_Window::draw()</tt> is a pure virtual method.  You must
-subclass <tt>Fl_Gl_Window</tt> and provide an implementation for
-<tt>draw()</tt>.  You may also provide an implementation of
-draw_overlay() if you want to draw into the overlay planes.  You can
-avoid reinitializing the viewport and lights and other things by
-checking <tt>valid()</tt> at the start of <tt>draw()</tt> and only
-doing the initialization if it is false.
-
-<p>The <tt>draw()</tt> method can <i>only</i> use OpenGL calls.  Do not
-attempt to call X, any of the functions in &lt;FL/fl_draw.H>, or
-<tt>glX</tt> directly.  Do not call <tt>gl_start()</tt> or
-<tt>gl_finish()</tt>.
-
-<p>If double-buffering is enabled in the window, the back and front buffers
-are swapped after this function is completed.
-
-<h4><a name="Fl_Gl_Window.mode">const int Fl_Gl_Window::mode() const<br>
-int Fl_Gl_Window::mode(int m)</a></h4>
-
-Set or change the OpenGL capabilites of the window.  The value can be
-any of the following OR'd together:
-
-<ul>
-	<li><tt>FL_RGB</tt> - RGB color (not indexed)
-	<li><tt>FL_RGB8</tt> - RGB color with at least 8 bits of each color
-	<li><tt>FL_INDEX</tt> - Indexed mode
-	<li><tt>FL_SINGLE</tt> - not double buffered
-	<li><tt>FL_DOUBLE</tt> - double buffered
-	<li><tt>FL_ACCUM</tt> - accumulation buffer
-	<li><tt>FL_ALPHA</tt> - alpha channel in color
-	<li><tt>FL_DEPTH</tt> - depth buffer
-	<li><tt>FL_STENCIL</tt> - stencil buffer
-	<li><tt>FL_MULTISAMPLE</tt> - multisample antialiasing
-</ul>
-
-<tt>FL_RGB</tt> and <tt>FL_SINGLE</tt> have a value of zero, so they are
-"on" unless you give <tt>FL_INDEX</tt> or <tt>FL_DOUBLE</tt>.
-
-<p>If the desired combination cannot be done, FLTK will try turning off
-<tt>FL_MULTISAMPLE</tt>.  If this also fails the <tt>show()</tt> will call
-<tt>Fl::error()</tt> and not show the window.
-
-<p>You can change the mode while the window is displayed.  This
-is most useful for turning double-buffering on and off.  Under
-X this will cause the old X window to be destroyed and a new one to be
-created.  If this is a top-level window this will unfortunately also
-cause the window to blink, raise to the top, and be de-iconized, and
-the <tt>xid()</tt> will change, possibly breaking other code.  It is best to
-make the GL window a child of another window if you wish to do this!
-
-<h4><a name="Fl_Gl_Window.can_do">static int Fl_Gl_Window::can_do(int)<br>
-int Fl_Gl_Window::can_do() const</a></h4>
-
-Returns non-zero if the hardware supports the given or current OpenGL mode.
-
-<h4><a name="Fl_Gl_Window.valid">char Fl_Gl_Window::valid() const<br>
-void Fl_Gl_Window::valid(char i)</a></h4>
-
-<tt>Fl_Gl_Window::valid()</tt> is turned off when FLTK creates a
-new context for this window or when the window resizes, and is turned
-on <i>after</i> <tt>draw()</tt> is called.  You can use this inside your <tt>draw()</tt>
-method to avoid unneccessarily initializing the OpenGL context.  Just
-do this:
-
-<ul><pre>
+           +----<A href=Fl_Pack.html#Fl_Pack>Fl_Pack</A>, <A href=Fl_Scroll.html#Fl_Scroll>Fl_Scroll</A>, <A href=Fl_Tabs.html#Fl_Tabs>Fl_Tabs</A>, <A href=Fl_Tile.html#Fl_Tile>Fl_Tile</A>, <A href=Fl_Window.html#Fl_Window>Fl_Window</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Gl_Window.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Gl_Window</TT> widget sets things up so OpenGL works, and 
+also keeps an OpenGL &quot;context&quot; for that window, so that changes to the 
+lighting and projection may be reused between redraws. Fl_Gl_Window
+ also flushes the OpenGL streams and swaps buffers after <TT>draw()</TT>
+ returns. 
+<P>OpenGL hardware typically provides some overlay bit planes, which 
+are very useful for drawing UI controls atop your 3D graphics.  If the 
+overlay hardware is not provided, FLTK tries to simulate the overlay, 
+This works pretty well if your graphics are double buffered, but not 
+very well for single-buffered. </P>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90%>
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Gl_Window.Fl_Gl_Window>Fl_Gl_Window</A></LI>
+<LI><A href=#Fl_Gl_Window.~Fl_Gl_Window>~Fl_Gl_Window</A></LI>
+<LI><A href=#Fl_Gl_Window.can_do>can_do</A></LI>
+<LI><A href=#Fl_Gl_Window.can_do_overlay>can_do_overlay</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Gl_Window.draw>draw</A></LI>
+<LI><A href=#Fl_Gl_Window.draw_overlay>draw_overlay</A></LI>
+<LI><A href=#Fl_Gl_Window.handle>handle</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Gl_Window.hide>hide</A></LI>
+<LI><A href=#Fl_Gl_Window.invalidate>invalidate</A></LI>
+<LI><A href=#Fl_Gl_Window.make_current>make_current</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Gl_Window.make_overlay_current>make_overlay_current</A></LI>
+<LI><A href=#Fl_Gl_Window.mode>mode</A></LI>
+<LI><A href=#Fl_Gl_Window.ortho>ortho</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Gl_Window.redraw_overlay>redraw_overlay</A></LI>
+<LI><A href=#Fl_Gl_Window.swap_buffers>swap_buffers</A></LI>
+<LI><A href=#Fl_Gl_Window.valid>valid</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+<H4><A name=Fl_Gl_Window.Fl_Gl_Window>Fl_Gl_Window::Fl_Gl_Window(int x, 
+int y, int w, int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Gl_Window</TT> widget using the given position, 
+size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>. The 
+default mode is <TT>FL_RGB|FL_DOUBLE|FL_DEPTH</TT>. 
+<H4><A name=Fl_Gl_Window.~Fl_Gl_Window>virtual 
+Fl_Gl_Window::~Fl_Gl_Window()</A></H4>
+ The destructor removes the widget and destroys the OpenGL context 
+associated with it. 
+<H4><A name=Fl_Gl_Window.draw>virtual void Fl_Gl_Window::draw(void)</A></H4>
+<TT>Fl_Gl_Window::draw()</TT> is a pure virtual method.  You must 
+subclass <TT>Fl_Gl_Window</TT> and provide an implementation for <TT>
+draw()</TT>.  You may also provide an implementation of draw_overlay() 
+if you want to draw into the overlay planes.  You can avoid 
+reinitializing the viewport and lights and other things by checking <TT>
+valid()</TT> at the start of <TT>draw()</TT> and only doing the 
+initialization if it is false. 
+<P>The <TT>draw()</TT> method can <I>only</I> use OpenGL calls.  Do not 
+attempt to call X, any of the functions in &lt;FL/fl_draw.H&gt;, or <TT>glX</TT>
+ directly.  Do not call <TT>gl_start()</TT> or <TT>gl_finish()</TT>. </P>
+<P>If double-buffering is enabled in the window, the back and front 
+buffers are swapped after this function is completed. </P>
+<H4><A name=Fl_Gl_Window.mode>const int Fl_Gl_Window::mode() const
+<BR> int Fl_Gl_Window::mode(int m)</A></H4>
+ Set or change the OpenGL capabilites of the window.  The value can be 
+any of the following OR'd together: 
+<UL>
+<LI><TT>FL_RGB</TT> - RGB color (not indexed) </LI>
+<LI><TT>FL_RGB8</TT> - RGB color with at least 8 bits of each color </LI>
+<LI><TT>FL_INDEX</TT> - Indexed mode </LI>
+<LI><TT>FL_SINGLE</TT> - not double buffered </LI>
+<LI><TT>FL_DOUBLE</TT> - double buffered </LI>
+<LI><TT>FL_ACCUM</TT> - accumulation buffer </LI>
+<LI><TT>FL_ALPHA</TT> - alpha channel in color </LI>
+<LI><TT>FL_DEPTH</TT> - depth buffer </LI>
+<LI><TT>FL_STENCIL</TT> - stencil buffer </LI>
+<LI><TT>FL_MULTISAMPLE</TT> - multisample antialiasing </LI>
+</UL>
+<TT>FL_RGB</TT> and <TT>FL_SINGLE</TT> have a value of zero, so they 
+are &quot;on&quot; unless you give <TT>FL_INDEX</TT> or <TT>FL_DOUBLE</TT>. 
+<P>If the desired combination cannot be done, FLTK will try turning off <TT>
+FL_MULTISAMPLE</TT>.  If this also fails the <TT>show()</TT> will call <TT>
+Fl::error()</TT> and not show the window. </P>
+<P>You can change the mode while the window is displayed.  This is most 
+useful for turning double-buffering on and off.  Under X this will 
+cause the old X window to be destroyed and a new one to be created.  If 
+this is a top-level window this will unfortunately also cause the 
+window to blink, raise to the top, and be de-iconized, and the <TT>xid()</TT>
+ will change, possibly breaking other code.  It is best to make the GL 
+window a child of another window if you wish to do this! </P>
+<H4><A name=Fl_Gl_Window.can_do>static int Fl_Gl_Window::can_do(int)
+<BR> int Fl_Gl_Window::can_do() const</A></H4>
+ Returns non-zero if the hardware supports the given or current OpenGL 
+mode. 
+<H4><A name=Fl_Gl_Window.valid>char Fl_Gl_Window::valid() const
+<BR> void Fl_Gl_Window::valid(char i)</A></H4>
+<TT>Fl_Gl_Window::valid()</TT> is turned off when FLTK creates a new 
+context for this window or when the window resizes, and is turned on <I>
+after</I><TT>draw()</TT> is called.  You can use this inside your <TT>
+draw()</TT> method to avoid unneccessarily initializing the OpenGL 
+context.  Just do this: 
+<UL>
+<PRE>
 void mywindow::draw() {
   if (!valid()) {
     glViewport(0,0,w(),h());
@@ -171,16 +139,17 @@ void mywindow::draw() {
   ... draw your geometry here ...
 }
 
-<br>void Fl_Gl_Window::invalidate();
-<br>void Fl_Gl_Window::valid(char i);</a></h4>
+<BR>void Fl_Gl_Window::invalidate();
+<BR>void Fl_Gl_Window::valid(char i);
 
-<tt>Fl_Gl_Window::valid()</tt> is turned off when FLTK creates a
+<TT>Fl_Gl_Window::valid()</TT> is turned off when FLTK creates a
 new context for this window and by the window resizing, and is turned
-on <i>after</i> draw() is called.  You can use this inside your draw()
+on <I>after</I> draw() is called.  You can use this inside your draw()
 method to avoid unneccessarily initializing the OpenGL context.  Just
 do this:
 
-<pre><tt>void mywindow::draw() {
+</PRE>
+<PRE><TT>void mywindow::draw() {
   if (!valid()) {
     glViewport(0,0,w(),h());
     glFrustum(...);
@@ -189,77 +158,61 @@ do this:
   }
   ... draw your geometry here ...
 }
-</pre></ul>
-
-You can turn <tt>valid()</tt> on by calling <tt>valid(1)</tt>.  You
-should only do this after fixing the transformation inside a
-<tt>draw()</tt> or after <tt>make_current()</tt>.  This is done
-automatically after <tt>draw()</tt> returns.
-
-<h4><a name="Fl_Gl_Window.invalidate">void Fl_Gl_Window::invalidate()</a></h4>
-
-The <tt>invalidate()</tt> method turns off <tt>valid()</tt> and is
-equivalent to calling <tt>value(0)</tt>.
-
-<h4><a name="Fl_Gl_Window.ortho">void Fl_Gl_Window::ortho()</a></h4>
-
-Set the projection so 0,0 is in the lower left of the window and each
-pixel is 1 unit wide/tall.  If you are drawing 2D images, your
-<tt>draw()</tt> method may want to call this if <tt>valid()</tt> is
-false.
-
-<h4><a name="Fl_Gl_Window.make_current">void Fl_Gl_Window::make_current()</a></h4>
-
-The <tt>make_current()</tt> method selects the OpenGL context for the
-widget.  It is called automatically prior to the <tt>draw()</tt> method
-being called and can also be used to implement feedback and/or selection
-within the <tt>handle()</tt> method.
-
-<h4><a name="Fl_Gl_Window.make_overlay_current">void Fl_Gl_Window::make_overlay_current()</a></h4>
-
-The <tt>make_overlay_current()</tt> method selects the OpenGL context
-for the widget's overlay.  It is called automatically prior to the
-<tt>draw_overlay()</tt> method being called and can also be used to
-implement feedback and/or selection within the <tt>handle()</tt>
-method.
-
-<h4><a name="Fl_Gl_Window.swap_buffers">void Fl_Gl_Window::swap_buffers()</a></h4>
-
-The <tt>swap_buffers()</tt> method swaps the back and front buffers.
-It is called automatically after the <tt>draw()</tt> method is called.
-
-<h4><a name="Fl_Gl_Window.hide">void Fl_Gl_Window::hide()</a></h4>
-
-Hides the window and destroys the OpenGL context.
-
-<h4><a name="Fl_Gl_Window.can_do_overlay">int Fl_Gl_Window::can_do_overlay()</a></h4>
-
-Returns true if the hardware overlay is possible.  If this is false,
-FLTK will try to simulate the overlay, with significant loss of update
-speed.  Calling this will cause FLTK to open the display.
-
-<h4><a name="Fl_Gl_Window.redraw_overlay">void Fl_Gl_Window::redraw_overlay()</a></h4>
-
-This method causes <tt>draw_overlay</tt> to be called at a later time. 
-Initially the overlay is clear, if you want the window to display
-something in the overlay when it first appears, you must call this
-immediately after you <tt>show()</tt> your window.
-
-<h4><a name="Fl_Gl_Window.draw_overlay">virtual void Fl_Gl_Window::draw_overlay()</a></h4>
-
-You must implement this virtual function if you want to draw into the
-overlay.  The overlay is cleared before this is called.  You should
-draw anything that is not clear using OpenGL.  You must use
-<tt>gl_color(i)</tt> to choose colors (it allocates them from the colormap
-using system-specific calls), and remember that you are in an indexed
-OpenGL mode and drawing anything other than flat-shaded will probably
-not work.
-
-<p>Both this function and <tt>Fl_Gl_Window::draw()</tt> should check
-<tt>Fl_Gl_Window::valid()</tt> and set the same transformation.  If you
-don't your code may not work on other systems.  Depending on the OS,
-and on whether overlays are real or simulated, the OpenGL context may
-be the same or different between the overlay and main window.
-
-</body>
-</html>
+</TT></PRE>
+</UL>
+ You can turn <TT>valid()</TT> on by calling <TT>valid(1)</TT>.  You 
+should only do this after fixing the transformation inside a <TT>draw()</TT>
+ or after <TT>make_current()</TT>.  This is done automatically after <TT>
+draw()</TT> returns. 
+<H4><A name=Fl_Gl_Window.invalidate>void Fl_Gl_Window::invalidate()</A></H4>
+ The <TT>invalidate()</TT> method turns off <TT>valid()</TT> and is 
+equivalent to calling <TT>value(0)</TT>. 
+<H4><A name=Fl_Gl_Window.ortho>void Fl_Gl_Window::ortho()</A></H4>
+ Set the projection so 0,0 is in the lower left of the window and each 
+pixel is 1 unit wide/tall.  If you are drawing 2D images, your <TT>
+draw()</TT> method may want to call this if <TT>valid()</TT> is false. 
+<H4><A name=Fl_Gl_Window.make_current>void Fl_Gl_Window::make_current()</A>
+</H4>
+ The <TT>make_current()</TT> method selects the OpenGL context for the 
+widget.  It is called automatically prior to the <TT>draw()</TT> method 
+being called and can also be used to implement feedback and/or 
+selection within the <TT>handle()</TT> method. 
+<H4><A name=Fl_Gl_Window.make_overlay_current>void 
+Fl_Gl_Window::make_overlay_current()</A></H4>
+ The <TT>make_overlay_current()</TT> method selects the OpenGL context 
+for the widget's overlay.  It is called automatically prior to the <TT>
+draw_overlay()</TT> method being called and can also be used to 
+implement feedback and/or selection within the <TT>handle()</TT>
+ method. 
+<H4><A name=Fl_Gl_Window.swap_buffers>void Fl_Gl_Window::swap_buffers()</A>
+</H4>
+ The <TT>swap_buffers()</TT> method swaps the back and front buffers. 
+It is called automatically after the <TT>draw()</TT> method is called. 
+<H4><A name=Fl_Gl_Window.hide>void Fl_Gl_Window::hide()</A></H4>
+ Hides the window and destroys the OpenGL context. 
+<H4><A name=Fl_Gl_Window.can_do_overlay>int 
+Fl_Gl_Window::can_do_overlay()</A></H4>
+ Returns true if the hardware overlay is possible.  If this is false, 
+FLTK will try to simulate the overlay, with significant loss of update 
+speed.  Calling this will cause FLTK to open the display. 
+<H4><A name=Fl_Gl_Window.redraw_overlay>void 
+Fl_Gl_Window::redraw_overlay()</A></H4>
+ This method causes <TT>draw_overlay</TT> to be called at a later time. 
+ Initially the overlay is clear, if you want the window to display 
+something in the overlay when it first appears, you must call this 
+immediately after you <TT>show()</TT> your window. 
+<H4><A name=Fl_Gl_Window.draw_overlay>virtual void 
+Fl_Gl_Window::draw_overlay()</A></H4>
+ You must implement this virtual function if you want to draw into the 
+overlay.  The overlay is cleared before this is called.  You should 
+draw anything that is not clear using OpenGL.  You must use <TT>
+gl_color(i)</TT> to choose colors (it allocates them from the colormap 
+using system-specific calls), and remember that you are in an indexed 
+OpenGL mode and drawing anything other than flat-shaded will probably 
+not work. 
+<P>Both this function and <TT>Fl_Gl_Window::draw()</TT> should check <TT>
+Fl_Gl_Window::valid()</TT> and set the same transformation.  If you 
+don't your code may not work on other systems.  Depending on the OS, 
+and on whether overlays are real or simulated, the OpenGL context may 
+be the same or different between the overlay and main window. </P>
+</BODY></HTML>

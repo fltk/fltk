@@ -1,29 +1,24 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_End">class Fl_End</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Group">Fl_Group</a>----<b>Fl_End</b>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Group.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-This is a dummy class that allows you to end a group in a constructor list of a class:
-
-<ul><pre>class MyClass {
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_End>class Fl_End</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>----<B>Fl_End</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Group.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This is a dummy class that allows you to end a group in a constructor 
+list of a class: 
+<UL>
+<PRE>class MyClass {
   Fl_Group group;
   Fl_Button button_in_group;
   Fl_End end;
@@ -35,17 +30,11 @@ MyClass::MyClass() :
   button_in_group(20,20,60,30),
   end(),
   button_outside_group(10,120,60,30)
-{}</pre></ul>
-
-<h3>Methods</h3>
-
-<ul>
-       <li><a href="#Fl_End.Fl_End">Fl_End</a>
-</ul>
-
-<h4><a name="Fl_End.Fl_End">Fl_End::Fl_End</a></h4>
-
-The constructor does <tt>Fl_Group::current()->end()</tt>.
-
-</body>
-</html>
+{}</PRE>
+</UL>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_End.Fl_End>Fl_End</A></LI>
+</UL>
+<H4><A name=Fl_End.Fl_End>Fl_End::Fl_End</A></H4>
+ The constructor does <TT>Fl_Group::current()-&gt;end()</TT>. </BODY></HTML>

@@ -1,319 +1,241 @@
-<HTML>
-<BODY>
-
+<HTML><BODY>
 <H1 ALIGN=RIGHT><A NAME=functions>B - Function Reference</A></H1>
-
-This appendix describes all of the <tt>fl_</tt> functions and
-<tt>Fl::</tt> methods. For a description of the FLTK widgets, see <a
-href="#widgets">Appendix A</a>.
-
+ This appendix describes all of the <TT>fl_</TT> functions and <TT>Fl::</TT>
+ methods. For a description of the FLTK widgets, see <A href=widgets.html#widgets>
+Appendix A</A>. 
 <H2>Functions</H2>
-
-<h3><a name="fl_color_chooser">int fl_color_chooser(const char*, double &amp;r, double &amp;g, double &amp;b)<br>
-int fl_color_chooser(const char *, uchar &amp;r, uchar &amp;g, uchar &amp;b)</a></h3>
-
-The double version takes RGB values in the range 0.0 to 1.0.  The
-uchar version takes RGB values in the range 0 to 255.
-
-<center><img src="fl_color_chooser.jpg"></center>
-
-<p><tt>fl_color_chooser()</tt> pops up a window to let the user pick an
-arbitrary RGB color.  They can pick the hue and saturation in the "hue
-box" on the left (hold down CTRL to just change the saturation), and
-the brighness using the vertical slider.  Or they can type the 8-bit
-numbers into the RGB <a
-href="#Fl_Value_Input"><tt>Fl_Value_Input</tt></a> fields, or drag the
-mouse across them to adjust them.  The pull-down menu lets the user set
-the input fields to show RGB, HSV, or 8-bit RGB (0 to 255).
-
-<p>This returns non-zero if the user picks ok, and updates the RGB
-values.  If the user picks cancel or closes the window this returns
-zero and leaves RGB unchanged.
-
-<p>If you use the color chooser on an 8-bit screen, it will allocate
-all the available colors, leaving you no space to exactly represent
-the color the user picks!  You can however use <a
-href="#fl_rectf"><tt>fl_rectf()</tt></a> to fill a region with a
-simulated color using dithering.
-
-<h3><a name="fl_show_colormap">int fl_show_colormap(int oldcol)</a></h3>
-
-<tt>fl_show_colormap()</tt> pops up a panel of the 256 colors you
-can access with <a href="#fl_color"><tt>fl_color()</tt></a> and lets the
-user pick one of them.  It returns the new color index, or the old one
-if the user types ESC or clicks outside the window.
-
-<center><img src="fl_show_colormap.gif"></center>
-
-<h3><a name="fl_message">void fl_message(const char *, ...)</a></h3>
-
-Displays a printf-style message in a pop-up box with an "OK"
-button, waits for the user to hit the button.  The message will wrap
-to fit the window, or may be many lines by putting <tt>\n</tt> characters into
-it.  The enter key is a shortcut for the OK button.
-
-<center><img src="fl_message.gif"></center>
-
-<h3><a name="fl_">void fl_alert(const char *, ...)</a></h3>
-
-Same as <tt>fl_message()</tt> except for the "!" symbol.
-
-<center><img src="fl_alert.gif"></center>
-
-<h3><a name="fl_ask">int fl_ask(const char *, ...)</a></h3>
-
-Displays a printf-style message in a pop-up box with an "Yes" and "No"
-button and waits for the user to hit a button.  The return value is 1
-if the user hits Yes, 0 if they pick No.  The enter key is a shortcut
-for Yes and ESC is a shortcut for No.
-
-<center><img src="fl_ask.gif"></center>
-
-<h3><a name="fl_choice">int fl_choice(const char *q, const char *b0, const char *b1, const char *b2, ...)</a></h3>
-
-Shows the message with three buttons below it marked with the strings
-<tt>b0</tt>, <tt>b1</tt>, and <tt>b2</tt>.  Returns 0, 1, or 2
-depending on which button is hit. ESC is a shortcut for button 0 and
-the enter key is a shortcut for button 1.  Notice the "misordered"
-position of the buttons.  You can hide buttons by passing <tt>NULL</tt>
-as their labels.
-
-<center><img src="fl_choice.gif"></center>
-
-<h3><a name="fl_input">const char *fl_input(const char *label, const char *deflt = 0, ...)</a></h3>
-
-Pops up a window displaying a string, lets the user edit it, and return
-the new value.  The cancel button returns <tt>NULL</tt>.  <i>The
-returned pointer is only valid until the next time <tt>fl_input()</tt>
-is called</i>.  Due to back-compatability, the arguments to any printf
-commands in the label are after the default value.
-
-<center><img src="fl_input.gif"></center>
-
-<h3><a name="fl_password">const char *fl_password(const char *label, const char *deflt = 0, ...)</a></h3>
-
-Same as <tt>fl_input()</tt> except an <a
-href="#Fl_Secret_Input"><tt>Fl_Secret_Input</tt></a> field is used.
-
-<center><img src="fl_password.gif"></center>
-
-<h3><a name="fl_message_font">void fl_message_font(Fl_Font fontid, uchar size)</a></h3>
-
-Change the font and font size used for the messages in all the popups.
-
-<h3><a name="fl_message_icon">Fl_Widget *fl_message_icon()</a></h3>
-
-Returns a pointer to the box at the left edge of all the popups.  You
-can alter the font, color, or label (including making it a Pixmap),
-before calling the functions.
-
-<h3><a name="fl_file_chooser">char *fl_file_chooser(const char * message, const char *pattern, const char *fname)</a></h3>
-
-FLTK provides a "tab completion" file chooser that makes it easy to
-choose files from large directories.  This file chooser has several
-unique features, the major one being that the Tab key completes
-filenames like it does in Emacs or tcsh, and the list always shows all
-possible completions.
-
-<center><img src="filechooser.gif"></center>
-
-<tt>fl_file_chooser()</tt> pops up the file chooser, waits for the user
-to pick a file or Cancel, and then returns a pointer to that filename
-or <tt>NULL</tt> if Cancel is chosen.
-
-<p><tt>message</tt> is a string used to title the window.
-
-<p><tt>pattern</tt> is used to limit the files listed in a directory to
-those matching the pattern.  This matching is done by <a
-href="#filename_match"><tt>filename_match()</tt></a>.  Use
-<tt>NULL</tt> to show all files.
-
-<p><tt>fname</tt> is a default filename to fill in the chooser with.  If
-this is <tt>NULL</tt> then the last filename that was choosen is used (unless
-that had a different pattern, in which case just the last directory
-with no name is used).  The first time the file chooser is called this
-defaults to a blank string.
-
-<p>The returned value points at a static buffer that is only good
-until the next time <tt>fl_file_chooser()</tt> is called.
-
-<h3><a name="fl_file_chooser_callback">void fl_file_chooser_callback(void (*cb)(const char *))</a></h3>
-
-Set a function that is called every time the user clicks a file in the
-currently popped-up file chooser.  This could be used to preview the
-contents of the file.  It has to be reasonably fast, and cannot create
-FLTK windows.
-
-<h3><a name="filename_list">int filename_list(const char *d, dirent ***list)</a></h3>
-
-This is a portable and const-correct wrapper for the
-<tt>fl_scandir</tt> function.  <tt>d</tt> is the name of a directory
-(it does not matter if it has a trailing slash or not).  For each file
-in that directory a "dirent" structure is created.  The only portable
-thing about a dirent is that dirent.d_name is the nul-terminated file
-name.  An array of pointers to these dirents is created and a pointer
-to the array is returned in <tt>*list</tt>.  The number of entries is
-given as a return value.  If there is an error reading the directory a
-number less than zero is returned, and <tt>errno</tt> has the reason
-(<tt>errno</tt> does not work under WIN32).  The files are sorted in
-"alphanumeric" order, where an attempt is made to put unpadded numbers
-in consecutive order.
-
-<p>You can free the returned list of files with the following code:
-
-<ul><pre>
-for (int i = return_value; i > 0;) free((void*)(list[--i]));
+<H3><A name=fl_color_chooser>int fl_color_chooser(const char*, double 
+&amp;r, double &amp;g, double &amp;b)
+<BR> int fl_color_chooser(const char *, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A>
+</H3>
+ The double version takes RGB values in the range 0.0 to 1.0.  The 
+uchar version takes RGB values in the range 0 to 255. 
+<CENTER><IMG src=./fl_color_chooser.jpg></CENTER>
+<P><TT>fl_color_chooser()</TT> pops up a window to let the user pick an 
+arbitrary RGB color.  They can pick the hue and saturation in the &quot;hue 
+box&quot; on the left (hold down CTRL to just change the saturation), and 
+the brighness using the vertical slider.  Or they can type the 8-bit 
+numbers into the RGB <A href=Fl_Value_Input.html#Fl_Value_Input><TT>
+Fl_Value_Input</TT></A> fields, or drag the mouse across them to adjust 
+them.  The pull-down menu lets the user set the input fields to show 
+RGB, HSV, or 8-bit RGB (0 to 255). </P>
+<P>This returns non-zero if the user picks ok, and updates the RGB 
+values.  If the user picks cancel or closes the window this returns 
+zero and leaves RGB unchanged. </P>
+<P>If you use the color chooser on an 8-bit screen, it will allocate 
+all the available colors, leaving you no space to exactly represent the 
+color the user picks!  You can however use <A href=#fl_rectf><TT>
+fl_rectf()</TT></A> to fill a region with a simulated color using 
+dithering. </P>
+<H3><A name=fl_show_colormap>int fl_show_colormap(int oldcol)</A></H3>
+<TT>fl_show_colormap()</TT> pops up a panel of the 256 colors you can 
+access with <A href=#fl_color><TT>fl_color()</TT></A> and lets the user 
+pick one of them.  It returns the new color index, or the old one if 
+the user types ESC or clicks outside the window. 
+<CENTER><IMG src=./fl_show_colormap.gif></CENTER>
+<H3><A name=fl_message>void fl_message(const char *, ...)</A></H3>
+ Displays a printf-style message in a pop-up box with an &quot;OK&quot; button, 
+waits for the user to hit the button.  The message will wrap to fit the 
+window, or may be many lines by putting <TT>\n</TT> characters into it. 
+ The enter key is a shortcut for the OK button. 
+<CENTER><IMG src=./fl_message.gif></CENTER>
+<H3><A name=fl_>void fl_alert(const char *, ...)</A></H3>
+ Same as <TT>fl_message()</TT> except for the &quot;!&quot; symbol. 
+<CENTER><IMG src=./fl_alert.gif></CENTER>
+<H3><A name=fl_ask>int fl_ask(const char *, ...)</A></H3>
+ Displays a printf-style message in a pop-up box with an &quot;Yes&quot; and &quot;No&quot; 
+button and waits for the user to hit a button.  The return value is 1 
+if the user hits Yes, 0 if they pick No.  The enter key is a shortcut 
+for Yes and ESC is a shortcut for No. 
+<CENTER><IMG src=./fl_ask.gif></CENTER>
+<H3><A name=fl_choice>int fl_choice(const char *q, const char *b0, 
+const char *b1, const char *b2, ...)</A></H3>
+ Shows the message with three buttons below it marked with the strings <TT>
+b0</TT>, <TT>b1</TT>, and <TT>b2</TT>.  Returns 0, 1, or 2 depending on 
+which button is hit. ESC is a shortcut for button 0 and the enter key 
+is a shortcut for button 1.  Notice the &quot;misordered&quot; position of the 
+buttons.  You can hide buttons by passing <TT>NULL</TT> as their 
+labels. 
+<CENTER><IMG src=./fl_choice.gif></CENTER>
+<H3><A name=fl_input>const char *fl_input(const char *label, const char 
+*deflt = 0, ...)</A></H3>
+ Pops up a window displaying a string, lets the user edit it, and 
+return the new value.  The cancel button returns <TT>NULL</TT>. <I>The 
+returned pointer is only valid until the next time <TT>fl_input()</TT>
+ is called</I>.  Due to back-compatability, the arguments to any printf 
+commands in the label are after the default value. 
+<CENTER><IMG src=./fl_input.gif></CENTER>
+<H3><A name=fl_password>const char *fl_password(const char *label, 
+const char *deflt = 0, ...)</A></H3>
+ Same as <TT>fl_input()</TT> except an <A href=Fl_Secret_Input.html#Fl_Secret_Input>
+<TT>Fl_Secret_Input</TT></A> field is used. 
+<CENTER><IMG src=./fl_password.gif></CENTER>
+<H3><A name=fl_message_font>void fl_message_font(Fl_Font fontid, uchar 
+size)</A></H3>
+ Change the font and font size used for the messages in all the popups. 
+<H3><A name=fl_message_icon>Fl_Widget *fl_message_icon()</A></H3>
+ Returns a pointer to the box at the left edge of all the popups.  You 
+can alter the font, color, or label (including making it a Pixmap), 
+before calling the functions. 
+<H3><A name=fl_file_chooser>char *fl_file_chooser(const char * message, 
+const char *pattern, const char *fname)</A></H3>
+ FLTK provides a &quot;tab completion&quot; file chooser that makes it easy to 
+choose files from large directories.  This file chooser has several 
+unique features, the major one being that the Tab key completes 
+filenames like it does in Emacs or tcsh, and the list always shows all 
+possible completions. 
+<CENTER><IMG src=./filechooser.gif></CENTER>
+<TT>fl_file_chooser()</TT> pops up the file chooser, waits for the user 
+to pick a file or Cancel, and then returns a pointer to that filename 
+or <TT>NULL</TT> if Cancel is chosen. 
+<P><TT>message</TT> is a string used to title the window. </P>
+<P><TT>pattern</TT> is used to limit the files listed in a directory to 
+those matching the pattern.  This matching is done by <A href=#filename_match>
+<TT>filename_match()</TT></A>.  Use <TT>NULL</TT> to show all files. </P>
+<P><TT>fname</TT> is a default filename to fill in the chooser with. 
+ If this is <TT>NULL</TT> then the last filename that was choosen is 
+used (unless that had a different pattern, in which case just the last 
+directory with no name is used).  The first time the file chooser is 
+called this defaults to a blank string. </P>
+<P>The returned value points at a static buffer that is only good until 
+the next time <TT>fl_file_chooser()</TT> is called. </P>
+<H3><A name=fl_file_chooser_callback>void fl_file_chooser_callback(void 
+(*cb)(const char *))</A></H3>
+ Set a function that is called every time the user clicks a file in the 
+currently popped-up file chooser.  This could be used to preview the 
+contents of the file.  It has to be reasonably fast, and cannot create 
+FLTK windows. 
+<H3><A name=filename_list>int filename_list(const char *d, dirent 
+***list)</A></H3>
+ This is a portable and const-correct wrapper for the <TT>fl_scandir</TT>
+ function. <TT>d</TT> is the name of a directory (it does not matter if 
+it has a trailing slash or not).  For each file in that directory a 
+&quot;dirent&quot; structure is created.  The only portable thing about a dirent 
+is that dirent.d_name is the nul-terminated file name.  An array of 
+pointers to these dirents is created and a pointer to the array is 
+returned in <TT>*list</TT>.  The number of entries is given as a return 
+value.  If there is an error reading the directory a number less than 
+zero is returned, and <TT>errno</TT> has the reason (<TT>errno</TT>
+ does not work under WIN32).  The files are sorted in &quot;alphanumeric&quot; 
+order, where an attempt is made to put unpadded numbers in consecutive 
+order. 
+<P>You can free the returned list of files with the following code: </P>
+<UL>
+<PRE>
+for (int i = return_value; i &gt; 0;) free((void*)(list[--i]));
 free((void*)list);
-</pre></ul>
-
-<h3><a name="filename_isdir">int filename_isdir(const char *f)</a></h3>
-
-Returns non-zero if the file exists and is a directory.
-
-<h3><a name="filename_name">const char *filename_name(const char *f)</a></h3>
-
-Returns a pointer to the character after the last slash, or to the
-start of the filename if there is none.
-
-<h3><a name="filename_ext">const char *filename_ext(const char *f)</a></h3>
-
-Returns a pointer to the last period in <tt>filename_name(f)</tt>, or
-a pointer to the trailing nul if none.
-
-<h3><a name="filename_setext">char *filename_setext(char *f, const char *ext)</a></h3>
-
-Does <tt>strcpy(filename_ext(f), ext ? ext : "")</tt>.  Returns a
-pointer to <tt>f</tt>.
-
-<h3><a name="filename_expand">int filename_expand(char *out, const char *in)</a></h3>
-
-Splits <tt>in</tt> at each slash character.  Replaces any occurrance of
-<tt>$X</tt> with <tt>getenv("X")</tt> (leaving it as <tt>$X</tt> if the
-environment variable does not exist).  Replaces any occurances of
-<tt>~X</tt> with user <tt>X</tt>'s home directory (leaving it as
-<tt>~X</tt> if the user does not exist).  Any resulting double slashes
-cause everything before the second slash to be deleted.  Copies the
-result to <tt>out</tt> (<tt>in</tt> and <tt>out</tt> may be the same
-buffer).  Returns non-zero if any changes were made. <i>In true retro
-programming style, it is up to you to provide a buffer big enough for
-the result.  1024 characters should be enough.</i>
-
-<h3><a name="filename_absolute">int filename_absolute(char *out, const char *in)</a></h3>
-
-If <tt>in</tt> does not start with a slash, this prepends the current
-working directory to <tt>in</tt> and then deletes any occurances of
-<tt>.</tt> and </tt>x/..</tt> from the result, which it copies to
-<tt>out</tt> (<tt>in</tt> and <tt>out</tt> may be the same buffer). 
-Returns non-zero if any changes were made.  <i>In true retro
-programming style, it is up to you to provide a buffer big enough for
-the result.  1024 characters should be enough.</i>
-
-<h3><a name="filename_match">int filename_match(const char *f, const char *pattern)</a></h3>
-
-Returns true if <tt>f</tt> matches <tt>pattern</tt>.  The following syntax
-is used by <tt>pattern</tt>:
-
-<ul>
-
-	<li><tt>*</tt> matches any sequence of 0 or more characters.
-
-	<li><tt>?</tt> matches any single character.
-
-	<li><tt>[set]</tt> matches any character in the set.  Set
-	can contain any single characters, or a-z to represent a range.  To
-	match ] or - they must be the first characters.  To match ^ or ! they
-	must not be the first characters.
-
-	<li><tt>[^set]</b> or <b>[!set]</tt> matches any character
-	not in the set.
-
-	<li><tt>{X|Y|Z}</b> or <b>{X,Y,Z}</tt> matches any one of
-	the subexpressions literally.
-
-	<li><tt>\x</tt> quotes the character x so it has no special
-	meaning.
-
-	<li><tt>x</tt> all other characters must be matched exactly.
-</ul>
-
+</PRE>
+</UL>
+<H3><A name=filename_isdir>int filename_isdir(const char *f)</A></H3>
+ Returns non-zero if the file exists and is a directory. 
+<H3><A name=filename_name>const char *filename_name(const char *f)</A></H3>
+ Returns a pointer to the character after the last slash, or to the 
+start of the filename if there is none. 
+<H3><A name=filename_ext>const char *filename_ext(const char *f)</A></H3>
+ Returns a pointer to the last period in <TT>filename_name(f)</TT>, or 
+a pointer to the trailing nul if none. 
+<H3><A name=filename_setext>char *filename_setext(char *f, const char 
+*ext)</A></H3>
+ Does <TT>strcpy(filename_ext(f), ext ? ext : &quot;&quot;)</TT>.  Returns a 
+pointer to <TT>f</TT>. 
+<H3><A name=filename_expand>int filename_expand(char *out, const char 
+*in)</A></H3>
+ Splits <TT>in</TT> at each slash character.  Replaces any occurrance 
+of <TT>$X</TT> with <TT>getenv(&quot;X&quot;)</TT> (leaving it as <TT>$X</TT> if 
+the environment variable does not exist).  Replaces any occurances of <TT>
+~X</TT> with user <TT>X</TT>'s home directory (leaving it as <TT>~X</TT>
+ if the user does not exist).  Any resulting double slashes cause 
+everything before the second slash to be deleted.  Copies the result to <TT>
+out</TT> (<TT>in</TT> and <TT>out</TT> may be the same buffer). 
+ Returns non-zero if any changes were made. <I>In true retro 
+programming style, it is up to you to provide a buffer big enough for 
+the result.  1024 characters should be enough.</I>
+<H3><A name=filename_absolute>int filename_absolute(char *out, const 
+char *in)</A></H3>
+ If <TT>in</TT> does not start with a slash, this prepends the current 
+working directory to <TT>in</TT> and then deletes any occurances of <TT>
+.</TT> and x/.. from the result, which it copies to <TT>out</TT> (<TT>in</TT>
+ and <TT>out</TT> may be the same buffer).  Returns non-zero if any 
+changes were made. <I>In true retro programming style, it is up to you 
+to provide a buffer big enough for the result.  1024 characters should 
+be enough.</I>
+<H3><A name=filename_match>int filename_match(const char *f, const char 
+*pattern)</A></H3>
+ Returns true if <TT>f</TT> matches <TT>pattern</TT>.  The following 
+syntax is used by <TT>pattern</TT>: 
+<UL>
+<LI><TT>*</TT> matches any sequence of 0 or more characters. </LI>
+<LI><TT>?</TT> matches any single character. </LI>
+<LI><TT>[set]</TT> matches any character in the set.  Set  can contain 
+any single characters, or a-z to represent a range.  To  match ] or - 
+they must be the first characters.  To match ^ or ! they  must not be 
+the first characters. </LI>
+<LI><TT>[^set] or <B>[!set]</B></TT> matches any character  not in the 
+set. </LI>
+<LI><TT>{X|Y|Z} or <B>{X,Y,Z}</B></TT> matches any one of  the 
+subexpressions literally. </LI>
+<LI><TT>\x</TT> quotes the character x so it has no special  meaning. </LI>
+<LI><TT>x</TT> all other characters must be matched exactly. </LI>
+</UL>
 <H2>Fl:: Methods</H2>
-
-<h3><a name="add_fd">static void Fl::add_fd(int fd, void (*cb)(int, void *), void * = 0)<br>
-static void Fl::add_fd(int fd, int when, void (*cb)(int, void *), void * = 0)</a><br>
-<a name="remove_fd">static void Fl::remove_fd(int)</a></h3>
-
-Add file descriptor <tt>fd</tt> to listen to.  When the <tt>fd</tt>
-becomes ready for reading the callback is done.  The callback is passed
-the <tt>fd</tt> and the arbitrary <tt>void *</tt> argument. 
-<tt>Fl::wait()</tt> will return immediately after calling the callback.
-
-<p>The second version takes a <tt>when</tt> bitfield, with the bits
-<tt>FL_READ</tt>, <tt>FL_WRITE</tt>, and <tt>FL_EXCEPT</tt> defined, to
-indicate when the callback should be done.
-
-<p>There can only be one callback of each type for a file descriptor.
-<tt>Fl::remove_fd()</tt> gets rid of <i>all</i> the callbacks for a
-given file descriptor.
-
-<p>Under UNIX <i>any</i> file descriptor can be monitored (files,
-devices, pipes, sockets, etc.) Due to limitations in Microsoft Windows,
-WIN32 applications can only monitor sockets.
-
-<h3><a name="add_handler">static void Fl::add_handler(int (*f)(int))</h3>
-
-Install a function to parse unrecognized events.  If FLTK cannot figure
-out what to do with an event, it calls each of these functions (most
-recent first) until one of them returns non-zero.  If none of them
-returns non zero then the event is ignored.  Events that cause this to
-be called are:
-
-<ul>
-
-	<li><tt>FL_SHORTCUT</tt> events that are not recognized by any
-	widget.  This lets you provide global shortcut keys.
-
-	<li>System events that FLTK does not recognize.  See <a
-	href="#fl_xevent"><tt>fl_xevent</tt></a>.
-
-	<li><i>Some</i> other events when the widget FLTK selected
-	returns zero from its <tt>handle()</tt> method.  Exactly which
-	ones may change in future versions, however.
-
-</ul>
-
-<h3><a name="add_idle">static Fl::add_idle(void (*cb)(void *), void *)</a></h3>
-
-Adds a callback function that is called by <tt>Fl::wait()</tt> when there
-is nothing to do. This can be used for background
-processing.
-
-<p><i>Warning: this can absorb all your machine's time!</i>
-
-<p>You can have multiple idle callbacks. To remove an idle callback
-use <a href="#remove_idle"><tt>Fl::remove_idle()</tt></a>.
-
-<p>Only <tt>Fl::wait()</tt> calls the idle callbacks.
-<tt>Fl::wait(time)</tt>, <tt>Fl::check()</tt>, and <tt>Fl::ready()</tt>
-ignore them so that these functions may be called by the idle callbacks
-themselves without having to worry about recursion.
-
-<p>The idle callback can call any FLTK functions.  However if you call
-something that calls <tt>Fl::wait()</tt> (such as a message pop-up) you
-should first remove the idle callback so that it does not recurse.
-
-<h3><a name="add_timeout">static void Fl::add_timeout(float t, void (*cb)(void *),void *v=0)</a></h3>
-
-Add a one-shot timeout callback.  The timeout will happen as soon as
-possible after <tt>t</tt> seconds after the last time <tt>wait()</tt>
-was called.  The optional <tt>void *</tt> argument is passed to the
-callback.
-
-<p>This code will print "TICK" each second on stdout, no matter what
-else the user or program does:
-
-<ul><pre>
+<H3><A name=add_fd>static void Fl::add_fd(int fd, void (*cb)(int, void 
+*), void * = 0)
+<BR> static void Fl::add_fd(int fd, int when, void (*cb)(int, void *), 
+void * = 0)</A>
+<BR><A name=remove_fd>static void Fl::remove_fd(int)</A></H3>
+ Add file descriptor <TT>fd</TT> to listen to.  When the <TT>fd</TT>
+ becomes ready for reading the callback is done.  The callback is 
+passed the <TT>fd</TT> and the arbitrary <TT>void *</TT> argument. <TT>
+Fl::wait()</TT> will return immediately after calling the callback. 
+<P>The second version takes a <TT>when</TT> bitfield, with the bits <TT>
+FL_READ</TT>, <TT>FL_WRITE</TT>, and <TT>FL_EXCEPT</TT> defined, to 
+indicate when the callback should be done. </P>
+<P>There can only be one callback of each type for a file descriptor. <TT>
+Fl::remove_fd()</TT> gets rid of <I>all</I> the callbacks for a given 
+file descriptor. </P>
+<P>Under UNIX <I>any</I> file descriptor can be monitored (files, 
+devices, pipes, sockets, etc.) Due to limitations in Microsoft Windows, 
+WIN32 applications can only monitor sockets. </P>
+<H3><A name=add_handler>static void Fl::add_handler(int (*f)(int))</A></H3>
+ Install a function to parse unrecognized events.  If FLTK cannot 
+figure out what to do with an event, it calls each of these functions 
+(most recent first) until one of them returns non-zero.  If none of 
+them returns non zero then the event is ignored.  Events that cause 
+this to be called are: 
+<UL>
+<LI><TT>FL_SHORTCUT</TT> events that are not recognized by any  widget. 
+ This lets you provide global shortcut keys. </LI>
+<LI>System events that FLTK does not recognize.  See <A href=osissues.html#fl_xevent>
+<TT>fl_xevent</TT></A>. </LI>
+<LI><I>Some</I> other events when the widget FLTK selected  returns 
+zero from its <TT>handle()</TT> method.  Exactly which  ones may change 
+in future versions, however. </LI>
+</UL>
+<H3><A name=add_idle>static Fl::add_idle(void (*cb)(void *), void *)</A></H3>
+ Adds a callback function that is called by <TT>Fl::wait()</TT> when 
+there is nothing to do. This can be used for background processing. 
+<P><I>Warning: this can absorb all your machine's time!</I></P>
+<P>You can have multiple idle callbacks. To remove an idle callback use <A
+href=#remove_idle><TT>Fl::remove_idle()</TT></A>. </P>
+<P>Only <TT>Fl::wait()</TT> calls the idle callbacks. <TT>Fl::wait(time)</TT>
+, <TT>Fl::check()</TT>, and <TT>Fl::ready()</TT> ignore them so that 
+these functions may be called by the idle callbacks themselves without 
+having to worry about recursion. </P>
+<P>The idle callback can call any FLTK functions.  However if you call 
+something that calls <TT>Fl::wait()</TT> (such as a message pop-up) you 
+should first remove the idle callback so that it does not recurse. </P>
+<H3><A name=add_timeout>static void Fl::add_timeout(float t, void 
+(*cb)(void *),void *v=0)</A></H3>
+ Add a one-shot timeout callback.  The timeout will happen as soon as 
+possible after <TT>t</TT> seconds after the last time <TT>wait()</TT>
+ was called.  The optional <TT>void *</TT> argument is passed to the 
+callback. 
+<P>This code will print &quot;TICK&quot; each second on stdout, no matter what 
+else the user or program does: </P>
+<UL>
+<PRE>
 void callback(void *) {
-  printf("TICK\n");
+  printf(&quot;TICK\n&quot;);
   Fl::add_timeout(1.0,callback);
 }
 
@@ -321,519 +243,385 @@ main() {
   Fl::add_timeout(1.0,callback);
   Fl::run();
 }
-</pre></ul>
-
-<h3><a name="arg">static int Fl::arg(int argc, char **argv, int &amp;i)</a></h3>
-
-Consume a single switch from <tt>argv</tt>, starting at word
-</tt>i</tt>.  Returns the number of words eaten (1 or 2, or 0 if it is
-not recognized) and adds the same value to <tt>i</tt>.  You can use this
-function if you prefer to control the incrementing through the
-arguments yourself.
-
-<h3><a name="args">static int Fl::args(int argc, char **argv, int &amp;i, int (*callback)(int, char**,int &amp;)=0)<br>
-void Fl::args(int argc, char **argv)</a></h3>
-
-FLTK provides an <i>entirely optional</i> command-line switch parser. 
-You don't have to call it if you don't like them! Everything it can do
-can be done with other calls to FLTK.
-
-<p>To use the switch parser, call <tt>Fl::args(...)</tt> near the start of
-your program.  This does <i>not</i> open the display, instead switches
-that need the display open are stashed into static variables. Then
-you <i>must</i> display your first window by calling
-<a href="#Fl_Window.show">window->show(argc,argv)</a>, which will do anything
-stored in the static variables.
-
-<p><tt>callback</tt> lets you define your own switches.  It is called
-with the same <tt>argc</tt> and <tt>argv</tt>, and with <tt>i</tt> the index of each word.
-The callback should return zero if the switch is unrecognized, and not
-change <tt>i</tt>.  It should return non-zero if the switch is recognized, and
-add at least 1 to <tt>i</tt> (it can add more to consume words after the
-switch).  This function is called before any other tests, so you can
-override any FLTK switch.
-
-<p>On return <tt>i</tt> is set to the index of the first non-switch.
-This is either:
-
-<ul>
-
-     <li>The first word that does not start with '-'.
-
-     <li>The word '-' (used by many programs to name stdin as a file)
-
-     <li>The first unrecognized switch (return value is 0).
-
-     <li><tt>argc</tt>
-
-</ul>
-
-The return value is <tt>i</tt> unless an unrecognized switch is
-found, in which case it is zero.  If your program takes no arguments
-other than switches you should produce an error if the return value is
-less than <tt>argc</tt>.
-
-<p>All switches may be abbreviated to two letters and case is ignored:
-
-<ul>
-
-	<li><tt>-display host:n.n</tt> The X display to use (ignored
-	under WIN32).
-
-	<li><tt>-geometry WxH+X+Y</tt> The window position and size
-	will be modified according the the standard X geometry string.
-
-	<li><tt>-name string</tt> Fl_Window::xclass(string) will be
-	done to the window, possibly changing its icon.
-
-	<li><tt>-title string</tt> Fl_Window::label(string) will be
-	done to the window, changing both its title and the icontitle.
-
-	<li><tt>-iconic</tt> Fl_Window::iconize() will be done to
-	the window.
-
-	<li><tt>-bg color</tt> XParseColor is used to lookup the
-	passed color and then Fl::background() is done.  Under WIN32
-	only color names of the form "#xxxxxx" are understood.
-
-	<li><tt>-bg2 color</tt> XParseColor is used to lookup the
-	passed color and then Fl::background2() is done.
-
-	<li><tt>-fg color</tt> XParseColor is used to lookup the
-	passed color and then Fl::foreground() is done.
-
-</ul>
-
-The second form of <tt>Fl::args()</tt> is useful if your program does
-not have command line switches of its own.  It parses all the switches,
-and if any are not recognized it calls <tt>Fl::abort(Fl::help)</tt>.
-
-<h3><a name="background">static void Fl::background(uchar, uchar, uchar)</a></h3>
-
-Changes <tt>fl_color(FL_GRAY)</tt> to the given color, and changes
-the gray ramp from 32 to 56 to black to white.  These are the colors
-used as backgrounds by almost all widgets and used to draw the edges
-of all the boxtypes.
-
-<h3><a name="background2">static void Fl::background2(uchar, uchar, uchar)</a></h3>
-
-Changes <tt>fl_color(FL_WHITE)</tt> and the same colors as
-<tt>Fl::foreground()</tt>.  This color is used as a background by
-<tt>Fl_Input</tt> and other text widgets.
-
-<h3><a name="belowmouse">static Fl_Widget *Fl::belowmouse() const<br>
-static void Fl::belowmouse(Fl_Widget *)</h3>
-
-Get or set the widget that is below the mouse.  This is for
-highlighting buttons.  It is not used to send <tt>FL_PUSH</tt> or
-<tt>FL_MOVE</tt> directly, for several obscure reasons, but those
-events typically go to this widget.  This is also the first widget
-tried for <tt>FL_SHORTCUT</tt> events.
-
-<p>If you change the belowmouse widget, the previous one and all
-parents (that don't contain the new widget) are sent <tt>FL_LEAVE</tt>
-events.  Changing this does <i>not</i> send <tt>FL_ENTER</tt> to this
-or any widget, because sending <tt>FL_ENTER</tt> is supposed to
-<i>test</i> if the widget wants the mouse (by it returning non-zero
-from <tt>handle()</tt>).
-
-<h3><a name="box_dh">static int Fl::box_dh(Fl_Boxtype)</a></h3>
-
-Returns the height offset for the given boxtype.
-
-<h3><a name="box_dw">static int Fl::box_dw(Fl_Boxtype)</a></h3>
-
-Returns the width offset for the given boxtype.
-
-<h3><a name="box_dx">static int Fl::box_dx(Fl_Boxtype)</a></h3>
-
-Returns the X offset for the given boxtype.
-
-<h3><a name="box_dy">static int Fl::box_dy(Fl_Boxtype)</a></h3>
-
-Returns the Y offset for the given boxtype.
-
-<h3><a name="check">static int Fl::check()</a></h3>
-
-This does the same thing as <tt>Fl::wait(0)</tt>, except because it does not
-have to return the elapsed time value it can be implemented faster on
-certain systems.  Use this to interrupt a big calculation:
-
-<ul><pre>
+</PRE>
+</UL>
+<H3><A name=arg>static int Fl::arg(int argc, char **argv, int &amp;i)</A></H3>
+ Consume a single switch from <TT>argv</TT>, starting at word i. 
+ Returns the number of words eaten (1 or 2, or 0 if it is not 
+recognized) and adds the same value to <TT>i</TT>.  You can use this 
+function if you prefer to control the incrementing through the 
+arguments yourself. 
+<H3><A name=args>static int Fl::args(int argc, char **argv, int &amp;i, int 
+(*callback)(int, char**,int &amp;)=0)
+<BR> void Fl::args(int argc, char **argv)</A></H3>
+ FLTK provides an <I>entirely optional</I> command-line switch parser. 
+ You don't have to call it if you don't like them! Everything it can do 
+can be done with other calls to FLTK. 
+<P>To use the switch parser, call <TT>Fl::args(...)</TT> near the start 
+of your program.  This does <I>not</I> open the display, instead 
+switches that need the display open are stashed into static variables. 
+Then you <I>must</I> display your first window by calling <A href=Fl_Window.html#Fl_Window.show>
+window-&gt;show(argc,argv)</A>, which will do anything stored in the 
+static variables. </P>
+<P><TT>callback</TT> lets you define your own switches.  It is called 
+with the same <TT>argc</TT> and <TT>argv</TT>, and with <TT>i</TT> the 
+index of each word. The callback should return zero if the switch is 
+unrecognized, and not change <TT>i</TT>.  It should return non-zero if 
+the switch is recognized, and add at least 1 to <TT>i</TT> (it can add 
+more to consume words after the switch).  This function is called 
+before any other tests, so you can override any FLTK switch. </P>
+<P>On return <TT>i</TT> is set to the index of the first non-switch. 
+This is either: </P>
+<UL>
+<LI>The first word that does not start with '-'. </LI>
+<LI>The word '-' (used by many programs to name stdin as a file) </LI>
+<LI>The first unrecognized switch (return value is 0). </LI>
+<LI><TT>argc</TT></LI>
+</UL>
+ The return value is <TT>i</TT> unless an unrecognized switch is found, 
+in which case it is zero.  If your program takes no arguments other 
+than switches you should produce an error if the return value is less 
+than <TT>argc</TT>. 
+<P>All switches may be abbreviated to two letters and case is ignored: </P>
+<UL>
+<LI><TT>-display host:n.n</TT> The X display to use (ignored  under 
+WIN32). </LI>
+<LI><TT>-geometry WxH+X+Y</TT> The window position and size  will be 
+modified according the the standard X geometry string. </LI>
+<LI><TT>-name string</TT> Fl_Window::xclass(string) will be  done to 
+the window, possibly changing its icon. </LI>
+<LI><TT>-title string</TT> Fl_Window::label(string) will be  done to 
+the window, changing both its title and the icontitle. </LI>
+<LI><TT>-iconic</TT> Fl_Window::iconize() will be done to  the window. </LI>
+<LI><TT>-bg color</TT> XParseColor is used to lookup the  passed color 
+and then Fl::background() is done.  Under WIN32  only color names of 
+the form &quot;#xxxxxx&quot; are understood. </LI>
+<LI><TT>-bg2 color</TT> XParseColor is used to lookup the  passed color 
+and then Fl::background2() is done. </LI>
+<LI><TT>-fg color</TT> XParseColor is used to lookup the  passed color 
+and then Fl::foreground() is done. </LI>
+</UL>
+ The second form of <TT>Fl::args()</TT> is useful if your program does 
+not have command line switches of its own.  It parses all the switches, 
+and if any are not recognized it calls <TT>Fl::abort(Fl::help)</TT>. 
+<H3><A name=background>static void Fl::background(uchar, uchar, uchar)</A>
+</H3>
+ Changes <TT>fl_color(FL_GRAY)</TT> to the given color, and changes the 
+gray ramp from 32 to 56 to black to white.  These are the colors used 
+as backgrounds by almost all widgets and used to draw the edges of all 
+the boxtypes. 
+<H3><A name=background2>static void Fl::background2(uchar, uchar, uchar)</A>
+</H3>
+ Changes <TT>fl_color(FL_WHITE)</TT> and the same colors as <TT>
+Fl::foreground()</TT>.  This color is used as a background by <TT>
+Fl_Input</TT> and other text widgets. 
+<H3><A name=belowmouse>static Fl_Widget *Fl::belowmouse() const
+<BR> static void Fl::belowmouse(Fl_Widget *)</A></H3>
+ Get or set the widget that is below the mouse.  This is for 
+highlighting buttons.  It is not used to send <TT>FL_PUSH</TT> or <TT>
+FL_MOVE</TT> directly, for several obscure reasons, but those events 
+typically go to this widget.  This is also the first widget tried for <TT>
+FL_SHORTCUT</TT> events. 
+<P>If you change the belowmouse widget, the previous one and all 
+parents (that don't contain the new widget) are sent <TT>FL_LEAVE</TT>
+ events.  Changing this does <I>not</I> send <TT>FL_ENTER</TT> to this 
+or any widget, because sending <TT>FL_ENTER</TT> is supposed to <I>test</I>
+ if the widget wants the mouse (by it returning non-zero from <TT>
+handle()</TT>). </P>
+<H3><A name=box_dh>static int Fl::box_dh(Fl_Boxtype)</A></H3>
+ Returns the height offset for the given boxtype. 
+<H3><A name=box_dw>static int Fl::box_dw(Fl_Boxtype)</A></H3>
+ Returns the width offset for the given boxtype. 
+<H3><A name=box_dx>static int Fl::box_dx(Fl_Boxtype)</A></H3>
+ Returns the X offset for the given boxtype. 
+<H3><A name=box_dy>static int Fl::box_dy(Fl_Boxtype)</A></H3>
+ Returns the Y offset for the given boxtype. 
+<H3><A name=check>static int Fl::check()</A></H3>
+ This does the same thing as <TT>Fl::wait(0)</TT>, except because it 
+does not have to return the elapsed time value it can be implemented 
+faster on certain systems.  Use this to interrupt a big calculation: 
+<UL>
+<PRE>
 while (!calculation_done()) {
   calculate();
   Fl::check();
   if (user_hit_abort_button()) break;
 }
-</pre></ul>
-
-This returns non-zero if any windows are displayed, and 0 if no
-windows are displayed.
-
-<h3><a name="damage">static int Fl::damage()</a></h3>
-
-If true then <a href="#flush"><tt>flush()</tt></a> will do something.
-
-<h3><a name="display">static void Fl::display(const char *)</a></h3>
-
-Sets the X display to use for all windows.  This function is ignored
-under WIN32.
-
-<h3><a name="enable_symbols">static void Fl::enable_symbols()</a></h3>
-
-Enables the symbol drawing code.
-
-<h3><a name="event_button">static int Fl::event_button()</a></h3>
-
-Returns which mouse button was pressed.  This returns garbage if the
-most recent event was not a <tt>FL_PUSH</tt> or <tt>FL_RELEASE</tt>
-event.
-
-<h3><a name="event_clicks">int Fl::event_clicks()<br>
-void Fl::event_clicks(int)</a></h3>
-
-The first form returns non-zero if the most recent <tt>FL_PUSH</tt> or
-<tt>FL_KEYBOARD</tt> was a "double click".  Returns N-1 for N clicks. 
-A double click is counted if the same button is pressed again while
-<tt>event_is_click()</tt> is true.
-
-<p>The second form directly sets the number returned by
-<tt>Fl::event_clicks()</tt>.  This can be used to set it to zero so
-that later code does not think an item was double-clicked.
-
-<h3><a name="event_inside">int Fl::event_inside(const Fl_Widget *) const<br>
-int Fl::event_inside(int x, int y, int w, int h)</a></h3>
-
-Returns non-zero if the current <tt>event_x</tt> and <tt>event_y</tt>
-put it inside the widget or inside an arbitrary bounding box.  You
-should always call this rather than doing your own comparison so you
-are consistent about edge effects.
-
-<h3><a name="event_is_click">int Fl::event_is_click()<br>
-void Fl::event_is_click(0)</a></h3>
-
-The first form returns non-zero if the mouse has not moved far enough
-and not enough time has passed since the last <tt>FL_PUSH</tt> or
-<tt>FL_KEYBOARD</tt> event for it to be considered a "drag" rather than
-a "click".  You can test this on <tt>FL_DRAG</tt>, <tt>FL_RELEASE</tt>,
-and <tt>FL_MOVE</tt> events.
-
-The second form clears the value returned by
-<tt>Fl::event_is_click()</tt>.  Useful to prevent the <i>next</i> click
-from being counted as a double-click or to make a popup menu pick an
-item with a single click.  Don't pass non-zero to this.
-
-<h3><a name="event_key">int Fl::event_key()<br>
-int Fl::event_key(int)</a><br>
-<a name="get_key">int Fl::get_key(int)</a></h3>
-
-<tt>Fl::event_key()</tt> returns which key on the keyboard was last pushed.
-
-<p><tt>Fl::event_key(int)</tt> returns true if the given key was held
-down (or pressed) <i>during</i> the last event.  This is constant until
-the next event is read from the server.
-
-<p><tt>Fl::get_key(int)</tt> returns true if the given key is held down
-<i>now</i>.  Under X this requires a round-trip to the server and is
-<i>much</i> slower than <tt>Fl::event_key(int)</tt>.
-
-<p>Keys are identified by the <i>unshifted</i> values. FLTK defines a
-set of symbols that should work on most modern machines for every key
-on the keyboard:
-
-<ul>
-
-	<li>All keys on the main keyboard producing a printable ASCII
-	character use the value of that ASCII character (as though shift,
-	ctrl, and caps lock were not on).  The space bar is 32.
-
-	<li>All keys on the numeric keypad producing a printable ASCII
-	character use the value of that ASCII character plus
-	<tt>FL_KP</tt>.  The highest possible value is
-	<tt>FL_KP_Last</tt> so you can range-check to see if something is
-	on the keypad.
-
-	<li>All numbered function keys use the number on the function key plus
-	<tt>FL_F</tt>.  The highest possible number is
-	<tt>FL_F_Last</tt>, so you can range-check a value.
-
-	<li>Buttons on the mouse are considered keys, and use the button
-	number (where the left button is 1) plus <tt>FL_Button</tt>.
-
-	<li>All other keys on the keypad have a symbol: <tt>FL_Escape,
-	FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause,
-	FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
-	FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
-	FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
-	FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter</tt>.  Be
-	careful not to confuse these with the very similar, but all-caps,
-	symbols used by <a href="#event_state"><tt>Fl::event_state()</tt></a>.
-
-</ul>
-
-On X <tt>Fl::get_key(FL_Button+n)</tt> does not work.
-
-<p>On WIN32 <tt>Fl::get_key(FL_KP_Enter)</tt> and
-<tt>Fl::event_key(FL_KP_Enter)</tt> do not work.
-
-<h3><a name="event_length">char *Fl::event_length()</a></h3>
-
-Returns the length of the text in <tt>Fl::event_text()</tt>.  There
-will always be a nul at this position in the text.  However there may
-be a nul before that if the keystroke translates to a nul character or
-you paste a nul character.
-
-<h3><a name="event_state">ulong Fl::event_state()<br>
-unsigned int Fl::event_state(ulong)</h3>
-
-This is a bitfield of what shift states were on and what mouse buttons
-were held down during the most recent event.  The second version
-returns non-zero if any of the passed bits are turned on.  The legal
-bits are:
-
-<ul>
-	<li><tt>FL_SHIFT</tt>
-	<li><tt>FL_CAPS_LOCK</tt>
-	<li><tt>FL_CTRL</tt>
-	<li><tt>FL_ALT</tt>
-	<li><tt>FL_NUM_LOCK</tt>
-	<li><tt>FL_META</tt>
-	<li><tt>FL_SCROLL_LOCK</tt>
-	<li><tt>FL_BUTTON1</tt>
-	<li><tt>FL_BUTTON2</tt>
-	<li><tt>FL_BUTTON3</tt>
-</ul>
-
-X servers do not agree on shift states, and FL_NUM_LOCK, FL_META,
-and FL_SCROLL_LOCK may not work.  The values were selected to match
-the XFree86 server on Linux.  In addition there is a bug in the way
-X works so that the shift state is not correctly reported until the
-first event <i>after</i> the shift key is pressed or released.
-
-<h3><a name="event_text">char *Fl::event_text()</a></h3>
-
-Returns the ASCII text (in the future this may be UTF-8) produced by
-the last <tt>FL_KEYBOARD</tt> or <tt>FL_PASTEM</tt> or possibly other
-event.  A zero-length string is returned for any keyboard function keys
-that do not produce text. This pointer points at a static buffer and is
-only valid until the next event is processed.
-
-<p>Under X this is the result of calling <tt>XLookupString()</tt>.
-
-<h3><a name="event_x">static int Fl::event_x()<br>
-<a name="event_y">static int Fl::event_y()</a></h3>
-
-Returns the mouse position of the event relative to the <tt>Fl_Window</tt> it
-was passed to.
-
-<h3><a name="event_x_root">static int Fl::event_x_root()<br>
-<a name="event_y_root">static int Fl::event_y_root()</a></h3>
-
-Returns the mouse position on the screen of the event.  To find the
-absolute position of an <tt>Fl_Window</tt> on the screen, use the difference
-between <tt>event_x_root(),event_y_root()</tt> and
-<tt>event_x(),event_y()</tt>.
-
-<h3><a name="first_window">static Fl_Window *Fl::first_window()</a></h3>
-
-Returns the first top-level window in the widget hierarchy.
-
-<h3><a name="flush">static void Fl::flush()</a></h3>
-
-Causes all the windows that need it to be redrawn and graphics forced
-out through the pipes.  This is what <tt>wait()</tt> does before
-looking for events.
-
-<h3><a name="focus">static Fl_Widget *Fl::focus() const<br>
-static void Fl::focus(Fl_Widget *)</a></h3>
-
-Get or set the widget that will receive <tt>FL_KEYBOARD</tt> events.
-
-<p>If you change <tt>Fl::focus()</tt>, the previous widget and all
-parents (that don't contain the new widget) are sent
-<tt>FL_UNFOCUS</tt> events.  Changing the focus does <i>not</i> send
-<tt>FL_FOCUS</tt> to this or any widget, because sending
-<tt>FL_FOCUS</tt> is supposed to <i>test</i> if the widget wants the
-focus (by it returning non-zero from <tt>handle()</tt>).
-
-<h3><a name="foreground">static void Fl::foreground(uchar, uchar, uchar)</a></h3>
-
-Changes <tt>fl_color(FL_BLACK)</tt>.  Also changes
-<tt>FL_INACTIVE_COLOR</tt> and <tt>FL_SELECTION_COLOR</tt> to
-be a ramp between this and <tt>FL_WHITE</tt>.
-
-<h3><a name="free_color">static void Fl::free_color(Fl_Color, int overlay = 0)</a></h3>
-
-Frees the specified color from the colormap, if applicable.  If
-<tt>overlay</tt> is non-zero then the color is freed from the overlay
-colormap.
-
-<h3><a name="get_color">static unsigned Fl::get_color(Fl_Color)<br>
-static void Fl::get_color(Fl_Color, uchar &amp;r, uchar &amp;g, uchar &amp;b)</a></h3>
-
-Returns the color index or RGB value for the given FLTK color index.
-
-<h3><a name="get_font">static const char *Fl::get_font(int face)</h4>
-
-Get the string for this face.  This string is different for each face.
-Under X this value is passed to XListFonts to get all the sizes of
-this face.
-
-<h3><a name="get_font_name">static const char *Fl::get_font_name(int face, int *attributes = 0)</a></h3>
-
-Get a human-readable string describing the family of this face.  This
-is useful if you are presenting a choice to the user.  There is no
-guarantee that each face has a different name.  The return value
-points to a static buffer that is overwritten each call.
-
-<p>The integer pointed to by <tt>attributes</tt> (if the pointer is not
-zero) is set to zero, <tt>FL_BOLD</tt> or <tt>FL_ITALIC</tt> or
-<tt>FL_BOLD | FL_ITALIC</tt>.  To locate a "family" of fonts, search
-forward and back for a set with non-zero attributes, these faces along
-with the face with a zero attribute before them constitute a family.
-
-<h3><a name="get_font_sizes">int get_font_sizes(int face, int *&amp;sizep)</a></h3>
-
-Return an array of sizes in <tt>sizep</tt>.  The return value is the
-length of this array.  The sizes are sorted from smallest to largest
-and indicate what sizes can be given to <tt>fl_font()</tt> that will be
-matched exactly (<tt>fl_font()</tt> will pick the closest size for
-other sizes).  A zero in the first location of the array indicates a
-scalable font, where any size works, although the array may list sizes
-that work "better" than others.  Warning: the returned array points at
-a static buffer that is overwritten each call.  Under X this will open
-the display.
-
-<h3><a name="get_mouse">static void Fl::get_mouse(int &amp;x, int &amp;y)</a></h3>
-
-Return where the mouse is on the screen by doing a round-trip query to
-the server.  You should use <tt>Fl::event_x_root()</tt> and
-<tt>Fl::event_y_root()</tt> if possible, but this is necessary if you
-are not sure if a mouse event has been processed recently (such as to
-position your first window).  If the display is not open, this will
-open it.
-
-<h3><a name="get_system_colors">static void Fl::get_system_colors()</a></h3>
-
-Read the user preference colors from the system and use them to call
-<tt>Fl::foreground()</tt>, <tt>Fl::background()</tt>, and
-<tt>Fl::background2()</tt>.  This is done by
-<tt>Fl_Window::show(argc,argv)</tt> before applying the -fg and -bg
-switches.
-
-<p>Currently this only does something on WIN32.  In future versions for
-X it may read the window manager (KDE, Gnome, etc.) setup as well.
-
-<h3><a name="gl_visual">static int Fl::gl_visual(int)</a></h3>
-
-This does the same thing as <a
-href="#visual"><tt>Fl::visual(int)</tt></a> but also requires OpenGL
-drawing to work.  This <i>must</i> be done if you want to draw in
-normal windows with OpenGL with <a
-href="#gl_start"><tt>gl_start()</tt></a> and <tt>gl_end()</tt>.  It may
-be useful to call this so your X windows use the same visual as an <a
-href="#Fl_Gl_Window"><tt>Fl_Gl_Window</tt></a>, which on some servers
-will reduce colormap flashing.
-
-<p>See <a href="#Fl_Gl_Window.mode"><tt>Fl_Gl_Window</tt></a> for a
-list of additional values for the argument.
-
-<h3><a name="grab">static void Fl::grab(Fl_Window &)<br>
-static Fl_Window *Fl::grab()</h3>
-
-This is used when pop-up menu systems are active.  Send all events to
-the passed window no matter where the pointer or focus is (including in
-other programs).  The window <i>does not have to be
-<tt>shown()</tt></i>, this lets the <tt>handle()</tt> method of a
-"dummy" window override all event handling and allows you to map and
-unmap a complex set of windows (under both X and WIN32 <i>some</i>
-window must be mapped because the system interface needs a window id).
-
-<p><tt>Fl::event_x()</tt> and <tt>Fl::event_y()<.tt> are undefined if
-the passed widget is not a mapped <tt>Fl_Window</tt>.  Use
-<tt>Fl::event_x_root()</tt> and <tt>Fl::event_y_root()</tt> instead.
-
-<p><i>Be careful that your program does not enter an infinite loop
-while <tt>grab()</tt> is on.  On X this will lock up your screen!</i>
-
-<p>The second function returns the current grab window, or <tt>NULL</tt> if
-none.
-
-<h3><a name="h">static int Fl::h()</a></h3>
-
-Returns the height of the screen in pixels.
-
-<h3><a name="handle">static int Fl::handle(int, Fl_Window *)</a></h3>
-
-Sends the event to a window for processing.  Returns non-zero if any
-widget uses the event.
-
-<h3><a name="help">static const char *Fl::help</a></h3>
-
-This is the usage string that is displayed if <tt>Fl::args()</tt>
-detects an invalid argument on the command-line.
-
-<h3><a name="modal">static Fl_Window *Fl::modal()</h3>
-
-The <tt>modal()</tt> window has its <tt>handle()</tt> method called for
-all events, and no other windows will have <tt>handle()</tt> called. 
-If <a href="#grab"><tt>grab()</tt></a> has been done then this is equal
-to <tt>grab()</tt>. Otherwise this is the most recently
-<tt>shown()</tt> window with <a
-href="#Fl_Window.modal"><tt>modal()</tt></a> true, or <tt>NULL</tt> if
-there are no <tt>modal()</tt> windows <tt>shown()</tt>.
-
-<h3><a name="next_window">static Fl_Window *Fl::next_window(Fl_Window *)</a></h3>
-
-Returns the next top-level window in the widget hierarchy.
-
-<h3><a name="own_colormap">static void Fl::own_colormap()</a></h3>
-
-Makes FLTK use its own colormap.  This may make FLTK display
-better and will reduce conflicts with other programs that want lots of
-colors.  However the colors may flash as you move the cursor between
-windows.
-
-<p>This does nothing if the current visual is not colormapped.
-
-<h3><a name="paste">static void Fl::paste(Fl_Widget *receiver)</a></h3>
-
-Set things up so the receiver widget will be called with an <a
-href="#FL_PASTE"><tt>FL_PASTE</tt></a> event some time in the future.
-The reciever should be prepared to be called <i>directly</i> by this,
-or for it to happen <i>later</i>, or possibly <i>not at all</i>.  This
-allows the window system to take as long as necessary to retrieve the
-paste buffer (or even to screw up completely) without complex and
-error-prone synchronization code in FLTK.
-
-<h3><a name="pushed">static Fl_Widget *Fl::pushed() const<br>
-static void Fl::pushed(Fl_Widget *)</h3>
-
-Get or set the widget that is being pushed. <tt>FL_DRAG</tt> or
-<tt>FL_RELEASE</tt> (and any more <tt>FL_PUSH</tt>) events will be sent
-to this widget.
-
-<p>If you change the pushed widget, the previous one and all parents
-(that don't contain the new widget) are sent <tt>FL_RELEASE</tt>
-events.  Changing this does <i>not</i> send <tt>FL_PUSH</tt> to this or
-any widget, because sending <tt>FL_PUSH</tt> is supposed to <i>test</i>
-if the widget wants the mouse (by it returning non-zero from
-<tt>handle()</tt>).
-
-<h3><a name="readqueue">static Fl_Widget *Fl::readqueue()</a></h3>
-
-All <tt>Fl_Widgets</tt> that don't have a callback defined use a
-default callback that puts a pointer to the widget in this queue, and
-this method reads the oldest widget out of this queue.
-
-<h3><a name="ready">static int Fl::ready()</a></h3>
-
-Returns non-zero if there are pending timeouts or events or file
-descriptors.  This does <i>not</i> call <tt>Fl::flush()</tt> or any
-callbacks, which is useful if your program is in a state where such
-callbacks are illegal:
-
-<ul><pre>
+</PRE>
+</UL>
+ This returns non-zero if any windows are displayed, and 0 if no 
+windows are displayed. 
+<H3><A name=damage>static int Fl::damage()</A></H3>
+ If true then <A href=#flush><TT>flush()</TT></A> will do something. 
+<H3><A name=display>static void Fl::display(const char *)</A></H3>
+ Sets the X display to use for all windows.  This function is ignored 
+under WIN32. 
+<H3><A name=enable_symbols>static void Fl::enable_symbols()</A></H3>
+ Enables the symbol drawing code. 
+<H3><A name=event_button>static int Fl::event_button()</A></H3>
+ Returns which mouse button was pressed.  This returns garbage if the 
+most recent event was not a <TT>FL_PUSH</TT> or <TT>FL_RELEASE</TT>
+ event. 
+<H3><A name=event_clicks>int Fl::event_clicks()
+<BR> void Fl::event_clicks(int)</A></H3>
+ The first form returns non-zero if the most recent <TT>FL_PUSH</TT> or <TT>
+FL_KEYBOARD</TT> was a &quot;double click&quot;.  Returns N-1 for N clicks.  A 
+double click is counted if the same button is pressed again while <TT>
+event_is_click()</TT> is true. 
+<P>The second form directly sets the number returned by <TT>
+Fl::event_clicks()</TT>.  This can be used to set it to zero so that 
+later code does not think an item was double-clicked. </P>
+<H3><A name=event_inside>int Fl::event_inside(const Fl_Widget *) const
+<BR> int Fl::event_inside(int x, int y, int w, int h)</A></H3>
+ Returns non-zero if the current <TT>event_x</TT> and <TT>event_y</TT>
+ put it inside the widget or inside an arbitrary bounding box.  You 
+should always call this rather than doing your own comparison so you 
+are consistent about edge effects. 
+<H3><A name=event_is_click>int Fl::event_is_click()
+<BR> void Fl::event_is_click(0)</A></H3>
+ The first form returns non-zero if the mouse has not moved far enough 
+and not enough time has passed since the last <TT>FL_PUSH</TT> or <TT>
+FL_KEYBOARD</TT> event for it to be considered a &quot;drag&quot; rather than a 
+&quot;click&quot;.  You can test this on <TT>FL_DRAG</TT>, <TT>FL_RELEASE</TT>, 
+and <TT>FL_MOVE</TT> events.  The second form clears the value returned 
+by <TT>Fl::event_is_click()</TT>.  Useful to prevent the <I>next</I>
+ click from being counted as a double-click or to make a popup menu 
+pick an item with a single click.  Don't pass non-zero to this. 
+<H3><A name=event_key>int Fl::event_key()
+<BR> int Fl::event_key(int)</A>
+<BR><A name=get_key>int Fl::get_key(int)</A></H3>
+<TT>Fl::event_key()</TT> returns which key on the keyboard was last 
+pushed. 
+<P><TT>Fl::event_key(int)</TT> returns true if the given key was held 
+down (or pressed) <I>during</I> the last event.  This is constant until 
+the next event is read from the server. </P>
+<P><TT>Fl::get_key(int)</TT> returns true if the given key is held down <I>
+now</I>.  Under X this requires a round-trip to the server and is <I>
+much</I> slower than <TT>Fl::event_key(int)</TT>. </P>
+<P>Keys are identified by the <I>unshifted</I> values. FLTK defines a 
+set of symbols that should work on most modern machines for every key 
+on the keyboard: </P>
+<UL>
+<LI>All keys on the main keyboard producing a printable ASCII 
+ character use the value of that ASCII character (as though shift, 
+ ctrl, and caps lock were not on).  The space bar is 32. </LI>
+<LI>All keys on the numeric keypad producing a printable ASCII 
+ character use the value of that ASCII character plus <TT>FL_KP</TT>. 
+ The highest possible value is <TT>FL_KP_Last</TT> so you can 
+range-check to see if something is  on the keypad. </LI>
+<LI>All numbered function keys use the number on the function key plus <TT>
+FL_F</TT>.  The highest possible number is <TT>FL_F_Last</TT>, so you 
+can range-check a value. </LI>
+<LI>Buttons on the mouse are considered keys, and use the button 
+ number (where the left button is 1) plus <TT>FL_Button</TT>. </LI>
+<LI>All other keys on the keypad have a symbol: <TT>FL_Escape, 
+ FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause, 
+ FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down, 
+ FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R, 
+ FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R, 
+ FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter</TT>.  Be 
+ careful not to confuse these with the very similar, but all-caps, 
+ symbols used by <A href=events.html#event_state><TT>Fl::event_state()</TT>
+</A>. </LI>
+</UL>
+ On X <TT>Fl::get_key(FL_Button+n)</TT> does not work. 
+<P>On WIN32 <TT>Fl::get_key(FL_KP_Enter)</TT> and <TT>
+Fl::event_key(FL_KP_Enter)</TT> do not work. </P>
+<H3><A name=event_length>char *Fl::event_length()</A></H3>
+ Returns the length of the text in <TT>Fl::event_text()</TT>.  There 
+will always be a nul at this position in the text.  However there may 
+be a nul before that if the keystroke translates to a nul character or 
+you paste a nul character. 
+<H3><A name=event_state>ulong Fl::event_state()
+<BR> unsigned int Fl::event_state(ulong)</A></H3>
+ This is a bitfield of what shift states were on and what mouse buttons 
+were held down during the most recent event.  The second version 
+returns non-zero if any of the passed bits are turned on.  The legal 
+bits are: 
+<UL>
+<LI><TT>FL_SHIFT</TT></LI>
+<LI><TT>FL_CAPS_LOCK</TT></LI>
+<LI><TT>FL_CTRL</TT></LI>
+<LI><TT>FL_ALT</TT></LI>
+<LI><TT>FL_NUM_LOCK</TT></LI>
+<LI><TT>FL_META</TT></LI>
+<LI><TT>FL_SCROLL_LOCK</TT></LI>
+<LI><TT>FL_BUTTON1</TT></LI>
+<LI><TT>FL_BUTTON2</TT></LI>
+<LI><TT>FL_BUTTON3</TT></LI>
+</UL>
+ X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and 
+FL_SCROLL_LOCK may not work.  The values were selected to match the 
+XFree86 server on Linux.  In addition there is a bug in the way X works 
+so that the shift state is not correctly reported until the first event <I>
+after</I> the shift key is pressed or released. 
+<H3><A name=event_text>char *Fl::event_text()</A></H3>
+ Returns the ASCII text (in the future this may be UTF-8) produced by 
+the last <TT>FL_KEYBOARD</TT> or <TT>FL_PASTEM</TT> or possibly other 
+event.  A zero-length string is returned for any keyboard function keys 
+that do not produce text. This pointer points at a static buffer and is 
+only valid until the next event is processed. 
+<P>Under X this is the result of calling <TT>XLookupString()</TT>. </P>
+<H3><A name=event_x>static int Fl::event_x()
+<BR><A name=event_y>static int Fl::event_y()</A></A></H3>
+ Returns the mouse position of the event relative to the <TT>Fl_Window</TT>
+ it was passed to. 
+<H3><A name=event_x_root>static int Fl::event_x_root()
+<BR><A name=event_y_root>static int Fl::event_y_root()</A></A></H3>
+ Returns the mouse position on the screen of the event.  To find the 
+absolute position of an <TT>Fl_Window</TT> on the screen, use the 
+difference between <TT>event_x_root(),event_y_root()</TT> and <TT>
+event_x(),event_y()</TT>. 
+<H3><A name=first_window>static Fl_Window *Fl::first_window()</A></H3>
+ Returns the first top-level window in the widget hierarchy. 
+<H3><A name=flush>static void Fl::flush()</A></H3>
+ Causes all the windows that need it to be redrawn and graphics forced 
+out through the pipes.  This is what <TT>wait()</TT> does before 
+looking for events. 
+<H3><A name=focus>static Fl_Widget *Fl::focus() const
+<BR> static void Fl::focus(Fl_Widget *)</A></H3>
+ Get or set the widget that will receive <TT>FL_KEYBOARD</TT> events. 
+<P>If you change <TT>Fl::focus()</TT>, the previous widget and all 
+parents (that don't contain the new widget) are sent <TT>FL_UNFOCUS</TT>
+ events.  Changing the focus does <I>not</I> send <TT>FL_FOCUS</TT> to 
+this or any widget, because sending <TT>FL_FOCUS</TT> is supposed to <I>
+test</I> if the widget wants the focus (by it returning non-zero from <TT>
+handle()</TT>). </P>
+<H3><A name=foreground>static void Fl::foreground(uchar, uchar, uchar)</A>
+</H3>
+ Changes <TT>fl_color(FL_BLACK)</TT>.  Also changes <TT>
+FL_INACTIVE_COLOR</TT> and <TT>FL_SELECTION_COLOR</TT> to be a ramp 
+between this and <TT>FL_WHITE</TT>. 
+<H3><A name=free_color>static void Fl::free_color(Fl_Color, int overlay 
+= 0)</A></H3>
+ Frees the specified color from the colormap, if applicable.  If <TT>
+overlay</TT> is non-zero then the color is freed from the overlay 
+colormap. 
+<H3><A name=get_color>static unsigned Fl::get_color(Fl_Color)
+<BR> static void Fl::get_color(Fl_Color, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A>
+</H3>
+ Returns the color index or RGB value for the given FLTK color index. 
+<H3><A name=get_font>static const char *Fl::get_font(int face) Get the 
+string for this face.  This string is different for each face. Under X 
+this value is passed to XListFonts to get all the sizes of this face. </A>
+</H3>
+<H3><A name=get_font_name>static const char *Fl::get_font_name(int 
+face, int *attributes = 0)</A></H3>
+ Get a human-readable string describing the family of this face.  This 
+is useful if you are presenting a choice to the user.  There is no 
+guarantee that each face has a different name.  The return value points 
+to a static buffer that is overwritten each call. 
+<P>The integer pointed to by <TT>attributes</TT> (if the pointer is not 
+zero) is set to zero, <TT>FL_BOLD</TT> or <TT>FL_ITALIC</TT> or <TT>
+FL_BOLD | FL_ITALIC</TT>.  To locate a &quot;family&quot; of fonts, search 
+forward and back for a set with non-zero attributes, these faces along 
+with the face with a zero attribute before them constitute a family. </P>
+<H3><A name=get_font_sizes>int get_font_sizes(int face, int *&amp;sizep)</A></H3>
+ Return an array of sizes in <TT>sizep</TT>.  The return value is the 
+length of this array.  The sizes are sorted from smallest to largest 
+and indicate what sizes can be given to <TT>fl_font()</TT> that will be 
+matched exactly (<TT>fl_font()</TT> will pick the closest size for 
+other sizes).  A zero in the first location of the array indicates a 
+scalable font, where any size works, although the array may list sizes 
+that work &quot;better&quot; than others.  Warning: the returned array points at 
+a static buffer that is overwritten each call.  Under X this will open 
+the display. 
+<H3><A name=get_mouse>static void Fl::get_mouse(int &amp;x, int &amp;y)</A></H3>
+ Return where the mouse is on the screen by doing a round-trip query to 
+the server.  You should use <TT>Fl::event_x_root()</TT> and <TT>
+Fl::event_y_root()</TT> if possible, but this is necessary if you are 
+not sure if a mouse event has been processed recently (such as to 
+position your first window).  If the display is not open, this will 
+open it. 
+<H3><A name=get_system_colors>static void Fl::get_system_colors()</A></H3>
+ Read the user preference colors from the system and use them to call <TT>
+Fl::foreground()</TT>, <TT>Fl::background()</TT>, and <TT>
+Fl::background2()</TT>.  This is done by <TT>Fl_Window::show(argc,argv)</TT>
+ before applying the -fg and -bg switches. 
+<P>Currently this only does something on WIN32.  In future versions for 
+X it may read the window manager (KDE, Gnome, etc.) setup as well. </P>
+<H3><A name=gl_visual>static int Fl::gl_visual(int)</A></H3>
+ This does the same thing as <A href=#visual><TT>Fl::visual(int)</TT></A>
+ but also requires OpenGL drawing to work.  This <I>must</I> be done if 
+you want to draw in normal windows with OpenGL with <A href=opengl.html#gl_start>
+<TT>gl_start()</TT></A> and <TT>gl_end()</TT>.  It may be useful to 
+call this so your X windows use the same visual as an <A href=Fl_Gl_Window.html#Fl_Gl_Window>
+<TT>Fl_Gl_Window</TT></A>, which on some servers will reduce colormap 
+flashing. 
+<P>See <A href=Fl_Gl_Window.html#Fl_Gl_Window.mode><TT>Fl_Gl_Window</TT></A>
+ for a list of additional values for the argument. </P>
+<H3><A name=grab>static void Fl::grab(Fl_Window static Fl_Window 
+*Fl::grab()</A></H3>
+ This is used when pop-up menu systems are active.  Send all events to 
+the passed window no matter where the pointer or focus is (including in 
+other programs).  The window <I>does not have to be <TT>shown()</TT></I>
+, this lets the <TT>handle()</TT> method of a &quot;dummy&quot; window override 
+all event handling and allows you to map and unmap a complex set of 
+windows (under both X and WIN32 <I>some</I> window must be mapped 
+because the system interface needs a window id). 
+<P><TT>Fl::event_x()</TT> and <TT>Fl::event_y()
+<!--.tt-->
+ are undefined if the 
+passed widget is not a mapped <TT>Fl_Window</TT>.  Use <TT>
+Fl::event_x_root()</TT> and <TT>Fl::event_y_root()</TT> instead. </TT></P>
+<P><I>Be careful that your program does not enter an infinite loop 
+while <TT>grab()</TT> is on.  On X this will lock up your screen!</I></P>
+<P>The second function returns the current grab window, or <TT>NULL</TT>
+ if none. </P>
+<H3><A name=h>static int Fl::h()</A></H3>
+ Returns the height of the screen in pixels. 
+<H3><A name=handle>static int Fl::handle(int, Fl_Window *)</A></H3>
+ Sends the event to a window for processing.  Returns non-zero if any 
+widget uses the event. 
+<H3><A name=help>static const char *Fl::help</A></H3>
+ This is the usage string that is displayed if <TT>Fl::args()</TT>
+ detects an invalid argument on the command-line. 
+<H3><A name=modal>static Fl_Window *Fl::modal()</A></H3>
+ The <TT>modal()</TT> window has its <TT>handle()</TT> method called 
+for all events, and no other windows will have <TT>handle()</TT>
+ called.  If <A href=#grab><TT>grab()</TT></A> has been done then this 
+is equal to <TT>grab()</TT>. Otherwise this is the most recently <TT>
+shown()</TT> window with <A href=Fl_Window.html#Fl_Window.modal><TT>
+modal()</TT></A> true, or <TT>NULL</TT> if there are no <TT>modal()</TT>
+ windows <TT>shown()</TT>. 
+<H3><A name=next_window>static Fl_Window *Fl::next_window(Fl_Window *)</A>
+</H3>
+ Returns the next top-level window in the widget hierarchy. 
+<H3><A name=own_colormap>static void Fl::own_colormap()</A></H3>
+ Makes FLTK use its own colormap.  This may make FLTK display better 
+and will reduce conflicts with other programs that want lots of colors. 
+ However the colors may flash as you move the cursor between windows. 
+<P>This does nothing if the current visual is not colormapped. </P>
+<H3><A name=paste>static void Fl::paste(Fl_Widget *receiver)</A></H3>
+ Set things up so the receiver widget will be called with an <A href=#FL_PASTE>
+<TT>FL_PASTE</TT></A> event some time in the future. The reciever 
+should be prepared to be called <I>directly</I> by this, or for it to 
+happen <I>later</I>, or possibly <I>not at all</I>.  This allows the 
+window system to take as long as necessary to retrieve the paste buffer 
+(or even to screw up completely) without complex and error-prone 
+synchronization code in FLTK. 
+<H3><A name=pushed>static Fl_Widget *Fl::pushed() const
+<BR> static void Fl::pushed(Fl_Widget *)</A></H3>
+ Get or set the widget that is being pushed. <TT>FL_DRAG</TT> or <TT>
+FL_RELEASE</TT> (and any more <TT>FL_PUSH</TT>) events will be sent to 
+this widget. 
+<P>If you change the pushed widget, the previous one and all parents 
+(that don't contain the new widget) are sent <TT>FL_RELEASE</TT>
+ events.  Changing this does <I>not</I> send <TT>FL_PUSH</TT> to this 
+or any widget, because sending <TT>FL_PUSH</TT> is supposed to <I>test</I>
+ if the widget wants the mouse (by it returning non-zero from <TT>
+handle()</TT>). </P>
+<H3><A name=readqueue>static Fl_Widget *Fl::readqueue()</A></H3>
+ All <TT>Fl_Widgets</TT> that don't have a callback defined use a 
+default callback that puts a pointer to the widget in this queue, and 
+this method reads the oldest widget out of this queue. 
+<H3><A name=ready>static int Fl::ready()</A></H3>
+ Returns non-zero if there are pending timeouts or events or file 
+descriptors.  This does <I>not</I> call <TT>Fl::flush()</TT> or any 
+callbacks, which is useful if your program is in a state where such 
+callbacks are illegal: 
+<UL>
+<PRE>
 while (!calculation_done()) {
   calculate();
   if (Fl::ready()) {
@@ -842,225 +630,176 @@ while (!calculation_done()) {
     if (user_hit_abort_button()) break;
   }
 }
-</pre></ul>
-
-<h3><a name="redraw">static void Fl::redraw()</a></h3>
-
-Redraws all widgets.
-
-<h3><a name="release">static void Fl::release()</a></h3>
-
-Turn off the <tt>grab()</tt> behavior.
-
-<h3><a name="remove_idle">static void Fl::remove_idle(void (*cb)(void *), void *= 0)</a></h3>
-
-Removes the specified idle callback.
-
-<h3><a name="remove_timeout">static void Fl::remove_timeout(void (*cb)(void *), void *= 0)</a></h3>
-
-Removes a timeout callback. It is harmless to remove a timeout callback
-that no longer exists.
-
-<h3><a name="run">static Fl::run()</a></h3>
-
-Runs FLTK until there are no windows displayed, and then returns a zero.
-<tt>Fl::run()</tt> is <i>exactly equivalent to:</i>
-
-<ul><pre>
+</PRE>
+</UL>
+<H3><A name=redraw>static void Fl::redraw()</A></H3>
+ Redraws all widgets. 
+<H3><A name=release>static void Fl::release()</A></H3>
+ Turn off the <TT>grab()</TT> behavior. 
+<H3><A name=remove_idle>static void Fl::remove_idle(void (*cb)(void *), 
+void *= 0)</A></H3>
+ Removes the specified idle callback. 
+<H3><A name=remove_timeout>static void Fl::remove_timeout(void 
+(*cb)(void *), void *= 0)</A></H3>
+ Removes a timeout callback. It is harmless to remove a timeout 
+callback that no longer exists. 
+<H3><A name=run>static Fl::run()</A></H3>
+ Runs FLTK until there are no windows displayed, and then returns a 
+zero. <TT>Fl::run()</TT> is <I>exactly equivalent to:</I>
+<UL>
+<PRE>
 while (Fl::wait());
 return 0;
-</pre></ul>
-
-<h3><a name="selection">static void Fl::selection(Fl_Widget *owner, const char *stuff, int len)<br>
-static const char* Fl::selection()<BR>
-static int Fl::selection_length()</a></h3>
-
-The first form changes the current selection.  The block of text is
-copied to an internal buffer by FLTK (be careful if doing this in
-response to an <tt>FL_PASTE</tt> as this <i>may</i> be the same buffer
-returned by <tt>event_text()</tt>).  The <tt>selection_owner()</tt>
-widget is set to the passed owner (possibly sending
-<tt>FL_SELECTIONCLEAR</tt> to the previous owner).
-
-The second form looks at the buffer containing the current selection. 
-The contents of this buffer are undefined if this program does not own
-the current selection.
-
-<h3><a name="selection_owner">static Fl_Widget *Fl::selection_owner() const<BR>
-static void Fl::selection_owner(Fl_Widget *)</a></h3>
-
-The single-argument <tt>selection_owner(x)</tt> call can be used to
-move the selection to another widget or to set the owner to
-<tt>NULL</tt>, without changing the actual text of the selection. 
-<tt>FL_SELECTIONCLEAR</tt> is sent to the previous selection owner, if
-any.
-
-<p><i>Copying the buffer every time the selection is changed is
-obviously wasteful, especially for large selections.  An interface will
-probably be added in a future version to allow the selection to be made
-by a callback function.  The current interface will be emulated on top
-of this.</i>
-
-<h3><a name="set_boxtype">static void Fl::set_boxtype(Fl_Boxtype, Fl_Box_Draw_F *, uchar, uchar, uchar, uchar)<br>
-static void Fl::set_boxtype(Fl_Boxtype, Fl_Boxtype from)</a></h3>
-
-The first form sets the function to call to draw a specific boxtype.
-
-<p>The second form copies the <tt>from</tt> boxtype.
-
-<h3><a name="set_color">static void Fl::set_color(Fl_Color, uchar r, uchar g, uchar b)</a></h3>
-
-Sets an entry in the <tt>fl_color</tt> index table.  You can set
-it to any 8-bit RGB color.  The color is not allocated until
-<tt>fl_color(i)</tt> is used.
-
-<h3><a name="set_font">static int Fl::set_font(int face, const char *)<br>
-static int Fl::set_font(int face, int from)</a></h3>
-
-The first form changes a face.  The string pointer is simply stored,
-the string is not copied, so the string must be in static memory.
-
-<p>The second form copies one face to another.
-
-<h3><a name="set_fonts">int Fl::set_fonts(const char * = 0)</a></h3>
-
-FLTK will open the display, and add every font on the server to the
-face table.  It will attempt to put "families" of faces together, so
-that the normal one is first, followed by bold, italic, and bold
-italic.
-
-<p>The optional argument is a string to describe the set of fonts to
-add.  Passing <tt>NULL</tt> will select only fonts that have the ISO8859-1
-character set (and are thus usable by normal text).  Passing "-*" will
-select all fonts with any encoding as long as they have normal X font
-names with dashes in them.  Passing "*" will list every font that
-exists (on X this may produce some strange output).  Other values may
-be useful but are system dependent.  With WIN32 <tt>NULL</tt> selects fonts
-with ISO8859-1 encoding and non-<tt>NULL</tt> selects all fonts.
-
-<p>The return value is how many faces are in the table after this is done.
-
-<h3><a name="set_labeltype">static void Fl::set_labeltype(Fl_Labeltype, Fl_Label_Draw_F *, Fl_Label_Measure_F *)<br>
-static void Fl:set_labeltype(Fl_Labeltype, Fl_Labeltype from)</a></h3>
-
-The first form sets the functions to call to draw and measure a
-specific labeltype.
-
-<p>The second form copies the <tt>from</tt> labeltype.
-
-<h3><a name="test_shortcut">int Fl::test_shortcut(ulong) const</a></h3>
-
-Test the current event, which must be an <tt>FL_KEYBOARD</tt> or
-<tt>FL_SHORTCUT</tt>, against a shortcut value (described in <a
-href="#Fl_Button.shortcut"><tt>Fl_Button</tt></a>).  Returns non-zero
-if there is a match.  Not to be confused with
-<a href="#Fl_Widge.test_shortcut"><tt>Fl_Widget::test_shortcut()</tt></a>.
-
-<h3><a name="visual">static int Fl::visual(int)</a></h3>
-
-Selects a visual so that your graphics are drawn correctly.  This
-does nothing if the default visual satisfies the capabilities, or if
-no visual satisfies the capabilities, or on systems that don't have
-such brain-dead notions.
-
-<p>Only the following combinations do anything useful:
-
-<ul>
-
-	<li><tt>Fl::visual(FL_RGB)</tt>
-
-	<br>Full/true color (if there are several depths FLTK chooses
-	the largest).  Do this if you use <a href="#fl_draw_image">
-	<tt>fl_draw_image</tt></a> for much better (non-dithered)
-	output.
-	<br>&nbsp;
-
-	<li><tt>Fl::visual(FL_RGB8)</tt>
-
-	<br>Full color with at least 24 bits of color.  <tt>FL_RGB</tt> will always
-	pick this if available, but if not it will happily return a
-	less-than-24 bit deep visual.  This call fails if 24 bits are not
-	available.
-	<br>&nbsp;
-
-	<li><tt>Fl::visual(FL_DOUBLE|FL_INDEX)</tt>
-
-	<br>Hardware double buffering.  Call this if you are going to use
-	<a href="#Fl_Double_Window"><tt>Fl_Double_Window</tt></a>.
-	<br>&nbsp;
-
-	<li><tt>Fl::visual(FL_DOUBLE|FL_RGB)</tt>
-	<li><tt>Fl::visual(FL_DOUBLE|FL_RGB8)</tt>
-
-	<br>Hardware double buffering and full color.
-	<br>&nbsp;
-
-</ul>
-
-This returns true if the system has the capabilities by default or
-FLTK suceeded in turing them on.  Your program will still work even if
-this returns false (it just won't look as good).
-
-<h3><a name="w">static int Fl::w()</a></h3>
-
-Returns the width of the screen in pixels.
-
-<h3><a name="wait">static int wait()<br>
-static double wait(double time)</a></h3>
-
-Calls the idle function if any, then calls any pending timeout
-functions, then calls <a href="#flush"><tt>Fl::flush()</tt></a>.  If there are
-any windows displayed it then waits some time for events (zero if
-there is an idle(), the shortest timeout if there are any timeouts, or
-forever) and calls the handle() function on those events, and then
-returns non-zero.
-
-<p>Your program can check its global state and update things after
-each call to <tt>Fl::wait()</tt>, which can be very useful in complex programs.
-
-<p>If there are no windows (this is checked after the idle and
-timeouts are called) then <tt>Fl::wait()</tt> returns zero without waiting for
-any events.  Your program can either exit at this point, or call
-<tt>show()</tt> on some window so the GUI can continue to operate.
-
-The second form of <tt>Fl::wait()</tt> waits only a certain amount of
-time for anything to happen.  This does the same as <tt>wait()</tt>
-except if the given time (in seconds) passes it returns.  The return
-value is how much time remains.  If the return value is zero or
-negative then the entire time period elapsed.
-
-<p>If you do several <tt>wait(time)</tt> calls in a row, the subsequent ones
-are measured from when the first one is called, even if you do
-time-consuming calculations after they return.  This allows you to
-accurately make something happen at regular intervals.  This code will
-accurately call <tt>A()</tt> once per second (as long as it takes less than a
-second to execute):
-
-<ul><pre>
+</PRE>
+</UL>
+<H3><A name=selection>static void Fl::selection(Fl_Widget *owner, const 
+char *stuff, int len)
+<BR> static const char* Fl::selection()
+<BR> static int Fl::selection_length()</A></H3>
+ The first form changes the current selection.  The block of text is 
+copied to an internal buffer by FLTK (be careful if doing this in 
+response to an <TT>FL_PASTE</TT> as this <I>may</I> be the same buffer 
+returned by <TT>event_text()</TT>).  The <TT>selection_owner()</TT>
+ widget is set to the passed owner (possibly sending <TT>
+FL_SELECTIONCLEAR</TT> to the previous owner).  The second form looks 
+at the buffer containing the current selection.  The contents of this 
+buffer are undefined if this program does not own the current 
+selection. 
+<H3><A name=selection_owner>static Fl_Widget *Fl::selection_owner() 
+const
+<BR> static void Fl::selection_owner(Fl_Widget *)</A></H3>
+ The single-argument <TT>selection_owner(x)</TT> call can be used to 
+move the selection to another widget or to set the owner to <TT>NULL</TT>
+, without changing the actual text of the selection. <TT>
+FL_SELECTIONCLEAR</TT> is sent to the previous selection owner, if any. 
+<P><I>Copying the buffer every time the selection is changed is 
+obviously wasteful, especially for large selections.  An interface will 
+probably be added in a future version to allow the selection to be made 
+by a callback function.  The current interface will be emulated on top 
+of this.</I></P>
+<H3><A name=set_boxtype>static void Fl::set_boxtype(Fl_Boxtype, 
+Fl_Box_Draw_F *, uchar, uchar, uchar, uchar)
+<BR> static void Fl::set_boxtype(Fl_Boxtype, Fl_Boxtype from)</A></H3>
+ The first form sets the function to call to draw a specific boxtype. 
+<P>The second form copies the <TT>from</TT> boxtype. </P>
+<H3><A name=set_color>static void Fl::set_color(Fl_Color, uchar r, 
+uchar g, uchar b)</A></H3>
+ Sets an entry in the <TT>fl_color</TT> index table.  You can set it to 
+any 8-bit RGB color.  The color is not allocated until <TT>fl_color(i)</TT>
+ is used. 
+<H3><A name=set_font>static int Fl::set_font(int face, const char *)
+<BR> static int Fl::set_font(int face, int from)</A></H3>
+ The first form changes a face.  The string pointer is simply stored, 
+the string is not copied, so the string must be in static memory. 
+<P>The second form copies one face to another. </P>
+<H3><A name=set_fonts>int Fl::set_fonts(const char * = 0)</A></H3>
+ FLTK will open the display, and add every font on the server to the 
+face table.  It will attempt to put &quot;families&quot; of faces together, so 
+that the normal one is first, followed by bold, italic, and bold 
+italic. 
+<P>The optional argument is a string to describe the set of fonts to 
+add.  Passing <TT>NULL</TT> will select only fonts that have the 
+ISO8859-1 character set (and are thus usable by normal text).  Passing 
+&quot;-*&quot; will select all fonts with any encoding as long as they have 
+normal X font names with dashes in them.  Passing &quot;*&quot; will list every 
+font that exists (on X this may produce some strange output).  Other 
+values may be useful but are system dependent.  With WIN32 <TT>NULL</TT>
+ selects fonts with ISO8859-1 encoding and non-<TT>NULL</TT> selects 
+all fonts. </P>
+<P>The return value is how many faces are in the table after this is 
+done. </P>
+<H3><A name=set_labeltype>static void Fl::set_labeltype(Fl_Labeltype, 
+Fl_Label_Draw_F *, Fl_Label_Measure_F *)
+<BR> static void Fl:set_labeltype(Fl_Labeltype, Fl_Labeltype from)</A></H3>
+ The first form sets the functions to call to draw and measure a 
+specific labeltype. 
+<P>The second form copies the <TT>from</TT> labeltype. </P>
+<H3><A name=test_shortcut>int Fl::test_shortcut(ulong) const</A></H3>
+ Test the current event, which must be an <TT>FL_KEYBOARD</TT> or <TT>
+FL_SHORTCUT</TT>, against a shortcut value (described in <A href=Fl_Button.html#Fl_Button.shortcut>
+<TT>Fl_Button</TT></A>).  Returns non-zero if there is a match.  Not to 
+be confused with <A href=#Fl_Widge.test_shortcut><TT>
+Fl_Widget::test_shortcut()</TT></A>. 
+<H3><A name=visual>static int Fl::visual(int)</A></H3>
+ Selects a visual so that your graphics are drawn correctly.  This does 
+nothing if the default visual satisfies the capabilities, or if no 
+visual satisfies the capabilities, or on systems that don't have such 
+brain-dead notions. 
+<P>Only the following combinations do anything useful: </P>
+<UL>
+<LI><TT>Fl::visual(FL_RGB)</TT>
+<BR>Full/true color (if there are several depths FLTK chooses  the 
+largest).  Do this if you use <A href=#fl_draw_image><TT>fl_draw_image</TT>
+</A> for much better (non-dithered)  output. 
+<BR>&nbsp; </LI>
+<LI><TT>Fl::visual(FL_RGB8)</TT>
+<BR>Full color with at least 24 bits of color. <TT>FL_RGB</TT> will 
+always  pick this if available, but if not it will happily return a 
+ less-than-24 bit deep visual.  This call fails if 24 bits are not 
+ available. 
+<BR>&nbsp; </LI>
+<LI><TT>Fl::visual(FL_DOUBLE|FL_INDEX)</TT>
+<BR>Hardware double buffering.  Call this if you are going to use <A href=Fl_Double_Window.html#Fl_Double_Window>
+<TT>Fl_Double_Window</TT></A>. 
+<BR>&nbsp; </LI>
+<LI><TT>Fl::visual(FL_DOUBLE|FL_RGB)</TT></LI>
+<LI><TT>Fl::visual(FL_DOUBLE|FL_RGB8)</TT>
+<BR>Hardware double buffering and full color. 
+<BR>&nbsp; </LI>
+</UL>
+ This returns true if the system has the capabilities by default or 
+FLTK suceeded in turing them on.  Your program will still work even if 
+this returns false (it just won't look as good). 
+<H3><A name=w>static int Fl::w()</A></H3>
+ Returns the width of the screen in pixels. 
+<H3><A name=wait>static int wait()
+<BR> static double wait(double time)</A></H3>
+ Calls the idle function if any, then calls any pending timeout 
+functions, then calls <A href=#flush><TT>Fl::flush()</TT></A>.  If 
+there are any windows displayed it then waits some time for events 
+(zero if there is an idle(), the shortest timeout if there are any 
+timeouts, or forever) and calls the handle() function on those events, 
+and then returns non-zero. 
+<P>Your program can check its global state and update things after each 
+call to <TT>Fl::wait()</TT>, which can be very useful in complex 
+programs. </P>
+<P>If there are no windows (this is checked after the idle and timeouts 
+are called) then <TT>Fl::wait()</TT> returns zero without waiting for 
+any events.  Your program can either exit at this point, or call <TT>
+show()</TT> on some window so the GUI can continue to operate.  The 
+second form of <TT>Fl::wait()</TT> waits only a certain amount of time 
+for anything to happen.  This does the same as <TT>wait()</TT> except 
+if the given time (in seconds) passes it returns.  The return value is 
+how much time remains.  If the return value is zero or negative then 
+the entire time period elapsed. </P>
+<P>If you do several <TT>wait(time)</TT> calls in a row, the subsequent 
+ones are measured from when the first one is called, even if you do 
+time-consuming calculations after they return.  This allows you to 
+accurately make something happen at regular intervals.  This code will 
+accurately call <TT>A()</TT> once per second (as long as it takes less 
+than a second to execute): </P>
+<UL>
+<PRE>
 for (;;) {
-  for (float time = 1.0; time > 0; ) time = Fl::wait(time);
+  for (float time = 1.0; time &gt; 0; ) time = Fl::wait(time);
   A();
 }
-</pre></ul>
-
-<h3><a name="warning">static void (*Fl::warning)(const char *, ...)</a><br>
-<a name="error">static void (*Fl::error)(const char *, ...)</a><br>
-<a name="fatal">static void (*Fl::fatal)(const char *, ...)</a></h3>
-
-FLTK will call these to print messages when unexpected conditions
-occur.  By default they <tt>fprintf</tt> to <tt>stderr</tt>, and
-<tt>Fl::error</tt> and <tt>Fl::fatal</tt> call <tt>exit(1)</tt>.  You
-can override the behavior by setting the function pointers to your own
-routines.
-
-<p><tt>Fl::warning</tt> means that there was a recoverable problem, the
-display may be messed up but the user can probably keep working (all X
-protocol errors call this).  <tt>Fl::error</tt> means there is a
-recoverable error, but the display is so messed up it is unlikely the
-user can continue (very little calls this now).  <tt>Fl::fatal</tt>
-must not return, as FLTK is in an unusable state, however your version
-may be able to use <tt>longjmp</tt> or an exception to continue, as
-long as it does not call FLTK again.
-
-</BODY>
-</HTML>
+</PRE>
+</UL>
+<H3><A name=warning>static void (*Fl::warning)(const char *, ...)</A>
+<BR><A name=error>static void (*Fl::error)(const char *, ...)</A>
+<BR><A name=fatal>static void (*Fl::fatal)(const char *, ...)</A></H3>
+ FLTK will call these to print messages when unexpected conditions 
+occur.  By default they <TT>fprintf</TT> to <TT>stderr</TT>, and <TT>
+Fl::error</TT> and <TT>Fl::fatal</TT> call <TT>exit(1)</TT>.  You can 
+override the behavior by setting the function pointers to your own 
+routines. 
+<P><TT>Fl::warning</TT> means that there was a recoverable problem, the 
+display may be messed up but the user can probably keep working (all X 
+protocol errors call this). <TT>Fl::error</TT> means there is a 
+recoverable error, but the display is so messed up it is unlikely the 
+user can continue (very little calls this now). <TT>Fl::fatal</TT> must 
+not return, as FLTK is in an unusable state, however your version may 
+be able to use <TT>longjmp</TT> or an exception to continue, as long as 
+it does not call FLTK again. </P>
+</BODY></HTML>

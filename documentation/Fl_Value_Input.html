@@ -1,89 +1,71 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Value_Input">class Fl_Value_Input</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Valuator">Fl_Valuator</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Value_Input>class Fl_Value_Input</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Valuator.html#Fl_Valuator>Fl_Valuator</A>
    |
-   +----<b>Fl_Value_Input</b>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Value_Input.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-The <tt>Fl_Value_Input</tt> widget displays a floating point value.
-The user can click in the text field and edit it (there is in fact
-a hidden <a href="#Fl_Value_Input"><tt>Fl_Value_Input</tt></a> widget with
-<tt>type(FL_FLOAT_INPUT)</tt> in there), and when they hit return
-or tab the value updates to what they typed and the callback is done.
-
-<p>If <tt>step()</tt> is not zero, the user can also drag the mouse
-across the object and thus slide the value.  The left button moves one
-<tt>step()</tt> per pixel, the middle by <tt>10 * step()</tt>, and the
-left button by <tt>100 * step()</tt>.  It is then impossible to select
-text by dragging across it, although clicking can still move the
-insertion cursor.
-
-<h3>Methods</h3>
-
-<ul>
-	<li><a href="#Fl_Value_Input.Fl_Value_Input">Fl_Value_Input</a>
-	<li><a href="#Fl_Value_Input.~Fl_Value_Input">~Fl_Value_Input</a>
-	<li><a href="#Fl_Value_Input.cursor_color">cursor_color</a>
-	<li><a href="#Fl_Value_Input.soft">soft</a>
-	<li><a href="#Fl_Value_Input.textcolor">textcolor</a>
-	<li><a href="#Fl_Value_Input.textfont">textfont</a>
-	<li><a href="#Fl_Value_Input.textsize">textsize</a>
-</ul>
-
-<h4><a name="Fl_Value_Input.Fl_Value_Input">Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char *label = 0)</a></h4>
-
-Creates a new <tt>Fl_Value_Input</tt> widget using the given position, size, and
-label string. The default boxtype is <tt>FL_NO_BOX</tt>.
-
-<h4><a name="Fl_Value_Input.~Fl_Value_Input">virtual Fl_Value_Input::~Fl_Value_Input()</a></h4>
-
-Destroys the valuator.
-
-<h4><a name="Fl_Value_Input.cursor_color">Fl_Color Fl_Value_Input::cursor_color() const<br>
-void Fl_Value_Input::cursor_color(Fl_Color)</a></h4>
-
-Get or set the color of the cursor.  This is black by default.
-
-<h4><a name="Fl_Value_Input.soft">uchar Fl_Value_Input::soft() const<br>
-void Fl_Value_Input::soft(uchar)</a></h4>
-
-If "soft" is turned on, the user is allowed to drag the value outside
-the range.  If they drag the value to one of the ends, let go, then
-grab again and continue to drag, they can get to any value.  Default
-is one.
-
-<h4><a name="Fl_Value_Input.textcolor">Fl_Color Fl_Value_Input::textcolor() const<br>
-void Fl_Value_Input::textcolor(Fl_Color)</a></h4>
-
-Gets or sets the color of the text in the value box.
-
-<h4><a name="Fl_Value_Input.textfont">Fl_Font Fl_Value_Input::textfont() const<br>
-<br>void Fl_Value_Input::textfont(Fl_Font)</a></h4>
-
-Gets or sets the typeface of the text in the value box.
-
-<h4><a name="Fl_Value_Input.textsize">uchar Fl_Value_Input::textsize() const<br>
-void Fl_Value_Input::textsize(uchar)</a></h4>
-
-Gets or sets the size of the text in the value box.
-
-</body>
-</html>
+   +----<B>Fl_Value_Input</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Value_Input.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Value_Input</TT> widget displays a floating point value. 
+The user can click in the text field and edit it (there is in fact a 
+hidden <A href=#Fl_Value_Input><TT>Fl_Value_Input</TT></A> widget with <TT>
+type(FL_FLOAT_INPUT)</TT> in there), and when they hit return or tab 
+the value updates to what they typed and the callback is done. 
+<P>If <TT>step()</TT> is not zero, the user can also drag the mouse 
+across the object and thus slide the value.  The left button moves one <TT>
+step()</TT> per pixel, the middle by <TT>10 * step()</TT>, and the left 
+button by <TT>100 * step()</TT>.  It is then impossible to select text 
+by dragging across it, although clicking can still move the insertion 
+cursor. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Value_Input.Fl_Value_Input>Fl_Value_Input</A></LI>
+<LI><A href=#Fl_Value_Input.~Fl_Value_Input>~Fl_Value_Input</A></LI>
+<LI><A href=#Fl_Value_Input.cursor_color>cursor_color</A></LI>
+<LI><A href=#Fl_Value_Input.soft>soft</A></LI>
+<LI><A href=#Fl_Value_Input.textcolor>textcolor</A></LI>
+<LI><A href=#Fl_Value_Input.textfont>textfont</A></LI>
+<LI><A href=#Fl_Value_Input.textsize>textsize</A></LI>
+</UL>
+<H4><A name=Fl_Value_Input.Fl_Value_Input>
+Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char 
+*label = 0)</A></H4>
+ Creates a new <TT>Fl_Value_Input</TT> widget using the given position, 
+size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+<H4><A name=Fl_Value_Input.~Fl_Value_Input>virtual 
+Fl_Value_Input::~Fl_Value_Input()</A></H4>
+ Destroys the valuator. 
+<H4><A name=Fl_Value_Input.cursor_color>Fl_Color 
+Fl_Value_Input::cursor_color() const
+<BR> void Fl_Value_Input::cursor_color(Fl_Color)</A></H4>
+ Get or set the color of the cursor.  This is black by default. 
+<H4><A name=Fl_Value_Input.soft>uchar Fl_Value_Input::soft() const
+<BR> void Fl_Value_Input::soft(uchar)</A></H4>
+ If &quot;soft&quot; is turned on, the user is allowed to drag the value outside 
+the range.  If they drag the value to one of the ends, let go, then 
+grab again and continue to drag, they can get to any value.  Default is 
+one. 
+<H4><A name=Fl_Value_Input.textcolor>Fl_Color 
+Fl_Value_Input::textcolor() const
+<BR> void Fl_Value_Input::textcolor(Fl_Color)</A></H4>
+ Gets or sets the color of the text in the value box. 
+<H4><A name=Fl_Value_Input.textfont>Fl_Font Fl_Value_Input::textfont() 
+const
+<BR>
+<BR>void Fl_Value_Input::textfont(Fl_Font)</A></H4>
+ Gets or sets the typeface of the text in the value box. 
+<H4><A name=Fl_Value_Input.textsize>uchar Fl_Value_Input::textsize() 
+const
+<BR> void Fl_Value_Input::textsize(uchar)</A></H4>
+ Gets or sets the size of the text in the value box. </BODY></HTML>

@@ -1,66 +1,58 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Double_Window">class Fl_Double_Window</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Window">Fl_Window</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Double_Window>class Fl_Double_Window</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Window.html#Fl_Window>Fl_Window</A>
    |
-   +----<b>Fl_Double_Window</b>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Double_Window.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-The <tt>Fl_Double_Window</tt> class provides a double-buffered window. 
-If possible this will use the X double buffering extension (Xdbe).  If
-not, it will draw the window data into an off-screen pixmap, and then
-copy it to the on-screen window.
-
-<p>It is highly recommended that you put the following code before the
-first <tt>show()</tt> of <i>any</i> window in your program:
-
-<ul><pre>
+   +----<B>Fl_Double_Window</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Double_Window.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Double_Window</TT> class provides a double-buffered window. 
+ If possible this will use the X double buffering extension (Xdbe).  If 
+not, it will draw the window data into an off-screen pixmap, and then 
+copy it to the on-screen window. 
+<P>It is highly recommended that you put the following code before the 
+first <TT>show()</TT> of <I>any</I> window in your program: </P>
+<UL>
+<PRE>
 Fl::visual(FL_DOUBLE|FL_INDEX)
-</pre></ul>
-
-This makes sure you can use Xdbe on servers where double buffering does
-not exist for every visual.
-
-<h3>Methods</h3>
-
-<ul>
-	<li><a href="#Fl_Double_Window.Fl_Double_Window">Fl_Double_Window</a>
-	<li><a href="#Fl_Double_Window.~Fl_Double_Window">~Fl_Double_Window</a>
-	<li><a href="#Fl_Double_Window.pixmap">pixmap</a>
-</ul>
-
-<h4><a name="Fl_Double_Window.Fl_Double_Window">Fl_Double_Window::Fl_Double_Window(int x, int y, int w, int h, const char *label = 0)</a></h4>
-
-Creates a new <tt>Fl_Double_Window</tt> widget using the given position, size, and
-label (title) string.
-
-<h4><a name="Fl_Double_Window.~Fl_Double_Window">virtual Fl_Double_Window::~Fl_Double_Window()</a></h4>
-
-The destructor <i>also deletes all the children</i>. This allows a
-whole tree to be deleted at once, without having to keep a pointer to all
-the children in the user code.
-
-<h4><a name="Fl_Double_Window.pixmap>ulong Fl_Double_Window::pixmap() const</a></h4>
+</PRE>
+</UL>
+ This makes sure you can use Xdbe on servers where double buffering 
+does not exist for every visual. 
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Double_Window.Fl_Double_Window>Fl_Double_Window</A></LI>
+<LI><A href=#Fl_Double_Window.~Fl_Double_Window>~Fl_Double_Window</A></LI>
+<LI><A href=#Fl_Double_Window.pixmap>pixmap</A></LI>
+</UL>
+<H4><A name=Fl_Double_Window.Fl_Double_Window>
+Fl_Double_Window::Fl_Double_Window(int x, int y, int w, int h, const 
+char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Double_Window</TT> widget using the given 
+position, size, and label (title) string. 
+<H4><A name=Fl_Double_Window.~Fl_Double_Window>virtual 
+Fl_Double_Window::~Fl_Double_Window()</A></H4>
+ The destructor <I>also deletes all the children</I>. This allows a 
+whole tree to be deleted at once, without having to keep a pointer to 
+all the children in the user code. 
+<H4><A name="Fl_Double_Window.pixmap>ulong Fl_Double_Window::pixmap() const</a></h4>
 
 Returns the off-screen pixmap or back buffer. This value is zero until
 the first time <tt>flush()</tt> is called.
 
 </body>
 </html>
+">
+</H4>
+</BODY></HTML>

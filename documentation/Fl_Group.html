@@ -1,178 +1,136 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Group">class Fl_Group</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Widget">Fl_Widget</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Group>class Fl_Group</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
    |
-   +----<b>Fl_Group</b>
+   +----<B>Fl_Group</B>
            |
-           +----<a href="#Fl_Pack">Fl_Pack</a>, <a href="#Fl_Scroll">Fl_Scroll</a>, <a href="#Fl_Tabs">Fl_Tabs</a>, <a href="#Fl_Tile">Fl_Tile</a>, <a href="#Fl_Window">Fl_Window</a>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Group.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-The <tt>Fl_Group</tt> class is the FLTK container widget. It maintains
-an array of child widgets. These children can themselves be any widget
-including <tt>Fl_Group</tt>. The most important subclass of <tt>Fl_Group</tt>
-is <a href="#Fl_Window"><tt>Fl_Window</tt></a>, however groups can also
-be used to control radio buttons or to enforce resize behavior.
-
-<h3>Methods</h3>
-
-<center>
-<table width=90%>
-<tr>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Group.Fl_Group">Fl_Group</a>
-	<li><a href="#Fl_Group.~Fl_Group">~Fl_Group</a>
-	<li><a href="#Fl_Group.add">add</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Group.add_resizable">add_resizable</a>
-	<li><a href="#Fl_Group.array">array</a>
-	<li><a href="#Fl_Group.begin">begin</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Group.child">child</a>
-	<li><a href="#Fl_Group.children">children</a>
-	<li><a href="#Fl_Group.current">current</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Group.end">end</a>
-	<li><a href="#Fl_Group.find">find</a>
-	<li><a href="#Fl_Group.insert">insert</a>
-</ul>
-</td>
-<td align=left valign=top>
-<ul>
-	<li><a href="#Fl_Group.remove">remove</a>
-	<li><a href="#Fl_Group.resizeable">resizable</a>
-</ul>
-</td>
-</tr>
-</table>
-</center>
-
-<h4><a name="Fl_Group.Fl_Group">Fl_Group::Fl_Group(int x, int y, int w, int h, const char *label = 0)</a></h4>
-
-Creates a new <tt>Fl_Group</tt> widget using the given position, size, and
-label string. The default boxtype is <tt>FL_NO_BOX</tt>.
-
-<h4><a name="Fl_Group.~Fl_Group">virtual Fl_Group::~Fl_Group()</a></h4>
-
-The destructor <i>also deletes all the children</i>. This allows a
-whole tree to be deleted at once, without having to keep a pointer to all
-the children in the user code. A kludge has been done so the
-<tt>Fl_Group</tt> and all of it's children can be automatic (local)
-variables, but you must declare the <tt>Fl_Group</tt> <i>first</i>, so
-that it is destroyed last.
-
-<h4><a name="Fl_Group.add">void Fl_Group::add(Fl_Widget &amp;w)<BR>
-void Fl_Group::add(Fl_Widget *w)</a></h4>
-
-Adds a widget to the group at the end of the child array.
-
-<h4><a name="Fl_Group.add_resizable">Fl_Group &amp;Fl_Group::add_resizable(Fl_Widget &amp;box)</a></h4>
-
-Adds a widget to the group and makes it the resizable widget.
-
-<h4><a name="Fl_Group.array">const Fl_Widget **Fl_Group::array() const</a></h4>
-
-Returns a pointer to the array of children. <i>This pointer can change
-when children are added or removed!</i>
-
-<h4><a name="Fl_Group.begin">void Fl_Group::begin()</a></h4>
-
-<tt>begin()</tt> sets the current group so you can build the widget tree
-by just constructing the widgets. <tt>begin()</tt> is automatically called by
-the constructor for Fl_Group (and thus for Fl_Window as well).
-<tt>begin()</tt> does <tt>current(this)</tt>.
-
-<p><i>Don't forget to <tt>end()</tt> the group or window!</i>
-
-<h4><a name="Fl_Group.child">Fl_Widget *Fl_Group::child(int n) const</a></h4>
-
-Returns child <tt>n</tt>, where <tt>0 <= n < children()</tt>.
-
-<h4><a name="Fl_Group.children">int Fl_Group::children() const</a></h4>
-
-Returns how many child widgets the group has.
-
-<h4><a name="Fl_Group.current">static Fl_Group *Fl_Group::current()<BR>
-static void Fl_Group::current(Fl_Group *w)</a></h4>
-
-<tt>current()</tt> returns the currently active group in the widget tree.
-To prevent widgets from being added to a group, call <tt>current()</tt>
-with a <tt>NULL</tt> group.
-
-<h4><a name="Fl_Group.end">void Fl_Group::end()</a></h4>
-
-<tt>end()</tt> does <tt>current(this->parent())</tt>. Any new widgets added
-to the widget tree will be added to the parent of the group.
-
-<h4><a name="Fl_Group.find">int Fl_Group::find(const Fl_Widget *w) const<BR>
-int Fl_Group::find(const Fl_Widget &amp;w) const</a></h4>
-
-Searches the child array for the widget and returns the index. Returns
-<a href="#Fl_Group.children"><tt>children()</tt></a> if the widget is
-<tt>NULL</tt> or not found.
-
-<h4><a name="Fl_Group.insert">void Fl_Group::insert(Fl_Widget &amp;w, int n)<BR>
-void Fl_Group::insert(Fl_Widget &amp;w, Fl_Widget *beforethis)</a></h4>
-
-Inserts a widget into the child array. It is put at index <tt>n</tt> which
-must be less or equal to children(). The second version does a
-<tt>find(beforethis)</tt> and inserts using that index.
-
-<h4><a name="Fl_Group.remove">void Fl_Group::remove(Fl_Widget &amp;w)</a></h4>
-
-Removes a widget from the group. This does nothing if the widget
-is not currently a child of this group.
-
-<h4><a name="Fl_Group.resizeable">void Fl_Group::resizable(Fl_Widget *box)<BR>
-void Fl_Group::resizable(Fl_Widget &amp;box)<BR>
-Fl_Widget *Fl_Group::resizable() const</a></h4>
-
-The resizable widget defines the resizing box for the group. When the
-group is resized it calculates a new size and position for all of its
-children. Widgets that are horizontally or vertically inside the dimensions
-of the box are scaled to the new size. Widgets outside the box are moved.
-
-<p>In these examples the gray area is the resizable:<br>
-
-<p align=center><img SRC="resizebox1.gif" align=TOP height=240>&nbsp;&nbsp;
-<img SRC="resizebox2.gif" align=TOP height=240>
-
-<p>The resizable may be set to the group itself (this is the default value
-for an <tt>Fl_Group</tt>, although <tt>NULL</tt> is the default for an
-<tt>Fl_Window</tt>), in which case all the contents are resized. If the
-resizable is <tt>NULL</tt> then all widgets remain a fixed size and
-distance from the top-left corner.
-
-<p>It is possible to achieve any type of resize behavior by using an
-invisible <tt>Fl_Box</tt> as the resizable and/or by using a hierarchy of
-child <tt>Fl_Group</tt>'s.
-
-</body>
-</html>
+           +----<A href=Fl_Pack.html#Fl_Pack>Fl_Pack</A>, <A href=Fl_Scroll.html#Fl_Scroll>Fl_Scroll</A>, <A href=Fl_Tabs.html#Fl_Tabs>Fl_Tabs</A>, <A href=Fl_Tile.html#Fl_Tile>Fl_Tile</A>, <A href=Fl_Window.html#Fl_Window>Fl_Window</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Group.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Group</TT> class is the FLTK container widget. It maintains 
+an array of child widgets. These children can themselves be any widget 
+including <TT>Fl_Group</TT>. The most important subclass of <TT>Fl_Group</TT>
+ is <A href=Fl_Window.html#Fl_Window><TT>Fl_Window</TT></A>, however 
+groups can also be used to control radio buttons or to enforce resize 
+behavior. 
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90%>
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Group.Fl_Group>Fl_Group</A></LI>
+<LI><A href=#Fl_Group.~Fl_Group>~Fl_Group</A></LI>
+<LI><A href=#Fl_Group.add>add</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Group.add_resizable>add_resizable</A></LI>
+<LI><A href=#Fl_Group.array>array</A></LI>
+<LI><A href=#Fl_Group.begin>begin</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Group.child>child</A></LI>
+<LI><A href=#Fl_Group.children>children</A></LI>
+<LI><A href=#Fl_Group.current>current</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Group.end>end</A></LI>
+<LI><A href=#Fl_Group.find>find</A></LI>
+<LI><A href=#Fl_Group.insert>insert</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Group.remove>remove</A></LI>
+<LI><A href=#Fl_Group.resizeable>resizable</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+<H4><A name=Fl_Group.Fl_Group>Fl_Group::Fl_Group(int x, int y, int w, 
+int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Group</TT> widget using the given position, size, 
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+<H4><A name=Fl_Group.~Fl_Group>virtual Fl_Group::~Fl_Group()</A></H4>
+ The destructor <I>also deletes all the children</I>. This allows a 
+whole tree to be deleted at once, without having to keep a pointer to 
+all the children in the user code. A kludge has been done so the <TT>
+Fl_Group</TT> and all of it's children can be automatic (local) 
+variables, but you must declare the <TT>Fl_Group</TT><I>first</I>, so 
+that it is destroyed last. 
+<H4><A name=Fl_Group.add>void Fl_Group::add(Fl_Widget &amp;w)
+<BR> void Fl_Group::add(Fl_Widget *w)</A></H4>
+ Adds a widget to the group at the end of the child array. 
+<H4><A name=Fl_Group.add_resizable>Fl_Group 
+&amp;Fl_Group::add_resizable(Fl_Widget &amp;box)</A></H4>
+ Adds a widget to the group and makes it the resizable widget. 
+<H4><A name=Fl_Group.array>const Fl_Widget **Fl_Group::array() const</A></H4>
+ Returns a pointer to the array of children. <I>This pointer can change 
+when children are added or removed!</I>
+<H4><A name=Fl_Group.begin>void Fl_Group::begin()</A></H4>
+<TT>begin()</TT> sets the current group so you can build the widget 
+tree by just constructing the widgets. <TT>begin()</TT> is 
+automatically called by the constructor for Fl_Group (and thus for 
+Fl_Window as well). <TT>begin()</TT> does <TT>current(this)</TT>. 
+<P><I>Don't forget to <TT>end()</TT> the group or window!</I></P>
+<H4><A name=Fl_Group.child>Fl_Widget *Fl_Group::child(int n) const</A></H4>
+ Returns child <TT>n</TT>, where <TT>0 
+<!--= n < children()</tt-->
+. 
+<H4><A name=Fl_Group.children>int Fl_Group::children() const</A></H4>
+ Returns how many child widgets the group has. 
+<H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()
+<BR> static void Fl_Group::current(Fl_Group *w)</A></H4>
+<TT>current()</TT> returns the currently active group in the widget 
+tree. To prevent widgets from being added to a group, call <TT>current()</TT>
+ with a <TT>NULL</TT> group. 
+<H4><A name=Fl_Group.end>void Fl_Group::end()</A></H4>
+<TT>end()</TT> does <TT>current(this-&gt;parent())</TT>. Any new widgets 
+added to the widget tree will be added to the parent of the group. 
+<H4><A name=Fl_Group.find>int Fl_Group::find(const Fl_Widget *w) const
+<BR> int Fl_Group::find(const Fl_Widget &amp;w) const</A></H4>
+ Searches the child array for the widget and returns the index. Returns <A
+href=#Fl_Group.children><TT>children()</TT></A> if the widget is <TT>
+NULL</TT> or not found. 
+<H4><A name=Fl_Group.insert>void Fl_Group::insert(Fl_Widget &amp;w, int n)
+<BR> void Fl_Group::insert(Fl_Widget &amp;w, Fl_Widget *beforethis)</A></H4>
+ Inserts a widget into the child array. It is put at index <TT>n</TT>
+ which must be less or equal to children(). The second version does a <TT>
+find(beforethis)</TT> and inserts using that index. 
+<H4><A name=Fl_Group.remove>void Fl_Group::remove(Fl_Widget &amp;w)</A></H4>
+ Removes a widget from the group. This does nothing if the widget is 
+not currently a child of this group. 
+<H4><A name=Fl_Group.resizeable>void Fl_Group::resizable(Fl_Widget *box)
+<BR> void Fl_Group::resizable(Fl_Widget &amp;box)
+<BR> Fl_Widget *Fl_Group::resizable() const</A></H4>
+ The resizable widget defines the resizing box for the group. When the 
+group is resized it calculates a new size and position for all of its 
+children. Widgets that are horizontally or vertically inside the 
+dimensions of the box are scaled to the new size. Widgets outside the 
+box are moved. 
+<P>In these examples the gray area is the resizable:
+<BR></P>
+<P align=center><IMG align=TOP height=240 SRC=./resizebox1.gif>&nbsp;&nbsp; <IMG align=TOP
+height=240 SRC=./resizebox2.gif></P>
+<P>The resizable may be set to the group itself (this is the default 
+value for an <TT>Fl_Group</TT>, although <TT>NULL</TT> is the default 
+for an <TT>Fl_Window</TT>), in which case all the contents are resized. 
+If the resizable is <TT>NULL</TT> then all widgets remain a fixed size 
+and distance from the top-left corner. </P>
+<P>It is possible to achieve any type of resize behavior by using an 
+invisible <TT>Fl_Box</TT> as the resizable and/or by using a hierarchy 
+of child <TT>Fl_Group</TT>'s. </P>
+</TT></BODY></HTML>

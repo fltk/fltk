@@ -1,41 +1,35 @@
-<HTML>
-<BODY>
-
-<H1 ALIGN=RIGHT><A NAME="editor">4 - Designing a Simple Text Editor</A></H1>
-
-This chapter takes you through the design of a simple FLTK-based text editor.
-
+<HTML><BODY>
+<H1 ALIGN=RIGHT><A NAME=editor>4 - Designing a Simple Text Editor</A></H1>
+ This chapter takes you through the design of a simple FLTK-based text 
+editor. 
 <H2>Determining the Goals of the Text Editor</H2>
-
-Since this will be the first big project you'll be doing with FLTK, lets define
-what we want our text editor to do:
-
-<ol>
-	<li>Menu_Bar/menus for all functions.
-	<li>Edit a single text file.
-	<li>Load from a file.
-	<li>Save to a file.
-	<li>Cut/copy/delete/paste functions.
-	<li>Search and replace functions.
-	<li>Keep track of when the file has been changed.
-</ol>
-
+ Since this will be the first big project you'll be doing with FLTK, 
+lets define what we want our text editor to do: 
+<OL>
+<LI>Menu_Bar/menus for all functions. </LI>
+<LI>Edit a single text file. </LI>
+<LI>Load from a file. </LI>
+<LI>Save to a file. </LI>
+<LI>Cut/copy/delete/paste functions. </LI>
+<LI>Search and replace functions. </LI>
+<LI>Keep track of when the file has been changed. </LI>
+</OL>
 <H2>Designing the Main Window</H2>
-
-Now that we've outlined the goals for our editor, we can begin with the design
-of our GUI.  Obviously the first thing that we need is a window:
-
-<ul><pre>
+ Now that we've outlined the goals for our editor, we can begin with 
+the design of our GUI.  Obviously the first thing that we need is a 
+window: 
+<UL>
+<PRE>
 Fl_Window *window;
 
-window = new Fl_Window(640, 480, "Text Editor");
-</pre></ul>
-
+window = new Fl_Window(640, 480, &quot;Text Editor&quot;);
+</PRE>
+</UL>
 <H2>Variables</H2>
-
-Our text editor will need some global variables to keep track of things:
-
-<ul><pre>
+ Our text editor will need some global variables to keep track of 
+things: 
+<UL>
+<PRE>
 Fl_Window          *window;
 Fl_Menu_Bar         *menubar;
 Fl_Multiline_Input *input;
@@ -47,187 +41,173 @@ Fl_Return_Button   *replace_next;
 Fl_Button          *replace_cancel;
 
 int                changed = 0;
-char               filename[1024] = "";
-char               search[256] = "";
-</pre></ul>
-
-The <tt>window</tt> variable is our top-level window described previously.
-We'll cover the other variables as we build the application.
-
+char               filename[1024] = &quot;&quot;;
+char               search[256] = &quot;&quot;;
+</PRE>
+</UL>
+ The <TT>window</TT> variable is our top-level window described 
+previously. We'll cover the other variables as we build the 
+application. 
 <H2>Menu_Bars and Menus</H2>
-
-The first goal requires us to use a menubar and menus that define
-each function the editor needs to perform.  The
-<a href="#Fl_Menu_Item"><tt>Fl_Menu_Item</tt></a> structure is used to
-define the menus and items in a menubar:
-
-<ul><pre>
+ The first goal requires us to use a menubar and menus that define each 
+function the editor needs to perform.  The <A href=Fl_Menu_Item.html#Fl_Menu_Item>
+<TT>Fl_Menu_Item</TT></A> structure is used to define the menus and 
+items in a menubar: 
+<UL>
+<PRE>
 Fl_Menu_Item menuitems[] = {
-  { "&amp;File", 0, 0, 0, FL_SUBMENU },
-    { "&amp;New",        FL_ALT + 'n', new_cb },
-    { "&amp;Open...",    FL_ALT + 'o', open_cb, 0, FL_MENU_DIVIDER },
-    { "&amp;Save",       FL_ALT + 's', save_cb },
-    { "Save &amp;As...", FL_ALT + FL_SHIFT + 's', saveas_cb, 0, FL_MENU_DIVIDER },
-    { "&amp;Quit", FL_ALT + 'q', quit_cb },
+  { &quot;&amp;File&quot;, 0, 0, 0, FL_SUBMENU },
+    { &quot;&amp;New&quot;,        FL_ALT + 'n', new_cb },
+    { &quot;&amp;Open...&quot;,    FL_ALT + 'o', open_cb, 0, FL_MENU_DIVIDER },
+    { &quot;&amp;Save&quot;,       FL_ALT + 's', save_cb },
+    { &quot;Save &amp;As...&quot;, FL_ALT + FL_SHIFT + 's', saveas_cb, 0, FL_MENU_DIVIDER },
+    { &quot;&amp;Quit&quot;, FL_ALT + 'q', quit_cb },
     { 0 },
 
-  { "&amp;Edit", 0, 0, 0, FL_SUBMENU },
-    { "&amp;Undo",       FL_ALT + 'z', undo_cb, 0, FL_MENU_DIVIDER },
-    { "Cu&amp;t",        FL_ALT + 'x', cut_cb },
-    { "&amp;Copy",       FL_ALT + 'c', copy_cb },
-    { "&amp;Paste",      FL_ALT + 'v', paste_cb },
-    { "&amp;Delete",     0, delete_cb },
+  { &quot;&amp;Edit&quot;, 0, 0, 0, FL_SUBMENU },
+    { &quot;&amp;Undo&quot;,       FL_ALT + 'z', undo_cb, 0, FL_MENU_DIVIDER },
+    { &quot;Cu&amp;t&quot;,        FL_ALT + 'x', cut_cb },
+    { &quot;&amp;Copy&quot;,       FL_ALT + 'c', copy_cb },
+    { &quot;&amp;Paste&quot;,      FL_ALT + 'v', paste_cb },
+    { &quot;&amp;Delete&quot;,     0, delete_cb },
     { 0 },
 
-  { "&amp;Search", 0, 0, 0, FL_SUBMENU },
-    { "&amp;Find...",       FL_ALT + 'f', find_cb },
-    { "F&amp;ind Again",    FL_ALT + 'g', find2_cb },
-    { "&amp;Replace...",    FL_ALT + 'r', replace_cb },
-    { "Re&amp;place Again", FL_ALT + 't', replace2_cb },
+  { &quot;&amp;Search&quot;, 0, 0, 0, FL_SUBMENU },
+    { &quot;&amp;Find...&quot;,       FL_ALT + 'f', find_cb },
+    { &quot;F&amp;ind Again&quot;,    FL_ALT + 'g', find2_cb },
+    { &quot;&amp;Replace...&quot;,    FL_ALT + 'r', replace_cb },
+    { &quot;Re&amp;place Again&quot;, FL_ALT + 't', replace2_cb },
     { 0 },
 
   { 0 }
 };
-</pre></ul>
-
-Once we have the menus defined we can create the <tt>Fl_Menu_Bar</tt> widget
-and assign the menus to it with:
-
-<ul><pre>
+</PRE>
+</UL>
+ Once we have the menus defined we can create the <TT>Fl_Menu_Bar</TT>
+ widget and assign the menus to it with: 
+<UL>
+<PRE>
 Fl_Menu_Bar *menubar = new Fl_Menu_Bar(0, 0, 640, 30);
-menubar->menu(menuitems);
-</pre></ul>
-
-We'll define the callback functions later.
-
+menubar-&gt;menu(menuitems);
+</PRE>
+</UL>
+ We'll define the callback functions later. 
 <H2>Editing the Text</H2>
-
-To keep things simple our text editor will use the
-<a href="#Fl_Multiline_Input"><tt>Fl_Multiline_Input</tt></a> widget to
-edit the text:
-
-<ul><pre>
+ To keep things simple our text editor will use the <A href=Fl_Multiline_Input.html#Fl_Multiline_Input>
+<TT>Fl_Multiline_Input</TT></A> widget to edit the text: 
+<UL>
+<PRE>
 Fl_Multiline_Input *input = new Fl_Multiline_Input(0, 30, 640, 450);
-</pre></ul>
-
-So that we can keep track of changes to the file, we also want to add a
-"changed" callback:
-
-<ul><pre>
-input->callback(changed_cb);
-input->when(FL_WHEN_CHANGED);
-</pre></ul>
-
-Finally, we want to use a mono-spaced font like <tt>FL_COURIER</tt>:
-
-<ul><pre>
-input->textfont(FL_COURIER);
-</pre></ul>
-
+</PRE>
+</UL>
+ So that we can keep track of changes to the file, we also want to add 
+a &quot;changed&quot; callback: 
+<UL>
+<PRE>
+input-&gt;callback(changed_cb);
+input-&gt;when(FL_WHEN_CHANGED);
+</PRE>
+</UL>
+ Finally, we want to use a mono-spaced font like <TT>FL_COURIER</TT>: 
+<UL>
+<PRE>
+input-&gt;textfont(FL_COURIER);
+</PRE>
+</UL>
 <H2>The Replace Dialog</H2>
-
-We can use the FLTK convenience functions for many of the editor's
-dialogs, however the replace dialog needs its own custom window.  To
-keep things simple we will have a "find" string, a "replace" string,
-and "replace all", "replace next", and "cancel" buttons.  The strings
-are just <tt>Fl_Input</tt> widgets, the "replace all" and "cancel"
-buttons are <tt>Fl_Button</tt> widgets, and the "replace next " button
-is a <tt>Fl_Return_Button</tt> widget:
-
-<center><img src=editor-replace.gif></center>
-
-<ul><pre>
-Fl_Window *replace_dlg = new Fl_Window(300, 105, "Replace");
-Fl_Input *replace_find = new Fl_Input(70, 10, 200, 25, "Find:");
-Fl_Input *replace_with = new Fl_Input(70, 40, 200, 25, "Replace:");
-Fl_Button *replace_all = new Fl_Button(10, 70, 90, 25, "Replace All");
-Fl_Button *replace_next = new Fl_Button(105, 70, 120, 25, "Replace Next");
-Fl_Button *replace_cancel = new Fl_Button(230, 70, 60, 25, "Cancel");
-</pre></ul>
-
+ We can use the FLTK convenience functions for many of the editor's 
+dialogs, however the replace dialog needs its own custom window.  To 
+keep things simple we will have a &quot;find&quot; string, a &quot;replace&quot; string, 
+and &quot;replace all&quot;, &quot;replace next&quot;, and &quot;cancel&quot; buttons.  The strings 
+are just <TT>Fl_Input</TT> widgets, the &quot;replace all&quot; and &quot;cancel&quot; 
+buttons are <TT>Fl_Button</TT> widgets, and the &quot;replace next &quot; button 
+is a <TT>Fl_Return_Button</TT> widget: 
+<CENTER><IMG src=./editor-replace.gif></CENTER>
+<UL>
+<PRE>
+Fl_Window *replace_dlg = new Fl_Window(300, 105, &quot;Replace&quot;);
+Fl_Input *replace_find = new Fl_Input(70, 10, 200, 25, &quot;Find:&quot;);
+Fl_Input *replace_with = new Fl_Input(70, 40, 200, 25, &quot;Replace:&quot;);
+Fl_Button *replace_all = new Fl_Button(10, 70, 90, 25, &quot;Replace All&quot;);
+Fl_Button *replace_next = new Fl_Button(105, 70, 120, 25, &quot;Replace Next&quot;);
+Fl_Button *replace_cancel = new Fl_Button(230, 70, 60, 25, &quot;Cancel&quot;);
+</PRE>
+</UL>
 <H2>Callbacks</H2>
-
-Now that we've defined the GUI components of our editor, we need to define
-our callback functions.
-
+ Now that we've defined the GUI components of our editor, we need to 
+define our callback functions. 
 <H3>changed_cb()</H3>
-
-This function will be called whenever the user changes any text in the
-<tt>input</tt> widget:
-
-<ul><pre>
+ This function will be called whenever the user changes any text in the <TT>
+input</TT> widget: 
+<UL>
+<PRE>
 void changed_cb(void) {
   set_changed(1);
 }
-</pre></ul>
-
-The <tt>set_changed()</tt> function is one that we will write to set the
-changed status on the current file.  We're doing it this way because some
-of the other callbacks will set the changed status to 0, and also because
-we want to show the changed status in the window's title bar.
-
+</PRE>
+</UL>
+ The <TT>set_changed()</TT> function is one that we will write to set 
+the changed status on the current file.  We're doing it this way 
+because some of the other callbacks will set the changed status to 0, 
+and also because we want to show the changed status in the window's 
+title bar. 
 <H3>copy_cb()</H3>
-
-This callback function will call <a href="#Fl_Input.copy">
-<tt>input->copy()</tt></a> to copy the currently selected text to the
-clipboard:
-
-<ul><pre>
+ This callback function will call <A href=#Fl_Input.copy><TT>
+input-&gt;copy()</TT></A> to copy the currently selected text to the 
+clipboard: 
+<UL>
+<PRE>
 void copy_cb(void) {
-  input->copy();
+  input-&gt;copy();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>cut_cb()</H3>
-
-This callback function will call <a href="#Fl_Input_.copy">
-<tt>input->copy()</tt></a> to copy the currently selected text to the
-clipboard and then <a href="#Fl_Input_.cut"><tt>input->cut()</tt></a>
-to delete it:
-
-<ul><pre>
+ This callback function will call <A href=Fl_Input_.html#Fl_Input_.copy><TT>
+input-&gt;copy()</TT></A> to copy the currently selected text to the 
+clipboard and then <A href=Fl_Input_.html#Fl_Input_.cut><TT>input-&gt;cut()</TT>
+</A> to delete it: 
+<UL>
+<PRE>
 void cut_cb(void) {
-  input->copy();
-  input->cut();
+  input-&gt;copy();
+  input-&gt;cut();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>delete_cb()</H3>
-
-This callback function will call <a href="#Fl_Input_.cut">
-<tt>input->cut()</tt></a> to delete the selected text:
-
-<ul><pre>
+ This callback function will call <A href=Fl_Input_.html#Fl_Input_.cut><TT>
+input-&gt;cut()</TT></A> to delete the selected text: 
+<UL>
+<PRE>
 void delete_cb(void) {
-  input->cut();
+  input-&gt;cut();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>find_cb()</H3>
-
-This callback function asks for a search string using the
-<a href="#fl_input"><tt>fl_input()</tt></a> convenience function and
-then calls the <tt>find2_cb()</tt> function to find the string:
-
-<ul><pre>
+ This callback function asks for a search string using the <A href=functions.html#fl_input>
+<TT>fl_input()</TT></A> convenience function and then calls the <TT>
+find2_cb()</TT> function to find the string: 
+<UL>
+<PRE>
 void find_cb(void) {
   const char *val;
 
-  val = fl_input("Search String:", search);
+  val = fl_input(&quot;Search String:&quot;, search);
   if (val != NULL) {
     // User entered a string - go find it!
     strcpy(search, val);
     find2_cb();
   }
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>find2_cb()</H3>
-
-This function will find the next occurrence of the search string.  If the
-search string is blank then we want to pop up the search dialog:
-
-<ul><pre>
+ This function will find the next occurrence of the search string.  If 
+the search string is blank then we want to pop up the search dialog: 
+<UL>
+<PRE>
 void find2_cb(void) {
   const char *val, *found;
   int pos;
@@ -238,182 +218,174 @@ void find2_cb(void) {
     return;
   }
 
-  val   = input->value() + input->mark();
+  val   = input-&gt;value() + input-&gt;mark();
   found = strstr(val, search);
 
   if (found != NULL) {
     // Found a match; update the position and mark...
-    pos = input->mark() + found - val;
-    input->position(pos, pos + strlen(search));
+    pos = input-&gt;mark() + found - val;
+    input-&gt;position(pos, pos + strlen(search));
   }
-  else fl_alert("No occurrences of \'%s\' found!", search);
+  else fl_alert(&quot;No occurrences of \'%s\' found!&quot;, search);
 }
-</pre></ul>
-
-If the search string cannot be found we use the <a href="#fl_alert">
-<tt>fl_alert()</tt></a> convenience function to display a message to
-that effect.
-
+</PRE>
+</UL>
+ If the search string cannot be found we use the <A href=#fl_alert><TT>
+fl_alert()</TT></A> convenience function to display a message to that 
+effect. 
 <H3>new_cb()</H3>
-
-This callback function will clear the input widget and current filename.
-It also calls the <tt>check_save()</tt> function to give the user the
-opportunity to save the current file first as needed:
-
-<ul><pre>
+ This callback function will clear the input widget and current 
+filename. It also calls the <TT>check_save()</TT> function to give the 
+user the opportunity to save the current file first as needed: 
+<UL>
+<PRE>
 void new_cb(void) {
   if (changed)
     if (!check_save()) return;
 
   filename[0] = '\0';
-  input->value("");
+  input-&gt;value(&quot;&quot;);
   set_changed(0);
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>open_cb()</H3>
-
-This callback function will ask the user for a filename and then load
-the specified file into the input widget and current filename. It also
-calls the <tt>check_save()</tt> function to give the user the
-opportunity to save the current file first as needed:
-
-<ul><pre>
+ This callback function will ask the user for a filename and then load 
+the specified file into the input widget and current filename. It also 
+calls the <TT>check_save()</TT> function to give the user the 
+opportunity to save the current file first as needed: 
+<UL>
+<PRE>
 void open_cb(void) {
   char *newfile;
 
   if (changed)
     if (!check_save()) return;
 
-  newfile = fl_file_chooser("Open File?", "*", filename);
+  newfile = fl_file_chooser(&quot;Open File?&quot;, &quot;*&quot;, filename);
   if (newfile != NULL) load_file(newfile);
 }
-</pre></ul>
-
-We call the <tt>load_file()</tt> function to actually load the file.
-
+</PRE>
+</UL>
+ We call the <TT>load_file()</TT> function to actually load the file. 
 <H3>paste_cb()</H3>
-
-This callback function will send a FL_PASTE message to the <tt>input</tt>
-widget using the <a href="#paste"><tt>Fl::paste()</tt></a> method:
-
-<ul><pre>
+ This callback function will send a FL_PASTE message to the <TT>input</TT>
+ widget using the <A href=functions.html#paste><TT>Fl::paste()</TT></A>
+ method: 
+<UL>
+<PRE>
 void paste_cb(void) {
   Fl::paste(*input);
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>quit_cb()</H3>
-
-The quit callback will first see if the current file has been modified,
-and if so give the user a chance to save it. It then hides the main window:
-
-<ul><pre>
+ The quit callback will first see if the current file has been 
+modified, and if so give the user a chance to save it. It then hides 
+the main window: 
+<UL>
+<PRE>
 void quit_cb(void) {
   if (changed)
     if (!check_save())
       return;
 
-  window->hide();
+  window-&gt;hide();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>replace_cb()</H3>
-
-The replace callback just shows the replace dialog:
-
-<ul><pre>
+ The replace callback just shows the replace dialog: 
+<UL>
+<PRE>
 void replace_cb(void) {
-  replace_dlg->show();
+  replace_dlg-&gt;show();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>replace2_cb()</H3>
-
-This callback will replace the next occurence of the replacement string. If
-nothing has been entered for the replacement string, then the replace dialog
-is displayed instead:
-
-<ul><pre>
+ This callback will replace the next occurence of the replacement 
+string. If nothing has been entered for the replacement string, then 
+the replace dialog is displayed instead: 
+<UL>
+<PRE>
 void replace2_cb() {
   const char *find, *val, *found;
   int pos;
 
-  find = replace_find->value();
+  find = replace_find-&gt;value();
   if (find[0] == '\0') {
     // Search string is blank; get a new one...
-    replace_dlg->show();
+    replace_dlg-&gt;show();
     return;
   }
 
-  val   = input->value() + input->position();
+  val   = input-&gt;value() + input-&gt;position();
   found = strstr(val, find);
 
   if (found != NULL) {
     // Found a match; update the position and replace text...
-    pos = input->position() + found - val;
-    input->replace(pos, pos + strlen(find), replace_with->value());
-    input->position(pos + strlen(replace_with->value()));
+    pos = input-&gt;position() + found - val;
+    input-&gt;replace(pos, pos + strlen(find), replace_with-&gt;value());
+    input-&gt;position(pos + strlen(replace_with-&gt;value()));
   }
-  else fl_alert("No occurrences of \'%s\' found!", find);
+  else fl_alert(&quot;No occurrences of \'%s\' found!&quot;, find);
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>replall_cb()</H3>
-
-This callback will replace all occurences of the search string in the file:
-
-<ul><pre>
+ This callback will replace all occurences of the search string in the 
+file: 
+<UL>
+<PRE>
 void replall_cb() {
   const char *find, *val, *found;
   int pos;
   int times;
 
-  find = replace_find->value();
+  find = replace_find-&gt;value();
   if (find[0] == '\0') {
     // Search string is blank; get a new one...
-    replace_dlg->show();
+    replace_dlg-&gt;show();
     return;
   }
 
-  input->position(0);
+  input-&gt;position(0);
   times = 0;
 
   // Loop through the whole string
   do {
-    val   = input->value() + input->position();
+    val   = input-&gt;value() + input-&gt;position();
     found = strstr(val, find);
 
     if (found != NULL) {
       // Found a match; update the position and replace text...
       times ++;
-      pos = input->position() + found - val;
-      input->replace(pos, pos + strlen(find), replace_with->value());
-      input->position(pos + strlen(replace_with->value()));
+      pos = input-&gt;position() + found - val;
+      input-&gt;replace(pos, pos + strlen(find), replace_with-&gt;value());
+      input-&gt;position(pos + strlen(replace_with-&gt;value()));
     }
   } while (found != NULL);
 
-  if (times > 0) fl_message("Replaced %d occurrences.", times);
-  else fl_alert("No occurrences of \'%s\' found!", find);
+  if (times &gt; 0) fl_message(&quot;Replaced %d occurrences.&quot;, times);
+  else fl_alert(&quot;No occurrences of \'%s\' found!&quot;, find);
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>replcan_cb()</H3>
-
-This callback just hides the replace dialog:
-
-<ul><pre>
+ This callback just hides the replace dialog: 
+<UL>
+<PRE>
 void replcan_cb() {
-  replace_dlg->hide();
+  replace_dlg-&gt;hide();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>save_cb()</H3>
-
-This callback saves the current file.  If the current filename is blank it
-calls the "save as" callback:
-
-<ul><pre>
+ This callback saves the current file.  If the current filename is 
+blank it calls the &quot;save as&quot; callback: 
+<UL>
+<PRE>
 void save_cb(void) {
   if (filename[0] == '\0') {
     // No filename - get one!
@@ -422,54 +394,47 @@ void save_cb(void) {
   }
   else save_file(filename);
 }
-</pre></ul>
-
-The <tt>save_file()</tt> function saves the current file to the specified
-filename.
-
+</PRE>
+</UL>
+ The <TT>save_file()</TT> function saves the current file to the 
+specified filename. 
 <H3>saveas_cb()</H3>
-
-This callback asks the user for a filename and saves the current file:
-
-<ul><pre>
+ This callback asks the user for a filename and saves the current file: 
+<UL>
+<PRE>
 void saveas_cb(void) {
   char *newfile;
 
-  newfile = fl_file_chooser("Save File As?", "*", filename);
+  newfile = fl_file_chooser(&quot;Save File As?&quot;, &quot;*&quot;, filename);
   if (newfile != NULL) save_file(newfile);
 }
-</pre></ul>
-
-The <tt>save_file()</tt> function saves the current file to the specified
-filename.
-
+</PRE>
+</UL>
+ The <TT>save_file()</TT> function saves the current file to the 
+specified filename. 
 <H3>undo_cb()</H3>
-
-The undo callback just calls the <a href="#Fl_Input_.undo">
-<tt>undo()</tt></a> method:
-
-<ul><pre>
+ The undo callback just calls the <A href=Fl_Input_.html#Fl_Input_.undo><TT>
+undo()</TT></A> method: 
+<UL>
+<PRE>
 void undo_cb(void) {
-  input->undo();
+  input-&gt;undo();
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H2>Other Functions</H2>
-
-Now that we've defined the callback functions, we need our support functions
-to make it all work:
-
+ Now that we've defined the callback functions, we need our support 
+functions to make it all work: 
 <H3>check_save()</H3>
-
-This function checks to see if the current file needs to be saved.  If
-so, it asks the user if they want to save it:
-
-<ul><pre>
+ This function checks to see if the current file needs to be saved.  If 
+so, it asks the user if they want to save it: 
+<UL>
+<PRE>
 int check_save(void) {
   if (!changed) return 1;
 
-  if (fl_ask("The current file has not been saved.\n"
-             "Would you like to save it now?")) {
+  if (fl_ask(&quot;The current file has not been saved.\n&quot;
+             &quot;Would you like to save it now?&quot;)) {
     // Save the file...
     save_cb();
 
@@ -477,62 +442,59 @@ int check_save(void) {
   }
   else return (1);
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>load_file()</H3>
-
-This function loads the specified file into the <tt>input</tt> widget:
-
-<ul><pre>
+ This function loads the specified file into the <TT>input</TT> widget: 
+<UL>
+<PRE>
 void load_file(char *newfile) {
   FILE *fp;
   char buffer[8192];
   int  nbytes;
   int  pos;
 
-  input->value("");
+  input-&gt;value(&quot;&quot;);
 
-  fp = fopen(newfile, "r");
+  fp = fopen(newfile, &quot;r&quot;);
   if (fp != NULL) {
     // Was able to open file; let's read from it...
     strcpy(filename, newfile);
     pos = 0;
 
-    while ((nbytes = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
-      input->replace(pos, pos, buffer, nbytes);
+    while ((nbytes = fread(buffer, 1, sizeof(buffer), fp)) &gt; 0) {
+      input-&gt;replace(pos, pos, buffer, nbytes);
       pos += nbytes;
     }
 
     fclose(fp);
-    input->position(0);
+    input-&gt;position(0);
     set_changed(0);
   } else {
     // Couldn't open file - say so...
-    fl_alert("Unable to open \'%s\' for reading!");
+    fl_alert(&quot;Unable to open \'%s\' for reading!&quot;);
   }
 }
-</pre></ul>
-
-When loading the file we use the <a href="#Fl_Input_.replace">
-<tt>input->replace()</tt></a> method to "replace" the text at the end of
-the buffer.  The <tt>pos</tt> variable keeps track of the end of the
-buffer.
-
+</PRE>
+</UL>
+ When loading the file we use the <A href=Fl_Input_.html#Fl_Input_.replace>
+<TT>input-&gt;replace()</TT></A> method to &quot;replace&quot; the text at the end 
+of the buffer.  The <TT>pos</TT> variable keeps track of the end of the 
+buffer. 
 <H3>save_file()</H3>
-
-This function saves the current buffer to the specified file:
-
-<ul><pre>
+ This function saves the current buffer to the specified file: 
+<UL>
+<PRE>
 void save_file(char *newfile) {
   FILE *fp;
 
-  fp = fopen(newfile, "w");
+  fp = fopen(newfile, &quot;w&quot;);
   if (fp != NULL) {
     // Was able to create file; let's write to it...
     strcpy(filename, newfile);
 
-    if (fwrite(input->value(), 1, input->size(), fp) &lt; 1) {
-      fl_alert("Unable to write file!");
+    if (fwrite(input-&gt;value(), 1, input-&gt;size(), fp) &lt; 1) {
+      fl_alert(&quot;Unable to write file!&quot;);
       fclose(fp);
       return;
     }
@@ -541,17 +503,16 @@ void save_file(char *newfile) {
     set_changed(0);
   } else {
     // Couldn't open file - say so...
-    fl_alert("Unable to create \'%s\' for writing!");
+    fl_alert(&quot;Unable to create \'%s\' for writing!&quot;);
   }
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H3>set_changed()</H3>
-
-This function sets the <tt>changed</tt> variable and updates the window label
-accordingly:
-
-<ul><pre>
+ This function sets the <TT>changed</TT> variable and updates the 
+window label accordingly: 
+<UL>
+<PRE>
 void set_changed(int c) {
   if (c != changed) {
     char title[1024];
@@ -559,7 +520,7 @@ void set_changed(int c) {
 
     changed = c;
 
-    if (filename[0] == '\0') strcpy(title, "Untitled");
+    if (filename[0] == '\0') strcpy(title, &quot;Untitled&quot;);
     else {
       slash = strrchr(filename, '/');
       if (slash == NULL) slash = strrchr(filename, '\\');
@@ -568,36 +529,29 @@ void set_changed(int c) {
       else strcpy(title, filename);
     }
 
-    if (changed) strcat(title, " (modified)");
+    if (changed) strcat(title, &quot; (modified)&quot;);
 
-    window->label(title);
+    window-&gt;label(title);
   }
 }
-</pre></ul>
-
+</PRE>
+</UL>
 <H2>Compiling the Editor</H2>
-
-The complete source for our text editor can be found in the
-<tt>test/editor.cxx</tt> source file.  Both the Makefile and Visual C++
-workspace include the necessary rules to build the editor.  You can
-also compile it using a standard compiler with:
-
-<ul><pre>
+ The complete source for our text editor can be found in the <TT>
+test/editor.cxx</TT> source file.  Both the Makefile and Visual C++ 
+workspace include the necessary rules to build the editor.  You can 
+also compile it using a standard compiler with: 
+<UL>
+<PRE>
 CC -o editor editor.cxx -lfltk -lXext -lX11 -lm
-</pre></ul>
-
-As noted in <a href="#basics">Chapter 1</a>, you may need to include
-compiler and linker options to tell them where to find the FLTK library.
-Also, the <tt>CC</tt> command may also be called <tt>gcc</tt> or
-<tt>c++</tt> on your system.
-
-<p>Congratulations, you've just built your own text editor!
-
+</PRE>
+</UL>
+ As noted in <A href=basics.html#basics>Chapter 1</A>, you may need to 
+include compiler and linker options to tell them where to find the FLTK 
+library. Also, the <TT>CC</TT> command may also be called <TT>gcc</TT>
+ or <TT>c++</TT> on your system. 
+<P>Congratulations, you've just built your own text editor! </P>
 <H2>The Final Product</H2>
-
-The final editor window should look like the image below:
-
-<center><img src=editor.gif></center>
-
-</BODY>
-</HTML>
+ The final editor window should look like the image below: 
+<CENTER><IMG src=./editor.gif></CENTER>
+</BODY></HTML>

@@ -1,74 +1,65 @@
-<html>
-<body>
-
-<hr break>
-
-<h2><a name="Fl_Free">class Fl_Free</a></h2>
-
-<hr>
-
-<h3>Class Hierarchy</h3>
-
-<ul><pre>
-<a href="#Fl_Widget">Fl_Widget</a>
+<HTML><BODY>
+<HR break>
+<H2><A name=Fl_Free>class Fl_Free</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
    |
-   +----<b>Fl_Free</b>
-</pre></ul>
-
-<h3>Include Files</h3>
-
-<ul><pre>
-#include &lt;FL/Fl_Free.H>
-</pre></ul>
-
-<h3>Description</h3>
-
-Emulation of the Forms "free" widget.  This emulation allows the free
-demo to run, and appears to be useful for porting programs written in
-Forms which use the free widget or make subclasses of the Forms widgets.
-
-<p>There are five types of free, which determine when the handle
-function is called:
-
-<ul><pre>
+   +----<B>Fl_Free</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Free.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ Emulation of the Forms &quot;free&quot; widget.  This emulation allows the free 
+demo to run, and appears to be useful for porting programs written in 
+Forms which use the free widget or make subclasses of the Forms 
+widgets. 
+<P>There are five types of free, which determine when the handle 
+function is called: </P>
+<UL>
+<PRE>
 #define FL_NORMAL_FREE		1
 #define FL_SLEEPING_FREE	2
 #define FL_INPUT_FREE		3
 #define FL_CONTINUOUS_FREE	4
 #define FL_ALL_FREE		5
-</pre></ul>
-
-<p>An FL_INPUT_FREE accepts FL_FOCUS events.  A FL_CONTINUOUS_FREE
-sets a timeout callback 100 times a second and provides a FL_STEP
-event, this has obvious detrimental effects on machine performance.
-FL_ALL_FREE does both.  FL_SLEEPING_FREE are deactivated.
-
-<h3>Methods</h3>
-
-<ul>
-	<li><a href="#Fl_Free.Fl_Free">Fl_Free</a>
-	<li><a href="#Fl_Free.~Fl_Free">~Fl_Free</a>
-</ul>
-
-<h4><a name="Fl_Free.Fl_Free">Fl_Free(uchar type, int, int, int, int, const char*l, FL_HANDLEPTR hdl)</a></h4>
-
-The constructor takes both the <tt>type</tt> and the <tt>handle</tt> function.
-The handle function should be declared as follows:
-
-<ul><pre>
+</PRE>
+</UL>
+<P>An FL_INPUT_FREE accepts FL_FOCUS events.  A FL_CONTINUOUS_FREE sets 
+a timeout callback 100 times a second and provides a FL_STEP event, 
+this has obvious detrimental effects on machine performance. 
+FL_ALL_FREE does both.  FL_SLEEPING_FREE are deactivated. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Free.Fl_Free>Fl_Free</A></LI>
+<LI><A href=#Fl_Free.~Fl_Free>~Fl_Free</A></LI>
+</UL>
+<H4><A name=Fl_Free.Fl_Free>Fl_Free(uchar type, int, int, int, int, 
+const char*l, FL_HANDLEPTR hdl)</A></H4>
+ The constructor takes both the <TT>type</TT> and the <TT>handle</TT>
+ function. The handle function should be declared as follows: 
+<UL>
+<PRE>
 int
 handle_function(Fl_Widget *w,
                 int       event,
 	        float     event_x,
 		float     event_y,
 		char      key)
-</pre></ul>
-
-This function is called from the the <tt>handle()</tt> method in
-response to most events, and is called by the <tt>draw()</tt> method.
-The <tt>event</tt> argument contains the event type:
-
-<ul><pre>
+</PRE>
+</UL>
+ This function is called from the the <TT>handle()</TT> method in 
+response to most events, and is called by the <TT>draw()</TT> method. 
+The <TT>event</TT> argument contains the event type: 
+<UL>
+<PRE>
 // old event names for compatability:
 #define FL_MOUSE		FL_DRAG
 #define FL_DRAW			0
@@ -76,12 +67,8 @@ The <tt>event</tt> argument contains the event type:
 #define FL_FREEMEM		12
 #define FL_FREEZE		FL_UNMAP
 #define FL_THAW			FL_MAP
-</pre></ul>
-
-<h4><a name="Fl_Free.~Fl_Free">virtual Fl_Free::~Fl_Free()</a></h4>
-
-The destructor will call the handle function with the event
-<tt>FL_FREE_MEM</tt>.
-
-</body>
-</html>
+</PRE>
+</UL>
+<H4><A name=Fl_Free.~Fl_Free>virtual Fl_Free::~Fl_Free()</A></H4>
+ The destructor will call the handle function with the event <TT>
+FL_FREE_MEM</TT>. </BODY></HTML>
