@@ -396,9 +396,6 @@ Package=<4>
     Project_Dep_Name pack
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name style
-    End Project Dependency
-    Begin Project Dependency
     Project_Dep_Name inactive
     End Project Dependency
 }}}
@@ -895,21 +892,6 @@ Package=<4>
 ###############################################################################
 
 Project: "shiny"=".\shiny.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name fltk
-    End Project Dependency
-}}}
-
-###############################################################################
-
-Project: "style"=".\style.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
