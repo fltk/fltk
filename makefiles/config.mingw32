@@ -1,5 +1,5 @@
 /*
- * "$Id: config.mingw32,v 1.4 1999/03/04 18:11:36 mike Exp $"
+ * "$Id: config.mingw32,v 1.4.2.1 1999/03/25 22:19:31 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -139,7 +139,7 @@
  * Whether or not select() call has its own header file.
  */
 
-#define HAVE_SYS_SELECT 0
+#define HAVE_SYS_SELECT_H 0
 
 /*
  * HAVE_POLL:
@@ -150,5 +150,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.mingw32,v 1.4 1999/03/04 18:11:36 mike Exp $".
+ * End of "$Id: config.mingw32,v 1.4.2.1 1999/03/25 22:19:31 mike Exp $".
  */
