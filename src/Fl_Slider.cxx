@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.7 1999/01/07 19:17:27 mike Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8 1999/03/03 07:21:28 bill Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -109,7 +109,7 @@ void Fl_Slider::draw(int x, int y, int w, int h) {
   int X, S;
   if (type()==FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
     S = int(val*W+.5);
-    if (minimum()>maximum()) {S = W-S; X = h-BW-S;}
+    if (minimum()>maximum()) {S = W-S; X = W-S+BW;}
     else X = BW;
   } else {
     S = int(slider_size_*W+.5);
@@ -182,7 +182,9 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
     int S = int(slider_size_*W+.5);
     int T = (horizontal() ? h : w)/2-BW+1;
     if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
-    if (S < T) S = T;
+    if (type()!=FL_HOR_FILL_SLIDER && type()!=FL_VERT_FILL_SLIDER) {
+      if (S < T) S = T;
+    }
     double v = double(X)/(W-S);
     double sliderwidth = double(S)/(W-S);
     double val = (value()-minimum())/(maximum()-minimum());
@@ -228,5 +230,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.7 1999/01/07 19:17:27 mike Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8 1999/03/03 07:21:28 bill Exp $".
 //
