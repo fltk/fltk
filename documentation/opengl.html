@@ -225,6 +225,45 @@ the current OpenGL font at the given position.
 other control characters changed to ^X, and aligned with the edges or 
 center.  Exactly the same output as <A href=#fl_draw><TT>fl_draw()</TT></A>
 . 
+
+
+<h2>Speeding up OpenGL</h2>
+
+Performance of Fl_Gl_Window may be improved on some types of OpenGL
+implementations (in particular MESA or other software emulators) by
+setting the <tt>GL_SWAP_TYPE</tt> environment variable.  This variable
+declares what is in the back buffer after you do a swapbuffers.
+
+<ul>
+
+<li><tt>setenv GL_SWAP_TYPE COPY</tt>
+
+<p>This indicates that the back buffer is copied to the front buffer,
+and still contains it's old data. This is true of many hardware
+implementations.  Setting this will speed up emulation of
+overlays, and widgets that can do partial update can take
+advantage of this as damage() will not be cleared to -1.
+<p>
+
+<li><tt>setenv GL_SWAP_TYPE NODAMAGE</tt>
+
+<p>This indicates that nothing changes the back buffer except drawing
+into it.  This is true of MESA and Win32 software emulation and
+perhaps some hardware emulation on systems with lots of memory.
+<p>
+
+<li>All other values for <tt>GL_SWAP_TYPE</tt>, and not setting the variable,
+cause fltk to assumme that the back buffer must be completely
+redrawn after a swap.
+
+</ul>
+
+<p>This is easily tested by running the gl_overlay demo program and
+seeing if the display is correct when you drag another window over
+it or if you drag the window off the screen and back on. You have to
+exit and run the program again for it to see any changes to the
+environment variable.
+
 <H2>Using OpenGL Optimizer with FLTK</H2>
 <A href=http://www.sgi.com/software/optimizer>OpenGL Optimizer</A> is a 
 scene graph toolkit for OpenGL available from Silicon Graphics for IRIX 
