@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.4
 
+	- FLUID could crash after displaying a syntax error
+	  dialog for the callback code.
+	- FLUID would reset the callback code if you opened the
+	  widget panel for multiple widgets.
 	- Added a NULL check to Fl_Text_Display (SF Bug #706921).
 	- The fltk-config script placed the LDFLAGS at the wrong
 	  place in the linker options.
