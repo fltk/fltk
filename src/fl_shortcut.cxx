@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.11 2003/06/12 01:36:18 easysw Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.12 2003/07/18 17:43:30 matthiaswm Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -119,9 +119,9 @@ const char * fl_shortcut_label(int shortcut) {
 #ifdef __APPLE__
   // \todo Mac :  we might want to change the symbols for Mac users - consider drawing Apple Symbols... .
   if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;} //: Mac hollow up arrow
-  if (shortcut & FL_META)  {strcpy(p,"Ctrl+"); p += 5;}  //: Mac 'control'
-  if (shortcut & FL_ALT)   {strcpy(p,"Option+"); p += 7;}   //: Mac 'Option' or fancy switch symbol
-  if (shortcut & FL_CTRL)  {strcpy(p,"Cmd+"); p += 4;}  //: Mac Apple or Curlyflour
+  if (shortcut & FL_META)  {strcpy(p,"Cmd+"); p += 4;}  //: Mac 'Apple' key
+  if (shortcut & FL_ALT)   {strcpy(p,"Option+"); p += 7;}   //: Mac 'Alt/Option' or fancy switch symbol
+  if (shortcut & FL_CTRL)  {strcpy(p,"Ctrl+"); p += 5;}  //: Mac ctrl key
 #else
   if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
@@ -201,5 +201,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.11 2003/06/12 01:36:18 easysw Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.12 2003/07/18 17:43:30 matthiaswm Exp $".
 //

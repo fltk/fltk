@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.4
 
+	- Swapped shortcut labels in OS X (STR #86)
 	- Non-square Fl_Dial would calculate angle from user
 	  input wrong (STR #101)
 	- Updated documentatiopn of fl_draw (STR #94)
