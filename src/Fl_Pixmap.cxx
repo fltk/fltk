@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.2 2001/08/06 23:51:39 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.3 2001/11/18 20:52:28 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,8 @@
 
 #include <stdio.h>
 
-extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.C to store mask
-void fl_restore_clip(); // in fl_rect.C
+extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
+void fl_restore_clip(); // in fl_rect.cxx
 
 void Fl_Pixmap::measure() {
   int W, H;
@@ -70,13 +70,15 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
   if (!id) {
-    id = (ulong)fl_create_offscreen(w(), h());
-    fl_begin_offscreen((Fl_Offscreen)id);
+    id = fl_create_offscreen(w(), h());
+    fl_begin_offscreen(id);
     uchar *bitmap = 0;
     fl_mask_bitmap = &bitmap;
     fl_draw_pixmap(data, 0, 0, FL_BLACK);
     fl_mask_bitmap = 0;
     if (bitmap) {
+      mask = fl_create_bitmask(w(), h(), bitmap);
+#if 0 // Don't think this is needed; try using fl_create_bitmask()...
 #ifdef WIN32 // Matt: mask done
       // this won't work ehen the user changes display mode during run or
       // has two screens with differnet depths
@@ -128,8 +130,10 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       mask = XCreateBitmapFromData(fl_display, fl_window,
 				   (const char*)bitmap, (w()+7)&-8, h());
 #endif
+#endif // 0
       delete[] bitmap;
     }
+
     fl_end_offscreen();
   }
 #ifdef WIN32
@@ -166,8 +170,8 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 }
 
 Fl_Pixmap::~Fl_Pixmap() {
-  if (id) fl_delete_offscreen((Fl_Offscreen)id);
-  if (mask) fl_delete_offscreen((Fl_Offscreen)mask);
+  if (id) fl_delete_offscreen(id);
+  if (mask) fl_delete_bitmask(mask);
 }
 
 void Fl_Pixmap::label(Fl_Widget* w) {
@@ -178,5 +182,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* m) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.2 2001/08/06 23:51:39 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.3 2001/11/18 20:52:28 easysw Exp $".
 //

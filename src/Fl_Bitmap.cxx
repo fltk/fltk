@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.2 2001/11/18 20:52:27 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -30,6 +30,48 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
 
+#ifdef WIN32 // Windows bitmask functions...
+Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
+  // we need to pad the lines out to words & swap the bits
+  // in each byte.
+  int w1 = (w+7)/8;
+  int w2 = ((w+15)/16)*2;
+  uchar* newarray = new uchar[w2*h];
+  const uchar* src = data;
+  uchar* dest = newarray;
+  Fl_Bitmask id;
+  static uchar reverse[16] =	/* Bit reversal lookup table */
+  	      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+		0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+
+  for (int y=0; y < h; y++) {
+    for (int n = 0; n < w1; n++, src++)
+      *dest++ = (reverse[*src & 0x0f] & 0xf0) |
+	        (reverse[(*src >> 4) & 0x0f] & 0x0f);
+    dest += w2-w1;
+  }
+
+  id = CreateBitmap(w, h, 1, 1, newarray);
+
+  delete[] newarray;
+
+  return (id);
+}
+
+void fl_delete_bitmask(Fl_Bitmask bm) {
+  DeleteObject((HGDIOBJ)bm);
+}
+#else // X11 bitmask functions
+Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
+  return XCreateBitmapFromData(fl_display, fl_window, (const char *)data,
+                               (w+7)&-8, h);
+}
+
+void fl_delete_bitmask(Fl_Bitmask bm) {
+  fl_delete_offscreen((Fl_Offscreen)bm);
+}
+#endif // WIN32
+
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
@@ -41,27 +83,9 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
   if ((cy+H) > h()) H = h()-cy;
   if (H <= 0) return;
+  if (!id) id = fl_create_bitmask(w(), h(), array);
+
 #ifdef WIN32
-  if (!id) {
-    // we need to pad the lines out to words & swap the bits
-    // in each byte.
-    int w1 = (w()+7)/8;
-    int w2 = ((w()+15)/16)*2;
-    uchar* newarray = new uchar[w2*h()];
-    const uchar* src = array;
-    uchar* dest = newarray;
-    static uchar reverse[16] =	/* Bit reversal lookup table */
-  		{ 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-		  0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-    for (int y=0; y < h(); y++) {
-      for (int n = 0; n < w1; n++, src++)
-	*dest++ = (reverse[*src & 0x0f] & 0xf0) |
-	          (reverse[(*src >> 4) & 0x0f] & 0x0f);
-      dest += w2-w1;
-    }
-    id = (ulong)CreateBitmap(w(), h(), 1, 1, newarray);
-    array = newarray; // keep the pointer so I can free it later
-  }
   HDC tempdc = CreateCompatibleDC(fl_gc);
   SelectObject(tempdc, (HGDIOBJ)id);
   SelectObject(fl_gc, fl_brush());
@@ -69,8 +93,6 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
   DeleteDC(tempdc);
 #else
-  if (!id) id = XCreateBitmapFromData(fl_display, fl_window,
-				      (const char*)array, (w()+7)&-8, h());
   XSetStipple(fl_display, fl_gc, id);
   int ox = X-cx; if (ox < 0) ox += w();
   int oy = Y-cy; if (oy < 0) oy += h();
@@ -82,14 +104,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 }
 
 Fl_Bitmap::~Fl_Bitmap() {
-#ifdef WIN32
-  if (id) {
-    DeleteObject((HGDIOBJ)id);
-    delete[] (uchar*)array;
-  }
-#else
-  if (id) fl_delete_offscreen((Fl_Offscreen)id);
-#endif
+  if (id) fl_delete_bitmask(id);
 }
 
 void Fl_Bitmap::label(Fl_Widget* w) {
@@ -100,5 +115,5 @@ void Fl_Bitmap::label(Fl_Menu_Item* m) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.2 2001/11/18 20:52:27 easysw Exp $".
 //

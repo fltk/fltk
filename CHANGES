@@ -37,6 +37,13 @@ CHANGES IN FLTK 1.1.0b6
 	- Tooltips could appear off the screen.
 	- Mouse wheel events are now sent to the focus widget
 	  first, then to any other interested widget.
+	- The Fl_RGB_Image class now supports images with an
+	  alpha channel.  Images are currently drawn using
+	  "screen door" transparency...  See the "image" demo
+	  for an example.
+	- Added new fl_create_bitmask() and fl_delete_bitmask()
+	  functions that create bitmap objects for masking and
+	  bitmap drawing.
 
 
 CHANGES IN FLTK 1.1.0b5

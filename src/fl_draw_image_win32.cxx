@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_win32.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_draw_image_win32.cxx,v 1.4.2.3.2.1 2001/11/18 20:52:28 easysw Exp $"
 //
 // WIN32 image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -51,7 +51,7 @@
 
 #if USE_COLORMAP
 
-// error-diffusion dither into the fltk colormap
+// error-diffusion dither into the FLTK colormap
 static void dither(uchar* to, const uchar* from, int w, int delta) {
   static int ri, gi, bi, dir;
   int r=ri, g=gi, b=bi;
@@ -82,7 +82,7 @@ static void dither(uchar* to, const uchar* from, int w, int delta) {
   ri = r; gi = g; bi = b;
 }
 
-// error-diffusion dither into the fltk colormap
+// error-diffusion dither into the FLTK colormap
 static void monodither(uchar* to, const uchar* from, int w, int delta) {
   static int ri,dir;
   int r=ri;
@@ -258,5 +258,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_win32.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_draw_image_win32.cxx,v 1.4.2.3.2.1 2001/11/18 20:52:28 easysw Exp $".
 //

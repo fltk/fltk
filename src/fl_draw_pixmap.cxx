@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8 2001/04/13 19:07:40 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.1 2001/11/18 20:52:28 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -148,7 +148,7 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
   const uchar*const* data = (const uchar*const*)(di+1);
   int transparent_index = -1;
 
-  if (ncolors < 0) {	// fltk (non standard) compressed colormap
+  if (ncolors < 0) {	// FLTK (non standard) compressed colormap
     ncolors = -ncolors;
     const uchar *p = *data++;
     // if first color is ' ' it is transparent (put it later to make
@@ -272,5 +272,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8 2001/04/13 19:07:40 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.1 2001/11/18 20:52:28 easysw Exp $".
 //

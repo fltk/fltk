@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.1 2001/11/18 20:52:27 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -77,7 +77,7 @@ extern FL_EXPORT const XEvent* fl_xevent;
 extern FL_EXPORT ulong fl_event_time;
 
 // off-screen pixmaps: create, destroy, draw into, copy to window:
-#define Fl_Offscreen ulong
+typedef ulong Fl_Offscreen;
 #define fl_create_offscreen(w,h) \
   XCreatePixmap(fl_display, fl_window, w, h, fl_visual->depth)
 // begin/end are macros that save the old state in local variables:
@@ -89,6 +89,12 @@ extern FL_EXPORT ulong fl_event_time;
 #define fl_copy_offscreen(x,y,w,h,pixmap,srcx,srcy) \
   XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y)
 #define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
+
+// Bitmap masks
+typedef ulong Fl_Bitmask;
+
+extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
+extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
 // this object contains all X-specific stuff about a window:
 // Warning: this object is highly subject to change!  It's definition
@@ -125,5 +131,5 @@ extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.1 2001/11/18 20:52:27 easysw Exp $".
 //

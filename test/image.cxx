@@ -1,5 +1,5 @@
 //
-// "$Id: image.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: image.cxx,v 1.6.2.3.2.2 2001/11/18 20:52:28 easysw Exp $"
 //
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -33,13 +33,14 @@
 #include <FL/Fl_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-int width = 75;
-int height = 75;
+int width = 100;
+int height = 100;
 uchar *image;
 
 void make_image() {
-  image = new uchar[3*width*height];
+  image = new uchar[4*width*height];
   uchar *p = image;
   for (int y = 0; y < height; y++) {
     double Y = double(y)/(height-1);
@@ -48,6 +49,12 @@ void make_image() {
       *p++ = uchar(255*((1-X)*(1-Y))); // red in upper-left
       *p++ = uchar(255*((1-X)*Y));	// green in lower-left
       *p++ = uchar(255*(X*Y));	// blue in lower-right
+      X -= 0.5;
+      Y -= 0.5;
+      int alpha = (int)(255 * sqrt(X * X + Y * Y));
+      if (alpha < 255) *p++ = uchar(alpha);	// alpha transparency
+      else *p++ = 255;
+      Y += 0.5;
     }
   }
 }
@@ -114,9 +121,10 @@ int main(int argc, char **argv) {
 #endif
 
   Fl_Window window(400,400); ::w = &window;
-  Fl_Button b(140,160,120,120,"Image"); ::b = &b;
+  window.color(FL_WHITE);
+  Fl_Button b(140,160,120,120,"Image w/Alpha"); ::b = &b;
   make_image();
-  (new Fl_RGB_Image(image, width, height))->label(&b);
+  b.image(new Fl_RGB_Image(image, width, height,4));
   leftb = new Fl_Toggle_Button(25,75,50,25,"left");
   leftb->callback(button_cb);
   rightb = new Fl_Toggle_Button(75,75,50,25,"right");
@@ -136,5 +144,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: image.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: image.cxx,v 1.6.2.3.2.2 2001/11/18 20:52:28 easysw Exp $".
 //

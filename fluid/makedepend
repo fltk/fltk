@@ -70,7 +70,8 @@ Fluid_Image.o: ../FL/Fl_Menu_Item.H Fluid_Image.h ../FL/Fl_Tabs.H
 Fluid_Image.o: ../FL/Fl_Group.H ../FL/Fl_Pack.H ../FL/Fl_Group.H
 Fluid_Image.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H
 Fluid_Image.o: ../FL/Fl_Menu_.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Bar.H
-Fluid_Image.o: ../FL/filename.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
+Fluid_Image.o: ../FL/filename.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/x.H
+Fluid_Image.o: ../FL/Fl_Window.H
 code.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H Fl_Type.h
 code.o: ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H Fluid_Image.h
 code.o: ../FL/Fl_Tabs.H ../FL/Fl_Group.H ../FL/Fl_Pack.H ../FL/Fl_Group.H

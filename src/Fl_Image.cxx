@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.2 2001/11/18 20:52:28 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,9 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
+#include <string.h>
+
+void fl_restore_clip(); // in fl_rect.cxx
 
 Fl_Image::~Fl_Image() {
 }
@@ -63,8 +66,153 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_begin_offscreen((Fl_Offscreen)id);
     fl_draw_image(array, 0, 0, w(), h(), d, ld);
     fl_end_offscreen();
+
+    if (d == 2 || d == 4) {
+      // Create alpha mask...
+      int bmw = (w() + 7) / 8;
+      uchar *bitmap = new uchar[bmw * h()];
+      uchar *bitptr, bit;
+      const uchar *dataptr;
+      int x, y;
+      static uchar dither[16][16] = { // Simple 16x16 Floyd dither
+	{ 0,   128, 32,  160, 8,   136, 40,  168,
+	  2,   130, 34,  162, 10,  138, 42,  170 },
+	{ 192, 64,  224, 96,  200, 72,  232, 104,
+	  194, 66,  226, 98,  202, 74,  234, 106 },
+	{ 48,  176, 16,  144, 56,  184, 24,  152,
+	  50,  178, 18,  146, 58,  186, 26,  154 },
+	{ 240, 112, 208, 80,  248, 120, 216, 88,
+	  242, 114, 210, 82,  250, 122, 218, 90 },
+	{ 12,  140, 44,  172, 4,   132, 36,  164,
+	  14,  142, 46,  174, 6,   134, 38,  166 },
+	{ 204, 76,  236, 108, 196, 68,  228, 100,
+	  206, 78,  238, 110, 198, 70,  230, 102 },
+	{ 60,  188, 28,  156, 52,  180, 20,  148,
+	  62,  190, 30,  158, 54,  182, 22,  150 },
+	{ 252, 124, 220, 92,  244, 116, 212, 84,
+	  254, 126, 222, 94,  246, 118, 214, 86 },
+	{ 3,   131, 35,  163, 11,  139, 43,  171,
+	  1,   129, 33,  161, 9,   137, 41,  169 },
+	{ 195, 67,  227, 99,  203, 75,  235, 107,
+	  193, 65,  225, 97,  201, 73,  233, 105 },
+	{ 51,  179, 19,  147, 59,  187, 27,  155,
+	  49,  177, 17,  145, 57,  185, 25,  153 },
+	{ 243, 115, 211, 83,  251, 123, 219, 91,
+	  241, 113, 209, 81,  249, 121, 217, 89 },
+	{ 15,  143, 47,  175, 7,   135, 39,  167,
+	  13,  141, 45,  173, 5,   133, 37,  165 },
+	{ 207, 79,  239, 111, 199, 71,  231, 103,
+	  205, 77,  237, 109, 197, 69,  229, 101 },
+	{ 63,  191, 31,  159, 55,  183, 23,  151,
+	  61,  189, 29,  157, 53,  181, 21,  149 },
+	{ 254, 127, 223, 95,  247, 119, 215, 87,
+	  253, 125, 221, 93,  245, 117, 213, 85 }
+      };
+
+      // Right now do a "screen door" alpha mask; not always pretty, but
+      // definitely fast...
+      memset(bitmap, 0, bmw * h());
+
+      for (dataptr = array + d - 1, y = 0; y < h(); y ++)
+        for (bitptr = bitmap + y * bmw, bit = 128, x = 0; x < w(); x ++, dataptr += d) {
+	  if (*dataptr > dither[x & 15][y & 15])
+	    *bitptr |= bit;
+	  if (bit > 1) bit >>= 1;
+	  else {
+	    bit = 128;
+	    bitptr ++;
+	  }
+	}
+
+#if 0 // MRS: Don't think this is necessary; try using new fl_create_bitmask code...
+#ifdef WIN32 // Matt: mask done
+      // this won't work ehen the user changes display mode during run or
+      // has two screens with differnet depths
+      static uchar hiNibble[16] =
+      { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
+	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
+      static uchar loNibble[16] =
+      { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
+	0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
+      int np  = GetDeviceCaps(fl_gc, PLANES);	//: was always one on sample machines
+      int bpp = GetDeviceCaps(fl_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
+      int Bpr = (bpp*w()+7)/8;			//: bytes per row
+      int pad = Bpr&1, w1 = (w()+7)/8, shr = ((w()-1)&7)+1;
+      if (bpp==4) shr = (shr+1)/2;
+      uchar *newarray = new uchar[(Bpr+pad)*h()], *dst = newarray, *src = bitmap;
+      for (int i=0; i<h(); i++) {
+	//: this is slooow, but we do it only once per pixmap
+	for (int j=w1; j>0; j--) {
+	  uchar b = *src++;
+	  if (bpp==1) {
+	    *dst++ = ( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
+	  } else if (bpp==4) {
+	    for (int k=(j==1)?shr:4; k>0; k--) {
+	      *dst++ = "\377\360\017\000"[b&3];
+	      b = b >> 2;
+	    }
+	  } else {
+	    for (int k=(j==1)?shr:8; k>0; k--) {
+	      if (b&1) {
+		*dst++=0;
+		if (bpp>8) *dst++=0;
+		if (bpp>16) *dst++=0;
+		if (bpp>24) *dst++=0;
+	      } else {
+		*dst++=0xff;
+		if (bpp>8) *dst++=0xff;
+		if (bpp>16) *dst++=0xff;
+		if (bpp>24) *dst++=0xff;
+	      }
+	      b = b >> 1;
+	    }
+	  }
+	}
+	dst += pad;
+      }
+      mask = (ulong)CreateBitmap(w(), h(), np, bpp, newarray);
+      delete[] newarray;
+#else
+      mask = XCreateBitmapFromData(fl_display, fl_window,
+				   (const char*)bitmap, (w()+7)&-8, h());
+#endif
+#endif // 0
+
+      mask = fl_create_bitmask(w(), h(), bitmap);
+      delete[] bitmap;
+    }
   }
-  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+#ifdef WIN32
+  if (mask) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    SelectObject(new_gc, (void*)mask);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    SelectObject(new_gc, (void*)id);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    DeleteDC(new_gc);
+  } else {
+    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+  }
+#else
+  if (mask) {
+    // I can't figure out how to combine a mask with existing region,
+    // so cut the image down to a clipped rectangle:
+    int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
+    cx += nx-X; X = nx;
+    cy += ny-Y; Y = ny;
+    // make X use the bitmap as a mask:
+    XSetClipMask(fl_display, fl_gc, mask);
+    int ox = X-cx; if (ox < 0) ox += w();
+    int oy = Y-cy; if (oy < 0) oy += h();
+    XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
+  }
+  fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+  if (mask) {
+    // put the old clip region back
+    XSetClipOrigin(fl_display, fl_gc, 0, 0);
+    fl_restore_clip();
+  }
+#endif
 }
 
 void Fl_RGB_Image::label(Fl_Widget* w) {
@@ -76,5 +224,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.2 2001/11/18 20:52:28 easysw Exp $".
 //

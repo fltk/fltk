@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.15.2.3 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.1 2001/11/18 20:52:27 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -106,7 +106,7 @@ extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT MSG fl_msg;
 
 // off-screen pixmaps: create, destroy, draw into, copy to window
-#define Fl_Offscreen HBITMAP
+typedef HBITMAP Fl_Offscreen;
 #define fl_create_offscreen(w, h) CreateCompatibleBitmap(fl_gc, w, h)
 
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
@@ -120,6 +120,12 @@ extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
 
+// Bitmap masks
+typedef HBITMAP Fl_Bitmask;
+
+extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
+extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
+
 //
-// End of "$Id: win32.H,v 1.15.2.3 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.1 2001/11/18 20:52:27 easysw Exp $".
 //
