@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.11 2002/08/09 03:17:29 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.12 2002/12/04 05:34:39 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -79,7 +79,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
       list[n++] = AGL_DOUBLEBUFFER;
     }
     if (m & FL_DEPTH) {
-      list[n++] = AGL_DEPTH_SIZE; list[n++] = 16;
+      list[n++] = AGL_DEPTH_SIZE; list[n++] = 24;
     }
     if (m & FL_STENCIL) {
       list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
@@ -318,5 +318,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.11 2002/08/09 03:17:29 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.12 2002/12/04 05:34:39 easysw Exp $".
 //
