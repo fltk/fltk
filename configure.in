@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.14 2000/06/05 21:20:16 mike Exp $"
+dnl "$Id: configure.in,v 1.33.2.15 2000/06/06 14:48:17 mike Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -166,11 +166,9 @@ AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
         ac_cv_have_overlay=no
     fi)
 
-dnl Note: Overlay support seems to be broken for menus; disable...
-dnl 
-dnl if test "$ac_cv_have_overlay" = yes; then
-dnl     AC_DEFINE(HAVE_OVERLAY)
-dnl fi
+if test "$ac_cv_have_overlay" = yes; then
+    AC_DEFINE(HAVE_OVERLAY)
+fi
 
 MAKEDEPEND="\$(CXX) -M"
 
@@ -277,5 +275,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.14 2000/06/05 21:20:16 mike Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.15 2000/06/06 14:48:17 mike Exp $".
 dnl
