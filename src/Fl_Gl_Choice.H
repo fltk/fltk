@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.1 1999/09/16 05:34:24 bill Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.2 2000/03/18 10:04:17 bill Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -62,10 +62,11 @@ class Fl_Gl_Choice {
   Fl_Gl_Choice *next;
 public:
 #ifdef WIN32
-  PIXELFORMATDESCRIPTOR pfd;
+  int pixelformat;	// the visual to use
+  PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
 #else
   XVisualInfo *vis;	// the visual to use
-  Colormap colormap;	// a colormap to use
+  Colormap colormap;	// a colormap for that visual
 #endif
   uchar r,d,o;		// rgb mode, double buffered, overlay flags
   // Return one of these structures for a given gl mode.
@@ -90,5 +91,5 @@ void fl_no_gl_context();
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.1 1999/09/16 05:34:24 bill Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.2 2000/03/18 10:04:17 bill Exp $".
 //

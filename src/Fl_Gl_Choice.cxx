@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.1 1999/09/16 05:34:25 bill Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.2 2000/03/18 10:04:17 bill Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,6 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <stdlib.h>
-
 #include "Fl_Gl_Choice.H"
 
 static Fl_Gl_Choice *first;
@@ -103,26 +102,35 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
 
 #else
 
-  PIXELFORMATDESCRIPTOR pfd = { 
-    sizeof(PIXELFORMATDESCRIPTOR), 1, 
-    PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL,
-    PFD_TYPE_RGBA, 8 };
-
-  if (mode & FL_INDEX) {
-    pfd.iPixelType = PFD_TYPE_COLORINDEX;
-    pfd.cColorBits = 8;
-  } else {
-    if (mode & FL_ALPHA) pfd.cAlphaBits = 8;
-    if (mode & FL_ACCUM) {
-      pfd.cAccumBits = 6;	// Wonko: I didn't find any documentation on those bits
-      pfd.cAccumGreenBits = 1;	// Wonko: They don't seem to get any support yet (4/98)
-      if (mode & FL_ALPHA) pfd.cAccumAlphaBits = 1;
+  // Replacement for ChoosePixelFormat() that finds one with an overlay
+  // if possible:
+  if (!fl_gc) fl_GetDC(0);
+  int pixelformat = 0;
+  PIXELFORMATDESCRIPTOR chosen_pfd;
+  for (int i = 1; ; i++) {
+    PIXELFORMATDESCRIPTOR pfd;
+    if (!DescribePixelFormat(fl_gc, i, sizeof(pfd), &pfd)) break;
+    // continue if it does not satisfy our requirements:
+    if (~pfd.dwFlags & (PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL)) continue;
+    if (pfd.iPixelType != ((mode&FL_INDEX)?1:0)) continue;
+    if ((mode & FL_ALPHA) && !pfd.cAlphaBits) continue;
+    if ((mode & FL_ACCUM) && !pfd.cAccumBits) continue;
+    if ((!(mode & FL_DOUBLE)) != (!(pfd.dwFlags & PFD_DOUBLEBUFFER))) continue;
+    if ((mode & FL_DEPTH) && !pfd.cDepthBits) continue;
+    if ((mode & FL_STENCIL) && !pfd.cStencilBits) continue;
+    // see if better than the one we have already:
+    if (pixelformat) {
+      // offering overlay is better:
+      if (!(chosen_pfd.bReserved & 15) && (pfd.bReserved & 15)) {}
+      // otherwise more bit planes is better:
+      else if (chosen_pfd.cColorBits < pfd.cColorBits) {}
+      else continue;
     }
+    pixelformat = i;
+    chosen_pfd = pfd;
   }
-  if (mode & FL_DOUBLE) pfd.dwFlags |= PFD_DOUBLEBUFFER;
-  if (mode & FL_DEPTH) pfd.cDepthBits = 16;
-  if (mode & FL_STENCIL) pfd.cStencilBits = 1;
-  pfd.bReserved = 1; // always ask for overlay
+  //printf("Chosen pixel format is %d\n", pixelformat);
+  if (!pixelformat) return 0;
 
 #endif
 
@@ -133,7 +141,8 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
   first = g;
 
 #ifdef WIN32
-  memcpy(&g->pfd, &pfd, sizeof(PIXELFORMATDESCRIPTOR));
+  g->pixelformat = pixelformat;
+  g->pfd = chosen_pfd;
   g->d = ((mode&FL_DOUBLE) != 0);
   g->r = (mode & FL_INDEX);
   g->o = 0; // not an overlay
@@ -164,10 +173,8 @@ HDC fl_private_dc(Fl_Window* w, int mode, Fl_Gl_Choice **gp) {
   if (!i->private_dc) {
     i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
     Fl_Gl_Choice *g = Fl_Gl_Choice::find(mode, 0);
-	if (gp) *gp = g;
-    int pixelFormat = ChoosePixelFormat(i->private_dc, &g->pfd);
-    if (!pixelFormat) {Fl::error("Insufficient GL support"); return NULL;}
-    SetPixelFormat(i->private_dc, pixelFormat, &g->pfd);
+    if (gp) *gp = g;
+    SetPixelFormat(i->private_dc, g->pixelformat, &g->pfd);
 #if USE_COLORMAP
     if (fl_palette) SelectPalette(i->private_dc, fl_palette, FALSE);
 #endif
@@ -206,5 +213,5 @@ void fl_no_gl_context() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.1 1999/09/16 05:34:25 bill Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.2 2000/03/18 10:04:17 bill Exp $".
 //

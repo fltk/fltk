@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.7 2000/03/05 06:51:05 bill Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.8 2000/03/18 10:04:18 bill Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -70,20 +70,7 @@ extern HPALETTE fl_gl_palette;
 ////////////////////////////////////////////////////////////////
 
 int Fl_Gl_Window::can_do(int a, const int *b) {
-#ifdef WIN32
-  Fl_Gl_Choice *g = Fl_Gl_Choice::find(a,b);
-/*
-  Is this necessary? Don't all windows have the same 
-  support for pixel formats?
-  HWND w = GetDesktopWindow();
-  HDC dc = GetDC(w);
-*/
-  if (!fl_gc) fl_GetDC(0);
-  int r = ChoosePixelFormat(fl_gc, &g->pfd);
-  return r != 0;
-#else
   return Fl_Gl_Choice::find(a,b) != 0;
-#endif
 }
 
 void Fl_Gl_Window::show() {
@@ -150,11 +137,18 @@ void Fl_Gl_Window::make_current() {
 }
 
 void Fl_Gl_Window::ortho() {
-  GLint p[2];
-  glGetIntegerv(GL_MAX_VIEWPORT_DIMS, p);
+// Alpha NT seems to have a broken OpenGL that does not like negative coords:
+#ifdef _M_ALPHA
   glLoadIdentity();
-  glViewport(w()-p[0], h()-p[1], p[0], p[1]);
-  glOrtho(w()-p[0], w(), h()-p[1], h(), -1, 1);
+  glViewport(0, 0, w(), h());
+  glOrtho(0, w(), 0, h(), -1, 1);
+#else
+  GLint v[2];
+  glGetIntegerv(GL_MAX_VIEWPORT_DIMS, v);
+  glLoadIdentity();
+  glViewport(w()-v[0], h()-v[1], v[0], v[1]);
+  glOrtho(w()-v[0], w(), h()-v[1], h(), -1, 1);
+#endif
 }
 
 void Fl_Gl_Window::swap_buffers() {
@@ -174,11 +168,9 @@ uchar fl_overlay; // changes how fl_color() works
 void Fl_Gl_Window::flush() {
   make_current();
 
-#if HAVE_GL_OVERLAY
-#ifdef WIN32
+#if defined(_WIN32) && HAVE_GL_OVERLAY
   uchar save_valid = valid_;
   if (overlay && overlay!= this && damage() == FL_DAMAGE_OVERLAY) goto DRAW_OVERLAY_ONLY;
-#endif
 #endif
 
   if (g->d) {
@@ -202,7 +194,6 @@ void Fl_Gl_Window::flush() {
       uchar save_valid = valid_;
       // don't draw if only the overlay is damaged:
       if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !valid()) draw();
-
       // we use a seperate context for the copy because rasterpos must be 0
       // and depth test needs to be off:
       static GLXContext ortho_context = 0;
@@ -264,6 +255,8 @@ void Fl_Gl_Window::flush() {
 #ifdef WIN32
   if (overlay && overlay != this) {
   DRAW_OVERLAY_ONLY:
+    // Draw into hardware overlay planes
+    if (!g->d) SetCursor(0); // SGI system messes up overlay over singlebuffer
     valid_ = save_valid;
     fl_set_gl_context(this, (GLXContext)overlay);
     glDisable(GL_SCISSOR_TEST);
@@ -272,6 +265,7 @@ void Fl_Gl_Window::flush() {
     draw_overlay();
     wglSwapLayerBuffers(Fl_X::i(this)->private_dc,WGL_SWAP_OVERLAY1);
     fl_overlay = 0;
+    if (!g->d) SetCursor(Fl_X::i(this)->cursor);
   }
 #endif
 #endif
@@ -324,5 +318,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.7 2000/03/05 06:51:05 bill Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.8 2000/03/18 10:04:18 bill Exp $".
 //
