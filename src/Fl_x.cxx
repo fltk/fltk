@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.22 1999/01/27 17:52:25 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.23 1999/02/03 08:43:34 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -373,9 +373,12 @@ int fl_handle(const XEvent& xevent)
 
   case Expose:
     Fl_X::i(window)->wait_for_expose = 0;
+#if 0
     // try to keep windows on top even if WM_TRANSIENT_FOR does not work:
+    // opaque move/resize window managers do not like this, so I disabled it.
     if (Fl::first_window()->non_modal() && window != Fl::first_window())
       Fl::first_window()->show();
+#endif
 
   case GraphicsExpose:
     window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
@@ -818,5 +821,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.22 1999/01/27 17:52:25 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.23 1999/02/03 08:43:34 bill Exp $".
 //

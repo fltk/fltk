@@ -40,20 +40,21 @@ methods to build it dynamically. </P>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Menu_.copy>copy</A></LI>
 <LI><A href=#Fl_Menu_.down_box>down_box</A></LI>
 <LI><A href=#Fl_Menu_.global>global</A></LI>
 <LI><A href=#Fl_Menu_.menu>menu</A></LI>
-<LI><A href=#Fl_Menu_.mode>mode</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Menu_.mode>mode</A></LI>
 <LI><A href=#Fl_Menu_.remove>remove</A></LI>
 <LI><A href=#Fl_Menu_.replace>replace</A></LI>
 <LI><A href=#Fl_Menu_.shortcut>shortcut</A></LI>
-<LI><A href=#Fl_Menu_.size>size</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Menu_.size>size</A></LI>
 <LI><A href=#Fl_Menu_.test_shortcut>test_shortcut</A></LI>
 <LI><A href=#Fl_Menu_.text>text</A></LI>
 <LI><A href=#Fl_Menu_.textcolor>textcolor</A></LI>
@@ -77,6 +78,9 @@ and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
 <BR> void Fl_Menu_::menu(const Fl_Menu_Item*)</A></H4>
  Get or set the menu array directly.  Setting it to <TT>NULL</TT>
  indicates that you want the widget to allocate its own array. 
+<H4><A name=Fl_Menu_.copy>void Fl_Menu_::copy(const Fl_Menu_Item*)</A></H4>
+ Set the menu array to a copy of the passed array.  This copy will be
+ deleted when the Fl_Menu_ is deleted.
 <H4><A name=Fl_Menu_.value>int Fl_Menu_::value() const
 <BR> int Fl_Menu_::value(int)
 <BR> int Fl_Menu_::value(const Fl_Menu_Item*)</A></H4>

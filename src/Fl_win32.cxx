@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.26 1999/01/29 07:52:21 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.27 1999/02/03 08:43:33 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -176,7 +176,7 @@ void fl_fix_focus(); // in Fl.C
 
 ////////////////////////////////////////////////////////////////
 
-extern HWND fl_capture;
+HWND fl_capture;
 
 static int mouse_event(Fl_Window *window, int what, int button,
 			WPARAM wParam, LPARAM lParam)
@@ -862,5 +862,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.26 1999/01/29 07:52:21 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.27 1999/02/03 08:43:33 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: subwindow.cxx,v 1.4 1999/01/07 19:18:01 mike Exp $"
+// "$Id: subwindow.cxx,v 1.5 1999/02/03 08:43:35 bill Exp $"
 //
 // Nested window test program for the Fast Light Tool Kit (FLTK).
 //
@@ -101,18 +101,56 @@ int testwindow::handle(int e) {
   return 0;
 }
 
+const char* bigmess =
+#if 1
+"this|is|only|a test"
+#else
+"item1|item2|item3|item4|item5|"
+"submenu/item1|submenu/item2|submenu/item3|submenu/item4|"
+"submenu/sub/item1|submenu/sub/item2|submenu/sub/item3|"
+"item6|item7|item8|item9|item10|"
+"item21|item22|item23|item24|item25|"
+"submenu/item21|submenu/item22|submenu/item23|submenu/item24|"
+"submenu/sub/item21|submenu/sub/item22|submenu/sub/item23|"
+"item36|item37|item38|item39|item310|"
+"item31|item32|item33|item34|item35|"
+"submenu/item31|submenu/item32|submenu/item33|submenu/item34|"
+"submenu/sub/item31|submenu/sub/item32|submenu/sub/item33|"
+"item46|item47|item48|item49|item410|"
+"item41|item42|item43|item44|item45|"
+"submenu/item41|submenu/item42|submenu/item43|submenu/item44|"
+"submenu/sub/item41|submenu/sub/item42|submenu/sub/item43|"
+"item26|item27|item28|item29|item210|"
+"submenu2/item1|submenu2/item2|submenu2/item3|submenu2/item4|"
+"submenu2/sub/item1|submenu2/sub/item2|submenu2/sub/item3|"
+"item6|item7|item8|item9|item10|"
+"item21|item22|item23|item24|item25|"
+"submenu2/item21|submenu2/item22|submenu2/item23|submenu2/item24|"
+"submenu2/sub/item21|submenu2/sub/item22|submenu2/sub/item23|"
+"item36|item37|item38|item39|item310|"
+"item31|item32|item33|item34|item35|"
+"submenu2/item31|submenu2/item32|submenu2/item33|submenu2/item34|"
+"submenu2/sub/item31|submenu2/sub/item32|submenu2/sub/item33|"
+"item46|item47|item48|item49|item410|"
+"item41|item42|item43|item44|item45|"
+"submenu2/item41|submenu2/item42|submenu2/item43|submenu2/item44|"
+"submenu2/sub/item41|submenu2/sub/item42|submenu2/sub/item43|"
+"item26|item27|item28|item29|item210|"
+#endif
+;
+
 int main(int, char **) {
   testwindow *window =
     new testwindow(FL_UP_BOX,400,400,"outer");
   new Fl_Toggle_Button(310,310,80,80,"&outer");
   new EnterExit(10,310,80,80,"enterexit");
   new Fl_Input(150,310,150,25,"input:");
-  (new Fl_Menu_Button(5,150,80,25,"menu&1"))->add("this|is|only|a test");
+  (new Fl_Menu_Button(5,150,80,25,"menu&1"))->add(bigmess);
   testwindow *subwindow =
     new testwindow(FL_DOWN_BOX,100,100,200,200,"inner");
   new Fl_Toggle_Button(110,110,80,80,"&inner");
   new EnterExit(10,110,80,80,"enterexit");
-  (new Fl_Menu_Button(50,50,80,25,"menu&2"))->add("this|is|only|a test");
+  (new Fl_Menu_Button(50,50,80,25,"menu&2"))->add(bigmess);
   new Fl_Input(45,80,150,25,"input:");
   subwindow->resizable(subwindow);
   window->resizable(subwindow);
@@ -132,5 +170,5 @@ int main(int, char **) {
 }
 
 //
-// End of "$Id: subwindow.cxx,v 1.4 1999/01/07 19:18:01 mike Exp $".
+// End of "$Id: subwindow.cxx,v 1.5 1999/02/03 08:43:35 bill Exp $".
 //

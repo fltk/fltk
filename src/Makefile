@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10 1999/01/31 07:43:15 bill Exp $"
+# "$Id: Makefile,v 1.11 1999/02/03 08:43:34 bill Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -87,6 +87,7 @@ CPPFILES = \
 	Fl_display.cxx \
 	Fl_get_key.cxx \
 	Fl_get_system_colors.cxx \
+	Fl_grab.cxx \
 	Fl_own_colormap.cxx \
 	Fl_visual.cxx \
 	Fl_x.cxx \
@@ -112,6 +113,7 @@ CPPFILES = \
 	fl_file_chooser.cxx \
 	fl_font.cxx \
 	fl_labeltype.cxx \
+	fl_line_style.cxx \
 	fl_oval_box.cxx \
 	fl_overlay.cxx \
 	fl_overlay_visual.cxx \
@@ -182,5 +184,5 @@ install: ../lib/$(LIBNAME)
 	-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.10 1999/01/31 07:43:15 bill Exp $".
+# End of "$Id: Makefile,v 1.11 1999/02/03 08:43:34 bill Exp $".
 #

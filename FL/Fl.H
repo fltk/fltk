@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.4 1999/01/07 19:16:50 mike Exp $"
+// "$Id: Fl.H,v 1.5 1999/02/03 08:43:29 bill Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -104,8 +104,7 @@ public:
   static Fl_Window* next_window(const Fl_Window*);
   static Fl_Window* modal() {return modal_;}
   static Fl_Window* grab() {return grab_;}
-  static void grab(Fl_Window&);
-  static void release();
+  static void grab(Fl_Window*);
 
   // event information:
   static int event_x()		{return e_x;}
@@ -192,11 +191,13 @@ public:
   static int event_button2() {return e_state&FL_BUTTON2;}
   static int event_button3() {return e_state&FL_BUTTON3;}
   static void set_idle(void (*cb)()) {idle = cb;}
+  static void grab(Fl_Window&w) {grab(&w);}
+  static void release() {grab(0);}
 
 };
 
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.4 1999/01/07 19:16:50 mike Exp $".
+// End of "$Id: Fl.H,v 1.5 1999/02/03 08:43:29 bill Exp $".
 //

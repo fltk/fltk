@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.6 1999/01/29 16:56:48 carl Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.7 1999/02/03 08:43:33 bill Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -41,20 +41,44 @@
 // always allocate this much initially:
 #define INITIAL_MENU_SIZE 15
 
-// as menu array size passes through each power of two, the memory
-// array allocated is doubled in size:
-static Fl_Menu_Item* incr_array(Fl_Menu_Item* array, int size) {
-  if (size < INITIAL_MENU_SIZE) return array;
-  if ((size+1) & size) return array; // not a power of 2
-  Fl_Menu_Item* newarray = new Fl_Menu_Item[size*2+1];
-  for (int i = 0; i <= size; i++) newarray[i] = array[i];
-  delete[] array;
-  return newarray;
-}
-
 // if this local pointer is set, array is reallocated and put here:
 static Fl_Menu_Item** alloc;
 
+// Insert a single Fl_Menu_Item into an array at offset n.  If ::alloc
+// is not zero, the array may be reallocated.  This is done each time
+// it's size passes through a power of 2.  The new (or old) array is
+// returned.
+// Notice that size does not count the trailing null item, so one more
+// item than you think must be copied.
+static Fl_Menu_Item* insert(
+  Fl_Menu_Item* array, int size,
+  int n,
+  const char *text,
+  int flags) {
+  // If new size is a power of two, we reallocate to the next power
+  // of two:
+  if (alloc && size >= INITIAL_MENU_SIZE && !((size+1)&size)) {
+    Fl_Menu_Item* newarray = new Fl_Menu_Item[(size+1)*2];
+    memcpy(newarray, array, (size+1)*sizeof(Fl_Menu_Item));
+    delete[] array;
+    *alloc = array = newarray;
+  }
+  // move all the later items:
+  memmove(array+n+1, array+n, sizeof(Fl_Menu_Item)*(size-n+1));
+  // create the new item:
+  Fl_Menu_Item* m = array+n;
+  m->text = text ? strdup(text) : 0;
+  m->shortcut_ = 0;
+  m->callback_ = 0;
+  m->user_data_ = 0;
+  m->flags = flags;
+  m->labeltype_ = m->labelfont_ = m->labelsize_ = m->labelcolor_ = 0;
+  return array;
+}
+
+// Add an item.  The text is split at '/' characters to automatically
+// produce submenus (actually a totally unnecessary feature as you can
+// now add submenu titles directly by setting SUBMENU in the flags):
 int Fl_Menu_Item::add(
   const char *text,
   int shortcut,
@@ -85,27 +109,17 @@ int Fl_Menu_Item::add(
 
     /* find a matching menu title: */
     for (; m->text; m = m->next())
-      if (m->flags&FL_SUBMENU && !strcmp(item,m->text)) break;
+      if (m->flags&FL_SUBMENU && !strcmp(item, m->text)) break;
 
     if (!m->text) { /* create a new menu */
-      if (alloc) {
-	int n = m-array;
-	array = incr_array(array,size);
-	array = incr_array(array,size+1);
-	*alloc = array;
-	m = array+n;
-      }
-      memmove(m+2,m,sizeof(Fl_Menu_Item)*(array+size-m));
-      m->text = strdup(item);
-      m->shortcut_ = 0;
-      m->callback_ = 0;
-      m->user_data_ = 0;
-      m->flags = FL_SUBMENU|flags1;
-      m->labeltype_ = m->labelfont_ = m->labelsize_ = m->labelcolor_ = 0;
-      (m+1)->text = 0;
-      size += 2;
+      int n = m-array;
+      array = insert(array, size, n, item, FL_SUBMENU|flags1);
+      size++;
+      array = insert(array, size, n+1, 0, 0);
+      size++;
+      m = array+n;
     }
-    m++;	/* go into the menu */
+    m++;	/* go into the submenu */
     flags1 = 0;
   }
 
@@ -114,22 +128,20 @@ int Fl_Menu_Item::add(
     if (!strcmp(m->text,item)) break;
 
   if (!m->text) {	/* add a new menu item */
-    if (alloc) {
-      int n = m-array;
-      *alloc = array = incr_array(array,size);
-      m = array+n;
-    }
-    memmove(m+1,m,sizeof(Fl_Menu_Item)*(array+size-m));
+    int n = m-array;
+    array = insert(array, size, n, item, flags|flags1);
     size++;
-    m->text = strdup(item);
+    if (flags & FL_SUBMENU) { // add submenu delimiter
+      array = insert(array, size, n+1, 0, 0);
+      size++;
+    }
+    m = array+n;
   }
 
   /* fill it in */
   m->shortcut_ = shortcut;
   m->callback_ = cb;
   m->user_data_ = data;
-  m->flags = flags|flags1;
-  m->labeltype_ = m->labelfont_ = m->labelsize_ = m->labelcolor_ = 0;
 
   return m-array;
 }
@@ -137,8 +149,8 @@ int Fl_Menu_Item::add(
 int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
   int n = value_ ? value_ - menu_ : 0;
   if (!menu_) {
-    alloc = 1;
-    menu_ = new Fl_Menu_Item[INITIAL_MENU_SIZE];
+    alloc = 2; // indicates that the strings can be freed
+    menu_ = new Fl_Menu_Item[INITIAL_MENU_SIZE+1];
     menu_[0].text = 0;
   }
   if (alloc) ::alloc = &menu_;
@@ -148,6 +160,8 @@ int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
   return r;
 }
 
+// This is a Forms (and SGI GL library) compatable add function, it
+// adds strings of the form "name\tshortcut|name\tshortcut|..."
 int Fl_Menu_::add(const char *str) {
   char buf[128];
   int r = 0;
@@ -167,30 +181,20 @@ int Fl_Menu_::add(const char *str) {
 
 void Fl_Menu_::replace(int i, const char *str) {
   if (i<0 || i>=size()) return;
-  if (alloc) free((void *)menu_[i].text);
-  menu_[i].text = strdup(str);
+  if (alloc > 1) {
+    free((void *)menu_[i].text);
+    str = strdup(str);
+  }
+  menu_[i].text = str;
 }
 
 void Fl_Menu_::remove(int i) {
   int n = size();
   if (i<0 || i>=n) return;
-  if (alloc) free((void *)menu_[i].text);
+  if (alloc > 1) free((void *)menu_[i].text);
   memmove(&menu_[i],&menu_[i+1],(n-i)*sizeof(Fl_Menu_Item));
 }
 
-void Fl_Menu_::clear() {
-  for (int i = size(); i--;)
-    if (menu_[i].text) free((void*)menu_[i].text);
-  if (alloc) {
-    delete[] menu_;
-    menu_ = 0;
-    alloc = 0;
-  } else if (menu_) {
-    menu_[0].text = 0;
-    value_ = menu_;
-  }
-}
-
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.6 1999/01/29 16:56:48 carl Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.7 1999/02/03 08:43:33 bill Exp $".
 //

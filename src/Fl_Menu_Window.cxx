@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.cxx,v 1.7 1999/01/07 19:17:23 mike Exp $"
+// "$Id: Fl_Menu_Window.cxx,v 1.8 1999/02/03 08:43:33 bill Exp $"
 //
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
@@ -96,65 +96,6 @@ Fl_Menu_Window::~Fl_Menu_Window() {
   hide();
 }
 
-////////////////////////////////////////////////////////////////
-// "Grab" is done while menu systems are up.  This has several effects:
-// Events are all sent to the "grab window", which does not even
-// have to be displayed (and in the case of Fl_Menu.C it isn't).
-// Under X override_redirect and save_under is done to new windows.
-// The system is also told to "grab" events and send them to this app.
-
-extern void fl_fix_focus();
-
-#ifdef WIN32
-// We have to keep track of whether we have captured the mouse, since
-// MSWindows shows little respect for this... Grep for fl_capture to
-// see where and how this is used.
-HWND fl_capture;
-#endif
-
-void Fl::grab(Fl_Window& w) {
-  grab_ = &w;
-#ifdef WIN32
-  SetActiveWindow(fl_capture = fl_xid(first_window()));
-  SetCapture(fl_capture);
-#else
-  XGrabPointer(fl_display,
-	       fl_xid(first_window()),
-	       1,
-	       ButtonPressMask|ButtonReleaseMask|
-	       ButtonMotionMask|PointerMotionMask,
-	       GrabModeAsync,
-	       GrabModeAsync, 
-	       None,
-	       0,
-	       fl_event_time);
-  XGrabKeyboard(fl_display,
-		fl_xid(first_window()),
-		1,
-		GrabModeAsync,
-		GrabModeAsync, 
-		fl_event_time);
-#endif
-}
-
-extern void fl_send_extra_move(); // in Fl.cxx
-
-void Fl::release() {
-  grab_ = 0;
-#ifdef WIN32
-  fl_capture = 0;
-  ReleaseCapture();
-#else
-  XUngrabKeyboard(fl_display, fl_event_time);
-  XUngrabPointer(fl_display, fl_event_time);
-  // this flush is done in case the picked menu item goes into
-  // an infinite loop, so we don't leave the X server locked up:
-  XFlush(fl_display);
-#endif
-  fl_send_extra_move();
-  return;
-}
-
 //
-// End of "$Id: Fl_Menu_Window.cxx,v 1.7 1999/01/07 19:17:23 mike Exp $".
+// End of "$Id: Fl_Menu_Window.cxx,v 1.8 1999/02/03 08:43:33 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.5 1999/01/07 19:17:22 mike Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.6 1999/02/03 08:43:32 bill Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,8 +32,8 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_.H>
+#include <string.h>
 #include <stdlib.h>
-
 
 int Fl_Menu_::value(const Fl_Menu_Item* m) {
   clear_changed();
@@ -105,15 +105,37 @@ int Fl_Menu_::size() const {
 }
 
 void Fl_Menu_::menu(const Fl_Menu_Item* m) {
-  // if (alloc) clear();
-  alloc = 0;
+  clear();
   value_ = menu_ = (Fl_Menu_Item*)m;
 }
 
+void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
+  int n = m->size()+1;
+  Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
+  memcpy(newMenu, m, n*sizeof(Fl_Menu_Item));
+  menu(newMenu);
+  alloc = 1; // make destructor free it
+  // for convienence, provide way to change all the user data pointers:
+  if (user_data) for (; n--;) {
+    if (newMenu->callback_) newMenu->user_data_ = user_data;
+    newMenu++;
+  }
+}
+
 Fl_Menu_::~Fl_Menu_() {
-  // if (alloc) clear();
+  clear();
+}
+
+void Fl_Menu_::clear() {
+  if (alloc) {
+    if (alloc>1) for (int i = size(); i--;)
+      if (menu_[i].text) free((void*)menu_[i].text);
+    delete[] menu_;
+    menu_ = 0;
+    alloc = 0;
+  }
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.5 1999/01/07 19:17:22 mike Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.6 1999/02/03 08:43:32 bill Exp $".
 //
