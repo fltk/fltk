@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.14 2001/10/25 17:12:03 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.15 2001/10/25 17:13:26 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -305,15 +305,11 @@ if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
         	FreeBSD* | NetBSD* | OpenBSD* | Linux*)
         		# *BSD
-        		mandir="/usr/share/man"
+        		mandir="\${prefix}/share/man"
         		;;
         	IRIX*)
         		# SGI IRIX
-        		mandir="/usr/share/catman"
-        		;;
-        	*)
-        		# All others
-        		mandir="/usr/man"
+        		mandir="\${prefix}/share/catman"
         		;;
 	esac
 fi
@@ -492,5 +488,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.14 2001/10/25 17:12:03 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.15 2001/10/25 17:13:26 easysw Exp $".
 dnl
