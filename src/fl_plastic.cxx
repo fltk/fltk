@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.18 2003/05/18 22:12:24 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.19 2003/05/19 14:56:42 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,11 +40,12 @@
 //
 
 //#define USE_OLD_PLASTIC_BOX
+#define USE_OLD_PLASTIC_COLOR
 
 extern uchar *fl_gray_ramp();
 
 inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
-#ifdef USE_OLD_PLASTIC_BOX
+#ifdef USE_OLD_PLASTIC_COLOR
   return fl_color_average((Fl_Color)gc, bc, 0.75f);
 #else
   unsigned	grgb = Fl::get_color((Fl_Color)gc),
@@ -72,7 +73,7 @@ inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
     return fl_rgb_color(red, green, blue);
   else
     return fl_color_average(FL_GRAY, fl_rgb_color(red, green, blue), 0.75f);
-#endif // USE_OLD_PLASTIC_BOX
+#endif // USE_OLD_PLASTIC_COLOR
 }
 
 
@@ -225,5 +226,5 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.18 2003/05/18 22:12:24 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.19 2003/05/19 14:56:42 easysw Exp $".
 //
