@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.8 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.9 2002/07/30 14:57:02 easysw Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -190,7 +190,7 @@ static struct {
   Fl_Box_Draw_F *f;
   uchar dx, dy, dw, dh;
   int set;
-} fl_box_table[] = {
+} fl_box_table[256] = {
 // must match list in Enumerations.H!!!
   {fl_no_box,		0,0,0,0,1},		
   {fl_rectf,		0,0,0,0,1}, // FL_FLAT_BOX
@@ -248,6 +248,10 @@ void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
   }
 }
 
+Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
+  return fl_box_table[t].f;
+}
+
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
 		      uchar a, uchar b, uchar c, uchar d) {
   fl_box_table[t].f   = f;
@@ -291,5 +295,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.8 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.9 2002/07/30 14:57:02 easysw Exp $".
 //

@@ -1,6 +1,10 @@
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
+	- "make install" didn't automatically (re)compile the
+	  FLUID executable.
+	- Added an Fl::get_boxtype() method to get the current
+	  drawing function for a specific box type.
 	- Fl_Output and Fl_Multiline_Output didn't prevent
 	  middle-mouse pastes.
 	- Fl_JPEG_Image didn't compile out-of-the-box with Cygwin

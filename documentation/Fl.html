@@ -80,6 +80,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.focus">focus</A></LI>
 	<LI><A HREF="#Fl.foreground">foreground</A></LI>
 	<LI><A HREF="#Fl.free_color">free_color</A></LI>
+	<LI><A HREF="#Fl.get_boxtype">get_boxtype</A></LI>
 	<LI><A HREF="#Fl.get_color">get_color</A></LI>
 	<LI><A HREF="#Fl.get_font">get_font</A></LI>
 	<LI><A HREF="#Fl.get_font_name">get_font_name</A></LI>
@@ -703,6 +704,11 @@ between this and <tt>FL_WHITE</tt>.
 <P>Frees the specified color from the colormap, if applicable.
 If <tt>overlay</tt> is non-zero then the color is freed from the
 overlay colormap.
+
+<H4><A NAME="Fl.get_boxtype">Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);</A></H4>
+
+<P>Gets the current box drawing function for the specified box type.
+
 
 <H4><A NAME="Fl.get_color">unsigned get_color(Fl_Color c);<BR>
 void get_color(Fl_Color c, uchar&amp;r, uchar&amp;g, uchar&amp;b);</A></H4>
