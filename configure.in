@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.51 2002/02/15 18:15:45 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.52 2002/03/06 18:11:00 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -420,8 +420,14 @@ case $uname in
 	    GLDEMOS=""
 	fi
 
+	dnl Check for the Xft library...
+	AC_CHECK_HEADER(X11/Xft/Xft.h,
+	    AC_CHECK_LIB(Xft, XftDrawCreate,
+	        AC_DEFINE(USE_XFT)
+		LIBS="-lXft $LIBS"))
+
 	dnl Check for the Xdbe extension...
-	AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
+	AC_CHECK_HEADER(X11/extensions/Xdbe.h,
 	    if test "$uname" != "SunOS"; then
         	AC_DEFINE(HAVE_XDBE)
 	    fi)
@@ -683,5 +689,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.51 2002/02/15 18:15:45 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.52 2002/03/06 18:11:00 easysw Exp $".
 dnl

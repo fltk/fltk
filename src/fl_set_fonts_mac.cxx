@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.3 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.4 2002/03/06 18:11:01 easysw Exp $"
 //
 // MacOS font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -27,13 +27,6 @@
 // are found on the X server.  It tries to place the fonts into families
 // and to sort them so the first 4 in a family are normal, bold, italic,
 // and bold italic.
-
-#include <FL/Fl.H>
-#include <FL/mac.H>
-#include "Fl_Font.H"
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
 
 // turn a stored font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
@@ -146,5 +139,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.3 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.4 2002/03/06 18:11:01 easysw Exp $".
 //

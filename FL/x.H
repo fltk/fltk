@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.5 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.6 2002/03/06 18:11:00 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -69,6 +69,7 @@ extern FL_EXPORT XFontStruct* fl_xfont;
 FL_EXPORT ulong fl_xpixel(Fl_Color i);
 FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);
 FL_EXPORT void fl_clip_region(Fl_Region);
+FL_EXPORT Fl_Region fl_clip_region();
 FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 // feed events into fltk:
@@ -135,5 +136,5 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.5 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.6 2002/03/06 18:11:00 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.11.2.7 2002/01/01 15:11:27 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.8 2002/03/06 18:11:00 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -73,6 +73,14 @@
  */
 
 #define USE_COLORMAP 1
+
+/*
+ * USE_XFT
+ *
+ * Use the new Xft library to draw anti-aliased text.
+ */
+
+#define USE_XFT 0
 
 /*
  * HAVE_XDBE:
@@ -209,5 +217,5 @@
 
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11.2.7 2002/01/01 15:11:27 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11.2.8 2002/03/06 18:11:00 easysw Exp $".
  */

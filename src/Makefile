@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.34 2002/02/26 00:34:55 matthiaswm Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.35 2002/03/06 18:11:01 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -232,9 +232,10 @@ Fl_cutpaste.o:	Fl_cutpaste_mac.cxx Fl_cutpaste_win32.cxx
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
 Fl_x.o:		Fl_mac.cxx Fl_win32.cxx
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
-fl_draw_image.o:	fl_draw_image_mac.cxx fl_draw_image_win32.cxx
-fl_font.o:	fl_font_mac.cxx fl_font_win32.cxx
-fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_win32.cxx
+fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
+fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
+fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
+		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
 
 fl_arci.o:	../FL/mac.H ../FL/win32.H
 Fl_arg.o:	../FL/mac.H ../FL/win32.H
@@ -353,5 +354,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.34 2002/02/26 00:34:55 matthiaswm Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.35 2002/03/06 18:11:01 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.4 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.5 2002/03/06 18:11:01 easysw Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -27,17 +27,6 @@
 //: TextSize, TextFont
 //: GetFNum (theName: Str255; VAR familyID: Integer);
 //: FUNCTION FMSwapFont (inRec: FMInput): FMOutPtr;
-
-
-#include <config.h>
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include <FL/mac.H>
-#include "Fl_Font.h"
-
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 
 Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   knowMetrics = 0;
@@ -149,11 +138,6 @@ int fl_descent() {
   return fl_fontsize->descent;
 }
 
-double fl_width(const char* c) {
-  int n = strlen( c );
-  return (double)TextWidth( c, 0, n );
-}
-
 double fl_width(const char* c, int n) {
   return (double)TextWidth( c, 0, n );
 }
@@ -167,10 +151,6 @@ void fl_draw(const char* str, int n, int x, int y) {
   DrawText(str, 0, n);
 }
 
-void fl_draw(const char* str, int x, int y) {
-  fl_draw(str, strlen(str), x, y);
-}
-
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.4 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.5 2002/03/06 18:11:01 easysw Exp $".
 //
