@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.48 2003/11/01 01:32:40 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.49 2004/03/01 02:05:02 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -163,11 +163,13 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   /* Add the buffer to the display, and attach a callback to the buffer for
      receiving modification information when the buffer contents change */
   mBuffer = buf;
-  mBuffer->add_modify_callback( buffer_modified_cb, this );
-  mBuffer->add_predelete_callback( buffer_predelete_cb, this );
+  if (mBuffer) {
+    mBuffer->add_modify_callback( buffer_modified_cb, this );
+    mBuffer->add_predelete_callback( buffer_predelete_cb, this );
 
-  /* Update the display */
-  buffer_modified_cb( 0, buf->length(), 0, 0, 0, this );
+    /* Update the display */
+    buffer_modified_cb( 0, buf->length(), 0, 0, 0, this );
+  }
 
   /* Resize the widget to update the screen... */
   resize(x(), y(), w(), h());
@@ -1745,7 +1747,7 @@ int Fl_Text_Display::position_style( int lineStartPos,
     style = FILL_MASK;
   else if ( styleBuf != NULL ) {
     style = ( unsigned char ) styleBuf->character( pos );
-    if (style == mUnfinishedStyle) {
+    if (style == mUnfinishedStyle && mUnfinishedHighlightCB) {
         /* encountered "unfinished" style, trigger parsing */
         (mUnfinishedHighlightCB)( pos, mHighlightCBArg);
         style = (unsigned char) styleBuf->character( pos);
@@ -2701,7 +2703,7 @@ int Fl_Text_Display::measure_proportional_character(char c, int colNum, int pos)
 	style = 0;
     } else {
 	style = (unsigned char)styleBuf->character(pos);
-	if (style == mUnfinishedStyle) {
+	if (style == mUnfinishedStyle && mUnfinishedHighlightCB) {
     	    /* encountered "unfinished" style, trigger parsing */
     	    (mUnfinishedHighlightCB)(pos, mHighlightCBArg);
     	    style = (unsigned char)styleBuf->character(pos);
@@ -3059,5 +3061,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.48 2003/11/01 01:32:40 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.49 2004/03/01 02:05:02 easysw Exp $".
 //

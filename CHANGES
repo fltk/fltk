@@ -1,5 +1,16 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Documentation updates (STR #245, STR #250, STR #277,
+	  STR #281)
+	- Fl_Preferences incorrectly created the preferences
+	  directory before necessary (STR #247)
+	- The WIN32 project files still defined the (obsolete)
+	  FL_STATIC constant (STR #279)
+	- Fl_Text_Display::buffer() did not support NULL values,
+	  making it impossible to clean up text buffers from a
+	  subclass (STR #295)
+	- Fl_Text_Display did not support a NULL
+	  unfinishedStyleCB function (STR #241)
 	- Fl::background2() incorrectly marked the foreground
 	  color as initialized (STR #255)
 	- Fixed the X11 CTRL + "-" detection code to properly

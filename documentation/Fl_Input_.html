@@ -223,12 +223,13 @@ l=0)</A></H4>
 leave the mark and position after it. If <TT>l</TT> is not zero
 then it is assumed to be <TT>strlen(t)</TT>.
 
-<H4><A name="Fl_Input_.copy">int Fl_Input_::copy()</A></H4>
+<H4><A name="Fl_Input_.copy">int Fl_Input_::copy(int clipboard)</A></H4>
 
 <P>Put the current selection between <TT>mark()</TT> and
-<TT>position()</TT> into the clipboard.  Does not replace the
-old clipboard contents if <TT>position()</TT> and
-<TT>mark()</TT> are equal.
+<TT>position()</TT> into the specified clipboard.  Does not
+replace the old clipboard contents if <TT>position()</TT> and
+<TT>mark()</TT> are equal. Clipboard 0 maps to the current text
+selection and clipboard 1 maps to the cut/paste clipboard.
 
 <H4><A name="Fl_Input_.undo">int Fl_Input_::undo()</A></H4>
 

@@ -50,22 +50,23 @@ be "private": a dynamically allocated array managed by the Fl_Menu_.
 </TD><TD align=left valign=top>
 <UL>
 <LI><A href=#Fl_Menu_.mode>mode</A></LI>
+<LI><A href=#Fl_Menu_.mvalue>mvalue</A></LI>
 <LI><A href=#Fl_Menu_.remove>remove</A></LI>
 <LI><A href=#Fl_Menu_.replace>replace</A></LI>
-<LI><A href=#Fl_Menu_.shortcut>shortcut</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Menu_.shortcut>shortcut</A></LI>
 <LI><A href=#Fl_Menu_.size>size</A></LI>
 <LI><A href=#Fl_Menu_.test_shortcut>test_shortcut</A></LI>
 <LI><A href=#Fl_Menu_.text>text</A></LI>
-<LI><A href=#Fl_Menu_.textcolor>textcolor</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
 <LI><A href=#Fl_Menu_.textfont>textfont</A></LI>
 <LI><A href=#Fl_Menu_.textsize>textsize</A></LI>
 <LI><A href=#Fl_Menu_.value>value</A></LI>
+<LI><A href=#Fl_Menu_.textcolor>textcolor</A></LI>
 </UL>
 </TD></TR>
 </TABLE>
@@ -93,10 +94,19 @@ deleted.  <tt>NULL</tt> is allowed and acts the same as a zero-length
 menu.  If you try to modify the array (with add(), replace(), or
 delete()) a private copy is automatically done.
 
+<H4><A name=Fl_Menu_.mvalue>const Fl_Menu_Item* Fl_Menu_::mvalue()
+const</a></h4>
+
+<P>Returns a pointer to the last menu item that was picked.
+
 <H4><A name=Fl_Menu_.copy>void Fl_Menu_::copy(const
-Fl_Menu_Item*)</A></H4>
-The menu is set to a private copy of the passed Fl_Menu_Item array.
-This is useful if you want to modify the flags of the menu items.
+Fl_Menu_Item*, void* user_data = 0)</A></H4>
+
+<P>The menu is set to a private copy of the passed Fl_Menu_Item
+array. This is useful if you want to modify the flags of the
+menu items. If the <tt>user_data</tt> argument is non-NULL, then
+the <tt>user_data</tt> members of the menu items are set to the
+given value.
 
 <H4><A name=Fl_Menu_.clear>void Fl_Menu_::clear()</A></H4>
 Same as <tt>menu(NULL)</tt>, set the array pointer to null, indicating

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.25 2003/05/04 21:45:46 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.26 2004/03/01 02:05:01 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -671,8 +671,6 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
            "%s/%s.prefs", vendor, application);
 #endif
 
-  makePathForFile(filename);
-
   prefs_       = prefs;
   filename_    = strdup(filename);
   vendor_      = strdup(vendor);
@@ -688,8 +686,6 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, const char *path, con
   char filename[ FL_PATH_MAX ]; filename[0] = 0;
 
   snprintf(filename, sizeof(filename), "%s/%s.prefs", path, application);
-
-  makePathForFile(filename);
 
   prefs_       = prefs;
   filename_    = strdup(filename);
@@ -758,6 +754,7 @@ int Fl_Preferences::RootNode::read()
 // write the group tree and all entry leafs
 int Fl_Preferences::RootNode::write()
 {
+  makePathForFile(filename_);
   FILE *f = fopen( filename_, "wb" );
   if ( !f ) return 1;
   fprintf( f, "; FLTK preferences file format 1.0\n" );
@@ -1116,5 +1113,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.25 2003/05/04 21:45:46 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.26 2004/03/01 02:05:01 easysw Exp $".
 //

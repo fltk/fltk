@@ -29,8 +29,6 @@
 
 #include <Win32Headers.h>
 
-#define FL_STATIC
-
 //
 //
 //

@@ -223,7 +223,8 @@ int* rectEnd);</A></H4>
 
 <H4><A NAME="Fl_Text_Buffer.highlight_text">const char* highlight_text();</A></H4>
 
-<P>Returns the highlighted text.
+<P>Returns the highlighted text. When you are done with the
+text, free it using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.insert_column">void insert_column(int column, int startPos, const char* text,
 int* charsInserted, int* charsDeleted);</A></H4>
@@ -253,7 +254,8 @@ int* charsInserted, int* charsDeleted);</A></H4>
 <H4><A NAME="Fl_Text_Buffer.line_text">const char* line_text(int pos);</A></H4>
 
 <P>Returns the text for the line containing the specified
-character position.
+character position. When you are done with the text, free it
+using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.loadfile">int loadfile(const char *file, int buflen = 128*1024);</A></H4>
 
@@ -340,7 +342,8 @@ int* rectStart, int* rectEnd);</A></H4>
 
 <H4><A NAME="Fl_Text_Buffer.secondary_selection_text">const char* secondary_selection_text();</A></H4>
 
-<P>Returns the text in the secondary selection.
+<P>Returns the text in the secondary selection. When you are
+done with the text, free it using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.secondary_select_rectangular">void secondary_select_rectangular(int start, int end, int rectStart,
 int rectEnd);</A></H4>
@@ -367,7 +370,8 @@ int selection_position(int* start, int* end, int* isRect, int* rectStart, int* r
 
 <H4><A NAME="Fl_Text_Buffer.selection_text">const char* selection_text();</A></H4>
 
-<P>Returns the currently selected text.
+<P>Returns the currently selected text. When you are done with
+the text, free it using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.select_rectangular">void select_rectangular(int start, int end, int rectStart, int rectEnd);</A></H4>
 
@@ -399,16 +403,19 @@ void tab_distance(int tabDist);</A></H4>
 
 <H4><A NAME="Fl_Text_Buffer.text_in_rectangle">const char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);</A></H4>
 
-<P>Returns the text from the given rectangle.
+<P>Returns the text from the given rectangle. When you are done
+with the text, free it using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.text_range">const char* text_range(int start, int end);</A></H4>
 
-<P>Returns the text from the range of characters.
+<P>Returns the text from the range of characters. When you are
+done with the text, free it using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.text">const char* text();<BR>
 void text(const char* text);</A></H4>
 
-<P>Gets or sets the text in the buffer.
+<P>Gets or sets the text in the buffer. When you are done with
+the text, free it using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.unhighlight">void unhighlight();</A></H4>
 
