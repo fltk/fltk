@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.9 2003/01/30 21:40:53 easysw Exp $"
+// "$Id: mac.H,v 1.1.2.10 2003/05/30 07:03:08 easysw Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -112,9 +112,12 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
 extern void fl_open_display();
 
+// Register a function for opening files via the finder...
+extern void fl_open_callback(void (*cb)(const char *));
+
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: mac.H,v 1.1.2.9 2003/01/30 21:40:53 easysw Exp $".
+// End of "$Id: mac.H,v 1.1.2.10 2003/05/30 07:03:08 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.43 2003/05/28 05:10:05 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.44 2003/05/30 07:03:09 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -70,6 +70,7 @@ extern void fl_fix_focus();
 // forward definition of functions in this file
 static void handleUpdateEvent( WindowPtr xid );
 //+ int fl_handle(const EventRecord &event);
+static int FSSpec2UnixPath( FSSpec *fs, char *dst );
 
 // public variables
 int fl_screen;
@@ -984,6 +985,90 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
 }
 
 
+
+/**
+ * Open callback function to call...
+ */
+
+static void	(*open_cb)(const char *) = 0;
+
+
+/**
+ * Event handler for Apple-O key combination and also for file opens
+ * via the finder...
+ */
+
+static OSErr OpenAppleEventHandler(const AppleEvent *appleEvt,
+                                   AppleEvent *reply,
+				   UInt32 refcon) {
+  OSErr err;
+  AEDescList documents;
+  long i, n;
+  FSSpec fileSpec;
+  AEKeyword keyWd;
+  DescType typeCd;
+  Size actSz;
+  char filename[1024];
+
+  if (!open_cb) return noErr;
+
+  // Initialize the document list...
+  AECreateDesc(typeNull, NULL, 0, &documents);
+ 
+  // Get the open parameter(s)...
+  err = AEGetParamDesc(appleEvt, keyDirectObject, typeAEList, &documents);
+  if (err != noErr) {
+    AEDisposeDesc(&documents);
+    return err;
+  }
+
+  // Lock access to FLTK in this thread...
+  fl_lock_function();
+
+  // Open the documents via the callback...
+  if (AECountItems(theDocuments, &n) == noErr) {
+    for (i = 1; i <= n; i ++) {
+      // Get the next FSSpec record...
+      AEGetNthPtr(theDocuments, i, typeFSS, &keyWd, &typeCd,
+                  (Ptr)&fileSpec, sizeof(fileSpec),
+		  (actSz = sizeof(fileSpec), &actSz));
+
+      // Convert to a UNIX path...
+      FSSpec2UnixPath(&fileSpec, filename);
+
+      // Call the callback with the filename...
+      (*open_cb)(filename);
+    }
+  }
+
+  // Unlock access to FLTK for all threads...
+  fl_unlock_function();
+
+  // Get rid of the document list...
+  AEDisposeDesc(&documents);
+
+  return noErr;
+}
+
+
+/**
+ * Install an open documents event handler...
+ */
+
+void fl_open_callback(void (*cb)(const char *)) {
+  open_cb = cb;
+  if (cb) {
+    AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
+                          NewAEEventHandlerUPP((AEEventHandlerProcPtr)
+			      OpenAppleEventHandler), 0, false);
+  } else {
+    AERemoveEventHandler(kCoreEventClass, kAEOpenDocuments,
+                          NewAEEventHandlerUPP((AEEventHandlerProcPtr)
+			      OpenAppleEventHandler), false);
+  }
+}
+
+
 /**
  * initialize the Mac toolboxes and set the default menubar
  */
@@ -1776,6 +1861,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.43 2003/05/28 05:10:05 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.44 2003/05/30 07:03:09 easysw Exp $".
 //
 
