@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.14 2002/05/02 14:31:10 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.15 2002/05/06 04:11:50 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -342,7 +342,18 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
       // Tab - nul terminate this fragment and draw it...
       *ptr = '\0';
 
-      fl_draw(fragment, x + width, y, w - width, fl_height(),
+      int cW = w - width; // Clip width...
+
+      if (columns)
+      {
+        // Try clipping inside this column...
+	for (i = 0; i < column && columns[i]; i ++);
+
+        if (columns[i])
+          cW = columns[i];
+      }
+
+      fl_draw(fragment, x + width, y, cW, fl_height(),
               (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP), 0, 0);
 
       // Advance to the next column...
@@ -627,5 +638,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.14 2002/05/02 14:31:10 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.15 2002/05/06 04:11:50 easysw Exp $".
 //
