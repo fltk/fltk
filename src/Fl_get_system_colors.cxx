@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.21 2003/07/12 04:20:48 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.22 2003/07/29 02:12:36 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -247,8 +247,6 @@ int Fl::scheme(const char *s) {
 int Fl::reload_scheme() {
   Fl_Window *win;
 
-  get_system_colors();
-
   if (scheme_ && !strcasecmp(scheme_, "plastic")) {
     // Update the tile image to match the background color...
     uchar r, g, b;
@@ -323,5 +321,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.21 2003/07/12 04:20:48 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.22 2003/07/29 02:12:36 easysw Exp $".
 //

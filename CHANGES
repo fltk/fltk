@@ -1,6 +1,12 @@
-CHANGES IN FLTK 1.1.4
+CHANGES IN FLTK 1.1.4rc2
 
-	- 'Enter' key event on OS X would not set Fl::e_text;
+	- Images were not clipped properly on MacOS X (STR #114)
+	- Fl::reload_scheme() and Fl::scheme("foo") incorrectly
+	  called Fl::get_system_colors().  This prevented an
+	  application from setting its own color preferences
+	  (STR #115)
+	- The 'Enter' key event on OS X would not set Fl::e_text
+	  (STR #???)
 	- Changed behaviour of fluid to always paste into
 	  a selected group (STR #88)
 	- Menuitem now changes font, even if fontsize
