@@ -354,6 +354,9 @@ Package=<4>
     Project_Dep_Name input
     End Project Dependency
     Begin Project Dependency
+    Project_Dep_Name input_choice
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name keyboard
     End Project Dependency
     Begin Project Dependency
@@ -823,6 +826,21 @@ Package=<4>
 ###############################################################################
 
 Project: "input"=".\input.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "input_choice"=".\input_choice.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
