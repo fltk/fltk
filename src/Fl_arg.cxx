@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.4 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.5 2001/12/20 14:41:44 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -87,7 +87,7 @@ int Fl::arg(int argc, char **argv, int &i) {
     Fl::visible_focus(1);
     i++;
     return 1;
-  } else if (match(s, "nokbd")) {
+  } else if (match(s, "nokbd", 3)) {
     Fl::visible_focus(0);
     i++;
     return 1;
@@ -123,6 +123,9 @@ int Fl::arg(int argc, char **argv, int &i) {
 
   } else if (match(s, "fg") || match(s, "foreground")) {
     fl_fg = v;
+
+  } else if (match(s, "scheme")) {
+    Fl::scheme(v);
 
   } else return 0; // unrecognized
 
@@ -184,7 +187,7 @@ void Fl_Window::show(int argc, char **argv) {
 
   if (!beenhere) {
     beenhere = 1;
-    Fl::get_system_colors(); // opens display!  May call Fl::fatal()
+    Fl::scheme(Fl::scheme()); // opens display!  May call Fl::fatal()
   }
 
 #if !defined(WIN32) && !defined(__APPLE__)
@@ -204,15 +207,17 @@ void Fl_Window::show(int argc, char **argv) {
 
 static const char * const helpmsg =
 "options are:\n"
-" -d[isplay] host:n.n\n"
-" -g[eometry] WxH+X+Y\n"
-" -t[itle] windowtitle\n"
-" -n[ame] classname\n"
-" -i[conic]\n"
-" -fg color\n"
-" -bg color\n"
 " -bg2 color\n"
-" -nokbd";
+" -bg color\n"
+" -d[isplay] host:n.n\n"
+" -fg color\n"
+" -g[eometry] WxH+X+Y\n"
+" -i[conic]\n"
+" -k[bd]\n"
+" -n[ame] classname\n"
+" -nok[bd]\n"
+" -s[cheme] scheme\n"
+" -t[itle] windowtitle";
 
 const char * const Fl::help = helpmsg+13;
 
@@ -359,5 +364,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.4 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.5 2001/12/20 14:41:44 easysw Exp $".
 //

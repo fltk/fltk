@@ -267,7 +267,10 @@ Fl_display.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_get_key.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
 Fl_get_key.o: ../FL/Fl_Window.H
 Fl_get_system_colors.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-Fl_get_system_colors.o: ../FL/x.H ../FL/Fl_Window.H ../FL/math.h
+Fl_get_system_colors.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_get_system_colors.o: ../FL/math.h flstring.h ../config.h ../FL/Fl_Pixmap.H
+Fl_get_system_colors.o: ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Tiled_Image.H
+Fl_get_system_colors.o: tile.xpm
 Fl_grab.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_grab.o: ../FL/x.H ../FL/Fl_Window.H
 Fl_lock.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../config.h

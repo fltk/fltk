@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.2 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.3 2001/12/20 14:41:44 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -24,9 +24,15 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/math.h>
-#include <string.h>
+#include "flstring.h"
+#include <stdlib.h>
+#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Tiled_Image.H>
+#include "tile.xpm"
+
 
 void Fl::background(uchar r, uchar g, uchar b) {
   // replace the gray ramp so that FL_GRAY is this color
@@ -117,7 +123,8 @@ void Fl::get_system_colors() {
 // MacOS X currently supports two color schemes - Blue and Graphite.
 // Since we aren't emulating the Aqua interface (even if Apple would
 // let us), we can stick with the defaults that FLTK has traditionally
-// used...
+// used...  The Fl::scheme("plastic") color/box scheme provides a
+// usable Aqua-like look-n-feel...
 void Fl::get_system_colors()
 {
   fl_open_display();
@@ -161,6 +168,108 @@ void Fl::get_system_colors()
 
 #endif
 
+
+//// Simple implementation of 2.0 Fl::scheme() interface...
+#define D1 BORDER_WIDTH
+#define D2 (BORDER_WIDTH+BORDER_WIDTH)
+
+extern void	fl_up_box(int, int, int, int, Fl_Color);
+extern void	fl_down_box(int, int, int, int, Fl_Color);
+extern void	fl_thin_up_box(int, int, int, int, Fl_Color);
+extern void	fl_thin_down_box(int, int, int, int, Fl_Color);
+extern void	fl_round_up_box(int, int, int, int, Fl_Color);
+extern void	fl_round_down_box(int, int, int, int, Fl_Color);
+
+extern void	fl_up_frame(int, int, int, int, Fl_Color);
+extern void	fl_down_frame(int, int, int, int, Fl_Color);
+extern void	fl_thin_up_frame(int, int, int, int, Fl_Color);
+extern void	fl_thin_down_frame(int, int, int, int, Fl_Color);
+
+const char	*Fl::scheme_ = (const char *)0;
+Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;
+
+static Fl_Pixmap	tile(tile_xpm);
+
+int Fl::scheme(const char *s) {
+  if (!s) s = getenv("FLTK_SCHEME");
+  if (s) {
+    if (!strcasecmp(s, "none") || !*s) s = 0;
+    else s = strdup(s);
+  }
+  if (scheme_) free((void*)scheme_);
+  scheme_ = s;
+
+  // Save the new scheme in the FLTK_SCHEME env var so that child processes
+  // inherit it...
+  static char e[1024];
+  strcpy(e,"FLTK_SCHEME=");
+  if (s) {
+    strncat(e,s,sizeof(e) - 1);
+    e[sizeof(e) - 1] = '\0';
+  }
+  putenv(e);
+
+  // Load the scheme...
+  return reload_scheme();
+}
+
+int Fl::reload_scheme() {
+  Fl_Window *w;
+
+  get_system_colors();
+
+  if (scheme_ && !strcasecmp(scheme_, "plastic")) {
+    // Load plastic buttons, etc...
+    if (!scheme_bg_) scheme_bg_ = new Fl_Tiled_Image(&tile, Fl::w(), Fl::h());
+
+    Fl::foreground(0, 0, 0);
+    Fl::background(0xe0, 0xe0, 0xe0);
+    Fl::background2(0xf0, 0xf0, 0xf0);
+    set_selection_color(0x80, 0x80, 0x80);
+
+    Fl::set_boxtype(FL_UP_FRAME,        FL_PLASTIC_UP_FRAME);
+    Fl::set_boxtype(FL_DOWN_FRAME,      FL_PLASTIC_DOWN_FRAME);
+    Fl::set_boxtype(FL_THIN_UP_FRAME,   FL_PLASTIC_UP_FRAME);
+    Fl::set_boxtype(FL_THIN_DOWN_FRAME, FL_PLASTIC_DOWN_FRAME);
+
+    Fl::set_boxtype(FL_UP_BOX,          FL_PLASTIC_UP_BOX);
+    Fl::set_boxtype(FL_DOWN_BOX,        FL_PLASTIC_DOWN_BOX);
+    Fl::set_boxtype(FL_THIN_UP_BOX,     FL_PLASTIC_UP_BOX);
+    Fl::set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_DOWN_BOX);
+    Fl::set_boxtype(_FL_ROUND_UP_BOX,   FL_PLASTIC_UP_BOX);
+    Fl::set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_UP_BOX);
+  } else {
+    // Use the standard FLTK look-n-feel...
+    if (scheme_bg_) {
+      delete scheme_bg_;
+      scheme_bg_ = (Fl_Image *)0;
+    }
+
+    Fl::set_boxtype(FL_UP_FRAME,        fl_up_frame, D1, D1, D2, D2);
+    Fl::set_boxtype(FL_DOWN_FRAME,      fl_down_frame, D1, D1, D2, D2);
+    Fl::set_boxtype(FL_THIN_UP_FRAME,   fl_thin_up_frame, 1, 1, 2, 2);
+    Fl::set_boxtype(FL_THIN_DOWN_FRAME, fl_thin_down_frame, 1, 1, 2, 2);
+
+    Fl::set_boxtype(FL_UP_BOX,          fl_up_box, D1, D1, D2, D2);
+    Fl::set_boxtype(FL_DOWN_BOX,        fl_down_box, D1, D1, D2, D2);
+    Fl::set_boxtype(FL_THIN_UP_BOX,     fl_thin_up_box, 1, 1, 2, 2);
+    Fl::set_boxtype(FL_THIN_DOWN_BOX,   fl_thin_down_box, 1, 1, 2, 2);
+    Fl::set_boxtype(_FL_ROUND_UP_BOX,   fl_round_up_box, 3, 3, 6, 6);
+    Fl::set_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, 3, 3, 6, 6);
+  }
+
+  // Set (or clear) the background tile for all windows...
+  for (w = first_window(); w; w = next_window(w)) {
+    w->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
+    w->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+    w->image(scheme_bg_);
+    w->redraw();
+  }
+
+  return 1;
+}
+
+
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.2 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.3 2001/12/20 14:41:44 easysw Exp $".
 //

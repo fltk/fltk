@@ -1,142 +1,146 @@
-README.mac - 12/03/2001 - Building FLTK under MacOS and OS X
-------------------------------------------------------------
+README.mac - 12/20/2001 - Building FLTK under MacOS 8, 9, and X
+---------------------------------------------------------------
 
 CONTENTS
---------
-  - Introduction
-  - gcc (Carbon) - how to build
-  - scripts
-  - known MacFLTK bugs
-  - test suite status
-  - other stuff
-  - FLTK 1.0.x for Mac
-  
-  
+
+    - Introduction
+    - How to Build Using GCC (MacOS X)
+    - Scripts
+    - Known MacFLTK bugs
+    - Test suite status
+    - Other stuff
+    - FLTK 1.0.x for Mac
+
+
 INTRODUCTION
-------------
 
-FLTK for Mac OS X is in beta stage. Expect rapid changes to the 
-source code and build environment. 
+    FLTK for MacOS X is in beta stage.  Expect rapid changes to
+    the source code and build environment. 
 
-FLTK currently supports the following development environment on the
-Mac OS X platform:
+    FLTK currently supports the following development
+    environments on the MacOS X platform:
 
-    - gcc (Carbon)
+	- GCC
+	- (Metrowerks CodeWarrior - future releases)
+	- (Apple Project Builder - future releases)
+	- (MPW - future releases)
 
-    - (Metrowerks CodeWarrior - future releases)
-
-    - (Apple Project Builder - future releases)
-
-    - (MPW - future releases)
-
-FLTK for Mac is fully carbonized, i.e. all applications should run 
-on Mac OS 8.1 and higher and OS X without changes.
-
-
-gcc (Carbon) - how to build
---------------------------
-
-Since the Max OS X command line build environment is based on BSD 
-Unix, the normal Unix build procedure as described in 'README' 
-applies. 
-
-A 'resource fork' will be attached to applications to make
-them visible in the Finder. Thedefault resource file is ./FL/mac.r .
-
-A possible way to add a resource fork is:
-> Rez -t APPL -c Fltk ../FL/mac.r -o hello
+    FLTK for Mac is fully carbonized, i.e. all applications
+    should run  on MacOS 8.1 and higher and OS X without
+    changes.  Note, however, that applications compiled using
+    GCC will only run under MacOS X since they use a different
+    executable format.
 
 
-scripts
--------
+HOW TO BUILD USING GCC (MacOS X)
 
-When using Finder applications on source files (i.e. FileMerge)
-I found the following script very useful. It adds resource forks to
-all text files.
+    Since the MacOS X command line build environment is based on
+    BSD UNIX, the normal UNIX build procedure as described in
+    'README' applies.
 
-#!/bin/tcsh
-setenv SET_MAC_TYPE "SetFile -t TEXT -c ttxt "
-setenv F1MAC_N 7
-echo "Setting Mac File Types. Please wait..."
-echo "[1/"$F1MAC_N"]"
-find . -name '*.H' -exec $SET_MAC_TYPE {} \;
-echo "[2/"$F1MAC_N"]"
-find . -name '*.h' -exec $SET_MAC_TYPE {} \;
-echo "[3/"$F1MAC_N"]"
-find . -name '*.c' -exec $SET_MAC_TYPE {} \;
-echo "[4/"$F1MAC_N"]"
-find . -name '*.cxx' -exec $SET_MAC_TYPE {} \;
-echo "[5/"$F1MAC_N"]"
-find . -name '*.fl' -exec $SET_MAC_TYPE {} \;
-echo "[6/"$F1MAC_N"]"
-find . -name 'make*' -exec $SET_MAC_TYPE {} \;
-echo "[7/"$F1MAC_N"]"
-find . -name 'Make*' -exec $SET_MAC_TYPE {} \;
-echo "done."
+    A 'resource fork' will be attached to applications to make
+    them visible in the Finder. The default resource file is
+    "FL/mac.r".
+
+    The "fltk-config" script can be used to attach the FLTK
+    resource fork to an executable using the "--post" option:
+
+        fltk-config --post foo
+	
+    where "foo" is the name of the executable.
+
+    To attach your own resource fork to your FLTK program, run
+    the "Rez" command:
+
+        Rez -t APPL foo.r -o foo
 
 
-known MacFLTK bugs and ToDo's
------------------------------
+SCRIPTS
 
-- file handles not supported
-- line styles not fully implemented
-- cut, copy, paste not implemented
-- sub-sub-subwindow not tested
-- image transparency not implemented
-- 'shiny' needs work (flush/aglFlush)
-- threads not implemented
+    When using Finder applications on source files (e.g.
+    FileMerge), I found the following script very useful. It adds
+    resource forks to all text files:
 
-
-test suite status
------------------
-
-OS X:
-
-CubeView(++), adjuster(++), arc(++), ask(++), bitmap(++), 
-boxtype(++), browser(++), button(++), buttons(++), checkers(++),
-clock(++), colbrowser(++), color_chooser(++), cube(++), cursor(++),
-curve(++), demo(++), doublebuffer(++), editor(++), fast_slow(++),
-file_chooser(++), fonts(++), forms(++), fractals(++), fullscreen(++),
-gl_overlay(++), glpuzzle(++), hello(++), help(++), iconize(++), image(+),
-inactive(++), input(++), keyboard(++), label(++), line_style(+),
-mandelbrot(++), menubar(++), message(++), minimum(++), navigation(++),
-output(++), overlay(++), pack(++), pixmap(++), pixmap_browser(++),
-radio(++), resizebox(++), scroll(++), shape(++), shiny(-), subwindow(++),
-symbols(++), tabs(++), tile(++), tiled_image(++), valuators(++), 
-fluid(++)
-
-(o)=minor bugs, (+)=usable, (++)=running perfectly, (-)=major 
-bugs, (--)=crashes  
+	#!/bin/tcsh
+	setenv SET_MAC_TYPE "SetFile -t TEXT -c ttxt "
+	setenv F1MAC_N 7
+	echo "Setting Mac File Types. Please wait..."
+	echo "[1/"$F1MAC_N"]"
+	find . -name '*.H' -exec $SET_MAC_TYPE {} \;
+	echo "[2/"$F1MAC_N"]"
+	find . -name '*.h' -exec $SET_MAC_TYPE {} \;
+	echo "[3/"$F1MAC_N"]"
+	find . -name '*.c' -exec $SET_MAC_TYPE {} \;
+	echo "[4/"$F1MAC_N"]"
+	find . -name '*.cxx' -exec $SET_MAC_TYPE {} \;
+	echo "[5/"$F1MAC_N"]"
+	find . -name '*.fl' -exec $SET_MAC_TYPE {} \;
+	echo "[6/"$F1MAC_N"]"
+	find . -name 'make*' -exec $SET_MAC_TYPE {} \;
+	echo "[7/"$F1MAC_N"]"
+	find . -name 'Make*' -exec $SET_MAC_TYPE {} \;
+	echo "done."
 
 
-other stuff
------------
+KNOWN MacFLTK BUGS
 
-The following creator ID's 'FLTK', 'Fltk', 'FLID' and 'Flid' are
-officially registered with Apple Computers and can be used for
-FLTK applications ('FLTK') and fluid files ('Flid').
+    The following FLTK things are not implemented or don't work
+    at present:
 
-All applications should be ended with exit(0); or they might 
-hang until killed.
-
-Under OS X, all windows are doublebuffered anyway. Using Fl_Window
-has the same effect as using Fl_Double_Window on OS X.
-
-
-FLTK 1.0.x for Mac
-------------------
-
-FLTK 1.0.6 for Mac OS 8.x and OS 9.x is in beta stage and can be
-downloaded from http://www.matthiasm.com/fltk/mac.shtml. The
-archive contains build files for Metrowerks CodeWarrior 5 and 6.
-
-FLTK 1.0.6 for Mac is not supported by the FLTK team and will not 
-be further developed by the author. Instead it will be replaced 
-by FLTK 1.1.x for Mac in the near future.
-
-  Matthias Melcher
+	- File handles (Fl::add_fd) are not implemented.
+	- Line styles are not fully implemented.
+	- Cut, copy, and paste are not implemented.
+	- Sub-sub-subwindow not tested.
+	- Image transparency is not implemented.
+	- The 'shiny' demo needs work (flush/aglFlush).
+	- Threads are not implemented.
 
 
+TEST SUITE STATUS
+
+    OS X:
+
+    CubeView(++), adjuster(++), arc(++), ask(++), bitmap(++), 
+    boxtype(++), browser(++), button(++), buttons(++),
+    checkers(++), clock(++), colbrowser(++), color_chooser(++),
+    cube(++), cursor(++), curve(++), demo(++), doublebuffer(++),
+    editor(++), fast_slow(++), file_chooser(++), fonts(++),
+    forms(++), fractals(++), fullscreen(++), gl_overlay(++),
+    glpuzzle(++), hello(++), help(++), iconize(++), image(+),
+    inactive(++), input(++), keyboard(++), label(++),
+    line_style(+), mandelbrot(++), menubar(++), message(++),
+    minimum(++), navigation(++), output(++), overlay(++),
+    pack(++), pixmap(++), pixmap_browser(++), radio(++),
+    resizebox(++), scroll(++), shape(++), shiny(-),
+    subwindow(++), symbols(++), tabs(++), tile(++),
+    tiled_image(++), valuators(++),  fluid(++)
+
+    (o)=minor bugs, (+)=usable, (++)=running perfectly,
+    (-)=major bugs, (--)=crashes  
 
 
+OTHER STUFF
 
+    The creator ID's 'FLTK', 'Fltk', 'FLID', and 'Flid' are
+    officially registered with Apple Computers, Inc. and can be
+    used for FLTK applications ('FLTK') and FLUID files
+    ('Flid').
+
+    All applications should call exit(0) to terminate; otherwise
+    they may hang until killed.
+
+    Under MacOS X, all windows are double-buffered. Using
+    Fl_Window has the same effect as using Fl_Double_Window on
+    other operating systems.
+
+
+FLTK 1.0.X FOR MAC
+
+    FLTK 1.0.6 for MacOS 8.x and OS 9.x is in beta stage and can
+    be downloaded from http://www.matthiasm.com/fltk/mac.shtml.
+    The archive contains build files for Metrowerks CodeWarrior
+    5 and 6.
+
+    FLTK 1.0.6 for Mac is not supported by the FLTK team and
+    will not be further developed by the author.  Instead it
+    will be replaced by FLTK 1.1.x for Mac in the near future.

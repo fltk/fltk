@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.10 2001/12/19 18:15:33 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.11 2001/12/20 14:41:44 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 
 class Fl_Widget;
 class Fl_Window;
+class Fl_Image;
 struct Fl_Label;
 typedef void (Fl_Label_Draw_F)(const Fl_Label*, int,int,int,int, Fl_Align);
 typedef void (Fl_Label_Measure_F)(const Fl_Label*, int&, int&);
@@ -67,6 +68,9 @@ public: // should be private!
 
   static FL_EXPORT void (*idle)();
 
+  static const char* scheme_;
+  static Fl_Image* scheme_bg_;
+
 public:
 
   // API version number
@@ -87,6 +91,11 @@ public:
   static FL_EXPORT void foreground(uchar, uchar, uchar);
   static FL_EXPORT void background(uchar, uchar, uchar);
   static FL_EXPORT void background2(uchar, uchar, uchar);
+
+  // schemes:
+  static int scheme(const char*);
+  static const char* scheme() {return scheme_;}
+  static int reload_scheme();
 
   // execution:
   static FL_EXPORT int wait();
@@ -234,5 +243,5 @@ public:
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.10 2001/12/19 18:15:33 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.11 2001/12/20 14:41:44 easysw Exp $".
 //

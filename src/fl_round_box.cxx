@@ -1,5 +1,5 @@
 //
-// "$Id: fl_round_box.cxx,v 1.6.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_round_box.cxx,v 1.6.2.3.2.1 2001/12/20 14:41:44 easysw Exp $"
 //
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -80,7 +80,7 @@ static void draw(int which, int x,int y,int w,int h, int inset, uchar color)
 
 extern uchar* fl_gray_ramp();
 
-static void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
+void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   uchar *g = fl_gray_ramp();
   draw(FILL,	    x,   y, w,   h, 2, bgcolor);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0, g['N']);
@@ -94,7 +94,7 @@ static void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   draw(CLOSED,	    x,   y, w,   h, 2, g['A']);
 }
 
-static void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
+void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   uchar *g = fl_gray_ramp();
   draw(FILL,	    x,   y, w,   h, 2, bgcolor);
   draw(LOWER_RIGHT, x+1, y, w-2, h, 0, g['H']);
@@ -116,5 +116,5 @@ Fl_Boxtype define_FL_ROUND_UP_BOX() {
 }
 
 //
-// End of "$Id: fl_round_box.cxx,v 1.6.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_round_box.cxx,v 1.6.2.3.2.1 2001/12/20 14:41:44 easysw Exp $".
 //

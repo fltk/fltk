@@ -1,9 +1,14 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- New Fl::scheme() methods from FLTK 2.0; currently only
+	  the standard ("") and plastic ("plastic") methods are
+	  supported.  Schemes can be set on the command-line
+	  ("-scheme plastic") or using the FLTK_SCHEME
+	  environment variable.
 	- MacOS: fixed iBook keyboard handling, moved 
 	  remaining message handling to Carbon, added mouse
 	  capture support, added timer support, added overlay
-	  support, fixed doublebuffering side effects.
+	  support, fixed double-buffering side effects.
 	- The configure script wasn't using the -fpermissive or
 	  -fno-exceptions options with GCC.
 	- Fl_JPEG_Image and friends didn't set the depth if the
@@ -18,9 +23,6 @@ CHANGES IN FLTK 1.1.0b8
 	  WIN32.
 	- Fl_Shared_Image::get() did not check to see if the
 	  image could not be loaded.
-	- Fixed Fl_Widget::~Fl_Widget() so that "delete widget"
-	  will remove the widget from the parent.  Otherwise
-	  the Fl_Group destructor will try to access freed memory...
 	- Fl_Help_View didn't clear the line array in the
 	  Fl_Help_Block structure; this causes erratic
 	  formatting for some pages.

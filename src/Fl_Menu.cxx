@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.4 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.5 2001/12/20 14:41:44 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
+#include <stdio.h>
 
 int Fl_Menu_Item::size() const {
   const Fl_Menu_Item* m = this;
@@ -158,33 +159,36 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   }
 
   if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) {
-    int size = 12;
-    int y1 = y + (h - size) / 2;
-    int x1 = x + 2;
+    int d = (h - FL_NORMAL_SIZE + 1) / 2;
+    int W = h - 2 * d;
 
     if (flags & FL_MENU_RADIO) {
-      fl_color(FL_DARK3);
-      fl_arc(x1, y1, size, size, 45.0, 225.0);
-      fl_color(FL_LIGHT3);
-      fl_arc(x1, y1, size, size, 225.0, 405.0);
-
+      fl_draw_box(FL_ROUND_DOWN_BOX, x+2, y+d+1, W, W, FL_WHITE);
       if (value()) {
-	fl_color(FL_BLACK);
-	fl_pie(x1 + 3, y1 + 3, size - 7, size - 7, 0.0, 360.0);
+	fl_color(labelcolor_);
+	int tW = W - Fl::box_dw(FL_ROUND_DOWN_BOX) - 3;
+	int td = Fl::box_dx(FL_ROUND_DOWN_BOX) + 2;
+	if (tW > 4) {
+          fl_pie(x + td + 1, y + td, tW, tW + 1, 0.0, 360.0);
+	} else {
+          // Small circles don't draw well with some X servers...
+	  fl_rectf(x + td + 2, y + td, 2, 4);
+	  fl_rectf(x + td + 1, y + td + 1, 4, 2);
+	}
       }
     } else {
-      fl_draw_box(FL_THIN_DOWN_FRAME, x1, y1, size, size, color);
+      fl_draw_box(FL_DOWN_BOX, x+2, y+d, W, W, FL_WHITE);
       if (value()) {
-	fl_color(FL_BLACK);
-	fl_line_style(FL_SOLID, 2);
-	fl_line(x1 + size - 3, y1 + 2,
-	        x1 + size / 2 - 1, y1 + size - 4,
-	        x1 + 3, y1 + size / 2);
-	fl_line_style(FL_SOLID);
+	fl_color(labelcolor_);
+        fl_line_style(FL_SOLID, 2);
+	fl_line(x + W - 1, y + d + 3,
+	        x + W / 2 + 1, y + d + W - 4,
+	        x + 5, y + d + W / 2);
+        fl_line_style(FL_SOLID);
       }
     }
-    x += size + 3;
-    w -= size + 3;
+    x += W + 3;
+    w -= W + 3;
   }
 
   if (!fl_draw_shortcut) fl_draw_shortcut = 1;
@@ -752,5 +756,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.4 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.5 2001/12/20 14:41:44 easysw Exp $".
 //
