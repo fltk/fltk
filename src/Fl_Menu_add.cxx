@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.5 1999/01/07 19:17:23 mike Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.6 1999/01/29 16:56:48 carl Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -37,15 +37,6 @@
 #include <FL/Fl_Menu_.H>
 #include <string.h>
 #include <stdlib.h>
-
-int fl_old_shortcut(const char* s) {
-  if (!s || !*s) return 0;
-  int n = 0;
-  if (*s == '#') {n |= FL_ALT; s++;}
-  if (*s == '+') {n |= FL_SHIFT; s++;}
-  if (*s == '^') {n |= FL_CTRL; s++;}
-  return n | *s;
-}
 
 // always allocate this much initially:
 #define INITIAL_MENU_SIZE 15
@@ -201,5 +192,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.5 1999/01/07 19:17:23 mike Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.6 1999/01/29 16:56:48 carl Exp $".
 //

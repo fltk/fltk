@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.16 1999/01/26 21:37:14 mike Exp $"
+// "$Id: Fl.cxx,v 1.17 1999/01/29 16:56:47 carl Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -665,6 +665,15 @@ void Fl_Window::flush() {
   draw();
 }
 
+int fl_old_shortcut(const char* s) {
+  if (!s || !*s) return 0;
+  int n = 0;
+  if (*s == '#') {n |= FL_ALT; s++;}
+  if (*s == '+') {n |= FL_SHIFT; s++;}
+  if (*s == '^') {n |= FL_CTRL; s++;}
+  return n | *s;
+}
+
 //
-// End of "$Id: Fl.cxx,v 1.16 1999/01/26 21:37:14 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.17 1999/01/29 16:56:47 carl Exp $".
 //
