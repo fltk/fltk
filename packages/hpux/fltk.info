@@ -15,13 +15,13 @@ product
     tag			dso
     title		FLTK - Shared Libraries, 1.0
 
-    file -m 0000 -o root -g sys lib/libfltk.so /usr/lib/libfltk.so
-    file -m 0555 -o root -g sys lib/libfltk.so.1 /usr/lib/libfltk.so.1
+    file -m 0000 -o root -g sys lib/libfltk.sl /usr/lib/libfltk.sl
+    file -m 0555 -o root -g sys lib/libfltk.sl.1 /usr/lib/libfltk.sl.1
   end
 
   fileset
-    tag			dev
-    title		FLTK - Development Software, 1.0
+    tag			doc
+    title		FLTK - Documentation, 1.0
 
     file -m 0444 -o root -g sys documentation/adjuster1.gif /usr/info/fltk/adjuster1.gif
     file -m 0444 -o root -g sys documentation/ask.C.gif /usr/info/fltk/ask.C.gif
@@ -51,7 +51,7 @@ product
     file -m 0444 -o root -g sys documentation/fluid-org.gif /usr/info/fltk/fluid-org.gif
     file -m 0444 -o root -g sys documentation/fluid.gif /usr/info/fltk/fluid.gif
     file -m 0444 -o root -g sys documentation/fluid.html /usr/info/fltk/fluid.html
-    file -m 0444 -o root -g sys documentation/fluid.z /usr/catman/pman/cat1/fluid.z
+    file -m 0444 -o root -g sys documentation/fluid.1 /usr/man/man1/fluid.1
     file -m 0444 -o root -g sys documentation/fluid_main.gif /usr/info/fltk/fluid_main.gif
     file -m 0444 -o root -g sys documentation/fluid_prefs.gif /usr/info/fltk/fluid_prefs.gif
     file -m 0444 -o root -g sys documentation/fluid_widget.gif /usr/info/fltk/fluid_widget.gif
@@ -154,6 +154,12 @@ product
     file -m 0444 -o root -g sys documentation/valuators.gif /usr/info/fltk/valuators.gif
     file -m 0444 -o root -g sys documentation/value_slider.gif /usr/info/fltk/value_slider.gif
     file -m 0444 -o root -g sys documentation/widgets.html /usr/info/fltk/widgets.html
+  end
+
+  fileset
+    tag			dev
+    title		FLTK - Development Software, 1.0
+
     file -m 0444 -o root -g sys fluid/fluid /usr/bin/X11/fluid
     file -m 0444 -o root -g sys FL/dirent.h /usr/include/FL/dirent.h
     file -m 0444 -o root -g sys FL/Enumerations.H /usr/include/FL/Enumerations.H
