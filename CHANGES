@@ -1,7 +1,9 @@
 CHANGES IN FLTK 1.1.0rc1
 
-	- Now show a "lock" icon next to static/private elements
-	  in FLUID.
+	- Fixed a bug in the MacOS font enumeration code.
+	- Now show a "locked" icon next to static/private
+	  elements in FLUID, and "unlocked" icon next to
+	  global/public elements.
 	- Implemented Fl_Menu_Item image labels using older
 	  1.0.x labeltype method.
 	- Updated the PNG library check to support both png.h
