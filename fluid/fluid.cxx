@@ -922,9 +922,10 @@ void print_cb(Fl_Return_Button *, void *) {
   // Open the print stream...
   if (print_choice->value()) {
     // Pipe the output into the lp command...
+    const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
+
     snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
-             print_choice->text(print_choice->value()),
-	     print_collate_button->value() ? 1 : print_copies->value(),
+             printer, print_collate_button->value() ? 1 : print_copies->value(),
 	     basename, print_page_size->text(print_page_size->value()));
     outfile = popen(command, "w");
   } else {
@@ -934,6 +935,7 @@ void print_cb(Fl_Return_Button *, void *) {
     fl_ok = "OK";
 
     if (outname) outfile = fopen(outname, "w");
+    else outfile = NULL;
   }
 
   if (outfile) {
@@ -1038,10 +1040,10 @@ void print_cb(Fl_Return_Button *, void *) {
 		"/Helvetica findfont 14 scalefont setfont\n"
 		"%d %d moveto (%s) show\n"
 		"%.1f %d moveto (%s) dup stringwidth pop -0.5 mul 0 rmoveto show\n"
-		"%d %d moveto (%d) dup stringwidth pop neg 0 rmoveto show\n",
+		"%d %d moveto (%d/%d) dup stringwidth pop neg 0 rmoveto show\n",
 	        left, top - 15, basename,
 		0.5 * (left + right), top - 15, date,
-		right, top - 15, winpage + 1);
+		right, top - 15, winpage + 1, num_windows);
 
         // Get window image...
 	uchar	*pixels;		// Window image data

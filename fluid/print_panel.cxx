@@ -222,11 +222,12 @@ static void cb_Save(Fl_Return_Button*, void*) {
 
 char name[1024];
 int val;
+const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
 
-snprintf(name, sizeof(name), "%s/page_size", print_choice->text(print_choice->value()));
+snprintf(name, sizeof(name), "%s/page_size", printer);
 fluid_prefs.set(name, print_page_size->value());
 
-snprintf(name, sizeof(name), "%s/output_mode", print_choice->text(print_choice->value()));
+snprintf(name, sizeof(name), "%s/output_mode", printer);
 for (val = 0; val < 4; val ++) {
   if (print_output_mode[val]->value()) break;
 }
@@ -505,14 +506,18 @@ void print_cb(Fl_Return_Button *, void *);
 
 void print_load() {
   FILE *lpstat;
-char line[1024], name[1024], defname[1024];
+char line[1024], name[1024], *nptr, qname[2048], *qptr, defname[1024];
 int i;
+
+if (print_choice->size() > 1) {
+  for (i = 1; print_choice->text(i); i ++) {
+    free(print_choice->menu()[i].user_data());
+  }
+}
 
 print_choice->clear();
 print_choice->add("Print To File", 0, 0, 0, FL_MENU_DIVIDER);
 print_choice->value(0);
-
-print_properties->deactivate();
 
 defname[0] = '\0';
 
@@ -520,7 +525,12 @@ if ((lpstat = popen("lpstat -p -d", "r")) != NULL) {
   while (fgets(line, sizeof(line), lpstat)) {
     if (!strncmp(line, "printer ", 8) &&
         sscanf(line + 8, "%s", name) == 1) {
-      print_choice->add(name, 0, 0, (void *)name, 0);
+      for (nptr = name, qptr = qname; *nptr; *qptr++ = *nptr++) {
+        if (*nptr == '/') *qptr++ = '\\';
+      }
+      *qptr = '\0';
+
+      print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
     } else if (!strncmp(line, "system default destination: ", 28)) {
       if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\0';
     }
@@ -530,16 +540,12 @@ if ((lpstat = popen("lpstat -p -d", "r")) != NULL) {
 
 if (defname[0]) {
   for (i = 1; print_choice->text(i); i ++) {
-    if (!strcmp(print_choice->text(i), defname)) {
+    if (!strcmp((char *)print_choice->menu()[i].user_data(), defname)) {
       print_choice->value(i);
-      print_properties->activate();
       break;
     }
   }
-} else if (print_choice->size() > 2) {
-  print_choice->value(1);
-  print_properties->activate();
-}
+} else if (print_choice->size() > 2) print_choice->value(1);
 
 
 print_update_status();
@@ -549,10 +555,10 @@ void print_update_status() {
   FILE *lpstat;
 char command[1024];
 static char status[1024];
+const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
 
 if (print_choice->value()) {
-  snprintf(command, sizeof(command), "lpstat -p '%s'",
-           print_choice->text(print_choice->value()));
+  snprintf(command, sizeof(command), "lpstat -p '%s'", printer);
   if ((lpstat = popen(command, "r")) != NULL) {
     fgets(status, sizeof(status), lpstat);
     pclose(lpstat);
@@ -564,11 +570,11 @@ print_status->label(status);
 char name[1024];
 int val;
 
-snprintf(name, sizeof(name), "%s/page_size", print_choice->text(print_choice->value()));
+snprintf(name, sizeof(name), "%s/page_size", printer);
 fluid_prefs.get(name, val, 0);
 print_page_size->value(val);
 
-snprintf(name, sizeof(name), "%s/output_mode", print_choice->text(print_choice->value()));
+snprintf(name, sizeof(name), "%s/output_mode", printer);
 fluid_prefs.get(name, val, 0);
 print_output_mode[val]->setonly();
 }

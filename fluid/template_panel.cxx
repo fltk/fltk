@@ -257,7 +257,7 @@ for (i = 0; i < num_files; i ++) {
   free(files[i]);
 }
 
-if (files) free(files);
+if (num_files > 0) free(files);
 }
 
 //

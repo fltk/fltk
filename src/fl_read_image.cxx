@@ -111,6 +111,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   printf("red_mask         = %08x\n", image->red_mask);
   printf("green_mask       = %08x\n", image->green_mask);
   printf("blue_mask        = %08x\n", image->blue_mask);
+  printf("map_entries      = %d\n", fl_visual->visual->map_entries);
 #endif // DEBUG
 
   d = alpha ? 4 : 3;
@@ -124,9 +125,22 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   // Check that we have valid mask/shift values...
   if (!image->red_mask && image->bits_per_pixel > 12) {
     // Greater than 12 bits must be TrueColor...
-    image->red_mask   = fl_redmask << fl_redshift;
-    image->green_mask = fl_greenmask << fl_greenshift;
-    image->blue_mask  = fl_bluemask << fl_blueshift;
+    image->red_mask   = fl_visual->visual->red_mask;
+    image->green_mask = fl_visual->visual->green_mask;
+    image->blue_mask  = fl_visual->visual->blue_mask;
+
+#ifdef DEBUG
+    puts("\n---- UPDATED ----");
+    printf("fl_redmask       = %08x\n", fl_redmask);
+    printf("fl_redshift      = %d\n", fl_redshift);
+    printf("fl_greenmask     = %08x\n", fl_greenmask);
+    printf("fl_greenshift    = %d\n", fl_greenshift);
+    printf("fl_bluemask      = %08x\n", fl_bluemask);
+    printf("fl_blueshift     = %d\n", fl_blueshift);
+    printf("red_mask         = %08x\n", image->red_mask);
+    printf("green_mask       = %08x\n", image->green_mask);
+    printf("blue_mask        = %08x\n", image->blue_mask);
+#endif // DEBUG
   }
 
   // Check if we have colormap image...
