@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.20 1999/03/02 07:03:14 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21 1999/03/04 18:09:18 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -646,6 +646,7 @@ Fl_Input_::Fl_Input_(int x, int y, int w, int h, const char* l)
   cursor_color_ = FL_BLACK; // was FL_BLUE
   mark_ = position_ = size_ = 0;
   bufsize = 0;
+  buffer  = 0;
   value_ = "";
   xscroll_ = yscroll_ = 0;
   maximum_size_ = 32767;
@@ -733,5 +734,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.20 1999/03/02 07:03:14 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21 1999/03/04 18:09:18 mike Exp $".
 //
