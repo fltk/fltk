@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.35 2004/05/15 22:58:18 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.36 2004/05/24 01:30:45 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -764,7 +764,7 @@ int fl_handle(const XEvent& thisevent)
       Fl::e_length = len;
     } else {
       // Stupid X sends fake key-up events when a repeating key is held
-      // down, probably due to some back compatability problem. Fortunatley
+      // down, probably due to some back compatability problem. Fortunately
       // we can detect this because the repeating KeyPress event is in
       // the queue, get it and execute it instead:
       XEvent temp;
@@ -805,7 +805,7 @@ int fl_handle(const XEvent& thisevent)
       // behavior of the translator in Fl_win32.cxx, and IMHO is the
       // user-friendly result:
       unsigned long keysym1 = XKeycodeToKeysym(fl_display, keycode, 1);
-      if (keysym1 <= 0x7f || keysym1 > 0xff9f && keysym1 <= FL_KP_Last) {
+      if (keysym1 <= 0x7f || (keysym1 > 0xff9f && keysym1 <= FL_KP_Last)) {
 	keysym = keysym1 | FL_KP;
 	buffer[0] = char(keysym1) & 0x7F;
 	len = 1;
@@ -1280,5 +1280,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.35 2004/05/15 22:58:18 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.36 2004/05/24 01:30:45 easysw Exp $".
 //

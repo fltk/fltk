@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.52 2004/05/15 22:58:18 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.53 2004/05/24 01:30:30 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -114,7 +114,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 
   mCursor_color = FL_BLACK;
 
-  mFixedFontWidth = TMPFONTWIDTH;// CET - FIXME
+  mFixedFontWidth = -1;
   mStyleBuffer = 0;
   mStyleTable = 0;
   mNStyles = 0;
@@ -343,7 +343,14 @@ int Fl_Text_Display::longest_vline() {
 ** Change the size of the displayed text area
 */
 void Fl_Text_Display::resize(int X, int Y, int W, int H) {
+#ifdef DEBUG
+  printf("Fl_Text_Display::resize(X=%d, Y=%d, W=%d, H=%d)\n", X, Y, W, H);
+#endif // DEBUG
   const int oldWidth = w();
+#ifdef DEBUG
+  printf("    oldWidth=%d, mContinuousWrap=%d, mWrapMargin=%d\n", oldWidth,
+         mContinuousWrap, mWrapMargin);
+#endif // DEBUG
   Fl_Widget::resize(X,Y,W,H);
   if (!buffer()) return;
   X += Fl::box_dx(box());
@@ -376,10 +383,14 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
        the top character no longer pointing at a valid line start */
     if (mContinuousWrap && !mWrapMargin && W!=oldWidth) {
       int oldFirstChar = mFirstChar;
-    	mNBufferLines = count_lines(0, buffer()->length(), true);
-	   mFirstChar = line_start(mFirstChar);
-	   mTopLineNum = count_lines(0, mFirstChar, true)+1;
-		absolute_top_line_number(oldFirstChar);
+      mNBufferLines = count_lines(0, buffer()->length(), true);
+      mFirstChar = line_start(mFirstChar);
+      mTopLineNum = count_lines(0, mFirstChar, true)+1;
+      absolute_top_line_number(oldFirstChar);
+
+#ifdef DEBUG
+      printf("    mNBufferLines=%d\n", mNBufferLines);
+#endif // DEBUG
     }
  
     /* reallocate and update the line starts array, which may have changed
@@ -390,9 +401,10 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       mNVisibleLines = nvlines;
       if (mLineStarts) delete[] mLineStarts;
       mLineStarts = new int [mNVisibleLines];
-      calc_line_starts(0, mNVisibleLines);
-      calc_last_char();
     }
+
+    calc_line_starts(0, mNVisibleLines);
+    calc_last_char();
 
     // figure the scrollbars
     if (scrollbar_width()) {
@@ -483,7 +495,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   display_insert_position_hint = 0;
 
   if (mContinuousWrap ||
-		hscrollbarvisible != mHScrollBar->visible() ||
+      hscrollbarvisible != mHScrollBar->visible() ||
       vscrollbarvisible != mVScrollBar->visible())
     redraw();
 
@@ -628,39 +640,24 @@ void Fl_Text_Display::cursor_style(int style) {
 }
 
 void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
-    mWrapMargin = wrapMargin;
-    mContinuousWrap = wrap;
-    
-    /* wrapping can change change the total number of lines, re-count */
-    mNBufferLines = count_lines(0, buffer()->length(), true);
-    
-    /* changing wrap margins wrap or changing from wrapped mode to non-wrapped
-       can leave the character at the top no longer at a line start, and/or
-       change the line number */
-    mFirstChar = line_start(mFirstChar);
-    mTopLineNum = count_lines(0, mFirstChar, true) + 1;
-	 reset_absolute_top_line_number();
-        
-    /* update the line starts array */
-    calc_line_starts(0, mNVisibleLines);
-    calc_last_char();
-    
-#if 0
-	 //	FIXME!
-    /* Update the scroll bar page increment size (as well as other scroll
-       bar parameters) */
-    updateVScrollBarRange(textD);
-    updateHScrollBarRange(textD);
-    
-    /* Decide if the horizontal scroll bar needs to be visible */
-    hideOrShowHScrollBar(textD);
+  mWrapMargin = wrapMargin;
+  mContinuousWrap = wrap;
 
-    /* Do a full redraw */
-    TextDRedisplayRect(textD, 0, textD->top, textD->width + textD->left,
-	    textD->height);
-#else
-	 resize(x(), y(), w(), h());
-#endif
+  /* wrapping can change change the total number of lines, re-count */
+  mNBufferLines = count_lines(0, buffer()->length(), true);
+
+  /* changing wrap margins wrap or changing from wrapped mode to non-wrapped
+     can leave the character at the top no longer at a line start, and/or
+     change the line number */
+  mFirstChar = line_start(mFirstChar);
+  mTopLineNum = count_lines(0, mFirstChar, true) + 1;
+  reset_absolute_top_line_number();
+
+  /* update the line starts array */
+  calc_line_starts(0, mNVisibleLines);
+  calc_last_char();
+
+  resize(x(), y(), w(), h());
 }
 
 /*
@@ -1015,7 +1012,12 @@ int Fl_Text_Display::move_down() {
 int Fl_Text_Display::count_lines(int startPos, int endPos,
     	bool startPosIsLineStart) {
     int retLines, retPos, retLineStart, retLineEnd;
-    
+
+#ifdef DEBUG
+    printf("Fl_Text_Display::count_line(startPos=%d, endPos=%d, startPosIsLineStart=%d\n",
+           startPos, endPos, startPosIsLineStart);
+#endif // DEBUG
+
     /* If we're not wrapping use simple (and more efficient) BufCountLines */
     if (!mContinuousWrap)
     	return buffer()->count_lines(startPos, endPos);
@@ -1023,6 +1025,12 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
     wrapped_line_counter(buffer(), startPos, endPos, INT_MAX,
 	    startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
 	    &retLineEnd);
+
+#ifdef DEBUG
+    printf("retPos=%d, retLines=%d, retLineStart=%d, retLineEnd=%d\n",
+           retPos, retLines, retLineStart, retLineEnd);
+#endif // DEBUG
+
     return retLines;
 }
 
@@ -2133,6 +2141,12 @@ void Fl_Text_Display::update_v_scrollbar() {
      line number, and the number of visible lines respectively.  The scroll
      bar maximum value is chosen to generally represent the size of the whole
      buffer, with minor adjustments to keep the scroll bar widget happy */
+#ifdef DEBUG
+  printf("Fl_Text_Display::update_v_scrollbar():\n"
+         "    mTopLineNum=%d, mNVisibleLines=%d, mNBufferLines=%d\n",
+	 mTopLineNum, mNVisibleLines, mNBufferLines);
+#endif // DEBUG
+
   mVScrollBar->value(mTopLineNum, mNVisibleLines, 1, mNBufferLines+2);
   mVScrollBar->linesize(3);
 }
@@ -3069,5 +3083,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.52 2004/05/15 22:58:18 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.53 2004/05/24 01:30:30 easysw Exp $".
 //
