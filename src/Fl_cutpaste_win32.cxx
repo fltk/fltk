@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.3 1999/06/12 15:09:19 mike Exp $"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.4 2000/02/05 09:10:07 bill Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
@@ -46,18 +46,17 @@ static int selection_xevent_handler(int) {
 
   switch (fl_msg.message) {
 
-  case WM_DESTROYCLIPBOARD: {
-      Fl_Window *w = Fl::first_window();
-      while (w != (Fl_Window *)0)
-        if (fl_msg.hwnd == fl_xid(w)) break;
-        else w = Fl::next_window(w);
-
-      if (w == (Fl_Window *)0) {
-        Fl::selection_owner(0);
-        Fl::flush(); // get the redraw to happen
-      }
-      return 1;
-    }
+  case WM_DESTROYCLIPBOARD:
+// This commented-out code was in previous versions of fltk, but it broke
+// things, and I'm not sure what the intention of it is:
+//       {Fl_Window *w = Fl::first_window();
+//       while (w != (Fl_Window *)0)
+//         if (fl_msg.hwnd == fl_xid(w)) break;
+//         else w = Fl::next_window(w);
+//       if (w != (Fl_Window *)0) return 1;}
+    Fl::selection_owner(0);
+    Fl::flush(); // get the redraw to happen
+    return 1;
 
   case WM_RENDERALLFORMATS:
     if (!OpenClipboard(fl_xid(Fl::first_window()))) return 0;
@@ -138,5 +137,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.3 1999/06/12 15:09:19 mike Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.4 2000/02/05 09:10:07 bill Exp $".
 //
