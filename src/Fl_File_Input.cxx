@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.3 2002/05/24 14:25:04 easysw Exp $"
+// "$Id: Fl_File_Input.cxx,v 1.1.2.4 2002/07/30 18:10:03 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -180,15 +180,29 @@ Fl_File_Input::handle(int event) 		// I - Event
 {
 //  printf("handle(event = %d)\n", event);
 
-  if ((event == FL_PUSH || event == FL_RELEASE || event == FL_DRAG) &&
-      (Fl::event_y() < (y() + DIR_HEIGHT) || pressed_ >= 0)) {
-    return handle_button(event);
-  }
+  switch (event) {
+    case FL_MOVE :
+    case FL_ENTER :
+      if (Fl::event_y() < (y() + DIR_HEIGHT)) fl_cursor(FL_CURSOR_DEFAULT);
+      else fl_cursor(FL_CURSOR_INSERT);
 
-  if (Fl_Input::handle(event)) {
-    damage(FL_DAMAGE_BAR);
-    return 1;
-  } else return 0;
+      return 1;
+
+    case FL_PUSH :
+    case FL_RELEASE :
+    case FL_DRAG :
+      if (Fl::event_y() < (y() + DIR_HEIGHT) || pressed_ >= 0) return handle_button(event);
+
+      return Fl_Input::handle(event);
+
+    default :
+      if (Fl_Input::handle(event)) {
+	damage(FL_DAMAGE_BAR);
+	return 1;
+      }
+
+      return 0;
+  }
 }
 
 
@@ -201,7 +215,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
 {
   int		i,				// Looping var
 		X;				// Current X position
-  const char	*start,				// Start of path component
+  char		*start,				// Start of path component
 		*end;				// End of path component
   char		newvalue[1024];			// New value
 
@@ -242,6 +256,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
   if (i < 0) {
     // Found the end; truncate the value and update the buttons...
+    *start = '\0';
     value(newvalue, start - newvalue);
 
     // Then do the callbacks, if necessary...
@@ -253,5 +268,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.3 2002/05/24 14:25:04 easysw Exp $".
+// End of "$Id: Fl_File_Input.cxx,v 1.1.2.4 2002/07/30 18:10:03 easysw Exp $".
 //

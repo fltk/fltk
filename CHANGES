@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
+	- Fl_Input_ could crash if it received an empty paste
+	  event.
 	- The mouse pointer now changes to the I beam
 	  (FL_CURSOR_INSERT) when moved over an input field or
 	  text widget.
