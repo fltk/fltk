@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.1 2001/09/02 11:23:27 easysw Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.2 2001/09/30 17:37:06 easysw Exp $"
 //
 // Another pixmap test program for the Fast Light Tool Kit (FLTK).
 //
@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <FL/fl_file_chooser.H>
+#include <FL/Fl_File_Chooser.H>
 #include <FL/fl_message.H>
 
 Fl_Box *b;
@@ -166,5 +166,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.1 2001/09/02 11:23:27 easysw Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.2 2001/09/30 17:37:06 easysw Exp $".
 //

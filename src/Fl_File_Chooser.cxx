@@ -261,3 +261,6 @@ int Fl_File_Chooser::type() {
 int Fl_File_Chooser::visible() {
   return window->visible();
 }
+FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname);
+FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname);
+FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));

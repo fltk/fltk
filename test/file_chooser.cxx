@@ -1,5 +1,5 @@
 //
-// "$Id: file_chooser.cxx,v 1.4.2.3.2.2 2001/09/29 14:38:59 easysw Exp $"
+// "$Id: file_chooser.cxx,v 1.4.2.3.2.3 2001/09/30 17:37:06 easysw Exp $"
 //
 // File chooser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
-#include <FL/fl_file_chooser.H>
+#include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Icon.H>
 #include <stdio.h>
 #include <string.h>
@@ -56,5 +56,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.2 2001/09/29 14:38:59 easysw Exp $".
+// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.3 2001/09/30 17:37:06 easysw Exp $".
 //

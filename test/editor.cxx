@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.1 2001/08/04 12:21:34 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.2 2001/09/30 17:37:06 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_ask.H>
-#include <FL/fl_file_chooser.H>
+#include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
@@ -424,5 +424,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.1 2001/08/04 12:21:34 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.2 2001/09/30 17:37:06 easysw Exp $".
 //

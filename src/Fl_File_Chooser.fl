@@ -7,7 +7,7 @@ gridy 5
 snap 3
 class Fl_File_Chooser {open
 } {
-  decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {selected public
+  decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public
   }
   Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
   } {
@@ -55,11 +55,11 @@ window->hide();}
       }
       Fl_Button upButton {
         callback {up();}
-        private image {up.xbm} tooltip {Show the parent directory.} xywh {280 10 25 25} labelsize 8
+        private tooltip {Show the parent directory.} image {up.xbm} xywh {280 10 25 25} labelsize 8
       }
       Fl_Button newButton {
         callback {newdir();}
-        private image {new.xbm} tooltip {Create a new directory.} xywh {310 10 25 25} labelsize 8
+        private tooltip {Create a new directory.} image {new.xbm} xywh {310 10 25 25} labelsize 8
       }
       Fl_Choice dirMenu {
         label {Directory:}
@@ -80,7 +80,7 @@ if ((f = fl_input("New Filter?",
   fileList->filter(f);
   rescan();
 }}
-        private image {allfiles.xbm} tooltip {Change the filename filter.} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
+        private tooltip {Change the filename filter.} image {allfiles.xbm} xywh {340 10 25 25} labelsize 28 labelcolor 4 align 16
         code0 {\#include <FL/fl_ask.H>}
       }
     }
@@ -207,4 +207,13 @@ else
   } {
     code {return window->visible();} {}
   }
+} 
+
+decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname);} {public
+} 
+
+decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname);} {public
+} 
+
+decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {selected public
 } 
