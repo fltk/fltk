@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.5 2001/11/23 12:06:36 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.6 2001/11/24 02:46:19 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -242,8 +242,8 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
   memset(new_array, 0, H * (W + 7) / 8);
 
   // Scale the image using a nearest-neighbor algorithm...
-  for (dy = h(), sy = 0, yerr = H / 2, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = w(), xerr = W / 2, old_ptr = array + sy * (w() + 7) / 8, sx = 0, new_bit = 128;
+  for (dy = H, sy = 0, yerr = H / 2, new_ptr = new_array; dy > 0; dy --) {
+    for (dx = W, xerr = W / 2, old_ptr = array + sy * (w() + 7) / 8, sx = 0, new_bit = 128;
 	 dx > 0;
 	 dx --) {
       old_bit = 128 >> (sx & 7);
@@ -278,5 +278,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.5 2001/11/23 12:06:36 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.6 2001/11/24 02:46:19 easysw Exp $".
 //

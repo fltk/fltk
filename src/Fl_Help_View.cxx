@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.12 2001/11/22 13:56:10 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.13 2001/11/24 02:46:19 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -26,37 +26,27 @@
 // Contents:
 //
 //   Fl_Help_View::add_block()       - Add a text block to the list.
-//   Fl_Help_View::add_image()       - Add an image to the image cache.
 //   Fl_Help_View::add_link()        - Add a new link to the list.
 //   Fl_Help_View::add_target()      - Add a new target to the list.
 //   Fl_Help_View::compare_targets() - Compare two targets.
 //   Fl_Help_View::do_align()        - Compute the alignment for a line in
-//                                    a block.
+//                                     a block.
 //   Fl_Help_View::draw()            - Draw the Fl_Help_View widget.
-//   Fl_Help_View::find_image()      - Find an image by name 
 //   Fl_Help_View::format()          - Format the help text.
 //   Fl_Help_View::format_table()    - Format a table...
 //   Fl_Help_View::get_align()       - Get an alignment attribute.
 //   Fl_Help_View::get_attr()        - Get an attribute value from the string.
 //   Fl_Help_View::get_color()       - Get an alignment attribute.
 //   Fl_Help_View::handle()          - Handle events in the widget.
-//   Fl_Help_View::Fl_Help_View()     - Build a Fl_Help_View widget.
-//   Fl_Help_View::~Fl_Help_View()    - Destroy a Fl_Help_View widget.
+//   Fl_Help_View::Fl_Help_View()    - Build a Fl_Help_View widget.
+//   Fl_Help_View::~Fl_Help_View()   - Destroy a Fl_Help_View widget.
 //   Fl_Help_View::load()            - Load the specified file.
-//   Fl_Help_View::load_gif()        - Load a GIF image file...
-//   Fl_Help_View::load_jpeg()       - Load a JPEG image file.
-//   Fl_Help_View::load_png()        - Load a PNG image file.
 //   Fl_Help_View::resize()          - Resize the help widget.
 //   Fl_Help_View::topline()         - Set the top line to the named target.
 //   Fl_Help_View::topline()         - Set the top line by number.
 //   Fl_Help_View::value()           - Set the help text directly.
 //   Fl_Help_View::compare_blocks()  - Compare two blocks.
-//   gif_read_cmap()                - Read the colormap from a GIF file...
-//   gif_get_block()                - Read a GIF data block...
-//   gif_get_code()                 - Get a LZW code from the file...
-//   gif_read_lzw()                 - Read a byte from the LZW stream...
-//   gif_read_image()               - Read a GIF image stream...
-//   scrollbar_callback()           - A callback for the scrollbar.
+//   scrollbar_callback()            - A callback for the scrollbar.
 //
 
 //
@@ -74,9 +64,6 @@
 #endif /* HAVE_STRINGS_H */
 #include <errno.h>
 
-#include <FL/Fl_Image.H>
-#include <FL/Fl_Pixmap.H>
-
 #if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
 #  include <direct.h>
@@ -88,18 +75,6 @@
 #else
 #  include <unistd.h>
 #endif // WIN32
-
-extern "C"
-{
-#ifdef HAVE_LIBPNG
-#  include <zlib.h>
-#  include <png.h>
-#endif // HAVE_LIBPNG
-
-#ifdef HAVE_LIBJPEG
-#  include <jpeglib.h>
-#endif // HAVE_LIBJPEG
-}
 
 #define MAX_COLUMNS	200
 
@@ -113,328 +88,11 @@ extern "C"
   typedef int (*compare_func_t)(const void *, const void *);
 }
 
-//
-// GIF definitions...
-//
-
-#define GIF_INTERLACE	0x40
-#define GIF_COLORMAP	0x80
-
-typedef unsigned char	gif_cmap_t[256][3];
-
-
-//
-// Local globals...
-//
-
-static const char *broken_xpm[] =
-		{
-		  "16 24 4 1",
-		  "@ c #000000",
-		  "  c #ffffff",
-		  "+ c none",
-		  "x c #ff0000",
-		  // pixels
-		  "@@@@@@@+++++++++",
-		  "@    @++++++++++",
-		  "@   @+++++++++++",
-		  "@   @++@++++++++",
-		  "@    @@+++++++++",
-		  "@     @+++@+++++",
-		  "@     @++@@++++@",
-		  "@ xxx  @@  @++@@",
-		  "@  xxx    xx@@ @",
-		  "@   xxx  xxx   @",
-		  "@    xxxxxx    @",
-		  "@     xxxx     @",
-		  "@    xxxxxx    @",
-		  "@   xxx  xxx   @",
-		  "@  xxx    xxx  @",
-		  "@ xxx      xxx @",
-		  "@              @",
-		  "@              @",
-		  "@              @",
-		  "@              @",
-		  "@              @",
-		  "@              @",
-		  "@              @",
-		  "@@@@@@@@@@@@@@@@",
-		  NULL
-		};
-
-static Fl_Pixmap *broken_image = (Fl_Pixmap *)0;
-static int	gif_eof = 0;		// Did we hit EOF?
-static unsigned	fltk_colors[] =
-		{
-		  0x00000000,
-		  0xff000000,
-		  0x00ff0000,
-		  0xffff0000,
-		  0x0000ff00,
-		  0xff00ff00,
-		  0x00ffff00,
-		  0xffffff00,
-		  0x55555500,
-		  0xc6717100,
-		  0x71c67100,
-		  0x8e8e3800,
-		  0x7171c600,
-		  0x8e388e00,
-		  0x388e8e00,
-		  0xaaaaaa00,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x55555500,
-		  0x00000000,
-		  0x0d0d0d00,
-		  0x1a1a1a00,
-		  0x26262600,
-		  0x31313100,
-		  0x3d3d3d00,
-		  0x48484800,
-		  0x55555500,
-		  0x5f5f5f00,
-		  0x6a6a6a00,
-		  0x75757500,
-		  0x80808000,
-		  0x8a8a8a00,
-		  0x95959500,
-		  0xa0a0a000,
-		  0xaaaaaa00,
-		  0xb5b5b500,
-		  0xc0c0c000,
-		  0xcbcbcb00,
-		  0xd5d5d500,
-		  0xe0e0e000,
-		  0xeaeaea00,
-		  0xf5f5f500,
-		  0xffffff00,
-		  0x00000000,
-		  0x00240000,
-		  0x00480000,
-		  0x006d0000,
-		  0x00910000,
-		  0x00b60000,
-		  0x00da0000,
-		  0x00ff0000,
-		  0x3f000000,
-		  0x3f240000,
-		  0x3f480000,
-		  0x3f6d0000,
-		  0x3f910000,
-		  0x3fb60000,
-		  0x3fda0000,
-		  0x3fff0000,
-		  0x7f000000,
-		  0x7f240000,
-		  0x7f480000,
-		  0x7f6d0000,
-		  0x7f910000,
-		  0x7fb60000,
-		  0x7fda0000,
-		  0x7fff0000,
-		  0xbf000000,
-		  0xbf240000,
-		  0xbf480000,
-		  0xbf6d0000,
-		  0xbf910000,
-		  0xbfb60000,
-		  0xbfda0000,
-		  0xbfff0000,
-		  0xff000000,
-		  0xff240000,
-		  0xff480000,
-		  0xff6d0000,
-		  0xff910000,
-		  0xffb60000,
-		  0xffda0000,
-		  0xffff0000,
-		  0x00003f00,
-		  0x00243f00,
-		  0x00483f00,
-		  0x006d3f00,
-		  0x00913f00,
-		  0x00b63f00,
-		  0x00da3f00,
-		  0x00ff3f00,
-		  0x3f003f00,
-		  0x3f243f00,
-		  0x3f483f00,
-		  0x3f6d3f00,
-		  0x3f913f00,
-		  0x3fb63f00,
-		  0x3fda3f00,
-		  0x3fff3f00,
-		  0x7f003f00,
-		  0x7f243f00,
-		  0x7f483f00,
-		  0x7f6d3f00,
-		  0x7f913f00,
-		  0x7fb63f00,
-		  0x7fda3f00,
-		  0x7fff3f00,
-		  0xbf003f00,
-		  0xbf243f00,
-		  0xbf483f00,
-		  0xbf6d3f00,
-		  0xbf913f00,
-		  0xbfb63f00,
-		  0xbfda3f00,
-		  0xbfff3f00,
-		  0xff003f00,
-		  0xff243f00,
-		  0xff483f00,
-		  0xff6d3f00,
-		  0xff913f00,
-		  0xffb63f00,
-		  0xffda3f00,
-		  0xffff3f00,
-		  0x00007f00,
-		  0x00247f00,
-		  0x00487f00,
-		  0x006d7f00,
-		  0x00917f00,
-		  0x00b67f00,
-		  0x00da7f00,
-		  0x00ff7f00,
-		  0x3f007f00,
-		  0x3f247f00,
-		  0x3f487f00,
-		  0x3f6d7f00,
-		  0x3f917f00,
-		  0x3fb67f00,
-		  0x3fda7f00,
-		  0x3fff7f00,
-		  0x7f007f00,
-		  0x7f247f00,
-		  0x7f487f00,
-		  0x7f6d7f00,
-		  0x7f917f00,
-		  0x7fb67f00,
-		  0x7fda7f00,
-		  0x7fff7f00,
-		  0xbf007f00,
-		  0xbf247f00,
-		  0xbf487f00,
-		  0xbf6d7f00,
-		  0xbf917f00,
-		  0xbfb67f00,
-		  0xbfda7f00,
-		  0xbfff7f00,
-		  0xff007f00,
-		  0xff247f00,
-		  0xff487f00,
-		  0xff6d7f00,
-		  0xff917f00,
-		  0xffb67f00,
-		  0xffda7f00,
-		  0xffff7f00,
-		  0x0000bf00,
-		  0x0024bf00,
-		  0x0048bf00,
-		  0x006dbf00,
-		  0x0091bf00,
-		  0x00b6bf00,
-		  0x00dabf00,
-		  0x00ffbf00,
-		  0x3f00bf00,
-		  0x3f24bf00,
-		  0x3f48bf00,
-		  0x3f6dbf00,
-		  0x3f91bf00,
-		  0x3fb6bf00,
-		  0x3fdabf00,
-		  0x3fffbf00,
-		  0x7f00bf00,
-		  0x7f24bf00,
-		  0x7f48bf00,
-		  0x7f6dbf00,
-		  0x7f91bf00,
-		  0x7fb6bf00,
-		  0x7fdabf00,
-		  0x7fffbf00,
-		  0xbf00bf00,
-		  0xbf24bf00,
-		  0xbf48bf00,
-		  0xbf6dbf00,
-		  0xbf91bf00,
-		  0xbfb6bf00,
-		  0xbfdabf00,
-		  0xbfffbf00,
-		  0xff00bf00,
-		  0xff24bf00,
-		  0xff48bf00,
-		  0xff6dbf00,
-		  0xff91bf00,
-		  0xffb6bf00,
-		  0xffdabf00,
-		  0xffffbf00,
-		  0x0000ff00,
-		  0x0024ff00,
-		  0x0048ff00,
-		  0x006dff00,
-		  0x0091ff00,
-		  0x00b6ff00,
-		  0x00daff00,
-		  0x00ffff00,
-		  0x3f00ff00,
-		  0x3f24ff00,
-		  0x3f48ff00,
-		  0x3f6dff00,
-		  0x3f91ff00,
-		  0x3fb6ff00,
-		  0x3fdaff00,
-		  0x3fffff00,
-		  0x7f00ff00,
-		  0x7f24ff00,
-		  0x7f48ff00,
-		  0x7f6dff00,
-		  0x7f91ff00,
-		  0x7fb6ff00,
-		  0x7fdaff00,
-		  0x7fffff00,
-		  0xbf00ff00,
-		  0xbf24ff00,
-		  0xbf48ff00,
-		  0xbf6dff00,
-		  0xbf91ff00,
-		  0xbfb6ff00,
-		  0xbfdaff00,
-		  0xbfffff00,
-		  0xff00ff00,
-		  0xff24ff00,
-		  0xff48ff00,
-		  0xff6dff00,
-		  0xff91ff00,
-		  0xffb6ff00,
-		  0xffdaff00,
-		  0xffffff00
-		};
-
 
 //
 // Local functions...
 //
 
-static int	gif_read_cmap(FILE *fp, int ncolors, gif_cmap_t cmap);
-static int	gif_get_block(FILE *fp, unsigned char *buffer);
-static int	gif_get_code (FILE *fp, int code_size, int first_time);
-static int	gif_read_lzw(FILE *fp, int first_time, int input_code_size);
-static int	gif_read_image(FILE *fp, Fl_Help_Image *img, gif_cmap_t cmap,
-		               int interlace);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 
 
@@ -476,280 +134,6 @@ Fl_Help_View::add_block(const char    *s,	// I - Pointer to start of block text
   nblocks_ ++;
 
   return (temp);
-}
-
-
-//
-// 'Fl_Help_View::add_image()' - Add an image to the image cache.
-//
-
-Fl_Help_Image *					// O - Image or NULL if not found
-Fl_Help_View::add_image(const char *name,	// I - Path of image
-                       const char *wattr,	// I - Width attribute
-		       const char *hattr,	// I - Height attribute
-                       int        make)		// I - Make the image?
-{
-  Fl_Help_Image	*img,				// New image
-		*orig;				// Original image
-  FILE		*fp;				// File pointer
-  unsigned char	header[16];			// First 16 bytes of file
-  int		status;				// Status of load...
-  const char	*localname;			// Local filename
-  char		dir[1024];			// Current directory
-  char		temp[1024],			// Temporary filename
-		*tempptr;			// Pointer into temporary name
-  int		width,				// Desired width of image
-		height;				// Desired height of image
-
-
-  // See if the image has already been loaded...
-  if ((img = find_image(name, wattr, hattr)) != (Fl_Help_Image *)0)
-  {
-    // Make the image if needed...
-    if (!img->image)
-      img->image = new Fl_RGB_Image(img->data, img->w, img->h, img->d);
-
-    return (img);
-  }
-
-  // See if the image exists with the default size info...
-  orig = find_image(name, "", "");
-
-  // Allocate memory as needed...
-  if (aimage_ == nimage_)
-  {
-    aimage_ += 16;
-
-    if (aimage_ == 16)
-      image_ = (Fl_Help_Image *)malloc(sizeof(Fl_Help_Image) * aimage_);
-    else
-      image_ = (Fl_Help_Image *)realloc(image_, sizeof(Fl_Help_Image) * aimage_);
-  }
-
-  img       = image_ + nimage_;
-  img->name = strdup(name);
-  img->copy = 0;
-
-  if (!orig)
-  {
-    // See if the image can be found...
-    if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL)
-    {
-      if (name[0] == '/')
-      {
-        strcpy(temp, directory_);
-        if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-	  strcpy(tempptr, name);
-	else
-	  strcat(temp, name);
-      }
-      else
-	sprintf(temp, "%s/%s", directory_, name);
-
-      if (link_)
-	localname = (*link_)(this, temp);
-      else
-	localname = temp;
-    }
-    else if (name[0] != '/' && strchr(name, ':') == NULL)
-    {
-      if (directory_[0])
-	sprintf(temp, "%s/%s", directory_, name);
-      else
-      {
-	getcwd(dir, sizeof(dir));
-	sprintf(temp, "file:%s/%s", dir, name);
-      }
-
-      if (link_)
-	localname = (*link_)(this, temp);
-      else
-	localname = temp;
-    }
-    else if (link_)
-      localname = (*link_)(this, name);
-    else
-      localname = name;
-
-    if (!localname)
-      return ((Fl_Help_Image *)0);
-
-    if (strncmp(localname, "file:", 5) == 0)
-      localname += 5;
-
-    // Figure out the file type...
-    if ((fp = fopen(localname, "rb")) == NULL)
-      return ((Fl_Help_Image *)0);
-
-    if (fread(header, 1, sizeof(header), fp) == 0)
-      return ((Fl_Help_Image *)0);
-
-    rewind(fp);
-
-    // Load the image as appropriate...
-    if (memcmp(header, "GIF87a", 6) == 0 ||
-	memcmp(header, "GIF89a", 6) == 0)
-      status = load_gif(img,  fp);
-  #ifdef HAVE_LIBPNG
-    else if (memcmp(header, "\211PNG", 4) == 0)
-      status = load_png(img, fp);
-  #endif // HAVE_LIBPNG
-  #ifdef HAVE_LIBJPEG
-    else if (memcmp(header, "\377\330\377", 3) == 0 &&	// Start-of-Image
-	     header[3] >= 0xe0 && header[3] <= 0xef)	// APPn
-      status = load_jpeg(img, fp);
-  #endif // HAVE_LIBJPEG
-    else
-      status = 0;
-
-    fclose(fp);
-
-    if (!status)
-    {
-      free(img->name);
-      return ((Fl_Help_Image *)0);
-    }
-
-    img->wattr[0] = '\0';
-    img->hattr[0] = '\0';
-    img->image    = 0;
-
-    nimage_ ++;
-
-    // Allocate memory as needed for the new copy...
-    if (aimage_ == nimage_)
-    {
-      aimage_ += 16;
-      image_  = (Fl_Help_Image *)realloc(image_, sizeof(Fl_Help_Image) * aimage_);
-    }
-
-    orig      = image_ + nimage_ - 1;
-    img       = image_ + nimage_;
-    img->name = strdup(name);
-  }
-
-//  printf("orig->data = %p, width = %d, height = %d\n", orig->data,
-//         orig->w, orig->h);
-
-  // Copy image data from original image...
-  img->data = orig->data;
-  img->w    = orig->w;
-  img->h    = orig->h;
-  img->d    = orig->d;
-  img->copy = 1;
-
-  // Figure out the size of the image...
-  if (wattr[0])
-  {
-    if (wattr[strlen(wattr) - 1] == '%')
-      width = atoi(wattr) * (w() - 24) / 100;
-    else
-      width = atoi(wattr);
-  }
-  else
-    width = 0;
-
-  if (hattr[0])
-  {
-    if (hattr[strlen(hattr) - 1] == '%')
-      height = atoi(hattr) * h() / 100;
-    else
-      height = atoi(hattr);
-  }
-  else
-    height = 0;
-
-  if (width == 0 && height == 0)
-  {
-    // Use image size...
-    width  = img->w;
-    height = img->h;
-  }
-  else if (width == 0)
-    // Scale width to height
-    width = img->w * height / img->h;
-  else if (height == 0)
-    // Scale height to width
-    height = img->h * width / img->w;
-
-  // Scale the image as needed...
-  if (width != img->w && height != img->h)
-  {
-    unsigned char	*scaled,	// Scaled image data
-			*sptr,		// Source image data pointer
-			*dptr;		// Destination image data pointer
-    int			sy,		// Source coordinates
-			dx, dy,		// Destination coordinates
-			xerr, yerr,	// X & Y errors
-			xmod, ymod,	// X & Y moduli
-			xstep, ystep;	// X & Y step increments
-
-
-     xmod   = img->w % width;
-     xstep  = (img->w / width) * img->d;
-     ymod   = img->h % height;
-     ystep  = img->h / height;
-
-     if ((scaled = (unsigned char *)malloc(width * height * img->d)) != NULL)
-     {
-       img->copy = 0;
-
-       // Scale the image...
-       for (dy = height, sy = 0, yerr = height / 2, dptr = scaled; dy > 0; dy --)
-       {
-         for (dx = width, xerr = width / 2,
-	          sptr = img->data + sy * img->w * img->d;
-	      dx > 0;
-	      dx --)
-         {
-	   *dptr++ = sptr[0];
-	   if (img->d > 1)
-	   {
-	     *dptr++ = sptr[1];
-	     *dptr++ = sptr[2];
-	   }
-
-           sptr += xstep;
-	   xerr -= xmod;
-	   if (xerr <= 0)
-	   {
-	     xerr += width;
-	     sptr += img->d;
-	   }
-	 }
-
-         sy   += ystep;
-	 yerr -= ymod;
-	 if (yerr <= 0)
-	 {
-	   yerr += height;
-	   sy ++;
-	 }
-       }
-
-       // Finally, copy the new size and data to the image structure...
-       img->w    = width;
-       img->h    = height;
-       img->data = scaled;
-     }
-  }
-
-  strncpy(img->wattr, wattr, sizeof(img->wattr) - 1);
-  img->wattr[sizeof(img->wattr) - 1] = '\0';
-  strncpy(img->hattr, hattr, sizeof(img->hattr) - 1);
-  img->hattr[sizeof(img->hattr) - 1] = '\0';
-
-  if (make)
-    img->image = new Fl_RGB_Image(img->data, img->w, img->h, img->d);
-  else
-    img->image = (Fl_Image *)0;
-
-  nimage_ ++;
-
-//  printf("img->data = %p, width = %d, height = %d\n", img->data,
-//         img->w, img->h);
-
-  return (img);
 }
 
 
@@ -1187,29 +571,27 @@ Fl_Help_View::draw()
 	  }
 	  else if (strcasecmp(buf, "IMG") == 0)
 	  {
-	    Fl_Help_Image	*img = (Fl_Help_Image *)0;
-	    int		width = 16;
-	    int		height = 24;
+	    Fl_Shared_Image *img = 0;
+	    int		width, height;
 	    char	wattr[8], hattr[8];
 
 
             get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
             get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+	    width  = atoi(wattr);
+	    height = atoi(hattr);
 
-	    if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
-	      if ((img = add_image(attr, wattr, hattr)) != NULL)
-	      {
-	        if (!img->image)
-	          img = (Fl_Help_Image *)0;
-              }
-
-	    if (img)
-	    {
-	      width  = img->w;
-	      height = img->h;
+	    if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+	      img = get_image(attr, width, height);
+	      if (!width) width = img->w();
+	      if (!height) height = img->h();
 	    }
-	    else if (get_attr(attrs, "ALT", attr, sizeof(attr)) == NULL)
-	      strcpy(attr, "IMG");
+
+	    if (!width || !height) {
+              if (get_attr(attrs, "ALT", attr, sizeof(attr)) == NULL) {
+	        strcpy(attr, "IMG");
+              }
+	    }
 
 	    ww = width;
 
@@ -1227,11 +609,8 @@ Fl_Help_View::draw()
 	    }
 
 	    if (img) 
-	      img->image->draw(xx + x(),
-	                       yy + y() - fl_height() + fl_descent() + 2);
-	    else
-	      broken_image->draw(xx + x(),
-	                         yy + y() - fl_height() + fl_descent() + 2);
+	      img->draw(xx + x(),
+	                yy + y() - fl_height() + fl_descent() + 2);
 
 	    xx += ww;
 	    if ((height + 2) > hh)
@@ -1353,29 +732,6 @@ Fl_Help_View::draw()
 
 
 //
-// 'Fl_Help_View::find_image()' - Find an image by name 
-//
-
-Fl_Help_Image *					// O - Image or NULL if not found
-Fl_Help_View::find_image(const char *name,	// I - Path and name of image
-                	const char *wattr,	// I - Width attribute of image
-			const char *hattr)	// I - Height attribute of image
-{
-  int		i;				// Looping var
-  Fl_Help_Image	*img;				// Current image
-
-
-  for (i = nimage_, img = image_; i > 0; i --, img ++) 
-    if (strcmp(img->name, name) == 0 &&
-        strcmp(img->wattr, wattr) == 0 &&
-        strcmp(img->hattr, hattr) == 0)
-      return (img);
-
-  return ((Fl_Help_Image *)0);
-}
-
-
-//
 // 'Fl_Help_View::format()' - Format the help text.
 //
 
@@ -1424,21 +780,6 @@ Fl_Help_View::format()
 
   if (!value_)
     return;
-
-  // Flush images that are scaled by percentage...
-  for (i = 0; i < nimage_; i ++)
-    if (strchr(image_[i].wattr, '%') != NULL ||
-        strchr(image_[i].hattr, '%') != NULL)
-    {
-      // Flush this one...
-      free(image_[i].name);
-      free(image_[i].data);
-      delete image_[i].image;
-      nimage_ --;
-      if (i < nimage_)
-        memcpy(image_ + i, image_ + i + 1, (nimage_ - i) * sizeof(Fl_Help_Image));
-      i --;
-    }
 
   // Setup for formatting...
   initfont(font, size);
@@ -1871,26 +1212,21 @@ Fl_Help_View::format()
 	popfont(font, size);
       else if (strcasecmp(buf, "IMG") == 0)
       {
-	Fl_Help_Image	*img = (Fl_Help_Image *)0;
-	int		width = 16;
-	int		height = 24;
+	Fl_Shared_Image	*img = 0;
+	int		width;
+	int		height;
 
 
         get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
         get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+	width  = atoi(wattr);
+	height = atoi(hattr);
 
-	if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
-	  if ((img = add_image(attr, wattr, hattr)) != (Fl_Help_Image *)0 &&
-	      img->image == NULL)
-	    img = (Fl_Help_Image *)0;
-
-	if (img)
-	{
-	  width  = img->w;
-	  height = img->h;
+	if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+	  img    = get_image(attr, width, height);
+	  width  = img->w();
+	  height = img->h();
 	}
-	else if (get_attr(attrs, "ALT", attr, sizeof(attr)) == NULL)
-	  strcpy(attr, "IMG");
 
 	ww = width;
 
@@ -2320,26 +1656,25 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	popfont(font, size);
       else if (strcasecmp(buf, "IMG") == 0 && incell)
       {
-	Fl_Help_Image	*img = (Fl_Help_Image *)0;
+	Fl_Shared_Image	*img = 0;
+	int		iwidth, iheight;
 
 
         get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
         get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+	iwidth  = atoi(wattr);
+	iheight = atoi(hattr);
 
-        if (get_attr(attrs, "SRC", attr, sizeof(attr))) 
-	  if ((img = add_image(attr, wattr, hattr)) != (Fl_Help_Image *)0 &&
-	      img->image == NULL)
-	    img = (Fl_Help_Image *)0;
+        if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+	  img     = get_image(attr, iwidth, iheight);
+	  iwidth  = img->w();
+	  iheight = img->h();
+	}
 
-	if (img)
-	  temp_width = img->w;
-	else
-	  temp_width = 16;
+	if (iwidth > minwidths[column])
+          minwidths[column] = iwidth;
 
-	if (temp_width > minwidths[column])
-          minwidths[column] = temp_width;
-
-        width += temp_width;
+        width += iwidth;
 	if (needspace)
 	  width += (int)fl_width(' ');
 
@@ -2577,7 +1912,7 @@ Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
 
 Fl_Color				// O - Color value
 Fl_Help_View::get_color(const char *n,	// I - Color name
-                       Fl_Color   c)	// I - Default color value
+                        Fl_Color   c)	// I - Default color value
 {
   int	rgb, r, g, b;			// RGB values
 
@@ -2635,6 +1970,47 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
     return (fl_color_cube(0, 4, 2));
   else
     return (c);
+}
+
+
+//
+// 'Fl_Help_View::get_image()' - Get an inline image.
+//
+
+Fl_Shared_Image *
+Fl_Help_View::get_image(const char *name, int W, int H) {
+  const char	*localname;		// Local filename
+  char		dir[1024];		// Current directory
+  char		temp[1024],		// Temporary filename
+		*tempptr;		// Pointer into temporary name
+
+  // See if the image can be found...
+  if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
+    if (name[0] == '/') {
+      strcpy(temp, directory_);
+      if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL) strcpy(tempptr, name);
+      else strcat(temp, name);
+    } else sprintf(temp, "%s/%s", directory_, name);
+
+    if (link_) localname = (*link_)(this, temp);
+    else localname = temp;
+  } else if (name[0] != '/' && strchr(name, ':') == NULL) {
+    if (directory_[0]) sprintf(temp, "%s/%s", directory_, name);
+    else {
+      getcwd(dir, sizeof(dir));
+      sprintf(temp, "file:%s/%s", dir, name);
+    }
+
+    if (link_) localname = (*link_)(this, temp);
+    else localname = temp;
+  } else if (link_) localname = (*link_)(this, name);
+  else localname = name;
+
+  if (!localname) return 0;
+
+  if (strncmp(localname, "file:", 5) == 0) localname += 5;
+
+  return Fl_Shared_Image::get(localname, W, H);
 }
 
 
@@ -2743,10 +2119,10 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 //
 
 Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
-                	 int        yy,	// I - Top position
-			 int        ww,	// I - Width in pixels
-			 int        hh,	// I - Height in pixels
-			 const char *l)
+                	   int        yy,	// I - Top position
+			   int        ww,	// I - Width in pixels
+			   int        hh,	// I - Height in pixels
+			   const char *l)
     : Fl_Group(xx, yy, ww, hh, l),
       scrollbar_(xx + ww - 17, yy, 17, hh)
 {
@@ -2758,13 +2134,6 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   ablocks_     = 0;
   nblocks_     = 0;
   blocks_      = (Fl_Help_Block *)0;
-
-  nimage_      = 0;
-  aimage_      = 0;
-  image_       = (Fl_Help_Image *)0;
-
-  if (!broken_image)
-    broken_image = new Fl_Pixmap((char **)broken_xpm);
 
   alinks_      = 0;
   nlinks_      = 0;
@@ -2800,10 +2169,6 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 
 Fl_Help_View::~Fl_Help_View()
 {
-  int		i;		// Looping var
-  Fl_Help_Image	*img;		// Current image
-
-
   if (nblocks_)
     free(blocks_);
   if (nlinks_)
@@ -2812,16 +2177,6 @@ Fl_Help_View::~Fl_Help_View()
     free(targets_);
   if (value_)
     free((void *)value_);
-  if (image_)
-  {
-    for (i = nimage_, img = image_; i > 0; i --, img ++)
-    {
-      delete img->image;
-      if (!img->copy)
-        free(img->data);
-      free(img->name);
-    }
-  }
 }
 
 
@@ -2907,231 +2262,6 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 
   return (0);
 }
-
-
-//
-// 'Fl_Help_View::load_gif()' - Load a GIF image file...
-//
-
-int					// O - 0 = success, -1 = fail
-Fl_Help_View::load_gif(Fl_Help_Image *img,// I - Image pointer
-        	       FILE         *fp)// I - File to load from
-{
-  unsigned char	buf[1024];		// Input buffer
-  gif_cmap_t	cmap;			// Colormap
-  int		ncolors,		// Bits per pixel
-		transparent;		// Transparent color index
-
-
-  // Read the header; we already know it is a GIF file...
-  fread(buf, 13, 1, fp);
-
-  img->w  = (buf[7] << 8) | buf[6];
-  img->h  = (buf[9] << 8) | buf[8];
-  ncolors = 2 << (buf[10] & 0x07);
-
-  if (buf[10] & GIF_COLORMAP)
-    if (!gif_read_cmap(fp, ncolors, cmap))
-      return (0);
-
-  transparent = -1;
-
-  for (;;)
-  {
-    switch (getc(fp))
-    {
-      case ';' :	// End of image
-          return (0);	// Early end of file
-
-      case '!' :	// Extension record
-          buf[0] = getc(fp);
-          if (buf[0] == 0xf9)	// Graphic Control Extension
-          {
-            gif_get_block(fp, buf);
-            if (buf[0] & 1)	// Get transparent color index
-              transparent = buf[3];
-          }
-
-          while (gif_get_block(fp, buf) != 0);
-          break;
-
-      case ',' :	// Image data
-          fread(buf, 9, 1, fp);
-
-          if (buf[8] & GIF_COLORMAP)
-          {
-            ncolors = 2 << (buf[8] & 0x07);
-
-	    if (!gif_read_cmap(fp, ncolors, cmap))
-	      return (0);
-	  }
-
-          if (transparent >= 0)
-          {
-	    unsigned	rgba = fltk_colors[bgcolor_];
-
-
-            // Map transparent color to background color...
-	    cmap[transparent][0] = rgba >> 24;
-            cmap[transparent][1] = rgba >> 16;
-            cmap[transparent][2] = rgba >> 8;
-          }
-
-          img->w    = (buf[5] << 8) | buf[4];
-          img->h    = (buf[7] << 8) | buf[6];
-          img->d    = 3;
-          img->data = (unsigned char *)malloc(img->w * img->h * img->d);
-          if (img->data == NULL)
-            return (0);
-
-	  return (gif_read_image(fp, img, cmap, buf[8] & GIF_INTERLACE));
-    }
-  }
-}
-
-
-#ifdef HAVE_LIBJPEG
-//
-// 'Fl_Help_View::load_jpeg()' - Load a JPEG image file.
-//
-
-int						// O - 0 = success, -1 = fail
-Fl_Help_View::load_jpeg(Fl_Help_Image *img,	// I - Image pointer
-                       FILE         *fp)	// I - File to load from
-{
-  struct jpeg_decompress_struct	cinfo;		// Decompressor info
-  struct jpeg_error_mgr		jerr;		// Error handler info
-  JSAMPROW			row;		// Sample row pointer
-
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_decompress(&cinfo);
-  jpeg_stdio_src(&cinfo, fp);
-  jpeg_read_header(&cinfo, 1);
-
-  cinfo.quantize_colors      = 0;
-  cinfo.out_color_space      = JCS_RGB;
-  cinfo.out_color_components = 3;
-  cinfo.output_components    = 3;
-
-  jpeg_calc_output_dimensions(&cinfo);
-
-  img->w  = cinfo.output_width;
-  img->h = cinfo.output_height;
-  img->d  = cinfo.output_components;
-  img->data = (unsigned char *)malloc(img->w * img->h * img->d);
-
-  if (img->data == NULL)
-  {
-    jpeg_destroy_decompress(&cinfo);
-    return (0);
-  }
-
-  jpeg_start_decompress(&cinfo);
-
-  while (cinfo.output_scanline < cinfo.output_height)
-  {
-    row = (JSAMPROW)(img->data +
-                     cinfo.output_scanline * cinfo.output_width *
-                     cinfo.output_components);
-    jpeg_read_scanlines(&cinfo, &row, (JDIMENSION)1);
-  }
-
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
-
-  return (1);
-}
-#endif // HAVE_LIBJPEG
-
-
-#ifdef HAVE_LIBPNG
-//
-// 'Fl_Help_View::load_png()' - Load a PNG image file.
-//
-
-int					// O - 0 = success, -1 = fail
-Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
-        	      FILE         *fp)	// I - File to read from
-{
-  int		i;			// Looping var
-  png_structp	pp;			// PNG read pointer
-  png_infop	info;			// PNG info pointers
-  png_bytep	*rows;			// PNG row pointers
-  png_color_16	bg;			// Background color
-
-
-  // Setup the PNG data structures...
-  pp   = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  info = png_create_info_struct(pp);
-
-  // Initialize the PNG read "engine"...
-  png_init_io(pp, fp);
-
-  // Get the image dimensions and convert to grayscale or RGB...
-  png_read_info(pp, info);
-
-  if (info->color_type == PNG_COLOR_TYPE_PALETTE)
-    png_set_expand(pp);
-
-  if (info->color_type & PNG_COLOR_MASK_COLOR)
-    img->d = 3;
-  else
-    img->d = 1;
-
-  if ((info->color_type & PNG_COLOR_MASK_ALPHA) || info->num_trans)
-    img->d ++;
-
-  if (info->bit_depth < 8)
-  {
-    png_set_packing(pp);
-    png_set_expand(pp);
-  }
-  else if (info->bit_depth == 16)
-    png_set_strip_16(pp);
-
-#if defined(HAVE_PNG_GET_VALID) && defined(HAVE_SET_TRNS_TO_ALPHA)
-  // Handle transparency...
-  if (png_get_valid(pp, info, PNG_INFO_tRNS))
-    png_set_tRNS_to_alpha(pp);
-#endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
-
-  img->w    = (int)info->width;
-  img->h    = (int)info->height;
-  img->data = (unsigned char *)malloc(img->w * img->h * img->d);
-
-  // Background color...
-  unsigned	rgba = fltk_colors[bgcolor_];
-
-  bg.red   = 65535 * (rgba >> 24) / 255;
-  bg.green = 65535 * ((rgba >> 16) & 255) / 255;
-  bg.blue  = 65535 * ((rgba >> 8) & 255) / 255;
-
-  png_set_background(pp, &bg, PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
-
-  // Allocate pointers...
-  rows = (png_bytep *)calloc(info->height, sizeof(png_bytep));
-
-  for (i = 0; i < (int)info->height; i ++)
-    rows[i] = img->data + i * img->w * img->d;
-
-  // Read the image, handling interlacing as needed...
-  for (i = png_set_interlace_handling(pp); i > 0; i --)
-    png_read_rows(pp, rows, NULL, img->h);
-
-  // Free memory and return...
-  free(rows);
-
-  png_read_end(pp, info);
-#  ifdef HAVE_PNG_READ_DESTROY
-  png_read_destroy(pp, info, NULL);
-#  else
-  png_destroy_read_struct(&pp, &info, NULL);
-#  endif // HAVE_PNG_READ_DESTROY
-
-  return (1);
-}
-#endif // HAVE_LIBPNG
 
 
 //
@@ -3237,351 +2367,6 @@ Fl_Help_View::compare_blocks(const void *a,	// I - First block
 
 
 //
-// 'gif_read_cmap()' - Read the colormap from a GIF file...
-//
-
-static int				// O - -1 = error, 0 = success
-gif_read_cmap(FILE       *fp,		// I - File to read from
-  	      int        ncolors,	// I - Number of colors
-	      gif_cmap_t cmap)		// O - Colormap
-{
-  // Read the colormap...
-  if (fread(cmap, 3, ncolors, fp) < (size_t)ncolors)
-    return (0);
-
-  return (1);
-}
-
-
-//
-// 'gif_get_block()' - Read a GIF data block...
-//
-
-static int				// O - Number characters read
-gif_get_block(FILE  *fp,		// I - File to read from
-	      unsigned char *buf)	// I - Input buffer
-{
-  int	count;				// Number of character to read
-
-
-  // Read the count byte followed by the data from the file...
-  if ((count = getc(fp)) == EOF)
-  {
-    gif_eof = 1;
-    return (-1);
-  }
-  else if (count == 0)
-    gif_eof = 1;
-  else if (fread(buf, 1, count, fp) < (size_t)count)
-  {
-    gif_eof = 1;
-    return (-1);
-  }
-  else
-    gif_eof = 0;
-
-  return (count);
-}
-
-
-//
-// 'gif_get_code()' - Get a LZW code from the file...
-//
-
-static int				// O - LZW code
-gif_get_code(FILE *fp,			// I - File to read from
-	     int  code_size,		// I - Size of code in bits
-	     int  first_time)		// I - 1 = first time, 0 = not first time
-{
-  unsigned		i, j,		// Looping vars
-			ret;		// Return value
-  int			count;		// Number of bytes read
-  static unsigned char	buf[280];	// Input buffer
-  static unsigned	curbit,		// Current bit
-			lastbit,	// Last bit in buffer
-			done,		// Done with this buffer?
-			last_byte;	// Last byte in buffer
-  static unsigned	bits[8] =	// Bit masks for codes
-			{
-			  0x01, 0x02, 0x04, 0x08,
-			  0x10, 0x20, 0x40, 0x80
-			};
-
-
-  if (first_time)
-  {
-    // Just initialize the input buffer...
-    curbit  = 0;
-    lastbit = 0;
-    done    = 0;
-
-    return (0);
-  }
-
-
-  if ((curbit + code_size) >= lastbit)
-  {
-    // Don't have enough bits to hold the code...
-    if (done)
-      return (-1);	// Sorry, no more...
-
-    // Move last two bytes to front of buffer...
-    if (last_byte > 1)
-    {
-      buf[0]    = buf[last_byte - 2];
-      buf[1]    = buf[last_byte - 1];
-      last_byte = 2;
-    }
-    else if (last_byte == 1)
-    {
-      buf[0]    = buf[last_byte - 1];
-      last_byte = 1;
-    }
-
-    // Read in another buffer...
-    if ((count = gif_get_block (fp, buf + last_byte)) <= 0)
-    {
-      // Whoops, no more data!
-      done = 1;
-      return (-1);
-    }
-
-    // Update buffer state...
-    curbit    = (curbit - lastbit) + 8 * last_byte;
-    last_byte += count;
-    lastbit   = last_byte * 8;
-  }
-
-  ret = 0;
-  for (ret = 0, i = curbit + code_size - 1, j = code_size;
-       j > 0;
-       i --, j --)
-    ret = (ret << 1) | ((buf[i / 8] & bits[i & 7]) != 0);
-
-  curbit += code_size;
-
-  return ret;
-}
-
-
-//
-// 'gif_read_lzw()' - Read a byte from the LZW stream...
-//
-
-static int				// I - Byte from stream
-gif_read_lzw(FILE *fp,			// I - File to read from
-	     int  first_time,		// I - 1 = first time, 0 = not first time
- 	     int  input_code_size)	// I - Code size in bits
-{
-  int		i,			// Looping var
-		code,			// Current code
-		incode;			// Input code
-  static short	fresh = 0,		// 1 = empty buffers
-		code_size,		// Current code size
-		set_code_size,		// Initial code size set
-		max_code,		// Maximum code used
-		max_code_size,		// Maximum code size
-		firstcode,		// First code read
-		oldcode,		// Last code read
-		clear_code,		// Clear code for LZW input
-		end_code,		// End code for LZW input
-		table[2][4096],		// String table
-		stack[8192],		// Output stack
-		*sp;			// Current stack pointer
-
-
-  if (first_time)
-  {
-    // Setup LZW state...
-    set_code_size = input_code_size;
-    code_size     = set_code_size + 1;
-    clear_code    = 1 << set_code_size;
-    end_code      = clear_code + 1;
-    max_code_size = 2 * clear_code;
-    max_code      = clear_code + 2;
-
-    // Initialize input buffers...
-    gif_get_code(fp, 0, 1);
-
-    // Wipe the decompressor table...
-    fresh = 1;
-
-    for (i = 0; i < clear_code; i ++)
-    {
-      table[0][i] = 0;
-      table[1][i] = i;
-    }
-
-    for (; i < 4096; i ++)
-      table[0][i] = table[1][0] = 0;
-
-    sp = stack;
-
-    return (0);
-  }
-  else if (fresh)
-  {
-    fresh = 0;
-
-    do
-      firstcode = oldcode = gif_get_code(fp, code_size, 0);
-    while (firstcode == clear_code);
-
-    return (firstcode);
-  }
-
-  if (sp > stack)
-    return (*--sp);
-
-  while ((code = gif_get_code (fp, code_size, 0)) >= 0)
-  {
-    if (code == clear_code)
-    {
-      for (i = 0; i < clear_code; i ++)
-      {
-	table[0][i] = 0;
-	table[1][i] = i;
-      }
-
-      for (; i < 4096; i ++)
-	table[0][i] = table[1][i] = 0;
-
-      code_size     = set_code_size + 1;
-      max_code_size = 2 * clear_code;
-      max_code      = clear_code + 2;
-
-      sp = stack;
-
-      firstcode = oldcode = gif_get_code(fp, code_size, 0);
-
-      return (firstcode);
-    }
-    else if (code == end_code)
-    {
-      unsigned char	buf[260];
-
-
-      if (!gif_eof)
-        while (gif_get_block(fp, buf) > 0);
-
-      return (-2);
-    }
-
-    incode = code;
-
-    if (code >= max_code)
-    {
-      *sp++ = firstcode;
-      code  = oldcode;
-    }
-
-    while (code >= clear_code)
-    {
-      *sp++ = table[1][code];
-      if (code == table[0][code])
-	return (255);
-
-      code = table[0][code];
-    }
-
-    *sp++ = firstcode = table[1][code];
-    code  = max_code;
-
-    if (code < 4096)
-    {
-      table[0][code] = oldcode;
-      table[1][code] = firstcode;
-      max_code ++;
-
-      if (max_code >= max_code_size && max_code_size < 4096)
-      {
-	max_code_size *= 2;
-	code_size ++;
-      }
-    }
-
-    oldcode = incode;
-
-    if (sp > stack)
-      return (*--sp);
-  }
-
-  return (code);
-}
-
-
-//
-// 'gif_read_image()' - Read a GIF image stream...
-//
-
-static int				// I - 0 = success, -1 = failure
-gif_read_image(FILE          *fp,	// I - Input file
-	       Fl_Help_Image  *img,	// I - Image pointer
-	       gif_cmap_t    cmap,	// I - Colormap
-	       int           interlace)	// I - Non-zero = interlaced image
-{
-  unsigned char	code_size,		// Code size
-		*temp;			// Current pixel
-  int		xpos,			// Current X position
-		ypos,			// Current Y position
-		pass;			// Current pass
-  int		pixel;			// Current pixel
-  static int	xpasses[4] = { 8, 8, 4, 2 },
-		ypasses[5] = { 0, 4, 2, 1, 999999 };
-
-
-  xpos      = 0;
-  ypos      = 0;
-  pass      = 0;
-  code_size = getc(fp);
-
-  if (gif_read_lzw(fp, 1, code_size) < 0)
-    return (0);
-
-  temp = img->data;
-
-  while ((pixel = gif_read_lzw(fp, 0, code_size)) >= 0)
-  {
-    temp[0] = cmap[pixel][0];
-
-    if (img->d > 1)
-    {
-      temp[1] = cmap[pixel][1];
-      temp[2] = cmap[pixel][2];
-    }
-
-    xpos ++;
-    temp += img->d;
-    if (xpos == img->w)
-    {
-      xpos = 0;
-
-      if (interlace)
-      {
-        ypos += xpasses[pass];
-        temp += (xpasses[pass] - 1) * img->w * img->d;
-
-        if (ypos >= img->h)
-	{
-	  pass ++;
-
-          ypos = ypasses[pass];
-          temp = img->data + ypos * img->w * img->d;
-	}
-      }
-      else
-	ypos ++;
-    }
-
-    if (ypos >= img->h)
-      break;
-  }
-
-  return (1);
-}
-
-
-//
 // 'scrollbar_callback()' - A callback for the scrollbar.
 //
 
@@ -3593,5 +2378,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.12 2001/11/22 13:56:10 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.13 2001/11/24 02:46:19 easysw Exp $".
 //

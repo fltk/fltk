@@ -1,5 +1,5 @@
 //
-// "$Id: image.cxx,v 1.6.2.3.2.3 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: image.cxx,v 1.6.2.3.2.4 2001/11/24 02:46:19 easysw Exp $"
 //
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Image.H>
+#include <FL/Fl_Shared_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -96,13 +96,10 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
+  int i = 1;
 
 #ifndef WIN32
-  int i = 1;
-  if (Fl::args(argc,argv,i,arg) < argc) {
-    fprintf(stderr," -v # : use visual\n%s\n",Fl::help);
-    exit(1);
-  }
+  Fl::args(argc,argv,i,arg);
 
   if (visid >= 0) {
     fl_open_display();
@@ -125,10 +122,23 @@ int main(int argc, char **argv) {
   Fl_Window window(400,400); ::w = &window;
   window.color(FL_WHITE);
   Fl_Button b(140,160,120,120,"Image w/Alpha"); ::b = &b;
-  make_image();
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(image, width, height,4);
-  Fl_RGB_Image *dergb;
-  dergb = (Fl_RGB_Image *)rgb->copy();
+
+  Fl_Image *rgb;
+  Fl_Image *dergb;
+
+  if (argv[1]) {
+    rgb = Fl_Shared_Image::get(argv[1]);
+    if (rgb->w() > 100 || rgb->h() > 100) {
+      if (rgb->w() > rgb->h()) rgb = rgb->copy(100, 100 * rgb->h() / rgb->w());
+      else rgb = rgb->copy(100 * rgb->w() / rgb->h(), 100);
+    }
+    b.label(argv[1]);
+  } else {
+    make_image();
+    rgb = new Fl_RGB_Image(image, width, height,4);
+  }
+
+  dergb = rgb->copy();
   dergb->inactive();
 
   b.image(rgb);
@@ -155,5 +165,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: image.cxx,v 1.6.2.3.2.3 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: image.cxx,v 1.6.2.3.2.4 2001/11/24 02:46:19 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23 2001/09/10 01:16:17 spitzak Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.1 2001/11/24 02:46:19 easysw Exp $"
 //
-// Image drawing code for the Fast Light Tool Kit (FLTK).
+// Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -20,242 +20,354 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-// Draw an image that is stored compressed in a file or in memory. 
-// Keep uncompressed images in memory for later use. 
-
-#include <config.h>
-#include <fltk/Fl.h>
-#include <fltk/fl_draw.h>
-#include <fltk/Fl_Shared_Image.h>
-#include <fltk/Fl_Bitmap.h>
-#include <fltk/x.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <FL/Fl.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_GIF_Image.H>
+#include <FL/Fl_JPEG_Image.H>
+#include <FL/Fl_PNG_Image.H>
+//#include <FL/Fl_XBM_Image.H>
+//#include <FL/Fl_XPM_Image.H>
 
-FL_IMAGES_API const char *Fl_Shared_Image::fl_shared_image_root=0;
-
-FL_IMAGES_API Fl_Shared_Image  *Fl_Shared_Image::first_image = 0;
-
-FL_IMAGES_API int Fl_Shared_Image::image_used=0;
-FL_IMAGES_API size_t Fl_Shared_Image::mem_usage_limit=0;
-
-FL_IMAGES_API size_t Fl_Shared_Image::mem_used=0;
-FL_IMAGES_API int Fl_Shared_Image::forbid_delete = 1;
-
-//     static size_t mem_used=0; (now moved to Fl.cxx !)
-// This contains the total number of pixmap pixels in the cache
-// WARNING : this is updated incrementally, so beware that it keeps balanced
-// when deleting or creating pixmaps !
-
-Fl_Shared_Image::~Fl_Shared_Image()
-{
-  if(forbid_delete)
-    fprintf(stderr, 
-      "FLTK user error : deleting an Fl_Shared_Image object is forbiden !\n");
-  if(id) mem_used -= w*h;
-}
-
-void Fl_Shared_Image::set_cache_size(size_t l)
-{
-  mem_usage_limit = l;
-}
-
-static Fl_Shared_Image *limage; // used to find the less used image
-void Fl_Shared_Image::find_less_used() {
-  if(l1) l1->find_less_used();
-  if(l2) l2->find_less_used();
-  if(id && (limage->id == 0 || used<limage->used)) limage=this;
-}
-void Fl_Shared_Image::check_mem_usage()
-{
-  if(mem_usage_limit==0 || first_image==NULL || mem_used < mem_usage_limit) 
-    return;
-
-  do {
-    limage=first_image;
-    first_image->find_less_used();
-    if(limage->id) {
-      mem_used -= limage->w*limage->h;
-      fl_delete_offscreen(Pixmap(limage->id));
-      limage->id=0;
-      if(limage->mask) {
-	fl_delete_bitmap(Pixmap(limage->mask));
-	limage->mask = 0;
-      }
-    } else return;
-  } while(mem_used >= mem_usage_limit);
-}
-
-
-class fl_shared_image_destructor_class {
-  int dummy;
-public:
-  fl_shared_image_destructor_class() { dummy = 0; }
-  ~fl_shared_image_destructor_class() {
-    if (Fl_Shared_Image::first_image) Fl_Shared_Image::first_image->clear_cache();
-  }
-};
-
-fl_shared_image_destructor_class fl_shared_image_destructor;
-
-void Fl_Shared_Image::clear_cache()
-{
-  if(id) {
-    mem_used -= w*h;
-    fl_delete_offscreen((Pixmap)id);
-    id=0;
-    if(mask) {
-      fl_delete_bitmap((Pixmap)mask);
-      mask = 0;
-    }
-  }
-  if (l1) l1->clear_cache();
-  if (l2) l2->clear_cache();
-}
-
-void Fl_Shared_Image::set_root_directory(const char *d) {
-  fl_shared_image_root = d;
-}
-
-void Fl_Shared_Image::insert(Fl_Shared_Image*& p, Fl_Shared_Image* image) {
-  if(p == 0)
-    p = image;
-  else {
-    int c = strcmp(image->name, p->name);
-    if(c<0) insert(p->l1, image);
-    else insert(p->l2, image);
-  }
-}
-
-Fl_Shared_Image* Fl_Shared_Image::find(Fl_Shared_Image* image, const char* name) {
-  if(image == 0) return 0;
-  int c = strcmp(name, image->name);
-  if(c == 0) return image;
-  else if(c<0) return find(image->l1, name);
-  else return find(image->l2, name);
-}
-
-
-const char* Fl_Shared_Image::get_filename() {
-  return get_filename(name);
-}
-
-const char* Fl_Shared_Image::get_filename(const char* name)
-{
-  if (name[0] == '/' || !fl_shared_image_root || !*fl_shared_image_root)
-    return name;
-  int m = strlen(fl_shared_image_root);
-  int n = strlen(name) + m + 2;
-  static char *s;
-  if (s) free(s);
-  s = (char*) malloc(n+1);
-  strcpy(s, fl_shared_image_root);
-  if (s[m-1] != '/') s[m++] = '/';
-  strcpy(s+m, name);
-  return s;
-}
-
-
-Fl_Shared_Image* Fl_Shared_Image::get(Fl_Shared_Image* (*create)(),
-				      const char* name, const uchar *datas)
-{
-  Fl_Shared_Image *image=Fl_Shared_Image::find(first_image, name);
-  if(!image)
-  {
-    image=create();
-    image->refcount = 1;
-    image->name = strdup(name);
-    image->datas=datas;
-    image->w = -1; // We mark the fact the it has never been measured yet
-    image->l1 = image->l2 = 0;
-    image->id=image->mask=0;
-    Fl_Shared_Image::insert(first_image, image);
-  } else {
-    if(image->datas==NULL) image->datas=datas;
-    image->refcount++;
-  }
-  image->used = image_used++;
-  return image;
-}
-
-void Fl_Shared_Image::reload(const uchar* pdatas)
-{
-  if (id) {
-    mem_used -= w*h;
-    fl_delete_offscreen((Pixmap)id);
-    id=0;
-    if (mask) {
-      fl_delete_bitmap((Pixmap)mask);
-      mask = 0;
-    }
-  }
-  if (pdatas) datas = pdatas;
-  measure(w, h);
-}
-void Fl_Shared_Image::reload(const char* name, const uchar* pdatas)
-{
-  Fl_Shared_Image *image=Fl_Shared_Image::find(first_image, name);
-  if (image) image->reload(pdatas);
-}
-
-void Fl_Shared_Image::remove_from_tree(Fl_Shared_Image*& p, Fl_Shared_Image* image) {
-  if (p) {
-    int c = strcmp(image->name, p->name);
-    if (c == 0) {
-      if (image->l1) {
-	p = image->l1;
-	if (image->l2) insert(first_image, image->l2);
-      } else
-	p = image->l2;
-    } else if (c<0) remove_from_tree(p->l1, image);
-    else remove_from_tree(p->l2, image);
-  }
-}
-
-int Fl_Shared_Image::remove()
-{
-  if (--refcount) return 0;
-  remove_from_tree(first_image, this);
-  forbid_delete = 0;
-  delete this;
-  forbid_delete = 1;
-  return 1;
-}
-int Fl_Shared_Image::remove(const char* name)
-{
-  Fl_Shared_Image *image=Fl_Shared_Image::find(first_image, name);
-  if (image) return image->remove();
-  else return 0;
-}
-
-void Fl_Shared_Image::draw(int X, int Y, Fl_Flags flags)
-{
-  if (w<0) measure(w, h);
-  if (w==0) return;
-  if (!id) // Need to uncompress the image ?
-  {
-    used = image_used++; // do this before check_mem_usage
-    mem_used += w*h;
-    check_mem_usage();
-
-    read();
-    if (!id) { // could not read the image for some reason ?
-      mem_used -= w*h;
-      w = 0; // Will never try again ...
-      return; 
-    }
-  }
-  else
-    used = image_used++;
-  _draw(X, Y, flags);
-}
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23 2001/09/10 01:16:17 spitzak Exp $"
+// Global class vars...
+//
+
+Fl_Shared_Image **Fl_Shared_Image::images_ = 0;	// Shared images
+int	Fl_Shared_Image::num_images_ = 0;	// Number of shared images
+int	Fl_Shared_Image::alloc_images_ = 0;	// Allocated shared images
+
+
+//
+// Typedef the C API sort function type the only way I know how...
+//
+
+extern "C" {
+  typedef int (*compare_func_t)(const void *, const void *);
+}
+
+
+//
+// 'Fl_Shared_Image::compare()' - Compare two shared images...
+//
+
+int
+Fl_Shared_Image::compare(Fl_Shared_Image **i0,		// I - First image
+                         Fl_Shared_Image **i1) {	// I - Second image
+  int i = strcmp((*i0)->name(), (*i1)->name());
+
+  if (i) return i;
+  else if (((*i0)->w() == 0 && (*i1)->original_) ||
+           ((*i1)->w() == 0 && (*i0)->original_)) return 0;
+  else if ((*i0)->w() != (*i1)->w()) return (*i0)->w() - (*i1)->w();
+  else return (*i0)->h() - (*i1)->h();
+}
+
+
+//
+// 'Fl_Shared_Image::Fl_Shared_Image()' - Basic constructor.
+//
+
+Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
+  name_        = 0;
+  refcount_    = 1;
+  original_    = 0;
+  image_       = 0;
+  alloc_image_ = 0;
+}
+
+
+//
+// 'Fl_Shared_Image::Fl_Shared_Image()' - Add an image to the image cache.
+//
+
+Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
+                                 Fl_Image   *img)	// I - Image
+  : Fl_Image(0,0,0) {
+  name_ = new char[strlen(n) + 1];
+  strcpy((char *)name_, n);
+
+  refcount_    = 1;
+  image_       = img;
+  alloc_image_ = 0;
+  original_    = 1;
+
+  if (!img) reload();
+  else update();
+}
+
+
+//
+// 'Fl_Shared_Image::add()' - Add a shared image to the array.
+//
+
+void
+Fl_Shared_Image::add() {
+  Fl_Shared_Image	**temp;		// New image pointer array...
+
+  if (num_images_ >= alloc_images_) {
+    // Allocate more memory...
+    temp = new Fl_Shared_Image *[alloc_images_ + 32];
+
+    if (alloc_images_) {
+      memcpy(images_, temp, sizeof(Fl_Shared_Image *));
+
+      delete[] images_;
+    }
+
+    images_       = temp;
+    alloc_images_ += 32;
+  }
+
+  images_[num_images_] = this;
+  num_images_ ++;
+
+  if (num_images_ > 1) {
+    qsort(images_, num_images_, sizeof(Fl_Shared_Image *),
+          (compare_func_t)compare);
+  }
+}
+
+
+//
+// 'Fl_Shared_Image::update()' - Update the dimensions of the shared images.
+//
+
+void
+Fl_Shared_Image::update() {
+  if (image_) {
+    w(image_->w());
+    h(image_->h());
+    d(image_->d());
+    data(image_->data(), image_->count());
+  }
+}
+
+
+//
+// 'Fl_Shared_Image::~Fl_Shared_Image()' - Destroy a shared image...
+//
+
+Fl_Shared_Image::~Fl_Shared_Image() {
+  if (name_) delete name_;
+  if (alloc_image_) delete image_;
+}
+
+
+//
+// 'Fl_Shared_Image::release()' - Release and possibly destroy a shared image.
+//
+
+void
+Fl_Shared_Image::release() {
+  int	i;	// Looping var...
+
+  refcount_ --;
+  if (refcount_ > 0) return;
+
+  for (i = 0; i < num_images_; i ++)
+    if (images_[i] == this) {
+      num_images_ --;
+
+      if (i < num_images_) {
+        memcpy(images_ + i, images_ + i + 1,
+               (num_images_ - i) * sizeof(Fl_Shared_Image *));
+      }
+
+      break;
+    }
+
+  delete this;
+
+  if (num_images_ == 0 && images_) {
+    delete[] images_;
+
+    images_       = 0;
+    alloc_images_ = 0;
+  }
+}
+
+
+//
+// 'Fl_Shared_Image::reload()' - Reload the shared image...
+//
+
+void
+Fl_Shared_Image::reload() {
+  // Load image from disk...
+  FILE		*fp;		// File pointer
+  uchar		header[16];	// Buffer for auto-detecting files
+  Fl_Image	*img;		// New image
+
+  if (!name_) return;
+
+  if ((fp = fopen(name_, "rb")) != NULL) {
+    fread(header, 1, sizeof(header), fp);
+    fclose(fp);
+  } else {
+    memset(header, 0, sizeof(header));
+  }
+
+  // Load the image as appropriate...
+  if (memcmp(header, "GIF87a", 6) == 0 ||
+      memcmp(header, "GIF89a", 6) == 0)
+    img = new Fl_GIF_Image(name_);
+  else if (memcmp(header, "\211PNG", 4) == 0)
+    img = new Fl_PNG_Image(name_);
+  else if (memcmp(header, "\377\330\377", 3) == 0 &&	// Start-of-Image
+	   header[3] >= 0xe0 && header[3] <= 0xef)	// APPn
+    img = new Fl_JPEG_Image(name_);
+  else
+    img = 0;
+
+  if (img) {
+    if (alloc_image_) delete image_;
+
+    image_       = img;
+    alloc_image_ = 1;
+
+    if ((img->w() != w() && w()) || (img->h() != h() && h())) {
+      // Make sure the reloaded image is the same size as the existing one.
+      Fl_Image *temp = img->copy(w(), h());
+      delete img;
+      img = temp;
+    }
+
+    update();
+  }
+}
+
+
+//
+// 'Fl_Shared_Image::copy()' - Copy and resize a shared image...
+//
+
+Fl_Image *
+Fl_Shared_Image::copy(int W, int H) {
+  Fl_Image		*temp_image;	// New image file
+  Fl_Shared_Image	*temp_shared;	// New shared image
+
+  // Make a copy of the image we're sharing...
+  if (!image_) temp_image = 0;
+  else temp_image = image_->copy(W, H);
+
+  // Then make a new shared image...
+  temp_shared = new Fl_Shared_Image();
+
+  temp_shared->name_ = new char[strlen(name_) + 1];
+  strcpy((char *)temp_shared->name_, name_);
+
+  temp_shared->refcount_    = 1;
+  temp_shared->image_       = temp_image;
+  temp_shared->alloc_image_ = 0;
+
+  temp_shared->update();
+
+  return temp_shared;
+}
+
+
+//
+// 'Fl_Shared_Image::color_average()' - Blend colors...
+//
+
+void
+Fl_Shared_Image::color_average(Fl_Color c,	// I - Color to blend with
+                               float    i) {	// I - Blend fraction
+  if (!image_) return;
+
+  image_->color_average(c, i);
+  update();
+}
+
+
+//
+// 'Fl_Shared_Image::desaturate()' - Convert the image to grayscale...
+//
+
+void
+Fl_Shared_Image::desaturate() {
+  if (!image_) return;
+
+  image_->desaturate();
+  update();
+}
+
+
+//
+// 'Fl_Shared_Image::draw()' - Draw a shared image...
+//
+
+void
+Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
+  if (image_) image_->draw(X, Y, W, H, cx, cy);
+  else Fl_Image::draw(X, Y, W, H, cx, cy);
+}
+
+
+//
+// 'Fl_Shared_Image::find()' - Find a shared image...
+//
+
+Fl_Shared_Image *
+Fl_Shared_Image::find(const char *n, int W, int H) {
+  Fl_Shared_Image	*key,		// Image key
+			**match;	// Matching image
+
+  if (num_images_) {
+    key = new Fl_Shared_Image();
+    key->name_ = new char[strlen(n) + 1];
+    strcpy((char *)key->name_, n);
+    key->w(W);
+    key->h(H);
+
+    match = (Fl_Shared_Image **)bsearch(&key, images_, num_images_,
+                                        sizeof(Fl_Shared_Image *),
+                                        (compare_func_t)compare);
+
+    delete key;
+
+    if (match) {
+      (*match)->refcount_ ++;
+      return *match;
+    }
+  }
+
+  return 0;
+}
+
+
+//
+// 'Fl_Shared_Image::get()' - Get a shared image...
+//
+
+Fl_Shared_Image *
+Fl_Shared_Image::get(const char *n, int W, int H) {
+  Fl_Shared_Image	*temp;		// Image
+
+  if ((temp = find(n, W, H)) != NULL) return temp;
+
+  if ((temp = find(n)) == NULL) {
+    temp = new Fl_Shared_Image(n);
+    temp->add();
+  }
+
+  if ((temp->w() != W || temp->h() != H) && W && H) {
+    temp = (Fl_Shared_Image *)temp->copy(W, H);
+    temp->add();
+  }
+
+  return temp;
+}
+
+
+//
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.1 2001/11/24 02:46:19 easysw Exp $".
 //

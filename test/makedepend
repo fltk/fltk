@@ -161,14 +161,15 @@ hello.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 hello.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Box.H
 help.o: ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/Enumerations.H
 help.o: ../FL/Fl_Export.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
-help.o: ../FL/Fl_Help_View.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
-help.o: ../FL/Fl_Slider.H ../FL/fl_draw.H ../FL/Fl_Button.H
+help.o: ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+help.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/fl_draw.H
+help.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Button.H
 iconize.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 iconize.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 iconize.o: ../FL/Fl_Button.H ../FL/Fl_Box.H
 image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 image.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Button.H
-image.o: ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
+image.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
 image.o: ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H ../FL/x.H
 image.o: list_visuals.cxx ../config.h
 input.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H

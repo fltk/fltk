@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.8 2001/11/23 12:06:36 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.9 2001/11/24 02:46:19 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -245,17 +245,12 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
     }
   }
 
-  // Copy image data...
-  for (i = 0; i < h(); i ++, new_row ++) {
-    *new_row = new char[chars_per_line];
-    memcpy(*new_row, data()[i + ncolors + 1], chars_per_line);
-  }
   // Scale the image using a nearest-neighbor algorithm...
-  for (dy = h(), sy = 0, yerr = H / 2; dy > 0; dy --, new_row ++) {
+  for (dy = H, sy = 0, yerr = H / 2; dy > 0; dy --, new_row ++) {
     *new_row = new char[chars_per_line];
     new_ptr  = *new_row;
 
-    for (dx = w(), xerr = W / 2, old_ptr = data()[sy + ncolors + 1];
+    for (dx = W, xerr = W / 2, old_ptr = data()[sy + ncolors + 1];
 	 dx > 0;
 	 dx --) {
       for (c = 0; c < chars_per_pixel; c ++) *new_ptr++ = old_ptr[c];
@@ -467,5 +462,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.8 2001/11/23 12:06:36 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.9 2001/11/24 02:46:19 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.3 2001/10/29 03:44:31 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -24,18 +24,19 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifndef _Fl_Help_View_H_
-#  define _Fl_Help_View_H_
+#ifndef Fl_Help_View_H
+#  define Fl_Help_View_H
 
 //
 // Include necessary header files...
 //
 
 #  include <stdio.h>
-#  include <FL/Fl.H>
-#  include <FL/Fl_Group.H>
-#  include <FL/Fl_Scrollbar.H>
-#  include <FL/fl_draw.H>
+#  include "Fl.H"
+#  include "Fl_Group.H"
+#  include "Fl_Scrollbar.H"
+#  include "fl_draw.H"
+#  include "Fl_Shared_Image.H"
 
 
 //
@@ -89,23 +90,6 @@ struct Fl_Help_Target
 };
 
 //
-// Fl_Help_Image structure...
-//
-
-class Fl_Image;
-
-struct Fl_Help_Image 
-{
-  char		*name,		// Path and name of the image
-		wattr[8],	// Width attribute
-		hattr[8];	// Height attribute
-  Fl_Image	*image;		// FLTK image representation
-  unsigned char	*data;		// Raw image data
-  int		copy;		// Data is a copy?
-  int		w, h, d;	// Image size & depth
-};
-
-//
 // Fl_Help_View class...
 //
 
@@ -145,18 +129,6 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 		size_;			// Total document length
   Fl_Scrollbar	scrollbar_;		// Vertical scrollbar for document
 
-  int		nimage_,		// Number of images in a page
-		aimage_;		// Allocated blocks
-  Fl_Help_Image	*image_;		// list of image descriptors
-
-  Fl_Help_Image	*add_image(const char *name, const char *wattr,
-		           const char *hattr, int make = 1);
-  Fl_Help_Image	*find_image(const char *name, const char *wattr,
-		           const char *hattr);
-  int		load_gif(Fl_Help_Image *img, FILE *fp);
-  int		load_jpeg(Fl_Help_Image *img, FILE *fp);
-  int		load_png(Fl_Help_Image *img, FILE *fp);
-
   Fl_Help_Block	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   static int	compare_blocks(const void *a, const void *b);
   void		add_link(const char *n, int xx, int yy, int ww, int hh);
@@ -169,6 +141,7 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
   int		get_align(const char *p, int a);
   const char	*get_attr(const char *p, const char *n, char *buf, int bufsize);
   Fl_Color	get_color(const char *n, Fl_Color c);
+  Fl_Shared_Image *get_image(const char *name, int W, int H);
   int		handle(int);
 
   void		initfont(uchar &f, uchar &s) { nfonts_ = 0;
@@ -207,8 +180,8 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
   const char	*value() const { return (value_); }
 };
 
-#endif // !_Fl_Help_View_H_
+#endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.3 2001/10/29 03:44:31 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $".
 //

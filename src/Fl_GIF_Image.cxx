@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.3 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -353,8 +353,9 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
   // split the image data into lines:
   for (i=0; i<Height; i++) {
-    new_data[i+2] = new char[Width];
+    new_data[i+2] = new char[Width+1];
     memcpy(new_data[i + 2], (char*)(Image + i*Width), Width);
+    new_data[i + 2][Width] = 0;
   }
 
   data(new_data, Height + 2);
@@ -365,5 +366,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.3 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $".
 //
