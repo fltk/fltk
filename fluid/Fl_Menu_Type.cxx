@@ -419,6 +419,8 @@ Fl_Menu_Item dummymenu[] = {{"CHOICE"},{0}};
 
 Fl_Choice_Type Fl_Choice_type;
 
+Fl_Input_Choice_Type Fl_Input_Choice_type;
+
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Bar_Type Fl_Menu_Bar_type;

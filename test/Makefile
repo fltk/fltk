@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.42 2004/08/26 22:24:24 matthiaswm Exp $"
+# "$Id$"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -61,6 +61,7 @@ CPPFILES =\
 	image.cxx \
 	inactive.cxx \
 	input.cxx \
+	input_choice.cxx \
 	keyboard.cxx \
 	label.cxx \
 	line_style.cxx \
@@ -118,6 +119,7 @@ ALL =	\
 	image$(EXEEXT) \
 	inactive$(EXEEXT) \
 	input$(EXEEXT) \
+	input_choice$(EXEEXT) \
 	keyboard$(EXEEXT) \
 	label$(EXEEXT) \
 	line_style$(EXEEXT) \
@@ -259,6 +261,8 @@ inactive.cxx:	inactive.fl
 
 input$(EXEEXT): input.o
 
+input_choice$(EXEEXT): input_choice.o
+
 keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) -o $@ keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS)
@@ -376,5 +380,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.42 2004/08/26 22:24:24 matthiaswm Exp $".
+# End of "$Id$".
 #

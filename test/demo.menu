@@ -65,6 +65,7 @@
 	@o:File Chooser:file_chooser
 	@o:Fonts:fonts
 	@o:HelpDialog:help
+	@o:Input Choice:input_choice
 	@o:Preferences:preferences
 	@o:Threading:threads
 	@o:XForms Emulation:forms

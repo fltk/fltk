@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.13 2004/04/11 04:38:55 easysw Exp $"
+// "$Id$"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -549,6 +549,20 @@ public:
   int pixmapID() { return 15; }
 };
 
+#include <FL/Fl_Input_Choice.H>
+class Fl_Input_Choice_Type : public Fl_Menu_Type {
+public:
+  virtual const char *type_name() {return "Fl_Input_Choice";}
+  Fl_Widget *widget(int X,int Y,int W,int H) {
+    Fl_Input_Choice *myo = new Fl_Input_Choice(X,Y,W,H,"input choice:");
+    myo->menu(dummymenu);
+    myo->value("input");
+    return myo;
+  }
+  Fl_Widget_Type *_make() {return new Fl_Input_Choice_Type();}
+  int pixmapID() { return 15; }
+};
+
 #include <FL/Fl_Menu_Bar.H>
 class Fl_Menu_Bar_Type : public Fl_Menu_Type {
 public:
@@ -599,5 +613,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.13 2004/04/11 04:38:55 easysw Exp $".
+// End of "$Id$".
 //

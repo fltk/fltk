@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Added Greg Ercolano's simple Fl_Input_Choice widget
+	  which is a combination of the Fl_Input and
+	  Fl_Menu_Button widgets (STR #650)
 	- Fl_Multiline_Input now scrolls the full height of the
 	  widget instead of 5 lines when the user presses PageUp
 	  or PageDown (STR #727)
