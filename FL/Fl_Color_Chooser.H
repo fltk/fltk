@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.H,v 1.5.2.2 2000/06/05 21:20:21 mike Exp $"
+// "$Id: Fl_Color_Chooser.H,v 1.5.2.3 2000/06/10 19:29:59 carl Exp $"
 //
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,19 +37,21 @@
 #include <FL/Fl_Value_Input.H>
 
 class Flcc_HueBox : public Fl_Widget {
-  FL_EXPORT int handle(int);
-  FL_EXPORT void draw();
   int px, py;
+protected:
+  FL_EXPORT void draw();
 public:
+  FL_EXPORT int handle(int);
   Flcc_HueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
   px = py = 0;}
 };
 
 class Flcc_ValueBox : public Fl_Widget {
-  FL_EXPORT int handle(int);
-  FL_EXPORT void draw();
   int py;
+protected:
+  FL_EXPORT void draw();
 public:
+  FL_EXPORT int handle(int);
   Flcc_ValueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
   py = 0;}
 };
@@ -94,5 +96,5 @@ FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b);
 #endif
 
 //
-// End of "$Id: Fl_Color_Chooser.H,v 1.5.2.2 2000/06/05 21:20:21 mike Exp $".
+// End of "$Id: Fl_Color_Chooser.H,v 1.5.2.3 2000/06/10 19:29:59 carl Exp $".
 //

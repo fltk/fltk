@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.14 2000/06/10 18:24:30 bill Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.15 2000/06/10 19:30:01 carl Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -53,11 +53,11 @@
 #define COPY 2		// unchanged
 #define NODAMAGE 3	// unchanged even by X expose() events
 
-#ifdef MESA
-#define SWAP_TYPE NODAMAGE
-#else
+//#ifdef MESA
+//#define SWAP_TYPE NODAMAGE
+//#else
 #define SWAP_TYPE SWAP
-#endif
+//#endif
 
 ////////////////////////////////////////////////////////////////
 
@@ -292,9 +292,11 @@ void Fl_Gl_Window::hide() {
       glXDestroyContext(fl_display, (GLXContext)context);
 #endif
     }
-#ifdef GLX_MESA_release_buffers
-    glXReleaseBuffersMESA(fl_display, fl_xid(this));
-#endif
+// This causes incompatibility with some OpenGL libraries
+// I don't think this is not necessary in any case, right?
+//#ifdef GLX_MESA_release_buffers
+//    glXReleaseBuffersMESA(fl_display, fl_xid(this));
+//#endif
     context = 0;
   }
 #if HAVE_GL_OVERLAY && defined(_WIN32)
@@ -327,5 +329,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.14 2000/06/10 18:24:30 bill Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.15 2000/06/10 19:30:01 carl Exp $".
 //

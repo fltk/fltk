@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.H,v 1.5.2.2 2000/06/05 21:20:29 mike Exp $"
+// "$Id: Fl_Roller.H,v 1.5.2.3 2000/06/10 19:29:59 carl Exp $"
 //
 // Roller header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,7 @@
 #endif
 
 class Fl_Roller : public Fl_Valuator {
+protected:
   FL_EXPORT void draw();
 public:
   FL_EXPORT int handle(int);
@@ -40,5 +41,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Roller.H,v 1.5.2.2 2000/06/05 21:20:29 mike Exp $".
+// End of "$Id: Fl_Roller.H,v 1.5.2.3 2000/06/10 19:29:59 carl Exp $".
 //
