@@ -71,6 +71,9 @@ Fl_Select_Browser.html
 Fl_Single_Window.html
 Fl_Slider.html
 Fl_Tabs.html
+Fl_Text_Buffer.html
+Fl_Text_Display.html
+Fl_Text_Editor.html
 Fl_Tile.html
 Fl_Tiled_Image.html
 Fl_Timer.html

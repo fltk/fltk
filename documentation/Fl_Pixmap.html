@@ -3,7 +3,7 @@
 
 <!-- NEW PAGE -->
 
-<H2><A name=Fl_Bitmap>class Fl_Bitmap</A></H2>
+<H2><A name="Fl_Pixmap">class Fl_Pixmap</A></H2>
 <HR>
 
 <H3>Class Hierarchy</H3>
@@ -11,41 +11,44 @@
 <UL><PRE>
 <A href="Fl_Image.html">Fl_Image</A>
    |
-   +----<B>Fl_Bitmap</B>
+   +----<B>Fl_Pixmap</B>
            |
-           +----<A href="Fl_XBM_Image.html">Fl_XBM_Image</A>
+           +----<A href="Fl_GIF_Image.html">Fl_GIF_Image</A>,
+                <A href="Fl_XPM_Image.html">Fl_XPM_Image</A>
 </PRE></UL>
 
 <H3>Include Files</H3>
 
 <UL><PRE>
-#include &lt;FL/Fl_Bitmap.H&gt;
+#include &lt;FL/Fl_Pixmap.H&gt;
 </PRE></UL>
 
 <H3>Description</H3>
 
-<P>The <TT>Fl_Bitmap</TT> class supports caching and drawing of mono-color
-(bitmap) images. Images are drawn using the current color.</P>
+<P>The <TT>Fl_Pixmap</TT> class supports caching and drawing of colormap
+(pixmap) images, including transparency.</P>
 
 <H3>Methods</H3>
 
 <UL>
 
-	<LI><A href="#Fl_Bitmap.Fl_Bitmap">Fl_Bitmap</A></LI>
+	<LI><A href="#Fl_Pixmap.Fl_Pixmap">Fl_Pixmap</A></LI>
 
-	<LI><A href="#Fl_Bitmap.~Fl_Bitmap">~Fl_Bitmap</A></LI>
+	<LI><A href="#Fl_Pixmap.~Fl_Pixmap">~Fl_Pixmap</A></LI>
 
 </UL>
 
-<H4><A name="Fl_Bitmap.Fl_Bitmap">Fl_Bitmap::Fl_Bitmap(const char *array, int W, int H);<BR>
-Fl_Bitmap::Fl_Bitmap(const unsigned char *array, int W, int H);</A></H4>
+<H4><A name="Fl_Pixmap.Fl_Pixmap">Fl_Pixmap::Fl_Pixmap(const char * const *data);<BR>
+Fl_Pixmap::Fl_Pixmap(const char **data);<BR>
+Fl_Pixmap::Fl_Pixmap(const unsigned char * const *data);<BR>
+Fl_Pixmap::Fl_Pixmap(const unsigned char **data);</A></H4>
 
-<P>The constructors create a new bitmap from the specified bitmap data.</P>
+<P>The constructors create a new pixmap from the specified XPM data.</P>
 
-<H4><A name="Fl_Bitmap.~Fl_Bitmap">Fl_Bitmap::~Fl_Bitmap();</A></H4>
+<H4><A name="Fl_Pixmap.~Fl_Pixmap">Fl_Pixmap::~Fl_Pixmap();</A></H4>
 
 <P>The destructor free all memory and server resources that are used by
-the bitmap.</P>
+the pixmap.</P>
 
 </BODY>
 </HTML>

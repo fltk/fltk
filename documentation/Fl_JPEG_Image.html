@@ -3,49 +3,48 @@
 
 <!-- NEW PAGE -->
 
-<H2><A name=Fl_Bitmap>class Fl_Bitmap</A></H2>
+<H2><A name="Fl_JPEG_Image">class Fl_JPEG_Image</A></H2>
 <HR>
 
 <H3>Class Hierarchy</H3>
 
 <UL><PRE>
-<A href="Fl_Image.html">Fl_Image</A>
+<A href="Fl_RGB_Image.html">Fl_RGB_Image</A>
    |
-   +----<B>Fl_Bitmap</B>
-           |
-           +----<A href="Fl_XBM_Image.html">Fl_XBM_Image</A>
+   +----<B>Fl_JPEG_Image</B>
 </PRE></UL>
 
 <H3>Include Files</H3>
 
 <UL><PRE>
-#include &lt;FL/Fl_Bitmap.H&gt;
+#include &lt;FL/Fl_JPEG_Image.H&gt;
 </PRE></UL>
 
 <H3>Description</H3>
 
-<P>The <TT>Fl_Bitmap</TT> class supports caching and drawing of mono-color
-(bitmap) images. Images are drawn using the current color.</P>
+<P>The <TT>Fl_JPEG_Image</TT> class supports loading, caching,
+and drawing of Joint Photographic Experts Group (JPEG) File
+Interchange Format (JFIF) images. The class supports grayscale
+and color (RGB) JPEG image files.</P>
 
 <H3>Methods</H3>
 
 <UL>
 
-	<LI><A href="#Fl_Bitmap.Fl_Bitmap">Fl_Bitmap</A></LI>
+	<LI><A href="#Fl_JPEG_Image.Fl_JPEG_Image">Fl_JPEG_Image</A></LI>
 
-	<LI><A href="#Fl_Bitmap.~Fl_Bitmap">~Fl_Bitmap</A></LI>
+	<LI><A href="#Fl_JPEG_Image.~Fl_JPEG_Image">~Fl_JPEG_Image</A></LI>
 
 </UL>
 
-<H4><A name="Fl_Bitmap.Fl_Bitmap">Fl_Bitmap::Fl_Bitmap(const char *array, int W, int H);<BR>
-Fl_Bitmap::Fl_Bitmap(const unsigned char *array, int W, int H);</A></H4>
+<H4><A name="Fl_JPEG_Image.Fl_JPEG_Image">Fl_JPEG_Image::Fl_JPEG_Image(const char *filename);</A></H4>
 
-<P>The constructors create a new bitmap from the specified bitmap data.</P>
+<P>The constructor loads the named JPEG image.</P>
 
-<H4><A name="Fl_Bitmap.~Fl_Bitmap">Fl_Bitmap::~Fl_Bitmap();</A></H4>
+<H4><A name="Fl_JPEG_Image.~Fl_JPEG_Image">Fl_JPEG_Image::~Fl_JPEG_Image();</A></H4>
 
 <P>The destructor free all memory and server resources that are used by
-the bitmap.</P>
+the image.</P>
 
 </BODY>
 </HTML>

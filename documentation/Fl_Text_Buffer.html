@@ -1,336 +1,363 @@
-<HTML><BODY>
-<HR break>
-<H2><A name=Fl_Input>class Fl_Input</A></H2>
-<HR>
-<H3>Class Hierarchy</H3>
-<UL>
-<PRE>
-<A href=Fl_Input_.html#Fl_Input_>Fl_Input_</A>
-   |
-   +----<B>Fl_Input</B>
-           |
-           +----<A href=Fl_Float_Input.html#Fl_Float_Input>Fl_Float_Input</A>, <A href=Fl_Int_Input.html#Fl_Int_Input>Fl_Int_Input</A>,
-                <A href=Fl_Multiline_Input.html#Fl_Multiline_Input>Fl_Multiline_Input</A>, <A href=Fl_Secret_Input.html#Fl_Secret_Input>Fl_Secret_Input</A>
-</PRE>
-</UL>
-<H3>Include Files</H3>
-<UL>
-<PRE>
-#include &lt;FL/Fl_Input.H&gt;
-</PRE>
-</UL>
-<H3>Description</H3>
-<P>This is the FLTK text input widget.  It displays a single line of text 
-and lets the user edit it.  Normally it is drawn with an inset box and 
-a white background.  The text may contain any characters (even 0), and 
-will correctly display anything, using ^X notation for unprintable 
-control characters and \nnn notation for unprintable characters with 
-the high bit set. It assumes the font can draw any characters in the 
-ISO-8859-1 character set. 
-
-<CENTER><TABLE border=1 WIDTH=90% summary="Fl_Input keyboard and mouse bindings.">
-
-<TR><TD WIDTH=200><B>Mouse button 1</B></TD><TD>Moves the cursor to
- this point. Drag selects characters.  Double click selects words.
- Triple click selects all text.  Shift+click extends the selection.
- When you select text it is automatically copied to the clipboard.
-</TD></TR>
-
-<TR><TD><B>Mouse button 2</B></TD><TD>Insert the clipboard at
-the point clicked.  You can also select a region and replace it with the
-clipboard by selecting the region with mouse button 2.
-</TD></TR>
-
-<TR><TD><B>Mouse button 3</B></TD><TD>Currently acts like button 1.</TD></TR>
-
-<TR><TD><B>Backspace</B></TD><TD>Deletes one character to the left, or 
-deletes the selected region.</TD></TR>
-<TR><TD><B>Enter</B></TD><TD>May cause the callback, see when().</TD></TR>
-<TR><TD><B>^A or Home</B></TD><TD>Go to start of line.</TD></TR>
-<TR><TD><B>^B or Left</B></TD><TD>Move left</TD></TR>
-<TR><TD><B>^C</B></TD><TD>Copy the selection to the clipboard</TD></TR>
-<TR><TD><B>^D or Delete</B></TD><TD>Deletes one character to the right 
-or deletes the selected region.</TD></TR>
-<TR><TD><B>^E or End</B></TD><TD>Go to the end of line.</TD></TR>
-<TR><TD><B>^F or Right</B></TD><TD>Move right</TD></TR>
-<TR><TD><B>^K</B></TD><TD>Delete to the end of line (next \n character) 
-or deletes a single \n character.  These deletions are all concatenated 
-into the clipboard.</TD></TR>
-<TR><TD><B>^N or Down</B></TD><TD>Move down (for Fl_Multiline_Input 
-only, otherwise it moves to the next input field).</TD></TR>
-<TR><TD><B>^P or Up</B></TD><TD>Move up (for Fl_Multiline_Input only, 
-otherwise it moves to the previous input field).</TD></TR>
-<TR><TD><B>^U</B></TD><TD>Delete everything.</TD></TR>
-<TR><TD><B>^V or ^Y</B></TD><TD>Paste the clipboard</TD></TR>
-<TR><TD><B>^X or ^W</B></TD><TD>Copy the region to the clipboard and 
-delete it.</TD></TR>
-<TR><TD><B>^Z or ^_</B></TD><TD>Undo.  This is a single-level undo 
-mechanism, but all adjacent deletions and insertions are concatenated 
-into a single &quot;undo&quot;.  Often this will undo a lot more than you 
-expected.</TD></TR>
-<TR><TD><B>Shift+move</B></TD><TD>Move the cursor but also extend the 
-selection.</TD></TR>
-
-<TR><TD><B>RightCtrl or
-<BR>Compose</B></TD><TD><a name=compose>Start</A>
-a <A href="events.html#compose">compose-character</A>
-sequence.  The next one or two keys typed define the character to
-insert (see table that follows.)
-
-<p>For instance, to type "á" type [compose][a]['] or [compose]['][a].
-
-<P>The character "nbsp" (non-breaking space) is typed by using
-[compose][space].
-
-<P>The single-character sequences may be followed by a space if
-necessary to remove ambiguity.  For instance, if you really want to
-type "ª~" rather than "ã" you must type [compose][a][space][~].
-
-<p>The same key may be used to "quote" control characters into the
-text.  If you need a <tt>^Q</tt> character you can get one by typing
-[compose][Control+Q].
-
-<p>X may have a key on the keyboard
-defined as <tt>XK_Multi_key</tt>.  If so this key may be used as well
-as the right-hand control key.  You can set this up with the program
-<tt>xmodmap</tt>.
-
-<p>If your keyboard is set to support a foreign language you should
-also be able to type "dead key" prefix characters.  On X you will
-actually be able to see what dead key you typed, and if you then move
-the cursor without completing the sequence the accent will remain
-inserted.
-</TABLE></CENTER>
+<HTML>
+<BODY>
 
 <!-- NEW PAGE -->
-<center><table border=1 summary="Character Composition Table">
-<caption align="top">Character Composition Table</caption>
-<tr>
-	<th>Keys</th><th>Char</th>
-	<th>Keys</th><th>Char</th>
-	<th>Keys</th><th>Char</th>
-	<th>Keys</th><th>Char</th>
-	<th>Keys</th><th>Char</th>
-	<th>Keys</th><th>Char</th>
 
-</tr><tr>
-	<td align=center><TT>sp</TT></td><td align=center><small>nbsp</small></td>
-	<td align=center><TT>*</tt></td><td align=center>°</td>
-	<td align=center><TT>` A</tt></td><td align=center>À</td>
-	<td align=center><TT>D -</tt></td><td align=center>Ð</td>
-	<td align=center><TT>` a</tt></td><td align=center>à</td>
-	<td align=center><TT>d -</tt></td><td align=center>ð
-</tr><tr>
-	<td align=center><TT>!</tt></td><td align=center>¡</td>
-	<td align=center><TT>+ -</tt></td><td align=center>±</td>
-	<td align=center><TT>' A</tt></td><td align=center>Á</td>
-	<td align=center><TT>~ N</tt></td><td align=center>Ñ</td>
-	<td align=center><TT>' a</tt></td><td align=center>á</td>
-	<td align=center><TT>~ n</tt></td><td align=center>ñ
-</tr><tr>
-	<td align=center><TT>%</tt></td><td align=center>¢</td>
-	<td align=center><TT>2</tt></td><td align=center>²</td>
-	<td align=center><TT>A ^</tt></td><td align=center>Â</td>
-	<td align=center><TT>` O</tt></td><td align=center>Ò</td>
-	<td align=center><TT>^ a</tt></td><td align=center>â</td>
-	<td align=center><TT>` o</tt></td><td align=center>ò
-</tr><tr>
-	<td align=center><TT>#</tt></td><td align=center>£</td>
-	<td align=center><TT>3</tt></td><td align=center>³</td>
-	<td align=center><TT>~ A</tt></td><td align=center>Ã</td>
-	<td align=center><TT>' O</tt></td><td align=center>Ó</td>
-	<td align=center><TT>~ a</tt></td><td align=center>ã</td>
-	<td align=center><TT>' o</tt></td><td align=center>ó
-</tr><tr>
-	<td align=center><TT>$</tt></td><td align=center>¤</td>
-	<td align=center><TT>'</tt></td><td align=center>´</td>
-	<td align=center><TT>: A</tt></td><td align=center>Ä</td>
-	<td align=center><TT>^ O</tt></td><td align=center>Ô</td>
-	<td align=center><TT>: a</tt></td><td align=center>ä</td>
-	<td align=center><TT>^ o</tt></td><td align=center>ô
-</tr><tr>
-	<td align=center><TT>y =</tt></td><td align=center>¥</td>
-	<td align=center><TT>u</tt></td><td align=center>µ</td>
-	<td align=center><TT>* A</tt></td><td align=center>Å</td>
-	<td align=center><TT>~ O</tt></td><td align=center>Õ</td>
-	<td align=center><TT>* a</tt></td><td align=center>å</td>
-	<td align=center><TT>~ o</tt></td><td align=center>õ
-</tr><tr>
-	<td align=center><TT>|</tt></td><td align=center>¦</td>
-	<td align=center><TT>p</tt></td><td align=center>¶</td>
-	<td align=center><TT>A E</tt></td><td align=center>Æ</td>
-	<td align=center><TT>: O</tt></td><td align=center>Ö</td>
-	<td align=center><TT>a e</tt></td><td align=center>æ</td>
-	<td align=center><TT>: o</tt></td><td align=center>ö
-</tr><tr>
-	<td align=center><TT>&amp;</tt></td><td align=center>§</td>
-	<td align=center><TT>.</tt></td><td align=center>·</td>
-	<td align=center><TT>, C</tt></td><td align=center>Ç</td>
-	<td align=center><TT>x</tt></td><td align=center>×</td>
-	<td align=center><TT>, c</tt></td><td align=center>ç</td>
-	<td align=center><TT>- :</tt></td><td align=center>÷
-</tr><tr>
-	<td align=center><TT>:</tt></td><td align=center>¨</td>
-	<td align=center><TT>,</tt></td><td align=center>¸</td>
-	<td align=center><TT>E `</tt></td><td align=center>È</td>
-	<td align=center><TT>O /</tt></td><td align=center>Ø</td>
-	<td align=center><TT>` e</tt></td><td align=center>è</td>
-	<td align=center><TT>o /</tt></td><td align=center>ø
-</tr><tr>
-	<td align=center><TT>c</tt></td><td align=center>©</td>
-	<td align=center><TT>1</tt></td><td align=center>¹</td>
-	<td align=center><TT>' E</tt></td><td align=center>É</td>
-	<td align=center><TT>` U</tt></td><td align=center>Ù</td>
-	<td align=center><TT>' e</tt></td><td align=center>é</td>
-	<td align=center><TT>` u</tt></td><td align=center>ù
-</tr><tr>
-	<td align=center><TT>a</tt></td><td align=center>ª</td>
-	<td align=center><TT>o</tt></td><td align=center>º</td>
-	<td align=center><TT>^ E</tt></td><td align=center>Ê</td>
-	<td align=center><TT>' U</tt></td><td align=center>Ú</td>
-	<td align=center><TT>^ e</tt></td><td align=center>ê</td>
-	<td align=center><TT>' u</tt></td><td align=center>ú
-</tr><tr>
-	<td align=center><TT>&lt; &lt;</tt></td><td align=center>«</td>
-	<td align=center><TT>&gt; &gt;</tt></td><td align=center>»</td>
-	<td align=center><TT>: E</tt></td><td align=center>Ë</td>
-	<td align=center><TT>^ U</tt></td><td align=center>Û</td>
-	<td align=center><TT>: e</tt></td><td align=center>ë</td>
-	<td align=center><TT>^ u</tt></td><td align=center>û
-</tr><tr>
-	<td align=center><TT>~</tt></td><td align=center>¬</td>
-	<td align=center><TT>1 4</tt></td><td align=center>¼</td>
-	<td align=center><TT>` I</tt></td><td align=center>Ì</td>
-	<td align=center><TT>: U</tt></td><td align=center>Ü</td>
-	<td align=center><TT>` i</tt></td><td align=center>ì</td>
-	<td align=center><TT>: u</tt></td><td align=center>ü
-</tr><tr>
-	<td align=center><TT>-</tt></td><td align=center>­</td>
-	<td align=center><TT>1 2</tt></td><td align=center>½</td>
-	<td align=center><TT>' I</tt></td><td align=center>Í</td>
-	<td align=center><TT>' Y</tt></td><td align=center>Ý</td>
-	<td align=center><TT>' i</tt></td><td align=center>í</td>
-	<td align=center><TT>' y</tt></td><td align=center>ý
-</tr><tr>
-	<td align=center><TT>r</tt></td><td align=center>®</td>
-	<td align=center><TT>3 4</tt></td><td align=center>¾</td>
-	<td align=center><TT>^ I</tt></td><td align=center>Î</td>
-	<td align=center><TT>T H</tt></td><td align=center>Þ</td>
-	<td align=center><TT>^ i</tt></td><td align=center>î</td>
-	<td align=center><TT>t h</tt></td><td align=center>þ
-</tr><tr>
-	<td align=center><TT>_</tt></td><td align=center>¯</td>
-	<td align=center><TT>?</tt></td><td align=center>¿</td>
-	<td align=center><TT>: I</tt></td><td align=center>Ï</td>
-	<td align=center><TT>s s</tt></td><td align=center>ß</td>
-	<td align=center><TT>: i</tt></td><td align=center>ï</td>
-	<td align=center><TT>: y</tt></td><td align=center>ÿ
-</table></center>
+<H2><A name="Fl_Text_Buffer">class Fl_Text_Buffer</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<B>Fl_Text_Buffer</B>
+         |
+         +----<A href="Fl_Text_Display.html">Fl_Text_Display</A>,
+              <A href="Fl_Text_Editor.html">Fl_Text_Editor</A>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Text_Buffer.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Text_Buffer</TT> class is used by the <TT>Fl_Text_Display</TT>
+and <TT>Fl_Text_Editor</TT> to manage complex text data and is based upon the
+excellent NEdit text editor engine - see
+<A HREF="http://www.nedit.org/">http://www.nedit.org/</A>.</P>
 
 <H3>Methods</H3>
-<CENTER>
-<TABLE width=90% summary="Fl_Input methods.">
-<TR><TD align=left valign=top>
-<UL>
-<LI><A href=#Fl_Input.Fl_Input>Fl_Input</A></LI>
-<LI><A href=#Fl_Input.~Fl_Input>~Fl_Input</A></LI>
-<LI><A href=#Fl_Input.cursor_color>cursor_color</A></LI>
-</UL>
-</TD><TD align=left valign=top>
-<UL>
-<LI><A href=#Fl_Input.index>index</A></LI>
-<LI><A href=#Fl_Input.size>size</A></LI>
-</UL>
-</TD><TD align=left valign=top>
-<UL>
-<LI><A href=#Fl_Input.static_value>static_value</A></LI>
-<LI><A href=#Fl_Input.textcolor>textcolor</A></LI>
-</UL>
-</TD><TD align=left valign=top>
-<UL>
-<LI><A href=#Fl_Input.textfont>textfont</A></LI>
-<LI><A href=#Fl_Input.textsize>textsize</A></LI>
-</UL>
-</TD><TD align=left valign=top>
-<UL>
-<LI><A href=#Fl_Input.value>value</A></LI>
-<LI><A href=#Fl_Input.when>when</A></LI>
-</UL>
-</TD></TR>
-</TABLE>
-</CENTER>
-<H4><A name=Fl_Input.Fl_Input>Fl_Input::Fl_Input(int x, int y, int w, 
-int h, const char *label = 0)</A></H4>
- Creates a new <TT>Fl_Input</TT> widget using the given position, size, 
-and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>. 
-<H4><A name=Fl_Input.~Fl_Input>virtual Fl_Input::~Fl_Input()</A></H4>
- Destroys the widget and any value associated with it. 
-<H4><A name=Fl_Input.value>const char *Fl_Input::value() const
-<BR> int Fl_Input::value(const char*)
-<BR> int Fl_Input::value(const char*, int)</A></H4>
- The first form returns the current value, which is a pointer to the 
-internal buffer and is valid only until the next event is handled. 
-<P>The second two forms change the text and set the mark and the point 
-to the end of it. The string is copied to the internal buffer.  Passing <TT>
-NULL</TT> is the same as &quot;&quot;.  This returns non-zero if the new value is 
-different than the current one.  You can use the second version to 
-directly set the length if you know it already or want to put nul's in 
-the text. </P>
-<H4><A name=Fl_Input.static_value>int Fl_Input::static_value(const 
-char*)
-<BR> int Fl_Input::static_value(const char*, int)</A></H4>
- Change the text and set the mark and the point to the end of it.  The 
-string is <I>not</I> copied.  If the user edits the string it is copied 
-to the internal buffer then.  This can save a great deal of time and 
-memory if your program is rapidly changing the values of text fields, 
-but this will only work if the passed string remains unchanged until 
-either the <TT>Fl_Input</TT> is destroyed or <TT>value()</TT> is called 
-again. 
-<H4><A name=Fl_Input.size>int Fl_Input::size() const</A></H4>
- Returns the number of characters in <TT>value()</TT>.  This may be 
-greater than <TT>strlen(value())</TT> if there are nul characters in 
-it. 
-<H4><A name=Fl_Input.index>char Fl_Input::index(int) const</A></H4>
- Same as <TT>value()[n]</TT>, but may be faster in plausible 
-implementations. No bounds checking is done. 
-<H4><A name=Fl_Input.when>Fl_When Fl_Widget::when() const
-<BR> void Fl_Widget::when(Fl_When)</A></H4>
- Controls when callbacks are done.  The following values are useful, 
-the default value is <TT>FL_WHEN_RELEASE</TT>: 
-<UL>
-<LI><TT>0</TT>: The callback is not done, but <TT>changed()</TT> is 
- turned on. </LI>
-<LI><TT>FL_WHEN_CHANGED</TT>: The callback is done each time the  text 
-is changed by the user. </LI>
-<LI><TT>FL_WHEN_RELEASE</TT>: The callback will  be done when this 
-widget loses the focus, including when the window is  unmapped.  This 
-is a useful value for text fields in a panel where  doing the callback 
-on every change is wasteful.  However the callback  will also happen if 
-the mouse is moved out of the window, which means  it should not do 
-anything visible (like pop up an error message).  You  might do better 
-setting this to zero, and scanning all the items for <TT>changed()</TT>
- when the OK button on a panel is pressed. </LI>
-<LI><TT>FL_WHEN_ENTER_KEY</TT>: If the user types the Enter  key, the 
-entire text is selected, and the callback is done if  the text has 
-changed.  Normally the Enter key will navigate to  the next field (or 
-insert a newline for a <TT>Fl_Mulitline_Input</TT>), this changes the 
-behavior. </LI>
-<LI><TT>FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED</TT>: The Enter key  will 
-do the callback even if the text has not changed.  Useful for  command 
-fields. </LI>
-</UL>
-<H4><A name=Fl_Input.textcolor>Fl_Color Fl_Input::textcolor() const
-<BR> void Fl_Input::textcolor(Fl_Color)</A></H4>
- Gets or sets the color of the text in the input field. 
-<H4><A name=Fl_Input.textfont>Fl_Font Fl_Input::textfont() const
-<BR> void Fl_Input::textfont(Fl_Font)</A></H4>
- Gets or sets the font of the text in the input field. 
-<H4><A name=Fl_Input.textsize>uchar Fl_Input::textsize() const
-<BR> void Fl_Input::textsize(uchar)</A></H4>
- Gets or sets the size of the text in the input field. 
-<H4><A name=Fl_Input.cursor_color>Fl_Color Fl_Input::cursor_color() 
-const
-<BR> void Fl_Input::cursor_color(Fl_Color)</A></H4>
- Get or set the color of the cursor.  This is black by default.
 
-</BODY></HTML>
+<UL>
+
+	<H4><A NAME="Fl_Text_Buffer.Fl_Text_Buffer">Fl_Text_Buffer</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.~Fl_Text_Buffer">~Fl_Text_Buffer</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.add_modify_callback">add_modify_callback</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.append">append</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.appendfile">appendfile</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.call_modify_callbacks">call_modify_callbacks</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.character">character</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.character_width">character_width</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.clear_rectangular">clear_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.copy">copy</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.count_displayed_characters">count_displayed_characters</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.count_lines">count_lines</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.expand_character">expand_character</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.findchar_backward">findchar_backward</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.findchar_forward">findchar_forward</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.findchars_backward">findchars_backward</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.findchars_forward">findchars_forward</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.highlight">highlight</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.highlight_position">highlight_position</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.highlight_rectangular">highlight_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.highlight_selection">highlight_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.highlight_text">highlight_text</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.insert_column">insert_column</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.insertfile">insertfile</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.insert">insert</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.length">length</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.line_end">line_end</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.line_start">line_start</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.line_text">line_text</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.loadfile">loadfile</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.null_substitution_character">null_substitution_character</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.outputfile">outputfile</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.overlay_rectangular">overlay_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.primary_selection">primary_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.remove_modify_callback">remove_modify_callback</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.remove_rectangular">remove_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.remove">remove</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.remove_secondary_selection">remove_secondary_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.remove_selection">remove_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.replace_rectangular">replace_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.replace">replace</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.replace_secondary_selection">replace_secondary_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.replace_selection">replace_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.rewind_lines">rewind_lines</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.savefile">savefile</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.search_backward">search_backward</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.search_forward">search_forward</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.secondary_selection_position">secondary_selection_position</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.secondary_selection">secondary_selection</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.secondary_selection_text">secondary_selection_text</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.secondary_select_rectangular">secondary_select_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.secondary_select">secondary_select</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.secondary_unselect">secondary_unselect</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.selected">selected</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.selection_position">selection_position</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.selection_text">selection_text</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.select_rectangular">select_rectangular</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.select">select</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.skip_displayed_characters">skip_displayed_characters</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.skip_lines">skip_lines</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.substitute_null_characters">substitute_null_characters</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.text_in_rectangle">text_in_rectangle</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.text_range">text_range</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.text">text</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.unhighlight">unhighlight</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.unselect">unselect</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.unsubstitute_null_characters">unsubstitute_null_characters</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.word_end">word_end</A></H4>
+	<H4><A NAME="Fl_Text_Buffer.word_start">word_start</A></H4>
+
+</UL>
+
+<H4><A NAME="Fl_Text_Buffer.Fl_Text_Buffer">Fl_Text_Buffer</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.~Fl_Text_Buffer">~Fl_Text_Buffer</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.add_modify_callback">add_modify_callback</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.append">append</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.appendfile">appendfile</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.call_modify_callbacks">call_modify_callbacks</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.character">character</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.character_width">character_width</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.clear_rectangular">clear_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.copy">copy</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.count_displayed_characters">count_displayed_characters</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.count_lines">count_lines</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.expand_character">expand_character</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.findchar_backward">findchar_backward</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.findchar_forward">findchar_forward</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.findchars_backward">findchars_backward</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.findchars_forward">findchars_forward</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.highlight">highlight</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.highlight_position">highlight_position</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.highlight_rectangular">highlight_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.highlight_selection">highlight_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.highlight_text">highlight_text</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.insert_column">insert_column</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.insertfile">insertfile</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.insert">insert</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.length">length</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.line_end">line_end</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.line_start">line_start</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.line_text">line_text</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.loadfile">loadfile</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.null_substitution_character">null_substitution_character</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.outputfile">outputfile</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.overlay_rectangular">overlay_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.primary_selection">primary_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.remove_modify_callback">remove_modify_callback</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.remove_rectangular">remove_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.remove">remove</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.remove_secondary_selection">remove_secondary_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.remove_selection">remove_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.replace_rectangular">replace_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.replace">replace</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.replace_secondary_selection">replace_secondary_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.replace_selection">replace_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.rewind_lines">rewind_lines</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.savefile">savefile</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.search_backward">search_backward</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.search_forward">search_forward</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.secondary_selection_position">secondary_selection_position</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.secondary_selection">secondary_selection</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.secondary_selection_text">secondary_selection_text</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.secondary_select_rectangular">secondary_select_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.secondary_select">secondary_select</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.secondary_unselect">secondary_unselect</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.selected">selected</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.selection_position">selection_position</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.selection_text">selection_text</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.select_rectangular">select_rectangular</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.select">select</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.skip_displayed_characters">skip_displayed_characters</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.skip_lines">skip_lines</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.substitute_null_characters">substitute_null_characters</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.tab_distance">tab_distance</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.text_in_rectangle">text_in_rectangle</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.text_range">text_range</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.text">text</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.unhighlight">unhighlight</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.unselect">unselect</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.unsubstitute_null_characters">unsubstitute_null_characters</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.word_end">word_end</A></H4>
+
+<H4><A NAME="Fl_Text_Buffer.word_start">word_start</A></H4>
+
+
+
+    Fl_Text_Buffer(int requestedSize = 0);
+    ~Fl_Text_Buffer();
+
+    int length() { return mLength; }
+    const char* text();
+    void text(const char* text);
+    const char* text_range(int start, int end);
+    char character(int pos);
+    const char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
+    void insert(int pos, const char* text);
+    void append(const char* text) { insert(length(), text); }
+    void remove(int start, int end);
+    void replace(int start, int end, const char *text);
+    void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
+    int insertfile(const char *file, int pos, int buflen = 128*1024);
+    int appendfile(const char *file, int buflen = 128*1024)
+      { return insertfile(file, length(), buflen); }
+    int loadfile(const char *file, int buflen = 128*1024)
+      { select(0, length()); remove_selection(); return appendfile(file, buflen); }
+    int outputfile(const char *file, int start, int end, int buflen = 128*1024);
+    int savefile(const char *file, int buflen = 128*1024)
+      { return outputfile(file, 0, length(), buflen); }
+
+    void insert_column(int column, int startPos, const char* text,
+                       int* charsInserted, int* charsDeleted);
+
+    void replace_rectangular(int start, int end, int rectStart, int rectEnd,
+                             const char* text);
+
+    void overlay_rectangular(int startPos, int rectStart, int rectEnd,
+                             const char* text, int* charsInserted,
+                             int* charsDeleted);
+
+    void remove_rectangular(int start, int end, int rectStart, int rectEnd);
+    void clear_rectangular(int start, int end, int rectStart, int rectEnd);
+    int tab_distance() { return mTabDist; }
+    void tab_distance(int tabDist);
+    void select(int start, int end);
+    int selected() { return mPrimary.selected(); }
+    void unselect();
+    void select_rectangular(int start, int end, int rectStart, int rectEnd);
+    int selection_position(int* start, int* end);
+
+    int selection_position(int* start, int* end, int* isRect, int* rectStart,
+                           int* rectEnd);
+
+    const char* selection_text();
+    void remove_selection();
+    void replace_selection(const char* text);
+    void secondary_select(int start, int end);
+    void secondary_unselect();
+
+    void secondary_select_rectangular(int start, int end, int rectStart,
+                                      int rectEnd);
+
+    int secondary_selection_position(int* start, int* end, int* isRect,
+                                     int* rectStart, int* rectEnd);
+
+    const char* secondary_selection_text();
+    void remove_secondary_selection();
+    void replace_secondary_selection(const char* text);
+    void highlight(int start, int end);
+    void unhighlight();
+    void highlight_rectangular(int start, int end, int rectStart, int rectEnd);
+
+    int highlight_position(int* start, int* end, int* isRect, int* rectStart,
+                           int* rectEnd);
+
+    const char* highlight_text();
+    void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
+    void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
+
+    void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
+
+    const char* line_text(int pos);
+    int line_start(int pos);
+    int line_end(int pos);
+    int word_start(int pos);
+    int word_end(int pos);
+    int expand_character(int pos, int indent, char *outStr);
+
+    static int expand_character(char c, int indent, char* outStr, int tabDist,
+                                char nullSubsChar);
+
+    static int character_width(char c, int indent, int tabDist, char nullSubsChar);
+    int count_displayed_characters(int lineStartPos, int targetPos);
+    int skip_displayed_characters(int lineStartPos, int nChars);
+    int count_lines(int startPos, int endPos);
+    int skip_lines(int startPos, int nLines);
+    int rewind_lines(int startPos, int nLines);
+    int findchar_forward(int startPos, char searchChar, int* foundPos);
+    int findchar_backward(int startPos, char searchChar, int* foundPos);
+    int findchars_forward(int startPos, const char* searchChars, int* foundPos);
+    int findchars_backward(int startPos, const char* searchChars, int* foundPos);
+
+    int search_forward(int startPos, const char* searchString, int* foundPos,
+                       int matchCase = 0);
+
+    int search_backward(int startPos, const char* searchString, int* foundPos,
+                        int matchCase = 0);
+
+    int substitute_null_characters(char* string, int length);
+    void unsubstitute_null_characters(char* string);
+    char null_substitution_character() { return mNullSubsChar; }
+    Fl_Text_Selection* primary_selection() { return &mPrimary; }
+    Fl_Text_Selection* secondary_selection() { return &mSecondary; }
+    Fl_Text_Selection* highlight_selection() { return &mHighlight; }
+
+</BODY>
+</HTML>
