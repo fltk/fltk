@@ -27,6 +27,7 @@ drawing functions:
 <UL>
 <LI><A href=#clipping>Clipping</A></LI>
 <LI><A href=#colors>Colors</A></LI>
+<LI><A href=#lines>Line dashes and thickness</A></LI>
 <LI><A href=#fast>Fast Shapes</A></LI>
 <LI><A href=#complex>Complex Shapes</A></LI>
 <LI><A href=#text>Text</A></LI>
@@ -82,6 +83,46 @@ for state save/restore.
 possible match to the RGB color is used.  The RGB color is used 
 directly on TrueColor displays. For colormap visuals the nearest index 
 in the gray ramp or color cube is used. 
+
+<h3><A name=lines>Line dashes and thickness</a></h3>
+
+<h4>void fl_line_style(int style, int width=0, char* dashes=0)</h4>
+
+Set how to draw lines (the "pen").  If you change this it is your
+responsibility to set it back to the default with
+<tt>fl_line_style(0)</tt>.
+
+<p><i>style</i> is a bitmask in which you 'or' the following values.  If
+you don't specify a dash type you will get a solid line.  If you don't
+specify a cap or join type you will get a system-defined default of
+whatever value is fastest.
+
+<ul>
+<li><tt>FL_SOLID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------</tt>
+<li><tt>FL_DASH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - - - -</tt>
+<li><tt>FL_DOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......</tt>
+<li><tt>FL_DASHDOT&nbsp;&nbsp;&nbsp; - . - .</tt>
+<li><tt>FL_DASHDOTDOT - .. -</tt>
+<li><tt>FL_CAP_FLAT</tt>
+<li><tt>FL_CAP_ROUND</tt>
+<li><tt>FL_CAP_SQUARE</tt> (extends past end point 1/2 line width)
+<li><tt>FL_JOIN_MITER</tt> (pointed)
+<li><tt>FL_JOIN_ROUND</tt>
+<li><tt>FL_JOIN_BEVEL</tt> (flat)
+</ul>
+
+<p><i>width</i> is the number of pixels thick to draw the lines.  Zero
+results in the system-defined default, which on both X and Windows is
+somewhat different and nicer than 1.
+
+<p><i>dashes</i> is a pointer to an array of dash lengths, measured in
+pixels.  The first location is how long to draw a solid portion, the
+next is how long to draw the gap, then the solid, etc.  It is
+terminated with a zero-length entry.  A null pointer or a zero-length
+array results in a solid line.  Odd array sizes are not supported and
+result in undefined behavior.  <i>The dashes array does not work on
+Windows 95/98, use the dash styles instead.</i>
+
 <H3><A name=fast>Fast Shapes</A></H3>
  These are used to draw almost all the FLTK widgets.  They draw on 
 exact pixel boundaries and are as fast as possible, and their behavior 

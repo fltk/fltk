@@ -40,7 +40,7 @@
 	@d:labels:label
 	@d:fl_arc:arc
 	@d:fl_curve:curve
-	@d:fonts:fonts
+	@d:fl_line_style:line_style
 
 @main:Events:@u
 	@u:navigation:navigation
@@ -63,6 +63,7 @@
 	@o:color choosers:color_chooser r
 	@o:file chooser:file_chooser
 	@o:XForms Emulation:forms
+	@o:fonts:fonts
 
 @main:Tutorial\nfrom\nManual:@j
 	@j:ask\n(modified):ask

@@ -49,32 +49,30 @@ exit(0)</TT> if this is the last top-level window. </P>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Window.first_window>first_window</A></LI>
 <LI><A href=#Fl_Window.free_position>free_position</A></LI>
 <LI><A href=#Fl_Window.fullscreen>fullscreen</A></LI>
 <LI><A href=#Fl_Window.fullscreen_off>fullscreen_off</A></LI>
 <LI><A href=#Fl_Window.hide>hide</A></LI>
+<LI><A href=#Fl_Window.hotspot>hotspot</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Window.hotspot>hotspot</A></LI>
 <LI><A href=#Fl_Window.iconize>iconize</A></LI>
 <LI><A href=#Fl_Window.iconlabel>iconlabel</A></LI>
 <LI><A href=#Fl_Window.label>label</A></LI>
 <LI><A href=#Fl_Window.make_current>make_current</A></LI>
+<LI><A href=#Fl_Window.modal>modal</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Window.modal>modal</A></LI>
-<LI><A href=#Fl_Window.next_window>next_window</A></LI>
 <LI><A href=#Fl_Window.non_modal>non_modal</A></LI>
 <LI><A href=#Fl_Window.resize>resize</A></LI>
 <LI><A href=#Fl_Window.set_modal>set_modal</A></LI>
+<LI><A href=#Fl_Window.set_non_modal>set_non_modal</A></LI>
+<LI><A href=#Fl_Window.show>show</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Window.set_non_modal>set_non_modal</A></LI>
-<LI><A href=#Fl_Window.show>show</A></LI>
 <LI><A href=#Fl_Window.shown>shown</A></LI>
 <LI><A href=#Fl_Window.size_range>size_range</A></LI>
 <LI><A href=#Fl_Window.xclass>xclass</A></LI>
@@ -172,13 +170,7 @@ FL_SHOW</TT> events and <TT>visible()</TT> is turned on and off. </P>
 <P>There is no way to control what is drawn in the icon except with the 
 string passed to <TT>Fl_Window::xclass()</TT>.  You should not rely on 
 window managers displaying the icons. </P>
-<H4><A name=Fl_Window.first_window>Fl_Window *Fl::first_window()</A></H4>
- Returns the first <TT>shown()</TT> window in the widget hierarchy. If 
-no windows are displayed <TT>first_window</TT> returns <TT>NULL</TT>. 
-<H4><A name=Fl_Window.next_window>Fl_Window *Fl::next_window(const 
-Fl_Window*)</A></H4>
- Returns the next <TT>shown()</TT> window in the hierarchy.  You can 
-use this call to iterate through all the windows that are shown(). 
+
 <H4><A name=Fl_Window.resize>void Fl_Window::resize(int,int,int,int)</A></H4>
  Change the size and position of the window.  If <TT>shown()</TT> is 
 true, these changes are communicated to the window server (which may 

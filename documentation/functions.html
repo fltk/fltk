@@ -478,8 +478,23 @@ only valid until the next event is processed.
 absolute position of an <TT>Fl_Window</TT> on the screen, use the 
 difference between <TT>event_x_root(),event_y_root()</TT> and <TT>
 event_x(),event_y()</TT>. 
+
 <H3><A name=first_window>static Fl_Window *Fl::first_window()</A></H3>
- Returns the first top-level window in the widget hierarchy. 
+Returns the first top-level window in the list of shown() windows.  If
+a modal() window is shown this is the top-most modal window, otherwise
+it is the most recent window to get an event.
+
+<H3><A name=next_window>static Fl_Window *Fl::next_window(Fl_Window *)</A></H3>
+Returns the next top-level window in the list of shown() windows.  You can 
+use this call to iterate through all the windows that are shown(). 
+
+<H3><A name=first_window>static void Fl::first_window(Fl_Window*)</A></H3>
+Sets the window that is returned by first_window.  The window is
+removed from wherever it is in the list and inserted at the top.  This
+is not done if Fl::modal() is on or if the window is not shown().
+Because the first window is used to set the "parent" of modal windows,
+this is often useful.
+
 <H3><A name=flush>static void Fl::flush()</A></H3>
  Causes all the windows that need it to be redrawn and graphics forced 
 out through the pipes.  This is what <TT>wait()</TT> does before 
@@ -591,9 +606,6 @@ windows <TT>shown()</TT>.
 The <TT>modal()</TT> window has its <TT>handle()</TT> method called 
 for all events, and no other windows will have <TT>handle()</TT>
 called (<A href=#grab><TT>grab()</TT></A> overrides this).
-<H3><A name=next_window>static Fl_Window *Fl::next_window(Fl_Window *)</A>
-</H3>
- Returns the next top-level window in the widget hierarchy. 
 <H3><A name=own_colormap>static void Fl::own_colormap()</A></H3>
  Makes FLTK use its own colormap.  This may make FLTK display better 
 and will reduce conflicts with other programs that want lots of colors. 

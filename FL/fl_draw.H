@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9.2.2 2000/04/25 22:15:58 mike Exp $"
+// "$Id: fl_draw.H,v 1.9.2.3 2000/05/13 20:03:14 bill Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,24 @@ FL_EXPORT int fl_clip_box(int, int, int, int, int& x, int& y, int& w, int& h);
 
 // points:
 FL_EXPORT void fl_point(int x, int y);
+
+// line type:
+FL_EXPORT void fl_line_style(int style, int width=0, char* dashes=0);
+enum {
+  FL_SOLID	= 0,
+  FL_DASH	= 1,
+  FL_DOT	= 2,
+  FL_DASHDOT	= 3,
+  FL_DASHDOTDOT	= 4,
+
+  FL_CAP_FLAT	= 0x100,
+  FL_CAP_ROUND	= 0x200,
+  FL_CAP_SQUARE	= 0x300,
+
+  FL_JOIN_MITER	= 0x1000,
+  FL_JOIN_ROUND	= 0x2000,
+  FL_JOIN_BEVEL	= 0x3000
+};
 
 // rectangles tweaked to exactly fill the pixel rectangle:
 FL_EXPORT void fl_rect(int x, int y, int w, int h);
@@ -161,5 +179,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9.2.2 2000/04/25 22:15:58 mike Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.3 2000/05/13 20:03:14 bill Exp $".
 //

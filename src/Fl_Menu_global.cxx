@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_global.cxx,v 1.5.2.1 2000/04/25 22:16:28 mike Exp $"
+// "$Id: Fl_Menu_global.cxx,v 1.5.2.2 2000/05/13 20:03:18 bill Exp $"
 //
 // Global menu shortcut code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,7 @@ static Fl_Menu_* the_widget;
 
 static int handler(int e) {
   if (e != FL_SHORTCUT || Fl::modal()) return 0;
+  Fl::first_window(the_widget->window());
   return the_widget->handle(e);
 }
 
@@ -43,5 +44,5 @@ void Fl_Menu_::global() {
 }
 
 //
-// End of "$Id: Fl_Menu_global.cxx,v 1.5.2.1 2000/04/25 22:16:28 mike Exp $".
+// End of "$Id: Fl_Menu_global.cxx,v 1.5.2.2 2000/05/13 20:03:18 bill Exp $".
 //
