@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5 1999/01/07 19:17:20 mike Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.1 1999/09/16 05:34:25 bill Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -110,8 +110,6 @@ int Fl_Gl_Window::can_do_overlay() {
   return 1;
 }
 
-extern GLXContext fl_first_context;
-
 #endif
 
 #else
@@ -175,10 +173,9 @@ void Fl_Gl_Window::make_overlay_current() {
 #if HAVE_GL_OVERLAY
   if (overlay != this) {
 #ifdef WIN32
-    wglMakeCurrent(Fl_X::i(this)->private_dc, (GLXContext)overlay);
+    fl_set_gl_context(this, (GLXContext)overlay);
 #else
-    Fl_Gl_Window* w = (Fl_Gl_Window*)overlay;
-    w->make_current();
+    ((Fl_Gl_Window*)overlay)->make_current();
 #endif
   } else
 #endif
@@ -198,5 +195,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5 1999/01/07 19:17:20 mike Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.1 1999/09/16 05:34:25 bill Exp $".
 //

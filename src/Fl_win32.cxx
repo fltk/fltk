@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.13 1999/07/22 07:27:11 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.14 1999/09/16 05:34:26 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,7 +48,7 @@
 #endif /* !WM_SYNCPAINT */
 
 #ifndef WM_MOUSELEAVE
-#  define WM_MOUSE_LEAVE 0x02a3
+#  define WM_MOUSELEAVE 0x02a3
 #endif
 
 ////////////////////////////////////////////////////////////////
@@ -949,5 +949,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.13 1999/07/22 07:27:11 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.14 1999/09/16 05:34:26 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.2 1999/08/25 05:37:40 bill Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.3 1999/09/16 05:34:27 bill Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -210,7 +210,7 @@ int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
 #endif
 #endif
 #ifdef WIN32
-      if (fl_parse_color(p, c[0], c[1], c[2])) {;
+      if (fl_parse_color((const char*)p, c[0], c[1], c[2])) {;
 #else
       XColor x;
       if (XParseColor(fl_display, fl_colormap, (const char*)p, &x)) {
@@ -264,5 +264,5 @@ int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.2 1999/08/25 05:37:40 bill Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.3 1999/09/16 05:34:27 bill Exp $".
 //

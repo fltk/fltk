@@ -1,5 +1,5 @@
 //
-// "$Id: gl_start.cxx,v 1.6 1999/01/07 19:17:46 mike Exp $"
+// "$Id: gl_start.cxx,v 1.6.2.1 1999/09/16 05:34:27 bill Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -61,19 +61,20 @@ Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
 void gl_start() {
 #ifdef WIN32
   HDC hdc = fl_private_dc(Fl_Window::current(), default_mode,0);
+#endif
   if (!context) {
+#ifdef WIN32
     context = wglCreateContext(hdc);
     if (!fl_first_context) fl_first_context = context;
     else wglShareLists(fl_first_context, context);
-  }
-  wglMakeCurrent(hdc, context);
 #else
-  if (!context) {
     context = glXCreateContext(fl_display, fl_visual, fl_first_context, 1);
     if (!context) Fl::fatal("OpenGL does not support this visual");
     if (!fl_first_context) fl_first_context = context;
+#endif
   }
-  glXMakeCurrent(fl_display, fl_window, context);
+  fl_set_gl_context(Fl_Window::current(), context);
+#ifndef WIN32
   glXWaitX();
 #endif
   if (pw != Fl_Window::current()->w() || ph != Fl_Window::current()->h()) {
@@ -121,5 +122,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.6 1999/01/07 19:17:46 mike Exp $".
+// End of "$Id: gl_start.cxx,v 1.6.2.1 1999/09/16 05:34:27 bill Exp $".
 //
