@@ -47,7 +47,7 @@ decl {\#include <FL/Fl_Shared_Image.H>} {}
 
 decl {\#include <FL/Fl_Preferences.H>} {} 
 
-declblock {\#ifdef WIN32} {after {\#endif // WIN32}
+declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {selected after {\#endif // WIN32 && !__CYGWIN__}
 } {
   decl {\#include <io.h>} {}
   decl {\#else} {}
@@ -115,7 +115,7 @@ img = Fl_Shared_Image::get(pngfile);
 if (img) {
   template_preview->image(img);
   template_preview->redraw();
-}} selected
+}}
       xywh {10 28 180 250} type Hold labelfont 1 align 5 when 3
     }
     Fl_Box template_preview {

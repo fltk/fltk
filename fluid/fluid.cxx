@@ -46,7 +46,7 @@
 #include "alignment_panel.h"
 #include "function_panel.h"
 #include "template_panel.h"
-#ifndef WIN32
+#if !defined(WIN32) || defined(__CYGWIN__)
 #  include "print_panel.h"
 #endif // !WIN32
 
@@ -251,7 +251,11 @@ void save_template_cb(Fl_Widget *, void *) {
   fluid_prefs.getUserdataPath(filename, sizeof(filename));
 
   strlcat(filename, "templates", sizeof(filename));
+#if defined(WIN32) && !defined(__CYGWIN__)
+  if (access(filename, 0)) mkdir(filename);
+#else
   if (access(filename, 0)) mkdir(filename, 0777);
+#endif // WIN32 && !__CYGWIN__
 
   strlcat(filename, "/", sizeof(filename));
   strlcat(filename, safename, sizeof(filename));
@@ -848,7 +852,7 @@ void manual_cb(Fl_Widget *, void *) {
 
 // Load and show the print dialog...
 void print_menu_cb(Fl_Widget *, void *) {
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
   fl_message("Sorry, printing is not yet implemented on Windows...");
 }
 #else
@@ -1300,7 +1304,7 @@ void print_cb(Fl_Return_Button *, void *) {
   print_progress->hide();
   print_panel->hide();
 }
-#endif // WIN32
+#endif // WIN32 && !__CYGWIN__
 
 ////////////////////////////////////////////////////////////////
 

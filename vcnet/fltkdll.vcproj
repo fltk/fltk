@@ -1782,6 +1782,9 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\src\fl_read_image.cxx">
+		</File>
+		<File
 			RelativePath="..\src\fl_rect.cxx">
 			<FileConfiguration
 				Name="Release|Win32">

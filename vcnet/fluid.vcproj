@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,..,..\zlib,..\png"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -87,7 +87,7 @@
 				InlineFunctionExpansion="2"
 				ImproveFloatingPointConsistency="TRUE"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,..,..\zlib,..\png"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -202,6 +202,25 @@
 		</File>
 		<File
 			RelativePath="..\fluid\code.cxx">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCLCompilerTool"
+					FavorSizeOrSpeed="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\fluid\CodeEditor.cxx">
 			<FileConfiguration
 				Name="Debug|Win32">
 				<Tool
@@ -429,6 +448,9 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\fluid\template_panel.cxx">
+		</File>
+		<File
 			RelativePath="..\fluid\undo.cxx">
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -449,25 +471,6 @@
 		</File>
 		<File
 			RelativePath="..\fluid\widget_panel.cxx">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					FavorSizeOrSpeed="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\fluid\CodeEditor.cxx">
 			<FileConfiguration
 				Name="Debug|Win32">
 				<Tool
