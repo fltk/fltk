@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.19 2002/03/07 19:22:57 spitzak Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.20 2002/03/25 19:17:05 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -354,22 +354,22 @@ void Fl::get_mouse(int &x, int &y) {
 ////////////////////////////////////////////////////////////////
 // code used for selections:
 
-static char *selection_buffer[2];
-static int selection_length[2];
-static int selection_buffer_length[2];
-static char i_own_selection;
+char *fl_selection_buffer[2];
+int fl_selection_length[2];
+int fl_selection_buffer_length[2];
+char fl_i_own_selection[2];
 
 // call this when you create a selection:
 void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
-  if (len+1 > selection_buffer_length[clipboard]) {
-    delete[] selection_buffer[clipboard];
-    selection_buffer[clipboard] = new char[len+100];
-    selection_buffer_length[clipboard] = len+100;
+  if (len+1 > fl_selection_buffer_length[clipboard]) {
+    delete[] fl_selection_buffer[clipboard];
+    fl_selection_buffer[clipboard] = new char[len+100];
+    fl_selection_buffer_length[clipboard] = len+100;
   }
-  memcpy(selection_buffer[clipboard], stuff, len);
-  selection_buffer[clipboard][len] = 0; // needed for direct paste
-  selection_length[clipboard] = len;
+  memcpy(fl_selection_buffer[clipboard], stuff, len);
+  fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
+  fl_selection_length[clipboard] = len;
   if (clipboard) {
     // set up for "delayed rendering":
     if (OpenClipboard(fl_xid(Fl::first_window()))) {
@@ -377,18 +377,18 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
       SetClipboardData(CF_TEXT, NULL);
       CloseClipboard();
     }
-    i_own_selection = true;
+    fl_i_own_selection[clipboard] = 1;
   }
 }
 
 // Call this when a "paste" operation happens:
 void Fl::paste(Fl_Widget &receiver, int clipboard) {
-  if (!clipboard || i_own_selection) {
+  if (!clipboard || fl_i_own_selection[clipboard]) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
-    Fl::e_text = selection_buffer[clipboard];
-    Fl::e_length = selection_length[clipboard];
+    Fl::e_text = fl_selection_buffer[clipboard];
+    Fl::e_length = fl_selection_length[clipboard];
     receiver.handle(FL_PASTE);
   } else {
     if (!OpenClipboard(NULL)) return;
@@ -772,7 +772,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
 
   case WM_DESTROYCLIPBOARD:
-    i_own_selection = false;
+    fl_i_own_selection[1] = 0;
     return 1;
 
   case WM_RENDERALLFORMATS:
@@ -784,11 +784,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     OpenClipboard(NULL);
     // fall through...
   case WM_RENDERFORMAT: {
-    HANDLE h = GlobalAlloc(GHND, selection_length[1]+1);
+    HANDLE h = GlobalAlloc(GHND, fl_selection_length[1]+1);
     if (h) {
       LPSTR p = (LPSTR)GlobalLock(h);
-      memcpy(p, selection_buffer[1], selection_length[1]);
-      p[selection_length[1]] = 0;
+      memcpy(p, fl_selection_buffer[1], fl_selection_length[1]);
+      p[fl_selection_length[1]] = 0;
       GlobalUnlock(h);
       SetClipboardData(CF_TEXT, h);
     }
@@ -1156,5 +1156,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.19 2002/03/07 19:22:57 spitzak Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.20 2002/03/25 19:17:05 easysw Exp $".
 //

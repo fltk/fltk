@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5.2.3 2002/03/07 19:22:58 spitzak Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.4 2002/03/25 19:17:05 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -46,8 +46,10 @@
 #include <ole2.h>
 #include <ShellAPI.h>
 
-extern char *fl_selection_buffer;
-extern int fl_selection_length;
+extern char *fl_selection_buffer[2];
+extern int fl_selection_length[2];
+extern int fl_selection_buffer_length[2];
+extern char fl_i_own_selection[2];
 
 Fl_Window *fl_dnd_target_window = 0;
 
@@ -273,9 +275,10 @@ public:
         (pformatetcIn->tymed & TYMED_HGLOBAL) &&
         (pformatetcIn->cfFormat == CF_TEXT))
     {
-      HGLOBAL gh = GlobalAlloc( GHND, fl_selection_length+1 );
+      HGLOBAL gh = GlobalAlloc( GHND, fl_selection_length[0]+1 );
       char *pMem = (char*)GlobalLock( gh );
-      memmove( pMem, fl_selection_buffer, fl_selection_length ); pMem[ fl_selection_length ] = 0;      
+      memmove( pMem, fl_selection_buffer[0], fl_selection_length[0] );
+      pMem[ fl_selection_length[0] ] = 0;      
       pmedium->tymed	      = TYMED_HGLOBAL;
       pmedium->hGlobal	      = gh;
       pmedium->pUnkForRelease = NULL;
@@ -336,5 +339,5 @@ int Fl::dnd()
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.3 2002/03/07 19:22:58 spitzak Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.4 2002/03/25 19:17:05 easysw Exp $".
 //
