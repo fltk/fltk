@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.3 2001/08/02 18:15:44 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.4 2001/08/02 19:43:49 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -30,7 +30,7 @@ CPPFILES =\
 	color_chooser.cxx cube.cxx cursor.cxx curve.cxx demo.cxx \
 	doublebuffer.cxx editor.cxx file_chooser.cxx fonts.cxx \
 	forms.cxx fractals.cxx fullscreen.cxx gl_overlay.cxx \
-	glpuzzle.cxx hello.cxx iconize.cxx image.cxx input.cxx \
+	glpuzzle.cxx hello.cxx help.cxx iconize.cxx image.cxx input.cxx \
 	keyboard.cxx label.cxx list_visuals.cxx mandelbrot.cxx \
 	menubar.cxx message.cxx minimum.cxx navigation.cxx \
 	output.cxx overlay.cxx pixmap.cxx pixmap_browser.cxx \
@@ -42,7 +42,7 @@ CPPFILES =\
 ALL =	adjuster arc ask bitmap boxtype browser button buttons \
 	checkers clock colbrowser color_chooser cursor curve \
 	demo doublebuffer editor file_chooser fonts forms hello \
-	iconize image input keyboard label list_visuals \
+	help iconize image input keyboard label list_visuals \
 	mandelbrot menubar message minimum navigation output \
 	overlay pixmap pixmap_browser radio resizebox scroll \
 	subwindow symbols tabs tile valuators fast_slow resize \
@@ -70,6 +70,10 @@ include ../makeinclude
 $(ALL):  ../lib/$(LIBNAME)
 
 # Programs needing special instructions...
+help: help.cxx
+	echo Compiling and linking $@...
+	echo $(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
+	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 keyboard: keyboard.cxx keyboard_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx $(LINKFLTK) $(LDLIBS) -o $@
@@ -124,5 +128,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.3 2001/08/02 18:15:44 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.4 2001/08/02 19:43:49 easysw Exp $".
 #

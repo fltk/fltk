@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.2 2001/08/02 18:15:44 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.3 2001/08/02 19:43:49 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -158,6 +158,36 @@ AC_CHECK_FUNC(snprintf,
 AC_CHECK_FUNCS(vsprintf)
 AC_CHECK_HEADER(strings.h,AC_DEFINE(HAVE_STRINGS_H))
 AC_CHECK_FUNCS(strcasecmp)
+
+dnl Check for image libraries...
+SAVELIBS="$LIBS"
+IMAGELIBS=""
+
+AC_SUBST(IMAGELIBS)
+
+AC_CHECK_HEADER(jpeglib.h,
+    AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
+	AC_DEFINE(HAVE_LIBJPEG)
+	IMAGELIBS="$IMAGELIBS -ljpeg"))
+
+AC_CHECK_HEADER(zlib.h,
+    AC_CHECK_LIB(z, gzopen,
+	AC_DEFINE(HAVE_LIBZ)
+	IMAGELIBS="$IMAGELIBS -lz"
+	LIBS="$LIBS -lz"))
+
+dnl PNG library uses math library functions...
+AC_CHECK_LIB(m, pow)
+
+AC_CHECK_HEADER(png.h,
+    AC_CHECK_LIB(png, png_read_rows,
+	AC_DEFINE(HAVE_LIBPNG)
+	IMAGELIBS="-lpng -lm$IMAGELIBS"
+	LIBS="-lpng -lm $LIBS"
+	AC_CHECK_FUNCS(png_get_valid)))
+
+dnl Restore original LIBS settings...
+LIBS="$SAVELIBS"
 
 dnl Check for X11...
 AC_PATH_XTRA
@@ -403,5 +433,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.2 2001/08/02 18:15:44 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.3 2001/08/02 19:43:49 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.11 2001/04/30 17:17:01 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.1 2001/08/02 19:43:49 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -177,5 +177,20 @@
 #define USE_POLL 0
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11 2001/04/30 17:17:01 easysw Exp $".
+ * Do we have various image libraries?
+ */
+
+#undef HAVE_LIBPNG
+#undef HAVE_LIBZ
+#undef HAVE_LIBJPEG
+
+/*
+ * Do we have the png_get_valid() function?
+ */
+
+#undef HAVE_PNG_GET_VALID
+
+
+/*
+ * End of "$Id: configh.in,v 1.11.2.11.2.1 2001/08/02 19:43:49 easysw Exp $".
  */

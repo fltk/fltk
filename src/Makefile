@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.6 2001/08/02 18:39:01 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.7 2001/08/02 19:43:49 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -45,6 +45,8 @@ CPPFILES = \
 	Fl_FileChooser2.cxx \
 	Fl_FileIcon.cxx \
 	Fl_Group.cxx \
+	Fl_HelpDialog.cxx \
+	Fl_HelpView.cxx \
 	Fl_Image.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
@@ -168,11 +170,11 @@ $(LIBNAME): $(OBJECTS)
 
 libfltk.so.1.1 libfltk.sl.1.1: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(OBJECTS)
+	$(DSOCOMMAND) $@ $(OBJECTS) $(IMAGELIBS)
 
 libfltk_s.a: $(OBJECTS)
 	echo $(DSOCOMMAND) libfltk_s.o ...
-	$(DSOCOMMAND) libfltk_s.o $(OBJECTS)
+	$(DSOCOMMAND) libfltk_s.o $(OBJECTS) $(IMAGELIBS)
 	echo $(LIBCOMMAND) libfltk_s.a libfltk_s.o
 	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
 	chmod +x libfltk_s.a
@@ -251,5 +253,5 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.6 2001/08/02 18:39:01 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.7 2001/08/02 19:43:49 easysw Exp $".
 #
