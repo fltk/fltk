@@ -1,3 +1,28 @@
+#
+# "$Id"
+#
+# Fluid makefile for the Fast Light Tool Kit (FLTK).
+#
+# Copyright 1998 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@easysw.com".
+#
+
 PROGRAM = fluid
 
 CPPFILES = \
@@ -57,27 +82,13 @@ include makedepend
 
 install: $(PROGRAM)
 	strip $(PROGRAM)
+	-mkdir -p $(bindir)
 	cp $(PROGRAM) $(bindir)/$(PROGRAM)
 	@chmod a+rx,g-w,o-w $(bindir)/$(PROGRAM)
 
 uninstall:
 	-@ rm -f $(bindir)/$(PROGRAM)
 
-################################################################
-
-PROGRAM_D = $(PROGRAM)_d
-
-debug: $(PROGRAM_D)
-
-OBJECTS_D = $(CPPFILES:.C=.do) $(CFILES:.c=.do)
-
-.C.do :
-	@echo $<:
-	@$(CXX) -I.. $(CXXFLAGS_D) -c -o $@ $<
-.c.do :
-	@echo $<:
-	@$(CC) -I.. $(CFLAGS_D) -c -o $@ $<
-
-$(PROGRAM_D) : $(OBJECTS_D) ../lib/$(LIBNAME_D)
-	@echo linking $@:
-	@$(CXX) $(CXXFLAGS_D) -o $(PROGRAM_D) $(OBJECTS_D) -L../lib -lfltk_d $(LDLIBS)
+#
+# End of "$Id: Makefile,v 1.2 1998/10/20 21:06:18 mike Exp $".
+#

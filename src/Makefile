@@ -1,3 +1,28 @@
+#
+# "$Id"
+#
+# Library makefile for the Fast Light Tool Kit (FLTK).
+#
+# Copyright 1998 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@easysw.com".
+#
+
 CPPFILES = \
 	Fl.C \
 	Fl_Adjuster.C \
@@ -126,7 +151,7 @@ OBJECTS = $(CPPFILES:.C=.o) $(CFILES:.c=.o)
 
 $(LIBRARY) : $(OBJECTS)
 	@echo Building $(LIBRARY)
-	@$(AR) $(LIBRARY) $(OBJECTS)
+	@$(LIBCOMMAND) $(LIBRARY) $(OBJECTS)
 	@$(RANLIB) $(LIBRARY)
 
 .C.o :
@@ -147,69 +172,14 @@ include makedepend
 
 ################################################################
 
-LIBRARY_D = ../lib/$(LIBNAME_D)
-
-debug: $(LIBRARY_D)
-
-OBJECTS_D = $(CPPFILES:.C=.do) $(CFILES:.c=.do)
-
-.SUFFIXES : .C .c .o .do
-
-.C.do :
-	@echo $<:
-	@$(CXX) -I.. $(CXXFLAGS_D) -c -o $@ $<
-.c.do :
-	@echo $<:
-	@$(CC) -I.. $(CFLAGS) -c -o $@ $<
-
-$(LIBRARY_D) : $(OBJECTS_D)
-	@echo building $(LIBRARY_D):
-	@$(AR) $(LIBRARY_D) $(OBJECTS_D)
-	@$(RANLIB) $(LIBRARY_D)
-
-################################################################
-# Linux-specific shared libraries:
-
-include ../version
-
-SHBASENAME  = libfltk.so
-SONAME      = $(SHBASENAME).$(VERSION)
-SHLIBNAME   = $(SHBASENAME).$(VERSION).$(REVISION)
-PICOBJECTS   = $(CPPFILES:.C=.pic.o) $(CFILES:.c=.pic.o)
-
-shared: ../lib/$(SHLIBNAME) ../lib/$(SONAME) ../lib/$(SHBASENAME)
-	touch ../lib/$(LIBNAME)
-
-../lib/$(SHLIBNAME): $(PICOBJECTS)
-	@echo building $@:
-	@$(CXX) -shared -Wl,-soname,$(SONAME) $(GLDLIBS) -o $@ $(PICOBJECTS)
-
-../lib/$(SONAME): ../lib/$(SHLIBNAME)
-	ln -nsf $(SHLIBNAME) $@
-
-../lib/$(SHBASENAME): ../lib/$(SHLIBNAME)
-	ln -nsf $(SHLIBNAME) $@
-
-%.pic.o: %.C
-	@echo $<:
-	@$(CXX) -fPIC -I.. $(CXXFLAGS) -c -o $@ $<
-%.pic.o: %.c
-	@echo $<:
-	@$(CC) -fPIC -I.. $(CFLAGS) -c -o $@ $<
-
-################################################################
-
 install: ../lib/$(LIBNAME)
+	-mkdir -p $(libdir)
 	cp -f ../lib/$(LIBNAME) $(libdir)
-	-cp -f ../lib/$(SHLIBNAME) $(libdir)
 	@chmod a+r,u+w,g-w,o-w $(libdir)/$(LIBNAME)*
+	-mkdir -p $(includedir)
 	cp -rf ../FL $(includedir)
 	@chmod -R a+r,u+w,g-w,o-w $(includedir)/FL
 
-# it used to do this, but it was recommended that I take it out
-#	@chown root $(libdir)/$(LIBNAME)*
-#	@chown -R root $(includedir)/FL
-
-uninstall:
-	-@ rm -f $(libdir)/libfltk*
-	-@ rm -rf $(includedir)/FL
+#
+# End of "$Id: Makefile,v 1.3 1998/10/20 21:06:18 mike Exp $".
+#
