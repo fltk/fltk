@@ -1,10 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {../FL/Fl_File_Chooser.H} 
-code_name {.cxx} 
-gridx 5 
-gridy 5 
-snap 3
+code_name {.cxx}
 class Fl_File_Chooser {open
 } {
   decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public
@@ -16,7 +13,7 @@ class Fl_File_Chooser {open
       callback {fileList->deselect();
 fileName->value("");
 window->hide();} open
-      private xywh {99 225 375 315} resizable
+      private xywh {99 225 375 325} resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -62,9 +59,11 @@ if ((f = fl_input(filter_label,
       Fl_Input fileName {
         label {Filename:}
         callback {fileNameCB();}
-        private xywh {10 245 355 25} align 5 when 8
+        private xywh {10 245 355 35} align 5 when 8
         code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
         code1 {fileName->label(filename_label);}
+        code2 {\#include <FL/Fl_File_Input.H>}
+        class Fl_File_Input
       }
       Fl_Return_Button okButton {
         label OK
@@ -73,7 +72,7 @@ if (callback_)
   (*callback_)(this, data_);
 
 window->hide();}
-        private xywh {200 280 75 25}
+        private xywh {200 290 75 25}
         code0 {\#include <FL/fl_ask.H>}
         code1 {okButton->label(fl_ok);}
       }
@@ -82,7 +81,7 @@ window->hide();}
         callback {fileList->deselect();
 fileName->value("");
 window->hide();}
-        private xywh {285 280 80 25}
+        private xywh {285 290 80 25}
         code0 {o->label(fl_cancel);}
       }
     }
@@ -214,11 +213,11 @@ else
   } {
     code {return window->visible();} {}
   }
-  decl {static const char *directory_label = "Directory:";} {public
+  decl {static const char *directory_label;} {public
   }
-  decl {static const char *filename_label = "Filename:";} {public
+  decl {static const char *filename_label;} {public
   }
-  decl {static const char *filter_label = "New Filter?";} {selected public
+  decl {static const char *filter_label;} {selected public
   }
 } 
 

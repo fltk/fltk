@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.8 2002/04/30 21:50:16 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -62,11 +62,20 @@
 
 
 //
+// File chooser label strings...
+//
+
+const char	*Fl_File_Chooser::directory_label = "Directory:";
+const char	*Fl_File_Chooser::filename_label = "Filename:";
+const char	*Fl_File_Chooser::filter_label = "New Filter?";
+
+
+//
 // 'Fl_File_Chooser::directory()' - Set the directory in the file chooser.
 //
 
 void
-Fl_File_Chooser::directory(const char *d)	// I - Directory to change to
+Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 {
   char	pathname[1024],			// Full path of directory
 	*pathptr,			// Pointer into full path
@@ -218,17 +227,8 @@ Fl_File_Chooser::value(int f)	// I - File number
   if (!(type_ & MULTI))
   {
     name = fileName->value();
-    if (name[0] == '\0')
-      return (NULL);
-
-    if (directory_[0]) {
-      snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
-    } else {
-      strncpy(pathname, name, sizeof(pathname) - 1);
-      pathname[sizeof(pathname) - 1] = '\0';
-    }
-
-    return ((const char *)pathname);
+    if (name[0] == '\0') return NULL;
+    else return name;
   }
 
   for (i = 1, count = 0; i <= fileList->size(); i ++)
@@ -272,11 +272,12 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
 
 //  printf("Fl_File_Chooser::value(\"%s\")\n", filename == NULL ? "(null)" : filename);
 
-  // See if the filename is actually a directory...
-  if (filename == NULL || !filename[0] || fl_filename_isdir(filename))
-  {
+  // See if the filename is the "My System" directory...
+  if (filename == NULL || !filename[0]) {
     // Yes, just change the current directory...
     directory(filename);
+    fileName->value("");
+    okButton->deactivate();
     return;
   }
 
@@ -285,8 +286,7 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
     type(SINGLE);
 
   // See if there is a directory in there...
-  strncpy(pathname, filename, sizeof(pathname) - 1);
-  pathname[sizeof(pathname) - 1] = '\0';
+  fl_filename_absolute(pathname, sizeof(pathname), filename);
 
   if ((slash = strrchr(pathname, '/')) == NULL)
     slash = strrchr(pathname, '\\');
@@ -303,17 +303,27 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
     slash = pathname;
   }
 
-  // Set the input field to the remaining portion
-  fileName->value(slash);
-  fileName->position(0, strlen(slash));
+  // Set the input field to the absolute path...
+  if (slash > pathname) slash[-1] = '/';
+
+  fileName->value(pathname);
+  fileName->position(0, strlen(pathname));
   okButton->activate();
 
   // Then find the file in the file list and select it...
   count = fileList->size();
 
+  fileList->deselect(0);
+  fileList->redraw();
+
   for (i = 1; i <= count; i ++)
-    if (strcmp(fileList->text(i), slash) == 0)
-    {
+#if defined(WIN32) || defined(__EMX__)
+    if (strcasecmp(fileList->text(i), slash) == 0) {
+#else
+    if (strcmp(fileList->text(i), slash) == 0) {
+#endif // WIN32 || __EMX__
+//      printf("Selecting line %d...\n", i);
+      fileList->topline(i);
       fileList->select(i);
       break;
     }
@@ -400,10 +410,17 @@ Fl_File_Chooser::newdir()
 void
 Fl_File_Chooser::rescan()
 {
+  char	pathname[1024];		// New pathname for filename field
+
 //  printf("Fl_File_Chooser::rescan(); directory = \"%s\"\n", directory_);
 
   // Clear the current filename
-  fileName->value("");
+  pathname[sizeof(pathname) - 1] = '\0';
+  strncpy(pathname, directory_, sizeof(pathname) - 1);
+  if (pathname[strlen(pathname) - 1] != '/') {
+    strncat(pathname, "/", sizeof(pathname) - 1);
+  }
+  fileName->value(pathname);
   okButton->deactivate();
 
   // Build the file list...
@@ -459,7 +476,11 @@ Fl_File_Chooser::fileListCB()
   }
   else
   {
-    fileName->value(filename);
+    // Strip any trailing slash from the directory name...
+    filename = pathname + strlen(pathname) - 1;
+    if (*filename == '/') *filename = '\0';
+
+    fileName->value(pathname);
 
     if (!fl_filename_isdir(pathname) || (type_ & DIRECTORY))
       okButton->activate();
@@ -476,7 +497,8 @@ Fl_File_Chooser::fileNameCB()
 {
   char		*filename,	// New filename
 		*slash,		// Pointer to trailing slash
-		pathname[1024];	// Full pathname to file
+		pathname[1024],	// Full pathname to file
+		matchname[256];	// Matching filename
   int		i,		// Looping var
 		min_match,	// Minimum number of matching chars
 		max_match,	// Maximum number of matching chars
@@ -494,64 +516,35 @@ Fl_File_Chooser::fileNameCB()
     return;
   }
 
-#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
-  if (directory_[0] != '\0' &&
-      filename[0] != '/' &&
+  // Expand ~ and $ variables as needed...
+  if (strchr(filename, '~') || strchr(filename, '$')) {
+    fl_filename_expand(pathname, sizeof(pathname), filename);
+    filename = pathname;
+    value(pathname);
+  }
+
+  // Make sure we have an absolute path...
+#if (defined(WIN32) && !defined(__CYGWIN__)) || defined(__EMX__)
+  if (directory_[0] != '\0' && filename[0] != '/' &&
       filename[0] != '\\' &&
-      !(isalpha(filename[0]) && filename[1] == ':'))
-    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-  else
-  {
-    strncpy(pathname, filename, sizeof(pathname) - 1);
-    pathname[sizeof(pathname) - 1] = '\0';
-  }
+      !(isalpha(filename[0]) && filename[1] == ':')) {
 #else
-  if (filename[0] == '~')
-  {
-    // Lookup user...
-    struct passwd	*pwd;
-
-    if (!filename[1] || filename[1] == '/')
-      pwd = getpwuid(getuid());
-    else
-    {
-      strncpy(pathname, filename + 1, sizeof(pathname) - 1);
-      pathname[sizeof(pathname) - 1] = '\0';
-
-      i = strlen(pathname) - 1;
-      if (pathname[i] == '/')
-        pathname[i] = '\0';
-
-      pwd = getpwnam(pathname);
-    }
-
-    if (pwd)
-    {
-      strncpy(pathname, pwd->pw_dir, sizeof(pathname) - 1);
-      pathname[sizeof(pathname) - 1] = '\0';
-
-      if (filename[strlen(filename) - 1] == '/')
-        strncat(pathname, "/", sizeof(pathname) - 1);
-    }
-    else
-      snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-
-    endpwent();
-  }
-  else if (directory_[0] != '\0' &&
-           filename[0] != '/')
-    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-  else
-  {
+  if (directory_[0] != '\0' && filename[0] != '/') {
+#endif /* WIN32 || __EMX__ */
+    fl_filename_absolute(pathname, sizeof(pathname), filename);
+    value(pathname);
+  } else if (filename != pathname) {
+    // Finally, make sure that we have a writable copy...
     strncpy(pathname, filename, sizeof(pathname) - 1);
     pathname[sizeof(pathname) - 1] = '\0';
   }
-#endif /* WIN32 || __EMX__ */
 
+  filename = pathname;
+
+  // Now process things according to the key pressed...
   if (Fl::event_key() == FL_Enter)
   {
     // Enter pressed - select or change directory...
-
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
         fl_filename_isdir(pathname))
@@ -582,33 +575,31 @@ Fl_File_Chooser::fileNameCB()
   else if (Fl::event_key() != FL_Delete)
   {
     // Check to see if the user has entered a directory...
-    if ((slash = strrchr(filename, '/')) == NULL)
-      slash = strrchr(filename, '\\');
+    if ((slash = strrchr(pathname, '/')) == NULL)
+      slash = strrchr(pathname, '\\');
 
     if (slash != NULL)
     {
-      // Yes, change directories and update the file name field...
-      if ((slash = strrchr(pathname, '/')) == NULL)
-	slash = strrchr(pathname, '\\');
-
+      // Yes, change directories if necessary...
       if (slash > pathname)		// Special case for "/"
         *slash++ = '\0';
       else
         slash++;
 
-      if (strcmp(filename, "../") == 0)	// Special case for "../"
-        up();
-      else
+      filename = slash;
+
+#if defined(WIN32) || defined(__EMX__)
+      if (strcasecmp(pathname, directory_)) {
+#else
+      if (strcmp(pathname, directory_)) {
+#endif // WIN32 || __EMX__
+        int p = fileName->position();
+	int m = fileName->mark();
+
         directory(pathname);
 
-      // If the string ended after the slash, we're done for now...
-      if (*slash == '\0')
-        return;
-
-      // Otherwise copy the remainder and proceed...
-      fileName->value(slash);
-      fileName->position(strlen(slash));
-      filename = slash;
+	fileName->position(p, m);
+      }
     }
 
     // Other key pressed - do filename completion as possible...
@@ -631,15 +622,15 @@ Fl_File_Chooser::fileNameCB()
 	if (max_match == 100000)
 	{
 	  // First match; copy stuff over...
-	  strncpy(pathname, file, sizeof(pathname) - 1);
-	  pathname[sizeof(pathname) - 1] = '\0';
-	  max_match = strlen(pathname);
+	  strncpy(matchname, file, sizeof(matchname) - 1);
+	  matchname[sizeof(matchname) - 1] = '\0';
+	  max_match = strlen(matchname);
 
           // Strip trailing /, if any...
-	  if (pathname[max_match - 1] == '/')
+	  if (matchname[max_match - 1] == '/')
 	  {
 	    max_match --;
-	    pathname[max_match] = '\0';
+	    matchname[max_match] = '\0';
 	  }
 
 	  // And then make sure that the item is visible
@@ -651,16 +642,16 @@ Fl_File_Chooser::fileNameCB()
 	  // Succeeding match; compare to find maximum string match...
 	  while (max_match > min_match)
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
-	    if (strnicmp(file, pathname, max_match) == 0)
+	    if (strnicmp(file, matchname, max_match) == 0)
 #else
-	    if (strncmp(file, pathname, max_match) == 0)
+	    if (strncmp(file, matchname, max_match) == 0)
 #endif // WIN32 || __EMX__
 	      break;
 	    else
 	      max_match --;
 
           // Truncate the string as needed...
-          pathname[max_match] = '\0';
+          matchname[max_match] = '\0';
 	}
       }
     }
@@ -670,12 +661,15 @@ Fl_File_Chooser::fileNameCB()
 
     // If we have any matches, add them to the input field...
     if (first_line > 0 && min_match == max_match &&
-        max_match == (int)strlen(fileList->text(first_line)))
+        max_match == (int)strlen(fileList->text(first_line))) {
+      // This is the only possible match...
       fileList->select(first_line);
+    }
     else if (max_match > min_match && max_match != 100000)
     {
       // Add the matching portion...
-      fileName->replace(0, min_match, pathname);
+      fileName->replace(filename - pathname, filename - pathname + min_match,
+                        matchname);
 
       // Highlight it; if the user just pressed the backspace
       // key, position the cursor at the start of the selection.
@@ -683,22 +677,16 @@ Fl_File_Chooser::fileNameCB()
       // s/he can press the right arrow to accept the selection
       // (Tab and End also do this for both cases.)
       if (Fl::event_key() == FL_BackSpace)
-        fileName->position(min_match - 1, max_match);
+        fileName->position(filename - pathname + min_match - 1,
+	                   filename - pathname + max_match);
       else
-        fileName->position(max_match, min_match);
+        fileName->position(filename - pathname + max_match,
+	                   filename - pathname + min_match);
     }
 
     // See if we need to enable the OK button...
-    if (directory_[0]) {
-      snprintf(pathname, sizeof(pathname), "%s/%s", directory_,
-               fileName->value());
-    } else {
-      strncpy(pathname, fileName->value(), sizeof(pathname) - 1);
-      pathname[sizeof(pathname) - 1] = '\0';
-    }
-
-    if ((type_ & CREATE || access(pathname, 0) == 0) &&
-        (!fl_filename_isdir(pathname) || type_ & DIRECTORY))
+    if ((type_ & CREATE || access(fileName->value(), 0) == 0) &&
+        (!fl_filename_isdir(fileName->value()) || type_ & DIRECTORY))
       okButton->activate();
     else
       okButton->deactivate();
@@ -707,5 +695,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.8 2002/04/30 21:50:16 easysw Exp $".
 //

@@ -2,10 +2,6 @@
 
 #include "../FL/Fl_File_Chooser.H"
 
-const char *Fl_File_Chooser::directory_label = "Directory:";
-const char *Fl_File_Chooser::filename_label = "Filename:";
-const char *Fl_File_Chooser::filter_label = "New Filter?";
-
 inline void Fl_File_Chooser::cb_window_i(Fl_Window*, void*) {
   fileList->deselect();
 fileName->value("");
@@ -77,10 +73,10 @@ void Fl_File_Chooser::cb_fileList(Fl_File_Browser* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_fileList_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_fileName_i(Fl_Input*, void*) {
+inline void Fl_File_Chooser::cb_fileName_i(Fl_File_Input*, void*) {
   fileNameCB();
 }
-void Fl_File_Chooser::cb_fileName(Fl_Input* o, void* v) {
+void Fl_File_Chooser::cb_fileName(Fl_File_Input* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_fileName_i(o,v);
 }
 
@@ -106,7 +102,7 @@ void Fl_File_Chooser::cb_Cancel(Fl_Button* o, void* v) {
 
 Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
   Fl_Window* w;
-  { Fl_Window* o = window = new Fl_Window(375, 315, "Pick a File");
+  { Fl_Window* o = window = new Fl_Window(375, 325, "Pick a File");
     w = o;
     o->callback((Fl_Callback*)cb_window, (void*)(this));
     { Fl_Choice* o = dirMenu = new Fl_Choice(95, 10, 180, 25, "Directory:");
@@ -141,18 +137,18 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       Fl_Group::current()->resizable(o);
       w->hotspot(o);
     }
-    { Fl_Input* o = fileName = new Fl_Input(10, 245, 355, 25, "Filename:");
+    { Fl_File_Input* o = fileName = new Fl_File_Input(10, 245, 355, 35, "Filename:");
       o->callback((Fl_Callback*)cb_fileName);
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_ENTER_KEY);
       fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
       fileName->label(filename_label);
     }
-    { Fl_Return_Button* o = okButton = new Fl_Return_Button(200, 280, 75, 25, "OK");
+    { Fl_Return_Button* o = okButton = new Fl_Return_Button(200, 290, 75, 25, "OK");
       o->callback((Fl_Callback*)cb_okButton);
       okButton->label(fl_ok);
     }
-    { Fl_Button* o = new Fl_Button(285, 280, 80, 25, "Cancel");
+    { Fl_Button* o = new Fl_Button(285, 290, 80, 25, "Cancel");
       o->callback((Fl_Callback*)cb_Cancel);
       o->label(fl_cancel);
     }

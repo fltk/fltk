@@ -11,7 +11,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_File_Browser.H>
-#include <FL/Fl_Input.H>
+#include <FL/Fl_File_Input.H>
 #include <FL/Fl_Return_Button.H>
 
 class Fl_File_Chooser {
@@ -36,9 +36,9 @@ private:
   Fl_File_Browser *fileList;
   inline void cb_fileList_i(Fl_File_Browser*, void*);
   static void cb_fileList(Fl_File_Browser*, void*);
-  Fl_Input *fileName;
-  inline void cb_fileName_i(Fl_Input*, void*);
-  static void cb_fileName(Fl_Input*, void*);
+  Fl_File_Input *fileName;
+  inline void cb_fileName_i(Fl_File_Input*, void*);
+  static void cb_fileName(Fl_File_Input*, void*);
   Fl_Return_Button *okButton;
   inline void cb_okButton_i(Fl_Return_Button*, void*);
   static void cb_okButton(Fl_Return_Button*, void*);
