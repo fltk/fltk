@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.8.2.7 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Browser.H,v 1.8.2.7.2.1 2001/11/02 20:59:07 easysw Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -109,7 +109,11 @@ public:
   void column_widths(const int* l) {column_widths_ = l;}
 
   int displayed(int n) const {return Fl_Browser_::displayed(find_line(n));}
-  void make_visible(int n) {Fl_Browser_::display(find_line(n));}
+  void make_visible(int n) {
+  	if (n < 1) Fl_Browser_::display(find_line(1));
+	else if (n > lines) Fl_Browser_::display(find_line(lines));
+	else Fl_Browser_::display(find_line(n));
+  }
 
   // for back compatability only:
   void replace(int a, const char* b) {text(a, b);}
@@ -119,5 +123,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.8.2.7 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8.2.7.2.1 2001/11/02 20:59:07 easysw Exp $".
 //

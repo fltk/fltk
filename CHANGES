@@ -1,3 +1,14 @@
+CHANGES IN FLTK 1.1.0
+
+	- Now use -lsupc++ for Red Hat's GCC 2.96.
+	- Removed the "Microsoft" mode button from the menubar
+	  demo.
+	- The browser demo now makes sure that the input field
+	  contains a number.
+	- The Fl_Browser::make_visible() method now range checks
+	  the input.
+
+
 CHANGES IN FLTK 1.1.0b5
 
 	**** NOTE: DUE TO CHANGES IN THE WIDGET CLASSES,  ****
