@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.1
 
+	- Fl_Tabs now only redraws the tabs themselves when
+	  making focus changes.  This reduces flicker in tabbed
+	  interfaces.
+	- The WIN32 redraw handler now correctly merges the FLTK
+	  and Windows redraw regions.
 	- The Fl_Text_* widgets use the C++ bool type, which is
 	  not supported by older C++ compilers.  Added a
 	  configure check and workaround code for this.
