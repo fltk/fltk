@@ -36,8 +36,9 @@ autoconf
 
 echo "Removing CVS directories..."
 
-rm -rf CVS */CVS */*/CVS
-rm -rf .cvsignore */.cvsignore */*/.cvsignore
+find . -name .cvsignore -exec rm -f '{}' \;
+find . -name CVS -exec rm -rf '{}' \;
+
 rm -rf OpenGL autom4te* bc5 config forms gl glut images packages themes
 rm makesrcdist
 
