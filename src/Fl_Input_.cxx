@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.11 2002/04/16 17:11:11 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.12 2002/04/27 19:20:50 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -146,12 +146,12 @@ void Fl_Input_::minimal_update(int p) {
     mu_p = p;
   }
 
-#if defined(__APPLE__) || USE_XFT
-  redraw();
-#else
+//#if defined(__APPLE__) || USE_XFT
+//  redraw();
+//#else
   damage(FL_DAMAGE_EXPOSE);
   erase_cursor_only = 0;
-#endif // __APPLE__ || USE_XFT
+//#endif // __APPLE__ || USE_XFT
 }
 
 void Fl_Input_::minimal_update(int p, int q) {
@@ -241,11 +241,12 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   fl_clip(X, Y, W, H);
-  Fl_Color color = active_r() ? textcolor() : fl_inactive(textcolor());
+  Fl_Color tc = active_r() ? textcolor() : fl_inactive(textcolor());
 
   p = value();
   // visit each line and draw it:
   int desc = height-fl_descent();
+  int xpos = X-xscroll_; if (W > 12) xpos += 3;
   int ypos = -yscroll_;
   for (; ypos < H;) {
 
@@ -256,56 +257,71 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
     if (do_mu) {	// for minimal update:
       const char* pp = value()+mu_p; // pointer to where minimal update starts
-      if (e >= pp && (!erase_cursor_only || p <= pp)) { // we must erase this
-	// calculate area to erase:
-	int x1 = -xscroll_;
-	if (p < pp) x1 += int(expandpos(p, pp, buf, 0));
-	// erase it:
-	fl_color(this->color());
-	fl_rectf(X+x1, Y+ypos, erase_cursor_only?2:W-x1, height);
-	// it now draws entire line over it
-	// this should not draw letters to left of erased area, but
-	// that is nyi.
+      if (e < pp) goto CONTINUE2; // this line is before the changes
+      if (erase_cursor_only && p > pp) goto CONTINUE2; // this line is after
+      // calculate area to erase:
+      int r = X+W;
+      int x;
+      if (p >= pp) {
+	x = X;
+	if (erase_cursor_only) r = xpos+2;
+      } else {
+	x = xpos+(int)expandpos(p, pp, buf, 0);
+	if (erase_cursor_only) r = x+2;
       }
+      // clip to and erase it:
+      fl_color(color());
+      fl_rectf(x, Y+ypos, r-x, height);
+      fl_push_clip(x, Y+ypos, r-x, height);
+      // it now draws entire line over it
+      // this should not draw letters to left of erased area, but
+      // that is nyi.
     }
 
     // Draw selection area if required:
     if (selstart < selend && selstart <= e-value() && selend > p-value()) {
       const char* pp = value()+selstart;
-      int x1 = -xscroll_;
+      int x1 = xpos;
       int offset1 = 0;
       if (pp > p) {
-	fl_color(color);
+	fl_color(tc);
 	x1 += int(expandpos(p, pp, buf, &offset1));
-	fl_draw(buf, offset1, X-xscroll_, Y+ypos+desc);
+	fl_draw(buf, offset1, xpos, Y+ypos+desc);
       }
       pp = value()+selend;
-      int x2 = W;
+      int x2 = X+W;
       int offset2;
-      if (pp <= e) x2 = int(expandpos(p, pp, buf, &offset2))-xscroll_;
+      if (pp <= e) x2 = xpos+int(expandpos(p, pp, buf, &offset2));
       else offset2 = strlen(buf);
       fl_color(selection_color());
-      fl_rectf(X+int(x1+.5), Y+ypos, int(x2-x1), height);
+      fl_rectf(x1, Y+ypos, x2-x1, height);
       fl_color(fl_contrast(textcolor(), selection_color()));
-      fl_draw(buf+offset1, offset2-offset1, X+x1, Y+ypos+desc);
+      fl_draw(buf+offset1, offset2-offset1, x1, Y+ypos+desc);
       if (pp < e) {
-	fl_color(color);
-	fl_draw(buf+offset2, X+x2, Y+ypos+desc);
+	fl_color(tc);
+	fl_draw(buf+offset2, x2, Y+ypos+desc);
       }
     } else {
-      // draw the cursor:
-      if (Fl::focus() == this && selstart == selend &&
-	  position() >= p-value() && position() <= e-value()) {
-	fl_color(cursor_color());
-	fl_rectf(X+curx-xscroll_, Y+ypos, 2, height);
-      }
-      fl_color(color);
-      fl_draw(buf, X-xscroll_, Y+ypos+desc);
+      // draw unselected text
+      fl_color(tc);
+      fl_draw(buf, xpos, Y+ypos+desc);
     }
+
+    if (do_mu) fl_pop_clip();
+
+  CONTINUE2:
+    // draw the cursor:
+    if (Fl::focus() == this && selstart == selend &&
+	position() >= p-value() && position() <= e-value()) {
+      fl_color(cursor_color());
+      fl_rectf(xpos+curx, Y+ypos, 2, height);
+    }
+
   CONTINUE:
     ypos += height;
     if (e >= value_+size_) break;
-    p = e+1;
+    if (*e == '\n' || *e == ' ') e++;
+    p = e;
   }
 
   // for minimal update, erase all lines below last one if necessary:
@@ -869,5 +885,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.11 2002/04/16 17:11:11 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.12 2002/04/27 19:20:50 easysw Exp $".
 //

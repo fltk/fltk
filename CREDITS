@@ -27,30 +27,14 @@ CORE DEVELOPERS
 
 OTHER CONTRIBUTORS
 
-    Documentation and OS/2 porting:
-
-	Alexander Mai
-
-    WIN32 and Cygwin testing and fixes:
+    The following people have contributed fixes or enhancements
+    for FLTK:
 
 	Teun Burgers
-
-    OpenGL enhancements and widget fixes:
-
 	Stuart Levy
-
-    Documentation:
-
-        Andrea Suatoni
-
-    Fl_Scroll fixes:
-
 	Mike Lindner
-
-    Fl_Input fixes:
-
+	Alexander Mai
 	Alexander Rabi
-
-    X11 resource support:
-
 	James Roth
+        Andrea Suatoni
+	Paul Sydney
