@@ -34,8 +34,8 @@
 extern "C"
 #endif 
 int scandir(const char *dirname, struct dirent ***namelist,
-    int (*select)(const struct dirent *),
-    int (*compar)(const struct dirent **, const struct dirent **)) {
+    int (*select)(struct dirent *),
+    int (*compar)(struct dirent **, struct dirent **)) {
 
   int len = strlen(dirname);
   char *findIn = new char[len+5]; strcpy(findIn, dirname);
@@ -100,10 +100,10 @@ int scandir(const char *dirname, struct dirent ***namelist,
   return nDir;
 }
 
-int alphasort (const struct dirent **a, const struct dirent **b) {
+int alphasort (struct dirent **a, struct dirent **b) {
   return strcmp ((*a)->d_name, (*b)->d_name);
 }
 
 //
-// End of "$Id: scandir_win32.c,v 1.4 1998/10/19 20:46:58 mike Exp $".
+// End of "$Id: scandir_win32.c,v 1.5 1998/10/20 23:58:32 mike Exp $".
 //

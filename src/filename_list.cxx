@@ -29,13 +29,13 @@
 #include <FL/filename.H>
 
 extern "C" {
-  int numericsort(const dirent **, const dirent **);
+  int numericsort(dirent **, dirent **);
 #if HAVE_SCANDIR
 #else
-  int alphasort(const dirent **, const dirent **);
+  int alphasort(dirent **, dirent **);
   int scandir (const char *dir, dirent ***namelist,
-	       int (*select)(const dirent *),
-	       int (*compar)(const dirent **, const dirent **));
+	       int (*select)(dirent *),
+	       int (*compar)(dirent **, dirent **));
 #endif
 }
 
@@ -46,14 +46,10 @@ int filename_list(const char *d, dirent ***list) {
   // of pointer indirection is missing:
   return scandir(d, list, 0, (int(*)(const void*,const void*))numericsort);
 #else
-#if HAVE_SCANDIR
-  return scandir(d, list, 0, (int(*)(const dirent**,const dirent**))numericsort);
-#else // built-in scandir is const-correct:
   return scandir(d, list, 0, numericsort);
-#endif
 #endif
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.3 1998/10/19 20:46:24 mike Exp $".
+// End of "$Id: filename_list.cxx,v 1.4 1998/10/20 23:58:30 mike Exp $".
 //

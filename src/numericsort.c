@@ -53,7 +53,7 @@
 #ifdef __cplusplus
 extern "C"
 #endif
-int numericsort(const struct dirent **A, const struct dirent **B) {
+int numericsort(struct dirent **A, struct dirent **B) {
   const char* a = (*A)->d_name;
   const char* b = (*B)->d_name;
   int ret = 0;
@@ -80,6 +80,6 @@ int numericsort(const struct dirent **A, const struct dirent **B) {
   }
 }
 
-//
-// End of "$Id: numericsort.c,v 1.4 1998/10/19 20:46:57 mike Exp $".
-//
+/*
+ * End of "$Id: numericsort.c,v 1.5 1998/10/20 23:58:31 mike Exp $".
+ */
