@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.3 2002/04/15 20:30:06 easysw Exp $"
+// "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.4 2003/01/28 20:42:13 easysw Exp $"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
 void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
   int X = o->w()/2;
   int Y = o->h()/2;
-  while (o != this) {
+  while (o != this && o) {
     X += o->x(); Y += o->y();
     o = o->window();
   }
@@ -80,5 +80,5 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
 
 
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.3 2002/04/15 20:30:06 easysw Exp $".
+// End of "$Id: Fl_Window_hotspot.cxx,v 1.7.2.3.2.4 2003/01/28 20:42:13 easysw Exp $".
 //

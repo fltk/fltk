@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.28 2002/11/20 15:49:24 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.29 2003/01/28 20:42:11 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -122,7 +122,7 @@ Fl_File_Chooser::count()
 
 //    printf("Fl_File_Chooser::count(): filename=\"%s\"\n", filename);
 
-    if (filename == NULL || filename[0] == '\0')
+    if (!filename || !filename[0])
       return (0);
 
     // Is the file name just the current directory?
@@ -457,7 +457,7 @@ Fl_File_Chooser::fileNameCB()
   // Get the filename from the text field...
   filename = (char *)fileName->value();
 
-  if (filename == NULL || filename[0] == '\0') {
+  if (!filename || !filename[0]) {
     okButton->deactivate();
     return;
   }
@@ -1004,7 +1004,7 @@ Fl_File_Chooser::value(int f)	// I - File number
 
   if (!(type_ & MULTI)) {
     name = fileName->value();
-    if (name[0] == '\0') return NULL;
+    if (!name || !name[0]) return NULL;
     else if (fl_filename_isdir(name)) {
       if (type_ & DIRECTORY) {
         // Strip trailing slash, if any...
@@ -1159,5 +1159,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.28 2002/11/20 15:49:24 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.29 2003/01/28 20:42:11 easysw Exp $".
 //
