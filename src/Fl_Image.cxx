@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.34 2004/08/27 21:57:18 matthiaswm Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.35 2004/08/28 13:45:27 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -127,7 +127,7 @@ void Fl_RGB_Image::uncache() {
 #ifdef __APPLE_QUARTZ__
   if (id)
     CGImageRelease((CGImageRef)id);
-#elif
+#else
   if (id) {
     fl_delete_offscreen((Fl_Offscreen)id);
     id = 0;
@@ -418,5 +418,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.34 2004/08/27 21:57:18 matthiaswm Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.35 2004/08/28 13:45:27 easysw Exp $".
 //
