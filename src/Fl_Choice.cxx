@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.7 2002/03/25 22:11:52 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.8 2002/03/26 00:50:16 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,6 @@
 extern char fl_draw_shortcut;
 
 void Fl_Choice::draw() {
-  draw_box(FL_DOWN_BOX, color());
   int dx = Fl::box_dx(FL_DOWN_BOX);
   int dy = Fl::box_dy(FL_DOWN_BOX);
   int H = h() - 2 * dy;
@@ -45,10 +44,19 @@ void Fl_Choice::draw() {
   int x1 = X + (W - 2 * w1 - 1) / 2;
   int y1 = Y + (H - w1 - 1) / 2;
 
-  draw_box(FL_UP_BOX,X,Y,W,H,FL_GRAY);
+  if (Fl::scheme()) {
+    draw_box(FL_UP_BOX, color());
 
-  fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-  fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
+    fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
+    fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
+    fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
+  } else {
+    draw_box(FL_DOWN_BOX, color());
+    draw_box(FL_UP_BOX,X,Y,W,H,FL_GRAY);
+
+    fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
+    fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
+  }
 
   W += 2 * dx;
 
@@ -62,6 +70,7 @@ void Fl_Choice::draw() {
     fl_draw_shortcut = 0;
     fl_pop_clip();
   }
+
   draw_label();
 }
 
@@ -119,5 +128,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.7 2002/03/25 22:11:52 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.8 2002/03/26 00:50:16 easysw Exp $".
 //
