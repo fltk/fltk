@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- Now append trailing slash to directory names in names
+	  in WIN32 version of scandir().  This takes care of a
+	  file chooser performance problem with large
+	  directories.
 	- Added Fl_Preferences class from Matthias Melcher.
 	- FLUID now recognizes the "using" keyword in
 	  declarations.

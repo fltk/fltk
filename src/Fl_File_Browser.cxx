@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.10 2002/04/16 14:50:10 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.11 2002/04/29 19:40:51 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -572,6 +572,13 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
 	snprintf(filename, sizeof(filename), "%s/%s", directory_,
 	         files[i]->d_name);
 
+#if defined(WIN32) && !defined(__CYGWIN__)
+	if (files[i].d_name[strlen(files[i].d_name) - 1] == '/')
+	{
+          num_dirs ++;
+          insert(num_dirs, files[i].d_name, Fl_File_Icon::find(filename));
+	}
+#else
 	if (fl_filename_isdir(filename))
 	{
 	  char name[1024]; // Temporary directory name
@@ -581,6 +588,7 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
           num_dirs ++;
           insert(num_dirs, name, Fl_File_Icon::find(filename));
 	}
+#endif // WIN32 && !__CYGWIN__
 	else if (filetype_ == FILES &&
 	         fl_filename_match(files[i]->d_name, pattern_))
           add(files[i]->d_name, Fl_File_Icon::find(filename));
@@ -615,5 +623,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.10 2002/04/16 14:50:10 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.11 2002/04/29 19:40:51 easysw Exp $".
 //
