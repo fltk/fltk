@@ -7,7 +7,8 @@ CHANGES IN FLTK 1.1.0b6
 	  notifications of various types.
 	- Fl_Float_Input and Fl_Int_Input no longer accept
 	  pasted text that is not a floating point or integer
-	  value.
+	  value.  Pasted numbers now replace text in these
+	  widgets.
 	- Implemented the Fl_File_Icon::load_png() method.
 	- The Fl_File_Icon::load_system_icons() method now
 	  supports KDE 2.x icons.

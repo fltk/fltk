@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.3 2001/11/17 16:37:48 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.4 2001/11/17 17:00:22 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -715,21 +715,37 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     const char* e = t+Fl::event_length();
     if (type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
     if (type() == FL_INT_INPUT) {
+      while (isspace(*t) && t < e) t ++;
       const char *p = t;
-      while ((isdigit(*p) || *p == '+' || *p == '-') && p < e)
-        p ++;
+      if (*p == '+' || *p == '-') p ++;
+      if (strncmp(p, "0x", 2) == 0) {
+        p += 2;
+        while (isxdigit(*p) && p < e) p ++;
+      } else {
+        while (isdigit(*p) && p < e) p ++;
+      }
       if (p < e) {
         fl_beep(FL_BEEP_ERROR);
         return 1;
-      }
+      } else return replace(0, size(), t, e - t);
     } else if (type() == FL_FLOAT_INPUT) {
+      while (isspace(*t) && t < e) t ++;
       const char *p = t;
-      while ((isdigit(*p) || *p == '+' || *p == '-' || *p == '.') && p < e)
+      if (*p == '+' || *p == '-') p ++;
+      while (isdigit(*p) && p < e) p ++;
+      if (*p == '.') {
         p ++;
+        while (isdigit(*p) && p < e) p ++;
+	if (*p == 'e' || *p == 'E') {
+	  p ++;
+	  if (*p == '+' || *p == '-') p ++;
+	  while (isdigit(*p) && p < e) p ++;
+	}
+      }
       if (p < e) {
         fl_beep(FL_BEEP_ERROR);
         return 1;
-      }
+      } else return replace(0, size(), t, e - t);
     }
     return replace(position(), mark(), t, e-t);}
 
@@ -839,5 +855,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.3 2001/11/17 16:37:48 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.4 2001/11/17 17:00:22 easysw Exp $".
 //
