@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.h,v 1.3.2.4 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fluid_Image.h,v 1.3.2.4.2.1 2001/09/29 06:20:15 easysw Exp $"
 //
 // Pixmap image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,18 +43,20 @@ public:
   static Fluid_Image* find(const char *);
   void decrement(); // reference counting & automatic free
   void increment();
-  virtual void label(Fl_Widget *) = 0; // set the label of this widget
+  virtual void image(Fl_Widget *) = 0; // set the image of this widget
+  virtual void deimage(Fl_Widget *) = 0; // set the deimage of this widget
   virtual void write_static() = 0;
-  virtual void write_code() = 0;
+  virtual void write_code(int inactive = 0) = 0;
   const char *name() const {return name_;}
 };
 
 // pop up file chooser and return a legal image selected by user,
 // or zero for any errors:
 Fluid_Image *ui_find_image(const char *);
+extern const char *ui_find_image_name;
 
 #endif
 
 //
-// End of "$Id: Fluid_Image.h,v 1.3.2.4 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fluid_Image.h,v 1.3.2.4.2.1 2001/09/29 06:20:15 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.1 2001/08/05 14:00:15 easysw Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -35,6 +35,7 @@ int Fl_Roller::handle(int event) {
   int newpos = horizontal() ? Fl::event_x() : Fl::event_y();
   switch (event) {
   case FL_PUSH:
+    take_focus();
     handle_push();
     ipos = newpos;
     return 1;
@@ -43,6 +44,32 @@ int Fl_Roller::handle(int event) {
     return 1;
   case FL_RELEASE:
     handle_release();
+    return 1;
+  case FL_KEYBOARD :
+    switch (Fl::event_key()) {
+      case FL_Up:
+        if (horizontal()) return 0;
+	handle_drag(clamp(increment(value(),-1)));
+	return 1;
+      case FL_Down:
+        if (horizontal()) return 0;
+	handle_drag(clamp(increment(value(),1)));
+	return 1;
+      case FL_Left:
+        if (!horizontal()) return 0;
+	handle_drag(clamp(increment(value(),-1)));
+	return 1;
+      case FL_Right:
+        if (!horizontal()) return 0;
+	handle_drag(clamp(increment(value(),1)));
+	return 1;
+      default:
+        return 0;
+    }
+    break;
+  case FL_FOCUS :
+  case FL_UNFOCUS :
+    damage(FL_DAMAGE_ALL);
     return 1;
   default:
     return 0;
@@ -128,14 +155,16 @@ void Fl_Roller::draw() {
       fl_yxline(X+W,Y+h1,Y);
     }
   }
+
+  if (Fl::focus() == this) draw_focus(FL_THIN_UP_FRAME, x(), y(), w(), h());
 }
 
 Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
   : Fl_Valuator(X,Y,W,H,L) {
-  box(FL_UP_FRAME);
+  box(FL_UP_BOX);
   step(1,1000);
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.1 2001/08/05 14:00:15 easysw Exp $".
 //

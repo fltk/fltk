@@ -9,7 +9,7 @@ a key, an event is generated and sent to your application. Events can also
 come from other programs like the window manager.
 
 <P>Events are identified by the integer argument passed to the
-<A href=functions.html#handle> <TT>Fl_Widget::handle()</TT></A> virtual
+<A href="subclassing.html#handle"> <TT>Fl_Widget::handle()</TT></A> virtual
 method. Other information  about the most recent event is stored in
 static locations and acquired  by calling the <A
 href=#event_xxx><TT>Fl::event_*()</TT></A> methods.  This static
@@ -20,28 +20,28 @@ method).
 <H2>Mouse Events</H2>
 <H3>FL_PUSH</H3>
 A mouse button has gone down with the mouse pointing at this widget. 
-You can find out what button by calling <A href=#event_button><TT>
+You can find out what button by calling <A href="functions.html#event_button"><TT>
 Fl::event_button()</TT></A>.  You find out the mouse position by 
-calling <A href=#event_x><TT>Fl::event_x()</TT></A> and <A href=functions.html#event_y>
+calling <A href="functions.html#event_x"><TT>Fl::event_x()</TT></A> and <A href="functions.html#event_y">
 <TT>Fl::event_y()</TT></A>. 
 <P>A widget indicates that it &quot;wants&quot; the mouse click by returning 
-non-zero from its <A href=functions.html#handle><TT>handle()</TT></A>
- method. It will then become the <A href=functions.html#pushed><TT>
+non-zero from its <A href="subclassing.html#handle"><TT>handle()</TT></A>
+ method. It will then become the <A href="functions.html#pushed"><TT>
 Fl::pushed()</TT></A> widget and will get <TT>FL_DRAG</TT> and the 
 matching <TT>FL_RELEASE</TT> events.  If <TT>handle()</TT> returns zero 
 then FLTK will try sending the <TT>FL_PUSH</TT> to another widget. </P>
 <H3>FL_DRAG</H3>
 The mouse has moved with a button held down. The current button state is
-in <a href="#event_state"><tt>Fl::event_state()</tt></a>. The mouse position
-is in <a href="#event_x"><tt>Fl::event_x()</tt></a> and
-<a href="#event_y"><tt>Fl::event_y()</tt></a>.
+in <a href="functions.html#event_state"><tt>Fl::event_state()</tt></a>. The mouse position
+is in <a href="functions.html#event_x"><tt>Fl::event_x()</tt></a> and
+<a href="functions.html#event_y"><tt>Fl::event_y()</tt></a>.
 
 <P>To receive <CODE>FL_DRAG</CODE> events you must also respond to the
 <CODE>FL_PUSH</CODE> and <CODE>FL_RELEASE</CODE> events.
 
 <H3>FL_RELEASE</H3>
  A mouse button has been released.  You can find out what button by 
-calling <A href=#event_button><TT>Fl::event_button()</TT></A>. 
+calling <A href="functions.html#event_button"><TT>Fl::event_button()</TT></A>. 
 <H3>FL_MOVE</H3>
  The mouse has moved without any mouse buttons held down.  This event 
 is sent to the <A href="functions.html#belowmouse"><TT>Fl::belowmouse()</TT></A>
@@ -187,7 +187,7 @@ to leaf widgets.  These procedures control those leaf widgets: </P>
 <LI><A href=functions.html#grab><TT>Fl::grab</TT></A></LI>
 <LI><A href=functions.html#modal><TT>Fl::modal</TT></A></LI>
 <LI><A href=functions.html#pushed><TT>Fl::pushed</TT></A></LI>
-<LI><A href=functions.html#release><TT>Fl::release</TT></A></LI>
+<LI><TT>Fl::release</TT></LI>
 <LI><A href=Fl_Widget.html#Fl_Widget.take_focus><TT>Fl_Widget::take_focus</TT></A>
 </LI>
 </UL>

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.5 2001/08/04 12:21:33 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
+#include <FL/Fl_Tooltip.H>    // tooltip
 
 Fl_Group* Fl_Group::current_;
 
@@ -120,9 +121,11 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_KEYBOARD:
+    Fl_Tooltip::exit(this);    // tooltip
     return navigation(navkey());
 
   case FL_SHORTCUT:
+    Fl_Tooltip::exit(this);    // tooltip
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o) && send(o,FL_SHORTCUT))
@@ -137,6 +140,7 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_ENTER:
+    Fl_Tooltip::enter(this);    // tooltip
   case FL_MOVE:
     for (i = children(); i--;) {
       o = a[i];
@@ -153,12 +157,28 @@ int Fl_Group::handle(int event) {
     return 1;
 
   case FL_PUSH:
+    Fl_Tooltip::exit(this);   // tooltip
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o)) {
 	if (send(o,FL_PUSH)) {
 	  if (Fl::pushed() && !o->contains(Fl::pushed())) Fl::pushed(o);
 	  return 1;
+	}
+      }
+    }
+    return 0;
+
+  case FL_RELEASE:
+  case FL_DRAG:
+    o = Fl::pushed();
+    if (o == this) return 0;
+    else if (o) send(o,event);
+    else {
+      for (i = children(); i--;) {
+	o = a[i];
+	if (o->takesevents() && Fl::event_inside(o)) {
+	  if (send(o,event)) return 1;
 	}
       }
     }
@@ -180,9 +200,26 @@ int Fl_Group::handle(int event) {
     }
     return 1;
 
-  default:
-    return 0;
+  case FL_LEAVE:              // tooltip
+    Fl_Tooltip::exit(this);   // tooltip
 
+  default:
+    // For all other events, try to give to each child, starting at focus:
+    for (i = 0; i < children(); i ++)
+      if (Fl::focus_ == child(i)) break;
+
+    if (i >= children()) i = 0;
+
+    if (children()) {
+      for (int j = i;;) {
+        if (send(child(j), event)) return 1;
+        j++;
+        if (j >= children()) j = 0;
+        if (j == i) break;
+      }
+    }
+
+    return 0;
   }
 }
 
@@ -275,7 +312,9 @@ void Fl_Group::clear() {
   if (old_children > 1) free((void*)old_array);
 }
 
-Fl_Group::~Fl_Group() {clear();}
+Fl_Group::~Fl_Group() {
+  clear();
+}
 
 void Fl_Group::insert(Fl_Widget &o, int index) {
   if (o.parent()) {
@@ -513,5 +552,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.5 2001/08/04 12:21:33 easysw Exp $".
 //

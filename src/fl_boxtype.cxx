@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.1 2001/08/04 12:21:33 easysw Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -176,11 +176,6 @@ void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
 }
 #define fl_border_box fl_rectbound
 
-void fl_rectf(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c);
-  fl_rectf(x, y, w, h);
-}
-
 void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   fl_rect(x, y, w, h);
@@ -282,5 +277,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.1 2001/08/04 12:21:33 easysw Exp $".
 //

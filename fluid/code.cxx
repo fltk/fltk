@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.9.2.9 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: code.cxx,v 1.9.2.9.2.1 2001/08/02 16:17:04 easysw Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -254,6 +254,8 @@ static Fl_Type* write_code(Fl_Type* p) {
   return q;
 }
 
+extern const char* header_file_name;
+
 int write_code(const char *s, const char *t) {
   write_number++;
   delete id_root; id_root = 0;
@@ -303,8 +305,13 @@ int write_code(const char *s, const char *t) {
       }
     }
   }
-  if (t && include_H_from_C)
-    write_c("#include \"%s\"\n", filename_name(t));
+  if (t && include_H_from_C) {
+    if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
+      write_c("#include \"%s\"\n", filename_name(t));
+    } else {
+      write_c("#include \"%s\"\n", t);
+    }
+  }
   for (Fl_Type* p = Fl_Type::first; p;) {
     // write all static data for this & all children first
     p->write_static();
@@ -405,5 +412,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.9.2.9 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: code.cxx,v 1.9.2.9.2.1 2001/08/02 16:17:04 easysw Exp $".
 //

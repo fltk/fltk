@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24 2001/04/27 14:39:27 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.2 2001/08/02 21:11:43 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -448,9 +448,18 @@ int fl_handle(const XEvent& xevent)
 
   case ButtonPress:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy(); checkdouble();
-    Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
-    event = FL_PUSH;
+    set_event_xy();
+    if (xevent.xbutton.button == Button4) {
+      Fl::e_dy = -1; // Up
+      event = FL_MOUSEWHEEL;
+    } else if (xevent.xbutton.button == Button5) {
+      Fl::e_dy = +1; // Down
+      event = FL_MOUSEWHEEL;
+    } else {
+      Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
+      event = FL_PUSH;
+      checkdouble();
+    }
     break;
 
   case MotionNotify:
@@ -918,5 +927,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24 2001/04/27 14:39:27 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.2 2001/08/02 21:11:43 easysw Exp $".
 //

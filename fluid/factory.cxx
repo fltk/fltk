@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11 2001/04/13 19:07:40 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.2 2001/09/29 14:38:59 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -173,6 +173,9 @@ static Fl_Round_Button_Type Fl_Round_Button_type;
 extern int compile_only;
 
 #include <FL/Fl_Browser.H>
+#include <FL/Fl_Check_Browser.H>
+#include <FL/Fl_File_Browser.H>
+
 static Fl_Menu_Item browser_type_menu[] = {
   {"No Select",0,0,(void*)FL_NORMAL_BROWSER},
   {"Select",0,0,(void*)FL_SELECT_BROWSER},
@@ -203,6 +206,70 @@ static Fl_Browser_Type Fl_Browser_type;
 
 int Fl_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   Fl_Browser *myo = (Fl_Browser*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  switch (w) {
+    case 4:
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+  }
+  return 1;
+}
+
+class Fl_Check_Browser_Type : public Fl_Widget_Type {
+  Fl_Menu_Item *subtypes() {return browser_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
+public:
+  virtual const char *type_name() {return "Fl_Check_Browser";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Check_Browser* b = new Fl_Check_Browser(x,y,w,h);
+    // Fl_Check_Browser::add calls fl_height(), which requires the X display open.
+    // Avoid this when compiling so it works w/o a display:
+    if (!compile_only) {
+      char buffer[20];
+      for (int i = 1; i <= 20; i++) {
+	sprintf(buffer,"Browser Line %d",i);
+	b->add(buffer);
+      }
+    }
+    return b;
+  }
+  Fl_Widget_Type *_make() {return new Fl_Check_Browser_Type();}
+};
+static Fl_Check_Browser_Type Fl_Check_Browser_type;
+
+int Fl_Check_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_Check_Browser *myo = (Fl_Check_Browser*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  switch (w) {
+    case 4:
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+  }
+  return 1;
+}
+
+class Fl_File_Browser_Type : public Fl_Widget_Type {
+  Fl_Menu_Item *subtypes() {return browser_type_menu;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
+public:
+  virtual const char *type_name() {return "Fl_File_Browser";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_File_Browser* b = new Fl_File_Browser(x,y,w,h);
+    // Fl_File_Browser::add calls fl_height(), which requires the X display open.
+    // Avoid this when compiling so it works w/o a display:
+    if (!compile_only) {
+      b->load(".");
+    }
+    return b;
+  }
+  Fl_Widget_Type *_make() {return new Fl_File_Browser_Type();}
+};
+static Fl_File_Browser_Type Fl_File_Browser_type;
+
+int Fl_File_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_File_Browser *myo = (Fl_File_Browser*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
   switch (w) {
     case 4:
     case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
@@ -282,6 +349,60 @@ int Fl_Input_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 ////////////////////////////////////////////////////////////////
 
+#include <FL/Fl_Text_Display.H>
+class Fl_Text_Display_Type : public Fl_Widget_Type {
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
+public:
+  virtual const char *type_name() {return "Fl_Text_Display";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Text_Display *myo = new Fl_Text_Display(x,y,w,h);
+    return myo;
+  }
+  Fl_Widget_Type *_make() {return new Fl_Text_Display_Type();}
+};
+static Fl_Text_Display_Type Fl_Text_Display_type;
+
+int Fl_Text_Display_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_Text_Display *myo = (Fl_Text_Display*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  switch (w) {
+    case 4:
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+  }
+  return 1;
+}
+
+////////////////////////////////////////////////////////////////
+
+#include <FL/Fl_Text_Editor.H>
+class Fl_Text_Editor_Type : public Fl_Widget_Type {
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
+public:
+  virtual const char *type_name() {return "Fl_Text_Editor";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Text_Editor *myo = new Fl_Text_Editor(x,y,w,h);
+    return myo;
+  }
+  Fl_Widget_Type *_make() {return new Fl_Text_Editor_Type();}
+};
+static Fl_Text_Editor_Type Fl_Text_Editor_type;
+
+int Fl_Text_Editor_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_Text_Editor *myo = (Fl_Text_Editor*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  switch (w) {
+    case 4:
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+  }
+  return 1;
+}
+
+////////////////////////////////////////////////////////////////
+
 #include <FL/Fl_Clock.H>
 class Fl_Clock_Type : public Fl_Widget_Type {
 public:
@@ -291,6 +412,35 @@ public:
   Fl_Widget_Type *_make() {return new Fl_Clock_Type();}
 };
 static Fl_Clock_Type Fl_Clock_type;
+
+////////////////////////////////////////////////////////////////
+
+#include <FL/Fl_Help_View.H>
+class Fl_Help_View_Type : public Fl_Widget_Type {
+public:
+  virtual const char *type_name() {return "Fl_Help_View";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Help_View *myo = new Fl_Help_View(x,y,w,h);
+    myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
+               "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
+    return myo;}
+  Fl_Widget_Type *_make() {return new Fl_Help_View_Type();}
+};
+static Fl_Help_View_Type Fl_Help_View_type;
+
+////////////////////////////////////////////////////////////////
+
+#include <FL/Fl_Progress.H>
+class Fl_Progress_Type : public Fl_Widget_Type {
+public:
+  virtual const char *type_name() {return "Fl_Progress";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Progress *myo = new Fl_Progress(x,y,w,h);
+    myo->value(50);
+    return myo;}
+  Fl_Widget_Type *_make() {return new Fl_Progress_Type();}
+};
+static Fl_Progress_Type Fl_Progress_type;
 
 ////////////////////////////////////////////////////////////////
 
@@ -498,6 +648,7 @@ extern class Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 extern class Fl_Menu_Button_Type Fl_Menu_Button_type;
 extern class Fl_Menu_Item_Type Fl_Menu_Item_type;
 extern class Fl_Submenu_Type Fl_Submenu_type;
+extern class Fl_Wizard_Type Fl_Wizard_type;
 
 extern void select(Fl_Type *,int);
 extern void select_only(Fl_Type *);
@@ -523,6 +674,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Tabs_type},
   {0,0,cb,(void*)&Fl_Scroll_type},
   {0,0,cb,(void*)&Fl_Tile_type},
+  {0,0,cb,(void*)&Fl_Wizard_type},
 {0},
 {"buttons",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Button_type},
@@ -546,6 +698,8 @@ Fl_Menu_Item New_Menu[] = {
 {"text",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Input_type},
   {0,0,cb,(void*)&Fl_Output_type},
+  {0,0,cb,(void*)&Fl_Text_Display_type},
+  {0,0,cb,(void*)&Fl_Text_Editor_type},
 {0},
 {"menus",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Menu_Bar_type},
@@ -554,10 +708,16 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb, (void*)&Fl_Submenu_type},
   {0,0,cb, (void*)&Fl_Menu_Item_type},
 {0},
-{"other",0,0,0,FL_SUBMENU},
+{"browsers",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Browser_type},
+  {0,0,cb,(void*)&Fl_Check_Browser_type},
+  {0,0,cb,(void*)&Fl_File_Browser_type},
+{0},
+{"other",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Box_type},
   {0,0,cb,(void*)&Fl_Clock_type},
+  {0,0,cb,(void*)&Fl_Help_View_type},
+  {0,0,cb,(void*)&Fl_Progress_type},
 {0},
 {0}};
 
@@ -727,5 +887,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11 2001/04/13 19:07:40 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.2 2001/09/29 14:38:59 easysw Exp $".
 //

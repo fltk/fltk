@@ -1,5 +1,5 @@
-README - Fast Light Tool Kit (FLTK) Version 1.0.11
---------------------------------------------------
+README - Fast Light Tool Kit (FLTK) Version 1.1.0
+-------------------------------------------------
 
 WHAT IS FLTK?
 
@@ -26,7 +26,7 @@ ON-LINE DOCUMENTATION
     starting point.  PostScript(tm) and PDF versions of this
     documentation is also available from the FLTK web site at:
 
-        http://fltk.easysw.com/documentation.html
+        http://www.fltk.org/documentation.html
 
 
 BUILDING AND INSTALLING FLTK UNDER UNIX

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.4 2001/08/04 20:17:10 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -55,6 +55,7 @@ void Fl_Button::draw() {
 //if (col == FL_GRAY && Fl::belowmouse()==this) col = FL_LIGHT1;
   draw_box(value() ? (down_box()?down_box():down(box())) : box(), col);
   draw_label();
+  if (Fl::focus() == this) draw_focus();
 }
 int Fl_Button::handle(int event) {
   int newval;
@@ -65,6 +66,7 @@ int Fl_Button::handle(int event) {
     return 1;
   case FL_PUSH:
   case FL_DRAG:
+    take_focus();
     if (Fl::event_inside(this)) {
       if (type() == FL_RADIO_BUTTON) newval = 1;
       else newval = !oldval;
@@ -103,6 +105,22 @@ int Fl_Button::handle(int event) {
     }
     if (when() & FL_WHEN_RELEASE) do_callback(); else set_changed();
     return 1;
+  case FL_FOCUS :
+  case FL_UNFOCUS :
+    redraw();
+    return 1;
+  case FL_KEYBOARD :
+    if (Fl::focus() == this && Fl::event_key() == ' ') {
+      if (type() == FL_RADIO_BUTTON && !value_) {
+	setonly();
+	if (when() & FL_WHEN_CHANGED) do_callback();
+      } else if (type() == FL_TOGGLE_BUTTON) {
+	value(!value());
+	if (when() & FL_WHEN_CHANGED) do_callback();
+      }
+      if (when() & FL_WHEN_RELEASE) do_callback(); else set_changed();
+      return 1;
+    }
   default:
     return 0;
   }
@@ -118,5 +136,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.4 2001/08/04 20:17:10 easysw Exp $".
 //

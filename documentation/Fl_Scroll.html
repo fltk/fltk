@@ -34,12 +34,12 @@ Fl_Double_Window</TT>. </P>
 draw()</TT> method that draws the contents.  The scrolling is done by 
 changing the <TT>x()</TT> and <TT>y()</TT> of the widget, so this child 
 must use the <TT>x()</TT> and <TT>y()</TT> to position it's drawing. 
- To speed up drawing it should test <A href=fl_clip><TT>fl_clip()</TT></A>
+ To speed up drawing it should test <A href=drawing.html#fl_clip><TT>fl_clip()</TT></A>
 . </P>
 <P>Another very useful child is a single <A href=Fl_Pack.html#Fl_Pack><TT>
 Fl_Pack</TT></A>, which is itself a group that packs it's children 
 together and changes size to surround them.  Filling the <TT>Fl_Pack</TT>
- with <A href=#Fl_Tab><TT>Fl_Tab</TT></A> groups (and then putting 
+ with <A href=Fl_Tabs.html#Fl_Tabs><TT>Fl_Tabs</TT></A> groups (and then putting 
 normal widgets inside those) gives you a very powerful scrolling list 
 of individually-openable panels. </P>
 <P>Fluid lets you create these, but you can only lay out objects that 

@@ -13,27 +13,27 @@ Function {make_function_panel()} {open
   } {
     Fl_Light_Button f_public_button {
       label public
-      xywh {10 10 65 25} labelsize 10 when 0
+      tooltip {Make the function or method publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
     }
     Fl_Light_Button f_c_button {
       label {C declaration}
-      xywh {80 10 90 25} labelsize 10
+      tooltip {Declare with a C interface instead of C++.} xywh {80 10 90 25} labelsize 10
     }
     Fl_Input f_name_input {
       label {Name(args): (blank for main())}
-      xywh {10 55 265 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {The name of the function or method.} xywh {10 55 265 25} labelsize 12 align 5 when 0 textfont 4 resizable
     }
     Fl_Input f_return_type_input {
       label {Return Type: (blank to return outermost widget)}
-      xywh {10 100 265 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {The return type of the function or method.} xywh {10 100 265 25} labelsize 12 align 5 when 0 textfont 4
     }
     Fl_Return_Button f_panel_ok {
       label OK
-      xywh {110 135 80 25} hotspot
+      tooltip {Apply the changes.} xywh {110 135 80 25} hotspot
     }
     Fl_Button f_panel_cancel {
       label Cancel
-      xywh {195 135 80 25} shortcut 0xff1b
+      tooltip {Cancel the changes.} xywh {195 135 80 25} shortcut 0xff1b
     }
   }
 } 
@@ -45,7 +45,7 @@ Function {make_code_panel()} {open
     xywh {260 242 290 175} resizable modal visible
   } {
     Fl_Input code_input {
-      xywh {10 10 270 120} type Multiline labelsize 12 align 0 when 0 textfont 4 resizable
+      tooltip {C/C++ code.} xywh {10 10 270 120} type Multiline labelsize 12 align 0 when 0 textfont 4 resizable
     }
     Fl_Return_Button code_panel_ok {
       label OK
@@ -65,14 +65,14 @@ Function {make_codeblock_panel()} {open
     xywh {289 462 295 130} resizable modal visible
   } {
     Fl_Input code_before_input {
-      xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {\#ifdef or similar conditional code block.} xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
     }
     Fl_Box {} {
       label {"{...child code...}" is inserted here}
       xywh {10 35 270 25} align 20
     }
     Fl_Input code_after_input {
-      xywh {10 60 275 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {\#endif or similar conditional code block.} xywh {10 60 275 25} labelsize 12 align 5 when 0 textfont 4
     }
     Fl_Return_Button codeblock_panel_ok {
       label OK
@@ -92,14 +92,14 @@ Function {make_declblock_panel()} {open
     xywh {314 255 295 130} resizable modal visible
   } {
     Fl_Input decl_before_input {
-      xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {\#ifdef or similar conditional declaration block.} xywh {10 10 275 25} labelsize 12 align 5 when 0 textfont 4 resizable
     }
     Fl_Box {} {
       label {"\\n...child code...\\n" is inserted here}
       xywh {10 35 275 25} align 20
     }
     Fl_Input decl_after_input {
-      xywh {10 60 275 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {\#endif or similar declaration code block.} xywh {10 60 275 25} labelsize 12 align 5 when 0 textfont 4
     }
     Fl_Return_Button declblock_panel_ok {
       label OK
@@ -120,7 +120,7 @@ Function {make_decl_panel()} {open
   } {
     Fl_Light_Button decl_public_button {
       label public
-      xywh {10 10 65 25} labelsize 10 when 0
+      tooltip {Make the declaration publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
     }
     Fl_Input decl_input {
       label {Can be any declaration, like "int x;",
@@ -128,7 +128,7 @@ an external symbol like "extern int foo();",
 a \#directive like "\#include <foo.h>",
 or a comment like "//foo" or "/*foo*/",
 or typedef like "typedef char byte;"}
-      xywh {10 40 270 25} labelsize 12 align 6 when 0 textfont 4 resizable
+      tooltip {Declaration text.} xywh {10 40 270 25} labelsize 12 align 6 when 0 textfont 4 resizable
     }
     Fl_Return_Button decl_panel_ok {
       label OK
@@ -149,15 +149,15 @@ Function {make_class_panel()} {open
   } {
     Fl_Light_Button c_public_button {
       label public
-      xywh {10 10 65 25} labelsize 10 when 0
+      tooltip {Make the class publicly accessible.} xywh {10 10 65 25} labelsize 10 when 0
     }
     Fl_Input c_name_input {
       label {Name:}
-      xywh {10 55 265 25} labelsize 12 align 5 when 0 textfont 4 resizable
+      tooltip {Name of class.} xywh {10 55 265 25} labelsize 12 align 5 when 0 textfont 4 resizable
     }
     Fl_Input c_subclass_input {
       label {Subclass of (text between : and \{)}
-      xywh {10 100 265 25} labelsize 12 align 5 when 0 textfont 4
+      tooltip {Name of subclass.} xywh {10 100 265 25} labelsize 12 align 5 when 0 textfont 4
     }
     Fl_Return_Button c_panel_ok {
       label OK

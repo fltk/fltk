@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.1 2001/08/05 23:58:54 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -36,30 +36,30 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if ((cx+W) > w) W = w-cx;
+  if ((cx+W) > w()) W = w()-cx;
   if (W <= 0) return;
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if ((cy+H) > h) H = h-cy;
+  if ((cy+H) > h()) H = h()-cy;
   if (H <= 0) return;
 #ifdef WIN32
   if (!id) {
     // we need to pad the lines out to words & swap the bits
     // in each byte.
-    int w1 = (w+7)/8;
-    int w2 = ((w+15)/16)*2;
-    uchar* newarray = new uchar[w2*h];
+    int w1 = (w()+7)/8;
+    int w2 = ((w()+15)/16)*2;
+    uchar* newarray = new uchar[w2*h()];
     const uchar* src = array;
     uchar* dest = newarray;
     static uchar reverse[16] =	/* Bit reversal lookup table */
   		{ 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
 		  0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-    for (int y=0; y < h; y++) {
+    for (int y=0; y < h(); y++) {
       for (int n = 0; n < w1; n++, src++)
 	*dest++ = (reverse[*src & 0x0f] & 0xf0) |
 	          (reverse[(*src >> 4) & 0x0f] & 0x0f);
       dest += w2-w1;
     }
-    id = (ulong)CreateBitmap(w, h, 1, 1, newarray);
+    id = (ulong)CreateBitmap(w(), h(), 1, 1, newarray);
     array = newarray; // keep the pointer so I can free it later
   }
   HDC tempdc = CreateCompatibleDC(fl_gc);
@@ -70,10 +70,10 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   DeleteDC(tempdc);
 #else
   if (!id) id = XCreateBitmapFromData(fl_display, fl_window,
-				      (const char*)array, (w+7)&-8, h);
+				      (const char*)array, (w()+7)&-8, h());
   XSetStipple(fl_display, fl_gc, id);
-  int ox = X-cx; if (ox < 0) ox += w;
-  int oy = Y-cy; if (oy < 0) oy += h;
+  int ox = X-cx; if (ox < 0) ox += w();
+  int oy = Y-cy; if (oy < 0) oy += h();
   XSetTSOrigin(fl_display, fl_gc, ox, oy);
   XSetFillStyle(fl_display, fl_gc, FillStippled);
   XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
@@ -92,38 +92,13 @@ Fl_Bitmap::~Fl_Bitmap() {
 #endif
 }
 
-static void bitmap_labeltype(
-    const Fl_Label* o, int x, int y, int w, int h, Fl_Align a)
-{
-  Fl_Bitmap* b = (Fl_Bitmap*)(o->value);
-  int cx;
-  if (a & FL_ALIGN_LEFT) cx = 0;
-  else if (a & FL_ALIGN_RIGHT) cx = b->w-w;
-  else cx = (b->w-w)/2;
-  int cy;
-  if (a & FL_ALIGN_TOP) cy = 0;
-  else if (a & FL_ALIGN_BOTTOM) cy = b->h-h;
-  else cy = (b->h-h)/2;
-  fl_color((Fl_Color)o->color);
-  b->draw(x,y,w,h,cx,cy);
+void Fl_Bitmap::label(Fl_Widget* w) {
+  w->image(this);
 }
 
-static void bitmap_measure(const Fl_Label* o, int& w, int& h) {
-  Fl_Bitmap* b = (Fl_Bitmap*)(o->value);
-  w = b->w;
-  h = b->h;
-}
-
-void Fl_Bitmap::label(Fl_Widget* o) {
-  Fl::set_labeltype(_FL_BITMAP_LABEL, bitmap_labeltype, bitmap_measure);
-  o->label(_FL_BITMAP_LABEL, (const char*)this);
-}
-
-void Fl_Bitmap::label(Fl_Menu_Item* o) {
-  Fl::set_labeltype(_FL_BITMAP_LABEL, bitmap_labeltype, bitmap_measure);
-  o->label(_FL_BITMAP_LABEL, (const char*)this);
+void Fl_Bitmap::label(Fl_Menu_Item* m) {
 }
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.1 2001/08/05 23:58:54 easysw Exp $".
 //
