@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.3 2001/10/01 19:38:28 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.4 2001/10/02 16:54:45 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1565,7 +1565,8 @@ Fl_Help_View::format()
       {
         if (get_attr(attrs, "NAME", attr, sizeof(attr)) != NULL)
 	  add_target(attr, yy - size - 2);
-	else if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
+
+	if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
 	{
 	  strncpy(link, attr, sizeof(link) - 1);
 	  link[sizeof(link) - 1] = '\0';
@@ -3578,5 +3579,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.3 2001/10/01 19:38:28 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.4 2001/10/02 16:54:45 easysw Exp $".
 //
