@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.14 1999/02/19 14:33:22 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15 1999/02/19 14:53:04 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,6 @@
 
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
-// these currently require comments to parse correctly!
 
 static char buffer[128]; // for error messages
 
@@ -58,15 +57,36 @@ const char *_c_check(const char * & c, int type) {
     if (!type) return 0;
     sprintf(buffer, "missing %c", type);
     return buffer;
+  case '/':
+    // Skip comments as needed...
+    if (*c == '/') {
+      while (*c != '\n' && *c) c++;
+    } else if (*c == '*') {
+      c++;
+      while ((*c != '*' || c[1] != '/') && *c) c++;
+      if (*c == '*') c+=2;
+      else {
+        return "unterminated /* ... */ comment";
+      }
+    }
+    break;
   case '{':
     if (type==')') goto UNEXPECTED;
-    d = _c_check(c,'}'); if (d) return d; break;
+    d = _c_check(c,'}');
+    if (d) return d;
+    break;
   case '(':
-    d = _c_check(c,')'); if (d) return d; break;
+    d = _c_check(c,')');
+    if (d) return d;
+    break;
   case '\"':
-    d = _q_check(c,'\"'); if (d) return d; break;
+    d = _q_check(c,'\"');
+    if (d) return d;
+    break;
   case '\'':
-    d = _q_check(c,'\''); if (d) return d; break;
+    d = _q_check(c,'\'');
+    if (d) return d;
+    break;
   case '}':
   case ')':
   case '#':
@@ -709,5 +729,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.14 1999/02/19 14:33:22 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15 1999/02/19 14:53:04 mike Exp $".
 //
