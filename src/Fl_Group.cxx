@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.4 1998/10/21 14:20:07 mike Exp $"
+// "$Id: Fl_Group.cxx,v 1.5 1998/12/29 13:59:48 mike Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -260,13 +260,14 @@ void Fl_Group::insert(Fl_Widget &o, int i) {
   } else if (children_ == 1) { // go from 1 to 2 children
     Fl_Widget* t = (Fl_Widget*)array_;
     array_ = (Fl_Widget**)malloc(2*sizeof(Fl_Widget*));
-    array_[!i] = t; array_[i] = &o;
+    if (i) {array_[0] = t; array_[1] = &o;}
+    else {array_[0] = &o; array_[1] = t;}
   } else {
     if (!(children_ & (children_-1))) // double number of children
       array_ = (Fl_Widget**)realloc((void*)array_,
 				    2*children_*sizeof(Fl_Widget*));
-    for (int j = children_; j > i; j--) array_[j] = array_[j-1];
-    array_[i] = &o;
+    int j; for (j = children_; j > i; j--) array_[j] = array_[j-1];
+    array_[j] = &o;
   }
   children_++;
   init_sizes();
@@ -465,5 +466,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.4 1998/10/21 14:20:07 mike Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.5 1998/12/29 13:59:48 mike Exp $".
 //
