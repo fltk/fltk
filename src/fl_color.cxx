@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.6 1999/01/05 17:57:48 mike Exp $"
+// "$Id: fl_color.cxx,v 1.7 1999/01/07 16:40:58 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -294,6 +294,25 @@ Fl_Color inactive(Fl_Color c) {
   return i;
 }
 
+Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
+  Fl_Color avg;
+  unsigned rgb1 = fl_cmap[color1];
+  unsigned rgb2 = fl_cmap[color2];
+  uchar r, g, b;
+
+  r = (uchar)(((uchar)(rgb1>>24))*weight + ((uchar)(rgb2>>24))*(1-weight));
+  g = (uchar)(((uchar)(rgb1>>16))*weight + ((uchar)(rgb2>>16))*(1-weight));
+  b = (uchar)(((uchar)(rgb1>>8))*weight + ((uchar)(rgb2>>8))*(1-weight));
+
+  if (r == g && r == b) { // get it out of gray ramp
+    avg = fl_gray_ramp(r*FL_NUM_GRAY/256);
+  } else {		// get it out of color cube:
+    avg = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+  }
+
+  return avg;
+}
+
 Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
   if (bright(fl_cmap[bg])) {
     if (bright(fl_cmap[fg]))
@@ -353,5 +372,5 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 #endif
 
 //
-// End of "$Id: fl_color.cxx,v 1.6 1999/01/05 17:57:48 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.7 1999/01/07 16:40:58 mike Exp $".
 //
