@@ -243,8 +243,14 @@ int write_code(const char *s, const char *t) {
 
   if (t && include_H_from_C)
     write_c("#include \"%s\"\n", filename_name(t));
-  for (p = Fl_Type::first; p; p = p->next) p->write_static();
-  for (p = Fl_Type::first; p;) p = write_code(p);
+  for (p = Fl_Type::first; p;) {
+    // write all static data for this & all children first
+    p->write_static();
+    for (Fl_Type* q = p->next; q && q->level > p->level; q = q->next)
+      q->write_static();
+    // then write the nested code:
+    p = write_code(p);
+  }
 
   if (!s) return 1;
   int x = fclose(code_file);

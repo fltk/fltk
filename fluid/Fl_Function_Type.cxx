@@ -208,7 +208,7 @@ void Fl_Function_Type::write_code2() {
   if (ismain()) {
     if (havewidgets) write_c("  w->show(argc, argv);\n");
     write_c("  return Fl::run();\n");
-  } else if (havewidgets && !constructor)
+  } else if (havewidgets && !constructor && !return_type)
     write_c("  return w;\n");
   write_c("}\n");
   indentation = 0;
