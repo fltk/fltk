@@ -40,6 +40,7 @@ extern void active_cb(Fl_Light_Button*, void*);
 extern void resizable_cb(Fl_Light_Button*, void*);
 extern void hotspot_cb(Fl_Light_Button*, void*);
 extern void xclass_cb(Fl_Input*, void*);
+extern void tooltip_cb(Fl_Input*, void*);
 extern Fl_Menu_Item fontmenu[];
 extern void labelfont_cb(Fl_Choice*, void*);
 extern void labelsize_cb(Fl_Value_Input*, void*);

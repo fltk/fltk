@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.2 2001/09/29 03:36:27 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.3 2001/09/29 06:20:15 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -146,19 +146,20 @@ void Fl_Widget_Type::setimage(Fluid_Image *i) {
   if (image) image->decrement();
   if (i) i->increment();
   image = i;
-  if (i) i->label(o);
-  else o->labeltype(FL_NORMAL_LABEL);
+  i->image(o);
   redraw();
 }
 
-static char dont_touch_image;
+void Fl_Widget_Type::setinactive(Fluid_Image *i) {
+  if (i == inactive) return;
+  if (inactive) inactive->decrement();
+  if (i) i->increment();
+  inactive = i;
+  i->deimage(o);
+  redraw();
+}
+
 void Fl_Widget_Type::setlabel(const char *n) {
-  if (image) {
-    if (dont_touch_image) return;
-    Fluid_Image *i = Fluid_Image::find(n);
-    setimage(i);
-    if (i) return;
-  }
   o->label(n);
   redraw();
 }
@@ -166,7 +167,11 @@ void Fl_Widget_Type::setlabel(const char *n) {
 Fl_Widget_Type::Fl_Widget_Type() {
   for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = 0; subclass_ = 0;}
   hotspot_ = 0;
+  tooltip_ = 0;
+  image_name_ = 0;
+  inactive_name_ = 0;
   image = 0;
+  inactive = 0;
   xclass = 0;
   o = 0;
   public_ = 1;
@@ -188,6 +193,21 @@ extern void redraw_browser();
 void Fl_Widget_Type::subclass(const char *n) {
   if (storestring(n,subclass_) && visible)
     redraw_browser();
+}
+
+void Fl_Widget_Type::tooltip(const char *n) {
+  storestring(n,tooltip_);
+  o->tooltip(n);
+}
+
+void Fl_Widget_Type::image_name(const char *n) {
+  setimage(Fluid_Image::find(n));
+  storestring(n,image_name_);
+}
+
+void Fl_Widget_Type::inactive_name(const char *n) {
+  setinactive(Fluid_Image::find(n));
+  storestring(n,inactive_name_);
 }
 
 void Fl_Widget_Type::redraw() {
@@ -296,15 +316,26 @@ static Fl_Input *image_input;
 void image_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
     image_input = i;
-//    i->static_value(current_widget->label());
+    if (current_widget->is_widget()) {
+      i->activate();
+      i->static_value(((Fl_Widget_Type*)current_widget)->image_name());
+    } else i->deactivate();
   } else {
-//    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
-//      if (o->selected && o->is_widget()) o->label(i->value());
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) ((Fl_Widget_Type*)o)->image_name(i->value());
   }
 }
 
 void image_browse_cb(Fl_Button* b, void *v) {
-  if (v != LOAD) {
+  if (v == LOAD) {
+    if (current_widget->is_widget()) b->activate();
+    else b->deactivate();
+  } else {
+    if (ui_find_image(image_input->value())) {
+      image_input->value(ui_find_image_name);
+      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+	if (o->selected && o->is_widget()) ((Fl_Widget_Type*)o)->image_name(ui_find_image_name);
+    }
   }
 }
 
@@ -313,15 +344,41 @@ static Fl_Input *inactive_input;
 void inactive_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
     inactive_input = i;
-//    i->static_value(current_widget->label());
+    if (current_widget->is_widget()) {
+      i->activate();
+      i->static_value(((Fl_Widget_Type*)current_widget)->inactive_name());
+    } else i->deactivate();
   } else {
-//    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
-//      if (o->selected && o->is_widget()) o->label(i->value());
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) ((Fl_Widget_Type*)o)->inactive_name(i->value());
   }
 }
 
 void inactive_browse_cb(Fl_Button* b, void *v) {
-  if (v != LOAD) {
+  if (v == LOAD) {
+    if (current_widget->is_widget()) b->activate();
+    else b->deactivate();
+  } else {
+    if (ui_find_image(inactive_input->value())) {
+      inactive_input->value(ui_find_image_name);
+      for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+	if (o->selected && o->is_widget()) ((Fl_Widget_Type*)o)->inactive_name(ui_find_image_name);
+    }
+  }
+}
+
+static Fl_Input *tooltip_input;
+
+void tooltip_cb(Fl_Input* i, void *v) {
+  if (v == LOAD) {
+    tooltip_input = i;
+    if (current_widget->is_widget()) {
+      i->activate();
+      i->static_value(((Fl_Widget_Type*)current_widget)->tooltip());
+    } else i->deactivate();
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+      if (o->selected && o->is_widget()) ((Fl_Widget_Type*)o)->tooltip(i->value());
   }
 }
 
@@ -724,6 +781,7 @@ void labelsize_cb(Fl_Value_Input* i, void *v) {
 }
 
 extern const char *ui_find_image_name;
+#if 0
 void image_cb(Fl_Widget *a, void *) {
   Fluid_Image *i = ui_find_image(current_widget->label());
   if (!ui_find_image_name) return; // user hit "Cancel"
@@ -740,11 +798,10 @@ void image_cb(Fl_Widget *a, void *) {
   label_cb(label_input,LOAD);
   a->when(FL_WHEN_RELEASE|FL_WHEN_NOT_CHANGED);
 }
+#endif /* 0 */
 
 Fl_Menu_Item labeltypemenu[] = {
-  {"Image...",0,image_cb,(void*)(-1)},
   {"NORMAL_LABEL",0,0,(void*)0},
-  {"SYMBOL_LABEL",0,0,(void*)FL_SYMBOL_LABEL},
   {"SHADOW_LABEL",0,0,(void*)FL_SHADOW_LABEL},
   {"ENGRAVED_LABEL",0,0,(void*)FL_ENGRAVED_LABEL},
   {"EMBOSSED_LABEL",0,0,(void*)FL_EMBOSSED_LABEL},
@@ -754,27 +811,17 @@ Fl_Menu_Item labeltypemenu[] = {
 void labeltype_cb(Fl_Choice* i, void *v) {
   if (v == LOAD) {
     int n;
-    if (current_widget->image) {
-      n = -1;
-      i->when(FL_WHEN_RELEASE|FL_WHEN_NOT_CHANGED);
-    } else {
-      n = current_widget->o->labeltype();
-      i->when(FL_WHEN_RELEASE);
-    }
+    n = current_widget->o->labeltype();
+    i->when(FL_WHEN_RELEASE);
     for (int j = 0; j < int(sizeof(labeltypemenu)/sizeof(*labeltypemenu)); j++)
       if (labeltypemenu[j].argument() == n) {i->value(j); break;}
   } else {
     int m = i->value();
     int n = int(labeltypemenu[m].argument());
     if (n<0) return; // should not happen
-    if (current_widget->image) label_input->activate();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_widget()) {
       Fl_Widget_Type* p = (Fl_Widget_Type*)o;
-      if (p->image) {
-	p->setimage(0);
-	p->o->label(p->label());
-      }
       p->o->labeltype((Fl_Labeltype)n);
       p->redraw();
     }
@@ -846,6 +893,7 @@ static Fl_Menu_Item alignmenu[] = {
   {"FL_ALIGN_INSIDE",0,0,(void*)(FL_ALIGN_INSIDE)},
   {"FL_ALIGN_CLIP",0,0,(void*)(FL_ALIGN_CLIP)},
   {"FL_ALIGN_WRAP",0,0,(void*)(FL_ALIGN_WRAP)},
+  {"FL_ALIGN_TEXT_OVER_IMAGE",0,0,(void*)(FL_ALIGN_TEXT_OVER_IMAGE)},
   {"FL_ALIGN_TOP_LEFT",0,0,(void*)(FL_ALIGN_TOP_LEFT)},
   {"FL_ALIGN_TOP_RIGHT",0,0,(void*)(FL_ALIGN_TOP_RIGHT)},
   {"FL_ALIGN_BOTTOM_LEFT",0,0,(void*)(FL_ALIGN_BOTTOM_LEFT)},
@@ -1437,7 +1485,7 @@ void Fl_Widget_Type::write_code1() {
   } else {
     write_c("new %s(%d, %d, %d, %d", t, o->x(), o->y(), o->w(), o->h());
   }
-  if (!image && label() && *label()) {
+  if (label() && *label()) {
     write_c(", ");
     switch (i18n_type) {
     case 0 : /* None */
@@ -1458,6 +1506,7 @@ void Fl_Widget_Type::write_code1() {
   }
   write_c(");\n");
   indentation += 2;
+
   if (is_window()) write_c("%sw = o;\n",indent());
   if (varused) write_widget_code();
 }
@@ -1465,6 +1514,27 @@ void Fl_Widget_Type::write_code1() {
 // this is split from write_code1() for Fl_Window_Type:
 void Fl_Widget_Type::write_widget_code() {
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
+  if (tooltip() && *tooltip()) {
+    write_c("%so->tooltip(",indent());
+    switch (i18n_type) {
+    case 0 : /* None */
+        write_cstring(tooltip());
+        break;
+    case 1 : /* GNU gettext */
+        write_c("%s(", i18n_function);
+        write_cstring(tooltip());
+	write_c(")");
+        break;
+    case 2 : /* POSIX catgets */
+        write_c("catgets(%s,%s,%d,", i18n_file[0] ? i18n_file : "_catalog",
+	        i18n_set, msgnum());
+        write_cstring(tooltip());
+	write_c(")");
+        break;
+    }
+    write_c(");\n");
+  }
+
   if (o->type() != tplate->type() && !is_window())
     write_c("%so->type(%d);\n", indent(), o->type());
   if (o->box() != tplate->box())
@@ -1486,9 +1556,9 @@ void Fl_Widget_Type::write_widget_code() {
     write_c("%so->color(%d);\n", indent(), o->color());
   if (o->selection_color() != tplate->selection_color())
     write_c("%so->selection_color(%d);\n", indent(), o->selection_color());
-  if (image)
-    image->write_code();
-  else if (o->labeltype() != tplate->labeltype())
+  if (image) image->write_code();
+  if (inactive) inactive->write_code(1);
+  if (o->labeltype() != tplate->labeltype())
     write_c("%so->labeltype(FL_%s);\n", indent(),
 	    item_name(labeltypemenu, o->labeltype()));
   if (o->labelfont() != tplate->labelfont())
@@ -1572,6 +1642,18 @@ void Fl_Widget_Type::write_properties() {
   Fl_Type::write_properties();
   write_indent(level+1);
   if (!public_) write_string("private");
+  if (tooltip() && *tooltip()) {
+    write_string("tooltip");
+    write_word(o->tooltip());
+  }
+  if (image_name() && *image_name()) {
+    write_string("image");
+    write_word(image_name());
+  }
+  if (inactive_name() && *inactive_name()) {
+    write_string("deimage");
+    write_word(inactive_name());
+  }
   write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
   if (o->type() != tplate->type()) {
@@ -1596,9 +1678,7 @@ void Fl_Widget_Type::write_properties() {
     write_string("color %d", o->color());
   if (o->selection_color()!=tplate->selection_color())
     write_string("selection_color %d", o->selection_color());
-  if (image)
-    write_string("labeltype image");
-  else if (o->labeltype()!=tplate->labeltype()) {
+  if (o->labeltype()!=tplate->labeltype()) {
     write_string("labeltype");
     write_word(item_name(labeltypemenu, o->labeltype()));
   }
@@ -1659,6 +1739,12 @@ void Fl_Widget_Type::read_property(const char *c) {
       y += pasteoffset;
       o->resize(x,y,w,h);
     }
+  } else if (!strcmp(c,"tooltip")) {
+    tooltip(read_word());
+  } else if (!strcmp(c,"image")) {
+    image_name(read_word());
+  } else if (!strcmp(c,"deimage")) {
+    inactive_name(read_word());
   } else if (!strcmp(c,"type")) {
     o->type(item_number(subtypes(), read_word()));
   } else if (!strcmp(c,"box")) {
@@ -1698,6 +1784,8 @@ void Fl_Widget_Type::read_property(const char *c) {
       Fluid_Image *i = Fluid_Image::find(label());
       if (!i) read_error("Image file '%s' not found", label());
       else setimage(i);
+      image_name(label());
+      label("");
     } else {
       o->labeltype((Fl_Labeltype)item_number(labeltypemenu,c));
     }
@@ -1791,7 +1879,6 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
     }
   } else if (!strcmp(name,"label")) {
     label(value);
-    if (value[0] == '@') o->labeltype(FL_SYMBOL_LABEL);
   } else if (!strcmp(name,"name")) {
     this->name(value);
   } else if (!strcmp(name,"callback")) {
@@ -1868,5 +1955,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.2 2001/09/29 03:36:27 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.3 2001/09/29 06:20:15 easysw Exp $".
 //

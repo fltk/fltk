@@ -31,16 +31,16 @@ Fl_Window* make_widget_panel() {
         }
         { Fl_Input* o = new Fl_Input(95, 65, 195, 20, "Image:");
           o->callback((Fl_Callback*)image_cb);
-          o->when(FL_WHEN_CHANGED);
         }
         { Fl_Button* o = new Fl_Button(290, 65, 105, 20, "Browse...");
+          o->tooltip("}");
           o->callback((Fl_Callback*)image_browse_cb);
         }
         { Fl_Input* o = new Fl_Input(95, 90, 195, 20, "Inactive:");
           o->callback((Fl_Callback*)inactive_cb);
-          o->when(FL_WHEN_CHANGED);
         }
         { Fl_Button* o = new Fl_Button(290, 90, 105, 20, "Browse...");
+          o->tooltip("}");
           o->callback((Fl_Callback*)inactive_browse_cb);
         }
         { Fl_Value_Input* o = new Fl_Value_Input(95, 150, 60, 20, "X:");
@@ -87,7 +87,7 @@ Fl_Window* make_widget_panel() {
           { Fl_Button* o = new Fl_Button(175, 115, 55, 20, "text\nimage");
             o->type(1);
             o->labelsize(8);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_WRAP));
+            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_TEXT_OVER_IMAGE));
           }
           { Fl_Button* o = new Fl_Button(295, 115, 20, 20, "@-1<-");
             o->type(1);
@@ -204,9 +204,11 @@ Fl_Window* make_widget_panel() {
         }
         { Fl_Input* o = new Fl_Input(95, 235, 115, 20, "X Class:");
           o->callback((Fl_Callback*)xclass_cb);
-          o->when(FL_WHEN_NEVER);
         }
-        new Fl_Input(95, 285, 300, 20, "Tooltip:");
+        { Fl_Input* o = new Fl_Input(95, 285, 300, 20, "Tooltip:");
+          o->tooltip("}");
+          o->callback((Fl_Callback*)tooltip_cb);
+        }
         o->end();
       }
       { Fl_Group* o = new Fl_Group(10, 30, 395, 295, "Style");
@@ -273,7 +275,6 @@ Fl_Window* make_widget_panel() {
         o->hide();
         { Fl_Input* o = new Fl_Input(100, 65, 230, 20, "Name:");
           o->callback((Fl_Callback*)name_cb);
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Light_Button* o = new Fl_Light_Button(330, 65, 65, 20, "public");
           o->selection_color(1);
@@ -284,7 +285,6 @@ Fl_Window* make_widget_panel() {
         { Fl_Input* o = new Fl_Input(100, 40, 160, 20, "Class:");
           o->textfont(4);
           o->callback((Fl_Callback*)subclass_cb, (void*)(4));
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Choice* o = new Fl_Choice(260, 40, 135, 20);
           o->box(FL_THIN_UP_BOX);
@@ -294,22 +294,18 @@ Fl_Window* make_widget_panel() {
         { Fl_Input* o = v_input[0] = new Fl_Input(100, 90, 295, 20, "Extra Code:");
           o->textfont(4);
           o->callback((Fl_Callback*)v_input_cb, (void*)(0));
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Input* o = v_input[1] = new Fl_Input(100, 110, 295, 20);
           o->textfont(4);
           o->callback((Fl_Callback*)v_input_cb, (void*)(1));
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Input* o = v_input[2] = new Fl_Input(100, 130, 295, 20);
           o->textfont(4);
           o->callback((Fl_Callback*)v_input_cb, (void*)(2));
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Input* o = v_input[3] = new Fl_Input(100, 150, 295, 20);
           o->textfont(4);
           o->callback((Fl_Callback*)v_input_cb, (void*)(3));
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Box* o = new Fl_Box(20, 175, 75, 20, "Callback:");
           o->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
@@ -318,7 +314,6 @@ Fl_Window* make_widget_panel() {
           o->type(4);
           o->textfont(4);
           o->callback((Fl_Callback*)callback_cb);
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Box* o = new Fl_Box(95, 325, 100, 0, "label");
           o->hide();
@@ -327,18 +322,16 @@ Fl_Window* make_widget_panel() {
         { Fl_Input* o = new Fl_Input(100, 270, 140, 20, "User Data:");
           o->textfont(4);
           o->callback((Fl_Callback*)user_data_cb);
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Input* o = new Fl_Input(100, 295, 140, 20, "Type:");
           o->textfont(4);
           o->callback((Fl_Callback*)user_data_type_cb);
-          o->when(FL_WHEN_NEVER);
         }
         { Fl_Choice* o = new Fl_Choice(290, 270, 105, 20, "When:");
           o->box(FL_THIN_UP_BOX);
           o->down_box(FL_BORDER_BOX);
           o->callback((Fl_Callback*)when_cb);
-          o->when(FL_WHEN_NEVER);
+          o->when(FL_WHEN_CHANGED);
           o->menu(whenmenu);
         }
         { Fl_Light_Button* o = new Fl_Light_Button(290, 295, 105, 20, "No Change");

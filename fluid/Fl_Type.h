@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.1 2001/08/11 16:09:26 easysw Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.2 2001/09/29 06:20:15 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -227,6 +227,9 @@ class Fl_Widget_Type : public Fl_Type {
 
   const char *extra_code_[NUM_EXTRA_CODE];
   const char *subclass_;
+  const char *tooltip_;
+  const char *image_name_;
+  const char *inactive_name_;
   uchar hotspot_;
 
 protected:
@@ -246,6 +249,8 @@ public:
 
   Fluid_Image *image;
   void setimage(Fluid_Image *);
+  Fluid_Image *inactive;
+  void setinactive(Fluid_Image *);
 
   Fl_Widget_Type();
   Fl_Type *make();
@@ -255,6 +260,12 @@ public:
   void extra_code(int n,const char *);
   const char *subclass() const {return subclass_;}
   void subclass(const char *);
+  const char *tooltip() const {return tooltip_;}
+  void tooltip(const char *);
+  const char *image_name() const {return image_name_;}
+  void image_name(const char *);
+  const char *inactive_name() const {return inactive_name_;}
+  void inactive_name(const char *);
   uchar hotspot() const {return hotspot_;}
   void hotspot(uchar v) {hotspot_ = v;}
   uchar resizable() const;
@@ -549,5 +560,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.1 2001/08/11 16:09:26 easysw Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.2 2001/09/29 06:20:15 easysw Exp $".
 //

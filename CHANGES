@@ -1,8 +1,3 @@
-TODO	- FLUID now provides on-line help.
-
-TODO	- FLUID now supports image labels in addition to text
-	  labels + text over image alignment.
-
 TODO	- Documentation updates.
 
 
@@ -12,24 +7,45 @@ CHANGES IN FLTK 1.1.0b2
 	  needed a non-blank text string to display the image. 
 	  This bug also caused all sorts of crashes and display
 	  problems.
+
 	- Added new filetype() method to Fl_FileBrowser to allow
 	  for file or directory browsing.
+
 	- Fixed the drawing of the focus box around
 	  Fl_Return_Button.
+
 	- Fixed menu item measurement bug (wasn't initializing
 	  image pointers to 0...)
+
 	- Radio and checkbox menu items now draw with the new
 	  style (round radio buttons with dots and square check
 	  buttons with check marks.)
+
 	- Improved the appearance of Fl_Check_Button.
+
 	- Improved the Fl_HelpView table formatting code; now
 	  dynamically sizes the table columns, and supports
 	  COLSPAN.
+
 	- The FLUID keyboard shortcuts now work as expected
 	  (CTRL-C copies, SHIFT-CTRL-C writes code, etc.)
+
 	- The FLTK_DOCDIR environment variable can now be
 	  used to tell FLUID where to find the on-line
 	  documentation files.
+
+	- FLUID now supports image labels in addition to text
+	  labels + text over image alignment.
+
+	- FLUID now supports tooltips.
+
+	- The widget panel in FLUID is now tabbed, a la FLTK
+	  2.0.
+
+	- The FLUID pixmap destructor tried to free 1 too many
+	  lines of image data.
+
+	- FLUID now provides on-line help.
 
 
 CHANGES IN FLTK 1.1.0b1

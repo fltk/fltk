@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.2 2001/09/29 06:20:15 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -48,9 +48,10 @@ protected:
 public:
   pixmap_image(const char *name, FILE *);
   ~pixmap_image();
-  virtual void label(Fl_Widget *); // set the label of this widget
+  virtual void image(Fl_Widget *); // set the image of this widget
+  virtual void deimage(Fl_Widget *); // set the deimage of this widget
   virtual void write_static();
-  virtual void write_code();
+  virtual void write_code(int inactive = 0);
   static int test_file(char *buffer);
 };
 
@@ -58,8 +59,12 @@ int pixmap_image::test_file(char *buffer) {
   return (strstr(buffer,"/* XPM") != 0);
 }
 
-void pixmap_image::label(Fl_Widget *o) {
-  if (p) p->label(o);
+void pixmap_image::image(Fl_Widget *o) {
+  o->image(p);
+}
+
+void pixmap_image::deimage(Fl_Widget *o) {
+  o->deimage(p);
 }
 
 static int pixmap_header_written;
@@ -84,9 +89,9 @@ void pixmap_image::write_static() {
 	  unique_id(this, "image", filename_name(name()), 0));
 }
 
-void pixmap_image::write_code() {
+void pixmap_image::write_code(int inactive) {
   if (!p) return;
-  write_c("%s%s.label(o);\n", indent(),
+  write_c("%so->%s(%s);\n", indent(), inactive ? "deimage" : "image",
 	  unique_id(this, "pixmap", filename_name(name()), 0));
 }
 
@@ -101,6 +106,10 @@ static int hexdigit(int x) {
 #define INITIALLINES 1024
 
 pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
+  p = 0;
+  numlines = 0;
+  linelength = 0;
+
   if (!f) return; // for subclasses
   // read all the c-strings out of the file:
   char* local_data[INITIALLINES];
@@ -181,7 +190,7 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
 pixmap_image::~pixmap_image() {
   if (p && p->data) {
     char** real_data = (char**)(p->data);
-    for (int i = 0; real_data[i]; i++) delete[] real_data[i];
+    for (int i = 0; i < numlines; i++) delete[] real_data[i];
     free((void*)real_data);
   }
   free((void*)linelength);
@@ -234,9 +243,10 @@ class bitmap_image : public Fluid_Image {
 public:
   ~bitmap_image();
   bitmap_image(const char *name, FILE *);
-  virtual void label(Fl_Widget *); // set the label of this widget
+  virtual void image(Fl_Widget *); // set the image of this widget
+  virtual void deimage(Fl_Widget *); // set the deimage of this widget
   virtual void write_static();
-  virtual void write_code();
+  virtual void write_code(int inactive = 0);
   static int test_file(char *buffer);
 };
 
@@ -245,8 +255,12 @@ int bitmap_image::test_file(char *buffer) {
   return (strstr(buffer,"#define ") != 0);
 }
 
-void bitmap_image::label(Fl_Widget *o) {
-  if (p) p->label(o); else o->labeltype(FL_NORMAL_LABEL);
+void bitmap_image::image(Fl_Widget *o) {
+  o->image(p);
+}
+
+void bitmap_image::deimage(Fl_Widget *o) {
+  o->deimage(p);
 }
 
 static int bitmap_header_written;
@@ -284,9 +298,9 @@ void bitmap_image::write_static() {
 	  p->w(), p->h());
 }
 
-void bitmap_image::write_code() {
+void bitmap_image::write_code(int inactive) {
   if (!p) return;
-  write_c("%s%s.label(o);\n", indent(),
+  write_c("%so->%s(%s);\n", indent(), inactive ? "deimage" : "image",
 	  unique_id(this, "bitmap", filename_name(name()), 0));
 }
 
@@ -436,5 +450,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.2 2001/09/29 06:20:15 easysw Exp $".
 //

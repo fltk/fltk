@@ -33,41 +33,41 @@ Function {make_widget_panel()} {open
         Fl_Input {} {
           label {Image:}
           callback image_cb
-          xywh {95 65 195 20} when 1
+          xywh {95 65 195 20}
         }
         Fl_Button {} {
           label {Browse...}
           callback image_browse_cb
-          xywh {290 65 105 20}
+          tooltip {\}} xywh {290 65 105 20}
         }
         Fl_Input {} {
           label {Inactive:}
           callback inactive_cb
-          xywh {95 90 195 20} when 1
+          xywh {95 90 195 20}
         }
         Fl_Button {} {
           label {Browse...}
           callback inactive_browse_cb
-          xywh {290 90 105 20}
+          tooltip {\}} xywh {290 90 105 20}
         }
         Fl_Value_Input {} {
           label {X:}
-          callback x_cb selected
+          callback x_cb
           xywh {95 150 60 20} labelsize 10 align 5 maximum 2048 step 1
         }
         Fl_Value_Input {} {
           label {Y:}
-          callback y_cb selected
+          callback y_cb
           xywh {155 150 60 20} labelsize 10 align 5 maximum 2048 step 1
         }
         Fl_Value_Input {} {
           label {Width:}
-          callback w_cb selected
+          callback w_cb
           xywh {215 150 60 20} labelsize 10 align 5 maximum 2048 step 1
         }
         Fl_Value_Input {} {
           label {Height:}
-          callback h_cb selected
+          callback h_cb
           xywh {275 150 60 20} labelsize 10 align 5 maximum 2048 step 1
         }
         Fl_Group {} {
@@ -90,7 +90,7 @@ Function {make_widget_panel()} {open
           Fl_Button {} {
             label {text
 image}
-            user_data FL_ALIGN_WRAP
+            user_data FL_ALIGN_TEXT_OVER_IMAGE
             callback align_cb
             xywh {175 115 55 20} type Toggle labelsize 8
           }
@@ -212,11 +212,12 @@ image}
         Fl_Input {} {
           label {X Class:}
           callback xclass_cb
-          xywh {95 235 115 20} when 0
+          xywh {95 235 115 20}
         }
         Fl_Input {} {
           label {Tooltip:}
-          xywh {95 285 300 20}
+          callback tooltip_cb
+          tooltip {\}} xywh {95 285 300 20}
         }
       }
       Fl_Group {} {
@@ -289,7 +290,7 @@ image}
         Fl_Input {} {
           label {Name:}
           callback name_cb
-          xywh {100 65 230 20} when 0
+          xywh {100 65 230 20}
         }
         Fl_Light_Button {} {
           label public
@@ -300,7 +301,7 @@ image}
           label {Class:}
           user_data 4
           callback subclass_cb
-          xywh {100 40 160 20} when 0 textfont 4
+          xywh {100 40 160 20} textfont 4
         }
         Fl_Choice {} {
           callback subtype_cb open
@@ -310,22 +311,22 @@ image}
           label {Extra Code:}
           user_data 0
           callback v_input_cb
-          xywh {100 90 295 20} when 0 textfont 4
+          xywh {100 90 295 20} textfont 4
         }
         Fl_Input {v_input[1]} {
           user_data 1
           callback v_input_cb
-          xywh {100 110 295 20} when 0 textfont 4
+          xywh {100 110 295 20} textfont 4
         }
         Fl_Input {v_input[2]} {
           user_data 2
           callback v_input_cb
-          xywh {100 130 295 20} when 0 textfont 4
+          xywh {100 130 295 20} textfont 4
         }
         Fl_Input {v_input[3]} {
           user_data 3
           callback v_input_cb
-          xywh {100 150 295 20} when 0 textfont 4
+          xywh {100 150 295 20} textfont 4
         }
         Fl_Box {} {
           label {Callback:}
@@ -333,7 +334,7 @@ image}
         }
         Fl_Input {} {
           callback callback_cb
-          xywh {100 175 295 90} type Multiline when 0 textfont 4
+          xywh {100 175 295 90} type Multiline textfont 4
         }
         Fl_Box {} {
           label label
@@ -342,17 +343,17 @@ image}
         Fl_Input {} {
           label {User Data:}
           callback user_data_cb
-          xywh {100 270 140 20} when 0 textfont 4
+          xywh {100 270 140 20} textfont 4
         }
         Fl_Input {} {
           label {Type:}
           callback user_data_type_cb
-          xywh {100 295 140 20} when 0 textfont 4
+          xywh {100 295 140 20} textfont 4
         }
         Fl_Choice {} {
           label {When:}
           callback when_cb open
-          xywh {290 270 105 20} box THIN_UP_BOX down_box BORDER_BOX when 0
+          xywh {290 270 105 20} box THIN_UP_BOX down_box BORDER_BOX when 1
           code0 {extern Fl_Menu_Item whenmenu[];}
           code1 {o->menu(whenmenu);}
         } {}
@@ -383,7 +384,7 @@ image}
       }
       Fl_Return_Button {} {
         label OK
-        callback ok_cb
+        callback ok_cb selected
         xywh {240 335 80 25}
       }
     }
