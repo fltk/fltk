@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.6 1999/01/07 19:17:13 mike Exp $"
+// "$Id: file.cxx,v 1.7 1999/03/04 18:10:00 mike Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -311,6 +311,9 @@ static struct {const char* name; int* value;} inttable[] = {
   {"snap", &snap}
 };
 
+
+extern int header_file_set;
+extern int code_file_set;
 extern const char* header_file_name;
 extern const char* code_file_name;
 
@@ -393,12 +396,14 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
     if (!strcmp(c,"header_name")) {
-      header_file_name = strdup(read_word());
+      if (!header_file_set) header_file_name = strdup(read_word());
+      else read_word();
       goto CONTINUE;
     }
 
     if (!strcmp(c,"code_name")) {
-      code_file_name = strdup(read_word());
+      if (!code_file_set) code_file_name = strdup(read_word());
+      else read_word();
       goto CONTINUE;
     }
 
@@ -587,5 +592,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.6 1999/01/07 19:17:13 mike Exp $".
+// End of "$Id: file.cxx,v 1.7 1999/03/04 18:10:00 mike Exp $".
 //
