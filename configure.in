@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.14 1998/12/07 14:35:53 mike Exp $"
+dnl# "$Id: configure.in,v 1.15 1998/12/07 14:57:26 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -118,12 +118,7 @@ AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
     -lX11 -lXext $X_EXTRA_LIBS -lm)
 AC_SUBST(GLLIB)
 
-AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
-    if [ `uname -s` = "SunOS" ]; then
-	echo Xdbe supported, but SunOS Xdbe is broken.
-    else
-	AC_DEFINE(HAVE_XDBE))
-    fi)
+AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE))
 
 AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
     if xprop -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
@@ -167,5 +162,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.14 1998/12/07 14:35:53 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.15 1998/12/07 14:57:26 mike Exp $".
 dnl#
