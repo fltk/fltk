@@ -15,6 +15,8 @@ CHANGES IN FLTK 1.1.7
 	  current selection.
 	- FLUID now tracks the current state of the widget bin
 	  and overlays.
+	- Now fill the widget image paths with relative
+	  filenames.
 	- Fixed frame drawing of Fl_Text_Display (STR #762)
 	- Fl_Clock_Output::value() did not return the previously
 	  set value (STR #748)
