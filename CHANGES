@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- The boolean (char) value methods in Fl_Preferences
+	  have been removed since some C++ compilers can't
+	  handle char and int value methods with the same name.
 	- Added fl_read_image() function.
 	- Fixed Fl_Valuator::format() so that the correct format
 	  type is used when step == 1.0.
