@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0rc5
 
+	- The newButton and previewButton widgets are now public
+	  members of the Fl_File_Chooser class.  This allows
+	  developers to disable or hide the "new directory" and
+	  "preview" buttons as desired.
 	- Added new visible focus flag bit and methods to
 	  Fl_Widget, so it is now possible to do both global and
 	  per-widget keyboard focus control.

@@ -52,7 +52,9 @@ private:
   Fl_Menu_Button *favoritesButton;
   inline void cb_favoritesButton_i(Fl_Menu_Button*, void*);
   static void cb_favoritesButton(Fl_Menu_Button*, void*);
+public:
   Fl_Button *newButton;
+private:
   inline void cb_newButton_i(Fl_Button*, void*);
   static void cb_newButton(Fl_Button*, void*);
   inline void cb__i(Fl_Tile*, void*);
@@ -61,7 +63,9 @@ private:
   inline void cb_fileList_i(Fl_File_Browser*, void*);
   static void cb_fileList(Fl_File_Browser*, void*);
   Fl_Box *previewBox;
+public:
   Fl_Check_Button *previewButton;
+private:
   inline void cb_previewButton_i(Fl_Check_Button*, void*);
   static void cb_previewButton(Fl_Check_Button*, void*);
   Fl_File_Input *fileName;

@@ -52,8 +52,8 @@ window->hide();} open
           code0 {favoritesButton->label(favorites_label);}
         } {}
         Fl_Button newButton {
-          callback {newdir();}
-          private tooltip {Create a new directory.} image {new.xbm} xywh {455 10 25 25} labelsize 8
+          callback {newdir();} selected
+          tooltip {Create a new directory.} image {new.xbm} xywh {455 10 25 25} labelsize 8
           code0 {\#include <FL/Fl_Preferences.H>}
         }
       }
@@ -80,7 +80,7 @@ window->hide();} open
           Fl_Check_Button previewButton {
             label Preview
             callback {preview(previewButton->value());}
-            private xywh {405 275 75 20} down_box DOWN_BOX shortcut 0x80070 value 1
+            xywh {405 275 75 20} down_box DOWN_BOX shortcut 0x80070 value 1
             code0 {previewButton->label(preview_label);}
           }
           Fl_Box {} {
@@ -308,7 +308,7 @@ else
   }
   decl {static const char *all_files_label;} {public
   }
-  decl {static const char *custom_filter_label;} {selected public
+  decl {static const char *custom_filter_label;} {public
   }
   decl {static const char *existing_file_label;} {public
   }
