@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.29 2002/09/26 20:27:16 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.30 2002/09/26 20:52:50 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -742,7 +742,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) {
 
   /* Calculate Y coordinate */
   if (!position_to_line(pos, &visLineNum)) return 0;
-  if (visLineNum < 0 || visLineNum >= nNBufferLines) return 0;
+  if (visLineNum < 0 || visLineNum >= mNBufferLines) return 0;
   fontHeight = mMaxsize;
   *Y = text_area.y + visLineNum * fontHeight;
 
@@ -3008,5 +3008,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.29 2002/09/26 20:27:16 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.30 2002/09/26 20:52:50 easysw Exp $".
 //
