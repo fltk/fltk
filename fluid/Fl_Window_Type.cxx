@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.7 1998/11/05 16:04:44 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.8 1998/11/18 18:40:44 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -475,6 +475,18 @@ int Fl_Window_Type::handle(int event) {
       if (Fl::event_inside(o->o)) selection = o;
     CONTINUE2:;
     }}
+    // see if user grabs edges of selected region:
+    if (numselected && !overlays_invisible && !(Fl::event_state(FL_SHIFT)) &&
+	mx<=br+snap && mx>=bx-snap && my<=bt+snap && my>=by-snap) {
+      int snap1 = snap>5 ? snap : 5;
+      int w1 = (br-bx)/4; if (w1 > snap1) w1 = snap1;
+      if (mx>=br-w1) drag |= RIGHT;
+      else if (mx<bx+w1) drag |= LEFT;
+      w1 = (bt-by)/4; if (w1 > snap1) w1 = snap1;
+      if (my<=by+w1) drag |= BOTTOM;
+      else if (my>bt-w1) drag |= TOP;
+      if (!drag) drag = DRAG;
+    }
     // do object-specific selection of other objects:
     {Fl_Type* t = selection->click_test(mx, my);
     if (t) {
@@ -488,22 +500,10 @@ int Fl_Window_Type::handle(int event) {
 	if (t->is_menu_item()) t->open();
       }
       selection = t;
-      return 1;
-    }}
-    // see if user grabs edges of selected region:
-    if (numselected && !overlays_invisible && !(Fl::event_state(FL_SHIFT)) &&
-	mx<=br+snap && mx>=bx-snap && my<=bt+snap && my>=by-snap) {
-      int snap1 = snap>5 ? snap : 5;
-      int w1 = (br-bx)/4; if (w1 > snap1) w1 = snap1;
-      if (mx>=br-w1) drag |= RIGHT;
-      else if (mx<bx+w1) drag |= LEFT;
-      w1 = (bt-by)/4; if (w1 > snap1) w1 = snap1;
-      if (my<=by+w1) drag |= BOTTOM;
-      else if (my>bt-w1) drag |= TOP;
-      if (!drag) drag = DRAG;
+      drag = 0;
     } else {
-      drag = BOX; // start a new selection region
-    }
+      if (!drag) drag = BOX; // if all else fails, start a new selection region
+    }}
     return 1;
   case FL_DRAG:
     if (!drag) return 0;
@@ -693,5 +693,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.7 1998/11/05 16:04:44 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.8 1998/11/18 18:40:44 mike Exp $".
 //
