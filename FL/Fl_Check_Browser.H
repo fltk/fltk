@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Browser.H,v 1.1.2.1 2001/08/11 14:49:51 easysw Exp $"
+// "$Id: Fl_Check_Browser.H,v 1.1.2.2 2001/11/01 18:53:46 easysw Exp $"
 //
 // Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,8 @@ class Fl_Check_Browser : public Fl_Browser_ {
 
   /* private data */
 
+  public: // IRIX 5.3 C++ compiler doesn't support private structures...
+
   struct cb_item {
 	  cb_item *next;
 	  cb_item *prev;
@@ -50,6 +52,8 @@ class Fl_Check_Browser : public Fl_Browser_ {
 	  char selected;
 	  char *text;
   };
+
+  private:
 
   cb_item *first;
   cb_item *last;
@@ -82,6 +86,6 @@ class Fl_Check_Browser : public Fl_Browser_ {
 #endif // Fl_Check_Browser_H
 
 //
-// End of "$Id: Fl_Check_Browser.H,v 1.1.2.1 2001/08/11 14:49:51 easysw Exp $".
+// End of "$Id: Fl_Check_Browser.H,v 1.1.2.2 2001/11/01 18:53:46 easysw Exp $".
 //
 
