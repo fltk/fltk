@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.2
 
+	- Added new widget bin and icons to FLUID.
+	- FLUID would try running multiple commands in parallel,
+	  even though it wasn't capable of handling it.
+	- FLUID didn't generate code for some attributes when
+	  using custom/named widget classes.
 	- Added a new FL_COMMAND state bit which maps to FL_CTRL
 	  on X11 and WIN32 and FL_META on MacOS.
 	- MacOS keyboard modifiers mapping corrections. Cmd and

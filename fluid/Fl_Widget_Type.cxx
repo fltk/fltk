@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.19 2002/09/09 02:04:46 spitzak Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.20 2002/11/01 14:17:36 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1552,7 +1552,7 @@ void Fl_Widget_Type::write_widget_code() {
 
   if (o->type() != tplate->type() && !is_window())
     write_c("%so->type(%d);\n", indent(), o->type());
-  if (o->box() != tplate->box())
+  if (o->box() != tplate->box() || subclass())
     write_c("%so->box(FL_%s);\n", indent(), boxname(o->box()));
   if (is_button()) {
     Fl_Button* b = (Fl_Button*)o;
@@ -1567,20 +1567,20 @@ void Fl_Widget_Type::write_widget_code() {
     if (b->down_box()) write_c("%so->down_box(FL_%s);\n", indent(),
 			       boxname(b->down_box()));
   }
-  if (o->color() != tplate->color())
+  if (o->color() != tplate->color() || subclass())
     write_c("%so->color(%d);\n", indent(), o->color());
-  if (o->selection_color() != tplate->selection_color())
+  if (o->selection_color() != tplate->selection_color() || subclass())
     write_c("%so->selection_color(%d);\n", indent(), o->selection_color());
   if (image) image->write_code();
   if (inactive) inactive->write_code(1);
-  if (o->labeltype() != tplate->labeltype())
+  if (o->labeltype() != tplate->labeltype() || subclass())
     write_c("%so->labeltype(FL_%s);\n", indent(),
 	    item_name(labeltypemenu, o->labeltype()));
-  if (o->labelfont() != tplate->labelfont())
+  if (o->labelfont() != tplate->labelfont() || subclass())
     write_c("%so->labelfont(%d);\n", indent(), o->labelfont());
-  if (o->labelsize() != tplate->labelsize())
+  if (o->labelsize() != tplate->labelsize() || subclass())
     write_c("%so->labelsize(%d);\n", indent(), o->labelsize());
-  if (o->labelcolor() != tplate->labelcolor())
+  if (o->labelcolor() != tplate->labelcolor() || subclass())
     write_c("%so->labelcolor(%d);\n", indent(), o->labelcolor());
   if (is_valuator()) {
     Fl_Valuator* v = (Fl_Valuator*)o;
@@ -1616,14 +1616,14 @@ void Fl_Widget_Type::write_widget_code() {
   } else if (ud) {
     write_c("%so->user_data((void*)(%s));\n", indent(), ud);
   }
-  if (o->align() != tplate->align()) {
+  if (o->align() != tplate->align() || subclass()) {
     int i = o->align();
     write_c("%so->align(%s", indent(),
 	    item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
     if (i & FL_ALIGN_INSIDE) write_c("|FL_ALIGN_INSIDE");
     write_c(");\n");
   }
-  if (o->when() != tplate->when())
+  if (o->when() != tplate->when() || subclass())
     write_c("%so->when(%s);\n", indent(),item_name(whensymbolmenu, o->when()));
   if (!o->visible() && o->parent())
     write_c("%so->hide();\n", indent());
@@ -1970,5 +1970,5 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.19 2002/09/09 02:04:46 spitzak Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.20 2002/11/01 14:17:36 easysw Exp $".
 //
