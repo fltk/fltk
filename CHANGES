@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- CMake build fixes (STR #724)
 	- Fl_Browser::swap() didn't handle redraws properly when
 	  the swapped lines had different heights (STR #729)
 	- FL_MOUSEWHEEL events are now sent first to the widget
