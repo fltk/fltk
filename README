@@ -53,6 +53,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX
     need. Type "./configure <options>".  Options include:
 
 	--enable-debug          - Enable debugging code & symbols
+	--disable-gl            - Disable OpenGL support
 	--enable-shared         - Enable generation of shared libraries
 
 	--bindir=/path          - Set the location for executables

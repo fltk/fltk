@@ -1,5 +1,5 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.10 2001/04/13 19:07:40 easysw Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.11 2001/04/25 13:34:43 easysw Exp $"
  *
  * Copyright 1998-2001 by Bill Spitzak and others.
  *
@@ -81,10 +81,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #else
 /* This code to prevent "empty translation unit" or similar warnings... */
-static void dummy(void) {}
+static void dummy(void) {dummy();}
 #endif
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.10 2001/04/13 19:07:40 easysw Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.11 2001/04/25 13:34:43 easysw Exp $".
  */
 
