@@ -1,5 +1,5 @@
 //
-// "$Id: fl_labeltype.cxx,v 1.3 1998/10/21 14:20:53 mike Exp $"
+// "$Id: fl_labeltype.cxx,v 1.4 1998/12/02 15:39:37 mike Exp $"
 //
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -102,17 +102,12 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H) const {
   draw_label(X,Y,W,H,align());
 }
 
-Fl_Font Fl_Widget::default_font_;
-int Fl_Widget::default_size_;
-
 // Anybody can call this to force the label to draw anywhere:
 extern char fl_draw_shortcut;
 void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
   if (flags()&SHORTCUT_LABEL) fl_draw_shortcut = 1;
   Fl_Label l1 = label_;
   if (!active_r()) l1.color |= 8;
-  if (l1.font<4) l1.font |= default_font_;
-  l1.size += default_size_;
   l1.draw(X,Y,W,H,a);
   fl_draw_shortcut = 0;
 }
@@ -121,10 +116,6 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
 // Fl_Input_ code:
 #include <FL/Fl_Input_.H>
 
-Fl_Boxtype Fl_Input_::default_box_ = FL_DOWN_BOX;
-Fl_Font Fl_Input_::default_font_;
-int Fl_Input_::default_size_;
-
 //
-// End of "$Id: fl_labeltype.cxx,v 1.3 1998/10/21 14:20:53 mike Exp $".
+// End of "$Id: fl_labeltype.cxx,v 1.4 1998/12/02 15:39:37 mike Exp $".
 //

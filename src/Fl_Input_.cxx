@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.9 1998/11/18 17:26:43 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.10 1998/12/02 15:39:31 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -128,7 +128,7 @@ static double up_down_pos;
 static int was_up_down;
 
 void Fl_Input_::setfont() const {
- fl_font(textfont(), textsize(), default_font(), default_size());
+ fl_font(textfont(), textsize());
 }
 
 void Fl_Input_::drawtext(int X, int Y, int W, int H) {
@@ -727,5 +727,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.9 1998/11/18 17:26:43 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.10 1998/12/02 15:39:31 mike Exp $".
 //

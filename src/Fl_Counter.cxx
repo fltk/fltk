@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.4 1998/10/21 14:20:01 mike Exp $"
+// "$Id: Fl_Counter.cxx,v 1.5 1998/12/02 15:39:30 mike Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,13 +26,12 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Counter.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Input.H> // for default_font
 
 void Fl_Counter::draw() {
   int i; Fl_Boxtype boxtype[5];
 
   boxtype[0] = box();
-  if (boxtype[0] == FL_UP_BOX) boxtype[0] = Fl_Input::default_box();
+  if (boxtype[0] == FL_UP_BOX) boxtype[0] = FL_DOWN_BOX;
   for (i=1; i<5; i++)
     if (mouseobj == i)
       boxtype[i] = down(box());
@@ -55,8 +54,7 @@ void Fl_Counter::draw() {
   }
 
   draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_WHITE);
-  fl_font(textfont(), textsize(),
-	  Fl_Input::default_font(), Fl_Input::default_size());
+  fl_font(textfont(), textsize());
   fl_color(active_r() ? textcolor() : inactive(textcolor()));
   char str[128]; format(str);
   fl_draw(str, xx[0], y(), ww[0], h(), FL_ALIGN_CENTER);
@@ -161,5 +159,5 @@ Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.4 1998/10/21 14:20:01 mike Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.5 1998/12/02 15:39:30 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.3 1998/10/21 14:19:56 mike Exp $"
+// "$Id: Fl_Browser.cxx,v 1.4 1998/12/02 15:39:29 mike Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include <FL/Fl_Input_.H> // for default_font
 
 // I modified this from the original Forms data to use a linked list
 // so that the number of items in the browser and size of those items
@@ -213,7 +212,7 @@ int Fl_Browser::item_height(void* lv) const {
   case 'm': case 'M': t = 20; break;
   case 's': case 'S': t = 13; break;
   }
-  return t + Fl_Input_::default_size();
+  return t;
 }
 
 int Fl_Browser::item_width(void* v) const {
@@ -258,7 +257,7 @@ int Fl_Browser::item_width(void* v) const {
       break;
   }
 
-  fl_font(font, size, Fl_Input_::default_font(), Fl_Input_::default_size());
+  fl_font(font, size);
   return w + int(fl_width(str)) + 6;
 }
 
@@ -330,7 +329,7 @@ void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
       }
     }
   BREAK:
-    fl_font(font, size, Fl_Input_::default_font(), Fl_Input_::default_size());
+    fl_font(font, size);
     if (!active_r()) lcol = inactive(lcol);
     if (((FL_BLINE*)v)->flags & SELECTED)
       lcol = contrast(lcol, selection_color());
@@ -441,5 +440,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.3 1998/10/21 14:19:56 mike Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.4 1998/12/02 15:39:29 mike Exp $".
 //

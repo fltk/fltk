@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.3 1998/10/21 14:19:15 mike Exp $"
+// "$Id: Fl_Input_.H,v 1.4 1998/12/02 15:39:26 mike Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -62,9 +62,6 @@ class Fl_Input_ : public Fl_Widget {
   void minimal_update(int p);
   void put_in_buffer(int newsize);
 
-  static Fl_Boxtype default_box_;
-  static Fl_Font default_font_;
-  static int default_size_;
   void setfont() const;
 
 protected:
@@ -118,17 +115,10 @@ public:
   void textcolor(uchar n) {textcolor_ = n;}
   Fl_Color cursor_color() const {return (Fl_Color)cursor_color_;}
   void cursor_color(uchar n) {cursor_color_ = n;}
-
-  static void default_box(Fl_Boxtype b) {default_box_ = b;}
-  static Fl_Boxtype default_box() {return default_box_;}
-  static void default_font(Fl_Font b) {default_font_ = b;}
-  static Fl_Font default_font() {return default_font_;}
-  static void default_size(int b) {default_size_ = b;}
-  static int default_size() {return default_size_;}
 };
 
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.3 1998/10/21 14:19:15 mike Exp $".
+// End of "$Id: Fl_Input_.H,v 1.4 1998/12/02 15:39:26 mike Exp $".
 //

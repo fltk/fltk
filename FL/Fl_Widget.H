@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.3 1998/10/21 14:19:42 mike Exp $"
+// "$Id: Fl_Widget.H,v 1.4 1998/12/02 15:39:27 mike Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -86,9 +86,6 @@ protected:
   void draw_label() const;
   void draw_label(int, int, int, int) const;
 
-  static Fl_Font default_font_;
-  static int default_size_;
-
 public:
 
   virtual ~Fl_Widget();
@@ -142,11 +139,6 @@ public:
   Fl_When when() const {return (Fl_When)when_;}
   void when(uchar i) {when_ = i;}
 
-  static void default_font(Fl_Font b) {default_font_ = b;}
-  static Fl_Font default_font() {return default_font_;}
-  static void default_size(int b) {default_size_ = b;}
-  static int default_size() {return default_size_;}
-
   int visible() const {return !(flags_&INVISIBLE);}
   int visible_r() const;
   void show();
@@ -198,5 +190,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.3 1998/10/21 14:19:42 mike Exp $".
+// End of "$Id: Fl_Widget.H,v 1.4 1998/12/02 15:39:27 mike Exp $".
 //

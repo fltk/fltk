@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.3 1998/10/21 14:21:34 mike Exp $"
+// "$Id: menubar.cxx,v 1.4 1998/12/02 15:39:38 mike Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -167,11 +167,17 @@ Fl_Menu_* menus[4];
 // turn MicroSoft style on/off
 void button_cb(Fl_Widget* w, void*) {
   if (((Fl_Button*)w)->value()) {
-    Fl::set_color(FL_SELECTION_COLOR, 0, 36, 127);
-    Fl_Menu_::default_font(FL_HELVETICA);
+    for (int i = 0; i < 4; i++) {
+      menus[i]->down_box(FL_FLAT_BOX);
+      menus[i]->selection_color(137);
+      menus[i]->textfont(FL_HELVETICA);
+    }
   } else {
-    Fl::set_color(FL_SELECTION_COLOR, 170, 170, 170);
-    Fl_Menu_::default_font(FL_HELVETICA_BOLD_ITALIC);
+    for (int i = 0; i < 4; i++) {
+      menus[i]->down_box(FL_NO_BOX);
+      menus[i]->selection_color(FL_WHITE);
+      menus[i]->textfont(FL_BOLD|FL_ITALIC);
+    }
   }
   menus[0]->parent()->redraw();
 }
@@ -207,5 +213,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.3 1998/10/21 14:21:34 mike Exp $".
+// End of "$Id: menubar.cxx,v 1.4 1998/12/02 15:39:38 mike Exp $".
 //

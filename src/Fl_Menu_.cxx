@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.3 1998/10/21 14:20:11 mike Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.4 1998/12/02 15:39:32 mike Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,8 +34,6 @@
 #include <FL/Fl_Menu_.H>
 #include <stdlib.h>
 
-Fl_Font Fl_Menu_::default_font_;
-int Fl_Menu_::default_size_;
 
 int Fl_Menu_::value(const Fl_Menu_Item* m) {
   clear_changed();
@@ -117,5 +115,5 @@ Fl_Menu_::~Fl_Menu_() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.3 1998/10/21 14:20:11 mike Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.4 1998/12/02 15:39:32 mike Exp $".
 //

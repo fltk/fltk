@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.11 1998/10/21 22:03:53 mike Exp $"
+# "$Id: Makefile,v 1.12 1998/12/02 15:39:38 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -33,7 +33,7 @@ CPPFILES =\
 	minimum.C navigation.C output.C overlay.C pixmap.C  \
 	pixmap_browser.C radio.C resizebox.C scroll.C shape.C shiny.C \
 	subwindow.C  symbols.C tabs.C tile.C valuators.C fast_slow.C \
-	resize.C pack.C inactive.C style.C
+	resize.C pack.C inactive.C
 
 ALL =	adjuster arc ask bitmap boxtype browser button buttons checkers \
 	clock colbrowser color_chooser cube cursor curve demo doublebuffer \
@@ -41,7 +41,7 @@ ALL =	adjuster arc ask bitmap boxtype browser button buttons checkers \
 	hello iconize image input keyboard label list_visuals mandelbrot \
 	menubar message minimum navigation output overlay pixmap \
 	pixmap_browser radio resizebox scroll shape shiny subwindow \
-	symbols tabs tile valuators fast_slow resize pack inactive style
+	symbols tabs tile valuators fast_slow resize pack inactive
 
 all:	$(ALL)
 
@@ -94,9 +94,6 @@ keyboard: keyboard.C keyboard_ui.C
 mandelbrot: mandelbrot.C mandelbrot_ui.C
 	@echo $@:
 	@$(CXX) -I.. $(CXXFLAGS) mandelbrot.C -L../lib -lfltk $(LDLIBS) -o $@
-style: style.C style_ui.C
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) style.C -L../lib -lfltk $(LDLIBS) -o $@
 
 # If you have libjpeg installed, you might want to try this test program:
 
@@ -114,5 +111,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.11 1998/10/21 22:03:53 mike Exp $".
+# End of "$Id: Makefile,v 1.12 1998/12/02 15:39:38 mike Exp $".
 #

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.H,v 1.3 1998/10/21 14:19:18 mike Exp $"
+// "$Id: Fl_Menu_.H,v 1.4 1998/12/02 15:39:27 mike Exp $"
 //
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -35,8 +35,6 @@ class Fl_Menu_ : public Fl_Widget {
 
   Fl_Menu_Item *menu_;
   const Fl_Menu_Item *value_;
-  static Fl_Font default_font_;
-  static int default_size_;
 
 protected:
 
@@ -83,11 +81,6 @@ public:
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
   void textcolor(uchar c) {textcolor_=c;}
 
-  static void default_font(Fl_Font b) {default_font_ = b;}
-  static Fl_Font default_font() {return default_font_;}
-  static void default_size(int b) {default_size_ = b;}
-  static int default_size() {return default_size_;}
-
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   void down_box(Fl_Boxtype b) {down_box_ = b;}
 
@@ -99,5 +92,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Menu_.H,v 1.3 1998/10/21 14:19:18 mike Exp $".
+// End of "$Id: Fl_Menu_.H,v 1.4 1998/12/02 15:39:27 mike Exp $".
 //

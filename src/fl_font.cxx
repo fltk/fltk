@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font.cxx,v 1.3 1998/10/21 14:20:51 mike Exp $"
+// "$Id: fl_font.cxx,v 1.4 1998/12/02 15:39:36 mike Exp $"
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -250,11 +250,6 @@ void fl_font(int fnum, int size) {
   if (f != fl_current_xfont) {fl_current_xfont = f; font_gc = 0;}
 }
 
-void fl_font(int fnum, int size, Fl_Font default_font, int default_size) {
-  if (fnum<4) fnum |= default_font;
-  fl_font(fnum, size + default_size);
-}
-
 int fl_height() {
   return (fl_current_xfont->font->ascent + fl_current_xfont->font->descent);
 }
@@ -305,5 +300,5 @@ void fl_draw(const char *str, int x, int y) {
 #endif
 
 //
-// End of "$Id: fl_font.cxx,v 1.3 1998/10/21 14:20:51 mike Exp $".
+// End of "$Id: fl_font.cxx,v 1.4 1998/12/02 15:39:36 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.3 1998/10/21 14:19:45 mike Exp $"
+// "$Id: fl_draw.H,v 1.4 1998/12/02 15:39:28 mike Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -108,7 +108,6 @@ void fl_transformed_vertex(double x, double y);
 
 // current font:
 void fl_font(int face, int size);
-void fl_font(int face, int size, Fl_Font default_font, int default_size);
 extern int fl_font_; inline int fl_font() {return fl_font_;}
 extern int fl_size_; inline int fl_size() {return fl_size_;}
 
@@ -157,5 +156,5 @@ int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scalable);
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.3 1998/10/21 14:19:45 mike Exp $".
+// End of "$Id: fl_draw.H,v 1.4 1998/12/02 15:39:28 mike Exp $".
 //

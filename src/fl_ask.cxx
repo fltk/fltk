@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.5 1998/11/12 14:16:57 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.6 1998/12/02 15:39:35 mike Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -95,9 +95,8 @@ static int innards(const char* fmt, va_list ap,
     message->label(buffer);
   }
   Fl_Font f = (Fl_Font)fl_message_font_;
-  if (!f) f = Fl_Input_::default_font();
   message->labelfont(f);
-  message->labelsize(fl_message_size_ + Fl_Input::default_size());
+  message->labelsize(fl_message_size_);
   if (b0) {button[0]->show();button[0]->label(b0);button[1]->position(210,70);}
   else {button[0]->hide(); button[1]->position(310,70);}
   if (b1) {button[1]->show(); button[1]->label(b1);}
@@ -196,5 +195,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.5 1998/11/12 14:16:57 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.6 1998/12/02 15:39:35 mike Exp $".
 //

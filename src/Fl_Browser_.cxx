@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.5 1998/11/08 15:05:45 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.6 1998/12/02 15:39:29 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Input_.H> // for default_font
 
 // This is the base class for browsers.  To be useful it must be
 // subclassed and several virtual functions defined.  The
@@ -66,7 +65,7 @@ int Fl_Browser_::scrollbar_width_ = 17;
 
 // return where to draw the actual box:
 void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
-  Fl_Boxtype b = box() ? box() : Fl_Input_::default_box();
+  Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
   X = x()+Fl::box_dx(b);
   Y = y()+Fl::box_dy(b);
   W = w()-Fl::box_dw(b);
@@ -225,7 +224,7 @@ void Fl_Browser_::display(void* x) {
 void Fl_Browser_::draw() {
   int drawsquare = 0;
   if (damage() & FL_DAMAGE_ALL) { // redraw the box if full redraw
-    Fl_Boxtype b = box() ? box() : Fl_Input_::default_box();
+    Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
     draw_box(b, x(), y(), w(), h(), color());
     drawsquare = 1;
   }
@@ -627,5 +626,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.5 1998/11/08 15:05:45 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.6 1998/12/02 15:39:29 mike Exp $".
 //
