@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.1 2001/08/04 20:17:10 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -460,9 +460,6 @@ int menuwindow::handle(int e) {
     switch (Fl::event_key()) {
     case FL_Tab:
       if (Fl::event_shift()&FL_SHIFT) goto BACKTAB;
-    case ' ':
-      if (!forward(p.menu_number)) {p.item_number = -1; forward(p.menu_number);}
-      return 1;
     case FL_BackSpace:
     case 0xFE20: // backtab
     BACKTAB:
@@ -488,6 +485,7 @@ int menuwindow::handle(int e) {
 	setitem(p.menu_number-1, p.p[p.menu_number-1]->selected);
       return 1;
     case FL_Enter:
+    case ' ':
       p.state = DONE_STATE;
       return 1;
     case FL_Escape:
@@ -743,5 +741,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.1 2001/08/04 20:17:10 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.1 2001/08/04 20:17:10 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,17 +34,28 @@
 extern char fl_draw_shortcut;
 
 void Fl_Choice::draw() {
-  draw_box();
-  if (box() == FL_FLAT_BOX) return; // for XForms compatability
-  int H = labelsize()/2+1;
-  draw_box(FL_THIN_UP_BOX,x()+w()-3*H,y()+(h()-H)/2,2*H,H,color());
+  draw_box(FL_DOWN_BOX, color());
+  int dx = Fl::box_dx(FL_DOWN_BOX);
+  int dy = Fl::box_dy(FL_DOWN_BOX);
+  int H = h() - 2 * dy;
+  int X = x() + w() - h() + dx;
+  int Y = y() + dy;
+  int w1 = (H - 4) / 3; if (w1 < 1) w1 = 1;
+  int x1 = X + (H - 2 * w1 - 1) / 2;
+  int y1 = Y + (H - w1 - 1) / 2;
+
+  draw_box(FL_UP_BOX,X,Y,H,H,FL_GRAY);
+
+  fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
+  fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
+
   if (mvalue()) {
     Fl_Menu_Item m = *mvalue();
     if (active_r()) m.activate(); else m.deactivate();
-    int BW = Fl::box_dx(box());
-    fl_clip(x(), y(), w()-3*H, h());
+    fl_clip(x() + dx, y() + dy + 1, w() - h() - 2 * dx, H - 2);
     fl_draw_shortcut = 2; // hack value to make '&' disappear
-    m.draw(x()+BW, y(), w()-2*BW-3*H, h(), this);
+    m.draw(x() + dx, y() + dy + 1, w() - h() - 2 * dx, H - 2, this,
+           Fl::focus() == this);
     fl_draw_shortcut = 0;
     fl_pop_clip();
   }
@@ -56,7 +67,9 @@ Fl_Choice::Fl_Choice(int x,int y,int w,int h, const char *l)
   align(FL_ALIGN_LEFT);
   when(FL_WHEN_RELEASE);
   textfont(FL_HELVETICA);
-  down_box(FL_NO_BOX);
+  box(FL_FLAT_BOX);
+  down_box(FL_BORDER_BOX);
+  color(FL_WHITE);
 }
 
 int Fl_Choice::value(int v) {
@@ -69,7 +82,10 @@ int Fl_Choice::handle(int e) {
   if (!menu() || !menu()->text) return 0;
   const Fl_Menu_Item* v;
   switch (e) {
+  case FL_KEYBOARD:
+    if (Fl::event_key() != ' ') return 0;
   case FL_PUSH:
+    take_focus();
     Fl::event_is_click(0);
   J1:
     v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
@@ -84,11 +100,15 @@ int Fl_Choice::handle(int e) {
     if (v != mvalue()) redraw();
     picked(v);
     return 1;
+  case FL_FOCUS:
+  case FL_UNFOCUS:
+    redraw();
+    return 1;
   default:
     return 0;
   }
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.1 2001/08/04 20:17:10 easysw Exp $".
 //

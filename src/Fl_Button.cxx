@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6.2.3 2001/08/04 16:43:31 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.4 2001/08/04 20:17:10 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
-#include <FL/fl_draw.H>
 
 // There are a lot of subclasses, named Fl_*_Button.  Some of
 // them are implemented by setting the type() value and testing it
@@ -56,12 +55,7 @@ void Fl_Button::draw() {
 //if (col == FL_GRAY && Fl::belowmouse()==this) col = FL_LIGHT1;
   draw_box(value() ? (down_box()?down_box():down(box())) : box(), col);
   draw_label();
-  if (Fl::focus() == this) {
-    fl_line_style(FL_DASH);
-    fl_rect(x() + Fl::box_dx(box()), y() + Fl::box_dy(box()),
-            w() - Fl::box_dw(box()) - 1, h() - Fl::box_dh(box()) - 1);
-    fl_line_style(FL_SOLID);
-  }
+  if (Fl::focus() == this) draw_focus();
 }
 int Fl_Button::handle(int event) {
   int newval;
@@ -72,6 +66,7 @@ int Fl_Button::handle(int event) {
     return 1;
   case FL_PUSH:
   case FL_DRAG:
+    take_focus();
     if (Fl::event_inside(this)) {
       if (type() == FL_RADIO_BUTTON) newval = 1;
       else newval = !oldval;
@@ -141,5 +136,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.3 2001/08/04 16:43:31 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.4 2001/08/04 20:17:10 easysw Exp $".
 //

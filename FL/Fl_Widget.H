@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.3 2001/08/03 02:28:32 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.4 2001/08/04 20:17:10 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -86,6 +86,8 @@ protected:
   void draw_box() const;
   void draw_box(Fl_Boxtype, Fl_Color) const;
   void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
+  void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
+  void draw_focus(Fl_Boxtype, int,int,int,int) const;
   void draw_label() const;
   void draw_label(int, int, int, int) const;
 
@@ -195,5 +197,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.3 2001/08/03 02:28:32 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.4 2001/08/04 20:17:10 easysw Exp $".
 //

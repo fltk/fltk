@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.2 2001/08/03 15:48:20 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.3 2001/08/04 20:17:10 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/fl_draw.H>
 
 
 ////////////////////////////////////////////////////////////////
@@ -132,6 +133,17 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
 }
 
+// draw a focus box for the widget...
+void
+Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+  fl_color(FL_BLACK);
+  fl_line_style(FL_DASH);
+  fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
+          W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
+  fl_line_style(FL_SOLID);
+}
+
+
 // redraw this, plus redraw opaque object if there is an outside label
 static void redraw_label(Fl_Widget* w) {
   w->redraw();
@@ -206,5 +218,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.2 2001/08/03 15:48:20 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.3 2001/08/04 20:17:10 easysw Exp $".
 //

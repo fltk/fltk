@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.4 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.5 2001/08/04 20:17:10 easysw Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -316,9 +316,8 @@ J1:
 	fl_rectf(X, yy+Y, W, hh);
       }
       item_draw(l, X-hposition_, yy+Y, W+hposition_, hh);
-      if (l == selection_) {
-	fl_color(active_r() ? textcolor() : inactive(textcolor()));
-	fl_rect(X+1, yy+Y, W-2, hh);
+      if (l == selection_ && Fl::focus() == this) {
+	draw_focus(FL_NO_BOX, X, yy+Y+1, W, hh);
       }
       int w = item_width(l);
       if (w > max_width) {max_width = w; max_width_item = l;}
@@ -499,8 +498,7 @@ int Fl_Browser_::select_only(void* l, int docallbacks) {
 
 int Fl_Browser_::handle(int event) {
   // must do shortcuts first or the scrollbar will get them...
-  if ((event == FL_SHORTCUT || event == FL_KEYBOARD)
-      && type() >= FL_HOLD_BROWSER) {
+  if (event == FL_KEYBOARD && type() >= FL_HOLD_BROWSER) {
     void* l1 = selection_;
     void* l = l1; if (!l) l = top_; if (!l) l = item_first();
     if (l) {
@@ -553,6 +551,7 @@ int Fl_Browser_::handle(int event) {
   switch (event) {
   case FL_PUSH:
     if (!Fl::event_inside(X, Y, W, H)) return 0;
+    take_focus();
     my = py = Fl::event_y();
     change = 0;
     if (type() == FL_NORMAL_BROWSER || !top_)
@@ -647,6 +646,12 @@ int Fl_Browser_::handle(int event) {
       if (when() & FL_WHEN_NOT_CHANGED) do_callback();
     }
     return 1;
+  case FL_FOCUS:
+  case FL_UNFOCUS:
+    if (type() >= FL_HOLD_BROWSER) {
+      redraw();
+      return 1;
+    } else return 0;
   }
 
   return 0;
@@ -707,5 +712,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.4 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16.2.5 2001/08/04 20:17:10 easysw Exp $".
 //

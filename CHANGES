@@ -9,7 +9,7 @@ TODO	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
 	- Added tooltip support using Jacques Tremblay's tooltip
 	  patch.
 
-TODO	- Added keyboard navigation to all widgets.
+PARTIAL	- Added keyboard navigation to all widgets.
 
 	- Added support for mouse wheels using the new
 	  FL_MOUSEWHEEL event type.  Get the mouse wheel
@@ -26,7 +26,7 @@ TODO	- Added the Fl_Check_Browser, and Fl_Tree_Browser
 	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
 	  based on NEdit.
 
-TODO	- The Fl_Choice widget now looks more line a combo box
+	- The Fl_Choice widget now looks more line a combo box
 	  than a Motif option menu.
 
 	- Moved the OpenGL widgets into a separate library
