@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H,v 1.6.2.4.2.4 2002/04/11 11:52:40 easysw Exp $"
+// "$Id: Fl_Input_.H,v 1.6.2.4.2.5 2002/07/23 16:28:18 easysw Exp $"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,6 +40,9 @@
 #define FL_INPUT_READONLY	8
 #define FL_NORMAL_OUTPUT	(FL_NORMAL_INPUT | FL_INPUT_READONLY)
 #define FL_MULTILINE_OUTPUT	(FL_MULTILINE_INPUT | FL_INPUT_READONLY)
+#define FL_INPUT_WRAP		16
+#define FL_MULTILINE_INPUT_WRAP	(FL_MULTILINE_INPUT | FL_INPUT_WRAP)
+#define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
 
 class Fl_Input_ : public Fl_Widget {
 
@@ -126,11 +129,14 @@ public:
   void input_type(int t) { type(t | readonly()); }
   int readonly() const { return type() & FL_INPUT_READONLY; }
   void readonly(int b) { if (b) type(type() | FL_INPUT_READONLY);
-                         else type(type() & FL_INPUT_TYPE); }
+                         else type(type() & ~FL_INPUT_READONLY); }
+  int wrap() const { return type() & FL_INPUT_WRAP; }
+  void wrap(int b) { if (b) type(type() | FL_INPUT_WRAP);
+                         else type(type() & ~FL_INPUT_WRAP); }
 };
 
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.4 2002/04/11 11:52:40 easysw Exp $".
+// End of "$Id: Fl_Input_.H,v 1.6.2.4.2.5 2002/07/23 16:28:18 easysw Exp $".
 //

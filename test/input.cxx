@@ -1,5 +1,5 @@
 //
-// "$Id: input.cxx,v 1.5.2.4.2.3 2002/05/13 05:05:11 spitzak Exp $"
+// "$Id: input.cxx,v 1.5.2.4.2.4 2002/07/23 16:28:19 easysw Exp $"
 //
 // Input field test program for the Fast Light Tool Kit (FLTK).
 //
@@ -89,6 +89,7 @@ int main(int argc, char **argv) {
   input[3]->tooltip("Input field for password");
   input[4] = new Fl_Multiline_Input(70,y,300,100,"Multiline:"); y += 105;
   input[4]->tooltip("Input field for short text with newlines");
+  input[4]->wrap(1);
 
   for (int i = 0; i < 4; i++) {
     input[i]->when(0); input[i]->callback(cb);
@@ -131,5 +132,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: input.cxx,v 1.5.2.4.2.3 2002/05/13 05:05:11 spitzak Exp $".
+// End of "$Id: input.cxx,v 1.5.2.4.2.4 2002/07/23 16:28:19 easysw Exp $".
 //

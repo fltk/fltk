@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.0rc5
 
+	- Added "wrap" type bit to Fl_Input_, so you can now
+	  have a multiline text field that wraps text.
+	- Setting the value() of an output text field no longer
+	  selects the text in it.
+	- Output text fields now show a caret for the cursor
+	  instead of the vertical bar.
 	- The newButton and previewButton widgets are now public
 	  members of the Fl_File_Chooser class.  This allows
 	  developers to disable or hide the "new directory" and

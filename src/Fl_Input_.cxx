@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.14 2002/07/23 15:07:33 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.15 2002/07/23 16:28:19 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -41,34 +41,26 @@
 
 ////////////////////////////////////////////////////////////////
 
-// Wordwrap kludge.  This works ok but is commented out because
-// we want to move multi-line functionality to it's own subclass.
-// To try the wordwrap define this:
-//#define WORDWRAP
-#ifdef WORDWRAP
-static int wordwrap; // width for wordwrapping, should be are to Fl_Input_.
-#endif
-
 // Copy string p..e to the buffer, replacing characters with ^X and \nnn
 // as necessary.  Truncate if necessary so the resulting string and
 // null terminator fits in a buffer of size n.  Return new end pointer.
 const char* Fl_Input_::expand(const char* p, char* buf) const {
   char* o = buf;
   char* e = buf+(MAXBUF-4);
-#ifdef WORDWRAP
   const char* lastspace = p;
   char* lastspace_out = o;
   int width_to_lastspace = 0;
   int word_count = 0;
-#endif
+  int word_wrap;
+
   if (input_type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {*o++ = '*'; p++;}
   } else while (o<e) {
-#ifdef WORDWRAP
-    if (wordwrap && (p >= value_+size_ || isspace(*p))) {
+    if (wrap() && (p >= value_+size_ || isspace(*p))) {
+      word_wrap = w() - Fl::box_dw(box()) - 2;
       width_to_lastspace += (int)fl_width(lastspace_out, o-lastspace_out);
       if (p > lastspace+1) {
-	if (word_count && width_to_lastspace > wordwrap) {
+	if (word_count && width_to_lastspace > word_wrap) {
 	  p = lastspace; o = lastspace_out; break;
 	}
 	word_count++;
@@ -76,7 +68,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
       lastspace = p;
       lastspace_out = o;
     }
-#endif
+
     if (p >= value_+size_) break;
     int c = *p++ & 255;
     if (c < ' ' || c == 127) {
@@ -176,10 +168,6 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   setfont();
-#ifdef WORDWRAP
-  if (input_type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
-#endif
-
   const char *p, *e;
   char buf[MAXBUF];
 
@@ -245,6 +233,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     if (do_mu) {	// for minimal update:
       const char* pp = value()+mu_p; // pointer to where minimal update starts
       if (e < pp) goto CONTINUE2; // this line is before the changes
+      if (readonly()) erase_cursor_only = 0; // this isn't the most efficient way
       if (erase_cursor_only && p > pp) goto CONTINUE2; // this line is after
       // calculate area to erase:
       int r = X+W;
@@ -252,9 +241,11 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       if (p >= pp) {
 	x = X;
 	if (erase_cursor_only) r = xpos+2;
+	else if (readonly()) x -= 3;
       } else {
 	x = xpos+(int)expandpos(p, pp, buf, 0);
 	if (erase_cursor_only) r = x+2;
+	else if (readonly()) x -= 3;
       }
       // clip to and erase it:
       fl_color(color());
@@ -301,7 +292,13 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     if (Fl::focus() == this && selstart == selend &&
 	position() >= p-value() && position() <= e-value()) {
       fl_color(cursor_color());
-      fl_rectf(xpos+curx, Y+ypos, 2, height);
+      if (readonly()) {
+        fl_line(xpos+curx-3, Y+ypos+height-1,
+	        xpos+curx, Y+ypos+height-4,
+	        xpos+curx+3, Y+ypos+height-1);
+      } else {
+        fl_rectf(xpos+curx, Y+ypos, 2, height);
+      }
     }
 
   CONTINUE:
@@ -343,51 +340,42 @@ int Fl_Input_::word_start(int i) const {
 
 int Fl_Input_::line_end(int i) const {
   if (input_type() != FL_MULTILINE_INPUT) return size();
-#ifdef WORDWRAP
-  // go to the start of the paragraph:
-  int j = i;
-  while (j > 0 && index(j-1) != '\n') j--;
-  // now measure lines until we get past i, end of that line is real eol:
-  wordwrap = w()-Fl::box_dw(box())-6;
-  setfont();
-  for (const char* p=value()+j; ;) {
-    char buf[MAXBUF];
-    p = expand(p, buf);
-    if (p-value() >= i) return p-value();
-    p++;
+
+  if (wrap()) {
+    // go to the start of the paragraph:
+    int j = i;
+    while (j > 0 && index(j-1) != '\n') j--;
+    // now measure lines until we get past i, end of that line is real eol:
+    setfont();
+    for (const char* p=value()+j; ;) {
+      char buf[MAXBUF];
+      p = expand(p, buf);
+      if (p-value() >= i) return p-value();
+      p++;
+    }
+  } else {
+    while (i < size() && index(i) != '\n') i++;
+    return i;
   }
-#else
-  while (i < size() && index(i) != '\n') i++;
-  return i;
-#endif
 }
 
 int Fl_Input_::line_start(int i) const {
   if (input_type() != FL_MULTILINE_INPUT) return 0;
   int j = i;
   while (j > 0 && index(j-1) != '\n') j--;
-#ifdef WORDWRAP
-  // now measure lines until we get past i, start of that line is real eol:
-  wordwrap = w()-Fl::box_dw(box())-6;
-  setfont();
-  for (const char* p=value()+j; ;) {
-    char buf[MAXBUF];
-    const char* e = expand(p, buf);
-    if (e-value() >= i) return p-value();
-    p = e+1;
-  }
-#else
-  return j;
-#endif
+  if (wrap()) {
+    // now measure lines until we get past i, start of that line is real eol:
+    setfont();
+    for (const char* p=value()+j; ;) {
+      char buf[MAXBUF];
+      const char* e = expand(p, buf);
+      if (e-value() >= i) return p-value();
+      p = e+1;
+    }
+  } else return j;
 }
 
-void Fl_Input_::handle_mouse(int X, int Y,
-#ifdef WORDWRAP
-			     int W,
-#else
-			     int /*W*/,
-#endif
-			     int /*H*/, int drag) {
+void Fl_Input_::handle_mouse(int X, int Y, int W, int /*H*/, int drag) {
   was_up_down = 0;
   if (!size()) return;
   setfont();
@@ -399,9 +387,6 @@ void Fl_Input_::handle_mouse(int X, int Y,
     (Fl::event_y()-Y+yscroll_)/fl_height() : 0;
 
   int newpos = 0;
-#ifdef WORDWRAP
-  if (input_type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
-#endif
   for (p=value();; ) {
     e = expand(p, buf);
     theline--; if (theline < 0) break;
@@ -488,11 +473,6 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
   // unlike before, i must be at the start of the line already!
 
   setfont();
-#ifdef WORDWRAP
-  if (input_type()==FL_MULTILINE_INPUT)
-    wordwrap = w()-Fl::box_dw(box())-6;
-  else wordwrap = 0;
-#endif
   char buf[MAXBUF];
   const char* p = value()+i;
   const char* e = expand(p, buf);
@@ -600,15 +580,13 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   undowidget = this;
   undoat = b+ilen;
 
-#ifdef WORDWRAP
   // Insertions into the word at the end of the line will cause it to
   // wrap to the next line, so we must indicate that the changes may start
   // right after the whitespace before the current word.  This will
   // result in sub-optimal update when such wrapping does not happen
   // but it is too hard to figure out for now...
-  if (input_type() == FL_MULTILINE_INPUT)
+  if (wrap())
     while (b > 0 && !isspace(index(b))) b--;
-#endif
 
   // make sure we redraw the old selection or cursor:
   if (mark_ < b) b = mark_;
@@ -659,14 +637,6 @@ int Fl_Input_::undo() {
   return 1;
 }
 
-#if 0
-int Fl_Input_::yank() {
-  // fake yank by trying to get it out of undobuffer
-  if (!yankcut) return 0;
-  return change(position(), position(), undobuffer, yankcut);
-}
-#endif
-
 int Fl_Input_::copy_cuts() {
   // put the yank buffer into the X clipboard
   if (!yankcut || input_type()==FL_SECRET_INPUT) return 0;
@@ -716,15 +686,8 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     return 1;
 
   case FL_RELEASE:
-//  handle_mouse(X, Y, W, H, 1);
     copy(0);
     return 1;
-
-// MRS: FL_SELECTIONCLEAR is no longer used...
-//   case FL_SELECTIONCLEAR:
-//     minimal_update(mark_, position_);
-//     mark_ = position_;
-//     return 1;
 
   case FL_PASTE: {
     // strip trailing control characters and spaces before pasting:
@@ -842,7 +805,7 @@ int Fl_Input_::static_value(const char* str, int len) {
     xscroll_ = yscroll_ = 0;
     minimal_update(0);
   }
-  position(0, size());
+  position(0, readonly() ? 0 : size());
   return 1;
 }
 
@@ -872,5 +835,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.14 2002/07/23 15:07:33 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.15 2002/07/23 16:28:19 easysw Exp $".
 //
