@@ -1,5 +1,5 @@
 /*
- * fractviewer.c [from agviewer.c  (version 1.0)]
+ * fractviewer.cxx [from agviewer.c  (version 1.0)]
  *
  * AGV: a glut viewer. Routines for viewing a 3d scene w/ glut
  *
@@ -12,12 +12,26 @@
  * http://www.cs.hmc.edu/people/pwinston
  */
 
-#include <GL/glut.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <config.h>
 
-#include "fracviewer.h"
+#if HAVE_GL && HAVE_GL_GLU_H
+#  include <FL/glut.h>
+#  ifdef __APPLE__
+#    include <OpenGL/glu.h>
+#  else
+#    include <GL/glu.h> // added for FLTK
+#  endif
+
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <math.h>
+#  include <sys/types.h>
+#  include <time.h>
+#  if !defined(WIN32) && !defined(__EMX__)
+#    include <sys/time.h>
+#  endif // !WIN32 && !__EMX__
+
+#  include "fracviewer.h"
 
 /* Some <math.h> files do not define M_PI... */
 #ifndef M_PI
@@ -133,7 +147,7 @@ int  ConstrainEl(void);
 void MoveOn(int v);
 void SetMove(float newmove);
 static void normalize(GLfloat v[3]);
-static void ncrossprod(float v1[3], float v2[3], float cp[3]);
+void ncrossprod(float v1[3], float v2[3], float cp[3]);
 
 
 /***************************************************************/
@@ -223,7 +237,6 @@ int ConstrainEl(void)
   */
 void agvMove(void)
 {
-
   switch (MoveMode)  {
     case FLYING:
       Ex += EyeMove*sin(TORAD(EyeAz))*cos(TORAD(EyeEl));
@@ -378,7 +391,7 @@ void agvHandleMotion(int x, int y)
 
   switch (downb) {
     case GLUT_LEFT_BUTTON:
-      EyeEl  = downEl + EL_SENS * ((MoveMode == FLYING) ? -deltay : deltay);
+      EyeEl  = downEl + EL_SENS * deltay;
       ConstrainEl();
       EyeAz  = downAz + AZ_SENS * deltax;
       dAz    = PREV_DAZ*dAz + CUR_DAZ*(lastAz - EyeAz);
@@ -453,7 +466,7 @@ static void normalize(GLfloat v[3])
 }
 
   /* calculates a normalized crossproduct to v1, v2 */
-static void ncrossprod(float v1[3], float v2[3], float cp[3])
+void ncrossprod(float v1[3], float v2[3], float cp[3])
 {
   cp[0] = v1[1]*v2[2] - v1[2]*v2[1];
   cp[1] = v1[2]*v2[0] - v1[0]*v2[2];
@@ -494,3 +507,4 @@ void agvMakeAxesList(int displaylistnum)
 }
 
 
+#endif // HAVE_GL && HAVE_GL_GLU_H

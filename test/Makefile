@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.26 2002/01/01 15:11:32 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.27 2002/01/03 14:08:08 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -207,9 +207,9 @@ cube$(EXEEXT): cube.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
-fractals$(EXEEXT): fractals.o
+fractals$(EXEEXT): fractals.o fracviewer.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fractals.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) fractals.o fracviewer.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 fullscreen$(EXEEXT): fullscreen.o
 	echo Linking $@...
@@ -261,5 +261,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.26 2002/01/01 15:11:32 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.27 2002/01/03 14:08:08 easysw Exp $".
 #

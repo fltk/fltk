@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- The fractals demo would get far ahead of the UI with
+	  some Linux OpenGL drivers.  Now use glFinish() instead
+	  of glFlush() so we are at most 1 frame ahead.
+	- The fractals demo Y axis controls were backwards for
+	  the "flying" mode.
 	- MacOS: cleaned up src/Fl_mac.cxx
 	- MacOS: fixed Fl::wait(0.0), fixed Cmd-Q handling
 	- Update CygWin support for Fl::add_fd().

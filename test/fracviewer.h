@@ -95,6 +95,7 @@ void agvMakeAxesList(int displaylist);
 
 
 
+void ncrossprod(float v1[3], float v2[3], float cp[3]);
 
 
 

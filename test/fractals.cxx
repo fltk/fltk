@@ -1,11 +1,11 @@
 //
-// "$Id: fractals.cxx,v 1.5.2.6.2.3 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: fractals.cxx,v 1.5.2.6.2.4 2002/01/03 14:08:08 easysw Exp $"
 //
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
 // This is a GLUT demo program, with modifications to
-// demonstrate how to add fltk controls to a glut program.   The glut
-// code is unchanged except for the end (search for fltk to find changes).
+// demonstrate how to add FLTK controls to a GLUT program.   The GLUT
+// code is unchanged except for the end (search for FLTK to find changes).
 //
 // Copyright 1998-2002 by Bill Spitzak and others.
 //
@@ -63,9 +63,9 @@ int main(int, char**) {
 
 #include <FL/glut.H>
 #ifdef __APPLE__
-# include <OpenGL/glu.h>
+#  include <OpenGL/glu.h>
 #else
-# include <GL/glu.h> // added for fltk
+#  include <GL/glu.h> // added for FLTK
 #endif
 
 #include <stdio.h>
@@ -76,14 +76,14 @@ int main(int, char**) {
 
 #include <time.h>  /* for random seed */
 
-#include "fracviewer.c" // changed from .h for fltk
+#include "fracviewer.h"
 
 #if defined(WIN32) || defined(__EMX__)
-# define drand48() (((float) rand())/((float) RAND_MAX))
-# define srand48(x) (srand((x)))
+#  define drand48() (((float) rand())/((float) RAND_MAX))
+#  define srand48(x) (srand((x)))
 #elif defined __APPLE__
-# define drand48() (((float) rand())/((float) RAND_MAX))
-# define srand48(x) (srand((x)))
+#  define drand48() (((float) rand())/((float) RAND_MAX))
+#  define srand48(x) (srand((x)))
 #endif
 
 typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF, 
@@ -624,7 +624,6 @@ void reshape(int w, int h)
 void display(void)
 { 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glFlush();
 
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
@@ -645,8 +644,12 @@ void display(void)
   if (DrawAxes)
     glCallList(AXES);
 
-  glutSwapBuffers();
-  glFlush();
+  //
+  // Use glFinish() instead of glFlush() to avoid getting many frames
+  // ahead of the display (problem with some Linux OpenGL implementations...)
+  //
+
+  glFinish();
 }
 
 void visible(int v)
@@ -742,7 +745,7 @@ void MenuInit(void)
 /**************************** MAIN *****************************/
 /***************************************************************/
 
-// fltk-style callbacks to Glut menu callback translators:
+// FLTK-style callbacks to Glut menu callback translators:
 void setlevel(Fl_Widget*, void *value) {setlevel(long(value));}
 
 void choosefract(Fl_Widget*, void *value) {choosefract(long(value));}
@@ -755,9 +758,9 @@ void handlemenu(Fl_Widget*, void *value) {handlemenu(long(value));}
 
 int main(int argc, char** argv)
 {
-//  glutInit(&argc, argv); // this line removed for fltk
+//  glutInit(&argc, argv); // this line removed for FLTK
 
-  // create fltk window:
+  // create FLTK window:
   Fl_Window window(512+20, 512+100);
   window.resizable(window);
 
@@ -813,5 +816,5 @@ int main(int argc, char** argv)
 #endif
 
 //
-// End of "$Id: fractals.cxx,v 1.5.2.6.2.3 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: fractals.cxx,v 1.5.2.6.2.4 2002/01/03 14:08:08 easysw Exp $".
 //
