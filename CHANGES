@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.5
 
 	- Documentation updates (STR #568, STR #570)
+	- Shortcuts were incorrectly underlined in multi-line
+	  labels (STR #566)
 	- More CMake updates (STR #499)
 	- The Watcom C++ compiler needed a small change (STR
 	  #567)

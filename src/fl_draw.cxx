@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.16 2004/04/11 04:38:59 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.17 2004/10/18 20:40:36 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -208,7 +208,7 @@ void fl_draw(
 
       callthis(buf,buflen,xpos,ypos-desc);
 
-      if (underline_at)
+      if (underline_at && underline_at >= buf && underline_at < (buf + buflen))
 	callthis("_",1,xpos+int(fl_width(buf,underline_at-buf)),ypos-desc);
 
       if (!*e || (*e == '@' && e[1] != '@')) break;
@@ -325,5 +325,5 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.16 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.17 2004/10/18 20:40:36 easysw Exp $".
 //
