@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12 1999/02/16 14:01:46 mike Exp $"
+# "$Id: Makefile,v 1.13 1999/02/19 13:10:20 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -175,13 +175,13 @@ include makedepend
 install: ../lib/$(LIBNAME)
 	-mkdir -p $(libdir)
 	-cp ../lib/$(LIBNAME)* $(libdir)
-	@-chmod a+r,a-w $(libdir)/$(LIBNAME)*
+	@-chmod a+r,u+w,g-w,o-w $(libdir)/$(LIBNAME)*
 	-mkdir -p $(includedir)
 	-rm -rf $(includedir)/FL $(includedir)/Fl
 	-cp -r ../FL $(includedir)
-	@-chmod -R a+r,a-w $(includedir)/FL
+	@-chmod -R a+r,u+w,g-w,o-w $(includedir)/FL
 	-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.12 1999/02/16 14:01:46 mike Exp $".
+# End of "$Id: Makefile,v 1.13 1999/02/19 13:10:20 mike Exp $".
 #

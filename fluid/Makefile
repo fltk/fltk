@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.8 1999/01/31 07:43:14 bill Exp $"
+# "$Id: Makefile,v 1.9 1999/02/19 13:10:20 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -73,7 +73,7 @@ install: $(PROGRAM)
 	strip $(PROGRAM)
 	-mkdir -p $(bindir)
 	cp $(PROGRAM) $(bindir)/$(PROGRAM)
-	@chmod a+rx,g-w,o-w $(bindir)/$(PROGRAM)
+	@chmod a+rx,u+w,g-w,o-w $(bindir)/$(PROGRAM)
 
 uninstall:
 	-@ rm -f $(bindir)/$(PROGRAM)
@@ -90,5 +90,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.8 1999/01/31 07:43:14 bill Exp $".
+# End of "$Id: Makefile,v 1.9 1999/02/19 13:10:20 mike Exp $".
 #
