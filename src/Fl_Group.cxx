@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.6 2001/12/19 18:15:34 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.7 2001/12/19 18:40:13 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -23,7 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-// The Fl_Group is the only defined container type in fltk.
+// The Fl_Group is the only defined container type in FLTK.
 
 // Fl_Window itself is a subclass of this, and most of the event
 // handling is designed so windows themselves work correctly.
@@ -551,5 +551,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.6 2001/12/19 18:15:34 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.7 2001/12/19 18:40:13 easysw Exp $".
 //
