@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.22 2000/05/16 12:26:58 mike Exp $"
+// "$Id: Fl.cxx,v 1.24.2.23 2000/06/03 08:36:59 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -360,8 +360,6 @@ void fl_fix_focus() {
 
   if (Fl::grab()) return; // don't do anything while grab is on.
 
-  Fl::e_keysym = 0; // make sure it is not confused with navigation key
-
   // set focus based on Fl::modal() and fl_xfocus
   Fl_Widget* w = fl_xfocus;
   if (w) {
@@ -600,18 +598,35 @@ Fl_Window::~Fl_Window() {
   hide();
 }
 
-// Child windows must respond to FL_SHOW and FL_HIDE by actually
-// doing unmap operations.  Outer windows assumme FL_SHOW & FL_HIDE
-// are messages from X:
+// FL_SHOW and FL_HIDE are called whenever the visibility of this widget
+// or any parent changes.  We must correctly map/unmap the system's window.
+
+// For top-level windows it is assummed the window has already been
+// mapped or unmapped!!!  This is because this should only happen when
+// Fl_Window::show() or Fl_Window::hide() is called, or in response to
+// iconize/deiconize events from the system.
 
 int Fl_Window::handle(int event) {
   if (parent()) switch (event) {
   case FL_SHOW:
     if (!shown()) show();
-    else XMapWindow(fl_display, fl_xid(this));
+    else XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
     break;
   case FL_HIDE:
-    if (shown()) XUnmapWindow(fl_display, fl_xid(this));
+    if (shown()) {
+      // Find what really turned invisible, if is was a parent window
+      // we do nothing.  We need to avoid unnecessary unmap calls
+      // because they cause the display to blink when the parent is
+      // remapped.  However if this or any intermediate non-window
+      // widget has really had hide() called directly on it, we must
+      // unmap because when the parent window is remapped we don't
+      // want to reappear.
+      if (visible()) {
+       Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
+       if (p->type() >= FL_WINDOW) break; // don't do the unmap
+      }
+      XUnmapWindow(fl_display, fl_xid(this));
+    }
     break;
   }
   return Fl_Group::handle(event);
@@ -705,5 +720,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.22 2000/05/16 12:26:58 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.23 2000/06/03 08:36:59 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.11 2000/04/25 22:16:24 mike Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.12 2000/06/03 08:37:01 bill Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -126,6 +126,7 @@ void Fl_Gl_Window::make_current() {
   }
 #endif // USE_COLORMAP
   glDrawBuffer(GL_BACK);
+  current_ = this;
 }
 
 void Fl_Gl_Window::ortho() {
@@ -158,15 +159,17 @@ int fl_overlay_depth = 0;
 
 void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
+#ifdef _WIN32
+  // SGI 320 messes up overlay with user-defined cursors:
+  bool fixcursor =
+    Fl_X::i(this)->cursor && Fl_X::i(this)->cursor != fl_default_cursor;
+  if (fixcursor) SetCursor(0);
+#endif
 
 #if HAVE_GL_OVERLAY && defined(_WIN32)
-  bool fixcursor = false;
   if (overlay && overlay != this &&
-      ((damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_ALL|FL_DAMAGE_EXPOSE))
+      ((damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE))
        || !save_valid)) {
-    // SGI 320 messes up overlay over singlebuffer
-    fixcursor = !g->d;
-    if (fixcursor) SetCursor(0);
     // Draw into hardware overlay planes
     fl_set_gl_context(this, (GLXContext)overlay);
     if (fl_overlay_depth)
@@ -262,11 +265,11 @@ void Fl_Gl_Window::flush() {
     draw();
     if (overlay == this) draw_overlay();
     glFlush();
-#if HAVE_GL_OVERLAY && defined(_WIN32)
-    if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
-#endif
   }
 
+#ifdef _WIN32
+  if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
+#endif
   valid(1);
 }
 
@@ -320,5 +323,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.11 2000/04/25 22:16:24 mike Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.12 2000/06/03 08:37:01 bill Exp $".
 //

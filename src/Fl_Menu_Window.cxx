@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.cxx,v 1.8.2.1 2000/04/25 22:16:27 mike Exp $"
+// "$Id: Fl_Menu_Window.cxx,v 1.8.2.2 2000/06/03 08:37:01 bill Exp $"
 //
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
@@ -68,7 +68,7 @@ void Fl_Menu_Window::flush() {
   if (!gc) gc = XCreateGC(fl_display, i->xid, 0, 0);
   fl_gc = gc;
   fl_overlay = 1;
-  fl_clip_region(i->region); i->region = 0;
+  fl_clip_region(i->region); i->region = 0; current_ = this;
   draw();
   fl_overlay = 0;
 #else
@@ -97,5 +97,5 @@ Fl_Menu_Window::~Fl_Menu_Window() {
 }
 
 //
-// End of "$Id: Fl_Menu_Window.cxx,v 1.8.2.1 2000/04/25 22:16:27 mike Exp $".
+// End of "$Id: Fl_Menu_Window.cxx,v 1.8.2.2 2000/06/03 08:37:01 bill Exp $".
 //

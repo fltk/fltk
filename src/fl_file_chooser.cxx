@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.3 2000/04/25 22:16:41 mike Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.4 2000/06/03 08:37:08 bill Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -147,6 +147,9 @@ void* FCB::item_prev(void* p) const {
   return ((dirent**)p)-1;
 }
 
+#ifdef _MSC_VER
+#pragma optimize("a",off) // without this it does not change *e
+#endif
 static int ido_matching(const dirent* p, const char* e, const char* n) {
   // replace / or 1 at end with 0 and do match, then put back.  yukko
   int save = *e; *(char*)e = 0;
@@ -154,6 +157,9 @@ static int ido_matching(const dirent* p, const char* e, const char* n) {
   *(char*)e = save;
   return(r);
 }
+#ifdef _MSC_VER
+#pragma optimize("",on)
+#endif
 
 int FCB::incr_height() const {return textsize()+2;}
 
@@ -225,7 +231,11 @@ int FCB::get(char* buf) {
       for (dirent** r = q+1; n && r < last; r++) {
 	if (!item_height(*r, 0)) continue;
 	int i;
-	for (i=0; i<n && (*q)->d_name[i]==(*r)->d_name[i]; i++);
+#ifdef _WIN32
+	for (i=0; i<n && tolower((*q)->d_name[i])==tolower((*r)->d_name[i]); i++) {}
+#else
+	for (i=0; i<n && (*q)->d_name[i]==(*r)->d_name[i]; i++) {}
+#endif
 	n = i;
       }
     }
@@ -622,5 +632,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.3 2000/04/25 22:16:41 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.4 2000/06/03 08:37:08 bill Exp $".
 //
