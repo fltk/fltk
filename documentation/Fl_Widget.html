@@ -53,11 +53,11 @@ after these.
        <li><a href="#Fl_Widget.argument">argument</a>
        <li><a href="#Fl_Widget.box">box</a>
        <li><a href="#Fl_Widget.callback">callback</a>
-       <li><a href="#Fl_Widget.changed">changed</a>
 </ul>
 </td>
 <td align=left valign=top>
 <ul>
+       <li><a href="#Fl_Widget.changed">changed</a>
        <li><a href="#Fl_Widget.clear_changed">clear_changed</a>
        <li><a href="#Fl_Widget.color">color</a>
        <li><a href="#Fl_Widget.contains">contains</a>
@@ -66,27 +66,22 @@ after these.
        <li><a href="#Fl_Widget.default_callback">default_callback</a>
        <li><a href="#Fl_Widget.do_callback">do_callback</a>
        <li><a href="#Fl_Widget.h">h</a>
-       <li><a href="#Fl_Widget.hide">hide</a>
-       <li><a href="#Fl_Widget.ih">ih</a>
 </ul>
 </td>
 <td align=left valign=top>
 <ul>
-       <li><a href="#Fl_Widget.init_size">init_size</a>
+       <li><a href="#Fl_Widget.hide">hide</a>
        <li><a href="#Fl_Widget.inside">inside</a>
-       <li><a href="#Fl_Widget.iw">iw</a>
-       <li><a href="#Fl_Widget.ix">ix</a>
-       <li><a href="#Fl_Widget.iy">iy</a>
        <li><a href="#Fl_Widget.label">label</a>
        <li><a href="#Fl_Widget.labelcolor">labelcolor</a>
        <li><a href="#Fl_Widget.labelfont">labelfont</a>
        <li><a href="#Fl_Widget.labelsize">labelsize</a>
        <li><a href="#Fl_Widget.labeltype">labeltype</a>
+       <li><a href="#Fl_Widget.parent">parent</a>
 </ul>
 </td>
 <td align=left valign=top>
 <ul>
-       <li><a href="#Fl_Widget.parent">parent</a>
        <li><a href="#Fl_Widget.position">position</a>
        <li><a href="#Fl_Widget.redraw">redraw</a>
        <li><a href="#Fl_Widget.resize">resize</a>
@@ -94,12 +89,13 @@ after these.
        <li><a href="#Fl_Widget.set_changed">set_changed</a>
        <li><a href="#Fl_Widget.show">show</a>
        <li><a href="#Fl_Widget.size">size</a>
-       <li><a href="#Fl_Widget.type">type</a>
-       <li><a href="#Fl_Widget.user_data">user_data</a>
+       <li><a href="#Fl_Widget.take_focus">take_focus</a>
 </ul>
 </td>
 <td align=left valign=top>
 <ul>
+       <li><a href="#Fl_Widget.type">type</a>
+       <li><a href="#Fl_Widget.user_data">user_data</a>
        <li><a href="#Fl_Widget.visible">visible</a>
        <li><a href="#Fl_Widget.w">w</a>
        <li><a href="#Fl_Widget.when">when</a>
@@ -150,27 +146,11 @@ way to update the display, such as scrolling from the old position).
 <p><tt>position(x,y)</tt> is a shortcut for <tt>resize(x,y,w(),h())</tt>,
 and <tt>size(w,h)</tt> is a shortcut for <tt>resize(x(),y(),w,h)</tt>.
 
-<h4><a name="Fl_Widget.ix">short Fl_Widget::ix() const</a><br>
-<a name="Fl_Widget.iy">short Fl_Widget::iy() const</a><br>
-<a name="Fl_Widget.iw">short Fl_Widget::iw() const</a><br>
-<a name="Fl_Widget.ih">short Fl_Widget::ih() const</a><br>
-<a name="Fl_Widget.init_size">void Fl_Widget::init_size(int,int,int,int)</a></h4>
-
-The initial size and position of the widget.  This is a copy of the
-arguments that the constructor was called with.  This information is
-used by <a href="#Fl_Group"><tt>Fl_Group</tt></a> to calculate new sizes of
-the children when they are resized.
-
-<p><tt>init_size()</tt> calls <tt>resize()</tt> with the passed sizes,
-and then replaces the initial size with the new values.  If this widget
-is a group you will have to init_size all the children as well or
-unpredictable results will occur.
-
 <h4><a name="Fl_Widget.window">Fl_Window* Fl_Widget::window() const;</a></h4>
 
 Return a pointer to the <a href="#Fl_Window"><tt>Fl_Window</tt></a>
 that this widget is in (it will skip any and all parent widgets between
-this and the window).  Returns NULL if none.  Note: for an
+this and the window).  Returns <tt>NULL</tt> if none.  Note: for an
 <tt>Fl_Window</tt>, this returns it's <i>parent</i> window (if any),
 not <i>this</i> window.
 
@@ -375,6 +355,14 @@ this widget.  Returns false if <tt>b</tt> is <tt>NULL</tt>.
 
 Returns true if this is a child of <tt>a</tt>, or is equal to <tt>a</tt>.
 Returns false if <tt>a</tt> is <tt>NULL</tt>.
+
+<h4><a name="Fl_Widget.take_focus">int Fl_Widget::take_focus()</a></h4>
+
+Tries to make this widget be the <tt>Fl::focus()</tt> widget, by first
+sending it an <tt>FL_FOCUS</tt> event, and if it returns non-zero,
+setting <tt>Fl::focus()</tt> to this widget.  You should use this
+method to assign the focus to an widget.  Returns true if the widget
+accepted the focus.
 
 </body>
 </html>

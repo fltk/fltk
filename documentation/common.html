@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN=RIGHT>3 - Common Widgets and Attributes</H1>
+<H1 ALIGN=RIGHT><A NAME="common">3 - Common Widgets and Attributes</A></H1>
 
 This chapter describes many of the widgets that are provided with FLTK and covers how
 to query and set the standard attributes.
@@ -119,7 +119,7 @@ window->size(width, height);
 Changing the size or position of a widget will cause a redraw of that widget
 and its children.
 
-<H2>Colors</H2>
+<H2><A NAME="colors">Colors</A></H2>
 
 FLTK manages a virtual color palette of "standard" colors.  The
 standard colors are:
@@ -148,7 +148,7 @@ Similarly, the label color can be set using the <tt>labelcolor()</tt> method:
 button->labelcolor(FL_WHITE);
 </pre></ul>
 
-<H2>Box Types</H2>
+<H2><A NAME="boxtypes">Box Types</A></H2>
 
 <p>The type <tt>Fl_Boxtype</tt> stored and returned in <a href="#Fl_Widget.box">
 <tt>Fl_Widget::box()</tt></a> is an enumeration defined in
@@ -204,9 +204,9 @@ The last 4 arguments to <tt>Fl::set_boxtype()</tt> are the offsets
 for the bounding box that should be subtracted when drawing the label
 inside the box.
 
-<H2>Labels and Label Types</H2>
+<H2><A NAME="labels">Labels and Label Types</A></H2>
 
-The <tt>label()</tt>, <tt>align</tt>, <tt>labelfont()</tt>, <tt>labelsize()<tt>,
+The <tt>label()</tt>, <tt>align</tt>, <tt>labelfont()</tt>, <tt>labelsize()</tt>,
 and <tt>labeltype()</tt> methods control the labeling of widgets.
 
 <H3>label()</H3>

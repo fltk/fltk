@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN=RIGHT>4 - Designing a Simple Text Editor</H1>
+<H1 ALIGN=RIGHT><A NAME="editor">4 - Designing a Simple Text Editor</A></H1>
 
 This chapter takes you through the design of a simple FLTK-based text editor.
 
@@ -295,7 +295,7 @@ We call the <tt>load_file()</tt> function to actually load the file.
 <H3>paste_cb()</H3>
 
 This callback function will send a FL_PASTE message to the <tt>input</tt>
-widget using the <a href="#paste"><tt>Fl::paste()</tt> method:
+widget using the <a href="#paste"><tt>Fl::paste()</tt></a> method:
 
 <ul><pre>
 void paste_cb(void) {
@@ -514,7 +514,7 @@ void load_file(char *newfile) {
 </pre></ul>
 
 When loading the file we use the <a href="#Fl_Input_.replace">
-<tt>input->replace()</tt> method to "replace" the text at the end of
+<tt>input->replace()</tt></a> method to "replace" the text at the end of
 the buffer.  The <tt>pos</tt> variable keeps track of the end of the
 buffer.
 
