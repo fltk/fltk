@@ -25,6 +25,9 @@ CHANGES SINCE FLTK 1.0.10
 	- Fl::flush() now calls GdiFlush() under WIN32 to
 	  ensure that all graphics are drawn.
 
+	- FLUID now uses GetTempPath() under WIN32 to determine
+	  where to store the clipboard.
+
 
 CHANGES SINCE FLTK 1.0.9
 
