@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.14 2004/04/11 04:38:59 easysw Exp $"
+// "$Id$"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -207,9 +207,9 @@ static struct {
   {fl_engraved_frame,	2,2,4,4,1},
   {fl_embossed_frame,	2,2,4,4,1},
   {fl_border_box,	1,1,2,2,1},
-  {fl_border_box,	1,1,2,2,0}, // _FL_SHADOW_BOX,
+  {fl_border_box,	1,1,5,5,0}, // _FL_SHADOW_BOX,
   {fl_border_frame,	1,1,2,2,1},
-  {fl_border_frame,	1,1,2,2,0}, // _FL_SHADOW_FRAME,
+  {fl_border_frame,	1,1,5,5,0}, // _FL_SHADOW_FRAME,
   {fl_border_box,	1,1,2,2,0}, // _FL_ROUNDED_BOX,
   {fl_border_box,	1,1,2,2,0}, // _FL_RSHADOW_BOX,
   {fl_border_frame,	1,1,2,2,0}, // _FL_ROUNDED_FRAME
@@ -297,5 +297,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.14 2004/04/11 04:38:59 easysw Exp $".
+// End of "$Id$".
 //
