@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.17 2002/04/07 18:31:55 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.18 2002/04/10 01:32:03 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -171,8 +171,10 @@ static void do_queued_events() {
     XNextEvent(fl_display, &xevent);
     fl_handle(xevent);
   }
+  // we send FL_LEAVE only if the mouse did not enter some other window:
+  if (!fl_xmousewin) Fl::handle(FL_LEAVE, 0);
 #  if CONSOLIDATE_MOTION
-  if (send_motion && send_motion == fl_xmousewin) {
+  else if (send_motion == fl_xmousewin) {
     send_motion = 0;
     Fl::handle(FL_MOVE, fl_xmousewin);
   }
@@ -614,6 +616,7 @@ int fl_handle(const XEvent& xevent)
     if ((Atom)(data[0]) == WM_DELETE_WINDOW) {
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
+      fl_xmousewin = window;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
       if (data[1]&1) {
@@ -644,6 +647,7 @@ int fl_handle(const XEvent& xevent)
       break;
 
     } else if (message == fl_XdndPosition) {
+      fl_xmousewin = window;
       fl_dnd_source_window = data[0];
       Fl::e_x_root = data[2]>>16;
       Fl::e_y_root = data[2]&0xFFFF;
@@ -669,6 +673,7 @@ int fl_handle(const XEvent& xevent)
       break;
 
     } else if (message == fl_XdndDrop) {
+      fl_xmousewin = window;
       fl_dnd_source_window = data[0];
       fl_event_time = data[2];
       Window to_window = fl_xevent->xclient.window;
@@ -711,41 +716,6 @@ int fl_handle(const XEvent& xevent)
     window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
 		   xevent.xexpose.width, xevent.xexpose.height);
     return 1;
-
-  case ButtonPress:
-    Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy();
-    if (xevent.xbutton.button == Button4) {
-      Fl::e_dy = -1; // Up
-      event = FL_MOUSEWHEEL;
-    } else if (xevent.xbutton.button == Button5) {
-      Fl::e_dy = +1; // Down
-      event = FL_MOUSEWHEEL;
-    } else {
-      Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
-      event = FL_PUSH;
-      checkdouble();
-    }
-    break;
-
-  case MotionNotify:
-    set_event_xy();
-#  if CONSOLIDATE_MOTION
-    send_motion = fl_xmousewin = window;
-    return 0;
-#  else
-    event = FL_MOVE;
-    break;
-#  endif
-
-  case ButtonRelease:
-    Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy();
-    Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
-    if (xevent.xbutton.button == Button4 ||
-        xevent.xbutton.button == Button5) return 0;
-    event = FL_RELEASE;
-    break;
 
   case FocusIn:
     event = FL_FOCUS;
@@ -832,19 +802,62 @@ int fl_handle(const XEvent& xevent)
     Fl::e_is_click = 0;
     break;}
 
+  case ButtonPress:
+    Fl::e_keysym = FL_Button + xevent.xbutton.button;
+    set_event_xy();
+    if (xevent.xbutton.button == Button4) {
+      Fl::e_dy = -1; // Up
+      event = FL_MOUSEWHEEL;
+    } else if (xevent.xbutton.button == Button5) {
+      Fl::e_dy = +1; // Down
+      event = FL_MOUSEWHEEL;
+    } else {
+      Fl::e_state |= (FL_BUTTON1 << (xevent.xbutton.button-1));
+      event = FL_PUSH;
+      checkdouble();
+    }
+
+    fl_xmousewin = window;
+    break;
+
+  case MotionNotify:
+    set_event_xy();
+#  if CONSOLIDATE_MOTION
+    send_motion = fl_xmousewin = window;
+    return 0;
+#  else
+    event = FL_MOVE;
+    fl_xmousewin = window;
+    break;
+#  endif
+
+  case ButtonRelease:
+    Fl::e_keysym = FL_Button + xevent.xbutton.button;
+    set_event_xy();
+    Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
+    if (xevent.xbutton.button == Button4 ||
+        xevent.xbutton.button == Button5) return 0;
+    event = FL_RELEASE;
+
+    fl_xmousewin = window;
+    break;
+
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
     // XInstallColormap(fl_display, Fl_X::i(window)->colormap);
     set_event_xy();
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
+
+    fl_xmousewin = window;
     break;
 
   case LeaveNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
     set_event_xy();
     Fl::e_state = xevent.xcrossing.state << 16;
-    event = FL_LEAVE;
+//    event = FL_LEAVE;
+    fl_xmousewin = 0;
     break;
 
   case ConfigureNotify: {
@@ -1216,5 +1229,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.17 2002/04/07 18:31:55 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.18 2002/04/10 01:32:03 easysw Exp $".
 //
