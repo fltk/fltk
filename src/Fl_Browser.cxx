@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.1 1999/03/13 20:20:37 bill Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.2 1999/03/13 20:25:09 bill Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -231,7 +231,7 @@ int Fl_Browser::item_height(void* lv) const {
     char* ptr = str;
     for(;*str && (*str!=column_char()); str++) ;
     if (ptr < str) {
-      fl_font(font, size); int h = fl_height;
+      fl_font(font, size); int h = fl_height();
       if (h > hmax) hmax = size;
     }
   }
@@ -475,5 +475,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.1 1999/03/13 20:20:37 bill Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.2 1999/03/13 20:25:09 bill Exp $".
 //
