@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.H,v 1.3 1998/10/21 14:19:26 mike Exp $"
+// "$Id: Fl_Pixmap.H,v 1.4 1998/11/08 15:05:44 mike Exp $"
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -35,6 +35,7 @@ struct Fl_Pixmap {
   ulong id; // for internal use (the pixmap)
   ulong mask; // for internal use (mask bitmap)
   Fl_Pixmap(/*const*/char * const * d) : data(d), w(-1), h(0), id(0),mask(0) {}
+  Fl_Pixmap(/*const*/uchar* const * d) : data((char**)d), w(-1), h(0), id(0),mask(0) {}
   ~Fl_Pixmap();
   void label(Fl_Widget*);
   void label(Fl_Menu_Item*);
@@ -45,5 +46,5 @@ struct Fl_Pixmap {
 #endif
 
 //
-// End of "$Id: Fl_Pixmap.H,v 1.3 1998/10/21 14:19:26 mike Exp $".
+// End of "$Id: Fl_Pixmap.H,v 1.4 1998/11/08 15:05:44 mike Exp $".
 //

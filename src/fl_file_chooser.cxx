@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.5 1998/11/06 16:00:45 mike Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.6 1998/11/08 15:05:46 mike Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -341,11 +341,11 @@ void FCB::draw() {
     if (full_height() > 0) return;
     message = "No matching files";
   }
-    Fl_Boxtype b = box(); if (!b) b = Fl_Input_::default_box();
-    draw_box(b,color());
-    fl_color(FL_INACTIVE_COLOR);
+  Fl_Boxtype b = box(); if (!b) b = Fl_Input_::default_box();
+  draw_box(b,color());
+  fl_color(FL_INACTIVE_COLOR);
   fl_font(textfont(), textsize(), default_font(), default_size());
-    fl_draw(message, x()+7, y()+3, w(), h()-3, FL_ALIGN_TOP_LEFT);
+  fl_draw(message, x()+7, y()+3, w(), h()-3, FL_ALIGN_TOP_LEFT);
 }
 
 void FCB::clear_prev() {
@@ -611,5 +611,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.5 1998/11/06 16:00:45 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.6 1998/11/08 15:05:46 mike Exp $".
 //

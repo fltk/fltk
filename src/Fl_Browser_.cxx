@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.4 1998/10/21 14:19:57 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.5 1998/11/08 15:05:45 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -326,7 +326,7 @@ J1:
     else update_child(hscrollbar);
   }
 
-  // draw that little square between the scrolbars:
+  // draw that little square between the scrollbars:
   if (drawsquare && scrollbar.visible() && hscrollbar.visible()) {
     fl_color(parent()->color());
     fl_rectf(scrollbar.x(), hscrollbar.y(), scrollbar_width_,scrollbar_width_);
@@ -627,5 +627,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.4 1998/10/21 14:19:57 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.5 1998/11/08 15:05:45 mike Exp $".
 //

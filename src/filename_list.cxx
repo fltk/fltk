@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.5 1998/10/21 14:20:41 mike Exp $"
+// "$Id: filename_list.cxx,v 1.6 1998/11/08 15:05:45 mike Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,7 @@ extern "C" {
 }
 
 int filename_list(const char *d, dirent ***list) {
-#if defined(_AIX) || defined(CRAY)
+#if defined(_AIX) || defined(CRAY) || defined(HPUX)
   // on some systems you may need to do this, due to a rather common
   // error in the prototype for the sorting function, where a level
   // of pointer indirection is missing:
@@ -51,5 +51,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.5 1998/10/21 14:20:41 mike Exp $".
+// End of "$Id: filename_list.cxx,v 1.6 1998/11/08 15:05:45 mike Exp $".
 //

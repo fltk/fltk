@@ -1,5 +1,5 @@
 //
-// "$Id: input.cxx,v 1.3 1998/10/21 14:21:30 mike Exp $"
+// "$Id: input.cxx,v 1.4 1998/11/08 15:05:47 mike Exp $"
 //
 // Input field test program for the Fast Light Tool Kit (FLTK).
 //
@@ -36,7 +36,7 @@
 #include <FL/Fl_Color_Chooser.H>
 
 void cb(Fl_Widget *ob) {
-  printf("Callback for %s\n",ob->label());
+  printf("Callback for %s '%s'\n",ob->label(),((Fl_Input*)ob)->value());
 }
 
 int when = 0;
@@ -48,7 +48,9 @@ void toggle_cb(Fl_Widget *o, long v) {
 }
 
 void test(Fl_Input *i) {
-  if (i->changed()) {i->clear_changed(); printf("%s\n",i->label());}
+  if (i->changed()) {
+    i->clear_changed(); printf("%s '%s'\n",i->label(),i->value());
+  }
 }
 
 void button_cb(Fl_Widget *,void *) {
@@ -115,5 +117,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: input.cxx,v 1.3 1998/10/21 14:21:30 mike Exp $".
+// End of "$Id: input.cxx,v 1.4 1998/11/08 15:05:47 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: style.C,v 1.3 1998/10/21 14:21:42 mike Exp $"
+// "$Id: style.C,v 1.4 1998/11/08 15:05:48 mike Exp $"
 //
 // Style demo for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,9 @@
 // that the user presses.
 
 #include "style_ui.C"
-
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/fl_draw.H>
+#include <config.h>
 #include <string.h>
 
 Fl_Menu_Item* font_menu() {
@@ -78,8 +80,6 @@ void font_size_cb(Fl_Value_Input* c, long i) {
   Fl::redraw();
 }
 
-#include <FL/Fl_Color_Chooser.H>
-
 void color_button_cb(Fl_Button* w, void*) {
   Fl_Color c = w->color();
   uchar r,g,b; Fl::get_color(c, r,g,b);
@@ -100,10 +100,16 @@ void fl_up_frame(int, int, int, int, Fl_Color);
 void fl_down_box(int, int, int, int, Fl_Color);
 void fl_up_box(int, int, int, int, Fl_Color);
 
+#if BORDER_WIDTH == 3
+
+#define fl_3_up_frame fl_up_frame
+#define fl_3_up_box fl_up_box
+#define fl_3_down_frame fl_down_frame
+#define fl_3_down_box fl_down_box
+
 // define the 2-pixel boxes:
-#include <FL/fl_draw.H>
 void fl_2_up_frame(int x, int y, int w, int h, Fl_Color) {
-  fl_frame2("AAPPMMWU",x,y,w,h);
+  fl_frame2("AAUWMMSS",x,y,w,h);
 }
 void fl_2_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_2_up_frame(x,y,w,h,c);
@@ -116,6 +122,31 @@ void fl_2_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_2_down_frame(x,y,w,h,c);
   fl_color(c); fl_rectf(x+2, y+2, w-4, h-4);
 }
+
+#else
+
+#define fl_2_up_frame fl_up_frame
+#define fl_2_up_box fl_up_box
+#define fl_2_down_frame fl_down_frame
+#define fl_2_down_box fl_down_box
+
+// define the 3-pixel boxes:
+void fl_3_up_frame(int x, int y, int w, int h, Fl_Color) {
+  fl_frame("AAAAWUJJUSNN",x,y,w,h);
+}
+void fl_3_up_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_3_up_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+3, y+3, w-6, h-6);
+}
+void fl_3_down_frame(int x, int y, int w, int h, Fl_Color) {
+  fl_frame("NNSUJJUWAAAA",x,y,w,h);
+}
+void fl_3_down_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_3_down_frame(x,y,w,h,c);
+  fl_color(c); fl_rectf(x+3, y+3, w-6, h-6);
+}
+
+#endif
 
 void box_thickness_cb(Fl_Value_Slider*v, void*) {
   switch (int(v->value())) {
@@ -132,10 +163,10 @@ void box_thickness_cb(Fl_Value_Slider*v, void*) {
     Fl::set_boxtype(FL_DOWN_FRAME, fl_2_down_frame, 2,2,4,4);
     break;
   default:
-    Fl::set_boxtype(FL_UP_BOX, fl_up_box, 3,3,6,6);
-    Fl::set_boxtype(FL_DOWN_BOX, fl_down_box, 3,3,6,6);
-    Fl::set_boxtype(FL_UP_FRAME, fl_up_frame, 3,3,6,6);
-    Fl::set_boxtype(FL_DOWN_FRAME, fl_down_frame, 3,3,6,6);
+    Fl::set_boxtype(FL_UP_BOX, fl_3_up_box, 3,3,6,6);
+    Fl::set_boxtype(FL_DOWN_BOX, fl_3_down_box, 3,3,6,6);
+    Fl::set_boxtype(FL_UP_FRAME, fl_3_up_frame, 3,3,6,6);
+    Fl::set_boxtype(FL_DOWN_FRAME, fl_3_down_frame, 3,3,6,6);
     break;
   }
   Fl::redraw();
@@ -163,5 +194,5 @@ void defaults_cb(Fl_Button*, void*) {
 }
 
 //
-// End of "$Id: style.C,v 1.3 1998/10/21 14:21:42 mike Exp $".
+// End of "$Id: style.C,v 1.4 1998/11/08 15:05:48 mike Exp $".
 //
