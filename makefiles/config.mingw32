@@ -1,5 +1,5 @@
 /*
- * "$Id: config.mingw32,v 1.4.2.2 2000/04/25 22:16:06 mike Exp $"
+ * "$Id: config.mingw32,v 1.4.2.3 2000/06/13 20:33:35 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "FLTK-bugs@easysw.com".
+ * Please report all bugs and problems to "FLTK-bugs@fltk.org".
  */
 
 /*
@@ -150,5 +150,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.mingw32,v 1.4.2.2 2000/04/25 22:16:06 mike Exp $".
+ * End of "$Id: config.mingw32,v 1.4.2.3 2000/06/13 20:33:35 mike Exp $".
  */

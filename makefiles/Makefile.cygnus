@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.cygnus,v 1.1.2.1 2000/04/25 22:16:05 mike Exp $"
+# "$Id: Makefile.cygnus,v 1.1.2.2 2000/06/13 20:33:33 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -20,59 +20,77 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-SHELL=cmd.exe
+# By default use a Un*x-style shell
+#
+# uncomment next line to use NT command shell 
+# SHELL=cmd.exe
+#
+# or uncomment next line to explicitly use a unix-compatible shell
+# SHELL=sh.exe
+#
+# If we are using a Un*x-based make, make sure the environmental var is set
+# set MAKE_MODE=unix
+#
+# By default, a Un*x style make is assumed, so towards the bottom of this
+# file filenames are copied with 'cp' and use forward slashes throughout
+# in filepaths.
+#
+# Changing to a Windows-based command line would require 'cp' replaced with
+# a local equivalent ('copy' is OK) and potentially for forward-slashes in
+# filepaths to be replaced by back-slashes.
+
 
 all: makeinclude config.h
 	echo "=== making src ==="
 	touch src/makedepend
-	cd src & $(MAKE)
+	cd src ; $(MAKE)
 	echo "=== making fluid ==="
 	touch fluid/makedepend
-	cd fluid & $(MAKE)
+	cd fluid ; $(MAKE)
 	echo "=== making test ==="
 	touch test/makedepend
-	cd test & $(MAKE)
+	cd test ; $(MAKE)
 
 install:
 	echo "=== installing src ==="
 	touch src/makedepend
-	cd src & $(MAKE) install
+	cd src ; $(MAKE) install
 	echo "=== installing fluid ==="
 	touch fluid/makedepend
-	cd fluid & $(MAKE) install
+	cd fluid ; $(MAKE) install
 
 depend:
 	echo "=== making src dependencies ==="
 	touch src/makedepend
-	cd src & $(MAKE) depend
+	cd src ; $(MAKE) depend
 	echo "=== making fluid dependencies ==="
 	touch fluid/makedepend
-	cd fluid & $(MAKE) depend
+	cd fluid ; $(MAKE) depend
 	echo "=== making test dependencies ==="
 	touch test/makedepend
-	cd test & $(MAKE) depend
+	cd test ; $(MAKE) depend
 
 clean:
 	-@ rm -f core config.cache *.o *.bck
 	echo "=== cleaning src ==="
 	touch src/makedepend
-	cd src & $(MAKE) clean
+	cd src ; $(MAKE) clean
 	echo "=== cleaning fluid ==="
 	touch fluid/makedepend
-	cd fluid & $(MAKE) clean
+	cd fluid ; $(MAKE) clean
 	echo "=== cleaning test ==="
 	touch test/makedepend
-	cd test & $(MAKE) clean
+	cd test ; $(MAKE) clean
 
-config.h: makefiles\config.cygnus
-	copy $< $@
+config.h: makefiles/config.cygnus
+	cp $< $@
 
-makeinclude: makefiles\makeinclude.cygnus
-	copy $< $@
+makeinclude: makefiles/makeinclude.cygnus
+	cp $< $@
 
 #
-# End of "$Id: Makefile.cygnus,v 1.1.2.1 2000/04/25 22:16:05 mike Exp $".
+# End of "$Id: Makefile.cygnus,v 1.1.2.2 2000/06/13 20:33:33 mike Exp $".
 #

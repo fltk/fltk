@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.6.2.1 2000/04/25 22:16:05 mike Exp $"
+# "$Id: Makefile.os2x,v 1.6.2.2 2000/06/13 20:33:34 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
 SHELL=cmd.exe
@@ -74,5 +74,5 @@ makeinclude: makefiles\makeinclude.os2x
 	copy $< $@
 
 #
-# End of "$Id: Makefile.os2x,v 1.6.2.1 2000/04/25 22:16:05 mike Exp $".
+# End of "$Id: Makefile.os2x,v 1.6.2.2 2000/06/13 20:33:34 mike Exp $".
 #

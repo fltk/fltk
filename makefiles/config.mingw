@@ -1,5 +1,5 @@
 /*
- * "$Id: config.cygnus,v 1.4.2.3 2000/06/13 20:33:35 mike Exp $"
+ * "$Id: config.mingw,v 1.1.2.1 2000/06/13 20:33:35 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -126,15 +126,15 @@
 #define HAVE_SYS_NDIR_H 0
 #define HAVE_SYS_DIR_H 0
 #define HAVE_NDIR_H 0
-#define HAVE_SCANDIR 1
+#define HAVE_SCANDIR 0
 
 /*
  * possibly missing sprintf-style functions:
  */
 
-#define HAVE_VSNPRINTF 1
-#define HAVE_SNPRINTF 1
-#define HAVE_VSPRINTF 1
+#define HAVE_VSNPRINTF 0
+#define HAVE_SNPRINTF 0
+#define HAVE_VSPRINTF 0
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -153,5 +153,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.cygnus,v 1.4.2.3 2000/06/13 20:33:35 mike Exp $".
+ * End of "$Id: config.mingw,v 1.1.2.1 2000/06/13 20:33:35 mike Exp $".
  */

@@ -1,5 +1,5 @@
 //
-// "$Id: cube.cxx,v 1.4.2.2 2000/06/05 21:21:17 mike Exp $"
+// "$Id: cube.cxx,v 1.4.2.3 2000/06/13 20:33:36 mike Exp $"
 //
 // Another forms test program for the Fast Light Tool Kit (FLTK).
 //
@@ -141,7 +141,7 @@ void makeform(const char *name) {
   form->end();
 }
 
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
   makeform(argv[0]);
   speed->bounds(4,0);
   speed->value(cube->speed = cube2->speed = 1.0);
@@ -169,5 +169,5 @@ main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: cube.cxx,v 1.4.2.2 2000/06/05 21:21:17 mike Exp $".
+// End of "$Id: cube.cxx,v 1.4.2.3 2000/06/13 20:33:36 mike Exp $".
 //
