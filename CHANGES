@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
 	  STR #281, STR #328, STR #338)
+	- The Fl_Widget copy operator definitions were not
+	  conditionally compiled properly (STR #329)
 	- FLUID's Layout functionality did not move child
 	  widgets when laying out group widgets (STR #319)
 	- FLUID's Layout->Center In Group functionality did not
