@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.9 1999/01/13 15:47:27 mike Exp $"
+// "$Id: Fl_Input.cxx,v 1.10 1999/01/24 15:28:59 mike Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -289,6 +289,7 @@ int Fl_Input::handle(int event) {
       up_down_position(size());
       break;
     case FL_Tab:
+    case 0xfe20: // XK_ISO_Left_Tab
       position(size(),0);
       break;
     }
@@ -329,5 +330,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.9 1999/01/13 15:47:27 mike Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10 1999/01/24 15:28:59 mike Exp $".
 //
