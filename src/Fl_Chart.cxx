@@ -187,9 +187,9 @@ static void draw_piechart(int x,int y,int w,int h,
   double txc,tyc;	/* temporary center */
   double lh = fl_height();
   /* compute center and radius */
-  xc = x+w/2.0; yc = y+h/2.0;
-  rad = h/2.0 - lh;
-  if (special) { yc += 0.1*rad; rad = 0.9*rad;}
+  double h_denom = (special ? 2.3 : 2.0);
+  rad = (h - 2*lh)/h_denom/1.1;
+  xc = x+w/2.0; yc = y+h-1.1*rad-lh;
   /* compute sum of values */
   tot = 0.0;
   for (i=0; i<numb; i++)

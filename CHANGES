@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Menus and other pop-up windows now obey screen
+	  boundaries on multi-screen displays (STR #781)
+	- Fl_Chart would draw outside its bounding box (STR #780)
 	- Added Fl::screen_count() and Fl::screen_xywh() APIs to
 	  support multi-screen displays.
 	- FLUID now supports direct creation of widget classes.
