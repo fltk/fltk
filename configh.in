@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.11.2.8 2002/03/06 18:11:00 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.9 2002/03/25 21:56:41 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -94,12 +94,9 @@
  * USE_XDBE:
  *
  * Actually try to use the double-buffer extension?
- * You can try this, it may speed up Fl_Double_Window.  However we have
- * found most (all?) X implementations to be broken, or at least I
- * don't understand the documentation, or something...
  */
 
-#define USE_XDBE 0
+#define USE_XDBE HAVE_XDBE
 
 /*
  * HAVE_OVERLAY:
@@ -217,5 +214,5 @@
 
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11.2.8 2002/03/06 18:11:00 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11.2.9 2002/03/25 21:56:41 easysw Exp $".
  */
