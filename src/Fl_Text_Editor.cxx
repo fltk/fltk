@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.14 2003/01/30 21:42:50 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.15 2003/04/01 20:14:16 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -266,9 +266,11 @@ int Fl_Text_Editor::kf_ctrl_move(int c, Fl_Text_Editor* e) {
   switch (c) {
     case FL_Home:
       e->insert_position(0);
+      e->scroll(0, 0);
       break;
     case FL_End:
       e->insert_position(e->buffer()->length());
+      e->scroll(e->count_lines(0, e->buffer()->length(), 1), 0);
       break;
     case FL_Left:
       e->previous_word();
@@ -470,17 +472,16 @@ int Fl_Text_Editor::handle(int event) {
       if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
       return 1;
 
-// CET - FIXME - this will clobber the window's current cursor state!
-//    case FL_ENTER:
+    case FL_ENTER:
+// MRS: WIN32 only?  Need to test!
 //    case FL_MOVE:
-//    case FL_LEAVE:
-//      if (Fl::event_inside(text_area)) fl_cursor(FL_CURSOR_INSERT);
-//      else fl_cursor(FL_CURSOR_DEFAULT);
+      show_cursor(mCursorOn);
+      return 1;
   }
 
   return Fl_Text_Display::handle(event);
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.14 2003/01/30 21:42:50 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.15 2003/04/01 20:14:16 easysw Exp $".
 //
