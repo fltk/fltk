@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_mac.cxx,v 1.1.2.22 2004/09/09 21:34:47 matthiaswm Exp $"
+// "$Id: fl_font_mac.cxx,v 1.1.2.23 2004/09/13 00:30:08 easysw Exp $"
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -242,15 +242,15 @@ const char *fl_iso2macRoman(const char *s, int n) {
 }
 
 double fl_width(const char* c, int n) {
+  const char *txt = fl_iso2macRoman(c, n);
 #ifdef __APPLE_QD__
-  return (double)TextWidth( c, 0, n );
+  return (double)TextWidth( txt, 0, n );
 #else
   if (!fl_gc) {
     Fl_Window *w = Fl::first_window();
     if (w) w->make_current();
     if (!fl_gc) return -1;
   }
-  const char *txt = fl_iso2macRoman(c, n);
   // according to the Apple developer docs, this is the correct way to
   // find the length of a rendered text...
   CGContextSetTextPosition(fl_gc, 0, 0);
@@ -276,11 +276,11 @@ void fl_draw(const char* str, int n, int x, int y) {
 #ifdef __APPLE_QD__
   const char *txt = fl_iso2macRoman(str, n);
   MoveTo(x, y);
-  DrawText((const char *)buf, 0, n);
+  DrawText((const char *)txt, 0, n);
 #elif defined(__APPLE_QUARTZ__)
   fl_draw(str, n, (float)x, (float)y);
 #else
-# error : neither Quartz no Quickdraw chosen
+#  error : neither Quartz no Quickdraw chosen
 #endif
 }
 
@@ -291,10 +291,10 @@ void fl_draw(const char *str, int n, float x, float y) {
   const char *txt = fl_iso2macRoman(str, n);
   CGContextShowTextAtPoint(fl_gc, x, y, txt, n);
 #else
-# error : neither Quartz no Quickdraw chosen
+#  error : neither Quartz no Quickdraw chosen
 #endif
 }
 
 //
-// End of "$Id: fl_font_mac.cxx,v 1.1.2.22 2004/09/09 21:34:47 matthiaswm Exp $".
+// End of "$Id: fl_font_mac.cxx,v 1.1.2.23 2004/09/13 00:30:08 easysw Exp $".
 //
