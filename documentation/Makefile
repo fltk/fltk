@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1 1998/12/29 14:18:27 mike Exp $"
+# "$Id: Makefile,v 1.2 1998/12/29 14:58:59 mike Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -98,19 +98,29 @@ all:	index.html fltk.ps.gz fltk.pdf
 
 clean:
 	rm -f index.html toc.html doc*.html *.gif *.jpg
-	rm -f fltk.ps.gz
+	rm -f fltk.ps fltk.ps.gz
 	rm -f fltk.pdf
 
+depend:
+
+install:
+
 index.html: $(HTMLFILES)
-	htmldoc -d . -t html --toclevels 2 --title src/FL.gif $(HTMLFILES)
+	@echo "Generating HTML documentation..."
+	@rm -f index.html toc.html doc*.html *.gif *.jpg
+	@htmldoc -d . -t html --toclevels 2 --title src/FL.gif $(HTMLFILES)
 
-fltk.ps.gz: fltk.ps
-	rm -f fltk.ps.gz
-	gzip -v9 fltk.ps
+fltk.ps.gz: $(HTMLFILES)
+	@echo "Generating PostScript documentation..."
+	@rm -f fltk.ps fltk.ps.gz
+	@htmldoc -f fltk.ps --no-compression --jpeg=90 --duplex --verbose --toclevels 2 --title src/FL.gif $(HTMLFILES)
+	@gzip -9 fltk.ps
 
-fltk.ps fltk.pdf: $(HTMLFILES)
-	htmldoc -f $@ --no-compression --jpeg=90 --duplex --verbose --toclevels 2 --title src/FL.gif $(HTMLFILES)
+fltk.pdf: $(HTMLFILES)
+	@echo "Generating PDF documentation..."
+	@rm -f fltk.pdf
+	@htmldoc -f fltk.pdf --no-compression --jpeg=90 --duplex --verbose --toclevels 2 --title src/FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.1 1998/12/29 14:18:27 mike Exp $".
+# End of "$Id: Makefile,v 1.2 1998/12/29 14:58:59 mike Exp $".
 #
