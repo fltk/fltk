@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Window::show(argc, argv) wasn't calling
+	  Fl::get_system_colors() as documented (STR #119)
+	- DSO (shared library) building wasn't quite right for
+	  some platforms (STR #118)
 	- OSX: some changes to make ProjectBuilder compiles
 	  possible.
 	- OSX: FLTK would not know where a window was positioned

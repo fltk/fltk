@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.52 2003/06/15 05:37:32 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.53 2003/08/02 13:49:17 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -308,13 +308,13 @@ $(IMGLIBNAME): $(IMGOBJECTS)
 
 libfltk_images.so.1.1: $(IMGOBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMGLIBS)
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS)
 	-$(RM) libfltk_images.so
 	$(LN) libfltk_images.so.1.1 libfltk_images.so
 
 libfltk_images.sl.1.1: $(IMGOBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMGLIBS)
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS)
 	-$(RM) libfltk_images.sl
 	$(LN) libfltk_images.sl.1.1 libfltk_images.sl
 
@@ -582,5 +582,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.52 2003/06/15 05:37:32 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.53 2003/08/02 13:49:17 easysw Exp $".
 #
