@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_PNG_Image.cxx,v 1.1.2.3 2001/12/11 16:03:12 easysw Exp $"
+// "$Id: Fl_PNG_Image.cxx,v 1.1.2.4 2002/01/01 15:11:31 easysw Exp $"
 //
 // Fl_PNG_Image routines.
 //
-// Copyright 1997-2001 by Easy Software Products.
+// Copyright 1997-2002 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
 //
 // This library is free software; you can redistribute it and/or
@@ -131,5 +131,5 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 
 
 //
-// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.3 2001/12/11 16:03:12 easysw Exp $".
+// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.4 2002/01/01 15:11:31 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_own_colormap.cxx,v 1.4.2.3.2.1 2001/11/27 17:44:06 easysw Exp $"
+// "$Id: Fl_own_colormap.cxx,v 1.4.2.3.2.2 2002/01/01 15:11:31 easysw Exp $"
 //
 // Private colormap support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -77,5 +77,5 @@ void Fl::own_colormap() {
 #endif
 
 //
-// End of "$Id: Fl_own_colormap.cxx,v 1.4.2.3.2.1 2001/11/27 17:44:06 easysw Exp $".
+// End of "$Id: Fl_own_colormap.cxx,v 1.4.2.3.2.2 2002/01/01 15:11:31 easysw Exp $".
 //

@@ -5,7 +5,10 @@ code_name {.cxx}
 gridx 10 
 gridy 10 
 snap 3
-Function {make_about_panel(const char *copyright)} {open
+decl {void show_help(const char *name);} {selected public
+} 
+
+Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
     label {about fluid} open
@@ -49,20 +52,15 @@ Function {make_about_panel(const char *copyright)} {open
         label {FLTK User
 Interface
 Designer
-Version 1.1.0} selected
+Version 1.1.0}
         xywh {140 27 160 123} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
         label {©1998-2001 by
 Bill Spitzak and others}
-        callback {display_group->hide();
-copyright_box->show();}
+        callback {show_help("license.html");}
         xywh {181 176 115 30} box THIN_UP_BOX labelsize 10 labelcolor 136
       }
-    }
-    Fl_Box copyright_box {
-      xywh {5 5 300 210} labelsize 8 labelcolor 6 align 148 hide
-      code0 {o->label(copyright);}
     }
     Fl_Return_Button {} {
       label OK

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.5 2001/12/16 16:41:48 easysw Exp $"
+// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.6 2002/01/01 15:11:30 easysw Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -117,5 +117,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.5 2001/12/16 16:41:48 easysw Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.6 2002/01/01 15:11:30 easysw Exp $".
 //

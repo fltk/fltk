@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.3 2001/12/18 11:00:09 matthiaswm Exp $"
+// "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.4 2002/01/01 15:11:31 easysw Exp $"
 //
 // Window minification code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -43,5 +43,5 @@ void Fl_Window::iconize() {
 }
 
 //
-// End of "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.3 2001/12/18 11:00:09 matthiaswm Exp $".
+// End of "$Id: Fl_Window_iconize.cxx,v 1.5.2.3.2.4 2002/01/01 15:11:31 easysw Exp $".
 //

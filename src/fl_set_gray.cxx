@@ -1,9 +1,9 @@
 //
-// "$Id: fl_set_gray.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_set_gray.cxx,v 1.5.2.3.2.1 2002/01/01 15:11:32 easysw Exp $"
 //
 // Background (gray) color routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -58,5 +58,5 @@ void Fl::background2(uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_set_gray.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_set_gray.cxx,v 1.5.2.3.2.1 2002/01/01 15:11:32 easysw Exp $".
 //

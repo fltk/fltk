@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_XPM_Image.cxx,v 1.1.2.2 2001/12/21 20:45:43 easysw Exp $"
+// "$Id: Fl_XPM_Image.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $"
 //
 // Fl_XPM_Image routines.
 //
-// Copyright 1997-2001 by Bill Spitzak and others.
+// Copyright 1997-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -125,5 +125,5 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.2 2001/12/21 20:45:43 easysw Exp $".
+// End of "$Id: Fl_XPM_Image.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: gl.h,v 1.6.2.4.2.1 2001/12/06 00:17:47 matthiaswm Exp $"
+// "$Id: gl.h,v 1.6.2.4.2.2 2002/01/01 15:11:28 easysw Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // You must include this instead of GL/gl.h to get the Microsoft
 // APIENTRY stuff included (from <windows.h>) prior to the OpenGL
@@ -81,5 +81,5 @@ FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, in
 #endif
 
 //
-// End of "$Id: gl.h,v 1.6.2.4.2.1 2001/12/06 00:17:47 matthiaswm Exp $".
+// End of "$Id: gl.h,v 1.6.2.4.2.2 2002/01/01 15:11:28 easysw Exp $".
 //

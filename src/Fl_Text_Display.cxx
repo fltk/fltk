@@ -1,8 +1,9 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.9 2001/12/19 18:15:34 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.10 2002/01/01 15:11:31 easysw Exp $"
 //
-// Copyright Mark Edel.  Permission to distribute under the LGPL for
-// the FLTK library granted by Mark Edel.
+// Copyright 2001-2002 by Bill Spitzak and others.
+// Original code Copyright Mark Edel.  Permission to distribute under
+// the LGPL for the FLTK library granted by Mark Edel.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1957,5 +1958,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.9 2001/12/19 18:15:34 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.10 2002/01/01 15:11:31 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.1 2001/10/29 03:44:31 easysw Exp $"
+// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.2 2002/01/01 15:11:28 easysw Exp $"
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -153,5 +153,5 @@ enum {	// back-compatability enum:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.1 2001/10/29 03:44:31 easysw Exp $".
+// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.2 2002/01/01 15:11:28 easysw Exp $".
 //

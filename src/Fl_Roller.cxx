@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.3 2001/12/16 16:41:48 easysw Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.4 2002/01/01 15:11:31 easysw Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -168,5 +168,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.3 2001/12/16 16:41:48 easysw Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.4 2002/01/01 15:11:31 easysw Exp $".
 //

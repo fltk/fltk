@@ -1,11 +1,11 @@
 //
-// "$Id: cube.cxx,v 1.4.2.5 2001/03/14 17:20:02 spitzak Exp $"
+// "$Id: cube.cxx,v 1.4.2.5.2.1 2002/01/01 15:11:32 easysw Exp $"
 //
 // Another forms test program for the Fast Light Tool Kit (FLTK).
 //
 // Modified to have 2 cubes to test multiple OpenGL contexts
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -179,5 +179,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: cube.cxx,v 1.4.2.5 2001/03/14 17:20:02 spitzak Exp $".
+// End of "$Id: cube.cxx,v 1.4.2.5.2.1 2002/01/01 15:11:32 easysw Exp $".
 //

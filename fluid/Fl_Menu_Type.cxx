@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.3 2001/12/17 01:02:16 easysw Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.4 2002/01/01 15:11:29 easysw Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -9,7 +9,7 @@
 // This file also contains code to make Fl_Menu_Button, Fl_Menu_Bar,
 // etc widgets.
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -467,5 +467,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.3 2001/12/17 01:02:16 easysw Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.4 2002/01/01 15:11:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.2 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.3 2002/01/01 15:11:29 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -15,7 +15,7 @@
 // not in the linked list and are not written to files or
 // copied or otherwise examined.
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -668,5 +668,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.2 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.3 2002/01/01 15:11:29 easysw Exp $".
 //

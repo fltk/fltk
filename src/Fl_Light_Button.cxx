@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.9 2001/12/16 16:43:41 easysw Exp $"
+// "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.10 2002/01/01 15:11:30 easysw Exp $"
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -118,5 +118,5 @@ Fl_Light_Button::Fl_Light_Button(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.9 2001/12/16 16:43:41 easysw Exp $".
+// End of "$Id: Fl_Light_Button.cxx,v 1.4.2.3.2.10 2002/01/01 15:11:30 easysw Exp $".
 //

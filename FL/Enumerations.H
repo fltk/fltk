@@ -1,9 +1,9 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.17 2001/12/22 07:16:11 matthiaswm Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.18 2002/01/01 15:11:27 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -373,5 +373,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.17 2001/12/22 07:16:11 matthiaswm Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.18 2002/01/01 15:11:27 easysw Exp $".
 //

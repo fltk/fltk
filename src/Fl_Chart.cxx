@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.4 2002/01/01 13:11:29 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.5 2002/01/01 15:11:30 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.4 2002/01/01 13:11:29 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.5 2002/01/01 15:11:30 easysw Exp $".
 //

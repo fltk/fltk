@@ -1,245 +1,236 @@
-README.win32 - 06/15/2000 - Building FLTK under Windows
--------------------------------------------------------
-
-This document is split into two main sections.  The first describes several
-possible build environments, while the second describes some of the issues
-associated with using the GNU-like build configurations in the "makefiles"
-subdirectory.
-
+README.win32 - 01/01/2002 - Building FLTK under Windows
 -------------------------------------------------------
 
 INTRODUCTION
 
-FLTK currently supports the following development environments on the
-Windows platform:
+    This document is split into two main sections.  The first
+    describes several possible build environments, while the
+    second describes some of the issues associated with using
+    the GNU-like build configurations in the "makefiles"
+    subdirectory.
 
-    - Microsoft Visual C++ 5.0 and 6.0 using the supplied workspace
-      and project files.  Be sure to get your service packs!
+    FLTK currently supports the following development
+    environments on the Windows platform:
 
-    - Borland C++ Builder 5 using the supplied IDE file.
+	- Microsoft Visual C++ 6.0 using the supplied workspace
+	  and project files.  Be sure to get your service packs!
 
-    - GNU toolsets (Cygwin or MinGW) hosted on Windows 9x/2000/NT
+	- Borland C++ Builder 5 using the supplied IDE file.
 
-This document gives a brief overview of compiling and using FLTK with the
-Cygwin and MinGW compiler toolkits.  Both toolkits provide a build
-environment based around the GNU C/C++ compiler.
+	- GNU toolsets (Cygwin or MinGW) hosted on Windows
+	  9x/2000/NT/XP.
 
-The Cygwin build environment supplies a library (the Cygwin DLL) that is
-primarily intended to provide a number of Unix-like POSIX facilities for
-programs being ported to the Windows environment (Win32 or WinNT).  Cygwin
-also supplies a very Unix-like build environment for Windows, including
-the "BASH" Bourne-compatible shell and all of the standard Unix file
-utilities (ls, cat, grep, etc.).
+    This document gives a brief overview of compiling and using
+    FLTK with the Cygwin and MinGW compiler toolkits.  Both
+    toolkits provide a build environment based around the GNU
+    C/C++ compiler.
 
-Cygwin is developed by Cygnus (now part of RedHat, Inc).  Although provided
-for free download under the GPL, distributing programs that require the
-Cygwin DLL under a license other than the GPL requires a commercial
-license for the Cygwin DLL.  Native Windows programs that do not require
-the Cygwin DLL (compiled and linked with the "-mno-cygwin" option) may be
-released under any license freely.
+    The Cygwin build environment supplies a library (the Cygwin
+    DLL) that is primarily intended to provide a number of
+    Unix-like POSIX facilities for programs being ported to the
+    Windows environment (Win32 or WinNT).  Cygwin also supplies
+    a very Unix-like build environment for Windows, including
+    the "BASH" Bourne-compatible shell and all of the standard
+    Unix file utilities (ls, cat, grep, etc.).
 
-The MinGW distribution (Minimalist GNU for Windows) provides a similar
-toolset but geared solely towards native Windows development without the
-Unix-like POSIX library.  The lack of any libraries under the GPL or any
-other restrictive license means that programs built with the MinGW
-environment may always be released under any license freely.
+    Cygwin is developed by Cygnus (now part of RedHat, Inc). 
+    Although provided for free download under the GPL,
+    distributing programs that require the Cygwin DLL under a
+    license other than the GPL requires a commercial license for
+    the Cygwin DLL.  Native Windows programs that do not require
+    the Cygwin DLL (compiled and linked with the "-mno-cygwin"
+    option) may be released under any license freely.
 
-If you are not familiar with these GNU-like toolkits please refer to the
-links section later in this section.  In particular, check out their
-license conditions carefully before use.
+    The MinGW distribution (Minimalist GNU for Windows) provides
+    a similar toolset but geared solely towards native Windows
+    development without the Unix-like POSIX library.  The lack
+    of any libraries under the GPL or any other restrictive
+    license means that programs built with the MinGW environment
+    may always be released under any license freely.
+
+    If you are not familiar with these GNU-like toolkits please
+    refer to the links section later in this section.  In
+    particular, check out their license conditions carefully
+    before use.
 
 
 THE TOOLS
 
-There are currently three main configurations supported by FLTK
+    There are currently three main configurations supported by
+    FLTK:
 
-1. Cygwin: Built using the Cygwin toolset and using the Unix-like POSIX
-   compatibility layer provided by the Cygwin DLL.
-   
-2. Cygwin using the "-mno-cygwin" option: Built using the Cygwin toolset
-   but not using the Cygwin DLL.
+	1. Cygwin: Built using the Cygwin toolset and using the
+	   Unix-like POSIX compatibility layer provided by the
+	   Cygwin DLL.
 
-3. MinGW: Mainly based upon the MinGW utilities, compiler and tools but
-   currently needs additional tools from the Cygwin distribution (make.exe
-   and sh.exe).
+	2. Cygwin using the "-mno-cygwin" option: Built using
+	   the Cygwin toolset but not using the Cygwin DLL.
+
+	3. MinGW: Mainly based upon the MinGW utilities,
+	   compiler and tools but currently needs additional
+	   tools from the Cygwin distribution (make.exe and
+	   sh.exe).
 
 
 RECOMMENDED BUILD ENVIRONMENTS
 
-Our recommendation is to:
+    Our recommendation is to:
 
-1) Get the current Cygwin toolset (June 20, 2000 or later).
+	1. Get the current Cygwin toolset (June 20, 2000 or
+	   later).
 
-   Can produce executables that do or do not rely on the Cygwin DLL (check
-   licensing)-- your choice.  No supplementary MinGW files are required.
+	   Can produce executables that do or do not rely on the
+	   Cygwin DLL (check licensing)-- your choice.  No
+	   supplementary MinGW files are required.
 
-2) Get the latest full MinGW toolset and add Cygwin "make.exe" and "sh.exe"
-   to it.
- 
-   Will only normal Windows native executables without any Unix or POSIX
-   compatibility.
-   
-3) Get a pre-built combined toolset that has been tested with FLTK.
+	2. Get the latest full MinGW toolset and add Cygwin
+	   "make.exe" and "sh.exe" to it.
 
-   Carl Thompson has provided a set based upon the B20.1 Cygwin release and
-   ~Feb 2000 version of Mingw which has been successfully used for FLTK.
+	   Will only normal Windows native executables without
+	   any Unix or POSIX compatibility.
 
-   This will provide several Cygwin utilities and the MinGW compiler.
-   Compilation will produce executables not reliant on the Cygwin DLL and
-   so are freely redistributable under any license you choose.
+	3. Get a pre-built combined toolset that has been tested
+	   with FLTK.
 
-   See the links section below for more information.
+	   Carl Thompson has provided a set based upon the B20.1
+	   Cygwin release and ~Feb 2000 version of Mingw which
+	   has been successfully used for FLTK.
 
-All three options can provide windows-native executables and 1) can provide
-a Unix-like POSIX portability layer that is reliant on a GPLed library.
- 
-See the later sections for detailed information about using one of
-these configurations.
+	   This will provide several Cygwin utilities and the
+	   MinGW compiler. Compilation will produce executables
+	   not reliant on the Cygwin DLL and so are freely
+	   redistributable under any license you choose.
+
+	   See the links section below for more information.
+
+    All three options can provide windows-native executables and
+    1 can provide a Unix-like POSIX portability layer that is
+    reliant on a GPLed library.
+
+    See the later sections for detailed information about using
+    one of these configurations.
 
 LINKS
 
-1) Main Cygwin homepage: http://sourceware.cygnus.com/cygwin/
+    The following links may be of use:
 
-2) Main Mingw homepage: http://www.mingw.org/
+	1. Main Cygwin homepage:
 
-   In particular look for the MinGW FAQ at this link for a lot of useful
-   Mingw-native development documentation.
+	       http://sourceware.cygnus.com/cygwin/
 
-3) Mumit Khan's homepage (chief maintainer and driving force behing MinGW):
+	2. Main Mingw homepage:
 
-   http://www.xraylith.wisc.edu/~khan/software/gnu-win32/index.html
+	       http://www.mingw.org/
 
-   This page provides descriptions of Cygwin, Mingw and several other
-   similar packages. This information can sometimes lag the current
-   release however.
+	   In particular look for the MinGW FAQ at this link for
+	   a lot of useful Mingw-native development
+	   documentation.
 
-   In particular the insights and recommendations for using Cygwin for MinGW
-   compilation are very useful:
+	3. Mumit Khan's homepage (chief maintainer and driving
+	   force behing MinGW):
 
-   http://www.xraylith.wisc.edu/~khan/software/gnu-win32/mno-cygwin-howto.txt
+	       http://www.xraylith.wisc.edu/~khan/software/gnu-win32/index.html
 
-   (Some of this information may be outdated and inaccurate!)
+	   This page provides descriptions of Cygwin, Mingw and
+	   several other similar packages. This information can
+	   sometimes lag the current release however.
 
-4) Check out the FLTK mailing list at the FLTK homepage:
+	   In particular the insights and recommendations for
+	   using Cygwin for MinGW compilation are very useful:
 
-   http://www.fltk.org/
+	       http://www.xraylith.wisc.edu/~khan/software/gnu-win32/mno-cygwin-howto.txt
 
-   Its archival search facilities are EXTREMELY useful to check back
-   through previous problems with this sort of configuration before posting
-   new questions.
+	   (Some of this information may be outdated and inaccurate!)
 
-5) Carl Thompson (One of the core team responsible for FLTK):
+	4. Check out the FLTK newsgroups at the FLTK homepage:
 
-   http://www.carlthompson.net/
+	       http://www.fltk.org/
 
-   Currently a pre-bundled development toolset may be found at:
+	   Its archival search facilities are EXTREMELY useful
+	   to check back through previous problems with this
+	   sort of configuration before posting new questions.
 
-   http://www.carlthompson.net/cygwin/
+	5. Carl Thompson (member of the core team responsible
+	   for FLTK):
 
-6) GCC compiler homepage
+	       http://www.carlthompson.net/
 
-   http://gcc.gnu.org/
+	   Currently a pre-bundled development toolset may be
+	   found at:
+
+	       http://www.carlthompson.net/cygwin/
+
+	6. GNU Compiler Collection (GCC) compiler homepage:
+
+	       http://gcc.gnu.org/
+
+	7. OpenGL page - for OpenGL and GLUT libs
+
+	       http://www.opengl.org/
   
-7) OpenGL page - for OpenGL and GLUT libs
-
-   http://www.opengl.org/
-  
-------------------------------------------------------------------
 
 BUILDING FLTK WITH CYGWIN OR MINGW
 
-
-1. Starting your first build
-----------------------------
-
-1.1  How to build FLTK
-
-a) Cygwin (to build an executable that does not use the Cygwin DLL)
-
-   (You should have read the Cygwin documentation and compiled and linked
-   your own small test programs)
- 
-i) Copy makefiles/Makefile.no-cygwin to top level FLTK directory.
-
-ii) Backup existing Makefile and rename top level copy of Makefile.no-cygwin
-    to Makefile
-
-iii) Type make
-
-     The first time it is run it will copy other configuration files from
-     the makefiles directory and then begin building FLTK, Fluid and the
-     test examples.
-
-iv) The build process will produce libraries in the lib directory and
-    various executables.
-
-v) Read the rest of this document to learn how to troubleshoot your setup
-   or change various configuration settings.
+    Please read chapter 1 of the FLTK Programmers Manual for
+    compilation instructions.
 
 
-b) Cygwin (to build an executable that uses the Cygwin DLL)
+WHY DOES A CONSOLE WINDOW APPEAR WHEN I RUN MY PROGRAM
 
-(Steps are the same as above, but use "Makefile.cygwin" instead of
-"Makefile.no-cygwin" .)
+    Windows has a flag that determines whether an application
+    runs in the foreground with a console or in the background
+    without a console.  Use the "-mwindows" option to make your
+    application run in the background and "-mconsole" to run in
+    the foreground.
 
-c) MinGW
-
-(Steps are the same as above, but use "Makefile.mingw" instead of
-"Makefile.no-cygwin" .  Make sure you have "make.exe" and "sh.exe" from the
-Cygwin distribution in your path as well as the MinGW tools.)
-
-
-1.2  How do I set up Cygwin and/or MinGW
-
-See the links section provided in the first part of this document.  This
-isn't really an FLTK issue and is adequately described at the linked sites.
+    Keep in mind that a windows application cannot send output
+    to stdout, even if you run it from an existing console
+    application.
 
 
-2. Other stuff
---------------
+HOW DO I GET OPENGL TO WORK?
 
-2.1  Getting rid of that peskey console window in the background!
-Take a look at the "makeinclude" file.  You'll want the add the option
-"-mwindows" to your LDFLAGS setting.
+    The CygWin build automatically supports OpenGL.
 
-2.2 OpenGL - How do I get it to work
+    The MingW build disables OpenGL by default, since the
+    standard MingW distribution lacks the OpenGL header files.
 
-The configuration file config.h has a number of settings which control
-compile-time compilation.  One such setting is "HAVE_GL" . By default this
-is set to 0 to disable Open GL operation.  Changing the line in config.h to
+    The configuration file config.h has a number of settings
+    which control compile-time compilation.  One such setting is
+    "HAVE_GL" . By default this is set to 0 to disable Open GL
+    operation.  Changing the line in config.h to
 
-#define HAVE_GL 1
+        #define HAVE_GL 1
 
-will change this to compile and link in OpenGL.
+    will change this to compile and link in OpenGL.
 
+    In order for it to work you will need a few OpenGL headers
+    for both Cygwin and MinGW.  These are not part of the
+    official distributions of Cygwin or MinGW, so they need to
+    be added.  The following page provides a ZIP file containing
+    the OpenGL headers:
 
-In order for it to work you will need a few OpenGL headers for both Cygwin
-and MinGW. These are not part of the official distributions of Cygwin or
-MinGW, so they need to be added.
+	http://www.carlthompson.net/fltk/
 
-http://www.carlthompson.net/fltk/
+    These should be put in a "GL" subdirectory somewhere in your
+    compiler's search path.
 
-has a small zip file called MingwGL.zip which contains the necessary
-headers.
+    You will also need an OpenGL library and an additional set
+    of GLUT libraries.
 
-These should be put in a "GL" subdirectory somewhere in your compiler's
-search path.
+    The OpenGL files are most likely already part of your
+    operating system, and the GLUT libraries are in current
+    versions of MinGW and Cygwin or may be found at:
 
-You will also need an OpenGL library and an additional set of GLUT
-libraries.
+        http://www.opengl.org/
 
-The opengl files are most likely already part of your operating system, and
-the GLUT libraries are in current versions of MinGW and Cygwin or may be
-found at:
+    Do a search for 'GLUT windows' and the first couple of
+    results will take you to the latest GLUT and OpenGL libs for
+    Windows.
 
-http://www.opengl.org/
+    The binaries (DLLs normally) need to be put somewhere on the
+    system PATH. Consult the install documentation on the site
+    for info.
 
-Do a search for 'GLUT windows' and the first couple of results will take you
-to the latest GLUT and OpenGL libs for Windows.
-
-The binaries (DLLs normally) need to be put somewhere on the system PATH.
-Consult the install documentation on the site for info.
-
-Many programs use OpenGL and GLUT so you may already have them on your system
-
-[ FLTK compiled/tested with OpenGL 1.1 and GLUT DLLs version 3.7 ]
+    Many programs use OpenGL and GLUT so you may already have
+    them on your system.

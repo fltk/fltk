@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Input.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Input.H,v 1.5.2.3.2.1 2002/01/01 15:11:27 easysw Exp $"
 //
 // Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -42,5 +42,5 @@ public:
 #endif 
 
 //
-// End of "$Id: Fl_Input.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Input.H,v 1.5.2.3.2.1 2002/01/01 15:11:27 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_File_Icon.H,v 1.1.2.4 2001/11/25 16:38:10 easysw Exp $"
+// "$Id: Fl_File_Icon.H,v 1.1.2.5 2002/01/01 15:11:27 easysw Exp $"
 //
 // Fl_File_Icon definitions.
 //
-// Copyright 1999-2001 by Michael Sweet.
+// Copyright 1999-2002 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -108,5 +108,5 @@ class Fl_File_Icon			//// Icon data
 #endif // !_Fl_Fl_File_Icon_H_
 
 //
-// End of "$Id: Fl_File_Icon.H,v 1.1.2.4 2001/11/25 16:38:10 easysw Exp $".
+// End of "$Id: Fl_File_Icon.H,v 1.1.2.5 2002/01/01 15:11:27 easysw Exp $".
 //

@@ -1,8 +1,9 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.2 2001/12/03 18:29:49 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.3 2002/01/01 15:11:31 easysw Exp $"
 //
-// Copyright Mark Edel.  Permission to distribute under the LGPL for
-// the FLTK library granted by Mark Edel.
+// Copyright 2001-2002 by Bill Spitzak and others.
+// Original code Copyright Mark Edel.  Permission to distribute under
+// the LGPL for the FLTK library granted by Mark Edel.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -2284,5 +2285,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.2 2001/12/03 18:29:49 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.3 2002/01/01 15:11:31 easysw Exp $".
 //

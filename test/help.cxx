@@ -1,9 +1,9 @@
 //
-// "$Id: help.cxx,v 1.1.2.3 2001/12/23 03:40:51 easysw Exp $"
+// "$Id: help.cxx,v 1.1.2.4 2002/01/01 15:11:33 easysw Exp $"
 //
 // Fl_Help_Dialog test program.
 //
-// Copyright 1999-2001 by Easy Software Products.
+// Copyright 1999-2002 by Easy Software Products.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -63,5 +63,5 @@ main(int  argc,			// I - Number of command-line arguments
 
 
 //
-// End of "$Id: help.cxx,v 1.1.2.3 2001/12/23 03:40:51 easysw Exp $".
+// End of "$Id: help.cxx,v 1.1.2.4 2002/01/01 15:11:33 easysw Exp $".
 //

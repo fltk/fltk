@@ -1,9 +1,10 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.6 2001/12/14 19:34:29 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.7 2002/01/01 15:11:27 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
+# Copyright 2000-2002 by Bill Spitzak and others.
 # Original version Copyright 2000 by James Dean Palmer
 # Adapted by Vincent Penne and Michael Sweet
 #

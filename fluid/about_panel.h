@@ -3,13 +3,13 @@
 #ifndef about_panel_h
 #define about_panel_h
 #include <FL/Fl.H>
+extern void show_help(const char *name);
 #include <FL/Fl_Window.H>
 extern Fl_Window *about_panel;
 #include <FL/Fl_Group.H>
 extern Fl_Group *display_group;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
-extern Fl_Box *copyright_box;
 #include <FL/Fl_Return_Button.H>
-Fl_Window* make_about_panel(const char *copyright);
+Fl_Window* make_about_panel();
 #endif

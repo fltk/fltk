@@ -1,9 +1,9 @@
 //
-// "$Id: threads.cxx,v 1.10.2.2 2001/12/23 03:40:51 easysw Exp $"
+// "$Id: threads.cxx,v 1.10.2.3 2002/01/01 15:11:33 easysw Exp $"
 //
 // Threading example program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -126,5 +126,5 @@ int main() {
 
 
 //
-// End of "$Id: threads.cxx,v 1.10.2.2 2001/12/23 03:40:51 easysw Exp $".
+// End of "$Id: threads.cxx,v 1.10.2.3 2002/01/01 15:11:33 easysw Exp $".
 //

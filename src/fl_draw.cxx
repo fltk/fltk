@@ -1,9 +1,9 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.8 2001/12/21 14:17:00 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.9 2002/01/01 15:11:32 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2001 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -327,5 +327,5 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.8 2001/12/21 14:17:00 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.9 2002/01/01 15:11:32 easysw Exp $".
 //
