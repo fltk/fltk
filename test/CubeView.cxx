@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.cxx,v 1.1 1999/02/22 21:33:54 mike Exp $"
+// "$Id: CubeView.cxx,v 1.2 1999/03/04 20:11:48 mike Exp $"
 //
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
@@ -51,6 +51,7 @@ CubeView::CubeView(int x,int y,int w,int h,const char *l)
 #define CUBECOLOR 255,255,255,255
 
 void CubeView::drawCube() {
+#ifdef HAVE_GL
 /* Draw a colored cube */
     glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0); v3f(boxv1); v3f(boxv2); v3f(boxv3); glEnd();
     glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv5); v3f(boxv4); v3f(boxv7); v3f(boxv6); glEnd();
@@ -65,9 +66,11 @@ void CubeView::drawCube() {
     glBegin(GL_QUADS); glColor4ub(255,   0,   0, ALPHA); v3f(boxv4); v3f(boxv5); v3f(boxv6); v3f(boxv7); glEnd();
     glBegin(GL_QUADS); glColor4ub(255,   0, 255, ALPHA); v3f(boxv0); v3f(boxv3); v3f(boxv7); v3f(boxv4); glEnd();
     glBegin(GL_QUADS); glColor4ub(  0, 255,   0, ALPHA); v3f(boxv1); v3f(boxv5); v3f(boxv6); v3f(boxv2); glEnd();
+#endif /* HAVE_GL */
 };//drawCube
 
 void CubeView::draw() {
+#ifdef HAVE_GL
     if (!valid()) {
         glLoadIdentity();
         glViewport(0,0,w(),h());
@@ -87,8 +90,9 @@ void CubeView::draw() {
     drawCube();
     
     glPopMatrix();
+#endif /* HAVE_GL */
 };
 
 //
-// End of "$Id: CubeView.cxx,v 1.1 1999/02/22 21:33:54 mike Exp $".
+// End of "$Id: CubeView.cxx,v 1.2 1999/03/04 20:11:48 mike Exp $".
 //

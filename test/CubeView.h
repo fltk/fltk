@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.h,v 1.1 1999/02/22 21:33:54 mike Exp $"
+// "$Id: CubeView.h,v 1.2 1999/03/04 20:11:49 mike Exp $"
 //
 // CubeView class definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -28,8 +28,10 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
-#include <FL/gl.h>
-#include <GL/glu.h>
+#ifdef HAVE_GL
+#  include <FL/gl.h>
+#  include <GL/glu.h>
+#endif /* HAVE_GL */
 
 #include <stdlib.h>
 
@@ -109,5 +111,5 @@ private:
 #endif
 
 //
-// End of "$Id: CubeView.h,v 1.1 1999/02/22 21:33:54 mike Exp $".
+// End of "$Id: CubeView.h,v 1.2 1999/03/04 20:11:49 mike Exp $".
 //
