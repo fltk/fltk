@@ -1,3 +1,9 @@
+CHANGES IN FLTK 1.1.0
+
+	- The MacOS font code was missing definitions for
+	  fl_font_ and fl_size_.
+
+
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
