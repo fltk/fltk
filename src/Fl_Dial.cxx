@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.9 1999/03/09 07:26:28 bill Exp $"
+// "$Id: Fl_Dial.cxx,v 1.10 1999/03/09 07:51:10 bill Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,10 +29,13 @@
 #include <stdlib.h>
 #include <FL/math.h>
 
+// For XForms compatability, all angles are measured with 0 being straight
+// up and positive numbers going clockwise.
+
 void Fl_Dial::angles(short a, short b) {
   a1=a;
   a2=b;
-  if (a2 < a1) a2 += 360;
+  if (a2 < a1) a2 += 360; // necessary for XForms compatability
 }
 
 void Fl_Dial::draw(int x, int y, int w, int h) {
@@ -43,14 +46,13 @@ void Fl_Dial::draw(int x, int y, int w, int h) {
   h -= Fl::box_dh(box());
   double angle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
   if (type() == FL_FILL_DIAL) {
-    double a = angle; if (a < 0) a = 0;
     // foo: draw this nicely in certain round box types
     int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
     if (foo) {x--; y--; w+=2; h+=2;}
     fl_color(color());
-    fl_pie(x, y, w-1, h-1, (360-a1)+90, (360-a)+360+90);
+    fl_pie(x, y, w-1, h-1, 90-a1, 360+90-angle);
     fl_color(selection_color());
-    fl_pie(x, y, w-1, h-1, (360-a1)+90, (360-a)+90);
+    fl_pie(x, y, w-1, h-1, 90-angle, 90-a1);
     if (foo) {
       fl_color(FL_BLACK);
       fl_arc(x, y, w, h, 0, 360);
@@ -145,5 +147,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.9 1999/03/09 07:26:28 bill Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.10 1999/03/09 07:51:10 bill Exp $".
 //
