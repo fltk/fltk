@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.33.2.9 2000/04/26 07:59:53 bill Exp $"
+dnl# "$Id: configure.in,v 1.33.2.10 2000/04/26 12:55:29 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -184,18 +184,32 @@ if test -n "$GXX"; then
     	CFLAGS="-fPIC $CFLAGS"
     	CXXFLAGS="-fPIC $CXXFLAGS"
     fi
+
     CFLAGS="-fno-rtti -fomit-frame-pointer $CFLAGS"
-    CXXFLAGS="-fno-rtti -fomit-stack-frame $CXXFLAGS"
+    CXXFLAGS="-fno-rtti -fomit-frame-pointer $CXXFLAGS"
 
     # See if GCC supports -fno-exceptions...
-
+    echo "Testing if GCC supports -fno-exceptions..."
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
     AC_TRY_COMPILE(,,
 	CXXFLAGS="$CXXFLAGS -fno-exceptions"
-	echo "Congratulations your GCC supports exceptions; disabling them...",
+	echo "Congratulations - your GCC supports exceptions; disabling them...",
 	CFLAGS="$OLDCFLAGS"
-	echo "I see that your GCC does not support exceptions." )
+	echo "GCC does not support exceptions...")
+
+    # See if we are running Solaris; if so, try the -fpermissive option...
+    if test $uname = SunOS; then
+	echo "Testing if GCC supports -fpermissive..."
+
+	OLDCFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -fpermissive"
+	AC_TRY_COMPILE(,,
+	    CXXFLAGS="$CXXFLAGS -fpermissive"
+	    echo "Enabling -fpermissive to work around X header bugs...",
+	    CFLAGS="$OLDCFLAGS"
+	    echo "The -fpermissive option is not required by your GCC...")
+    fi
 else
     case `(uname) 2>/dev/null` in
         IRIX*)
@@ -263,5 +277,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.33.2.9 2000/04/26 07:59:53 bill Exp $".
+dnl# End of "$Id: configure.in,v 1.33.2.10 2000/04/26 12:55:29 mike Exp $".
 dnl#
