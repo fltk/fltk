@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.11.2.4.2.1 2001/08/04 12:21:33 easysw Exp $"
+// "$Id: filename.H,v 1.11.2.4.2.2 2001/11/26 00:15:06 easysw Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -32,11 +32,16 @@
 
 FL_EXPORT const char *filename_name(const char *); // return pointer to name
 FL_EXPORT const char *filename_ext(const char *); // return pointer to .ext
-FL_EXPORT char *filename_setext(char *,const char *ext); // clobber .ext
-FL_EXPORT int filename_expand(char *, const char *from); // do $x and ~x
-FL_EXPORT int filename_absolute(char *, const char *from); // prepend getcwd()
-FL_EXPORT int filename_match(const char *, const char *pattern); // glob match
-FL_EXPORT int filename_isdir(const char*);
+FL_EXPORT char *filename_setext(char *to, int tolen, const char *ext); // clobber .ext
+inline char *filename_setext(char *to, const char *ext) { return filename_setext(to, FL_PATH_MAX, ext); }
+FL_EXPORT int filename_expand(char *to, int tolen, const char *from); // do $x and ~x
+inline int filename_expand(char *to, const char *from) { return filename_expand(to, FL_PATH_MAX, from); }
+FL_EXPORT int filename_absolute(char *to, int tolen, const char *from); // prepend getcwd()
+inline int filename_absolute(char *to, const char *from) { return filename_absolute(to, FL_PATH_MAX, from); }
+FL_EXPORT int filename_relative(char *to, int tolen, const char *from); // make local to getcwd()
+inline int filename_relative(char *to, const char *from) { return filename_relative(to, FL_PATH_MAX, from); }
+FL_EXPORT int filename_match(const char *name, const char *pattern); // glob match
+FL_EXPORT int filename_isdir(const char *name);
 
 // Portable "scandir" function.  Ugly but apparently necessary...
 
@@ -64,5 +69,5 @@ FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11.2.4.2.1 2001/08/04 12:21:33 easysw Exp $".
+// End of "$Id: filename.H,v 1.11.2.4.2.2 2001/11/26 00:15:06 easysw Exp $".
 //

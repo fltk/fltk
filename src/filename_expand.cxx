@@ -1,5 +1,5 @@
 //
-// "$Id: filename_expand.cxx,v 1.4.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: filename_expand.cxx,v 1.4.2.4.2.1 2001/11/26 00:15:06 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -43,12 +43,13 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
-int filename_expand(char *to,const char *from) {
+int filename_expand(char *to,int tolen, const char *from) {
 
-  char temp[FL_PATH_MAX];
-  strcpy(temp,from);
-  const char *start = temp;
-  const char *end = temp+strlen(temp);
+  char *temp = new char[tolen];
+  strncpy(temp,from, tolen);
+  temp[tolen - 1] = '\0';
+  char *start = temp;
+  char *end = temp+strlen(temp);
 
   int ret = 0;
 
@@ -81,8 +82,10 @@ int filename_expand(char *to,const char *from) {
       if (value[0] && value[1]==':') start = a;
 #endif
       int t = strlen(value); if (isdirsep(value[t-1])) t--;
+      if ((end+1-e+t) >= tolen) end += tolen - (end+1-e+t);
       memmove(a+t, e, end+1-e);
       end = a+t+(end-e);
+      *end = '\0';
       memcpy(a, value, t);
       ret++;
     } else {
@@ -92,10 +95,16 @@ int filename_expand(char *to,const char *from) {
 #endif
     }
   }
-  strcpy(to,start);
+
+  strncpy(to, start, tolen - 1);
+  to[tolen - 1] = '\0';
+
+  delete[] temp;
+
   return ret;
 }
 
+
 //
-// End of "$Id: filename_expand.cxx,v 1.4.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: filename_expand.cxx,v 1.4.2.4.2.1 2001/11/26 00:15:06 easysw Exp $".
 //

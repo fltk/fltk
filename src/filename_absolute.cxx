@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.1 2001/11/26 00:15:06 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 
 #include <FL/filename.H>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 #if defined(WIN32) && !defined(__CYGWIN__)
 # include <direct.h>
 //# define getcwd(a,b) _getdcwd(0,a,b)
@@ -48,23 +48,27 @@ inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
-int filename_absolute(char *to,const char *from) {
-
+int filename_absolute(char *to, int tolen, const char *from) {
   if (isdirsep(*from) || *from == '|'
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
       || from[1]==':'
 #endif
       ) {
-    strcpy(to,from);
+    strncpy(to, from, tolen - 1);
+    to[tolen - 1] = '\0';
     return 0;
   }
 
-  char *a,temp[FL_PATH_MAX];
+  char *a;
+  char *temp = new char[tolen];
   const char *start = from;
 
-  a = getenv("PWD");
-  if (a) strncpy(temp,a,FL_PATH_MAX);
-  else {a = getcwd(temp,FL_PATH_MAX); if (!a) return 0;}
+  a = getcwd(temp, tolen);
+  if (!a) {
+    strncpy(to, from, tolen - 1);
+    to[tolen - 1] = '\0';
+    return 0;
+  }
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
   for (a = temp; *a; a++) if (*a=='\\') *a = '/'; // ha ha
 #else
@@ -81,16 +85,92 @@ int filename_absolute(char *to,const char *from) {
       start += 3;
     } else if (isdirsep(start[1])) {
       start += 2;
+    } else if (!start[1]) {
+      start ++; // Skip lone "."
+      break;
     } else
       break;
   }
-  *a++ = '/';
-  strcpy(a,start);
-  strcpy(to,temp);
-  return 1;
 
+  *a++ = '/';
+  strncpy(a,start,tolen - (a - temp) - 1);
+  temp[tolen - 1] = '\0';
+
+  strncpy(to, temp, tolen - 1);
+  to[tolen - 1] = '\0';
+
+  delete[] temp;
+
+  return 1;
 }
 
+/*
+ * 'filename_relative()' - Make a filename relative to the current working directory.
+ */
+
+int					// O - 0 if no change, 1 if changed
+filename_relative(char       *to,		// O - Relative filename
+               int        tolen,	// I - Size of "to" buffer
+               const char *from) {	// I - Absolute filename
+  const char	*newslash;		// Directory separator
+  char		*slash;			// Directory separator
+  char		cwd[1024];		// Current directory
+  char		*temp = new char[tolen];// Temporary pathname
+
+
+  if (from[0] == '\0' || !isdirsep(*from)) {
+    strncpy(to, from, tolen - 1);
+    to[tolen - 1] = '\0';
+    return 0;
+  }
+
+  if (!getcwd(cwd, sizeof(cwd))) {
+    strncpy(to, from, tolen - 1);
+    to[tolen - 1] = '\0';
+    return 0;
+  }
+
+  strncpy(temp, from, tolen - 1);
+  temp[tolen - 1] = '\0';
+
+  for (slash = temp, newslash = cwd;
+       *slash != '\0' && *newslash != '\0';
+       slash ++, newslash ++)
+    if (isdirsep(*slash) && isdirsep(*newslash)) continue;
+    else if (*slash != *newslash) break;
+
+  while (!isdirsep(*slash) && slash > temp) slash --;
+
+  if (isdirsep(*slash)) slash ++;
+
+#if defined(WIN32) || defined(__EMX__)
+  if (isalpha(slash[0]) && slash[1] == ':') {
+    strncpy(to, from, tolen - 1);
+    to[tolen - 1] = '\0';
+    return 0; /* Different drive letter... */
+  }
+#endif /* WIN32 || __EMX__ */
+
+  if (*newslash != '\0')
+    while (!isdirsep(*newslash) && newslash > cwd) newslash --;
+
+  to[0]         = '\0';
+  to[tolen - 1] = '\0';
+
+  while (*newslash != '\0')
+  {
+    if (*newslash == '/' || *newslash == '\\')
+      strncat(to, "../", tolen - 1);
+
+    newslash ++;
+  }
+
+  strncat(to, slash, tolen - 1);
+
+  return 1;
+}
+
+
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.1 2001/11/26 00:15:06 easysw Exp $".
 //

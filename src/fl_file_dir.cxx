@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_dir.cxx,v 1.1.2.2 2001/09/30 17:37:06 easysw Exp $"
+// "$Id: fl_file_dir.cxx,v 1.1.2.3 2001/11/26 00:15:06 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -24,6 +24,7 @@
 //
 
 #include <config.h>
+#include <FL/filename.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 
@@ -44,6 +45,8 @@ void fl_file_chooser_callback(void (*cb)(const char*)) {
 
 char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 {
+  static char	retname[1024];
+
   if (!fname || !*fname) fname = ".";
 
   if (!fc) {
@@ -61,12 +64,18 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
   while (fc->visible())
     Fl::wait();
 
-  return ((char *)fc->value());
+  if (fc->value()) {
+    filename_relative(retname, sizeof(retname), fc->value());
+
+    return retname;
+  } else return 0;
 }
 
 
 char* fl_dir_chooser(const char* message, const char* fname)
 {
+  static char	retname[1024];
+
   if (!fname || !*fname) fname = ".";
 
   if (!fc) {
@@ -85,10 +94,14 @@ char* fl_dir_chooser(const char* message, const char* fname)
   while (fc->visible())
     Fl::wait();
 
-  return ((char *)fc->value());
+  if (fc->value()) {
+    filename_relative(retname, sizeof(retname), fc->value());
+
+    return retname;
+  } else return 0;
 }
 
 
 //
-// End of "$Id: fl_file_dir.cxx,v 1.1.2.2 2001/09/30 17:37:06 easysw Exp $".
+// End of "$Id: fl_file_dir.cxx,v 1.1.2.3 2001/11/26 00:15:06 easysw Exp $".
 //

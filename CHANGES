@@ -70,6 +70,14 @@ CHANGES IN FLTK 1.1.0b6
 	- FLUID now uses the Fl_Shared_Image class, so FLUID-
 	  generated GUIs can embed any of the supported image
 	  file formats.
+	- New filename_relative() function to convert an
+	  absolute filename to a relative one.
+	- Updated the filename_absolute(), filename_expand(),
+	  and filename_setext() functions to take the
+	  destination string size, with inline functions for the
+	  old FL_PATH_MAX size.
+	- fl_file_chooser() and fl_dir_chooser() now return a
+	  relative path.
 
 
 CHANGES IN FLTK 1.1.0b5
