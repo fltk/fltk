@@ -64,7 +64,7 @@ Fl_Window* make_widget_panel() {
           o->align(FL_ALIGN_TOP_LEFT);
         }
         { Fl_Value_Input* o = new Fl_Value_Input(215, 150, 60, 20, "Width:");
-          o->tooltip("The widget of the widget.");
+          o->tooltip("The width of the widget.");
           o->labelsize(10);
           o->maximum(2048);
           o->step(1);

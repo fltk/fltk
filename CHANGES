@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fixed widget width tooltip and default argument
+	  handling code in FLUID.
 	- Fixed colors used when drawing antialiased text using
 	  Xft.
 	- Fl_Preferences::makePath() now uses access() instead

@@ -1,10 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {.h} 
-code_name {.cxx} 
-gridx 5 
-gridy 5 
-snap 3
+code_name {.cxx}
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
@@ -63,11 +60,11 @@ Function {make_widget_panel()} {open
         Fl_Value_Input {} {
           label {Width:}
           callback w_cb
-          tooltip {The widget of the widget.} xywh {215 150 60 20} labelsize 10 align 5 maximum 2048 step 1
+          tooltip {The width of the widget.} xywh {215 150 60 20} labelsize 10 align 5 maximum 2048 step 1
         }
         Fl_Value_Input {} {
           label {Height:}
-          callback h_cb
+          callback h_cb selected
           tooltip {The height of the widget.} xywh {275 150 60 20} labelsize 10 align 5 maximum 2048 step 1
         }
         Fl_Group {} {
@@ -379,7 +376,7 @@ image}
       }
       Fl_Button {} {
         label Cancel
-        callback cancel_cb selected
+        callback cancel_cb
         xywh {325 335 80 25}
       }
       Fl_Return_Button {} {
