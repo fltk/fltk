@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.4
 
+	- CodeWarrior Mac OS X updated to work with current CW8.3
 	- Apple-C/X/V/Z didn't work in the Fl_Input widget due
 	  to a bad mapping to control keys (STR #pending)
 	- Added the OSX-specific fl_open_callback() function to

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.45 2003/06/01 00:23:57 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.46 2003/06/09 18:53:06 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,6 +41,9 @@
 // true mouse moves.  On very slow systems however, this flag may
 // still be useful.
 #define CONSOLIDATE_MOTION 0
+extern "C" {
+#include <pthread.h>
+}
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -51,7 +54,6 @@
 #include <stdlib.h>
 #include "flstring.h"
 #include <unistd.h>
-#include <pthread.h>
 
 // #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT
@@ -1861,6 +1863,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.45 2003/06/01 00:23:57 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.46 2003/06/09 18:53:06 matthiaswm Exp $".
 //
 
