@@ -1,5 +1,7 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 0.99 
+version 1.00 
+header_name {.h} 
+code_name {.cxx} 
 gridx 10 
 gridy 5 
 snap 3
@@ -7,18 +9,18 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {function/method} open
-    xywh {281 608 287 173} modal visible
+    xywh {281 608 287 173} resizable modal visible
   } {
     Fl_Light_Button f_public_button {
       label public
       xywh {10 15 65 25} labelsize 10 when 0
     }
     Fl_Input f_name_input {
-      label {name(args): (blank for main())}
+      label {Name(args): (blank for main())}
       xywh {10 60 270 25} labelsize 12 align 5 when 0 resizable
     }
     Fl_Input f_return_type_input {
-      label {return type: (blank to return outermost widget)}
+      label {Return Type: (blank to return outermost widget)} selected
       xywh {10 105 270 25} labelsize 12 align 5 when 0
     }
     Fl_Return_Button f_panel_ok {
@@ -26,7 +28,7 @@ Function {make_function_panel()} {open
       xywh {110 140 80 25} hotspot
     }
     Fl_Button f_panel_cancel {
-      label cancel
+      label Cancel
       xywh {200 140 80 25} shortcut 0xff1b
     }
   }
@@ -36,7 +38,7 @@ Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
     label code open
-    xywh {256 219 291 178} modal visible
+    xywh {256 219 291 178} resizable modal visible
   } {
     Fl_Input code_input {
       xywh {6 5 280 135} type Multiline labelsize 12 align 0 when 0 resizable
@@ -46,7 +48,7 @@ Function {make_code_panel()} {open
       xywh {115 145 80 25} hotspot
     }
     Fl_Button code_panel_cancel {
-      label cancel
+      label Cancel
       xywh {205 145 80 25} shortcut 0xff1b
     }
   }
@@ -56,7 +58,7 @@ Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
     label codeblock open
-    xywh {285 439 293 134} modal visible
+    xywh {285 439 293 134} resizable modal visible
   } {
     Fl_Input code_before_input {
       xywh {10 5 275 25} labelsize 12 align 5 when 0 resizable
@@ -73,7 +75,7 @@ Function {make_codeblock_panel()} {open
       xywh {115 100 80 25} hotspot
     }
     Fl_Button codeblock_panel_cancel {
-      label cancel
+      label Cancel
       xywh {205 100 80 25} shortcut 0xff1b
     }
   }
@@ -83,7 +85,7 @@ Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
     label {declaration block} open
-    xywh {296 118 293 134} modal visible
+    xywh {296 118 293 134} resizable modal visible
   } {
     Fl_Input decl_before_input {
       xywh {15 10 275 25} labelsize 12 align 5 when 0 resizable
@@ -100,7 +102,7 @@ Function {make_declblock_panel()} {open
       xywh {120 105 80 25} hotspot
     }
     Fl_Button declblock_panel_cancel {
-      label cancel
+      label Cancel
       xywh {210 105 80 25} shortcut 0xff1b
     }
   }
@@ -110,7 +112,7 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label declaration open
-    xywh {278 800 290 176} visible
+    xywh {278 800 290 176} resizable visible
   } {
     Fl_Light_Button decl_public_button {
       label public
@@ -128,7 +130,7 @@ or a comment like "//foo" or "/*foo*/"}
       xywh {115 145 80 25} hotspot
     }
     Fl_Button decl_panel_cancel {
-      label cancel
+      label Cancel
       xywh {205 145 80 25} shortcut 0xff1b
     }
   }
@@ -137,8 +139,8 @@ or a comment like "//foo" or "/*foo*/"}
 Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
-    label class open selected
-    xywh {291 618 287 173} modal visible
+    label class open
+    xywh {513 790 287 173} resizable modal visible
   } {
     Fl_Light_Button c_public_button {
       label public
@@ -157,7 +159,7 @@ Function {make_class_panel()} {open
       xywh {110 135 80 25} hotspot
     }
     Fl_Button c_panel_cancel {
-      label cancel
+      label Cancel
       xywh {200 135 80 25} shortcut 0xff1b
     }
   }

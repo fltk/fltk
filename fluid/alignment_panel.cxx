@@ -2,74 +2,76 @@
 
 #include "alignment_panel.h"
 
-Fl_Window *alignment_window;
+Fl_Window *alignment_window=(Fl_Window *)0;
 
-Fl_Input *horizontal_input;
+Fl_Input *horizontal_input=(Fl_Input *)0;
 
-Fl_Input *vertical_input;
+Fl_Input *vertical_input=(Fl_Input *)0;
 
-Fl_Input *snap_input;
+Fl_Input *snap_input=(Fl_Input *)0;
 
-static void cb_close(Fl_Button*, void*) {
+static void cb_Close(Fl_Button*, void*) {
   alignment_window->hide();
 }
 
-Fl_Input *header_file_input;
+Fl_Input *header_file_input=(Fl_Input *)0;
 
-Fl_Input *code_file_input;
+Fl_Input *code_file_input=(Fl_Input *)0;
 
-Fl_Light_Button *include_H_from_C_button;
+Fl_Light_Button *include_H_from_C_button=(Fl_Light_Button *)0;
 
 Fl_Window* make_alignment_window() {
   Fl_Window* w;
-  { Fl_Window* o = alignment_window = w = new Fl_Window(210, 310, "fluid Preferences");
-    { Fl_Box* o = new Fl_Box(10, 20, 190, 100, "ALIGNMENT:");
+  { Fl_Window* o = alignment_window = new Fl_Window(210, 310, "fluid Preferences");
+    w = o;
+    { Fl_Box* o = new Fl_Box(10, 20, 190, 100, "Alignment:");
       o->box(FL_ENGRAVED_FRAME);
-      o->labelsize(10);
+      o->labelsize(12);
       o->align(5);
     }
-    { Fl_Input* o = horizontal_input = new Fl_Input(90, 30, 100, 20, "horizontal:");
+    { Fl_Input* o = horizontal_input = new Fl_Input(90, 30, 100, 20, "Horizontal:");
       o->type(2);
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)alignment_cb, (void*)(1));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Input* o = vertical_input = new Fl_Input(90, 60, 100, 20, "vertical:");
+    { Fl_Input* o = vertical_input = new Fl_Input(90, 60, 100, 20, "Vertical:");
       o->type(2);
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)alignment_cb, (void*)(2));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Input* o = snap_input = new Fl_Input(90, 90, 100, 20, "snap:");
+    { Fl_Input* o = snap_input = new Fl_Input(90, 90, 100, 20, "Snap:");
       o->type(2);
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)alignment_cb, (void*)(3));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Button* o = new Fl_Button(10, 280, 190, 20, "close");
-      o->callback((Fl_Callback*)cb_close);
+    { Fl_Button* o = new Fl_Button(140, 280, 60, 20, "Close");
+      o->callback((Fl_Callback*)cb_Close);
     }
-    { Fl_Box* o = new Fl_Box(10, 140, 190, 100, "OUTPUT FILE NAMES:");
+    { Fl_Box* o = new Fl_Box(10, 140, 190, 130, "Output File Names:");
       o->box(FL_ENGRAVED_FRAME);
-      o->labelsize(10);
+      o->labelsize(12);
       o->align(5);
     }
-    { Fl_Box* o = new Fl_Box(10, 140, 190, 40, "Use \"name.ext\" to set name, use just \".ext\" to set only extension.");
+    { Fl_Box* o = new Fl_Box(20, 150, 170, 30, "Use \"name.ext\" to set name or just \".ext\" to set only extension.");
       o->labelsize(10);
-      o->align(128);
+      o->align(148);
     }
-    { Fl_Input* o = header_file_input = new Fl_Input(90, 180, 100, 20, "header file:");
+    { Fl_Input* o = header_file_input = new Fl_Input(100, 180, 90, 20, "Header File:");
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)header_input_cb, (void*)(1));
       o->when(1);
     }
-    { Fl_Input* o = code_file_input = new Fl_Input(90, 210, 100, 20, "code file:");
+    { Fl_Input* o = code_file_input = new Fl_Input(100, 210, 90, 20, "Code File:");
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)code_input_cb, (void*)(1));
       o->when(1);
     }
-    { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(60, 250, 140, 20, "Include .h from .cxx");
+    { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(20, 240, 170, 20, "Include Header from Code");
       o->value(1);
+      o->labelsize(12);
       o->callback((Fl_Callback*)include_H_from_C_button_cb);
     }
     o->set_modal();

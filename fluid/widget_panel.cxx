@@ -2,13 +2,14 @@
 
 #include "widget_panel.h"
 
-Fl_Input *v_input[4];
+Fl_Input *v_input[4]={(Fl_Input *)0};
 
 Fl_Window* make_widget_panel() {
   Fl_Window* w;
-  { Fl_Window* o = w = new Fl_Window(370, 480);
+  { Fl_Window* o = new Fl_Window(370, 480);
+    w = o;
     w->hotspot(o);
-    { Fl_Input* o = new Fl_Input(90, 10, 210, 20, "name:");
+    { Fl_Input* o = new Fl_Input(90, 10, 210, 20, "Name:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)name_cb);
       o->when(0);
@@ -20,7 +21,7 @@ Fl_Window* make_widget_panel() {
       o->callback((Fl_Callback*)name_public_cb);
       o->when(1);
     }
-    { Fl_Input* o = new Fl_Input(90, 35, 170, 20, "class:");
+    { Fl_Input* o = new Fl_Input(90, 35, 170, 20, "Class:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)subclass_cb, (void*)(4));
       o->when(0);
@@ -29,12 +30,12 @@ Fl_Window* make_widget_panel() {
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)subtype_cb);
     }
-    { Fl_Input* o = new Fl_Input(90, 60, 270, 20, "label:");
+    { Fl_Input* o = new Fl_Input(90, 60, 270, 20, "Label:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)label_cb);
       o->when(1);
     }
-    { Fl_Choice* o = new Fl_Choice(90, 80, 150, 20, "labeltype:");
+    { Fl_Choice* o = new Fl_Choice(90, 80, 150, 20, "Label Type:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)labeltype_cb);
       o->menu(labeltypemenu);
@@ -86,7 +87,7 @@ Fl_Window* make_widget_panel() {
       o->labelsize(8);
       o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_CLIP));
     }
-    { Fl_Choice* o = new Fl_Choice(90, 100, 170, 20, "labelfont:");
+    { Fl_Choice* o = new Fl_Choice(90, 100, 170, 20, "Label Font:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)labelfont_cb);
       o->menu(fontmenu);
@@ -98,32 +99,32 @@ Fl_Window* make_widget_panel() {
       o->value(14);
       o->callback((Fl_Callback*)labelsize_cb);
     }
-    { Fl_Button* o = new Fl_Button(310, 100, 50, 20, "labelcolor");
+    { Fl_Button* o = new Fl_Button(310, 100, 50, 20, "Label Color");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(8);
       o->callback((Fl_Callback*)labelcolor_cb);
     }
-    { Fl_Choice* o = new Fl_Choice(90, 125, 220, 20, "box:");
+    { Fl_Choice* o = new Fl_Choice(90, 125, 220, 20, "Box:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)box_cb);
       o->menu(boxmenu);
     }
-    { Fl_Button* o = new Fl_Button(310, 125, 50, 20, "color");
+    { Fl_Button* o = new Fl_Button(310, 125, 50, 20, "Color");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(8);
       o->callback((Fl_Callback*)color_cb);
     }
-    { Fl_Choice* o = new Fl_Choice(90, 145, 220, 20, "down_box:");
+    { Fl_Choice* o = new Fl_Choice(90, 145, 220, 20, "Down Box:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)down_box_cb);
       o->menu(boxmenu);
     }
-    { Fl_Button* o = new Fl_Button(310, 145, 50, 20, "select color");
+    { Fl_Button* o = new Fl_Button(310, 145, 50, 20, "Select Color");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(8);
       o->callback((Fl_Callback*)color2_cb);
     }
-    { Fl_Choice* o = new Fl_Choice(90, 170, 170, 20, "textfont:");
+    { Fl_Choice* o = new Fl_Choice(90, 170, 170, 20, "Text Font:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)textfont_cb);
       o->hide();
@@ -134,7 +135,7 @@ Fl_Window* make_widget_panel() {
       o->callback((Fl_Callback*)xclass_cb);
       o->when(0);
     }
-    { Shortcut_Button* o = new Shortcut_Button(90, 170, 270, 20, "shortcut:");
+    { Shortcut_Button* o = new Shortcut_Button(90, 170, 270, 20, "Shortcut:");
       o->box(FL_THIN_UP_BOX);
       o->color(7);
       o->selection_color(7);
@@ -149,39 +150,39 @@ Fl_Window* make_widget_panel() {
       o->callback((Fl_Callback*)textsize_cb);
       o->hide();
     }
-    { Fl_Button* o = new Fl_Button(310, 170, 50, 20, "textcolor");
+    { Fl_Button* o = new Fl_Button(310, 170, 50, 20, "Text Color");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(8);
       o->callback((Fl_Callback*)textcolor_cb);
       o->hide();
     }
-    { Fl_Value_Input* o = new Fl_Value_Input(20, 205, 60, 20, "size:");
+    { Fl_Value_Input* o = new Fl_Value_Input(20, 205, 60, 20, "Size:");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(10);
       o->step(0.010101);
       o->callback((Fl_Callback*)slider_size_cb);
       o->align(5);
     }
-    { Fl_Value_Input* o = new Fl_Value_Input(90, 205, 60, 20, "minimum:");
+    { Fl_Value_Input* o = new Fl_Value_Input(90, 205, 60, 20, "Minimum:");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(10);
       o->callback((Fl_Callback*)min_cb);
       o->align(5);
     }
-    { Fl_Value_Input* o = new Fl_Value_Input(160, 205, 60, 20, "maximum:");
+    { Fl_Value_Input* o = new Fl_Value_Input(160, 205, 60, 20, "Maximum:");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(10);
       o->value(1);
       o->callback((Fl_Callback*)max_cb);
       o->align(5);
     }
-    { Fl_Value_Input* o = new Fl_Value_Input(230, 205, 60, 20, "step:");
+    { Fl_Value_Input* o = new Fl_Value_Input(230, 205, 60, 20, "Step:");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(10);
       o->callback((Fl_Callback*)step_cb);
       o->align(5);
     }
-    { Fl_Value_Input* o = new Fl_Value_Input(300, 205, 60, 20, "value:");
+    { Fl_Value_Input* o = new Fl_Value_Input(300, 205, 60, 20, "Value:");
       o->box(FL_THIN_UP_BOX);
       o->labelsize(10);
       o->callback((Fl_Callback*)value_cb);
@@ -237,7 +238,7 @@ Fl_Window* make_widget_panel() {
       }
       o->end();
     }
-    { Fl_Input* o = v_input[0] = new Fl_Input(90, 260, 270, 20, "extra code:");
+    { Fl_Input* o = v_input[0] = new Fl_Input(90, 260, 270, 20, "Extra Code:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)v_input_cb, (void*)(0));
       o->when(0);
@@ -257,7 +258,7 @@ Fl_Window* make_widget_panel() {
       o->callback((Fl_Callback*)v_input_cb, (void*)(3));
       o->when(0);
     }
-    { Fl_Box* o = new Fl_Box(0, 350, 90, 20, "callback:");
+    { Fl_Box* o = new Fl_Box(0, 350, 90, 20, "Callback:");
       o->align(24);
     }
     { Fl_Input* o = new Fl_Input(90, 350, 270, 50);
@@ -276,12 +277,12 @@ Fl_Window* make_widget_panel() {
       o->callback((Fl_Callback*)user_data_cb);
       o->when(0);
     }
-    { Fl_Input* o = new Fl_Input(300, 400, 60, 20, "type:");
+    { Fl_Input* o = new Fl_Input(300, 400, 60, 20, "Type:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)user_data_type_cb);
       o->when(0);
     }
-    { Fl_Choice* o = new Fl_Choice(90, 420, 100, 20, "when:");
+    { Fl_Choice* o = new Fl_Choice(90, 420, 100, 20, "When:");
       o->box(FL_THIN_UP_BOX);
       o->callback((Fl_Callback*)when_cb);
       o->when(0);

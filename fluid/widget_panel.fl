@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 0.99 
+version 1.00 
 header_name {.h} 
 code_name {.cxx} 
 gridx 10 
@@ -8,20 +8,20 @@ snap 3
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
-    xywh {189 164 370 480} hotspot visible
+    xywh {189 164 370 480} resizable hotspot visible
   } {
     Fl_Input {} {
-      label {name:}
+      label {Name:}
       callback name_cb
       xywh {90 10 210 20} box THIN_UP_BOX when 0
     }
     Fl_Light_Button {} {
       label public
       callback name_public_cb
-      xywh {300 10 60 20} box THIN_UP_BOX color {49 1} labelsize 10 when 1
+      xywh {300 10 60 20} box THIN_UP_BOX selection_color 1 labelsize 10 when 1
     }
     Fl_Input {} {
-      label {class:}
+      label {Class:}
       user_data 4
       callback subclass_cb
       xywh {90 35 170 20} box THIN_UP_BOX when 0
@@ -31,12 +31,12 @@ Function {make_widget_panel()} {open
       xywh {260 35 100 20} box THIN_UP_BOX
     } {}
     Fl_Input {} {
-      label {label:}
+      label {Label:}
       callback label_cb
       xywh {90 60 270 20} box THIN_UP_BOX when 1
     }
     Fl_Choice {} {
-      label {labeltype:}
+      label {Label Type:}
       callback labeltype_cb
       xywh {90 80 150 20} box THIN_UP_BOX
       code0 {extern Fl_Menu_Item labeltypemenu[];}
@@ -85,7 +85,7 @@ Function {make_widget_panel()} {open
       xywh {340 90 20 10} type Toggle box THIN_UP_BOX labelsize 8
     }
     Fl_Choice {} {
-      label {labelfont:}
+      label {Label Font:}
       callback labelfont_cb
       xywh {90 100 170 20} box THIN_UP_BOX
       code0 {extern Fl_Menu_Item fontmenu[];}
@@ -96,37 +96,37 @@ Function {make_widget_panel()} {open
       xywh {260 100 50 20} box THIN_UP_BOX maximum 100 step 1 value 14
     }
     Fl_Button {} {
-      label labelcolor
+      label {Label Color}
       callback labelcolor_cb
       xywh {310 100 50 20} box THIN_UP_BOX labelsize 8
     }
     Fl_Choice {} {
-      label {box:}
+      label {Box:}
       callback box_cb
       xywh {90 125 220 20} box THIN_UP_BOX
       code0 {extern Fl_Menu_Item boxmenu[];}
       code1 {o->menu(boxmenu);}
     } {}
     Fl_Button {} {
-      label color
+      label Color
       callback color_cb
       xywh {310 125 50 20} box THIN_UP_BOX labelsize 8
     }
     Fl_Choice {} {
-      label {down_box:}
+      label {Down Box:}
       callback down_box_cb
       xywh {90 145 220 20} box THIN_UP_BOX
       code0 {extern Fl_Menu_Item boxmenu[];}
       code1 {o->menu(boxmenu);}
     } {}
     Fl_Button {} {
-      label {select color}
+      label {Select Color}
       callback color2_cb
       xywh {310 145 50 20} box THIN_UP_BOX labelsize 8
     }
     Fl_Choice {} {
-      label {textfont:}
-      callback textfont_cb selected
+      label {Text Font:}
+      callback textfont_cb
       xywh {90 170 170 20} box THIN_UP_BOX hide
       code0 {extern Fl_Menu_Item fontmenu[];}
       code1 {o->menu(fontmenu);}
@@ -137,9 +137,9 @@ Function {make_widget_panel()} {open
       xywh {90 170 170 20} box THIN_UP_BOX when 0
     }
     Fl_Button {} {
-      label {shortcut:}
+      label {Shortcut:}
       callback shortcut_in_cb
-      xywh {90 170 270 20} box THIN_UP_BOX color {7 7} align 4
+      xywh {90 170 270 20} box THIN_UP_BOX color 7 selection_color 7 align 4
       code0 {\#include "Shortcut_Button.h"}
       class Shortcut_Button
     }
@@ -148,32 +148,32 @@ Function {make_widget_panel()} {open
       xywh {260 170 50 20} box THIN_UP_BOX maximum 100 step 1 value 14 hide
     }
     Fl_Button {} {
-      label textcolor
+      label {Text Color}
       callback textcolor_cb
       xywh {310 170 50 20} box THIN_UP_BOX labelsize 8 hide
     }
     Fl_Value_Input {} {
-      label {size:}
+      label {Size:}
       callback slider_size_cb
       xywh {20 205 60 20} box THIN_UP_BOX labelsize 10 align 5 step 0.010101
     }
     Fl_Value_Input {} {
-      label {minimum:}
+      label {Minimum:}
       callback min_cb
       xywh {90 205 60 20} box THIN_UP_BOX labelsize 10 align 5
     }
     Fl_Value_Input {} {
-      label {maximum:}
+      label {Maximum:}
       callback max_cb
       xywh {160 205 60 20} box THIN_UP_BOX labelsize 10 align 5 value 1
     }
     Fl_Value_Input {} {
-      label {step:}
+      label {Step:}
       callback step_cb
       xywh {230 205 60 20} box THIN_UP_BOX labelsize 10 align 5
     }
     Fl_Value_Input {} {
-      label {value:}
+      label {Value:}
       callback value_cb
       xywh {300 205 60 20} box THIN_UP_BOX labelsize 10 align 5
     }
@@ -184,41 +184,41 @@ Function {make_widget_panel()} {open
       Fl_Light_Button {} {
         label non_modal
         callback non_modal_cb
-        xywh {20 230 70 20} box THIN_UP_BOX color {49 1} labelsize 9 align 148
+        xywh {20 230 70 20} box THIN_UP_BOX selection_color 1 labelsize 9 align 148
       }
       Fl_Light_Button {} {
         label visible
         callback visible_cb
-        xywh {90 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+        xywh {90 230 60 20} box THIN_UP_BOX selection_color 1 labelsize 10
       }
       Fl_Light_Button {} {
         label modal
         callback modal_cb
-        xywh {90 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+        xywh {90 230 60 20} box THIN_UP_BOX selection_color 1 labelsize 10
       }
       Fl_Light_Button {} {
         label active
         callback active_cb
-        xywh {160 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+        xywh {160 230 60 20} box THIN_UP_BOX selection_color 1 labelsize 10
       }
       Fl_Light_Button {} {
         label border
         callback border_cb
-        xywh {160 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10
+        xywh {160 230 60 20} box THIN_UP_BOX selection_color 1 labelsize 10
       }
       Fl_Light_Button {} {
         label resizable
         callback resizable_cb
-        xywh {230 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10 when 1
+        xywh {230 230 60 20} box THIN_UP_BOX selection_color 1 labelsize 10 when 1
       }
       Fl_Light_Button {} {
         label hotspot
         callback hotspot_cb
-        xywh {300 230 60 20} box THIN_UP_BOX color {49 1} labelsize 10 when 1
+        xywh {300 230 60 20} box THIN_UP_BOX selection_color 1 labelsize 10 when 1
       }
     }
     Fl_Input {v_input[0]} {
-      label {extra code:}
+      label {Extra Code:}
       user_data 0
       callback v_input_cb
       xywh {90 260 270 20} box THIN_UP_BOX when 0
@@ -239,7 +239,7 @@ Function {make_widget_panel()} {open
       xywh {90 320 270 20} box THIN_UP_BOX when 0
     }
     Fl_Box {} {
-      label {callback:}
+      label {Callback:}
       xywh {0 350 90 20} align 24
     }
     Fl_Input {} {
@@ -256,13 +256,13 @@ Function {make_widget_panel()} {open
       xywh {90 400 170 20} box THIN_UP_BOX when 0
     }
     Fl_Input {} {
-      label {type:}
+      label {Type:}
       callback user_data_type_cb
       xywh {300 400 60 20} box THIN_UP_BOX when 0
     }
     Fl_Choice {} {
-      label {when:}
-      callback when_cb
+      label {When:}
+      callback when_cb selected
       xywh {90 420 100 20} box THIN_UP_BOX when 0
       code0 {extern Fl_Menu_Item whenmenu[];}
       code1 {o->menu(whenmenu);}
@@ -270,7 +270,7 @@ Function {make_widget_panel()} {open
     Fl_Light_Button {} {
       label {no change}
       callback when_button_cb
-      xywh {190 420 70 20} box THIN_UP_BOX color {49 1} labelsize 10 when 0
+      xywh {190 420 70 20} box THIN_UP_BOX selection_color 1 labelsize 10 when 0
     }
     Fl_Group {} {open
       xywh {10 450 350 20}

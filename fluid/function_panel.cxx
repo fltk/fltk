@@ -2,32 +2,33 @@
 
 #include "function_panel.h"
 
-Fl_Window *function_panel;
+Fl_Window *function_panel=(Fl_Window *)0;
 
-Fl_Light_Button *f_public_button;
+Fl_Light_Button *f_public_button=(Fl_Light_Button *)0;
 
-Fl_Input *f_name_input;
+Fl_Input *f_name_input=(Fl_Input *)0;
 
-Fl_Input *f_return_type_input;
+Fl_Input *f_return_type_input=(Fl_Input *)0;
 
-Fl_Return_Button *f_panel_ok;
+Fl_Return_Button *f_panel_ok=(Fl_Return_Button *)0;
 
-Fl_Button *f_panel_cancel;
+Fl_Button *f_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_function_panel() {
   Fl_Window* w;
-  { Fl_Window* o = function_panel = w = new Fl_Window(287, 173, "function/method");
+  { Fl_Window* o = function_panel = new Fl_Window(287, 173, "function/method");
+    w = o;
     { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 15, 65, 25, "public");
       o->labelsize(10);
       o->when(0);
     }
-    { Fl_Input* o = f_name_input = new Fl_Input(10, 60, 270, 25, "name(args): (blank for main())");
+    { Fl_Input* o = f_name_input = new Fl_Input(10, 60, 270, 25, "Name(args): (blank for main())");
       o->labelsize(12);
       o->align(5);
       o->when(0);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Input* o = f_return_type_input = new Fl_Input(10, 105, 270, 25, "return type: (blank to return outermost widget)");
+    { Fl_Input* o = f_return_type_input = new Fl_Input(10, 105, 270, 25, "Return Type: (blank to return outermost widget)");
       o->labelsize(12);
       o->align(5);
       o->when(0);
@@ -35,7 +36,7 @@ Fl_Window* make_function_panel() {
     { Fl_Return_Button* o = f_panel_ok = new Fl_Return_Button(110, 140, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = f_panel_cancel = new Fl_Button(200, 140, 80, 25, "cancel");
+    { Fl_Button* o = f_panel_cancel = new Fl_Button(200, 140, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->set_modal();
@@ -44,17 +45,18 @@ Fl_Window* make_function_panel() {
   return w;
 }
 
-Fl_Window *code_panel;
+Fl_Window *code_panel=(Fl_Window *)0;
 
-Fl_Input *code_input;
+Fl_Input *code_input=(Fl_Input *)0;
 
-Fl_Return_Button *code_panel_ok;
+Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
 
-Fl_Button *code_panel_cancel;
+Fl_Button *code_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_code_panel() {
   Fl_Window* w;
-  { Fl_Window* o = code_panel = w = new Fl_Window(291, 178, "code");
+  { Fl_Window* o = code_panel = new Fl_Window(291, 178, "code");
+    w = o;
     { Fl_Input* o = code_input = new Fl_Input(6, 5, 280, 135);
       o->type(4);
       o->labelsize(12);
@@ -65,7 +67,7 @@ Fl_Window* make_code_panel() {
     { Fl_Return_Button* o = code_panel_ok = new Fl_Return_Button(115, 145, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = code_panel_cancel = new Fl_Button(205, 145, 80, 25, "cancel");
+    { Fl_Button* o = code_panel_cancel = new Fl_Button(205, 145, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->set_modal();
@@ -74,19 +76,20 @@ Fl_Window* make_code_panel() {
   return w;
 }
 
-Fl_Window *codeblock_panel;
+Fl_Window *codeblock_panel=(Fl_Window *)0;
 
-Fl_Input *code_before_input;
+Fl_Input *code_before_input=(Fl_Input *)0;
 
-Fl_Input *code_after_input;
+Fl_Input *code_after_input=(Fl_Input *)0;
 
-Fl_Return_Button *codeblock_panel_ok;
+Fl_Return_Button *codeblock_panel_ok=(Fl_Return_Button *)0;
 
-Fl_Button *codeblock_panel_cancel;
+Fl_Button *codeblock_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_codeblock_panel() {
   Fl_Window* w;
-  { Fl_Window* o = codeblock_panel = w = new Fl_Window(293, 134, "codeblock");
+  { Fl_Window* o = codeblock_panel = new Fl_Window(293, 134, "codeblock");
+    w = o;
     { Fl_Input* o = code_before_input = new Fl_Input(10, 5, 275, 25);
       o->labelsize(12);
       o->align(5);
@@ -104,7 +107,7 @@ Fl_Window* make_codeblock_panel() {
     { Fl_Return_Button* o = codeblock_panel_ok = new Fl_Return_Button(115, 100, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = codeblock_panel_cancel = new Fl_Button(205, 100, 80, 25, "cancel");
+    { Fl_Button* o = codeblock_panel_cancel = new Fl_Button(205, 100, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->set_modal();
@@ -113,19 +116,20 @@ Fl_Window* make_codeblock_panel() {
   return w;
 }
 
-Fl_Window *declblock_panel;
+Fl_Window *declblock_panel=(Fl_Window *)0;
 
-Fl_Input *decl_before_input;
+Fl_Input *decl_before_input=(Fl_Input *)0;
 
-Fl_Input *decl_after_input;
+Fl_Input *decl_after_input=(Fl_Input *)0;
 
-Fl_Return_Button *declblock_panel_ok;
+Fl_Return_Button *declblock_panel_ok=(Fl_Return_Button *)0;
 
-Fl_Button *declblock_panel_cancel;
+Fl_Button *declblock_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_declblock_panel() {
   Fl_Window* w;
-  { Fl_Window* o = declblock_panel = w = new Fl_Window(293, 134, "declaration block");
+  { Fl_Window* o = declblock_panel = new Fl_Window(293, 134, "declaration block");
+    w = o;
     { Fl_Input* o = decl_before_input = new Fl_Input(15, 10, 275, 25);
       o->labelsize(12);
       o->align(5);
@@ -143,7 +147,7 @@ Fl_Window* make_declblock_panel() {
     { Fl_Return_Button* o = declblock_panel_ok = new Fl_Return_Button(120, 105, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = declblock_panel_cancel = new Fl_Button(210, 105, 80, 25, "cancel");
+    { Fl_Button* o = declblock_panel_cancel = new Fl_Button(210, 105, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->set_modal();
@@ -152,19 +156,20 @@ Fl_Window* make_declblock_panel() {
   return w;
 }
 
-Fl_Window *decl_panel;
+Fl_Window *decl_panel=(Fl_Window *)0;
 
-Fl_Light_Button *decl_public_button;
+Fl_Light_Button *decl_public_button=(Fl_Light_Button *)0;
 
-Fl_Input *decl_input;
+Fl_Input *decl_input=(Fl_Input *)0;
 
-Fl_Return_Button *decl_panel_ok;
+Fl_Return_Button *decl_panel_ok=(Fl_Return_Button *)0;
 
-Fl_Button *decl_panel_cancel;
+Fl_Button *decl_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_decl_panel() {
   Fl_Window* w;
-  { Fl_Window* o = decl_panel = w = new Fl_Window(290, 176, "declaration");
+  { Fl_Window* o = decl_panel = new Fl_Window(290, 176, "declaration");
+    w = o;
     { Fl_Light_Button* o = decl_public_button = new Fl_Light_Button(10, 15, 65, 25, "public");
       o->labelsize(10);
       o->when(0);
@@ -180,7 +185,7 @@ int foo();\",\na #directive like \"#include <foo.h>\",\nor a comment like \"\
     { Fl_Return_Button* o = decl_panel_ok = new Fl_Return_Button(115, 145, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = decl_panel_cancel = new Fl_Button(205, 145, 80, 25, "cancel");
+    { Fl_Button* o = decl_panel_cancel = new Fl_Button(205, 145, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->end();
@@ -188,21 +193,22 @@ int foo();\",\na #directive like \"#include <foo.h>\",\nor a comment like \"\
   return w;
 }
 
-Fl_Window *class_panel;
+Fl_Window *class_panel=(Fl_Window *)0;
 
-Fl_Light_Button *c_public_button;
+Fl_Light_Button *c_public_button=(Fl_Light_Button *)0;
 
-Fl_Input *c_name_input;
+Fl_Input *c_name_input=(Fl_Input *)0;
 
-Fl_Input *c_subclass_input;
+Fl_Input *c_subclass_input=(Fl_Input *)0;
 
-Fl_Return_Button *c_panel_ok;
+Fl_Return_Button *c_panel_ok=(Fl_Return_Button *)0;
 
-Fl_Button *c_panel_cancel;
+Fl_Button *c_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_class_panel() {
   Fl_Window* w;
-  { Fl_Window* o = class_panel = w = new Fl_Window(287, 173, "class");
+  { Fl_Window* o = class_panel = new Fl_Window(287, 173, "class");
+    w = o;
     { Fl_Light_Button* o = c_public_button = new Fl_Light_Button(10, 10, 65, 25, "public");
       o->labelsize(10);
       o->when(0);
@@ -221,7 +227,7 @@ Fl_Window* make_class_panel() {
     { Fl_Return_Button* o = c_panel_ok = new Fl_Return_Button(110, 135, 80, 25, "OK");
       w->hotspot(o);
     }
-    { Fl_Button* o = c_panel_cancel = new Fl_Button(200, 135, 80, 25, "cancel");
+    { Fl_Button* o = c_panel_cancel = new Fl_Button(200, 135, 80, 25, "Cancel");
       o->shortcut(0xff1b);
     }
     o->set_modal();

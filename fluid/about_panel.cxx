@@ -2,16 +2,16 @@
 
 #include "about_panel.h"
 
-Fl_Window *about_panel;
+Fl_Window *about_panel=(Fl_Window *)0;
 
-Fl_Group *display_group;
+Fl_Group *display_group=(Fl_Group *)0;
 
 static void cb_1998(Fl_Button*, void*) {
   display_group->hide();
 copyright_box->show();
 }
 
-Fl_Box *copyright_box;
+Fl_Box *copyright_box=(Fl_Box *)0;
 
 static void cb_OK(Fl_Return_Button* o, void*) {
   ((Fl_Window*)(o->parent()))->hide();
@@ -19,7 +19,8 @@ static void cb_OK(Fl_Return_Button* o, void*) {
 
 Fl_Window* make_about_panel(const char *copyright) {
   Fl_Window* w;
-  { Fl_Window* o = about_panel = w = new Fl_Window(309, 221, "about fluid");
+  { Fl_Window* o = about_panel = new Fl_Window(309, 221, "about fluid");
+    w = o;
     o->box(FL_UP_BOX);
     o->color(97);
     o->selection_color(47);
@@ -86,7 +87,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelcolor(7);
         o->align(17);
       }
-      { Fl_Box* o = new Fl_Box(159, 27, 131, 95, "Fltk User\nInterface\nDesigner\nVersion 1.00");
+      { Fl_Box* o = new Fl_Box(159, 27, 131, 95, "FLTK User\nInterface\nDesigner\nVersion 1.0");
         o->box(FL_OVAL_BOX);
         o->color(12);
         o->selection_color(47);
@@ -95,7 +96,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelsize(18);
         o->labelcolor(7);
       }
-      { Fl_Button* o = new Fl_Button(169, 138, 115, 30, "\xa9\x31\x39\x39\x38 Bill Spitzak\n(click here)");
+      { Fl_Button* o = new Fl_Button(169, 138, 115, 30, "\251\061\071\071\070-1999 by\nBill Spitzak and others");
         o->box(FL_THIN_UP_BOX);
         o->labelsize(10);
         o->labelcolor(136);
