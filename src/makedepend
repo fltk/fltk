@@ -11,6 +11,9 @@ Fl_Bitmap.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
 Fl_Bitmap.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_Widget.H
 Fl_Bitmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 Fl_Bitmap.o: ../FL/Fl_Image.H ../FL/x.H
+Fl_BMP_Image.o: ../FL/Fl_BMP_Image.H ../FL/Fl_Image.H ../FL/x.H
+Fl_BMP_Image.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
+Fl_BMP_Image.o: ../config.h
 Fl_Browser.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Browser.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Group.H
 Fl_Browser.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
@@ -88,8 +91,8 @@ Fl_File_Chooser2.o: ../FL/Fl_Window.H flstring.h ../config.h
 Fl_File_Icon.o: ../config.h ../FL/Fl_File_Icon.H ../FL/Fl.H
 Fl_File_Icon.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Widget.H
 Fl_File_Icon.o: ../FL/fl_draw.H ../FL/filename.H
-Fl_File_Icon2.o: flstring.h ../config.h ../FL/Fl_File_Icon.H ../FL/Fl.H
-Fl_File_Icon2.o: ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_File_Icon2.o: flstring.h ../config.h ../FL/math.h ../FL/Fl_File_Icon.H
+Fl_File_Icon2.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_File_Icon2.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H
 Fl_File_Icon2.o: ../FL/Fl_Window.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_File_Icon2.o: ../FL/filename.H
@@ -111,7 +114,8 @@ Fl_Help_View.o: ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Enumerations.H
 Fl_Help_View.o: ../FL/Fl_Export.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 Fl_Help_View.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Help_View.o: ../FL/fl_draw.H ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
-Fl_Help_View.o: ../FL/x.H ../FL/Fl_Window.H flstring.h ../config.h
+Fl_Help_View.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Pixmap.H flstring.h
+Fl_Help_View.o: ../config.h
 Fl_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_draw.H
 Fl_Image.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Widget.H
 Fl_Image.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/x.H
@@ -192,7 +196,8 @@ Fl_Scrollbar.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Scrollbar.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Shared_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Shared_Image.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/x.H
-Fl_Shared_Image.o: ../FL/Fl_Window.H ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H
+Fl_Shared_Image.o: ../FL/Fl_Window.H ../FL/Fl_BMP_Image.H
+Fl_Shared_Image.o: ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H
 Fl_Shared_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_PNG_Image.H
 Fl_Shared_Image.o: ../FL/Fl_PNM_Image.H ../FL/Fl_XBM_Image.H
 Fl_Shared_Image.o: ../FL/Fl_Bitmap.H ../FL/Fl_XPM_Image.H

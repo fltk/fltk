@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.4 2002/01/01 15:11:33 easysw Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.5 2002/01/06 17:51:12 easysw Exp $"
 //
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -67,7 +67,7 @@ void file_cb(const char *n) {
 
 void button_cb(Fl_Widget *,void *) {
   fl_file_chooser_callback(file_cb);
-  fl_file_chooser("Image file?","*.{gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name);
+  fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name);
   fl_file_chooser_callback(0);
 }
 
@@ -94,5 +94,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.4 2002/01/01 15:11:33 easysw Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.5 2002/01/06 17:51:12 easysw Exp $".
 //

@@ -14,6 +14,7 @@ widgets.html
 Fl.html
 Fl_Adjuster.html
 Fl_Bitmap.html
+Fl_BMP_Image.html
 Fl_Box.html
 Fl_Browser_.html
 Fl_Browser.html

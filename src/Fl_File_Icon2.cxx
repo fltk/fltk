@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.11 2002/01/02 13:49:38 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.12 2002/01/06 17:51:12 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -733,7 +733,7 @@ Fl_File_Icon::load_system_icons(void)
     {
       // Create the default icons...
       new Fl_File_Icon("*", Fl_File_Icon::PLAIN, sizeof(plain) / sizeof(plain[0]), plain);
-      new Fl_File_Icon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN,
+      new Fl_File_Icon("*.{bm|bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN,
                    sizeof(image) / sizeof(image[0]), image);
       new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY, sizeof(dir) / sizeof(dir[0]), dir);
     }
@@ -931,5 +931,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.11 2002/01/02 13:49:38 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.12 2002/01/06 17:51:12 easysw Exp $".
 //
