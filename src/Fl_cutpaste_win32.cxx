@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste_win32.cxx,v 1.5 1999/03/02 07:03:15 bill Exp $"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.1 1999/05/15 14:31:32 mike Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Widget.H>
 #include <string.h>
+#include <stdio.h>
 
 static char *selection_buffer;
 static int selection_length;
@@ -46,8 +47,10 @@ static int selection_xevent_handler(int) {
   switch (fl_msg.message) {
 
   case WM_DESTROYCLIPBOARD:
-    Fl::selection_owner(0);
-    Fl::flush(); // get the redraw to happen
+    if (fl_msg.hwnd != fl_xid(Fl::first_window())) {
+      Fl::selection_owner(0);
+      Fl::flush(); // get the redraw to happen
+    }
     return 1;
 
   case WM_RENDERALLFORMATS:
@@ -129,5 +132,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5 1999/03/02 07:03:15 bill Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.1 1999/05/15 14:31:32 mike Exp $".
 //
