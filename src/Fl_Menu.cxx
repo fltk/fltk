@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.12 1999/01/13 15:45:49 mike Exp $"
+// "$Id: Fl_Menu.cxx,v 1.13 1999/01/19 19:12:51 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -127,7 +127,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.type = labeltype_;
   l.font = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
   l.size = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
-  l.color = !active() ? inactive((Fl_Color)labelcolor_) : labelcolor_;
+  l.color = !active() ? inactive((Fl_Color)labelcolor_) : (Fl_Color)labelcolor_;
   Fl_Color color = m ? m->color() : FL_GRAY;
   if (selected) {
     Fl_Color r = m ? m->selection_color() : FL_SELECTION_COLOR;
@@ -271,11 +271,11 @@ void menuwindow::position(int X, int Y) {
 
 // scroll so item i is visible on screen
 void menuwindow::autoscroll(int i) {
-  int Y = y()+h()-(Fl::box_dx(box()) + (numitems-i)*itemheight - LEADING + 1);
+  int Y = y()+Fl::box_dx(box())+2+i*itemheight;
   if (Y <= 0) Y = -Y+10;
   else {
     Y = Y+itemheight-Fl::h();
-    if (Y <= 0) return;
+    if (Y < 0) return;
     Y = -Y-10;
   }
   Fl_Menu_Window::position(x(), y()+Y);
@@ -405,6 +405,12 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
 // main loop does that.  This is because the X mapping and unmapping
 // of windows is slow, and we don't want to fall behind the events.
 
+// values for menustate.state:
+#define INITIAL_STATE 0	// no mouse up or down since popup() called
+#define PUSH_STATE 1	// mouse has been pushed on a normal item
+#define DONE_STATE 2	// exit the popup, the current item was picked
+#define MENU_PUSH_STATE 3 // mouse has been pushed on a menu title
+
 struct menustate {
   const Fl_Menu_Item* current_item; // what mouse is pointing at
   int menu_number; // which menu it is in
@@ -412,7 +418,7 @@ struct menustate {
   menuwindow* p[20]; // pointers to menus
   int nummenus;
   int menubar; // if true p[0] is a menubar
-  int state; // 0 at first, 1 after push, 2 when done
+  int state;
 };
 static menustate* p;
 
@@ -479,11 +485,11 @@ int menuwindow::handle(int e) {
 	setitem(p.menu_number-1, p.p[p.menu_number-1]->selected);
       return 1;
     case FL_Enter:
-      p.state = 2;
+      p.state = DONE_STATE;
       return 1;
     case FL_Escape:
       setitem(0, -1, 0);
-      p.state = 2;
+      p.state = DONE_STATE;
       return 1;
     }
     break;
@@ -493,7 +499,7 @@ int menuwindow::handle(int e) {
       int item; const Fl_Menu_Item* m = mw.menu->find_shortcut(&item);
       if (m) {
 	setitem(m, menu, item);
-	if (!m->submenu()) p.state = 2;
+	if (!m->submenu()) p.state = DONE_STATE;
 	return 1;
       }
     }} break;
@@ -509,19 +515,19 @@ int menuwindow::handle(int e) {
     }
     setitem(menu, item);
     if (e == FL_PUSH) {
-      // detect second click on a menu title:
-      if (p.current_item && item == p.p[menu]->selected) p.state = 3;
-      else p.state = 1;
-    }
-    } return 1;
+      if (p.current_item && p.current_item->submenu() // this is a menu title
+	  && item != p.p[menu]->selected // and it is not already on
+	  && !p.current_item->callback_) // and it does not have a callback
+	p.state = MENU_PUSH_STATE;
+      else
+	p.state = PUSH_STATE;
+    }} return 1;
   case FL_RELEASE:
-    if (!p.current_item) {
-      if (p.state || !Fl::event_is_click()) p.state = 2;
-    } else {
-      if (p.state == 3 && Fl::event_is_click()) p.state = 2;
-      else if (p.current_item->activevisible() && !p.current_item->submenu())
-	p.state = 2;
-    }
+    // do nothing if they try to pick inactive items
+    if (p.current_item && !p.current_item->activevisible()) return 1;
+    // Mouse must either be held down/dragged some, or this must be
+    // the second click (not the one that popped up the menu):
+    if (!Fl::event_is_click() || p.state == PUSH_STATE) p.state = DONE_STATE;
     return 1;
   }
   return Fl_Window::handle(e);
@@ -552,7 +558,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   p.p[0] = &mw;
   p.nummenus = 1;
   p.menubar = menubar;
-  p.state = 0;
+  p.state = INITIAL_STATE;
 
   menuwindow* fakemenu = 0; // kludge for buttons in menubar
 
@@ -567,7 +573,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   initial_item = p.current_item;
   if (initial_item) goto STARTUP;
 
-  // the main loop, runs until p.state goes to 2:
+  // the main loop, runs until p.state goes to DONE_STATE:
   for (;;) {
 
     // make sure all the menus are shown:
@@ -581,7 +587,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     // get events:
     {const Fl_Menu_Item* oldi = p.current_item;
     Fl::wait();
-    if (p.state == 2) break; // done.
+    if (p.state == DONE_STATE) break; // done.
     if (p.current_item == oldi) continue;}
     // only do rest if item changes:
 
@@ -703,5 +709,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.12 1999/01/13 15:45:49 mike Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.13 1999/01/19 19:12:51 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.6 1999/01/07 19:17:18 mike Exp $"
+// "$Id: Fl_Choice.cxx,v 1.7 1999/01/19 19:12:51 mike Exp $"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -66,6 +66,7 @@ int Fl_Choice::handle(int e) {
   const Fl_Menu_Item* v;
   switch (e) {
   case FL_PUSH:
+    Fl::event_is_click(0);
   J1:
     v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
     if (!v || v->submenu()) return 1;
@@ -85,5 +86,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.6 1999/01/07 19:17:18 mike Exp $".
+// End of "$Id: Fl_Choice.cxx,v 1.7 1999/01/19 19:12:51 mike Exp $".
 //
