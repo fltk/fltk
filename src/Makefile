@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.48 2002/09/16 01:35:34 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.49 2003/01/12 01:22:21 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -331,8 +331,9 @@ clean :
 		libfltk_gl.dylib libfltk_images.dylib \
 		$(CLEAN)
 
-depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(CFILES)
-	makedepend -Y -I.. -f makedepend $(CPPFILES) $(GLCPPFILES) $(CFILES)
+depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES)
+	makedepend -Y -I.. -f makedepend $(CPPFILES) $(FLCPPFILES) \
+		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES)
 
 # Automatically generated dependencies...
 include makedepend
@@ -565,5 +566,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.48 2002/09/16 01:35:34 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.49 2003/01/12 01:22:21 easysw Exp $".
 #

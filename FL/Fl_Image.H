@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3.2.18 2003/01/11 19:47:30 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.19 2003/01/12 01:22:21 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 #ifndef Fl_Image_H
 #  define Fl_Image_H
 
-#  include "Fl_Export.H"
+#  include "Enumerations.H"
 
 class Fl_Widget;
 struct Fl_Menu_Item;
@@ -106,5 +106,5 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 #endif // !Fl_Image_H
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3.2.18 2003/01/11 19:47:30 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.19 2003/01/12 01:22:21 easysw Exp $".
 //

@@ -341,7 +341,7 @@ fl_file_dir.o: ../FL/Fl_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 fl_file_dir.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H ../FL/fl_ask.H
 fl_font.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
 fl_font.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_draw.H ../FL/x.H
-fl_font.o: ../FL/Fl_Window.H Fl_Font.H fl_font_x.cxx
+fl_font.o: ../FL/Fl_Window.H Fl_Font.H fl_font_xft.cxx
 fl_labeltype.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_labeltype.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/fl_draw.H
 fl_labeltype.o: ../FL/Fl_Image.H ../FL/Fl_Input_.H ../FL/Fl_Widget.H
@@ -369,7 +369,7 @@ fl_set_font.o: ../FL/Fl_Window.H flstring.h ../FL/Fl_Export.H ../config.h
 fl_set_font.o: Fl_Font.H
 fl_set_fonts.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
 fl_set_fonts.o: ../FL/Fl_Window.H Fl_Font.H flstring.h ../FL/Fl_Export.H
-fl_set_fonts.o: ../config.h fl_set_fonts_x.cxx
+fl_set_fonts.o: ../config.h fl_set_fonts_xft.cxx
 fl_scroll_area.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_scroll_area.o: ../FL/Fl_Window.H
 fl_shadow_box.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -385,6 +385,98 @@ fl_symbols.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_symbols.o: ../FL/fl_draw.H flstring.h ../FL/Fl_Export.H ../config.h
 fl_vertex.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
 fl_vertex.o: ../FL/Fl_Window.H ../FL/math.h
+forms_compatability.o: ../FL/forms.H ../FL/Fl.H ../FL/Enumerations.H
+forms_compatability.o: ../FL/Fl_Export.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+forms_compatability.o: ../FL/Fl_Window.H ../FL/fl_draw.H
+forms_compatability.o: ../FL/Fl_FormsBitmap.H ../FL/Fl_Bitmap.H
+forms_compatability.o: ../FL/Fl_Image.H ../FL/Fl_FormsPixmap.H
+forms_compatability.o: ../FL/Fl_Pixmap.H ../FL/Fl_Box.H ../FL/Fl_Browser.H
+forms_compatability.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+forms_compatability.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+forms_compatability.o: ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_compatability.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_compatability.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_compatability.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H
+forms_compatability.o: ../FL/Fl_Counter.H ../FL/Fl_Dial.H ../FL/Fl_Free.H
+forms_compatability.o: ../FL/fl_ask.H ../FL/fl_show_colormap.H
+forms_compatability.o: ../FL/filename.H ../FL/Fl_File_Chooser.H ../FL/Fl.H
+forms_compatability.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
+forms_compatability.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H
+forms_compatability.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_compatability.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H
+forms_compatability.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+forms_compatability.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
+forms_compatability.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_compatability.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_compatability.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_compatability.o: ../FL/Fl_Timer.H ../FL/Fl_Repeat_Button.H
+forms_bitmap.o: ../FL/forms.H ../FL/Fl.H ../FL/Enumerations.H
+forms_bitmap.o: ../FL/Fl_Export.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+forms_bitmap.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_FormsBitmap.H
+forms_bitmap.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_FormsPixmap.H
+forms_bitmap.o: ../FL/Fl_Pixmap.H ../FL/Fl_Box.H ../FL/Fl_Browser.H
+forms_bitmap.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+forms_bitmap.o: ../FL/Fl_Valuator.H ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_bitmap.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_bitmap.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_bitmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H ../FL/Fl_Counter.H
+forms_bitmap.o: ../FL/Fl_Dial.H ../FL/Fl_Free.H ../FL/fl_ask.H
+forms_bitmap.o: ../FL/fl_show_colormap.H ../FL/filename.H
+forms_bitmap.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/Fl_Window.H
+forms_bitmap.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_bitmap.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_bitmap.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_bitmap.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_bitmap.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_bitmap.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_bitmap.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_bitmap.o: ../FL/Fl_Timer.H
+forms_free.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+forms_free.o: ../FL/Fl_Free.H ../FL/Fl_Widget.H
+forms_fselect.o: ../FL/forms.H ../FL/Fl.H ../FL/Enumerations.H
+forms_fselect.o: ../FL/Fl_Export.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+forms_fselect.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_FormsBitmap.H
+forms_fselect.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_FormsPixmap.H
+forms_fselect.o: ../FL/Fl_Pixmap.H ../FL/Fl_Box.H ../FL/Fl_Browser.H
+forms_fselect.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+forms_fselect.o: ../FL/Fl_Valuator.H ../FL/Fl_Button.H
+forms_fselect.o: ../FL/Fl_Light_Button.H ../FL/Fl_Round_Button.H
+forms_fselect.o: ../FL/Fl_Check_Button.H ../FL/Fl_Chart.H ../FL/Fl_Choice.H
+forms_fselect.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H
+forms_fselect.o: ../FL/Fl_Counter.H ../FL/Fl_Dial.H ../FL/Fl_Free.H
+forms_fselect.o: ../FL/fl_ask.H ../FL/fl_show_colormap.H ../FL/filename.H
+forms_fselect.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/Fl_Window.H
+forms_fselect.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_fselect.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_fselect.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_fselect.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_fselect.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_fselect.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_fselect.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_fselect.o: ../FL/Fl_Timer.H flstring.h ../FL/Fl_Export.H ../config.h
+forms_pixmap.o: ../FL/forms.H ../FL/Fl.H ../FL/Enumerations.H
+forms_pixmap.o: ../FL/Fl_Export.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+forms_pixmap.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_FormsBitmap.H
+forms_pixmap.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_FormsPixmap.H
+forms_pixmap.o: ../FL/Fl_Pixmap.H ../FL/Fl_Box.H ../FL/Fl_Browser.H
+forms_pixmap.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+forms_pixmap.o: ../FL/Fl_Valuator.H ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_pixmap.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_pixmap.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_pixmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H ../FL/Fl_Counter.H
+forms_pixmap.o: ../FL/Fl_Dial.H ../FL/Fl_Free.H ../FL/fl_ask.H
+forms_pixmap.o: ../FL/fl_show_colormap.H ../FL/filename.H
+forms_pixmap.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/Fl_Window.H
+forms_pixmap.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_pixmap.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_pixmap.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_pixmap.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_pixmap.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_pixmap.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_pixmap.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_pixmap.o: ../FL/Fl_Timer.H
+forms_timer.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+forms_timer.o: ../FL/Fl_Timer.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Gl_Choice.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Gl_Choice.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
 Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/Enumerations.H
@@ -406,6 +498,34 @@ glut_compatability.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
 glut_font.o: ../config.h ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
 glut_font.o: ../FL/Fl_Export.H ../FL/Fl.H ../FL/Fl_Gl_Window.H
 glut_font.o: ../FL/Fl_Window.H ../FL/gl.h
+fl_images_core.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/Fl_Export.H
+fl_images_core.o: ../FL/Fl_BMP_Image.H ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H
+fl_images_core.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_PNG_Image.H
+fl_images_core.o: ../FL/Fl_PNM_Image.H flstring.h ../FL/Fl_Export.H
+fl_images_core.o: ../config.h
+Fl_BMP_Image.o: ../FL/Fl_BMP_Image.H ../FL/Fl_Image.H ../FL/Fl_Export.H
+Fl_BMP_Image.o: ../config.h
+Fl_File_Icon2.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/math.h
+Fl_File_Icon2.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/Enumerations.H
+Fl_File_Icon2.o: ../FL/Fl_Export.H ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
+Fl_File_Icon2.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/filename.H
+Fl_GIF_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_GIF_Image.o: ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
+Fl_GIF_Image.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Help_Dialog.o: ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/Enumerations.H
+Fl_Help_Dialog.o: ../FL/Fl_Export.H ../FL/Fl_Double_Window.H
+Fl_Help_Dialog.o: ../FL/Fl_Window.H ../FL/Fl_Help_View.H ../FL/Fl.H
+Fl_Help_Dialog.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
+Fl_Help_Dialog.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/fl_draw.H
+Fl_Help_Dialog.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/Fl_Button.H
+Fl_Help_Dialog.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/fl_ask.H
+Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H ../FL/Fl_Export.H
+Fl_JPEG_Image.o: ../config.h
+Fl_PNG_Image.o: ../FL/Fl_PNG_Image.H ../FL/Fl_Image.H ../FL/Fl_Export.H
+Fl_PNG_Image.o: ../config.h
+Fl_PNM_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_PNM_Image.o: ../FL/Fl_PNM_Image.H ../FL/Fl_Image.H flstring.h
+Fl_PNM_Image.o: ../FL/Fl_Export.H ../config.h
 flstring.o: flstring.h ../FL/Fl_Export.H ../config.h
 scandir.o: flstring.h ../FL/Fl_Export.H ../config.h
 numericsort.o: ../config.h ../FL/filename.H
