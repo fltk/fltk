@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.10 2002/04/24 12:14:57 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.11 2002/04/26 12:45:16 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -92,7 +92,8 @@ Option to compile and link an application:
     exit $1
 }
 
-if test $# -eq 0; then usage 1
+if test $# -eq 0; then
+    usage 1
 fi
 
 no_plugins=no
@@ -100,90 +101,100 @@ compile=
 post=
 debug=
 
+# AIX has very poor handling of static and shared libraries; always use
+# the image libraries under AIX...
+if test `uname` = AIX; then
+    use_images=yes
+fi
+
 # Parse command line options
 while test $# -gt 0 
 do
-  case "$1" in
-  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
-  *) optarg= ;;
-  esac
+    case "$1" in
+	-*=*) 
+	    optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	    ;;
+	*)
+	    optarg=
+	    ;;
+    esac
 
-  case $1 in
-    --prefix=*)
-      prefix=$optarg
-      if test $exec_prefix_set = no ; then
-        exec_prefix=$optarg
-      fi
-      ;;
-    --prefix)
-      echo_prefix=yes
-      ;;
-    --exec-prefix=*)
-      exec_prefix=$optarg
-      exec_prefix_set=yes
-      ;;
-    --exec-prefix)
-      echo_exec_prefix=yes
-      ;;
-    --version)
-      echo $VERSION
-      ;;
-    --api-version)
-      echo $APIVERSION
-      ;;
-    --use-gl | --use-glut)
-      use_gl=yes
-      ;;
-    --use-forms)
-      use_forms=yes
-      ;;
-    --use-images)
-      use_images=yes
-      ;;
-    --cflags)
-      echo_cflags=yes
-      ;;
-    --cxxflags)
-      echo_cxxflags=yes
-      ;;
-    --ldflags)
-      echo_ldflags=yes
-      ;;
-    --ldstaticflags)
-      echo_ldstaticflags=yes
-      ;;
-    --libs)
-      echo_libs=yes
-      ;;
-    -g)
-      debug=-g
-      ;;
-    --compile)
-      compile=$2
-      post=$2
-      shift
-      ;;
-    --post)
-      post=$2
-      shift
-      ;;
-    *)
-      echo_help=yes
-      ;;
-  esac
-  shift
+    case $1 in
+	--prefix=*)
+	    prefix=$optarg
+	    if test $exec_prefix_set = no ; then
+              exec_prefix=$optarg
+	    fi
+	    ;;
+	--prefix)
+	    echo_prefix=yes
+	    ;;
+	--exec-prefix=*)
+	    exec_prefix=$optarg
+	    exec_prefix_set=yes
+	    ;;
+	--exec-prefix)
+	    echo_exec_prefix=yes
+	    ;;
+	--version)
+	    echo $VERSION
+	    ;;
+	--api-version)
+	    echo $APIVERSION
+	    ;;
+	--use-gl | --use-glut)
+	    use_gl=yes
+	    ;;
+	--use-forms)
+	    use_forms=yes
+	    ;;
+	--use-images)
+	    use_images=yes
+	    ;;
+	--cflags)
+	    echo_cflags=yes
+	    ;;
+	--cxxflags)
+	    echo_cxxflags=yes
+	    ;;
+	--ldflags)
+	    echo_ldflags=yes
+	    ;;
+	--ldstaticflags)
+	    echo_ldstaticflags=yes
+	    ;;
+	--libs)
+	    echo_libs=yes
+	    ;;
+	-g)
+	    debug=-g
+	    ;;
+	--compile)
+	    compile=$2
+	    post=$2
+	    shift
+	    ;;
+	--post)
+	    post=$2
+	    shift
+	    ;;
+	*)
+	    echo_help=yes
+	    ;;
+    esac
+    shift
 done
 
 if test "$includedir" != /usr/include; then
-	includes=-I$includedir
+    includes=-I$includedir
 else
-	includes=
+    includes=
 fi
 
 if test "$libdir" != /usr/lib -a "$libdir" != /usr/lib32; then
-	libs=-L$libdir
+    libs=-L$libdir
 else
-      	libs=
+    libs=
 fi
 
 # Calculate needed libraries
@@ -210,7 +221,8 @@ LDLIBS="$DSOLINK $LDLIBS -lm"
 LDSTATIC="$LDSTATIC -lm"
 
 # Answer to user requests
-if test -n "$echo_help"; then usage 1
+if test -n "$echo_help"; then
+    usage 1
 fi
 
 if test -n "$compile"; then
@@ -245,43 +257,45 @@ if test -n "$post" -a "$POSTBUILD" != ":"; then
 fi
 
 if test "$echo_prefix" = "yes"; then
-        echo $prefix
+    echo $prefix
 fi
 
 if test "$echo_exec_prefix" = "yes"; then
-        echo $exec_prefix
+    echo $exec_prefix
 fi
 
 if test "$echo_cflags" = "yes"; then
-	echo $includes $CFLAGS
+    echo $includes $CFLAGS
 fi
 
 if test "$echo_cxxflags" = "yes"; then
-	echo $includes $CXXFLAGS
+    echo $includes $CXXFLAGS
 fi
 
 if test "$echo_ldflags" = "yes"; then
-	my_libs=
-	libdirs=$libs
+    my_libs=
+    libdirs=$libs
 
-	for i in $LDLIBS ; do
-		if test $i != -L$libdir ; then
-			if test -z "$my_libs" ; then
-				my_libs="$i"
-			else
-				my_libs="$my_libs $i"
-			fi
-		fi
-	done
-	echo $libdirs $my_libs
+    for i in $LDLIBS ; do
+	if test $i != -L$libdir ; then
+	    if test -z "$my_libs" ; then
+		my_libs="$i"
+	    else
+		my_libs="$my_libs $i"
+	    fi
+	fi
+    done
+    echo $libdirs $my_libs
 fi
 
 if test "$echo_ldstaticflags" = "yes"; then
-      echo $LDSTATIC
+    echo $LDSTATIC
 fi
 
 if test "$echo_libs" = "yes"; then
-      echo $LIBS
+    echo $LIBS
 fi
 
-# END of fltk-config
+#
+# End of "$Id: fltk-config.in,v 1.12.2.11 2002/04/26 12:45:16 easysw Exp $".
+#
