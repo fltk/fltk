@@ -26,6 +26,6 @@ LIBCOMMAND      =ar -ruv
 RANLIB          =ranlib
 
 # libraries to link with:
-LDLIBS  =-lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lm -mwindows
+LDLIBS  =-lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lwsock32 -lm -mwindows
 
 INSTALL =/CYGNUS/B19/H-I386~1/BIN/install -c
