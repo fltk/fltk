@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.13 1999/02/19 13:10:20 mike Exp $"
+# "$Id: Makefile,v 1.14 1999/02/22 18:05:20 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -175,6 +175,12 @@ include makedepend
 install: ../lib/$(LIBNAME)
 	-mkdir -p $(libdir)
 	-cp ../lib/$(LIBNAME)* $(libdir)
+	if test $(LIBNAME) = libfltk.so.1; then\
+		ln -s $(libdir)/libfltk.so.1 $(libdir)/libfltk.so;\
+	fi
+	if test $(LIBNAME) = libfltk.sl.1; then\
+		ln -s $(libdir)/libfltk.sl.1 $(libdir)/libfltk.sl;\
+	fi
 	@-chmod a+r,u+w,g-w,o-w $(libdir)/$(LIBNAME)*
 	-mkdir -p $(includedir)
 	-rm -rf $(includedir)/FL $(includedir)/Fl
@@ -183,5 +189,5 @@ install: ../lib/$(LIBNAME)
 	-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.13 1999/02/19 13:10:20 mike Exp $".
+# End of "$Id: Makefile,v 1.14 1999/02/22 18:05:20 mike Exp $".
 #
