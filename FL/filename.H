@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.3 1998/10/21 14:19:43 mike Exp $"
+// "$Id: filename.H,v 1.4 1998/12/07 22:11:10 mike Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -56,10 +56,10 @@ struct dirent {char d_name[1];};
 
 #endif
 
-int filename_list(const char *d, dirent ***list);
+int filename_list(const char *d, struct dirent ***list);
 
 #endif
 
 //
-// End of "$Id: filename.H,v 1.3 1998/10/21 14:19:43 mike Exp $".
+// End of "$Id: filename.H,v 1.4 1998/12/07 22:11:10 mike Exp $".
 //
