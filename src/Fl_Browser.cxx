@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.10 2004/05/15 22:58:18 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.11 2004/05/16 02:18:13 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -218,7 +218,7 @@ int Fl_Browser::item_height(void* lv) const {
   else {
     const int* i = column_widths();
     // do each column separately as they may all set different fonts:
-    for (char* str = l->txt; *str; str++) {
+    for (char* str = l->txt; str && *str; str++) {
       Fl_Font font = textfont(); // default font
       int tsize = textsize(); // default size
       while (*str==format_char()) {
@@ -240,13 +240,13 @@ int Fl_Browser::item_height(void* lv) const {
       }
       END_FORMAT:
       char* ptr = str;
-      if (*i++) str = strchr(str, column_char());
+      if (ptr && *i++) str = strchr(str, column_char());
       else str = NULL;
       if((!str && *ptr) || (str && ptr < str)) {
 	fl_font(font, tsize); int hh = fl_height();
 	if (hh > hmax) hmax = hh;
       }
-      if (!*str) break;
+      if (!str || !*str) break;
     }
   }
 
@@ -498,5 +498,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.10 2004/05/15 22:58:18 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.11 2004/05/16 02:18:13 easysw Exp $".
 //
