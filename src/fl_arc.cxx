@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arc.cxx,v 1.4.2.3.2.4 2002/05/03 12:49:36 easysw Exp $"
+// "$Id: fl_arc.cxx,v 1.4.2.3.2.5 2002/05/03 19:33:39 easysw Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
@@ -33,38 +33,38 @@
 void fl_arc(double x, double y, double r, double start, double end) {
 
   // draw start point accurately:
-  double A = start*(M_PI/180);
-  double X = r*cos(A);
-  double Y = -r*sin(A);
-  fl_vertex(x+X,y+Y);
+  
+  double A = start*(M_PI/180); // Initial angle (radians)
+  double X =  r*cos(A);	       // Initial displacement, (X,Y)
+  double Y = -r*sin(A);	       //   from center to initial point
+  fl_vertex(x+X,y+Y);	       // Insert initial point
 
-  // number of segments per radian:
-  int n; {
-    double x1 = fl_transform_dx(r,0);
-    double y1 = fl_transform_dy(r,0);
-    double r1 = x1*x1+y1*y1;
-    x1 = fl_transform_dx(0,r);
-    y1 = fl_transform_dy(0,r);
-    double r2 = x1*x1+y1*y1;
-    if (r2 < r1) r1 = r2;
-    n = int(sqrt(r1)*.841471);
-    if (n < 2) n = 2;
-    if (n > 60) n = 60;
+  // Maximum arc length to approximate with chord with error <= 0.125
+  
+  double epsilon; {
+    double r1 = hypot(fl_transform_dx(r,0), // Horizontal "radius"
+		      fl_transform_dy(r,0));
+    double r2 = hypot(fl_transform_dx(0,r), // Vertical "radius"
+		      fl_transform_dy(0,r));
+		      
+    if (r2 < r1) r1 = r2;	// r1 = minimum "radius"
+    r2 = 1.0 - 0.125/r1;	// r2 = cos(epsilon/2)
+    if (r2 < 0.5) r2 = 0.5;	// minimum 3 chords/circle
+    epsilon = 2*acos(r2);	// Maximum arc angle
   }
-  double epsilon = 1.0/n;
-  double E = end*(M_PI/180);
-  int i = int((E-A)*n);
-  if (i < 0) {i = -i; epsilon = -epsilon;}
-  double epsilon2 = epsilon/2;
-  for (; i>1; i--) {
-    X += epsilon*Y;
-    Y -= epsilon2*X;
-    fl_vertex(x+X,y+Y);
-    Y -= epsilon2*X;
+  A = end*(M_PI/180) - A;		// Displacement angle (radians)
+  int i = int(ceil(fabs(A)/epsilon));	// Segments in approximation
+  
+  if (i) {
+    epsilon = A/i;		// Arc length for equal-size steps
+    double cos_e = cos(epsilon);// Rotation coefficients
+    double sin_e = sin(epsilon);
+    do {
+      double Xnew =  cos_e*X + sin_e*Y;
+		Y = -sin_e*X + cos_e*Y;
+      fl_vertex(x + (X=Xnew), y + Y);
+    } while (--i);
   }
-
-  // draw the end point accurately:
-  fl_vertex(x+r*cos(E), y-r*sin(E));
 }
 
 #if 0 // portable version.  X-specific one in fl_vertex.cxx
@@ -74,5 +74,5 @@ void fl_circle(double x,double y,double r) {
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.4 2002/05/03 12:49:36 easysw Exp $".
+// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.5 2002/05/03 19:33:39 easysw Exp $".
 //
