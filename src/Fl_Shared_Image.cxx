@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.1 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.2 2001/11/24 18:07:57 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,8 +32,9 @@
 #include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
-//#include <FL/Fl_XBM_Image.H>
-//#include <FL/Fl_XPM_Image.H>
+#include <FL/Fl_PNM_Image.H>
+#include <FL/Fl_XBM_Image.H>
+#include <FL/Fl_XPM_Image.H>
 
 
 //
@@ -224,6 +225,12 @@ Fl_Shared_Image::reload() {
   else if (memcmp(header, "\377\330\377", 3) == 0 &&	// Start-of-Image
 	   header[3] >= 0xe0 && header[3] <= 0xef)	// APPn
     img = new Fl_JPEG_Image(name_);
+  else if (header[0] == 'P' && header[1] >= '1' && header[1] <= '6') // Portable anymap
+    img = new Fl_PNM_Image(name_);
+  else if (memcmp(header, "#define", 7) == 0) // XBM file
+    img = new Fl_XBM_Image(name_);
+  else if (memcmp(header, "/* XPM */", 9) == 0) // XPM file
+    img = new Fl_XPM_Image(name_);
   else
     img = 0;
 
@@ -369,5 +376,5 @@ Fl_Shared_Image::get(const char *n, int W, int H) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.1 2001/11/24 02:46:19 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.2 2001/11/24 18:07:57 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.11 2001/11/24 02:46:19 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.12 2001/11/24 18:07:57 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -26,20 +26,66 @@
 include ../makeinclude
 
 CPPFILES =\
-	CubeMain.cxx CubeView.cxx adjuster.cxx arc.cxx ask.cxx \
-	bitmap.cxx boxtype.cxx browser.cxx button.cxx \
-	buttons.cxx checkers.cxx clock.cxx colbrowser.cxx \
-	color_chooser.cxx cube.cxx cursor.cxx curve.cxx demo.cxx \
-	doublebuffer.cxx editor.cxx file_chooser.cxx fonts.cxx \
-	forms.cxx fractals.cxx fullscreen.cxx gl_overlay.cxx \
-	glpuzzle.cxx hello.cxx help.cxx iconize.cxx image.cxx input.cxx \
-	keyboard.cxx label.cxx list_visuals.cxx mandelbrot.cxx \
-	menubar.cxx message.cxx minimum.cxx navigation.cxx \
-	output.cxx overlay.cxx pixmap.cxx pixmap_browser.cxx \
-	radio.cxx resizebox.cxx scroll.cxx shape.cxx shiny.cxx \
-	subwindow.cxx symbols.cxx tabs.cxx tile.cxx \
-	valuators.cxx fast_slow.cxx resize.cxx pack.cxx \
-	inactive.cxx line_style.cxx
+	adjuster.cxx \
+	arc.cxx \
+	ask.cxx \
+	bitmap.cxx \
+	boxtype.cxx \
+	browser.cxx \
+	button.cxx \
+	buttons.cxx \
+	checkers.cxx \
+	clock.cxx \
+	colbrowser.cxx \
+	color_chooser.cxx \
+	cube.cxx \
+	CubeMain.cxx \
+	CubeView.cxx \
+	cursor.cxx \
+	curve.cxx \
+	demo.cxx \
+	doublebuffer.cxx \
+	editor.cxx \
+	fast_slow.cxx \
+	file_chooser.cxx \
+	fonts.cxx \
+	forms.cxx \
+	fractals.cxx \
+	fullscreen.cxx \
+	gl_overlay.cxx \
+	glpuzzle.cxx \
+	hello.cxx \
+	help.cxx \
+	iconize.cxx \
+	image.cxx \
+	inactive.cxx \
+	input.cxx \
+	keyboard.cxx \
+	label.cxx \
+	line_style.cxx \
+	list_visuals.cxx \
+	mandelbrot.cxx \
+	menubar.cxx \
+	message.cxx \
+	minimum.cxx \
+	navigation.cxx \
+	output.cxx \
+	overlay.cxx \
+	pack.cxx \
+	pixmap_browser.cxx \
+	pixmap.cxx \
+	radio.cxx \
+	resizebox.cxx \
+	resize.cxx \
+	scroll.cxx \
+	shape.cxx \
+	shiny.cxx \
+	subwindow.cxx \
+	symbols.cxx \
+	tabs.cxx \
+	tile.cxx \
+	tiled_image.cxx \
+	valuators.cxx
 
 ALL =	\
 	adjuster$(EXEEXT) \
@@ -90,6 +136,7 @@ ALL =	\
 	symbols$(EXEEXT) \
 	tabs$(EXEEXT) \
 	tile$(EXEEXT) \
+	tiled_image$(EXEEXT) \
 	valuators$(EXEEXT)
 
 GLALL = \
@@ -129,9 +176,6 @@ file_chooser$(EXEEXT): file_chooser.cxx
 help$(EXEEXT): help.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
-image$(EXEEXT): image.cxx
-	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) image.cxx -o $@ $(LINKFLTK) $(LDLIBS) $(IMAGELIBS)
 keyboard$(EXEEXT): keyboard.cxx keyboard_ui.cxx
 	echo Compiling and linking $@...
 	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx $(LINKFLTK) $(LDLIBS) -o $@
@@ -192,5 +236,5 @@ uninstall:
 	@echo Nothing to uninstall in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.11 2001/11/24 02:46:19 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.12 2001/11/24 18:07:57 easysw Exp $".
 #

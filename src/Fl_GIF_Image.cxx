@@ -1,10 +1,9 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.5 2001/11/24 18:07:57 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
-// Copyright 1997-2001 by Easy Software Products.
-// Image support donated by Matthias Melcher, Copyright 2000.
+// Copyright 1997-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -366,5 +365,5 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.4 2001/11/24 02:46:19 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.5 2001/11/24 18:07:57 easysw Exp $".
 //

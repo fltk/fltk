@@ -207,6 +207,9 @@ Fl_Text_Editor.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Text_Editor.o: ../FL/Fl_Text_Buffer.H
 Fl_Tile.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Tile.H
 Fl_Tile.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Window.H
+Fl_Tiled_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Tiled_Image.o: ../FL/Fl_Tiled_Image.H ../FL/Fl_Image.H ../FL/x.H
+Fl_Tiled_Image.o: ../FL/Fl_Window.H
 Fl_Tooltip.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Tooltip.o: ../FL/Fl_Menu_Window.H ../FL/Fl_Single_Window.H
 Fl_Tooltip.o: ../FL/Fl_Window.H ../FL/Fl_Box.H ../FL/Fl_Widget.H

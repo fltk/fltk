@@ -1,10 +1,7 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.2 2001/09/30 17:37:06 easysw Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.4.2.3 2001/11/24 18:07:57 easysw Exp $"
 //
-// Another pixmap test program for the Fast Light Tool Kit (FLTK).
-//
-// On purpose, I do NOT provide a fltk method to turn a file
-// into a pixmap.  This program uses a rather simplistic one.
+// A shared image test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2001 by Bill Spitzak and others.
 //
@@ -30,9 +27,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Pixmap.H>
-#include <ctype.h>
-#include <stdio.h>
+#include <FL/Fl_Shared_Image.H>
 #include <string.h>
 #include <errno.h>
 #include <FL/Fl_File_Chooser.H>
@@ -40,107 +35,39 @@
 
 Fl_Box *b;
 Fl_Window *w;
+Fl_Shared_Image *img;
 
-char **data;
-int sizeofdata;
-int numlines;
-
-static int hexdigit(int x) {
-  if (isdigit(x)) return x-'0';
-  if (isupper(x)) return x-'A'+10;
-  if (islower(x)) return x-'a'+10;
-  return 20;
-}
-
-int load_file(const char *name) {
-  FILE *f = fopen(name,"r");
-  if (!f) {
-    fl_message("Can't open %s, %s",name,strerror(errno));
-    return 0;
-  }
-  if (data) {
-    for (int i=numlines; i--;) delete[] data[i];
-  }
-#define BUFSIZE 2048
-  char buffer[BUFSIZE];
-  int i = 0;
-  while (fgets(buffer, BUFSIZE, f)) {
-    if (buffer[0] != '\"') continue;
-    char *p = buffer;
-    char *q = buffer+1;
-    while (*q != '\"') {
-      if (*q == '\\') switch (*++q) {
-      case '\n':
-	fgets(q,(buffer+BUFSIZE)-q,f); break;
-      case 0:
-	break;
-      case 'x': {
-	q++;
-	int n = 0;
-	for (int x = 0; x < 3; x++) {
-	  int d = hexdigit(*q);
-	  if (d > 15) break;
-	  n = (n<<4)+d;
-	  q++;
-	}
-	*p++ = n;
-      } break;
-      default: {
-	int c = *q++;
-	if (c>='0' && c<='7') {
-	  c -= '0';
-	  for (int x=0; x<2; x++) {
-	    int d = hexdigit(*q);
-	    if (d>7) break;
-	    c = (c<<3)+d;
-	    q++;
-	  }
-	}
-	*p++ = c;
-      } break;
-      } else {
-	*p++ = *q++;
-      }
-    }
-    *p++ = 0;
-    if (i >= sizeofdata) {
-      sizeofdata = 2*sizeofdata+100;
-      char **newdata = new char *[sizeofdata];
-      for (int j=0; j<i; j++) newdata[j] = data[j];
-      delete[] data;
-      data = newdata;
-    }
-    data[i] = new char[p-buffer];
-    memcpy(data[i],buffer,p-buffer);
-    i++;
-  }
-  numlines = i;
-  fclose(f);
-  return i;
-}
-
-Fl_Pixmap *pixmap;
-void newpixmap() {
-  delete pixmap;
-  pixmap = new Fl_Pixmap(data);
-  b->image(pixmap);
-  b->redraw();
-  w->redraw();
-}
 
 static char name[1024];
 
+void load_file(const char *n) {
+  if (img) img->release();
+
+  img = Fl_Shared_Image::get(n);
+  if (img->w() > b->w() || img->h() > b->h()) {
+    Fl_Image *temp;
+    if (img->w() > img->h()) temp = img->copy(b->w(), b->h() * img->h() / img->w());
+    else temp = img->copy(b->w() * img->w() / img->h(), b->h());
+
+    img->release();
+    img = (Fl_Shared_Image *)temp;
+  }
+
+  b->label(name);
+  b->image(img);
+  b->redraw();
+}
+
 void file_cb(const char *n) {
   if (!strcmp(name,n)) return;
-  if (!load_file(n)) return;
+  load_file(n);
   strcpy(name,n);
   w->label(name);
-  newpixmap();
 }
 
 void button_cb(Fl_Widget *,void *) {
   fl_file_chooser_callback(file_cb);
-  fl_file_chooser("XPM file","*.xpm",name);
+  fl_file_chooser("Image file?","*.{gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name);
   fl_file_chooser_callback(0);
 }
 
@@ -152,19 +79,20 @@ int arg(int, char **argv, int &i) {
 
 int main(int argc, char **argv) {
   int i = 1;
-  if (Fl::args(argc,argv,i,arg) < argc)
-    Fl::fatal(" -8 # : use default visual\n%s\n",Fl::help);
+  Fl::args(argc,argv,i,arg);
 
   Fl_Window window(400,400); ::w = &window;
   Fl_Box b(0,0,window.w(),window.h()); ::b = &b;
+  b.box(FL_FLAT_BOX);
   Fl_Button button(5,5,100,35,"load");
   button.callback(button_cb);
   if (!dvisual) Fl::visual(FL_RGB);
+  if (argv[1]) load_file(argv[1]);
   window.resizable(window);
   window.show(argc,argv);
   return Fl::run();
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.2 2001/09/30 17:37:06 easysw Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.4.2.3 2001/11/24 18:07:57 easysw Exp $".
 //

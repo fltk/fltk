@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.H,v 1.6.2.8.2.5 2001/11/22 15:35:01 easysw Exp $"
+// "$Id: Fl_Pixmap.H,v 1.6.2.8.2.6 2001/11/24 18:07:57 easysw Exp $"
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -39,6 +39,9 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   void copy_data();
   void delete_data();
   void set_data(const char * const *p);
+
+  protected:
+
   void measure();
 
   public:
@@ -65,5 +68,5 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Pixmap.H,v 1.6.2.8.2.5 2001/11/22 15:35:01 easysw Exp $".
+// End of "$Id: Fl_Pixmap.H,v 1.6.2.8.2.6 2001/11/24 18:07:57 easysw Exp $".
 //
