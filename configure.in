@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.63 2002/04/26 12:39:32 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.64 2002/04/28 16:41:15 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -720,6 +720,13 @@ else
     AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
 fi
 
+dnl Define the FLTK data directory...
+if test x$prefix = xNONE; then
+    AC_DEFINE_UNQUOTED(FLTK_DATADIR, "/usr/local/share/fltk")
+else
+    AC_DEFINE_UNQUOTED(FLTK_DATADIR, "$prefix/share/fltk")
+fi
+
 dnl Write all of the files...
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
@@ -728,5 +735,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.63 2002/04/26 12:39:32 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.64 2002/04/28 16:41:15 easysw Exp $".
 dnl

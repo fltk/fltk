@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.cxx,v 1.6.2.3.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Window.cxx,v 1.6.2.3.2.4 2002/04/28 16:41:16 easysw Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -84,6 +84,7 @@ int Fl_Window::y_root() const {
 void Fl_Window::draw() {
   int savex = x(); x(0);
   int savey = y(); y(0);
+  Fl_Widget::label(0);
   Fl_Group::draw();
   y(savey);
   x(savex);
@@ -108,5 +109,5 @@ void Fl_Window::default_callback(Fl_Window* window, void* v) {
 }
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.4 2002/04/28 16:41:16 easysw Exp $".
 //

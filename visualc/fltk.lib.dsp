@@ -601,5 +601,9 @@ SOURCE=..\src\scandir.c
 
 SOURCE=..\src\vsnprintf.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Preferences.cxx
+# End Source File
 # End Target
 # End Project

@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- Added Fl_Preferences class from Matthias Melcher.
+	- FLUID now recognizes the "using" keyword in
+	  declarations.
 	- fl_file_chooser() didn't highlight the requested file
 	  the second time the file chooser dialog was shown.
 	- Fixed rendering of Fl_Light_Button with the plastic

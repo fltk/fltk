@@ -1,5 +1,5 @@
 /*
- * "$Id: config.mingw,v 1.1.2.3.2.3 2002/04/24 18:29:05 easysw Exp $"
+ * "$Id: config.mingw,v 1.1.2.3.2.4 2002/04/28 16:41:16 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -24,9 +24,10 @@
  */
 
 /*
- * Where to find the documentation files...
+ * Where to find files...
  */
 
+#define FLTK_DATADIR	"C:/FLTK"
 #define FLTK_DOCDIR	"C:/FLTK/DOC"
 
 /*
@@ -189,5 +190,5 @@
 
 
 /*
- * End of "$Id: config.mingw,v 1.1.2.3.2.3 2002/04/24 18:29:05 easysw Exp $".
+ * End of "$Id: config.mingw,v 1.1.2.3.2.4 2002/04/28 16:41:16 easysw Exp $".
  */

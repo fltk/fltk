@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.39 2002/04/11 11:52:42 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.40 2002/04/28 16:41:16 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -70,6 +70,7 @@ CPPFILES = \
 	Fl_PNG_Image.cxx \
 	Fl_PNM_Image.cxx \
 	Fl_Positioner.cxx \
+	Fl_Preferences.cxx \
 	Fl_Progress.cxx \
 	Fl_Repeat_Button.cxx \
 	Fl_Return_Button.cxx \
@@ -427,5 +428,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.39 2002/04/11 11:52:42 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.40 2002/04/28 16:41:16 easysw Exp $".
 #

@@ -2407,5 +2407,10 @@ DEP_CPP_VSNPR=\
 	".\config.h"\
 	
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Preferences.cxx
+	
+# End Source File
 # End Target
 # End Project

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.5.2.5.2.6 2002/04/24 18:29:06 easysw Exp $"
+ * "$Id: config.h,v 1.5.2.5.2.7 2002/04/28 16:41:17 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -24,9 +24,10 @@
  */
 
 /*
- * Where to find the documentation files...
+ * Where to find files...
  */
 
+#define FLTK_DATADIR	"C:/FLTK"
 #define FLTK_DOCDIR	"C:/FLTK/DOC"
 
 /*
@@ -182,5 +183,5 @@
 
 
 /*
- * End of "$Id: config.h,v 1.5.2.5.2.6 2002/04/24 18:29:06 easysw Exp $".
+ * End of "$Id: config.h,v 1.5.2.5.2.7 2002/04/28 16:41:17 easysw Exp $".
  */

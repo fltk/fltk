@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.13 2002/04/20 21:07:18 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.14 2002/04/28 16:41:16 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -42,102 +42,163 @@ MEDIA		=	--size universal
 
 # These are the HTML "source" files...
 HTMLFILES	= \
-			basics.html \
-			common.html \
-			drawing.html \
-			editor.html \
-			enumerations.html \
-			events.html \
-			Fl.html \
-			Fl_Adjuster.html \
-			Fl_Bitmap.html \
-			Fl_BMP_Image.html \
-			Fl_Box.html \
-			Fl_Browser_.html \
-			Fl_Browser.html \
-			Fl_Button.html \
-			Fl_Chart.html \
-			Fl_Check_Button.html \
-			Fl_Choice.html \
-			Fl_Clock.html \
-			Fl_Color_Chooser.html \
-			Fl_Counter.html \
-			Fl_Dial.html \
-			Fl_Double_Window.html \
-			Fl_End.html \
-			Fl_File_Browser.html \
-			Fl_File_Chooser.html \
-			Fl_File_Icon.html \
-			Fl_Float_Input.html \
-			Fl_Free.html \
-			Fl_GIF_Image.html \
-			Fl_Gl_Window.html \
-			Fl_Group.html \
-			Fl_Help_Dialog.html \
-			Fl_Help_View.html \
-			Fl_Hold_Browser.html \
-			Fl_Image.html \
-			Fl_Input_.html \
-			Fl_Input.html \
-			Fl_Int_Input.html \
-			Fl_JPEG_Image.html \
-			Fl_Light_Button.html \
-			Fl_Menu_Bar.html \
-			Fl_Menu_Button.html \
-			Fl_Menu_.html \
-			Fl_Menu_Item.html \
-			Fl_Menu_Window.html \
-			Fl_Multi_Browser.html \
-			Fl_Multiline_Input.html \
-			Fl_Multiline_Output.html \
-			Fl_Output.html \
-			Fl_Overlay_Window.html \
-			Fl_Pack.html \
-			Fl_Pixmap.html \
-			Fl_PNG_Image.html \
-			Fl_PNM_Image.html \
-			Fl_Positioner.html \
-			Fl_Repeat_Button.html \
-			Fl_Return_Button.html \
-			Fl_RGB_Image.html \
-			Fl_Roller.html \
-			Fl_Round_Button.html \
-			Fl_Scrollbar.html \
-			Fl_Scroll.html \
-			Fl_Secret_Input.html \
-			Fl_Select_Browser.html \
-			Fl_Shared_Image.html \
-			Fl_Single_Window.html \
-			Fl_Slider.html \
-			Fl_Tabs.html \
-			Fl_Text_Buffer.html \
-			Fl_Text_Display.html \
-			Fl_Text_Editor.html \
-			Fl_Tiled_Image.html \
-			Fl_Tile.html \
-			Fl_Timer.html \
-			Fl_Tooltip.html \
-			fluid.html \
-			Fl_Valuator.html \
-			Fl_Value_Input.html \
-			Fl_Value_Output.html \
-			Fl_Value_Slider.html \
-			Fl_Widget.html \
-			Fl_Window.html \
-			Fl_Wizard.html \
-			Fl_XBM_Image.html \
-			Fl_XPM_Image.html \
-			forms.html \
-			functions.html \
-			glut.html \
-			intro.html \
-			license.html \
-			migration.html \
-			opengl.html \
-			osissues.html \
-			preface.html \
-			subclassing.html \
-			widgets.html
+		preface.html \
+		intro.html \
+		basics.html \
+		common.html \
+		editor.html \
+		drawing.html \
+		events.html \
+		subclassing.html \
+		opengl.html \
+		fluid.html \
+		widgets.html \
+		Fl.html \
+		Fl_Adjuster.html \
+		Fl_Bitmap.html \
+		Fl_BMP_Image.html \
+		Fl_Box.html \
+		Fl_Browser_.html \
+		Fl_Browser.html \
+		Fl_Button.html \
+		Fl_Chart.html \
+		Fl_Check_Button.html \
+		Fl_Choice.html \
+		Fl_Clock.html \
+		Fl_Color_Chooser.html \
+		Fl_Counter.html \
+		Fl_Dial.html \
+		Fl_Double_Window.html \
+		Fl_End.html \
+		Fl_File_Browser.html \
+		Fl_File_Chooser.html \
+		Fl_File_Icon.html \
+		Fl_Float_Input.html \
+		Fl_Free.html \
+		Fl_GIF_Image.html \
+		Fl_Gl_Window.html \
+		Fl_Group.html \
+		Fl_Help_Dialog.html \
+		Fl_Help_View.html \
+		Fl_Hold_Browser.html \
+		Fl_Image.html \
+		Fl_Input.html \
+		Fl_Input_.html \
+		Fl_Int_Input.html \
+		Fl_JPEG_Image.html \
+		Fl_Light_Button.html \
+		Fl_Menu_.html \
+		Fl_Menu_Bar.html \
+		Fl_Menu_Button.html \
+		Fl_Menu_Item.html \
+		Fl_Menu_Window.html \
+		Fl_Multi_Browser.html \
+		Fl_Multiline_Input.html \
+		Fl_Multiline_Output.html \
+		Fl_Output.html \
+		Fl_Overlay_Window.html \
+		Fl_Pack.html \
+		Fl_Pixmap.html \
+		Fl_PNG_Image.html \
+		Fl_PNM_Image.html \
+		Fl_Positioner.html \
+		Fl_Progress.html \
+		Fl_Repeat_Button.html \
+		Fl_RGB_Image.html \
+		Fl_Return_Button.html \
+		Fl_Roller.html \
+		Fl_Round_Button.html \
+		Fl_Scroll.html \
+		Fl_Scrollbar.html \
+		Fl_Secret_Input.html \
+		Fl_Select_Browser.html \
+		Fl_Single_Window.html \
+		Fl_Slider.html \
+		Fl_Tabs.html \
+		Fl_Text_Buffer.html \
+		Fl_Text_Display.html \
+		Fl_Text_Editor.html \
+		Fl_Tile.html \
+		Fl_Tiled_Image.html \
+		Fl_Timer.html \
+		Fl_Tooltip.html \
+		Fl_Valuator.html \
+		Fl_Value_Input.html \
+		Fl_Value_Output.html \
+		Fl_Value_Slider.html \
+		Fl_Widget.html \
+		Fl_Window.html \
+		Fl_Wizard.html \
+		Fl_XBM_Image.html \
+		Fl_XPM_Image.html \
+		functions.html \
+		enumerations.html \
+		glut.html \
+		forms.html \
+		osissues.html \
+		migration.html \
+		license.html
+
+IMAGEFILES	= \
+		adjuster1.gif \
+		boxtypes.gif \
+		buttons.gif \
+		charts.gif \
+		choice.gif \
+		clock.gif \
+		counter.gif \
+		cubeview.gif \
+		dial.gif \
+		editor.gif \
+		editor-replace.gif \
+		filechooser.gif \
+		fl_alert.gif \
+		fl_ask.gif \
+		Fl_Check_Button.gif \
+		fl_choice.gif \
+		fl_color_chooser.jpg \
+		FL.gif \
+		Fl_Help_Dialog.gif \
+		fl_input.gif \
+		Fl_Light_Button.gif \
+		fl_message.gif \
+		fl_password.gif \
+		Fl_Return_Button.gif \
+		Fl_Roller.gif \
+		Fl_Round_Button.gif \
+		Fl_Scroll.gif \
+		fl_show_colormap.gif \
+		Fl_Tile.gif \
+		fluid1.gif \
+		fluid2.gif \
+		fluid3-cxx.gif \
+		fluid3-gui.gif \
+		fluid3-style.gif \
+		fluid4.gif \
+		fluid-catgets.gif \
+		fluid-gettext.gif \
+		fluid-org.gif \
+		fluid_prefs.gif \
+		fluid_widget_cxx.gif \
+		fluid_widget_gui.gif \
+		fluid_widget_style.gif \
+		Fl_Value_Input.gif \
+		Fl_Value_Output.gif \
+		hello.C.gif \
+		menubar.gif \
+		menu_button.gif \
+		menu.gif \
+		positioner.gif \
+		resizebox1.gif \
+		resizebox2.gif \
+		round_clock.gif \
+		scrollbar.gif \
+		slider.gif \
+		symbols.gif \
+		tabs.gif \
+		text.gif \
+		valuators.gif \
+		value_slider.gif
 
 MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT)
 
@@ -192,22 +253,22 @@ uninstall:
 
 # Base html files are now the readable ones, so this target is not make by
 # default...
-fltk.d/index.html: $(HTMLFILES)
+fltk.d/index.html: $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating HTML documentation..."
 	-mkdir fltk.d
 	-rm -f fltk.d/*
 	$(HTMLDOC) --verbose --batch fltk.book -d fltk.d -t html
 
-fltk.ps: $(HTMLFILES)
+fltk.ps: $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating PostScript documentation..."
 	rm -f fltk.ps
 	$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
 
-fltk.pdf: $(HTMLFILES)
+fltk.pdf: $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating PDF documentation..."
 	rm -f fltk.pdf
 	$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.pdf
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.13 2002/04/20 21:07:18 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.14 2002/04/28 16:41:16 easysw Exp $".
 #
