@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.8 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.9 2004/06/07 19:22:45 matthiaswm Exp $"
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
@@ -64,6 +64,8 @@ struct FL_EXPORT Fl_Menu_Item {
   const Fl_Menu_Item *next(int=1) const;
   Fl_Menu_Item *next(int i=1) {
     return (Fl_Menu_Item*)(((const Fl_Menu_Item*)this)->next(i));}
+  const Fl_Menu_Item *first() const { return next(0); }
+  Fl_Menu_Item *first() { return next(0); }
 
   // methods on menu items:
   const char* label() const {return text;}
@@ -159,5 +161,5 @@ enum {	// back-compatability enum:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.8 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.9 2004/06/07 19:22:45 matthiaswm Exp $".
 //

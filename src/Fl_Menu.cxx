@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.30 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.31 2004/06/07 19:22:49 matthiaswm Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -53,6 +53,7 @@ const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
   if (n < 0) return 0; // this is so selected==-1 returns NULL
   const Fl_Menu_Item* m = this;
   int nest = 0;
+  if (!m->visible()) n++;
   while (n>0) {
     if (!m->text) {
       if (!nest) return m;
@@ -239,6 +240,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   set_modal();
   clear_border();
   menu = m;
+  m - m->first(); // find the first item that needs to be rendered
   drawn_selected = -1;
   if (button) {
     box(button->box());
@@ -379,7 +381,7 @@ void menuwindow::draw() {
     fl_draw_box(box(), 0, 0, w(), h(), color());
     if (menu) {
       const Fl_Menu_Item* m; int j;
-      for (m=menu, j=0; m->text; j++, m = m->next()) drawentry(m, j, 0);
+      for (m=menu->first(), j=0; m->text; j++, m = m->next()) drawentry(m, j, 0);
     }
   } else {
     if (damage() & FL_DAMAGE_CHILD && selected!=drawn_selected) { // change selection
@@ -403,7 +405,7 @@ int menuwindow::find_selected(int mx, int my) {
   if (my < 0 || my >= h()) return -1;
   if (!itemheight) { // menubar
     int xx = 3; int n = 0;
-    const Fl_Menu_Item* m = menu;
+    const Fl_Menu_Item* m = menu->first();
     for (; ; m = m->next(), n++) {
       if (!m->text) return -1;
       xx += m->measure(0, button) + 16;
@@ -421,7 +423,7 @@ int menuwindow::find_selected(int mx, int my) {
 int menuwindow::titlex(int n) {
   const Fl_Menu_Item* m;
   int xx = 3;
-  for (m=menu; n--; m = m->next()) xx += m->measure(0, button) + 16;
+  for (m=menu->first(); n--; m = m->next()) xx += m->measure(0, button) + 16;
   return xx;
 }
 
@@ -754,7 +756,7 @@ Fl_Menu_Item::popup(
 // Search only the top level menu for a shortcut.  Either &x in the
 // label or the shortcut fields are used:
 const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
-  const Fl_Menu_Item* m = this;
+  const Fl_Menu_Item* m = first();
   if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
     if (m->activevisible()) {
       if (Fl::test_shortcut(m->shortcut_)
@@ -770,7 +772,7 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
 // Recursive search of all submenus for anything with this key as a
 // shortcut.  Only uses the shortcut field, ignores &x in the labels:
 const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
-  const Fl_Menu_Item* m = this;
+  const Fl_Menu_Item* m = first();
   const Fl_Menu_Item* ret = 0;
   if (m) for (; m->text; m = m->next()) {
     if (m->activevisible()) {
@@ -789,5 +791,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.30 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.31 2004/06/07 19:22:49 matthiaswm Exp $".
 //
