@@ -1,5 +1,5 @@
 //
-// "$Id: symbols.cxx,v 1.4.2.3.2.7 2004/07/04 06:49:34 matthiaswm Exp $"
+// "$Id: symbols.cxx,v 1.4.2.3.2.8 2004/08/09 21:05:45 matthiaswm Exp $"
 //
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
@@ -53,13 +53,13 @@ void slider_cb(Fl_Widget *w, void *) {
     if ( *l == '@' ) {                            // all children with '@'
       if ( *(++l) == '@' ) {                      // ascii legend?
         l++;
-	while (isdigit(*l)||*l=='+'||*l=='-') { l++; }
+	while (isdigit(*l)||(*l=='+'&&l[1])||*l=='-') { l++; }
         if (val&&sze) sprintf(buf, "@@%+d%d%s", sze, val, l);
         else if (val) sprintf(buf, "@@%d%s", val, l);
         else if (sze) sprintf(buf, "@@%+d%s", sze, l);
         else          sprintf(buf, "@@%s", l);
       } else {                                    // box with symbol
-        while (isdigit(*l)||*l=='+'||*l=='-') { l++; }
+        while (isdigit(*l)||(*l=='+'&&l[1])||*l=='-') { l++; }
         if (val&&sze) sprintf(buf, "@%+d%d%s", sze, val, l);
         else if (val) sprintf(buf, "@%d%s", val, l);
         else if (sze) sprintf(buf, "@%+d%s", sze, l);
@@ -141,5 +141,5 @@ bt("@FLTK");
 }
 
 //
-// End of "$Id: symbols.cxx,v 1.4.2.3.2.7 2004/07/04 06:49:34 matthiaswm Exp $".
+// End of "$Id: symbols.cxx,v 1.4.2.3.2.8 2004/08/09 21:05:45 matthiaswm Exp $".
 //
