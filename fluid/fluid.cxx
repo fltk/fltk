@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.7 2000/06/05 21:20:43 mike Exp $"
+// "$Id: fluid.cxx,v 1.15.2.8 2000/06/08 08:26:45 bill Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -159,6 +159,7 @@ void new_cb(Fl_Widget *, void *v) {
 }
 
 int compile_only = 0;
+int compile_strings = 0;
 int header_file_set = 0;
 int code_file_set = 0;
 const char* header_file_name = ".h";
@@ -391,6 +392,7 @@ void set_filename(const char *c) {
 
 static int arg(int argc, char** argv, int& i) {
   if (argv[i][1] == 'c' && !argv[i][2]) {compile_only = 1; i++; return 1;}
+  if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_only = 1; compile_strings = 1; i++; return 1;}
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
     code_file_name = argv[i+1];
     code_file_set  = 1;
@@ -431,6 +433,7 @@ int main(int argc,char **argv) {
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
     fprintf(stderr,"usage: %s <switches> name.fl\n"
 " -c : write .cxx and .h and exit\n"
+" -cs : write .cxx and .h and strings and exit\n"
 " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
 " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
 "%s\n", argv[0], Fl::help);
@@ -451,6 +454,7 @@ int main(int argc,char **argv) {
     }
     fl_message("Can't read %s: %s", c, strerror(errno));
   }
+      if (compile_only && compile_strings) { write_strings_cb(0,0); }
   if (compile_only) {write_cb(0,0); exit(0);}
   modflag = 0;
 #ifndef WIN32
@@ -460,5 +464,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.7 2000/06/05 21:20:43 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.8 2000/06/08 08:26:45 bill Exp $".
 //
