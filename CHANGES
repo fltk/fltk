@@ -8,6 +8,8 @@ CHANGES IN FLTK 1.1.0b7
 	- Fl_File_Icon::load_image() could cause segfaults
 	  (NULL data and incrementing the data pointer too
 	  often.)
+	- Fl_File_Icon::load_image() now handles 2-byte
+	  per color XPM files.
 	- Some Win32 drivers would draw into wrong buffers
 	  after OpenGL mode change.
 	- Message handling and Resources for MacOS port.

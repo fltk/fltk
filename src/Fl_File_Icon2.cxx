@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.5 2001/12/05 00:06:41 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.6 2001/12/05 00:19:26 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -410,7 +410,7 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 		*const*ptr;		// Pointer into data array
     int		ncolors,		// Number of colors
 		chars_per_color;	// Characters per color
-    Fl_Color	colors[256];		// Colors
+    Fl_Color	*colors;		// Colors
     int		red, green, blue;	// Red, green, and blue values
     int		x, y;			// X & Y in image
     int		startx;			// Starting X coord
@@ -419,15 +419,11 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
     // Get the pixmap data...
     ptr = img->data();
     sscanf(*ptr, "%*d%*d%d%d", &ncolors, &chars_per_color);
-    if (chars_per_color > 1) {
-      Fl::warning("Fl_Icon_File::load(): Unable to load 2-byte XPM file \"%s\"!",
-                  ifile);
-      img->release();
-      return (-1);
-    }
+
+    colors = new Fl_Color[1 << (chars_per_color * 8)];
 
     // Read the colormap...
-    memset(colors, 0, sizeof(colors));
+    memset(colors, 0, sizeof(Fl_Color) << (chars_per_color * 8));
     bg = ' ';
 
     ptr ++;
@@ -447,6 +443,8 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 	// Get the color's character
 	lineptr = *ptr;
 	ch      = *lineptr++;
+
+        if (chars_per_color > 1) ch = (ch << 8) | *lineptr++;
 
 	// Get the color value...
 	if ((lineptr = strstr(lineptr, "c ")) == NULL) {
@@ -516,17 +514,18 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
     }
 
     // Read the image data...
-    for (y = 0; y < img->h(); y ++, ptr ++)
-    {
+    for (y = 0; y < img->h(); y ++, ptr ++) {
       lineptr = *ptr;
       startx  = 0;
       ch      = bg;
 
-      for (x = 0; x < img->w(); x ++, lineptr ++)
-	if (*lineptr != ch)
-	{
-	  if (ch != bg)
-	  {
+      for (x = 0; x < img->w(); x ++) {
+	newch = *lineptr++;
+
+        if (chars_per_color > 1) newch = (newch << 8) | *lineptr++;
+
+	if (newch != ch) {
+	  if (ch != bg) {
             add_color(colors[ch]);
 	    add(POLYGON);
 	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
@@ -536,12 +535,12 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 	    add(END);
           }
 
-	  ch     = *lineptr;
+	  ch     = newch;
 	  startx = x;
 	}
+      }
 
-      if (ch != bg)
-      {
+      if (ch != bg) {
 	add_color(colors[ch]);
 	add(POLYGON);
 	add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
@@ -551,6 +550,9 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 	add(END);
       }
     }
+
+    // Free the colormap...
+    delete[] colors;
   }
 
   img->release();
@@ -923,5 +925,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.5 2001/12/05 00:06:41 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.6 2001/12/05 00:19:26 easysw Exp $".
 //
