@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.6 2004/03/11 05:17:12 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.7 2004/04/06 02:47:26 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,10 @@
 void Fl_Scroll::clear() {
   for (int i=children() - 1; i >= 0; i --) {
     Fl_Widget* o = child(i);
-    if (o != &hscrollbar && o != &scrollbar) delete o;
+    if (o != &hscrollbar && o != &scrollbar) {
+      remove(o);
+      delete o;
+    }
   }
 }
 
@@ -268,5 +271,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.6 2004/03/11 05:17:12 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.7 2004/04/06 02:47:26 easysw Exp $".
 //

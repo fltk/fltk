@@ -2,6 +2,10 @@ CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
 	  STR #281)
+	- FLUID crashed if you did layout with a window widget
+	  (STR #317)
+	- Fl_Scroll::clear() didn't remove the child widget from
+	  the Fl_Scroll widget (STR #327)
 	- Fl_Value_Slider::draw_bg() didn't always apply the
 	  clipping rectangle (STR #235)
 	- fl_filename_relative() returned the wrong string if
