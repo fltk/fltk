@@ -1,3 +1,171 @@
+CHANGES SINCE FLTK 1.0.9
+
+	- Disabled the WIN32 async socket select code by default:
+	  it doesn't seem to work anymore...
+
+	- Fl::below_mouse() was incorrectly clearing e_is_click;
+	  this prevented any double-clicks from getting
+	  through...
+
+	- No longer clear Fl::keysym on every event, this makes
+	  better back compatability and fixes Win2000
+
+	- Fluid now restores which tab in an Fl_Tabs was
+	  selected when loads .fl files.
+
+	- Hack to fix the annoying "raise another application
+	  when a modal window is closed" problem on WIN32.
+
+	- Fl_Tabs now draws the background behind the tabs.
+
+	- Fl::set_fonts() on WIN32 fixed to work before the
+	  first window is shown.
+
+	- CUA function keys, code submitted by George Yohng
+	  <yohng@drivex.dosware.8m.com>
+
+	- Another attempt to get glut.h to work on WIN32.
+
+	- Fl_Menu_::add() ignores '&' signs when comparing menu
+	  items, so you don't have to make the shortcuts the
+	  same all the time.
+
+	- Fixed bit-flipping patterns in WIN32 bitmap code.
+
+	- Fixed size of data written by gif images to .C files
+
+	- Menu titles and buttons in the menubar can be images
+	  (allows it to be used as a toolbar)
+
+	- Reads selectBackground from the xrdb database to set
+	  the selection color. Adding this to your .Xdefaults
+	  will make fltk and Motif programs look much more
+	  Windoze-like:
+
+	      *selectForeground: white
+	      *selectBackground: #000080
+
+	- FL_WHEN_RELEASE on Fl_Input will now do the callback
+	  when the input field is hidden, for instance when it
+	  is on a tab and the user switches to another tab.
+
+	- Fl_Gl_Window with an overlay on X always resized any
+	  child windows even if you turned resizable() off
+	  because it turned it back on to resize the overlay
+	  window. This patch avoids changing resizable().
+
+	- Fix so multiple Fl::add_idle() calls works
+
+	- The input focus got messed up if you called
+	  Fl_Tabs::value(x) and there was something that took
+	  focus on an earlier tab.
+
+	- Removed some (not all) of the warnings when compiled
+	  with -Wwrite-strings, this should also get similar
+	  warnings Solaris produces.
+
+	- Made Fl_Browser not hide the Fl_Widget::show() method
+
+	- Changes & additions for OS/2 from Alexander Mai
+
+	- Patch from Mike Lindner to make the turning on/off of
+	  scrollbars on Fl_Scroll smarter.
+
+	- Added missing FL_EXPORT for Fl_Valuator::format()
+
+	- Shortcuts for "buttons" in a Fl_Menu_Bar work again.
+
+	- Fix for cut/paste support and Xdnd.
+
+	- Shortcuts for submenu titles in a menubar pop up the
+	  submenu (rather than calling the callback)
+
+	- Added documentation for GL_SWAP_TYPE
+
+	- Buttons with box(FL_NO_BOX) did not draw.  Apparently
+	  they did in older versions of fltk, I restored this.
+	  (bug 108771)
+
+	- Removed 8-bit colormap drawing code that was not doing
+	  anything in fl_draw_image due to the colormap
+	  allocation changes.  I also made fl_color(r,g,b)
+	  actually allocate the requested color rather than the
+	  nearest fltk color-cube color (this is only done for
+	  the first color that maps to a given entry in the fltk
+	  color cube), the result is that pixmaps with a small
+	  number of colors are drawn much more accurately. The
+	  resulting code seems to produce better images and is a
+	  good deal smaller!
+
+	- Fixed makeinclude.in so CFLAGS are used for c source
+	  code instead of CXXFLAGS. (bug 108694)
+
+	- Better fix for gif files suggested by pauly (bug
+	  108770)
+
+	- Performance of Fl_Gl_Window may be improved on some
+	  types of OpenGL implementations, in particular MESA
+	  or other software emulators, by setting the
+	  GL_SWAP_TYPE environment variable.  This variable
+	  declares what is in the back buffer after you do a
+	  swapbuffers:
+
+	      setenv GL_SWAP_TYPE COPY
+
+	      This indicates that the back buffer is copied to
+	      the front buffer, and still contains it's old
+	      data. This is true of many hardware
+	      implementations.  Setting this will speed up
+	      emulation of overlays, and widgets that can do
+	      partial update can take advantage of this as
+	      damage() will not be cleared to -1.
+
+	      setenv GL_SWAP_TYPE NODAMAGE
+
+	      This indicates that nothing changes the back
+	      buffer except drawing into it.  This is true of
+	      MESA and Win32 software emulation and perhaps some
+	      hardware emulation on systems with lots of memory.
+
+	  All other values for GL_SWAP_TYPE, and not setting
+	  the variable, cause fltk to assumme that the back
+	  buffer must be completely redrawn after a swap.
+
+	  This is easily tested by running the gl_overlay demo
+	  program and seeing if the display is correct when
+	  you drag another window over it or if you drag the
+	  window off the screen and back on. You have to exit
+	  and run the program again for it to see any changes
+	  to the environment variable.
+
+	- Optimized colormap usage on 8-bit displays with
+	  images. New code only allocates colors as they are
+	  needed (still converts indexed images to full RGB and
+	  dithers, tho...)
+
+	- Fixed .gif files in fluid, they were broken by the fix
+	  for large .xpm files in version 1.0.9.
+
+	- Fix for OpenGL hardware overlays with the transparent
+	  index != 0. Tested on the brand new HP Linux
+	  Workstations, this is the only bug encountered.  Both
+	  X and OpenGL hardware overlay works perfectly on
+	  these, though configue may not enable it by
+	  default...)
+
+	- Fl_Choice and all other Fl_Menu_ subclasses draw the
+	  items using textcolor() as the default color of the
+	  text.
+
+	- Fix suggested by Stuart Levy to fix scrolling when
+	  deleting items from the browser.
+
+	- Replaced the -$(MAKEFLAGS) with $(MFLAGS) as per the
+	  gmake documenation.  Apperntly this works with other
+	  make programs and MAKEFLAGS is passed invisibly by
+	  gmake, though the documenation is not too clear...
+
+
 CHANGES SINCE FLTK 1.0.8
 
 	- More documentation fixes.
