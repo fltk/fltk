@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.18 2003/05/16 02:19:46 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.19 2003/05/18 22:12:21 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -283,8 +283,8 @@ int Fl::reload_scheme() {
 
     set_boxtype(FL_UP_BOX,          FL_PLASTIC_UP_BOX);
     set_boxtype(FL_DOWN_BOX,        FL_PLASTIC_DOWN_BOX);
-    set_boxtype(FL_THIN_UP_BOX,     FL_PLASTIC_UP_BOX);
-    set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_DOWN_BOX);
+    set_boxtype(FL_THIN_UP_BOX,     FL_PLASTIC_THIN_UP_BOX);
+    set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_PLASTIC_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_UP_BOX);
   } else {
@@ -320,5 +320,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.18 2003/05/16 02:19:46 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.19 2003/05/18 22:12:21 easysw Exp $".
 //

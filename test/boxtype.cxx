@@ -1,5 +1,5 @@
 //
-// "$Id: boxtype.cxx,v 1.4.2.3.2.3 2003/01/30 21:44:56 easysw Exp $"
+// "$Id: boxtype.cxx,v 1.4.2.3.2.4 2003/05/18 22:12:24 easysw Exp $"
 //
 // Boxtype test program for the Fast Light Tool Kit (FLTK).
 //
@@ -30,9 +30,9 @@
 #include <FL/Fl_Box.H>
 
 int N = 0;
-#define W 150
+#define W 200
 #define H 50
-#define ROWS 9
+#define ROWS 10
 
 Fl_Window *window;
 
@@ -86,12 +86,15 @@ int main(int argc, char ** argv) {
   bt("FL_PLASTIC_DOWN_BOX",FL_PLASTIC_DOWN_BOX);
   bt("FL_PLASTIC_UP_FRAME",FL_PLASTIC_UP_FRAME);
   bt("FL_PLASTIC_DOWN_FRAME",FL_PLASTIC_DOWN_FRAME);
+  bt("FL_PLASTIC_THIN_UP_BOX",FL_PLASTIC_THIN_UP_BOX);
+  bt("FL_PLASTIC_THIN_DOWN_BOX",FL_PLASTIC_THIN_DOWN_BOX);
   window->resizable(window);
   window->end();
-  window->show(argc,argv);
+//  window->show(argc,argv);
+  window->show();
   return Fl::run();
 }
 
 //
-// End of "$Id: boxtype.cxx,v 1.4.2.3.2.3 2003/01/30 21:44:56 easysw Exp $".
+// End of "$Id: boxtype.cxx,v 1.4.2.3.2.4 2003/05/18 22:12:24 easysw Exp $".
 //

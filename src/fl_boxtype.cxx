@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.12 2003/01/30 21:43:27 easysw Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.13 2003/05/18 22:12:24 easysw Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -226,6 +226,8 @@ static struct {
   {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX,
   {fl_up_frame,		2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME,
   {fl_down_frame,	2,2,4,4,0}, // _FL_PLASTIC_DOWN_FRAME,
+  {fl_up_box,		2,2,4,4,0}, // _FL_PLASTIC_THIN_UP_BOX,
+  {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_THIN_DOWN_BOX,
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+0
   {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+1
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+2
@@ -295,5 +297,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.12 2003/01/30 21:43:27 easysw Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.13 2003/05/18 22:12:24 easysw Exp $".
 //
