@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.3 1999/09/16 05:34:25 bill Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.4 1999/10/14 04:56:08 bill Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -150,9 +150,11 @@ void Fl_Gl_Window::make_current() {
 }
 
 void Fl_Gl_Window::ortho() {
+  int p[2];
+  glGetIntegerv(GL_MAX_VIEWPORT_DIMS, p);
   glLoadIdentity();
-  glViewport(0, 0, w(), h());
-  glOrtho(0, w(), 0, h(), -1, 1);
+  glViewport(w()-p[0], h()-p[1], p[0], p[1]);
+  glOrtho(w()-p[0], w(), h()-p[1], h(), -1, 1);
 }
 
 void Fl_Gl_Window::swap_buffers() {
@@ -314,5 +316,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.3 1999/09/16 05:34:25 bill Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.4 1999/10/14 04:56:08 bill Exp $".
 //

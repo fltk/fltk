@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.1 1999/04/20 04:43:24 bill Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.2 1999/10/14 04:56:08 bill Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -313,11 +313,18 @@ int Fl_Input::handle(int event) {
     compose = 0;
     if (Fl::event_button() == 2) {
       Fl::paste(*this);
-      if (Fl::focus()==this) return 1; // remove line for Motif behavior
+#ifndef MOTIF // use -DMOTIF for Motif rather than Win32+Motif hybrid
+      if (Fl::focus()==this) return 1;
+#endif
     }
     if (Fl::focus() != this) {
       Fl::focus(this);
       handle(FL_FOCUS); // cause minimal update
+#ifndef MOTIF
+      position(size(),0); // select everything
+      Fl::event_is_click(0); // prevents next click from doing word-select
+      return 1;
+#endif
     }
     break;
 
@@ -337,5 +344,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.1 1999/04/20 04:43:24 bill Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.2 1999/10/14 04:56:08 bill Exp $".
 //
