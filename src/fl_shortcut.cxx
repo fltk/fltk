@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.2 1999/10/14 04:56:09 bill Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.3 2000/02/23 09:14:23 bill Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -73,6 +73,43 @@ int Fl::test_shortcut(int shortcut) {
   return 0;
 }
 
+#ifdef WIN32 // if not X
+// This table must be in numeric order by fltk (X) keysym number:
+struct Keyname {int key; const char* name;};
+static Keyname table[] = {
+  {FL_BackSpace, "Backspace"},
+  {FL_Tab,	"Tab"},
+  {0xff0b/*XK_Clear*/, "Clear"},
+  {FL_Enter,	"Enter"}, // X says "Enter"
+  {FL_Pause,	"Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,	"Escape"},
+  {FL_Home,	"Home"},
+  {FL_Left,	"Left"},
+  {FL_Up,	"Up"},
+  {FL_Right,	"Right"},
+  {FL_Down,	"Down"},
+  {FL_Page_Up,	"Page_Up"}, // X says "Prior"
+  {FL_Page_Down,"Page_Down"}, // X says "Next"
+  {FL_End,	"End"},
+  {FL_Print,	"Print"},
+  {FL_Insert,	"Insert"},
+  {FL_Menu,	"Menu"},
+  {FL_Num_Lock,	"Num_Lock"},
+  {FL_KP_Enter,	"KP_Enter"},
+  {FL_Shift_L,	"Shift_L"},
+  {FL_Shift_R,	"Shift_R"},
+  {FL_Control_L,"Control_L"},
+  {FL_Control_R,"Control_R"},
+  {FL_Caps_Lock,"Caps_Lock"},
+  {FL_Meta_L,	"Meta_L"},
+  {FL_Meta_R,	"Meta_R"},
+  {FL_Alt_L,	"Alt_L"},
+  {FL_Alt_R,	"Alt_R"},
+  {FL_Delete,	"Delete"}
+};
+#endif
+
 const char * fl_shortcut_label(int shortcut) {
   static char buf[20];
   char *p = buf;
@@ -82,20 +119,38 @@ const char * fl_shortcut_label(int shortcut) {
   if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;}
   if (shortcut & FL_CTRL) {strcpy(p,"Ctrl+"); p += 5;}
   int key = shortcut & 0xFFFF;
-#ifdef WIN32
+#ifdef WIN32 // if not X
   if (key >= FL_F && key <= FL_F_Last) {
     *p++ = 'F';
     if (key > FL_F+9) *p++ = (key-FL_F)/10+'0';
     *p++ = (key-FL_F)%10 + '0';
   } else {
-    if (key == FL_Enter || key == '\r') {strcpy(p,"Enter"); return buf;}
-    *p++ = uchar(key);
+    // binary search the table for a match:
+    int a = 0;
+    int b = sizeof(table)/sizeof(*table);
+    while (a < b) {
+      int c = (a+b)/2;
+      if (table[c].key == key) {
+	if (p > buf) {strcpy(p,table[c].name); return buf;}
+	return table[c].name;
+      }
+      if (table[c].key < key) a = c+1;
+      else b = c;
+    }
+    if (key >= FL_KP && key <= FL_KP_Last) {
+      // mark keypad keys with KP_ prefix
+      strcpy(p,"KP_"); p += 3;
+      *p++ = uchar(key & 127);
+    } else {
+      // if none found, use the keystroke as a match:
+      *p++ = uchar(key);
+    }
   }
   *p = 0;
   return buf;
 #else
   const char* q;
-  if (key == FL_Enter || key == '\r') q="Enter"; // don't use Xlib's "Return"
+  if (key == FL_Enter || key == '\r') q="Enter";  // don't use Xlib's "Return":
   else if (key > 32 && key < 0x100) q = 0;
   else q = XKeysymToString(key);
   if (!q) {*p++ = uchar(key); *p = 0; return buf;}
@@ -124,5 +179,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.2 1999/10/14 04:56:09 bill Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.3 2000/02/23 09:14:23 bill Exp $".
 //
