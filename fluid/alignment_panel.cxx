@@ -33,7 +33,7 @@ Fl_Input *i18n_function_input=(Fl_Input *)0;
 
 Fl_Double_Window* make_project_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = project_window = new Fl_Double_Window(365, 208, "Project Settings");
+  { Fl_Double_Window* o = project_window = new Fl_Double_Window(365, 210, "Project Settings");
     w = o;
     { Fl_Button* o = new Fl_Button(295, 175, 60, 25, "Close");
       o->tooltip("Close this dialog.");
@@ -76,7 +76,6 @@ Fl_Double_Window* make_project_window() {
       }
       { Fl_Group* o = new Fl_Group(10, 30, 345, 134, "Internationalization");
         o->labelsize(11);
-        o->hide();
         { Fl_Choice* o = i18n_type_chooser = new Fl_Choice(100, 42, 100, 20, "Use:");
           o->tooltip("Type of internationalization to use.");
           o->box(FL_THIN_UP_BOX);
@@ -118,15 +117,6 @@ Fl_Double_Window* make_project_window() {
           o->textfont(4);
           o->textsize(11);
           o->callback((Fl_Callback*)i18n_text_cb);
-        }
-        o->end();
-      }
-      { Fl_Group* o = new Fl_Group(10, 30, 345, 134, "Copyright");
-        o->labelsize(11);
-        { Fl_Text_Editor* o = new Fl_Text_Editor(15, 35, 335, 124);
-          o->labelsize(11);
-          o->textfont(4);
-          o->textsize(11);
         }
         o->end();
       }

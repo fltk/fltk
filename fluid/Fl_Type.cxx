@@ -60,6 +60,7 @@ static Fl_Pixmap	lock_pixmap(lock_xpm);
 #include "pixmaps/flFunction.xpm"
 #include "pixmaps/flCode.xpm"
 #include "pixmaps/flCodeBlock.xpm"
+#include "pixmaps/flComment.xpm"
 #include "pixmaps/flDeclaration.xpm"
 #include "pixmaps/flDeclarationBlock.xpm"
 #include "pixmaps/flClass.xpm"
@@ -106,6 +107,7 @@ static Fl_Pixmap	group_pixmap(flGroup_xpm);
 static Fl_Pixmap	function_pixmap(flFunction_xpm);
 static Fl_Pixmap	code_pixmap(flCode_xpm);
 static Fl_Pixmap	codeblock_pixmap(flCodeBlock_xpm);
+static Fl_Pixmap	comment_pixmap(flComment_xpm);
 static Fl_Pixmap	declaration_pixmap(flDeclaration_xpm);
 static Fl_Pixmap	declarationblock_pixmap(flDeclarationBlock_xpm);
 static Fl_Pixmap	class_pixmap(flClass_xpm);
@@ -151,7 +153,7 @@ Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, 
  &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
  &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	     /* 33..36 */
  &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
- &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, /* 42..45*/ };
+ &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap /* 42..46*/ };
 
 ////////////////////////////////////////////////////////////////
 
@@ -565,7 +567,8 @@ int storestring(const char *n, const char * & p, int nostrip) {
 }
 
 void Fl_Type::name(const char *n) {
-  if (storestring(n,name_)) {
+  int nostrip = is_comment();
+  if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
 }
@@ -615,6 +618,7 @@ int Fl_Type::is_group() const {return 0;}
 int Fl_Type::is_window() const {return 0;}
 int Fl_Type::is_code_block() const {return 0;}
 int Fl_Type::is_decl_block() const {return 0;}
+int Fl_Type::is_comment() const {return 0;}
 int Fl_Type::is_class() const {return 0;}
 int Fl_Type::is_public() const {return 1;}
 

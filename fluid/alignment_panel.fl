@@ -12,7 +12,7 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {4 21 365 210} type Double
+    xywh {312 395 365 210} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -21,7 +21,7 @@ Function {make_project_window()} {open
       callback {project_window->hide();}
       tooltip {Close this dialog.} xywh {295 175 60 25}
     }
-    Fl_Tabs {} {open
+    Fl_Tabs {} {open selected
       xywh {10 10 345 154} labelsize 11
     } {
       Fl_Group {} {
@@ -52,7 +52,7 @@ Function {make_project_window()} {open
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 30 345 134} labelsize 11 hide
+        xywh {10 30 345 134} labelsize 11
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
@@ -91,14 +91,6 @@ Function {make_project_window()} {open
           label {Function:}
           callback i18n_text_cb
           tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 92 245 20} box THIN_DOWN_BOX labelsize 11 textfont 4 textsize 11
-        }
-      }
-      Fl_Group {} {
-        label Copyright open
-        xywh {10 30 345 134} labelsize 11
-      } {
-        Fl_Text_Editor {} {selected
-          xywh {20 40 325 114} labelsize 11 textfont 4 textsize 11
         }
       }
     }

@@ -29,7 +29,6 @@ extern Fl_Input *i18n_include_input;
 extern Fl_Input *i18n_file_input;
 extern Fl_Input *i18n_set_input;
 extern Fl_Input *i18n_function_input;
-#include <FL/Fl_Text_Editor.H>
 Fl_Double_Window* make_project_window();
 extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern void i18n_cb(Fl_Choice *,void *);

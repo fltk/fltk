@@ -125,6 +125,7 @@ public:
   virtual int is_window() const;
   virtual int is_code_block() const;
   virtual int is_decl_block() const;
+  virtual int is_comment() const;
   virtual int is_class() const;
   virtual int is_public() const;
 
@@ -211,6 +212,21 @@ public:
   int is_decl_block() const {return 1;}
   virtual int is_public() const;
   int pixmapID() { return 11; }
+};
+
+class Fl_Comment_Type : public Fl_Type {
+  char in_c_, in_h_, style_;
+public:
+  Fl_Type *make();
+  void write_code1();
+  void write_code2();
+  void open();
+  virtual const char *type_name() {return "comment";}
+  void write_properties();
+  void read_property(const char *);
+  virtual int is_public() const { return 1; }
+  virtual int is_comment() const { return 1; }
+  int pixmapID() { return 46; }
 };
 
 class Fl_Class_Type : public Fl_Type {

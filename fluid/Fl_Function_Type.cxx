@@ -24,6 +24,8 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/Fl_Preferences.H>
+#include <FL/fl_file_chooser.H>
 #include "Fl_Type.h"
 #include <FL/fl_show_input.H>
 #include "../src/flstring.h"
@@ -640,6 +642,205 @@ void Fl_DeclBlock_Type::write_code2() {
      write_h("%s\n", c);
   write_c("%s\n", c);
 }
+
+////////////////////////////////////////////////////////////////
+
+Fl_Type *Fl_Comment_Type::make() {
+  Fl_Type *p = Fl_Type::current;
+  while (p && !p->is_code_block()) p = p->parent;
+  Fl_Comment_Type *o = new Fl_Comment_Type();
+  o->in_c_ = 1;
+  o->in_h_ = 1;
+  o->style_ = 0;
+  o->name("my comment");
+  o->add(p);
+  o->factory = this;
+  return o;
+}
+
+void Fl_Comment_Type::write_properties() {
+  Fl_Type::write_properties();
+  if (in_c_) write_string("in_source"); else write_string("not_in_source"); 
+  if (in_h_) write_string("in_header"); else write_string("not_in_header");
+}
+
+void Fl_Comment_Type::read_property(const char *c) {
+  if (!strcmp(c,"in_source")) {
+    in_c_ = 1;
+  } else if (!strcmp(c,"not_in_source")) {
+    in_c_ = 0;
+  } else if (!strcmp(c,"in_header")) {
+    in_h_ = 1;
+  } else if (!strcmp(c,"not_in_header")) {
+    in_h_ = 0;
+  } else {
+    Fl_Type::read_property(c);
+  }
+}
+
+#include "comments.h"
+
+static void load_comments_preset(Fl_Preferences &menu) {
+  static char *predefined_comment[] = {
+    "GNU Public License/GPL Header",  "GNU Public License/GPL Footer",
+    "GNU Public License/LGPL Header", "GNU Public License/LGPL Footer",
+    "FLTK/Header", "FLTK/Footer" };
+  int i;
+  menu.set("n", 6);
+  Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+  for (i=0; i<6; i++) {
+    menu.set(Fl_Preferences::Name(i), predefined_comment[i]);
+    db.set(predefined_comment[i], comment_text[i]);
+  }
+}
+
+void Fl_Comment_Type::open() {
+  if (!comment_panel) make_comment_panel();
+  const char *text = name();
+  {
+    int i=0, n=0;
+    Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
+    comment_predefined->clear();
+    comment_predefined->add("_Edit/Add current comment...");
+    comment_predefined->add("_Edit/Remove last selection...");
+    menu.get("n", n, -1);
+    if (n==-1) load_comments_preset(menu);
+    menu.get("n", n, 0);
+    for (i=0;i<n;i++) {
+      char *text;
+      menu.get(Fl_Preferences::Name(i), text, "");
+      comment_predefined->add(text);
+      free(text);
+    }
+  }
+  comment_input->buffer()->text( text ? text : "" );
+  comment_in_source->value(in_c_);
+  comment_in_header->value(in_h_);
+  comment_panel->show();
+  const char* message = 0;
+  char itempath[256]; itempath[0] = 0;
+  int last_selected_item = 0;
+  for (;;) { // repeat as long as there are errors
+    if (message) fl_alert(message);
+    for (;;) {
+      Fl_Widget* w = Fl::readqueue();
+      if (w == comment_panel_cancel) goto BREAK2;
+      else if (w == comment_panel_ok) break;
+      else if (w == comment_predefined) {
+        if (comment_predefined->value()==1) {
+          // add the current comment to the database
+          const char *xname = fl_input(
+            "Please enter a name to reference the current\ncomment in your database.\n\n"
+            "Use forward slashes '/' to create submenus.", 
+            "My Comment");
+          if (xname) {
+            char *name = strdup(xname);
+            for (char*s=name;*s;s++) if (*s==':') *s = ';';
+            int n;
+            Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+            db.set(name, comment_input->buffer()->text());
+            Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
+            menu.get("n", n, 0);
+            menu.set(Fl_Preferences::Name(n), name);
+            menu.set("n", ++n);
+            comment_predefined->add(name);
+            free(name);
+          }
+        } else if (comment_predefined->value()==2) {
+          // remove the last selected comment from the database
+          if (itempath[0]==0 || last_selected_item==0) {
+            fl_message("Please select an entry form this menu first.");
+          } else if (fl_ask("Are you sure that you want to delete the entry\n\"%s\"\nfrom the database?", itempath)) {
+            Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+            db.deleteEntry(itempath);
+            comment_predefined->remove(last_selected_item);
+            Fl_Preferences menu(Fl_Preferences::USER, "fltk.org", "fluid_comments_menu");
+            for (int i=4, n=0; i<comment_predefined->size(); i++) {
+              const Fl_Menu_Item *mi = comment_predefined->menu()+i;
+              if (comment_predefined->item_pathname(itempath, 255, mi)==0) {
+                if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
+                if (itempath[0]) menu.set(Fl_Preferences::Name(n++), itempath);
+              }
+            }
+            menu.set("n", n);
+          }
+        } else {
+          // load the selected comment from the database
+          if (comment_predefined->item_pathname(itempath, 255)==0) {
+            if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
+            Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
+            char *text; 
+            db.get(itempath, text, "(no text found in data base)");
+            comment_input->buffer()->text(text);
+            free(text);
+            last_selected_item = comment_predefined->value();
+          }
+        }
+      }
+      else if (w == comment_load) {
+        // load a comment from disk
+        const char *fname = fl_file_chooser("Pick a comment", 0L, 0L);
+        if (fname) {
+          if (comment_input->buffer()->loadfile(fname)) {
+            fl_alert("Error loading file\n%s", fname);
+          }
+        }
+      }
+      else if (!w) Fl::wait();
+    }
+    char*c = comment_input->buffer()->text();
+    name(c);
+    free(c);
+    in_c_ = comment_in_source->value();
+    in_h_ = comment_in_header->value();
+    break;
+  }
+ BREAK2:
+  comment_panel->hide();
+}
+
+Fl_Comment_Type Fl_Comment_type;
+
+void Fl_Comment_Type::write_code1() {
+  const char* c = name();
+  if (!c) return;
+  if (!in_c_ && !in_h_) return;
+  // find out if there is already a valid comment:
+  const char *s = c;
+  while (isspace(*s)) s++;
+  // if this seems to be a C style comment, copy the block as is
+  // (it's up to the user to correctly close the comment)
+  if (s[0]=='/' && s[1]=='*') {
+    if (in_h_) write_h("%s\n", c);
+    if (in_c_) write_c("%s\n", c);
+    return;
+  }
+  // copy the comment line by line, add the double slash if needed
+  char *txt = strdup(c);
+  char *b = txt, *e = txt;
+  for (;;) {
+    // find the end of the line and set it to NUL
+    while (*e && *e!='\n') e++;
+    char eol = *e;
+    *e = 0;
+    // check if there is a C++ style comment at the beginning of the line
+    char *s = b;
+    while (isspace(*s)) s++;
+    if (s!=e && ( s[0]!='/' || s[1]!='/') ) {
+      // if no comment marker was found, we add one ourselves
+      if (in_h_) write_h("// ");
+      if (in_c_) write_c("// ");
+    }
+    // now copy the rest of the line
+    if (in_h_) write_h("%s\n", b);
+    if (in_c_) write_c("%s\n", b);
+    if (eol==0) break;
+    *e++ = eol;
+    b = e;
+  }
+}
+
+void Fl_Comment_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
 
