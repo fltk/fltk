@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- Fixed a bug in the Xft support in Fl_Window::hide()
+	  (the config header wasn't included, so the Xft code
+	  wasn't getting called)
+	- Xdbe support must now be enabled explicitly using
+	  --enable-xdbe due to inconsistent bugs in XFree86 and
+	  others.
 	- Windows resized by a program would revert to their
 	  original size when moved under WIN32.
 	- Cygwin can only compile the new WIN32 drag-n-drop code

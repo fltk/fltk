@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.23 2002/03/09 21:33:54 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.24 2002/04/10 16:26:33 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,7 @@
 #include <FL/Fl_Tooltip.H>
 #include <ctype.h>
 #include <stdlib.h>
-#include <string.h>
+#include "flstring.h"
 
 
 //
@@ -889,5 +889,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.23 2002/03/09 21:33:54 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.24 2002/04/10 16:26:33 easysw Exp $".
 //

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.58 2002/04/09 20:36:27 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.59 2002/04/10 16:26:33 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -35,7 +35,7 @@ dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
 FL_PATCH_VERSION=0
-FL_RELEASE_VERSION=b12
+FL_RELEASE_VERSION=b13
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)
@@ -181,7 +181,7 @@ AC_SUBST(GLDSONAME)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support])
 
-AC_ARG_WITH(optim, [  --with-optim=\"flags\"    use custom optimization flags])
+AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
 
 dnl Find commands...
 AC_PROG_CC
@@ -202,7 +202,11 @@ dnl How do we make libraries?
 AC_PROG_RANLIB
 AC_PATH_PROG(AR, ar)
 
-if test "$RANLIB" != ":"; then
+if test "x$AR" = "x:"; then
+    AC_MSG_ERROR(Configure could not find the library archiver, aborting.)
+fi
+
+if test "x$RANLIB" != "x:"; then
     LIBCOMMAND="$AR cr"
 else
     LIBCOMMAND="$AR crs"
@@ -444,11 +448,12 @@ case $uname in
 		    LIBS="-lXft $LIBS"))
 	fi
 
-	dnl Check for the Xdbe extension...
-	AC_CHECK_HEADER(X11/extensions/Xdbe.h,
-	    if test "$uname" != "SunOS"; then
-        	AC_DEFINE(HAVE_XDBE)
-	    fi)
+	dnl Check for the Xdbe extension unless disabled...
+        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [default=no]])
+
+	if test x$enable_xdbe = xyes; then
+	    AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE))
+	fi
 
 	dnl Check for overlay visuals...
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,
@@ -707,5 +712,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.58 2002/04/09 20:36:27 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.59 2002/04/10 16:26:33 easysw Exp $".
 dnl
