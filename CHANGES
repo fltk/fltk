@@ -1,9 +1,10 @@
 CHANGES IN FLTK 1.1.5rc2
 
-	- first Menu Item in a list would not go invisible 
+	- Documentation updates (STR #365, STR #399, STR #412)
+	- The configure script now offers options for JPEG, PNG,
+	  and ZLIB libraries (STR #416)
+	- The first menu item in a list would not go invisible 
 	  (STR #406)
-	- Documaentation fix (STR #412)
-	- Documentation updates (STR #365, STR #399)
 	- Fl_Text_Buffer::replace() now range checks its input
 	  (STR #385)
 	- FLTK now builds with the current release of MinGW (STR
