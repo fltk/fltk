@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.6 1999/05/11 09:39:29 bill Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.7 1999/11/19 08:44:43 bill Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -229,8 +229,10 @@ int Fl_Browser::item_height(void* lv) const {
 	case 'b': font = (Fl_Font)(font|FL_BOLD); break;
 	case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
 	case 'f': case 't': font = FL_COURIER; break;
-	case 'S': size = strtol(str,&str,10); break;
+	case 'B':
+	case 'C': strtol(str, &str, 10); break;// skip a color number
 	case 'F': font = (Fl_Font)strtol(str,&str,10); break;
+	case 'S': size = strtol(str,&str,10); break;
 	case 0: case '@': str--;
 	case '.': goto END_FORMAT;
 	}
@@ -277,9 +279,10 @@ int Fl_Browser::item_width(void* v) const {
     case 'b': font = (Fl_Font)(font|FL_BOLD); break;
     case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
     case 'f': case 't': font = FL_COURIER; break;
-    case 'S':
-      size = strtol(str, &str, 10);
-      break;
+    case 'B':
+    case 'C': strtol(str, &str, 10); break;// skip a color number
+    case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
+    case 'S': size = strtol(str, &str, 10); break;
     case '.':
       done = 1;
     case '@':
@@ -488,5 +491,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.6 1999/05/11 09:39:29 bill Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.7 1999/11/19 08:44:43 bill Exp $".
 //
