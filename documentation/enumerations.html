@@ -59,6 +59,17 @@ is released and the value changes. </LI>
 <LI><TT>FL_WHEN_ENTER_KEY_ALWAYS</TT> - Do the callback when the user 
  presses the ENTER key, even if the value doesn't change. </LI>
 </UL>
+<H2><A NAME="button_values">Fl::event_button() Values</A></H2>
+
+<P>The following constants define the button numbers for <TT>FL_PUSH</TT> and
+<TT>FL_RELEASE</TT> events:
+
+<UL>
+	<LI><TT>FL_LEFT_MOUSE</TT> - the left mouse button
+	<LI><TT>FL_MIDDLE_MOUSE</TT> - the middle mouse button
+	<LI><TT>FL_RIGHT_MOUSE</TT> - the right mouse button
+</UL>
+
 <H2><A NAME="key_values">Fl::event_key() Values</A></H2>
  The following constants define the non-ASCII keys on the keyboard for <TT>
 FL_KEYBOARD</TT> and <TT>FL_SHORTCUT</TT> events: 
@@ -180,7 +191,7 @@ In addition there are two inline functions to allow you to select
 grays or colors from the FLTK colormap:
 
 <p><b>Fl_Color fl_gray_ramp(int i)</b>
-<br>Returs a gray color.  Returns black for zero, returns white for
+<br>Returns a gray color.  Returns black for zero, returns white for
 <tt>FL_NUM_GRAY</tt> (which is 24) minus 1.  To get the closest to an
 8-bit gray value 'I' use
 <tt>fl_gray_ramp(I*FL_NUM_GRAY/256)</tt>

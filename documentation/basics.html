@@ -65,8 +65,8 @@ better and can be used with the "optimized for speed" setting.</P>
 program must include a header file for each FLTK class it uses. 
  Listing 1 shows a simple &quot;Hello, World!&quot; program that uses FLTK to 
 display the window. 
-<UL><I>Listing 1 - &quot;hello.cxx&quot;</I>
-<BR>&nbsp; 
+<UL>
+<P><I>Listing 1 - &quot;hello.cxx&quot;</I>
 <PRE>
 #include &lt;FL/Fl.H&gt;
 #include &lt;FL/Fl_Window.H&gt;
@@ -123,7 +123,7 @@ program by closing the window or pressing the ESCape key.
  most widgets the arguments to the constructor are:
 <UL>
 <PRE>
-Fl_Widget(x, y, width, height)
+Fl_Widget(x, y, width, height, label)
 </PRE>
 </UL>
 <P>The <TT>x</TT> and <TT>y</TT> parameters determine where the widget 
@@ -135,9 +135,9 @@ of the widget or window in pixels.  The maximum widget size is
 typically governed by the underlying window system or hardware. </P>
 <p><tt>label</tt> is a pointer to a character string to label the
 widget with or <tt>NULL</tt>. If not specified the label defaults to
-<tt>NULL</tt>.  The label string must be in static storage (such as a
-string constant) because FLTK does not make a copy of it (it just uses
-the pointer).
+<tt>NULL</tt>.  The label string must be in static storage such as a
+string constant because FLTK does not make a copy of it - it just uses
+the pointer.
 <H3>Get/Set Methods</H3>
 <tt>box-&gt;box(FL_UP_BOX)</tt> sets the type of box the
 Fl_Box draws, changing it from the default of <tt>FL_NO_BOX</tt>, which means 
@@ -150,13 +150,16 @@ Chapter 3</A>.
 short names for get/set methods.  A "set" method is always of the form 
 "void&nbsp;name(type)", and a "get" method is always of the form
 "type&nbsp;name()&nbsp;const".
-<p>Almost all of these set/get pairs are very fast and short inline
+
+<H3>Redrawing After Changing Attributes</H3>
+<p>Almost all of the set/get pairs are very fast, short inline
 functions and thus very efficient.  However, <i>the "set" methods do
-not call redraw()</i>, you have to call it yourself.  This greatly
+not call <TT>redraw()</TT></i> - you have to call it yourself.  This greatly
 reduces code size and execution time.  The only common exception is
-<tt>value()</tt>, this does redraw() if necessary.
+<tt>value()</tt> which calls <TT>redraw()</TT> if necessary.
+
 <H3>Labels</H3>
- All widgets support labels.  In the case of window widgets, the label 
+All widgets support labels.  In the case of window widgets, the label 
 is used for the label in the title bar. Our example program calls the <A href=Fl_Widget.html#Fl_Widget.labelfont>
 <TT>labelfont</TT></A>, <A href=Fl_Widget.html#Fl_Widget.labelsize><TT>
 labelsize</TT></A>, and <A href=Fl_Widget.html#Fl_Widget.labeltype><TT>
@@ -166,9 +169,11 @@ used for the label, which for this example we are using <TT>FL_BOLD</TT>
  and <TT>FL_ITALIC</TT>.  You can also specify typefaces directly. </P>
 <P>The <TT>labelsize</TT> method sets the height of the font in pixels. </P>
 <P>The <TT>labeltype</TT> method sets the type of label.  FLTK supports 
-normal, embossed, shadowed, symbol, and image labels. </P>
+normal, embossed, shadowed, symbol, and image labels internally, and
+more types can be added as desired. </P>
 <P>A complete list of all label options can be found in <A href=common.html#labels>
 Chapter 3</A>. </P>
+
 <H3>Showing the Window</H3>
  The <TT>show()</TT> method shows the widget or window.  For windows 
 you can also provide the command-line arguments to allow users to 
@@ -183,4 +188,6 @@ while (Fl::wait());
 </PRE>
 </UL>
 <TT>Fl::run()</TT> does not return until all of the windows under FLTK 
-control are closed (either by the user or your program). </TT></BODY></HTML>
+control are closed by the user or your program.
+</BODY>
+</HTML>

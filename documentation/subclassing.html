@@ -361,7 +361,7 @@ should call this on all the children if your own damage is equal to
 FL_DAMAGE_CHILD.  Nothing is done if the child is not <TT>visible()</TT>
  or if it is clipped. 
 <H2>Cut and Paste Support</H2>
- FLTK provides routines to cut and paste ASCII text (in the future this 
+ FLTK provides routines to cut and paste 8-bit text (in the future this 
 may be UTF-8) between applications: 
 <UL>
 <LI><A href=functions.html#paste><TT>Fl::paste</TT></A></LI>
@@ -369,10 +369,10 @@ may be UTF-8) between applications:
 <LI><A href=#selection_length><TT>Fl::selection_length</TT></A></LI>
 <LI><A href=functions.html#selection_owner><TT>Fl::selection_owner</TT></A></LI>
 </UL>
- It may be possible to cut/paste non-ASCII data by using <A href=osissues.html#add_handler>
+It may be possible to cut/paste non-text data by using <A href=osissues.html#add_handler>
 <TT>Fl::add_handler()</TT></A>. 
 <H2>Making a subclass of Fl_Window</H2>
- You may want your widget to be a subclass of <TT>Fl_Window</TT>.  This 
+You may want your widget to be a subclass of <TT>Fl_Window</TT>.  This 
 can be useful if your widget wants to occupy an entire window, and can 
 also be used to take advantage of system-provided clipping, or to work 
 with a library that expects a system window ID to indicate where to 

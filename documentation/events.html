@@ -3,16 +3,23 @@
  This chapter discusses the FLTK event model and how to handle events 
 in your program or widget. 
 <H2>The FLTK Event Model</H2>
- Events are identified by the integer argument passed to the <A href=functions.html#handle>
-<TT>Fl_Widget::handle()</TT></A> virtual method. Other information 
-about the most recent event is stored in static locations and acquired 
-by calling the <A href=#event_xxx><TT>Fl::event_*()</TT></A> methods. 
-This static information remains valid until the next event is read from 
-window system (i.e. it is ok to look at it outside of the <TT>handle()</TT>
- method). 
+
+<P>Every time a user moves the mouse pointer, clicks a button, or presses
+a key, an event is generated and sent to your application. Events can also
+come from other programs like the window manager.
+
+<P>Events are identified by the integer argument passed to the
+<A href=functions.html#handle> <TT>Fl_Widget::handle()</TT></A> virtual
+method. Other information  about the most recent event is stored in
+static locations and acquired  by calling the <A
+href=#event_xxx><TT>Fl::event_*()</TT></A> methods.  This static
+information remains valid until the next event is read from  window
+system (i.e. it is ok to look at it outside of the <TT>handle()</TT>
+method). 
+
 <H2>Mouse Events</H2>
 <H3>FL_PUSH</H3>
- A mouse button has gone down with the mouse pointing at this widget. 
+A mouse button has gone down with the mouse pointing at this widget. 
 You can find out what button by calling <A href=#event_button><TT>
 Fl::event_button()</TT></A>.  You find out the mouse position by 
 calling <A href=#event_x><TT>Fl::event_x()</TT></A> and <A href=functions.html#event_y>

@@ -50,10 +50,11 @@ behavior.
 <UL>
 <LI><A href=#Fl_Group.end>end</A></LI>
 <LI><A href=#Fl_Group.find>find</A></LI>
-<LI><A href=#Fl_Group.insert>insert</A></LI>
+<LI><A href=#Fl_Group.init_sizes>init_sizes</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Group.insert>insert</A></LI>
 <LI><A href=#Fl_Group.remove>remove</A></LI>
 <LI><A href=#Fl_Group.resizeable>resizable</A></LI>
 </UL>
@@ -76,6 +77,14 @@ that it is destroyed last.
 
 The widget is removed from it's current group (if any) and then added
 to the end of this group.
+
+<H4><A name="Fl_Group.init_sizes">void Fl_Group::init_sizes()</A></H4>
+
+The <TT>Fl_Group</TT> widget keeps track of the original widget sizes and
+positions when resizing occurs so that if you resize a window back to its
+original size the widgets will be in the correct places. If you rearrange
+the widgets in your group, call this method to register the new arrangement
+with the <TT>Fl_Group</TT> that contains them.
 
 <H4><A name=Fl_Group.insert>void Fl_Group::insert(Fl_Widget &amp;w, int n)</A></H4>
 
