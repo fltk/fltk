@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Fixed some OS/2-specific build problems (STR #185)
 	- Calling Fl_Text_Display::buffer() with the same buffer
 	  would cause an application to lockup (STR #196)
 	- Some of the widgets could crash an application if the

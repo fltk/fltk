@@ -1,5 +1,5 @@
 //
-// "$Id: math.h,v 1.4.2.4.2.9 2003/08/02 05:54:43 matthiaswm Exp $"
+// "$Id: math.h,v 1.4.2.4.2.10 2003/11/01 01:44:23 easysw Exp $"
 //
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,10 @@
 #    include <math.h>
 #  endif
 
+#  ifdef __EMX__
+#    include <float.h>
+#  endif
+
 
 #  ifndef M_PI
 #    define M_PI            3.14159265358979323846
@@ -51,10 +55,6 @@
 #    define M_SQRT1_2       0.70710678118654752440
 #  endif // !M_SQRT2
 
-#  ifdef __EMX__
-#    include <float.h>
-#  endif
-
 #  if (defined(WIN32) || defined(CRAY)) && !defined(__MINGW32__) && !defined(__MWERKS__)
 
 inline double rint(double v) {return floor(v+.5);}
@@ -66,5 +66,5 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 
 
 //
-// End of "$Id: math.h,v 1.4.2.4.2.9 2003/08/02 05:54:43 matthiaswm Exp $".
+// End of "$Id: math.h,v 1.4.2.4.2.10 2003/11/01 01:44:23 easysw Exp $".
 //
