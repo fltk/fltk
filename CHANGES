@@ -1,3 +1,8 @@
+CHANGES IN FLTK 1.1.0rc7
+
+	- Fl_Preferences would not find groups inside the root 
+	  group. 
+
 CHANGES IN FLTK 1.1.0
 
 	- Small bug fixes for Fl_Chart, Fl_Scrollbar, Fl_Tabs,
