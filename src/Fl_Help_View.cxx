@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.44 2002/11/19 16:37:34 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.45 2002/12/04 18:14:30 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -833,22 +833,23 @@ Fl_Help_View::format()
     // Setup for formatting...
     initfont(font, fsize);
 
-    line        = 0;
-    links       = 0;
-    xx          = 4;
-    yy          = fsize + 2;
-    ww          = 0;
-    column      = 0;
-    border      = 0;
-    hh          = 0;
-    block       = add_block(value_, xx, yy, hsize_, 0);
-    row         = 0;
-    head        = 0;
-    pre         = 0;
-    talign      = LEFT;
-    newalign    = LEFT;
-    needspace   = 0;
-    linkdest[0] = '\0';
+    line         = 0;
+    links        = 0;
+    xx           = 4;
+    yy           = fsize + 2;
+    ww           = 0;
+    column       = 0;
+    border       = 0;
+    hh           = 0;
+    block        = add_block(value_, xx, yy, hsize_, 0);
+    row          = 0;
+    head         = 0;
+    pre          = 0;
+    talign       = LEFT;
+    newalign     = LEFT;
+    needspace    = 0;
+    linkdest[0]  = '\0';
+    table_offset = 0;
 
     for (ptr = value_, s = buf; *ptr;)
     {
@@ -2730,5 +2731,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.44 2002/11/19 16:37:34 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.45 2002/12/04 18:14:30 easysw Exp $".
 //
