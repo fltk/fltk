@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.11 2002/01/09 21:50:02 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.12 2002/02/19 20:21:10 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -536,7 +536,7 @@ int fl_handle(const XEvent& xevent)
                            0, // used for xy rectangle to not send position inside
                            0, // used for width+height of rectangle
                            accept ? fl_dnd_action : None);
-      return true;
+      return 1;
 
     } else if (message == fl_XdndLeave) {
       fl_dnd_source_window = 0; // don't send a finished message to it
@@ -560,7 +560,7 @@ int fl_handle(const XEvent& xevent)
 	fl_sendClientMessage(fl_dnd_source_window, fl_XdndFinished, to_window);
 	fl_dnd_source_window = 0;
       }
-      return true;
+      return 1;
 
     }
     break;}
@@ -1084,5 +1084,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.11 2002/01/09 21:50:02 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.12 2002/02/19 20:21:10 easysw Exp $".
 //
