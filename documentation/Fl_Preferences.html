@@ -139,7 +139,7 @@ int get(const char *entry, int &amp;value, int defaultValue)<BR>
 int get(const char *entry, float &amp;value, float defaultValue)<BR>
 int get(const char *entry, double &amp;value, double defaultValue )<BR>
 int get(const char *entry, char *&amp;text, const char *defaultValue)<BR>
-int get(const char *entry, char *text, const char *defaultValue, int maxSize)<BR>
+int get(const char *entry, char *text, const char *defaultValue, int maxLength)<BR>
 int get(const char *entry, void *&amp;data, const void *defaultValue, int defaultSize)<BR>
 int get(const char *entry, void *data, const void *defaultValue, int defaultSize,
 int maxSize)</a></H4>
@@ -149,6 +149,7 @@ supplied. The return value indicates if the value was available
 (non-zero) or the default was used (0). If the '<tt>char
 *&amp;text</tt>' or '<tt>void *&amp;data</tt>' form is used, 
 the resulting data must be freed with '<tt>free(value)</tt>'. 
+<P>'<tt>maxLength</tt>' is the maximum length of text that will be read. The text buffer must allow for one additional byte for a trailling zero.
 
 <H4><a name="Fl_Preferences.group">const char
 *Fl_Preferences::group(int ix)</a></H4>

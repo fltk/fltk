@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.14 2002/05/16 20:53:22 matthiaswm Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.15 2002/05/17 21:17:05 matthiaswm Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -700,8 +700,10 @@ Fl_Preferences::RootNode::~RootNode()
     write();
   if ( filename_ ) 
     free( filename_ );
-  delete vendor_;
-  delete application_;
+  if ( vendor_ )
+    free( vendor_ );
+  if ( application_ )
+    free( application_ );
   delete prefs_->node;
 }
 
@@ -795,13 +797,19 @@ Fl_Preferences::Node::~Node()
     nx = nd->next_;
     delete nd;
   }
-  for ( int i = 0; i < nEntry; i++ )
+  if ( entry )
   {
-    delete entry[i].name;
-    delete entry[i].value;
+    for ( int i = 0; i < nEntry; i++ )
+    {
+      if ( entry[i].name ) 
+	free( entry[i].name );
+      if ( entry[i].value )
+	free( entry[i].value );
+    }
+    free( entry );
   }
-  delete[] entry;
-  if ( path_ ) free( path_ );
+  if ( path_ ) 
+    free( path_ );
 }
 
 // recursively check if any entry is dirty (was changed after loading a fresh prefs file)
@@ -881,7 +889,8 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
       if ( !value ) return; // annotation
       if ( strcmp( value, entry[i].value ) != 0 )
       {
-	delete entry[i].value;
+	if ( entry[i].value )
+	  free( entry[i].value );
 	entry[i].value = strdup( value );
 	dirty_ = 1;
       }
@@ -1067,5 +1076,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.14 2002/05/16 20:53:22 matthiaswm Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.15 2002/05/17 21:17:05 matthiaswm Exp $".
 //
