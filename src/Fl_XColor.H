@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_XColor.H,v 1.5 1999/02/16 21:59:51 mike Exp $"
+// "$Id: Fl_XColor.H,v 1.6 1999/02/16 22:27:52 mike Exp $"
 //
 // X-specific color definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -24,6 +24,7 @@
 //
 
 #include <config.h>
+#include <FL/Enumerations.H>
 
 // one of these for each color in fltk's "colormap":
 // if overlays are enabled, another one for the overlay
@@ -39,5 +40,5 @@ extern FL_EXPORT unsigned char fl_redmask, fl_greenmask, fl_bluemask;
 extern FL_EXPORT int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
 
 //
-// End of "$Id: Fl_XColor.H,v 1.5 1999/02/16 21:59:51 mike Exp $".
+// End of "$Id: Fl_XColor.H,v 1.6 1999/02/16 22:27:52 mike Exp $".
 //
