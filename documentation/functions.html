@@ -185,8 +185,8 @@ subexpressions literally. </LI>
 <BR> static void Fl::add_fd(int fd, int when, void (*cb)(int, void *), 
 void * = 0)</A>
 <BR><A name=remove_fd>static void Fl::remove_fd(int)</A></H3>
- Add file descriptor <TT>fd</TT> to listen to.  When the <TT>fd</TT>
- becomes ready for reading the callback is done.  The callback is 
+Add file descriptor <TT>fd</TT> to listen to.  When the <TT>fd</TT>
+becomes ready for reading the callback is done.  The callback is 
 passed the <TT>fd</TT> and the arbitrary <TT>void *</TT> argument. <TT>
 Fl::wait()</TT> will return immediately after calling the callback. 
 <P>The second version takes a <TT>when</TT> bitfield, with the bits <TT>
@@ -214,23 +214,22 @@ zero from its <TT>handle()</TT> method.  Exactly which  ones may change
 in future versions, however. </LI>
 </UL>
 <H3><A name=add_idle>static Fl::add_idle(void (*cb)(void *), void *)</A></H3>
- Adds a callback function that is called by <TT>Fl::wait()</TT> when 
+Adds a callback function that is called by <TT>Fl::wait()</TT> when 
 there is nothing to do. This can be used for background processing. 
 <P><I>Warning: this can absorb all your machine's time!</I></P>
 <P>You can have multiple idle callbacks. To remove an idle callback use <A
 href=#remove_idle><TT>Fl::remove_idle()</TT></A>. </P>
-<P>Only <TT>Fl::wait()</TT> calls the idle callbacks. <TT>Fl::wait(time)</TT>
-, <TT>Fl::check()</TT>, and <TT>Fl::ready()</TT> ignore them so that 
-these functions may be called by the idle callbacks themselves without 
-having to worry about recursion. </P>
+<P><TT>Fl::wait()</TT> and <TT>Fl::check()</TT> call idle callbacks,
+but <TT>Fl::ready()</TT> does not.</P>
 <P>The idle callback can call any FLTK functions.  However if you call 
-something that calls <TT>Fl::wait()</TT> (such as a message pop-up) you 
-should first remove the idle callback so that it does not recurse. </P>
+something that calls <TT>Fl::wait()</TT> or <TT>Fl::check()</TT> (such
+as a message pop-up) you  should first remove the idle callback so that
+it does not recurse. </P>
 <H3><A name=add_timeout>static void Fl::add_timeout(float t, void 
 (*cb)(void *),void *v=0)</A></H3>
- Add a one-shot timeout callback.  The timeout will happen as soon as 
+Add a one-shot timeout callback.  The timeout will happen as soon as 
 possible after <TT>t</TT> seconds after the last time <TT>wait()</TT>
- was called.  The optional <TT>void *</TT> argument is passed to the 
+was called.  The optional <TT>void *</TT> argument is passed to the 
 callback. 
 <P>This code will print &quot;TICK&quot; each second on stdout, no matter what 
 else the user or program does: </P>
