@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.32 2001/11/29 21:50:05 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.33 2001/11/29 22:22:08 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -261,7 +261,7 @@ HLINKS=
 case $uname in
     CYGWIN*)
 	dnl Cygwin environment...
-	LIBS="$LIBS -mwindows -lgdi32 -lwsock32"
+	LIBS="$LIBS -mwindows -lwsock32"
 	CFLAGS="$CFLAGS -mwindows -DWIN32"
 	CXXFLAGS="$CXXFLAGS -mwindows -DWIN32"
 	HLINKS="#"
@@ -580,5 +580,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile FL/Enumerations.H)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.32 2001/11/29 21:50:05 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.33 2001/11/29 22:22:08 easysw Exp $".
 dnl
