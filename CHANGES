@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.7
 
+	- Removed a few warnings when compiling on OS X
 	- Documentation fixes (STR #648, STR #692)
 	- Fl_Menu now draws the arrow more like other toolkits
 	  and 2.0 (STR #651)
