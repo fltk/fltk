@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.10 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.11 2002/01/02 13:49:38 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -314,9 +314,9 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
   fclose(fp);
 
 #ifdef DEBUG
-  p(int)rintf("Icon File \"%s\":\n", fti);
+  printf("Icon File \"%s\":\n", fti);
   for (int i = 0; i < num_data_; i ++)
-    p(int)rintf("    %d,\n", data_[i]);
+    printf("    %d,\n", data_[i]);
 #endif /* DEBUG */
 
   return 0;
@@ -560,9 +560,9 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
   img->release();
 
 #ifdef DEBUG
-  p(int)rintf("Icon File \"%s\":\n", xpm);
+  printf("Icon File \"%s\":\n", xpm);
   for (i = 0; i < num_data_; i ++)
-    p(int)rintf("    %d,\n", data_[i]);
+    printf("    %d,\n", data_[i]);
 #endif // DEBUG
 
   return 0;
@@ -931,5 +931,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.10 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.11 2002/01/02 13:49:38 easysw Exp $".
 //
