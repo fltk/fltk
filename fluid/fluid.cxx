@@ -854,15 +854,15 @@ void manual_cb(Fl_Widget *, void *) {
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 // Draw a shaded box...
-static void win_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c);
+static void win_box(int x, int y, int w, int h) {
+  fl_color(0xc0, 0xc0, 0xc0);
   fl_rectf(x, y, w, h);
-  fl_color(FL_BLACK);
+  fl_color(0, 0, 0);
   fl_rect(x, y, w, h);
-  fl_color(FL_LIGHT2);
+  fl_color(0xf0, 0xf0, 0xf0);
   fl_rectf(x + 1, y + 1, 4, h - 2);
   fl_rectf(x + 1, y + 1, w - 2, 4);
-  fl_color(FL_DARK2);
+  fl_color(0x90, 0x90, 0x90);
   fl_rectf(x + w - 5, y + 1, 4, h - 2);
   fl_rectf(x + 1, y + h - 5, w - 2, 4);
 }
@@ -958,9 +958,11 @@ void print_menu_cb(Fl_Widget *, void *) {
 //             width, length, xdpi, ydpi, num_windows);
 
   HDC	save_dc = fl_gc;
+  HWND	save_win = fl_window;
   int	fontsize = 14 * ydpi / 72;
 
   fl_gc = dialog.hDC;
+  fl_window = (HWND)dialog.hDC;
   fl_push_no_clip();
 
   // Get the time and date...
@@ -976,7 +978,7 @@ void print_menu_cb(Fl_Widget *, void *) {
     StartPage(dialog.hDC);
 
     fl_font(FL_HELVETICA_BOLD, fontsize);
-    fl_color(FL_BLACK);
+    fl_color(0, 0, 0);
 
     fl_draw(basename, 0, fontsize);
 
@@ -1023,38 +1025,37 @@ void print_menu_cb(Fl_Widget *, void *) {
     int yborder = 4 * hh / h;
 
     win_box(ulx - xborder, uly - 5 * yborder,
-            ww + 2 * xborder, hh + 6 * yborder,
-            FL_GRAY);
+            ww + 2 * xborder, hh + 6 * yborder);
 
-    fl_color(FL_BLUE);
+    fl_color(0, 0, 255);
     fl_rectf(ulx, uly - 4 * yborder, ww, 4 * yborder);
 
-    fl_font(FL_HELVETICA_BOLD, 3 * yborder);
-    fl_color(FL_WHITE);
+    fl_font(FL_HELVETICA_BOLD, 2 * yborder);
+    fl_color(255, 255, 255);
     fl_draw(win->label() ? win->label() : "Window",
-            ulx + xborder, uly + yborder);
+            ulx + xborder, uly - 3 * yborder);
 
     int x = ulx + ww - 4 * xborder;
 
-    win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder, FL_GRAY);
-    fl_color(FL_BLACK);
-    fl_line(x + xborder, uly + yborder,
-            x + 3 * xborder, uly + 3 * yborder);
-    fl_line(x + xborder, uly + 3 * yborder,
-            x + 3 * xborder, uly + yborder);
+    win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder);
+    fl_color(0, 0, 0);
+    fl_line(x + xborder, uly - yborder,
+            x + 3 * xborder, uly - 3 * yborder);
+    fl_line(x + xborder, uly - 3 * yborder,
+            x + 3 * xborder, uly - yborder);
     x -= 4 * xborder;
 
     if (win->resizable()) {
-      win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder, FL_GRAY);
-      fl_color(FL_BLACK);
-      fl_rect(x + xborder, uly + yborder, 2 * xborder, 2 * yborder);
+      win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder);
+      fl_color(0, 0, 0);
+      fl_rect(x + xborder, uly - 3 * yborder, 2 * xborder, 2 * yborder);
       x -= 4 * xborder;
     }
 
     if (!win->modal()) {
-      win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder, FL_GRAY);
-      fl_color(FL_BLACK);
-      fl_line(x + xborder, uly + yborder, x + 3 * xborder, uly + yborder);
+      win_box(x, uly - 4 * yborder, 4 * xborder, 4 * yborder);
+      fl_color(0, 0, 0);
+      fl_line(x + xborder, uly - yborder, x + 3 * xborder, uly - yborder);
       x -= 4 * xborder;
     }
 
@@ -1062,13 +1063,15 @@ void print_menu_cb(Fl_Widget *, void *) {
     memset(&info, 0, sizeof(info));
     info.bmiHeader.biSize        = sizeof(info);
     info.bmiHeader.biWidth       = w;
-    info.bmiHeader.biHeight      = -h;
+    info.bmiHeader.biHeight      = 1;
     info.bmiHeader.biPlanes      = 1;
     info.bmiHeader.biBitCount    = 24;
     info.bmiHeader.biCompression = BI_RGB;
 
-    StretchDIBits(dialog.hDC, ulx, uly, ww, hh, 0, 0, w, h, pixels,
-                  &info, DIB_RGB_COLORS, SRCCOPY);
+    for (int y = 0; y < h; y ++) {
+      StretchDIBits(dialog.hDC, ulx, uly + y * hh / h, ww, (hh + h - 1) / h, 0, 0, w, 1,
+                    pixels + y * w * 3, &info, DIB_RGB_COLORS, SRCCOPY);
+    }
 
     delete[] pixels;
 
@@ -1080,6 +1083,7 @@ void print_menu_cb(Fl_Widget *, void *) {
   EndDoc(dialog.hDC);
 
   fl_gc = save_dc;
+  fl_window = save_window;
   fl_pop_clip();
 
   // Free the print DC and return...
