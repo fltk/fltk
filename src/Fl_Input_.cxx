@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.10 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.11 2002/04/16 17:11:11 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -145,8 +145,13 @@ void Fl_Input_::minimal_update(int p) {
   } else {
     mu_p = p;
   }
+
+#if defined(__APPLE__) || USE_XFT
+  redraw();
+#else
   damage(FL_DAMAGE_EXPOSE);
   erase_cursor_only = 0;
+#endif // __APPLE__ || USE_XFT
 }
 
 void Fl_Input_::minimal_update(int p, int q) {
@@ -164,8 +169,8 @@ void Fl_Input_::setfont() const {
 }
 
 void Fl_Input_::drawtext(int X, int Y, int W, int H) {
-
   int do_mu = !(damage()&FL_DAMAGE_ALL);
+
   if (Fl::focus()!=this && !size()) {
     if (do_mu) { // we have to erase it if cursor was there
       fl_color(color());
@@ -864,5 +869,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.10 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.11 2002/04/16 17:11:11 easysw Exp $".
 //

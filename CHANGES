@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- Fixed redraw problem with Fl_Input and anti-aliased
+	  text.
 	- Added threading support for MacOS X and Darwin.
 	- The filesystem list in the file chooser now works under
 	  MacOS X and Darwin.
