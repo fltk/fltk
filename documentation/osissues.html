@@ -580,7 +580,16 @@ internally in the same way.
 
 <P>FLTK does not access the resource fork of an application.
 However, a minimal resource fork must be created for OS 8 and OS
-X applications.
+X applications
+
+<br><br>Caution: when using Unix commands to copy or move executables,
+OS X will NOT copy any resource forks! For copying and moving use CpMac
+and MvMac respectively. For creating a tar archive, all executables
+need to be stripped from their Resource Fork before packing (DeRez fluid >fluid.r).
+After unpacking the Resource Fok needs to be reattached (Rez fluid.r -o fluid).
+
+<br><br>It is advisable to use the Finder for moving and copying and Mac archiving
+tools like Sit for distribution as they will handle the Resource Fork correctly. 
 
 <h4>Mac File Paths</h4>
 
