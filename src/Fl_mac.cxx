@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.8 2001/12/20 05:27:14 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.9 2001/12/20 22:02:25 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -647,7 +647,7 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
   case kEventRawKeyUp:
     if ( !sendEvent ) sendEvent = FL_KEYUP;
     Fl::e_keysym = macKeyLookUp[ keyCode & 0x7f ];
-    if ( key=='\t' || key==27 || ( key>=32 && key!=0x7f )  ) {
+    if ( key=='\t' || key==27 || ( key>=32 && keyCode!=0x75 )  ) {
       buffer[0] = key;
       Fl::e_length = 1;
     } else if ( key==3 || key==0x0d ) {
@@ -860,7 +860,7 @@ static void set_event_xy(const EventRecord &macevent)
 static unsigned short macKeyLookUp[128] = 
 {
  'a', 's', 'd', 'f', 'h', 'g', 'z', 'x', 
- 'c', 'v', 0, 'b', 'q', 'w', 'e', 'r', 
+ 'c', 'v', 0/*ISO extra (u-umlaut?)*/, 'b', 'q', 'w', 'e', 'r', 
  
  'y', 't', '1', '2', '3', '4', '6', '5', 
  '=', '9', '7', '-', '8', '0', ']', 'o', 
@@ -871,16 +871,16 @@ static unsigned short macKeyLookUp[128] =
  FL_Tab, ' ', '`', FL_BackSpace, 0, FL_Escape, 0, 0, 
  0, 0, 0, 0, 0, 0, 0, 0, 
  
- 0, FL_KP+'.', 0, FL_KP+'*', 0, FL_KP+'+', 0, FL_Num_Lock,
- 0, 0, 0, FL_KP+'/', FL_KP_Enter, 0, FL_KP+'-', 0, 
+ 0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
+ FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0, 
  
  0, FL_KP+'=', FL_KP+'0', FL_KP+'1', FL_KP+'2', FL_KP+'3', FL_KP+'4', FL_KP+'5', 
  FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0, 
  
  FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11, 
- 0, 0, 0, 0, 0, FL_F+10, 0, FL_F+12, 
+ 0, 0, FL_F+13, FL_F+14, 0, FL_F+10, 0, FL_F+12, 
  
- 0, 0, FL_Pause, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, 0, 
+ 0, FL_F+15, FL_Pause, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End, 
  FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0, 
 };
 
@@ -1693,6 +1693,6 @@ elapsedNanoseconds = AbsoluteToNanoseconds(elapsedTime);
 //++ we MUST call aglConfigure(AGL_TARGET_OS_MAC_OSX, GL_TRUE);
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.8 2001/12/20 05:27:14 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.9 2001/12/20 22:02:25 matthiaswm Exp $".
 //
 
