@@ -109,8 +109,7 @@ Fl_GIF_Image.o: ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
 Fl_GIF_Image.o: ../FL/x.H ../FL/Fl_Window.H ../config.h flstring.h
 Fl_Group.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Group.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_Group.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Tooltip.H
-Fl_Group.o: ../FL/Fl_Widget.H
+Fl_Group.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Help_Dialog.o: ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/Enumerations.H
 Fl_Help_Dialog.o: ../FL/Fl_Export.H ../FL/Fl_Double_Window.H
 Fl_Help_Dialog.o: ../FL/Fl_Window.H ../FL/Fl_Help_View.H ../FL/Fl.H
@@ -236,10 +235,10 @@ Fl_Tile.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Window.H
 Fl_Tiled_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Tiled_Image.o: ../FL/Fl_Tiled_Image.H ../FL/Fl_Image.H ../FL/x.H
 Fl_Tiled_Image.o: ../FL/Fl_Window.H ../FL/fl_draw.H
-Fl_Tooltip.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Tooltip.o: ../FL/Fl_Tooltip.H ../FL/Fl.H ../FL/Enumerations.H
+Fl_Tooltip.o: ../FL/Fl_Export.H ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_Tooltip.o: ../FL/Fl_Menu_Window.H ../FL/Fl_Single_Window.H
-Fl_Tooltip.o: ../FL/Fl_Window.H ../FL/Fl_Box.H ../FL/Fl_Widget.H
-Fl_Tooltip.o: ../FL/fl_draw.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
+Fl_Tooltip.o: ../FL/Fl_Window.H
 Fl_Valuator.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Valuator.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/math.h
 Fl_Value_Input.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
