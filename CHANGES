@@ -20,6 +20,10 @@ CHANGES IN FLTK 1.1.0b4
 
 	- Miscellaneous compile warning fixes.
 
+	- Tooltips were being reset by Fl::belowmouse(), which
+	  caused problems with the FLUID main window (flashing
+	  tooltip windows and serious problems with KDE 2.2)
+
 
 CHANGES IN FLTK 1.1.0b3
 
