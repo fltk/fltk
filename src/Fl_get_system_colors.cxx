@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.17 2003/01/30 21:43:06 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.18 2003/05/16 02:19:46 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -148,8 +148,8 @@ void Fl::get_system_colors()
   fl_open_display();
 
   foreground(0, 0, 0);
-  background(0xe8, 0xe8, 0xe8);
-  background2(0xf0, 0xf0, 0xf0);
+  background(0xd8, 0xd8, 0xd8);
+  background2(0xff, 0xff, 0xff);
   set_selection_color(0x80, 0x80, 0x80);
 }
 #else
@@ -253,22 +253,23 @@ int Fl::reload_scheme() {
     // Update the tile image to match the background color...
     uchar r, g, b;
     int nr, ng, nb;
+    int i;
+    static uchar levels[3] = { 0xff, 0xef, 0xe8 };
 
     get_color(FL_GRAY, r, g, b);
 
-    nr = 0xf0 * r / 0xe0;
-    if (nr > 255) nr = 255;
+    for (i = 0; i < 3; i ++) {
+      nr = levels[i] * r / 0xd8;
+      if (nr > 255) nr = 255;
 
-    ng = 0xf0 * g / 0xe0;
-    if (ng > 255) ng = 255;
+      ng = levels[i] * g / 0xd8;
+      if (ng > 255) ng = 255;
 
-    nb = 0xf0 * b / 0xe0;
-    if (nb > 255) nb = 255;
+      nb = levels[i] * b / 0xd8;
+      if (nb > 255) nb = 255;
 
-    sprintf(tile_cmap[0], "O c #%02x%02x%02x", nr, ng, nb);
-    sprintf(tile_cmap[1], "o c #%02x%02x%02x", r, g, b);
-    sprintf(tile_cmap[2], ". c #%02x%02x%02x", 0xd8 * (int)r / 0xe0,
-            0xd8 * (int)g / 0xe0, 0xd8 * (int)b / 0xe0);
+      sprintf(tile_cmap[i], "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
+    }
 
     tile.uncache();
 
@@ -319,5 +320,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.17 2003/01/30 21:43:06 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.18 2003/05/16 02:19:46 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Updated the default background color on OSX to provide
+	  better contrast.
 	- Fl_Text_Display and friends now look for the next
 	  non-punctuation/space character for word boundaries
 	  (STR #26)

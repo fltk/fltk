@@ -1,17 +1,14 @@
 /* XPM */
 static char	tile_cmap[3][32] = {
-"O c #F0F0F0",
-"o c #E0E0E0",
-". c #D8D8D8"
+"O c #FFFFFF",
+"o c #EFEFEF",
+". c #E8E8E8"
 };
 static const char * tile_xpm[] = {
 "16 16 3 1",
 tile_cmap[0],
 tile_cmap[1],
 tile_cmap[2],
-"................",
-"oooooooooooooooo",
-"OOOOOOOOOOOOOOOO",
 "oooooooooooooooo",
 "................",
 "oooooooooooooooo",
@@ -24,4 +21,7 @@ tile_cmap[2],
 "................",
 "oooooooooooooooo",
 "OOOOOOOOOOOOOOOO",
-"oooooooooooooooo"};
+"oooooooooooooooo",
+"................",
+"oooooooooooooooo",
+"OOOOOOOOOOOOOOOO"};
