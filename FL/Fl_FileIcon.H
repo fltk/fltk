@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_FileIcon.H,v 1.1 2000/01/08 22:14:13 vincent Exp $"
+// "$Id: Fl_FileIcon.H,v 1.1.2.1 2001/08/02 16:17:04 easysw Exp $"
 //
-// Fl_FileIcon definitions for the Fast Light Tool Kit (FLTK).
+// Fl_FileIcon definitions.
 //
-// Copyright 1997-1999 by Easy Software Products.
+// Copyright 1999-2001 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -20,24 +20,24 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 //
 // Include necessary header files...
 //
 
-#ifndef _FL_FILEICON_H_
-#  define _FL_FILEICON_H_
+#ifndef _Fl_Fl_FileIcon_H_
+#  define _Fl_Fl_FileIcon_H_
 
-#  include <FL/Fl.H>
+#  include "Fl.H"
 
 
 //
 // Fl_FileIcon class...
 //
 
-class FL_API Fl_FileIcon	//// Icon data
+class Fl_FileIcon			//// Icon data
 {
   static Fl_FileIcon *first_;	// Pointer to first icon/filetype
   Fl_FileIcon	*next_;		// Pointer to next icon/filetype
@@ -56,7 +56,7 @@ class FL_API Fl_FileIcon	//// Icon data
     FIFO,			// Only named pipes
     DEVICE,			// Only character and block devices
     LINK,			// Only symbolic links
-    DIR 			// Only directories
+    DIRECTORY			// Only directories
   };
 
   enum				// Data opcodes
@@ -84,7 +84,7 @@ class FL_API Fl_FileIcon	//// Icon data
   void		clear() { num_data_ = 0; }
   void		draw(int x, int y, int w, int h, Fl_Color ic, int active = 1);
   void		label(Fl_Widget *w);
-//  static void	labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a);
+  static void	labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a);
   void		load(const char *f);
   void		load_fti(const char *fti);
   void		load_xpm(const char *xpm);
@@ -98,10 +98,8 @@ class FL_API Fl_FileIcon	//// Icon data
   static void	load_system_icons(void);
 };
 
-//#define _FL_ICON_LABEL	FL_FREE_LABELTYPE
-
-#endif // !_FL_FILEICON_H_
+#endif // !_Fl_Fl_FileIcon_H_
 
 //
-// End of "$Id: Fl_FileIcon.H,v 1.1 2000/01/08 22:14:13 vincent Exp $".
+// End of "$Id: Fl_FileIcon.H,v 1.1.2.1 2001/08/02 16:17:04 easysw Exp $".
 //

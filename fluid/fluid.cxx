@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13 2001/03/15 22:39:56 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.1 2001/08/02 16:17:04 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -181,13 +181,13 @@ void write_cb(Fl_Widget *, void *) {
   char hname[1024];
   strcpy(i18n_program, filename_name(filename));
   filename_setext(i18n_program, "");
-  if (*code_file_name == '.') {
+  if (*code_file_name == '.' && strchr(code_file_name, '/') == NULL) {
     strcpy(cname,filename_name(filename));
     filename_setext(cname, code_file_name);
   } else {
     strcpy(cname, code_file_name);
   }
-  if (*header_file_name == '.') {
+  if (*header_file_name == '.' && strchr(header_file_name, '/') == NULL) {
     strcpy(hname,filename_name(filename));
     filename_setext(hname, header_file_name);
   } else {
@@ -196,7 +196,7 @@ void write_cb(Fl_Widget *, void *) {
   if (!compile_only) goto_source_dir();
   int x = write_code(cname,hname);
   if (!compile_only) leave_source_dir();
-  strcat(cname, "/"); strcat(cname,header_file_name);
+  strcat(cname, " and "); strcat(cname,hname);
   if (compile_only) {
     if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
   } else {
@@ -474,5 +474,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13 2001/03/15 22:39:56 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.1 2001/08/02 16:17:04 easysw Exp $".
 //
