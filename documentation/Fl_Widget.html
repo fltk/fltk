@@ -75,6 +75,7 @@ to call <TT>redraw()</TT> after these. </P>
 <LI><A href=#Fl_Widget.parent>parent</A></LI>
 <LI><A href=#Fl_Widget.position>position</A></LI>
 <LI><A href=#Fl_Widget.redraw>redraw</A></LI>
+<LI><A href=#Fl_Widget.redraw_label>redraw_label</A></LI>
 <LI><A href=#Fl_Widget.resize>resize</A></LI>
 <LI><A href=#Fl_Widget.selection_color>selection_color</A></LI>
 <LI><A href=#Fl_Widget.set_changed>set_changed</A></LI>
@@ -384,6 +385,12 @@ HREF="Fl_Window.html#Fl_Window"><tt>Fl_Window</tt></a>. Returns
 
 <P>Marks the widget as needing its <A
 HREF="subclassing.html#draw"><TT>draw()</TT></A> routine called.
+
+
+<H4><A name=Fl_Widget.redraw_label>void Fl_Widget::redraw_label()</A></H4>
+
+<P>Marks the widget or the parent as needing a redraw for the
+label area of a widget.
 
 
 <H4><A name=Fl_Widget.resize>virtual void

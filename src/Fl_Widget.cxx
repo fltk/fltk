@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.19 2002/07/23 15:07:33 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.20 2002/10/04 15:59:29 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -182,6 +182,7 @@ void Fl_Widget::activate() {
     clear_flag(INACTIVE);
     if (active_r()) {
       redraw();
+      redraw_label();
       handle(FL_ACTIVATE);
       if (inside(Fl::focus())) Fl::focus()->take_focus();
     }
@@ -192,6 +193,7 @@ void Fl_Widget::deactivate() {
   if (active_r()) {
     set_flag(INACTIVE);
     redraw();
+    redraw_label();
     handle(FL_DEACTIVATE);
     fl_throw_focus(this);
   } else {
@@ -210,6 +212,7 @@ void Fl_Widget::show() {
     clear_flag(INVISIBLE);
     if (visible_r()) {
       redraw();
+      redraw_label();
       handle(FL_SHOW);
       if (inside(Fl::focus())) Fl::focus()->take_focus();
     }
@@ -242,5 +245,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.19 2002/07/23 15:07:33 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.20 2002/10/04 15:59:29 easysw Exp $".
 //

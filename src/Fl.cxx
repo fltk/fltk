@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.53 2002/09/20 17:56:56 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.54 2002/10/04 15:59:28 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -855,7 +855,9 @@ void Fl::paste(Fl_Widget &receiver) {
 
 void Fl_Widget::redraw() {
   damage(FL_DAMAGE_ALL);
+}
 
+void Fl_Widget::redraw_label() {
   if (window()) {
     if (box() == FL_NO_BOX) {
       // Widgets with the FL_NO_BOX boxtype need a parent to
@@ -880,7 +882,12 @@ void Fl_Widget::redraw() {
 	window()->damage(FL_DAMAGE_EXPOSE, x() - W, y(), W, h());
       } else if (align() & FL_ALIGN_RIGHT) {
 	window()->damage(FL_DAMAGE_EXPOSE, x() + w(), y(), W, h());
+      } else {
+        damage(FL_DAMAGE_ALL);
       }
+    } else {
+      // The label is inside the widget, so just redraw the widget itself...
+      damage(FL_DAMAGE_ALL);
     }
   }
 }
@@ -960,5 +967,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.53 2002/09/20 17:56:56 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.54 2002/10/04 15:59:28 easysw Exp $".
 //

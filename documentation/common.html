@@ -332,7 +332,7 @@ sign. Figure 3-4 shows the available symbols.</P>
 <I>Figure 3-4: FLTK label symbols</I></A></P>
 
 <P>The @ sign may also be followed by the following optional
-&quot;formatting&quot;  characters, in this order:</P>
+&quot;formatting&quot; characters, in this order:</P>
 
 <UL>
 
@@ -342,11 +342,14 @@ sign. Figure 3-4 shows the available symbols.</P>
 	<LI>+[1-9] or -[1-9] tweaks the scaling a little bigger
 	or smaller.</LI>
 
-	<LI>[1-9] - rotates by a multiple of 45 degrees. '6'
-	does nothing, the others point in the direction of
-	that key on a numeric keypad.</LI>
+	<LI>[1-9] - rotates by a multiple of 45 degrees. '5' and
+	'6' do no rotation while the others point in the
+	direction of that key on a numeric keypad.</LI>
 
 </UL>
+
+<P>Thus, to show a very large arrow pointing downward you would use the
+label string "@+92->".
 
 <H3>align()</H3>
 
