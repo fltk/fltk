@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.9 1999/06/07 07:03:31 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.10 1999/07/22 21:37:03 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -327,19 +327,8 @@ void Fl::belowmouse(Fl_Widget *o) {
   }
 }
 
-// Because mouse events are posted to the outermost window we need to
-// adjust them for child windows if they are pushed().  This should also
-// be done for the focus() but that is nyi.
-static int mouse_dx;
-static int mouse_dy;
-
 void Fl::pushed(Fl_Widget *o) {
   pushed_ = o;
-  mouse_dx = 0;
-  mouse_dy = 0;
-  if (o) for (Fl_Widget* w = o; w->parent(); w = w->parent()) {
-    if (w->type()>=FL_WINDOW) {mouse_dx -= w->x(); mouse_dy -= w->y();}
-  }
 }
 
 Fl_Window *fl_xfocus;	// which window X thinks has focus
@@ -416,6 +405,22 @@ void fl_throw_focus(Fl_Widget *o) {
 
 ////////////////////////////////////////////////////////////////
 
+// Call to->handle but first replace the mouse x/y with the correct
+// values to account for nested X windows. 'window' is the outermost
+// window the event was posted to by X:
+static int send(int event, Fl_Widget* to, Fl_Window* window) {
+  int dx = window->x();
+  int dy = window->y();
+  for (const Fl_Widget* w = to; w; w = w->parent())
+    if (w->type()>=FL_WINDOW) {dx -= w->x(); dy -= w->y();}
+  int save_x = Fl::e_x; Fl::e_x += dx;
+  int save_y = Fl::e_y; Fl::e_y += dy;
+  int ret = to->handle(event);
+  Fl::e_y = save_y;
+  Fl::e_x = save_x;
+  return ret;
+}
+
 int Fl::handle(int event, Fl_Window* window)
 {
   Fl_Widget* w = window;
@@ -438,22 +443,18 @@ int Fl::handle(int event, Fl_Window* window)
   case FL_PUSH:
     if (grab()) w = grab();
     else if (modal() && w != modal()) return 0;
-    pushed_ = w; mouse_dx = mouse_dy = 0;
-    if (w->handle(event)) return 1;
+    pushed_ = w;
+    if (send(event, w, window)) return 1;
     // raise windows that are clicked on:
     window->show();
     return 1;
 
   case FL_MOVE:
   case FL_DRAG:
-    // this should not happen if enter/leave events were reported
-    // correctly by the system, but just in case:
-    fl_xmousewin = window;
+    fl_xmousewin = window; // this should already be set, but just in case.
     if (pushed()) {
       w = pushed();
       event = FL_DRAG;
-      e_x += mouse_dx;
-      e_y += mouse_dy;
     } else if (modal() && w != modal()) {
       w = 0;
     }
@@ -464,11 +465,9 @@ int Fl::handle(int event, Fl_Window* window)
     if (pushed()) {
       w = pushed();
       pushed_ = 0; // must be zero before callback is done!
-      e_x += mouse_dx;
-      e_y += mouse_dy;
     }
     if (grab()) w = grab();
-    int r = w->handle(event);
+    int r = send(event, w, window);
     fl_fix_focus();
     return r;}
 
@@ -481,21 +480,18 @@ int Fl::handle(int event, Fl_Window* window)
     return 1;
 
   case FL_KEYBOARD:
+    fl_xfocus = window; // this should already be set, but just in case.
 
-    // this should not happen if focus/unfocus events were reported
-    // correctly by the system, but just in case:
-    fl_xfocus = window;
     // Try it as keystroke, sending it to focus and all parents:
     for (w = grab() ? grab() : focus(); w; w = w->parent())
-      if (w->handle(FL_KEYBOARD)) return 1;
+      if (send(FL_KEYBOARD, w, window)) return 1;
 
     // recursive call to try shortcut:
     if (handle(FL_SHORTCUT, window)) return 1;
 
-    // and then try a shortcut with the case of the text swapped:
+    // and then try a shortcut with the case of the text swapped, by
+    // changing the text and falling through to FL_SHORTCUT case:
     if (!isalpha(event_text()[0])) return 0;
-
-    // swap the case and fall through to FL_SHORTCUT case:
     *(char*)(event_text()) ^= ('A'^'a');
     event = FL_SHORTCUT;
 
@@ -505,7 +501,7 @@ int Fl::handle(int event, Fl_Window* window)
 
     // Try it as shortcut, sending to mouse widget and all parents:
     w = belowmouse(); if (!w) {w = modal(); if (!w) w = window;}
-    for (; w; w = w->parent()) if (w->handle(FL_SHORTCUT)) return 1;
+    for (; w; w = w->parent()) if (send(FL_SHORTCUT, w, window)) return 1;
 
     // try using add_handle() functions:
     if (send_handlers(FL_SHORTCUT)) return 1;
@@ -530,7 +526,7 @@ int Fl::handle(int event, Fl_Window* window)
   default:
     break;
   }
-  if (w && w->handle(event)) return 1;
+  if (w && send(event, w, window)) return 1;
   return send_handlers(event);
 }
 
@@ -698,5 +694,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.9 1999/06/07 07:03:31 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.10 1999/07/22 21:37:03 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.1 1999/07/22 07:27:11 bill Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.2 1999/07/22 21:37:03 bill Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -399,7 +399,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
     Fl_Widget*const* a = array();
     for (int i=children_; i--;) {
       Fl_Widget* o = *a++;
-
+#if 1
       int X = *p++;
       if (X >= IR) X += dw;
       else if (X > IX) X = IX+((X-IX)*(IR+dw-IX)+(IR-IX)/2)/(IR-IX);
@@ -413,7 +413,21 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
       int B = *p++;
       if (B >= IB) B += dh;
       else if (B > IY) B = IY+((B-IY)*(IB+dh-IY)+(IB-IY)/2)/(IB-IY);
+#else // much simpler code from Francois Ostiguy:
+      int X = *p++;
+      if (X >= IR) X += dw;
+      else if (X > IX) X = X + dw * (X-IX)/(IR-IX);
+      int R = *p++;
+      if (R >= IR) R += dw;
+      else if (R > IX) R = R + dw * (R-IX)/(IR-IX);
 
+      int Y = *p++;
+      if (Y >= IB) Y += dh;
+      else if (Y > IY) Y = Y + dh*(Y-IY)/(IB-IY);
+      int B = *p++;
+      if (B >= IB) B += dh;
+      else if (B > IY) B = B + dh*(B-IY)/(IB-IY);
+#endif
       o->resize(X+dx, Y+dy, R-X, B-Y);
     }
   }
@@ -489,5 +503,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.1 1999/07/22 07:27:11 bill Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.2 1999/07/22 21:37:03 bill Exp $".
 //
