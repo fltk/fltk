@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.4 2001/10/02 16:54:45 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.5 2001/10/16 20:25:24 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2073,6 +2073,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   colspan     = 0;
   max_width   = 0;
   pre         = 0;
+  needspace   = 0;
 
   // Scan the table...
   for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)
@@ -3579,5 +3580,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.4 2001/10/02 16:54:45 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.5 2001/10/16 20:25:24 easysw Exp $".
 //

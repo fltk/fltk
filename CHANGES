@@ -18,6 +18,8 @@ CHANGES IN FLTK 1.1.0b4
 	- Fl_Help_View didn't support A elements with both a
 	  NAME and HREF attribute - the HREF was ignored.
 
+	- Miscellaneous compile warning fixes.
+
 
 CHANGES IN FLTK 1.1.0b3
 
