@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.1 2000/04/04 17:57:03 bill Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.2 2000/04/14 09:08:14 bill Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -488,13 +488,13 @@ static void files_cb(Fl_Widget* obj, void* v) { // file pattern buttons
 
 /*----------------------- The Main Routine ----------------------*/
 #define HEIGHT_BOX	(4*WIDTH_SPC+HEIGHT_BUT+HEIGHT_INPUT+HEIGHT_BROWSER)
-#define HEIGHT_BUT	25
-#define HEIGHT_INPUT	30
+#define HEIGHT_BUT	23
+#define HEIGHT_INPUT	23
 #define HEIGHT_BROWSER	(9*HEIGHT_BUT+2) // must be > buttons*HEIGHT_BUT
 #define WIDTH_BOX	(3*WIDTH_SPC+WIDTH_BUT+WIDTH_BROWSER)
 #define WIDTH_BROWSER	350
 #define WIDTH_BUT	125
-#define WIDTH_OK	70
+#define WIDTH_OK	60
 #define WIDTH_SPC	5
 
 int FCW::handle(int event) {
@@ -572,7 +572,7 @@ FCW::FCW() : Fl_Window(WIDTH_BOX, HEIGHT_BOX),
   but_y += HEIGHT_BUT;
 
   resizable(new Fl_Box(browser.x(), but_y,
-		       cancel_button->x()-browser.x(),
+		       ok_button->x()-browser.x(),
 		       browser.y()+browser.h()-but_y));
   // add(input); // put last for better draw() speed
   end();
@@ -622,5 +622,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.1 2000/04/04 17:57:03 bill Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.2 2000/04/14 09:08:14 bill Exp $".
 //

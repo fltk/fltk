@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.7 1999/03/07 08:51:43 bill Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.1 2000/04/14 09:08:12 bill Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -324,10 +324,10 @@ Fl_Color_Chooser::Fl_Color_Chooser(int X, int Y, int W, int H, const char* L)
     huebox(0,0,100,100),
     valuebox(100,0,20,100),
     choice(120,0,60,20),
-    rvalue(120,20,60,25),
-    gvalue(120,45,60,25),
-    bvalue(120,70,60,25),
-    resize_box(0,95,100,5)
+    rvalue(120,20,60,23),
+    gvalue(120,43,60,23),
+    bvalue(120,66,60,23),
+    resize_box(0,89,100,9)
 {
   end();
   resizable(resize_box);
@@ -384,15 +384,15 @@ extern const char* fl_ok;
 extern const char* fl_cancel;
 
 int fl_color_chooser(const char* name, double& r, double& g, double& b) {
-  Fl_Window window(210,165,name);
+  Fl_Window window(210,153,name);
   Fl_Color_Chooser chooser(5, 5, 200, 95);
-  ColorChip ok_color(5, 105, 95, 30);
-  Fl_Return_Button ok_button(5, 135, 95, 25, fl_ok);
-  ColorChip cancel_color(110, 105, 95, 30);
+  ColorChip ok_color(5, 105, 95, 23);
+  Fl_Return_Button ok_button(5, 128, 95, 23, fl_ok);
+  ColorChip cancel_color(110, 105, 95, 23);
   cancel_color.r = uchar(255*r+.5); ok_color.r = cancel_color.r;
   ok_color.g = cancel_color.g = uchar(255*g+.5);
   ok_color.b = cancel_color.b = uchar(255*b+.5);
-  Fl_Button cancel_button(110, 135, 95, 25, fl_cancel);
+  Fl_Button cancel_button(110, 128, 95, 23, fl_cancel);
   window.resizable(chooser);
   chooser.rgb(r,g,b);
   chooser.callback(chooser_cb, &ok_color);
@@ -431,5 +431,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.7 1999/03/07 08:51:43 bill Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.1 2000/04/14 09:08:12 bill Exp $".
 //
