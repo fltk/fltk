@@ -1,11 +1,9 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 0.99 
-header_name {.H} 
-code_name {.C} 
 gridx 10 
 gridy 10 
 snap 3
-decl {\#include "mandelbrot.H"} {public
+decl {\#include "mandelbrot.h"} {public
 } 
 
 decl {\#include <stdlib.h>} {} 
