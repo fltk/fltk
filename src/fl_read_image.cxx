@@ -1,5 +1,5 @@
 //
-// "$Id: fl_read_image.cxx,v 1.1.2.3 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_read_image.cxx,v 1.1.2.4 2004/04/24 04:10:24 easysw Exp $"
 //
 // X11 image reading routines for the Fast Light Tool Kit (FLTK).
 //
@@ -118,7 +118,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   memset(p, alpha, w * h * d);
 
   // Check if we have colormap image...
-  if (image->red_mask == 0) {
+  if (image->red_mask == 0 && image->bits_per_pixel < 24) {
     // Get the colormap entries for this window...
     maxindex = fl_visual->visual->map_entries;
 
@@ -238,28 +238,37 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
     }
   } else {
     // RGB(A) image, so figure out the shifts & masks...
-    red_mask  = image->red_mask;
-    red_shift = 0;
+    if (image->red_mask == 0) {
+      red_mask    = 0xff;
+      red_shift   = 0;
+      green_mask  = 0xff00;
+      green_shift = 8;
+      blue_mask   = 0xff0000;
+      blue_shift  = 16;
+    } else {
+      red_mask  = image->red_mask;
+      red_shift = 0;
 
-    while ((red_mask & 1) == 0) {
-      red_mask >>= 1;
-      red_shift ++;
-    }
+      while ((red_mask & 1) == 0) {
+        red_mask >>= 1;
+        red_shift ++;
+      }
 
-    green_mask  = image->green_mask;
-    green_shift = 0;
+      green_mask  = image->green_mask;
+      green_shift = 0;
 
-    while ((green_mask & 1) == 0) {
-      green_mask >>= 1;
-      green_shift ++;
-    }
+      while ((green_mask & 1) == 0) {
+        green_mask >>= 1;
+        green_shift ++;
+      }
 
-    blue_mask  = image->blue_mask;
-    blue_shift = 0;
+      blue_mask  = image->blue_mask;
+      blue_shift = 0;
 
-    while ((blue_mask & 1) == 0) {
-      blue_mask >>= 1;
-      blue_shift ++;
+      while ((blue_mask & 1) == 0) {
+        blue_mask >>= 1;
+        blue_shift ++;
+      }
     }
 
     // Read the pixels and output an RGB image...
@@ -393,5 +402,5 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 #endif
 
 //
-// End of "$Id: fl_read_image.cxx,v 1.1.2.3 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_read_image.cxx,v 1.1.2.4 2004/04/24 04:10:24 easysw Exp $".
 //
