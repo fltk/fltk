@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.5rc1
 
 	- Documentation updates (STR #245, STR #250, STR #277,
 	  STR #281, STR #328, STR #338)
+	- Fl_Menu now uses the boxtype to redraw the menu
+	  background (STR #204)
 	- Fl_Scroll now shows the background image when a framed
 	  box type is used and the Fl_Scroll is a direct
 	  decendent of a window (STR #205)
