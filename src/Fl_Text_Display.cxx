@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.44 2003/03/26 00:47:14 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.45 2003/05/04 22:29:01 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1120,13 +1120,16 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
     }
 }
 
+static inline int fl_isseparator(int c) {
+  return c != '$' && c != '_' && (isspace(c) || ispunct(c));
+}
+
 void Fl_Text_Display::next_word() {
   int pos = insert_position();
-  while ( pos < buffer()->length() && (
-            isalnum( buffer()->character( pos ) ) || buffer()->character( pos ) == '_' ) ) {
+  while (pos < buffer()->length() && !fl_isseparator(buffer()->character(pos))) {
     pos++;
   }
-  while ( pos < buffer()->length() && !( isalnum( buffer()->character( pos ) ) || buffer()->character( pos ) == '_' ) ) {
+  while (pos < buffer()->length() && fl_isseparator(buffer()->character(pos))) {
     pos++;
   }
 
@@ -1136,13 +1139,13 @@ void Fl_Text_Display::next_word() {
 void Fl_Text_Display::previous_word() {
   int pos = insert_position();
   pos--;
-  while ( pos && !( isalnum( buffer()->character( pos ) ) || buffer()->character( pos ) == '_' ) ) {
+  while (pos && fl_isseparator(buffer()->character(pos))) {
     pos--;
   }
-  while ( pos && ( isalnum( buffer()->character( pos ) ) || buffer()->character( pos ) == '_' ) ) {
+  while (pos && !fl_isseparator(buffer()->character(pos))) {
     pos--;
   }
-  if ( !( isalnum( buffer()->character( pos ) ) || buffer()->character( pos ) == '_' ) ) pos++;
+  if (fl_isseparator(buffer()->character(pos))) pos++;
 
   insert_position( pos );
 }
@@ -3046,5 +3049,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.44 2003/03/26 00:47:14 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.45 2003/05/04 22:29:01 easysw Exp $".
 //

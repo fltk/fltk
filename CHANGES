@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Text_Display and friends now look for the next
+	  non-punctuation/space character for word boundaries
+	  (STR #26)
 	- gl_font() didn't work properly for X11 when Xft was
 	  used (STR #12)
 	- Fl_File_Browser incorrectly included "." on WIN32 (STR
