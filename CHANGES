@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- FLUID didn't redraw widgets when changing the X, Y, W,
+	  or H values in the widget panel (STR #120)
 	- Fl_Window::show(argc, argv) wasn't calling
 	  Fl::get_system_colors() as documented (STR #119)
 	- DSO (shared library) building wasn't quite right for

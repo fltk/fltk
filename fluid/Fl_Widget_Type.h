@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.h,v 1.4.2.4.2.1 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Widget_Type.h,v 1.4.2.4.2.2 2003/08/02 21:17:30 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -7,7 +7,7 @@
 // This should have the widget pointer in it, but it is still in the
 // Fl_Type base class.
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -36,5 +36,5 @@ void* const LOAD = (void *)9831;
 extern Fl_Widget_Type *current_widget; // one of the selected ones
 
 //
-// End of "$Id: Fl_Widget_Type.h,v 1.4.2.4.2.1 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.h,v 1.4.2.4.2.2 2003/08/02 21:17:30 easysw Exp $".
 //

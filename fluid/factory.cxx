@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.10 2002/10/30 22:30:30 matthiaswm Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.11 2003/08/02 21:17:30 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -11,7 +11,7 @@
 // to a factory instance for every class (both the ones defined
 // here and ones in other files)
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -962,5 +962,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.10 2002/10/30 22:30:30 matthiaswm Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.11 2003/08/02 21:17:30 easysw Exp $".
 //

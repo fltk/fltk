@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.h,v 1.3.2.4.2.3 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fluid_Image.h,v 1.3.2.4.2.4 2003/08/02 21:17:30 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -7,7 +7,7 @@
 // not a class in FLTK itself, and will produce different types of
 // code depending on what the image type is.
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -60,5 +60,5 @@ extern const char *ui_find_image_name;
 #endif
 
 //
-// End of "$Id: Fluid_Image.h,v 1.3.2.4.2.3 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fluid_Image.h,v 1.3.2.4.2.4 2003/08/02 21:17:30 easysw Exp $".
 //

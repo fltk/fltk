@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.26 2003/07/12 04:20:48 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.27 2003/08/02 21:17:30 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2002 by Bill Spitzak and others.
+// Copyright 1998-2003 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -396,6 +396,7 @@ void x_cb(Fl_Value_Input *i, void *v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize((int)i->value(), w->y(), w->w(), w->h());
+	if (w->window()) w->window()->redraw();
       }
   }
 }
@@ -412,6 +413,7 @@ void y_cb(Fl_Value_Input *i, void *v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize(w->x(), (int)i->value(), w->w(), w->h());
+	if (w->window()) w->window()->redraw();
       }
   }
 }
@@ -428,6 +430,7 @@ void w_cb(Fl_Value_Input *i, void *v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize(w->x(), w->y(), (int)i->value(), w->h());
+	if (w->window()) w->window()->redraw();
       }
   }
 }
@@ -444,6 +447,7 @@ void h_cb(Fl_Value_Input *i, void *v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize(w->x(), w->y(), w->w(), (int)i->value());
+	if (w->window()) w->window()->redraw();
       }
   }
 }
@@ -1978,5 +1982,5 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.26 2003/07/12 04:20:48 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.27 2003/08/02 21:17:30 easysw Exp $".
 //
