@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.5 1998/10/21 16:28:52 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.6 1998/11/25 13:18:46 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -183,11 +183,9 @@ void Fl_Function_Type::write_code1() {
   constructor=0;
   havewidgets = 0;
   Fl_Type *child;
-  const char* widget_type = 0;
   for (child = next; child && child->level > level; child = child->next)
     if (child->is_widget()) {
       havewidgets = 1;
-      widget_type = subclassname(child);
       break;
     }
   write_c("\n");
@@ -195,9 +193,8 @@ void Fl_Function_Type::write_code1() {
     write_c("int main(int argc, char **argv) {\n");
   else {
     const char* t = return_type;
-    const char* star = "";
     if (!t) {
-      if (havewidgets) {t = widget_type; star = "*";}
+      if (havewidgets) t = "Fl_Window*";
       else t = "void";
     }
     const char* k = class_name();
@@ -210,16 +207,16 @@ void Fl_Function_Type::write_code1() {
 	if (n == strlen(k) && !strncmp(name(), k, n)) constructor = 1;
       }
       write_h("  ");
-      if (!constructor) {write_h("%s%s ", t, star); write_c("%s%s ", t,star);}
+      if (!constructor) {write_h("%s ", t); write_c("%s ", t);}
       write_h("%s;\n", name());
       write_c("%s::%s {\n", k, name());
     } else {
-      if (public_) write_h("%s%s %s;\n", t, star, name());
+      if (public_) write_h("%s %s;\n", t, name());
       else write_c("static ");
-      write_c("%s%s %s {\n", t, star, name());
+      write_c("%s %s {\n", t, name());
     }
   }
-  if (havewidgets) write_c("  %s* w;\n", widget_type);
+  if (havewidgets) write_c("  Fl_Window* w;\n");
   indentation += 2;
 }
 
@@ -688,5 +685,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.5 1998/10/21 16:28:52 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.6 1998/11/25 13:18:46 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.7 1998/11/18 18:40:09 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.8 1998/11/25 13:18:47 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1210,7 +1210,7 @@ void Fl_Widget_Type::write_static() {
     write_c("\n");
     if (!public_) write_c("static ");
     else write_h("extern %s *%s;\n", t, c);
-    write_c("%s *%s=NULL;\n", t, c);
+    write_c("%s *%s=(%s *)0;\n", t, c, t);
   }
   if (callback() && !is_name(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -1266,7 +1266,7 @@ void Fl_Widget_Type::write_code1() {
     if (class_name()) {
       write_public(public_);
       write_h("  %s *%s;\n", t, c);
-    } else if (!public_)
+    } else if (public_)
       write_h("extern %s *%s;\n", t, c);
   }
   if (class_name() && callback() && !is_name(callback())) {
@@ -1290,7 +1290,7 @@ void Fl_Widget_Type::write_code1() {
   if (varused) write_c("{ %s* o = ", t);
   if (name()) write_c("%s = ", name());
   if (is_window()) {
-    write_c("w = new %s(%d, %d", t, o->w(), o->h());
+    write_c("new %s(%d, %d", t, o->w(), o->h());
     // prevent type() code from being emitted:
     ((Fl_Widget_Type*)factory)->o->type(o->type());
   } else {
@@ -1302,6 +1302,7 @@ void Fl_Widget_Type::write_code1() {
   }
   write_c(");\n");
   indentation += 2;
+  if (is_window()) write_c("%sw = o;\n",indent());
   if (varused) write_widget_code();
 }
 
@@ -1699,5 +1700,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.7 1998/11/18 18:40:09 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.8 1998/11/25 13:18:47 mike Exp $".
 //
