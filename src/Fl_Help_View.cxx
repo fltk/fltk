@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.6 2001/10/19 14:04:08 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.7 2001/10/26 21:18:30 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -3082,11 +3082,11 @@ Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
   else if (info->bit_depth == 16)
     png_set_strip_16(pp);
 
-#ifdef HAVE_PNG_GET_VALID
+#if defined(HAVE_PNG_GET_VALID) && defined(HAVE_SET_TRNS_TO_ALPHA)
   // Handle transparency...
   if (png_get_valid(pp, info, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(pp);
-#endif // HAVE_PNG_GET_VALID
+#endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
 
   // Background color...
   unsigned	rgba = fltk_colors[bgcolor_];
@@ -3584,5 +3584,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.6 2001/10/19 14:04:08 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.7 2001/10/26 21:18:30 easysw Exp $".
 //
