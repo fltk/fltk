@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.21 2002/07/10 15:33:52 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.22 2002/07/30 15:10:32 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1886,11 +1886,19 @@ int Fl_Text_Display::handle(int event) {
   if (!buffer()) return 0;
   // This isn't very elegant!
   if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h)
-      && !dragging) {
+      && !dragging && event != FL_LEAVE && event != FL_ENTER) {
     return Fl_Group::handle(event);
   }
 
   switch (event) {
+    case FL_ENTER:
+      fl_cursor(FL_CURSOR_INSERT);
+      return 1;
+
+    case FL_LEAVE:
+      fl_cursor(FL_CURSOR_DEFAULT);
+      return 1;
+
     case FL_PUSH: {
         Fl::focus(this); // Take focus from any child widgets...
         if (Fl::event_state()&FL_SHIFT) return handle(FL_DRAG);
@@ -1954,5 +1962,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.21 2002/07/10 15:33:52 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.22 2002/07/30 15:10:32 easysw Exp $".
 //
