@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.10 2001/11/17 15:27:15 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.11 2001/11/17 15:59:53 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -3114,7 +3114,7 @@ Fl_Help_View::load_png(Fl_Help_Image *img,// I - Image pointer
 #  ifdef HAVE_PNG_READ_DESTROY
   png_read_destroy(pp, info, NULL);
 #  else
-  png_destroy_read_struct(pp, info, NULL);
+  png_destroy_read_struct(&pp, &info, NULL);
 #  endif // HAVE_PNG_READ_DESTROY
 
   return (1);
@@ -3581,5 +3581,5 @@ scrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.10 2001/11/17 15:27:15 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.11 2001/11/17 15:59:53 easysw Exp $".
 //
