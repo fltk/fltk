@@ -28,6 +28,11 @@ CHANGES SINCE FLTK 1.0.11
 
 	- Another little fix for the BoXX OpenGL overlays.
 
+	- Fl_Gl_Window no longer blanks the mouse pointer on
+	  WIN32 unless an OpenGL overlay is being used.  This
+	  should make non-overlay displays faster when a cursor
+	  is set.
+
 
 CHANGES SINCE FLTK 1.0.10
 
