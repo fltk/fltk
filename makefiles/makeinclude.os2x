@@ -1,8 +1,7 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4.2.7 2002/07/08 20:14:07 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.8 2002/07/09 17:41:24 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
-# Generated automatically from makeinclude.in by configure.
 #
 # Copyright 1998-2002 by Bill Spitzak and others.
 #
@@ -119,5 +118,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.7 2002/07/08 20:14:07 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.8 2002/07/09 17:41:24 easysw Exp $".
 #

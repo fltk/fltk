@@ -1,10 +1,10 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.3.2.10 2002/07/09 17:41:24 easysw Exp $"
+# "$Id: makeinclude.mingw31,v 1.1.2.1 2002/07/09 17:41:24 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
-# (this file for MingW using GCC 2.95.x)
+# (this file for MingW using GCC 3.1.x)
 #
-# Copyright 1998-2001 by Bill Spitzak and others.
+# Copyright 1998-2002 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -79,8 +79,8 @@ IMGDSONAME	=
 DSOCOMMAND	= echo
 
 # libraries to link with (in addition to default libs):
-LDLIBS		=-mwindows -lgdi32 -lcomctl32 -lwsock32
-GLDLIBS		=-mwindows -lglu32 -lopengl32 -lgdi32 -lcomctl32 -lwsock32
+LDLIBS		=-mwindows -lole32 -luuid -lgdi32 -lcomctl32 -lwsock32 -lsupc++
+GLDLIBS		=-mwindows -lole32 -luuid -lglu32 -lopengl32 -lgdi32 -lcomctl32 -lwsock32 -lsupc++
 LINKFLTK	=-L../lib -lfltk
 LINKFLTKGL	=-L../lib -lfltk_gl
 LINKFLTKFORMS	=-L../lib -lfltk_forms -lfltk
@@ -112,5 +112,5 @@ THREADS		=threads
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.10 2002/07/09 17:41:24 easysw Exp $".
+# End of "$Id: makeinclude.mingw31,v 1.1.2.1 2002/07/09 17:41:24 easysw Exp $".
 #

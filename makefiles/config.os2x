@@ -1,9 +1,8 @@
 /* config.h.  Generated automatically by configure.  */
 /*
- * "$Id: config.os2x,v 1.1.2.4.2.9 2002/05/21 18:13:32 easysw Exp $"
+ * "$Id: config.os2x,v 1.1.2.4.2.10 2002/07/09 17:41:24 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
- * @configure_input@
  *
  * Copyright 1998-2002 by Bill Spitzak and others.
  *
@@ -222,5 +221,5 @@
 
 
 /*
- * End of "$Id: config.os2x,v 1.1.2.4.2.9 2002/05/21 18:13:32 easysw Exp $".
+ * End of "$Id: config.os2x,v 1.1.2.4.2.10 2002/07/09 17:41:24 easysw Exp $".
  */

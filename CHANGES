@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0
 
+	- Added new makeinclude file for MingW using GCC 3.1.x.
 	- Fl_Choice::value(n) didn't range check "n".
 	- The MingW and OS/2 makeinclude files didn't have the
 	  new fltk_images library definitions.
