@@ -72,7 +72,7 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy)
   HDC new_gc = CreateCompatibleDC(fl_gc);
   SelectObject(new_gc, bitmap);
   BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
-  ReleaseDC(bitmap, new_gc);
+  DeleteDC(new_gc);
 }
 
 extern void fl_restore_clip();
@@ -95,12 +95,13 @@ void Fl_Double_Window::flush() {
     clear_damage(~0);
   }
 #ifdef WIN32
+  fl_clip_region(i->region); i->region = 0;
   if (DAMAGE_TEST()) {
     HDC _sgc = fl_gc;
     fl_gc = fl_makeDC(i->other_xid);
     fl_restore_clip(); // duplicate region into new gc
     draw();
-    ReleaseDC(i->other_xid, fl_gc);
+    DeleteDC(fl_gc);
     fl_gc = _sgc;
   }
 #else // X:

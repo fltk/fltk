@@ -83,10 +83,10 @@ extern MSG fl_msg;
 
 extern HDC fl_makeDC(HBITMAP);
 #define fl_begin_offscreen(b) \
-  HDC _sgc=fl_gc; Window _sw=fl_window; fl_gc=fl_makeDC(b); fl_window=b;
+  HDC _sgc=fl_gc; Window _sw=fl_window; fl_gc=fl_makeDC(b); fl_window=(HWND)b
 
 #define fl_end_offscreen() \
-  ReleaseDC(fl_window,fl_gc); fl_window=_sw; fl_gc = _sgc
+  DeleteDC(fl_gc); fl_window=_sw; fl_gc = _sgc
 
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
