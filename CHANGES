@@ -1,4 +1,12 @@
-CHANGES IN FLTK 1.1.0
+TODO	- FLUID now provides on-line help.
+
+TODO	- FLUID now supports image labels in addition to text
+	  labels + text over image alignment.
+
+TODO	- Documentation updates.
+
+
+CHANGES IN FLTK 1.1.0b1
 
 	- Added new image() and deimage() methods to support
 	  image + text labels more easily.
@@ -31,21 +39,10 @@ CHANGES IN FLTK 1.1.0
 	  dependencies on OpenGL when no OpenGL functionality is
 	  used/required.
 
-TODO	- Colors are now 32 bits in FLTK, allowing the use and
-	  selection of 24-bit RGB values or 8-bit FLTK indexed
-	  colors.
-
 	- FLUID now supports the new Fl_CheckBrowser,
 	  Fl_FileBrowser, Fl_FileIcon, Fl_HelpView,
 	  Fl_Text_Display, Fl_Text_Editor, and Fl_Wizard
 	  widgets.
-
-TODO	- FLUID now provides on-line help.
-
-TODO	- FLUID now supports image labels in addition to text
-	  labels + text over image alignment.
-
-TODO	- Documentation updates.
 
 	- Updated configure stuff to support shared libraries
 	  under AIX (link to -lfltk_s)
