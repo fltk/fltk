@@ -22,7 +22,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,..,../zlib,../png,../jpeg"
 				PreprocessorDefinitions="FL_DLL;FL_LIBRARY;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -85,7 +85,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,..,../zlib,../png,../jpeg"
 				PreprocessorDefinitions="FL_DLL;FL_LIBRARY;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"

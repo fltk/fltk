@@ -919,7 +919,7 @@
 					Optimization="0"
 					AdditionalIncludeDirectories=""
 					PreprocessorDefinitions=""
-					RuntimeLibrary="1"/>
+					RuntimeLibrary="3"/>
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|Win32">
@@ -928,7 +928,7 @@
 					FavorSizeOrSpeed="0"
 					AdditionalIncludeDirectories=""
 					PreprocessorDefinitions=""
-					RuntimeLibrary="0"/>
+					RuntimeLibrary="2"/>
 			</FileConfiguration>
 		</File>
 		<File
