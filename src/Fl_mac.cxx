@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.55 2004/06/01 01:08:50 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.56 2004/06/19 01:50:31 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -131,7 +131,7 @@ static unsigned short macKeyLookUp[128] =
     FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0,
 
     FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11,
-    0, 0, FL_Print, FL_Scroll_Lock, 0, FL_F+10, 0, FL_F+12,
+    0, 0, FL_Print, FL_Scroll_Lock, 0, FL_F+10, FL_Menu, FL_F+12,
 
     0, FL_Pause, FL_Help, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End,
     FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0,
@@ -936,6 +936,7 @@ static void mods_to_e_keysym( UInt32 mods )
   else if ( mods & rightShiftKey ) Fl::e_keysym = FL_Shift_R;
   else if ( mods & alphaLock ) Fl::e_keysym = FL_Caps_Lock;
   else Fl::e_keysym = 0;
+  //printf( "to sym 0x%08x (%04x)\n", Fl::e_keysym, mods );
 }
 
 /**
@@ -960,7 +961,8 @@ static unsigned short keycode_to_sym( UInt32 keyCode, UInt32 mods, unsigned shor
 /**
  * handle carbon keyboard events
  */
-pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
+pascal OSStatus carbonKeyboardHandler( 
+  EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   static char buffer[5];
   int sendEvent = 0;
@@ -970,15 +972,35 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
 
   fl_lock_function();
   
-  GetEventParameter( event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &mods );
+  int kind = GetEventKind(event);
+  
+  // get the modifiers for any of the events
+  GetEventParameter( event, kEventParamKeyModifiers, typeUInt32, 
+                     NULL, sizeof(UInt32), NULL, &mods );
   if ( prevMods == 0xffffffff ) prevMods = mods;
-  UInt32 keyCode;
-  GetEventParameter( event, kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyCode );
-  unsigned char key;
-  GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &key );
-  unsigned short sym;
-
-  switch ( GetEventKind( event ) )
+  
+  // get the key code only for key events
+  UInt32 keyCode = 0;
+  unsigned char key = 0;
+  unsigned short sym = 0;
+  if (kind!=kEventRawKeyModifiersChanged) {
+    GetEventParameter( event, kEventParamKeyCode, typeUInt32, 
+                       NULL, sizeof(UInt32), NULL, &keyCode );
+    GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, 
+                       NULL, sizeof(char), NULL, &key );
+  }
+  /* output a human readbale event identifier for debugging
+  const char *ev = "";
+  switch (kind) {
+    case kEventRawKeyDown: ev = "kEventRawKeyDown"; break;
+    case kEventRawKeyRepeat: ev = "kEventRawKeyRepeat"; break;
+    case kEventRawKeyUp: ev = "kEventRawKeyUp"; break;
+    case kEventRawKeyModifiersChanged: ev = "kEventRawKeyModifiersChanged"; break;
+    default: ev = "unknown";
+  }
+  printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
+  */
+  switch (kind)
   {
   case kEventRawKeyDown:
   case kEventRawKeyRepeat:
@@ -986,20 +1008,24 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
     // fall through
   case kEventRawKeyUp:
     if ( !sendEvent ) sendEvent = FL_KEYUP;
-    // if the user pressed alt/option, event_key should have the keycap, but event_text should generate the international symbol
+    // if the user pressed alt/option, event_key should have the keycap, 
+    // but event_text should generate the international symbol
     if ( isalpha(key) )
       sym = tolower(key);
     else if ( Fl::e_state&FL_CTRL && key<32 )
       sym = key+96;
-    else if ( Fl::e_state&FL_ALT )
-      sym = keycode_to_sym( keyCode & 0x7f, 0, macKeyLookUp[ keyCode & 0x7f ] ); // find the keycap of this key
+    else if ( Fl::e_state&FL_ALT ) // find the keycap of this key
+      sym = keycode_to_sym( keyCode & 0x7f, 0, macKeyLookUp[ keyCode & 0x7f ] );
     else
       sym = macKeyLookUp[ keyCode & 0x7f ];
     Fl::e_keysym = sym;
     if ( keyCode==0x4c ) key=0x0d;
-    if ((Fl::e_state & FL_NUM_LOCK) &&
-        ((sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
-	 sym == FL_Tab || sym == FL_Enter)) {
+    // Matt: the Mac has no concept of a NumLock key, or at least not visible
+    // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
+    // Matt: a numeric keypad key is pressed and does not correspond with
+    // Matt: the NumLock light in PowerBook keyboards.
+    if ( (sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
+            sym == FL_Tab || sym == FL_Enter) {
       buffer[0] = key;
       Fl::e_length = 1;
     } else {
@@ -1025,13 +1051,14 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
   }
   while (window->parent()) window = window->window();
   if (sendEvent && Fl::handle(sendEvent,window)) {
-    fl_unlock_function();
-  
+    fl_unlock_function();  
     return noErr; // return noErr if FLTK handled the event
   } else {
     fl_unlock_function();
-  
-    return CallNextEventHandler( nextHandler, event );;
+    //return CallNextEventHandler( nextHandler, event );;
+    // Matt: I had better results (no duplicate events) always returning
+    // Matt: 'noErr'. System keyboard events still seem to work just fine.
+    return noErr;
   }
 }
 
@@ -1322,33 +1349,6 @@ static int FSSpec2UnixPath( FSSpec *fs, char *dst )
   FSpMakeFSRef( fs, &fsRef );
   FSRefMakePath( &fsRef, (UInt8*)dst, 1024 );
   return strlen(dst);
-/* keep the code below. The above function is only implemented in OS X, so we might need the other code for OS 9 and friends
-  short offset = 0;
-  if ( fs->parID != fsRtParID )
-  {
-    FSSpec parent;
-    OSErr ret = FSMakeFSSpec( fs->vRefNum, fs->parID, 0, &parent );
-    if ( ret != noErr ) return 0;
-    offset = FSSpec2UnixPath( &parent, dst );
-  }
-
-  if ( fs->parID == fsRtParID && fs->vRefNum == -100 ) //+ bad hack: we assume that volume -100 is mounted as root
-  {
-    memcpy( dst, "/", 2 );
-    return 1; // don't add anything to the filename - we are fine already
-  }
-
-  short len = fs->name[0];
-  if ( fs->parID == fsRtParID ) { // assume tat all other volumes are in this directory (international name WILL vary!)
-    memcpy( dst, "/Volumes", 8 );
-    offset = 8;
-  }
-  
-  if ( offset!=1 ) dst[ offset++ ] = '/'; // avoid double '/'
-  memcpy( dst+offset, fs->name+1, len );
-  dst[ len+offset ] = 0;
-  return len+offset;
-*/
 }
  
 Fl_Window *fl_dnd_target_window = 0;
@@ -1922,6 +1922,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.55 2004/06/01 01:08:50 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.56 2004/06/19 01:50:31 matthiaswm Exp $".
 //
 
