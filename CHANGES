@@ -1,3 +1,68 @@
+CHANGES SINCE FLTK 1.0.6
+
+	- Fixed Fl_Input_ bug under WIN32 - no longer stop accepting input
+	  when one of the "Windows" keys is pressed.
+	- Now call TranslateEvent for all events under WIN32.
+	- Fixes for OpenBSD and NetBSD
+	- The FL_CURSOR_HAND cursor now uses the IDC_HAND cursor instead of
+	  IDC_UPARROW under Windows 98 and 2000.
+	- Fl_Scrollbar now does a page-up/down when you click outside the
+	  scroller.
+	- Fl_Window::show(0, NULL) causes core dump
+	- Fixed a compile-time error in fl_call_main.c for Borland C++.
+	- "fluid -c filename.fl" would try to open an X display if the
+	  FLUID file contained an Fl_Browser widget.
+	- Fl_Browser now correctly measures items with @C or @B color
+	  formatting commands.
+	- Fixed a bitmap drawing bug for WIN32 (bit reversal table was wrong)
+	- fl_xyz() dialogs now set a title in the title bar.
+	- fl_alert() sounds the bell under X11.
+	- fl_xyz() dialogs now call MessageBeep() under WIN32.
+	- Fl_Browser_ didn't draw the selection box with the inactive color
+	  when the browser wasn't activated.
+	- Fl_Browser now responds to FL_KEYBOARD as well as FL_SHORTCUT.  If
+	  you subclass it to accept focus then keyboard navigation will work.
+	- Fl_Tile and Fl_Tabs do their callback when the user changes their
+	  display.
+	- Made some of the private methods of Fl_Browser protected.
+	- Now set win_gravity correctly, this helps some X
+	  window managers that use it position the window where
+	  FLTK wants it to be.
+	- 0-width browsers crashed.
+	- Minor change: if the X window manager does not do
+	  anything else with windows that don't have their
+	  position specified, the windows appear centered in the
+	  screen, rather than in the top-left corner.  This
+	  happened with modal windows under Irix 4Dwm.  This
+	  also causes windows to be centered when no window
+	  manager is running, which might be useful for
+	  installation gui programs?
+	- Clicking in an Fl_Input field the first time selects the entire
+	  field.
+	- Clicking the middle mouse button in an Fl_Input field now inserts
+	  the text at the indicated position instead of the cursor position.
+	- Drag-selecting text in an Fl_Input field now copies the text
+	  automatically.
+	- Fl::flush() no longer calls the draw() method for invisible windows.
+	- Calling deactivate() on an invisible widget could cause an
+	  infinite loop in some obscure cases.
+	- Added #pragma's for SGI C++ compilers - the 6.{23} X headers had
+	  errors in them.
+	- Fl_Gl_Window::ortho() changed so that text and images
+	  are not erased if the origin is off the left/bottom of the
+	  window.
+	- Small change to Fl_Input so that a click that gives it
+	  the focus also selects all the text.
+	- Fixed a slider drawing problem.
+	- You can now add/delete children of Fl_Tabs widgets whether or
+	  not they are visible.
+	- Now embed woff options for SGI C++ compilers (gets rid of X11
+	  header warnings)
+	- draw_pixmap used a cast that the Digital UNIX C++ compiler didn't
+	  like.
+	- The GLUT function key constants were off by one.
+	- The XPM reading code didn't handle RGB colors other than #rrggbb.
+
 CHANGES SINCE FLTK 1.0.5
 
     - Fl_win32.cxx defined WM_MOUSE_LEAVE instead of WM_MOUSELEAVE.
