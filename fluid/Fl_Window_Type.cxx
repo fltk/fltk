@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.3 2002/05/01 19:17:24 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.4 2002/05/03 14:33:00 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -251,8 +251,10 @@ Fl_Type *Fl_Window_Type::make() {
     this->o = new Fl_Window(100,100);
     Fl_Group::current(0);
   }
+  // Set the size ranges for this window; in order to avoid opening the
+  // X display we use an arbitrary maximum size...
   ((Fl_Window *)(this->o))->size_range(gridx * snap, gridy * snap,
-                                       Fl::w(), Fl::h(),
+                                       3072, 2048,
                                        gridx * snap, gridy * snap, 0);
   myo->factory = this;
   myo->drag = 0;
@@ -790,5 +792,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.3 2002/05/01 19:17:24 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.4 2002/05/03 14:33:00 easysw Exp $".
 //
