@@ -11,6 +11,7 @@ CHANGES IN FLTK 1.1.0
 	- Fl_Help_View didn't support HTML comments.
 	- Fl_Help_View didn't include the extra cellpadding when
 	  handling colspan attributes in cells.
+	- Fl_Help_View didn't support table alignment.
 
 
 CHANGES IN FLTK 1.1.0rc6
