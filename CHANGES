@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- Fixed some drawing problems with Fl_Light_Button and
+	  its subclasses.
 	- Fixed a minor event propagation bug in Fl_Group that
 	  caused mousewheel events to be passed to scrollbars
 	  that were not visible.
