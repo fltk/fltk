@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arc.cxx,v 1.4.2.3.2.5 2002/05/03 19:33:39 easysw Exp $"
+// "$Id: fl_arc.cxx,v 1.4.2.3.2.6 2002/05/07 00:17:07 easysw Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
@@ -34,10 +34,10 @@ void fl_arc(double x, double y, double r, double start, double end) {
 
   // draw start point accurately:
   
-  double A = start*(M_PI/180); // Initial angle (radians)
-  double X =  r*cos(A);	       // Initial displacement, (X,Y)
-  double Y = -r*sin(A);	       //   from center to initial point
-  fl_vertex(x+X,y+Y);	       // Insert initial point
+  double A = start*(M_PI/180);		// Initial angle (radians)
+  double X =  r*cos(A);			// Initial displacement, (X,Y)
+  double Y = -r*sin(A);			//   from center to initial point
+  fl_vertex(x+X,y+Y);			// Insert initial point
 
   // Maximum arc length to approximate with chord with error <= 0.125
   
@@ -47,17 +47,17 @@ void fl_arc(double x, double y, double r, double start, double end) {
     double r2 = hypot(fl_transform_dx(0,r), // Vertical "radius"
 		      fl_transform_dy(0,r));
 		      
-    if (r2 < r1) r1 = r2;	// r1 = minimum "radius"
-    r2 = 1.0 - 0.125/r1;	// r2 = cos(epsilon/2)
-    if (r2 < 0.5) r2 = 0.5;	// minimum 3 chords/circle
-    epsilon = 2*acos(r2);	// Maximum arc angle
+    if (r1 > r2) r1 = r2;		// r1 = minimum "radius"
+    if (r1 < 2.) r1 = 2.;		// radius for circa 9 chords/circle
+    
+    epsilon = 2*acos(1.0 - 0.125/r1);	// Maximum arc angle
   }
   A = end*(M_PI/180) - A;		// Displacement angle (radians)
   int i = int(ceil(fabs(A)/epsilon));	// Segments in approximation
   
   if (i) {
-    epsilon = A/i;		// Arc length for equal-size steps
-    double cos_e = cos(epsilon);// Rotation coefficients
+    epsilon = A/i;			// Arc length for equal-size steps
+    double cos_e = cos(epsilon);	// Rotation coefficients
     double sin_e = sin(epsilon);
     do {
       double Xnew =  cos_e*X + sin_e*Y;
@@ -74,5 +74,5 @@ void fl_circle(double x,double y,double r) {
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.5 2002/05/03 19:33:39 easysw Exp $".
+// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.6 2002/05/07 00:17:07 easysw Exp $".
 //
