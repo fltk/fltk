@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.1 2001/08/05 15:34:28 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.2 2001/11/03 19:24:22 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -138,7 +138,7 @@ int Fl_Tabs::handle(int event) {
     } else {
       if (Fl::event_y() < y()+h()+H) goto DEFAULT;
     }}
-    take_focus();
+    if (Fl::visible_focus()) take_focus();
   case FL_DRAG:
   case FL_RELEASE:
     o = which(Fl::event_x(), Fl::event_y());
@@ -147,8 +147,10 @@ int Fl_Tabs::handle(int event) {
     return 1;
   case FL_FOCUS:
   case FL_UNFOCUS:
-    redraw();
-    return 1;
+    if (Fl::visible_focus()) {
+      redraw();
+      return 1;
+    } else return 0;
   case FL_KEYBOARD:
     switch (Fl::event_key()) {
       case FL_Left:
@@ -309,5 +311,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.1 2001/08/05 15:34:28 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.2 2001/11/03 19:24:22 easysw Exp $".
 //

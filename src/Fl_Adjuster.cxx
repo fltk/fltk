@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.2 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.3 2001/11/03 19:24:22 easysw Exp $"
 //
 // Adjuster widget for the Fast Light Tool Kit (FLTK).
 //
@@ -70,7 +70,7 @@ int Fl_Adjuster::handle(int event) {
   int mx = Fl::event_x();
   switch (event) {
     case FL_PUSH:
-      take_focus();
+      if (Fl::visible_focus()) take_focus();
       ix = mx;
       if (w()>=h())
 	drag = 3*(mx-x())/w() + 1;
@@ -142,8 +142,10 @@ int Fl_Adjuster::handle(int event) {
       break;
     case FL_FOCUS:
     case FL_UNFOCUS:
-      redraw();
-      return 1;
+      if (Fl::visible_focus()) {
+        redraw();
+        return 1;
+      } else return 0;
   }
   return 0;
 }
@@ -158,5 +160,5 @@ Fl_Adjuster::Fl_Adjuster(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.2 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.3 2001/11/03 19:24:22 easysw Exp $".
 //

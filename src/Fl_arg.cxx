@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8 2001/03/20 18:02:52 spitzak Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.1 2001/11/03 19:24:22 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -81,6 +81,14 @@ int Fl::arg(int argc, char **argv, int &i) {
 
   if (match(s, "iconic")) {
     fl_show_iconic = 1;
+    i++;
+    return 1;
+  } else if (match(s, "kbd")) {
+    Fl::visible_focus(1);
+    i++;
+    return 1;
+  } else if (match(s, "nokbd")) {
+    Fl::visible_focus(0);
     i++;
     return 1;
   }
@@ -357,5 +365,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8 2001/03/20 18:02:52 spitzak Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.1 2001/11/03 19:24:22 easysw Exp $".
 //

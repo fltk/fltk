@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.1 2001/08/05 14:00:15 easysw Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.4.2.2 2001/11/03 19:24:22 easysw Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -35,7 +35,7 @@ int Fl_Roller::handle(int event) {
   int newpos = horizontal() ? Fl::event_x() : Fl::event_y();
   switch (event) {
   case FL_PUSH:
-    take_focus();
+    if (Fl::visible_focus()) take_focus();
     handle_push();
     ipos = newpos;
     return 1;
@@ -69,8 +69,10 @@ int Fl_Roller::handle(int event) {
     break;
   case FL_FOCUS :
   case FL_UNFOCUS :
-    damage(FL_DAMAGE_ALL);
-    return 1;
+    if (Fl::visible_focus()) {
+      redraw();
+      return 1;
+    } else return 0;
   default:
     return 0;
   }
@@ -166,5 +168,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.1 2001/08/05 14:00:15 easysw Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.4.2.2 2001/11/03 19:24:22 easysw Exp $".
 //
