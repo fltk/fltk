@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.2 2001/09/30 17:37:06 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.3 2001/10/18 19:21:45 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -109,12 +109,12 @@ int check_save(void) {
                     "Would you like to save it now?",
                     "Cancel", "Save", "Discard");
 
-  if (r == 2) {
+  if (r == 1) {
     save_cb(); // Save the file...
     return !changed;
-  };
+  }
 
-   return (r == 1) ? 1 : 0;
+  return (r == 2) ? 1 : 0;
 }
 
 int loading = 0;
@@ -424,5 +424,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.2 2001/09/30 17:37:06 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.3 2001/10/18 19:21:45 easysw Exp $".
 //
