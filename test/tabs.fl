@@ -1,14 +1,11 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {.h} 
-code_name {.cxx} 
-gridx 10 
-gridy 10 
-snap 3
+code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {674 782 321 324} resizable visible
+    xywh {674 671 321 324} resizable visible
   } {
     Fl_Tabs {} {open
       xywh {10 10 300 200} selection_color 7 resizable
@@ -32,10 +29,12 @@ Function {} {open
       }
       Fl_Group {} {
         label tab2 open
-        xywh {10 30 300 180} selection_color 2 hide
+        xywh {10 30 300 180} selection_color 2
       } {
         Fl_Button {} {
           label button1
+          callback {fl_message("Test to see if this modal window prevents you from "
+           "changing the tabs. It should.");}
           xywh {20 60 100 30}
         }
         Fl_Input {} {
@@ -82,8 +81,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label {     tab5      } open selected
-        xywh {10 30 300 180} labeltype ENGRAVED_LABEL
+        label {     tab5      } open
+        xywh {10 30 300 180} labeltype ENGRAVED_LABEL hide
       } {
         Fl_Button {} {
           label button2
@@ -115,7 +114,7 @@ Function {} {open
     }
     Fl_Return_Button {} {
       label OK
-      callback {exit(0);}
+      callback {exit(0);} selected
       xywh {250 290 60 30}
       code0 {\#include <stdlib.h>}
     }
