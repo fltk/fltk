@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.35 2002/05/01 15:55:06 matthiaswm Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.36 2002/06/03 12:32:57 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -205,7 +205,7 @@ clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 color_chooser$(EXEEXT): color_chooser.o
@@ -216,7 +216,7 @@ curve$(EXEEXT): curve.o
 
 demo$(EXEEXT): demo.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 doublebuffer$(EXEEXT): doublebuffer.o
@@ -238,7 +238,7 @@ fonts$(EXEEXT): fonts.o
 
 forms$(EXEEXT): forms.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 hello$(EXEEXT): hello.o
@@ -259,14 +259,14 @@ input$(EXEEXT): input.o
 
 keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 keyboard_ui.o:	keyboard_ui.h
 keyboard_ui.cxx:	keyboard_ui.fl
 
 label$(EXEEXT): label.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 line_style$(EXEEXT): line_style.o
@@ -275,7 +275,7 @@ list_visuals$(EXEEXT): list_visuals.o
 
 mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 mandelbrot_ui.o:	mandelbrot_ui.h
 mandelbrot_ui.cxx:	mandelbrot_ui.fl
@@ -290,7 +290,7 @@ navigation$(EXEEXT): navigation.o
 
 output$(EXEEXT): output.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -o $@ $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 overlay$(EXEEXT): overlay.o
@@ -339,8 +339,8 @@ $(GLALL): ../lib/$(LIBNAME) ../lib/$(GLLIBNAME)
 # OpenGL demos...
 CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	echo Linking $@...
-	$(CXX) $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
-		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) $(CXXFLAGS) -o $@ CubeMain.o CubeView.o CubeViewUI.o \
+		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
@@ -349,37 +349,37 @@ CubeViewUI.cxx:	CubeViewUI.fl
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 fractals$(EXEEXT): fractals.o fracviewer.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fractals.o fracviewer.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ fractals.o fracviewer.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 fullscreen$(EXEEXT): fullscreen.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 glpuzzle$(EXEEXT): glpuzzle.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 shiny$(EXEEXT): shiny_panel.o shiny.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) shiny.o shiny_panel.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ shiny.o shiny_panel.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 shiny_panel.o:	shiny_panel.h
 shiny_panel.cxx:	shiny_panel.fl
 
 shape$(EXEEXT): shape.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.35 2002/05/01 15:55:06 matthiaswm Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.36 2002/06/03 12:32:57 easysw Exp $".
 #
