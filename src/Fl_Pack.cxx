@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.6 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.7 2004/04/25 01:39:36 easysw Exp $"
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@ void Fl_Pack::draw() {
   int tw = w()-Fl::box_dw(box());
   int th = h()-Fl::box_dh(box());
   int rw, rh;
-  int current_position = horizontal() ? tx : ty;
+  int current_position = (horizontal() ? tx : ty) + spacing_ / 2;
   int maximum_position = current_position;
   uchar d = damage();
   Fl_Widget*const* a = array();
@@ -102,7 +102,10 @@ void Fl_Pack::draw() {
         o->resize(X,Y,W,H);
         o->clear_damage(FL_DAMAGE_ALL);
       }
-      if (d&FL_DAMAGE_ALL) draw_child(*o); else update_child(*o);
+      if (d&FL_DAMAGE_ALL) {
+        draw_child(*o);
+        draw_outside_label(*o);
+      } else update_child(*o);
       // child's draw() can change it's size, so use new size:
       current_position += (horizontal() ? o->w() : o->h());
       if (current_position > maximum_position)
@@ -127,10 +130,16 @@ void Fl_Pack::draw() {
 
   tw += Fl::box_dw(box()); if (tw <= 0) tw = 1;
   th += Fl::box_dh(box()); if (th <= 0) th = 1;
-  if (tw != w() || th != h()) {Fl_Widget::resize(x(),y(),tw,th); d = FL_DAMAGE_ALL;}
-  if (d&FL_DAMAGE_ALL) draw_box();
+  if (tw != w() || th != h()) {
+    Fl_Widget::resize(x(),y(),tw,th);
+    d = FL_DAMAGE_ALL;
+  }
+  if (d&FL_DAMAGE_ALL) {
+    draw_box();
+    draw_label();
+  }
 }
 
 //
-// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.6 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.7 2004/04/25 01:39:36 easysw Exp $".
 //
