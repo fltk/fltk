@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_FileBrowser.cxx,v 1.13.2.3 2001/08/03 19:45:58 easysw Exp $"
+// "$Id: Fl_FileBrowser.cxx,v 1.13.2.4 2001/08/06 15:19:20 easysw Exp $"
 //
 // Fl_FileBrowser routines.
 //
@@ -43,6 +43,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <config.h>
 
 #if defined(WIN32)
 #  include <windows.h>
@@ -563,5 +564,5 @@ Fl_FileBrowser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.3 2001/08/03 19:45:58 easysw Exp $".
+// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.4 2001/08/06 15:19:20 easysw Exp $".
 //

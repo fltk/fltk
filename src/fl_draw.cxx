@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.2 2001/08/06 03:17:43 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.3 2001/08/06 15:19:20 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -119,43 +119,51 @@ void fl_draw(
   const char* e;
   char buf[MAXBUF];
   int buflen;
-  char symbol[255], *symptr;
-  int symwidth, symwhen, symoffset;
+  char symbol[2][255], *symptr;
+  int symwidth[2], symoffset, symtotal;
 
   // count how many lines and put the last one into the buffer:
   int lines;
   double width;
 
-  symbol[0] = '\0';
-  symwidth  = 0;
-  symwhen   = 0;
+  symbol[0][0] = '\0';
+  symwidth[0]  = 0;
+
+  symbol[1][0] = '\0';
+  symwidth[1]  = 0;
 
   if (str && str[0] == '@' && str[1] && str[1] != '@') {
     // Start with a symbol...
-    for (symptr = symbol;
-         *str && !isspace(*str) && symptr < (symbol + sizeof(symbol) - 1);
+    for (symptr = symbol[0];
+         *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
          *symptr++ = *str++);
     *symptr = '\0';
     if (isspace(*str)) str++;
-    symwidth = min(w,h);
+    symwidth[0] = min(w,h);
   }
 
+  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
+    strncpy(symbol[1], p, sizeof(symbol[1]) - 1);
+    symbol[1][sizeof(symbol[1]) - 1] = '\0';
+    symwidth[1] = min(w,h);
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+  
   for (p = str, lines=0; p;) {
-    e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
+    e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP);
     lines++;
-    if (!*e) break;
-    else if (*e == '@') {
-      strncpy(symbol, e, sizeof(symbol) - 1);
-      symbol[sizeof(symbol) - 1] = '\0';
-      symwidth = min(w,h);
-      symwhen  = 1;
-      break;
-    }
+    if (!*e || *e == '@') break;
     p = e;
   }
 
-  if (symwidth && lines) symwidth = lines * fl_height();
+  if ((symwidth[0] || symwidth[1]) && lines) {
+    if (symwidth[0]) symwidth[0] = lines * fl_height();
+    if (symwidth[1]) symwidth[1] = lines * fl_height();
+  }
 
+  symtotal = symwidth[0] + symwidth[1];
+  
   // figure out vertical position of the first line:
   int xpos;
   int ypos;
@@ -172,18 +180,9 @@ void fl_draw(
   if (img && !(align & FL_ALIGN_TEXT_OVER_IMAGE)) {
     if (img->w() > symoffset) symoffset = img->w();
 
-    if (align & FL_ALIGN_LEFT) {
-      if (!symwhen)  xpos = x + symwidth;
-      else xpos = x;
-    }
-    else if (align & FL_ALIGN_RIGHT) {
-      if (symwhen) xpos = x+w-img->w()-symwidth;
-      else xpos = x+w-img->w();
-    }
-    else {
-      xpos = x+(w-img->w()-symwidth)/2;
-      if (!symwhen) xpos += symwidth;
-    }
+    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - img->w() - symwidth[1];
+    else xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
 
     img->draw(xpos, ypos - height);
     ypos += img->h();
@@ -192,22 +191,14 @@ void fl_draw(
   // now draw all the lines:
   int desc = fl_descent();
   for (p=str; ; ypos += height) {
-    if (lines>1) e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
+    if (lines>1) e = expand(p, buf, w - symtotal, buflen, width,
+                            align&FL_ALIGN_WRAP);
 
     if (width > symoffset) symoffset = (int)(width + 0.5);
 
-    if (align & FL_ALIGN_LEFT) {
-      if (!symwhen) xpos = x + symwidth;
-      else xpos = x;
-    }
-    else if (align & FL_ALIGN_RIGHT) {
-      if (symwhen) xpos = x+w-int(width+.5) - symwidth;
-      else xpos = x+w-int(width+.5);
-    }
-    else {
-      xpos = x+int((w-width-symwidth)/2);
-      if (!symwhen) xpos += symwidth;
-    }
+    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - (int)(width + .5) - symwidth[1];
+    else xpos = x + (w - (int)(width + .5) - symtotal) / 2 + symwidth[0];
 
     callthis(buf,buflen,xpos,ypos-desc);
 
@@ -222,41 +213,38 @@ void fl_draw(
   if (img && (align & FL_ALIGN_TEXT_OVER_IMAGE)) {
     if (img->w() > symoffset) symoffset = img->w();
 
-    if (align & FL_ALIGN_LEFT) {
-      if (!symwhen)  xpos = x + symwidth;
-      else xpos = x;
-    }
-    else if (align & FL_ALIGN_RIGHT) {
-      if (symwhen) xpos = x+w-img->w()-symwidth;
-      else xpos = x+w-img->w();
-    }
-    else {
-      xpos = x+(w-img->w()-symwidth)/2;
-      if (!symwhen) xpos += symwidth;
-    }
+    if (align & FL_ALIGN_LEFT) xpos = x + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - img->w() - symwidth[1];
+    else xpos = x + (w - img->w() - symtotal) / 2 + symwidth[0];
 
     img->draw(xpos, ypos);
   }
 
-  // draw the symbol, if any...
-  if (symwidth) {
-    if (symwhen) {
-      // draw to the right
-      if (align & FL_ALIGN_LEFT) xpos = x + symoffset;
-      else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth;
-      else xpos = x + (w-symoffset-symwidth)/2+symoffset;
-    } else {
-      // draw to the left
-      if (align & FL_ALIGN_LEFT) xpos = x;
-      else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth - symoffset;
-      else xpos = x + (w-symoffset-symwidth)/2;
-    }
+  // draw the symbols, if any...
+  if (symwidth[0]) {
+    // draw to the left
+    if (align & FL_ALIGN_LEFT) xpos = x;
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - symtotal - symoffset;
+    else xpos = x + (w - symoffset - symtotal) / 2;
 
-    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth;
+    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth[0];
     else if (align & FL_ALIGN_TOP) ypos = y;
-    else ypos = y + (h-symwidth)/2;
+    else ypos = y + (h - symwidth[0]) / 2;
 
-    fl_draw_symbol(symbol, xpos, ypos, symwidth, symwidth, fl_color());
+    fl_draw_symbol(symbol[0], xpos, ypos, symwidth[0], symwidth[0], fl_color());
+  }
+
+  if (symwidth[1]) {
+    // draw to the right
+    if (align & FL_ALIGN_LEFT) xpos = x + symoffset + symwidth[0];
+    else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth[1];
+    else xpos = x + (w - symoffset - symtotal) / 2 + symoffset + symwidth[0];
+
+    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth[1];
+    else if (align & FL_ALIGN_TOP) ypos = y;
+    else ypos = y + (h - symwidth[1]) / 2;
+
+    fl_draw_symbol(symbol[1], xpos, ypos, symwidth[1], symwidth[1], fl_color());
   }
 }
 
@@ -282,17 +270,53 @@ void fl_measure(const char* str, int& w, int& h) {
   int lines;
   double width;
   int W = 0;
-  for (p=str,lines=0; ;) {
-    e = expand(p, buf, w, buflen, width, w!=0);
+  char symbol[2][255], *symptr;
+  int symwidth[2], symtotal;
+
+  // count how many lines and put the last one into the buffer:
+  symbol[0][0] = '\0';
+  symwidth[0]  = 0;
+
+  symbol[1][0] = '\0';
+  symwidth[1]  = 0;
+
+  if (str && str[0] == '@' && str[1] && str[1] != '@') {
+    // Start with a symbol...
+    for (symptr = symbol[0];
+         *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
+         *symptr++ = *str++);
+    *symptr = '\0';
+    if (isspace(*str)) str++;
+    symwidth[0] = min(w,h);
+  }
+
+  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
+    strncpy(symbol[1], p, sizeof(symbol[1]) - 1);
+    symbol[1][sizeof(symbol[1]) - 1] = '\0';
+    symwidth[1] = min(w,h);
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+  
+  for (p = str, lines=0; p;) {
+    e = expand(p, buf, w - symtotal, buflen, width, w != 0);
     if (int(width) > W) W = int(width);
     lines++;
-    if (!*e) break;
+    if (!*e || *e == '@') break;
     p = e;
   }
-  w = W;
+
+  if ((symwidth[0] || symwidth[1]) && lines) {
+    if (symwidth[0]) symwidth[0] = lines * fl_height();
+    if (symwidth[1]) symwidth[1] = lines * fl_height();
+  }
+
+  symtotal = symwidth[0] + symwidth[1];
+  
+  w = W + symtotal;
   h = lines*h;
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.2 2001/08/06 03:17:43 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.3 2001/08/06 15:19:20 easysw Exp $".
 //
