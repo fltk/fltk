@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.8 2001/04/13 19:07:40 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.9 2001/04/13 19:34:03 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ void pixmap_image::write_static() {
     write_c("#include <FL/Fl_Pixmap.H>\n");
     pixmap_header_written = write_number;
   }
-  write_c("static char *%s[] = {\n",
+  write_c("static const char *%s[] = {\n",
 	  unique_id(this, "image", filename_name(name()), 0));
   int l;
   for (l = 0; l < numlines; l++) {
@@ -436,5 +436,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.8 2001/04/13 19:07:40 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.9 2001/04/13 19:34:03 easysw Exp $".
 //
