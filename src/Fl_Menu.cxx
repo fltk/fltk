@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.9 2000/06/29 07:23:56 spitzak Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.10 2000/07/30 00:31:44 spitzak Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -384,18 +384,6 @@ int menuwindow::titlex(int i) {
   return x;
 }
 
-// match shortcuts & label shortcuts, don't search submenus:
-// returns menu item and index
-const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
-  const Fl_Menu_Item* m1 = this;
-  for (int ii = 0; m1 && m1->text; m1 = m1->next(1), ii++) {
-    if (m1->activevisible() &&
-	(Fl::test_shortcut(m1->shortcut_)
-	 || Fl_Widget::test_shortcut(m1->text))) {if (ip) *ip=ii; return m1;}
-  }
-  return 0;
-}
-
 ////////////////////////////////////////////////////////////////
 // Fl_Menu_Item::popup(...)
 
@@ -717,6 +705,24 @@ Fl_Menu_Item::popup(
   return pulldown(X, Y, 0, 0, picked, button, title ? &dummy : 0);
 }
 
+// Search only the top level menu for a shortcut.  Either &x in the
+// label or the shortcut fields are used:
+const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
+  const Fl_Menu_Item* m = this;
+  if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
+    if (m->activevisible()) {
+      if (Fl::test_shortcut(m->shortcut_)
+	 || Fl_Widget::test_shortcut(m->text)) {
+	if (ip) *ip=ii;
+	return m;
+      }
+    }
+  }
+  return 0;
+}
+
+// Recursive search of all submenus for anything with this key as a
+// shortcut.  Only uses the shortcut field, ignores &x in the labels:
 const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
   const Fl_Menu_Item* m = this;
   const Fl_Menu_Item* ret = 0;
@@ -737,5 +743,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.9 2000/06/29 07:23:56 spitzak Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.10 2000/07/30 00:31:44 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.6 2000/07/11 05:36:39 spitzak Exp $"
+// "$Id: menubar.cxx,v 1.6.2.7 2000/07/30 00:31:44 spitzak Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -145,7 +145,7 @@ Fl_Menu_Item menutable[] = {
     {"A very long menu item"},
     {0},
   {"&Huge", 0, 0, (void*)hugemenu, FL_SUBMENU_POINTER},
-  {"button",0, 0, 0, FL_MENU_TOGGLE},
+  {"button",FL_F+4, 0, 0, FL_MENU_TOGGLE},
   {0}
 };
 
@@ -216,5 +216,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.6 2000/07/11 05:36:39 spitzak Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.7 2000/07/30 00:31:44 spitzak Exp $".
 //
