@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.22 2004/07/06 00:18:48 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.23 2004/07/26 17:46:36 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -175,7 +175,7 @@ else
 fi
 
 # Calculate needed libraries
-LDSTATIC="$libdir/libfltk.a $LDLIBS"
+LDSTATIC="$libs $libdir/libfltk.a $LDLIBS"
 LDLIBS="$libs -lfltk$SHAREDSUFFIX $LDLIBS"
 LIBS="$LIBS $libs $libdir/libfltk.a"
 
@@ -266,5 +266,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.22 2004/07/06 00:18:48 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.23 2004/07/26 17:46:36 easysw Exp $".
 #
