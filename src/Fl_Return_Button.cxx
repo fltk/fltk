@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Return_Button.cxx,v 1.5 1999/01/19 19:26:46 mike Exp $"
+// "$Id: Fl_Return_Button.cxx,v 1.5.2.1 2000/04/25 22:16:29 mike Exp $"
 //
 // Return button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -65,5 +65,5 @@ int Fl_Return_Button::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Return_Button.cxx,v 1.5 1999/01/19 19:26:46 mike Exp $".
+// End of "$Id: Fl_Return_Button.cxx,v 1.5.2.1 2000/04/25 22:16:29 mike Exp $".
 //

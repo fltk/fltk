@@ -1,9 +1,9 @@
 //
-// "$Id: CubeView.cxx,v 1.4 1999/03/10 16:40:19 mike Exp $"
+// "$Id: CubeView.cxx,v 1.4.2.1 2000/04/25 22:16:48 mike Exp $"
 //
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -165,5 +165,5 @@ void CubeView::draw() {
 #endif /* HAVE_GL */
 
 //
-// End of "$Id: CubeView.cxx,v 1.4 1999/03/10 16:40:19 mike Exp $".
+// End of "$Id: CubeView.cxx,v 1.4.2.1 2000/04/25 22:16:48 mike Exp $".
 //

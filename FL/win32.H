@@ -1,9 +1,9 @@
 //
-// "$Id: win32.H,v 1.15 1999/03/09 18:16:45 mike Exp $"
+// "$Id: win32.H,v 1.15.2.1 2000/04/25 22:16:00 mike Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -121,5 +121,5 @@ FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
 
 //
-// End of "$Id: win32.H,v 1.15 1999/03/09 18:16:45 mike Exp $".
+// End of "$Id: win32.H,v 1.15.2.1 2000/04/25 22:16:00 mike Exp $".
 //

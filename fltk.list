@@ -1,14 +1,11 @@
 #
-# "$Id: fltk.list,v 1.1.2.3 1999/09/27 18:16:36 mike Exp $"
+# "$Id: fltk.list,v 1.1.2.1 2000/04/25 22:15:41 mike Exp $"
 #
-# ESP Package Manager (EPM) distribution file.
+# EPM product list file for the Fast Light Tool Kit (FLTK).
 #
-# EPM is a free software distribution program that works with all
-# UNIX's.  You can find the EPM distribution in the CUPS distribution
-# at "http://www.cups.org", and eventually on the ESP web page at
-# "http://www.easysw.com/epm".
+# (EPM can be found at http://www.easysw.com/epm)
 #
-# Copyright 1998-1999 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -28,42 +25,36 @@
 # Please report all bugs and problems to "fltk-bugs@easysw.com".
 #
 
-%product Fast Light Tool Kit
-%copyright 1998-1999 by Bill Spitzak and others.
-%vendor GNU
+%product Fast Light Tool Kit (FLTK)
+%copyright 1998-2000 by Bill Spitzak and others.
+%vendor LGPL
 %license COPYING
-%readme packages/README.epm
-%version 1.0.6
+%readme README
+%version 1.0.8
+%description FLTK is a cross-platform GUI toolkit for C++.
 
-# GUIs
-%system solaris
-f 0555 root sys /usr/openwin/bin/fluid fluid/fluid
-%system !solaris
-f 0555 root sys /usr/bin/X11/fluid fluid/fluid
+# FLUID
+f 0555 root sys /usr/bin/fluid fluid/fluid
 
 # Man pages
 %system irix
-f 0444 root sys /usr/catman/pman/cat1/fluid.z documentation/fluid.z
+f 0444 root sys /usr/catman/u_man/cat1/fluid.1 documentation/fluid.1
 %system !irix
-f 0444 root sys /usr/man/man1/fluid.1 documentation/fluid.1
+f 0444 root sys /usr/man/man1/fluid.1 documentation/fluid.man
 %system all
 
-# Libraries
-%system hpux
-f 0555 root sys /usr/lib/libfltk.a lib/libfltk.a
-f 0555 root sys /usr/lib/libfltk.sl.1 src/libfltk.sl.1
-l 0555 root sys /usr/lib/libfltk.sl libfltk.sl.1
+# Library files
 %system irix-6.5
 f 0555 root sys /usr/lib32/libfltk.a lib/libfltk.a
 f 0555 root sys /usr/lib32/libfltk.so.1 src/libfltk.so.1
-l 0555 root sys /usr/lib32/libfltk.so libfltk.so.1
-%system !irix-6.5 !hpux
+l 0000 root sys /usr/lib32/libfltk.so libfltk.so.1
+%system !irix-6.5
 f 0555 root sys /usr/lib/libfltk.a lib/libfltk.a
 f 0555 root sys /usr/lib/libfltk.so.1 src/libfltk.so.1
-l 0555 root sys /usr/lib/libfltk.so libfltk.so.1
+l 0000 root sys /usr/lib/libfltk.so libfltk.so.1
 %system all
 
-# Header files...
+# Header files
 f 0444 root sys /usr/include/FL/Enumerations.H FL/Enumerations.H
 l 0000 root sys /usr/include/FL/Enumerations.h Enumerations.H
 f 0444 root sys /usr/include/FL/Fl.H FL/Fl.H
@@ -254,137 +245,137 @@ l 0000 root sys /usr/include/FL/x.h x.H
 l 0000 root sys /usr/include/Fl FL
 
 # Documentation
-f 0444 root sys /usr/doc/fltk/FL.gif documentation/FL.gif
-f 0444 root sys /usr/doc/fltk/Fl_Adjuster.html documentation/Fl_Adjuster.html
-f 0444 root sys /usr/doc/fltk/Fl_Box.html documentation/Fl_Box.html
-f 0444 root sys /usr/doc/fltk/Fl_Browser.html documentation/Fl_Browser.html
-f 0444 root sys /usr/doc/fltk/Fl_Browser_.html documentation/Fl_Browser_.html
-f 0444 root sys /usr/doc/fltk/Fl_Button.html documentation/Fl_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Chart.html documentation/Fl_Chart.html
-f 0444 root sys /usr/doc/fltk/Fl_Check_Button.gif documentation/Fl_Check_Button.gif
-f 0444 root sys /usr/doc/fltk/Fl_Check_Button.html documentation/Fl_Check_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Choice.html documentation/Fl_Choice.html
-f 0444 root sys /usr/doc/fltk/Fl_Clock.html documentation/Fl_Clock.html
-f 0444 root sys /usr/doc/fltk/Fl_Color_Chooser.html documentation/Fl_Color_Chooser.html
-f 0444 root sys /usr/doc/fltk/Fl_Counter.html documentation/Fl_Counter.html
-f 0444 root sys /usr/doc/fltk/Fl_Dial.html documentation/Fl_Dial.html
-f 0444 root sys /usr/doc/fltk/Fl_Double_Window.html documentation/Fl_Double_Window.html
-f 0444 root sys /usr/doc/fltk/Fl_End.html documentation/Fl_End.html
-f 0444 root sys /usr/doc/fltk/Fl_Float_Input.html documentation/Fl_Float_Input.html
-f 0444 root sys /usr/doc/fltk/Fl_Free.html documentation/Fl_Free.html
-f 0444 root sys /usr/doc/fltk/Fl_Gl_Window.html documentation/Fl_Gl_Window.html
-f 0444 root sys /usr/doc/fltk/Fl_Group.html documentation/Fl_Group.html
-f 0444 root sys /usr/doc/fltk/Fl_Hold_Browser.html documentation/Fl_Hold_Browser.html
-f 0444 root sys /usr/doc/fltk/Fl_Input.html documentation/Fl_Input.html
-f 0444 root sys /usr/doc/fltk/Fl_Input_.html documentation/Fl_Input_.html
-f 0444 root sys /usr/doc/fltk/Fl_Int_Input.html documentation/Fl_Int_Input.html
-f 0444 root sys /usr/doc/fltk/Fl_Light_Button.gif documentation/Fl_Light_Button.gif
-f 0444 root sys /usr/doc/fltk/Fl_Light_Button.html documentation/Fl_Light_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Menu_.html documentation/Fl_Menu_.html
-f 0444 root sys /usr/doc/fltk/Fl_Menu_Bar.html documentation/Fl_Menu_Bar.html
-f 0444 root sys /usr/doc/fltk/Fl_Menu_Button.html documentation/Fl_Menu_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Menu_Item.html documentation/Fl_Menu_Item.html
-f 0444 root sys /usr/doc/fltk/Fl_Menu_Window.html documentation/Fl_Menu_Window.html
-f 0444 root sys /usr/doc/fltk/Fl_Multi_Browser.html documentation/Fl_Multi_Browser.html
-f 0444 root sys /usr/doc/fltk/Fl_Multiline_Input.html documentation/Fl_Multiline_Input.html
-f 0444 root sys /usr/doc/fltk/Fl_Multiline_Output.html documentation/Fl_Multiline_Output.html
-f 0444 root sys /usr/doc/fltk/Fl_Output.html documentation/Fl_Output.html
-f 0444 root sys /usr/doc/fltk/Fl_Overlay_Window.html documentation/Fl_Overlay_Window.html
-f 0444 root sys /usr/doc/fltk/Fl_Pack.html documentation/Fl_Pack.html
-f 0444 root sys /usr/doc/fltk/Fl_Positioner.html documentation/Fl_Positioner.html
-f 0444 root sys /usr/doc/fltk/Fl_Repeat_Button.html documentation/Fl_Repeat_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Return_Button.gif documentation/Fl_Return_Button.gif
-f 0444 root sys /usr/doc/fltk/Fl_Return_Button.html documentation/Fl_Return_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Roller.gif documentation/Fl_Roller.gif
-f 0444 root sys /usr/doc/fltk/Fl_Roller.html documentation/Fl_Roller.html
-f 0444 root sys /usr/doc/fltk/Fl_Round_Button.gif documentation/Fl_Round_Button.gif
-f 0444 root sys /usr/doc/fltk/Fl_Round_Button.html documentation/Fl_Round_Button.html
-f 0444 root sys /usr/doc/fltk/Fl_Scroll.gif documentation/Fl_Scroll.gif
-f 0444 root sys /usr/doc/fltk/Fl_Scroll.html documentation/Fl_Scroll.html
-f 0444 root sys /usr/doc/fltk/Fl_Scrollbar.html documentation/Fl_Scrollbar.html
-f 0444 root sys /usr/doc/fltk/Fl_Secret_Input.html documentation/Fl_Secret_Input.html
-f 0444 root sys /usr/doc/fltk/Fl_Select_Browser.html documentation/Fl_Select_Browser.html
-f 0444 root sys /usr/doc/fltk/Fl_Single_Window.html documentation/Fl_Single_Window.html
-f 0444 root sys /usr/doc/fltk/Fl_Slider.html documentation/Fl_Slider.html
-f 0444 root sys /usr/doc/fltk/Fl_Tabs.html documentation/Fl_Tabs.html
-f 0444 root sys /usr/doc/fltk/Fl_Tile.gif documentation/Fl_Tile.gif
-f 0444 root sys /usr/doc/fltk/Fl_Tile.html documentation/Fl_Tile.html
-f 0444 root sys /usr/doc/fltk/Fl_Timer.html documentation/Fl_Timer.html
-f 0444 root sys /usr/doc/fltk/Fl_Valuator.html documentation/Fl_Valuator.html
-f 0444 root sys /usr/doc/fltk/Fl_Value_Input.gif documentation/Fl_Value_Input.gif
-f 0444 root sys /usr/doc/fltk/Fl_Value_Input.html documentation/Fl_Value_Input.html
-f 0444 root sys /usr/doc/fltk/Fl_Value_Output.gif documentation/Fl_Value_Output.gif
-f 0444 root sys /usr/doc/fltk/Fl_Value_Output.html documentation/Fl_Value_Output.html
-f 0444 root sys /usr/doc/fltk/Fl_Value_Slider.html documentation/Fl_Value_Slider.html
-f 0444 root sys /usr/doc/fltk/Fl_Widget.html documentation/Fl_Widget.html
-f 0444 root sys /usr/doc/fltk/Fl_Window.html documentation/Fl_Window.html
-f 0444 root sys /usr/doc/fltk/adjuster1.gif documentation/adjuster1.gif
-f 0444 root sys /usr/doc/fltk/ask.C.gif documentation/ask.C.gif
-f 0444 root sys /usr/doc/fltk/basics.html documentation/basics.html
-f 0444 root sys /usr/doc/fltk/bglogo.gif documentation/bglogo.gif
-f 0444 root sys /usr/doc/fltk/boxtypes.gif documentation/boxtypes.gif
-f 0444 root sys /usr/doc/fltk/button.C.gif documentation/button.C.gif
-f 0444 root sys /usr/doc/fltk/buttons.gif documentation/buttons.gif
-f 0444 root sys /usr/doc/fltk/charts.gif documentation/charts.gif
-f 0444 root sys /usr/doc/fltk/choice.gif documentation/choice.gif
-f 0444 root sys /usr/doc/fltk/clock.gif documentation/clock.gif
-f 0444 root sys /usr/doc/fltk/common.html documentation/common.html
-f 0444 root sys /usr/doc/fltk/counter.gif documentation/counter.gif
-f 0444 root sys /usr/doc/fltk/cubeview.gif documentation/cubeview.gif
-f 0444 root sys /usr/doc/fltk/dial.gif documentation/dial.gif
-f 0444 root sys /usr/doc/fltk/drawing.html documentation/drawing.html
-f 0444 root sys /usr/doc/fltk/editor-replace.gif documentation/editor-replace.gif
-f 0444 root sys /usr/doc/fltk/editor.gif documentation/editor.gif
-f 0444 root sys /usr/doc/fltk/editor.html documentation/editor.html
-f 0444 root sys /usr/doc/fltk/enumerations.html documentation/enumerations.html
-f 0444 root sys /usr/doc/fltk/events.html documentation/events.html
-f 0444 root sys /usr/doc/fltk/filechooser.gif documentation/filechooser.gif
-f 0444 root sys /usr/doc/fltk/fl_alert.gif documentation/fl_alert.gif
-f 0444 root sys /usr/doc/fltk/fl_ask.gif documentation/fl_ask.gif
-f 0444 root sys /usr/doc/fltk/fl_choice.gif documentation/fl_choice.gif
-f 0444 root sys /usr/doc/fltk/fl_color_chooser.jpg documentation/fl_color_chooser.jpg
-f 0444 root sys /usr/doc/fltk/fl_input.gif documentation/fl_input.gif
-f 0444 root sys /usr/doc/fltk/fl_message.gif documentation/fl_message.gif
-f 0444 root sys /usr/doc/fltk/fl_password.gif documentation/fl_password.gif
-f 0444 root sys /usr/doc/fltk/fl_show_colormap.gif documentation/fl_show_colormap.gif
-f 0444 root sys /usr/doc/fltk/fluid-org.gif documentation/fluid-org.gif
-f 0444 root sys /usr/doc/fltk/fluid.gif documentation/fluid.gif
-f 0444 root sys /usr/doc/fltk/fluid.html documentation/fluid.html
-f 0444 root sys /usr/doc/fltk/fluid1.gif documentation/fluid1.gif
-f 0444 root sys /usr/doc/fltk/fluid2.gif documentation/fluid2.gif
-f 0444 root sys /usr/doc/fltk/fluid3.gif documentation/fluid3.gif
-f 0444 root sys /usr/doc/fltk/fluid4.gif documentation/fluid4.gif
-f 0444 root sys /usr/doc/fltk/fluid_main.gif documentation/fluid_main.gif
-f 0444 root sys /usr/doc/fltk/fluid_prefs.gif documentation/fluid_prefs.gif
-f 0444 root sys /usr/doc/fltk/fluid_widget.gif documentation/fluid_widget.gif
-f 0444 root sys /usr/doc/fltk/forms.html documentation/forms.html
-f 0444 root sys /usr/doc/fltk/functions.html documentation/functions.html
-f 0444 root sys /usr/doc/fltk/glut.html documentation/glut.html
-f 0444 root sys /usr/doc/fltk/hello.C.gif documentation/hello.C.gif
-f 0444 root sys /usr/doc/fltk/index.html documentation/index.html
-f 0444 root sys /usr/doc/fltk/intro.html documentation/intro.html
-f 0444 root sys /usr/doc/fltk/license.html documentation/license.html
-f 0444 root sys /usr/doc/fltk/menu.gif documentation/menu.gif
-f 0444 root sys /usr/doc/fltk/menu_button.gif documentation/menu_button.gif
-f 0444 root sys /usr/doc/fltk/menubar.gif documentation/menubar.gif
-f 0444 root sys /usr/doc/fltk/opengl.html documentation/opengl.html
-f 0444 root sys /usr/doc/fltk/osissues.html documentation/osissues.html
-f 0444 root sys /usr/doc/fltk/positioner.gif documentation/positioner.gif
-f 0444 root sys /usr/doc/fltk/preface.html documentation/preface.html
-f 0444 root sys /usr/doc/fltk/resizebox1.gif documentation/resizebox1.gif
-f 0444 root sys /usr/doc/fltk/resizebox2.gif documentation/resizebox2.gif
-f 0444 root sys /usr/doc/fltk/round_clock.gif documentation/round_clock.gif
-f 0444 root sys /usr/doc/fltk/scrollbar.gif documentation/scrollbar.gif
-f 0444 root sys /usr/doc/fltk/shape.C.gif documentation/shape.C.gif
-f 0444 root sys /usr/doc/fltk/slider.gif documentation/slider.gif
-f 0444 root sys /usr/doc/fltk/subclassing.html documentation/subclassing.html
-f 0444 root sys /usr/doc/fltk/symbols.gif documentation/symbols.gif
-f 0444 root sys /usr/doc/fltk/tabs.gif documentation/tabs.gif
-f 0444 root sys /usr/doc/fltk/text.gif documentation/text.gif
-f 0444 root sys /usr/doc/fltk/valuators.gif documentation/valuators.gif
-f 0444 root sys /usr/doc/fltk/value_slider.gif documentation/value_slider.gif
-f 0444 root sys /usr/doc/fltk/widgets.html documentation/widgets.html
+f 0444 root sys /usr/share/doc/fltk/adjuster1.gif documentation/adjuster1.gif
+f 0444 root sys /usr/share/doc/fltk/ask.C.gif documentation/ask.C.gif
+f 0444 root sys /usr/share/doc/fltk/basics.html documentation/basics.html
+f 0444 root sys /usr/share/doc/fltk/bglogo.gif documentation/bglogo.gif
+f 0444 root sys /usr/share/doc/fltk/boxtypes.gif documentation/boxtypes.gif
+f 0444 root sys /usr/share/doc/fltk/buttons.gif documentation/buttons.gif
+f 0444 root sys /usr/share/doc/fltk/button.C.gif documentation/button.C.gif
+f 0444 root sys /usr/share/doc/fltk/charts.gif documentation/charts.gif
+f 0444 root sys /usr/share/doc/fltk/choice.gif documentation/choice.gif
+f 0444 root sys /usr/share/doc/fltk/clock.gif documentation/clock.gif
+f 0444 root sys /usr/share/doc/fltk/common.html documentation/common.html
+f 0444 root sys /usr/share/doc/fltk/counter.gif documentation/counter.gif
+f 0444 root sys /usr/share/doc/fltk/cubeview.gif documentation/cubeview.gif
+f 0444 root sys /usr/share/doc/fltk/dial.gif documentation/dial.gif
+f 0444 root sys /usr/share/doc/fltk/drawing.html documentation/drawing.html
+f 0444 root sys /usr/share/doc/fltk/editor-replace.gif documentation/editor-replace.gif
+f 0444 root sys /usr/share/doc/fltk/editor.gif documentation/editor.gif
+f 0444 root sys /usr/share/doc/fltk/editor.html documentation/editor.html
+f 0444 root sys /usr/share/doc/fltk/enumerations.html documentation/enumerations.html
+f 0444 root sys /usr/share/doc/fltk/events.html documentation/events.html
+f 0444 root sys /usr/share/doc/fltk/filechooser.gif documentation/filechooser.gif
+f 0444 root sys /usr/share/doc/fltk/fluid1.gif documentation/fluid1.gif
+f 0444 root sys /usr/share/doc/fltk/fluid2.gif documentation/fluid2.gif
+f 0444 root sys /usr/share/doc/fltk/fluid3.gif documentation/fluid3.gif
+f 0444 root sys /usr/share/doc/fltk/fluid4.gif documentation/fluid4.gif
+f 0444 root sys /usr/share/doc/fltk/fluid-org.gif documentation/fluid-org.gif
+f 0444 root sys /usr/share/doc/fltk/fluid.gif documentation/fluid.gif
+f 0444 root sys /usr/share/doc/fltk/fluid.html documentation/fluid.html
+f 0444 root sys /usr/share/doc/fltk/fluid_main.gif documentation/fluid_main.gif
+f 0444 root sys /usr/share/doc/fltk/fluid_prefs.gif documentation/fluid_prefs.gif
+f 0444 root sys /usr/share/doc/fltk/fluid_widget.gif documentation/fluid_widget.gif
+f 0444 root sys /usr/share/doc/fltk/FL.gif documentation/FL.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Adjuster.html documentation/Fl_Adjuster.html
+f 0444 root sys /usr/share/doc/fltk/fl_alert.gif documentation/fl_alert.gif
+f 0444 root sys /usr/share/doc/fltk/fl_ask.gif documentation/fl_ask.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Box.html documentation/Fl_Box.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Browser.html documentation/Fl_Browser.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Browser_.html documentation/Fl_Browser_.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Button.html documentation/Fl_Button.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Chart.html documentation/Fl_Chart.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Check_Button.gif documentation/Fl_Check_Button.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Check_Button.html documentation/Fl_Check_Button.html
+f 0444 root sys /usr/share/doc/fltk/fl_choice.gif documentation/fl_choice.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Choice.html documentation/Fl_Choice.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Clock.html documentation/Fl_Clock.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Color_Chooser.html documentation/Fl_Color_Chooser.html
+f 0444 root sys /usr/share/doc/fltk/fl_color_chooser.jpg documentation/fl_color_chooser.jpg
+f 0444 root sys /usr/share/doc/fltk/Fl_Counter.html documentation/Fl_Counter.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Dial.html documentation/Fl_Dial.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Double_Window.html documentation/Fl_Double_Window.html
+f 0444 root sys /usr/share/doc/fltk/Fl_End.html documentation/Fl_End.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Float_Input.html documentation/Fl_Float_Input.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Free.html documentation/Fl_Free.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Gl_Window.html documentation/Fl_Gl_Window.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Group.html documentation/Fl_Group.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Hold_Browser.html documentation/Fl_Hold_Browser.html
+f 0444 root sys /usr/share/doc/fltk/fl_input.gif documentation/fl_input.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Input.html documentation/Fl_Input.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Input_.html documentation/Fl_Input_.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Int_Input.html documentation/Fl_Int_Input.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Light_Button.gif documentation/Fl_Light_Button.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Light_Button.html documentation/Fl_Light_Button.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Menu_Bar.html documentation/Fl_Menu_Bar.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Menu_Button.html documentation/Fl_Menu_Button.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Menu_Item.html documentation/Fl_Menu_Item.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Menu_Window.html documentation/Fl_Menu_Window.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Menu_.html documentation/Fl_Menu_.html
+f 0444 root sys /usr/share/doc/fltk/fl_message.gif documentation/fl_message.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Multiline_Input.html documentation/Fl_Multiline_Input.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Multiline_Output.html documentation/Fl_Multiline_Output.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Multi_Browser.html documentation/Fl_Multi_Browser.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Output.html documentation/Fl_Output.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Overlay_Window.html documentation/Fl_Overlay_Window.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Pack.html documentation/Fl_Pack.html
+f 0444 root sys /usr/share/doc/fltk/fl_password.gif documentation/fl_password.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Positioner.html documentation/Fl_Positioner.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Repeat_Button.html documentation/Fl_Repeat_Button.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Return_Button.gif documentation/Fl_Return_Button.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Return_Button.html documentation/Fl_Return_Button.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Roller.gif documentation/Fl_Roller.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Roller.html documentation/Fl_Roller.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Round_Button.gif documentation/Fl_Round_Button.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Round_Button.html documentation/Fl_Round_Button.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Scrollbar.html documentation/Fl_Scrollbar.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Scroll.gif documentation/Fl_Scroll.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Scroll.html documentation/Fl_Scroll.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Secret_Input.html documentation/Fl_Secret_Input.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Select_Browser.html documentation/Fl_Select_Browser.html
+f 0444 root sys /usr/share/doc/fltk/fl_show_colormap.gif documentation/fl_show_colormap.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Single_Window.html documentation/Fl_Single_Window.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Slider.html documentation/Fl_Slider.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Tabs.html documentation/Fl_Tabs.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Tile.gif documentation/Fl_Tile.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Tile.html documentation/Fl_Tile.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Timer.html documentation/Fl_Timer.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Valuator.html documentation/Fl_Valuator.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Value_Input.gif documentation/Fl_Value_Input.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Value_Input.html documentation/Fl_Value_Input.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Value_Output.gif documentation/Fl_Value_Output.gif
+f 0444 root sys /usr/share/doc/fltk/Fl_Value_Output.html documentation/Fl_Value_Output.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Value_Slider.html documentation/Fl_Value_Slider.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Widget.html documentation/Fl_Widget.html
+f 0444 root sys /usr/share/doc/fltk/Fl_Window.html documentation/Fl_Window.html
+f 0444 root sys /usr/share/doc/fltk/forms.html documentation/forms.html
+f 0444 root sys /usr/share/doc/fltk/functions.html documentation/functions.html
+f 0444 root sys /usr/share/doc/fltk/glut.html documentation/glut.html
+f 0444 root sys /usr/share/doc/fltk/hello.C.gif documentation/hello.C.gif
+f 0444 root sys /usr/share/doc/fltk/index.html documentation/index.html
+f 0444 root sys /usr/share/doc/fltk/intro.html documentation/intro.html
+f 0444 root sys /usr/share/doc/fltk/license.html documentation/license.html
+f 0444 root sys /usr/share/doc/fltk/menubar.gif documentation/menubar.gif
+f 0444 root sys /usr/share/doc/fltk/menu.gif documentation/menu.gif
+f 0444 root sys /usr/share/doc/fltk/menu_button.gif documentation/menu_button.gif
+f 0444 root sys /usr/share/doc/fltk/opengl.html documentation/opengl.html
+f 0444 root sys /usr/share/doc/fltk/osissues.html documentation/osissues.html
+f 0444 root sys /usr/share/doc/fltk/positioner.gif documentation/positioner.gif
+f 0444 root sys /usr/share/doc/fltk/preface.html documentation/preface.html
+f 0444 root sys /usr/share/doc/fltk/resizebox1.gif documentation/resizebox1.gif
+f 0444 root sys /usr/share/doc/fltk/resizebox2.gif documentation/resizebox2.gif
+f 0444 root sys /usr/share/doc/fltk/round_clock.gif documentation/round_clock.gif
+f 0444 root sys /usr/share/doc/fltk/scrollbar.gif documentation/scrollbar.gif
+f 0444 root sys /usr/share/doc/fltk/shape.C.gif documentation/shape.C.gif
+f 0444 root sys /usr/share/doc/fltk/slider.gif documentation/slider.gif
+f 0444 root sys /usr/share/doc/fltk/subclassing.html documentation/subclassing.html
+f 0444 root sys /usr/share/doc/fltk/symbols.gif documentation/symbols.gif
+f 0444 root sys /usr/share/doc/fltk/tabs.gif documentation/tabs.gif
+f 0444 root sys /usr/share/doc/fltk/text.gif documentation/text.gif
+f 0444 root sys /usr/share/doc/fltk/valuators.gif documentation/valuators.gif
+f 0444 root sys /usr/share/doc/fltk/value_slider.gif documentation/value_slider.gif
+f 0444 root sys /usr/share/doc/fltk/widgets.html documentation/widgets.html
 
 #
-# End of "$Id: fltk.list,v 1.1.2.3 1999/09/27 18:16:36 mike Exp $".
+# End of "$Id: fltk.list,v 1.1.2.1 2000/04/25 22:15:41 mike Exp $".
 #

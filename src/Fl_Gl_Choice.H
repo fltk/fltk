@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Gl_Choice.H,v 1.4.2.2 2000/03/18 10:04:17 bill Exp $"
+// "$Id: Fl_Gl_Choice.H,v 1.4.2.3 2000/04/25 22:16:24 mike Exp $"
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -91,5 +91,5 @@ void fl_no_gl_context();
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.2 2000/03/18 10:04:17 bill Exp $".
+// End of "$Id: Fl_Gl_Choice.H,v 1.4.2.3 2000/04/25 22:16:24 mike Exp $".
 //

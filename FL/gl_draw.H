@@ -1,9 +1,9 @@
 //
-// "$Id: gl_draw.H,v 1.4 1999/01/07 19:17:07 mike Exp $"
+// "$Id: gl_draw.H,v 1.4.2.1 2000/04/25 22:16:00 mike Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -26,5 +26,5 @@
 #include "gl.h"
 
 //
-// End of "$Id: gl_draw.H,v 1.4 1999/01/07 19:17:07 mike Exp $".
+// End of "$Id: gl_draw.H,v 1.4.2.1 2000/04/25 22:16:00 mike Exp $".
 //

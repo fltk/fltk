@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.4 2000/04/12 04:32:04 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.5 2000/04/25 22:16:26 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -736,5 +736,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.4 2000/04/12 04:32:04 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.5 2000/04/25 22:16:26 mike Exp $".
 //

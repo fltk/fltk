@@ -1,9 +1,9 @@
 //
-// "$Id: shape.cxx,v 1.5.2.1 1999/10/15 09:01:48 bill Exp $"
+// "$Id: shape.cxx,v 1.5.2.2 2000/04/25 22:16:59 mike Exp $"
 //
 // Tiny OpenGL demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -111,5 +111,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: shape.cxx,v 1.5.2.1 1999/10/15 09:01:48 bill Exp $".
+// End of "$Id: shape.cxx,v 1.5.2.2 2000/04/25 22:16:59 mike Exp $".
 //

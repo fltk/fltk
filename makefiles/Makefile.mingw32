@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile.mingw32,v 1.1 1999/02/18 14:05:30 mike Exp $"
+# "$Id: Makefile.mingw32,v 1.1.2.1 2000/04/25 22:16:05 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-1999 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -74,5 +74,5 @@ makeinclude: makefiles\makeinclude.mingw32
 	copy $< $@
 
 #
-# End of "$Id: Makefile.mingw32,v 1.1 1999/02/18 14:05:30 mike Exp $".
+# End of "$Id: Makefile.mingw32,v 1.1.2.1 2000/04/25 22:16:05 mike Exp $".
 #

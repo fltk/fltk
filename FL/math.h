@@ -1,9 +1,9 @@
 //
-// "$Id: math.h,v 1.4.2.1 1999/04/07 14:22:21 gustavo Exp $"
+// "$Id: math.h,v 1.4.2.2 2000/04/25 22:16:00 mike Exp $"
 //
 // Math header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -57,5 +57,5 @@ inline double copysign(double a, double b) {return b<0 ? -a : a;}
 #endif
 
 //
-// End of "$Id: math.h,v 1.4.2.1 1999/04/07 14:22:21 gustavo Exp $".
+// End of "$Id: math.h,v 1.4.2.2 2000/04/25 22:16:00 mike Exp $".
 //

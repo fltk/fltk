@@ -1,9 +1,9 @@
 //
-// "$Id: button.cxx,v 1.4.2.1 1999/04/17 01:02:30 bill Exp $"
+// "$Id: button.cxx,v 1.4.2.2 2000/04/25 22:16:51 mike Exp $"
 //
 // Button/callback test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -62,5 +62,5 @@ int main(int argc, char ** argv) {
 }
 
 //
-// End of "$Id: button.cxx,v 1.4.2.1 1999/04/17 01:02:30 bill Exp $".
+// End of "$Id: button.cxx,v 1.4.2.2 2000/04/25 22:16:51 mike Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.5 1999/03/04 18:11:37 mike Exp $"
+ * "$Id: config.h,v 1.5.2.1 2000/04/25 22:17:00 mike Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -138,5 +138,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.h,v 1.5 1999/03/04 18:11:37 mike Exp $".
+ * End of "$Id: config.h,v 1.5.2.1 2000/04/25 22:17:00 mike Exp $".
  */

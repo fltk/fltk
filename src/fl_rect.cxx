@@ -1,9 +1,9 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.1 2000/02/15 08:31:46 bill Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.2 2000/04/25 22:16:43 mike Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -388,5 +388,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.1 2000/02/15 08:31:46 bill Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.2 2000/04/25 22:16:43 mike Exp $".
 //

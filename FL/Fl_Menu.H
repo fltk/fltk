@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Menu.H,v 1.4 1999/01/07 19:16:57 mike Exp $"
+// "$Id: Fl_Menu.H,v 1.4.2.1 2000/04/25 22:15:49 mike Exp $"
 //
 // Old menu header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -27,5 +27,5 @@
 #include "Fl_Menu_Item.H"
 
 //
-// End of "$Id: Fl_Menu.H,v 1.4 1999/01/07 19:16:57 mike Exp $".
+// End of "$Id: Fl_Menu.H,v 1.4.2.1 2000/04/25 22:15:49 mike Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: fl_overlay_visual.cxx,v 1.4 1999/01/07 19:17:40 mike Exp $"
+// "$Id: fl_overlay_visual.cxx,v 1.4.2.1 2000/04/25 22:16:43 mike Exp $"
 //
 // X overlay support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -99,5 +99,5 @@ XVisualInfo *fl_find_overlay_visual() {
 #endif
 
 //
-// End of "$Id: fl_overlay_visual.cxx,v 1.4 1999/01/07 19:17:40 mike Exp $".
+// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.1 2000/04/25 22:16:43 mike Exp $".
 //

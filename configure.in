@@ -1,11 +1,11 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.33.2.6 1999/10/19 04:50:32 bill Exp $"
+dnl# "$Id: configure.in,v 1.33.2.7 2000/04/25 22:15:41 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
-dnl# Copyright 1998-1999 by Bill Spitzak and others.
+dnl# Copyright 1998-2000 by Bill Spitzak and others.
 dnl#
 dnl# This library is free software; you can redistribute it and/or
 dnl# modify it under the terms of the GNU Library General Public
@@ -41,8 +41,7 @@ DSONAME=""
 dnl# Get the operating system and version number...
 
 uname=`uname`
-uversion=`uname -r | sed -e 's/-.*$//g;s/\.//g'`
-dnl# uversion=`uname -r | sed -e '1,$s/[[-.A-Za-z]]//g'`
+uversion=`uname -r | sed -e 's/-.*$//g;s/[\.]//g'`
 if test "$uname" = "IRIX64"; then
     uname="IRIX"
 fi
@@ -77,6 +76,10 @@ if eval "test x$enable_shared = xyes"; then
       IRIX*)
           DSONAME="libfltk.so.1"
           DSOCOMMAND="\$(CXX) -soname libfltk.so.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
+	  ;;
+      FreeBSD* | NetBSD* | OpenBSD*)
+          DSONAME="libfltk.so.1"
+	  DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ -shared \$(OPTIM) -o"
 	  ;;
       *)
           echo "Warning: shared libraries may not be supported.  Trying -shared"
@@ -181,6 +184,18 @@ if test -n "$GXX"; then
     	CFLAGS="-fPIC $CFLAGS"
     	CXXFLAGS="-fPIC $CXXFLAGS"
     fi
+    CFLAGS="-fno-rtti -fomit-stack-frame $CFLAGS"
+    CXXFLAGS="-fno-rtti -fomit-stack-frame $CXXFLAGS"
+
+    # See if GCC supports -fno-exceptions...
+
+    OLDCFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -fno-exceptions"
+    AC_TRY_COMPILE(#include <stdio.h>,void func(void) { puts("Hello, World!"); },
+	CXXFLAGS="$CXXFLAGS -fno-exceptions"
+	echo Congratulations, your GCC supports exceptions; disabling them...,
+	CFLAGS="$OLDCFLAGS"
+	echo I see that your GCC does not support exceptions.)
 else
     case `(uname) 2>/dev/null` in
         IRIX*)
@@ -248,5 +263,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.33.2.6 1999/10/19 04:50:32 bill Exp $".
+dnl# End of "$Id: configure.in,v 1.33.2.7 2000/04/25 22:15:41 mike Exp $".
 dnl#

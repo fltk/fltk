@@ -1,9 +1,9 @@
 //
-// "$Id: fl_file_chooser.H,v 1.5 1999/02/16 21:59:48 mike Exp $"
+// "$Id: fl_file_chooser.H,v 1.5.2.1 2000/04/25 22:15:59 mike Exp $"
 //
 // File chooser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -34,5 +34,5 @@ FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char *));
 #endif
 
 //
-// End of "$Id: fl_file_chooser.H,v 1.5 1999/02/16 21:59:48 mike Exp $".
+// End of "$Id: fl_file_chooser.H,v 1.5.2.1 2000/04/25 22:15:59 mike Exp $".
 //

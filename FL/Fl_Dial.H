@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Dial.H,v 1.7 1999/03/10 08:17:40 bill Exp $"
+// "$Id: Fl_Dial.H,v 1.7.2.1 2000/04/25 22:15:46 mike Exp $"
 //
 // Dial header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -61,5 +61,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Dial.H,v 1.7 1999/03/10 08:17:40 bill Exp $".
+// End of "$Id: Fl_Dial.H,v 1.7.2.1 2000/04/25 22:15:46 mike Exp $".
 //

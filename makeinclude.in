@@ -1,10 +1,10 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.1 1999/03/25 15:26:28 mike Exp $"
+# "$Id: makeinclude.in,v 1.7.2.2 2000/04/25 22:15:42 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
 #
-# Copyright 1998-1999 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -38,7 +38,7 @@ CC		=@CC@
 MAKEDEPEND	=@MAKEDEPEND@
 
 # flags for C++ compiler:
-CFLAGS		=@CFLAGS@
+CFLAGS		=@CFLAGS@ @X_CFLAGS@
 CXXFLAGS	=@CXXFLAGS@ @X_CFLAGS@
 
 # program to make the archive:
@@ -52,6 +52,33 @@ DSOCOMMAND	=@DSOCOMMAND@
 LDLIBS		=@LDFLAGS@ @LIBS@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 GLDLIBS		=@LDFLAGS@ @LIBS@ @GLLIB@ -lX11 -lXext @X_EXTRA_LIBS@ -lm
 
+# Be quiet when building...
+.SILENT:
+
+# Build commands and filename extensions...
+.SUFFIXES:	.c .cxx .h .fl .o
+
+.cxx:
+	echo Compiling and linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -L../lib -lfltk $(LDLIBS) -o $@
+
+.c.o:
+	echo Compiling $@...
+	$(CC) -I.. $(CXXFLAGS) $< -c
+
+.cxx.o:
+	echo Compiling $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -c
+
+.fl.cxx .fl.h:
+	echo Generating $<...
+	../fluid/fluid -c $<
+
+.fl:
+	echo Generating, compiling, and linking $@...
+	../fluid/fluid -c $<
+	$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
+
 #
-# End of "$Id: makeinclude.in,v 1.7.2.1 1999/03/25 15:26:28 mike Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.2 2000/04/25 22:15:42 mike Exp $".
 #

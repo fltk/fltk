@@ -1,5 +1,5 @@
 //
-// "$Id: fl_jpeg_image.cxx,v 1.5 1999/01/07 19:17:53 mike Exp $"
+// "$Id: fl_jpeg_image.cxx,v 1.5.2.1 2000/04/25 22:16:54 mike Exp $"
 //
 // fl_draw_image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // The makefile assummes you decompressed and build these in a directory
 // called "jpeg-6a" in the same location as the "FL" directory.
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -197,5 +197,5 @@ void readtheimage(const char *name) {
 #endif
 
 //
-// End of "$Id: fl_jpeg_image.cxx,v 1.5 1999/01/07 19:17:53 mike Exp $".
+// End of "$Id: fl_jpeg_image.cxx,v 1.5.2.1 2000/04/25 22:16:54 mike Exp $".
 //

@@ -1,9 +1,9 @@
 #
-# "$Id: makeinclude.cygnus,v 1.9.2.1 1999/03/25 15:26:31 mike Exp $"
+# "$Id: makeinclude.cygnus,v 1.9.2.2 2000/04/25 22:16:06 mike Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-1999 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -51,5 +51,5 @@ GLDLIBS		= -lgdi32 -luser32 -lglu32 -lopengl32 -lmsvcrt -lwsock32 -lm \
 		  -mno-cygwin -mwindows
 
 #
-# End of "$Id: makeinclude.cygnus,v 1.9.2.1 1999/03/25 15:26:31 mike Exp $".
+# End of "$Id: makeinclude.cygnus,v 1.9.2.2 2000/04/25 22:16:06 mike Exp $".
 #

@@ -1,10 +1,10 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.17 2000/03/08 16:02:25 carl Exp $"
+// "$Id: Fl.cxx,v 1.24.2.18 2000/04/25 22:16:17 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -706,5 +706,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.17 2000/03/08 16:02:25 carl Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.18 2000/04/25 22:16:17 mike Exp $".
 //

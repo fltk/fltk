@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.19.2.1 1999/03/25 15:26:43 mike Exp $"
+# "$Id: Makefile,v 1.19.2.2 2000/04/25 22:16:49 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-1999 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -50,21 +50,6 @@ include ../makeinclude
 
 $(ALL):  ../lib/$(LIBNAME)
 
-.SUFFIXES: .cxx .c .o .fl .h
-
-.cxx:
-	$(CXX) -I.. $(CXXFLAGS) $< -L../lib -lfltk $(LDLIBS) -o $@
-
-.cxx.o:
-	$(CXX) -I.. $(CXXFLAGS) $< -c
-
-.fl.cxx .fl.h:
-	../fluid/fluid -c $<
-
-.fl:
-	../fluid/fluid -c $<
-	$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
-
 # Other programs needing special "help"...
 CubeView: CubeMain.o CubeView.o CubeViewUI.o
 	$(CXX) -I.. $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
@@ -106,5 +91,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.1 1999/03/25 15:26:43 mike Exp $".
+# End of "$Id: Makefile,v 1.19.2.2 2000/04/25 22:16:49 mike Exp $".
 #

@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.10.2.3 1999/08/25 05:37:38 bill Exp $"
+# "$Id: Makefile,v 1.10.2.4 2000/04/25 22:16:04 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-1999 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -49,16 +49,8 @@ OBJECTS = $(CPPFILES:.cxx=.o)
 
 include ../makeinclude
 
-.SUFFIXES : .cxx .c .o
-
-.cxx.o :
-	$(CXX) -I.. $(CXXFLAGS) -c $<
-.c.o :
-	$(CC) -I.. $(CFLAGS) -c $<
-.cxx :
-	$(CXX) -I.. $(CXXFLAGS) -o $@ $< -L../lib -lfltk $(LDLIBS)
-
 $(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
+	echo Linking $@...
 	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) -L../lib -lfltk $(LDLIBS)
 
 clean :
@@ -70,14 +62,14 @@ depend:
 include makedepend
 
 install: $(PROGRAM)
-	@echo "Installing FLUID..."
-	@strip $(PROGRAM)
-	@-mkdir -p $(bindir)
-	@cp $(PROGRAM) $(bindir)/$(PROGRAM)
-	@chmod 755 $(bindir)/$(PROGRAM)
+	echo "Installing FLUID..."
+	strip $(PROGRAM)
+	-mkdir -p $(bindir)
+	cp $(PROGRAM) $(bindir)/$(PROGRAM)
+	chmod 755 $(bindir)/$(PROGRAM)
 
 uninstall:
-	-@ rm -f $(bindir)/$(PROGRAM)
+	-rm -f $(bindir)/$(PROGRAM)
 
 #
 # Note: The rebuild target can only be used if you have the original .fl
@@ -91,5 +83,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.3 1999/08/25 05:37:38 bill Exp $".
+# End of "$Id: Makefile,v 1.10.2.4 2000/04/25 22:16:04 mike Exp $".
 #

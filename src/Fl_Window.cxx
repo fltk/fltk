@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Window.cxx,v 1.6 1999/01/13 15:45:49 mike Exp $"
+// "$Id: Fl_Window.cxx,v 1.6.2.1 2000/04/25 22:16:32 mike Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -102,5 +102,5 @@ void Fl_Window::default_callback(Fl_Window* window, void* v) {
 }
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.6 1999/01/13 15:45:49 mike Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.6.2.1 2000/04/25 22:16:32 mike Exp $".
 //

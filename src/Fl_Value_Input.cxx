@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Value_Input.cxx,v 1.6.2.2 2000/04/04 17:05:59 bill Exp $"
+// "$Id: Fl_Value_Input.cxx,v 1.6.2.3 2000/04/25 22:16:31 mike Exp $"
 //
 // Value input widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -128,5 +128,5 @@ Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Value_Input.cxx,v 1.6.2.2 2000/04/04 17:05:59 bill Exp $".
+// End of "$Id: Fl_Value_Input.cxx,v 1.6.2.3 2000/04/25 22:16:31 mike Exp $".
 //

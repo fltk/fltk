@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile,v 1.18.2.9 2000/02/21 10:29:59 bill Exp $"
+# "$Id: Makefile,v 1.18.2.10 2000/04/25 22:16:37 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998 by Bill Spitzak and others.
+# Copyright 1998-2000 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -154,61 +154,57 @@ OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 all:	$(LIBRARY) $(DSONAME)
 
 $(LIBRARY): $(OBJECTS)
-	@echo $(LIBCOMMAND) $@ ...
-	@$(LIBCOMMAND) $@ $(OBJECTS)
-	@$(RANLIB) $@
+	echo $(LIBCOMMAND) $@ ...
+	$(LIBCOMMAND) $@ $(OBJECTS)
+	$(RANLIB) $@
 
 libfltk.so.1 libfltk.sl.1: $(OBJECTS)
-	@echo $(DSOCOMMAND) $@ ...
-	@$(DSOCOMMAND) $@ $(OBJECTS)
-
-.SUFFIXES:	.cxx .h .o
-
-.cxx.o :
-	$(CXX) -I.. $(CXXFLAGS) -c $<
-.c.o :
-	$(CC) -I.. $(CFLAGS) -c -o $@ $<
+	echo $(DSOCOMMAND) $@ ...
+	$(DSOCOMMAND) $@ $(OBJECTS)
 
 clean :
 	-@ rm -f *.o *.do $(DSONAME) $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
-	@touch makedepend
+	touch makedepend
 
 depend:
 	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+
 include makedepend
 
 ################################################################
 
 install: $(LIBRARY) $(DSONAME)
-	@echo "Installing libraries..."
-	@-mkdir -p $(libdir)
-	@rm -f $(libdir)/$(LIBNAME)
-	@-cp $(LIBRARY) $(libdir)
-	@-chmod 644 $(libdir)/$(LIBNAME)
-	@if test "$(DSONAME)" = libfltk.so.1; then\
+	echo "Installing libraries..."
+	-mkdir -p $(libdir)
+	rm -f $(libdir)/$(LIBNAME)
+	-cp $(LIBRARY) $(libdir)
+	-chmod 644 $(libdir)/$(LIBNAME)
+	if test "$(DSONAME)" = libfltk.so.1; then\
 		rm -f $(libdir)/libfltk.so*;\
 		cp libfltk.so.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk.so.1; \
 		ln -s $(libdir)/libfltk.so.1 $(libdir)/libfltk.so;\
 	fi
-	@if test "$(DSONAME)" = libfltk.sl.1; then\
+	if test "$(DSONAME)" = libfltk.sl.1; then\
 		rm -f $(libdir)/libfltk.sl*;\
 		cp libfltk.sl.1 $(libdir); \
 		chmod 755 $(libdir)/libfltk.sl.1; \
 		ln -s $(libdir)/libfltk.sl.1 $(libdir)/libfltk.sl;\
 	fi
-	@echo "Installing include files..."
-	@-mkdir -p $(includedir)
-	@rm -rf $(includedir)/FL $(includedir)/Fl
-	@-cp -r ../FL $(includedir)
-	@-chmod 755 $(includedir)/FL
-	@-chmod 644 $(includedir)/FL/*
-	@for file in $(includedir)/FL/*.H; do\
-		newfile="`basename $$file H`h";\
-		ln -s $$file $(includedir)/FL/$$newfile;\
+	echo "Installing include files..."
+	-mkdir -p $(includedir)
+	rm -rf $(includedir)/FL
+	mkdir $(includedir)/FL
+	cp ../FL/*.[hH] $(includedir)
+	-chmod 755 $(includedir)/FL
+	-chmod 644 $(includedir)/FL/*
+	cd $(includedir)/FL;\
+	for file in *.H; do\
+		ln -s $$file `basename $$file H`h";\
 	done
-	@-ln -s FL $(includedir)/Fl
+	rm -f $(includedir)/Fl
+	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.9 2000/02/21 10:29:59 bill Exp $".
+# End of "$Id: Makefile,v 1.18.2.10 2000/04/25 22:16:37 mike Exp $".
 #

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Window_fullscreen.cxx,v 1.5 1999/01/07 19:17:29 mike Exp $"
+// "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.1 2000/04/25 22:16:33 mike Exp $"
 //
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -71,5 +71,5 @@ void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5 1999/01/07 19:17:29 mike Exp $".
+// End of "$Id: Fl_Window_fullscreen.cxx,v 1.5.2.1 2000/04/25 22:16:33 mike Exp $".
 //

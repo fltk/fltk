@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Multi_Browser.H,v 1.4 1999/01/07 19:16:58 mike Exp $"
+// "$Id: Fl_Multi_Browser.H,v 1.4.2.1 2000/04/25 22:15:51 mike Exp $"
 //
 // Multi browser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -37,5 +37,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Multi_Browser.H,v 1.4 1999/01/07 19:16:58 mike Exp $".
+// End of "$Id: Fl_Multi_Browser.H,v 1.4.2.1 2000/04/25 22:15:51 mike Exp $".
 //

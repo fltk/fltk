@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_visual.cxx,v 1.7.2.1 2000/01/23 01:56:42 bill Exp $"
+// "$Id: Fl_visual.cxx,v 1.7.2.2 2000/04/25 22:16:35 mike Exp $"
 //
 // Visual support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -107,5 +107,5 @@ int Fl::visual(int flags) {
 #endif
 
 //
-// End of "$Id: Fl_visual.cxx,v 1.7.2.1 2000/01/23 01:56:42 bill Exp $".
+// End of "$Id: Fl_visual.cxx,v 1.7.2.2 2000/04/25 22:16:35 mike Exp $".
 //

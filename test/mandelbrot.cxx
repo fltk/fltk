@@ -1,9 +1,9 @@
 //
-// "$Id: mandelbrot.cxx,v 1.8 1999/01/13 15:45:50 mike Exp $"
+// "$Id: mandelbrot.cxx,v 1.8.2.1 2000/04/25 22:16:57 mike Exp $"
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -197,5 +197,5 @@ void Drawing_Area::resize(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: mandelbrot.cxx,v 1.8 1999/01/13 15:45:50 mike Exp $".
+// End of "$Id: mandelbrot.cxx,v 1.8.2.1 2000/04/25 22:16:57 mike Exp $".
 //

@@ -1,7 +1,7 @@
 /*
- * "$Id: fl_call_main.c,v 1.1.2.5 1999/11/30 13:14:27 carl Exp $"
+ * "$Id: fl_call_main.c,v 1.1.2.6 2000/04/25 22:16:39 mike Exp $"
  *
- * Copyright 1998-1999 by Bill Spitzak and others.
+ * Copyright 1998-2000 by Bill Spitzak and others.
  *
  * fl_call_main() calls main() for you Windows people.  Needs to be done in C
  * because Borland C++ won't let you call main() from C++.
@@ -83,6 +83,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 /*
- * End of "$Id: fl_call_main.c,v 1.1.2.5 1999/11/30 13:14:27 carl Exp $".
+ * End of "$Id: fl_call_main.c,v 1.1.2.6 2000/04/25 22:16:39 mike Exp $".
  */
 

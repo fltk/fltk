@@ -1,12 +1,12 @@
 //
-// "$Id: checkers.cxx,v 1.9.2.3 1999/08/09 14:38:40 mike Exp $"
+// "$Id: checkers.cxx,v 1.9.2.4 2000/04/25 22:16:51 mike Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
 // Hours of fun: the FLTK checkers game!
 // Based on a very old algorithim, but it still works!
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1365,5 +1365,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.9.2.3 1999/08/09 14:38:40 mike Exp $".
+// End of "$Id: checkers.cxx,v 1.9.2.4 2000/04/25 22:16:51 mike Exp $".
 //

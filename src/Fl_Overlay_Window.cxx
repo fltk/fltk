@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Overlay_Window.cxx,v 1.7.2.1 1999/10/23 05:59:27 bill Exp $"
+// "$Id: Fl_Overlay_Window.cxx,v 1.7.2.2 2000/04/25 22:16:28 mike Exp $"
 //
 // Overlay window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -140,5 +140,5 @@ void Fl_Overlay_Window::redraw_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Overlay_Window.cxx,v 1.7.2.1 1999/10/23 05:59:27 bill Exp $".
+// End of "$Id: Fl_Overlay_Window.cxx,v 1.7.2.2 2000/04/25 22:16:28 mike Exp $".
 //

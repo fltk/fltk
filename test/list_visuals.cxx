@@ -1,5 +1,5 @@
 //
-// "$Id: list_visuals.cxx,v 1.5 1999/01/07 19:17:57 mike Exp $"
+// "$Id: list_visuals.cxx,v 1.5.2.1 2000/04/25 22:16:57 mike Exp $"
 //
 // Visual list utility for the Fast Light Tool Kit (FLTK).
 //
@@ -11,7 +11,7 @@
 // This file may be #included in another program to make a function to
 // call to list the visuals.  Fl.H must be included first to indicate this.
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -235,5 +235,5 @@ int main(int argc, char **argv) {
 #endif
 
 //
-// End of "$Id: list_visuals.cxx,v 1.5 1999/01/07 19:17:57 mike Exp $".
+// End of "$Id: list_visuals.cxx,v 1.5.2.1 2000/04/25 22:16:57 mike Exp $".
 //

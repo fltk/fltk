@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_grab.cxx,v 1.1.2.1 1999/04/10 08:09:38 bill Exp $"
+// "$Id: Fl_grab.cxx,v 1.1.2.2 2000/04/25 22:16:35 mike Exp $"
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -89,5 +89,5 @@ void Fl::grab(Fl_Window* w) {
 }
 
 //
-// End of "$Id: Fl_grab.cxx,v 1.1.2.1 1999/04/10 08:09:38 bill Exp $".
+// End of "$Id: Fl_grab.cxx,v 1.1.2.2 2000/04/25 22:16:35 mike Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Object.H,v 1.4 1999/01/07 19:16:59 mike Exp $"
+// "$Id: Fl_Object.H,v 1.4.2.1 2000/04/25 22:15:52 mike Exp $"
 //
 // Old Fl_Object header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -30,5 +30,5 @@
 #include "Fl_Widget.H"
 
 //
-// End of "$Id: Fl_Object.H,v 1.4 1999/01/07 19:16:59 mike Exp $".
+// End of "$Id: Fl_Object.H,v 1.4.2.1 2000/04/25 22:15:52 mike Exp $".
 //

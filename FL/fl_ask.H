@@ -1,9 +1,9 @@
 //
-// "$Id: fl_ask.H,v 1.7 1999/02/23 14:03:26 mike Exp $"
+// "$Id: fl_ask.H,v 1.7.2.1 2000/04/25 22:15:58 mike Exp $"
 //
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -52,5 +52,5 @@ extern FL_EXPORT const char* fl_cancel;
 #endif
 
 //
-// End of "$Id: fl_ask.H,v 1.7 1999/02/23 14:03:26 mike Exp $".
+// End of "$Id: fl_ask.H,v 1.7.2.1 2000/04/25 22:15:58 mike Exp $".
 //
