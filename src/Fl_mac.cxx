@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.40 2003/05/22 18:32:51 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.41 2003/05/26 14:09:00 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1344,7 +1344,8 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
   dst[-1] = 0;
 //  if ( Fl::e_text[Fl::e_length-1]==0 ) Fl::e_length--; // modify, if trailing 0 is part of string
   Fl::e_length = dst - Fl::e_text - 1;
-  target->handle(FL_PASTE);
+//  target->handle(FL_PASTE);
+  paste(*belowmouse(), 0);
   free( Fl::e_text );
   
   fl_dnd_target_window = 0L;
@@ -1774,6 +1775,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.40 2003/05/22 18:32:51 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.41 2003/05/26 14:09:00 easysw Exp $".
 //
 
