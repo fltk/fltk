@@ -67,6 +67,9 @@ CHANGES IN FLTK 1.1.0b6
 	  printf's in some of the newer widgets.
 	- The default behavior of Fl::error() is now to display
 	  an error but not to exit; Fl::fatal() still exits.
+	- FLUID now uses the Fl_Shared_Image class, so FLUID-
+	  generated GUIs can embed any of the supported image
+	  file formats.
 
 
 CHANGES IN FLTK 1.1.0b5

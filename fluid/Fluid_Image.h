@@ -1,13 +1,11 @@
 //
-// "$Id: Fluid_Image.h,v 1.3.2.4.2.1 2001/09/29 06:20:15 easysw Exp $"
+// "$Id: Fluid_Image.h,v 1.3.2.4.2.2 2001/11/25 22:51:34 easysw Exp $"
 //
-// Pixmap image header file for the Fast Light Tool Kit (FLTK).
+// Image header file for the Fast Light Tool Kit (FLTK).
 //
 // This class stores the image labels for widgets in fluid.  This is
-// not a class in fltk itself, and this will produce different types of
-// code depending on what the image type is.  There are private subclasses
-// in Fluid_Image.C for each type of image format.  Right now only xpm
-// files are supported.
+// not a class in FLTK itself, and will produce different types of
+// code depending on what the image type is.
 //
 // Copyright 1998-2001 by Bill Spitzak and others.
 //
@@ -30,23 +28,27 @@
 //
 
 #ifndef FLUID_IMAGE_H
-#define FLUID_IMAGE_H
+#  define FLUID_IMAGE_H
+
+#  include <FL/Fl_Shared_Image.H>
+
 
 class Fluid_Image {
   const char *name_;
   int refcount;
+  Fl_Shared_Image *img;
 protected:
   Fluid_Image(const char *name); // no public constructor
-  virtual ~Fluid_Image(); // no public destructor
+  ~Fluid_Image(); // no public destructor
 public:
   int written;
   static Fluid_Image* find(const char *);
   void decrement(); // reference counting & automatic free
   void increment();
-  virtual void image(Fl_Widget *) = 0; // set the image of this widget
-  virtual void deimage(Fl_Widget *) = 0; // set the deimage of this widget
-  virtual void write_static() = 0;
-  virtual void write_code(int inactive = 0) = 0;
+  void image(Fl_Widget *); // set the image of this widget
+  void deimage(Fl_Widget *); // set the deimage of this widget
+  void write_static();
+  void write_code(int inactive = 0);
   const char *name() const {return name_;}
 };
 
@@ -58,5 +60,5 @@ extern const char *ui_find_image_name;
 #endif
 
 //
-// End of "$Id: Fluid_Image.h,v 1.3.2.4.2.1 2001/09/29 06:20:15 easysw Exp $".
+// End of "$Id: Fluid_Image.h,v 1.3.2.4.2.2 2001/11/25 22:51:34 easysw Exp $".
 //
