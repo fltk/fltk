@@ -1,5 +1,5 @@
 //
-// "$Id: navigation.cxx,v 1.3 1998/10/21 14:21:36 mike Exp $"
+// "$Id: navigation.cxx,v 1.4 1998/11/12 14:17:48 mike Exp $"
 //
 // Navigation test program for the Fast Light Tool Kit (FLTK).
 //
@@ -50,21 +50,21 @@ int main(int argc, char **argv) {
     if (h < y) {h = y-h; y-=h;} else {h = h-y;}
     if (w < GRID || h < GRID || w < h) continue;
     // find where to insert it and see if it intersects something:
-    Fl_Widget *i = 0;
+    Fl_Widget *j = 0;
     int n; for (n=0; n < window.children(); n++) {
       Fl_Widget *o = window.child(n);
       if (x<o->x()+o->w() && x+w>o->x() &&
 	  y<o->y()+o->h() && y+h>o->y()) break;
-      if (!i && (y < o->y() || y == o->y() && x < o->x())) i = o;
+      if (!j && (y < o->y() || y == o->y() && x < o->x())) j = o;
     }
     // skip if intersection:
     if (n < window.children()) continue;
-    window.insert(*(new Fl_Input(x,y,w,h)),i);
+    window.insert(*(new Fl_Input(x,y,w,h)),j);
   }
   window.show();
   return Fl::run();
 }
 
 //
-// End of "$Id: navigation.cxx,v 1.3 1998/10/21 14:21:36 mike Exp $".
+// End of "$Id: navigation.cxx,v 1.4 1998/11/12 14:17:48 mike Exp $".
 //
