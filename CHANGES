@@ -1,6 +1,12 @@
 CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365)
+	- Fl_Gl_Window's on WIN32 now prefer accelerated pixel
+	  formats over generic formats (STR #382)
+	- Fl_Window::resize() did not work on some systems if
+	  the window was not shown (STR #373)
+	- FLUID did not write the user_data type if the
+	  user_data field was empty (STR #374)
 	- The value(const Fl_Menu_Item*) method was not
 	  implemented for Fl_Choice (STR #366)
         - Fl_Pack didn't draw child widget labels the same way
