@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.7 2000/08/12 08:42:12 spitzak Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.8 2000/08/30 05:51:39 spitzak Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -178,16 +178,17 @@ Fl_Widget* Fl_Tabs::value() {
 // visible, iff it is really a child:
 int Fl_Tabs::value(Fl_Widget *newvalue) {
   Fl_Widget*const* a = array();
+  int ret = 0;
   for (int i=children(); i--;) {
     Fl_Widget* o = *a++;
     if (o == newvalue) {
-      if (o->visible()) return 0; // no change
+      if (!o->visible()) ret = 1;
       o->show();
     } else {
       o->hide();
     }
   }
-  return 1;
+  return ret;
 }
 
 enum {LEFT, RIGHT, SELECTED};
@@ -272,5 +273,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.7 2000/08/12 08:42:12 spitzak Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.8 2000/08/30 05:51:39 spitzak Exp $".
 //
