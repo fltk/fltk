@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.3 1999/04/19 07:01:23 bill Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.4 1999/05/06 01:17:49 carl Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -112,6 +112,7 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   value_ = menu_ = (Fl_Menu_Item*)m;
 }
 
+/* This version is broken
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
   int n = m->size();
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
@@ -120,6 +121,24 @@ void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
   alloc = 1; // make destructor free array, but not strings
   // for convienence, provide way to change all the user data pointers:
   if (user_data) for (; n--;) {
+    if (newMenu->callback_) newMenu->user_data_ = user_data;
+    newMenu++;
+  }
+}
+*/
+
+// This is Guillaume Nodet's fixed version
+void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
+  int i, s = m->size(), n=s;
+  for (i=0; n; n>>=1, i++);
+  n = 1 << i;
+  Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
+  memcpy(newMenu, m, s*sizeof(Fl_Menu_Item));
+  memset(newMenu+s, 0, (n-s)*sizeof(Fl_Menu_Item));
+  menu(newMenu);
+  alloc = 1; // make destructor free it
+  // for convienence, provide way to change all the user data pointers:
+  if (user_data) for (; s--;) {
     if (newMenu->callback_) newMenu->user_data_ = user_data;
     newMenu++;
   }
@@ -148,5 +167,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.3 1999/04/19 07:01:23 bill Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.4 1999/05/06 01:17:49 carl Exp $".
 //
