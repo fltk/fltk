@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_fullscreen.cxx,v 1.3 1998/10/21 14:20:27 mike Exp $"
+// "$Id: Fl_Window_fullscreen.cxx,v 1.4 1998/11/08 14:36:55 mike Exp $"
 //
 // Fullscreen window support for the Fast Light Tool Kit (FLTK).
 //
@@ -53,22 +53,23 @@ void Fl_Window::border(int b) {
 }
 
 void Fl_Window::fullscreen() {
+#ifndef WIN32
+  //this would clobber the fake wm, since it relies on the border flags to
+  //determine its thickness
   border(0);
+#endif
   if (!x()) x(1); // force it to call XResizeWindow()
   resize(0,0,Fl::w(),Fl::h());
 }
 
 void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
-#ifdef WIN32
-  border(1);
-  resize(X,Y,W,H);
-#else
   // this order produces less blinking on IRIX:
   resize(X,Y,W,H);
+#ifndef WIN32
   border(1);
 #endif
 }
 
 //
-// End of "$Id: Fl_Window_fullscreen.cxx,v 1.3 1998/10/21 14:20:27 mike Exp $".
+// End of "$Id: Fl_Window_fullscreen.cxx,v 1.4 1998/11/08 14:36:55 mike Exp $".
 //

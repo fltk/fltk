@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.12 1998/11/06 14:32:17 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.13 1998/11/08 14:36:56 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -220,9 +220,9 @@ static int ms2fltk(int vk, int extended) {
     for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
       vklut[vktab[i].vk] = vktab[i].fltk;
       extendedlut[vktab[i].vk] = vktab[i].extended;
-    }
-    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
   }
+    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
+    }
   return extended ? extendedlut[vk] : vklut[vk];
 }
 
@@ -251,6 +251,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
 
   case WM_PAINT: {
+ 
 #if USE_COLORMAP
     // Before we do a paint we need to tell Windows what color palette to
     // use.  This is because Windows will map our color indices to the
@@ -259,7 +260,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     fl_GetDC(hWnd);
     fl_select_palette();
- 
+#endif
+
     // This might be a better alternative, where we fully ignore NT's
     // "facilities" for painting. MS expects applications to paint according
     // to a very restrictive paradigm, and this is the way I found of
@@ -408,6 +410,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_GetDC(hWnd);
     fl_select_palette();
     break;
+
 #endif
 
   default:
@@ -427,26 +430,51 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 //
 // value | border | title bar
 //   0   |  none  |   no
-//   1   |  fix   |   no
-//   2   |  fix   |   yes
-//   3   |  size  |   yes
+//   1   |  fix   |   yes
+//   2   |  size  |   yes
 
-int Fl_X::get_border(const Fl_Window* w,int &T, int &X, int &Y) {
-  int ret = T = X = Y = 0;
+int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
+  int W, H, xoff, yoff, dx, dy;
+  int ret = bx = by = bt = 0;
   if (w->border() && !w->parent()) {
-    ret = 2;
-    if ((w->maxw != w->minw || w->maxh != w->minh) && !w->non_modal()) {
-      ret |= 1;
-      X = GetSystemMetrics(SM_CXSIZEFRAME);
-      Y = GetSystemMetrics(SM_CYSIZEFRAME);
+    if (w->maxw != w->minw || w->maxh != w->minh) {
+      ret = 2;
+      bx = GetSystemMetrics(SM_CXSIZEFRAME);
+      by = GetSystemMetrics(SM_CYSIZEFRAME);
     } else {
-      X = GetSystemMetrics(SM_CXFIXEDFRAME);
-      Y = GetSystemMetrics(SM_CYFIXEDFRAME);
-    }
-    if (w->modal())
       ret = 1;
-      else T = GetSystemMetrics(SM_CYCAPTION); 
+      bx = GetSystemMetrics(SM_CXFIXEDFRAME);
+      by = GetSystemMetrics(SM_CYFIXEDFRAME);
+    }
+    bt = GetSystemMetrics(SM_CYCAPTION); 
   }
+  //The coordinates of the whole window, including non-client area
+  xoff = bx;
+  yoff = by + bt;
+  dx = 2*bx;
+  dy = 2*by + bt;
+  X = w->x()-xoff;
+  Y = w->y()-yoff;
+  W = w->w()+dx;
+  H = w->h()+dy;
+
+  //Proceed to positioning the window fully inside the screen, if possible
+  //Make border's lower right corner visible
+  if (Fl::w() < X+W) X = Fl::w() - W;
+  if (Fl::h() < Y+H) Y = Fl::h() - H;
+  //Make border's upper left corner visible
+  if (X<0) X = 0;
+  if (Y<0) Y = 0;
+  //Make client area's lower right corner visible
+  if (Fl::w() < X+dx+ w->w()) X = Fl::w() - w->w() - dx;
+  if (Fl::h() < Y+dy+ w->h()) Y = Fl::h() - w->h() - dy;
+  //Make client area's upper left corner visible
+  if (X+xoff < 0) X = -xoff;
+  if (Y+yoff < 0) Y = -yoff;
+  //Return the client area's top left corner in (X,Y)
+  X+=xoff;
+  Y+=yoff;
+
   return ret;
 }
 
@@ -464,15 +492,18 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     if (shown()) {redraw(); i->wait_for_expose = 1;}
   } else {
     x(X); y(Y);
+    flags |= SWP_NOSIZE;
   }
   if (resize_from_program && shown()) {
-    int bt, bx, by;
-    if (Fl_X::get_border(this, bt, bx, by)) {
+    int dummy, bt, bx, by;
+    //Ignore window managing when resizing, so that windows (and more
+    //specifically menus) can be moved offscreen.
+    if (Fl_X::fake_X_wm(this, dummy, dummy, bt, bx, by)) {
       X -= bx;
       Y -= by+bt;
       W += 2*bx;
       H += 2*by+bt;
-    } else {flags |= SWP_NOSIZE;}
+    }
     SetWindowPos(i->xid, 0, X, Y, W, H, flags);
   }
 }
@@ -535,33 +566,32 @@ Fl_X* Fl_X::make(Fl_Window* w) {
       }
     }
     styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
-    int bt, bx, by;
-    switch (Fl_X::get_border(w, bt, bx, by)) {
+    int xwm = xp , ywm = yp , bt, bx, by;
+    switch (fake_X_wm(w, xwm, ywm, bt, bx, by)) {
       // No border (user for menus)
       case 0: style |= WS_POPUP; break;
 
-      // Thin border
-      case 1: style |= WS_POPUP | WS_DLGFRAME; break;
-
       // Thin border and title bar
-      case 2: style |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU; 
-	      if (!w->non_modal()) style |= WS_MINIMIZEBOX; break;
+      case 1: style |= WS_DLGFRAME | WS_CAPTION; break;
 
       // Thick, resizable border and title bar, with maximize button
-      case 3: style |= WS_THICKFRAME | WS_MAXIMIZEBOX | WS_CAPTION | 
-		       WS_SYSMENU | WS_MINIMIZEBOX;
+      case 2: style |= WS_THICKFRAME | WS_MAXIMIZEBOX | WS_CAPTION ; break;
     }
-    wp += 2*bx;
-    hp += 2*by+bt;
-
+    if (by+bt) {
+      if (!w->non_modal()) style |= WS_SYSMENU | WS_MINIMIZEBOX;
+      wp += 2*bx;
+      hp += 2*by+bt;
+    }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
       xp = yp = CW_USEDEFAULT;
     } else {
+      if (!Fl::grab()) {
+	xp = xwm; yp = ywm;
+        w->x(xp);w->y(yp);
+      }
       xp -= bx;
       yp -= by+bt;
     }
-//  if (xp<0) xp = 0;
-//  if (yp<0) yp = 0;
 
     parent = 0;
     if (w->non_modal() && !fl_disable_transient_for) {
@@ -634,9 +664,9 @@ void Fl_Window::size_range_() {
 
 void Fl_X::set_minmax(LPMINMAXINFO minmax)
 {
-  int td, wd, hd;
+  int td, wd, hd, dummy;
 
-  get_border(w, td, wd, hd);
+  fake_X_wm(w, dummy, dummy, td, wd, hd);
   wd *= 2;
   hd *= 2;
   hd += td;
@@ -783,5 +813,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.12 1998/11/06 14:32:17 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.13 1998/11/08 14:36:56 mike Exp $".
 //

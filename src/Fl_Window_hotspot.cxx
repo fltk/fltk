@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_hotspot.cxx,v 1.4 1998/11/05 16:04:48 mike Exp $"
+// "$Id: Fl_Window_hotspot.cxx,v 1.5 1998/11/08 14:36:55 mike Exp $"
 //
 // Common hotspot routines for the Fast Light Tool Kit (FLTK).
 //
@@ -34,18 +34,20 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
   int mx,my; Fl::get_mouse(mx,my);
   X = mx-X; Y = my-Y;
   if (!offscreen) {
+#ifdef WIN32
+    //These will be used by reference, so we must passed different variables
+    int bt,bx,by;
+    x(X);y(Y);
+    Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+    //force FL_FORCE_POSITION to be set in Fl_Window::resize()
+    if (X==x()) x(X-1);
+#else
     if (border()) {
       // ensure border is on screen:
-#ifdef WIN32
-      int top, left, right, bottom;
-      Fl_X::get_border(this, top, left, bottom);
-      right = left; top += bottom;
-#else
       const int top = 20;
       const int left = 1;
       const int right = 1;
       const int bottom = 1;
-#endif
       if (X+w()+right > Fl::w()) X = Fl::w()-right-w();
       if (X-left < 0) X = left;
       if (Y+h()+bottom > Fl::h()) Y = Fl::h()-bottom-h();
@@ -56,6 +58,7 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
     if (X < 0) X = 0;
     if (Y+h() > Fl::h()) Y = Fl::h()-h();
     if (Y < 0) Y = 0;
+#endif
   }
   position(X,Y);
 }
@@ -71,5 +74,5 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
 }
 
 //
-// End of "$Id: Fl_Window_hotspot.cxx,v 1.4 1998/11/05 16:04:48 mike Exp $".
+// End of "$Id: Fl_Window_hotspot.cxx,v 1.5 1998/11/08 14:36:55 mike Exp $".
 //
