@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.5rc1
 
+	- Fl::background2() incorrectly marked the foreground
+	  color as initialized (STR #255)
 	- Fixed the X11 CTRL + "-" detection code to properly
 	  track the state of the CTRL key (STR #264)
 	- Fl_File_Icon::load_system_icons() didn't support KDE
