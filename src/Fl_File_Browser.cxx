@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.8 2002/03/29 14:16:03 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -238,10 +238,10 @@ Fl_File_Browser::item_width(void *p) const	// I - List item data
 
 void
 Fl_File_Browser::item_draw(void *p,	// I - List item data
-                	  int  x,	// I - Upper-lefthand X coordinate
-			  int  y,	// I - Upper-lefthand Y coordinate
-			  int  w,	// I - Width of item
-			  int  h) const	// I - Height of item
+                 	   int  x,	// I - Upper-lefthand X coordinate
+		 	   int  y,	// I - Upper-lefthand Y coordinate
+		 	   int  w,	// I - Width of item
+			   int  h) const// I - Height of item
 {
   int		i;			// Looping var
   FL_BLINE	*line;			// Pointer to line
@@ -365,10 +365,10 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
 //
 
 Fl_File_Browser::Fl_File_Browser(int        x,	// I - Upper-lefthand X coordinate
-                         int        y,	// I - Upper-lefthand Y coordinate
-			 int        w,	// I - Width in pixels
-			 int        h,	// I - Height in pixels
-			 const char *l)	// I - Label text
+                        	 int        y,	// I - Upper-lefthand Y coordinate
+				 int        w,	// I - Width in pixels
+				 int        h,	// I - Height in pixels
+				 const char *l)	// I - Label text
     : Fl_Browser(x, y, w, h, l)
 {
   // Initialize the filter pattern, current directory, and icon size...
@@ -559,5 +559,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.7 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.8 2002/03/29 14:16:03 easysw Exp $".
 //
