@@ -30,39 +30,80 @@
 #include <FL/x.H>
 #include <config.h>
 
-#ifdef HAVE_XINERAMA
+
+// Number of screens...
+static int num_screens = 0;
+
+#ifdef WIN32
+static RECT screens[16];
+
+static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
+  if (num_screens >= 16) return;
+
+  MONITORINFO mi;
+  mi.cbSize = sizeof(mi);
+
+  GetMonitorInfo(mon, &mi);
+  screens[num_screens] = mi.rcWork;
+  num_screens ++;
+}
+
+static void screen_init() {
+  num_screens = GetSystemMetrics(SM_CMONITORS);
+  if (num_screens > 1) {
+    // If there is more than 1 monitor, enumerate them...
+    num_screens = 0;
+    EnumDisplayMonitors(0,0,screen_cb,0);
+  }
+}
+#elif defined(HAVE_XINERAMA)
 #  include <X11/extensions/Xinerama.h>
 
-static int			num_screens = 0;
-static XineramaScreenInfo	*screens;
+// Screen data...
+static XineramaScreenInfo *screens;
 
-static void xinerama_init() {
+static void screen_init() {
   if (!fl_display) fl_open_display();
 
   if (XineramaIsActive(fl_display)) {
     screens = XineramaQueryScreens(fl_display, &num_screens);
   } else num_screens = 1;
 }
-#endif // HAVE_XINERAMA
+#else
+static void screen_init() {
+  num_screens = 1;
+}
+#endif // WIN32
 
 
 // Return the number of screens...
 int Fl::screen_count() {
-#ifdef WIN32
-#elif defined(__APPLE__)
-#elif defined(HAVE_XINERAMA);
-  if (!num_screens) xinerama_init();
+  if (!num_screens) screen_init();
+
   return num_screens;
-#endif // WIN32
 }
 
 // Return the screen bounding rect for the given mouse position...
 void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
+  if (!num_screens) screen_init();
+
 #ifdef WIN32
+  if (num_screens > 0) {
+    int i;
+
+    for (i = 0; i < num_screens; i ++) {
+      if (mx >= screens[i].left && mx < screens[i].right &&
+	  my >= screens[i].top && my < screens[i].bottom) {
+	x = screens[i].left;
+	y = screens[i].top;
+	w = screens[i].right - screens[i].left;
+	h = screens[i].bottom - screens[i].top;
+	return;
+      }
+    }
+  }
 #elif defined(__APPLE__)
 #elif defined(HAVE_XINERAMA)
-  if (!num_screens) xinerama_init();
-
   if (num_screens > 0) {
     int i;
 
@@ -89,12 +130,19 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
 
 // Return the screen bounding rect for the given screen...
 void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
+  if (!num_screens) screen_init();
+
 #ifdef WIN32
+  if (num_screens > 0 && n >= 0 && n < num_screens) {
+    x = screens[n].left;
+    y = screens[n].top;
+    w = screens[n].right - screens[n].left;
+    h = screens[n].bottom - screens[n].top;
+    return;
+  }
 #elif defined(__APPLE__)
 #elif defined(HAVE_XINERAMA)
-  if (!num_screens) xinerama_init();
-
-  if (num_screens > 0 && n < num_screens) {
+  if (num_screens > 0 && n >= 0 && n < num_screens) {
     x = screens[n].x_org;
     y = screens[n].y_org;
     w = screens[n].width;
