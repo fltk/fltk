@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.4 2001/12/13 20:11:56 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.5 2001/12/13 21:48:58 matthiaswm Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -122,8 +122,20 @@ static void up_box(int x, int y, int w, int h, Fl_Color c) {
   if (w > 30 && h > 30)
   {
     uchar *g = fl_gray_ramp();
-    fl_color(shade_color(g['W'], c));
-    fl_rectf(x + 2, y + 2, w - 4, h - 4);
+	if ( h<(w*2) )
+	{
+	  shade_rect(x + 2, y + 2, w - 4, 9, "VTR", c);
+      fl_color(shade_color(g['P'], c));
+      fl_rectf(x + 2, y + 11, w - 4, h - 25);
+      shade_rect(x + 2, y + h - 14, w - 4, 12, "RTVXX", c);
+	} 
+	else
+	{
+	  shade_rect(x + 2, y + 2, 9, h-4, "VTR", c);
+      fl_color(shade_color(g['P'], c));
+      fl_rectf(x + 11, y + 2, w - 25, h - 4);
+      shade_rect(x + w - 14, y + 2, 12, h-4, "RTVXX", c);
+	} 
   }
   else
     shade_rect(x + 2, y + 2, w - 4, h - 4, "VTRPPRTVXX", c);
@@ -141,8 +153,20 @@ static void down_box(int x, int y, int w, int h, Fl_Color c) {
   if (w > 30 && h > 30)
   {
     uchar *g = fl_gray_ramp();
-    fl_color(shade_color(g['T'], c));
-    fl_rectf(x + 2, y + 2, w - 4, h - 4);
+	if ( w>=h )
+	{
+	  shade_rect(x + 2, y + 2, w - 4, 11, "STUV", c);
+      fl_color(shade_color(g['W'], c));
+      fl_rectf(x + 2, y + 13, w - 4, h - 21);
+      shade_rect(x + 2, y + h - 8, w - 4, 6, "VT", c);
+	} 
+	else
+	{
+	  shade_rect(x + 2, y + 2, 11, h-4, "STUV", c);
+      fl_color(shade_color(g['W'], c));
+      fl_rectf(x + 13, y + 2, w - 21, h - 4);
+      shade_rect(x + w - 8, y + 2, 6, h-4, "VT", c);
+	} 
   }
   else
     shade_rect(x + 2, y + 2, w - 4, h - 4, "STUVWWWWVT", c);
@@ -165,5 +189,5 @@ Fl_Boxtype define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.4 2001/12/13 20:11:56 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.5 2001/12/13 21:48:58 matthiaswm Exp $".
 //
