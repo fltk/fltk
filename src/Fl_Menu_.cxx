@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.1 1999/03/16 08:44:48 bill Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.2 1999/04/08 19:13:02 carl Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -113,13 +113,16 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
 }
 
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
-  int n = m->size()+1;
+  int i, s = m->size(), n=s;
+  for (i=0; n; n>>=1, i++);
+  n = 1 << i;
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
-  memcpy(newMenu, m, n*sizeof(Fl_Menu_Item));
+  memcpy(newMenu, m, s*sizeof(Fl_Menu_Item));
+  memset(newMenu+s, 0, (n-s)*sizeof(Fl_Menu_Item));
   menu(newMenu);
   alloc = 1; // make destructor free it
   // for convienence, provide way to change all the user data pointers:
-  if (user_data) for (; n--;) {
+  if (user_data) for (; s--;) {
     if (newMenu->callback_) newMenu->user_data_ = user_data;
     newMenu++;
   }
@@ -141,5 +144,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.1 1999/03/16 08:44:48 bill Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.2 1999/04/08 19:13:02 carl Exp $".
 //
