@@ -9,7 +9,7 @@ TODO	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
 	- Added tooltip support using Jacques Tremblay's tooltip
 	  patch.
 
-PARTIAL	- Added keyboard navigation to all widgets.
+	- Added keyboard navigation to all widgets.
 
 	- Added support for mouse wheels using the new
 	  FL_MOUSEWHEEL event type.  Get the mouse wheel

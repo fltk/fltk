@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.3 2001/08/04 20:17:10 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.4 2001/08/05 14:00:15 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -136,8 +136,19 @@ Fl_Widget::~Fl_Widget() {
 // draw a focus box for the widget...
 void
 Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+  switch (B) {
+    case FL_DOWN_BOX:
+    case FL_DOWN_FRAME:
+    case FL_THIN_DOWN_BOX:
+    case FL_THIN_DOWN_FRAME:
+      X ++;
+      Y ++;
+    default:
+      break;
+  }
+
   fl_color(FL_BLACK);
-  fl_line_style(FL_DASH);
+  fl_line_style(FL_DOT);
   fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
           W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
   fl_line_style(FL_SOLID);
@@ -218,5 +229,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.3 2001/08/04 20:17:10 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.4 2001/08/05 14:00:15 easysw Exp $".
 //
