@@ -450,6 +450,10 @@ DEP_CPP_FL_COL=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_compose.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Counter.cxx
 DEP_CPP_FL_COU=\
 	"..\fl\enumerations.h"\
