@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.3 2001/12/28 21:57:41 easysw Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -113,7 +113,7 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
 }
 
 void fl_transformed_vertex(double xf, double yf) {
-  fl_transformed_vertex(COORD_T(xf+.5), COORD_T(yf+.5));
+  fl_transformed_vertex(COORD_T(rint(xf)), COORD_T(rint(yf)));
 }
 
 void fl_vertex(double x,double y) {
@@ -248,5 +248,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.2 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.3 2001/12/28 21:57:41 easysw Exp $".
 //

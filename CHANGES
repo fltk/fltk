@@ -1,9 +1,9 @@
 CHANGES IN FLTK 1.1.0b9
 
-	- Demo cleanup - made sure they all worked with
-	  schemes.
-	- Fl_Tabs no longer clears the unused area of the
-	  tab bar.
+	- Now use rint() to round floating-point coordinates.
+	- Demo cleanup - made sure they all worked with schemes.
+	- Fl_Tabs no longer clears the unused area of the tab
+	  bar.
 	- Added show(argc, argv) method to Fl_Help_Dialog.
 	- MacOS: implemented cut/copy/paste.
 	- MacOS: improved keyboard handling, fixed keyboard
