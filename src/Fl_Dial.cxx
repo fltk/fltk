@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.11 1999/03/10 00:13:52 carl Exp $"
+// "$Id: Fl_Dial.cxx,v 1.12 1999/03/10 08:17:42 bill Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,14 +29,7 @@
 #include <stdlib.h>
 #include <FL/math.h>
 
-// For XForms compatability, all angles are measured with 0 being straight
-// up and positive numbers going clockwise.
-
-void Fl_Dial::angles(short a, short b) {
-  a1=a;
-  a2=b;
-  if (a2 < a1) a2 += 360; // necessary for XForms compatability
-}
+// All angles are measured with 0 to the right and counter-clockwise
 
 void Fl_Dial::draw(int x, int y, int w, int h) {
   if (damage()&FL_DAMAGE_ALL) draw_box(box(), x, y, w, h, color());
@@ -50,7 +43,7 @@ void Fl_Dial::draw(int x, int y, int w, int h) {
     int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
     if (foo) {x--; y--; w+=2; h+=2;}
     fl_color(color());
-    fl_pie(x, y, w-1, h-1, 270-a1, 360+270-angle);
+    fl_pie(x, y, w-1, h-1, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
     fl_color(selection_color());
     fl_pie(x, y, w-1, h-1, 270-angle, 270-a1);
     if (foo) {
@@ -66,15 +59,9 @@ void Fl_Dial::draw(int x, int y, int w, int h) {
   fl_push_matrix();
   fl_translate(x+w/2-.5, y+h/2-.5);
   fl_scale(w-1, h-1);
-/* CET - Why is this here?  This code is never reached!
-  if (type() == FL_FILL_DIAL) {
-    fl_rotate(225);
-    fl_begin_line(); fl_vertex(0, 0); fl_vertex(.5, 0); fl_end_line();
-  }
-*/
   fl_rotate(45-angle);
   fl_color(selection_color());
-  if (type() == FL_LINE_DIAL) {
+  if (type()) { // FL_LINE_DIAL
     fl_begin_polygon();
     fl_vertex(0.0,   0.0);
     fl_vertex(-0.04, 0.0);
@@ -106,24 +93,20 @@ int Fl_Dial::handle(int event, int x, int y, int w, int h) {
   case FL_PUSH:
     handle_push();
   case FL_DRAG: {
-    double oldangle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
-    double angle;
-    static double last = 0.0;
-    double val = value();
     int mx = Fl::event_x()-x-w/2;
     int my = Fl::event_y()-y-h/2;
     if (!mx && !my) return 1;
-    angle = atan2((float)-my, (float)-mx) + M_PI;
-    angle = (angle*360) / (2*M_PI) + 270;
+    double angle = 270-atan2((float)-my, (float)mx)*180/M_PI;
+    double oldangle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
     while (angle < oldangle-180) angle += 360;
     while (angle > oldangle+180) angle -= 360;
-    if (angle <= a1) {
+    double val;
+    if ((a1<a2) ? (angle <= a1) : (angle >= a1)) {
       val = minimum();
-    } else if (angle >= a2) {
+    } else if ((a1<a2) ? (angle >= a2) : (angle <= a2)) {
       val = maximum();
     } else {
       val = minimum() + (maximum()-minimum())*(angle-a1)/(a2-a1);
-      last = angle;
     }
     handle_drag(clamp(round(val)));
   } return 1;
@@ -143,9 +126,10 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
   : Fl_Valuator(x, y, w, h, l) {
   box(FL_OVAL_BOX);
   selection_color(FL_INACTIVE_COLOR); // was 37
-  angles(0,360);
+  a1 = 45;
+  a2 = 315;
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.11 1999/03/10 00:13:52 carl Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.12 1999/03/10 08:17:42 bill Exp $".
 //

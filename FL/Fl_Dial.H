@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.H,v 1.6 1999/03/08 21:44:28 carl Exp $"
+// "$Id: Fl_Dial.H,v 1.7 1999/03/10 08:17:40 bill Exp $"
 //
 // Dial header file for the Fast Light Tool Kit (FLTK).
 //
@@ -35,13 +35,9 @@
 #define FL_LINE_DIAL	1
 #define FL_FILL_DIAL	2
 
-#define FL_DIAL_CW	0
-#define FL_DIAL_CCW	1
-
 class Fl_Dial : public Fl_Valuator {
 
   short a1,a2;
-  uchar direction_;
 
 protected:
 
@@ -54,14 +50,16 @@ public:
 
   FL_EXPORT int handle(int);
   FL_EXPORT Fl_Dial(int x,int y,int w,int h, const char *l = 0);
-  void angles(short a, short b);
-  void direction(uchar d) {direction_ = d;}
-  uchar direction() const {return direction_;}
+  short angle1() const {return a1;}
+  void angle1(short a) {a1 = a;}
+  short angle2() const {return a2;}
+  void angle2(short a) {a2 = a;}
+  void angles(short a, short b) {a1 = a; a2 = b;}
 
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Dial.H,v 1.6 1999/03/08 21:44:28 carl Exp $".
+// End of "$Id: Fl_Dial.H,v 1.7 1999/03/10 08:17:40 bill Exp $".
 //

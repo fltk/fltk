@@ -147,7 +147,7 @@ fflush(stdout);}
       callback {printf("%g      \\r",o->value());
 fflush(stdout);}
       xywh {475 280 65 65} type Fill color 10 selection_color 1 labelsize 8
-      code0 {o->angles(45,315);}
+      code0 {o->angles(0,360);}
       code1 {o->value(1.0);}
     }
     Fl_Box {} {
