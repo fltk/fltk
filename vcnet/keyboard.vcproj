@@ -187,7 +187,7 @@
 					Description="Create .cxx and .h file with fluid"
 					CommandLine="cd ..\test
 ..\fluid\fluid -c keyboard_ui.fl
-cd ..\visualc
+cd ..\vcnet
 "
 					Outputs="..\test\keyboard_ui.cxx"/>
 			</FileConfiguration>
@@ -198,7 +198,7 @@ cd ..\visualc
 					Description="Create .cxx and .h file with fluidd"
 					CommandLine="cd ..\test
 ..\fluid\fluidd -c keyboard_ui.fl
-cd ..\visualc
+cd ..\vcnet
 "
 					Outputs="..\test\keyboard_ui.cxx"/>
 			</FileConfiguration>

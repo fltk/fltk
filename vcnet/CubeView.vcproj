@@ -205,7 +205,7 @@
 					Description="Create .cxx and .h file with fluidd"
 					CommandLine="cd ..\test
 ..\fluid\fluidd -c CubeViewUI.fl
-cd ..\visualc
+cd ..\vcnet
 "
 					Outputs="..\test\CubeViewUI.cxx"/>
 			</FileConfiguration>
@@ -216,7 +216,7 @@ cd ..\visualc
 					Description="Create .cxx and .h file with fluid"
 					CommandLine="cd ..\test
 ..\fluid\fluid -c CubeViewUI.fl
-cd ..\visualc
+cd ..\vcnet
 "
 					Outputs="..\test\CubeViewUI.cxx"/>
 			</FileConfiguration>
