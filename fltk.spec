@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.9.2.4 2001/10/02 18:42:59 easysw Exp $"
+# "$Id: fltk.spec,v 1.1.2.9.2.5 2001/10/29 14:54:52 easysw Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -23,7 +23,7 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-%define version 1.1.0b4
+%define version 1.1.0b5
 %define release 0
 %define prefix /usr
 
@@ -45,7 +45,7 @@ LGPL'd C++ graphical user interface toolkit for X (UNIX(r)),
 OpenGL(r), and Microsoft(r) Windows(r). It was originally
 developed by Mr. Bill Spitzak and is currently maintained by a
 small group of developers across the world with a central
-repository in the US.
+repository in the US (SourceForge).
 
 %package devel
 Summary: FLTK - development environment
@@ -78,18 +78,26 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%dir %{prefix}/lib
 %{prefix}/lib/libfltk*.so.*
 
 %files devel
 %defattr(-,root,root)
+%dir %{prefix}/bin
 %{prefix}/bin/*
+%dir %{prefix}/include/FL
 %{prefix}/include/FL/*
-%{prefix}/include/Fl/*
+%{prefix}/include/Fl
+%dir %{prefix}/lib
 %{prefix}/lib/libfltk*.so
 %{prefix}/lib/libfltk*.a
-%{prefix}/man/*
+%dir %{prefix}/share
+%dir %{prefix}/share/man
+%{prefix}/share/man/*
+%dir %{prefix}/share/doc
+%dir %{prefix}/share/doc/fltk
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.9.2.4 2001/10/02 18:42:59 easysw Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.9.2.5 2001/10/29 14:54:52 easysw Exp $".
 #
