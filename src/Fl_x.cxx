@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.11 1998/12/07 13:36:23 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.12 1998/12/07 13:38:40 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -804,47 +804,61 @@ void Fl_Window::make_current() {
 #include <FL/fl_draw.H>
 
 void Fl_Widget::damage(uchar flags) {
-  if (type() < FL_WINDOW) {
-    damage(flags, x(), y(), w(), h());
-  } else {
-    Fl_X* i = Fl_X::i((Fl_Window*)this);
-    if (i) {
-      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
-      damage_ |= flags;
-      Fl::damage(FL_DAMAGE_CHILD);
+  Fl_Widget* w = this;
+  while (w->type() < FL_WINDOW) {
+    w->damage_ |= flags;
+    w = w->parent();
+    if (!w) return;
+    flags = FL_DAMAGE_CHILD;
+  }
+  Fl_X* i = Fl_X::i((Fl_Window*)w);
+  if (i) {
+    if (i->region) {
+      // if there already is an update region then merge the area
+      // of the child with it:
+      if (w->damage() && w != this) {
+	w->damage(flags, x(), y(), this->w(), h());
+	return;
+      }
+      // otherwise it is faster to just damage the whole window and
+      // rely on Fl_Group only drawing the damaged children:
+      XDestroyRegion(i->region);
+      i->region = 0;
     }
+    w->damage_ |= flags;
+    Fl::damage(FL_DAMAGE_CHILD);
   }
 }
 
 void Fl_Widget::redraw() {damage(FL_DAMAGE_ALL);}
 
-Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
-
 void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
-  if (type() < FL_WINDOW) {
-    damage_ |= flags;
-    if (parent()) parent()->damage(FL_DAMAGE_CHILD,X,Y,W,H);
-  } else {
-    // see if damage covers entire window:
-    if (X<=0 && Y<=0 && W>=w() && H>=h()) {damage(flags); return;}
-    Fl_X* i = Fl_X::i((Fl_Window*)this);
-    if (i) {
-      if (damage()) {
-	// if we already have damage we must merge with existing region:
-	if (i->region) {
-	  XRectangle R;
-	  R.x = X; R.y = Y; R.width = W; R.height = H;
-	  XUnionRectWithRegion(&R, i->region, i->region);
-	}
-	damage_ |= flags;
-      } else {
-	// create a new region:
-	if (i->region) XDestroyRegion(i->region);
-	i->region = XRectangleRegion(X,Y,W,H);
-	damage_ = flags;
+  Fl_Widget* w = this;
+  while (w->type() < FL_WINDOW) {
+    w->damage_ |= flags;
+    w = w->parent();
+    if (!w) return;
+    flags = FL_DAMAGE_CHILD;
+  }
+  // see if damage covers entire window:
+  if (X<=0 && Y<=0 && W>=w->w() && H>=w->h()) {w->damage(flags); return;}
+  Fl_X* i = Fl_X::i((Fl_Window*)w);
+  if (i) {
+    if (w->damage()) {
+      // if we already have damage we must merge with existing region:
+      if (i->region) {
+	XRectangle R;
+	R.x = X; R.y = Y; R.width = W; R.height = H;
+	XUnionRectWithRegion(&R, i->region, i->region);
       }
-      Fl::damage(FL_DAMAGE_CHILD);
+      w->damage_ |= flags;
+    } else {
+      // create a new region:
+      if (i->region) XDestroyRegion(i->region);
+      i->region = XRectangleRegion(X,Y,W,H);
+      w->damage_ = flags;
     }
+    Fl::damage(FL_DAMAGE_CHILD);
   }
 }
 
@@ -858,5 +872,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.11 1998/12/07 13:36:23 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.12 1998/12/07 13:38:40 mike Exp $".
 //
