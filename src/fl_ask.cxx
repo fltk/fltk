@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8.2.6 2002/03/23 15:35:08 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.7 2002/04/02 19:30:52 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -102,8 +102,8 @@ void resizeform() {
 
   message_w += 10;
   message_h += 10;
-  if (message_w < 60)
-    message_w = 60;
+  if (message_w < 340)
+    message_w = 340;
   if (message_h < 30)
     message_h = 30;
 
@@ -340,5 +340,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.6 2002/03/23 15:35:08 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.7 2002/04/02 19:30:52 easysw Exp $".
 //
