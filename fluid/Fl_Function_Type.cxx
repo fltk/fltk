@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.10 1999/01/07 19:17:09 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.11 1999/01/07 21:21:20 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -193,16 +193,17 @@ void Fl_Function_Type::write_code1() {
     write_c("int main(int argc, char **argv) {\n");
   else {
     const char* t = return_type;
+    // from matt: let the user type "static " at the start of type
+    // in order to declare a static method;
+    int is_static = 0;
+    if (t) {
+      if (!strcmp(t,"static")) {is_static = 1; t = 0;}
+      else if (!strncmp(t,"static ",7)) {is_static = 1; t += 7;}
+    }
     if (!t) {
       if (havewidgets) t = "Fl_Window*";
       else t = "void";
     }
-
-    // Remove leading spacing and "static" declarations...
-    const char* t1 = t;
-    while (*t1==' ') t1++;
-    if (!strncmp(t1, "static ", 7)) t1+= 7;
-    while (*t1==' ') t1++;
 
     const char* k = class_name();
     if (k) {
@@ -210,11 +211,15 @@ void Fl_Function_Type::write_code1() {
       if (name()[0] == '~')
 	constructor = 1;
       else {
-	size_t n; for (n=0; name()[n] && name()[n]!='('; n++);
-	if (n == strlen(k) && !strncmp(name(), k, n)) constructor = 1;
+        size_t n = strlen(k);
+        if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
       }
       write_h("  ");
-      if (!constructor) {write_h("%s ", t); write_c("%s ", t);}
+      if (!constructor) {
+        if (is_static) write_h("static ");
+        write_h("%s ", t);
+        write_c("%s ", t);
+      }
       write_h("%s;\n", name());
       write_c("%s::%s {\n", k, name());
     } else {
@@ -692,5 +697,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.10 1999/01/07 19:17:09 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.11 1999/01/07 21:21:20 mike Exp $".
 //
