@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.1 1999/05/11 09:39:27 bill Exp $"
+// "$Id: forms.H,v 1.7.2.2 2000/03/05 06:51:04 bill Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -104,13 +104,10 @@ typedef Fl_Window FL_FORM;
 #define FL_OVAL3D_DOWNBOX	FL_ROUND_DOWN_BOX
 
 #define FL_MBUTTON1	1
-#define FL_LEFT_MOUSE	1
 #define FL_LEFTMOUSE	1
 #define FL_MBUTTON2	2
-#define FL_MIDDLE_MOUSE	2
 #define FL_MIDDLEMOUSE	2
 #define FL_MBUTTON3	3
-#define FL_RIGHT_MOUSE	3
 #define FL_RIGHTMOUSE	3
 #define FL_MBUTTON4	4
 #define FL_MBUTTON5	5
@@ -841,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.1 1999/05/11 09:39:27 bill Exp $".
+// End of "$Id: forms.H,v 1.7.2.2 2000/03/05 06:51:04 bill Exp $".
 //

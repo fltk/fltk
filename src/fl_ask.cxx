@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.2 1999/12/30 17:37:05 mike Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.3 2000/03/05 06:51:07 bill Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -55,7 +55,10 @@ uchar fl_message_font_ = 0;
 uchar fl_message_size_ = FL_NORMAL_SIZE;
 
 static Fl_Window *makeform() {
- if (message_form) return message_form;
+ if (message_form) {
+   message_form->size(410,105);
+   return message_form;
+ }
  Fl_Window *w = message_form = new Fl_Window(410,105);
  // w->clear_border();
  // w->box(FL_UP_BOX);
@@ -72,6 +75,7 @@ static Fl_Window *makeform() {
  (button[0] = new Fl_Button(310, 70, 90, 25))->shortcut("^[");
  button[1] = new Fl_Return_Button(210, 70, 90, 25);
  button[2] = new Fl_Button(110, 70, 90, 25);
+ w->resizable(new Fl_Box(60,10,110-60,22));
  w->end();
  w->set_modal();
  return w;
@@ -228,5 +232,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.2 1999/12/30 17:37:05 mike Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.3 2000/03/05 06:51:07 bill Exp $".
 //

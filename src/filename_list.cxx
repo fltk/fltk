@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.4 2000/01/27 08:27:26 bill Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.5 2000/03/05 06:51:06 bill Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -43,7 +43,7 @@ int filename_list(const char *d, dirent ***list) {
 #if defined(__hpux)
   // HP-UX defines the comparison function like this:
   return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))numericsort);
-#elif HAVE_SCANDIR && !defined(__sgi)
+#elif HAVE_SCANDIR && !defined(__sgi) && !defined(OSF1)
   // The vast majority of Unix systems want the sort function to have this
   // prototype, most likely so that it can be passed to qsort without any
   // changes:
@@ -56,5 +56,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.4 2000/01/27 08:27:26 bill Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.5 2000/03/05 06:51:06 bill Exp $".
 //
