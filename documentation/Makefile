@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.4 1999/01/07 19:17:09 mike Exp $"
+# "$Id: Makefile,v 1.5 1999/01/13 16:25:15 mike Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -23,106 +23,124 @@
 # Please report all bugs and problems to "fltk-bugs@easysw.com".
 #
 
-HTMLFILES	= \
-		src/preface.html \
-		src/intro.html \
-		src/basics.html \
-		src/common.html \
-		src/editor.html \
-		src/drawing.html \
-		src/events.html \
-		src/subclassing.html \
-		src/fluid.html \
-		src/opengl.html \
-		src/widgets.html \
-		src/Fl_Adjuster.html \
-		src/Fl_Box.html \
-		src/Fl_Browser.html \
-		src/Fl_Browser_.html \
-		src/Fl_Button.html \
-		src/Fl_Chart.html \
-		src/Fl_Check_Button.html \
-		src/Fl_Choice.html \
-		src/Fl_Clock.html \
-		src/Fl_Color_Chooser.html \
-		src/Fl_Counter.html \
-		src/Fl_Dial.html \
-		src/Fl_Double_Window.html \
-		src/Fl_End.html \
-		src/Fl_Float_Input.html \
-		src/Fl_Free.html \
-		src/Fl_Gl_Window.html \
-		src/Fl_Group.html \
-		src/Fl_Hold_Browser.html \
-		src/Fl_Input.html \
-		src/Fl_Input_.html \
-		src/Fl_Int_Input.html \
-		src/Fl_Light_Button.html \
-		src/Fl_Menu_.html \
-		src/Fl_Menu_Bar.html \
-		src/Fl_Menu_Button.html \
-		src/Fl_Menu_Item.html \
-		src/Fl_Menu_Window.html \
-		src/Fl_Multi_Browser.html \
-		src/Fl_Multiline_Input.html \
-		src/Fl_Multiline_Output.html \
-		src/Fl_Output.html \
-		src/Fl_Overlay_Window.html \
-		src/Fl_Pack.html \
-		src/Fl_Positioner.html \
-		src/Fl_Repeat_Button.html \
-		src/Fl_Return_Button.html \
-		src/Fl_Roller.html \
-		src/Fl_Round_Button.html \
-		src/Fl_Scroll.html \
-		src/Fl_Scrollbar.html \
-		src/Fl_Secret_Input.html \
-		src/Fl_Select_Browser.html \
-		src/Fl_Single_Window.html \
-		src/Fl_Slider.html \
-		src/Fl_Tabs.html \
-		src/Fl_Tile.html \
-		src/Fl_Timer.html \
-		src/Fl_Valuator.html \
-		src/Fl_Value_Input.html \
-		src/Fl_Value_Output.html \
-		src/Fl_Value_Slider.html \
-		src/Fl_Widget.html \
-		src/Fl_Window.html \
-		src/functions.html \
-		src/enumerations.html \
-		src/glut.html \
-		src/forms.html \
-		src/osissues.html \
-		src/license.html
+# Where to find HTMLDOC...
+HTMLDOC		=	htmldoc
 
-all:	index.html fltk.ps.gz fltk.pdf
+# What media size to use:
+
+# "Universal" size - minimum of US Letter and A4
+MEDIA		=	--size universal
+
+# Standard US Letter
+#MEDIA		=	--size letter
+
+# Standard A4
+#MEDIA		=	--size a4
+
+# 7x8.5in (1/2 legal page) with reduced-size fonts
+#MEDIA		=	--size 7x8.5in --fontsize 9.0
+
+# These are the HTML "source" files; the files are formatted in the
+# order listed...
+HTMLFILES	= \
+		preface.html \
+		intro.html \
+		basics.html \
+		common.html \
+		editor.html \
+		drawing.html \
+		events.html \
+		subclassing.html \
+		fluid.html \
+		opengl.html \
+		widgets.html \
+		Fl_Adjuster.html \
+		Fl_Box.html \
+		Fl_Browser.html \
+		Fl_Browser_.html \
+		Fl_Button.html \
+		Fl_Chart.html \
+		Fl_Check_Button.html \
+		Fl_Choice.html \
+		Fl_Clock.html \
+		Fl_Color_Chooser.html \
+		Fl_Counter.html \
+		Fl_Dial.html \
+		Fl_Double_Window.html \
+		Fl_End.html \
+		Fl_Float_Input.html \
+		Fl_Free.html \
+		Fl_Gl_Window.html \
+		Fl_Group.html \
+		Fl_Hold_Browser.html \
+		Fl_Input.html \
+		Fl_Input_.html \
+		Fl_Int_Input.html \
+		Fl_Light_Button.html \
+		Fl_Menu_.html \
+		Fl_Menu_Bar.html \
+		Fl_Menu_Button.html \
+		Fl_Menu_Item.html \
+		Fl_Menu_Window.html \
+		Fl_Multi_Browser.html \
+		Fl_Multiline_Input.html \
+		Fl_Multiline_Output.html \
+		Fl_Output.html \
+		Fl_Overlay_Window.html \
+		Fl_Pack.html \
+		Fl_Positioner.html \
+		Fl_Repeat_Button.html \
+		Fl_Return_Button.html \
+		Fl_Roller.html \
+		Fl_Round_Button.html \
+		Fl_Scroll.html \
+		Fl_Scrollbar.html \
+		Fl_Secret_Input.html \
+		Fl_Select_Browser.html \
+		Fl_Single_Window.html \
+		Fl_Slider.html \
+		Fl_Tabs.html \
+		Fl_Tile.html \
+		Fl_Timer.html \
+		Fl_Valuator.html \
+		Fl_Value_Input.html \
+		Fl_Value_Output.html \
+		Fl_Value_Slider.html \
+		Fl_Widget.html \
+		Fl_Window.html \
+		functions.html \
+		enumerations.html \
+		glut.html \
+		forms.html \
+		osissues.html \
+		license.html
+
+all:	fltk.ps fltk.pdf
 
 clean:
-	rm -f index.html toc.html doc*.html *.gif *.jpg
-	rm -f fltk.ps fltk.ps.gz
+	rm -rf fltk.d
+	rm -f fltk.ps
 	rm -f fltk.pdf
 
 depend:
 
 install:
 
-index.html: $(HTMLFILES)
+fltk.d/index.html: $(HTMLFILES)
 	@echo "Generating HTML documentation..."
-	@rm -f index.html toc.html doc*.html *.gif *.jpg
-	@htmldoc -d . -t html --toclevels 2 --title src/FL.gif $(HTMLFILES)
+	@-mkdir fltk.d
+	@-rm -f fltk.d/*
+	@$(HTMLDOC) -d fltk.d -t html --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
 
-fltk.ps.gz: $(HTMLFILES)
+fltk.ps: $(HTMLFILES)
 	@echo "Generating PostScript documentation..."
-	@rm -f fltk.ps fltk.ps.gz
-	@htmldoc -f fltk.ps --jpeg=90 --duplex --verbose --toclevels 2 --title src/FL.gif $(HTMLFILES)
-	@gzip -9 fltk.ps
+	@$(HTMLDOC) -f fltk.ps --jpeg=90 --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
 
 fltk.pdf: $(HTMLFILES)
 	@echo "Generating PDF documentation..."
 	@rm -f fltk.pdf
-	@htmldoc -f fltk.pdf --compression=9 --jpeg=90 --duplex --verbose --toclevels 2 --title src/FL.gif $(HTMLFILES)
+	@$(HTMLDOC) -f fltk.pdf --compression=9 --jpeg=90 --duplex --verbose --toclevels 2 --title FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.4 1999/01/07 19:17:09 mike Exp $".
+# End of "$Id: Makefile,v 1.5 1999/01/13 16:25:15 mike Exp $".
 #

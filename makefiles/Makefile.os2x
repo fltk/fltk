@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.os2x,v 1.4 1999/01/07 19:17:14 mike Exp $"
+# "$Id: Makefile.os2x,v 1.5 1999/01/13 16:25:17 mike Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -35,8 +35,6 @@ all:
 	echo "=== making test ==="
 	touch test/makedepend
 	cd test & $(MAKE)
-	echo "=== making documentation ==="
-	cd documentation & $(MAKE)
 
 install:
 	echo "=== installing src ==="
@@ -45,8 +43,6 @@ install:
 	echo "=== installing fluid ==="
 	touch fluid/makedepend
 	cd fluid & $(MAKE) install
-	echo "=== installing documentation ==="
-	cd documentation & $(MAKE) install
 
 depend:
 	echo "=== making src dependencies ==="
@@ -58,8 +54,6 @@ depend:
 	echo "=== making test dependencies ==="
 	touch test/makedepend
 	cd test & $(MAKE) depend
-	echo "=== making documentation dependencies ==="
-	cd documentation & $(MAKE) depend
 
 clean:
 	-@ rm -f core config.cache *.o *.bck
@@ -72,9 +66,7 @@ clean:
 	echo "=== cleaning test ==="
 	touch test/makedepend
 	cd test & $(MAKE) clean
-	echo "=== cleaning documentation ==="
-	cd documentation & $(MAKE) clean
 
 #
-# End of "$Id: Makefile.os2x,v 1.4 1999/01/07 19:17:14 mike Exp $".
+# End of "$Id: Makefile.os2x,v 1.5 1999/01/13 16:25:17 mike Exp $".
 #

@@ -3,75 +3,12 @@ README - Fast Light Tool Kit (FLTK) Version 1.0
 
 WHAT IS FLTK?
 
-    FLTK (pronounced "fulltick") is a LGPL'd C++ graphical user
-    interface toolkit for X (UNIX(r)), OpenGL, and Microsoft(r)
-    Windows(r) NT 4.0, 95, or 98. It is currently maintained by a small
-    group of developers across the world with a central repository in
-    the US. 
-
-    FLTK was originally created to build in-house applications at
-    Digital Domain for image processing and 3D graphics. The original
-    author, Bill Spitzak, received permission from Digital Domain to
-    release it to the public domain in the hopes that it could be used
-    to make better, faster, and nicer-looking UNIX programs. Digital
-    Domain has since withdrawn support for FLTK, and Bill is no longer
-    able to actively develop it. 
-
-
-FEATURES
-
-    FLTK was designed to be statically linked. This was done by
-    splitting it into many small objects and desigining it so that
-    functions that are not used do not have pointers to them in the
-    parts that are used, and thus do not get linked in. This allows you
-    to make an easy-to-install program, or to modify FLTK to the exact
-    requirements of your appli- cation, without worrying about bloat.
-    FLTK works fine as a shared library, though, and has started being
-    included on Linux distribu- tions. 
-
-    Here are some of the core features unique to FLTK: 
-
-	- sizeof(Fl_Widget) == 48.
-
-	- The "core" (the "hello" program compiled & linked with a
-	  static FLTK library using gcc on a 486 and then stripped) is
-	  39.5K. 
-
-	- A program including every widget is less than 108K.  Does not
-	  use macros, templates, multiple inheritance, or exceptions. 
-
-	- Written directly atop Xlib (or the WIN32 API) for maximum
-	  speed, and carefully optimized for code size and
-	  performance. 
-
-	- Precise low-level compatability between the X and Windows
-	  version (only about 10% of the code is different). 
-
-	- Interactive user interface builder program. Output is human-
-	  readable and editable C++ source code. 
-
-	- Support for the X double buffering extension (emulation if
-	  not available and under Windows.)
-
-	- Support for X overlay hardware (emulation if none and under
-	  Windows.)
-
-	- Very small & fast portable 2-D drawing library to hide Xlib
-	  and WIN32.
-
-	- OpenGL/Mesa drawing area widget.
-
-	- Support for OpenGL overlay hardware on both X and Windows.
-	  Emulation if none.
-
-	- Text input fields with Emacs key bindings, X cut & paste, and
-	  foreign letter compose!
-
-	- Compatability header file for the Glut library.
-
-	- Compatability header file for the XForms library.
-
-	- Much too much to list here...
+    The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a LGPL'd
+    C++ graphical user interface toolkit for X (UNIX(r)), OpenGL(r),
+    and Microsoft(r) Windows(r) NT 4.0, 95, or 98. It was originally
+    developed by Mr. Bill Spitzak and is currently maintained by a
+    small group of developers across the world with a central
+    repository in the US.
 
 
 LICENSING
@@ -82,24 +19,20 @@ LICENSING
     Gates could use it.) 
 
 
-WHAT DOES "FLTK" MEAN?
+ON-LINE DOCUMENTATION
 
-    FLTK was originally designed to be compatable with the Forms
-    Library written for SGI machines. In that library all the functions
-    and structures started with "fl_". This naming was extended to all
-    new methods and widgets in the C++ library, and this prefix was
-    taken as the name of the library. It is almost impossible to search
-    for "FL" on the Internet, due to the fact that it is also the
-    abbreviation for Florida. After much debating and searching for a
-    new name for the toolkit, which was already in use by several
-    people, Bill came up with "FLTK", and even a bogus excuse that it
-    stands for "The Fast Light Tool Kit". 
+    All of the documentation is in HTML in the subdirectory
+    "documentation". The "index.html" file should be your starting
+    point.  PostScript(tm) and PDF versions of this documentation is
+    also available from the FLTK web site at:
+
+        http://fltk.easysw.com/documentation
 
 
 BUILDING AND INSTALLING FLTK UNDER UNIX
 
     In most cases you can just type "make".  This will run configure
-    with the default of no options and then compile everything.
+    with the default (no) options and then compile everything.
 
     FLTK uses GNU autoconf to configure itself for your UNIX platform.
     The main things that the configure script will look for are the
@@ -164,13 +97,6 @@ BUILDING FLTK UNDER OS/2
 	make
 
 
-ON-LINE DOCUMENTATION
-
-    All of the documentation is in HTML in the subdirectory
-    "documentation". The "index.html" file should be your starting
-    point.
-
-
 INTERNET RESOURCES
 
     FLTK is available on the 'net in a bunch of locations:
@@ -203,16 +129,6 @@ REPORTING BUGS
     list at "fltk@easysw.com".
 
 
-WINDOW MANAGERS
-
-    FLTK now uses X transient windows for modal() windows.  This may
-    confuse some window managers.  Mostly it causes them to not put any
-    borders on the modal windows and prevent you from moving them.
-
-    For FVWM I recommend you put "DecorateTransients" into your
-    ~/.fvwmrc file.
-
-
 MESA
 
     Currently the best way to get OpenGL on your Linux system is to use
@@ -222,48 +138,16 @@ MESA
     Mesa is available at "http://www.ssec.wisc.edu/~brianp/Mesa.html".
 
     The configure script will not see Mesa unless it is installed as
-    either libGL or libMesa.  If you don't want to do this you will
+    either libGL or libMesaGL.  If you don't want to do this you will
     have to edit config.h (set HAVE_GL to 1) and makeinclude (add the
     libraries).
-
-
-HOW TO WRITE PROGRAMS THAT USE FLTK
-
-    The proper way to include FLTK header files is "#include
-    <FL/Fl_xyz.H>".  If FLTK is installed this will work without
-    switches.  If not you will need to provide a "-Idir" switch
-    pointing to this directory (all the headers are in ./FL).
-
-    Microsoft Windows developers please note: case *is* significant
-    under other operating systems, and the C standard uses the forward
-    slash (/) to separate directories.  The following #include
-    directives are *not* recommended for portability reasons:
-
-        #include <fl\fl_xyz.h>
-	#include <fl/fl_xyz.h>
-	#include <FL\Fl_xyz.H>
-
-    Linker switches will be something like "-lfltk -L/usr/X11R6/lib
-    -lX11".  Some programs may require "-lXext" or "-lm".  If FLTK is
-    not installed in a standard location you will need to add a "-Ldir"
-    switch to point to the proper directory.
-
-    If you wish to distribute a program (in source form) that uses
-    FLTK, you are allowed by the license to directly include the
-    portions of FLTK that you need.  This may make it easier for a user
-    to compile your program since they don't need to install the
-    library.  Please provide instructions for the user on how they can
-    get the entire source of FLTK.
-
-    If you wish to distribute a compiled program without source code,
-    this is allowed also.  See the file "COPYING" for details.
 
 
 TRADEMARKS
 
     Microsoft and Windows are registered trademarks of Microsoft
     Corportation. UNIX is a registered trademark of the X/Open Group,
-    Inc.
+    Inc.  OpenGL is a registered trademark of Silicon Graphics, Inc.
 
 
 COPYRIGHT
@@ -276,7 +160,7 @@ COPYRIGHT
 	Vincent Penne (vincent.penne@wanadoo.fr)
         Michael Sweet (mike@easysw.com)
 	Carl Thompson (clip@home.net)
-	Matthias ??? (matthias@mediaone.net)
+	Matthias Melcher (matthias@mediaone.net)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public License
