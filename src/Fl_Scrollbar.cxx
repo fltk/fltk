@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.2 1999/12/04 12:22:37 mike Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.3 1999/12/07 17:53:08 bill Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,8 @@ void Fl_Scrollbar::increment_cb() {
   switch (pushed_) {
   case 1: i = -linesize_; break;
   default:i =  linesize_; break;
-  case 3: i = -S * (maximum() - minimum()) / W; break;
-  case 4: i =  S * (maximum() - minimum()) / W; break;
+  case 3: i = -int(S * (maximum() - minimum()) / W); break;
+  case 4: i =  int(S * (maximum() - minimum()) / W); break;
   }
   if (maximum() < minimum() && pushed_ < 3) i = -i;
   handle_drag(clamp(value() + i));
@@ -241,5 +241,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.2 1999/12/04 12:22:37 mike Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.3 1999/12/07 17:53:08 bill Exp $".
 //
