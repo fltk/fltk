@@ -12,6 +12,8 @@ CHANGES IN FLTK 1.1.0b8
 	- Fixed the example program makefile - wasn't building
 	  the mandelbrot and shiny demos right.
 	- Fl::set_font(Fl_Font, Fl_Font) was not implemented.
+	- Fixed the documentation Makefile commands; was not
+	  using the fltk.book file for some reason...
 
 
 CHANGES IN FLTK 1.1.0b7
