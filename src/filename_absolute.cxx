@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.4 1999/01/07 19:17:34 mike Exp $"
+// "$Id: filename_absolute.cxx,v 1.5 1999/01/13 16:56:05 mike Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,7 @@
 #include <string.h>
 #if defined(WIN32) && !defined(CYGNUS)
 # include <direct.h>
-# define getcwd(a,b) _getdcwd(0,a,b)
+//# define getcwd(a,b) _getdcwd(0,a,b)
 #else
 # include <unistd.h>
 # ifdef __EMX__
@@ -92,5 +92,5 @@ int filename_absolute(char *to,const char *from) {
 }
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.4 1999/01/07 19:17:34 mike Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5 1999/01/13 16:56:05 mike Exp $".
 //
