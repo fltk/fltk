@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.8.2.5 2000/06/05 21:20:20 mike Exp $"
+// "$Id: Fl_Browser.H,v 1.8.2.6 2000/08/19 17:10:47 spitzak Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -86,6 +86,7 @@ public:
   FL_EXPORT int select(int, int=1);
   FL_EXPORT int selected(int) const ;
   FL_EXPORT void show(int n);
+  void show() {Fl_Widget::show();}
   FL_EXPORT void hide(int n);
   void hide() {Fl_Widget::hide();}
   FL_EXPORT int visible(int n) const ;
@@ -118,5 +119,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.8.2.5 2000/06/05 21:20:20 mike Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8.2.6 2000/08/19 17:10:47 spitzak Exp $".
 //
