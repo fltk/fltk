@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.92 2002/11/08 19:50:35 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.93 2002/11/14 13:57:39 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -779,6 +779,17 @@ else
 
 	    OPTIM="$OPTIM +W336,501,736,740,749,829"
 	    ;;
+	OSF1*)
+	    # Running Digital/Tru64 UNIX; these options should work for the
+	    # Digital/Compaq/NewHP compilers.
+	    if test -z "$DEBUGFLAG"; then
+        	if test "x$with_optim" != x; then
+		    OPTIM="$with_optim $OPTIM"
+		else
+        	    OPTIM="-O2 $OPTIM"
+		fi
+	    fi
+	    ;;
 	SunOS*)
 	    # Solaris
 	    if test -z "$DEBUGFLAG"; then
@@ -837,5 +848,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.92 2002/11/08 19:50:35 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.93 2002/11/14 13:57:39 easysw Exp $".
 dnl
