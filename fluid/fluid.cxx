@@ -1085,19 +1085,13 @@ void print_cb(Fl_Return_Button *, void *) {
 
         fprintf(outfile,
 	        "newpath %.2f %.2f %.2f 180 90 arcn\n"	// Top left 
-		"%.2f 0 rlineto\n"			// Top
 		"%.2f %.2f %.2f 90 0 arcn\n"		// Top right
-		"0 -%.2f rlineto\n"			// Right
 		"%.2f %.2f %.2f 0 -90 arcn\n"		// Bottom right
-		"-%.2f 0 rlineto\n"			// Bottom
 		"%.2f %.2f %.2f -90 -180 arcn\n"	// Bottom left
-		"closepath fill\n",			// Left + fill
-		llx + 12 * border, ury, 16 * border,
-		ww - 8 * border,
-		urx - 12 * border, ury, 16 * border,
-		hh,
+		"closepath fill\n",			// Fill
+		llx, ury + 12 * border, 4 * border,
+		urx, ury + 12 * border, 4 * border,
 		urx, lly, 4 * border,
-		ww - 4 * border,
 		llx, lly, 4 * border);
 
         if (windows[winpage]->label()) {
