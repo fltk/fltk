@@ -42,7 +42,7 @@ cursor. </P>
 Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char 
 *label = 0)</A></H4>
  Creates a new <TT>Fl_Value_Input</TT> widget using the given position, 
-size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+size, and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>. 
 <H4><A name=Fl_Value_Input.~Fl_Value_Input>virtual 
 Fl_Value_Input::~Fl_Value_Input()</A></H4>
  Destroys the valuator. 
@@ -55,7 +55,7 @@ Fl_Value_Input::cursor_color() const
  If &quot;soft&quot; is turned on, the user is allowed to drag the value outside 
 the range.  If they drag the value to one of the ends, let go, then 
 grab again and continue to drag, they can get to any value.  Default is 
-one. 
+true. 
 <H4><A name=Fl_Value_Input.textcolor>Fl_Color 
 Fl_Value_Input::textcolor() const
 <BR> void Fl_Value_Input::textcolor(Fl_Color)</A></H4>

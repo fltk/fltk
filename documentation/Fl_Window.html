@@ -45,6 +45,7 @@ exit(0)</TT> if this is the last top-level window. </P>
 <LI><A href=#Fl_Window.border>border</A></LI>
 <LI><A href=#Fl_Window.clear_border>clear_border</A></LI>
 <LI><A href=#Fl_Window.current>current</A></LI>
+<LI><A href=#Fl_Window.cursor>cursor</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
@@ -265,4 +266,17 @@ debug and maintain!</B>
 <P>This method only works for the <TT>Fl_Window</TT> and <TT>
 Fl_Gl_Window</TT> classes. </P>
 <H4><A name=Fl_Window.current>static Fl_Window* Fl_Window::current()</A></H4>
- Returns the last window that was made current. </BODY></HTML>
+ Returns the last window that was made current.
+<H4><A name=Fl_Window.cursor>void Fl_Window::cursor(Fl_Cursor, Fl_Color = FL_WHITE, Fl_Color = FL_BLACK)</H4>
+Change the cursor for this window.  This always calls the system, if
+you are changing the cursor a lot you may want to keep track of how
+you set it in a static varaible and call this only if the new cursor
+is different.
+
+<P>The type <TT>Fl_Cursor</TT> is an enumeration defined in <A
+href=enumerations.html#cursor> <TT>&lt;Enumerations.H&gt;</TT></A>.
+(Under X you can get any XC_cursor value by passing <TT>
+Fl_Cursor((XC_foo/2)+1)</TT>).  The colors only work on X, they are
+not implemented on WIN32.
+
+</BODY></HTML>

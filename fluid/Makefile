@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.7 1999/01/07 18:49:36 mike Exp $"
+# "$Id: Makefile,v 1.8 1999/01/31 07:43:14 bill Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -52,18 +52,14 @@ include ../makeinclude
 .SUFFIXES : .cxx .c .o
 
 .cxx.o :
-	@echo $<:
-	@$(CXX) -I.. $(CXXFLAGS) -c $<
+	$(CXX) -I.. $(CXXFLAGS) -c $<
 .c.o :
-	@echo $<:
-	@$(CC) -I.. $(CFLAGS) -c $<
+	$(CC) -I.. $(CFLAGS) -c $<
 .cxx :
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) -o $@ $< -L../lib -lfltk $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ $< -L../lib -lfltk $(LDLIBS)
 
 $(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
-	@echo linking $@:
-	@$(CXX) $(CXXFLAGS) -o $(PROGRAM) $(OBJECTS) -L../lib -lfltk $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) -L../lib -lfltk $(LDLIBS)
 
 clean :
 	-@ rm -f *.o $(PROGRAM) $(CLEAN) core *~ makedepend
@@ -94,5 +90,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.7 1999/01/07 18:49:36 mike Exp $".
+# End of "$Id: Makefile,v 1.8 1999/01/31 07:43:14 bill Exp $".
 #

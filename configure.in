@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.18 1999/01/27 17:52:23 mike Exp $"
+dnl# "$Id: configure.in,v 1.19 1999/01/31 07:43:08 bill Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -39,7 +39,7 @@ fi
 DEBUGFLAG=""
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]],if eval "test x$enable_debug = xyes"; then
-  DEBUGFLAG="-g"
+  DEBUGFLAG="-g "
 fi)
 AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]],[
 if eval "test x$enable_shared = xyes"; then
@@ -69,9 +69,6 @@ if eval "test x$enable_shared = xyes"; then
 	  ;;
   esac
 fi])
-
-CFLAGS="$DEBUGFLAG $CFLAGS"
-CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -148,16 +145,18 @@ dnl# Uncomment these if you don't have IDO 7.2 or higher
 dnl#     CXX="CC -n32"
 dnl#     CC="cc -n32"
 dnl#     LD="ld -n32"
-    MAKEDEPEND="CC -M"
+dnl#     MAKEDEPEND="CC -M"
     # -woff 3322 is necessary due to errors in Xlib headers on IRIX
-    CFLAGS="-fullwarn $CFLAGS"
-    CXXFLAGS="-fullwarn -woff 1685 -woff 3322 $CXXFLAGS"
-    MAKEDEPEND="CC -M"
+    CFLAGS="-O2 -fullwarn $CFLAGS"
+    CXXFLAGS="-O2 -fullwarn -woff 1685 -woff 3322 $CXXFLAGS"
   else
     CXXFLAGS="+w +pp $CXXFLAGS"
   fi
 fi
 fi
+
+CFLAGS="$DEBUGFLAG$CFLAGS"
+CXXFLAGS="$DEBUGFLAG$CXXFLAGS"
 
 AC_SUBST(LIBNAME)
 AC_SUBST(LIBCOMMAND)
@@ -166,5 +165,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.18 1999/01/27 17:52:23 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.19 1999/01/31 07:43:08 bill Exp $".
 dnl#

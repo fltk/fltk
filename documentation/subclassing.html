@@ -71,9 +71,9 @@ flags(ACTIVE|VISIBLE);
 <LI><A href=#test_shortcut><TT>Fl_Widget::test_shortcut</TT></A></LI>
 <LI><A href=#type><TT>Fl_Widget::type</TT></A></LI>
 </UL>
-<H3><A name=damage>void Fl_Widget::damage(uchar mask)
+<H4><A name=damage>void Fl_Widget::damage(uchar mask)
 <BR> void Fl_Widget::damage(uchar mask, int x, int y, int w, int h)
-<BR> uchar Fl_Widget::damage()</A></H3>
+<BR> uchar Fl_Widget::damage()</A></H4>
 The first form indicates that a partial update of the object is 
 needed.  The bits in mask are OR'd into <TT>damage()</TT>.  Your <TT>
 draw()</TT> routine can examine these bits to limit what it is
@@ -109,15 +109,15 @@ MyClass::draw() {
   if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
 }
 </PRE></UL>
-<H3><A name=draw_box>void Fl_Widget::draw_box() const
-<BR></A>void Fl_Widget::draw_box(Fl_Boxtype b, ulong c) const</H3>
+<H4><A name=draw_box>void Fl_Widget::draw_box() const
+<BR></A>void Fl_Widget::draw_box(Fl_Boxtype b, ulong c) const</H4>
  The first form draws this widget's <TT>box()</TT>, using the 
 dimensions of the widget.  The second form uses <TT>b</TT> as the box 
 type and <TT>c</TT> as the color for the box. 
-<H3><A name=draw_label>void Fl_Widget::draw_label() const
+<H4><A name=draw_label>void Fl_Widget::draw_label() const
 <BR> void Fl_Widget::draw_label(int x, int y, int w, int h) const
 <BR> void Fl_Widget::draw_label(int x, int y, int w, int h, Fl_Align 
-align) const</A></H3>
+align) const</A></H4>
  This is the usual function for a <TT>draw()</TT> method to call to 
 draw the widget's label.  It does not draw the label if it is supposed 
 to be outside the box (on the assumption that the enclosing group will 
@@ -129,16 +129,16 @@ feature, like a moving slider. </P>
 FL_ALIGN_INSIDE</TT> has been forced on so the label will appear inside 
 the passed bounding box. This is designed for parent groups to draw 
 labels with. </P>
-<H3><A name=set_flag>void Fl_Widget::set_flag(SHORTCUT_LABEL)</A></H3>
+<H4><A name=set_flag>void Fl_Widget::set_flag(SHORTCUT_LABEL)</A></H4>
 Modifies <TT>draw_label()</TT> so that '&amp;' characters cause an underscore
 to be printed under the next letter. 
-<H3><A name=set_visible>void Fl_Widget::set_visible()</A>
-<BR><A name=clear_visible>void Fl_Widget::clear_visible()</A></H3>
+<H4><A name=set_visible>void Fl_Widget::set_visible()</A>
+<BR><A name=clear_visible>void Fl_Widget::clear_visible()</A></H4>
  Fast inline versions of <TT>Fl_Widget::hide()</TT> and <TT>
 Fl_Widget::show()</TT>. These do not send the <TT>FL_HIDE</TT> and <TT>
 FL_SHOW</TT> events to the widget. 
-<H3><A name=test_shortcut>int Fl_Widget::test_shortcut() const
-<BR> static int Fl_Widget::test_shortcut(const char *s)</A></H3>
+<H4><A name=test_shortcut>int Fl_Widget::test_shortcut() const
+<BR> static int Fl_Widget::test_shortcut(const char *s)</A></H4>
  The first version tests <TT>Fl_Widget::label()</TT> against the 
 current event (which should be a <TT>FL_SHORTCUT</TT> event).  If the 
 label contains a '&amp;' character and the character after it matches the key 
@@ -147,8 +147,8 @@ flag is off, if the label is <TT>NULL</TT> or does not have a
 '&amp;' character in it, or if the keypress does not match the character. 
 <P>The second version lets you do this test against an arbitrary 
 string. </P>
-<H3><A name=type>uchar Fl_Widget::type() const
-<BR> void Fl_Widget::type(uchar t)</A></H3>
+<H4><A name=type>uchar Fl_Widget::type() const
+<BR> void Fl_Widget::type(uchar t)</A></H4>
  The property <TT>Fl_Widget::type()</TT> can return an arbitrary 8-bit 
 identifier, and can be set with the protected method <TT>type(uchar t)</TT>
 . This value had to be provided for Forms compatibility, but you can 
@@ -240,7 +240,7 @@ must be redrawn (e.g. for an expose event). </P>
 <P>Expose events (and the above <TT>damage(b,x,y,w,h)</TT>) will cause <TT>
 draw()</TT> to be called with FLTK's <A href=drawing.html#clipping>
 clipping</A> turned on.  You can greatly speed up redrawing in some 
-cases by testing <TT>fl_clipped</TT> and <TT>fl_current_clip</TT> and 
+cases by testing <TT>fl_not_clipped(x,y,w,h)</TT> or <TT>fl_clip_box(...)</TT> and 
 skipping invisible parts. </P>
 <P>Besides the protected methods described above, FLTK provides a large 
 number of basic drawing functions, which are described <A href=drawing.html#drawing>
@@ -343,19 +343,19 @@ easier:
 <LI><A href=#draw_outside_label>draw_outside_label</A></LI>
 <LI><A href=#update_child>update_child</A></LI>
 </UL>
-<H3><A name=draw_child>void Fl_Group::draw_child(Fl_Widget&amp;)</A></H3>
+<H4><A name=draw_child>void Fl_Group::draw_child(Fl_Widget&amp;)</A></H4>
  This will force the child's <TT>damage()</TT> bits all to one and call <TT>
 draw()</TT> on it, then clear the <TT>damage()</TT>.  You should call 
 this on all children if a total redraw of your widget is requested, or 
 if you draw something (like a background box) that damages the child. 
  Nothing is done if the child is not <TT>visible()</TT> or if it is 
 clipped. 
-<H3><A name=draw_outside_label>void 
-Fl_Group::draw_outside_label(Fl_Widget&amp;) const</A></H3>
+<H4><A name=draw_outside_label>void 
+Fl_Group::draw_outside_label(Fl_Widget&amp;) const</A></H4>
  Draw the labels that are <I>not</I> drawn by <A href=#draw_label><TT>
 draw_label()</TT></A>.  If you want more control over the label 
 positions you might want to call <TT>child-&gt;draw_label(x,y,w,h,a)</TT>. 
-<H3><A name=update_child>void Fl_Group::update_child(Fl_Widget&amp;)</A></H3>
+<H4><A name=update_child>void Fl_Group::update_child(Fl_Widget&amp;)</A></H4>
  Draws the child only if its <TT>damage()</TT> is non-zero.  You 
 should call this on all the children if your own damage is equal to 
 FL_DAMAGE_CHILD.  Nothing is done if the child is not <TT>visible()</TT>
@@ -377,7 +377,7 @@ can be useful if your widget wants to occupy an entire window, and can
 also be used to take advantage of system-provided clipping, or to work 
 with a library that expects a system window ID to indicate where to 
 draw. 
-<P>Subclassing <TT>Fl_Window</TT> is almost exactly like subclassing <TT>
+<P>Subclassing <TT>Fl_Window </TT>is almost exactly like subclassing <TT>
 Fl_Widget</TT>, and in fact you can easily switch a subclass back and 
 forth.  Watch out for the following differences: </P>
 <OL>

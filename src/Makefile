@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9 1999/01/27 14:44:32 mike Exp $"
+# "$Id: Makefile,v 1.10 1999/01/31 07:43:15 bill Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -150,26 +150,23 @@ LIBRARY = ../lib/$(LIBNAME)
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 
 $(LIBRARY) : $(OBJECTS)
-	@echo Building $(LIBRARY)
+	@echo $(LIBCOMMAND) $(LIBRARY) ...
 	@$(LIBCOMMAND) $(LIBRARY) $(OBJECTS)
 	@$(RANLIB) $(LIBRARY)
 
 .SUFFIXES:	.cxx .h .o
 
 .cxx.o :
-	@echo $<:
-	@$(CXX) -I.. $(CXXFLAGS) -c $<
+	$(CXX) -I.. $(CXXFLAGS) -c $<
 .c.o :
-	@echo $<:
-	@$(CC) -I.. $(CFLAGS) -c -o $@ $<
+	$(CC) -I.. $(CFLAGS) -c -o $@ $<
 
 clean :
 	-@ rm -f *.o *.do $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
 	@touch makedepend
 
 depend:
-	@echo Making makedepend
-	@$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
 include makedepend
 
 ################################################################
@@ -185,5 +182,5 @@ install: ../lib/$(LIBNAME)
 	-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.9 1999/01/27 14:44:32 mike Exp $".
+# End of "$Id: Makefile,v 1.10 1999/01/31 07:43:15 bill Exp $".
 #

@@ -18,9 +18,7 @@ identified by an  8-bit index that is stored in the widget's <TT>box()</TT>
 <LI>You can call <A href=Fl_Window.html#Fl_Window.make_current><TT>
 Fl_Window::make_current()</TT></A> to do incremental update of a 
 widget. Use <A href=Fl_Widget.html#Fl_Widget.window><TT>
-Fl_Widget::window()</TT></A> to  find the window. <I>Under X this only 
-works for the base <TT>Fl_Window</TT> class, not for double buffered, 
-overlay, or  OpenGL windows!</I></LI>
+Fl_Widget::window()</TT></A> to  find the window.</LI>
 </UL>
 <H2>FLTK Drawing Functions</H2>
  To use the drawing functions you must first include the <TT>
@@ -33,7 +31,6 @@ drawing functions:
 <LI><A href=#complex>Complex Shapes</A></LI>
 <LI><A href=#text>Text</A></LI>
 <LI><A href=#images>Images</A></LI>
-<LI><A href=#cursor>Cursor</A></LI>
 <LI><A href=#overlay>Overlay</A></LI>
 </UL>
 <H3><A name=clipping>Clipping</A></H3>
@@ -72,7 +69,7 @@ is completely outside the region.
 is <I>not</I> the X or WIN32 pixel, it is an index into an internal 
 table!  The table provides several general colors, a 24-entry gray 
 ramp, and a 5x8x5 color cube. All of these are named with 
-symbols in <A href=enumerations.html#enumerations>
+symbols in <A href=enumerations.html#colors>
 <TT>&lt;FL/Enumerations.H&gt;</TT></A>. 
 <P>For colormapped displays, a color cell will be allocated out of <TT>
 fl_colormap</TT> the first time you use a color. If the colormap fills 
@@ -144,9 +141,9 @@ w - 1</TT> and <TT>h - 1</TT>. </P>
 transformations.  The functionality matches that found in Adobe&reg; 
 PostScript<SUP>TM</SUP>.  The exact pixels that are filled is less defined 
 than for the previous calls so that FLTK can take advantage of drawing 
-hardware.  The transformed vertices are rounded to integers before 
-drawing the line segments.  This severely limits the accuracy of these 
-functions for complex graphics.  Use OpenGL when greater accuracy 
+hardware.  On both X and WIN32 the transformed vertices are rounded to integers before 
+drawing the line segments: this severely limits the accuracy of these 
+functions for complex graphics, so use OpenGL when greater accuracy 
 and/or performance is required. 
 <H4>void fl_push_matrix()
 <BR> void fl_pop_matrix()</H4>
@@ -249,9 +246,8 @@ value points at a static buffer that is overwritten with each call.
 above.  You may call this outside a draw context if necessary to call <TT>
 fl_width()</TT>, but on X this will open the display. 
 <P>The font is identified by a <TT>face</TT> and a <TT>size</TT>.  The 
-size of the font is measured in <TT>pixels</TT> (i.e. it is not 
-&quot;resolution [in]dependent&quot;).  Lines should be spaced <TT>size</TT>
- pixels apart (or more). </P>
+size of the font is measured in <TT>pixels</TT> (not "points").  Lines
+ should be spaced <TT>size</TT> pixels apart (or more). </P>
 <P>The <TT>face</TT> is an index into an internal table.  Initially 
 only the first 16 faces are filled in.  There are symbolic names for 
 them: <TT>FL_HELVETICA</TT>, <TT>FL_TIMES</TT>, <TT>FL_COURIER</TT>, 
@@ -263,33 +259,6 @@ since it stores the index as a byte. </P>
 <BR> int fl_size()</H4>
  Returns the face and size set by the most recent call to <TT>
 fl_font(a,b)</TT>.  This can be used to save/restore the font. 
-<H3><A name=cursor>Cursor</A></H3>
-<H4>void fl_cursor(Fl_Cursor, Fl_Color = FL_WHITE, Fl_Color = FL_BLACK)</H4>
- Change the cursor.  Depending on the system this may affect the cursor 
-everywhere, or only when it is pointing at the window that is current 
-when you call this.  For portability you should change the cursor back 
-to the default in response to <TT>FL_LEAVE</TT> events. 
-<P>The type <TT>Fl_Cursor</TT> is an enumeration defined in <A href=enumerations.html#enumerations>
-<TT>&lt;Enumerations.H&gt;</TT></A>.  The  double-headed arrows are bitmaps 
-provided by FLTK on X, the others are provided by system-defined 
-cursors.  Under X you can get any XC_cursor value by passing <TT>
-Fl_Cursor((XC_foo/2)+1)</TT>. </P>
-<P>The following standard cursors are available: </P>
-<UL>
-<LI><TT>FL_CURSOR_DEFAULT</TT> - the default cursor, usually an arrow </LI>
-<LI><TT>FL_CURSOR_ARROW</TT> - an arrow pointer </LI>
-<LI><TT>FL_CURSOR_CROSS</TT> - crosshair </LI>
-<LI><TT>FL_CURSOR_WAIT</TT> - watch or hourglass </LI>
-<LI><TT>FL_CURSOR_INSERT</TT> - I-beam </LI>
-<LI><TT>FL_CURSOR_HAND</TT> - hand (uparrow on MSWindows) </LI>
-<LI><TT>FL_CURSOR_HELP</TT> - question mark </LI>
-<LI><TT>FL_CURSOR_MOVE</TT> - 4-pointed arrow </LI>
-<LI><TT>FL_CURSOR_NS</TT> - up/down arrow </LI>
-<LI><TT>FL_CURSOR_WE</TT> - left/right arrow </LI>
-<LI><TT>FL_CURSOR_NWSE</TT> - diagonal arrow </LI>
-<LI><TT>FL_CURSOR_NESW</TT> - diagonal arrow </LI>
-<LI><TT>FL_CURSOR_NONE</TT> - invisible </LI>
-</UL>
 <H3><A name=overlay>Overlays</A></H3>
 <H4>void fl_overlay_rect(int x, int y, int w, int h)
 <BR> void fl_overlay_clear()</H4>

@@ -73,27 +73,31 @@ variables, but you must declare the <TT>Fl_Group</TT> <I>first</I>, so
 that it is destroyed last. 
 <H4><A name=Fl_Group.add>void Fl_Group::add(Fl_Widget &amp;w)
 <BR> void Fl_Group::add(Fl_Widget *w)</A></H4>
-Adds a widget to the group at the end of the child array.  If the
-widget is already in a group it is removed from that group before
-adding to this one.
 
-<H4><A name=Fl_Group.insert>void Fl_Group::insert(Fl_Widget &amp;w, int n)
-<BR> void Fl_Group::insert(Fl_Widget &amp;w, Fl_Widget
-*beforethis)</A></H4>
+The widget is removed from it's current group (if any) and then added
+to the end of this group.
+
+<H4><A name=Fl_Group.insert>void Fl_Group::insert(Fl_Widget &amp;w, int n)</A></H4>
 
 The widget is removed from it's current group (if any) and then
 inserted into this group. It is put at index <TT>n</TT> (or at the end
-if <tt>n &gt;= children()</tt>.  The second version does a <TT>
-find(beforethis)</TT> and inserts using that index (at the end if
-<tt>beforethis</tt> is not in this group).
+if <tt>n &gt;= children()</tt>.  This can also be used to rearrange
+the windgets inside a group.
+
+<H4>void Fl_Group::insert(Fl_Widget &amp;w, Fl_Widget* beforethis)</H4>
+
+This does <tt>insert(w, find(beforethis))</tt>.  This will append the
+widget if <tt>beforethis</tt> is not in the group.
 
 <H4><A name=Fl_Group.remove>void Fl_Group::remove(Fl_Widget &amp;w)</A></H4>
 Removes a widget from the group. This does nothing if the widget is 
 not currently a child of this group. 
 
-<H4><A name=Fl_Group.array>const Fl_Widget **Fl_Group::array() const</A></H4>
- Returns a pointer to the array of children. <I>This pointer can change 
-when children are added or removed!</I>
+<H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()
+<BR> static void Fl_Group::current(Fl_Group *w)</A></H4>
+<TT>current()</TT> returns the currently active group.  The Fl_Widget
+ constructor automatically does <tt>current()->add(widget)</tt> if this is not null.
+ To prevent new widgets from being added to a group, call <TT>Fl_Group::current(0)</TT>.
 <H4><A name=Fl_Group.begin>void Fl_Group::begin()</A></H4>
 <TT>begin()</TT> sets the current group so you can build the widget 
 tree by just constructing the widgets. <TT>begin()</TT> is 
@@ -103,13 +107,11 @@ Fl_Window as well). <TT>begin()</TT> <i>is exactly the same as</i> <TT>current(t
 <H4><A name=Fl_Group.end>void Fl_Group::end()</A></H4>
 <TT>end()</TT> <i>is exactly the same as</i> <TT>current(this-&gt;parent())</TT>. Any new widgets 
 added to the widget tree will be added to the parent of the group. 
-<H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()
-<BR> static void Fl_Group::current(Fl_Group *w)</A></H4>
-<TT>current()</TT> returns the currently active group.  The Fl_Widget
- constructor automatically does <tt>current()->add(widget)</tt> if this is not null.
- To prevent new widgets from being added to a group, call <TT>Fl_Group::current(0)</TT>.
+<H4><A name=Fl_Group.array>const Fl_Widget **Fl_Group::array() const</A></H4>
+ Returns a pointer to the array of children. <I>This pointer is only
+ valid until the next time a child is added or removed.</I>
 <H4><A name=Fl_Group.child>Fl_Widget *Fl_Group::child(int n) const</A></H4>
- Returns child <TT>n</TT>, where <TT>0 &lt;= n &lt; children()</TT>. 
+ Returns <tt>array()[n]</tt>.  <i>No range checking is done!</i>
 <H4><A name=Fl_Group.children>int Fl_Group::children() const</A></H4>
  Returns how many child widgets the group has. 
 <H4><A name=Fl_Group.find>int Fl_Group::find(const Fl_Widget *w) const

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.15 1999/01/07 19:17:48 mike Exp $"
+# "$Id: Makefile,v 1.16 1999/01/31 07:43:16 bill Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -52,34 +52,27 @@ $(ALL):  ../lib/$(LIBNAME)
 .SUFFIXES: .cxx .c .o .fl .H
 
 .cxx:
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) $< -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) $< -L../lib -lfltk $(LDLIBS) -o $@
 
 .fl.cxx:
-	@echo $@:
-	@../fluid/fluid -c $<
+	../fluid/fluid -c $<
 
 .fl:
-	@echo $@:
-	@../fluid/fluid -c $<
-	@$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	../fluid/fluid -c $<
+	$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
 
 # Other programs needing special "help"...
 shiny: shiny.cxx shiny_panel.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(LDLIBS) -o $@
 keyboard: keyboard.cxx keyboard_ui.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) keyboard.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx -L../lib -lfltk $(LDLIBS) -o $@
 mandelbrot: mandelbrot.cxx mandelbrot_ui.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx -L../lib -lfltk $(LDLIBS) -o $@
 
 # If you have libjpeg installed, you might want to try this test program:
 
 jpeg_image: jpeg_image.cxx
-	@echo $@:
-	@$(CXX) -I.. $(CXXFLAGS) -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.cxx -L../lib -lfltk $(LDLIBS) -ljpeg -lXext -o $@
+	$(CXX) -I.. $(CXXFLAGS) -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.cxx -L../lib -lfltk $(LDLIBS) -ljpeg -lXext -o $@
 
 depend:
 	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
@@ -91,5 +84,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.15 1999/01/07 19:17:48 mike Exp $".
+# End of "$Id: Makefile,v 1.16 1999/01/31 07:43:16 bill Exp $".
 #

@@ -20,13 +20,12 @@ FLTK.
 </UL>
 <B>Microsoft Windows developers please note:</B> case *is* significant 
 under other operating systems, and the C standard uses the forward 
-slash (/) to separate directories.  The following <TT>#include</TT>
- directives are *not* recommended for portability reasons: 
+slash (/) to separate directories.  <i>Do not do any of the following:</i>
 <UL>
 <PRE>
-#include &lt;fl\fl_xyz.h&gt;
-#include &lt;fl/fl_xyz.h&gt;
 #include &lt;FL\Fl_xyz.H&gt;
+#include &lt;fl/fl_xyz.h&gt;
+#include &lt;Fl/fl_xyz.h&gt;
 </PRE>
 </UL>
 <H2>Compiling Programs with Standard Compilers</H2>
@@ -75,7 +74,8 @@ display the window.
 
 int main(int argc, char **argv) {
   Fl_Window *window = new Fl_Window(300,180);
-  Fl_Box *box = new Fl_Box(FL_UP_BOX,20,40,260,100,&quot;Hello, World!&quot;);
+  Fl_Box *box = new Fl_Box(20,40,260,100,&quot;Hello, World!&quot;);
+  box-&gt;box(FL_UP_BOX);
   box-&gt;labelsize(36);
   box-&gt;labelfont(FL_BOLD+FL_ITALIC);
   box-&gt;labeltype(FL_SHADOW_LABEL);
@@ -95,12 +95,13 @@ Fl_Window *window = new <A href=Fl_Window.html#Fl_Window>Fl_Window</A>(300,180);
  and a box with the &quot;Hello, World!&quot; string in it: 
 <UL>
 <PRE>
-Fl_Box *box = new <A href=Fl_Box.html#Fl_Box>Fl_Box</A>(FL_UP_BOX,20,40,260,100,&quot;Hello, World!&quot;);
+Fl_Box *box = new <A href=Fl_Box.html#Fl_Box>Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
 </PRE>
 </UL>
- Next, we set the size, font, and style of the label: 
+ Next, we set the type of box and the size, font, and style of the label: 
 <UL>
 <PRE>
+box-&gt;box(FL_UP_BOX);
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelsize>labelsize</A>(36);
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelfont>labelfont</A>(FL_BOLD+FL_ITALIC);
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labeltype>labeltype</A>(FL_SHADOW_LABEL);
@@ -118,21 +119,13 @@ The resulting program will display the window below. You can quit the
 program by closing the window or pressing the ESCape key. 
 <P ALIGN=CENTER><IMG src=./hello.C.gif></P>
 <H3>Creating the Widgets</H3>
- The widgets are created using the C++ <TT>new</TT> operator; the 
-arguments to the constructors are usually one of the following: 
+ The widgets are created using the C++ <TT>new</TT> operator.  For
+ most widgets the arguments to the constructor are:
 <UL>
 <PRE>
-Fl_Widget(boxtype, x, y, width, height, label)
 Fl_Widget(x, y, width, height)
-Fl_Widget(width, height)
 </PRE>
 </UL>
- The <TT>boxtype</TT> value is the style of the box that is drawn 
-around the widget.  Usually this is <TT>FL_NO_BOX</TT>, which means 
-that no box is drawn. In our &quot;Hello, World!&quot; example we use <TT>
-FL_UP_BOX</TT>, which means that a raised button border will be drawn 
-around the widget.  You can learn more about boxtypes in <A href=#boytypes>
-Chapter 3</A>. 
 <P>The <TT>x</TT> and <TT>y</TT> parameters determine where the widget 
 or window is placed on the screen. In FLTK the top left corner of the 
 window or screen is the origin (i.e. x = 0, y = 0) and the units are in 
@@ -145,6 +138,23 @@ widget with or <tt>NULL</tt>. If not specified the label defaults to
 <tt>NULL</tt>.  The label string must be in static storage (such as a
 string constant) because FLTK does not make a copy of it (it just uses
 the pointer).
+<H3>Get/Set Methods</H3>
+<tt>box-&gt;box(FL_UP_BOX)</tt> sets the type of box the
+Fl_Box draws, changing it from the default of <tt>FL_NO_BOX</tt>, which means 
+that no box is drawn. In our &quot;Hello, World!&quot; example we use <TT>
+FL_UP_BOX</TT>, which means that a raised button border will be drawn 
+around the widget.  You can learn more about boxtypes in <A href=#boytypes>
+Chapter 3</A>.
+<p>You could examine the boxtype in by doing
+<tt>box->box()</tt>.  Fltk uses method name overloading to make
+short names for get/set methods.  A "set" method is always of the form 
+"void&nbsp;name(type)", and a "get" method is always of the form
+"type&nbsp;name()&nbsp;const".
+<p>Almost all of these set/get pairs are very fast and short inline
+functions and thus very efficient.  However, <i>the "set" methods do
+not call redraw()</i>, you have to call it yourself.  This greatly
+reduces code size and execution time.  The only common exception is
+<tt>value()</tt>, this does redraw() if necessary.
 <H3>Labels</H3>
  All widgets support labels.  In the case of window widgets, the label 
 is used for the label in the title bar. Our example program calls the <A href=Fl_Widget.html#Fl_Widget.labelfont>

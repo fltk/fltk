@@ -174,36 +174,36 @@ FLTK provides some useful OpenGL drawing functions.  They can be
 freely mixed with any OpenGL calls, and are defined by including <TT>
 &lt;FL/gl.H&gt;</TT> (which you should include instead of the OpenGL header <TT>
 &lt;GL/gl.h&gt;</TT>). 
-<H3>void gl_color(Fl_Color)</H3>
+<H4>void gl_color(Fl_Color)</H4>
 Set the current color to a FLTK color. <I>For color-index modes 
 it will use <TT>fl_xpixel(c)</TT>, which is only right if this window 
 uses the default colormap!</I>
-<H3>void gl_rect(int x, int y, int w, int h)
-<BR> void gl_rectf(int x, int y, int w, int h)</H3>
+<H4>void gl_rect(int x, int y, int w, int h)
+<BR> void gl_rectf(int x, int y, int w, int h)</H4>
 Outline or fill a rectangle with the current color.  If
 <A HREF="Fl_Gl_Window.html#Fl_Gl_Window.ortho"><TT>Fl_Gl_Window::ortho()</TT></A>
 has been called, then the rectangle will exactly fill the pixel 
 rectangle passed. 
-<H3>void gl_font(Fl_Font fontid, int size)</H3>
+<H4>void gl_font(Fl_Font fontid, int size)</H4>
 Set the current OpenGL font to the same font you get by calling <A href=drawing.html#fl_font>
 <TT>fl_font()</TT></A>. 
-<H3>int gl_height()
+<H4>int gl_height()
 <BR> int gl_descent()
 <BR> float gl_width(const char *)
 <BR> float gl_width(const char *, int n)
-<BR> float gl_width(uchar)</H3>
+<BR> float gl_width(uchar)</H4>
  Return information about the current OpenGL font. 
-<H3>void gl_draw(const char *)
-<BR> void gl_draw(const char *, int n)</H3>
+<H4>void gl_draw(const char *)
+<BR> void gl_draw(const char *, int n)</H4>
 Draw a nul-terminated string or an array of <TT>n</TT> characters in 
 the current OpenGL font at the current raster position.
-<H3>void gl_draw(const char *, int x, int y)
+<H4>void gl_draw(const char *, int x, int y)
 <BR> void gl_draw(const char *, int n, int x, int y)
 <BR> void gl_draw(const char *, float x, float y)
-<BR> void gl_draw(const char *, int n, float x, float y)</H3>
+<BR> void gl_draw(const char *, int n, float x, float y)</H4>
  Draw a nul-terminated string or an array of <TT>n</TT> characters in 
 the current OpenGL font at the given position. 
-<H3>void gl_draw(const char *, int x, int y, int w, int h, Fl_Align)</H3>
+<H4>void gl_draw(const char *, int x, int y, int w, int h, Fl_Align)</H4>
  Draw a string formatted into a box, with newlines and tabs expanded, 
 other control characters changed to ^X, and aligned with the edges or 
 center.  Exactly the same output as <A href=#fl_draw><TT>fl_draw()</TT></A>
@@ -214,7 +214,7 @@ scene graph toolkit for OpenGL available from Silicon Graphics for IRIX
 and Microsoft Windows.  Versions are in the works for Solaris and 
 HP-UX.  It allows you to view large scenes without writing a lot of 
 OpenGL code. 
-<H3>OptimizerWindow Class Definition</H3>
+<H4>OptimizerWindow Class Definition</H4>
  To use OpenGL Optimizer with FLTK you'll need to create a subclass of <TT>
 Fl_Gl_Widget</TT> that includes several state variables: 
 <UL>
@@ -252,11 +252,11 @@ public:
 <PRE>
 
 </PRE>
-<H3>The camera() Method</H3>
+<H4>The camera() Method</H4>
  The <TT>camera()</TT> method sets the camera (projection and 
 viewpoint) to use when drawing the scene. The scene is redrawn after 
 this call. 
-<H3>The draw() Method</H3>
+<H4>The draw() Method</H4>
  The <TT>draw()</TT> method performs the needed initialization and does 
 the actual drawing: 
 <UL>
@@ -301,7 +301,7 @@ void OptimizerWindow::draw() {
 }
 </PRE>
 </UL>
-<H3>The scene() Method</H3>
+<H4>The scene() Method</H4>
  The <TT>scene()</TT> method sets the scene to be drawn.  The scene is 
 a collection of 3D objects in a <TT>csGroup</TT>.  The scene is redrawn 
 after this call. </BODY></HTML>
