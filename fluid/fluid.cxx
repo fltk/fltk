@@ -721,10 +721,10 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 
   if (widgetbin_panel->visible()) {
     widgetbin_panel->hide();
-    Main_Menu[38].label("Show Widget &Bin...");
+    Main_Menu[39].label("Show Widget &Bin...");
   } else {
     widgetbin_panel->show();
-    Main_Menu[38].label("Hide Widget &Bin");
+    Main_Menu[39].label("Hide Widget &Bin");
   }
 }
 
