@@ -36,8 +36,8 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.args">args</A></LI>
 	<LI><A HREF="#Fl.atclose">atclose</A></LI>
 	<LI><A HREF="#Fl.awake">awake</A></LI>
-	<LI><A HREF="#Fl.background2">background2</A></LI>
 	<LI><A HREF="#Fl.background">background</A></LI>
+	<LI><A HREF="#Fl.background2">background2</A></LI>
 	<LI><A HREF="#Fl.belowmouse">belowmouse</A></LI>
 	<LI><A HREF="#Fl.box_dh">box_dh</A></LI>
 	<LI><A HREF="#Fl.box_dw">box_dw</A></LI>
@@ -50,6 +50,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.default_atclose">default_atclose</A></LI>
 	<LI><A HREF="#Fl.display">display</A></LI>
 	<LI><A HREF="#Fl.error">error</A></LI>
+	<LI><A HREF="#Fl.event">event</A></LI>
 	<LI><A HREF="#Fl.event_alt">event_alt</A></LI>
 	<LI><A HREF="#Fl.event_button1">event_button1</A></LI>
 	<LI><A HREF="#Fl.event_button2">event_button2</A></LI>
@@ -58,13 +59,15 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.event_buttons">event_buttons</A></LI>
 	<LI><A HREF="#Fl.event_clicks">event_clicks</A></LI>
 	<LI><A HREF="#Fl.event_ctrl">event_ctrl</A></LI>
-	<LI><A HREF="#Fl.event">event</A></LI>
+	<LI><A HREF="#Fl.event_dx">event_dx</A></LI>
+	<LI><A HREF="#Fl.event_dy">event_dx</A></LI>
 	<LI><A HREF="#Fl.event_inside">event_inside</A></LI>
 	<LI><A HREF="#Fl.event_is_click">event_is_click</A></LI>
 	<LI><A HREF="#Fl.event_key">event_key</A></LI>
 	<LI><A HREF="#Fl.event_length">event_length</A></LI>
 	<LI><A HREF="#Fl.event_shift">event_shift</A></LI>
 	<LI><A HREF="#Fl.event_state">event_state</A></LI>
+	<LI><A HREF="#Fl.event_text">event_text</A></LI>
 	<LI><A HREF="#Fl.event_x">event_x</A></LI>
 	<LI><A HREF="#Fl.event_x_root">event_x_root</A></LI>
 	<LI><A HREF="#Fl.event_y">event_y</A></LI>
@@ -1102,6 +1105,12 @@ the left side of the screen.
 
 <P>Returns the origin of the current screen, where 0 indicates
 the top edge of the screen.
+
+<H4><A NAME="Fl.event_dx">int event_dx();</A></H4>
+
+<H4><A NAME="Fl.event_dy">int event_dy();</A></H4>
+
+<H4><A NAME="Fl.event_text">const char* event_text();</A></H4>
 
 </BODY>
 </HTML>

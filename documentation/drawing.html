@@ -74,7 +74,8 @@ transformation matrix.
 <P>In addition, the system may provide clipping when updating windows
 which may be more complex than a simple rectangle.</P>
 
-<H4>void fl_push_clip(int x, int y, int w, int h)</H4>
+<H4><A name="fl_clip">void fl_push_clip(int x, int y, int w, int h)</A><BR>
+void fl_clip(int x, int y, int w, int h)</H4>
 
 <P>Intersect the current clip region with a rectangle and push this new
 region onto the stack.
@@ -141,10 +142,10 @@ values. These are mapped to the closest color supported by the
 screen, either from one of the 256 colors in the FLTK 1.0.x
 colormap or a direct RGB value on TrueColor screens. You can
 generate 24-bit RGB color values using the <A
-HREF="functions.html#fl_rgb_color"><TT>fl_rgb_color()</TT></A>
+HREF="enumerations.html#fl_rgb_color"><TT>fl_rgb_color()</TT></A>
 function.
 
-<H4>void fl_color(Fl_Color)</H4>
+<H4><A name="fl_color">void fl_color(Fl_Color)</A></H4>
 
 <P>Sets the color for all subsequent drawing operations.
 
@@ -685,7 +686,7 @@ fl_draw_pixmap(foo, X, Y);
 
 <P>Transparent colors are replaced by the optional
 <TT>Fl_Color</TT> argument. To draw with true transparency you must
-use the <A HREF="#Fl_Pixmap"><TT>Fl_Pixmap</TT></A> class.
+use the <A HREF="Fl_Pixmap.html"><TT>Fl_Pixmap</TT></A> class.
 
 <H4>int fl_measure_pixmap(char **data, int &amp;w, int &amp;h)</H4>
 

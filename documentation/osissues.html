@@ -88,7 +88,7 @@ window does not belong to FLTK and the <TT>add_handler()</TT>
 functions all return 0, this function will return false.
 
 <P>Besides feeding events your code should call <A
-href="functions.html#flush"><TT>Fl::flush()</TT></A>
+href="Fl.html#Fl.flush"><TT>Fl::flush()</TT></A>
 periodically so that FLTK redraws its windows.</P>
 
 <P>This function will call the callback functions. It will not
@@ -148,7 +148,7 @@ colormap. This greatly simplifies its internal structure and
 makes it much smaller and faster. You can change which it uses
 by setting global variables <I>before the first
 <TT>Fl_Window::show()</TT> is called</I>. You may also want to
-call <A href="functions.html#visual">Fl::visual()</A>, which is
+call <A href="Fl.html#Fl.visual">Fl::visual()</A>, which is
 a portable interface to get a full color and/or double buffered
 visual.
 
@@ -392,7 +392,7 @@ functions are called.</P>
 
 <P>This variable contains the most recent message read by
 <TT>GetMessage</TT>, which is called by <A
-href="Fl.html#wait"><TT>Fl::wait()</TT></A>. This may not be the
+href="Fl.html#Fl.wait"><TT>Fl::wait()</TT></A>. This may not be the
 most recent message sent to an FLTK window, because silly WIN32
 calls the handle procedures directly for some events (sigh).
 

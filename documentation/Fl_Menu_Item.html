@@ -157,7 +157,7 @@ const
 <BR> void Fl_Menu_Item::labelfont(Fl_Font)</A></H4>
  Fonts are identified by small 8-bit indexes into a table.  See the <A href=enumerations.html#Enumerations>
 enumeration list</A> for predefined fonts. The default value is a
-Helvetica font.  The function <A href=functions.html#set_font><TT>
+Helvetica font.  The function <A href="Fl.html#Fl.set_font"><TT>
 Fl::set_font()</TT></A> can define new fonts.
 <H4><A name=Fl_Menu_Item.labelsize>uchar Fl_Menu_Item::labelsize() const
 <BR> void Fl_Menu_Item::labelsize(uchar)</A></H4>
@@ -197,10 +197,10 @@ before calling this.
 value is a logical 'or' of a key and a set of shift flags, for instance <TT>
 FL_ALT+'a'</TT> or <TT>FL_ALT+FL_F+10</TT> or just 'a'.  A value of
 zero disables the shortcut.
-<P>The key can be any value returned by <A href=functions.html#event_key>
+<P>The key can be any value returned by <A href="Fl.html#Fl.event_key">
 <TT>Fl::event_key()</TT></A>, but will usually be an ASCII letter.  Use
 a lower-case letter unless you require the shift key to be held down. </P>
-<P>The shift flags can be any set of values accepted by <A href=functions.html#event_state>
+<P>The shift flags can be any set of values accepted by <A href="Fl.html#Fl.event_state">
 <TT>Fl::event_state()</TT></A>.  If the bit is on that shift key must
 be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
 the shift flags (zero for the other bits indicates a &quot;don't care&quot;

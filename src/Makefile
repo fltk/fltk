@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.30 2002/01/06 17:51:12 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.31 2002/01/15 02:17:19 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -217,7 +217,7 @@ libfltk_gl_s.a: $(GLOBJECTS)
 	chmod +x libfltk_gl_s.a
 
 clean :
-	-@ rm -f *.o $(DSONAME) $(LIBRARY) $(CLEAN)
+	-@ rm -f *.o $(DSONAME) $(GLDSONAME) $(LIBRARY) $(CLEAN) libfltk.so libfltk_gl.so
 
 depend:	$(CPPFILES) $(GLCPPFILES) $(CFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES) $(GLCPPFILES) $(CFILES)
@@ -351,5 +351,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.30 2002/01/06 17:51:12 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.31 2002/01/15 02:17:19 easysw Exp $".
 #

@@ -60,7 +60,7 @@ box-&gt;<A href=Fl_Widget.html#Fl_Widget.labeltype>labeltype</A>(FL_SHADOW_LABEL
 <UL><PRE>
 window-&gt;<A href=Fl_Group.html#Fl_Group.end>end</A>();
 window-&gt;<A href=Fl_Window.html#Fl_Window.show>show</A>(argc, argv);
-return <A href=functions.html#run>Fl::run</A>();
+return <A href="Fl.html#Fl.run">Fl::run</A>();
 </PRE></UL>
 
 <P>The resulting program will display the window in Figure 2-1.
@@ -103,7 +103,7 @@ Fl_Box draws, changing it from the default of
 &quot;Hello, World!&quot; example we use <TT>FL_UP_BOX</TT>,
 which means that a raised button border will be drawn around
 the widget. You can learn more about boxtypes in
-<A href="common.html#boytypes">Chapter 3</A>.</P>
+<A href="common.html#boxtypes">Chapter 3</A>.</P>
 
 <P>You could examine the boxtype in by doing
 <tt>box->box()</tt>. FLTK uses method name overloading to make
@@ -179,7 +179,7 @@ data-driven displays.</P>
 
 <P>FLTK applications must periodically check
 (<TT>Fl::check()</TT>) or wait (<TT>Fl::wait()</TT>) for events
-or use the <A href="functions.html#run"><TT>Fl:run()</TT></A>
+or use the <A href="Fl.html#Fl.run"><TT>Fl::run()</TT></A>
 method to enter a standard event processing loop. Calling
 <TT>Fl::run()</TT> is equivalent to the following code:</P>
 

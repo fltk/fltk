@@ -31,7 +31,7 @@ on how to add and remove children. </P>
 <P>There are several subclasses of <TT>Fl_Window</TT> that provide
 double-buffering, overlay, menu, and OpenGL support. </P>
 <P>The window's callback is done if the user tries to close a window
-using the window manager and <A href=functions.html#modal><TT>
+using the window manager and <A href="Fl.html#Fl.modal"><TT>
 Fl::modal()</TT></A> is zero or equal to the window. <TT>Fl_Window</TT>
  has a default callback that calls <TT>Fl_Window::hide()</TT>. </P>
 <H3>Methods</H3>
@@ -216,7 +216,7 @@ being delivered to other windows in the same program, and will also
 remain on top of the other windows (if the X window manager supports
 the &quot;transient for&quot; property).  Several modal windows may be shown at
 once, in which case only the last one shown gets events.  You can see
-which window (if any) is modal by calling <A href=functions.html#modal><TT>
+which window (if any) is modal by calling <A href="Fl.html#Fl.modal"><TT>
 Fl::modal()</TT></A>.
 <H4><A name=Fl_Window.modal>uchar Fl_Window::modal() const</A></H4>
  Returns true if this window is modal.
