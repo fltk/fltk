@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.5 1998/12/02 15:51:38 mike Exp $"
+// "$Id: gl_draw.cxx,v 1.6 1998/12/02 21:15:19 mike Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -50,18 +50,21 @@ void gl_draw(const char* str, int n) {
     int base = fl_fontsize->metr.tmFirstChar;
     int size = fl_fontsize->metr.tmLastChar-base+1;
     HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
-    fl_fontsize->listbase = glGenLists(size)-base;
+    fl_fontsize->listbase = glGenLists(256);
     wglUseFontBitmaps(fl_gc, base, size, fl_fontsize->listbase+base); 
     SelectObject(fl_gc, oldFid);
 #else
     int base = fl_xfont->min_char_or_byte2;
     int size = fl_xfont->max_char_or_byte2-base+1;
-    fl_fontsize->listbase = glGenLists(size)-base;
+    fl_fontsize->listbase = glGenLists(256);
     glXUseXFont(fl_xfont->fid, base, size, fl_fontsize->listbase+base);
 #endif
   }
-  glListBase(fl_fontsize->listbase);
-  glCallLists(n, GL_UNSIGNED_BYTE, str);
+
+  glPushAttrib(GL_LIST_BIT);
+    glListBase(fl_fontsize->listbase);
+    glCallLists(n, GL_UNSIGNED_BYTE, str);
+  glPopAttrib();
 }
 
 void gl_draw(const char* str, int n, int x, int y) {
@@ -139,5 +142,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.5 1998/12/02 15:51:38 mike Exp $".
+// End of "$Id: gl_draw.cxx,v 1.6 1998/12/02 21:15:19 mike Exp $".
 //
