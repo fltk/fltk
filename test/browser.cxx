@@ -1,5 +1,5 @@
 //
-// "$Id: browser.cxx,v 1.5.2.4 2000/06/05 21:21:16 mike Exp $"
+// "$Id: browser.cxx,v 1.5.2.5 2000/12/08 15:44:24 easysw Exp $"
 //
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -62,14 +62,36 @@ That was a blank line above this.
 #include <FL/Fl.H>
 #include <FL/Fl_Select_Browser.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Input.H>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
 
+Fl_Select_Browser *browser;
+Fl_Button	*top,
+		*bottom,
+		*middle,
+		*visible;
+Fl_Input	*field;
+
 void b_cb(Fl_Widget* o, void*) {
   printf("callback, selection = %d, event_clicks = %d\n",
 	 ((Fl_Browser*)o)->value(), Fl::event_clicks());
+}
+
+void show_cb(Fl_Widget *o, void *) {
+  int line = atoi(field->value());
+
+  if (o == top)
+    browser->topline(line);
+  else if (o == bottom)
+    browser->bottomline(line);
+  else if (o == middle)
+    browser->middleline(line);
+  else
+    browser->make_visible(line);
 }
 
 int main(int argc, char **argv) {
@@ -77,25 +99,40 @@ int main(int argc, char **argv) {
   if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
   const char* fname = (i < argc) ? argv[i] : "browser.cxx";
   Fl_Window window(400,400,fname);
-  window.box(FL_NO_BOX); // because it is filled with browser
-  Fl_Select_Browser browser(0,0,400,400,0);
-  browser.type(FL_MULTI_BROWSER);
-  //browser.type(FL_HOLD_BROWSER);
-  //browser.color(42);
-  browser.callback(b_cb);
-  // browser.scrollbar_right();
-  //browser.has_scrollbar(Fl_Browser::BOTH_ALWAYS);
-  if (!browser.load(fname)) {
+  browser = new Fl_Select_Browser(0,0,400,350,0);
+  browser->type(FL_MULTI_BROWSER);
+  //browser->type(FL_HOLD_BROWSER);
+  //browser->color(42);
+  browser->callback(b_cb);
+  // browser->scrollbar_right();
+  //browser->has_scrollbar(Fl_Browser::BOTH_ALWAYS);
+  if (!browser->load(fname)) {
     printf("Can't load %s, %s\n", fname, strerror(errno));
     exit(1);
   }
-  browser.position(0);
-  window.resizable(&browser);
+  browser->position(0);
+
+  field = new Fl_Input(50, 350, 350, 25, "Line #:");
+  field->callback(show_cb);
+
+  top = new Fl_Button(0, 375, 100, 25, "Top");
+  top->callback(show_cb);
+
+  bottom = new Fl_Button(100, 375, 100, 25, "Bottom");
+  bottom->callback(show_cb);
+
+  middle = new Fl_Button(200, 375, 100, 25, "Middle");
+  middle->callback(show_cb);
+
+  visible = new Fl_Button(300, 375, 100, 25, "Make Vis.");
+  visible->callback(show_cb);
+
+  window.resizable(browser);
   window.show(argc,argv);
   return Fl::run();
 }
 
 //
-// End of "$Id: browser.cxx,v 1.5.2.4 2000/06/05 21:21:16 mike Exp $".
+// End of "$Id: browser.cxx,v 1.5.2.5 2000/12/08 15:44:24 easysw Exp $".
 //
 
