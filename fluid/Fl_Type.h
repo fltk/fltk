@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.9 2000/06/05 21:20:38 mike Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.10 2000/11/21 21:37:08 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -431,13 +431,13 @@ public:
 #include <FL/Fl_Menu_.H>
 class Fl_Menu_Type : public Fl_Widget_Type {
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-    Fl_Menu_ *o = (Fl_Menu_*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+    Fl_Menu_ *myo = (Fl_Menu_*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
     switch (w) {
     case 4:
-    case 0: f = o->textfont(); s = o->textsize(); c = o->textcolor(); break;
-    case 1: o->textfont(f); break;
-    case 2: o->textsize(s); break;
-    case 3: o->textcolor(c); break;
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
     }
     return 1;
   }
@@ -476,9 +476,9 @@ class Fl_Choice_Type : public Fl_Menu_Type {
 public:
   virtual const char *type_name() {return "Fl_Choice";}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Choice *o = new Fl_Choice(x,y,w,h,"choice:");
-    o->menu(dummymenu);
-    return o;
+    Fl_Choice *myo = new Fl_Choice(x,y,w,h,"choice:");
+    myo->menu(dummymenu);
+    return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Choice_Type();}
 };
@@ -532,5 +532,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.9 2000/06/05 21:20:38 mike Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.10 2000/11/21 21:37:08 easysw Exp $".
 //
