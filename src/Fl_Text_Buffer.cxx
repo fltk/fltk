@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.21 2004/06/01 20:33:26 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.22 2004/09/08 15:42:47 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -942,7 +942,7 @@ int Fl_Text_Buffer::expand_character( char c, int indent, char *outStr, int tabD
   /* Convert control codes to readable character sequences */
   /*... is this safe with international character sets? */
   if ( ( ( unsigned char ) c ) <= 31 ) {
-    sprintf( outStr, "<%s>", ControlCodeTable[ c ] );
+    sprintf( outStr, "<%s>", ControlCodeTable[ ( unsigned char ) c ] );
     return strlen( outStr );
   } else if ( c == 127 ) {
     sprintf( outStr, "<del>" );
@@ -969,7 +969,7 @@ int Fl_Text_Buffer::character_width( char c, int indent, int tabDist, char nullS
   if ( c == '\t' )
     return tabDist - ( indent % tabDist );
   else if ( ( ( unsigned char ) c ) <= 31 )
-    return strlen( ControlCodeTable[ c ] ) + 2;
+    return strlen( ControlCodeTable[ ( unsigned char ) c ] ) + 2;
   else if ( c == 127 )
     return 5;
   else if ( c == nullSubsChar )
@@ -2517,5 +2517,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.21 2004/06/01 20:33:26 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.22 2004/09/08 15:42:47 easysw Exp $".
 //

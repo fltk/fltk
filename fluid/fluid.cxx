@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.45 2004/09/07 20:59:16 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.46 2004/09/08 15:42:47 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -713,7 +713,7 @@ do_shell_command(Fl_Return_Button*, void*) {
   shell_run_buffer->append("\n");
   shell_run_window->label("Shell Command Running...");
 
-  if ((shell_pipe = popen(command, "r")) == NULL) {
+  if ((shell_pipe = popen((char *)command, "r")) == NULL) {
     fl_alert("Unable to run shell command: %s", strerror(errno));
     return;
   }
@@ -886,5 +886,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.45 2004/09/07 20:59:16 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.46 2004/09/08 15:42:47 easysw Exp $".
 //
