@@ -1,5 +1,5 @@
 //
-// "$Id: checkers.cxx,v 1.9.2.1 1999/03/25 15:26:44 mike Exp $"
+// "$Id: checkers.cxx,v 1.9.2.2 1999/06/07 07:03:34 bill Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -56,7 +56,6 @@ const char* copyright =
 #define FLTK
 //#define VT100
 
-#include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -1366,5 +1365,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.9.2.1 1999/03/25 15:26:44 mike Exp $".
+// End of "$Id: checkers.cxx,v 1.9.2.2 1999/06/07 07:03:34 bill Exp $".
 //

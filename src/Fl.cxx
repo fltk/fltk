@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.8 1999/05/24 14:03:45 mike Exp $"
+// "$Id: Fl.cxx,v 1.24.2.9 1999/06/07 07:03:31 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
 #include <ctype.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 //
@@ -698,5 +698,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.8 1999/05/24 14:03:45 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.9 1999/06/07 07:03:31 bill Exp $".
 //

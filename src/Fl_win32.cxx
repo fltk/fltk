@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.11 1999/05/24 14:03:46 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.12 1999/06/07 07:03:32 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <winsock.h>
+#include <ctype.h>
 
 //
 // WM_SYNCPAINT is an "undocumented" message, which is finally defined in
@@ -940,5 +941,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.11 1999/05/24 14:03:46 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.12 1999/06/07 07:03:32 bill Exp $".
 //

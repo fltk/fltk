@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.1 1999/05/01 15:08:22 mike Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.2 1999/06/07 07:03:32 bill Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -235,6 +235,7 @@ void Fl_Browser_::draw() {
   int full_width_ = full_width();
   int full_height_ = full_height();
   int X, Y, W, H; bbox(X, Y, W, H);
+  int dont_repeat = 0;
 J1:
   // see if scrollbar needs to be switched on/off:
   if ((has_scrollbar_ & VERTICAL) && (
@@ -303,21 +304,24 @@ J1:
   fl_pop_clip();
   redraw1 = redraw2 = 0;
 
-  // see if changes to full_height caused by calls to slow_height
-  // caused scrollbar state to change, in which case we have to redraw:
-  full_height_ = full_height();
-  full_width_ = full_width();
-  if ((has_scrollbar_ & VERTICAL) && (
-      (has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
-    if (!scrollbar.visible()) goto J1;
-  } else {
-    if (scrollbar.visible()) goto J1;
-  }
-  if ((has_scrollbar_ & HORIZONTAL) && (
-      (has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
-    if (!hscrollbar.visible()) goto J1;
-  } else {
-    if (hscrollbar.visible()) goto J1;
+  if (!dont_repeat) {
+    dont_repeat = 1;
+    // see if changes to full_height caused by calls to slow_height
+    // caused scrollbar state to change, in which case we have to redraw:
+    full_height_ = full_height();
+    full_width_ = full_width();
+    if ((has_scrollbar_ & VERTICAL) &&
+	((has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
+      if (!scrollbar.visible()) goto J1;
+    } else {
+      if (scrollbar.visible()) goto J1;
+    }
+    if ((has_scrollbar_ & HORIZONTAL) &&
+	((has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
+      if (!hscrollbar.visible()) goto J1;
+    } else {
+      if (hscrollbar.visible()) goto J1;
+    }
   }
 
   // update the scrollbars and redraw them:
@@ -643,5 +647,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.1 1999/05/01 15:08:22 mike Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.2 1999/06/07 07:03:32 bill Exp $".
 //
