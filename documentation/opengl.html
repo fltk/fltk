@@ -104,8 +104,8 @@ int MyWindow::handle(int event) {
     ... Return 1 if you understand/use the shortcut event, 0 otherwise...
     return 1;
   default:
-    // tell FLTK that I don't understand other events
-    return 0;
+    // pass other events to the base class...
+    return Fl_Gl_Window::handle(event);
   }
 }
 </PRE>

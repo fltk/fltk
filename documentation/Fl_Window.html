@@ -145,12 +145,11 @@ also the maximum size (so the window cannot resize in  that direction). </LI>
  It is undefined what happens if the current size does not fit in the 
 constraints passed to <TT>size_range()</TT>. 
 <H4><A name=Fl_Window.show>virtual void Fl_Window::show()
-<BR> int Fl_Window::show(int argc, char **argv, int i)
 <BR> void Fl_Window::show(int argc, char **argv)</A></H4>
- Put the window on the screen.  Usually this has the side effect of 
-opening the display. The second two forms are used for top-level 
+Put the window on the screen.  Usually this has the side effect of 
+opening the display. The second form is used for top-level 
 windows and allow standard arguments to be parsed from the 
-command-line. 
+command-line.
 <P>If the window is already shown then it is restored and raised to the 
 top.  This is really convenient because your program can call <TT>show()</TT>
  at any time, even if the window is already up.  It also means that <TT>

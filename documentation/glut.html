@@ -126,10 +126,70 @@ not work.  If you do <TT>show()</TT> the window, call <TT>make_current()</TT>
  again to set the context. </P>
 <P><TT>~Fl_Glut_Window()</TT> is the same as <TT>glutDestroyWindow()</TT>
 . </P>
+<H3>Members</H3>
+The <TT>Fl_Glut_Window</TT> class contains several public members that can
+be altered directly:
+<CENTER><TABLE WIDTH="80%" BORDER">
+<TR>
+	<TH>member</TH>
+	<TH>description</TH>
+</TR>
+<TR>
+	<TD>display</TD>
+	<TD>A pointer to the function to call to draw the normal planes.</TD>
+</TR>
+<TR>
+	<TD>entry</TD>
+	<TD>A pointer to the function to call when the mouse moves into
+	or out of the window.</TD>
+</TR>
+<TR>
+	<TD>keyboard</TD>
+	<TD>A pointer to the function to call when a regular key is pressed.</TD>
+</TR>
+<TR>
+	<TD>menu[3]</TD>
+	<TD>The menu to post when one of the mouse buttons is pressed.</TD>
+</TR>
+<TR>
+	<TD>mouse</TD>
+	<TD>A pointer to the function to call when a button is pressed or
+	released.</TD>
+</TR>
+<TR>
+	<TD>motion</TD>
+	<TD>A pointer to the function to call when the mouse is moved with
+	a button down.</TD>
+</TR>
+<TR>
+	<TD>overlaydisplay</TD>
+	<TD>A pointer to the function to call to draw the overlay planes.</TD>
+</TR>
+<TR>
+	<TD>passivemotion</TD>
+	<TD>A pointer to the function to call when the mouse is moved with
+	no buttons down.</TD>
+</TR>
+<TR>
+	<TD>reshape</TD>
+	<TD>A pointer to the function to call when the window is resized.</TD>
+</TR>
+<TR>
+	<TD>special</TD>
+	<TD>A pointer to the function to call when a special key is pressed.</TD>
+</TR>
+<TR>
+	<TD>visibility</TD>
+	<TD>A pointer to the function to call when the window is iconified
+	or restored (made visible.)</TD>
+</TR>
+</TABLE></CENTER>
+
 <H3>Methods</H3>
 <UL>
 <LI><A href=#Fl_Glut_Window.Fl_Glut_Window>Fl_Glut_Window</A></LI>
 <LI><A href=#Fl_Glut_Window.~Fl_Glut_Window>~Fl_Glut_Window</A></LI>
+<LI><A href=#Fl_Glut_Window.make_current>make_current</A></LI>
 </UL>
 <H4><A name=Fl_Glut_Window.Fl_Glut_Window>
 Fl_Glut_Window::Fl_Glut_Window(int x, int y, int w, int h, const char 
@@ -142,4 +202,9 @@ will create the window with a preset size, but the window manager will
 choose the position according to it's own whims. 
 <H4><A name=Fl_Glut_Window.~Fl_Glut_Window>virtual 
 Fl_Glut_Window::~Fl_Glut_Window()</A></H4>
- Destroys the GLUT window. </BODY></HTML>
+ Destroys the GLUT window.
+<H4><A name="Fl_Glut_Window.make_current">void Fl_Glut_Window::make_current()</A></H4>
+Switches all drawing functions to the GLUT window.
+
+</BODY>
+</HTML>

@@ -218,7 +218,7 @@ int MyClass::handle(int event) {
       }
       return 0;
     default:
-      return 0;
+      return Fl_Widget::handle(event);
   }
 }
 </PRE>

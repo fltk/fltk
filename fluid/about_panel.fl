@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.00 
+version 1.0008 
 header_name {.h} 
 code_name {.cxx} 
 gridx 10 
@@ -9,7 +9,7 @@ Function {make_about_panel(const char *copyright)} {open
 } {
   Fl_Window about_panel {
     label {about fluid} open
-    xywh {345 417 309 258} box UP_BOX color 97 selection_color 47 hotspot non_modal visible
+    xywh {345 417 309 258} box UP_BOX color 97 selection_color 47 hide hotspot non_modal
   } {
     Fl_Group display_group {open
       xywh {10 10 289 240}
@@ -49,18 +49,18 @@ Function {make_about_panel(const char *copyright)} {open
         label {FLTK User
 Interface
 Designer
-Version 1.0}
+Version 1.0} selected
         xywh {150 27 140 113} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
-        label {©1998-1999 by
+        label {©1998-2000 by
 Bill Spitzak and others}
         callback {display_group->hide();
 copyright_box->show();}
         xywh {181 176 115 30} box THIN_UP_BOX labelsize 10 labelcolor 136
       }
     }
-    Fl_Box copyright_box {selected
+    Fl_Box copyright_box {
       xywh {5 5 300 210} labelsize 8 labelcolor 6 align 148 hide
       code0 {o->label(copyright);}
     }

@@ -50,8 +50,8 @@ gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
  In Visual C++ you will need to tell the compiler where to find the 
 FLTK header files.  This can be done by selecting &quot;Settings&quot; from the 
 &quot;Project&quot; menu and then changing the &quot;Preprocessor&quot; settings under the 
-&quot;C/C++&quot; tab. Similarly, you will need to add the FLTK library to the 
-&quot;Link&quot; settings. 
+&quot;C/C++&quot; tab. You will also need to add the FLTK and WinSock (WSOCK32.LIB)
+libraries to the &quot;Link&quot; settings.
 <P>You can build your Microsoft Windows applications as Console or 
 WIN32 applications.  If you want to use the standard C <TT>main()</TT>
  function as the entry point, FLTK includes a <TT>WinMain()</TT>

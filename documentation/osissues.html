@@ -232,10 +232,10 @@ MyWindow::~MyWindow() {
 </PRE>
 </UL>
 <H3>Setting the Icon of a Window</H3>
- FLTK currently supports setting a window's icon *before* it is shown 
+FLTK currently supports setting a window's icon *before* it is shown 
 using the <TT>Fl_Window::icon()</TT> method. 
 <H4>void Fl_Window::icon(char *)</H4>
- Sets the icon for the window to the passed pointer.  You will need to 
+Sets the icon for the window to the passed pointer.  You will need to 
 cast the icon <TT>Pixmap</TT> to a <TT>char *</TT> when calling this 
 method. To set the icon using a bitmap compiled with your application 
 use: 
@@ -249,6 +249,11 @@ Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
 window-&gt;icon((char *)p);
 </PRE>
 </UL>
+
+<P><B>Note:</B> you must call <A HREF="Fl_Window.html#Fl_Window.show">
+<TT>Fl_Window::show(argc, argv)</TT></A> for the icon to be used. The
+<TT>Fl_Window::show()</TT> method does not bind the icon to the window.
+
 <H2>WIN32-Specific Interface</H2>
 <UL>
 <PRE>
@@ -330,6 +335,14 @@ application use:
 window-&gt;icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
 </PRE>
 </UL>
+
+You can also use the <TT>LoadImage()</TT> and related functions to load
+specific resolutions or create the icon from bitmap data.
+
+<P><B>Note:</B> you must call <A HREF="Fl_Window.html#Fl_Window.show">
+<TT>Fl_Window::show(argc, argv)</TT></A> for the icon to be used. The
+<TT>Fl_Window::show()</TT> method does not bind the icon to the window.
+
 <H3>How to Not Get a MSDOS Console Window</H3>
  WIN32 has a really stupid mode switch stored in the executables that 
 controls whether or not to make a console window. 
