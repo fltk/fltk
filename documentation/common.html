@@ -1,0 +1,389 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN=RIGHT>3 - Common Widgets and Attributes</H1>
+
+This chapter describes many of the widgets that are provided with FLTK and covers how
+to query and set the standard attributes.
+
+<H2>Buttons</H2>
+
+FLTK provides many types of buttons:
+
+<ul>
+	<li><tt>Fl_Button</tt> - A standard push button.
+	<li><tt>Fl_Check_Button</tt> - A button with a check box.
+	<li><tt>Fl_Light_Button</tt> - A push button with a light.
+	<li><tt>Fl_Repeat_Button</tt> - A push button that repeats when held.
+	<li><tt>Fl_Return_Button</tt> - A push button that is activated by the Enter key.
+	<li><tt>Fl_Round_Button</tt> - A button with a check circle.
+</ul>
+
+For all of these buttons you just need to include the corresponding
+<tt>&lt;FL/Fl_xyz_Button.H></tt> header file.  The constructor takes the
+bounding box of the button and optionally a label string:
+
+<ul><pre>
+Fl_Button *button = new Fl_Button(x, y, width, height, "label");
+Fl_Light_Button *lbutton = new Fl_Light_Button(x, y, width, height);
+Fl_Round_Button *rbutton = new Fl_Round_Button(x, y, width, height, "label");
+</pre></ul>
+
+Each button has an associated <a href="#Fl_Button.type"><tt>type()</tt></a>
+which allows it to behave as a push button, toggle button, or radio button:
+
+<ul><pre>
+button->type(0);
+lbutton->type(FL_TOGGLE_BUTTON);
+rbutton->type(FL_RADIO_BUTTON);
+</pre></ul>
+
+For toggle and radio buttons, the <a href="#Fl_Button.value"><tt>value()</tt></a>
+method returns the current button state (0 = off, 1 = on).  The
+<a href="#Fl_Widget.set"><tt>set()</tt></a> and
+<a href="#Fl_Widget.clear"><tt>clear()</tt></a> methods can be used on toggle
+buttons to turn a toggle button on or off, respectively.  Radio buttons can
+be turned on with the <a href="#Fl_Widget.setonly"><tt>setonly()</tt></a>
+method; this will also turn off other radio buttons in the current group.
+
+<H2>Text</H2>
+
+FLTK provides several text widgets for displaying and receiving text:
+
+<ul>
+	<li><tt>Fl_Input</tt> - A standard one-line text input field.
+	<li><tt>Fl_Output</tt> - A standard one-line text output field.
+	<li><tt>Fl_Multiline_Input</tt> - A standard multi-line text input field.
+	<li><tt>Fl_Multiline_Output</tt> - A standard multi-line text output field.
+</ul>
+
+The <tt>Fl_Output</tt> and <tt>Fl_Multiline_Output</tt> widgets allow the
+user to copy text from the output field but not change it.
+
+<p>The <a href="#Fl_Input.value"><tt>value()</tt></a> method is used to get or
+set the string that is displayed:
+
+<ul><pre>
+Fl_Input *input = new Fl_Input(x, y, width, height, "label");
+input->value("Now is the time for all good men...");
+</pre></ul>
+
+<H2>Valuators</H2>
+
+Unlike text widgets, valuators keep track of numbers instead of strings.
+FLTK provides the following valuators:
+
+<ul>
+	<li><tt>Fl_Counter</tt> - A widget with arrow buttons that shows the
+	current value.
+	<li><tt>Fl_Dial</tt> - A round knob.
+	<li><tt>Fl_Roller</tt> - An SGI-like dolly widget.
+	<li><tt>Fl_Scrollbar</tt> - A standard scrollbar widget.
+	<li><tt>Fl_Slider</tt> - A scrollbar with a knob.
+	<li><tt>Fl_Value_Slider</tt> - A slider that shows the current value.
+</ul>
+
+The <a href="#Fl_Valuator.value"><tt>value()</tt></a> method gets and sets the
+current value of the widget.  The <a href="#Fl_Valuator.minimum">
+<tt>minimum()</tt></a> and <a href="#Fl_Valuator.maximum"><tt>maximum</tt></a>
+methods set the range of values that are reported by the widget.
+
+<H2>Groups</H2>
+
+The <tt>Fl_Group</tt> widget class is used as a general purpose "container"
+widget.  Besides grouping radio buttons, the groups are used to encapsulate
+windows, tabs, and scrolled windows.  The following group classes are available
+with FLTK:
+
+<ul>
+	<li><tt>Fl_Double_Window</tt> - A double-buffered window on the screen.
+	<li><tt>Fl_Gl_Window</tt> - An OpenGL window on the screen.
+	<li><tt>Fl_Group</tt> - The base container class; can be used to group any widgets together.
+	<li><tt>Fl_Scroll</tt> - A scrolled window area.
+	<li><tt>Fl_Tabs</tt> - Displays child widgets as tabs.
+	<li><tt>Fl_Window</tt> - A window on the screen.
+</ul>
+
+<H2>Setting the Size and Position of Widgets</H2>
+
+The size and position of widgets is usually set when you create them.  You
+can change this at any time using the <tt>position</tt>, <tt>resize()</tt>,
+and <tt>size</tt> methods:
+
+<ul><pre>
+button->position(x, y);
+group->resize(x, y, width, height);
+window->size(width, height);
+</pre></ul>
+
+Changing the size or position of a widget will cause a redraw of that widget
+and its children.
+
+<H2>Colors</H2>
+
+FLTK manages a virtual color palette of "standard" colors.  The
+standard colors are:
+
+<ul>
+	<li><tt>FL_BLACK</tt>
+	<li><tt>FL_RED</tt>
+	<li><tt>FL_GREEN</tt>
+	<li><tt>FL_YELLOW</tt>
+	<li><tt>FL_BLUE</tt>
+	<li><tt>FL_MAGENTA</tt>
+	<li><tt>FL_CYAN</tt>
+	<li><tt>FL_WHITE</tt>
+	<li><tt>FL_GRAY</tt>
+</ul>
+
+The widget color can be set using the <tt>color()</tt> method:
+
+<ul><pre>
+button->color(FL_RED);
+</pre></ul>
+
+Similarly, the label color can be set using the <tt>labelcolor()</tt> method:
+
+<ul><pre>
+button->labelcolor(FL_WHITE);
+</pre></ul>
+
+<H2>Box Types</H2>
+
+<p>The type <tt>Fl_Boxtype</tt> stored and returned in <a href="#Fl_Widget.box">
+<tt>Fl_Widget::box()</tt></a> is an enumeration defined in
+<a href="#enumerations"><tt>&ltFL/Enumerations.H></tt></a>:
+
+<center><img src=boxtypes.gif width=80%></center>
+
+<tt>FL_NO_BOX</tt> means nothing is drawn at all, so whatever is
+already on the screen remains.  The <tt>FL_..._FRAME</tt> types only
+draw their edges, leaving the center unchanged.  In the above diagram
+the blue color is the area that is not drawn by the box.
+
+<H3>Making your own Boxtypes</H3>
+
+You can define your own boxtypes by making a small function that
+draws the box and adding a pointer to it to a table of boxtypes.
+
+<H4>The Drawing Function</H4>
+
+The drawing function is passed the bounding box and background
+color for the widget:
+
+<ul><pre>
+void xyz_draw(int x, int y, int w, int h, Fl_Color c) {
+...
+}
+</pre></ul>
+
+A simple drawing function might fill a rectangle with the given
+color and then draw a black outline:
+
+<ul><pre>
+void xyz_draw(int x, int y, int w, int h, Fl_Color c) {
+  fl_color(c);
+  fl_rectf(x, y, w, h);
+  fl_color(FL_BLACK);
+  fl_rect(x, y, w, h);
+}
+</pre></ul>
+
+<H4>Adding Your Box Type</H4>
+
+The <tt>Fl::set_boxtype()</tt> method adds or replaces the
+specified box type:
+
+<ul><pre>
+#define XYZ_BOX FL_FREE_BOXTYPE
+
+Fl::set_boxtype(XYZ_BOX, xyz_draw, 1, 1, 2, 2);
+</pre></ul>
+
+The last 4 arguments to <tt>Fl::set_boxtype()</tt> are the offsets
+for the bounding box that should be subtracted when drawing the label
+inside the box.
+
+<H2>Labels and Label Types</H2>
+
+The <tt>label()</tt>, <tt>align</tt>, <tt>labelfont()</tt>, <tt>labelsize()<tt>,
+and <tt>labeltype()</tt> methods control the labeling of widgets.
+
+<H3>label()</H3>
+
+The <tt>label()</tt> method sets the string that is displayed for the label.
+For the <tt>FL_SYMBOL_LABEL</tt> and image label types the string contains
+the actual symbol or image data.
+
+<H3>align()</H3>
+
+The <tt>align()</tt> method positions the label.  The following constants are
+defined:
+
+<ul>
+	<li><tt>FL_ALIGN_CENTER</tt> - center the label in the widget.
+	<li><tt>FL_ALIGN_TOP</tt> - align the label at the top of the widget.
+	<li><tt>FL_ALIGN_BOTTOM</tt> - align the label at the bottom of the widget.
+	<li><tt>FL_ALIGN_LEFT</tt> - align the label to the left of the widget.
+	<li><tt>FL_ALIGN_RIGHT</tt> - align the label to the right of the widget.
+	<li><tt>FL_ALIGN_INSIDE</tt> - align the label inside the widget.
+	<li><tt>FL_ALIGN_CLIP</tt> - clip the label to the widget's bounding box.
+	<li><tt>FL_ALIGN_WRAP</tt> - wrap the label text as needed.
+</ul>
+
+<H3>labeltype()</H3>
+
+The <tt>labeltype()</tt> method sets the type of the label.  The following
+standard label types are included:
+
+<ul>
+	<li><tt>FL_NORMAL_LABEL</tt> - draws the text.
+	<li><tt>FL_NO_LABEL</tt> - does nothing
+	<li><tt>FL_SYMBOL_LABEL</tt> - draws "@xyz" labels, see "<a href=#symbols>Symbol Labels</a>"
+	<li><tt>FL_SHADOW_LABEL</tt> - draws a drop shadow under the text
+	<li><tt>FL_ENGRAVED_LABEL</tt> - draws edges as though the text is engraved
+	<li><tt>FL_EMBOSSED_LABEL</tt> - draws edges as thought the text is raised
+</ul>
+
+To make bitmaps or pixmaps you use a method on the
+<a href="#Fl_Bitmap"><tt>Fl_Bitmap</tt></a> or
+<a href="#Fl_Pixmap"><tt>Fl_Pixmap</tt></a> objects.
+
+<H4>Making Your Own Label Types</H4>
+
+Label types are actually indexes into a table of functions to draw
+them.  The primary purpose of this is to let you reuse the
+<tt>label()</tt> pointer as a pointer to arbitrary data such as a
+bitmap or pixmap. You can also use this to draw the labels in ways
+inaccessible through the <tt>fl_font</tt> mechanisim (e.g.
+<tt>FL_ENGRAVED_LABEL</tt>) or with program-generated letters or
+symbology.
+
+<H5>Label Type Functions</H5>
+
+To setup your own label type you will need to write two functions
+to draw and measure the label.  The draw function is called with a
+pointer to a <a href="#Fl_Label"><tt>Fl_Label</tt></a> structure
+containing the label information, the bounding box for the label,
+and the label alignment:
+
+<ul><pre>
+void xyz_draw(Fl_Label *label, int x, int y, int w, int h, Fl_Align align) {
+...
+}
+</pre></ul>
+
+The label should be drawn <i>inside</i> this bounding box, even if
+<tt>FL_ALIGN_INSIDE</tt> is not enabled.  The function is not called if
+the label value is <tt>NULL</tt>.
+
+<p>The measure function is called with a pointer to a <a href="#Fl_Label"><tt>Fl_Label</tt></a> structure
+and references to the width and height:
+
+<ul><pre>
+void xyz_measure(Fl_Label *label, int &w, int &h) {
+...
+}
+</pre></ul>
+
+It should measure the size of the label and set <tt>w</tt> and <tt>h</tt> to
+the size it will occupy.
+
+<H5>Adding Your Label Type</H5>
+
+The <tt>Fl::set_labeltype</tt> method creates a label type using your
+draw and measure functions:
+
+<ul><pre>
+#define XYZ_LABEL FL_FREE_LABELTYPE
+
+Fl::set_labeltype(XYZ_LABEL, xyz_draw, xyz_measure);
+</pre></ul>
+
+The label type number <tt>n</tt> can be any integer value starting at
+the constant <tt>FL_FREE_LABELTYPE</tt>.  Once you have added the label
+type you can use the <tt>labeltype()</tt> method to select your label
+type.
+
+<p>The <tt>Fl::set_labeltype</tt> method can also be used to overload an
+existing label type such as <tt>FL_NORMAL_LABEL</tt>.
+
+<H4><a name="symbols">Symbol Labels</H4>
+
+<p>The <tt>FL_SYMBOL_LABEL</tt> label type uses the <tt>label()</tt>
+string to look up a small drawing procedure in a hash table.  For
+historical reasons the string always starts with '@', if it starts with
+something else (or the symbol is not found) the label is drawn
+normally:
+
+<center><img src=symbols.gif></center>
+
+The @ sign may be followed by the following optional "formatting"
+characters, in this order:
+
+<ul>
+	<li>'#' forces square scaling, rather than distortion to the
+	widget's shape.
+
+	<li>+[1-9] or -[1-9] tweaks the scaling a little bigger or
+	smaller.
+
+	<li>[1-9] - rotates by a multiple of 45 degrees.  '6' does
+	nothing, the others point in the direction of that key on a
+	numeric keypad.
+</ul>
+
+<H2>Callbacks</H2>
+
+Callbacks are functions that are called when the value of a widget changes.
+A callback function is sent a <tt>Fl_Widget</tt> pointer of the widget that
+changed and optionally a pointer to data of some sort:
+
+<ul><pre>
+void xyz_callback(Fl_Widget *w, void *data) {
+...
+}
+</pre></ul>
+
+The <tt>callback()</tt> method sets the callback function for a widget.  You
+can optionally pass a pointer to some data needed for the callback:
+
+<ul><pre>
+int xyz_data;
+
+button->callback(xyz_callback, &xyz_data);
+</pre></ul>
+
+Normally callbacks are performed only when the value of the widget
+changes. You can change this using the
+<a href="#Fl_Widget.when"><tt>when()</tt></a> method:
+
+<ul><pre>
+button->when(FL_WHEN_NEVER);
+button->when(FL_WHEN_CHANGED);
+button->when(FL_WHEN_RELEASE);
+button->when(FL_WHEN_RELEASE_ALWAYS);
+button->when(FL_WHEN_ENTER_KEY);
+button->when(FL_WHEN_ENTER_KEY_ALWAYS);
+button->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
+</pre></ul>
+
+<H2>Shortcuts</H2>
+
+Shortcuts are key sequences that activate widgets (usually buttons or menu
+items).  The <tt>shortcut()</tt> method registers a shortcut for a widget:
+
+<ul><pre>
+button->shortcut(FL_Enter);
+button->shortcut(FL_SHIFT + 'b');
+button->shortcut(FL_CTRL + 'b');
+button->shortcut(FL_ALT + 'b');
+button->shortcut(FL_CTRL + FL_ALT + 'b');
+</pre></ul>
+
+The shortcut value is the key event value (the ASCII value or one of
+the special keys like <tt>FL_Enter</tt>) combined with any modifiers
+(like shift, alt, and control).
+
+</BODY>
+</HTML>

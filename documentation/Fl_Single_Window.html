@@ -1,0 +1,49 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Single_Window">class Fl_Single_Window</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Window">Fl_Window</a>
+   |
+   +----<b>Fl_Single_Window</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Single_Window.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+This is the same as <tt>Fl_Window<tt>.  However, it is possible that
+some implementations will provide double-buffered windows by default.
+This subclass can be used to force single-buffering.  This may be
+useful for modifying existing programs that use incremental update, or
+for some types of image data, such as a movie flipbook.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Single_Window.Fl_Single_Window">Fl_Single_Window</a>
+	<li><a href="#Fl_Single_Window.~Fl_Single_Window">~Fl_Single_Window</a>
+</ul>
+
+<h4><a name="Fl_Single_Window.Fl_Single_Window">Fl_Single_Window::Fl_Single_Window(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Single_Window</tt> widget using the given position, size, and
+label (title) string.
+
+<h4><a name="Fl_Single_Window.~Fl_Single_Window">virtual Fl_Single_Window::~Fl_Single_Window()</a></h4>
+
+Destroys the window and all child widgets.
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Choice">class Fl_Choice</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Menu_">Fl_Menu_</a>
+   |
+   +----<b>Fl_Choice</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Choice.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+This is a button that when pushed pops up a menu (or hierarchy of
+menus) defined by an array of <a href="#Fl_Menu_Item"><tt>Fl_Menu_Item</tt></a>
+objects.  Motif calls this an OptionButton.
+
+<p>The only difference between this and a <a href="#Fl_Menu_Button">
+<tt>Fl_Menu_Button</tt></a> is that the name of the most recent chosen
+menu item is displayed inside the box, while the label is displayed
+outside the box.  However, since the use of this is most often to
+control a single variable rather than do individual callbacks, some of
+the <tt>Fl_Menu_Button</tt> methods are redescribed here in those terms.
+
+<P>When the user picks an item off the menu the <tt>value()</tt> is set
+to that item and then the callback is done.
+
+<p>All three mouse buttons pop up the menu.  The Forms behavior of the
+first two buttons to increment/decrement the choice is not
+implemented.  This could be added with a subclass, however.
+
+<p>The menu will also pop up in response to shortcuts indicated by
+putting a '&' character in the <tt>label()</tt>.  See
+<a href="#Fl_Button"><tt>Fl_Button</tt></a> for a description of this.
+
+<p>Typing the <tt>shortcut()</tt> of any of the items will do exactly
+the same as when you pick the item with the mouse.  The '&' character
+in item names are only looked at when the menu is popped up, however.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Choice.Fl_Choice">Fl_Choice</a>
+	<li><a href="#Fl_Choice.~Fl_Choice">~Fl_Choice</a>
+	<li><a href="#Fl_Choice.clear_changed">clear_changed</a>
+	<li><a href="#Fl_Choice.changed">changed</a>
+	<li><a href="#Fl_Choice.down_box">down_box</a>
+	<li><a href="#Fl_Choice.set_changed">set_changed</a>
+	<li><a href="#Fl_Choice.value">value</a>
+</ul>
+
+<h4><a name="Fl_Choice.Fl_Choice">Fl_Choice::Fl_Choice(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Choice</tt> widget using the given position, size, and
+label string. The default boxtype is <tt>FL_UP_BOX</tt>.
+
+<p>The constructor sets <tt>menu()</tt> to <tt>NULL</tt>.  See <a
+href="#Fl_Menu_"><tt>Fl_Menu_</tt></a> for the methods to set or change
+the menu.
+
+<h4><a name="Fl_Choice.~Fl_Choice">virtual Fl_Choice::~Fl_Choice()</a></h4>
+
+The destructor removes the <tt>Fl_Choice</tt> widget and all of its menu items.
+
+<h4><a name="Fl_Choice.value">int Fl_Choice::value() const<br>
+int Fl_Choice::value(int)<br>
+int Fl_Choice::value(const Fl_Menu *)</a></h4>
+
+The value is the index into the <tt>Fl_Menu</tt> array of the last item chosen
+by the user.  It is zero initially.  You can set it as an integer, or
+set it with a pointer to a menu item.  The set routines return
+non-zero if the new value is different than the old one.  Changing it
+causes a <tt>redraw()</tt>.
+
+<h4><a name="Fl_Choice.changed">int Fl_Widget::changed() const</a></h4>
+
+This value is true if the user picks a different value.  <i>It is
+turned off by <tt>value()</tt> and just before doing a callback (the
+callback can turn it back on if desired).</i>
+
+<h4><a name="Fl_Choice.set_changed">void Fl_Widget::set_changed()</a></h4>
+
+This method sets the <tt>changed()</tt> flag.
+
+<h4><a name="Fl_Choice.clear_changed">void Fl_Widget::clear_changed()</a></h4>
+
+This method clears the <tt>changed()</tt> flag.
+
+<h4><a name="Fl_Choice.down_box">Fl_Boxtype Fl_Choice::down_box() const<br>
+void Fl_Choice::down_box(Fl_Boxtype b)</a></h4>
+
+The first form gets the current down box, which is used when the menu
+is popped up.  The default down box type is <tt>FL_DOWN_BOX</tt>
+
+The second form sets the current down box type to <tt>b</tt>.
+
+</body>
+</html>

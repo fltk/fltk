@@ -1,0 +1,366 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Menu_Item">struct Fl_Menu_Item</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Menu_Item</b>----<a href="#Fl_Menu_">Fl_Menu_</a>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Menu_Item.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Menu_Item</tt> structure defines a single menu item that is
+used by the <tt>Fl_Menu_</tt> class. This structure is defined in
+<tt>&lt;FL/Fl_Menu_Item.H></tt>
+
+<ul><pre>
+struct Fl_Menu_Item {
+  const char*	text; // label()
+  ulong		shortcut_;
+  Fl_Callback*	callback_;
+  void*		user_data_;
+  int		flags;
+  uchar		labeltype_;
+  uchar		labelfont_;
+  uchar		labelsize_;
+  uchar		labelcolor_;
+};
+
+enum { // values for flags:
+  FL_MENU_INACTIVE	= 1,
+  FL_MENU_TOGGLE	= 2,
+  FL_MENU_VALUE		= 4,
+  FL_MENU_RADIO		= 8,
+  FL_MENU_INVISIBLE	= 0x10,
+  FL_SUBMENU_POINTER	= 0x20,
+  FL_SUBMENU		= 0x40,
+  FL_MENU_DIVIDER	= 0x80,
+  FL_MENU_HORIZONTAL	= 0x100
+};
+</pre></ul>
+
+Typically menu items are statically defined; for example:
+
+<table>
+<tr valign=top>
+	<td><img align=left src=menu.gif></td>
+	<td><pre>
+Fl_Menu_Item popup[] = {
+  {"&alpha",   FL_ALT+'a', the_cb, (void*)1},
+  {"&beta",    FL_ALT+'b', the_cb, (void*)2},
+  {"gamma",    FL_ALT+'c', the_cb, (void*)3, FL_MENU_DIVIDER},
+  {"&strange",  0,   strange_cb},
+  {"&charm",    0,   charm_cb},
+  {"&truth",    0,   truth_cb},
+  {"b&eauty",   0,   beauty_cb},
+  {"sub&menu",	0,   0, 0, FL_SUBMENU},
+    {"one"},
+    {"two"},
+    {"three"},
+  {0},
+  {"inactive", FL_ALT+'i', 0, 0, FL_MENU_INACTIVE|FL_MENU_DIVIDER},
+  {"invisible",FL_ALT+'i', 0, 0, FL_MENU_INVISIBLE},
+  {"check",    FL_ALT+'i', 0, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
+  {"box",      FL_ALT+'i', 0, 0, FL_MENU_TOGGLE},
+{0}};
+	</pre></td>
+</tr>
+</table>
+
+A submenu title is identified by the bit <tt>FL_SUBMENU</tt> in the
+<tt>flags</tt> field, and ends with a <tt>label()</tt> that is
+<tt>NULL</tt>.  You can nest menus to any depth.  A pointer to the
+first item in the submenu can be treated as an <tt>Fl_Menu</tt> array
+itself.  It is also possible to make seperate submenu arrays with
+<tt>FL_SUBMENU_POINTER</tt> flags.
+
+<p>You should use the method functions to access structure members and
+not access them directly to avoid compatibility problems with future
+releases of FLTK.
+
+<h3>Methods</h3>
+
+<center>
+<table width=90%>
+<tr>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_Item.label">label</a>
+	<li><a href="#Fl_Menu_Item.labeltype">labeltype</a>
+	<li><a href="#Fl_Menu_Item.labelcolor">labelcolor</a>
+	<li><a href="#Fl_Menu_Item.labelfont">labelfont</a>
+	<li><a href="#Fl_Menu_Item.labelsize">labelsize</a>
+	<li><a href="#Fl_Menu_Item.callback">callback</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_Item.user_data">user_data</a>
+	<li><a href="#Fl_Menu_Item.argument">argument</a>
+	<li><a href="#Fl_Menu_Item.do_callback">do_callback</a>
+	<li><a href="#Fl_Menu_Item.shortcut">shortcut</a>
+	<li><a href="#Fl_Menu_Item.submenu">submenu</a>
+	<li><a href="#Fl_Menu_Item.checkbox">checkbox</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_Item.radio">radio</a>
+	<li><a href="#Fl_Menu_Item.value">value</a>
+	<li><a href="#Fl_Menu_Item.set">set</a>
+	<li><a href="#Fl_Menu_Item.setonly">setonly</a>
+	<li><a href="#Fl_Menu_Item.clear">clear</a>
+	<li><a href="#Fl_Menu_Item.visible">visible</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_Item.show">show</a>
+	<li><a href="#Fl_Menu_Item.hide">hide</a>
+	<li><a href="#Fl_Menu_Item.active">active</a>
+	<li><a href="#Fl_Menu_Item.activate">activate</a>
+	<li><a href="#Fl_Menu_Item.deactivate">deactivate</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_Item.popup">popup</a>
+	<li><a href="#Fl_Menu_Item.pulldown">pulldown</a>
+	<li><a href="#Fl_Menu_Item.test_shortcut">test_shortcut</a>
+	<li><a href="#Fl_Menu_Item.size">size</a>
+	<li><a href="#Fl_Menu_Item.next">next</a>
+</ul>
+</td>
+</tr>
+</table>
+</center>
+
+<h4><a name="Fl_Menu_Item.label">const char* Fl_Menu_Item::label() const<br>
+void Fl_Menu_Item::label(const char*)<br>
+void Fl_Menu_Item::label(Fl_Labeltype, const char*)</a></h4>
+
+This is the title of the item.  A <tt>NULL</tt> here indicates the end of the
+menu (or of a submenu).  A '&' in the item will print an underscore
+under the next letter, and if the menu is popped up that letter will
+be a "shortcut" to pick that item.  To get a real '&' put two in a
+row.
+
+<h4><a name="Fl_Menu_Item.labeltype">Fl_Labeltype Fl_Menu_Item::labeltype() const<br>
+void Fl_Menu_Item::labeltype(Fl_Labeltype)</a></h4>
+
+A <tt>labeltype</tt> identifies a routine that draws the label of the
+widget.  This can be used for special effects such as emboss, or to use
+the <tt>label()</tt> pointer as another form of data such as a bitmap. 
+The value <tt>FL_NORMAL_LABEL</tt> prints the label as text.
+
+<h4><a name="Fl_Menu_Item.labelcolor">Fl_Color Fl_Menu_Item::labelcolor() const<br>
+void Fl_Menu_Item::labelcolor(Fl_Color)</a></h4>
+
+This color is passed to the labeltype routine, and is typically the
+color of the label text.  This defaults to <tt>FL_BLACK</tt>.  If this
+color is not black fltk will <i>not</i> use overlay bitplanes to draw
+the menu - this is so that images put in the menu draw correctly.
+
+<h4><a name="Fl_Menu_Item.labelfont">Fl_Font Fl_Menu_Item::labelfont() const<br>
+void Fl_Menu_Item::labelfont(Fl_Font)</a></h4>
+
+Fonts are identified by small 8-bit indexes into a table.  See the <a
+href="#Enumerations">enumeration list</a> for predefined fonts. The
+default value is a Helvetica font.  The function <a
+href="#set_font"><tt>Fl::set_font()</tt></a> can define new fonts.
+
+<h4><a name="Fl_Menu_Item.labelsize">uchar Fl_Menu_Item::labelsize() const<br>
+void Fl_Menu_Item::labelsize(uchar)</a></h4>
+
+Gets or sets the label font pixel size/height.
+
+<h4><a name="Fl_Menu_Item.callback">typedef void (Fl_Callback)(Fl_Widget*, void*)<br>
+Fl_Callback* Fl_Menu_Item::callback() const<br>
+void Fl_Menu_Item::callback(Fl_Callback*, void* = 0)<br>
+void Fl_Menu_Item::callback(void (*)(Fl_Widget*))</a></h4>
+
+Each item has space for a callback function and an argument for that
+function.  Due to back compatability, the <tt>Fl_Menu_Item</tt> itself
+is not passed to the callback, instead you have to get it by calling
+<tt>((Fl_Menu_*)w)->mvalue()</tt> where <tt>w</tt> is the widget
+argument.
+
+<h4><a name="Fl_Menu_Item.user_data">void* Fl_Menu_Item::user_data() const<br>
+void Fl_Menu_Item::user_data(void*)</a></h4>
+
+Get or set the <tt>user_data</tt> argument that is sent to the callback
+function.
+
+<h4><a name="Fl_Menu_Item.argument">void Fl_Menu_Item::callback(void (*)(Fl_Widget*, long), long = 0)<br>
+long Fl_Menu_Item::argument() const<br>
+void Fl_Menu_Item::argument(long)</a></h4>
+
+For convenience you can also define the callback as taking a
+<tt>long</tt> argument.  This is implemented by casting this to a
+<tt>Fl_Callback</tt> and casting the <tt>long</tt> to a <tt>void*</tt>
+and may not be portable to some machines.
+
+<h4><a name="Fl_Menu_Item.do_callback">void Fl_Menu_Item::do_callback(Fl_Widget*)<br>
+void Fl_Menu_Item::do_callback(Fl_Widget*, void*)<br>
+void Fl_Menu_Item::do_callback(Fl_Widget*, long)</a></h4>
+
+Call the <tt>Fl_Menu_Item</tt> item's callback, and provide the
+<tt>Fl_Widget</tt> argument (and optionally override the user_data()
+argument).  You must first check that <tt>callback()</tt> is non-zero before
+calling this.
+
+<h4><a name="Fl_Menu_Item.shortcut">ulong Fl_Menu_Item::shortcut() const<br>
+void Fl_Menu_Item::shortcut(ulong)</a></h4>
+
+Sets exactly what key combination will trigger the menu item.  The
+value is a logical 'or' of a key and a set of shift flags, for
+instance <tt>FL_ALT+'a'</tt> or <tt>FL_ALT+FL_F+10</tt> or
+just 'a'.  A value of zero disables the shortcut.
+
+<p>The key can be any value returned by <a
+href="#event_key"><tt>Fl::event_key()</tt></a>, but will usually be an
+ASCII letter.  Use a lower-case letter unless you require the shift key
+to be held down.
+
+<p>The shift flags can be any set of values accepted by <a
+href="#event_state"><tt>Fl::event_state()</tt></a>.  If the bit is on
+that shift key must be pushed.  Meta, Alt, Ctrl, and Shift must be off
+if they are not in the shift flags (zero for the other bits indicates
+a "don't care" setting).
+
+<h4><a name="Fl_Menu_Item.submenu">int Fl_Menu_Item::submenu() const</a></h4>
+
+Returns true if either <tt>FL_SUBMENU</tt> or
+<tt>FL_SUBMENU_POINTER</tt> is on in the flags.  <tt>FL_SUBMENU</tt>
+indicates an embedded submenu that goes from the next item through the
+next one with a <tt>NULL</tt> <tt>label()</tt>.
+<tt>FL_SUBMENU_POINTER</tt> indicates that <tt>user_data()</tt> is a
+pointer to another menu array.
+
+<h4><a name="Fl_Menu_Item.checkbox">int Fl_Menu_Item::checkbox() const</a></h4>
+
+Returns true if a checkbox will be drawn next to this item.  This is
+true if <tt>FL_MENU_TOGGLE</tt> or <tt>FL_MENU_RADIO</tt> is set in the flags.
+
+<h4><a name="Fl_Menu_Item.radio">int Fl_Menu_Item::radio() const</a></h4>
+
+Returns true if this item is a radio item.  When a radio button is
+selected all "adjacent" radio buttons are turned off.  A set of radio
+items is delimited by an item that has <tt>radio()</tt> false, or by an item
+with <tt>FL_MENU_DIVIDER</tt> turned on.
+
+<h4><a name="Fl_Menu_Item.value">int Fl_Menu_Item::value() const</a></h4>
+
+Returns the current value of the check or radio item.
+
+<h4><a name="Fl_Menu_Item.set">void Fl_Menu_Item::set()</a></h4>
+
+Turns the check or radio item "on" for the menu item. Note that this does not
+turn off any adjacent radio items like <tt>set_only()</tt> does.
+
+<h4><a name="Fl_Menu_Item.setonly">void Fl_Menu_Item::setonly()</a></h4>
+
+Turns the radio item "on" for the menu item and turns off adjacent radio
+item.
+
+<h4><a name="Fl_Menu_Item.clear">void Fl_Menu_Item::clear()</a></h4>
+
+Turns the check or radio item "off" for the menu item.
+
+<h4><a name="Fl_Menu_Item.visible">int Fl_Menu_Item::visible() const</a></h4>
+
+Gets the visibility of an item.
+
+<h4><a name="Fl_Menu_Item.show">void Fl_Menu_Item::show()</a></h4>
+
+Makes an item visible in the menu.
+
+<h4><a name="Fl_Menu_Item.hide">void Fl_Menu_Item::hide()</a></h4>
+
+Hides an item in the menu.
+
+<h4><a name="Fl_Menu_Item.active">int Fl_Menu_Item::active() const</a></h4>
+
+Get whether or not the item can be picked.
+
+<h4><a name="Fl_Menu_Item.activate">void Fl_Menu_Item::activate()</a></h4>
+
+Allows a menu item to be picked.
+
+<h4><a name="Fl_Menu_Item.deactivate">void Fl_Menu_Item::deactivate()</a></h4>
+
+Prevents a menu item from being picked. Note that this will also cause the
+menu item to appear grayed-out.
+
+<h4><a name="Fl_Menu_Item.popup">const Fl_Menu_Item *Fl_Menu_Item::popup(int X, int Y, const char* title = 0, const Fl_Menu_Item* picked = 0, const Fl_Menu_* button = 0) const</a></h4>
+
+This method is called by widgets that want to display menus.  The menu
+stays up until the user picks an item or dismisses it.  The selected
+item (or <tt>NULL</tt> if none) is returned.  <i>This does not do the
+callbacks or change the state of check or radio items.</i>
+
+<p><tt>X,Y</tt> is the position of the mouse cursor, relative to the
+window that got the most recent event (usually you can pass
+<tt>Fl::event_x()</tt> and <tt>Fl::event_y()</tt> unchanged here).
+
+<p><tt>title</tt> is a character string title for the menu.  If non-zero
+a small box appears above the menu with the title in it.
+
+<p>The menu is positioned so the cursor is centered over the item
+<tt>picked</tt>.  This will work even if <tt>picked</tt> is in a submenu.
+If <tt>picked</tt> is zero or not in the menu item table the menu is
+positioned with the cursor in the top-left corner.
+
+<p><tt>button</tt> is a pointer to an <a href="#Fl_Menu_"><tt>Fl_Menu_</tt></a>
+from which the color and boxtypes for the menu are pulled.  If <tt>NULL</tt>
+then defaults are used.
+
+<h4><a name="Fl_Menu_Item.pulldown">const Fl_Menu_Item *Fl_Menu_Item::pulldown(int X, int Y, int W, int H, const Fl_Menu_Item* picked = 0, const Fl_Menu_* button = 0, const Fl_Menu_Item* title = 0, int menubar=0) const</a></h4>
+
+<tt>pulldown()</tt> is similar to <tt>popup()</tt>, but a rectangle is
+provided to position the menu.  The menu is made at least <tt>W</tt>
+wide, and the <tt>picked</tt> item is centered over the rectangle (like
+<tt>Fl_Choice</tt> uses).  If <tt>picked</tt> is zero or not found, the
+menu is aligned just below the rectangle (like a pulldown menu).
+
+<p>The <tt>title</tt> and <tt>menubar</tt> arguments are used internally by
+the <tt>Fl_Menu_</tt> widget.
+
+<h4><a name="Fl_Menu_Item.test_shortcut">const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const</a></h4>
+
+This is designed to be called by a widgets <tt>handle()</tt> method in
+response to a <tt>FL_SHORTCUT</tt> event.  If the current event matches
+one of the items shortcut, that item is returned.  If the keystroke
+does not match any shortcuts then <tt>NULL</tt> is returned.  This only
+matches the <tt>shortcut()</tt> fields, not the letters in the title
+preceeded by '&'.
+
+<h4><a name="Fl_Menu_Item.size">int Fl_Menu_Item::size()</a></h4>
+
+Return the offset of the <tt>NULL</tt> terminator that ends this menu,
+correctly skipping over submenus.  To copy a menu you should copy
+<tt>size() + 1</tt> structures.
+
+<h4><a name="Fl_Menu_Item.next">const Fl_Menu_Item* Fl_Menu_Item::next(int n=1) const<br>
+Fl_Menu_Item* Fl_Menu_Item::next(int n=1);</a></h4>
+
+Advance a pointer by <tt>n</tt> items through a menu array, skipping the
+contents of submenus and invisible items.  There are two calls so that
+you can advance through const and non-const data.
+
+</body>
+</html>

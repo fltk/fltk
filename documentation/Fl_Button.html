@@ -1,0 +1,176 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Button">class Fl_Button</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Button</b>
+           |
+           +----<a href="#Fl_Check_Button">Fl_Check_Button</a>, <a href="#Fl_Light_Button">Fl_Light_Button</a>, <a href="#Fl_Repeat_Button">Fl_Repeat_Button</a>,
+                <a href="#Fl_Return_Button">Fl_Return_Button</a>, <a href="#Fl_Round_Button">Fl_Round_Button</a>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Button.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+<p>Buttons generate callbacks when they are clicked by the user.  You
+control exactly when and how by changing the values for <tt>type()</tt> and
+<tt>when()</tt>.
+
+<p>Buttons can also generate callbacks in response to
+<tt>FL_SHORTCUT</tt> events.  The button can either have an explicit
+<a href="#Fl_Button.shortcut"><tt>shortcut()</tt></a> value or a letter
+shortcut can be indicated in the <tt>label()</tt> with an '&' character
+before it.  For the label shortcut it does not matter if <i>Alt</i> is
+held down, but if you have an input field in the same window, the user
+will have to hold down the <i>Alt</i> key so that the input field does
+not eat the event first as an <tt>FL_KEYBOARD</tt> event.
+
+<h3>Methods</h3>
+
+<center>
+<table width=90%>
+<tr>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Button.Fl_Button">Fl_Button</a>
+       <li><a href="#Fl_Button.~Fl_Button">~Fl_Button</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Button.clear">clear</a>
+       <li><a href="#Fl_Button.down_box">down_box</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Button.set">set</a>
+       <li><a href="#Fl_Button.setonly">setonly</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Button.shortcut">shortcut</a>
+       <li><a href="#Fl_Button.type">type</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Button.value">value</a>
+       <li><a href="#Fl_Button.when">when</a>
+</ul>
+</td>
+</tr>
+</table>
+</center>
+
+<h4><a name="Fl_Button.Fl_Button">Fl_Button::Fl_Button(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+The constructor creates the button using the position, size, and label.
+
+<h4><a name="Fl_Button.~Fl_Button">Fl_Button::~Fl_Button(void)</a></h4>
+
+The destructor removed the button.
+
+<h4><a name="Fl_Button.clear">int Fl_Button::clear()</a></h4>
+
+Same as <tt>value(0)</tt>.
+
+<h4><a name="Fl_Button.down_box">Fl_Boxtype Fl_Button::down_box() const<br>
+void Fl_Button::down_box(Fl_Boxtype bt)</a></h4>
+
+The first form returns the current down box type, which is drawn when
+<tt>value()</tt> is non-zero.
+
+<p>The second form sets the down box type. The default value of 0
+causes FLTK to figure out the correct matching down version of
+<tt>box()</tt>.
+
+<h4><a name="Fl_Button.set">int Fl_Button::set()</a></h4>
+
+Same as <tt>value(1)</tt>.
+
+<h4><a name="Fl_Button.setonly">void Fl_Button::setonly()</a></h4>
+
+Turns on this button and turns off all other radio buttons in the
+group (calling <tt>value(1)</tt> or <tt>set()</tt> does not do this).
+
+<h4><a name="Fl_Button.shortcut">ulong Fl_Button::shortcut() const<br>
+void Fl_Button::shortcut(ulong key)</a></h4>
+
+The first form returns the current shortcut key for the button.
+
+<P>The second form sets the shortcut key to <tt>key</tt>. Setting this
+overrides the use of '&' in the <tt>label()</tt>.  The value is a
+bitwise OR of a key and a set of shift flags, for example <code>FL_ALT
+| 'a'</code>, <code>FL_ALT | (FL_F + 10)</code>, or just
+<code>'a'</code>.  A value of 0 disables the shortcut.
+
+<p>The key can be any value returned by <a href=#event_key><tt>
+Fl::event_key()</tt></a>, but will usually be an ASCII letter.  Use a
+lower-case letter unless you require the shift key to be held down.
+
+<p>The shift flags can be any set of values accepted by
+<a href=#event_state><tt>Fl::event_state()</tt></a>.  If the bit is on
+that shift key must be pushed.  Meta, Alt, Ctrl, and Shift must be off
+if they are not in the shift flags (zero for the other bits indicates
+a "don't care" setting).
+
+<h4><a name="Fl_Button.type">uchar Fl_Button::type() const<br>
+void Fl_Button::type(uchar t)</a></h4>
+
+The first form of <tt>type()</tt> returns the current button type,
+which can be one of:
+
+<ul>
+	<li><code>0</code>: The value is unchanged.
+
+	<li><code>FL_TOGGLE_BUTTON</code>: The value is inverted.
+
+	<li><code>FL_RADIO_BUTTON</code>: The value is set to 1, and all
+	other buttons in the current group with
+	<code>type() == FL_RADIO_BUTTON</code> are set to zero.
+</ul>
+
+The second form sets the button type to <tt>t</tt>.
+
+<h4><a name="Fl_Button.value">char Fl_Button::value() const<br>
+int Fl_Button::value(int)</a></h4>
+
+The first form returns the current value (0 or 1).  The second form sets
+the current value.
+
+<h4><a name="Fl_Button.when">Fl_When Fl_Widget::when() const<br>
+void Fl_Widget::when(Fl_When w)</a></h4>
+
+Controls when callbacks are done.  The following values are useful,
+the default value is <code>FL_WHEN_RELEASE</code>:
+
+<ul>
+	<li><code>0</code>: The callback is not done, instead changed() is
+	turned on.
+
+	<li><code>FL_WHEN_RELEASE</code>: The callback is done after the user
+	successfully clicks the button, or when a shortcut is typed.
+
+	<li><code>FL_WHEN_CHANGED </code>: The callback is done each time the
+	value() changes (when the user pushes and releases the button, and as
+	the mouse is dragged around in and out of the button).
+</ul>
+
+</body>
+</html>

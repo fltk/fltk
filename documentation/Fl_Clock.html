@@ -1,0 +1,78 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Clock">class Fl_Clock</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Clock</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Clock.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+This widget provides a round analog clock display and is provided for
+Forms compatibility.  It installs a 1-second timeout callback using
+<a href="#add_timeout"><tt>Fl::add_timeout()</tt></a>.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Clock.Fl_Clock">Fl_Clock</a>
+	<li><a href="#Fl_Clock.~Fl_Clock">~Fl_Clock</a>
+	<li><a href="#Fl_Clock.hour">hour</a>
+	<li><a href="#Fl_Clock.minute">minute</a>
+	<li><a href="#Fl_Clock.second">second</a>
+	<li><a href="#Fl_Clock.value">value</a>
+</ul>
+
+<h4><a name="Fl_Clock.Fl_Clock">Fl_Clock::Fl_Clock(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Clock</tt> widget using the given position, size, and
+label string. The default boxtype is <tt>FL_NO_BOX</tt>.
+
+<h4><a name="Fl_Clock.~Fl_Clock">virtual Fl_Clock::~Fl_Clock()</a></h4>
+
+The destructor <i>also deletes all the children</i>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to all
+the children in the user code. A kludge has been done so the
+<tt>Fl_Clock</tt> and all of it's children can be automatic (local)
+variables, but you must declare the <tt>Fl_Clock</tt> <i>first</i>, so
+that it is destroyed last.
+
+<h4><a name="Fl_Clock.hour">int Fl_Clock::hour() const</a></h4>
+
+Returns the current hour (0 to 23).
+
+<h4><a name="Fl_Clock.minute">int Fl_Clock::minute() const</a></h4>
+
+Returns the current minute (0 to 59).
+
+<h4><a name="Fl_Clock.second">int Fl_Clock::second() const</a></h4>
+
+Returns the current second (0 to 60, 60 = leap second).
+
+<h4><a name="Fl_Clock.value">void Fl_Clock::value(ulong v)<br>
+void Fl_Clock::value(int h, int m, int s)<br>
+ulong Fl_Clock::value(void)</a></h4>
+
+The first two forms of <tt>value</tt> set the displayed time to the given
+UNIX time value or specific hours, minutes, and seconds.
+
+<p>The third form of <tt>value</tt> returns the displayed time in seconds
+since the UNIX epoch (January 1, 1970).
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN=RIGHT><A NAME="glut">D - GLUT Compatibility</A></H1>
+
+You should be able to compile existing Glut source code by
+including &lt;FL/glut.H> instead of &lt;GL/glut.h>.  This can be done by
+editing the source, by changing the -I switches to the compiler, or by
+providing a symbolic link from GL/glut.h to FL/glut.H.
+
+<p>All files calling glut procedures must be compiled with C++.  You may
+have to alter them slightly to get them to compile without warnings,
+and you may have to rename them to get make to use the C++ compiler.
+I was unable to get some calls to glu to compile without adding some
+casts, apparently due to errors in the glu header files.
+
+<p>You must link with -lFl.  If you call any glut drawing functions
+that fltk does not emulate (<code>glutExtensionsSupported(), glutWire*(),
+glutSolid*(), and glutStroke*()</code>), you will also have to link with
+-lglut, <i>after</i> -lFl.
+
+<p>Most of glut.H is inline functions.  You should take a look at it
+(and maybe at glut.C in the fltk source) if you are having trouble
+porting your Glut program.
+
+<p>This has been tested with most of the demo programs that come with
+the Glut 3.3 distribution.
+
+<h2>Known Problems</h2>
+
+<ul>
+
+<li>The following functions and/or arguments to functions are missing,
+and you will have to replace them or comment them out for your code to
+compile:<ul>
+
+<li><code>glutLayerGet(GLUT_LAYER_IN_USE)</code>
+<li><code>glutLayerGet(GLUT_HAS_OVERLAY)</code>
+<li><code>glutSetColor(), glutGetColor(), glutCopyColormap()</code>
+<li><code>glutInitDisplayMode(GLUT_STEREO)</code>
+<li><code>glutInitDisplayMode(GLUT_LUMINANCE)</code>
+<li><code>glutPushWindow()</code>
+<li><code>glutWarpPointer()</code>
+<li>Spaceball, buttonbox, dials, tablet functions, <code>glutDeviceGet()</code>
+<li><code>glutWindowStatusFunc()</code>
+<li><code>glutGet(GLUT_WINDOW_NUM_CHILDREN)</code>
+<li><code>glutGet(GLUT_SCREEN_WIDTH_MM)</code>
+<li><code>glutGet(GLUT_SCREEN_HEIGHT_MM)</code>
+<li><code>glutGet(GLUT_ELAPSED_TIME)</code>
+<li><code>glutVideoResize()</code> missing.
+
+</ul>
+
+<li>Most of the symbols/enumerations have different values than
+Glut uses.  This will break code that relies on the actual values.
+The only symbols guaranteed to have the same values are true/false
+pairs like <code>GLUT_DOWN</code> and <code>GLUT_UP</code>, mouse
+buttons <code>GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON,
+GLUT_RIGHT_BUTTON</code>, and <code>GLUT_KEY_F1</code> thru
+<code>F12</code>.
+
+<li><i>The strings passed as menu labels are not copied</i>.
+
+<li><code>glutPostRedisplay()</code> does not work if called from
+inside a display function.  You must use <code>glutIdleFunc()</code>
+if you want your display to update continuously.
+
+<li><code>glutSwapBuffers()</code> does not work from inside a display
+function.  This is on purpose, because fltk swaps the buffers for you.
+
+<li><code>glutUseLayer()</code> does not work well, and should only be
+used to initialize transformations inside a resize callback.  You
+should redraw overlays by using <code>glutOverlayDisplayFunc()</code>.
+
+<li>Overlays are cleared before the overlay display function is
+called.  <code>glutLayerGet(GLUT_OVERLAY_DAMAGED)</code> always
+returns true, this fixed some glut overlay programs.  You must rewrite
+your code so that gl_color() is used to choose colors in an overlay,
+or you will get random overlay colors.
+
+<li><code>glutSetCursor(GLUT_CURSOR_FULL_CROSSHAIR)</code> just
+results in a small crosshair.
+
+<li>The fonts used by <code>glutBitmapCharacter() and
+glutBitmapWidth()</code> may be different.
+
+<li><code>glutInit(argc,argv)</code> will consume different switches than glut
+does.  It accepts the switches recognized by <a
+href=Fl.html>Fl_Window::arg()</a>, and will accept any
+abbreviation of these switches (such as -d for -display).
+
+</ul>
+
+<h2>Mixing Glut code and Fltk code</h2>
+
+You can make your Glut window a child of a Fl_Window with the
+following scheme.  The biggest trick is that Glut insists on
+show()'ing the window at the point it is created, which means the
+Fl_Window parent window must already be show()n.
+
+<p>Don't call glutInit().
+
+<p>Create your Fl_Window, and any fltk widgets.  Leave a blank area in
+the window for your glut window.
+
+<p>show() the Fl_Window.  Perhaps call show(argc,argv).
+
+<p>Call window->begin() so the glut window will be automatically added
+to it.
+
+<p>Use glutInitWindowSize() and glutInitWindowPosition() to set the
+location in the parent window to put the glut window.
+
+<p>Put your glut code next.  It probably does not need many changes.
+Call window->end() immediately after the glutCreateWindow()!
+
+<p>You can call either glutMainLoop() or Fl::run() or loop calling
+Fl::wait() to run the program.
+
+<h2>class Fl_Glut_Window : public <a href=Fl_Gl_Window.html>Fl_Gl_Window</a></h2>
+
+Each Glut window is an instance of this class, which is a subclass of
+<a href=Fl_Gl_Window.html>Fl_Gl_Window</a>.  You may find it useful to
+manipulate instances directly rather than use glut window id's.  These
+may be created without opening the display, and thus can fit better
+into FL's method of creating windows.
+
+<p>The current glut window is available in <code>Fl_Glut_Window
+*glut_window</code>.
+
+<p><code>new Fl_Glut_Window(...)</code> is the same as
+<code>glutCreateWindow()</code> except it does not show() the window
+or make the window current.
+
+<p><code>window->make_current()</code> is the same as
+<code>glutSetWindow(number)</code>.  If the window has not had show()
+called on it yet, some functions that assumme a gl context will not
+work.  If you do show() the window, call make_current() again to set
+the context.
+
+<p><code>~Fl_Glut_Window()</code> is the same as
+<code>glutDestroyWindow()</code>.
+
+</BODY>
+</HTML>

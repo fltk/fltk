@@ -1,0 +1,78 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Scrollbar">class Fl_Scrollbar</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Slider">Fl_Slider</a>
+   |
+   +----<b>Fl_Scrollbar</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Scrollbar.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Scrollbar</tt> widget displays a slider with arrow buttons
+at the ends of the scrollbar. Clicking on the arrows move up/left and
+down/right by <tt>linesize()</tt>.  Scrollbars also accept
+<tt>FL_SHORTCUT</tt> events: the arrows move by <tt>linesize()</tt>,
+and vertical scrollbars take Page Up/Down (they move by the page size
+minus <tt>linesize()</tt>) and Home/End (they jump to the top or
+bottom).
+
+<p>Scrollbars have <tt>step(1)</tt> preset (they always return
+integers). If desired you can set the <tt>step()</tt> to non-integer
+values.  You will then have to use casts to get at the floating-point
+versions of <tt>value()</tt> from <tt>Fl_Slider</tt>.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Scrollbar.Fl_Scrollbar">Fl_Scrollbar</a>
+	<li><a href="#Fl_Scrollbar.~Fl_Scrollbar">~Fl_Scrollbar</a>
+	<li><a href="#Fl_Scrollbar.linesize">linesize</a>
+	<li><a href="#Fl_Scrollbar.value">value</a>
+</ul>
+
+<h4><a name="Fl_Scrollbar.Fl_Scrollbar">Fl_Scrollbar::Fl_Scrollbar(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Scrollbar</tt> widget using the given position,
+size, and label string.  You need to do <tt>type(FL_HORIZONTAL)</tt> if
+you want a horizontal scrollbar.
+
+<h4><a name="Fl_Scrollbar.~Fl_Scrollbar">virtual Fl_Scrollbar::~Fl_Scrollbar()</a></h4>
+
+Destroys the valuator.
+
+<h4><a name="Fl_Scrollbar.linesize">int Fl_Scrollbar::linesize() const<br>
+void Fl_Scrollbar::linesize(int i)</a></h4>
+
+This number controls how big the steps are that the arrow keys do.  In
+addition page up/down move by the size last sent to <tt>value()</tt>
+minus one <tt>linesize()</tt>.  The default is 16.
+
+<h4><a name="Fl_Scrollbar.value">int Fl_Scrollbar::value()<br>
+int Fl_Scrollbar::value(int position, int size, int top, int total)</a></h4>
+
+The first form returns the integer value of the scrollbar. You can get
+the floating point value with <tt>Fl_Slider::value()</tt>.
+
+The second form sets <tt>value()</tt>, <tt>range()</tt>, and
+<tt>slider_size()</tt> to make a variable-sized scrollbar. You should
+call this every time your window changes size, your data changes size,
+or your scroll position changes (even if in response to a callback from
+this scrollbar).  All necessary calls to <tt>redraw()</tt> are done.
+
+</body>
+</html>

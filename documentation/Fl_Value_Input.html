@@ -1,0 +1,89 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Value_Input">class Fl_Value_Input</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Valuator">Fl_Valuator</a>
+   |
+   +----<b>Fl_Value_Input</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Value_Input.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Value_Input</tt> widget displays a floating point value.
+The user can click in the text field and edit it (there is in fact
+a hidden <a href="#Fl_Value_Input"><tt>Fl_Value_Input</tt></a> widget with
+<tt>type(FL_FLOAT_INPUT)</tt> in there), and when they hit return
+or tab the value updates to what they typed and the callback is done.
+
+<p>If <tt>step()</tt> is not zero, the user can also drag the mouse
+across the object and thus slide the value.  The left button moves one
+<tt>step()</tt> per pixel, the middle by <tt>10 * step()</tt>, and the
+left button by <tt>100 * step()</tt>.  It is then impossible to select
+text by dragging across it, although clicking can still move the
+insertion cursor.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Value_Input.Fl_Value_Input">Fl_Value_Input</a>
+	<li><a href="#Fl_Value_Input.~Fl_Value_Input">~Fl_Value_Input</a>
+	<li><a href="#Fl_Value_Input.cursor_color">cursor_color</a>
+	<li><a href="#Fl_Value_Input.soft">soft</a>
+	<li><a href="#Fl_Value_Input.textcolor">textcolor</a>
+	<li><a href="#Fl_Value_Input.textfont">textfont</a>
+	<li><a href="#Fl_Value_Input.textsize">textsize</a>
+</ul>
+
+<h4><a name="Fl_Value_Input.Fl_Value_Input">Fl_Value_Input::Fl_Value_Input(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Value_Input</tt> widget using the given position, size, and
+label string. The default boxtype is <tt>FL_NO_BOX</tt>.
+
+<h4><a name="Fl_Value_Input.~Fl_Value_Input">virtual Fl_Value_Input::~Fl_Value_Input()</a></h4>
+
+Destroys the valuator.
+
+<h4><a name="Fl_Value_Input.cursor_color">Fl_Color Fl_Value_Input::cursor_color() const<br>
+void Fl_Value_Input::cursor_color(Fl_Color)</a></h4>
+
+Get or set the color of the cursor.  This is black by default.
+
+<h4><a name="Fl_Value_Input.soft">uchar Fl_Value_Input::soft() const<br>
+void Fl_Value_Input::soft(uchar)</a></h4>
+
+If "soft" is turned on, the user is allowed to drag the value outside
+the range.  If they drag the value to one of the ends, let go, then
+grab again and continue to drag, they can get to any value.  Default
+is one.
+
+<h4><a name="Fl_Value_Input.textcolor">Fl_Color Fl_Value_Input::textcolor() const<br>
+void Fl_Value_Input::textcolor(Fl_Color)</a></h4>
+
+Gets or sets the color of the text in the value box.
+
+<h4><a name="Fl_Value_Input.textfont">Fl_Font Fl_Value_Input::textfont() const<br>
+<br>void Fl_Value_Input::textfont(Fl_Font)</a></h4>
+
+Gets or sets the typeface of the text in the value box.
+
+<h4><a name="Fl_Value_Input.textsize">uchar Fl_Value_Input::textsize() const<br>
+void Fl_Value_Input::textsize(uchar)</a></h4>
+
+Gets or sets the size of the text in the value box.
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Browser_">class Fl_Browser_</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Browser_</b>
+           |
+           +----<a href="#Fl_Browser">Fl_Browser</a>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Browser_.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+This is the base class for browsers.  To be useful it must be
+subclassed and several virtual functions defined.  The Forms-compatable
+browser and the file chooser's browser are subclassed off of this.
+
+<p>This has been designed so that the subclass has complete control
+over the storage of the data, although because <tt>next()</tt> and
+<tt>prev()</tt> functions are used to index, it works best as a linked
+list or as a large block of characters in which the line breaks must be
+searched for.
+
+<p>A great deal of work has been done so that the "height" of a data
+object does not need to be determined until it is drawn.  This is
+useful if actually figuring out the size of an object requires
+accessing image data or doing <tt>stat()</tt> on a file or doing some
+other slow operation.
+
+<h3>Methods</h3>
+
+<center>
+<table width=90%>
+<tr>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Browser_.Fl_Browser_">Fl_Browser_</a>
+	<li><a href="#Fl_Browser_.~Fl_Browser_">~Fl_Browser_</a>
+	<li><a href="#Fl_Browser_.bbox">bbox</a>
+	<li><a href="#Fl_Browser_.deleting">deleting</a>
+	<li><a href="#Fl_Browser_.deselect">deselect</a>
+	<li><a href="#Fl_Browser_.display">display</a>
+	<li><a href="#Fl_Browser_.displayed">displayed</a>
+	<li><a href="#Fl_Browser_.draw">draw</a>
+	<li><a href="#Fl_Browser_.find_item">find_item</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Browser_.full_height">full_height</a>
+	<li><a href="#Fl_Browser_.full_width">full_width</a>
+	<li><a href="#Fl_Browser_.handle">handle</a>
+	<li><a href="#Fl_Browser_.has_scrollbar">has_scrollbar</a>
+	<li><a href="#Fl_Browser_.hposition">hposition</a>
+	<li><a href="#Fl_Browser_.incr_height">incr_height</a>
+	<li><a href="#Fl_Browser_.inserting">inserting</a>
+	<li><a href="#Fl_Browser_.item_draw">item_draw</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Browser_.item_first">item_first</a>
+	<li><a href="#Fl_Browser_.item_height">item_height</a>
+	<li><a href="#Fl_Browser_.item_next">item_next</a>
+	<li><a href="#Fl_Browser_.item_prev">item_prev</a>
+	<li><a href="#Fl_Browser_.item_quick_height">item_quick_height</a>
+	<li><a href="#Fl_Browser_.item_select">item_select</a>
+	<li><a href="#Fl_Browser_.item_selected">item_selected</a>
+	<li><a href="#Fl_Browser_.item_width">item_width</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Browser_.leftedge">leftedge</a>
+	<li><a href="#Fl_Browser_.new_list">new_list</a>
+	<li><a href="#Fl_Browser_.position">position</a>
+	<li><a href="#Fl_Browser_.redraw_line">redraw_line</a>
+	<li><a href="#Fl_Browser_.redraw_lines">redraw_lines</a>
+	<li><a href="#Fl_Browser_.replacing">replacing</a>
+	<li><a href="#Fl_Browser_.resize">resize</a>
+	<li><a href="#Fl_Browser_.scrollbar_left">scrollbar_left</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Browser_.scrollbar_right">scrollbar_right</a>
+	<li><a href="#Fl_Browser_.select">select</a>
+	<li><a href="#Fl_Browser_.select_only">select_only</a>
+	<li><a href="#Fl_Browser_.selection">selection</a>
+	<li><a href="#Fl_Browser_.textcolor">textcolor</a>
+	<li><a href="#Fl_Browser_.textfont">textfont</a>
+	<li><a href="#Fl_Browser_.textsize">textsize</a>
+	<li><a href="#Fl_Browser_.top">top</a>
+</ul>
+</td>
+</tr>
+</table>
+</center>
+
+<h4><a name="Fl_Browser_.Fl_Browser_">Fl_Browser::Fl_Browser(int, int, int, int, const char * = 0)</a></h4> 
+
+The constructor makes an empty browser.
+
+<h4><a name="Fl_Browser_.~Fl_Browser_">Fl_Browser::~Fl_Browser(void)</a></h4> 
+
+The destructor deletes all list items and destroys the browser.
+
+<h4><a name="Fl_Browser_.has_scrollbar">void Fl_Browser_::has_scrollbar(int h)</a></h4>
+
+By default you can scroll in both directions, and the scrollbars
+disappear if the data will fit in the widget.  has_scrollbar()
+changes this based on the value of <tt>h</tt>:
+
+<ul>
+	<li><code>0</code> - No scrollbars
+
+	<li><code>Fl_Browser_::HORIZONTAL</code> - Only a horizontal scrollbar.
+
+	<li><code>Fl_Browser_::VERTICAL</code> - Only a vertical scrollbar.
+
+	<li><code>Fl_Browser_::BOTH</code> - The default is both scrollbars.
+
+	<li><code>Fl_Browser_::HORIZONTAL_ALWAYS</code> - Horizontal
+	scrollbar always on, vertical always off.
+
+	<li><code>Fl_Browser_::VERTICAL_ALWAYS</code> - Vertical
+	scrollbar always on, horizontal always off.
+
+	<li><code>Fl_Browser_::BOTH_ALWAYS</code> - Both always on.
+</ul>
+
+<h4><a name="Fl_Browser_.textcolor">Fl_Color Fl_Browser_::textcolor() const<br>
+void Fl_Browser_::textcolor(Fl_Color color)</a></h4>
+
+The first form gets the default text color for the lines in the
+browser.
+
+<p>The second form sets the default text color to <tt>color</tt>
+
+<h4><a name="Fl_Browser_.textfont">Fl_Font Fl_Browser_::textfont() const<br>
+void Fl_Browser_::textfont(Fl_Font font)</a></h4>
+
+The first form gets the default text font for the lines in the
+browser.
+
+<p>The second form sets the default text font to <tt>font</tt>
+
+<h4><a name="Fl_Browser_.textsize">uchar Fl_Browser_::textsize() const<br>
+void Fl_Browser_::textsize(uchar size)</a></h4>
+
+The first form gets the default text size for the lines in the
+browser.
+
+<p>The second form sets the default text size to <tt>size</tt>
+
+</body>
+</html>

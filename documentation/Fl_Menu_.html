@@ -1,0 +1,220 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Menu_">class Fl_Menu_</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Menu_</b>----<a href="#Fl_Menu_Item">Fl_Menu_Item</a>
+           |
+           +----<a href="#Fl_Choice">Fl_Choice</a>, <a href="#Fl_Menu_Bar">Fl_Menu_Bar</a>, <a href="#Fl_Menu_Button">Fl_Menu_Button</a>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Menu_.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+All widgets that have a menu in FLTK are subclassed off of this class.
+Currently FLTK provides you with
+<a href="#Fl_Menu_Button"><tt>Fl_Menu_Button</tt></a>,
+<a href="#Fl_Menu_Bar"><tt>Fl_Menu_Bar</tt></a>, and
+<a href="#Fl_Choice"><tt>Fl_Choice</tt></a>.
+
+<p>The class contains a pointer to an array of structures of type
+<a href="#Fl_Menu_Item"><tt>Fl_Menu_Item</tt></a>.
+These describe the contents of the menu.  Usually the array is a large
+initialization constant, but there are methods to build it
+dynamically.
+
+<h3>Methods</h3>
+
+<center>
+<table width=90%>
+<tr>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_.Fl_Menu_">Fl_Menu_</a>
+	<li><a href="#Fl_Menu_.~Fl_Menu_">~Fl_Menu_</a>
+	<li><a href="#Fl_Menu_.add">add</a>
+	<li><a href="#Fl_Menu_.clear">clear</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_.down_box">down_box</a>
+	<li><a href="#Fl_Menu_.global">global</a>
+	<li><a href="#Fl_Menu_.menu">menu</a>
+	<li><a href="#Fl_Menu_.mode">mode</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_.remove">remove</a>
+	<li><a href="#Fl_Menu_.replace">replace</a>
+	<li><a href="#Fl_Menu_.shortcut">shortcut</a>
+	<li><a href="#Fl_Menu_.size">size</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_.test_shortcut">test_shortcut</a>
+	<li><a href="#Fl_Menu_.text">text</a>
+	<li><a href="#Fl_Menu_.textcolor">textcolor</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+	<li><a href="#Fl_Menu_.textfont">textfont</a>
+	<li><a href="#Fl_Menu_.textsize">textsize</a>
+	<li><a href="#Fl_Menu_.value">value</a>
+</ul>
+</td>
+</tr>
+</table>
+</center>
+
+<h4><a name="Fl_Menu_.Fl_Menu_">Fl_Menu_::Fl_Menu_(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Menu_</tt> widget using the given position, size, and
+label string. The default boxtype is <tt>FL_NO_BOX</tt>.
+
+<h4><a name="Fl_Menu_.~Fl_Menu_">virtual Fl_Menu_::~Fl_Menu_()</a></h4>
+
+Destroys the menu and its items.
+
+<h4><a name="Fl_Menu_.menu">const Fl_Menu_Item* Fl_Menu_::menu() const<br>
+void Fl_Menu_::menu(const Fl_Menu_Item*)</a></h4>
+
+Get or set the menu array directly.  Setting it to <tt>NULL</tt> indicates that
+you want the widget to allocate its own array.
+
+<h4><a name="Fl_Menu_.value">int Fl_Menu_::value() const<br>
+int Fl_Menu_::value(int)<br>
+int Fl_Menu_::value(const Fl_Menu_Item*)</a></h4>
+
+The value is the index into <tt>menu()</tt> of the last item chosen by the
+user.  It is zero initially.  You can set it as an integer, or set it
+with a pointer to a menu item.  The set routines return non-zero if
+the new value is different than the old one.
+
+<h4><a name="Fl_Menu_.test_shortcut">const Fl_Menu_Item* Fl_Menu_::test_shortcut()</a></h4>
+
+Only call this in response to <tt>FL_SHORTCUT events</tt>.  If the event
+matches an entry in the menu that entry is selected and the callback
+will be done (or <tt>changed()</tt> will be set).  This allows shortcuts
+directed at one window to call menus in another.
+
+<h4><a name="Fl_Menu_.global">void Fl_Menu_::global()</a></h4>
+
+Make the shortcuts for this menu work no matter what window has the
+focus when you type it.  This is done by using <a
+href="#add_handler"><tt>Fl::add_handler()</tt></a>.  This
+<tt>Fl_Menu_</tt> widget does not have to be visible (ie the window it
+is in can be hidden, or it does not have to be put in a window at all).
+
+<p>Currently there can be only one <tt>global()<tt> menu.  Setting a new one
+will replace the old one.  There is no way to remove the <tt>global()</tt>
+setting (including destroying the menu).
+
+<h4><a name="Fl_Menu_.text">const char* Fl_Menu_::text() const<br>
+const char* Fl_Menu_::text(int i) const</a></h4>
+
+Returns the title of the last item chosen, or of item <tt>i</tt>.
+
+<h4><a name="Fl_Menu_.size">int Fl_Menu_::size() const</a></h4>
+
+This returns <tt>menu()->size()</tt>, which is how many entries are in
+the array, not counting the <tt>NULL</tt> ending, but including all
+submenus titles and the <tt>NULL</tt>'s that end them.  If the menu is
+<tt>NULL</tt> this returns zero.
+
+<h4><a name="Fl_Menu_.add">int Fl_Menu_::add(const char *,const char *,Fl_Callback *,void *v=0,int f=0)<br>
+int Fl_Menu_::add(const char *)</a></h4>
+
+The first form adds a new menu item, with a <tt>title</tt> string,
+<tt>shortcut</tt> string, <tt>callback</tt>, argument to the callback,
+and flags.  If <tt>menu()</tt> was originally set with <tt>NULL</tt>
+then space is allocated for the new item.  If instead you gave it an
+array then the array must have enough empty space for the new item. 
+The title string is copied, but the shortcut is not.
+
+<p>The second form splits the string at any | characters and then does
+<tt>add(s,0,0,0,0)</tt> with each section.  This is often useful if you
+are just using the value, and is compatable with some Forms programs.
+
+<p>Text is a string of the form "foo/bar/baz", this example will result
+in a submenu called "foo" and one in that called "bar" and and entry
+called "baz".  The text is copied to new memory and can be freed.  The
+other arguments are copied into the menu item unchanged.
+
+<P>If an item exists already with that name then it is replaced with
+this new one.  Otherwise this new one is added to the end of the
+correct menu or submenu.  The return value is the offset into the
+array that the new entry was placed at.
+
+<p>No bounds checking is done, the table must be big enough for all the
+entries you plan to add.  Don't forget that there is a <tt>NULL</tt> terminator
+on the end, and the first time a item is added to a submenu three
+items are added (the title and the <tt>NULL</tt> terminator, as well as the
+actual menu item)
+
+<P>The return value is the index into the array that the entry was put.
+
+<h4><a name="Fl_Menu_.clear">void Fl_Menu_::clear()</a></h4>
+
+Delete all the menu items.  Don't do this if you used <tt>menu(x)</tt> to
+set it to your own array.  You should do this before destroying the
+<tt>Fl_Menu_</tt> widget if it uses it's own array.
+
+<h4><a name="Fl_Menu_.replace">void Fl_Menu_::replace(int n, const char *)</a></h4>
+
+Changes the text of item <tt>n</tt>.  The passed string is copied.
+
+<h4><a name="Fl_Menu_.remove">void Fl_Menu_::remove(int n)</a></h4>
+
+Deletes item <tt>n</tt> from the menu.
+
+<h4><a name="Fl_Menu_.shortcut">void Fl_Menu_::shortcut(int i, int n);</a></h4>
+
+Changes the shortcut of item <tt>i</tt> to <tt>n</tt>.
+
+<h4><a name="Fl_Menu_.mode">void Fl_Menu_::mode(int i,int x);</a></h4>
+
+Changes the flags of item <tt>i</tt>.
+
+<h4><a name="Fl_Menu_.textcolor">Fl_Color Fl_Menu_::textcolor() const<br>
+void Fl_Menu_::textcolor(Fl_Color)</a></h4>
+
+Get or set the current color of menu item labels.
+
+<h4><a name="Fl_Menu_.textfont">Fl_Font Fl_Menu_::textfont() const<br>
+void Fl_Menu_::textfont(Fl_Font)</a></h4>
+
+Get or set the current font of menu item labels.
+
+<h4><a name="Fl_Menu_.textsize">uchar Fl_Menu_::textsize() const<br>
+void Fl_Menu_::textsize(uchar)</a></h4>
+
+Get or set the font size of menu item labels.
+
+<h4><a name="Fl_Menu_.down_box">Fl_Boxtype Fl_Menu_::down_box() const<br>
+void Fl_Menu_::down_box(Fl_Boxtype)</a></h4>
+
+This box type is used to surround the currently-selected items in the
+menus.  If this is <tt>FL_NO_BOX</tt> then it acts like
+<tt>FL_THIN_UP_BOX</tt> and <tt>selection_color()</tt> acts like
+<tt>FL_WHITE</tt>, for back compatability.
+
+</body>
+</html>

@@ -1,0 +1,499 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN=RIGHT>4 - Handling Events</H1>
+
+This chapter discusses the FLTK event model and how to handle events in your program or
+widget.
+
+<H2>The FLTK Event Model</H2>
+
+<H2>Mouse Events</H2>
+
+<H3><TT>FL_PUSH</TT></H3>
+
+<H3><TT>FL_RELEASE</TT></H3>
+
+<H3><TT>FL_DRAG</TT></H3>
+
+<H3><TT>FL_MOVE</TT></H3>
+
+<H2>Keyboard Events</H2>
+
+<H3><TT>FL_KEYBOARD</TT></H3>
+
+<H3><TT>FL_SHORTCUT</TT></H3>
+
+<H2>Widget Events</H2>
+
+<H3><TT>FL_ACTIVATE</TT></H3>
+
+<H3><TT>FL_DEACTIVATE</TT></H3>
+
+<H3><TT>FL_HIDE</TT></H3>
+
+<H3><TT>FL_SHOW</TT></H3>
+
+<H3><TT>FL_FOCUS</TT></H3>
+
+<H3><TT>FL_UNFOCUS</TT></H3>
+
+<H3><TT>FL_ENTER</TT></H3>
+
+<H3><TT>FL_LEAVE</TT></H3>
+
+<H3><TT>FL_PASTE</TT></H3>
+
+<H3><TT>FL_SELECTIONCLEAR</TT></H3>
+
+</BODY>
+</HTML>
+<title>Events in Fltk</title>
+<a name=types>
+<h2>Events in Fltk</h2>
+
+<p>Events are identified the small integer argument passed to the <a
+href=subclass.html#handle>Fl_Widget::handle()</a> virtual method.
+Other information about the most recent event is stored in static
+locations and aquired by calling <a
+href=#information><code>Fl::event_*()</code></a>.  This static
+information remains valid until the next event is read from the X
+server (that is, it is ok to look at it outside the handle() method).
+
+</ul><h4><code>FL_PUSH (1)</code></h4><ul>
+
+A mouse button has gone down with the mouse pointing at this widget.
+You can find out what button by calling <a
+href=#event_button>Fl::event_button()</a>.  You find out the mouse
+position by calling <a href=#event_x>Fl::event_x() and
+Fl::event_y()</a>.
+
+<p>A widget indicates that it "wants" the mouse click by returning
+non-zero from it's <a href=subclass.html#handle>handle()</a> method.
+It will then become the <a href=#pushed>Fl::pushed()</a> widget and
+will get FL_DRAG and the matching FL_RELEASE events.  If handle()
+returns zero then fltk will try sending the FL_PUSH to another widget.
+
+</ul><h4><code>FL_DRAG (5)</code></h4><ul>
+
+The mouse has moved with the button held down.
+
+</ul><h4><code>FL_RELEASE (2)</code></h4><ul>
+
+A mouse button has been released.  You can find out what button by
+calling <a href=#event_button>Fl::event_button()</a>.
+
+</ul><h4><code>FL_ENTER (3)</code></h4><ul>
+
+The mouse has been moved to point at this widget.  This can be used
+for highlighting feedback.  If a widget wants to highlight or
+otherwise track the mouse, it indicates this by returning
+non-zero from it's <a href=subclass.html#handle>handle()</a> method.
+It then becomes the <a href=#belowmouse>Fl::belowmouse()</a> widget
+and will receive FL_MOVE and FL_EXIT events.
+
+</ul><h4><code>FL_MOVE (10)</code></h4><ul>
+
+The mouse has moved without any mouse buttons held down.  This event
+is sent (sort of) to the belowmouse() widget.
+
+</ul><h4><code>FL_LEAVE (4)</code></h4><ul>
+
+The mouse has moved out of the widget.
+
+</ul><h4><code>FL_FOCUS (6)</code></h4><ul>
+
+This indicates an <i>attempt</i> to give a widget the keyboard
+focus.
+
+<p>If a widget wants the focus, it should change itself to display the
+fact that it has the focus, and return non-zero from it's <a
+href=subclass.html#handle>handle()</a> method.  It then becomes the <a
+href=#focus>Fl::focus()</a> widget and gets FL_KEYBOARD and FL_UNFOCUS
+events.
+
+<p>The focus will change either because the window manager changed
+which window gets the focus, or because the user tried to navigate
+using tab, arrows, or other keys.  You can check <a
+href=#event_key>Fl::event_key()</a> to figure out why it moved.  For
+navigation it will be the key pressed, for instructions from the
+window manager it will be zero.
+
+</ul><h4><code>FL_UNFOCUS (7)</code></h4><ul>
+
+Sent to the old <a href=#focus>Fl::focus()</a> when something else
+gets the focus.
+
+</ul><h4><code>FL_KEYBOARD (8)</code></h4><ul>
+
+A key press.  The key pressed can be found in <a
+href=#event_key>Fl::event_key()</a>, or, more usefully, the text that
+the key should insert can be found with <a
+href=#event_text>Fl::event_text()</a> and it's length is in <a
+href=#event_length>Fl::event_length()</a>.  If you use the key
+handle() should return 1.  If you return zero then fltk assummes you
+ignored the key.  It will then attempt to send it to a parent widget.
+If none of them want it, it will change the event into a FL_SHORTCUT
+event.
+
+</ul><h4><code>FL_SHORTCUT (11)</code></h4><ul>
+
+If the <a href=#focus>Fl::focus()</a> is zero or ignores an
+FL_KEYBOARD event then fltk tries sending this event to every widget
+it can, until one of them returns non-zero.  FL_SHORTCUT is first sent
+to the belowmouse widget, then it's parents and siblings, and
+eventually to every widget in the window, trying to find an object
+that returns non-zero.  Fltk tries real hard to not let any keystrokes
+be ignored!
+
+<p>If the <a href=#event_text>Fl::event_text()</a> is a lower or
+upper-case letter, and nothing wants the shortcut 
+
+<p>You can also make "global" shortcuts by using <a
+href=#add_handler>Fl::add_handler()</a>.  A global shortcut will work
+no matter what windows are displayed or which one has the focus.
+
+</ul><h4><code>FL_DEACTIVATE (13)</code></h4><ul>
+
+This widget is no longer active, due to <a
+href=Fl_Widget.html#active>deactivate()</a> being called on it or one
+of it's parents.  active() may still be true after this, the widget is
+only active if active() is true on it and all it's parents.
+
+</ul><h4><code>FL_ACTIVATE (14)</code></h4><ul>
+
+This widget is now active, due to <a
+href=Fl_Widget.html#activate>active()</a> being called on it or one
+of it's parents.
+
+</ul><h4><code>FL_HIDE (15)</code></h4><ul>
+
+This widget is no longer visible, due to <a
+href=Fl_Widget.html#visible>hide()</a> being called, or a parent group
+or window having hide() be called, or due to a parent window being
+iconized.  visible() may still be true after this, the widget is
+visible only if visible() is true for it and all it's parents.
+
+</ul><h4><code>FL_SHOW (16)</code></h4><ul>
+
+This widget is visible again, due to <a
+href=Fl_Widget.html#visible>show()</a> being called on it or one of
+it's parents, or due to a parent window being deiconized.  <i>Child
+Fl_Windows respond to this by actually creating the X window if not
+done already, so if you subclass a window, be sure to pass FL_SHOW to
+the base class handle() method!</i>
+
+<a name=paste>
+</ul><h4><code>FL_PASTE (17)</code></h4><ul>
+
+You should get this event some time after you call <a
+href=cutpaste.html>Fl::paste()</a>.  The contents of <a
+href=#event_text>Fl::event_text()</a> is the text to insert and the
+number of characters is in <a href=#event_length>Fl::event_length()</a>.
+
+</ul><h4><code>FL_SELECTIONCLEAR (18)</code></h4><ul>
+
+The <a href=cutpaste.html>Fl::selection_owner()</a> will get this
+event before the selection is moved to another widget.  This indicates
+that some other widget or program has claimed the selection.
+
+</ul>
+
+<a name=information>
+<h2>Fl::event_*() methods</h2>
+
+Fltk keeps the information about the most recent event in static
+storage.  This information is good until the next event is processed.
+Thus it is valid inside handle() and callback() methods.
+
+<p>These are all trivial inline functions and thus very fast and
+small.  The data is stored in static locations and remains valid until
+the next X event is handled.
+
+<a name=event_button>
+</ul><h4><code>int Fl::event_button();</code></h4><ul>
+
+Returns which mouse button was pressed.  This returns garbage if the
+most recent event was not a FL_PUSH or FL_RELEASE.
+
+<a name=event_x>
+</ul><h4><code>int Fl::event_x()</code>
+<br><code>int Fl::event_y()</code></h4><ul>
+
+Returns the mouse position of the event (relative to the Fl_Window it
+was passed to).
+
+</ul><h4><code>int Fl::event_x_root()</code>
+<br><code>int Fl::event_y_root()</code></h4><ul>
+
+Returns the mouse position on the screen of the event.  To find the
+absolute position of an Fl_Window on the screen, use the difference
+between event_x_root and event_x.
+
+<a name=get_mouse>
+</ul><h4><code>void Fl::get_mouse(int &,int &)</code></h4><ul>
+
+<p>Return where the mouse is on the screen by doing a round-trip query
+to the server.  You should use <a
+href=#event_x>Fl::event_x/y_root()</a> if possible, but this is
+necessary if you are not sure if a mouse event has been processed
+recently (such as to position your first window).  If the display is
+not open, this will open it.
+
+<a name=event_state>
+</ul><h4><code>ulong Fl::event_state();
+<br>unsigned int Fl::event_state(int);</code></h4><ul>
+
+This is a bitfield of what shift states were on and what mouse buttons
+were held down during the most recent event.  The second version
+returns non-zero if any of the passed bits are turned on.  The legal
+bits are <code>FL_SHIFT, FL_CAPS_LOCK, FL_CTRL, FL_ALT, FL_NUM_LOCK,
+FL_META, FL_SCROLL_LOCK, FL_BUTTON1, FL_BUTTON2, FL_BUTTON3</code>.
+
+<i><p>X servers do not agree on shift states and FL_NUM_LOCK, FL_META,
+and FL_SCROLL_LOCK may not work.  The values were selected to match
+the XFree86 server on Linux.  In addition there is a bug in the way
+Xlib works so that the shift state is not correctly reported until the
+first event <b>after</b> the shift key is pressed or released.</i>
+
+<a name=event_key>
+</ul><h4><code>int Fl::event_key();
+<br>int Fl::event_key(int);
+<br>int Fl::get_key(int);</code></h4><ul>
+
+Fl::event_key() returns which key on the keyboard was last pushed.
+
+<p>Fl::event_key(int) returns true if the given key was held down (or
+pressed) <i>during</i> the last event.  This is constant until the
+next event is read from the server.
+
+<p>Fl::get_key(int) returns true if the given key is held down
+<i>now</i>.  Under X this requires a round-trip to the server and is
+<i>much</i> slower than Fl::event_key(int).
+
+<p>Keys are identified by the <i>unshifted</i> X keysym values.
+However fltk defines a set of symbols that should work on most modern
+machines for every key on the generic PC keyboard:
+
+<p><ul>
+
+<li>All keys on the main keyboard producing a printable ASCII
+character use the value of that ASCII character (as though shift,
+ctrl, and caps lock were not on).  The space bar is 32.
+
+<li>All keys on the numeric keypad producing a printable ASCII
+character use the value of that ASCII character plus
+<code>FL_KP</code>.  The highest possible value is
+<code>FL_KP_Last</code> so you can range-check to see if something is
+on the keypad.
+
+<li>All numbered function keys use the number on the function key plus
+<code>FL_F</code>.  The highest possible number is
+<code>FL_F_Last</code>, so you can range-check a value.
+
+<li>Buttons on the mouse are considered keys, and use the button
+number (where the left button is 1) plus <code>FL_Button</code>.
+
+<li>All other keys on the keypad have a symbol: <code>FL_Escape,
+FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause,
+FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
+FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
+FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
+FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter</code>.  Be
+careful not to confuse these with the very similar, but all-caps,
+symbols used by <a href=#event_state>Fl::event_state()</a>.
+
+</ul>
+
+<p>Known bugs: on X <code>Fl::get_key(FL_Button+n)</code> does not
+work.  On MSWindows <code>Fl::get_key(FL_KP_Enter)</code> and
+<code>Fl::event_key(FL_KP_Enter)</code> do not work.
+
+<a name=event_text>
+</ul><h4><code>char * Fl::event_text()</code></h4><ul>
+
+<p>ASCII text (in the future this may be UTF-8) produced by the last
+FL_KEYBOARD or FL_PASTE or possibly other event.  A zero-length string
+is returned for any keyboard function keys that do not produce text.
+This pointer points at a static buffer and is only valid until the
+next event is processed.
+
+<p>Under X this is the result of XLookupString.
+
+<a name=event_length>
+</ul><h4><code>char * Fl::event_length()</code></h4><ul>
+
+<p>Length of the text in Fl::event_text().  There will always be a
+null at this position in the text.  However there may be a nul before
+that if the keystroke translates to a nul character or you paste a nul
+character.
+
+</ul><h4><code>int Fl::event_is_click()</code></h4><ul>
+
+Returns non-zero if the mouse has not moved far enough and not enough
+time has passed since the last FL_PUSH or FL_KEYBOARD event for it
+to be considered a "drag" rather than a "click".  You can test this on
+FL_DRAG, FL_RELEASE, and FL_MOVE events.
+
+</ul><h4><code>void Fl::event_is_click(0)</code></h4><ul>
+
+Clear the value returned by Fl::event_is_click().  Useful to prevent
+the <i>next</i> click from being counted as a double-click or to make
+a popup menu pick an item with a single click.  Don't pass non-zero to
+this.
+
+</ul><h4><code>int Fl::event_clicks()</code></h4><ul>
+
+Returns non-zero if the most recent FL_PUSH or FL_KEYBOARD was a
+"double click".  Returns N-1 for N clicks.  A double click is counted
+if the same button is pressed again while event_is_click() is true.
+
+</ul><h4><code>void Fl::event_clicks(int)</code></h4><ul>
+
+Directly set the number returned by Fl::event_clicks().  This can be
+used to set it to zero so that later code does not think an item was
+double-clicked.
+
+</ul><h4><code>int Fl::event_inside(const Fl_Widget *) const ;
+<br>int Fl::event_inside(int,int,int,int);</code></h4><ul>
+
+Returns non-zero if the current event_x and event_y put it inside the
+widget or inside an arbitrary bounding box.  You should always call
+this rather than doing your own comparison so you are consistent about
+edge effects.
+
+</ul><h4><code>int Fl::test_shortcut(ulong) const ;</code></h4><ul>
+
+Test the current event, which must be an FL_KEYBOARD or FL_SHORTCUT,
+against a shortcut value (described in <a
+href=Fl_Button.html#shortcut>Fl_Button</a>).  Returns non-zero if
+there is a match.  Not to be confused with <a
+href=subclass.html#test_shortcut>Fl_Widget::test_shortcut()</a>.
+
+</ul>
+
+<a name=propagation>
+<h2>Event Propagation</h2>
+
+<p>Fltk follows very simple and unchangeable rules for sending events.
+The major innovation is that widgets can indicate (by returning 0 from
+the handle() method) that they are not interested in an event, and fltk
+can then send that event elsewhere.  This eliminates the need for
+"interests" (event masks or tables), and this is probably the main
+reason fltk is much smaller than other X toolkits.
+
+<p>Most events are sent directly to the handle() method of the
+Fl_Window that X says they belong to.  The window (actually the
+Fl_Group that Fl_Window is a subclass of) is responsible for sending
+the events on to any child widgets.  To make the Fl_Group code
+somewhat easier, fltk sends some events (FL_DRAG, FL_RELEASE,
+FL_KEYBOARD, FL_SHORTCUT, FL_UNFOCUS, FL_LEAVE) directly to leaf
+widgets.  These procedures control those leaf widgets:
+
+<a name=focus>
+</ul><h4><code>Fl_Widget *Fl::focus() const;
+<br>void Fl::focus(Fl_Widget *);</code></h4><ul>
+
+Get or set the widget that will receive FL_KEYBOARD events.
+
+<p>If you change Fl::focus(), the old one and all parents (that don't
+contain the new widget) are sent FL_UNFOCUS events.  Changing the
+focus does <i>not</i> send FL_FOCUS to this or any widget, because
+sending FL_FOCUS is supposed to <i>test</i> if the widget wants the
+focus (by it returning non-zero from handle()).
+
+</ul><h4><code>int Fl_Widget::take_focus();</code></h4><ul>
+
+<p>Try to make this widget be the Fl::focus(), by first sending it an
+FL_FOCUS event, and if it returns non-zero, setting Fl::focus() to
+this widget.  You should use this method to assign the focus to an
+widget.  Returns true if the widget accepted the focus.
+
+<a name=belowmouse>
+</ul><h4><code>Fl_Widget *Fl::belowmouse() const;
+<br>void Fl::belowmouse(Fl_Widget *);</code></h4><ul>
+
+Get or set the widget that is below the mouse.  This is for
+highlighting buttons.  It is not used to send FL_PUSH or FL_MOVE
+directly, for several obscure reasons, but those events typically go
+to this widget.  This is also the first widget tried for FL_SHORTCUT
+events.
+
+<p>If you change the belowmouse widget, the old one and all parents (that
+don't contain the new widget) are sent FL_LEAVE events.  Changing this
+does <i>not</i> send FL_ENTER to this or any widget, because
+sending FL_ENTER is supposed to <i>test</i> if the widget wants the
+mouse (by it returning non-zero from handle()).
+
+<a name=pushed>
+</ul><h4><code>Fl_Widget *Fl::pushed() const;
+<br>void Fl::pushed(Fl_Widget *);</code></h4><ul>
+
+<p>Get or set the widget that is being pushed.  FL_DRAG or FL_RELEASE
+(and any more FL_PUSH) events will be sent to this widget.
+
+<p>If you change the pushed widget, the old one and all parents (that
+don't contain the new widget) are sent FL_RELEASE events.  Changing
+this does <i>not</i> send FL_PUSH to this or any widget, because
+sending FL_PUSH is supposed to <i>test</i> if the widget wants the
+mouse (by it returning non-zero from handle()).
+
+<a name=add_handler>
+</ul><h4><code>void Fl::add_handler(int (*f)(int));</code></h4><ul>
+
+Install a function to parse unrecognized events.  If fltk cannot figure
+out what to do with an event, it calls each of these functions (most
+recent first) until one of them returns non-zero.  If none of them
+returns non zero then the event is ignored.  Events that cause this to
+be called are:
+
+<p><ul>
+<li>FL_SHORTCUT events that are not recognized by any widget.  This
+lets you provide global shortcut keys.
+
+<li>System events that fltk does not recognize.  See <a
+href=x.html#fl_xevent>fl_xevent</a>.
+
+<li><i>Some</i> other events when the widget fltk selected returns zero
+from it's handle() method.  Exactly which ones may change in future
+versions, however.
+</ul>
+
+<a name=modal>
+</ul><h4><code>Fl_Window* Fl::modal();</code></h4><ul>
+
+The modal() window has it's handle() method called for all events, and
+no other windows will have handle() called.  If <a
+href=#grab>grab()</a> has been done then this is equal to grab().
+Otherwise this is the most recently shown() window with <a
+href=Fl_Window.html#modal>modal()</a> true, or null if there are no
+modal() windows shown().
+
+<a name=grab>
+</ul><h4><code>void Fl::grab(Fl_Window&);<br>
+Fl_Window* Fl::grab();</code></h4><ul>
+
+This is used when pop-up menu systems are active.  Send all events to
+the passed window no matter where the pointer or focus is (including
+in other programs).  The window <i>does not have to be shown()</i>,
+this lets the handle() method of a "dummy" window override all event
+handling and allows you to map and unmap a complex set of windows
+(under both X and NT <i>some</i> window must be mapped because the
+system interface needs a window id).
+
+<p>Fl::event_x() and y() are undefiend if the passed widget is not a
+mapped Fl_Window.  Use Fl::event_x_root() and Fl::event_y_root()
+instead.
+
+<p><i>Be careful that your program does not enter an infinite loop
+while grab() is on.  On X this will lock up your screen!</i>
+
+<p>The second function returns the current grab window, or null if
+none.
+
+<a name=release>
+</ul><h4><code>void Fl::release()</code></h4><ul>
+
+Turn off the grab() behavior.
+
+</ul><p><a href = index.html>(back to contents)</a>

@@ -1,0 +1,519 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN=RIGHT><A NAME="subclassing">5 - Adding and Extending Widgets</A></H1>
+
+This chapter describes how to add your own widgets or extend existing widgets in FLTK.
+
+<H2>Subclassing</H2>
+
+<H2>Adding Syntax Highlighting to the Fl_Input Widget</H2>
+
+<H2>Drawing Functions</H2>
+
+<H3>Lines, Rectangles, and Curves, Oh, My!</H3>
+
+<H3>Colors</H3>
+
+<H3>Fonts</H3>
+
+<H3>Images</H3>
+
+<H2><A NAME="Fl_Table">Writing a Table Widget</A></H2>
+
+<H3>Methods</H3>
+
+<H3>Cut and Paste Support</H3>
+
+</BODY>
+</HTML>
+<title>Cut & paste</title>
+<h2>Cut & paste</h2>
+
+Fltk provides routines to cut and paste ASCII text (in the future this
+may be UTF-8) between applications.  It may be possible to cut/paste
+non-ascii data under X by using <a
+href=events.html#add_handler>Fl::add_handler()</a>.
+
+</ul><h4><code>void Fl::paste(Fl_Widget *receiver)</code></h4><ul>
+
+<P>Set things up so the receiver widget will be called with an <a
+href=events.html#paste>FL_PASTE</a> event some time in the future.
+The reciever should be prepared to be called <i>directly</i> by this,
+or for it to happen <i>later</i>, or possibly <i>not at all</i>.  This
+allows the window system to take as long as necessary to retrieve the
+paste buffer (or even to screw up completely) without complex and
+error-prone synchronization code in fltk.
+
+</ul><h4><code>void Fl::selection(Fl_Widget *owner, const char *stuff, int len);
+</code></h4><ul>
+
+<p>Change the current selection.  The block of text is copied to an
+internal buffer by Fltk (be careful if doing this in response to an
+FL_PASTE as this <i>may</i> be the same buffer returned by
+event_text()).  The selection_owner is set to the passed owner
+(possibly sending FL_SELECTIONCLEAR to the previous owner).
+
+</ul><h4><code>const char* Fl::selection();
+<br>int Fl::selection_length();</code></h4><ul>
+
+You can look at the buffer containing the current selection.  Contents
+of this buffer are undefined if this program does not own the X
+selection.
+
+</ul><h4><code>Fl_Widget *Fl::selection_owner() const;
+<br>void Fl::selection_owner(Fl_Widget *);</code></h4><ul>
+
+<p>The single-argument selection_owner(x) call can be used to move the
+selection to another widget or to set the owner to NULL, without
+changing the actual text of the selection.  FL_SELECTIONCLEAR is sent
+to the old selection owner, if any.
+
+</ul>
+
+<p><i>Copying the buffer every time the selection is changed is
+obviously wasteful, especially for large selections.  I expect an
+interface will be added in a future version to allow the selection to
+be made by a callback function.  The current interface will be
+emulated on top of this.</i>
+
+<title>Making a subclass of Fl_Widget</title>
+</ul><h2>Making a subclass of Fl_Widget</h2>
+
+<p>Your subclasses can directly descend from Fl_Widget or any
+subclass of Fl_Widget.  Fl_Widget has only four virtual methods, and
+overriding some or all of these may be necessary.
+
+<p>Parts of this document:
+
+<ul>
+
+<li><a href=#constructor>Constructing your Fl_Widget</a>
+
+<li><a href=#protected>Protected methods of Fl_Widget</a>
+
+<li>Virtual functions to override:
+
+<ul>
+
+<li><code><a href=#handle>int Fl_Widget::handle(int
+event);</a></code>
+
+<li><code><a href=#draw>void Fl_Widget::draw();</a></code>
+
+<li><code><a href=#resize>void
+Fl_Widget::resize(int,int,int,int);</a></code>
+
+<li><code><a href=#destructor>Fl_Widget::~Fl_Widget();</a></code>
+
+</ul>
+
+<li><a href=#composite>Making a Composite/Group Widget</a>
+
+<li><a href=#window>Making a subclass of Fl_Window</a>
+
+</ul>
+
+<a name=constructor>
+<h2>Constructing your Fl_Widget</h2>
+
+I recommend your constructor be of this form:
+
+<p><pre>
+    Class(int x, int y, int w, int h, const char* label = 0);
+</pre>
+
+<p>This will allow the class name to be typed into <a
+href=fluid.html>fluid</a> and it will produce the correct call.
+
+<p>The constructor must call the constructor for the base class and
+pass the same arguments.  Fl_Widget's protected constructor sets x(),
+y(), w(), h(), and label() to the passed values and initializes the
+other instance variables to:
+
+<p><pre>
+    type(0);
+    box(FL_NO_BOX);
+    color(FL_GRAY);
+    selection_color(FL_GRAY);
+    labeltype(FL_NORMAL_LABEL);
+    labelstyle(FL_NORMAL_STYLE);
+    labelsize(FL_NORMAL_SIZE);
+    labelcolor(FL_BLACK);
+    align(FL_ALIGN_CENTER);
+    callback(default_callback,0);
+    flags(ACTIVE|VISIBLE);
+</pre>
+
+<a name=protected>
+<h2>Protected methods of Fl_Widget</h2>
+
+<p>These methods are provided for subclasses to use.
+
+</ul><h4><code>uchar Fl_Widget::type() const;
+<br>void Fl_Widget::type(uchar);
+</code></h4><ul>
+
+The property Fl_Widget::type() can return an arbitrary 8-bit
+identifier, and can be set with the protected method type(uchar).
+This value had to be provided for Forms compatability, but you can use
+it for any purpose you want.  Try to keep the value less than 100 to
+not interfere with reserved values.
+
+<p>Fltk does not use RTTI (Run Time Typing Infomation), to enhance
+portability.  But this may change in the near future if RTTI becomes
+standard everywhere.
+
+<p>If you don't have RTTI you can use the clumsy fltk mechanisim, by
+having type() have a unique value.  These unique values must be
+greater than the symbol FL_RESERVED_TYPE (which is 100).  Grep through
+the header files for "FL_RESERVED_TYPE" to find an unused number.  If
+you make a subclass of Fl_Group you must use FL_GROUP+n, and if you
+make a subclass of Fl_Window you must use FL_WINDOW+n (in both cases n
+is in the range 1-7).
+
+<a name=test_shortcut>
+</ul><h4><code>void Fl_Widget::set_flag(SHORTCUT_LABEL);</code></h4><ul>
+
+If your constructor calls this it modifies draw_label() so that '&'
+characters cause an underscore to be printed under the next letter.
+
+</ul><h4><code>int Fl_Widget::test_shortcut() const;<br>
+static int Fl_Widget::test_shortcut(const char *);</code></h4><ul>
+
+The first version tests Fl_Widget::label() against the current event
+(which should be a FL_SHORTCUT event).  If the label contains a '&'
+character and the character after it matches the key press, this
+returns true.  This returns false if the SHORTCUT_LABEL flag is off,
+if the label is null or does not have a '&' character in it, or if the
+keypress does not match the character.
+
+<p>The second version lets you do this test to an arbitrary string.
+
+</ul><h4><code>void Fl_Widget::x(short);
+<br>void Fl_Widget::y(short);
+<br>void Fl_Widget::w(short);
+<br>void Fl_Widget::h(short);</code></h4><ul>
+
+You can directly clobber the values for <a
+href=Fl_Widget.html#xywh>x(), y(), w(), and h()</a>.  Make sure you
+know what you are doing.  This is most useful for temporarily
+replacing the values before calling handle() or draw() on the base
+class to "fool" it into working in a different area.
+
+<a name=damage>
+</ul><h4><code>void Fl_Widget::damage(uchar mask);</code></h4><ul>
+
+Indicate that a partial update of the object is needed.  The bits in
+mask are or'd into damage().  Your draw() routine can examine these
+bits to limit what it is drawing.  The public method
+Fl_Widget::redraw() simply does Fl_Widget::damage(-1).
+
+</ul><h4><code>void Fl_Widget::damage(uchar mask,int x,int y,int w,int
+h);</code></h4><ul>
+
+Indicate that a region is damaged.  If only these calls are done in a
+window (no calls to damage(n)) then fltk will clip to the union of all
+these calls before drawing anything.  This can greatly speed up
+incremental displays.  The mask bits are or'd into damage() (unless
+this is a Fl_Window, in which case they are forced to the value 6 for
+internal reasons).
+
+</ul><h4><code>void Fl_Widget::clear_damage(uchar value = 0);</code></h4><ul>
+
+Directly set damage() to the passed value.  This is provided for
+kludges only.
+
+</ul><h4><code>uchar Fl_Widget::damage()</code></h4><ul>
+
+Return the bitwise-or of all damage(n) calls done since the last
+draw().  The public method redraw() does damage(-1), but the
+implementation of your widget can call the private damage(n).
+
+</ul><h4><code>void Fl_Widget::set_visible();
+<br>void Fl_Widget::clear_visible();</code></h4><ul>
+
+Fast inline versions of Fl_Widget::hide() and Fl_Widget::show().
+These do not send the FL_HIDE and FL_SHOW events to the widget.
+
+</ul><h4><code>void Fl_Widget::draw_box() const ;</code></h4><ul>
+
+Draw this widget's box(), using the dimensions of the widget.
+
+</ul><h4><code>void Fl_Widget::draw_box(Fl_Boxtype b,ulong c) const
+;</code></h4><ul>
+
+Pretend the box()==b and the color()==c and draw this widget's box.
+
+<a name=draw_label>
+</ul><h4><code>void Fl_Widget::draw_label() const ;</code></h4><ul>
+
+This is the usual function for a draw() method to call to draw the
+widget's label.  It does not draw the label if it is supposed to be
+outside the box (on the assumption that the enclosing group will draw
+those labels).
+
+</ul><h4><code>void Fl_Widget::draw_label(int x,int y,int w,int h) const
+;</code></h4><ul>
+
+Do the same thing except use the passed bounding box.  This is useful
+so "centered" labels are aligned with some feature, such as a moving
+slider.
+
+</ul><h4><code>void Fl_Widget::draw_label(int x,int y,int w,int
+h,Fl_Align align) const ;</code></h4><ul>
+
+Draw the label anywhere.  It acts as though FL_ALIGN_INSIDE has been
+forced on, the label will appear inside the passed bounding box.  This
+is designed for parent groups to draw labels with.
+
+</ul>
+<a name=handle>
+<h2>virtual int Fl_Widget::handle()</h2>
+
+The virtual method <b><code>int Fl_Widget::handle(int
+event)</code></b> is called to handle each event passed to the widget.
+It can:<ul>
+
+<li>Change the state of the widget.
+
+<li>Call <a href=Fl_Widget.html>Fl_Widget::redraw()</a> if the widget
+needs to be redisplayed.
+
+<li>Call <a href=#damage>Fl_Widget::damage(n)</a> if the widget needs
+a partial-update (assumming you provide support for this in your
+Fl_Widget::draw() method).
+
+<li>Call <a href=Fl_Widget.html>Fl_Widget::do_callback()</a> if a
+callback should be generated.
+
+<li>Call Fl_Widget::handle() on child widgets.
+
+</ul>
+
+<p>Events are identified the small integer argument.  Other
+information about the most recent event is stored in static locations
+and aquired by calling <a href=events.html><code>Fl::event_*()</code></a>.
+This other information remains valid until another event is read from
+the X server.
+
+<p>Here is a sample Fl_Widget::handle(), for a widget that acts as a
+pushbutton and also accepts the keystroke 'x' to cause the callback:
+
+<ul><pre>int Fl_Pushbutton::handle(int event) {
+  switch(event) {
+    case FL_PUSH:
+      highlight = 1; redraw();
+      return 1;
+    case FL_DRAG:
+      {int t = Fl::event_inside(this);
+      if (t != highlight) {highlight = t; redraw();}}
+      return 1;
+    case FL_RELEASE:
+      if (highlight) {
+	highlight = 0; redraw();
+        do_callback();
+	// never do anything after a callback, so that the callback
+	// may delete the widget!
+      }
+      return 1;
+    case FL_SHORTCUT:
+      if (Fl::event_key() == 'x') {do_callback(); return 1;}
+      return 0;
+    default:
+      return 0;
+    }
+  }
+}
+</pre></ul>
+
+<p>You must return non-zero if your handle() method used the event.
+If you return zero it indicates to the parent that it can try sending
+another widget the event.
+
+<p>It looks like it is best to make the handle() method public.
+
+<a name=draw>
+<h2>virtual void Fl_Widget::draw()</h2>
+
+<p>The virtual method Fl_Widget::draw() is called when fltk wants you
+to redraw your widget.  It will be called if and only if damage() is
+non-zero, and damage() will be cleared to zero after it returns.
+draw() should be declared protected, so that subclasses may call it
+but it can't be called from non-drawing code.
+
+<p>damage() contains the bitwise-or of all the damage(n) calls to this
+widget since it was last drawn.  This can be used for minimal update,
+by only redrawing the parts whose bits are set.  Fltk will turn
+<i>all</i> the bits on if it thinks the entire widget must be redrawn
+(for instance due to an expose event).  It is easiest to program to
+handle this by pretending a bit (usually damage()&128) draw the
+non-minimal-update parts of your widget (such as the box()).
+
+<p>Expose events (and the above damage(b,x,y,w,h)) will cause draw()
+to be called with fltk's <a href=Draw.html#clipping>clipping</a>
+turned on.  You can greatly speed up redrawing in some cases by
+testing <code>fl_clipped</code> and <code>fl_current_clip</code>
+and skipping invisible parts.
+
+<p>The functions you can use to draw are described in <a
+href=Draw.html>&lt;FL/fl_draw.H></a> or any of the protected
+Fl_Widget::draw_* methods described above.
+
+<a name=resize>
+<h2>virtual void Fl_Widget::resize(int,int,int,int);</h2>
+
+This is called when the widget is being resized or moved.  The
+arguments are the new position, width, and height.  x(), y(), w(), and
+h() still return the old size.  You must call resize() on your
+base class with the same arguments to get the widget size to actually
+change.
+
+<p>This should <i>not</i> call redraw(), at least if only the x() and
+y() change.  This is because group objects like <a
+href=Fl_Scroll.html>Fl_Scroll</a> may have a more efficient way of
+drawing the new position.
+
+<p>It may be useful to refer to the size the widget was constructed
+at, these are stored in Fl_Widget::ix(), iy(), iw(), and ih().
+
+<p>Resize should be declared public.
+
+<a name=destructor>
+<h2>virtual Fl_Widget::~Fl_Widget();</h2>
+
+We all know why the destructor must be virtual don't we?  Don't forget
+to make it public.
+
+<a name=composite>
+<h2>Making a Composite/Group Widget</h2>
+
+A "composite" widget contains one or more "child" widgets.  To do this
+you should subclass <a href=Fl_Group.html>Fl_Group</a> (it is
+possible to make a composite object that is not a subclass of
+Fl_Group, but this is very difficult).
+
+<p>Instances of the child widgets may be included in the parent:
+
+<ul><pre>class MyClass : public Fl_Group {
+  Fl_Button the_button;
+  Fl_Slider the_slider;
+  ...
+};
+</pre></ul>
+
+<p>The constructor has to initialize these instances.  They are
+automatically add()ed to the group, since the Fl_Group constructor
+does begin().  <i>Don't forget to call end():</i>
+
+<ul><pre>MyClass::MyClass(int x,int y,int w,int h) :
+  Fl_Group(x,y,w,h),
+  the_button(x+5,y+5,100,20),
+  the_slider(x,y+50,w,20)
+{
+  ...(you could add dynamically created child widgets here)...
+  end(); // don't forget to do this!
+}
+</pre></ul>
+
+<p>The child widgets need callbacks.  These will be called with a
+pointer to the children, but the widget itself may be found in the
+parent() pointer of the child.  Usually these callbacks can be static
+private methods, with a matching private method:
+
+<ul><pre>void MyClass::slider_cb(Fl_Widget* v, void *) { // static method
+  ((MyClass*)(v->parent())->slider_cb();
+}
+void MyClass::slider_cb() { // normal method
+  use(the_slider->value());
+}
+</pre></ul>
+
+<p>If you make the handle() method, you can quickly pass all the
+events to the children (notice that you don't need to override
+handle() if your composite widget does nothing other than pass events
+to the children):
+
+<ul><pre>int MyClass::handle(int event) {
+  if (Fl_Group::handle(event)) return 1;
+  ... handle events that children don't want ...
+}
+</pre></ul>
+
+<p>If you override draw() you need to draw all the children.  If
+redraw() or damage() is called on a child, damage(1) is done to the
+group.  Thus the 1 bit of damage() can be used to indicate that a
+child needs to be drawn.  It is fastest if you avoid drawing anything
+else in this case:
+
+<ul><pre>int MyClass::draw() {
+  Fl_Widget*const* a = array();
+  if (damage()==1) { // only redraw some children
+    for (int i=children(); i--; a++) update_child(**a);
+  } else { // total redraw
+    ... draw background graphics ...
+    // now draw all the children atop the background:
+    for (int i=children_; i--; a++) {
+      draw_child(**a);
+      draw_outside_label(**a); // you may not want to do this
+    }
+  }
+}
+</pre></ul>
+
+<p>Fl_Group provides some protected methods to make drawing easier:
+
+</ul><h4><code>void Fl_Group::draw_outside_label(Fl_Widget&) const;</code></h4><ul>
+
+Draw the labels that are <i>not</i> drawn by <a
+href=#draw_label>draw_label()</a>.  If you want more control over the
+label positions you might want to call child->draw_label(x,y,w,h,a).
+
+</ul><h4><code>void Fl_Group::draw_child(Fl_Widget&);</code></h4><ul>
+
+This will force the child's damage() bits all to one and call draw()
+on it, then clear the damage().  You should call this on all children
+if a total redraw of your widget is requested, or if you draw
+something (like a background box) that damages the child.  Nothing is
+done if the child is not visible() or if it is clipped.
+
+</ul><h4><code>void Fl_Group::update_child(Fl_Widget&);</code></h4><ul>
+
+Draws the child only if it's damage() is non-zero.  You should call
+this on all the children if your own damage is equal to 1.  Nothing is
+done if the child is not visible() or if it is clipped.
+
+</ul>
+
+<a name=window>
+<h2>Making a subclass of Fl_Window</h2>
+
+<p>You may want your widget to be a subclass of Fl_Window.  This can
+be useful if your widget wants to occupy an entire window, and can
+also be used to take advantage of system-provided clipping, or to work
+with a library that expects a system window id to indicate where to
+draw.
+
+<p>Subclassing Fl_Window is almost exactly like subclassing Fl_Widget,
+in fact you can easily switch a subclass back and forth.  Watch out
+for the following differences:
+
+<ol>
+
+<li>Fl_Window is a subclass of Fl_Group so <i>make sure your constructor
+calls end()</i> (unless you actually want children added to your
+window).
+
+<li>When handling events and drawing, the lower-left corner is at 0,0,
+not x(),y() as in other Fl_Widgets.  For instance, to draw a box
+around the widget, call draw_box(0,0,w(),h()), rather than
+draw_box(x(),y(),w(),h()).
+
+
+</ol>
+
+<p>You may also want to subclass Fl_Window in order to get access to
+different X visuals or to change other X attributes of the windows,
+<a href=x.html#window>See here for details</a>.
+
+<p><a href = index.html>(back to contents)</a>

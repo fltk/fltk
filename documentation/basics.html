@@ -1,0 +1,211 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN=RIGHT>2 - FLTK Basics</H1>
+
+This chapter will teach you the basics of compiling programs that use
+FLTK.
+
+<H2>Naming</H2>
+
+All public symbols in FLTK start with the characters 'F' and 'L':
+
+<ul>
+
+	<li>Functions are either <tt>Fl::foo()</tt> or <tt>fl_foo()</tt>.
+
+	<li>Class and type names are capitalized: <tt>Fl_Foo</tt>.
+
+	<li><a href=#Enumerations>Constants and enumerations</a> are
+	uppercase: <tt>FL_FOO</tt>.
+
+	<li>All header files start with <tt>&lt;FL/...></tt>.
+
+</ul>
+
+<H2>Header Files</H2>
+
+The proper way to include FLTK header files is:
+
+<ul><pre>
+#include &lt;FL/Fl_xyz.H>
+</pre></ul>
+
+Microsoft Windows developers please note: case *is* significant
+under other operating systems, and the C standard uses the forward
+slash (/) to separate directories.  The following <tt>#include</tt>
+directives are *not* recommended for portability reasons:
+
+<ul><pre>
+#include &lt;fl\fl_xyz.h>
+#include &lt;fl/fl_xyz.h>
+#include &lt;FL\Fl_xyz.H>
+</pre></ul>
+
+<H2>Compiling Programs with Standard Compilers</H2>
+
+Under UNIX (and under Microsoft Windows when using the GNU development tools)
+you will probably need to tell the compiler where to find the header files.
+This is usually done using the <tt>-I</tt> option:
+
+<ul><pre>
+CC -I/usr/local/include ...
+gcc -I/usr/local/include ...
+</pre></ul>
+
+Similarly, when linking your application you will need to tell the compiler
+to use the FLTK library:
+
+<ul><pre>
+CC ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
+gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
+</pre></ul>
+
+<H2>Compiling Programs with Microsoft Visual C++</H2>
+
+In Visual C++ you will need to tell the compiler where to find the FLTK
+header files.  This can be done by selecting "Settings" from the
+"Project" menu and then changing the "Preprocessor" settings under the
+"C/C++" tab. Similarly, you will need to add the FLTK library to the
+"Link" settings.
+
+<p>You can build your Microsoft Windows applications as Console or
+WIN32 applications.  If you want to use the standard C <tt>main()</tt>
+function as the entry point, enter the name <tt>mainCRTStartup</tt> in
+the "Entry-point symbol" field in the "Output" settings under the
+"Link" tab.
+
+<p><i>Note: The Visual C++ optimizer is known to cause problems with
+many programs.  We only recommend using the "Favor Small Code"
+optimization setting.
+
+<H2>Writing Your First FLTK Program</H2>
+
+All programs must include the file <tt>&lt;FL/Fl.H&gt</tt>.  In
+addition the program must include a header file for each FLTK class it
+uses.  Listing 1 shows a simple "Hello, World!" program that uses
+FLTK to display the window.
+
+<ul>
+<i>Listing 1 - "hello.cxx"</i>
+<br>&nbsp;
+<pre>
+#include &lt;FL/Fl.H>
+#include &lt;FL/Fl_Window.H>
+#include &lt;FL/Fl_Box.H>
+
+int main(int argc, char **argv) {
+  Fl_Window *window = new Fl_Window(300,180);
+  Fl_Box *box = new Fl_Box(FL_UP_BOX,20,40,260,100,"Hello, World!");
+  box->labelsize(36);
+  box->labelfont(FL_BOLD+FL_ITALIC);
+  box->labeltype(FL_SHADOW_LABEL);
+  window->end();
+  window->show(argc, argv);
+  return Fl::run();
+}
+</pre></ul>
+
+After including the required header files, the program then creates a
+window:
+
+<ul><pre>
+Fl_Window *window = new <a href="#Fl_Window">Fl_Window</a>(300,180);
+</pre></ul>
+
+and a box with the "Hello, World!" string in it:
+
+<ul><pre>
+Fl_Box *box = new <a href="#Fl_Box">Fl_Box</a>(FL_UP_BOX,20,40,260,100,"Hello, World!");
+</pre></ul>
+
+Next, we set the size, font, and style of the label:
+
+<ul><pre>
+box-><a href="#Fl_Widget.labelsize">labelsize</a>(36);
+box-><a href="#Fl_Widget.labelfont">labelfont</a>(FL_BOLD+FL_ITALIC);
+box-><a href="#Fl_Widget.labeltype">labeltype</a>(FL_SHADOW_LABEL);
+</pre></ul>
+
+Finally, we show the window and enter the FLTK event loop:
+
+<ul><pre>
+window-><a href="#Fl_Group.end">end</a>();
+window-><a href="#Fl_Window.show">show</a>(argc, argv);
+return <a href="#run">Fl::run</a>();
+</pre></ul>
+
+The resulting program will display the window below. You can quit
+the program by closing the window or pressing the ESCape key.
+
+<center><img src=hello.C.gif></center>
+
+<H3>Creating the Widgets</H3>
+
+The widgets are created using the C++ <tt>new</tt> operator; the arguments
+to the constructors are usually one of the following:
+
+<ul><pre>
+Fl_Widget(boxtype, x, y, width, height)
+Fl_Widget(x, y, width, height)
+Fl_Widget(width, height)
+</pre></ul>
+
+The <tt>boxtype</tt> value is the style of the box that is drawn around
+the widget.  Usually this is <tt>FL_NO_BOX</tt>, which means that no
+box is drawn. In our "Hello, World!" example we use <tt>FL_UP_BOX</tt>,
+which means that a raised button border will be drawn around the
+widget.  You can learn more about boxtypes in <a href="#common">Chapter
+3</a>.
+
+<p>The <tt>x</tt> and <tt>y</tt> parameters determine where the widget
+or window is placed on the screen. In FLTK the top left corner of the
+window or screen is the origin (i.e. x = 0, y = 0) and the units are in
+pixels.
+
+<p>The <tt>width</tt> and <tt>height</tt> parameters determine the size
+of the widget or window in pixels.  The maximum widget size is typically
+governed by the underlying window system or hardware.
+
+<H3>Labels</H3>
+
+All widgets support labels.  In the case of window widgets, the label
+is used for the label in the title bar. Our example program calls the
+<a href="#Fl_Widget.labelfont"><tt>labelfont</tt></a>,
+<a href="#Fl_Widget.labelsize"><tt>labelsize</tt></a>, and
+<a href="#Fl_Widget.labeltype"><tt>labeltype</tt></a> methods.
+
+<p>The <tt>labelfont</tt> method sets the typeface and style that is
+used for the label, which for this example we are using
+<tt>FL_BOLD</tt> and <tt>FL_ITALIC</tt>.  You can also specify typefaces
+directly.
+
+<p>The <tt>labelsize</tt> method sets the height of the font in pixels.
+
+<p>The <tt>labeltype</tt> method sets the type of label.  FLTK supports
+normal, embossed, shadowed, symbol, and image labels.
+
+<p>A complete list of all label options can be found in <a href="#common">
+Chapter 3</a>.
+
+<H3>Showing the Window</H3>
+
+The <tt>show()</tt> method shows the widget or window.  For windows you can
+also provide the command-line arguments to allow users to customize the
+appearance, size, and position of your windows.
+
+<H3>The Main Event Loop</H3>
+
+FLTK provides the <a href="#run"><tt>Fl:run()</tt></a> method to enter
+a standard event processing loop.  This is equivalent to the following
+code:
+
+<ul><pre>
+while (Fl::wait());
+</pre></ul>
+
+<tt>Fl::run()</tt> does not return until all of the windows under FLTK control
+are closed (either by the user or your program).
+
+</BODY>
+</HTML>

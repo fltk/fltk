@@ -1,0 +1,70 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Overlay_Window">class Fl_Overlay_Window</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Double_Window">Fl_Double_Window</a>
+   |
+   +----<b>Fl_Overlay_Window</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Overlay_Window.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+This window provides double buffering and also the ability to draw the
+"overlay" which is another picture placed on top of the main image.
+The overlay is designed to be a rapidly-changing but simple graphic
+such as a mouse selection box.  <tt>Fl_Overlay_Window</tt> uses the
+overlay planes provided by your graphics hardware if they are available.
+
+<p>If no hardware support is found the overlay is simulated by drawing
+directly into the on-screen copy of the double-buffered window, and
+"erased" by copying the backbuffer over it again.  This means the
+overlay will blink if you change the image in the window.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Overlay_Window.Fl_Overlay_Window">Fl_Overlay_Window</a>
+	<li><a href="#Fl_Overlay_Window.~Fl_Overlay_Window">~Fl_Overlay_Window</a>
+	<li><a href="#Fl_Overlay_Window.draw_overlay">draw_overlay</a>
+	<li><a href="#Fl_Overlay_Window.redraw_overlay">redraw_overlay</a>
+</ul>
+
+<h4><a name="Fl_Overlay_Window.Fl_Overlay_Window">Fl_Overlay_Window::Fl_Overlay_Window(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Overlay_Window</tt> widget using the given position, size, and
+label (title) string.
+
+<h4><a name="Fl_Overlay_Window.~Fl_Overlay_Window">virtual Fl_Overlay_Window::~Fl_Overlay_Window()</a></h4>
+
+Destroys the window and all child widgets.
+
+<h4><a name="Fl_Overlay_Window.">virtual void Fl_Overlay_Window::draw_overlay() = 0</a></h4>
+
+You must subclass <tt>Fl_Overlay_Window</tt> and provide this method.  It is
+just like a <tt>draw()</tt> method, except it draws the overlay.  The overlay
+will have already been "cleared" when this is called.  You can use any
+of the routines described in <a href="#Drawing">&lt;FL/fl_draw.H></a>.
+
+<h4><a name="Fl_Overlay_Window.">void Fl_Overlay_Window::redraw_overlay()</a></h4>
+
+Call this to indicate that the overlay data has changed and needs to
+be redrawn.  The overlay will be clear until the first time this is
+called, so if you want an initial display you must call this after
+calling <tt>show()</tt>.
+
+</body>
+</html>

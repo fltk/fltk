@@ -1,0 +1,61 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Adjuster">class Fl_Adjuster</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Valuator">Fl_Valuator</a>
+   |
+   +----<b>Fl_Adjuster</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Adjuster.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Adjuster</tt> widget was stolen from Prisms, and has
+proven to be very useful for values that need a large dynamic range. 
+When you press a button and drag to the right the value increases. When
+you drag to the left it decreases.  The largest button adjusts by
+<tt>100 * step()</tt>, the next by <tt>10 * step()</tt> and that
+smallest button by <tt>step()</tt>.  Clicking on the buttons increments
+by 10 times the amount dragging by a pixel does. Shift + click
+decrements by 10 times the amount.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Adjuster.Fl_Adjuster">Fl_Adjuster</a>
+	<li><a href="#Fl_Adjuster.~Fl_Adjuster">~Fl_Adjuster</a>
+	<li><a href="#Fl_Adjuster.soft">soft</a>
+</ul>
+
+<h4><a name="Fl_Adjuster.Fl_Adjuster">Fl_Adjuster::Fl_Adjuster(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Adjuster</tt> widget using the given position, size, and
+label string. It looks best if one of the dimensions is 3 times the other.
+
+<h4><a name="Fl_Adjuster.~Fl_Adjuster">virtual Fl_Adjuster::~Fl_Adjuster()</a></h4>
+
+Destroys the valuator.
+
+<h4><a name="Fl_Adjuster.soft">uchar Fl_Adjuster::soft() const<br>
+void Fl_Adjuster::soft(uchar)</a></h4>
+
+If "soft" is turned on, the user is allowed to drag the value outside
+the range.  If they drag the value to one of the ends, let go, then
+grab again and continue to drag, they can get to any value.  Default
+is one.
+
+</body>
+</html>

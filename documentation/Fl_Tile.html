@@ -1,0 +1,85 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Tile">class Fl_Tile</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Tile</b>
+           |
+           +----<a href="#Fl_Pack">Fl_Pack</a>, <a href="#Fl_Scroll">Fl_Scroll</a>, <a href="#Fl_Tabs">Fl_Tabs</a>, <a href="#Fl_Tile">Fl_Tile</a>, <a href="#Fl_Window">Fl_Window</a>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Tile.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Tile</tt> class lets you resize the children by dragging the
+border between them:
+
+<p><img src=Fl_Tile.gif>
+
+<p><tt>Fl_Tile</tt> allows objects to be resized to zero dimensions. 
+To prevent this you can use the <tt>resizable()</tt> to limit where
+corners can be dragged to.
+
+<p>Even though objects can be resized to zero sizes, they must
+initially have non-zero sizes so the <tt>Fl_Tile</tt> can figure out
+their layout.  If desired, call <tt>position()</tt> after creating the
+children but before displaying the window to set the borders where you
+want.
+
+<p>The "borders" are part of the children, an <tt>Fl_Tile<tt> does not
+draw any graphics of it's own.  In the above example all the final
+children have <tt>FL_DOWN_BOX</tt> types, and the "ridges" you see are
+two adjacent <tt>FL_DOWN_BOX</tt>'s drawn next to each other.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Tile.Fl_Tile">Fl_Tile</a>
+	<li><a href="#Fl_Tile.~Fl_Tile">~Fl_Tile</a>
+	<li><a href="#Fl_Tile.position">position</a>
+	<li><a href="#Fl_Tile.resizeable">resizeable</a>
+</ul>
+
+<h4><a name="Fl_Tile.Fl_Tile">Fl_Tile::Fl_Tile(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Tile</tt> widget using the given position, size, and
+label string. The default boxtype is <tt>FL_NO_BOX</tt>.
+
+<h4><a name="Fl_Tile.~Fl_Tile">virtual Fl_Tile::~Fl_Tile()</a></h4>
+
+The destructor <i>also deletes all the children</i>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to all
+the children in the user code. A kludge has been done so the
+<tt>Fl_Tile</tt> and all of it's children can be automatic (local)
+variables, but you must declare the <tt>Fl_Tile</tt> <i>first</i>, so
+that it is destroyed last.
+
+<h4><a name="Fl_Tile.position">void Fl_Tile::position(from_x, from_y, to_x, to_y)</a></h4>
+
+Drag the intersection at <tt>from_x,from_y</tt> to <tt>to_x,to_y</tt>. 
+This redraws all the necessary children.
+
+<h4><a name="Fl_Tile.resizeable">void Fl_Tile::resizable(Fl_Widget&)</a></h4>
+
+The "resizable" child widget (which should be invisible) limits where
+the border can be dragged to.  If you don't set it, it will be possible
+to drag the borders right to the edge, and thus resize objects on the
+edge to zero width or height.  The <tt>resizable()</tt> widget is not
+resized by dragging any borders.
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Tabs">class Fl_Tabs</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Group">Fl_Group</a>
+   |
+   +----<b>Fl_Tabs</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Tab.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Tabs</tt> widget is the "file card tabs" interface that
+allows you to put lots and lots of buttons and switches in a panel, as
+popularized by many toolkits.
+
+<p><img src=tabs.gif>
+
+<p>Clicking the tab makes a child <tt>visible()</tt> (by calling
+<tt>show()</tt> on it) and all other children are invisible (by calling
+<tt>hide()</tt> on them).  Usually the children are <a
+href="#Fl_Group"><tt>Fl_Group<tt></a> widgets containing several
+widgets themselves.
+
+<p>Each child makes a card, and it's <tt>label()</tt> is printed on the
+card tab (including the label font and style).  The color of that child
+is used to color the card as well.  Currently this only draws nicely if
+you set <a href="#Fl_Widget.box"><tt>box()</tt></a> to the default
+<tt>FL_THIN_UP_BOX</tt> or to <tt>FL_FLAT_BOX</tt>, which gets rid of
+the edges drawn on the sides and bottom.
+
+<p>The size of the tabs is controlled by the bounding box of the
+children (there should be some space between the children and the edge
+of the <tt>Fl_Tabs</tt>), and the tabs may be placed "inverted" on the
+bottom, this is determined by which gap is larger.  It is easiest to
+lay this out in fluid, using the fluid browser to select each child
+group and resize them until the tabs look the way you want them to.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Tab.Fl_Tab">Fl_Tab</a>
+	<li><a href="#Fl_Tab.~Fl_Tab">~Fl_Tab</a>
+	<li><a href="#Fl_Tab.value">value</a>
+</ul>
+
+<h4><a name="Fl_Tab.Fl_Tab">Fl_Tab::Fl_Tab(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Tab</tt> widget using the given position, size, and
+label string. The default boxtype is <tt>FL_THIN_UP_BOX</tt>.
+
+<p>Use <a href="#Fl_Group.add"><tt>add(Fl_Widget *)</tt></a> to add
+each child (which is probably itself a <tt>Fl_Group</tt>).  The
+children should be sized to stay away from the top or bottom edge of
+the <tt>Fl_Tabs</tt>, which is where the tabs are drawn.
+
+<h4><a name="Fl_Tab.~Fl_Tab">virtual Fl_Tab::~Fl_Tab()</a></h4>
+
+The destructor <i>also deletes all the children</i>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to all
+the children in the user code. A kludge has been done so the
+<tt>Fl_Tab</tt> and all of it's children can be automatic (local)
+variables, but you must declare the <tt>Fl_Tab</tt> <i>first</i>, so
+that it is destroyed last.
+
+<h4><a name="Fl_Tab.value">Fl_Widget* Fl_Tabs::value() const<br>
+int Fl_Tabs::value(Fl_Widget*)</a></h4>
+
+Gets or sets the currently visible widget/tab.
+
+</body>
+</html>

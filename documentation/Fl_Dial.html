@@ -1,0 +1,65 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Dial">class Fl_Dial</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Valuator">Fl_Valuator</a>
+   |
+   +----<b>Fl_Dial</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Dial.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Dial</tt> widget provides a circular dial to control a
+single floating point value.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Dial.Fl_Dial">Fl_Dial</a>
+	<li><a href="#Fl_Dial.~Fl_Dial">~Fl_Dial</a>
+	<li><a href="#Fl_Dial.angles">angles</a>
+	<li><a href="#Fl_Dial.type">type</a>
+</ul>
+
+<h4><a name="Fl_Dial.Fl_Dial">Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Dial</tt> widget using the given position, size, and
+label string. The default type is <tt>FL_NORMAL_DIAL</tt>.
+
+<h4><a name="Fl_Dial.~Fl_Dial">virtual Fl_Dial::~Fl_Dial()</a></h4>
+
+Destroys the valuator.
+
+<h4><a name="Fl_Dial.angles">void Fl_Dial::angles(short a, short b)</a></h4>
+
+Sets the angles used for the minimum and maximum values.  By default these
+are 0 and 360, respectively.
+
+<h4><a name="Fl_Dial.type">type(uchar)</a></h4>
+
+Sets the type of the dial to:
+
+<ul>
+	<li><tt>FL_NORMAL_DIAL</tt> - Draws a normal dial with a knob.
+
+	<li><tt>FL_LINE_DIAL</tt> - Draws a dial with a line.
+
+	<li><tt>FL_FILL_DIAL</tt> - Draws a dial with a filled arc.
+</tt>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Timer">class Fl_Timer</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Widget">Fl_Widget</a>
+   |
+   +----<b>Fl_Timer</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Timer.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+This is provided only to emulate the Forms Timer widget.  It works by
+making a timeout callback every 1/5 second.  This is wasteful and
+inaccurate if you just want something to happen a fixed time in the
+future.  You should directly call <a
+href="#add_timeout"><tt>Fl::add_timeout()</tt></a> instead.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Timer.Fl_Timer">Fl_Timer</a>
+	<li><a href="#Fl_Timer.~Fl_Timer">~Fl_Timer</a>
+	<li><a href="#Fl_Timer.direction">direction</a>
+	<li><a href="#Fl_Timer.suspended">suspended</a>
+	<li><a href="#Fl_Timer.value">value</a>
+</ul>
+
+<h4><a name="Fl_Timer.Fl_Timer">Fl_Timer::Fl_Timer(uchar type, int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Timer</tt> widget using the given type, position, size, and
+label string. The <tt>type</tt> parameter can be any of the following symbolic
+constants:
+
+<ul>
+	<li><tt>FL_NORMAL_TIMER</tt> - The timer just does the callback
+	and displays the string "Timer" in the widget.
+
+	<li><tt>FL_VALUE_TIMER</tt> - The timer does the callback and
+	displays the current timer value in the widget.
+
+	<li><tt>FL_HIDDEN_TIMER</tt> - The timer just does the callback
+	and does not display anything.
+</ul>
+
+<h4><a name="Fl_Timer.~Fl_Timer">virtual Fl_Timer::~Fl_Timer()</a></h4>
+
+Destroys the timer and removes the timeout.
+
+<h4><a name="Fl_Timer.direction">char direction() const<br>
+void direction(char d)</a></h4>
+
+Gets or sets the direction of the timer.  If the direction is zero then
+the timer will count up, otherwise it will count down from the initial
+<tt>value()</tt>.
+
+<h4><a name="Fl_Timer.suspended">char suspended() const<br>
+void suspended(char d)</a></h4>
+
+Gets or sets whether the timer is suspended.
+
+<h4><a name="Fl_Timer.value">float value() const<br>
+void value(float)</a></h4>
+
+Gets or sets the current timer value.
+
+</body>
+</html>

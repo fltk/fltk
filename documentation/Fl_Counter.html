@@ -1,0 +1,66 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Counter">class Fl_Counter</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Valuator">Fl_Valuator</a>
+   |
+   +----<b>Fl_Counter</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Counter.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Counter</tt> widget is provided for forms compatibility.  It
+controls a single floating point value.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Counter.Fl_Counter">Fl_Counter</a>
+	<li><a href="#Fl_Counter.~Fl_Counter">~Fl_Counter</a>
+	<li><a href="#Fl_Counter.lstep">lstep</a>
+	<li><a href="#Fl_Counter.type">type</a>
+</ul>
+
+<h4><a name="Fl_Counter.Fl_Counter">Fl_Counter::Fl_Counter(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Counter</tt> widget using the given position, size, and
+label string. The default type is <tt>FL_NORMAL_COUNTER</tt>.
+
+<h4><a name="Fl_Counter.~Fl_Counter">virtual Fl_Counter::~Fl_Counter()</a></h4>
+
+Destroys the valuator.
+
+<h4><a name="Fl_Counter.lstep">double Fl_Counter::lstep() const<br>
+void Fl_Counter::lstep(double)</a></h4>
+
+Get or set the increment for the double-arrow buttons.  The default
+value is 1.0.
+
+<h4><a name="Fl_Counter.type">type(uchar)</a></h4>
+
+Sets the type of counter:
+
+<ul>
+	<li><tt>FL_NORMAL_COUNTER</tt> - Displays a counter with 4 arrow
+	buttons.
+
+	<li><tt>FL_SIMPLE_COUNTER</tt> - Displays a counter with only 2
+	arrow buttons.
+</ul>
+
+</body>
+</html>

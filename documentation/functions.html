@@ -1,0 +1,768 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN=RIGHT>B - Function Reference</H1>
+
+When we created the window and box widgets 
+ and widgets inside the window.
+  Here a single
+<a href=Fl_Box.html>Fl_Box</a> is created.  The arguments to the
+constructor are a value for the <a href=Fl_Widget.html#box>box()</a>
+property (most constructors do not have this), values for <a
+href=Fl_Widget.html#xywh>x(), y(), w(), h()</a> to define the position
+and size of the box, and a value for <a
+href=Fl_Widget.html#label>label()</a> to define the text printed in the
+box.
+
+<p>All the widgets have several attributes and there is a method for
+setting and getting the current value of each of them.
+<Code>box->labelsize(36)</tt> sets the <a
+href=Fl_Widget.html#labelsize>labelsize()</a> to 36.  You could get
+the value with <tt>box->labelsize()</tt>.  Often you have to set
+many properties, so you will be relieved to know that almost all of
+these methods are trivial inline functions.
+
+<P><a href=Fl_Widget.html#labelfont><tt>labelfont()</tt></a> is
+set to a symbolic value which is compiled into a constant integer, 3
+in this case.  All properties that cannot be described by a single
+small number use a 1-byte index into a table.  This makes the widget
+smaller, allows the actual definition of the property to be deferred
+until first use, and you can redefine existing entries to make global
+style changes.
+
+<p><a
+href=Fl_Widget.html#labeltype><tt>labeltype(FL_SHADOW_LABEL)</tt></a>
+also stores a 1-byte symbolic value, in this case indicating a
+procedure to draw drop shadows under the letters should be called to
+draw the label.
+
+<p>The constructor for widgets adds them as children of the "current
+group" (usually a window).  <tt>window->end()</tt> stops adding
+them to this window.  For more control over the construction of
+objects, you can end() the window immediately, and then add the
+objects with <a
+href=Fl_Group.html#add><tt>window->add(box)</tt></a>.  You can
+also do <a href=Fl_Group.html#begin><tt>window->begin()</tt></a>
+to switch what window new objects are added to.
+
+<p><a href=Fl_Window.html#show><Code>window->show()</tt></a> finally
+puts the window on the screen.  It is not until this point that the X
+server is opened.  FLTK provides some <i>optional</i> and rather
+simple command-line parsing if you call <a
+href=Fl.html#show>show(argv,argc)</a>.  If you don't want this, just
+call show() with no arguments, and <i>the unused argument code is not
+linked into your program, making it smaller!</i>
+
+<p><a href=Fl.html#run><tt>Fl::run()</tt></a> makes FLTK
+enter a loop to update the screen and respond to events.  By
+default when the user closes the last window FLTK exits by calling <a
+href=Fl.html><tt>exit(0)</tt></a>.  <i>run() does not
+actually return, it is declared to return an int so you can end your
+main() function with "return Fl::run()" and outwit the stupid compiler
+made by a certain very large software company.</i>
+
+<p>The following command compiles this program, assuming the FLTK
+library has been put in /usr/local/lib and the header files in
+/usr/local/include/FL:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<p>The first thing your program should do is construct one or more
+trees of <tt>Fl_Widgets</tt>.  The base widget of each of these is
+an <tt>Fl_Window</tt> widget.  The constructors for widgets
+automatically add them as children of the most recent created window
+widget (use window->end() to stop this).  Constructing the widgets
+<i>does not require the display to be open and does not open it</i>,
+unless you purposely open it to get information such as the width of a
+font.
+
+<p><tt>Fl_Window</tt>s are displayed on the screen with
+<tt>Fl_Window::show()</tt>.  For the first window you may also use
+<tt>Fl_Window::show(argc,argv)</tt> and FLTK will automatically
+parse some startup arguments such as -display.
+
+<p>Then the program repeatedly calls <tt>Fl::wait()</tt>.  Each
+time "something happens" <tt>Fl::wait()</tt> returns, usually after
+a block of X events have been read and processed.  It is often useful
+for a program to check global state after each event, and FLTK makes
+this easy by leaving the main loop under your control.
+
+<p>Each widget has a <i>single</i> "callback".  This is a function that
+is called when something happens (such as the user pressing a button). 
+FLTK avoids all the complexities of signals/slots by having only a
+single callback.  Instead a when() method on the object selects when
+the callback is done (ie. when a slider is moved or when the mouse is
+released).
+
+<p>The callback is passed a pointer to the widget and a void* user_data
+field.  This is redundant, as the user_data can be determined from the
+widget, but was done for XForms compatability and to make the same
+callbacks useful for menu items.  Typically you want to turn the
+callback into a method on some C++ object.  A simple way is to use the
+user_data as a pointer to the object.  A more common but harder to
+understand way is to store the object in the <i>parent</i> widget's
+user_data field, since usually all the controls on a window are for the
+same object, this lets you use the user_data for an abitrary method
+argument.
+
+<p>To display graphic data, you must <i>subclass</i> either
+<tt>Fl_Window</tt> or <tt>Fl_Widget</tt> and define the virtual
+<tt>draw()</tt> method.  This can use functions defined in
+&lt;FL/fl_draw.H>, or can use system-specific calls such as Xlib.  If
+the data being displayed changes, your main program calls the
+<tt>redraw()</tt> method on your widget, and FLTK will call
+<tt>draw()</tt> while waiting for the next event.  Subclassing
+<tt>Fl_Window</tt> or <tt>Fl_Widget</tt> is so easy that I felt
+it unnecessary to provide the "canvas" widget that most toolkits have.
+
+<p>If your program needs to monitor another device (such as stdin) you
+can provide a callback routine for when it becomes ready, by using
+<tt>Fl::add_fd(i)</tt>.  If your program needs something to happen
+at regular intervals you can define a timeout callback with <tt><a
+href=Fl.html#add_timeout>Fl::add_timeout(time)</a></tt>.
+
+<p>Building a large hierarchy is made much easier with <i>fluid</i>
+(the Fast Light User Interface Designer).  This is a program that lets
+you interactively design the widget layout and set all the properties
+visually.  It outputs C++ source code that you compile and link with
+your program.  All you have to write is the main loop and any
+callbacks.
+
+</BODY>
+</HTML>
+<HTML>
+<BODY>
+
+This chapter demonstrates the basics of FLTK programming with examples.
+
+<H2>Compiling a FLTK Program</H2>
+
+<H3>Include Files</H3>
+
+<H3>Library Files</H3>
+
+<H2>A "Hello, World" Program</H2>
+
+<H3>Creating the Window</H3>
+
+<H3>The Main Loop</H3>
+
+</BODY>
+</HTML>
+<title>FLTK example: ask.C</title>
+<h2>ask.C</h2>
+
+<p><img src = ask.C.gif align=top>
+
+<pre>
+#include &lt;stdio.h>
+#include &lt;string.h>
+#include &lt;FL/Fl.H>
+#include &lt;FL/Fl_Window.H>
+#include &lt;FL/Fl_Input.H>
+#include &lt;FL/Fl_Button.H>
+#include &lt;FL/Fl_Return_Button.H>
+
+int get_string(char*buffer, const char *from) {
+  Fl_Window window(320,75);
+  window.set_modal();
+  Fl_Input input(60, 40, 250, 25,"Input:");
+  input.value(buffer);
+  Fl_Button cancel(60, 10,80, 25,"cancel");
+  Fl_Return_Button ok(150, 10,80, 25,"OK");
+  window.end();
+  window.show();
+  for (;;) {
+    Fl::wait();
+    Fl_Widget *o;
+    while (o = Fl::readqueue()) {
+      if (o == &ok) {
+	strcpy(buffer, input.value());
+	return 1;
+      } else if (o == &cancel || o == &window) {
+	return 0;
+      }
+    }
+  }
+}
+
+int main(int argc, char **argv) {
+  char buffer[128];
+  if (get_string(buffer, argv[1])) {
+    puts(buffer);
+    return 0;
+  } else {
+    return 1; // exit with error
+  }
+}
+</pre>
+
+<p>Widgets don't need to have <a
+href=Fl_Widget.html#callback>callback()</a> set.  The <a
+href=Fl_Widget.html#default_callback>default callback</a> puts a
+pointer to the widget on a "queue" from which it can later be read
+with <a href=Fl.html#readqueue>Fl::readqueue()</a>.  This was
+done for Forms compatibility but it is useful for <a
+href=Fl_Window.html#modal>modal windows</a>.  In this example the
+"get_string" function puts up a modal window and loops until one of
+the buttons is pushed.
+
+<a href=Fl.html#wait>Fl::wait()</a> does exactly one cycle of
+what Fl::run() does repeatedly: it updates the screen and then waits
+for and responds to an event (or several events if they are all ready
+at the same time).  It then returns, allowing the user program to
+check any state information it wants to after each group of events.
+One thing the user program can check is <a
+href=Fl.html#readqueue>Fl::readqueue()</a> which returns each
+object without a callback that was triggered.  It returns null when
+the queue is empty.  It is possible for more than one object to be on
+the queue (or the same object several times) so if your program wants
+to read the queue it should always read it until empty and ignore
+unrecognized widgets (don't look at them as they may have been
+deleted).
+
+<P><a href=Fl_Window.html#modal>modal()</a> on a window prevents any
+interaction with other program windows below it, and prevents the user
+from raising a program window above it (well, it tries, but X is
+broken).  It won't make any difference in this program because there
+is only one window, but this allows the "get_string" function to be
+used as subroutine by a larger program and have the expected behavior.
+
+<P>This program also demonstrates that FLTK widgets may be constructed
+as C++ automatic objects (local variables).  You have to be careful
+about <a href=Fl_Widget.html#destructor>destruction</a>, however.
+Always make sure all automatic children are destructed before the
+container (by declaring the children <i>after</i> the container),
+since the destructor for a container will attempt to delete all
+remaining children, and you don't want to delete automatic objects.
+
+<p><a href = shape.C.html>[Next example]</a>
+<br><a href = index.html>[back to contents]</a>
+<title>FLTK example: button.C</title>
+<h2>button.C</h2>
+
+<p><img src= button.C.gif align=top>
+
+<pre>
+#include &lt;stdlib.h>
+#include &lt;stdio.h>
+#include &lt;FL/Fl.H>
+#include &lt;FL/Fl_Window.H>
+#include &lt;FL/Fl_Button.H>
+
+void beepcb(Fl_Widget *, void *) {
+  printf("\007"); fflush(stdout);
+}
+
+void exitcb(Fl_Widget *, void *) {
+  exit(0);
+}
+
+int main(int argc, char ** argv) {
+  Fl_Window *window = new Fl_Window(320,65);
+  window->begin();
+  Fl_Button *b1 = new Fl_Button(20, 20, 80, 25, "Beep");
+  b1->callback(beepcb,0);
+  Fl_Button *b2 = new Fl_Button(120,20, 80, 25, "no op");
+  Fl_Button *b3 = new Fl_Button(220,20, 80, 25, "Exit");
+  b3->callback(exitcb,0);
+  window->end();
+  window->show(argc,argv);
+  return Fl::run();
+}
+</pre>
+
+<p>In this example we make some button widgets and make them do
+something through callbacks.
+
+<P>All widgets have a single <a
+href=Fl_Widget.html#callback>callback()</a> function.  It is called in
+response to an event on that widget, exactly which event depends on
+the type of widget.  The function takes two arguments: a pointer to
+the widget (you will usually need to cast this to the correct
+subclass) and a void* pointer to a piece of arbitrary user_data.
+
+<P>You don't have to give all the widgets a callback, as the "no op" b2
+widget demonstrates.  What these do is described in the next program.
+
+<p><a href = ask.C.html>[Next example]</a>
+<br><a href = index.html>[back to contents]</a>
+<title>FLTK methods</title>
+
+<h2>#include &lt;FL/Fl.H></h2>
+
+<p>You will have to include at least this header file in your main
+code so that you can call the methods described here.
+
+<h2>Initialization</h2>
+
+<p><i>You can construct all your widgets (and menus and boxtypes and
+images and other FLTK types) without "initializing".</i> The
+constructors do not require a connection to the X display.  This makes
+it a lot easier, especially if your program has a mode where it does
+not use a gui, and guarantees that code you don't use is not linked
+in.
+
+<p>FLTK is usually "initialized" when you show() the first window.  At
+this time the X display is opened and everything is set up so the
+calls described in the rest of this document work.  A few other calls
+can open the X display, amoung them are fl_width() to measure the
+size of a font.  Be careful that the following calls are done before
+the display is opened, if not you will get lots of strange X errors.
+
+<p>Most of these "initialization" calls are to get around stupid X
+things.  I have tried to make these as simple to call as possible and
+they have no effect on systems which aren't as badly designed as X.
+But you should call them to make your program as portable as possible.
+
+<a name=visual>
+</ul><h4><tt>int Fl::visual(int)</tt></h4><ul>
+
+Selects an X visual so that your graphics are drawn correctly.  This
+does nothing if the default visual satisfies the capabilities, or if
+no visual satisfies the capabilities, or on systems that don't have
+such brain-dead notions.
+
+<p>Only the following combinations do anything useful:
+
+<ul>
+
+<p><li><tt>Fl::visual(FL_RGB)</tt>
+
+<br>Full/true color (if there are several depths FLTK chooses the
+largest).  Do this if you use <a
+href=images.html#fl_draw_image>fl_draw_image</a> for much better
+(non-dithered) output.
+
+<p><li><tt>Fl::visual(FL_RGB8)</tt>
+
+<br>Full color with at least 24 bits of color.  FL_RGB will always
+pick this if available, but if not it will happily return a
+less-than-24 bit deep visual.  This call fails if 24 bits are not
+available.
+
+<p><li><tt>Fl::visual(FL_DOUBLE|FL_INDEX)</tt>
+
+<br>Hardware double buffering.  Call this if you are going to use
+<a href=Fl_Double_Window.html>Fl_Double_Window</a>.
+
+<p><li><tt>Fl::visual(FL_DOUBLE|FL_RGB)</tt>
+<li><tt>Fl::visual(FL_DOUBLE|FL_RGB8)</tt>
+
+<br>Hardware double buffering and full color.
+
+</ul>
+
+<p>This returns true if the system has the capabilities by default or
+FLTK suceeded in turing them on.  Your program will still work even if
+this returns false (it just won't look as good).
+
+<p>See <a href=x.html#visuals>here</a> for ways to select the visual
+using your own code.
+
+<a name=gl_visual>
+</ul><h4><tt>int Fl::gl_visual(int)</tt></h4><ul>
+
+This does the same thing as Fl::visual(int) but also requires OpenGL
+drawing to work.  This <i>must</i> be done if you want to draw in
+normal windows with OpenGL with <a href=Fl_Gl_Window.html#gl_start>gl_start()
+and gl_end()</a>.  It may be useful to call this so your X windows use
+the same visual as an <a href=Fl_Gl_Window.html>Fl_Gl_Window</a>, on
+some servers the windows will drag around easier then.
+
+<p>See <a href=Fl_Gl_Window.html#mode>Fl_Gl_Window</a> for a list of
+additional values for the argument.
+
+</ul><h4><tt>void Fl::own_colormap();</tt></h4><ul>
+
+Makes FLTK use it's own X colormap.  This may make FLTK display
+better and will reduce conflicts with other programs that want lots of
+colors.  However the colors may flash as you drag the cursor between
+windows.
+
+<p>This does nothing if the current visual is not colormapped or on
+MSWindows (even though it probably should if your display is in 8-bit
+mode).
+
+</ul><h4><tt>void Fl::get_system_colors();</tt></h4><ul>
+
+Read the user preference colors from the system and use them to call
+Fl::foreground(), Fl::background(), and Fl::background2().  This is
+done by Fl_Window::show(argc,argv) before applying the -fg and -bg
+switches.
+
+<p>Currently this only works on MSWindows.  In future versions on X it
+may read the KDE or Gnome setup, but for now it does nothing.
+
+</ul><h4><tt>void Fl::background(uchar, uchar, uchar);</tt></h4><ul>
+
+Changes <tt>fl_color(FL_GRAY)</tt> to the given color, and changes
+the gray ramp from 32 to 56 to black to white.  These are the colors
+used as backgrounds by almost all widgets and used to draw the edges
+of all the boxtypes.
+
+</ul><h4><tt>void Fl::foreground(uchar, uchar, uchar);</tt></h4><ul>
+
+Changes <tt>fl_color(FL_BLACK)</tt>.  Also changes
+<tt>FL_INACTIVE_COLOR</tt> and <tt>FL_SELECTION_COLOR</tt> to
+be a ramp between this and <tt>FL_WHITE</tt>.
+
+</ul><h4><tt>void Fl::background2(uchar, uchar, uchar);</tt></h4><ul>
+
+Changes <tt>fl_color(FL_WHITE)</tt> and the same colors as
+Fl::foreground().  This color is used as a background by Fl_Input and
+other text widgets.
+
+</ul><h4><tt>int Fl::args(int argc, char** argv, int
+&i, int (*callback)(int,char**,int&)=0)</tt></h4><ul>
+
+<p>FLTK provides an <i>entirely optional</i> command-line switch
+parser.  You don't have to call it if you don't like them!
+Everything it can do can be done with other calls to FLTK.
+
+<p>To use the switch parser, call Fl::args(...)  near the start of
+your program.  This does <i>not</i> open the display, instead switches
+that need the display open are stashed into static variables.  Then
+you <i>must</i> display your first window by calling <a
+href=#show>Fl_Window::show(argc,argv)</a>, which will do anything
+stored in the static variables.
+
+<p><i>callback</i> lets you define your own switches.  It is called
+with the same argc and argv, and with <i>i</i> the index of each word.
+The callback should return zero if the switch is unrecognized, and not
+change i.  It should return non-zero if the switch is recognized, and
+add at least 1 to i (it can add more to consume words after the
+switch).  This function is called before any other tests, so you can
+override any FLTK switch.
+
+<p>On return <i>i</i> is set to the index of the first non-switch.
+This is either:
+
+<p><ul>
+
+<li>The first word that does not start with '-'.
+
+<li>The word '-' (used by many programs to name stdin as a file)
+
+<li>The first word <i>after</i> '--'
+
+<li>The first unrecognized switch (return value is 0).
+
+<li>argc
+
+</ul>
+
+<p>The return value is <i>i</i> unless an unrecognized switch is
+found, in which case it is zero.  If your program takes no arguments
+other than switches you should produce an error if the return value is
+less than argc.
+
+<p>All switches may be abbreviated to one letter and case is ignored:
+
+<p><tt><b>-display host:n.n</b> </tt>The X display to use (ignored
+by MSWindows).
+
+<p><tt><b>-geometry WxH+X+Y</b> </tt>The window position and size
+will be modified according the the standard X geometry string.
+
+<p><tt><b>-name string</b> Fl_Window::xclass(string)</tt> will be
+done to the window, this will change it's icon.
+
+<p><tt><b>-title string</b> Fl_Window::label(string)</tt> will be
+done to the window, changing both it's title and the icontitle.
+
+<p><tt><b>-iconic</b> Fl_Window::iconize()</tt> will be done to
+the window.
+
+<p><tt><b>-bg color</b> </tt>XParseColor is used to lookup the
+passed color and then Fl::background() is done.  On MSWindows
+only color names of the form "#xxxxxx" are understood.
+
+<p><tt><b>-bg2 color</b> </tt>XParseColor is used to lookup the
+passed color and then Fl::background2() is done.
+
+<p><tt><b>-fg color</b> </tt>XParseColor is used to lookup the
+passed color and then Fl::foreground() is done.
+
+</ul><h4><tt>int Fl::arg(int argc, char** argv, int &i)</tt></h4><ul>
+
+Consume a single switch from argv, starting at word i.  Returns the
+number of words eaten (1 or 2, or 0 if it is not recognized) and adds
+the same value to i.  You can use this function if you prefer to
+control the incrementing through the arguments yourself.
+
+</ul><h4><tt>void Fl::args(int argc, char** argv)</tt></h4><ul>
+
+This method is useful if your program does not have command line
+switches of it's own.  It parses all the switches, and if any are not
+recognized it calls <tt>Fl::abort(Fl::help)</tt>.
+
+</ul><h4><tt>const char* const Fl::help;</tt></h4><ul>
+
+A string descibing the switches understood by Fl::arg(), useful for
+printing as an error message.
+
+<a name=show>
+</ul><h4><tt>int Fl_Window::show(int argc, char** argv)</tt></h4><ul>
+
+show() a window and set the <tt>XA_WM_COMMAND</tt> attribute to
+the passed argc/argv.  If this is the first time this has been called
+since Fl::args() or Fl::arg(), the results of those switches are used
+to set the xclass(), label(), and other attributes of this window.
+
+<p>If Fl::args() or Fl::arg() have never been called, this calls
+Fl::args(argc,argv) automatically.  This is convienent for very small
+programs that just want to put up a single window and take no
+switches.
+
+</ul>
+
+<h2>Running</h2>
+
+After FLTK is "initialized" by calling show() on some window, you get
+FLTK to wait for and respond to events by calling the following
+methods:
+
+<a name=run>
+</ul><h4><tt>int Fl::run()</tt></h4><ul>
+
+Runs FLTK until there are no windows displayed, and then returns a zero.
+Fl::run() is <i>exactly equivalent to:</i>
+
+<ul><tt><pre>
+while (Fl::wait());
+return 0;
+</pre></tt></ul>
+
+<A name=wait>
+</ul><h4><tt>int Fl::wait()</tt></h4><ul>
+
+Calls the idle function if any, then calls any pending timeout
+functions, then calls <a href=#flush>Fl::flush()</a>.  If there are
+any windows displayed it then waits some time for events (zero if
+there is an idle(), the shortest timeout if there are any timeouts, or
+forever) and calls the handle() function on those events, and then
+returns non-zero.
+
+<p>Your program can check it's global state and update things after
+each call to Fl::wait(), which can be very useful in complex programs.
+
+<p>If there are no windows (this is checked after the idle and
+timeouts are called) then Fl::wait() returns zero without waiting for
+any events.  Your program can either exit at this point, or call
+show() on some window so the UI can continue to operate.
+
+</ul><h4><tt>float Fl::wait(float time)</tt></h4><ul>
+
+Wait only a certain amount of time for anything to happen.  This does
+the same as wait() except if the given time (in seconds) passes it
+returns.  The return value is how much time remains.  If the return
+value is zero or negative then the entire time period elapsed.
+
+<p>If you do several wait(time) calls in a row, the subsequent ones
+are measured from when the first one is called, even if you do
+time-consuming calculations after they return.  This allows you to
+accurately make something happen at regular intervals.  This code will
+accurately call A() once per second (as long as it takes less than a
+second to execute):
+
+<ul><tt><pre>
+for (;;) {
+  for (float time = 1.0; time > 0; ) time = Fl::wait(time);
+  A();
+}
+</pre></tt></ul>
+
+</ul><h4><tt>int Fl::check()</tt></h4><ul>
+
+This does the same thing as Fl::wait(0), except because it does not
+have to return the elapsed time value it can be implemented faster on
+certain systems.  Use this to interrupt a big calculation:
+
+<ul><tt><pre>
+while (!calculation_done()) {
+  calculate();
+  Fl::check();
+  if (user_hit_abort_button()) break;
+}
+</pre></tt></ul>
+
+<p>This returns non-zero if any windows are displayed, and 0 if no
+windows are displayed.
+
+</ul><h4><tt>int Fl::ready();</tt></h4><ul>
+
+Returns non-zero if there are pending timeouts or X events or file
+descriptors.  This does <i>not</i> call Fl::flush() or any callbacks,
+which is useful if your program is in a state where such callbacks are
+illegal:
+
+<ul><tt><pre>
+while (!calculation_done()) {
+  calculate();
+  if (Fl::ready()) {
+    do_expensive_cleanup();
+    Fl::check();
+    if (user_hit_abort_button()) break;
+  }
+}
+<a name=add_timeout>
+</pre></tt></ul>
+
+</ul><h4><tt>void Fl::add_timeout(float t,void (*cb)(void*),void* v=0);
+<br>void Fl::remove_timeout(void (*cb)(void*), void* = 0);</tt></h4><ul>
+
+Add or remove a one-shot timeout callback.  The timeout will happen as
+soon as possible after <i>t</i> seconds after the last time wait() was
+called.  The optional void* argument is passed to the callback.  It is
+harmless to remove a timeout callback that no longer exists.
+
+<p>This code will print "TICK" each second on stdout, no matter what
+else the user or program does:
+
+<ul><tt><pre>
+void callback(void *) {
+  printf("TICK\n");
+  Fl::add_timeout(1.0,callback);
+}
+main() {...
+  Fl::add_timeout(1.0,callback);
+  Fl::run();
+}
+</pre></tt></ul>
+
+<a name=idle>
+</ul><h4><tt>void Fl::set_idle(void (*cb)());</tt></h4><ul>
+
+If the idle callback is set it will be called by Fl::wait() and
+Fl::wait() will return immediately.  This can be used for background
+processing.  <i>This will absorb all your machine's time!</i> There is
+only one idle callback, changing it will replace the old one.  To turn
+off the idle processing use Fl::set_idle(0).
+
+<p>Only Fl::wait(void) calls the idle callback.  Fl::wait(time),
+Fl::check(), and Fl::ready() ignore it.  This is so that these
+functions may be called by the idle callback itself without having to
+worry about recursion.
+
+<p>The idle callback can call any FLTK functions.  However if you call
+something that calls Fl::wait() (such as a message pop-up) you should
+first set the idle callback to zero so it does not recurse.
+
+<a name=flush>
+</ul><h4><tt>void Fl::flush()</tt></h4><ul>
+
+Causes all the windows that need it to be redrawn and graphics forced
+out through the pipes.  This is what wait() does before looking for
+events.
+
+</ul><h4><tt>int Fl::damage()</tt></h4><ul>
+
+If true then <a href=#flush>flush()</a> will do something.
+
+<a name=readqueue>
+</ul><h4><tt>Fl_Widget *Fl::readqueue();</tt></h4><ul>
+
+All Fl_Widgets that don't have a callback defined use a default callback
+that puts a pointer to the widget in this queue, and this method reads
+the oldest widget out of this queue.
+
+<a name=add_fd>
+</ul>
+<h2>Listening to other file descriptors (Unix only)</h2>
+
+<h4><tt>
+void Fl::add_fd(int fd, void (*cb)(int, void*), void* = 0);<br>
+void Fl::add_fd(int fd, int when, void (*cb)(int, void*), void* = 0);<br>
+void Fl::remove_fd(int);</tt></h4><ul>
+
+Add file descriptor <i>fd</i> to listen to.  When the fd becomes ready
+for reading the callback is done.  The callback is passed the fd and
+the arbitrary void* argument.  Fl::wait() will return immediately
+after calling the callback.
+
+<p>The second version takes a <i>when</i> bitfield, with the bits
+FL_READ, FL_WRITE, and FL_EXCEPT defined, to indicate when the
+callback should be done.  This probably only works on Unix.
+
+<p>There can only be one callback of each type for a file descriptor.
+Fl::remove_fd() gets rid of <i>all</i> the callbacks for a given file
+descriptor.
+
+</ul>
+
+<h2>Exiting</h2>
+
+When all windows are closed Fl::wait() and Fl::run() return zero.  If
+your main() routine then returns the program exits.  You can also call
+exit(0) at any time in your program.  <i>You do not need to do any
+cleanup code for FLTK.</i> In particular you do not have to destroy
+any widgets you have created.  FLTK also does not sneak any atexit
+functions in on you either.  You will need to do<tt>
+#include&nbsp&lt;stdlib.h> </tt>to call exit().
+
+<p>To stop a window from closing, or conversely to make the closing of
+a particular window exit the program you must change the callback()
+function.  Here is a typical use:
+
+<ul><tt><pre>
+static void main_window_cb(Fl_Widget*, void*) {
+  if (document_changed()) {
+    if (!fl_ask("Exit without saving changes?")) return;
+    // window will not go away as hide() has not been called...
+  }
+  exit(0);
+}
+
+...somewhere in main():
+  main_window->callback(window_cb);
+</pre></tt></ul>
+
+<a name=fatal>
+</ul><h4><tt>void (*Fl::warning)(const char*,...);
+<br>void (*Fl::error)(const char*,...);
+<br>void (*Fl::fatal)(const char*,...);</tt></h4><ul>
+
+FLTK will call these to print messages when unexpected conditions
+occur.  By default they fprintf to stderr, and Fl::error and Fl::fatal
+call exit(1).  You can override the behavior by setting the function
+pointers to your own routines.
+
+<p>Supposedly Fl::warning means that there was a recoverable problem,
+the display may be messed up but the user can probably keep working
+(all X protocol errors call this).  Fl::error means there is a
+recoverable error, but the display is so messed up it is unlikely the
+user can continue (very little calls this now).  Fl::fatal must not
+return, as FLTK is in an unusable state (however your version may be
+able to use longjmp or an exception to continue, as long as it does
+not call FLTK again).
+
+</ul><p><a href = index.html>(back to contents)</a>
+<title>FLTK example: hello.C</title>
+<h2>hello.C</h2>
+
+
+<p><a href = button.C.html>[Next example]</a>
+<br><a href = index.html>[back to contents]</a>
+
+</BODY>
+</HTML>

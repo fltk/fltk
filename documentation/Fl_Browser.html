@@ -1,0 +1,276 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Browser">class Fl_Browser</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Browser_">Fl_Browser_</a>
+   |
+   +----<b>Fl_Browser</b>
+           |
+           +----<a href="#Fl_Hold_Browser">Fl_Hold_Browser</a>, <a href="#Fl_Multi_Browser">Fl_Multi_Browser</a>, <a href="#Fl_Select_Browser">Fl_Select_Browser</a>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Browser.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Browser</tt> widget displays a scrolling list of text lines,
+and manages all the storage for the text.  This is not a text editor or
+spreadsheet!  But it is useful for showing a vertical list of named
+objects to the user.
+
+<p>Each line in the browser is identified by number.  <i>The numbers
+start at one</i> (this is so that zero can be reserved for "no line"
+in the selective browsers).  <i>Unless otherwise noted, the methods do
+not check to see if the passed line number is in range and legal.  It
+must always be greater than zero and &lt;= <tt>size()</tt>.</i>
+
+<p>Each line contains a null-terminated string of text and a <tt>void
+*</tt> data pointer.  The text string is displayed, the <tt>void *</tt>
+pointer can be used by the callbacks to reference the object the text
+describes.
+
+<p>The base class does nothing when the user clicks on it.  The subclasses
+<a href="#Fl_Select_Browser"><tt>Fl_Select_Browser</tt></a>,
+<a href="#Fl_Hold_Browser"><tt>Fl_Hold_Browser</tt></a>, and
+<a href="#Fl_Multi_Browser"><tt>Fl_Multi_Browser</tt></a>
+react to user clicks to select lines in the browser and do callbacks.
+
+<p>The base class called <a href="#Fl_Browser_">
+<tt>Fl_Browser_</tt></a> provides the scrolling and selection
+mechanisms of this and all the subclasses, but the dimensions and
+appearance of each item are determined by the subclass. You can use
+<tt>Fl_Browser_</tt> to display information other than text, or text
+that is dynamically produced from your own data structures. If you find
+that loading the browser is a lot of work or is inefficient, you may
+want to make a subclass of <tt>Fl_Browser_</tt>.
+
+<h3>Methods</h3>
+
+<center>
+<table width=90%>
+<tr>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Browser.Fl_Browser">Fl_Browser</a>
+       <li><a href="#Fl_Browser.~Fl_Browser">~Fl_Browser</a>
+       <li><a href="#Fl_Browser.add">add</a>
+       <li><a href="#Fl_Browser.clear">clear</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Browser.column_char">column_char</a>
+       <li><a href="#Fl_Browser.column_widths">column_widths</a>
+       <li><a href="#Fl_Browser.data">data</a>
+       <li><a href="#Fl_Browser.format_char">format_char</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Browser.hide">hide</a>
+       <li><a href="#Fl_Browser.insert">insert</a>
+       <li><a href="#Fl_Browser.load">load</a>
+       <li><a href="#Fl_Browser.move">move</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Browser.position">position</a>
+       <li><a href="#Fl_Browser.remove">remove</a>
+       <li><a href="#Fl_Browser.show">show</a>
+       <li><a href="#Fl_Browser.size">size</a>
+</ul>
+</td>
+<td align=left valign=top>
+<ul>
+       <li><a href="#Fl_Browser.text">text</a>
+       <li><a href="#Fl_Browser.topline">topline</a>
+       <li><a href="#Fl_Browser.visible">visible</a>
+</ul>
+</td>
+</tr>
+</table>
+</center>
+
+<h4><a name="Fl_Browser.Fl_Browser">Fl_Browser::Fl_Browser(int, int, int, int, const char * = 0)</a></h4> 
+
+The constructor makes an empty browser.
+
+<h4><a name="Fl_Browser.~Fl_Browser">Fl_Browser::~Fl_Browser(void)</a></h4> 
+
+The destructor deletes all list items and destroys the browser.
+
+<h4><a name="Fl_Browser.add">void Fl_Browser::add(const char *, void * = 0)</a></h4>
+
+Add a new line to the end of the browser.  The text is copied using the
+<tt>strdup()</tt> function.  It may also be <tt>NULL</tt> to make a
+blank line.  The <tt>void *</tt> argument is returned as the
+<tt>data()</tt> of the new item.
+
+<h4><a name="Fl_Browser.clear">void Fl_Browser::clear()</a></h4>
+
+Remove all the lines in the browser.
+
+<h4><a name="Fl_Browser.column_char">uchar Fl_Browser::column_char() const<br>
+void Fl_Browser::column_char(char c)</a></h4>
+
+The first form gets the current column separator character. By default this is
+<tt>'\t'</tt> (tab).
+
+<p>The second form sets the column separator to <tt>c</tt>. This will only
+have an effect if you also set <tt>column_widths()</tt>.
+
+<h4><a name="Fl_Browser.column_widths">const int *Fl_Browser::column_widths() const<br>
+void Fl_Browser::column_widths(const int *w)</a></h4>
+
+The first form gets the current column width array.  This array is
+zero-terminated and specifies the widths in pixels of each column. The
+text is split at each <tt>column_char()</tt> and each part is formatted
+into it's own column.  After the last column any remaining text is
+formatted into the space between the last column and the right edge of
+the browser, even if the text contains instances of
+<tt>column_char()</tt>.  The default value is a one-element array of
+just a zero, which makes there are no columns.
+
+<p>The second form sets the current array to <tt>w</tt>.  Make sure the last
+entry is zero.
+
+<h4><a name="Fl_Browser.data">void *Fl_Browser::data(int n) const<br>
+void Fl_Browser::data(int n, void *)</a></h4>
+
+The first form returns the data for line <tt>n</tt>.  If <tt>n</tt> is
+out of range this returns <tt>NULL</tt>.
+
+<p>The second form sets the data for line <tt>n</tt>.
+
+<h4><a name="Fl_Browser.format_char">uchar Fl_Browser::format_char() const<br>
+void Fl_Browser::format_char(char c)</a></h4>
+
+The first form gets the current format code prefix character, which by
+default is <tt>@</tt>. A string of formatting codes at the start of
+each column are stripped off and used to modify how the rest of the
+line is printed:
+
+<ul>
+	<li><code>@.</code> Print rest of line, don't look for more '@' signs
+
+	<li><code>@@</code> Print rest of line starting with '@'
+
+	<li><code>@l</code> Use a <big>large</big> (24 point) font
+
+	<li><code>@m</code> Use a <big>medium large</big> (18 point) font
+
+	<li><code>@s</code> Use a <small>small</small> (11 point) font
+
+	<li><code>@b</code> Use a <b>bold</b> font (adds FL_BOLD to font)
+
+	<li><code>@i</code> Use an <i>italic</i> font (adds FL_ITALIC to font)
+
+	<li><code>@f</code> or <code>@t</code> Use a <code>fixed-pitch</code>
+	font (sets font to FL_COURIER)
+
+	<li><code>@c</code> Center the line horizontally
+
+	<li><code>@r</code> Right-justify the text
+
+	<li><code>@B0, @B1, ... @B255</code> Fill the backgound with fl_color(n)
+
+	<li><code>@C0, @C1, ... @C255</code> Use fl_color(n) to draw the text
+
+	<li><code>@F0, @F1, ... </code> Use fl_font(n) to draw the text
+
+	<li><code>@S1, @S2, ... </code> Use point size n to draw the text
+
+	<li><code>@u</code> or <code>@_</code> Underline the text.
+
+	<li><code>@-</code> draw an engraved line through the middle.
+</ul>
+
+Notice that the <code>@.</code> command can be used to reliably
+terminate the parsing.  To print a random string in a random color,
+use <tt>sprintf("@C%d@.%s", color, string)</tt> and it will work even
+if the string starts with a digit or has the format character in it.
+
+<p>The second form sets the current prefix to <tt>c</tt>.  Set the prefix
+to 0 to disable formatting.
+
+<h4><a name="Fl_Browser.hide">void Fl_Browser::hide(int n)</a></h4>
+
+Makes line <tt>n</tt> invisible, preventing selection by the user.  The line
+can still be selected under program control.
+
+<h4><a name="Fl_Browser.insert">void Fl_Browser::insert(int n, const char *, void * = 0)</a></h4>
+
+Insert a new line <i>before</i> line <tt>n</tt>.  If <tt>n</tt> >
+<tt>size()</tt> then the line is added to the end.
+
+<h4><a name="Fl_Browser.load">int Fl_Browser::load(const char *filename)</a></h4>
+
+Clears the browser and reads the file, adding each line from the file
+to the browser.  If the filename is <tt>NULL</tt> or a zero-length
+string then this just clears the browser.  This returns zero if there
+was any error in opening or reading the file, in which case
+<tt>errno</tt> is set to the system error.  The <tt>data()</tt> of each
+line is set to <tt>NULL</tt>.
+
+<h4><a name="Fl_Browser.move">void Fl_Browser::move(int to, int from)</a></h4>
+
+Line <tt>from</tt> is removed and reinserted at <tt>to</tt>; <tt>to</tt>
+is calculated after the line is removed.
+
+<h4><a name="Fl_Browser.position">int Fl_Browser::position() const<br>
+void Fl_Browser::position(int p)</a></h4>
+
+The first form returns the current vertical scrollbar position, where 0
+corresponds to the top.  If there is not vertical scrollbar then this
+will always return 0.
+
+<h4><a name="Fl_Browser.remove">void Fl_Browser::remove(int n)</a></h4>
+
+Remove line <tt>n</tt> and make the browser one line shorter.
+
+<h4><a name="Fl_Browser.show">void Fl_Browser::show(int n)</a></h4>
+
+Makes line <tt>n</tt> visible for selection.
+
+<h4><a name="Fl_Browser.size">int Fl_Browser::size() const</a></h4>
+
+Returns how many lines are in the browser.  The last line number is
+equal to this.
+
+<h4><a name="Fl_Browser.text">const char *Fl_Browser::text(int n) const<br>
+void Fl_Browser::text(int n, const char *)</a></h4>
+
+The first form returns the text for line <tt>n</tt>.  If <tt>n</tt> is
+out of range it returns <tt>NULL</tt>.
+
+<p>The second form sets the text for line <tt>n</tt>.
+
+<h4><a name="Fl_Browser.topline">int Fl_Browser::topline() const<br>
+void Fl_Browser::topline(int n)</a></h4>
+
+The first form returns the current top line in the browser. If there is no
+vertical scrollbar then this will always return 1.
+
+<p>The second form sets the top line in the browser to <tt>n</tt>.
+
+<p>The second form sets the vertical scrollbar position to <tt>p</tt>.
+
+<h4><a name="Fl_Browser.visible">int Fl_Browser::visible(int n) const</a></h4>
+
+Returns a non-zero value if line <tt>n</tt> is visible.
+
+</body>
+</html>

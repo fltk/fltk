@@ -1,0 +1,103 @@
+<html>
+<body>
+
+<hr break>
+
+<h2><a name="Fl_Color_Chooser">class Fl_Color_Chooser</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href="#Fl_Group">Fl_Group</a>
+   |
+   +----<b>Fl_Color_Chooser</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Color_Chooser.H>
+</pre></ul>
+
+<h3>Description</h3>
+
+The <tt>Fl_Color_Chooser</tt> widget provides a standard RGB color
+chooser.  You can place any number of these into a panel of your own
+design.  This widget contains the hue box, value slider, and rgb input
+fields from the above diagram (it does not have the color chips or the
+Cancel or OK buttons).  The callback is done every time the user
+changes the rgb value.  It is not done if they move the hue control in
+a way that produces the <i>same</i> rgb value, such as when saturation
+or value is zero.
+
+<h3>Methods</h3>
+
+<ul>
+	<li><a href="#Fl_Color_Chooser.Fl_Color_Chooser">Fl_Color_Chooser</a>
+	<li><a href="#Fl_Color_Chooser.~Fl_Color_Chooser">~Fl_Color_Chooser</a>
+	<li><a href="#Fl_Color_Chooser.add">add</a>
+</ul>
+
+<h4><a name="Fl_Color_Chooser.Fl_Color_Chooser">Fl_Color_Chooser::Fl_Color_Chooser(int x, int y, int w, int h, const char *label = 0)</a></h4>
+
+Creates a new <tt>Fl_Color_Chooser</tt> widget using the given
+position, size, and label string. The recommended dimensions are
+200x95. The color is initialized to black.
+
+<h4><a name="Fl_Color_Chooser.~Fl_Color_Chooser">virtual Fl_Color_Chooser::~Fl_Color_Chooser()</a></h4>
+
+The destructor removes the color chooser and all of its controls.
+
+<h4><a name="Fl_Color_Chooser.hue">double Fl_Color_Chooser::hue() const</a></h4>
+
+Return the current hue.  0 &lt;= hue &lt; 6.  Zero is red, one is
+yellow, two is green, etc.  <i>This value is convienent for the internal
+calculations - some other systems consider hue to run from zero to
+one, or from 0 to 360.</i>
+
+<h4><a name="Fl_Color_Chooser.saturation">double Fl_Color_Chooser::saturation() const</a></h4>
+
+Returns the saturation.  0 &lt;= saturation &lt;= 1.
+
+<h4><a name="Fl_Color_Chooser.value">double Fl_Color_Chooser::value() const</a></h4>
+
+Returns the value/brightness.  0 &lt;= value &lt;= 1.
+
+<h4><a name="Fl_Color_Chooser.r">double Fl_Color_Chooser::r() const</a></h4>
+
+Returns the current red value.  0 &lt;= r &lt;= 1.
+
+<h4><a name="Fl_Color_Chooser.g">double Fl_Color_Chooser::g() const</a></h4>
+
+Returns the current green value.  0 &lt;= g &lt;= 1.
+
+<h4><a name="Fl_Color_Chooser.b">double Fl_Color_Chooser::b() const</a></h4>
+
+Returns the current blue value.  0 &lt;= b &lt;= 1.
+
+<h4><a name="Fl_Color_Chooser.rgb">int Fl_Color_Chooser::rgb(double, double,
+double)</a></h4>
+
+Sets the current rgb color values.  Does not do the callback.  Does
+not clamp (but out of range values will produce psychedelic effects in
+the hue selector).
+
+<h4><a name="Fl_Color_Chooser.hsv">int Fl_Color_Chooser::hsv(double,double,double)</a></h4>
+
+Set the hsv values.  The passed values are clamped (or for hue,
+modulus 6 is used) to get legal values.  Does not do the callback.
+
+<h4><a name="Fl_Color_Chooser.hsv2rgb">static void Fl_Color_Chooser::hsv2rgb(double, double,
+double, double&amp;, double&amp;, double&amp;)</a></h4>
+
+This <i>static</i> method converts HSV colors to RGB colorspace.
+
+<h4><a name="Fl_Color_Chooser.rgb2hsv">static void Fl_Color_Chooser::rgb2hsv(double, double, double, double&amp;,
+double&amp;, double&amp;)</a></h4>
+
+This <i>static</i> method converts RGB colors to HSV colorspace.
+
+</body>
+</html>
