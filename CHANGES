@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Menuitem now changes font, even if fontsize
+	  is not set (STR #110)
 	- Swapped shortcut labels in OS X (STR #86)
 	- Non-square Fl_Dial would calculate angle from user
 	  input wrong (STR #101)

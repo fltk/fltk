@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.26 2003/05/21 01:50:13 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.27 2003/07/18 22:36:00 matthiaswm Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -113,7 +113,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   l.image   = 0;
   l.deimage = 0;
   l.type    = labeltype_;
-  l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
+  l.font    = labelsize_ || labelfont_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : (uchar)FL_NORMAL_SIZE;
   l.color   = FL_BLACK; // this makes no difference?
   fl_draw_shortcut = 1;
@@ -130,7 +130,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.image   = 0;
   l.deimage = 0;
   l.type    = labeltype_;
-  l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
+  l.font    = labelsize_ || labelfont_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : (uchar)FL_NORMAL_SIZE;
   l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
   if (!active()) l.color = fl_inactive((Fl_Color)l.color);
@@ -360,7 +360,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
     int x1 = xx+ww-sz-3;
     fl_polygon(x1, y1, x1, y1+sz, x1+sz, y1+sz/2);
   } else if (m->shortcut_) {
-    Fl_Font f = m->labelfont_ ? (Fl_Font)m->labelfont_ :
+    Fl_Font f = m->labelsize_ || m->labelfont_ ? (Fl_Font)m->labelfont_ :
                     button ? button->textfont() : FL_HELVETICA;
     fl_font(f, m->labelsize_ ? m->labelsize_ :
                    button ? button->textsize() : FL_NORMAL_SIZE);
@@ -793,5 +793,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.26 2003/05/21 01:50:13 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.27 2003/07/18 22:36:00 matthiaswm Exp $".
 //
