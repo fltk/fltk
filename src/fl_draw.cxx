@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.14 2003/06/15 04:13:17 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.15 2003/07/18 05:53:21 matthiaswm Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -44,7 +44,7 @@ char fl_draw_shortcut;	// set by fl_labeltypes.cxx
 static char* underline_at;
 
 // Copy p to buf, replacing unprintable characters with ^X and \nnn
-// Stop at a newline of if MAXBUF characters written to buffer.
+// Stop at a newline or if MAXBUF characters written to buffer.
 // Also word-wrap if width exceeds maxw.
 // Returns a pointer to the start of the next line of caharcters.
 // Sets n to the number of characters put into the buffer.
@@ -325,5 +325,5 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.14 2003/06/15 04:13:17 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.15 2003/07/18 05:53:21 matthiaswm Exp $".
 //

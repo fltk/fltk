@@ -1,11 +1,15 @@
 CHANGES IN FLTK 1.1.4
 
+	- Non-square Fl_Dial would calculate angle from user
+	  input wrong (STR #101)
+	- Updated documentatiopn of fl_draw (STR #94)
+	  and Fl_Menu_::add() (STR #99)
 	- Fluid collapse triangle events were not offset by
           horizontal scroll (STR #106)
 	- QuitAppleEvent now correctly returns from Fl::run()
-          instead of just exiting (STR #??)
+          instead of just exiting (STR #87)
 	- Hiding the first created OpenGL context was not
-	  possible. FLTK now manages a list of contexts (STR #??)
+	  possible. FLTK now manages a list of contexts (STR #77)
 	- FLUID didn't keep the double/single buffer type for
 	  windows.
 	- FLTK didn't work with Xft2.

@@ -111,7 +111,9 @@ item at the end.  To copy a menu array you need to copy
 <TT>NULL</TT> this returns zero (an empty menu will return 1).
 
 <H4><A name=Fl_Menu_.add>int Fl_Menu_::add(const char* label, const
-char* shortcut, Fl_Callback*, void *user_data=0, int flags=0)</a></h4>
+char* shortcut, Fl_Callback*, void *user_data=0, int flags=0)</a><br>
+int Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*,
+void *user_data=0, int flags=0)</h4>
 
 Adds a new menu item, with a <TT>title</TT> string, <TT> shortcut</TT>
 string, <TT>callback</TT>, argument to the callback, and flags.  If
@@ -128,6 +130,24 @@ the shortcut) are copied into the menu item unchanged. </P>
 this new one.  Otherwise this new one is added to the end of the
 correct menu or submenu.  The return value is the offset into the array
 that the new entry was placed at.</P>
+
+<P>Shortcut can be 0L, or either a modifier/key combination (for example
+FL_CTRL+'A') or a string describing the shortcut in one of two ways:</p>
+
+<pre>
+  [#+^]<ascii_value>     eg. "97", "^97", "+97", "#97"
+  [#+^]<ascii_char>      eg. "a", "^a", "+a", "#a"
+</pre>
+..where <ascii_value> is a decimal value representing an ascii character
+(eg. 97 is the ascii for 'a'), and the optional prefixes enhance the value 
+that follows. Multiple prefixes must appear in the above order.
+<pre>
+  # - Alt
+  + - Shift
+  ^ - Control
+</pre>
+Text shortcuts are converted to integer shortcut by calling 
+<tt>int fl_old_shortcut(const char*)</tt>.
 
 <P>The return value is the index into the array that the entry was put. </P>
 

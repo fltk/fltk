@@ -494,11 +494,16 @@ want a circle as part of a complex polygon you must use <TT>fl_arc()</TT>.
 It is undefined whether this location or the characters are
 modified by the current transformation.
 
-<H4>void fl_draw(const char *, float x, float y)
-<BR>void fl_draw(const char *, int n, float x, float y)</H4>
+<H4>void fl_draw(const char *, int x, int y)
+<BR>void fl_draw(const char *, int n, int x, int y)</H4>
 
 <P>Draw a nul-terminated string or an array of <TT>n</TT> characters
-starting at the given location.
+starting at the given location. Text is aligned to the left and to
+the baseline of the font. To align to the bottom, subtract fl_descent() from
+<i>y</i>. To align to the top, subtract fl_descent() and add fl_height().
+This version of fl_draw provides direct access to
+the text drawing function of the underlying OS. It does not apply any 
+special handling to control characters. 
 
 <H4>void fl_draw(const char *, int x, int y, int w, int h,
 Fl_Align align, Fl_Image *img = 0, int draw_symbols = 1)</H4>
@@ -507,7 +512,7 @@ Fl_Align align, Fl_Image *img = 0, int draw_symbols = 1)</H4>
 labels. The string is formatted and aligned inside the passed
 box.  Handles '\t' and '\n', expands all other control
 characters to ^X, and aligns inside or against the edges of the
-box. See <A
+box described by <i>x</i>, <i>y</i>, <i>w</i> and <i>h</i>. See <A
 href="Fl_Widget.html#Fl_Widget.align"><TT>Fl_Widget::align()</TT></A>
 for values for <TT>align</TT>. The value
 <TT>FL_ALIGN_INSIDE</TT> is ignored, as this function always
@@ -519,6 +524,8 @@ image is drawn above or below the text as specified by the
 
 <P>The <TT>draw_symbols</TT> argument specifies whether or not
 to look for symbol names starting with the "@" character.
+
+<P>The text length is limited to 1024 caracters per line.
 
 <H4>void fl_measure(const char *, int &amp;w, int &amp;h, int draw_symbols = 1)</H4>
 
