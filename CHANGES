@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fixed some compiler errors on WIN32 (STR #647)
 	- FLUID didn't update the widget panel X/Y/W/H values
 	  when moving the selected window (STR #701)
 	- FLUID didn't use the label type constant names for

@@ -1,5 +1,5 @@
 /*
- * "$Id: scandir_win32.c,v 1.11.2.4.2.9 2004/04/11 04:39:00 easysw Exp $"
+ * "$Id$"
  *
  * WIN32 scandir function for the Fast Light Tool Kit (FLTK).
  *
@@ -43,7 +43,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   unsigned long ret;
 
   len    = strlen(dirname);
-  findIn = malloc(len+5);
+  findIn = (char *)malloc(len+5);
 
   if (!findIn) return -1;
 
@@ -72,7 +72,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
     }
     if (!select || (*select)(selectDir)) {
       if (nDir==NDir) {
-	struct dirent **tempDir = calloc(sizeof(struct dirent*), NDir+33);
+	struct dirent **tempDir = (struct dirent **)calloc(sizeof(struct dirent*), NDir+33);
 	if (NDir) memcpy(tempDir, dir, sizeof(struct dirent*)*NDir);
 	if (dir) free(dir);
 	dir = tempDir;
@@ -104,5 +104,5 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
 #endif
 
 /*
- * End of "$Id: scandir_win32.c,v 1.11.2.4.2.9 2004/04/11 04:39:00 easysw Exp $".
+ * End of "$Id$".
  */
