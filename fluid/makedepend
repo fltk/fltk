@@ -13,7 +13,7 @@ Fl_Function_Type.o: ../FL/Fl_Export.H ../config.h function_panel.h
 Fl_Function_Type.o: ../FL/Fl_Window.H ../FL/Fl_Light_Button.H
 Fl_Function_Type.o: ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 Fl_Function_Type.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H ../FL/Fl_Box.H
-Fl_Function_Type.o: ../FL/fl_ask.H
+Fl_Function_Type.o: ../FL/Fl_Double_Window.H ../FL/fl_ask.H
 Fl_Menu_Type.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Menu_Type.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
 Fl_Menu_Type.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
@@ -70,7 +70,26 @@ Fl_Type.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Window.H
 Fl_Type.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Tabs.H
 Fl_Type.o: ../FL/Fl_Pack.H ../FL/Fl_Group.H ../FL/Fl_Wizard.H
 Fl_Type.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H
-Fl_Type.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Bar.H ../FL/Fl_Pixmap.H lock.xpm
+Fl_Type.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Bar.H ../FL/Fl_Pixmap.H
+Fl_Type.o: pixmaps/lock.xpm pixmaps/flWindow.xpm pixmaps/flButton.xpm
+Fl_Type.o: pixmaps/flCheckButton.xpm pixmaps/flRoundButton.xpm
+Fl_Type.o: pixmaps/flBox.xpm pixmaps/flGroup.xpm pixmaps/flFunction.xpm
+Fl_Type.o: pixmaps/flCode.xpm pixmaps/flCodeBlock.xpm
+Fl_Type.o: pixmaps/flDeclaration.xpm pixmaps/flDeclarationBlock.xpm
+Fl_Type.o: pixmaps/flClass.xpm pixmaps/flTabs.xpm pixmaps/flInput.xpm
+Fl_Type.o: pixmaps/flChoice.xpm pixmaps/flMenuitem.xpm pixmaps/flMenubar.xpm
+Fl_Type.o: pixmaps/flSubmenu.xpm pixmaps/flScroll.xpm pixmaps/flTile.xpm
+Fl_Type.o: pixmaps/flWizard.xpm pixmaps/flPack.xpm pixmaps/flReturnButton.xpm
+Fl_Type.o: pixmaps/flLightButton.xpm pixmaps/flRepeatButton.xpm
+Fl_Type.o: pixmaps/flMenuButton.xpm pixmaps/flOutput.xpm
+Fl_Type.o: pixmaps/flTextDisplay.xpm pixmaps/flTextEdit.xpm
+Fl_Type.o: pixmaps/flFileInput.xpm pixmaps/flBrowser.xpm
+Fl_Type.o: pixmaps/flCheckBrowser.xpm pixmaps/flFileBrowser.xpm
+Fl_Type.o: pixmaps/flClock.xpm pixmaps/flHelp.xpm pixmaps/flProgress.xpm
+Fl_Type.o: pixmaps/flSlider.xpm pixmaps/flScrollBar.xpm
+Fl_Type.o: pixmaps/flValueSlider.xpm pixmaps/flAdjuster.xpm
+Fl_Type.o: pixmaps/flCounter.xpm pixmaps/flDial.xpm pixmaps/flRoller.xpm
+Fl_Type.o: pixmaps/flValueInput.xpm pixmaps/flValueOutput.xpm
 Fl_Window_Type.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Window_Type.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
 Fl_Window_Type.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/fl_message.H
@@ -124,9 +143,9 @@ code.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 code.o: ../FL/Fl_Valuator.H ../FL/filename.H
 factory.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Group.H
 factory.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/x.H
-factory.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../src/flstring.h
-factory.o: ../FL/Fl_Export.H ../config.h Fl_Widget_Type.h Fl_Type.h
-factory.o: ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
+factory.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Pixmap.H
+factory.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h Fl_Widget_Type.h
+factory.o: Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
 factory.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Tabs.H
 factory.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
 factory.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Choice.H
@@ -146,6 +165,7 @@ factory.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Progress.H ../FL/Fl_Adjuster.H
 factory.o: ../FL/Fl_Dial.H ../FL/Fl_Roller.H ../FL/Fl_Scrollbar.H
 factory.o: ../FL/Fl_Output.H ../FL/Fl_Input.H ../FL/Fl_Value_Input.H
 factory.o: ../FL/Fl_Value_Output.H ../FL/Fl_Value_Slider.H
+factory.o: ../FL/Fl_Multi_Label.H
 file.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h alignment_panel.h
 file.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 file.o: ../FL/Fl_Preferences.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
@@ -176,10 +196,10 @@ fluid.o: ../FL/Fl_File_Input.H ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
 fluid.o: ../FL/fl_message.H ../FL/fl_ask.H ../FL/filename.H ../src/flstring.h
 fluid.o: ../FL/Fl_Export.H ../config.h alignment_panel.h ../FL/Fl_Tooltip.H
 fluid.o: ../FL/Fl_Widget.H ../FL/Fl_Tabs.H ../FL/Fl_Light_Button.H
-fluid.o: ../FL/Fl_Browser.H about_panel.h Fl_Type.h ../FL/Fl_Menu.H
-fluid.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/x.H
-fluid.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Pack.H
-fluid.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+fluid.o: ../FL/Fl_Browser.H function_panel.h about_panel.h Fl_Type.h
+fluid.o: ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
+fluid.o: ../FL/Fl_Image.H ../FL/x.H Fluid_Image.h ../FL/Fl_Shared_Image.H
+fluid.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
 align_widget.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 align_widget.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
 align_widget.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
@@ -214,3 +234,10 @@ function_panel.o: function_panel.h ../FL/Fl.H ../FL/Enumerations.H
 function_panel.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Light_Button.H
 function_panel.o: ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 function_panel.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H ../FL/Fl_Box.H
+function_panel.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+function_panel.o: ../FL/Fl_Group.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
+function_panel.o: ../FL/x.H Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
+function_panel.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H Fluid_Image.h
+function_panel.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Tabs.H ../FL/Fl_Pack.H
+function_panel.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H
+function_panel.o: ../FL/Fl_Menu_.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Bar.H
