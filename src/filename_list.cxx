@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.11.2.4 2002/05/25 13:38:25 easysw Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.11.2.5 2002/08/19 18:11:24 easysw Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -49,8 +49,8 @@ int fl_casealphasort(struct dirent **a, struct dirent **b) {
 
 int fl_filename_list(const char *d, dirent ***list,
                      Fl_File_Sort_F *sort) {
-#if defined(__hpux)
-  // HP-UX defines the comparison function like this:
+#if defined(__hpux) || defined(__CYGWIN__)
+  // HP-UX, Cygwin define the comparison function like this:
   return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
   // OSF, DU 4.0x
@@ -59,17 +59,17 @@ int fl_filename_list(const char *d, dirent ***list,
   // AIX is almost standard...
   return scandir(d, list, 0, (int(*)(void*, void*))sort);
 #elif HAVE_SCANDIR && !defined(__sgi)
-  // The vast majority of Unix systems want the sort function to have this
+  // The vast majority of UNIX systems want the sort function to have this
   // prototype, most likely so that it can be passed to qsort without any
   // changes:
   return scandir(d, list, 0, (int(*)(const void*,const void*))sort);
 #else
   // This version is when we define our own scandir (WIN32 and perhaps
-  // some Unix systems) and apparently on Irix:
+  // some Unix systems) and apparently on IRIX:
   return scandir(d, list, 0, sort);
 #endif
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.11.2.4 2002/05/25 13:38:25 easysw Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.11.2.5 2002/08/19 18:11:24 easysw Exp $".
 //
