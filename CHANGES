@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- Added a NULL check to Fl_Text_Display (SF Bug #706921).
+	- The fltk-config script placed the LDFLAGS at the wrong
+	  place in the linker options.
 	- Fl_Text_Display didn't draw the outer box in the right
 	  dimensions, so it was invisible.
 	- Fl_Help_Dialog used the same color for links as for

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.43 2003/03/17 18:31:16 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.44 2003/03/26 00:47:14 easysw Exp $"
 //
 // Copyright 2001-2003 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2220,6 +2220,8 @@ static int countlines( const char *string ) {
   const char * c;
   int lineCount = 0;
 
+  if (!string) return 0;
+
   for ( c = string; *c != '\0'; c++ )
     if ( *c == '\n' ) lineCount++;
   return lineCount;
@@ -3044,5 +3046,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.43 2003/03/17 18:31:16 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.44 2003/03/26 00:47:14 easysw Exp $".
 //

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.17 2003/01/30 21:38:21 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.18 2003/03/26 00:47:14 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -53,7 +53,7 @@ POSTBUILD="@POSTBUILD@"
 CFLAGS="@CFLAGS@"
 CXXFLAGS="@CXXFLAGS@"
 LDFLAGS="@LDFLAGS@"
-LDLIBS="@LDFLAGS@ @LIBS@"
+LDLIBS="@LIBS@"
 
 # libraries to link with:
 LIBNAME="@LIBNAME@"
@@ -212,8 +212,8 @@ if test x$use_images = xyes; then
     LDSTATIC="$libdir/libfltk_images.a $IMAGELIBS $LDSTATIC"
 fi
 
-LDLIBS="$DSOLINK $LDLIBS"
-LDSTATIC="$LDSTATIC"
+LDLIBS="$DSOLINK $LDFLAGS $LDLIBS"
+LDSTATIC="$LDFLAGS $LDSTATIC"
 
 # Answer to user requests
 if test -n "$echo_help"; then
@@ -292,5 +292,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.17 2003/01/30 21:38:21 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.18 2003/03/26 00:47:14 easysw Exp $".
 #
