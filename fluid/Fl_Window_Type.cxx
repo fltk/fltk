@@ -893,8 +893,12 @@ void Fl_Window_Type::draw_overlay() {
   fl_rectf(mybx,mybt-5,5,5);
 }
 
+extern Fl_Menu_Bar *main_menubar;
+
 // Calculate new bounding box of selected widgets:
 void Fl_Window_Type::fix_overlay() {
+  Fl_Menu_Item *item = (Fl_Menu_Item *)main_menubar->find_item("&Edit/O&verlays");
+  if (item) item->set();
   overlays_invisible = 0;
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();

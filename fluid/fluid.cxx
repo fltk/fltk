@@ -140,6 +140,7 @@ void save_position(Fl_Window *w, const char *prefsName) {
 }
 
 Fl_Window *main_window;
+Fl_Menu_Bar *main_menubar;
 
 void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
@@ -348,22 +349,26 @@ void ungroup_cb(Fl_Widget *, void *);
 extern int pasteoffset;
 static int ipasteoffset;
 
-static char* cutfname() {
-  static char name[1024];
+static char* cutfname(int which = 0) {
+  static char name[2][1024];
   static char beenhere = 0;
 
   if (!beenhere) {
     beenhere = 1;
-    fluid_prefs.getUserdataPath(name, sizeof(name));
-    strlcat(name, "cut_buffer", sizeof(name));
-    // getUserdataPath zeros the "name" buffer...
+    fluid_prefs.getUserdataPath(name[0], sizeof(name[0]));
+    strlcat(name[0], "cut_buffer", sizeof(name[0]));
+    fluid_prefs.getUserdataPath(name[1], sizeof(name[1]));
+    strlcat(name[1], "dup_buffer", sizeof(name[1]));
   }
 
-  return name;
+  return name[which];
 }
 
 void copy_cb(Fl_Widget*, void*) {
-  if (!Fl_Type::current) return;
+  if (!Fl_Type::current) {
+    fl_beep();
+    return;
+  }
   ipasteoffset = 10;
   if (!write_file(cutfname(),1)) {
     fl_message("Can't write %s: %s", cutfname(), strerror(errno));
@@ -373,7 +378,10 @@ void copy_cb(Fl_Widget*, void*) {
 
 extern void select_only(Fl_Type *);
 void cut_cb(Fl_Widget *, void *) {
-  if (!Fl_Type::current) return;
+  if (!Fl_Type::current) {
+    fl_beep();
+    return;
+  }
   ipasteoffset = 0;
   Fl_Type *p = Fl_Type::current->parent;
   while (p && p->selected) p = p->parent;
@@ -397,6 +405,28 @@ void paste_cb(Fl_Widget*, void*) {
   }
   pasteoffset = 0;
   ipasteoffset += 10;
+  force_parent = 0;
+}
+
+// Duplicate the selected widgets...
+void duplicate_cb(Fl_Widget*, void*) {
+  if (!Fl_Type::current) {
+    fl_beep();
+    return;
+  }
+
+  if (!write_file(cutfname(1),1)) {
+    fl_message("Can't write %s: %s", cutfname(1), strerror(errno));
+    return;
+  }
+
+  pasteoffset  = 0;
+  force_parent = 1;
+
+  if (!read_file(cutfname(1), 1)) {
+    fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
+  }
+
   force_parent = 0;
 }
 
@@ -455,14 +485,21 @@ void manual_cb(Fl_Widget *, void *) {
 }
 
 void toggle_widgetbin_cb(Fl_Widget *, void *) {
+  Fl_Menu_Item *item = (Fl_Menu_Item *)main_menubar->find_item("&Edit/Widget &Bin");
+
   if ( !widgetbin_panel ) {
     make_widgetbin();
+    widgetbin_panel->callback(toggle_widgetbin_cb);
     if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
+
   }
-  if ( widgetbin_panel->visible() )
+  if ( widgetbin_panel->visible() ) {
     widgetbin_panel->hide();
-  else
+    if (item) item->clear();
+  } else {
     widgetbin_panel->show();
+    if (item) item->set();
+  }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -496,6 +533,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Undo", FL_CTRL+'z', nyi},
   {"C&ut", FL_CTRL+'x', cut_cb},
   {"&Copy", FL_CTRL+'c', copy_cb},
+  {"&Duplicate", FL_CTRL+'d', duplicate_cb},
   {"&Paste", FL_CTRL+'v', paste_cb},
   {"Select &All", FL_CTRL+'a', select_all_cb, 0, FL_MENU_DIVIDER},
   {"&Open...", FL_F+1, openwidget_cb},
@@ -508,8 +546,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"U&ngroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
-  {"Toggle O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
-  {"Toggle Widget &Bin",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_DIVIDER},
+  {"O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays, 0, FL_MENU_TOGGLE | FL_MENU_VALUE},
+  {"Widget &Bin",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_TOGGLE | FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_CTRL+'p',show_project_cb},
   {"&GUI Settings...",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
@@ -578,9 +616,9 @@ void make_main_window() {
     o->box(FL_FLAT_BOX);
     o->tooltip("Double-click to view or change an item.");
     main_window->resizable(o);
-    Fl_Menu_Bar *m = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
-    m->menu(Main_Menu);
-    m->global();
+    main_menubar = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
+    main_menubar->menu(Main_Menu);
+    main_menubar->global();
     fill_in_New_Menu();
     main_window->end();
   }
