@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.13 1998/12/02 15:39:25 mike Exp $"
+dnl# "$Id: configure.in,v 1.14 1998/12/07 14:35:53 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -25,7 +25,7 @@ dnl#
 dnl# Please report all bugs and problems to "fltk-bugs@easysw.com".
 dnl#
 
-AC_INIT(src/Fl.C)
+AC_INIT(src/Fl.cxx)
 
 AC_PROG_RANLIB
 
@@ -167,5 +167,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.13 1998/12/02 15:39:25 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.14 1998/12/07 14:35:53 mike Exp $".
 dnl#
