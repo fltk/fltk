@@ -10,8 +10,7 @@ class Fl_File_Chooser {open
   } {
     Fl_Window window {
       label {Pick a File}
-      callback {fileList->deselect();
-fileName->value("");
+      callback {fileName->value(directory_);
 window->hide();} open
       private xywh {99 225 375 325} resizable
       code0 {if (title) window->label(title);}
@@ -78,8 +77,7 @@ window->hide();}
       }
       Fl_Button {} {
         label Cancel
-        callback {fileList->deselect();
-fileName->value("");
+        callback {fileName->value(directory_);
 window->hide();}
         private xywh {285 290 80 25}
         code0 {o->label(fl_cancel);}
@@ -154,8 +152,8 @@ rescan();} {}
   Function {show()} {open return_type void
   } {
     code {window->hotspot(fileList);
-window->show();
-fileList->deselect();} {}
+window->show();} {selected
+    }
   }
   Function {shown()} {return_type int
   } {
@@ -217,7 +215,7 @@ else
   }
   decl {static const char *filename_label;} {public
   }
-  decl {static const char *filter_label;} {selected public
+  decl {static const char *filter_label;} {public
   }
 } 
 

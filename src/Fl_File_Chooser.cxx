@@ -3,8 +3,7 @@
 #include "../FL/Fl_File_Chooser.H"
 
 inline void Fl_File_Chooser::cb_window_i(Fl_Window*, void*) {
-  fileList->deselect();
-fileName->value("");
+  fileName->value(directory_);
 window->hide();
 }
 void Fl_File_Chooser::cb_window(Fl_Window* o, void* v) {
@@ -92,8 +91,7 @@ void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
 }
 
 inline void Fl_File_Chooser::cb_Cancel_i(Fl_Button*, void*) {
-  fileList->deselect();
-fileName->value("");
+  fileName->value(directory_);
 window->hide();
 }
 void Fl_File_Chooser::cb_Cancel(Fl_Button* o, void* v) {
@@ -213,7 +211,6 @@ const char * Fl_File_Chooser::label() {
 void Fl_File_Chooser::show() {
   window->hotspot(fileList);
 window->show();
-fileList->deselect();
 }
 
 int Fl_File_Chooser::shown() {

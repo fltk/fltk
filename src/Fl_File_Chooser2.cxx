@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.8 2002/04/30 21:50:16 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.9 2002/05/01 08:28:59 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -656,14 +656,13 @@ Fl_File_Chooser::fileNameCB()
       }
     }
 
-    fileList->deselect(0);
-    fileList->redraw();
-
     // If we have any matches, add them to the input field...
     if (first_line > 0 && min_match == max_match &&
         max_match == (int)strlen(fileList->text(first_line))) {
       // This is the only possible match...
+      fileList->deselect(0);
       fileList->select(first_line);
+      fileList->redraw();
     }
     else if (max_match > min_match && max_match != 100000)
     {
@@ -683,6 +682,10 @@ Fl_File_Chooser::fileNameCB()
         fileName->position(filename - pathname + max_match,
 	                   filename - pathname + min_match);
     }
+    else if (max_match == 0) {
+      fileList->deselect(0);
+      fileList->redraw();
+    }
 
     // See if we need to enable the OK button...
     if ((type_ & CREATE || access(fileName->value(), 0) == 0) &&
@@ -695,5 +698,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.8 2002/04/30 21:50:16 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.9 2002/05/01 08:28:59 easysw Exp $".
 //
