@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.5 1999/01/07 19:17:10 mike Exp $"
+// "$Id: Fl_Type.cxx,v 1.6 1999/02/17 16:31:47 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -560,19 +560,27 @@ void Fl_Type::move_before(Fl_Type* g) {
 // move selected widgets in their parent's list:
 void earlier_cb(Fl_Widget*,void*) {
   Fl_Type *f;
-  for (f = Fl_Type::first; f; f=f->next) if (f->selected) {
-    Fl_Type *g;
-    for (g = f->prev; g && g->level > f->level; g = g->prev);
-    if (g && g->level == f->level) f->move_before(g);
+  for (f = Fl_Type::first; f; ) {
+    Fl_Type* nxt = f->next;
+    if (f->selected) {
+      Fl_Type* g;
+      for (g = f->prev; g && g->level > f->level; g = g->prev);
+      if (g && g->level == f->level && !g->selected) f->move_before(g);
+    }
+    f = nxt;
   }
 }
 
 void later_cb(Fl_Widget*,void*) {
   Fl_Type *f;
-  for (f = Fl_Type::last; f; f=f->prev) if (f->selected) {
-    Fl_Type *g;
-    for (g = f->next; g && g->level > f->level; g = g->next);
-    if (g && g->level == f->level && !g->selected) g->move_before(f);
+  for (f = Fl_Type::last; f; ) {
+    Fl_Type* prv = f->prev;
+    if (f->selected) {
+      Fl_Type* g;
+      for (g = f->next; g && g->level > f->level; g = g->next);
+      if (g && g->level == f->level && !g->selected) g->move_before(f);
+    }
+    f = prv;
   }
 }
 
@@ -640,5 +648,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.5 1999/01/07 19:17:10 mike Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6 1999/02/17 16:31:47 mike Exp $".
 //
