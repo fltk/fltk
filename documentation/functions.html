@@ -13,10 +13,13 @@ A</A>.
 
 	<LI><A HREF="#fl_alert"><TT>fl_alert</TT></A></LI>
 	<LI><A HREF="#fl_ask"><TT>fl_ask</TT></A></LI>
+	<LI><A HREF="#fl_average_color"><TT>fl_average_color</TT></A></LI>
 	<LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
 	<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
 	<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
 	<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+	<LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
+	<LI><A HREF="#fl_darker"><TT>fl_darker</TT></A></LI>
 	<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
@@ -31,6 +34,7 @@ A</A>.
 	<LI><A HREF="#fl_filename_setext"><TT>fl_filename_setext</TT></A></LI>
 	<LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
 	<LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
+	<LI><A HREF="#fl_lighter"><TT>fl_lighter</TT></A></LI>
 	<LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
 	<LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
 	<LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
@@ -67,8 +71,12 @@ A</A>.
 	<LI>Drawing Functions
 	<UL>
 
+		<LI><A HREF="#fl_average_color"><TT>fl_average_color</TT></A></LI>
 		<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+		<LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
+		<LI><A HREF="#fl_darker"><TT>fl_darker</TT></A></LI>
 		<LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
+		<LI><A HREF="#fl_lighter"><TT>fl_lighter</TT></A></LI>
 		<LI><A HREF="#fl_rgb_color"><TT>fl_rgb_color</TT></A></LI>
 
 	</UL>
@@ -146,6 +154,37 @@ if they pick No. The enter key is a shortcut for Yes and ESC is
 a shortcut for No.
 
 <P ALIGN="CENTER"><IMG SRC="fl_ask.gif" ALT="The fl_ask window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_average_color">fl_average_color</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_average_color(Fl_Color c1, Fl_Color c2, float weight);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the weighted average color between the two colors.
+The red, green, and blue values are averaged using the following
+formula:
+
+<UL><PRE>
+color = c1 * weight + c2 * (1 - weight)
+</PRE></UL>
+
+<P>Thus, a <CODE>weight</CODE> value of 1.0 will return the
+first color, while a value of 0.0 will return the second color.
 
 
 <!-- NEED 4in -->
@@ -301,6 +340,53 @@ fl_color_cube(R * (FL_NUM_RED - 1) / 255,
               G * (FL_NUM_GREEN - 1) / 255,
               B * (FL_NUM_BLUE - 1) / 255);
 </PRE></UL>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_contrast">fl_contrast</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the foreground color if it contrasts sufficiently
+with the background color. Otherwise, returns
+<CODE>FL_WHITE</CODE> or <CODE>FL_BLACK</CODE> depending on
+which color provides the best contrast.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_darker">fl_darker</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_darker(Fl_Color c);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a darker version of the specified color.
 
 
 <!-- NEED 4in -->
@@ -804,6 +890,28 @@ back-compatability, the arguments to any printf commands in the
 label are after the default value.
 
 <P ALIGN=CENTER><IMG SRC="fl_input.gif" ALT="The fl_input window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_lighter">fl_lighter</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_lighter(Fl_Color c);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a lighter version of the specified color.
 
 
 <!-- NEED 4in -->
