@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.17 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.18 2002/06/02 17:52:36 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -176,20 +176,11 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
 }
 
 
-// redraw this, plus redraw opaque object if there is an outside label
-static void redraw_label(Fl_Widget* w) {
-  w->redraw();
-  if (w->label() && (w->align()&15) && !(w->align() & FL_ALIGN_INSIDE)) {
-    for (Fl_Widget *p = w->parent(); p; p = p->parent())
-      if (p->box() || !p->parent()) {p->redraw(); break;}
-  }
-}
-
 void Fl_Widget::activate() {
   if (!active()) {
     clear_flag(INACTIVE);
     if (active_r()) {
-      redraw_label(this);
+      redraw();
       handle(FL_ACTIVATE);
       if (inside(Fl::focus())) Fl::focus()->take_focus();
     }
@@ -199,7 +190,7 @@ void Fl_Widget::activate() {
 void Fl_Widget::deactivate() {
   if (active_r()) {
     set_flag(INACTIVE);
-    redraw_label(this);
+    redraw();
     handle(FL_DEACTIVATE);
     fl_throw_focus(this);
   } else {
@@ -217,7 +208,7 @@ void Fl_Widget::show() {
   if (!visible()) {
     clear_flag(INVISIBLE);
     if (visible_r()) {
-      redraw_label(this);
+      redraw();
       handle(FL_SHOW);
       if (inside(Fl::focus())) Fl::focus()->take_focus();
     }
@@ -250,5 +241,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.17 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.18 2002/06/02 17:52:36 easysw Exp $".
 //

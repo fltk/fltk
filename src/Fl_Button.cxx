@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6.2.14 2002/05/17 11:31:09 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.15 2002/06/02 17:52:36 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -36,8 +36,13 @@ int Fl_Button::value(int v) {
   v = v ? 1 : 0;
   oldval = v;
   clear_changed();
-  if (value_ != v) {value_ = v; redraw(); return 1;}
-  else return 0;
+  if (value_ != v) {
+    value_ = v;
+    redraw();
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 void Fl_Button::setonly() { // set this radio button on, turn others off
@@ -58,6 +63,7 @@ void Fl_Button::draw() {
   draw_label();
   if (Fl::focus() == this) draw_focus();
 }
+
 int Fl_Button::handle(int event) {
   int newval;
   switch (event) {
@@ -109,15 +115,7 @@ int Fl_Button::handle(int event) {
   case FL_FOCUS :
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
-      if (event == FL_UNFOCUS && box() == FL_NO_BOX) {
-        // Buttons with the FL_NO_BOX boxtype need a parent to
-	// redraw, since it is responsible for redrawing the
-	// background...
-	int X = x() > 0 ? x() - 1 : 0;
-	int Y = y() > 0 ? y() - 1 : 0;
-	window()->damage(FL_DAMAGE_EXPOSE, X, Y, w() + 2, h() + 2);
-      }
-      else redraw();
+      redraw();
       return 1;
     } else return 0;
   case FL_KEYBOARD :
@@ -147,5 +145,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.14 2002/05/17 11:31:09 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.15 2002/06/02 17:52:36 easysw Exp $".
 //
