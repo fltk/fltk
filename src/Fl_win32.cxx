@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.22 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.23 2002/04/07 18:31:55 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1067,6 +1067,7 @@ void Fl_X::set_minmax(LPMINMAXINFO minmax)
 // returns pointer to the filename, or null if name ends with '/'
 const char *fl_filename_name(const char *name) {
   const char *p,*q;
+  if (!name) return (0);
   q = name;
   if (q[0] && q[1]==':') q += 2; // skip leading drive letter
   for (p = q; *p; p++) if (*p == '/' || *p == '\\') q = p+1;
@@ -1156,5 +1157,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.22 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.23 2002/04/07 18:31:55 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.16 2002/03/26 17:37:42 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.17 2002/04/07 18:31:55 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1149,6 +1149,7 @@ void Fl_Window::size_range_() {
 // returns pointer to the filename, or null if name ends with '/'
 const char *fl_filename_name(const char *name) {
   const char *p,*q;
+  if (!name) return (0);
   for (p=q=name; *p;) if (*p++ == '/') q = p;
   return q;
 }
@@ -1215,5 +1216,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.16 2002/03/26 17:37:42 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.17 2002/04/07 18:31:55 easysw Exp $".
 //

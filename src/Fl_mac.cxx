@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.17 2002/03/26 17:35:18 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.18 2002/04/07 18:31:55 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1166,6 +1166,7 @@ void Fl_Window::size_range_() {
 const char *fl_filename_name( const char *name ) 
 {
   const char *p, *q;
+  if (!name) return (0);
   for ( p = q = name ; *p ; ) 
   {
     if ( ( p[0] == ':' ) && ( p[1] == ':' ) ) 
@@ -1358,6 +1359,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.17 2002/03/26 17:35:18 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.18 2002/04/07 18:31:55 easysw Exp $".
 //
 

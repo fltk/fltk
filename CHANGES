@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- The fl_filename_name() function didn't handle a NULL
+	  input string.
 	- The input field used by the fl_input() and
 	  fl_password() functions was resized too small in
 	  1.1.0b12.
