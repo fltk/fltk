@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.8 2002/06/09 18:28:48 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.9 2002/08/05 18:03:58 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -117,12 +117,13 @@ class Fl_Text_Display: public Fl_Group {
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
     void textcolor(unsigned n) {textcolor_ = n;}
 
+    FL_EXPORT virtual void resize(int X, int Y, int W, int H);
+
   protected:
     // Most (all?) of this stuff should only be called from resize() or
     // draw().
     // Anything with "vline" indicates thats it deals with currently
     // visible lines.
-    FL_EXPORT virtual void resize(int X, int Y, int W, int H);
 
     FL_EXPORT virtual void draw();
     FL_EXPORT void draw_text(int X, int Y, int W, int H);
@@ -242,5 +243,5 @@ class Fl_Text_Display: public Fl_Group {
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.8 2002/06/09 18:28:48 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.9 2002/08/05 18:03:58 easysw Exp $".
 //
