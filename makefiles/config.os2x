@@ -1,6 +1,6 @@
 /* config.h.  Generated automatically by configure.  */
 /*
- * "$Id: config.os2x,v 1.1.2.4.2.7 2002/05/16 12:47:43 easysw Exp $"
+ * "$Id: config.os2x,v 1.1.2.4.2.8 2002/05/19 14:19:10 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -162,7 +162,7 @@
  */
 
 #define HAVE_STRINGS_H 1
-/* #undef HAVE_STRCASECMP */
+#define HAVE_STRCASECMP 1
 /* #undef HAVE_STRLCAT*/
 /* #undef HAVE_STRLCPY*/
 
@@ -202,7 +202,7 @@
  * Which header file do we include for libpng?
  */
 
-#define HAVE_PNG_H
+#define HAVE_PNG_H 1
 #undef HAVE_LIBPNG_PNG_H
 
 /*
@@ -222,5 +222,5 @@
 
 
 /*
- * End of "$Id: config.os2x,v 1.1.2.4.2.7 2002/05/16 12:47:43 easysw Exp $".
+ * End of "$Id: config.os2x,v 1.1.2.4.2.8 2002/05/19 14:19:10 easysw Exp $".
  */
