@@ -96,6 +96,12 @@ public:
   void clear() {
     menu_->clear();
   }
+  Fl_Boxtype down_box() const {
+    return (menu_->down_box());
+  }
+  void down_box(Fl_Boxtype b) {
+    menu_->down_box(b);
+  }
   const Fl_Menu_Item *menu() {
     return (menu_->menu());
   }
@@ -107,8 +113,26 @@ public:
     inp_->resize(inp_x(), inp_y(), inp_w(), inp_h());
     menu_->resize(menu_x(), menu_y(), menu_w(), menu_h());
   }
+  Fl_Color textcolor() const {
+    return (inp_->textcolor());
+  }
+  void textcolor(Fl_Color c) {
+    inp_->textcolor(c);
+  }
+  uchar textfont() const {
+    return (inp_->textfont());
+  }
+  void textfont(uchar f) {
+    inp_->textfont(f);
+  }
+  uchar textsize() const {
+    return (inp_->textsize());
+  }
+  void textsize(uchar s) {
+    inp_->textsize(s);
+  }
   const char* value() const {
-    return(inp_->value());
+    return (inp_->value());
   }
   void value(const char *val) {
     inp_->value(val);

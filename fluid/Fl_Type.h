@@ -509,7 +509,7 @@ public:
   int is_menu_button() const {return 1;}
   int is_parent() const {return 1;}
   int menusize;
-  void build_menu();
+  virtual void build_menu();
   Fl_Menu_Type() : Fl_Widget_Type() {menusize = 0;}
   ~Fl_Menu_Type() {
     if (menusize) delete[] (Fl_Menu_Item*)(((Fl_Menu_*)o)->menu());
@@ -551,6 +551,17 @@ public:
 
 #include <FL/Fl_Input_Choice.H>
 class Fl_Input_Choice_Type : public Fl_Menu_Type {
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+    Fl_Menu_ *myo = (Fl_Menu_*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+    switch (w) {
+    case 4:
+    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+    }
+    return 1;
+  }
 public:
   virtual const char *type_name() {return "Fl_Input_Choice";}
   Fl_Widget *widget(int X,int Y,int W,int H) {
@@ -560,6 +571,7 @@ public:
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Input_Choice_Type();}
+  virtual void build_menu();
   int pixmapID() { return 15; }
 };
 

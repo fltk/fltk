@@ -55,6 +55,54 @@ extern const char* i18n_set;
 
 static char submenuflag;
 
+void Fl_Input_Choice_Type::build_menu() {
+  Fl_Input_Choice* w = (Fl_Input_Choice*)o;
+  // count how many Fl_Menu_Item structures needed:
+  int n = 0;
+  Fl_Type* q;
+  for (q = next; q && q->level > level; q = q->next) {
+    if (q->is_parent()) n++; // space for null at end of submenu
+    n++;
+  }
+  if (!n) {
+    if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+    w->menu(0);
+    menusize = 0;
+  } else {
+    n++; // space for null at end of menu
+    if (menusize<n) {
+      if (menusize) delete[] (Fl_Menu_Item*)(w->menu());
+      menusize = n+10;
+      w->menu(new Fl_Menu_Item[menusize]);
+    }
+    // fill them all in:
+    Fl_Menu_Item* m = (Fl_Menu_Item*)(w->menu());
+    int lvl = level+1;
+    for (q = next; q && q->level > level; q = q->next) {
+      Fl_Menu_Item_Type* i = (Fl_Menu_Item_Type*)q;
+      if (i->o->image()) i->o->image()->label(m);
+      else {
+        m->label(i->o->label() ? i->o->label() : "(nolabel)");
+        m->labeltype(i->o->labeltype());
+      }
+      m->shortcut(((Fl_Button*)(i->o))->shortcut());
+      m->callback(0,(void*)i);
+      m->flags = i->flags();
+      m->labelfont(i->o->labelfont());
+      m->labelsize(i->o->labelsize());
+      m->labelcolor(i->o->labelcolor());
+      if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
+      m++;
+      int l1 =
+	(q->next && q->next->is_menu_item()) ? q->next->level : level;
+      while (lvl > l1) {m->label(0); m++; lvl--;}
+      lvl = l1;
+    }
+  }
+  o->redraw();
+}
+
+
 Fl_Type *Fl_Menu_Item_Type::make() {
   // Find the current menu item:
   Fl_Type* q = Fl_Type::current;

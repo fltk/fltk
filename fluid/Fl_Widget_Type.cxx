@@ -565,6 +565,8 @@ void down_box_cb(Fl_Choice* i, void *v) {
     int n;
     if (current_widget->is_button() && !current_widget->is_menu_item())
       n = ((Fl_Button*)(current_widget->o))->down_box();
+    else if (!strcmp(current_widget->type_name(), "Fl_Input_Choice"))
+      n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
     else if (current_widget->is_menu_button())
       n = ((Fl_Menu_*)(current_widget->o))->down_box();
     else {
@@ -584,6 +586,9 @@ void down_box_cb(Fl_Choice* i, void *v) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
         if (((Fl_Button*)(q->o))->value()) q->redraw();
+      } else if (!strcmp(o->type_name(), "Fl_Input_Choice")) {
+	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+	((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
       } else if (o->is_menu_button()) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         ((Fl_Menu_*)(q->o))->down_box((Fl_Boxtype)n);
@@ -1610,8 +1615,11 @@ void Fl_Widget_Type::write_widget_code() {
     if (b->value()) write_c("%so->value(1);\n", indent());
     if (b->shortcut())
       write_c("%so->shortcut(0x%x);\n", indent(), b->shortcut());
-  }
-  if (is_menu_button()) {
+  } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
+    Fl_Input_Choice* b = (Fl_Input_Choice*)o;
+    if (b->down_box()) write_c("%so->down_box(FL_%s);\n", indent(),
+			       boxname(b->down_box()));
+  } else if (is_menu_button()) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box()) write_c("%so->down_box(FL_%s);\n", indent(),
 			       boxname(b->down_box()));
@@ -1732,8 +1740,11 @@ void Fl_Widget_Type::write_properties() {
       write_string("down_box"); write_word(boxname(b->down_box()));}
     if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
     if (b->value()) write_string("value 1");
-  }
-  if (is_menu_button()) {
+  } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
+    Fl_Input_Choice* b = (Fl_Input_Choice*)o;
+    if (b->down_box()) {
+      write_string("down_box"); write_word(boxname(b->down_box()));}
+  } else if (is_menu_button()) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box()) {
       write_string("down_box"); write_word(boxname(b->down_box()));}
@@ -1822,6 +1833,12 @@ void Fl_Widget_Type::read_property(const char *c) {
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Button*)o)->down_box((Fl_Boxtype)x);
+    }
+  } else if (!strcmp(type_name(), "Fl_Input_Choice") && !strcmp(c,"down_box")) {
+    const char* value = read_word();
+    if ((x = boxnumber(value))) {
+      if (x == ZERO_ENTRY) x = 0;
+      ((Fl_Input_Choice*)o)->down_box((Fl_Boxtype)x);
     }
   } else if (is_menu_button() && !strcmp(c,"down_box")) {
     const char* value = read_word();
