@@ -515,6 +515,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkimages
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -567,6 +570,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "fltkimages"=".\fltkimages.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "fluid"=".\fluid.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -580,6 +595,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name fltkforms
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkimages
     End Project Dependency
 }}}
 
@@ -715,6 +733,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkimages
     End Project Dependency
 }}}
 
@@ -982,6 +1003,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltkimages
     End Project Dependency
 }}}
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.13 2002/06/13 18:18:33 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.14 2002/06/28 21:29:16 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -184,7 +184,9 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
                    int        filetype)	// I - Enumerated file type
 {
   Fl_File_Icon	*current;		// Current file in list
+#ifndef WIN32
   struct stat	fileinfo;		// Information on file
+#endif // !WIN32
   const char	*name;			// Base name of filename
 
 
@@ -475,5 +477,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.13 2002/06/13 18:18:33 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.14 2002/06/28 21:29:16 easysw Exp $".
 //
