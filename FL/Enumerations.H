@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.24 2002/06/09 13:35:49 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.25 2002/06/24 15:22:57 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -394,8 +394,16 @@ enum Fl_Damage {
   FL_DAMAGE_ALL      = 0x80
 };
 
+// FLTK 1.0.x compatibility definitions...
+#  ifdef FLTK_1_0_COMPAT
+#    define contrast	fl_contrast
+#    define down	fl_down
+#    define frame	fl_frame
+#    define inactive	fl_inactive
+#  endif // FLTK_1_0_COMPAT
+
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.24 2002/06/09 13:35:49 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.25 2002/06/24 15:22:57 easysw Exp $".
 //

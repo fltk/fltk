@@ -32,8 +32,19 @@ class.</P>
 <H2>Function Names</H2>
 
 <P>Some function names have changed from FLTK 1.0.x to 1.1.x in
-order to avoid name space collisions. The following table shows
-the old and new function names:</P>
+order to avoid name space collisions. You can still use the old
+function names by defining the <CODE>FLTK_1_0_COMPAT</CODE>
+symbol on the command-line when you compile
+(<CODE>-DFLTK_1_0_COMPAT</CODE>) or in your source, e.g.:
+
+<UL><PRE>
+#define FLTK_1_0_COMPAT
+#include &lt;FL/Fl.H>
+#include &lt;FL/Enumerations.H>
+#include &lt;FL/filename.H>
+</PRE></UL>
+
+<P>The following table shows the old and new function names:</P>
 
 <CENTER><TABLE WIDTH="80%" BORDER="1">
 <TR>
@@ -116,6 +127,18 @@ as the label.
 
 <P>Image labels in menu items must still use the old labeltype
 mechanism to preserve source compatibility.
+
+<H2>Keyboard Navigation</H2>
+
+<P>FLTK 1.1.x now supports keyboard navigation and control with
+all widgets. To restore the old FLTK 1.0.x behavior so that only
+text widgets get keyboard focus, call the <A
+HREF="Fl.html#Fl.visible_focus"><CODE>Fl::visible_focus()</CODE></A>
+method to disable it:
+
+<UL><PRE>
+Fl::visible_focus(0);
+</PRE></UL>
 
 </BODY>
 </HTML>

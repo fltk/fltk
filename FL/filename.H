@@ -1,5 +1,5 @@
 /*
- * "$Id: filename.H,v 1.11.2.4.2.7 2002/05/02 14:15:46 easysw Exp $"
+ * "$Id: filename.H,v 1.11.2.4.2.8 2002/06/24 15:22:57 easysw Exp $"
  *
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
@@ -96,9 +96,22 @@ FL_EXPORT int fl_filename_list(const char *d, struct dirent ***list,
                                Fl_File_Sort_F *sort = fl_numericsort);
 #  endif /* __cplusplus */
 
+// FLTK 1.0.x compatibility definitions...
+#  ifdef FLTK_1_0_COMPAT
+#    define filename_absolute	fl_filename_absolute
+#    define filename_expand	fl_filename_expand
+#    define filename_ext	fl_filename_ext
+#    define filename_isdir	fl_filename_isdir
+#    define filename_list	fl_filename_list
+#    define filename_match	fl_filename_match
+#    define filename_name	fl_filename_name
+#    define filename_relative	fl_filename_relative
+#    define numericsort		fl_numericsort
+#  endif // FLTK_1_0_COMPAT
+
 
 #endif /* FL_FILENAME_H */
 
 /*
- * End of "$Id: filename.H,v 1.11.2.4.2.7 2002/05/02 14:15:46 easysw Exp $".
+ * End of "$Id: filename.H,v 1.11.2.4.2.8 2002/06/24 15:22:57 easysw Exp $".
  */
