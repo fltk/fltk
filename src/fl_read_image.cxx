@@ -1,5 +1,5 @@
 //
-// "$Id: fl_read_image.cxx,v 1.1.2.4 2004/04/24 04:10:24 easysw Exp $"
+// "$Id: fl_read_image.cxx,v 1.1.2.5 2004/04/25 01:22:56 easysw Exp $"
 //
 // X11 image reading routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,6 +40,10 @@
 #  ifdef __sgi
 #    include <X11/extensions/readdisplay.h>
 #  endif // __sgi
+
+// Defined in fl_color.cxx
+extern uchar fl_redmask, fl_greenmask, fl_bluemask;
+extern int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
 
 //
 // 'fl_read_image()' - Read an image from the current window.
@@ -117,8 +121,16 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   // Initialize the default colors/alpha in the whole image...
   memset(p, alpha, w * h * d);
 
+  // Check that we have valid mask/shift values...
+  if (!image->red_mask && image->bits_per_pixel > 12) {
+    // Greater than 12 bits must be TrueColor...
+    image->red_mask   = fl_redmask << fl_redshift;
+    image->green_mask = fl_greenmask << fl_greenshift;
+    image->blue_mask  = fl_bluemask << fl_blueshift;
+  }
+
   // Check if we have colormap image...
-  if (image->red_mask == 0 && image->bits_per_pixel < 24) {
+  if (!image->red_mask) {
     // Get the colormap entries for this window...
     maxindex = fl_visual->visual->map_entries;
 
@@ -238,37 +250,28 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
     }
   } else {
     // RGB(A) image, so figure out the shifts & masks...
-    if (image->red_mask == 0) {
-      red_mask    = 0xff;
-      red_shift   = 0;
-      green_mask  = 0xff00;
-      green_shift = 8;
-      blue_mask   = 0xff0000;
-      blue_shift  = 16;
-    } else {
-      red_mask  = image->red_mask;
-      red_shift = 0;
+    red_mask  = image->red_mask;
+    red_shift = 0;
 
-      while ((red_mask & 1) == 0) {
-        red_mask >>= 1;
-        red_shift ++;
-      }
+    while ((red_mask & 1) == 0) {
+      red_mask >>= 1;
+      red_shift ++;
+    }
 
-      green_mask  = image->green_mask;
-      green_shift = 0;
+    green_mask  = image->green_mask;
+    green_shift = 0;
 
-      while ((green_mask & 1) == 0) {
-        green_mask >>= 1;
-        green_shift ++;
-      }
+    while ((green_mask & 1) == 0) {
+      green_mask >>= 1;
+      green_shift ++;
+    }
 
-      blue_mask  = image->blue_mask;
-      blue_shift = 0;
+    blue_mask  = image->blue_mask;
+    blue_shift = 0;
 
-      while ((blue_mask & 1) == 0) {
-        blue_mask >>= 1;
-        blue_shift ++;
-      }
+    while ((blue_mask & 1) == 0) {
+      blue_mask >>= 1;
+      blue_shift ++;
     }
 
     // Read the pixels and output an RGB image...
@@ -402,5 +405,5 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 #endif
 
 //
-// End of "$Id: fl_read_image.cxx,v 1.1.2.4 2004/04/24 04:10:24 easysw Exp $".
+// End of "$Id: fl_read_image.cxx,v 1.1.2.5 2004/04/25 01:22:56 easysw Exp $".
 //
