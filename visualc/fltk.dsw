@@ -3,6 +3,18 @@ Microsoft Developer Studio Workspace File, Format Version 5.00
 
 ###############################################################################
 
+Project: "CubeView"=.\CubeView.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "adjuster"=.\adjuster.dsp - Package Owner=<4>
 
 Package=<5>
