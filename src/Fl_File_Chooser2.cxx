@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.23 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.24 2002/10/28 15:00:56 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -1112,10 +1112,16 @@ quote_pathname(char       *dst,		// O - Destination string
   dstsize --;
 
   while (*src && dstsize > 1) {
-    if (*src == '/')
+    if (*src == '\\') {
+      // Convert backslash to forward slash...
       *dst++ = '\\';
+      *dst++ = '/';
+      src ++;
+    } else {
+      if (*src == '/') *dst++ = '\\';
 
-    *dst++ = *src++;
+      *dst++ = *src++;
+    }
   }
 
   *dst = '\0';
@@ -1143,5 +1149,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.23 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.24 2002/10/28 15:00:56 easysw Exp $".
 //
