@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- The MingW and OS/2 makeinclude files didn't have the
+	  new fltk_images library definitions.
 	- Fl_Text_Editor didn't scroll the text in the widget
 	  when dragging text.
 	- Config header file changes for Borland C++.

@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4.2.6 2002/03/26 18:47:02 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.7 2002/07/08 20:14:07 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # Generated automatically from makeinclude.in by configure.
@@ -24,49 +24,52 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-prefix		=/usr/local
-exec_prefix	=${prefix}
-bindir		=${exec_prefix}/bin
-datadir		=${prefix}/share
-includedir	=${prefix}/include
-libdir		=${exec_prefix}/lib
-mandir		=${prefix}/man
-srcdir		=./.
-VPATH		=./.
+prefix		= /usr/local
+exec_prefix	= ${prefix}
+bindir		= ${exec_prefix}/bin
+datadir		= ${prefix}/share
+includedir	= ${prefix}/include
+libdir		= ${exec_prefix}/lib
+mandir		= ${prefix}/man
+srcdir		= ./.
+VPATH		= ./.
 
 # programs we use...
-HTMLDOC		=htmldoc.exe
-NROFF		=nroff
-RM		=rm -f
+HTMLDOC		= htmldoc.exe
+NROFF		= nroff
+RM		= rm -f
 
 # compiler names:
-CXX		=gcc.exe
-CC		=gcc.exe
-MAKEDEPEND	=$(CXX) -M
+CXX		= gcc.exe
+CC		= gcc.exe
+MAKEDEPEND	= $(CXX) -M
 
 # flags for C++ compiler:
 OPTIM		= -O2 -Wall  -fno-exceptions
-CFLAGS		=$(OPTIM) -O4 -mpentium -Zmt
-CXXFLAGS	=$(OPTIM) -O4 -mpentium -Zmt
+CFLAGS		= $(OPTIM) -O4 -mpentium -Zmt
+CXXFLAGS	= $(OPTIM) -O4 -mpentium -Zmt
 
 # program to make the archive:
-LIBNAME		=../lib/libfltk.a
-FLLIBNAME	=../lib/libfltk_forms.a
+LIBNAME		= ../lib/libfltk.a
+FLLIBNAME	= ../lib/libfltk_forms.a
 GLLIBNAME	=
-LIBCOMMAND	=ar.exe cr
-RANLIB		=ar.exe s
+IMGLIBNAME	= ../lib/libfltk_images.a
+LIBCOMMAND	= ar.exe cr
+RANLIB		= ar.exe s
 DSONAME		=
 FLDSONAME	=
 GLDSONAME	=
+IMGDSONAME	=
 DSOCOMMAND	=echo
 
 # libraries to link with:
 LDLIBS		= -s -Zmt -Zcrtdll -Zbsd-signals -lXext -lX11 -lsocket $(LDFLAGS_MIPSPRO)
 GLDLIBS		= -s -Zmt -Zcrtdll -Zbsd-signals -lXext -lX11 -lsocket  -lshm $(LDFLAGS_MIPSPRO)
-LINKFLTK	=  ../lib/libfltk.a
+LINKFLTK	= ../lib/libfltk.a
 LINKFLTKGL	= -L../lib 
 LINKFLTKFORMS	= ../lib/libfltk_forms.a ../lib/libfltk.a
-IMAGELIBS	=-lpng  -ljpeg -lz
+LINKFLTKIMG	= ../lib/libfltk_images.a ../lib/libfltk.a
+IMAGELIBS	= -lpng -ljpeg -lz
 
 # Do we build the OpenGL demos?
 GLDEMOS		=
@@ -116,5 +119,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.6 2002/03/26 18:47:02 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.7 2002/07/08 20:14:07 easysw Exp $".
 #

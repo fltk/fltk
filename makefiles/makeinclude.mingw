@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.3.2.8 2002/06/26 12:03:28 easysw Exp $"
+# "$Id: makeinclude.mingw,v 1.1.2.3.2.9 2002/07/08 20:14:06 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -67,12 +67,14 @@ CXXFLAGS	= -Wall -O2 -DWIN32
 LIBNAME		= ../lib/libfltk.a
 FLLIBNAME	= ../lib/libfltk_forms.a
 GLLIBNAME	= ../lib/libfltk_gl.a
+IMGLIBNAME	= ../lib/libfltk_images.a
 LIBCOMMAND	= ar -ruv
 RM		= del
 RANLIB		= ranlib
 DSONAME		=
 FLDSONAME	=
 GLDSONAME	=
+IMGDSONAME	=
 DSOCOMMAND	= echo
 
 # libraries to link with (in addition to default libs):
@@ -81,6 +83,7 @@ GLDLIBS		=-mwindows -lglu32 -lopengl32 -lgdi32 -lcomctl32 -lwsock32
 LINKFLTK	=-L../lib -lfltk
 LINKFLTKGL	=-L../lib -lfltk_gl
 LINKFLTKFORMS	=-L../lib -lfltk_forms -lfltk
+LINKFLTKIMG	=-L../lib -lfltk_images -lfltk
 IMAGELIBS	=
 
 # Do we build the OpenGL demos?
@@ -108,5 +111,5 @@ THREADS		=threads
 	$(CXX) -I.. $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.8 2002/06/26 12:03:28 easysw Exp $".
+# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.9 2002/07/08 20:14:06 easysw Exp $".
 #
