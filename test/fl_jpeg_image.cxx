@@ -1,5 +1,5 @@
 //
-// "$Id: fl_jpeg_image.cxx,v 1.3 1998/10/21 14:21:25 mike Exp $"
+// "$Id: fl_jpeg_image.cxx,v 1.4 1998/12/06 15:57:02 mike Exp $"
 //
 // fl_draw_image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -73,7 +73,7 @@ void image_window::draw() {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/x.H>
-#include "list_visuals.C"
+#include "list_visuals.cxx"
 
 ////////////////////////////////////////////////////////////////
 
@@ -197,5 +197,5 @@ void readtheimage(const char *name) {
 #endif
 
 //
-// End of "$Id: fl_jpeg_image.cxx,v 1.3 1998/10/21 14:21:25 mike Exp $".
+// End of "$Id: fl_jpeg_image.cxx,v 1.4 1998/12/06 15:57:02 mike Exp $".
 //

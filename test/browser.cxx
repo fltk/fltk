@@ -1,5 +1,5 @@
 //
-// "$Id: browser.cxx,v 1.3 1998/10/21 14:21:16 mike Exp $"
+// "$Id: browser.cxx,v 1.4 1998/12/06 15:57:01 mike Exp $"
 //
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -75,7 +75,7 @@ void b_cb(Fl_Widget* o, void*) {
 int main(int argc, char **argv) {
   int i;
   if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
-  const char* fname = (i < argc) ? argv[i] : "browser.C";
+  const char* fname = (i < argc) ? argv[i] : "browser.cxx";
   Fl_Window window(400,400,fname);
   window.box(FL_NO_BOX); // because it is filled with browser
   Fl_Select_Browser browser(0,0,400,400,0);
@@ -94,6 +94,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: browser.cxx,v 1.3 1998/10/21 14:21:16 mike Exp $".
+// End of "$Id: browser.cxx,v 1.4 1998/12/06 15:57:01 mike Exp $".
 //
 

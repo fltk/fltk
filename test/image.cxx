@@ -1,5 +1,5 @@
 //
-// "$Id: image.cxx,v 1.4 1998/10/21 14:21:30 mike Exp $"
+// "$Id: image.cxx,v 1.5 1998/12/06 15:57:03 mike Exp $"
 //
 // Fl_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ void button_cb(Fl_Widget *,void *) {
 
 #include <FL/x.H>
 #ifndef WIN32
-#include "list_visuals.C"
+#include "list_visuals.cxx"
 #endif
 
 int visid = -1;
@@ -133,5 +133,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: image.cxx,v 1.4 1998/10/21 14:21:30 mike Exp $".
+// End of "$Id: image.cxx,v 1.5 1998/12/06 15:57:03 mike Exp $".
 //

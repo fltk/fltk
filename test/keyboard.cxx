@@ -1,5 +1,5 @@
 //
-// "$Id: keyboard.cxx,v 1.3 1998/10/21 14:21:31 mike Exp $"
+// "$Id: keyboard.cxx,v 1.4 1998/12/06 15:57:04 mike Exp $"
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
@@ -37,7 +37,7 @@
 // Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
-#include "keyboard_ui.C"
+#include "keyboard_ui.cxx"
 #include <stdio.h>
 
 // these are used to identify which buttons are which:
@@ -127,5 +127,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: keyboard.cxx,v 1.3 1998/10/21 14:21:31 mike Exp $".
+// End of "$Id: keyboard.cxx,v 1.4 1998/12/06 15:57:04 mike Exp $".
 //

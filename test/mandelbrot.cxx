@@ -1,5 +1,5 @@
 //
-// "$Id: mandelbrot.cxx,v 1.4 1998/10/21 16:35:17 mike Exp $"
+// "$Id: mandelbrot.cxx,v 1.5 1998/12/06 15:57:04 mike Exp $"
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
@@ -23,7 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
-#include "mandelbrot_ui.C"
+#include "mandelbrot_ui.cxx"
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include <stdlib.h>
@@ -197,5 +197,5 @@ void Drawing_Area::resize(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: mandelbrot.cxx,v 1.4 1998/10/21 16:35:17 mike Exp $".
+// End of "$Id: mandelbrot.cxx,v 1.5 1998/12/06 15:57:04 mike Exp $".
 //
