@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.19 1999/03/01 03:44:30 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.20 1999/03/02 07:03:14 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -436,10 +436,7 @@ int Fl_Input_::copy() {
     } else {
       e = position(); b = mark();
     }
-    if (type()!=FL_SECRET_INPUT)
-      Fl::selection(*this, value()+b, e-b);
-    else
-      Fl::selection(*this, "*", 1);
+    Fl::selection(*this, value()+b, (type()!=FL_SECRET_INPUT) ? e-b : 0);
     return 1;
   }
   return 0;
@@ -736,5 +733,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.19 1999/03/01 03:44:30 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.20 1999/03/02 07:03:14 bill Exp $".
 //

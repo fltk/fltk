@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste_win32.cxx,v 1.4 1999/01/07 19:17:31 mike Exp $"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.5 1999/03/02 07:03:15 bill Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
@@ -76,7 +76,7 @@ static int selection_xevent_handler(int) {
 
 // call this when you create a selection:
 void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
-  if (!stuff || len<=0) return;
+  if (!stuff || len<0) return;
   if (len+1 > selection_buffer_length) {
     delete[] selection_buffer;
     selection_buffer = new char[len+100];
@@ -129,5 +129,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.4 1999/01/07 19:17:31 mike Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5 1999/03/02 07:03:15 bill Exp $".
 //
