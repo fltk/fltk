@@ -1,0 +1,11 @@
+REAME.lib
+---------
+
+This README file is a placeholder for library files on your system. 
+Under Microsoft Windows a successful build will contain both a debug
+(fltkd.lib) and release (fltk.lib) library for you to link to.  Both
+are built using the multi-threaded settings.  Currently the Visual C++
+project files do not generate DLL libraries for FLTK.
+
+Under UNIX a single library file (libfltk.a or libfltk.so) will be
+built.
