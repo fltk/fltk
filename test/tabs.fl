@@ -34,8 +34,9 @@ Function {} {open
         Fl_Button {} {
           label button1
           callback {fl_message("Test to see if this modal window prevents you from "
-           "changing the tabs. It should.");}
+           "changing the tabs. It should.");} selected
           xywh {20 60 100 30}
+          code0 {\#include <FL/fl_ask.H>}
         }
         Fl_Input {} {
           label {input in box2}
@@ -114,7 +115,7 @@ Function {} {open
     }
     Fl_Return_Button {} {
       label OK
-      callback {exit(0);} selected
+      callback {exit(0);}
       xywh {250 290 60 30}
       code0 {\#include <stdlib.h>}
     }

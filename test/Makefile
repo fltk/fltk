@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.37 2002/06/28 21:04:37 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.38 2002/08/12 02:11:03 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -243,7 +243,7 @@ forms$(EXEEXT): forms.o
 
 hello$(EXEEXT): hello.o
 
-help$(EXEEXT): help.o ../lib/$(LIBFLTKIMG)
+help$(EXEEXT): help.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
@@ -381,5 +381,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.37 2002/06/28 21:04:37 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.38 2002/08/12 02:11:03 easysw Exp $".
 #
