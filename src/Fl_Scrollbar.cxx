@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.5 2000/01/16 04:30:37 bill Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.6 2000/01/17 20:40:12 bill Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -75,7 +75,11 @@ int Fl_Scrollbar::handle(int event) {
     else {
       int sliderx;
       int S = int(slider_size()*W+.5);
-      double val = (value()-minimum())/(maximum()-minimum());
+      double val;
+      if (minimum() == maximum())
+	val = 0.5;
+      else
+	val = (value()-minimum())/(maximum()-minimum());
       if (val >= 1.0) sliderx = W-S;
       else if (val <= 0.0) sliderx = 0;
       else sliderx = int(val*(W-S)+.5);
@@ -91,7 +95,11 @@ int Fl_Scrollbar::handle(int event) {
     else {
       int slidery;
       int S = int(slider_size()*H+.5);
-      double val = (value()-minimum())/(maximum()-minimum());
+      double val;
+      if (minimum() == maximum())
+	val = 0.5;
+      else
+	val = (value()-minimum())/(maximum()-minimum());
       if (val >= 1.0) slidery = H-S;
       else if (val <= 0.0) slidery = 0;
       else slidery = int(val*(H-S)+.5);
@@ -241,5 +249,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.5 2000/01/16 04:30:37 bill Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.6 2000/01/17 20:40:12 bill Exp $".
 //
