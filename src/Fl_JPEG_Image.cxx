@@ -56,13 +56,28 @@ extern "C"
 
 
 //
+// Custom JPEG error handling structure...
+//
+
+struct fl_jpeg_error_mgr {
+  jpeg_error_mgr	pub_;		// Destination manager...
+  int			err_;		// Error flag
+};
+
+
+//
 // Error handler for JPEG files...
 //
 
 #ifdef HAVE_LIBJPEG
 static void
-jpeg_error_handler(j_common_ptr)
-{
+fl_jpeg_error_handler(j_common_ptr dinfo) {	// I - Decompressor info
+  ((fl_jpeg_error_mgr *)(dinfo->err))->err_ = 1;
+  return;
+}
+
+static void
+fl_jpeg_output_handler(j_common_ptr dinfo) {	// I - Decompressor info
   return;
 }
 #endif // HAVE_LIBJPEG
@@ -75,70 +90,82 @@ jpeg_error_handler(j_common_ptr)
 Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   : Fl_RGB_Image(0,0,0) {
 #ifdef HAVE_LIBJPEG
-  FILE				*fp;		// File pointer
-  struct jpeg_decompress_struct	cinfo;		// Decompressor info
-  struct jpeg_error_mgr		jerr;		// Error handler info
-  JSAMPROW			row;		// Sample row pointer
+  FILE				*fp;	// File pointer
+  jpeg_decompress_struct	dinfo;	// Decompressor info
+  fl_jpeg_error_mgr		jerr;	// Error handler info
+  JSAMPROW			row;	// Sample row pointer
 
 
+  // Clear data...
+  alloc_array = 0;
+  array = (uchar *)0;
+
+  // Open the image file...
   if ((fp = fopen(jpeg, "rb")) == NULL) return;
 
-  cinfo.err = jpeg_std_error(&jerr);
-  jerr.error_exit = jpeg_error_handler;
-  jerr.output_message = jpeg_error_handler;
+  // Setup the decompressor info and read the header...
+  dinfo.err                = jpeg_std_error((jpeg_error_mgr *)&jerr);
+  jerr.pub_.error_exit     = fl_jpeg_error_handler;
+  jerr.pub_.output_message = fl_jpeg_output_handler;
+  jerr.err_                = 0;
 
-  jpeg_create_decompress(&cinfo);
-  jpeg_stdio_src(&cinfo, fp);
-  jpeg_read_header(&cinfo, 1);
+  jpeg_create_decompress(&dinfo);
+  jpeg_stdio_src(&dinfo, fp);
+  jpeg_read_header(&dinfo, 1);
 
-  cinfo.quantize_colors      = (boolean)FALSE;
-  cinfo.out_color_space      = JCS_RGB;
-  cinfo.out_color_components = 3;
-  cinfo.output_components    = 3;
+  if (jerr.err_) goto error_return;
 
-  jpeg_calc_output_dimensions(&cinfo);
+  dinfo.quantize_colors      = (boolean)FALSE;
+  dinfo.out_color_space      = JCS_RGB;
+  dinfo.out_color_components = 3;
+  dinfo.output_components    = 3;
 
-  w(cinfo.output_width);
-  h(cinfo.output_height);
-  d(cinfo.output_components);
+  jpeg_calc_output_dimensions(&dinfo);
+
+  w(dinfo.output_width);
+  h(dinfo.output_height);
+  d(dinfo.output_components);
+
+  if (!w() || !h() || !d() || jerr.err_) goto error_return;
 
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
 
-  jpeg_start_decompress(&cinfo);
+  jpeg_start_decompress(&dinfo);
 
-  while (cinfo.output_scanline < cinfo.output_height)
-  {
+  while (dinfo.output_scanline < dinfo.output_height) {
+    if (jerr.err_) goto error_return;
+
     row = (JSAMPROW)(array +
-                     cinfo.output_scanline * cinfo.output_width *
-                     cinfo.output_components);
-    jpeg_read_scanlines(&cinfo, &row, (JDIMENSION)1);
+                     dinfo.output_scanline * dinfo.output_width *
+                     dinfo.output_components);
+    jpeg_read_scanlines(&dinfo, &row, (JDIMENSION)1);
   }
 
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
+  jpeg_finish_decompress(&dinfo);
+  jpeg_destroy_decompress(&dinfo);
 
   fclose(fp);
 
-#  if 0
+  return;
+
   // JPEG error handling...
   error_return:
 
-  if (array) jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
+  if (array) jpeg_finish_decompress(&dinfo);
+  jpeg_destroy_decompress(&dinfo);
 
   fclose(fp);
 
-  if (array) {
-    w(0);
-    h(0);
-    d(0);
+  w(0);
+  h(0);
+  d(0);
 
+  if (array) {
     delete[] (uchar *)array;
     array = 0;
     alloc_array = 0;
   }
-#  endif // 0
 #endif // HAVE_LIBJPEG
 }
 
