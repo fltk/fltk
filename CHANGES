@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fixed MacOS X shared library generation (STR #51)
 	- Several widgets defined their own size() method but
 	  didn't provide an inline method that mapped to the
 	  Fl_Widget::size() method (STR #62)

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.99 2003/05/29 19:43:06 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.100 2003/06/15 05:37:32 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -118,10 +118,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
-	    DSOCOMMAND="ld $DSOFLAGS -dylib /usr/lib/dylib1.o -lc -o"
-	    if test "x$libdir" != "x/usr/lib"; then
-		    DSOLINK="-Wl,-rpath,$libdir"
-            fi
+	    DSOCOMMAND="\$(CC) $DSOFLAGS -dynamiclib -lc -o"
 	    ;;
 
 	SunOS* | UNIX_S*)
@@ -848,5 +845,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.99 2003/05/29 19:43:06 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.100 2003/06/15 05:37:32 easysw Exp $".
 dnl
