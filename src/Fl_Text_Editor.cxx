@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.8 2002/10/23 12:23:40 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.9 2002/10/29 17:34:47 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -96,8 +96,11 @@ static struct {
 //{ 'z',          FL_CTRL,                  Fl_Text_Editor::undo	  },
 //{ '/',          FL_CTRL,                  Fl_Text_Editor::undo	  },
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },
+  { FL_Delete,    FL_SHIFT,                 Fl_Text_Editor::kf_cut        },
   { 'c',          FL_CTRL,                  Fl_Text_Editor::kf_copy       },
+  { FL_Insert,    FL_CTRL,                  Fl_Text_Editor::kf_copy       },
   { 'v',          FL_CTRL,                  Fl_Text_Editor::kf_paste      },
+  { FL_Insert,    FL_SHIFT,                 Fl_Text_Editor::kf_paste      },
   { 'a',          FL_CTRL,                  ctrl_a                        },
   { 0,            0,                        0                             }
 };
@@ -439,5 +442,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.8 2002/10/23 12:23:40 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.9 2002/10/29 17:34:47 easysw Exp $".
 //

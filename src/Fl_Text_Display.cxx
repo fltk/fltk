@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.34 2002/10/24 17:26:03 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.35 2002/10/29 17:34:44 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2956,6 +2956,7 @@ int Fl_Text_Display::handle(int event) {
       }
 
     case FL_LEAVE:
+    case FL_HIDE:
       if (active_r()) {
         fl_cursor(FL_CURSOR_DEFAULT);
 
@@ -3027,5 +3028,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.34 2002/10/24 17:26:03 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.35 2002/10/29 17:34:44 easysw Exp $".
 //

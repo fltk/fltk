@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.2
 
+	- Fl_Text_Editor now supports Shift+Delete, Ctrl+Insert,
+	  and Shift+Insert for cut, copy, and paste,
+	  respectively.
+	- Fl_Text_Display didn't restore the mouse pointer when
+	  hidden.
 	- Fl::arg() now ignores the MacOS X -psn_N_NNNNN option.
 	- Added another change to the WIN32 redraw handling for
 	  the MingW compilers.
