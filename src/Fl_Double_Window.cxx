@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.12 2004/08/31 22:00:47 matthiaswm Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.13 2004/11/21 15:33:24 easysw Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -315,11 +315,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-#ifdef __APPLE__
   if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
-#else
-  fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
-#endif
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
@@ -352,5 +348,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.12 2004/08/31 22:00:47 matthiaswm Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.13 2004/11/21 15:33:24 easysw Exp $".
 //
