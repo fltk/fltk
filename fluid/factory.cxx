@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.9 2002/10/30 21:06:18 matthiaswm Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.10 2002/10/30 22:30:30 matthiaswm Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -775,9 +775,9 @@ Fl_Menu_Item New_Menu[] = {
 static void make_iconlabel( Fl_Menu_Item *mi, Fl_Image *ic, const char *txt )
 {
   if (ic) {
-    char *t1 = new char (strlen(txt)+2);
+    char *t1 = new char[strlen(txt)+3];
     strcpy( t1, " " );
-    strcat( t1, txt );
+    strcat(t1, txt);
     mi->image( ic );
     Fl_Multi_Label *ml = new Fl_Multi_Label;
     ml->labela = (char*)ic;
@@ -786,7 +786,7 @@ static void make_iconlabel( Fl_Menu_Item *mi, Fl_Image *ic, const char *txt )
     ml->typeb = FL_NORMAL_LABEL;
     ml->label( mi );
   }
-  else
+  else if (txt!=mi->text)
     mi->label(txt);
 }
 
@@ -794,11 +794,11 @@ void fill_in_New_Menu() {
   for (unsigned i = 0; i < sizeof(New_Menu)/sizeof(*New_Menu); i++) {
     Fl_Menu_Item *m = New_Menu+i;
     if (m->user_data()) {
+      Fl_Type *t = (Fl_Type*)m->user_data();
       if (m->text) {
-	make_iconlabel( New_Menu+i, pixmap[ ((Fl_Type*)(New_Menu[i].user_data_))->pixmapID() ], New_Menu[i].label() );
+	make_iconlabel( m, pixmap[t->pixmapID()], m->label() );
       }
       else {
-	Fl_Type *t = (Fl_Type*)m->user_data();
 	const char *n = t->type_name();
 	if (!strncmp(n,"Fl_",3)) n += 3;
 	make_iconlabel( m, pixmap[t->pixmapID()], n );
@@ -962,5 +962,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.9 2002/10/30 21:06:18 matthiaswm Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.10 2002/10/30 22:30:30 matthiaswm Exp $".
 //

@@ -71,7 +71,6 @@ Fl_Type.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Tabs.H
 Fl_Type.o: ../FL/Fl_Pack.H ../FL/Fl_Group.H ../FL/Fl_Wizard.H
 Fl_Type.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H
 Fl_Type.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Bar.H ../FL/Fl_Pixmap.H lock.xpm
-Fl_Type.o: unlock.xpm
 Fl_Window_Type.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Window_Type.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
 Fl_Window_Type.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/fl_message.H
