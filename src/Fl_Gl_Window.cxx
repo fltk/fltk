@@ -38,8 +38,6 @@
 
 ////////////////////////////////////////////////////////////////
 
-HDC fl_GetDC(HWND);
-
 int Fl_Gl_Window::can_do(int a, const int *b) {
 #ifdef WIN32
   Fl_Gl_Choice *g = Fl_Gl_Choice::find(a,b);
@@ -98,10 +96,6 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 #endif
   return 1;
 }
-
-#ifdef WIN32
-extern char fl_direct_paint; // true when responding to WM_PAINT
-#endif
 
 void Fl_Gl_Window::make_current() {
 #ifdef WIN32

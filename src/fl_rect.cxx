@@ -264,7 +264,7 @@ void fl_clip(int x, int y, int w, int h) {
 #ifndef WIN32
     r = XCreateRegion();
 #else
-    r = 0; //whatever, for win32 this is the same as having 0 for HRGN
+    r = CreateRectRgn(0,0,0,0);
 #endif
   }
   rstack[++rstackptr] = r;
@@ -312,24 +312,6 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   default: // partial:
     break;
   }
-#else
-// The win32 API makes no distinction between partial and complete
-// intersection, so we have to check for partial intersection ourselves.
-  RECT rect;
-  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
-  if (!RectInRegion(r,&rect)) {
-    W = H = 0;
-    return 2;
-  } else {
-    if (PtInRegion(r, rect.left, rect.top) &&
-        PtInRegion(r, rect.left, rect.top) &&
-        PtInRegion(r, rect.right, rect.bottom) &&
-        PtInRegion(r, rect.right, rect.bottom))
-      return 0;
-  }
-#endif
-
-#ifndef WIN32
   Region rr = XRectangleRegion(x,y,w,h);
   Region temp = XCreateRegion();
   XIntersectRegion(r, rr, temp);
@@ -338,14 +320,30 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
   XDestroyRegion(temp);
   XDestroyRegion(rr);
-#else
-  Region rr = XRectangleRegion(x,y,w,h);
-  CombineRgn(rr, rr, r,RGN_AND);
-  GetRgnBox(rr, &rect);
-  X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
-  DeleteObject(rr);
-#endif
   return 1;
+#else
+// The win32 API makes no distinction between partial and complete
+// intersection, so we have to check for partial intersection ourselves.
+// However, given that the regions may be composite, we have to do
+// some voodoo stuff...
+  Region rr = XRectangleRegion(x,y,w,h);
+  Region temp = CreateRectRgn(0,0,0,0);
+  int ret;
+  if (CombineRgn(temp, rr, r, RGN_AND) == NULLREGION) { // disjoint
+    W = H = 0;
+    ret = 2;
+  } else if (EqualRgn(temp, rr)) { // complete
+    ret = 0;
+  } else {	// parital intersection
+    RECT rect;
+    GetRgnBox(temp, &rect);
+    X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
+    ret = 1;
+  }
+  DeleteObject(temp);
+  DeleteObject(rr);
+  return ret;
+#endif
 }
 
 // end of fl_rect.C

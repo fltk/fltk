@@ -48,4 +48,4 @@ jpeg_image: jpeg_image.C
 	@${CXX} -I.. ${CXXFLAGS} -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.C -L../lib -lfltk ${LDLIBS} -ljpeg -lXext -o $@
 
 clean:
-	-rm -f ${ALL} jpeg_image *~
+	-@ rm -f ${ALL} jpeg_image *.o core *~

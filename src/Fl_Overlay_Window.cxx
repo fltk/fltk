@@ -20,10 +20,13 @@ void Fl_Overlay_Window::hide() {
 }
 
 void Fl_Overlay_Window::flush() {
-  // a non-zero argument copies entire back buffer to window, erasing
-  // the overlay.  We should only do this if fake overlay needs redraw:
-  uchar overlay_damage = damage()&8; clear_damage(damage()&~8);
-  _flush(overlay_damage);
+  // turn off the bit set by redraw_overlay:
+  clear_damage(damage()&~8);
+  // even if damage() == 0, flush() will erase the fake overlay by
+  // copying back buffer over it.  It will also set the clip to the
+  // region made by all the expose events:
+  Fl_Double_Window::flush();
+  // Now draw the fake overlay, if any, using the current clip:
   if (overlay_ == this) draw_overlay();
 }
 

@@ -11,7 +11,7 @@ void Fl_Window::iconize() {
     show();
   } else {
 #ifdef WIN32
-    ShowWindow(i->xid, SW_MINIMIZE);
+    ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
 #else
     XIconifyWindow(fl_display, i->xid, fl_screen);
 #endif

@@ -17,9 +17,13 @@
 extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.C to store mask
 void fl_restore_clip(); // in fl_rect.C
 
-void Fl_Pixmap::draw(int X, int Y, int W, int H, int cx,int cy) {
+void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
+  // ignore empty or bad pixmap data:
   if (w<0) fl_measure_pixmap(data, w, h);
   if (!w) return;
+  // account for current clip region (faster on Irix):
+  int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
   if (cx+W > w) W = w-cx;

@@ -81,16 +81,20 @@ Fl_Menu_Window::~Fl_Menu_Window() {
 // The system is also told to "grab" events and send them to this app.
 
 extern void fl_fix_focus();
+
 #ifdef WIN32
-HWND fl_capture; // for some reason we must keep forcing it back on!
+// We have to keep track of whether we have captured the mouse, since
+// MSWindows shows little respect for this... Grep for fl_capture to
+// see where and how this is used.
+HWND fl_capture;
 #endif
 
 void Fl::grab(Fl_Window& w) {
   grab_ = &w;
   fl_fix_focus();
 #ifdef WIN32
-  // this seems to have no effect...
-  SetCapture(fl_capture = fl_xid(first_window()));
+  SetActiveWindow(fl_capture = fl_xid(first_window()));
+  SetCapture(fl_capture);
 #else
   XGrabPointer(fl_display,
 	       fl_xid(first_window()),

@@ -25,45 +25,48 @@ static uchar inactive_ramp[24] = {
   48, 48, 48, 49,
   49, 49, 50, 50,
   51, 51, 52, 52};
-uchar* Fl_Gray_Ramp = (uchar*)active_ramp-'A';
+static int draw_it_active;
+uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
 
 void fl_frame(const char* s, int x, int y, int w, int h) {
+  uchar *g = fl_gray_ramp();
   if (h > 0 && w > 0) for (;*s;) {
     // draw top line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_xyline(x, y, x+w-1);
     y++; if (--h <= 0) break;
     // draw left line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_yxline(x, y+h-1, y);
     x++; if (--w <= 0) break;
     // draw bottom line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_xyline(x, y+h-1, x+w-1);
     if (--h <= 0) break;
     // draw right line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_yxline(x+w-1, y+h-1, y);
     if (--w <= 0) break;
   }
 }
 
 void fl_frame2(const char* s, int x, int y, int w, int h) {
+  uchar *g = fl_gray_ramp();
   if (h > 0 && w > 0) for (;*s;) {
     // draw bottom line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_xyline(x, y+h-1, x+w-1);
     if (--h <= 0) break;
     // draw right line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_yxline(x+w-1, y+h-1, y);
     if (--w <= 0) break;
     // draw top line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_xyline(x, y, x+w-1);
     y++; if (--h <= 0) break;
     // draw left line:
-    fl_color(Fl_Gray_Ramp[*s++]);
+    fl_color(g[*s++]);
     fl_yxline(x, y+h-1, y);
     x++; if (--w <= 0) break;
   }
@@ -250,7 +253,7 @@ void Fl_Widget::draw_box(Fl_Boxtype b, Fl_Color c) const {
 
 void Fl_Widget::draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c)
 const {
-  if (!active_r()) Fl_Gray_Ramp = inactive_ramp-'A';
+  draw_it_active = active_r();
   fl_box_table[b].f(x, y, w, h, c);
-  Fl_Gray_Ramp = active_ramp-'A';
+  draw_it_active = 1;
 }

@@ -137,7 +137,7 @@ $(LIBRARY) : $(OBJECTS)
 	@$(CC) -I.. $(CFLAGS) -c -o $@ $<
 
 clean :
-	-@ rm -f *.o *.do $(LIBRARY) $(CLEAN) core *~ makedepend
+	-@ rm -f *.o *.do $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
 	@touch makedepend
 
 depend:

@@ -23,7 +23,13 @@ inline Region XRectangleRegion(int x, int y, int w, int h) {
     return CreateRectRgn(x,y,x+w,y+h);
 }
 inline void XDestroyRegion(Region r) {DeleteObject(r);}
-
+inline void XClipBox(Region r,XRectangle* rect) {
+    RECT win_rect; GetRgnBox(r,&win_rect);
+    rect->x=win_rect.left;
+    rect->y=win_rect.top;
+    rect->width=win_rect.right-win_rect.left;
+    rect->height=win_rect.bottom-win_rect.top;
+}
 #define XDestroyWindow(a,b) DestroyWindow(b)
 #define XMapWindow(a,b) ShowWindow(b, SW_RESTORE)
 #define XUnmapWindow(a,b) ShowWindow(b, SW_HIDE)
@@ -67,7 +73,6 @@ HBRUSH fl_brush(); // allocates a brush if necessary
 extern HINSTANCE fl_display;
 extern Window fl_window;
 extern HDC fl_gc;
-extern HDC window_dc; // for double-buffered windows
 extern HPALETTE fl_palette; // non-zero only on 8-bit displays!
 extern HDC fl_GetDC(Window);
 extern MSG fl_msg;
@@ -75,15 +80,13 @@ extern MSG fl_msg;
 // off-screen pixmaps: create, destroy, draw into, copy to window
 #define Fl_Offscreen HBITMAP
 #define fl_create_offscreen(w, h) CreateCompatibleBitmap(fl_gc, w, h)
-extern void fl_switch_offscreen(HBITMAP);
 
-inline void fl_begin_offscreen(HBITMAP b) {
-  window_dc = fl_gc; fl_switch_offscreen(b);
-}
-inline void fl_end_offscreen() {
-  fl_gc = window_dc;
-}
-void fl_make_current(HBITMAP bitmap);
+extern HDC fl_makeDC(HBITMAP);
+#define fl_begin_offscreen(b) \
+  HDC _sgc=fl_gc; Window _sw=fl_window; fl_gc=fl_makeDC(b); fl_window=b;
+
+#define fl_end_offscreen() \
+  ReleaseDC(fl_window,fl_gc); fl_window=_sw; fl_gc = _sgc
+
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);
-

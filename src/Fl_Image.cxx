@@ -9,7 +9,10 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
 
-void Fl_Image::draw(int X, int Y, int W, int H, int cx,int cy) {
+void Fl_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
+  // account for current clip region (faster on Irix):
+  int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
   if (cx+W > w) W = w-cx;

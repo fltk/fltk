@@ -6,8 +6,6 @@
 #include "Fl_Window.H"
 
 class Fl_Double_Window : public Fl_Window {
-protected:
-  void _flush(int); // used by Fl_Overlay_Window
 public:
   void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}

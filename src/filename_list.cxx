@@ -5,9 +5,7 @@
 #include <config.h>
 #include <FL/filename.H>
 
-#if !defined(WIN32) || defined(__GNUC__)
 extern "C" {
-#endif
   int numericsort(const dirent **, const dirent **);
 #if HAVE_SCANDIR
 #else
@@ -16,9 +14,7 @@ extern "C" {
 	       int (*select)(const dirent *),
 	       int (*compar)(const dirent **, const dirent **));
 #endif
-#if !defined(WIN32) || defined(__GNUC__)
 }
-#endif
 
 int filename_list(const char *d, dirent ***list) {
 #if defined(_AIX) || defined(CRAY)

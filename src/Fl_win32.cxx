@@ -161,29 +161,29 @@ static int mouse_event(Fl_Window *window, int what, int button,
 // convert a MSWindows VK_x to an Fltk (X) Keysym:
 // See also the inverse converter in Fl_get_key_win32.C
 // This table is in numeric order by VK:
-static const struct {unsigned short vk, fltk;} vktab[] = {
+static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_BACK,	FL_BackSpace},
   {VK_TAB,	FL_Tab},
   {VK_CLEAR,	FL_KP+'5'},
-  {VK_RETURN,	FL_Enter},
-  {VK_SHIFT,	FL_Shift_L},
-  {VK_CONTROL,	FL_Control_L},
-  {VK_MENU,	FL_Alt_L},
+  {VK_RETURN,	FL_Enter,	FL_KP_Enter},
+  {VK_SHIFT,	FL_Shift_L,	FL_Shift_R},
+  {VK_CONTROL,	FL_Control_L,	FL_Control_R},
+  {VK_MENU,	FL_Alt_L,	FL_Alt_R},
   {VK_PAUSE,	FL_Pause},
   {VK_CAPITAL,	FL_Caps_Lock},
   {VK_ESCAPE,	FL_Escape},
   {VK_SPACE,	' '},
-  {VK_PRIOR,	FL_Page_Up},
-  {VK_NEXT,	FL_Page_Down},
-  {VK_END,	FL_End},
-  {VK_HOME,	FL_Home},
-  {VK_LEFT,	FL_Left},
-  {VK_UP,	FL_Up},
-  {VK_RIGHT,	FL_Right},
-  {VK_DOWN,	FL_Down},
-  {VK_SNAPSHOT,	FL_Print},	// does not work on NT
-  {VK_INSERT,	FL_Insert},
-  {VK_DELETE,	FL_Delete},
+  {VK_PRIOR,	FL_KP+'9',	FL_Page_Up},
+  {VK_NEXT,	FL_KP+'3',	FL_Page_Down},
+  {VK_END,	FL_KP+'1',	FL_End},
+  {VK_HOME,	FL_KP+'7',	FL_Home},
+  {VK_LEFT,	FL_KP+'4',	FL_Left},
+  {VK_UP,	FL_KP+'8',	FL_Up},
+  {VK_RIGHT,	FL_KP+'6',	FL_Right},
+  {VK_DOWN,	FL_KP+'2',	FL_Down},
+  {VK_SNAPSHOT,	FL_Print}, // does not work on NT
+  {VK_INSERT,	FL_KP+'0',	FL_Insert},
+  {VK_DELETE,	FL_KP+'.',	FL_Delete},
   {VK_LWIN,	FL_Meta_L},
   {VK_RWIN,	FL_Meta_R},
   {VK_APPS,	FL_Menu},
@@ -208,20 +208,19 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
 };
 static int ms2fltk(int vk, int extended) {
   static unsigned short vklut[256];
+  static unsigned short extendedlut[256];
   if (!vklut[1]) { // init the table
     unsigned int i;
     for (i = 0; i < 256; i++) vklut[i] = tolower(i);
     for (i=VK_F1; i<=VK_F16; i++) vklut[i] = i+(FL_F-(VK_F1-1));
     for (i=VK_NUMPAD0; i<=VK_NUMPAD9; i++) vklut[i] = i+(FL_KP+'0'-VK_NUMPAD0);
-    for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++)
+    for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
       vklut[vktab[i].vk] = vktab[i].fltk;
+      extendedlut[vktab[i].vk] = vktab[i].extended;
+    }
+    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
   }
-  if (extended) switch (vk) {
-    case VK_CONTROL : return FL_Control_R;
-    case VK_MENU: return FL_Alt_R;
-    case VK_RETURN: return FL_KP_Enter;
-  }
-  return vklut[vk];
+  return extended ? extendedlut[vk] : vklut[vk];
 }
 
 #if USE_COLORMAP
@@ -249,45 +248,29 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
 
   case WM_PAINT: {
-    // MSWindows has already set the clip region!  Fltk does not like this,
-    // since it wants to draw it's own damage at the same time, and
-    // this damage may be outside the clip region.  I kludge around
-    // this, grep for fl_direct_paint to find the kludges...
-    // if (!(window->damage())) fl_direct_paint = 1;
-    PAINTSTRUCT ps;
+ 
+    // This might be a better alternative, where we fully ignore NT's
+    // "facilities" for painting. MS expects applications to paint according
+    // to a very restrictive paradigm, and this is the way I found of
+    // working around it. In a sense, we are using WM_PAINT simply as an
+    // "exposure alert", like the X event. 
 
-    // I think MSWindows refuses to allocate two DCs for the same hWnd,
-    // so it may kludge the way the DCs are being handled. Works for now,
-    // the "final" solution can wait... Whatever the behaviour of the win32
-    // API, there is bound to be some small memory leak here. 
-    // If anyone knows EXACTLY how DCs are allocated, please fix.
-    fl_window = hWnd;
-    fl_gc = BeginPaint(hWnd, &ps);
-    // A bug popped up because of the two following lines, which according to 
-    // the original code's comments GetDC always resets. I just don't get
-    // why the problem hadn't manifested itself here earlier (well, probably
-    // because MSWindows was not allocating a new DC, but using the old one)
-    // Anyway, these followed the original GetDC calls, but for some reason
-    // were not here with the BeginPaint
-    SetTextAlign(fl_gc, TA_BASELINE|TA_LEFT);
-    SetBkMode(fl_gc, TRANSPARENT);
-
-    window->expose(2, ps.rcPaint.left, ps.rcPaint.top,
-		   ps.rcPaint.right-ps.rcPaint.left,
-		   ps.rcPaint.bottom-ps.rcPaint.top);
-
-    Fl_X::i(window)->flush();
-    window->clear_damage();
-    //Since damage has been reset, we can dispose of the clip region
-    Region &r=Fl_X::i(window)->region;
-    if (r) {
-      DeleteObject(r);
-      r = 0;
+    Fl_X *i = Fl_X::i(window);
+    if (window->damage()) {
+      if (i->region) {
+	InvalidateRgn(hWnd,i->region,FALSE);
+	GetUpdateRgn(hWnd,i->region,0);
+      }
+    } else {
+      if (!i->region) i->region = CreateRectRgn(0,0,0,0);
+      GetUpdateRgn(hWnd,i->region,0);
     }
-    EndPaint(hWnd, &ps);
-
-    fl_gc = 0;
-    fl_window = (HWND)-1;
+    window->clear_damage(window->damage()|2);
+    i->flush();
+    window->clear_damage();
+    // This convinces MSWindows we have painted whatever they wanted
+    // us to paint, and stops it from sending WM_PAINT messages.
+    ValidateRgn(hWnd,NULL);
     } break;
 
   case WM_LBUTTONDOWN:  mouse_event(window, 0, 1, wParam, lParam); return 0;
@@ -300,20 +283,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RBUTTONDBLCLK:mouse_event(window, 1, 3, wParam, lParam); return 0;
   case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
   case WM_MOUSEMOVE:    mouse_event(window, 3, 0, wParam, lParam); return 0;
-
-  // kludges so the pop-up menus work.  Title bar still blinks, sigh...
-  case WM_CAPTURECHANGED:
-    if (fl_capture && lParam != (LPARAM)fl_capture) {
-      SetCapture(fl_capture);
-      return 0;
-    }
-    break;
-  case WM_ACTIVATE:
-    if (fl_capture && wParam && hWnd!=fl_capture) {
-      SetActiveWindow(fl_capture);
-      return 0;
-    }
-    break;
 
   case WM_SETFOCUS:
     Fl::handle(FL_FOCUS, window);
@@ -350,16 +319,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // otherwise use it as a 0-character key...
   case WM_DEADCHAR:
   case WM_SYSDEADCHAR:
-    buffer[0] = 0;
-    Fl::e_text = buffer;
-    Fl::e_length = 0;
-    goto GETSTATE;
   case WM_CHAR:
   case WM_SYSCHAR:
-    buffer[0] = char(wParam);
-    Fl::e_text = buffer;
-    Fl::e_length = 1;
-  GETSTATE:
     {ulong state = Fl::e_state & 0xff000000; // keep the mouse button state
      // if GetKeyState is expensive we might want to comment some of these out:
       if (GetKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
@@ -374,6 +335,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
       Fl::e_state = state;}
     if (lParam & (1<<31)) goto DEFAULT; // ignore up events after fixing shift
+    if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
+      buffer[0] = char(wParam);
+      Fl::e_length = 1;
+    } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
+      buffer[0] = Fl::e_keysym-FL_KP;
+      Fl::e_length = 1;
+    } else {
+      buffer[0] = 0;
+      Fl::e_length = 0;
+    }
+    Fl::e_text = buffer;
     // for (int i = lParam&0xff; i--;)
     while (window->parent()) window = window->window();
     if (Fl::handle(FL_KEYBOARD,window)) return 0;
@@ -472,7 +444,11 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   if (!class_name) {	// create a single WNDCLASS used for everything:
     class_name = "FLTK";
     WNDCLASSEX wc;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
+    // Documentation states a device context consumes about 800 bytes
+    // of memory... so who cares? If 800 bytes per window is what it 
+    // takes to speed things up, I'm game.
+    //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
     wc.lpfnWndProc = (WNDPROC)WndProc;
     wc.cbClsExtra = wc.cbWndExtra = 0;
     wc.hInstance = fl_display;
@@ -564,7 +540,10 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   w->set_visible();
   w->handle(FL_SHOW); // get child windows to appear
-  ShowWindow(x->xid, fl_show_iconic ? SW_MINIMIZE : SW_SHOW);
+  // If we've captured the mouse, we dont want do activate any
+  // other windows from the code, or we loose the capture.
+  ShowWindow(x->xid, fl_show_iconic ? SW_SHOWMINNOACTIVE : 
+             fl_capture? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
   fl_show_iconic = 0;
   fl_fix_focus();
   return x;
@@ -654,27 +633,20 @@ void Fl_Window::show() {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
     Fl_X::make(this);
   } else {
-    ShowWindow(i->xid, SW_RESTORE);
-    SetActiveWindow(i->xid);
+    // Once again, we would lose the capture if we activated the window.
+    ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
 }
 
 Fl_Window *Fl_Window::current_;
-HDC window_dc;
 // the current context
 HDC fl_gc = 0;
 // the current window handle, initially set to -1 so we can correctly
 // allocate fl_GetDC(0)
 HWND fl_window = (HWND)-1;
 
-// Here we ensure only one GetDC is ever in place. There is a little
-// workaround for the case of direct_paint.
+// Here we ensure only one GetDC is ever in place.
 HDC fl_GetDC(HWND w) {
- /*
-  if (fl_direct_paint) {
-    if (w == direct_paint_window) return direct_paint_dc;
-  } 
-*/
   if (fl_gc) {
     if (w == fl_window) return fl_gc;
     ReleaseDC(fl_window, fl_gc);
@@ -691,19 +663,7 @@ HDC fl_GetDC(HWND w) {
 void Fl_Window::make_current() {
   fl_GetDC(fl_xid(this));
   current_ = this;
-}
-
-// WM_PAINT events and cropped damage call this:
-void Fl_Window::expose(uchar flags,int X,int Y,int W,int H) {
-  if (i) {
-    Region temp= XRectangleRegion(X,Y,W,H);
-    if (i->region) {
-      CombineRgn(temp,temp,i->region,RGN_AND);
-      DeleteObject((HGDIOBJ)i->region);
-    }
-    i->region=temp;
-  }
-  damage(flags);
+  fl_clip_region(0);
 }
 
 #include <FL/fl_draw.H>
@@ -714,7 +674,8 @@ void Fl_Widget::damage(uchar flags) {
   } else {
     Fl_X* i = Fl_X::i((Fl_Window*)this);
     if (i) {
-      if (i->region) {DeleteObject((HGDIOBJ)i->region); i->region = 0;}
+      if (i->region) {DeleteObject(i->region);}
+      i->region = 0;
       damage_ |= flags;
       Fl::damage(1);
     }
@@ -741,13 +702,12 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
 	  CombineRgn(i->region,i->region,r,RGN_OR);
 	  DeleteObject(r);
 	}
-	damage_ |= flags;
       } else {
 	// create a new region:
 	if (i->region) DeleteObject(i->region);
 	i->region = XRectangleRegion(X,Y,W,H);
-	damage_ = flags;
       }
+      damage_ |= flags;
       Fl::damage(1);
     }
   }
@@ -755,13 +715,8 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
 
 void Fl_Window::flush() {
   make_current();
-  if (damage() & ~6) {
-    draw();
-  } else {
-    fl_clip_region(i->region);
-    draw();
-    fl_pop_clip();
-  }
+  fl_clip_region(i->region);i->region=0;
+  draw();
 }
 
 // End of Fl_win32.C //

@@ -9,7 +9,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-extern uchar* Fl_Gray_Ramp;
+extern uchar* fl_gray_ramp();
 
 static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   w &= -2;
@@ -17,13 +17,14 @@ static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   int x1 = x+w/2;
   int y1 = y+h/2;
   fl_color(bgcolor); fl_polygon(x+3, y1, x1,y+3, x+w-3,y1, x1,y+h-3);
-  fl_color(Fl_Gray_Ramp['W']); fl_line(x+1, y1, x1, y+1, x+w-1, y1);
-  fl_color(Fl_Gray_Ramp['U']); fl_line(x+2, y1, x1, y+2, x+w-2, y1);
-  fl_color(Fl_Gray_Ramp['S']); fl_line(x+3, y1, x1, y+3, x+w-3, y1);
-  fl_color(Fl_Gray_Ramp['P']); fl_line(x+3, y1, x1, y+h-3, x+w-3, y1);
-  fl_color(Fl_Gray_Ramp['N']); fl_line(x+2, y1, x1, y+h-2, x+w-2, y1);
-  fl_color(Fl_Gray_Ramp['H']); fl_line(x+1, y1, x1, y+h-1, x+w-1, y1);
-  fl_color(Fl_Gray_Ramp['A']); fl_loop(x, y1, x1, y, x+w, y1, x1, y+h);
+  uchar *g = fl_gray_ramp();
+  fl_color(g['W']); fl_line(x+1, y1, x1, y+1, x+w-1, y1);
+  fl_color(g['U']); fl_line(x+2, y1, x1, y+2, x+w-2, y1);
+  fl_color(g['S']); fl_line(x+3, y1, x1, y+3, x+w-3, y1);
+  fl_color(g['P']); fl_line(x+3, y1, x1, y+h-3, x+w-3, y1);
+  fl_color(g['N']); fl_line(x+2, y1, x1, y+h-2, x+w-2, y1);
+  fl_color(g['H']); fl_line(x+1, y1, x1, y+h-1, x+w-1, y1);
+  fl_color(g['A']); fl_loop(x, y1, x1, y, x+w, y1, x1, y+h);
 }
 
 static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
@@ -31,14 +32,15 @@ static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   h &= -2;
   int x1 = x+w/2;
   int y1 = y+h/2;
-  fl_color(Fl_Gray_Ramp['P']); fl_line(x+0, y1, x1, y+0, x+w-0, y1);
-  fl_color(Fl_Gray_Ramp['N']); fl_line(x+1, y1, x1, y+1, x+w-1, y1);
-  fl_color(Fl_Gray_Ramp['H']); fl_line(x+2, y1, x1, y+2, x+w-2, y1);
-  fl_color(Fl_Gray_Ramp['W']); fl_line(x+2, y1, x1, y+h-2, x+w-2, y1);
-  fl_color(Fl_Gray_Ramp['U']); fl_line(x+1, y1, x1, y+h-1, x+w-1, y1);
-  fl_color(Fl_Gray_Ramp['S']); fl_line(x+0, y1, x1, y+h-0, x+w-0, y1);
+  uchar *g = fl_gray_ramp();
+  fl_color(g['P']); fl_line(x+0, y1, x1, y+0, x+w-0, y1);
+  fl_color(g['N']); fl_line(x+1, y1, x1, y+1, x+w-1, y1);
+  fl_color(g['H']); fl_line(x+2, y1, x1, y+2, x+w-2, y1);
+  fl_color(g['W']); fl_line(x+2, y1, x1, y+h-2, x+w-2, y1);
+  fl_color(g['U']); fl_line(x+1, y1, x1, y+h-1, x+w-1, y1);
+  fl_color(g['S']); fl_line(x+0, y1, x1, y+h-0, x+w-0, y1);
   fl_color(bgcolor); fl_polygon(x+3, y1, x1,y+3, x+w-3,y1, x1,y+h-3);
-  fl_color(Fl_Gray_Ramp['A']); fl_loop(x+3, y1, x1, y+3, x+w-3, y1, x1, y+h-3);
+  fl_color(g['A']); fl_loop(x+3, y1, x1, y+3, x+w-3, y1, x1, y+h-3);
 }
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);

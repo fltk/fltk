@@ -74,7 +74,6 @@ public:
   void fullscreen();
   void fullscreen_off(int,int,int,int);
   void iconize();
-  void expose(uchar flags,int X,int Y,int W,int H);
 
   int x_root() const ;
   int y_root() const ;

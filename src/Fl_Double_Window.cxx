@@ -36,6 +36,9 @@ static int can_xdbe() {
   }
   return use_xdbe;
 }
+#define DAMAGE_TEST() (damage() && (use_xdbe || damage() != 2))
+#else
+#define DAMAGE_TEST() (damage() & ~2)
 #endif
 
 void Fl_Double_Window::show() {
@@ -51,33 +54,35 @@ void Fl_Double_Window::show() {
 
 #ifdef WIN32
 
-// I've removed the second one (never understool why
-// it was there to begin with).
+// Code used to switch output to an off-screen window.  See macros in
+// win32.H which save the old state in local variables.
 
-static HDC blt_gc;
-
-void fl_switch_offscreen(HBITMAP bitmap) {
-  if (!blt_gc) {
-    blt_gc = CreateCompatibleDC(fl_gc);
-    SetTextAlign(blt_gc, TA_BASELINE|TA_LEFT);
-    SetBkMode(blt_gc, TRANSPARENT);
+HDC fl_makeDC(HBITMAP bitmap) {
+  HDC new_gc = CreateCompatibleDC(fl_gc);
+  SetTextAlign(new_gc, TA_BASELINE|TA_LEFT);
+  SetBkMode(new_gc, TRANSPARENT);
 #if USE_COLORMAP
-    if (fl_palette) SelectPalette(blt_gc, fl_palette, FALSE);
+  if (fl_palette) SelectPalette(new_gc, fl_palette, FALSE);
 #endif
-  }
-  SelectObject(blt_gc, bitmap);
-  fl_gc = blt_gc;
+  SelectObject(new_gc, bitmap);
+  return new_gc;
 }
 
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
-  SelectObject(blt_gc, bitmap);
-  BitBlt(window_dc, x, y, w, h, blt_gc, srcx, srcy, SRCCOPY);
+  HDC new_gc = CreateCompatibleDC(fl_gc);
+  SelectObject(new_gc, bitmap);
+  BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+  ReleaseDC(bitmap, new_gc);
 }
+
+extern void fl_restore_clip();
 
 #endif
 
-// protected method used by Fl_Overlay_Window to fake overlay:
-void Fl_Double_Window::_flush(int eraseoverlay) {
+// Fl_Overlay_Window relies on flush() copying the back buffer to the
+// front even if damage() == 0, thus erasing the overlay inside the region:
+
+void Fl_Double_Window::flush() {
   make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(this);
   if (!i->other_xid) {
@@ -89,49 +94,46 @@ void Fl_Double_Window::_flush(int eraseoverlay) {
       i->other_xid = fl_create_offscreen(w(), h());
     clear_damage(~0);
   }
-  XRectangle rect = {0,0,w(),h()};
-  if (damage()) {
-    if (	// don't draw if back buffer is ok
-#if USE_XDBE
-	use_xdbe ||
-#endif
-	damage() != 2) {
-/*
 #ifdef WIN32
-      fl_begin_offscreen(i->other_xid);
-      fl_clip_region(i->region); i->region = 0;
-      draw();
-      fl_end_offscreen();
-#else
-*/
-#ifdef WIN32
-      fl_begin_offscreen(i->other_xid);
-#endif
-      fl_window = i->other_xid;
-      fl_clip_region(i->region); i->region = 0;
-      draw();
-      fl_window = i->xid;
-#ifdef WIN32
-      fl_end_offscreen();
-#endif
-//#endif
-    }
+  if (DAMAGE_TEST()) {
+    HDC _sgc = fl_gc;
+    fl_gc = fl_makeDC(i->other_xid);
+    fl_restore_clip(); // duplicate region into new gc
+    draw();
+    ReleaseDC(i->other_xid, fl_gc);
+    fl_gc = _sgc;
   }
-  fl_clip_region(0);
+#else // X:
 #if USE_XDBE
-  if (i->region && !eraseoverlay) XClipBox(i->region, &rect);
-  if (use_xdbe) {
+  int clipped = i->region != 0;
+#endif
+  fl_clip_region(i->region); i->region = 0;
+  if (DAMAGE_TEST()) {
+    fl_window = i->other_xid;
+    draw();
+    fl_window = i->xid;
+  }
+#if USE_XDBE
+  // It appears that swapbuffers ignores the clip region (it has to
+  // as the gc is not passed as an argument to it).  This causes it
+  // to erase parts of the overlay that won't be redrawn, and (at least
+  // on XFree86) it is slower.  So I don't use it unless the entire
+  // window is being redrawn.   Sigh.
+  if (use_xdbe && !clipped) {
     XdbeSwapInfo s;
     s.swap_window = fl_xid(this);
     s.swap_action = XdbeCopied;
-    XdbeSwapBuffers(fl_display,&s,1);
-  } else
+    XdbeSwapBuffers(fl_display, &s, 1);
+    // fl_clip_region(0); older fix for clipping problem but overlay blinked
+    return;
+  }
 #endif
-    fl_copy_offscreen(rect.x, rect.y, rect.width, rect.height,
-		      i->other_xid, rect.x, rect.y);
+#endif
+  // on Irix (at least) it is faster to reduce the area copied to
+  // the current clip region:
+  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+  fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
 }
-
-void Fl_Double_Window::flush() {_flush(0);}
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int ow = w();
