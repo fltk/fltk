@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.1 1999/03/25 22:19:30 mike Exp $"
+ * "$Id: configh.in,v 1.11.2.2 2000/02/29 06:42:12 bill Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -69,11 +69,13 @@
 /*
  * USE_XDBE:
  *
- * Actually try to use the double-buffer extension?  Set this to zero
- * disable use of XDBE without breaking the list_visuals program.
+ * Actually try to use the double-buffer extension?
+ * You can try this, it may speed up Fl_Double_Window.  However we have
+ * found most (all?) X implementations to be broken, or at least I
+ * don't understand the documentation, or something...
  */
 
-#define USE_XDBE HAVE_XDBE
+#define USE_XDBE 0
 
 /*
  * HAVE_OVERLAY:
@@ -151,5 +153,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: configh.in,v 1.11.2.1 1999/03/25 22:19:30 mike Exp $".
+ * End of "$Id: configh.in,v 1.11.2.2 2000/02/29 06:42:12 bill Exp $".
  */
