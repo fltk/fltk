@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.13 2004/08/27 20:02:43 matthiaswm Exp $"
+// "$Id: mac.H,v 1.1.2.14 2004/08/31 00:27:40 matthiaswm Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -82,6 +82,8 @@ public:
   static void q_fill_context();    // fill a Quartz context with current FLTK state
   static void q_clear_clipping();  // remove all clipping from a Quartz context
   static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
+  static void q_begin_image(CGRect&, int x, int y);
+  static void q_end_image();
 };
 
 inline Window fl_xid(const Fl_Window*w) 
@@ -124,6 +126,6 @@ extern void fl_open_callback(void (*cb)(const char *));
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: mac.H,v 1.1.2.13 2004/08/27 20:02:43 matthiaswm Exp $".
+// End of "$Id: mac.H,v 1.1.2.14 2004/08/31 00:27:40 matthiaswm Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.35 2004/08/28 13:45:27 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.36 2004/08/31 00:27:40 matthiaswm Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -327,7 +327,6 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_begin_offscreen((Fl_Offscreen)id);
     fl_draw_image(array, 0, 0, w(), h(), d(), ld());
     fl_end_offscreen();
-
     if (d() == 2 || d() == 4) {
       mask = fl_create_alphamask(w(), h(), d(), ld(), array);
     }
@@ -380,10 +379,11 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
 #elif defined(__APPLE_QUARTZ__)
-# warning : Quartz implementation not finished yet
   if (id && fl_gc) {
-    CGRect rect = { X, Y, w(), h() };
+    CGRect rect = { X, Y, W, H };
+    Fl_X::q_begin_image(rect, cx, cy);
     CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
+    Fl_X::q_end_image();
   }
 #else
   if (mask) {
@@ -418,5 +418,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.35 2004/08/28 13:45:27 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.36 2004/08/31 00:27:40 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.24 2004/08/25 00:20:25 matthiaswm Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.25 2004/08/31 00:27:40 matthiaswm Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -78,49 +78,23 @@ void fl_delete_bitmask(Fl_Bitmask id) {
   if (id) DisposeGWorld(id);
 }
 #elif defined(__APPLE_QUARTZ__)
-#  warning quartz
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
-  Rect srcRect;
-  srcRect.left = 0; srcRect.right = w;
-  srcRect.top = 0; srcRect.bottom = h;
-  GrafPtr savePort;
-
-  GetPort(&savePort); // remember the current port
-
-  Fl_Bitmask gw;
-  NewGWorld( &gw, 1, &srcRect, 0L, 0L, 0 );
-  PixMapHandle pm = GetGWorldPixMap( gw );
-  if ( pm )
-  {
-    LockPixels( pm );
-    if ( *pm )
-    {
-      uchar *base = (uchar*)GetPixBaseAddr( pm );
-      if ( base )
-      {
-        PixMapPtr pmp = *pm;
-        // verify the parameters for direct memory write
-        if ( pmp->pixelType == 0 || pmp->pixelSize == 1 || pmp->cmpCount == 1 || pmp->cmpSize == 1 )
-        {
-          static uchar reverse[16] =    /* Bit reversal lookup table */
-          { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee, 0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-          uchar *dst = base;
-          const uchar *src = array;
-          int rowBytesSrc = (w+7)>>3 ;
-          int rowPatch = (pmp->rowBytes&0x3fff) - rowBytesSrc;
-          for ( int j=0; j<h; j++,dst+=rowPatch )
-            for ( int i=0; i<rowBytesSrc; i++,src++ )
-              *dst++ = (reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f);
-        }
-      }
-      UnlockPixels( pm );
-    }
+  static uchar reverse[16] =    /* Bit reversal lookup table */
+    { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee, 
+      0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+  int rowBytes = (w+7)>>3 ;
+  uchar *bmask = (uchar*)malloc(rowBytes*h), *dst = bmask;
+  const uchar *src = array;
+  for ( int i=rowBytes*h; i>0; i--,src++ ) {
+    *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
   }
-  SetPort(savePort);
-  return gw;               /* tell caller we succeeded! */
+  CGDataProviderRef srcp = CGDataProviderCreateWithData( 0L, bmask, rowBytes*h, 0L);
+  CGImageRef id = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
+  CGDataProviderRelease(srcp);
+  return (Fl_Bitmask)id;
 }
 void fl_delete_bitmask(Fl_Bitmask id) {
-  if (id) DisposeGWorld(id);
+  if (id) CGImageRelease((CGImageRef)id);
 }
 #elif defined(WIN32) // Windows bitmask functions...
 // 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
@@ -416,20 +390,13 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 	   srcOr, 				// mode
 	   0L);					// mask region
 #elif defined(__APPLE_QUARTZ__)
-# warning quartz
   if (!id) id = fl_create_bitmask(w(), h(), array);
-  GrafPtr dstPort;
-  GetPort( &dstPort );
-  Rect src, dst;
-  GetPortBounds( (Fl_Offscreen)id, &src );
-  SetRect( &src, cx, cy, cx+W, cy+H );
-  SetRect( &dst, X, Y, X+W, Y+H );
-  CopyBits(GetPortBitMapForCopyBits((Fl_Offscreen)id),  // srcBits
-           GetPortBitMapForCopyBits(dstPort),   // dstBits
-           &src,                                // src bounds
-           &dst,                                // dst bounds
-           srcOr,                               // mode
-           0L);                                 // mask region
+  if (id && fl_gc) {
+    CGRect rect = { X, Y, W, H };
+    Fl_X::q_begin_image(rect, cx, cy);
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
+    Fl_X::q_end_image();
+  }
 #else
   if (!id) id = fl_create_bitmask(w(), h(), array);
 
@@ -534,5 +501,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.24 2004/08/25 00:20:25 matthiaswm Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.25 2004/08/31 00:27:40 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_mac.cxx,v 1.1.2.7 2004/08/25 00:20:27 matthiaswm Exp $"
+// "$Id: fl_draw_image_mac.cxx,v 1.1.2.8 2004/08/31 00:27:40 matthiaswm Exp $"
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -58,6 +58,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 {
   if (!linedelta) linedelta = W*delta;
 
+#ifdef __APPLE_QD__
   // theoretically, if the current GPort permits, we could write
   // directly into it, avoiding the temporary GWorld. For now I
   // will go the safe way... .
@@ -167,7 +168,51 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       }
     }
   }
-
+#elif defined(__APPLE_QUARTZ__)
+  // following the very save (and very slow) way to write the image into the give port
+  CGContextSetShouldAntialias(fl_gc, false);
+  if ( cb )
+  {
+    uchar *tmpBuf = new uchar[ W*4 ];
+    for ( int i=0; i<H; i++ )
+    {
+      uchar *src = tmpBuf;
+      cb( userdata, 0, i, W, tmpBuf );
+      for ( int j=0; j<W; j++ )
+      {
+        if ( mono )
+          { fl_color( src[0], src[0], src[0] ); src++; }
+        else
+          { fl_color( src[0], src[1], src[2] ); src+=4; }
+        CGContextMoveToPoint(fl_gc, X+j, Y+i);
+        CGContextAddLineToPoint(fl_gc, X+j, Y+i);
+        CGContextStrokePath(fl_gc);
+      }
+    }
+    delete[] tmpBuf;
+  }
+  else
+  {
+    for ( int i=0; i<H; i++ )
+    {
+      const uchar *src = buf+i*linedelta;
+      for ( int j=0; j<W; j++ )
+      {
+        if ( mono )
+          fl_color( src[0], src[0], src[0] );
+        else
+          fl_color( src[0], src[1], src[2] );
+        CGContextMoveToPoint(fl_gc, X+j, Y+i);
+        CGContextAddLineToPoint(fl_gc, X+j, Y+i);
+        CGContextStrokePath(fl_gc);
+        src += delta;
+      }
+    }
+  }
+  CGContextSetShouldAntialias(fl_gc, true);
+#else
+# error : you must defined __APPLE_QD__ or __APPLE_QUARTZ__
+#endif
 // \todo Mac : the above function does not support subregions yet
 #ifdef later_we_do_this
 // \todo Mac : the following code is taken from fl_draw_image_win32 and needs to be modified for Mac Carbon
@@ -279,5 +324,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.7 2004/08/25 00:20:27 matthiaswm Exp $".
+// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.8 2004/08/31 00:27:40 matthiaswm Exp $".
 //

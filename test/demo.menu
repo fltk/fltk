@@ -48,7 +48,7 @@
 	@u:navigation:navigation
 	@u:minimum update:minimum
 	@u:keyboard:keyboard
-	@u:fast & slow widgets:fast_slow
+	@u:fast && slow widgets:fast_slow
 	@u:inactive:inactive
 
 @main:Fluid\n(UI design tool):../fluid/fluid valuators.fl

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.29 2004/08/25 00:20:25 matthiaswm Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.30 2004/08/31 00:27:40 matthiaswm Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -80,6 +80,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
   if (!id) {
+#warning : to enable masking in Quartz, write our own version of this little function!
     id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
     uchar *bitmap = 0;
@@ -124,25 +125,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
 #elif defined(__APPLE_QUARTZ__)
-#warning quartz
-  if (mask) {
-    Rect src, dst;
-    src.left = cx; src.right = cx+W;
-    src.top = cy; src.bottom = cy+H;
-    dst.left = X; dst.right = X+W;
-    dst.top = Y; dst.bottom = Y+H;
-    RGBColor rgb;
-    rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
-    RGBBackColor(&rgb);
-    rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
-    RGBForeColor(&rgb);
-    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
-             GetPortBitMapForCopyBits((GrafPtr)mask),
-             GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
-             &src, &src, &dst);
-  } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-  }
+  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
 #else
   if (mask) {
     // I can't figure out how to combine a mask with existing region,
@@ -481,5 +464,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.29 2004/08/25 00:20:25 matthiaswm Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.30 2004/08/31 00:27:40 matthiaswm Exp $".
 //
