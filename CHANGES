@@ -2,6 +2,12 @@ CHANGES IN FLTK 1.1.0b7
 
 	- More documentation updates...
 	- Mac OS X support works 95%
+	- Updated paragraph 4 of the FLTK license exceptions;
+	  there was some question about the requirement to show
+	  that a program uses FLTK, which is required by section
+	  6 of the LGPL. The new exemption specifies that
+	  inclusion of the FLTK license is not required, just a
+	  statement that the program uses FLTK.
 	- Fl_Button::handle() was calling take_focus() for both
 	  FL_PUSH and FL_DRAG.
 	- File and memory fixes for Fl_GIF_Image, Fl_PNG_Image,
