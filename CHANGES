@@ -1,5 +1,9 @@
 CHANGES SINCE FLTK 1.0.11
 
+	- Fixed a bug in Fl_Scrollbar - clicking in the "trough"
+	  of the scrollbar would move the scroller in the wrong
+	  direction.
+
 	- Made the Forms pixmap parameter const to match the
 	  Fl_Pixmap.H definitions.
 
