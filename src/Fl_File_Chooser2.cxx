@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.14 2002/06/06 21:26:12 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -31,7 +31,7 @@
 //   Fl_File_Chooser::newdir()     - Make a new directory.
 //   Fl_File_Chooser::rescan()     - Rescan the current directory.
 //   Fl_File_Chooser::fileListCB() - Handle clicks (and double-clicks) in the
-//                               FileBrowser.
+//                                   FileBrowser.
 //   Fl_File_Chooser::fileNameCB() - Handle text entry in the FileBrowser.
 //
 
@@ -173,16 +173,8 @@ Fl_File_Chooser::count()
     if (filename == NULL || filename[0] == '\0')
       return (0);
 
-    // Is the file name a directory?
-    if (directory_[0] != '\0')
-      snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-    else
-      strlcpy(pathname, filename, sizeof(pathname));
-
-    if (fl_filename_isdir(pathname))
-      return (0);
-    else
-      return (1);
+    // Is the file name just the current directory?
+    return (strcmp(filename, directory_) != 0);
   }
 
   for (i = 1, count = 0; i <= fileList->size(); i ++)
@@ -683,5 +675,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.14 2002/06/06 21:26:12 easysw Exp $".
 //
