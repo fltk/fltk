@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNG_Image.cxx,v 1.1.2.4 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_PNG_Image.cxx,v 1.1.2.5 2002/04/24 18:29:05 easysw Exp $"
 //
 // Fl_PNG_Image routines.
 //
@@ -39,10 +39,14 @@
 
 extern "C"
 {
-#ifdef HAVE_LIBPNG
+#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
 #  include <zlib.h>
-#  include <png.h>
-#endif // HAVE_LIBPNG
+#  ifdef HAVE_PNG_H
+#    include <png.h>
+#  else
+#    include <libpng/png.h>
+#  endif // HAVE_PNG_H
+#endif // HAVE_LIBPNG ** HAVE_LIBZ
 }
 
 
@@ -52,7 +56,7 @@ extern "C"
 
 Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   : Fl_RGB_Image(0,0,0) {
-#ifdef HAVE_LIBPNG
+#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
   int		i;			// Looping var
   FILE		*fp;			// File pointer
   int		channels;		// Number of color channels
@@ -97,11 +101,11 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   else if (info->bit_depth == 16)
     png_set_strip_16(pp);
 
-#if defined(HAVE_PNG_GET_VALID) && defined(HAVE_SET_TRNS_TO_ALPHA)
+#  if defined(HAVE_PNG_GET_VALID) && defined(HAVE_SET_TRNS_TO_ALPHA)
   // Handle transparency...
   if (png_get_valid(pp, info, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(pp);
-#endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
+#  endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
 
   array = new uchar[w() * h() * d()];
 
@@ -126,10 +130,10 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 #  endif // HAVE_PNG_READ_DESTROY
 
   fclose(fp);
-#endif // HAVE_LIBPNG
+#endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
 
 //
-// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.4 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.5 2002/04/24 18:29:05 easysw Exp $".
 //

@@ -1,6 +1,6 @@
 /* config.h.  Generated automatically by configure.  */
 /*
- * "$Id: config.os2x,v 1.1.2.4.2.4 2002/03/26 18:47:01 easysw Exp $"
+ * "$Id: config.os2x,v 1.1.2.4.2.5 2002/04/24 18:29:05 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -30,7 +30,6 @@
  */
 
 #define FLTK_DOCDIR	"/usr/local/share/doc/fltk"
-
 
 /*
  * BORDER_WIDTH:
@@ -198,13 +197,19 @@
 #define HAVE_LIBJPEG 1
 
 /*
+ * Which header file do we include for libpng?
+ */
+
+#define HAVE_PNG_H
+#undef HAVE_LIBPNG_PNG_H
+
+/*
  * Do we have the png_xyz() functions?
  */
 
 #define HAVE_PNG_GET_VALID 1
 /* #undef HAVE_PNG_SET_TRNS_TO_ALPHA */
 #define HAVE_PNG_READ_DESTROY 1
-
 
 /*
  * Do we have POSIX threading?
@@ -215,5 +220,5 @@
 
 
 /*
- * End of "$Id: config.os2x,v 1.1.2.4.2.4 2002/03/26 18:47:01 easysw Exp $".
+ * End of "$Id: config.os2x,v 1.1.2.4.2.5 2002/04/24 18:29:05 easysw Exp $".
  */

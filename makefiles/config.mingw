@@ -1,5 +1,5 @@
 /*
- * "$Id: config.mingw,v 1.1.2.3.2.2 2001/10/19 14:04:08 easysw Exp $"
+ * "$Id: config.mingw,v 1.1.2.3.2.3 2002/04/24 18:29:05 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -28,7 +28,6 @@
  */
 
 #define FLTK_DOCDIR	"C:/FLTK/DOC"
-
 
 /*
  * BORDER_WIDTH:
@@ -174,6 +173,13 @@
 #undef HAVE_LIBJPEG
 
 /*
+ * Which header file do we include for libpng?
+ */
+
+#undef HAVE_PNG_H
+#undef HAVE_LIBPNG_PNG_H
+
+/*
  * Do we have the png_xyz() functions?
  */
 
@@ -183,5 +189,5 @@
 
 
 /*
- * End of "$Id: config.mingw,v 1.1.2.3.2.2 2001/10/19 14:04:08 easysw Exp $".
+ * End of "$Id: config.mingw,v 1.1.2.3.2.3 2002/04/24 18:29:05 easysw Exp $".
  */
