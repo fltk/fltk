@@ -1,0 +1,75 @@
+#!/bin/sh
+#
+# makedist - make a distribution of FLTK.
+#
+
+echo "Getting distribution..."
+
+CVS_RSH=ssh1; export CVS_RSH
+MAINTAINER=easysw
+
+cd /tmp
+cvs -q -d$MAINTAINER@cvs.fltk.sourceforge.net:/cvsroot/fltk get -r v1_1 fltk
+
+if test $# = 0; then
+	echo -n "Version number for distribution? "
+	read version
+else
+	version=$1
+fi
+
+rm -rf fltk-$version
+mv fltk fltk-$version
+cd fltk-$version
+
+if test x$version != snapshot; then
+	echo "Tagging release..."
+
+	set tag = `echo v$version | tr '.' '_'`
+
+	cvs tag -F $tag
+fi
+
+echo "Making configuration script..."
+
+autoconf
+
+echo "Removing CVS directories..."
+
+rm -rf CVS */CVS */*/CVS
+rm makesrcdist
+
+echo "Generating .cxx and .h files for fluid demos..."
+
+cd test
+cp demo.menu demod.menu
+
+for file in *.fl; do
+	echo $file
+	/usr/local/src/fltk-1.1/fluid/fluid -c $file
+	if test $? != 0; then
+		echo Error executing fluid: $?
+		exit 1
+	fi
+done
+
+cd ..
+
+echo "Making UNIX distribution..."
+
+cd ..
+gtar czf fltk-$version-source.tar.gz fltk-$version
+
+echo "Making BZ2 distribution..."
+gunzip -c fltk-$version-source.tar.gz | bzip2 -v9 >fltk-$version-source.tar.bz2
+
+echo "Making Windows distribution..."
+
+rm -f fltk-$version-source.zip
+zip -r9 fltk-$version-source.zip fltk-$version
+
+echo "Removing distribution directory..."
+
+rm -rf fltk-$version
+
+echo "Done\!"

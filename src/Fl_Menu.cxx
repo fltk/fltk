@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.2 2001/08/06 03:17:43 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -123,11 +123,13 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
 void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 			int selected) const {
   Fl_Label l;
-  l.value = text;
-  l.type = labeltype_;
-  l.font = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
-  l.size = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
-  l.color = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
+  l.value   = text;
+  l.image   = 0;
+  l.deimage = 0;
+  l.type    = labeltype_;
+  l.font    = labelsize_ ? labelfont_ : uchar(m ? m->textfont() : FL_HELVETICA);
+  l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
+  l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_BLACK);
   if (!active()) l.color = inactive((Fl_Color)l.color);
   Fl_Color color = m ? m->color() : FL_GRAY;
   if (selected) {
@@ -460,9 +462,6 @@ int menuwindow::handle(int e) {
     switch (Fl::event_key()) {
     case FL_Tab:
       if (Fl::event_shift()&FL_SHIFT) goto BACKTAB;
-    case ' ':
-      if (!forward(p.menu_number)) {p.item_number = -1; forward(p.menu_number);}
-      return 1;
     case FL_BackSpace:
     case 0xFE20: // backtab
     BACKTAB:
@@ -488,6 +487,7 @@ int menuwindow::handle(int e) {
 	setitem(p.menu_number-1, p.p[p.menu_number-1]->selected);
       return 1;
     case FL_Enter:
+    case ' ':
       p.state = DONE_STATE;
       return 1;
     case FL_Escape:
@@ -743,5 +743,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.2 2001/08/06 03:17:43 easysw Exp $".
 //

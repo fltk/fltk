@@ -1,0 +1,192 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0100 
+header_name {../FL/Fl_HelpDialog.H} 
+code_name {.cxx} 
+gridx 5 
+gridy 5 
+snap 3
+class Fl_HelpDialog {open
+} {
+  decl {int index_;} {}
+  decl {int max_;} {}
+  decl {int line_[100];} {}
+  decl {char file_[100][256];} {}
+  Function {Fl_HelpDialog()} {open
+  } {
+    Fl_Window window_ {
+      label {Help Dialog} open
+      private xywh {470 402 530 385} resizable
+      code0 {\#include <string.h>} visible
+    } {
+      Fl_Group view_ {
+        callback {if (view_->changed())
+{
+  index_ ++;
+
+  if (index_ >= 100)
+  {
+    memcpy(line_, line_ + 10, sizeof(line_[0]) * 90);
+    memcpy(file_, file_ + 10, sizeof(file_[0]) * 90);
+    index_ -= 10;
+  }
+
+  max_ = index_;
+
+  strcpy(file_[index_], view_->filename());
+  line_[index_] = view_->topline();
+
+  if (index_ > 0)
+    back_->activate();
+  else
+    back_->deactivate();
+
+  forward_->deactivate();
+  window_->label(view_->title());
+}
+else if (view_->filename())
+{
+  strncpy(file_[index_], view_->filename(), 255);
+  file_[index_][255] = '\\0';
+  line_[index_] = view_->topline();
+}} open
+        private xywh {10 10 510 330} box DOWN_BOX resizable
+        code0 {\#include <FL/Fl_HelpView.H>}
+        class Fl_HelpView
+      } {}
+      Fl_Button {} {
+        label Close
+        callback {window_->hide();}
+        xywh {425 350 95 25}
+      }
+      Fl_Button back_ {
+        label {@<-}
+        callback {if (index_ > 0)
+  index_ --;
+
+if (index_ == 0)
+  back_->deactivate();
+
+forward_->activate();
+
+if (strcmp(view_->filename(), file_[index_]) != 0)
+  view_->load(file_[index_]);
+
+view_->topline(line_[index_]);}
+        private xywh {365 350 25 25} shortcut 0xff51 labeltype SYMBOL_LABEL labelcolor 2
+      }
+      Fl_Button forward_ {
+        label {@->}
+        callback {if (index_ < max_)
+  index_ ++;
+
+if (index_ >= max_)
+  forward_->deactivate();
+
+back_->activate();
+
+if (strcmp(view_->filename(), file_[index_]) != 0)
+  view_->load(file_[index_]);
+
+view_->topline(line_[index_]);}
+        private xywh {395 350 25 25} shortcut 0xff53 labeltype SYMBOL_LABEL labelcolor 2
+      }
+      Fl_Button smaller_ {
+        label F
+        callback {if (view_->textsize() > 8)
+  view_->textsize(view_->textsize() - 2);
+
+if (view_->textsize() <= 8)
+  smaller_->deactivate();
+larger_->activate();}
+        private xywh {305 350 25 25} labelfont 1 labelsize 10
+      }
+      Fl_Button larger_ {
+        label F
+        callback {if (view_->textsize() < 18)
+  view_->textsize(view_->textsize() + 2);
+
+if (view_->textsize() >= 18)
+  larger_->deactivate();
+smaller_->activate();}
+        private xywh {335 350 25 25} labelfont 1 labelsize 16
+      }
+    }
+    code {back_->deactivate();
+forward_->deactivate();
+
+index_ = -1;
+max_  = 0;} {}
+  }
+  Function {~Fl_HelpDialog()} {selected
+  } {
+    code {delete window_;} {}
+  }
+  Function {h()} {return_type int
+  } {
+    code {return (window_->h());} {}
+  }
+  Function {hide()} {return_type void
+  } {
+    code {window_->hide();} {}
+  }
+  Function {load(const char *f)} {return_type void
+  } {
+    code {view_->set_changed();
+view_->load(f);
+window_->label(view_->title());} {}
+  }
+  Function {position(int xx, int yy)} {return_type void
+  } {
+    code {window_->position(xx, yy);} {}
+  }
+  Function {resize(int xx, int yy, int ww, int hh)} {return_type void
+  } {
+    code {window_->resize(xx, yy, ww, hh);} {}
+  }
+  Function {show()} {return_type void
+  } {
+    code {window_->show();} {}
+  }
+  Function {textsize(uchar s)} {return_type void
+  } {
+    code {view_->textsize(s);
+
+if (s <= 8)
+  smaller_->deactivate();
+else
+  smaller_->activate();
+
+if (s >= 18)
+  larger_->deactivate();
+else
+  larger_->activate();} {}
+  }
+  Function {textsize()} {return_type uchar
+  } {
+    code {return (view_->textsize());} {}
+  }
+  Function {topline(const char *n)} {return_type void
+  } {
+    code {view_->topline(n);} {}
+  }
+  Function {topline(int n)} {return_type void
+  } {
+    code {view_->topline(n);} {}
+  }
+  Function {visible()} {return_type int
+  } {
+    code {return (window_->visible());} {}
+  }
+  Function {w()} {return_type int
+  } {
+    code {return (window_->w());} {}
+  }
+  Function {x()} {return_type int
+  } {
+    code {return (window_->x());} {}
+  }
+  Function {y()} {return_type int
+  } {
+    code {return (window_->y());} {}
+  }
+} 

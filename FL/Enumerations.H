@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.5 2001/08/06 03:17:43 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -26,19 +26,8 @@
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
-//
-// The following is only used when building DLLs under WIN32 with Visual C++...
-//
+#  include "Fl_Export.H"
 
-#if defined(FL_DLL) && defined(_MSC_VER)
-#  ifdef FL_LIBRARY
-#    define FL_EXPORT	__declspec(dllexport)
-#  else
-#    define FL_EXPORT	__declspec(dllimport)
-#  endif /* FL_LIBRARY */
-#else
-#  define FL_EXPORT
-#endif /* FL_DLL && _MSC_VER */
 
 //
 // The FLTK version number; this is changed slightly from the beta versions
@@ -55,8 +44,8 @@
 //
 
 #define FL_MAJOR_VERSION	1
-#define FL_MINOR_VERSION	0
-#define FL_PATCH_VERSION	11
+#define FL_MINOR_VERSION	1
+#define FL_PATCH_VERSION	0
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
 				 (double)FL_MINOR_VERSION * 0.01 + \
 				 (double)FL_PATCH_VERSION * 0.0001)
@@ -73,17 +62,20 @@ enum Fl_Event {	// events
   FL_DRAG		= 5,
   FL_FOCUS		= 6,
   FL_UNFOCUS		= 7,
-  FL_KEYBOARD		= 8,
-  FL_CLOSE		= 9,
-  FL_MOVE		= 10,
-  FL_SHORTCUT		= 11,
+  FL_KEYDOWN		= 8,
+  FL_KEYUP		= 9,
+  FL_CLOSE		= 10,
+  FL_MOVE		= 11,
+  FL_SHORTCUT		= 12,
   FL_DEACTIVATE		= 13,
   FL_ACTIVATE		= 14,
   FL_HIDE		= 15,
   FL_SHOW		= 16,
   FL_PASTE		= 17,
-  FL_SELECTIONCLEAR	= 18
+  FL_SELECTIONCLEAR	= 18,
+  FL_MOUSEWHEEL		= 19
 };
+#define FL_KEYBOARD FL_KEYDOWN
 
 enum Fl_When { // Fl_Widget::when():
   FL_WHEN_NEVER		= 0,
@@ -203,18 +195,15 @@ inline Fl_Boxtype frame(Fl_Boxtype b) {return (Fl_Boxtype)(b|2);}
 enum Fl_Labeltype {	// labeltypes:
   FL_NORMAL_LABEL	= 0,
   FL_NO_LABEL,
-  _FL_SYMBOL_LABEL,
   _FL_SHADOW_LABEL,
   _FL_ENGRAVED_LABEL,
   _FL_EMBOSSED_LABEL,
-  _FL_BITMAP_LABEL,
-  _FL_PIXMAP_LABEL,
-  _FL_IMAGE_LABEL,
   _FL_MULTI_LABEL,
+  _FL_ICON_LABEL,
+
   FL_FREE_LABELTYPE
 };
-extern Fl_Labeltype FL_EXPORT define_FL_SYMBOL_LABEL();
-#define FL_SYMBOL_LABEL define_FL_SYMBOL_LABEL()
+#define FL_SYMBOL_LABEL FL_NORMAL_LABEL
 extern Fl_Labeltype FL_EXPORT define_FL_SHADOW_LABEL();
 #define FL_SHADOW_LABEL define_FL_SHADOW_LABEL()
 extern Fl_Labeltype FL_EXPORT define_FL_ENGRAVED_LABEL();
@@ -223,23 +212,25 @@ extern Fl_Labeltype FL_EXPORT define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL define_FL_EMBOSSED_LABEL()
 
 enum Fl_Align {	// align() values
-  FL_ALIGN_CENTER	= 0,
-  FL_ALIGN_TOP		= 1,
-  FL_ALIGN_BOTTOM	= 2,
-  FL_ALIGN_LEFT		= 4,
-  FL_ALIGN_RIGHT	= 8,
-  FL_ALIGN_INSIDE	= 16,
-  FL_ALIGN_CLIP		= 64,
-  FL_ALIGN_WRAP		= 128,
-  FL_ALIGN_TOP_LEFT	= FL_ALIGN_TOP | FL_ALIGN_LEFT,
-  FL_ALIGN_TOP_RIGHT	= FL_ALIGN_TOP | FL_ALIGN_RIGHT,
-  FL_ALIGN_BOTTOM_LEFT	= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT,
-  FL_ALIGN_BOTTOM_RIGHT	= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT,
-  FL_ALIGN_LEFT_TOP	= FL_ALIGN_TOP_LEFT,
-  FL_ALIGN_RIGHT_TOP	= FL_ALIGN_TOP_RIGHT,
-  FL_ALIGN_LEFT_BOTTOM	= FL_ALIGN_BOTTOM_LEFT,
-  FL_ALIGN_RIGHT_BOTTOM	= FL_ALIGN_BOTTOM_RIGHT,
-  FL_ALIGN_NOWRAP	= 0 // for back compatability
+  FL_ALIGN_CENTER		= 0,
+  FL_ALIGN_TOP			= 1,
+  FL_ALIGN_BOTTOM		= 2,
+  FL_ALIGN_LEFT			= 4,
+  FL_ALIGN_RIGHT		= 8,
+  FL_ALIGN_INSIDE		= 16,
+  FL_ALIGN_TEXT_OVER_IMAGE	= 32,
+  FL_ALIGN_IMAGE_OVER_TEXT	= 0,
+  FL_ALIGN_CLIP			= 64,
+  FL_ALIGN_WRAP			= 128,
+  FL_ALIGN_TOP_LEFT		= FL_ALIGN_TOP | FL_ALIGN_LEFT,
+  FL_ALIGN_TOP_RIGHT		= FL_ALIGN_TOP | FL_ALIGN_RIGHT,
+  FL_ALIGN_BOTTOM_LEFT		= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT,
+  FL_ALIGN_BOTTOM_RIGHT		= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT,
+  FL_ALIGN_LEFT_TOP		= FL_ALIGN_TOP_LEFT,
+  FL_ALIGN_RIGHT_TOP		= FL_ALIGN_TOP_RIGHT,
+  FL_ALIGN_LEFT_BOTTOM		= FL_ALIGN_BOTTOM_LEFT,
+  FL_ALIGN_RIGHT_BOTTOM		= FL_ALIGN_BOTTOM_RIGHT,
+  FL_ALIGN_NOWRAP		= 0 // for back compatability
 };
 
 enum Fl_Font {	// standard fonts
@@ -297,8 +288,10 @@ enum Fl_Color {	// standard colors
   FL_COLOR_CUBE		= 56
 };
 
-FL_EXPORT Fl_Color inactive(Fl_Color c);
-FL_EXPORT Fl_Color contrast(Fl_Color fg, Fl_Color bg);
+#define inactive fl_inactive
+FL_EXPORT Fl_Color fl_inactive(Fl_Color c);
+#define contrast fl_contrast
+FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
@@ -371,5 +364,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.5 2001/08/06 03:17:43 easysw Exp $".
 //

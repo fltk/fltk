@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.5 2001/08/06 03:17:43 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,9 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Tooltip.H>
+#include <FL/fl_draw.H>
+
 
 ////////////////////////////////////////////////////////////////
 // for compatability with Forms, all widgets without callbacks are
@@ -73,24 +76,32 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   x_ = X; y_ = Y; w_ = W; h_ = H;
 
-  label_.value	= L;
-  label_.type	= FL_NORMAL_LABEL;
-  label_.font	= FL_HELVETICA;
-  label_.size	= FL_NORMAL_SIZE;
-  label_.color	= FL_BLACK;
-  callback_	= default_callback;
-  user_data_ 	= 0;
-  type_		= 0;
-  flags_	= 0;
-  damage_	= 0;
-  box_		= FL_NO_BOX;
-  color_	= FL_GRAY;
-  color2_	= FL_GRAY;
-  align_	= FL_ALIGN_CENTER;
-  when_		= FL_WHEN_RELEASE;
+  label_.value	 = L;
+  label_.image   = 0;
+  label_.deimage = 0;
+  label_.type	 = FL_NORMAL_LABEL;
+  label_.font	 = FL_HELVETICA;
+  label_.size	 = FL_NORMAL_SIZE;
+  label_.color	 = FL_BLACK;
+  tooltip_       = 0;
+  callback_	 = default_callback;
+  user_data_ 	 = 0;
+  type_		 = 0;
+  flags_	 = 0;
+  damage_	 = 0;
+  box_		 = FL_NO_BOX;
+  color_	 = FL_GRAY;
+  color2_	 = FL_GRAY;
+  align_	 = FL_ALIGN_CENTER;
+  when_		 = FL_WHEN_RELEASE;
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
+}
+
+void Fl_Widget::tooltip(const char *t) {
+  Fl_Tooltip::enable();
+  tooltip_ = t;
 }
 
 void Fl_Widget::resize(int X, int Y, int W, int H) {
@@ -123,6 +134,28 @@ Fl_Widget::~Fl_Widget() {
   parent_ = 0; // kludge to prevent ~Fl_Group from destroying again
   fl_throw_focus(this);
 }
+
+// draw a focus box for the widget...
+void
+Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+  switch (B) {
+    case FL_DOWN_BOX:
+    case FL_DOWN_FRAME:
+    case FL_THIN_DOWN_BOX:
+    case FL_THIN_DOWN_FRAME:
+      X ++;
+      Y ++;
+    default:
+      break;
+  }
+
+  fl_color(FL_BLACK);
+  fl_line_style(FL_DOT);
+  fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
+          W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
+  fl_line_style(FL_SOLID);
+}
+
 
 // redraw this, plus redraw opaque object if there is an outside label
 static void redraw_label(Fl_Widget* w) {
@@ -198,5 +231,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.5 2001/08/06 03:17:43 easysw Exp $".
 //

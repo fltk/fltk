@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,21 +29,42 @@
 class Fl_Widget;
 struct Fl_Menu_Item;
 
-struct Fl_Image {
+class FL_EXPORT Fl_Image {
+  int w_, h_;
+
+  public:
+
+  int w() const {return w_;}
+  void w(int W) {w_ = W;}
+  int h() const {return h_;}
+  void h(int H) {h_ = H;}
+
+  Fl_Image(int W, int H) {w_ = W; h_ = H;}
+  virtual ~Fl_Image();
+  virtual void label(Fl_Widget*w);
+  virtual void label(Fl_Menu_Item*m);
+  virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
+  void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
+};
+
+class FL_EXPORT Fl_RGB_Image : public Fl_Image {
+  public:
+
   const uchar *array;
-  int w, h, d, ld;
+  int d, ld;
   ulong id; // for internal use
-  FL_EXPORT Fl_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
-    array(bits), w(W), h(H), d(D), ld(LD), id(0) {}
-  FL_EXPORT ~Fl_Image();
-  FL_EXPORT void label(Fl_Widget*);
-  FL_EXPORT void label(Fl_Menu_Item*);
-  FL_EXPORT void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
-  FL_EXPORT void draw(int X, int Y) {draw(X, Y, w, h, 0, 0);}
+
+  Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
+    Fl_Image(W,H), array(bits), d(D), ld(LD), id(0) {}
+  virtual ~Fl_RGB_Image();
+  virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
+  void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
+  virtual void label(Fl_Widget*w);
+  virtual void label(Fl_Menu_Item*m);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
 //

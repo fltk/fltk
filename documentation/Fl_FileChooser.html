@@ -1,0 +1,172 @@
+<HTML>
+<HEAD>
+	<TITLE>FileChooser - ESP Widget Set for FLTK</TITLE>
+	<LINK REL="STYLESHEET" TYPE="text/css" HREF="fltk.css">
+	<MAP NAME="navbar">
+		<AREA SHAPE="RECT" COORD="20,19,74,36" HREF="index.html" ALT="Widget Set Home Page">
+		<AREA SHAPE="RECT" COORD="96,19,240,36" HREF="documentation.html" ALT="Widget Set Documentation">
+		<AREA SHAPE="RECT" COORD="262,19,356,36" HREF="download.html" ALT="Download Widget Set">
+		<AREA SHAPE="RECT" COORD="378,19,416,36" HREF="http://www.easysw.com" ALT="ESP Home Page">
+		<AREA SHAPE="RECT" COORD="438,19,487,36" HREF="http://www.fltk.org" ALT="FLTK Home Page">
+	</MAP>
+</HEAD>
+
+<BODY BGCOLOR="#ccccff">
+
+<!-- NEW PAGE -->
+<H2>class FileChooser</H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+Fl_Group
+   |
+   +----<B>FileChooser</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include "FileChooser.h"
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>FileChooser</CODE> widget displays a standard file selection
+dialog that supports various selection modes.
+
+<CENTER><IMG SRC="FileChooser.gif" WIDTH="397" HEIGHT="322" ALT="FileChooser widget"></CENTER>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#FileChooser.FileChooser">FileChooser</A>
+	<LI><A HREF="#FileChooser.~FileChooser">~FileChooser</A>
+	<LI><A HREF="#FileChooser.color">color</A>
+	<LI><A HREF="#FileChooser.count">count</A>
+	<LI><A HREF="#FileChooser.directory">directory</A>
+	<LI><A HREF="#FileChooser.filter">filter</A>
+	<LI><A HREF="#FileChooser.hide">hide</A>
+	<LI><A HREF="#FileChooser.iconsize">iconsize</A>
+	<LI><A HREF="#FileChooser.label">label</A>
+	<LI><A HREF="#FileChooser.rescan">rescan</A>
+	<LI><A HREF="#FileChooser.show">show</A>
+	<LI><A HREF="#FileChooser.textcolor">textcolor</A>
+	<LI><A HREF="#FileChooser.textfont">textfont</A>
+	<LI><A HREF="#FileChooser.textsize">textsize</A>
+	<LI><A HREF="#FileChooser.type">type</A>
+	<LI><A HREF="#FileChooser.value">value</A>
+	<LI><A HREF="#FileChooser.visible">visible</A>
+
+</UL>
+
+<H4><A NAME="FileChooser.FileChooser">FileChooser(const char *pathname, const char *pattern,
+int type, const char *title)</A></H4>
+
+<P>The constructor creates the <CODE>FileChooser</CODE> dialog pictured
+above. The <CODE>pathname</CODE> argument can be a directory name or a
+complete file name (in which case the corresponding file is highlighted
+in the list and in the filename input field.)
+
+<P>The <CODE>pattern</CODE> argument can be a <CODE>NULL</CODE> string or
+<CODE>"*"</CODE> to list all files. See the FLTK documentation on
+<CODE>filename_match()</CODE> for other kinds of patterns.
+
+<P>The <CODE>type</CODE> argument can be one of the following:
+
+<UL>
+	<LI><CODE>SINGLE</CODE> - allows the user to select a
+	single, existing file.
+	<LI><CODE>MULTI</CODE> - allows the user to select one
+	or more existing files.
+	<LI><CODE>CREATE</CODE> - allows the user to select a
+	single, existing file or specify a new filename.
+</UL>
+
+<P>The <CODE>title</CODE> argument is used to set the title bar text for the
+<CODE>FileChooser</CODE> window.
+
+<H4><A NAME="FileChooser.~FileChooser">~FileChooser()</A></H4>
+
+<P>Destroys the widget and frees all memory used by it.
+
+<H4><A NAME="FileChooser.color">void color(Fl_Color c)<BR>
+Fl_Color color()</A></H4>
+
+<P>Sets or gets the background color of the <CODE>FileBrowser</CODE> list.
+
+<H4><A NAME="FileChooser.count">int count()</A></H4>
+
+<P>Returns the number of selected files.
+
+<H4><A NAME="FileChooser.directory">void directory(const char *pathname)<BR>
+const char *directory()</A></H4>
+
+<P>Sets or gets the current directory.
+
+<H4><A NAME="FileChooser.filter">void filter(const char *pattern)<BR>
+const char *filter()</A></H4>
+
+<P>Sets or gets the current filename filter pattern.
+
+<H4><A NAME="FileChooser.hide">void hide()</A></H4>
+
+<P>Hides the <CODE>FileChooser</CODE> window.
+
+<H4><A NAME="FileChooser.iconsize">void iconsize(uchar s)<BR>
+uchar iconsize()</A></H4>
+
+<P>Sets or gets the size of the icons in the <CODE>FileBrowser</CODE>.  By
+default the icon size is set to 1.5 times the <CODE>textsize()</CODE>.
+
+<H4><A NAME="FileChooser.label">void label(const char *l)<BR>
+const char *label()</A></H4>
+
+<P>Sets or gets the title bar text for the <CODE>FileChooser</CODE>.
+
+<H4><A NAME="FileChooser.rescan">void rescan()</A></H4>
+
+<P>Reloads the current directory in the <CODE>FileBrowser</CODE>.
+
+<H4><A NAME="FileChooser.show">void show()</A></H4>
+
+<P>Shows the <CODE>FileChooser</CODE> window.
+
+<H4><A NAME="FileChooser.textcolor">void textcolor(Fl_Color c)<BR>
+Fl_Color textcolor()</A></H4>
+
+<P>Sets or gets the current <CODE>FileBrowser</CODE> text color.
+
+<H4><A NAME="FileChooser.textfont">void textfont(uchar f)<BR>
+uchar textfont()</A></H4>
+
+<P>Sets or gets the current <CODE>FileBrowser</CODE> text font.
+
+<H4><A NAME="FileChooser.textsize">void textsize(uchar s)<BR>
+uchar textsize()</A></H4>
+
+<P>Sets or gets the current <CODE>FileBrowser</CODE> text size.
+
+<H4><A NAME="FileChooser.type">void type(int t)<BR>
+int type()</A></H4>
+
+<P>Sets or gets the current type of <CODE>FileChooser</CODE>.
+
+<H4><A NAME="FileChooser.value">const char *value(const char *pathname)<BR>
+const char *value(int file)<BR>
+const char *value()</A></H4>
+
+<P>Sets or gets the current value of the selected file.
+
+<H4><A NAME="FileChooser.visible">int visible()</A></H4>
+
+<P>Returns 1 if the <CODE>FileChooser</CODE> window is visible.
+
+<HR>
+
+
+</BODY>
+</HTML>

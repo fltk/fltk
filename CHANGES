@@ -1,4 +1,56 @@
-CHANGES SINCE FLTK 1.0.11
+TODO	- FLUID now provides on-line help.
+
+TODO	- FLUID now supports image labels in addition to text
+	  labels + text over image alignment.
+
+TODO	- Documentation updates.
+
+
+CHANGES IN FLTK 1.1.0b1
+
+	- Added new image() and deimage() methods to support
+	  image + text labels more easily.
+
+	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
+
+	- Added tooltip support using Jacques Tremblay's tooltip
+	  patch.
+
+	- Added keyboard navigation to all widgets.
+
+	- Added support for mouse wheels using the new
+	  FL_MOUSEWHEEL event type.  Get the mouse wheel
+	  movement values from Fl::e_dx (horizontal) and
+	  Fl::e_dy (vertical).
+
+	- Added the Fl_Check_Browser, Fl_FileBrowser,
+	  Fl_FileChooser, Fl_FileIcon, Fl_HelpDialog,
+	  Fl_HelpView, Fl_Progress, and Fl_Wizard widgets from
+	  the bazaar.
+
+	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
+	  based on NEdit.
+
+	- The Fl_Choice widget now looks more line a combo box
+	  than a Motif option menu.
+
+	- Moved the OpenGL widgets into a separate library
+	  called fltkgl - this eliminates shared library
+	  dependencies on OpenGL when no OpenGL functionality is
+	  used/required.
+
+	- FLUID now supports the new Fl_CheckBrowser,
+	  Fl_FileBrowser, Fl_FileIcon, Fl_HelpView,
+	  Fl_Text_Display, Fl_Text_Editor, and Fl_Wizard
+	  widgets.
+
+	- Updated configure stuff to support shared libraries
+	  under AIX (link to -lfltk_s)
+
+	- Symbol labels can now contain regular text.
+
+	- FLUID now supports relative filenames for the source
+	  and header files you generate.
 
 	- Fl_Menu_Item::add() didn't use the flags that were
 	  passed in.
@@ -27,6 +79,11 @@ CHANGES SINCE FLTK 1.0.11
 	  changes make the menus compatable with fltk 2.0.
 
 	- Another little fix for the BoXX OpenGL overlays.
+
+	- Fl_Gl_Window no longer blanks the mouse pointer on
+	  WIN32 unless an OpenGL overlay is being used.  This
+	  should make non-overlay displays faster when a cursor
+	  is set.
 
 
 CHANGES SINCE FLTK 1.0.10

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10.2.6 2001/01/22 15:13:38 easysw Exp $"
+# "$Id: Makefile,v 1.10.2.6.2.3 2001/08/11 16:09:26 easysw Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -51,14 +51,17 @@ include ../makeinclude
 
 $(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
 	echo Linking $@...
-	$(CXX) -L../lib $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) -lfltk $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) $(LINKFLTK) $(LDLIBS) \
+		$(IMAGELIBS)
 
 clean :
 	-@ rm -f *.o $(PROGRAM) $(CLEAN) core *~ makedepend
 	@touch makedepend
 
 depend:
-	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+#	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(CFILES) > makedepend
+	makedepend -Y -I.. -f makedepend $(CPPFILES)
+
 include makedepend
 
 install: $(PROGRAM)
@@ -83,5 +86,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.6 2001/01/22 15:13:38 easysw Exp $".
+# End of "$Id: Makefile,v 1.10.2.6.2.3 2001/08/11 16:09:26 easysw Exp $".
 #

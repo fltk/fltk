@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Bitmap.H,v 1.5.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
 //
 // Bitmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -25,27 +25,30 @@
 
 #ifndef Fl_Bitmap_H
 #define Fl_Bitmap_H
+#  include "Fl_Image.H"
 
 class Fl_Widget;
 struct Fl_Menu_Item;
 
-struct Fl_Bitmap {
+class FL_EXPORT Fl_Bitmap : public Fl_Image {
+  public:
+
   const uchar *array;
-  int w, h;
   ulong id; // for internal use
-  FL_EXPORT Fl_Bitmap(const uchar *bits, int W, int H) :
-    array(bits), w(W), h(H), id(0) {}
-  FL_EXPORT Fl_Bitmap(const char *bits, int W, int H) :
-    array((const uchar *)bits), w(W), h(H), id(0) {}
-  FL_EXPORT ~Fl_Bitmap();
-  FL_EXPORT void label(Fl_Widget*);
-  FL_EXPORT void label(Fl_Menu_Item*);
-  FL_EXPORT void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
-  FL_EXPORT void draw(int X, int Y) {draw(X, Y, w, h, 0, 0);}
+
+  Fl_Bitmap(const uchar *bits, int W, int H) :
+    Fl_Image(W,H), array(bits), id(0) {}
+  Fl_Bitmap(const char *bits, int W, int H) :
+    Fl_Image(W,H), array((const uchar *)bits), id(0) {}
+  virtual ~Fl_Bitmap();
+  virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
+  void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);}
+  virtual void label(Fl_Widget*w);
+  virtual void label(Fl_Menu_Item*m);
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Bitmap.H,v 1.5.2.3 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Bitmap.H,v 1.5.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
 //

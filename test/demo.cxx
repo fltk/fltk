@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.8.2.5 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: demo.cxx,v 1.8.2.5.2.1 2001/08/01 21:24:49 easysw Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -173,6 +173,8 @@ void push_menu(const char* nnn)
     bn = numb2but(i,n-1);
     but[bn]->show();
     but[bn]->label(menus[men].iname[i]);
+    if (menus[men].icommand[i][0] != '@') but[bn]->tooltip(menus[men].icommand[i]);
+    else but[bn]->tooltip(0);
   }
   strcpy(stack[stsize],nnn);
   stsize++;
@@ -332,6 +334,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.8.2.5 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: demo.cxx,v 1.8.2.5.2.1 2001/08/01 21:24:49 easysw Exp $".
 //
 

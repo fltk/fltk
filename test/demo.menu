@@ -64,6 +64,7 @@
 	@o:file chooser:file_chooser
 	@o:XForms Emulation:forms
 	@o:fonts:fonts
+	@o:HelpDialog:help
 
 @main:Tutorial\nfrom\nManual:@j
 	@j:ask\n(modified):ask

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.1 2001/08/06 03:17:43 easysw Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -92,7 +92,7 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 int fl_return_arrow(int x,int y,int w,int h);
 
 // provided for back compatability:
-int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
+int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {  
   const char *p = label;
   if (*p++ != '@') return 0;
   fl_init_symbols();
@@ -360,28 +360,6 @@ static void fl_init_symbols(void) {
   fl_add_symbol("||",		draw_doublebar,		1);
 }
 
-////////////////////////////////////////////////////////////////
-
-#include <FL/Fl_Widget.H>
-
-// this is the labeltype function:
-extern void fl_normal_label(const Fl_Label*, int, int, int, int, Fl_Align);
-static void fl_symbol_label(
-    const Fl_Label* o, int x, int y, int w, int h, Fl_Align align)
-{
-  if (!fl_draw_symbol(o->value, x, y, w, h, (Fl_Color)o->color))
-    fl_normal_label(o, x, y, w, h, align);
-}
-
-Fl_Labeltype define_FL_SYMBOL_LABEL() {
-  Fl::set_labeltype(_FL_SYMBOL_LABEL, fl_symbol_label, 0);
-  return _FL_SYMBOL_LABEL;
-}
-
-void Fl::enable_symbols() {
-  Fl::set_labeltype(FL_NORMAL_LABEL, fl_symbol_label, 0);
-}
-
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.1 2001/08/06 03:17:43 easysw Exp $".
 //

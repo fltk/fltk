@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.7 2001/01/22 15:13:38 easysw Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.7.2.1 2001/08/11 16:09:26 easysw Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -165,6 +165,18 @@ Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
   return (Fl_Type*)(t->value()->user_data());
 }
 
+////////////////////////////////////////////////////////////////
+
+const char wizard_type_name[] = "Fl_Wizard";
+
+// Override group's resize behavior to do nothing to children:
+void iwizard::resize(int X, int Y, int W, int H) {
+  Fl_Widget::resize(X,Y,W,H);
+  redraw();
+}
+
+Fl_Wizard_Type Fl_Wizard_type;	// the "factory"
+
 // This is called when o is created.  If it is in the tab group make
 // sure it is visible:
 
@@ -230,5 +242,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.7 2001/01/22 15:13:38 easysw Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.7.2.1 2001/08/11 16:09:26 easysw Exp $".
 //

@@ -25,10 +25,15 @@ Fl_Counter.html
 Fl_Dial.html
 Fl_Double_Window.html
 Fl_End.html
+Fl_FileBrowser.html
+Fl_FileChooser.html
+Fl_FileIcon.html
 Fl_Float_Input.html
 Fl_Free.html
 Fl_Gl_Window.html
 Fl_Group.html
+Fl_HelpDialog.html
+Fl_HelpView.html
 Fl_Hold_Browser.html
 Fl_Input.html
 Fl_Input_.html
@@ -65,6 +70,7 @@ Fl_Value_Output.html
 Fl_Value_Slider.html
 Fl_Widget.html
 Fl_Window.html
+Fl_Wizard.html
 functions.html
 enumerations.html
 glut.html
