@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_xft.cxx,v 1.4.2.2 2002/03/09 21:33:54 spitzak Exp $"
+// "$Id: fl_font_xft.cxx,v 1.4.2.3 2002/04/18 21:07:53 easysw Exp $"
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
@@ -148,7 +148,7 @@ Fl_FontSize::~Fl_FontSize() {
 //  XftFontClose(fl_display, font);
 }
 
-#if 1
+#if 0
 // Some of the line spacings these return are insanely big!
 //int fl_height() { return current_font->height; }
 int fl_height() { return current_font->ascent + current_font->descent; }
@@ -233,5 +233,5 @@ void fl_draw(const char *str, int n, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_xft.cxx,v 1.4.2.2 2002/03/09 21:33:54 spitzak Exp $"
+// End of "$Id: fl_font_xft.cxx,v 1.4.2.3 2002/04/18 21:07:53 easysw Exp $"
 //
