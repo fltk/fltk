@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.7 1998/12/06 14:59:14 mike Exp $"
+# "$Id: Makefile,v 1.8 1998/12/06 15:19:37 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -154,6 +154,8 @@ $(LIBRARY) : $(OBJECTS)
 	@$(LIBCOMMAND) $(LIBRARY) $(OBJECTS)
 	@$(RANLIB) $(LIBRARY)
 
+.SUFFIXES:	.cxx .h .o
+
 .cxx.o :
 	@echo $<:
 	@$(CXX) -I.. $(CXXFLAGS) -c $<
@@ -182,5 +184,5 @@ install: ../lib/$(LIBNAME)
 	@chmod -R a+r,u+w,g-w,o-w $(includedir)/FL
 
 #
-# End of "$Id: Makefile,v 1.7 1998/12/06 14:59:14 mike Exp $".
+# End of "$Id: Makefile,v 1.8 1998/12/06 15:19:37 mike Exp $".
 #
