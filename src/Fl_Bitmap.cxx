@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.14 2002/04/15 20:52:26 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.15 2002/04/26 11:32:37 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -393,6 +393,8 @@ void Fl_Bitmap::label(Fl_Widget* w) {
 }
 
 void Fl_Bitmap::label(Fl_Menu_Item* m) {
+  Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
+  m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
 
 Fl_Image *Fl_Bitmap::copy(int W, int H) {
@@ -464,5 +466,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.14 2002/04/15 20:52:26 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.15 2002/04/26 11:32:37 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.19 2002/04/15 17:18:48 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.20 2002/04/26 11:32:37 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,11 @@
 #include "flstring.h"
 
 
-void fl_restore_clip(); // in fl_rect.cxx
+void fl_restore_clip(); // from fl_rect.cxx
+
+//
+// Base image class...
+//
 
 Fl_Image::~Fl_Image() {
 }
@@ -65,7 +69,51 @@ void Fl_Image::label(Fl_Widget* w) {
 }
 
 void Fl_Image::label(Fl_Menu_Item* m) {
+  Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
+  m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
+
+void
+Fl_Image::labeltype(const Fl_Label *lo,		// I - Label
+                    int            lx,		// I - X position
+		    int            ly,		// I - Y position
+		    int            lw,		// I - Width of label
+		    int            lh,		// I - Height of label
+		    Fl_Align       la) {	// I - Alignment
+  Fl_Image	*img;				// Image pointer
+  int		cx, cy;				// Image position
+
+  img = (Fl_Image *)(lo->value);
+
+  if (la & FL_ALIGN_LEFT) cx = 0;
+  else if (la & FL_ALIGN_RIGHT) cx = img->w() - lw;
+  else cx = (img->w() - lw) / 2;
+
+  if (la & FL_ALIGN_TOP) cy = 0;
+  else if (la & FL_ALIGN_BOTTOM) cy = img->h() - lh;
+  else cy = (img->h() - lh) / 2;
+
+  fl_color((Fl_Color)lo->color);
+
+  img->draw(lx, ly, lw, lh, cx, cy);
+}
+
+void
+Fl_Image::measure(const Fl_Label *lo,		// I - Label
+                  int            &lw,		// O - Width of image
+		  int            &lh) {		// O - Height of image
+  Fl_Image *img;				// Image pointer
+
+  img = (Fl_Image *)(lo->value);
+
+  lw = img->w();
+  lh = img->h();
+}
+
+
+//
+// RGB image class...
+//
 
 Fl_RGB_Image::~Fl_RGB_Image() {
   if (id) fl_delete_offscreen((Fl_Offscreen)id);
@@ -339,9 +387,11 @@ void Fl_RGB_Image::label(Fl_Widget* w) {
 }
 
 void Fl_RGB_Image::label(Fl_Menu_Item* m) {
+  Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
+  m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.19 2002/04/15 17:18:48 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.20 2002/04/26 11:32:37 easysw Exp $".
 //

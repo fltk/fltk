@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3.2.11 2002/01/07 20:40:02 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.12 2002/04/26 11:32:37 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -48,6 +48,9 @@ class FL_EXPORT Fl_Image {
   void data(const char * const *p, int c) {data_ = p; count_ = c;}
   void draw_empty(int X, int Y);
 
+  static void labeltype(const Fl_Label *lo, int lx, int ly, int lw, int lh, Fl_Align la);
+  static void measure(const Fl_Label *lo, int &lw, int &lh);
+
   public:
 
   int w() const {return w_;}
@@ -95,5 +98,5 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3.2.11 2002/01/07 20:40:02 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.12 2002/04/26 11:32:37 easysw Exp $".
 //
