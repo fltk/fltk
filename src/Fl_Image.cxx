@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.25 2002/11/19 16:37:35 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.26 2002/12/19 21:34:25 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -169,8 +169,8 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   new_image->alloc_array = 1;
 
   // Scale the image using a nearest-neighbor algorithm...
-  for (dy = H, sy = 0, yerr = H / 2, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W / 2, old_ptr = array + sy * (w() * d() + ld());
+  for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
+    for (dx = W, xerr = W, old_ptr = array + sy * (w() * d() + ld());
 	 dx > 0;
 	 dx --) {
       for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
@@ -392,5 +392,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.25 2002/11/19 16:37:35 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.26 2002/12/19 21:34:25 easysw Exp $".
 //

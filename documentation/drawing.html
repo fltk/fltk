@@ -46,6 +46,8 @@ following types of drawing functions:
 
 <UL>
 
+	<LI><A href="#boxdraw">Boxes</A></LI>
+
 	<LI><A href="#clipping">Clipping</A></LI>
 
 	<LI><A href="#colors">Colors</A></LI>
@@ -63,6 +65,45 @@ following types of drawing functions:
 	<LI><A href="#overlay">Overlay</A></LI>
 
 </UL>
+
+<H3><A name="boxdraw">Boxes</A></H3>
+
+<P>FLTK provides three functions that can be used to draw boxes
+for buttons and other UI controls. Each function uses the
+supplied upper-lefthand corner and width and height to determine
+where to draw the box.
+
+<H4><A NAME="fl_draw_box">void fl_draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c);</A></H4>
+
+<P>The first box drawing function is <CODE>fl_draw_box()</CODE>
+which draws a standard boxtype <CODE>c</CODE> in the specified
+color <CODE>c</CODE>.
+
+<H4><A NAME="fl_frame">void fl_frame(const char *s, int x, int y, int w, int h);</A></H4>
+
+<P>The <CODE>fl_frame()</CODE> function draws a series of line
+segments around the given box. The string <CODE>s</CODE> must
+contain groups of 4 letters which specify one of 24 standard
+grayscale values, where 'A' is black and 'X' is white. The order
+of each set of 4 characters is: top, left, bottom, right. The
+results of calling <CODE>fl_frame()</CODE> with a string that is
+not a multiple of 4 characters in length are undefined.
+
+<P>The only difference between this function and
+<CODE>fl_frame2()</CODE> is the order of the line segments.
+
+<H4><A NAME="fl_frame2">void fl_frame2(const char *s, int x, int y, int w, int h);</A></H4>
+
+<P>The <CODE>fl_frame2()</CODE> function draws a series of line
+segments around the given box. The string <CODE>s</CODE> must
+contain groups of 4 letters which specify one of 24 standard
+grayscale values, where 'A' is black and 'X' is white. The order
+of each set of 4 characters is: bottom, right, top, left. The
+results of calling <CODE>fl_frame2()</CODE> with a string that is
+not a multiple of 4 characters in length are undefined.
+
+<P>The only difference between this function and
+<CODE>fl_frame()</CODE> is the order of the line segments.
 
 <H3><A name="clipping">Clipping</A></H3>
 
