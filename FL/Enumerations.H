@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.17 1999/02/22 22:10:14 mike Exp $"
+// "$Id: Enumerations.H,v 1.18 1999/03/10 16:25:02 mike Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -62,7 +62,6 @@
 
 typedef unsigned char uchar;
 typedef unsigned long ulong;
-typedef unsigned int u32; // you must fix if not 32 bits on your machine!
 
 enum Fl_Event {	// events
   FL_NO_EVENT		= 0,
@@ -365,5 +364,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.17 1999/02/22 22:10:14 mike Exp $".
+// End of "$Id: Enumerations.H,v 1.18 1999/03/10 16:25:02 mike Exp $".
 //
