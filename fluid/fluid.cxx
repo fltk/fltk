@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.19 2002/05/01 10:44:55 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.20 2002/05/01 17:35:30 matthiaswm Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -335,6 +335,8 @@ static void sort_cb(Fl_Widget *,void *) {
 void show_alignment_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
 
+void align_widget_cb(Fl_Widget *, long);
+
 void about_cb(Fl_Widget *, void *) {
   if (!about_panel) make_about_panel();
   display_group->show();
@@ -418,9 +420,32 @@ Fl_Menu_Item Main_Menu[] = {
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
   {"Overlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
   {"Preferences",FL_CTRL+'p',show_alignment_cb},
-  {"Settings",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
+{"&Layout",0,0,0,FL_SUBMENU},
+  {"&Align",0,0,0,FL_SUBMENU},
+    {"&Left",0,(Fl_Callback *)align_widget_cb,(void*)10},
+    {"&Hor. Center",0,(Fl_Callback *)align_widget_cb,(void*)11},
+    {"&Right",0,(Fl_Callback *)align_widget_cb,(void*)12},
+    {"&Top",0,(Fl_Callback *)align_widget_cb,(void*)13},
+    {"&Vert. Center",0,(Fl_Callback *)align_widget_cb,(void*)14},
+    {"&Bottom",0,(Fl_Callback *)align_widget_cb,(void*)15},
+    {0},
+  {"&Space Evenly",0,0,0,FL_SUBMENU},
+    {"&Across",0,(Fl_Callback *)align_widget_cb,(void*)20},
+    {"&Down",0,(Fl_Callback *)align_widget_cb,(void*)21},
+    {0},
+  {"&Make Same Size",0,0,0,FL_SUBMENU},
+    {"&Width",0,(Fl_Callback *)align_widget_cb,(void*)30},
+    {"&Height",0,(Fl_Callback *)align_widget_cb,(void*)31},
+    {"&Both",0,(Fl_Callback *)align_widget_cb,(void*)32},
+    {0},
+  {"&Center In Group",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
+    {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
+    {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
+    {0},
+  {"&Grid",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
+  {0},
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
   {"Execute Again",FL_ALT+'g',(Fl_Callback *)do_shell_command},
@@ -743,5 +768,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.19 2002/05/01 10:44:55 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.20 2002/05/01 17:35:30 matthiaswm Exp $".
 //
