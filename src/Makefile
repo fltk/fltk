@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18 1999/03/09 18:33:46 mike Exp $"
+# "$Id: Makefile,v 1.18.2.3 1999/03/25 16:09:54 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -150,16 +150,16 @@ LIBRARY = ../lib/$(LIBNAME)
 
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 
-all:	$(LIBRARY) ../lib/libfltk.a
+all:	$(LIBRARY) $(DSONAME)
 
 ../lib/libfltk.a: $(OBJECTS)
 	@echo $(LIBCOMMAND) ../lib/libfltk.a ...
 	@$(LIBCOMMAND) ../lib/libfltk.a $(OBJECTS)
 	@$(RANLIB) ../lib/libfltk.a
 
-../lib/libfltk.sl.1 ../lib/libfltk.so.1: $(OBJECTS)
-	@echo $(DSOCOMMAND) $(LIBRARY) ...
-	@$(DSOCOMMAND) $(LIBRARY) $(OBJECTS)
+libfltk.sl.1 libfltk.so.1: $(OBJECTS)
+	@echo $(DSOCOMMAND) $(DSONAME) ...
+	@$(DSOCOMMAND) $(DSONAME) $(OBJECTS)
 
 .SUFFIXES:	.cxx .h .o
 
@@ -178,29 +178,36 @@ include makedepend
 
 ################################################################
 
-install: ../lib/$(LIBNAME)
-	-mkdir -p $(libdir)
-	-cp ../lib/$(LIBNAME)* $(libdir)
-	-cp ../lib/libfltk.a $(libdir)
-	if test $(LIBNAME) = libfltk.so.1; then\
-		rm -f $(libdir)/libfltk.so;\
+install: ../lib/$(LIBNAME) $(DSONAME)
+	@echo "Installing libraries..."
+	@-mkdir -p $(libdir)
+	@rm -f $(libdir)/$(LIBNAME)
+	@-cp ../lib/$(LIBNAME) $(libdir)
+	@-chmod 644 $(libdir)/$(LIBNAME)
+	@if test "$(DSONAME)" = libfltk.so.1; then\
+		rm -f $(libdir)/libfltk.so*;\
+		cp libfltk.so.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk.so.1; \
 		ln -s $(libdir)/libfltk.so.1 $(libdir)/libfltk.so;\
 	fi
-	if test $(LIBNAME) = libfltk.sl.1; then\
-		rm -f $(libdir)/libfltk.sl;\
+	@if test "$(DSONAME)" = libfltk.sl.1; then\
+		rm -f $(libdir)/libfltk.sl*;\
+		cp libfltk.sl.1 $(libdir); \
+		chmod 755 $(libdir)/libfltk.sl.1; \
 		ln -s $(libdir)/libfltk.sl.1 $(libdir)/libfltk.sl;\
 	fi
-	@-chmod a+r,u+w,g-w,o-w $(libdir)/$(LIBNAME)*
-	-mkdir -p $(includedir)
-	-rm -rf $(includedir)/FL $(includedir)/Fl
-	-cp -r ../FL $(includedir)
-	@-chmod -R a+r,u+w,g-w,o-w $(includedir)/FL
-	for file in $(includedir)/FL/*.H; do\
+	@echo "Installing include files..."
+	@-mkdir -p $(includedir)
+	@rm -rf $(includedir)/FL $(includedir)/Fl
+	@-cp -r ../FL $(includedir)
+	@-chmod 755 $(includedir)/FL
+	@-chmod 644 $(includedir)/FL/*
+	@for file in $(includedir)/FL/*.H; do\
 		newfile="`basename $$file H`h";\
 		ln -s $$file $(includedir)/FL/$$newfile;\
 	done
-	-ln -s FL $(includedir)/Fl
+	@-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18 1999/03/09 18:33:46 mike Exp $".
+# End of "$Id: Makefile,v 1.18.2.3 1999/03/25 16:09:54 mike Exp $".
 #

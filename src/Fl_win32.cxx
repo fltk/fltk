@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33 1999/03/04 21:20:55 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.2 1999/03/25 13:32:52 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -143,8 +143,10 @@ double fl_wait(int timeout_flag, double time) {
     GetMessage(&fl_msg, NULL, 0, 0);
     have_message = 1;
   } else {
-    if (time >= 0.001) {
-      int timerid = SetTimer(NULL, 0, int(time*1000), NULL);
+    if (time >= 0.0) {
+      int t = (int)(time * 1000.0);
+      if (t <= 0) t = 1;
+      int timerid = SetTimer(NULL, 0, t, NULL);
       GetMessage(&fl_msg, NULL, 0, 0);
       KillTimer(NULL, timerid);
       have_message = 1;
@@ -760,10 +762,17 @@ HINSTANCE fl_display = 0;
 //
 
 #ifndef FL_DLL
+
 extern "C" {
+#ifdef BORLAND
+extern int  _argc;
+extern char **_argv;
+extern FL_EXPORT int OwlMain(int, char *[]);
+#else
 extern int  __argc;
 extern char **__argv;
-extern FL_EXPORT int main(int argc, char *argv[]);
+extern FL_EXPORT int main(int, char *[]);
+#endif
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -787,11 +796,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif // _DEBUG
 
   // Run the standard main entry point function...
-
+#ifdef BORLAND
+  return OwlMain(_argc, _argv);
+#else
   return main(__argc, __argv);
+#endif
 }
-#endif /* !FL_DLL */
 
+#endif /* !FL_DLL */
 
 ////////////////////////////////////////////////////////////////
 
@@ -907,5 +919,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33 1999/03/04 21:20:55 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.2 1999/03/25 13:32:52 mike Exp $".
 //

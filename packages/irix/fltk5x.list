@@ -1,4 +1,4 @@
-f 0444 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
+f 0555 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
 f 0444 root sys usr/catman/pman/cat1/fluid.z documentation/fluid.z fltk.man.dev
 f 0444 root sys usr/include/FL/Enumerations.H FL/Enumerations.H fltk.sw.dev
 l 0000 root sys usr/include/FL/Enumerations.h - fltk.sw.dev symval("FL/Enumerations.H")
@@ -320,4 +320,4 @@ f 0444 root sys usr/info/fltk/value_slider.gif documentation/value_slider.gif fl
 f 0444 root sys usr/info/fltk/widgets.html documentation/widgets.html fltk.man.dev
 f 0555 root sys usr/lib/libfltk.a lib/libfltk.a fltk.sw.dev
 l 0000 root sys usr/lib/libfltk.so - fltk.sw.eoe symval("libfltk.so.1")
-f 0555 root sys usr/lib/libfltk.so.1 lib/libfltk.so.1 fltk.sw.eoe
+f 0555 root sys usr/lib/libfltk.so.1 src/libfltk.so.1 fltk.sw.eoe

@@ -9,7 +9,7 @@ Function {} {open
 } {
   Fl_Window {} {
     label {Valuator classes, showing values for type()} open
-    xywh {414 83 567 506} color 43 selection_color 43
+    xywh {370 393 567 506} color 43 selection_color 43
     code0 {\#include <stdio.h>} visible
   } {
     Fl_Box {} {
@@ -131,24 +131,22 @@ fflush(stdout);}
     Fl_Dial {} {
       label 0
       callback {printf("%g      \\r",o->value());
-fflush(stdout);} selected
-      xywh {315 280 65 65} color 10 selection_color 1 labelsize 8
+fflush(stdout);}
+      xywh {315 280 65 65} color 10 selection_color 1 labelsize 8 value 0.5
       code0 {o->angles(0,315);}
     }
     Fl_Dial {} {
       label FL_LINE_DIAL
       callback {printf("%g      \\r",o->value());
 fflush(stdout);}
-      xywh {395 280 65 65} type Line color 10 selection_color 1 labelsize 8
-      code1 {o->value(0.5);}
+      xywh {395 280 65 65} type Line color 10 selection_color 1 labelsize 8 value 0.5
     }
     Fl_Dial {} {
       label FL_FILL_DIAL
       callback {printf("%g      \\r",o->value());
-fflush(stdout);}
-      xywh {475 280 65 65} type Fill color 10 selection_color 1 labelsize 8
+fflush(stdout);} selected
+      xywh {475 280 65 65} type Fill color 10 selection_color 1 labelsize 8 value 1
       code0 {o->angles(0,360);}
-      code1 {o->value(1.0);}
     }
     Fl_Box {} {
       label Fl_Roller
