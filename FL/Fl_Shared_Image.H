@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.H,v 1.22.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Shared_Image.H,v 1.22.2.3 2002/03/29 11:59:56 easysw Exp $"
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,10 @@
 #  include "Fl_Image.H"
 
 
+// Test function for adding new formats
+typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
+                                       int headerlen);
+
 // Shared images class. 
 class Fl_Shared_Image : public Fl_Image {
   protected:
@@ -36,6 +40,9 @@ class Fl_Shared_Image : public Fl_Image {
   static Fl_Shared_Image **images_;	// Shared images
   static int	num_images_;		// Number of shared images
   static int	alloc_images_;		// Allocated shared images
+  static Fl_Shared_Handler **handlers_;	// Additional format handlers
+  static int	num_handlers_;		// Number of format handlers
+  static int	alloc_handlers_;	// Allocated format handlers
 
   const char	*name_;			// Name of image file
   int		original_;		// Original image?
@@ -70,10 +77,12 @@ class Fl_Shared_Image : public Fl_Image {
   static Fl_Shared_Image *get(const char *n, int W = 0, int H = 0);
   static Fl_Shared_Image **images() { return images_; }
   static int		num_images() { return num_images_; }
+  static void		add_handler(Fl_Shared_Handler *f);
+  static void		remove_handler(Fl_Shared_Handler *f);
 };
 
 #endif // !Fl_Shared_Image_H
 
 //
-// End of "$Id: Fl_Shared_Image.H,v 1.22.2.2 2002/01/01 15:11:28 easysw Exp $"
+// End of "$Id: Fl_Shared_Image.H,v 1.22.2.3 2002/03/29 11:59:56 easysw Exp $"
 //

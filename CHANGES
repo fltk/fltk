@@ -1,3 +1,10 @@
+CHANGES IN FLTK 1.1.0
+
+	- The Fl_Shared_Image class now supports additional
+	  image handling functions - this allows you to support
+	  additional image file formats transparently.
+
+
 CHANGES IN FLTK 1.1.0b12
 
 	- Documentation updates.
