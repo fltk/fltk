@@ -1,5 +1,5 @@
 //
-// "$Id: file_chooser.cxx,v 1.4.2.3.2.6 2002/06/28 21:04:37 easysw Exp $"
+// "$Id: file_chooser.cxx,v 1.4.2.3.2.7 2002/06/28 21:10:20 easysw Exp $"
 //
 // File chooser test program.
 //
@@ -81,8 +81,6 @@ main(int  argc,		// I - Number of command-line arguments
 
 
   // Make the file chooser...
-  fl_register_images();
-
   Fl::scheme(NULL);
   Fl_File_Icon::load_system_icons();
 
@@ -292,5 +290,5 @@ show_callback(void)
 
 
 //
-// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.6 2002/06/28 21:04:37 easysw Exp $".
+// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.7 2002/06/28 21:10:20 easysw Exp $".
 //
