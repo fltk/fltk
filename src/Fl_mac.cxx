@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.42 2003/05/26 14:19:48 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.43 2003/05/28 05:10:05 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -116,7 +116,7 @@ static unsigned short macKeyLookUp[128] =
     'u', '[', 'i', 'p', FL_Enter, 'l', 'j', '\'',
     'k', ';', '\\', ',', '/', 'n', 'm', '.',
 
-    FL_Tab, ' ', '`', FL_BackSpace, 0, FL_Escape, 0, 0,
+    FL_Tab, ' ', '`', FL_BackSpace, 0/*kp_enter on powerbook G4*/, FL_Escape, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
 
     0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
@@ -770,7 +770,8 @@ static void chord_to_e_state( UInt32 chord )
   static ulong state[] = 
   { 
     0, FL_BUTTON1, FL_BUTTON3, FL_BUTTON1|FL_BUTTON3, FL_BUTTON2,
-    FL_BUTTON2|FL_BUTTON1, FL_BUTTON2|FL_BUTTON3, FL_BUTTON2|FL_BUTTON1|FL_BUTTON3
+    FL_BUTTON2|FL_BUTTON1, FL_BUTTON2|FL_BUTTON3, 
+    FL_BUTTON2|FL_BUTTON1|FL_BUTTON3
   };
   Fl::e_state = ( Fl::e_state & 0xff0000 ) | state[ chord & 0x07 ];
 }
@@ -1775,6 +1776,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.42 2003/05/26 14:19:48 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.43 2003/05/28 05:10:05 matthiaswm Exp $".
 //
 
