@@ -14,8 +14,10 @@ TODO	- Added keyboard navigation to all widgets.
 PARTIAL	- Added support for mouse wheels using the new
 	  FL_MOUSEWHEEL event type.
 
-TODO	- Added the Fl_Check_Browser, Fl_FileBrowser,
-	  Fl_FileChooser, Fl_FileIcon, Fl_HelpDialog,
+	- Added the Fl_FileBrowser, Fl_FileChooser, and
+	  Fl_FileIcon widgets from the bazaar.
+
+TODO	- Added the Fl_Check_Browser, Fl_HelpDialog,
 	  Fl_HelpView, Fl_Tree_Browser, and Fl_Wizard widgets
 	  from the bazaar.
 
@@ -46,6 +48,9 @@ TODO	- Updated configure stuff to support shared libraries
 
 TODO	- Symbol labels can now contain regular text and
 	  Fl_Browser font and color controls.
+
+	- FLUID now supports relative filenames for the source
+	  and header files you generate.
 
 	- Fl_Menu_Item::add() didn't use the flags that were
 	  passed in.
