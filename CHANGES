@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.2
 
+	- Added a "draw_children()" method to Fl_Group to make
+	  subclassing Fl_Group with a custom draw() function
+	  easier.
+	- Fl_Text_Editor now supports basic undo functionality.
+	- FLUID now uses Fl_Text_Editor widgets for all
+	  multi-line code fields.
 	- Added new widget bin and icons to FLUID.
 	- FLUID would try running multiple commands in parallel,
 	  even though it wasn't capable of handling it.

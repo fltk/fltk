@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.13 2002/11/05 19:53:50 matthiaswm Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.14 2002/11/08 15:22:15 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -351,7 +351,6 @@ int Fl_Text_Buffer::undo(int *cursorPos) {
     undobuffersize(ilen+1);
     undobuffer[ilen] = 0;
     char *tmp = strdup(undobuffer);
-    int at = undoat;
     replace(b, undoat, tmp);
     if (cursorPos) *cursorPos = mCursorPosHint;
     free(tmp);
@@ -2494,5 +2493,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.13 2002/11/05 19:53:50 matthiaswm Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.14 2002/11/08 15:22:15 easysw Exp $".
 //
