@@ -654,6 +654,30 @@ void select_all_cb(Fl_Widget *,void *) {
   selection_changed(p);
 }
 
+void select_none_cb(Fl_Widget *,void *) {
+  Fl_Type *p = Fl_Type::current ? Fl_Type::current->parent : 0;
+  if (in_this_only) {
+    Fl_Type *t = p;
+    for (; t && t != in_this_only; t = t->parent);
+    if (t != in_this_only) p = in_this_only;
+  }
+  for (;;) {
+    if (p) {
+      int foundany = 0;
+      for (Fl_Type *t = p->next; t && t->level>p->level; t = t->next) {
+	if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
+      }
+      if (foundany) break;
+      p = p->parent;
+    } else {
+      for (Fl_Type *t = Fl_Type::first; t; t = t->next)
+	widget_browser->select(t,0,0);
+      break;
+    }
+  }
+  selection_changed(p);
+}
+
 static void delete_children(Fl_Type *p) {
   Fl_Type *f;
   for (f = p; f && f->next && f->next->level > p->level; f = f->next);

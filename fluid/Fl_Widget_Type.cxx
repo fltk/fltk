@@ -1301,7 +1301,7 @@ void cancel_cb(Fl_Button* o, void* v) {
   the_panel->hide();
 }
 
-void toggle_overlays(Fl_Widget *,void *); // in Fl_Window_Type.C
+void toggle_overlays(Fl_Widget *,void *); // in Fl_Window_Type.cxx
 void overlay_cb(Fl_Button*o,void *v) {
   toggle_overlays(o,v);
 }

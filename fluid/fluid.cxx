@@ -415,6 +415,7 @@ void openwidget_cb(Fl_Widget *, void *) {
 void toggle_overlays(Fl_Widget *,void *);
 
 void select_all_cb(Fl_Widget *,void *);
+void select_none_cb(Fl_Widget *,void *);
 
 void group_cb(Fl_Widget *, void *);
 
@@ -559,27 +560,11 @@ void manual_cb(Fl_Widget *, void *) {
   show_help("index.html");
 }
 
-void toggle_widgetbin_cb(Fl_Widget *, void *) {
-  Fl_Menu_Item *item = (Fl_Menu_Item *)main_menubar->find_item("&Edit/Widget &Bin");
-
-  if ( !widgetbin_panel ) {
-    make_widgetbin();
-    widgetbin_panel->callback(toggle_widgetbin_cb);
-    if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
-
-  }
-  if ( widgetbin_panel->visible() ) {
-    widgetbin_panel->hide();
-    if (item) item->clear();
-  } else {
-    widgetbin_panel->show();
-    if (item) item->set();
-  }
-}
-
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
+
+void toggle_widgetbin_cb(Fl_Widget *, void *);
 
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
@@ -609,8 +594,9 @@ Fl_Menu_Item Main_Menu[] = {
   {"C&ut", FL_CTRL+'x', cut_cb},
   {"&Copy", FL_CTRL+'c', copy_cb},
   {"&Duplicate", FL_CTRL+'d', duplicate_cb},
-  {"&Paste", FL_CTRL+'v', paste_cb},
-  {"Select &All", FL_CTRL+'a', select_all_cb, 0, FL_MENU_DIVIDER},
+  {"&Paste", FL_CTRL+'v', paste_cb, 0, FL_MENU_DIVIDER},
+  {"Select &All", FL_CTRL+'a', select_all_cb},
+  {"Select &None", FL_CTRL+FL_SHIFT+'a', select_none_cb, 0, FL_MENU_DIVIDER},
   {"&Open...", FL_F+1, openwidget_cb},
   {"&Sort",0,sort_cb},
   {"&Earlier", FL_F+2, earlier_cb},
@@ -618,11 +604,11 @@ Fl_Menu_Item Main_Menu[] = {
 //{"Show", FL_F+5, show_cb},
 //{"Hide", FL_F+6, hide_cb},
   {"&Group", FL_F+7, group_cb},
-  {"U&ngroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
+  {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
-  {"O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays, 0, FL_MENU_TOGGLE | FL_MENU_VALUE},
-  {"Widget &Bin",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_TOGGLE | FL_MENU_DIVIDER},
+  {"Hide O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
+  {"Show Widget &Bin",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_CTRL+'p',show_project_cb},
   {"&GUI Settings...",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
@@ -675,8 +661,23 @@ Fl_Menu_Item Main_Menu[] = {
 
 extern void fill_in_New_Menu();
 
-void make_main_window() {
+void toggle_widgetbin_cb(Fl_Widget *, void *) {
+  if (!widgetbin_panel) {
+    make_widgetbin();
+    widgetbin_panel->callback(toggle_widgetbin_cb);
+    if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
+  }
 
+  if (widgetbin_panel->visible()) {
+    widgetbin_panel->hide();
+    Main_Menu[37].label("Show Widget &Bin");
+  } else {
+    widgetbin_panel->show();
+    Main_Menu[37].label("Hide Widget &Bin");
+  }
+}
+
+void make_main_window() {
   fluid_prefs.get("snap", snap, 1);
   fluid_prefs.get("gridx", gridx, 5);
   fluid_prefs.get("gridy", gridy, 5);
@@ -920,6 +921,9 @@ void set_modflag(int mf) {
       main_window->label(title);
     } else main_window->label(basename);
   }
+
+  if (modflag) Main_Menu[16].activate();
+  else Main_Menu[16].deactivate();
 }
 
 ////////////////////////////////////////////////////////////////
