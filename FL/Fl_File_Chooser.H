@@ -68,6 +68,7 @@ public:
   const char * label();
   void rescan();
   void show();
+  int shown();
   void textcolor(Fl_Color c);
   Fl_Color textcolor();
   void textfont(uchar f);

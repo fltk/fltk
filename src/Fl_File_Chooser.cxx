@@ -213,6 +213,10 @@ void Fl_File_Chooser::show() {
 fileList->deselect();
 }
 
+int Fl_File_Chooser::shown() {
+  return window->shown();
+}
+
 void Fl_File_Chooser::textcolor(Fl_Color c) {
   fileList->textcolor(c);
 }

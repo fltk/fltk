@@ -89,8 +89,7 @@ fileList->filter(p);
 type(t);
 value(d);
 callback_ = 0;
-data_ = 0;} {selected
-    }
+data_ = 0;} {}
   }
   decl {void (*callback_)(Fl_File_Chooser*, void *);} {}
   decl {void *data_;} {}
@@ -155,6 +154,11 @@ rescan();} {}
   } {
     code {window->show();
 fileList->deselect();} {}
+  }
+  Function {shown()} {return_type int
+  } {
+    code {return window->shown();} {selected
+    }
   }
   Function {textcolor(Fl_Color c)} {return_type void
   } {

@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- The Fl_File_Chooser widget did not provide a shown()
+	  method, and fl_file_chooser() and fl_dir_chooser() did
+	  not wait on shown(); this would cause them to return
+	  prematurely if you switched desktops/workspaces.
 	- Cosmetic changes to plastic boxtypes.  Now look much
 	  better for large areas and the sides now have a much
 	  greater "3D" feeling to them.
