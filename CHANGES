@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.4
 
+	- Updated the Fl_Tabs widget to offset the first tab by
+	  the box dx value to avoid visual errors.
+	- Updated the plastic up box to draw only a single
+	  border frame instead of the old double one for
+	  improved appearance.
 	- Updated the default background color on OSX to provide
 	  better contrast.
 	- Fl_Text_Display and friends now look for the next

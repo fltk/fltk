@@ -1,5 +1,5 @@
 //
-// "$Id: fl_plastic.cxx,v 1.1.2.16 2003/01/30 21:44:00 easysw Exp $"
+// "$Id: fl_plastic.cxx,v 1.1.2.17 2003/05/16 18:33:03 easysw Exp $"
 //
 // "Plastic" drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -136,18 +136,18 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc)
 
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c) {
-//  shade_frame(x, y, w, h - 1, "MNFKKLNO", c);
   shade_frame(x, y, w, h - 1, "KLDIIJLM", c);
 }
 
 
 static void up_box(int x, int y, int w, int h, Fl_Color c) {
-//  shade_rect(x + 2, y + 2, w - 4, h - 5, "TXSPPQQRSSTTUVS", c);
+#if 0 // OLD UP BOX
   shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
-//  shade_rect(x + 2, y + 2, w - 4, h - 5, "RTVUTSRSTUWWXWQ", c);
-//  shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNNOOPQQRRSTQ", c);
-
   up_frame(x, y, w, h, c);
+#else // NEW UP BOX
+  shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
+  shade_frame(x, y, w, h - 1, "IJLM", c);
+#endif // 0
 }
 
 
@@ -177,5 +177,5 @@ Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX() {
 
 
 //
-// End of "$Id: fl_plastic.cxx,v 1.1.2.16 2003/01/30 21:44:00 easysw Exp $".
+// End of "$Id: fl_plastic.cxx,v 1.1.2.17 2003/05/16 18:33:03 easysw Exp $".
 //
