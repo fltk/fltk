@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.33 2004/09/24 16:00:10 easysw Exp $"
+// "$Id$"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -121,7 +121,9 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     src.top = cy; src.bottom = cy+H;
     dst.left = X; dst.right = X+W;
     dst.top = Y; dst.bottom = Y+H;
-    RGBColor rgb;
+    RGBColor rgb, oldfg, oldbg;
+    GetForeColor(&oldfg);
+    GetBackColor(&oldbg);
     rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
     RGBBackColor(&rgb);
     rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
@@ -130,6 +132,8 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 	     GetPortBitMapForCopyBits((GrafPtr)mask), 
 	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
              &src, &src, &dst);
+    RGBBackColor(&oldbg);
+    RGBForeColor(&oldfg);
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }
@@ -479,5 +483,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.33 2004/09/24 16:00:10 easysw Exp $".
+// End of "$Id$".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.14 2004/12/27 19:16:42 matthiaswm Exp $"
+// "$Id$"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -115,12 +115,16 @@ void fl_copy_offscreen(int x,int y,int w,int h,GWorldPtr gWorld,int srcx,int src
   Rect dst;
   GrafPtr dstPort; GetPort(&dstPort);
   dst.top = y; dst.left = x; dst.bottom = y+h; dst.right = x+w;
-  RGBColor rgb;
+  RGBColor rgb, oldbg, oldfg;
+  GetForeColor(&oldfg);
+  GetBackColor(&oldbg);
   rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
   RGBBackColor( &rgb );
   rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
   RGBForeColor( &rgb );
   CopyBits(GetPortBitMapForCopyBits(gWorld), GetPortBitMapForCopyBits(dstPort), &src, &dst, srcCopy, 0L);
+  RGBBackColor(&oldbg);
+  RGBForeColor(&oldfg);
 }
 
 void fl_delete_offscreen(GWorldPtr gWorld) {
@@ -353,5 +357,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.14 2004/12/27 19:16:42 matthiaswm Exp $".
+// End of "$Id$".
 //
