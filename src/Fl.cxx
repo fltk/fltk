@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.30 2000/06/21 17:36:36 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.31 2000/10/17 06:40:53 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -599,7 +599,11 @@ void Fl_Window::hide() {
   if (x->region) XDestroyRegion(x->region);
 #endif
   XDestroyWindow(fl_display, x->xid);
-
+#ifdef WIN32
+  // Try to stop the annoying "raise another program" behavior
+  if (non_modal() && Fl::first_window() && Fl::first_window()->shown())
+    Fl::first_window()->show();
+#endif
   delete x;
 }
 
@@ -729,5 +733,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.30 2000/06/21 17:36:36 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.31 2000/10/17 06:40:53 spitzak Exp $".
 //
