@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Bar.cxx,v 1.6 1999/01/13 15:45:49 mike Exp $"
+// "$Id: Fl_Menu_Bar.cxx,v 1.7 1999/01/19 19:05:39 mike Exp $"
 //
 // Menu bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -52,13 +52,12 @@ int Fl_Menu_Bar::handle(int event) {
   case FL_SHORTCUT:
     v = menu()->test_shortcut();
     if (v) {picked(v); return 1;}
-    v = menu()->find_shortcut();
-    if (v) goto J1;
+    if (visible_r() && (v = menu()->find_shortcut())) goto J1;
     return 0;
   }
   return 0;
 }
 
 //
-// End of "$Id: Fl_Menu_Bar.cxx,v 1.6 1999/01/13 15:45:49 mike Exp $".
+// End of "$Id: Fl_Menu_Bar.cxx,v 1.7 1999/01/19 19:05:39 mike Exp $".
 //
