@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Added Fl_Spinner widget (another combination of
+	  existing widgets in a header file)
 	- FLUID now provides support for UI templates.
 	- fl_not_clipped() incorrectly used the current window
 	  dimensions for gross clipping, which interfered with

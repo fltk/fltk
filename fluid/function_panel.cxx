@@ -432,7 +432,7 @@ Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 Fl_Window* make_widgetbin() {
   Fl_Window* w;
-  { Fl_Window* o = widgetbin_panel = new Fl_Window(465, 100, "Widget Bin");
+  { Fl_Window* o = widgetbin_panel = new Fl_Window(485, 100, "Widget Bin");
     w = o;
     { Fl_Group* o = new Fl_Group(3, 3, 74, 74);
       o->box(FL_THIN_DOWN_BOX);
@@ -566,7 +566,7 @@ Fl_Window* make_widgetbin() {
       }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(207, 3, 74, 74);
+    { Fl_Group* o = new Fl_Group(207, 3, 97, 74);
       o->box(FL_THIN_DOWN_BOX);
       { Fl_Button* o = new Fl_Button(208, 4, 24, 24);
         o->tooltip("Slider");
@@ -611,46 +611,52 @@ Fl_Window* make_widgetbin() {
         o->image(pixmap[43]);
       }
       { Fl_Button* o = new Fl_Button(232, 52, 24, 24);
-        o->tooltip("Value Input");
+        o->tooltip("Spinner");
         o->box(FL_THIN_UP_BOX);
-        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Input"));
-        o->image(pixmap[44]);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Spinner"));
+        o->image(pixmap[47]);
       }
-      { Fl_Button* o = new Fl_Button(256, 52, 24, 24);
+      { Fl_Button* o = new Fl_Button(278, 4, 24, 24);
         o->tooltip("Value Output");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Output"));
         o->image(pixmap[45]);
       }
+      { Fl_Button* o = new Fl_Button(256, 52, 24, 24);
+        o->tooltip("Value Input");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Input"));
+        o->image(pixmap[44]);
+      }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(283, 3, 50, 74);
+    { Fl_Group* o = new Fl_Group(307, 3, 50, 74);
       o->box(FL_THIN_DOWN_BOX);
-      { Fl_Button* o = new Fl_Button(284, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(308, 4, 24, 24);
         o->tooltip("Input");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Input"));
         o->image(pixmap[14]);
       }
-      { Fl_Button* o = new Fl_Button(308, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(332, 4, 24, 24);
         o->tooltip("Output");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Output"));
         o->image(pixmap[27]);
       }
-      { Fl_Button* o = new Fl_Button(284, 28, 24, 24);
+      { Fl_Button* o = new Fl_Button(308, 28, 24, 24);
         o->tooltip("Text Edit");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Text_Editor"));
         o->image(pixmap[29]);
       }
-      { Fl_Button* o = new Fl_Button(308, 28, 24, 24);
+      { Fl_Button* o = new Fl_Button(332, 28, 24, 24);
         o->tooltip("Text Display");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Text_Display"));
         o->image(pixmap[28]);
       }
-      { Fl_Button* o = new Fl_Button(284, 52, 24, 24);
+      { Fl_Button* o = new Fl_Button(308, 52, 24, 24);
         o->tooltip("File Input");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Input"));
@@ -658,55 +664,61 @@ Fl_Window* make_widgetbin() {
       }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(335, 3, 50, 74);
+    { Fl_Group* o = new Fl_Group(359, 3, 50, 74);
       o->box(FL_THIN_DOWN_BOX);
-      { Fl_Button* o = new Fl_Button(336, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(360, 4, 24, 24);
         o->tooltip("Menu Bar");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Menu_Bar"));
         o->image(pixmap[17]);
       }
-      { Fl_Button* o = new Fl_Button(360, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(384, 28, 24, 24);
         o->tooltip("Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("menuitem"));
         o->image(pixmap[16]);
       }
-      { Fl_Button* o = new Fl_Button(336, 28, 24, 24);
+      { Fl_Button* o = new Fl_Button(360, 28, 24, 24);
         o->tooltip("Menu Button");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Menu_Button"));
         o->image(pixmap[26]);
       }
-      { Fl_Button* o = new Fl_Button(360, 28, 24, 24);
+      { Fl_Button* o = new Fl_Button(384, 52, 24, 24);
         o->tooltip("Sub Menu");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("submenu"));
         o->image(pixmap[18]);
       }
-      { Fl_Button* o = new Fl_Button(336, 52, 24, 24);
+      { Fl_Button* o = new Fl_Button(360, 52, 24, 24);
         o->tooltip("Choice");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Choice"));
         o->image(pixmap[15]);
       }
+      { Fl_Button* o = new Fl_Button(384, 4, 24, 24);
+        o->tooltip("Input Choice");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Input_Choice"));
+        o->image(pixmap[15]);
+      }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(387, 3, 26, 74);
+    { Fl_Group* o = new Fl_Group(411, 3, 26, 74);
       o->box(FL_THIN_DOWN_BOX);
-      { Fl_Button* o = new Fl_Button(388, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(412, 4, 24, 24);
         o->tooltip("Browser");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Browser"));
         o->image(pixmap[31]);
       }
-      { Fl_Button* o = new Fl_Button(388, 28, 24, 24);
+      { Fl_Button* o = new Fl_Button(412, 28, 24, 24);
         o->tooltip("Check Browser");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Check_Browser"));
         o->image(pixmap[32]);
       }
-      { Fl_Button* o = new Fl_Button(388, 52, 24, 24);
+      { Fl_Button* o = new Fl_Button(412, 52, 24, 24);
         o->tooltip("File Browser");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Browser"));
@@ -714,27 +726,27 @@ Fl_Window* make_widgetbin() {
       }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(415, 3, 50, 74);
+    { Fl_Group* o = new Fl_Group(439, 3, 50, 74);
       o->box(FL_THIN_DOWN_BOX);
-      { Fl_Button* o = new Fl_Button(416, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(440, 4, 24, 24);
         o->tooltip("Box");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Box"));
         o->image(pixmap[5]);
       }
-      { Fl_Button* o = new Fl_Button(440, 4, 24, 24);
+      { Fl_Button* o = new Fl_Button(464, 4, 24, 24);
         o->tooltip("Clock");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Clock"));
         o->image(pixmap[34]);
       }
-      { Fl_Button* o = new Fl_Button(416, 28, 24, 24);
+      { Fl_Button* o = new Fl_Button(440, 28, 24, 24);
         o->tooltip("Help Browser");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Help_View"));
         o->image(pixmap[35]);
       }
-      { Fl_Button* o = new Fl_Button(416, 52, 24, 24);
+      { Fl_Button* o = new Fl_Button(440, 52, 24, 24);
         o->tooltip("Progress");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Progress"));

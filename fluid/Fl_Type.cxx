@@ -98,6 +98,7 @@ static Fl_Pixmap	lock_pixmap(lock_xpm);
 #include "pixmaps/flRoller.xpm"
 #include "pixmaps/flValueInput.xpm"
 #include "pixmaps/flValueOutput.xpm"
+#include "pixmaps/flSpinner.xpm"
 
 static Fl_Pixmap	window_pixmap(flWindow_xpm);
 static Fl_Pixmap	button_pixmap(flButton_xpm);
@@ -145,6 +146,7 @@ static Fl_Pixmap	dial_pixmap(flDial_xpm);
 static Fl_Pixmap	roller_pixmap(flRoller_xpm);
 static Fl_Pixmap	valueinput_pixmap(flValueInput_xpm);
 static Fl_Pixmap	valueoutput_pixmap(flValueOutput_xpm);
+static Fl_Pixmap	spinner_pixmap(flSpinner_xpm);
 
 Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, &roundbutton_pixmap, /* 0..4 */
  &box_pixmap, &group_pixmap, &function_pixmap, &code_pixmap, &codeblock_pixmap, &declaration_pixmap, /* 5..10 */ 
@@ -154,7 +156,7 @@ Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, 
  &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
  &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	     /* 33..36 */
  &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
- &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap /* 42..46*/ };
+ &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap, &spinner_pixmap /* 42..47 */ };
 
 ////////////////////////////////////////////////////////////////
 

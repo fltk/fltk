@@ -59,7 +59,15 @@ decl {extern Fl_Preferences fluid_prefs;} {}
 Function {make_template_panel()} {open
 } {
   Fl_Window template_panel {
-    label {New/Save Template} open
+    label {New/Save Template}
+    callback {Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+if (img) img->release();
+template_preview->image(0);
+
+template_browser->deselect();
+template_name->value("");
+template_instance->value("");
+template_panel->hide();} open selected
     xywh {340 237 460 355} type Double resizable modal visible
   } {
     Fl_Browser template_browser {
@@ -112,7 +120,7 @@ if (img) {
 
   template_preview->image(img);
   template_preview->redraw();
-}} selected
+}}
       xywh {10 28 180 250} type Hold labelfont 1 align 5 when 3
     }
     Fl_Box template_preview {

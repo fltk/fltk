@@ -45,6 +45,17 @@ extern Fl_Preferences fluid_prefs;
 
 Fl_Double_Window *template_panel=(Fl_Double_Window *)0;
 
+static void cb_template_panel(Fl_Double_Window*, void*) {
+  Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+if (img) img->release();
+template_preview->image(0);
+
+template_browser->deselect();
+template_name->value("");
+template_instance->value("");
+template_panel->hide();
+}
+
 Fl_Browser *template_browser=(Fl_Browser *)0;
 
 static void cb_template_browser(Fl_Browser*, void*) {
@@ -139,6 +150,7 @@ Fl_Double_Window* make_template_panel() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = template_panel = new Fl_Double_Window(460, 355, "New/Save Template");
     w = o;
+    o->callback((Fl_Callback*)cb_template_panel);
     { Fl_Browser* o = template_browser = new Fl_Browser(10, 28, 180, 250, "Available Templates:");
       o->type(2);
       o->labelfont(1);

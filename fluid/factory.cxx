@@ -375,6 +375,43 @@ int Fl_Counter_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 ////////////////////////////////////////////////////////////////
 
+#include <FL/Fl_Spinner.H>
+class Fl_Spinner_Type : public Fl_Widget_Type {
+  Fl_Menu_Item *subtypes() {return 0;}
+  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
+  int pixmapID() { return 47; }
+public:
+  virtual void ideal_size(int &w, int &h) {
+    Fl_Spinner *myo = (Fl_Spinner *)o;
+    fl_font(myo->textfont(), myo->textsize());
+    h = fl_height() + myo->textsize() - 6;
+    if (h < 15) h = 15;
+    w -= Fl::box_dw(o->box());
+    int ww = (int)fl_width('m');
+    w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box()) + h / 2;
+    if (w < 40) w = 40	;
+  }
+  virtual const char *type_name() {return "Fl_Spinner";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    return new Fl_Spinner(x,y,w,h,"spinner:");}
+  Fl_Widget_Type *_make() {return new Fl_Spinner_Type();}
+};
+static Fl_Spinner_Type Fl_Spinner_type;
+
+int Fl_Spinner_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
+  Fl_Spinner *myo = (Fl_Spinner*)(w==4 ? ((Fl_Widget_Type*)factory)->o : o);
+  switch (w) {
+    case 4:
+    case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 1: myo->textfont(f); break;
+    case 2: myo->textsize(s); break;
+    case 3: myo->textcolor(c); break;
+  }
+  return 1;
+}
+
+////////////////////////////////////////////////////////////////
+
 #include <FL/Fl_Input.H>
 static Fl_Menu_Item input_type_menu[] = {
   {"Normal",0,0,(void*)FL_NORMAL_INPUT},
@@ -922,6 +959,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Value_Slider_type},
   {0,0,cb,(void*)&Fl_Adjuster_type},
   {0,0,cb,(void*)&Fl_Counter_type},
+  {0,0,cb,(void*)&Fl_Spinner_type},
   {0,0,cb,(void*)&Fl_Dial_type},
   {0,0,cb,(void*)&Fl_Roller_type},
   {0,0,cb,(void*)&Fl_Value_Input_type},
