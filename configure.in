@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.24 2001/02/16 13:35:28 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.25 2001/02/21 21:37:30 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -159,10 +159,12 @@ CXXFLAGS="$CXXFLAGS$X_CFLAGS"
 
 dnl My test to see if OpenGL is on this machine:
 GLLIB=
-AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
-    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGLU -lMesaGL",,\
-	-lX11 -lXext $X_EXTRA_LIBS -lm), \
-    -lX11 -lXext $X_EXTRA_LIBS -lm)
+AC_CHECK_HEADER(GL/gl.h,
+    AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lGLU -lGL", \
+	AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGLU -lMesaGL",,\
+	    -lX11 -lXext $X_EXTRA_LIBS -lm), \
+	-lX11 -lXext $X_EXTRA_LIBS -lm)
+)
 AC_SUBST(GLLIB)
 
 AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
@@ -332,5 +334,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.24 2001/02/16 13:35:28 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.25 2001/02/21 21:37:30 easysw Exp $".
 dnl
