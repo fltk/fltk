@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.70 2002/06/07 20:15:17 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.71 2002/06/08 12:51:38 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -445,7 +445,7 @@ case $uname in
 		fi
 	    )
 
-	    if test x$ac_cv_lib_GL_glXMakeCurrent = xno -a x$ac_cv_lib_MesaGL_glXMakeCurrent = xno; then
+	    if test x$ac_cv_lib_GL_glXMakeCurrent != xyes -a x$ac_cv_lib_MesaGL_glXMakeCurrent != xyes; then
 		    LINKFLTKGL=""
 		    GLLIBNAME=""
 		    GLDSONAME=""
@@ -748,5 +748,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.70 2002/06/07 20:15:17 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.71 2002/06/08 12:51:38 easysw Exp $".
 dnl

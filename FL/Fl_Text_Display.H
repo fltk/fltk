@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.6 2002/05/21 11:14:57 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.7 2002/06/08 12:51:38 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -219,10 +219,20 @@ class Fl_Text_Display: public Fl_Group {
     uchar textfont_;
     uchar textsize_;
     unsigned textcolor_;
+
+    // The following are not presently used from the original NEdit
+    // code, but are being put here so that future versions of
+    // Fl_Text_Display can implement wrapping and line numbers
+    // without breaking binary compatibility.
+    int mLineNumLeft, mLineNumWidth;
+				/* Line number margin and width */
+    int mContinuousWrap;       	/* Wrap long lines when displaying */
+    int mWrapMargin; 	     	/* Margin in # of char positions for
+    	    	    	       	   wrapping in continuousWrap mode */
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.6 2002/05/21 11:14:57 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.7 2002/06/08 12:51:38 easysw Exp $".
 //
