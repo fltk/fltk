@@ -1,19 +1,44 @@
+//
+// "$Id"
+//
+// Minimal update test program for the Fast Light Tool Kit (FLTK).
+//
 // This is a test of the minimal update code.  The right slider has a
 // label that extends outside it's border, and the minimal update
 // assummes this does not happen.  Thus there is *supposed* to be
 // display errors when you move the right-most or any other slider.
 // If you *don't* see these errors, then the minimal update is
 // broken!!!
-
+//
 // I cannot emphasize how important it is to test this and make sure
 // any changes have not broken the minimal update.  These sort of bugs
 // are extremely hard to fix and must be detected right away!
-
+//
 // The reason it is important to fix this is that otherwise you will
 // swiftly end up with a toolkit that thinks it has to draw the window
 // 20 times each time the display changes.  I don't care how fast the
 // machine is, this is an insane waste of resources, and should be
 // stopped!
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <stdlib.h>
 #include <FL/Fl.H>
@@ -47,3 +72,7 @@ int main(int argc, char **argv) {
   window->show(argc, argv);
   return Fl::run();
 }
+
+//
+// End of "$Id: minimum.cxx,v 1.2 1998/10/20 13:25:15 mike Exp $".
+//

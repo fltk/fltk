@@ -1,24 +1,44 @@
-/* 	Test fl_draw_image.
-
-	Be sure to try every visual with the -v switch and try
-	-m (monochrome) on each of them.
-
-	This program requires either the libjpeg.a library or
-	an internal DD library to read images (this is chosen
-	by the presence of the "DD" #define).
-
-	To get the jpeg library:
-
-The "official" archive site for this software is ftp.uu.net (Internet
-address 192.48.96.9).  The most recent released version can always be found
-there in directory graphics/jpeg.  This particular version will be archived
-as graphics/jpeg/jpegsrc.v6a.tar.gz.
-
-	The makefile assummes you decompressed and build these
-	in a directory called "jpeg-6a" in the same location as the
-	"FL" directory.
-
-*/
+//
+// "$Id"
+//
+// fl_draw_image test program for the Fast Light Tool Kit (FLTK).
+//
+// Be sure to try every visual with the -v switch and try -m (monochrome)
+// on each of them.
+//
+// This program requires either the libjpeg.a library or an internal DD
+// library to read images (this is chosen by the presence of the "DD"
+// #define).
+//
+// To get the jpeg library:
+//
+// The "official" archive site for this software is ftp.uu.net (Internet
+// address 192.48.96.9).  The most recent released version can always be
+// found there in directory graphics/jpeg.  This particular version will
+// be archived as graphics/jpeg/jpegsrc.v6a.tar.gz.
+//
+// The makefile assummes you decompressed and build these in a directory
+// called "jpeg-6a" in the same location as the "FL" directory.
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -176,3 +196,6 @@ void readtheimage(const char *name) {
 }
 #endif
 
+//
+// End of "$Id: fl_jpeg_image.cxx,v 1.2 1998/10/20 13:25:02 mike Exp $".
+//

@@ -1,3 +1,8 @@
+//
+// "$Id"
+//
+// Visual list utility for the Fast Light Tool Kit (FLTK).
+//
 // List all the visuals on the screen, and dumps anything interesting
 // about them to stdout.
 //
@@ -5,6 +10,26 @@
 //
 // This file may be #included in another program to make a function to
 // call to list the visuals.  Fl.H must be included first to indicate this.
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #ifdef WIN32
 #include <FL/Fl.H>
@@ -209,4 +234,6 @@ int main(int argc, char **argv) {
 }
 #endif
 
-// end of list_visuals.C
+//
+// End of "$Id: list_visuals.cxx,v 1.3 1998/10/20 13:25:12 mike Exp $".
+//

@@ -1,10 +1,13 @@
+test/README - 20 Oct 1998
+-------------------------
+
 This directory contains tests and demos of FL.  In most cases you can
 learn a lot about how to program FL by looking at the source code.
 
 Type "make" to compile them all.
 
-The program "demo" is a graphical interface to run all the demos.
-(you may recognize this as a rewrite of an XForms program).
+The program "demo" is a graphical interface to run all the demos. (you
+may recognize this as a rewrite of an XForms program).
 
 Some of the more interesting programs:
 
@@ -25,8 +28,3 @@ shiny:		Demo of drawing FL's controls using OpenGL
 forms:		An XForms program to demonstrate emulation
 
 colbrowser:	Another XForms program that is actually useful
-
-The program "fl_image" can be compiled if you have the jpeg library.
-The makefile assummes that the jpeg distribution resides in
-../../jpeg-6a/.  Perhaps edit the Makefile to fix this, and type
-"make fl_image" to make this jpeg file viewer.

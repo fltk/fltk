@@ -1,37 +1,58 @@
-/*	fullscreen.C
-
-	This demo shows how to do many of the window manipulations that
-	are popular on SGI programs, even though X does not really like
-	them.  You can toggle the border on/off, change the visual to
-	switch between single/double buffer, and make the window take
-	over the screen.
-
-	Normally the program makes a single window with a child GL window.
-	This simulates a program where the 3D display is surrounded by
-	control knobs.  Running the program with an argument will
-	make it make a seperate GL window from the controls window.  This
-	simulates a (older?) style program where the graphics display is
-	a different window than the controls.
-
-	This program reports how many times it redraws the window to
-	stdout, so you can see how much time it is wasting.  It appears
-	to be impossible to prevent X from sending redundant resize
-	events, so there are extra redraws.  But the way I have the
-	code arranged here seems to be keeping that to a minimu.
-
-	Apparently unavoidable bugs:
-
-	Turning the border on causes an unnecessary redraw.
-
-	Turning off full screen when the border is on causes an unnecessary
-	resize and redraw when the program turns the border on.
-
-	If it is a seperate window, turning double buffering on and off
-	will cause the window to raise, deiconize, and possibly move.  You
-	can avoid this by making the Fl_Gl_Window a child of a normal
-	window.
-
-*/
+//
+// "$Id"
+//
+// Fullscreen test program for the Fast Light Tool Kit (FLTK).
+//
+// This demo shows how to do many of the window manipulations that
+// are popular on SGI programs, even though X does not really like
+// them.  You can toggle the border on/off, change the visual to
+// switch between single/double buffer, and make the window take
+// over the screen.
+//
+// Normally the program makes a single window with a child GL window.
+// This simulates a program where the 3D display is surrounded by
+// control knobs.  Running the program with an argument will
+// make it make a seperate GL window from the controls window.  This
+// simulates a (older?) style program where the graphics display is
+// a different window than the controls.
+//
+// This program reports how many times it redraws the window to
+// stdout, so you can see how much time it is wasting.  It appears
+// to be impossible to prevent X from sending redundant resize
+// events, so there are extra redraws.  But the way I have the
+// code arranged here seems to be keeping that to a minimu.
+//
+// Apparently unavoidable bugs:
+//
+// Turning the border on causes an unnecessary redraw.
+//
+// Turning off full screen when the border is on causes an unnecessary
+// resize and redraw when the program turns the border on.
+//
+// If it is a seperate window, turning double buffering on and off
+// will cause the window to raise, deiconize, and possibly move.  You
+// can avoid this by making the Fl_Gl_Window a child of a normal
+// window.
+//
+// Copyright 1998 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@easysw.com".
+//
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -217,3 +238,7 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
+
+//
+// End of "$Id: fullscreen.cxx,v 1.2 1998/10/20 13:25:05 mike Exp $".
+//
