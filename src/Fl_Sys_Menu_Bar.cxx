@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.6 2003/01/30 21:42:45 easysw Exp $"
+// "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.7 2003/06/12 01:36:18 easysw Exp $"
 //
 // MacOS system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -110,11 +110,11 @@ static void catMenuFont( const Fl_Menu_Item *m, char *dst )
  * append a marker to identify the menu shortcut
  * <B, I, U, O, and S
 enum {
-ÊÊÊÊkMenuNoModifiersÊÊÊÊÊÊÊÊ= 0,
-ÊÊÊÊkMenuShiftModifierÊÊÊÊÊÊ= (1 << 0),
-ÊÊÊÊkMenuOptionModifierÊÊÊÊÊ= (1 << 1),
-ÊÊÊÊkMenuControlModifierÊÊÊÊ= (1 << 2),
-ÊÊÊÊkMenuNoCommandModifierÊÊ= (1 << 3)
+  kMenuNoModifiers = 0,
+  kMenuShiftModifier = (1 << 0),
+  kMenuOptionModifier = (1 << 1),
+  kMenuControlModifier = (1 << 2),
+  kMenuNoCommandModifier = (1 << 3)
 }; 
  */
 static void setMenuShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
@@ -316,5 +316,5 @@ int Fl_Menu_Bar::handle(int event) {
 */
 
 //
-// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.6 2003/01/30 21:42:45 easysw Exp $".
+// End of "$Id: Fl_Sys_Menu_Bar.cxx,v 1.1.2.7 2003/06/12 01:36:18 easysw Exp $".
 //

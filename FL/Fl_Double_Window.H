@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.H,v 1.7.2.3.2.4 2003/01/30 21:38:57 easysw Exp $"
+// "$Id: Fl_Double_Window.H,v 1.7.2.3.2.5 2003/06/12 01:36:16 easysw Exp $"
 //
 // Double-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,13 +40,13 @@ public:
   void hide();
   ~Fl_Double_Window();
   Fl_Double_Window(int W, int H, const char *l = 0) 
-    : Fl_Window(W,H,l), force_doublebuffering_(0) {}
+    : Fl_Window(W,H,l), force_doublebuffering_(0) { type(FL_DOUBLE_WINDOW); }
   Fl_Double_Window(int X, int Y, int W, int H, const char *l = 0)
-    : Fl_Window(X,Y,W,H,l), force_doublebuffering_(0) {}
+    : Fl_Window(X,Y,W,H,l), force_doublebuffering_(0) { type(FL_DOUBLE_WINDOW); }
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Double_Window.H,v 1.7.2.3.2.4 2003/01/30 21:38:57 easysw Exp $".
+// End of "$Id: Fl_Double_Window.H,v 1.7.2.3.2.5 2003/06/12 01:36:16 easysw Exp $".
 //

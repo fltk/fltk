@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.34 2003/05/18 22:12:19 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.35 2003/06/12 01:36:15 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -403,6 +403,8 @@ enum Fl_Damage {
   FL_DAMAGE_EXPOSE   = 0x02,
   FL_DAMAGE_SCROLL   = 0x04,
   FL_DAMAGE_OVERLAY  = 0x08,
+  FL_DAMAGE_USER1    = 0x10,
+  FL_DAMAGE_USER2    = 0x20,
   FL_DAMAGE_ALL      = 0x80
 };
 
@@ -417,5 +419,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.34 2003/05/18 22:12:19 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.35 2003/06/12 01:36:15 easysw Exp $".
 //

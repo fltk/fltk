@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.10 2003/05/21 01:50:14 easysw Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.11 2003/06/12 01:36:18 easysw Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -116,12 +116,12 @@ const char * fl_shortcut_label(int shortcut) {
   static char buf[20];
   char *p = buf;
   if (!shortcut) {*p = 0; return buf;}
-#ifdef UNUSED__APPLE__UNUSED
+#ifdef __APPLE__
   // \todo Mac :  we might want to change the symbols for Mac users - consider drawing Apple Symbols... .
-  if (shortcut & FL_SHIFT) {strcpy(p,"shift+"); p += 6;} //: Mac hollow up arrow
-  if (shortcut & FL_META)  {strcpy(p,"ctrl+"); p += 5;}  //: Mac 'cotrol'
-  if (shortcut & FL_ALT)   {strcpy(p,"option+"); p += 7;}   //: Mac 'Option' or fancy switch symbol
-  if (shortcut & FL_CTRL)  {strcpy(p,"cmd+"); p += 4;}  //: Mac Apple or Curlyflour
+  if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;} //: Mac hollow up arrow
+  if (shortcut & FL_META)  {strcpy(p,"Ctrl+"); p += 5;}  //: Mac 'control'
+  if (shortcut & FL_ALT)   {strcpy(p,"Option+"); p += 7;}   //: Mac 'Option' or fancy switch symbol
+  if (shortcut & FL_CTRL)  {strcpy(p,"Cmd+"); p += 4;}  //: Mac Apple or Curlyflour
 #else
   if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
@@ -201,5 +201,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.10 2003/05/21 01:50:14 easysw Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.11 2003/06/12 01:36:18 easysw Exp $".
 //

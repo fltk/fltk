@@ -258,13 +258,17 @@ method for more information.
 equal to this widget. Returns 0 if <TT>b</TT> is <TT>NULL</TT>.
 
 
-<H4><A name=Fl_Widget.damage>uchar Fl_Widget::damage() const</A></H4>
+<H4><A name=Fl_Widget.damage>uchar Fl_Widget::damage() const<BR>
+void damage(uchar c);<BR>
+void damage(uchar c, int X, int Y, int W, int H);</A></H4>
 
-<P>Non-zero if <A
+<P>The first version returns non-zero if <A
 HREF="subclassing.html#draw"><TT>draw()</TT></A> needs to be
 called. The damage value is actually a bit field that the widget
 subclass can use to figure out what parts to draw.
 
+<P>The last two forms set the damage bits for the widget; the
+last form damages the widget within the specified bounding box.
 
 <H4><A name=Fl_Widget.default_callback>static void
 Fl_Widget::default_callback(Fl_Widget*, void*)</A></H4>

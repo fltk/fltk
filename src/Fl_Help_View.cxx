@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.47 2003/05/21 16:12:14 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.48 2003/06/12 01:36:17 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2759,9 +2759,11 @@ quote_char(const char *p) {	// I - Quoted string
     { "yuml;",   5, 255 }
   };
 
-
-  if (isdigit(*p)) return atoi(p);
-
+  if (!strchr(p, ';')) return -1;
+  if (*p == '#') {
+    if (*(p+1) == 'x' || *(p+1) == 'X') return strtol(p+2, NULL, 16);
+    else return atoi(p+1);
+  }
   for (i = (int)(sizeof(names) / sizeof(names[0])), nameptr = names; i > 0; i --, nameptr ++)
     if (strncmp(p, nameptr->name, nameptr->namelen) == 0)
       return nameptr->code;
@@ -2793,5 +2795,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.47 2003/05/21 16:12:14 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.48 2003/06/12 01:36:17 easysw Exp $".
 //

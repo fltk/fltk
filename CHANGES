@@ -1,11 +1,23 @@
 CHANGES IN FLTK 1.1.4
 
-	- CodeWarrior Mac OS X updated to work with current CW8.3
+	- Added documentation for all forms of
+	  Fl_Widget::damage() (STR #61)
+	- Fl_Double_Window now has a type() value of
+	  FL_DOUBLE_WINDOW, to allow double-buffered windows to
+	  process redraws properly on WIN32 (STR #46)
+	- Added FL_DAMAGE_USER1 and FL_DAMAGE_USER2 damage bits
+	  for use by widget developers (STR #57)
+	- Fl_Help_View didn't support numeric character entities
+	  (STR #66)
+	- Menu shortcuts didn't use the Mac key names under
+	  MacOS X (STR #71)
+	- CodeWarrior Mac OS X updated to work with current
+	  CW8.3 (STR #34)
 	- Apple-C/X/V/Z didn't work in the Fl_Input widget due
-	  to a bad mapping to control keys (STR #pending)
+	  to a bad mapping to control keys (STR #79)
 	- Added the OSX-specific fl_open_callback() function to
 	  handle Open Documents messages from the Finder (STR
-	  #pending)
+	  #80)
 	- The configure script contained erroneous whitespace in
 	  various tests which caused errors on some platforms
 	  (STR #60)
