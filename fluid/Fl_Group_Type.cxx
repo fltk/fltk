@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.2 1998/10/21 16:28:52 mike Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.3 1998/12/06 15:09:14 mike Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/fl_message.H>
-#include "Fl_Widget_Type.H"
+#include "Fl_Widget_Type.h"
 
 class igroup : public Fl_Group {
 public:
@@ -267,5 +267,5 @@ public:
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.2 1998/10/21 16:28:52 mike Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.3 1998/12/06 15:09:14 mike Exp $".
 //

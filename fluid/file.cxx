@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.3 1998/10/21 16:29:00 mike Exp $"
+// "$Id: file.cxx,v 1.4 1998/12/06 15:09:20 mike Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include "alignment_panel.H"
+#include "alignment_panel.h"
 
 ////////////////////////////////////////////////////////////////
 // BASIC FILE WRITING:
@@ -587,5 +587,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.3 1998/10/21 16:29:00 mike Exp $".
+// End of "$Id: file.cxx,v 1.4 1998/12/06 15:09:20 mike Exp $".
 //

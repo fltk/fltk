@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.7 1998/12/06 14:59:13 mike Exp $"
+// "$Id: fluid.cxx,v 1.8 1998/12/06 15:09:20 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -68,9 +68,9 @@ const char *copyright =
 # include <unistd.h>
 #endif
 
-#include "about_panel.H"
+#include "about_panel.h"
 
-#include "Fl_Type.H"
+#include "Fl_Type.h"
 
 ////////////////////////////////////////////////////////////////
 
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.7 1998/12/06 14:59:13 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.8 1998/12/06 15:09:20 mike Exp $".
 //

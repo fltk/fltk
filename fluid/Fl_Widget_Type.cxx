@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.10 1998/12/02 15:47:28 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.11 1998/12/06 15:09:16 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -25,7 +25,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
-#include "Fl_Widget_Type.H"
+#include "Fl_Widget_Type.h"
 #include <FL/fl_message.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Window.H>
@@ -1701,5 +1701,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.10 1998/12/02 15:47:28 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.11 1998/12/06 15:09:16 mike Exp $".
 //

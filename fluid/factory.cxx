@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.2 1998/10/21 16:28:59 mike Exp $"
+// "$Id: factory.cxx,v 1.3 1998/12/06 15:09:19 mike Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,7 +41,7 @@
 #define strcasecmp stricmp
 #endif
 
-#include "Fl_Widget_Type.H"
+#include "Fl_Widget_Type.h"
 
 ////////////////////////////////////////////////////////////////
 
@@ -673,5 +673,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.2 1998/10/21 16:28:59 mike Exp $".
+// End of "$Id: factory.cxx,v 1.3 1998/12/06 15:09:19 mike Exp $".
 //

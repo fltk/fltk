@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.9 1998/12/02 15:59:47 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.10 1998/12/06 15:09:16 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,10 +32,10 @@
 #include <FL/fl_message.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
-#include "Fl_Widget_Type.H"
+#include "Fl_Widget_Type.h"
 #include <math.h>
 #include <stdlib.h>
-#include "alignment_panel.H"
+#include "alignment_panel.h"
 #include <stdio.h>
 
 int gridx = 5;
@@ -697,5 +697,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.9 1998/12/02 15:59:47 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.10 1998/12/06 15:09:16 mike Exp $".
 //

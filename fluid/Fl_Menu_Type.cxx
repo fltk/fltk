@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.4 1998/11/23 22:14:06 mike Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.5 1998/12/06 15:09:14 mike Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 //
 
 #include <FL/Fl.H>
-#include "Fl_Widget_Type.H"
+#include "Fl_Widget_Type.h"
 #include <FL/fl_message.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Button.H>
@@ -529,5 +529,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.4 1998/11/23 22:14:06 mike Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.5 1998/12/06 15:09:14 mike Exp $".
 //
