@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.5rc3
 	- Documentation updates (STR #505, STR #513)
 	- Updated PNG library source to 1.2.6 + wutil patch.
 	- Updated ZLIB library source to 1.2.1.
+	- Tooltips would not reappear on the same widget, and
+	  the initial tooltip delay was not used after a tooltip
+	  was shown (STR #465)
 	- Fixed a compile problem with the Linux 2.6 threading
 	  support (STR #483)
 	- Fixed problems with 2-byte Xpm files on 64-bit

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.67 2004/09/09 21:34:45 matthiaswm Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.68 2004/09/12 20:26:23 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -35,6 +35,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "flstring.h"
+
+#ifdef DEBUG
+#  include <stdio.h>
+#endif // DEBUG
 
 
 //
@@ -482,6 +486,9 @@ void (*Fl_Tooltip::exit)(Fl_Widget *) = nothing;
 // X says the focus or mouse window have changed.
 
 void fl_fix_focus() {
+#ifdef DEBUG
+  puts("fl_fix_focus();");
+#endif // DEBUG
 
   if (Fl::grab()) return; // don't do anything while grab is on.
 
@@ -535,6 +542,10 @@ extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 // desirable behavior and caused flwm to crash.
 
 void fl_throw_focus(Fl_Widget *o) {
+#ifdef DEBUG
+  printf("fl_throw_focus(o=%p)\n", o);
+#endif // DEBUG
+
   if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
 #ifndef WIN32
   if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
@@ -594,6 +605,10 @@ int Fl::handle(int e, Fl_Window* window)
     return 1;
 
   case FL_PUSH:
+#ifdef DEBUG
+    printf("Fl::handle(e=%d, window=%p);\n", e, window);
+#endif // DEBUG
+
     if (grab()) wi = grab();
     else if (modal() && wi != modal()) return 0;
     pushed_ = wi;
@@ -631,7 +646,12 @@ int Fl::handle(int e, Fl_Window* window)
     if (grab()) wi = grab();
     {Fl_Widget* pbm = belowmouse();
     int ret = (wi && send(e, wi, window));
-    if (pbm != belowmouse()) Fl_Tooltip::enter(belowmouse());
+    if (pbm != belowmouse()) {
+#ifdef DEBUG
+      printf("Fl::handle(e=%d, window=%p);\n", e, window);
+#endif // DEBUG
+      Fl_Tooltip::enter(belowmouse());
+    }
     return ret;}
 
   case FL_RELEASE: {
@@ -657,6 +677,10 @@ int Fl::handle(int e, Fl_Window* window)
     return 1;
 
   case FL_KEYBOARD:
+#ifdef DEBUG
+    printf("Fl::handle(e=%d, window=%p);\n", e, window);
+#endif // DEBUG
+
     Fl_Tooltip::enter((Fl_Widget*)0);
 
     fl_xfocus = window; // this should not happen!  But maybe it does:
@@ -695,12 +719,20 @@ int Fl::handle(int e, Fl_Window* window)
     return 0;
 
   case FL_ENTER:
+#ifdef DEBUG
+    printf("Fl::handle(e=%d, window=%p);\n", e, window);
+#endif // DEBUG
+
     fl_xmousewin = window;
     fl_fix_focus();
     Fl_Tooltip::enter(belowmouse());
     return 1;
 
   case FL_LEAVE:
+#ifdef DEBUG
+    printf("Fl::handle(e=%d, window=%p);\n", e, window);
+#endif // DEBUG
+
     if (!pushed_) {
       belowmouse(0);
       Fl_Tooltip::enter(0);
@@ -1020,5 +1052,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.67 2004/09/09 21:34:45 matthiaswm Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.68 2004/09/12 20:26:23 easysw Exp $".
 //

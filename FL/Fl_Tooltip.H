@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.H,v 1.16.2.12 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Tooltip.H,v 1.16.2.13 2004/09/12 20:26:23 easysw Exp $"
 //
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
@@ -52,6 +52,11 @@ public:
   static Fl_Color color() { return (Fl_Color)color_; }
   static void textcolor(unsigned c) { textcolor_ = c; }
   static Fl_Color textcolor() { return (Fl_Color)textcolor_; }
+
+  // These should not be public, but Fl_Widget::tooltip() needs them...
+  static void enter_(Fl_Widget* w);
+  static void exit_(Fl_Widget *w);
+
 private:
   static float delay_;
   static float hoverdelay_;
@@ -66,5 +71,5 @@ private:
 #endif
 
 //
-// End of "$Id: Fl_Tooltip.H,v 1.16.2.12 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Tooltip.H,v 1.16.2.13 2004/09/12 20:26:23 easysw Exp $".
 //
