@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.13 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.14 2002/05/21 11:14:59 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -167,7 +167,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
 */
 void
 Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
-                                Style_Table_Entry *styleTable,
+                                const Style_Table_Entry *styleTable,
                                 int nStyles, char unfinishedStyle,
                                 Unfinished_Style_Cb unfinishedHighlightCB,
                                 void *cbArg ) {
@@ -1036,7 +1036,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
 */
 void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
                                    const char *string, int nChars ) {
-  Style_Table_Entry * styleRec;
+  const Style_Table_Entry * styleRec;
 
   /* Draw blank area rather than text, if that was the request */
   if ( style & FILL_MASK ) {
@@ -1958,5 +1958,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.13 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.14 2002/05/21 11:14:59 easysw Exp $".
 //

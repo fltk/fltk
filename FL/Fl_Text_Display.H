@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.H,v 1.4.2.5 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Text_Display.H,v 1.4.2.6 2002/05/21 11:14:57 easysw Exp $"
 //
 // Header file for Fl_Text_Display class.
 //
@@ -94,7 +94,7 @@ class Fl_Text_Display: public Fl_Group {
 
     
     FL_EXPORT void highlight_data(Fl_Text_Buffer *styleBuffer,
-                        Style_Table_Entry *styleTable,
+                        const Style_Table_Entry *styleTable,
                         int nStyles, char unfinishedStyle,
                         Unfinished_Style_Cb unfinishedHighlightCB,
                         void *cbArg);
@@ -193,7 +193,7 @@ class Fl_Text_Display: public Fl_Group {
                                    of file (first line of file is 1) */
     int mHorizOffsetHint;       /* Horizontal scroll pos. in pixels */
     int mNStyles;               /* Number of entries in styleTable */
-    Style_Table_Entry *mStyleTable; /* Table of fonts and colors for
+    const Style_Table_Entry *mStyleTable; /* Table of fonts and colors for
                                    coloring/syntax-highlighting */
     char mUnfinishedStyle;      /* Style buffer entry which triggers
                                    on-the-fly reparsing of region */
@@ -224,5 +224,5 @@ class Fl_Text_Display: public Fl_Group {
 #endif
 
 //
-// End of "$Id: Fl_Text_Display.H,v 1.4.2.5 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Text_Display.H,v 1.4.2.6 2002/05/21 11:14:57 easysw Exp $".
 //

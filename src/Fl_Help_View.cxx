@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.31 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.32 2002/05/21 11:14:57 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -836,12 +836,13 @@ Fl_Help_View::format()
     {
       if ((*ptr == '<' || isspace(*ptr)) && s > buf)
       {
+        // Get width...
+        *s = '\0';
+        ww = (int)fl_width(buf);
+
 	if (!head && !pre)
 	{
           // Check width...
-          *s = '\0';
-          ww = (int)fl_width(buf);
-
           if (ww > hsize_) {
 	    hsize_ = ww;
 	    done   = 0;
@@ -874,6 +875,14 @@ Fl_Help_View::format()
 	}
 	else if (pre)
 	{
+          // Add a link as needed...
+          if (link[0])
+	    add_link(link, xx, yy - hh, ww, hh);
+
+	  xx += ww;
+	  if ((size + 2) > hh)
+	    hh = size + 2;
+
           // Handle preformatted text...
 	  while (isspace(*ptr))
 	  {
@@ -881,15 +890,14 @@ Fl_Help_View::format()
 	    {
               if (xx > hsize_) break;
 
-              if (link[0])
-		add_link(link, xx, yy - hh, ww, hh);
-
               line     = do_align(block, line, xx, newalign, links);
               xx       = block->x;
 	      yy       += hh;
 	      block->h += hh;
 	      hh       = size + 2;
 	    }
+	    else
+              xx += (int)fl_width(' ');
 
             if ((size + 2) > hh)
 	      hh = size + 2;
@@ -2615,5 +2623,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.31 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.32 2002/05/21 11:14:57 easysw Exp $".
 //
