@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.34 2004/10/18 20:22:23 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.35 2004/11/23 01:48:25 matthiaswm Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,6 +34,10 @@
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
+
+#ifdef __APPLE__
+#  include <Carbon/Carbon.H>
+#endif
 
 int Fl_Menu_Item::size() const {
   const Fl_Menu_Item* m = this;
@@ -234,7 +238,27 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
 		       int menubar, int menubar_title, int right_edge)
   : Fl_Menu_Window(X, Y, Wp, Hp, 0)
 {
-  if (!right_edge) right_edge = Fl::w();
+  int scr_right = Fl::x() + Fl::w();
+  int scr_x = Fl::x();
+#ifdef __APPLE__
+  GDHandle gd = 0L;
+  for ( gd = GetDeviceList(); gd; gd = GetNextDevice(gd) ) {
+    GDPtr gp = *gd;
+    if (    X >= gp->gdRect.left && X <= gp->gdRect.right
+         && Y >= gp->gdRect.top  && Y <= gp->gdRect.bottom)
+      break;
+  }
+  if ( !gd ) gd = GetMainDevice();
+  if ( gd ) {
+    // since the menu pops over everything, we use the screen
+    // bounds, right across the dock and menu bar
+    GDPtr gp = *gd;
+    scr_right = gp->gdRect.right;
+    scr_x = gp->gdRect.left;
+  }
+#endif
+
+  if (!right_edge) right_edge = scr_right;
 
   end();
   set_modal();
@@ -290,7 +314,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (Wp > W) W = Wp;
   if (Wtitle > W) W = Wtitle;
 
-  if (!Wp) {if (X < 0) X = 0; if (X > Fl::w()-W) X= right_edge-W;}
+  if (!Wp) {if (X < scr_x) X = scr_x; if (X > scr_right-W) X= right_edge-W;}
   x(X); w(W);
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0)
@@ -319,10 +343,27 @@ void menuwindow::position(int X, int Y) {
 
 // scroll so item i is visible on screen
 void menuwindow::autoscroll(int n) {
+  int scr_y = Fl::y(), scr_h = Fl::h();
   int Y = y()+Fl::box_dx(box())+2+n*itemheight;
-  if (Y <= Fl::y()) Y = Fl::y()-Y+10;
+#ifdef __APPLE__
+  GDHandle gd = 0L;
+  for ( gd = GetDeviceList(); gd; gd = GetNextDevice(gd) ) {
+    GDPtr gp = *gd;
+    if (    x() >= gp->gdRect.left && x() <= gp->gdRect.right
+         && Y >= gp->gdRect.top    && Y <= gp->gdRect.bottom)
+      break;
+  }
+  if ( !gd ) gd = GetMainDevice();
+  if ( gd ) {
+    // since the menu pops over everything, we use the screen
+    // bounds, right across the dock and menu bar
+    GDPtr gp = *gd;
+    scr_y = gp->gdRect.top; scr_h = gp->gdRect.bottom - gp->gdRect.top + 1;
+  }
+#endif
+  if (Y <= scr_y) Y = scr_y-Y+10;
   else {
-    Y = Y+itemheight-Fl::h()-Fl::y();
+    Y = Y+itemheight-scr_h-scr_y;
     if (Y < 0) return;
     Y = -Y-10;
   }
@@ -791,5 +832,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.34 2004/10/18 20:22:23 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.35 2004/11/23 01:48:25 matthiaswm Exp $".
 //
