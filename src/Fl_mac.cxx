@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.27 2002/06/27 04:29:39 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.28 2002/06/27 23:18:12 matthiaswm Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -51,6 +51,17 @@
 #include <stdlib.h>
 #include "flstring.h"
 #include <unistd.h>
+#include <pthread.h>
+
+// #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
+#ifdef DEBUG_SELECT
+#include <stdio.h>	// testing
+#define DEBUGMSG(msg)		fprintf(stderr, msg);
+#define DEBUGPERRORMSG(msg)	perror(msg)
+#else
+#define DEBUGMSG(msg)
+#define DEBUGPERRORMSG(msg)
+#endif /*DEBUGSELECT*/
 
 // external functions
 extern Fl_Window* fl_find(Window);
@@ -89,7 +100,7 @@ extern Fl_Window* fl_xmousewin;
 #endif
 
 enum { kEventClassFLTK = 'fltk' };
-enum { kEventFLTKBreakLoop = 1 };
+enum { kEventFLTKBreakLoop = 1, kEventFLTKDataReady };
 
 /**
 * Mac keyboard lookup table
@@ -128,56 +139,166 @@ void (*fl_lock_function)() = nothing;
 void (*fl_unlock_function)() = nothing;
 
 
-/**
- * \todo This funtion is not yet implemented!
- */
-void Fl::add_fd( int n, int events, void (*cb)(int, void*), void *v ) 
+//
+// Select interface
+//
+#define POLLIN  1
+#define POLLOUT 4
+#define POLLERR 8
+struct FD
 {
-#pragma unused ( n )
-#pragma unused ( events )
-#pragma unused ( cb )
-#pragma unused ( v )
+  int fd;
+  short events;
+  void (*cb)(int, void*);
+  void* arg;
+};
+static int nfds = 0;
+static int fd_array_size = 0;
+static FD *fd = 0;
+static int G_pipe[2] = { 0,0 };		// work around pthread_cancel() problem
+enum GetSet { GET = 1, SET = 2 };
+static pthread_mutex_t select_mutex;	// global data lock
+
+// MAXFD ACCESSOR (HANDLES LOCKING)
+static void MaxFD(GetSet which, int& val)
+{
+  static int maxfd = 0;
+  pthread_mutex_lock(&select_mutex);
+  if ( which == GET ) { val = maxfd; }
+  else                { maxfd = val; }
+  pthread_mutex_unlock(&select_mutex);
 }
 
-
-/**
- * \todo This funtion is not yet implemented!
- */
-void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) 
+// FDSET ACCESSOR (HANDLES LOCKING)
+static void Fdset(GetSet which, fd_set& r, fd_set &w, fd_set &x)
 {
-#pragma unused ( fd )
-#pragma unused ( cb )
-#pragma unused ( v )
+  static fd_set fdsets[3];
+  pthread_mutex_lock(&select_mutex);
+  if ( which == GET ) { r = fdsets[0]; w = fdsets[1]; x = fdsets[2]; }
+  else                { fdsets[0] = r; fdsets[1] = w; fdsets[2] = x; }
+  pthread_mutex_unlock(&select_mutex);
 }
 
-
-/**
- * \todo This funtion is not yet implemented!
- */
-void Fl::remove_fd(int n, int events) 
+void Fl::add_fd( int n, int events, void (*cb)(int, void*), void *v )
 {
-#pragma unused ( n )
-#pragma unused ( events )
+  remove_fd(n, events);
+
+  int i = nfds++;
+
+  if (i >= fd_array_size) {
+    FD *temp;
+    fd_array_size = 2*fd_array_size+1;
+
+    if (!fd) { temp = (FD*)malloc(fd_array_size*sizeof(FD)); }
+    else     { temp = (FD*)realloc(fd, fd_array_size*sizeof(FD)); }
+
+    if (!temp) return;
+    fd = temp;
+  }
+
+  fd[i].cb  = cb;
+  fd[i].arg = v;
+  fd[i].fd  = n;
+  fd[i].events = events;
+
+  {
+    int maxfd;
+    fd_set r, w, x;
+    MaxFD(GET, maxfd);
+    Fdset(GET, r, w, x);
+    if (events & POLLIN)  FD_SET(n, &r);
+    if (events & POLLOUT) FD_SET(n, &w);
+    if (events & POLLERR) FD_SET(n, &x);
+    if (n > maxfd) maxfd = n;
+    Fdset(SET, r, w, x);
+    MaxFD(SET, maxfd);
+  }
 }
 
+void Fl::add_fd(int fd, void (*cb)(int, void*), void* v)
+{
+  Fl::add_fd(fd, POLLIN, cb, v);
+}
 
-/**
- * \todo This funtion is not yet implemented!
- */
-void Fl::remove_fd(int n) 
+void Fl::remove_fd(int n, int events)
+{
+  int i,j;
+
+  for (i=j=0; i<nfds; i++) {
+
+    if (fd[i].fd == n) {
+      int e = fd[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      fd[i].events = e;
+    }
+
+    // move it down in the array if necessary:
+    if (j<i)
+    { fd[j] = fd[i]; }
+
+    j++;
+  }
+
+  nfds = j;
+
+  {
+    int maxfd;
+    fd_set r, w, x;
+    MaxFD(GET, maxfd);
+    Fdset(GET, r, w, x);
+    if (events & POLLIN)  FD_CLR(n, &r);
+    if (events & POLLOUT) FD_CLR(n, &w);
+    if (events & POLLERR) FD_CLR(n, &x);
+    if (n == maxfd) maxfd--;
+    Fdset(SET, r, w, x);
+    MaxFD(SET, maxfd);
+  }
+}
+
+void Fl::remove_fd(int n)
 {
   remove_fd(n, -1);
 }
 
-
 /**
  * \todo check if there is actually a message pending!
  */
-int fl_ready() 
+int fl_ready()
 {
   return 1;
 }
 
+// CHECK IF USER DATA READY
+static int CheckDataReady(fd_set& r, fd_set& w, fd_set& x)
+{
+  int maxfd;
+  MaxFD(GET, maxfd);
+  timeval t = { 0, 1 };		// quick check
+  int ret = ::select(maxfd+1, &r, &w, &x, &t);
+  if ( ret == -1 )
+    { DEBUGPERRORMSG("CheckDataReady(): select()"); }
+  return(ret);
+}
+
+// HANDLE DATA READY CALLBACKS
+static void HandleDataReady(fd_set& r, fd_set& w, fd_set& x)
+{
+  for (int i=0; i<nfds; i++) 
+  {
+    // fprintf(stderr, "CHECKING FD %d OF %d (%d)\n", i, nfds, fd[i].fd);
+    int f = fd[i].fd;
+    short revents = 0;
+    if (FD_ISSET(f, &r)) revents |= POLLIN;
+    if (FD_ISSET(f, &w)) revents |= POLLOUT;
+    if (FD_ISSET(f, &x)) revents |= POLLERR;
+    if (fd[i].events & revents) 
+    {
+      DEBUGMSG("DOING CALLBACK: ");
+      fd[i].cb(f, fd[i].arg);
+      DEBUGMSG("DONE\n");
+    }
+  }
+}
 
 /**
  * We can make every event pass through this function
@@ -214,6 +335,30 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
     case kEventFLTKBreakLoop:
       ret = noErr;
       break;
+    case kEventFLTKDataReady:
+      {
+	DEBUGMSG("DATA READY EVENT: RECEIVED\n");
+
+        // CHILD THREAD TELLS US DATA READY
+	//     Check to see what's ready, and invoke user's cb's
+	//
+	fd_set r, w, x;
+	Fdset(GET, r, w, x);
+	switch ( CheckDataReady(r, w, x) )
+	{
+	case 0:		// NO DATA
+	  break;
+
+	case -1:	// ERROR
+	  break;
+
+	default:	// DATA READY
+	  HandleDataReady(r, w, x);
+	  break;
+        }
+      }
+      ret = noErr;
+      break;
     }
   }
   if ( ret == eventNotHandledErr )
@@ -236,6 +381,54 @@ static void timerProcCB( EventLoopTimerRef, void* )
   QuitApplicationEventLoop();
 
   fl_unlock_function();
+}
+
+
+// DATA READY THREAD
+//    Separate thread, watches for changes in user's file descriptors.
+//    Sends a 'data ready event' to the main thread if any change.
+//
+static void *dataready_thread(void *userdata)
+{
+  EventRef drEvent;
+  CreateEvent( 0, kEventClassFLTK, kEventFLTKDataReady,
+               0, kEventAttributeUserEvent, &drEvent);
+  EventQueueRef eventqueue = (EventQueueRef)userdata;
+
+  // Thread safe local copy
+  int maxfd;
+  fd_set r, w, x;
+  MaxFD(GET, maxfd);
+  Fdset(GET, r, w, x);
+
+  // TACK ON FD'S FOR 'CANCEL PIPE'
+  FD_SET(G_pipe[0], &r);
+  if ( G_pipe[0] > maxfd ) maxfd = G_pipe[0];
+
+  // FOREVER UNTIL THREAD CANCEL OR ERROR
+  while ( 1 )
+  {
+    timeval t = { 1000, 0 };	// 1000 seconds;
+    int ret = ::select(maxfd+1, &r, &w, &x, &t);
+    pthread_testcancel();	// OSX 10.0.4 and under: need to do this
+                          // so parent can cancel us :(
+    switch ( ret )
+    {
+      case  0:	// NO DATA
+        continue;
+      case -1:	// ERROR
+      {
+        DEBUGPERRORMSG("CHILD THREAD: select() failed");
+        return(NULL);		// error? exit thread
+      }
+      default:	// DATA READY
+      {
+        DEBUGMSG("DATA READY EVENT: SENDING\n");
+        PostEventToQueue(eventqueue, drEvent, kEventPriorityStandard );
+        return(NULL);		// done with thread
+      }
+    }
+  }
 }
 
 
@@ -298,19 +491,48 @@ static double do_queued_events( double time = 0.0 )
         { kEventClassMouse, kEventMouseMoved },
         { kEventClassMouse, kEventMouseWheelMoved },
         { kEventClassMouse, kEventMouseDragged },
-        { kEventClassFLTK, kEventFLTKBreakLoop } };
-    ret = InstallEventHandler( target, dispatchHandler, 15, dispatchEvents, 0, 0L );
+        { kEventClassFLTK, kEventFLTKBreakLoop },
+        { kEventClassFLTK, kEventFLTKDataReady } };
+    ret = InstallEventHandler( target, dispatchHandler, 16, dispatchEvents, 0, 0L );
     ret = InstallEventLoopTimer( GetMainEventLoop(), 0, 0, NewEventLoopTimerUPP( timerProcCB ), 0, &timer );
   }
 
   got_events = 0;
+
+  // START A THREAD TO WATCH FOR DATA READY
+  static pthread_t dataready_tid = 0;
+  if ( nfds )
+  {
+    void *userdata = (void*)GetCurrentEventQueue();
+
+    // PREPARE INTER-THREAD DATA
+    pthread_mutex_init(&select_mutex, NULL);
+
+    if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
+    if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
+    pipe(G_pipe);
+
+    DEBUGMSG("*** START THREAD\n");
+    pthread_create(&dataready_tid, NULL, dataready_thread, userdata);
+  }
 
   fl_unlock_function();
 
   if ( time > 0.0 ) 
   {
     SetEventLoopTimerNextFireTime( timer, time );
-    RunApplicationEventLoop(); // will return after the previously set time
+    RunApplicationEventLoop(); // wil return after the previously set time
+    if ( dataready_tid != 0 )
+    {
+        DEBUGMSG("*** CANCEL THREAD: ");
+	pthread_cancel(dataready_tid);		// cancel first
+	write(G_pipe[1], "x", 1);		// then wakeup thread from select
+	pthread_join(dataready_tid, NULL);	// wait for thread to finish
+	if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
+	if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
+        dataready_tid = 0;
+        DEBUGMSG("OK\n");
+    }
   }
   else
   {
@@ -319,6 +541,17 @@ static double do_queued_events( double time = 0.0 )
     PostEventToQueue( GetCurrentEventQueue(), breakEvent, kEventPriorityStandard );
     RunApplicationEventLoop();
     ReleaseEvent( breakEvent );
+    if ( dataready_tid != 0 )
+    {
+        DEBUGMSG("*** CANCEL THREAD: ");
+	pthread_cancel(dataready_tid);		// cancel first
+	write(G_pipe[1], "x", 1);		// then wakeup thread from select
+	pthread_join(dataready_tid, NULL);	// wait for thread to finish
+	if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
+	if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
+	dataready_tid = 0;
+        DEBUGMSG("OK\n");
+    }
   }
   
   fl_lock_function();
@@ -1450,6 +1683,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.27 2002/06/27 04:29:39 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.28 2002/06/27 23:18:12 matthiaswm Exp $".
 //
 
