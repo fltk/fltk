@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.H,v 1.6.2.7 2001/06/06 19:42:56 easysw Exp $"
+// "$Id: Fl_Pixmap.H,v 1.6.2.8 2001/06/07 13:16:08 easysw Exp $"
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,11 @@
 class Fl_Widget;
 struct Fl_Menu_Item;
 
+// Older C++ compilers don't support the explicit keyword... :(
+#if defined(__sgi) && !defined(_COMPILER_VERSION)
+#define explicit
+#endif // __sgi && !_COMPILER_VERSION
+
 struct Fl_Pixmap {
   const char * const * data;
   int w, h; // set by first draw...
@@ -48,5 +53,5 @@ struct Fl_Pixmap {
 #endif
 
 //
-// End of "$Id: Fl_Pixmap.H,v 1.6.2.7 2001/06/06 19:42:56 easysw Exp $".
+// End of "$Id: Fl_Pixmap.H,v 1.6.2.8 2001/06/07 13:16:08 easysw Exp $".
 //
