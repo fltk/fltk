@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.33 2002/09/19 02:32:44 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.34 2002/09/20 17:56:56 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -580,42 +580,20 @@ static double do_queued_events( double time = 0.0 )
 
   fl_unlock_function();
 
-  if ( time > 0.0 ) 
+  SetEventLoopTimerNextFireTime( timer, time );
+  RunApplicationEventLoop(); // will return after the previously set time
+  if ( dataready_tid != 0 )
   {
-    SetEventLoopTimerNextFireTime( timer, time );
-    RunApplicationEventLoop(); // will return after the previously set time
-    if ( dataready_tid != 0 )
-    {
-        DEBUGMSG("*** CANCEL THREAD: ");
-	pthread_cancel(dataready_tid);		// cancel first
-	write(G_pipe[1], "x", 1);		// then wakeup thread from select
-	pthread_join(dataready_tid, NULL);	// wait for thread to finish
-	if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
-	if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
-        dataready_tid = 0;
-        DEBUGMSG("OK\n");
-    }
+      DEBUGMSG("*** CANCEL THREAD: ");
+      pthread_cancel(dataready_tid);		// cancel first
+      write(G_pipe[1], "x", 1);		// then wakeup thread from select
+      pthread_join(dataready_tid, NULL);	// wait for thread to finish
+      if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
+      if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
+      dataready_tid = 0;
+      DEBUGMSG("OK\n");
   }
-  else
-  {
-    EventRef breakEvent;
-    CreateEvent( 0, kEventClassFLTK, kEventFLTKBreakLoop, 0, kEventAttributeUserEvent, &breakEvent );
-    PostEventToQueue( GetCurrentEventQueue(), breakEvent, kEventPriorityLow );
-    RunApplicationEventLoop();
-    ReleaseEvent( breakEvent );
-    if ( dataready_tid != 0 )
-    {
-        DEBUGMSG("*** CANCEL THREAD: ");
-	pthread_cancel(dataready_tid);		// cancel first
-	write(G_pipe[1], "x", 1);		// then wakeup thread from select
-	pthread_join(dataready_tid, NULL);	// wait for thread to finish
-	if ( G_pipe[0] ) { close(G_pipe[0]); G_pipe[0] = 0; }
-	if ( G_pipe[1] ) { close(G_pipe[1]); G_pipe[1] = 0; }
-	dataready_tid = 0;
-        DEBUGMSG("OK\n");
-    }
-  }
-  
+
   fl_lock_function();
 
 #if CONSOLIDATE_MOTION
@@ -1745,6 +1723,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.33 2002/09/19 02:32:44 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.34 2002/09/20 17:56:56 easysw Exp $".
 //
 

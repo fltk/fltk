@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0rc7
 
+	- Fixed a problem with Fl::wait(0.0) on MacOS X 10.2;
+	  this affected the fractals demo and other OpenGL
+	  applications.
 	- Fl_Glut_Window now takes keyboard focus and handles
 	  shortcut events.
 	- The MacOS X implementation of fl_ready() now checks
