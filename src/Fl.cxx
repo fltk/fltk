@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.19 2000/05/10 16:43:35 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.20 2000/05/11 21:58:09 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -210,7 +210,6 @@ int Fl::wait() {
   int expired = 0;
   if (numtimeouts) {fl_elapsed(); expired = call_timeouts();}
   flush();
-  if (!Fl_X::first) return 0; // no windows
   if ((idle && !in_idle) || expired) {
     fl_wait(1,0.0);
   } else if (numtimeouts) {
@@ -219,7 +218,7 @@ int Fl::wait() {
     initclock = 0;
     fl_wait(0,0);
   }
-  return 1;
+  return Fl_X::first != 0; // return true if there is a window
 }
 
 double Fl::wait(double time) {
@@ -697,5 +696,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.19 2000/05/10 16:43:35 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.20 2000/05/11 21:58:09 bill Exp $".
 //
