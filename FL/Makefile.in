@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.1.2.8 2004/04/11 04:38:54 easysw Exp $"
+# "$Id: Makefile.in,v 1.1.2.9 2004/10/18 20:22:21 easysw Exp $"
 #
 # Header makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -28,31 +28,31 @@ include ../makeinclude
 all:
 
 install:
-	echo "Installing include files in $(includedir)..."
-	-$(MKDIR) -p $(includedir)
-	$(RMDIR) $(includedir)/FL
-	$(MKDIR) $(includedir)/FL
-	$(CHMOD) 755 $(includedir)/FL
-	$(CP) ../FL/*.[hHr] $(includedir)/FL
-	$(CHMOD) 644 $(includedir)/FL/*.[hHr]
-@HLINKS@	cd $(includedir)/FL;\
+	echo "Installing include files in $(DESTDIR)$(includedir)..."
+	-$(MKDIR) -p $(DESTDIR)$(includedir)
+	$(RMDIR) $(DESTDIR)$(includedir)/FL
+	$(MKDIR) $(DESTDIR)$(includedir)/FL
+	$(CHMOD) 755 $(DESTDIR)$(includedir)/FL
+	$(CP) ../FL/*.[hHr] $(DESTDIR)$(includedir)/FL
+	$(CHMOD) 644 $(DESTDIR)$(includedir)/FL/*.[hHr]
+@HLINKS@	cd $(DESTDIR)$(includedir)/FL;\
 @HLINKS@	for file in *.H; do\
 @HLINKS@		$(RM) "`basename $$file H`h";\
 @HLINKS@		$(LN) $$file "`basename $$file H`h";\
 @HLINKS@	done
-@HLINKS@	$(RM) $(includedir)/FL/fl_file_chooser.H
-@HLINKS@	$(LN) Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.H
-@HLINKS@	$(RM) $(includedir)/FL/fl_file_chooser.h
-@HLINKS@	$(LN) Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.h
-@HLINKS@	$(RM) $(includedir)/Fl
-@HLINKS@	$(LN) FL $(includedir)/Fl
+@HLINKS@	$(RM) $(DESTDIR)$(includedir)/FL/fl_file_chooser.H
+@HLINKS@	$(LN) Fl_File_Chooser.H $(DESTDIR)$(includedir)/FL/fl_file_chooser.H
+@HLINKS@	$(RM) $(DESTDIR)$(includedir)/FL/fl_file_chooser.h
+@HLINKS@	$(LN) Fl_File_Chooser.H $(DESTDIR)$(includedir)/FL/fl_file_chooser.h
+@HLINKS@	$(RM) $(DESTDIR)$(includedir)/Fl
+@HLINKS@	$(LN) FL $(DESTDIR)$(includedir)/Fl
 
 uninstall:
 	echo "Uninstalling include files..."
-	$(RMDIR) $(includedir)/FL
-@HLINKS@	$(RM) $(includedir)/Fl
+	$(RMDIR) $(DESTDIR)$(includedir)/FL
+@HLINKS@	$(RM) $(DESTDIR)$(includedir)/Fl
 
 
 #
-# End of "$Id: Makefile.in,v 1.1.2.8 2004/04/11 04:38:54 easysw Exp $".
+# End of "$Id: Makefile.in,v 1.1.2.9 2004/10/18 20:22:21 easysw Exp $".
 #

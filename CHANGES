@@ -1,3 +1,26 @@
+CHANGES IN FLTK 1.1.5
+
+	- Documentation updates (STR #570)
+	- Added DESTDIR support and now remove all man pages for
+	  the "uninstall" target (STR #545)
+	- Fix PNG drawing on buggy WIN32 graphics cards (STR
+	  #548)
+	- The configure script didn't propagate the CPPFLAGS
+	  environment variable (STR #549)
+	- The numpad keys didn't work properly on WIN32 (STR
+	  #502)
+	- fl_input() and friends now set the input focus to the
+	  text field when the dialog is shown (STR #553)
+	- Fixed background color mixup when drawing Fl_Choice
+	  menus (STR #544)
+	- Fixed MingW makefiles (STR #550)
+	- More VC++ project file tweaking (STR #559)
+	- Fl_PNG_Image didn't use the png_set_trns_to_alpha
+	  function when available (STR #547)
+	- The FL_UNFOCUS event wasn't always sent when switching
+	  tabs (STR #558)
+
+
 CHANGES IN FLTK 1.1.5rc3
 
 	- Documentation updates (STR #505, STR #513)

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNG_Image.cxx,v 1.1.2.11 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_PNG_Image.cxx,v 1.1.2.12 2004/10/18 20:22:24 easysw Exp $"
 //
 // Fl_PNG_Image routines.
 //
@@ -108,11 +108,11 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   else if (info->bit_depth == 16)
     png_set_strip_16(pp);
 
-#  if defined(HAVE_PNG_GET_VALID) && defined(HAVE_SET_TRNS_TO_ALPHA)
+#  if defined(HAVE_PNG_GET_VALID) && defined(HAVE_PNG_SET_TRNS_TO_ALPHA)
   // Handle transparency...
   if (png_get_valid(pp, info, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(pp);
-#  endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
+#  endif // HAVE_PNG_GET_VALID && HAVE_PNG_SET_TRNS_TO_ALPHA
 
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
@@ -127,6 +127,16 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   for (i = png_set_interlace_handling(pp); i > 0; i --)
     png_read_rows(pp, rows, NULL, h());
 
+#ifdef WIN32
+  // Some Windows graphics drivers don't honor transparency when RGB == white
+  if (channels == 4) {
+    // Convert RGB to 0 when alpha == 0...
+    uchar *ptr = (uchar *)array;
+    for (i = w() * h(); i > 0; i --, ptr += 4)
+      if (!ptr[3]) ptr[0] = ptr[1] = ptr[2] = 0;
+  }
+#endif // WIN32
+
   // Free memory and return...
   delete[] rows;
 
@@ -139,5 +149,5 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 
 
 //
-// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.11 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.12 2004/10/18 20:22:24 easysw Exp $".
 //

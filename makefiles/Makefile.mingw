@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.mingw,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $"
+# "$Id: Makefile.mingw,v 1.1.2.2.2.1 2004/10/18 20:22:22 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -44,6 +44,15 @@
 
 
 all: makeinclude config.h
+	echo "=== making zlib ==="
+	touch zlib/makedepend
+	cd zlib ; $(MAKE)
+	echo "=== making jpeg ==="
+	touch jpeg/makedepend
+	cd jpeg ; $(MAKE)
+	echo "=== making png ==="
+	touch png/makedepend
+	cd png ; $(MAKE)
 	echo "=== making src ==="
 	touch src/makedepend
 	cd src ; $(MAKE)
@@ -55,6 +64,15 @@ all: makeinclude config.h
 	cd test ; $(MAKE)
 
 install:
+	echo "=== installing zlib ==="
+	touch zlib/makedepend
+	cd zlib ; $(MAKE) install
+	echo "=== installing jpeg ==="
+	touch jpeg/makedepend
+	cd jpeg ; $(MAKE) install
+	echo "=== installing png ==="
+	touch png/makedepend
+	cd png ; $(MAKE) install
 	echo "=== installing src ==="
 	touch src/makedepend
 	cd src ; $(MAKE) install
@@ -92,5 +110,5 @@ makeinclude: makefiles/makeinclude.mingw
 	cp $< $@
 
 #
-# End of "$Id: Makefile.mingw,v 1.1.2.2 2001/01/22 15:13:39 easysw Exp $".
+# End of "$Id: Makefile.mingw,v 1.1.2.2.2.1 2004/10/18 20:22:22 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.mingw,v 1.1.2.3.2.13 2004/07/23 19:26:26 easysw Exp $"
+# "$Id: makeinclude.mingw,v 1.1.2.3.2.14 2004/10/18 20:22:22 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # (this file for MingW using GCC 2.95.x)
@@ -95,14 +95,31 @@ GLDLIBS		=-mwindows -lglu32 -lopengl32 -lole32 -luuid -lcomctl32 -lwsock32 -lsup
 LINKFLTK	=-L../lib -lfltk
 LINKFLTKGL	=-L../lib -lfltk_gl
 LINKFLTKFORMS	=-L../lib -lfltk_forms -lfltk
-LINKFLTKIMG	=-L../lib -lfltk_images -lfltk
-IMAGELIBS	=
+LINKFLTKIMG	=-L../lib -lfltk_images -lfltk $(IMAGELIBS)
+LINKSHARED	=  -L../lib -lfltk_images -lfltk_forms -lfltk $(IMAGELIBS)
+IMAGELIBS	=-lfltk_png -lfltk_z -lfltk_jpeg
+
+# image libraries to build...
+IMAGEDIRS	= jpeg zlib png
+
+# The extension to use for executables...
+EXEEXT		= .exe
 
 # Do we build the OpenGL demos?
 GLDEMOS		=gldemos
 
 # Do we build the threads demo?
 THREADS		=threads
+
+# Name of FLUID executable we install
+FLUID		= fluid$(EXEEXT)
+
+# Possible steps after linking...
+POSTBUILD	= :
+
+# Man page extensions...
+CAT1EXT		= 1
+CAT3EXT		= 3
 
 # Be quiet when building...
 .SILENT:
@@ -112,16 +129,16 @@ THREADS		=threads
 
 .cxx:
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(CXX) -I.. -I../png -I../jpeg -I../zlib $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 
 .c.o:
 	echo Compiling $@...
-	$(CC) -I.. $(CXXFLAGS) $< -c
+	$(CC) -I.. -I../png -I../jpeg -I../zlib $(CXXFLAGS) $< -c
 
 .cxx.o:
 	echo Compiling $@...
-	$(CXX) -I.. $(CXXFLAGS) $< -c
+	$(CXX) -I.. -I../png -I../jpeg -I../zlib $(CXXFLAGS) $< -c
 
 #
-# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.13 2004/07/23 19:26:26 easysw Exp $".
+# End of "$Id: makeinclude.mingw,v 1.1.2.3.2.14 2004/10/18 20:22:22 easysw Exp $".
 #
