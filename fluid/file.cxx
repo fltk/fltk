@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.6.2.10 2004/04/11 04:38:56 easysw Exp $"
+// "$Id$"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -637,5 +637,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.6.2.10 2004/04/11 04:38:56 easysw Exp $".
+// End of "$Id$".
 //

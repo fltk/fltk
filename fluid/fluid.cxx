@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.46 2004/09/08 15:42:47 easysw Exp $"
+// "$Id$"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -886,5 +886,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.46 2004/09/08 15:42:47 easysw Exp $".
+// End of "$Id$".
 //

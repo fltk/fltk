@@ -165,8 +165,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     }
   }
 #elif defined(__APPLE_QUARTZ__)
-  void *array = buf;
-  uchar *tmpBuf;
+  const void *array = buf;
+  uchar *tmpBuf = 0;
   if (cb) {
     tmpBuf = new uchar[ H*W*delta ];
     for (int i=0; i<H; i++) {

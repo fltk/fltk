@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.9.2.9.2.7 2004/04/11 04:38:56 easysw Exp $"
+// "$Id$"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -463,5 +463,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.9.2.9.2.7 2004/04/11 04:38:56 easysw Exp $".
+// End of "$Id$".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.19 2004/05/13 21:02:39 easysw Exp $"
+// "$Id$"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -791,5 +791,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.19 2004/05/13 21:02:39 easysw Exp $".
+// End of "$Id$".
 //

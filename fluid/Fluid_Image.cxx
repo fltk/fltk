@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.15 2004/04/11 04:38:56 easysw Exp $"
+// "$Id$"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -221,5 +221,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.15 2004/04/11 04:38:56 easysw Exp $".
+// End of "$Id$".
 //

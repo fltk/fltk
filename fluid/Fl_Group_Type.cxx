@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.7.2.4 2004/04/11 04:38:55 easysw Exp $"
+// "$Id$"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -242,5 +242,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.7.2.4 2004/04/11 04:38:55 easysw Exp $".
+// End of "$Id$".
 //
