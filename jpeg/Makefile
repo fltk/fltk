@@ -69,6 +69,7 @@ install:
 	-$(MKDIR) $(libdir)
 	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
 	$(CP) $(LIBJPEG) $(libdir)
+	$(RANLIB) $(libdir)/libfltk_jpeg$(LIBEXT)
 	echo "Installing jpeg headers in $(includedir)/FL/images..."
 	-$(MKDIR) $(includedir)/FL/images
 	$(CP) jconfig.h jerror.h jmorecfg.h jpeglib.h $(includedir)/FL/images
