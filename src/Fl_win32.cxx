@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.7 1999/04/18 19:17:03 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.8 1999/04/23 06:55:53 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -287,7 +287,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
 static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_BACK,	FL_BackSpace},
   {VK_TAB,	FL_Tab},
-  {VK_CLEAR,	FL_KP+'5'},
+  {VK_CLEAR,	FL_KP+'5',	0xff0b/*XK_Clear*/},
   {VK_RETURN,	FL_Enter,	FL_KP_Enter},
   {VK_SHIFT,	FL_Shift_L,	FL_Shift_R},
   {VK_CONTROL,	FL_Control_L,	FL_Control_R},
@@ -922,5 +922,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.7 1999/04/18 19:17:03 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.8 1999/04/23 06:55:53 bill Exp $".
 //

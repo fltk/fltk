@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.3 1999/04/17 01:02:29 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.4 1999/04/23 06:55:53 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -443,45 +443,60 @@ int fl_handle(const XEvent& xevent)
     break;
 
   case KeyPress: {
-#if BACKSPACE_HACK
-    static int got_backspace;
-#endif /* BACKSPACE_HACK */
+    int keycode = xevent.xkey.keycode;
+    fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char buffer[21];
     KeySym keysym;
-    int i = xevent.xkey.keycode; fl_key_vector[i/8] |= (1 << (i%8));
     int len = XLookupString((XKeyEvent*)&(xevent.xkey),buffer,20,&keysym,0);
-    if (!len && keysym < 0x400) {
-      // turn all latin-2,3,4 characters into 8-bit codes:
-      buffer[0] = char(keysym);
-      len = 1;
+    if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
+      // force it to type a character (not sure if this ever is needed):
+      if (!len) {buffer[0] = char(keysym); len = 1;}
+      // ignore all effects of shift on the keysyms, which makes it a lot
+      // easier to program shortcuts and is Windoze-compatable:
+      keysym = XKeycodeToKeysym(fl_display, keycode, 0);
     }
-    // ignore all effects of shift on the keysyms (makes it a lot
-    // easier to program shortcuts!)
-    if (keysym < 0x400) keysym = XKeycodeToKeysym(fl_display, i, 0);
 #ifdef __sgi
-    // get some missing PC keyboard keys:
-    if (!keysym) switch(i) {
+    // You can plug a microsoft keyboard into an sgi but the extra shift
+    // keys are not translated.  Make them translate like XFree86 does:
+    if (!keysym) switch(keycode) {
     case 147: keysym = FL_Meta_L; break;
     case 148: keysym = FL_Meta_R; break;
     case 149: keysym = FL_Menu; break;
     }
 #endif
 #if BACKSPACE_HACK
+    // Attempt to fix keyboards that send "delete" for the key in the
+    // upper-right corner of the main keyboard.  But it appears that
+    // very few of these remain?
+    static int got_backspace;
     if (!got_backspace) {
-      // Backspace kludge: until user hits the backspace key, assumme
-      // it is missing and use the Delete key for that purpose:
       if (keysym == FL_Delete) keysym = FL_BackSpace;
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
-#endif /* BACKSPACE_HACK */
-    if (keysym >= 0xff95 && keysym < 0xffa0) {
-      // Make NumLock irrelevant (always on):
-      // This lookup table turns the XK_KP_* functions back into the
-      // ascii characters.  This won't work on non-PC layout keyboards,
-      // but are there any of those left??
-      buffer[0] = "7486293150."[keysym-0xff95];
-      keysym = FL_KP+buffer[0];
-      len = 1;
+#endif
+    // We have to get rid of the XK_KP_function keys, because they are
+    // not produced on Windoze and thus case statements tend not to check
+    // for them.  There are 15 of these in the range 0xff91 ... 0xff9f
+    if (keysym >= 0xff91 && keysym <= 0xff9f) {
+      // Try to make them turn into FL_KP+'c' so that NumLock is
+      // irrelevant, by looking at the shifted code.  This matches the
+      // behavior of the translator in Fl_win32.C, and IMHO is the
+      // user-friendly result:
+      unsigned long keysym1 = XKeycodeToKeysym(fl_display, keycode, 1);
+      if (keysym1 <= 0x7f || keysym1 > 0xff9f && keysym1 <= FL_KP_Last) {
+	keysym = keysym1 | FL_KP;
+	buffer[0] = char(keysym1) & 0x7F;
+	len = 1;
+      } else {
+	// If that failed to work, just translate them to the matching
+	// normal function keys:
+	static const unsigned short table[15] = {
+	  FL_F+1, FL_F+2, FL_F+3, FL_F+4,
+	  FL_Home, FL_Left, FL_Up, FL_Right,
+	  FL_Down, FL_Page_Up, FL_Page_Down, FL_End,
+	  0xff0b/*XK_Clear*/, FL_Insert, FL_Delete};
+	keysym = table[keysym-0xff91];
+      }
     }
     buffer[len] = 0;
     Fl::e_keysym = int(keysym);
@@ -493,7 +508,8 @@ int fl_handle(const XEvent& xevent)
     break;}
 
   case KeyRelease: {
-    int i = xevent.xkey.keycode; fl_key_vector[i/8] &= ~(1 << (i%8));
+    int keycode = xevent.xkey.keycode;
+    fl_key_vector[keycode/8] &= ~(1 << (keycode%8));
     set_event_xy();}
     break;
 
@@ -849,5 +865,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.3 1999/04/17 01:02:29 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.4 1999/04/23 06:55:53 bill Exp $".
 //

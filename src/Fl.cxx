@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.4 1999/04/17 01:02:28 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.5 1999/04/23 06:55:52 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -407,6 +407,8 @@ void fl_throw_focus(Fl_Widget *o) {
 #endif
   if (o->contains(Fl::belowmouse())) Fl::belowmouse_ = 0;
   if (o->contains(Fl::focus())) Fl::focus_ = 0;
+  if (o == fl_xfocus) fl_xfocus = 0;
+  if (o == fl_xmousewin) fl_xmousewin = 0;
   fl_fix_focus();
 }
 
@@ -696,5 +698,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.4 1999/04/17 01:02:28 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.5 1999/04/23 06:55:52 bill Exp $".
 //
