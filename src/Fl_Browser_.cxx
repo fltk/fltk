@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10 1999/03/09 06:46:36 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.6 1999/11/16 14:44:43 mike Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -27,6 +27,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
+
 
 // This is the base class for browsers.  To be useful it must be
 // subclassed and several virtual functions defined.  The
@@ -74,10 +75,12 @@ void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
     W -= scrollbar_width_;
     if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollbar_width_;
   }
+  if (W < 0) W = 0;
   if (hscrollbar.visible()) {
     H -= scrollbar_width_;
     if (scrollbar.align() & FL_ALIGN_TOP) Y += scrollbar_width_;
   }
+  if (H < 0) H = 0;
 }
 
 int Fl_Browser_::leftedge() const {
@@ -234,11 +237,16 @@ void Fl_Browser_::draw() {
   int full_width_ = full_width();
   int full_height_ = full_height();
   int X, Y, W, H; bbox(X, Y, W, H);
+  int dont_repeat = 0;
 J1:
   // see if scrollbar needs to be switched on/off:
   if ((has_scrollbar_ & VERTICAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
-    if (!scrollbar.visible()) {scrollbar.set_visible(); drawsquare = 1;}
+    if (!scrollbar.visible()) {
+      scrollbar.set_visible();
+      drawsquare = 1;
+      bbox(X, Y, W, H);
+    }
   } else {
     top_ = item_first(); real_position_ = offset_ = 0;
     if (scrollbar.visible()) {
@@ -249,11 +257,33 @@ J1:
 
   if ((has_scrollbar_ & HORIZONTAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_ > W)) {
-    if (!hscrollbar.visible()) {hscrollbar.set_visible(); drawsquare = 1;}
+    if (!hscrollbar.visible()) {
+      hscrollbar.set_visible();
+      drawsquare = 1;
+      bbox(X, Y, W, H);
+    }
   } else {
     real_hposition_ = 0;
     if (hscrollbar.visible()) {
       hscrollbar.clear_visible();
+      clear_damage(damage()|FL_DAMAGE_SCROLL);
+    }
+  }
+
+  // Check the vertical scrollbar again, just in case it needs to be drawn
+  // because the horizontal one is drawn.  There should be a cleaner way
+  // to do this besides copying the same code...
+  if ((has_scrollbar_ & VERTICAL) && (
+	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
+    if (!scrollbar.visible()) {
+      scrollbar.set_visible();
+      drawsquare = 1;
+      bbox(X, Y, W, H);
+    }
+  } else {
+    top_ = item_first(); real_position_ = offset_ = 0;
+    if (scrollbar.visible()) {
+      scrollbar.clear_visible();
       clear_damage(damage()|FL_DAMAGE_SCROLL);
     }
   }
@@ -270,14 +300,14 @@ J1:
     if (hh <= 0) continue;
     if ((damage()&(FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) || l == redraw1 || l == redraw2) {
       if (item_selected(l)) {
-	fl_color(selection_color());
+	fl_color(active_r() ? selection_color() : inactive(selection_color()));
 	fl_rectf(X, yy+Y, W, hh);
       } else if (!(damage()&FL_DAMAGE_ALL)) {
-	fl_color(color());
+	fl_color(active_r() ? color() : inactive(color()));
 	fl_rectf(X, yy+Y, W, hh);
       }
       if (type() == FL_MULTI_BROWSER && l == selection_) {
-	fl_color(textcolor());
+	fl_color(active_r() ? textcolor() : inactive(textcolor()));
 	fl_rect(X+1, yy+Y, W-2, hh);
       }
       item_draw(l, X-hposition_, yy+Y, W+hposition_, hh);
@@ -288,27 +318,30 @@ J1:
   }
   // erase the area below last line:
   if (!(damage()&FL_DAMAGE_ALL) && yy < H) {
-    fl_color(color());
+    fl_color(active_r() ? color() : inactive(color()));
     fl_rectf(X, yy+Y, W, H-yy);
   }
   fl_pop_clip();
   redraw1 = redraw2 = 0;
 
-  // see if changes to full_height caused by calls to slow_height
-  // caused scrollbar state to change, in which case we have to redraw:
-  full_height_ = full_height();
-  full_width_ = full_width();
-  if ((has_scrollbar_ & VERTICAL) && (
-      (has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
-    if (!scrollbar.visible()) goto J1;
-  } else {
-    if (scrollbar.visible()) goto J1;
-  }
-  if ((has_scrollbar_ & HORIZONTAL) && (
-      (has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
-    if (!hscrollbar.visible()) goto J1;
-  } else {
-    if (hscrollbar.visible()) goto J1;
+  if (!dont_repeat) {
+    dont_repeat = 1;
+    // see if changes to full_height caused by calls to slow_height
+    // caused scrollbar state to change, in which case we have to redraw:
+    full_height_ = full_height();
+    full_width_ = full_width();
+    if ((has_scrollbar_ & VERTICAL) &&
+	((has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
+      if (!scrollbar.visible()) goto J1;
+    } else {
+      if (scrollbar.visible()) goto J1;
+    }
+    if ((has_scrollbar_ & HORIZONTAL) &&
+	((has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
+      if (!hscrollbar.visible()) goto J1;
+    } else {
+      if (hscrollbar.visible()) goto J1;
+    }
   }
 
   // update the scrollbars and redraw them:
@@ -452,7 +485,8 @@ int Fl_Browser_::select_only(void* l, int docallbacks) {
 int Fl_Browser_::handle(int event) {
 
   // must do shortcuts first or the scrollbar will get them...
-  if (event == FL_SHORTCUT && type() >= FL_HOLD_BROWSER) {
+  if ((event == FL_SHORTCUT || event == FL_KEYBOARD)
+      && type() >= FL_HOLD_BROWSER) {
     void* l1 = selection_;
     void* l = l1; if (!l) l = top_; if (!l) l = item_first();
     if (l) {
@@ -634,5 +668,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10 1999/03/09 06:46:36 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.6 1999/11/16 14:44:43 mike Exp $".
 //

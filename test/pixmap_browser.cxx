@@ -1,5 +1,5 @@
 //
-// "$Id: pixmap_browser.cxx,v 1.5 1999/01/07 19:18:00 mike Exp $"
+// "$Id: pixmap_browser.cxx,v 1.5.2.1 1999/07/27 17:24:14 bill Exp $"
 //
 // Another pixmap test program for the Fast Light Tool Kit (FLTK).
 //
@@ -61,16 +61,17 @@ int load_file(const char *name) {
   if (data) {
     for (int i=numlines; i--;) delete[] data[i];
   }
-  char buffer[1024];
+#define BUFSIZE 2048
+  char buffer[BUFSIZE];
   int i = 0;
-  while (fgets(buffer,1024,f)) {
+  while (fgets(buffer, BUFSIZE, f)) {
     if (buffer[0] != '\"') continue;
     char *p = buffer;
     char *q = buffer+1;
     while (*q != '\"') {
       if (*q == '\\') switch (*++q) {
       case '\n':
-	fgets(q,(buffer+1024)-q,f); break;
+	fgets(q,(buffer+BUFSIZE)-q,f); break;
       case 0:
 	break;
       case 'x': {
@@ -164,5 +165,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pixmap_browser.cxx,v 1.5 1999/01/07 19:18:00 mike Exp $".
+// End of "$Id: pixmap_browser.cxx,v 1.5.2.1 1999/07/27 17:24:14 bill Exp $".
 //

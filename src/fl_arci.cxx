@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arci.cxx,v 1.4 1999/01/07 19:17:36 mike Exp $"
+// "$Id: fl_arci.cxx,v 1.4.2.2 1999/11/12 00:19:14 mike Exp $"
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
@@ -68,5 +68,5 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
 }
 
 //
-// End of "$Id: fl_arci.cxx,v 1.4 1999/01/07 19:17:36 mike Exp $".
+// End of "$Id: fl_arci.cxx,v 1.4.2.2 1999/11/12 00:19:14 mike Exp $".
 //

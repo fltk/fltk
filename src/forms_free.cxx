@@ -1,5 +1,5 @@
 //
-// "$Id: forms_free.cxx,v 1.4 1999/01/07 19:17:44 mike Exp $"
+// "$Id: forms_free.cxx,v 1.4.2.1 1999/10/23 05:59:27 bill Exp $"
 //
 // Forms free widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,7 @@ Fl_Free::Fl_Free(uchar t,int x,int y,int w,int h,const char *l,
 Fl_Widget(x,y,w,h,l) {
   type(t);
   hfunc = hdl;
-  if (t == FL_SLEEPING_FREE) deactivate();
+  if (t == FL_SLEEPING_FREE) set_flag(INACTIVE);
   if (t == FL_CONTINUOUS_FREE || t == FL_ALL_FREE)
     Fl::add_timeout(.01,step,this);
 }
@@ -73,5 +73,5 @@ int Fl_Free::handle(int e) {
 }
 
 //
-// End of "$Id: forms_free.cxx,v 1.4 1999/01/07 19:17:44 mike Exp $".
+// End of "$Id: forms_free.cxx,v 1.4.2.1 1999/10/23 05:59:27 bill Exp $".
 //

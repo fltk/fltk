@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6 1999/01/07 19:17:38 mike Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.1 1999/06/16 15:14:42 mike Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -90,11 +90,18 @@ expand(const char* from, char* buf, double maxw, int& n, double &width, int wrap
       *o++ = '^';
       *o++ = c ^ 0x40;
 
+   /*
+    * mike@easysw.com - The following escaping code causes problems when
+    * using the PostScript ISOLatin1 and WinANSI encodings, because these
+    * map to I18N characters...
+    */
+#if 0
     } else if (c >= 128 && c < 0xA0) { // \nnn
       *o++ = '\\';
       *o++ = (c>>6)+'0';
       *o++ = ((c>>3)&7)+'0';
       *o++ = (c&7)+'0';
+#endif /* 0 */
 
     } else if (c == 0xA0) { // non-breaking space
       *o++ = ' ';
@@ -193,5 +200,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6 1999/01/07 19:17:38 mike Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.1 1999/06/16 15:14:42 mike Exp $".
 //

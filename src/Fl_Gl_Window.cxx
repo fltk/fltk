@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12 1999/01/07 19:17:20 mike Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.4 1999/10/14 04:56:08 bill Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -107,8 +107,6 @@ void Fl_Gl_Window::invalidate() {
 #endif
 }
 
-extern GLXContext fl_first_context; // in Fl_Gl_Choice.C
-
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
   mode_ = m; alist = a;
@@ -129,40 +127,34 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 }
 
 void Fl_Gl_Window::make_current() {
-#ifdef WIN32
-  HDC hdc = fl_private_dc(this, mode_,&g);
-
   if (!context) {
-    context = wglCreateContext(hdc);
+#ifdef WIN32
+    context = wglCreateContext(fl_private_dc(this, mode_,&g));
     if (fl_first_context) wglShareLists(fl_first_context, (GLXContext)context);
     else fl_first_context = (GLXContext)context;
+#else
+    context = glXCreateContext(fl_display, g->vis, fl_first_context, 1);
+    if (!fl_first_context) fl_first_context = (GLXContext)context;
+#endif
     valid(0);
   }
-  wglMakeCurrent(hdc, (GLXContext)context);
-
-#  if USE_COLORMAP
+  fl_set_gl_context(this, (GLXContext)context);
+#if defined(WIN32) && USE_COLORMAP
   if (fl_palette) {
     fl_GetDC(fl_xid(this));
     SelectPalette(fl_gc, fl_palette, FALSE);
     RealizePalette(fl_gc);
   }
-#  endif // USE_COLORMAP
-#else
-  if (!context) {
-    context = glXCreateContext(fl_display, g->vis, fl_first_context, 1);
-    if (!fl_first_context) fl_first_context = (GLXContext)context;
-    valid(0);
-  }
-  glXMakeCurrent(fl_display, fl_xid(this), (GLXContext)context);
-#endif
-
+#endif // USE_COLORMAP
   glDrawBuffer(GL_BACK);
 }
 
 void Fl_Gl_Window::ortho() {
+  int p[2];
+  glGetIntegerv(GL_MAX_VIEWPORT_DIMS, p);
   glLoadIdentity();
-  glViewport(0, 0, w(), h());
-  glOrtho(0, w(), 0, h(), -1, 1);
+  glViewport(w()-p[0], h()-p[1], p[0], p[1]);
+  glOrtho(w()-p[0], w(), h()-p[1], h(), -1, 1);
 }
 
 void Fl_Gl_Window::swap_buffers() {
@@ -174,7 +166,7 @@ void Fl_Gl_Window::swap_buffers() {
 }
 
 #if HAVE_GL_OVERLAY
-#if WIN32
+#ifdef WIN32
 uchar fl_overlay; // changes how fl_color() works
 #endif
 #endif
@@ -215,12 +207,11 @@ void Fl_Gl_Window::flush() {
       int init = !ortho_context;
 #ifdef WIN32
       if (init) ortho_context = wglCreateContext(Fl_X::i(this)->private_dc);
-      wglMakeCurrent(Fl_X::i(this)->private_dc, ortho_context);
 #else
       if (init)
 	ortho_context = glXCreateContext(fl_display,g->vis,fl_first_context,1);
-      glXMakeCurrent(fl_display, fl_xid(this), ortho_context);
 #endif
+      fl_set_gl_context(this, ortho_context);
       if (init) {
 	glDisable(GL_DEPTH_TEST);
 	glReadBuffer(GL_BACK);
@@ -255,9 +246,7 @@ void Fl_Gl_Window::flush() {
 
   } else {	// single-buffered context is simpler:
 
-    // this faking of the overlay is incorrect but worked good for
-    // one in-house program:
-    if (overlay != this || damage()!=FL_DAMAGE_OVERLAY || !Fl::pushed()) draw();
+    draw();
     if (overlay == this) draw_overlay();
     glFlush();
 
@@ -268,7 +257,7 @@ void Fl_Gl_Window::flush() {
   if (overlay && overlay != this) {
   DRAW_OVERLAY_ONLY:
     valid_ = save_valid;
-    wglMakeCurrent(Fl_X::i(this)->private_dc, (GLXContext)overlay);
+    fl_set_gl_context(this, (GLXContext)overlay);
     glDisable(GL_SCISSOR_TEST);
     fl_overlay = 1;
     glClear(GL_COLOR_BUFFER_BIT);
@@ -289,13 +278,12 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 
 void Fl_Gl_Window::hide() {
   if (context) {
+    fl_no_gl_context();
 #ifdef WIN32
-    wglMakeCurrent(0, 0);
     if (context && context != fl_first_context)
       wglDeleteContext((GLXContext)context);
     g = 0;
 #else
-    glXMakeCurrent(fl_display, 0, 0);
     if (context != fl_first_context)
       glXDestroyContext(fl_display, (GLXContext)context);
 #ifdef GLX_MESA_release_buffers
@@ -328,5 +316,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12 1999/01/07 19:17:20 mike Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.4 1999/10/14 04:56:08 bill Exp $".
 //

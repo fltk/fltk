@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24 1999/03/09 17:08:35 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.8 1999/11/10 09:18:31 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -41,78 +41,101 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
-#if HAVE_SYS_SELECT_H
-#  include <sys/select.h>
-#endif /* HAVE_SYS_SELECT_H */
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
 #if HAVE_POLL
+
 #include <poll.h>
+static pollfd *pollfds = 0;
+
 #else
-struct pollfd {int fd; short events; short revents;};
+
+#if HAVE_SYS_SELECT_H
+#  include <sys/select.h>
+#endif /* HAVE_SYS_SELECT_H */
+
+// The following #define is only needed for HP-UX 9.x and earlier:
+//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
+
+static fd_set fdsets[3];
+static int maxfd;
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
 
-//
-// The following #define is only needed for HP-UX 9.x and earlier.  10.x
-// and beyond have the right stuff, and any good GCC distribution fixes
-// this, too!
-//
+#endif /* HAVE_POLL */
 
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
-
-#ifdef __EMX__
-#include <sys/select.h>
-#endif
-#endif
-
-#define MAXFD 8
-#if !HAVE_POLL
-static fd_set fdsets[3];
-static int maxfd;
-#endif
-static int nfds;
-static struct pollfd fds[MAXFD];
-static struct {
+static int nfds = 0;
+static int fd_array_size = 0;
+static struct FD {
+  int fd;
+  short events;
   void (*cb)(int, void*);
   void* arg;
-} fd[MAXFD];
+} *fd = 0;
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
-  int i;
-  if (nfds < MAXFD) {i = nfds; nfds++;} else {i = MAXFD-1;}
+  remove_fd(n,events);
+  int i = nfds++;
+  if (i >= fd_array_size) {
+    fd_array_size = 2*fd_array_size+1;
+    fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+#if HAVE_POLL
+    pollfds = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
+#endif
+  }
+  fd[i].fd = n;
+  fd[i].events = events;
+  fd[i].cb = cb;
+  fd[i].arg = v;
+#if HAVE_POLL
   fds[i].fd = n;
   fds[i].events = events;
-#if !HAVE_POLL
+#else
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
   if (n > maxfd) maxfd = n;
 #endif
-  fd[i].cb = cb;
-  fd[i].arg = v;
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
-  Fl::add_fd(fd,POLLIN,cb,v);
+  Fl::add_fd(fd, POLLIN, cb, v);
 }
 
-void Fl::remove_fd(int n) {
+void Fl::remove_fd(int n, int events) {
   int i,j;
   for (i=j=0; i<nfds; i++) {
-    if (fds[i].fd == n);
-    else {if (j<i) {fd[j]=fd[i]; fds[j]=fds[i];} j++;}
+    if (fd[i].fd == n) {
+      int e = fd[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      fd[i].events = e;
+#if HAVE_POLL
+      fds[j].events = e;
+#endif
+    }
+    // move it down in the array if necessary:
+    if (j<i) {
+      fd[j]=fd[i];
+#if HAVE_POLL
+      fds[j]=fds[i];
+#endif
+    }
+    j++;
   }
   nfds = j;
 #if !HAVE_POLL
-  FD_CLR(n, &fdsets[0]);
-  FD_CLR(n, &fdsets[1]);
-  FD_CLR(n, &fdsets[2]);
+  if (events & POLLIN) FD_CLR(n, &fdsets[0]);
+  if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
+  if (events & POLLERR) FD_CLR(n, &fdsets[2]);
   if (n == maxfd) maxfd--;
 #endif
+}
+
+void Fl::remove_fd(int n) {
+  remove_fd(n, -1);
 }
 
 int fl_ready() {
@@ -133,18 +156,18 @@ int fl_ready() {
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
+extern Fl_Window* fl_xmousewin;
 #endif
 static void do_queued_events() {
-  while (XEventsQueued(fl_display,QueuedAfterReading)) {
+ while (XEventsQueued(fl_display,QueuedAfterReading)) {
     XEvent xevent;
     XNextEvent(fl_display, &xevent);
     fl_handle(xevent);
   }
 #if CONSOLIDATE_MOTION
-  if (send_motion) {
-    Fl_Window* w = send_motion;
+  if (send_motion && send_motion == fl_xmousewin) {
     send_motion = 0;
-    Fl::handle(FL_MOVE, w);
+    Fl::handle(FL_MOVE, fl_xmousewin);
   }
 #endif
 }
@@ -188,14 +211,14 @@ double fl_wait(int timeout_flag, double time) {
   if (n > 0) {
     for (int i=0; i<nfds; i++) {
 #if HAVE_POLL
-      if (fds[i].revents) fd[i].cb(fds[i].fd, fd[i].arg);
+      if (fds[i].revents) fd[i].cb(fd[i].fd, fd[i].arg);
 #else
-      int f = fds[i].fd;
+      int f = fd[i].fd;
       short revents = 0;
       if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
       if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
       if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
-      if (fds[i].events & revents) fd[i].cb(f, fd[i].arg);
+      if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
 #endif
     }
   }
@@ -397,7 +420,7 @@ int fl_handle(const XEvent& xevent)
   case MotionNotify:
     set_event_xy();
 #if CONSOLIDATE_MOTION
-    send_motion = window;
+    send_motion = fl_xmousewin = window;
     return 0;
 #else
     event = FL_MOVE;
@@ -420,45 +443,60 @@ int fl_handle(const XEvent& xevent)
     break;
 
   case KeyPress: {
-#if BACKSPACE_HACK
-    static int got_backspace;
-#endif /* BACKSPACE_HACK */
+    int keycode = xevent.xkey.keycode;
+    fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char buffer[21];
     KeySym keysym;
-    int i = xevent.xkey.keycode; fl_key_vector[i/8] |= (1 << (i%8));
     int len = XLookupString((XKeyEvent*)&(xevent.xkey),buffer,20,&keysym,0);
-    if (!len && keysym < 0x400) {
-      // turn all latin-2,3,4 characters into 8-bit codes:
-      buffer[0] = char(keysym);
-      len = 1;
+    if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
+      // force it to type a character (not sure if this ever is needed):
+      if (!len) {buffer[0] = char(keysym); len = 1;}
+      // ignore all effects of shift on the keysyms, which makes it a lot
+      // easier to program shortcuts and is Windoze-compatable:
+      keysym = XKeycodeToKeysym(fl_display, keycode, 0);
     }
-    // ignore all effects of shift on the keysyms (makes it a lot
-    // easier to program shortcuts!)
-    if (keysym < 0x400) keysym = XKeycodeToKeysym(fl_display, i, 0);
 #ifdef __sgi
-    // get some missing PC keyboard keys:
-    if (!keysym) switch(i) {
+    // You can plug a microsoft keyboard into an sgi but the extra shift
+    // keys are not translated.  Make them translate like XFree86 does:
+    if (!keysym) switch(keycode) {
     case 147: keysym = FL_Meta_L; break;
     case 148: keysym = FL_Meta_R; break;
     case 149: keysym = FL_Menu; break;
     }
 #endif
 #if BACKSPACE_HACK
+    // Attempt to fix keyboards that send "delete" for the key in the
+    // upper-right corner of the main keyboard.  But it appears that
+    // very few of these remain?
+    static int got_backspace;
     if (!got_backspace) {
-      // Backspace kludge: until user hits the backspace key, assumme
-      // it is missing and use the Delete key for that purpose:
       if (keysym == FL_Delete) keysym = FL_BackSpace;
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
-#endif /* BACKSPACE_HACK */
-    if (keysym >= 0xff95 && keysym < 0xffa0) {
-      // Make NumLock irrelevant (always on):
-      // This lookup table turns the XK_KP_* functions back into the
-      // ascii characters.  This won't work on non-PC layout keyboards,
-      // but are there any of those left??
-      buffer[0] = "7486293150."[keysym-0xff95];
-      keysym = FL_KP+buffer[0];
-      len = 1;
+#endif
+    // We have to get rid of the XK_KP_function keys, because they are
+    // not produced on Windoze and thus case statements tend not to check
+    // for them.  There are 15 of these in the range 0xff91 ... 0xff9f
+    if (keysym >= 0xff91 && keysym <= 0xff9f) {
+      // Try to make them turn into FL_KP+'c' so that NumLock is
+      // irrelevant, by looking at the shifted code.  This matches the
+      // behavior of the translator in Fl_win32.C, and IMHO is the
+      // user-friendly result:
+      unsigned long keysym1 = XKeycodeToKeysym(fl_display, keycode, 1);
+      if (keysym1 <= 0x7f || keysym1 > 0xff9f && keysym1 <= FL_KP_Last) {
+	keysym = keysym1 | FL_KP;
+	buffer[0] = char(keysym1) & 0x7F;
+	len = 1;
+      } else {
+	// If that failed to work, just translate them to the matching
+	// normal function keys:
+	static const unsigned short table[15] = {
+	  FL_F+1, FL_F+2, FL_F+3, FL_F+4,
+	  FL_Home, FL_Left, FL_Up, FL_Right,
+	  FL_Down, FL_Page_Up, FL_Page_Down, FL_End,
+	  0xff0b/*XK_Clear*/, FL_Insert, FL_Delete};
+	keysym = table[keysym-0xff91];
+      }
     }
     buffer[len] = 0;
     Fl::e_keysym = int(keysym);
@@ -470,7 +508,8 @@ int fl_handle(const XEvent& xevent)
     break;}
 
   case KeyRelease: {
-    int i = xevent.xkey.keycode; fl_key_vector[i/8] &= ~(1 << (i%8));
+    int keycode = xevent.xkey.keycode;
+    fl_key_vector[keycode/8] &= ~(1 << (keycode%8));
     set_event_xy();}
     break;
 
@@ -546,6 +585,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* w, Window xid) {
   x->region = 0;
   x->wait_for_expose = 1;
   Fl_X::first = x;
+  if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
 }
 
@@ -578,6 +618,11 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
   int H = w->h();
   if (H <= 0) H = 1; // X don't like zero...
   if (!w->parent() && !Fl::grab()) {
+    // center windows in case window manager does not do anything:
+    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
+      w->x(X = (Fl::w()-W)/2);
+      w->y(Y = (Fl::h()-H)/2);
+    }
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
     if (w->border()) {
@@ -631,8 +676,6 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
   w->set_visible();
   w->handle(FL_SHOW); // get child windows to appear
   w->redraw();
-  fl_fix_focus(); // if this is modal we must fix focus now
-  //XInstallColormap(fl_display, colormap);
 
   if (!w->parent() && !attr.override_redirect) {
     // Communicate all kinds 'o junk to the X Window Manager:
@@ -703,12 +746,14 @@ void Fl_X::sendxjunk() {
   }
 
   XSizeHints hints;
+  // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
   hints.min_width = w->minw;
   hints.min_height = w->minh;
   hints.max_width = w->maxw;
   hints.max_height = w->maxh;
   hints.width_inc = w->dw;
   hints.height_inc = w->dh;
+  hints.win_gravity = StaticGravity;
 
   // see the file /usr/include/X11/Xm/MwmUtil.h:
   // fill all fields to avoid bugs in kwm and perhaps other window managers:
@@ -717,10 +762,10 @@ void Fl_X::sendxjunk() {
 
   if (hints.min_width != hints.max_width ||
       hints.min_height != hints.max_height) { // resizable
-    hints.flags = PMinSize;
+    hints.flags = PMinSize|PWinGravity;
     if (hints.max_width >= hints.min_width ||
 	hints.max_height >= hints.min_height) {
-      hints.flags = PMinSize|PMaxSize;
+      hints.flags = PMinSize|PMaxSize|PWinGravity;
       // unfortunately we can't set just one maximum size.  Guess a
       // value for the other one.  Some window managers will make the
       // window fit on screen when maximized, others will put it off screen:
@@ -736,7 +781,7 @@ void Fl_X::sendxjunk() {
       hints.flags |= PAspect;
     }
   } else { // not resizable:
-    hints.flags = PMinSize|PMaxSize;
+    hints.flags = PMinSize|PMaxSize|PWinGravity;
     prop[0] = 1; // MWM_HINTS_FUNCTIONS
     prop[1] = 1|2|16; // MWM_FUNC_ALL | MWM_FUNC_RESIZE | MWM_FUNC_MAXIMIZE
   }
@@ -827,5 +872,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24 1999/03/09 17:08:35 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.8 1999/11/10 09:18:31 bill Exp $".
 //

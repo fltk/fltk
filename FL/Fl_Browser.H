@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.8 1999/02/16 21:59:35 mike Exp $"
+// "$Id: Fl_Browser.H,v 1.8.2.3 1999/11/16 07:39:56 bill Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,18 @@ struct FL_BLINE;
 
 class Fl_Browser : public Fl_Browser_ {
 
+  FL_BLINE *first;		// the array of lines
+  FL_BLINE *last;
+  FL_BLINE *cache;
+  int cacheline;		// line number of cache
+  int lines;                	// Number of lines
+  int full_height_;
+  const int* column_widths_;
+  char format_char_;		// alternative to @-sign
+  char column_char_;		// alternative to tab
+
+protected:
+
   // required routines for Fl_Browser_ subclass:
   FL_EXPORT void* item_first() const ;
   FL_EXPORT void* item_next(void*) const ;
@@ -48,15 +60,6 @@ class Fl_Browser : public Fl_Browser_ {
   FL_EXPORT int full_height() const ;
   FL_EXPORT int incr_height() const ;
 
-  FL_BLINE *first;		// the array of lines
-  FL_BLINE *last;
-  FL_BLINE *cache;
-  int cacheline;		// line number of cache
-  int lines;                	// Number of lines
-  int full_height_;
-  const int* column_widths_;
-  char format_char_;		// alternative to @-sign
-  char column_char_;		// alternative to tab
   FL_EXPORT FL_BLINE* find_line(int) const ;
   FL_EXPORT FL_BLINE* _remove(int) ;
   FL_EXPORT void insert(int, FL_BLINE*);
@@ -95,6 +98,7 @@ public:
   FL_EXPORT void data(int, void* v);
 
   FL_EXPORT Fl_Browser(int, int, int, int, const char* = 0);
+  ~Fl_Browser() { clear(); }
 
   char format_char() const {return format_char_;}
   void format_char(char c) {format_char_ = c;}
@@ -104,6 +108,7 @@ public:
   void column_widths(const int* l) {column_widths_ = l;}
 
   int displayed(int n) const {return Fl_Browser_::displayed(find_line(n));}
+  void make_visible(int n) {Fl_Browser_::display(find_line(n));}
 
   // for back compatability only:
   void replace(int a, const char* b) {text(a, b);}
@@ -113,5 +118,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.8 1999/02/16 21:59:35 mike Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8.2.3 1999/11/16 07:39:56 bill Exp $".
 //

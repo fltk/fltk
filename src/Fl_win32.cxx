@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33 1999/03/04 21:20:55 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.17 1999/12/15 04:58:27 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -32,11 +32,11 @@
 #include <FL/win32.H>
 #include <FL/Fl_Window.H>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <time.h>
 #include <winsock.h>
+#include <ctype.h>
 
 //
 // WM_SYNCPAINT is an "undocumented" message, which is finally defined in
@@ -46,53 +46,75 @@
 #  define WM_SYNCPAINT 0x0088
 #endif /* !WM_SYNCPAINT */
 
+#ifndef WM_MOUSELEAVE
+#  define WM_MOUSELEAVE 0x02a3
+#endif
+
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
 // fd's are only implemented for sockets.  Microsoft Windows does not
 // have a unified IO system, so it doesn't support select() on files,
-// devices, or pipes...
+// devices, or pipes...  Also, unlike UNIX the Windows select() call
+// doesn't use the nfds parameter, so we don't need to keep track of
+// the maximum FD number...
 
+static fd_set fdsets[3];
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
-struct pollfd {int fd; short events; short revents;};
 
-#define MAXFD 8
-static fd_set fdsets[3];
-static int nfds;
-static struct pollfd fds[MAXFD];
-static struct {
+static int nfds = 0;
+static int fd_array_size = 0;
+static struct FD {
+  int fd;
+  short events;
   void (*cb)(int, void*);
   void* arg;
-} fd[MAXFD];
+} *fd = 0;
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
-  int i;
-  if (nfds < MAXFD) {i = nfds; nfds++;} else {i = MAXFD-1;}
-  fds[i].fd = n;
-  fds[i].events = events;
+  remove_fd(n,events);
+  int i = nfds++;
+  if (i >= fd_array_size) {
+    fd_array_size = 2*fd_array_size+1;
+    fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+  }
+  fd[i].fd = n;
+  fd[i].events = events;
+  fd[i].cb = cb;
+  fd[i].arg = v;
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
-  fd[i].cb = cb;
-  fd[i].arg = v;
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
-  Fl::add_fd(fd,POLLIN,cb,v);
+  Fl::add_fd(fd, POLLIN, cb, v);
+}
+
+void Fl::remove_fd(int n, int events) {
+  int i,j;
+  for (i=j=0; i<nfds; i++) {
+    if (fd[i].fd == n) {
+      int e = fd[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      fd[i].events = e;
+    }
+    // move it down in the array if necessary:
+    if (j<i) {
+      fd[j]=fd[i];
+    }
+    j++;
+  }
+  nfds = j;
+  if (events & POLLIN) FD_CLR(unsigned(n), &fdsets[0]);
+  if (events & POLLOUT) FD_CLR(unsigned(n), &fdsets[1]);
+  if (events & POLLERR) FD_CLR(unsigned(n), &fdsets[2]);
 }
 
 void Fl::remove_fd(int n) {
-  int i,j;
-  for (i=j=0; i<nfds; i++) {
-    if (fds[i].fd == n);
-    else {if (j<i) {fd[j]=fd[i]; fds[j]=fds[i];} j++;}
-  }
-  nfds = j;
-  FD_CLR(n, &fdsets[0]);
-  FD_CLR(n, &fdsets[1]);
-  FD_CLR(n, &fdsets[2]);
+  remove_fd(n, -1);
 }
 
 MSG fl_msg;
@@ -111,50 +133,68 @@ int fl_ready() {
 }
 
 double fl_wait(int timeout_flag, double time) {
-  int have_message;
-  timeval t;
-  fd_set fdt[3];
+  int have_message = 0;
+  int timerid;
 
+  if (nfds) {
+    // For WIN32 we need to poll for socket input FIRST, since
+    // the event queue is not something we can select() on...
+    timeval t;
+    t.tv_sec = 0;
+    t.tv_usec = 0;
 
-  // For WIN32 we need to poll for socket input FIRST, since
-  // the event queue is not something we can select() on...
+    fd_set fdt[3];
+    fdt[0] = fdsets[0];
+    fdt[1] = fdsets[1];
+    fdt[2] = fdsets[2];
 
-  t.tv_sec = 0;
-  t.tv_usec = 0;
-
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-
-  if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
-    // We got something - do the callback!
-    for (int i = 0; i < nfds; i ++) {
-      int f = fds[i].fd;
-      short revents = 0;
-      if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
-      if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
-      if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
-      if (fds[i].events & revents) fd[i].cb(f, fd[i].arg);
+    if (::select(0,&fdt[0],&fdt[1],&fdt[2],&t)) {
+      // We got something - do the callback!
+      for (int i = 0; i < nfds; i ++) {
+	int f = fd[i].fd;
+	short revents = 0;
+	if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
+	if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
+	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
+	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
+      }
     }
   }
 
   // get the first message by waiting the correct amount of time:
   if (!timeout_flag) {
-    GetMessage(&fl_msg, NULL, 0, 0);
+    // If we are monitoring sockets we need to check them periodically,
+    // so set a timer in this case...
+    if (nfds) {
+      // First see if there is a message waiting...
+      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+      if (!have_message) {
+	// If not then set a 1ms timer...
+	timerid = SetTimer(NULL, 0, 1, NULL);
+	GetMessage(&fl_msg, NULL, 0, 0);
+	KillTimer(NULL, timerid);
+      }
+    } else {
+      // Wait for a message...
+      GetMessage(&fl_msg, NULL, 0, 0);
+    }
     have_message = 1;
   } else {
-    if (time >= 0.001) {
-      int timerid = SetTimer(NULL, 0, int(time*1000), NULL);
+    // Perform the requested timeout...
+    have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+    if (!have_message && time > 0.0) {
+      int t = (int)(time * 1000.0);
+      if (t <= 0) t = 1;
+      timerid = SetTimer(NULL, 0, t, NULL);
       GetMessage(&fl_msg, NULL, 0, 0);
       KillTimer(NULL, timerid);
       have_message = 1;
-    } else {
-      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
     }
   }
 
   // execute it, them execute any other messages that become ready during it:
   while (have_message) {
+    TranslateMessage(&fl_msg);
     DispatchMessage(&fl_msg);
     have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
   }
@@ -268,7 +308,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
 static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_BACK,	FL_BackSpace},
   {VK_TAB,	FL_Tab},
-  {VK_CLEAR,	FL_KP+'5'},
+  {VK_CLEAR,	FL_KP+'5',	0xff0b/*XK_Clear*/},
   {VK_RETURN,	FL_Enter,	FL_KP_Enter},
   {VK_SHIFT,	FL_Shift_L,	FL_Shift_R},
   {VK_CONTROL,	FL_Control_L,	FL_Control_R},
@@ -333,7 +373,7 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.C
 
 static Fl_Window* resize_bug_fix;
 
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static char buffer[2];
   static int cnt=0;
@@ -342,14 +382,13 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if(cnt) {
       InvalidateRect(fl_window,0,FALSE);
       cnt = 0;
-    } else cnt = 1; 
+    } else cnt = 1;
   } else if (uMsg == WM_PAINT) cnt = 0;
 
   fl_msg.message = uMsg;
 
   Fl_Window *window = fl_find(hWnd);
 
- STUPID_MICROSOFT:
   if (window) switch (uMsg) {
 
   case WM_QUIT: // this should not happen?
@@ -360,12 +399,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
 
   case WM_PAINT: {
- 
+
     // This might be a better alternative, where we fully ignore NT's
     // "facilities" for painting. MS expects applications to paint according
     // to a very restrictive paradigm, and this is the way I found of
     // working around it. In a sense, we are using WM_PAINT simply as an
-    // "exposure alert", like the X event. 
+    // "exposure alert", like the X event.
 
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
@@ -398,6 +437,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
   case WM_MOUSEMOVE:    mouse_event(window, 3, 0, wParam, lParam); return 0;
 
+#ifdef WM_MOUSELEAVE
+  case WM_MOUSELEAVE:
+    Fl::handle(FL_LEAVE, window);
+    break;
+#endif /* WM_MOUSELEAVE */
+
   case WM_SETFOCUS:
     Fl::handle(FL_FOCUS, window);
     break;
@@ -414,23 +459,16 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_KEYDOWN:
   case WM_SYSKEYDOWN:
-    // save the keysym until we figure out the characters:
-    Fl::e_keysym = ms2fltk(wParam,lParam&(1<<24));
   case WM_KEYUP:
   case WM_SYSKEYUP:
-    TranslateMessage(&fl_msg); // always returns 1!!!
-    // TranslateMessage is supposed to return true only if it turns
-    // into another message, but it seems to always return 1 on my
-    // NT machine.  So I will instead peek to see if there is a
-    // character message in the queue, I hope this can only happen
-    // if the translation worked:
+    // save the keysym until we figure out the characters:
+    Fl::e_keysym = ms2fltk(wParam,lParam&(1<<24));
+    // See if TranslateMessage turned it into a WM_*CHAR message:
     if (PeekMessage(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, 1)) {
       uMsg = fl_msg.message;
       wParam = fl_msg.wParam;
       lParam = fl_msg.lParam;
-      goto STUPID_MICROSOFT;
     }
-    // otherwise use it as a 0-character key...
   case WM_DEADCHAR:
   case WM_SYSDEADCHAR:
   case WM_CHAR:
@@ -445,7 +483,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       if ((lParam&(1<<29)) //same as GetKeyState(VK_MENU)
 	&& uMsg != WM_CHAR) state |= FL_ALT;
       if (GetKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
-      if (GetKeyState(VK_LWIN)&~1 || GetKeyState(VK_RWIN)&~1) state |= FL_META;
+      if (GetKeyState(VK_LWIN)&~1 || GetKeyState(VK_RWIN)&~1) {
+	// WIN32 bug?  GetKeyState returns garbage if the user hit the
+	// meta key to pop up start menu.  Sigh.
+	if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1)
+	  state |= FL_META;
+      }
       if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
       Fl::e_state = state;}
     if (lParam & (1<<31)) goto DEFAULT; // ignore up events after fixing shift
@@ -499,7 +542,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_GetDC(hWnd);
     if (fl_select_palette()) InvalidateRect(hWnd, NULL, FALSE);
     break;
-       
+
   case WM_PALETTECHANGED:
     fl_GetDC(hWnd);
     if ((HWND)wParam != hWnd && fl_select_palette()) UpdateColors(fl_gc);
@@ -524,7 +567,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 ////////////////////////////////////////////////////////////////
 // This function gets the dimensions of the top/left borders and
 // the title bar, if there is one, based on the FL_BORDER, FL_MODAL
-// and FL_NONMODAL flags, and on the window's size range. 
+// and FL_NONMODAL flags, and on the window's size range.
 // It returns the following values:
 //
 // value | border | title bar
@@ -545,7 +588,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
       bx = GetSystemMetrics(SM_CXFIXEDFRAME);
       by = GetSystemMetrics(SM_CYFIXEDFRAME);
     }
-    bt = GetSystemMetrics(SM_CYCAPTION); 
+    bt = GetSystemMetrics(SM_CYCAPTION);
   }
   //The coordinates of the whole window, including non-client area
   xoff = bx;
@@ -619,12 +662,12 @@ int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
-  const char* class_name = w->xclass();
-  if (!class_name) class_name = "FLTK"; // create a "FLTK" WNDCLASS
+  const char* class_name = /*w->xclass();
+  if (!class_name) class_name =*/ "FLTK"; // create a "FLTK" WNDCLASS
 
   WNDCLASSEX wc;
   // Documentation states a device context consumes about 800 bytes
-  // of memory... so who cares? If 800 bytes per window is what it 
+  // of memory... so who cares? If 800 bytes per window is what it
   // takes to speed things up, I'm game.
   //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
   wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
@@ -728,72 +771,16 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   w->redraw(); // force draw to happen
   // If we've captured the mouse, we dont want do activate any
   // other windows from the code, or we loose the capture.
-  ShowWindow(x->xid, fl_show_iconic ? SW_SHOWMINNOACTIVE : 
+  ShowWindow(x->xid, fl_show_iconic ? SW_SHOWMINNOACTIVE :
              fl_capture? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
   fl_show_iconic = 0;
-  fl_fix_focus();
+  if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
 }
 
 ////////////////////////////////////////////////////////////////
 
-HINSTANCE fl_display = 0;
-
-//
-// This WinMain() function can be overridden by an application and
-// is provided for compatibility with programs written for other
-// operating systems that conform to the ANSI standard entry point
-// "main()".  This will allow you to build a WIN32 Application
-// without any special settings.
-//
-// Because of problems with the Microsoft Visual C++ header files
-// and/or compiler, you cannot have a WinMain function in a DLL.
-// I don't know why.  Thus, this nifty feature is only available
-// if you link to the static library.
-//
-// Currently the debug version of this library will create a
-// console window for your application so you can put printf()
-// statements for debugging or informational purposes.  Ultimately
-// we want to update this to always use the parent's console,
-// but at present we have not identified a function or API in
-// Microsoft(r) Windows(r) that allows for it.
-//
-
-#ifndef FL_DLL
-extern "C" {
-extern int  __argc;
-extern char **__argv;
-extern FL_EXPORT int main(int argc, char *argv[]);
-};
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                             LPSTR lpCmdLine, int nCmdShow) {
-  // Save the current instance in the fl_display variable...
-  fl_display = hInstance;
-
-#ifdef _DEBUG
-  // If we are using compiling in debug mode, open a console window so
-  // we can see any printf's, etc...
-  //
-  // While we can detect if the program was run from the command-line -
-  // look at the CMDLINE environment variable, it will be "WIN" for
-  // programs started from the GUI - the shell seems to run all WIN32
-  // applications in the background anyways...
-
-  AllocConsole();
-  freopen("conin$", "r", stdin);
-  freopen("conout$", "w", stdout);
-  freopen("conout$", "w", stderr);
-#endif // _DEBUG
-
-  // Run the standard main entry point function...
-
-  return main(__argc, __argv);
-}
-#endif /* !FL_DLL */
-
-
-////////////////////////////////////////////////////////////////
+HINSTANCE fl_display = GetModuleHandle(NULL);
 
 void Fl_Window::size_range_() {
   size_range_set = 1;
@@ -821,6 +808,8 @@ void Fl_X::set_minmax(LPMINMAXINFO minmax)
 }
 
 ////////////////////////////////////////////////////////////////
+
+#include <FL/filename.H> // need so FL_EXPORT filename_name works
 
 // returns pointer to the filename, or null if name ends with '/'
 const char *filename_name(const char *name) {
@@ -907,5 +896,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33 1999/03/04 21:20:55 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.17 1999/12/15 04:58:27 bill Exp $".
 //

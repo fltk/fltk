@@ -1,5 +1,5 @@
 //
-// "$Id: shape.cxx,v 1.5 1999/01/13 15:45:50 mike Exp $"
+// "$Id: shape.cxx,v 1.5.2.1 1999/10/15 09:01:48 bill Exp $"
 //
 // Tiny OpenGL demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -52,7 +52,7 @@ void shape_window::draw() {
   if (!valid()) {
     valid(1);
     glLoadIdentity();
-    glViewport(0,0,w(),h());
+    glViewport(0, 0, w(), h());
   }
 // draw an amazing graphic:
   glClear(GL_COLOR_BUFFER_BIT);
@@ -111,5 +111,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: shape.cxx,v 1.5 1999/01/13 15:45:50 mike Exp $".
+// End of "$Id: shape.cxx,v 1.5.2.1 1999/10/15 09:01:48 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6 1999/01/07 19:17:27 mike Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.4 1999/11/16 07:39:59 bill Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -43,16 +43,17 @@
 // Return value is the index of the selected item.
 
 int Fl_Tabs::tab_positions(int* p, int* w) {
-  int selected = 0;
+  int selected = -1;
   Fl_Widget*const* a = array();
   int i;
   p[0] = 0;
   for (i=0; i<children(); i++) {
     Fl_Widget* o = *a++;
-    if (o == value_) selected = i;
+    if (o->visible()) selected = i;
     if (o->label()) {
       int wt = 0; int ht = 0; o->measure_label(wt,ht);
       w[i] = wt+TABSLOPE;
+      if (2*TABSLOPE > w[i]) w[i] = 2*TABSLOPE;
     } else 
       w[i] = 2*TABSLOPE;
     p[i+1] = p[i]+w[i];
@@ -137,13 +138,12 @@ int Fl_Tabs::handle(int event) {
   case FL_DRAG:
   case FL_RELEASE:
     o = which(Fl::event_x(), Fl::event_y());
-    if (event == FL_RELEASE) {push(0); if (o) value(o);}
+    if (event == FL_RELEASE) {push(0); if (o && value(o)) do_callback();}
     else push(o);
     return 1;
 
   default:
   DEFAULT:
-    value(); // initialize value & visibility if value_ == 0
     return Fl_Group::handle(event);
 
   }
@@ -151,34 +151,41 @@ int Fl_Tabs::handle(int event) {
 
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
-  if (push_ && push_ != value_ || o && o != value_) damage(FL_DAMAGE_EXPOSE);
+  if (push_ && !push_->visible() || o && !o->visible())
+    damage(FL_DAMAGE_EXPOSE);
   push_ = o;
   return 1;
 }
 
+// The value() is the first visible child (or the last child if none
+// are visible) and this also hides any other children.
+// This allows the tabs to be deleted, moved to other groups, and
+// show()/hide() called without it screwing up.
 Fl_Widget* Fl_Tabs::value() {
-  Fl_Widget *v = value_;
-  if (!v) {
-    // If value() has not been called, find first visible() child:
-    Fl_Widget*const* a = array();
-    for (int i=children(); i--;) {
-      Fl_Widget* o = *a++;
-      if (v) o->hide();
-      else if (o->visible()) v = o;
-    }
-    if (!v) return 0; // no children...
-    value_ = v;
+  Fl_Widget* v = 0;
+  Fl_Widget*const* a = array();
+  for (int i=children(); i--;) {
+    Fl_Widget* o = *a++;
+    if (v) o->hide();
+    else if (o->visible()) v = o;
+    else if (!i) {o->show(); v = o;}
   }
   return v;
 }
 
-int Fl_Tabs::value(Fl_Widget *o) {
-  if (value_ == o) return 0;
-  if (o) o->show();
-  if (value_) value_->hide();
-  value_ = o;
-  redraw();
-  do_callback();
+// Setting the value hides all other children, and makes this one
+// visible, iff it is really a child:
+int Fl_Tabs::value(Fl_Widget *newvalue) {
+  Fl_Widget*const* a = array();
+  for (int i=children(); i--;) {
+    Fl_Widget* o = *a++;
+    if (o == newvalue) {
+      if (o->visible()) return 0; // no change
+      o->show();
+    } else {
+      o->hide();
+    }
+  }
   return 1;
 }
 
@@ -195,8 +202,6 @@ void Fl_Tabs::draw() {
   } else { // redraw the child
     if (v) update_child(*v);
   }
-  if (!v) return;
-
   if (damage() & (FL_DAMAGE_EXPOSE|FL_DAMAGE_ALL)) {
     int p[128]; int w[128];
     int selected = tab_positions(p,w);
@@ -206,8 +211,14 @@ void Fl_Tabs::draw() {
       draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], LEFT);
     for (i=children()-1; i > selected; i--)
       draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], RIGHT);
-    i = selected;
-    draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], SELECTED);
+    if (v) {
+      i = selected;
+      draw_tab(x()+p[i], x()+p[i+1], w[i], H, a[i], SELECTED);
+    } else {
+      // draw the edge when no selection:
+      fl_color(H >= 0 ? FL_LIGHT3 : FL_DARK3);
+      fl_xyline(x(), H >= 0 ? y()+H : y()+h()+H, x()+this->w());
+    }
   }
 }
 
@@ -246,18 +257,19 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     fl_color(!sel && o==push_ ? FL_DARK3 : FL_LIGHT3);
     fl_line(x1, y()+h()+H, x1+TABSLOPE, y()+h()-1);
   }
-  if (x2-x1 > 2*TABSLOPE)
+  if (W > TABSLOPE)
     o->draw_label(what==LEFT ? x1+TABSLOPE : x2-W+TABSLOPE,
 		  y()+(H<0?h()+H-3:0), W-TABSLOPE,
 		  (H<0?-H:H)+3, FL_ALIGN_CENTER);
 }
 
 Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
-  Fl_Group(X,Y,W,H,l) {
-    box(FL_THIN_UP_BOX);
-    value_ = push_ = 0;
+  Fl_Group(X,Y,W,H,l)
+{
+  box(FL_THIN_UP_BOX);
+  push_ = 0;
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6 1999/01/07 19:17:27 mike Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.4 1999/11/16 07:39:59 bill Exp $".
 //

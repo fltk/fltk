@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18 1999/03/07 08:51:43 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.2 1999/08/09 06:19:33 bill Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -412,7 +412,7 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
 struct menustate {
   const Fl_Menu_Item* current_item; // what mouse is pointing at
   int menu_number; // which menu it is in
-  int item_number; // which item in that menu
+  int item_number; // which item in that menu, -1 if none
   menuwindow* p[20]; // pointers to menus
   int nummenus;
   int menubar; // if true p[0] is a menubar
@@ -428,8 +428,7 @@ static inline void setitem(const Fl_Menu_Item* i, int m, int n) {
 
 static void setitem(int m, int n) {
   menustate &p = *(::p);
-  p.current_item = (m >= 0 && n >= 0) ?
-    p.current_item = p.p[m]->menu->next(n) : 0;
+  p.current_item = (n >= 0) ? p.p[m]->menu->next(n) : 0;
   p.menu_number = m;
   p.item_number = n;
 }
@@ -449,6 +448,7 @@ static int backward(int menu) { // previous item in menu menu if possible
   menustate &p = *(::p);
   menuwindow &m = *(p.p[menu]);
   int item = (menu == p.menu_number) ? p.item_number : m.selected;
+  if (item < 0) item = m.numitems;
   while (--item >= 0) {
     const Fl_Menu_Item* m1 = m.menu->next(item);
     if (m1->activevisible()) {setitem(m1, menu, item); return 1;}
@@ -461,15 +461,23 @@ int menuwindow::handle(int e) {
   switch (e) {
   case FL_KEYBOARD:
     switch (Fl::event_key()) {
+    case FL_Tab:
+      if (Fl::event_shift()&FL_SHIFT) goto BACKTAB;
+    case ' ':
+      if (!forward(p.menu_number)) {p.item_number = -1; forward(p.menu_number);}
+      return 1;
+    case FL_BackSpace:
+    case 0xFE20: // backtab
+    BACKTAB:
+      if (!backward(p.menu_number)) {p.item_number = -1;backward(p.menu_number);}
+      return 1;
     case FL_Up:
-      if (p.menu_number < 0) setitem(0, 0);
       if (p.menubar && p.menu_number == 0) ;
       else if (backward(p.menu_number));
       else if (p.menubar && p.menu_number==1) setitem(0, p.p[0]->selected);
       return 1;
     case FL_Down:
-      if (p.menu_number < 0) setitem(0, 0);
-      else if (p.menu_number || !p.menubar) forward(p.menu_number);
+      if (p.menu_number || !p.menubar) forward(p.menu_number);
       else if (p.menu_number < p.nummenus-1) forward(p.menu_number+1);
       return 1;
     case FL_Right:
@@ -507,9 +515,10 @@ int menuwindow::handle(int e) {
     int mx = Fl::event_x_root();
     int my = Fl::event_y_root();
     int item=0; int menu;
-    for (menu = p.nummenus-1; menu >= 0; menu--) {
+    for (menu = p.nummenus-1; ; menu--) {
       item = p.p[menu]->find_selected(mx, my);
       if (item >= 0) break;
+      if (menu <= 0) break;
     }
     setitem(menu, item);
     if (e == FL_PUSH) {
@@ -527,7 +536,16 @@ int menuwindow::handle(int e) {
     // the second click (not the one that popped up the menu):
     if (!Fl::event_is_click() || p.state == PUSH_STATE ||
 	p.menubar && p.current_item && !p.current_item->submenu() // button
-	) p.state = DONE_STATE;
+	) {
+#if 0 // makes the check/radio items leave the menu up
+      const Fl_Menu_Item* m = p.current_item;
+      if (m && button && (m->flags & (FL_MENU_TOGGLE|FL_MENU_RADIO))) {
+	((Fl_Menu_*)button)->picked(m);
+	p.p[p.menu_number]->redraw();
+      } else
+#endif
+	p.state = DONE_STATE;
+    }
     return 1;
   }
   return Fl_Window::handle(e);
@@ -568,7 +586,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     goto STARTUP;
   }
 
-  p.current_item = 0; p.menu_number = -1; p.item_number = -1;
+  p.current_item = 0; p.menu_number = 0; p.item_number = -1;
   if (menubar) mw.handle(FL_DRAG); // find the initial menu
   initial_item = p.current_item;
   if (initial_item) goto STARTUP;
@@ -710,5 +728,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18 1999/03/07 08:51:43 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.2 1999/08/09 06:19:33 bill Exp $".
 //

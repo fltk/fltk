@@ -12,5 +12,5 @@ case `uname -r` in
 	;;
 esac
 
-tar cvf fltk-1.0-irix-`uname -r`.tardist fltk fltk.idb fltk.man fltk.sw
+tar cvf fltk-1.0.5-irix-`uname -r`.tardist fltk fltk.idb fltk.man fltk.sw
 

@@ -27,7 +27,7 @@ Fl_Window* make_alignment_window() {
     { Fl_Box* o = new Fl_Box(10, 20, 190, 100, "Alignment:");
       o->box(FL_ENGRAVED_FRAME);
       o->labelsize(12);
-      o->align(5);
+      o->align(FL_ALIGN_TOP_LEFT);
     }
     { Fl_Input* o = horizontal_input = new Fl_Input(90, 30, 100, 20, "Horizontal:");
       o->type(2);
@@ -53,21 +53,21 @@ Fl_Window* make_alignment_window() {
     { Fl_Box* o = new Fl_Box(10, 140, 190, 130, "Output File Names:");
       o->box(FL_ENGRAVED_FRAME);
       o->labelsize(12);
-      o->align(5);
+      o->align(FL_ALIGN_TOP_LEFT);
     }
     { Fl_Box* o = new Fl_Box(20, 150, 170, 30, "Use \"name.ext\" to set name or just \".ext\" to set only extension.");
       o->labelsize(10);
-      o->align(148);
+      o->align(132|FL_ALIGN_INSIDE);
     }
     { Fl_Input* o = header_file_input = new Fl_Input(100, 180, 90, 20, "Header File:");
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)header_input_cb, (void*)(1));
-      o->when(1);
+      o->when(FL_WHEN_CHANGED);
     }
     { Fl_Input* o = code_file_input = new Fl_Input(100, 210, 90, 20, "Code File:");
       o->box(FL_THIN_DOWN_BOX);
       o->callback((Fl_Callback*)code_input_cb, (void*)(1));
-      o->when(1);
+      o->when(FL_WHEN_CHANGED);
     }
     { Fl_Light_Button* o = include_H_from_C_button = new Fl_Light_Button(20, 240, 170, 20, "Include Header from Code");
       o->value(1);

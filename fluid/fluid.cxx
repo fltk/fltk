@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15 1999/03/09 06:59:05 bill Exp $"
+// "$Id: fluid.cxx,v 1.15.2.2 1999/11/20 09:17:21 bill Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -110,10 +110,6 @@ void leave_source_dir() {
   
 Fl_Window *main_window;
 
-void exit_cb(Fl_Widget *,void *) {
-  if (!modflag || fl_ask("Exit without saving changes?")) exit(0);
-}
-
 void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
   if (v || !c || !*c) {
@@ -125,6 +121,20 @@ void save_cb(Fl_Widget *, void *v) {
     return;
   }
   modflag = 0;
+}
+
+void exit_cb(Fl_Widget *,void *) {
+  if (modflag)
+    switch (fl_choice("Save changes before exiting?", "Cancel", "No", "Yes"))
+    {
+      case 0 : /* Cancel */
+          return;
+      case 2 : /* Yes */
+          save_cb(NULL, NULL);
+	  if (modflag) return;	// Didn't save!
+    }
+
+  exit(0);
 }
 
 void open_cb(Fl_Widget *, void *v) {
@@ -148,7 +158,7 @@ void new_cb(Fl_Widget *, void *v) {
   modflag = 0;
 }
 
-static int compile_only = 0;
+int compile_only = 0;
 int header_file_set = 0;
 int code_file_set = 0;
 const char* header_file_name = ".h";
@@ -418,5 +428,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15 1999/03/09 06:59:05 bill Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.2 1999/11/20 09:17:21 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10 1999/01/24 15:28:59 mike Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.4 1999/10/30 20:21:29 bill Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -54,29 +54,36 @@ int Fl_Input::shift_up_down_position(int p) {
 
 ////////////////////////////////////////////////////////////////
 // Fltk "compose"
-// I tried to do compose characters "correctly" with much more user
-// feedback.  They can see the character they will get, rather than
-// the "dead key" effect.  Notice that I completely ignore that horrid
-// XIM extension!
-// Although the current scheme only works for Latin-NR1 character sets
-// the intention is to expand this to UTF-8 someday, to allow you to
-// compose all characters in all languages with no stupid "locale"
-// setting.
-// To use, you call "fl_compose()" for each keystroke.  You pass it
-// the characters it displayed last time plus the new character.  It
-// returns a new set of characters to replace the old one with.  If
-// it returns zero length you should leave the old set unchanged and
-// treat the new key normally.
-// Pressing any function keys or moving the cursor should set the
-// compose state back to zero.
+//
+// This is a demonstration of a IMHO "correct" interface to compose
+// character sequences.  It does not have a "dead key" effect: the
+// user has feedback at all times, and sees exactly the symbol they
+// will get if they stop typing at that point.  Notice that I totally
+// ignore the horrid XIM extension!
+//
+// You only need to keep track of your normal text buffer and a
+// single integer "state".  Call fl_compose() for each character
+// keystroke.  The return value is the new "state" that must be passed
+// the next time you call fl_compose().  It also returns the number of
+// characters to delete to the left, a buffer of new characters, and
+// the number of characters in that buffer.  Obey these editing
+// instructions.  Reset the state to zero if the user types any
+// function keys or clicks the mouse.
+//
+// Fl_Input does not call fl_compose unless you hit the "compose" key
+// first.  It may be interesting and useful to always call it, though...
 
-// This string lists a pair for each possible foreign letter in Latin-NR1
+// Although this simple code is only for ISO-8859-1 character
+// encodings, I think the interface can be expanded to UTF-8 (encoded
+// Unicode) someday.
+
+// This string lists a pair for each possible foreign letter in ISO-8859-1
 // starting at code 0xa0 (nbsp).  If the second character is a space then
 // only the first character needs to by typed:
 static const char* const compose_pairs =
 "  ! % # $ y=| & : c a <<~ - r _ * +-2 3 ' u p . , 1 o >>141234? "
-"A`A'A^A~A:A*AEC,E`E'E^E:I`I'I^I:D-N~O`O'O^O~O:x O/U`U'U^U:Y'DDss"
-"a`a'a^a~a:a*aec,e`e'e^e:i`i'i^i:d-n~o`o'o^o~o:-:o/u`u'u^u:y'ddy:";
+"A`A'A^A~A:A*AEC,E`E'E^E:I`I'I^I:D-N~O`O'O^O~O:x O/U`U'U^U:Y'THss"
+"a`a'a^a~a:a*aec,e`e'e^e:i`i'i^i:d-n~o`o'o^o~o:-:o/u`u'u^u:y'thy:";
 
 int fl_compose(int state, char c, int& del, char* buffer, int& ins) {
   del = 0; ins = 1; buffer[0] = c;
@@ -272,6 +279,7 @@ int Fl_Input::handle_key() {
 }
 
 int Fl_Input::handle(int event) {
+
   switch (event) {
 
   case FL_FOCUS:
@@ -303,21 +311,28 @@ int Fl_Input::handle(int event) {
     return handle_key();
 
   case FL_PUSH:
-    compose = 0;
-    if (Fl::event_button() == 2) {
-      Fl::paste(*this);
-      if (Fl::focus()==this) return 1; // remove line for Motif behavior
-    }
     if (Fl::focus() != this) {
       Fl::focus(this);
-      handle(FL_FOCUS); // cause minimal update
+      handle(FL_FOCUS);
+      // Windoze-style: select everything on first click:
+      if (type() != FL_MULTILINE_INPUT) {
+        position(size(), 0); // select everything
+        return 1;
+      }
     }
+    compose = 0;
     break;
 
-  case FL_DRAG:
   case FL_RELEASE:
-    if (Fl::event_button() == 2) return 0;
-    break;
+    if (Fl::event_button() == 2) {
+      Fl::event_is_click(0); // stop double click from picking a word
+      Fl::paste(*this);
+    } else if (!Fl::event_is_click()) {
+      // copy drag-selected text to the clipboard.
+      copy();
+    }
+    return 1;
+
   }
   Fl_Boxtype b = box();
   return Fl_Input_::handletext(event,
@@ -330,5 +345,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10 1999/01/24 15:28:59 mike Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.4 1999/10/30 20:21:29 bill Exp $".
 //

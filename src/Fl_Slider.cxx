@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8 1999/03/03 07:21:28 bill Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.4 1999/12/07 17:53:09 bill Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -83,13 +83,14 @@ int Fl_Slider::scrollvalue(int p, int w, int t, int l) {
 // actually it ranges from 0 to 1/(1-size).
 
 void Fl_Slider::draw_bg(int x, int y, int w, int h) {
-  draw_box(box(), x, y, w, h, color());
-  int BW = Fl::box_dx(box());
+  if (!(damage()&FL_DAMAGE_ALL)) { // not a complete redraw
+    draw_box();
+  }
   Fl_Color black = active_r() ? FL_BLACK : FL_INACTIVE_COLOR;
   if (type() == FL_VERT_NICE_SLIDER) {
-    draw_box(FL_THIN_DOWN_BOX, x+w/2-2, y+BW, 4, h-2*BW, black);
+    draw_box(FL_THIN_DOWN_BOX, x+w/2-2, y, 4, h, black);
   } else if (type() == FL_HOR_NICE_SLIDER) {
-    draw_box(FL_THIN_DOWN_BOX, x+BW, y+h/2-2, w-2*BW, 4, black);
+    draw_box(FL_THIN_DOWN_BOX, x, y+h/2-2, w, 4, black);
   }
 }
 
@@ -104,45 +105,44 @@ void Fl_Slider::draw(int x, int y, int w, int h) {
     else if (val < 0.0) val = 0.0;
   }
 
-  int BW = Fl::box_dx(box());
-  int W = (horizontal() ? w : h) - 2*BW;
+  int W = (horizontal() ? w : h);
   int X, S;
   if (type()==FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
     S = int(val*W+.5);
-    if (minimum()>maximum()) {S = W-S; X = W-S+BW;}
-    else X = BW;
+    if (minimum()>maximum()) {S = W-S; X = W-S;}
+    else X = 0;
   } else {
     S = int(slider_size_*W+.5);
-    int T = (horizontal() ? h : w)/2-BW+1;
+    int T = (horizontal() ? h : w)/2+1;
     if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
     if (S < T) S = T;
-    X = BW+int(val*(W-S)+.5);
+    X = int(val*(W-S)+.5);
   }
   int xsl, ysl, wsl, hsl;
   if (horizontal()) {
     xsl = x+X;
     wsl = S;
-    ysl = y+BW;
-    hsl = h-2*BW;
+    ysl = y;
+    hsl = h;
   } else {
     ysl = y+X;
     hsl = S;
-    xsl = x+BW;
-    wsl = w-2*BW;
+    xsl = x;
+    wsl = w;
   }
 
   if (damage()&FL_DAMAGE_ALL) { // complete redraw
     draw_bg(x, y, w, h);
   } else { // partial redraw, clip off new position of slider
-    if (X > BW) {
+    if (X > 0) {
       if (horizontal()) fl_clip(x, ysl, X, hsl);
       else fl_clip(xsl, y, wsl, X);
       draw_bg(x, y, w, h);
       fl_pop_clip();
     }
-    if (X+S < W+BW) {
-      if (horizontal()) fl_clip(xsl+wsl, ysl, x+w-BW-xsl-wsl, hsl);
-      else fl_clip(xsl, ysl+hsl, wsl, y+h-BW-ysl-hsl);
+    if (X+S < W) {
+      if (horizontal()) fl_clip(xsl+wsl, ysl, x+w-xsl-wsl, hsl);
+      else fl_clip(xsl, ysl+hsl, wsl, y+h-ysl-hsl);
       draw_bg(x, y, w, h);
       fl_pop_clip();
     }
@@ -166,7 +166,11 @@ void Fl_Slider::draw(int x, int y, int w, int h) {
 }
 
 void Fl_Slider::draw() {
-  draw(x(), y(), w(), h());
+  if (damage()&FL_DAMAGE_ALL) draw_box();
+  draw(x()+Fl::box_dx(box()),
+       y()+Fl::box_dy(box()),
+       w()-Fl::box_dw(box()),
+       h()-Fl::box_dh(box()));
 }
 
 int Fl_Slider::handle(int event, int x, int y, int w, int h) {
@@ -175,43 +179,54 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
     if (!Fl::event_inside(x, y, w, h)) return 0;
     handle_push();
   case FL_DRAG: {
-    if (slider_size() >= 1 || minimum()==maximum()) return 1;
-    int BW = Fl::box_dx(box());
-    int W = (horizontal() ? w : h) - 2*BW;
-    int X = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y) - BW;
+    int W = (horizontal() ? w : h);
+    //int H = (horizontal() ? h : w);
+    int mx = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y);
     int S = int(slider_size_*W+.5);
-    int T = (horizontal() ? h : w)/2-BW+1;
-    if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
-    if (type()!=FL_HOR_FILL_SLIDER && type()!=FL_VERT_FILL_SLIDER) {
-      if (S < T) S = T;
+    int X;
+    static int offcenter;
+    if (type() == FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
+      double val = (value()-minimum())/(maximum()-minimum());
+
+      if (val >= 1.0) X = W;
+      else if (val <= 0.0) X = 0;
+      else X = int(val*W+.5);
+
+      if (event == FL_PUSH) {
+	offcenter = mx-X;
+	if (offcenter < -S/2) offcenter = 0;
+	else if (offcenter > S/2) offcenter = 0;
+	else return 1;
+      }
+      S = 0;
+    } else {
+      double val = (value()-minimum())/(maximum()-minimum());
+
+      if (val >= 1.0) X = W-S;
+      else if (val <= 0.0) X = 0;
+      else X = int(val*(W-S)+.5);
+
+      if (event == FL_PUSH) {
+	offcenter = mx-X;
+	if (offcenter < 0) offcenter = 0;
+	else if (offcenter > S) offcenter = S;
+	else return 1;
+      }
     }
-    double v = double(X)/(W-S);
-    double sliderwidth = double(S)/(W-S);
-    double val = (value()-minimum())/(maximum()-minimum());
-    static double offcenter;
-    if (event == FL_PUSH) {
-      offcenter = v-val;
-      if (offcenter < 0) offcenter = 0;
-      else if (offcenter > sliderwidth) offcenter = sliderwidth;
-      else return 1;
-    }
+    X = mx-offcenter;
+    double v;
   TRY_AGAIN:
-    v -= offcenter;
-    if (v < 0) {
-      offcenter = v+offcenter;
-      if (offcenter<0) offcenter=0;
-      v = 0;
-    } else if (v > 1) {
-      offcenter =  v+offcenter-1;
-      if (offcenter > sliderwidth) offcenter = sliderwidth;
-      v = 1;
+    if (X < 0) {
+      X = 0;
+      offcenter = mx; if (offcenter < 0) offcenter = 0;
+    } else if (X > (W-S)) {
+      X = W-S;
+      offcenter = mx-X; if (offcenter > S) offcenter = S;
     }
-    // if (Fl::event_state(FL_SHIFT)) v = val+(v-val)*.05;
-    v = round(v*(maximum()-minimum())+minimum());
+    v = round(X*(maximum()-minimum())/(W-S) + minimum());
     // make sure a click outside the sliderbar moves it:
     if (event == FL_PUSH && v == value()) {
-      offcenter = sliderwidth/2;
-      v = double(X)/(W-S);
+      offcenter = S/2;
       event = FL_DRAG;
       goto TRY_AGAIN;
     }
@@ -226,9 +241,13 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
 }
 
 int Fl_Slider::handle(int event) {
-  return handle(event, x(), y(), w(), h());
+  return handle(event,
+		x()+Fl::box_dx(box()),
+		y()+Fl::box_dy(box()),
+		w()-Fl::box_dw(box()),
+		h()-Fl::box_dh(box()));
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8 1999/03/03 07:21:28 bill Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.4 1999/12/07 17:53:09 bill Exp $".
 //

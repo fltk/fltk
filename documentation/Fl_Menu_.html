@@ -9,7 +9,7 @@
    |
    +----<B>Fl_Menu_</B>----<A href=Fl_Menu_Item.html#Fl_Menu_Item>Fl_Menu_Item</A>
            |
-           +----<A href=functions.html#Fl_Choice>Fl_Choice</A>, <A href=Fl_Menu_Bar.html#Fl_Menu_Bar>Fl_Menu_Bar</A>, <A href=Fl_Menu_Button.html#Fl_Menu_Button>Fl_Menu_Button</A>
+           +----<A href=Fl_Choice.html#Fl_Choice>Fl_Choice</A>, <A href=Fl_Menu_Bar.html#Fl_Menu_Bar>Fl_Menu_Bar</A>, <A href=Fl_Menu_Button.html#Fl_Menu_Button>Fl_Menu_Button</A>
 </PRE>
 </UL>
 <H3>Include Files</H3>
@@ -24,10 +24,12 @@ Currently FLTK provides you with <A href=Fl_Menu_Button.html#Fl_Menu_Button>
 <TT>Fl_Menu_Button</TT></A>, <A href=Fl_Menu_Bar.html#Fl_Menu_Bar><TT>
 Fl_Menu_Bar</TT></A>, and <A href=functions.html#Fl_Choice><TT>Fl_Choice</TT>
 </A>. 
-<P>The class contains a pointer to an array of structures of type <A href=Fl_Menu_Item.html#Fl_Menu_Item>
-<TT>Fl_Menu_Item</TT></A>. These describe the contents of the menu. 
- Usually the array is a large initialization constant, but there are 
-methods to build it dynamically. </P>
+
+<P>The class contains a pointer to an array of structures of type <A
+href=Fl_Menu_Item.html#Fl_Menu_Item> <TT>Fl_Menu_Item</TT></A>.  The
+array may either be supplied directly by the user program, or it may
+be "private": a dynamically allocated array managed by the Fl_Menu_.
+
 <H3>Methods</H3>
 <CENTER>
 <TABLE width=90%>
@@ -68,26 +70,104 @@ methods to build it dynamically. </P>
 </TD></TR>
 </TABLE>
 </CENTER>
+
 <H4><A name=Fl_Menu_.Fl_Menu_>Fl_Menu_::Fl_Menu_(int x, int y, int w, 
 int h, const char *label = 0)</A></H4>
- Creates a new <TT>Fl_Menu_</TT> widget using the given position, size, 
-and label string. The default boxtype is <TT>FL_NO_BOX</TT>. 
+
+Creates a new <TT>Fl_Menu_</TT> widget using the given position, size,
+and label string.<tt>  menu()</tt> is initialized to null.
+
 <H4><A name=Fl_Menu_.~Fl_Menu_>virtual Fl_Menu_::~Fl_Menu_()</A></H4>
- Destroys the menu and its items. 
-<H4><A name=Fl_Menu_.menu>const Fl_Menu_Item* Fl_Menu_::menu() const
-<BR> void Fl_Menu_::menu(const Fl_Menu_Item*)</A></H4>
- Get or set the menu array directly.  Setting it to <TT>NULL</TT>
- indicates that you want the widget to allocate its own array. 
-<H4><A name=Fl_Menu_.copy>void Fl_Menu_::copy(const Fl_Menu_Item*)</A></H4>
- Set the menu array to a copy of the passed array.  This copy will be
- deleted when the Fl_Menu_ is deleted.
+
+If the menu array is private the memory it uses is freed.
+
+<H4><A name=Fl_Menu_.menu>const Fl_Menu_Item* Fl_Menu_::menu()
+const</a></h4>
+
+Returns a pointer to the array of Fl_Menu_Items.  This will either be
+the value passed to <tt>menu(value)</tt> or the private copy.
+
+<h4>void Fl_Menu_::menu(const Fl_Menu_Item*)</H4>
+Set the menu array pointer directly.  If the old menu is private it is
+deleted.  <tt>NULL</tt> is allowed and acts the same as a zero-length
+menu.  If you try to modify the array (with add(), replace(), or
+delete()) a private copy is automatically done.
+
+<H4><A name=Fl_Menu_.copy>void Fl_Menu_::copy(const
+Fl_Menu_Item*)</A></H4>
+The menu is set to a private copy of the passed Fl_Menu_Item array.
+This is useful if you want to modify the flags of the menu items.
+
+<H4><A name=Fl_Menu_.clear>void Fl_Menu_::clear()</A></H4>
+Same as <tt>menu(NULL)</tt>, set the array pointer to null, indicating
+a zero-length menu.
+
+<H4><A name=Fl_Menu_.size>int Fl_Menu_::size() const</A></H4>
+
+This returns the number of Fl_Menu_Item structures that make up the
+menu, correctly counting submenus.  This includes the "terminator"
+item at the end.  To copy a menu array you need to copy
+<tt>size()*sizeof(Fl_Menu_Item)</tt> bytes.  If the menu is
+<TT>NULL</TT> this returns zero (an empty menu will return 1).
+
+<H4><A name=Fl_Menu_.add>int Fl_Menu_::add(const char* label, const
+char* shortcut, Fl_Callback*, void *user_data=0, int flags=0)</a></h4>
+
+Adds a new menu item, with a <TT>title</TT> string, <TT> shortcut</TT>
+string, <TT>callback</TT>, argument to the callback, and flags.  If
+the menu array was directly set with menu(x) then copy() is done to
+make a private array.
+
+<P>Text is a string of the form &quot;foo/bar/baz&quot;, this example
+will result in a submenu called &quot;foo&quot; and one in that called
+&quot;bar&quot; and and entry called &quot;baz&quot;.  The text is
+copied to new memory and can be freed.  The other arguments (including
+the shortcut) are copied into the menu item unchanged. </P>
+
+<P>If an item exists already with that name then it is replaced with 
+this new one.  Otherwise this new one is added to the end of the 
+correct menu or submenu.  The return value is the offset into the array 
+that the new entry was placed at.</P>
+
+<P>The return value is the index into the array that the entry was put. </P>
+
+<h4>int Fl_Menu_::add(const char *)</A></H4>
+
+<P>The passed string is split at any '|' characters and then <TT>
+add(s,0,0,0,0)</TT> is done with each section.  This is often useful
+if you are just using the value, and is compatable with Forms
+and other GL programs. </P>
+
+<H4><A name=Fl_Menu_.replace>void Fl_Menu_::replace(int n, const char *)</A>
+</H4>
+
+Changes the text of item <TT>n</TT>.  This is the only way to get
+slash into an add()'ed menu item.  If the menu array was directly set
+with menu(x) then copy() is done to make a private array.
+
+<H4><A name=Fl_Menu_.remove>void Fl_Menu_::remove(int n)</A></H4>
+
+Deletes item <TT>n</TT> from the menu.  If the menu array was directly
+set with menu(x) then copy() is done to make a private array.
+
+<H4><A name=Fl_Menu_.shortcut>void Fl_Menu_::shortcut(int i, int n);</A></H4>
+
+Changes the shortcut of item <TT>i</TT> to <TT>n</TT>.
+
+<H4><A name=Fl_Menu_.mode>void Fl_Menu_::mode(int i, int x);</A></H4>
+
+Changes the flags of item <TT>i</TT>.  For a list of the flags, see <a
+href=Fl_Menu_Item.html>Fl_Menu_Item</a>.
+
 <H4><A name=Fl_Menu_.value>int Fl_Menu_::value() const
 <BR> int Fl_Menu_::value(int)
+<BR> const Fl_Menu_Item* mvalue() const
 <BR> int Fl_Menu_::value(const Fl_Menu_Item*)</A></H4>
  The value is the index into <TT>menu()</TT> of the last item chosen by 
 the user.  It is zero initially.  You can set it as an integer, or set 
 it with a pointer to a menu item.  The set routines return non-zero if 
 the new value is different than the old one. 
+
 <H4><A name=Fl_Menu_.test_shortcut>const Fl_Menu_Item* 
 Fl_Menu_::test_shortcut()</A></H4>
  Only call this in response to <TT>FL_SHORTCUT events</TT>.  If the 
@@ -102,56 +182,11 @@ have to be visible (ie the window it is in can be hidden, or it does
 not have to be put in a window at all). 
 <P>Currently there can be only one <TT>global()</TT>menu.  Setting a new 
 one will replace the old one.  There is no way to remove the <TT>
-global()</TT> setting (including destroying the menu). </TT></P>
+global()</TT> setting (so don't destroy the widget!)</P>
 <H4><A name=Fl_Menu_.text>const char* Fl_Menu_::text() const
 <BR> const char* Fl_Menu_::text(int i) const</A></H4>
  Returns the title of the last item chosen, or of item <TT>i</TT>. 
-<H4><A name=Fl_Menu_.size>int Fl_Menu_::size() const</A></H4>
- This returns <TT>menu()-&gt;size()</TT>, which is
-the number of Fl_Menu_Item structures that make up this menu,
-correctly counting submenus.  This includes the "terminator" item at
-the end.  So to copy a menu you need to copy
-<tt>size()*sizeof(Fl_Menu_Item)</tt> bytes.  If the menu is <TT>
-NULL</TT> this returns zero (an empty menu will return 1).
-<H4><A name=Fl_Menu_.add>int Fl_Menu_::add(const char *,const char 
-*,Fl_Callback *,void *v=0,int f=0)
-<BR> int Fl_Menu_::add(const char *)</A></H4>
- The first form adds a new menu item, with a <TT>title</TT> string, <TT>
-shortcut</TT> string, <TT>callback</TT>, argument to the callback, and 
-flags.  If <TT>menu()</TT> was originally set with <TT>NULL</TT> then 
-space is allocated for the new item.  If instead you gave it an array 
-then the array must have enough empty space for the new item.  The 
-title string is copied, but the shortcut is not. 
-<P>The second form splits the string at any | characters and then does <TT>
-add(s,0,0,0,0)</TT> with each section.  This is often useful if you are 
-just using the value, and is compatable with some Forms programs. </P>
-<P>Text is a string of the form &quot;foo/bar/baz&quot;, this example will result 
-in a submenu called &quot;foo&quot; and one in that called &quot;bar&quot; and and entry 
-called &quot;baz&quot;.  The text is copied to new memory and can be freed.  The 
-other arguments are copied into the menu item unchanged. </P>
-<P>If an item exists already with that name then it is replaced with 
-this new one.  Otherwise this new one is added to the end of the 
-correct menu or submenu.  The return value is the offset into the array 
-that the new entry was placed at. </P>
-<P>No bounds checking is done, the table must be big enough for all the 
-entries you plan to add.  Don't forget that there is a <TT>NULL</TT>
- terminator on the end, and the first time a item is added to a submenu 
-three items are added (the title and the <TT>NULL</TT> terminator, as 
-well as the actual menu item) </P>
-<P>The return value is the index into the array that the entry was put. </P>
-<H4><A name=Fl_Menu_.clear>void Fl_Menu_::clear()</A></H4>
- Delete all the menu items.  Don't do this if you used <TT>menu(x)</TT>
- to set it to your own array.  You should do this before destroying the <TT>
-Fl_Menu_</TT> widget if it uses it's own array. 
-<H4><A name=Fl_Menu_.replace>void Fl_Menu_::replace(int n, const char *)</A>
-</H4>
- Changes the text of item <TT>n</TT>.  The passed string is copied. 
-<H4><A name=Fl_Menu_.remove>void Fl_Menu_::remove(int n)</A></H4>
- Deletes item <TT>n</TT> from the menu. 
-<H4><A name=Fl_Menu_.shortcut>void Fl_Menu_::shortcut(int i, int n);</A></H4>
- Changes the shortcut of item <TT>i</TT> to <TT>n</TT>. 
-<H4><A name=Fl_Menu_.mode>void Fl_Menu_::mode(int i,int x);</A></H4>
- Changes the flags of item <TT>i</TT>. 
+
 <H4><A name=Fl_Menu_.textcolor>Fl_Color Fl_Menu_::textcolor() const
 <BR> void Fl_Menu_::textcolor(Fl_Color)</A></H4>
  Get or set the current color of menu item labels. 

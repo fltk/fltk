@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tile.cxx,v 1.5 1999/01/07 19:17:27 mike Exp $"
+// "$Id: Fl_Tile.cxx,v 1.5.2.2 1999/11/16 07:39:59 bill Exp $"
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
@@ -39,7 +39,7 @@ void Fl_Tile::position(int oix, int oiy, int newx, int newy) {
   Fl_Widget*const* a = array();
   short* p = sizes();
   p += 8; // skip group & resizable's saved size
-  for (int i=children(); i--;) {
+  for (int i=children(); i--; p += 4) {
     Fl_Widget* o = *a++;
     if (o == resizable()) continue;
     int X = o->x();
@@ -59,7 +59,6 @@ void Fl_Tile::position(int oix, int oiy, int newx, int newy) {
       if (t == oiy || t>oiy && B<newy || t<oiy && B>newy) B = newy;
     }
     o->damage_resize(X,Y,R-X,B-Y);
-    p += 4;
   }
 }
 
@@ -188,6 +187,7 @@ int Fl_Tile::handle(int event) {
     } else
       newy = sy;
     position(sx,sy,newx,newy);
+    do_callback();
     return 1;}
 
   }
@@ -196,5 +196,5 @@ int Fl_Tile::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Tile.cxx,v 1.5 1999/01/07 19:17:27 mike Exp $".
+// End of "$Id: Fl_Tile.cxx,v 1.5.2.2 1999/11/16 07:39:59 bill Exp $".
 //

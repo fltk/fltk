@@ -1,5 +1,5 @@
 //
-// "$Id: fl_cursor.cxx,v 1.6 1999/01/07 19:17:37 mike Exp $"
+// "$Id: fl_cursor.cxx,v 1.6.2.2 1999/12/06 14:43:40 mike Exp $"
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,10 @@ void fl_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 
 #ifdef WIN32
 
+#  ifndef IDC_HAND
+#    define IDC_HAND	MAKEINTRESOURCE(32649)
+#  endif // !IDC_HAND
+
 void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   if (!shown()) return;
   if (c > FL_CURSOR_NESW) {
@@ -57,7 +61,20 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
     case FL_CURSOR_WAIT:	n = IDC_WAIT; break;
     case FL_CURSOR_INSERT:	n = IDC_IBEAM; break;
     case FL_CURSOR_HELP:	n = IDC_HELP; break;
-    case FL_CURSOR_HAND:	n = IDC_UPARROW; break;
+    case FL_CURSOR_HAND: {
+          OSVERSIONINFO osvi;
+
+          // Get the OS version: Windows 98 and 2000 have a standard
+	  // hand cursor.
+          memset(&osvi, 0, sizeof(OSVERSIONINFO));
+          osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+          GetVersionEx(&osvi);
+
+          if (osvi.dwMajorVersion > 4 ||
+  	      (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion > 0 &&
+  	       osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)) n = IDC_HAND;
+          else n = IDC_UPARROW;
+	} break;
     case FL_CURSOR_MOVE:	n = IDC_SIZEALL; break;
     case FL_CURSOR_N:
     case FL_CURSOR_S:
@@ -167,5 +184,5 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #endif
 
 //
-// End of "$Id: fl_cursor.cxx,v 1.6 1999/01/07 19:17:37 mike Exp $".
+// End of "$Id: fl_cursor.cxx,v 1.6.2.2 1999/12/06 14:43:40 mike Exp $".
 //

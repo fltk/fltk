@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10 1999/02/16 21:59:49 mike Exp $"
+// "$Id: x.H,v 1.10.2.4 1999/10/16 19:58:20 bill Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,14 @@
 
 #else
 
+#if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
+#pragma set woff 3322
+#endif
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#if defined(_ABIN32) || defined(_ABI64)
+#pragma reset woff 3322
+#endif
 #include <X11/Xatom.h>
 #include "Fl_Window.H"
 
@@ -118,5 +124,5 @@ extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.10 1999/02/16 21:59:49 mike Exp $".
+// End of "$Id: x.H,v 1.10.2.4 1999/10/16 19:58:20 bill Exp $".
 //
