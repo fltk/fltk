@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- The Fl_Tabs widget should no longer be a focus hog;
+	  previously it would take focus from child widgets.
 	- The file chooser now activates the OK button when
 	  opening a directory in directory selection mode.
 	- Fixed a bug in the file chooser when entering an
