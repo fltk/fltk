@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.35 2002/06/06 13:40:49 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.36 2002/06/10 17:21:53 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -788,7 +788,7 @@ Fl_Help_View::format()
   int		column,		// Current table column number
 		columns[MAX_COLUMNS];
 				// Column widths
-  Fl_Color	tc, rc, c;	// Table/row/cell background color
+  Fl_Color	tc, rc;		// Table/row background color
 
 
   // Reset document width...
@@ -807,7 +807,7 @@ Fl_Help_View::format()
     textcolor_ = textcolor();
     linkcolor_ = selection_color();
 
-    tc = rc = c = bgcolor_;
+    tc = rc = bgcolor_;
 
     strcpy(title_, "Untitled");
 
@@ -2638,5 +2638,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.35 2002/06/06 13:40:49 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.36 2002/06/10 17:21:53 easysw Exp $".
 //
