@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.14 1999/01/07 19:17:15 mike Exp $"
+// "$Id: Fl.cxx,v 1.15 1999/01/19 19:04:30 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -413,8 +413,8 @@ int Fl::handle(int event, Fl_Window* window)
   case FL_MOVE:
   case FL_DRAG:
     // this should not happen if enter/leave events were reported
-    // correctly by the system, but just in case...
-    if (window != fl_xmousewin) handle(FL_ENTER, window);
+    // correctly by the system, but just in case:
+    fl_xmousewin = window;
     if (pushed()) {
       w = pushed();
       event = FL_DRAG;
@@ -450,9 +450,8 @@ int Fl::handle(int event, Fl_Window* window)
   case FL_KEYBOARD:
 
     // this should not happen if focus/unfocus events were reported
-    // correctly by the system, but just in case...
-    if (window != fl_xfocus) handle(FL_FOCUS, window);
-      
+    // correctly by the system, but just in case:
+    fl_xfocus = window;
     // Try it as keystroke, sending it to focus and all parents:
     for (w = grab() ? grab() : focus(); w; w = w->parent())
       if (w->handle(FL_KEYBOARD)) return 1;
@@ -667,5 +666,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.14 1999/01/07 19:17:15 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.15 1999/01/19 19:04:30 mike Exp $".
 //
