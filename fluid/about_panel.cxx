@@ -19,37 +19,37 @@ static void cb_OK(Fl_Return_Button* o, void*) {
 
 Fl_Window* make_about_panel(const char *copyright) {
   Fl_Window* w;
-  { Fl_Window* o = about_panel = new Fl_Window(309, 221, "about fluid");
+  { Fl_Window* o = about_panel = new Fl_Window(309, 258, "about fluid");
     w = o;
     o->box(FL_UP_BOX);
     o->color(97);
     o->selection_color(47);
     w->hotspot(o);
-    { Fl_Group* o = display_group = new Fl_Group(24, 14, 275, 186);
-      { Fl_Box* o = new Fl_Box(64, 14, 50, 126);
+    { Fl_Group* o = display_group = new Fl_Group(10, 10, 289, 240);
+      { Fl_Box* o = new Fl_Box(50, 30, 70, 150);
         o->box(FL_ROUND_UP_BOX);
         o->color(14);
         o->selection_color(47);
         o->labelcolor(6);
       }
-      { Fl_Box* o = new Fl_Box(54, 14, 70, 16);
+      { Fl_Box* o = new Fl_Box(50, 10, 90, 40);
         o->box(FL_FLAT_BOX);
         o->color(97);
         o->selection_color(47);
       }
-      { Fl_Box* o = new Fl_Box(68, 30, 42, 50);
+      { Fl_Box* o = new Fl_Box(60, 50, 50, 70);
         o->box(FL_DOWN_BOX);
         o->color(6);
         o->selection_color(47);
       }
-      { Fl_Box* o = new Fl_Box(54, 20, 70, 20);
+      { Fl_Box* o = new Fl_Box(40, 30, 90, 30);
         o->box(FL_ROUND_UP_BOX);
         o->color(6);
         o->selection_color(47);
         o->labelcolor(6);
         o->align(16);
       }
-      { Fl_Box* o = new Fl_Box(24, 110, 130, 90, "fluid");
+      { Fl_Box* o = new Fl_Box(10, 150, 150, 90, "fluid");
         o->box(FL_ROUND_UP_BOX);
         o->color(14);
         o->selection_color(47);
@@ -58,12 +58,12 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelsize(40);
         o->labelcolor(6);
       }
-      { Fl_Box* o = new Fl_Box(67, 110, 44, 10);
+      { Fl_Box* o = new Fl_Box(50, 150, 67, 10);
         o->box(FL_FLAT_BOX);
         o->color(14);
         o->selection_color(47);
       }
-      { Fl_Box* o = new Fl_Box(84, 120, 15, 15, "` ");
+      { Fl_Box* o = new Fl_Box(79, 160, 15, 15, "` ");
         o->box(FL_OVAL_BOX);
         o->color(6);
         o->selection_color(47);
@@ -71,7 +71,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelcolor(7);
         o->align(17);
       }
-      { Fl_Box* o = new Fl_Box(75, 105, 15, 15, "` ");
+      { Fl_Box* o = new Fl_Box(70, 145, 15, 15, "` ");
         o->box(FL_OVAL_BOX);
         o->color(6);
         o->selection_color(47);
@@ -79,7 +79,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelcolor(7);
         o->align(17);
       }
-      { Fl_Box* o = new Fl_Box(89, 85, 15, 15, "` ");
+      { Fl_Box* o = new Fl_Box(84, 125, 15, 15, "` ");
         o->box(FL_OVAL_BOX);
         o->color(6);
         o->selection_color(47);
@@ -87,7 +87,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelcolor(7);
         o->align(17);
       }
-      { Fl_Box* o = new Fl_Box(159, 27, 131, 95, "FLTK User\nInterface\nDesigner\nVersion 1.0");
+      { Fl_Box* o = new Fl_Box(150, 27, 140, 113, "FLTK User\nInterface\nDesigner\nVersion 1.0");
         o->box(FL_OVAL_BOX);
         o->color(12);
         o->selection_color(47);
@@ -96,7 +96,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelsize(18);
         o->labelcolor(7);
       }
-      { Fl_Button* o = new Fl_Button(169, 138, 115, 30, "\251\061\071\071\070-1999 by\nBill Spitzak and others");
+      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251\061\071\071\070-1999 by\nBill Spitzak and others");
         o->box(FL_THIN_UP_BOX);
         o->labelsize(10);
         o->labelcolor(136);
@@ -111,12 +111,11 @@ Fl_Window* make_about_panel(const char *copyright) {
       o->hide();
       o->label(copyright);
     }
-    { Fl_Return_Button* o = new Fl_Return_Button(168, 182, 116, 22, "OK");
+    { Fl_Return_Button* o = new Fl_Return_Button(180, 218, 116, 22, "OK");
       o->labelsize(10);
       o->callback((Fl_Callback*)cb_OK);
     }
     o->set_non_modal();
-    o->clear_border();
     o->end();
   }
   return w;
