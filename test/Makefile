@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.5 2001/08/02 21:11:43 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.6 2001/08/05 16:28:03 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -22,6 +22,8 @@
 #
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
+
+include ../makeinclude
 
 CPPFILES =\
 	CubeMain.cxx CubeView.cxx adjuster.cxx arc.cxx ask.cxx \
@@ -53,8 +55,6 @@ GLALL =	CubeView cube fullscreen fractals gl_overlay glpuzzle shiny shape
 all:	$(ALL) $(GLDEMOS)
 
 gldemos:	$(GLALL)
-
-include ../makeinclude
 
 # FLUID file rules
 .fl.cxx .fl.h:
@@ -127,5 +127,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.5 2001/08/02 21:11:43 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.6 2001/08/05 16:28:03 easysw Exp $".
 #
