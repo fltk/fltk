@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.17 2000/06/05 21:21:03 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.18 2000/06/18 00:38:41 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
-#if HAVE_POLL
+#if USE_POLL
 
 #include <poll.h>
 static pollfd *pollfds = 0;
@@ -65,13 +65,15 @@ static int maxfd;
 #define POLLOUT 4
 #define POLLERR 8
 
-#endif /* HAVE_POLL */
+#endif /* USE_POLL */
 
 static int nfds = 0;
 static int fd_array_size = 0;
 static struct FD {
+#if !USE_POLL
   int fd;
   short events;
+#endif
   void (*cb)(int, void*);
   void* arg;
 } *fd = 0;
@@ -82,18 +84,18 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   if (i >= fd_array_size) {
     fd_array_size = 2*fd_array_size+1;
     fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
-#if HAVE_POLL
+#if USE_POLL
     pollfds = (pollfd*)realloc(pollfds, fd_array_size*sizeof(pollfd));
 #endif
   }
-  fd[i].fd = n;
-  fd[i].events = events;
   fd[i].cb = cb;
   fd[i].arg = v;
-#if HAVE_POLL
-  fds[i].fd = n;
-  fds[i].events = events;
+#if USE_POLL
+  pollfds[i].fd = n;
+  pollfds[i].events = events;
 #else
+  fd[i].fd = n;
+  fd[i].events = events;
   if (events & POLLIN) FD_SET(n, &fdsets[0]);
   if (events & POLLOUT) FD_SET(n, &fdsets[1]);
   if (events & POLLERR) FD_SET(n, &fdsets[2]);
@@ -108,25 +110,30 @@ void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
 void Fl::remove_fd(int n, int events) {
   int i,j;
   for (i=j=0; i<nfds; i++) {
+#if USE_POLL
+    if (pollfds[i].fd == n) {
+      int e = pollfds[i].events & ~events;
+      if (!e) continue; // if no events left, delete this fd
+      pollfds[j].events = e;
+    }
+#else
     if (fd[i].fd == n) {
       int e = fd[i].events & ~events;
       if (!e) continue; // if no events left, delete this fd
       fd[i].events = e;
-#if HAVE_POLL
-      fds[j].events = e;
-#endif
     }
+#endif
     // move it down in the array if necessary:
     if (j<i) {
-      fd[j]=fd[i];
-#if HAVE_POLL
-      fds[j]=fds[i];
+      fd[j] = fd[i];
+#if USE_POLL
+      pollfds[j] = pollfds[i];
 #endif
     }
     j++;
   }
   nfds = j;
-#if !HAVE_POLL
+#if !USE_POLL
   if (events & POLLIN) FD_CLR(n, &fdsets[0]);
   if (events & POLLOUT) FD_CLR(n, &fdsets[1]);
   if (events & POLLERR) FD_CLR(n, &fdsets[2]);
@@ -136,22 +143,6 @@ void Fl::remove_fd(int n, int events) {
 
 void Fl::remove_fd(int n) {
   remove_fd(n, -1);
-}
-
-int fl_ready() {
-  if (XQLength(fl_display)) return 1;
-#if HAVE_POLL
-  return ::poll(fds, nfds, 0);
-#else
-  timeval t;
-  t.tv_sec = 0;
-  t.tv_usec = 0;
-  fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-  return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
-#endif
 }
 
 #if CONSOLIDATE_MOTION
@@ -172,14 +163,17 @@ static void do_queued_events() {
 #endif
 }
 
-double fl_wait(int timeout_flag, double time) {
+// This is never called with time_to_wait < 0.0:
+// It should return negative on error, 0 if nothing happens before
+// timeout, and >0 if any callbacks were done.
+int fl_wait(double time_to_wait) {
 
   // OpenGL and other broken libraries call XEventsQueued
   // unnecessarily and thus cause the file descriptor to not be ready,
   // so we must check for already-read events:
-  if (XQLength(fl_display)) {do_queued_events(); return time;}
+  if (fl_display && XQLength(fl_display)) {do_queued_events(); return 1;}
 
-#if !HAVE_POLL
+#if !USE_POLL
   fd_set fdt[3];
   fdt[0] = fdsets[0];
   fdt[1] = fdsets[1];
@@ -187,31 +181,26 @@ double fl_wait(int timeout_flag, double time) {
 #endif
   int n;
 
-  if (!timeout_flag) {
-#if HAVE_POLL
-    n = ::poll(fds, nfds, -1);
-#else
-    n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],0);
-#endif
-  } else {
-#if HAVE_POLL
-    int n = ::poll(fds, nfds, time > 0.0 ? int(time*1000) : 0);
+  if (time_to_wait < 2147483.648) {
+#if USE_POLL
+    n = ::poll(pollfds, nfds, int(time_to_wait*1000 + .5));
 #else
     timeval t;
-    if (time <= 0.0) {
-      t.tv_sec = 0;
-      t.tv_usec = 0;
-    } else {
-      t.tv_sec = int(time);
-      t.tv_usec = int(1000000 * (time-t.tv_sec));
-    }
+    t.tv_sec = int(time_to_wait);
+    t.tv_usec = int(1000000 * (time_to_wait-t.tv_sec));
     n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
+#endif
+  } else {
+#if USE_POLL
+    n = ::poll(pollfds, nfds, -1);
+#else
+    n = ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],0);
 #endif
   }
   if (n > 0) {
     for (int i=0; i<nfds; i++) {
-#if HAVE_POLL
-      if (fds[i].revents) fd[i].cb(fd[i].fd, fd[i].arg);
+#if USE_POLL
+      if (pollfds[i].revents) fd[i].cb(pollfds[i].fd, fd[i].arg);
 #else
       int f = fd[i].fd;
       short revents = 0;
@@ -222,7 +211,24 @@ double fl_wait(int timeout_flag, double time) {
 #endif
     }
   }
-  return time;
+  return n;
+}
+
+// fl_ready() is just like fl_wait(0.0) except no callbacks are done:
+int fl_ready() {
+  if (XQLength(fl_display)) return 1;
+#if USE_POLL
+  return ::poll(pollfds, nfds, 0);
+#else
+  timeval t;
+  t.tv_sec = 0;
+  t.tv_usec = 0;
+  fd_set fdt[3];
+  fdt[0] = fdsets[0];
+  fdt[1] = fdsets[1];
+  fdt[2] = fdsets[2];
+  return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////
@@ -890,5 +896,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.17 2000/06/05 21:21:03 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.18 2000/06/18 00:38:41 bill Exp $".
 //

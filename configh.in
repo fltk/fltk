@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.4 2000/06/07 12:11:52 mike Exp $"
+ * "$Id: configh.in,v 1.11.2.5 2000/06/18 00:38:37 bill Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -145,13 +145,13 @@
 #define HAVE_SYS_SELECT_H 0
 
 /*
- * HAVE_POLL:
+ * USE_POLL:
  *
- * Use poll() if we don't have select().
+ * Use the poll() call provided on Linux and Irix instead of select()
  */
 
-#define HAVE_POLL 0
+#define USE_POLL 0
 
 /*
- * End of "$Id: configh.in,v 1.11.2.4 2000/06/07 12:11:52 mike Exp $".
+ * End of "$Id: configh.in,v 1.11.2.5 2000/06/18 00:38:37 bill Exp $".
  */

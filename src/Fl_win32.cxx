@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.26 2000/06/05 21:21:02 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.27 2000/06/18 00:38:40 bill Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -151,24 +151,14 @@ void Fl::remove_fd(int n) {
 
 MSG fl_msg;
 
-int fl_ready() {
-  if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
+#define FOREVER 1e20
 
-#ifdef USE_ASYNC_SELECT
-  return (0);
-#else
-  timeval t;
-  t.tv_sec = 0;
-  t.tv_usec = 0;
-  fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-  return ::select(0,&fdt[0],&fdt[1],&fdt[2],&t);
-#endif // USE_ASYNC_SELECT
-}
-
-double fl_wait(int timeout_flag, double time) {
+// This is never called with time_to_wait < 0.0.
+// It *should* return negative on error, 0 if nothing happens before
+// timeout, and >0 if any callbacks were done.  This version only
+// returns zero if nothing happens during a 0.0 timeout, otherwise
+// it returns 1.
+int fl_wait(double time_to_wait) {
   int have_message = 0;
   int timerid;
 
@@ -195,46 +185,29 @@ double fl_wait(int timeout_flag, double time) {
 	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
 	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
       }
+      time_to_wait = 0.0; // just peek for any messages
+    } else {
+      // we need to check them periodically, so set a short timeout:
+      if (time_to_wait > .001) time_to_wait = .001;
     }
   }
 #endif // USE_ASYNC_SELECT
 
-  // get the first message by waiting the correct amount of time:
-  if (!timeout_flag) {
-#ifdef USE_ASYNC_SELECT
-    // Wait for a message...
-    have_message = GetMessage(&fl_msg, NULL, 0, 0);
-#else
-    // If we are monitoring sockets we need to check them periodically,
-    // so set a timer in this case...
-    if (nfds) {
-      // First see if there is a message waiting...
-      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
-      if (!have_message) {
-	// If not then set a 1ms timer...
-	timerid = SetTimer(NULL, 0, 1, NULL);
-	GetMessage(&fl_msg, NULL, 0, 0);
-	KillTimer(NULL, timerid);
-      }
-    } else {
-      // Wait for a message...
-      GetMessage(&fl_msg, NULL, 0, 0);
-    }
-    have_message = 1;
-#endif // USE_ASYNC_SELECT
-  } else {
+  if (time_to_wait < 2147483.648) {
     // Perform the requested timeout...
     have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
-    if (!have_message && time > 0.0) {
-      int t = (int)(time * 1000.0);
-      if (t <= 0) t = 1;
+    if (!have_message) {
+      int t = (int)(time_to_wait * 1000.0 + .5);
+      if (t <= 0) return 0; // too short to measure
       timerid = SetTimer(NULL, 0, t, NULL);
       have_message = GetMessage(&fl_msg, NULL, 0, 0);
       KillTimer(NULL, timerid);
     }
+  } else {
+    have_message = GetMessage(&fl_msg, NULL, 0, 0);
   }
 
-  // execute it, them execute any other messages that become ready during it:
+  // Execute the message we got, and all other pending messages:
   while (have_message) {
 #ifdef USE_ASYNC_SELECT
     if (fl_msg.message == WM_FLSELECT) {
@@ -244,20 +217,33 @@ double fl_wait(int timeout_flag, double time) {
 	  (fd[i].cb)(fd[i].fd, fd[i].arg);
 	  break;
 	}
-    } else {
-      // Some other message...
-      TranslateMessage(&fl_msg);
-      DispatchMessage(&fl_msg);
+      // looks like it is best to do the dispatch-message anyway:
     }
-#else
+#endif
     TranslateMessage(&fl_msg);
     DispatchMessage(&fl_msg);
-#endif // USE_ASYNC_SELECT
-
     have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
   }
 
-  return time;
+  // This should return 0 if only timer events were handled:
+  return 1;
+}
+
+// fl_ready() is just like fl_wait(0.0) except no callbacks are done:
+int fl_ready() {
+  if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
+#ifdef USE_ASYNC_SELECT
+  return (0);
+#else
+  timeval t;
+  t.tv_sec = 0;
+  t.tv_usec = 0;
+  fd_set fdt[3];
+  fdt[0] = fdsets[0];
+  fdt[1] = fdsets[1];
+  fdt[2] = fdsets[2];
+  return ::select(0,&fdt[0],&fdt[1],&fdt[2],&t);
+#endif // USE_ASYNC_SELECT
 }
 
 ////////////////////////////////////////////////////////////////
@@ -967,5 +953,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.26 2000/06/05 21:21:02 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.27 2000/06/18 00:38:40 bill Exp $".
 //
