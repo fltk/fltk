@@ -4,8 +4,8 @@ README - Fast Light Tool Kit (FLTK) Version 1.0
 WHAT IS FLTK?
 
     FLTK (pronounced "fulltick") is a LGPL'd C++ graphical user
-    interface toolkit for X (UNIX(r)), OpenGL, and WIN32 (Microsoft(r)
-    Windows(r) NT 4.0, 95, or 98). It is currently maintained by a small
+    interface toolkit for X (UNIX(r)), OpenGL, and Microsoft(r)
+    Windows(r) NT 4.0, 95, or 98. It is currently maintained by a small
     group of developers across the world with a central repository in
     the US. 
 
@@ -158,6 +158,7 @@ BUILDING FLTK UNDER OS/2
     To build the XFree86 version of FLTK for OS/2, copy the appropriate
     makeinclude and config files to the main directory and do a make:
 
+        cp makefiles/Makefile.os2x Makefile
 	cp makefiles/makeinclude.os2x makeinclude
 	cp makefiles/config.os2x config.h
 	make
@@ -233,10 +234,10 @@ HOW TO WRITE PROGRAMS THAT USE FLTK
     switches.  If not you will need to provide a "-Idir" switch
     pointing to this directory (all the headers are in ./FL).
 
-    Windows developers please note: case *is* significant under other
-    operating systems, and the C standard uses the forward slash (/) to
-    separate directories.  The following #include directives are *not*
-    recommended for portability reasons:
+    Microsoft Windows developers please note: case *is* significant
+    under other operating systems, and the C standard uses the forward
+    slash (/) to separate directories.  The following #include
+    directives are *not* recommended for portability reasons:
 
         #include <fl\fl_xyz.h>
 	#include <fl/fl_xyz.h>
