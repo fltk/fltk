@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.8 2002/04/30 22:25:18 matthiaswm Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.9 2002/05/01 00:03:35 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -545,7 +545,7 @@ void Fl_Preferences::flush()
 Fl_Preferences::Name::Name( unsigned int n )
 {
   data_ = (char*)malloc(20);
-  itoa( n, data_, 10 );
+  sprintf(data_, "%u", n);
 }
 
 /**
@@ -1084,5 +1084,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.8 2002/04/30 22:25:18 matthiaswm Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.9 2002/05/01 00:03:35 easysw Exp $".
 //
