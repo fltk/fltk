@@ -708,7 +708,7 @@ int Fl::handle(int e, Fl_Window* window)
 
     // and then try a shortcut with the case of the text swapped, by
     // changing the text and falling through to FL_SHORTCUT case:
-    {char* c = (char*)event_text(); // cast away const
+    {unsigned char* c = (unsigned char*)event_text(); // cast away const
     if (!isalpha(*c)) return 0;
     *c = isupper(*c) ? tolower(*c) : toupper(*c);}
     e_number = e = FL_SHORTCUT;
