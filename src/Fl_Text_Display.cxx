@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.26 2002/08/15 17:26:46 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.27 2002/08/20 17:12:19 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -301,7 +301,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     scroll_(mTopLineNumHint, mHorizOffsetHint);
 
   // everything will fit in the viewport
-  if (mNBufferLines < mNVisibleLines)
+  if (mNBufferLines < mNVisibleLines || mBuffer == NULL || mBuffer->length() == 0)
     scroll_(1, mHorizOffset);
   /* if empty lines become visible, there may be an opportunity to
      display more text by scrolling down */
@@ -1976,5 +1976,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.26 2002/08/15 17:26:46 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.27 2002/08/20 17:12:19 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Text_Display::resize() could go into an infinite
+	  loop if the buffer is emptied.
 	- Fl::handle() didn't pass FL_RELEASE events to the
 	  grab() widget if pushed() was set (for proper menu
 	  handling...)
