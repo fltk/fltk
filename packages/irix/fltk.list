@@ -1,4 +1,4 @@
-f 0444 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
+f 0555 root sys usr/bin/X11/fluid fluid/fluid fltk.sw.dev
 f 0444 root sys usr/catman/pman/cat1/fluid.z documentation/fluid.z fltk.man.dev
 f 0444 root sys usr/include/FL/Enumerations.H FL/Enumerations.H fltk.sw.dev
 l 0000 root sys usr/include/FL/Enumerations.h - fltk.sw.dev symval("FL/Enumerations.H")
