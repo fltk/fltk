@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.12 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.13 2002/10/28 19:43:24 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -109,6 +109,14 @@ int Fl::arg(int argc, char **argv, int &i) {
     i++;
     return 1;
   }
+#ifdef __APPLE__
+  // The Finder application in MacOS X passes the "-psn_N_NNNNN" option
+  // to all apps...
+  else if (strncmp(s, "psn_", 4) == 0) {
+    i++;
+    return 1;
+  }
+#endif // __APPLE__
 
   const char *v = argv[i+1];
   if (i >= argc-1 || !v)
@@ -412,5 +420,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.12 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.13 2002/10/28 19:43:24 easysw Exp $".
 //
