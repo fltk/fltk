@@ -15,6 +15,8 @@ CHANGES IN FLTK 1.1.0b3
 	- fl_line_style() used different default cap and join
 	  options for WIN32 and X11.
 
+	- Documentation updates from A. Suatoni.
+
 
 CHANGES IN FLTK 1.1.0b2
 

@@ -128,16 +128,15 @@ are ignored.  (this is ignored on WIN32)</LI>
  window managers)</LI>
 </UL>
  If this function is not called, FLTK tries to figure out the range 
-from the setting of <A href=#Fl_Group.resizable><TT>resizeable()</TT></A>
-: 
+from the setting of <A href="Fl_Group.html#Fl_Group.resizable"><TT>resizable()</TT></A>:
 <UL>
-<LI>If <TT>resizeable()</TT> is <TT>NULL</TT> (this is the  default) 
+<LI>If <TT>resizable()</TT> is <TT>NULL</TT> (this is the  default) 
 then the window cannot be resized and the resize  border and max-size 
 control will not be displayed for the  window. </LI>
-<LI>If either dimension of <TT>resizeable()</TT> is less than  100, 
+<LI>If either dimension of <TT>resizable()</TT> is less than  100, 
 then that is considered the minimum size.  Otherwise the <TT>
-resizeable()</TT> has a minimum size of 100. </LI>
-<LI>If either dimension of <TT>resizeable()</TT> is zero, then  that is 
+resizable()</TT> has a minimum size of 100. </LI>
+<LI>If either dimension of <TT>resizable()</TT> is zero, then  that is 
 also the maximum size (so the window cannot resize in  that direction). </LI>
 </UL>
  It is undefined what happens if the current size does not fit in the 

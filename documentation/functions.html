@@ -33,14 +33,14 @@ zero and leaves RGB unchanged.
 
 <P>If you use the color chooser on an 8-bit screen, it will allocate
 all the available colors, leaving you no space to exactly represent the
-color the user picks!  You can however use <A href=#fl_rectf><tt>
+color the user picks!  You can however use <A href="drawing.html#fast"><tt>
 fl_rectf()</tt></A> to fill a region with a simulated color using
 dithering.
 
 <h3><A name=fl_show_colormap>int fl_show_colormap(int oldcol)</A></h3>
 
 <tt>fl_show_colormap()</tt> pops up a panel of the 256 colors you can
-access with <A href=#fl_color><tt>fl_color()</tt></A> and lets the user
+access with <A href="drawing.html#fl_color"><tt>fl_color()</tt></A> and lets the user
 pick one of them.  It returns the new color index, or the old one if
 the user types ESC or clicks outside the window.
 <P ALIGN=CENTER><IMG src="fl_show_colormap.gif" ALT="The fl_show_colormap dialog">
@@ -53,7 +53,7 @@ window, or may be many lines by putting <tt>\n</tt> characters into it.
 The enter key is a shortcut for the OK button.
 <P ALIGN=CENTER><IMG src="fl_message.gif" ALT="The fl_message window.">
 
-<h3><A name=fl_>void fl_alert(const char *, ...)</A></h3>
+<h3><A name="fl_alert">void fl_alert(const char *, ...)</A></h3>
 
 Same as <tt>fl_message()</tt> except for the &quot;!&quot; symbol.
 <P ALIGN=CENTER><IMG src="fl_alert.gif" ALT="The fl_alert window">
@@ -585,7 +585,7 @@ FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
 FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
 FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter</tt>.  Be
 careful not to confuse these with the very similar, but all-caps,
-symbols used by <A href=events.html#event_state><tt>Fl::event_state()</tt>
+symbols used by <A href="#event_state"><tt>Fl::event_state()</tt>
 </A>. </LI>
 </UL>
 
@@ -631,7 +631,7 @@ after</I> the shift key is pressed or released.
 <h3><A name=event_text>char *Fl::event_text()</A></h3>
 
 Returns the ASCII text (in the future this may be UTF-8) produced by
-the last <tt>FL_KEYBOARD</tt> or <tt>FL_PASTEM</tt> or possibly other
+the last <tt>FL_KEYBOARD</tt> or <tt>FL_PASTE</tt> or possibly other
 event.  A zero-length string is returned for any keyboard function keys
 that do not produce text. This pointer points at a static buffer and is
 only valid until the next event is processed.
@@ -831,7 +831,7 @@ However the colors may flash as you move the cursor between windows.
 
 <h3><A name=paste>static void Fl::paste(Fl_Widget *receiver)</A></h3>
 
-Set things up so the receiver widget will be called with an <A href=#FL_PASTE>
+Set things up so the receiver widget will be called with an <A href="enumerations.html#events">
 <tt>FL_PASTE</tt></A> event some time in the future. The reciever
 should be prepared to be called <I>directly</I> by this, or for it to
 happen <I>later</I>, or possibly <I>not at all</I>.  This allows the
@@ -1001,7 +1001,7 @@ specific labeltype.
 Test the current event, which must be an <tt>FL_KEYBOARD</tt> or <tt>
 FL_SHORTCUT</tt>, against a shortcut value (described in <A href=Fl_Button.html#Fl_Button.shortcut>
 <tt>Fl_Button</tt></A>).  Returns non-zero if there is a match.  Not to
-be confused with <A href=#Fl_Widge.test_shortcut><tt>
+be confused with <A href="subclassing.html#test_shortcut"><tt>
 Fl_Widget::test_shortcut()</tt></A>.
 
 <h3><A name=visual>static int Fl::visual(int)</A></h3>
@@ -1017,7 +1017,7 @@ brain-dead notions.
 <UL>
 <LI><tt>Fl::visual(FL_RGB)</tt>
 <BR>Full/true color (if there are several depths FLTK chooses  the
-largest).  Do this if you use <A href=#fl_draw_image><tt>fl_draw_image</tt>
+largest).  Do this if you use <A href="drawing.html#fl_draw_image"><tt>fl_draw_image</tt>
 </A> for much better (non-dithered)  output.
 <BR>&nbsp; </LI>
 <LI><tt>Fl::visual(FL_RGB8)</tt>
