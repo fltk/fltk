@@ -127,8 +127,7 @@ context for this window or when the window resizes, and is turned on <I>
 after</I><TT>draw()</TT> is called.  You can use this inside your <TT>
 draw()</TT> method to avoid unneccessarily initializing the OpenGL 
 context.  Just do this: 
-<UL>
-<PRE>
+<UL><PRE>
 void mywindow::draw() {
   if (!valid()) {
     glViewport(0,0,w(),h());
@@ -138,9 +137,7 @@ void mywindow::draw() {
   }
   ... draw your geometry here ...
 }
-
-<BR>void Fl_Gl_Window::invalidate();
-<BR>void Fl_Gl_Window::valid(char i);
+</PRE></UL>
 
 <TT>Fl_Gl_Window::valid()</TT> is turned off when FLTK creates a
 new context for this window and by the window resizing, and is turned
@@ -148,8 +145,8 @@ on <I>after</I> draw() is called.  You can use this inside your draw()
 method to avoid unneccessarily initializing the OpenGL context.  Just
 do this:
 
-</PRE>
-<PRE><TT>void mywindow::draw() {
+<UL><PRE>
+void mywindow::draw() {
   if (!valid()) {
     glViewport(0,0,w(),h());
     glFrustum(...);
@@ -158,11 +155,11 @@ do this:
   }
   ... draw your geometry here ...
 }
-</TT></PRE>
-</UL>
- You can turn <TT>valid()</TT> on by calling <TT>valid(1)</TT>.  You 
+</PRE></UL>
+
+You can turn <TT>valid()</TT> on by calling <TT>valid(1)</TT>.  You 
 should only do this after fixing the transformation inside a <TT>draw()</TT>
- or after <TT>make_current()</TT>.  This is done automatically after <TT>
+or after <TT>make_current()</TT>.  This is done automatically after <TT>
 draw()</TT> returns. 
 <H4><A name=Fl_Gl_Window.invalidate>void Fl_Gl_Window::invalidate()</A></H4>
  The <TT>invalidate()</TT> method turns off <TT>valid()</TT> and is 

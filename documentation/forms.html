@@ -166,7 +166,7 @@ have to rewrite things a lot. </P>
 <H3>You Cannot Use &lt;device.h&gt;</H3>
  If you have written your own &quot;free&quot; widgets you will probably get a 
 lot of errors about &quot;getvaluator&quot;.  You should substitute: 
-<TABLE border=1>
+<CENTER><TABLE border=1 WIDTH=90%>
 <TR><TH align=center>Forms</TH><TH align=center>FLTK</TH></TR>
 <TR><TD>MOUSE_X</TD><TD>Fl::event_x_root()</TD></TR>
 <TR><TD>MOUSE_Y</TD><TD>Fl::event_y_root()</TD></TR>
@@ -177,7 +177,7 @@ lot of errors about &quot;getvaluator&quot;.  You should substitute:
 <TR><TD>MOUSE1,RIGHTMOUSE</TD><TD>Fl::event_state()</TD></TR>
 <TR><TD>MOUSE2,MIDDLEMOUSE</TD><TD>Fl::event_state()</TD></TR>
 <TR><TD>MOUSE3,LEFTMOUSE</TD><TD>Fl::event_state()</TD></TR>
-</TABLE>
+</TABLE></CENTER>
  Anything else in <TT>getvaluator</TT> and you are on your own... 
 <H3>Font Numbers Are Different</H3>
  The &quot;style&quot; numbers have been changed because I wanted to insert 

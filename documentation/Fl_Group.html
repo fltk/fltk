@@ -87,9 +87,7 @@ automatically called by the constructor for Fl_Group (and thus for
 Fl_Window as well). <TT>begin()</TT> does <TT>current(this)</TT>. 
 <P><I>Don't forget to <TT>end()</TT> the group or window!</I></P>
 <H4><A name=Fl_Group.child>Fl_Widget *Fl_Group::child(int n) const</A></H4>
- Returns child <TT>n</TT>, where <TT>0 
-<!--= n < children()</tt-->
-. 
+ Returns child <TT>n</TT>, where <TT>0 &lt;= n &lt; children()</TT>. 
 <H4><A name=Fl_Group.children>int Fl_Group::children() const</A></H4>
  Returns how many child widgets the group has. 
 <H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()

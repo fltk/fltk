@@ -559,11 +559,9 @@ other programs).  The window <I>does not have to be <TT>shown()</TT></I>
 all event handling and allows you to map and unmap a complex set of 
 windows (under both X and WIN32 <I>some</I> window must be mapped 
 because the system interface needs a window id). 
-<P><TT>Fl::event_x()</TT> and <TT>Fl::event_y()
-<!--.tt-->
- are undefined if the 
+<P><TT>Fl::event_x()</TT> and <TT>Fl::event_y()</TT> are undefined if the 
 passed widget is not a mapped <TT>Fl_Window</TT>.  Use <TT>
-Fl::event_x_root()</TT> and <TT>Fl::event_y_root()</TT> instead. </TT></P>
+Fl::event_x_root()</TT> and <TT>Fl::event_y_root()</TT> instead.</P>
 <P><I>Be careful that your program does not enter an infinite loop 
 while <TT>grab()</TT> is on.  On X this will lock up your screen!</I></P>
 <P>The second function returns the current grab window, or <TT>NULL</TT>
