@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.9 1999/02/19 13:07:40 mike Exp $"
+// "$Id: filename_list.cxx,v 1.10 1999/02/22 20:54:44 mike Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -45,7 +45,7 @@ int filename_list(const char *d, dirent ***list) {
   // error in the prototype for the sorting function, where a level
   // of pointer indirection is missing:
   return scandir(d, list, 0, (int(*)(const void*,const void*))numericsort);
-#elif defined(hpux)
+#elif defined(__hpux)
   // HP-UX defines the comparison function to take const pointers instead of
   // ordinary ones...
   return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))numericsort);
@@ -55,5 +55,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.9 1999/02/19 13:07:40 mike Exp $".
+// End of "$Id: filename_list.cxx,v 1.10 1999/02/22 20:54:44 mike Exp $".
 //
