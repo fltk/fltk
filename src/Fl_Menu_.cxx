@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.3 1999/04/19 07:01:23 bill Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -113,11 +113,11 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
 }
 
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
-  int n = m->size()+1;
+  int n = m->size();
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
   memcpy(newMenu, m, n*sizeof(Fl_Menu_Item));
   menu(newMenu);
-  alloc = 1; // make destructor free it
+  alloc = 1; // make destructor free array, but not strings
   // for convienence, provide way to change all the user data pointers:
   if (user_data) for (; n--;) {
     if (newMenu->callback_) newMenu->user_data_ = user_data;
@@ -129,16 +129,24 @@ Fl_Menu_::~Fl_Menu_() {
   clear();
 }
 
+// Fl_Menu::add() uses this to indicate the owner of the dynamically-
+// expanding array.  We must not free this array:
+Fl_Menu_* fl_menu_array_owner = 0;
+
 void Fl_Menu_::clear() {
   if (alloc) {
     if (alloc>1) for (int i = size(); i--;)
       if (menu_[i].text) free((void*)menu_[i].text);
-    delete[] menu_;
+    if (this == fl_menu_array_owner)
+      fl_menu_array_owner = 0;
+    else
+      delete[] menu_;
     menu_ = 0;
+    value_ = 0;
     alloc = 0;
   }
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7 1999/03/04 17:36:08 mike Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.3 1999/04/19 07:01:23 bill Exp $".
 //

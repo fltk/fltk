@@ -1,7 +1,7 @@
 product
   tag			fltk
-  revision		1.0
-  title			Fast Light Tool Kit, 1.0
+  revision		1.0.2
+  title			Fast Light Tool Kit, 1.0.2
   description		C++ GUI toolkit for UNIX and Microsoft Windows.
   copyright		Copyright 1998-1999, see the GNU Library General Public License for details.
   number		HP-FLTK
@@ -13,15 +13,15 @@ product
 
   fileset
     tag			dso
-    title		FLTK - Shared Libraries, 1.0
+    title		FLTK - Shared Libraries, 1.0.2
 
-    file -m 0000 -o root -g sys lib/libfltk.sl /usr/lib/libfltk.sl
-    file -m 0555 -o root -g sys lib/libfltk.sl.1 /usr/lib/libfltk.sl.1
+    file -m 0000 -o root -g sys packages/hpux/links/libfltk.sl /usr/lib/libfltk.sl
+    file -m 0555 -o root -g sys src/libfltk.sl.1 /usr/lib/libfltk.sl.1
   end
 
   fileset
     tag			doc
-    title		FLTK - Documentation, 1.0
+    title		FLTK - Documentation, 1.0.2
 
     file -m 0444 -o root -g sys documentation/adjuster1.gif /usr/info/fltk/adjuster1.gif
     file -m 0444 -o root -g sys documentation/ask.C.gif /usr/info/fltk/ask.C.gif
@@ -158,7 +158,7 @@ product
 
   fileset
     tag			dev
-    title		FLTK - Development Software, 1.0
+    title		FLTK - Development Software, 1.0.2
 
     file -m 0444 -o root -g sys fluid/fluid /usr/bin/X11/fluid
     file -m 0444 -o root -g sys FL/dirent.h /usr/include/FL/dirent.h

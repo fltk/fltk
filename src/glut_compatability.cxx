@@ -1,5 +1,5 @@
 //
-// "$Id: glut_compatability.cxx,v 1.4 1999/01/07 19:17:46 mike Exp $"
+// "$Id: glut_compatability.cxx,v 1.4.2.1 1999/03/18 20:04:13 bill Exp $"
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
@@ -92,7 +92,7 @@ int Fl_Glut_Window::handle(int event) {
     break;
 
   case FL_RELEASE:
-    for (button = 0; button < 3; button++) if (mouse_down & 1<<button) {
+    for (button = 0; button < 3; button++) if (mouse_down & (1<<button)) {
       if (mouse) mouse(button,GLUT_UP,ex,ey);
     }
     mouse_down = 0;
@@ -399,5 +399,5 @@ int glutLayerGet(GLenum type) {
 #endif
 
 //
-// End of "$Id: glut_compatability.cxx,v 1.4 1999/01/07 19:17:46 mike Exp $".
+// End of "$Id: glut_compatability.cxx,v 1.4.2.1 1999/03/18 20:04:13 bill Exp $".
 //

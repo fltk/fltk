@@ -3,8 +3,8 @@
 # makedist - make a digital unix distribution.
 #
 
-rm -rf fltk-1.0-dunix
-mkdir fltk-1.0-dunix
+rm -rf fltk-1.0.2-dunix
+mkdir fltk-1.0.2-dunix
 
 echo "Building distribution tree..."
 rm -rf usr
@@ -23,7 +23,7 @@ cp ../../fluid/fluid usr/bin/X11
 strip usr/bin/X11/fluid
 
 cp ../../lib/libfltk.a usr/lib
-cp ../../lib/libfltk.so.1 usr/lib
+cp ../../src/libfltk.so.1 usr/lib
 ln -sf libfltk.so.1 usr/lib/libfltk.so
 
 cp ../../documentation/*.html usr/info/fltk
@@ -40,16 +40,16 @@ for file in *.H; do
 done
 cd ../../..
 
-kits fltk.key . fltk-1.0-dunix
+kits fltk.key . fltk-1.0.2-dunix
 
 echo "Archiving distribution..."
 
-tar cf fltk-1.0-dunix.tar fltk-1.0-dunix
+tar cf fltk-1.0.2-dunix.tar fltk-1.0.2-dunix
 
 echo "Compressing distribution..."
-rm -f fltk-1.0-dunix.tar.gz
-gzip -9 fltk-1.0-dunix.tar
+rm -f fltk-1.0.2-dunix.tar.gz
+gzip -9 fltk-1.0.2-dunix.tar
 
 echo "Removing temporary distribution files..."
-rm -rf fltk-1.0-dunix
+rm -rf fltk-1.0.2-dunix
 rm -rf usr

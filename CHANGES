@@ -1,0 +1,61 @@
+CHANGES SINCE FLTK 1.0.1
+
+    - Documentation updates
+    - The Visual C++ project files didn't include fl_add_idle.cxx.
+    - LIBRARY/DSO name inconsistencies in src/Makefile.
+    - src/Makefile didn't clean the DSO.
+    - The valuator demo now has only a single callback.
+    - The code looked for HAVE_SYS_SELECT_H, but the
+      config file uses HAVE_SYS_SELECT.
+    - Fl_Image redraw not quite right under X11 or WIN32
+    - Problems with timeouts & cube demo under WIN32
+    - FLUID problems with inline functions.
+    - Documentation fixes...
+    - Fl_Browser::item_height() didn't handle blank lines or
+      non-default fonts properly.
+    - FL/math.h didn't have #ifndef...#define...#endif guards
+      against multiple inclusion...
+    - Fl_Menu_::copy() fix - didn't allocate power of 2...
+    - Fl::damage() now remains true until all windows are actually
+      redrawn.
+    - Fl_Widget destructor, hide(), and deactivate() methods no longer
+      send FL_LEAVE, FL_RELEASE, or FL_UNFOCUS events to the widget
+      (which could cause applications to crash).
+    - FLUID now outputs symbolic names for align() and when().
+    - Fixed select() to use maxfd + 1 instead of maxfd.
+    - Added "Fl::remove_fd(fd, when)" function so you can remove the
+      read and write callbacks separately.
+    - The Fl::add_fd() and Fl::add_timeout() arrays are now dynamically
+      allocated.
+    - FLUID didn't always turn the FL_SUBMENU flag on for submenu titles.
+    - The "extra code" in FLUID now is placed before the "o->end()" call
+      for Fl_Group and its derived classes.
+    - You can now set a FL_Window widget's class in FLUID to Fl_Group to
+      generate a function or class that builds part of a GUI (i.e. no window).
+    - FLUID now displays "Save file before exiting?" with the standard yes,
+      no, and cancel buttons rather than "Discard changes?".
+    - Fl_Menu_::add() now works with any type of menu, even one set with
+      the menu() method.
+    - The keypad keys were not always decoded properly under X11.
+    - Some pointers were not being turned off when widgets were deleted,
+      which caused some applications (like FLWM) to crash.
+
+CHANGES SINCE FLTK 1.0
+
+    - Documentation fixes.
+    - Fl::check() didn't return the correct value, breaking a number
+      of applications.
+    - Fixed fluid bug that caused styles patch to crash when you delete
+      a menu item.
+    - Updated valuators demo to put the values in the gui box.
+    - Fl_Browser_::item_height() didn't always compute the correct
+      value.
+    - Fixed the alignment of Fl_Choice text.
+    - Fixes for OS/2.
+    - Fl_Menu_Item::clear() didn't clear value.
+    - Added some changes to make FLTK work with Borland C++.
+    - ANSI C++ fixes.
+    - Plugged a memory leak in the fractal demo.
+    - Fl::add_timeout() didn't work under WIN32 with small values.
+    - The configure script and makefiles now define DSONAME and
+      use the static library for all example programs.    
