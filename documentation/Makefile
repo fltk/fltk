@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.11 2002/02/15 18:15:45 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.12 2002/04/03 22:46:04 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -51,6 +51,7 @@ HTMLFILES	= \
 			Fl.html \
 			Fl_Adjuster.html \
 			Fl_Bitmap.html \
+			Fl_BMP_Image.html \
 			Fl_Box.html \
 			Fl_Browser_.html \
 			Fl_Browser.html \
@@ -208,5 +209,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) --verbose --batch fltk.book -f fltk.pdf
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.11 2002/02/15 18:15:45 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.12 2002/04/03 22:46:04 easysw Exp $".
 #
