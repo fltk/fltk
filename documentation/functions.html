@@ -19,6 +19,7 @@ A</A>.
 	<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
 	<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
 	<LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
+	<LI><A HREF="#fl_cursor"><TT>fl_cursor</TT></A></LI>
 	<LI><A HREF="#fl_darker"><TT>fl_darker</TT></A></LI>
 	<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
 	<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
@@ -74,6 +75,7 @@ A</A>.
 		<LI><A HREF="#fl_average_color"><TT>fl_average_color</TT></A></LI>
 		<LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
 		<LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
+		<LI><A HREF="#fl_cursor"><TT>fl_cursor</TT></A></LI>
 		<LI><A HREF="#fl_darker"><TT>fl_darker</TT></A></LI>
 		<LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
 		<LI><A HREF="#fl_lighter"><TT>fl_lighter</TT></A></LI>
@@ -365,6 +367,31 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 with the background color. Otherwise, returns
 <CODE>FL_WHITE</CODE> or <CODE>FL_BLACK</CODE> depending on
 which color provides the best contrast.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_cursor">fl_cursor</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_cursor(Fl_Cursor cursor, Fl_Color fg, Fl_Color bg);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sets the cursor for the current window to the specified shape
+and colors. The cursors are defined in the <A
+HREF="enumerations.html#cursor"><CODE>&lt;FL/Enumerations.H></CODE>
+header file</A>.
 
 
 <!-- NEED 4in -->

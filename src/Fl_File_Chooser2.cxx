@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.20 2002/07/14 18:26:54 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.21 2002/07/30 18:33:49 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -382,10 +382,12 @@ Fl_File_Chooser::fileListCB()
   if (!filename)
     return;
 
-  if (directory_[0] != '\0') {
-    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-  } else {
+  if (!directory_[0]) {
     strlcpy(pathname, filename, sizeof(pathname));
+  } else if (strcmp(directory_, "/") == 0) {
+    snprintf(pathname, sizeof(pathname), "/%s", filename);
+  } else {
+    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
   }
 
   if (Fl::event_clicks()) {
@@ -449,8 +451,7 @@ Fl_File_Chooser::fileNameCB()
   // Get the filename from the text field...
   filename = (char *)fileName->value();
 
-  if (filename == NULL || filename[0] == '\0')
-  {
+  if (filename == NULL || filename[0] == '\0') {
     okButton->deactivate();
     return;
   }
@@ -538,8 +539,12 @@ Fl_File_Chooser::fileNameCB()
 
         directory(pathname);
 
-	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
-	fileName->value(pathname);
+        if (filename[0]) {
+	  char tempname[1024];
+
+	  snprintf(tempname, sizeof(tempname), "%s/%s", directory_, filename);
+	  fileName->value(tempname);
+	}
 
 	fileName->position(p, m);
       }
@@ -1138,5 +1143,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.20 2002/07/14 18:26:54 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.21 2002/07/30 18:33:49 easysw Exp $".
 //
