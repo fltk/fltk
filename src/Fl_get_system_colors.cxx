@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.8 2002/04/13 22:17:46 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.9 2002/04/27 19:35:18 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -223,7 +223,7 @@ int Fl::scheme(const char *s) {
   }
 
   if (s) {
-    if (!strcasecmp(s, "none") || !*s) s = 0;
+    if (!strcasecmp(s, "none") || !strcasecmp(s, "base") || !*s) s = 0;
     else s = strdup(s);
   }
   if (scheme_) free((void*)scheme_);
@@ -316,5 +316,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.8 2002/04/13 22:17:46 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.9 2002/04/27 19:35:18 easysw Exp $".
 //

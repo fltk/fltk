@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- Fixed rendering of Fl_Light_Button with the plastic
+	  scheme.
 	- Fixed a bug in the MacOS font enumeration code.
 	- Now show a "locked" icon next to static/private
 	  elements in FLUID, and "unlocked" icon next to
