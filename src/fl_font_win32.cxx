@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_win32.cxx,v 1.9.2.3.2.3 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: fl_font_win32.cxx,v 1.9.2.3.2.4 2002/06/08 13:07:19 easysw Exp $"
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -119,8 +119,8 @@ static Fl_FontSize* find(int fnum, int size) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-int fl_font_;
-int fl_size_;
+int fl_font_ = 0;
+int fl_size_ = 0;
 //static HDC font_gc;
 
 void fl_font(int fnum, int size) {
@@ -156,5 +156,5 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 //
-// End of "$Id: fl_font_win32.cxx,v 1.9.2.3.2.3 2002/03/06 18:11:01 easysw Exp $".
+// End of "$Id: fl_font_win32.cxx,v 1.9.2.3.2.4 2002/06/08 13:07:19 easysw Exp $".
 //
