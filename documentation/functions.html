@@ -556,22 +556,24 @@ call this so your X windows use the same visual as an <A href=Fl_Gl_Window.html#
 flashing. 
 <P>See <A href=Fl_Gl_Window.html#Fl_Gl_Window.mode><TT>Fl_Gl_Window</TT></A>
  for a list of additional values for the argument. </P>
-<H3><A name=grab>static void Fl::grab(Fl_Window&amp;)
+<H3><A name=grab>static void Fl::grab(Fl_Window*)
 <br>static Fl_Window* Fl::grab()</A></H3>
- This is used when pop-up menu systems are active.  Send all events to 
-the passed window no matter where the pointer or focus is (including in 
-other programs).  The window <I>does not have to be <TT>shown()</TT></I>
-, this lets the <TT>handle()</TT> method of a &quot;dummy&quot; window override 
-all event handling and allows you to map and unmap a complex set of 
-windows (under both X and WIN32 <I>some</I> window must be mapped 
-because the system interface needs a window id). 
-<P><TT>Fl::event_x()</TT> and <TT>Fl::event_y()</TT> are undefined if the 
-passed widget is not a mapped <TT>Fl_Window</TT>.  Use <TT>
-Fl::event_x_root()</TT> and <TT>Fl::event_y_root()</TT> instead.</P>
+
+ This is used when pop-up menu systems are active.  Send all events to
+the passed window no matter where the pointer or focus is (including
+in other programs).  The window <I>does not have to be
+<TT>shown()</TT></I> , this lets the <TT>handle()</TT> method of a
+&quot;dummy&quot; window override all event handling and allows you to
+map and unmap a complex set of windows (under both X and WIN32
+<I>some</I> window must be mapped because the system interface needs a
+window id).
+<p>If <tt>grab()</tt> is on it will also affect show() of windows by
+doing system-specific operations (on X it turns on
+override-redirect).  These are designed to make menus popup reliably
+and faster on the system.
+<p>To turn off grabbing do <tt>Fl::grab(0)</tt>.
 <P><I>Be careful that your program does not enter an infinite loop 
 while <TT>grab()</TT> is on.  On X this will lock up your screen!</I></P>
-<P>The second function returns the current grab window, or <TT>NULL</TT>
- if none. </P>
 <H3><A name=h>static int Fl::h()</A></H3>
  Returns the height of the screen in pixels. 
 <H3><A name=handle>static int Fl::handle(int, Fl_Window *)</A></H3>
@@ -639,8 +641,6 @@ while (!calculation_done()) {
 </UL>
 <H3><A name=redraw>static void Fl::redraw()</A></H3>
  Redraws all widgets. 
-<H3><A name=release>static void Fl::release()</A></H3>
- Turn off the <TT>grab()</TT> behavior. 
 <H3><A name=remove_idle>static void Fl::remove_idle(void (*cb)(void *), 
 void *= 0)</A></H3>
  Removes the specified idle callback. 
