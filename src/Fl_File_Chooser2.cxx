@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.34 2004/04/06 19:33:11 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.35 2004/04/10 21:35:44 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -475,7 +475,7 @@ Fl_File_Chooser::fileNameCB()
 #if (defined(WIN32) && !defined(__CYGWIN__)) || defined(__EMX__)
   if (directory_[0] != '\0' && filename[0] != '/' &&
       filename[0] != '\\' &&
-      !(isalpha(filename[0]) && filename[1] == ':')) {
+      !(isalpha(filename[0]) && (!filename[1] || filename[1] == ':'))) {
 #else
   if (directory_[0] != '\0' && filename[0] != '/') {
 #endif /* WIN32 || __EMX__ */
@@ -1164,5 +1164,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.34 2004/04/06 19:33:11 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.35 2004/04/10 21:35:44 easysw Exp $".
 //
