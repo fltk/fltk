@@ -29,7 +29,7 @@
 				ObjectFile=".\adjuster_/"
 				ProgramDataBaseFileName=".\adjuster_/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

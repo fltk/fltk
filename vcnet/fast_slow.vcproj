@@ -29,7 +29,7 @@
 				ObjectFile=".\fast_slow_/"
 				ProgramDataBaseFileName=".\fast_slow_/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

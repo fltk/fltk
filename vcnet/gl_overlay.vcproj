@@ -93,7 +93,7 @@
 				ObjectFile=".\gl_overlay_/"
 				ProgramDataBaseFileName=".\gl_overlay_/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

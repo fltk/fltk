@@ -29,7 +29,7 @@
 				ObjectFile=".\tiled_image_/"
 				ProgramDataBaseFileName=".\tiled_image_/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="png.lib z.lib jpeg.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib"
 				OutputFile="../test/help.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -93,13 +93,13 @@
 				ObjectFile=".\help_/"
 				ProgramDataBaseFileName=".\help_/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="png.lib z.lib jpeg.lib  wsock32.lib comctl32.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib"
 				OutputFile="../test/helpd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

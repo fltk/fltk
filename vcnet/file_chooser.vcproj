@@ -29,13 +29,13 @@
 				ObjectFile=".\file_chooser_/"
 				ProgramDataBaseFileName=".\file_chooser_/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="png.lib z.lib jpeg.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib"
 				OutputFile="../test/file_chooserd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="png.lib z.lib jpeg.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib"
 				OutputFile="../test/file_chooser.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

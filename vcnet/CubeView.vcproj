@@ -29,7 +29,7 @@
 				ObjectFile=".\CubeView__0/"
 				ProgramDataBaseFileName=".\CubeView__0/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

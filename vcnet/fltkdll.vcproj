@@ -30,14 +30,14 @@
 				AssemblerListingLocation=".\fltkdll/"
 				ObjectFile=".\fltkdll/"
 				ProgramDataBaseFileName=".\fltkdll/"
-				WarningLevel="3"
+				WarningLevel="1"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="png.lib z.lib jpeg.lib opengl32.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib wsock32.lib comctl32.lib"
 				OutputFile="fltkdll.dll"
 				Version="1.0"
 				LinkIncremental="1"
@@ -94,13 +94,13 @@
 				ObjectFile=".\fltkdlld/"
 				ProgramDataBaseFileName=".\fltkdlld/"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="png.lib z.lib jpeg.lib opengl32.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib wsock32.lib comctl32.lib"
 				OutputFile="fltkdlld.dll"
 				Version="1.0"
 				LinkIncremental="1"
