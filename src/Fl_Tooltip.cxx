@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.17 2002/05/13 05:05:11 spitzak Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.18 2002/05/13 14:00:46 spitzak Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -48,10 +48,6 @@ public:
   }
   void draw();
   void layout();
-#ifdef _WIN32
-  // You have to destroy the window or it will not raise next time:
-  void hide() {destroy();}
-#endif
 };
 
 static const char* tip;
@@ -176,5 +172,5 @@ void Fl_Widget::tooltip(const char *tt) {
 }
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.17 2002/05/13 05:05:11 spitzak Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.18 2002/05/13 14:00:46 spitzak Exp $".
 //
