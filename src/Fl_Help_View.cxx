@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.23 2001/12/19 18:15:34 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.24 2001/12/21 15:50:49 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -54,6 +54,7 @@
 //
 
 #include <FL/Fl_Help_View.H>
+#include <FL/Fl_Pixmap.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -87,6 +88,48 @@ extern "C"
 static int	quote_char(const char *);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 static void	hscrollbar_callback(Fl_Widget *s, void *);
+
+
+//
+// Broken image...
+//
+
+static const char *broken_xpm[] =
+		{
+		  "16 24 4 1",
+		  "@ c #000000",
+		  "  c #ffffff",
+		  "+ c none",
+		  "x c #ff0000",
+		  // pixels
+		  "@@@@@@@+++++++++",
+		  "@    @++++++++++",
+		  "@   @+++++++++++",
+		  "@   @++@++++++++",
+		  "@    @@+++++++++",
+		  "@     @+++@+++++",
+		  "@     @++@@++++@",
+		  "@ xxx  @@  @++@@",
+		  "@  xxx    xx@@ @",
+		  "@   xxx  xxx   @",
+		  "@    xxxxxx    @",
+		  "@     xxxx     @",
+		  "@    xxxxxx    @",
+		  "@   xxx  xxx   @",
+		  "@  xxx    xxx  @",
+		  "@ xxx      xxx @",
+		  "@              @",
+		  "@              @",
+		  "@              @",
+		  "@              @",
+		  "@              @",
+		  "@              @",
+		  "@              @",
+		  "@@@@@@@@@@@@@@@@",
+		  NULL
+		};
+
+static Fl_Pixmap broken_image(broken_xpm);
 
 
 //
@@ -1967,6 +2010,7 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
   char		dir[1024];		// Current directory
   char		temp[1024],		// Temporary filename
 		*tempptr;		// Pointer into temporary name
+  Fl_Shared_Image *ip;			// Image pointer...
 
   // See if the image can be found...
   if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
@@ -1994,7 +2038,10 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
 
   if (strncmp(localname, "file:", 5) == 0) localname += 5;
 
-  return Fl_Shared_Image::get(localname, W, H);
+  if ((ip = Fl_Shared_Image::get(localname, W, H)) == NULL)
+    ip = (Fl_Shared_Image *)&broken_image;
+
+  return ip;
 }
 
 
@@ -2569,5 +2616,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.23 2001/12/19 18:15:34 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.24 2001/12/21 15:50:49 easysw Exp $".
 //
