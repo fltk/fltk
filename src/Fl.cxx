@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.32 2002/05/16 07:43:59 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.33 2002/05/23 16:47:41 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -802,6 +802,7 @@ int Fl_Window::handle(int event)
     }
     break;
   }
+
   return Fl_Group::handle(event);
 }
 
@@ -900,5 +901,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.32 2002/05/16 07:43:59 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.33 2002/05/23 16:47:41 easysw Exp $".
 //

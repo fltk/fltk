@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
+	- Fixed WM_PAINT handling under WIN32.
 	- Minor tweeks to MingW and OS/2 config headers.
 	- Fl_Value_Input now correctly determines if step()
 	  specifies an integer value.

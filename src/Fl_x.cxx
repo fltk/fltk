@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.19 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.20 2002/05/23 16:47:41 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -466,11 +466,11 @@ static void set_event_xy() {
 #  if CONSOLIDATE_MOTION
   send_motion = 0;
 #  endif
-  Fl::e_x_root = fl_xevent->xbutton.x_root;
-  Fl::e_x = fl_xevent->xbutton.x;
-  Fl::e_y_root = fl_xevent->xbutton.y_root;
-  Fl::e_y = fl_xevent->xbutton.y;
-  Fl::e_state = fl_xevent->xbutton.state << 16;
+  Fl::e_x_root  = fl_xevent->xbutton.x_root;
+  Fl::e_x       = fl_xevent->xbutton.x;
+  Fl::e_y_root  = fl_xevent->xbutton.y_root;
+  Fl::e_y       = fl_xevent->xbutton.y;
+  Fl::e_state   = fl_xevent->xbutton.state << 16;
   fl_event_time = fl_xevent->xbutton.time;
 #  ifdef __sgi
   // get the meta key off PC keyboards:
@@ -1229,5 +1229,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.19 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.20 2002/05/23 16:47:41 easysw Exp $".
 //
