@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.46 2003/01/30 21:41:54 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.47 2003/05/21 16:12:14 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -763,6 +763,68 @@ Fl_Help_View::draw()
     }
 
   fl_pop_clip();
+}
+
+
+//
+// 'Fl_Help_View::find()' - Find the specified string...
+//
+
+int						// O - Matching position or -1 if not found
+Fl_Help_View::find(const char *s,		// I - String to find
+                   int        p)		// I - Starting position
+{
+  int		i,				// Looping var
+		c;				// Current character
+  Fl_Help_Block	*b;				// Current block
+  const char	*bp,				// Block matching pointer
+		*bs,				// Start of current comparison
+		*sp;				// Search string pointer
+
+
+  // Range check input...
+  if (!s) return -1;
+
+  if (p < 0 || p >= (int)strlen(value_)) p = 0;
+  else if (p > 0) p ++;
+
+  // Look for the string...
+  for (i = nblocks_, b = blocks_; i > 0; i --, b ++) {
+    if (b->end < (value_ + p))
+      continue;
+
+    if (b->start < (value_ + p)) bp = value_ + p;
+    else bp = b->start;
+
+    for (sp = s, bs = bp; *sp && *bp && bp < b->end; bp ++) {
+      if (*bp == '<') {
+        // skip to end of element...
+	while (*bp && bp < b->end && *bp != '>') bp ++;
+	continue;
+      } else if (*bp == '&') {
+        // decode HTML entity...
+	if ((c = quote_char(bp + 1)) < 0) c = '&';
+	else bp = strchr(bp + 1, ';') + 1;
+      } else c = *bp;
+
+      if (tolower(*sp) == tolower(c)) sp ++;
+      else {
+        // No match, so reset to start of search...
+	sp = s;
+	bs ++;
+	bp = bs;
+      }
+    }
+
+    if (!*sp) {
+      // Found a match!
+      topline(b->y - b->h);
+      return (b->end - value_);
+    }
+  }
+
+  // No match!
+  return (-1);
 }
 
 
@@ -2731,5 +2793,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.46 2003/01/30 21:41:54 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.47 2003/05/21 16:12:14 easysw Exp $".
 //

@@ -6,12 +6,14 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Input.H>
 
 class FL_EXPORT Fl_Help_Dialog {
   int index_;
   int max_;
   int line_[100];
   char file_[100][256];
+  int find_pos_;
 public:
   Fl_Help_Dialog();
 private:
@@ -33,6 +35,9 @@ private:
   Fl_Button *larger_;
   inline void cb_larger__i(Fl_Button*, void*);
   static void cb_larger_(Fl_Button*, void*);
+  Fl_Input *find_;
+  inline void cb_find__i(Fl_Input*, void*);
+  static void cb_find_(Fl_Input*, void*);
 public:
   ~Fl_Help_Dialog();
   int h();

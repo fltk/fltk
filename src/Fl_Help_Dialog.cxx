@@ -106,6 +106,13 @@ void Fl_Help_Dialog::cb_larger_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->user_data()))->cb_larger__i(o,v);
 }
 
+inline void Fl_Help_Dialog::cb_find__i(Fl_Input*, void*) {
+  find_pos_ = view_->find(find_->value(), find_pos_);
+}
+void Fl_Help_Dialog::cb_find_(Fl_Input* o, void* v) {
+  ((Fl_Help_Dialog*)(o->parent()->user_data()))->cb_find__i(o,v);
+}
+
 Fl_Help_Dialog::Fl_Help_Dialog() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = window_ = new Fl_Double_Window(530, 385, "Help Dialog");
@@ -129,37 +136,42 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       o->callback((Fl_Callback*)cb_Close);
       o->label(fl_close);
     }
-    { Fl_Button* o = back_ = new Fl_Button(365, 350, 25, 25, "@<-");
+    { Fl_Button* o = back_ = new Fl_Button(355, 350, 25, 25, "@<-");
       o->tooltip("Show the previous help page.");
       o->shortcut(0xff51);
       o->labelcolor(2);
       o->callback((Fl_Callback*)cb_back_);
     }
-    { Fl_Button* o = forward_ = new Fl_Button(395, 350, 25, 25, "@->");
+    { Fl_Button* o = forward_ = new Fl_Button(390, 350, 25, 25, "@->");
       o->tooltip("Show the next help page.");
       o->shortcut(0xff53);
       o->labelcolor(2);
       o->callback((Fl_Callback*)cb_forward_);
     }
-    { Fl_Button* o = smaller_ = new Fl_Button(305, 350, 25, 25, "F");
+    { Fl_Button* o = smaller_ = new Fl_Button(285, 350, 25, 25, "F");
       o->tooltip("Make the help text smaller.");
       o->labelfont(1);
       o->labelsize(10);
       o->callback((Fl_Callback*)cb_smaller_);
     }
-    { Fl_Button* o = larger_ = new Fl_Button(335, 350, 25, 25, "F");
+    { Fl_Button* o = larger_ = new Fl_Button(320, 350, 25, 25, "F");
       o->tooltip("Make the help text larger.");
       o->labelfont(1);
       o->labelsize(16);
       o->callback((Fl_Callback*)cb_larger_);
+    }
+    { Fl_Input* o = find_ = new Fl_Input(10, 350, 265, 25);
+      o->callback((Fl_Callback*)cb_find_);
+      o->when(FL_WHEN_ENTER_KEY_ALWAYS);
     }
     o->end();
   }
   back_->deactivate();
 forward_->deactivate();
 
-index_ = -1;
-max_  = 0;
+index_    = -1;
+max_      = 0;
+find_pos_ = 0;
 
 fl_register_images();
 }

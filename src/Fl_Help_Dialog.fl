@@ -12,11 +12,12 @@ class FL_EXPORT Fl_Help_Dialog {open
   decl {int max_;} {}
   decl {int line_[100];} {}
   decl {char file_[100][256];} {}
+  decl {int find_pos_;} {}
   Function {Fl_Help_Dialog()} {open
   } {
     Fl_Window window_ {
       label {Help Dialog} open
-      private xywh {470 380 530 385} type Double resizable visible
+      private xywh {398 65 530 385} type Double resizable visible
     } {
       Fl_Group view_ {
         callback {if (view_->changed())
@@ -47,7 +48,7 @@ else if (view_->filename())
 {
   strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
   line_[index_] = view_->topline();
-}} open selected
+}} open
         private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
         code0 {\#include <FL/Fl_Help_View.H>}
         class Fl_Help_View
@@ -72,7 +73,7 @@ if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
 view_->topline(line_[index_]);}
-        private tooltip {Show the previous help page.} xywh {365 350 25 25} shortcut 0xff51 labelcolor 2
+        private tooltip {Show the previous help page.} xywh {355 350 25 25} shortcut 0xff51 labelcolor 2
       }
       Fl_Button forward_ {
         label {@->}
@@ -88,7 +89,7 @@ if (strcmp(view_->filename(), file_[index_]) != 0)
   view_->load(file_[index_]);
 
 view_->topline(line_[index_]);}
-        private tooltip {Show the next help page.} xywh {395 350 25 25} shortcut 0xff53 labelcolor 2
+        private tooltip {Show the next help page.} xywh {390 350 25 25} shortcut 0xff53 labelcolor 2
       }
       Fl_Button smaller_ {
         label F
@@ -98,7 +99,7 @@ view_->topline(line_[index_]);}
 if (view_->textsize() <= 8)
   smaller_->deactivate();
 larger_->activate();}
-        private tooltip {Make the help text smaller.} xywh {305 350 25 25} labelfont 1 labelsize 10
+        private tooltip {Make the help text smaller.} xywh {285 350 25 25} labelfont 1 labelsize 10
       }
       Fl_Button larger_ {
         label F
@@ -108,14 +109,19 @@ larger_->activate();}
 if (view_->textsize() >= 18)
   larger_->deactivate();
 smaller_->activate();}
-        private tooltip {Make the help text larger.} xywh {335 350 25 25} labelfont 1 labelsize 16
+        private tooltip {Make the help text larger.} xywh {320 350 25 25} labelfont 1 labelsize 16
+      }
+      Fl_Input find_ {
+        callback {find_pos_ = view_->find(find_->value(), find_pos_);} selected
+        private xywh {10 350 265 25} when 10
       }
     }
     code {back_->deactivate();
 forward_->deactivate();
 
-index_ = -1;
-max_  = 0;
+index_    = -1;
+max_      = 0;
+find_pos_ = 0;
 
 fl_register_images();} {}
   }

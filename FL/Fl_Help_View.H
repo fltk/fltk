@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.11 2003/01/30 21:39:13 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.12 2003/05/21 16:12:14 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -164,6 +164,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   					else return ((const char *)0); }
   const char	*filename() const { if (filename_[0]) return (filename_);
   					else return ((const char *)0); }
+  int		find(const char *s, int p = 0);
   void		link(Fl_Help_Func *fn) { link_ = fn; }
   int		load(const char *f);
   void		resize(int,int,int,int);
@@ -187,5 +188,5 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.11 2003/01/30 21:39:13 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.12 2003/05/21 16:12:14 easysw Exp $".
 //
