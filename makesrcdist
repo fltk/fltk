@@ -44,7 +44,6 @@ cd ..
 
 echo "Making UNIX distribution..."
 
-cd ..
 gtar czf fltk-$version-source.tar.gz fltk-$version
 
 echo "Making BZ2 distribution..."
