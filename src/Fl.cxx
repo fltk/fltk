@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.44 2002/08/09 01:09:48 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.45 2002/08/12 19:30:44 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -717,8 +717,8 @@ void Fl_Window::hide() {
   // remove all childwindow links
   for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
   { 
-    if ( pc->xidNext == x ) pc->xidNext = x->xidNext;
-    if ( pc->xidChildren == x ) pc->xidChildren = x->xidNext;   
+    if ( pc->xidNext == ip ) pc->xidNext = ip->xidNext;
+    if ( pc->xidChildren == ip ) pc->xidChildren = ip->xidNext;   
   }
 #endif // __APPLE__
 
@@ -949,5 +949,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.44 2002/08/09 01:09:48 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.45 2002/08/12 19:30:44 easysw Exp $".
 //
