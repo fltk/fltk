@@ -78,6 +78,15 @@ Fl_FileIcon.o: ../FL/filename.H
 Fl_Group.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Group.H
 Fl_Group.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 Fl_Group.o: ../FL/fl_draw.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
+Fl_HelpDialog.o: ../FL/Fl_HelpDialog.H ../FL/Fl.H ../FL/Enumerations.H
+Fl_HelpDialog.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_HelpDialog.o: ../FL/Fl_HelpView.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
+Fl_HelpDialog.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/fl_draw.H
+Fl_HelpDialog.o: ../FL/Fl_Button.H
+Fl_HelpView.o: ../FL/Fl_HelpView.H ../FL/Fl.H ../FL/Enumerations.H
+Fl_HelpView.o: ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_HelpView.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_HelpView.o: ../config.h ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 Fl_Image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
 Fl_Image.o: ../FL/Fl_Window.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
 Fl_Image.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H

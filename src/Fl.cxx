@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.2 2001/08/02 15:31:59 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.3 2001/08/02 20:09:25 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,8 @@ int		Fl::damage_,
 		Fl::e_y,
 		Fl::e_x_root,
 		Fl::e_y_root,
+		Fl::e_dx,
+		Fl::e_dy,
 		Fl::e_state,
 		Fl::e_clicks,
 		Fl::e_is_click,
@@ -788,5 +790,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.2 2001/08/02 15:31:59 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.3 2001/08/02 20:09:25 easysw Exp $".
 //

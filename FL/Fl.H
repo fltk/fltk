@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.1 2001/08/02 20:09:25 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -46,6 +46,7 @@ class Fl {
 public: // should be private!
 
   static FL_EXPORT int e_x,e_y,e_x_root,e_y_root;
+  static FL_EXPORT int e_dx, e_dy;
   static FL_EXPORT int e_state;
   static FL_EXPORT int e_clicks;
   static FL_EXPORT int e_is_click;
@@ -217,5 +218,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.1 2001/08/02 20:09:25 easysw Exp $".
 //

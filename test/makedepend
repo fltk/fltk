@@ -134,6 +134,10 @@ glpuzzle.o: ../FL/Fl.H ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H trackball.c
 glpuzzle.o: trackball.h
 hello.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 hello.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H
+help.o: ../FL/Fl_HelpDialog.H ../FL/Fl.H ../FL/Enumerations.H
+help.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+help.o: ../FL/Fl_HelpView.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
+help.o: ../FL/Fl_Slider.H ../FL/fl_draw.H ../FL/Fl_Button.H
 iconize.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 iconize.o: ../FL/Fl_Widget.H ../FL/Fl_Button.H ../FL/Fl_Box.H
 image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H

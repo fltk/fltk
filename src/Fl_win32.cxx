@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37 2001/04/27 15:43:38 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.1 2001/08/02 20:09:25 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -56,6 +56,14 @@
 
 #ifndef WM_MOUSELEAVE
 #  define WM_MOUSELEAVE 0x02a3
+#endif
+
+#ifndef WM_MOUSEWHEEL
+#  define WM_MOUSEWHEEL 0x020a
+#endif
+
+#ifndef WHEEL_DELTA
+#	define WHEEL_DELTA 120	// according to MSDN.
 #endif
 
 //
@@ -581,6 +589,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (Fl::handle(FL_KEYBOARD,window)) return 0;
     break;}
 
+  case WM_MOUSEWHEEL: {
+    static int delta = 0; // running total of all motion
+    delta += (SHORT)(HIWORD(wParam));
+    Fl::e_dy = delta / WHEEL_DELTA;
+    delta -= Fl::e_dy * WHEEL_DELTA;
+    if (Fl::e_dy) Fl::handle(FL_MOUSEWHEEL, window);
+    return 0;
+  }
+
   case WM_GETMINMAXINFO:
     Fl_X::i(window)->set_minmax((LPMINMAXINFO)lParam);
     break;
@@ -974,5 +991,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37 2001/04/27 15:43:38 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.1 2001/08/02 20:09:25 easysw Exp $".
 //
