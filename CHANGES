@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Fixed a VC++ compiler error in Fl_JPEG_Image.cxx (STR
+	  #676)
 	- FL_SHADOW_BOX/FRAME drew outside of the bounding box
 	  (STR #694)
 	- Fl_Widget::copy_label(NULL) didn't work (STR #707)

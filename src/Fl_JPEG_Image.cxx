@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.12 2005/01/25 20:50:25 easysw Exp $"
+// "$Id$"
 //
 // Fl_JPEG_Image routines.
 //
@@ -134,7 +134,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
     h(0);
     d(0);
 
-    delete[] array;
+    delete[] (uchar *)array;
     array = 0;
     alloc_array = 0;
   }
@@ -143,5 +143,5 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.12 2005/01/25 20:50:25 easysw Exp $".
+// End of "$Id$".
 //
