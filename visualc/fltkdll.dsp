@@ -2633,5 +2633,9 @@ DEP_CPP_VSNPR=\
 	{$(INCLUDE)}"fl\fl_export.h"\
 	
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\screen_xywh.cxx
+# End Source File
 # End Target
 # End Project

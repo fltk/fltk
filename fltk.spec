@@ -59,7 +59,7 @@ dynamically linked applications.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --mandir=%{_mandir} --enable-shared --enable-xft --enable-xdbe
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --mandir=%{_mandir} --enable-shared --enable-xft --enable-xdbe --enable-xinerama
 
 # If we got this far, all prerequisite libraries must be here.
 make

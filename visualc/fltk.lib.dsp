@@ -589,5 +589,9 @@ SOURCE=..\src\scandir.c
 
 SOURCE=..\src\vsnprintf.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\src\screen_xywh.cxx
+# End Source File
 # End Target
 # End Project
