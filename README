@@ -38,8 +38,13 @@ BUILDING AND INSTALLING FLTK UNDER UNIX
     The main things that the configure script will look for are the
     X11, OpenGL (or Mesa), and JPEG header and library files.  Make
     sure that they are in the standard include/library locations.  If
-    they aren't you need to define the CXXFLAGS and LDFLAGS
+    they aren't you need to define the CFLAGS, CXXFLAGS, and LDFLAGS
     environment variables.
+
+    If you aren't using "gcc", "g++", "c++", or "CC" for your C++
+    compiler, you'll also need to set the CXX environment variable.
+    Similarly, if you aren't using "gcc" or "cc" for your C compiler
+    you'll need to set the CC environment variable.
 
     You can run configure yourself to get the exact setup you need.
     Type "./configure <options>".  Options include:
