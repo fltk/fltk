@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.1 1999/03/29 17:39:26 carl Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.2 1999/04/18 14:10:55 gustavo Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -593,13 +593,14 @@ void Fl_Window_Type::write_code1() {
 }
 
 void Fl_Window_Type::write_code2() {
+  write_extra_code();
   if (modal) write_c("%so->set_modal();\n", indent());
   else if (non_modal) write_c("%so->set_non_modal();\n", indent());
   if (!((Fl_Window*)o)->border()) write_c("%so->clear_border();\n", indent());
   write_c("%so->end();\n", indent());
   if (((Fl_Window*)o)->resizable() == o)
     write_c("%so->resizable(o);\n", indent());
-  Fl_Widget_Type::write_code2();
+  write_block_close();
 }
 
 void Fl_Window_Type::write_properties() {
@@ -652,5 +653,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.1 1999/03/29 17:39:26 carl Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.2 1999/04/18 14:10:55 gustavo Exp $".
 //

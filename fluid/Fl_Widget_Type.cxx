@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.1 1999/04/10 09:14:34 bill Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.2 1999/04/18 14:10:53 gustavo Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1427,13 +1427,20 @@ void Fl_Widget_Type::write_widget_code() {
     write_c("%sw->hotspot(o);\n", indent());
 }
 
-void Fl_Widget_Type::write_code2() {
-  indentation -= 2;
-  if (!is_parent() && !varused) return;
+void Fl_Widget_Type::write_extra_code() {
   for (int n=0; n < NUM_EXTRA_CODE; n++)
     if (extra_code(n) && !isdeclare(extra_code(n)))
-      write_c("%s  %s\n", indent(), extra_code(n));
-  write_c("%s}\n", indent());
+      write_c("%s%s\n", indent(), extra_code(n));
+}
+
+void Fl_Widget_Type::write_block_close() {
+  indentation -= 2;
+  if (is_parent() || varused) write_c("%s}\n", indent());
+}
+
+void Fl_Widget_Type::write_code2() {
+  write_extra_code();
+  write_block_close();
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1738,5 +1745,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.1 1999/04/10 09:14:34 bill Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.2 1999/04/18 14:10:53 gustavo Exp $".
 //

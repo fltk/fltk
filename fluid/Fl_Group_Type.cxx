@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.1 1999/03/29 17:39:24 carl Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.2 1999/04/18 14:10:55 gustavo Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -121,9 +121,10 @@ void Fl_Group_Type::write_code1() {
 }
 
 void Fl_Group_Type::write_code2() {
+  write_extra_code();
   write_c("%so->end();\n", indent());
   if (resizable()) write_c("%sFl_Group::current()->resizable(o);\n", indent());
-  Fl_Widget_Type::write_code2();
+  write_block_close();
 }
 
 ////////////////////////////////////////////////////////////////
@@ -219,5 +220,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.1 1999/03/29 17:39:24 carl Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.2 1999/04/18 14:10:55 gustavo Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.1 1999/03/29 17:39:25 carl Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.2 1999/04/18 14:10:53 gustavo Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -239,6 +239,8 @@ protected:
   void write_static();
   void write_code1();
   void write_widget_code();
+  void write_extra_code();
+  void write_block_close();
   void write_code2();
 
 public:
@@ -523,5 +525,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.1 1999/03/29 17:39:25 carl Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.2 1999/04/18 14:10:53 gustavo Exp $".
 //
