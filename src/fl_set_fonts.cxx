@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts.cxx,v 1.6.2.3 2000/06/05 21:21:10 mike Exp $"
+// "$Id: fl_set_fonts.cxx,v 1.6.2.4 2000/08/20 04:35:16 spitzak Exp $"
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -145,6 +145,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   return buffer;
 }
 
+extern "C" {
 // sort raw (non-'*') X font names into perfect order:
 
 static int ultrasort(const void *aa, const void *bb) {
@@ -214,13 +215,14 @@ static int ultrasort(const void *aa, const void *bb) {
   // something wrong, just do a string compare...
   return strcmp(*(char**)aa, *(char**)bb);
 }
+}
 
 // converts a X font name to a standard starname, returns point size:
 static int to_canonical(char *to, const char *from) {
   char* c = fl_find_fontsize((char*)from);
   if (!c) return -1; // no point size found...
-  char* endptr;
-  int size = strtol(c,&endptr,10);
+  const char* endptr;
+  int size = strtol(c,(char**)&endptr,10);
   if (from[0] == '-') {
     // replace the "foundry" with -*-:
     *to++ = '-'; *to++ = '*';
@@ -327,5 +329,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 #endif
 
 //
-// End of "$Id: fl_set_fonts.cxx,v 1.6.2.3 2000/06/05 21:21:10 mike Exp $".
+// End of "$Id: fl_set_fonts.cxx,v 1.6.2.4 2000/08/20 04:35:16 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.18 2000/06/18 00:38:41 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.19 2000/08/20 04:35:16 spitzak Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -242,9 +242,11 @@ static Atom wm_delete_window;
 static Atom wm_protocols;
 static Atom _motif_wm_hints;
 
+extern "C" {
 static void fd_callback(int,void *) {do_queued_events();}
 
 static int io_error_handler(Display*) {Fl::fatal("X I/O error"); return 0;}
+}
 
 static int xerror_handler(Display* d, XErrorEvent* e) {
   char buf1[128], buf2[128];
@@ -896,5 +898,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.18 2000/06/18 00:38:41 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.19 2000/08/20 04:35:16 spitzak Exp $".
 //

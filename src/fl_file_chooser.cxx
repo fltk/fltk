@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.5 2000/06/05 21:21:08 mike Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.6 2000/08/20 04:35:16 spitzak Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -438,7 +438,7 @@ static void input_cb(Fl_Widget*, void* v) {
 static void up_cb(Fl_Widget*, void* v) { // the .. button
   FCW* w = (FCW*)v;
   char* p;
-  char* newname;
+  const char* newname;
   char buf[FL_PATH_MAX];
   p = w->browser.listed+w->browser.dirend-1; // point right before last '/'
   if (p < w->browser.listed)
@@ -632,5 +632,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.5 2000/06/05 21:21:08 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.6 2000/08/20 04:35:16 spitzak Exp $".
 //

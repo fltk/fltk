@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.8 2000/06/08 08:26:45 bill Exp $"
+// "$Id: fluid.cxx,v 1.15.2.9 2000/08/20 04:35:16 spitzak Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -208,7 +208,7 @@ void write_cb(Fl_Widget *, void *) {
 }
 
 void write_strings_cb(Fl_Widget *, void *) {
-  static char *exts[] = { ".txt", ".po", ".msg" };
+  static const char *exts[] = { ".txt", ".po", ".msg" };
   if (!filename) {
     save_cb(0,0);
     if (!filename) return;
@@ -421,11 +421,12 @@ static int arg(int argc, char** argv, int& i) {
 #endif
 #endif
 
+extern "C" {
 static void sigint(SIGARG) {
   signal(SIGINT,sigint);
   exit_cb(0,0);
 }
-
+}
 #endif
 
 int main(int argc,char **argv) {
@@ -464,5 +465,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.8 2000/06/08 08:26:45 bill Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.9 2000/08/20 04:35:16 spitzak Exp $".
 //

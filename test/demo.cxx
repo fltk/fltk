@@ -1,5 +1,5 @@
 //
-// "$Id: demo.cxx,v 1.8.2.3 2000/06/05 21:21:18 mike Exp $"
+// "$Id: demo.cxx,v 1.8.2.4 2000/08/20 04:35:17 spitzak Exp $"
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -91,7 +91,7 @@ typedef struct {
 MENU menus[MAXMENU];
 int mennumb = 0;
 
-int find_menu(char nnn[])
+int find_menu(const char* nnn)
 /* Returns the number of a given menu name. */
 {
   int i;
@@ -100,7 +100,7 @@ int find_menu(char nnn[])
   return -1;
 }
 
-void create_menu(char nnn[])
+void create_menu(const char* nnn)
 /* Creates a new menu with name nnn */
 {
   if (mennumb == MAXMENU -1) return;
@@ -109,7 +109,7 @@ void create_menu(char nnn[])
   mennumb++;
 }
 
-void addto_menu(char men[], char item[], char comm[])
+void addto_menu(const char* men, const char* item, const char* comm)
 /* Adds an item to a menu */
 {
   int n = find_menu(men);
@@ -160,7 +160,7 @@ int numb2but(int inumb, int maxnumb)
 char stack[64][32];
 char stsize = 0;
 
-void push_menu(char nnn[])
+void push_menu(const char* nnn)
 /* Pushes a menu to be visible */
 {
   int n,i,bn;
@@ -267,7 +267,7 @@ void doback(Fl_Widget *, void *) {pop_menu();}
 
 void doexit(Fl_Widget *, void *) {exit(0);}
 
-int load_the_menu(const char fname[])
+int load_the_menu(const char* fname)
 /* Loads the menu file. Returns whether successful. */
 {
   FILE *fin;
@@ -332,6 +332,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: demo.cxx,v 1.8.2.3 2000/06/05 21:21:18 mike Exp $".
+// End of "$Id: demo.cxx,v 1.8.2.4 2000/08/20 04:35:17 spitzak Exp $".
 //
 
