@@ -81,8 +81,13 @@ subclass of <TT>Fl_Browser_</TT>. </P>
 </TD><TD align=left valign=top>
 <UL>
 <LI><A href=#Fl_Browser.size>size</A></LI>
+<LI><A href=#Fl_Browser.swap>swap</A></LI>
 <LI><A href=#Fl_Browser.text>text</A></LI>
 <LI><A href=#Fl_Browser.topline>topline</A></LI>
+</UL>
+</TD>
+<TD align=left valign=top>
+<UL>
 <LI><A href=#Fl_Browser.visible>visible</A></LI>
 </UL>
 </TD></TR>
@@ -192,6 +197,8 @@ will always return 0.
 <H4><A name=Fl_Browser.size>int Fl_Browser::size() const</A></H4>
  Returns how many lines are in the browser.  The last line number is
 equal to this.
+<H4><A name=Fl_Browser.swap>void Fl_Browser::swap(int a, int b)</A></H4>
+Swaps two lines in the browser.
 <H4><A name=Fl_Browser.text>const char *Fl_Browser::text(int n) const
 <BR> void Fl_Browser::text(int n, const char *)</A></H4>
  The first form returns the text for line <TT>n</TT>.  If <TT>n</TT> is

@@ -120,13 +120,14 @@ const</A></H4>
 already been erased to <TT>color()</TT>. Otherwise it does
 minimal update and erases the area itself.
 
-<H4><A name="Fl_Input_.handletext">void Fl_Input_::handletext(int
+<H4><A name="Fl_Input_.handletext">int Fl_Input_::handletext(int
 e,int,int,int,int)</A></H4>
 
 <P>Default handler for all event types. Your <TT>handle()</TT>
 method should call this for all events that it does not handle
-completely. You must pass it the same bounding box as passed to
-<TT>draw()</TT>. Handles <TT>FL_PUSH</TT>, <TT>FL_DRAG</TT>,
+completely. You must pass it the same bounding box as you do
+when calling <TT>drawtext()</TT> from your <tt>draw()</tt>
+method. Handles <TT>FL_PUSH</TT>, <TT>FL_DRAG</TT>,
 <TT>FL_RELEASE</TT> to select text, handles <TT>FL_FOCUS</TT>
 and <TT>FL_UNFOCUS</TT> to show and hide the cursor.
 

@@ -1,6 +1,19 @@
 CHANGES IN FLTK 1.1.5rc2
 
-	- Documentation updates (STR #365, STR #399, STR #412)
+	- Documentation updates (STR #365, STR #399, STR #407,
+	  STR #412, STR #414, STR #462)
+	- Fl_File_Chooser did not handle some cases for filename
+	  completion (STR #376)
+	- Fl_Help_View didn't properly compute the default
+	  maximum width of the page properly, resulting in
+	  non-wrapped text in table cells (STR #464)
+	- Fl_Text_Editor no longer tries to emulate the Emacs
+	  CTRL-A shortcut to move to the first column, since
+	  there is a key for that and the widget does not
+	  emulate any other Emacs keys (STR #421)
+	- Fl_File_Chooser always disabled the OK button when the
+	  user pressed DELETE or BACKSPACE (STR #397)
+	- Added Fl_Browser::swap() methods (STR #459)
 	- Fl_Counter didn't use a thin down box for the text
 	  field if the box type was set to FL_THIN_UP_BOX (STR
 	  #467)

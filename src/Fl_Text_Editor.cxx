@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.19 2004/05/26 02:42:10 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.20 2004/07/26 20:52:52 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -46,8 +46,6 @@ Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
 }
 
 Fl_Text_Editor::Key_Binding* Fl_Text_Editor::global_key_bindings = 0;
-
-static int ctrl_a(int, Fl_Text_Editor* e);
 
 // These are the default key bindings every widget should start with
 static struct {
@@ -102,7 +100,7 @@ static struct {
   { FL_Insert,    FL_CTRL,                  Fl_Text_Editor::kf_copy       },
   { 'v',          FL_CTRL,                  Fl_Text_Editor::kf_paste      },
   { FL_Insert,    FL_SHIFT,                 Fl_Text_Editor::kf_paste      },
-  { 'a',          FL_CTRL,                  ctrl_a                        },
+  { 'a',          FL_CTRL,                  Fl_Text_Editor::kf_select_all },
 
 #ifdef __APPLE__
   // Define CMD+key accelerators...
@@ -110,7 +108,7 @@ static struct {
   { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        },
   { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       },
   { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      },
-  { 'a',          FL_COMMAND,               ctrl_a                        },
+  { 'a',          FL_COMMAND,               Fl_Text_Editor::kf_select_all },
 #endif // __APPLE__
 
   { 0,            0,                        0                             }
@@ -301,20 +299,6 @@ int Fl_Text_Editor::kf_c_s_move(int c, Fl_Text_Editor* e) {
   return 1;
 }
 
-static int ctrl_a(int, Fl_Text_Editor* e) {
-  // make 2+ ^A's in a row toggle select-all:
-  int i = e->buffer()->line_start(e->insert_position());
-  if (i != e->insert_position())
-    return Fl_Text_Editor::kf_move(FL_Home, e);
-  else {
-    if (e->buffer()->selected())
-      e->buffer()->unselect();
-    else
-      Fl_Text_Editor::kf_select_all(0, e);
-  }
-  return 1;
-}
-
 int Fl_Text_Editor::kf_home(int, Fl_Text_Editor* e) {
     return kf_move(FL_Home, e);
 }
@@ -488,5 +472,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.19 2004/05/26 02:42:10 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.20 2004/07/26 20:52:52 easysw Exp $".
 //

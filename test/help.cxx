@@ -1,5 +1,5 @@
 //
-// "$Id: help.cxx,v 1.1.2.10 2004/04/11 04:39:01 easysw Exp $"
+// "$Id: help.cxx,v 1.1.2.11 2004/07/26 20:52:52 easysw Exp $"
 //
 // Fl_Help_Dialog test program.
 //
@@ -52,7 +52,7 @@ main(int  argc,			// I - Number of command-line arguments
   else
     help->load(argv[1]);
 
-  help->show(argc, argv);
+  help->show(1, argv);
 
   Fl::run();
 
@@ -63,5 +63,5 @@ main(int  argc,			// I - Number of command-line arguments
 
 
 //
-// End of "$Id: help.cxx,v 1.1.2.10 2004/04/11 04:39:01 easysw Exp $".
+// End of "$Id: help.cxx,v 1.1.2.11 2004/07/26 20:52:52 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: browser.cxx,v 1.5.2.6.2.6 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: browser.cxx,v 1.5.2.6.2.7 2004/07/26 20:52:52 easysw Exp $"
 //
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -74,7 +74,8 @@ Fl_Select_Browser *browser;
 Fl_Button	*top,
 		*bottom,
 		*middle,
-		*visible;
+		*visible,
+		*swap;
 Fl_Int_Input	*field;
 
 void b_cb(Fl_Widget* o, void*) {
@@ -99,6 +100,19 @@ void show_cb(Fl_Widget *o, void *) {
     browser->middleline(line);
   else
     browser->make_visible(line);
+}
+
+void swap_cb(Fl_Widget *o, void *) {
+  int a = -1, b = -1;
+  for ( int t=0; t<browser->size(); t++ ) {	// find two selected items
+    if ( browser->selected(t) ) {
+      if ( a < 0 )
+	{ a = t; }
+      else 
+	{ b = t; break; }
+    }
+  }
+  browser->swap(a, b);				// swap them
 }
 
 int main(int argc, char **argv) {
@@ -139,17 +153,21 @@ int main(int argc, char **argv) {
   field = new Fl_Int_Input(50, 350, 350, 25, "Line #:");
   field->callback(show_cb);
 
-  top = new Fl_Button(0, 375, 100, 25, "Top");
+  top = new Fl_Button(0, 375, 80, 25, "Top");
   top->callback(show_cb);
 
-  bottom = new Fl_Button(100, 375, 100, 25, "Bottom");
+  bottom = new Fl_Button(80, 375, 80, 25, "Bottom");
   bottom->callback(show_cb);
 
-  middle = new Fl_Button(200, 375, 100, 25, "Middle");
+  middle = new Fl_Button(160, 375, 80, 25, "Middle");
   middle->callback(show_cb);
 
-  visible = new Fl_Button(300, 375, 100, 25, "Make Vis.");
+  visible = new Fl_Button(240, 375, 80, 25, "Make Vis.");
   visible->callback(show_cb);
+
+  swap = new Fl_Button(320, 375, 80, 25, "Swap");
+  swap->callback(swap_cb);
+  swap->tooltip("Swaps two selected lines\n(Use CTRL-click to select two lines)");
 
   window.resizable(browser);
   window.show(argc,argv);
@@ -157,6 +175,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: browser.cxx,v 1.5.2.6.2.6 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: browser.cxx,v 1.5.2.6.2.7 2004/07/26 20:52:52 easysw Exp $".
 //
 

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.8.2.7.2.6 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Browser.H,v 1.8.2.7.2.7 2004/07/26 20:52:50 easysw Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -64,6 +64,7 @@ protected:
   FL_BLINE* _remove(int) ;
   void insert(int, FL_BLINE*);
   int lineno(void*) const ;
+  void swap(FL_BLINE *a, FL_BLINE *b);
 
 public:
 
@@ -72,6 +73,7 @@ public:
   void insert(int, const char*, void* = 0);
   void move(int to, int from);
   int  load(const char* filename);
+  void swap(int a, int b);
   void clear();
 
   int size() const {return lines;}
@@ -124,5 +126,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.8.2.7.2.6 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8.2.7.2.7 2004/07/26 20:52:50 easysw Exp $".
 //

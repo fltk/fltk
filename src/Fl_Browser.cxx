@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.11 2004/05/16 02:18:13 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.12 2004/07/26 20:52:50 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -497,6 +497,54 @@ int Fl_Browser::value() const {
   return lineno(selection());
 }
 
+// SWAP TWO LINES
+void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
+
+  if ( a == b || !a || !b) return;          // nothing to do
+  FL_BLINE *aprev  = a->prev;
+  FL_BLINE *anext  = a->next;
+  FL_BLINE *bprev  = b->prev;
+  FL_BLINE *bnext  = b->next;
+  if ( b->prev == a ) { 		// A ADJACENT TO B
+     if ( aprev ) aprev->next = b; else first = b;
+     b->next = a;
+     a->next = bnext;
+     b->prev = aprev;
+     a->prev = b;
+     if ( bnext ) bnext->prev = a; else last = a;
+  } else if ( a->prev == b ) {		// B ADJACENT TO A
+     if ( bprev ) bprev->next = a; else first = a;
+     a->next = b;
+     b->next = anext;
+     a->prev = bprev;
+     b->prev = a;
+     if ( anext ) anext->prev = b; else last = b;
+  } else {				// A AND B NOT ADJACENT
+     // handle prev's
+     b->prev = aprev;
+     if ( anext ) anext->prev = b; else last = b;
+     a->prev = bprev;
+     if ( bnext ) bnext->prev = a; else last = a;
+     // handle next's
+     if ( aprev ) aprev->next = b; else first = b;
+     b->next = anext;
+     if ( bprev ) bprev->next = a; else first = a;
+     a->next = bnext;
+  }
+  // Disable cache -- we played around with positions
+  cacheline = 0;
+  // Redraw modified lines
+  redraw_line(a);
+  redraw_line(b);
+}
+
+void Fl_Browser::swap(int ai, int bi) {
+  if (ai < 1 || ai > lines || bi < 1 || bi > lines) return;
+  FL_BLINE* a = find_line(ai);
+  FL_BLINE* b = find_line(bi);
+  swap(a,b);
+}
+
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.11 2004/05/16 02:18:13 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.12 2004/07/26 20:52:50 easysw Exp $".
 //
