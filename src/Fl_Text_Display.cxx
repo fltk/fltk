@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.35 2002/10/29 17:34:44 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.36 2002/11/12 22:48:36 matthiaswm Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -197,6 +197,7 @@ Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
   mUnfinishedHighlightCB = unfinishedHighlightCB;
   mHighlightCBArg = cbArg;
 
+  mStyleBuffer->canUndo(0);
 #if 0
   // FIXME: this is in nedit code -- is it needed?	
     /* Call TextDSetFont to combine font information from style table and
@@ -3028,5 +3029,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.35 2002/10/29 17:34:44 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.36 2002/11/12 22:48:36 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.H,v 1.3.2.6 2002/11/05 19:53:50 matthiaswm Exp $"
+// "$Id: Fl_Text_Buffer.H,v 1.3.2.7 2002/11/12 22:48:36 matthiaswm Exp $"
 //
 // Header file for Fl_Text_Buffer class.
 //
@@ -84,6 +84,7 @@ class FL_EXPORT Fl_Text_Buffer {
     void replace(int start, int end, const char *text);
     void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
     int undo(int *cp=0);
+    void canUndo(char flag=1);
     int insertfile(const char *file, int pos, int buflen = 128*1024);
     int appendfile(const char *file, int buflen = 128*1024)
       { return insertfile(file, length(), buflen); }
@@ -245,10 +246,12 @@ class FL_EXPORT Fl_Text_Buffer {
                                    with something else.  This is the else, but
                                    of course, things get quite messy when you
                                    use it */
+    char mCanUndo;		/* if this buffer is used for attributes, it must
+				   not do any undo calls */
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.6 2002/11/05 19:53:50 matthiaswm Exp $".
+// End of "$Id: Fl_Text_Buffer.H,v 1.3.2.7 2002/11/12 22:48:36 matthiaswm Exp $".
 //
