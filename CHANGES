@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.1
 
+	- Fl_Shared_Image::uncache() was not implemented.
 	- Fl::set_font() didn't 0-initialize all font descriptor
 	  data.
 	- Some OpenGL implementations don't support single-

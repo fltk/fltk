@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.H,v 1.22.2.7 2002/08/14 16:19:48 easysw Exp $"
+// "$Id: Fl_Shared_Image.H,v 1.22.2.8 2002/10/20 03:13:56 easysw Exp $"
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -72,6 +72,7 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx, int cy);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
+  virtual void uncache();
 
   static Fl_Shared_Image *find(const char *n, int W = 0, int H = 0);
   static Fl_Shared_Image *get(const char *n, int W = 0, int H = 0);
@@ -92,5 +93,5 @@ FL_EXPORT extern void fl_register_images();
 #endif // !Fl_Shared_Image_H
 
 //
-// End of "$Id: Fl_Shared_Image.H,v 1.22.2.7 2002/08/14 16:19:48 easysw Exp $"
+// End of "$Id: Fl_Shared_Image.H,v 1.22.2.8 2002/10/20 03:13:56 easysw Exp $"
 //
