@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_dir.cxx,v 1.1.2.11 2002/05/01 13:52:25 easysw Exp $"
+// "$Id: fl_file_dir.cxx,v 1.1.2.12 2002/05/16 12:47:43 easysw Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -23,7 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <config.h>
+#include "flstring.h"
 #include <FL/filename.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
@@ -68,8 +68,7 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
       if (fc->filter() != pat && (!pat || !fc->filter() ||
           strcmp(pat, fc->filter())) && fc->value()) {
 	// if pattern is different, remove name but leave old directory:
-	strncpy(retname, fc->value(), sizeof(retname) - 1);
-	retname[sizeof(retname) - 1] = '\0';
+	strlcpy(retname, fc->value(), sizeof(retname));
 
 	char *p = strrchr(retname, '/');
 
@@ -143,5 +142,5 @@ fl_dir_chooser(const char *message,	// I - Message for titlebar
 
 
 //
-// End of "$Id: fl_file_dir.cxx,v 1.1.2.11 2002/05/01 13:52:25 easysw Exp $".
+// End of "$Id: fl_file_dir.cxx,v 1.1.2.12 2002/05/16 12:47:43 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.1.2.3 2001/01/22 15:13:38 easysw Exp $"
+ * "$Id: config.h,v 1.1.2.3.2.1 2002/05/16 12:47:42 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -131,7 +131,6 @@
 
 #define HAVE_VSNPRINTF 0
 #define HAVE_SNPRINTF 0
-#define HAVE_VSPRINTF 1
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -150,5 +149,5 @@
 #define HAVE_POLL 0
 
 /*
- * End of "$Id: config.h,v 1.1.2.3 2001/01/22 15:13:38 easysw Exp $".
+ * End of "$Id: config.h,v 1.1.2.3.2.1 2002/05/16 12:47:42 easysw Exp $".
  */

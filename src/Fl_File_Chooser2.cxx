@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.12 2002/05/02 15:24:34 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -100,10 +100,7 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 #endif /* WIN32 || __EMX__ */
       fl_filename_absolute(directory_, d);
     else
-    {
-      strncpy(directory_, d, sizeof(directory_) - 1);
-      directory_[sizeof(directory_) - 1] = '\0';
-    }
+      strlcpy(directory_, d, sizeof(directory_));
 
     // Strip any trailing slash and/or period...
     dirptr = directory_ + strlen(directory_) - 1;
@@ -180,10 +177,7 @@ Fl_File_Chooser::count()
     if (directory_[0] != '\0')
       snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
     else
-    {
-      strncpy(pathname, filename, sizeof(pathname) - 1);
-      pathname[sizeof(pathname) - 1] = '\0';
-    }
+      strlcpy(pathname, filename, sizeof(pathname));
 
     if (fl_filename_isdir(pathname))
       return (0);
@@ -199,10 +193,7 @@ Fl_File_Chooser::count()
       if (directory_[0] != '\0')
 	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
       else
-      {
-	strncpy(pathname, filename, sizeof(pathname) - 1);
-	pathname[sizeof(pathname) - 1] = '\0';
-      }
+	strlcpy(pathname, filename, sizeof(pathname));
 
       if (!fl_filename_isdir(pathname))
 	count ++;
@@ -244,8 +235,7 @@ Fl_File_Chooser::value(int f)	// I - File number
       if (directory_[0]) {
 	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
       } else {
-	strncpy(pathname, name, sizeof(pathname) - 1);
-	pathname[sizeof(pathname) - 1] = '\0';
+	strlcpy(pathname, name, sizeof(pathname));
       }
 
       if (!fl_filename_isdir(pathname))
@@ -385,10 +375,7 @@ Fl_File_Chooser::newdir()
 #endif /* WIN32 || __EMX__ */
     snprintf(pathname, sizeof(pathname), "%s/%s", directory_, dir);
   else
-  {
-    strncpy(pathname, dir, sizeof(pathname) - 1);
-    pathname[sizeof(pathname) - 1] = '\0';
-  }
+    strlcpy(pathname, dir, sizeof(pathname));
 
   // Create the directory; ignore EEXIST errors...
 #if defined(WIN32) && ! defined (__CYGWIN__)
@@ -419,10 +406,9 @@ Fl_File_Chooser::rescan()
 //  printf("Fl_File_Chooser::rescan(); directory = \"%s\"\n", directory_);
 
   // Clear the current filename
-  pathname[sizeof(pathname) - 1] = '\0';
-  strncpy(pathname, directory_, sizeof(pathname) - 1);
+  strlcpy(pathname, directory_, sizeof(pathname));
   if (pathname[strlen(pathname) - 1] != '/') {
-    strncat(pathname, "/", sizeof(pathname) - 1);
+    strlcat(pathname, "/", sizeof(pathname));
   }
   fileName->value(pathname);
   okButton->deactivate();
@@ -451,10 +437,7 @@ Fl_File_Chooser::fileListCB()
   if (directory_[0] != '\0')
     snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
   else
-  {
-    strncpy(pathname, filename, sizeof(pathname) - 1);
-    pathname[sizeof(pathname) - 1] = '\0';
-  }
+    strlcpy(pathname, filename, sizeof(pathname));
 
   if (Fl::event_clicks())
   {
@@ -539,8 +522,7 @@ Fl_File_Chooser::fileNameCB()
     value(pathname);
   } else if (filename != pathname) {
     // Finally, make sure that we have a writable copy...
-    strncpy(pathname, filename, sizeof(pathname) - 1);
-    pathname[sizeof(pathname) - 1] = '\0';
+    strlcpy(pathname, filename, sizeof(pathname));
   }
 
   filename = pathname;
@@ -627,8 +609,7 @@ Fl_File_Chooser::fileNameCB()
 	if (max_match == 100000)
 	{
 	  // First match; copy stuff over...
-	  strncpy(matchname, file, sizeof(matchname) - 1);
-	  matchname[sizeof(matchname) - 1] = '\0';
+	  strlcpy(matchname, file, sizeof(matchname));
 	  max_match = strlen(matchname);
 
           // Strip trailing /, if any...
@@ -702,5 +683,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.12 2002/05/02 15:24:34 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $".
 //

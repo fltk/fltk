@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.4 2002/05/03 14:33:00 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.5 2002/05/16 12:47:43 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -725,7 +725,7 @@ int Fl_Window_Type::handle(int event) {
 ////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
-#include <string.h>
+#include "../src/flstring.h"
 
 void Fl_Window_Type::write_code1() {
   Fl_Widget_Type::write_code1();
@@ -792,5 +792,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.4 2002/05/03 14:33:00 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.5 2002/05/16 12:47:43 easysw Exp $".
 //

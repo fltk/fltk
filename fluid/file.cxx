@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.6.2.5 2002/05/13 20:54:49 easysw Exp $"
+// "$Id: file.cxx,v 1.7.2.6.2.6 2002/05/16 12:47:43 easysw Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -28,10 +28,9 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdarg.h>
 #include "alignment_panel.h"
 
@@ -157,7 +156,7 @@ void read_error(const char *format, ...) {
   va_start(args, format);
   if (!fin) {
     char buffer[1024];
-    vsprintf(buffer, format, args);
+    vsnprintf(buffer, sizeof(buffer), format, args);
     fl_message(buffer);
   } else {
     fprintf(stderr, "%s:%d: ", fname, lineno);
@@ -632,5 +631,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.6.2.5 2002/05/13 20:54:49 easysw Exp $".
+// End of "$Id: file.cxx,v 1.7.2.6.2.6 2002/05/16 12:47:43 easysw Exp $".
 //

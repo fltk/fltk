@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_display.cxx,v 1.4.2.3.2.4 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: Fl_display.cxx,v 1.4.2.3.2.5 2002/05/16 12:47:43 easysw Exp $"
 //
 // Display function for the Fast Light Tool Kit (FLTK).
 //
@@ -36,11 +36,10 @@ void Fl::display(const char *d) {
 #else
   static char e[1024];
   strcpy(e,"DISPLAY=");
-  strncat(e,d,sizeof(e) - 1);
-  e[sizeof(e) - 1] = '\0';
+  strlcat(e,d,sizeof(e));
   for (char *c = e+8; *c!=':'; c++) {
     if (!*c) {
-      strncat(e,":0.0",sizeof(e) - 1);
+      strlcat(e,":0.0",sizeof(e));
       break;
     }
   }
@@ -49,5 +48,5 @@ void Fl::display(const char *d) {
 }
 
 //
-// End of "$Id: Fl_display.cxx,v 1.4.2.3.2.4 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: Fl_display.cxx,v 1.4.2.3.2.5 2002/05/16 12:47:43 easysw Exp $".
 //

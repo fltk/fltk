@@ -1,5 +1,5 @@
 //
-// "$Id: factory.cxx,v 1.4.2.11.2.7 2002/05/01 08:51:59 easysw Exp $"
+// "$Id: factory.cxx,v 1.4.2.11.2.8 2002/05/16 12:47:43 easysw Exp $"
 //
 // Widget factory code for the Fast Light Tool Kit (FLTK).
 //
@@ -35,30 +35,11 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
 #include <stdio.h>
-#include <config.h>
-
-#include <string.h>
-
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif // HAVE_STRINGS_H
-
-// Apparently Unixware defines "index" to strchr (!) rather than
-// providing a proper entry point or not providing the (obsolete)
-// BSD function.  Make sure index is not defined...
-#ifdef index
-#  undef index
-#endif // index
-
-#if defined(WIN32) || defined(__EMX__)
-#define strcasecmp stricmp
-#endif
+#include "../src/flstring.h"
 
 #include "Fl_Widget_Type.h"
 
 #if !HAVE_STRCASECMP
-#  include <ctype.h>
-
 //
 // 'strcasecmp()' - Do a case-insensitive compare...
 //
@@ -924,5 +905,5 @@ int lookup_symbol(const char *name, int &v, int numberok) {
 }
 
 //
-// End of "$Id: factory.cxx,v 1.4.2.11.2.7 2002/05/01 08:51:59 easysw Exp $".
+// End of "$Id: factory.cxx,v 1.4.2.11.2.8 2002/05/16 12:47:43 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.42 2002/05/08 12:44:52 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.43 2002/05/16 12:47:43 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -170,9 +170,9 @@ GLCPPFILES = \
 	glut_compatability.cxx \
 	glut_font.cxx
 
-CFILES = fl_call_main.c scandir.c numericsort.c vsnprintf.c
+CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
 
-CLEAN =	core cmap
+CLEAN =	core* cmap
 
 ################################################################
 
@@ -433,5 +433,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.42 2002/05/08 12:44:52 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.43 2002/05/16 12:47:43 easysw Exp $".
 #

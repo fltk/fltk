@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.5 2002/04/27 18:37:15 easysw Exp $"
+// "$Id: fl_set_fonts_mac.cxx,v 1.1.2.6 2002/05/16 12:47:43 easysw Exp $"
 //
 // MacOS font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -107,7 +107,9 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
 
   Str255 name;
-  int len = strlen( s->name ); strncpy( (char*)(name+1), s->name+1, len ); name[0] = len-1;
+  int len = strlen( s->name );
+  memcpy(((char*)name)+1, s->name+1, len );
+  name[0] = len-1;
   FMFontFamily family = FMGetFontFamilyFromName( name );
   if ( family == kInvalidFontFamily ) return 0;
 
@@ -152,5 +154,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.5 2002/04/27 18:37:15 easysw Exp $".
+// End of "$Id: fl_set_fonts_mac.cxx,v 1.1.2.6 2002/05/16 12:47:43 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.12 2002/05/16 08:01:12 spitzak Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -318,28 +318,15 @@ static char *decodeText( const char *src )
 char Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize )
 {
   const char *v = node->get( key );
-  if ( v && strchr( v, '\\' ) )
-  {
+  if ( v && strchr( v, '\\' ) ) {
     char *w = decodeText( v );
-    strncpy( text, w, maxSize );
-    if ( (int)strlen(w) >= maxSize ) text[maxSize] = 0;
+    strlcpy(text, w, maxSize);
     free( w );
     return 1;
-  }    
-  if ( !v ) v = defaultValue;
-  if ( v )
-  {
-    int vLen = strlen( v );
-    if ( vLen >= maxSize )
-    {
-      strncpy( text, v, maxSize );
-      text[maxSize] = 0;
-    }
-    else
-      strcpy( text, v );
   }
-  else
-    text = 0;
+  if ( !v ) v = defaultValue;
+  if ( v ) strlcpy(text, v, maxSize);
+  else text = 0;
   return ( v != defaultValue );
 }
 
@@ -676,13 +663,12 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   switch (root) {
     case USER:
       if ((e = getenv("HOME")) != NULL) {
-	strncpy(filename, e, sizeof(filename) - 1);
-	filename[sizeof(filename) - 1] = '\0';
+	strlcpy(filename, e, sizeof(filename));
 
 	if (filename[strlen(filename)-1] != '/') {
-	  strncat(filename, "/.fltk/", sizeof(filename) - 1);
+	  strlcat(filename, "/.fltk/", sizeof(filename));
 	} else {
-	  strncat(filename, ".fltk/", sizeof(filename) - 1);
+	  strlcat(filename, ".fltk/", sizeof(filename));
 	}
 	break;
       }
@@ -776,8 +762,7 @@ int Fl_Preferences::RootNode::write()
 // get the path to the preferences directory
 char Fl_Preferences::RootNode::getPath( char *path, int pathlen )
 {
-  strncpy( path, filename_, pathlen - 1 );
-  path[pathlen - 1] = '\0';
+  strlcpy( path, filename_, pathlen);
 
   char *s;
   for ( s = path; *s; s++ ) if ( *s == '\\' ) *s = '/';
@@ -928,8 +913,7 @@ void Fl_Preferences::Node::set( const char *line )
     const char *c = strchr( line, ':' );
     if ( c )
     {
-      strncpy( nameBuffer, line, c-line );
-      nameBuffer[ c-line ] = 0;
+      strlcpy( nameBuffer, line, c-line+1);
       set( nameBuffer, c+1 );
     }
     else
@@ -1000,7 +984,8 @@ Fl_Preferences::Node *Fl_Preferences::Node::find( const char *path )
       }
       const char *s = path+len+1;
       const char *e = strchr( s, '/' );
-      if ( e ) { strncpy( nameBuffer, s, e-s ); nameBuffer[ e-s ] = 0; } else strcpy( nameBuffer, s );
+      if (e) strlcpy( nameBuffer, s, e-s+1 );
+      else strlcpy( nameBuffer, s, sizeof(nameBuffer));
       nd = new Node( nameBuffer );
       nd->setParent( this );
       return nd->find( path );
@@ -1081,5 +1066,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.12 2002/05/16 08:01:12 spitzak Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.13 2002/05/16 12:47:43 easysw Exp $".
 //

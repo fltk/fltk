@@ -4,7 +4,6 @@
 #define Fl_Help_Dialog_H
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <string.h>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Button.H>
 

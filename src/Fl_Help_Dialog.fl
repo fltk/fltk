@@ -1,10 +1,10 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0100 
 header_name {../FL/Fl_Help_Dialog.H} 
-code_name {.cxx} 
-gridx 5 
-gridy 5 
-snap 3
+code_name {.cxx}
+decl {\#include "flstring.h"} {selected
+} 
+
 class Fl_Help_Dialog {open
 } {
   decl {int index_;} {}
@@ -16,7 +16,7 @@ class Fl_Help_Dialog {open
     Fl_Window window_ {
       label {Help Dialog} open
       private xywh {470 380 530 385} type Double resizable
-      code0 {\#include <string.h>} visible
+      visible
     } {
       Fl_Group view_ {
         callback {if (view_->changed())
@@ -32,7 +32,7 @@ class Fl_Help_Dialog {open
 
   max_ = index_;
 
-  strcpy(file_[index_], view_->filename());
+  strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
   line_[index_] = view_->topline();
 
   if (index_ > 0)
@@ -45,8 +45,7 @@ class Fl_Help_Dialog {open
 }
 else if (view_->filename())
 {
-  strncpy(file_[index_], view_->filename(), 255);
-  file_[index_][255] = '\\0';
+  strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
   line_[index_] = view_->topline();
 }} open
         private xywh {10 10 510 330} box DOWN_BOX resizable
@@ -146,10 +145,9 @@ window_->label(view_->title());} {}
   } {
     code {window_->show();} {}
   }
-  Function {show(int argc, char **argv)} {open return_type void
+  Function {show(int argc, char **argv)} {return_type void
   } {
-    code {window_->show(argc, argv);} {selected
-    }
+    code {window_->show(argc, argv);} {}
   }
   Function {textsize(uchar s)} {return_type void
   } {

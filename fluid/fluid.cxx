@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.25 2002/05/02 10:08:44 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.26 2002/05/16 12:47:43 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -39,8 +39,6 @@
 #include <FL/filename.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include <errno.h>
 
 #include "../src/flstring.h"
@@ -298,7 +296,7 @@ static char* cutfname() {
   if (!beenhere) {
     beenhere = 1;
     fluid_prefs.getUserdataPath(name, sizeof(name));
-    strncat(name, "cut_buffer", sizeof(name) - 1);
+    strlcat(name, "cut_buffer", sizeof(name));
     // getUserdataPath zeros the "name" buffer...
   }
 
@@ -565,8 +563,7 @@ void update_history(const char *filename) {
           i * sizeof(relative_history[0]));
 
   // Put the new file at the top...
-  strncpy(absolute_history[0], absolute, sizeof(absolute_history[0]) - 1);
-  absolute_history[0][sizeof(absolute_history[0]) - 1] = '\0';
+  strlcpy(absolute_history[0], absolute, sizeof(absolute_history[0]));
 
   fl_filename_relative(relative_history[0], sizeof(relative_history[0]),
                        absolute_history[0]);
@@ -798,5 +795,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.25 2002/05/02 10:08:44 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.26 2002/05/16 12:47:43 easysw Exp $".
 //

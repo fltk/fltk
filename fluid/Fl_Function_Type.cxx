@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.6 2002/05/15 23:32:25 easysw Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.7 2002/05/16 12:47:42 easysw Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -26,9 +26,8 @@
 #include <FL/Fl.H>
 #include "Fl_Type.h"
 #include <FL/fl_show_input.H>
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdio.h>
-#include <ctype.h>
 
 extern int i18n_type;
 extern const char* i18n_include;
@@ -704,5 +703,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.6 2002/05/15 23:32:25 easysw Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.7 2002/05/16 12:47:42 easysw Exp $".
 //

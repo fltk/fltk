@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.14 2002/04/28 11:40:25 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.15 2002/05/16 12:47:42 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 #include <FL/fl_message.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Window.H>
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -1339,8 +1339,6 @@ void selection_changed(Fl_Type *p) {
 ////////////////////////////////////////////////////////////////
 // Writing the C code:
 
-#include <ctype.h>
-
 // test to see if user named a function, or typed in code:
 int is_name(const char *c) {
   for (; *c; c++) if (ispunct(*c) && *c!='_' && *c!=':') return 0;
@@ -1373,8 +1371,9 @@ const char *array_name(Fl_Widget_Type *o) {
     if (n1 > num || n1==num && sawthis) return 0;
   }
   static char buffer[128];
+  // MRS: we want strncpy() here...
   strncpy(buffer,c,d-c+1);
-  sprintf(buffer+(d-c+1),"%d]",num+1);
+  snprintf(buffer+(d-c+1),sizeof(buffer) - (d-c+1), "%d]",num+1);
   return buffer;
 }
 
@@ -1976,5 +1975,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.14 2002/04/28 11:40:25 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.15 2002/05/16 12:47:42 easysw Exp $".
 //

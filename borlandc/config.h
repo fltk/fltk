@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.1.2.1 2002/03/25 18:31:30 easysw Exp $"
+ * "$Id: config.h,v 1.1.2.2 2002/05/16 12:47:42 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Borland C++.
  *
@@ -143,7 +143,6 @@
 
 #define HAVE_VSNPRINTF 0
 #define HAVE_SNPRINTF 0
-#define HAVE_VSPRINTF 1
 
 /*
  * String functions...
@@ -176,5 +175,5 @@
 
 
 /*
- * End of "$Id: config.h,v 1.1.2.1 2002/03/25 18:31:30 easysw Exp $".
+ * End of "$Id: config.h,v 1.1.2.2 2002/05/16 12:47:42 easysw Exp $".
  */

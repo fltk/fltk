@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.4 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.5 2002/05/16 12:47:42 easysw Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -35,7 +35,7 @@
 #include <FL/fl_message.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Button.H>
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -91,8 +91,6 @@ Fl_Submenu_Type Fl_Submenu_type;
 
 ////////////////////////////////////////////////////////////////
 // Writing the C code:
-
-#include <ctype.h>
 
 // test functions in Fl_Widget_Type.C:
 int is_name(const char *c);
@@ -467,5 +465,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.4 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.12.2.5 2002/05/16 12:47:42 easysw Exp $".
 //

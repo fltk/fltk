@@ -1,5 +1,11 @@
-CHANGES IN FLTK 1.1.0
+CHANGES IN FLTK 1.1.0rc3
 
+	- Now use strlcat() instead of strncat() which could
+	  cause buffer overflows.
+	- Now use of strlcpy() instead of strncpy() to simplify
+	  the code.
+	- Drag-n-drop under WIN32 now shows a [+] cursor instead
+	  of the link cursor.
 	- Fixed widget width tooltip and default argument
 	  handling code in FLUID.
 	- Fixed colors used when drawing antialiased text using

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.mingw,v 1.1.2.3.2.4 2002/04/28 16:41:16 easysw Exp $"
+ * "$Id: config.mingw,v 1.1.2.3.2.5 2002/05/16 12:47:43 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -141,13 +141,15 @@
 
 #define HAVE_VSNPRINTF 0
 #define HAVE_SNPRINTF 0
-#define HAVE_VSPRINTF 0
 
 /*
  * String functions...
  */
 
+/* #undef HAVE_STRINGS_H */
 #define HAVE_STRCASECMP 1
+/* #undef HAVE_STRLCAT*/
+/* #undef HAVE_STRLCPY*/
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -190,5 +192,5 @@
 
 
 /*
- * End of "$Id: config.mingw,v 1.1.2.3.2.4 2002/04/28 16:41:16 easysw Exp $".
+ * End of "$Id: config.mingw,v 1.1.2.3.2.5 2002/05/16 12:47:43 easysw Exp $".
  */

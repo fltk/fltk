@@ -2174,6 +2174,11 @@ DEP_CPP_FL_XP=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\flstring.c
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\forms_bitmap.cxx
 DEP_CPP_FORMS=\
 	"..\fl\enumerations.h"\

@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.9.2.9.2.4 2002/03/25 21:08:41 easysw Exp $"
+// "$Id: code.cxx,v 1.9.2.9.2.5 2002/05/16 12:47:43 easysw Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -23,10 +23,9 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdarg.h>
 
 #include <FL/Fl.H>
@@ -136,7 +135,7 @@ int write_declare(const char *format, ...) {
   va_list args;
   char buf[1024];
   va_start(args, format);
-  vsprintf(buf, format, args);
+  vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
   included **p = &included_root;
   while (*p) {
@@ -464,5 +463,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.9.2.9.2.4 2002/03/25 21:08:41 easysw Exp $".
+// End of "$Id: code.cxx,v 1.9.2.9.2.5 2002/05/16 12:47:43 easysw Exp $".
 //

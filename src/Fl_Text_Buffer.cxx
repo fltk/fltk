@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.5 2002/05/03 20:30:19 easysw Exp $"
+// "$Id: Fl_Text_Buffer.cxx,v 1.9.2.6 2002/05/16 12:47:43 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2034,8 +2034,7 @@ static char *copyLine( const char *text, int *lineLen ) {
   for ( c = text; *c != '\0' && *c != '\n'; c++ )
     len++;
   outStr = (char *)malloc( len + 1 );
-  strncpy( outStr, text, len );
-  outStr[ len ] = '\0';
+  strlcpy( outStr, text, len + 1);
   *lineLen = len;
   return outStr;
 }
@@ -2285,5 +2284,5 @@ Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
 
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.5 2002/05/03 20:30:19 easysw Exp $".
+// End of "$Id: Fl_Text_Buffer.cxx,v 1.9.2.6 2002/05/16 12:47:43 easysw Exp $".
 //

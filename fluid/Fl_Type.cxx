@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.7 2002/04/28 08:42:32 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.8 2002/05/16 12:47:42 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -38,9 +38,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
-#include <ctype.h>
 #include <stdlib.h>
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdio.h>
 
 #include "Fl_Type.h"
@@ -454,8 +453,7 @@ int storestring(const char *n, const char * & p, int nostrip) {
     p = 0;
   } else {
     char *q = (char *)malloc(length+1);
-    strncpy(q,n,length);
-    q[length] = 0;
+    strlcpy(q,n,length+1);
     p = q;
   }
   modflag = 1;
@@ -682,5 +680,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.7 2002/04/28 08:42:32 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.8 2002/05/16 12:47:42 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_x.cxx,v 1.1.2.2 2002/03/06 19:42:30 easysw Exp $"
+// "$Id: fl_set_fonts_x.cxx,v 1.1.2.3 2002/05/16 12:47:43 easysw Exp $"
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -115,7 +115,9 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
     return p;
   }
   const char *e = fl_font_word(x,1);
-  strncpy(o,x,e-x); o += e-x;
+  // MRS: we want strncpy here, not strlcpy...
+  strncpy(o,x,e-x);
+  o += e-x;
 
   // collect all the attribute words:
   int type = 0;
@@ -123,8 +125,12 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
     // get the next word:
     if (*e) e++; x = e; e = fl_font_word(x,1);
     int t = attribute(n,x);
-    if (t < 0) {*o++ = ' '; strncpy(o,x,e-x); o += e-x;}
-    else type |= t;
+    if (t < 0) {
+      *o++ = ' ';
+      // MRS: we want strncpy here, not strlcpy...
+      strncpy(o,x,e-x);
+      o += e-x;
+    } else type |= t;
   }
 
   // skip over the '*' for the size and get the registry-encoding:
@@ -213,7 +219,7 @@ static int ultrasort(const void *aa, const void *bb) {
 }
 
 // converts a X font name to a standard starname, returns point size:
-static int to_canonical(char *to, const char *from) {
+static int to_canonical(char *to, const char *from, size_t tolen) {
   char* c = fl_find_fontsize((char*)from);
   if (!c) return -1; // no point size found...
   const char* endptr;
@@ -227,9 +233,11 @@ static int to_canonical(char *to, const char *from) {
     if (*endptr && !use_registry(endptr+1)) endptr = "";
   }
   int n = c-from;
+  // MRS: we want strncpy here, not strlcpy...
+  if (n > (int)(tolen - 1)) return -1;
   strncpy(to,from,n);
   to[n++] = '*';
-  strcpy(to+n,endptr);
+  strlcpy(to+n,endptr, tolen - n);
   return size;
 }
 
@@ -253,13 +261,13 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
     int first_xlist = i;
     const char *p = xlist[i++];
     char canon[1024];
-    int size = to_canonical(canon, p);
+    int size = to_canonical(canon, p, sizeof(canon));
     if (size >= 0) {
       for (;;) { // find all matching fonts:
 	if (i >= xlistsize) break;
 	const char *q = xlist[i];
 	char this_canon[1024];
-	if (to_canonical(this_canon, q) < 0) break;
+	if (to_canonical(this_canon, q, sizeof(this_canon)) < 0) break;
 	if (strcmp(canon, this_canon)) break;
 	i++;
       }
@@ -322,5 +330,5 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.2 2002/03/06 19:42:30 easysw Exp $".
+// End of "$Id: fl_set_fonts_x.cxx,v 1.1.2.3 2002/05/16 12:47:43 easysw Exp $".
 //

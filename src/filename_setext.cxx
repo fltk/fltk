@@ -1,5 +1,5 @@
 //
-// "$Id: filename_setext.cxx,v 1.4.2.3.2.4 2002/04/11 11:52:42 easysw Exp $"
+// "$Id: filename_setext.cxx,v 1.4.2.3.2.5 2002/05/16 12:47:43 easysw Exp $"
 //
 // Filename extension routines for the Fast Light Tool Kit (FLTK).
 //
@@ -33,13 +33,12 @@
 char *fl_filename_setext(char *buf, int buflen, const char *ext) {
   char *q = (char *)fl_filename_ext(buf);
   if (ext) {
-    strncpy(q,ext,buflen - (q - buf) - 1);
-    buf[buflen - 1] = '\0';
+    strlcpy(q,ext,buflen - (q - buf));
   } else *q = 0;
   return(buf);
 }
 
 
 //
-// End of "$Id: filename_setext.cxx,v 1.4.2.3.2.4 2002/04/11 11:52:42 easysw Exp $".
+// End of "$Id: filename_setext.cxx,v 1.4.2.3.2.5 2002/05/16 12:47:43 easysw Exp $".
 //

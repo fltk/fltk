@@ -1,5 +1,5 @@
 //
-// "$Id: forms_fselect.cxx,v 1.4.2.3.2.3 2002/04/11 11:52:43 easysw Exp $"
+// "$Id: forms_fselect.cxx,v 1.4.2.3.2.4 2002/05/16 12:47:43 easysw Exp $"
 //
 // Forms file selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -34,21 +34,21 @@ static char fl_filename[256];
 
 char* fl_show_file_selector(const char *message,const char *dir,
 			    const char *pat,const char *fname) {
-  if (dir && dir[0]) strncpy(fl_directory,dir,1023);
+  if (dir && dir[0]) strlcpy(fl_directory,dir,sizeof(fl_directory));
   if (pat && pat[0]) fl_pattern = pat;
-  if (fname && fname[0]) strncpy(fl_filename,fname,255);
+  if (fname && fname[0]) strlcpy(fl_filename,fname,sizeof(fl_filename));
   char *p = fl_directory+strlen(fl_directory);
   if (p > fl_directory && *(p-1)!='/'
 #ifdef WIN32
       && *(p-1)!='\\' && *(p-1)!=':'
 #endif
       ) *p++ = '/';
-  strcpy(p,fl_filename);
+  strlcpy(p,fl_filename,sizeof(fl_directory) - (p - fl_directory));
   const char *q = fl_file_chooser(message,fl_pattern,fl_directory);
   if (!q) return 0;
-  strcpy(fl_directory, q);
+  strlcpy(fl_directory, q, sizeof(fl_directory));
   p = (char *)fl_filename_name(fl_directory);
-  strcpy(fl_filename, p);
+  strlcpy(fl_filename, p, sizeof(fl_directory));
   if (p > fl_directory+1) p--;
   *p = 0;
   return (char *)q;
@@ -61,5 +61,5 @@ char*	fl_get_pattern() {return (char *)fl_pattern;}
 char*	fl_get_filename() {return fl_filename;}
 
 //
-// End of "$Id: forms_fselect.cxx,v 1.4.2.3.2.3 2002/04/11 11:52:43 easysw Exp $".
+// End of "$Id: forms_fselect.cxx,v 1.4.2.3.2.4 2002/05/16 12:47:43 easysw Exp $".
 //

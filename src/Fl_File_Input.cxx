@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.1 2002/04/30 21:50:16 easysw Exp $"
+// "$Id: Fl_File_Input.cxx,v 1.1.2.2 2002/05/16 12:47:43 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,6 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-//#include <FL/Fl_File_Input.H>
 #include <FL/Fl.H>
 #include <FL/Fl_File_Input.H>
 #include <FL/fl_draw.H>
@@ -228,8 +227,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
   if (!buttons_[i] || event != FL_RELEASE) return 1;
 
   // Figure out where to truncate the path...
-  strncpy(newvalue, value(), sizeof(newvalue) - 1);
-  newvalue[sizeof(newvalue) - 1] = '\0';
+  strlcpy(newvalue, value(), sizeof(newvalue));
 
   for (start = newvalue, end = start; start && i >= 0; start = end, i --) {
 //    printf("    start = \"%s\"\n", start);
@@ -255,5 +253,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.1 2002/04/30 21:50:16 easysw Exp $".
+// End of "$Id: Fl_File_Input.cxx,v 1.1.2.2 2002/05/16 12:47:43 easysw Exp $".
 //

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.65 2002/05/07 00:55:48 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.66 2002/05/16 12:47:42 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -35,7 +35,7 @@ dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
 FL_PATCH_VERSION=0
-FL_RELEASE_VERSION=rc1
+FL_RELEASE_VERSION=rc3
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)
@@ -261,9 +261,8 @@ AC_CHECK_FUNC(snprintf,
     else
         AC_DEFINE(HAVE_SNPRINTF)
     fi)
-AC_CHECK_FUNCS(vsprintf)
 AC_CHECK_HEADER(strings.h, AC_DEFINE(HAVE_STRINGS_H))
-AC_CHECK_FUNCS(strcasecmp)
+AC_CHECK_FUNCS(strcasecmp strlcat strlcpy)
 
 dnl FLTK library uses math library functions...
 AC_SEARCH_LIBS(pow, m)
@@ -736,5 +735,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.65 2002/05/07 00:55:48 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.66 2002/05/16 12:47:42 easysw Exp $".
 dnl

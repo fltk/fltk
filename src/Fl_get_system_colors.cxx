@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.9 2002/04/27 19:35:18 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.10 2002/05/16 12:47:43 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -233,10 +233,7 @@ int Fl::scheme(const char *s) {
   // inherit it...
   static char e[1024];
   strcpy(e,"FLTK_SCHEME=");
-  if (s) {
-    strncat(e,s,sizeof(e) - 1);
-    e[sizeof(e) - 1] = '\0';
-  }
+  if (s) strlcat(e,s,sizeof(e));
   putenv(e);
 
   // Load the scheme...
@@ -316,5 +313,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.9 2002/04/27 19:35:18 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.10 2002/05/16 12:47:43 easysw Exp $".
 //

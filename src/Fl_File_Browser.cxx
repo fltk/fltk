@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.15 2002/05/06 04:11:50 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.16 2002/05/16 12:47:43 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -540,7 +540,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
         if (sscanf(line, "%*s%4095s", filename) != 1)
 	  continue;
 
-        strncat(filename, "/", sizeof(filename) - 1);
+        strlcat(filename, "/", sizeof(filename));
 
 //        printf("Fl_File_Browser::load() - adding \"%s\" to list...\n", filename);
         add(filename, icon);
@@ -561,15 +561,14 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
     //
 
 #if (defined(WIN32) && !defined(__CYGWIN__)) || defined(__EMX__)
-    strncpy(filename, directory_, sizeof(filename) - 1);
-    filename[sizeof(filename) - 1] = '\0';
+    strlcpy(filename, directory_, sizeof(filename));
     i = strlen(filename) - 1;
 
     if (i == 2 && filename[1] == ':' &&
         (filename[2] == '/' || filename[2] == '\\'))
       filename[2] = '/';
     else if (filename[i] != '/' && filename[i] != '\\')
-      strcat(filename, "/");
+      strlcat(filename, "/", sizeof(filename));
 
     num_files = fl_filename_list(filename, &files, sort);
 #else
@@ -638,5 +637,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.15 2002/05/06 04:11:50 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.16 2002/05/16 12:47:43 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.30 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.31 2002/05/16 12:47:43 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -207,14 +207,12 @@ Fl_Help_View::add_link(const char *n,	// I - Name of link
   temp->w       = xx + ww;
   temp->h       = yy + hh;
 
-  strncpy(temp->filename, n, sizeof(temp->filename) - 1);
-  temp->filename[sizeof(temp->filename) - 1] = '\0';
+  strlcpy(temp->filename, n, sizeof(temp->filename));
 
   if ((target = strrchr(temp->filename, '#')) != NULL)
   {
     *target++ = '\0';
-    strncpy(temp->name, target, sizeof(temp->name) - 1);
-    temp->name[sizeof(temp->name) - 1] = '\0';
+    strlcpy(temp->name, target, sizeof(temp->name));
   }
   else
     temp->name[0] = '\0';
@@ -247,8 +245,7 @@ Fl_Help_View::add_target(const char *n,	// I - Name of target
   temp = targets_ + ntargets_;
 
   temp->y = yy;
-  strncpy(temp->name, n, sizeof(temp->name) - 1);
-  temp->name[sizeof(temp->name) - 1] = '\0';
+  strlcpy(temp->name, n, sizeof(temp->name));
 
   ntargets_ ++;
 }
@@ -960,10 +957,7 @@ Fl_Help_View::format()
 	    add_target(attr, yy - size - 2);
 
 	  if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
-	  {
-	    strncpy(link, attr, sizeof(link) - 1);
-	    link[sizeof(link) - 1] = '\0';
-	  }
+	    strlcpy(link, attr, sizeof(link));
 	}
 	else if (strcasecmp(buf, "/A") == 0)
           link[0] = '\0';
@@ -2136,8 +2130,7 @@ Fl_Help_View::handle(int event)	// I - Event to handle
   {
     fl_cursor(FL_CURSOR_DEFAULT);
 
-    strncpy(target, link->name, sizeof(target) - 1);
-    target[sizeof(target) - 1] = '\0';
+    strlcpy(target, link->name, sizeof(target));
 
     set_changed();
 
@@ -2391,8 +2384,7 @@ Fl_Help_View::topline(const char *n)	// I - Target name
   if (ntargets_ == 0)
     return;
 
-  strncpy(key.name, n, sizeof(key.name) - 1);
-  key.name[sizeof(key.name) - 1] = '\0';
+  strlcpy(key.name, n, sizeof(key.name));
 
   target = (Fl_Help_Target *)bsearch(&key, targets_, ntargets_, sizeof(Fl_Help_Target),
                                  (compare_func_t)compare_targets);
@@ -2623,5 +2615,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.30 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.31 2002/05/16 12:47:43 easysw Exp $".
 //

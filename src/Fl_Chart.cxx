@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.6 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.7 2002/05/16 12:47:43 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -312,8 +312,7 @@ void Fl_Chart::add(double val, const char *str, unsigned col) {
   entries[numb].val = float(val);
   entries[numb].col = col;
     if (str) {
-	strncpy(entries[numb].str,str,FL_CHART_LABEL_MAX);
-	entries[numb].str[FL_CHART_LABEL_MAX] = 0;
+	strlcpy(entries[numb].str,str,FL_CHART_LABEL_MAX + 1);
     } else {
 	entries[numb].str[0] = 0;
     }
@@ -336,8 +335,7 @@ void Fl_Chart::insert(int index, double val, const char *str, unsigned col) {
   entries[index-1].val = float(val);
   entries[index-1].col = col;
   if (str) {
-      strncpy(entries[index-1].str,str,FL_CHART_LABEL_MAX);
-      entries[index-1].str[FL_CHART_LABEL_MAX] = 0;
+      strlcpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
   } else {
       entries[index-1].str[0] = 0;
   }
@@ -349,8 +347,7 @@ void Fl_Chart::replace(int index,double val, const char *str, unsigned col) {
   entries[index-1].val = float(val);
   entries[index-1].col = col;
   if (str) {
-      strncpy(entries[index-1].str,str,FL_CHART_LABEL_MAX);
-      entries[index-1].str[FL_CHART_LABEL_MAX] = 0;
+      strlcpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
   } else {
       entries[index-1].str[0] = 0;
   }
@@ -378,5 +375,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.6 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.7 2002/05/16 12:47:43 easysw Exp $".
 //

@@ -1,9 +1,9 @@
 /*
- * "$Id: flstring.h,v 1.1.2.5 2002/04/29 20:56:19 easysw Exp $"
+ * "$Id: flstring.h,v 1.1.2.6 2002/05/16 12:47:43 easysw Exp $"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2001 by Bill Spitzak and others.
+ * Copyright 1998-2002 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -66,11 +66,26 @@ extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
 #    define vsnprintf fl_vsnprintf
 #  endif /* !HAVE_VSNPRINTF */
 
+/*
+ * strlcpy() and strlcat() are some really useful BSD string functions
+ * that work the way strncpy() and strncat() *should* have worked.
+ */
+
+#  if !HAVE_STRLCAT
+extern size_t fl_strlcat(char *, const char *, size_t);
+#    define strlcat fl_strlcat
+#  endif /* !HAVE_STRLCAT */
+
+#  if !HAVE_STRLCPY
+extern size_t fl_strlcpy(char *, const char *, size_t);
+#    define strlcpy fl_strlcpy
+#  endif /* !HAVE_STRLCPY */
+
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */
 #endif /* !flstring_h */
 
 /*
- * End of "$Id: flstring.h,v 1.1.2.5 2002/04/29 20:56:19 easysw Exp $".
+ * End of "$Id: flstring.h,v 1.1.2.6 2002/05/16 12:47:43 easysw Exp $".
  */

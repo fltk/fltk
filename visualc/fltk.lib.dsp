@@ -599,6 +599,10 @@ SOURCE=..\src\Fl_XPM_Image.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\flstring.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\numericsort.c
 # End Source File
 # Begin Source File

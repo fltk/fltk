@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.7 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.8 2002/05/16 12:47:43 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -55,8 +55,7 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
       || from[1]==':'
 #endif
       ) {
-    strncpy(to, from, tolen - 1);
-    to[tolen - 1] = '\0';
+    strlcpy(to, from, tolen);
     return 0;
   }
 
@@ -66,8 +65,7 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
 
   a = getcwd(temp, tolen);
   if (!a) {
-    strncpy(to, from, tolen - 1);
-    to[tolen - 1] = '\0';
+    strlcpy(to, from, tolen);
     delete[] temp;
     return 0;
   }
@@ -95,11 +93,9 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
   }
 
   *a++ = '/';
-  strncpy(a,start,tolen - (a - temp) - 1);
-  temp[tolen - 1] = '\0';
+  strlcpy(a,start,tolen - (a - temp));
 
-  strncpy(to, temp, tolen - 1);
-  to[tolen - 1] = '\0';
+  strlcpy(to, temp, tolen);
 
   delete[] temp;
 
@@ -120,14 +116,12 @@ fl_filename_relative(char       *to,	// O - Relative filename
 
 
   if (from[0] == '\0' || !isdirsep(*from)) {
-    strncpy(to, from, tolen - 1);
-    to[tolen - 1] = '\0';
+    strlcpy(to, from, tolen);
     return 0;
   }
 
   if (!getcwd(cwd, sizeof(cwd))) {
-    strncpy(to, from, tolen - 1);
-    to[tolen - 1] = '\0';
+    strlcpy(to, from, tolen);
     return 0;
   }
 
@@ -150,8 +144,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
 
 #if defined(WIN32) || defined(__EMX__)
   if (isalpha(slash[0]) && slash[1] == ':') {
-    strncpy(to, from, tolen - 1);
-    to[tolen - 1] = '\0';
+    strlcpy(to, from, tolen);
     return 0; /* Different drive letter... */
   }
 #endif /* WIN32 || __EMX__ */
@@ -163,17 +156,17 @@ fl_filename_relative(char       *to,	// O - Relative filename
   to[tolen - 1] = '\0';
 
   while (*newslash != '\0') {
-    if (isdirsep(*newslash)) strncat(to, "../", tolen - 1);
+    if (isdirsep(*newslash)) strlcat(to, "../", tolen);
 
     newslash ++;
   }
 
-  strncat(to, slash, tolen - 1);
+  strlcat(to, slash, tolen);
 
   return 1;
 }
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.7 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.8 2002/05/16 12:47:43 easysw Exp $".
 //

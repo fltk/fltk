@@ -1,5 +1,5 @@
 //
-// "$Id: checkers.cxx,v 1.9.2.7.2.1 2002/01/01 15:11:32 easysw Exp $"
+// "$Id: checkers.cxx,v 1.9.2.7.2.2 2002/05/16 12:47:43 easysw Exp $"
 //
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
@@ -56,11 +56,10 @@ const char* copyright =
 #define FLTK
 //#define VT100
 
-#include <string.h>
+#include "../src/flstring.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <ctype.h>
 #include <time.h>
 
 ////////////////////////////////////////////////////////////////
@@ -1057,15 +1056,6 @@ void Board::animate(node* move, int backwards) {
 
 int busy; // causes pop-up abort menu
 
-void message(const char* m, ...) {
-  char buffer[2048];
-  va_list a;
-  va_start(a,m);
-  vsprintf(buffer, m, a);
-  va_end(a);
-  fl_message(buffer);
-}
-
 void Board::computer_move(int help) {
   if (!playing) return;
   cursor(FL_CURSOR_WAIT);
@@ -1075,7 +1065,7 @@ void Board::computer_move(int help) {
   busy = 0;
   if (move) {
     if (!help && move->value <= -30000) {
-      message("%s resigns", move->who ? "White" : "Black");
+      fl_message("%s resigns", move->who ? "White" : "Black");
       playing = autoplay = 0;
       cursor(FL_CURSOR_DEFAULT);
       return;
@@ -1085,7 +1075,7 @@ void Board::computer_move(int help) {
   }
   expandnode(root);
   if (!root->son) {
-    message("%s has no move", root->who ? "Black" : "White");
+    fl_message("%s has no move", root->who ? "Black" : "White");
     playing = autoplay = 0;
   }
   if (!autoplay) cursor(FL_CURSOR_DEFAULT);
@@ -1365,5 +1355,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: checkers.cxx,v 1.9.2.7.2.1 2002/01/01 15:11:32 easysw Exp $".
+// End of "$Id: checkers.cxx,v 1.9.2.7.2.2 2002/05/16 12:47:43 easysw Exp $".
 //
