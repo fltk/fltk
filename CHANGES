@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Optimized the redrawing of tabs and radio/check
+	  buttons when the keyboard focus changes.
 	- More tooltip fixes.
 	- DND text operations would loop under X11.
 
