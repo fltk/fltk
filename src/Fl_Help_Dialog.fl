@@ -25,8 +25,8 @@ class Fl_Help_Dialog {open
 
   if (index_ >= 100)
   {
-    memcpy(line_, line_ + 10, sizeof(line_[0]) * 90);
-    memcpy(file_, file_ + 10, sizeof(file_[0]) * 90);
+    memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
+    memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
     index_ -= 10;
   }
 

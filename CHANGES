@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.1
 
+	- Replaced several memcpy's with memmove's for
+	  portability (memmove allows for overlapping copies,
+	  memcpy does not)
 	- Bug #621737: Fl_Bitmap::copy(), Fl_Pixmap::copy(), and
 	  Fl_RGB_Image::copy() now range-check the new width and
 	  height to make sure they are positive integers.
