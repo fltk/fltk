@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.12 1999/01/07 19:17:11 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13 1999/02/19 15:03:26 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,7 @@ int gridx = 5;
 int gridy = 5;
 int snap = 3;
 
-int include_H_from_C;
+int include_H_from_C = 1;
 
 void alignment_cb(Fl_Input *i, long v) {
   int n = atoi(i->value());
@@ -697,5 +697,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.12 1999/01/07 19:17:11 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13 1999/02/19 15:03:26 mike Exp $".
 //
