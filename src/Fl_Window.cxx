@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window.cxx,v 1.6.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Window.cxx,v 1.6.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -25,8 +25,8 @@
 
 // The Fl_Window is a window in the fltk library.
 // This is the system-independent portions.  The huge amount of 
-// crap you need to do to communicate with X is in Fl_x.C, the
-// equivalent (but totally different) crap for MSWindows is in Fl_win32.C
+// crap you need to do to communicate with X is in Fl_x.cxx, the
+// equivalent (but totally different) crap for MSWindows is in Fl_win32.cxx
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -102,5 +102,5 @@ void Fl_Window::default_callback(Fl_Window* window, void* v) {
 }
 
 //
-// End of "$Id: Fl_Window.cxx,v 1.6.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Window.cxx,v 1.6.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

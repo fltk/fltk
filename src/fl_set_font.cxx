@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_font.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_set_font.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 // Add a font to the internal table.
-// Also see fl_set_fonts.C which adds all possible fonts.
+// Also see fl_set_fonts.cxx which adds all possible fonts.
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -71,5 +71,5 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
 const char* Fl::get_font(Fl_Font fnum) {return fl_fonts[fnum].name;}
 
 //
-// End of "$Id: fl_set_font.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_set_font.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_vertex.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_vertex.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 // Portable drawing code for drawing arbitrary shapes with
-// simple 2D transformations.  See also fl_arc.C
+// simple 2D transformations.  See also fl_arc.cxx
 
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -223,5 +223,5 @@ void fl_circle(double x, double y,double r) {
 }
 
 //
-// End of "$Id: fl_vertex.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_vertex.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

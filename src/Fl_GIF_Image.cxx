@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.2 2001/11/20 05:13:23 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.3 2001/11/22 15:35:01 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -79,7 +79,8 @@ typedef unsigned char uchar;
 #define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
 
 Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
-  FILE *GifFile;	// file to read
+  FILE *GifFile;	// File to read
+  char **new_data;	// Data array
 
   if ((GifFile = fopen(infname, "rb")) == NULL) {
     Fl::error("Unable to open %s!", infname);
@@ -291,8 +292,8 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   // allocate line pointer arrays:
   w(Width);
   h(Height);
-  alloc_data = 1;
-  data = new char*[Height+2];
+  d(1);
+  new_data = new char*[Height+2];
 
   // transparent pixel must be zero, swap if it isn't:
   if (has_transparent && transparent_pixel != 0) {
@@ -334,11 +335,11 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   // write the first line of xpm data (use suffix as temp array):
   int length = sprintf((char*)(Suffix),
 		       "%d %d %d %d",Width,Height,-numcolors,1);
-  ((char **)data)[0] = new char[length+1];
-  strcpy(((char **)data)[0], (char*)Suffix);
+  new_data[0] = new char[length+1];
+  strcpy(new_data[0], (char*)Suffix);
 
   // write the colormap
-  ((char **)data)[1] = (char*)(p = new uchar[4*numcolors]);
+  new_data[1] = (char*)(p = new uchar[4*numcolors]);
   for (i = 0; i < ColorMapSize; i++) if (used[i]) {
     *p++ = remap[i];
     *p++ = Red[i];
@@ -352,14 +353,17 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
   // split the image data into lines:
   for (i=0; i<Height; i++) {
-    ((char **)data)[i+2] = new char[Width];
-    memcpy(((char **)data)[i + 2], (char*)(Image + i*Width), Width);
+    new_data[i+2] = new char[Width];
+    memcpy(new_data[i + 2], (char*)(Image + i*Width), Width);
   }
+
+  data(new_data, Height + 2);
+  alloc_data = 1;
 
   delete[] Image;
 }
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.2 2001/11/20 05:13:23 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.3 2001/11/22 15:35:01 easysw Exp $".
 //

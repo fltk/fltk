@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.2 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.3 2001/11/22 15:35:01 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -132,7 +132,7 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
 #endif
 
 #ifdef WIN32
-// this is in Fl_arg.C:
+// this is in Fl_arg.cxx:
 extern int fl_parse_color(const char*, uchar&, uchar&, uchar&);
 #endif
 
@@ -273,5 +273,5 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.2 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.3 2001/11/22 15:35:01 easysw Exp $".
 //

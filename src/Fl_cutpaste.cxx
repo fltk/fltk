@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Cut/paste code for the Fast Light Tool Kit (FLTK).
 //
@@ -25,7 +25,7 @@
 
 // Implementation of cut and paste.
 
-// This is seperated from Fl.C mostly to test Fl::add_handler().
+// This is seperated from Fl.cxx mostly to test Fl::add_handler().
 // But this will save a small amount of code size in a program that
 // has no text editing fields or other things that call cut or paste.
 
@@ -158,5 +158,5 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
 #endif
 
 //
-// End of "$Id: Fl_cutpaste.cxx,v 1.6.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

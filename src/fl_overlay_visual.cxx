@@ -1,5 +1,5 @@
 //
-// "$Id: fl_overlay_visual.cxx,v 1.4.2.5 2001/05/19 21:30:23 spitzak Exp $"
+// "$Id: fl_overlay_visual.cxx,v 1.4.2.5.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // X overlay support for the Fast Light Tool Kit (FLTK).
 //
@@ -26,7 +26,7 @@
 // Return an overlay visual, if any.  Also allocate a colormap and
 // record the depth for fl_color() to use.
 // Another disgusting X interface, based on code extracted and
-// purified with great difficulty from XLayerUtil.C:
+// purified with great difficulty from XLayerUtil.cxx:
 
 #include <config.h>
 #if HAVE_OVERLAY
@@ -99,5 +99,5 @@ XVisualInfo *fl_find_overlay_visual() {
 #endif
 
 //
-// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.5 2001/05/19 21:30:23 spitzak Exp $".
+// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.5.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

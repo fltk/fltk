@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key_win32.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_get_key_win32.cxx,v 1.4.2.5.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // WIN32 keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -31,7 +31,7 @@
 #include <FL/win32.H>
 
 // convert an Fltk (X) keysym to a MSWindows VK symbol:
-// See also the inverse converter in Fl_win32.C
+// See also the inverse converter in Fl_win32.cxx
 // This table is in numeric order by Fltk symbol order for binary search:
 
 static const struct {unsigned short vk, fltk;} vktab[] = {
@@ -132,5 +132,5 @@ int Fl::get_key(int k) {
 }
 
 //
-// End of "$Id: Fl_get_key_win32.cxx,v 1.4.2.5 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_get_key_win32.cxx,v 1.4.2.5.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

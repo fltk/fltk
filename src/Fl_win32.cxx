@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.7 2001/11/19 20:59:59 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.8 2001/11/22 15:35:01 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 // This file contains win32-specific code for fltk which is always linked
-// in.  Search other files for "WIN32" or filenames ending in _win32.C
+// in.  Search other files for "WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
 #include <config.h>
@@ -360,7 +360,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
 }
 
 // convert a MSWindows VK_x to an Fltk (X) Keysym:
-// See also the inverse converter in Fl_get_key_win32.C
+// See also the inverse converter in Fl_get_key_win32.cxx
 // This table is in numeric order by VK:
 static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_BACK,	FL_BackSpace},
@@ -425,7 +425,7 @@ static int ms2fltk(int vk, int extended) {
 }
 
 #if USE_COLORMAP
-extern HPALETTE fl_select_palette(void); // in fl_color_win32.C
+extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 #endif
 
 static Fl_Window* resize_bug_fix;
@@ -755,7 +755,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 
 ////////////////////////////////////////////////////////////////
 
-void fl_fix_focus(); // in Fl.C
+void fl_fix_focus(); // in Fl.cxx
 
 char fl_show_iconic;	// hack for Fl_Window::iconic()
 // int fl_background_pixel = -1; // color to use for background
@@ -946,7 +946,7 @@ void Fl_Window::label(const char *name,const char *iname) {
 // If the box is a filled rectangle, we can make the redisplay *look*
 // faster by using X's background pixel erasing.  We can make it
 // actually *be* faster by drawing the frame only, this is done by
-// setting fl_boxcheat, which is seen by code in fl_drawbox.C:
+// setting fl_boxcheat, which is seen by code in fl_drawbox.cxx:
 // For WIN32 it looks like all windows share a background color, so
 // I use FL_GRAY for this and only do this cheat for windows that are
 // that color.
@@ -1005,5 +1005,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.7 2001/11/19 20:59:59 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.8 2001/11/22 15:35:01 easysw Exp $".
 //

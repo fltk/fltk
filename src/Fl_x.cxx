@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.5 2001/11/19 18:28:55 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.6 2001/11/22 15:35:01 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -543,7 +543,7 @@ int fl_handle(const XEvent& xevent)
     if (keysym >= 0xff91 && keysym <= 0xff9f) {
       // Try to make them turn into FL_KP+'c' so that NumLock is
       // irrelevant, by looking at the shifted code.  This matches the
-      // behavior of the translator in Fl_win32.C, and IMHO is the
+      // behavior of the translator in Fl_win32.cxx, and IMHO is the
       // user-friendly result:
       unsigned long keysym1 = XKeycodeToKeysym(fl_display, keycode, 1);
       if (keysym1 <= 0x7f || keysym1 > 0xff9f && keysym1 <= FL_KP_Last) {
@@ -900,7 +900,7 @@ void Fl_Window::label(const char *name,const char *iname) {
 // If the box is a filled rectangle, we can make the redisplay *look*
 // faster by using X's background pixel erasing.  We can make it
 // actually *be* faster by drawing the frame only, this is done by
-// setting fl_boxcheat, which is seen by code in fl_drawbox.C:
+// setting fl_boxcheat, which is seen by code in fl_drawbox.cxx:
 //
 // On XFree86 (and prehaps all X's) this has a problem if the window
 // is resized while a save-behind window is atop it.  The previous
@@ -936,5 +936,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.5 2001/11/19 18:28:55 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.6 2001/11/22 15:35:01 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.3.2.4 2001/11/22 15:35:01 easysw Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -32,16 +32,25 @@ class Fl_Widget;
 struct Fl_Menu_Item;
 
 class FL_EXPORT Fl_Image {
-  int w_, h_;
+  int w_, h_, d_, count_;
+  const char * const *data_;
+
+  protected:
+
+  void w(int W) {w_ = W;}
+  void h(int H) {h_ = H;}
+  void d(int D) {d_ = D;}
+  void data(const char * const *p, int c) {data_ = p; count_ = c;}
 
   public:
 
   int w() const {return w_;}
-  void w(int W) {w_ = W;}
   int h() const {return h_;}
-  void h(int H) {h_ = H;}
-
-  Fl_Image(int W, int H) {w_ = W; h_ = H;}
+  int d() const {return d_;}
+  int count() const {return count_;}
+  const char * const *data() const {return data_;}
+  
+  Fl_Image(int W, int H, int D) {w_ = W; h_ = H; d_ = D; count_ = 0; data_ = 0;}
   virtual ~Fl_Image();
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return copy(w(), h()); }
@@ -59,12 +68,12 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 
   const uchar *array;
   int alloc_array; // Non-zero if array was allocated
-  int d, ld;
+  int ld;
   Fl_Offscreen id; // for internal use
   Fl_Bitmask mask; // for internal use (mask bitmap)
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
-    Fl_Image(W,H), array(bits), alloc_array(0), d(D), ld(LD), id(0) {}
+    Fl_Image(W,H,D), array(bits), alloc_array(0), ld(LD), id(0) {data(&((char *)array), 1);}
   virtual ~Fl_RGB_Image();
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return copy(w(), h()); }
@@ -79,5 +88,5 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.3.2.3 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.3.2.4 2001/11/22 15:35:01 easysw Exp $".
 //

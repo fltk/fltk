@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.2 2001/10/27 03:29:25 easysw Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.4.2.3 2001/11/22 15:35:01 easysw Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -259,7 +259,7 @@ void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
   if (t) fl_box_table[t].f(x,y,w,h,c);
 }
 
-//extern Fl_Widget *fl_boxcheat; // hack set by Fl_Window.C
+//extern Fl_Widget *fl_boxcheat; // hack set by Fl_Window.cxx
 
 void Fl_Widget::draw_box() const {
   int t = box_;
@@ -284,5 +284,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.2 2001/10/27 03:29:25 easysw Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.4.2.3 2001/11/22 15:35:01 easysw Exp $".
 //

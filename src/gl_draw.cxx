@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5 2001/03/14 17:20:02 spitzak Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 // Functions from <FL/gl.h>
-// See also Fl_Gl_Window and gl_start.C
+// See also Fl_Gl_Window and gl_start.cxx
 
 #include <config.h>
 #if HAVE_GL
@@ -155,5 +155,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5 2001/03/14 17:20:02 spitzak Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

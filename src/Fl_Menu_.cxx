@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.8 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -28,7 +28,7 @@
 // This provides storage for a menu item, functions to add/modify/delete
 // items, and a call for when the user picks a menu item.
 
-// More code in Fl_Menu_add.C
+// More code in Fl_Menu_add.cxx
 
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_.H>
@@ -172,5 +172,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

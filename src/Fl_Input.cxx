@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.3 2001/11/17 16:37:48 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.4 2001/11/22 15:35:01 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 // This is the "user interface", it decodes user actions into what to
-// do to the text.  See also Fl_Input_.C, where the text is actually
+// do to the text.  See also Fl_Input_.cxx, where the text is actually
 // manipulated (and some ui, in particular the mouse, is done...).
 // In theory you can replace this code with another subclass to change
 // the keybindings.
@@ -276,5 +276,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.3 2001/11/17 16:37:48 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.4 2001/11/22 15:35:01 easysw Exp $".
 //

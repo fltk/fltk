@@ -1,5 +1,5 @@
 //
-// "$Id: gl_start.cxx,v 1.6.2.5 2001/03/14 17:20:02 spitzak Exp $"
+// "$Id: gl_start.cxx,v 1.6.2.5.2.1 2001/11/22 15:35:02 easysw Exp $"
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
@@ -44,7 +44,7 @@
 #include <FL/fl_draw.H>
 #include "Fl_Gl_Choice.H"
 
-extern int fl_clip_state_number; // in fl_rect.C
+extern int fl_clip_state_number; // in fl_rect.cxx
 
 static GLContext context;
 static int clip_state_number=-1;
@@ -54,7 +54,7 @@ static int pw, ph;
 static Fl_Gl_Choice* gl_choice;
 #endif
 
-Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.C
+Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 void gl_start() {
   if (!context) {
@@ -113,5 +113,5 @@ int Fl::gl_visual(int mode, int *alist) {
 #endif
 
 //
-// End of "$Id: gl_start.cxx,v 1.6.2.5 2001/03/14 17:20:02 spitzak Exp $".
+// End of "$Id: gl_start.cxx,v 1.6.2.5.2.1 2001/11/22 15:35:02 easysw Exp $".
 //

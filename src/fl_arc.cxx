@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arc.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_arc.cxx,v 1.4.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
@@ -66,12 +66,12 @@ void fl_arc(double x, double y, double r, double start, double end) {
   fl_vertex(x+r*cos(E), y-r*sin(E));
 }
 
-#if 0 // portable version.  X-specific one in fl_vertex.C
+#if 0 // portable version.  X-specific one in fl_vertex.cxx
 void fl_circle(double x,double y,double r) {
   _fl_arc(x, y, r, r, 0, 360);
 }
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.4.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

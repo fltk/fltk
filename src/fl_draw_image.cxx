@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.6 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.6.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -347,7 +347,7 @@ mono32_converter(const uchar *from,uchar *to,int w, int delta) {
 
 static void figure_out_visual() {
 
-  fl_xpixel(FL_BLACK); // setup fl_redmask, etc, in fl_color.C
+  fl_xpixel(FL_BLACK); // setup fl_redmask, etc, in fl_color.cxx
   fl_xpixel(FL_WHITE); // also make sure white is allocated
 
   static XPixmapFormatValues *pfvlist;
@@ -573,5 +573,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.6 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.6.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

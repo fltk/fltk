@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.5 2001/11/20 05:13:23 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.6 2001/11/22 15:35:01 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,7 @@ void Fl_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 }
 
 Fl_Image *Fl_Image::copy(int W, int H) {
-  return new Fl_Image(W, H);
+  return new Fl_Image(W, H, d());
 }
 
 void Fl_Image::color_average(Fl_Color c, float i) {
@@ -63,7 +63,7 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   // Optimize the simple copy where the width and height are the same...
-  if (W == w() && H == h()) return new Fl_RGB_Image(array, w(), h(), d, ld);
+  if (W == w() && H == h()) return new Fl_RGB_Image(array, w(), h(), d(), ld);
 
   // OK, need to resize the image data; allocate memory and 
   Fl_RGB_Image	*new_image;	// New RGB image
@@ -80,28 +80,28 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
   // Figure out Bresenheim step/modulus values...
   xmod   = w() % W;
-  xstep  = (w() / W) * d;
+  xstep  = (w() / W) * d();
   ymod   = h() % H;
   ystep  = h() / H;
 
   // Allocate memory for the new image...
-  new_array = new uchar [W * H * d];
-  new_image = new Fl_RGB_Image(new_array, W, H, d);
+  new_array = new uchar [W * H * d()];
+  new_image = new Fl_RGB_Image(new_array, W, H, d());
   new_image->alloc_array = 1;
 
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = h(), sy = 0, yerr = H / 2, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = w(), xerr = W / 2, old_ptr = array + sy * (w() * d + ld);
+    for (dx = w(), xerr = W / 2, old_ptr = array + sy * (w() * d() + ld);
 	 dx > 0;
 	 dx --) {
-      for (c = 0; c < d; c ++) *new_ptr++ = old_ptr[c];
+      for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
 
       old_ptr += xstep;
       xerr    -= xmod;
 
       if (xerr <= 0) {
 	xerr    += W;
-	old_ptr += d;
+	old_ptr += d();
       }
     }
 
@@ -132,7 +132,7 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   uchar		*new_array,
 		*new_ptr;
 
-  if (!alloc_array) new_array = new uchar[h() * w() * d];
+  if (!alloc_array) new_array = new uchar[h() * w() * d()];
   else new_array = (uchar *)array;
 
   // Get the color to blend with...
@@ -152,13 +152,13 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   const uchar	*old_ptr;
   int		x, y;
 
-  if (d < 3) {
+  if (d() < 3) {
     ig = (r * 31 + g * 61 + b * 8) / 100 * (256 - ia);
 
     for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld)
       for (x = 0; x < w(); x ++) {
 	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
-	if (d > 1) *new_ptr++ = *old_ptr++;
+	if (d() > 1) *new_ptr++ = *old_ptr++;
       }
   } else {
     for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld)
@@ -166,7 +166,7 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
 	*new_ptr++ = (*old_ptr++ * ia + ir) >> 8;
 	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
 	*new_ptr++ = (*old_ptr++ * ia + ib) >> 8;
-	if (d > 3) *new_ptr++ = *old_ptr++;
+	if (d() > 3) *new_ptr++ = *old_ptr++;
       }
   }
 
@@ -180,7 +180,7 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
 
 void Fl_RGB_Image::desaturate() {
   // Can only desaturate color images...
-  if (d < 3) return;
+  if (d() < 3) return;
 
   // Delete any existing pixmap/mask objects...
   if (id) {
@@ -198,7 +198,7 @@ void Fl_RGB_Image::desaturate() {
 		*new_ptr;
   int		new_d;
 
-  new_d     = d - 2;
+  new_d     = d() - 2;
   new_array = new uchar[h() * w() * new_d];
 
   // Copy the image data, converting to grayscale...
@@ -206,9 +206,9 @@ void Fl_RGB_Image::desaturate() {
   int		x, y;
 
   for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld)
-    for (x = 0; x < w(); x ++, old_ptr += d) {
+    for (x = 0; x < w(); x ++, old_ptr += d()) {
       *new_ptr++ = (31 * old_ptr[0] + 61 * old_ptr[1] + 8 * old_ptr[2]) / 100;
-      if (d > 3) *new_ptr++ = old_ptr[3];
+      if (d() > 3) *new_ptr++ = old_ptr[3];
     }
 
   // Free the old array as needed, and then set the new pointers/values...
@@ -216,8 +216,9 @@ void Fl_RGB_Image::desaturate() {
 
   array       = new_array;
   alloc_array = 1;
-  d           = new_d;
   ld          = 0;
+
+  d(new_d);
 }
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -234,10 +235,10 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!id) {
     id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
-    fl_draw_image(array, 0, 0, w(), h(), d, ld);
+    fl_draw_image(array, 0, 0, w(), h(), d(), ld);
     fl_end_offscreen();
 
-    if (d == 2 || d == 4) {
+    if (d() == 2 || d() == 4) {
       // Create alpha mask...
       int bmw = (w() + 7) / 8;
       uchar *bitmap = new uchar[bmw * h()];
@@ -283,8 +284,8 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       // definitely fast...
       memset(bitmap, 0, bmw * h());
 
-      for (dataptr = array + d - 1, y = 0; y < h(); y ++, dataptr += ld)
-        for (bitptr = bitmap + y * bmw, bit = 128, x = 0; x < w(); x ++, dataptr += d) {
+      for (dataptr = array + d() - 1, y = 0; y < h(); y ++, dataptr += ld)
+        for (bitptr = bitmap + y * bmw, bit = 128, x = 0; x < w(); x ++, dataptr += d()) {
 	  if (*dataptr > dither[x & 15][y & 15])
 	    *bitptr |= bit;
 	  if (bit > 1) bit >>= 1;
@@ -340,5 +341,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.5 2001/11/20 05:13:23 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.6 2001/11/22 15:35:01 easysw Exp $".
 //

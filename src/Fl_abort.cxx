@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_abort.cxx,v 1.8.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_abort.cxx,v 1.8.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Warning/error message code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 //
 
 // This method is in it's own source file so that stdlib and stdio
-// do not need to be included in Fl.C:
+// do not need to be included in Fl.cxx:
 // You can also override this by redefining all of these.
 
 #include <FL/Fl.H>
@@ -89,5 +89,5 @@ void (*Fl::error)(const char* format, ...) = ::error;
 void (*Fl::fatal)(const char* format, ...) = ::error;
 
 //
-// End of "$Id: Fl_abort.cxx,v 1.8.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_abort.cxx,v 1.8.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

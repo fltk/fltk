@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.6 2001/11/03 05:11:34 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.7 2001/11/22 15:35:01 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -124,7 +124,7 @@ int Fl_Widget::take_focus() {
   return 1;
 }
 
-extern void fl_throw_focus(Fl_Widget*); // in Fl_x.C
+extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 
 // Destruction does not remove from any parent group!  And groups when
 // destroyed destroy all their children.  This is convienent and fast.
@@ -249,5 +249,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.6 2001/11/03 05:11:34 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.7 2001/11/22 15:35:01 easysw Exp $".
 //

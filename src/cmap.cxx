@@ -1,5 +1,5 @@
 //
-// "$Id: cmap.cxx,v 1.4.2.6 2001/05/05 23:39:01 spitzak Exp $"
+// "$Id: cmap.cxx,v 1.4.2.6.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
@@ -109,7 +109,7 @@ static short cmap[256][3] = {
 // The rest of the colormap is a gray ramp and table, filled in below:
 };
 
-// This is Fl::background from Fl_get_system_colors.C, with modifications:
+// This is Fl::background from Fl_get_system_colors.cxx, with modifications:
 
 #define FL_GRAY_RAMP 32
 #define FL_NUM_GRAY  24
@@ -175,5 +175,5 @@ int main() {
 }
 
 //
-// End of "$Id: cmap.cxx,v 1.4.2.6 2001/05/05 23:39:01 spitzak Exp $".
+// End of "$Id: cmap.cxx,v 1.4.2.6.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.3 2001/09/30 17:37:06 easysw Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.9.2.4 2001/11/22 15:35:01 easysw Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -81,7 +81,7 @@ void pixmap_image::write_static() {
   int l;
   for (l = 0; l < numlines; l++) {
     if (l) write_c(",\n");
-    write_cstring(p->data[l],linelength[l]);
+    write_cstring(p->data()[l],linelength[l]);
   }
   write_c("\n};\n");
   write_c("static Fl_Pixmap %s(%s);\n",
@@ -188,8 +188,8 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
 }
 
 pixmap_image::~pixmap_image() {
-  if (p && p->data) {
-    char** real_data = (char**)(p->data);
+  if (p && p->data()) {
+    char** real_data = (char**)(p->data());
     for (int i = 0; i < numlines; i++) delete[] real_data[i];
     free((void*)real_data);
   }
@@ -227,11 +227,11 @@ gif_image::gif_image(const char *name, FILE *f) : pixmap_image(name,0) {
 }
 
 gif_image::~gif_image() {
-  if (p && p->data) {
-    char** real_data = (char**)(p->data);
+  if (p && p->data()) {
+    char** real_data = (char**)(p->data());
     for (int i = 0; i < 3; i++) delete[] real_data[i];
     delete[] real_data;
-    p->data = 0;
+//    p->data(0,0);
   }
 }
 
@@ -450,5 +450,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.3 2001/09/30 17:37:06 easysw Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.9.2.4 2001/11/22 15:35:01 easysw Exp $".
 //

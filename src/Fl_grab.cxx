@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_grab.cxx,v 1.1.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_grab.cxx,v 1.1.2.4.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////////
 // "Grab" is done while menu systems are up.  This has several effects:
 // Events are all sent to the "grab window", which does not even
-// have to be displayed (and in the case of Fl_Menu.C it isn't).
+// have to be displayed (and in the case of Fl_Menu.cxx it isn't).
 // The system is also told to "grab" events and send them to this app.
 // This also modifies how Fl_Window::show() works, on X it turns on
 // override_redirect, it does similar things on WIN32.
@@ -89,5 +89,5 @@ void Fl::grab(Fl_Window* w) {
 }
 
 //
-// End of "$Id: Fl_grab.cxx,v 1.1.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_grab.cxx,v 1.1.2.4.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

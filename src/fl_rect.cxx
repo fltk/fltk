@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -247,7 +247,7 @@ void fl_point(int x, int y) {
 #define STACK_MAX (STACK_SIZE - 1)
 static Region rstack[STACK_SIZE];
 static int rstackptr=0;
-int fl_clip_state_number=0; // used by gl_begin.C to update GL clip
+int fl_clip_state_number=0; // used by gl_begin.cxx to update GL clip
 
 #ifndef WIN32
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
@@ -388,5 +388,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.1 2001/11/22 15:35:01 easysw Exp $".
 //

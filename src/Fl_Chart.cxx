@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.1 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.2 2001/11/22 15:35:01 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,7 +32,7 @@
 
 #define ARCINC	(2.0*M_PI/360.0)
 
-// this function is in fl_boxtype.C:
+// this function is in fl_boxtype.cxx:
 void fl_rectbound(int x,int y,int w,int h, Fl_Color color);
 
 /* Widget specific information */
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.1 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.2 2001/11/22 15:35:01 easysw Exp $".
 //

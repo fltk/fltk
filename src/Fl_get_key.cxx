@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key.cxx,v 1.5.2.3 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_get_key.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $"
 //
 // Keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -29,12 +29,12 @@
 
 // Return the current state of a key.  This is the X version.  I identify
 // keys (mostly) by the X keysym.  So this turns the keysym into a keycode
-// and looks it up in the X key bit vector, which Fl_x.C keeps track of.
+// and looks it up in the X key bit vector, which Fl_x.cxx keeps track of.
 
 #include <FL/Fl.H>
 #include <FL/x.H>
 
-extern char fl_key_vector[32]; // in Fl_x.C
+extern char fl_key_vector[32]; // in Fl_x.cxx
 
 int Fl::event_key(int k) {
   if (k > FL_Button && k <= FL_Button+8)
@@ -60,5 +60,5 @@ int Fl::get_key(int k) {
 #endif
 
 //
-// End of "$Id: Fl_get_key.cxx,v 1.5.2.3 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_get_key.cxx,v 1.5.2.3.2.1 2001/11/22 15:35:01 easysw Exp $".
 //
