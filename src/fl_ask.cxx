@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.cxx,v 1.8.2.8.2.2 2001/11/18 12:48:38 easysw Exp $"
+// "$Id: fl_ask.cxx,v 1.8.2.8.2.3 2001/11/25 16:38:11 easysw Exp $"
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
@@ -30,8 +30,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <string.h>
-#include <config.h>
+#include "flstring.h"
 
 #include <FL/Fl.H>
 
@@ -80,12 +79,6 @@ static Fl_Window *makeform() {
  w->set_modal();
  return w;
 }
-
-#if !HAVE_VSNPRINTF || defined(__hpux)
-extern "C" {
-int vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
-}
-#endif
 
 static int innards(const char* fmt, va_list ap,
   const char *b0,
@@ -256,5 +249,5 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 }
 
 //
-// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.2 2001/11/18 12:48:38 easysw Exp $".
+// End of "$Id: fl_ask.cxx,v 1.8.2.8.2.3 2001/11/25 16:38:11 easysw Exp $".
 //

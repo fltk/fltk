@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.14 2001/11/24 04:12:56 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.15 2001/11/25 16:38:11 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -54,24 +54,15 @@
 //
 
 #include <FL/Fl_Help_View.H>
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "flstring.h"
 #include <ctype.h>
-#include <string.h>
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif /* HAVE_STRINGS_H */
 #include <errno.h>
 
 #if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
 #  include <direct.h>
-#  define strcasecmp(s,t)	stricmp((s), (t))
-#  define strncasecmp(s,t,n)	strnicmp((s), (t), (n))
-#elif defined(__EMX__)
-#  define strcasecmp(s,t)	stricmp((s), (t))
-#  define strncasecmp(s,t,n)	strnicmp((s), (t), (n))
 #else
 #  include <unistd.h>
 #endif // WIN32
@@ -2506,5 +2497,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.14 2001/11/24 04:12:56 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.15 2001/11/25 16:38:11 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -46,12 +46,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <string.h>
-#include <ctype.h>
 
 #if defined(WIN32) && ! defined (__CYGWIN__)
 #  include <direct.h>
@@ -169,7 +168,7 @@ Fl_File_Chooser::count()
 
     // Is the file name a directory?
     if (directory_[0] != '\0')
-      sprintf(pathname, "%s/%s", directory_, filename);
+      snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
     else
     {
       strncpy(pathname, filename, sizeof(pathname) - 1);
@@ -188,7 +187,7 @@ Fl_File_Chooser::count()
       // See if this file is a directory...
       filename = (char *)fileList->text(i);
       if (directory_[0] != '\0')
-	sprintf(pathname, "%s/%s", directory_, filename);
+	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
       else
       {
 	strncpy(pathname, filename, sizeof(pathname) - 1);
@@ -222,7 +221,13 @@ Fl_File_Chooser::value(int f)	// I - File number
     if (name[0] == '\0')
       return (NULL);
 
-    sprintf(pathname, "%s/%s", directory_, name);
+    if (directory_[0]) {
+      snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
+    } else {
+      strncpy(pathname, name, sizeof(pathname) - 1);
+      pathname[sizeof(pathname) - 1] = '\0';
+    }
+
     return ((const char *)pathname);
   }
 
@@ -231,7 +236,13 @@ Fl_File_Chooser::value(int f)	// I - File number
     {
       // See if this file is a directory...
       name = fileList->text(i);
-      sprintf(pathname, "%s/%s", directory_, name);
+
+      if (directory_[0]) {
+	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, name);
+      } else {
+	strncpy(pathname, name, sizeof(pathname) - 1);
+	pathname[sizeof(pathname) - 1] = '\0';
+      }
 
       if (!filename_isdir(pathname))
       {
@@ -358,7 +369,7 @@ Fl_File_Chooser::newdir()
 #else
   if (dir[0] != '/' && dir[0] != '\\')
 #endif /* WIN32 || __EMX__ */
-    sprintf(pathname, "%s/%s", directory_, dir);
+    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, dir);
   else
   {
     strncpy(pathname, dir, sizeof(pathname) - 1);
@@ -414,7 +425,7 @@ Fl_File_Chooser::fileListCB()
 
   filename = (char *)fileList->text(fileList->value());
   if (directory_[0] != '\0')
-    sprintf(pathname, "%s/%s", directory_, filename);
+    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
   else
   {
     strncpy(pathname, filename, sizeof(pathname) - 1);
@@ -485,7 +496,7 @@ Fl_File_Chooser::fileNameCB()
       filename[0] != '/' &&
       filename[0] != '\\' &&
       !(isalpha(filename[0]) && filename[1] == ':'))
-    sprintf(pathname, "%s/%s", directory_, filename);
+    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
   else
   {
     strncpy(pathname, filename, sizeof(pathname) - 1);
@@ -520,13 +531,13 @@ Fl_File_Chooser::fileNameCB()
         strncat(pathname, "/", sizeof(pathname) - 1);
     }
     else
-      sprintf(pathname, "%s/%s", directory_, filename);
+      snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
 
     endpwent();
   }
   else if (directory_[0] != '\0' &&
            filename[0] != '/')
-    sprintf(pathname, "%s/%s", directory_, filename);
+    snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
   else
   {
     strncpy(pathname, filename, sizeof(pathname) - 1);
@@ -675,7 +686,13 @@ Fl_File_Chooser::fileNameCB()
     }
 
     // See if we need to enable the OK button...
-    sprintf(pathname, "%s/%s", directory_, fileName->value());
+    if (directory_[0]) {
+      snprintf(pathname, sizeof(pathname), "%s/%s", directory_,
+               fileName->value());
+    } else {
+      strncpy(pathname, fileName->value(), sizeof(pathname) - 1);
+      pathname[sizeof(pathname) - 1] = '\0';
+    }
 
     if ((type_ & CREATE || access(pathname, 0) == 0) &&
         (!filename_isdir(pathname) || type_ & DIRECTORY))
@@ -687,5 +704,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $".
 //

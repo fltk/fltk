@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.4 2001/11/03 05:11:34 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.5 2001/11/25 16:38:11 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -42,8 +42,7 @@
 #include <FL/filename.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <config.h>
+#include "flstring.h"
 
 #if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <windows.h>
@@ -55,12 +54,6 @@
 #define  INCL_DOSMISC
 #include <os2.h>
 #endif /* __EMX__ */
-
-#if !HAVE_SNPRINTF
-extern "C" {
-extern int snprintf(char* str, size_t size, const char* fmt, ...);
-}
-#endif // !HAVE_SNPRINTF
 
 
 //
@@ -566,5 +559,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.4 2001/11/03 05:11:34 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.5 2001/11/25 16:38:11 easysw Exp $".
 //

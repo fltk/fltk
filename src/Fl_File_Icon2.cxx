@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.3 2001/11/17 16:37:48 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -27,8 +27,7 @@
 // Contents:
 //
 //   Fl_File_Icon::load_fti()          - Load an SGI-format FTI file...
-//   Fl_File_Icon::load_png()          - Load a PNG icon file...
-//   Fl_File_Icon::load_xpm()          - Load an XPM icon file...
+//   Fl_File_Icon::load_image()        - Load an image icon file...
 //   Fl_File_Icon::load_system_icons() - Load the standard system icons/filetypes.
 //
 
@@ -36,38 +35,25 @@
 // Include necessary header files...
 //
 
-#include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif // HAVE_STRINGS_H
+#include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
+#if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
 #  define F_OK	0
-#  define strcasecmp stricmp
-#  define strncasecmp strnicmp
 #else
 #  include <unistd.h>
-#endif /* WIN32 || __EMX__ */
+#endif // WIN32
 
 #include <FL/Fl_File_Icon.H>
+#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
-
-extern "C"
-{
-#ifdef HAVE_LIBPNG
-#  include <zlib.h>
-#  include <png.h>
-#endif // HAVE_LIBPNG
-}
 
 
 //
@@ -100,24 +86,20 @@ static char	*get_kde_val(char *str, const char *key);
 void
 Fl_File_Icon::load(const char *f)	// I - File to read from
 {
+  int		i;			// Load status...
   const char	*ext;			// File extension
 
 
-  if ((ext = filename_ext(f)) == NULL)
-  {
-    fprintf(stderr, "Fl_File_Icon::load(): Unknown file type for \"%s\".\n", f);
-    return;
-  }
+  ext = filename_ext(f);
 
-  if (strcmp(ext, ".fti") == 0)
-    load_fti(f);
-  else if (strcmp(ext, ".xpm") == 0)
-    load_xpm(f);
-  else if (strcmp(ext, ".png") == 0)
-    load_png(f);
+  if (ext && strcmp(ext, ".fti") == 0)
+    i = load_fti(f);
   else
+    i = load_image(f);
+
+  if (i)
   {
-    fprintf(stderr, "Fl_File_Icon::load(): Unknown file type for \"%s\".\n", f);
+    Fl::warning("Fl_File_Icon::load(): Unable to load icon file \"%s\".", f);
     return;
   }
 }
@@ -127,7 +109,7 @@ Fl_File_Icon::load(const char *f)	// I - File to read from
 // 'Fl_File_Icon::load_fti()' - Load an SGI-format FTI file...
 //
 
-void
+int					// O - 0 on success, non-zero on error
 Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 {
   FILE	*fp;			// File pointer
@@ -141,9 +123,9 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
   // Try to open the file...
   if ((fp = fopen(fti, "rb")) == NULL)
   {
-    fprintf(stderr, "Fl_File_Icon::load_fti(): Unable to open \"%s\" - %s\n",
-            fti, strerror(errno));
-    return;
+    Fl::error("Fl_File_Icon::load_fti(): Unable to open \"%s\" - %s",
+              fti, strerror(errno));
+    return -1;
   }
 
   // Read the entire file, adding data as needed...
@@ -171,8 +153,8 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
     // OK, this character better be a letter...
     if (!isalpha(ch))
     {
-      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a letter at file position %ld (saw '%c')\n",
-              ftell(fp) - 1, ch);
+      Fl::error("Fl_File_Icon::load_fti(): Expected a letter at file position %ld (saw '%c')",
+                ftell(fp) - 1, ch);
       break;
     }
 
@@ -193,8 +175,8 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
     // Make sure we stopped on a parenthesis...
     if (ch != '(')
     {
-      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a ( at file position %ld (saw '%c')\n",
-              ftell(fp) - 1, ch);
+      Fl::error("Fl_File_Icon::load_fti(): Expected a ( at file position %ld (saw '%c')",
+                ftell(fp) - 1, ch);
       break;
     }
 
@@ -214,16 +196,16 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
     // Make sure we stopped on a parenthesis...
     if (ch != ')')
     {
-      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a ) at file position %ld (saw '%c')\n",
-              ftell(fp) - 1, ch);
+      Fl::error("Fl_File_Icon::load_fti(): Expected a ) at file position %ld (saw '%c')",
+                ftell(fp) - 1, ch);
       break;
     }
 
     // Make sure the next character is a semicolon...
     if ((ch = getc(fp)) != ';')
     {
-      fprintf(stderr, "Fl_File_Icon::load_fti(): Expected a ; at file position %ld (saw '%c')\n",
-              ftell(fp) - 1, ch);
+      Fl::error("Fl_File_Icon::load_fti(): Expected a ; at file position %ld (saw '%c')",
+                ftell(fp) - 1, ch);
       break;
     }
 
@@ -321,8 +303,8 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
     }
     else
     {
-      fprintf(stderr, "Fl_File_Icon::load_fti(): Unknown command \"%s\" at file position %ld.\n",
-              command, ftell(fp) - 1);
+      Fl::error("Fl_File_Icon::load_fti(): Unknown command \"%s\" at file position %ld.",
+                command, ftell(fp) - 1);
       break;
     }
   }
@@ -335,363 +317,252 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
   for (int i = 0; i < num_data_; i ++)
     printf("    %d,\n", data_[i]);
 #endif /* DEBUG */
+
+  return 0;
 }
 
 
 //
-// 'Fl_File_Icon::load_png()' - Load a PNG icon file...
+// 'Fl_File_Icon::load_image()' - Load an image icon file...
 //
 
-void
-Fl_File_Icon::load_png(const char *png)	// I - File to read from
+int					// O - 0 on success, non-0 on error
+Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 {
-#ifdef HAVE_LIBPNG
-  FILE		*fp;			// File pointer
-  int		i;			// Looping vars
-  int		x, y;			// X & Y in image
-  int		startx;			// Starting X coord
-  int		width, height;		// Width and height of image
-  int		depth;			// Depth of image
-  png_structp	pp;			// PNG read pointer
-  png_infop	info;			// PNG info pointers
-  png_bytep	pixels,			// Pixel buffer
-		row,			// Current row
-		*rows;			// PNG row pointers
-  Fl_Color	c,			// Current color
-		temp;			// Temporary color
+  Fl_Shared_Image	*img;		// Image file
 
 
-  // Try to open the file...
-  if ((fp = fopen(png, "rb")) == NULL)
-    return;
+  img = Fl_Shared_Image::get(ifile);
+  if (!img->w() && !img->h()) return -1;
 
-  // Setup the PNG data structures...
-  pp   = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  info = png_create_info_struct(pp);
+  if (img->count() == 1) {
+    int		x, y;		// X & Y in image
+    int		startx;		// Starting X coord
+    Fl_Color	c,		// Current color
+		temp;		// Temporary color
+    const uchar *row;		// Pointer into image
 
-  // Initialize the PNG read "engine"...
-  png_init_io(pp, fp);
 
-  // Get the image dimensions and convert to grayscale or RGB...
-  png_read_info(pp, info);
-
-  if (info->color_type == PNG_COLOR_TYPE_PALETTE)
-    png_set_expand(pp);
-
-  if (info->bit_depth < 8)
-  {
-    png_set_packing(pp);
-    png_set_expand(pp);
-  }
-  else if (info->bit_depth == 16)
-    png_set_strip_16(pp);
-
-  if (info->color_type & PNG_COLOR_MASK_COLOR)
-    depth = 3;
-  else
-    depth = 1;
-
-  if ((info->color_type & PNG_COLOR_MASK_ALPHA) || info->num_trans)
-    depth ++;
-
-#if defined(HAVE_PNG_GET_VALID) && defined(HAVE_SET_TRNS_TO_ALPHA)
-  // Handle transparency...
-  if (png_get_valid(pp, info, PNG_INFO_tRNS))
-    png_set_tRNS_to_alpha(pp);
-#endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
-
-  width  = (int)info->width;
-  height = (int)info->height;
-  pixels = (unsigned char *)malloc(width * height * depth);
-
-  // Allocate pointers...
-  rows = (png_bytep *)calloc(height, sizeof(png_bytep));
-
-  for (i = 0; i < height; i ++)
-    rows[i] = pixels + i * width * depth;
-
-  // Read the image, handling interlacing as needed...
-  for (i = png_set_interlace_handling(pp); i > 0; i --)
-    png_read_rows(pp, rows, NULL, height);
-
-  // Now loop through the image, adding strips as needed...
-  for (y = height - 1; y >= 0; y --)
-  {
-    for (x = 0, startx = 0, row = rows[height - 1 - y], c = (Fl_Color)-1;
-         x < width;
-	 x ++, row += depth)
+    // Loop through grayscale or RGB image...
+    for (y = 0, row = (const uchar *)(*(img->data())); y < img->h(); y ++, row += img->ld())
     {
-      switch (depth)
+      for (x = 0, startx = 0, c = (Fl_Color)-1;
+           x < img->w();
+	   x ++, row += img->d())
       {
-        case 1 :
-            temp = fl_rgb_color(row[0], row[0], row[0]);
-	    break;
-        case 2 :
-	    if (row[1] > 127)
-              temp = fl_rgb_color(row[0], row[0], row[0]);
-	    else
-	      temp = (Fl_Color)-1;
-	    break;
-	case 3 :
-            temp = fl_rgb_color(row[0], row[1], row[2]);
-	    break;
-	default :
-	    if (row[3] > 127)
-              temp = fl_rgb_color(row[0], row[1], row[2]);
-	    else
-	      temp = (Fl_Color)-1;
-	    break;
-      }
-
-      if (temp != c)
-      {
-	if (x > startx && c != (Fl_Color)-1)
+	switch (img->d())
 	{
-	  add_color(c);
-	  add(POLYGON);
-	  add_vertex(startx * 9000 / width + 1000, y * 9000 / height + 500);
-	  add_vertex(x * 9000 / width + 1000,      y * 9000 / height + 500);
-	  add_vertex(x * 9000 / width + 1000,      (y + 1) * 9000 / height + 500);
-	  add_vertex(startx * 9000 / width + 1000, (y + 1) * 9000 / height + 500);
-	  add(END);
+          case 1 :
+              temp = fl_rgb_color(row[0], row[0], row[0]);
+	      break;
+          case 2 :
+	      if (row[1] > 127)
+        	temp = fl_rgb_color(row[0], row[0], row[0]);
+	      else
+		temp = (Fl_Color)-1;
+	      break;
+	  case 3 :
+              temp = fl_rgb_color(row[0], row[1], row[2]);
+	      break;
+	  default :
+	      if (row[3] > 127)
+        	temp = fl_rgb_color(row[0], row[1], row[2]);
+	      else
+		temp = (Fl_Color)-1;
+	      break;
 	}
 
-        c      = temp;
-	startx = x;
-      }
-    }
-
-    if (x > startx && c != (Fl_Color)-1)
-    {
-      add_color(c);
-      add(POLYGON);
-      add_vertex(startx * 9000 / width + 1000, y * 9000 / height + 500);
-      add_vertex(x * 9000 / width + 1000,      y * 9000 / height + 500);
-      add_vertex(x * 9000 / width + 1000,      (y + 1) * 9000 / height + 500);
-      add_vertex(startx * 9000 / width + 1000, (y + 1) * 9000 / height + 500);
-      add(END);
-    }
-  }
-
-  // Free memory and return...
-  free(rows);
-  free(pixels);
-
-  png_read_end(pp, info);
-#  ifdef HAVE_PNG_READ_DESTROY
-  png_read_destroy(pp, info, NULL);
-#  else
-  png_destroy_read_struct(&pp, &info, NULL);
-#  endif // HAVE_PNG_READ_DESTROY
-
-  // Close the file and return...
-  fclose(fp);
-
-#  ifdef DEBUG
-  printf("Icon File \"%s\":\n", xpm);
-  for (i = 0; i < num_data_; i ++)
-    printf("    %d,\n", data_[i]);
-#  endif // DEBUG
-#endif // HAVE_LIBPNG
-}
-
-
-//
-// 'Fl_File_Icon::load_xpm()' - Load an XPM icon file...
-//
-
-void
-Fl_File_Icon::load_xpm(const char *xpm)	// I - File to read from
-{
-  FILE		*fp;			// File pointer
-  int		i, j;			// Looping vars
-  int		ch;			// Current character
-  int		bg;			// Background color
-  char		line[1024],		// Line from file
-		val[16],		// Color value
-		*ptr;			// Pointer into line
-  int		x, y;			// X & Y in image
-  int		startx;			// Starting X coord
-  int		width, height;		// Width and height of image
-  int		ncolors;		// Number of colors
-  Fl_Color	colors[256];		// Colors
-  int		red, green, blue;	// Red, green, and blue values
-
-
-  // Try to open the file...
-  if ((fp = fopen(xpm, "rb")) == NULL)
-    return;
-
-  // Read the file header until we find the first string...
-  ptr = NULL;
-  while (fgets(line, sizeof(line), fp) != NULL)
-    if ((ptr = strchr(line, '\"')) != NULL)
-      break;
-
-  if (ptr == NULL)
-  {
-    // Nothing to load...
-    fclose(fp);
-    return;
-  }
-
-  // Get the size of the image...
-  sscanf(ptr + 1, "%d%d%d", &width, &height, &ncolors);
-
-  // Now read the colormap...
-  memset(colors, 0, sizeof(colors));
-  bg = ' ';
-
-  for (i = 0; i < ncolors; i ++)
-  {
-    while (fgets(line, sizeof(line), fp) != NULL)
-      if ((ptr = strchr(line, '\"')) != NULL)
-	break;
-
-    if (ptr == NULL)
-    {
-      // Nothing to load...
-      fclose(fp);
-      return;
-    }
-
-    // Get the color's character
-    ptr ++;
-    ch = *ptr++;
-
-    // Get the color value...
-    if ((ptr = strstr(ptr, "c ")) == NULL)
-    {
-      // No color; make this black...
-      colors[ch] = FL_BLACK;
-    }
-    else if (ptr[2] == '#')
-    {
-      // Read the RGB triplet...
-      ptr += 3;
-      for (j = 0; j < 12; j ++)
-        if (!isxdigit(ptr[j]))
-	  break;
-
-      switch (j)
-      {
-        case 0 :
-	    bg = ch;
-	default :
-	    red = green = blue = 0;
-	    break;
-
-        case 3 :
-	    val[0] = ptr[0];
-	    val[1] = '\0';
-	    red = 255 * strtol(val, NULL, 16) / 15;
-
-	    val[0] = ptr[1];
-	    val[1] = '\0';
-	    green = 255 * strtol(val, NULL, 16) / 15;
-
-	    val[0] = ptr[2];
-	    val[1] = '\0';
-	    blue = 255 * strtol(val, NULL, 16) / 15;
-	    break;
-
-        case 6 :
-        case 9 :
-        case 12 :
-	    j /= 3;
-
-	    val[0] = ptr[0];
-	    val[1] = ptr[1];
-	    val[2] = '\0';
-	    red = strtol(val, NULL, 16);
-
-	    val[0] = ptr[j + 0];
-	    val[1] = ptr[j + 1];
-	    val[2] = '\0';
-	    green = strtol(val, NULL, 16);
-
-	    val[0] = ptr[2 * j + 0];
-	    val[1] = ptr[2 * j + 1];
-	    val[2] = '\0';
-	    blue = strtol(val, NULL, 16);
-	    break;
-      }
-
-      colors[ch] = fl_rgb_color(red, green, blue);
-    }
-    else
-    {
-      // Read a color name...
-      if (strncasecmp(ptr + 2, "white", 5) == 0)
-        colors[ch] = FL_WHITE;
-      else if (strncasecmp(ptr + 2, "black", 5) == 0)
-        colors[ch] = FL_BLACK;
-      else if (strncasecmp(ptr + 2, "none", 4) == 0)
-      {
-        colors[ch] = FL_BLACK;
-	bg = ch;
-      }
-      else
-        colors[ch] = FL_GRAY;
-    }
-  }
-
-  // Read the image data...
-  for (y = height - 1; y >= 0; y --)
-  {
-    while (fgets(line, sizeof(line), fp) != NULL)
-      if ((ptr = strchr(line, '\"')) != NULL)
-	break;
-
-    if (ptr == NULL)
-    {
-      // Nothing to load...
-      fclose(fp);
-      return;
-    }
-
-    startx = 0;
-    ch     = bg;
-    ptr ++;
-
-    for (x = 0; x < width; x ++, ptr ++)
-      if (*ptr != ch)
-      {
-	if (ch != bg)
+	if (temp != c)
 	{
-          add_color(colors[ch]);
-	  add(POLYGON);
-	  add_vertex(startx * 9000 / width + 1000, y * 9000 / height + 500);
-	  add_vertex(x * 9000 / width + 1000,      y * 9000 / height + 500);
-	  add_vertex(x * 9000 / width + 1000,      (y + 1) * 9000 / height + 500);
-	  add_vertex(startx * 9000 / width + 1000, (y + 1) * 9000 / height + 500);
-	  add(END);
-        }
+	  if (x > startx && c != (Fl_Color)-1)
+	  {
+	    add_color(c);
+	    add(POLYGON);
+	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+	    add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+	    add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+	    add(END);
+	  }
 
-	ch     = *ptr;
-	startx = x;
+          c      = temp;
+	  startx = x;
+	}
       }
 
-    if (ch != bg)
+      if (x > startx && c != (Fl_Color)-1)
+      {
+	add_color(c);
+	add(POLYGON);
+	add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+	add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+	add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+	add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+	add(END);
+      }
+    }
+  } else {
+    int		i, j;			// Looping vars
+    int		ch;			// Current character
+    int		bg;			// Background color
+    char	val[16];		// Color value
+    const char	*lineptr,		// Pointer into line
+		*const*ptr;		// Pointer into data array
+    int		ncolors,		// Number of colors
+		chars_per_color;	// Characters per color
+    Fl_Color	colors[256];		// Colors
+    int		red, green, blue;	// Red, green, and blue values
+    int		x, y;			// X & Y in image
+    int		startx;			// Starting X coord
+
+
+    // Get the pixmap data...
+    ptr = img->data();
+    sscanf(*ptr, "%*d%*d%d%d", &ncolors, &chars_per_color);
+    if (chars_per_color > 1) {
+      Fl::warning("Fl_Icon_File::load(): Unable to load 2-byte XPM file \"%s\"!",
+                  ifile);
+      img->release();
+      return (-1);
+    }
+
+    // Read the colormap...
+    memset(colors, 0, sizeof(colors));
+    bg = ' ';
+
+    ptr ++;
+
+    if (ncolors < 0) {
+      // Read compressed colormap...
+      const uchar *cmapptr;
+
+      ncolors = -ncolors;
+
+      for (i = 0, cmapptr = (const uchar *)*ptr; i < ncolors; i ++, cmapptr += 4)
+        colors[cmapptr[0]] = fl_rgb_color(cmapptr[1], cmapptr[2], cmapptr[3]);
+
+      ptr ++;
+    } else {
+      for (i = 0; i < ncolors; i ++, ptr ++) {
+	// Get the color's character
+	lineptr = *ptr;
+	ch      = *lineptr++;
+
+	// Get the color value...
+	if ((lineptr = strstr(lineptr, "c ")) == NULL) {
+	  // No color; make this black...
+	  colors[ch] = FL_BLACK;
+	} else if (lineptr[2] == '#') {
+	  // Read the RGB triplet...
+	  lineptr += 3;
+	  for (j = 0; j < 12; j ++)
+            if (!isxdigit(lineptr[j]))
+	      break;
+
+	  switch (j) {
+            case 0 :
+		bg = ch;
+	    default :
+		red = green = blue = 0;
+		break;
+
+            case 3 :
+		val[0] = lineptr[0];
+		val[1] = '\0';
+		red = 255 * strtol(val, NULL, 16) / 15;
+
+		val[0] = lineptr[1];
+		val[1] = '\0';
+		green = 255 * strtol(val, NULL, 16) / 15;
+
+		val[0] = lineptr[2];
+		val[1] = '\0';
+		blue = 255 * strtol(val, NULL, 16) / 15;
+		break;
+
+            case 6 :
+            case 9 :
+            case 12 :
+		j /= 3;
+
+		val[0] = lineptr[0];
+		val[1] = lineptr[1];
+		val[2] = '\0';
+		red = strtol(val, NULL, 16);
+
+		val[0] = lineptr[j + 0];
+		val[1] = lineptr[j + 1];
+		val[2] = '\0';
+		green = strtol(val, NULL, 16);
+
+		val[0] = lineptr[2 * j + 0];
+		val[1] = lineptr[2 * j + 1];
+		val[2] = '\0';
+		blue = strtol(val, NULL, 16);
+		break;
+	  }
+
+	  colors[ch] = fl_rgb_color(red, green, blue);
+	} else {
+	  // Read a color name...
+	  if (strncasecmp(lineptr + 2, "white", 5) == 0) colors[ch] = FL_WHITE;
+	  else if (strncasecmp(lineptr + 2, "black", 5) == 0) colors[ch] = FL_BLACK;
+	  else if (strncasecmp(lineptr + 2, "none", 4) == 0) {
+            colors[ch] = FL_BLACK;
+	    bg = ch;
+	  } else colors[ch] = FL_GRAY;
+	}
+      }
+    }
+
+    // Read the image data...
+    for (y = 0; y < img->h(); y ++, ptr ++)
     {
-      add_color(colors[ch]);
-      add(POLYGON);
-      add_vertex(startx * 9000 / width + 1000, y * 9000 / height + 500);
-      add_vertex(x * 9000 / width + 1000,      y * 9000 / height + 500);
-      add_vertex(x * 9000 / width + 1000,      (y + 1) * 9000 / height + 500);
-      add_vertex(startx * 9000 / width + 1000, (y + 1) * 9000 / height + 500);
-      add(END);
+      lineptr = *ptr;
+      startx  = 0;
+      ch      = bg;
+      ptr ++;
+
+      for (x = 0; x < img->w(); x ++, lineptr ++)
+	if (*lineptr != ch)
+	{
+	  if (ch != bg)
+	  {
+            add_color(colors[ch]);
+	    add(POLYGON);
+	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+	    add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+	    add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+	    add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+	    add(END);
+          }
+
+	  ch     = *lineptr;
+	  startx = x;
+	}
+
+      if (ch != bg)
+      {
+	add_color(colors[ch]);
+	add(POLYGON);
+	add_vertex(startx * 9000 / img->w() + 1000, 9500 - y * 9000 / img->h());
+	add_vertex(x * 9000 / img->w() + 1000,      9500 - y * 9000 / img->h());
+	add_vertex(x * 9000 / img->w() + 1000,      9500 - (y + 1) * 9000 / img->h());
+	add_vertex(startx * 9000 / img->w() + 1000, 9500 - (y + 1) * 9000 / img->h());
+	add(END);
+      }
     }
   }
 
-  // Close the file and return...
-  fclose(fp);
+  img->release();
 
 #ifdef DEBUG
   printf("Icon File \"%s\":\n", xpm);
   for (i = 0; i < num_data_; i ++)
     printf("    %d,\n", data_[i]);
-#endif /* DEBUG */
+#endif // DEBUG
+
+  return 0;
 }
 
 
@@ -777,9 +648,9 @@ Fl_File_Icon::load_system_icons(void)
       // Load KDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
       if (!access("/usr/share/icons/hicolor/32x32/mimetypes/unknown.png", F_OK))
-        icon->load_png("/usr/share/icons/hicolor/32x32/mimetypes/unknown.png");
+        icon->load_image("/usr/share/icons/hicolor/32x32/mimetypes/unknown.png");
       else
-        icon->load_xpm("/usr/share/icons/unknown.xpm");
+        icon->load_image("/usr/share/icons/unknown.xpm");
 
       load_kde_icons("/usr/share/mimelnk");
     }
@@ -787,31 +658,31 @@ Fl_File_Icon::load_system_icons(void)
     {
       // Load GNOME icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
-      icon->load_xpm("/usr/share/icons/page.xpm");
+      icon->load_image("/usr/share/icons/page.xpm");
 
       icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
-      icon->load_xpm("/usr/share/icons/folder.xpm");
+      icon->load_image("/usr/share/icons/folder.xpm");
     }
     else if (!access("/usr/dt/appconfig/icons", F_OK))
     {
       // Load CDE icons...
       icon = new Fl_File_Icon("*", Fl_File_Icon::PLAIN);
-      icon->load_xpm("/usr/dt/appconfig/icons/C/Dtdata.m.pm");
+      icon->load_image("/usr/dt/appconfig/icons/C/Dtdata.m.pm");
 
       icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
-      icon->load_xpm("/usr/dt/appconfig/icons/C/DtdirB.m.pm");
+      icon->load_image("/usr/dt/appconfig/icons/C/DtdirB.m.pm");
 
       icon = new Fl_File_Icon("core", Fl_File_Icon::PLAIN);
-      icon->load_xpm("/usr/dt/appconfig/icons/C/Dtcore.m.pm");
+      icon->load_image("/usr/dt/appconfig/icons/C/Dtcore.m.pm");
 
       icon = new Fl_File_Icon("*.{bmp|bw|gif|jpg|pbm|pcd|pgm|ppm|png|ras|rgb|tif|xbm|xpm}", Fl_File_Icon::PLAIN);
-      icon->load_xpm("/usr/dt/appconfig/icons/C/Dtimage.m.pm");
+      icon->load_image("/usr/dt/appconfig/icons/C/Dtimage.m.pm");
 
       icon = new Fl_File_Icon("*.{eps|pdf|ps}", Fl_File_Icon::PLAIN);
-      icon->load_xpm("/usr/dt/appconfig/icons/C/Dtps.m.pm");
+      icon->load_image("/usr/dt/appconfig/icons/C/Dtps.m.pm");
 
       icon = new Fl_File_Icon("*.ppd", Fl_File_Icon::PLAIN);
-      icon->load_xpm("/usr/dt/appconfig/icons/C/DtPrtpr.m.pm");
+      icon->load_image("/usr/dt/appconfig/icons/C/DtPrtpr.m.pm");
     }
     else if (!access("/usr/lib/filetype", F_OK))
     {
@@ -940,27 +811,60 @@ load_kde_mimelnk(const char *filename)
 	strcpy(pattern, val);
     }
 
-    if (iconfilename && pattern)
+    fclose(fp);
+
+    if (iconfilename[0] && (pattern[0] || strncmp(mimetype, "inode/", 6) == 0))
     {
-      if (!access("/usr/share/icons/locolor", F_OK))
+      if (!access("/usr/share/icons/hicolor", F_OK))
       {
-        if (strncmp(mimetype, "inode/", 6) != 0)
-          sprintf(full_iconfilename, "/usr/share/icons/hicolor/32x32/mimetypes/%s.png", iconfilename);
-        else
-          sprintf(full_iconfilename, "/usr/share/icons/hicolor/32x32/filesystems/%s.png", iconfilename);
+	int		i;		// Looping var
+	static const char *paths[] = {	// Subdirs to look in...
+	  "32x32/actions",
+	  "32x32/apps",
+	  "32x32/devices",
+	  "32x32/filesystems",
+	  "32x32/mimetypes",
+
+	  "22x22/actions",
+	  "22x22/apps",
+	  "22x22/devices",
+	  "22x22/filesystems",
+	  "22x22/mimetypes",
+
+	  "16x16/actions",
+	  "16x16/apps",
+	  "16x16/devices",
+	  "16x16/filesystems",
+	  "16x16/mimetypes"
+	};
+
+        for (i = 0; i < (int)(sizeof(paths) / sizeof(paths[0])); i ++) {
+          snprintf(full_iconfilename, sizeof(full_iconfilename),
+	           "/usr/share/icons/hicolor/%s/%s.png", paths[i],
+		   iconfilename);
+
+          if (!access(full_iconfilename, F_OK)) break;
+	}
+
+        if (i >= (int)(sizeof(paths) / sizeof(paths[0]))) return;
       }
       else
-        sprintf(full_iconfilename, "/usr/share/icons/%s", iconfilename);
+        snprintf(full_iconfilename, sizeof(full_iconfilename),
+	         "/usr/share/icons/%s", iconfilename);
 
-      if (strcmp(mimetype, "inode/directory") == 0)
-	icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
-      else
+      if (strncmp(mimetype, "inode/", 6) == 0) {
+	if (strcmp(mimetype + 6, "directory") == 0)
+	  icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
+	else if (strcmp(mimetype + 6, "blockdevice") == 0)
+	  icon = new Fl_File_Icon("*", Fl_File_Icon::DEVICE);
+	else if (strcmp(mimetype + 6, "fifo") == 0)
+	  icon = new Fl_File_Icon("*", Fl_File_Icon::FIFO);
+	else return;
+      } else
         icon = new Fl_File_Icon(kde_to_fltk_pattern(pattern), Fl_File_Icon::PLAIN);
 
       icon->load(full_iconfilename);
     }
-
-    fclose(fp);
   }
 }
 
@@ -1020,5 +924,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.3 2001/11/17 16:37:48 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $".
 //

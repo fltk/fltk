@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.8 2001/11/24 02:46:19 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.9 2001/11/25 16:38:11 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -74,7 +74,7 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   // Optimize the simple copy where the width and height are the same...
-  if (W == w() && H == h()) return new Fl_RGB_Image(array, w(), h(), d(), ld);
+  if (W == w() && H == h()) return new Fl_RGB_Image(array, w(), h(), d(), ld());
 
   // OK, need to resize the image data; allocate memory and 
   Fl_RGB_Image	*new_image;	// New RGB image
@@ -102,7 +102,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = H, sy = 0, yerr = H / 2, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W / 2, old_ptr = array + sy * (w() * d() + ld);
+    for (dx = W, xerr = W / 2, old_ptr = array + sy * (w() * d() + ld());
 	 dx > 0;
 	 dx --) {
       for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
@@ -166,13 +166,13 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   if (d() < 3) {
     ig = (r * 31 + g * 61 + b * 8) / 100 * (256 - ia);
 
-    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld)
+    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
       for (x = 0; x < w(); x ++) {
 	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
 	if (d() > 1) *new_ptr++ = *old_ptr++;
       }
   } else {
-    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld)
+    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
       for (x = 0; x < w(); x ++) {
 	*new_ptr++ = (*old_ptr++ * ia + ir) >> 8;
 	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
@@ -185,7 +185,8 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   if (!alloc_array) {
     array       = new_array;
     alloc_array = 1;
-    ld          = 0;
+
+    ld(0);
   }
 }
 
@@ -216,7 +217,7 @@ void Fl_RGB_Image::desaturate() {
   const uchar	*old_ptr;
   int		x, y;
 
-  for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld)
+  for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
     for (x = 0; x < w(); x ++, old_ptr += d()) {
       *new_ptr++ = (31 * old_ptr[0] + 61 * old_ptr[1] + 8 * old_ptr[2]) / 100;
       if (d() > 3) *new_ptr++ = old_ptr[3];
@@ -227,8 +228,8 @@ void Fl_RGB_Image::desaturate() {
 
   array       = new_array;
   alloc_array = 1;
-  ld          = 0;
 
+  ld(0);
   d(new_d);
 }
 
@@ -251,7 +252,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!id) {
     id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
-    fl_draw_image(array, 0, 0, w(), h(), d(), ld);
+    fl_draw_image(array, 0, 0, w(), h(), d(), ld());
     fl_end_offscreen();
 
     if (d() == 2 || d() == 4) {
@@ -300,7 +301,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       // definitely fast...
       memset(bitmap, 0, bmw * h());
 
-      for (dataptr = array + d() - 1, y = 0; y < h(); y ++, dataptr += ld)
+      for (dataptr = array + d() - 1, y = 0; y < h(); y ++, dataptr += ld())
         for (bitptr = bitmap + y * bmw, bit = 128, x = 0; x < w(); x ++, dataptr += d()) {
 	  if (*dataptr > dither[x & 15][y & 15])
 	    *bitptr |= bit;
@@ -357,5 +358,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.8 2001/11/24 02:46:19 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.9 2001/11/25 16:38:11 easysw Exp $".
 //

@@ -55,6 +55,18 @@ CHANGES IN FLTK 1.1.0b6
 	- Was sending FL_RELEASE events for buttons 4 and 5
 	  under X11, which are only for FL_MOUSEWHEEL.
 	- Fl_Help_View now supports the EM and STRONG elements.
+	- Didn't do callbacks when changing tabs via keyboard.
+	- FLUID didn't write tooltip strings to the message
+	  catalog file.
+	- Fl_File_Icon now uses Fl_Shared_Image to load icon
+	  images; the load_png() and load_xpm() methods have
+	  been replaced by a single load_image() method.
+	- Fl_File_Icon::load_system_icons() now does a better
+	  job of finding KDE icons.
+	- Now use Fl::warning() and Fl::error() in place of
+	  printf's in some of the newer widgets.
+	- The default behavior of Fl::error() is now to display
+	  an error but not to exit; Fl::fatal() still exits.
 
 
 CHANGES IN FLTK 1.1.0b5

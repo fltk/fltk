@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.7 2001/10/30 21:56:15 easysw Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.8 2001/11/25 16:38:11 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1535,7 +1535,7 @@ void Fl_Widget_Type::write_widget_code() {
         break;
     case 2 : /* POSIX catgets */
         write_c("catgets(%s,%s,%d,", i18n_file[0] ? i18n_file : "_catalog",
-	        i18n_set, msgnum());
+	        i18n_set, msgnum() + 1);
         write_cstring(tooltip());
 	write_c(")");
         break;
@@ -1963,5 +1963,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.7 2001/10/30 21:56:15 easysw Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.15.2.16.2.8 2001/11/25 16:38:11 easysw Exp $".
 //
