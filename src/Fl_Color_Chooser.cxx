@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.5 1999/01/07 19:17:18 mike Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.6 1999/01/13 15:47:27 mike Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -310,6 +310,10 @@ void Fl_Color_Chooser::rgb_cb(Fl_Widget* o, void*) {
 
 void Fl_Color_Chooser::mode_cb(Fl_Widget* o, void*) {
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)(o->parent());
+  // force them to redraw even if value is the same:
+  c->rvalue.value(-1);
+  c->gvalue.value(-1);
+  c->bvalue.value(-1);
   c->set_valuators();
 }
 
@@ -426,5 +430,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.5 1999/01/07 19:17:18 mike Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.6 1999/01/13 15:47:27 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.8 1999/01/07 19:17:21 mike Exp $"
+// "$Id: Fl_Input.cxx,v 1.9 1999/01/13 15:47:27 mike Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -259,7 +259,13 @@ int Fl_Input::handle_key() {
   if (type() == FL_FLOAT_INPUT) {
     if (!strchr("0123456789.eE+-", key)) return 0;
   } else if (type() == FL_INT_INPUT) {
-    if (!strchr("0123456789+-", key)) return 0;
+    if (!position() && (key == '+' || key == '-'));
+    else if (key >= '0' && key <= '9');
+    // we allow 0xabc style hex numbers to be typed:
+    else if (position()==1 && index(0)=='0' && (key == 'x' || key == 'X'));
+    else if (position()>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
+           && (key>='A'&& key<='F' || key>='a'&& key<='f'));
+    else return 0;
   }
 
   return replace(position(), mark(), Fl::event_text(), Fl::event_length());
@@ -323,5 +329,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.8 1999/01/07 19:17:21 mike Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.9 1999/01/13 15:47:27 mike Exp $".
 //
