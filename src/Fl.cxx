@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.35 2002/06/02 20:49:47 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.36 2002/06/02 21:06:24 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -825,30 +825,33 @@ void Fl::paste(Fl_Widget &receiver) {
 #include <FL/fl_draw.H>
 
 void Fl_Widget::redraw() {
-  if (window() && box() == FL_NO_BOX) {
-    // Widgets with the FL_NO_BOX boxtype need a parent to
-    // redraw, since it is responsible for redrawing the
-    // background...
-    int X = x() > 0 ? x() - 1 : 0;
-    int Y = y() > 0 ? y() - 1 : 0;
-    window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
-  }
-  else damage(FL_DAMAGE_ALL);
+  damage(FL_DAMAGE_ALL);
 
-  if (window() && align() && !(align() & FL_ALIGN_INSIDE)) {
-    // If the label is not inside the widget, compute the location of
-    // the label and redraw the window within that bounding box...
-    int W = 0, H = 0;
-    label_.measure(W, H);
+  if (window()) {
+    if (box() == FL_NO_BOX) {
+      // Widgets with the FL_NO_BOX boxtype need a parent to
+      // redraw, since it is responsible for redrawing the
+      // background...
+      int X = x() > 0 ? x() - 1 : 0;
+      int Y = y() > 0 ? y() - 1 : 0;
+      window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+    }
 
-    if (align() & FL_ALIGN_BOTTOM) {
-      window()->damage(FL_DAMAGE_ALL, x(), y() + h(), w(), H);
-    } else if (align() & FL_ALIGN_TOP) {
-      window()->damage(FL_DAMAGE_ALL, x(), y() - H, w(), H);
-    } else if (align() & FL_ALIGN_LEFT) {
-      window()->damage(FL_DAMAGE_ALL, x() - W, y(), W, h());
-    } else if (align() & FL_ALIGN_RIGHT) {
-      window()->damage(FL_DAMAGE_ALL, x() + w(), y(), W, h());
+    if (align() && !(align() & FL_ALIGN_INSIDE)) {
+      // If the label is not inside the widget, compute the location of
+      // the label and redraw the window within that bounding box...
+      int W = 0, H = 0;
+      label_.measure(W, H);
+
+      if (align() & FL_ALIGN_BOTTOM) {
+	window()->damage(FL_DAMAGE_ALL, x(), y() + h(), w(), H);
+      } else if (align() & FL_ALIGN_TOP) {
+	window()->damage(FL_DAMAGE_ALL, x(), y() - H, w(), H);
+      } else if (align() & FL_ALIGN_LEFT) {
+	window()->damage(FL_DAMAGE_ALL, x() - W, y(), W, h());
+      } else if (align() & FL_ALIGN_RIGHT) {
+	window()->damage(FL_DAMAGE_ALL, x() + w(), y(), W, h());
+      }
     }
   }
 }
@@ -928,5 +931,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.35 2002/06/02 20:49:47 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.36 2002/06/02 21:06:24 easysw Exp $".
 //
