@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.7 2002/04/30 18:11:49 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.8 2002/04/30 22:25:18 matthiaswm Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -48,10 +48,10 @@ char Fl_Preferences::nameBuffer[];
 
 /**
  * create the initial preferences base
- * i root: machine or user preferences
- * i vendor: unique identification of author or vendor of application
+ * - root: machine or user preferences
+ * - vendor: unique identification of author or vendor of application
  *     Must be a valid directory name.
- * i application: vendor unique application name, i.e. "PreferencesTest"
+ * - application: vendor unique application name, i.e. "PreferencesTest"
  *     multiple preferences files can be created per application.
  *     Must be a valid file name.
  * example: Fl_Preferences base( Fl_Preferences::USER, "fltk.org", "test01");
@@ -65,8 +65,8 @@ Fl_Preferences::Fl_Preferences( enum Root root, const char *vendor, const char *
 
 /**
  * create a Preferences node in relation to a parent node for reading and writing
- * i parent: base name for group
- * i group: group name (can contain '/' seperated group names)
+ * - parent: base name for group
+ * - group: group name (can contain '/' seperated group names)
  * example: Fl_Preferences colors( base, "setup/colors" );
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *key )
@@ -78,8 +78,8 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *key )
 
 /**
  * create a Preferences node in relation to a parent node for reading and writing
- * i parent: base name for group
- * i group: group name (can contain '/' seperated group names)
+ * - parent: base name for group
+ * - group: group name (can contain '/' seperated group names)
  * example: Fl_Preferences colors( base, "setup/colors" );
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *key )
@@ -311,9 +311,8 @@ static char *decodeText( const char *src )
 
 /**
  * read a text entry from the group
- * - the maximum size for text plus entry name is 2046 bytes plus the trailling 0
- * - the text must not contain special characters
- * the text will be movet into the given text buffer
+ * the text will be moved into the given text buffer
+ * text will be clipped to the buffer size
  */
 char Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize )
 {
@@ -327,16 +326,25 @@ char Fl_Preferences::get( const char *key, char *text, const char *defaultValue,
     return 1;
   }    
   if ( !v ) v = defaultValue;
-  strncpy( text, v, maxSize );
-  if ( (int)strlen(v) >= maxSize ) text[maxSize] = 0;
+  if ( v )
+  {
+    int vLen = strlen( v );
+    if ( vLen >= maxSize )
+    {
+      strncpy( text, v, maxSize );
+      text[maxSize] = 0;
+    }
+    else
+      strcpy( text, v );
+  }
+  else
+    text = 0;
   return ( v != defaultValue );
 }
 
 
 /**
  * read a text entry from the group
- * - the maximum size for text plus entry name is 2046 bytes plus the trailling 0
- * - the text must not contain special characters (no \n or \r, "quotes" are OK)
  * 'text' will be changed to point to a new text buffer
  * the text buffer must be deleted with 'free(text)' by the user.
  */
@@ -349,7 +357,10 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
     return 1;
   }    
   if ( !v ) v = defaultValue;
-  text = strdup( v );
+  if ( v )
+    text = strdup( v );
+  else
+    text = 0;
   return ( v != defaultValue );
 }
 
@@ -381,6 +392,97 @@ char Fl_Preferences::set( const char *key, const char *text )
   }
   else
     node->set( key, text );
+  return 1;
+}
+
+
+// convert a hex string to binary data
+static void *decodeHex( const char *src, int &size )
+{
+  size = strlen( src )/2;
+  unsigned char *data = (unsigned char*)malloc( size ), *d = data;
+  const char *s = src;
+  int i;
+
+  for ( i=size; i>0; i-- )
+  {
+    unsigned char v = 0;
+    char x = tolower(*s++);
+    if ( x >= 'a' ) v = x-'a'+10; else v = x-'0';
+    v = v<<4;
+    x = tolower(*s++);
+    if ( x >= 'a' ) v += x-'a'+10; else v += x-'0';
+    *d++ = v;
+  }
+
+  return (void*)data;
+}
+
+
+/**
+ * read a binary entry from the group
+ * the data will be moved into the given destination buffer
+ * data will be clipped to the buffer size
+ */
+char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int maxSize )
+{
+  const char *v = node->get( key );
+  if ( v )
+  {
+    int size;
+    void *w = decodeHex( v, size );
+    memmove( data, w, size>maxSize?maxSize:size );
+    free( w );
+    return 1;
+  }    
+  if ( defaultValue )
+    memmove( data, defaultValue, defaultSize>maxSize?maxSize:defaultSize );
+  return 0;
+}
+
+
+/**
+ * read a binary entry from the group
+ * 'data' will be changed to point to a new data buffer
+ * the data buffer must be deleted with 'free(data)' by the user.
+ */
+char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue, int defaultSize )
+{
+  const char *v = node->get( key );
+  if ( v )
+  {
+    int size;
+    data = decodeHex( v, size );
+    return 1;
+  }    
+  if ( defaultValue )
+  {
+    data = (void*)malloc( defaultSize );
+    memmove( data, defaultValue, defaultSize );
+  }
+  else
+    data = 0;
+  return 0;
+}
+
+
+/**
+ * set an entry (name/value pair)
+ */
+char Fl_Preferences::set( const char *key, const void *data, int size )
+{
+  char *buffer = (char*)malloc( size*2+1 ), *d = buffer;;
+  unsigned char *s = (unsigned char*)data;
+  for ( ; size>0; size-- )
+  {
+    static char lu[] = "0123456789abcdef";
+    unsigned char v = *s++;
+    *d++ = lu[v>>4];
+    *d++ = lu[v&0xf];
+  }
+  *d = 0;
+  node->set( key, buffer );
+  free( buffer );
   return 1;
 }
 
@@ -418,12 +520,57 @@ char Fl_Preferences::getUserdataPath( char *path, int pathlen )
 /**
  * write all preferences to disk
  * - this function works only with the base preference group
- * - this function is rarely used as deleting the base preferences does that automatically
+ * - this function is rarely used as deleting the base preferences flushes automatically
  */
 void Fl_Preferences::flush()
 {
   if ( rootNode && node->dirty() )
     rootNode->write();
+}
+
+//-----------------------------------------------------------------------------
+// helper class to create dynamic group and entry names on the fly
+//
+
+/**
+ * create a group name or entry name on the fly
+ * - this version creates a simple unsigned integer as an entry name
+ * example:
+ *   int n, i;
+ *   Fl_Preferences prev( appPrefs, "PreviousFiles" );
+ *   prev.get( "n", 0 );
+ *   for ( i=0; i<n; i++ )
+ *     prev.get( Fl_Preferences::Name(i), prevFile[i], "" );
+ */
+Fl_Preferences::Name::Name( unsigned int n )
+{
+  data_ = (char*)malloc(20);
+  itoa( n, data_, 10 );
+}
+
+/**
+ * create a group name or entry name on the fly
+ * - this version creates entry names as in 'printf'
+ * example:
+ *   int n, i;
+ *   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
+ *   prev.get( "nFiles", 0 );
+ *   for ( i=0; i<n; i++ )
+ *     prev.get( Fl_Preferences::Name( "File%d", i ), prevFile[i], "" );
+ */
+Fl_Preferences::Name::Name( const char *format, ... )
+{
+  data_ = (char*)malloc(1024);
+  va_list args;
+  va_start(args, format);
+  vsnprintf(data_, 1024, format, args);
+  va_end(args);
+}
+
+// delete the name
+Fl_Preferences::Name::~Name()
+{
+  free(data_);
 }
 
 //-----------------------------------------------------------------------------
@@ -937,5 +1084,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.7 2002/04/30 18:11:49 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.8 2002/04/30 22:25:18 matthiaswm Exp $".
 //

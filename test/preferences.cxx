@@ -172,7 +172,7 @@ double doubleValue;
 Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
 
   char path[ FL_PATH_MAX ];
-  app.getUserdataPath( path, sizeof(path) );
+  app.getUserdataPath( path );
 
   Fl_Preferences bed( app, "Bed" );
     bed.get( "alarm", buffer, "8:00", 80 );
@@ -222,6 +222,21 @@ Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
     if ( flexBuffer ) free( flexBuffer );
 
     eat.get( "foo", buffer, "bar", 80 );
+
+  /** sample code only:
+  Fl_Preferences prev( app, "PreviousStarts" );
+  {
+    int i, n;
+    prev.get( "n", n, 0 );
+    for ( i=0; i<n; i++ )
+      prev.get( Fl_Preferences::Name( i ), flexBuffer, "" );
+  }
+
+    unsigned int hex;
+    eat.get( "binFoo", (void*)&hex, 0, 0, sizeof( unsigned int ) );
+    void *data;
+    eat.get( "binFoo2", data, 0, 0 );
+  **/
 }
 
 void writePrefs() {
@@ -259,4 +274,11 @@ void writePrefs() {
 
     eat.set( "foo", "bar\nfly\rBackslash: \\ and bell: \007 and delete: \177\n" );
 
+    eat.set( Fl_Preferences::Name( 3 ), "Test3" );
+
+  /** sample code only:
+    unsigned int hex = 0x2387efcd;
+    eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
+    eat.set( "binFoo2", (void*)&writePrefs, 1024 );
+  **/
 }

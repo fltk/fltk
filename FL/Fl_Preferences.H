@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.H,v 1.1.2.4 2002/04/30 18:11:49 easysw Exp $"
+// "$Id: Fl_Preferences.H,v 1.1.2.5 2002/04/30 22:25:18 matthiaswm Exp $"
 //
 // Preferences definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -33,10 +33,6 @@
 #include <stdio.h>
 
 
-// missing features:
-// - get and set binary data
-// - Fl_Preferences could offer functions that return the value instead off an error code to write directly into widgets
-
 
 /**
  * Preferences are a data tree containing a root, branches and leafs
@@ -69,7 +65,7 @@ public:
   FL_EXPORT char set( const char *entry, float value );
   FL_EXPORT char set( const char *entry, double value );
   FL_EXPORT char set( const char *entry, const char *value );
-  // FL_EXPORT char set( const char *entry, const void *value, int size ); 
+  FL_EXPORT char set( const char *entry, const void *value, int size ); 
 
   FL_EXPORT char get( const char *entry, char &value,   char defaultValue );
   FL_EXPORT char get( const char *entry, int &value,    int defaultValue );
@@ -77,8 +73,8 @@ public:
   FL_EXPORT char get( const char *entry, double &value, double defaultValue );
   FL_EXPORT char get( const char *entry, char *&value,  const char *defaultValue );
   FL_EXPORT char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
-  // FL_EXPORT char get( const char *entry, void *&value,  const char *defaultValue );
-  // FL_EXPORT char get( const char *entry, void *value,   const char *defaultValue, int maxSize );
+  FL_EXPORT char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
+  FL_EXPORT char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
   FL_EXPORT int size( const char *entry );
 
   FL_EXPORT char getUserdataPath( char *path, int pathlen );
@@ -88,7 +84,14 @@ public:
   // FL_EXPORT char export( const char *filename, enum Type fileFormat );
   // FL_EXPORT char import( const char *filename );
 
-  // FL_EXPORT const char *namef( const char *, ... );
+  class Name {
+    char *data_;
+  public:
+    FL_EXPORT Name( unsigned int n );
+    FL_EXPORT Name( const char *format, ... );
+    FL_EXPORT operator const char *() { return data_; }
+    FL_EXPORT ~Name();
+  };
 
 private:
 
@@ -154,5 +157,5 @@ private:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H,v 1.1.2.4 2002/04/30 18:11:49 easysw Exp $".
+// End of "$Id: Fl_Preferences.H,v 1.1.2.5 2002/04/30 22:25:18 matthiaswm Exp $".
 //

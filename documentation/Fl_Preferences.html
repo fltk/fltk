@@ -10,7 +10,7 @@
 <h3>Class Hierarchy</h3>
 
 <ul><pre>
-<b>Fl_Preferences</a></H4>&nbsp;
+<b>Fl_Preferences</b></a></H4>&nbsp;
 </pre></ul>
 
 <h3>Include Files</h3>
@@ -65,6 +65,7 @@ method.
     <li><a href="#Fl_Preferences.groups">groups</a></li>
     <li><a href="#Fl_Preferences.set">set</a></li>
     <li><a href="#Fl_Preferences.size">size</a></li>
+    <li><a href="#Fl_Preferences.Name">Name</a></li>
 
 </ul>
 
@@ -133,19 +134,21 @@ deleting the base preferences flushes automatically.
 that is usable for application data beyond what is covered by
 <tt>Fl_Preferences</tt>.
 
-<H4><a name="Fl_Preferences.get">int get(const char *entry, int &amp;value,&nbsp;&nbsp; int defaultValue)<BR>
-int get(const char *entry, int &amp;value,&nbsp;&nbsp;&nbsp; int defaultValue)<BR>
-int get(const char *entry, float &amp;value,&nbsp; float defaultValue)<BR>
-int get(const char *entry, double &amp;value, double defaultValue )
-int get(const char *entry, char *&amp;value,&nbsp; const char *defaultValue)<BR>
-int get(const char *entry, char *value,&nbsp;&nbsp; const char *defaultValue,
+<H4><a name="Fl_Preferences.get">int get(const char *entry, int &amp;value, int defaultValue)<BR>
+int get(const char *entry, int &amp;value, int defaultValue)<BR>
+int get(const char *entry, float &amp;value, float defaultValue)<BR>
+int get(const char *entry, double &amp;value, double defaultValue )<BR>
+int get(const char *entry, char *&amp;text, const char *defaultValue)<BR>
+int get(const char *entry, char *text, const char *defaultValue, int maxSize)<BR>
+int get(const char *entry, void *&amp;data, const void *defaultValue, int defaultSize)<BR>
+int get(const char *entry, void *data, const void *defaultValue, int defaultSize,
 int maxSize)</a></H4>
 
 <P>Reads an entry from the group. A default value must be
 supplied. The return value indicates if the value was available
 (non-zero) or the default was used (0). If the '<tt>char
-*&amp;value</tt>' form is used, the resulting text must be freed
-with '<tt>free(value)</tt>'. 
+*&amp;text</tt>' or '<tt>void *&amp;data</tt>' form is used, 
+the resulting data must be freed with '<tt>free(value)</tt>'. 
 
 <H4><a name="Fl_Preferences.group">const char
 *Fl_Preferences::group(int ix)</a></H4>
@@ -167,10 +170,10 @@ group.
 int set(const char *entry, int value)<BR>
 int set(const char *entry, float value)<BR>
 int set(const char *entry, double value)<BR>
-int set(const char *entry, const char *value)</a></H4>
+int set(const char *entry, const char *text)<BR>
+int set(const char *entry, const void *data, int size)</a></H4>
 
-<P>Sets an entry (name/value pair). Text data must not contain
-any '\n' or '\r' characters. The return value indicates if there
+<P>Sets an entry (name/value pair). The return value indicates if there
 was a problem storing the data in memory. However it does not
 reflect if the value was actually stored in the preferences
 file.
@@ -178,6 +181,18 @@ file.
 <H4><a name="Fl_Preferences.size">int Fl_Preferences::size(const char *key)</a></H4>
 
 <P>Returns the size of the value part of an entry.
+
+<H4><a name="Fl_Preferences.Name">
+Fl_Preferences::Name( unsigned int numericName )<BR>
+Fl_Preferences::Name( const char *format, ... )
+</a></H4>
+
+<P>'Name' provides a simple method to create numerical or more complex 
+procedural names for entries and groups on the fly,
+i.e. <tt>prefs.set(Fl_Preferences::Name("File%d",i),file[i]);</tt>. 
+See <tt>test/preferences.cxx</tt> as a sample for writing arrays into preferences.<p>
+'Name' is actually implemented as a class inside Fl_Preferences. It casts
+into <tt>const char*</tt> and gets automatically destroyed after the enclosing call.
 
 
 </body>

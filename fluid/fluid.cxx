@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.15 2002/04/30 18:11:49 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.16 2002/04/30 22:25:18 matthiaswm Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -468,11 +468,9 @@ void make_main_window() {
 // Load file history from preferences...
 void load_history() {
   int	i;		// Looping var
-  char	name[32];	// Variable name
 
   for (i = 0; i < 10; i ++) {
-    sprintf(name, "file%d", i);
-    fluid_prefs.get(name, absolute_history[i], "", sizeof(absolute_history[i]));
+    fluid_prefs.get( Fl_Preferences::Name("file%d", i), absolute_history[i], "", sizeof(absolute_history[i]));
     if (absolute_history[i][0]) {
       // Make a relative version of the filename for the menu...
       fl_filename_relative(relative_history[i], sizeof(relative_history[i]),
@@ -488,7 +486,6 @@ void load_history() {
 // Update file history from preferences...
 void update_history(const char *filename) {
   int	i;		// Looping var
-  char	name[32];	// Variable name
   char	absolute[1024];
 
   fl_filename_absolute(absolute, sizeof(absolute), filename);
@@ -519,8 +516,7 @@ void update_history(const char *filename) {
 
   // Update the menu items as needed...
   for (i = 0; i < 10; i ++) {
-    sprintf(name, "file%d", i);
-    fluid_prefs.set(name, absolute_history[i]);
+    fluid_prefs.set( Fl_Preferences::Name("file%d", i), absolute_history[i]);
     if (absolute_history[i][0]) Main_Menu[i + 4].flags = 0;
     else Main_Menu[i + 4].flags = FL_MENU_INVISIBLE;
   }
@@ -618,5 +614,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.15 2002/04/30 18:11:49 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.16 2002/04/30 22:25:18 matthiaswm Exp $".
 //
