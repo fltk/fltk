@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.4 2000/04/24 18:22:49 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.5 2000/04/25 01:12:48 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,9 @@ void i18n_type_cb(Fl_Choice *c, void *) {
       break;
   case 1 : /* GNU gettext */
       i18n_include_input->value("<libintl.h>");
+      i18n_include = i18n_include_input->value();
       i18n_function_input->value("gettext");
+      i18n_function = i18n_function_input->value();
       i18n_include_input->show();
       i18n_file_input->hide();
       i18n_set_input->hide();
@@ -80,8 +82,11 @@ void i18n_type_cb(Fl_Choice *c, void *) {
   case 2 : /* POSIX cat */
       i18n_include_input->value("<nl_types.h>");
       i18n_file_input->value("i18n_file");
+      i18n_file = i18n_file_input->value();
       i18n_set_input->value("1");
+      i18n_set = i18n_set_input->value();
       i18n_include_input->show();
+      i18n_include = i18n_include_input->value();
       i18n_file_input->show();
       i18n_set_input->show();
       i18n_function_input->hide();
@@ -747,5 +752,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.4 2000/04/24 18:22:49 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.5 2000/04/25 01:12:48 mike Exp $".
 //
