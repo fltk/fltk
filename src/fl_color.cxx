@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.11 1999/01/19 19:10:39 mike Exp $"
+// "$Id: fl_color.cxx,v 1.12 1999/01/25 20:43:05 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -316,25 +316,27 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   blue  = uchar(c>>8);
 }
 
+Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
+  Fl_Color avg;
+  unsigned rgb1 = fl_cmap[color1];
+  unsigned rgb2 = fl_cmap[color2];
+  uchar r, g, b;
+
+  r = (uchar)(((uchar)(rgb1>>24))*weight + ((uchar)(rgb2>>24))*(1-weight));
+  g = (uchar)(((uchar)(rgb1>>16))*weight + ((uchar)(rgb2>>16))*(1-weight));
+  b = (uchar)(((uchar)(rgb1>>8))*weight + ((uchar)(rgb2>>8))*(1-weight));
+
+  if (r == g && r == b) { // get it out of gray ramp
+    avg = fl_gray_ramp(r*FL_NUM_GRAY/256);
+  } else {		// get it out of color cube:
+    avg = fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
+  }
+
+  return avg;
+}
+
 Fl_Color inactive(Fl_Color c) {
-  // cache because it is like to ask for the same color a lot:
-  static Fl_Color cache_from = FL_GRAY;
-  static Fl_Color cache_to = FL_GRAY;
-  if (c == cache_from) return cache_to;
-  cache_from = c;
-  // do a 33% mix between this color and FL_GRAY:
-  unsigned rgb1 = fl_cmap[c];
-  unsigned rgb2 = fl_cmap[FL_GRAY];
-  uchar r = (uchar)((((uchar)(rgb1>>24)) + ((uchar)(rgb2>>24))*2)/3);
-  uchar g = (uchar)((((uchar)(rgb1>>16)) + ((uchar)(rgb2>>16))*2)/3);
-  uchar b = (uchar)((((uchar)(rgb1>> 8)) + ((uchar)(rgb2>> 8))*2)/3);
-  // and find the closest color in gray ramp or color cube:
-  if (r == g && r == b) // get it out of gray ramp
-    cache_to = fl_gray_ramp(r*FL_NUM_GRAY/256);
-  else		// get it out of color cube:
-    cache_to =
-      fl_color_cube(r*FL_NUM_RED/256,g*FL_NUM_GREEN/256,b*FL_NUM_BLUE/256);
-  return cache_to;
+  return fl_color_average(c, FL_GRAY, .33f);
 }
 
 Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
@@ -349,5 +351,5 @@ Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.11 1999/01/19 19:10:39 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.12 1999/01/25 20:43:05 mike Exp $".
 //
