@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.h,v 1.2 1998/10/21 16:28:56 mike Exp $"
+// "$Id: Fl_Widget_Type.h,v 1.3 1998/12/06 15:18:39 mike Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 // Please report all bugs and problems to "fltk-bugs@easysw.com".
 //
 
-#include "Fl_Type.H"
+#include "Fl_Type.h"
 
 struct Fl_Menu_Item;
 class Fluid_Image;
@@ -90,5 +90,5 @@ void* const LOAD = (void *)9831;
 extern Fl_Widget_Type *current_widget; // one of the selected ones
 
 //
-// End of "$Id: Fl_Widget_Type.h,v 1.2 1998/10/21 16:28:56 mike Exp $".
+// End of "$Id: Fl_Widget_Type.h,v 1.3 1998/12/06 15:18:39 mike Exp $".
 //
