@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.1 1999/04/26 06:45:27 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.2 1999/08/09 06:19:33 bill Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -536,7 +536,16 @@ int menuwindow::handle(int e) {
     // the second click (not the one that popped up the menu):
     if (!Fl::event_is_click() || p.state == PUSH_STATE ||
 	p.menubar && p.current_item && !p.current_item->submenu() // button
-	) p.state = DONE_STATE;
+	) {
+#if 0 // makes the check/radio items leave the menu up
+      const Fl_Menu_Item* m = p.current_item;
+      if (m && button && (m->flags & (FL_MENU_TOGGLE|FL_MENU_RADIO))) {
+	((Fl_Menu_*)button)->picked(m);
+	p.p[p.menu_number]->redraw();
+      } else
+#endif
+	p.state = DONE_STATE;
+    }
     return 1;
   }
   return Fl_Window::handle(e);
@@ -719,5 +728,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.1 1999/04/26 06:45:27 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.2 1999/08/09 06:19:33 bill Exp $".
 //

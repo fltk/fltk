@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.2 1999/07/22 21:37:03 bill Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.3 1999/08/09 06:19:32 bill Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -259,7 +259,7 @@ void Fl_Group::clear() {
   int old_children = children();
   // clear everything now, in case fl_fix_focus recursively calls us:
   children_ = 0;
-  array_ = 0;
+  // array_ = 0; dont do this, it will clobber old_array if only one child
   savedfocus_ = 0;
   resizable_ = this;
   init_sizes();
@@ -503,5 +503,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.2 1999/07/22 21:37:03 bill Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.3 1999/08/09 06:19:32 bill Exp $".
 //
