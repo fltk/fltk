@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image.cxx,v 1.5.2.3 2000/06/27 23:07:51 easysw Exp $"
+// "$Id: fl_draw_image.cxx,v 1.5.2.4 2000/06/27 23:30:54 easysw Exp $"
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -80,13 +80,14 @@ static int ri,gi,bi;	// saved error-diffusion value
 // we could allocate to each of the colors in a 4-bit image.  This is
 // then used to find the pixel values and actual colors for error diffusion.
 static uchar cube[16*16*16];
+extern unsigned fl_cmap[];
 
 // calculate sum-of-squares error between 4-bit index and pixel colors:
 static int calc_error(int r, int g, int b, int i) {
   int t; int s;
-  t = ((r<<4)+8)-fl_xmap[0][i].r; s = t*t;
-  t = ((g<<4)+8)-fl_xmap[0][i].g; s += t*t;
-  t = ((b<<4)+8)-fl_xmap[0][i].b; s += t*t;
+  t = ((r<<4)+8)-((fl_cmap[i] >> 24) & 255); s = t*t;
+  t = ((g<<4)+8)-((fl_cmap[i] >> 16) & 255); s += t*t;
+  t = ((b<<4)+8)-((fl_cmap[i] >> 8) & 255); s += t*t;
   return s;
 }
 
@@ -116,6 +117,7 @@ static void fill_color_cube() {
     fl_xpixel((Fl_Color)(i+FL_GRAY_RAMP));
     i = (i+7)%FL_NUM_GRAY; if (!i) break;
   }
+  memset(alloc_color, 1, sizeof(alloc_color));
 #else
   memset(alloc_color, 0, sizeof(alloc_color));
 #endif /* 0 */
@@ -168,15 +170,15 @@ static void color8_converter(const uchar *from, uchar *to, int w, int delta) {
     g += from[1]; if (g < 0) g = 0; else if (g>255) g = 255;
     b += from[2]; if (b < 0) b = 0; else if (b>255) b = 255;
     i = cube[((r<<4)&0xf00)+(g&0xf0)+(b>>4)];
-    Fl_XColor* x = fl_xmap[0] + i;
-    r -= x->r;
-    g -= x->g;
-    b -= x->b;
     if (!alloc_color[i])
     {
       fl_xpixel((Fl_Color)i);
       alloc_color[i] = 1;
     }
+    Fl_XColor* x = fl_xmap[0] + i;
+    r -= x->r;
+    g -= x->g;
+    b -= x->b;
     *to = uchar(x->pixel);
   }
   ri = r; gi = g; bi = b;
@@ -201,13 +203,13 @@ static void mono8_converter(const uchar *from, uchar *to, int w, int delta) {
   for (; w--; from += d, to += td) {
     r += from[0]; if (r < 0) r = 0; else if (r>255) r = 255;
     i = cube[(r>>4)*0x111];
-    Fl_XColor* x = fl_xmap[0] + i;
-    r -= x->g;
     if (!alloc_color[i])
     {
       fl_xpixel((Fl_Color)i);
       alloc_color[i] = 1;
     }
+    Fl_XColor* x = fl_xmap[0] + i;
+    r -= x->g;
     *to = uchar(x->pixel);
   }
   ri = r;
@@ -650,5 +652,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #endif
 
 //
-// End of "$Id: fl_draw_image.cxx,v 1.5.2.3 2000/06/27 23:07:51 easysw Exp $".
+// End of "$Id: fl_draw_image.cxx,v 1.5.2.4 2000/06/27 23:30:54 easysw Exp $".
 //

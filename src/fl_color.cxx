@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.2 2000/06/05 21:21:06 mike Exp $"
+// "$Id: fl_color.cxx,v 1.12.2.3 2000/06/27 23:30:54 easysw Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -125,7 +125,7 @@ void fl_color(uchar r,uchar g,uchar b) {
 // an X color, and does a least-squares match to find the closest
 // color if X cannot allocate that color.
 
-static unsigned fl_cmap[256] = {
+unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.C":
 };
 
@@ -351,5 +351,5 @@ Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.2 2000/06/05 21:21:06 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.12.2.3 2000/06/27 23:30:54 easysw Exp $".
 //
