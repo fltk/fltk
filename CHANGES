@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.0
 
 	- Added some more range checking to the Fl_Text_Display
 	  widget.
+	- The editor demo did not correctly update the style
+	  (syntax highlighting) information.
 
 
 CHANGES IN FLTK 1.1.0rc7

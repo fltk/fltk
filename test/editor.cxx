@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.14 2002/09/20 19:59:45 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.15 2002/09/26 20:43:03 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -173,6 +173,7 @@ style_parse(const char *text,
   const char *temp;
 
   for (current = *style, col = 0, last = 0; length > 0; length --, text ++) {
+    if (current == 'B') current = 'A';
     if (current == 'A') {
       // Check for directives, comments, strings, and keywords...
       if (col == 0 && *text == '#') {
@@ -180,6 +181,9 @@ style_parse(const char *text,
         current = 'E';
       } else if (strncmp(text, "//", 2) == 0) {
         current = 'B';
+	for (; length > 0 && *text != '\n'; length --, text ++) *style++ = 'B';
+
+        if (length == 0) break;
       } else if (strncmp(text, "/*", 2) == 0) {
         current = 'C';
       } else if (strncmp(text, "\\\"", 2) == 0) {
@@ -319,7 +323,7 @@ style_update(int        pos,		// I - Position of update
              int        nInserted,	// I - Number of inserted chars
 	     int        nDeleted,	// I - Number of deleted chars
              int        /*nRestyled*/,	// I - Number of restyled chars
-	     const char * /*deletedText*/,	// I - Text that was deleted
+	     const char * /*deletedText*/,// I - Text that was deleted
              void       *cbArg) {	// I - Callback data
   int	start,				// Start of text
 	end;				// End of text
@@ -358,12 +362,17 @@ style_update(int        pos,		// I - Position of update
   // style character and keep updating if we have a multi-line
   // comment character...
   start = textbuf->line_start(pos);
-  end   = textbuf->line_end(pos + nInserted - nDeleted);
+  end   = textbuf->line_end(pos + nInserted);
   text  = textbuf->text_range(start, end);
   style = stylebuf->text_range(start, end);
   last  = style[end - start - 1];
 
+  printf("start = %d, end = %d, text = \"%s\", style = \"%s\"...\n",
+         start, end, text, style);
+
   style_parse(text, style, end - start);
+
+  printf("new style = \"%s\"...\n", style);
 
   stylebuf->replace(start, end, style);
   ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
@@ -762,5 +771,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.14 2002/09/20 19:59:45 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.15 2002/09/26 20:43:03 easysw Exp $".
 //
