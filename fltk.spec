@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.spec,v 1.1.2.2 2000/05/15 19:20:03 mike Exp $"
+# "$Id: fltk.spec,v 1.1.2.3 2000/06/04 20:54:56 mike Exp $"
 #
 # RPM spec file for FLTK.
 #
@@ -32,7 +32,7 @@ Name: fltk
 Version: %{version}
 Release: %{release}
 Copyright: LGPL
-Group: Development/Libraries
+Group: System Environment/Libraries
 Source: ftp://ftp.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
 URL: http://www.fltk.org
 Packager: Michael Sweet <mike@easysw.com>
@@ -45,11 +45,16 @@ small group of developers across the world with a central
 repository in the US.
 
 # use buildroot so as not to disturb the version already installed
-BuildRoot: /tmp/rpmbuild
+BuildRoot: /var/tmp/fltk-%{PACKAGE_VERSION}
 
 %package devel
 Summary: FLTK - development environment
 Group: Development/Libraries
+
+%description devel
+Install fltk-devel if you need to develop FLTK applications.  You'll
+need to install the fltk package if you plan to run dynamically linked
+applications.
 
 %prep
 %setup
@@ -66,20 +71,24 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
-make prefix=$RPM_BUILD_ROOT
+make prefix=$RPM_BUILD_ROOT/%{prefix} install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%{prefix}/lib/libfltk*.so.*
 
-%{prefix}/bin/*
-%{prefix}/include/FL/*
+%files devel
+%defattr(-,root,root)
+%{prefix}/lib/libfltk*.so
+%{prefix}/lib/libfltk*.a
+%{prefix}/include/FL
 %{prefix}/include/Fl
-%{prefix}/lib/*
+%{prefix}/bin/fluid
 %{prefix}/share/doc/fltk/*
 
 #
-# End of "$Id: fltk.spec,v 1.1.2.2 2000/05/15 19:20:03 mike Exp $".
+# End of "$Id: fltk.spec,v 1.1.2.3 2000/06/04 20:54:56 mike Exp $".
 #
