@@ -1,7 +1,8 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
-	- Fl_Shared_Image didn't delete images that were loaded.
+	- Fl_BMP_Image, Fl_JPEG_Image, Fl_PNG_Image, and Fl_Shared_Image
+	  didn't delete image data that was allocated.
 	- Enabled the OpenGL and threads demos when compiling
 	  for MingW.
 	- Fl_File_Input didn't update the directory buttons if a

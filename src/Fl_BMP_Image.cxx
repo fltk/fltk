@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.3 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.4 2002/05/25 02:56:59 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -140,6 +140,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   fseek(fp, offbits, SEEK_SET);
 
   array = new uchar[w() * h() * d()];
+  alloc_array = 1;
 
   // Read the image data...
   color = 0;
@@ -370,5 +371,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.3 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.4 2002/05/25 02:56:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.4 2002/01/15 01:33:16 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.5 2002/05/25 02:56:59 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
@@ -76,6 +76,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   d(cinfo.output_components);
 
   array = new uchar[w() * h() * d()];
+  alloc_array = 1;
 
   jpeg_start_decompress(&cinfo);
 
@@ -95,5 +96,5 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.4 2002/01/15 01:33:16 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.5 2002/05/25 02:56:59 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PNG_Image.cxx,v 1.1.2.6 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_PNG_Image.cxx,v 1.1.2.7 2002/05/25 02:56:59 easysw Exp $"
 //
 // Fl_PNG_Image routines.
 //
@@ -108,6 +108,7 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 #  endif // HAVE_PNG_GET_VALID && HAVE_SET_TRNS_TO_ALPHA
 
   array = new uchar[w() * h() * d()];
+  alloc_array = 1;
 
   // Allocate pointers...
   rows = new png_bytep[h()];
@@ -135,5 +136,5 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
 
 
 //
-// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.6 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_PNG_Image.cxx,v 1.1.2.7 2002/05/25 02:56:59 easysw Exp $".
 //
