@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.1.2.2 2004/04/08 00:20:40 easysw Exp $"
+ * "$Id: config.h,v 1.1.2.3 2004/04/11 05:17:02 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -164,25 +164,25 @@
  * Do we have various image libraries?
  */
 
-#undef HAVE_LIBPNG
-#undef HAVE_LIBZ
-#undef HAVE_LIBJPEG
+#define HAVE_LIBPNG
+#define HAVE_LIBZ
+#define HAVE_LIBJPEG
 
 /*
  * Which header file do we include for libpng?
  */
 
-#undef HAVE_PNG_H
+#define HAVE_PNG_H
 #undef HAVE_LIBPNG_PNG_H
 
 /*
  * Do we have the png_xyz() functions?
  */
 
-#undef HAVE_PNG_GET_VALID
-#undef HAVE_PNG_SET_TRNS_TO_ALPHA
+#define HAVE_PNG_GET_VALID
+#define HAVE_PNG_SET_TRNS_TO_ALPHA
 
 
 /*
- * End of "$Id: config.h,v 1.1.2.2 2004/04/08 00:20:40 easysw Exp $".
+ * End of "$Id: config.h,v 1.1.2.3 2004/04/11 05:17:02 easysw Exp $".
  */
