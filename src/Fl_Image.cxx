@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.4 2001/11/19 20:59:59 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.5 2001/11/20 05:13:23 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -294,60 +294,6 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 	  }
 	}
 
-#if 0 // MRS: Don't think this is necessary; try using new fl_create_bitmask code...
-#ifdef WIN32 // Matt: mask done
-      // this won't work ehen the user changes display mode during run or
-      // has two screens with differnet depths
-      static uchar hiNibble[16] =
-      { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
-	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
-      static uchar loNibble[16] =
-      { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
-	0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-      int np  = GetDeviceCaps(fl_gc, PLANES);	//: was always one on sample machines
-      int bpp = GetDeviceCaps(fl_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
-      int Bpr = (bpp*w()+7)/8;			//: bytes per row
-      int pad = Bpr&1, w1 = (w()+7)/8, shr = ((w()-1)&7)+1;
-      if (bpp==4) shr = (shr+1)/2;
-      uchar *newarray = new uchar[(Bpr+pad)*h()], *dst = newarray, *src = bitmap;
-      for (int i=0; i<h(); i++) {
-	//: this is slooow, but we do it only once per pixmap
-	for (int j=w1; j>0; j--) {
-	  uchar b = *src++;
-	  if (bpp==1) {
-	    *dst++ = ( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
-	  } else if (bpp==4) {
-	    for (int k=(j==1)?shr:4; k>0; k--) {
-	      *dst++ = "\377\360\017\000"[b&3];
-	      b = b >> 2;
-	    }
-	  } else {
-	    for (int k=(j==1)?shr:8; k>0; k--) {
-	      if (b&1) {
-		*dst++=0;
-		if (bpp>8) *dst++=0;
-		if (bpp>16) *dst++=0;
-		if (bpp>24) *dst++=0;
-	      } else {
-		*dst++=0xff;
-		if (bpp>8) *dst++=0xff;
-		if (bpp>16) *dst++=0xff;
-		if (bpp>24) *dst++=0xff;
-	      }
-	      b = b >> 1;
-	    }
-	  }
-	}
-	dst += pad;
-      }
-      mask = (ulong)CreateBitmap(w(), h(), np, bpp, newarray);
-      delete[] newarray;
-#else
-      mask = XCreateBitmapFromData(fl_display, fl_window,
-				   (const char*)bitmap, (w()+7)&-8, h());
-#endif
-#endif // 0
-
       mask = fl_create_bitmask(w(), h(), bitmap);
       delete[] bitmap;
     }
@@ -394,5 +340,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.4 2001/11/19 20:59:59 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.5 2001/11/20 05:13:23 easysw Exp $".
 //

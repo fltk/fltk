@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GIF_Image.cxx,v 1.1.2.1 2001/11/19 01:06:45 easysw Exp $"
+// "$Id: Fl_GIF_Image.cxx,v 1.1.2.2 2001/11/20 05:13:23 easysw Exp $"
 //
 // Fl_GIF_Image routines.
 //
@@ -31,480 +31,335 @@
 // Include necessary header files...
 //
 
+#include <FL/Fl.H>
 #include <FL/Fl_GIF_Image.H>
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif /* HAVE_STRINGS_H */
-#include <errno.h>
 
-#if defined(WIN32) && ! defined(__CYGWIN__)
-#  include <io.h>
-#  include <direct.h>
-#  define strcasecmp(s,t)	stricmp((s), (t))
-#  define strncasecmp(s,t,n)	strnicmp((s), (t), (n))
-#elif defined(__EMX__)
-#  define strcasecmp(s,t)	stricmp((s), (t))
-#  define strncasecmp(s,t,n)	strnicmp((s), (t), (n))
-#else
-#  include <unistd.h>
-#endif // WIN32
+// Read a .gif file and convert it to a "xpm" format (actually my
+// modified one with compressed colormaps).
 
+// Extensively modified from original code for gif2ras by
+// Patrick J. Naughton of Sun Microsystems.  The original
+// copyright notice follows:
 
-//
-// GIF definitions...
-//
+/* gif2ras.c - Converts from a Compuserve GIF (tm) image to a Sun Raster image.
+ *
+ * Copyright (c) 1988 by Patrick J. Naughton
+ *
+ * Author: Patrick J. Naughton
+ * naughton@wind.sun.com
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted,
+ * provided that the above copyright notice appear in all copies and that
+ * both that copyright notice and this permission notice appear in
+ * supporting documentation.
+ *
+ * This file is provided AS IS with no warranties of any kind.  The author
+ * shall have no liability with respect to the infringement of copyrights,
+ * trade secrets or any patents by this file or any part thereof.  In no
+ * event will the author be liable for any lost revenue or profits or
+ * other special, indirect and consequential damages.
+ *
+ * Comments and additions should be sent to the author:
+ *
+ *                     Patrick J. Naughton
+ *                     Sun Microsystems, Inc.
+ *                     2550 Garcia Ave, MS 14-40
+ *                     Mountain View, CA 94043
+ *                     (415) 336-1080
+ */
 
-#define GIF_INTERLACE	0x40
-#define GIF_COLORMAP	0x80
+typedef unsigned char uchar;
 
-typedef unsigned char	gif_cmap_t[256][3];
+#define NEXTBYTE getc(GifFile)
+#define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
 
+Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
+  FILE *GifFile;	// file to read
 
-//
-// Local functions...
-//
+  if ((GifFile = fopen(infname, "rb")) == NULL) {
+    Fl::error("Unable to open %s!", infname);
+    return;
+  }
 
-#if 0
-static int	gif_read_cmap(FILE *fp, int ncolors, gif_cmap_t cmap);
-static int	gif_get_block(FILE *fp, unsigned char *buffer);
-static int	gif_get_code (FILE *fp, int code_size, int first_time);
-static int	gif_read_lzw(FILE *fp, int first_time, int input_code_size);
-static int	gif_read_image(FILE *fp, Fl_Help_Image *img, gif_cmap_t cmap,
-		               int interlace);
+  {char b[6];
+  if (fread(b,1,6,GifFile)<6) return; /* quit on eof */
+  if (b[0]!='G' || b[1]!='I' || b[2] != 'F') {
+    Fl::error("%s is not a GIF file.\n", infname); return;}
+  if (b[3]!='8' || b[4]>'9' || b[5]!= 'a')
+    Fl::warning("%s is version %c%c%c.",infname,b[3],b[4],b[5]);
+  }
 
+  int Width; GETSHORT(Width);
+  int Height; GETSHORT(Height);
 
-//
-// 'Fl_Help_View::load_gif()' - Load a GIF image file...
-//
+  uchar ch = NEXTBYTE;
+  char HasColormap = ((ch & 0x80) != 0);
+  int BitsPerPixel = (ch & 7) + 1;
+  int ColorMapSize = 1 << BitsPerPixel;
+  // int OriginalResolution = ((ch>>4)&7)+1;
+  // int SortedTable = (ch&8)!=0;
+  NEXTBYTE; // Background Color index
+  NEXTBYTE; // Aspect ratio is N/64
 
-int					// O - 0 = success, -1 = fail
-Fl_Help_View::load_gif(Fl_Help_Image *img,// I - Image pointer
-        	       FILE         *fp)// I - File to load from
-{
-  unsigned char	buf[1024];		// Input buffer
-  gif_cmap_t	cmap;			// Colormap
-  int		ncolors,		// Bits per pixel
-		transparent;		// Transparent color index
-
-
-  // Read the header; we already know it is a GIF file...
-  fread(buf, 13, 1, fp);
-
-  img->w  = (buf[7] << 8) | buf[6];
-  img->h  = (buf[9] << 8) | buf[8];
-  ncolors = 2 << (buf[10] & 0x07);
-
-  if (buf[10] & GIF_COLORMAP)
-    if (!gif_read_cmap(fp, ncolors, cmap))
-      return (0);
-
-  transparent = -1;
-
-  for (;;)
-  {
-    switch (getc(fp))
-    {
-      case ';' :	// End of image
-          return (0);	// Early end of file
-
-      case '!' :	// Extension record
-          buf[0] = getc(fp);
-          if (buf[0] == 0xf9)	// Graphic Control Extension
-          {
-            gif_get_block(fp, buf);
-            if (buf[0] & 1)	// Get transparent color index
-              transparent = buf[3];
-          }
-
-          while (gif_get_block(fp, buf) != 0);
-          break;
-
-      case ',' :	// Image data
-          fread(buf, 9, 1, fp);
-
-          if (buf[8] & GIF_COLORMAP)
-          {
-            ncolors = 2 << (buf[8] & 0x07);
-
-	    if (!gif_read_cmap(fp, ncolors, cmap))
-	      return (0);
-	  }
-
-          if (transparent >= 0)
-          {
-	    unsigned	rgba = fltk_colors[bgcolor_];
-
-
-            // Map transparent color to background color...
-	    cmap[transparent][0] = rgba >> 24;
-            cmap[transparent][1] = rgba >> 16;
-            cmap[transparent][2] = rgba >> 8;
-          }
-
-          img->w    = (buf[5] << 8) | buf[4];
-          img->h    = (buf[7] << 8) | buf[6];
-          img->d    = 3;
-          img->data = (unsigned char *)malloc(img->w * img->h * img->d);
-          if (img->data == NULL)
-            return (0);
-
-	  return (gif_read_image(fp, img, cmap, buf[8] & GIF_INTERLACE));
+  // Read in global colormap:
+  uchar transparent_pixel = 0;
+  char has_transparent = 0;
+  uchar Red[256], Green[256], Blue[256]; /* color map */
+  if (HasColormap) {
+    for (int i=0; i < ColorMapSize; i++) {	
+      Red[i] = NEXTBYTE;
+      Green[i] = NEXTBYTE;
+      Blue[i] = NEXTBYTE;
     }
-  }
-}
-
-
-//
-// 'gif_read_cmap()' - Read the colormap from a GIF file...
-//
-
-static int				// O - -1 = error, 0 = success
-gif_read_cmap(FILE       *fp,		// I - File to read from
-  	      int        ncolors,	// I - Number of colors
-	      gif_cmap_t cmap)		// O - Colormap
-{
-  // Read the colormap...
-  if (fread(cmap, 3, ncolors, fp) < (size_t)ncolors)
-    return (0);
-
-  return (1);
-}
-
-
-//
-// 'gif_get_block()' - Read a GIF data block...
-//
-
-static int				// O - Number characters read
-gif_get_block(FILE  *fp,		// I - File to read from
-	      unsigned char *buf)	// I - Input buffer
-{
-  int	count;				// Number of character to read
-
-
-  // Read the count byte followed by the data from the file...
-  if ((count = getc(fp)) == EOF)
-  {
-    gif_eof = 1;
-    return (-1);
-  }
-  else if (count == 0)
-    gif_eof = 1;
-  else if (fread(buf, 1, count, fp) < (size_t)count)
-  {
-    gif_eof = 1;
-    return (-1);
-  }
-  else
-    gif_eof = 0;
-
-  return (count);
-}
-
-
-//
-// 'gif_get_code()' - Get a LZW code from the file...
-//
-
-static int				// O - LZW code
-gif_get_code(FILE *fp,			// I - File to read from
-	     int  code_size,		// I - Size of code in bits
-	     int  first_time)		// I - 1 = first time, 0 = not first time
-{
-  unsigned		i, j,		// Looping vars
-			ret;		// Return value
-  int			count;		// Number of bytes read
-  static unsigned char	buf[280];	// Input buffer
-  static unsigned	curbit,		// Current bit
-			lastbit,	// Last bit in buffer
-			done,		// Done with this buffer?
-			last_byte;	// Last byte in buffer
-  static unsigned	bits[8] =	// Bit masks for codes
-			{
-			  0x01, 0x02, 0x04, 0x08,
-			  0x10, 0x20, 0x40, 0x80
-			};
-
-
-  if (first_time)
-  {
-    // Just initialize the input buffer...
-    curbit  = 0;
-    lastbit = 0;
-    done    = 0;
-
-    return (0);
+  } else {
+    Fl::warning("%s does not have a colormap.", infname);
+    for (int i = 0; i < ColorMapSize; i++)
+      Red[i] = Green[i] = Blue[i] = 255 * i / (ColorMapSize-1);
   }
 
+  int CodeSize;		/* Code size, init from GIF header, increases... */
+  char Interlace;
 
-  if ((curbit + code_size) >= lastbit)
-  {
-    // Don't have enough bits to hold the code...
-    if (done)
-      return (-1);	// Sorry, no more...
+  for (;;) {
 
-    // Move last two bytes to front of buffer...
-    if (last_byte > 1)
-    {
-      buf[0]    = buf[last_byte - 2];
-      buf[1]    = buf[last_byte - 1];
-      last_byte = 2;
-    }
-    else if (last_byte == 1)
-    {
-      buf[0]    = buf[last_byte - 1];
-      last_byte = 1;
-    }
+    int i = NEXTBYTE;
+    if (i<0) {Fl::error("%s: unexpected EOF",infname); return;}
+    int blocklen;
 
-    // Read in another buffer...
-    if ((count = gif_get_block (fp, buf + last_byte)) <= 0)
-    {
-      // Whoops, no more data!
-      done = 1;
-      return (-1);
-    }
+    //  if (i == 0x3B) return 0;  eof code
 
-    // Update buffer state...
-    curbit    = (curbit - lastbit) + 8 * last_byte;
-    last_byte += count;
-    lastbit   = last_byte * 8;
-  }
+    if (i == 0x21) {		// a "gif extension"
 
-  ret = 0;
-  for (ret = 0, i = curbit + code_size - 1, j = code_size;
-       j > 0;
-       i --, j --)
-    ret = (ret << 1) | ((buf[i / 8] & bits[i & 7]) != 0);
+      ch = NEXTBYTE;
+      blocklen = NEXTBYTE;
 
-  curbit += code_size;
+      if (ch==0xF9 && blocklen==4) { // Netscape animation extension
 
-  return ret;
-}
+	char bits;
+	bits = NEXTBYTE;
+	NEXTBYTE; NEXTBYTE; // GETSHORT(delay);
+	transparent_pixel = NEXTBYTE;
+	if (bits & 1) has_transparent = 1;
+	blocklen = NEXTBYTE;
 
+      } else if (ch == 0xFF) { // Netscape repeat count
+	;
 
-//
-// 'gif_read_lzw()' - Read a byte from the LZW stream...
-//
-
-static int				// I - Byte from stream
-gif_read_lzw(FILE *fp,			// I - File to read from
-	     int  first_time,		// I - 1 = first time, 0 = not first time
- 	     int  input_code_size)	// I - Code size in bits
-{
-  int		i,			// Looping var
-		code,			// Current code
-		incode;			// Input code
-  static short	fresh = 0,		// 1 = empty buffers
-		code_size,		// Current code size
-		set_code_size,		// Initial code size set
-		max_code,		// Maximum code used
-		max_code_size,		// Maximum code size
-		firstcode,		// First code read
-		oldcode,		// Last code read
-		clear_code,		// Clear code for LZW input
-		end_code,		// End code for LZW input
-		table[2][4096],		// String table
-		stack[8192],		// Output stack
-		*sp;			// Current stack pointer
-
-
-  if (first_time)
-  {
-    // Setup LZW state...
-    set_code_size = input_code_size;
-    code_size     = set_code_size + 1;
-    clear_code    = 1 << set_code_size;
-    end_code      = clear_code + 1;
-    max_code_size = 2 * clear_code;
-    max_code      = clear_code + 2;
-
-    // Initialize input buffers...
-    gif_get_code(fp, 0, 1);
-
-    // Wipe the decompressor table...
-    fresh = 1;
-
-    for (i = 0; i < clear_code; i ++)
-    {
-      table[0][i] = 0;
-      table[1][i] = i;
-    }
-
-    for (; i < 4096; i ++)
-      table[0][i] = table[1][0] = 0;
-
-    sp = stack;
-
-    return (0);
-  }
-  else if (fresh)
-  {
-    fresh = 0;
-
-    do
-      firstcode = oldcode = gif_get_code(fp, code_size, 0);
-    while (firstcode == clear_code);
-
-    return (firstcode);
-  }
-
-  if (sp > stack)
-    return (*--sp);
-
-  while ((code = gif_get_code (fp, code_size, 0)) >= 0)
-  {
-    if (code == clear_code)
-    {
-      for (i = 0; i < clear_code; i ++)
-      {
-	table[0][i] = 0;
-	table[1][i] = i;
+      } else if (ch != 0xFE) { //Gif Comment
+	Fl::warning("%s: unknown gif extension 0x%02x.", infname, ch);
       }
+    } else if (i == 0x2c) {	// an image
 
-      for (; i < 4096; i ++)
-	table[0][i] = table[1][i] = 0;
-
-      code_size     = set_code_size + 1;
-      max_code_size = 2 * clear_code;
-      max_code      = clear_code + 2;
-
-      sp = stack;
-
-      firstcode = oldcode = gif_get_code(fp, code_size, 0);
-
-      return (firstcode);
-    }
-    else if (code == end_code)
-    {
-      unsigned char	buf[260];
-
-
-      if (!gif_eof)
-        while (gif_get_block(fp, buf) > 0);
-
-      return (-2);
-    }
-
-    incode = code;
-
-    if (code >= max_code)
-    {
-      *sp++ = firstcode;
-      code  = oldcode;
-    }
-
-    while (code >= clear_code)
-    {
-      *sp++ = table[1][code];
-      if (code == table[0][code])
-	return (255);
-
-      code = table[0][code];
-    }
-
-    *sp++ = firstcode = table[1][code];
-    code  = max_code;
-
-    if (code < 4096)
-    {
-      table[0][code] = oldcode;
-      table[1][code] = firstcode;
-      max_code ++;
-
-      if (max_code >= max_code_size && max_code_size < 4096)
-      {
-	max_code_size *= 2;
-	code_size ++;
-      }
-    }
-
-    oldcode = incode;
-
-    if (sp > stack)
-      return (*--sp);
-  }
-
-  return (code);
-}
-
-
-//
-// 'gif_read_image()' - Read a GIF image stream...
-//
-
-static int				// I - 0 = success, -1 = failure
-gif_read_image(FILE          *fp,	// I - Input file
-	       Fl_Help_Image  *img,	// I - Image pointer
-	       gif_cmap_t    cmap,	// I - Colormap
-	       int           interlace)	// I - Non-zero = interlaced image
-{
-  unsigned char	code_size,		// Code size
-		*temp;			// Current pixel
-  int		xpos,			// Current X position
-		ypos,			// Current Y position
-		pass;			// Current pass
-  int		pixel;			// Current pixel
-  static int	xpasses[4] = { 8, 8, 4, 2 },
-		ypasses[5] = { 0, 4, 2, 1, 999999 };
-
-
-  xpos      = 0;
-  ypos      = 0;
-  pass      = 0;
-  code_size = getc(fp);
-
-  if (gif_read_lzw(fp, 1, code_size) < 0)
-    return (0);
-
-  temp = img->data;
-
-  while ((pixel = gif_read_lzw(fp, 0, code_size)) >= 0)
-  {
-    temp[0] = cmap[pixel][0];
-
-    if (img->d > 1)
-    {
-      temp[1] = cmap[pixel][1];
-      temp[2] = cmap[pixel][2];
-    }
-
-    xpos ++;
-    temp += img->d;
-    if (xpos == img->w)
-    {
-      xpos = 0;
-
-      if (interlace)
-      {
-        ypos += xpasses[pass];
-        temp += (xpasses[pass] - 1) * img->w * img->d;
-
-        if (ypos >= img->h)
-	{
-	  pass ++;
-
-          ypos = ypasses[pass];
-          temp = img->data + ypos * img->w * img->d;
+      NEXTBYTE; NEXTBYTE; // GETSHORT(x_position);
+      NEXTBYTE; NEXTBYTE; // GETSHORT(y_position);
+      GETSHORT(Width);
+      GETSHORT(Height);
+      ch = NEXTBYTE;
+      Interlace = ((ch & 0x40) != 0);
+      if (ch&0x80) { 
+	// read local color map
+	int n = 1<<((ch&7)+1); // does this replace ColorMapSize ??
+	for (i=0; i < n; i++) {	
+	  Red[i] = NEXTBYTE;
+	  Green[i] = NEXTBYTE;
+	  Blue[i] = NEXTBYTE;
 	}
       }
-      else
-	ypos ++;
+      CodeSize = NEXTBYTE+1;
+
+      break; // okay, this is the image we want
+    } else {
+      Fl::warning("%s: unknown gif code 0x%02x", infname, i);
+      blocklen = 0;
     }
 
-    if (ypos >= img->h)
-      break;
+    // skip the data:
+    while (blocklen>0) {while (blocklen--) {NEXTBYTE;} blocklen=NEXTBYTE;}
   }
 
-  return (1);
+  uchar *Image = new uchar[Width*Height];
+  if (!Image) {
+    Fl::fatal("Insufficient memory for %s.", infname);
+    return;
+  }
+
+  int YC = 0, Pass = 0; /* Used to de-interlace the picture */
+  uchar *p = Image;
+  uchar *eol = p+Width;
+
+  int InitCodeSize = CodeSize;
+  int ClearCode = (1 << (CodeSize-1));
+  int EOFCode = ClearCode + 1;
+  int FirstFree = ClearCode + 2;
+  int FinChar = 0;
+  int ReadMask = (1<<CodeSize) - 1;
+  int FreeCode = FirstFree;
+  int OldCode = ClearCode;
+
+  // tables used by LZW decompresser:
+  short int Prefix[4096];
+  uchar Suffix[4096];
+
+  int blocklen = NEXTBYTE;
+  uchar thisbyte = NEXTBYTE; blocklen--;
+  int frombit = 0;
+
+  for (;;) {
+
+/* Fetch the next code from the raster data stream.  The codes can be
+ * any length from 3 to 12 bits, packed into 8-bit bytes, so we have to
+ * maintain our location as a pointer and a bit offset.
+ * In addition, gif adds totally useless and annoying block counts
+ * that must be correctly skipped over. */
+    int CurCode = thisbyte;
+    if (frombit+CodeSize > 7) {
+      if (blocklen <= 0) {
+	blocklen = NEXTBYTE;
+	if (blocklen <= 0) break;
+      }
+      thisbyte = NEXTBYTE; blocklen--;
+      CurCode |= thisbyte<<8;
+    }
+    if (frombit+CodeSize > 15) {
+      if (blocklen <= 0) {
+	blocklen = NEXTBYTE;
+	if (blocklen <= 0) break;
+      }
+      thisbyte = NEXTBYTE; blocklen--;
+      CurCode |= thisbyte<<16;
+    }
+    CurCode = (CurCode>>frombit)&ReadMask;
+    frombit = (frombit+CodeSize)%8;
+
+    if (CurCode == ClearCode) {
+      CodeSize = InitCodeSize;
+      ReadMask = (1<<CodeSize) - 1;
+      FreeCode = FirstFree;
+      OldCode = ClearCode;
+      continue;
+    }
+
+    if (CurCode == EOFCode) break;
+
+    uchar OutCode[1025]; // temporary array for reversing codes
+    uchar *tp = OutCode;
+    int i;
+    if (CurCode < FreeCode) i = CurCode;
+    else if (CurCode == FreeCode) {*tp++ = FinChar; i = OldCode;}
+    else {fprintf(stderr,"%s : LZW Barf!\n",infname); break;}
+
+    while (i >= ColorMapSize) {*tp++ = Suffix[i]; i = Prefix[i];}
+    *tp++ = FinChar = i;
+    while (tp > OutCode) {
+      *p++ = *--tp;
+      if (p >= eol) {
+	if (!Interlace) YC++;
+	else switch (Pass) {
+	case 0: YC += 8; if (YC >= Height) {Pass++; YC = 4;} break;
+	case 1: YC += 8; if (YC >= Height) {Pass++; YC = 2;} break;
+	case 2: YC += 4; if (YC >= Height) {Pass++; YC = 1;} break;
+	case 3: YC += 2; break;
+	}
+	if (YC>=Height) YC=0; /* cheap bug fix when excess data */
+	p = Image + YC*Width;
+	eol = p+Width;
+      }
+    }
+
+    if (OldCode != ClearCode) {
+      Prefix[FreeCode] = OldCode;
+      Suffix[FreeCode] = FinChar;
+      FreeCode++;
+      if (FreeCode > ReadMask) {
+	if (CodeSize < 12) {
+	  CodeSize++;
+	  ReadMask = (1 << CodeSize) - 1;
+	}
+	else FreeCode--;
+      }
+    }
+    OldCode = CurCode;
+  }
+
+  // We are done reading the file, now convert to xpm:
+
+  // allocate line pointer arrays:
+  w(Width);
+  h(Height);
+  alloc_data = 1;
+  data = new char*[Height+2];
+
+  // transparent pixel must be zero, swap if it isn't:
+  if (has_transparent && transparent_pixel != 0) {
+    // swap transparent pixel with zero
+    p = Image+Width*Height;
+    while (p-- > Image) {
+      if (*p==transparent_pixel) *p = 0;
+      else if (!*p) *p = transparent_pixel;
+    }
+    uchar t;
+    t                        = Red[0];
+    Red[0]                   = Red[transparent_pixel];
+    Red[transparent_pixel]   = t;
+
+    t                        = Green[0];
+    Green[0]                 = Green[transparent_pixel];
+    Green[transparent_pixel] = t;
+
+    t                        = Blue[0];
+    Blue[0]                  = Blue[transparent_pixel];
+    Blue[transparent_pixel]  = t;
+  }
+
+  // find out what colors are actually used:
+  uchar used[256]; uchar remap[256];
+  int i;
+  for (i = 0; i < ColorMapSize; i++) used[i] = 0;
+  p = Image+Width*Height;
+  while (p-- > Image) used[*p] = 1;
+
+  // remap them to start with printing characters:
+  int base = has_transparent && used[0] ? ' ' : ' '+1;
+  int numcolors = 0;
+  for (i = 0; i < ColorMapSize; i++) if (used[i]) {
+    remap[i] = base++;
+    numcolors++;
+  }
+
+  // write the first line of xpm data (use suffix as temp array):
+  int length = sprintf((char*)(Suffix),
+		       "%d %d %d %d",Width,Height,-numcolors,1);
+  ((char **)data)[0] = new char[length+1];
+  strcpy(((char **)data)[0], (char*)Suffix);
+
+  // write the colormap
+  ((char **)data)[1] = (char*)(p = new uchar[4*numcolors]);
+  for (i = 0; i < ColorMapSize; i++) if (used[i]) {
+    *p++ = remap[i];
+    *p++ = Red[i];
+    *p++ = Green[i];
+    *p++ = Blue[i];
+  }
+
+  // remap the image data:
+  p = Image+Width*Height;
+  while (p-- > Image) *p = remap[*p];
+
+  // split the image data into lines:
+  for (i=0; i<Height; i++) {
+    ((char **)data)[i+2] = new char[Width];
+    memcpy(((char **)data)[i + 2], (char*)(Image + i*Width), Width);
+  }
+
+  delete[] Image;
 }
-#endif
 
 
 //
-// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.1 2001/11/19 01:06:45 easysw Exp $".
+// End of "$Id: Fl_GIF_Image.cxx,v 1.1.2.2 2001/11/20 05:13:23 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.5 2001/11/19 20:59:59 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.6 2001/11/20 05:13:23 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -48,7 +48,7 @@ void Fl_Pixmap::measure() {
   int W, H;
 
   // ignore empty or bad pixmap data:
-  if (w()<0) {
+  if (w()<0 && data) {
     fl_measure_pixmap(data, W, H);
     w(W); h(H);
   }
@@ -56,6 +56,7 @@ void Fl_Pixmap::measure() {
 
 void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // ignore empty or bad pixmap data:
+  if (!data) return;
   if (w()<0) {
     measure();
     if (WP==-1) { WP = w(); HP = h(); }
@@ -80,59 +81,6 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_mask_bitmap = 0;
     if (bitmap) {
       mask = fl_create_bitmask(w(), h(), bitmap);
-#if 0 // Don't think this is needed; try using fl_create_bitmask()...
-#ifdef WIN32 // Matt: mask done
-      // this won't work when the user changes display mode during run or
-      // has two screens with differnet depths
-      static uchar hiNibble[16] =
-      { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
-	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
-      static uchar loNibble[16] =
-      { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
-	0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-      int np  = GetDeviceCaps(fl_gc, PLANES);	//: was always one on sample machines
-      int bpp = GetDeviceCaps(fl_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
-      int Bpr = (bpp*w()+7)/8;			//: bytes per row
-      int pad = Bpr&1, w1 = (w()+7)/8, shr = ((w()-1)&7)+1;
-      if (bpp==4) shr = (shr+1)/2;
-      uchar *newarray = new uchar[(Bpr+pad)*h()], *dst = newarray, *src = bitmap;
-      for (int i=0; i<h(); i++) {
-	//: this is slooow, but we do it only once per pixmap
-	for (int j=w1; j>0; j--) {
-	  uchar b = *src++;
-	  if (bpp==1) {
-	    *dst++ = ( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
-	  } else if (bpp==4) {
-	    for (int k=(j==1)?shr:4; k>0; k--) {
-	      *dst++ = "\377\360\017\000"[b&3];
-	      b = b >> 2;
-	    }
-	  } else {
-	    for (int k=(j==1)?shr:8; k>0; k--) {
-	      if (b&1) {
-		*dst++=0;
-		if (bpp>8) *dst++=0;
-		if (bpp>16) *dst++=0;
-		if (bpp>24) *dst++=0;
-	      } else {
-		*dst++=0xff;
-		if (bpp>8) *dst++=0xff;
-		if (bpp>16) *dst++=0xff;
-		if (bpp>24) *dst++=0xff;
-	      }
-	      b = b >> 1;
-	    }
-	  }
-	}
-	dst += pad;
-      }
-      mask = (ulong)CreateBitmap(w(), h(), np, bpp, newarray);
-      delete[] newarray;
-#else
-      mask = XCreateBitmapFromData(fl_display, fl_window,
-				   (const char*)bitmap, (w()+7)&-8, h());
-#endif
-#endif // 0
       delete[] bitmap;
     }
 
@@ -199,7 +147,9 @@ void Fl_Pixmap::copy_data() {
   chars_per_line = chars_per_pixel * w() + 1;
 
   // Allocate memory for the new array...
-  new_data    = new char *[h() + ncolors + 1];
+  if (ncolors < 0) new_data = new char *[h() + 2];
+  else new_data = new char *[h() + ncolors + 1];
+
   new_data[0] = new char[strlen(data[0]) + 1];
   strcpy(new_data[0], data[0]);
 
@@ -207,10 +157,11 @@ void Fl_Pixmap::copy_data() {
   if (ncolors < 0) {
     // Copy FLTK colormap values...
     ncolors = -ncolors;
-    for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
-      *new_row = new char[4];
-      memcpy(*new_row, data[i + 1], 4);
-    }
+    new_row = new_data + 1;
+    *new_row = new char[ncolors * 4];
+    memcpy(*new_row, data[1], ncolors * 4);
+    ncolors = 1;
+    new_row ++;
   } else {
     // Copy standard XPM colormap values...
     for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
@@ -265,7 +216,8 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
   ystep  = h() / H;
 
   // Allocate memory for the new array...
-  new_data    = new char *[H + ncolors + 1];
+  if (ncolors < 0) new_data = new char *[H + 2];
+  else new_data = new char *[H + ncolors + 1];
   new_data[0] = new char[strlen(new_info) + 1];
   strcpy(new_data[0], new_info);
 
@@ -273,10 +225,11 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
   if (ncolors < 0) {
     // Copy FLTK colormap values...
     ncolors = -ncolors;
-    for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
-      *new_row = new char[4];
-      memcpy(*new_row, data[i + 1], 4);
-    }
+    new_row = new_data + 1;
+    *new_row = new char[ncolors * 4];
+    memcpy(*new_row, data[1], ncolors * 4);
+    ncolors = 1;
+    new_row ++;
   } else {
     // Copy standard XPM colormap values...
     for (i = 0, new_row = new_data + 1; i < ncolors; i ++, new_row ++) {
@@ -364,10 +317,11 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
   if (ncolors < 0) {
     // Update FLTK colormap...
     ncolors = -ncolors;
-    for (color = 0; color < ncolors; color ++) {
-      ((char *)data[color + 1])[1] = (ia * data[color + 1][1] + ir) >> 8;
-      ((char *)data[color + 1])[2] = (ia * data[color + 1][2] + ig) >> 8;
-      ((char *)data[color + 1])[3] = (ia * data[color + 1][3] + ib) >> 8;
+    uchar *cmap = (uchar *)(data[1]);
+    for (color = 0; color < ncolors; color ++, cmap += 4) {
+      cmap[1] = (ia * cmap[1] + ir) >> 8;
+      cmap[2] = (ia * cmap[2] + ig) >> 8;
+      cmap[3] = (ia * cmap[3] + ib) >> 8;
     }
   } else {
     // Update standard XPM colormap...
@@ -447,11 +401,10 @@ void Fl_Pixmap::desaturate() {
   if (ncolors < 0) {
     // Update FLTK colormap...
     ncolors = -ncolors;
-    for (i = 0; i < ncolors; i ++) {
-      g = (data[i + 1][1] * 31 + data[i + 1][2] * 61 + data[i + 1][3] * 8) / 100;
-      ((char *)data[i + 1])[1] =
-      ((char *)data[i + 1])[2] =
-      ((char *)data[i + 1])[3] = g;
+    uchar *cmap = (uchar *)(data[1]);
+    for (i = 0; i < ncolors; i ++, cmap += 4) {
+      g = (cmap[1] * 31 + cmap[2] * 61 + cmap[3] * 8) / 100;
+      cmap[1] = cmap[2] = cmap[3] = g;
     }
   } else {
     // Update standard XPM colormap...
@@ -495,5 +448,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.5 2001/11/19 20:59:59 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.6 2001/11/20 05:13:23 easysw Exp $".
 //
