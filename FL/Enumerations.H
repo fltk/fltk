@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.5 1998/10/21 14:18:56 mike Exp $"
+// "$Id: Enumerations.H,v 1.6 1998/12/22 18:26:10 mike Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -145,7 +145,8 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_ROUND_UP_BOX,	_FL_ROUND_DOWN_BOX,
   _FL_DIAMOND_UP_BOX,	_FL_DIAMOND_DOWN_BOX,
   _FL_OVAL_BOX,		_FL_OSHADOW_BOX,
-  _FL_OVAL_FRAME,	_FL_OFLAT_BOX
+  _FL_OVAL_FRAME,	_FL_OFLAT_BOX,
+  FL_FREE_BOXTYPE
 };
 extern Fl_Boxtype define_FL_ROUND_UP_BOX();
 #define FL_ROUND_UP_BOX define_FL_ROUND_UP_BOX()
@@ -346,5 +347,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.5 1998/10/21 14:18:56 mike Exp $".
+// End of "$Id: Enumerations.H,v 1.6 1998/12/22 18:26:10 mike Exp $".
 //
