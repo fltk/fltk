@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.2 1999/08/09 06:19:33 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.3 2000/04/11 08:11:52 bill Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -199,7 +199,12 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   clear_border();
   menu = m;
   drawn_selected = -1;
-  box(button && button->box() ? button->box() : FL_UP_BOX);
+  if (button) {
+    box(button->box());
+    if (box() == FL_NO_BOX || box() == FL_FLAT_BOX) box(FL_UP_BOX);
+  } else {
+    box(FL_UP_BOX);
+  }
   color(button ? button->color() : FL_GRAY);
   selected = -1;
   {int i = 0;
@@ -246,14 +251,15 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   x(X); w(W);
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+5);
   if (selected >= 0)
-    Y = Y+(Hp-itemheight)/2-selected*itemheight-BW+1;
+    Y = Y+(Hp-itemheight)/2-selected*itemheight-BW;
   else
     Y = Y+Hp;
-  if (m) y(Y-1); else {y(Y-3); w(1); h(1);}
+  if (m) y(Y); else {y(Y-2); w(1); h(1);}
 
   if (t) {
-    int ht = menubar_title ? button->h()-6 : Htitle+2*BW+3;
-    title = new menutitle(X, Y-ht-3, Wtitle, ht, t);
+    int dy = menubar_title ? Fl::box_dy(button->box())+1 : 2;
+    int ht = menubar_title ? button->h()-dy*2 : Htitle+2*BW+3;
+    title = new menutitle(X, Y-ht-dy, Wtitle, ht, t);
   } else
     title = 0;
 }
@@ -302,8 +308,10 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int i, int erase) {
 
   // the shortcuts and arrows assumme fl_color() was left set by draw():
   if (m->submenu()) {
-    int y1 = y+(h-14)/2;
-    fl_polygon(x+w-13, y1+2, x+w-13, y1+2+10, x+w-3, y1+2+5);
+    int sz = (h-5)&-2;
+    int y1 = y+(h-sz)/2;
+    int x1 = x+w-sz-3;
+    fl_polygon(x1, y1, x1, y1+sz, x1+sz, y1+sz/2);
   } else if (m->shortcut_) {
     Fl_Font f = button ? button->textfont() : FL_HELVETICA;
     fl_font(f, button ? button->textsize() : FL_NORMAL_SIZE);
@@ -645,7 +653,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	initial_item = 0;
       } else {
 	nX = cw.x() + cw.w();
-	nY = cw.y() + 1 + p.item_number * cw.itemheight;
+	nY = cw.y() + p.item_number * cw.itemheight;
 	title = 0;
       }
       if (initial_item) { // bring up submenu containing initial item:
@@ -658,7 +666,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	  for (int menu = 0; menu <= p.menu_number; menu++) {
 	    menuwindow* t = p.p[menu];
 	    int nx = t->x()+dx; if (nx < 0) {nx = 0; dx = -t->x();}
-	    int ny = t->y()+dy+1; if (ny < 0) {ny = 0; dy = -t->y()-1;}
+	    int ny = t->y()+dy; if (ny < 0) {ny = 0; dy = -t->y();}
 	    t->position(nx, ny);
 	  }
 	  setitem(p.nummenus-1, n->selected);
@@ -728,5 +736,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.2 1999/08/09 06:19:33 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.3 2000/04/11 08:11:52 bill Exp $".
 //

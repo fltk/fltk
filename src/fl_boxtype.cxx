@@ -1,5 +1,5 @@
 //
-// "$Id: fl_boxtype.cxx,v 1.8 1999/01/07 19:17:36 mike Exp $"
+// "$Id: fl_boxtype.cxx,v 1.8.2.1 2000/04/11 08:11:55 bill Exp $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -120,9 +120,9 @@ void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame2("HHWW",x,y,w,h);
 #else
 #if BORDER_WIDTH == 2
-  fl_frame2("AAUWMMTT",x,y,w,h);
+  fl_frame2("AAWWMMTT",x,y,w,h);
 #else
-  fl_frame("AAAAWUJJUTNN",x,y,w,h);
+  fl_frame("AAAAWWJJUTNN",x,y,w,h);
 #endif
 #endif
 }
@@ -140,9 +140,9 @@ void fl_down_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame2("WWHH",x,y,w,h);
 #else
 #if BORDER_WIDTH == 2
-  fl_frame2("UWMMPPAA",x,y,w,h);
+  fl_frame2("WWMMPPAA",x,y,w,h);
 #else
-  fl_frame("NNTUJJUWAAAA",x,y,w,h);
+  fl_frame("NNTUJJWWAAAA",x,y,w,h);
 #endif
 #endif
 }
@@ -282,5 +282,5 @@ const {
 }
 
 //
-// End of "$Id: fl_boxtype.cxx,v 1.8 1999/01/07 19:17:36 mike Exp $".
+// End of "$Id: fl_boxtype.cxx,v 1.8.2.1 2000/04/11 08:11:55 bill Exp $".
 //

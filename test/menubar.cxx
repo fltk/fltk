@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.2 2000/01/16 04:30:39 bill Exp $"
+// "$Id: menubar.cxx,v 1.6.2.3 2000/04/11 08:11:56 bill Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -183,6 +183,7 @@ void button_cb(Fl_Widget* w, void*) {
 }
 
 int main(int argc, char **argv) {
+  //Fl::set_color(Fl_Color(15),0,0,128);
   for (int i=0; i<99; i++) {
     char buf[100];
     sprintf(buf,"item %d",i);
@@ -215,5 +216,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.2 2000/01/16 04:30:39 bill Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.3 2000/04/11 08:11:56 bill Exp $".
 //

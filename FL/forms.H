@@ -1,5 +1,5 @@
 //
-// "$Id: forms.H,v 1.7.2.2 2000/03/05 06:51:04 bill Exp $"
+// "$Id: forms.H,v 1.7.2.3 2000/04/11 08:11:50 bill Exp $"
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -134,7 +134,7 @@ typedef Fl_Window FL_FORM;
 // size values are different from XForms, match older Forms:
 #define FL_TINY_SIZE	8
 #define FL_SMALL_SIZE	11 // 10
-#define FL_NORMAL_SIZE	14 // 12
+//#define FL_NORMAL_SIZE	14 // 12
 #define FL_MEDIUM_SIZE	18 // 14
 #define FL_LARGE_SIZE	24 // 18
 #define FL_HUGE_SIZE	32 // 24
@@ -838,5 +838,5 @@ inline void fl_draw() {Fl::flush();}
 #endif	/* define __FORMS_H__ */
 
 //
-// End of "$Id: forms.H,v 1.7.2.2 2000/03/05 06:51:04 bill Exp $".
+// End of "$Id: forms.H,v 1.7.2.3 2000/04/11 08:11:50 bill Exp $".
 //

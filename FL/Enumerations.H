@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.9 2000/03/05 06:51:03 bill Exp $"
+// "$Id: Enumerations.H,v 1.18.2.10 2000/04/11 08:11:49 bill Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -265,7 +265,7 @@ enum Fl_Font {	// standard fonts
   FL_ITALIC		= 2	// add this to helvetica, courier, or times
 };
 
-#define FL_NORMAL_SIZE	14	// default size of all labels & text
+extern FL_EXPORT int FL_NORMAL_SIZE;
 
 enum Fl_Color {	// standard colors
   FL_BLACK		= 0,
@@ -371,5 +371,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.9 2000/03/05 06:51:03 bill Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.10 2000/04/11 08:11:49 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.10 2000/03/17 09:38:18 bill Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.11 2000/04/11 08:11:51 bill Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -62,7 +62,7 @@ static void hscrollbar_callback(Fl_Widget* s, void*) {
   ((Fl_Browser_*)(s->parent()))->hposition(int(((Fl_Scrollbar*)s)->value()));
 }
 
-int Fl_Browser_::scrollbar_width_ = 17;
+int Fl_Browser_::scrollbar_width_ = 16;
 
 // return where to draw the actual box:
 void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
@@ -700,5 +700,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.10 2000/03/17 09:38:18 bill Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.11 2000/04/11 08:11:51 bill Exp $".
 //
