@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.25 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.26 2002/02/20 13:02:27 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -45,7 +45,6 @@
 //   Fl_Help_View::topline()         - Set the top line to the named target.
 //   Fl_Help_View::topline()         - Set the top line by number.
 //   Fl_Help_View::value()           - Set the help text directly.
-//   Fl_Help_View::compare_blocks()  - Compare two blocks.
 //   scrollbar_callback()            - A callback for the scrollbar.
 //
 
@@ -330,7 +329,7 @@ Fl_Help_View::draw()
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
 					// Box to draw...
-  Fl_Color		tc, c;		// Table/cell background color
+  Fl_Color		tc, rc, c;	// Table/row/cell background color
 
 
   // Draw the scrollbar(s) and box first...
@@ -362,11 +361,11 @@ Fl_Help_View::draw()
   fl_push_clip(x() + 4, y() + 4, ww - 8, hh - 8);
   fl_color(textcolor_);
 
-  tc = c = bgcolor_;
+  tc = rc = c = bgcolor_;
 
   // Draw all visible blocks...
-  for (i = 0, block = blocks_; i < nblocks_ && (block->y - topline_) < h(); i ++, block ++)
-    if ((block->y + block->h) >= topline_)
+  for (i = 0, block = blocks_; i < nblocks_; i ++, block ++)
+    if ((block->y + block->h) >= topline_ && block->y < (topline_ + h()))
     {
       line      = 0;
       xx        = block->line[line];
@@ -541,15 +540,6 @@ Fl_Help_View::draw()
 	    }
 
 	    pushfont(font, size);
-
-            if (c != bgcolor_)
-	    {
-	      fl_color(c);
-              fl_rectf(block->x + x() - 4 - leftline_,
-	               block->y - topline_ + y() - size - 3,
-		       block->w - block->x + 7, block->h + size - 5);
-              fl_color(textcolor_);
-	    }
 	  }
 	  else if (strcasecmp(buf, "A") == 0 &&
 	           get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
@@ -560,30 +550,52 @@ Fl_Help_View::draw()
 	           strcasecmp(buf, "STRONG") == 0)
 	    pushfont(font |= FL_BOLD, size);
 	  else if (strcasecmp(buf, "TABLE") == 0)
-            tc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
+            tc = rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
+	  else if (strcasecmp(buf, "TR") == 0)
+            rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), tc);
 	  else if (strcasecmp(buf, "TD") == 0 ||
 	           strcasecmp(buf, "TH") == 0)
           {
+	    int tx, ty, tw, th;
+
 	    if (tolower(buf[1]) == 'h')
 	      pushfont(font |= FL_BOLD, size);
 	    else
 	      pushfont(font = textfont_, size);
 
-            c = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), tc);
+            c = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), rc);
+
+            tx = block->x - 4 - leftline_;
+	    ty = block->y - topline_ - size - 3;
+            tw = block->w - block->x + 7;
+	    th = block->h + size - 5;
+
+            if (tx < 0)
+	    {
+	      tw += tx;
+	      tx  = 0;
+	    }
+
+	    if (ty < 0)
+	    {
+	      th += ty;
+	      ty  = 0;
+	    }
+
+            tx += x();
+	    ty += y();
+
+//	    printf("%s: %d,%d - %dx%d\n", buf, tx, ty, tw, th);
 
             if (c != bgcolor_)
 	    {
 	      fl_color(c);
-              fl_rectf(block->x + x() - 4 - leftline_,
-	               block->y - topline_ + y() - size - 3,
-		       block->w - block->x + 7, block->h + size - 5);
+              fl_rectf(tx, ty, tw, th);
               fl_color(textcolor_);
 	    }
 
             if (block->border)
-              fl_rect(block->x + x() - 4 - leftline_,
-	              block->y - topline_ + y() - size - 3,
-		      block->w - block->x + 7, block->h + size - 5);
+              fl_rect(tx, ty, tw, th);
 	  }
 	  else if (strcasecmp(buf, "I") == 0 ||
                    strcasecmp(buf, "EM") == 0)
@@ -611,10 +623,10 @@ Fl_Help_View::draw()
 		   strcasecmp(buf, "/VAR") == 0)
 	    popfont(font, size);
 	  else if (strcasecmp(buf, "/TABLE") == 0)
-	    tc = c = bgcolor_;
+	    tc = rc = c = bgcolor_;
 	  else if (strcasecmp(buf, "/TD") == 0 ||
 	           strcasecmp(buf, "/TH") == 0)
-	    c = tc;
+	    c = rc;
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
 	    popfont(font, size);
@@ -766,7 +778,9 @@ Fl_Help_View::format()
   int		done;		// Are we done yet?
   Fl_Help_Block	*block,		// Current block
 		*cell;		// Current table cell
-  int		row;		// Current table row (block number)
+  int		cells[MAX_COLUMNS],
+				// Cells in the current row...
+		row;		// Current table row (block number)
   const char	*ptr,		// Pointer into block
 		*start,		// Pointer to start of element
 		*attrs;		// Pointer to start of element attributes
@@ -1154,11 +1168,19 @@ Fl_Help_View::format()
 	      if ((cell->y + cell->h) > yy)
 		yy = cell->y + cell->h;
 
+            block = blocks_ + row;
+
             block->h = yy - block->y + 2;
 
-	    for (cell = blocks_ + row + 1; cell < block; cell ++)
-	      cell->h = block->h;
+	    for (i = 0; i < column; i ++)
+	      if (cells[i])
+	      {
+		cell = blocks_ + cells[i];
+		cell->h = block->h;
+	      }
 	  }
+
+          memset(cells, 0, sizeof(cells));
 
 	  yy        = block->y + block->h - 4;
 	  hh        = 0;
@@ -1182,10 +1204,16 @@ Fl_Help_View::format()
 	    if ((cell->y + cell->h) > yy)
 	      yy = cell->y + cell->h;
 
+          block = blocks_ + row;
+
           block->h = yy - block->y + 2;
 
-	  for (cell = blocks_ + row + 1; cell < block; cell ++)
-	    cell->h = block->h;
+	  for (i = 0; i < column; i ++)
+	    if (cells[i])
+	    {
+	      cell = blocks_ + cells[i];
+	      cell->h = block->h;
+	    }
 
 	  yy        = block->y + block->h - 4;
           block     = add_block(start, xx, yy, hsize_, 0);
@@ -1237,11 +1265,15 @@ Fl_Help_View::format()
 	  line      = 0;
 	  newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? CENTER : LEFT);
 
-	  column ++;
+          cells[column] = block - blocks_;
+
+	  column += colspan;
 	}
 	else if ((strcasecmp(buf, "/TD") == 0 ||
                   strcasecmp(buf, "/TH") == 0) && row)
+	{
           popfont(font, size);
+	}
 	else if (strcasecmp(buf, "B") == 0 ||
         	 strcasecmp(buf, "STRONG") == 0)
 	  pushfont(font |= FL_BOLD, size);
@@ -1405,10 +1437,6 @@ Fl_Help_View::format()
   if (ntargets_ > 1)
     qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
           (compare_func_t)compare_targets);
-
-  if (nblocks_ > 1)
-    qsort(blocks_, nblocks_, sizeof(Fl_Help_Block),
-          (compare_func_t)compare_blocks);
 
   if (hsize_ > (w() - 24)) {
     hscrollbar_.show();
@@ -1944,7 +1972,7 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
   int	rgb, r, g, b;			// RGB values
 
 
-  if (!n)
+  if (!n || !n[0])
     return (c);
 
   if (n[0] == '#')
@@ -1956,19 +1984,14 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
     g = (rgb >> 8) & 255;
     b = rgb & 255;
 
-    if (r == g && g == b)
-      return (fl_gray_ramp(FL_NUM_GRAY * r / 256));
-    else
-      return (fl_color_cube((FL_NUM_RED - 1) * r / 255,
-                            (FL_NUM_GREEN - 1) * g / 255,
-			    (FL_NUM_BLUE - 1) * b / 255));
+    return (fl_rgb_color(r, g, b));
   }
   else if (strcasecmp(n, "black") == 0)
     return (FL_BLACK);
   else if (strcasecmp(n, "red") == 0)
     return (FL_RED);
   else if (strcasecmp(n, "green") == 0)
-    return (fl_color_cube(0, 4, 0));
+    return (fl_rgb_color(0, 0x80, 0));
   else if (strcasecmp(n, "yellow") == 0)
     return (FL_YELLOW);
   else if (strcasecmp(n, "blue") == 0)
@@ -1980,21 +2003,21 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
   else if (strcasecmp(n, "white") == 0)
     return (FL_WHITE);
   else if (strcasecmp(n, "gray") == 0 || strcasecmp(n, "grey") == 0)
-    return (FL_GRAY);
+    return (fl_rgb_color(0x80, 0x80, 0x80));
   else if (strcasecmp(n, "lime") == 0)
     return (FL_GREEN);
   else if (strcasecmp(n, "maroon") == 0)
-    return (fl_color_cube(2, 0, 0));
+    return (fl_rgb_color(0x80, 0, 0));
   else if (strcasecmp(n, "navy") == 0)
-    return (fl_color_cube(0, 0, 2));
+    return (fl_rgb_color(0, 0, 0x80));
   else if (strcasecmp(n, "olive") == 0)
-    return (fl_color_cube(2, 4, 0));
+    return (fl_rgb_color(0x80, 0x80, 0));
   else if (strcasecmp(n, "purple") == 0)
-    return (fl_color_cube(2, 0, 2));
+    return (fl_rgb_color(0x80, 0, 0x80));
   else if (strcasecmp(n, "silver") == 0)
-    return (FL_LIGHT2);
+    return (fl_rgb_color(0xc0, 0xc0, 0xc0));
   else if (strcasecmp(n, "teal") == 0)
-    return (fl_color_cube(0, 4, 2));
+    return (fl_rgb_color(0, 0x80, 0x80));
   else
     return (c);
 }
@@ -2456,18 +2479,6 @@ Fl_Help_View::value(const char *v)	// I - Text to view
 
 
 //
-// 'Fl_Help_View::compare_blocks()' - Compare two blocks.
-//
-
-int						// O - Result of comparison
-Fl_Help_View::compare_blocks(const void *a,	// I - First block
-                            const void *b)	// I - Second block
-{
-  return (((Fl_Help_Block *)a)->y - ((Fl_Help_Block *)b)->y);
-}
-
-
-//
 // 'quote_char()' - Return the character code associated with a quoted char.
 //
 
@@ -2616,5 +2627,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.25 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.26 2002/02/20 13:02:27 easysw Exp $".
 //

@@ -1,5 +1,11 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- Fixed a table rendering bug in the Fl_Help_View
+	  widget.
+	- The fltk-config script now recognizes all common C++
+	  extensions.
+	- The menu code was using overlay visuals when the
+	  scheme was set to "plastic".
 	- Fixed some drawing problems with Fl_Light_Button and
 	  its subclasses.
 	- Fixed a minor event propagation bug in Fl_Group that

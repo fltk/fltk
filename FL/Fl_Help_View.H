@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.H,v 1.1.2.7 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Fl_Help_View.H,v 1.1.2.8 2002/02/20 13:02:25 easysw Exp $"
 //
 // Help Viewer widget definitions.
 //
@@ -131,7 +131,6 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 		hscrollbar_;		// Horizontal scrollbar
 
   Fl_Help_Block	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
-  static int	compare_blocks(const void *a, const void *b);
   void		add_link(const char *n, int xx, int yy, int ww, int hh);
   void		add_target(const char *n, int yy);
   static int	compare_targets(const Fl_Help_Target *t0, const Fl_Help_Target *t1);
@@ -187,5 +186,5 @@ class Fl_Help_View : public Fl_Group	//// Help viewer widget
 #endif // !Fl_Help_View_H
 
 //
-// End of "$Id: Fl_Help_View.H,v 1.1.2.7 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Fl_Help_View.H,v 1.1.2.8 2002/02/20 13:02:25 easysw Exp $".
 //

@@ -56,7 +56,7 @@ Version 1.1.0}
         xywh {140 27 160 123} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
-        label {©1998-2001 by
+        label {©1998-2002 by
 Bill Spitzak and others}
         callback {show_help("license.html");}
         xywh {181 176 115 30} box THIN_UP_BOX labelsize 10 labelcolor 136

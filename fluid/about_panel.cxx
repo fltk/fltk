@@ -94,7 +94,7 @@ Fl_Window* make_about_panel() {
         o->labelsize(18);
         o->labelcolor(7);
       }
-      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251""1998-2001 by\nBill Spitzak and others");
+      { Fl_Button* o = new Fl_Button(181, 176, 115, 30, "\251""1998-2002 by\nBill Spitzak and others");
         o->box(FL_THIN_UP_BOX);
         o->labelsize(10);
         o->labelcolor(136);
