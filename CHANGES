@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fl_Double_Window would cause a full redraw, even if only
+	  small parts of the UI were changed on Mac OS X.
 	- Fl_JPEG_Image did not correctly handle errors reported
 	  by the JPEG library (STR #652)
 	- Fl_Menu now draws sub-menu arrows like other toolkits

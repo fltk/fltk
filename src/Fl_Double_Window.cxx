@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.13 2004/11/21 15:33:24 easysw Exp $"
+// "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.14 2004/12/27 19:16:42 matthiaswm Exp $"
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
@@ -251,15 +251,20 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     else
 #endif
 #ifdef __APPLE_QD__
-    if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) || force_doublebuffering_ )
+    if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) 
+        || force_doublebuffering_ ) {
       myi->other_xid = fl_create_offscreen(w(), h());
+      clear_damage(FL_DAMAGE_ALL);
+    }
 #elif defined(__APPLE_QUARTZ__)
-    if (force_doublebuffering_)
+    if (force_doublebuffering_) {
       myi->other_xid = fl_create_offscreen(w(), h());
+      clear_damage(FL_DAMAGE_ALL);
+    }
 #else
     myi->other_xid = fl_create_offscreen(w(), h());
-#endif
     clear_damage(FL_DAMAGE_ALL);
+#endif
   }
 #if USE_XDBE
   if (use_xdbe) {
@@ -348,5 +353,5 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 //
-// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.13 2004/11/21 15:33:24 easysw Exp $".
+// End of "$Id: Fl_Double_Window.cxx,v 1.12.2.4.2.14 2004/12/27 19:16:42 matthiaswm Exp $".
 //
