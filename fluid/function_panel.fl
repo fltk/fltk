@@ -57,6 +57,7 @@ Function {make_code_panel()} {open
       Fl_Text_Editor code_input {selected
         xywh {12 12 521 116} box NO_BOX resizable
         code0 {o->buffer(new Fl_Text_Buffer);}
+        code1 {o->textfont(FL_COURIER);}
       }
     }
     Fl_Return_Button code_panel_ok {

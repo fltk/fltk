@@ -81,6 +81,7 @@ Fl_Window* make_code_panel() {
         o->box(FL_NO_BOX);
         Fl_Group::current()->resizable(o);
         o->buffer(new Fl_Text_Buffer);
+        o->textfont(FL_COURIER);
       }
       o->end();
       Fl_Group::current()->resizable(o);
