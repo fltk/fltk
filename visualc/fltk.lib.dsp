@@ -595,30 +595,6 @@ SOURCE=..\src\Fl_XPM_Image.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\forms_bitmap.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\forms_compatability.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\forms_free.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\forms_fselect.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\forms_pixmap.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\forms_timer.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\numericsort.c
 # End Source File
 # Begin Source File
