@@ -333,12 +333,12 @@ syntax errors such as mismatched parenthesis in any code before
 saving any text. </P>
 </TD><TD><IMG src=./fluid_widget.gif width=225></TD></TR>
 </TABLE>
- &quot;Revert&quot; or &quot;Cancel&quot; put everything back to when you last brought up 
+&quot;Revert&quot; or &quot;Cancel&quot; put everything back to when you last brought up 
 the panel or hit OK.  However in the current version of FLUID, changes 
 to &quot;visible&quot; attributes (such as the color, label, box) are not undone 
 by revert or cancel.  Changes to code like the callbacks are undone, 
-however. <A name=widget_attributes>
-<H2>Widget Attributes</H2>
+however.
+<H2><A name=widget_attributes>Widget Attributes</A></H2>
 <H3>Name (text field)</H3>
 Name of a variable to declare, and to store a pointer to this 
 widget into.  This variable will be of type &quot;&lt;class&gt;*&quot;.  If the name is 
@@ -464,9 +464,9 @@ much other error  checking.  Be careful here, as it may be hard to
 figure out what widget  is producing an error in the compiler. </P>
 <P>If the callback is blank then no callback is set. </P>
 <H3>user_data</H3>
-<P>This is a value for the <tt>user_data()</tt> of the widget.  If blank the 
+This is a value for the <tt>user_data()</tt> of the widget.  If blank the 
 default value of zero is used.  This can be any piece of C code that 
-can be cast to a <tt>void</tt> pointer.</P>
+can be cast to a <tt>void</tt> pointer.
 <H3>User Data Type</H3>
 The <tt>void *</tt> in the callback function prototypes is replaced with this. 
 You may want to use <tt>long</tt> for old XForms code.  Be warned that 
@@ -482,11 +482,11 @@ the data is not changed.
 <P>There are other rare but useful values for the <tt>when()</tt> field that are 
 not in the menu.  You should use the extra code fields to put these 
 values in.</P>
-<H2>Selecting Moving Widgets</H2>
-<P>Double-clicking a window name in the browser will display it, if not 
+<H2>Selecting and Moving Widgets</H2>
+Double-clicking a window name in the browser will display it, if not 
 displayed yet.  From this display you can select widgets, sets of 
 widgets, and move or resize them.  To close a window either 
-double-click it or type Esc. </P>
+double-click it or type Esc.
 <P>To select a widget, click it.  To select several widgets drag a 
 rectangle around them.  Holding down shift will toggle the selection of 
 the widgets instead. </P>
@@ -530,8 +530,8 @@ effect.
  The string typed into here is passed to the X window manager as the 
 class.  This can change the icon or window decorations.  On most (all?) 
 window managers you will have to close the window and reopen it to see 
-the effect. <A name=images>
-<H2>Image Labels</H2>
+the effect.
+<H2><A name=images>Image Labels</A></H2>
 <P>Selecting &quot;Image...&quot; off the label style pull-down menu will bring 
 up a file chooser from which you pick the image file.  If an image has 
 already been chosen, you can change the image used by picking 
@@ -547,10 +547,10 @@ to the location the <TT>.fl</TT> file is (not necessarily the current
 directory).  I recommend you either put the images in the same 
 directory as the <TT>.fl</TT> file, or use absolute path names. </P>
 <H3>Notes for all image types</H3>
-<P>FLUID runs using the default visual of your X server.  This may be 8 
+FLUID runs using the default visual of your X server.  This may be 8 
 bits, which will give you dithered images.  You may get better results 
 in your actual program by adding the code &quot;Fl::visual(FL_RGB)&quot; to your 
-code right before the first window is displayed. </P>
+code right before the first window is displayed.
 <P>All widgets with the same image on them share the same code and 
 source X pixmap.  Thus once you have put an image on a widget, it is 
 nearly free to put the same image on many other widgets. </P>
@@ -569,9 +569,9 @@ want the image inside it, you must change the button's boxtype to
 FL_UP_FRAME (or another frame), otherwise when it is pushed it will 
 erase the image. </P>
 <H3>XBM (X bitmap files)</H3>
-<P>FLUID will read X bitmap files.  These files have C source code to 
+FLUID will read X bitmap files.  These files have C source code to 
 define a bitmap.  Sometimes they are stored with the &quot;.h&quot; or &quot;.bm&quot; 
-extension rather than the standard &quot;.xbm&quot;. </P>
+extension rather than the standard &quot;.xbm&quot;.
 <P>FLUID will output code to construct an Fl_Bitmap widget and use it 
 to label the widget.  The '1' bits in the bitmap are drawn using the 
 label color of the widget.  You can change the color in FLUID.  The '0' 
@@ -579,9 +579,9 @@ bits are transparent. </P>
 <P>The program &quot;bitmap&quot; on the X distribution does an ok job of editing 
 bitmaps. </P>
 <H3>XPM (X pixmap files)</H3>
-<P>FLUID will read X pixmap files as used by the libxpm library. These 
+FLUID will read X pixmap files as used by the libxpm library. These 
 files have C source code to define a pixmap.  The filenames usually 
-have a &quot;.xpm&quot; extension. </P>
+have a &quot;.xpm&quot; extension.
 <P>FLUID will output code to construct an Fl_Pixmap widget and use it 
 to label the widget.  The label color of the widget is ignored, even 
 for 2-color images that could be a bitmap. </P>
@@ -596,9 +596,9 @@ XPaint</A>.  This (and most other) painting programs are designed for
 large full color images and are difficult to use to edit an image of 
 small size and few colors. </P>
 <H3>GIF files</H3>
-<P>FLUID will also read GIF image files.  These files are often used on 
+FLUID will also read GIF image files.  These files are often used on 
 html documents to make icons.  This lets you use nice icons that you 
-steal off the net in your user interface. </P>
+steal off the net in your user interface.
 <P>FLUID converts these into (modified) XPM format and uses an 
 Fl_Pixmap widget to label the widget.  Transparency is handled the same 
 as for xpm files.  Notice that the conversion removes the compression, 
