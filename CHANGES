@@ -1,7 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
 	- Implemented full alpha blending under MacOS X.
-	- Added fl_create_deepmask() function to create an alpha
+	- Added fl_create_alphamask() function to create an alpha
 	  mask from 8-bit data; under MacOS X this creates an
 	  8-bit bitmask, while other OS's currently get 1-bit
 	  screen-door bitmasks.

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.11 2002/04/14 21:26:05 easysw Exp $"
+// "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.12 2002/04/15 12:19:01 easysw Exp $"
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -208,8 +208,8 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 
 
 #ifdef __APPLE__
-// Create an 8-bit "deep" mask (used for alpha blending)
-Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *array) {
+// Create an 8-bit mask used for alpha blending
+Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) {
   Rect srcRect;
   srcRect.left = 0; srcRect.right = w;
   srcRect.top = 0; srcRect.bottom = h;
@@ -249,8 +249,8 @@ Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *array) {
   return gw;               /* tell caller we succeeded! */
 }
 #else
-// Create a 1-bit "deep" mask (used for alpha blending)
-Fl_Bitmask fl_create_deepmask(int w, int h, int d, int ld, const uchar *array) {
+// Create a 1-bit mask used for alpha blending
+Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) {
   Fl_Bitmask mask;
   int bmw = (w + 7) / 8;
   uchar *bitmap = new uchar[bmw * h];
@@ -456,5 +456,5 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
 //
-// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.11 2002/04/14 21:26:05 easysw Exp $".
+// End of "$Id: Fl_Bitmap.cxx,v 1.5.2.4.2.12 2002/04/15 12:19:01 easysw Exp $".
 //

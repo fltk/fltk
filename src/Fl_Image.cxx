@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.17 2002/04/14 21:26:06 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.18 2002/04/15 12:19:01 easysw Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -268,7 +268,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_end_offscreen();
 
     if (d() == 2 || d() == 4) {
-      mask = fl_create_deepmask(w(), h(), d(), ld(), array);
+      mask = fl_create_alphamask(w(), h(), d(), ld(), array);
     }
   }
 #ifdef WIN32
@@ -334,5 +334,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.17 2002/04/14 21:26:06 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.18 2002/04/15 12:19:01 easysw Exp $".
 //
