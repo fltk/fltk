@@ -55,6 +55,7 @@ overlay
 pack
 pixmap
 pixmap_browser
+preferences
 radio
 radio.cxx
 radio.h
