@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.47 2003/06/15 04:27:35 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.48 2003/06/15 06:10:54 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1722,11 +1722,14 @@ void Fl_Window::show() {
  */
 void Fl_Window::resize(int X,int Y,int W,int H) {
   int is_a_resize = (W != w() || H != h());
+//  printf("Fl_Winodw::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
+//         X, Y, W, H, is_a_resize, resize_from_system, this);
   if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
   else if (!is_a_resize) return;
   if ( (resize_from_system!=this) && (!parent()) && shown()) {
     MoveWindow(i->xid, X, Y, 0);
     if (is_a_resize) {
+      if (!resizable()) size_range(W>0 ? W : 1, H>0 ? H : 1, W>0 ? W : 1, H>0 ? H : 1);
       SizeWindow(i->xid, W>0 ? W : 1, H>0 ? H : 1, 1);
       Rect all; all.top=-32000; all.bottom=32000; all.left=-32000; all.right=32000;
       InvalWindowRect( i->xid, &all );    
@@ -1864,6 +1867,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.47 2003/06/15 04:27:35 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.48 2003/06/15 06:10:54 easysw Exp $".
 //
 
