@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.10 1999/01/13 15:56:22 mike Exp $"
+// "$Id: fl_color.cxx,v 1.11 1999/01/19 19:10:39 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -340,14 +340,14 @@ Fl_Color inactive(Fl_Color c) {
 Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
   int c1 = int(fl_cmap[fg]);
   int c2 = int(fl_cmap[bg]);
-  if (((c1|(c1<<1)&0x800000)^(c2|(c2<<1)&0x800000))&0x80808000)
+  if ((c1^c2)&0x80800000)
     return fg;
-  else if (c2&0x80c00000)
+  else if (c2&0x80800000)
     return FL_GRAY_RAMP; // black from gray ramp
   else
     return (Fl_Color)(FL_COLOR_CUBE-1); // white from gray ramp
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.10 1999/01/13 15:56:22 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.11 1999/01/19 19:10:39 mike Exp $".
 //

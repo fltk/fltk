@@ -1,5 +1,5 @@
 //
-// "$Id: fractals.cxx,v 1.4 1999/01/07 19:17:54 mike Exp $"
+// "$Id: fractals.cxx,v 1.5 1999/01/19 19:10:39 mike Exp $"
 //
 // Fractal drawing demo for the Fast Light Tool Kit (FLTK).
 //
@@ -796,11 +796,12 @@ int main(int argc, char** argv)
   myGLInit(); 
   MenuInit();
 
-  glutMainLoop(); // must use this rather than Fl::run if glutIdleFunc is used
+  glutMainLoop(); // you could use Fl::run() instead
+
   return 0;
 }
 #endif
 
 //
-// End of "$Id: fractals.cxx,v 1.4 1999/01/07 19:17:54 mike Exp $".
+// End of "$Id: fractals.cxx,v 1.5 1999/01/19 19:10:39 mike Exp $".
 //

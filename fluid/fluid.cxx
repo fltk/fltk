@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.9 1999/01/07 19:17:13 mike Exp $"
+// "$Id: fluid.cxx,v 1.10 1999/01/19 19:10:38 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -104,7 +104,7 @@ void goto_source_dir() {
 void leave_source_dir() {
   if (!in_source_dir) return;
   if (chdir(pwd)<0) {fprintf(stderr, "Can't chdir to %s : %s\n",
-				pwd, strerror(errno));}
+			     pwd, strerror(errno));}
   in_source_dir = 0;
 }
   
@@ -277,8 +277,8 @@ void about_cb(Fl_Widget *, void *) {
 extern Fl_Menu_Item New_Menu[];
 
 Fl_Menu_Item Main_Menu[] = {
-{"File",0,0,0,FL_SUBMENU},
-  {"New", FL_ALT+'N', new_cb, 0},
+{"&File",0,0,0,FL_SUBMENU},
+  {"New", 0, new_cb, 0},
   {"Open...", FL_ALT+'O', open_cb, 0},
   {"Save", FL_ALT+'s', save_cb, 0},
   {"Save As...", FL_ALT+'S', save_cb, (void*)1},
@@ -286,7 +286,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"Write code", FL_ALT+'C', write_cb, 0},
   {"Quit", FL_ALT+'q', exit_cb},
   {0},
-{"Edit",0,0,0,FL_SUBMENU},
+{"&Edit",0,0,0,FL_SUBMENU},
   {"Undo", FL_ALT+'z', nyi},
   {"Cut", FL_ALT+'x', cut_cb},
   {"Copy", FL_ALT+'c', copy_cb},
@@ -305,8 +305,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"Overlays on/off",FL_ALT+'o',toggle_overlays},
   {"Preferences",FL_ALT+'p',show_alignment_cb},
   {0},
-{"New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
-{"Help",0,0,0,FL_SUBMENU},
+{"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
+{"&Help",0,0,0,FL_SUBMENU},
   {"About fluid",0,about_cb},
   {"Manual",0,nyi},
   {0},
@@ -407,5 +407,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.9 1999/01/07 19:17:13 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.10 1999/01/19 19:10:38 mike Exp $".
 //
