@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:48 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:26 easysw Exp $"
 #
 # PNG library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -33,12 +33,14 @@ OBJS	=	png.o pngset.o pngget.o pngrutil.o pngtrans.o pngwutil.o \
 		pngread.o pngrio.o pngwio.o pngwrite.o pngrtran.o \
 		pngwtran.o pngmem.o pngerror.o pngpread.o
 
+LIBPNG	=	../lib/libpng$(LIBEXT)
+
 
 #
 # Make all of the targets...
 #
 
-all:	libpng.a
+all:	$(LIBPNG)
 
 
 #
@@ -47,18 +49,19 @@ all:	libpng.a
 
 clean:
 	$(RM) $(OBJS)
-	$(RM) libpng.a
+	$(RM) $(LIBPNG)
 
 
 #
 # Install everything...
 #
 
-install: libpng.a
-	echo "Installing libpng.a in $(libdir)..."
+install: $(LIBPNG)
+	echo "Installing libpng$(LIBEXT) in $(libdir)..."
 	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libpng.a
-	-$(CP) libpng.a $(libdir)
+	$(RM) $(libdir)/libpng$(LIBEXT)
+	$(CP) $(LIBPNG) $(libdir)
+	$(RANLIB) $(libdir)/libpng$(LIBEXT)
 
 
 #
@@ -66,18 +69,18 @@ install: libpng.a
 #
 
 uninstall:
-	echo "Uninstalling libpng.a in $(libdir)..."
-	$(RM) $(libdir)/libpng.a
+	echo "Uninstalling libpng$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libpng$(LIBEXT)
 
 
 #
 # libpng.a
 #
 
-libpng.a:	$(OBJS)
+$(LIBPNG):	$(OBJS)
 	echo Archiving $@...
 	$(RM) $@
-	$(AR) $(ARFLAGS) $@  $(OBJS)
+	$(LIBCOMMAND) $@ $(OBJS)
 	$(RANLIB) $@
 
 
@@ -94,5 +97,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:48 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:26 easysw Exp $".
 #

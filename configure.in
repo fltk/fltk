@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.113 2004/07/12 15:50:01 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.114 2004/07/23 19:26:25 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -83,6 +83,7 @@ LINKFLTKGL="-lfltk_gl"
 LINKFLTKIMG="-lfltk_images"
 GLDEMOS="gldemos"
 
+LIBEXT=".a"
 LIBNAME="../lib/libfltk.a"
 FLLIBNAME="../lib/libfltk_forms.a"
 GLLIBNAME="../lib/libfltk_gl.a"
@@ -92,6 +93,7 @@ AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIBNAME)
 AC_SUBST(IMGLIBNAME)
+AC_SUBST(LIBEXT)
 AC_SUBST(LIBNAME)
 AC_SUBST(LINKFLTK)
 AC_SUBST(LINKFLTKGL)
@@ -373,7 +375,7 @@ AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
     IMAGELIBS="-ljpeg $IMAGELIBS",
     JPEGINC="-I../jpeg"
     JPEG="jpeg"
-    IMAGELIBS="../jpeg/libjpeg.a $IMAGELIBS")
+    IMAGELIBS="../lib/libjpeg.a $IMAGELIBS")
 
 AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library, default=auto],
     [if eval "test x$enable_localzlib = xyes"; then
@@ -387,8 +389,8 @@ AC_CHECK_LIB(z,gzgets,
     IMAGELIBS="-lz $IMAGELIBS",
     ZLIBINC="-I../zlib"
     ZLIB="zlib"
-    LIBS="../zlib/libz.a $LIBS"
-    IMAGELIBS="../zlib/libz.a $IMAGELIBS")
+    LIBS="../lib/libz.a $LIBS"
+    IMAGELIBS="../lib/libz.a $IMAGELIBS")
 
 AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto],
     [if eval "test x$enable_localpng = xyes"; then
@@ -403,7 +405,7 @@ AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
     AC_DEFINE(HAVE_PNG_H)
     PNGINC="-I../png"
     PNG="png"
-    IMAGELIBS="../png/libpng.a $IMAGELIBS"])
+    IMAGELIBS="../lib/libpng.a $IMAGELIBS"])
 
 AC_SUBST(JPEG)
 AC_SUBST(JPEGINC)
@@ -896,5 +898,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.113 2004/07/12 15:50:01 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.114 2004/07/23 19:26:25 easysw Exp $".
 dnl

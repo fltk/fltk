@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.56 2004/04/11 04:38:59 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.57 2004/07/23 19:26:26 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -195,20 +195,20 @@ all:	$(LIBNAME) $(DSONAME) \
 
 $(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) $@ $(OBJECTS)
 	$(RANLIB) $@
 
 libfltk.so.1.1: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(OBJECTS)
-	-$(RM) libfltk.so
+	$(RM) libfltk.so
 	$(LN) libfltk.so.1.1 libfltk.so
 
 libfltk.sl.1.1: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(OBJECTS)
-	-$(RM) libfltk.sl
+	$(RM) libfltk.sl
 	$(LN) libfltk.sl.1.1 libfltk.sl
 
 libfltk.1.1.dylib: $(OBJECTS)
@@ -218,33 +218,33 @@ libfltk.1.1.dylib: $(OBJECTS)
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
 		$(OBJECTS) $(LDLIBS)
-	-$(RM) libfltk.dylib
+	$(RM) libfltk.dylib
 	$(LN) libfltk.1.1.dylib libfltk.dylib
 
 libfltk_s.a: $(OBJECTS)
 	echo $(DSOCOMMAND) libfltk_s.o ...
 	$(DSOCOMMAND) libfltk_s.o $(OBJECTS) $(IMAGELIBS)
 	echo $(LIBCOMMAND) libfltk_s.a libfltk_s.o
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
 	$(CHMOD) +x libfltk_s.a
 
 $(FLLIBNAME): $(FLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) $@ $(FLOBJECTS)
 	$(RANLIB) $@
 
 libfltk_forms.so.1.1: $(FLOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
-	-$(RM) libfltk_forms.so
+	$(RM) libfltk_forms.so
 	$(LN) libfltk_forms.so.1.1 libfltk_forms.so
 
 libfltk_forms.sl.1.1: $(FLOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
-	-$(RM) libfltk_forms.sl
+	$(RM) libfltk_forms.sl
 	$(LN) libfltk_forms.sl.1.1 libfltk_forms.sl
 
 libfltk_forms.1.1.dylib: $(FLOBJECTS) libfltk.1.1.dylib
@@ -254,33 +254,33 @@ libfltk_forms.1.1.dylib: $(FLOBJECTS) libfltk.1.1.dylib
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
 		$(FLOBJECTS) $(LDLIBS) -L. -lfltk
-	-$(RM) libfltk_forms.dylib
+	$(RM) libfltk_forms.dylib
 	$(LN) libfltk_forms.1.1.dylib libfltk_forms.dylib
 
 libfltk_forms_s.a: $(FLOBJECTS)
 	echo $(DSOCOMMAND) libfltk_forms_s.o ...
 	$(DSOCOMMAND) libfltk_forms_s.o $(FLOBJECTS)
 	echo $(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o
 	$(CHMOD) +x libfltk_forms_s.a
 
 $(GLLIBNAME): $(GLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) $@ $(GLOBJECTS)
 	$(RANLIB) $@
 
 libfltk_gl.so.1.1: $(GLOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
-	-$(RM) libfltk_gl.so
+	$(RM) libfltk_gl.so
 	$(LN) libfltk_gl.so.1.1 libfltk_gl.so
 
 libfltk_gl.sl.1.1: $(GLOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
-	-$(RM) libfltk_gl.sl
+	$(RM) libfltk_gl.sl
 	$(LN) libfltk_gl.sl.1.1 libfltk_gl.sl
 
 libfltk_gl.1.1.dylib: $(GLOBJECTS) libfltk.1.1.dylib
@@ -290,33 +290,33 @@ libfltk_gl.1.1.dylib: $(GLOBJECTS) libfltk.1.1.dylib
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
 		$(GLOBJECTS) $(GLDLIBS) -L. -lfltk
-	-$(RM) libfltk_gl.dylib
+	$(RM) libfltk_gl.dylib
 	$(LN) libfltk_gl.1.1.dylib libfltk_gl.dylib
 
 libfltk_gl_s.a: $(GLOBJECTS)
 	echo $(DSOCOMMAND) libfltk_gl_s.o ...
 	$(DSOCOMMAND) libfltk_gl_s.o $(GLOBJECTS)
 	echo $(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
 	$(CHMOD) +x libfltk_gl_s.a
 
 $(IMGLIBNAME): $(IMGOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) $@ $(IMGOBJECTS)
 	$(RANLIB) $@
 
 libfltk_images.so.1.1: $(IMGOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS) -L. -lfltk
-	-$(RM) libfltk_images.so
+	$(RM) libfltk_images.so
 	$(LN) libfltk_images.so.1.1 libfltk_images.so
 
 libfltk_images.sl.1.1: $(IMGOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS) -L. -lfltk
-	-$(RM) libfltk_images.sl
+	$(RM) libfltk_images.sl
 	$(LN) libfltk_images.sl.1.1 libfltk_images.sl
 
 libfltk_images.1.1.dylib: $(IMGOBJECTS) libfltk.1.1.dylib
@@ -326,14 +326,14 @@ libfltk_images.1.1.dylib: $(IMGOBJECTS) libfltk.1.1.dylib
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
 		$(IMGOBJECTS) $(LDLIBS) $(IMAGELIBS) -L. -lfltk
-	-$(RM) libfltk_images.dylib
+	$(RM) libfltk_images.dylib
 	$(LN) libfltk_images.1.1.dylib libfltk_images.dylib
 
 libfltk_images_s.a: $(IMGOBJECTS)
 	echo $(DSOCOMMAND) libfltk_images_s.o ...
 	$(DSOCOMMAND) libfltk_images_s.o $(IMGOBJECTS)
 	echo $(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
-	-$(RM) $@
+	$(RM) $@
 	$(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
 	$(CHMOD) +x libfltk_images_s.a
 
@@ -583,5 +583,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.56 2004/04/11 04:38:59 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.57 2004/07/23 19:26:26 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4.2.12 2003/11/03 00:36:50 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.13 2004/07/23 19:26:26 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
@@ -60,6 +60,7 @@ FLLIBNAME	= ../lib/libfltk_forms.a
 GLLIBNAME	=
 IMGLIBNAME	= ../lib/libfltk_images.a
 LIBCOMMAND	= ar.exe cr
+LIBEXT		= .a
 RANLIB		= ar.exe s
 DSONAME		=
 FLDSONAME	=
@@ -124,5 +125,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.12 2003/11/03 00:36:50 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.13 2004/07/23 19:26:26 easysw Exp $".
 #

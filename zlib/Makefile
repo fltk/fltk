@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:49 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:27 easysw Exp $"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -34,12 +34,14 @@ OBJS	=	adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o \
 		trees.o zutil.o inflate.o infblock.o inftrees.o infcodes.o \
 		infutil.o inffast.o
 
+LIBZ	=	../lib/libz$(LIBEXT)
+
 
 #
 # Make all targets...
 #
 
-all:	libz.a
+all:	$(LIBZ)
 
 
 #
@@ -48,18 +50,19 @@ all:	libz.a
 
 clean:
 	$(RM) $(OBJS)
-	$(RM) libz.a
+	$(RM) $(LIBZ)
 
 
 #
 # Install everything...
 #
 
-install: libz.a
-	echo "Installing libz.a in $(libdir)..."
+install: $(LIBZ)
+	echo "Installing libz$(LIBEXT) in $(libdir)..."
 	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libz.a
-	-$(CP) libz.a $(libdir)
+	$(RM) $(libdir)/libz$(LIBEXT)
+	$(CP) $(LIBZ) $(libdir)
+	$(RANLIB) $(libdir)/libz$(LIBEXT)
 
 
 #
@@ -67,18 +70,18 @@ install: libz.a
 #
 
 uninstall:
-	echo "Uninstalling libz.a in $(libdir)..."
-	$(RM) $(libdir)/libz.a
+	echo "Uninstalling libz$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libz$(LIBEXT)
 
 
 #
 # libz.a
 #
 
-libz.a:	$(OBJS)
+$(LIBZ):	$(OBJS)
 	echo Archiving $@...
 	$(RM) $@
-	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(LIBCOMMAND) $@ $(OBJS)
 	$(RANLIB) $@
 
 #
@@ -94,5 +97,5 @@ $(OBJS):	../makeinclude
 
 
 #
-# End of "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:49 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:27 easysw Exp $".
 #

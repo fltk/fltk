@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:48 easysw Exp $"
+# "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:26 easysw Exp $"
 #
 # JPEG library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -41,12 +41,14 @@ OBJS	=	jmemnobs.o \
 		jidctflt.o jidctfst.o jidctint.o jidctred.o jquant1.o \
 		jquant2.o jutils.o jmemmgr.o
 
+LIBJPEG	=	../lib/libjpeg$(LIBEXT)
+
 
 #
 # Make all targets...
 #
 
-all:	libjpeg.a
+all:	$(LIBJPEG)
 
 
 #
@@ -55,7 +57,7 @@ all:	libjpeg.a
 
 clean:
 	$(RM) $(OBJS)
-	$(RM) libjpeg.a
+	$(RM) $(LIBJPEG)
 
 
 #
@@ -63,10 +65,10 @@ clean:
 #
 
 install:
-	echo "Installing libjpeg.a in $(libdir)..."
+	echo "Installing libjpeg$(LIBEXT) in $(libdir)..."
 	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libjpeg.a
-	-$(CP) libjpeg.a $(libdir)
+	$(RM) $(libdir)/libjpeg$(LIBEXT)
+	$(CP) $(LIBJPEG) $(libdir)
 
 
 #
@@ -74,18 +76,18 @@ install:
 #
 
 uninstall:
-	echo "Uninstalling libjpeg.a in $(libdir)..."
-	$(RM) $(libdir)/libjpeg.a
+	echo "Uninstalling libjpeg$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libjpeg$(LIBEXT)
 
 
 #
 # libjpeg.a
 #
 
-libjpeg.a:	$(OBJS)
+$(LIBJPEG):	$(OBJS)
 	echo Archiving $@...
 	$(RM) $@
-	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(LIBCOMMAND) $@ $(OBJS)
 	$(RANLIB) $@
 
 
@@ -101,5 +103,5 @@ include makedepend
 $(OBJS):	../makeinclude
 
 #
-# End of "$Id: Makefile,v 1.1.2.2 2004/07/06 00:18:48 easysw Exp $".
+# End of "$Id: Makefile,v 1.1.2.3 2004/07/23 19:26:26 easysw Exp $".
 #
