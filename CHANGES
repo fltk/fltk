@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Now hide the tooltip window whenever a window is
+	  hidden.  Otherwise a tooltip window could keep an
+	  application running.
 	- Updated FLUID to only append a trailing semicolon to
 	  code lines in a callback (so "#include" and friends
 	  will work...)
@@ -14,7 +17,7 @@ CHANGES IN FLTK 1.1.0b8
 	  not wait on shown(); this would cause them to return
 	  prematurely if you switched desktops/workspaces.
 	- Cosmetic changes to plastic boxtypes.  Now look much
-	  better for large areas and the sides now have a much
+	  better for large areas and the buttons now have a much
 	  greater "3D" feeling to them.
 	- Added new Fl::draw_box_active() method so that
 	  boxtypes can find out if the widget they are drawing
