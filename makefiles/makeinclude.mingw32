@@ -14,7 +14,7 @@ srcdir          =.
 
 # compiler names:
 CXX     =g++
-CC      =g++
+CC      =gcc
 
 # flags for C++ compiler:
 CFLAGS          =-Wall -O2 -DWIN32
