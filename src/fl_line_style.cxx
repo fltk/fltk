@@ -1,5 +1,5 @@
 //
-// "$Id: fl_line_style.cxx,v 1.3.2.3.2.6 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: fl_line_style.cxx,v 1.3.2.3.2.7 2001/12/07 16:28:38 easysw Exp $"
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
@@ -55,8 +55,19 @@ void fl_line_style(int style, int width, char* dashes) {
   DeleteObject(oldpen);
   fl_current_xmap->pen = newpen;
 #elif defined(__APPLE__)
-  //++
-  // Use PenPat, PenSize
+  // QuickDraw supports pen size and pattern, but no arbitrary line styles.
+  static Pattern	styles[] = {
+    { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },	// FL_SOLID
+    { { 0xcc, 0xcc, 0x00, 0x00, 0xcc, 0xcc, 0x00, 0x00 } },	// FL_DASH
+    { { 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00 } }	// FL_DOT
+  };
+
+  if (!width) width = 1;
+  PenSize(width, width);
+
+  style &= 0xff;
+  if (style > 2) style = 2;
+  PenPat(styles + style);
 #else
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the WIN32 dash patterns on X
@@ -93,5 +104,5 @@ void fl_line_style(int style, int width, char* dashes) {
 
 
 //
-// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.6 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: fl_line_style.cxx,v 1.3.2.3.2.7 2001/12/07 16:28:38 easysw Exp $".
 //
