@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.15 2002/04/24 12:30:00 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.16 2002/05/02 15:02:31 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -137,10 +137,10 @@ Fl_Tooltip::enter(Fl_Widget *w) {
     temp = temp->parent();
   }
 
-  if ((!w || !w->tooltip()) && tooltip_callback_ && window) {
+  if ((!w || !w->tooltip()) && tooltip_callback_) {
 //    puts("Hiding tooltip...");
     Fl::remove_timeout(tooltip_callback_);
-    window->hide();
+    if (window) window->hide();
     shown = 0;
     return;
   }
@@ -221,5 +221,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.15 2002/04/24 12:30:00 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.16 2002/05/02 15:02:31 easysw Exp $".
 //
