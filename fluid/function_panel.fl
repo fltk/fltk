@@ -54,7 +54,7 @@ Function {make_code_panel()} {open
     Fl_Group {} {open
       xywh {10 10 525 120} box DOWN_FRAME resizable
     } {
-      Fl_Text_Editor code_input {selected
+      Fl_Text_Editor code_input {
         xywh {12 12 521 116} box NO_BOX resizable
         code0 {o->buffer(new Fl_Text_Buffer);}
         code1 {o->textfont(FL_COURIER);}
@@ -399,7 +399,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"Fl_Output"}
-        callback type_make_cb
+        callback type_make_cb selected
         tooltip Output xywh {284 4 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[27]);}
       }

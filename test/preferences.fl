@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0102 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public
@@ -28,7 +28,8 @@ Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
 Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {writePrefs();
-  delete myWindow;} {}
+  delete myWindow;} {selected
+  }
 } 
 
 Function {} {open return_type int
@@ -173,7 +174,7 @@ Function {} {open return_type int
         xywh {175 185 70 20} type Horizontal align 8 minimum 2 maximum 6 value 3.1
       }
       Fl_Input wPaper {
-        label {Newspaper:} selected
+        label {Newspaper:}
         xywh {165 225 105 20} align 5
       }
     }
@@ -316,6 +317,5 @@ Function {writePrefs()} {open return_type void
   /* sample code only: */
     unsigned int hex = 0x2387efcd;
     eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-  eat.set( "binFoo2", (void*)&writePrefs, 256 );
-  } {}
+  eat.set( "binFoo2", (void*)&writePrefs, 256 );} {}
 } 

@@ -13,8 +13,8 @@ Function {make_widget_panel()} {open
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load selected
-        xywh {10 30 395 295} when 0 resizable
+        callback propagate_load
+        xywh {10 30 395 295} when 0 hide resizable
       } {
         Fl_Group {} {
           callback propagate_load open
@@ -349,7 +349,7 @@ image}
       Fl_Group {} {
         label {C++}
         callback propagate_load
-        xywh {10 30 395 295} when 0 hide
+        xywh {10 30 395 295} when 0
       } {
         Fl_Group {} {
           callback propagate_load
@@ -413,8 +413,8 @@ image}
         } {
           Fl_Text_Editor {} {
             label {Callback:}
-            callback callback_cb
-            tooltip {The callback function or code for the widget.} xywh {102 177 291 86} box NO_BOX align 4 textfont 4 resizable
+            callback callback_cb selected
+            tooltip {The callback function or code for the widget.} xywh {102 177 291 86} box NO_BOX align 4 when 6 textfont 4 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->textfont(FL_COURIER);}
           }

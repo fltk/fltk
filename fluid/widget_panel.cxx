@@ -19,6 +19,7 @@ Fl_Double_Window* make_widget_panel() {
       { Fl_Group* o = new Fl_Group(10, 30, 395, 295, "GUI");
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 301, 280);
           o->callback((Fl_Callback*)propagate_load);
           { Fl_Group* o = new Fl_Group(95, 40, 300, 20);
@@ -383,7 +384,6 @@ Fl_Double_Window* make_widget_panel() {
       { Fl_Group* o = new Fl_Group(10, 30, 395, 295, "C++");
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(100, 40, 295, 132);
           o->callback((Fl_Callback*)propagate_load);
           { Fl_Group* o = new Fl_Group(100, 40, 295, 20);
@@ -449,6 +449,7 @@ Fl_Double_Window* make_widget_panel() {
             o->textfont(4);
             o->callback((Fl_Callback*)callback_cb);
             o->align(FL_ALIGN_LEFT);
+            o->when(FL_WHEN_RELEASE_ALWAYS);
             Fl_Group::current()->resizable(o);
             o->buffer(new Fl_Text_Buffer());
             o->textfont(FL_COURIER);

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.10 2002/10/30 14:23:16 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.11 2002/11/05 06:45:40 matthiaswm Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -185,6 +185,7 @@ int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   if (e->insert_mode()) e->insert(s);
   else e->overstrike(s);
   e->show_insert_position();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
   return 1;
 }
 
@@ -197,6 +198,7 @@ int Fl_Text_Editor::kf_backspace(int, Fl_Text_Editor* e) {
     e->buffer()->select(e->insert_position(), e->insert_position()+1);
   kill_selection(e);
   e->show_insert_position();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
   return 1;
 }
 
@@ -204,6 +206,7 @@ int Fl_Text_Editor::kf_enter(int, Fl_Text_Editor* e) {
   kill_selection(e);
   e->insert("\n");
   e->show_insert_position();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
   return 1;
 }
 
@@ -350,6 +353,7 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
     e->buffer()->select(e->insert_position(), e->insert_position()+1);
   kill_selection(e);
   e->show_insert_position();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
   return 1;
 }
 
@@ -365,6 +369,7 @@ int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_cut(int c, Fl_Text_Editor* e) {
   kf_copy(c, e);
   kill_selection(e);
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
   return 1;
 }
 
@@ -372,6 +377,7 @@ int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
   kill_selection(e);
   Fl::paste(*e, 1);
   e->show_insert_position();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
   return 1;
 }
 
@@ -409,6 +415,11 @@ int Fl_Text_Editor::handle_key() {
   return 0;
 }
 
+void Fl_Text_Editor::maybe_do_callback() {
+  if (changed() || (when()&FL_WHEN_NOT_CHANGED)) {
+    clear_changed(); do_callback();}
+}
+
 int Fl_Text_Editor::handle(int event) {
   if (!buffer()) return 0;
 
@@ -416,6 +427,7 @@ int Fl_Text_Editor::handle(int event) {
     dragType = -1;
     Fl::paste(*this, 0);
     Fl::focus(this);
+    if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
     return 1;
   }
 
@@ -427,6 +439,8 @@ int Fl_Text_Editor::handle(int event) {
 
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
+    case FL_HIDE:
+      if (when() & FL_WHEN_RELEASE) maybe_do_callback();
       return 1;
 
     case FL_KEYBOARD:
@@ -437,6 +451,7 @@ int Fl_Text_Editor::handle(int event) {
       if (insert_mode()) insert(Fl::event_text());
       else overstrike(Fl::event_text());
       show_insert_position();
+      if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
       return 1;
 
 // CET - FIXME - this will clobber the window's current cursor state!
@@ -451,5 +466,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.10 2002/10/30 14:23:16 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.11 2002/11/05 06:45:40 matthiaswm Exp $".
 //
