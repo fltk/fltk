@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0102 
 header_name {.h} 
 code_name {.cxx}
 Function {make_project_window()} {open
@@ -101,19 +101,19 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {397 774 255 175} visible
+    xywh {462 92 255 253} visible
   } {
     Fl_Button {} {
       label Close
       callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {185 145 60 25}
+      tooltip {Close this dialog.} xywh {185 215 60 25}
     }
     Fl_Tabs {} {
-      xywh {10 10 235 125}
+      xywh {10 10 235 190}
     } {
       Fl_Group {} {
         label {GUI:}
-        xywh {10 35 235 100} align 5
+        xywh {10 35 235 165} align 5
       } {
         Fl_Check_Button tooltips_button {
           label {Show Tooltips}
@@ -135,11 +135,27 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         }
         Fl_Check_Button openlast_button {
           label {Open Previous File on Startup}
-          callback {fluid_prefs.set("open_previous_file", openlast_button->value());} selected
+          callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
           xywh {20 105 215 20} down_box DOWN_BOX
           code0 {int b;}
           code1 {fluid_prefs.get("open_previous_file", b, 0);}
           code2 {openlast_button->value(b);}
+        }
+        Fl_Check_Button openbin_button {
+          label {Open Widget Bin on Startup}
+          callback {fluid_prefs.set("open_widget_bin", openbin_button->value());}
+          xywh {20 135 215 20} down_box DOWN_BOX
+          code0 {int b;}
+          code1 {fluid_prefs.get("open_widget_bin", b, 1);}
+          code2 {openbin_button->value(b);}
+        }
+        Fl_Check_Button prevpos_button {
+          label {Remember Window Positions}
+          callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());} selected
+          xywh {20 165 215 20} down_box DOWN_BOX
+          code0 {int b;}
+          code1 {fluid_prefs.get("prev_window_pos", b, 1);}
+          code2 {prevpos_button->value(b);}
         }
       }
     }

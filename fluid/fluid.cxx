@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.33 2002/09/02 10:41:51 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.34 2002/10/31 18:48:58 matthiaswm Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,7 @@
 
 #include "../src/flstring.h"
 #include "alignment_panel.h"
+#include "function_panel.h"
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
@@ -111,6 +112,27 @@ void leave_source_dir() {
   in_source_dir = 0;
 }
   
+void position_window(Fl_Window *w, const char *prefsName, int X, int Y, int W=0, int H=0 ) {
+  Fl_Preferences pos(fluid_prefs, prefsName);
+  pos.get("x", X, X);
+  pos.get("y", Y, Y);
+  if ( W!=0 ) {
+    pos.get("w", W, W);
+    pos.get("h", H, H);
+    w->resize( X, Y, W, H );
+  }
+  else
+    w->position( X, Y );
+}
+
+void save_position(Fl_Window *w, const char *prefsName) {
+  Fl_Preferences pos(fluid_prefs, prefsName);
+  pos.set("x", w->x());
+  pos.set("y", w->y());
+  pos.set("w", w->w());
+  pos.set("h", w->h());
+}
+
 Fl_Window *main_window;
 
 void save_cb(Fl_Widget *, void *v) {
@@ -137,6 +159,12 @@ void exit_cb(Fl_Widget *,void *) {
 	  if (modflag) return;	// Didn't save!
     }
 
+  save_position(main_window,"main_window_pos");
+
+  if (widgetbin_panel) {
+    save_position(widgetbin_panel,"widgetbin_pos");
+    delete widgetbin_panel;
+  }
   if (about_panel)
     delete about_panel;
   if (help_dialog)
@@ -397,6 +425,17 @@ void manual_cb(Fl_Widget *, void *) {
   show_help("index.html");
 }
 
+void toggle_widgetbin_cb(Fl_Widget *, void *) {
+  if ( !widgetbin_panel ) {
+    make_widgetbin();
+    position_window(widgetbin_panel,"widgetbin_pos", 320, 30);
+  }
+  if ( widgetbin_panel->visible() )
+    widgetbin_panel->hide();
+  else
+    widgetbin_panel->show();
+}
+
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -441,6 +480,7 @@ Fl_Menu_Item Main_Menu[] = {
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
   {"O&verlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
+  {"Widget &Bin on/off",FL_ALT+'b',toggle_widgetbin_cb},
   {"Pro&ject Settings...",FL_CTRL+'p',show_project_cb},
   {"&GUI Settings...",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
@@ -772,7 +812,11 @@ int main(int argc,char **argv) {
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
+    if (prevpos_button->value()) 
+      position_window(main_window,"main_window_pos", 10, 30, WINWIDTH, WINHEIGHT );
     main_window->show(argc,argv);
+    if (openbin_button->value()) 
+      toggle_widgetbin_cb(0,0);
     if (!c && openlast_button->value() && absolute_history[0][0]) {
       // Open previous file when no file specified...
       open_history_cb(0, absolute_history[0]);
@@ -801,5 +845,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.33 2002/09/02 10:41:51 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.34 2002/10/31 18:48:58 matthiaswm Exp $".
 //
