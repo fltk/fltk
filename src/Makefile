@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.10 2001/09/29 14:38:59 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.11 2001/09/29 15:57:32 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -189,16 +189,16 @@ $(GLLIBNAME): $(GLOBJECTS)
 	$(LIBCOMMAND) $@ $(GLOBJECTS)
 	$(RANLIB) $@
 
-libfltkgl.so.1.1 libfltkgl.sl.1.1: $(GLOBJECTS)
+libfltk_gl.so.1.1 libfltk_gl.sl.1.1: $(GLOBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(GLOBJECTS)
 
-libfltkgl_s.a: $(GLOBJECTS)
-	echo $(DSOCOMMAND) libfltkgl_s.o ...
-	$(DSOCOMMAND) libfltkgl_s.o $(GLOBJECTS)
-	echo $(LIBCOMMAND) libfltkgl_s.a libfltkgl_s.o
-	$(LIBCOMMAND) libfltkgl_s.a libfltkgl_s.o
-	chmod +x libfltkgl_s.a
+libfltk_gl_s.a: $(GLOBJECTS)
+	echo $(DSOCOMMAND) libfltk_gl_s.o ...
+	$(DSOCOMMAND) libfltk_gl_s.o $(GLOBJECTS)
+	echo $(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
+	$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
+	chmod +x libfltk_gl_s.a
 
 clean :
 	-@ rm -f *.o *.do $(DSONAME) $(LIBRARY) $(CLEAN) core *~ ../include/*~ makedepend cmap
@@ -231,19 +231,19 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 		rm -f $(libdir)/libfltk_s.a;\
 		cp libfltk_s.a $(libdir); \
 	fi
-	if test x$(GLDSONAME) = xlibfltkgl.so.1.1; then\
-		rm -f $(libdir)/libfltkgl.so*;\
-		cp libfltkgl.so.1.1 $(libdir); \
-		ln -s libfltkgl.so.1.1 $(libdir)/libfltkgl.so;\
+	if test x$(GLDSONAME) = xlibfltk_gl.so.1.1; then\
+		rm -f $(libdir)/libfltk_gl.so*;\
+		cp libfltk_gl.so.1.1 $(libdir); \
+		ln -s libfltk_gl.so.1.1 $(libdir)/libfltk_gl.so;\
 	fi
-	if test x$(GLDSONAME) = xlibfltkgl.sl.1.1; then\
-		rm -f $(libdir)/libfltkgl.sl*;\
-		cp libfltkgl.sl.1.1 $(libdir); \
-		ln -s libfltkgl.sl.1.1 $(libdir)/libfltkgl.sl;\
+	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.1; then\
+		rm -f $(libdir)/libfltk_gl.sl*;\
+		cp libfltk_gl.sl.1.1 $(libdir); \
+		ln -s libfltk_gl.sl.1.1 $(libdir)/libfltk_gl.sl;\
 	fi
-	if test x$(GLDSONAME) = xlibfltkgl_s.a; then\
-		rm -f $(libdir)/libfltkgl_s.a;\
-		cp libfltkgl_s.a $(libdir); \
+	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
+		rm -f $(libdir)/libfltk_gl_s.a;\
+		cp libfltk_gl_s.a $(libdir); \
 	fi
 	echo "Installing include files..."
 	-mkdir -p $(includedir)
@@ -258,5 +258,5 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.10 2001/09/29 14:38:59 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.11 2001/09/29 15:57:32 easysw Exp $".
 #

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b2
 
+	- New fltk-config script.
+
 	- Fixed image/text label handling; in b1 the label
 	  needed a non-blank text string to display the image. 
 	  This bug also caused all sorts of crashes and display

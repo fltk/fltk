@@ -1,24 +1,39 @@
 #! /bin/sh
+#
+# "$Id: fltk-config.in,v 1.12.2.1 2001/09/29 15:57:32 easysw Exp $"
 # 
-# fltk-config
+# FLTK configuration utility.
 #
-# original version by James Dean Palmer, adapted by Vincent Penne
+# Original version Copyright 2000 by James Dean Palmer
+# Adapted by Vincent Penne and Michael Sweet
 #
-# "$Id: fltk-config.in,v 1.12 2001/08/05 10:48:38 spitzak Exp $"
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-MAJOR_VERSION=2
-MINOR_VERSION=0
+MAJOR_VERSION=1
+MINOR_VERSION=1
 PATCH_VERSION=0
 VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
 ### BEGIN fltk-config
 
-# Calculate the prefix from the location of *this* file
-prefix=`echo "$0" | sed 's/\/bin\/fltk-config//
-s/\/fltk-config//'`
-
-#prefix=@prefix@
+prefix=@prefix@
 exec_prefix=@exec_prefix@
 exec_prefix_set=no
 bindir=@bindir@
@@ -33,23 +48,16 @@ CC="@CC@"
 # flags for C++ compiler:
 CFLAGS="@CFLAGS@"
 CXXFLAGS="@CXXFLAGS@"
+LDFLAGS="@LDFLAGS@"
+LDLIBS="@LDFLAGS@ -lX11 -lXext @X_EXTRA_LIBS@"
 
 # program to make the archive:
 LIBNAME="@LIBNAME@"
-LIBCOMMAND="@LIBCOMMAND@"
-RANLIB="@RANLIB@"
-DSOLIBNAME="@DSOLIBNAME@"
-DSOCOMMAND="@DSOCOMMAND@"
-
-# flags for the linker
-LD_PLUGIN_FLAGS="@LD_PLUGIN_FLAGS@"
+DSONAME="@DSONAME@"
+DSOLINK="@DSOLINK@"
 
 # libraries to link with:
-IMAGELIBS="@LIBPNG@ @LIBJPEG@"
-
-# programs to make archive and build DSOs
-RANLIB="@RANLIB@"
-DSOCOMMAND="@DSOCOMMAND@"
+IMAGELIBS="@IMAGELIBS@"
 
 usage ()
 {
@@ -58,15 +66,12 @@ Options:
 	[--prefix[=DIR]]  return/set where FLTK is installed
 	[--exec-prefix[=DIR]]
 	[--version]
+	[--api-version]
 
 options telling what we are doing :
 	[--use-gl]        use GL
-	[--use-images]    use extra image formats (PNG, Jpeg)
+	[--use-images]    use extra image formats (PNG, JPEG)
 	[--use-glut]      use glut compatibility layer
-	[--use-forms]     use forms compatibility layer
-        [--multithread]   build a multithreaded program
-	[--build-plugin]  build a plugin
-	[--no-plugins]    build a program unable to load plugins (Linux only)
 
 options telling what information we request
 	[--cflags]        return flags to compile C using FLTK
@@ -112,27 +117,14 @@ do
     --version)
       echo $VERSION
       ;;
-    --use-gl)
-      use_gl=yes
+    --api-version)
+      echo $APIVERSION
       ;;
-    --use-glut)
-      use_glut=yes
+    --use-gl | --use-glut)
       use_gl=yes
       ;;
     --use-images)
       use_images=yes
-      ;;
-    --use-forms)
-      use_forms=yes
-      ;;
-    --multithread)
-      use_threads=yes
-      ;;
-    --build-plugin)
-      build_plugin=yes
-      ;;
-    --no-plugins)
-      no_plugins=yes
       ;;
     --cflags)
       echo_cflags=yes
@@ -156,45 +148,35 @@ do
   shift
 done
 
+if test "$includedir" != /usr/include; then
+	includes=-I$includedir
+else
+	includes=
+fi
+
+if test "$libdir" != /usr/lib -a "$libdir" != /usr/lib32; then
+	libs=-L$libdir
+else
+      	libs=
+fi
+
 # Calculate needed libraries
-LDLIBS=""
-LDSTATIC=""
-LIBS=""
-if test "$use_forms" = "yes"; then
-    LDLIBS="$LDLIBS -lfltk_forms"
-    LDSTATIC="$LDSTATIC $prefix/lib/libfltk_forms.a"
-    LIBS="$LIBS $prefix/lib/libfltk_forms.a"
-fi
-if test "$use_glut" = "yes"; then
-    LDLIBS="$LDLIBS -lfltk_glut"
-    LDSTATIC="$LDSTATIC $prefix/lib/libfltk_glut.a"
-    LIBS="$LIBS $prefix/lib/libfltk_glut.a"
-fi
+LDSTATIC="$libdir/libfltk.a $LDLIBS"
+LDLIBS="$libs -lfltk $LDLIBS"
+LIBS="$LIBS $libdir/libfltk.a"
+
 if test "$use_gl" = "yes"; then
-    LDLIBS="$LDLIBS -lfltk_gl @GLLIB@"
-    LDSTATIC="$LDSTATIC $prefix/lib/libfltk_gl.a @GLLIB@"
-    LIBS="$LIBS $prefix/lib/libfltk_gl.a"
+    LDLIBS="-lfltk_gl @GLLIB@ $LDLIBS"
+    LDSTATIC="$libdir/libfltk_gl.a @GLLIB@ $LDSTATIC"
+    LIBS="$LIBS $libdir/libfltk_gl.a"
 fi
 if test "$use_images" = "yes"; then
-    LDLIBS="$LDLIBS -lfltk_images $IMAGELIBS"
-    LDSTATIC="$LDSTATIC $prefix/lib/libfltk_images.a $IMAGELIBS"
-    LIBS="$LIBS $prefix/lib/libfltk_images.a"
+    LDLIBS="$LDLIBS $IMAGELIBS"
+    LDSTATIC="$LDSTATIC $IMAGELIBS"
 fi
-if test "$build_plugin" = "yes"; then
-    LDLIBS="$LDLIBS $LD_PLUGIN_FLAGS"
-    LDSTATIC="$LDSTATIC $LD_PLUGIN_FLAGS"
-fi
-LDLIBS="$LDLIBS -lfltk @LDFLAGS@ @LIBS@ @LDLIBS@ -lm"
-LDSTATIC="$LDSTATIC $prefix/lib/libfltk.a @LDFLAGS@ @LIBS@ @LDLIBS@ -lm"
-LIBS="$LIBS $prefix/lib/libfltk.a"
-if test "$use_threads" = "yes"; then
-    LDLIBS="$LDLIBS @THREADSLIBS@"
-    LDSTATIC="$LDSTATIC @THREADSLIBS@"
-fi
-if test "$no_plugins" = "no"; then
-    LDLIBS="$LDLIBS @LD_DLOPEN_FLAGS@"
-    LDSTATIC="$LDSTATIC @LD_DLOPEN_FLAGS@"
-fi
+
+LDLIBS="$DSOLINK $LDLIBS -lm"
+LDSTATIC="$LDSTATIC -lm"
 
 # Answer to user requests
 if test -n "$echo_help"; then usage 1
@@ -209,30 +191,27 @@ if test "$echo_exec_prefix" = "yes"; then
 fi
 
 if test "$echo_cflags" = "yes"; then
-      includes=-I`echo "$0" | sed 's/\/bin\/fltk-config/\/include/
-s/\/fltk-config//'`
-      echo $includes $CFLAGS
+	echo $includes $CFLAGS
 fi
 
 if test "$echo_cxxflags" = "yes"; then
-      includes=-I`echo "$0" | sed 's/\/bin\/fltk-config/\/include/
-s/\/fltk-config//'`
-      echo $includes $CXXFLAGS
+	echo $includes $CXXFLAGS
 fi
 
 if test "$echo_ldflags" = "yes"; then
-      my_libs=
-      libdirs=-L${exec_prefix}/lib
-      for i in $LDLIBS ; do
-        if test $i != -L${exec_prefix}/lib ; then
-          if test -z "$my_libs" ; then
-            my_libs="$i"
-          else
-            my_libs="$my_libs $i"
-          fi
-        fi
-      done
-      echo $libdirs $my_libs
+	my_libs=
+	libdirs=$libs
+
+	for i in $LDLIBS ; do
+		if test $i != -L$libdir ; then
+			if test -z "$my_libs" ; then
+				my_libs="$i"
+			else
+				my_libs="$my_libs $i"
+			fi
+		fi
+	done
+	echo $libdirs $my_libs
 fi
 
 if test "$echo_ldstaticflags" = "yes"; then
