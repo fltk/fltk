@@ -150,15 +150,16 @@ rescan();} {}
   }
   decl {void rescan();} {public
   }
-  Function {show()} {return_type void
+  Function {show()} {open return_type void
   } {
-    code {window->show();
-fileList->deselect();} {}
+    code {window->hotspot(fileList);
+window->show();
+fileList->deselect();} {selected
+    }
   }
   Function {shown()} {return_type int
   } {
-    code {return window->shown();} {selected
-    }
+    code {return window->shown();} {}
   }
   Function {textcolor(Fl_Color c)} {return_type void
   } {

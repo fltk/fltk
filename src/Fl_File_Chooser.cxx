@@ -209,7 +209,8 @@ const char * Fl_File_Chooser::label() {
 }
 
 void Fl_File_Chooser::show() {
-  window->show();
+  window->hotspot(fileList);
+window->show();
 fileList->deselect();
 }
 
