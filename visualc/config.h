@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h,v 1.5.2.5.2.7 2002/04/28 16:41:17 easysw Exp $"
+ * "$Id: config.h,v 1.5.2.5.2.8 2002/05/02 14:15:46 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
@@ -131,11 +131,11 @@
  * Where is <dirent.h> (used only by fl_file_chooser and scandir).
  */
 
-#define HAVE_DIRENT_H 1
-#define HAVE_SYS_NDIR_H 0
-#define HAVE_SYS_DIR_H 0
-#define HAVE_NDIR_H 0
-#define HAVE_SCANDIR 0
+/*#undef HAVE_DIRENT_H */
+/*#undef HAVE_SYS_NDIR_H */
+/*#undef HAVE_SYS_DIR_H */
+/*#undef HAVE_NDIR_H */
+/*#undef HAVE_SCANDIR */
 
 /*
  * Possibly missing sprintf-style functions:
@@ -183,5 +183,5 @@
 
 
 /*
- * End of "$Id: config.h,v 1.5.2.5.2.7 2002/04/28 16:41:17 easysw Exp $".
+ * End of "$Id: config.h,v 1.5.2.5.2.8 2002/05/02 14:15:46 easysw Exp $".
  */
