@@ -4,6 +4,8 @@
 #define alignment_panel_h
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Preferences.H>
+#include <FL/Fl_Tooltip.H>
 extern Fl_Window *alignment_window;
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Box.H>
@@ -25,8 +27,8 @@ extern Fl_Input *i18n_set_input;
 extern Fl_Input *i18n_function_input;
 Fl_Window* make_alignment_window();
 extern Fl_Menu_Item menu_i18n_type_chooser[];
-#include <FL/Fl_Preferences.H>
-#include <FL/Fl_Tooltip.H>
+extern void i18n_cb(Fl_Choice *,void *);
+extern Fl_Preferences fluid_prefs;
 extern Fl_Window *settings_window;
 extern void grid_cb(Fl_Input*, long);
 extern Fl_Input *horizontal_input;
@@ -37,4 +39,17 @@ extern Fl_Check_Button *tooltips_button;
 extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
 Fl_Window* make_settings_window();
+extern Fl_Window *shell_window;
+extern Fl_Input *shell_command_input;
+#include <FL/Fl_Group.H>
+extern Fl_Check_Button *shell_savefl_button;
+extern Fl_Check_Button *shell_writecode_button;
+extern Fl_Check_Button *shell_writemsgs_button;
+#include <FL/Fl_Return_Button.H>
+extern void do_shell_command(Fl_Return_Button*, void*);
+extern Fl_Window *shell_run_window;
+#include <FL/Fl_Browser.H>
+extern Fl_Browser *shell_run_list;
+extern Fl_Return_Button *shell_run_button;
+Fl_Window* make_shell_window();
 #endif

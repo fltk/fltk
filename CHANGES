@@ -1,8 +1,6 @@
 CHANGES IN FLTK 1.1.0rc1
 
-	- Fixed VisualC projects for Fl_File_Input.
-	- Added binary support and procedural names to
-	  Fl_Preferences, updated FLUID
+	- FLUID now supports running shell commands.
 	- New Fl_File_Input widget that shows directory
 	  separators with filename in input field.
 	- The Fl_File_Chooser dialog now shows the absolute path
@@ -15,7 +13,8 @@ CHANGES IN FLTK 1.1.0rc1
 	  in WIN32 version of scandir().  This takes care of a
 	  file chooser performance problem with large
 	  directories.
-	- Added Fl_Preferences class from Matthias Melcher.
+	- Added Fl_Preferences class from Matthias Melcher,
+	  including binary data support.
 	- FLUID now recognizes the "using" keyword in
 	  declarations.
 	- fl_file_chooser() didn't highlight the requested file

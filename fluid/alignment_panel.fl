@@ -6,7 +6,9 @@ Function {make_alignment_window()} {open
 } {
   Fl_Window alignment_window {
     label Preferences open
-    xywh {469 112 365 340} modal visible
+    xywh {469 112 365 340}
+    code0 {\#include <FL/Fl_Preferences.H>}
+    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
@@ -83,17 +85,17 @@ Function {make_alignment_window()} {open
   }
 } 
 
-decl {extern void i18n_cb(Fl_Choice *,void *);} {} 
+decl {extern void i18n_cb(Fl_Choice *,void *);} {public
+} 
 
-decl {extern Fl_Preferences fluid_prefs;} {} 
+decl {extern Fl_Preferences fluid_prefs;} {public
+} 
 
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label Settings open
-    xywh {376 480 400 175}
-    code0 {\#include <FL/Fl_Preferences.H>}
-    code1 {\#include <FL/Fl_Tooltip.H>} visible
+    xywh {376 480 400 175} visible
   } {
     Fl_Button {} {
       label Close
@@ -132,7 +134,7 @@ Function {make_settings_window()} {open
     Fl_Check_Button tooltips_button {
       label {Show Tooltips}
       callback {Fl_Tooltip::enable(tooltips_button->value());
-fluid_prefs.set("show_tooltips", tooltips_button->value());} selected
+fluid_prefs.set("show_tooltips", tooltips_button->value());}
       xywh {165 40 215 20} down_box DOWN_BOX
       code0 {char b;}
       code1 {fluid_prefs.get("show_tooltips", b, 1);}
@@ -154,6 +156,75 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());} selected
       code0 {char b;}
       code1 {fluid_prefs.get("open_previous_file", b, 0);}
       code2 {openlast_button->value(b);}
+    }
+  }
+} 
+
+Function {make_shell_window()} {open
+} {
+  Fl_Window shell_window {
+    label {Shell Command} open
+    xywh {630 219 445 104} visible
+  } {
+    Fl_Input shell_command_input {
+      label {Command:}
+      callback {fluid_prefs.set("shell_command", shell_command_input->value());}
+      xywh {85 10 350 20}
+      code0 {char buf[1024];}
+      code1 {fluid_prefs.get("shell_command", buf, "", sizeof(buf));}
+      code2 {shell_command_input->value(buf);}
+    }
+    Fl_Group {} {
+      label {Options:} open
+      xywh {85 40 350 20} align 4
+    } {
+      Fl_Check_Button shell_savefl_button {
+        label {Save .FL File}
+        callback {fluid_prefs.set("shell_savefl", shell_savefl_button->value());}
+        xywh {85 40 110 20} down_box DOWN_BOX
+        code0 {char b;}
+        code1 {fluid_prefs.get("shell_savefl", b, 1);}
+        code2 {shell_savefl_button->value(b);}
+      }
+      Fl_Check_Button shell_writecode_button {
+        label {Write Code}
+        callback {fluid_prefs.set("shell_writecode", shell_writecode_button->value());}
+        xywh {200 40 95 20} down_box DOWN_BOX
+        code0 {char b;}
+        code1 {fluid_prefs.get("shell_writecode", b, 1);}
+        code2 {shell_writecode_button->value(b);}
+      }
+      Fl_Check_Button shell_writemsgs_button {
+        label {Write Messages}
+        callback {fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());}
+        xywh {300 40 125 20} down_box DOWN_BOX
+        code0 {char b;}
+        code1 {fluid_prefs.get("shell_writemsgs", b, 0);}
+        code2 {shell_writemsgs_button->value(b);}
+      }
+    }
+    Fl_Button {} {
+      label Cancel
+      callback {shell_window->hide();}
+      xywh {370 70 65 25}
+    }
+    Fl_Return_Button {} {
+      label {Run Command}
+      callback do_shell_command
+      xywh {220 70 140 25}
+    }
+  }
+  Fl_Window shell_run_window {
+    label {Shell Command Output} open
+    xywh {693 386 553 435} resizable visible
+  } {
+    Fl_Browser shell_run_list {selected
+      xywh {10 10 535 380} textfont 4 textsize 12 resizable
+    }
+    Fl_Return_Button shell_run_button {
+      label Close
+      callback {shell_run_window->hide();}
+      xywh {465 400 80 25}
     }
   }
 } 

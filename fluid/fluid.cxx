@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.17 2002/05/01 08:51:59 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.18 2002/05/01 10:36:08 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -71,9 +71,11 @@ int snap;
 char	absolute_history[10][1024];
 char	relative_history[10][1024];
 
-void load_history();
-void update_history(const char *);
+void	load_history();
+void	update_history(const char *);
 
+// Shell command support...
+void	show_shell_window();
 
 ////////////////////////////////////////////////////////////////
 
@@ -419,6 +421,10 @@ Fl_Menu_Item Main_Menu[] = {
   {"Settings",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
+{"&Shell",0,0,0,FL_SUBMENU},
+  {"Execute Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
+  {"Execute Again",FL_ALT+'g',(Fl_Callback *)do_shell_command},
+  {0},
 {"&Help",0,0,0,FL_SUBMENU},
   {"About FLUID...",0,about_cb},
   {"On FLUID...",0,help_cb},
@@ -449,6 +455,7 @@ void make_main_window() {
   load_history();
 
   make_settings_window();
+  make_shell_window();
 
   if (!main_window) {
     Fl_Widget *o;
@@ -523,6 +530,86 @@ void update_history(const char *filename) {
   }
 
   Main_Menu[3].flags &= ~FL_MENU_INACTIVE;
+}
+
+// Shell command support...
+static FILE *shell_pipe;
+
+void
+shell_pipe_cb(int, void*) {
+  char	line[1024];		// Line from command output...
+
+  if (fgets(line, sizeof(line), shell_pipe) != NULL) {
+    // Add the line to the output list...
+    shell_run_list->add(line);
+    shell_run_list->make_visible(shell_run_list->size());
+  } else {
+    // End of file; tell the parent...
+    Fl::remove_fd(fileno(shell_pipe));
+
+    pclose(shell_pipe);
+    shell_pipe = NULL;
+    shell_run_list->add("COMPLETE");
+  }
+}
+
+void
+do_shell_command(Fl_Return_Button*, void*) {
+  const char	*command;	// Command to run
+
+
+  shell_window->hide();
+
+  if ((command = shell_command_input->value()) == NULL || !*command) {
+    fl_alert("No shell command entered!");
+    return;
+  }
+
+  if (shell_savefl_button->value()) {
+    save_cb(0, 0);
+  }
+
+  if (shell_writecode_button->value()) {
+    compile_only = 1;
+    write_cb(0, 0);
+    compile_only = 0;
+  }
+
+  if (shell_writemsgs_button->value()) {
+    compile_only = 1;
+    write_strings_cb(0, 0);
+    compile_only = 0;
+  }
+
+  // Show the output window and clear things...
+  shell_run_list->clear();
+  shell_run_list->add(command);
+  shell_run_window->label("Shell Command Running...");
+
+  if ((shell_pipe = popen(command, "r")) == NULL) {
+    fl_alert("Unable to run shell command: %s", strerror(errno));
+    return;
+  }
+
+  shell_run_button->deactivate();
+  shell_run_window->hotspot(shell_run_list);
+  shell_run_window->show();
+
+  Fl::add_fd(fileno(shell_pipe), shell_pipe_cb);
+
+  while (shell_pipe) Fl::wait();
+
+  shell_run_button->activate();
+  shell_run_window->label("Shell Command Complete");
+  fl_beep();
+
+  while (shell_run_window->shown()) Fl::wait();
+}
+
+void
+show_shell_window() {
+  shell_window->hotspot(shell_command_input);
+  shell_window->show();
 }
 
 void set_filename(const char *c) {
@@ -615,5 +702,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.17 2002/05/01 08:51:59 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.18 2002/05/01 10:36:08 easysw Exp $".
 //

@@ -114,8 +114,6 @@ Fl_Window* make_alignment_window() {
   }
   return w;
 }
-extern void i18n_cb(Fl_Choice *,void *);
-extern Fl_Preferences fluid_prefs;
 
 Fl_Window *settings_window=(Fl_Window *)0;
 
@@ -208,6 +206,104 @@ Fl_Window* make_settings_window() {
       char b;
       fluid_prefs.get("open_previous_file", b, 0);
       openlast_button->value(b);
+    }
+    o->end();
+  }
+  return w;
+}
+
+Fl_Window *shell_window=(Fl_Window *)0;
+
+Fl_Input *shell_command_input=(Fl_Input *)0;
+
+static void cb_shell_command_input(Fl_Input*, void*) {
+  fluid_prefs.set("shell_command", shell_command_input->value());
+}
+
+Fl_Check_Button *shell_savefl_button=(Fl_Check_Button *)0;
+
+static void cb_shell_savefl_button(Fl_Check_Button*, void*) {
+  fluid_prefs.set("shell_savefl", shell_savefl_button->value());
+}
+
+Fl_Check_Button *shell_writecode_button=(Fl_Check_Button *)0;
+
+static void cb_shell_writecode_button(Fl_Check_Button*, void*) {
+  fluid_prefs.set("shell_writecode", shell_writecode_button->value());
+}
+
+Fl_Check_Button *shell_writemsgs_button=(Fl_Check_Button *)0;
+
+static void cb_shell_writemsgs_button(Fl_Check_Button*, void*) {
+  fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());
+}
+
+static void cb_Cancel(Fl_Button*, void*) {
+  shell_window->hide();
+}
+
+Fl_Window *shell_run_window=(Fl_Window *)0;
+
+Fl_Browser *shell_run_list=(Fl_Browser *)0;
+
+Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
+
+static void cb_shell_run_button(Fl_Return_Button*, void*) {
+  shell_run_window->hide();
+}
+
+Fl_Window* make_shell_window() {
+  Fl_Window* w;
+  { Fl_Window* o = shell_window = new Fl_Window(445, 104, "Shell Command");
+    w = o;
+    { Fl_Input* o = shell_command_input = new Fl_Input(85, 10, 350, 20, "Command:");
+      o->callback((Fl_Callback*)cb_shell_command_input);
+      char buf[1024];
+      fluid_prefs.get("shell_command", buf, "", sizeof(buf));
+      shell_command_input->value(buf);
+    }
+    { Fl_Group* o = new Fl_Group(85, 40, 350, 20, "Options:");
+      o->align(FL_ALIGN_LEFT);
+      { Fl_Check_Button* o = shell_savefl_button = new Fl_Check_Button(85, 40, 110, 20, "Save .FL File");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_shell_savefl_button);
+        char b;
+        fluid_prefs.get("shell_savefl", b, 1);
+        shell_savefl_button->value(b);
+      }
+      { Fl_Check_Button* o = shell_writecode_button = new Fl_Check_Button(200, 40, 95, 20, "Write Code");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_shell_writecode_button);
+        char b;
+        fluid_prefs.get("shell_writecode", b, 1);
+        shell_writecode_button->value(b);
+      }
+      { Fl_Check_Button* o = shell_writemsgs_button = new Fl_Check_Button(300, 40, 125, 20, "Write Messages");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_shell_writemsgs_button);
+        char b;
+        fluid_prefs.get("shell_writemsgs", b, 0);
+        shell_writemsgs_button->value(b);
+      }
+      o->end();
+    }
+    { Fl_Button* o = new Fl_Button(370, 70, 65, 25, "Cancel");
+      o->callback((Fl_Callback*)cb_Cancel);
+    }
+    { Fl_Return_Button* o = new Fl_Return_Button(220, 70, 140, 25, "Run Command");
+      o->callback((Fl_Callback*)do_shell_command);
+    }
+    o->end();
+  }
+  { Fl_Window* o = shell_run_window = new Fl_Window(553, 435, "Shell Command Output");
+    w = o;
+    { Fl_Browser* o = shell_run_list = new Fl_Browser(10, 10, 535, 380);
+      o->textfont(4);
+      o->textsize(12);
+      Fl_Group::current()->resizable(o);
+    }
+    { Fl_Return_Button* o = shell_run_button = new Fl_Return_Button(465, 400, 80, 25, "Close");
+      o->callback((Fl_Callback*)cb_shell_run_button);
     }
     o->end();
   }
