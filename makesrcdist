@@ -9,7 +9,7 @@ CVS_RSH=ssh; export CVS_RSH
 MAINTAINER=easysw
 
 cd /tmp
-cvs -q -d$MAINTAINER@cvs.fltk.sourceforge.net:/cvsroot/fltk get -P -r v1_1 fltk
+cvs -q -d$MAINTAINER@cvs.sourceforge.net:/cvsroot/fltk get -P -r v1_1 fltk
 
 if test $# = 0; then
 	echo -n "Version number for distribution? "
