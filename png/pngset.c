@@ -1,7 +1,7 @@
 
 /* pngset.c - storage of image information into info struct
  *
- * libpng 1.2.6 - August 15, 2004
+ * libpng 1.2.7 - September 12, 2004
  * For conditions of distribution and use, see copyright notice in png.h
  * Copyright (c) 1998-2004 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -1034,7 +1034,7 @@ png_permit_empty_plte (png_structp png_ptr, int empty_plte_permitted)
    if (png_ptr == NULL)
       return;
    png_ptr->mng_features_permitted = (png_byte)
-     ((png_ptr->mng_features_permitted & (~(unsigned)(PNG_FLAG_MNG_EMPTY_PLTE))) |
+     ((png_ptr->mng_features_permitted & (~(PNG_FLAG_MNG_EMPTY_PLTE))) |
      ((empty_plte_permitted & PNG_FLAG_MNG_EMPTY_PLTE)));
 }
 #endif

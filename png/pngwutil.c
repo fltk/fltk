@@ -1,7 +1,7 @@
 
 /* pngwutil.c - utilities to write a PNG file
  *
- * libpng version 1.2.6 - August 15, 2004
+ * libpng version 1.2.7 - September 12, 2004
  * For conditions of distribution and use, see copyright notice in png.h
  * Copyright (c) 1998-2004 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -515,18 +515,7 @@ png_write_IHDR(png_structp png_ptr, png_uint_32 width, png_uint_32 height,
    if (!(png_ptr->flags & PNG_FLAG_ZLIB_CUSTOM_MEM_LEVEL))
       png_ptr->zlib_mem_level = 8;
    if (!(png_ptr->flags & PNG_FLAG_ZLIB_CUSTOM_WINDOW_BITS))
-     {
-       if (png_ptr->rowbytes <= 16384 && png_ptr->height <= 16384)
-         {
-	   png_uint_32 imagebytes = (png_ptr->rowbytes+1) * png_ptr->height;
-	   png_uint_32 windowsize = 14;  /* try for a smaller window */
-	   while ((1U << windowsize) >= imagebytes && windowsize > 7)
-	       --windowsize;
-	   png_ptr->zlib_window_bits = windowsize + 1;
-	 }
-       else
-         png_ptr->zlib_window_bits = 15;
-     }
+      png_ptr->zlib_window_bits = 15;
    if (!(png_ptr->flags & PNG_FLAG_ZLIB_CUSTOM_METHOD))
       png_ptr->zlib_method = 8;
    deflateInit2(&png_ptr->zstream, png_ptr->zlib_level,
@@ -612,6 +601,45 @@ png_write_IDAT(png_structp png_ptr, png_bytep data, png_size_t length)
    PNG_IDAT;
 #endif
    png_debug(1, "in png_write_IDAT\n");
+
+   /* Optimize the CMF field in the zlib stream. */
+   /* This hack of the zlib stream is compliant to the stream specification. */
+   if (!(png_ptr->mode & PNG_HAVE_IDAT) &&
+       png_ptr->compression_type == PNG_COMPRESSION_TYPE_BASE)
+   {
+      unsigned int z_cmf = data[0];  /* zlib compression method and flags */
+      if ((z_cmf & 0x0f) == 8 && (z_cmf & 0xf0) <= 0x70)
+      {
+         /* Avoid memory underflows and multiplication overflows. */
+         /* The conditions below are practically always satisfied;
+            however, they still must be checked. */
+         if (length >= 2 &&
+             png_ptr->height < 16384 && png_ptr->width < 16384)
+         {
+            png_uint_32 uncompressed_idat_size = png_ptr->height *
+               ((png_ptr->width *
+               png_ptr->channels * png_ptr->bit_depth + 15) >> 3);
+            unsigned int z_cinfo = z_cmf >> 4;
+            unsigned int half_z_window_size = 1 << (z_cinfo + 7);
+            while (uncompressed_idat_size <= half_z_window_size &&
+                   half_z_window_size >= 256)
+            {
+               z_cinfo--;
+               half_z_window_size >>= 1;
+            }
+            z_cmf = (z_cmf & 0x0f) | (z_cinfo << 4);
+            if (data[0] != (png_byte)z_cmf)
+            {
+               data[0] = (png_byte)z_cmf;
+               data[1] &= 0xe0;
+               data[1] += (png_byte)(0x1f - ((z_cmf << 8) + data[1]) % 0x1f);
+            }
+         }
+      }
+      else
+         png_error(png_ptr,
+            "Invalid zlib compression method or flags in IDAT");
+   }
 
    png_write_chunk(png_ptr, (png_bytep)png_IDAT, data, length);
    png_ptr->mode |= PNG_HAVE_IDAT;
@@ -1528,6 +1556,7 @@ png_write_sCAL(png_structp png_ptr, int unit, double width,double height)
 #endif
    png_size_t total_len;
    char wbuf[32], hbuf[32];
+   png_byte bunit = unit;
 
    png_debug(1, "in png_write_sCAL\n");
 
@@ -1548,7 +1577,7 @@ png_write_sCAL(png_structp png_ptr, int unit, double width,double height)
 
    png_debug1(3, "sCAL total length = %d\n", (int)total_len);
    png_write_chunk_start(png_ptr, (png_bytep)png_sCAL, (png_uint_32)total_len);
-   png_write_chunk_data(png_ptr, (png_bytep)&unit, 1);
+   png_write_chunk_data(png_ptr, (png_bytep)&bunit, 1);
    png_write_chunk_data(png_ptr, (png_bytep)wbuf, png_strlen(wbuf)+1);
    png_write_chunk_data(png_ptr, (png_bytep)hbuf, png_strlen(hbuf));
 
@@ -1565,6 +1594,7 @@ png_write_sCAL_s(png_structp png_ptr, int unit, png_charp width,
 #endif
    png_size_t total_len;
    char wbuf[32], hbuf[32];
+   png_byte bunit = unit;
 
    png_debug(1, "in png_write_sCAL_s\n");
 
@@ -1574,7 +1604,7 @@ png_write_sCAL_s(png_structp png_ptr, int unit, png_charp width,
 
    png_debug1(3, "sCAL total length = %d\n", total_len);
    png_write_chunk_start(png_ptr, (png_bytep)png_sCAL, (png_uint_32)total_len);
-   png_write_chunk_data(png_ptr, (png_bytep)&unit, 1);
+   png_write_chunk_data(png_ptr, (png_bytep)&bunit, 1);
    png_write_chunk_data(png_ptr, (png_bytep)wbuf, png_strlen(wbuf)+1);
    png_write_chunk_data(png_ptr, (png_bytep)hbuf, png_strlen(hbuf));
 
