@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.8 1998/11/18 18:40:44 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.9 1998/12/02 15:59:47 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -656,6 +656,7 @@ void Fl_Window_Type::write_properties() {
   if (o->visible()) write_string("visible");
 }
 
+extern int pasteoffset;
 void Fl_Window_Type::read_property(const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
@@ -668,6 +669,9 @@ void Fl_Window_Type::read_property(const char *c) {
   } else if (!strcmp(c,"xclass")) {
     storestring(read_word(),xclass);
     ((Fl_Window*)o)->xclass(xclass);
+  } else if (!strcmp(c,"xywh")) {
+    Fl_Widget_Type::read_property(c);
+    pasteoffset = 0; // make it not apply to contents
   } else {
     Fl_Widget_Type::read_property(c);
   }
@@ -693,5 +697,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.8 1998/11/18 18:40:44 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.9 1998/12/02 15:59:47 mike Exp $".
 //
