@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.3
 
 	- Documentation updates.
+	- Fl_Scroll didn't compute the location of labels to the
+	  right or below when determining the area to erase.
 	- Added backward-compatibility macro for
 	  filename_setext().
 	- Fl_Bitmap::copy(), Fl_Pixmap::copy(), and

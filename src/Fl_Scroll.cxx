@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.2 2002/08/09 22:57:00 easysw Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.3 2002/12/19 21:42:22 easysw Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -50,10 +50,20 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   int R = X; int B = Y; // track bottom & right edge of all children
   for (int i=s->children()-2; i--;) {
     Fl_Widget& o = **a++;
+    int NR, NB;
     s->draw_child(o);
     s->draw_outside_label(o);
-    if (o.x()+o.w() > R) R = o.x()+o.w();
-    if (o.y()+o.h() > B) B = o.y()+o.h();
+    NR = o.x()+o.w();
+    NB = o.y()+o.h();
+    if ((o.align() & (FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT)) &&
+        !(o.align() & FL_ALIGN_INSIDE)) {
+      int LW = 0, LH = 0;
+      o.measure_label(LW, LH);
+      if (o.align() & FL_ALIGN_BOTTOM) NB += LH;
+      else NR += LW;
+    }
+    if (NR > R) R = NR;
+    if (NB > B) B = NB;
   }
   // fill any area to right & bottom of widgets:
   if (R < X+W && B > Y) {
@@ -248,5 +258,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.2 2002/08/09 22:57:00 easysw Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.6.2.3 2002/12/19 21:42:22 easysw Exp $".
 //
