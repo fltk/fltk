@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.38 2003/06/01 00:23:57 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.39 2003/07/19 06:10:20 matthiaswm Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -387,7 +387,7 @@ void cut_cb(Fl_Widget *, void *) {
 extern int force_parent;
 
 void paste_cb(Fl_Widget*, void*) {
-  if (ipasteoffset) force_parent = 1;
+  //if (ipasteoffset) force_parent = 1;
   pasteoffset = ipasteoffset;
   if (gridx>1) pasteoffset = ((pasteoffset-1)/gridx+1)*gridx;
   if (gridy>1) pasteoffset = ((pasteoffset-1)/gridy+1)*gridy;
@@ -884,5 +884,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.38 2003/06/01 00:23:57 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.39 2003/07/19 06:10:20 matthiaswm Exp $".
 //
