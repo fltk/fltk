@@ -26,12 +26,10 @@ CC      =gcc
 # flags for C++ compiler:
 CFLAGS          =-Wall -O2 -DCYGNUS
 CXXFLAGS        =-Wall -O2 -DCYGNUS
-CXXFLAGS_D      =-Wall -g -DDEBUG -DCYGNUS
 
 # program to make the archive:
 LIBNAME         =libfltk.a
-LIBNAME_D       =libfltk_d.a
-AR              =ar -ruv
+LIBCOMMAND      =ar -ruv
 RANLIB          =ranlib
 
 # libraries to link with:
