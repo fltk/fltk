@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.19 2000/08/20 04:35:16 spitzak Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.20 2000/10/21 20:01:56 spitzak Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -364,7 +364,6 @@ static Fl_Window* resize_bug_fix;
 
 int fl_handle(const XEvent& xevent)
 {
-  Fl::e_keysym = 0;
   fl_xevent = &xevent;
   Window xid = xevent.xany.window;
 
@@ -898,5 +897,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.19 2000/08/20 04:35:16 spitzak Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.20 2000/10/21 20:01:56 spitzak Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.28 2000/06/20 05:47:38 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.29 2000/10/21 20:01:56 spitzak Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -417,7 +417,6 @@ static Fl_Window* resize_bug_fix;
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  Fl::e_keysym = 0;
 
 #if 0
   // Not sure what this is, it may be left over from earlier attempts to
@@ -951,5 +950,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.28 2000/06/20 05:47:38 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.29 2000/10/21 20:01:56 spitzak Exp $".
 //

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.15 2000/06/06 14:48:17 mike Exp $"
+dnl "$Id: configure.in,v 1.33.2.16 2000/10/21 20:01:55 spitzak Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -140,11 +140,10 @@ AC_CHECK_FUNC(snprintf,
 AC_CHECK_FUNCS(vsprintf)
 
 AC_PATH_XTRA
-echo "Ignoring libraries \"$X_PRE_LIBS\" requested by configure."
-dnl LIBS="$LIBS$X_LIBS$X_PRE_LIBS"
+dnl# echo "Ignoring libraries \"$X_PRE_LIBS\" requested by configure."
 LIBS="$LIBS$X_LIBS"
-CFLAGS="$CFLAGS $X_CFLAGS"
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+CFLAGS="$CFLAGS$X_CFLAGS"
+CXXFLAGS="$CXXFLAGS$X_CFLAGS"
 
 dnl My test to see if OpenGL is on this machine:
 GLLIB=
@@ -176,10 +175,15 @@ dnl add warnings to compiler switches:
 dnl do this last so messing with switches does not break tests
 if test -n "$GXX"; then
     CFLAGS="-Wall $CFLAGS"
-    CXXFLAGS="-Wall -Wno-return-type $CXXFLAGS"
+    CXXFLAGS="-Wall $CXXFLAGS"
     if test -z "$DEBUGFLAG"; then
-        CFLAGS="-O2 -fforce-mem -fforce-addr -fcaller-saves $CFLAGS"
-        CXXFLAGS="-O2 -fforce-mem -fforce-addr -fcaller-saves $CXXFLAGS"
+    	# Note: Can't use -fomit-frame-pointer - prevents tools like
+	#       libsafe from working!
+	# WAS: I removed the -fforce-mem, -fforce-addr, -fcaller-saves
+	#      They all seemed to make either no difference or enlarged
+	#      the code by a few hundred bytes.
+        CFLAGS="-O2 $CFLAGS"
+        CXXFLAGS="-O2 $CXXFLAGS"
     fi
     if test $PICFLAG = 1; then
     	CFLAGS="-fPIC $CFLAGS"
@@ -223,9 +227,8 @@ else
 		#     MAKEDEPEND="CC -M"
 
 		echo "FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI -n32"
-        	# -woff 3322 is necessary due to errors in Xlib headers on IRIX
         	CFLAGS="-fullwarn $CFLAGS"
-        	CXXFLAGS="-fullwarn -woff 1685,3322 $CXXFLAGS"
+        	CXXFLAGS="-fullwarn $CXXFLAGS"
 	    else
         	CXXFLAGS="+w +pp $CXXFLAGS"
 	    fi
@@ -275,5 +278,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.15 2000/06/06 14:48:17 mike Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.16 2000/10/21 20:01:55 spitzak Exp $".
 dnl

@@ -1,15 +1,17 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 0.99 
+version 1.0009 
+header_name {.h} 
+code_name {.cxx} 
 gridx 10 
 gridy 10 
 snap 3
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {329 266 321 324} hide resizable
+    xywh {329 266 321 324} resizable visible
   } {
     Fl_Tabs {} {open
-      xywh {10 10 300 200} color {47 15} resizable
+      xywh {10 10 300 200} selection_color 15 resizable
     } {
       Fl_Group {} {
         label Label1 open
@@ -41,13 +43,13 @@ Function {} {open
           xywh {140 100 100 30}
         }
         Fl_Button {} {
-          label {This is stuff inside the Fl_Group "tab2"} selected
+          label {This is stuff inside the Fl_Group "tab2"}
           xywh {30 140 260 30}
         }
       }
       Fl_Group {} {
-        label tab3 open
-        xywh {10 30 300 180} hide
+        label tab3 open selected
+        xywh {10 30 300 180}
       } {
         Fl_Button {} {
           label button2
@@ -81,7 +83,7 @@ Function {} {open
       }
       Fl_Group {} {
         label {     tab5      } open
-        xywh {10 30 300 180} labeltype ENGRAVED_LABEL
+        xywh {10 30 300 180} labeltype ENGRAVED_LABEL hide
       } {
         Fl_Button {} {
           label button2
@@ -93,7 +95,7 @@ Function {} {open
         }
         Fl_Clock {} {
           label {Make sure this clock does not use processor time when this tab is hidden or window is iconized}
-          xywh {160 50 100 100} box OSHADOW_BOX color {238 0} labelfont 8 labelsize 10 align 130
+          xywh {160 50 100 100} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
         }
       }
     }
