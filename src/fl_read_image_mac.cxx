@@ -1,5 +1,5 @@
 //
-// "$Id: fl_read_image_mac.cxx,v 1.1.2.3 2003/09/08 17:30:06 easysw Exp $"
+// "$Id: fl_read_image_mac.cxx,v 1.1.2.4 2003/09/08 18:08:04 easysw Exp $"
 //
 // WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
 //
@@ -37,14 +37,13 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   Rect		src,		// Source rectangle
 		dst;		// Destination rectangle
   Fl_Offscreen	osbuffer;	// Temporary off-screen buffer for copy
-  GrafPtr	srcPort,	// Source port
-		dstPort;	// Destination port
+  GrafPtr	srcPort;	// Source port
   RGBColor	rgb;		// RGB colors for copy mask...
   PixMapHandle	pm;		// Pixmap handle for off-screen buffer
   uchar		*base,		// Base address of off-screen buffer
 		*psrc,		// Pointer into off-screen buffer
 		*pdst;		// Pointer into pixel buffer
-  int           x, y;		// Current X & Y in image
+  int           idx, idy;	// Current X & Y in image
   int		d;		// Depth of image
   int		rowBytes;	// Number of bytes per row...
 
@@ -101,13 +100,12 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   rowBytes = (*pm)->rowBytes & 0x3fff;
 
   // Copy the image from the off-screen buffer to the memory buffer.
-  for (y = 0, pdst = p; y < h; y ++)
-    for (x = 0, psrc = base + y * rowBytes + 1; x < w; x ++, psrc += 4, pdst += d) {
+  for (idy = 0, pdst = p; idy < h; idy ++)
+    for (idx = 0, psrc = base + idy * rowBytes + 1; idx < w; idx ++, psrc += 4, pdst += d) {
       pdst[0] = psrc[0];
       pdst[1] = psrc[1];
       pdst[2] = psrc[2];
     }
-  }
 
   // Unlock and delete the off-screen buffer, then return...
   UnlockPixels(pm);
@@ -118,5 +116,5 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
 
 //
-// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.3 2003/09/08 17:30:06 easysw Exp $".
+// End of "$Id: fl_read_image_mac.cxx,v 1.1.2.4 2003/09/08 18:08:04 easysw Exp $".
 //
