@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fl_Shared_Image::reload() didn't set the image_
+	  pointer properly in all cases (STR #632)
 	- Fl_Help_View::topline() incorrectly set the changed()
 	  flag (STR #631)
 	- Fl_Choice::value() now supports NULL or -1 to deselect
