@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Button.cxx,v 1.4.2.3.2.2 2001/11/03 19:24:22 easysw Exp $"
+// "$Id: Fl_Menu_Button.cxx,v 1.4.2.3.2.3 2001/12/16 16:41:48 easysw Exp $"
 //
 // Menu button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -65,7 +65,7 @@ int Fl_Menu_Button::handle(int e) {
     } else if (type()) {
       if (!(type() & (1 << (Fl::event_button()-1)))) return 0;
     }
-    if (Fl::visible_focus()) take_focus();
+    if (Fl::visible_focus()) Fl::focus(this);
     popup();
     return 1;
   case FL_KEYBOARD:
@@ -93,5 +93,5 @@ Fl_Menu_Button::Fl_Menu_Button(int X,int Y,int W,int H,const char *l)
 }
 
 //
-// End of "$Id: Fl_Menu_Button.cxx,v 1.4.2.3.2.2 2001/11/03 19:24:22 easysw Exp $".
+// End of "$Id: Fl_Menu_Button.cxx,v 1.4.2.3.2.3 2001/12/16 16:41:48 easysw Exp $".
 //

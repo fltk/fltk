@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.H,v 1.5.2.4 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Fl_Color_Chooser.H,v 1.5.2.4.2.1 2001/12/16 16:41:48 easysw Exp $"
 //
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,6 +40,7 @@ class Flcc_HueBox : public Fl_Widget {
   int px, py;
 protected:
   FL_EXPORT void draw();
+  FL_EXPORT int handle_key(int);
 public:
   FL_EXPORT int handle(int);
   Flcc_HueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
@@ -50,6 +51,7 @@ class Flcc_ValueBox : public Fl_Widget {
   int py;
 protected:
   FL_EXPORT void draw();
+  FL_EXPORT int handle_key(int);
 public:
   FL_EXPORT int handle(int);
   Flcc_ValueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
@@ -96,5 +98,5 @@ FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b);
 #endif
 
 //
-// End of "$Id: Fl_Color_Chooser.H,v 1.5.2.4 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Fl_Color_Chooser.H,v 1.5.2.4.2.1 2001/12/16 16:41:48 easysw Exp $".
 //

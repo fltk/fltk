@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- The Fl_Color_Chooser widget now supports keyboard
+	  navigation.
+	- Fixed button and valuator widgets to call Fl::focus()
+	  instead of take_focus().
 	- Tweeked the radio button drawing code for better
 	  circles with different boxtypes.
 	- The Fl_File_Chooser widget did not provide a shown()

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.1 2001/12/12 21:33:34 easysw Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.2 2001/12/16 16:41:48 easysw Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -180,6 +180,10 @@ int Flcc_HueBox::handle(int e) {
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
   switch (e) {
   case FL_PUSH:
+    if (Fl::visible_focus()) {
+      Fl::focus(this);
+      redraw();
+    }
     ih = c->hue();
     is = c->saturation();
   case FL_DRAG: {
@@ -192,6 +196,15 @@ int Flcc_HueBox::handle(int e) {
     if (Fl::event_state(FL_CTRL)) H = ih;
     if (c->hsv(H, S, c->value())) c->do_callback();
     } return 1;
+  case FL_FOCUS :
+  case FL_UNFOCUS :
+    if (Fl::visible_focus()) {
+      redraw();
+      return 1;
+    }
+    else return 1;
+  case FL_KEYBOARD :
+    return handle_key(Fl::event_key());
   default:
     return 0;
   }
@@ -217,6 +230,45 @@ static void generate_image(void* vv, int X, int Y, int W, uchar* buf) {
   }
 }
 
+int Flcc_HueBox::handle_key(int key) {
+  int w1 = w()-Fl::box_dw(box())-6;
+  int h1 = h()-Fl::box_dh(box())-6;
+  Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
+
+#ifdef CIRCLE
+  int X = int(.5*(cos(c->hue()*(M_PI/3.0))*c->saturation()+1) * w1);
+  int Y = int(.5*(1-sin(c->hue()*(M_PI/3.0))*c->saturation()) * h1);
+#else
+  int X = int(c->hue()/6.0*w1);
+  int Y = int((1-c->saturation())*h1);
+#endif
+
+  switch (key) {
+    case FL_Up :
+      Y -= 3;
+      break;
+    case FL_Down :
+      Y += 3;
+      break;
+    case FL_Left :
+      X -= 3;
+      break;
+    case FL_Right :
+      X += 3;
+      break;
+    default :
+      return 0;
+  }
+
+  double Xf, Yf, H, S;
+  Xf = (double)X/(double)w1;
+  Yf = (double)Y/(double)h1;
+  tohs(Xf, Yf, H, S);
+  if (c->hsv(H, S, c->value())) c->do_callback();
+
+  return 1;
+}
+
 void Flcc_HueBox::draw() {
   if (damage()&FL_DAMAGE_ALL) draw_box();
   int x1 = x()+Fl::box_dx(box());
@@ -237,7 +289,7 @@ void Flcc_HueBox::draw() {
   if (X < 0) X = 0; else if (X > w1-6) X = w1-6;
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
   //  fl_color(c->value()>.75 ? FL_BLACK : FL_WHITE);
-  draw_box(FL_UP_BOX,x1+X,y1+Y,6,6,FL_GRAY);
+  draw_box(FL_UP_BOX,x1+X,y1+Y,6,6,Fl::focus() == this ? FL_BLACK : FL_GRAY);
   px = X; py = Y;
 }
 
@@ -248,6 +300,10 @@ int Flcc_ValueBox::handle(int e) {
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
   switch (e) {
   case FL_PUSH:
+    if (Fl::visible_focus()) {
+      Fl::focus(this);
+      redraw();
+    }
     iv = c->value();
   case FL_DRAG: {
     double Yf;
@@ -255,6 +311,15 @@ int Flcc_ValueBox::handle(int e) {
     if (fabs(Yf-iv)<(3*1.0/h())) Yf = iv;
     if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback();
     } return 1;
+  case FL_FOCUS :
+  case FL_UNFOCUS :
+    if (Fl::visible_focus()) {
+      redraw();
+      return 1;
+    }
+    else return 1;
+  case FL_KEYBOARD :
+    return handle_key(Fl::event_key());
   default:
     return 0;
   }
@@ -285,8 +350,33 @@ void Flcc_ValueBox::draw() {
   if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
   int Y = int((1-c->value()) * (h1-6));
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
-  draw_box(FL_UP_BOX,x1,y1+Y,w1,6,FL_GRAY);
+  draw_box(FL_UP_BOX,x1,y1+Y,w1,6,Fl::focus() == this ? FL_BLACK : FL_GRAY);
   py = Y;
+}
+
+int Flcc_ValueBox::handle_key(int key) {
+  int h1 = h()-Fl::box_dh(box())-6;
+  Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
+
+  int Y = int((1-c->value()) * h1);
+  if (Y < 0) Y = 0; else if (Y > h1) Y = h1;
+
+  switch (key) {
+    case FL_Up :
+      Y -= 3;
+      break;
+    case FL_Down :
+      Y += 3;
+      break;
+    default :
+      return 0;
+  }
+
+  double Yf;
+  Yf = 1-((double)Y/(double)h1);
+  if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback();
+
+  return 1;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -431,5 +521,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.1 2001/12/12 21:33:34 easysw Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.2 2001/12/16 16:41:48 easysw Exp $".
 //
