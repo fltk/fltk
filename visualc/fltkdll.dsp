@@ -1312,6 +1312,16 @@ DEP_CPP_FL_PI=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_plastic.cxx
+DEP_CPP_FL_PLA=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_PNG_Image.cxx
 DEP_CPP_FL_PN=\
 	"..\fl\enumerations.h"\

@@ -20,6 +20,9 @@ CHANGES IN FLTK 1.1.0b6
 	  color_average() methods to the Fl_Image classes.
 	- Added a horizontal scrollbar to the Fl_Help_View
 	  widget.
+	- Added new FL_PLASTIC_{UP/DOWN}_{BOX/FRAME} boxtypes
+	  for a more "modern" look (sort of a cross between KDE
+	  2.2 and Aqua.)
 	- Fl_Float_Input and Fl_Int_Input no longer accept
 	  pasted text that is not a floating point or integer
 	  value.  Pasted numbers now replace text in these

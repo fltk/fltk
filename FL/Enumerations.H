@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.9 2001/11/28 20:48:49 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.10 2001/11/28 21:37:35 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -158,6 +158,8 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_DIAMOND_UP_BOX,	_FL_DIAMOND_DOWN_BOX,
   _FL_OVAL_BOX,		_FL_OSHADOW_BOX,
   _FL_OVAL_FRAME,	_FL_OFLAT_BOX,
+  _FL_PLASTIC_UP_BOX,	_FL_PLASTIC_DOWN_BOX,
+  _FL_PLASTIC_UP_FRAME,	_FL_PLASTIC_DOWN_FRAME,
   FL_FREE_BOXTYPE
 };
 extern FL_EXPORT Fl_Boxtype define_FL_ROUND_UP_BOX();
@@ -181,6 +183,12 @@ extern FL_EXPORT Fl_Boxtype define_FL_OVAL_BOX();
 #define FL_OSHADOW_BOX (Fl_Boxtype)(define_FL_OVAL_BOX()+1)
 #define FL_OVAL_FRAME (Fl_Boxtype)(define_FL_OVAL_BOX()+2)
 #define FL_OFLAT_BOX (Fl_Boxtype)(define_FL_OVAL_BOX()+3)
+
+extern FL_EXPORT Fl_Boxtype define_FL_PLASTIC_UP_BOX();
+#define FL_PLASTIC_UP_BOX define_FL_PLASTIC_UP_BOX()
+#define FL_PLASTIC_DOWN_BOX (Fl_Boxtype)(define_FL_PLASTIC_UP_BOX()+1)
+#define FL_PLASTIC_UP_FRAME (Fl_Boxtype)(define_FL_PLASTIC_UP_BOX()+2)
+#define FL_PLASTIC_DOWN_FRAME (Fl_Boxtype)(define_FL_PLASTIC_UP_BOX()+3)
 
 // conversions of box types to other boxtypes:
 inline Fl_Boxtype down(Fl_Boxtype b) {return (Fl_Boxtype)(b|1);}
@@ -364,5 +372,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.9 2001/11/28 20:48:49 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.10 2001/11/28 21:37:35 easysw Exp $".
 //

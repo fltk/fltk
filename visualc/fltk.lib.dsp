@@ -403,6 +403,11 @@ SOURCE=..\src\Fl_Pixmap.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_plastic.cxx
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_PNG_Image.cxx
 # End Source File
 # Begin Source File
