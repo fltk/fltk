@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.18 2000/04/25 22:16:17 mike Exp $"
+// "$Id: Fl.cxx,v 1.24.2.19 2000/05/10 16:43:35 bill Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -696,15 +696,6 @@ void Fl_Window::flush() {
   draw();
 }
 
-int fl_old_shortcut(const char* s) {
-  if (!s || !*s) return 0;
-  int n = 0;
-  if (*s == '#') {n |= FL_ALT; s++;}
-  if (*s == '+') {n |= FL_SHIFT; s++;}
-  if (*s == '^') {n |= FL_CTRL; s++;}
-  return n | *s;
-}
-
 //
-// End of "$Id: Fl.cxx,v 1.24.2.18 2000/04/25 22:16:17 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.19 2000/05/10 16:43:35 bill Exp $".
 //

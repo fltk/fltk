@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.4 2000/04/25 22:16:45 mike Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.5 2000/05/10 16:43:36 bill Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -158,6 +158,18 @@ const char * fl_shortcut_label(int shortcut) {
 #endif
 }
 
+// Emulation of XForms named shortcuts
+#include <stdlib.h>
+int fl_old_shortcut(const char* s) {
+  if (!s || !*s) return 0;
+  int n = 0;
+  if (*s == '#') {n |= FL_ALT; s++;}
+  if (*s == '+') {n |= FL_SHIFT; s++;}
+  if (*s == '^') {n |= FL_CTRL; s++;}
+  if (s[1]) return n | (int)strtol(s,0,0); // allow 0xf00 to get any key
+  return n | *s;
+}
+
 // Tests for &x shortcuts in button labels:
 
 int Fl_Widget::test_shortcut(const char *label) {
@@ -179,5 +191,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.4 2000/04/25 22:16:45 mike Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.5 2000/05/10 16:43:36 bill Exp $".
 //
