@@ -38,8 +38,6 @@
 #include "alignment_panel.h"
 #include <stdio.h>
 
-#define DRAW_GUIDES 
-
 extern int gridx;
 extern int gridy;
 extern int snap;
@@ -395,33 +393,12 @@ void Fl_Window_Type::setlabel(const char *n) {
 // make() is called on this widget when user picks window off New menu:
 Fl_Window_Type Fl_Window_type;
 
-// Resize from window manager, try to resize it back to a legal size.
-// This is not proper X behavior, but works on 4DWM and fvwm
+// Resize from window manager...
 void Overlay_Window::resize(int X,int Y,int W,int H) {
-//   if (!visible() || W==w() && H==h()) {
-//     Fl_Overlay_Window::resize(X,Y,W,H);
-//     return;
-//   }
-//   int nw = gridx&&W!=w() ? ((W+gridx/2)/gridx)*gridx : W;
-//   int nh = gridy&&H!=h() ? ((H+gridy/2)/gridy)*gridy : H;
   Fl_Widget* t = resizable(); resizable(0);
   Fl_Overlay_Window::resize(X,Y,W,H);
   resizable(t);
   update_xywh();
-//   // make sure new window size surrounds the widgets:
-//   int b = 0;
-//   int r = 0;
-//   for (Fl_Type *o=window->next; o && o->level>window->level; o=o->next)
-//     if (o->is_widget() && !o->is_menu_item()) {
-//       Fl_Widget* w = ((Fl_Widget_Type*)o)->o;
-//       if (w->x()+w->w() > r) r = w->x()+w->w();
-//       if (w->y()+w->h() > b) b = w->y()+w->h();
-//     }
-//   if (nh < b) nh = b;
-//   if (nw < r) nw = r;
-//   // If changed, tell the window manager.  Skip really big windows
-//   // that might be bigger than screen:
-//   if (nw != W && nw < Fl::w()-100 || nh != H && nh < Fl::h()-100) size(nw,nh);
 }
 
 // calculate actual move by moving mouse position (mx,my) to
@@ -637,75 +614,69 @@ void Fl_Window_Type::draw_overlay() {
     // - check for distance to the window edge
     //    * FLTK suggests 10 pixels from the edge
     int d;
+    int xsp, xdl, ydl, ysp;
+
+
+    ideal_spacing(xsp, ysp);
+    xdl = (xsp + 1) / 2;
+    ydl = (ysp + 1) / 2;
 
     if (drag & DRAG) {
-      if (abs(d = 10 - myby) < 5) {
+      if (abs(d = ysp - myby) < ydl) {
 	dy += d;
 	mybt += d;
-	myby = 10;
+	myby = ysp;
 	draw_v_arrow(mybx+5, myby, 0);
       }
-      if (abs(d = o->h() - 10 - mybt) < 5) {
+      if (abs(d = o->h() - ysp - mybt) < ydl) {
 	dy += d;
 	myby += d;
-	mybt = o->h()- 10;
+	mybt = o->h()- ysp;
 	draw_v_arrow(mybx+5, mybt, o->h());
       }
-      if (abs(d = 10 - mybx) < 5) {
+      if (abs(d = xsp - mybx) < xdl) {
         dx += d;
 	mybr += d;
-	mybx = 10;
+	mybx = xsp;
 	draw_h_arrow(mybx, myby+5, 0);
       }
-      if (abs(d = o->w() - 10 - mybr) < 5) {
+      if (abs(d = o->w() - xsp - mybr) < xdl) {
 	dx += d;
 	mybx += d;
-	mybr = o->w()- 10;
+	mybr = o->w()- xsp;
 	draw_h_arrow(mybr, myby+5, o->w());
       }
     } else if (numselected==1 && selection) {
       // check for FLTK preferred sizes
-      Fl_Widget *myw = ((Fl_Widget_Type *)selection)->o;
+      Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
+      int iw, ih;
 
-      if (selection->is_button()) {
-	int w = mybr-mybx;
-	int h = mybt-myby;
-	if (abs(d = h-25) < 4) {
-	  mybt = myby + 25;
-	  if (drag & TOP) dy -= d;
-	  else dy += d;
-	} else if (abs(d = h-20) < 4) {
-	  mybt = myby + 20;
-	  if (drag & TOP) dy -= d;
-	  else dy += d;
-	} else if (abs(d = h-15) < 4) {
-	  mybt = myby + 15;
-	  if (drag & TOP) dy -= d;
-	  else dy += d;
-	}
+      mysel->ideal_size(iw, ih);
 
-	draw_height(mybx < 20 ? mybr+10 : mybx-10, myby, mybt,
-	            mybx < 20 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
+      int w = mybr-mybx;
+      int h = mybt-myby;
 
-	int ww = 0, hh = 0;
-
-	myw->measure_label(ww, hh);
-
-        ww += 20;
-
-	if (abs(d = ww - w) < 5) {
-	  if (drag & LEFT) {
-            mybx = mybr - ww;
-	    dx -= d;
-	  } else {
-            mybr = mybx + ww;
-	    dx += d;
-	  }
-	}
-
-	draw_width(mybx, myby < 20 ? mybt+10 : myby-10, mybr,
-	           myby < 20 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
+      if (abs(d = h-ih) < 4) {
+	mybt = myby + ih;
+	if (drag & TOP) dy -= d;
+	else dy += d;
       }
+
+      draw_height(mybx < 20 ? mybr+10 : mybx-10, myby, mybt,
+	          mybx < 20 ? FL_ALIGN_RIGHT : FL_ALIGN_LEFT);
+
+      if (abs(d = iw - w) < 5) {
+	if (drag & LEFT) {
+          mybx = mybr - iw;
+	  dx -= d;
+	} else {
+          mybr = mybx + iw;
+	  dx += d;
+	}
+      }
+
+      draw_width(mybx, myby < 20 ? mybt+10 : myby-10, mybr,
+	         myby < 20 ? FL_ALIGN_BOTTOM : FL_ALIGN_TOP);
     }
 
     // - check distances between individual widgets
@@ -716,6 +687,10 @@ void Fl_Window_Type::draw_overlay() {
 
           // Only check visible widgets...
 	  if (!qw->o->visible_r()) continue;
+
+          qw->ideal_spacing(xsp, ysp);
+	  xdl = (xsp + 1) / 2;
+	  ydl = (ysp + 1) / 2;
 
           // - check horizontal and vertical alignment with other widgets
           if (abs(myby - qw->o->y()) < 3) draw_top_brace(qw->o);
@@ -728,7 +703,7 @@ void Fl_Window_Type::draw_overlay() {
           if (qw->o->y()>=myby && qw->o->y()<mybt) {
 	    // Compare left of selected to right of current
             int xx = mybx - (qw->o->x()+qw->o->w());
-            if (abs(d = xx-10) < 5) {
+            if (abs(d = xx-xsp) < xdl) {
 	      if (drag & (LEFT | DRAG)) dx += d;
 	      else dx -= d;
 
@@ -740,7 +715,7 @@ void Fl_Window_Type::draw_overlay() {
             } else {
 	      // Compare right of selected to left of current
               xx = qw->o->x() - mybr;
-              if (abs(d = xx-10) < 5) {
+              if (abs(d = xx-xsp) < xdl) {
 	        if (drag & (LEFT | DRAG)) dx += d;
 		else dx -= d;
 
@@ -756,7 +731,7 @@ void Fl_Window_Type::draw_overlay() {
           if (qw->o->x()>=mybx && qw->o->x()<mybr) {
             // Compare top of selected to bottom of current
             int yy = myby - (qw->o->y()+qw->o->h());
-            if (abs(d = yy-10) < 5) {
+            if (abs(d = yy-ysp) < ydl) {
 	      if (drag & (TOP | DRAG)) dy += d;
 	      else dy -= d;
 
@@ -768,7 +743,7 @@ void Fl_Window_Type::draw_overlay() {
             } else {
 	      // Compare bottom of selected to top of current
               yy = qw->o->y() - mybt;
-              if (abs(d = yy-10) < 5) {
+              if (abs(d = yy-ydl) < ydl) {
 	        if (drag & (TOP | DRAG)) dy += d;
 		else dy -= d;
 

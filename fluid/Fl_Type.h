@@ -304,6 +304,9 @@ public:
   virtual void read_property(const char *);
   virtual int read_fdesign(const char*, const char*);
 
+  virtual void ideal_size(int &w, int &h);
+  virtual void ideal_spacing(int &x, int &y);
+
   ~Fl_Widget_Type();
   void redraw();
 };

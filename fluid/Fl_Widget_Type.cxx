@@ -65,6 +65,27 @@ const char* subclassname(Fl_Type* l) {
   return l->type_name();
 }
 
+// Return the ideal widget size...
+void
+Fl_Widget_Type::ideal_size(int &w, int &h) {
+  h = o->labelsize();
+  o->measure_label(w, h);
+
+  h += o->labelsize() - 3; 
+  w += 2 * (o->labelsize() - 4);
+}
+
+// Return the ideal widget spacing...
+void
+Fl_Widget_Type::ideal_spacing(int &x, int &y) {
+  if (o->labelsize() < 9)
+    x = y = 0;
+  else if (o->labelsize() < 14)
+    x = y = 5;
+  else
+    x = y = 10;
+}
+
 Fl_Type *Fl_Widget_Type::make() {
   // Find the current widget, or widget to copy:
   Fl_Type *qq = Fl_Type::current;
