@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.6 1998/10/21 20:42:08 mike Exp $"
+dnl# "$Id: configure.in,v 1.7 1998/10/21 20:56:42 mike Exp $"
 dnl#
 dnl# for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -70,8 +70,13 @@ AC_ARG_ENABLE(winstyle, [  --enable-windows-style  turn on windows look-n-feel [
   BORDER_WIDTH=2
 fi)
 
-CFLAGS="$DEBUGFLAG $CFLAGS"
-CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
+if test -n "$CFLAGS"; then
+	CFLAGS="$DEBUGFLAG $CFLAGS"
+fi
+
+if test -n "$CXXFLAGS"; then
+	CXXFLAGS="$DEBUGFLAG $CXXFLAGS"
+fi
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -141,5 +146,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.6 1998/10/21 20:42:08 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.7 1998/10/21 20:56:42 mike Exp $".
 dnl#
