@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.6 2000/06/05 21:20:57 mike Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.7 2000/08/12 08:42:12 spitzak Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,8 @@
 #include <FL/fl_draw.H>
 
 #define BORDER 10
-#define TABSLOPE 8
+#define TABSLOPE 5
+#define EXTRASPACE 5
 
 // return the left edges of each tab (plus a fake left edge for a tab
 // past the right-hand one).  These position are actually of the left
@@ -52,8 +53,8 @@ int Fl_Tabs::tab_positions(int* p, int* w) {
     if (o->visible()) selected = i;
     if (o->label()) {
       int wt = 0; int ht = 0; o->measure_label(wt,ht);
-      w[i] = wt+TABSLOPE;
-      if (2*TABSLOPE > w[i]) w[i] = 2*TABSLOPE;
+      w[i] = wt+TABSLOPE+EXTRASPACE;
+      //if (2*TABSLOPE > w[i]) w[i] = 2*TABSLOPE;
     } else 
       w[i] = 2*TABSLOPE;
     p[i+1] = p[i]+w[i];
@@ -257,9 +258,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     fl_color(!sel && o==push_ ? FL_DARK3 : FL_LIGHT3);
     fl_line(x1, y()+h()+H, x1+TABSLOPE, y()+h()-1);
   }
-  if (W > TABSLOPE)
-    o->draw_label(what==LEFT ? x1+TABSLOPE : x2-W+TABSLOPE,
-		  y()+(H<0?h()+H-3:0), W-TABSLOPE,
+  if (W > TABSLOPE+EXTRASPACE/2)
+    o->draw_label((what==LEFT ? x1 : x2-W)+(TABSLOPE+EXTRASPACE/2),
+		  y()+(H<0?h()+H-2:0), W-(TABSLOPE+EXTRASPACE/2),
 		  (H<0?-H:H)+3, FL_ALIGN_CENTER);
 }
 
@@ -271,5 +272,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.6 2000/06/05 21:20:57 mike Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.7 2000/08/12 08:42:12 spitzak Exp $".
 //

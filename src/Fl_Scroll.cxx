@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scroll.cxx,v 1.7.2.3 2000/06/05 21:20:56 mike Exp $"
+// "$Id: Fl_Scroll.cxx,v 1.7.2.4 2000/08/12 08:42:12 spitzak Exp $"
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
@@ -116,39 +116,57 @@ void Fl_Scroll::draw() {
   }
 
   // turn the scrollbars on and off as necessary:
-  for (int z = 0; z<2; z++) {
-    if ((type()&VERTICAL) && (type()&ALWAYS_ON || t < Y || b > Y+H)) {
-      if (!scrollbar.visible()) {
-	scrollbar.set_visible();
-	W -= scrollbar.w();
-	d = FL_DAMAGE_ALL;
-      }
-    } else {
-      if (scrollbar.visible()) {
-	scrollbar.clear_visible();
-	draw_clip(this,
-		  scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar.w() : X+W,
-		  Y, scrollbar.w(), H);
-	W += scrollbar.w();
-	d = FL_DAMAGE_ALL;
+  // See if children would fit if we had no scrollbars...
+  X = x()+Fl::box_dx(box());
+  Y = y()+Fl::box_dy(box());
+  W = w()-Fl::box_dw(box());
+  H = h()-Fl::box_dh(box());
+  int vneeded = 0;
+  int hneeded = 0;
+  if (type() & VERTICAL) {
+    if ((type() & ALWAYS_ON) || t < Y || b > Y+H) {
+      vneeded = 1;
+      W -= scrollbar.w();
+      if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollbar.w();
+    }
+  }
+  if (type() & HORIZONTAL) {
+    if ((type() & ALWAYS_ON) || l < X || r > X+W) {
+      hneeded = 1;
+      H -= hscrollbar.h();
+      if (scrollbar.align() & FL_ALIGN_TOP) Y += hscrollbar.h();
+      // recheck vertical since we added a horizontal scrollbar
+      if (!vneeded && (type() & VERTICAL)) {
+	if ((type() & ALWAYS_ON) || t < Y || b > Y+H) {
+	  vneeded = 1;
+	  W -= scrollbar.w();
+	  if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollbar.w();
+	}
       }
     }
-    if ((type()&HORIZONTAL) && (type()&ALWAYS_ON || l < X || r > X+W)) {
-      if (!hscrollbar.visible()) {
-	hscrollbar.set_visible();
-	H -= hscrollbar.h();
-	d = FL_DAMAGE_ALL;
-      }
-    } else {
-      if (hscrollbar.visible()) {
-	hscrollbar.clear_visible();
-	draw_clip(this, X,
-		  scrollbar.align()&FL_ALIGN_TOP ? Y-hscrollbar.h() : Y+H,
-		  W, hscrollbar.h());
-	H += hscrollbar.h();
-	d = FL_DAMAGE_ALL;
-      }
-    }
+  }
+  // Now that we know what's needed, make it so.
+  if (vneeded && !scrollbar.visible()) {
+    scrollbar.set_visible();
+    d = FL_DAMAGE_ALL;
+  }
+  else if (!vneeded && scrollbar.visible()) {
+    scrollbar.clear_visible();
+    draw_clip(this,
+	      scrollbar.align()&FL_ALIGN_LEFT ? X : X+W-scrollbar.w(),
+	      Y, scrollbar.w(), H);
+    d = FL_DAMAGE_ALL;
+  }
+  if (hneeded && !hscrollbar.visible()) {
+    hscrollbar.set_visible();
+    d = FL_DAMAGE_ALL;
+  }
+  else if (!hneeded && hscrollbar.visible()) {
+    hscrollbar.clear_visible();
+    draw_clip(this,
+	      X, scrollbar.align()&FL_ALIGN_TOP ? Y : Y+H-hscrollbar.h(),
+	      W, hscrollbar.h());
+    d = FL_DAMAGE_ALL;
   }
 
   scrollbar.resize(scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar.w() : X+W,
@@ -231,5 +249,5 @@ int Fl_Scroll::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Scroll.cxx,v 1.7.2.3 2000/06/05 21:20:56 mike Exp $".
+// End of "$Id: Fl_Scroll.cxx,v 1.7.2.4 2000/08/12 08:42:12 spitzak Exp $".
 //
