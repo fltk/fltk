@@ -1,5 +1,5 @@
 /*
- * "$Id: flstring.h,v 1.1.2.6 2002/05/16 12:47:43 easysw Exp $"
+ * "$Id: flstring.h,v 1.1.2.7 2002/05/19 17:44:56 easysw Exp $"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
@@ -42,7 +42,7 @@
 
 #  ifdef index
 #    undef index
-#  endif // index
+#  endif /* index */
 
 #  if defined(WIN32) && !defined(__CYGWIN__)
 #    define strcasecmp(s,t)	stricmp((s), (t))
@@ -87,5 +87,5 @@ extern size_t fl_strlcpy(char *, const char *, size_t);
 #endif /* !flstring_h */
 
 /*
- * End of "$Id: flstring.h,v 1.1.2.6 2002/05/16 12:47:43 easysw Exp $".
+ * End of "$Id: flstring.h,v 1.1.2.7 2002/05/19 17:44:56 easysw Exp $".
  */
