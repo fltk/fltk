@@ -1,5 +1,5 @@
 //
-// "$Id: scandir_win32.c,v 1.7 1998/11/05 21:40:45 mike Exp $"
+// "$Id: scandir_win32.c,v 1.8 1998/12/08 21:00:18 mike Exp $"
 //
 // WIN32 scandir function for the Fast Light Tool Kit (FLTK).
 //
@@ -26,9 +26,10 @@
 // Emulation of posix scandir() call
 
 #include <config.h>
-#include <FL/filename.H>
 #include <string.h>
 #include <windows.h>
+
+struct dirent { char name[1]; };
 
 #ifdef __cplusplus
 extern "C"
@@ -108,5 +109,5 @@ int alphasort (struct dirent **a, struct dirent **b) {
 }
 
 //
-// End of "$Id: scandir_win32.c,v 1.7 1998/11/05 21:40:45 mike Exp $".
+// End of "$Id: scandir_win32.c,v 1.8 1998/12/08 21:00:18 mike Exp $".
 //
