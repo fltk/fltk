@@ -1,5 +1,5 @@
 //
-// "$Id: glut_font.cxx,v 1.4 1999/01/07 19:17:46 mike Exp $"
+// "$Id: glut_font.cxx,v 1.4.2.1 2000/04/25 07:48:07 bill Exp $"
 //
 // GLUT bitmap font routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,13 +40,13 @@ Glut_Bitmap_Font glutBitmapHelvetica10 = {FL_HELVETICA, 10};
 Glut_Bitmap_Font glutBitmapHelvetica12 = {FL_HELVETICA, 12};
 Glut_Bitmap_Font glutBitmapHelvetica18 = {FL_HELVETICA, 18};
 
-void glutBitmapCharacter(void *font, int character) {
+void glutBitmapCharacter(void* font, int character) {
   gl_font(((Glut_Bitmap_Font *)font)->font,((Glut_Bitmap_Font *)font)->size);
   char a[1]; a[0] = character;
   gl_draw(a,1);
 }
 
-int glutBitmapWidth(int font, int character) {
+int glutBitmapWidth(void* font, int character) {
   gl_font(((Glut_Bitmap_Font *)font)->font,((Glut_Bitmap_Font *)font)->size);
   return int(gl_width(character)+.5);
 }
@@ -54,5 +54,5 @@ int glutBitmapWidth(int font, int character) {
 #endif
 
 //
-// End of "$Id: glut_font.cxx,v 1.4 1999/01/07 19:17:46 mike Exp $".
+// End of "$Id: glut_font.cxx,v 1.4.2.1 2000/04/25 07:48:07 bill Exp $".
 //

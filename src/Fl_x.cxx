@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.13 2000/02/23 09:23:53 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.14 2000/04/25 07:48:06 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -684,9 +684,7 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 			     InputOutput,
 			     visual->visual,
 			     mask, &attr));
-  w->set_visible();
-  w->handle(FL_SHOW); // get child windows to appear
-  w->redraw();
+  int showit = 1;
 
   if (!w->parent() && !attr.override_redirect) {
     // Communicate all kinds 'o junk to the X Window Manager:
@@ -719,6 +717,7 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
       Fl_Window* w = x->next->w;
       while (w->parent()) w = w->window();
       XSetTransientForHint(fl_display, x->xid, fl_xid(w));
+      if (!w->visible()) showit = 0; // guess that wm will not show it
     }
 
     XWMHints hints;
@@ -728,6 +727,7 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
       hints.flags |= StateHint;
       hints.initial_state = IconicState;
       fl_show_iconic = 0;
+      showit = 0;
     }
     if (w->icon()) {
       hints.icon_pixmap = (Pixmap)w->icon();
@@ -737,6 +737,11 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
   }
 
   XMapWindow(fl_display, x->xid);
+  if (showit) {
+    w->set_visible();
+    w->handle(FL_SHOW); // get child windows to appear
+    w->redraw();
+  }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -884,5 +889,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.13 2000/02/23 09:23:53 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.14 2000/04/25 07:48:06 bill Exp $".
 //
