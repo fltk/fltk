@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.12 1999/01/04 19:24:59 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.13 1999/01/04 19:29:10 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -40,15 +40,42 @@
 
 ////////////////////////////////////////////////////////////////
 
+// Wordwrap kludge.  It "sort of" works but there are lots of bugs.
+// Really the whole multi-line-input should be moved to a seperate
+// (and much more complex) subclass.  Single-line and multi-line
+// input are really a *lot* different!
+// To try the wordwrap define this:
+//#define WORDWRAP
+#ifdef WORDWRAP
+static int wordwrap; // width for wordwrapping, should be are to Fl_Input_.
+#endif
+
 // Copy string p..e to the buffer, replacing characters with ^X and \nnn
 // as necessary.  Truncate if necessary so the resulting string and
 // null terminator fits in a buffer of size n.  Return new end pointer.
 const char* Fl_Input_::expand(const char* p, char* buf) const {
   char* o = buf;
   char* e = buf+(MAXBUF-4);
+#ifdef WORDWRAP
+  const char* lastspace = p;
+  char* lastspace_out = o;
+  int width_to_lastspace = 0;
+#endif
   if (type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {*o++ = '*'; p++;}
   } else while (o<e) {
+#ifdef WORDWRAP
+    if (wordwrap && (p >= value_+size_ || *p==' ' || *p=='\n')) {
+      width_to_lastspace += fl_width(lastspace, p-lastspace);
+      if (p > lastspace+1) {
+	if (width_to_lastspace > wordwrap) {
+	  p = lastspace; o = lastspace_out; break;
+	}
+      }
+      lastspace = p;
+      lastspace_out = o;
+    }
+#endif
     if (p >= value_+size_) break;
     int c = *p++ & 255;
     if (c < ' ' || c == 127) {
@@ -152,36 +179,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   }
 
   setfont();
-
-#if 0	// patch to do auto-wrap written by Ian West
-  if ((type()==FL_MULTILINE_INPUT) && (value_==buffer) && (bufsize>=size_)) {
-    int wwidth = W-10;
-    int strtofln=0,lastsp=0,idx=0,lastbr=0;
-    while(idx <= size_){
-      if((buffer[idx] <= ' ') || (idx == size_)) {
-	if(buffer[idx] == '\n') lastbr=idx;
-	buffer[idx]=' ';
-	int twidth=(int)fl_width(&buffer[strtofln],idx-strtofln);
-	if ((twidth >= wwidth) && (lastsp > strtofln)) {
-//	printf(stderr,"Line break, lastsp=%d, idx=%d, strtofln=%d, lastbr=%d\n",lastsp,idx,strtofln,lastbr);
-	  buffer[lastsp]='\n';
-	  if (lastsp != lastbr) {
-	    if (lastsp < mu_p){
-	      mu_p=lastsp;
-	      erase_cursor_only = 0;
-	    }
-	  }
-	  strtofln=lastsp+1; 
-	} else {
-	  lastsp=idx;
-	}
-      }
-      idx++;
-    }
-//  fprintf(stderr,"Line length %d %d %d\n",(int)fl_width(buffer),size_, mu_p);
-//  if(xscroll_ > 0) {xscroll_=0; mu_p=0;}
-    buffer[size_] = 0;
-  }
+#ifdef WORDWRAP
+  if (type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
 #endif
 
   const char *p, *e;
@@ -215,7 +214,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     }
     lines++;
     if (e >= value_+size_) break;
-    if (*e == '\n') e++;
+    if (*e == '\n' || *e == ' ') e++;
     p = e;
   }
 
@@ -296,7 +295,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   CONTINUE:
     ypos += height;
     if (e >= value_+size_) break;
-    if (*e == '\n') e++;
+    if (*e == '\n' || *e == ' ') e++;
     p = e;
   }
 
@@ -326,7 +325,13 @@ int Fl_Input_::lineboundary(int i) const {
   return index(i-1) == '\n' || index(i) == '\n';
 }
 
-void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
+void Fl_Input_::handle_mouse(int X, int Y,
+#ifdef WORDWRAP
+			     int W,
+#else
+			     int /*W*/,
+#endif
+			     int /*H*/, int drag) {
   was_up_down = 0;
   if (!size()) return;
   setfont();
@@ -338,10 +343,13 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
     (Fl::event_y()-Y+yscroll_)/fl_height() : 0;
 
   int newpos = 0;
+#ifdef WORDWRAP
+  if (type()==FL_MULTILINE_INPUT) wordwrap = W; else wordwrap = 0;
+#endif
   for (p=value();; ) {
     e = expand(p, buf);
     theline--; if (theline < 0) break;
-    if (*e == '\n') e++;
+    if (*e == '\n' || *e == ' ') e++;
     p = e;
     if (e >= value_+size_) break;
   }
@@ -728,5 +736,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.12 1999/01/04 19:24:59 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.13 1999/01/04 19:29:10 mike Exp $".
 //
