@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.15 2003/07/23 14:38:00 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.16 2003/09/20 18:45:55 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -181,8 +181,8 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
       // offering overlay is better:
       if (!(chosen_pfd.bReserved & 15) && (pfd.bReserved & 15)) {}
       // otherwise more bit planes is better:
-      else if (chosen_pfd.cColorBits < pfd.cColorBits) {}
-      else continue;
+      else if (chosen_pfd.cColorBits > pfd.cColorBits) continue;
+      else if (chosen_pfd.cDepthBits > pfd.cDepthBits) continue;
     }
     pixelformat = i;
     chosen_pfd = pfd;
@@ -347,5 +347,5 @@ void fl_delete_gl_context(GLContext context) {
 
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.15 2003/07/23 14:38:00 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.16 2003/09/20 18:45:55 easysw Exp $".
 //
