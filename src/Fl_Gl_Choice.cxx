@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.8 2002/01/03 08:08:21 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.9 2002/03/25 16:41:01 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -84,6 +84,11 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (mode & FL_STENCIL) {
       list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
     }
+#ifdef AGL_STEREO  /* is there such a thing as AGL_STEREO? */
+    if (mode & FL_STEREO) {
+      list[n++] = AGL_STEREO;
+    }
+#endif
     list[n] = AGL_NONE;
     blist = list;
   }
@@ -129,6 +134,9 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if (mode & FL_STENCIL) {
       list[n++] = GLX_STENCIL_SIZE; list[n++] = 1;
     }
+    if (mode & FL_STEREO) {
+      list[n++] = GLX_STEREO;
+    }
 #if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
     if (mode & FL_MULTISAMPLE) {
       list[n++] = GLX_SAMPLES_SGIS;
@@ -164,6 +172,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int mode, const int *alist) {
     if ((mode & FL_ALPHA) && !pfd.cAlphaBits) continue;
     if ((mode & FL_ACCUM) && !pfd.cAccumBits) continue;
     if ((!(mode & FL_DOUBLE)) != (!(pfd.dwFlags & PFD_DOUBLEBUFFER))) continue;
+    if ((!(mode & FL_STEREO)) != (!(pfd.dwFlags & PFD_STEREO))) continue;
     if ((mode & FL_DEPTH) && !pfd.cDepthBits) continue;
     if ((mode & FL_STENCIL) && !pfd.cStencilBits) continue;
     // see if better than the one we have already:
@@ -309,5 +318,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.8 2002/01/03 08:08:21 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.9 2002/03/25 16:41:01 easysw Exp $".
 //

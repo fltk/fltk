@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0b12
 
+	- Stereo OpenGL support (patch from Stuart Levy)
 	- All of the convenience functions defined in fl_ask.H
 	  now resize the widgets and dialog window as needed for
 	  the labels and prompt.

@@ -1,5 +1,5 @@
 //
-// "$Id: glut.H,v 1.6.2.10.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: glut.H,v 1.6.2.10.2.2 2002/03/25 16:41:01 easysw Exp $"
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
@@ -106,7 +106,7 @@ FL_EXPORT void glutInitDisplayMode(unsigned int mode);
 #define GLUT_DEPTH	FL_DEPTH
 #define GLUT_STENCIL	FL_STENCIL
 #define GLUT_MULTISAMPLE FL_MULTISAMPLE
-// #define GLUT_STEREO			256
+#define GLUT_STEREO	FL_STEREO
 // #define GLUT_LUMINANCE		512
 
 FL_EXPORT void glutInitWindowPosition(int x, int y);
@@ -470,5 +470,5 @@ extern void APIENTRY glutSolidIcosahedron();
 #endif                  /* __glut_h__ */
 
 //
-// End of "$Id: glut.H,v 1.6.2.10.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: glut.H,v 1.6.2.10.2.2 2002/03/25 16:41:01 easysw Exp $".
 //
