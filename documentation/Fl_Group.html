@@ -44,6 +44,7 @@ behavior.
 <UL>
 <LI><A href=#Fl_Group.child>child</A></LI>
 <LI><A href=#Fl_Group.children>children</A></LI>
+<LI><A href="#Fl_Group.clear">clear</A></LI>
 <LI><A href=#Fl_Group.current>current</A></LI>
 </UL>
 </TD><TD align=left valign=top>
@@ -77,6 +78,10 @@ that it is destroyed last.
 
 The widget is removed from it's current group (if any) and then added
 to the end of this group.
+
+<H4><A name="Fl_Group.clear">void Fl_Group::clear()</A></H4>
+
+<P>The <TT>clear()</TT> method deletes all child widgets recursively.
 
 <H4><A name="Fl_Group.init_sizes">void Fl_Group::init_sizes()</A></H4>
 
