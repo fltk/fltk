@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.6 2001/08/08 12:47:59 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.7 2001/08/11 16:09:26 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -435,9 +435,15 @@ AC_SUBST(LINKFLTKGL)
 AC_SUBST(LINKFLTK)
 AC_SUBST(MAKEDEPEND)
 
+if test x$prefix = xNONE; then
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "/usr/local/share/doc/fltk")
+else
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
+fi
+
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.6 2001/08/08 12:47:59 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.7 2001/08/11 16:09:26 easysw Exp $".
 dnl

@@ -20,8 +20,6 @@ CHANGES IN FLTK 1.1.0
 	  Fl_HelpView, Fl_Progress, and Fl_Wizard widgets from
 	  the bazaar.
 
-TODO	- Added the Fl_Tree_Browser widgets from the bazaar.
-
 	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
 	  based on NEdit.
 
@@ -37,10 +35,15 @@ TODO	- Colors are now 32 bits in FLTK, allowing the use and
 	  selection of 24-bit RGB values or 8-bit FLTK indexed
 	  colors.
 
-TODO	- FLUID now supports the new Fl_CheckBrowser,
+	- FLUID now supports the new Fl_CheckBrowser,
 	  Fl_FileBrowser, Fl_FileIcon, Fl_HelpView,
-	  Fl_Text_Display, Fl_Text_Editor, Fl_Tree_Browser, and
-	  Fl_Wizard widgets.
+	  Fl_Text_Display, Fl_Text_Editor, and Fl_Wizard
+	  widgets.
+
+TODO	- FLUID now provides on-line help.
+
+TODO	- FLUID now supports image labels in addition to text
+	  labels + text over image alignment.
 
 TODO	- Documentation updates.
 
