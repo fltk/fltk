@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.19 1999/12/30 17:37:04 mike Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.20 1999/12/31 02:56:18 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -246,6 +246,7 @@ double fl_wait(int timeout_flag, double time) {
 	}
     } else {
       // Some other message...
+      TranslateMessage(&fl_msg);
       DispatchMessage(&fl_msg);
     }
 #else
@@ -953,5 +954,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.19 1999/12/30 17:37:04 mike Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.20 1999/12/31 02:56:18 mike Exp $".
 //
