@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Removed the Fl_Mutex and Fl_Signal_Mutex classes from
+	  the threads example, since they weren't being used
+	  and apparently are not very portable.
 	- Fl_Help_View now ignores links when the link callback
 	  returns NULL, and displays a sensible error message
 	  when an unhandled URI scheme is used (e.g. http:,
