@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.22 1999/02/18 13:42:08 mike Exp $"
+dnl# "$Id: configure.in,v 1.23 1999/02/18 15:05:50 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -85,36 +85,29 @@ AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 if test $ac_cv_sizeof_short -eq 2; then
-AC_DEFINE(U16,unsigned short)
+    AC_DEFINE(U16,unsigned short)
 fi
 if test $ac_cv_sizeof_int -eq 4; then
-AC_DEFINE(U32,unsigned)
+    AC_DEFINE(U32,unsigned)
 else
-if test $ac_cv_sizeof_long -eq 4; then
-AC_DEFINE(U32,unsigned long)
-fi
+    if test $ac_cv_sizeof_long -eq 4; then
+        AC_DEFINE(U32,unsigned long)
+    fi
 fi
 if test $ac_cv_sizeof_int -eq 8; then
-AC_DEFINE(U64,unsigned)
+    AC_DEFINE(U64,unsigned)
 else
-if test $ac_cv_sizeof_long -eq 8; then
-AC_DEFINE(U64,unsigned long)
-fi
+    if test $ac_cv_sizeof_long -eq 8; then
+        AC_DEFINE(U64,unsigned long)
+    fi
 fi
 
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h)
 AC_CHECK_FUNCS(scandir,
-    case `(uname) 2>/dev/null` in
-        SunOS)
-	    # Solaris may have scandir, but we don't want to
-	    # depend on it...
-	    ;;
-	*)
-	    # All others either have it or not...
-	    AC_DEFINE(HAVE_SCANDIR)
-	    ;;
-    esac)
+    if test "`(uname) 2>/dev/null`" != "SunOS"; then
+        AC_DEFINE(HAVE_SCANDIR)
+    fi)
 AC_CHECK_FUNCS(vsnprintf)
 AC_CHECK_FUNCS(snprintf)
 AC_CHECK_FUNCS(vsprintf)
@@ -210,5 +203,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.22 1999/02/18 13:42:08 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.23 1999/02/18 15:05:50 mike Exp $".
 dnl#
