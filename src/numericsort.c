@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.6 1998/10/21 14:21:10 mike Exp $"
+ * "$Id: numericsort.c,v 1.7 1998/11/09 16:25:59 mike Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -56,30 +56,26 @@ extern "C"
 int numericsort(struct dirent **A, struct dirent **B) {
   const char* a = (*A)->d_name;
   const char* b = (*B)->d_name;
-  int ret = 0;
+
   for (;;) {
     if (isdigit(*a) && isdigit(*b)) {
-      int zdiff,diff,magdiff;
-      zdiff = 0;
-      while (*a == '0') {a++; zdiff++;}
-      while (*b == '0') {b++; zdiff--;}
-      while (isdigit(*a) && *a == *b) {a++; b++;}
-      diff = (isdigit(*a) && isdigit(*b)) ? *a - *b : 0;
-      magdiff = 0;
-      while (isdigit(*a)) {magdiff++; a++;}
-      while (isdigit(*b)) {magdiff--; b++;}
-      if (ret);
-      else if (magdiff) ret = magdiff;
-      else if (diff) ret = diff;
-      else if (zdiff) ret = zdiff;
-    } else if (*a == *b) {
-      if (!*a) return ret;
-      a++; b++;
-    } else
-      return (*a-*b);
+      int anum = 0, bnum = 0;
+
+      while (isdigit(*a)) anum = anum * 10 + *a++ - '0';
+      while (isdigit(*b)) bnum = bnum * 10 + *b++ - '0';
+
+      if (anum < bnum) return (-1);
+      else if (anum > bnum) return (1);
+    } else if (tolower(*a) < tolower(*b)) return (-1);
+    else if (tolower(*a) > tolower(*b)) return (1);
+    else {
+      if (*a == '\0') return (0);
+      a++;
+      b++;
+    }
   }
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.6 1998/10/21 14:21:10 mike Exp $".
+ * End of "$Id: numericsort.c,v 1.7 1998/11/09 16:25:59 mike Exp $".
  */
