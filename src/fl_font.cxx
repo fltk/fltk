@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font.cxx,v 1.5 1998/12/02 15:51:35 mike Exp $"
+// "$Id: fl_font.cxx,v 1.6 1998/12/02 15:53:22 mike Exp $"
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -50,7 +50,7 @@ Fl_FontSize::Fl_FontSize(const char* name) {
 #endif
 }
 
-Fl_FontSize* fl_current_xfont;
+Fl_FontSize* fl_fontsize;
 
 Fl_FontSize::~Fl_FontSize() {
 #if HAVE_GL
@@ -64,7 +64,7 @@ Fl_FontSize::~Fl_FontSize() {
 //  glDeleteLists(listbase+base,size);
 // }
 #endif
-  if (this == fl_current_xfont) fl_current_xfont = 0;
+  if (this == fl_fontsize) fl_fontsize = 0;
   XFreeFont(fl_display, font);
 }
 
@@ -223,8 +223,8 @@ void fl_font(int fnum, int size) {
   if (fnum == fl_font_ && size == fl_size_) return;
   fl_font_ = fnum; fl_size_ = size;
   Fl_FontSize* f = find(fnum, size);
-  if (f != fl_current_xfont) {
-    fl_current_xfont = f;
+  if (f != fl_fontsize) {
+    fl_fontsize = f;
     fl_xfont = f->font;
     font_gc = 0;
   }
@@ -292,5 +292,5 @@ void fl_draw(const char* str, int x, int y) {
 #endif
 
 //
-// End of "$Id: fl_font.cxx,v 1.5 1998/12/02 15:51:35 mike Exp $".
+// End of "$Id: fl_font.cxx,v 1.6 1998/12/02 15:53:22 mike Exp $".
 //

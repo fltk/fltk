@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font_win32.cxx,v 1.7 1998/12/02 15:51:36 mike Exp $"
+// "$Id: fl_font_win32.cxx,v 1.8 1998/12/02 15:53:22 mike Exp $"
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
@@ -71,7 +71,7 @@ Fl_FontSize::Fl_FontSize(const char* name, int size) {
   minsize = maxsize = size;
 }
 
-Fl_FontSize* fl_current_xfont;
+Fl_FontSize* fl_fontsize;
 
 Fl_FontSize::~Fl_FontSize() {
 #if HAVE_GL
@@ -85,7 +85,7 @@ Fl_FontSize::~Fl_FontSize() {
 //  glDeleteLists(listbase+base,size);
 // }
 #endif
-  if (this == fl_current_xfont) fl_current_xfont = 0;
+  if (this == fl_fontsize) fl_fontsize = 0;
   DeleteObject(fid);
 }
 
@@ -136,36 +136,36 @@ int fl_size_;
 void fl_font(int fnum, int size) {
   if (fnum == fl_font_ && size == fl_size_) return;
   fl_font_ = fnum; fl_size_ = size;
-  fl_current_xfont = find(fnum, size);
+  fl_fontsize = find(fnum, size);
 }
 
 int fl_height() {
-  return (fl_current_xfont->metr.tmAscent + fl_current_xfont->metr.tmDescent);
+  return (fl_fontsize->metr.tmAscent + fl_fontsize->metr.tmDescent);
 }
 
 int fl_descent() {
-  return fl_current_xfont->metr.tmDescent;
+  return fl_fontsize->metr.tmDescent;
 }
 
 double fl_width(const char* c) {
   double w = 0.0;
-  while (*c) w += fl_current_xfont->width[uchar(*c++)];
+  while (*c) w += fl_fontsize->width[uchar(*c++)];
   return w;
 }
 
 double fl_width(const char* c, int n) {
   double w = 0.0;
-  while (n--) w += fl_current_xfont->width[uchar(*c++)];
+  while (n--) w += fl_fontsize->width[uchar(*c++)];
   return w;
 }
 
 double fl_width(uchar c) {
-  return fl_current_xfont->width[c];
+  return fl_fontsize->width[c];
 }
 
 void fl_draw(const char* str, int n, int x, int y) {
   SetTextColor(fl_gc, fl_RGB());
-  SelectObject(fl_gc, fl_current_xfont->fid);
+  SelectObject(fl_gc, fl_fontsize->fid);
   TextOut(fl_gc, x, y, str, n);
 }
 
@@ -174,5 +174,5 @@ void fl_draw(const char* str, int x, int y) {
 }
 
 //
-// End of "$Id: fl_font_win32.cxx,v 1.7 1998/12/02 15:51:36 mike Exp $".
+// End of "$Id: fl_font_win32.cxx,v 1.8 1998/12/02 15:53:22 mike Exp $".
 //
