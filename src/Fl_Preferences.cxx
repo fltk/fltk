@@ -883,7 +883,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::addChild( const char *path )
 {
   sprintf( nameBuffer, "%s/%s", path_, path );
   char *name = strdup( nameBuffer );
-  Node *nd = find( nameBuffer );
+  Node *nd = find( name );
   free( name );
   dirty_ = 1;
   return nd;

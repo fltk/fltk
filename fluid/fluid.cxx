@@ -1083,7 +1083,7 @@ void print_menu_cb(Fl_Widget *, void *) {
   EndDoc(dialog.hDC);
 
   fl_gc = save_dc;
-  fl_window = save_window;
+  fl_window = save_win;
   fl_pop_clip();
 
   // Free the print DC and return...
