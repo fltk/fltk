@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.os2x,v 1.1.2.4 2001/05/06 13:32:48 easysw Exp $"
+# "$Id: makeinclude.os2x,v 1.1.2.4.2.1 2001/10/16 20:19:22 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # Generated automatically from makeinclude.in by configure.
@@ -48,7 +48,8 @@ CXXFLAGS	=-Wall -O4 -mpentium -Zmt -fno-exceptions
 LDFLAGS		=-s -Zexe -Zmt -Zcrtdll -Zbsd-signals -Zbin-files -fno-exceptions
 
 # program to make the archive:
-LIBNAME		=fltk.a
+LIBNAME		=../lib/fltk.a
+GLLIBNAME	=../lib/fltk_gl.a
 LIBCOMMAND	=ar cr
 RANLIB		=ar.exe s
 DSONAME		=
@@ -57,6 +58,9 @@ DSOCOMMAND	=echo
 # libraries to link with:
 LDLIBS		=-lX11 -lXext -lsocket -lshm -lm
 GLDLIBS		=-lX11 -lXext -lsocket -lshm -lm
+LINKFLTK	=-L../lib -lfltk
+LINKFLTKGL	=-L../lib -lfltk_gl
+IMAGELIBS	=
 
 # Man page extensions...
 CAT1EXT		=1
@@ -70,7 +74,7 @@ CAT3EXT		=3
 
 .cxx:
 	echo Compiling and linking $@...
-	$(CXX) -I.. -L../lib $(CXXFLAGS) $< -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 
 .c.o:
 	echo Compiling $@...
@@ -93,5 +97,5 @@ CAT3EXT		=3
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.os2x,v 1.1.2.4 2001/05/06 13:32:48 easysw Exp $".
+# End of "$Id: makeinclude.os2x,v 1.1.2.4.2.1 2001/10/16 20:19:22 easysw Exp $".
 #

@@ -6,6 +6,9 @@ CHANGES IN FLTK 1.1.0b4
 	- Updated the config.h files for all platforms for the
 	  image and FLTK documentation defines.
 
+	- Updated the makeinclude files for all platforms to
+	  match the current makeinclude.in file.
+
 	- FLUID would crash if you cleared an image for a
 	  widget.
 
