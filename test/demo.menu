@@ -58,7 +58,6 @@
 	@e:Mandelbrot:mandelbrot
 	@e:Fractals:fractals
 	@e:Puzzle:glpuzzle
-	@e:shiny\nOpenGL\nbuttons:shiny
 	@e:Checkers:checkers
 
 @main:Other\nTests:@o
