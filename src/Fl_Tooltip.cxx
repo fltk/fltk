@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.10 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.11 2002/04/09 17:20:24 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -38,8 +38,8 @@
 void		(*Fl_Tooltip::tooltip_callback_)(void *) = Fl_Tooltip::tooltip_timeout;
 void		(*Fl_Tooltip::tooltip_exit_)(void *) = (void (*)(void *))Fl_Tooltip::tooltip_exit;
 float		Fl_Tooltip::delay_ = 0.5;
-Fl_TooltipBox	*Fl_Tooltip::box = 0;
-Fl_Menu_Window	*Fl_Tooltip::window = 0;
+Fl_Tooltip_Box	*Fl_Tooltip::box = 0;
+Fl_Tooltip_Window *Fl_Tooltip::window = 0;
 Fl_Widget	*Fl_Tooltip::widget = 0;
 int		Fl_Tooltip::shown = 0;
 unsigned	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
@@ -50,20 +50,44 @@ int		Fl_Tooltip::size_ = FL_NORMAL_SIZE;
 
 
 //
+// Tooltip window class...
+//
+
+class Fl_Tooltip_Window : public Fl_Menu_Window {
+  public:
+
+  FL_EXPORT ~Fl_Tooltip_Window() {}
+  Fl_Tooltip_Window(int W, int H, const char *l = 0)
+    : Fl_Menu_Window(W,H,l) {}
+  Fl_Tooltip_Window(int X, int Y, int W, int H, const char *l = 0)
+    : Fl_Menu_Window(X,Y,W,H,l) {}
+
+  virtual FL_EXPORT int handle(int event);
+};
+
+
+int
+Fl_Tooltip_Window::handle(int event) {
+  if (event == FL_KEYDOWN || event == FL_KEYUP || event == FL_SHORTCUT) return 0;
+  else return Fl_Menu_Window::handle(event);
+}
+
+
+//
 // Tooltip label class...
 //
 
-class Fl_TooltipBox : public Fl_Box {
+class Fl_Tooltip_Box : public Fl_Box {
 public:
   
-  Fl_TooltipBox() : Fl_Box(0,0,10,10) {
+  Fl_Tooltip_Box() : Fl_Box(0,0,10,10) {
     color(Fl_Tooltip::color_);
     align(FL_ALIGN_CENTER);
     box(FL_BORDER_BOX);
     Fl_Tooltip::widget = 0;
   }
 
-  ~Fl_TooltipBox() { }
+  ~Fl_Tooltip_Box() { }
 
   void draw() {
     tooltip(0); // Just in case
@@ -110,6 +134,12 @@ public:
 // when the pointer enters them
 void
 Fl_Tooltip::enter(Fl_Widget *w) {
+//  printf("Fl_Tooltip::enter(%p)\n", w);
+//  if (w) {
+//    printf("    label() = \"%s\"\n", w->label() ? w->label() : "(null)");
+//    printf("    visible() = %d\n", w->visible());
+//    printf("    active() = %d\n", w->active());
+//  }
   if ((!w || !w->tooltip()) && tooltip_callback_ && window) {
     Fl::remove_timeout(tooltip_callback_);
     window->hide();
@@ -118,7 +148,8 @@ Fl_Tooltip::enter(Fl_Widget *w) {
   }
   if (!tooltip_callback_ || !w || !w->tooltip()) return;
   Fl::remove_timeout(tooltip_callback_);
-  Fl::add_timeout(delay_, tooltip_callback_, w);
+  if (window && window->shown()) (*tooltip_callback_)(w);
+  else Fl::add_timeout(delay_, tooltip_callback_, w);
 }
 
 
@@ -153,13 +184,13 @@ Fl_Tooltip::tooltip_timeout(void *v) {
   if (!window) {
     Fl_Group* saveCurrent = Fl_Group::current();
     Fl_Group::current(0);
-    window = new Fl_Menu_Window(0, 0, 10, 10, 0);
+    window = new Fl_Tooltip_Window(0, 0, 10, 10, 0);
     window->clear_border();
     window->box(FL_NO_BOX);
     window->set_override();
 
     window->begin();
-    box = new Fl_TooltipBox;
+    box = new Fl_Tooltip_Box;
     box->color(FL_YELLOW);
     box->align(FL_ALIGN_CENTER);
     window->resizable(box);
@@ -189,5 +220,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.10 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.11 2002/04/09 17:20:24 easysw Exp $".
 //

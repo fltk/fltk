@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.11 2002/02/24 17:52:17 matthiaswm Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.12 2002/04/09 17:20:23 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -28,6 +28,7 @@
 // Fl_Window itself is a subclass of this, and most of the event
 // handling is designed so windows themselves work correctly.
 
+#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
@@ -158,10 +159,11 @@ int Fl_Group::handle(int event) {
 
   case FL_ENTER:
     Fl_Tooltip::enter(this);    // tooltip
+
   case FL_MOVE:
     for (i = children(); i--;) {
       o = a[i];
-      if (o->takesevents() && Fl::event_inside(o)) {
+      if (o->visible() && Fl::event_inside(o)) {
 	if (o->contains(Fl::belowmouse())) {
 	  return send(o,FL_MOVE);
 	} else if (send(o,FL_ENTER)) {
@@ -239,13 +241,13 @@ int Fl_Group::handle(int event) {
   default:
     // For all other events, try to give to each child, starting at focus:
     for (i = 0; i < children(); i ++)
-      if (Fl::focus_ == child(i)) break;
+      if (Fl::focus_ == a[i]) break;
 
     if (i >= children()) i = 0;
 
     if (children()) {
       for (int j = i;;) {
-        if (send(child(j), event)) return 1;
+        if (send(a[j], event)) return 1;
         j++;
         if (j >= children()) j = 0;
         if (j == i) break;
@@ -585,5 +587,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.11 2002/02/24 17:52:17 matthiaswm Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.12 2002/04/09 17:20:23 easysw Exp $".
 //

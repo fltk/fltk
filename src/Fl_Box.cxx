@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Box.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Box.cxx,v 1.4.2.3.2.2 2002/04/09 17:20:23 easysw Exp $"
 //
 // Box widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,13 +26,11 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Box.H>
 
-// MRS - shouldn't we inline this?
-
 void Fl_Box::draw() {
   draw_box();
   draw_label();
 }
 
 //
-// End of "$Id: Fl_Box.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Box.cxx,v 1.4.2.3.2.2 2002/04/09 17:20:23 easysw Exp $".
 //
