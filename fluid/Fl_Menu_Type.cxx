@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.2 1999/04/17 01:33:27 bill Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.3 1999/08/05 08:01:36 bill Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -93,16 +93,6 @@ int is_name(const char *c);
 const char *array_name(Fl_Widget_Type *o);
 int isdeclare(const char *c);
 
-void Fl_Menu_Item_Type::write_declare() {
-  if (callback() && is_name(callback()))
-    ::write_declare("extern void %s(Fl_Menu_*, %s);", callback(),
-		    user_data_type() ? user_data_type() : "void*");
-  for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (extra_code(n) && isdeclare(extra_code(n)))
-      ::write_declare("%s", extra_code(n));
-  }
-}
-
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
 // to this menu item.
@@ -123,6 +113,13 @@ const char* Fl_Menu_Item_Type::menu_name(int& i) {
 #include "Fluid_Image.h"
 
 void Fl_Menu_Item_Type::write_static() {
+  if (callback() && is_name(callback()))
+    ::write_declare("extern void %s(Fl_Menu_*, %s);", callback(),
+		    user_data_type() ? user_data_type() : "void*");
+  for (int n=0; n < NUM_EXTRA_CODE; n++) {
+    if (extra_code(n) && isdeclare(extra_code(n)))
+      ::write_declare("%s", extra_code(n));
+  }
   if (callback() && !is_name(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
@@ -442,5 +439,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.2 1999/04/17 01:33:27 bill Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.3 1999/08/05 08:01:36 bill Exp $".
 //

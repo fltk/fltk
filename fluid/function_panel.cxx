@@ -20,18 +20,18 @@ Fl_Window* make_function_panel() {
     w = o;
     { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 15, 65, 25, "public");
       o->labelsize(10);
-      o->when(0);
+      o->when(FL_WHEN_NEVER);
     }
     { Fl_Input* o = f_name_input = new Fl_Input(10, 60, 270, 25, "Name(args): (blank for main())");
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
     { Fl_Input* o = f_return_type_input = new Fl_Input(10, 105, 270, 25, "Return Type: (blank to return outermost widget)");
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
     }
     { Fl_Return_Button* o = f_panel_ok = new Fl_Return_Button(110, 140, 80, 25, "OK");
       w->hotspot(o);
@@ -60,8 +60,8 @@ Fl_Window* make_code_panel() {
     { Fl_Input* o = code_input = new Fl_Input(6, 5, 280, 135);
       o->type(4);
       o->labelsize(12);
-      o->align(0);
-      o->when(0);
+      o->align(FL_ALIGN_CENTER);
+      o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
     { Fl_Return_Button* o = code_panel_ok = new Fl_Return_Button(115, 145, 80, 25, "OK");
@@ -92,17 +92,17 @@ Fl_Window* make_codeblock_panel() {
     w = o;
     { Fl_Input* o = code_before_input = new Fl_Input(10, 5, 275, 25);
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
     { Fl_Box* o = new Fl_Box(10, 35, 270, 25, "\"{...child code...}\" is inserted here");
-      o->align(20);
+      o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
     }
     { Fl_Input* o = code_after_input = new Fl_Input(10, 65, 275, 25);
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
     }
     { Fl_Return_Button* o = codeblock_panel_ok = new Fl_Return_Button(115, 100, 80, 25, "OK");
       w->hotspot(o);
@@ -132,17 +132,17 @@ Fl_Window* make_declblock_panel() {
     w = o;
     { Fl_Input* o = decl_before_input = new Fl_Input(15, 10, 275, 25);
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
     { Fl_Box* o = new Fl_Box(15, 40, 270, 25, "\"\\n...child code...\\n\" is inserted here");
-      o->align(20);
+      o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
     }
     { Fl_Input* o = decl_after_input = new Fl_Input(15, 70, 275, 25);
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
     }
     { Fl_Return_Button* o = declblock_panel_ok = new Fl_Return_Button(120, 105, 80, 25, "OK");
       w->hotspot(o);
@@ -172,14 +172,14 @@ Fl_Window* make_decl_panel() {
     w = o;
     { Fl_Light_Button* o = decl_public_button = new Fl_Light_Button(10, 15, 65, 25, "public");
       o->labelsize(10);
-      o->when(0);
+      o->when(FL_WHEN_NEVER);
     }
-    { Fl_Input* o = decl_input = new Fl_Input(10, 50, 270, 25, "can be any declartion, like \"int x;\",\nan external symbol like \"extern \
-int foo();\",\na #directive like \"#include <foo.h>\",\nor a comment like \"\
-//foo\" or \"/*foo*/\"");
+    { Fl_Input* o = decl_input = new Fl_Input(10, 50, 270, 25, "can be any declartion, like \"int x;\",\nan external symbol like \"extern int\
+ foo();\",\na #directive like \"#include <foo.h>\",\nor a comment like \"//foo\
+\" or \"/*foo*/\"");
       o->labelsize(12);
-      o->align(6);
-      o->when(0);
+      o->align(FL_ALIGN_BOTTOM_LEFT);
+      o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
     { Fl_Return_Button* o = decl_panel_ok = new Fl_Return_Button(115, 145, 80, 25, "OK");
@@ -211,18 +211,18 @@ Fl_Window* make_class_panel() {
     w = o;
     { Fl_Light_Button* o = c_public_button = new Fl_Light_Button(10, 10, 65, 25, "public");
       o->labelsize(10);
-      o->when(0);
+      o->when(FL_WHEN_NEVER);
     }
     { Fl_Input* o = c_name_input = new Fl_Input(10, 55, 270, 25, "name:");
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
     { Fl_Input* o = c_subclass_input = new Fl_Input(10, 100, 270, 25, "subclass of (text between : and {)");
       o->labelsize(12);
-      o->align(5);
-      o->when(0);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->when(FL_WHEN_NEVER);
     }
     { Fl_Return_Button* o = c_panel_ok = new Fl_Return_Button(110, 135, 80, 25, "OK");
       w->hotspot(o);

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.6 1999/07/22 07:27:09 bill Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.7 1999/08/05 08:01:35 bill Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -173,10 +173,6 @@ void Fl_Function_Type::open() {
 
 Fl_Function_Type Fl_Function_type;
 
-void Fl_Function_Type::write_declare() {
-  ::write_declare("#include <FL/Fl.H>");
-}
-
 extern const char* subclassname(Fl_Type*);
 
 void Fl_Function_Type::write_code1() {
@@ -305,8 +301,6 @@ void Fl_Code_Type::open() {
 
 Fl_Code_Type Fl_Code_type;
 
-void Fl_Code_Type::write_declare() {}
-
 void Fl_Code_Type::write_code1() {
   const char* c = name();
   if (!c) return;
@@ -376,8 +370,6 @@ void Fl_CodeBlock_Type::open() {
 
 Fl_CodeBlock_Type Fl_CodeBlock_type;
 
-void Fl_CodeBlock_Type::write_declare() {}
-
 void Fl_CodeBlock_Type::write_code1() {
   const char* c = name();
   write_c("%s%s {\n", indent(), c ? c : "");
@@ -444,8 +436,6 @@ void Fl_Decl_Type::open() {
 
 Fl_Decl_Type Fl_Decl_type;
 
-void Fl_Decl_Type::write_declare() {}
-
 void Fl_Decl_Type::write_code1() {
   const char* c = name();
   if (!c) return;
@@ -466,7 +456,7 @@ void Fl_Decl_Type::write_code1() {
   while (e>c && e[-1]==';') e--;
   if (class_name()) {
     write_public(public_);
-    write_h("  %.*s;\n", e-c, c);
+    write_h("  %.*s;", e-c, c);
   } else {
     if (public_) {
       write_h("extern %.*s;\n", e-c, c);
@@ -537,8 +527,6 @@ void Fl_DeclBlock_Type::open() {
 }
 
 Fl_DeclBlock_Type Fl_DeclBlock_type;
-
-void Fl_DeclBlock_Type::write_declare() {}
 
 void Fl_DeclBlock_Type::write_code1() {
   const char* c = name();
@@ -638,8 +626,6 @@ void Fl_Class_Type::open() {
 
 Fl_Class_Type Fl_Class_type;
 
-void Fl_Class_Type::write_declare() {}
-
 static Fl_Class_Type *current_class;
 extern int varused_test;
 void write_public(int state) {
@@ -664,5 +650,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.6 1999/07/22 07:27:09 bill Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.7 1999/08/05 08:01:35 bill Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.2 1999/04/18 14:10:53 gustavo Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.3 1999/08/05 08:01:36 bill Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -106,7 +106,6 @@ public:
   virtual int read_fdesign(const char*, const char*);
 
   // write code, these are called in order:
-  virtual void write_declare(); // write #include and #define to .h file
   virtual void write_static(); // write static stuff to .c file
   virtual void write_code1(); // code and .h before children
   virtual void write_code2(); // code and .h after children
@@ -132,7 +131,6 @@ class Fl_Function_Type : public Fl_Type {
   char public_, constructor, havewidgets;
 public:
   Fl_Type *make();
-  void write_declare();
   void write_code1();
   void write_code2();
   void open();
@@ -150,7 +148,6 @@ public:
 class Fl_Code_Type : public Fl_Type {
 public:
   Fl_Type *make();
-  void write_declare();
   void write_code1();
   void write_code2();
   void open();
@@ -162,7 +159,6 @@ class Fl_CodeBlock_Type : public Fl_Type {
   const char* after;
 public:
   Fl_Type *make();
-  void write_declare();
   void write_code1();
   void write_code2();
   void open();
@@ -177,7 +173,6 @@ class Fl_Decl_Type : public Fl_Type {
   char public_;
 public:
   Fl_Type *make();
-  void write_declare();
   void write_code1();
   void write_code2();
   void open();
@@ -190,7 +185,6 @@ class Fl_DeclBlock_Type : public Fl_Type {
   const char* after;
 public:
   Fl_Type *make();
-  void write_declare();
   void write_code1();
   void write_code2();
   void open();
@@ -210,7 +204,6 @@ public:
   Fl_Class_Type* parent_class; // save class if nested
 //
   Fl_Type *make();
-  void write_declare();
   void write_code1();
   void write_code2();
   void open();
@@ -235,7 +228,6 @@ class Fl_Widget_Type : public Fl_Type {
 
 protected:
 
-  void write_declare();
   void write_static();
   void write_code1();
   void write_widget_code();
@@ -398,7 +390,6 @@ public:
   int is_button() const {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) {return 0;}
   Fl_Widget_Type* _make() {return 0;}
-  void write_declare();
   const char* menu_name(int& i);
   int flags();
   void write_static();
@@ -525,5 +516,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.2 1999/04/18 14:10:53 gustavo Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.3 1999/08/05 08:01:36 bill Exp $".
 //

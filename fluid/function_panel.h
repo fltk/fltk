@@ -3,17 +3,16 @@
 #ifndef function_panel_h
 #define function_panel_h
 #include <FL/Fl.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Light_Button.H>
-#include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Window.H>
 extern Fl_Window *function_panel;
+#include <FL/Fl_Light_Button.H>
 extern Fl_Light_Button *f_public_button;
+#include <FL/Fl_Input.H>
 extern Fl_Input *f_name_input;
 extern Fl_Input *f_return_type_input;
+#include <FL/Fl_Return_Button.H>
 extern Fl_Return_Button *f_panel_ok;
+#include <FL/Fl_Button.H>
 extern Fl_Button *f_panel_cancel;
 Fl_Window* make_function_panel();
 extern Fl_Window *function_panel;
@@ -33,6 +32,7 @@ extern Fl_Return_Button *code_panel_ok;
 extern Fl_Button *code_panel_cancel;
 extern Fl_Window *codeblock_panel;
 extern Fl_Input *code_before_input;
+#include <FL/Fl_Box.H>
 extern Fl_Input *code_after_input;
 extern Fl_Return_Button *codeblock_panel_ok;
 extern Fl_Button *codeblock_panel_cancel;
