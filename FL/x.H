@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.8.2.9 2002/04/15 12:19:01 easysw Exp $"
+// "$Id: x.H,v 1.10.2.8.2.10 2002/08/09 01:09:48 easysw Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -114,15 +114,15 @@ public:
   char wait_for_expose;
   char backbuffer_bad; // used for XDBE
   static FL_EXPORT Fl_X* first;
-  static FL_EXPORT Fl_X* i(const Fl_Window* w) {return w->i;}
+  static FL_EXPORT Fl_X* i(const Fl_Window* wi) {return wi->i;}
   FL_EXPORT void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
   FL_EXPORT void sendxjunk();
   static FL_EXPORT void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static FL_EXPORT Fl_X* set_xid(Fl_Window*, Window);
   // kludges to get around protection:
   FL_EXPORT void flush() {w->flush();}
-  static FL_EXPORT void x(Fl_Window* w, int X) {w->x(X);}
-  static FL_EXPORT void y(Fl_Window* w, int Y) {w->y(Y);}
+  static FL_EXPORT void x(Fl_Window* wi, int X) {wi->x(X);}
+  static FL_EXPORT void y(Fl_Window* wi, int Y) {wi->y(Y);}
 };
 
 // convert xid <-> Fl_Window:
@@ -138,5 +138,5 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.8.2.9 2002/04/15 12:19:01 easysw Exp $".
+// End of "$Id: x.H,v 1.10.2.8.2.10 2002/08/09 01:09:48 easysw Exp $".
 //

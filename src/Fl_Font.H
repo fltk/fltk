@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.6.2.3.2.2 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: Fl_Font.H,v 1.6.2.3.2.3 2002/08/09 01:09:48 easysw Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -75,6 +75,7 @@ extern FL_EXPORT Fl_FontSize *fl_fontsize; // the currently selected one
 
 struct Fl_Fontdesc {
   const char *name;
+  char fontname[128];	// "Pretty" font name
   Fl_FontSize *first;	// linked list of sizes of this style
 #  ifndef WIN32
   char **xlist;		// matched X font names
@@ -93,5 +94,5 @@ FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.6.2.3.2.2 2002/03/06 18:11:01 easysw Exp $".
+// End of "$Id: Fl_Font.H,v 1.6.2.3.2.3 2002/08/09 01:09:48 easysw Exp $".
 //

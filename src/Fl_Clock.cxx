@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Clock.cxx,v 1.8.2.4.2.1 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Clock.cxx,v 1.8.2.4.2.2 2002/08/09 01:09:48 easysw Exp $"
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
@@ -68,11 +68,11 @@ static void rect(double x, double y, double w, double h) {
   fl_end_polygon();
 }
 
-void Fl_Clock_Output::draw(int x, int y, int w, int h) {
-  draw_box(box(), x, y, w, h, type()==FL_ROUND_CLOCK ? FL_GRAY : color());
+void Fl_Clock_Output::draw(int X, int Y, int W, int H) {
+  draw_box(box(), X, Y, W, H, type()==FL_ROUND_CLOCK ? FL_GRAY : color());
   fl_push_matrix();
-  fl_translate(x+w/2.0-.5, y+h/2.0-.5);
-  fl_scale((w-1)/28.0, (h-1)/28.0);
+  fl_translate(X+W/2.0-.5, Y+H/2.0-.5);
+  fl_scale((W-1)/28.0, (H-1)/28.0);
   if (type() == FL_ROUND_CLOCK) {
     fl_color(color());
     fl_begin_polygon(); fl_circle(0,0,14); fl_end_polygon();
@@ -104,9 +104,9 @@ void Fl_Clock_Output::draw() {
   draw_label();
 }
 
-void Fl_Clock_Output::value(int h, int m, int s) {
-  if (h!=hour_ || m!=minute_ || s!=second_) {
-    hour_ = h; minute_ = m; second_ = s;
+void Fl_Clock_Output::value(int H, int m, int s) {
+  if (H!=hour_ || m!=minute_ || s!=second_) {
+    hour_ = H; minute_ = m; second_ = s;
     damage(FL_DAMAGE_CHILD);
   }
 }
@@ -117,8 +117,8 @@ void Fl_Clock_Output::value(ulong v) {
   value(timeofday->tm_hour, timeofday->tm_min, timeofday->tm_sec);
 }
 
-Fl_Clock_Output::Fl_Clock_Output(int x, int y, int w, int h, const char *l)
-: Fl_Widget(x, y, w, h, l) {
+Fl_Clock_Output::Fl_Clock_Output(int X, int Y, int W, int H, const char *l)
+: Fl_Widget(X, Y, W, H, l) {
   box(FL_UP_BOX);
   selection_color(fl_gray_ramp(5));
   align(FL_ALIGN_BOTTOM);
@@ -130,11 +130,11 @@ Fl_Clock_Output::Fl_Clock_Output(int x, int y, int w, int h, const char *l)
 
 ////////////////////////////////////////////////////////////////
 
-Fl_Clock::Fl_Clock(int x, int y, int w, int h, const char *l)
-  : Fl_Clock_Output(x, y, w, h, l) {}
+Fl_Clock::Fl_Clock(int X, int Y, int W, int H, const char *l)
+  : Fl_Clock_Output(X, Y, W, H, l) {}
 
-Fl_Clock::Fl_Clock(uchar t, int x, int y, int w, int h, const char *l)
-  : Fl_Clock_Output(x, y, w, h, l) {
+Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char *l)
+  : Fl_Clock_Output(X, Y, W, H, l) {
   type(t);
   box(t==FL_ROUND_CLOCK ? FL_NO_BOX : FL_UP_BOX);
 }
@@ -170,5 +170,5 @@ Fl_Clock::~Fl_Clock() {
 }
 
 //
-// End of "$Id: Fl_Clock.cxx,v 1.8.2.4.2.1 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Clock.cxx,v 1.8.2.4.2.2 2002/08/09 01:09:48 easysw Exp $".
 //

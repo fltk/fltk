@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.15 2002/06/28 21:04:36 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.16 2002/08/09 01:09:48 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -777,9 +777,7 @@ load_kde_icons(const char *directory)	// I - Directory to load
   {
     if (entries[i]->d_name[0] != '.')
     {
-      strcpy(full, directory);
-      strcat(full,"/");
-      strcat(full, entries[i]->d_name);
+      snprintf(full, sizeof(full), "%s/%s", directory, entries[i]->d_name);
 
       if (fl_filename_isdir(full))
 	load_kde_icons(full);
@@ -820,11 +818,11 @@ load_kde_mimelnk(const char *filename)
     while (fgets(tmp, sizeof(tmp), fp))
     {
       if ((val = get_kde_val(tmp, "Icon")) != NULL)
-	strcpy(iconfilename, val);
+	strlcpy(iconfilename, val, sizeof(iconfilename));
       else if ((val = get_kde_val(tmp, "MimeType")) != NULL)
-	strcpy(mimetype, val);
+	strlcpy(mimetype, val, sizeof(mimetype));
       else if ((val = get_kde_val(tmp, "Patterns")) != NULL)
-	strcpy(pattern, val);
+	strlcpy(pattern, val, sizeof(pattern));
     }
 
     fclose(fp);
@@ -902,7 +900,7 @@ kde_to_fltk_pattern(const char *kdepattern)
 
   pattern = (char *)malloc(strlen(kdepattern) + 3);
   strcpy(pattern, "{");
-  strcat(pattern, kdepattern);
+  strcpy(pattern + 1, kdepattern);
 
   if (pattern[strlen(pattern) - 1] == ';')
     pattern[strlen(pattern) - 1] = '\0';
@@ -944,5 +942,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.15 2002/06/28 21:04:36 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.16 2002/08/09 01:09:48 easysw Exp $".
 //

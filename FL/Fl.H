@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.19 2002/07/30 14:57:02 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.20 2002/08/09 01:09:48 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -69,7 +69,7 @@ public: // should be private!
   static int compose_state;
   static int visible_focus_;
   static int dnd_text_ops_;
-  static void damage(int x) {damage_ = x;}
+  static void damage(int d) {damage_ = d;}
 
   static void (*idle)();
 
@@ -237,7 +237,7 @@ public:
   static int event_button2() {return e_state&FL_BUTTON2;}
   static int event_button3() {return e_state&FL_BUTTON3;}
   static void set_idle(void (*cb)()) {idle = cb;}
-  static void grab(Fl_Window&w) {grab(&w);}
+  static void grab(Fl_Window&win) {grab(&win);}
   static void release() {grab(0);}
 
   // Visible focus methods...
@@ -258,5 +258,5 @@ public:
 #endif // !Fl_H
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.19 2002/07/30 14:57:02 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.20 2002/08/09 01:09:48 easysw Exp $".
 //

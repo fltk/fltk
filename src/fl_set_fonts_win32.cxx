@@ -1,5 +1,5 @@
 //
-// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.7 2002/06/29 00:10:04 matthiaswm Exp $"
+// "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.8 2002/08/09 01:09:49 easysw Exp $"
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -30,22 +30,24 @@
 
 // turn a stored font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
-  const char* p = fl_fonts[fnum].name;
-  if (!p || !*p) {if (ap) *ap = 0; return "";}
-  int type;
-  switch (*p) {
-  case 'B': type = FL_BOLD; break;
-  case 'I': type = FL_ITALIC; break;
-  case 'P': type = FL_BOLD | FL_ITALIC; break;
-  default:  type = 0; break;
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  if (!f->fontname[0]) {
+    const char* p = f->name;
+    if (!p || !*p) {if (ap) *ap = 0; return "";}
+    int type;
+    switch (*p) {
+    case 'B': type = FL_BOLD; break;
+    case 'I': type = FL_ITALIC; break;
+    case 'P': type = FL_BOLD | FL_ITALIC; break;
+    default:  type = 0; break;
+    }
+    if (ap) *ap = type;
+    if (!type) return p+1;
+    strlcpy(f->fontname, p+1, sizeof(f->fontname));
+    if (type & FL_BOLD) strlcat(f->fontname, " bold", sizeof(f->fontname));
+    if (type & FL_ITALIC) strlcat(f->fontname, " italic", sizeof(f->fontname));
   }
-  if (ap) *ap = type;
-  if (!type) return p+1;
-  static char *buffer; if (!buffer) buffer = new char[128];
-  strcpy(buffer, p+1);
-  if (type & FL_BOLD) strcat(buffer, " bold");
-  if (type & FL_ITALIC) strcat(buffer, " italic");
-  return buffer;
+  return f->fontname;
 }
 
 static int fl_free_font = FL_FREE_FONT;
@@ -135,5 +137,5 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 
 //
-// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.7 2002/06/29 00:10:04 matthiaswm Exp $".
+// End of "$Id: fl_set_fonts_win32.cxx,v 1.5.2.5.2.8 2002/08/09 01:09:49 easysw Exp $".
 //

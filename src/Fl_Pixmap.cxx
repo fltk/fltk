@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.20 2002/08/05 17:50:25 easysw Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.21 2002/08/09 01:09:49 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -162,8 +162,8 @@ void Fl_Pixmap::uncache() {
   }
 }
 
-void Fl_Pixmap::label(Fl_Widget* w) {
-  w->image(this);
+void Fl_Pixmap::label(Fl_Widget* widget) {
+  widget->image(this);
 }
 
 void Fl_Pixmap::label(Fl_Menu_Item* m) {
@@ -460,5 +460,5 @@ void Fl_Pixmap::desaturate() {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.20 2002/08/05 17:50:25 easysw Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.4.2.21 2002/08/09 01:09:49 easysw Exp $".
 //

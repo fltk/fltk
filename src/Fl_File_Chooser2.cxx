@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.22 2002/08/05 17:50:25 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.23 2002/08/09 01:09:48 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -110,7 +110,7 @@ int				// O - Number of selected files
 Fl_File_Chooser::count()
 {
   int		i;		// Looping var
-  int		count;		// Number of selected files
+  int		fcount;		// Number of selected files
   const char	*filename;	// Filename in input field or list
   char		pathname[1024];	// Full path to file
 
@@ -126,7 +126,7 @@ Fl_File_Chooser::count()
     return (strcmp(filename, directory_) != 0);
   }
 
-  for (i = 1, count = 0; i <= fileList->size(); i ++)
+  for (i = 1, fcount = 0; i <= fileList->size(); i ++)
     if (fileList->selected(i))
     {
       // See if this file is a directory...
@@ -137,10 +137,10 @@ Fl_File_Chooser::count()
 	strlcpy(pathname, filename, sizeof(pathname));
 
       if (!fl_filename_isdir(pathname))
-	count ++;
+	fcount ++;
     }
 
-  return (count);
+  return (fcount);
 }
 
 
@@ -209,19 +209,19 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 void
 Fl_File_Chooser::favoritesButtonCB()
 {
-  int		value;			// Current selection
+  int		v;			// Current selection
   char		pathname[1024],		// Pathname
 		menuname[2048];		// Menu name
 
 
-  value = favoritesButton->value();
+  v = favoritesButton->value();
 
-  if (!value) {
+  if (!v) {
     // Add current directory to favorites...
-    if (getenv("HOME")) value = favoritesButton->size() - 5;
-    else value = favoritesButton->size() - 4;
+    if (getenv("HOME")) v = favoritesButton->size() - 5;
+    else v = favoritesButton->size() - 4;
 
-    sprintf(menuname, "favorite%02d", value);
+    sprintf(menuname, "favorite%02d", v);
 
     prefs_.set(menuname, directory_);
 
@@ -231,14 +231,14 @@ Fl_File_Chooser::favoritesButtonCB()
     if (favoritesButton->size() > 104) {
       ((Fl_Menu_Item *)favoritesButton->menu())[0].deactivate();
     }
-  } else if (value == 1) {
+  } else if (v == 1) {
     // Manage favorites...
     favoritesCB(0);
-  } else if (value == 2) {
+  } else if (v == 2) {
     // Filesystems/My Computer
     directory("");
   } else {
-    unquote_pathname(pathname, favoritesButton->text(value), sizeof(pathname));
+    unquote_pathname(pathname, favoritesButton->text(v), sizeof(pathname));
     directory(pathname);
   }
 }
@@ -986,7 +986,7 @@ const char *			// O - Filename or NULL
 Fl_File_Chooser::value(int f)	// I - File number
 {
   int		i;		// Looping var
-  int		count;		// Number of selected files
+  int		fcount;		// Number of selected files
   const char	*name;		// Current filename
   char		*slash;		// Trailing slash, if any
   static char	pathname[1024];	// Filename + directory
@@ -1006,7 +1006,7 @@ Fl_File_Chooser::value(int f)	// I - File number
     } else return name;
   }
 
-  for (i = 1, count = 0; i <= fileList->size(); i ++)
+  for (i = 1, fcount = 0; i <= fileList->size(); i ++)
     if (fileList->selected(i)) {
       // See if this file is a directory...
       name = fileList->text(i);
@@ -1019,8 +1019,8 @@ Fl_File_Chooser::value(int f)	// I - File number
 
       if (!fl_filename_isdir(pathname)) {
         // Nope, see if this this is "the one"...
-	count ++;
-	if (count == f) return (pathname);
+	fcount ++;
+	if (fcount == f) return (pathname);
       }
     }
 
@@ -1036,7 +1036,7 @@ void
 Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
 {
   int	i,					// Looping var
-  	count;					// Number of items in list
+  	fcount;					// Number of items in list
   char	*slash;					// Directory separator
   char	pathname[1024];				// Local copy of filename
 
@@ -1081,12 +1081,12 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
   okButton->activate();
 
   // Then find the file in the file list and select it...
-  count = fileList->size();
+  fcount = fileList->size();
 
   fileList->deselect(0);
   fileList->redraw();
 
-  for (i = 1; i <= count; i ++)
+  for (i = 1; i <= fcount; i ++)
 #if defined(WIN32) || defined(__EMX__)
     if (strcasecmp(fileList->text(i), slash) == 0) {
 #else
@@ -1143,5 +1143,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.22 2002/08/05 17:50:25 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.23 2002/08/09 01:09:48 easysw Exp $".
 //

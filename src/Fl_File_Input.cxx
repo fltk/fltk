@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.5 2002/07/30 18:40:50 easysw Exp $"
+// "$Id: Fl_File_Input.cxx,v 1.1.2.6 2002/08/09 01:09:48 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -49,8 +49,8 @@
 // 'Fl_File_Input::Fl_File_Input()' - Create a Fl_File_Input widget.
 //
 
-Fl_File_Input::Fl_File_Input(int x, int y, int w, int h, const char *l)
-  : Fl_Input(x, y, w, h, l) {
+Fl_File_Input::Fl_File_Input(int X, int Y, int W, int H, const char *l)
+  : Fl_Input(X, Y, W, H, l) {
   buttons_[0] = 0;
   errorcolor_ = FL_RED;
   ok_entry_   = 1;
@@ -270,5 +270,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.5 2002/07/30 18:40:50 easysw Exp $".
+// End of "$Id: Fl_File_Input.cxx,v 1.1.2.6 2002/08/09 01:09:48 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.H,v 1.6.2.8.2.8 2002/08/05 17:50:23 easysw Exp $"
+// "$Id: Fl_Pixmap.H,v 1.6.2.8.2.9 2002/08/09 01:09:48 easysw Exp $"
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
@@ -50,10 +50,10 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   Fl_Offscreen id; // for internal use
   Fl_Bitmask mask; // for internal use (mask bitmap)
 
-  explicit Fl_Pixmap(char * const * d) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)d); measure();}
-  explicit Fl_Pixmap(uchar* const * d) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)d); measure();}
-  explicit Fl_Pixmap(const char * const * d) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)d); measure();}
-  explicit Fl_Pixmap(const uchar* const * d) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)d); measure();}
+  explicit Fl_Pixmap(char * const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
+  explicit Fl_Pixmap(uchar* const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
+  explicit Fl_Pixmap(const char * const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
+  explicit Fl_Pixmap(const uchar* const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
   virtual ~Fl_Pixmap();
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return copy(w(), h()); }
@@ -69,5 +69,5 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Pixmap.H,v 1.6.2.8.2.8 2002/08/05 17:50:23 easysw Exp $".
+// End of "$Id: Fl_Pixmap.H,v 1.6.2.8.2.9 2002/08/09 01:09:48 easysw Exp $".
 //

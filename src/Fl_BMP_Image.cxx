@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.8 2002/07/26 14:22:02 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.9 2002/08/09 01:09:48 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -72,7 +72,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 		colors_used,	// Number of colors used
 		x, y,		// Looping vars
 		color,		// Color of RLE pixel
-		count,		// Number of times to repeat
+		repcount,	// Number of times to repeat
 		temp,		// Temporary color
 		align;		// Alignment bytes
   long		offbits;	// Offset to image data
@@ -111,7 +111,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     compression = BI_RGB;
     colors_used = 0;
 
-    count = info_size - 12;
+    repcount = info_size - 12;
   } else {
     // New BMP header...
     w(read_long(fp));
@@ -125,16 +125,16 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     colors_used = read_dword(fp);
     read_dword(fp);
 
-    count = info_size - 40;
+    repcount = info_size - 40;
   }
 
-//  printf("w() = %d, h() = %d, depth = %d, compression = %d, colors_used = %d, count = %d\n",
-//         w(), h(), depth, compression, colors_used, count);
+//  printf("w() = %d, h() = %d, depth = %d, compression = %d, colors_used = %d, repcount = %d\n",
+//         w(), h(), depth, compression, colors_used, repcount);
 
   // Skip remaining header bytes...
-  while (count > 0) {
+  while (repcount > 0) {
     getc(fp);
-    count --;
+    repcount --;
   }
 
   // Check header data...
@@ -147,9 +147,9 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   if (colors_used == 0 && depth <= 8)
     colors_used = 1 << depth;
 
-  for (count = 0; count < colors_used; count ++) {
+  for (repcount = 0; repcount < colors_used; repcount ++) {
     // Read BGR color...
-    fread(colormap[count], 1, 3, fp);
+    fread(colormap[repcount], 1, 3, fp);
 
     // Skip pad byte for new BMP files...
     if (info_size > 12) getc(fp);
@@ -164,7 +164,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   // Read the image data...
   color = 0;
-  count = 0;
+  repcount = 0;
   align = 0;
   byte  = 0;
   temp  = 0;
@@ -202,10 +202,10 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
       case 4 : // 16-color
           for (x = w(), bit = 0xf0; x > 0; x --) {
-	    // Get a new count as needed...
-	    if (count == 0) {
+	    // Get a new repcount as needed...
+	    if (repcount == 0) {
               if (compression != BI_RLE4) {
-		count = 2;
+		repcount = 2;
 		color = -1;
               } else {
 		while (align > 0) {
@@ -213,22 +213,22 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 		  getc(fp);
         	}
 
-		if ((count = getc(fp)) == 0) {
-		  if ((count = getc(fp)) == 0) {
+		if ((repcount = getc(fp)) == 0) {
+		  if ((repcount = getc(fp)) == 0) {
 		    // End of line...
                     x ++;
 		    continue;
-		  } else if (count == 1) {
+		  } else if (repcount == 1) {
                     // End of image...
 		    break;
-		  } else if (count == 2) {
+		  } else if (repcount == 2) {
 		    // Delta...
-		    count = getc(fp) * getc(fp) * w();
+		    repcount = getc(fp) * getc(fp) * w();
 		    color = 0;
 		  } else {
 		    // Absolute...
 		    color = -1;
-		    align = ((4 - (count & 3)) / 2) & 1;
+		    align = ((4 - (repcount & 3)) / 2) & 1;
 		  }
 		} else {
 	          color = getc(fp);
@@ -237,7 +237,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 	    }
 
             // Get a new color as needed...
-	    count --;
+	    repcount --;
 
 	    // Get the next color byte as needed...
             if (color < 0) color = getc(fp);
@@ -269,34 +269,34 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
       case 8 : // 256-color
           for (x = w(); x > 0; x --) {
-	    // Get a new count as needed...
+	    // Get a new repcount as needed...
             if (compression != BI_RLE8) {
-	      count = 1;
+	      repcount = 1;
 	      color = -1;
             }
 
-	    if (count == 0) {
+	    if (repcount == 0) {
 	      while (align > 0) {
 	        align --;
 		getc(fp);
               }
 
-	      if ((count = getc(fp)) == 0) {
-		if ((count = getc(fp)) == 0) {
+	      if ((repcount = getc(fp)) == 0) {
+		if ((repcount = getc(fp)) == 0) {
 		  // End of line...
                   x ++;
 		  continue;
-		} else if (count == 1) {
+		} else if (repcount == 1) {
 		  // End of image...
 		  break;
-		} else if (count == 2) {
+		} else if (repcount == 2) {
 		  // Delta...
-		  count = getc(fp) * getc(fp) * w();
+		  repcount = getc(fp) * getc(fp) * w();
 		  color = 0;
 		} else {
 		  // Absolute...
 		  color = -1;
-		  align = (2 - (count & 1)) & 1;
+		  align = (2 - (repcount & 1)) & 1;
 		}
 	      } else {
 	        color = getc(fp);
@@ -307,7 +307,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
             if (color < 0) temp = getc(fp);
 	    else temp = color;
 
-            count --;
+            repcount --;
 
             // Copy the color value...
 	    *ptr++ = colormap[temp][2];
@@ -393,5 +393,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.8 2002/07/26 14:22:02 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.9 2002/08/09 01:09:48 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Dial.cxx,v 1.12.2.3.2.3 2002/05/12 11:12:56 easysw Exp $"
+// "$Id: Fl_Dial.cxx,v 1.12.2.3.2.4 2002/08/09 01:09:48 easysw Exp $"
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
@@ -31,34 +31,34 @@
 
 // All angles are measured with 0 to the right and counter-clockwise
 
-void Fl_Dial::draw(int x, int y, int w, int h) {
-  if (damage()&FL_DAMAGE_ALL) draw_box(box(), x, y, w, h, color());
-  x += Fl::box_dx(box());
-  y += Fl::box_dy(box());
-  w -= Fl::box_dw(box());
-  h -= Fl::box_dh(box());
+void Fl_Dial::draw(int X, int Y, int W, int H) {
+  if (damage()&FL_DAMAGE_ALL) draw_box(box(), X, Y, W, H, color());
+  X += Fl::box_dx(box());
+  Y += Fl::box_dy(box());
+  W -= Fl::box_dw(box());
+  H -= Fl::box_dh(box());
   double angle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
   if (type() == FL_FILL_DIAL) {
     // foo: draw this nicely in certain round box types
     int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
-    if (foo) {x--; y--; w+=2; h+=2;}
+    if (foo) {X--; Y--; W+=2; H+=2;}
     fl_color(color());
-    fl_pie(x, y, w-1, h-1, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
+    fl_pie(X, Y, W-1, H-1, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
     fl_color(selection_color());
-    fl_pie(x, y, w-1, h-1, 270-angle, 270-a1);
+    fl_pie(X, Y, W-1, H-1, 270-angle, 270-a1);
     if (foo) {
       fl_color(FL_FOREGROUND_COLOR);
-      fl_arc(x, y, w, h, 0, 360);
+      fl_arc(X, Y, W, H, 0, 360);
     }
     return;
   }
   if (!(damage()&FL_DAMAGE_ALL)) {
     fl_color(color());
-    fl_pie(x+1, y+1, w-2, h-2, 0, 360);
+    fl_pie(X+1, Y+1, W-2, H-2, 0, 360);
   }
   fl_push_matrix();
-  fl_translate(x+w/2-.5, y+h/2-.5);
-  fl_scale(w-1, h-1);
+  fl_translate(X+W/2-.5, Y+H/2-.5);
+  fl_scale(W-1, H-1);
   fl_rotate(45-angle);
   fl_color(selection_color());
   if (type()) { // FL_LINE_DIAL
@@ -88,13 +88,13 @@ void Fl_Dial::draw() {
   draw_label();
 }
 
-int Fl_Dial::handle(int event, int x, int y, int w, int h) {
+int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
   switch (event) {
   case FL_PUSH:
     handle_push();
   case FL_DRAG: {
-    int mx = Fl::event_x()-x-w/2;
-    int my = Fl::event_y()-y-h/2;
+    int mx = Fl::event_x()-X-W/2;
+    int my = Fl::event_y()-Y-H/2;
     if (!mx && !my) return 1;
     double angle = 270-atan2((float)-my, (float)mx)*180/M_PI;
     double oldangle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
@@ -125,8 +125,8 @@ int Fl_Dial::handle(int e) {
   return handle(e, x(), y(), w(), h());
 }
 
-Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
-  : Fl_Valuator(x, y, w, h, l) {
+Fl_Dial::Fl_Dial(int X, int Y, int W, int H, const char* l)
+  : Fl_Valuator(X, Y, W, H, l) {
   box(FL_OVAL_BOX);
   selection_color(FL_INACTIVE_COLOR); // was 37
   a1 = 45;
@@ -134,5 +134,5 @@ Fl_Dial::Fl_Dial(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Dial.cxx,v 1.12.2.3.2.3 2002/05/12 11:12:56 easysw Exp $".
+// End of "$Id: Fl_Dial.cxx,v 1.12.2.3.2.4 2002/08/09 01:09:48 easysw Exp $".
 //

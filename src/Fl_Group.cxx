@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.17 2002/07/30 18:40:50 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.18 2002/08/09 01:09:48 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -484,35 +484,35 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
     for (int i=children_; i--;) {
       Fl_Widget* o = *a++;
 #if 1
-      int X = *p++;
-      if (X >= IR) X += dw;
-      else if (X > IX) X = IX+((X-IX)*(IR+dw-IX)+(IR-IX)/2)/(IR-IX);
+      int XX = *p++;
+      if (XX >= IR) XX += dw;
+      else if (XX > IX) XX = IX+((XX-IX)*(IR+dw-IX)+(IR-IX)/2)/(IR-IX);
       int R = *p++;
       if (R >= IR) R += dw;
       else if (R > IX) R = IX+((R-IX)*(IR+dw-IX)+(IR-IX)/2)/(IR-IX);
 
-      int Y = *p++;
-      if (Y >= IB) Y += dh;
-      else if (Y > IY) Y = IY+((Y-IY)*(IB+dh-IY)+(IB-IY)/2)/(IB-IY);
+      int YY = *p++;
+      if (YY >= IB) YY += dh;
+      else if (YY > IY) YY = IY+((YY-IY)*(IB+dh-IY)+(IB-IY)/2)/(IB-IY);
       int B = *p++;
       if (B >= IB) B += dh;
       else if (B > IY) B = IY+((B-IY)*(IB+dh-IY)+(IB-IY)/2)/(IB-IY);
 #else // much simpler code from Francois Ostiguy:
-      int X = *p++;
-      if (X >= IR) X += dw;
-      else if (X > IX) X = X + dw * (X-IX)/(IR-IX);
+      int XX = *p++;
+      if (XX >= IR) XX += dw;
+      else if (XX > IX) XX += dw * (XX-IX)/(IR-IX);
       int R = *p++;
       if (R >= IR) R += dw;
       else if (R > IX) R = R + dw * (R-IX)/(IR-IX);
 
-      int Y = *p++;
-      if (Y >= IB) Y += dh;
-      else if (Y > IY) Y = Y + dh*(Y-IY)/(IB-IY);
+      int YY = *p++;
+      if (YY >= IB) YY += dh;
+      else if (YY > IY) YY = YY + dh*(YY-IY)/(IB-IY);
       int B = *p++;
       if (B >= IB) B += dh;
       else if (B > IY) B = B + dh*(B-IY)/(IB-IY);
 #endif
-      o->resize(X+dx, Y+dy, R-X, B-Y);
+      o->resize(XX+dx, YY+dy, R-XX, B-YY);
     }
   }
 
@@ -535,57 +535,57 @@ void Fl_Group::draw() {
 }
 
 // Draw a child only if it needs it:
-void Fl_Group::update_child(Fl_Widget& w) const {
-  if (w.damage() && w.visible() && w.type() < FL_WINDOW &&
-      fl_not_clipped(w.x(), w.y(), w.w(), w.h())) {
-    w.draw();	
-    w.clear_damage();
+void Fl_Group::update_child(Fl_Widget& widget) const {
+  if (widget.damage() && widget.visible() && widget.type() < FL_WINDOW &&
+      fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
+    widget.draw();	
+    widget.clear_damage();
   }
 }
 
 // Force a child to redraw:
-void Fl_Group::draw_child(Fl_Widget& w) const {
-  if (w.visible() && w.type() < FL_WINDOW &&
-      fl_not_clipped(w.x(), w.y(), w.w(), w.h())) {
-    w.clear_damage(FL_DAMAGE_ALL);
-    w.draw();
-    w.clear_damage();
+void Fl_Group::draw_child(Fl_Widget& widget) const {
+  if (widget.visible() && widget.type() < FL_WINDOW &&
+      fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
+    widget.clear_damage(FL_DAMAGE_ALL);
+    widget.draw();
+    widget.clear_damage();
   }
 }
 
 extern char fl_draw_shortcut;
 
 // Parents normally call this to draw outside labels:
-void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
-  if (!w.visible()) return;
+void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
+  if (!widget.visible()) return;
   // skip any labels that are inside the widget:
-  if (!(w.align()&15) || (w.align() & FL_ALIGN_INSIDE)) return;
+  if (!(widget.align()&15) || (widget.align() & FL_ALIGN_INSIDE)) return;
   // invent a box that is outside the widget:
-  int align = w.align();
-  int X = w.x();
-  int Y = w.y();
-  int W = w.w();
-  int H = w.h();
-  if (align & FL_ALIGN_TOP) {
-    align ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
+  int a = widget.align();
+  int X = widget.x();
+  int Y = widget.y();
+  int W = widget.w();
+  int H = widget.h();
+  if (a & FL_ALIGN_TOP) {
+    a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
     Y = y();
-    H = w.y()-Y;
-  } else if (align & FL_ALIGN_BOTTOM) {
-    align ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
+    H = widget.y()-Y;
+  } else if (a & FL_ALIGN_BOTTOM) {
+    a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
     Y = Y+H;
     H = y()+h()-Y;
-  } else if (align & FL_ALIGN_LEFT) {
-    align ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
+  } else if (a & FL_ALIGN_LEFT) {
+    a ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
     X = x();
-    W = w.x()-X-3;
-  } else if (align & FL_ALIGN_RIGHT) {
-    align ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
+    W = widget.x()-X-3;
+  } else if (a & FL_ALIGN_RIGHT) {
+    a ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
     X = X+W+3;
     W = x()+this->w()-X;
   }
-  w.draw_label(X,Y,W,H,(Fl_Align)align);
+  widget.draw_label(X,Y,W,H,(Fl_Align)a);
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.17 2002/07/30 18:40:50 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.18 2002/08/09 01:09:48 easysw Exp $".
 //

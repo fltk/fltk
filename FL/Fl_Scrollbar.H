@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.H,v 1.5.2.4.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Scrollbar.H,v 1.5.2.4.2.2 2002/08/09 01:09:48 easysw Exp $"
 //
 // Scroll bar header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,8 +43,8 @@ public:
   FL_EXPORT int handle(int);
 
   int value() {return int(Fl_Slider::value());}
-  int value(int position, int size, int top, int total) {
-    return scrollvalue(position, size, top, total);
+  int value(int p, int s, int top, int total) {
+    return scrollvalue(p, s, top, total);
   }
   int linesize() const {return linesize_;}
   void linesize(int i) {linesize_ = i;}
@@ -54,5 +54,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Scrollbar.H,v 1.5.2.4.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Scrollbar.H,v 1.5.2.4.2.2 2002/08/09 01:09:48 easysw Exp $".
 //

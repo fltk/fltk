@@ -1,5 +1,5 @@
 //
-// "$Id: fl_images_core.cxx,v 1.1.2.2 2002/06/29 00:10:04 matthiaswm Exp $"
+// "$Id: fl_images_core.cxx,v 1.1.2.3 2002/08/09 01:09:49 easysw Exp $"
 //
 // FLTK images library core.
 //
@@ -33,8 +33,11 @@
 //
 
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_BMP_Image.H>
+#include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_PNM_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -65,20 +68,28 @@ Fl_Image *					// O - Image, if found
 fl_check_images(const char *name,		// I - Filename
                 uchar      *header,		// I - Header data from file
 		int        headerlen) {		// I - Amount of data
+  if (memcmp(header, "GIF87a", 6) == 0 ||
+      memcmp(header, "GIF89a", 6) == 0)	// GIF file
+    return new Fl_GIF_Image(name);
+
+  if (memcmp(header, "BM", 2) == 0)	// BMP file
+    return new Fl_BMP_Image(name);
+
+  if (header[0] == 'P' && header[1] >= '1' && header[1] <= '6')
+					// Portable anymap
+    return new Fl_PNM_Image(name);
+
 #ifdef HAVE_LIBPNG
-  if (memcmp(header, "\211PNG", 4) == 0)	// PNG header
+  if (memcmp(header, "\211PNG", 4) == 0)// PNG file
     return new Fl_PNG_Image(name);
-#else
-  header = header; name = name; headerlen = headerlen; // avoid warnings
 #endif // HAVE_LIBPNG
 
 #ifdef HAVE_LIBJPEG
-  if (memcmp(header, "\377\330\377", 3) == 0 &&	// Start-of-Image
-	   header[3] >= 0xe0 && header[3] <= 0xef)
-	   					// APPn
+  if (memcmp(header, "\377\330\377", 3) == 0 &&
+					// Start-of-Image
+      header[3] >= 0xe0 && header[3] <= 0xef)
+	   				// APPn for JPEG file
     return new Fl_JPEG_Image(name);
-#else
-  header = header; name = name; headerlen = headerlen; // avoid warnings
 #endif // HAVE_LIBJPEG
 
   return 0;
@@ -86,5 +97,5 @@ fl_check_images(const char *name,		// I - Filename
 
 
 //
-// End of "$Id: fl_images_core.cxx,v 1.1.2.2 2002/06/29 00:10:04 matthiaswm Exp $".
+// End of "$Id: fl_images_core.cxx,v 1.1.2.3 2002/08/09 01:09:49 easysw Exp $".
 //

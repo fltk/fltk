@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.46 2002/07/14 17:03:31 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.47 2002/08/09 01:09:49 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -27,7 +27,6 @@ CPPFILES = \
 	Fl.cxx \
 	Fl_Adjuster.cxx \
 	Fl_Bitmap.cxx \
-	Fl_BMP_Image.cxx \
 	Fl_Browser.cxx \
 	Fl_Browser_.cxx \
 	Fl_Browser_load.cxx \
@@ -47,7 +46,6 @@ CPPFILES = \
 	Fl_File_Chooser2.cxx \
 	Fl_File_Icon.cxx \
 	Fl_File_Input.cxx \
-	Fl_GIF_Image.cxx \
 	Fl_Group.cxx \
 	Fl_Help_Dialog.cxx \
 	Fl_Help_View.cxx \
@@ -66,7 +64,6 @@ CPPFILES = \
 	Fl_Overlay_Window.cxx \
 	Fl_Pack.cxx \
 	Fl_Pixmap.cxx \
-	Fl_PNM_Image.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
 	Fl_Progress.cxx \
@@ -170,9 +167,12 @@ GLCPPFILES = \
 
 IMGCPPFILES = \
 	fl_images_core.cxx \
+	Fl_BMP_Image.cxx \
 	Fl_File_Icon2.cxx \
+	Fl_GIF_Image.cxx \
 	Fl_JPEG_Image.cxx \
-	Fl_PNG_Image.cxx
+	Fl_PNG_Image.cxx \
+	Fl_PNM_Image.cxx
 
 CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
 
@@ -565,5 +565,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.46 2002/07/14 17:03:31 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.47 2002/08/09 01:09:49 easysw Exp $".
 #

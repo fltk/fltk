@@ -1,6 +1,16 @@
 CHANGES IN FLTK 1.1.0
 
 	- Documentation updates.
+	- More snprintf/strlcpy/strlcat changes where needed.
+	- Fl::get_font_name() would leak 128 bytes.
+	- Eliminated most of the "shadowed" variables to avoid
+	  potential problems with using the wrong copy of "foo"
+	  in a class method.
+	- Moved Fl_BMP_Image, Fl_GIF_Image, and Fl_PNM_Image to
+	  the fltk_images library, so the only image formats
+	  that are supported by the core library are XBM and XPM
+	  files.  This reduces the size of the FLTK core library
+	  by about 16k...
 	- The Fl_Text_Display::resize() method was incorrectly
 	  flagged as protected.
 	- Fixed some memory/initialization bugs in

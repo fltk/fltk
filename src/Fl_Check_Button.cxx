@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Check_Button.cxx,v 1.4.2.3.2.3 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Check_Button.cxx,v 1.4.2.3.2.4 2002/08/09 01:09:48 easysw Exp $"
 //
 // Check button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -30,8 +30,8 @@
 // diamond is smaller than the widget size and can be surchecked by
 // another box type, for compatability with Forms.
 
-Fl_Check_Button::Fl_Check_Button(int x, int y, int w, int h, const char *l)
-: Fl_Light_Button(x, y, w, h, l) {
+Fl_Check_Button::Fl_Check_Button(int X, int Y, int W, int H, const char *l)
+: Fl_Light_Button(X, Y, W, H, l) {
   box(FL_NO_BOX);
   down_box(FL_DOWN_BOX);
   selection_color(FL_BLACK);

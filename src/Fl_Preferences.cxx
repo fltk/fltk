@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Preferences.cxx,v 1.1.2.17 2002/07/01 20:14:08 easysw Exp $"
+// "$Id: Fl_Preferences.cxx,v 1.1.2.18 2002/08/09 01:09:49 easysw Exp $"
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
@@ -392,9 +392,9 @@ char Fl_Preferences::get( const char *key, void *data, const void *defaultValue,
   const char *v = node->get( key );
   if ( v )
   {
-    int size;
-    void *w = decodeHex( v, size );
-    memmove( data, w, size>maxSize?maxSize:size );
+    int dsize;
+    void *w = decodeHex( v, dsize );
+    memmove( data, w, dsize>maxSize?maxSize:dsize );
     free( w );
     return 1;
   }    
@@ -414,8 +414,8 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
   const char *v = node->get( key );
   if ( v )
   {
-    int size;
-    data = decodeHex( v, size );
+    int dsize;
+    data = decodeHex( v, dsize );
     return 1;
   }    
   if ( defaultValue )
@@ -432,11 +432,11 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
 /**
  * set an entry (name/value pair)
  */
-char Fl_Preferences::set( const char *key, const void *data, int size )
+char Fl_Preferences::set( const char *key, const void *data, int dsize )
 {
-  char *buffer = (char*)malloc( size*2+1 ), *d = buffer;;
+  char *buffer = (char*)malloc( dsize*2+1 ), *d = buffer;;
   unsigned char *s = (unsigned char*)data;
-  for ( ; size>0; size-- )
+  for ( ; dsize>0; dsize-- )
   {
     static char lu[] = "0123456789abcdef";
     unsigned char v = *s++;
@@ -889,7 +889,9 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
 // create or set a value (or annotation) from a single line in the file buffer
 void Fl_Preferences::Node::set( const char *line )
 {
-  char dirty = dirty_; // hmm. If we assume that we always read yhis file in the beginning, we can handle the dirty flag 'quick and dirty'
+  // hmm. If we assume that we always read this file in the beginning,
+  // we can handle the dirty flag 'quick and dirty'
+  char dirt = dirty_;
   if ( line[0]==';' || line[0]==0 || line[0]=='#' )
   {
     set( line, 0 );
@@ -905,7 +907,7 @@ void Fl_Preferences::Node::set( const char *line )
     else
       set( line, "" );
   }
-  dirty_ = dirty;
+  dirty_ = dirt;
 }
 
 // add more data to an existing entry
@@ -1052,5 +1054,5 @@ char Fl_Preferences::Node::remove()
 
 
 //
-// End of "$Id: Fl_Preferences.cxx,v 1.1.2.17 2002/07/01 20:14:08 easysw Exp $".
+// End of "$Id: Fl_Preferences.cxx,v 1.1.2.18 2002/08/09 01:09:49 easysw Exp $".
 //

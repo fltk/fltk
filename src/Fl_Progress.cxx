@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Progress.cxx,v 1.1.2.5 2002/04/11 10:46:19 easysw Exp $"
+// "$Id: Fl_Progress.cxx,v 1.1.2.6 2002/08/09 01:09:49 easysw Exp $"
 //
 // Progress bar widget routines.
 //
@@ -92,8 +92,8 @@ void Fl_Progress::draw()
 // 'Fl_Progress::Fl_Progress()' - Construct a Fl_Progress widget.
 //
 
-Fl_Progress::Fl_Progress(int x, int y, int w, int h, const char* l)
-: Fl_Widget(x, y, w, h, l)
+Fl_Progress::Fl_Progress(int X, int Y, int W, int H, const char* l)
+: Fl_Widget(X, Y, W, H, l)
 {
   align(FL_ALIGN_INSIDE);
   box(FL_DOWN_BOX);
@@ -105,5 +105,5 @@ Fl_Progress::Fl_Progress(int x, int y, int w, int h, const char* l)
 
 
 //
-// End of "$Id: Fl_Progress.cxx,v 1.1.2.5 2002/04/11 10:46:19 easysw Exp $".
+// End of "$Id: Fl_Progress.cxx,v 1.1.2.6 2002/08/09 01:09:49 easysw Exp $".
 //

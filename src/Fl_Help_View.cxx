@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.37 2002/07/18 15:27:21 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.38 2002/08/09 01:09:49 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -322,7 +322,7 @@ Fl_Help_View::draw()
 			attr[1024];	// Attribute buffer
   int			xx, yy, ww, hh;	// Current positions and sizes
   int			line;		// Current line
-  unsigned char		font, size;	// Current font and size
+  unsigned char		font, fsize;	// Current font and size
   int			head, pre,	// Flags for text
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
@@ -371,7 +371,7 @@ Fl_Help_View::draw()
       head      = 0;
       needspace = 0;
 
-      initfont(font, size);
+      initfont(font, fsize);
 
       for (ptr = block->start, s = buf; ptr < block->end;)
       {
@@ -399,8 +399,8 @@ Fl_Help_View::draw()
             fl_draw(buf, xx + x() - leftline_, yy + y());
 
             xx += ww;
-	    if ((size + 2) > hh)
-	      hh = size + 2;
+	    if ((fsize + 2) > hh)
+	      hh = fsize + 2;
 
 	    needspace = 0;
 	  }
@@ -419,7 +419,7 @@ Fl_Help_View::draw()
 	          line ++;
 		xx = block->line[line];
 		yy += hh;
-		hh = size + 2;
+		hh = fsize + 2;
 	      }
 	      else if (*ptr == '\t')
 	      {
@@ -430,8 +430,8 @@ Fl_Help_View::draw()
 	      else
 	        *s++ = ' ';
 
-              if ((size + 2) > hh)
-	        hh = size + 2;
+              if ((fsize + 2) > hh)
+	        hh = fsize + 2;
 
               ptr ++;
 	    }
@@ -514,28 +514,28 @@ Fl_Help_View::draw()
 	  {
             if (tolower(buf[0]) == 'h')
 	    {
-	      font = FL_HELVETICA_BOLD;
-	      size = textsize_ + '7' - buf[1];
+	      font  = FL_HELVETICA_BOLD;
+	      fsize = textsize_ + '7' - buf[1];
 	    }
 	    else if (strcasecmp(buf, "DT") == 0)
 	    {
-	      font = textfont_ | FL_ITALIC;
-	      size = textsize_;
+	      font  = textfont_ | FL_ITALIC;
+	      fsize = textsize_;
 	    }
 	    else if (strcasecmp(buf, "PRE") == 0)
 	    {
-	      font = FL_COURIER;
-	      size = textsize_;
-	      pre  = 1;
+	      font  = FL_COURIER;
+	      fsize = textsize_;
+	      pre   = 1;
 	    }
 
             if (strcasecmp(buf, "LI") == 0)
 	    {
-	      fl_font(FL_SYMBOL, size);
-	      fl_draw("\267", xx - size + x() - leftline_, yy + y());
+	      fl_font(FL_SYMBOL, fsize);
+	      fl_draw("\267", xx - fsize + x() - leftline_, yy + y());
 	    }
 
-	    pushfont(font, size);
+	    pushfont(font, fsize);
 	  }
 	  else if (strcasecmp(buf, "A") == 0 &&
 	           get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
@@ -544,21 +544,21 @@ Fl_Help_View::draw()
 	    fl_color(textcolor_);
 	  else if (strcasecmp(buf, "B") == 0 ||
 	           strcasecmp(buf, "STRONG") == 0)
-	    pushfont(font |= FL_BOLD, size);
+	    pushfont(font |= FL_BOLD, fsize);
 	  else if (strcasecmp(buf, "TD") == 0 ||
 	           strcasecmp(buf, "TH") == 0)
           {
 	    int tx, ty, tw, th;
 
 	    if (tolower(buf[1]) == 'h')
-	      pushfont(font |= FL_BOLD, size);
+	      pushfont(font |= FL_BOLD, fsize);
 	    else
-	      pushfont(font = textfont_, size);
+	      pushfont(font = textfont_, fsize);
 
             tx = block->x - 4 - leftline_;
-	    ty = block->y - topline_ - size - 3;
+	    ty = block->y - topline_ - fsize - 3;
             tw = block->w - block->x + 7;
-	    th = block->h + size - 5;
+	    th = block->h + fsize - 5;
 
             if (tx < 0)
 	    {
@@ -587,14 +587,14 @@ Fl_Help_View::draw()
 	  }
 	  else if (strcasecmp(buf, "I") == 0 ||
                    strcasecmp(buf, "EM") == 0)
-	    pushfont(font |= FL_ITALIC, size);
+	    pushfont(font |= FL_ITALIC, fsize);
 	  else if (strcasecmp(buf, "CODE") == 0 ||
 	           strcasecmp(buf, "TT") == 0)
-	    pushfont(font = FL_COURIER, size);
+	    pushfont(font = FL_COURIER, fsize);
 	  else if (strcasecmp(buf, "KBD") == 0)
-	    pushfont(font = FL_COURIER_BOLD, size);
+	    pushfont(font = FL_COURIER_BOLD, fsize);
 	  else if (strcasecmp(buf, "VAR") == 0)
-	    pushfont(font = FL_COURIER_ITALIC, size);
+	    pushfont(font = FL_COURIER_ITALIC, fsize);
 	  else if (strcasecmp(buf, "/HEAD") == 0)
             head = 0;
 	  else if (strcasecmp(buf, "/H1") == 0 ||
@@ -611,10 +611,10 @@ Fl_Help_View::draw()
 		   strcasecmp(buf, "/TT") == 0 ||
 		   strcasecmp(buf, "/KBD") == 0 ||
 		   strcasecmp(buf, "/VAR") == 0)
-	    popfont(font, size);
+	    popfont(font, fsize);
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
-	    popfont(font, size);
+	    popfont(font, fsize);
 	    pre = 0;
 	  }
 	  else if (strcasecmp(buf, "IMG") == 0)
@@ -678,7 +678,7 @@ Fl_Help_View::draw()
 	    line ++;
 	  xx = block->line[line];
 	  yy += hh;
-	  hh = size + 2;
+	  hh = fsize + 2;
 	  needspace = 0;
 
 	  ptr ++;
@@ -713,15 +713,15 @@ Fl_Help_View::draw()
 	    ptr = strchr(ptr, ';') + 1;
 	  }
 
-          if ((size + 2) > hh)
-	    hh = size + 2;
+          if ((fsize + 2) > hh)
+	    hh = fsize + 2;
 	}
 	else
 	{
 	  *s++ = *ptr++;
 
-          if ((size + 2) > hh)
-	    hh = size + 2;
+          if ((fsize + 2) > hh)
+	    hh = fsize + 2;
         }
       }
 
@@ -774,13 +774,13 @@ Fl_Help_View::format()
 		attr[1024],	// Attribute buffer
 		wattr[1024],	// Width attribute buffer
 		hattr[1024],	// Height attribute buffer
-		link[1024];	// Link destination
+		linkdest[1024];	// Link destination
   int		xx, yy, ww, hh;	// Size of current text fragment
   int		line;		// Current line in block
   int		links;		// Links for current line
-  unsigned char	font, size;	// Current font and size
+  unsigned char	font, fsize;	// Current font and size
   unsigned char	border;		// Draw border?
-  int		align,		// Current alignment
+  int		talign,		// Current alignment
 		newalign,	// New alignment
 		head,		// In the <HEAD> section?
 		pre,		// <PRE> text?
@@ -816,24 +816,24 @@ Fl_Help_View::format()
       return;
 
     // Setup for formatting...
-    initfont(font, size);
+    initfont(font, fsize);
 
-    line      = 0;
-    links     = 0;
-    xx        = 4;
-    yy        = size + 2;
-    ww        = 0;
-    column    = 0;
-    border    = 0;
-    hh        = 0;
-    block     = add_block(value_, xx, yy, hsize_, 0);
-    row       = 0;
-    head      = 0;
-    pre       = 0;
-    align     = LEFT;
-    newalign  = LEFT;
-    needspace = 0;
-    link[0]   = '\0';
+    line        = 0;
+    links       = 0;
+    xx          = 4;
+    yy          = fsize + 2;
+    ww          = 0;
+    column      = 0;
+    border      = 0;
+    hh          = 0;
+    block       = add_block(value_, xx, yy, hsize_, 0);
+    row         = 0;
+    head        = 0;
+    pre         = 0;
+    talign      = LEFT;
+    newalign    = LEFT;
+    needspace   = 0;
+    linkdest[0] = '\0';
 
     for (ptr = value_, s = buf; *ptr;)
     {
@@ -867,24 +867,24 @@ Fl_Help_View::format()
 	    hh       = 0;
 	  }
 
-          if (link[0])
-	    add_link(link, xx, yy - size, ww, size);
+          if (linkdest[0])
+	    add_link(linkdest, xx, yy - fsize, ww, fsize);
 
 	  xx += ww;
-	  if ((size + 2) > hh)
-	    hh = size + 2;
+	  if ((fsize + 2) > hh)
+	    hh = fsize + 2;
 
 	  needspace = 0;
 	}
 	else if (pre)
 	{
           // Add a link as needed...
-          if (link[0])
-	    add_link(link, xx, yy - hh, ww, hh);
+          if (linkdest[0])
+	    add_link(linkdest, xx, yy - hh, ww, hh);
 
 	  xx += ww;
-	  if ((size + 2) > hh)
-	    hh = size + 2;
+	  if ((fsize + 2) > hh)
+	    hh = fsize + 2;
 
           // Handle preformatted text...
 	  while (isspace(*ptr))
@@ -897,13 +897,13 @@ Fl_Help_View::format()
               xx       = block->x;
 	      yy       += hh;
 	      block->h += hh;
-	      hh       = size + 2;
+	      hh       = fsize + 2;
 	    }
 	    else
               xx += (int)fl_width(' ');
 
-            if ((size + 2) > hh)
-	      hh = size + 2;
+            if ((fsize + 2) > hh)
+	      hh = fsize + 2;
 
             ptr ++;
 	  }
@@ -965,13 +965,13 @@ Fl_Help_View::format()
 	else if (strcasecmp(buf, "A") == 0)
 	{
           if (get_attr(attrs, "NAME", attr, sizeof(attr)) != NULL)
-	    add_target(attr, yy - size - 2);
+	    add_target(attr, yy - fsize - 2);
 
 	  if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
-	    strlcpy(link, attr, sizeof(link));
+	    strlcpy(linkdest, attr, sizeof(linkdest));
 	}
 	else if (strcasecmp(buf, "/A") == 0)
-          link[0] = '\0';
+          linkdest[0] = '\0';
 	else if (strcasecmp(buf, "BODY") == 0)
 	{
           bgcolor_   = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)),
@@ -1016,8 +1016,8 @@ Fl_Help_View::format()
 	      strcasecmp(buf, "OL") == 0 ||
 	      strcasecmp(buf, "DL") == 0)
           {
-	    block->h += size + 2;
-	    xx       += 4 * size;
+	    block->h += fsize + 2;
+	    xx       += 4 * fsize;
 	  }
           else if (strcasecmp(buf, "TABLE") == 0)
 	  {
@@ -1028,7 +1028,7 @@ Fl_Help_View::format()
 
             tc = rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
 
-	    block->h += size + 2;
+	    block->h += fsize + 2;
 
             format_table(&table_width, columns, start);
 
@@ -1043,27 +1043,27 @@ Fl_Help_View::format()
 
           if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
 	  {
-	    font = FL_HELVETICA_BOLD;
-	    size = textsize_ + '7' - buf[1];
+	    font  = FL_HELVETICA_BOLD;
+	    fsize = textsize_ + '7' - buf[1];
 	  }
 	  else if (strcasecmp(buf, "DT") == 0)
 	  {
-	    font = textfont_ | FL_ITALIC;
-	    size = textsize_;
+	    font  = textfont_ | FL_ITALIC;
+	    fsize = textsize_;
 	  }
 	  else if (strcasecmp(buf, "PRE") == 0)
 	  {
-	    font = FL_COURIER;
-	    size = textsize_;
-	    pre  = 1;
+	    font  = FL_COURIER;
+	    fsize = textsize_;
+	    pre   = 1;
 	  }
 	  else
 	  {
-	    font = textfont_;
-	    size = textsize_;
+	    font  = textfont_;
+	    fsize = textsize_;
 	  }
 
-	  pushfont(font, size);
+	  pushfont(font, fsize);
 
           yy = block->y + block->h;
           hh = 0;
@@ -1072,11 +1072,11 @@ Fl_Help_View::format()
 	      strcasecmp(buf, "DD") == 0 ||
 	      strcasecmp(buf, "DT") == 0 ||
 	      strcasecmp(buf, "P") == 0)
-            yy += size + 2;
+            yy += fsize + 2;
 	  else if (strcasecmp(buf, "HR") == 0)
 	  {
-	    hh += 2 * size;
-	    yy += size;
+	    hh += 2 * fsize;
+	    yy += fsize;
 	  }
 
           if (row)
@@ -1088,9 +1088,9 @@ Fl_Help_View::format()
 	  line      = 0;
 
 	  if (strcasecmp(buf, "CENTER") == 0)
-	    newalign = align = CENTER;
+	    newalign = talign = CENTER;
 	  else
-	    newalign = get_align(attrs, align);
+	    newalign = get_align(attrs, talign);
 	}
 	else if (strcasecmp(buf, "/CENTER") == 0 ||
 		 strcasecmp(buf, "/P") == 0 ||
@@ -1114,20 +1114,20 @@ Fl_Help_View::format()
 	      strcasecmp(buf, "/OL") == 0 ||
 	      strcasecmp(buf, "/DL") == 0)
 	  {
-	    xx       -= 4 * size;
-	    block->h += size + 2;
+	    xx       -= 4 * fsize;
+	    block->h += fsize + 2;
 	  }
 	  else if (strcasecmp(buf, "/TABLE") == 0)
-	    block->h += size + 2;
+	    block->h += fsize + 2;
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
 	    pre = 0;
 	    hh  = 0;
 	  }
 	  else if (strcasecmp(buf, "/CENTER") == 0)
-	    align = LEFT;
+	    talign = LEFT;
 
-          popfont(font, size);
+          popfont(font, fsize);
 
           while (isspace(*ptr))
 	    ptr ++;
@@ -1136,7 +1136,7 @@ Fl_Help_View::format()
           yy       += hh;
 
           if (tolower(buf[2]) == 'l')
-            yy += size + 2;
+            yy += fsize + 2;
 
           if (row)
 	    block = add_block(ptr, xx, yy, block->w, 0);
@@ -1146,7 +1146,7 @@ Fl_Help_View::format()
 	  needspace = 0;
 	  hh        = 0;
 	  line      = 0;
-	  newalign  = align;
+	  newalign  = talign;
 	}
 	else if (strcasecmp(buf, "TR") == 0)
 	{
@@ -1233,9 +1233,9 @@ Fl_Help_View::format()
 	  else
 	    font = textfont_;
 
-          size = textsize_;
+          fsize = textsize_;
 
-          xx = blocks_[row].x + size + 3;
+          xx = blocks_[row].x + fsize + 3;
 	  for (i = 0; i < column; i ++)
 	    xx += columns[i] + 6;
 
@@ -1253,7 +1253,7 @@ Fl_Help_View::format()
 	    block --;
 	  }
 
-	  pushfont(font, size);
+	  pushfont(font, fsize);
 
 	  yy        = blocks_[row].y;
 	  hh        = 0;
@@ -1272,21 +1272,21 @@ Fl_Help_View::format()
 	else if ((strcasecmp(buf, "/TD") == 0 ||
                   strcasecmp(buf, "/TH") == 0) && row)
 	{
-          popfont(font, size);
+          popfont(font, fsize);
 	}
 	else if (strcasecmp(buf, "B") == 0 ||
         	 strcasecmp(buf, "STRONG") == 0)
-	  pushfont(font |= FL_BOLD, size);
+	  pushfont(font |= FL_BOLD, fsize);
 	else if (strcasecmp(buf, "I") == 0 ||
         	 strcasecmp(buf, "EM") == 0)
-	  pushfont(font |= FL_ITALIC, size);
+	  pushfont(font |= FL_ITALIC, fsize);
 	else if (strcasecmp(buf, "CODE") == 0 ||
 	         strcasecmp(buf, "TT") == 0)
-	  pushfont(font = FL_COURIER, size);
+	  pushfont(font = FL_COURIER, fsize);
 	else if (strcasecmp(buf, "KBD") == 0)
-	  pushfont(font = FL_COURIER_BOLD, size);
+	  pushfont(font = FL_COURIER_BOLD, fsize);
 	else if (strcasecmp(buf, "VAR") == 0)
-	  pushfont(font = FL_COURIER_ITALIC, size);
+	  pushfont(font = FL_COURIER_ITALIC, fsize);
 	else if (strcasecmp(buf, "/B") == 0 ||
 		 strcasecmp(buf, "/STRONG") == 0 ||
 		 strcasecmp(buf, "/I") == 0 ||
@@ -1295,7 +1295,7 @@ Fl_Help_View::format()
 		 strcasecmp(buf, "/TT") == 0 ||
 		 strcasecmp(buf, "/KBD") == 0 ||
 		 strcasecmp(buf, "/VAR") == 0)
-	  popfont(font, size);
+	  popfont(font, fsize);
 	else if (strcasecmp(buf, "IMG") == 0)
 	{
 	  Fl_Shared_Image	*img = 0;
@@ -1334,8 +1334,8 @@ Fl_Help_View::format()
 	    hh       = 0;
 	  }
 
-	  if (link[0])
-	    add_link(link, xx, yy - height, ww, height);
+	  if (linkdest[0])
+	    add_link(linkdest, xx, yy - height, ww, height);
 
 	  xx += ww;
 	  if ((height + 2) > hh)
@@ -1346,8 +1346,8 @@ Fl_Help_View::format()
       }
       else if (*ptr == '\n' && pre)
       {
-	if (link[0])
-	  add_link(link, xx, yy - hh, ww, hh);
+	if (linkdest[0])
+	  add_link(linkdest, xx, yy - hh, ww, hh);
 
         if (xx > hsize_) {
 	  hsize_ = xx;
@@ -1381,8 +1381,8 @@ Fl_Help_View::format()
 	  ptr = strchr(ptr, ';') + 1;
 	}
 
-	if ((size + 2) > hh)
-          hh = size + 2;
+	if ((fsize + 2) > hh)
+          hh = fsize + 2;
       }
       else
       {
@@ -1391,8 +1391,8 @@ Fl_Help_View::format()
 	else
           ptr ++;
 
-	if ((size + 2) > hh)
-          hh = size + 2;
+	if ((fsize + 2) > hh)
+          hh = fsize + 2;
       }
     }
 
@@ -1422,12 +1422,12 @@ Fl_Help_View::format()
 	hh       = 0;
       }
 
-      if (link[0])
-	add_link(link, xx, yy - size, ww, size);
+      if (linkdest[0])
+	add_link(linkdest, xx, yy - fsize, ww, fsize);
 
       xx += ww;
-      if ((size + 2) > hh)
-	hh = size + 2;
+      if ((fsize + 2) > hh)
+	hh = fsize + 2;
 
       needspace = 0;
     }
@@ -1493,7 +1493,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 		*attrs,					// Pointer to attributes
 		*start;					// Start of element
   int		minwidths[MAX_COLUMNS];			// Minimum widths for each column
-  unsigned char	font, size;				// Current font and size
+  unsigned char	font, fsize;				// Current font and size
 
 
   // Clear widths...
@@ -1584,33 +1584,33 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
         if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
 	{
-	  font = FL_HELVETICA_BOLD;
-	  size = textsize_ + '7' - buf[1];
+	  font  = FL_HELVETICA_BOLD;
+	  fsize = textsize_ + '7' - buf[1];
 	}
 	else if (strcasecmp(buf, "DT") == 0)
 	{
-	  font = textfont_ | FL_ITALIC;
-	  size = textsize_;
+	  font  = textfont_ | FL_ITALIC;
+	  fsize = textsize_;
 	}
 	else if (strcasecmp(buf, "PRE") == 0)
 	{
-	  font = FL_COURIER;
-	  size = textsize_;
-	  pre  = 1;
+	  font  = FL_COURIER;
+	  fsize = textsize_;
+	  pre   = 1;
 	}
 	else if (strcasecmp(buf, "LI") == 0)
 	{
-	  width += 4 * size;
-	  font  = textfont_;
-	  size  = textsize_;
+	  width  += 4 * fsize;
+	  font   = textfont_;
+	  fsize  = textsize_;
 	}
 	else
 	{
-	  font = textfont_;
-	  size = textsize_;
+	  font  = textfont_;
+	  fsize = textsize_;
 	}
 
-	pushfont(font, size);
+	pushfont(font, fsize);
       }
       else if (strcasecmp(buf, "/CENTER") == 0 ||
 	       strcasecmp(buf, "/P") == 0 ||
@@ -1628,7 +1628,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
         width     = 0;
 	needspace = 0;
 
-        popfont(font, size);
+        popfont(font, fsize);
       }
       else if (strcasecmp(buf, "TR") == 0 || strcasecmp(buf, "/TR") == 0 ||
                strcasecmp(buf, "/TABLE") == 0)
@@ -1703,9 +1703,9 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	else
 	  font = textfont_;
 
-        size = textsize_;
+        fsize = textsize_;
 
-	pushfont(font, size);
+	pushfont(font, fsize);
 
         if (get_attr(attrs, "WIDTH", attr, sizeof(attr)) != NULL)
 	  max_width = get_length(attr);
@@ -1718,21 +1718,21 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
                strcasecmp(buf, "/TH") == 0)
       {
 	incell = 0;
-        popfont(font, size);
+        popfont(font, fsize);
       }
       else if (strcasecmp(buf, "B") == 0 ||
                strcasecmp(buf, "STRONG") == 0)
-	pushfont(font |= FL_BOLD, size);
+	pushfont(font |= FL_BOLD, fsize);
       else if (strcasecmp(buf, "I") == 0 ||
                strcasecmp(buf, "EM") == 0)
-	pushfont(font |= FL_ITALIC, size);
+	pushfont(font |= FL_ITALIC, fsize);
       else if (strcasecmp(buf, "CODE") == 0 ||
                strcasecmp(buf, "TT") == 0)
-	pushfont(font = FL_COURIER, size);
+	pushfont(font = FL_COURIER, fsize);
       else if (strcasecmp(buf, "KBD") == 0)
-	pushfont(font = FL_COURIER_BOLD, size);
+	pushfont(font = FL_COURIER_BOLD, fsize);
       else if (strcasecmp(buf, "VAR") == 0)
-	pushfont(font = FL_COURIER_ITALIC, size);
+	pushfont(font = FL_COURIER_ITALIC, fsize);
       else if (strcasecmp(buf, "/B") == 0 ||
 	       strcasecmp(buf, "/STRONG") == 0 ||
 	       strcasecmp(buf, "/I") == 0 ||
@@ -1741,7 +1741,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	       strcasecmp(buf, "/TT") == 0 ||
 	       strcasecmp(buf, "/KBD") == 0 ||
 	       strcasecmp(buf, "/VAR") == 0)
-	popfont(font, size);
+	popfont(font, fsize);
       else if (strcasecmp(buf, "IMG") == 0 && incell)
       {
 	Fl_Shared_Image	*img = 0;
@@ -1873,7 +1873,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
 int					// O - Alignment
 Fl_Help_View::get_align(const char *p,	// I - Pointer to start of attrs
-                       int        a)	// I - Default alignment
+                        int        a)	// I - Default alignment
 {
   char	buf[255];			// Alignment value
 
@@ -2042,18 +2042,24 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
   // See if the image can be found...
   if (strchr(directory_, ':') != NULL && strchr(name, ':') == NULL) {
     if (name[0] == '/') {
-      strcpy(temp, directory_);
-      if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL) strcpy(tempptr, name);
-      else strcat(temp, name);
-    } else sprintf(temp, "%s/%s", directory_, name);
+      strlcpy(temp, directory_, sizeof(temp));
+
+      if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL) {
+        strlcpy(tempptr, name, sizeof(temp) - (tempptr - temp));
+      } else {
+        strlcat(temp, name, sizeof(temp));
+      }
+    } else {
+      snprintf(temp, sizeof(temp), "%s/%s", directory_, name);
+    }
 
     if (link_) localname = (*link_)(this, temp);
     else localname = temp;
   } else if (name[0] != '/' && strchr(name, ':') == NULL) {
-    if (directory_[0]) sprintf(temp, "%s/%s", directory_, name);
+    if (directory_[0]) snprintf(temp, sizeof(temp), "%s/%s", directory_, name);
     else {
       getcwd(dir, sizeof(dir));
-      sprintf(temp, "file:%s/%s", dir, name);
+      snprintf(temp, sizeof(temp), "file:%s/%s", dir, name);
     }
 
     if (link_) localname = (*link_)(this, temp);
@@ -2103,7 +2109,7 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 {
   int		i;		// Looping var
   int		xx, yy;		// Adjusted mouse position
-  Fl_Help_Link	*link;		// Current link
+  Fl_Help_Link	*linkp;		// Current link
   char		target[32];	// Current target
 
 
@@ -2126,9 +2132,9 @@ Fl_Help_View::handle(int event)	// I - Event to handle
   }
 
   // Handle mouse clicks on links...
-  for (i = nlinks_, link = links_; i > 0; i --, link ++)
-    if (xx >= link->x && xx < link->w &&
-        yy >= link->y && yy < link->h)
+  for (i = nlinks_, linkp = links_; i > 0; i --, linkp ++)
+    if (xx >= linkp->x && xx < linkp->w &&
+        yy >= linkp->y && yy < linkp->h)
       break;
 
   if (!i)
@@ -2145,11 +2151,11 @@ Fl_Help_View::handle(int event)	// I - Event to handle
   {
     fl_cursor(FL_CURSOR_DEFAULT);
 
-    strlcpy(target, link->name, sizeof(target));
+    strlcpy(target, linkp->name, sizeof(target));
 
     set_changed();
 
-    if (strcmp(link->filename, filename_) != 0 && link->filename[0])
+    if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
     {
       char	dir[1024];	// Current directory
       char	temp[1024],	// Temporary filename
@@ -2157,34 +2163,35 @@ Fl_Help_View::handle(int event)	// I - Event to handle
 
 
       if (strchr(directory_, ':') != NULL &&
-          strchr(link->filename, ':') == NULL)
+          strchr(linkp->filename, ':') == NULL)
       {
-	if (link->filename[0] == '/')
+	if (linkp->filename[0] == '/')
 	{
-          strcpy(temp, directory_);
+          strlcpy(temp, directory_, sizeof(temp));
           if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-	    strcpy(tempptr, link->filename);
+	    strlcpy(tempptr, linkp->filename, sizeof(temp));
 	  else
-	    strcat(temp, link->filename);
+	    strlcat(temp, linkp->filename, sizeof(temp));
 	}
 	else
-	  sprintf(temp, "%s/%s", directory_, link->filename);
+	  snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
       }
-      else if (link->filename[0] != '/' && strchr(link->filename, ':') == NULL)
+      else if (linkp->filename[0] != '/' && strchr(linkp->filename, ':') == NULL)
       {
 	if (directory_[0])
-	  sprintf(temp, "%s/%s", directory_, link->filename);
+	  snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
 	else
 	{
 	  getcwd(dir, sizeof(dir));
-	  sprintf(temp, "file:%s/%s", dir, link->filename);
+	  snprintf(temp, sizeof(temp), "file:%s/%s", dir, linkp->filename);
 	}
       }
       else
-        strcpy(temp, link->filename);
+        strlcpy(temp, linkp->filename, sizeof(temp));
 
-      if (link->name[0])
-        sprintf(temp + strlen(temp), "#%s", link->name);
+      if (linkp->name[0])
+        snprintf(temp + strlen(temp), sizeof(temp) - strlen(temp), "#%s",
+	         linkp->name);
 
       load(temp);
     }
@@ -2641,5 +2648,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.37 2002/07/18 15:27:21 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.38 2002/08/09 01:09:49 easysw Exp $".
 //

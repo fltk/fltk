@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.7 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.8 2002/08/09 01:09:48 easysw Exp $"
 //
 // Adjuster widget for the Fast Light Tool Kit (FLTK).
 //
@@ -155,8 +155,8 @@ int Fl_Adjuster::handle(int event) {
   return 0;
 }
 
-Fl_Adjuster::Fl_Adjuster(int x, int y, int w, int h, const char* l)
-  : Fl_Valuator(x, y, w, h, l) {
+Fl_Adjuster::Fl_Adjuster(int X, int Y, int W, int H, const char* l)
+  : Fl_Valuator(X, Y, W, H, l) {
   box(FL_UP_BOX);
   step(1, 10000);
   selection_color(FL_BLACK);
@@ -165,5 +165,5 @@ Fl_Adjuster::Fl_Adjuster(int x, int y, int w, int h, const char* l)
 }
 
 //
-// End of "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.7 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Adjuster.cxx,v 1.5.2.3.2.8 2002/08/09 01:09:48 easysw Exp $".
 //

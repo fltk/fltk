@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Shared_Image.cxx,v 1.23.2.15 2002/07/14 21:25:39 easysw Exp $"
+// "$Id: Fl_Shared_Image.cxx,v 1.23.2.16 2002/08/09 01:09:49 easysw Exp $"
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,11 +29,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Shared_Image.H>
-#include <FL/Fl_BMP_Image.H>
-#include <FL/Fl_GIF_Image.H>
-#include <FL/Fl_JPEG_Image.H>
-#include <FL/Fl_PNG_Image.H>
-#include <FL/Fl_PNM_Image.H>
 #include <FL/Fl_XBM_Image.H>
 #include <FL/Fl_XPM_Image.H>
 
@@ -234,14 +229,7 @@ Fl_Shared_Image::reload() {
   }
 
   // Load the image as appropriate...
-  if (memcmp(header, "GIF87a", 6) == 0 ||
-      memcmp(header, "GIF89a", 6) == 0)
-    img = new Fl_GIF_Image(name_);
-  else if (memcmp(header, "BM", 2) == 0)	// BMP file
-    img = new Fl_BMP_Image(name_);
-  else if (header[0] == 'P' && header[1] >= '1' && header[1] <= '6') // Portable anymap
-    img = new Fl_PNM_Image(name_);
-  else if (memcmp(header, "#define", 7) == 0) // XBM file
+  if (memcmp(header, "#define", 7) == 0) // XBM file
     img = new Fl_XBM_Image(name_);
   else if (memcmp(header, "/* XPM */", 9) == 0) // XPM file
     img = new Fl_XPM_Image(name_);
@@ -467,5 +455,5 @@ Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
 
 
 //
-// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.15 2002/07/14 21:25:39 easysw Exp $".
+// End of "$Id: Fl_Shared_Image.cxx,v 1.23.2.16 2002/08/09 01:09:49 easysw Exp $".
 //

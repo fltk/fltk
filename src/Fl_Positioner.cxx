@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.2 2002/08/09 01:09:49 easysw Exp $"
 //
 // Positioner widget for the Fast Light Tool Kit (FLTK).
 //
@@ -36,14 +36,14 @@ static double flinear(double val, double smin, double smax, double gmin, double 
   else return gmin + (gmax - gmin) * (val - smin) / (smax - smin);
 }
 
-void Fl_Positioner::draw(int x, int y, int w, int h) {
-  int x1 = x + 4;
-  int y1 = y + 4;
-  int w1 = w - 2 * 4;
-  int h1 = h - 2 * 4;
+void Fl_Positioner::draw(int X, int Y, int W, int H) {
+  int x1 = X + 4;
+  int y1 = Y + 4;
+  int w1 = W - 2 * 4;
+  int h1 = H - 2 * 4;
   int xx = int(flinear(xvalue(), xmin, xmax, x1, x1+w1-1)+.5);
   int yy = int(flinear(yvalue(), ymin, ymax, y1, y1+h1-1)+.5);
-  draw_box(box(), x, y, w, h, color());
+  draw_box(box(), X, Y, W, H, color());
   fl_color(selection_color());
   fl_xyline(x1, yy, x1+w1);
   fl_yxline(xx, y1, y1+h1);
@@ -70,24 +70,24 @@ int Fl_Positioner::yvalue(double Y) {
   return(value(xvalue_, Y));
 }
 
-int Fl_Positioner::handle(int event, int x, int y, int w, int h) {
+int Fl_Positioner::handle(int event, int X, int Y, int W, int H) {
   switch (event) {
   case FL_PUSH:
   case FL_DRAG:
   case FL_RELEASE: {
-    double x1 = x + 4;
-    double y1 = y + 4;
-    double w1 = w - 2 * 4;
-    double h1 = h - 2 * 4;
-    double X = flinear(Fl::event_x(), x1, x1+w1-1.0, xmin, xmax);
-    if (xstep_) X = int(X/xstep_+0.5) * xstep_;
-    if (X < xmin) X = xmin;
-    if (X > xmax) X = xmax;
-    double Y = flinear(Fl::event_y(), y1, y1+h1-1.0, ymin, ymax);
-    if (ystep_) Y = int(Y/ystep_+0.5) * ystep_;
-    if (Y < ymin) Y = ymin;
-    if (Y > ymax) Y = ymax;
-    if (value(X, Y)) set_changed();}
+    double x1 = X + 4;
+    double y1 = Y + 4;
+    double w1 = W - 2 * 4;
+    double h1 = H - 2 * 4;
+    double xx = flinear(Fl::event_x(), x1, x1+w1-1.0, xmin, xmax);
+    if (xstep_) xx = int(xx/xstep_+0.5) * xstep_;
+    if (xx < xmin) xx = xmin;
+    if (xx > xmax) xx = xmax;
+    double yy = flinear(Fl::event_y(), y1, y1+h1-1.0, ymin, ymax);
+    if (ystep_) yy = int(yy/ystep_+0.5) * ystep_;
+    if (yy < ymin) yy = ymin;
+    if (yy > ymax) yy = ymax;
+    if (value(xx, yy)) set_changed();}
     if (!(when() & FL_WHEN_CHANGED ||
 	  when() & FL_WHEN_RELEASE && event == FL_RELEASE)) return 1;
     if (changed() || when()&FL_WHEN_NOT_CHANGED) {
@@ -102,8 +102,8 @@ int Fl_Positioner::handle(int e) {
   return handle(e, x(), y(), w(), h());
 }
 
-Fl_Positioner::Fl_Positioner(int x, int y, int w, int h, const char* l)
-: Fl_Widget(x, y, w, h, l) {
+Fl_Positioner::Fl_Positioner(int X, int Y, int W, int H, const char* l)
+: Fl_Widget(X, Y, W, H, l) {
   box(FL_DOWN_BOX);
   selection_color(FL_RED);
   align(FL_ALIGN_BOTTOM);
@@ -129,5 +129,5 @@ void Fl_Positioner::ybounds(double a, double b) {
 }
 
 //
-// End of "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.2 2002/08/09 01:09:49 easysw Exp $".
 //

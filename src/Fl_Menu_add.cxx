@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.3 2002/06/06 14:04:53 easysw Exp $"
+// "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.4 2002/08/09 01:09:49 easysw Exp $"
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
@@ -99,7 +99,7 @@ static int compare(const char* a, const char* b) {
 // now add submenu titles directly by setting SUBMENU in the flags):
 int Fl_Menu_Item::add(
   const char *mytext,
-  int shortcut,
+  int sc,
   Fl_Callback *cb,	
   void *data,
   int myflags
@@ -110,7 +110,7 @@ int Fl_Menu_Item::add(
   char *q;
   char buf[1024];
 
-  int size = array==local_array ? local_array_size : array->size();
+  int msize = array==local_array ? local_array_size : array->size();
   int flags1 = 0;
   const char* item;
 
@@ -138,10 +138,10 @@ int Fl_Menu_Item::add(
 
     if (!m->text) { /* create a new menu */
       int n = m-array;
-      array = insert(array, size, n, item, FL_SUBMENU|flags1);
-      size++;
-      array = insert(array, size, n+1, 0, 0);
-      size++;
+      array = insert(array, msize, n, item, FL_SUBMENU|flags1);
+      msize++;
+      array = insert(array, msize, n+1, 0, 0);
+      msize++;
       m = array+n;
     }
     m++;	/* go into the submenu */
@@ -154,22 +154,22 @@ int Fl_Menu_Item::add(
 
   if (!m->text) {	/* add a new menu item */
     int n = m-array;
-    array = insert(array, size, n, item, myflags|flags1);
-    size++;
+    array = insert(array, msize, n, item, myflags|flags1);
+    msize++;
     if (myflags & FL_SUBMENU) { // add submenu delimiter
-      array = insert(array, size, n+1, 0, 0);
-      size++;
+      array = insert(array, msize, n+1, 0, 0);
+      msize++;
     }
     m = array+n;
   }
 
   /* fill it in */
-  m->shortcut_ = shortcut;
+  m->shortcut_ = sc;
   m->callback_ = cb;
   m->user_data_ = data;
   m->flags = myflags|flags1;
 
-  if (array == local_array) local_array_size = size;
+  if (array == local_array) local_array_size = msize;
   return m-array;
 }
 
@@ -222,14 +222,14 @@ int Fl_Menu_::add(const char *str) {
   char buf[128];
   int r = 0;
   while (*str) {
-    int shortcut = 0;
+    int sc = 0;
     char *c;
     for (c = buf; *str && *str != '|'; str++) {
-      if (*str == '\t') {*c++ = 0; shortcut = fl_old_shortcut(str);}
+      if (*str == '\t') {*c++ = 0; sc = fl_old_shortcut(str);}
       else *c++ = *str;
     }
     *c = 0;
-    r = add(buf, shortcut, 0, 0, 0);
+    r = add(buf, sc, 0, 0, 0);
     if (*str) str++;
   }
   return r;
@@ -262,5 +262,5 @@ void Fl_Menu_::remove(int i) {
 }
 
 //
-// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.3 2002/06/06 14:04:53 easysw Exp $".
+// End of "$Id: Fl_Menu_add.cxx,v 1.9.2.13.2.4 2002/08/09 01:09:49 easysw Exp $".
 //

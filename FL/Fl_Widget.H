@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.15 2002/07/23 15:07:32 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.16 2002/08/09 01:09:48 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -103,7 +103,7 @@ public:
   FL_EXPORT virtual void draw() = 0;
   FL_EXPORT virtual int handle(int);
   Fl_Group* parent() const {return parent_;}
-  void parent(Fl_Group* w) {parent_ = w;} // for hacks only, Fl_Group::add()
+  void parent(Fl_Group* p) {parent_ = p;} // for hacks only, Fl_Group::add()
 
   uchar type() const {return type_;}
   void type(uchar t) {type_ = t;}
@@ -195,7 +195,7 @@ public:
   FL_EXPORT void damage(uchar c);
   FL_EXPORT void damage(uchar c,int,int,int,int);
   FL_EXPORT void draw_label(int, int, int, int, Fl_Align) const;
-  void measure_label(int& x, int& y) {label_.measure(x,y);}
+  void measure_label(int& xx, int& yy) {label_.measure(xx,yy);}
 
   FL_EXPORT Fl_Window* window() const ;
 
@@ -212,5 +212,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.15 2002/07/23 15:07:32 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.16 2002/08/09 01:09:48 easysw Exp $".
 //

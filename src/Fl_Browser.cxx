@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.5 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.6 2002/08/09 01:09:48 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -161,13 +161,13 @@ void Fl_Browser::insert(int line, FL_BLINE* t) {
   redraw_line(t);
 }
 
-void Fl_Browser::insert(int line, const char* newtext, void* data) {
+void Fl_Browser::insert(int line, const char* newtext, void* d) {
   int l = strlen(newtext);
   FL_BLINE* t = (FL_BLINE*)malloc(sizeof(FL_BLINE)+l);
   t->length = l;
   t->flags = 0;
   strcpy(t->txt, newtext);
-  t->data = data;
+  t->data = d;
   insert(line, t);
 }
 
@@ -198,9 +198,9 @@ void Fl_Browser::text(int line, const char* newtext) {
   redraw_line(t);
 }
 
-void Fl_Browser::data(int line, void* data) {
+void Fl_Browser::data(int line, void* d) {
   if (line < 1 || line > lines) return;
-  find_line(line)->data = data;
+  find_line(line)->data = d;
 }
 
 int Fl_Browser::item_height(void* lv) const {
@@ -212,27 +212,27 @@ int Fl_Browser::item_height(void* lv) const {
   if (!l->txt[0]) {
     // For blank lines set the height to exactly 1 line!
     fl_font(textfont(), textsize());
-    int h = fl_height();
-    if (h > hmax) hmax = h;
+    int hh = fl_height();
+    if (hh > hmax) hmax = hh;
   }
   else {
     // do each column separately as they may all set different fonts:
     for (char* str = l->txt; *str; str++) {
       Fl_Font font = textfont(); // default font
-      int size = textsize(); // default size
+      int tsize = textsize(); // default size
       while (*str==format_char()) {
 	str++;
 	switch (*str++) {
-	case 'l': case 'L': size = 24; break;
-	case 'm': case 'M': size = 18; break;
-	case 's': size = 11; break;
+	case 'l': case 'L': tsize = 24; break;
+	case 'm': case 'M': tsize = 18; break;
+	case 's': tsize = 11; break;
 	case 'b': font = (Fl_Font)(font|FL_BOLD); break;
 	case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
 	case 'f': case 't': font = FL_COURIER; break;
 	case 'B':
 	case 'C': strtol(str, &str, 10); break;// skip a color number
 	case 'F': font = (Fl_Font)strtol(str,&str,10); break;
-	case 'S': size = strtol(str,&str,10); break;
+	case 'S': tsize = strtol(str,&str,10); break;
 	case 0: case '@': str--;
 	case '.': goto END_FORMAT;
 	}
@@ -241,8 +241,8 @@ int Fl_Browser::item_height(void* lv) const {
       char* ptr = str;
       for(;*str && (*str!=column_char()); str++) ;
       if (ptr < str) {
-	fl_font(font, size); int h = fl_height();
-	if (h > hmax) hmax = h;
+	fl_font(font, tsize); int hh = fl_height();
+	if (hh > hmax) hmax = hh;
       }
       if (!*str) str --;
     }
@@ -254,34 +254,34 @@ int Fl_Browser::item_height(void* lv) const {
 int Fl_Browser::item_width(void* v) const {
   char* str = ((FL_BLINE*)v)->txt;
   const int* i = column_widths();
-  int w = 0;
+  int ww = 0;
 
   while (*i) { // add up all tab-seperated fields
     char* e;
     for (e = str; *e && *e != column_char(); e++);
     if (!*e) break; // last one occupied by text
     str = e+1;
-    w += *i++;
+    ww += *i++;
   }
 
   // OK, we gotta parse the string and find the string width...
-  int size = textsize();
+  int tsize = textsize();
   Fl_Font font = textfont();
   int done = 0;
 
   while (*str == format_char_ && str[1] && str[1] != format_char_) {
     str ++;
     switch (*str++) {
-    case 'l': case 'L': size = 24; break;
-    case 'm': case 'M': size = 18; break;
-    case 's': size = 11; break;
+    case 'l': case 'L': tsize = 24; break;
+    case 'm': case 'M': tsize = 18; break;
+    case 's': tsize = 11; break;
     case 'b': font = (Fl_Font)(font|FL_BOLD); break;
     case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
     case 'f': case 't': font = FL_COURIER; break;
     case 'B':
     case 'C': strtol(str, &str, 10); break;// skip a color number
     case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
-    case 'S': size = strtol(str, &str, 10); break;
+    case 'S': tsize = strtol(str, &str, 10); break;
     case '.':
       done = 1;
     case '@':
@@ -296,8 +296,8 @@ int Fl_Browser::item_width(void* v) const {
   if (*str == format_char_ && str[1])
     str ++;
 
-  fl_font(font, size);
-  return w + int(fl_width(str)) + 6;
+  fl_font(font, tsize);
+  return ww + int(fl_width(str)) + 6;
 }
 
 int Fl_Browser::full_height() const {
@@ -308,36 +308,36 @@ int Fl_Browser::incr_height() const {
   return textsize()+2;
 }
 
-void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
+void Fl_Browser::item_draw(void* v, int X, int Y, int W, int H) const {
   char* str = ((FL_BLINE*)v)->txt;
   const int* i = column_widths();
 
-  while (w > 6) {	// do each tab-seperated field
-    int w1 = w;	// width for this field
+  while (W > 6) {	// do each tab-seperated field
+    int w1 = W;	// width for this field
     char* e = 0; // pointer to end of field or null if none
     if (*i) { // find end of field and temporarily replace with 0
       for (e = str; *e && *e != column_char(); e++);
       if (*e) {*e = 0; w1 = *i++;} else e = 0;
     }
-    int size = textsize();
+    int tsize = textsize();
     Fl_Font font = textfont();
     Fl_Color lcol = textcolor();
-    Fl_Align align = FL_ALIGN_LEFT;
+    Fl_Align talign = FL_ALIGN_LEFT;
     // check for all the @-lines recognized by XForms:
     while (*str == format_char() && *++str && *str != format_char()) {
       switch (*str++) {
-      case 'l': case 'L': size = 24; break;
-      case 'm': case 'M': size = 18; break;
-      case 's': size = 11; break;
+      case 'l': case 'L': tsize = 24; break;
+      case 'm': case 'M': tsize = 18; break;
+      case 's': tsize = 11; break;
       case 'b': font = (Fl_Font)(font|FL_BOLD); break;
       case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
       case 'f': case 't': font = FL_COURIER; break;
-      case 'c': align = FL_ALIGN_CENTER; break;
-      case 'r': align = FL_ALIGN_RIGHT; break;
+      case 'c': talign = FL_ALIGN_CENTER; break;
+      case 'r': talign = FL_ALIGN_RIGHT; break;
       case 'B': 
 	if (!(((FL_BLINE*)v)->flags & SELECTED)) {
 	  fl_color((Fl_Color)strtol(str, &str, 10));
-	  fl_rectf(x, y, w1, h);
+	  fl_rectf(X, Y, w1, H);
 	} else strtol(str, &str, 10);
         break;
       case 'C':
@@ -350,18 +350,18 @@ void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
 	lcol = FL_INACTIVE_COLOR;
 	break;
       case 'S':
-	size = strtol(str, &str, 10);
+	tsize = strtol(str, &str, 10);
 	break;
       case '-':
 	fl_color(FL_DARK3);
-	fl_line(x+3, y+h/2, x+w1-3, y+h/2);
+	fl_line(X+3, Y+H/2, X+w1-3, Y+H/2);
 	fl_color(FL_LIGHT3);
-	fl_line(x+3, y+h/2+1, x+w1-3, y+h/2+1);
+	fl_line(X+3, Y+H/2+1, X+w1-3, Y+H/2+1);
 	break;
       case 'u':
       case '_':
 	fl_color(lcol);
-	fl_line(x+3, y+h-1, x+w1-3, y+h-1);
+	fl_line(X+3, Y+H-1, X+w1-3, Y+H-1);
 	break;
       case '.':
 	goto BREAK;
@@ -370,24 +370,24 @@ void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
       }
     }
   BREAK:
-    fl_font(font, size);
+    fl_font(font, tsize);
     if (((FL_BLINE*)v)->flags & SELECTED)
       lcol = fl_contrast(lcol, selection_color());
     if (!active_r()) lcol = fl_inactive(lcol);
     fl_color(lcol);
-    fl_draw(str, x+3, y, w1-6, h, e ? Fl_Align(align|FL_ALIGN_CLIP) : align, 0, 0);
+    fl_draw(str, X+3, Y, w1-6, H, e ? Fl_Align(talign|FL_ALIGN_CLIP) : talign, 0, 0);
     if (!e) break; // no more fields...
     *e = column_char(); // put the seperator back
-    x += w1;
-    w -= w1;
+    X += w1;
+    W -= w1;
     str = e+1;
   }
 }
 
 static const int no_columns[1] = {0};
 
-Fl_Browser::Fl_Browser(int x, int y, int w, int h, const char*l)
-  : Fl_Browser_(x, y, w, h, l) {
+Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char*l)
+  : Fl_Browser_(X, Y, W, H, l) {
   column_widths_ = no_columns;
   lines = 0;
   full_height_ = 0;
@@ -427,9 +427,9 @@ int Fl_Browser::topline() const {
 
 void Fl_Browser::clear() {
   for (FL_BLINE* l = first; l;) {
-    FL_BLINE* h = l->next;
+    FL_BLINE* n = l->next;
     free(l);
-    l = h;
+    l = n;
   }
   full_height_ = 0;
   first = 0;
@@ -437,8 +437,8 @@ void Fl_Browser::clear() {
   new_list();
 }
 
-void Fl_Browser::add(const char* newtext, void* data) {
-  insert(lines+1, newtext, data);
+void Fl_Browser::add(const char* newtext, void* d) {
+  insert(lines+1, newtext, d);
   //Fl_Browser_::display(last);
 }
 
@@ -452,9 +452,9 @@ void* Fl_Browser::data(int line) const {
   return find_line(line)->data;
 }
 
-int Fl_Browser::select(int line, int value) {
+int Fl_Browser::select(int line, int v) {
   if (line < 1 || line > lines) return 0;
-  return Fl_Browser_::select(find_line(line), value);
+  return Fl_Browser_::select(find_line(line), v);
 }
 
 int Fl_Browser::selected(int line) const {
@@ -480,9 +480,9 @@ void Fl_Browser::hide(int line) {
   }
 }
 
-void Fl_Browser::display(int line, int value) {
+void Fl_Browser::display(int line, int v) {
   if (line < 1 || line > lines) return;
-  if (value) show(line); else hide(line);
+  if (v) show(line); else hide(line);
 }
 
 int Fl_Browser::visible(int line) const {
@@ -495,5 +495,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.5 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.6 2002/08/09 01:09:48 easysw Exp $".
 //

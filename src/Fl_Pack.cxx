@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.3 2002/08/09 01:09:49 easysw Exp $"
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,8 +32,8 @@
 #include <FL/Fl_Pack.H>
 #include <FL/fl_draw.H>
 
-Fl_Pack::Fl_Pack(int x,int y,int w ,int h,const char *l)
-: Fl_Group(x, y, w, h, l) {
+Fl_Pack::Fl_Pack(int X, int Y, int W, int H,const char *l)
+: Fl_Group(X, Y, W, H, l) {
   resizable(0);
   spacing_ = 0;
   // type(VERTICAL); // already set like this
@@ -132,5 +132,5 @@ void Fl_Pack::draw() {
 }
 
 //
-// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.3 2002/08/09 01:09:49 easysw Exp $".
 //

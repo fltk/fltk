@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.43 2002/07/23 15:07:33 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.44 2002/08/09 01:09:48 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -73,10 +73,10 @@ Fl::version() {
 //                       the given rectangle.
 //
 
-int Fl::event_inside(int x,int y,int w,int h) /*const*/ {
-  int mx = e_x - x;
-  int my = e_y - y;
-  return (mx >= 0 && mx < w && my >= 0 && my < h);
+int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
+  int mx = e_x - xx;
+  int my = e_y - yy;
+  return (mx >= 0 && mx < ww && my >= 0 && my < hh);
 }
 
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
@@ -135,19 +135,19 @@ static void elapse_timeouts() {
 // time interval:
 static double missed_timeout_by;
 
-void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
+void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   elapse_timeouts();
-  repeat_timeout(time, cb, arg);
+  repeat_timeout(time, cb, argp);
 }
 
-void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
+void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   time += missed_timeout_by; if (time < -.05) time = 0;
   Timeout* t = free_timeout;
   if (t) free_timeout = t->next;
   else t = new Timeout;
   t->time = time;
   t->cb = cb;
-  t->arg = arg;
+  t->arg = argp;
   // insert-sort the new timeout:
   Timeout** p = &first_timeout; 
   while (*p && (*p)->time <= time) p = &((*p)->next);
@@ -155,18 +155,18 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
   *p = t;
 }
 
-int Fl::has_timeout(Fl_Timeout_Handler cb, void *arg) {
+int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
   for (Timeout* t = first_timeout; t; t = t->next)
-    if (t->cb == cb && t->arg == arg) return 1;
+    if (t->cb == cb && t->arg == argp) return 1;
   return 0;
 }
 
-void Fl::remove_timeout(Fl_Timeout_Handler cb, void *arg) {
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
   // This version removes all matching timeouts, not just the first one.
   // This may change in the future.
   for (Timeout** p = &first_timeout; *p;) {
     Timeout* t = *p;
-    if (t->cb == cb && (t->arg == arg || !arg)) {
+    if (t->cb == cb && (t->arg == argp || !argp)) {
       *p = t->next;
       t->next = free_timeout;
       free_timeout = t;
@@ -191,21 +191,21 @@ struct Check {
 };
 static Check* first_check, *next_check, *free_check;
 
-void Fl::add_check(Fl_Timeout_Handler cb, void *arg) {
+void Fl::add_check(Fl_Timeout_Handler cb, void *argp) {
   Check* t = free_check;
   if (t) free_check = t->next;
   else t = new Check;
   t->cb = cb;
-  t->arg = arg;
+  t->arg = argp;
   t->next = first_check;
   if (next_check == first_check) next_check = t;
   first_check = t;
 }
 
-void Fl::remove_check(Fl_Timeout_Handler cb, void *arg) {
+void Fl::remove_check(Fl_Timeout_Handler cb, void *argp) {
   for (Check** p = &first_check; *p;) {
     Check* t = *p;
-    if (t->cb == cb && t->arg == arg) {
+    if (t->cb == cb && t->arg == argp) {
       if (next_check == t) next_check = t->next;
       *p = t->next;
       t->next = free_check;
@@ -215,7 +215,7 @@ void Fl::remove_check(Fl_Timeout_Handler cb, void *arg) {
     }
   }
 }
-  
+
 ////////////////////////////////////////////////////////////////
 // wait/run/check/ready:
 
@@ -235,12 +235,12 @@ double Fl::wait(double time_to_wait) {
       missed_timeout_by = t->time;
       // We must remove timeout from array before doing the callback:
       void (*cb)(void*) = t->cb;
-      void *arg = t->arg;
+      void *argp = t->arg;
       first_timeout = t->next;
       t->next = free_timeout;
       free_timeout = t;
       // Now it is safe for the callback to do add_timeout:
-      cb(arg);
+      cb(argp);
     }
   } else {
     reset_clock = 1; // we are not going to check the clock
@@ -249,9 +249,9 @@ double Fl::wait(double time_to_wait) {
   // from inside them without causing an infinite loop:
   if (next_check == first_check) {
     while (next_check) {
-      Check* check = next_check;
-      next_check = check->next;
-      (check->cb)(check->arg);
+      Check* checkp = next_check;
+      next_check = checkp->next;
+      (checkp->cb)(checkp->arg);
     }
     next_check = first_check;
   }
@@ -329,13 +329,13 @@ Fl_Window* fl_find(Window xid) {
 }
 
 Fl_Window* Fl::first_window() {
-  Fl_X* x = Fl_X::first;
-  return x ? x->w : 0;
+  Fl_X* i = Fl_X::first;
+  return i ? i->w : 0;
 }
 
-Fl_Window* Fl::next_window(const Fl_Window* w) {
-  Fl_X* x = Fl_X::i(w)->next;
-  return x ? x->w : 0;
+Fl_Window* Fl::next_window(const Fl_Window* window) {
+  Fl_X* i = Fl_X::i(window)->next;
+  return i ? i->w : 0;
 }
 
 void Fl::first_window(Fl_Window* window) {
@@ -344,19 +344,19 @@ void Fl::first_window(Fl_Window* window) {
 }
 
 void Fl::redraw() {
-  for (Fl_X* x = Fl_X::first; x; x = x->next) x->w->redraw();
+  for (Fl_X* i = Fl_X::first; i; i = i->next) i->w->redraw();
 }
 
 void Fl::flush() {
   if (damage()) {
     damage_ = 0;
-    for (Fl_X* x = Fl_X::first; x; x = x->next) {
-      if (x->wait_for_expose) {damage_ = 1; continue;}
-      Fl_Window* w = x->w;
-      if (!w->visible_r()) continue;
-      if (w->damage()) {x->flush(); w->clear_damage();}
+    for (Fl_X* i = Fl_X::first; i; i = i->next) {
+      if (i->wait_for_expose) {damage_ = 1; continue;}
+      Fl_Window* wi = i->w;
+      if (!wi->visible_r()) continue;
+      if (wi->damage()) {i->flush(); wi->clear_damage();}
       // destroy damage regions for windows that don't use them:
-      if (x->region) {XDestroyRegion(x->region); x->region = 0;}
+      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
     }
   }
 
@@ -383,18 +383,18 @@ struct handler_link {
 
 static handler_link *handlers = 0;
 
-void Fl::add_handler(int (*h)(int)) {
+void Fl::add_handler(int (*ha)(int)) {
   handler_link *l = new handler_link;
-  l->handle = h;
+  l->handle = ha;
   l->next = handlers;
   handlers = l;
 }
 
-void Fl::remove_handler(int (*h)(int)) {
+void Fl::remove_handler(int (*ha)(int)) {
   handler_link *l, *p;
 
   // Search for the handler in the list...
-  for (l = handlers, p = 0; l && l->handle != h; p = l, l = l->next);
+  for (l = handlers, p = 0; l && l->handle != ha; p = l, l = l->next);
 
   if (l) {
     // Found it, so remove it from the list...
@@ -408,9 +408,9 @@ void Fl::remove_handler(int (*h)(int)) {
 
 int (*fl_local_grab)(int); // used by fl_dnd.cxx
 
-static int send_handlers(int event) {
-  for (const handler_link *h = handlers; h; h = h->next)
-    if (h->handle(event)) return 1;
+static int send_handlers(int e) {
+  for (const handler_link *hl = handlers; hl; hl = hl->next)
+    if (hl->handle(e)) return 1;
   return 0;
 }
 
@@ -550,18 +550,18 @@ static int send(int event, Fl_Widget* to, Fl_Window* window) {
   return ret;
 }
 
-int Fl::handle(int event, Fl_Window* window)
+int Fl::handle(int e, Fl_Window* window)
 {
-  e_number = event;
-  if (fl_local_grab) return fl_local_grab(event);
+  e_number = e;
+  if (fl_local_grab) return fl_local_grab(e);
 
-  Fl_Widget* w = window;
+  Fl_Widget* wi = window;
 
-  switch (event) {
+  switch (e) {
 
   case FL_CLOSE:
     if (grab() || modal() && window != modal()) return 0;
-    w->do_callback();
+    wi->do_callback();
     return 1;
 
   case FL_SHOW:
@@ -574,10 +574,10 @@ int Fl::handle(int event, Fl_Window* window)
 
   case FL_PUSH:
     Fl_Tooltip::enter((Fl_Widget*)0);
-    if (grab()) w = grab();
-    else if (modal() && w != modal()) return 0;
-    pushed_ = w;
-    if (send(event, w, window)) return 1;
+    if (grab()) wi = grab();
+    else if (modal() && wi != modal()) return 0;
+    pushed_ = wi;
+    if (send(e, wi, window)) return 1;
     // raise windows that are clicked on:
     window->show();
     return 1;
@@ -594,32 +594,32 @@ int Fl::handle(int event, Fl_Window* window)
     return 1;
 
   case FL_DND_RELEASE:
-    w = belowmouse();
+    wi = belowmouse();
     break;
 
   case FL_MOVE:
   case FL_DRAG:
     fl_xmousewin = window; // this should already be set, but just in case.
     if (pushed()) {
-      w = pushed();
-      if (grab()) w = grab();
-      e_number = event = FL_DRAG;
+      wi = pushed();
+      if (grab()) wi = grab();
+      e_number = e = FL_DRAG;
       break;
     }
-    if (modal() && w != modal()) w = 0;
-    if (grab()) w = grab();
+    if (modal() && wi != modal()) wi = 0;
+    if (grab()) wi = grab();
     {Fl_Widget* pbm = belowmouse();
-    int ret = (w && send(event, w, window));
+    int ret = (wi && send(e, wi, window));
     if (pbm != belowmouse()) Fl_Tooltip::enter(belowmouse());
     return ret;}
 
   case FL_RELEASE: {
     if (pushed()) {
-      w = pushed();
+      wi = pushed();
       pushed_ = 0; // must be zero before callback is done!
     }
-    if (grab()) w = grab();
-    int r = send(event, w, window);
+    if (grab()) wi = grab();
+    int r = send(e, wi, window);
     fl_fix_focus();
     return r;}
 
@@ -636,8 +636,8 @@ int Fl::handle(int event, Fl_Window* window)
     fl_xfocus = window; // this should not happen!  But maybe it does:
 
     // Try it as keystroke, sending it to focus and all parents:
-    for (w = grab() ? grab() : focus(); w; w = w->parent())
-      if (send(FL_KEYBOARD, w, window)) return 1;
+    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
+      if (send(FL_KEYBOARD, wi, window)) return 1;
 
     // recursive call to try shortcut:
     if (handle(FL_SHORTCUT, window)) return 1;
@@ -647,22 +647,22 @@ int Fl::handle(int event, Fl_Window* window)
     {char* c = (char*)event_text(); // cast away const
     if (!isalpha(*c)) return 0;
     *c = isupper(*c) ? tolower(*c) : toupper(*c);}
-    e_number = event = FL_SHORTCUT;
+    e_number = e = FL_SHORTCUT;
 
   case FL_SHORTCUT:
-    if (grab()) {w = grab(); break;} // send it to grab window
+    if (grab()) {wi = grab(); break;} // send it to grab window
 
     // Try it as shortcut, sending to mouse widget and all parents:
-    w = belowmouse(); if (!w) {w = modal(); if (!w) w = window;}
-    for (; w; w = w->parent()) if (send(FL_SHORTCUT, w, window)) return 1;
+    wi = belowmouse(); if (!wi) {wi = modal(); if (!wi) wi = window;}
+    for (; wi; wi = wi->parent()) if (send(FL_SHORTCUT, wi, window)) return 1;
 
     // try using add_handle() functions:
     if (send_handlers(FL_SHORTCUT)) return 1;
 
     // make Escape key close windows:
     if (event_key()==FL_Escape) {
-      w = modal(); if (!w) w = window;
-      w->do_callback();
+      wi = modal(); if (!wi) wi = window;
+      wi->do_callback();
       return 1;
     }
 
@@ -682,17 +682,17 @@ int Fl::handle(int event, Fl_Window* window)
     fl_xfocus = window; // this should not happen!  But maybe it does:
 
     // Try it as keystroke, sending it to focus and all parents:
-    for (w = grab() ? grab() : focus(); w; w = w->parent())
-      if (send(FL_MOUSEWHEEL, w, window)) return 1;
+    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
+      if (send(FL_MOUSEWHEEL, wi, window)) return 1;
   default:
     break;
   }
-  if (w && send(event, w, window)) {
+  if (wi && send(e, wi, window)) {
     dnd_flag = 0;
     return 1;
   }
   dnd_flag = 0;
-  return send_handlers(event);
+  return send_handlers(e);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -708,10 +708,10 @@ void Fl_Window::hide() {
   if (!shown()) return;
 
   // remove from the list of windows:
-  Fl_X* x = i;
+  Fl_X* ip = i;
   Fl_X** pp = &Fl_X::first;
-  for (; *pp != x; pp = &(*pp)->next) if (!*pp) return;
-  *pp = x->next;
+  for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return;
+  *pp = ip->next;
 
 #ifdef __APPLE__
   // remove all childwindow links
@@ -725,20 +725,20 @@ void Fl_Window::hide() {
   i = 0;
 
   // recursively remove any subwindows:
-  for (Fl_X *w = Fl_X::first; w;) {
-    Fl_Window* W = w->w;
+  for (Fl_X *wi = Fl_X::first; wi;) {
+    Fl_Window* W = wi->w;
     if (W->window() == this) {
       W->hide();
       W->set_visible();
-      w = Fl_X::first;
-    } else w = w->next;
+      wi = Fl_X::first;
+    } else wi = wi->next;
   }
 
   if (this == Fl::modal_) { // we are closing the modal window, find next one:
-    Fl_Window* w;
-    for (w = Fl::first_window(); w; w = Fl::next_window(w))
-      if (w->modal()) break;
-    Fl::modal_ = w;
+    Fl_Window* W;
+    for (W = Fl::first_window(); W; W = Fl::next_window(W))
+      if (W->modal()) break;
+    Fl::modal_ = W;
   }
 
   // Make sure no events are sent to this window:
@@ -746,31 +746,31 @@ void Fl_Window::hide() {
   handle(FL_HIDE);
 
 #ifdef WIN32
-  if (x->private_dc) ReleaseDC(x->xid,x->private_dc);
-  if (x->xid == fl_window && fl_gc) {
+  if (ip->private_dc) ReleaseDC(ip->xid,ip->private_dc);
+  if (ip->xid == fl_window && fl_gc) {
     ReleaseDC(fl_window, fl_gc);
     fl_window = (HWND)-1;
     fl_gc = 0;
   }
 #elif defined(__APPLE__)
-  if ( x->xid == fl_window )
+  if ( ip->xid == fl_window )
     fl_window = 0;
 #else
-  if (x->region) XDestroyRegion(x->region);
+  if (ip->region) XDestroyRegion(ip->region);
 #endif
 
 #ifdef __APPLE__
   if ( !parent() ) // don't destroy shared windows!
   {
-    //+ RemoveTrackingHandler( dndTrackingHandler, x->xid );
-    //+ RemoveReceiveHandler( dndReceiveHandler, x->xid );
-    XDestroyWindow(fl_display, x->xid);
+    //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
+    //+ RemoveReceiveHandler( dndReceiveHandler, ip->xid );
+    XDestroyWindow(fl_display, ip->xid);
   }
 #else
 # if USE_XFT
-  fl_destroy_xft_draw(x->xid);
+  fl_destroy_xft_draw(ip->xid);
 # endif
-  XDestroyWindow(fl_display, x->xid);
+  XDestroyWindow(fl_display, ip->xid);
 #endif
   
 #ifdef WIN32
@@ -778,7 +778,7 @@ void Fl_Window::hide() {
   if (non_modal() && Fl::first_window() && Fl::first_window()->shown())
     Fl::first_window()->show();
 #endif
-  delete x;
+  delete ip;
 
   // Hide any visible tooltips...
   //Fl_Tooltip::enter(0);
@@ -796,9 +796,9 @@ Fl_Window::~Fl_Window() {
 // Fl_Window::show() or Fl_Window::hide() is called, or in response to
 // iconize/deiconize events from the system.
 
-int Fl_Window::handle(int event)
+int Fl_Window::handle(int ev)
 {
-  if (parent()) switch (event) {
+  if (parent()) switch (ev) {
   case FL_SHOW:
     if (!shown()) show();
     else XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
@@ -821,7 +821,7 @@ int Fl_Window::handle(int event)
     break;
   }
 
-  return Fl_Group::handle(event);
+  return Fl_Group::handle(ev);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -862,58 +862,58 @@ void Fl_Widget::redraw() {
       label_.measure(W, H);
 
       if (align() & FL_ALIGN_BOTTOM) {
-	window()->damage(FL_DAMAGE_ALL, x(), y() + h(), w(), H);
+	window()->damage(FL_DAMAGE_EXPOSE, x(), y() + h(), w(), H);
       } else if (align() & FL_ALIGN_TOP) {
-	window()->damage(FL_DAMAGE_ALL, x(), y() - H, w(), H);
+	window()->damage(FL_DAMAGE_EXPOSE, x(), y() - H, w(), H);
       } else if (align() & FL_ALIGN_LEFT) {
-	window()->damage(FL_DAMAGE_ALL, x() - W, y(), W, h());
+	window()->damage(FL_DAMAGE_EXPOSE, x() - W, y(), W, h());
       } else if (align() & FL_ALIGN_RIGHT) {
-	window()->damage(FL_DAMAGE_ALL, x() + w(), y(), W, h());
+	window()->damage(FL_DAMAGE_EXPOSE, x() + w(), y(), W, h());
       }
     }
   }
 }
 
-void Fl_Widget::damage(uchar flags) {
+void Fl_Widget::damage(uchar fl) {
   if (type() < FL_WINDOW) {
     // damage only the rectangle covered by a child widget:
-    damage(flags, x(), y(), w(), h());
+    damage(fl, x(), y(), w(), h());
   } else {
     // damage entire window by deleting the region:
     Fl_X* i = Fl_X::i((Fl_Window*)this);
     if (!i) return; // window not mapped, so ignore it
     if (i->region) {XDestroyRegion(i->region); i->region = 0;}
-    damage_ |= flags;
+    damage_ |= fl;
     Fl::damage(FL_DAMAGE_CHILD);
   }
 }
 
-void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
-  Fl_Widget* window = this;
+void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
+  Fl_Widget* wi = this;
   // mark all parent widgets between this and window with FL_DAMAGE_CHILD:
-  while (window->type() < FL_WINDOW) {
-    window->damage_ |= flags;
-    window = window->parent();
-    if (!window) return;
-    flags = FL_DAMAGE_CHILD;
+  while (wi->type() < FL_WINDOW) {
+    wi->damage_ |= fl;
+    wi = wi->parent();
+    if (!wi) return;
+    fl = FL_DAMAGE_CHILD;
   }
-  Fl_X* i = Fl_X::i((Fl_Window*)window);
+  Fl_X* i = Fl_X::i((Fl_Window*)wi);
   if (!i) return; // window not mapped, so ignore it
 
-  if (X<=0 && Y<=0 && W>=window->w() && H>=window->h()) {
+  if (X<=0 && Y<=0 && W>=wi->w() && H>=wi->h()) {
     // if damage covers entire window delete region:
-    window->damage(flags);
+    wi->damage(fl);
     return;
   }
 
   // clip the damage to the window and quit if none:
   if (X < 0) {W += X; X = 0;}
   if (Y < 0) {H += Y; Y = 0;}
-  if (W > window->w()-X) W = window->w()-X;
-  if (H > window->h()-Y) H = window->h()-Y;
+  if (W > wi->w()-X) W = wi->w()-X;
+  if (H > wi->h()-Y) H = wi->h()-Y;
   if (W <= 0 || H <= 0) return;
 
-  if (window->damage()) {
+  if (wi->damage()) {
     // if we already have damage we must merge with existing region:
     if (i->region) {
 #ifdef WIN32
@@ -931,12 +931,12 @@ void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
       XUnionRectWithRegion(&R, i->region, i->region);
 #endif
     }
-    window->damage_ |= flags;
+    wi->damage_ |= fl;
   } else {
     // create a new region:
     if (i->region) XDestroyRegion(i->region);
     i->region = XRectangleRegion(X,Y,W,H);
-    window->damage_ = flags;
+    wi->damage_ = fl;
   }
   Fl::damage(FL_DAMAGE_CHILD);
 }
@@ -949,5 +949,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.43 2002/07/23 15:07:33 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.44 2002/08/09 01:09:48 easysw Exp $".
 //

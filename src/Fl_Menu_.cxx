@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.3 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.4 2002/08/09 01:09:49 easysw Exp $"
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -112,42 +112,20 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   value_ = menu_ = (Fl_Menu_Item*)m;
 }
 
-#if 1
 // this version is ok with new Fl_Menu_add code with fl_menu_array_owner:
 
-void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
+void Fl_Menu_::copy(const Fl_Menu_Item* m, void* ud) {
   int n = m->size();
   Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
   memcpy(newMenu, m, n*sizeof(Fl_Menu_Item));
   menu(newMenu);
   alloc = 1; // make destructor free array, but not strings
   // for convienence, provide way to change all the user data pointers:
-  if (user_data) for (; n--;) {
-    if (newMenu->callback_) newMenu->user_data_ = user_data;
+  if (ud) for (; n--;) {
+    if (newMenu->callback_) newMenu->user_data_ = ud;
     newMenu++;
   }
 }
-
-#else
-// This is Guillaume Nodet's fixed version for the older Fl_Menu_add
-// that enlarged the array at powers of 2:
-
-void Fl_Menu_::copy(const Fl_Menu_Item* m, void* user_data) {
-  int i, s = m->size(), n=s;
-  for (i=0; n; n>>=1, i++);
-  n = 1 << i;
-  Fl_Menu_Item* newMenu = new Fl_Menu_Item[n];
-  memcpy(newMenu, m, s*sizeof(Fl_Menu_Item));
-  memset(newMenu+s, 0, (n-s)*sizeof(Fl_Menu_Item));
-  menu(newMenu);
-  alloc = 1; // make destructor free it
-  // for convienence, provide way to change all the user data pointers:
-  if (user_data) for (; s--;) {
-    if (newMenu->callback_) newMenu->user_data_ = user_data;
-    newMenu++;
-  }
-}
-#endif
 
 Fl_Menu_::~Fl_Menu_() {
   clear();
@@ -172,5 +150,5 @@ void Fl_Menu_::clear() {
 }
 
 //
-// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.3 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_Menu_.cxx,v 1.7.2.8.2.4 2002/08/09 01:09:49 easysw Exp $".
 //

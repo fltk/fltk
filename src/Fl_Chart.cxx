@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.8 2002/06/09 18:18:50 spitzak Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.6.2.9 2002/08/09 01:09:48 easysw Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -63,11 +63,11 @@ static void draw_barchart(int x,int y,int w,int h,
   int i;
   /* Draw the bars */
   for (i=0; i<numb; i++) {
-      int h = (int)rint(entries[i].val*incr);
-      if (h < 0)
-	fl_rectbound(x+i*bwidth,zeroh,bwidth+1,-h+1, (Fl_Color)entries[i].col);
-      else if (h > 0)
-	fl_rectbound(x+i*bwidth,zeroh-h,bwidth+1,h+1,(Fl_Color)entries[i].col);
+      int hh = (int)rint(entries[i].val*incr);
+      if (hh < 0)
+	fl_rectbound(x+i*bwidth,zeroh,bwidth+1,-hh+1, (Fl_Color)entries[i].col);
+      else if (hh > 0)
+	fl_rectbound(x+i*bwidth,zeroh-hh,bwidth+1,hh+1,(Fl_Color)entries[i].col);
   }
   /* Draw the labels */
   fl_color(textcolor);
@@ -109,11 +109,11 @@ static void draw_horbarchart(int x,int y,int w,int h,
   if (min == 0.0 && max == 0.0) return; /* Nothing else to draw */
   /* Draw the bars */
   for (i=0; i<numb; i++) {
-      int w = (int)rint(entries[i].val*incr);
-      if (w > 0)
-	fl_rectbound(zeroh,y+i*bwidth,w+1,bwidth+1, (Fl_Color)entries[i].col);
-      else if (w < 0)
-	fl_rectbound(zeroh+w,y+i*bwidth,-w+1,bwidth+1,(Fl_Color)entries[i].col);
+      int ww = (int)rint(entries[i].val*incr);
+      if (ww > 0)
+	fl_rectbound(zeroh,y+i*bwidth,ww+1,bwidth+1, (Fl_Color)entries[i].col);
+      else if (ww < 0)
+	fl_rectbound(zeroh+w,y+i*bwidth,-ww+1,bwidth+1,(Fl_Color)entries[i].col);
   }
   /* Draw the labels */
   fl_color(textcolor);
@@ -141,26 +141,26 @@ static void draw_linechart(int type, int x,int y,int w,int h,
   for (i=0; i<numb; i++) {
       int x0 = x + (int)rint((i-.5)*bwidth);
       int x1 = x + (int)rint((i+.5)*bwidth);
-      int y0 = i ? zeroh - (int)rint(entries[i-1].val*incr) : 0;
-      int y1 = zeroh - (int)rint(entries[i].val*incr);
+      int yy0 = i ? zeroh - (int)rint(entries[i-1].val*incr) : 0;
+      int yy1 = zeroh - (int)rint(entries[i].val*incr);
       if (type == FL_SPIKE_CHART) {
 	  fl_color((Fl_Color)entries[i].col);
-	  fl_line(x1, zeroh, x1, y1);
+	  fl_line(x1, zeroh, x1, yy1);
       } else if (type == FL_LINE_CHART && i != 0) {
 	  fl_color((Fl_Color)entries[i-1].col);
-	  fl_line(x0,y0,x1,y1);
+	  fl_line(x0,yy0,x1,yy1);
       } else if (type == FL_FILLED_CHART && i != 0) {
 	  fl_color((Fl_Color)entries[i-1].col);
 	  if ((entries[i-1].val>0.0)!=(entries[i].val>0.0)) {
 	      double ttt = entries[i-1].val/(entries[i-1].val-entries[i].val);
 	      int xt = x + (int)rint((i-.5+ttt)*bwidth);
-	      fl_polygon(x0,zeroh, x0,y0, xt,zeroh);
-	      fl_polygon(xt,zeroh, x1,y1, x1,zeroh);
+	      fl_polygon(x0,zeroh, x0,yy0, xt,zeroh);
+	      fl_polygon(xt,zeroh, x1,yy1, x1,zeroh);
 	  } else {
-	      fl_polygon(x0,zeroh, x0,y0, x1,y1, x1,zeroh);
+	      fl_polygon(x0,zeroh, x0,yy0, x1,yy1, x1,zeroh);
 	  }
 	  fl_color(textcolor);
-	  fl_line(x0,y0,x1,y1);
+	  fl_line(x0,yy0,x1,yy1);
       }
   }
   /* Draw base line */
@@ -283,8 +283,8 @@ void Fl_Chart::draw() {
 #define FL_CHART_LCOL		FL_LCOL
 #define FL_CHART_ALIGN		FL_ALIGN_BOTTOM
 
-Fl_Chart::Fl_Chart(int x,int y,int w,int h,const char *l) :
-Fl_Widget(x,y,w,h,l) {
+Fl_Chart::Fl_Chart(int X, int Y, int W, int H,const char *l) :
+Fl_Widget(X,Y,W,H,l) {
   box(FL_BORDER_BOX);
   align(FL_ALIGN_BOTTOM);
   numb       = 0;
@@ -325,36 +325,36 @@ void Fl_Chart::add(double val, const char *str, unsigned col) {
   redraw();
 }
 
-void Fl_Chart::insert(int index, double val, const char *str, unsigned col) {
+void Fl_Chart::insert(int ind, double val, const char *str, unsigned col) {
   int i;
-  if (index < 1 || index > numb+1) return;
+  if (ind < 1 || ind > numb+1) return;
   /* Allocate more entries if required */
   if (numb >= sizenumb) {
     sizenumb += FL_CHART_MAX;
     entries = (FL_CHART_ENTRY *)realloc(entries, sizeof(FL_CHART_ENTRY) * (sizenumb + 1));
   }
   // Shift entries as needed
-  for (i=numb; i >= index; i--) entries[i] = entries[i-1];
+  for (i=numb; i >= ind; i--) entries[i] = entries[i-1];
   if (numb < maxnumb || maxnumb == 0) numb++;
   /* Fill in the new entry */
-  entries[index-1].val = float(val);
-  entries[index-1].col = col;
+  entries[ind-1].val = float(val);
+  entries[ind-1].col = col;
   if (str) {
-      strlcpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
+      strlcpy(entries[ind-1].str,str,FL_CHART_LABEL_MAX+1);
   } else {
-      entries[index-1].str[0] = 0;
+      entries[ind-1].str[0] = 0;
   }
   redraw();
 }
 
-void Fl_Chart::replace(int index,double val, const char *str, unsigned col) {
-  if (index < 1 || index > numb) return;
-  entries[index-1].val = float(val);
-  entries[index-1].col = col;
+void Fl_Chart::replace(int ind,double val, const char *str, unsigned col) {
+  if (ind < 1 || ind > numb) return;
+  entries[ind-1].val = float(val);
+  entries[ind-1].col = col;
   if (str) {
-      strlcpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
+      strlcpy(entries[ind-1].str,str,FL_CHART_LABEL_MAX+1);
   } else {
-      entries[index-1].str[0] = 0;
+      entries[ind-1].str[0] = 0;
   }
   redraw();
 }
@@ -380,5 +380,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.8 2002/06/09 18:18:50 spitzak Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.6.2.9 2002/08/09 01:09:48 easysw Exp $".
 //

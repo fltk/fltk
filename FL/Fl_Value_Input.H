@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Value_Input.H,v 1.5.2.3.2.2 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Value_Input.H,v 1.5.2.3.2.3 2002/08/09 01:09:48 easysw Exp $"
 //
 // Value input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,7 @@ public:
   FL_EXPORT void resize(int,int,int,int);
   FL_EXPORT Fl_Value_Input(int x,int y,int w,int h,const char *l=0);
 
-  void soft(char x) {soft_ = x;}
+  void soft(char s) {soft_ = s;}
   char soft() const {return soft_;}
 
   Fl_Font textfont() const {return input.textfont();}
@@ -59,5 +59,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Value_Input.H,v 1.5.2.3.2.2 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Value_Input.H,v 1.5.2.3.2.3 2002/08/09 01:09:48 easysw Exp $".
 //
