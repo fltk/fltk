@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Menu_Window.H,v 1.5.2.3.2.2 2002/01/07 18:47:27 easysw Exp $"
 //
 // Menu window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -40,13 +40,13 @@ public:
   void clear_overlay() {set_flag(NO_OVERLAY);}
   FL_EXPORT ~Fl_Menu_Window();
   Fl_Menu_Window(int W, int H, const char *l = 0)
-    : Fl_Single_Window(W,H,l) {}
+    : Fl_Single_Window(W,H,l) { image(0); }
   Fl_Menu_Window(int X, int Y, int W, int H, const char *l = 0)
-    : Fl_Single_Window(X,Y,W,H,l) {}
+    : Fl_Single_Window(X,Y,W,H,l) { image(0); }
 };
 
 #endif
 
 //
-// End of "$Id: Fl_Menu_Window.H,v 1.5.2.3.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Menu_Window.H,v 1.5.2.3.2.2 2002/01/07 18:47:27 easysw Exp $".
 //

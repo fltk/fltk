@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.16 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.17 2002/01/07 18:47:27 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -447,7 +447,9 @@ void fl_fix_focus() {
   // set focus based on Fl::modal() and fl_xfocus
   Fl_Widget* w = fl_xfocus;
   if (w) {
-    Fl::e_keysym = 0; // make sure widgets don't think a keystroke moved focus
+    if (Fl::e_keysym < (FL_Button + FL_LEFT_MOUSE) ||
+        Fl::e_keysym > (FL_Button + FL_RIGHT_MOUSE))
+      Fl::e_keysym = 0; // make sure widgets don't think a keystroke moved focus
     while (w->parent()) w = w->parent();
     if (Fl::modal()) w = Fl::modal();
     if (!w->contains(Fl::focus()))
@@ -851,5 +853,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.16 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.17 2002/01/07 18:47:27 easysw Exp $".
 //

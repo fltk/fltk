@@ -1,6 +1,11 @@
 CHANGES IN FLTK 1.1.0b9
 
-	- Add Fl_BMP_Image class to support loading of Windows
+	- Fl::scheme() applied the scheme tile image to overlay
+	  and menu windows, which caused problems when the
+	  overlay planes were in use.
+	- Fixed Fl::event_button() value when hiding tooltip on
+	  some systems.
+	- Added Fl_BMP_Image class to support loading of Windows
 	  bitmap (BMP) files.
 	- The shiny demo didn't work on some systems (no
 	  single-buffered OpenGL visual), and the new box types

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.5 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.6 2002/01/07 18:47:27 easysw Exp $"
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
@@ -62,9 +62,9 @@ void Fl::background2(uchar r, uchar g, uchar b) {
 }
 
 // these are set by Fl::args() and override any system colors:
-const char *fl_fg;
-const char *fl_bg;
-const char *fl_bg2;
+const char *fl_fg = NULL;
+const char *fl_bg = NULL;
+const char *fl_bg2 = NULL;
 
 static void set_selection_color(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_SELECTION_COLOR,r,g,b);
@@ -159,11 +159,11 @@ void Fl::get_system_colors()
 // the same color as the windows).
 
 static void
-getsyscolor(const char *key1, const char* key2, const char *arg, void (*func)(uchar,uchar,uchar))
+getsyscolor(const char *key1, const char* key2, const char *arg, const char *defarg, void (*func)(uchar,uchar,uchar))
 {
   if (!arg) {
     arg = XGetDefault (fl_display, key1, key2);
-    if (!arg) return;
+    if (!arg) arg = defarg;
   }
   XColor x;
   if (!XParseColor(fl_display, fl_colormap, arg, &x))
@@ -178,10 +178,10 @@ void Fl::get_system_colors()
   const char* key1 = 0;
   if (Fl::first_window()) key1 = Fl::first_window()->xclass();
   if (!key1) key1 = "fltk";
-  getsyscolor(key1,  "background",	fl_bg,	Fl::background);
-  getsyscolor(key1,  "foreground",	fl_fg,	Fl::foreground);
-  getsyscolor("Text","background",	fl_bg2,	Fl::background2);
-  getsyscolor(key1,  "selectBackground",0,	set_selection_color);
+  getsyscolor(key1,  "background",	fl_bg,	"#c0c0c0", Fl::background);
+  getsyscolor(key1,  "foreground",	fl_fg,	"#000000", Fl::foreground);
+  getsyscolor("Text","background",	fl_bg2,	"#ffffff", Fl::background2);
+  getsyscolor(key1,  "selectBackground",0,	"#000080", set_selection_color);
 }
 
 #endif
@@ -304,5 +304,5 @@ int Fl::reload_scheme() {
 
 
 //
-// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.5 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_get_system_colors.cxx,v 1.6.2.7.2.6 2002/01/07 18:47:27 easysw Exp $".
 //
