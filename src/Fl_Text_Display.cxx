@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.57 2004/09/07 20:59:17 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.58 2004/11/20 03:44:17 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -3124,6 +3124,23 @@ int Fl_Text_Display::handle(int event) {
       if (buffer()->selected()) redraw();
 
       return 1;
+
+    case FL_KEYBOARD:
+      // Copy?
+      if ((Fl::event_state()&(FL_CTRL|FL_COMMAND)) && Fl::event_key()=='c') {
+          if (!buffer()->selected()) return 1;
+          const char *copy = buffer()->selection_text();
+          if (*copy) Fl::copy(copy, strlen(copy), 1);
+          free((void*)copy);
+          return 1;
+      }
+
+      // Select all ?
+      if ((Fl::event_state()&(FL_CTRL|FL_COMMAND)) && Fl::event_key()=='a') {
+          buffer()->select(0,buffer()->length());
+          return 1;
+      }
+      break;
   }
 
   return 0;
@@ -3131,5 +3148,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.57 2004/09/07 20:59:17 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.58 2004/11/20 03:44:17 easysw Exp $".
 //

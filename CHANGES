@@ -1,6 +1,14 @@
 CHANGES IN FLTK 1.1.6
 
-	- Watcom fixes (STR #584, STR #594, STR #595)
+	- The configure script did not support
+	  --disable-localfoo to completely disable image file
+	  support (STR #582)
+	- The Visual C++ 6.0 project files still listed the old
+	  JPEG, PNG, and ZLIB library names (STR #577)
+	- Fixed the scandir() conditional code for HP-UX 11i
+	  (STR #585)
+	- Fl_Text_Display didn't support CTRL/CMD-A/C (STR #601)
+	- Watcom fixes (STR #581, STR #584, STR #594, STR #595)
 	- Fixed library include order when building DSOs on
 	  MacOS X (STR #596)
 	- fl_xid() could cause a WIN32 application to crash (STR
