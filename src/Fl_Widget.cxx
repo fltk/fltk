@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.4 2001/08/05 14:00:15 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.5 2001/08/06 03:17:43 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -76,22 +76,24 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   x_ = X; y_ = Y; w_ = W; h_ = H;
 
-  label_.value	= L;
-  label_.type	= FL_NORMAL_LABEL;
-  label_.font	= FL_HELVETICA;
-  label_.size	= FL_NORMAL_SIZE;
-  label_.color	= FL_BLACK;
-  tooltip_      = 0;
-  callback_	= default_callback;
-  user_data_ 	= 0;
-  type_		= 0;
-  flags_	= 0;
-  damage_	= 0;
-  box_		= FL_NO_BOX;
-  color_	= FL_GRAY;
-  color2_	= FL_GRAY;
-  align_	= FL_ALIGN_CENTER;
-  when_		= FL_WHEN_RELEASE;
+  label_.value	 = L;
+  label_.image   = 0;
+  label_.deimage = 0;
+  label_.type	 = FL_NORMAL_LABEL;
+  label_.font	 = FL_HELVETICA;
+  label_.size	 = FL_NORMAL_SIZE;
+  label_.color	 = FL_BLACK;
+  tooltip_       = 0;
+  callback_	 = default_callback;
+  user_data_ 	 = 0;
+  type_		 = 0;
+  flags_	 = 0;
+  damage_	 = 0;
+  box_		 = FL_NO_BOX;
+  color_	 = FL_GRAY;
+  color2_	 = FL_GRAY;
+  align_	 = FL_ALIGN_CENTER;
+  when_		 = FL_WHEN_RELEASE;
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
@@ -229,5 +231,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.4 2001/08/05 14:00:15 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.5 2001/08/06 03:17:43 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.2 2001/08/06 03:17:43 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -34,8 +34,10 @@
 #include <FL/Fl_Image.H>
 
 #include <string.h>
+#include <ctype.h>
 
 #define MAXBUF 1024
+#define min(a,b) ((a)<(b)?(a):(b))
 
 char fl_draw_shortcut;	// set by fl_labeltypes.cxx
 
@@ -84,21 +86,20 @@ expand(const char* from, char* buf, double maxw, int& n, double &width, int wrap
 
     if (c == '\t') {
       for (c = (o-buf)%8; c<8 && o<e; c++) *o++ = ' ';
-
     } else if (c == '&' && fl_draw_shortcut && *(p+1)) {
       if (*(p+1) == '&') {p++; *o++ = '&';}
       else if (fl_draw_shortcut != 2) underline_at = o;
-
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
-
     } else if (c == 0xA0) { // non-breaking space
       *o++ = ' ';
-
+    } else if (c == '@') { // Symbol???
+      if (p[1] && p[1] != '@')  break;
+      *o++ = c;
+      if (p[1]) p++;
     } else {
       *o++ = c;
-
     }
   }
 
@@ -118,16 +119,42 @@ void fl_draw(
   const char* e;
   char buf[MAXBUF];
   int buflen;
+  char symbol[255], *symptr;
+  int symwidth, symwhen, symoffset;
 
   // count how many lines and put the last one into the buffer:
   int lines;
   double width;
-  for (p=str,lines=0; ;) {
+
+  symbol[0] = '\0';
+  symwidth  = 0;
+  symwhen   = 0;
+
+  if (str && str[0] == '@' && str[1] && str[1] != '@') {
+    // Start with a symbol...
+    for (symptr = symbol;
+         *str && !isspace(*str) && symptr < (symbol + sizeof(symbol) - 1);
+         *symptr++ = *str++);
+    *symptr = '\0';
+    if (isspace(*str)) str++;
+    symwidth = min(w,h);
+  }
+
+  for (p = str, lines=0; p;) {
     e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
     lines++;
     if (!*e) break;
+    else if (*e == '@') {
+      strncpy(symbol, e, sizeof(symbol) - 1);
+      symbol[sizeof(symbol) - 1] = '\0';
+      symwidth = min(w,h);
+      symwhen  = 1;
+      break;
+    }
     p = e;
   }
+
+  if (symwidth && lines) symwidth = lines * fl_height();
 
   // figure out vertical position of the first line:
   int xpos;
@@ -135,15 +162,28 @@ void fl_draw(
   int height = fl_height();
   int imgh = img ? img->h() : 0;
 
+  symoffset = 0;
+
   if (align & FL_ALIGN_BOTTOM) ypos = y+h-(lines-1)*height-imgh;
   else if (align & FL_ALIGN_TOP) ypos = y+height;
   else ypos = y+(h-lines*height-imgh)/2+height;
 
   // draw the image unless the "text over image" alignment flag is set...
   if (img && !(align & FL_ALIGN_TEXT_OVER_IMAGE)) {
-    if (align & FL_ALIGN_LEFT) xpos = x;
-    else if (align & FL_ALIGN_RIGHT) xpos = x+w-img->w();
-    else xpos = x+(w-img->w())/2;
+    if (img->w() > symoffset) symoffset = img->w();
+
+    if (align & FL_ALIGN_LEFT) {
+      if (!symwhen)  xpos = x + symwidth;
+      else xpos = x;
+    }
+    else if (align & FL_ALIGN_RIGHT) {
+      if (symwhen) xpos = x+w-img->w()-symwidth;
+      else xpos = x+w-img->w();
+    }
+    else {
+      xpos = x+(w-img->w()-symwidth)/2;
+      if (!symwhen) xpos += symwidth;
+    }
 
     img->draw(xpos, ypos - height);
     ypos += img->h();
@@ -154,26 +194,69 @@ void fl_draw(
   for (p=str; ; ypos += height) {
     if (lines>1) e = expand(p, buf, w, buflen, width, align&FL_ALIGN_WRAP);
 
-    if (align & FL_ALIGN_LEFT) xpos = x;
-    else if (align & FL_ALIGN_RIGHT) xpos = x+w-int(width+.5);
-    else xpos = x+int((w-width)/2);
+    if (width > symoffset) symoffset = (int)(width + 0.5);
+
+    if (align & FL_ALIGN_LEFT) {
+      if (!symwhen) xpos = x + symwidth;
+      else xpos = x;
+    }
+    else if (align & FL_ALIGN_RIGHT) {
+      if (symwhen) xpos = x+w-int(width+.5) - symwidth;
+      else xpos = x+w-int(width+.5);
+    }
+    else {
+      xpos = x+int((w-width-symwidth)/2);
+      if (!symwhen) xpos += symwidth;
+    }
 
     callthis(buf,buflen,xpos,ypos-desc);
 
     if (underline_at)
       callthis("_",1,xpos+int(fl_width(buf,underline_at-buf)),ypos-desc);
 
-    if (!*e) break;
+    if (!*e || *e == '@') break;
     p = e;
   }
 
   // draw the image if the "text over image" alignment flag is set...
   if (img && (align & FL_ALIGN_TEXT_OVER_IMAGE)) {
-    if (align & FL_ALIGN_LEFT) xpos = x;
-    else if (align & FL_ALIGN_RIGHT) xpos = x+w-img->w();
-    else xpos = x+(w-img->w())/2;
+    if (img->w() > symoffset) symoffset = img->w();
+
+    if (align & FL_ALIGN_LEFT) {
+      if (!symwhen)  xpos = x + symwidth;
+      else xpos = x;
+    }
+    else if (align & FL_ALIGN_RIGHT) {
+      if (symwhen) xpos = x+w-img->w()-symwidth;
+      else xpos = x+w-img->w();
+    }
+    else {
+      xpos = x+(w-img->w()-symwidth)/2;
+      if (!symwhen) xpos += symwidth;
+    }
 
     img->draw(xpos, ypos);
+  }
+
+  // draw the symbol, if any...
+  if (symwidth) {
+    if (symwhen) {
+      // draw to the right
+      if (align & FL_ALIGN_LEFT) xpos = x + symoffset;
+      else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth;
+      else xpos = x + (w-symoffset-symwidth)/2+symoffset;
+    } else {
+      // draw to the left
+      if (align & FL_ALIGN_LEFT) xpos = x;
+      else if (align & FL_ALIGN_RIGHT) xpos = x + w - symwidth - symoffset;
+      else xpos = x + (w-symoffset-symwidth)/2;
+    }
+
+    if (align & FL_ALIGN_BOTTOM) ypos = y + h - symwidth;
+    else if (align & FL_ALIGN_TOP) ypos = y;
+    else ypos = y + (h-symwidth)/2;
+
+    fl_draw_symbol(symbol, xpos, ypos, symwidth, symwidth, fl_color());
   }
 }
 
@@ -211,5 +294,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.2 2001/08/06 03:17:43 easysw Exp $".
 //

@@ -47,8 +47,7 @@ TODO	- Documentation updates.
 	- Updated configure stuff to support shared libraries
 	  under AIX (link to -lfltk_s)
 
-TODO	- Symbol labels can now contain regular text and
-	  Fl_Browser font and color controls.
+	- Symbol labels can now contain regular text.
 
 	- FLUID now supports relative filenames for the source
 	  and header files you generate.

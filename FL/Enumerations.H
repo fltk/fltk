@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.4 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.5 2001/08/06 03:17:43 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -195,20 +195,15 @@ inline Fl_Boxtype frame(Fl_Boxtype b) {return (Fl_Boxtype)(b|2);}
 enum Fl_Labeltype {	// labeltypes:
   FL_NORMAL_LABEL	= 0,
   FL_NO_LABEL,
-  _FL_SYMBOL_LABEL,
   _FL_SHADOW_LABEL,
   _FL_ENGRAVED_LABEL,
   _FL_EMBOSSED_LABEL,
-  _FL_BITMAP_LABEL,
-  _FL_PIXMAP_LABEL,
-  _FL_IMAGE_LABEL,
   _FL_MULTI_LABEL,
   _FL_ICON_LABEL,
 
   FL_FREE_LABELTYPE
 };
-extern Fl_Labeltype FL_EXPORT define_FL_SYMBOL_LABEL();
-#define FL_SYMBOL_LABEL define_FL_SYMBOL_LABEL()
+#define FL_SYMBOL_LABEL FL_NORMAL_LABEL
 extern Fl_Labeltype FL_EXPORT define_FL_SHADOW_LABEL();
 #define FL_SHADOW_LABEL define_FL_SHADOW_LABEL()
 extern Fl_Labeltype FL_EXPORT define_FL_ENGRAVED_LABEL();
@@ -369,5 +364,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.4 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.5 2001/08/06 03:17:43 easysw Exp $".
 //

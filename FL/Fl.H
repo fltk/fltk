@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.11.2.1 2001/08/02 20:09:25 easysw Exp $"
+// "$Id: Fl.H,v 1.8.2.11.2.2 2001/08/06 03:17:43 easysw Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -187,7 +187,6 @@ public:
   // labeltypes:
   static FL_EXPORT void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);
   static FL_EXPORT void set_labeltype(Fl_Labeltype, Fl_Labeltype from);
-  static FL_EXPORT void enable_symbols();
 
   // boxtypes:
   static FL_EXPORT void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar);
@@ -218,5 +217,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.11.2.1 2001/08/02 20:09:25 easysw Exp $".
+// End of "$Id: Fl.H,v 1.8.2.11.2.2 2001/08/06 03:17:43 easysw Exp $".
 //

@@ -311,7 +311,7 @@ fl_show_colormap.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_show_colormap.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H
 fl_show_colormap.o: ../FL/fl_draw.H ../FL/fl_show_colormap.H ../config.h
 fl_symbols.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
-fl_symbols.o: ../FL/fl_draw.H ../FL/Fl_Widget.H
+fl_symbols.o: ../FL/fl_draw.H
 fl_vertex.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
 fl_vertex.o: ../FL/Fl_Window.H ../FL/math.h
 forms_compatability.o: ../FL/forms.H ../FL/Fl.H ../FL/Enumerations.H

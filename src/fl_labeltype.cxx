@@ -1,5 +1,5 @@
 //
-// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: fl_labeltype.cxx,v 1.6.2.3.2.2 2001/08/06 03:17:43 easysw Exp $"
 //
 // Label drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -63,16 +63,15 @@ fl_normal_measure(const Fl_Label* o, int& W, int& H) {
 static Fl_Label_Draw_F* table[MAX_LABELTYPE] = {
   fl_normal_label,
   fl_no_label,
-  fl_normal_label,	// _FL_SYMBOL_LABEL,
   fl_normal_label,	// _FL_SHADOW_LABEL,
   fl_normal_label,	// _FL_ENGRAVED_LABEL,
   fl_normal_label,	// _FL_EMBOSSED_LABEL,
-  fl_no_label,		// _FL_BITMAP_LABEL,
-  fl_no_label,		// _FL_PIXMAP_LABEL,
-  fl_no_label,		// _FL_IMAGE_LABEL,
+  fl_no_label,		// _FL_MULTI_LABEL,
+  fl_no_label,		// _FL_ICON_LABEL,
   // FL_FREE_LABELTYPE+n:
   fl_no_label, fl_no_label, fl_no_label,
-  fl_no_label, fl_no_label, fl_no_label, fl_no_label,
+  fl_no_label, fl_no_label, fl_no_label,
+  fl_no_label, fl_no_label, fl_no_label
 };
 
 static Fl_Label_Measure_F* measure[MAX_LABELTYPE];
@@ -132,5 +131,5 @@ void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
 #include <FL/Fl_Input_.H>
 
 //
-// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.1 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: fl_labeltype.cxx,v 1.6.2.3.2.2 2001/08/06 03:17:43 easysw Exp $".
 //
