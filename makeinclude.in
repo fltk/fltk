@@ -1,5 +1,5 @@
 #
-# "$Id: makeinclude.in,v 1.7.2.11.2.20 2002/07/14 17:03:30 easysw Exp $"
+# "$Id: makeinclude.in,v 1.7.2.11.2.21 2002/07/15 23:38:11 easysw Exp $"
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 # @configure_input@
@@ -69,8 +69,8 @@ IMGDSONAME	= @IMGDSONAME@
 DSOCOMMAND	= @DSOCOMMAND@
 
 # libraries to link with:
-LDLIBS		= @LDFLAGS@ @LIBS@ $(LDFLAGS_MIPSPRO)
-GLDLIBS		= @LDFLAGS@ @GLLIB@ @LIBS@ $(LDFLAGS_MIPSPRO)
+LDLIBS		= @LDFLAGS@ @LIBS@
+GLDLIBS		= @LDFLAGS@ @GLLIB@ @LIBS@
 LINKFLTK	= -L../lib @LINKFLTK@
 LINKFLTKGL	= -L../lib @LINKFLTKGL@
 LINKFLTKFORMS	= -L../lib -lfltk_forms @LINKFLTK@
@@ -129,5 +129,5 @@ CAT3EXT		= @CAT3EXT@
 	mv t.z $@
 
 #
-# End of "$Id: makeinclude.in,v 1.7.2.11.2.20 2002/07/14 17:03:30 easysw Exp $".
+# End of "$Id: makeinclude.in,v 1.7.2.11.2.21 2002/07/15 23:38:11 easysw Exp $".
 #
