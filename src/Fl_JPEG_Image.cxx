@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.11 2004/12/16 21:38:24 easysw Exp $"
+// "$Id: Fl_JPEG_Image.cxx,v 1.1.2.12 2005/01/25 20:50:25 easysw Exp $"
 //
 // Fl_JPEG_Image routines.
 //
@@ -91,8 +91,6 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jpeg_stdio_src(&cinfo, fp);
   jpeg_read_header(&cinfo, 1);
 
-  if (cinfo.err->msg_code) goto error_return;
-    
   cinfo.quantize_colors      = (boolean)FALSE;
   cinfo.out_color_space      = JCS_RGB;
   cinfo.out_color_components = 3;
@@ -111,8 +109,6 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 
   while (cinfo.output_scanline < cinfo.output_height)
   {
-    if (cinfo.err->msg_code) goto error_return;
-
     row = (JSAMPROW)(array +
                      cinfo.output_scanline * cinfo.output_width *
                      cinfo.output_components);
@@ -124,6 +120,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 
   fclose(fp);
 
+#  if 0
   // JPEG error handling...
   error_return:
 
@@ -141,9 +138,10 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
     array = 0;
     alloc_array = 0;
   }
+#  endif // 0
 #endif // HAVE_LIBJPEG
 }
 
 //
-// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.11 2004/12/16 21:38:24 easysw Exp $".
+// End of "$Id: Fl_JPEG_Image.cxx,v 1.1.2.12 2005/01/25 20:50:25 easysw Exp $".
 //
