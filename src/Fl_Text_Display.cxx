@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.24 2002/08/09 03:17:30 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.25 2002/08/12 20:24:31 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1884,19 +1884,31 @@ void fl_text_drag_me(int pos, Fl_Text_Display* d) {
 int Fl_Text_Display::handle(int event) {
   if (!buffer()) return 0;
   // This isn't very elegant!
-  if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h)
-      && !dragging && event != FL_LEAVE && event != FL_ENTER) {
+  if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h) &&
+      !dragging && event != FL_LEAVE && event != FL_ENTER &&
+      event != FL_MOVE) {
     return Fl_Group::handle(event);
   }
 
   switch (event) {
     case FL_ENTER:
-      if (active_r()) fl_cursor(FL_CURSOR_INSERT);
-      return 1;
+    case FL_MOVE:
+      if (active_r()) {
+        if (Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h)) fl_cursor(FL_CURSOR_INSERT);
+	else fl_cursor(FL_CURSOR_DEFAULT);
+	return 1;
+      } else {
+        return 0;
+      }
 
     case FL_LEAVE:
-      if (active_r()) fl_cursor(FL_CURSOR_DEFAULT);
-      return 1;
+      if (active_r()) {
+        fl_cursor(FL_CURSOR_DEFAULT);
+
+	return 1;
+      } else {
+	return 0;
+      }
 
     case FL_PUSH: {
         Fl::focus(this); // Take focus from any child widgets...
@@ -1961,5 +1973,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.24 2002/08/09 03:17:30 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.25 2002/08/12 20:24:31 easysw Exp $".
 //
