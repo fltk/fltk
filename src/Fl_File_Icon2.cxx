@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: Fl_File_Icon2.cxx,v 1.1.2.5 2001/12/05 00:06:41 easysw Exp $"
 //
 // Fl_File_Icon system icon routines.
 //
@@ -333,7 +333,7 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 
 
   img = Fl_Shared_Image::get(ifile);
-  if (!img->w() && !img->h()) return -1;
+  if (!img || !img->count() || !img->w() || !img->h()) return -1;
 
   if (img->count() == 1) {
     int		x, y;		// X & Y in image
@@ -521,7 +521,6 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
       lineptr = *ptr;
       startx  = 0;
       ch      = bg;
-      ptr ++;
 
       for (x = 0; x < img->w(); x ++, lineptr ++)
 	if (*lineptr != ch)
@@ -924,5 +923,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: Fl_File_Icon2.cxx,v 1.1.2.5 2001/12/05 00:06:41 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.5 2001/11/17 15:27:15 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.6 2001/12/05 00:06:41 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -461,11 +461,10 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
   (void)a;
 
   icon = (Fl_File_Icon *)(o->value);
-
-  icon->draw(x, y, w, h, (Fl_Color)(o->color));
+  if (icon) icon->draw(x, y, w, h, (Fl_Color)(o->color));
 }
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.5 2001/11/17 15:27:15 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.6 2001/12/05 00:06:41 easysw Exp $".
 //

@@ -1,9 +1,16 @@
 CHANGES IN FLTK 1.1.0b7
 
-	- Some Win32 drivers would draw into wrong buffers
-	  after OpenGL mode change
-	- Message handling and Resources for Mac port
 	- More documentation updates...
+	- The file chooser would cause a segfault if you
+	  clicked in an empty area of the file list.
+	- Fl_File_Icon::labeltype() would cause a segfault
+	  if the value pointer was NULL.
+	- Fl_File_Icon::load_image() could cause segfaults
+	  (NULL data and incrementing the data pointer too
+	  often.)
+	- Some Win32 drivers would draw into wrong buffers
+	  after OpenGL mode change.
+	- Message handling and Resources for MacOS port.
 	- Fl_Help_View could get in an infinitely loop when
 	  determining the maximum width of the page; this
 	  was due to a bug in the get_length() method with

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.5 2001/12/05 00:06:41 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -424,6 +424,9 @@ Fl_File_Chooser::fileListCB()
 
 
   filename = (char *)fileList->text(fileList->value());
+  if (!filename)
+    return;
+
   if (directory_[0] != '\0')
     snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
   else
@@ -704,5 +707,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.4 2001/11/25 16:38:11 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.5 2001/12/05 00:06:41 easysw Exp $".
 //
