@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.29 2003/05/04 21:45:46 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.30 2003/06/15 04:27:35 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -397,6 +397,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     // called in response to FL_PASTE!
     Fl::e_text = fl_selection_buffer[clipboard];
     Fl::e_length = fl_selection_length[clipboard];
+    if (!Fl::e_text) Fl::e_text = (char *)"";
     receiver.handle(FL_PASTE);
     return;
   }
@@ -552,7 +553,7 @@ int fl_handle(const XEvent& thisevent)
       bytesread += count*format/8;
       if (!remaining) break;
     }
-    Fl::e_text = (char*)buffer;
+    Fl::e_text = buffer ? (char*)buffer : (char *)"";
     Fl::e_length = bytesread;
     fl_selection_requestor->handle(FL_PASTE);
     // Detect if this paste is due to Xdnd by the property name (I use
@@ -1267,5 +1268,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.29 2003/05/04 21:45:46 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.30 2003/06/15 04:27:35 easysw Exp $".
 //

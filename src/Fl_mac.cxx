@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.46 2003/06/09 18:53:06 matthiaswm Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.47 2003/06/15 04:27:35 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -1857,12 +1857,13 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
   }
   Fl::e_text = fl_selection_buffer[clipboard];
   Fl::e_length = fl_selection_length[clipboard];
+  if (!Fl::e_text) Fl::e_text = (char *)"";
   receiver.handle(FL_PASTE);
   return;
 }
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.46 2003/06/09 18:53:06 matthiaswm Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.47 2003/06/15 04:27:35 easysw Exp $".
 //
 

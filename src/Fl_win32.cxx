@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.46 2003/06/12 01:36:18 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.47 2003/06/15 04:27:35 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -397,6 +397,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     // called in response to FL_PASTE!
     Fl::e_text = fl_selection_buffer[clipboard];
     Fl::e_length = fl_selection_length[clipboard];
+
+    if (!Fl::e_text) Fl::e_text = (char *)"";
     receiver.handle(FL_PASTE);
   } else {
     if (!OpenClipboard(NULL)) return;
@@ -1193,5 +1195,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.46 2003/06/12 01:36:18 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.47 2003/06/15 04:27:35 easysw Exp $".
 //

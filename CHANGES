@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl::event_text() was sometimes initialized to NULL
+	  instead of an empty string (STR #70)
 	- fl_draw() didn't properly handle a trailing escaped
 	  "@" character (STR #84)
 	- Added documentation for all forms of
