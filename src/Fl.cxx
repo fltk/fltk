@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// "$Id: Fl.cxx,v 1.24.2.16 2000/02/18 07:11:08 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.17 2000/03/08 16:02:25 carl Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -79,7 +79,7 @@ static struct Timeout {
 static int numtimeouts;
 static int timeout_array_size;
 
-void Fl::add_timeout(double t, void (*cb)(void *), void *v) {
+void Fl::add_timeout(double t, Fl_Timeout_Handler cb, void *v) {
 
   fl_elapsed();
 
@@ -103,7 +103,7 @@ void Fl::add_timeout(double t, void (*cb)(void *), void *v) {
   numtimeouts++;
 }
 
-void Fl::remove_timeout(void (*cb)(void *), void *v) {
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void *v) {
   int i,j;
   for (i=j=0; i<numtimeouts; i++) {
     if (timeout[i].cb == cb && timeout[i].arg==v) ;
@@ -706,5 +706,5 @@ int fl_old_shortcut(const char* s) {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.16 2000/02/18 07:11:08 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.17 2000/03/08 16:02:25 carl Exp $".
 //

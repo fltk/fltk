@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.2 2000/02/21 10:45:58 bill Exp $"
+// "$Id: Fl.H,v 1.8.2.3 2000/03/08 16:02:24 carl Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -37,6 +37,8 @@ struct Fl_Label;
 typedef void (Fl_Label_Draw_F)(const Fl_Label*, int,int,int,int, Fl_Align);
 typedef void (Fl_Label_Measure_F)(const Fl_Label*, int&, int&);
 typedef void (Fl_Box_Draw_F)(int,int,int,int, Fl_Color);
+
+typedef void (*Fl_Timeout_Handler)(void*);
 
 class Fl {
   Fl() {}; // no constructor!
@@ -88,8 +90,8 @@ public:
   static FL_EXPORT int ready();
   static FL_EXPORT int run();
   static FL_EXPORT Fl_Widget* readqueue();
-  static FL_EXPORT void add_timeout(double t,void (*cb)(void*),void* v = 0);
-  static FL_EXPORT void remove_timeout(void (*cb)(void*), void* = 0);
+  static FL_EXPORT void add_timeout(double t, Fl_Timeout_Handler,void* = 0);
+  static FL_EXPORT void remove_timeout(Fl_Timeout_Handler, void* = 0);
   static FL_EXPORT void add_fd(int fd, int when, void (*cb)(int,void*),void* =0);
   static FL_EXPORT void add_fd(int fd, void (*cb)(int, void*), void* = 0);
   static FL_EXPORT void remove_fd(int, int when);
@@ -208,5 +210,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.2 2000/02/21 10:45:58 bill Exp $".
+// End of "$Id: Fl.H,v 1.8.2.3 2000/03/08 16:02:24 carl Exp $".
 //
