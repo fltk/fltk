@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include "alignment_panel.H"
 
 ////////////////////////////////////////////////////////////////
 // BASIC FILE WRITING:
@@ -298,6 +299,8 @@ int write_file(const char *filename, int selected_only) {
   if (!open_write(filename)) return 0;
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
 	       "version %.2f",FL_VERSION);
+  if(!include_H_from_C)
+    write_string("\ndo_not_include_H_from_C");
   if (!selected_only) {
     write_string("\nheader_name"); write_word(header_file_name);
     write_string("\ncode_name"); write_word(code_file_name);
@@ -365,6 +368,11 @@ static void read_children(Fl_Type *p, int paste) {
       continue;
     }
 
+    if (!strcmp(c,"do_not_include_H_from_C"))
+    {
+      include_H_from_C=0;
+      goto CONTINUE;
+    }
     if (!strcmp(c,"header_name")) {
       header_file_name = strdup(read_word());
       goto CONTINUE;
@@ -420,7 +428,7 @@ extern void deselect();
 int read_file(const char *filename, int merge) {
   read_version = 0.0;
   if (!open_read(filename)) return 0;
-  if (merge) deselect(); else delete_all();
+  if (merge) deselect(); else    delete_all();
   read_children(Fl_Type::current, merge);
   Fl_Type::current = 0;
   for (Fl_Type *o = Fl_Type::first; o; o = o->next)

@@ -12,6 +12,7 @@
 
 #include <FL/Fl.H>
 #include "Fl_Type.H"
+#include "alignment_panel.H"
 
 static FILE *code_file;
 static FILE *header_file;
@@ -240,7 +241,8 @@ int write_code(const char *s, const char *t) {
   for (p = Fl_Type::first; p; p = p->next) p->write_declare();
   delete included_root; included_root = 0;
 
-  if (t) write_c("#include \"%s\"\n", filename_name(t));
+  if (t && include_H_from_C)
+    write_c("#include \"%s\"\n", filename_name(t));
   for (p = Fl_Type::first; p; p = p->next) p->write_static();
   for (p = Fl_Type::first; p;) p = write_code(p);
 

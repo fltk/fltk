@@ -21,6 +21,8 @@ int gridx = 5;
 int gridy = 5;
 int snap = 3;
 
+bool include_H_from_C;
+
 void alignment_cb(Fl_Input *i, long v) {
   int n = atoi(i->value());
   if (n < 0) n = 0;
@@ -35,7 +37,8 @@ extern const char* header_file_name;
 extern const char* code_file_name;
 
 void show_alignment_cb(Fl_Widget *, void *) {
-  make_alignment_window();
+  if(alignment_window==0) make_alignment_window();
+  include_H_from_C_button->value(include_H_from_C);
   header_file_input->value(header_file_name);
   code_file_input->value(code_file_name);
   char buf[128];
@@ -51,6 +54,10 @@ void header_input_cb(Fl_Input* i, void*) {
 void code_input_cb(Fl_Input* i, void*) {
   code_file_name = i->value();
   printf("code file name set to %s\n", code_file_name);
+}
+
+void include_H_from_C_button_cb(Fl_Light_Button* b, void*) {
+  include_H_from_C = b->value();
 }
 
 ////////////////////////////////////////////////////////////////

@@ -512,6 +512,8 @@ void delete_all(int selected_only) {
       f = g;
     } else f = f->next;
   }
+  if(!selected_only)    include_H_from_C=1;
+
   selection_changed(0);
 }
 

@@ -5,8 +5,9 @@
 Fl_Input *v_input[4];
 
 Fl_Window* make_widget_panel() {
-  Fl_Window *w;
-  { Fl_Window* o = w = new Fl_Window(370, 480);
+  Fl_Window* w;
+  { Fl_Window* o = new Fl_Window(370, 480);
+    w = o;
     w->hotspot(o);
     { Fl_Input* o = new Fl_Input(90, 10, 210, 20, "name:");
       o->box(FL_THIN_UP_BOX);

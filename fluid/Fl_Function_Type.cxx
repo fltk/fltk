@@ -66,6 +66,8 @@ const char *c_check(const char *c, int type) {
 
 class Fl_Function_Type : public Fl_Type {
   const char* return_type;
+  const char* actual_return_type;
+  const char* star;
   char public_, constructor, havewidgets;
 public:
   Fl_Type *make();
@@ -166,21 +168,21 @@ void Fl_Function_Type::write_code1() {
   Fl_Type *child;
   const char* widget_type = 0;
   for (child = next; child && child->level > level; child = child->next)
-    if (child->is_widget()) {
+    if (child->is_widget() && child->level == level+1) {
       havewidgets = 1;
       widget_type = subclassname(child);
-      break;
     }
   write_c("\n");
   if (ismain())
     write_c("int main(int argc, char **argv) {\n");
   else {
     const char* t = return_type;
-    const char* star = "";
+    star = "";
     if (!t) {
       if (havewidgets) {t = widget_type; star = "*";}
       else t = "void";
     }
+    actual_return_type=t;
     const char* k = class_name();
     if (k) {
       write_public(public_);
@@ -200,7 +202,7 @@ void Fl_Function_Type::write_code1() {
       write_c("%s%s %s {\n", t, star, name());
     }
   }
-  if (havewidgets) write_c("  %s* w;\n", widget_type);
+  if (havewidgets) write_c("  Fl_Window* w;\n");
   indentation += 2;
 }
 
@@ -209,7 +211,7 @@ void Fl_Function_Type::write_code2() {
     if (havewidgets) write_c("  w->show(argc, argv);\n");
     write_c("  return Fl::run();\n");
   } else if (havewidgets && !constructor)
-    write_c("  return w;\n");
+    write_c("  return (%s%s)w;\n", actual_return_type, star);
   write_c("}\n");
   indentation = 0;
 }

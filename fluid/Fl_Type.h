@@ -140,3 +140,5 @@ const char *c_check(const char *c, int type = 0);
 
 // replace a string pointer with new value, strips leading/trailing blanks:
 int storestring(const char *n, const char * & p, int nostrip=0);
+
+extern bool include_H_from_C;

@@ -8,8 +8,8 @@ snap 3
 Function {make_alignment_window()} {open
 } {
   Fl_Window alignment_window {
-    label {fluid Preferences} open selected
-    xywh {303 187 210 282} visible
+    label {fluid Preferences} open
+    xywh {0 22 210 310} modal visible
   } {
     Fl_Box {} {
       label {ALIGNMENT:}
@@ -39,7 +39,7 @@ Function {make_alignment_window()} {open
     Fl_Button {} {
       label close
       callback {alignment_window->hide();}
-      xywh {10 250 190 20} hotspot
+      xywh {10 280 190 20}
     }
     Fl_Box {} {
       label {OUTPUT FILE NAMES:}
@@ -60,6 +60,11 @@ Function {make_alignment_window()} {open
       user_data 1 user_data_type {void*}
       callback code_input_cb
       xywh {90 210 100 20} box THIN_DOWN_BOX when 1
+    }
+    Fl_Light_Button include_H_from_C_button {
+      label {Include .H from .C}
+      callback include_H_from_C_button_cb
+      xywh {60 250 140 20} value 1
     }
   }
 } 

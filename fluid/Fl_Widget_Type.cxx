@@ -1267,7 +1267,7 @@ void Fl_Widget_Type::write_code1() {
   if (varused) write_c("{ %s* o = ", t);
   if (name()) write_c("%s = ", name());
   if (is_window()) {
-    write_c("w = new %s(%d, %d", t, o->w(), o->h());
+    write_c("new %s(%d, %d", t, o->w(), o->h());
     // prevent type() code from being emitted:
     ((Fl_Widget_Type*)factory)->o->type(o->type());
   } else {
@@ -1279,6 +1279,7 @@ void Fl_Widget_Type::write_code1() {
   }
   write_c(");\n");
   indentation += 2;
+  if (is_window()) write_c("%sw = o;\n", indent());
   if (varused) write_widget_code();
 }
 
