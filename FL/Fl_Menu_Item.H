@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.4 2002/07/17 15:23:57 easysw Exp $"
+// "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.5 2002/08/01 02:02:03 easysw Exp $"
 //
 // Menu item header file for the Fast Light Tool Kit (FLTK).
 //
@@ -26,14 +26,12 @@
 #ifndef Fl_Menu_Item_H
 #define Fl_Menu_Item_H
 
-#ifndef Fl_Widget_H
-// used to get the Fl_Callback typedefs:
-#include "Fl_Widget.H"
-#endif
+#  include "Fl_Widget.H"
+#  include "Fl_Image.H"
 
-#if defined(__APPLE__) && defined(__MWERKS__) && defined(check)
-#  undef check
-#endif
+#  if defined(__APPLE__) && defined(__MWERKS__) && defined(check)
+#    undef check
+#  endif
 
 enum { // values for flags:
   FL_MENU_INACTIVE = 1,
@@ -105,6 +103,10 @@ struct Fl_Menu_Item {
   void deactivate() {flags |= FL_MENU_INACTIVE;}
   int activevisible() const {return !(flags&0x11);}
 
+  // compatibility for FLUID so it can set the image of a menu item...
+  void image(Fl_Image* a) {a->label(this);}
+  void image(Fl_Image& a) {a.label(this);}
+
   // used by menubar:
   FL_EXPORT int measure(int* h, const Fl_Menu_*) const;
   FL_EXPORT void draw(int x, int y, int w, int h, const Fl_Menu_*, int t=0) const;
@@ -157,5 +159,5 @@ enum {	// back-compatability enum:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.4 2002/07/17 15:23:57 easysw Exp $".
+// End of "$Id: Fl_Menu_Item.H,v 1.5.2.4.2.5 2002/08/01 02:02:03 easysw Exp $".
 //
