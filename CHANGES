@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fixed one more redraw bug in Fl_Browser_ where we
+	  weren't using the box function to erase empty space in
+	  the list.
 	- Fl_Text_Display::buffer() now calls resize() to show
 	  the buffer.
 	- Fl_Help_View didn't support HTML comments.
