@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.3 1998/10/21 14:20:26 mike Exp $"
+// "$Id: Fl_Widget.cxx,v 1.4 1998/12/15 15:35:19 mike Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -132,19 +132,25 @@ static void redraw_label(Fl_Widget* w) {
 }
 
 void Fl_Widget::activate() {
-  if (active()) return;
-  clear_flag(INACTIVE);
-  handle(FL_ACTIVATE);
-  if (inside(Fl::focus())) Fl::focus()->take_focus();
-  redraw_label(this);
+  if (!active()) {
+    clear_flag(INACTIVE);
+    if (active_r()) {
+      redraw_label(this);
+      handle(FL_ACTIVATE);
+      if (inside(Fl::focus())) Fl::focus()->take_focus();
+    }
+  }
 }
 
 void Fl_Widget::deactivate() {
-  if (!active()) return;
-  set_flag(INACTIVE);
-  handle(FL_DEACTIVATE);
-  fl_throw_focus(this);
-  redraw_label(this);
+  if (active_r()) {
+    set_flag(INACTIVE);
+    redraw_label(this);
+    handle(FL_DEACTIVATE);
+    fl_throw_focus(this);
+  } else {
+    set_flag(INACTIVE);
+  }
 }
 
 int Fl_Widget::active_r() const {
@@ -154,20 +160,26 @@ int Fl_Widget::active_r() const {
 }
 
 void Fl_Widget::show() {
-  if (visible()) return;
-  clear_flag(INVISIBLE);
-  handle(FL_SHOW);
-  if (inside(Fl::focus())) Fl::focus()->take_focus();
-  redraw_label(this);
+  if (!visible()) {
+    clear_flag(INVISIBLE);
+    if (visible_r()) {
+      redraw_label(this);
+      handle(FL_SHOW);
+      if (inside(Fl::focus())) Fl::focus()->take_focus();
+    }
+  }
 }
 
 void Fl_Widget::hide() {
-  if (!visible()) return;
-  set_flag(INVISIBLE);
-  handle(FL_HIDE);
-  fl_throw_focus(this);
-  for (Fl_Widget *p = parent(); p; p = p->parent())
-    if (p->box() || !p->parent()) {p->redraw(); break;}
+  if (visible_r()) {
+    set_flag(INVISIBLE);
+    for (Fl_Widget *p = parent(); p; p = p->parent())
+      if (p->box() || !p->parent()) {p->redraw(); break;}
+    handle(FL_HIDE);
+    fl_throw_focus(this);
+  } else {
+    set_flag(INVISIBLE);
+  }
 }
 
 int Fl_Widget::visible_r() const {
@@ -184,5 +196,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.3 1998/10/21 14:20:26 mike Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.4 1998/12/15 15:35:19 mike Exp $".
 //
