@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.3 1999/05/11 09:39:28 bill Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.4 1999/06/12 12:59:06 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -233,7 +233,14 @@ void Fl_Function_Type::write_code1() {
       char s[1024], *sptr = s;
       char *nptr = (char *)name();
 
-      while (*nptr && *nptr != ':') *sptr++ = *nptr++;
+      while (*nptr) {
+        if (*nptr == ':') {
+	  if (nptr[1] != ':') break;
+	  // Copy extra ":" for "class::member"...
+          *sptr++ = *nptr++;
+        }	  
+        *sptr++ = *nptr++;
+      }
       *sptr = '\0';
 
       write_h("%s;\n", s);
@@ -653,5 +660,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.3 1999/05/11 09:39:28 bill Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.4 1999/06/12 12:59:06 mike Exp $".
 //
