@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.58 2004/11/20 03:44:17 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.59 2004/11/23 23:10:26 matthiaswm Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -1154,6 +1154,7 @@ void Fl_Text_Display::next_word() {
 
 void Fl_Text_Display::previous_word() {
   int pos = insert_position();
+  if (pos==0) return;
   pos--;
   while (pos && fl_isseparator(buffer()->character(pos))) {
     pos--;
@@ -3148,5 +3149,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.58 2004/11/20 03:44:17 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.59 2004/11/23 23:10:26 matthiaswm Exp $".
 //
