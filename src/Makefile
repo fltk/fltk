@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.12 2001/09/30 12:30:13 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.13 2001/09/30 17:54:45 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -252,11 +252,16 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 	cp ../FL/*.[hH] $(includedir)/FL
 	cd $(includedir)/FL;\
 	for file in *.H; do\
+		rm -f "`basename $$file H`h";\
 		ln -s $$file "`basename $$file H`h";\
 	done
+	rm -f $(includedir)/FL/fl_file_chooser.H
+	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.H
+	rm -f $(includedir)/FL/fl_file_chooser.h
+	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.h
 	rm -f $(includedir)/Fl
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.12 2001/09/30 12:30:13 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.13 2001/09/30 17:54:45 easysw Exp $".
 #

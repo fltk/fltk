@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list,v 1.1.2.6.2.3 2001/09/29 21:17:17 easysw Exp $"
+# "$Id: fltk.list,v 1.1.2.6.2.4 2001/09/30 17:54:45 easysw Exp $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -30,7 +30,7 @@
 %vendor LGPL
 %license COPYING
 %readme README
-%version 1.1.0b2
+%version 1.1.0b3
 %description FLTK is a cross-platform GUI toolkit for C++.
 
 # FLUID
@@ -170,7 +170,8 @@ l 0000 root sys /usr/include/FL/Fl_Window.h Fl_Window.H
 l 0000 root sys /usr/include/FL/filename.h filename.H
 l 0000 root sys /usr/include/FL/fl_ask.h fl_ask.H
 l 0000 root sys /usr/include/FL/fl_draw.h fl_draw.H
-l 0000 root sys /usr/include/FL/fl_file_chooser.h fl_file_chooser.H
+l 0000 root sys /usr/include/FL/fl_file_chooser.h Fl_File_Chooser.H
+l 0000 root sys /usr/include/FL/fl_file_chooser.H Fl_File_Chooser.H
 l 0000 root sys /usr/include/FL/fl_message.h fl_message.H
 l 0000 root sys /usr/include/FL/fl_show_colormap.h fl_show_colormap.H
 l 0000 root sys /usr/include/FL/fl_show_input.h fl_show_input.H
@@ -188,5 +189,5 @@ f 0444 root sys /usr/share/doc/fltk/COPYING COPYING
 f 0444 root sys /usr/share/doc/fltk/CHANGES CHANGES
 
 #
-# End of "$Id: fltk.list,v 1.1.2.6.2.3 2001/09/29 21:17:17 easysw Exp $".
+# End of "$Id: fltk.list,v 1.1.2.6.2.4 2001/09/30 17:54:45 easysw Exp $".
 #
