@@ -1,12 +1,12 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0103 
+version 1.0104 
 header_name {../FL/Fl_Help_Dialog.H} 
 code_name {.cxx}
 decl {\#include "flstring.h"} {} 
 
 decl {\#include <FL/fl_ask.H>} {} 
 
-class FL_EXPORT Fl_Help_Dialog {open selected
+class FL_EXPORT Fl_Help_Dialog {open
 } {
   decl {int index_;} {}
   decl {int max_;} {}
@@ -47,8 +47,8 @@ else if (view_->filename())
 {
   strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
   line_[index_] = view_->topline();
-}} open
-        private xywh {10 10 510 330} box DOWN_BOX resizable
+}} open selected
+        private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
         code0 {\#include <FL/Fl_Help_View.H>}
         class Fl_Help_View
       } {}
