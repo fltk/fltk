@@ -1,5 +1,5 @@
 //
-// "$Id: threads.cxx,v 1.10.2.4 2003/01/30 21:46:04 easysw Exp $"
+// "$Id: threads.cxx,v 1.10.2.5 2004/04/07 20:06:15 easysw Exp $"
 //
 // Threading example program for the Fast Light Tool Kit (FLTK).
 //
@@ -61,7 +61,7 @@ void* prime_func(void* p)
   // very simple prime number calculator !
   for (; ; n+= step) {
     int p;
-    int hn = (int)sqrt(n);
+    int hn = (int)sqrt((double)n);
     for (p=3; p<=hn; p+=2) if ( n%p == 0 ) break;
     if (p >= hn) {
       char s[128];
@@ -126,5 +126,5 @@ int main() {
 
 
 //
-// End of "$Id: threads.cxx,v 1.10.2.4 2003/01/30 21:46:04 easysw Exp $".
+// End of "$Id: threads.cxx,v 1.10.2.5 2004/04/07 20:06:15 easysw Exp $".
 //
