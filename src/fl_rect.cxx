@@ -1,5 +1,5 @@
 //
-// "$Id: fl_rect.cxx,v 1.10.2.4.2.8 2002/03/06 18:11:01 easysw Exp $"
+// "$Id: fl_rect.cxx,v 1.10.2.4.2.9 2002/06/11 20:58:12 easysw Exp $"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -379,7 +379,7 @@ Fl_Region fl_clip_region() {
 }
 
 // Intersect & push a new clip rectangle:
-void fl_clip(int x, int y, int w, int h) {
+void fl_push_clip(int x, int y, int w, int h) {
   Fl_Region r;
   if (w > 0 && h > 0) {
     r = XRectangleRegion(x,y,w,h);
@@ -508,5 +508,5 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 }
 
 //
-// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.8 2002/03/06 18:11:01 easysw Exp $".
+// End of "$Id: fl_rect.cxx,v 1.10.2.4.2.9 2002/06/11 20:58:12 easysw Exp $".
 //

@@ -34,7 +34,7 @@ Fl_Double_Window</TT>. </P>
 draw()</TT> method that draws the contents.  The scrolling is done by
 changing the <TT>x()</TT> and <TT>y()</TT> of the widget, so this child
 must use the <TT>x()</TT> and <TT>y()</TT> to position it's drawing.
- To speed up drawing it should test <A href=drawing.html#fl_clip><TT>fl_clip()</TT></A>
+ To speed up drawing it should test <A href=drawing.html#fl_push_clip><TT>fl_push_clip()</TT></A>
 . </P>
 <P>Another very useful child is a single <A href=Fl_Pack.html#Fl_Pack><TT>
 Fl_Pack</TT></A>, which is itself a group that packs it's children

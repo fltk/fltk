@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Documented that fl_push_clip() is preferred over
+	  fl_clip(), with a corresponding source change.
 	- Minor changes to the MacOS X event handling code.
 	- Added syntax highlighting example code to the editor
 	  test program.

@@ -67,18 +67,19 @@ following types of drawing functions:
 <H3><A name="clipping">Clipping</A></H3>
 
 <P>You can limit all your drawing to a rectangular region by calling
-<TT>fl_clip</TT>, and put the drawings back by using <TT>fl_pop_clip</TT>.
+<TT>fl_push_clip</TT>, and put the drawings back by using <TT>fl_pop_clip</TT>.
 This rectangle is measured in pixels and is unaffected by the current
 transformation matrix.
 
 <P>In addition, the system may provide clipping when updating windows
 which may be more complex than a simple rectangle.</P>
 
-<H4><A name="fl_clip">void fl_push_clip(int x, int y, int w, int h)</A><BR>
-void fl_clip(int x, int y, int w, int h)</H4>
+<H4><A name="fl_push_clip">void fl_clip(int x, int y, int w, int h)</A><BR>
+void fl_push_clip(int x, int y, int w, int h)</H4>
 
 <P>Intersect the current clip region with a rectangle and push this new
-region onto the stack.
+region onto the stack. The <CODE>fl_clip()</CODE> name is deprecated and
+will be removed from future releases.
 
 <H4>void fl_push_no_clip()</H4>
 
@@ -93,7 +94,7 @@ region onto the stack.
 	<TD><B>Note:</B>
 
 	<P>You must call <TT>fl_pop_clip()</TT> once for every
-	time you call <TT>fl_clip()</TT>. If you return to FLTK
+	time you call <TT>fl_push_clip()</TT>. If you return to FLTK
 	with the clip stack not empty unpredictable results
 	occur.
 
