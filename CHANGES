@@ -1,3 +1,127 @@
+CHANGES SINCE FLTK 1.0.7
+
+	- Many documentation changes/fixes/improvements.
+	- FLUID didn't save Fl_Double_Window's as
+	  double-buffered windows.
+	- Fl_Menu_ text color is used if Fl_Menu_Item text color
+	  is not set.
+	- Added Fl::first_window(window) method to change the
+	  "top" window that is used when showing modal windows.
+	  By default it is the window the user last
+	  clicked/typed in.
+	- The Fl_Menu::global() handler now uses the current top
+	  window instead of the menu bar for modal stuff.
+	- Added fl_line_style() function to set the line style. 
+	  Note that user-defined line styles ONLY WORK UNDER X11
+	  and Windows NT/2000. Windows 95/98 do, however,
+	  support the "standard" line styles.
+	- Fl::wait() does not return immediately when no windows
+	- XForms keyboard shortcuts using hex keycode constants
+	  now work.
+	- Updated the configure script for *BSD and to turn off
+	  exceptions and RTTI in the FLTK library itself (does
+	  not affect applications which use these things)
+	- FLUID now supports I18N using the POSIX or GNU
+	  mechanisms.
+	- Fixed definition of glutBitmapWidth to match header
+	  file.
+	- Does not turn visible() on when a window is iconized()
+	  or if a modal window is shown and it's parent is
+	  iconized.  This allows the code "while (w->visible()
+	  && w->damage()) Fl::check();" to reliably wait for the
+	  window to be mapped and drawn the first time.
+	- Setting box(FL_NO_BOX) on a button makes it an
+	  invisible overlay
+	- FL_NORMAL_SIZE is now a global variable so you can
+	  change the default text size prior to creating your
+	  widgets.
+	- Menus now draw properly with a box type of
+	  FL_FLAT_BOX.
+	- Cygwin fixes to compile in POSIX mode.
+	- Fl_Value_Input callback can call value() or
+	  destructor.
+	- OpenGL overlays now work under Windows NT!
+	- Fl_Slider and Fl_Scrollbar could cause a divide by
+	  zero.
+	- Clicking in an Fl_Input field no longer selects the
+	  whole field, it just moves the text cursor.
+	- Tru64 UNIX fixes for filename_list()
+	- Fl_Browser now draws itself properly when deactivated.
+	- FLUID GUIs now use Courier font for all code input.
+	- The FLUID OK and Cancel buttons are now all shown in
+	  the same order in all windows.
+	- Fixes to compile under GCC 2.95.2
+	- Fixed the BC5 project files.
+	- FL_LEFT_MOUSE and friends are now in
+	  <FL/Enumerations.H>
+	- Fixes for fake OpenGL overlay code under WIN32.
+	- Message windows are now resizeable.
+	- On WIN32 non_modal (but not modal) windows have the
+	  close and size boxes.
+	- Fl_Button and friends didn't honor the
+	  FL_WHEN_NOT_CHANGED condition.
+	- Disabled XDBE on all platforms.
+	- XGetDefault patch from James Roth
+	- New fl_open_display(Display *) function to allow FLTK
+	  to share a display connection with another toolkit
+	  (like Xt, GTK, etc.)
+	- Shortcut labels for special keys should now display
+	  properly under WIN32.
+	- fl_set_fonts() did not reuse fonts.
+	- Fixed shortcut problem under WIN32 when the focus
+	  window changes.
+	- "dead" keys should now work under X11.
+	- Fixes to make FLTK compile with GCC 2.95.2
+	- FL_SHORTCUT fix for I18N.
+	- Fixed cut/paste problems under WIN32
+	- FLUID now produces correct code for nested class
+	  destructors.
+	- Nested windows should now redraw properly under WIN32.
+	- "table" is now static in fl_cursor.cxx
+	- Fl_Chart used the textcolor() and not the color() for
+	  horizontal bar charts.
+	- Now set the input hint for TWM and TWM-derived window
+	  managers.
+	- Now look for TrueColor visual if FLTK is compiled with
+	  USE_COLORMAP == 0.
+	- Fl_Scrollbar could generate a divide-by-0 error if the
+	  min and max values were the same.
+	- Fl_Menu_::remove() now removes whole submenus if
+	  needed.
+	- Scrollbar buttons now draw themselves pushed in as
+	  needed.
+	- Fixed the gl_overlay demo (and gl overlays in general)
+	  when they are faked with no hardware and the window is
+	  resized.
+	- Selections weren't shown in Fl_Browser widgets when an
+	  item used the @B (background) format.
+	- Windows can now be resized by the program under X11
+	  for more window managers.
+	- OS/2 makeinclude updates.
+	- Added Fl.H required by an inline function in
+	  Fl_Repeat_Button.H
+	- Fl_add_idle adds new functions to the end of the queue
+	  ring, rather than the start, so they are executed in
+	  the order added, and a callback that adds itself does
+	  not prevent others from being called.
+	- Fluid lets you type in code that starts with '#' for
+	  cpp directives.
+	- XBell() could be called before the X11 display was
+	  opened, causing a segfault.
+	- Fixed Fl_Gl_Window::ortho() - Borland C++ doesn't
+	  define GLint to "int", but instead to "long"...
+	- Fixed Fl_Browser scrollbars within an Fl_Scroll
+	  widget.
+	- Fl_Output (and non-focused Fl_Input) now scroll in
+	  response to position()
+	- Fl_Input now does not scroll horizontally if the
+	  entire string will fit in the widget.
+	- Fl_Scrollbar didn't push the right arrow buttons when
+	  you clicked outside the scroller.
+	- Now use WSAAsyncSelect() for better socket performance
+	  with Fl::add_fd()
+
+
 CHANGES SINCE FLTK 1.0.6
 
 	- Fixed Fl_Input_ bug under WIN32 - no longer stop accepting input
@@ -63,6 +187,7 @@ CHANGES SINCE FLTK 1.0.6
 	- The GLUT function key constants were off by one.
 	- The XPM reading code didn't handle RGB colors other than #rrggbb.
 
+
 CHANGES SINCE FLTK 1.0.5
 
     - Fl_win32.cxx defined WM_MOUSE_LEAVE instead of WM_MOUSELEAVE.
@@ -72,6 +197,7 @@ CHANGES SINCE FLTK 1.0.5
     - Now keep track of the current OpenGL context; this provides
       significant performance improvements for OpenGL applications
       with a single context.
+
 
 CHANGES SINCE FLTK 1.0.4
 
@@ -130,6 +256,7 @@ CHANGES SINCE FLTK 1.0.4
     - New FLUID arrow key functionality: arrows move by one pixel, shift+arrow
       resizes, ctrl+arrow steps by grid
 
+
 CHANGES SINCE FLTK 1.0.3
 
     - Documentation updates
@@ -168,6 +295,7 @@ CHANGES SINCE FLTK 1.0.3
     - Fl_Chart was dividing by 0 if there were no data samples
       or if they were all the same (min == max).
 
+
 CHANGES SINCE FLTK 1.0.2
 
     - XDBE is now enabled for IRIX 6.[234] as well as 6.5.
@@ -188,6 +316,7 @@ CHANGES SINCE FLTK 1.0.2
     - FLWM would crash if fl_xmousewin was deleted.
     - The fast_slow demo now uses output widgets.
     - Timers under WIN32 were unreliable.
+
 
 CHANGES SINCE FLTK 1.0.1
 
@@ -230,6 +359,7 @@ CHANGES SINCE FLTK 1.0.1
     - The keypad keys were not always decoded properly under X11.
     - Some pointers were not being turned off when widgets were deleted,
       which caused some applications (like FLWM) to crash.
+
 
 CHANGES SINCE FLTK 1.0
 
