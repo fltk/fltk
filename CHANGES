@@ -21,6 +21,19 @@ CHANGES SINCE FLTK 1.0.10
 	- Tidied up the HTML documentation to be more standards
 	  compliant.
 
+	- Compiling with -DBOXX_BUGS will work around some
+	  problems with the newest X drivers that BoXX delivers,
+	  the problems all affect use of Overlays for normal X
+	  drawing and OpenGL drawing. Normal compilation is
+	  unchanged.
+
+	- The file chooser buttons use user_data() rather than
+	  the label to decide what to do, allowing the label to
+	  be somewhat cleaner.
+
+	- Selection color on X changed to blue, to match what
+	  happens on Windows now.
+
 	- Added support for AIX (static library only).
 
 	- Added support for SunOS 4.x

@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.30 2001/04/30 17:17:01 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31 2001/05/07 14:34:22 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -186,10 +186,10 @@ if test x$enable_gl != xno; then
     )
     AC_CHECK_HEADER(GL/glu.h,
         AC_DEFINE(HAVE_GL_GLU_H)
-	if test $ac_cv_lib_GL_glXMakeCurrent = yes; then
+	if test x$ac_cv_lib_GL_glXMakeCurrent = xyes; then
 	    GLLIB="-lGLU $GLLIB"
 	fi
-	if test $ac_cv_lib_MesaGL_glXMakeCurrent = yes; then
+	if test x$ac_cv_lib_MesaGL_glXMakeCurrent = xyes; then
 	    GLLIB="-lMesaGLU $GLLIB"
 	fi
     )
@@ -211,7 +211,7 @@ AC_CACHE_CHECK("for X overlay visuals", ac_cv_have_overlay,
         ac_cv_have_overlay=no
     fi)
 
-if test "$ac_cv_have_overlay" = yes; then
+if test x$ac_cv_have_overlay = xyes; then
     AC_DEFINE(HAVE_OVERLAY)
 fi
 
@@ -381,5 +381,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.30 2001/04/30 17:17:01 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31 2001/05/07 14:34:22 easysw Exp $".
 dnl
