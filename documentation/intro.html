@@ -1,21 +1,21 @@
 <HTML><BODY>
 <H1 ALIGN=RIGHT><A NAME=intro>1 - Introduction to FLTK</A></H1>
- The Fast Light Tool Kit (&quot;FLTK&quot;, pronounced &quot;fulltick&quot;) is a LGPL'd 
+The Fast Light Tool Kit (&quot;FLTK&quot;, pronounced &quot;fulltick&quot;) is a LGPL'd 
 C++ graphical user interface toolkit for X (UNIX&reg;), OpenGL&reg;, and 
 Microsoft&reg; Windows&reg; NT 4.0, 95, or 98. It was originally developed by 
 Mr. Bill Spitzak and is currently maintained by a small group of 
 developers across the world with a central repository in the US. 
 <H2>History of FLTK</H2>
- It has always been Bill's belief that the GUI API of all modern 
+It has always been Bill's belief that the GUI API of all modern 
 systems is much too high level.  Toolkits (even FL) are <I>not</I> what 
 should be provided and documented as part of an operating system.  The 
 system only has to provide arbitrary shaped but featureless windows, a 
 powerful set of graphics drawing calls, and a simple <I>unalterable</I>
- method of delivering events to the owners of the windows.  NeXT (if 
+method of delivering events to the owners of the windows.  NeXT (if 
 you ignored NextStep) provided this, but they chose to hide it and 
 tried to push their own baroque toolkit instead... 
 <P>Many of the ideas in FLTK were developed on a NeXT (but <I>not</I>
- using NextStep) in 1987 in a C toolkit Bill called &quot;views&quot;.  Here he 
+using NextStep) in 1987 in a C toolkit Bill called &quot;views&quot;.  Here he 
 came up with passing events downward in the tree and having the handle 
 routine return a value indicating the used the event, and the 
 table-driven menus.  In general he was trying to prove that complex UI 
@@ -29,7 +29,7 @@ events which hurt it.  But the designers did admit that perhaps the
 user could write just as good of a button as they could, and officially 
 exposed the lower level interface. </P>
 <P>With the death of NeWS Bill realized that he would have to live with 
-X.  The biggest problem with X is the &quot;window manager&quot;, which means 
+X. The biggest problem with X is the &quot;window manager&quot;, which means 
 that the toolkit can no longer control the window borders or drag the 
 window around. </P>
 <P>At Digital Domain Bill discovered another toolkit, &quot;Forms&quot;.  Forms 
@@ -106,7 +106,7 @@ toolkit, which was already in use by several people, Bill came up with
 &quot;FLTK&quot;, and even a bogus excuse that it stands for &quot;The Fast Light Tool 
 Kit&quot;. 
 <H2>Building and Installing FLTK Under UNIX</H2>
- In most cases you can just type &quot;make&quot;.  This will run configure with 
+In most cases you can just type &quot;make&quot;.  This will run configure with 
 the default of no options and then compile everything. 
 <P>FLTK uses GNU autoconf to configure itself for your UNIX platform. 
 The main things that the configure script will look for are the X11 and
@@ -195,8 +195,10 @@ make
 FLTK is available on the 'net in a bunch of locations: 
 <DL>
 <DT>WWW</DT>
-<DD><A href=http://fltk.easysw.com>http://fltk.easysw.com</A></DD>
+<DD><A href=http://www.fltk.org>http://www.fltk.org</A></DD>
 <DT>FTP</DT>
+<DD><A href=ftp://ftp.fltk.org/pub/fltk>ftp://ftp.fltk.org/pub/fltk</A>
+</DD>
 <DD><A href=ftp://ftp.easysw.com/pub/fltk>ftp://ftp.easysw.com/pub/fltk</A>
 </DD>
 <DD><A href=ftp://ftp.funet.fi/mirrors/ftp.easysw.com/pub/fltk>
@@ -205,22 +207,22 @@ ftp://ftp.funet.fi/mirrors/ftp.easysw.com/pub/fltk</A></DD>
 ftp.northamerica.net/pub/ESP/fltk</A>
 <BR></DD>
 <DT>EMail</DT>
-<DD><A href=mailto:fltk@easysw.com>fltk@easysw.com</A> [see 
+<DD><A href=mailto:fltk@fltk.org>fltk@fltk.org</A> [see 
 instructions below]</DD>
-<DD><A href=mailto:fltk-bugs@easysw.com>fltk-bugs@easysw.com</A> [for 
+<DD><A href=mailto:fltk-bugs@fltk.org>fltk-bugs@fltk.org</A> [for 
 reporting bugs]</DD>
 </DL>
- To send a message to the FLTK mailing list (&quot;fltk@easysw.com&quot;) you 
+ To send a message to the FLTK mailing list (&quot;fltk@fltk.org&quot;) you 
 must first join the list.  Non-member submissions are blocked to avoid 
 problems with unsolicited email.
 <P>To join the FLTK mailing list, send a message to 
-&quot;majordomo@easysw.com&quot; with &quot;subscribe fltk&quot; in the message body. A 
+&quot;majordomo@fltk.org&quot; with &quot;subscribe fltk&quot; in the message body. A 
 digest of this list is available by subscribing to the &quot;fltk-digest&quot; 
 mailing list. </P>
 <H2>Reporting Bugs</H2>
- To report a bug in FLTK, send an email to &quot;fltk-bugs@easysw.com&quot;. 
+ To report a bug in FLTK, send an email to &quot;fltk-bugs@fltk.org&quot;. 
 Please include the FLTK version, operating system &amp; version, and 
 compiler that you are using when describing the bug or problem. 
 <P>For general support and questions, please use the FLTK mailing list 
-at &quot;fltk@easysw.com&quot;. </P>
+at &quot;fltk@fltk.org&quot;. </P>
 </BODY></HTML>
