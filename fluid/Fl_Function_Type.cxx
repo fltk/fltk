@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.12 1999/01/13 15:45:48 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.13 1999/02/17 16:24:45 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -196,9 +196,12 @@ void Fl_Function_Type::write_code1() {
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
     int is_static = 0;
+    int is_virtual = 0;
     if (t) {
       if (!strcmp(t,"static")) {is_static = 1; t = 0;}
       else if (!strncmp(t,"static ",7)) {is_static = 1; t += 7;}
+      if (!strcmp(t,"virtual")) {is_virtual = 1; t = 0;}
+      else if (!strncmp(t,"virtual ",8)) {is_virtual = 1; t += 8;}
     }
     if (!t) {
       if (havewidgets) t = "Fl_Window*";
@@ -217,7 +220,8 @@ void Fl_Function_Type::write_code1() {
       write_h("  ");
       if (!constructor) {
 	if (is_static) write_h("static ");
-	write_h("%s ", t);
+	if (is_virtual) write_h("virtual ");
+        write_h("%s ", t);
 	write_c("%s ", t);
       }
       write_h("%s;\n", name());
@@ -697,5 +701,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.12 1999/01/13 15:45:48 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.13 1999/02/17 16:24:45 mike Exp $".
 //
