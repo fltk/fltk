@@ -33,6 +33,8 @@ int main(int argc, char **argv) {
 }
 </PRE></UL>
 
+<!-- NEED 2in -->
+
 <P>After including the required header files, the program then creates a
 window:</P>
 
@@ -114,11 +116,12 @@ of the form "type&nbsp;name()&nbsp;const".</P>
 <H3>Redrawing After Changing Attributes</H3>
 
 <P>Almost all of the set/get pairs are very fast, short inline
-functions and thus very efficient. However, <i>the "set"
-methods do not call <TT>redraw()</TT></i> - you have to call it
-yourself. This greatly reduces code size and execution time.
-The only common exception is <tt>value()</tt> which calls
-<TT>redraw()</TT> if necessary.</P>
+functions and thus very efficient. However, <i>the "set" methods
+do not call <TT>redraw()</TT></i> - you have to call it
+yourself. This greatly reduces code size and execution time. The
+only common exceptions are <tt>value()</tt> which calls
+<TT>redraw()</TT> and <tt>label()</tt> which calls
+<TT>redraw_label()</TT> if necessary.</P>
 
 <H3>Labels</H3>
 
@@ -239,14 +242,30 @@ used to get the options that are required by your linker:</P>
 CC ... `fltk-config --ldflags`
 </PRE></UL>
 
+<!-- NEED 2in -->
+
+<P>The forms, GL, and images libraries are included with the "--use-foo"
+options, as follows:
+
+<UL><PRE>
+CC ... `fltk-config --use-forms --ldflags`
+CC ... `fltk-config --use-gl --ldflags`
+CC ... `fltk-config --use-images --ldflags`
+CC ... `fltk-config --use-forms --use-gl --use-images --ldflags`
+</PRE></UL>
+
 <P>Finally, you can use the <TT>fltk-config</TT> script to
 compile a single source file as a FLTK program:
 
 <UL><PRE>
 fltk-config --compile filename.cpp
+fltk-config --use-forms --compile filename.cpp
+fltk-config --use-gl --compile filename.cpp
+fltk-config --use-images --compile filename.cpp
+fltk-config --use-forms --use-gl --use-images --compile filename.cpp
 </PRE></UL>
 
-<P>This will create an executable named <TT>filename</TT>.
+<P>Any of these will create an executable named <TT>filename</TT>.
 
 <H2>Compiling Programs with Microsoft Visual C++</H2>
 
@@ -288,6 +307,8 @@ better and can be used with the "optimized for speed" setting.</P>
 
 </UL>
 
+<!-- NEED 5in -->
+
 <H2>Header Files</H2>
 
 <P>The proper way to include FLTK header files is:</P>
@@ -296,16 +317,24 @@ better and can be used with the "optimized for speed" setting.</P>
 #include &lt;FL/Fl_xyz.H&gt;
 </PRE></UL>
 
-<P><B>Microsoft Windows developers please note:</B> case *is*
-significant under other operating systems, and the C standard
-uses the forward  slash (/) to separate directories. <i>Do not
-use any of the following include lines:</i></P>
+<CENTER><TABLE BORDER="1" CELLPADDING="10" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>Note:</B>
 
-<UL><PRE>
-#include &lt;FL\Fl_xyz.H&gt;
-#include &lt;fl/fl_xyz.h&gt;
-#include &lt;Fl/fl_xyz.h&gt;
-</PRE></UL>
+	<P>Case <I>is</I> significant on many operating systems,
+	and the C standard uses the forward slash (/) to
+	separate directories. <i>Do not use any of the following
+	include lines:</i></P>
+
+	<UL><PRE>
+	#include &lt;FL\Fl_xyz.H&gt;
+	#include &lt;fl/fl_xyz.h&gt;
+	#include &lt;Fl/fl_xyz.h&gt;
+	</PRE></UL>
+
+	</TD>
+</TR>
+</TABLE></CENTER>
 
 </BODY>
 </HTML>
