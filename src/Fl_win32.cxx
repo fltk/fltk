@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.31 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.32 2001/04/13 17:30:21 spitzak Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -419,13 +419,14 @@ static Fl_Window* resize_bug_fix;
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-#if 0
-  // Not sure what this is, it may be left over from earlier attempts to
-  // treat WM_PAINT as an expose event, rather than painting in response
-  // to it.
+#if 1
+  // Matt: When dragging a full window, MSWindows on 'slow'
+  // machines can lose track of the window refresh area. It sends some kind
+  // of panic message to the desktop that in turn sends this message on to
+  // all applications.
   static int cnt=0;
-  if(uMsg == WM_SYNCPAINT) {
-    if(cnt) {
+  if (uMsg == WM_SYNCPAINT) {
+    if (cnt) {
       InvalidateRect(fl_window,0,FALSE);
       cnt = 0;
     } else cnt = 1;
@@ -951,5 +952,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.31 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.32 2001/04/13 17:30:21 spitzak Exp $".
 //
