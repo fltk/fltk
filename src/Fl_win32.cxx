@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.29 2002/04/30 12:26:33 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.30 2002/05/01 19:44:01 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -123,7 +123,9 @@ static fd_set fdsets[3];
 #define POLLOUT 4
 #define POLLERR 8
 
-extern class FLDropTarget flDropTarget;
+class FLDropTarget : public IDropTarget;
+
+extern FLDropTarget flDropTarget;
 
 static int nfds = 0;
 static int fd_array_size = 0;
@@ -1181,5 +1183,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.29 2002/04/30 12:26:33 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.30 2002/05/01 19:44:01 easysw Exp $".
 //
