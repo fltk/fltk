@@ -1,5 +1,5 @@
 //
-// "$Id: menubar.cxx,v 1.6.2.8 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: menubar.cxx,v 1.6.2.8.2.1 2001/11/02 20:38:15 easysw Exp $"
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
@@ -164,24 +164,6 @@ Fl_Menu_Item pulldown[] = {
 
 Fl_Menu_* menus[4];
 
-// turn MicroSoft style on/off
-void button_cb(Fl_Widget* w, void*) {
-  if (((Fl_Button*)w)->value()) {
-    for (int i = 0; i < 4; i++) {
-      menus[i]->down_box(FL_FLAT_BOX);
-      menus[i]->selection_color(137);
-      menus[i]->textfont(FL_HELVETICA);
-    }
-  } else {
-    for (int i = 0; i < 4; i++) {
-      menus[i]->down_box(FL_NO_BOX);
-      menus[i]->selection_color(FL_WHITE);
-      menus[i]->textfont(FL_BOLD|FL_ITALIC);
-    }
-  }
-  menus[0]->parent()->redraw();
-}
-
 int main(int argc, char **argv) {
   //Fl::set_color(Fl_Color(15),0,0,128);
   for (int i=0; i<99; i++) {
@@ -206,8 +188,6 @@ int main(int argc, char **argv) {
   mb.callback(test_cb);
   menus[3] = &mb;
   Fl_Box b(200,200,200,100,"Press right button\nfor a pop-up menu");
-  Fl_Toggle_Button t(250,50,150,25,"MicroSoft Style");
-  t.callback(button_cb);
   window.resizable(&mb);
   window.size_range(300,20);
   window.end();
@@ -216,5 +196,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: menubar.cxx,v 1.6.2.8 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: menubar.cxx,v 1.6.2.8.2.1 2001/11/02 20:38:15 easysw Exp $".
 //

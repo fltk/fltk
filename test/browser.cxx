@@ -1,5 +1,5 @@
 //
-// "$Id: browser.cxx,v 1.5.2.6 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: browser.cxx,v 1.5.2.6.2.1 2001/11/02 20:38:15 easysw Exp $"
 //
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -63,7 +63,8 @@ That was a blank line above this.
 #include <FL/Fl_Select_Browser.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
+#include <FL/Fl_Int_Input.H>
+#include <FL/fl_ask.H>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -74,7 +75,7 @@ Fl_Button	*top,
 		*bottom,
 		*middle,
 		*visible;
-Fl_Input	*field;
+Fl_Int_Input	*field;
 
 void b_cb(Fl_Widget* o, void*) {
   printf("callback, selection = %d, event_clicks = %d\n",
@@ -83,6 +84,12 @@ void b_cb(Fl_Widget* o, void*) {
 
 void show_cb(Fl_Widget *o, void *) {
   int line = atoi(field->value());
+
+  if (!line) {
+    fl_alert("Please enter a number in the text field\n"
+             "before clicking on the buttons.");
+    return;
+  }
 
   if (o == top)
     browser->topline(line);
@@ -112,7 +119,7 @@ int main(int argc, char **argv) {
   }
   browser->position(0);
 
-  field = new Fl_Input(50, 350, 350, 25, "Line #:");
+  field = new Fl_Int_Input(50, 350, 350, 25, "Line #:");
   field->callback(show_cb);
 
   top = new Fl_Button(0, 375, 100, 25, "Top");
@@ -133,6 +140,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: browser.cxx,v 1.5.2.6 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: browser.cxx,v 1.5.2.6.2.1 2001/11/02 20:38:15 easysw Exp $".
 //
 
