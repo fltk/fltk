@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.H,v 1.1.2.7 2004/04/11 04:38:54 easysw Exp $"
+// "$Id$"
 //
 // FileBrowser definitions.
 //
@@ -69,11 +69,11 @@ public:
   void		textsize(uchar s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); };
 
   int		filetype() const { return (filetype_); };
-  void		filetype(int t) { filetype_ = t; load(directory_); };
+  void		filetype(int t) { filetype_ = t; };
 };
 
 #endif // !_Fl_File_Browser_H_
 
 //
-// End of "$Id: Fl_File_Browser.H,v 1.1.2.7 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id$".
 //

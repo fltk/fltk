@@ -1,5 +1,5 @@
 //
-// "$Id: file_chooser.cxx,v 1.4.2.3.2.11 2004/04/11 04:39:01 easysw Exp $"
+// "$Id$"
 //
 // File chooser test program.
 //
@@ -307,7 +307,6 @@ show_callback(void)
   char	relative[1024];		// Relative filename
 
 
-  fc->show();
   if (filter->value()[0])
     fc->filter(filter->value());
 
@@ -338,5 +337,5 @@ show_callback(void)
 
 
 //
-// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.11 2004/04/11 04:39:01 easysw Exp $".
+// End of "$Id$".
 //

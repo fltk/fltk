@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.38 2004/09/07 20:59:16 easysw Exp $"
+// "$Id$"
 //
 // More Fl_File_Chooser routines.
 //
@@ -196,8 +196,10 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
   else
     directory_[0] = '\0';
 
-  // Rescan the directory...
-  rescan();
+  if (shown()) {
+    // Rescan the directory...
+    rescan();
+  }
 }
 
 
@@ -834,7 +836,11 @@ Fl_File_Chooser::showChoiceCB()
   }
 
   fileList->filter(pattern_);
-  rescan();
+
+  if (shown()) {
+    // Rescan the directory...
+    rescan();
+  }
 }
 
 
@@ -1160,5 +1166,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.38 2004/09/07 20:59:16 easysw Exp $".
+// End of "$Id$".
 //

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
+version 1.0107 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 class FL_EXPORT Fl_File_Chooser {open
@@ -107,7 +107,7 @@ window->hide();} open
 if (callback_)
   (*callback_)(this, data_);
 
-window->hide();} selected
+window->hide();}
             private xywh {300 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}
@@ -245,11 +245,13 @@ showChoiceCB();} {}
   }
   decl {void rescan();} {public
   }
-  Function {show()} {return_type void
+  Function {show()} {open return_type void
   } {
     code {window->hotspot(fileList);
 window->show();
-fileName->take_focus();} {}
+rescan();
+fileName->take_focus();} {selected
+    }
   }
   Function {shown()} {return_type int
   } {

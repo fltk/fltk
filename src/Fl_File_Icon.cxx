@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.17 2004/06/14 15:58:52 easysw Exp $"
+// "$Id$"
 //
 // Fl_File_Icon routines.
 //
@@ -193,8 +193,10 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
   // Get file information if needed...
   if (filetype == ANY)
   {
-#ifdef WIN32 
-    if (fl_filename_isdir(filename))
+#ifdef WIN32
+    if (filename[strlen(filename) - 1] == '/')
+      filetype = DIRECTORY;
+    else if (fl_filename_isdir(filename))
       filetype = DIRECTORY;
     else
       filetype = PLAIN;
@@ -477,5 +479,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.17 2004/06/14 15:58:52 easysw Exp $".
+// End of "$Id$".
 //
