@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_BMP_Image.cxx,v 1.1.2.1 2002/01/06 17:51:12 easysw Exp $"
+// "$Id: Fl_BMP_Image.cxx,v 1.1.2.2 2002/05/15 19:42:34 easysw Exp $"
 //
 // Fl_BMP_Image routines.
 //
@@ -75,11 +75,11 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 		count,		// Number of times to repeat
 		temp,		// Temporary color
 		align;		// Alignment bytes
+  long		offbits;	// Offset to image data
   uchar		bit,		// Bit in image
 		byte;		// Byte in image
   uchar		*ptr;		// Pointer into pixels
-  uchar		colormap[256][4];// Colormap
-
+  uchar		colormap[256][3];// Colormap
 
   // Open the file...
   if ((fp = fopen(bmp, "rb")) == NULL) return;
@@ -90,30 +90,50 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   read_dword(fp);		// Skip size
   read_word(fp);		// Skip reserved stuff
   read_word(fp);
-  read_dword(fp);
+  offbits = read_dword(fp);	// Read offset to image data
 
   // Then the bitmap information...
-  info_size        = read_dword(fp);
+  info_size = read_dword(fp);
   w(read_long(fp));
   h(read_long(fp));
   read_word(fp);
-  depth            = read_word(fp);
-  compression      = read_dword(fp);
-  read_dword(fp);
-  read_long(fp);
-  read_long(fp);
-  colors_used      = read_dword(fp);
-  read_dword(fp);
+  depth = read_word(fp);
 
-  if (info_size > 40)
-    for (info_size -= 40; info_size > 0; info_size --)
-      getc(fp);
+  if (info_size < 40) {
+    // Old Windows/OS2 BMP header...
+    compression = BI_RGB;
+    colors_used = 0;
+
+    count = info_size - 12;
+  } else {
+    // New BMP header...
+    compression = read_dword(fp);
+    read_dword(fp);
+    read_long(fp);
+    read_long(fp);
+    colors_used = read_dword(fp);
+    read_dword(fp);
+
+    count = info_size - 40;
+  }
+
+  // Skip remaining header bytes...
+  while (count > 0) {
+    getc(fp);
+    count --;
+  }
 
   // Get colormap...
   if (colors_used == 0 && depth <= 8)
     colors_used = 1 << depth;
 
-  fread(colormap, colors_used, 4, fp);
+  for (count = 0; count < colors_used; count ++) {
+    // Read BGR color...
+    fread(colormap, colors_used, 3, fp);
+
+    // Skip pad byte for new BMP files...
+    if (info_size > 12) getc(fp);
+  }
 
   // Setup image and buffers...
   d(3);
@@ -349,5 +369,5 @@ read_long(FILE *fp) {		// I - File to read from
 
 
 //
-// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.1 2002/01/06 17:51:12 easysw Exp $".
+// End of "$Id: Fl_BMP_Image.cxx,v 1.1.2.2 2002/05/15 19:42:34 easysw Exp $".
 //
