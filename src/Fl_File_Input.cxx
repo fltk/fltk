@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.11 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_File_Input.cxx,v 1.1.2.12 2004/07/27 16:02:20 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -262,6 +262,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
     value(newvalue, start - newvalue);
 
     // Then do the callbacks, if necessary...
+    set_changed();
     if (when() & FL_WHEN_CHANGED) do_callback();
   }
 
@@ -270,5 +271,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.11 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_File_Input.cxx,v 1.1.2.12 2004/07/27 16:02:20 easysw Exp $".
 //

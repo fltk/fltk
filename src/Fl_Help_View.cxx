@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.52 2004/07/26 20:52:51 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.53 2004/07/27 16:02:20 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -1372,6 +1372,7 @@ Fl_Help_View::format()
 	  needspace = 0;
 	  line      = 0;
 	  newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? CENTER : LEFT);
+	  talign    = newalign;
 
           cells[column] = block - blocks_;
 
@@ -1574,15 +1575,15 @@ Fl_Help_View::format()
 
   // Reset scrolling if it needs to be...
   if (scrollbar_.visible()) {
-    int hh = h() - 8;
-    if (hscrollbar_.visible()) hh -= 16;
-    if ((topline_ + hh) > size_) topline(size_ - hh);
+    int temph = h() - 8;
+    if (hscrollbar_.visible()) temph -= 16;
+    if ((topline_ + temph) > size_) topline(size_ - temph);
     else topline(topline_);
   } else topline(0);
 
   if (hscrollbar_.visible()) {
-    int ww = w() - 24;
-    if ((leftline_ + ww) > hsize_) leftline(hsize_ - ww);
+    int tempw = w() - 24;
+    if ((leftline_ + tempw) > hsize_) leftline(hsize_ - tempw);
     else leftline(leftline_);
   } else leftline(0);
 }
@@ -2606,8 +2607,8 @@ Fl_Help_View::topline(int t)	// I - Top line number
 
   scrollbar_.value(topline_, h() - 24, 0, size_);
 
+  set_changed();
   do_callback();
-  clear_changed();
 
   redraw();
 }
@@ -2810,5 +2811,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.52 2004/07/26 20:52:51 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.53 2004/07/27 16:02:20 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6.2.4.2.23 2004/04/11 04:38:54 easysw Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.4.2.24 2004/07/27 16:02:18 easysw Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -185,9 +185,9 @@ public:
   int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
   static void default_callback(Fl_Widget*, void*);
-  void do_callback() {callback_(this,user_data_);}
-  void do_callback(Fl_Widget* o,void* arg=0) {callback_(o,arg);}
-  void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg);}
+  void do_callback() {callback_(this,user_data_); if (callback_ != default_callback) clear_changed();}
+  void do_callback(Fl_Widget* o,void* arg=0) {callback_(o,arg); if (callback_ != default_callback) clear_changed();}
+  void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg); if (callback_ != default_callback) clear_changed();}
   int test_shortcut();
   static int test_shortcut(const char*);
   int contains(const Fl_Widget*) const ;
@@ -217,5 +217,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.23 2004/04/11 04:38:54 easysw Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.4.2.24 2004/07/27 16:02:18 easysw Exp $".
 //

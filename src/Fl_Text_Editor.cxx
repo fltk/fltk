@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.20 2004/07/26 20:52:52 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.21 2004/07/27 16:02:21 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -185,8 +185,8 @@ int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   if (e->insert_mode()) e->insert(s);
   else e->overstrike(s);
   e->show_insert_position();
+  e->set_changed();
   if (e->when()&FL_WHEN_CHANGED) e->do_callback();
-  else e->set_changed();
   return 1;
 }
 
@@ -199,7 +199,8 @@ int Fl_Text_Editor::kf_backspace(int, Fl_Text_Editor* e) {
     e->buffer()->select(e->insert_position(), e->insert_position()+1);
   kill_selection(e);
   e->show_insert_position();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
   return 1;
 }
 
@@ -207,7 +208,8 @@ int Fl_Text_Editor::kf_enter(int, Fl_Text_Editor* e) {
   kill_selection(e);
   e->insert("\n");
   e->show_insert_position();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
   return 1;
 }
 
@@ -342,7 +344,8 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
     e->buffer()->select(e->insert_position(), e->insert_position()+1);
   kill_selection(e);
   e->show_insert_position();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
   return 1;
 }
 
@@ -358,7 +361,8 @@ int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_cut(int c, Fl_Text_Editor* e) {
   kf_copy(c, e);
   kill_selection(e);
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
   return 1;
 }
 
@@ -366,7 +370,8 @@ int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
   kill_selection(e);
   Fl::paste(*e, 1);
   e->show_insert_position();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
   return 1;
 }
 
@@ -381,7 +386,8 @@ int Fl_Text_Editor::kf_undo(int , Fl_Text_Editor* e) {
   int ret = e->buffer()->undo(&crsr);
   e->insert_position(crsr);
   e->show_insert_position();
-  if (e->when()&FL_WHEN_CHANGED) e->do_callback(); else e->set_changed();
+  e->set_changed();
+  if (e->when()&FL_WHEN_CHANGED) e->do_callback();
   return ret;
 }
 
@@ -399,8 +405,8 @@ int Fl_Text_Editor::handle_key() {
       else overstrike(Fl::event_text());
     }
     show_insert_position();
+    set_changed();
     if (when()&FL_WHEN_CHANGED) do_callback();
-    else set_changed();
     return 1;
   }
 
@@ -417,8 +423,7 @@ int Fl_Text_Editor::handle_key() {
 void Fl_Text_Editor::maybe_do_callback() {
 //  printf("Fl_Text_Editor::maybe_do_callback()\n");
 //  printf("changed()=%d, when()=%x\n", changed(), when());
-  if (changed() || (when()&FL_WHEN_NOT_CHANGED)) {
-    clear_changed(); do_callback();}
+  if (changed() || (when()&FL_WHEN_NOT_CHANGED)) do_callback();
 }
 
 int Fl_Text_Editor::handle(int event) {
@@ -428,7 +433,8 @@ int Fl_Text_Editor::handle(int event) {
     dragType = -1;
     Fl::paste(*this, 0);
     Fl::focus(this);
-    if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
+    set_changed();
+    if (when()&FL_WHEN_CHANGED) do_callback();
     return 1;
   }
 
@@ -458,7 +464,8 @@ int Fl_Text_Editor::handle(int event) {
       if (insert_mode()) insert(Fl::event_text());
       else overstrike(Fl::event_text());
       show_insert_position();
-      if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
+      set_changed();
+      if (when()&FL_WHEN_CHANGED) do_callback();
       return 1;
 
     case FL_ENTER:
@@ -472,5 +479,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.20 2004/07/26 20:52:52 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.21 2004/07/27 16:02:21 easysw Exp $".
 //

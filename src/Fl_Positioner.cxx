@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.4 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.5 2004/07/27 16:02:21 easysw Exp $"
 //
 // Positioner widget for the Fast Light Tool Kit (FLTK).
 //
@@ -89,9 +89,11 @@ int Fl_Positioner::handle(int event, int X, int Y, int W, int H) {
     if (yy > ymax) yy = ymax;
     if (value(xx, yy)) set_changed();}
     if (!(when() & FL_WHEN_CHANGED ||
-	  when() & FL_WHEN_RELEASE && event == FL_RELEASE)) return 1;
+	  (when() & FL_WHEN_RELEASE && event == FL_RELEASE))) return 1;
     if (changed() || when()&FL_WHEN_NOT_CHANGED) {
-      clear_changed(); do_callback();}
+      if (event == FL_RELEASE) clear_changed();
+      do_callback();
+    }
     return 1;
   default:
     return 0;
@@ -129,5 +131,5 @@ void Fl_Positioner::ybounds(double a, double b) {
 }
 
 //
-// End of "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.4 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Positioner.cxx,v 1.4.2.3.2.5 2004/07/27 16:02:21 easysw Exp $".
 //

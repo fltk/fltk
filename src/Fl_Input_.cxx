@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.29 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.30 2004/07/27 16:02:21 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -599,7 +599,8 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
 
   mark_ = position_ = undoat;
 
-  if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
+  set_changed();
+  if (when()&FL_WHEN_CHANGED) do_callback();
   return 1;
 }
 
@@ -636,7 +637,8 @@ int Fl_Input_::undo() {
   position_ = b;
 
   minimal_update(b1);
-  if (when()&FL_WHEN_CHANGED) do_callback(); else set_changed();
+  set_changed();
+  if (when()&FL_WHEN_CHANGED) do_callback();
   return 1;
 }
 
@@ -649,7 +651,8 @@ int Fl_Input_::copy_cuts() {
 
 void Fl_Input_::maybe_do_callback() {
   if (changed() || (when()&FL_WHEN_NOT_CHANGED)) {
-    clear_changed(); do_callback();}
+    do_callback();
+  }
 }
 
 int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
@@ -852,5 +855,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.29 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.30 2004/07/27 16:02:21 easysw Exp $".
 //

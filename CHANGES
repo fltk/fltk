@@ -1,7 +1,12 @@
 CHANGES IN FLTK 1.1.5rc2
 
 	- Documentation updates (STR #365, STR #399, STR #407,
-	  STR #412, STR #414, STR #462)
+	  STR #412, STR #414, STR #452, STR #462)
+	- All of the core widgets now consistently set changed()
+	  before calling the callback function for a change in
+	  value; this allows programs to check the changed()
+	  state in a callback to see why they are being called
+	  (STR #475)
 	- Fl_File_Chooser did not handle some cases for filename
 	  completion (STR #376)
 	- Fl_Help_View didn't properly compute the default

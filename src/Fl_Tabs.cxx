@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.19 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.20 2004/07/27 16:02:21 easysw Exp $"
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
@@ -133,8 +133,13 @@ int Fl_Tabs::handle(int event) {
   case FL_DRAG:
   case FL_RELEASE:
     o = which(Fl::event_x(), Fl::event_y());
-    if (event == FL_RELEASE) {push(0); if (o && value(o)) do_callback();}
-    else push(o);
+    if (event == FL_RELEASE) {
+      push(0);
+      if (o && value(o)) {
+        set_changed();
+	do_callback();
+      }
+    } else push(o);
     if (Fl::visible_focus() && event == FL_RELEASE) Fl::focus(this);
     return 1;
   case FL_FOCUS:
@@ -160,6 +165,7 @@ int Fl_Tabs::handle(int event) {
 	for (i = 1; i < children(); i ++)
 	  if (child(i)->visible()) break;
 	value(child(i - 1));
+	set_changed();
 	do_callback();
         return 1;
       case FL_Right:
@@ -167,6 +173,7 @@ int Fl_Tabs::handle(int event) {
 	for (i = 0; i < children(); i ++)
 	  if (child(i)->visible()) break;
 	value(child(i + 1));
+	set_changed();
 	do_callback();
         return 1;
       case FL_Down:
@@ -302,5 +309,5 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 }
 
 //
-// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.19 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Tabs.cxx,v 1.6.2.10.2.20 2004/07/27 16:02:21 easysw Exp $".
 //

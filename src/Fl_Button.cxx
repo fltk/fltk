@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6.2.22 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.23 2004/07/27 16:02:20 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -81,6 +81,7 @@ int Fl_Button::handle(int event) {
       newval = oldval;
     if (newval != value_) {
       value_ = newval;
+      set_changed();
       redraw();
       if (when() & FL_WHEN_CHANGED) do_callback();
     }
@@ -90,15 +91,14 @@ int Fl_Button::handle(int event) {
       if (when() & FL_WHEN_NOT_CHANGED) do_callback();
       return 1;
     }
-    if (type() == FL_RADIO_BUTTON)
-      setonly();
-    else if (type() == FL_TOGGLE_BUTTON)
-      oldval = value_;
+    set_changed();
+    if (type() == FL_RADIO_BUTTON) setonly();
+    else if (type() == FL_TOGGLE_BUTTON) oldval = value_;
     else {
       value(oldval);
       if (when() & FL_WHEN_CHANGED) do_callback();
     }
-    if (when() & FL_WHEN_RELEASE) do_callback(); else set_changed();
+    if (when() & FL_WHEN_RELEASE) do_callback();
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
@@ -108,12 +108,13 @@ int Fl_Button::handle(int event) {
 
     if (type() == FL_RADIO_BUTTON && !value_) {
       setonly();
+      set_changed();
       if (when() & FL_WHEN_CHANGED) do_callback();
     } else if (type() == FL_TOGGLE_BUTTON) {
       value(!value());
+      set_changed();
       if (when() & FL_WHEN_CHANGED) do_callback();
-    }
-    if (when() & FL_WHEN_RELEASE) do_callback(); else set_changed();
+    } else if (when() & FL_WHEN_RELEASE) do_callback();
     return 1;
   case FL_FOCUS :
   case FL_UNFOCUS :
@@ -131,6 +132,7 @@ int Fl_Button::handle(int event) {
   case FL_KEYBOARD :
     if (Fl::focus() == this && Fl::event_key() == ' ' &&
         !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
+      set_changed();
       if (type() == FL_RADIO_BUTTON && !value_) {
 	setonly();
 	if (when() & FL_WHEN_CHANGED) do_callback();
@@ -138,7 +140,7 @@ int Fl_Button::handle(int event) {
 	value(!value());
 	if (when() & FL_WHEN_CHANGED) do_callback();
       }
-      if (when() & FL_WHEN_RELEASE) do_callback(); else set_changed();
+      if (when() & FL_WHEN_RELEASE) do_callback();
       return 1;
     }
   default:
@@ -156,5 +158,5 @@ Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.22 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.23 2004/07/27 16:02:20 easysw Exp $".
 //

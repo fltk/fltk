@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.8 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.9 2004/07/27 16:02:21 easysw Exp $"
 //
 // Valuator widget for the Fast Light Tool Kit (FLTK).
 //
@@ -80,8 +80,8 @@ void Fl_Valuator::handle_drag(double v) {
   if (v != value_) {
     value_ = v;
     value_damage();
+    set_changed();
     if (when() & FL_WHEN_CHANGED) do_callback();
-    else set_changed();
   }
 }
 
@@ -92,8 +92,9 @@ void Fl_Valuator::handle_release() {
     // initial position:
     clear_changed();
     // now do the callback only if slider in new position or always is on:
-    if (value_ != previous_value_ || when() & FL_WHEN_NOT_CHANGED)
+    if (value_ != previous_value_ || when() & FL_WHEN_NOT_CHANGED) {
       do_callback();
+    }
   }
 }
 
@@ -125,5 +126,5 @@ int Fl_Valuator::format(char* buffer) {
 }
 
 //
-// End of "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.8 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Valuator.cxx,v 1.5.2.4.2.9 2004/07/27 16:02:21 easysw Exp $".
 //

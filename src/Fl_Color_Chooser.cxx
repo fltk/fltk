@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.7 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.8 2004/07/27 16:02:20 easysw Exp $"
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
@@ -125,6 +125,7 @@ int Fl_Color_Chooser::rgb(double R, double G, double B) {
   double pv = value_;
   rgb2hsv(R,G,B,hue_,saturation_,value_);
   set_valuators();
+  set_changed();
   if (value_ != pv) {
 #ifdef UPDATE_HUE_BOX
     huebox.damage(FL_DAMAGE_SCROLL);
@@ -157,6 +158,7 @@ int Fl_Color_Chooser::hsv(double H, double S, double V) {
   }
   hsv2rgb(H,S,V,r_,g_,b_);
   set_valuators();
+  set_changed();
   return 1;
 }
 
@@ -521,5 +523,5 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
 }
 
 //
-// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.7 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Color_Chooser.cxx,v 1.7.2.4.2.8 2004/07/27 16:02:20 easysw Exp $".
 //
