@@ -154,14 +154,14 @@ specified bounding box.
 displayed at that position then <TT>NULL</TT> is returned.
 
 
-<H4><A NAME="Fl_Browser_.full_height">virtual int Fl_Browser_::full_height()</A></H4>
+<H4><A NAME="Fl_Browser_.full_height">virtual int Fl_Browser_::full_height() const</A></H4>
 
 <P>This method may be provided by the subclass to indicate the full height
 of the item list in pixels. The default implementation computes the full
 height from the item heights.
 
 
-<H4><A NAME="Fl_Browser_.full_width">Fl_Browser_::full_width()</A></H4>
+<H4><A NAME="Fl_Browser_.full_width">Fl_Browser_::full_width() const</A></H4>
 
 <P>This method may be provided by the subclass to indicate the full width
 of the item list in pixels. The default implementation computes the full
@@ -213,7 +213,7 @@ this based on the value of <TT>h</TT>:
 <P>Gets or sets the horizontal scrolling position of the list.
 
 
-<H4><A NAME="Fl_Browser_.incr_height">virtual int Fl_Browser_::incr_height()</A></H4>
+<H4><A NAME="Fl_Browser_.incr_height">virtual int Fl_Browser_::incr_height() const</A></H4>
 
 <P>This method may be provided to return the average height of all items, to
 be used for scrolling. The default implementation uses the height of the first
@@ -239,7 +239,7 @@ and <TT>h</TT>.
 the list.
 
 
-<H4><A NAME="Fl_Browser_.item_height">virtual int Fl_Browser_::item_height(void *p)</A></H4>
+<H4><A NAME="Fl_Browser_.item_height">virtual int Fl_Browser_::item_height(void *p) const</A></H4>
 
 <P>This method must be provided by the subclass to return the height of the
 item <TT>p</TT> in pixels.  Allow for two additional pixels for the list
@@ -258,7 +258,7 @@ the list after <TT>p</TT>.
 the list before <TT>p</TT>.
 
 
-<H4><A NAME="Fl_Browser_.item_quick_height">virtual int Fl_Browser_::item_quick_height(void *p)</A></H4>
+<H4><A NAME="Fl_Browser_.item_quick_height">virtual int Fl_Browser_::item_quick_height(void *p) const</A></H4>
 
 <P>This method may be provided by the subclass to return the height of the
 item <TT>p</TT> in pixels.  Allow for two additional pixels for the list
@@ -282,7 +282,7 @@ multiple selections in the browser. The method should return 1 if <TT>p</TT>
 is selected and 0 otherwise.
 
 
-<H4><A NAME="Fl_Browser_.item_width">virtual int Fl_Browser_::item_width(void *p)</A></H4>
+<H4><A NAME="Fl_Browser_.item_width">virtual int Fl_Browser_::item_width(void *p) const</A></H4>
 
 <P>This method must be provided by the subclass to return the width of the
 item <TT>p</TT> in pixels.  Allow for two additional pixels for the list

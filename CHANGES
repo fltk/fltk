@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
-	- Documentation fixes (STR #648, STR #692, STR #745)
+	- Documentation fixes (STR #648, STR #692, STR #744, STR
+	  #745)
 	- Fl_JPEG_Image could still crash an app with a corrupt
 	  JPEG file (STR #739)
 	- Using the layout alignment controls on a menu widget
@@ -47,7 +48,8 @@ CHANGES IN FLTK 1.1.7
 	  button when necessary (STR #653)
 	- Image drawing on OSX changed the current drawing
 	  colors (STR #662)
-	- Fixed some compiler errors on WIN32 (STR #647)
+	- Fixed some compiler errors on WIN32 (STR #647, STR
+	  #726)
 	- FLUID didn't update the widget panel X/Y/W/H values
 	  when moving the selected window (STR #701)
 	- FLUID didn't use the label type constant names for
