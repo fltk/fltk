@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.33.2.4 1999/05/19 19:07:15 bill Exp $"
+dnl# "$Id: configure.in,v 1.33.2.5 1999/08/09 13:35:04 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -41,7 +41,7 @@ DSONAME=""
 dnl# Get the operating system and version number...
 
 uname=`uname`
-uversion=`uname -r | sed -e '1,$s/\.//g'`
+uversion=`uname -r | sed -e '1,$s/[[-.A-Za-z]]//g'`
 if test "$uname" = "IRIX64"; then
     uname="IRIX"
 fi
@@ -115,16 +115,22 @@ fi
 
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h)
-AC_CHECK_FUNCS(scandir,
-    if test "$uname" != "SunOS"; then
+AC_CHECK_FUNC(scandir,
+    if test "$uname" = "SunOS"; then
+	echo Not using Solaris scandir BSD emulation function.
+    else
         AC_DEFINE(HAVE_SCANDIR)
     fi)
-AC_CHECK_FUNCS(vsnprintf,
-    if test "$uname" != "HP-UX"; then
+AC_CHECK_FUNC(vsnprintf,
+    if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
+	echo Not using built-in vsnprintf function because you are running HP-UX 10.20.
+    else
         AC_DEFINE(HAVE_VSNPRINTF)
     fi)
-AC_CHECK_FUNCS(snprintf,
-    if test "$uname" != "HP-UX"; then
+AC_CHECK_FUNC(snprintf,
+    if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
+	echo Not using built-in snprintf function because you are running HP-UX 10.20.
+    else
         AC_DEFINE(HAVE_SNPRINTF)
     fi)
 AC_CHECK_FUNCS(vsprintf)
@@ -241,5 +247,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.33.2.4 1999/05/19 19:07:15 bill Exp $".
+dnl# End of "$Id: configure.in,v 1.33.2.5 1999/08/09 13:35:04 mike Exp $".
 dnl#
