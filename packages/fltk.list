@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list,v 1.1.2.2 1999/09/15 17:19:47 mike Exp $"
+# "$Id: fltk.list,v 1.1.2.3 1999/09/27 18:16:36 mike Exp $"
 #
 # ESP Package Manager (EPM) distribution file.
 #
@@ -33,7 +33,7 @@
 %vendor GNU
 %license COPYING
 %readme packages/README.epm
-%version 1.0.5
+%version 1.0.6
 
 # GUIs
 %system solaris
@@ -386,5 +386,5 @@ f 0444 root sys /usr/doc/fltk/value_slider.gif documentation/value_slider.gif
 f 0444 root sys /usr/doc/fltk/widgets.html documentation/widgets.html
 
 #
-# End of "$Id: fltk.list,v 1.1.2.2 1999/09/15 17:19:47 mike Exp $".
+# End of "$Id: fltk.list,v 1.1.2.3 1999/09/27 18:16:36 mike Exp $".
 #

@@ -1,3 +1,13 @@
+CHANGES SINCE FLTK 1.0.5
+
+    - Fl_win32.cxx defined WM_MOUSE_LEAVE instead of WM_MOUSELEAVE.
+    - Fl_get_key_win32.cxx needed to include <ctype.h>
+    - gl_draw_pixmap.cxx needed a pointer cast for ANSI C++.
+    - Fl_Repeat_Button didn't always delete its timeout.
+    - Now keep track of the current OpenGL context; this provides
+      significant performance improvements for OpenGL applications
+      with a single context.
+
 CHANGES SINCE FLTK 1.0.4
 
     - Fl_Roller didn't handle a width and height of 0.
