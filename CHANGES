@@ -1,8 +1,9 @@
 CHANGES IN FLTK 1.1.0rc3
 
 	- Documentation updates.
-	- Did some testing against Valgrind and fixed some
-	  uninitialized memory problems in Fl_Help_View.
+	- Did some testing with Valgrind and fixed some memory
+	  problems in Fl_Help_View::Fl_HelpView,
+	  Fl_Menu_::remove(), and Fl_Text_Display::draw_vline().
 	- Fixed some redraw() bugs, and now redraw portions of
 	  the parent widget when the label appears outside the
 	  widget.

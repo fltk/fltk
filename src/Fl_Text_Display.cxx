@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.15 2002/05/24 14:19:19 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.16 2002/06/06 14:04:53 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -888,7 +888,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   const char *lineStr;
 
   /* If line is not displayed, skip it */
-  if ( visLineNum < 0 || visLineNum > mNVisibleLines )
+  if ( visLineNum < 0 || visLineNum >= mNVisibleLines )
     return;
 
   /* Calculate Y coordinate of the string to draw */
@@ -1948,5 +1948,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.15 2002/05/24 14:19:19 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.16 2002/06/06 14:04:53 easysw Exp $".
 //
