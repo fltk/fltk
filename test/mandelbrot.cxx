@@ -1,5 +1,5 @@
 //
-// "$Id: mandelbrot.cxx,v 1.5 1998/12/06 15:57:04 mike Exp $"
+// "$Id: mandelbrot.cxx,v 1.6 1998/12/08 21:06:54 mike Exp $"
 //
 // Mandelbrot set demo for the Fast Light Tool Kit (FLTK).
 //
@@ -69,7 +69,7 @@ void Drawing_Area::draw() {
 }
 
 int Drawing_Area::idle() {
-  if (!window()->visible()) return 0;
+  if (!window()->shown() || !window()->visible()) return 0;
   if (drawn < nextline) {
     window()->make_current();
     int yy = drawn+y()+4;
@@ -197,5 +197,5 @@ void Drawing_Area::resize(int X,int Y,int W,int H) {
 }
 
 //
-// End of "$Id: mandelbrot.cxx,v 1.5 1998/12/06 15:57:04 mike Exp $".
+// End of "$Id: mandelbrot.cxx,v 1.6 1998/12/08 21:06:54 mike Exp $".
 //
