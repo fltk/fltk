@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.7
 
+	- The X11 DND code did not correctly select a text
+	  format for incoming data (STR #711)
 	- Fixes to Fl_JPEG_Image error handler.
 	- Fl_Menu::popup() and ::pulldown() would crash an
 	  application if a callback created widgets before they

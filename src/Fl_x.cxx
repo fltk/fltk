@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.41 2004/12/03 03:14:16 easysw Exp $"
+// "$Id$"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -634,6 +634,7 @@ int fl_handle(const XEvent& thisevent)
       in_a_window = true;
       fl_dnd_source_window = data[0];
       // version number is data[1]>>24
+//      printf("XdndEnter, version %ld\n", data[1] >> 24);
       if (data[1]&1) {
 	// get list of data types:
 	Atom actual; int format; unsigned long count, remaining;
@@ -657,7 +658,26 @@ int fl_handle(const XEvent& thisevent)
 	fl_dnd_source_types[2] = data[4];
 	fl_dnd_source_types[3] = 0;
       }
-      fl_dnd_type = fl_dnd_source_types[0]; // should pick text or url
+
+      // Loop through the source types and pick the first text type...
+      int i;
+
+      for (i = 0; fl_dnd_source_types[i]; i ++)
+      {
+//        printf("fl_dnd_source_types[%d] = %ld (%s)\n", i,
+//	       fl_dnd_source_types[i],
+//	       XGetAtomName(fl_display, fl_dnd_source_types[i]));
+
+        if (!strncmp(XGetAtomName(fl_display, fl_dnd_source_types[i]),
+	             "text/", 5))
+	  break;
+      }
+
+      if (fl_dnd_source_types[i])
+        fl_dnd_type = fl_dnd_source_types[i];
+      else
+        fl_dnd_type = fl_dnd_source_types[0];
+
       event = FL_DND_ENTER;
       break;
 
@@ -1303,5 +1323,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.41 2004/12/03 03:14:16 easysw Exp $".
+// End of "$Id$".
 //
