@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.4 1998/10/21 14:20:51 mike Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.5 1998/11/06 16:00:45 mike Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -278,7 +278,7 @@ void FCB::set(const char* buf) {
 	prev_last = last;
       }
       list = last = 0;
-      message = "reading..."; redraw(); Fl::flush();
+      message = "reading..."; redraw(); Fl::flush(); redraw();
       strcpy(listed, buf);
       dirend = nameend = bufdirend;
       listed[dirend] = listed[dirend+1] = 0;
@@ -611,5 +611,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.4 1998/10/21 14:20:51 mike Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.5 1998/11/06 16:00:45 mike Exp $".
 //
