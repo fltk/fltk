@@ -423,14 +423,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  int resize_from_program = 1;
-  if (this == resize_bug_fix) {
-    resize_from_program = 0;
-    resize_bug_fix = 0;
-  }
-  if (X==x() && Y==y() && W==w() && H==h()) return;
+  int is_a_resize = (W != w() || H != h());
+  int resize_from_program = (this != resize_bug_fix);
+  if (!resize_from_program) resize_bug_fix = 0;
   if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  if (W != w() || H != h()) Fl_Group::resize(X,Y,W,H); else {x(X); y(Y);}
+  else if (!is_a_resize) return;
+  if (is_a_resize) {
+    Fl_Group::resize(X,Y,W,H);
+    if (shown()) {redraw(); i->wait_for_expose = 1;}
+  } else {
+    x(X); y(Y);
+  }
   if (resize_from_program && shown()) {
     if (border() && !parent()) {
       X -= GetSystemMetrics(SM_CXFRAME);
@@ -439,7 +442,6 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       H += 2*GetSystemMetrics(SM_CYFRAME)+GetSystemMetrics(SM_CYCAPTION);
     }
     MoveWindow(i->xid, X, Y, W, H, TRUE);
-    //if (!parent()) redraw();
   }
 }
 

@@ -463,23 +463,23 @@ int fl_handle(const XEvent& xevent)
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  if (resize_bug_fix == this)
-    resize_bug_fix = 0;
-  else if (shown()) {
-    // tell X window manager to change window size:
-    if (!(flags()&FL_FORCE_POSITION) && X == x() && Y == y())
-      XResizeWindow(fl_display, i->xid, W>0 ? W : 1, H>0 ? H : 1);
-    else if (W != w() || H != h())
+  int is_a_resize = (W != w() || H != h());
+  int resize_from_program = (this != resize_bug_fix);
+  if (!resize_from_program) resize_bug_fix = 0;
+  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
+  else if (!is_a_resize) return;
+  if (is_a_resize) {
+    Fl_Group::resize(X,Y,W,H);
+    if (shown()) {redraw(); i->wait_for_expose = 1;}
+  } else {
+    x(X); y(Y);
+  }
+  if (resize_from_program && shown()) {
+    if (is_a_resize)
       XMoveResizeWindow(fl_display, i->xid, X, Y, W>0 ? W : 1, H>0 ? H : 1);
     else
       XMoveWindow(fl_display, i->xid, X, Y);
   }
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
-  if (W != w() || H != h()) Fl_Group::resize(X,Y,W,H); else {x(X); y(Y);}
-  // Notice that this does *not* set any redraw bits.  I assumme
-  // I will receive damage for the whole window from X.  I think
-  // that "ForgetGravity" forces the expose event for the entire
-  // window, but this may not be true on some implementations.
 }
 
 ////////////////////////////////////////////////////////////////
