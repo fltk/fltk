@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.H,v 1.4 1999/01/07 19:16:52 mike Exp $"
+// "$Id: Fl_Chart.H,v 1.5 1999/02/01 20:14:58 mike Exp $"
 //
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
@@ -53,7 +53,8 @@ struct FL_CHART_ENTRY {
 class Fl_Chart : public Fl_Widget {
     int numb;
     int maxnumb;
-    FL_CHART_ENTRY entries[FL_CHART_MAX+1];
+    int sizenumb;
+    FL_CHART_ENTRY *entries;
     double min,max;
     uchar autosize_;
     uchar textfont_,textsize_,textcolor_;
@@ -83,5 +84,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Chart.H,v 1.4 1999/01/07 19:16:52 mike Exp $".
+// End of "$Id: Fl_Chart.H,v 1.5 1999/02/01 20:14:58 mike Exp $".
 //

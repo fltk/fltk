@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.4 1999/01/07 19:17:17 mike Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5 1999/02/01 20:15:00 mike Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -28,6 +28,7 @@
 #include <FL/Fl_Chart.H>
 #include <FL/fl_draw.H>
 #include <string.h>
+#include <stdlib.h>
 
 #define ARCINC	(2.0*M_PI/360.0)
 
@@ -272,28 +273,34 @@ void Fl_Chart::draw() {
 
 Fl_Chart::Fl_Chart(int x,int y,int w,int h,const char *l) :
 Fl_Widget(x,y,w,h,l) {
-    box(FL_BORDER_BOX);
-    align(FL_ALIGN_BOTTOM);
-    numb = 0;
-    maxnumb = FL_CHART_MAX;
-    autosize_ = 1;
-    min = max = 0;
-    textfont_ = FL_HELVETICA;
-    textsize_ = 10;
-    textcolor_ = FL_BLACK;
+  box(FL_BORDER_BOX);
+  align(FL_ALIGN_BOTTOM);
+  numb       = 0;
+  maxnumb    = 0;
+  sizenumb   = FL_CHART_MAX;
+  autosize_  = 1;
+  min = max  = 0;
+  textfont_  = FL_HELVETICA;
+  textsize_  = 10;
+  textcolor_ = FL_BLACK;
+  entries    = (FL_CHART_ENTRY *)calloc(sizeof(FL_CHART_ENTRY), FL_CHART_MAX + 1);
 }
 
 void Fl_Chart::clear() {
-    numb = 0;
-    redraw();
+  numb = 0;
+  redraw();
 }
 
 void Fl_Chart::add(double val, const char *str, uchar col) {
-  int i;
-  /* Shift entries if required */
-  if (numb >= maxnumb) {
-    for (i=0; i<numb-1; i++) entries[i] = entries[i+1];
-    numb--;
+  /* Allocate more entries if required */
+  if (numb >= sizenumb) {
+    sizenumb += FL_CHART_MAX;
+    entries = (FL_CHART_ENTRY *)realloc(entries, sizeof(FL_CHART_ENTRY) * (sizenumb + 1));
+  }
+  // Shift entries as needed
+  if (numb >= maxnumb && maxnumb > 0) {
+    memcpy(entries, entries + 1, sizeof(FL_CHART_ENTRY) * (numb - 1));
+    numb --;
   }
   entries[numb].val = float(val);
   entries[numb].col = col;
@@ -308,59 +315,61 @@ void Fl_Chart::add(double val, const char *str, uchar col) {
 }
 
 void Fl_Chart::insert(int index, double val, const char *str, uchar col) {
-    int i;
-    if (index < 1 || index > numb+1) return;
-    /* Shift entries */
-    for (i=numb; i >= index; i--) entries[i] = entries[i-1];
-    if (numb < maxnumb) numb++;
-    /* Fill in the new entry */
-    entries[index-1].val = float(val);
-    entries[index-1].col = col;
-    if (str) {
-	strncpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
-	entries[index-1].str[FL_CHART_LABEL_MAX] = 0;
-    } else {
-	entries[index-1].str[0] = 0;
-    }
-    redraw();
+  int i;
+  if (index < 1 || index > numb+1) return;
+  /* Allocate more entries if required */
+  if (numb >= sizenumb) {
+    sizenumb += FL_CHART_MAX;
+    entries = (FL_CHART_ENTRY *)realloc(entries, sizeof(FL_CHART_ENTRY) * (sizenumb + 1));
+  }
+  // Shift entries as needed
+  for (i=numb; i >= index; i--) entries[i] = entries[i-1];
+  if (numb < maxnumb || maxnumb == 0) numb++;
+  /* Fill in the new entry */
+  entries[index-1].val = float(val);
+  entries[index-1].col = col;
+  if (str) {
+      strncpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
+      entries[index-1].str[FL_CHART_LABEL_MAX] = 0;
+  } else {
+      entries[index-1].str[0] = 0;
+  }
+  redraw();
 }
 
 void Fl_Chart::replace(int index,double val, const char *str, uchar col) {
-    if (index < 1 || index > numb) return;
-    entries[index-1].val = float(val);
-    entries[index-1].col = col;
-    if (str) {
-	strncpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
-	entries[index-1].str[FL_CHART_LABEL_MAX] = 0;
-    } else {
-	entries[index-1].str[0] = 0;
-    }
-    redraw();
+  if (index < 1 || index > numb) return;
+  entries[index-1].val = float(val);
+  entries[index-1].col = col;
+  if (str) {
+      strncpy(entries[index-1].str,str,FL_CHART_LABEL_MAX+1);
+      entries[index-1].str[FL_CHART_LABEL_MAX] = 0;
+  } else {
+      entries[index-1].str[0] = 0;
+  }
+  redraw();
 }
 
 void Fl_Chart::bounds(double min, double max) {
-    this->min = min;
-    this->max = max;
-    redraw();
+  this->min = min;
+  this->max = max;
+  redraw();
 }
 
 void Fl_Chart::maxsize(int m) {
-    int i;
-    /* Fill in the new number */
-    if (m < 0) return;
-    if (m > FL_CHART_MAX)
-	maxnumb = FL_CHART_MAX;
-    else
-	maxnumb = m;
-    /* Shift entries if required */
-    if (numb > maxnumb) {
-	for (i = 0; i<maxnumb; i++)
-	    entries[i] = entries[i+numb-maxnumb];
-	numb = maxnumb;
-	redraw();
-    }
+  int i;
+  /* Fill in the new number */
+  if (m < 0) return;
+  maxnumb = m;
+  /* Shift entries if required */
+  if (numb > maxnumb) {
+      for (i = 0; i<maxnumb; i++)
+	  entries[i] = entries[i+numb-maxnumb];
+      numb = maxnumb;
+      redraw();
+  }
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.4 1999/01/07 19:17:17 mike Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5 1999/02/01 20:15:00 mike Exp $".
 //

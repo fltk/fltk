@@ -17,8 +17,7 @@
 </PRE>
 </UL>
 <H3>Description</H3>
- This widget displays simple charts and is provided for forms 
-compatibility. 
+This widget displays simple charts and is provided for Forms compatibility.
 <H3>Methods</H3>
 <CENTER>
 <TABLE width=90%>
@@ -81,8 +80,9 @@ char *label = NULL, uchar color = 0)</A></H4>
 pos</TT>. Position 0 is the first data value. 
 <H4><A name=Fl_Chart.maxsize>int maxsize(void) const
 <BR> void maxsize(int n)</A></H4>
- The <TT>maxsize</TT> method gets or sets the maximum number of data 
-values for a chart. 
+The <TT>maxsize</TT> method gets or sets the maximum number of data 
+values for a chart. If you do not call this method then the chart will
+be allowed to grow to any size depending on available memory.
 <H4><A name=Fl_Chart.replace>void replace(int pos, double value, const 
 char *label = NULL, uchar color = 0)</A></H4>
  The <TT>replace</TT> method replaces data value <TT>pos</TT> with <TT>
