@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.9 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.10 2002/02/13 03:55:10 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -212,7 +212,8 @@ int Fl_Group::handle(int event) {
 
     if (children()) {
       for (int j = i;;) {
-        if (send(child(j), event)) return 1;
+        if (child(j)->takesevents())
+	  if (send(child(j), event)) return 1;
         j++;
         if (j >= children()) j = 0;
         if (j == i) break;
@@ -552,5 +553,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.9 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.10 2002/02/13 03:55:10 easysw Exp $".
 //

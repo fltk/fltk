@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.0b11
 
+	- Fixed a minor event propagation bug in Fl_Group that
+	  caused mousewheel events to be passed to scrollbars
+	  that were not visible.
+	- The fl_file_chooser() function did not preserve the
+	  old file/directory like the old file chooser did.
 	- The prototypes for fl_input() and fl_password() did
 	  not default the "default value" to NULL.
 	- Fl_Tabs now draws tabs using the selection_color() of
