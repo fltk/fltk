@@ -35,6 +35,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.arg">arg</A></LI>
 	<LI><A HREF="#Fl.args">args</A></LI>
 	<LI><A HREF="#Fl.atclose">atclose</A></LI>
+	<LI><A HREF="#Fl.awake">awake</A></LI>
 	<LI><A HREF="#Fl.background2">background2</A></LI>
 	<LI><A HREF="#Fl.background">background</A></LI>
 	<LI><A HREF="#Fl.belowmouse">belowmouse</A></LI>
@@ -88,6 +89,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.has_check">has_check</A></LI>
 	<LI><A HREF="#Fl.has_idle">has_idle</A></LI>
 	<LI><A HREF="#Fl.has_timeout">has_timeout</A></LI>
+	<LI><A HREF="#Fl.lock">lock</A></LI>
 	<LI><A HREF="#Fl.modal">modal</A></LI>
 	<LI><A HREF="#Fl.next_window">next_window</A></LI>
 	<LI><A HREF="#Fl.own_colormap">own_colormap</A></LI>
@@ -114,6 +116,8 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.set_idle">set_idle</A></LI>
 	<LI><A HREF="#Fl.set_labeltype">set_labeltype</A></LI>
 	<LI><A HREF="#Fl.test_shortcut">test_shortcut</A></LI>
+	<LI><A HREF="#Fl.thread_message">thread_message</A></LI>
+	<LI><A HREF="#Fl.unlock">unlock</A></LI>
 	<LI><A HREF="#Fl.version">version</A></LI>
 	<LI><A HREF="#Fl.visible_focus">visible_focus</A></LI>
 	<LI><A HREF="#Fl.visual">visual</A></LI>
@@ -296,6 +300,13 @@ argument on the command-line. You can change the message by setting the
 <TT>Fl::help</TT> pointer.
 
 <H4><A NAME="Fl.atclose">void (*atclose)(Fl_Window*,void*);</A></H4>
+
+<H4><A NAME="Fl.awake">void awake(void *p);</A></H4>
+
+<P>The <TT>awake()</TT> method sends a message pointer to the
+main thread, causing any pending <TT>wait()</TT> call to
+terminate so that the main thread can retrieve the message and
+any pending redraws can be processed.
 
 <H4><A NAME="Fl.background2">void background2(uchar, uchar, uchar);</A></H4>
 
@@ -742,6 +753,25 @@ widget uses the event.
 
 <P>Returns true if the timeout exists and has not been called yet.
 
+<H4><A NAME="Fl.lock">void lock();</A></H4>
+
+<P>The <TT>lock()</TT> method blocks the current thread until it
+can safely access FLTK widgets and data. Child threads should
+call this method prior to updating any widgets or accessing
+data. The main thread must call <TT>lock()</TT> to initialize
+the threading support in FLTK.
+
+<P>Child threads must call <A
+HREF="#Fl.unlock"><TT>unlock()</TT></A> when they are done
+accessing FLTK.
+
+<P>When the <A HREF="#Fl.wait"><TT>wait()</TT> method is waiting
+for input or timeouts, child threads are given access to FLTK.
+Similarly, when the main thread needs to do processing, it will
+wait until all child threads have called <A
+HREF="#Fl.unlock"><TT>unlock()</TT></A> before processing
+additional data.
+
 <H4><A NAME="Fl.modal">Fl_Window* modal();</A></H4>
 
 <P>Returns the top-most <tt>modal()</tt> window currently shown.
@@ -961,6 +991,19 @@ FL_SHORTCUT</tt>, against a shortcut value (described in <A href=Fl_Button.html#
 <tt>Fl_Button</tt></A>).  Returns non-zero if there is a match.  Not to
 be confused with <A href="subclassing.html#test_shortcut"><tt>
 Fl_Widget::test_shortcut()</tt></A>.
+
+<H4><A NAME="Fl.thread_message">void *thread_message();</A></H4>
+
+<P>The <TT>thread_message()</TT> method returns the last message
+that was sent from a child by the <A
+HREF="#Fl.awake"><TT>awake()</TT></A> method.
+
+<H4><A NAME="Fl.unlock">void unlock();</A></H4>
+
+<P>The <TT>unlock()</TT> method releases the lock that was set
+using the <A HREF="#Fl.lock"><TT>lock()</TT></A> method. Child
+threads should call this method as soon as they are finished
+accessing FLTK.
 
 <H4><A NAME="Fl.version">double version();</A></H4>
 
