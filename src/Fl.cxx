@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.36 2000/12/21 18:15:14 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.37 2001/01/15 23:51:37 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -204,7 +204,7 @@ double Fl::wait(double time_to_wait) {
   if (first_timeout) {
     elapse_timeouts();
     Timeout *t;
-    while (t = first_timeout) {
+    while ((t = first_timeout)) {
       if (t->time > 0) break;
       // The first timeout in the array has expired.
       // We must remove timeout from array before doing the callback:
@@ -772,5 +772,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.36 2000/12/21 18:15:14 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.37 2001/01/15 23:51:37 spitzak Exp $".
 //
