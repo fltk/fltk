@@ -97,14 +97,9 @@ strlcpy(pngfile, flfile, sizeof(pngfile));
 if ((ext = strrchr(pngfile, '.')) == NULL) return;
 strcpy(ext, ".png");
 
-printf("updating preview to \"%s\"...\n", pngfile);
-
 img = Fl_Shared_Image::get(pngfile);
 
 if (img) {
-  printf("img=%p, img->w()=%d, img->h()=%d\n",
-         img, img->w(), img->h());
-
   template_preview->image(img);
   template_preview->redraw();
 };

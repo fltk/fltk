@@ -197,14 +197,17 @@ void save_cb(Fl_Widget *, void *v) {
 		    "Replace", NULL, basename) == 0) return;
     }
 
-    set_filename(c);
+    if (v != (void *)2) set_filename(c);
   }
   if (!write_file(c)) {
     fl_alert("Error writing %s: %s", c, strerror(errno));
     return;
   }
-  set_modflag(0);
-  undo_save = undo_current;
+
+  if (v != (void *)2) {
+    set_modflag(0);
+    undo_save = undo_current;
+  }
 }
 
 void save_template_cb(Fl_Widget *, void *) {
@@ -334,6 +337,22 @@ void save_template_cb(Fl_Widget *, void *) {
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
+void revert_cb(Fl_Widget *,void *) {
+  if (modflag) {
+    if (!fl_choice("This user interface has been changed. Really revert?",
+                   "Cancel", "Revert", NULL)) return;
+  }
+  undo_suspend();
+  if (!read_file(filename, 0)) {
+    undo_resume();
+    fl_message("Can't read %s: %s", filename, strerror(errno));
+    return;
+  }
+  undo_resume();
+  set_modflag(0);
+  undo_clear();
+}
+
 void exit_cb(Fl_Widget *,void *) {
   if (modflag)
     switch (fl_choice("Do you want to save changes to this user\n"
@@ -368,8 +387,7 @@ void exit_cb(Fl_Widget *,void *) {
 
 void
 apple_open_cb(const char *c) {
-  if (modflag)
-  {
+  if (modflag) {
     switch (fl_choice("Do you want to save changes to this user\n"
                       "interface before opening another one?", "Don't Save",
                       "Save", "Cancel"))
@@ -404,8 +422,7 @@ apple_open_cb(const char *c) {
 #endif // __APPLE__
 
 void open_cb(Fl_Widget *, void *v) {
-  if (!v && modflag)
-  {
+  if (!v && modflag) {
     switch (fl_choice("Do you want to save changes to this user\n"
                       "interface before opening another one?", "Cancel",
                       "Save", "Don't Save"))
@@ -433,16 +450,15 @@ void open_cb(Fl_Widget *, void *v) {
     fl_message("Can't read %s: %s", c, strerror(errno));
     free((void *)filename);
     filename = oldfilename;
-    if (main_window) main_window->label(filename);
+    if (main_window) set_modflag(modflag);
     return;
   }
   undo_resume();
   if (v) {
     // Inserting a file; restore the original filename...
-    set_modflag(1);
     free((void *)filename);
     filename = oldfilename;
-    if (main_window) main_window->label(filename);
+    set_modflag(1);
   } else {
     // Loaded a file; free the old filename...
     set_modflag(0);
@@ -452,8 +468,7 @@ void open_cb(Fl_Widget *, void *v) {
 }
 
 void open_history_cb(Fl_Widget *, void *v) {
-  if (modflag)
-  {
+  if (modflag) {
     switch (fl_choice("Do you want to save changes to this user\n"
                       "interface before opening another one?", "Cancel",
                       "Save", "Don't Save"))
@@ -486,8 +501,7 @@ void open_history_cb(Fl_Widget *, void *v) {
 
 void new_cb(Fl_Widget *, void *v) {
   // Check if the current file has been modified...
-  if (!v && modflag)
-  {
+  if (!v && modflag) {
     // Yes, ask the user what to do...
     switch (fl_choice("Do you want to save changes to this user\n"
                       "interface before creating a new one?", "Cancel",
@@ -1298,25 +1312,27 @@ Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
   {"&New...", FL_CTRL+'n', new_cb, 0},
   {"&Open...", FL_CTRL+'o', open_cb, 0},
-  {"Open Pre&vious",0,0,0,FL_SUBMENU},
-    {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},
-    {relative_history[1], FL_CTRL+'1', open_history_cb, absolute_history[1]},
-    {relative_history[2], FL_CTRL+'2', open_history_cb, absolute_history[2]},
-    {relative_history[3], FL_CTRL+'3', open_history_cb, absolute_history[3]},
-    {relative_history[4], FL_CTRL+'4', open_history_cb, absolute_history[4]},
-    {relative_history[5], FL_CTRL+'5', open_history_cb, absolute_history[5]},
-    {relative_history[6], FL_CTRL+'6', open_history_cb, absolute_history[6]},
-    {relative_history[7], FL_CTRL+'7', open_history_cb, absolute_history[7]},
-    {relative_history[8], FL_CTRL+'8', open_history_cb, absolute_history[8]},
-    {relative_history[9], FL_CTRL+'9', open_history_cb, absolute_history[9]},
-    {0},
   {"&Insert...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
+#define SAVE_ITEM 4
   {"&Save", FL_CTRL+'s', save_cb, 0},
   {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
-  {"Save &Template...", 0, save_template_cb, (void*)2, FL_MENU_DIVIDER},
+  {"Sa&ve A Copy...", 0, save_cb, (void*)2},
+  {"Save &Template...", 0, save_template_cb},
+  {"&Revert...", 0, revert_cb, 0, FL_MENU_DIVIDER},
   {"&Print...", FL_CTRL+'p', print_menu_cb},
   {"Write &Code...", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
+#define HISTORY_ITEM 12
+  {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},
+  {relative_history[1], FL_CTRL+'1', open_history_cb, absolute_history[1]},
+  {relative_history[2], FL_CTRL+'2', open_history_cb, absolute_history[2]},
+  {relative_history[3], FL_CTRL+'3', open_history_cb, absolute_history[3]},
+  {relative_history[4], FL_CTRL+'4', open_history_cb, absolute_history[4]},
+  {relative_history[5], FL_CTRL+'5', open_history_cb, absolute_history[5]},
+  {relative_history[6], FL_CTRL+'6', open_history_cb, absolute_history[6]},
+  {relative_history[7], FL_CTRL+'7', open_history_cb, absolute_history[7]},
+  {relative_history[8], FL_CTRL+'8', open_history_cb, absolute_history[8]},
+  {relative_history[9], FL_CTRL+'9', open_history_cb, absolute_history[9], FL_MENU_DIVIDER},
   {"&Quit", FL_CTRL+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
@@ -1336,6 +1352,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Group", FL_F+7, group_cb},
   {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
+#define WIDGETBIN_ITEM 41
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
   {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
@@ -1414,10 +1431,10 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 
   if (widgetbin_panel->visible()) {
     widgetbin_panel->hide();
-    Main_Menu[41].label("Show Widget &Bin...");
+    Main_Menu[WIDGETBIN_ITEM].label("Show Widget &Bin...");
   } else {
     widgetbin_panel->show();
-    Main_Menu[41].label("Hide Widget &Bin");
+    Main_Menu[WIDGETBIN_ITEM].label("Hide Widget &Bin");
   }
 }
 
@@ -1461,11 +1478,12 @@ void load_history() {
       fl_filename_relative(relative_history[i], sizeof(relative_history[i]),
                            absolute_history[i]);
 
-      Main_Menu[i + 4].flags = 0;
-    } else Main_Menu[i + 4].flags = FL_MENU_INVISIBLE;
+      Main_Menu[i + HISTORY_ITEM].flags = 0;
+    } else {
+      if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
+      Main_Menu[i + HISTORY_ITEM].hide();
+    }
   }
-
-  if (!absolute_history[0][0]) Main_Menu[3].flags |= FL_MENU_INACTIVE;
 }
 
 // Update file history from preferences...
@@ -1501,11 +1519,12 @@ void update_history(const char *flname) {
   // Update the menu items as needed...
   for (i = 0; i < 10; i ++) {
     fluid_prefs.set( Fl_Preferences::Name("file%d", i), absolute_history[i]);
-    if (absolute_history[i][0]) Main_Menu[i + 4].flags = 0;
-    else Main_Menu[i + 4].flags = FL_MENU_INVISIBLE;
+    if (absolute_history[i][0]) Main_Menu[i + HISTORY_ITEM].flags = 0;
+    else {
+      if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
+      Main_Menu[i + HISTORY_ITEM].hide();
+    }
   }
-
-  Main_Menu[3].flags &= ~FL_MENU_INACTIVE;
 }
 
 // Shell command support...
@@ -1668,8 +1687,8 @@ void set_modflag(int mf) {
   }
 
   // Enable/disable the Save menu item...
-  if (modflag) Main_Menu[16].activate();
-  else Main_Menu[16].deactivate();
+  if (modflag) Main_Menu[SAVE_ITEM].activate();
+  else Main_Menu[SAVE_ITEM].deactivate();
 }
 
 ////////////////////////////////////////////////////////////////

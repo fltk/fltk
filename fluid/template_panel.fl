@@ -110,17 +110,12 @@ strlcpy(pngfile, flfile, sizeof(pngfile));
 if ((ext = strrchr(pngfile, '.')) == NULL) return;
 strcpy(ext, ".png");
 
-printf("updating preview to \\"%s\\"...\\n", pngfile);
-
 img = Fl_Shared_Image::get(pngfile);
 
 if (img) {
-  printf("img=%p, img->w()=%d, img->h()=%d\\n",
-         img, img->w(), img->h());
-
   template_preview->image(img);
   template_preview->redraw();
-}}
+}} selected
       xywh {10 28 180 250} type Hold labelfont 1 align 5 when 3
     }
     Fl_Box template_preview {
@@ -239,8 +234,7 @@ for (i = 0; i < num_files; i ++) {
   free(files[i]);
 }
 
-if (num_files > 0) free(files);} {selected
-  }
+if (num_files > 0) free(files);} {}
 } 
 
 comment {
