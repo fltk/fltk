@@ -1,0 +1,21 @@
+README.packages
+---------------
+
+Each of the subdirectories provide installation building scripts for
+various operating systems.  These are used to produce the standard
+binary distributions provided on the FLTK web site.
+
+To build a distribution for your OS simply run the makedist.sh shell
+script for your operating system:
+
+    cd <operating-system>
+    sh makedist.sh
+
+For Microsoft Windows we are using the InstallShield software.
+Unfortunately it is nearly impossible to distribute the InstallShield
+"source" files...
+
+If you'd like to contribute a binary distribution for your operating
+system, send email to "webmaster@fltk.org".  If you have additions or
+fixes to these scripts and distribution files, please send them to
+"fltk-bugs@fltk.org".
