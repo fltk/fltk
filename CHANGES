@@ -1,5 +1,10 @@
 CHANGES IN FLTK 1.1.7
 
+	- Fl_Help_View::topline() incorrectly set the changed()
+	  flag (STR #631)
+	- Fl_Choice::value() now supports NULL or -1 to deselect
+	  the current item (STR #637)
+	- More VC++ 6 project file fixes (STR #638)
 	- Added missing Watcom makefile in the test directory
 	  (STR #636)
 	- Fl_Text_Display::word_left would hang if the cursor
