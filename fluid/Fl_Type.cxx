@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.5 2002/04/27 18:08:45 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.6 2002/04/27 18:34:11 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -47,8 +47,10 @@
 
 #include <FL/Fl_Pixmap.H>
 #include "lock.xpm"
+#include "unlock.xpm"
 
 static Fl_Pixmap	lock_pixmap(lock_xpm);
+static Fl_Pixmap	unlock_pixmap(unlock_xpm);
 
 ////////////////////////////////////////////////////////////////
 
@@ -137,9 +139,8 @@ void Widget_Browser::item_draw(void *v, int x, int y, int, int) const {
   x += 3 + 16 + l->level * 10;
   if (l->new_selected) fl_color(fl_contrast(FL_BLACK,FL_SELECTION_COLOR));
   else fl_color(FL_BLACK);
-  if (!l->is_public()) {
-    lock_pixmap.draw(x - 16, y);
-  }
+  if (l->is_public() == 0) unlock_pixmap.draw(x - 16, y);
+  else if (l->is_public() > 0) lock_pixmap.draw(x - 16, y);
   if (l->is_parent()) {
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
@@ -515,6 +516,10 @@ int Fl_Type::is_decl_block() const {return 0;}
 int Fl_Type::is_class() const {return 0;}
 int Fl_Type::is_public() const {return 1;}
 
+int Fl_Code_Type::is_public()const { return -1; }
+int Fl_CodeBlock_Type::is_public()const { return -1; }
+
+
 ////////////////////////////////////////////////////////////////
 
 Fl_Type *in_this_only; // set if menu popped-up in window
@@ -677,5 +682,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.5 2002/04/27 18:08:45 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.6 2002/04/27 18:34:11 easysw Exp $".
 //
