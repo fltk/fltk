@@ -1,5 +1,5 @@
 //
-// "$Id: gif.cxx,v 1.3.2.1 2000/05/16 12:26:07 mike Exp $"
+// "$Id: gif.cxx,v 1.3.2.2 2000/06/05 21:20:43 mike Exp $"
 //
 // GIF support for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Read a .gif file and convert it to a "xpm" format (actually my
@@ -359,5 +359,5 @@ int gif2xpm(
 }
 
 //
-// End of "$Id: gif.cxx,v 1.3.2.1 2000/05/16 12:26:07 mike Exp $".
+// End of "$Id: gif.cxx,v 1.3.2.2 2000/06/05 21:20:43 mike Exp $".
 //

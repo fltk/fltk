@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.h,v 1.4.2.2 2000/05/16 12:26:05 mike Exp $"
+// "$Id: Fl_Widget_Type.h,v 1.4.2.3 2000/06/05 21:20:40 mike Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include "Fl_Type.h"
@@ -36,5 +36,5 @@ void* const LOAD = (void *)9831;
 extern Fl_Widget_Type *current_widget; // one of the selected ones
 
 //
-// End of "$Id: Fl_Widget_Type.h,v 1.4.2.2 2000/05/16 12:26:05 mike Exp $".
+// End of "$Id: Fl_Widget_Type.h,v 1.4.2.3 2000/06/05 21:20:40 mike Exp $".
 //

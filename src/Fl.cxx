@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.23 2000/06/03 08:36:59 bill Exp $"
+// "$Id: Fl.cxx,v 1.24.2.24 2000/06/05 21:20:46 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <FL/Fl.H>
@@ -720,5 +720,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.23 2000/06/03 08:36:59 bill Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.24 2000/06/05 21:20:46 mike Exp $".
 //

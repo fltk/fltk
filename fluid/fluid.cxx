@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.6 2000/05/16 12:26:06 mike Exp $"
+// "$Id: fluid.cxx,v 1.15.2.7 2000/06/05 21:20:43 mike Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 const char *copyright =
@@ -42,7 +42,7 @@ const char *copyright =
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 "
 "USA.\n"
 "\n"
-"Please report bugs to fltk-bugs@easysw.com.";
+"Please report bugs to fltk-bugs@fltk.org.";
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -460,5 +460,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.6 2000/05/16 12:26:06 mike Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.7 2000/06/05 21:20:43 mike Exp $".
 //

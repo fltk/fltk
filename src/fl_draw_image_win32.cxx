@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_win32.cxx,v 1.4.2.1 2000/04/25 22:16:41 mike Exp $"
+// "$Id: fl_draw_image_win32.cxx,v 1.4.2.2 2000/06/05 21:21:07 mike Exp $"
 //
 // WIN32 image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // I hope a simple and portable method of drawing color and monochrome
@@ -258,5 +258,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_win32.cxx,v 1.4.2.1 2000/04/25 22:16:41 mike Exp $".
+// End of "$Id: fl_draw_image_win32.cxx,v 1.4.2.2 2000/06/05 21:21:07 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H,v 1.6.2.1 2000/04/25 22:16:23 mike Exp $"
+// "$Id: Fl_Font.H,v 1.6.2.2 2000/06/05 21:20:50 mike Exp $"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Two internal fltk data structures:
@@ -78,5 +78,5 @@ FL_EXPORT char *fl_find_fontsize(char *name);
 #endif
 
 //
-// End of "$Id: Fl_Font.H,v 1.6.2.1 2000/04/25 22:16:23 mike Exp $".
+// End of "$Id: Fl_Font.H,v 1.6.2.2 2000/06/05 21:20:50 mike Exp $".
 //

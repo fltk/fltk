@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.4 2000/05/16 12:26:06 mike Exp $"
+// "$Id: file.cxx,v 1.7.2.5 2000/06/05 21:20:43 mike Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -25,7 +25,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <ctype.h>
@@ -639,5 +639,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.4 2000/05/16 12:26:06 mike Exp $".
+// End of "$Id: file.cxx,v 1.7.2.5 2000/06/05 21:20:43 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.H,v 1.8.2.4 2000/04/25 22:15:44 mike Exp $"
+// "$Id: Fl_Browser.H,v 1.8.2.5 2000/06/05 21:20:20 mike Exp $"
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Forms-compatable browser.  Probably useful for other
@@ -118,5 +118,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Browser.H,v 1.8.2.4 2000/04/25 22:15:44 mike Exp $".
+// End of "$Id: Fl_Browser.H,v 1.8.2.5 2000/06/05 21:20:20 mike Exp $".
 //

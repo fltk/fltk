@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.2 2000/04/25 22:16:46 mike Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.3 2000/06/05 21:21:12 mike Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Functions from <FL/gl.h>
@@ -155,5 +155,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.2 2000/04/25 22:16:46 mike Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.3 2000/06/05 21:21:12 mike Exp $".
 //

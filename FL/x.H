@@ -1,5 +1,5 @@
 //
-// "$Id: x.H,v 1.10.2.6 2000/04/25 22:16:00 mike Exp $"
+// "$Id: x.H,v 1.10.2.7 2000/06/05 21:20:34 mike Exp $"
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // These are internal fltk symbols that are necessary or useful for
@@ -125,5 +125,5 @@ extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 #endif
 
 //
-// End of "$Id: x.H,v 1.10.2.6 2000/04/25 22:16:00 mike Exp $".
+// End of "$Id: x.H,v 1.10.2.7 2000/06/05 21:20:34 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: filename_match.cxx,v 1.5.2.2 2000/04/25 22:16:38 mike Exp $"
+// "$Id: filename_match.cxx,v 1.5.2.3 2000/06/05 21:21:05 mike Exp $"
 //
 // Pattern matching routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 /* Adapted from Rich Salz. */
@@ -109,5 +109,5 @@ int filename_match(const char *s, const char *p) {
 }
 
 //
-// End of "$Id: filename_match.cxx,v 1.5.2.2 2000/04/25 22:16:38 mike Exp $".
+// End of "$Id: filename_match.cxx,v 1.5.2.3 2000/06/05 21:21:05 mike Exp $".
 //

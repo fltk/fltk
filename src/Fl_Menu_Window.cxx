@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Window.cxx,v 1.8.2.2 2000/06/03 08:37:01 bill Exp $"
+// "$Id: Fl_Menu_Window.cxx,v 1.8.2.3 2000/06/05 21:20:54 mike Exp $"
 //
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // This is the window type used by Fl_Menu to make the pop-ups.
@@ -97,5 +97,5 @@ Fl_Menu_Window::~Fl_Menu_Window() {
 }
 
 //
-// End of "$Id: Fl_Menu_Window.cxx,v 1.8.2.2 2000/06/03 08:37:01 bill Exp $".
+// End of "$Id: Fl_Menu_Window.cxx,v 1.8.2.3 2000/06/05 21:20:54 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: editor.cxx,v 1.2.2.1 2000/04/25 22:16:53 mike Exp $"
+// "$Id: editor.cxx,v 1.2.2.2 2000/06/05 21:21:18 mike Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
@@ -22,7 +22,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 //
@@ -385,5 +385,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.1 2000/04/25 22:16:53 mike Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.2 2000/06/05 21:21:18 mike Exp $".
 //

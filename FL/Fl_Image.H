@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.H,v 1.5.2.1 2000/04/25 22:15:49 mike Exp $"
+// "$Id: Fl_Image.H,v 1.5.2.2 2000/06/05 21:20:24 mike Exp $"
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef Fl_Image_H
@@ -45,5 +45,5 @@ struct Fl_Image {
 #endif
 
 //
-// End of "$Id: Fl_Image.H,v 1.5.2.1 2000/04/25 22:15:49 mike Exp $".
+// End of "$Id: Fl_Image.H,v 1.5.2.2 2000/06/05 21:20:24 mike Exp $".
 //

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10.2.4 2000/04/25 22:16:04 mike Exp $"
+# "$Id: Makefile,v 1.10.2.5 2000/06/05 21:20:41 mike Exp $"
 #
 # Fluid makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
 PROGRAM = fluid
@@ -51,7 +51,7 @@ include ../makeinclude
 
 $(PROGRAM) : $(OBJECTS) ../lib/$(LIBNAME)
 	echo Linking $@...
-	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) -L../lib -lfltk $(LDLIBS)
+	$(CXX) -L../lib $(LDFLAGS) -o $(PROGRAM) $(OBJECTS) -lfltk $(LDLIBS)
 
 clean :
 	-@ rm -f *.o $(PROGRAM) $(CLEAN) core *~ makedepend
@@ -83,5 +83,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.4 2000/04/25 22:16:04 mike Exp $".
+# End of "$Id: Makefile,v 1.10.2.5 2000/06/05 21:20:41 mike Exp $".
 #

@@ -1,5 +1,5 @@
 //
-// "$Id: glut_font.cxx,v 1.4.2.2 2000/04/25 22:16:47 mike Exp $"
+// "$Id: glut_font.cxx,v 1.4.2.3 2000/06/05 21:21:12 mike Exp $"
 //
 // GLUT bitmap font routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // (sort of) emulation of Glut's bitmap drawing functions, using FL's
@@ -54,5 +54,5 @@ int glutBitmapWidth(void* font, int character) {
 #endif
 
 //
-// End of "$Id: glut_font.cxx,v 1.4.2.2 2000/04/25 22:16:47 mike Exp $".
+// End of "$Id: glut_font.cxx,v 1.4.2.3 2000/06/05 21:21:12 mike Exp $".
 //

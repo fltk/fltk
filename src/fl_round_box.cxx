@@ -1,5 +1,5 @@
 //
-// "$Id: fl_round_box.cxx,v 1.6.2.1 2000/04/25 22:16:43 mike Exp $"
+// "$Id: fl_round_box.cxx,v 1.6.2.2 2000/06/05 21:21:09 mike Exp $"
 //
 // Round box drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Box drawing code for an obscure box type.
@@ -116,5 +116,5 @@ Fl_Boxtype define_FL_ROUND_UP_BOX() {
 }
 
 //
-// End of "$Id: fl_round_box.cxx,v 1.6.2.1 2000/04/25 22:16:43 mike Exp $".
+// End of "$Id: fl_round_box.cxx,v 1.6.2.2 2000/06/05 21:21:09 mike Exp $".
 //

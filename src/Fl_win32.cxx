@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.25 2000/06/03 08:37:02 bill Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.26 2000/06/05 21:21:02 mike Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // This file contains win32-specific code for fltk which is always linked
@@ -967,5 +967,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.25 2000/06/03 08:37:02 bill Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.26 2000/06/05 21:21:02 mike Exp $".
 //

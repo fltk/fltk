@@ -1,5 +1,5 @@
 //
-// "$Id: iconize.cxx,v 1.4.2.1 2000/04/25 22:16:55 mike Exp $"
+// "$Id: iconize.cxx,v 1.4.2.2 2000/06/05 21:21:21 mike Exp $"
 //
 // Iconize test program for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <FL/Fl.H>
@@ -77,5 +77,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: iconize.cxx,v 1.4.2.1 2000/04/25 22:16:55 mike Exp $".
+// End of "$Id: iconize.cxx,v 1.4.2.2 2000/06/05 21:21:21 mike Exp $".
 //

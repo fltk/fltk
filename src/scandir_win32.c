@@ -1,5 +1,5 @@
 //
-// "$Id: scandir_win32.c,v 1.11.2.2 2000/04/25 22:16:47 mike Exp $"
+// "$Id: scandir_win32.c,v 1.11.2.3 2000/06/05 21:21:12 mike Exp $"
 //
 // WIN32 scandir function for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef __CYGWIN__
@@ -101,5 +101,5 @@ int alphasort (struct dirent **a, struct dirent **b) {
 #endif
 
 //
-// End of "$Id: scandir_win32.c,v 1.11.2.2 2000/04/25 22:16:47 mike Exp $".
+// End of "$Id: scandir_win32.c,v 1.11.2.3 2000/06/05 21:21:12 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.1 2000/04/25 22:16:29 mike Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.2 2000/06/05 21:20:55 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Draws X pixmap data, keeping it stashed in a server pixmap so it
@@ -194,5 +194,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.1 2000/04/25 22:16:29 mike Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.2 2000/06/05 21:20:55 mike Exp $".
 //

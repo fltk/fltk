@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color.cxx,v 1.12.2.1 2000/04/25 22:16:40 mike Exp $"
+// "$Id: fl_color.cxx,v 1.12.2.2 2000/06/05 21:21:06 mike Exp $"
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Implementation of fl_color(i), fl_color(r,g,b).
@@ -351,5 +351,5 @@ Fl_Color contrast(Fl_Color fg, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_color.cxx,v 1.12.2.1 2000/04/25 22:16:40 mike Exp $".
+// End of "$Id: fl_color.cxx,v 1.12.2.2 2000/06/05 21:21:06 mike Exp $".
 //

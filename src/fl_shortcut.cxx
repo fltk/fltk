@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.5 2000/05/10 16:43:36 bill Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.6 2000/06/05 21:21:10 mike Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Code to test and parse fltk shortcut numbers.
@@ -191,5 +191,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.5 2000/05/10 16:43:36 bill Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.6 2000/06/05 21:21:10 mike Exp $".
 //

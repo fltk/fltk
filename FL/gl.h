@@ -1,5 +1,5 @@
 //
-// "$Id: gl.h,v 1.6.2.1 2000/04/25 22:16:00 mike Exp $"
+// "$Id: gl.h,v 1.6.2.2 2000/06/05 21:20:34 mike Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -27,7 +27,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef gl_draw_H
@@ -69,5 +69,5 @@ FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, in
 #endif
 
 //
-// End of "$Id: gl.h,v 1.6.2.1 2000/04/25 22:16:00 mike Exp $".
+// End of "$Id: gl.h,v 1.6.2.2 2000/06/05 21:20:34 mike Exp $".
 //

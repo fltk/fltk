@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Bar.H,v 1.5.2.1 2000/04/25 22:15:50 mike Exp $"
+// "$Id: Fl_Menu_Bar.H,v 1.5.2.2 2000/06/05 21:20:25 mike Exp $"
 //
 // Menu bar header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef Fl_Menu_Bar_H
@@ -40,5 +40,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Menu_Bar.H,v 1.5.2.1 2000/04/25 22:15:50 mike Exp $".
+// End of "$Id: Fl_Menu_Bar.H,v 1.5.2.2 2000/06/05 21:20:25 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Chart.cxx,v 1.5.2.3 2000/04/25 22:16:21 mike Exp $"
+// "$Id: Fl_Chart.cxx,v 1.5.2.4 2000/06/05 21:20:49 mike Exp $"
 //
 // Forms-compatible chart widget for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <FL/math.h>
@@ -378,5 +378,5 @@ void Fl_Chart::maxsize(int m) {
 }
 
 //
-// End of "$Id: Fl_Chart.cxx,v 1.5.2.3 2000/04/25 22:16:21 mike Exp $".
+// End of "$Id: Fl_Chart.cxx,v 1.5.2.4 2000/06/05 21:20:49 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Multi_Label.cxx,v 1.4.2.1 2000/04/25 22:16:28 mike Exp $"
+// "$Id: Fl_Multi_Label.cxx,v 1.4.2.2 2000/06/05 21:20:55 mike Exp $"
 //
 // Multi-label widget for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Allows two labels to be used on a widget (by having one of them
@@ -74,5 +74,5 @@ void Fl_Multi_Label::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Multi_Label.cxx,v 1.4.2.1 2000/04/25 22:16:28 mike Exp $".
+// End of "$Id: Fl_Multi_Label.cxx,v 1.4.2.2 2000/06/05 21:20:55 mike Exp $".
 //

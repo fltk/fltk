@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Round_Button.cxx,v 1.4.2.1 2000/04/25 22:16:30 mike Exp $"
+// "$Id: Fl_Round_Button.cxx,v 1.4.2.2 2000/06/05 21:20:56 mike Exp $"
 //
 // Round button for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // A subclass of Fl_Button that always draws as a round circle.  This
@@ -38,5 +38,5 @@ Fl_Round_Button::Fl_Round_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Round_Button.cxx,v 1.4.2.1 2000/04/25 22:16:30 mike Exp $".
+// End of "$Id: Fl_Round_Button.cxx,v 1.4.2.2 2000/06/05 21:20:56 mike Exp $".
 //

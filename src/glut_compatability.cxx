@@ -1,5 +1,5 @@
 //
-// "$Id: glut_compatability.cxx,v 1.4.2.3 2000/04/25 22:16:46 mike Exp $"
+// "$Id: glut_compatability.cxx,v 1.4.2.4 2000/06/05 21:21:12 mike Exp $"
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Emulation of Glut using fltk.
@@ -399,5 +399,5 @@ int glutLayerGet(GLenum type) {
 #endif
 
 //
-// End of "$Id: glut_compatability.cxx,v 1.4.2.3 2000/04/25 22:16:46 mike Exp $".
+// End of "$Id: glut_compatability.cxx,v 1.4.2.4 2000/06/05 21:21:12 mike Exp $".
 //

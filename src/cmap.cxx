@@ -1,5 +1,5 @@
 //
-// "$Id: cmap.cxx,v 1.4.2.2 2000/04/25 22:16:37 mike Exp $"
+// "$Id: cmap.cxx,v 1.4.2.3 2000/06/05 21:21:03 mike Exp $"
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // This program produces the contents of "fl_cmap.h" as stdout
@@ -148,5 +148,5 @@ int main() {
 }
 
 //
-// End of "$Id: cmap.cxx,v 1.4.2.2 2000/04/25 22:16:37 mike Exp $".
+// End of "$Id: cmap.cxx,v 1.4.2.3 2000/06/05 21:21:03 mike Exp $".
 //

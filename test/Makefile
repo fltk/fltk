@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.5 2000/06/03 12:04:12 mike Exp $"
+# "$Id: Makefile,v 1.19.2.6 2000/06/05 21:21:15 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
 CPPFILES =\
@@ -56,7 +56,7 @@ include ../makeinclude
 .fl:
 	echo Generating, compiling, and linking $@...
 	../fluid/fluid -c $<
-	$(CXX) -I.. $(CXXFLAGS) $@.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) $@.cxx -lfltk $(LDLIBS) -o $@
 
 
 $(ALL):  ../lib/$(LIBNAME)
@@ -64,44 +64,44 @@ $(ALL):  ../lib/$(LIBNAME)
 # Other programs needing special "help"...
 CubeView: CubeMain.o CubeView.o CubeViewUI.o
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
-		-L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) CubeMain.o CubeView.o CubeViewUI.o \
+		-lfltk $(GLDLIBS) -o $@
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 
 cube: cube.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) cube.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) cube.cxx -lfltk $(GLDLIBS) -o $@
 fractals: fractals.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fractals.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) fractals.cxx -lfltk $(GLDLIBS) -o $@
 fullscreen: fullscreen.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) fullscreen.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) fullscreen.cxx -lfltk $(GLDLIBS) -o $@
 glpuzzle: glpuzzle.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) glpuzzle.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) glpuzzle.cxx -lfltk $(GLDLIBS) -o $@
 gl_overlay: gl_overlay.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) gl_overlay.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) gl_overlay.cxx -lfltk $(GLDLIBS) -o $@
 shiny: shiny.cxx shiny_panel.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) shiny.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) shiny.cxx -lfltk $(GLDLIBS) -o $@
 keyboard: keyboard.cxx keyboard_ui.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) keyboard.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) keyboard.cxx -lfltk $(LDLIBS) -o $@
 mandelbrot: mandelbrot.cxx mandelbrot_ui.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) mandelbrot.cxx -L../lib -lfltk $(LDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) mandelbrot.cxx -lfltk $(LDLIBS) -o $@
 shape: shape.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) shape.cxx -L../lib -lfltk $(GLDLIBS) -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) shape.cxx -lfltk $(GLDLIBS) -o $@
 
 # If you have libjpeg installed, you might want to try this test program:
 
 jpeg_image: jpeg_image.cxx
 	echo Compiling and linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.cxx -L../lib -lfltk $(LDLIBS) -ljpeg -lXext -o $@
+	$(CXX) -I.. -L../lib $(CXXFLAGS) -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.cxx -lfltk $(LDLIBS) -ljpeg -lXext -o $@
 
 depend:
 	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
@@ -113,5 +113,5 @@ install:
 	@echo Nothing to install in test directory.
 
 #
-# End of "$Id: Makefile,v 1.19.2.5 2000/06/03 12:04:12 mike Exp $".
+# End of "$Id: Makefile,v 1.19.2.6 2000/06/05 21:21:15 mike Exp $".
 #

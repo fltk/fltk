@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.cxx,v 1.6.2.1 2000/04/25 22:16:29 mike Exp $"
+// "$Id: Fl_Pack.cxx,v 1.6.2.2 2000/06/05 21:20:55 mike Exp $"
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Based on code by Curtis Edwards
@@ -105,5 +105,5 @@ void Fl_Pack::draw() {
 }
 
 //
-// End of "$Id: Fl_Pack.cxx,v 1.6.2.1 2000/04/25 22:16:29 mike Exp $".
+// End of "$Id: Fl_Pack.cxx,v 1.6.2.2 2000/06/05 21:20:55 mike Exp $".
 //

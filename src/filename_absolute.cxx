@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.2 2000/04/25 22:16:37 mike Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.3 2000/06/05 21:21:04 mike Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 /* expand a file name by prepending current directory, deleting . and
@@ -92,5 +92,5 @@ int filename_absolute(char *to,const char *from) {
 }
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.2 2000/04/25 22:16:37 mike Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.3 2000/06/05 21:21:04 mike Exp $".
 //

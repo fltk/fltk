@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.4 2000/05/16 12:26:02 mike Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.5 2000/06/05 21:20:37 mike Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 
@@ -231,5 +231,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.4 2000/05/16 12:26:02 mike Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.5 2000/06/05 21:20:37 mike Exp $".
 //

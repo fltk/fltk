@@ -1,5 +1,5 @@
 //
-// "$Id: forms_timer.cxx,v 1.4.2.1 2000/04/25 22:16:46 mike Exp $"
+// "$Id: forms_timer.cxx,v 1.4.2.2 2000/06/05 21:21:12 mike Exp $"
 //
 // Forms timer object for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Emulate the Forms Timer object
@@ -150,5 +150,5 @@ void Fl_Timer::suspended(char d) {
 }
 
 //
-// End of "$Id: forms_timer.cxx,v 1.4.2.1 2000/04/25 22:16:46 mike Exp $".
+// End of "$Id: forms_timer.cxx,v 1.4.2.2 2000/06/05 21:21:12 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Roller.cxx,v 1.6.2.2 2000/04/25 22:16:30 mike Exp $"
+// "$Id: Fl_Roller.cxx,v 1.6.2.3 2000/06/05 21:20:56 mike Exp $"
 //
 // Roller widget for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Rapid-App style knob
@@ -137,5 +137,5 @@ Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
 }
 
 //
-// End of "$Id: Fl_Roller.cxx,v 1.6.2.2 2000/04/25 22:16:30 mike Exp $".
+// End of "$Id: Fl_Roller.cxx,v 1.6.2.3 2000/06/05 21:20:56 mike Exp $".
 //

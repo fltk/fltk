@@ -1,5 +1,5 @@
 //
-// "$Id: glpuzzle.cxx,v 1.8.2.1 2000/04/25 22:16:55 mike Exp $"
+// "$Id: glpuzzle.cxx,v 1.8.2.2 2000/06/05 21:21:20 mike Exp $"
 //
 // OpenGL puzzle demo for the Fast Light Tool Kit (FLTK).
 //
@@ -23,7 +23,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // this block added for fltk's distribtion so it will compile w/o OpenGL:
@@ -1479,5 +1479,5 @@ main(int argc, char **argv)
 #endif // added for fltk's distribution
 
 //
-// End of "$Id: glpuzzle.cxx,v 1.8.2.1 2000/04/25 22:16:55 mike Exp $".
+// End of "$Id: glpuzzle.cxx,v 1.8.2.2 2000/06/05 21:21:20 mike Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: vsnprintf.c,v 1.3.2.2 2000/04/25 22:16:47 mike Exp $"
+ * "$Id: vsnprintf.c,v 1.3.2.3 2000/06/05 21:21:13 mike Exp $"
  *
  * vsnprintf() function for the Fast Light Tool Kit (FLTK).
  *
@@ -34,7 +34,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "fltk-bugs@easysw.com".
+ * Please report all bugs and problems to "fltk-bugs@fltk.org".
  */
 
 #include <stdio.h>
@@ -131,6 +131,6 @@ int snprintf(char* str, size_t size, const char* fmt, ...) {
 #endif
 
 /*
- * End of "$Id: vsnprintf.c,v 1.3.2.2 2000/04/25 22:16:47 mike Exp $".
+ * End of "$Id: vsnprintf.c,v 1.3.2.3 2000/06/05 21:21:13 mike Exp $".
  */
 

@@ -1,5 +1,5 @@
 //
-// "$Id: message.cxx,v 1.5.2.1 2000/04/25 22:16:57 mike Exp $"
+// "$Id: message.cxx,v 1.5.2.2 2000/06/05 21:21:22 mike Exp $"
 //
 // Message test program for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <FL/Fl.H>
@@ -54,5 +54,5 @@ int main(int, char **) {
 }
 
 //
-// End of "$Id: message.cxx,v 1.5.2.1 2000/04/25 22:16:57 mike Exp $".
+// End of "$Id: message.cxx,v 1.5.2.2 2000/06/05 21:21:22 mike Exp $".
 //

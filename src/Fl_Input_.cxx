@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.4 2000/04/25 22:16:25 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.5 2000/06/05 21:20:52 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // This is the base class for Fl_Input.  You can use it directly
@@ -744,5 +744,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.4 2000/04/25 22:16:25 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.5 2000/06/05 21:20:52 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_global.cxx,v 1.5.2.2 2000/05/13 20:03:18 bill Exp $"
+// "$Id: Fl_Menu_global.cxx,v 1.5.2.3 2000/06/05 21:20:55 mike Exp $"
 //
 // Global menu shortcut code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Make all the shortcuts in this menu global.
@@ -44,5 +44,5 @@ void Fl_Menu_::global() {
 }
 
 //
-// End of "$Id: Fl_Menu_global.cxx,v 1.5.2.2 2000/05/13 20:03:18 bill Exp $".
+// End of "$Id: Fl_Menu_global.cxx,v 1.5.2.3 2000/06/05 21:20:55 mike Exp $".
 //

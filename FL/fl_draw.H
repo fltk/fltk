@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9.2.3 2000/05/13 20:03:14 bill Exp $"
+// "$Id: fl_draw.H,v 1.9.2.4 2000/06/05 21:20:33 mike Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef fl_draw_H
@@ -179,5 +179,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9.2.3 2000/05/13 20:03:14 bill Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.4 2000/06/05 21:20:33 mike Exp $".
 //

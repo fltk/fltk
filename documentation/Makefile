@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.5 2000/04/25 22:16:02 mike Exp $"
+# "$Id: Makefile,v 1.9.2.6 2000/06/05 21:20:35 mike Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -20,10 +20,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-# Where to find HTMLDOC (http://www.easysw.com/htmldoc)...
+# Get configuration stuff...
+include ../makeinclude
+
+# Where to find HTMLDOC (http://www.fltk.org/htmldoc)...
 HTMLDOC		=	htmldoc
 
 # What media size to use:
@@ -146,5 +149,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.5 2000/04/25 22:16:02 mike Exp $".
+# End of "$Id: Makefile,v 1.9.2.6 2000/06/05 21:20:35 mike Exp $".
 #

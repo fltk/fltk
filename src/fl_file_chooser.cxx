@@ -1,5 +1,5 @@
 //
-// "$Id: fl_file_chooser.cxx,v 1.10.2.4 2000/06/03 08:37:08 bill Exp $"
+// "$Id: fl_file_chooser.cxx,v 1.10.2.5 2000/06/05 21:21:08 mike Exp $"
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <config.h>
@@ -632,5 +632,5 @@ char* fl_file_chooser(const char* message, const char* pat, const char* fname)
 }
 
 //
-// End of "$Id: fl_file_chooser.cxx,v 1.10.2.4 2000/06/03 08:37:08 bill Exp $".
+// End of "$Id: fl_file_chooser.cxx,v 1.10.2.5 2000/06/05 21:21:08 mike Exp $".
 //

@@ -1,3 +1,37 @@
+CHANGES SINCE FLTK 1.0.8
+
+	- EMail changes - fltk-bugs@easysw.com now officially
+	  fltk-bugs@fltk.org.
+	- The FLTK DLL project file didn't include fl_compose.cxx
+	- Dropped the GCC -fno-rtti option since it caused problems
+	  with existing programs.
+	- Moved the .fl rules back to the test directory.
+	- Fixed some makefile and spec file problems.
+	- Fixed hardware overlays.  The problem was the new
+	  fl_clipped() code, which tests against the current window
+	  size.  The hardware overlay code did not set the current
+	  window when drawing the overlay.  I needed hardware overlay
+	  for DD's code, I'm not sure if these fixes are good enough to
+	  enable this in our general release.  Hardware overlay still
+	  only works on SGI Irix.
+	- Some patches to turn off the MSVC++ -Oa (assumme no aliasing)
+	  optimization flag.  Suprisingly this only broke a few parts
+	  of fltk, or at least these are the only ones I found.
+	- Does not unmap child windows when the main window is
+	  iconized.  This reduces flashing when the window is
+	  deiconized.
+	- Fl::key() is set to zero by all events except key down/up. 
+	  This will allow you to reliably test if an event or callback
+	  was produced by a keystroke.  Fixes the bug posted about
+	  stopping Escape from closing the window.
+	- User defined cursors on OpenGL windows slowed down NT a
+	  *LOT*.  Some attempts to fix this by turning off the cursor
+	  while drawing the window.
+	- Filename completion in the file chooser works better on NT. 
+	  Typing TAB fixes the case of everything you typed to match
+	  the shortest name that can be completed.
+
+
 CHANGES SINCE FLTK 1.0.7
 
 	- Many documentation changes/fixes/improvements.

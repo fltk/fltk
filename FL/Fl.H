@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.H,v 1.8.2.5 2000/05/13 20:03:14 bill Exp $"
+// "$Id: Fl.H,v 1.8.2.6 2000/06/05 21:20:18 mike Exp $"
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef Fl_H
@@ -211,5 +211,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl.H,v 1.8.2.5 2000/05/13 20:03:14 bill Exp $".
+// End of "$Id: Fl.H,v 1.8.2.6 2000/06/05 21:20:18 mike Exp $".
 //

@@ -9,10 +9,10 @@ Function {make_about_panel(const char *copyright)} {open
 } {
   Fl_Window about_panel {
     label {about fluid} open
-    xywh {345 417 309 258} box UP_BOX color 97 selection_color 47 hide hotspot non_modal
+    xywh {345 417 309 258} box UP_BOX color 97 selection_color 47 hotspot non_modal visible
   } {
     Fl_Group display_group {open
-      xywh {10 10 289 240}
+      xywh {10 10 290 240}
     } {
       Fl_Box {} {
         xywh {50 30 70 150} box ROUND_UP_BOX color 14 selection_color 47 labelcolor 6
@@ -49,8 +49,8 @@ Function {make_about_panel(const char *copyright)} {open
         label {FLTK User
 Interface
 Designer
-Version 1.0} selected
-        xywh {150 27 140 113} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
+Version 1.0.9} selected
+        xywh {140 27 160 113} box OVAL_BOX color 12 selection_color 47 labeltype SHADOW_LABEL labelfont 1 labelsize 18 labelcolor 7
       }
       Fl_Button {} {
         label {©1998-2000 by

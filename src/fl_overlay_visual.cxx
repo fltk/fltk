@@ -1,5 +1,5 @@
 //
-// "$Id: fl_overlay_visual.cxx,v 1.4.2.1 2000/04/25 22:16:43 mike Exp $"
+// "$Id: fl_overlay_visual.cxx,v 1.4.2.2 2000/06/05 21:21:09 mike Exp $"
 //
 // X overlay support for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Return an overlay visual, if any.  Also allocate a colormap and
@@ -99,5 +99,5 @@ XVisualInfo *fl_find_overlay_visual() {
 #endif
 
 //
-// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.1 2000/04/25 22:16:43 mike Exp $".
+// End of "$Id: fl_overlay_visual.cxx,v 1.4.2.2 2000/06/05 21:21:09 mike Exp $".
 //

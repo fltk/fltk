@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.1 2000/04/25 22:16:45 mike Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.2 2000/06/05 21:21:10 mike Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // These are small graphics drawn by the normal label-drawing
@@ -383,5 +383,5 @@ void Fl::enable_symbols() {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.1 2000/04/25 22:16:45 mike Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.2 2000/06/05 21:21:10 mike Exp $".
 //

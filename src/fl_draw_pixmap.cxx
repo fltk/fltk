@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.5 2000/04/25 22:16:41 mike Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.6 2000/06/05 21:21:07 mike Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Implemented without using the xpm library (which I can't use because
@@ -264,5 +264,5 @@ int fl_draw_pixmap(/*const*/char*const* di, int x, int y, Fl_Color bg) {
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.5 2000/04/25 22:16:41 mike Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.6 2000/06/05 21:21:07 mike Exp $".
 //

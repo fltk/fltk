@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arc.cxx,v 1.4.2.1 2000/04/25 22:16:38 mike Exp $"
+// "$Id: fl_arc.cxx,v 1.4.2.2 2000/06/05 21:21:05 mike Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Utility for drawing arcs and circles.  They are added to
@@ -73,5 +73,5 @@ void fl_circle(double x,double y,double r) {
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.4.2.1 2000/04/25 22:16:38 mike Exp $".
+// End of "$Id: fl_arc.cxx,v 1.4.2.2 2000/06/05 21:21:05 mike Exp $".
 //

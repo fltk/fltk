@@ -1,5 +1,5 @@
 //
-// "$Id: filename_list.cxx,v 1.10.2.7 2000/04/25 22:16:38 mike Exp $"
+// "$Id: filename_list.cxx,v 1.10.2.8 2000/06/05 21:21:04 mike Exp $"
 //
 // Filename list routines for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Wrapper for scandir with const-correct function prototypes.
@@ -59,5 +59,5 @@ int filename_list(const char *d, dirent ***list) {
 }
 
 //
-// End of "$Id: filename_list.cxx,v 1.10.2.7 2000/04/25 22:16:38 mike Exp $".
+// End of "$Id: filename_list.cxx,v 1.10.2.8 2000/06/05 21:21:04 mike Exp $".
 //

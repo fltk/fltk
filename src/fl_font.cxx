@@ -1,5 +1,5 @@
 //
-// "$Id: fl_font.cxx,v 1.9.2.3 2000/04/25 22:16:42 mike Exp $"
+// "$Id: fl_font.cxx,v 1.9.2.4 2000/06/05 21:21:08 mike Exp $"
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Select fonts from the fltk font table.
@@ -293,5 +293,5 @@ void fl_draw(const char* str, int x, int y) {
 #endif
 
 //
-// End of "$Id: fl_font.cxx,v 1.9.2.3 2000/04/25 22:16:42 mike Exp $".
+// End of "$Id: fl_font.cxx,v 1.9.2.4 2000/06/05 21:21:08 mike Exp $".
 //

@@ -25,7 +25,7 @@ Fl_Window* make_about_panel(const char *copyright) {
     o->color(97);
     o->selection_color(47);
     w->hotspot(o);
-    { Fl_Group* o = display_group = new Fl_Group(10, 10, 289, 240);
+    { Fl_Group* o = display_group = new Fl_Group(10, 10, 290, 240);
       { Fl_Box* o = new Fl_Box(50, 30, 70, 150);
         o->box(FL_ROUND_UP_BOX);
         o->color(14);
@@ -87,7 +87,7 @@ Fl_Window* make_about_panel(const char *copyright) {
         o->labelcolor(7);
         o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
       }
-      { Fl_Box* o = new Fl_Box(150, 27, 140, 113, "FLTK User\nInterface\nDesigner\nVersion 1.0");
+      { Fl_Box* o = new Fl_Box(140, 27, 160, 113, "FLTK User\nInterface\nDesigner\nVersion 1.0.9");
         o->box(FL_OVAL_BOX);
         o->color(12);
         o->selection_color(47);

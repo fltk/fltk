@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.7 2000/05/16 12:26:05 mike Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.8 2000/06/05 21:20:40 mike Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -24,7 +24,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <FL/Fl.H>
@@ -752,5 +752,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.7 2000/05/16 12:26:05 mike Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.8 2000/06/05 21:20:40 mike Exp $".
 //

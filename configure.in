@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.13 2000/06/03 13:21:13 mike Exp $"
+dnl "$Id: configure.in,v 1.33.2.14 2000/06/05 21:20:16 mike Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -22,7 +22,7 @@ dnl License along with this library; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 dnl USA.
 dnl
-dnl Please report all bugs and problems to "fltk-bugs@easysw.com".
+dnl Please report all bugs and problems to "fltk-bugs@fltk.org".
 dnl
 
 AC_INIT(src/Fl.cxx)
@@ -256,9 +256,9 @@ else
 	    ;;
 	*)
 	    # Running some other operating system; inform the user they
-	    # should contribute the necessary options to fltk-bugs@easysw.com...
+	    # should contribute the necessary options to fltk-bugs@fltk.org...
 	    echo "Building FLTK with default compiler optimizations; contact"
-	    echo "fltk-bugs@easysw.com with uname and compiler options needed"
+	    echo "fltk-bugs@fltk.org with uname and compiler options needed"
 	    echo "for your platform, or set the CFLAGS and CXXFLAGS options"
 	    echo "before running configure."
 	    ;;
@@ -277,5 +277,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.13 2000/06/03 13:21:13 mike Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.14 2000/06/05 21:20:16 mike Exp $".
 dnl

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.12 2000/06/04 20:57:34 mike Exp $"
+# "$Id: Makefile,v 1.18.2.13 2000/06/05 21:21:03 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 # USA.
 #
-# Please report all bugs and problems to "fltk-bugs@easysw.com".
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
 CPPFILES = \
@@ -207,5 +207,5 @@ install: $(LIBRARY) $(DSONAME)
 	ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.12 2000/06/04 20:57:34 mike Exp $".
+# End of "$Id: Makefile,v 1.18.2.13 2000/06/05 21:21:03 mike Exp $".
 #

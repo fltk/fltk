@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.9 2000/04/25 22:16:25 mike Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.10 2000/06/05 21:20:52 mike Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // This is the "user interface", it decodes user actions into what to
@@ -265,5 +265,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.9 2000/04/25 22:16:25 mike Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.10 2000/06/05 21:20:52 mike Exp $".
 //

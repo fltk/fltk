@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Repeat_Button.H,v 1.5.2.3 2000/04/25 22:15:53 mike Exp $"
+// "$Id: Fl_Repeat_Button.H,v 1.5.2.4 2000/06/05 21:20:28 mike Exp $"
 //
 // Repeat button header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef Fl_Repeat_Button_H
@@ -43,5 +43,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Repeat_Button.H,v 1.5.2.3 2000/04/25 22:15:53 mike Exp $".
+// End of "$Id: Fl_Repeat_Button.H,v 1.5.2.4 2000/06/05 21:20:28 mike Exp $".
 //

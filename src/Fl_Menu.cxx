@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.7 2000/05/17 07:09:26 bill Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.8 2000/06/05 21:20:53 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Warning: this menu code is quite a mess!
@@ -737,5 +737,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.7 2000/05/17 07:09:26 bill Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.8 2000/06/05 21:20:53 mike Exp $".
 //

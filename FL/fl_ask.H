@@ -1,5 +1,5 @@
 //
-// "$Id: fl_ask.H,v 1.7.2.1 2000/04/25 22:15:58 mike Exp $"
+// "$Id: fl_ask.H,v 1.7.2.2 2000/06/05 21:20:32 mike Exp $"
 //
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #ifndef fl_ask_H
@@ -52,5 +52,5 @@ extern FL_EXPORT const char* fl_cancel;
 #endif
 
 //
-// End of "$Id: fl_ask.H,v 1.7.2.1 2000/04/25 22:15:58 mike Exp $".
+// End of "$Id: fl_ask.H,v 1.7.2.2 2000/06/05 21:20:32 mike Exp $".
 //

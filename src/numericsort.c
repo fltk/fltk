@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.10.2.2 2000/04/25 22:16:47 mike Exp $"
+ * "$Id: numericsort.c,v 1.10.2.3 2000/06/05 21:21:12 mike Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "fltk-bugs@easysw.com".
+ * Please report all bugs and problems to "fltk-bugs@fltk.org".
  */
 
 /* My own scandir sorting function, useful for the film industry where
@@ -84,5 +84,5 @@ int numericsort(struct dirent **A, struct dirent **B) {
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.10.2.2 2000/04/25 22:16:47 mike Exp $".
+ * End of "$Id: numericsort.c,v 1.10.2.3 2000/06/05 21:21:12 mike Exp $".
  */

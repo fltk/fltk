@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_display.cxx,v 1.4.2.1 2000/04/25 22:16:34 mike Exp $"
+// "$Id: Fl_display.cxx,v 1.4.2.2 2000/06/05 21:21:01 mike Exp $"
 //
 // Display function for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // Startup method to set what display to use.
@@ -39,5 +39,5 @@ void Fl::display(const char *d) {
 }
 
 //
-// End of "$Id: Fl_display.cxx,v 1.4.2.1 2000/04/25 22:16:34 mike Exp $".
+// End of "$Id: Fl_display.cxx,v 1.4.2.2 2000/06/05 21:21:01 mike Exp $".
 //

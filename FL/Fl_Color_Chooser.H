@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Color_Chooser.H,v 1.5.2.1 2000/04/25 22:15:46 mike Exp $"
+// "$Id: Fl_Color_Chooser.H,v 1.5.2.2 2000/06/05 21:20:21 mike Exp $"
 //
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 // The color chooser object and the color chooser popup.  The popup
@@ -94,5 +94,5 @@ FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b);
 #endif
 
 //
-// End of "$Id: Fl_Color_Chooser.H,v 1.5.2.1 2000/04/25 22:15:46 mike Exp $".
+// End of "$Id: Fl_Color_Chooser.H,v 1.5.2.2 2000/06/05 21:20:21 mike Exp $".
 //
