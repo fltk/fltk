@@ -1,5 +1,5 @@
 //
-// "$Id: filename_absolute.cxx,v 1.5.2.4.2.8 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: filename_absolute.cxx,v 1.5.2.4.2.9 2002/10/10 19:33:22 easysw Exp $"
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
@@ -108,14 +108,20 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
 
 int					// O - 0 if no change, 1 if changed
 fl_filename_relative(char       *to,	// O - Relative filename
-                  int        tolen,	// I - Size of "to" buffer
-                  const char *from) {	// I - Absolute filename
+                     int        tolen,	// I - Size of "to" buffer
+                     const char *from) {// I - Absolute filename
   const char	*newslash;		// Directory separator
   const char	*slash;			// Directory separator
   char		cwd[1024];		// Current directory
 
 
+#if defined(WIN32) || defined(__EMX__)
+  if (from[0] == '\0' ||
+      (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
+       !isdirsep(from[2]))) {
+#else
   if (from[0] == '\0' || !isdirsep(*from)) {
+#endif // WIN32 || __EMX__
     strlcpy(to, from, tolen);
     return 0;
   }
@@ -125,7 +131,16 @@ fl_filename_relative(char       *to,	// O - Relative filename
     return 0;
   }
 
+#if defined(WIN32) || defined(__EMX__)
+  if (*from != *cwd) {
+    // Not the same drive...
+    strlcpy(to, from, tolen);
+    return 0;
+  }
+  for (slash = from + 2, newslash = cwd + 2;
+#else
   for (slash = from, newslash = cwd;
+#endif // WIN32 || __EMX__
        *slash != '\0' && *newslash != '\0';
        slash ++, newslash ++)
     if (isdirsep(*slash) && isdirsep(*newslash)) continue;
@@ -141,13 +156,6 @@ fl_filename_relative(char       *to,	// O - Relative filename
   while (!isdirsep(*slash) && slash > from) slash --;
 
   if (isdirsep(*slash)) slash ++;
-
-#if defined(WIN32) || defined(__EMX__)
-  if (isalpha(slash[0]) && slash[1] == ':') {
-    strlcpy(to, from, tolen);
-    return 0; /* Different drive letter... */
-  }
-#endif /* WIN32 || __EMX__ */
 
   if (*newslash != '\0')
     while (!isdirsep(*newslash) && newslash > cwd) newslash --;
@@ -168,5 +176,5 @@ fl_filename_relative(char       *to,	// O - Relative filename
 
 
 //
-// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.8 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: filename_absolute.cxx,v 1.5.2.4.2.9 2002/10/10 19:33:22 easysw Exp $".
 //

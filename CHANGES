@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.1
 
+	- fl_filename_relative() didn't check that the path was
+	  absolute under WIN32.
+	- fl_filename_relative() didn't check that the path was
+	  on the current drive under WIN32.
 	- The Fl_BMP_Image class now handles 16-bit BMP files
 	  and BMP files with a transparency mask.
 	- The fltk-config script didn't add the required include
