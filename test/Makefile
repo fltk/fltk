@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.5 1998/10/21 16:46:07 mike Exp $"
+# "$Id: Makefile,v 1.6 1998/10/21 16:53:14 mike Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -22,6 +22,18 @@
 #
 # Please report all bugs and problems to "fltk-bugs@easysw.com".
 #
+
+CPPFILES =\
+	adjuster.C arc.C ask.C bitmap.C boxtype.C browser.C button.C \
+	buttons.C checkers.C  clock.C colbrowser.C color_chooser.C \
+	cube.C cursor.C curve.C demo.C doublebuffer.C  file_chooser.C \
+	fonts.C forms.C fractals.C fullscreen.C gl_overlay.C \
+	glpuzzle.C  hello.C iconize.C image.C input.C keyboard.C \
+	label.C list_visuals.C mandelbrot.C  menubar.C message.C \
+	minimum.C navigation.C output.C overlay.C pixmap.C  \
+	pixmap_browser.C radio.C resizebox.C scroll.C shape.C shiny.C \
+	subwindow.C  symbols.C tabs.C tile.C valuators.C fast_slow.C \
+	resize.C pack.C inactive.C style.C
 
 ALL =	adjuster arc ask bitmap boxtype browser button buttons checkers \
 	clock colbrowser color_chooser cube cursor curve demo doublebuffer \
@@ -73,11 +85,11 @@ jpeg_image: jpeg_image.C
 	@${CXX} -I.. ${CXXFLAGS} -I../../../local/jpeg-6b -L../../../local/jpeg-6b jpeg_image.C -L../lib -lfltk ${LDLIBS} -ljpeg -lXext -o $@
 
 depend:
-	$(MAKEDEPEND) -I.. $(CXXFLAGS) *.c *.C > makedepend
+	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) > makedepend
 
 clean:
 	-@ rm -f ${ALL} jpeg_image *.o core *~
 
 #
-# End of "$Id: Makefile,v 1.5 1998/10/21 16:46:07 mike Exp $".
+# End of "$Id: Makefile,v 1.6 1998/10/21 16:53:14 mike Exp $".
 #
