@@ -42,6 +42,14 @@ CHANGES IN FLTK 1.1.0b4
 	  png_destroy_read_struct() if the older
 	  png_read_destroy() function is not available.
 
+	- The WIN32 DLL library now includes the OpenGL widgets.
+	  This is a simpler solution for the export/import
+	  dillemma under WIN32, as OpenGL and non-OpenGL symbols
+	  need to be exported at different times with the
+	  separate library scheme.  Since OpenGL is standard
+	  under Windows, this is less of a problem than under
+	  UNIX...
+
 
 CHANGES IN FLTK 1.1.0b3
 

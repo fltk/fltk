@@ -645,38 +645,8 @@ DEP_CPP_FL_EN=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\fl_file_dir.cxx
-DEP_CPP_FL_FI=\
-	"..\fl\enumerations.h"\
-	"..\fl\fl.h"\
-	"..\fl\fl_ask.h"\
-	"..\fl\fl_browser.h"\
-	"..\fl\fl_browser_.h"\
-	"..\fl\fl_button.h"\
-	"..\fl\fl_choice.h"\
-	"..\fl\fl_export.h"\
-	"..\fl\fl_file_chooser.h"\
-	"..\fl\fl_filebrowser.h"\
-	"..\fl\fl_filechooser.h"\
-	"..\fl\fl_fileicon.h"\
-	"..\fl\fl_group.h"\
-	"..\fl\fl_input.h"\
-	"..\fl\fl_input_.h"\
-	"..\fl\fl_menu_.h"\
-	"..\fl\fl_menu_item.h"\
-	"..\fl\fl_return_button.h"\
-	"..\fl\fl_scrollbar.h"\
-	"..\fl\fl_slider.h"\
-	"..\fl\fl_valuator.h"\
-	"..\fl\fl_widget.h"\
-	"..\fl\fl_window.h"\
-	".\config.h"\
-	
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_File_Browser.cxx
-DEP_CPP_FL_FIL=\
+DEP_CPP_FL_FI=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
 	"..\fl\fl.h"\
@@ -684,8 +654,8 @@ DEP_CPP_FL_FIL=\
 	"..\fl\fl_browser_.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
-	"..\fl\fl_filebrowser.h"\
-	"..\fl\fl_fileicon.h"\
+	"..\FL\Fl_File_Browser.H"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_scrollbar.h"\
 	"..\fl\fl_slider.h"\
@@ -697,7 +667,7 @@ DEP_CPP_FL_FIL=\
 # Begin Source File
 
 SOURCE=..\src\Fl_File_Chooser.cxx
-DEP_CPP_FL_FILE=\
+DEP_CPP_FL_FIL=\
 	"..\fl\enumerations.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_ask.h"\
@@ -707,9 +677,9 @@ DEP_CPP_FL_FILE=\
 	"..\fl\fl_button.h"\
 	"..\fl\fl_choice.h"\
 	"..\fl\fl_export.h"\
-	"..\fl\fl_filebrowser.h"\
-	"..\fl\fl_filechooser.h"\
-	"..\fl\fl_fileicon.h"\
+	"..\FL\Fl_File_Browser.H"\
+	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_image.h"\
 	"..\fl\fl_input.h"\
@@ -727,7 +697,7 @@ DEP_CPP_FL_FILE=\
 # Begin Source File
 
 SOURCE=..\src\Fl_File_Chooser2.cxx
-DEP_CPP_FL_FILEC=\
+DEP_CPP_FL_FILE=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
 	"..\fl\fl.h"\
@@ -737,9 +707,9 @@ DEP_CPP_FL_FILEC=\
 	"..\fl\fl_button.h"\
 	"..\fl\fl_choice.h"\
 	"..\fl\fl_export.h"\
-	"..\fl\fl_filebrowser.h"\
-	"..\fl\fl_filechooser.h"\
-	"..\fl\fl_fileicon.h"\
+	"..\FL\Fl_File_Browser.H"\
+	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_input.h"\
 	"..\fl\fl_input_.h"\
@@ -757,14 +727,43 @@ DEP_CPP_FL_FILEC=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_file_dir.cxx
+DEP_CPP_FL_FILE_=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_ask.h"\
+	"..\fl\fl_browser.h"\
+	"..\fl\fl_browser_.h"\
+	"..\fl\fl_button.h"\
+	"..\fl\fl_choice.h"\
+	"..\fl\fl_export.h"\
+	"..\FL\Fl_File_Browser.H"\
+	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_input.h"\
+	"..\fl\fl_input_.h"\
+	"..\fl\fl_menu_.h"\
+	"..\fl\fl_menu_item.h"\
+	"..\fl\fl_return_button.h"\
+	"..\fl\fl_scrollbar.h"\
+	"..\fl\fl_slider.h"\
+	"..\fl\fl_valuator.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_File_Icon.cxx
-DEP_CPP_FL_FILEI=\
+DEP_CPP_FL_FILE_I=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
 	"..\fl\fl.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
-	"..\fl\fl_fileicon.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_widget.h"\
 	".\config.h"\
 	
@@ -819,6 +818,59 @@ DEP_CPP_FL_GET=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Gl_Choice.cxx
+DEP_CPP_FL_GL=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	"..\src\Fl_Gl_Choice.H"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Gl_Overlay.cxx
+DEP_CPP_FL_GL_=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_gl_window.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	"..\src\Fl_Gl_Choice.H"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Gl_Window.cxx
+DEP_CPP_FL_GL_W=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_gl_window.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	"..\src\Fl_Gl_Choice.H"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_grab.cxx
 DEP_CPP_FL_GR=\
 	"..\fl\enumerations.h"\
@@ -857,8 +909,8 @@ DEP_CPP_FL_HE=\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
-	"..\fl\fl_helpdialog.h"\
-	"..\fl\fl_helpview.h"\
+	"..\FL\Fl_Help_Dialog.H"\
+	"..\FL\Fl_Help_View.H"\
 	"..\fl\fl_scrollbar.h"\
 	"..\fl\fl_slider.h"\
 	"..\fl\fl_valuator.h"\
@@ -875,7 +927,7 @@ DEP_CPP_FL_HEL=\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
-	"..\fl\fl_helpview.h"\
+	"..\FL\Fl_Help_View.H"\
 	"..\fl\fl_image.h"\
 	"..\fl\fl_pixmap.h"\
 	"..\fl\fl_scrollbar.h"\
@@ -1739,7 +1791,9 @@ DEP_CPP_FORMS=\
 	"..\fl\fl_dial.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
+	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -1753,6 +1807,7 @@ DEP_CPP_FORMS=\
 	"..\fl\fl_menu_item.h"\
 	"..\fl\fl_pixmap.h"\
 	"..\fl\fl_positioner.h"\
+	"..\fl\fl_return_button.h"\
 	"..\fl\fl_round_button.h"\
 	"..\fl\fl_scrollbar.h"\
 	"..\fl\fl_show_colormap.h"\
@@ -1786,7 +1841,9 @@ DEP_CPP_FORMS_=\
 	"..\fl\fl_dial.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
+	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -1846,7 +1903,9 @@ DEP_CPP_FORMS_FS=\
 	"..\fl\fl_dial.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
+	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -1860,6 +1919,7 @@ DEP_CPP_FORMS_FS=\
 	"..\fl\fl_menu_item.h"\
 	"..\fl\fl_pixmap.h"\
 	"..\fl\fl_positioner.h"\
+	"..\fl\fl_return_button.h"\
 	"..\fl\fl_round_button.h"\
 	"..\fl\fl_scrollbar.h"\
 	"..\fl\fl_show_colormap.h"\
@@ -1893,7 +1953,9 @@ DEP_CPP_FORMS_P=\
 	"..\fl\fl_dial.h"\
 	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
+	"..\FL\Fl_File_Browser.H"\
 	"..\fl\fl_file_chooser.h"\
+	"..\FL\Fl_File_Icon.H"\
 	"..\fl\fl_formsbitmap.h"\
 	"..\fl\fl_formspixmap.h"\
 	"..\fl\fl_free.h"\
@@ -1907,6 +1969,7 @@ DEP_CPP_FORMS_P=\
 	"..\fl\fl_menu_item.h"\
 	"..\fl\fl_pixmap.h"\
 	"..\fl\fl_positioner.h"\
+	"..\fl\fl_return_button.h"\
 	"..\fl\fl_round_button.h"\
 	"..\fl\fl_scrollbar.h"\
 	"..\fl\fl_show_colormap.h"\
@@ -1929,6 +1992,76 @@ DEP_CPP_FORMS_T=\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_timer.h"\
 	"..\fl\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\gl_draw.cxx
+DEP_CPP_GL_DR=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	"..\src\fl_font.h"\
+	"..\src\Fl_Gl_Choice.H"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\gl_start.cxx
+DEP_CPP_GL_ST=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	"..\src\Fl_Gl_Choice.H"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\glut_compatability.cxx
+DEP_CPP_GLUT_=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_gl_window.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_menu_item.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\glut.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\glut_font.cxx
+DEP_CPP_GLUT_F=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_gl_window.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\FL\gl.h"\
+	"..\fl\glut.h"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File

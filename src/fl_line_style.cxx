@@ -12,7 +12,7 @@ void fl_line_style(int style, int width, char* dashes) {
   // they should be different (same graphics cards, etc., right?) MRS
   static DWORD Cap[4]= {PS_ENDCAP_FLAT, PS_ENDCAP_FLAT, PS_ENDCAP_ROUND, PS_ENDCAP_SQUARE};
   static DWORD Join[4]={PS_JOIN_ROUND, PS_JOIN_MITER, PS_JOIN_ROUND, PS_JOIN_BEVEL};
-  int s1 = PS_GEOMETRIC | Cap[(style>>8)&3] | Join[(style>>12)&3];
+  int s1 = Cap[(style>>8)&3] | Join[(style>>12)&3];
   DWORD a[16]; int n = 0;
   if (dashes && dashes[0]) {
     s1 |= PS_USERSTYLE;
@@ -21,6 +21,8 @@ void fl_line_style(int style, int width, char* dashes) {
     s1 |= style & 0xff; // allow them to pass any low 8 bits for style
   }
   if ((style || n) && !width) width = 1; // fix cards that do nothing for 0?
+  if (width > 1) s1 |= PS_GEOMETRIC;
+  else s1 |= PS_COSMETIC;
   LOGBRUSH penbrush = {BS_SOLID,fl_RGB(),0}; // can this be fl_brush()?
   HPEN newpen = ExtCreatePen(s1, width, &penbrush, n, n ? a : 0);
   if (!newpen) {
