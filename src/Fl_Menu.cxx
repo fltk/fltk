@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.11 1999/01/07 19:17:22 mike Exp $"
+// "$Id: Fl_Menu.cxx,v 1.12 1999/01/13 15:45:49 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -138,7 +138,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 	b = m ? m->box() : FL_UP_BOX;
       } else {
 	r = (Fl_Color)(FL_COLOR_CUBE-1); // white
-        l.color = contrast((Fl_Color)labelcolor_, r);
+	l.color = contrast((Fl_Color)labelcolor_, r);
       }
     } else {
       l.color = contrast((Fl_Color)labelcolor_, r);
@@ -703,5 +703,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.11 1999/01/07 19:17:22 mike Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.12 1999/01/13 15:45:49 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: shape.cxx,v 1.4 1999/01/07 19:18:00 mike Exp $"
+// "$Id: shape.cxx,v 1.5 1999/01/13 15:45:50 mike Exp $"
 //
 // Tiny OpenGL demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -106,13 +106,10 @@ int main(int argc, char **argv) {
 
   window.end();
   window.show(argc,argv);
-// in the X version you must show() all Fl_Window's in top/down order
-// other systems may not require this, but it will be harmless:
-  //sw.show();
     
   return Fl::run();
 }
 
 //
-// End of "$Id: shape.cxx,v 1.4 1999/01/07 19:18:00 mike Exp $".
+// End of "$Id: shape.cxx,v 1.5 1999/01/13 15:45:50 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.20 1999/01/07 19:17:33 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.21 1999/01/13 15:45:50 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -652,15 +652,6 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
 		      (unsigned char *)buffer, p-buffer-1);
     }
 
-    // Set the icon pixmap as needed:
-    if (w->icon()) {
-      XWMHints hints;
-
-      hints.icon_pixmap = (Pixmap)w->icon();
-      hints.flags       = IconPixmapHint;
-      XSetWMHints(fl_display, x->xid, &hints);
-    }
-
     if (w->non_modal() && x->next && !fl_disable_transient_for) {
       // find some other window to be "transient for":
       Fl_Window* w = x->next->w;
@@ -668,13 +659,18 @@ void Fl_X::make_xid(Fl_Window* w, XVisualInfo *visual, Colormap colormap)
       XSetTransientForHint(fl_display, x->xid, fl_xid(w));
     }
 
+    XWMHints hints;
+    hints.flags = 0;
     if (fl_show_iconic) {
-      XWMHints hints;
       hints.flags = StateHint;
-      hints.initial_state = 3;
-      XSetWMHints(fl_display, x->xid, &hints);
+      hints.initial_state = IconicState;
       fl_show_iconic = 0;
     }
+    if (w->icon()) {
+      hints.icon_pixmap = (Pixmap)w->icon();
+      hints.flags       |= IconPixmapHint;
+    }
+    if (hints.flags) XSetWMHints(fl_display, x->xid, &hints);
   }
 
   XMapWindow(fl_display, x->xid);
@@ -823,5 +819,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.20 1999/01/07 19:17:33 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.21 1999/01/13 15:45:50 mike Exp $".
 //

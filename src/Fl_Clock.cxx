@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Clock.cxx,v 1.4 1999/01/07 19:17:18 mike Exp $"
+// "$Id: Fl_Clock.cxx,v 1.5 1999/01/13 15:45:49 mike Exp $"
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
@@ -29,9 +29,6 @@
 #include <math.h>
 #include <time.h>
 
-// There really should be a way to make this display something other
-// than the current time...
-
 // Original clock display written by Paul Haeberli at SGI.
 // Modifications by Mark Overmars for Forms
 // Further changes by Bill Spitzak for fltk
@@ -51,7 +48,7 @@ static void drawhand(double ang,const float v[][2],Fl_Color fill,Fl_Color line)
   fl_pop_matrix();
 }
 
-void Fl_Clock::drawhands(Fl_Color fill, Fl_Color line) {
+void Fl_Clock_Output::drawhands(Fl_Color fill, Fl_Color line) {
   drawhand(-360*(hour()+minute()/60.0)/12, hourhand, fill, line);
   drawhand(-360*(minute()+second()/60.0)/60, minhand, fill, line);
   drawhand(-360*(second()/60.0), sechand, fill, line);
@@ -68,7 +65,7 @@ static void rect(double x, double y, double w, double h) {
   fl_end_polygon();
 }
 
-void Fl_Clock::draw(int x, int y, int w, int h) {
+void Fl_Clock_Output::draw(int x, int y, int w, int h) {
   draw_box(box(), x, y, w, h, type()==FL_ROUND_CLOCK ? FL_GRAY : color());
   fl_push_matrix();
   fl_translate(x+w/2.0-.5, y+h/2.0-.5);
@@ -99,65 +96,75 @@ void Fl_Clock::draw(int x, int y, int w, int h) {
   fl_pop_matrix();
 }
 
-void Fl_Clock::draw() {
+void Fl_Clock_Output::draw() {
   draw(x(), y(), w(), h());
   draw_label();
 }
 
-void Fl_Clock::value(int h, int m, int s) {
+void Fl_Clock_Output::value(int h, int m, int s) {
   if (h!=hour_ || m!=minute_ || s!=second_) {
     hour_ = h; minute_ = m; second_ = s;
-    redraw();
+    damage(FL_DAMAGE_CHILD);
   }
 }
 
-void Fl_Clock::value(ulong v) {
+void Fl_Clock_Output::value(ulong v) {
   struct tm *timeofday;
   timeofday = localtime((const time_t *)&v);
   value(timeofday->tm_hour, timeofday->tm_min, timeofday->tm_sec);
 }
 
-static void tick(void *v) {
-  ((Fl_Clock*)v)->value(time(0));
-  Fl::add_timeout(1, tick, v);
-}
-
-void Fl_Clock::_Fl_Clock() {
-  selection_color(fl_gray_ramp(5));
-  align(FL_ALIGN_BOTTOM);
-  value(time(0));
-  //Fl::add_timeout(1, tick, this);
-}
-
-Fl_Clock::Fl_Clock(int x, int y, int w, int h, const char *l)
+Fl_Clock_Output::Fl_Clock_Output(int x, int y, int w, int h, const char *l)
 : Fl_Widget(x, y, w, h, l) {
   box(FL_UP_BOX);
-  _Fl_Clock();
+  selection_color(fl_gray_ramp(5));
+  align(FL_ALIGN_BOTTOM);
+  hour_ = 0;
+  minute_ = 0;
+  second_ = 0;
+  value_ = 0;
 }
+
+////////////////////////////////////////////////////////////////
+
+Fl_Clock::Fl_Clock(int x, int y, int w, int h, const char *l)
+  : Fl_Clock_Output(x, y, w, h, l) {}
 
 Fl_Clock::Fl_Clock(uchar t, int x, int y, int w, int h, const char *l)
-: Fl_Widget(x, y, w, h, l) {
+  : Fl_Clock_Output(x, y, w, h, l) {
   type(t);
   box(t==FL_ROUND_CLOCK ? FL_NO_BOX : FL_UP_BOX);
-  _Fl_Clock();
 }
 
-Fl_Clock::~Fl_Clock() {
-  Fl::remove_timeout(tick, this);
+#ifndef WIN32
+#include <sys/time.h>
+#endif
+
+static void tick(void *v) {
+  struct timeval t;
+  gettimeofday(&t, NULL);
+  ((Fl_Clock*)v)->value(t.tv_sec);
+  double delay = 1.0-t.tv_usec*.000001;
+  if (delay < .1 || delay > .9) delay = 1.0;
+  Fl::add_timeout(delay, tick, v);
 }
 
 int Fl_Clock::handle(int event) {
   switch (event) {
+  case FL_SHOW:
+    tick(this);
+    break;
   case FL_HIDE:
     Fl::remove_timeout(tick, this);
     break;
-  case FL_SHOW:
-    Fl::remove_timeout(tick, this);
-    tick(this);
   }
-  return 0;
+  return Fl_Clock_Output::handle(event);
+}
+  
+Fl_Clock::~Fl_Clock() {
+  Fl::remove_timeout(tick, this);
 }
 
 //
-// End of "$Id: Fl_Clock.cxx,v 1.4 1999/01/07 19:17:18 mike Exp $".
+// End of "$Id: Fl_Clock.cxx,v 1.5 1999/01/13 15:45:49 mike Exp $".
 //
