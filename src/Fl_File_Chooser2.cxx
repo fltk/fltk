@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.19 2002/07/14 18:18:59 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.20 2002/07/14 18:26:54 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -537,6 +537,9 @@ Fl_File_Chooser::fileNameCB()
 	int m = fileName->mark();
 
         directory(pathname);
+
+	snprintf(pathname, sizeof(pathname), "%s/%s", directory_, filename);
+	fileName->value(pathname);
 
 	fileName->position(p, m);
       }
@@ -1135,5 +1138,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.19 2002/07/14 18:18:59 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.20 2002/07/14 18:26:54 easysw Exp $".
 //
