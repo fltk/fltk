@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# "$Id: fltk-config.in,v 1.12.2.24 2004/07/29 18:13:10 easysw Exp $"
+# "$Id: fltk-config.in,v 1.12.2.25 2004/08/05 20:20:51 easysw Exp $"
 # 
 # FLTK configuration utility.
 #
@@ -175,9 +175,9 @@ else
 fi
 
 # Calculate needed libraries
-LDSTATIC="$libs $libdir/libfltk.a $LDLIBS"
-LDLIBS="$libs -lfltk$SHAREDSUFFIX $LDLIBS"
-LIBS="$LIBS $libs $libdir/libfltk.a"
+LDSTATIC="$libdir/libfltk.a $LDLIBS"
+LDLIBS="-lfltk$SHAREDSUFFIX $LDLIBS"
+LIBS="$libdir/libfltk.a"
 
 if test x$use_forms = xyes; then
     LDLIBS="-lfltk_forms$SHAREDSUFFIX $LDLIBS"
@@ -194,8 +194,8 @@ if test x$use_images = xyes; then
     LDSTATIC="$libdir/libfltk_images.a $IMAGELIBS $LDSTATIC"
 fi
 
-LDLIBS="$DSOLINK $LDFLAGS $LDLIBS"
-LDSTATIC="$LDFLAGS $LDSTATIC"
+LDLIBS="$DSOLINK $LDFLAGS $libs $LDLIBS"
+LDSTATIC="$LDFLAGS $libs $LDSTATIC"
 
 # Answer to user requests
 if test -n "$echo_help"; then
@@ -266,5 +266,5 @@ if test "$echo_libs" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in,v 1.12.2.24 2004/07/29 18:13:10 easysw Exp $".
+# End of "$Id: fltk-config.in,v 1.12.2.25 2004/08/05 20:20:51 easysw Exp $".
 #
