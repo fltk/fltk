@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.12.2.6.2.15 2003/01/30 21:38:15 easysw Exp $"
+# "$Id: Makefile,v 1.12.2.6.2.16 2003/06/15 05:39:12 easysw Exp $"
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -90,12 +90,12 @@ configure: configure.in
 	autoconf
 
 portable-dist:
-	epm -v fltk
+	epm -v -s fltk.xpm fltk
 
 native-dist:
 	epm -v -f native fltk
 
 
 #
-# End of "$Id: Makefile,v 1.12.2.6.2.15 2003/01/30 21:38:15 easysw Exp $".
+# End of "$Id: Makefile,v 1.12.2.6.2.16 2003/06/15 05:39:12 easysw Exp $".
 #
