@@ -1,5 +1,5 @@
 //
-// "$Id: code.cxx,v 1.9.2.7 2000/06/05 21:20:42 mike Exp $"
+// "$Id: code.cxx,v 1.9.2.8 2000/06/16 07:08:16 bill Exp $"
 //
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
@@ -76,7 +76,7 @@ const char* unique_id(void* o, const char* type, const char* name, const char* l
   const char* n = name;
   if (!n || !*n) n = label;
   if (n && *n) {
-    while (!is_id(*n)) n++;
+    while (*n && !is_id(*n)) n++;
     while (is_id(*n)) *q++ = *n++;
   }
   *q = 0;
@@ -405,5 +405,5 @@ void Fl_Type::write_code1() {
 void Fl_Type::write_code2() {}
 
 //
-// End of "$Id: code.cxx,v 1.9.2.7 2000/06/05 21:20:42 mike Exp $".
+// End of "$Id: code.cxx,v 1.9.2.8 2000/06/16 07:08:16 bill Exp $".
 //

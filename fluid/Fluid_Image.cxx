@@ -1,5 +1,5 @@
 //
-// "$Id: Fluid_Image.cxx,v 1.7.2.3 2000/06/05 21:20:41 mike Exp $"
+// "$Id: Fluid_Image.cxx,v 1.7.2.4 2000/06/16 07:08:15 bill Exp $"
 //
 // Pixmap label support for the Fast Light Tool Kit (FLTK).
 //
@@ -43,6 +43,7 @@ extern void leave_source_dir(); // in fluid.C
 class pixmap_image : public Fluid_Image {
 protected:
   Fl_Pixmap *p;
+  int numlines;
   int *linelength;
 public:
   pixmap_image(const char *name, FILE *);
@@ -70,12 +71,11 @@ void pixmap_image::write_static() {
     write_c("#include <FL/Fl_Pixmap.H>\n");
     pixmap_header_written = write_number;
   }
-  write_c("static unsigned char *%s[] = {\n",
+  write_c("static char *%s[] = {\n",
 	  unique_id(this, "image", filename_name(name()), 0));
   int l;
-  for (l = 0; p->data[l]; l++) {
+  for (l = 0; l < numlines; l++) {
     if (l) write_c(",\n");
-    write_c("(unsigned char*)\n");
     write_cstring(p->data[l],linelength[l]);
   }
   write_c("\n};\n");
@@ -98,15 +98,19 @@ static int hexdigit(int x) {
 }
 
 #define MAXSIZE 2048
+#define INITIALLINES 1024
 
 pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
   if (!f) return; // for subclasses
   // read all the c-strings out of the file:
-  char *data[MAXSIZE+1];
-  int length[MAXSIZE+1];
+  char* local_data[INITIALLINES];
+  char** data = local_data;
+  int local_length[INITIALLINES];
+  int* length = local_length;
+  int malloc_size = INITIALLINES;
   char buffer[MAXSIZE+20];
   int i = 0;
-  while (i < MAXSIZE && fgets(buffer,MAXSIZE+20,f)) {
+  while (fgets(buffer,MAXSIZE+20,f)) {
     if (buffer[0] != '\"') continue;
     char *p = buffer;
     char *q = buffer+1;
@@ -145,26 +149,42 @@ pixmap_image::pixmap_image(const char *name, FILE *f) : Fluid_Image(name) {
       }
     }
     *p++ = 0;
+    if (i >= malloc_size) {
+      malloc_size = 2*malloc_size;
+      if (data == local_data) {
+	data = (char**)malloc(malloc_size*sizeof(char*));
+	memcpy(data, local_data, i*sizeof(char*));
+	length = (int*)malloc(malloc_size*sizeof(int));
+	memcpy(length, local_length, i*sizeof(int));
+      } else {
+	data = (char**)realloc(data, malloc_size*sizeof(char*));
+	length = (int*)realloc(length, malloc_size*sizeof(int));
+      }
+    }
     data[i] = new char[p-buffer];
-    memcpy(data[i],buffer,p-buffer);
+    memcpy(data[i], buffer,p-buffer);
     length[i] = p-buffer-1;
     i++;
   }
-  data[i++] = 0; // put a null at the end
 
-  char** real_data = new char*[i];
-  linelength = new int[i];
-  while (i--) {real_data[i] = data[i]; linelength[i] = length[i];}
-  p = new Fl_Pixmap(real_data);
+  if (data == local_data) {
+    data = (char**)malloc(i*sizeof(char*));
+    memcpy(data, local_data, i*sizeof(char*));
+    length = (int*)malloc(i*sizeof(int));
+    memcpy(length, local_length, i*sizeof(int));
+  }
+  numlines = i;
+  linelength = length;
+  p = new Fl_Pixmap(data);
 }
 
 pixmap_image::~pixmap_image() {
   if (p && p->data) {
     char** real_data = (char**)(p->data);
     for (int i = 0; real_data[i]; i++) delete[] real_data[i];
-    delete[] real_data;
+    free((void*)real_data);
   }
-  delete[] linelength;
+  free((void*)linelength);
   delete p;
 }
 
@@ -417,5 +437,5 @@ Fluid_Image *ui_find_image(const char *oldname) {
 }
 
 //
-// End of "$Id: Fluid_Image.cxx,v 1.7.2.3 2000/06/05 21:20:41 mike Exp $".
+// End of "$Id: Fluid_Image.cxx,v 1.7.2.4 2000/06/16 07:08:15 bill Exp $".
 //
