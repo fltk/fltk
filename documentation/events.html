@@ -28,6 +28,10 @@ The mouse has moved with a button held down. The current button state is
 in <a href="#event_state"><tt>Fl::event_state()</tt></a>. The mouse position
 is in <a href="#event_x"><tt>Fl::event_x()</tt></a> and
 <a href="#event_y"><tt>Fl::event_y()</tt></a>.
+
+<P>To receive <CODE>FL_DRAG</CODE> events you must also respond to the
+<CODE>FL_PUSH</CODE> and <CODE>FL_RELEASE</CODE> events.
+
 <H3>FL_RELEASE</H3>
  A mouse button has been released.  You can find out what button by 
 calling <A href=#event_button><TT>Fl::event_button()</TT></A>. 
@@ -68,10 +72,14 @@ widget when another widget gets the focus.
 be found with <A href=functions.html#event_text><TT>Fl::event_text()</TT>
 </A> and its length is in <A href=functions.html#event_length><TT>
 Fl::event_length()</TT></A>.  If you use the key <TT>handle()</TT>
- should return 1.  If you return zero then FLTK assummes you ignored 
+should return 1.  If you return zero then FLTK assummes you ignored 
 the key.  It will then attempt to send it to a parent widget. If none 
 of them want it, it will change the event into a <TT>FL_SHORTCUT</TT>
- event. 
+event. 
+
+<P>To receive <CODE>FL_KEYBOARD</CODE> events you must also respond to the
+<CODE>FL_FOCUS</CODE> and <CODE>FL_UNFOCUS</CODE> events.
+
 <H3>FL_SHORTCUT</H3>
 If the <A href=functions.html#focus><TT>Fl::focus()</TT></A> widget is zero 
 or ignores an <TT>FL_KEYBOARD</TT> event then FLTK tries sending this 

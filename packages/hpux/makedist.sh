@@ -26,7 +26,7 @@ ln -sf libfltk.sl.1 links/libfltk.sl
 cd ../..
 
 /usr/sbin/swpackage -v -s packages/hpux/fltk.info \
-	-d packages/hpux/fltk-1.0.3-hpux.depot -x write_remote_files=true \
+	-d packages/hpux/fltk-1.0.4-hpux.depot -x write_remote_files=true \
 	-x target_type=tape fltk
 
 echo "Compressing distribution..."
@@ -34,6 +34,6 @@ echo "Compressing distribution..."
 cd packages/hpux
 
 rm -rf links
-rm -f fltk-1.0.3-hpux.depot.gz
-gzip -9 fltk-1.0.3-hpux.depot
+rm -f fltk-1.0.4-hpux.depot.gz
+gzip -9 fltk-1.0.4-hpux.depot
 

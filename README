@@ -1,4 +1,4 @@
-README - Fast Light Tool Kit (FLTK) Version 1.0.3
+README - Fast Light Tool Kit (FLTK) Version 1.0.4
 -------------------------------------------------
 
 WHAT IS FLTK?
@@ -103,9 +103,10 @@ INTERNET RESOURCES
 
     FLTK is available on the 'net in a bunch of locations:
 
-	- WWW:   http://fltk.easysw.com
+	- WWW:   http://www.fltk.org
 
 	- FTP:   ftp://ftp.easysw.com/pub/fltk
+                 ftp://ftp2.easysw.com/pub/fltk
                  ftp://ftp.northamerica.net/pub/ESP/fltk
         	 ftp://ftp.funet.fi/mirrors/ftp.easysw.com/pub/fltk
 
