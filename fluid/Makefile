@@ -1,7 +1,7 @@
 #
-# "$Id: Makefile,v 1.10.2.6.2.4 2001/11/18 12:48:38 easysw Exp $"
+# "$Id: Makefile,v 1.10.2.6.2.5 2001/11/19 21:25:35 easysw Exp $"
 #
-# Fluid makefile for the Fast Light Tool Kit (FLTK).
+# FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
 # Copyright 1998-2001 by Bill Spitzak and others.
 #
@@ -72,7 +72,7 @@ install: $(PROGRAM)
 	chmod 755 $(bindir)/$(PROGRAM)
 
 uninstall:
-	-rm -f $(bindir)/$(PROGRAM)
+	rm -f $(bindir)/$(PROGRAM)
 
 #
 # Note: The rebuild target can only be used if you have the original .fl
@@ -86,5 +86,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.6.2.4 2001/11/18 12:48:38 easysw Exp $".
+# End of "$Id: Makefile,v 1.10.2.6.2.5 2001/11/19 21:25:35 easysw Exp $".
 #

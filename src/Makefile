@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.17 2001/11/19 01:06:45 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.18 2001/11/19 21:25:35 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -253,23 +253,31 @@ install: $(LIBNAME) $(DSONAME) $(GLLIBNAME) $(GLDSONAME)
 		rm -f $(libdir)/libfltk_gl_s.a;\
 		cp libfltk_gl_s.a $(libdir); \
 	fi
-	echo "Installing include files..."
-	-mkdir -p $(includedir)
-	rm -rf $(includedir)/FL
-	mkdir $(includedir)/FL
-	cp ../FL/*.[hH] $(includedir)/FL
-	cd $(includedir)/FL;\
-	for file in *.H; do\
-		rm -f "`basename $$file H`h";\
-		ln -s $$file "`basename $$file H`h";\
-	done
-	rm -f $(includedir)/FL/fl_file_chooser.H
-	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.H
-	rm -f $(includedir)/FL/fl_file_chooser.h
-	ln -s Fl_File_Chooser.H $(includedir)/FL/fl_file_chooser.h
-	rm -f $(includedir)/Fl
-	ln -s FL $(includedir)/Fl
+
+
+uninstall:
+	echo "Uninstalling libraries..."
+	rm -f $(libdir)/$(LIBNAME)
+	if test x$(DSONAME) = xlibfltk.so.1.1; then\
+		rm -f $(libdir)/libfltk.so*;\
+	fi
+	if test x$(DSONAME) = xlibfltk.sl.1.1; then\
+		rm -f $(libdir)/libfltk.sl*;\
+	fi
+	if test x$(DSONAME) = xlibfltk_s.a; then\
+		rm -f $(libdir)/libfltk_s.a;\
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl.so.1.1; then\
+		rm -f $(libdir)/libfltk_gl.so*;\
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.1; then\
+		rm -f $(libdir)/libfltk_gl.sl*;\
+	fi
+	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
+		rm -f $(libdir)/libfltk_gl_s.a;\
+	fi
+
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.17 2001/11/19 01:06:45 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.18 2001/11/19 21:25:35 easysw Exp $".
 #

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.1 2001/10/24 17:04:30 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.2 2001/11/19 21:25:35 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -113,6 +113,7 @@ HTMLFILES	= \
 		glut.html \
 		forms.html \
 		osissues.html \
+		migration.html \
 		license.html
 
 MANPAGES =	fltk.$(CAT3EXT) fluid.$(CAT1EXT)
@@ -150,6 +151,15 @@ install: $(MANPAGES)
 	cp fltk.man $(mandir)/man3/fltk.3
 	chmod 644 $(mandir)/man3/fltk.3
 
+
+uninstall:
+	rm -rf $(docdir)
+	rm -f $(mandir)/cat1/fluid.$(CAT1EXT)
+	rm -f $(mandir)/man1/fluid.1
+	rm -f $(mandir)/cat3/fltk.$(CAT3EXT)
+	rm -f $(mandir)/man3/fltk.3
+
+
 # Base html files are now the readable ones, so this target is not make by
 # default...
 fltk.d/index.html: $(HTMLFILES)
@@ -168,5 +178,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.1 2001/10/24 17:04:30 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.2 2001/11/19 21:25:35 easysw Exp $".
 #

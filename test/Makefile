@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.9 2001/11/19 01:06:45 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.10 2001/11/19 21:25:35 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -185,6 +185,9 @@ clean:
 install:
 	@echo Nothing to install in test directory.
 
+uninstall:
+	@echo Nothing to uninstall in test directory.
+
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.9 2001/11/19 01:06:45 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.10 2001/11/19 21:25:35 easysw Exp $".
 #
