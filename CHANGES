@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.2
 
+	- Added a new FL_COMMAND state bit which maps to FL_CTRL
+	  on X11 and WIN32 and FL_META on MacOS.
 	- MacOS keyboard modifiers mapping corrections. Cmd and
 	  Control are no longer swapped, event_key and event_text
 	  return (mostly) the same values as on other platforms.

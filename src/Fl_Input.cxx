@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.14 2002/10/10 19:39:49 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.15 2002/10/30 14:23:15 easysw Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -145,6 +145,14 @@ int Fl_Input::handle_key() {
   case FL_Tab:
     if (Fl::event_state(FL_CTRL|FL_SHIFT) || input_type()!=FL_MULTILINE_INPUT || readonly()) return 0;
     return replace(position(), mark(), &ascii, 1);
+#ifdef __APPLE__
+  case 'c' :
+  case 'v' :
+  case 'x' :
+  case 'z' :
+    if (Fl::event_state(FL_META)) ascii = ctrl(Fl::event_key());
+    break;
+#endif // __APPLE__
   }
 
   int i;
@@ -396,5 +404,5 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.14 2002/10/10 19:39:49 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.15 2002/10/30 14:23:15 easysw Exp $".
 //

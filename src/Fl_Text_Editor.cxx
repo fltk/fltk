@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Editor.cxx,v 1.9.2.9 2002/10/29 17:34:47 easysw Exp $"
+// "$Id: Fl_Text_Editor.cxx,v 1.9.2.10 2002/10/30 14:23:16 easysw Exp $"
 //
 // Copyright 2001-2002 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -102,6 +102,15 @@ static struct {
   { 'v',          FL_CTRL,                  Fl_Text_Editor::kf_paste      },
   { FL_Insert,    FL_SHIFT,                 Fl_Text_Editor::kf_paste      },
   { 'a',          FL_CTRL,                  ctrl_a                        },
+
+#ifdef __APPLE__
+  // Define CMD+key accelerators...
+  { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        },
+  { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       },
+  { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      },
+  { 'a',          FL_COMMAND,               ctrl_a                        },
+#endif // __APPLE__
+
   { 0,            0,                        0                             }
 };
 
@@ -442,5 +451,5 @@ int Fl_Text_Editor::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.9 2002/10/29 17:34:47 easysw Exp $".
+// End of "$Id: Fl_Text_Editor.cxx,v 1.9.2.10 2002/10/30 14:23:16 easysw Exp $".
 //
