@@ -4,7 +4,7 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="fluid.exe"/>
-    <OBJFILES value="fluid.obj ..\fluid\widget_panel.obj ..\fluid\alignment_panel.obj 
+    <OBJFILES value="..\fluid\fluid.obj ..\fluid\widget_panel.obj ..\fluid\alignment_panel.obj 
       ..\fluid\code.obj ..\fluid\factory.obj ..\fluid\file.obj 
       ..\fluid\Fl_Function_Type.obj ..\fluid\Fl_Group_Type.obj 
       ..\fluid\Fl_Menu_Type.obj ..\fluid\Fl_Type.obj ..\fluid\Fl_Widget_Type.obj 
@@ -27,8 +27,8 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT"/>
     <MAINSOURCE value="fluid.cpp"/>
-    <INCLUDEPATH value="..\fluid;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="..\fluid;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value=".;..\fluid;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\lib;..\fluid;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
@@ -48,21 +48,21 @@
     <OTHERFILES value=""/>
   </LINKER>
   <FILELIST>
-      <FILE FILENAME="..\fluid\fluid.cxx" FORMNAME="" UNITNAME="fluid.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\widget_panel.cxx" FORMNAME="" UNITNAME="widget_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\alignment_panel.cxx" FORMNAME="" UNITNAME="alignment_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\code.cxx" FORMNAME="" UNITNAME="code.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\factory.cxx" FORMNAME="" UNITNAME="factory.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\file.cxx" FORMNAME="" UNITNAME="file.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Function_Type.cxx" FORMNAME="" UNITNAME="Fl_Function_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Group_Type.cxx" FORMNAME="" UNITNAME="Fl_Group_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Menu_Type.cxx" FORMNAME="" UNITNAME="Fl_Menu_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Type.cxx" FORMNAME="" UNITNAME="Fl_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Widget_Type.cxx" FORMNAME="" UNITNAME="Fl_Widget_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fl_Window_Type.cxx" FORMNAME="" UNITNAME="Fl_Window_Type.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\Fluid_Image.cxx" FORMNAME="" UNITNAME="Fluid_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\function_panel.cxx" FORMNAME="" UNITNAME="function_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\fluid\about_panel.cxx" FORMNAME="" UNITNAME="about_panel.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\fluid.cxx" FORMNAME="" UNITNAME="fluid.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\widget_panel.cxx" FORMNAME="" UNITNAME="widget_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\alignment_panel.cxx" FORMNAME="" UNITNAME="alignment_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\code.cxx" FORMNAME="" UNITNAME="code.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\factory.cxx" FORMNAME="" UNITNAME="factory.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\file.cxx" FORMNAME="" UNITNAME="file.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Function_Type.cxx" FORMNAME="" UNITNAME="Fl_Function_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Group_Type.cxx" FORMNAME="" UNITNAME="Fl_Group_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Menu_Type.cxx" FORMNAME="" UNITNAME="Fl_Menu_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Type.cxx" FORMNAME="" UNITNAME="Fl_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Widget_Type.cxx" FORMNAME="" UNITNAME="Fl_Widget_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fl_Window_Type.cxx" FORMNAME="" UNITNAME="Fl_Window_Type.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\Fluid_Image.cxx" FORMNAME="" UNITNAME="Fluid_Image.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\function_panel.cxx" FORMNAME="" UNITNAME="function_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\fluid\about_panel.cxx" FORMNAME="" UNITNAME="about_panel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -86,13 +86,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.0.0.0
+FileVersion=1.1.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=1.0.0.0
+ProductVersion=1.1.0.0
 Comments=
 
 [Excluded Packages]
