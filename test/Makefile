@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.19.2.7.2.39 2003/01/30 21:44:46 easysw Exp $"
+# "$Id: Makefile,v 1.19.2.7.2.40 2003/09/05 12:24:31 easysw Exp $"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -80,7 +80,6 @@ CPPFILES =\
 	resize.cxx \
 	scroll.cxx \
 	shape.cxx \
-	shiny.cxx \
 	subwindow.cxx \
 	symbols.cxx \
 	tabs.cxx \
@@ -151,8 +150,7 @@ GLALL = \
 	fullscreen$(EXEEXT) \
 	gl_overlay$(EXEEXT) \
 	glpuzzle$(EXEEXT) \
-	shape$(EXEEXT) \
-	shiny$(EXEEXT)
+	shape$(EXEEXT)
 
 all:	$(ALL) $(GLDEMOS)
 
@@ -367,13 +365,6 @@ gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
-shiny$(EXEEXT): shiny_panel.o shiny.o
-	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -o $@ shiny.o shiny_panel.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
-shiny_panel.o:	shiny_panel.h
-shiny_panel.cxx:	shiny_panel.fl
-
 shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) -I.. $(CXXFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
@@ -381,5 +372,5 @@ shape$(EXEEXT): shape.o
 
 
 #
-# End of "$Id: Makefile,v 1.19.2.7.2.39 2003/01/30 21:44:46 easysw Exp $".
+# End of "$Id: Makefile,v 1.19.2.7.2.40 2003/09/05 12:24:31 easysw Exp $".
 #
