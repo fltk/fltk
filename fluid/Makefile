@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.10.2.6.2.21 2002/07/14 17:03:31 easysw Exp $"
+# "$Id: Makefile,v 1.10.2.6.2.22 2002/07/25 17:07:06 easysw Exp $"
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -75,10 +75,10 @@ include makedepend
 install: $(PROGRAM)
 	echo "Installing FLUID in $(bindir)..."
 	-$(MKDIR) $(bindir)
-	$(CP) $(FLUID) $(bindir)/fluid
-	$(STRIP) $(bindir)/fluid
-	$(bindir)/fltk-config --post $(bindir)/fluid
-	$(CHMOD) 755 $(bindir)/fluid
+	$(CP) $(FLUID) $(bindir)/fluid$(EXEEXT)
+	$(STRIP) $(bindir)/fluid$(EXEEXT)
+	$(bindir)/fltk-config --post $(bindir)/fluid$(EXEEXT)
+	$(CHMOD) 755 $(bindir)/fluid$(EXEEXT)
 
 uninstall:
 	$(RM) $(bindir)/fluid
@@ -95,5 +95,5 @@ rebuild:
 	./fluid -c widget_panel.fl
 
 #
-# End of "$Id: Makefile,v 1.10.2.6.2.21 2002/07/14 17:03:31 easysw Exp $".
+# End of "$Id: Makefile,v 1.10.2.6.2.22 2002/07/25 17:07:06 easysw Exp $".
 #
