@@ -5,7 +5,7 @@ code_name {.cxx}
 gridx 5 
 gridy 5 
 snap 3
-decl {\#include <Fl/Fl_Preferences.H>} {public
+decl {\#include <FL/Fl_Preferences.H>} {public
 } 
 
 decl {\#include <stdio.h>} {public
