@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.29 2000/10/21 20:01:56 spitzak Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.30 2000/11/20 14:17:43 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -42,7 +42,8 @@
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 //
 
-#define USE_ASYNC_SELECT
+// MRS - this currently doesn't appear to work anymore; needs to be fixed!
+//#define USE_ASYNC_SELECT
 
 //
 // WM_SYNCPAINT is an "undocumented" message, which is finally defined in
@@ -950,5 +951,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.29 2000/10/21 20:01:56 spitzak Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.30 2000/11/20 14:17:43 easysw Exp $".
 //
