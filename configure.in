@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.62 2002/04/24 18:29:05 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.63 2002/04/26 12:39:32 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -671,6 +671,10 @@ else
 		OPTIM="$OPTIM +DAportable"
             fi
 
+	    if test $PICFLAG = 1; then
+		OPTIM="+z $OPTIM"
+	    fi
+
 	    OPTIM="$OPTIM +W336,501,736,740,749,829"
 	    ;;
 	SunOS*)
@@ -724,5 +728,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.62 2002/04/24 18:29:05 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.63 2002/04/26 12:39:32 easysw Exp $".
 dnl
