@@ -131,7 +131,6 @@ int Fl_Choice::handle(int e) {
         (Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) return 0;
   case FL_PUSH:
     if (Fl::visible_focus()) Fl::focus(this);
-    Fl::event_is_click(0);
   J1:
     v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
     if (!v || v->submenu()) return 1;
