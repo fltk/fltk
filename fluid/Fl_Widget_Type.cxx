@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Type.cxx,v 1.5 1998/11/05 16:04:43 mike Exp $"
+// "$Id: Fl_Widget_Type.cxx,v 1.6 1998/11/09 14:06:25 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -1210,7 +1210,7 @@ void Fl_Widget_Type::write_static() {
     write_c("\n");
     if (!public_) write_c("static ");
     else write_h("extern %s *%s;\n", t, c);
-    write_c("%s *%s;\n", t, c);
+    write_c("%s *%s=NULL;\n", t, c);
   }
   if (callback() && !is_name(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -1699,5 +1699,5 @@ int Fl_Widget_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Widget_Type.cxx,v 1.5 1998/11/05 16:04:43 mike Exp $".
+// End of "$Id: Fl_Widget_Type.cxx,v 1.6 1998/11/09 14:06:25 mike Exp $".
 //
