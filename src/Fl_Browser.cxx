@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.3 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.4 2002/03/05 10:42:13 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -257,11 +257,11 @@ int Fl_Browser::item_width(void* v) const {
   int w = 0;
 
   while (*i) { // add up all tab-seperated fields
-    w += *i++;
     char* e;
     for (e = str; *e && *e != column_char(); e++);
-    if (!*e) return 0; // last one occupied by text
+    if (!*e) break; // last one occupied by text
     str = e+1;
+    w += *i++;
   }
 
   // OK, we gotta parse the string and find the string width...
@@ -269,9 +269,8 @@ int Fl_Browser::item_width(void* v) const {
   Fl_Font font = textfont();
   int done = 0;
 
-  // MRS - might this cause problems on some platforms - order of operations?
-
-  while (*str == format_char_ && *++str && *str != format_char_) {
+  while (*str == format_char_ && str[1] && str[1] != format_char_) {
+    str ++;
     switch (*str++) {
     case 'l': case 'L': size = 24; break;
     case 'm': case 'M': size = 18; break;
@@ -293,6 +292,9 @@ int Fl_Browser::item_width(void* v) const {
     if (done)
       break;
   }
+
+  if (*str == format_char_ && str[1])
+    str ++;
 
   fl_font(font, size);
   return w + int(fl_width(str)) + 6;
@@ -493,5 +495,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.3 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.4 2002/03/05 10:42:13 easysw Exp $".
 //
