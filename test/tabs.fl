@@ -5,7 +5,7 @@ code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {674 671 321 324} resizable visible
+    xywh {733 489 321 324} resizable visible
   } {
     Fl_Tabs {} {open
       xywh {10 10 300 200} selection_color 7 resizable
@@ -34,7 +34,7 @@ Function {} {open
         Fl_Button {} {
           label button1
           callback {fl_message("Test to see if this modal window prevents you from "
-           "changing the tabs. It should.");} selected
+           "changing the tabs. It should.");}
           xywh {20 60 100 30}
           code0 {\#include <FL/fl_ask.H>}
         }
@@ -45,6 +45,12 @@ Function {} {open
         Fl_Button {} {
           label {This is stuff inside the Fl_Group "tab2"}
           xywh {30 140 260 30}
+        }
+        Fl_Button {} {
+          label {Test event blocking by modal window}
+          callback {fl_message("Make sure you cannot change the tabs while this modal window is up");} selected
+          xywh {30 170 260 30}
+          code0 {\#include <FL/fl_ask.H>}
         }
       }
       Fl_Group {} {
