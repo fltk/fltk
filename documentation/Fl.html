@@ -741,7 +741,15 @@ overlay colormap.
 <H4><A NAME="Fl.get_color">unsigned get_color(Fl_Color c);<BR>
 void get_color(Fl_Color c, uchar&amp;r, uchar&amp;g, uchar&amp;b);</A></H4>
 
-<P>Returns the color index or RGB value for the given FLTK color index.
+<P>Returns the RGB value(s) for the given FLTK color index. The
+first form returns the RGB values packed in a 32-bit unsigned
+integer with the red value in the upper 8 bits, the green value
+in the next 8 bits, and the blue value in bits 8-15.  The lower
+8 bits will always be 0.
+
+<P>The second form returns the red, green, and blue values
+separately in referenced variables.
+
 
 <H4><A NAME="Fl.get_font">const char* get_font(Fl_Font);</A></H4>
 
