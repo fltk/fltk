@@ -32,11 +32,28 @@
 
 #ifdef HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
+
+static int			num_screens = 0;
+static XineramaScreenInfo	*screens;
+
+static void xinerama_init() {
+  if (!fl_display) fl_open_display();
+
+  if (XineramaIsActive(fl_display)) {
+    screens = XineramaQueryScreens(fl_display, &num_screens);
+  } else num_screens = 1;
+}
 #endif // HAVE_XINERAMA
 
 
 // Return the number of screens...
 int Fl::screen_count() {
+#ifdef WIN32
+#elif defined(__APPLE__)
+#elif defined(HAVE_XINERAMA);
+  if (!num_screens) xinerama_init();
+  return num_screens;
+#endif // WIN32
 }
 
 // Return the screen bounding rect for the given mouse position...
@@ -44,43 +61,23 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
 #ifdef WIN32
 #elif defined(__APPLE__)
 #elif defined(HAVE_XINERAMA)
-  if (!fl_display) fl_open_display();
+  if (!num_screens) xinerama_init();
 
-  if (XineramaIsActive(fl_display)) {
-    int			i,
-			num_rects;
-    XineramaScreenInfo	*rects;
+  if (num_screens > 0) {
+    int i;
 
-
-    rects = XineramaQueryScreens(fl_display, &num_rects);
-
-#  ifdef DEBUG
-    printf("num_rects = %d\n", num_rects);
-    printf("window_->x_root() = %d, y_root() = %d\n",
-           window_->x_root(), window_->y_root());
-#  endif // DEBUG
-
-    for (i = 0; i < num_rects; i ++) {
-#  ifdef DEBUG
-      printf("rects[%d] = [%d %d %d %d]\n", i,
-	     rects[i].x_org, rects[i].y_org, rects[i].width,
-	     rects[i].height);
-#  endif // DEBUG
-
-      if (mx >= rects[i].x_org &&
-	  mx < (rects[i].x_org + rects[i].width) &&
-	  my >= rects[i].y_org &&
-	  my < (rects[i].y_org + rects[i].height))
-      {
-	x = rects[i].x_org;
-	y = rects[i].y_org;
-	w = rects[i].width;
-	h = rects[i].height;
-	break;
+    for (i = 0; i < num_screens; i ++) {
+      if (mx >= screens[i].x_org &&
+	  mx < (screens[i].x_org + screens[i].width) &&
+	  my >= screens[i].y_org &&
+	  my < (screens[i].y_org + screens[i].height)) {
+	x = screens[i].x_org;
+	y = screens[i].y_org;
+	w = screens[i].width;
+	h = screens[i].height;
+	return;
       }
     }
-
-    XFree(rects);
   }
 #endif // WIN32
 
@@ -95,43 +92,14 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
 #ifdef WIN32
 #elif defined(__APPLE__)
 #elif defined(HAVE_XINERAMA)
-  if (!fl_display) fl_open_display();
+  if (!num_screens) xinerama_init();
 
-  if (XineramaIsActive(fl_display)) {
-    int			i,
-			num_rects;
-    XineramaScreenInfo	*rects;
-
-
-    rects = XineramaQueryScreens(fl_display, &num_rects);
-
-#  ifdef DEBUG
-    printf("num_rects = %d\n", num_rects);
-    printf("window_->x_root() = %d, y_root() = %d\n",
-           window_->x_root(), window_->y_root());
-#  endif // DEBUG
-
-    for (i = 0; i < num_rects; i ++) {
-#  ifdef DEBUG
-      printf("rects[%d] = [%d %d %d %d]\n", i,
-	     rects[i].x_org, rects[i].y_org, rects[i].width,
-	     rects[i].height);
-#  endif // DEBUG
-
-      if (mx >= rects[i].x_org &&
-	  mx < (rects[i].x_org + rects[i].width) &&
-	  my >= rects[i].y_org &&
-	  my < (rects[i].y_org + rects[i].height))
-      {
-	x = rects[i].x_org;
-	y = rects[i].y_org;
-	w = rects[i].width;
-	h = rects[i].height;
-	break;
-      }
-    }
-
-    XFree(rects);
+  if (num_screens > 0 && n < num_screens) {
+    x = screens[n].x_org;
+    y = screens[n].y_org;
+    w = screens[n].width;
+    h = screens[n].height;
+    return;
   }
 #endif // WIN32
 
