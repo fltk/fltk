@@ -1,10 +1,14 @@
-CHANGES IN FLTK 1.1.4rc2
+CHANGES IN FLTK 1.1.4
 
-	- OS X: some changes to make ProjectBuilder compiles
-	  possible. I'll add the PB project files later.
-	- OS X: FLTK would not know where a window was positioned
+	- OSX: some changes to make ProjectBuilder compiles
+	  possible.
+	- OSX: FLTK would not know where a window was positioned
 	  by the OS. As a result, popup menus could open at 
 	  wrong positions.
+
+
+CHANGES IN FLTK 1.1.4rc2
+
 	- Fl_Window::show(argc,argv) incorrectly opened the
 	  display prior to parsing the arguments; this prevented
 	  the "-display foo" option from working (STR #111)
