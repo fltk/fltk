@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.21 2001/12/19 15:57:32 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.22 2001/12/19 15:59:51 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2402,6 +2402,7 @@ Fl_Help_View::value(const char *v)	// I - Text to view
 
   set_changed();
   topline(0);
+  leftline(0);
 }
 
 
@@ -2566,5 +2567,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.21 2001/12/19 15:57:32 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.22 2001/12/19 15:59:51 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b8
 
+	- Fl_Help_View didn't reset the horizontal scroll
+	  position when showing a new page.
 	- Fl_Pack now allows any child widget to be the
 	  resizable() widget, not just the last one.
 	- MacOS: opaque window resizing, all events except 
