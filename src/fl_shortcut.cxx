@@ -1,5 +1,5 @@
 //
-// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.9 2003/01/30 21:44:21 easysw Exp $"
+// "$Id: fl_shortcut.cxx,v 1.4.2.9.2.10 2003/05/21 01:50:14 easysw Exp $"
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -78,6 +78,7 @@ int Fl::test_shortcut(int shortcut) {
 // This table must be in numeric order by fltk (X) keysym number:
 struct Keyname {int key; const char* name;};
 static Keyname table[] = {
+  {' ', "Space"},
   {FL_BackSpace, "Backspace"},
   {FL_Tab,	"Tab"},
   {0xff0b/*XK_Clear*/, "Clear"},
@@ -200,5 +201,5 @@ int Fl_Widget::test_shortcut() {
 }
 
 //
-// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.9 2003/01/30 21:44:21 easysw Exp $".
+// End of "$Id: fl_shortcut.cxx,v 1.4.2.9.2.10 2003/05/21 01:50:14 easysw Exp $".
 //

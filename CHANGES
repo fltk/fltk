@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Menu items were not drawn using the font specified in
+	  the Fl_Menu_Item structure (STR #30)
 	- Long menus that were aligned such that the top of an
 	  item was exactly at the top of the screen would not
 	  scroll (STR #33)

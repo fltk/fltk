@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.25 2003/05/21 01:37:17 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.26 2003/05/21 01:50:13 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -360,8 +360,10 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
     int x1 = xx+ww-sz-3;
     fl_polygon(x1, y1, x1, y1+sz, x1+sz, y1+sz/2);
   } else if (m->shortcut_) {
-    Fl_Font f = button ? button->textfont() : FL_HELVETICA;
-    fl_font(f, button ? button->textsize() : FL_NORMAL_SIZE);
+    Fl_Font f = m->labelfont_ ? (Fl_Font)m->labelfont_ :
+                    button ? button->textfont() : FL_HELVETICA;
+    fl_font(f, m->labelsize_ ? m->labelsize_ :
+                   button ? button->textsize() : FL_NORMAL_SIZE);
     fl_draw(fl_shortcut_label(m->shortcut_), xx, yy, ww-3, hh, FL_ALIGN_RIGHT);
   }
 
@@ -791,5 +793,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.25 2003/05/21 01:37:17 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.26 2003/05/21 01:50:13 easysw Exp $".
 //
