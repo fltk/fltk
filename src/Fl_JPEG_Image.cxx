@@ -59,10 +59,12 @@ extern "C"
 // Custom JPEG error handling structure...
 //
 
+#ifdef HAVE_LIBJPEG
 struct fl_jpeg_error_mgr {
   jpeg_error_mgr	pub_;		// Destination manager...
   int			err_;		// Error flag
 };
+#endif // HAVE_LIBJPEG
 
 
 //
