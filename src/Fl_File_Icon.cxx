@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.10 2002/04/11 11:52:41 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.11 2002/04/12 20:16:07 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -43,9 +43,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif // HAVE_STRINGS_H
 #include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -53,8 +50,6 @@
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
 #  include <io.h>
 #  define F_OK	0
-#  define strcasecmp stricmp
-#  define strncasecmp strnicmp
 #else
 #  include <unistd.h>
 #endif /* WIN32 || __EMX__ */
@@ -471,5 +466,5 @@ Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.10 2002/04/11 11:52:41 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.11 2002/04/12 20:16:07 easysw Exp $".
 //

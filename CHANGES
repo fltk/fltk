@@ -1,5 +1,13 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_Widget::handle() returned 1 for FL_ENTER and
+	  FL_LEAVE events, which caused some compatibility
+	  problems with 1.0 code.
+	- Fl_Box::handle() now returns 1 for FL_ENTER and
+	  FL_LEAVE events so that tooltips will work with Fl_Box
+	  widgets.
+	- Some source files still defined strcasecmp and
+	  strncasecmp under WIN32.
 	- Some source files still used the "false" and "true"
 	  C++ keywords, even though several of our "supported"
 	  C++ compilers don't support them.  Using 0 and 1 until

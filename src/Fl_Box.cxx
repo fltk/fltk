@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Box.cxx,v 1.4.2.3.2.2 2002/04/09 17:20:23 easysw Exp $"
+// "$Id: Fl_Box.cxx,v 1.4.2.3.2.3 2002/04/12 20:16:07 easysw Exp $"
 //
 // Box widget for the Fast Light Tool Kit (FLTK).
 //
@@ -31,6 +31,12 @@ void Fl_Box::draw() {
   draw_label();
 }
 
+int Fl_Box::handle(int event) {
+  if (event == FL_ENTER || event == FL_LEAVE) return 1;
+  else return 0;
+}
+
+
 //
-// End of "$Id: Fl_Box.cxx,v 1.4.2.3.2.2 2002/04/09 17:20:23 easysw Exp $".
+// End of "$Id: Fl_Box.cxx,v 1.4.2.3.2.3 2002/04/12 20:16:07 easysw Exp $".
 //
