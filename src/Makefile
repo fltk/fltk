@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.2 1999/03/25 15:47:11 mike Exp $"
+# "$Id: Makefile,v 1.18.2.3 1999/03/25 16:09:54 mike Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -200,7 +200,8 @@ install: ../lib/$(LIBNAME) $(DSONAME)
 	@-mkdir -p $(includedir)
 	@rm -rf $(includedir)/FL $(includedir)/Fl
 	@-cp -r ../FL $(includedir)
-	@-chmod -R 644 $(includedir)/FL
+	@-chmod 755 $(includedir)/FL
+	@-chmod 644 $(includedir)/FL/*
 	@for file in $(includedir)/FL/*.H; do\
 		newfile="`basename $$file H`h";\
 		ln -s $$file $(includedir)/FL/$$newfile;\
@@ -208,5 +209,5 @@ install: ../lib/$(LIBNAME) $(DSONAME)
 	@-ln -s FL $(includedir)/Fl
 
 #
-# End of "$Id: Makefile,v 1.18.2.2 1999/03/25 15:47:11 mike Exp $".
+# End of "$Id: Makefile,v 1.18.2.3 1999/03/25 16:09:54 mike Exp $".
 #
