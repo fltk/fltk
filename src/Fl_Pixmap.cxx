@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pixmap.cxx,v 1.9.2.2 2000/06/05 21:20:55 mike Exp $"
+// "$Id: Fl_Pixmap.cxx,v 1.9.2.3 2000/09/23 07:33:39 spitzak Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -72,10 +72,10 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       // has two screens with differnet depths
       static uchar hiNibble[16] =
       { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
-	0x10, 0x90, 0x50, 0xd0, 0x20, 0xb0, 0x70, 0xf0 };
+	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
       static uchar loNibble[16] =
       { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
-	0x01, 0x09, 0x05, 0x0d, 0x02, 0x0b, 0x07, 0x0f };
+	0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
       int np  = GetDeviceCaps(fl_gc, PLANES);	//: was always one on sample machines
       int bpp = GetDeviceCaps(fl_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
       int Bpr = (bpp*w+7)/8;			//: bytes per row
@@ -194,5 +194,5 @@ void Fl_Pixmap::label(Fl_Menu_Item* o) {
 }
 
 //
-// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.2 2000/06/05 21:20:55 mike Exp $".
+// End of "$Id: Fl_Pixmap.cxx,v 1.9.2.3 2000/09/23 07:33:39 spitzak Exp $".
 //
