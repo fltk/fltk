@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser_.cxx,v 1.10.2.15 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Browser_.cxx,v 1.10.2.16 2001/07/05 00:20:41 uid28863 Exp $"
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -563,35 +563,36 @@ int Fl_Browser_::handle(int event) {
       void* l = find_item(my);
       whichway = 1;
       if (Fl::event_state(FL_CTRL)) { // toggle selection:
+      TOGGLE:
 	if (l) {
 	  whichway = !item_selected(l);
 	  change = select(l, whichway, when() & FL_WHEN_CHANGED);
 	}
       } else if (Fl::event_state(FL_SHIFT)) { // extend selection:
-	change = 0;
-	if (selection_ && l != selection_) {
-	  void *m = l;
-	  int down = 0;
-	  whichway = item_selected(selection_);
-	  for (m = selection_; m; m = item_next(m)) {
-	    if (m == l) down = 1;
-	  }
-	  void *n;
-	  if (down) {
-	    m = selection_;
-	    n = l;
-	  } else {
-	    m = l;
-	    n = selection_;
-	  }
-	  while (m != n) {
+	if (l == selection_) goto TOGGLE;
+	// state of previous selection determines new value:
+	whichway = l ? !item_selected(l) : 1;
+	// see which of the new item or previous selection is earlier,
+	// by searching from the previous forward for this one:
+	int down;
+	if (!l) down = 1;
+	else {for (void* m = selection_; ; m = item_next(m)) {
+	  if (m == l) {down = 1; break;}
+	  if (!m) {down = 0; break;}
+	}}
+	if (down) {
+	  for (void* m = selection_; m != l; m = item_next(m))
 	    select(m, whichway, when() & FL_WHEN_CHANGED);
-	    m = item_next(m);
+	} else {
+	  void* e = selection_;
+	  for (void* m = item_next(l); m; m = item_next(m)) {
+	    select(m, whichway, when() & FL_WHEN_CHANGED);
+	    if (m == e) break;
 	  }
-	  select(n, whichway, when() & FL_WHEN_CHANGED);
-	  select(l, whichway, when() & FL_WHEN_CHANGED);
-	  change = 1;
 	}
+	// do the clicked item last so the select box is around it:
+	if (l) select(l, whichway, when() & FL_WHEN_CHANGED);
+	change = 1;
       } else { // select only this item
 	change = select_only(l, when() & FL_WHEN_CHANGED);
       }
@@ -706,5 +707,5 @@ void Fl_Browser_::item_select(void*, int) {}
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //
-// End of "$Id: Fl_Browser_.cxx,v 1.10.2.15 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Browser_.cxx,v 1.10.2.16 2001/07/05 00:20:41 uid28863 Exp $".
 //
