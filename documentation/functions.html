@@ -48,7 +48,7 @@ button and waits for the user to hit a button.  The return value is 1
 if the user hits Yes, 0 if they pick No.  The enter key is a shortcut 
 for Yes and ESC is a shortcut for No. 
 <P ALIGN=CENTER><IMG src=./fl_ask.gif border=1></P>
-<H3><A name=fl_choice>int fl_choice(const char *q, const char *b0, 
+<H3><A name=fl_choice2>int fl_choice(const char *q, const char *b0, 
 const char *b1, const char *b2, ...)</A></H3>
 
  Shows the message with three buttons below it marked with the strings
@@ -59,7 +59,7 @@ positioned &quot;backwards&quot; You can hide buttons by passing
 <TT>NULL</TT> as their labels.
 
 <P ALIGN=CENTER><IMG src=./fl_choice.gif border=1></P>
-<H3><A name=fl_input>const char *fl_input(const char *label, const char 
+<H3><A name=fl_input2>const char *fl_input(const char *label, const char 
 *deflt = 0, ...)</A></H3>
  Pops up a window displaying a string, lets the user edit it, and 
 return the new value.  The cancel button returns <TT>NULL</TT>. <I>The 

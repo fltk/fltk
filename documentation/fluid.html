@@ -17,9 +17,8 @@ single source file to compile.  Most programs are more complex than
 this, so you write other <TT>.cxx</TT> files that call the FLUID functions. 
  These <TT>.cxx</TT> files must <TT>#include</TT> the <TT>.h</TT> file or they can <TT>
 #include</TT> the <TT>.cxx</TT> file so it still appears to be a single source 
-file. 
-<CENTER><IMG src=./fluid-org.gif></CENTER>
-</P>
+file.
+<P ALIGN=CENTER><IMG src=fluid-org.gif>
 <P>Normally the FLUID file defines one or more functions or classes which
 output C++ code.  Each function defines a one or more FLTK 
 windows, and all the widgets that go inside those windows. </P>
@@ -65,63 +64,14 @@ at if the user calls it with the same switches.
 '&amp;' then you will be able to abort FLUID by typing ^C on the terminal. It 
 will exit immediately, losing any changes. </P>
 <H2>Running FLUID Under Microsoft Windows</H2>
-To run FLUID under WIN32, double-click on the <I>fluid.exe</I> file. 
+To run FLUID under WIN32, double-click on the <I>FLUID.exe</I> file. 
 You can also run FLUID from the Command Prompt window (FLUID always 
 runs in the background under WIN32). 
-<H2>A Short Tutorial</H2>
-<OL>
-<LI>Type &quot;FLUID&quot; </LI>
-<LI>Pick &quot;New/code/function&quot; off the menu. </LI>
-<LI>Hit Tab, Delete to delete the function name and hit OK.  This is 
- how you get FLUID to output a &quot;main()&quot; function.  The text &quot;main()&quot; 
- with a triangle next to it should appear highlighted in the main 
- window. </LI>
-<LI>Pick &quot;New/group/Window&quot; off the menu. </LI>
-<LI>Move the new window and resize it to the size you want. </LI>
-<LI>Pick &quot;New/buttons/Button&quot; off the menu. </LI>
-<LI>Hit the &quot;OK&quot; button to dismiss the panel that appears. </LI>
-<LI>In the window you created, try moving the button by dragging it 
- around.  Notice that it &quot;snaps&quot; to fixed locations.  If you want to 
- drag it smoothly, hold down Alt.  You can also change the size of the 
- steps with Edit/Preferences. </LI>
-<LI>Try resizing the widget by dragging the edges and corners. </LI>
-<LI>Type Alt+c to copy the widget. </LI>
-<LI>Type Alt+v to paste a copy into the window. </LI>
-<LI>Type Alt+v several times. </LI>
-<LI>Drag the widgets and resize them so they don't overlap.  Notice 
- that you have to click a widget to pick it first, then drag it. </LI>
-<LI>Try selecting several widgets by dragging a box around them.  Check 
- what happens when you move them, or when you drag an edge to resize 
- them. </LI>
-<LI>You can also use Shift+click to toggle widgets on and off. </LI>
-<LI>You can also select widgets by clicking on them in the list in the 
- main window, try that. </LI>
-<LI>Double-click one of the widgets.  You will get a control panel. </LI>
-<LI>Try changing the &quot;label&quot;.  Try changing other items near the top of 
- the panel.  To see any changes to the box type clearer, type &quot;Alt+o&quot; 
- to make the red overlay disappear. </LI>
-<LI>Type &quot;#include &lt;stdlib.h&gt;&quot; into the first line of &quot;extra code:&quot;. </LI>
-<LI>Type &quot;exit(0);&quot; into the &quot;callback:&quot;. </LI>
-<LI>Hit OK. </LI>
-<LI>Pick &quot;File/Save As&quot; off the menu. </LI>
-<LI>Type &quot;test.fl&quot; into the file chooser and hit return. </LI>
-<LI>Pick &quot;File/Write Code&quot; off the menu, hit OK on the confirmation 
-panel. </LI>
-<LI>Go back to your terminal window.  Type &quot;more test.cxx&quot; and &quot;more 
- test.h&quot; and you can see the code it made.  Also try &quot;more test.fl&quot; to 
- see how FLUID saves its data. </LI>
-<LI>Type &quot;make test&quot; (you may have to add libaries to your Makefile). </LI>
-<LI>Type &quot;./test&quot; to run your program. </LI>
-<LI>Try the buttons.  The one you put the code into will exit the 
- program. </LI>
-<LI>Type &quot;Alt+Q&quot; to exit FLUID. </LI>
-<LI>Ok, now try to make a real program. </LI>
-</OL>
 <H2>Compiling <TT>.fl</TT> files</H2>
  FLUID can also be called as a command-line &quot;compiler&quot; to create the 
 <TT>.cxx</TT> and <TT>.h</TT> file from a <TT>.fl</TT> file.  To do this type: 
 <UL><PRE>
-FLUID -c <I>filename.fl</I>
+fluid -c <I>filename.fl</I>
 </PRE></UL>
 This will read the <TT>filename.fl</TT> file and write <I>filename.cxx</I> and <I>
 filename.h</I>. The directory will be stripped, so they are written to 
@@ -131,7 +81,7 @@ code.  In a makefile you can use a line like this:
 <UL>
 <PRE>
 my_panels.h my_panels.cxx: my_panels.fl
-	fluid -c my_panels.fl
+	FLUID -c my_panels.fl
 </PRE>
 </UL>
  Some versions of make will accept rules like this to allow all <TT>.fl</TT> 
@@ -140,12 +90,298 @@ files found to be compiled:
 <PRE>
 .SUFFIXES: .fl .cxx .h
 .fl.h .fl.cxx:
-	fluid -c $&lt;
+	FLUID -c $&lt;
 </PRE>
 </UL>
-<H2>The Widget Browser</H2>
-<TABLE cellpadding=0 cellspacing=0>
-<TR><TD>The main window shows a menu bar and a scrolling browser of all 
+<H2>A Short Tutorial</H2>
+FLUID is an amazingly powerful little program. However,
+this power comes at a price, it is not always obvious how
+to accomplish seemingly simple tasks with it. This
+tutorial will show you how to generate a complete user
+interface class with FLUID.
+<P>
+<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=TOP>
+<TD>
+The program shown to the right is called CubeView. The window you see
+is of class CubeViewUI, and is completely generated by FLUID, including
+class member functions. The central display of the cube is a separate
+subclass of Fl_Gl_Window called CubeView. CubeViewUI manages CubeView
+using callbacks from the various sliders and rollers to manipulate the
+viewing angle and zoom of CubeView.
+<p>At the completion of this tutorial you will (hopefully) understand
+how to:
+<ol>
+<li>Use FLUID to create a complete user interface class, including
+constructor and any member functions necessary.
+<li>Use FLUID to set callbacks member functions of a custom widget
+classes.
+<li>Subclass an <a
+href="Fl_Gl_Window.html#Fl_Gl_Window"><TT>Fl_Gl_Window</TT></A> to suit
+your purposes.
+</ol>
+</TD>
+<TD><IMG SRC="cubeview.gif"></TD>
+</TR>
+</TABLE>
+<h3>The CubeView Class</h3>
+The CubeView class is a subclass of Fl_Gl_Window. It has methods for
+setting the zoom, the <i>x</i> and <i>y</i> pan, and the rotation angle
+about the <i>x</i> and <i>y</i>axes.
+<p>You can safely skip this section as long as you realize the CubeView
+is a sublass of <tt>Fl_Gl_Window</tt> and will respond to calls from
+CubeViewUI, generated by FLUID.
+<h4><a name="def">The CubeView Class Definition</a></h4>
+Here is the CubeView class definition, as given by its header file
+"test/CubeView.hpp":
+<ul><pre>
+class CubeView : public Fl_Gl_Window {
+  public:
+    CubeView(int x,int y,int w,int h,const char *l=0);
+    // this value determines the scaling factor used to draw the cube.
+    double size;
+    /* Set the rotation about the vertical (y ) axis.
+     *
+     * This function is called by the horizontal roller in CubeViewUI
+     * and the initialize button in CubeViewUI.
+     */
+    void v_angle(float angle){vAng=angle;};
+    // Return the rotation about the vertical (y ) axis.
+    float v_angle(){return vAng;};
+    /* Set the rotation about the horizontal (x ) axis.
+     *
+     * This function is called by the vertical roller in CubeViewUI
+       and the
+     * initialize button in CubeViewUI.
+     */
+    void h_angle(float angle){hAng=angle;};
+    // the rotation about the horizontal (x ) axis.
+    float h_angle(){return hAng;};
+    /* Sets the x shift of the cube view camera.
+     *
+     * This function is called by the slider in CubeViewUI and the
+     * initialize button in CubeViewUI.
+     */
+    void panx(float x){xshift=x;};
+    /* Sets the y shift of the cube view camera.
+     *
+     * This function is called by the slider in CubeViewUI and the
+     * initialize button in CubeViewUI.
+     */
+    void pany(float y){yshift=y;};
+    /* The widget class draw() override.
+     * The draw() function initialize Gl for another round of
+     * drawing then calls specialized functions for drawing each
+     * of the entities displayed in the cube view.
+     */
+    void draw();
+
+  private:
+    /* Draw the cube boundaries
+     * Draw the faces of the cube using the boxv[] vertices, using
+     * GL_LINE_LOOP for the faces. The color is #defined by
+     * CUBECOLOR.
+     */
+    void drawCube();
+    
+    float vAng,hAng; float xshift,yshift;
+
+    float boxv0[3];float boxv1[3]; float boxv2[3];float boxv3[3];
+    float boxv4[3];float boxv5[3]; float boxv6[3];float boxv7[3];
+};
+</pre></ul>
+<h4><a name="imp">The CubeView Class Implementation</a></h4>
+Here is the CubeView implementation. It is very similar to the
+&quot;cube&quot; demo included with FLTK.
+<ul><pre>
+#include "CubeView.hpp"
+#include &lt;math.h&gt;
+
+CubeView::CubeView(int x,int y,int w,int h,const char *l)
+            : Fl_Gl_Window(x,y,w,h,l)
+{
+    vAng = 0.0; hAng=0.0; size=10.0;
+    /* The cube definition. These are the vertices of a unit cube
+     * centered on the origin.*/
+    boxv0[0] = -0.5; boxv0[1] = -0.5; boxv0[2] = -0.5; boxv1[0] = 0.5;
+    boxv1[1] = -0.5; boxv1[2] = -0.5; boxv2[0] = 0.5; boxv2[1] = 0.5;
+    boxv2[2] = -0.5; boxv3[0] = -0.5; boxv3[1] = 0.5; boxv3[2] = -0.5;
+    boxv4[0] = -0.5; boxv4[1] = -0.5; boxv4[2] = 0.5; boxv5[0] = 0.5;
+    boxv5[1] = -0.5; boxv5[2] = 0.5; boxv6[0] = 0.5; boxv6[1] = 0.5;
+    boxv6[2] = 0.5; boxv7[0] = -0.5; boxv7[1] = 0.5; boxv7[2] = 0.5;
+};
+
+// The color used for the edges of the bounding cube.
+#define CUBECOLOR 255,255,255,255
+
+void CubeView::drawCube() {
+/* Draw a colored cube */
+    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0);
+    v3f(boxv1); v3f(boxv2); v3f(boxv3); glEnd();
+    
+    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv5);
+    v3f(boxv4); v3f(boxv7); v3f(boxv6); glEnd();
+
+    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0);
+    v3f(boxv4); v3f(boxv5); v3f(boxv1); glEnd();
+
+    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv2);
+    v3f(boxv6); v3f(boxv7); v3f(boxv3); glEnd();
+
+    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv0);
+    v3f(boxv3); v3f(boxv7); v3f(boxv4); glEnd();
+
+    glBegin(GL_LINE_LOOP); glColor4ub(CUBECOLOR); v3f(boxv1);
+    v3f(boxv5); v3f(boxv6); v3f(boxv2); glEnd();
+
+#define ALPHA 128
+    glBegin(GL_QUADS); glColor4ub( 0, 0, 255, ALPHA); v3f(boxv0);
+    v3f(boxv1); v3f(boxv2); v3f(boxv3); glEnd();
+
+    glBegin(GL_QUADS); glColor4ub(255, 255, 0, ALPHA); v3f(boxv0);
+    v3f(boxv4); v3f(boxv5); v3f(boxv1); glEnd();
+
+    glBegin(GL_QUADS); glColor4ub( 0, 255, 255, ALPHA); v3f(boxv2);
+    v3f(boxv6); v3f(boxv7); v3f(boxv3); glEnd();
+
+    glBegin(GL_QUADS); glColor4ub(255, 0, 0, ALPHA); v3f(boxv4);
+    v3f(boxv5); v3f(boxv6); v3f(boxv7); glEnd();
+
+    glBegin(GL_QUADS); glColor4ub(255, 0, 255, ALPHA); v3f(boxv0);
+    v3f(boxv3); v3f(boxv7); v3f(boxv4); glEnd();
+
+    glBegin(GL_QUADS); glColor4ub( 0, 255, 0, ALPHA); v3f(boxv1);
+    v3f(boxv5); v3f(boxv6); v3f(boxv2); glEnd();
+};//drawCube
+
+void CubeView::draw() {
+    if (!valid()) {
+        glLoadIdentity(); glViewport(0,0,w(),h());
+        glOrtho(-10,10,-10,10,-20000,10000); glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPushMatrix(); glTranslatef(xshift, yshift, 0);
+    glRotatef(hAng,0,1,0); glRotatef(vAng,1,0,0);
+    glScalef(float(size),float(size),float(size)); drawCube();
+    glPopMatrix();
+};
+</pre></ul>
+
+<h3>The CubeViewUI Class</h3>
+We will completely construct a window to display and control the
+CubeView defined in the previous section using FLUID.
+<h4><a name="def">Defining the CubeViewUI Class</a></h4>
+Once you have started FLUID, the first step in defining a class is to
+create a new class within FLUID using the <b>New-&gt;Code-&gt;Class</b>
+menu item. Name the class &quot;CubeViewUI&quot; and leave the
+subclass blank. We do not need any inheritance for this
+window. You should see the new class declaration in the FLUID
+browser window.
+<p align=center><img src="fluid1.gif"></p>
+<h4><a name="addcon">Adding the Class Constructor</a></h4>
+Click on the CubeViewUI class in the FLUID window and add a new method
+by selecting <b>New-&gt;Code-&gt;Function/Method.</b> The name of the
+function will also be CubeViewUI. FLUID will understands that this will
+be the constructor for the class and will generate the appropriate
+code. Make sure you declare the constructor public.
+<p>Then add a window to the CubeViewUI class. Highlight the name of
+the constructor in the FLUID browser window and click on
+<b>New-&gt;Group-&gt;Window</b>. In a similar manner add the
+following to the CubeViewUI constructor:
+<ul>
+<li>A horizontal roller named <tt>hrot</tt>
+<li>A vertical roller named <tt>vrot</tt>
+<li>A horizontal slider named <tt>xpan</tt>
+<li>A vertical slider named <tt>ypan</tt>
+<li>A horizontal value slider named <tt>zoom</tt>
+</ul>
+None of these additions need be public. And they shouldn't be
+unless you plan to expose them as part of the interface for
+CubeViewUI.
+<p>When you are finished you should have something like this:
+<p align=center><img src="fluid2.gif">
+<p>We will talk about the <tt>show()</tt> method that is highlighted
+shortly.
+<h4><a name="addcube">Adding the CubeView Widget</a></h4>
+<table cellpadding=0 cellspacing=0>
+<tr valign=top>
+<td>
+What we have is nice, but does little to show our cube. We have already
+defined the CubeView class and we would like to show it within the
+CubeViewUI.
+<p>The CubeView class inherits the <tt>Fl_Gl_Window</tt> class, which
+is created in the same way as a <tt>Fl_Box</tt> widget. Use
+<b>New-&gt;Other-&gt;Box</b> to add a square box to the main window.
+This will be no ordinary box, however.
+<p>The Box properties window will appear. The key to letting CubeViewUI
+display CubeView is to enter CubeView in the &quot;Class:&quot; text
+entry box. This tells FLUID that it is not an <tt>Fl_Box</tt>, but a
+similar widget with the same constructor. In the &quot;Extra
+Code:&quot; field enter <tt>#include &quot;CubeView.hpp&quot;</tt>
+<p>This <tt>#include</tt> is important, as we have just included
+CubeView as a member of CubeViewUI, so any public CubeView methods are
+now available to CubeViewUI.
+</td>
+<td><img src="fluid3.gif"></td>
+</tr>
+</table>
+<h4><a name="defcall">Defining the Callbacks</a></h4>
+Each of the widgets we defined before adding CubeView can have
+callbacks that call CubeView methods. You can call an external
+function or put in a short amount of code in the &quot;Callback&quot;
+field of the widget panel. For example, the callback for the
+<tt>ypan</tt> slider is:
+<ul><pre>
+cube-&gt;pany(((Fl_Slider *)o)->value());
+cube-&gt;redraw();
+</pre></ul>
+We call <tt>cube-&gt;redraw()</tt> after changing the value to update
+the CubeView window. CubeView could easily be modified to do this, but
+it is nice to keep this exposed in the case where you may want to do
+more than one view change only redrawing once saves a lot of time.
+<p>There is no reason no wait until after you have added CubeView to
+enter these callbacks. FLUID assumes you are smart enough not to refer
+to members or functions that don't exist.
+<h4><a name="addmeth">Adding a Class Method</a></h4>
+<table cellpadding=0 cellspacing=0>
+<tr valign=top>
+<td>
+You can add class methods within FLUID that have nothing to do with the
+GUI. An an example add a show function so that CubeViewUI can actually
+appear on the screen.
+<p>Make sure the top level CubeViewUI is selected and select
+<b>New-&gt;Code-&gt;Function/Method</b>. Just use the name
+<tt>show()</tt>. We don't need a return value here, and since we will
+not be adding any widgets to this method FLUID will assign it a return
+type of <tt>void</tt>.
+<p>Once the new method has been added, highlight its name and select
+New-&gt;Code-&gt;Code. Enter the method's code in the code window.
+</td>
+<td><img src="fluid4.gif"></td>
+</tr>
+</table>
+
+<h3><a name="addconst">Adding Constructor Initialization Code</a></h3>
+If you need to add code to initialize class, for example setting
+initial values of the horizontal and vertical angles in the
+CubeView, you can simply highlight the Constructor and select
+<b>New-&gt;Code-&gt;Code</b>. Add any required code.
+
+<h3><a name="gencode">Generating the Code</a></h3>
+Now that we have completely defined the CubeViewUI, we have to generate
+the code. There is one last trick to ensure this all works. Open the
+preferences dialog from <b>Edit-&gt;Preferences</b>.
+<p>At the bottom of the preferences dialog box is the key: "Include
+Header from Code". Select that option and set your desired file
+extensions and you are in business. You can include the CubeViewUI.h
+(or whatever extension you prefer) as you would any other C++ class.
+<HR BREAK>
+<H2>FLUID Reference</H2>
+
+<H3>The Widget Browser</H3>
+The main window shows a menu bar and a scrolling browser of all 
 the defined widgets.  The name of the <TT>.fl</TT> file being edited is shown in 
 the window title. 
 <P>The widgets are stored in a hierarchy.  You can open and close a 
@@ -166,9 +402,7 @@ well-known file-card tab interface. </P>
 <P>Widgets are shown in the browser by either their <I>name</I> (such 
 as &quot;main_panel&quot; in the example), or by their <I>type</I>
 and <I>label</I> (such as &quot;Button &quot;the green&quot;&quot;). </P>
-</TD><TD><IMG src=./fluid_main.gif width=245></TD></TR>
-</TABLE>
- You <I>select</I> widgets by clicking on their names, which highlights 
+<P>You <I>select</I> widgets by clicking on their names, which highlights 
 them (you can also select widgets from any displayed window).  You can 
 select many widgets by dragging the mouse across them, or by using 
 Shift+Click to toggle them on and off.  To select no widgets, click in 
@@ -177,11 +411,11 @@ be selected even when there is no visual indication of this.
 <P>You <I>open</I> widgets by double-clicking on them, or (to open several 
 widgets you have picked) by typing the F1 key.  A control panel will appear
 so you can change the widget(s).</P>
-<H2>Menu Items</H2>
+<H3>Menu Items</H3>
 <P>The menu bar at the top is duplicated as a pop-up menu on any 
 displayed window.  The shortcuts for all the menu items work in any 
 window.  The menu items are: </P>
-<H3>File/Open... (Alt+o)</H3>
+<H4>File/Open... (Alt+o)</H4>
 Discards the current editing session and reads in a different <TT>.fl</TT> file. 
 You are asked for confirmation if you have changed the current file.
 <P>FLUID can also read <tt>.fd</tt> files produced by the Forms and
@@ -192,37 +426,37 @@ terminal for all data it does not understand. You will probably need
 to edit the resulting setup to fix these errors. Be careful not to
 save the file without changing the name, as FLUID will write over the
 <tt>.fd</tt> file with its own format, which fdesign cannot read! </P>
-<H3>File/Save (Alt+s)</H3>
+<H4>File/Save (Alt+s)</H4>
 Writes the current data to the <TT>.fl</TT> file.  If the file is unnamed 
 then FLUID will ask for a filename. 
-<H3>File/Save As...(Alt+Shift+S)</H3>
+<H4>File/Save As...(Alt+Shift+S)</H4>
 Asks for a new filename and saves the file.
-<H3>File/Merge... (Alt+i)</H3>
+<H4>File/Merge... (Alt+i)</H4>
 Inserts the contents of another <TT>.fl</TT> file, without changing the name of 
 the current <TT>.fl</TT> file.  All the functions (even if they have the same 
 names as the current ones) are added, and you will have to use cut/paste to 
 put the widgets where you want. 
-<H3>File/Write Code (Alt+Shift+C)</H3>
+<H4>File/Write Code (Alt+Shift+C)</H4>
 &quot;Compiles&quot; the data into a <TT>.cxx</TT> and <TT>.h</TT>
 file. These are exactly the same as the files you get when you run
 FLUID with the <tt>-c</tt> switch. 
 <P>The output file names are the same as the <TT>.fl</TT> file, with
 the leading  directory and trailing &quot;.fl&quot; stripped, and
 &quot;.h&quot; or &quot;.cxx&quot; appended.  </P>
-<H3>File/Quit (Alt+q)</H3>
+<H4>File/Quit (Alt+q)</H4>
 Exits FLUID.  You are asked for confirmation if you have changed the 
 current data. 
-<H3>Edit/Undo (Alt+z)</H3>
+<H4>Edit/Undo (Alt+z)</H4>
 This isn't implemented yet.  You should do save  often so you can
 recover from any mistakes you make. 
-<H3>Edit/Cut (Alt+x)</H3>
+<H4>Edit/Cut (Alt+x)</H4>
 Deletes the selected widgets and all of their children.  These are saved 
 to a &quot;clipboard&quot; file and can be pasted back into any FLUID
 window.
-<H3>Edit/Copy (Alt+c)</H3>
+<H4>Edit/Copy (Alt+c)</H4>
 Copies the selected widgets and all of their children to the &quot;clipboard&quot; 
 file. 
-<H3>Edit/Paste (Alt+c)</H3>
+<H4>Edit/Paste (Alt+c)</H4>
 Pastes the widgets from the clipboard file. 
 <P>If the widget is a window, it is added to whatever function is 
 selected, or contained in the current selection. </P>
@@ -232,39 +466,39 @@ is the parent of the current selection. </P>
 <P>To avoid confusion, it is best to select exactly one widget before 
 doing a paste. </P>
 <P>Cut/paste is the only way to change the parent of a widget. </P>
-<H3>Edit/Select All (Alt+a)</H3>
+<H4>Edit/Select All (Alt+a)</H4>
 Selects all widgets in the same group as the current selection. 
 <P>If they are all selected already then this selects all widgets in 
 that group's parent.  Repeatedly typing Alt+a will select larger and 
 larger groups of widgets until everything is selected. </P>
-<H3>Edit/Open... (F1 or double click)</H3>
+<H4>Edit/Open... (F1 or double click)</H4>
 Displays the current widget in the attributes panel. If the widget is a window
 and it is not visible then the window is shown instead.
-<H3>Edit/Sort</H3>
+<H4>Edit/Sort</H4>
 Sorts the selected widgets into left to right, top to bottom 
 order.  You need to do this to make navigation keys in FLTK work 
 correctly.  You may then fine-tune the sorting with &quot;Earlier&quot; and 
 &quot;Later&quot;.  This does not affect the positions of windows or functions. 
-<H3>Edit/Earlier (F2)</H3>
+<H4>Edit/Earlier (F2)</H4>
 Moves all of the selected widgets one earlier in order among the 
 children of their parent (if possible).  This will affect navigation 
 order, and if the widgets overlap it will affect how they draw, as the 
 later widget is drawn on top of the earlier one.  You can also use this 
 to reorder functions, classes, and windows within functions. 
-<H3>Edit/Later (F3)</H3>
+<H4>Edit/Later (F3)</H4>
 Moves all of the selected widgets one later in order among the 
 children of their parent (if possible). 
-<H3>Edit/Group (F7)</H3>
+<H4>Edit/Group (F7)</H4>
 Creates a new <tt>Fl_Group</tt> and make all the currently selected widgets
 children of it. 
-<H3>Edit/Ungroup (F8)</H3>
+<H4>Edit/Ungroup (F8)</H4>
 Deletes the parent group if all the children of a group are selected.
-<H3>Edit/Overlays on/off (Alt+Shift+O)</H3>
+<H4>Edit/Overlays on/off (Alt+Shift+O)</H4>
 Toggles the display of the red overlays off, without changing the 
 selection.  This makes it easier to see box borders and how the layout 
 looks.  The overlays will be forced back on if you change the 
 selection. 
-<H3>Edit/Preferences (Alt+p)</H3>
+<H4>Edit/Preferences (Alt+p)</H4>
 <TABLE WIDTH=100%>
 <TR>
 <TD VALIGN=TOP>
@@ -281,7 +515,7 @@ file will include the header file automatically.
 </TR>
 </TABLE>
 
-<H3>New/Code/Function</H3>
+<H4>New/Code/Function</H4>
 Creates a new C function.  You will be asked for a name for the 
 function.  This name should be a legal C++ function template, without 
 the return type.  You can pass arguments which can be referred to by 
@@ -298,14 +532,14 @@ will call <tt>show()</tt> on all the windows it creates and then call
 <tt>Fl::run()</tt>.  This can also be used to test resize behavior or
 other parts of the user  interface.</P>
 <P>You can change the function name by double-clicking on the function. </P>
-<H3>New/Window</H3>
+<H4>New/Window</H4>
 Creates a new <tt>Fl_Window</tt> widget.  The window is added to the
 currently selected  function, or to the function containing the
 currently selected item.  The window will appear, sized to 100x100. 
 You can resize it to whatever size you require. 
 <P>The widget panel will also appear and is described later in this
 chapter.</P>
-<H3>New/...</H3>
+<H4>New/...</H4>
 All other items on the New menu are subclasses of <tt>Fl_Widget</tt>.  Creating 
 them will add them to the currently selected group or window, or the 
 group or window containing the currently selected widget.  The initial 
@@ -313,9 +547,9 @@ dimensions and position are chosen by copying the current widget, if
 possible. 
 <P>When you create the widget you will get the widget's control panel, 
 which is described later in this chapter. </P>
-<H3>Help/About FLUID</H3>
+<H4>Help/About FLUID</H4>
 Pops up a panel showing the version of FLUID. 
-<H2>The Widget Panel</H2>
+<H3>The Widget Panel</H3>
 <TABLE cellpadding=0 cellspacing=0>
 <TR><TD>When you double-click on a widget or a set of widgets you will get 
 the &quot;widget attribute panel&quot;. 
@@ -331,15 +565,15 @@ widgets are changed to the new value. </P>
 widget also makes the changes permanent.  FLUID checks for simple 
 syntax errors such as mismatched parenthesis in any code before 
 saving any text. </P>
-</TD><TD><IMG src=./fluid_widget.gif width=225></TD></TR>
+</TD><TD><IMG src=fluid_widget.gif width=225></TD></TR>
 </TABLE>
 &quot;Revert&quot; or &quot;Cancel&quot; put everything back to when you last brought up 
 the panel or hit OK.  However in the current version of FLUID, changes 
 to &quot;visible&quot; attributes (such as the color, label, box) are not undone 
 by revert or cancel.  Changes to code like the callbacks are undone, 
 however.
-<H2><A name=widget_attributes>Widget Attributes</A></H2>
-<H3>Name (text field)</H3>
+<H3><A name=widget_attributes>Widget Attributes</A></H3>
+<H4>Name (text field)</H4>
 Name of a variable to declare, and to store a pointer to this 
 widget into.  This variable will be of type &quot;&lt;class&gt;*&quot;.  If the name is 
 blank then no variable is created. 
@@ -347,10 +581,10 @@ blank then no variable is created.
 etc.  This will cause FLUID to declare an array of pointers.  The array 
 is big enough that the highest number found can be stored.  All widgets 
 that in the array must be the same type. </P>
-<H3>Type (upper-right pulldown menu)</H3>
+<H4>Type (upper-right pulldown menu)</H4>
  Some classes have subtypes that modify their appearance or behavior. 
 You pick the subtype off of this menu. 
-<H3>Box (pulldown menu)</H3>
+<H4>Box (pulldown menu)</H4>
  The boxtype to draw as a background for the widget. 
 <P>Many widgets will work, and draw faster, with a &quot;frame&quot; instead of a 
 &quot;box&quot;.  A frame does not draw the colored interior, leaving whatever 
@@ -361,17 +595,17 @@ by changing the window's box type to &quot;NO_BOX&quot;.  FLUID will display a
 checkerboard for any areas that are not colored in by boxes. Note 
 that this checkerboard is not drawn by the resulting program. Instead 
 random garbage will be displayed.</P>
-<H3>Color</H3>
+<H4>Color</H4>
 <P>The color to draw the box with. </P>
-<H3>Color2</H3>
+<H4>Color2</H4>
 <P>Some widgets will use this color for certain parts.  FLUID does not 
 always show the result of this: this is the color buttons draw in when 
 pushed down, and the color of input fields when they have the focus. </P>
-<H3>Label</H3>
+<H4>Label</H4>
  String to print next to or inside the button. 
 <P>You can put newlines into the string to make multiple lines. The 
 easiest way is by typing Ctrl+j. </P>
-<H3>Label style (pull down menu)</H3>
+<H4>Label style (pull down menu)</H4>
  How to draw the label.  Normal, shadowed, engraved, and embossed 
 change the appearance of the text.  &quot;symbol&quot; requires the label to 
 start with an '@' sign to draw a named <A href=Labeltypes.html#symbols>
@@ -379,30 +613,30 @@ symbol</A>.
 <P>From this menu you can also pick <A href=drawing.html#images>
 &quot;Image...&quot;</A>.  This lets you use the contents of a GIF, XPM, or
 XBM image file to label the widget. </P>
-<H3>Label Alignment (Buttons)</H3>
+<H4>Label Alignment (Buttons)</H4>
  Where to draw the label.  The arrows put it on that side of the 
 widget, you can combine the to put it in the corner.  The &quot;box&quot; button 
 puts the label inside the widget, rather than outside. 
-<H3>Label Font</H3>
+<H4>Label Font</H4>
  Font to draw the label in.  Ignored by symbols, bitmaps, and pixmaps. 
 Your program can change the actual font used by these &quot;slots&quot; in case 
 you want some font other than the 16 provided. 
-<H3>Label Size</H3>
+<H4>Label Size</H4>
 Pixel size (height) for the font to draw the label in.  Ignored by symbols, 
 bitmaps, and pixmaps.  To see the result without dismissing the panel, 
 type the new number and then Tab. 
-<H3>Label Color</H3>
+<H4>Label Color</H4>
 Color to draw the label.  Ignored by pixmaps (bitmaps, however, do use 
 this color as the foreground color). 
-<H3>Text Font, Size, and Color</H3>
+<H4>Text Font, Size, and Color</H4>
 Some widgets display text, such as input fields, pull-down menus, and
 browsers.
-<H3>Visible</H3>
+<H4>Visible</H4>
 If you turn this off then the widget is hidden initially.  Don't change 
 this for windows or for the immediate children of a Tabs group. 
-<H3>Active</H3>
+<H4>Active</H4>
 If you turn this off then the widget is deactivated initially.
-<H3>Resizable</H3>
+<H4>Resizable</H4>
 If a window is resizable or has an immediate child that is resizable, 
 then the user will be able to resize it.  In addition all the size 
 changes of a window or group will go &quot;into&quot; the resizable child.  If 
@@ -414,7 +648,7 @@ the other children. </P>
 resizable widget, or by using hierarchies of groups.  Unfortunately the 
 only way to test it is to compile the program.  Resizing the FLUID 
 window is <I>not</I> the same as what will happen in the user program. </P>
-<H3>Hotspot</H3>
+<H4>Hotspot</H4>
  Each window may have exactly one hotspot (turning this on will turn 
 off any others).  This will cause it to be positioned with that widget 
 centered on the mouse.  This position is determined <I>when the FLUID 
@@ -422,7 +656,7 @@ function is called</I>, so you should call it immediately before showing
 the window.  If you want the window to hide and then reappear at a 
 new position, you should have your program set the hotspot itself just 
 before <tt>show()</tt>. 
-<H3>Subclass</H3>
+<H4>Subclass</H4>
 This is how you use your own subclasses of <tt>Fl_Widget</tt>.  Whatever 
 identifier you type in here will be the class that is instantiated. 
 <P>In addition, no <tt>#include</tt> header file is put in the <TT>.h</TT> file.  You 
@@ -433,7 +667,7 @@ does not have to be a subclass.  It is sometimes useful to change this
 to another FLTK class. Currently the only way to get a double-buffered 
 window is to change this field for the window to &quot;Fl_Double_Window&quot; and 
 to add &quot;#include &lt;FL/Fl_Double_Window.h&gt;&quot; to the extra code. </P>
-<H3>Extra Code</H3>
+<H4>Extra Code</H4>
 These four fields let you type in literal lines of code to dump into 
 the <TT>.h</TT> or <TT>.cxx</TT> files. 
 <P>If the text starts with a <tt>#</tt> or the word <tt>extern</tt> then FLUID thinks 
@@ -449,7 +683,7 @@ does not do much other error checking.  Be careful here, as it may be
 hard to figure out what widget is producing an error in the compiler. 
 If you need more than four lines you probably should call a function in 
 your own <TT>.cxx</TT> code. </P>
-<H3>Callback</H3>
+<H4>Callback</H4>
 This can either be the name of a function, or a small snippet of code. 
 If you enter anything but letters, numbers, and the underscore then FLUID
 treats it as code. 
@@ -463,17 +697,17 @@ check for matching  parenthesis, braces, and quotes, but does not do
 much other error  checking.  Be careful here, as it may be hard to
 figure out what widget  is producing an error in the compiler. </P>
 <P>If the callback is blank then no callback is set. </P>
-<H3>user_data</H3>
+<H4>user_data</H4>
 This is a value for the <tt>user_data()</tt> of the widget.  If blank the 
 default value of zero is used.  This can be any piece of C code that 
 can be cast to a <tt>void</tt> pointer.
-<H3>User Data Type</H3>
+<H4>User Data Type</H4>
 The <tt>void *</tt> in the callback function prototypes is replaced with this. 
 You may want to use <tt>long</tt> for old XForms code.  Be warned that 
 anything other than <tt>void *</tt> is not guaranteed to work! 
 However on most architectures other pointer types are ok, and <tt>long</tt> is 
 usually ok, too. 
-<H3>When</H3>
+<H4>When</H4>
 When to do the callback.  This can be &quot;never&quot;, &quot;changed&quot;,
 &quot;release&quot;, &quot;enter key&quot;, or &quot;no change&quot;.  The 
 value of &quot;enter key&quot; is only useful for text input fields.  The &quot;no 
@@ -482,7 +716,7 @@ the data is not changed.
 <P>There are other rare but useful values for the <tt>when()</tt> field that are 
 not in the menu.  You should use the extra code fields to put these 
 values in.</P>
-<H2>Selecting and Moving Widgets</H2>
+<H3>Selecting and Moving Widgets</H3>
 Double-clicking a window name in the browser will display it, if not 
 displayed yet.  From this display you can select widgets, sets of 
 widgets, and move or resize them.  To close a window either 
@@ -522,16 +756,16 @@ widgets may be different. </P>
 <P>The panel for the window (which you get by double-clicking it) is 
 almost identical to the panel for any other Fl_Widget.  There are three 
 extra items: </P>
-<H3>Border</H3>
+<H4>Border</H4>
  This button turns the window manager border on or off.  On most window 
 managers you will have to close the window and reopen it to see the 
 effect. 
-<H3>xclass</H3>
+<H4>xclass</H4>
  The string typed into here is passed to the X window manager as the 
 class.  This can change the icon or window decorations.  On most (all?) 
 window managers you will have to close the window and reopen it to see 
 the effect.
-<H2><A name=images>Image Labels</A></H2>
+<H3><A name=images>Image Labels</A></H3>
 <P>Selecting &quot;Image...&quot; off the label style pull-down menu will bring 
 up a file chooser from which you pick the image file.  If an image has 
 already been chosen, you can change the image used by picking 
@@ -546,7 +780,7 @@ the <TT>.fl</TT> file you need the image files as well.  Filenames are relative
 to the location the <TT>.fl</TT> file is (not necessarily the current 
 directory).  I recommend you either put the images in the same 
 directory as the <TT>.fl</TT> file, or use absolute path names. </P>
-<H3>Notes for all image types</H3>
+<H4>Notes for all image types</H4>
 FLUID runs using the default visual of your X server.  This may be 8 
 bits, which will give you dithered images.  You may get better results 
 in your actual program by adding the code &quot;Fl::visual(FL_RGB)&quot; to your 
@@ -568,7 +802,7 @@ and text label on the same widget.  If your widget is a button, and you
 want the image inside it, you must change the button's boxtype to 
 FL_UP_FRAME (or another frame), otherwise when it is pushed it will 
 erase the image. </P>
-<H3>XBM (X bitmap files)</H3>
+<H4>XBM (X bitmap files)</H4>
 FLUID will read X bitmap files.  These files have C source code to 
 define a bitmap.  Sometimes they are stored with the &quot;.h&quot; or &quot;.bm&quot; 
 extension rather than the standard &quot;.xbm&quot;.
@@ -578,7 +812,7 @@ label color of the widget.  You can change the color in FLUID.  The '0'
 bits are transparent. </P>
 <P>The program &quot;bitmap&quot; on the X distribution does an ok job of editing 
 bitmaps. </P>
-<H3>XPM (X pixmap files)</H3>
+<H4>XPM (X pixmap files)</H4>
 FLUID will read X pixmap files as used by the libxpm library. These 
 files have C source code to define a pixmap.  The filenames usually 
 have a &quot;.xpm&quot; extension.
@@ -595,7 +829,7 @@ pixmaps I have used <A href=http://www.danbbs.dk/~torsten/xpaint/index.html>
 XPaint</A>.  This (and most other) painting programs are designed for 
 large full color images and are difficult to use to edit an image of 
 small size and few colors. </P>
-<H3>GIF files</H3>
+<H4>GIF files</H4>
 FLUID will also read GIF image files.  These files are often used on 
 html documents to make icons.  This lets you use nice icons that you 
 steal off the net in your user interface.
@@ -605,4 +839,4 @@ as for xpm files.  Notice that the conversion removes the compression,
 so the code may be much bigger than the .gif file.  Only the first 
 image of an animated gif file is used. </P>
 <P>Behavior and performance with large .gif files is not guaranteed! </P>
-</A></A></BODY></HTML>
+</BODY></HTML>

@@ -50,39 +50,31 @@ subclass of <TT>Fl_Browser_</TT>. </P>
 <CENTER>
 <TABLE width=90%>
 <TR><TD align=left valign=top>
-<UL>
 <LI><A href=#Fl_Browser.Fl_Browser>Fl_Browser</A></LI>
 <LI><A href=#Fl_Browser.~Fl_Browser>~Fl_Browser</A></LI>
 <LI><A href=#Fl_Browser.add>add</A></LI>
+<LI><A href=#Fl_Browser.bottomline>bottomline</A></LI>
 <LI><A href=#Fl_Browser.clear>clear</A></LI>
-</UL>
 </TD><TD align=left valign=top>
-<UL>
 <LI><A href=#Fl_Browser.column_char>column_char</A></LI>
 <LI><A href=#Fl_Browser.column_widths>column_widths</A></LI>
 <LI><A href=#Fl_Browser.data>data</A></LI>
 <LI><A href=#Fl_Browser.format_char>format_char</A></LI>
-</UL>
 </TD><TD align=left valign=top>
-<UL>
 <LI><A href=#Fl_Browser.hide>hide</A></LI>
 <LI><A href=#Fl_Browser.insert>insert</A></LI>
 <LI><A href=#Fl_Browser.load>load</A></LI>
-<LI><A href=#Fl_Browser.move>move</A></LI>
-</UL>
+<LI><A href=#Fl_Browser.middleline>middleline</A></LI>
 </TD><TD align=left valign=top>
-<UL>
+<LI><A href=#Fl_Browser.move>move</A></LI>
 <LI><A href=#Fl_Browser.position>position</A></LI>
 <LI><A href=#Fl_Browser.remove>remove</A></LI>
 <LI><A href=#Fl_Browser.show>show</A></LI>
-<LI><A href=#Fl_Browser.size>size</A></LI>
-</UL>
 </TD><TD align=left valign=top>
-<UL>
+<LI><A href=#Fl_Browser.size>size</A></LI>
 <LI><A href=#Fl_Browser.text>text</A></LI>
 <LI><A href=#Fl_Browser.topline>topline</A></LI>
 <LI><A href=#Fl_Browser.visible>visible</A></LI>
-</UL>
 </TD></TR>
 </TABLE>
 </CENTER>
@@ -97,6 +89,8 @@ int, const char * = 0)</A></H4>
 the <TT>strdup()</TT> function.  It may also be <TT>NULL</TT> to make a 
 blank line.  The <TT>void *</TT> argument is returned as the <TT>data()</TT>
  of the new item. 
+<H4><A name=Fl_Browser.bottomline>void Fl_Browser::bottomline(int n)</A></H4>
+Scrolls the browser so the bottom line in the browser is <TT>n</TT>.
 <H4><A name=Fl_Browser.clear>void Fl_Browser::clear()</A></H4>
  Remove all the lines in the browser. 
 <H4><A name=Fl_Browser.column_char>uchar Fl_Browser::column_char() const
@@ -170,6 +164,8 @@ string then this just clears the browser.  This returns zero if there
 was any error in opening or reading the file, in which case <TT>errno</TT>
  is set to the system error.  The <TT>data()</TT> of each line is set 
 to <TT>NULL</TT>. 
+<H4><A name=Fl_Browser.middleline>void Fl_Browser::middleline(int n)</A></H4>
+Scrolls the browser so the middle line in the browser is <TT>n</TT>.
 <H4><A name=Fl_Browser.move>void Fl_Browser::move(int to, int from)</A></H4>
  Line <TT>from</TT> is removed and reinserted at <TT>to</TT>; <TT>to</TT>
  is calculated after the line is removed. 
@@ -178,6 +174,7 @@ to <TT>NULL</TT>.
  The first form returns the current vertical scrollbar position, where 
 0 corresponds to the top.  If there is not vertical scrollbar then this 
 will always return 0. 
+<P>The second form sets the vertical scrollbar position to <TT>p</TT>. </P>
 <H4><A name=Fl_Browser.remove>void Fl_Browser::remove(int n)</A></H4>
  Remove line <TT>n</TT> and make the browser one line shorter. 
 <H4><A name=Fl_Browser.show>void Fl_Browser::show(int n)</A></H4>
@@ -192,9 +189,8 @@ out of range it returns <TT>NULL</TT>.
 <P>The second form sets the text for line <TT>n</TT>. </P>
 <H4><A name=Fl_Browser.topline>int Fl_Browser::topline() const
 <BR> void Fl_Browser::topline(int n)</A></H4>
- The first form returns the current top line in the browser. If there 
+The first form returns the current top line in the browser. If there 
 is no vertical scrollbar then this will always return 1. 
-<P>The second form sets the top line in the browser to <TT>n</TT>. </P>
-<P>The second form sets the vertical scrollbar position to <TT>p</TT>. </P>
+<P>The second form scrolls the browser so the top line in the browser is <TT>n</TT>.</P>
 <H4><A name=Fl_Browser.visible>int Fl_Browser::visible(int n) const</A></H4>
  Returns a non-zero value if line <TT>n</TT> is visible. </BODY></HTML>
