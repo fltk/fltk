@@ -7,6 +7,13 @@ CHANGES IN FLTK 1.1.0
 	  contains a number.
 	- The Fl_Browser::make_visible() method now range checks
 	  the input.
+	- Updated the fl_draw() and fl_measure() methods to
+	  accept an optional draw_symbols argument, which
+	  controls whether symbols are drawn in the text.
+	- Added new Fl::visible_focus() methods to control
+	  whether the focus box is drawn.
+	- The focus box is now drawn using the contrast color.
+	- Fl_Repeat_Button didn't accept keyboard focus.
 
 
 CHANGES IN FLTK 1.1.0b5

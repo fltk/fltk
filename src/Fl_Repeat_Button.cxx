@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Repeat_Button.cxx,v 1.4.2.4 2001/01/22 15:13:40 easysw Exp $"
+// "$Id: Fl_Repeat_Button.cxx,v 1.4.2.4.2.1 2001/11/03 05:11:34 easysw Exp $"
 //
 // Repeat button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -44,6 +44,7 @@ int Fl_Repeat_Button::handle(int event) {
     newval = 0; goto J1;
   case FL_PUSH:
   case FL_DRAG:
+    take_focus();
     newval = Fl::event_inside(this);
   J1:
     if (value(newval)) {
@@ -61,5 +62,5 @@ int Fl_Repeat_Button::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Repeat_Button.cxx,v 1.4.2.4 2001/01/22 15:13:40 easysw Exp $".
+// End of "$Id: Fl_Repeat_Button.cxx,v 1.4.2.4.2.1 2001/11/03 05:11:34 easysw Exp $".
 //

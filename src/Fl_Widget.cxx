@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.5 2001/08/06 03:17:43 easysw Exp $"
+// "$Id: Fl_Widget.cxx,v 1.5.2.4.2.6 2001/11/03 05:11:34 easysw Exp $"
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
@@ -138,6 +138,7 @@ Fl_Widget::~Fl_Widget() {
 // draw a focus box for the widget...
 void
 Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+  if (!Fl::visible_focus()) return;
   switch (B) {
     case FL_DOWN_BOX:
     case FL_DOWN_FRAME:
@@ -149,11 +150,28 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
       break;
   }
 
-  fl_color(FL_BLACK);
+  fl_color(fl_contrast(FL_BLACK, color()));
+
+#ifdef WIN32
+  // Windows 95/98/ME do not implement the dotted line style, so draw
+  // every other pixel around the focus area...
+  int i, xx, yy;
+
+  X += Fl::box_dx(B);
+  Y += Fl::box_dy(B);
+  W -= Fl::box_dw(B) + 2;
+  H -= Fl::box_dh(B) + 2;
+
+  for (xx = 0, i = 1; xx < W; xx ++, i ++) if (i & 1) fl_point(X + xx, Y);
+  for (yy = 0; yy < H; yy ++, i ++) if (i & 1) fl_point(X + W, Y + yy);
+  for (xx = W; xx > 0; xx --, i ++) if (i & 1) fl_point(X + xx, Y + H);
+  for (yy = H; yy > 0; yy --, i ++) if (i & 1) fl_point(X, Y + yy);
+#else
   fl_line_style(FL_DOT);
   fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
           W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
   fl_line_style(FL_SOLID);
+#endif // WIN32
 }
 
 
@@ -231,5 +249,5 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 //
-// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.5 2001/08/06 03:17:43 easysw Exp $".
+// End of "$Id: Fl_Widget.cxx,v 1.5.2.4.2.6 2001/11/03 05:11:34 easysw Exp $".
 //

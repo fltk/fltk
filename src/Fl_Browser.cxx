@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.1 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.2 2001/11/03 05:11:34 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -373,7 +373,7 @@ void Fl_Browser::item_draw(void* v, int x, int y, int w, int h) const {
       lcol = fl_contrast(lcol, selection_color());
     if (!active_r()) lcol = fl_inactive(lcol);
     fl_color(lcol);
-    fl_draw(str, x+3, y, w1-6, h, e ? Fl_Align(align|FL_ALIGN_CLIP) : align);
+    fl_draw(str, x+3, y, w1-6, h, e ? Fl_Align(align|FL_ALIGN_CLIP) : align, 0, 0);
     if (!e) break; // no more fields...
     *e = column_char(); // put the seperator back
     x += w1;
@@ -493,5 +493,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.1 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.2 2001/11/03 05:11:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.cxx,v 1.6.2.4.2.5 2001/10/16 20:25:25 easysw Exp $"
+// "$Id: fl_draw.cxx,v 1.6.2.4.2.6 2001/11/03 05:11:34 easysw Exp $"
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -51,8 +51,8 @@ static char* underline_at;
 // Sets width to the width of the string in the current font.
 
 static const char*
-expand(const char* from, char* buf, double maxw, int& n, double &width, int wrap) {
-
+expand(const char* from, char* buf, double maxw, int& n, double &width,
+       int wrap, int draw_symbols) {
   char* o = buf;
   char* e = buf+(MAXBUF-4);
   underline_at = 0;
@@ -95,7 +95,7 @@ expand(const char* from, char* buf, double maxw, int& n, double &width, int wrap
     } else if (c == 0xA0) { // non-breaking space
       *o++ = ' ';
     } else if (c == '@') { // Symbol???
-      if (p[1] && p[1] != '@')  break;
+      if (p[1] && p[1] != '@' && draw_symbols)  break;
       *o++ = c;
       if (p[1]) p++;
     } else {
@@ -114,7 +114,7 @@ void fl_draw(
     int x, int y, int w, int h,	// bounding box
     Fl_Align align,
     void (*callthis)(const char*,int,int,int),
-    Fl_Image* img) {
+    Fl_Image* img, int draw_symbols) {
   const char* p;
   const char* e;
   char buf[MAXBUF];
@@ -132,29 +132,32 @@ void fl_draw(
   symbol[1][0] = '\0';
   symwidth[1]  = 0;
 
-  if (str && str[0] == '@' && str[1] && str[1] != '@') {
-    // Start with a symbol...
-    for (symptr = symbol[0];
-         *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
-         *symptr++ = *str++);
-    *symptr = '\0';
-    if (isspace(*str)) str++;
-    symwidth[0] = min(w,h);
-  }
+  if (draw_symbols) {
+    if (str && str[0] == '@' && str[1] && str[1] != '@') {
+      // Start with a symbol...
+      for (symptr = symbol[0];
+           *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
+           *symptr++ = *str++);
+      *symptr = '\0';
+      if (isspace(*str)) str++;
+      symwidth[0] = min(w,h);
+    }
 
-  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
-    strncpy(symbol[1], p, sizeof(symbol[1]) - 1);
-    symbol[1][sizeof(symbol[1]) - 1] = '\0';
-    symwidth[1] = min(w,h);
+    if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
+      strncpy(symbol[1], p, sizeof(symbol[1]) - 1);
+      symbol[1][sizeof(symbol[1]) - 1] = '\0';
+      symwidth[1] = min(w,h);
+    }
   }
 
   symtotal = symwidth[0] + symwidth[1];
 
   if (str) {
     for (p = str, lines=0; p;) {
-      e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP);
+      e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP,
+                 draw_symbols);
       lines++;
-      if (!*e || *e == '@') break;
+      if (!*e || (*e == '@' && draw_symbols)) break;
       p = e;
     }
   } else lines = 0;
@@ -195,7 +198,7 @@ void fl_draw(
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
       if (lines>1) e = expand(p, buf, w - symtotal, buflen, width,
-                              align&FL_ALIGN_WRAP);
+                              align&FL_ALIGN_WRAP, draw_symbols);
       else e = "";
 
       if (width > symoffset) symoffset = (int)(width + 0.5);
@@ -257,15 +260,16 @@ void fl_draw(
   const char* str,	// the (multi-line) string
   int x, int y, int w, int h,	// bounding box
   Fl_Align align,
-  Fl_Image* img) {
+  Fl_Image* img,
+  int draw_symbols) {
   if ((!str || !*str) && !img) return;
   if (w && h && !fl_not_clipped(x, y, w, h)) return;
   if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
-  fl_draw(str, x, y, w, h, align, fl_draw, img);
+  fl_draw(str, x, y, w, h, align, fl_draw, img, draw_symbols);
   if (align & FL_ALIGN_CLIP) fl_pop_clip();
 }
 
-void fl_measure(const char* str, int& w, int& h) {
+void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   if (!str || !*str) {w = 0; h = 0; return;}
   h = fl_height();
   const char* p;
@@ -304,10 +308,10 @@ void fl_measure(const char* str, int& w, int& h) {
   symtotal = symwidth[0] + symwidth[1];
   
   for (p = str, lines=0; p;) {
-    e = expand(p, buf, w - symtotal, buflen, width, w != 0);
+    e = expand(p, buf, w - symtotal, buflen, width, w != 0, draw_symbols);
     if (int(width) > W) W = int(width);
     lines++;
-    if (!*e || *e == '@') break;
+    if (!*e || (*e == '@' && draw_symbols)) break;
     p = e;
   }
 
@@ -323,5 +327,5 @@ void fl_measure(const char* str, int& w, int& h) {
 }
 
 //
-// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.5 2001/10/16 20:25:25 easysw Exp $".
+// End of "$Id: fl_draw.cxx,v 1.6.2.4.2.6 2001/11/03 05:11:34 easysw Exp $".
 //

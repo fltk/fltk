@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.4 2001/11/03 05:11:34 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -325,7 +325,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
       *ptr = '\0';
 
       fl_draw(fragment, x + width, y, w - width, fl_height(),
-              (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP));
+              (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP), 0, 0);
 
       // Point back to the start of the fragment...
       ptr    = fragment;
@@ -339,7 +339,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
       *ptr = '\0';
 
       fl_draw(fragment, x + width, y, w - width, fl_height(),
-              (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP));
+              (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP), 0, 0);
 
       // Advance to the next column...
       column ++;
@@ -362,7 +362,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
     *ptr = '\0';
 
     fl_draw(fragment, x + width, y, w - width, fl_height(),
-            (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP));
+            (Fl_Align)(FL_ALIGN_LEFT | FL_ALIGN_CLIP), 0, 0);
   }
 }
 
@@ -566,5 +566,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.3 2001/10/29 21:59:14 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.4 2001/11/03 05:11:34 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw.H,v 1.9.2.6.2.2 2001/08/05 23:58:54 easysw Exp $"
+// "$Id: fl_draw.H,v 1.9.2.6.2.3 2001/11/03 05:11:34 easysw Exp $"
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
@@ -151,11 +151,12 @@ FL_EXPORT double fl_width(uchar);
 // draw using current font:
 FL_EXPORT void fl_draw(const char*, int x, int y);
 FL_EXPORT void fl_draw(const char*, int n, int x, int y);
-FL_EXPORT void fl_measure(const char*, int& x, int& y);
-FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align, Fl_Image* img=0);
+FL_EXPORT void fl_measure(const char*, int& x, int& y, int draw_symbols = 1);
+FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align, Fl_Image* img=0,
+                       int draw_symbols = 1);
 FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align,
 	               void (*callthis)(const char *, int n, int x, int y),
-		       Fl_Image* img=0);
+		       Fl_Image* img=0, int draw_symbols = 1);
 
 // boxtypes:
 FL_EXPORT void fl_frame(const char* s, int x, int y, int w, int h);
@@ -191,5 +192,5 @@ FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scal
 #endif
 
 //
-// End of "$Id: fl_draw.H,v 1.9.2.6.2.2 2001/08/05 23:58:54 easysw Exp $".
+// End of "$Id: fl_draw.H,v 1.9.2.6.2.3 2001/11/03 05:11:34 easysw Exp $".
 //
