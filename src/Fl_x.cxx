@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.15 2002/03/25 21:08:42 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.16 2002/03/26 17:37:42 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -381,9 +381,9 @@ void Fl::get_mouse(int &x, int &y) {
 // Code used for paste and DnD into the program:
 
 Fl_Widget *fl_selection_requestor;
-static char *selection_buffer[2];
-static int selection_length[2];
-static int selection_buffer_length[2];
+char *fl_selection_buffer[2];
+int fl_selection_length[2];
+int fl_selection_buffer_length[2];
 char fl_i_own_selection[2];
 
 // Call this when a "paste" operation happens:
@@ -392,8 +392,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
-    Fl::e_text = selection_buffer[clipboard];
-    Fl::e_length = selection_length[clipboard];
+    Fl::e_text = fl_selection_buffer[clipboard];
+    Fl::e_length = fl_selection_length[clipboard];
     receiver.handle(FL_PASTE);
     return;
   }
@@ -435,14 +435,14 @@ void fl_sendClientMessage(Window window, Atom message,
 
 void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
-  if (len+1 > selection_buffer_length[clipboard]) {
-    delete[] selection_buffer[clipboard];
-    selection_buffer[clipboard] = new char[len+100];
-    selection_buffer_length[clipboard] = len+100;
+  if (len+1 > fl_selection_buffer_length[clipboard]) {
+    delete[] fl_selection_buffer[clipboard];
+    fl_selection_buffer[clipboard] = new char[len+100];
+    fl_selection_buffer_length[clipboard] = len+100;
   }
-  memcpy(selection_buffer[clipboard], stuff, len);
-  selection_buffer[clipboard][len] = 0; // needed for direct paste
-  selection_length[clipboard] = len;
+  memcpy(fl_selection_buffer[clipboard], stuff, len);
+  fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
+  fl_selection_length[clipboard] = len;
   fl_i_own_selection[clipboard] = 1;
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
   XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
@@ -573,11 +573,11 @@ int fl_handle(const XEvent& xevent)
       XChangeProperty(fl_display, e.requestor, e.property,
 		      XA_ATOM, sizeof(Atom)*8, 0, (unsigned char*)&a,
 		      sizeof(Atom));
-    } else if (/*e.target == XA_STRING &&*/ selection_length[clipboard]) {
+    } else if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
       XChangeProperty(fl_display, e.requestor, e.property,
 		      e.target, 8, 0,
-		      (unsigned char *)selection_buffer[clipboard],
-		      selection_length[clipboard]);
+		      (unsigned char *)fl_selection_buffer[clipboard],
+		      fl_selection_length[clipboard]);
     } else {
 //    char* x = XGetAtomName(fl_display,e.target);
 //    fprintf(stderr,"selection request of %s\n",x);
@@ -1215,5 +1215,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.15 2002/03/25 21:08:42 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.16 2002/03/26 17:37:42 easysw Exp $".
 //
