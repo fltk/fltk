@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Browser.cxx,v 1.1.2.8 2002/03/29 14:16:03 easysw Exp $"
+// "$Id: Fl_File_Browser.cxx,v 1.1.2.9 2002/04/14 12:51:55 easysw Exp $"
 //
 // Fl_File_Browser routines.
 //
@@ -44,15 +44,17 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-#if defined(WIN32) && ! defined(__CYGWIN__)
+#ifdef __CYGWIN__
+#  include <mntent.h>
+#elif defined(WIN32)
 #  include <windows.h>
 #  include <direct.h>
-#endif /* WIN32 */
+#endif /* __CYGWIN__ */
 
 #if defined(__EMX__)
-#define  INCL_DOS
-#define  INCL_DOSMISC
-#include <os2.h>
+#  define  INCL_DOS
+#  define  INCL_DOSMISC
+#  include <os2.h>
 #endif /* __EMX__ */
 
 
@@ -409,9 +411,26 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
     if ((icon = Fl_File_Icon::find("any", Fl_File_Icon::DEVICE)) == NULL)
       icon = Fl_File_Icon::find("any", Fl_File_Icon::DIRECTORY);
 
-#if defined(WIN32) && ! defined (__CYGWIN__)
-    DWORD	drives;		// Drive available bits
+#ifdef WIN32
+#  ifdef __CYGWIN__
+    //
+    // Cygwin provides an implementation of setmntent() to get the list
+    // of available drives...
+    //
+    FILE          *m = setmntent("/-not-used-", "r");
+    struct mntent *p;
 
+    while ((p = getmntent (m)) != NULL) {
+      add(p->mnt_dir, icon);
+      num_files ++;
+    }
+
+    endmntent(m);
+#  else
+    //
+    // Normal WIN32 code uses drive bits...
+    //
+    DWORD	drives;		// Drive available bits
 
     drives = GetLogicalDrives();
     for (i = 'A'; i <= 'Z'; i ++, drives >>= 1)
@@ -426,7 +445,11 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
 
 	num_files ++;
       }
+#  endif // __CYGWIN__
 #elif defined(__EMX__)
+    //
+    // OS/2 code uses drive bits...
+    //
     ULONG	curdrive;	// Current drive
     ULONG	drives;		// Drive available bits
     int		start = 3;      // 'C' (MRS - dunno if this is correct!)
@@ -443,22 +466,23 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
 	num_files ++;
       }
 #else
+    //
+    // UNIX code uses /etc/fstab or similar...
+    //
     FILE	*mtab;		// /etc/mtab or /etc/mnttab file
     char	line[1024];	// Input line
-
 
     //
     // Open the file that contains a list of mounted filesystems...
     //
-#  if defined(hpux) || defined(__sun)
+
     mtab = fopen("/etc/mnttab", "r");	// Fairly standard
-#  elif defined(__sgi) || defined(linux)
-    mtab = fopen("/etc/mtab", "r");	// More standard
-#  else
-    mtab = fopen("/etc/fstab", "r");	// Otherwise fallback to full list
     if (mtab == NULL)
-      mtab = fopen("/etc/vfstab", "r");
-#  endif
+      mtab = fopen("/etc/mtab", "r");	// More standard
+    if (mtab == NULL)
+      mtab = fopen("/etc/fstab", "r");	// Otherwise fallback to full list
+    if (mtab == NULL)
+      mtab = fopen("/etc/vfstab", "r");	// Alternate full list file
 
     if (mtab != NULL)
     {
@@ -489,7 +513,7 @@ Fl_File_Browser::load(const char *directory)// I - Directory to load
     // Build the file list...
     //
 
-#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
+#if (defined(WIN32) && !defined(__CYGWIN__)) || defined(__EMX__)
     strncpy(filename, directory_, sizeof(filename) - 1);
     filename[sizeof(filename) - 1] = '\0';
     i = strlen(filename) - 1;
@@ -559,5 +583,5 @@ Fl_File_Browser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.8 2002/03/29 14:16:03 easysw Exp $".
+// End of "$Id: Fl_File_Browser.cxx,v 1.1.2.9 2002/04/14 12:51:55 easysw Exp $".
 //

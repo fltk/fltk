@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.10 2002/04/14 02:43:48 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.11 2002/04/14 12:51:56 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -29,6 +29,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/filename.H>
 #include <FL/fl_draw.H>
 #include <ctype.h>
@@ -263,7 +264,7 @@ static const char * const helpmsg =
 " -nok[bd]\n"
 " -not[ooltips]\n"
 " -s[cheme] scheme\n"
-" -ti[tle] windowtitle\n";
+" -ti[tle] windowtitle\n"
 " -to[oltips]";
 
 const char * const Fl::help = helpmsg+13;
@@ -411,5 +412,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.10 2002/04/14 02:43:48 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.11 2002/04/14 12:51:56 easysw Exp $".
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0
 
+	- Fl_File_Browser::load() didn't properly show drives
+	  when compiled in Cygwin mode.
 	- Now pass correctly pass keyboard and mouse events to
 	  widget under tooltip as needed...
 	- Added new Fl::dnd_text_ops() methods to enable/disable

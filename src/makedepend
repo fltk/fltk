@@ -268,8 +268,8 @@ Fl_abort.o: ../config.h
 Fl_add_idle.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_arg.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/x.H
 Fl_arg.o: ../FL/Fl_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_arg.o: ../FL/Fl_Widget.H ../FL/filename.H ../FL/fl_draw.H flstring.h
-Fl_arg.o: ../config.h
+Fl_arg.o: ../FL/Fl_Widget.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
+Fl_arg.o: ../FL/filename.H ../FL/fl_draw.H flstring.h ../config.h
 Fl_compose.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_display.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H flstring.h
 Fl_display.o: ../config.h
