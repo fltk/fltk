@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arc.cxx,v 1.4.2.3.2.3 2002/05/03 01:18:15 easysw Exp $"
+// "$Id: fl_arc.cxx,v 1.4.2.3.2.4 2002/05/03 12:49:36 easysw Exp $"
 //
 // Arc functions for the Fast Light Tool Kit (FLTK).
 //
@@ -29,7 +29,6 @@
 
 #include <FL/fl_draw.H>
 #include <FL/math.h>
-#include <stdio.h>
 
 void fl_arc(double x, double y, double r, double start, double end) {
 
@@ -52,7 +51,6 @@ void fl_arc(double x, double y, double r, double start, double end) {
     if (n < 2) n = 2;
     if (n > 60) n = 60;
   }
-  printf("n = %d\n", n);
   double epsilon = 1.0/n;
   double E = end*(M_PI/180);
   int i = int((E-A)*n);
@@ -76,5 +74,5 @@ void fl_circle(double x,double y,double r) {
 #endif
 
 //
-// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.3 2002/05/03 01:18:15 easysw Exp $".
+// End of "$Id: fl_arc.cxx,v 1.4.2.3.2.4 2002/05/03 12:49:36 easysw Exp $".
 //
