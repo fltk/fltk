@@ -153,7 +153,7 @@ const char * fl_shortcut_label(int shortcut) {
       *p++ = uchar(key & 127);
     } else {
       // if none found, use the keystroke as a match:
-      *p++ = uchar(key);
+      *p++ = uchar(toupper(key & 255));
     }
   }
   *p = 0;
@@ -163,7 +163,7 @@ const char * fl_shortcut_label(int shortcut) {
   if (key == FL_Enter || key == '\r') q="Enter";  // don't use Xlib's "Return":
   else if (key > 32 && key < 0x100) q = 0;
   else q = XKeysymToString(key);
-  if (!q) {*p++ = uchar(key); *p = 0; return buf;}
+  if (!q) {*p++ = uchar(toupper(key & 255)); *p = 0; return buf;}
   if (p > buf) {strcpy(p,q); return buf;} else return q;
 #endif
 }

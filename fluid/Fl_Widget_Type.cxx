@@ -292,16 +292,17 @@ static int haderror;
 
 void name_cb(Fl_Input* o, void *v) {
   if (v == LOAD) {
+    static char buf[1024];
     if (numselected != 1) {
-      static char buf[16];
-      sprintf(buf,"(%d widgets)",numselected);
-      the_panel->label(buf);
+      snprintf(buf, sizeof(buf), "Widget Properties (%d widgets)", numselected);
       o->hide();
     } else {
       o->static_value(current_widget->name());
       o->show();
-      the_panel->label(current_widget->title());
+      snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
     }
+
+    the_panel->label(buf);
   } else {
     if (numselected == 1) {
       current_widget->name(o->value());

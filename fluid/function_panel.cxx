@@ -51,7 +51,7 @@ Fl_Button *f_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_function_panel() {
   Fl_Window* w;
-  { Fl_Window* o = function_panel = new Fl_Window(285, 140, "Function/Method");
+  { Fl_Window* o = function_panel = new Fl_Window(285, 140, "Function/Method Properties");
     w = o;
     { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
       o->tooltip("Make the function or method publicly accessible.");
@@ -107,7 +107,7 @@ Fl_Button *code_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_code_panel() {
   Fl_Window* w;
-  { Fl_Window* o = code_panel = new Fl_Window(545, 175, "Code");
+  { Fl_Window* o = code_panel = new Fl_Window(545, 175, "Code Properties");
     w = o;
     o->labelsize(11);
     { Fl_Text_Editor* o = code_input = new Fl_Text_Editor(10, 12, 525, 123);
@@ -153,7 +153,7 @@ Fl_Button *codeblock_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_codeblock_panel() {
   Fl_Window* w;
-  { Fl_Window* o = codeblock_panel = new Fl_Window(295, 100, "Code Block");
+  { Fl_Window* o = codeblock_panel = new Fl_Window(295, 100, "Code Block Properties");
     w = o;
     o->labelsize(11);
     { Fl_Input* o = code_before_input = new Fl_Input(10, 10, 275, 20);
@@ -201,7 +201,7 @@ Fl_Light_Button *declblock_public_button=(Fl_Light_Button *)0;
 
 Fl_Window* make_declblock_panel() {
   Fl_Window* w;
-  { Fl_Window* o = declblock_panel = new Fl_Window(295, 125, "Declaration Block");
+  { Fl_Window* o = declblock_panel = new Fl_Window(295, 125, "Declaration Block Properties");
     w = o;
     o->labelsize(11);
     { Fl_Input* o = decl_before_input = new Fl_Input(10, 35, 275, 20);
@@ -252,7 +252,7 @@ Fl_Button *decl_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_decl_panel() {
   Fl_Window* w;
-  { Fl_Window* o = decl_panel = new Fl_Window(290, 145, "Declaration");
+  { Fl_Window* o = decl_panel = new Fl_Window(290, 145, "Declaration Properties");
     w = o;
     { Fl_Light_Button* o = decl_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
       o->tooltip("Make the declaration publicly accessible.");
@@ -297,7 +297,7 @@ Fl_Button *c_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_class_panel() {
   Fl_Window* w;
-  { Fl_Window* o = class_panel = new Fl_Window(285, 140, "Class");
+  { Fl_Window* o = class_panel = new Fl_Window(285, 140, "Class Properties");
     w = o;
     o->labelsize(11);
     { Fl_Light_Button* o = c_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
@@ -356,7 +356,7 @@ Fl_Button *comment_load=(Fl_Button *)0;
 
 Fl_Window* make_comment_panel() {
   Fl_Window* w;
-  { Fl_Window* o = comment_panel = new Fl_Window(545, 285, "Comment");
+  { Fl_Window* o = comment_panel = new Fl_Window(545, 285, "Comment Properties");
     w = o;
     o->labelsize(11);
     { Fl_Text_Editor* o = comment_input = new Fl_Text_Editor(95, 10, 438, 241);
@@ -422,6 +422,9 @@ void type_make_cb(Fl_Widget*w,void*d) {
     select_only(t);
     set_modflag(1);
     t->open();
+  } else {
+    undo_current --;
+    undo_last --;
   }
 }
 

@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- fl_shortcut_label() now shows letter shortcuts in
+	  uppercase, e.g. "Ctrl+N" instead of "Ctrl+n" to be
+	  consistent with other toolkits.
 	- FLUID now provides unlimited undo/redo support.
 	- FLUID now provides an option to choose which scheme
 	  (default, none, plastic) to display.

@@ -126,8 +126,8 @@ void undo_cb(Fl_Widget *, void *) {
 void undo_checkpoint() {
   char	filename[1024];			// Undo checkpoint filename
 
-  printf("undo_checkpoint(): undo_current=%d, undo_paused=%d, modflag=%d\n",
-         undo_current, undo_paused, modflag);
+//  printf("undo_checkpoint(): undo_current=%d, undo_paused=%d, modflag=%d\n",
+//         undo_current, undo_paused, modflag);
 
   // Don't checkpoint if undo_suspend() has been called...
   if (undo_paused) return;

@@ -46,7 +46,7 @@ decl {extern void select_only(Fl_Type*);} {}
 Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
-    label {Function/Method}
+    label {Function/Method Properties}
     xywh {855 21 285 140} type Single hide resizable modal
   } {
     Fl_Light_Button f_public_button {
@@ -79,7 +79,7 @@ Function {make_function_panel()} {open
 Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
-    label Code
+    label {Code Properties}
     xywh {527 128 545 175} type Single labelsize 11 hide resizable modal
   } {
     Fl_Text_Editor code_input {
@@ -109,7 +109,7 @@ Function {make_code_panel()} {open
 Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
-    label {Code Block}
+    label {Code Block Properties}
     xywh {845 158 295 100} type Single labelsize 11 hide resizable modal
   } {
     Fl_Input code_before_input {
@@ -133,7 +133,7 @@ Function {make_codeblock_panel()} {open
 Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
-    label {Declaration Block}
+    label {Declaration Block Properties}
     xywh {665 33 295 125} type Single labelsize 11 hide resizable modal
   } {
     Fl_Input decl_before_input {
@@ -161,7 +161,7 @@ Function {make_declblock_panel()} {open
 Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
-    label Declaration
+    label {Declaration Properties}
     xywh {789 289 290 145} type Single hide resizable
   } {
     Fl_Light_Button decl_public_button {
@@ -186,7 +186,7 @@ Function {make_decl_panel()} {open
 Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
-    label Class
+    label {Class Properties}
     xywh {744 223 285 140} type Single labelsize 11 hide resizable modal
   } {
     Fl_Light_Button c_public_button {
@@ -215,7 +215,7 @@ Function {make_class_panel()} {open
 Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
-    label Comment
+    label {Comment Properties}
     xywh {328 152 545 285} type Single labelsize 11 hide resizable modal
   } {
     Fl_Text_Editor comment_input {
@@ -273,6 +273,9 @@ Function {type_make_cb(Fl_Widget*w,void*d)} {open return_type void
     select_only(t);
     set_modflag(1);
     t->open();
+  } else {
+    undo_current --;
+    undo_last --;
   }} {}
 } 
 
