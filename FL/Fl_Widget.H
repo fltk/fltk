@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget.H,v 1.6 1999/02/16 21:59:46 mike Exp $"
+// "$Id: Fl_Widget.H,v 1.6.2.1 1999/03/18 20:04:11 bill Exp $"
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
@@ -32,6 +32,7 @@ class Fl_Widget;
 class Fl_Window;
 
 typedef void (Fl_Callback )(Fl_Widget*, void*);
+typedef Fl_Callback* Fl_Callback_p; // needed for BORLAND
 typedef void (Fl_Callback0)(Fl_Widget*);
 typedef void (Fl_Callback1)(Fl_Widget*, long);
 
@@ -127,7 +128,7 @@ public:
   FL_EXPORT void labelfont(uchar a) {label_.font=a;}
   FL_EXPORT uchar labelsize() const {return label_.size;}
   FL_EXPORT void labelsize(uchar a) {label_.size=a;}
-  FL_EXPORT Fl_Callback* callback() const {return callback_;}
+  FL_EXPORT Fl_Callback_p callback() const {return callback_;}
   FL_EXPORT void callback(Fl_Callback* c, void* p) {callback_=c; user_data_=p;}
   FL_EXPORT void callback(Fl_Callback* c) {callback_=c;}
   FL_EXPORT void callback(Fl_Callback0*c) {callback_=(Fl_Callback*)c;}
@@ -190,5 +191,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Widget.H,v 1.6 1999/02/16 21:59:46 mike Exp $".
+// End of "$Id: Fl_Widget.H,v 1.6.2.1 1999/03/18 20:04:11 bill Exp $".
 //
