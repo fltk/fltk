@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.9 1998/11/12 14:14:57 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.10 1998/12/07 13:34:27 mike Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,8 @@
 #ifdef WIN32
 #include "Fl_win32.C"
 #else
+
+#define CONSOLIDATE_MOTION 1
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -128,12 +130,22 @@ int fl_ready() {
 #endif
 }
 
+#if CONSOLIDATE_MOTION
+static Fl_Window* send_motion;
+#endif
 static void do_queued_events() {
   while (XEventsQueued(fl_display,QueuedAfterReading)) {
     XEvent xevent;
     XNextEvent(fl_display, &xevent);
     fl_handle(xevent);
   }
+#if CONSOLIDATE_MOTION
+  if (send_motion) {
+    Fl_Window* w = send_motion;
+    send_motion = 0;
+    Fl::handle(FL_MOVE, w);
+  }
+#endif
 }
 
 double fl_wait(int timeout_flag, double time) {
@@ -263,12 +275,6 @@ void Fl::get_mouse(int &x, int &y) {
 
 ////////////////////////////////////////////////////////////////
 
-extern Fl_Window *fl_xfocus;	// in Fl.C
-extern Fl_Window *fl_xmousewin; // in Fl.C
-void fl_fix_focus(); // in Fl.C
-
-////////////////////////////////////////////////////////////////
-
 const XEvent* fl_xevent; // the current x event
 ulong fl_event_time; // the last timestamp from an x event
 
@@ -283,6 +289,9 @@ static int px, py;
 static ulong ptime;
 
 static void set_event_xy(Fl_Window* window) {
+#if CONSOLIDATE_MOTION
+  send_motion = 0;
+#endif
   Fl::e_x_root = fl_xevent->xbutton.x_root;
   Fl::e_x = fl_xevent->xbutton.x;
   Fl_X::x(window,Fl::e_x_root-Fl::e_x);
@@ -370,8 +379,13 @@ int fl_handle(const XEvent& xevent)
 
   case MotionNotify:
     set_event_xy(window);
+#if CONSOLIDATE_MOTION
+    send_motion = window;
+    return 0;
+#else
     event = FL_MOVE;
     break;
+#endif
 
   case ButtonRelease:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
@@ -498,6 +512,8 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 
 // A subclass of Fl_Window may call this to associate an X window it
 // creates with the Fl_Window:
+
+void fl_fix_focus(); // in Fl.cxx
 
 Fl_X* Fl_X::set_xid(Fl_Window* w, Window xid) {
   Fl_X* x = new Fl_X;
@@ -842,5 +858,5 @@ void Fl_Window::flush() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.9 1998/11/12 14:14:57 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.10 1998/12/07 13:34:27 mike Exp $".
 //
