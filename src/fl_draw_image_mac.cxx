@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_image_mac.cxx,v 1.1.2.9 2004/08/31 22:00:48 matthiaswm Exp $"
+// "$Id: fl_draw_image_mac.cxx,v 1.1.2.10 2004/09/09 23:43:40 matthiaswm Exp $"
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -165,7 +165,37 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     }
   }
 #elif defined(__APPLE_QUARTZ__)
-#warning : quartz - this function is *terribly* slow. Please replace!!!!
+  if (delta>=1||delta<=4) {
+    void *array = buf;
+    uchar *tmpBuf;
+    if (cb) {
+      tmpBuf = new uchar[ H*W*delta ];
+      for (int i=0; i<H; i++) {
+        cb(userdata, 0, i, W, tmpBuf+i*W*delta);
+      }
+      array = (void*)tmpBuf;
+      linedelta = W;
+    }
+    // create an image context
+    CGColorSpaceRef   lut = CGColorSpaceCreateDeviceRGB();
+    CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H*delta, 0L);
+    CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta*delta,
+                              lut, kCGImageAlphaNone,
+                              src, 0L, false, kCGRenderingIntentDefault);
+    // draw the image into the destination context
+    CGRect rect = { X, Y, W, H };
+    Fl_X::q_begin_image(rect, 0, 0, W, H);
+    CGContextDrawImage(fl_gc, rect, img);
+    Fl_X::q_end_image();
+    // release all allocated resources
+    CGImageRelease(img);
+    CGColorSpaceRelease(lut);
+    CGDataProviderRelease(src);
+    if (cb) {
+      delete[] tmpBuf;
+    }
+    return;
+  }
   // following the very save (and very slow) way to write the image into the give port
   CGContextSetShouldAntialias(fl_gc, false);
   if ( cb )
@@ -234,5 +264,5 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 }
 
 //
-// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.9 2004/08/31 22:00:48 matthiaswm Exp $".
+// End of "$Id: fl_draw_image_mac.cxx,v 1.1.2.10 2004/09/09 23:43:40 matthiaswm Exp $".
 //
