@@ -208,8 +208,10 @@ void fl_point(int x, int y) {
 
 ////////////////////////////////////////////////////////////////
 
-static Region rstack[10];
-static int rstackptr;
+#define STACK_SIZE 10
+#define STACK_MAX (STACK_SIZE - 1)
+static Region rstack[STACK_SIZE];
+static int rstackptr=0;
 int fl_clip_state_number=0; // used by gl_begin.C to update GL clip
 
 #ifndef WIN32
@@ -267,20 +269,22 @@ void fl_clip(int x, int y, int w, int h) {
     r = CreateRectRgn(0,0,0,0);
 #endif
   }
-  rstack[++rstackptr] = r;
+  if (rstackptr < STACK_MAX) rstack[++rstackptr] = r;
   fl_restore_clip();
 }
 
 // make there be no clip (used by fl_begin_offscreen() only!)
 void fl_push_no_clip() {
-  rstack[++rstackptr] = 0;
+  if (rstackptr < STACK_MAX) rstack[++rstackptr] = 0;
   fl_restore_clip();
 }
 
 // pop back to previous clip:
 void fl_pop_clip() {
-  Region oldr = rstack[rstackptr--];
-  if (oldr) XDestroyRegion(oldr);
+  if (rstackptr > 0) {
+    Region oldr = rstack[rstackptr--];
+    if (oldr) XDestroyRegion(oldr);
+  }
   fl_restore_clip();
 }
 
