@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.50 2002/08/20 17:33:12 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.51 2002/08/22 17:34:19 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -614,7 +614,6 @@ int Fl::handle(int e, Fl_Window* window)
     return ret;}
 
   case FL_RELEASE: {
-    if (modal() && wi != modal()) return 0;
     if (pushed()) {
       wi = pushed();
       pushed_ = 0; // must be zero before callback is done!
@@ -950,5 +949,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.50 2002/08/20 17:33:12 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.51 2002/08/22 17:34:19 easysw Exp $".
 //
