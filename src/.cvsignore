@@ -2,3 +2,5 @@
 *.sl*
 *.a
 *.bck
+*.sav
+*.dylib
