@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Input.cxx,v 1.1.2.4 2002/07/30 18:10:03 easysw Exp $"
+// "$Id: Fl_File_Input.cxx,v 1.1.2.5 2002/07/30 18:40:50 easysw Exp $"
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
@@ -183,8 +183,10 @@ Fl_File_Input::handle(int event) 		// I - Event
   switch (event) {
     case FL_MOVE :
     case FL_ENTER :
-      if (Fl::event_y() < (y() + DIR_HEIGHT)) fl_cursor(FL_CURSOR_DEFAULT);
-      else fl_cursor(FL_CURSOR_INSERT);
+      if (active_r()) {
+	if (Fl::event_y() < (y() + DIR_HEIGHT)) fl_cursor(FL_CURSOR_DEFAULT);
+	else fl_cursor(FL_CURSOR_INSERT);
+      }
 
       return 1;
 
@@ -268,5 +270,5 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
 
 //
-// End of "$Id: Fl_File_Input.cxx,v 1.1.2.4 2002/07/30 18:10:03 easysw Exp $".
+// End of "$Id: Fl_File_Input.cxx,v 1.1.2.5 2002/07/30 18:40:50 easysw Exp $".
 //
