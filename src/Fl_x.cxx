@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.7 1999/11/04 18:35:12 bill Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.8 1999/11/10 09:18:31 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -753,6 +753,7 @@ void Fl_X::sendxjunk() {
   hints.max_height = w->maxh;
   hints.width_inc = w->dw;
   hints.height_inc = w->dh;
+  hints.win_gravity = StaticGravity;
 
   // see the file /usr/include/X11/Xm/MwmUtil.h:
   // fill all fields to avoid bugs in kwm and perhaps other window managers:
@@ -761,10 +762,10 @@ void Fl_X::sendxjunk() {
 
   if (hints.min_width != hints.max_width ||
       hints.min_height != hints.max_height) { // resizable
-    hints.flags = PMinSize;
+    hints.flags = PMinSize|PWinGravity;
     if (hints.max_width >= hints.min_width ||
 	hints.max_height >= hints.min_height) {
-      hints.flags = PMinSize|PMaxSize;
+      hints.flags = PMinSize|PMaxSize|PWinGravity;
       // unfortunately we can't set just one maximum size.  Guess a
       // value for the other one.  Some window managers will make the
       // window fit on screen when maximized, others will put it off screen:
@@ -780,7 +781,7 @@ void Fl_X::sendxjunk() {
       hints.flags |= PAspect;
     }
   } else { // not resizable:
-    hints.flags = PMinSize|PMaxSize;
+    hints.flags = PMinSize|PMaxSize|PWinGravity;
     prop[0] = 1; // MWM_HINTS_FUNCTIONS
     prop[1] = 1|2|16; // MWM_FUNC_ALL | MWM_FUNC_RESIZE | MWM_FUNC_MAXIMIZE
   }
@@ -871,5 +872,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.7 1999/11/04 18:35:12 bill Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.8 1999/11/10 09:18:31 bill Exp $".
 //
