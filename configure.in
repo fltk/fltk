@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.79 2002/07/14 17:03:30 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.80 2002/07/17 17:05:08 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -600,13 +600,17 @@ if test -n "$GCC"; then
     AC_MSG_CHECKING(if libsupc++ is required)
 
     SUPC="`$CXX -print-file-name=libsupc++.a 2>/dev/null`"
-    if test -n "$SUPC" -a "$SUPC" != "libsupc++.a"; then
+    case "$SUPC" in
+    	libsupc++.a*)
+	    # Library not found, so this is and older GCC...
+	    AC_MSG_RESULT(no)
+	    ;;
+	*)
             # This is gcc 3.x, and it knows of libsupc++, so we need it
             LIBS="$LIBS -lsupc++"
             AC_MSG_RESULT(yes)
-    else
-            AC_MSG_RESULT(no)
-    fi
+	    ;;
+    esac
 
     CXX="$CC"
 
@@ -778,5 +782,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.79 2002/07/14 17:03:30 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.80 2002/07/17 17:05:08 easysw Exp $".
 dnl
