@@ -101,18 +101,18 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
   uchar *g = fl_gray_ramp();
   int b = strlen(c) / 4 + 1;
 
-  for (x += b, y += b, w -= 2 * b, h -= 2 * b; b > 1; b --)
+  for (; b > 1; b --, x ++, y ++, w -= 2, h -= 2)
   {
-    // Draw lines around the perimeter of the button, 4 colors per
+    // Draw arcs around the perimeter of the button, 4 colors per
     // circuit.
     fl_color(shade_color(g[*c++], bc));
-    fl_line(x, y + h + b, x + w - 1, y + h + b, x + w + b - 1, y + h);
+    fl_arc(x, y, w, h, 45.0, 135.0);
     fl_color(shade_color(g[*c++], bc));
-    fl_line(x + w + b - 1, y + h, x + w + b - 1, y, x + w - 1, y - b);
+    fl_arc(x, y, w, h, 315.0, 405.0);
     fl_color(shade_color(g[*c++], bc));
-    fl_line(x + w - 1, y - b, x, y - b, x - b, y);
+    fl_arc(x, y, w, h, 225.0, 315.0);
     fl_color(shade_color(g[*c++], bc));
-    fl_line(x - b, y, x - b, y + h, x, y + h + b);
+    fl_arc(x, y, w, h, 135.0, 225.0);
   }
 }
 
@@ -191,29 +191,36 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
 static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar		*g = fl_gray_ramp();
-  int		i, j;
+  int		i, j, k;
   int		clen = strlen(c) - 1;
   int		chalf = clen / 2;
   int		cstep = 1;
-
+  static const int kvals[] = { 5, 3, 2, 1 };
   if (clen >= h) cstep = 2;
 
   for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
+    // Indent k inside a circle...
+    k = kvals[i];
+
     // Draw the top line and points...
     fl_color(shade_color(g[c[i]], bc));
-    fl_xyline(x + 1, y + i, x + w - 1);
+    fl_xyline(x + k, y + i, x + w - k);
 
     fl_color(shade_color(g[c[i] - 2], bc));
-    fl_point(x, y + i + 1);
-    fl_point(x + w - 1, y + i + 1);
+    fl_point(x + k - 1, y + i + 1);
+    fl_point(x + k - 2, y + i + 2);
+    fl_point(x + w - k, y + i + 1);
+    fl_point(x + w - k - 1, y + i + 2);
 
     // Draw the bottom line and points...
     fl_color(shade_color(g[c[clen - i]], bc));
-    fl_xyline(x + 1, y + h - i, x + w - 1);
+    fl_xyline(x + k, y + h - i, x + w - k);
 
     fl_color(shade_color(g[c[clen - i] - 2], bc));
-    fl_point(x, y + h - i);
-    fl_point(x + w - 1, y + h - i);
+    fl_point(x + k - 1, y + h - i);
+    fl_point(x + k - 2, y + h - i - 1);
+    fl_point(x + w - k, y + h - i);
+    fl_point(x + w - k - 1, y + h - i - 1);
   }
 
   // Draw the interior and sides...
@@ -256,13 +263,8 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void up_round(int x, int y, int w, int h, Fl_Color c) {
-#ifdef USE_OLD_PLASTIC_BOX
-  shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
-  up_frame(x, y, w, h, c);
-#else
-  shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
-  frame_rect(x, y, w, h - 1, "IJLM", c);
-#endif // USE_OLD_PLASTIC_BOX
+  shade_round(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
+  frame_round(x, y, w, h - 1, "IJLM", c);
 }
 
 
@@ -273,16 +275,13 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c) {
 
 static void down_box(int x, int y, int w, int h, Fl_Color c) {
   shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
-
-
   down_frame(x, y, w, h, c);
 }
 
 
 static void down_round(int x, int y, int w, int h, Fl_Color c) {
-  shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
-
-  down_frame(x, y, w, h, c);
+  shade_round(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
+  frame_round(x, y, w, h - 1, "MLJI", c);
 }
 
 

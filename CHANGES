@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Now provide FL_PLASTIC_ROUND_UP/DOWN_BOX box types
+	  which are used by the plastic scheme.
 	- FLUID windows that are resized through the widget panel
 	  now remain resizable by the window manager.
 	- Increased the size of the background image used by
