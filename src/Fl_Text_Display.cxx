@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Text_Display.cxx,v 1.12.2.51 2004/04/11 04:38:58 easysw Exp $"
+// "$Id: Fl_Text_Display.cxx,v 1.12.2.52 2004/05/15 22:58:18 easysw Exp $"
 //
 // Copyright 2001-2004 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
@@ -2824,6 +2824,8 @@ void Fl_Text_Display::draw(void) {
   // don't even try if there is no associated text buffer!
   if (!buffer()) { draw_box(); return; }
 
+  fl_push_clip(x(),y(),w(),h());	// prevent drawing outside widget area
+
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
 //    printf("drawing all (box = %d)\n", box());
@@ -2930,6 +2932,7 @@ void Fl_Text_Display::draw(void) {
     mCursorOldY = Y;
     fl_pop_clip();
   }
+  fl_pop_clip();
 }
 
 // this processes drag events due to mouse for Fl_Text_Display and
@@ -3066,5 +3069,5 @@ int Fl_Text_Display::handle(int event) {
 
 
 //
-// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.51 2004/04/11 04:38:58 easysw Exp $".
+// End of "$Id: Fl_Text_Display.cxx,v 1.12.2.52 2004/05/15 22:58:18 easysw Exp $".
 //

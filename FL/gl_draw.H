@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.H,v 1.4.2.3.2.3 2004/04/11 04:38:55 easysw Exp $"
+// "$Id: gl_draw.H,v 1.4.2.3.2.4 2004/05/15 22:58:18 easysw Exp $"
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
@@ -25,6 +25,9 @@
 
 #include "gl.h"
 
+extern FL_EXPORT void gl_remove_displaylist_fonts();
+
+
 //
-// End of "$Id: gl_draw.H,v 1.4.2.3.2.3 2004/04/11 04:38:55 easysw Exp $".
+// End of "$Id: gl_draw.H,v 1.4.2.3.2.4 2004/05/15 22:58:18 easysw Exp $".
 //

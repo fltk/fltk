@@ -1,5 +1,5 @@
 //
-// "$Id: gl_draw.cxx,v 1.7.2.5.2.12 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: gl_draw.cxx,v 1.7.2.5.2.13 2004/05/15 22:58:19 easysw Exp $"
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
@@ -73,6 +73,47 @@ void  gl_font(int fontid, int size) {
   }
   glListBase(fl_fontsize->listbase);
 }
+
+
+void gl_remove_displaylist_fonts()
+{
+# if HAVE_GL
+
+  // clear variables used mostly in fl_font
+  fl_font_ = 0;
+  fl_size_ = 0;
+
+  for (int j = 0 ; j < FL_FREE_FONT ; ++j)
+  {
+    Fl_FontSize* past = 0;
+    Fl_Fontdesc* s    = fl_fonts + j ;
+    Fl_FontSize* f    = s->first;
+    while (f != 0) {
+      if(f->listbase) {
+        if(f == s->first) {
+          s->first = f->next;
+        }
+        else {
+          past->next = f->next;
+        }
+
+        // It would be nice if this next line was in a descturctor somewhere
+        glDeleteLists(f->listbase, 256);
+
+        Fl_FontSize* tmp = f;
+        f = f->next;
+        delete tmp;
+      }
+      else {
+        past = f;
+        f = f->next;
+      }
+    }
+  }
+
+#endif
+}
+
 
 void gl_draw(const char* str, int n) {
   glCallLists(n, GL_UNSIGNED_BYTE, str);
@@ -166,5 +207,5 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #endif
 
 //
-// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.12 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: gl_draw.cxx,v 1.7.2.5.2.13 2004/05/15 22:58:19 easysw Exp $".
 //

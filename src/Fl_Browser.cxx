@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.9 2004/04/11 04:38:57 easysw Exp $"
+// "$Id: Fl_Browser.cxx,v 1.9.2.12.2.10 2004/05/15 22:58:18 easysw Exp $"
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
@@ -216,6 +216,7 @@ int Fl_Browser::item_height(void* lv) const {
     if (hh > hmax) hmax = hh;
   }
   else {
+    const int* i = column_widths();
     // do each column separately as they may all set different fonts:
     for (char* str = l->txt; *str; str++) {
       Fl_Font font = textfont(); // default font
@@ -239,12 +240,13 @@ int Fl_Browser::item_height(void* lv) const {
       }
       END_FORMAT:
       char* ptr = str;
-      for(;*str && (*str!=column_char()); str++) ;
-      if (ptr < str) {
+      if (*i++) str = strchr(str, column_char());
+      else str = NULL;
+      if((!str && *ptr) || (str && ptr < str)) {
 	fl_font(font, tsize); int hh = fl_height();
 	if (hh > hmax) hmax = hh;
       }
-      if (!*str) str --;
+      if (!*str) break;
     }
   }
 
@@ -258,8 +260,8 @@ int Fl_Browser::item_width(void* v) const {
 
   while (*i) { // add up all tab-seperated fields
     char* e;
-    for (e = str; *e && *e != column_char(); e++);
-    if (!*e) break; // last one occupied by text
+    e = strchr(str, column_char());
+    if (!e) break; // last one occupied by text
     str = e+1;
     ww += *i++;
   }
@@ -284,6 +286,7 @@ int Fl_Browser::item_width(void* v) const {
     case 'S': tsize = strtol(str, &str, 10); break;
     case '.':
       done = 1;
+      break;
     case '@':
       str--;
       done = 1;
@@ -316,8 +319,8 @@ void Fl_Browser::item_draw(void* v, int X, int Y, int W, int H) const {
     int w1 = W;	// width for this field
     char* e = 0; // pointer to end of field or null if none
     if (*i) { // find end of field and temporarily replace with 0
-      for (e = str; *e && *e != column_char(); e++);
-      if (*e) {*e = 0; w1 = *i++;} else e = 0;
+      e = strchr(str, column_char());
+      if (e) {*e = 0; w1 = *i++;}
     }
     int tsize = textsize();
     Fl_Font font = textfont();
@@ -495,5 +498,5 @@ int Fl_Browser::value() const {
 }
 
 //
-// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.9 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id: Fl_Browser.cxx,v 1.9.2.12.2.10 2004/05/15 22:58:18 easysw Exp $".
 //
