@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.37 2001/01/15 23:51:37 spitzak Exp $"
+// "$Id: Fl.cxx,v 1.24.2.38 2001/01/21 06:00:58 spitzak Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -57,13 +57,15 @@ int		Fl::e_length;
 //
 
 int Fl::event_inside(int x,int y,int w,int h) /*const*/ {
-  int mx = event_x() - x;
-  int my = event_y() - y;
+  int mx = e_x - x;
+  int my = e_y - y;
   return (mx >= 0 && mx < w && my >= 0 && my < h);
 }
 
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
-  return event_inside(o->x(),o->y(),o->w(),o->h());
+  int mx = e_x - o->x();
+  int my = e_y - o->y();
+  return (mx >= 0 && mx < o->w() && my >= 0 && my < o->h());
 }
 
 ////////////////////////////////////////////////////////////////
@@ -110,13 +112,19 @@ static void elapse_timeouts() {
   }
 }
 
+// Continuously-adjusted error value, this is a number <= 0 for how late
+// we were at calling the last timeout. This appears to make repeat_timeout
+// very accurate even when processing takes a significant portion of the
+// time interval:
+static double missed_timeout_by;
+
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
   elapse_timeouts();
   repeat_timeout(time, cb, arg);
 }
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *arg) {
-  elapse_timeouts();
+  time += missed_timeout_by; if (time < -.05) time = 0;
   Timeout* t = free_timeout;
   if (t) free_timeout = t->next;
   else t = new Timeout;
@@ -207,6 +215,7 @@ double Fl::wait(double time_to_wait) {
     while ((t = first_timeout)) {
       if (t->time > 0) break;
       // The first timeout in the array has expired.
+      missed_timeout_by = t->time;
       // We must remove timeout from array before doing the callback:
       void (*cb)(void*) = t->cb;
       void *arg = t->arg;
@@ -772,5 +781,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.37 2001/01/15 23:51:37 spitzak Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.38 2001/01/21 06:00:58 spitzak Exp $".
 //
