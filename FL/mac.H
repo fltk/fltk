@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.7 2002/04/15 12:19:00 easysw Exp $"
+// "$Id: mac.H,v 1.1.2.8 2002/06/07 15:06:31 easysw Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -27,15 +27,15 @@
 // include this file if "__APPLE__" is defined.  This is to encourage
 // portability of even the system-specific code...
 
-
-#ifndef FL_MAC_H
-#  define FL_MAC_H
+#ifndef Fl_X_H
+#  error "Never use <FL/mac.H> directly; include <FL/x.H> instead."
+#endif // !Fl_X_H
 
 // Standard MacOS Carbon API includes...
-#  include <Carbon/Carbon.h>
+#include <Carbon/Carbon.h>
 
 // Now make some fixes to the headers...
-#  undef check			// Dunno where this comes from...
+#undef check			// Dunno where this comes from...
 
 // Some random X equivalents
 typedef WindowPtr Window;
@@ -114,9 +114,7 @@ extern void fl_open_display();
 
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
-#endif // !FL_MAC_H
-
 //
-// End of "$Id: mac.H,v 1.1.2.7 2002/04/15 12:19:00 easysw Exp $".
+// End of "$Id: mac.H,v 1.1.2.8 2002/06/07 15:06:31 easysw Exp $".
 //
 

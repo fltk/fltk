@@ -25,35 +25,62 @@
 <P>The <CODE>Fl_File_Chooser</CODE> widget displays a standard file selection
 dialog that supports various selection modes.
 
-<CENTER><IMG SRC="filechooser.gif" WIDTH="397" HEIGHT="322" ALT="Fl_File_Chooser widget"></CENTER>
+<CENTER><IMG SRC="Fl_File_Chooser.jpg" WIDTH="498" HEIGHT="408" ALT="Fl_File_Chooser widget"></CENTER>
 
 <P>The <CODE>Fl_File_Chooser</CODE> class also exports several static values
 that may be used to localize or customize the appearance of all file chooser
 dialogs:
 
-<UL>
+<CENTER><TABLE BORDER="1">
+<TR>
+	<TH>Member</TH>
+	<TH>Default value</TH>
+</TR>
+<TR>
+	<TD><TT>add_favorites_label</TT></TD>
+	<TD>"Add to Favorites"</TD>
+</TR>
+<TR>
+	<TD><TT>all_files_label</TT></TD>
+	<TD>"All Files (*)"</TD>
+</TR>
+<TR>
+	<TD><TT>existing_file_label</TT></TD>
+	<TD>"Please choose an existing file!"</TD>
+</TR>
+<TR>
+	<TD><TT>favorites_label</TT></TD>
+	<TD>"Favorites"</TD>
+</TR>
+<TR>
+	<TD><TT>filename_label</TT></TD>
+	<TD>"Filename:"</TD>
+</TR>
+<TR>
+	<TD><TT>filesystems_label</TT></TD>
+	<TD>"My Computer" (WIN32)<BR>
+	"File Systems" (all others)</TD>
+</TR>
+<TR>
+	<TD><TT>manage_favorites_label</TT></TD>
+	<TD>"Manage Favorites"</TD>
+</TR>
+<TR>
+	<TD><TT>preview_label</TT></TD>
+	<TD>"Preview"</TD>
+</TR>
+<TR>
+	<TD><TT>show_label</TT></TD>
+	<TD>"Show:"</TD>
+</TR>
+<TR>
+	<TD><TT>sort</TT></TD>
+	<TD>fl_numericsort</TD>
+</TR>
+</TABLE></CENTER>
 
-	<LI><TT>const char
-	*Fl_File_Chooser::directory_label</TT> <P>The label used
-	for the directory chooser at the top of the file
-	chooser. The default value is "Directory:".</P></LI>
-
-	<LI><TT>const char *Fl_File_Chooser::filename_label</TT>
-	<P>The label used for the filename field at the bottom
-	of the file chooser. The default value is
-	"Filename:".</P></LI>
-
-	<LI><TT>const char *Fl_File_Chooser::filter_label</TT>
-	<P>The label used for the filter text field. The default
-	value is "Filter:".</P></LI>
-
-	<LI><TT>Fl_File_Sort_F *Fl_File_Chooser::sort</TT>
-	<P>The sort function used when loading the contents of a
-	directory. The default value is <TT>fl_numericsort</TT>.
-	Other values are described in the reference page for <A
-	HREF="functions.html#fl_filename_list"><TT>fl_filename_list</TT></A></P></LI>
-
-</UL>
+<P>The <TT>sort</TT> member specifies the sort function that is
+used when loading the contents of a directory.
 
 <H3>Methods</H3>
 
@@ -68,6 +95,7 @@ dialogs:
 	<LI><A HREF="#Fl_File_Chooser.hide">hide</A>
 	<LI><A HREF="#Fl_File_Chooser.iconsize">iconsize</A>
 	<LI><A HREF="#Fl_File_Chooser.label">label</A>
+	<LI><A HREF="#Fl_File_Chooser.preview">preview</A>
 	<LI><A HREF="#Fl_File_Chooser.rescan">rescan</A>
 	<LI><A HREF="#Fl_File_Chooser.show">show</A>
 	<LI><A HREF="#Fl_File_Chooser.textcolor">textcolor</A>
@@ -88,10 +116,23 @@ complete file name (in which case the corresponding file is highlighted
 in the list and in the filename input field.)
 
 <P>The <CODE>pattern</CODE> argument can be a <CODE>NULL</CODE>
-string or <CODE>"*"</CODE> to list all files. See the FLTK
-documentation on <A
+string or <CODE>"*"</CODE> to list all files, or it can be a
+series of descriptions and filter strings separated by tab
+characters (<TT>\t</TT>). The format of filters is either
+"Description text (patterns)" or just "patterns". A file chooser
+that provides filters for HTML and image files might look like:
+
+<UL><PRE>
+"HTML Files (*.html)\tImage Files (*.{bmp,gif,jpg,png})"
+</PRE></UL>
+
+<P>The file chooser will automatically add the "All Files (*)"
+pattern to the end of the string you pass if you do not provide
+one. The first filter in the string is the default filter.
+
+<P>See the FLTK documentation on <A
 HREF="functions.html#fl_filename_match"><CODE>fl_filename_match()</CODE></A>
-for other kinds of patterns.
+for the kinds of pattern strings that are supported.
 
 <P>The <CODE>type</CODE> argument can be one of the following:
 
@@ -147,6 +188,12 @@ const char *label()</A></H4>
 
 <P>Sets or gets the title bar text for the <CODE>Fl_File_Chooser</CODE>.
 
+<H4><A NAME="Fl_File_Chooser.preview">void preview(int e)<BR>
+int preview()</A></H4>
+
+<P>The first form enables or disables the preview box in the file chooser.
+The second form returns the current state of the preview box.
+
 <H4><A NAME="Fl_File_Chooser.rescan">void rescan()</A></H4>
 
 <P>Reloads the current directory in the <CODE>Fl_File_Browser</CODE>.
@@ -184,9 +231,6 @@ const char *value()</A></H4>
 <H4><A NAME="Fl_File_Chooser.visible">int visible()</A></H4>
 
 <P>Returns 1 if the <CODE>Fl_File_Chooser</CODE> window is visible.
-
-<HR>
-
 
 </BODY>
 </HTML>

@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.26 2002/05/16 12:47:43 easysw Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.27 2002/06/07 15:06:32 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -116,7 +116,7 @@ Fl_Window *main_window;
 void save_cb(Fl_Widget *, void *v) {
   const char *c = filename;
   if (v || !c || !*c) {
-    if (!(c=fl_file_chooser("Save to:", "*.f[ld]", c))) return;
+    if (!(c=fl_file_chooser("Save to:", "FLUID Files (*.f[ld])", c))) return;
     set_filename(c);
   }
   if (!write_file(c)) {
@@ -149,7 +149,7 @@ void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag && !fl_ask("Discard changes?")) return;
   const char *c;
   const char *oldfilename;
-  if (!(c = fl_file_chooser("Open:", "*.f[ld]", filename))) return;
+  if (!(c = fl_file_chooser("Open:", "FLUID Files (*.f[ld])", filename))) return;
   oldfilename = filename;
   filename    = NULL;
   set_filename(c);
@@ -192,7 +192,7 @@ void open_history_cb(Fl_Widget *, void *v) {
 void new_cb(Fl_Widget *, void *v) {
   if (!v && modflag && !fl_ask("Discard changes?")) return;
   const char *c;
-  if (!(c = fl_file_chooser("New:", "*.f[ld]", 0))) return;
+  if (!(c = fl_file_chooser("New:", "FLUID Files (*.f[ld])", 0))) return;
   delete_all();
   set_filename(c);
   modflag = 0;
@@ -795,5 +795,5 @@ int main(int argc,char **argv) {
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.26 2002/05/16 12:47:43 easysw Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.27 2002/06/07 15:06:32 easysw Exp $".
 //

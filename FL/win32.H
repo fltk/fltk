@@ -1,5 +1,5 @@
 //
-// "$Id: win32.H,v 1.15.2.3.2.6 2002/04/15 12:19:00 easysw Exp $"
+// "$Id: win32.H,v 1.15.2.3.2.7 2002/06/07 15:06:31 easysw Exp $"
 //
 // WIN32 header file for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,10 @@
 // Do not directly include this file, instead use <FL/x.H>.  It will
 // include this file if WIN32 is defined.  This is to encourage
 // portability of even the system-specific code...
+
+#ifndef Fl_X_H
+#  error "Never use <FL/win32.H> directly; include <FL/x.H> instead."
+#endif // !Fl_X_H
 
 #include <windows.h>
 // In some of the distributions, the gcc header files are missing some stuff:
@@ -130,5 +134,5 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 
 //
-// End of "$Id: win32.H,v 1.15.2.3.2.6 2002/04/15 12:19:00 easysw Exp $".
+// End of "$Id: win32.H,v 1.15.2.3.2.7 2002/06/07 15:06:31 easysw Exp $".
 //
