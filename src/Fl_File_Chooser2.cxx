@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.19 2002/07/14 18:18:59 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -980,22 +980,26 @@ Fl_File_Chooser::value(int f)	// I - File number
   int		i;		// Looping var
   int		count;		// Number of selected files
   const char	*name;		// Current filename
+  char		*slash;		// Trailing slash, if any
   static char	pathname[1024];	// Filename + directory
 
 
-  if (!(type_ & MULTI))
-  {
+  if (!(type_ & MULTI)) {
     name = fileName->value();
     if (name[0] == '\0') return NULL;
     else if (fl_filename_isdir(name)) {
-      if (type_ & DIRECTORY) return name;
-      else return NULL;
+      if (type_ & DIRECTORY) {
+        // Strip trailing slash, if any...
+        strlcpy(pathname, name, sizeof(pathname));
+	slash = pathname + strlen(pathname) - 1;
+	if (*slash == '/') *slash = '\0';
+        return pathname;
+      } else return NULL;
     } else return name;
   }
 
   for (i = 1, count = 0; i <= fileList->size(); i ++)
-    if (fileList->selected(i))
-    {
+    if (fileList->selected(i)) {
       // See if this file is a directory...
       name = fileList->text(i);
 
@@ -1005,12 +1009,10 @@ Fl_File_Chooser::value(int f)	// I - File number
 	strlcpy(pathname, name, sizeof(pathname));
       }
 
-      if (!fl_filename_isdir(pathname))
-      {
+      if (!fl_filename_isdir(pathname)) {
         // Nope, see if this this is "the one"...
 	count ++;
-	if (count == f)
-          return ((const char *)pathname);
+	if (count == f) return (pathname);
       }
     }
 
@@ -1052,14 +1054,13 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
   if ((slash = strrchr(pathname, '/')) == NULL)
     slash = strrchr(pathname, '\\');
 
-  if (slash != NULL)
-  {
+  if (slash != NULL) {
     // Yes, change the display to the directory... 
-    *slash++ = '\0';
+    if (!fl_filename_isdir(pathname)) *slash++ = '\0';
+
     directory(pathname);
-  }
-  else
-  {
+    if (*slash == '/') slash = pathname;
+  } else {
     directory(".");
     slash = pathname;
   }
@@ -1134,5 +1135,5 @@ unquote_pathname(char       *dst,	// O - Destination string
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.18 2002/07/01 21:14:20 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.19 2002/07/14 18:18:59 easysw Exp $".
 //

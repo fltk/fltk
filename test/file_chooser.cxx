@@ -1,5 +1,5 @@
 //
-// "$Id: file_chooser.cxx,v 1.4.2.3.2.7 2002/06/28 21:10:20 easysw Exp $"
+// "$Id: file_chooser.cxx,v 1.4.2.3.2.8 2002/07/14 18:19:00 easysw Exp $"
 //
 // File chooser test program.
 //
@@ -43,6 +43,7 @@
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_PNM_Image.H>
+#include <FL/Fl_Light_Button.H>
 #include "../src/flstring.h"
 
 
@@ -61,7 +62,10 @@ Fl_Shared_Image		*image = 0;
 //
 
 void		close_callback(void);
+void		create_callback(void);
+void		dir_callback(void);
 void		fc_callback(Fl_File_Chooser *, void *);
+void		multi_callback(void);
 Fl_Image	*pdf_check(const char *, uchar *, int);
 Fl_Image	*ps_check(const char *, uchar *, int);
 void		show_callback(void);
@@ -84,10 +88,8 @@ main(int  argc,		// I - Number of command-line arguments
   Fl::scheme(NULL);
   Fl_File_Icon::load_system_icons();
 
-  fc = new Fl_File_Chooser(".", "*", Fl_File_Chooser::MULTI, "Fl_File_Chooser Test");
+  fc = new Fl_File_Chooser(".", "*", Fl_File_Chooser::SINGLE, "Fl_File_Chooser Test");
   fc->callback(fc_callback);
-//  fc->type(Fl_File_Chooser::MULTI);
-//  fc->color((Fl_Color)196);
 
   // Register the PS and PDF image types...
   Fl_Shared_Image::add_handler(pdf_check);
@@ -112,12 +114,22 @@ main(int  argc,		// I - Number of command-line arguments
   icon   = Fl_File_Icon::find(".", Fl_File_Icon::DIRECTORY);
   icon->label(button);
 
-  files = new Fl_File_Browser(50, 45, 340, 110, "Files:");
+  button = new Fl_Light_Button(50, 45, 80, 25, "MULTI");
+  button->callback((Fl_Callback *)multi_callback);
+
+  button = new Fl_Light_Button(140, 45, 90, 25, "CREATE");
+  button->callback((Fl_Callback *)create_callback);
+
+  button = new Fl_Light_Button(240, 45, 115, 25, "DIRECTORY");
+  button->callback((Fl_Callback *)dir_callback);
+
+  files = new Fl_File_Browser(50, 80, 340, 75, "Files:");
   files->align(FL_ALIGN_LEFT);
 
   button = new Fl_Button(340, 165, 50, 25, "Close");
   button->callback((Fl_Callback *)close_callback);
 
+  window->resizable(files);
   window->end();
   window->show();
 
@@ -139,6 +151,28 @@ close_callback(void)
 
 
 //
+// 'create_callback()' - Handle clicks on the create button.
+//
+
+void
+create_callback(void)
+{
+  fc->type(fc->type() ^ Fl_File_Chooser::CREATE);
+}
+
+
+//
+// 'dir_callback()' - Handle clicks on the directory button.
+//
+
+void
+dir_callback(void)
+{
+  fc->type(fc->type() ^ Fl_File_Chooser::DIRECTORY);
+}
+
+
+//
 // 'fc_callback()' - Handle choices in the file chooser...
 //
 
@@ -154,6 +188,17 @@ fc_callback(Fl_File_Chooser *fc,	// I - File chooser
   filename = fc->value();
 
   printf("    filename = \"%s\"\n", filename ? filename : "(null)");
+}
+
+
+//
+// 'multi_callback()' - Handle clicks on the multi button.
+//
+
+void
+multi_callback(void)
+{
+  fc->type(fc->type() ^ Fl_File_Chooser::MULTI);
 }
 
 
@@ -290,5 +335,5 @@ show_callback(void)
 
 
 //
-// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.7 2002/06/28 21:10:20 easysw Exp $".
+// End of "$Id: file_chooser.cxx,v 1.4.2.3.2.8 2002/07/14 18:19:00 easysw Exp $".
 //
