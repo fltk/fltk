@@ -10,5 +10,8 @@
 #       order to test your distribution.  Ya, I think RPM is just
 #       *great*...
 #
+#       Also, this script currently only builds a binary distribution.
+#       FLTK's source tar file builds under Linux without any modification.
+#
 
-rpm -ba fltk.spec
+rpm -bb fltk.spec

@@ -207,7 +207,7 @@ repository in the US.
 /usr/include/FL/x.H
 /usr/include/FL/x.h
 /usr/include/Fl
-%doc /usr/catman/pman/cat1/fluid.z
+%doc /usr/man/man1/fluid.1
 %doc /usr/info/fltk/FL.gif
 %doc /usr/info/fltk/Fl_Adjuster.html
 %doc /usr/info/fltk/Fl_Box.html
