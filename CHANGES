@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.4
 
+	- Pressing 'home' after the last letter in a Text_Editor
+          would move the cursor to pos 0 (STR #39)
 	- Fl::get_key(x) would mix up Ctrl and Meta on OS X (STR
 	  #55)
 	- The configure script used the wrong dynamic library
