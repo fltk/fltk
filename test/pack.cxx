@@ -1,5 +1,5 @@
 //
-// "$Id: pack.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: pack.cxx,v 1.4.2.3.2.1 2001/09/04 13:13:29 easysw Exp $"
 //
 // Fl_Pack test program for the Fast Light Tool Kit (FLTK).
 //
@@ -56,10 +56,10 @@ void spacing_cb(Fl_Value_Slider*o, long) {
 
 int main(int argc, char **argv) {
  Fl_Window *w;
- {Fl_Window* o = new Fl_Window(365, 525);
+ {Fl_Window* o = new Fl_Window(360, 370);
   w = o;
-  scroll = new Fl_Scroll(10,10,345,285);
- {Fl_Pack* o = new Fl_Pack(10, 10, 345, 285);
+  scroll = new Fl_Scroll(10,10,340,285);
+ {Fl_Pack* o = new Fl_Pack(10, 10, 340, 285);
   pack = o;
   o->box(FL_DOWN_FRAME);
   //o->box(FL_ENGRAVED_FRAME);
@@ -91,16 +91,16 @@ int main(int argc, char **argv) {
   w->resizable(o);
  }
  scroll->end();
- {Fl_Light_Button* o = new Fl_Light_Button(10, 325, 175, 25, "HORIZONTAL");
+ {Fl_Light_Button* o = new Fl_Light_Button(10, 305, 165, 25, "HORIZONTAL");
  o->type(FL_RADIO_BUTTON);
   o->callback((Fl_Callback*)type_cb, (void*)(Fl_Pack::HORIZONTAL));
  }
- {Fl_Light_Button* o = new Fl_Light_Button(10, 350, 175, 25, "VERTICAL");
+ {Fl_Light_Button* o = new Fl_Light_Button(185, 305, 165, 25, "VERTICAL");
  o->type(FL_RADIO_BUTTON);
  o->value(1);
   o->callback((Fl_Callback*)type_cb, (void*)(Fl_Pack::VERTICAL));
  }
- {Fl_Value_Slider* o = new Fl_Value_Slider(50,375, 295,25,"spacing:");
+ {Fl_Value_Slider* o = new Fl_Value_Slider(100, 335, 250, 25, "Spacing: ");
  o->align(FL_ALIGN_LEFT);
  o->type(FL_HORIZONTAL);
  o->range(0,30);
@@ -114,5 +114,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: pack.cxx,v 1.4.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: pack.cxx,v 1.4.2.3.2.1 2001/09/04 13:13:29 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_FileBrowser.cxx,v 1.13.2.4 2001/08/06 15:19:20 easysw Exp $"
+// "$Id: Fl_FileBrowser.cxx,v 1.13.2.5 2001/09/04 13:13:29 easysw Exp $"
 //
 // Fl_FileBrowser routines.
 //
@@ -382,6 +382,7 @@ Fl_FileBrowser::Fl_FileBrowser(int        x,	// I - Upper-lefthand X coordinate
   pattern_   = "*";
   directory_ = "";
   iconsize_  = 3 * textsize() / 2;
+  filetype_  = FILES;
 }
 
 
@@ -389,7 +390,7 @@ Fl_FileBrowser::Fl_FileBrowser(int        x,	// I - Upper-lefthand X coordinate
 // 'Fl_FileBrowser::load()' - Load a directory into the browser.
 //
 
-int					// O - Number of files loaded
+int				// O - Number of files loaded
 Fl_FileBrowser::load(const char *directory)// I - Directory to load
 {
   int		i;		// Looping var
@@ -531,7 +532,8 @@ Fl_FileBrowser::load(const char *directory)// I - Directory to load
           num_dirs ++;
           insert(num_dirs, name, Fl_FileIcon::find(filename));
 	}
-	else if (filename_match(files[i]->d_name, pattern_))
+	else if (filetype_ == FILES &&
+	         filename_match(files[i]->d_name, pattern_))
           add(files[i]->d_name, Fl_FileIcon::find(filename));
       }
 
@@ -564,5 +566,5 @@ Fl_FileBrowser::filter(const char *pattern)	// I - Pattern string
 
 
 //
-// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.4 2001/08/06 15:19:20 easysw Exp $".
+// End of "$Id: Fl_FileBrowser.cxx,v 1.13.2.5 2001/09/04 13:13:29 easysw Exp $".
 //

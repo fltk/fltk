@@ -1,76 +1,73 @@
 <HTML>
-<HEAD>
-	<TITLE>FileBrowser - ESP Widget Set for FLTK</TITLE>
-	<LINK REL="STYLESHEET" TYPE="text/css" HREF="fltk.css">
-	<MAP NAME="navbar">
-		<AREA SHAPE="RECT" COORD="20,19,74,36" HREF="index.html" ALT="Widget Set Home Page">
-		<AREA SHAPE="RECT" COORD="96,19,240,36" HREF="documentation.html" ALT="Widget Set Documentation">
-		<AREA SHAPE="RECT" COORD="262,19,356,36" HREF="download.html" ALT="Download Widget Set">
-		<AREA SHAPE="RECT" COORD="378,19,416,36" HREF="http://www.easysw.com" ALT="ESP Home Page">
-		<AREA SHAPE="RECT" COORD="438,19,487,36" HREF="http://www.fltk.org" ALT="FLTK Home Page">
-	</MAP>
-</HEAD>
-
-<BODY BGCOLOR="#ccccff">
+<BODY>
 
 <!-- NEW PAGE -->
-<H2>class FileBrowser</H2>
+<H2><A NAME="Fl_FileBrowser">class Fl_FileBrowser</A></H2>
 
 <HR>
 
 <H3>Class Hierarchy</H3>
 
 <UL><PRE>
-Fl_Browser
+<A HREF="Fl_Browser.html#Fl_Browser">Fl_Browser</A>
    |
-   +----<B>FileBrowser</B>
+   +----<B>Fl_FileBrowser</B>
 </PRE></UL>
 
 <H3>Include Files</H3>
 
 <UL><PRE>
-#include "FileBrowser.h"
+#include &lt;FL/Fl_FileBrowser.H>
 </PRE></UL>
 
 <H3>Description</H3>
 
-<P>The <CODE>FileBrowser</CODE> widget displays a list of filenames,
+<P>The <CODE>Fl_FileBrowser</CODE> widget displays a list of filenames,
 optionally with file-specific icons.
 
 <H3>Methods</H3>
 
 <UL>
 
-	<LI><A HREF="#FileBrowser.FileBrowser">FileBrowser</A>
-	<LI><A HREF="#FileBrowser.~FileBrowser">~FileBrowser</A>
-	<LI><A HREF="#FileBrowser.iconsize">iconsize</A>
-	<LI><A HREF="#FileBrowser.filter">filter</A>
-	<LI><A HREF="#FileBrowser.load">load</A>
+	<LI><A HREF="#Fl_FileBrowser.Fl_FileBrowser">Fl_FileBrowser</A>
+	<LI><A HREF="#Fl_FileBrowser.~Fl_FileBrowser">~Fl_FileBrowser</A>
+	<LI><A HREF="#Fl_FileBrowser.iconsize">iconsize</A>
+	<LI><A HREF="#Fl_FileBrowser.filter">filter</A>
+	<LI><A HREF="#Fl_FileBrowser.filetype">filetype</A>
+	<LI><A HREF="#Fl_FileBrowser.load">load</A>
 
 </UL>
 
-<H4><A NAME="FileBrowser.FileBrowser">FileBrowser(int xx, int yy, int ww, int hh, const char *l = 0)</A></H4>
+<H4><A NAME="Fl_FileBrowser.Fl_FileBrowser">Fl_FileBrowser(int xx, int yy, int ww, int hh, const char *l = 0)</A></H4>
 
-<P>The constructor creates the <CODE>FileBrowser</CODE> widget at the specified
+<P>The constructor creates the <CODE>Fl_FileBrowser</CODE> widget at the specified
 position and size.
 
-<H4><A NAME="FileBrowser.~FileBrowser">~FileBrowser()</A></H4>
+<H4><A NAME="Fl_FileBrowser.~Fl_FileBrowser">~Fl_FileBrowser()</A></H4>
 
 <P>The destructor destroys the widget and frees all memory that has been
 allocated.
 
-<H4><A NAME="FileBrowser.iconsize">void iconsize(uchar s)<BR>
+<H4><A NAME="Fl_FileBrowser.iconsize">void iconsize(uchar s)<BR>
 uchar iconsize() const</A></H4>
 
 <P>Sets or gets the size of the icons. The default size is 20 pixels.
 
-<H4><A NAME="FileBrowser.filter">void filter(const char *pattern)<BR>
+<H4><A NAME="Fl_FileBrowser.filter">void filter(const char *pattern)<BR>
 const char *filter() const</A></H4>
 
 <P>Sets or gets the filename filter. The pattern matching uses the
 <CODE>filename_match()</CODE> function in FLTK.
 
-<H4><A NAME="FileBrowser.load">int load(const char *directory)</A></H4>
+<H4><A NAME="Fl_FileBrowser.filetype">void filetype(int type)<BR>
+int filetype() const</A></H4>
+
+<P>Sets or gets the file browser type, <CODE>FILES</CODE> or
+<CODE>DIRECTORIES</CODE>. When set to <CODE>FILES</CODE>, both
+files and directories are shown. Otherwise only directories are
+shown.
+
+<H4><A NAME="Fl_FileBrowser.load">int load(const char *directory)</A></H4>
 
 <P>Loads the specified directory into the browser. If icons have been
 loaded then the correct icon is associated with each file in the list.

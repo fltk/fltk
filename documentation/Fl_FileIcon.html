@@ -1,38 +1,26 @@
 <HTML>
-<HEAD>
-	<TITLE>FileIcon - ESP Widget Set for FLTK</TITLE>
-	<LINK REL="STYLESHEET" TYPE="text/css" HREF="fltk.css">
-	<MAP NAME="navbar">
-		<AREA SHAPE="RECT" COORD="20,19,74,36" HREF="index.html" ALT="Widget Set Home Page">
-		<AREA SHAPE="RECT" COORD="96,19,240,36" HREF="documentation.html" ALT="Widget Set Documentation">
-		<AREA SHAPE="RECT" COORD="262,19,356,36" HREF="download.html" ALT="Download Widget Set">
-		<AREA SHAPE="RECT" COORD="378,19,416,36" HREF="http://www.easysw.com" ALT="ESP Home Page">
-		<AREA SHAPE="RECT" COORD="438,19,487,36" HREF="http://www.fltk.org" ALT="FLTK Home Page">
-	</MAP>
-</HEAD>
-
-<BODY BGCOLOR="#ccccff">
+<BODY>
 
 <!-- NEW PAGE -->
-<H2>class FileIcon</H2>
+<H2><A NAME="Fl_FileIcon">class Fl_FileIcon</A></H2>
 
 <HR>
 
 <H3>Class Hierarchy</H3>
 
 <UL><PRE>
-<B>FileIcon</B>
+<B>Fl_FileIcon</B>
 </PRE></UL>
 
 <H3>Include Files</H3>
 
 <UL><PRE>
-#include "FileIcon.h"
+#include &lt;FL/Fl_FileIcon.H>
 </PRE></UL>
 
 <H3>Description</H3>
 
-<P>The <CODE>FileIcon</CODE> class manages icon images that can be
+<P>The <CODE>Fl_FileIcon</CODE> class manages icon images that can be
 used as labels in other widgets and as icons in the <CODE>FileBrowser</CODE>
 widget.
 
@@ -40,47 +28,47 @@ widget.
 
 <UL>
 
-	<LI><A HREF="#FileIcon.FileIcon">FileIcon</A>
-	<LI><A HREF="#FileIcon.~FileIcon">~FileIcon</A>
-	<LI><A HREF="#FileIcon.add">add</A>
-	<LI><A HREF="#FileIcon.add_color">add_color</A>
-	<LI><A HREF="#FileIcon.add_vertex">add_vertex</A>
-	<LI><A HREF="#FileIcon.clear">clear</A>
-	<LI><A HREF="#FileIcon.draw">draw</A>
-	<LI><A HREF="#FileIcon.find">find</A>
-	<LI><A HREF="#FileIcon.first">first</A>
-	<LI><A HREF="#FileIcon.label">label</A>
-	<LI><A HREF="#FileIcon.labeltype">labeltype</A>
-	<LI><A HREF="#FileIcon.load_fti">load_fti</A>
-	<LI><A HREF="#FileIcon.load">load</A>
-	<LI><A HREF="#FileIcon.load_system_icons">load_system_icons</A>
-	<LI><A HREF="#FileIcon.load_xpm">load_xpm</A>
-	<LI><A HREF="#FileIcon.pattern">pattern</A>
-	<LI><A HREF="#FileIcon.size">size</A>
-	<LI><A HREF="#FileIcon.type">type</A>
-	<LI><A HREF="#FileIcon.value">value</A>
+	<LI><A HREF="#Fl_FileIcon.Fl_FileIcon">Fl_FileIcon</A>
+	<LI><A HREF="#Fl_FileIcon.~Fl_FileIcon">~Fl_FileIcon</A>
+	<LI><A HREF="#Fl_FileIcon.add">add</A>
+	<LI><A HREF="#Fl_FileIcon.add_color">add_color</A>
+	<LI><A HREF="#Fl_FileIcon.add_vertex">add_vertex</A>
+	<LI><A HREF="#Fl_FileIcon.clear">clear</A>
+	<LI><A HREF="#Fl_FileIcon.draw">draw</A>
+	<LI><A HREF="#Fl_FileIcon.find">find</A>
+	<LI><A HREF="#Fl_FileIcon.first">first</A>
+	<LI><A HREF="#Fl_FileIcon.label">label</A>
+	<LI><A HREF="#Fl_FileIcon.labeltype">labeltype</A>
+	<LI><A HREF="#Fl_FileIcon.load_fti">load_fti</A>
+	<LI><A HREF="#Fl_FileIcon.load">load</A>
+	<LI><A HREF="#Fl_FileIcon.load_system_icons">load_system_icons</A>
+	<LI><A HREF="#Fl_FileIcon.load_xpm">load_xpm</A>
+	<LI><A HREF="#Fl_FileIcon.pattern">pattern</A>
+	<LI><A HREF="#Fl_FileIcon.size">size</A>
+	<LI><A HREF="#Fl_FileIcon.type">type</A>
+	<LI><A HREF="#Fl_FileIcon.value">value</A>
 
 </UL>
 
-<H4><A NAME="FileIcon.FileIcon">FileIcon()</A></H4>
+<H4><A NAME="Fl_FileIcon.Fl_FileIcon">Fl_FileIcon()</A></H4>
 
-<P>The constructor creates a new <CODE>FileIcon</CODE> with the specified
+<P>The constructor creates a new <CODE>Fl_FileIcon</CODE> with the specified
 information.
 
-<H4><A NAME="FileIcon.~FileIcon">~FileIcon()</A></H4>
+<H4><A NAME="Fl_FileIcon.~Fl_FileIcon">~Fl_FileIcon()</A></H4>
 
 <P>The destructor destroys the icon and frees all memory that has been
 allocated for it.
 
-<H4><A NAME="FileIcon.add">short *add(short d)</A></H4>
+<H4><A NAME="Fl_FileIcon.add">short *add(short d)</A></H4>
 
 <P>Adds a keyword value to the icon array, returning a pointer to it.
 
-<H4><A NAME="FileIcon.add_color">short *add_color(short c)</A></H4>
+<H4><A NAME="Fl_FileIcon.add_color">short *add_color(short c)</A></H4>
 
 <P>Adds a color value to the icon array, returning a pointer to it.
 
-<H4><A NAME="FileIcon.add_vertex">short *add_vertex(int x, int y)<BR>
+<H4><A NAME="Fl_FileIcon.add_vertex">short *add_vertex(int x, int y)<BR>
 short *add_vertex(float x, float y)</A></H4>
 
 <P>Adds a vertex value to the icon array, returning a pointer to it.
@@ -88,76 +76,76 @@ The integer version accepts coordinates from 0 to 10000, while the
 floating point version goes from 0.0 to 1.0. The origin (0.0) is in
 the lower-lefthand corner of the icon.
 
-<H4><A NAME="FileIcon.clear">void clear()</A></H4>
+<H4><A NAME="Fl_FileIcon.clear">void clear()</A></H4>
 
 <P>Clears all icon data from the icon.
 
-<H4><A NAME="FileIcon.draw">void draw(int x, int y, int w, int h, Fl_Color ic, int active = 1)</A></H4>
+<H4><A NAME="Fl_FileIcon.draw">void draw(int x, int y, int w, int h, Fl_Color ic, int active = 1)</A></H4>
 
 <P>Draws the icon in the indicated area.
 
-<H4><A NAME="FileIcon.find">static FileIcon *find(const char *filename, int filetype = ANY);</A></H4>
+<H4><A NAME="Fl_FileIcon.find">static Fl_FileIcon *find(const char *filename, int filetype = ANY);</A></H4>
 
 <P>Finds an icon that matches the given filename and file type.
 
-<H4><A NAME="FileIcon.first">static FileIcon *first()</A></H4>
+<H4><A NAME="Fl_FileIcon.first">static Fl_FileIcon *first()</A></H4>
 
 <P>Returns a pointer to the first icon in the list.
 
-<H4><A NAME="FileIcon.label">void label(Fl_Widget *w)</A></H4>
+<H4><A NAME="Fl_FileIcon.label">void label(Fl_Widget *w)</A></H4>
 
-<P>Applies the icon to the widget, registering the <CODE>FileIcon</CODE>
+<P>Applies the icon to the widget, registering the <CODE>Fl_FileIcon</CODE>
 label type as needed.
 
-<H4><A NAME="FileIcon.labeltype">static void labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a)</A></H4>
+<H4><A NAME="Fl_FileIcon.labeltype">static void labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a)</A></H4>
 
 <P>The labeltype function for icons.
 
-<H4><A NAME="FileIcon.load">void load(const char *f)</A></H4>
+<H4><A NAME="Fl_FileIcon.load">void load(const char *f)</A></H4>
 
 <P>Loads the specified icon image. The format is deduced from the filename.
 
-<H4><A NAME="FileIcon.load_fti">void load_fti(const char *fti)</A></H4>
+<H4><A NAME="Fl_FileIcon.load_fti">void load_fti(const char *fti)</A></H4>
 
 <P>Loads an SGI icon file.
 
-<H4><A NAME="FileIcon.load_system_icons">static void load_system_icons(void)</A></H4>
+<H4><A NAME="Fl_FileIcon.load_system_icons">static void load_system_icons(void)</A></H4>
 
 <P>Loads all system-defined icons. This call is useful when using the
 <CODE>FileChooser</CODE> widget and should be used when the application
 starts:
 
 <UL><PRE>
-FileIcon::load_system_icons();
+Fl_FileIcon::load_system_icons();
 </PRE></UL>
 
-<H4><A NAME="FileIcon.load_xpm">void load_xpm(const char *xpm)</A></H4>
+<H4><A NAME="Fl_FileIcon.load_xpm">void load_xpm(const char *xpm)</A></H4>
 
 <P>Loads an XPM icon file.
 
-<H4><A NAME="FileIcon.pattern">const char *pattern()</A></H4>
+<H4><A NAME="Fl_FileIcon.pattern">const char *pattern()</A></H4>
 
 <P>Returns the filename matching pattern for the icon.
 
-<H4><A NAME="FileIcon.size">int size()</A></H4>
+<H4><A NAME="Fl_FileIcon.size">int size()</A></H4>
 
 <P>Returns the number of words of data used by the icon.
 
-<H4><A NAME="FileIcon.type">int type()</A></H4>
+<H4><A NAME="Fl_FileIcon.type">int type()</A></H4>
 
 <P>Returns the filetype associated with the icon, which can be one of the
 following:
 
 <UL>
-	<LI><CODE>FileIcon::ANY</CODE>, any kind of file.
-	<LI><CODE>FileIcon::PLAIN</CODE>, plain files.
-	<LI><CODE>FileIcon::FIFO</CODE>, named pipes.
-	<LI><CODE>FileIcon::DEVICE</CODE>, character and block devices.
-	<LI><CODE>FileIcon::LINK</CODE>, symbolic links.
-	<LI><CODE>FileIcon::DIRECTORY</CODE>, directories.
+	<LI><CODE>Fl_FileIcon::ANY</CODE>, any kind of file.
+	<LI><CODE>Fl_FileIcon::PLAIN</CODE>, plain files.
+	<LI><CODE>Fl_FileIcon::FIFO</CODE>, named pipes.
+	<LI><CODE>Fl_FileIcon::DEVICE</CODE>, character and block devices.
+	<LI><CODE>Fl_FileIcon::LINK</CODE>, symbolic links.
+	<LI><CODE>Fl_FileIcon::DIRECTORY</CODE>, directories.
 </UL>
 
-<H4><A NAME="FileIcon.value">short *value()</A></H4>
+<H4><A NAME="Fl_FileIcon.value">short *value()</A></H4>
 
 <P>Returns the data array for the icon.
 

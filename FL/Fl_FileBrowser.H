@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_FileBrowser.H,v 1.4.2.2 2001/08/11 14:49:51 easysw Exp $"
+// "$Id: Fl_FileBrowser.H,v 1.4.2.3 2001/09/04 13:13:29 easysw Exp $"
 //
 // FileBrowser definitions.
 //
@@ -40,6 +40,9 @@
 
 class Fl_FileBrowser : public Fl_Browser
 {
+  enum { FILES, DIRECTORIES };
+
+  int		filetype_;
   const char	*directory_;
   uchar		iconsize_;
   const char	*pattern_;
@@ -63,10 +66,13 @@ public:
 
   uchar			textsize() const { return (Fl_Browser::textsize()); };
   void			textsize(uchar s) { Fl_Browser::textsize(s); iconsize_ = 3 * s / 2; };
+
+  int			filetype() const { return (filetype_); };
+  void			filetype(int t) { filetype_ = t; load(directory_); };
 };
 
 #endif // !_Fl_FileBrowser_H_
 
 //
-// End of "$Id: Fl_FileBrowser.H,v 1.4.2.2 2001/08/11 14:49:51 easysw Exp $".
+// End of "$Id: Fl_FileBrowser.H,v 1.4.2.3 2001/09/04 13:13:29 easysw Exp $".
 //
