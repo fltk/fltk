@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24 1999/03/09 17:08:35 mike Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.1 1999/03/15 07:06:46 bill Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -64,9 +64,6 @@ struct pollfd {int fd; short events; short revents;};
 
 //#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
 
-#ifdef __EMX__
-#include <sys/select.h>
-#endif
 #endif
 
 #define MAXFD 8
@@ -827,5 +824,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24 1999/03/09 17:08:35 mike Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.1 1999/03/15 07:06:46 bill Exp $".
 //
