@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Icon.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $"
+// "$Id: Fl_File_Icon.cxx,v 1.1.2.3 2001/10/29 15:40:49 easysw Exp $"
 //
 // Fl_File_Icon routines.
 //
@@ -256,7 +256,8 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 {
   Fl_Color	c,		// Current color
 		oc;		// Outline color
-  short		*d;		// Pointer to data
+  short		*d,		// Pointer to data
+		*dend;		// End of data...
   short		*prim;		// Pointer to start of primitive...
   double	scale;		// Scale of icon
 
@@ -275,6 +276,7 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 
   // Loop through the array until we see an unmatched END...
   d    = data_;
+  dend = data_ + num_data_;
   prim = NULL;
   c    = ic;
 
@@ -283,57 +285,58 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
   else
     fl_color(fl_inactive(c));
 
-  while (*d != END || prim)
+  while (d < dend)
     switch (*d)
     {
       case END :
-          switch (*prim)
-	  {
-	    case LINE :
-		fl_end_line();
-		break;
+          if (prim)
+            switch (*prim)
+	    {
+	      case LINE :
+		  fl_end_line();
+		  break;
 
-	    case CLOSEDLINE :
-		fl_end_loop();
-		break;
+	      case CLOSEDLINE :
+		  fl_end_loop();
+		  break;
 
-	    case POLYGON :
-		fl_end_polygon();
-		break;
+	      case POLYGON :
+		  fl_end_polygon();
+		  break;
 
-	    case OUTLINEPOLYGON :
-		fl_end_polygon();
+	      case OUTLINEPOLYGON :
+		  fl_end_polygon();
 
-        	oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
-	                	((unsigned short *)prim)[2]);
-                if (active)
-		{
-                  if (oc == FL_ICON_COLOR)
-		    fl_color(ic);
+        	  oc = (Fl_Color)((((unsigned short *)prim)[1] << 16) | 
+	                	  ((unsigned short *)prim)[2]);
+                  if (active)
+		  {
+                    if (oc == FL_ICON_COLOR)
+		      fl_color(ic);
+		    else
+		      fl_color(oc);
+		  }
 		  else
-		    fl_color(oc);
-		}
-		else
-		{
-                  if (oc == FL_ICON_COLOR)
-		    fl_color(fl_inactive(ic));
-		  else
-		    fl_color(fl_inactive(oc));
-		}
+		  {
+                    if (oc == FL_ICON_COLOR)
+		      fl_color(fl_inactive(ic));
+		    else
+		      fl_color(fl_inactive(oc));
+		  }
 
-		fl_begin_loop();
+		  fl_begin_loop();
 
-		prim += 3;
-		while (*prim == VERTEX)
-		{
-		  fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
 		  prim += 3;
-		}
+		  while (*prim == VERTEX)
+		  {
+		    fl_vertex(prim[1] * 0.0001, prim[2] * 0.0001);
+		    prim += 3;
+		  }
 
-        	fl_end_loop();
-		fl_color(c);
-		break;
-	  }
+        	  fl_end_loop();
+		  fl_color(c);
+		  break;
+	    }
 
           prim = NULL;
 	  d ++;
@@ -373,7 +376,7 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 
       case OUTLINEPOLYGON :
           prim = d;
-	  d += 2;
+	  d += 3;
 	  fl_begin_polygon();
 	  break;
 
@@ -382,6 +385,9 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 	    fl_vertex(d[1] * 0.0001, d[2] * 0.0001);
 	  d += 3;
 	  break;
+
+      default : // Ignore invalid data...
+          d ++;
     }
 
   // If we still have an open primitive, close it...
@@ -1228,5 +1234,5 @@ get_kde_val(char       *str,
 
 
 //
-// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.2 2001/10/29 03:44:32 easysw Exp $".
+// End of "$Id: Fl_File_Icon.cxx,v 1.1.2.3 2001/10/29 15:40:49 easysw Exp $".
 //
