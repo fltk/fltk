@@ -1,5 +1,5 @@
 //
-// "$Id: fl_arci.cxx,v 1.4.2.5.2.8 2004/08/26 06:18:12 matthiaswm Exp $"
+// "$Id: fl_arci.cxx,v 1.4.2.5.2.9 2004/08/27 00:22:28 matthiaswm Exp $"
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
@@ -55,10 +55,18 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   a1 = a2-a1; a2 = 450-a2;
   FrameArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
-#  warning : no support for ovals yet!
-  float cx = x + 0.5f*w, cy = y + 0.5f*h;
-  float r = (w+h)*0.25f;
-  CGContextAddArc(fl_gc, cx, cy, r, a1/180.0f*M_PI, a2/180.0f*M_PI, 1);
+  a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
+  float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
+  if (w!=h) {
+    CGContextSaveGState(fl_gc);
+    CGContextTranslateCTM(fl_gc, cx, cy);
+    CGContextScaleCTM(fl_gc, w-1.0f, h-1.0f);
+    CGContextAddArc(fl_gc, 0, 0, 0.5, a1, a2, 1);
+    CGContextRestoreGState(fl_gc);
+  } else {
+    float r = (w+h)*0.25f-0.5f;
+    CGContextAddArc(fl_gc, cx, cy, r, a1, a2, 1);
+  }
   CGContextStrokePath(fl_gc);
 #else
   XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
@@ -80,10 +88,22 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   a1 = a2-a1; a2 = 450-a2;
   PaintArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
-#  warning : no support for ovals yet!
-  float cx = x + 0.5f*w, cy = y + 0.5f*h;
-  float r = (w+h)*0.25f;
-  CGContextAddArc(fl_gc, cx, cy, r, a1/180.0f*M_PI, a2/180.0f*M_PI, 1);
+  a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
+  float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
+  if (w!=h) {
+    CGContextSaveGState(fl_gc);
+    CGContextTranslateCTM(fl_gc, cx, cy);
+    CGContextScaleCTM(fl_gc, w, h);
+    CGContextAddArc(fl_gc, 0, 0, 0.5, a1, a2, 1);
+    CGContextAddLineToPoint(fl_gc, 0, 0);
+    CGContextClosePath(fl_gc);
+    CGContextRestoreGState(fl_gc);
+  } else {
+    float r = (w+h)*0.25f;
+    CGContextAddArc(fl_gc, cx, cy, r, a1, a2, 1);
+    CGContextAddLineToPoint(fl_gc, cx, cy);
+    CGContextClosePath(fl_gc);
+  }
   CGContextFillPath(fl_gc);
 #else
   XFillArc(fl_display, fl_window, fl_gc, x,y,w,h, int(a1*64),int((a2-a1)*64));
@@ -91,5 +111,5 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
 }
 
 //
-// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.8 2004/08/26 06:18:12 matthiaswm Exp $".
+// End of "$Id: fl_arci.cxx,v 1.4.2.5.2.9 2004/08/27 00:22:28 matthiaswm Exp $".
 //

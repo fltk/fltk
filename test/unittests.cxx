@@ -11,7 +11,7 @@
 
 Fl_Window *win = 0;
 
-int point_test_ix, line_test_ix, rect_test_ix, viewport_test_ix;
+int point_test_ix, line_test_ix, rect_test_ix, viewport_test_ix, circle_test_ix;
 
 void changePageCB(Fl_Widget*, void *ixvp) {
   int ix = (int)ixvp;
@@ -37,6 +37,7 @@ void createMenuPage() {
   newButton(125+2, 22, 22, 22, "2", line_test_ix, "Testing fl_line");
   newButton(150+2, 22, 22, 22, "3", rect_test_ix, "Testing fl_rect");
   newButton(175+2, 22, 22, 22, "4", viewport_test_ix, "Testing viewport alignment");
+  newButton(200+2, 22, 22, 22, "5", circle_test_ix, "Testing circle and oval drawing");
   g->end();
   page->end(); 
 }
@@ -50,7 +51,7 @@ Fl_Group *beginTestPage(const char *l) {
   newButton(20, 40, 20, 20, "@<", ix-1, "previous test");
   newButton(20, 60, 20, 20, "@>", ix+1, "next test");
   Fl_Box *bx = new Fl_Box(60, 20, win->w()-80, 100, l);
-  bx->box(FL_THIN_DOWN_BOX);
+  bx->box(FL_ENGRAVED_BOX);
   bx->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
   return g;
 }
@@ -193,16 +194,78 @@ void fl_viewport_test() {
   page->end();
 }
 
+//------- test the circle drawing capabilities of this implementation ----------
+class CircleTest : Fl_Widget {
+public: CircleTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
+  void draw() {
+    int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
+    // test fl_arc for full circles
+    fl_color(FL_GREEN); fl_rect(a+ 9, b+ 9, 33, 33);
+    fl_color(FL_RED); fl_xyline(a+24, b+10, a+27); fl_xyline(a+24, b+40, a+27);
+    fl_yxline(a+10, b+24, b+27); fl_yxline(a+40, b+24, b+27);
+    fl_color(FL_BLACK); fl_arc(a+10, b+10, 31, 31, 0.0, 360.0);
+    // test fl_arc segmet 1
+    fl_color(FL_GREEN); fl_rect(a+54, b+ 4, 43, 43);
+    fl_rect(a+54, b+4, 18, 18); fl_rect(a+79, b+29, 18, 18);
+    fl_color(FL_RED); fl_point(a+55, b+30); fl_point(a+70, b+45);
+    fl_point(a+80, b+5); fl_point(a+95, b+20);
+    fl_color(FL_BLACK); fl_arc(a+65, b+ 5, 31, 31, -35.0, 125.0);
+    // test fl_arc segmet 2
+    fl_color(FL_BLACK); fl_arc(a+55, b+15, 31, 31, 145.0, 305.0);
+    // test fl_pie for full circles
+    fl_color(FL_RED); fl_xyline(a+24, b+60, a+27); fl_xyline(a+24, b+90, a+27);
+    fl_yxline(a+10, b+74, b+77); fl_yxline(a+40, b+74, b+77);
+    fl_color(FL_GREEN); fl_rect(a+ 9, b+59, 33, 33);
+    fl_color(FL_BLACK); fl_pie(a+10, b+60, 31, 31, 0.0, 360.0);
+    // test fl_pie segmet 1
+    fl_color(FL_GREEN); fl_rect(a+54, b+54, 43, 43);
+    fl_rect(a+54, b+54, 18, 18); fl_rect(a+79, b+79, 18, 18);
+    fl_point(a+79, b+71); fl_point(a+71, b+79);
+    fl_color(FL_RED); fl_point(a+55, b+80); fl_point(a+70, b+95);
+    fl_point(a+80, b+55); fl_point(a+95, b+70);
+    fl_point(a+81, b+69); fl_point(a+69, b+81);
+    fl_color(FL_BLACK); fl_pie(a+65, b+55, 31, 31, -30.0, 120.0);
+    // test fl_pie segmet 2
+    fl_color(FL_BLACK); fl_pie(a+55, b+65, 31, 31, 150.0, 300.0);
+    //---- oval testing (horizontal squish)
+    a = x()+120; b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
+    fl_color(FL_GREEN); 
+    fl_rect(a+19, b+9, 63, 33); fl_rect(a+19, b+59, 63, 33);
+    fl_color(FL_BLACK); 
+    fl_arc(a+20, b+10, 61, 31, 0, 360); fl_pie(a+20, b+60, 61, 31, 0, 360);
+    //---- oval testing (horizontal squish)
+    a = x()+240; b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
+    fl_color(FL_GREEN); 
+    fl_rect(a+9, b+19, 33, 63); fl_rect(a+59, b+19, 33, 63);    
+    fl_color(FL_BLACK); 
+    fl_arc(a+10, b+20, 31, 61, 0, 360); fl_pie(a+60, b+20, 31, 61, 0, 360);
+  }
+};
+void fl_circle_test() {
+  circle_test_ix = win->children();
+  Fl_Group *page = beginTestPage(
+    "testing int drawing of circles and ovals (fl_arc, fl_pie)\n"
+    "No red lines should be visible. "
+    "If you see bright red pixels, the circle drawing alignment is off. "
+    "If you see dark red pixels, your syste supports anti-aliasing "
+    "which should be of no concern. "
+    "The green rectangles should not be touched by circle drawings."
+  );
+  new CircleTest(20, 140, 340, 100);
+  page->end();
+}
+
 int main(int argc, char **argv) {
   win = new Fl_Window(600, 600, "Unit Tests for FLTK");
+  // --- list all tests
   fl_point_test();
   fl_line_test();
   fl_rect_test();
   fl_viewport_test();
+  fl_circle_test();
+  // --- last page is the menu
   createMenuPage();
   win->end();
   win->show(argc, argv);
   Fl::run();
 }
-
-
