@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.37 2004/06/01 01:08:50 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.38 2004/09/11 19:32:43 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -912,6 +912,21 @@ int fl_handle(const XEvent& thisevent)
     window->resize(X, Y, W, H);
     break; // allow add_handler to do something too
     }
+
+  case ReparentNotify: {
+    int xpos, ypos;
+    Window junk;
+
+    //ReparentNotify gives the new position of the window relative to
+    //the new parent. FLTK cares about the position on the root window.
+    XTranslateCoordinates(fl_display, xevent.xreparent.parent,
+			  XRootWindow(fl_display, fl_screen),
+			  xevent.xreparent.x, xevent.xreparent.y,
+			  &xpos, &ypos, &junk);
+
+    window->position(xpos, ypos);
+    break;
+    }
   }
 
   return Fl::handle(event, window);
@@ -1279,5 +1294,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.37 2004/06/01 01:08:50 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.38 2004/09/11 19:32:43 easysw Exp $".
 //

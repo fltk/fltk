@@ -1,5 +1,5 @@
 //
-// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.15 2004/08/31 22:00:48 matthiaswm Exp $"
+// "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.16 2004/09/11 19:32:43 easysw Exp $"
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -69,12 +69,20 @@ static void cb1(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
   const uchar* p = d.data[y]+x;
   U64* q = (U64*)buf;
-  for (int X=(w+1)/2; X--; p += 2) {
+  for (int X=w; X>0; X-=2, p += 2) {
+    if (X>1) {
 #  if WORDS_BIGENDIAN
-    *q++ = (d.colors[p[0]]<<32) | d.colors[p[1]];
+      *q++ = (d.colors[p[0]]<<32) | d.colors[p[1]];
 #  else
-    *q++ = (d.colors[p[1]]<<32) | d.colors[p[0]];
+      *q++ = (d.colors[p[1]]<<32) | d.colors[p[0]];
 #  endif
+    } else {
+#  if WORDS_BIGENDIAN
+      *q++ = d.colors[p[0]]<<32;
+#  else
+      *q++ = d.colors[p[0]];
+#  endif
+    }
   }
 }
 
@@ -83,20 +91,28 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
   const uchar* p = d.data[y]+2*x;
   U64* q = (U64*)buf;
-  for (int X=(w+1)/2; X--;) {
+  for (int X=w; X>0; X-=2) {
     U64* colors = d.byte1[*p++];
     int index = *p++;
-    U64* colors1 = d.byte1[*p++];
-    int index1 = *p++;
+    if (X>1) {
+      U64* colors1 = d.byte1[*p++];
+      int index1 = *p++;
 #  if WORDS_BIGENDIAN
-    *q++ = (colors[index]<<32) | colors1[index1];
+      *q++ = (colors[index]<<32) | colors1[index1];
 #  else
-    *q++ = (colors1[index1]<<32) | colors[index];
+      *q++ = (colors1[index1]<<32) | colors[index];
 #  endif
+    } else {
+#  if WORDS_BIGENDIAN
+      *q++ = colors[index]<<32;
+#  else
+      *q++ = colors[index];
+#  endif
+    }
   }
 }
 
-#else
+#else // U32
 
 // The callback from fl_draw_image to get a row of data passes this:
 struct pixmap_data {
@@ -108,7 +124,7 @@ struct pixmap_data {
   };
 };
 
-#ifndef __APPLE_QUARTZ__
+#  ifndef __APPLE_QUARTZ__
 
 // callback for 1 byte per pixel:
 static void cb1(void*v, int x, int y, int w, uchar* buf) {
@@ -129,9 +145,9 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
   }
 }
 
-#endif
+#  endif  // !__APPLE_QUARTZ__
 
-#endif
+#endif // U64 else U32
 
 uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
@@ -197,7 +213,7 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 	if (!colors) colors = d.byte1[ind] = new U32[256];
 #endif
 	c = (uchar*)&colors[*p];
-	ind = (ind<<8)+*p++;
+	ind = (ind<<8)|*p++;
       } else {
 	c = (uchar *)&d.colors[ind];
       }
@@ -257,15 +273,21 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
 	  *bitmap++ = b;
 	}
       } else {
-	for (int X = 0; X < W; X++) {
-	  uchar b = 0;
-	  for (int i = 0; i < 8; i++) {
-	    int ind = *p++;
-	    ind = (ind<<8) | (*p++);
-	    if (ind != transparent_index) b |= (1<<i);
+        uchar b = 0, bit = 1;
+	for (int X = 0; X < d.w; X++) {
+	  int ind = *p++;
+	  ind = (ind<<8) | (*p++);
+	  if (ind != transparent_index) b |= bit;
+
+          if (bit < 128) bit <<= 1;
+	  else {
+	    *bitmap++ = b;
+	    b = 0;
+	    bit = 1;
 	  }
-	  *bitmap++ = b;
 	}
+
+        if (bit > 1) *bitmap++ = b;
       }
     }
   }
@@ -305,12 +327,12 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
   CGImageRelease(img);
   delete array;
 
-#endif // __APPLE_QUARTZ__
+#endif // !__APPLE_QUARTZ__
 
   if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete[] d.byte1[i];
   return 1;
 }
 
 //
-// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.15 2004/08/31 22:00:48 matthiaswm Exp $".
+// End of "$Id: fl_draw_pixmap.cxx,v 1.4.2.8.2.16 2004/09/11 19:32:43 easysw Exp $".
 //
