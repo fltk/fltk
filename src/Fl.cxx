@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.38 2002/06/11 16:17:41 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.39 2002/06/27 20:52:44 easysw Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -467,8 +467,10 @@ void fl_fix_focus() {
   } else
     Fl::focus(0);
 
-  if (!(Fl::event_state() & 0x7f00000 /*FL_BUTTONS*/)) {
-
+// MRS: Originally we checked the button state, but a user reported that it
+//      broke click-to-focus in FLWM?!?
+//  if (!(Fl::event_state() & 0x7f00000 /*FL_BUTTONS*/)) {
+  if (!Fl::pushed()) {
     // set belowmouse based on Fl::modal() and fl_xmousewin:
     w = fl_xmousewin;
     if (w) {
@@ -931,5 +933,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.38 2002/06/11 16:17:41 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.39 2002/06/27 20:52:44 easysw Exp $".
 //

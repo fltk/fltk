@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0
 
+	- A change in fl_fix_focus() broken click-focus in FLWM.
+	- Cygwin with -mnocygwin didn't like the FL/math.h
+	  header file.
+	- Fl_Browser_ cleared the click count unnecessarily.
 	- MacOS: Pixmap draw fix, gl_font implemented
 	  FL_FOCUS fix, window type fix for modal and nonmodal
 	  windows, glut uninitialised 'display' proc fix
