@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.9.2.10.2.2 2001/11/19 21:25:35 easysw Exp $"
+# "$Id: Makefile,v 1.9.2.10.2.3 2001/11/27 02:09:45 easysw Exp $"
 #
 # Documentation makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -40,81 +40,102 @@ MEDIA		=	--size universal
 # 7x8.5in (1/2 legal page) with reduced-size fonts
 #MEDIA		=	--size 7x8.5in --fontsize 9.0
 
-# These are the HTML "source" files; the files are formatted in the
-# order listed...
+# These are the HTML "source" files...
 HTMLFILES	= \
-		preface.html \
-		intro.html \
-		basics.html \
-		common.html \
-		editor.html \
-		drawing.html \
-		events.html \
-		subclassing.html \
-		fluid.html \
-		opengl.html \
-		widgets.html \
-		Fl_Adjuster.html \
-		Fl_Box.html \
-		Fl_Browser.html \
-		Fl_Browser_.html \
-		Fl_Button.html \
-		Fl_Chart.html \
-		Fl_Check_Button.html \
-		Fl_Choice.html \
-		Fl_Clock.html \
-		Fl_Color_Chooser.html \
-		Fl_Counter.html \
-		Fl_Dial.html \
-		Fl_Double_Window.html \
-		Fl_End.html \
-		Fl_Float_Input.html \
-		Fl_Free.html \
-		Fl_Gl_Window.html \
-		Fl_Group.html \
-		Fl_Hold_Browser.html \
-		Fl_Input.html \
-		Fl_Input_.html \
-		Fl_Int_Input.html \
-		Fl_Light_Button.html \
-		Fl_Menu_.html \
-		Fl_Menu_Bar.html \
-		Fl_Menu_Button.html \
-		Fl_Menu_Item.html \
-		Fl_Menu_Window.html \
-		Fl_Multi_Browser.html \
-		Fl_Multiline_Input.html \
-		Fl_Multiline_Output.html \
-		Fl_Output.html \
-		Fl_Overlay_Window.html \
-		Fl_Pack.html \
-		Fl_Positioner.html \
-		Fl_Repeat_Button.html \
-		Fl_Return_Button.html \
-		Fl_Roller.html \
-		Fl_Round_Button.html \
-		Fl_Scroll.html \
-		Fl_Scrollbar.html \
-		Fl_Secret_Input.html \
-		Fl_Select_Browser.html \
-		Fl_Single_Window.html \
-		Fl_Slider.html \
-		Fl_Tabs.html \
-		Fl_Tile.html \
-		Fl_Timer.html \
-		Fl_Valuator.html \
-		Fl_Value_Input.html \
-		Fl_Value_Output.html \
-		Fl_Value_Slider.html \
-		Fl_Widget.html \
-		Fl_Window.html \
-		functions.html \
-		enumerations.html \
-		glut.html \
-		forms.html \
-		osissues.html \
-		migration.html \
-		license.html
+			basics.html \
+			common.html \
+			drawing.html \
+			editor.html \
+			enumerations.html \
+			events.html \
+			Fl_Adjuster.html \
+			Fl_Bitmap.html \
+			Fl_Box.html \
+			Fl_Browser_.html \
+			Fl_Browser.html \
+			Fl_Button.html \
+			Fl_Chart.html \
+			Fl_Check_Button.html \
+			Fl_Choice.html \
+			Fl_Clock.html \
+			Fl_Color_Chooser.html \
+			Fl_Counter.html \
+			Fl_Dial.html \
+			Fl_Double_Window.html \
+			Fl_End.html \
+			Fl_File_Browser.html \
+			Fl_File_Chooser.html \
+			Fl_File_Icon.html \
+			Fl_Float_Input.html \
+			Fl_Free.html \
+			Fl_GIF_Image.html \
+			Fl_Gl_Window.html \
+			Fl_Group.html \
+			Fl_Help_Dialog.html \
+			Fl_Help_View.html \
+			Fl_Hold_Browser.html \
+			Fl.html \
+			Fl_Image.html \
+			Fl_Input_.html \
+			Fl_Input.html \
+			Fl_Int_Input.html \
+			Fl_JPEG_Image.html \
+			Fl_Light_Button.html \
+			Fl_Menu_Bar.html \
+			Fl_Menu_Button.html \
+			Fl_Menu_.html \
+			Fl_Menu_Item.html \
+			Fl_Menu_Window.html \
+			Fl_Multi_Browser.html \
+			Fl_Multiline_Input.html \
+			Fl_Multiline_Output.html \
+			Fl_Output.html \
+			Fl_Overlay_Window.html \
+			Fl_Pack.html \
+			Fl_Pixmap.html \
+			Fl_PNG_Image.html \
+			Fl_PNM_Image.html \
+			Fl_Positioner.html \
+			Fl_Repeat_Button.html \
+			Fl_Return_Button.html \
+			Fl_RGB_Image.html \
+			Fl_Roller.html \
+			Fl_Round_Button.html \
+			Fl_Scrollbar.html \
+			Fl_Scroll.html \
+			Fl_Secret_Input.html \
+			Fl_Select_Browser.html \
+			Fl_Shared_Image.html \
+			Fl_Single_Window.html \
+			Fl_Slider.html \
+			Fl_Tabs.html \
+			Fl_Text_Buffer.html \
+			Fl_Text_Display.html \
+			Fl_Text_Editor.html \
+			Fl_Tiled_Image.html \
+			Fl_Tile.html \
+			Fl_Timer.html \
+			fluid.html \
+			Fl_Valuator.html \
+			Fl_Value_Input.html \
+			Fl_Value_Output.html \
+			Fl_Value_Slider.html \
+			Fl_Widget.html \
+			Fl_Window.html \
+			Fl_Wizard.html \
+			Fl_XBM_Image.html \
+			Fl_XPM_Image.html \
+			forms.html \
+			functions.html \
+			glut.html \
+			intro.html \
+			license.html \
+			migration.html \
+			opengl.html \
+			osissues.html \
+			preface.html \
+			subclassing.html \
+			widgets.html
 
 MANPAGES =	fltk.$(CAT3EXT) fluid.$(CAT1EXT)
 
@@ -178,5 +199,5 @@ fltk.pdf: $(HTMLFILES)
 	$(HTMLDOC) -f fltk.pdf --jpeg --compression=9 --duplex --verbose --toclevels 2 --titleimage FL.gif $(HTMLFILES)
 
 #
-# End of "$Id: Makefile,v 1.9.2.10.2.2 2001/11/19 21:25:35 easysw Exp $".
+# End of "$Id: Makefile,v 1.9.2.10.2.3 2001/11/27 02:09:45 easysw Exp $".
 #
