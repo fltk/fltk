@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.11 2002/05/01 12:41:21 easysw Exp $"
+// "$Id: Fl_File_Chooser2.cxx,v 1.1.2.12 2002/05/02 15:24:34 easysw Exp $"
 //
 // More Fl_File_Chooser routines.
 //
@@ -68,6 +68,7 @@
 const char	*Fl_File_Chooser::directory_label = "Directory:";
 const char	*Fl_File_Chooser::filename_label = "Filename:";
 const char	*Fl_File_Chooser::filter_label = "New Filter?";
+Fl_File_Sort_F	*Fl_File_Chooser::sort = fl_numericsort;
 
 
 //
@@ -427,7 +428,7 @@ Fl_File_Chooser::rescan()
   okButton->deactivate();
 
   // Build the file list...
-  fileList->load(directory_);
+  fileList->load(directory_, sort);
 }
 
 
@@ -701,5 +702,5 @@ Fl_File_Chooser::fileNameCB()
 
 
 //
-// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.11 2002/05/01 12:41:21 easysw Exp $".
+// End of "$Id: Fl_File_Chooser2.cxx,v 1.1.2.12 2002/05/02 15:24:34 easysw Exp $".
 //

@@ -83,6 +83,7 @@ public:
   static const char *directory_label;
   static const char *filename_label;
   static const char *filter_label;
+  static Fl_File_Sort_F *sort;
 };
 extern FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 extern FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);

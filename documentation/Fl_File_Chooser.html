@@ -27,6 +27,34 @@ dialog that supports various selection modes.
 
 <CENTER><IMG SRC="filechooser.gif" WIDTH="397" HEIGHT="322" ALT="Fl_File_Chooser widget"></CENTER>
 
+<P>The <CODE>Fl_File_Chooser</CODE> class also exports several static values
+that may be used to localize or customize the appearance of all file chooser
+dialogs:
+
+<UL>
+
+	<LI><TT>const char
+	*Fl_File_Chooser::directory_label</TT> <P>The label used
+	for the directory chooser at the top of the file
+	chooser. The default value is "Directory:".</P></LI>
+
+	<LI><TT>const char *Fl_File_Chooser::filename_label</TT>
+	<P>The label used for the filename field at the bottom
+	of the file chooser. The default value is
+	"Filename:".</P></LI>
+
+	<LI><TT>const char *Fl_File_Chooser::filter_label</TT>
+	<P>The label used for the filter text field. The default
+	value is "Filter:".</P></LI>
+
+	<LI><TT>Fl_File_Sort_F *Fl_File_Chooser::sort</TT>
+	<P>The sort function used when loading the contents of a
+	directory. The default value is <TT>fl_numericsort</TT>.
+	Other values are described in the reference page for <A
+	HREF="functions.html#fl_filename_list"><TT>fl_filename_list</TT></A></P></LI>
+
+</UL>
+
 <H3>Methods</H3>
 
 <UL>

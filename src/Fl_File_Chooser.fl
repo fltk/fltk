@@ -215,12 +215,14 @@ else
   }
   decl {static const char *filter_label;} {public
   }
+  decl {static Fl_File_Sort_F *sort;} {selected public
+  }
 } 
 
 decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);} {public
 } 
 
-decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);} {selected public
+decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);} {public
 } 
 
 decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public
