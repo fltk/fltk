@@ -433,6 +433,8 @@ Fl_File_Chooser::fileListCB()
     // Activate the OK button as needed...
     if (!fl_filename_isdir(pathname) || (type_ & DIRECTORY))
       okButton->activate();
+    else
+      okButton->deactivate();
   }
 }
 
