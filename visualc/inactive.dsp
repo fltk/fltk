@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\inactive.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\inactive.fl
+
+!IF  "$(CFG)" == "inactive - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\inactive.fl
+
+"..\test\inactive.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c inactive.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "inactive - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\inactive.fl
+
+"..\test\inactive.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c inactive.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

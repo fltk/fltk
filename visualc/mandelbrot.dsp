@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\mandelbrot.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\mandelbrot_ui.fl
+
+!IF  "$(CFG)" == "mandelbrot - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\mandelbrot_ui.fl
+
+"../test/mandelbrot_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c mandelbrot_ui.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "mandelbrot - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\mandelbrot_ui.fl
+
+"../test/mandelbrot_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c mandelbrot_ui.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

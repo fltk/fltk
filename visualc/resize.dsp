@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\resize.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\resize.fl
+
+!IF  "$(CFG)" == "resize - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\resize.fl
+
+"../test/resize.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c resize.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "resize - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\resize.fl
+
+"../test/resize.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c resize.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

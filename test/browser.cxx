@@ -1,5 +1,5 @@
 //
-// "$Id: browser.cxx,v 1.5.2.6.2.1 2001/11/02 20:38:15 easysw Exp $"
+// "$Id: browser.cxx,v 1.5.2.6.2.2 2001/12/01 01:54:30 matthiaswm Exp $"
 //
 // Browser test program for the Fast Light Tool Kit (FLTK).
 //
@@ -114,8 +114,25 @@ int main(int argc, char **argv) {
   // browser->scrollbar_right();
   //browser->has_scrollbar(Fl_Browser::BOTH_ALWAYS);
   if (!browser->load(fname)) {
+#ifdef _MSC_VER
+    // if 'browser' was started from the VisualC environment in Win32, 
+    // the current directory is set to the environment itself, 
+    // so we need to correct the browser file path
+    int done = 1;
+    if ( i == argc ) 
+    {
+      fname = "../test/browser.cxx";
+      done = browser->load(fname);
+    }
+    if ( !done )
+    {
+      printf("Can't load %s, %s\n", fname, strerror(errno));
+      exit(1);
+    }
+#else
     printf("Can't load %s, %s\n", fname, strerror(errno));
     exit(1);
+#endif
   }
   browser->position(0);
 
@@ -140,6 +157,6 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: browser.cxx,v 1.5.2.6.2.1 2001/11/02 20:38:15 easysw Exp $".
+// End of "$Id: browser.cxx,v 1.5.2.6.2.2 2001/12/01 01:54:30 matthiaswm Exp $".
 //
 

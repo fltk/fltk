@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\valuators.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\valuators.fl
+
+!IF  "$(CFG)" == "valuators - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\valuators.fl
+
+"../test/valuators.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c valuators.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "valuators - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\valuators.fl
+
+"../test/valuators.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c valuators.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

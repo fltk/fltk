@@ -1,5 +1,5 @@
 //
-// "$Id: CubeView.cxx,v 1.4.2.4 2001/04/25 13:34:43 easysw Exp $"
+// "$Id: CubeView.cxx,v 1.4.2.4.2.1 2001/12/01 01:54:30 matthiaswm Exp $"
 //
 // CubeView class implementation for the Fast Light Tool Kit (FLTK).
 //
@@ -38,6 +38,8 @@ CubeView::CubeView(int x,int y,int w,int h,const char *l)
     vAng = 0.0;
     hAng=0.0;
     size=10.0;
+	xshift=0.0;
+	yshift=0.0;
     
     /* The cube definition. These are the vertices of a unit cube
      * centered on the origin.*/
@@ -165,5 +167,5 @@ void CubeView::draw() {
 #endif /* HAVE_GL */
 
 //
-// End of "$Id: CubeView.cxx,v 1.4.2.4 2001/04/25 13:34:43 easysw Exp $".
+// End of "$Id: CubeView.cxx,v 1.4.2.4.2.1 2001/12/01 01:54:30 matthiaswm Exp $".
 //

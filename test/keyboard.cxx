@@ -1,5 +1,5 @@
 //
-// "$Id: keyboard.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $"
+// "$Id: keyboard.cxx,v 1.5.2.3.2.1 2001/12/01 01:54:30 matthiaswm Exp $"
 //
 // Keyboard/event test program for the Fast Light Tool Kit (FLTK).
 //
@@ -37,16 +37,37 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include "keyboard_ui.cxx"
+
 #include <stdio.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+
+class MyWindow : public Fl_Window {
+  int handle(int);
+public:
+  MyWindow(int w, int h, const char *t=0L) 
+    : Fl_Window( w, h, t ) { }
+};
+
+#include "keyboard_ui.cxx"
 
 // these are used to identify which buttons are which:
 void key_cb(Fl_Button*, void*) {}
 void shift_cb(Fl_Button*, void*) {}
+void wheel_cb(Fl_Button*, void*) {}
 
 // this is used to stop Esc from exiting the program:
 int handle(int e) {
   return (e == FL_SHORTCUT); // eat all keystrokes
+}
+
+int MyWindow::handle(int msg) {
+  if (msg==FL_MOUSEWHEEL)
+  {
+    roller->value( roller->value() + Fl::e_dy * roller->step() );
+    return 1;
+  }
+  return 0;
 }
 
 struct {int n; const char* text;} table[] = {
@@ -127,5 +148,5 @@ int main(int argc, char** argv) {
 }
 
 //
-// End of "$Id: keyboard.cxx,v 1.5.2.3 2001/01/22 15:13:41 easysw Exp $".
+// End of "$Id: keyboard.cxx,v 1.5.2.3.2.1 2001/12/01 01:54:30 matthiaswm Exp $".
 //

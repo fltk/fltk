@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\shiny.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\shiny_panel.fl
+
+!IF  "$(CFG)" == "shiny - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\shiny_panel.fl
+
+"../test/shiny_panel.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c shiny_panel.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "shiny - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\shiny_panel.fl
+
+"../test/shiny_panel.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c shiny_panel.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

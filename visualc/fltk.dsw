@@ -17,6 +17,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltkgl
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -434,6 +437,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name tiled_image
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name help
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -476,6 +482,12 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name fluid
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -719,6 +731,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -748,6 +763,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
     End Project Dependency
 }}}
 
@@ -790,6 +808,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
     End Project Dependency
 }}}
 
@@ -941,6 +962,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -955,6 +979,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
     End Project Dependency
 }}}
 
@@ -1022,6 +1049,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltkgl
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -1067,6 +1097,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -1111,6 +1144,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name fltk
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fluid
     End Project Dependency
 }}}
 

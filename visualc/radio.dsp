@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\radio.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\radio.fl
+
+!IF  "$(CFG)" == "radio - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\radio.fl
+
+"../test/radio.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c radio.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "radio - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\radio.fl
+
+"../test/radio.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c radio.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

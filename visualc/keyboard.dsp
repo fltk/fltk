@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\keyboard.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\keyboard_ui.fl
+
+!IF  "$(CFG)" == "keyboard - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\keyboard_ui.fl
+
+"..\test\keyboard_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c keyboard_ui.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "keyboard - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\keyboard_ui.fl
+
+"..\test\keyboard_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c keyboard_ui.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\fast_slow.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\fast_slow.fl
+
+!IF  "$(CFG)" == "fast_slow - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\fast_slow.fl
+
+"..\test\fast_slow.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c fast_slow.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "fast_slow - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\fast_slow.fl
+
+"..\test\fast_slow.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c fast_slow.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

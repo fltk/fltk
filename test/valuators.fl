@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.00 
+version 1.0100 
 header_name {.h} 
 code_name {.cxx} 
 gridx 5 
@@ -8,8 +8,7 @@ snap 3
 Function {callback(Fl_Widget* o, void*)} {open private return_type void
 } {
   code {printf("%g     \\r", ((Fl_Valuator*)o)->value());
-fflush(stdout);} {selected
-  }
+fflush(stdout);} {}
 } 
 
 Function {} {open
@@ -88,7 +87,7 @@ Function {} {open
     }
     Fl_Value_Slider {} {
       label FL_HOR_NICE_SLIDER
-      callback callback
+      callback callback selected
       xywh {140 370 130 20} type {Horz Knob} box FLAT_BOX color 10 selection_color 1 labelsize 8
     }
     Fl_Adjuster {} {
@@ -179,12 +178,12 @@ Function {} {open
     Fl_Scrollbar {} {
       label 0
       callback callback
-      xywh {395 20 20 105} labelsize 8 align 1 maximum 100
+      xywh {395 20 20 105} labelsize 8 align 1 maximum 100 slider_size 0.3
     }
     Fl_Scrollbar {} {
       label FL_HORIZONTAL
       callback callback
-      xywh {300 65 95 20} type Horizontal labelsize 8 maximum 100
+      xywh {300 65 95 20} type Horizontal labelsize 8 maximum 100 slider_size 0.3
     }
   }
 } 

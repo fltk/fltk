@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\test\tabs.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\test\tabs.fl
+
+!IF  "$(CFG)" == "tabs - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\test\tabs.fl
+
+"../test/tabs.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluid -c tabs.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "tabs - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\test\tabs.fl
+
+"../test/tabs.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\test 
+	..\fluid\fluidd -c tabs.fl 
+	cd ..\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

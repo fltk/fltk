@@ -1,5 +1,5 @@
 //
-// "$Id: forms.cxx,v 1.4.2.4 2001/04/13 19:07:40 easysw Exp $"
+// "$Id: forms.cxx,v 1.4.2.4.2.1 2001/12/01 01:54:30 matthiaswm Exp $"
 //
 // Another forms demo for the Fast Light Tool Kit (FLTK).
 //
@@ -61,6 +61,8 @@ static VN_struct btypes[]=
    {FL_ROUNDED3D_DOWNBOX,"rounded3d downbox"},
    {FL_OVAL3D_UPBOX,"oval3d upbox"},
    {FL_OVAL3D_DOWNBOX,"oval3d downbox"},
+   {FL_PLASTIC_UP_BOX,"plastic upbox"},
+   {FL_PLASTIC_DOWN_BOX,"plastic downbox"},
    /* sentinel */
    {-1}
 };
@@ -229,5 +231,5 @@ main (int argc, char *argv[])
 }
 
 //
-// End of "$Id: forms.cxx,v 1.4.2.4 2001/04/13 19:07:40 easysw Exp $".
+// End of "$Id: forms.cxx,v 1.4.2.4.2.1 2001/12/01 01:54:30 matthiaswm Exp $".
 //
