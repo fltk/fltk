@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.8 1998/11/17 18:43:24 mike Exp $"
+// "$Id: Fl_Input_.cxx,v 1.9 1998/11/18 17:26:43 mike Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -492,11 +492,11 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
       undoinsert -= e-b;
     } else {
       undobuffersize(e-b);
-      memmove(undobuffer, value_+b, e-b);
+      memcpy(undobuffer, value_+b, e-b);
       undocut = e-b;
       undoinsert = 0;
     }
-    memcpy(buffer+b, buffer+e, size_-e+1);
+    memmove(buffer+b, buffer+e, size_-e+1);
     size_ -= e-b;
     undowidget = this;
     undoat = b;
@@ -727,5 +727,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.8 1998/11/17 18:43:24 mike Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.9 1998/11/18 17:26:43 mike Exp $".
 //
