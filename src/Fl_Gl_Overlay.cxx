@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18 2001/05/05 23:39:01 spitzak Exp $"
+// "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18.2.1 2001/12/09 12:52:13 easysw Exp $"
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <config.h>
@@ -231,5 +231,5 @@ void Fl_Gl_Window::hide_overlay() {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18 2001/05/05 23:39:01 spitzak Exp $".
+// End of "$Id: Fl_Gl_Overlay.cxx,v 1.5.2.18.2.1 2001/12/09 12:52:13 easysw Exp $".
 //

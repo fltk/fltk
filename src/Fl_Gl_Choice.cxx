@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.3 2001/12/06 00:17:47 matthiaswm Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.4 2001/12/09 12:52:13 easysw Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 #include <config.h>
@@ -275,5 +275,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.3 2001/12/06 00:17:47 matthiaswm Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.4 2001/12/09 12:52:13 easysw Exp $".
 //

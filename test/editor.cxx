@@ -1,11 +1,11 @@
 //
-// "$Id: editor.cxx,v 1.2.2.3.2.4 2001/11/29 19:24:00 easysw Exp $"
+// "$Id: editor.cxx,v 1.2.2.3.2.5 2001/12/09 12:52:13 easysw Exp $"
 //
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
 // This program is described in Chapter 4 of the FLTK Programmer's Guide.
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
 //
@@ -419,5 +419,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: editor.cxx,v 1.2.2.3.2.4 2001/11/29 19:24:00 easysw Exp $".
+// End of "$Id: editor.cxx,v 1.2.2.3.2.5 2001/12/09 12:52:13 easysw Exp $".
 //
