@@ -1,5 +1,5 @@
 //
-// "$Id: file.cxx,v 1.7.2.6.2.3 2002/05/12 02:19:18 easysw Exp $"
+// "$Id: file.cxx,v 1.7.2.6.2.4 2002/05/13 15:51:47 easysw Exp $"
 //
 // Fluid file routines for the Fast Light Tool Kit (FLTK).
 //
@@ -493,7 +493,7 @@ int read_file(const char *filename, int merge) {
   Fl_Type::current = 0;
   // Force menu items to be rebuilt...
   for (Fl_Type *o = Fl_Type::first; o; o = o->next)
-    if (o->is_menu_item()) o->add_child(0,0);
+    if (o->is_menu_button()) o->add_child(0,0);
   for (Fl_Type *o = Fl_Type::first; o; o = o->next)
     if (o->selected) {Fl_Type::current = o; break;}
   return close_read();
@@ -631,5 +631,5 @@ void read_fdesign() {
 }
 
 //
-// End of "$Id: file.cxx,v 1.7.2.6.2.3 2002/05/12 02:19:18 easysw Exp $".
+// End of "$Id: file.cxx,v 1.7.2.6.2.4 2002/05/13 15:51:47 easysw Exp $".
 //
