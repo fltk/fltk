@@ -10,13 +10,13 @@ href=widgets.html#widgets> Appendix A</A>.
 
 <h3><A name="fl_color_chooser_func">int fl_color_chooser(const char
 *title, double &amp;r, double &amp;g, double &amp;b)
-<br>int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b)</h3></A>
+<br>int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b)</A></h3>
 
 The double version takes RGB values in the range 0.0 to 1.0.  The
 uchar version takes RGB values in the range 0 to 255. The <tt>title</tt>
 argument specifies the label (title) for the window.
 
-<p align=center><img src="fl_color_chooser.jpg">
+<p align=center><img src="fl_color_chooser.jpg" ALT="The fl_color_chooser dialog.">
 
 <P><tt>fl_color_chooser()</tt> pops up a window to let the user pick an
 arbitrary RGB color.  They can pick the hue and saturation in the &quot;hue
@@ -43,7 +43,7 @@ dithering.
 access with <A href=#fl_color><tt>fl_color()</tt></A> and lets the user
 pick one of them.  It returns the new color index, or the old one if
 the user types ESC or clicks outside the window.
-<P ALIGN=CENTER><IMG src=./fl_show_colormap.gif>
+<P ALIGN=CENTER><IMG src="fl_show_colormap.gif" ALT="The fl_show_colormap dialog">
 
 <h3><A name=fl_message>void fl_message(const char *, ...)</A></h3>
 
@@ -51,12 +51,12 @@ Displays a printf-style message in a pop-up box with an &quot;OK&quot; button,
 waits for the user to hit the button.  The message will wrap to fit the
 window, or may be many lines by putting <tt>\n</tt> characters into it.
 The enter key is a shortcut for the OK button.
-<P ALIGN=CENTER><IMG src=./fl_message.gif border=1>
+<P ALIGN=CENTER><IMG src="fl_message.gif" ALT="The fl_message window.">
 
 <h3><A name=fl_>void fl_alert(const char *, ...)</A></h3>
 
 Same as <tt>fl_message()</tt> except for the &quot;!&quot; symbol.
-<P ALIGN=CENTER><IMG src=./fl_alert.gif border=1>
+<P ALIGN=CENTER><IMG src="fl_alert.gif" ALT="The fl_alert window">
 
 <h3><A name=fl_ask>int fl_ask(const char *, ...)</A></h3>
 
@@ -66,7 +66,7 @@ hit a button.  The return value is 1 if the user hits Yes, 0 if they
 pick No.  The enter key is a shortcut for Yes and ESC is a shortcut
 for No.
 
-<p align=center><img src=./fl_ask.gif border=1>
+<p align=center><img src="fl_ask.gif" ALT="The fl_ask window.">
 
 <h3><A name=fl_choice2>int fl_choice(const char *q, const char *b0,
 const char *b1, const char *b2, ...)</A></h3>
@@ -78,7 +78,7 @@ the enter key is a shortcut for button 1.  Notice the buttons are
 positioned &quot;backwards&quot; You can hide buttons by passing
 <tt>NULL</tt> as their labels.
 
-<p align=center><img src=./fl_choice.gif border=1>
+<p align=center><img src="fl_choice.gif" ALT="The fl_choice window.">
 
 <h3><A name=fl_input2>const char *fl_input(const char *label, const char
 *deflt = 0, ...)</A></h3>
@@ -89,7 +89,7 @@ returned pointer is only valid until the next time <tt>fl_input()</tt>
 is called</I>.  Due to back-compatability, the arguments to any printf
 commands in the label are after the default value.
 
-<p align=center><img src=./fl_input.gif border=1>
+<p align=center><img src="fl_input.gif" ALT="The fl_input window.">
 
 <h3><A name=fl_password>const char *fl_password(const char *label,
 const char *deflt = 0, ...)</A></h3>
@@ -97,7 +97,7 @@ const char *deflt = 0, ...)</A></h3>
 Same as <tt>fl_input()</tt> except an <A
 href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A> field is used.
 
-<p align=center><img src=./fl_password.gif border=1>
+<p align=center><img src="fl_password.gif" ALT="The fl_password window.">
 
 <h3><A name=fl_message_font>void fl_message_font(Fl_Font fontid, uchar
 size)</A></h3>
@@ -119,7 +119,7 @@ unique features, the major one being that the Tab key completes
 filenames like it does in Emacs or tcsh, and the list always shows all
 possible completions.
 
-<p align=center><img src=./filechooser.gif>
+<p align=center><img src="filechooser.gif" ALT="The fl_file_chooser window.">
 
 <tt>fl_file_chooser()</tt> pops up the file chooser, waits for the user
 to pick a file or Cancel, and then returns a pointer to that filename
@@ -663,7 +663,7 @@ it is the most recent window to get an event.
 Returns the next top-level window in the list of shown() windows.  You can
 use this call to iterate through all the windows that are shown().
 
-<h3><A name=first_window>static void Fl::first_window(Fl_Window*)</A></h3>
+<h3>static void Fl::first_window(Fl_Window*)</h3>
 
 Sets the window that is returned by first_window.  The window is
 removed from wherever it is in the list and inserted at the top.  This
@@ -706,11 +706,11 @@ colormap.
 
 Returns the color index or RGB value for the given FLTK color index.
 
-<h3><A name=get_font>static const char *Fl::get_font(int face)</h3>
+<h3><A name=get_font>static const char *Fl::get_font(int face)</A></h3>
 
 Get the string for this face.  This string is different for each
 face. Under X this value is passed to XListFonts to get all the sizes
-of this face. </A>
+of this face.
 
 <h3><A name=get_font_name>static const char *Fl::get_font_name(int
 face, int *attributes = 0)</A></h3>

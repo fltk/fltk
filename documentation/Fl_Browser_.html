@@ -34,7 +34,7 @@ accessing image data or doing <TT>stat()</TT> on a file or doing some
 other slow operation. </P>
 <H3>Methods</H3>
 <CENTER>
-<TABLE width=90%>
+<TABLE width=90% summary="Fl_Browser_ methods">
 <TR><TD align=left valign=top>
 <UL>
 <LI><A href="#Fl_Browser_.Fl_Browser_">Fl_Browser_</A></LI>
@@ -229,7 +229,7 @@ It allows the <TT>Fl_Browser_</TT> to update its cache data as needed.
 <H4><A NAME="Fl_Browser_.item_draw">virtual void Fl_Browser_::item_draw(void *p, int x, int y, int w, int h)</A></H4>
 
 <P>This method must be provided by the subclass to draw the item
-<TT>p</TT> in the area indicated by <TT>x</TT>, <TT>y<TT>, <TT>w</TT>,
+<TT>p</TT> in the area indicated by <TT>x</TT>, <TT>y</TT>, <TT>w</TT>,
 and <TT>h</TT>.
 
 
@@ -265,7 +265,7 @@ item <TT>p</TT> in pixels.  Allow for two additional pixels for the list
 selection box.  This method differs from
 <A HREF="#Fl_Browser_.item_height"><TT>item_height</TT></A> in that it is only
 called for selection and scrolling operations. The default implementation
-calls <TT>item_height</T>.
+calls <TT>item_height</TT>.
 
 
 <H4><A NAME="Fl_Browser_.item_select">virtual void Fl_Browser_::item_select(void *p, int s=1)</A></H4>

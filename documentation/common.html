@@ -13,7 +13,7 @@ and covers how to query and set the standard attributes.
 Enter key. </LI>
 <LI><A HREF="Fl_Round_Button.html"><TT>Fl_Round_Button</TT></A> - A button with a check circle. </LI>
 </UL>
-<P ALIGN=CENTER><IMG SRC="buttons.gif">
+<P ALIGN=CENTER><IMG SRC="buttons.gif" ALT="FLTK Buttons">
 <P>For all of these buttons you just need to include the corresponding <TT>
 &lt;FL/Fl_xyz_Button.H&gt;</TT> header file.  The constructor takes the 
 bounding box of the button and optionally a label string: 
@@ -75,7 +75,7 @@ strings. FLTK provides the following valuators:
 <LI><A HREF="Fl_Slider.html"><TT>Fl_Slider</TT></A> - A scrollbar with a knob. </LI>
 <LI><A HREF="Fl_Value_Slider.html"><TT>Fl_Value_Slider</TT></A> - A slider that shows the current value. </LI>
 </UL>
-<P ALIGN=CENTER><IMG SRC="valuators.gif"></P>
+<P ALIGN=CENTER><IMG SRC="valuators.gif" ALT="FLTK Valuators"></P>
 The <A href=Fl_Valuator.html#Fl_Valuator.value><TT>value()</TT></A>
  method gets and sets the current value of the widget.  The <A href=Fl_Valuator.html#Fl_Valuator.minimum>
 <TT>minimum()</TT></A> and <A href=Fl_Valuator.html#Fl_Valuator.maximum><TT>
@@ -143,7 +143,7 @@ button-&gt;labelcolor(FL_WHITE);
 <P>The type <TT>Fl_Boxtype</TT> stored and returned in <A href=Fl_Widget.html#Fl_Widget.box>
 <TT>Fl_Widget::box()</TT></A> is an enumeration defined in <A href=enumerations.html#enumerations>
 <TT>&lt;Enumerations.H&gt;</TT></A>: 
-<P ALIGN=CENTER><IMG src="boxtypes.gif"></P>
+<P ALIGN=CENTER><IMG src="boxtypes.gif" ALT="FLTK Box Types"></P>
 <P><TT>FL_NO_BOX</TT> means nothing is drawn at all, so whatever is 
 already on the screen remains.  The <TT>FL_..._FRAME</TT> types only 
 draw their edges, leaving the interior unchanged.  In the above diagram 
@@ -280,14 +280,14 @@ type.
 <P>The <TT>Fl::set_labeltype</TT> method can also be used to overload 
 an existing label type such as <TT>FL_NORMAL_LABEL</TT>. </P>
 <H4><A name=symbols>Symbol Labels</A></H4>
-The <TT>FL_SYMBOL_LABEL</TT> label type uses the <TT>label()</TT>
- string to look up a small drawing procedure in a hash table.  For 
+<P>The <TT>FL_SYMBOL_LABEL</TT> label type uses the <TT>label()</TT>
+string to look up a small drawing procedure in a hash table.  For 
 historical reasons the string always starts with '@'; if it starts with 
 something else (or the symbol is not found) the label is drawn 
 normally: 
-<CENTER><IMG src=./symbols.gif></CENTER>
- The @ sign may be followed by the following optional &quot;formatting&quot; 
-characters, in this order: </P>
+<CENTER><IMG src="symbols.gif" ALT="FLTK Symbols"></CENTER>
+<P>The @ sign may be followed by the following optional &quot;formatting&quot; 
+characters, in this order:
 <UL>
 <LI>'#' forces square scaling, rather than distortion to the  widget's 
 shape. </LI>

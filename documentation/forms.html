@@ -68,7 +68,6 @@ all occurances of &quot;-&gt;fdui&quot; and edit to use &quot;-&gt;user_data()&q
 <P>The prototype for the functions passed to <TT>fl_add_timeout()</TT>
  and <TT>fl_set_idle_callback()</TT> callback are different. </P>
 <P><B>All the following XForms calls are missing:</B></P>
-<P>
 <UL>
 <LI><TT>FL_REVISION</TT>, <TT>fl_library_version()</TT></LI>
 <LI><TT>FL_RETURN_DBLCLICK</TT> (use <TT>Fl::event_clicks()</TT>) </LI>
@@ -166,7 +165,7 @@ have to rewrite things a lot. </P>
 <H3>You Cannot Use &lt;device.h&gt;</H3>
  If you have written your own &quot;free&quot; widgets you will probably get a 
 lot of errors about &quot;getvaluator&quot;.  You should substitute: 
-<CENTER><TABLE border=1 WIDTH=90%>
+<CENTER><TABLE border=1 WIDTH=90% summary="Mapping of Forms valuators to FLTK.">
 <TR><TH align=center>Forms</TH><TH align=center>FLTK</TH></TR>
 <TR><TD>MOUSE_X</TD><TD>Fl::event_x_root()</TD></TR>
 <TR><TD>MOUSE_Y</TD><TD>Fl::event_y_root()</TD></TR>

@@ -16,6 +16,11 @@ CHANGES SINCE FLTK 1.0.10
 	- Eliminated all "string literal converted to char *"
 	  warnings.
 
+	- OS/2 updates from Alexander Mai.
+
+	- Tidied up the HTML documentation to be more standards
+	  compliant.
+
 	- Added support for AIX (static library only).
 
 	- Added support for SunOS 4.x

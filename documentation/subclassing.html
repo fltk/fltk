@@ -100,13 +100,13 @@ MyClass::handle(int event) {
 }
 
 MyClass::draw() {
-  if (damage() & FL_DAMAGE_ALL) {
+  if (damage() &amp; FL_DAMAGE_ALL) {
     ... draw frame/box and other static stuff ...
   }
 
-  if (damage() & (FL_DAMAGE_ALL | 1)) draw_part1();
-  if (damage() & (FL_DAMAGE_ALL | 2)) draw_part2();
-  if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
+  if (damage() &amp; (FL_DAMAGE_ALL | 1)) draw_part1();
+  if (damage() &amp; (FL_DAMAGE_ALL | 2)) draw_part2();
+  if (damage() &amp; (FL_DAMAGE_ALL | 4)) draw_part3();
 }
 </PRE></UL>
 <H4><A name=draw_box>void Fl_Widget::draw_box() const

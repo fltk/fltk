@@ -51,7 +51,7 @@ Restore the previous clip region. <I>You must call <TT>fl_pop_clip()</TT>
 once for every time you call <TT>fl_clip()</TT>.  If you return to 
 FLTK with the clip stack not empty unpredictable results occur.</I>
 <H4>int fl_not_clipped(int x, int y, int w, int h)</H4>
- Returns true if any of the rectangle intersects the current clip 
+Returns true if any of the rectangle intersects the current clip 
 region.  If this returns false you don't have to draw the object. <I>
 Under X this returns 2 if the rectangle is partially clipped, and 1 if 
 it is entirely inside the clip region</I>. 
@@ -230,7 +230,7 @@ holes should be drawn in the opposite direction of the outside.
 <P><TT>fl_gap()</TT> should only be called between <TT>
 fl_begin_complex_polygon()</TT> and <TT>fl_end_complex_polygon()</TT>. 
  To outline the polygon, use <TT>fl_begin_loop()</TT> and replace each <TT>
-fl_gap()</TT> with <TT>fl_end_loop();fl_begin_loop()<TT>. </TT></TT></P>
+fl_gap()</TT> with <TT>fl_end_loop();fl_begin_loop()</TT>.</P>
 <H4>void fl_vertex(float x, float y)</H4>
  Add a single vertex to the current path. 
 <H4>void fl_curve(float x, float y, float x1, float y1, float x2, float 
