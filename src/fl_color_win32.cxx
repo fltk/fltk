@@ -1,5 +1,5 @@
 //
-// "$Id: fl_color_win32.cxx,v 1.6 1998/11/08 17:02:40 mike Exp $"
+// "$Id: fl_color_win32.cxx,v 1.7 1998/12/02 16:04:02 mike Exp $"
 //
 // WIN32 color functions for the Fast Light Tool Kit (FLTK).
 //
@@ -47,9 +47,17 @@ Fl_XMap fl_xmap[256];
 Fl_XMap* fl_current_xmap;
 
 HPALETTE fl_palette;
+HPEN tmppen=0;
+HBRUSH tmpbrush=0;
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
+    if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
+    if(!tmpbrush) tmpbrush = CreateSolidBrush(0);
+    HPEN oldpen = SelectObject(fl_gc, tmppen); // Push out the current pen of the gc
+    if(oldpen != xmap.pen) SelectObject(fl_gc, oldpen); // Put it back if it is not the one we are about to delete
+    SelectObject(fl_gc, tmpbrush); // Push out the old pen of the gc
+    //fl_current_xmap = 0;
     DeleteObject((HGDIOBJ)(xmap.pen));
     xmap.pen = 0;
     xmap.brush = -1;
@@ -225,5 +233,5 @@ fl_select_palette(void)
 #endif
 
 //
-// End of "$Id: fl_color_win32.cxx,v 1.6 1998/11/08 17:02:40 mike Exp $".
+// End of "$Id: fl_color_win32.cxx,v 1.7 1998/12/02 16:04:02 mike Exp $".
 //
