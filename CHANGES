@@ -1,4 +1,51 @@
-CHANGES SINCE FLTK 1.0.11
+CHANGES IN FLTK 1.1.0
+
+TODO	- Added new image(), active_image(), and
+	  inactive_image() methods to support image + text
+	  labels more easily.
+
+TODO	- Added new alignment bit FL_ALIGN_TEXT_OVER_IMAGE.
+
+	- Added tooltip support using Jacques Tremblay's tooltip
+	  patch.
+
+TODO	- Added keyboard navigation to all widgets.
+
+PARTIAL	- Added support for mouse wheels using the new
+	  FL_MOUSEWHEEL event type.
+
+TODO	- Added the Fl_Check_Browser, Fl_FileBrowser,
+	  Fl_FileChooser, Fl_FileIcon, Fl_HelpDialog,
+	  Fl_HelpView, Fl_Tree_Browser, and Fl_Wizard widgets
+	  from the bazaar.
+
+TODO	- Added 2.0 Fl_Text_Display and Fl_Text_Editor widgets
+	  based on NEdit.
+
+TODO	- The Fl_Choice widget now looks more line a combo box
+	  than a Motif option menu.
+
+TODO	- Moved the OpenGL widgets into a separate library
+	  called fltkgl - this eliminates shared library
+	  dependencies on OpenGL when no OpenGL functionality is
+	  used/required.
+
+TODO	- Colors are now 32 bits in FLTK, allowing the use and
+	  selection of 24-bit RGB values or 8-bit FLTK indexed
+	  colors.
+
+TODO	- FLUID now supports the new Fl_CheckBrowser,
+	  Fl_FileBrowser, Fl_FileIcon, Fl_HelpView,
+	  Fl_Text_Display, Fl_Text_Editor, Fl_Tree_Browser, and
+	  Fl_Wizard widgets.
+
+TODO	- Documentation updates.
+
+TODO	- Updated configure stuff to support shared libraries
+	  under AIX (link to -lfltk_s)
+
+TODO	- Symbol labels can now contain regular text and
+	  Fl_Browser font and color controls.
 
 	- Fl_Menu_Item::add() didn't use the flags that were
 	  passed in.

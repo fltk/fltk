@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.1 2001/08/01 21:24:49 easysw Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
+#include <FL/Fl_Tooltip.H>    // tooltip
 
 Fl_Group* Fl_Group::current_;
 
@@ -120,9 +121,11 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_KEYBOARD:
+    Fl_Tooltip::exit(this);    // tooltip
     return navigation(navkey());
 
   case FL_SHORTCUT:
+    Fl_Tooltip::exit(this);    // tooltip
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o) && send(o,FL_SHORTCUT))
@@ -137,6 +140,7 @@ int Fl_Group::handle(int event) {
     return 0;
 
   case FL_ENTER:
+    Fl_Tooltip::enter(this);    // tooltip
   case FL_MOVE:
     for (i = children(); i--;) {
       o = a[i];
@@ -153,6 +157,7 @@ int Fl_Group::handle(int event) {
     return 1;
 
   case FL_PUSH:
+    Fl_Tooltip::exit(this);   // tooltip
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o)) {
@@ -179,6 +184,9 @@ int Fl_Group::handle(int event) {
       if (o->visible()) o->handle(event);
     }
     return 1;
+
+  case FL_LEAVE:              // tooltip
+    Fl_Tooltip::exit(this);   // tooltip
 
   default:
     return 0;
@@ -270,12 +278,18 @@ void Fl_Group::clear() {
   for (int i=old_children; i--;) {
     Fl_Widget* o = *a++;
     // test the parent to see if child already destructed:
-    if (o->parent() == this) delete o;
+    if (o->parent() == this) {
+      Fl_Tooltip::exit(o);
+      delete o;
+    }
   }
   if (old_children > 1) free((void*)old_array);
 }
 
-Fl_Group::~Fl_Group() {clear();}
+Fl_Group::~Fl_Group() {
+  Fl_Tooltip::exit(this);
+  clear();
+}
 
 void Fl_Group::insert(Fl_Widget &o, int index) {
   if (o.parent()) {
@@ -513,5 +527,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.1 2001/08/01 21:24:49 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Button.cxx,v 1.4.2.6 2001/01/22 15:13:39 easysw Exp $"
+// "$Id: Fl_Button.cxx,v 1.4.2.6.2.1 2001/08/01 21:24:49 easysw Exp $"
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
@@ -26,6 +26,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Tooltip.H>   // tooltip
 
 // There are a lot of subclasses, named Fl_*_Button.  Some of
 // them are implemented by setting the type() value and testing it
@@ -60,11 +61,15 @@ int Fl_Button::handle(int event) {
   int newval;
   switch (event) {
   case FL_ENTER:
+    Fl_Tooltip::enter(this);   // tooltip
+    return 1;                  // tooltip
   case FL_LEAVE:
 //  if ((value_?selection_color():color())==FL_GRAY) redraw();
+    Fl_Tooltip::exit(this);    // tooltip
     return 1;
   case FL_PUSH:
   case FL_DRAG:
+    Fl_Tooltip::exit(this);    // tooltip
     if (Fl::event_inside(this)) {
       if (type() == FL_RADIO_BUTTON) newval = 1;
       else newval = !oldval;
@@ -77,6 +82,7 @@ int Fl_Button::handle(int event) {
     }
     return 1;
   case FL_RELEASE:
+    Fl_Tooltip::exit(this);   // tooltip
     if (value_ == oldval) {
       if (when() & FL_WHEN_NOT_CHANGED) do_callback();
       return 1;
@@ -118,5 +124,5 @@ Fl_Button::Fl_Button(int x,int y,int w,int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Button.cxx,v 1.4.2.6 2001/01/22 15:13:39 easysw Exp $".
+// End of "$Id: Fl_Button.cxx,v 1.4.2.6.2.1 2001/08/01 21:24:49 easysw Exp $".
 //

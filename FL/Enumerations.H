@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14 2001/01/22 15:13:37 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.1 2001/08/01 21:24:48 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -55,8 +55,8 @@
 //
 
 #define FL_MAJOR_VERSION	1
-#define FL_MINOR_VERSION	0
-#define FL_PATCH_VERSION	11
+#define FL_MINOR_VERSION	1
+#define FL_PATCH_VERSION	0
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
 				 (double)FL_MINOR_VERSION * 0.01 + \
 				 (double)FL_PATCH_VERSION * 0.0001)
@@ -82,7 +82,8 @@ enum Fl_Event {	// events
   FL_HIDE		= 15,
   FL_SHOW		= 16,
   FL_PASTE		= 17,
-  FL_SELECTIONCLEAR	= 18
+  FL_SELECTIONCLEAR	= 18,
+  FL_MOUSEWHEEL		= 19
 };
 
 enum Fl_When { // Fl_Widget::when():
@@ -371,5 +372,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14 2001/01/22 15:13:37 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.1 2001/08/01 21:24:48 easysw Exp $".
 //

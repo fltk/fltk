@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Tooltip.H,v 1.16 2001/02/25 01:41:19 clip Exp $"
+// "$Id: Fl_Tooltip.H,v 1.16.2.1 2001/08/01 21:24:48 easysw Exp $"
 //
-// Tooltip definitions for the Fast Light Tool Kit (FLTK).
+// Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2001 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -20,53 +20,60 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#ifndef _FL_TOOLTIP_H_
-#define _FL_TOOLTIP_H_
+#ifndef _Fl_Tooltip_H_
+#define _Fl_Tooltip_H_
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 
-class FL_API Fl_Tooltip {
-public:
-  static float delay() { return delay_; }
-  static void delay(float f) { delay_ = f; }
-  static int enabled() { return enabled_; }
-  static void enable(int b = 1) { enabled_ = b; }
-  static void disable() { enable(0); }
 
-  // This is called when the pointer enters a widget,
-  // Also enter(0) gets rid of any displayed or pending tooltip:
-  static void (*enter)(Fl_Widget* w);
+class Fl_TooltipBox;
+class Fl_Menu_Window;
 
-  // A widget may also pop up tooltips for internal parts by calling this:
-  static void (*enter_area)(Fl_Widget* w, int X, int Y, int W, int H, const char* tip);
+FL_EXPORT class Fl_Tooltip {
 
-  // This is called when a widget is destroyed or hidden:
-  static void (*exit)(Fl_Widget *w);
+  friend class Fl_TooltipBox;
+  friend class Fl_Widget;
 
-  static Fl_Style* style()	{ return default_style; }
-  static Fl_Font font()		{ return style()->label_font; }
-  static void font(Fl_Font i)	{ style()->label_font = i; }
-  static unsigned size()	{ return style()->label_size; }
-  static void size(unsigned s)	{ style()->label_size = s; }
-  static void color(Fl_Color c)	{ style()->color = c; }
-  static Fl_Color color()	{ return style()->color; }
-  static void textcolor(Fl_Color c) {style()->label_color = c; }
-  static Fl_Color textcolor()	{ return style()->label_color; }
-  static void boxtype(Fl_Boxtype b) {style()->box = b; }
-  static Fl_Boxtype boxtype()	{ return style()->box; }
-
-private:
-  static Fl_Named_Style* default_style;
   static float delay_;
-  static int enabled_;
+  static Fl_TooltipBox *box;
+  static Fl_Menu_Window *window;
+  static Fl_Widget *widget;
+  static int shown;
+  static uchar color_;
+  static int font_;
+  static int size_;
+
+  static void tooltip_timeout(void *);
+  static void tooltip_exit(Fl_Widget *);
+
+  static void (*tooltip_callback_)(void *);
+  static void (*tooltip_exit_)(void *);
+
+public:
+
+  // These functions are user-called functions
+  static float tooltip_delay() { return delay_; }
+  static void tooltip_delay(float f) { delay_ = (f < 0.1) ? 0.1 : f; }
+  static int font() { return font_; }
+  static int size() { return size_; }
+  static void font(int i) { font_ = i; }
+  static void size(int s) { size_ = s; }
+  static void color(uchar c) { color_ = c; }
+  static uchar color() { return color_; }
+
+  static void enter(Fl_Widget *w);
+  static void exit(Fl_Widget *w);
+  static void enable() {tooltip_callback_ = tooltip_timeout; tooltip_exit_ = (void (*)(void *))tooltip_exit;}
+  static void disable() {tooltip_callback_ = 0; tooltip_exit_ = 0;}
 };
+
 
 #endif
 
 //
-// End of "$Id: Fl_Tooltip.H,v 1.16 2001/02/25 01:41:19 clip Exp $".
+// End of "$Id: Fl_Tooltip.H,v 1.16.2.1 2001/08/01 21:24:48 easysw Exp $".
 //
