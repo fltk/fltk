@@ -239,6 +239,10 @@ SOURCE=..\src\Fl_display.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_dnd.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Double_Window.cxx
 # End Source File
 # Begin Source File

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.5 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.15.2.6 2002/02/24 17:52:17 matthiaswm Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -33,6 +33,8 @@
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
 #include <string.h>
+
+#define DND_OUT 1
 
 void Fl_Input::draw() {
   if (type() == FL_HIDDEN_INPUT) return;
@@ -211,7 +213,8 @@ int Fl_Input::handle_key() {
 }
 
 int Fl_Input::handle(int event) {
-
+  static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
+  static Fl_Widget *dnd_save_focus;
   switch (event) {
   case FL_FOCUS:
     switch (Fl::event_key()) {
@@ -248,10 +251,43 @@ int Fl_Input::handle(int event) {
     } else return handle_key();
 
   case FL_PUSH:
+#if DND_OUT
+    {
+      int oldpos = position(), oldmark = mark();
+      Fl_Boxtype b = box();
+      Fl_Input_::handle_mouse(
+	x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
+	w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b), 0);
+      newpos = position(); 
+      position( oldpos, oldmark );
+      if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && type()!=FL_SECRET_INPUT &&
+	  (newpos >= mark() && newpos < position() ||
+	  newpos >= position() && newpos < mark())) {
+	// user clicked int the selection, may be trying to drag
+	drag_start = newpos;
+	return 1;
+      }
+      drag_start = -1;
+    }
+#endif
     if (Fl::focus() != this) {
       Fl::focus(this);
       handle(FL_FOCUS);
     }
+    break;
+
+  case FL_DRAG:
+#if DND_OUT
+    if (drag_start >= 0) {
+      if (Fl::event_is_click()) return 1; // debounce the mouse
+      // save the position because sometimes we don't get DND_ENTER:
+      dnd_save_position = position();
+      dnd_save_mark = mark();
+      // drag the data:
+      copy(); Fl::dnd();
+      return 1;
+    }
+#endif
     break;
 
   case FL_RELEASE:
@@ -262,6 +298,48 @@ int Fl_Input::handle(int event) {
       // copy drag-selected text to the clipboard.
       copy();
     }
+    return 1;
+
+  case FL_DND_ENTER:
+    Fl::belowmouse(this); // send the leave events first
+    dnd_save_position = position();
+    dnd_save_mark = mark();
+    dnd_save_focus = Fl::focus();
+    if (dnd_save_focus != this) {
+      Fl::focus(this);
+      handle(FL_FOCUS);
+    }
+    // fall through:
+  case FL_DND_DRAG: 
+    //int p = mouse_position(X, Y, W, H);
+#if DND_OUT_XXXX
+    if (Fl::focus()==this && (p>=dnd_save_position && p<=dnd_save_mark ||
+		      p>=dnd_save_mark && p<=dnd_save_position)) {
+      position(dnd_save_position, dnd_save_mark);
+      return 0;
+    }
+#endif
+    {
+      Fl_Boxtype b = box();
+      Fl_Input_::handle_mouse(
+	x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
+	w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b), 0);
+    }
+    return 1;
+
+  case FL_DND_LEAVE:
+    position(dnd_save_position, dnd_save_mark);
+#if DND_OUT_XXXX
+    if (!focused())
+#endif
+    if (dnd_save_focus != this) {
+      Fl::focus(dnd_save_focus);
+      handle(FL_UNFOCUS);
+    }
+    return 1;
+
+  case FL_DND_RELEASE:
+    take_focus();
     return 1;
 
   }
@@ -276,5 +354,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.5 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.6 2002/02/24 17:52:17 matthiaswm Exp $".
 //

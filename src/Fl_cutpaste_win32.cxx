@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.8.2.2 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.8.2.3 2002/02/24 17:52:17 matthiaswm Exp $"
 //
 // WIN32 cut/paste for the Fast Light Tool Kit (FLTK).
 //
@@ -35,8 +35,8 @@
 #include <string.h>
 #include <stdio.h>
 
-static char *selection_buffer;
-static int selection_length;
+char *fl_selection_buffer;
+int fl_selection_length;
 static int selection_buffer_length;
 static char beenhere;
 static char ignore_destroy;
@@ -59,11 +59,11 @@ static int selection_xevent_handler(int) {
     EmptyClipboard();
     // fall through...
   case WM_RENDERFORMAT: {
-    HANDLE h = GlobalAlloc(GHND, selection_length+1);
+    HANDLE h = GlobalAlloc(GHND, fl_selection_length+1);
     if (h) {
       LPSTR p = (LPSTR)GlobalLock(h);
-      memcpy(p, selection_buffer, selection_length);
-      p[selection_length] = 0;
+      memcpy(p, fl_selection_buffer, fl_selection_length);
+      p[fl_selection_length] = 0;
       GlobalUnlock(h);
       SetClipboardData(CF_TEXT, h);
     }
@@ -82,13 +82,13 @@ static int selection_xevent_handler(int) {
 void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
   if (!stuff || len<0) return;
   if (len+1 > selection_buffer_length) {
-    delete[] selection_buffer;
-    selection_buffer = new char[len+100];
+    delete[] fl_selection_buffer;
+    fl_selection_buffer = new char[len+100];
     selection_buffer_length = len+100;
   }
-  memcpy(selection_buffer, stuff, len);
-  selection_buffer[len] = 0; // needed for direct paste
-  selection_length = len;
+  memcpy(fl_selection_buffer, stuff, len);
+  fl_selection_buffer[len] = 0; // needed for direct paste
+  fl_selection_length = len;
   ignore_destroy = 1;
   if (OpenClipboard(fl_xid(Fl::first_window()))) {
     EmptyClipboard();
@@ -111,8 +111,8 @@ void Fl::paste(Fl_Widget &receiver) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
-    Fl::e_text = selection_buffer;
-    Fl::e_length = selection_length;
+    Fl::e_text = fl_selection_buffer;
+    Fl::e_length = fl_selection_length;
     receiver.handle(FL_PASTE);
   } else {
     if (!OpenClipboard(fl_xid(Fl::first_window()))) return;
@@ -135,5 +135,5 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 
 //
-// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.8.2.2 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_cutpaste_win32.cxx,v 1.5.2.8.2.3 2002/02/24 17:52:17 matthiaswm Exp $".
 //

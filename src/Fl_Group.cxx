@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group.cxx,v 1.8.2.8.2.10 2002/02/13 03:55:10 easysw Exp $"
+// "$Id: Fl_Group.cxx,v 1.8.2.8.2.11 2002/02/24 17:52:17 matthiaswm Exp $"
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
@@ -56,11 +56,28 @@ extern Fl_Widget* fl_oldfocus; // set by Fl::focus
 
 static int send(Fl_Widget* o, int event) {
   if (o->type() < FL_WINDOW) return o->handle(event);
+  switch ( event )
+  {
+  case FL_DND_ENTER:
+  case FL_DND_DRAG:
+    // figure out correct type of event:
+    event = (o->contains(Fl::belowmouse())) ? FL_DND_DRAG : FL_DND_ENTER;
+  }
   int save_x = Fl::e_x; Fl::e_x -= o->x();
   int save_y = Fl::e_y; Fl::e_y -= o->y();
   int ret = o->handle(event);
   Fl::e_y = save_y;
   Fl::e_x = save_x;
+  switch ( event )
+  {
+  case FL_ENTER:
+  case FL_DND_ENTER:
+    // Successful completion of FL_ENTER means the widget is now the
+    // belowmouse widget, but only call Fl::belowmouse if the child
+    // widget did not do so:
+    if (!o->contains(Fl::belowmouse())) Fl::belowmouse(o);
+    break;
+  }
   return ret;
 }
 
@@ -156,6 +173,22 @@ int Fl_Group::handle(int event) {
     Fl::belowmouse(this);
     return 1;
 
+  case FL_DND_ENTER:
+  case FL_DND_DRAG:
+    for (i = children(); i--;) {
+      o = a[i];
+      if (o->takesevents() && Fl::event_inside(o)) {
+	if (o->contains(Fl::belowmouse())) {
+	  return send(o,FL_DND_DRAG);
+	} else if (send(o,FL_DND_ENTER)) {
+	  if (!o->contains(Fl::belowmouse())) Fl::belowmouse(o);
+	  return 1;
+	}
+      }
+    }
+    Fl::belowmouse(this);
+    return 0;
+
   case FL_PUSH:
     Fl_Tooltip::exit(this);   // tooltip
     for (i = children(); i--;) {
@@ -212,8 +245,7 @@ int Fl_Group::handle(int event) {
 
     if (children()) {
       for (int j = i;;) {
-        if (child(j)->takesevents())
-	  if (send(child(j), event)) return 1;
+        if (send(child(j), event)) return 1;
         j++;
         if (j >= children()) j = 0;
         if (j == i) break;
@@ -416,7 +448,7 @@ short* Fl_Group::sizes() {
 
 void Fl_Group::resize(int X, int Y, int W, int H) {
 
-  if (!resizable() || W==w() && H==h()) {
+  if (!resizable() || W==w() && H==h() ) {
 
     if (type() < FL_WINDOW) {
       int dx = X-x();
@@ -553,5 +585,5 @@ void Fl_Group::draw_outside_label(const Fl_Widget& w) const {
 }
 
 //
-// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.10 2002/02/13 03:55:10 easysw Exp $".
+// End of "$Id: Fl_Group.cxx,v 1.8.2.8.2.11 2002/02/24 17:52:17 matthiaswm Exp $".
 //

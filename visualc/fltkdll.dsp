@@ -611,6 +611,23 @@ DEP_CPP_FL_DIS=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_dnd.cxx
+DEP_CPP_FL_DN=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl.h"\
+	"..\fl\fl_export.h"\
+	"..\fl\fl_group.h"\
+	"..\fl\fl_widget.h"\
+	"..\fl\fl_window.h"\
+	"..\fl\mac.H"\
+	"..\fl\win32.h"\
+	"..\fl\x.h"\
+	"..\src\fl_dnd_win32.cxx"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Double_Window.cxx
 DEP_CPP_FL_DO=\
 	"..\fl\enumerations.h"\

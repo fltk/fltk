@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.19 2002/02/20 19:29:57 easysw Exp $"
+// "$Id: Fl.cxx,v 1.24.2.41.2.20 2002/02/24 17:52:17 matthiaswm Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -416,13 +416,17 @@ void Fl::focus(Fl_Widget *o) {
   }
 }
 
+static char dnd_flag = 0; // make 'belowmouse' send DND_LEAVE instead of LEAVE
+
 void Fl::belowmouse(Fl_Widget *o) {
   if (grab()) return; // don't do anything while grab is on
   Fl_Widget *p = belowmouse_;
   if (o != p) {
-    Fl_Tooltip::enter(o);
+    if (!dnd_flag) Fl_Tooltip::enter(o);
     belowmouse_ = o;
-    for (; p && !p->contains(o); p = p->parent()) p->handle(FL_LEAVE);
+    for (; p && !p->contains(o); p = p->parent()) {
+      p->handle(dnd_flag ? FL_DND_LEAVE : FL_LEAVE);
+    }
   }
 }
 
@@ -555,6 +559,21 @@ int Fl::handle(int event, Fl_Window* window)
     window->show();
     return 1;
 
+  case FL_DND_ENTER:
+  case FL_DND_DRAG:
+    dnd_flag = 1;
+    break;
+
+  case FL_DND_LEAVE:
+    dnd_flag = 1;
+    belowmouse(0);
+    dnd_flag = 0;
+    return true;
+
+  case FL_DND_RELEASE:
+    w = belowmouse();
+    break;
+
   case FL_MOVE:
   case FL_DRAG:
     fl_xmousewin = window; // this should already be set, but just in case.
@@ -643,7 +662,9 @@ int Fl::handle(int event, Fl_Window* window)
     break;
   }
   if (w && send(event, w, window)) return 1;
-  return send_handlers(event);
+  int ret = send_handlers(event);
+  dnd_flag = 0;
+  return ret;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -855,5 +876,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.19 2002/02/20 19:29:57 easysw Exp $".
+// End of "$Id: Fl.cxx,v 1.24.2.41.2.20 2002/02/24 17:52:17 matthiaswm Exp $".
 //

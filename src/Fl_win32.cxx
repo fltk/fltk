@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.17 2002/02/20 19:29:57 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.18 2002/02/24 17:52:17 matthiaswm Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -45,6 +45,8 @@
 #include <ctype.h>
 #include <winuser.h>
 #include <commctrl.h>
+#include <ole2.h>
+#include <ShellApi.h>
 
 
 //
@@ -116,6 +118,8 @@ static fd_set fdsets[3];
 #define POLLIN 1
 #define POLLOUT 4
 #define POLLERR 8
+
+extern class FLDropTarget flDropTarget;
 
 static int nfds = 0;
 static int fd_array_size = 0;
@@ -935,6 +939,11 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // other windows from the code, or we loose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
 	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
+  // register all windows for potential drag'n'drop operations
+  { static char oleInitialized = 0;
+    if (!oleInitialized) { OleInitialize(0L); oleInitialized=1; }
+  }
+  RegisterDragDrop(x->xid, (IDropTarget*)&flDropTarget);
 
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
@@ -1065,5 +1074,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.17 2002/02/20 19:29:57 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.18 2002/02/24 17:52:17 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fl_dnd.cxx,v 1.3.2.1 2002/01/09 21:50:02 easysw Exp $"
+// "$Id: fl_dnd.cxx,v 1.3.2.2 2002/02/24 17:52:18 matthiaswm Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -25,12 +25,12 @@
 
 #ifdef WIN32
 #  include "fl_dnd_win32.cxx"
-//#elif defined(__APPLE__)
-//#  include "fl_dnd_mac.cxx"
+#elif defined(__APPLE__)
+#  include "fl_dnd_mac.cxx"
 #else
 #  include "fl_dnd_x.cxx"
 #endif
 
 //
-// End of "$Id: fl_dnd.cxx,v 1.3.2.1 2002/01/09 21:50:02 easysw Exp $".
+// End of "$Id: fl_dnd.cxx,v 1.3.2.2 2002/02/24 17:52:18 matthiaswm Exp $".
 //
