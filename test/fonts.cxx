@@ -1,5 +1,5 @@
 //
-// "$Id: fonts.cxx,v 1.3 1998/10/21 14:21:25 mike Exp $"
+// "$Id: fonts.cxx,v 1.4 1999/01/04 19:27:48 mike Exp $"
 //
 // Font demo program for the Fast Light Tool Kit (FLTK).
 //
@@ -34,7 +34,21 @@
 
 Fl_Window *form;
 
-Fl_Box *textobj;
+class FontDisplay : public Fl_Widget {
+  void draw();
+public:
+  int font, size;
+  FontDisplay(Fl_Boxtype B, int X, int Y, int W, int H, const char* L = 0) :
+    Fl_Widget(X,Y,W,H,L) {box(B); font = 0; size = 14;}
+};
+void FontDisplay::draw() {
+  draw_box();
+  fl_font((Fl_Font)font, size);
+  fl_color(FL_BLACK);
+  fl_draw(label(), x()+3, y()+3, w()-6, h()-6, align());
+}
+
+FontDisplay *textobj;
 
 Fl_Hold_Browser *fontobj, *sizeobj;
 
@@ -46,7 +60,7 @@ void font_cb(Fl_Widget *, long) {
   int fn = fontobj->value();
   if (!fn) return;
   fn--;
-  textobj->labelfont(fn);
+  textobj->font = fn;
   sizeobj->clear();
   int n = numsizes[fn];
   int *s = sizes[fn];
@@ -82,7 +96,7 @@ void size_cb(Fl_Widget *, long) {
   const char *c = sizeobj->text(i);
   while (*c < '0' || *c > '9') c++;
   pickedsize = atoi(c);
-  textobj->labelsize(pickedsize);
+  textobj->size = pickedsize;
   textobj->redraw();
 }
 
@@ -99,7 +113,7 @@ void create_the_forms() {
   for (c = 0xA1; c; c++) {if (!(c&0x1f)) label[i++]='\n'; label[i++]=c;}
   label[i] = 0;
 
-  textobj = new Fl_Box(FL_FRAME_BOX,10,10,530,170,label);
+  textobj = new FontDisplay(FL_FRAME_BOX,10,10,530,170,label);
   textobj->align(FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
   textobj->color(9,47);
   fontobj = new Fl_Hold_Browser(10, 190, 390, 170);
@@ -150,5 +164,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: fonts.cxx,v 1.3 1998/10/21 14:21:25 mike Exp $".
+// End of "$Id: fonts.cxx,v 1.4 1999/01/04 19:27:48 mike Exp $".
 //
