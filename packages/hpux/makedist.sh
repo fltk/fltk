@@ -32,5 +32,6 @@ echo "Compressing distribution..."
 
 cd packages/hpux
 
+rm -f fltk-1.0-hpux.depot.gz
 gzip -9 fltk-1.0-hpux.depot
 
