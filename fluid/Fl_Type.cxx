@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.6.2.3 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.6.2.4 2002/04/26 11:51:52 easysw Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -44,6 +44,11 @@
 #include <stdio.h>
 
 #include "Fl_Type.h"
+
+#include <FL/Fl_Pixmap.H>
+#include "lock.xpm"
+
+static Fl_Pixmap	lock_pixmap(lock_xpm);
 
 ////////////////////////////////////////////////////////////////
 
@@ -129,9 +134,12 @@ extern const char* subclassname(Fl_Type*);
 
 void Widget_Browser::item_draw(void *v, int x, int y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
-  x += 3 + l->level * 10;
+  x += 3 + 16 + l->level * 10;
   if (l->new_selected) fl_color(fl_contrast(FL_BLACK,FL_SELECTION_COLOR));
   else fl_color(FL_BLACK);
+  if (!l->is_public()) {
+    lock_pixmap.draw(x - 16, y);
+  }
   if (l->is_parent()) {
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
@@ -189,7 +197,7 @@ int Widget_Browser::item_width(void *v) const {
 
   if (!l->visible) return 0;
 
-  int w = 3 + l->level*10;
+  int w = 3 + 16 + l->level*10;
   if (l->is_parent()) w += 10;
 
   if (l->is_widget() || l->is_class()) {
@@ -505,6 +513,7 @@ int Fl_Type::is_window() const {return 0;}
 int Fl_Type::is_code_block() const {return 0;}
 int Fl_Type::is_decl_block() const {return 0;}
 int Fl_Type::is_class() const {return 0;}
+int Fl_Type::is_public() const {return 1;}
 
 ////////////////////////////////////////////////////////////////
 
@@ -668,5 +677,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.3 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.6.2.4 2002/04/26 11:51:52 easysw Exp $".
 //

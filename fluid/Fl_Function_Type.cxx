@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.1 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.2 2002/04/26 11:51:52 easysw Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
@@ -112,6 +112,8 @@ const char *c_check(const char *c, int type) {
 }
 
 ////////////////////////////////////////////////////////////////
+
+int Fl_Function_Type::is_public() const {return public_;}
 
 Fl_Type *Fl_Function_Type::make() {
   Fl_Type *p = Fl_Type::current;
@@ -404,6 +406,8 @@ void Fl_CodeBlock_Type::write_code2() {
 
 ////////////////////////////////////////////////////////////////
 
+int Fl_Decl_Type::is_public() const {return public_;}
+
 Fl_Type *Fl_Decl_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -583,6 +587,8 @@ const char* Fl_Type::class_name(const int need_nest) const {
   return 0;
 }
 
+int Fl_Class_Type::is_public() const {return public_;}
+
 Fl_Type *Fl_Class_Type::make() {
   Fl_Type *p = Fl_Type::current;
   while (p && !p->is_decl_block()) p = p->parent;
@@ -672,5 +678,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.1 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.16.2.2 2002/04/26 11:51:52 easysw Exp $".
 //

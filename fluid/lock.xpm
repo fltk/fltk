@@ -1,0 +1,29 @@
+/* XPM */
+static char *lock_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"` c #000000",
+"a c #00FFFF",
+"b c #80FFFF",
+"c c none",
+"d c #FFFFFF",
+"e c #0000FF",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccc````cccccccc",
+"ccc`daaa`ccccccc",
+"cc`da``bd`cccccc",
+"cc`a`cc`d`cccccc",
+"cc`a`cc`d`cccccc",
+"c``````````ccccc",
+"c`dddaaaae`ccccc",
+"c`daa`aaae`ccccc",
+"c`da`edaae`ccccc",
+"c`da`edaae`ccccc",
+"c`da`ddaee`ccccc",
+"c``````````ccccc",
+"cccccccccccccccc"
+};

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.11.2.3 2002/01/01 15:11:29 easysw Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.11.2.4 2002/04/26 11:51:52 easysw Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -125,6 +125,7 @@ public:
   virtual int is_code_block() const;
   virtual int is_decl_block() const;
   virtual int is_class() const;
+  virtual int is_public() const;
 
   const char* class_name(const int need_nest) const;
 };
@@ -144,6 +145,7 @@ public:
   }
   int is_parent() const {return 1;}
   int is_code_block() const {return 1;}
+  virtual int is_public() const;
   void write_properties();
   void read_property(const char *);
 };
@@ -182,6 +184,7 @@ public:
   virtual const char *type_name() {return "decl";}
   void write_properties();
   void read_property(const char *);
+  virtual int is_public() const;
 };
 
 class Fl_DeclBlock_Type : public Fl_Type {
@@ -214,6 +217,7 @@ public:
   int is_parent() const {return 1;}
   int is_decl_block() const {return 1;}
   int is_class() const {return 1;}
+  virtual int is_public() const;
   void write_properties();
   void read_property(const char *);
 };
@@ -275,6 +279,7 @@ public:
   virtual Fl_Menu_Item *subtypes();
 
   virtual int is_widget() const;
+  virtual int is_public() const;
 
   virtual void write_properties();
   virtual void read_property(const char *);
@@ -560,5 +565,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.11.2.3 2002/01/01 15:11:29 easysw Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.11.2.4 2002/04/26 11:51:52 easysw Exp $".
 //
