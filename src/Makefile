@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.36 2002/03/07 19:22:57 spitzak Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.37 2002/03/08 13:13:14 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -174,8 +174,6 @@ CLEAN =	core cmap
 ################################################################
 
 include ../makeinclude
-CFLAGS += -DFL_LIBRARY
-CXXFLAGS += -DFL_LIBRARY
 
 OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
@@ -221,11 +219,8 @@ libfltk_gl_s.a: $(GLOBJECTS)
 clean :
 	-@ rm -f *.o $(DSONAME) $(GLDSONAME) $(LIBRARY) $(CLEAN) libfltk.so libfltk_gl.so
 
-depend:
-	$(MAKEDEPEND) -I.. $(CXXFLAGS) $(CPPFILES) $(GLCPPFILES) $(CFILES) > makedepend
-	sed -e "s'\.o'_s\.o'" makedepend > foo
-	cat foo >> makedepend
-	rm foo
+depend:	$(CPPFILES) $(GLCPPFILES) $(CFILES)
+	makedepend -Y -I.. -f makedepend $(CPPFILES) $(GLCPPFILES) $(CFILES)
 
 # Automatically generated dependencies...
 include makedepend
@@ -358,5 +353,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.36 2002/03/07 19:22:57 spitzak Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.37 2002/03/08 13:13:14 easysw Exp $".
 #
