@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.11 1999/02/22 22:10:14 mike Exp $"
+// "$Id: filename.H,v 1.11.2.1 2000/04/04 18:00:50 bill Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -52,7 +52,7 @@ FL_EXPORT int filename_isdir(const char*);
 
 // Portable "scandir" function.  Ugly but apparently necessary...
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 
 struct dirent {char d_name[1];};
 
@@ -76,5 +76,5 @@ FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11 1999/02/22 22:10:14 mike Exp $".
+// End of "$Id: filename.H,v 1.11.2.1 2000/04/04 18:00:50 bill Exp $".
 //
