@@ -14,6 +14,8 @@ CHANGES SINCE FLTK 1.0.10
 	- Eliminated all "string literal converted to char *"
 	  warnings.
 
+	- Added support for AIX (static library only).
+
 	- Fl_has_idle only tested N-1 callbacks and missed one.
 
 	- Restored WM_SYNCPAINT handling under WIN32; this fixed

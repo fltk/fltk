@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.25 2001/02/21 21:37:30 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.26 2001/04/13 19:13:14 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -80,6 +80,12 @@ if eval "test x$enable_shared = xyes"; then
       FreeBSD* | NetBSD* | OpenBSD*)
           DSONAME="libfltk.so.1"
 	  DSOCOMMAND="\$(CXX) -Wl,-soname,\$@ -shared \$(OPTIM) -o"
+	  ;;
+      AIX*)
+          PICFLAG=0
+
+          echo "Warning: shared libraries are not currently supported under AIX."
+	  echo "         Building static libraries."
 	  ;;
       *)
           echo "Warning: shared libraries may not be supported.  Trying -shared"
@@ -311,6 +317,12 @@ else
 		CXXFLAGS="-PIC $CXXFLAGS"
 	    fi
 	    ;;
+	AIX*)
+	    if test -z "$DEBUGFLAG"; then
+        	CFLAGS="-O2 $CFLAGS"
+        	CXXFLAGS="-O2 $CXXFLAGS"
+	    fi
+	    ;;
 	*)
 	    # Running some other operating system; inform the user they
 	    # should contribute the necessary options to fltk-bugs@fltk.org...
@@ -334,5 +346,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.25 2001/02/21 21:37:30 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.26 2001/04/13 19:13:14 easysw Exp $".
 dnl
