@@ -1,5 +1,5 @@
 //
-// "$Id: tiled_image.cxx,v 1.1.2.2 2001/11/27 17:44:08 easysw Exp $"
+// "$Id: tiled_image.cxx,v 1.1.2.3 2001/11/29 00:24:43 easysw Exp $"
 //
 // Fl_Tiled_Image test program for the Fast Light Tool Kit (FLTK).
 //
@@ -88,6 +88,7 @@ int main(int argc, char **argv) {
 
   Fl_Button b(340,365,50,25,"Close"); ::b = &b;
   b.callback(button_cb);
+  b.box(FL_PLASTIC_UP_BOX);
 
   group.end();
 
@@ -99,5 +100,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: tiled_image.cxx,v 1.1.2.2 2001/11/27 17:44:08 easysw Exp $".
+// End of "$Id: tiled_image.cxx,v 1.1.2.3 2001/11/29 00:24:43 easysw Exp $".
 //

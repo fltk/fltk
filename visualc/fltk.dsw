@@ -431,6 +431,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name line_style
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tiled_image
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -1069,6 +1072,21 @@ Package=<4>
 ###############################################################################
 
 Project: "tile"=".\tile.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "tiled_image"=".\tiled_image.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{

@@ -404,11 +404,14 @@ SOURCE=..\src\Fl_Pixmap.cxx
 # Begin Source File
 
 SOURCE=..\src\fl_plastic.cxx
-	
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\Fl_PNG_Image.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_PNM_Image.cxx
 # End Source File
 # Begin Source File
 
@@ -472,6 +475,10 @@ SOURCE=..\src\fl_shadow_box.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\Fl_Shared_Image.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_shortcut.cxx
 # End Source File
 # Begin Source File
@@ -509,6 +516,10 @@ SOURCE=..\src\Fl_Text_Editor.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_Tile.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_Tiled_Image.cxx
 # End Source File
 # Begin Source File
 
@@ -565,6 +576,14 @@ SOURCE=..\src\Fl_Wizard.cxx
 # Begin Source File
 
 SOURCE=..\src\Fl_x.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_XBM_Image.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\Fl_XPM_Image.cxx
 # End Source File
 # Begin Source File
 

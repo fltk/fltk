@@ -1,5 +1,5 @@
 //
-// "$Id: filename.H,v 1.11.2.4.2.2 2001/11/26 00:15:06 easysw Exp $"
+// "$Id: filename.H,v 1.11.2.4.2.3 2001/11/29 00:24:43 easysw Exp $"
 //
 // Filename header file for the Fast Light Tool Kit (FLTK).
 //
@@ -24,35 +24,40 @@
 //
 
 #ifndef FL_FILENAME_H
-#define FL_FILENAME_H
+#  define FL_FILENAME_H
 
 #  include "Fl_Export.H"
 
-#define FL_PATH_MAX 256 // all buffers are this length
+#  define FL_PATH_MAX 256 // all buffers are this length
 
 FL_EXPORT const char *filename_name(const char *); // return pointer to name
 FL_EXPORT const char *filename_ext(const char *); // return pointer to .ext
 FL_EXPORT char *filename_setext(char *to, int tolen, const char *ext); // clobber .ext
-inline char *filename_setext(char *to, const char *ext) { return filename_setext(to, FL_PATH_MAX, ext); }
 FL_EXPORT int filename_expand(char *to, int tolen, const char *from); // do $x and ~x
-inline int filename_expand(char *to, const char *from) { return filename_expand(to, FL_PATH_MAX, from); }
 FL_EXPORT int filename_absolute(char *to, int tolen, const char *from); // prepend getcwd()
-inline int filename_absolute(char *to, const char *from) { return filename_absolute(to, FL_PATH_MAX, from); }
 FL_EXPORT int filename_relative(char *to, int tolen, const char *from); // make local to getcwd()
-inline int filename_relative(char *to, const char *from) { return filename_relative(to, FL_PATH_MAX, from); }
 FL_EXPORT int filename_match(const char *name, const char *pattern); // glob match
 FL_EXPORT int filename_isdir(const char *name);
 
+#  ifdef __cplusplus
+// Under WIN32, we include filename.H from numericsort.c; this should probably change
+inline char *filename_setext(char *to, const char *ext) { return filename_setext(to, FL_PATH_MAX, ext); }
+inline int filename_expand(char *to, const char *from) { return filename_expand(to, FL_PATH_MAX, from); }
+inline int filename_absolute(char *to, const char *from) { return filename_absolute(to, FL_PATH_MAX, from); }
+inline int filename_relative(char *to, const char *from) { return filename_relative(to, FL_PATH_MAX, from); }
+#  endif // __cplusplus
+
+
 // Portable "scandir" function.  Ugly but apparently necessary...
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#  if defined(WIN32) && !defined(__CYGWIN__)
 
 struct dirent {char d_name[1];};
 
-#else
+#  else
 
-#include <sys/types.h>
-#include <dirent.h>
+#    include <sys/types.h>
+#    include <dirent.h>
 // warning: on some systems (very few nowadays?) <dirent.h> may not exist.
 // The correct information is in one of these files:
 //#include <sys/ndir.h>
@@ -62,12 +67,12 @@ struct dirent {char d_name[1];};
 //#define dirent direct
 // It would be best to create a <dirent.h> file that does this...
 
-#endif
+#  endif
 
 FL_EXPORT int filename_list(const char *d, struct dirent ***list);
 
 #endif
 
 //
-// End of "$Id: filename.H,v 1.11.2.4.2.2 2001/11/26 00:15:06 easysw Exp $".
+// End of "$Id: filename.H,v 1.11.2.4.2.3 2001/11/29 00:24:43 easysw Exp $".
 //

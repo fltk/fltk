@@ -1,5 +1,5 @@
 /*
- * "$Id: numericsort.c,v 1.10.2.4 2001/01/22 15:13:41 easysw Exp $"
+ * "$Id: numericsort.c,v 1.10.2.4.2.1 2001/11/29 00:24:43 easysw Exp $"
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
@@ -32,22 +32,20 @@
 #include <sys/types.h>
 
 #if defined(WIN32) && !defined(__CYGWIN__)
-#include <FL/filename.H>
+#  include <FL/filename.H>
+#elif defined(HAVE_DIRENT_H)
+#  include <dirent.h>
 #else
-#if HAVE_DIRENT_H
-# include <dirent.h>
-#else
-# define dirent direct
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
+#  define dirent direct
+#  if HAVE_SYS_NDIR_H
+#    include <sys/ndir.h>
+#  endif
+#  if HAVE_SYS_DIR_H
+#    include <sys/dir.h>
+#  endif
+#  if HAVE_NDIR_H
+#    include <ndir.h>
+#  endif
 #endif
 
 #ifdef __cplusplus
@@ -84,5 +82,5 @@ int numericsort(struct dirent **A, struct dirent **B) {
 }
 
 /*
- * End of "$Id: numericsort.c,v 1.10.2.4 2001/01/22 15:13:41 easysw Exp $".
+ * End of "$Id: numericsort.c,v 1.10.2.4.2.1 2001/11/29 00:24:43 easysw Exp $".
  */
