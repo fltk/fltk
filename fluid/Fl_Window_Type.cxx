@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.2 2002/04/30 18:11:49 easysw Exp $"
+// "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.3 2002/05/01 19:17:24 easysw Exp $"
 //
 // Window type code for the Fast Light Tool Kit (FLTK).
 //
@@ -69,6 +69,20 @@ void grid_cb(Fl_Input *i, long v) {
       fluid_prefs.set("snap", n);
       break;
   }
+
+  // Next go through all of the windows in the project and set the
+  // stepping for resizes...
+  Fl_Type *p;
+  Fl_Window_Type *w;
+
+  for (p = Fl_Type::first; p; p = p->next) {
+    if (p->is_window()) {
+      w = (Fl_Window_Type *)p;
+      ((Fl_Window *)(w->o))->size_range(gridx * snap, gridy * snap,
+                                        Fl::w(), Fl::h(),
+                                        gridx * snap, gridy * snap, 0);
+    }
+  }
 }
 
 void i18n_type_cb(Fl_Choice *c, void *) {
@@ -122,8 +136,8 @@ void i18n_text_cb(Fl_Input *i, void *) {
 extern const char* header_file_name;
 extern const char* code_file_name;
 
-void show_alignment_cb(Fl_Widget *, void *) {
-  if(alignment_window==0) make_alignment_window();
+void show_project_cb(Fl_Widget *, void *) {
+  if(project_window==0) make_project_window();
   include_H_from_C_button->value(include_H_from_C);
   header_file_input->value(header_file_name);
   code_file_input->value(code_file_name);
@@ -152,14 +166,21 @@ void show_alignment_cb(Fl_Widget *, void *) {
       i18n_function_input->hide();
       break;
   }
-  alignment_window->show();
+  project_window->hotspot(project_window);
+  project_window->show();
 }
 
-void show_settings_cb(Fl_Widget *, void *) {
+void show_grid_cb(Fl_Widget *, void *) {
   char buf[128];
   sprintf(buf,"%d",gridx); horizontal_input->value(buf);
   sprintf(buf,"%d",gridy); vertical_input->value(buf);
   sprintf(buf,"%d",snap); snap_input->value(buf);
+  grid_window->hotspot(grid_window);
+  grid_window->show();
+}
+
+void show_settings_cb(Fl_Widget *, void *) {
+  settings_window->hotspot(settings_window);
   settings_window->show();
 }
 
@@ -230,6 +251,9 @@ Fl_Type *Fl_Window_Type::make() {
     this->o = new Fl_Window(100,100);
     Fl_Group::current(0);
   }
+  ((Fl_Window *)(this->o))->size_range(gridx * snap, gridy * snap,
+                                       Fl::w(), Fl::h(),
+                                       gridx * snap, gridy * snap, 0);
   myo->factory = this;
   myo->drag = 0;
   myo->numselected = 0;
@@ -766,5 +790,5 @@ int Fl_Window_Type::read_fdesign(const char* name, const char* value) {
 }
 
 //
-// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.2 2002/04/30 18:11:49 easysw Exp $".
+// End of "$Id: Fl_Window_Type.cxx,v 1.13.2.10.2.3 2002/05/01 19:17:24 easysw Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: fluid.cxx,v 1.15.2.13.2.20 2002/05/01 17:35:30 matthiaswm Exp $"
+// "$Id: fluid.cxx,v 1.15.2.13.2.21 2002/05/01 19:17:24 easysw Exp $"
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
@@ -63,9 +63,9 @@
 static Fl_Help_Dialog *help_dialog = 0;
 
 Fl_Preferences	fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
-int gridx;
-int gridy;
-int snap;
+int gridx = 5;
+int gridy = 5;
+int snap = 1;
 
 // File history info...
 char	absolute_history[10][1024];
@@ -307,7 +307,7 @@ void cut_cb(Fl_Widget *, void *) {
   if (p) select_only(p);
 }
 
-extern int force_parent, gridx, gridy;
+extern int force_parent;
 
 void paste_cb(Fl_Widget*, void*) {
   if (ipasteoffset) force_parent = 1;
@@ -332,7 +332,8 @@ static void sort_cb(Fl_Widget *,void *) {
   sort((Fl_Type*)0);
 }
 
-void show_alignment_cb(Fl_Widget *, void *);
+void show_project_cb(Fl_Widget *, void *);
+void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
 
 void align_widget_cb(Fl_Widget *, long);
@@ -381,9 +382,9 @@ extern Fl_Menu_Item New_Menu[];
 
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
-  {"New", 0, new_cb, 0},
-  {"Open...", FL_CTRL+'o', open_cb, 0},
-  {"Open Previous",0,0,0,FL_SUBMENU},
+  {"&New", 0, new_cb, 0},
+  {"&Open...", FL_CTRL+'o', open_cb, 0},
+  {"Open &Previous",0,0,0,FL_SUBMENU},
     {relative_history[0], FL_CTRL+'0', open_history_cb, absolute_history[0]},
     {relative_history[1], FL_CTRL+'1', open_history_cb, absolute_history[1]},
     {relative_history[2], FL_CTRL+'2', open_history_cb, absolute_history[2]},
@@ -395,40 +396,41 @@ Fl_Menu_Item Main_Menu[] = {
     {relative_history[8], FL_CTRL+'8', open_history_cb, absolute_history[8]},
     {relative_history[9], FL_CTRL+'9', open_history_cb, absolute_history[9]},
     {0},
-  {"Save", FL_CTRL+'s', save_cb, 0},
-  {"Save As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1},
-  {"Merge...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
-  {"Write code", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
-  {"Write strings", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0},
-  {"Quit", FL_CTRL+'q', exit_cb},
+  {"&Insert...", FL_CTRL+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
+  {"&Save", FL_CTRL+'s', save_cb, 0},
+  {"Save &As...", FL_CTRL+FL_SHIFT+'s', save_cb, (void*)1, FL_MENU_DIVIDER},
+  {"Write &code", FL_CTRL+FL_SHIFT+'c', write_cb, 0},
+  {"&Write strings", FL_CTRL+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
+  {"&Quit", FL_CTRL+'q', exit_cb},
   {0},
 {"&Edit",0,0,0,FL_SUBMENU},
-  {"Undo", FL_CTRL+'z', nyi},
-  {"Cut", FL_CTRL+'x', cut_cb},
-  {"Copy", FL_CTRL+'c', copy_cb},
-  {"Paste", FL_CTRL+'v', paste_cb},
-  {"Select All", FL_CTRL+'a', select_all_cb, 0, FL_MENU_DIVIDER},
-  {"Open...", FL_F+1, openwidget_cb},
-  {"Sort",0,sort_cb},
-  {"Earlier", FL_F+2, earlier_cb},
-  {"Later", FL_F+3, later_cb},
+  {"&Undo", FL_CTRL+'z', nyi},
+  {"C&ut", FL_CTRL+'x', cut_cb},
+  {"&Copy", FL_CTRL+'c', copy_cb},
+  {"&Paste", FL_CTRL+'v', paste_cb},
+  {"Select &All", FL_CTRL+'a', select_all_cb, 0, FL_MENU_DIVIDER},
+  {"&Open...", FL_F+1, openwidget_cb},
+  {"&Sort",0,sort_cb},
+  {"&Earlier", FL_F+2, earlier_cb},
+  {"&Later", FL_F+3, later_cb},
 //{"Show", FL_F+5, show_cb},
 //{"Hide", FL_F+6, hide_cb},
-  {"Group", FL_F+7, group_cb},
-  {"Ungroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
+  {"&Group", FL_F+7, group_cb},
+  {"U&ngroup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
 //{"Deactivate", 0, nyi},
 //{"Activate", 0, nyi, 0, FL_MENU_DIVIDER},
-  {"Overlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
-  {"Preferences",FL_CTRL+'p',show_alignment_cb},
+  {"O&verlays on/off",FL_CTRL+FL_SHIFT+'o',toggle_overlays},
+  {"Pro&ject Settings...",FL_CTRL+'p',show_project_cb},
+  {"&GUI Settings...",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
   {"&Align",0,0,0,FL_SUBMENU},
     {"&Left",0,(Fl_Callback *)align_widget_cb,(void*)10},
-    {"&Hor. Center",0,(Fl_Callback *)align_widget_cb,(void*)11},
+    {"&Center",0,(Fl_Callback *)align_widget_cb,(void*)11},
     {"&Right",0,(Fl_Callback *)align_widget_cb,(void*)12},
     {"&Top",0,(Fl_Callback *)align_widget_cb,(void*)13},
-    {"&Vert. Center",0,(Fl_Callback *)align_widget_cb,(void*)14},
+    {"&Middle",0,(Fl_Callback *)align_widget_cb,(void*)14},
     {"&Bottom",0,(Fl_Callback *)align_widget_cb,(void*)15},
     {0},
   {"&Space Evenly",0,0,0,FL_SUBMENU},
@@ -444,16 +446,16 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
-  {"&Grid",FL_CTRL+FL_SHIFT+'p',show_settings_cb},
+  {"&Grid...",FL_CTRL+'g',show_grid_cb},
   {0},
 {"&Shell",0,0,0,FL_SUBMENU},
-  {"Execute Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
-  {"Execute Again",FL_ALT+'g',(Fl_Callback *)do_shell_command},
+  {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
+  {"Execute &Again",FL_ALT+'g',(Fl_Callback *)do_shell_command},
   {0},
 {"&Help",0,0,0,FL_SUBMENU},
-  {"About FLUID...",0,about_cb},
-  {"On FLUID...",0,help_cb},
-  {"Manual...",0,manual_cb},
+  {"&About FLUID...",0,about_cb},
+  {"&On FLUID...",0,help_cb},
+  {"&Manual...",0,manual_cb},
   {0},
 {0}};
 
@@ -479,6 +481,7 @@ void make_main_window() {
 
   load_history();
 
+  make_grid_window();
   make_settings_window();
   make_shell_window();
 
@@ -758,15 +761,21 @@ int main(int argc,char **argv) {
     }
     fl_message("Can't read %s: %s", c, strerror(errno));
   }
-      if (compile_only && compile_strings) { write_strings_cb(0,0); }
-  if (compile_only) {write_cb(0,0); exit(0);}
+  if (compile_only) {
+    if (compile_strings) write_strings_cb(0,0);
+    write_cb(0,0);
+    exit(0);
+  }
   modflag = 0;
 #ifndef WIN32
   signal(SIGINT,sigint);
 #endif
+
+  grid_cb(horizontal_input, 0); // Makes sure that windows get snap params...
+
   return Fl::run();
 }
 
 //
-// End of "$Id: fluid.cxx,v 1.15.2.13.2.20 2002/05/01 17:35:30 matthiaswm Exp $".
+// End of "$Id: fluid.cxx,v 1.15.2.13.2.21 2002/05/01 19:17:24 easysw Exp $".
 //

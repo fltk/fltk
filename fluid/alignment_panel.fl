@@ -2,85 +2,91 @@
 version 1.0100 
 header_name {.h} 
 code_name {.cxx}
-Function {make_alignment_window()} {open
+Function {make_project_window()} {open
 } {
-  Fl_Window alignment_window {
-    label Preferences open
-    xywh {469 112 365 340}
+  Fl_Window project_window {
+    label {Project Settings} open
+    xywh {469 112 365 210}
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
-      callback {alignment_window->hide();}
-      tooltip {Close this dialog.} xywh {295 305 60 25}
+      callback {project_window->hide();} selected
+      tooltip {Close this dialog.} xywh {295 175 60 25}
     }
-    Fl_Box {} {
-      label {Output File Names:}
-      xywh {10 175 345 120} box ENGRAVED_FRAME labelsize 12 align 5
-    }
-    Fl_Box {} {
-      label {Use "name.ext" to set name or just ".ext" to set only extension.}
-      xywh {20 185 325 15} labelsize 10 align 148
-    }
-    Fl_Input header_file_input {
-      label {Header File:}
-      user_data 1 user_data_type {void*}
-      callback header_input_cb
-      tooltip {The name of the generated header file.} xywh {100 205 245 20} box THIN_DOWN_BOX when 1 textfont 4
-    }
-    Fl_Input code_file_input {
-      label {Code File:}
-      user_data 1 user_data_type {void*}
-      callback code_input_cb
-      tooltip {The name of the generated code file.} xywh {100 235 245 20} box THIN_DOWN_BOX when 1 textfont 4
-    }
-    Fl_Light_Button include_H_from_C_button {
-      label {Include Header from Code}
-      callback include_H_from_C_button_cb
-      tooltip {Include the header file from the code file.} xywh {100 265 170 20} value 1 labelsize 12
-    }
-    Fl_Box {} {
-      label {Internationalization:}
-      xywh {10 25 345 130} box ENGRAVED_FRAME labelsize 12 align 5
-    }
-    Fl_Choice i18n_type_chooser {
-      label {Use:}
-      callback i18n_type_cb open
-      tooltip {Type of internationalization to use.} xywh {100 35 125 20} box THIN_UP_BOX down_box BORDER_BOX
+    Fl_Tabs {} {open
+      xywh {10 10 345 155}
     } {
-      menuitem {} {
-        label None
-        xywh {0 0 100 20}
+      Fl_Group {} {
+        label Output
+        xywh {10 35 345 130}
+      } {
+        Fl_Box {} {
+          label {Use "name.ext" to set name or just ".ext" to set only extension.}
+          xywh {25 45 325 15} labelsize 10 align 148
+        }
+        Fl_Input header_file_input {
+          label {Header File:}
+          user_data 1 user_data_type {void*}
+          callback header_input_cb
+          tooltip {The name of the generated header file.} xywh {105 65 245 20} box THIN_DOWN_BOX when 1 textfont 4
+        }
+        Fl_Input code_file_input {
+          label {Code File:}
+          user_data 1 user_data_type {void*}
+          callback code_input_cb
+          tooltip {The name of the generated code file.} xywh {105 95 245 20} box THIN_DOWN_BOX when 1 textfont 4
+        }
+        Fl_Light_Button include_H_from_C_button {
+          label {Include Header from Code}
+          callback include_H_from_C_button_cb
+          tooltip {Include the header file from the code file.} xywh {105 125 170 20} value 1 labelsize 12
+        }
       }
-      menuitem {} {
-        label {GNU gettext}
-        xywh {0 0 100 20}
+      Fl_Group {} {
+        label Internationalization open
+        xywh {10 35 345 130} hide
+      } {
+        Fl_Choice i18n_type_chooser {
+          label {Use:}
+          callback i18n_type_cb open
+          tooltip {Type of internationalization to use.} xywh {100 45 125 20} box THIN_UP_BOX down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label None
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {GNU gettext}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {POSIX catgets}
+            xywh {0 0 100 20}
+          }
+        }
+        Fl_Input i18n_include_input {
+          label {\#include:}
+          callback i18n_text_cb
+          tooltip {The include file for internationalization.} xywh {100 75 245 20} box THIN_DOWN_BOX textfont 4
+        }
+        Fl_Input i18n_file_input {
+          label {File:}
+          callback i18n_text_cb
+          tooltip {The name of the message catalog.} xywh {100 105 245 20} box THIN_DOWN_BOX textfont 4
+        }
+        Fl_Input i18n_set_input {
+          label {Set:}
+          callback i18n_text_cb
+          tooltip {The message set number.} xywh {100 135 245 20} type Int box THIN_DOWN_BOX textfont 4
+        }
+        Fl_Input i18n_function_input {
+          label {Function:}
+          callback i18n_text_cb
+          tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 105 245 20} box THIN_DOWN_BOX textfont 4
+        }
       }
-      menuitem {} {
-        label {POSIX catgets}
-        xywh {0 0 100 20}
-      }
-    }
-    Fl_Input i18n_include_input {
-      label {\#include:}
-      callback i18n_text_cb
-      tooltip {The include file for internationalization.} xywh {100 65 245 20} box THIN_DOWN_BOX textfont 4 hide
-    }
-    Fl_Input i18n_file_input {
-      label {File:}
-      callback i18n_text_cb
-      tooltip {The name of the message catalog.} xywh {100 95 245 20} box THIN_DOWN_BOX textfont 4 hide
-    }
-    Fl_Input i18n_set_input {
-      label {Set:}
-      callback i18n_text_cb
-      tooltip {The message set number.} xywh {100 125 245 20} type Int box THIN_DOWN_BOX textfont 4 hide
-    }
-    Fl_Input i18n_function_input {
-      label {Function:}
-      callback i18n_text_cb
-      tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 95 245 20} box THIN_DOWN_BOX textfont 4 hide
     }
   }
 } 
@@ -94,68 +100,48 @@ decl {extern Fl_Preferences fluid_prefs;} {public
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label Settings open
-    xywh {376 480 400 175} visible
+    label {GUI Settings} open
+    xywh {397 774 255 179} visible
   } {
     Fl_Button {} {
       label Close
       callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {330 140 60 25}
+      tooltip {Close this dialog.} xywh {185 145 60 25}
     }
-    Fl_Box {} {
-      label {Grid:}
-      xywh {15 30 130 100} box ENGRAVED_FRAME labelsize 12 align 5
-    }
-    Fl_Input horizontal_input {
-      label {Horizontal:}
-      user_data 1 user_data_type long
-      callback grid_cb
-      tooltip {Horizontal grid spacing.} xywh {95 40 40 20} type Int box THIN_DOWN_BOX
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Input vertical_input {
-      label {Vertical:}
-      user_data 2 user_data_type long
-      callback grid_cb
-      tooltip {Vertical grid spacing.} xywh {95 70 40 20} type Int box THIN_DOWN_BOX
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Input snap_input {
-      label {Snap:}
-      user_data 3 user_data_type long
-      callback grid_cb
-      tooltip {Snap to grid within this many pixels.} xywh {95 100 40 20} type Int box THIN_DOWN_BOX
-      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
-    }
-    Fl_Box {} {
-      label {GUI:}
-      xywh {155 30 235 100} box ENGRAVED_FRAME labelsize 12 align 5
-    }
-    Fl_Check_Button tooltips_button {
-      label {Show Tooltips}
-      callback {Fl_Tooltip::enable(tooltips_button->value());
+    Fl_Tabs {} {
+      xywh {10 10 235 125}
+    } {
+      Fl_Group {} {
+        label {GUI:}
+        xywh {10 35 235 100} align 5
+      } {
+        Fl_Check_Button tooltips_button {
+          label {Show Tooltips}
+          callback {Fl_Tooltip::enable(tooltips_button->value());
 fluid_prefs.set("show_tooltips", tooltips_button->value());}
-      xywh {165 40 215 20} down_box DOWN_BOX
-      code0 {char b;}
-      code1 {fluid_prefs.get("show_tooltips", b, 1);}
-      code2 {tooltips_button->value(b);}
-      code3 {Fl_Tooltip::enable(b);}
-    }
-    Fl_Check_Button completion_button {
-      label {Show Completion Dialogs}
-      callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
-      xywh {165 70 215 20} down_box DOWN_BOX
-      code0 {char b;}
-      code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
-      code2 {completion_button->value(b);}
-    }
-    Fl_Check_Button openlast_button {
-      label {Open Previous File on Startup}
-      callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
-      xywh {165 100 215 20} down_box DOWN_BOX
-      code0 {char b;}
-      code1 {fluid_prefs.get("open_previous_file", b, 0);}
-      code2 {openlast_button->value(b);}
+          xywh {20 45 215 20} down_box DOWN_BOX
+          code0 {char b;}
+          code1 {fluid_prefs.get("show_tooltips", b, 1);}
+          code2 {tooltips_button->value(b);}
+          code3 {Fl_Tooltip::enable(b);}
+        }
+        Fl_Check_Button completion_button {
+          label {Show Completion Dialogs}
+          callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
+          xywh {20 75 215 20} down_box DOWN_BOX
+          code0 {char b;}
+          code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
+          code2 {completion_button->value(b);}
+        }
+        Fl_Check_Button openlast_button {
+          label {Open Previous File on Startup}
+          callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
+          xywh {20 105 215 20} down_box DOWN_BOX
+          code0 {char b;}
+          code1 {fluid_prefs.get("open_previous_file", b, 0);}
+          code2 {openlast_button->value(b);}
+        }
+      }
     }
   }
 } 
@@ -164,67 +150,114 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {630 219 445 104} visible
+    xywh {630 219 450 145} visible
   } {
-    Fl_Input shell_command_input {
-      label {Command:}
-      callback {fluid_prefs.set("shell_command", shell_command_input->value());}
-      xywh {85 10 350 20}
-      code0 {char buf[1024];}
-      code1 {fluid_prefs.get("shell_command", buf, "", sizeof(buf));}
-      code2 {shell_command_input->value(buf);}
-    }
-    Fl_Group {} {
-      label {Options:} open
-      xywh {85 40 350 20} align 4
+    Fl_Tabs {} {open
+      xywh {10 10 430 90}
     } {
-      Fl_Check_Button shell_savefl_button {
-        label {Save .FL File}
-        callback {fluid_prefs.set("shell_savefl", shell_savefl_button->value());}
-        xywh {85 40 110 20} down_box DOWN_BOX
-        code0 {char b;}
-        code1 {fluid_prefs.get("shell_savefl", b, 1);}
-        code2 {shell_savefl_button->value(b);}
-      }
-      Fl_Check_Button shell_writecode_button {
-        label {Write Code}
-        callback {fluid_prefs.set("shell_writecode", shell_writecode_button->value());}
-        xywh {200 40 95 20} down_box DOWN_BOX
-        code0 {char b;}
-        code1 {fluid_prefs.get("shell_writecode", b, 1);}
-        code2 {shell_writecode_button->value(b);}
-      }
-      Fl_Check_Button shell_writemsgs_button {
-        label {Write Messages}
-        callback {fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());}
-        xywh {300 40 125 20} down_box DOWN_BOX
-        code0 {char b;}
-        code1 {fluid_prefs.get("shell_writemsgs", b, 0);}
-        code2 {shell_writemsgs_button->value(b);}
+      Fl_Group {} {
+        label {Shell Command} open
+        xywh {10 30 430 70} align 5
+      } {
+        Fl_Input shell_command_input {
+          callback {fluid_prefs.set("shell_command", shell_command_input->value());}
+          xywh {20 40 410 20}
+          code0 {char buf[1024];}
+          code1 {fluid_prefs.get("shell_command", buf, "", sizeof(buf));}
+          code2 {shell_command_input->value(buf);}
+        }
+        Fl_Check_Button shell_savefl_button {
+          label {Save .FL File}
+          callback {fluid_prefs.set("shell_savefl", shell_savefl_button->value());}
+          xywh {20 65 110 20} down_box DOWN_BOX
+          code0 {char b;}
+          code1 {fluid_prefs.get("shell_savefl", b, 1);}
+          code2 {shell_savefl_button->value(b);}
+        }
+        Fl_Check_Button shell_writecode_button {
+          label {Write Code}
+          callback {fluid_prefs.set("shell_writecode", shell_writecode_button->value());}
+          xywh {140 65 95 20} down_box DOWN_BOX
+          code0 {char b;}
+          code1 {fluid_prefs.get("shell_writecode", b, 1);}
+          code2 {shell_writecode_button->value(b);}
+        }
+        Fl_Check_Button shell_writemsgs_button {
+          label {Write Messages}
+          callback {fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());}
+          xywh {245 65 130 20} down_box DOWN_BOX
+          code0 {char b;}
+          code1 {fluid_prefs.get("shell_writemsgs", b, 0);}
+          code2 {shell_writemsgs_button->value(b);}
+        }
       }
     }
     Fl_Button {} {
       label Cancel
       callback {shell_window->hide();}
-      xywh {370 70 65 25}
+      xywh {375 110 65 25}
     }
     Fl_Return_Button {} {
       label {Run Command}
       callback do_shell_command
-      xywh {220 70 140 25}
+      xywh {225 110 140 25}
     }
   }
   Fl_Window shell_run_window {
     label {Shell Command Output} open
-    xywh {693 386 553 435} resizable visible
+    xywh {693 386 555 435} hide resizable
   } {
-    Fl_Browser shell_run_list {selected
+    Fl_Browser shell_run_list {
       xywh {10 10 535 380} textfont 4 textsize 12 resizable
     }
     Fl_Return_Button shell_run_button {
       label Close
       callback {shell_run_window->hide();}
       xywh {465 400 80 25}
+    }
+  }
+} 
+
+Function {make_grid_window()} {open
+} {
+  Fl_Window grid_window {
+    label Grid open
+    xywh {1128 236 155 175} visible
+  } {
+    Fl_Tabs {} {
+      xywh {10 10 135 120} align 5
+    } {
+      Fl_Group {} {
+        label Grid
+        xywh {10 30 135 100} align 5
+      } {
+        Fl_Input horizontal_input {
+          label {Horizontal:}
+          user_data 1 user_data_type long
+          callback grid_cb
+          tooltip {Horizontal grid spacing.} xywh {95 40 40 20} type Int box THIN_DOWN_BOX
+          code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+        }
+        Fl_Input vertical_input {
+          label {Vertical:}
+          user_data 2 user_data_type long
+          callback grid_cb
+          tooltip {Vertical grid spacing.} xywh {95 70 40 20} type Int box THIN_DOWN_BOX
+          code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+        }
+        Fl_Input snap_input {
+          label {Snap:}
+          user_data 3 user_data_type long
+          callback grid_cb
+          tooltip {Snap to grid within this many pixels.} xywh {95 100 40 20} type Int box THIN_DOWN_BOX
+          code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+        }
+      }
+    }
+    Fl_Button {} {
+      label Close
+      callback {grid_window->hide();}
+      tooltip {Close this dialog.} xywh {85 140 60 25}
     }
   }
 } 
