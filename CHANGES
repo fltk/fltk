@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0rc7
 
+	- Fl_Glut_Window now takes keyboard focus and handles
+	  shortcut events.
+	- The MacOS X implementation of fl_ready() now checks
+	  the event queue for events.
 	- Fl_PNM_Image now supports the XV/GIMP thumbnail format
 	  (P7).
 	- Fl_Preferences would not find groups inside the root 
