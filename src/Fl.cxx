@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.24.2.41.2.73 2004/12/06 03:31:54 easysw Exp $"
+// "$Id$"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -307,8 +307,6 @@ int Fl::check() {
   wait(0.0);
   return Fl_X::first != 0; // return true if there is a window
 }
-
-extern int fl_ready();
 
 int Fl::ready() {
   if (first_timeout) {
@@ -1077,8 +1075,8 @@ static int		num_dwidgets = 0, alloc_dwidgets = 0;
 static Fl_Widget	**dwidgets = 0;
 
 void
-Fl::delete_widget(Fl_Widget *w) {
-  if (!w) return;
+Fl::delete_widget(Fl_Widget *wi) {
+  if (!wi) return;
 
   if (num_dwidgets >= alloc_dwidgets) {
     Fl_Widget	**temp;
@@ -1093,7 +1091,7 @@ Fl::delete_widget(Fl_Widget *w) {
     alloc_dwidgets += 10;
   }
 
-  dwidgets[num_dwidgets] = w;
+  dwidgets[num_dwidgets] = wi;
   num_dwidgets ++;
 }
 
@@ -1110,5 +1108,5 @@ Fl::do_widget_deletion() {
 
 
 //
-// End of "$Id: Fl.cxx,v 1.24.2.41.2.73 2004/12/06 03:31:54 easysw Exp $".
+// End of "$Id$".
 //

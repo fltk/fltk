@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Choice.cxx,v 1.10.2.5.2.18 2004/12/03 02:48:21 easysw Exp $"
+// "$Id$"
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
@@ -30,8 +30,6 @@
 // Emulates the Forms choice widget.  This is almost exactly the same
 // as an Fl_Menu_Button.  The only difference is the appearance of the
 // button: it draws the text of the current pick and a down-arrow.
-
-extern char fl_draw_shortcut;
 
 void Fl_Choice::draw() {
   int dx = Fl::box_dx(FL_DOWN_BOX);
@@ -159,5 +157,5 @@ int Fl_Choice::handle(int e) {
 }
 
 //
-// End of "$Id: Fl_Choice.cxx,v 1.10.2.5.2.18 2004/12/03 02:48:21 easysw Exp $".
+// End of "$Id$".
 //
