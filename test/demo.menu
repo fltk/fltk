@@ -62,7 +62,6 @@
 @main:Other\nTests:@o
 	@o:color choosers:./color_chooser r&
 	@o:file chooser:./file_chooser&
-	@o:styles:./style&
 	@o:XForms Emulation:./forms&
 
 @main:Tutorial\nfrom\nManual:@j
