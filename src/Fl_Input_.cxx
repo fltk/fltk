@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.18 1999/02/26 07:07:56 bill Exp $"
+// "$Id: Fl_Input_.cxx,v 1.19 1999/03/01 03:44:30 bill Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -369,7 +369,7 @@ void Fl_Input_::handle_mouse(int X, int Y,
 	if (newpos < size()) newpos++;
 	else newmark--;
       }
-      if (Fl::event_clicks()>1) {
+      if (Fl::event_clicks()>1 || type()==FL_SECRET_INPUT) {
 	while (!lineboundary(newpos)) newpos++;
 	while (!lineboundary(newmark)) newmark--;
       } else {
@@ -377,7 +377,7 @@ void Fl_Input_::handle_mouse(int X, int Y,
 	while (!wordboundary(newmark)) newmark--;
       }
     } else {
-      if (Fl::event_clicks()>1) {
+      if (Fl::event_clicks()>1 || type()==FL_SECRET_INPUT) {
 	while (!lineboundary(newpos)) newpos--;
       } else {
 	while (!wordboundary(newpos)) newpos--;
@@ -436,7 +436,10 @@ int Fl_Input_::copy() {
     } else {
       e = position(); b = mark();
     }
-    if (type()!=FL_SECRET_INPUT) Fl::selection(*this, value()+b, e-b);
+    if (type()!=FL_SECRET_INPUT)
+      Fl::selection(*this, value()+b, e-b);
+    else
+      Fl::selection(*this, "*", 1);
     return 1;
   }
   return 0;
@@ -733,5 +736,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.18 1999/02/26 07:07:56 bill Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.19 1999/03/01 03:44:30 bill Exp $".
 //
