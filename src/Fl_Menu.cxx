@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.13 1999/01/19 19:12:51 mike Exp $"
+// "$Id: Fl_Menu.cxx,v 1.14 1999/01/24 15:27:35 mike Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -362,10 +362,9 @@ int menuwindow::find_selected(int mx, int my) {
     }
     return i;
   }
-  if (mx < 0 || mx >= w()) return -1;
+  if (mx < Fl::box_dx(box()) || mx >= w()) return -1;
   int i = (my-Fl::box_dx(box())-1)/itemheight;
-  if (i>=numitems) i = numitems-1;
-  else if (i < 0) i = 0;
+  if (i < 0 || i>=numitems) return -1;
   return i;
 }
 
@@ -709,5 +708,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.13 1999/01/19 19:12:51 mike Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.14 1999/01/24 15:27:35 mike Exp $".
 //
