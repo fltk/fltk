@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.4 2002/01/09 21:50:02 easysw Exp $"
 //
 // Cut/paste code for the Fast Light Tool Kit (FLTK).
 //
@@ -39,6 +39,7 @@
 #  include <FL/x.H>
 #  include <FL/Fl_Window.H>
 #  include <string.h>
+#  include <stdlib.h>
 
 static char *selection_buffer;
 static int selection_length;
@@ -47,6 +48,30 @@ static char beenhere;
 static Atom TARGETS;
 
 extern Fl_Widget *fl_selection_requestor; // widget doing request_paste()
+extern Atom fl_XdndAware;
+extern Atom fl_XdndSelection;
+extern Atom fl_XdndEnter;
+extern Atom fl_XdndTypeList;
+extern Atom fl_XdndPosition;
+extern Atom fl_XdndLeave;
+extern Atom fl_XdndDrop;
+extern Atom fl_XdndStatus;
+extern Atom fl_XdndActionCopy;
+extern Atom fl_XdndFinished;
+//extern Atom fl_XdndProxy;
+
+extern Window fl_dnd_source_window;
+extern Atom *fl_dnd_source_types; // null-terminated list of data types being supplied
+extern Atom fl_dnd_type;
+extern Atom fl_dnd_source_action;
+extern Atom fl_dnd_action;
+
+extern void fl_sendClientMessage(Window window, Atom message,
+                                 unsigned long d0,
+                                 unsigned long d1=0,
+                                 unsigned long d2=0,
+                                 unsigned long d3=0,
+                                 unsigned long d4=0);
 
 static int selection_xevent_handler(int) {
 
@@ -54,21 +79,45 @@ static int selection_xevent_handler(int) {
 
   case SelectionNotify: {
     if (!fl_selection_requestor) return 0;
-    static char *pastebuffer;
-    if (pastebuffer) {XFree(pastebuffer); pastebuffer = 0;}
-    if (fl_xevent->xselection.property != 0) {
-      Atom a; int f; unsigned long n,b;
-      if (!XGetWindowProperty(fl_display,
-			      fl_xevent->xselection.requestor,
-			      fl_xevent->xselection.property,
-			      0,100000,1,0,&a,&f,&n,&b,
-			      (unsigned char**)&pastebuffer)) {
-	Fl::e_text = pastebuffer;
-	Fl::e_length = int(n);
-	fl_selection_requestor->handle(FL_PASTE);
+    static unsigned char* buffer;
+    if (buffer) {XFree(buffer); buffer = 0;}
+    long read = 0;
+    if (fl_xevent->xselection.property) for (;;) {
+      // The Xdnd code pastes 64K chunks together, possibly to avoid
+      // bugs in X servers, or maybe to avoid an extra round-trip to
+      // get the property length.  I copy this here:
+      Atom actual; int format; unsigned long count, remaining;
+      unsigned char* portion;
+      if (XGetWindowProperty(fl_display,
+			     fl_xevent->xselection.requestor,
+			     fl_xevent->xselection.property,
+			     read/4, 65536, 1, 0,
+			     &actual, &format, &count, &remaining,
+			     &portion)) break; // quit on error
+      if (read) { // append to the accumulated buffer
+	buffer = (unsigned char*)realloc(buffer, read+count*format/8+remaining);
+	memcpy(buffer+read, portion, count*format/8);
+	XFree(portion);
+      } else {	// Use the first section without moving the memory:
+	buffer = portion;
       }
-    }}
-    return 1;
+      read += count*format/8;
+      if (!remaining) break;
+    }
+    Fl::e_text = (char*)buffer;
+    Fl::e_length = read;
+    fl_selection_requestor->handle(FL_PASTE);
+    // Detect if this paste is due to Xdnd by the property name (I use
+    // XA_SECONDARY for that) and send an XdndFinished message. It is not
+    // clear if this has to be delayed until now or if it can be done
+    // immediatly after calling XConvertSelection.
+    if (fl_xevent->xselection.property == XA_SECONDARY &&
+	fl_dnd_source_window) {
+      fl_sendClientMessage(fl_dnd_source_window, fl_XdndFinished,
+                           fl_xevent->xselection.requestor);
+      fl_dnd_source_window = 0; // don't send a second time
+    }
+    return 1;}
 
   case SelectionClear:
     Fl::selection_owner(0);
@@ -160,5 +209,5 @@ void Fl::selection(Fl_Widget &owner, const char *stuff, int len) {
 #endif
 
 //
-// End of "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_cutpaste.cxx,v 1.6.2.4.2.4 2002/01/09 21:50:02 easysw Exp $".
 //

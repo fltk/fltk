@@ -1,9 +1,9 @@
 //
-// "$Id: fl_dnd_x.cxx,v 1.5 2001/07/23 09:50:05 spitzak Exp $"
+// "$Id: fl_dnd_x.cxx,v 1.5.2.1 2002/01/09 21:50:02 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -20,12 +20,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <fltk/Fl.h>
-#include <fltk/Fl_Window.h>
-#include <fltk/x.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/x.H>
+
 
 extern Atom fl_XdndAware;
 extern Atom fl_XdndSelection;
@@ -41,7 +42,7 @@ extern Atom fl_XdndFinished;
 
 extern char fl_i_own_selection;
 
-void fl_sendClientMessage(Window window, Atom message,
+extern void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d0,
                                  unsigned long d1=0,
                                  unsigned long d2=0,
@@ -49,7 +50,7 @@ void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d4=0);
 
 // return version # of Xdnd this window supports.  Also change the
-// window the the proxy if it uses a proxy:
+// window to the proxy if it uses a proxy:
 static int dnd_aware(Window& window) {
   Atom actual; int format; unsigned long count, remaining;
   unsigned char *data = 0;
@@ -62,15 +63,15 @@ static int dnd_aware(Window& window) {
   return 0;
 }
 
-static bool grabfunc(int event) {
+static int grabfunc(int event) {
   if (event == FL_RELEASE) Fl::pushed(0);
   return false;
 }
 
-extern bool (*fl_local_grab)(int); // in Fl.cxx
+extern int (*fl_local_grab)(int); // in Fl.cxx
 
 // send an event to an fltk window belonging to this program:
-static bool local_handle(int event, Fl_Window* window) {
+static int local_handle(int event, Fl_Window* window) {
   fl_local_grab = 0;
   Fl::e_x = Fl::e_x_root-window->x();
   Fl::e_y = Fl::e_y_root-window->y();
@@ -79,7 +80,7 @@ static bool local_handle(int event, Fl_Window* window) {
   return ret;
 }
 
-bool Fl::dnd() {
+int Fl::dnd() {
   Fl::first_window()->cursor((Fl_Cursor)21);
   Window source_window = fl_xid(Fl::first_window());
   fl_local_grab = grabfunc;
@@ -166,5 +167,5 @@ bool Fl::dnd() {
 
 
 //
-// End of "$Id: fl_dnd_x.cxx,v 1.5 2001/07/23 09:50:05 spitzak Exp $".
+// End of "$Id: fl_dnd_x.cxx,v 1.5.2.1 2002/01/09 21:50:02 easysw Exp $".
 //

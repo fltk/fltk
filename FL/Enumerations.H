@@ -1,5 +1,5 @@
 //
-// "$Id: Enumerations.H,v 1.18.2.14.2.18 2002/01/01 15:11:27 easysw Exp $"
+// "$Id: Enumerations.H,v 1.18.2.14.2.19 2002/01/09 21:50:02 easysw Exp $"
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
@@ -73,7 +73,11 @@ enum Fl_Event {	// events
   FL_SHOW		= 16,
   FL_PASTE		= 17,
   FL_SELECTIONCLEAR	= 18,
-  FL_MOUSEWHEEL		= 19
+  FL_MOUSEWHEEL		= 19,
+  FL_DND_ENTER		= 20,
+  FL_DND_DRAG		= 21,
+  FL_DND_LEAVE		= 22,
+  FL_DND_RELEASE	= 23
 };
 #define FL_KEYBOARD FL_KEYDOWN
 
@@ -373,5 +377,5 @@ enum Fl_Damage {
 #endif
 
 //
-// End of "$Id: Enumerations.H,v 1.18.2.14.2.18 2002/01/01 15:11:27 easysw Exp $".
+// End of "$Id: Enumerations.H,v 1.18.2.14.2.19 2002/01/09 21:50:02 easysw Exp $".
 //

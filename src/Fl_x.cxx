@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_x.cxx,v 1.24.2.24.2.10 2002/01/03 18:28:37 easysw Exp $"
+// "$Id: Fl_x.cxx,v 1.24.2.24.2.11 2002/01/09 21:50:02 easysw Exp $"
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -263,10 +263,49 @@ Display *fl_display;
 int fl_screen;
 XVisualInfo *fl_visual;
 Colormap fl_colormap;
+extern Fl_Widget *fl_selection_requestor; // widget doing request_paste()
 
 static Atom wm_delete_window;
 static Atom wm_protocols;
 static Atom _motif_wm_hints;
+Atom fl_XdndAware;
+Atom fl_XdndSelection;
+Atom fl_XdndEnter;
+Atom fl_XdndTypeList;
+Atom fl_XdndPosition;
+Atom fl_XdndLeave;
+Atom fl_XdndDrop;
+Atom fl_XdndStatus;
+Atom fl_XdndActionCopy;
+Atom fl_XdndFinished;
+//Atom fl_XdndProxy;
+
+Window fl_dnd_source_window;
+Atom *fl_dnd_source_types; // null-terminated list of data types being supplied
+Atom fl_dnd_type;
+Atom fl_dnd_source_action;
+Atom fl_dnd_action;
+
+void fl_sendClientMessage(Window window, Atom message,
+                                 unsigned long d0,
+                                 unsigned long d1=0,
+                                 unsigned long d2=0,
+                                 unsigned long d3=0,
+                                 unsigned long d4=0)
+{
+  XEvent e;
+  e.xany.type = ClientMessage;
+  e.xany.window = window;
+  e.xclient.message_type = message;
+  e.xclient.format = 32;
+  e.xclient.data.l[0] = (long)d0;
+  e.xclient.data.l[1] = (long)d1;
+  e.xclient.data.l[2] = (long)d2;
+  e.xclient.data.l[3] = (long)d3;
+  e.xclient.data.l[4] = (long)d4;
+  XSendEvent(fl_display, window, 0, 0, &e);
+}
+
 
 static void fd_callback(int,void *) {
   do_queued_events();
@@ -303,9 +342,22 @@ void fl_open_display() {
 void fl_open_display(Display* d) {
   fl_display = d;
 
-  wm_delete_window = XInternAtom(d,"WM_DELETE_WINDOW",0);
-  wm_protocols = XInternAtom(d,"WM_PROTOCOLS",0);
-  _motif_wm_hints = XInternAtom(d,"_MOTIF_WM_HINTS",0);
+  wm_delete_window      = XInternAtom(d,"WM_DELETE_WINDOW",0);
+  wm_protocols          = XInternAtom(d,"WM_PROTOCOLS",0);
+  _motif_wm_hints       = XInternAtom(d,"_MOTIF_WM_HINTS",0);
+
+  fl_XdndAware          = XInternAtom(d, "XdndAware",		0);
+  fl_XdndSelection      = XInternAtom(d, "XdndSelection",	0);
+  fl_XdndEnter          = XInternAtom(d, "XdndEnter",		0);
+  fl_XdndTypeList       = XInternAtom(d, "XdndTypeList",	0);
+  fl_XdndPosition       = XInternAtom(d, "XdndPosition",	0);
+  fl_XdndLeave          = XInternAtom(d, "XdndLeave",		0);
+  fl_XdndDrop           = XInternAtom(d, "XdndDrop",		0);
+  fl_XdndStatus         = XInternAtom(d, "XdndStatus",		0);
+  fl_XdndActionCopy     = XInternAtom(d, "XdndActionCopy",	0);
+  fl_XdndFinished       = XInternAtom(d, "XdndFinished",	0);
+  //fl_XdndProxy        = XInternAtom(d, "XdndProxy",		0);
+
   Fl::add_fd(ConnectionNumber(d), POLLIN, fd_callback);
 
   fl_screen = DefaultScreen(fl_display);
@@ -431,9 +483,87 @@ int fl_handle(const XEvent& xevent)
 
   if (window) switch (xevent.type) {
 
-  case ClientMessage:
-    if ((Atom)(xevent.xclient.data.l[0]) == wm_delete_window) event = FL_CLOSE;
-    break;
+  case ClientMessage: {
+    Atom message = fl_xevent->xclient.message_type;
+    const long* data = fl_xevent->xclient.data.l;
+    if ((Atom)(data[0]) == wm_delete_window) {
+      event = FL_CLOSE;
+    } else if (message == fl_XdndEnter) {
+      fl_dnd_source_window = data[0];
+      // version number is data[1]>>24
+      if (data[1]&1) {
+	// get list of data types:
+	Atom actual; int format; unsigned long count, remaining;
+	unsigned char *buffer = 0;
+	XGetWindowProperty(fl_display, fl_dnd_source_window, fl_XdndTypeList,
+			   0, 0x8000000L, False, XA_ATOM, &actual, &format,
+			   &count, &remaining, &buffer);
+	if (actual != XA_ATOM || format != 32 || count<4 || !buffer)
+	  goto FAILED;
+	delete [] fl_dnd_source_types;
+	fl_dnd_source_types = new Atom[count+1];
+	for (unsigned i = 0; i < count; i++)
+	  fl_dnd_source_types[i] = ((Atom*)buffer)[i];
+	fl_dnd_source_types[count] = 0;
+      } else {
+      FAILED:
+	// less than four data types, or if the above messes up:
+	if (!fl_dnd_source_types) fl_dnd_source_types = new Atom[4];
+	fl_dnd_source_types[0] = data[2];
+	fl_dnd_source_types[1] = data[3];
+	fl_dnd_source_types[2] = data[4];
+	fl_dnd_source_types[3] = 0;
+      }
+      fl_dnd_type = fl_dnd_source_types[0]; // should pick text or url
+      event = FL_DND_ENTER;
+      break;
+
+    } else if (message == fl_XdndPosition) {
+      fl_dnd_source_window = data[0];
+      Fl::e_x_root = data[2]>>16;
+      Fl::e_y_root = data[2]&0xFFFF;
+      if (window) {
+	Fl::e_x = Fl::e_x_root-window->x();
+	Fl::e_y = Fl::e_y_root-window->y();
+      }
+      fl_event_time = data[3];
+      fl_dnd_source_action = data[4];
+      fl_dnd_action = fl_XdndActionCopy;
+      int accept = Fl::handle(FL_DND_DRAG, window);
+      fl_sendClientMessage(data[0], fl_XdndStatus,
+                           fl_xevent->xclient.window,
+                           accept ? 1 : 0,
+                           0, // used for xy rectangle to not send position inside
+                           0, // used for width+height of rectangle
+                           accept ? fl_dnd_action : None);
+      return true;
+
+    } else if (message == fl_XdndLeave) {
+      fl_dnd_source_window = 0; // don't send a finished message to it
+      event = FL_DND_LEAVE;
+      break;
+
+    } else if (message == fl_XdndDrop) {
+      fl_dnd_source_window = data[0];
+      fl_event_time = data[2];
+      Window to_window = fl_xevent->xclient.window;
+      if (Fl::handle(FL_DND_RELEASE, window)) {
+	fl_selection_requestor = Fl::belowmouse();
+	XConvertSelection(fl_display, fl_XdndSelection,
+			  fl_dnd_type, XA_SECONDARY,
+			  to_window, fl_event_time);
+      } else {
+	// Send the finished message if I refuse the drop.
+	// It is not clear whether I can just send finished always,
+	// or if I have to wait for the SelectionNotify event as the
+	// code is currently doing.
+	fl_sendClientMessage(fl_dnd_source_window, fl_XdndFinished, to_window);
+	fl_dnd_source_window = 0;
+      }
+      return true;
+
+    }
+    break;}
 
   case MapNotify:
     event = FL_SHOW;
@@ -954,5 +1084,5 @@ void Fl_Window::make_current() {
 #endif
 
 //
-// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.10 2002/01/03 18:28:37 easysw Exp $".
+// End of "$Id: Fl_x.cxx,v 1.24.2.24.2.11 2002/01/09 21:50:02 easysw Exp $".
 //

@@ -1,3 +1,8 @@
+CHANGES IN FLTK 1.1.0b11
+
+	- Initial port of FLTK 2.0 drag-and-drop support.
+
+
 CHANGES IN FLTK 1.1.0b10
 
 	- Fixed the new WIN32 TrackMouseEvent code.

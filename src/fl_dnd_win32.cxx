@@ -1,9 +1,9 @@
 //
-// "$Id: fl_dnd_win32.cxx,v 1.5 2001/09/10 01:16:17 spitzak Exp $"
+// "$Id: fl_dnd_win32.cxx,v 1.5.2.1 2002/01/09 21:50:02 easysw Exp $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2002 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -20,8 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
-//
+// Please report all bugs and problems to "fltk-bugs@fltk.org
 
 
 // Dummy version of dnd for now, it waits until the FL_RELEASE and
@@ -34,14 +33,14 @@
 #include <fltk/Fl.h>
 #include <fltk/Fl_Window.h>
 
-static bool grabfunc(int event) {
+static int grabfunc(int event) {
   if (event == FL_RELEASE) Fl::pushed(0);
   return false;
 }
 
-extern bool (*fl_local_grab)(int); // in Fl.cxx
+extern int (*fl_local_grab)(int); // in Fl.cxx
 
-bool Fl::dnd() {
+int Fl::dnd() {
   Fl::first_window()->cursor(FL_CURSOR_HAND);
   fl_local_grab = grabfunc;
   while (Fl::pushed()) Fl::wait();
@@ -52,5 +51,5 @@ bool Fl::dnd() {
 
 
 //
-// End of "$Id: fl_dnd_win32.cxx,v 1.5 2001/09/10 01:16:17 spitzak Exp $".
+// End of "$Id: fl_dnd_win32.cxx,v 1.5.2.1 2002/01/09 21:50:02 easysw Exp $".
 //
