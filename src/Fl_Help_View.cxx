@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Help_View.cxx,v 1.1.2.19 2001/12/17 14:27:03 easysw Exp $"
+// "$Id: Fl_Help_View.cxx,v 1.1.2.20 2001/12/18 17:18:03 easysw Exp $"
 //
 // Fl_Help_View widget routines.
 //
@@ -2299,7 +2299,9 @@ Fl_Help_View::resize(int xx,	// I - New left position
 		    int hh)	// I - New height
 {
   Fl_Widget::resize(xx, yy, ww, hh);
-  scrollbar_.resize(xx + ww - 17, yy, 17, hh);
+
+  scrollbar_.resize(x() + w() - 17, y(), 17, h() - 17);
+  hscrollbar_.resize(x(), y() + h() - 17, w() - 17, 17);
 
   format();
 }
@@ -2312,7 +2314,7 @@ Fl_Help_View::resize(int xx,	// I - New left position
 void
 Fl_Help_View::topline(const char *n)	// I - Target name
 {
-  Fl_Help_Target	key,			// Target name key
+  Fl_Help_Target key,			// Target name key
 		*target;		// Pointer to matching target
 
 
@@ -2562,5 +2564,5 @@ hscrollbar_callback(Fl_Widget *s, void *)
 
 
 //
-// End of "$Id: Fl_Help_View.cxx,v 1.1.2.19 2001/12/17 14:27:03 easysw Exp $".
+// End of "$Id: Fl_Help_View.cxx,v 1.1.2.20 2001/12/18 17:18:03 easysw Exp $".
 //
