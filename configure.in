@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.19 2001/11/01 16:55:12 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.20 2001/11/02 20:40:29 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -347,8 +347,15 @@ if test -n "$GXX"; then
     #
     # Previous versions of GCC do not have the reliance on the stdc++
     # or g++ libraries, so the extra supc++ library is not needed.
+    #
+    # [Apparently this "feature" is also present in the unofficial
+    #  RedHat 2.96 release...]
 
     case "`$CXX --version`" in
+    	2.96*)
+	    AC_MSG_WARN(GCC 2.96.x is not an official GCC release - use with caution!)
+	    LIBS="$LIBS -lsupc++"
+	    ;;
     	3*)
 	    AC_MSG_WARN(GCC 3.0.x is known to produce incorrect code - use with caution!)
 	    LIBS="$LIBS -lsupc++"
@@ -494,5 +501,5 @@ AC_OUTPUT(makeinclude fltk-config)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.19 2001/11/01 16:55:12 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.20 2001/11/02 20:40:29 easysw Exp $".
 dnl
