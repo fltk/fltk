@@ -1,0 +1,32 @@
+#-----------------------------------------------------------------------------
+#
+# FLTKConfig.cmake - FLTK CMake configuration file for external projects.
+#
+# This file is configured by FLTK and used by the UseFLTK.cmake module
+# to load FLTK's settings for an external project.
+
+# The FLTK source tree.
+SET(FLTK_SOURCE_DIR "@FLTK_SOURCE_DIR@")
+
+# The FLTK include file directories.
+SET(FLTK_EXECUTABLE_DIRS "@FLTK_EXECUTABLE_DIRS@")
+SET(FLTK_LIBRARY_DIRS "@FLTK_LIBRARY_DIRS@")
+SET(FLTK_LIBRARIES "fltk_images;fltk;fltk_gl;fltk_forms")
+
+# The C and C++ flags added by FLTK to the cmake-configured flags.
+SET(FLTK_REQUIRED_C_FLAGS "@FLTK_REQUIRED_C_FLAGS@")
+SET(FLTK_REQUIRED_CXX_FLAGS "@FLTK_REQUIRED_CXX_FLAGS@")
+
+# The FLTK version number
+SET(FLTK_VERSION_MAJOR "@FLTK_VERSION_MAJOR@")
+SET(FLTK_VERSION_MINOR "@FLTK_VERSION_MINOR@")
+SET(FLTK_VERSION_PATCH "@FLTK_VERSION_PATCH@")
+
+# The location of the UseFLTK.cmake file.
+SET(FLTK_USE_FILE "@FLTK_USE_FILE@")
+
+# The build settings file.
+SET(FLTK_BUILD_SETTINGS_FILE "@FLTK_BUILD_SETTINGS_FILE@")
+
+# Whether FLTK was built with shared libraries.
+SET(FLTK_BUILD_SHARED "@BUILD_SHARED_LIBS@")
