@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Scrollbar.cxx,v 1.7.2.1 1999/05/14 09:07:07 bill Exp $"
+// "$Id: Fl_Scrollbar.cxx,v 1.7.2.2 1999/12/04 12:22:37 mike Exp $"
 //
 // Scroll bar widget for the Fast Light Tool Kit (FLTK).
 //
@@ -32,8 +32,18 @@
 #define REPEAT .05
 
 void Fl_Scrollbar::increment_cb() {
-  handle_drag(clamp(value() + (
-	((pushed_>1) == (maximum()>=minimum())) ? linesize_ : -linesize_)));
+  int i;
+  int W = horizontal() ? w() : h();
+  int S = int(slider_size()*W+.5);
+
+  switch (pushed_) {
+  case 1: i = -linesize_; break;
+  default:i =  linesize_; break;
+  case 3: i = -S * (maximum() - minimum()) / W; break;
+  case 4: i =  S * (maximum() - minimum()) / W; break;
+  }
+  if (maximum() < minimum() && pushed_ < 3) i = -i;
+  handle_drag(clamp(value() + i));
 }
 
 void Fl_Scrollbar::timeout_cb(void* v) {
@@ -43,41 +53,80 @@ void Fl_Scrollbar::timeout_cb(void* v) {
 }
 
 int Fl_Scrollbar::handle(int event) {
-  if (!pushed_) {
-    if (horizontal()) {
-      if (w() < 3*h()) return Fl_Slider::handle(event);
-      if (Fl_Slider::handle(event, x()+h(), y(), w()-2*h(), h())) return 1;
-    } else {
-      if (h() < 3*w()) return Fl_Slider::handle(event);
-      if (Fl_Slider::handle(event, x(), y()+w(), w(), h()-2*w())) return 1;
+  // area of scrollbar:
+  int area;
+  int X=x(); int Y=y(); int W=w(); int H=h();
+  int SX = X; int SY = Y; int SW = W; int SH = H;
+
+  // adjust slider area to be inside the arrow buttons:
+  if (horizontal()) {
+    if (W >= 3*H) {X += H; W -= 2*H;}
+  } else {
+    if (H >= 3*W) {Y += W; H -= 2*W;}
+  }
+
+  // which widget part is highlighted?
+  int mx = Fl::event_x();
+  int my = Fl::event_y();
+  if (!Fl::event_inside(SX, SY, SW, SH)) area = 0;
+  else if (horizontal()) {
+    if (mx < X) area = 1;
+    else if (mx >= X+W) area = 2;
+    else {
+      int sliderx;
+      int S = int(slider_size()*W+.5);
+      double val = (value()-minimum())/(maximum()-minimum());
+      if (val >= 1.0) sliderx = W-S;
+      else if (val <= 0.0) sliderx = 0;
+      else sliderx = int(val*(W-S)+.5);
+
+      if (mx < X+sliderx) area = 3;
+      else if (mx >= X+sliderx+S) area = 4;
+      else area = 5;
+    }
+  } else {
+    if (mx < X || mx >= X+W) area = 0;
+    else if (my < Y) area = 1;
+    else if (my >= Y+H) area = 2;
+    else {
+      int slidery;
+      int S = int(slider_size()*H+.5);
+      double val = (value()-minimum())/(maximum()-minimum());
+      if (val >= 1.0) slidery = H-S;
+      else if (val <= 0.0) slidery = 0;
+      else slidery = int(val*(H-S)+.5);
+
+      if (my < Y+slidery) area = 3;
+      else if (my >= Y+slidery+S) area = 4;
+      else area = 5;
     }
   }
   switch (event) {
+  case FL_ENTER:
+  case FL_LEAVE:
+    return 1;
   case FL_RELEASE:
+      damage(FL_DAMAGE_EXPOSE);
     if (pushed_) {
       Fl::remove_timeout(timeout_cb, this);
       pushed_ = 0;
-      redraw();
     }
     handle_release();
     return 1;
   case FL_PUSH:
-    if (horizontal()) {
-      if (Fl::event_inside(x(), y(), h(), h())) pushed_ = 1;
-      if (Fl::event_inside(x()+w()-h(), y(), h(), h())) pushed_ = 2;
-    } else {
-      if (Fl::event_inside(x(), y(), w(), w())) pushed_ = 1;
-      if (Fl::event_inside(x(), y()+h()-w(), w(), w())) pushed_ = 2;
-    }
+    if (pushed_) return 1;
+    if (area != 5) pushed_ = area;
     if (pushed_) {
       handle_push();
       Fl::add_timeout(INITIALREPEAT, timeout_cb, this);
       increment_cb();
-      redraw();
+      damage(FL_DAMAGE_EXPOSE);
+      return 1;
     }
-    return 1;
+    return Fl_Slider::handle(event, X,Y,W,H);
   case FL_DRAG:
-    return pushed_;
+    if (pushed_) return 1;
+    return Fl_Slider::handle(event, X,Y,W,H);
   case FL_SHORTCUT: {
     int v = value();
     int ls = maximum()>=minimum() ? linesize_ : -linesize_;
@@ -192,5 +241,5 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
 }
 
 //
-// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.1 1999/05/14 09:07:07 bill Exp $".
+// End of "$Id: Fl_Scrollbar.cxx,v 1.7.2.2 1999/12/04 12:22:37 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Slider.cxx,v 1.8.2.2 1999/10/15 08:14:37 bill Exp $"
+// "$Id: Fl_Slider.cxx,v 1.8.2.3 1999/12/04 12:22:37 mike Exp $"
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
@@ -179,42 +179,54 @@ int Fl_Slider::handle(int event, int x, int y, int w, int h) {
     if (!Fl::event_inside(x, y, w, h)) return 0;
     handle_push();
   case FL_DRAG: {
-    if (slider_size() >= 1 || minimum()==maximum()) return 1;
     int W = (horizontal() ? w : h);
-    int X = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y);
+    int H = (horizontal() ? h : w);
+    int mx = (horizontal() ? Fl::event_x()-x : Fl::event_y()-y);
     int S = int(slider_size_*W+.5);
-    int T = (horizontal() ? h : w)/2+1;
-    if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
-    if (type()!=FL_HOR_FILL_SLIDER && type()!=FL_VERT_FILL_SLIDER) {
-      if (S < T) S = T;
+    int X;
+    static int offcenter;
+    if (type() == FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
+      double val = (value()-minimum())/(maximum()-minimum());
+
+      if (val >= 1.0) X = W;
+      else if (val <= 0.0) X = 0;
+      else X = int(val*W+.5);
+
+      if (event == FL_PUSH) {
+	offcenter = mx-X;
+	if (offcenter < -S/2) offcenter = 0;
+	else if (offcenter > S/2) offcenter = 0;
+	else return 1;
+      }
+      S = 0;
+    } else {
+      double val = (value()-minimum())/(maximum()-minimum());
+
+      if (val >= 1.0) X = W-S;
+      else if (val <= 0.0) X = 0;
+      else X = int(val*(W-S)+.5);
+
+      if (event == FL_PUSH) {
+	offcenter = mx-X;
+	if (offcenter < 0) offcenter = 0;
+	else if (offcenter > S) offcenter = S;
+	else return 1;
+      }
     }
-    double v = double(X)/(W-S);
-    double sliderwidth = double(S)/(W-S);
-    double val = (value()-minimum())/(maximum()-minimum());
-    static double offcenter;
-    if (event == FL_PUSH) {
-      offcenter = v-val;
-      if (offcenter < 0) offcenter = 0;
-      else if (offcenter > sliderwidth) offcenter = sliderwidth;
-      else return 1;
-    }
+    X = mx-offcenter;
+    double v;
   TRY_AGAIN:
-    v -= offcenter;
-    if (v < 0) {
-      offcenter = v+offcenter;
-      if (offcenter<0) offcenter=0;
-      v = 0;
-    } else if (v > 1) {
-      offcenter =  v+offcenter-1;
-      if (offcenter > sliderwidth) offcenter = sliderwidth;
-      v = 1;
+    if (X < 0) {
+      X = 0;
+      offcenter = mx; if (offcenter < 0) offcenter = 0;
+    } else if (X > (W-S)) {
+      X = W-S;
+      offcenter = mx-X; if (offcenter > S) offcenter = S;
     }
-    // if (Fl::event_state(FL_SHIFT)) v = val+(v-val)*.05;
-    v = round(v*(maximum()-minimum())+minimum());
+    v = round(X*(maximum()-minimum())/(W-S) + minimum());
     // make sure a click outside the sliderbar moves it:
     if (event == FL_PUSH && v == value()) {
-      offcenter = sliderwidth/2;
-      v = double(X)/(W-S);
+      offcenter = S/2;
       event = FL_DRAG;
       goto TRY_AGAIN;
     }
@@ -237,5 +249,5 @@ int Fl_Slider::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Slider.cxx,v 1.8.2.2 1999/10/15 08:14:37 bill Exp $".
+// End of "$Id: Fl_Slider.cxx,v 1.8.2.3 1999/12/04 12:22:37 mike Exp $".
 //
