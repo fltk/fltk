@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.106 2003/09/14 14:28:22 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.107 2003/09/20 18:40:36 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -501,8 +501,8 @@ case $uname in
 	fi
 
 	LIBS="$LIBS -lXext -lX11 $X_EXTRA_LIBS"
-	CFLAGS="$CFLAGS$X_CFLAGS"
-	CXXFLAGS="$CXXFLAGS$X_CFLAGS"
+	CFLAGS="$CFLAGS $X_CFLAGS"
+	CXXFLAGS="$CXXFLAGS $X_CFLAGS"
 	LDFLAGS="$X_LIBS $LDFLAGS"
 
 	if test "x$x_includes" != x; then
@@ -863,5 +863,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.106 2003/09/14 14:28:22 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.107 2003/09/20 18:40:36 easysw Exp $".
 dnl
