@@ -6,6 +6,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 
 class FL_EXPORT Fl_Help_Dialog {

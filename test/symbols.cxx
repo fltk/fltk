@@ -1,5 +1,5 @@
 //
-// "$Id: symbols.cxx,v 1.4.2.3.2.6 2004/04/11 04:39:01 easysw Exp $"
+// "$Id: symbols.cxx,v 1.4.2.3.2.7 2004/07/04 06:49:34 matthiaswm Exp $"
 //
 // Symbol test program for the Fast Light Tool Kit (FLTK).
 //
@@ -36,34 +36,40 @@
 int N = 0;
 #define W 70
 #define H 70
-#define ROWS 5
-#define COLS 5
+#define ROWS 7
+#define COLS 4
 
 Fl_Window *window;
+Fl_Value_Slider *orientation;
+Fl_Value_Slider *size;
 
 void slider_cb(Fl_Widget *w, void *) {
   static char buf[80];
-  int val = (int)(((Fl_Value_Slider*)w)->value());
-  Fl_Window *win = (Fl_Window*)w->parent();       // get parent window
-  for (int i = win->children(); i--; ) {          // all window children
-    Fl_Widget *wc = win->child(i);
+  int val = (int)orientation->value();
+  int sze = (int)size->value();
+  for (int i = window->children(); i--; ) {          // all window children
+    Fl_Widget *wc = window->child(i);
     const char *l = wc->label();
     if ( *l == '@' ) {                            // all children with '@'
       if ( *(++l) == '@' ) {                      // ascii legend?
         l++;
-	while (isdigit(*l)) { l++; }
-        if (val == 0) { sprintf(buf, "@@%s", l); }
-        else          { sprintf(buf, "@@%d%s", val, l); }
+	while (isdigit(*l)||*l=='+'||*l=='-') { l++; }
+        if (val&&sze) sprintf(buf, "@@%+d%d%s", sze, val, l);
+        else if (val) sprintf(buf, "@@%d%s", val, l);
+        else if (sze) sprintf(buf, "@@%+d%s", sze, l);
+        else          sprintf(buf, "@@%s", l);
       } else {                                    // box with symbol
-        while (isdigit(*l)) { l++; }
-        if (val == 0) { sprintf(buf, "@%s", l); }
-	else          { sprintf(buf, "@%d%s", val, l); }
+        while (isdigit(*l)||*l=='+'||*l=='-') { l++; }
+        if (val&&sze) sprintf(buf, "@%+d%d%s", sze, val, l);
+        else if (val) sprintf(buf, "@%d%s", val, l);
+        else if (sze) sprintf(buf, "@%+d%s", sze, l);
+        else          sprintf(buf, "@%s", l);
       }
       free((void*)(wc->label()));
       wc->label(strdup(buf));
     }
   }
-  win->redraw();
+  window->redraw();
 }
 
 void bt(const char *name) {
@@ -108,17 +114,26 @@ bt("@line");
 bt("@menu");
 bt("@UpArrow");
 bt("@DnArrow");
+bt("@search");
+bt("@FLTK");
 
-  Fl_Value_Slider slider((int)(window->w()*.10+.5),
-                         window->h()-40,
-                         (int)(window->w()*.80+.5),
-                         16,
-                         "Orientation");
-  slider.type(FL_HORIZONTAL);
-  slider.range(0.0, 9.0);
-  slider.value(0.0);
-  slider.step(1);
-  slider.callback(slider_cb, &slider);
+  orientation = new Fl_Value_Slider(
+    (int)(window->w()*.05+.5), window->h()-40,
+    (int)(window->w()*.42+.5), 16, "Orientation");
+  orientation->type(FL_HORIZONTAL);
+  orientation->range(0.0, 9.0);
+  orientation->value(0.0);
+  orientation->step(1);
+  orientation->callback(slider_cb, 0);
+
+  size = new Fl_Value_Slider(
+    (int)(window->w()*.53+.5), window->h()-40,
+    (int)(window->w()*.42+.5), 16, "Size");
+  size->type(FL_HORIZONTAL);
+  size->range(-3.0, 9.0);
+  size->value(0.0);
+  size->step(1);
+  size->callback(slider_cb, 0);
 
   window->resizable(window);
   window->show(argc,argv);
@@ -126,5 +141,5 @@ bt("@DnArrow");
 }
 
 //
-// End of "$Id: symbols.cxx,v 1.4.2.3.2.6 2004/04/11 04:39:01 easysw Exp $".
+// End of "$Id: symbols.cxx,v 1.4.2.3.2.7 2004/07/04 06:49:34 matthiaswm Exp $".
 //

@@ -17,7 +17,7 @@ class FL_EXPORT Fl_Help_Dialog {open
   } {
     Fl_Window window_ {
       label {Help Dialog} open
-      private xywh {398 65 530 385} type Double hide resizable
+      private xywh {398 65 530 385} type Double resizable visible
     } {
       Fl_Group view_ {
         callback {if (view_->changed())
@@ -48,7 +48,7 @@ else if (view_->filename())
 {
   strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
   line_[index_] = view_->topline();
-}} open selected
+}} open
         private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
         code0 {\#include <FL/Fl_Help_View.H>}
         class Fl_Help_View
@@ -115,9 +115,14 @@ if (view_->textsize() >= 18)
 smaller_->activate();}
         private tooltip {Make the help text larger.} xywh {320 350 25 25} labelfont 1 labelsize 16
       }
-      Fl_Input find_ {
-        callback {find_pos_ = view_->find(find_->value(), find_pos_);}
-        private xywh {10 350 265 25} when 10
+      Fl_Group {} {open
+        xywh {10 350 265 25} box DOWN_BOX color 7
+      } {
+        Fl_Input find_ {
+          label {@search}
+          callback {find_pos_ = view_->find(find_->value(), find_pos_);} selected
+          private tooltip {find text in document} xywh {35 352 238 21} box FLAT_BOX labelsize 13 when 10
+        }
       }
     }
     code {back_->deactivate();

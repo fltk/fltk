@@ -114,7 +114,7 @@ inline void Fl_Help_Dialog::cb_find__i(Fl_Input*, void*) {
   find_pos_ = view_->find(find_->value(), find_pos_);
 }
 void Fl_Help_Dialog::cb_find_(Fl_Input* o, void* v) {
-  ((Fl_Help_Dialog*)(o->parent()->user_data()))->cb_find__i(o,v);
+  ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_find__i(o,v);
 }
 
 Fl_Help_Dialog::Fl_Help_Dialog() {
@@ -164,9 +164,17 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       o->labelsize(16);
       o->callback((Fl_Callback*)cb_larger_);
     }
-    { Fl_Input* o = find_ = new Fl_Input(10, 350, 265, 25);
-      o->callback((Fl_Callback*)cb_find_);
-      o->when(FL_WHEN_ENTER_KEY_ALWAYS);
+    { Fl_Group* o = new Fl_Group(10, 350, 265, 25);
+      o->box(FL_DOWN_BOX);
+      o->color(FL_BACKGROUND2_COLOR);
+      { Fl_Input* o = find_ = new Fl_Input(35, 352, 238, 21, "@search");
+        o->tooltip("find text in document");
+        o->box(FL_FLAT_BOX);
+        o->labelsize(13);
+        o->callback((Fl_Callback*)cb_find_);
+        o->when(FL_WHEN_ENTER_KEY_ALWAYS);
+      }
+      o->end();
     }
     o->end();
   }

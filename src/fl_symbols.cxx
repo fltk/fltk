@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3.2.8 2004/04/11 04:39:00 easysw Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.9 2004/07/04 06:49:33 matthiaswm Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -170,6 +170,51 @@ static void rectangle(double x,double y,double x2,double y2,Fl_Color col) {
 }
 
 /* The drawing routines */
+
+static void draw_fltk(Fl_Color col) 
+{
+  fl_color(col);
+  // F fill
+  BP; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
+  vv(-1.8, -0.1); vv(-1.2, -0.1); vv(-1.2, 0.1); vv(-1.8, 0.1);
+  vv(-1.8, 0.5); vv(-2.0, 0.5); EP;
+  // L fill
+  BP; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
+  vv(0.0, 0.5); vv(-1.0, 0.5); EP;
+  // T outline
+  BP; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
+  vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); EP;
+  // K outline
+  BP; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
+  vv(2.0, -0.5); vv(1.43, 0.0); vv(2.0, 0.5); vv(1.70, 0.5);
+  vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); EP;
+  set_outline_color(col);
+  // F outline
+  BC; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
+  vv(-1.8, -0.1); vv(-1.2, -0.1); vv(-1.2, 0.1); vv(-1.8, 0.1);
+  vv(-1.8, 0.5); vv(-2.0, 0.5); EC;
+  // L outline
+  BC; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
+  vv(0.0, 0.5); vv(-1.0, 0.5); EC;
+  // T outline
+  BC; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
+  vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); EC;
+  // K outline
+  BC; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
+  vv(2.0, -0.5); vv(1.43, 0.0); vv(2.0, 0.5); vv(1.70, 0.5);
+  vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); EC;
+}
+
+static void draw_search(Fl_Color col) 
+{
+  fl_color(col);
+  BP; vv(.4, .13); vv(1.0, .73); vv(.73, 1.0); vv(.13, .4); EP;
+  set_outline_color(col);
+  fl_line_style(FL_SOLID, 3, 0);
+  BC; fl_circle(-.2, -.2, .8); EC;
+  fl_line_style(FL_SOLID, 1, 0);
+  BC; vv(.4, .13); vv(1.0, .73); vv(.73, 1.0); vv(.13, .4); EC;
+}
 
 static void draw_arrow1(Fl_Color col)
 {
@@ -358,8 +403,10 @@ static void fl_init_symbols(void) {
   fl_add_symbol("UpArrow",	draw_uparrow,		1);
   fl_add_symbol("DnArrow",	draw_downarrow,		1);
   fl_add_symbol("||",		draw_doublebar,		1);
+  fl_add_symbol("search",       draw_search,            1);
+  fl_add_symbol("FLTK",         draw_fltk,              1);
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.8 2004/04/11 04:39:00 easysw Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.9 2004/07/04 06:49:33 matthiaswm Exp $".
 //
