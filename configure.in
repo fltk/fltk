@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.43 2001/12/19 19:23:30 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.44 2001/12/30 04:45:34 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -35,7 +35,7 @@ dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
 FL_PATCH_VERSION=0
-FL_RELEASE_VERSION=b6
+FL_RELEASE_VERSION=b9
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)
@@ -460,10 +460,10 @@ if test "$prefix" = NONE; then
 fi
 
 if test "$exec_prefix" = NONE; then
-    exec_prefix="$prefix"
+    exec_prefix="\${prefix}"
 fi
 
-if test "$uname" = "IRIX" -a $uversion -ge 62 -a "$libdir" = "\${exec_prefix}/lib" -a "$exec_prefix" = "/usr"; then
+if test "$uname" = "IRIX" -a $uversion -ge 62 -a "$libdir" = "\${exec_prefix}/lib" -a "$exec_prefix" = "\${prefix}" -a "$prefix" = "/usr"; then
     libdir="/usr/lib32"
 fi
 
@@ -633,5 +633,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.43 2001/12/19 19:23:30 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.44 2001/12/30 04:45:34 easysw Exp $".
 dnl
