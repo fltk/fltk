@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.4
 
+	- Fl_Pack ignored the box() setting and cleared any
+	  unused areas to the widget color; it now only does so
+	  if the box() is set to something other than FL_NO_BOX.
 	- Updated the Fl_Tabs widget to offset the first tab by
 	  the box dx value to avoid visual errors.
 	- Updated the plastic up box to draw only a single

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.4 2003/01/30 21:42:25 easysw Exp $"
+// "$Id: Fl_Pack.cxx,v 1.6.2.4.2.5 2003/05/16 18:43:40 easysw Exp $"
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
@@ -90,7 +90,7 @@ void Fl_Pack::draw() {
        else
          H = th - rh;
       }
-      if (spacing_ && current_position>maximum_position &&
+      if (spacing_ && current_position>maximum_position && box() &&
   	  (X != o->x() || Y != o->y() || d&FL_DAMAGE_ALL)) {
         fl_color(color());
         if (horizontal())
@@ -112,13 +112,13 @@ void Fl_Pack::draw() {
   }
 
   if (horizontal()) {
-    if (maximum_position < tx+tw) {
+    if (maximum_position < tx+tw && box()) {
       fl_color(color());
       fl_rectf(maximum_position, ty, tx+tw-maximum_position, th);
     }
     tw = maximum_position-tx;
   } else {
-    if (maximum_position < ty+th) {
+    if (maximum_position < ty+th && box()) {
       fl_color(color());
       fl_rectf(tx, maximum_position, tw, ty+th-maximum_position);
     }
@@ -132,5 +132,5 @@ void Fl_Pack::draw() {
 }
 
 //
-// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.4 2003/01/30 21:42:25 easysw Exp $".
+// End of "$Id: Fl_Pack.cxx,v 1.6.2.4.2.5 2003/05/16 18:43:40 easysw Exp $".
 //
