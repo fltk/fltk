@@ -1,9 +1,9 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.11 1998/11/05 16:04:37 mike Exp $"
+dnl# "$Id: configure.in,v 1.12 1998/11/05 16:17:39 mike Exp $"
 dnl#
-dnl# for the Fast Light Tool Kit (FLTK).
+dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
 dnl# Copyright 1998 by Bill Spitzak and others.
 dnl#
@@ -140,9 +140,10 @@ if test -n "$GXX"; then
 else
 if test "`(uname) 2>/dev/null`" = IRIX; then
   if expr "`(uname -r)`" \>= 6.2; then
-    CXX="CC -n32"
-    CC="cc -n32"
-    LD="ld -n32"
+dnl# Uncomment these if you don't have IDO 7.2 or higher
+dnl#     CXX="CC -n32"
+dnl#     CC="cc -n32"
+dnl#     LD="ld -n32"
     MAKEDEPEND="CC -M"
     # -woff 3322 is necessary due to errors in Xlib headers on IRIX
     CFLAGS="-fullwarn $CFLAGS"
@@ -161,5 +162,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.11 1998/11/05 16:04:37 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.12 1998/11/05 16:17:39 mike Exp $".
 dnl#
