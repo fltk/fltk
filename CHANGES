@@ -1,8 +1,10 @@
 CHANGES IN FLTK 1.1.5rc2
 
-	- Added Search symbol to the search field of the Help
-	  Dialog (@serach). Added FLTK logo (@FLTK)
 	- Documentation updates (STR #365, STR #399, STR #412)
+	- Added search symbol to the search field of
+	  Fl_Help_Dialog (STR #417)
+	- Added two new symbols, @search and @FLTK, which can be
+	  used in labels.
 	- MacOS X: fixed NumLock mixup, added support for
 	  FL_Menu and FL_Delete keys on external (PC) keyboards
 	  (STR #445)

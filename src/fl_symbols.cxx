@@ -1,5 +1,5 @@
 //
-// "$Id: fl_symbols.cxx,v 1.8.2.3.2.9 2004/07/04 06:49:33 matthiaswm Exp $"
+// "$Id: fl_symbols.cxx,v 1.8.2.3.2.10 2004/07/04 23:21:52 easysw Exp $"
 //
 // Symbol drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -151,6 +151,8 @@ int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
 
 #define BP fl_begin_polygon()
 #define EP fl_end_polygon()
+#define BCP fl_begin_complex_polygon()
+#define ECP fl_end_complex_polygon()
 #define BL fl_begin_line()
 #define EL fl_end_line()
 #define BC fl_begin_loop()
@@ -175,19 +177,19 @@ static void draw_fltk(Fl_Color col)
 {
   fl_color(col);
   // F fill
-  BP; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
+  BCP; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
   vv(-1.8, -0.1); vv(-1.2, -0.1); vv(-1.2, 0.1); vv(-1.8, 0.1);
-  vv(-1.8, 0.5); vv(-2.0, 0.5); EP;
+  vv(-1.8, 0.5); vv(-2.0, 0.5); ECP;
   // L fill
-  BP; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
-  vv(0.0, 0.5); vv(-1.0, 0.5); EP;
+  BCP; vv(-1.0, -0.5); vv(-0.8, -0.5); vv(-0.8, 0.3); vv(0.0, 0.3);
+  vv(0.0, 0.5); vv(-1.0, 0.5); ECP;
   // T outline
-  BP; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
-  vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); EP;
+  BCP; vv(-0.1, -0.5); vv(1.1, -0.5); vv(1.1, -0.3); vv(0.6, -0.3);
+  vv(0.6, 0.5); vv(0.4, 0.5); vv(0.4, -0.3); vv(-0.1, -0.3); ECP;
   // K outline
-  BP; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
+  BCP; vv(1.1, -0.5); vv(1.3, -0.5); vv(1.3, -0.15); vv(1.70, -0.5);
   vv(2.0, -0.5); vv(1.43, 0.0); vv(2.0, 0.5); vv(1.70, 0.5);
-  vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); EP;
+  vv(1.3, 0.15); vv(1.3, 0.5); vv(1.1, 0.5); ECP;
   set_outline_color(col);
   // F outline
   BC; vv(-2.0, -0.5); vv(-1.0, -0.5); vv(-1.0, -0.3); vv(-1.8, -0.3);
@@ -408,5 +410,5 @@ static void fl_init_symbols(void) {
 }
 
 //
-// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.9 2004/07/04 06:49:33 matthiaswm Exp $".
+// End of "$Id: fl_symbols.cxx,v 1.8.2.3.2.10 2004/07/04 23:21:52 easysw Exp $".
 //
