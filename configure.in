@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.38 2001/12/08 16:23:51 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.39 2001/12/09 20:26:24 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -262,6 +262,12 @@ HLINKS=
 dnl some environments need postprocessing (Darwin, MacOS)
 POSTBUILD=
 
+dnl Check for pthreads for multi-threaded apps...
+if test "$enable_threads" = yes; then
+    AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
+    AC_SEARCH_LIBS(pthread_create, pthread)
+fi
+
 case $uname in
     CYGWIN*)
 	dnl Cygwin environment...
@@ -281,6 +287,10 @@ case $uname in
 	    GLLIBNAME=""
 	    GLDSONAME=""
 	    GLDEMOS=""
+	fi
+
+	if test "x$ac_cv_search_pthread_create" != xno; then
+	    AC_DEFINE(HAVE_PTHREAD)
 	fi
 
 	# Don't make symlinks since Windows is not case sensitive.
@@ -308,12 +318,8 @@ case $uname in
 	POSTBUILD="/Developer/Tools/Rez -t APPL ../FL/mac.r -o \$@"
 	;;
     *)
-	dnl Check for pthreads for multi-threaded apps...
-	if test "$enable_threads" = yes; then
-	    AC_SEARCH_LIBS(pthread_create, pthread)
-	fi
 
-	if test "x$ac_cv_search_pthread_create" != x; then
+	if test "x$ac_cv_search_pthread_create" != xno; then
 	    AC_DEFINE(HAVE_PTHREAD)
 	fi
 
@@ -604,5 +610,5 @@ AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.38 2001/12/08 16:23:51 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.39 2001/12/09 20:26:24 easysw Exp $".
 dnl

@@ -1,5 +1,5 @@
 /*
- * "$Id: configh.in,v 1.11.2.11.2.5 2001/12/08 16:23:51 easysw Exp $"
+ * "$Id: configh.in,v 1.11.2.11.2.6 2001/12/09 20:26:24 easysw Exp $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  * @configure_input@
@@ -205,8 +205,9 @@
  */
 
 #undef HAVE_PTHREAD
+#undef HAVE_PTHREAD_H
 
 
 /*
- * End of "$Id: configh.in,v 1.11.2.11.2.5 2001/12/08 16:23:51 easysw Exp $".
+ * End of "$Id: configh.in,v 1.11.2.11.2.6 2001/12/09 20:26:24 easysw Exp $".
  */

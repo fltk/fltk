@@ -1,5 +1,5 @@
 //
-// "$Id: threads.h,v 1.1.2.1 2001/12/08 16:23:51 easysw Exp $"
+// "$Id: threads.h,v 1.1.2.2 2001/12/09 20:26:24 easysw Exp $"
 //
 // Simple threading API for the Fast Light Tool Kit (FLTK).
 //
@@ -41,7 +41,7 @@
 #ifndef Threads_H
 #  define Threads_H
 
-#  ifndef WIN32
+#  if HAVE_PTHREAD_H
 // Use POSIX threading...
 
 #    include <pthread.h>
@@ -160,5 +160,5 @@ public:
 #endif // !Threads_h
 
 //
-// End of "$Id: threads.h,v 1.1.2.1 2001/12/08 16:23:51 easysw Exp $".
+// End of "$Id: threads.h,v 1.1.2.2 2001/12/09 20:26:24 easysw Exp $".
 //

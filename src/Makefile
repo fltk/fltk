@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile,v 1.18.2.14.2.24 2001/12/06 22:16:49 easysw Exp $"
+# "$Id: Makefile,v 1.18.2.14.2.25 2001/12/09 20:26:24 easysw Exp $"
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -236,6 +236,49 @@ fl_draw_image.o:	fl_draw_image_mac.cxx fl_draw_image_win32.cxx
 fl_font.o:	fl_font_mac.cxx fl_font_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_win32.cxx
 
+fl_arci.o:	../FL/mac.H ../FL/win32.H
+Fl_arg.o:	../FL/mac.H ../FL/win32.H
+fl_ask.o:	../FL/mac.H ../FL/win32.H
+Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H
+fl_color.o:	../FL/mac.H ../FL/win32.H
+fl_cursor.o:	../FL/mac.H ../FL/win32.H
+Fl_cutpaste.o:	../FL/mac.H ../FL/win32.H
+Fl_cutpaste_win32.o:	../FL/mac.H ../FL/win32.H
+Fl.o:	../FL/mac.H ../FL/win32.H
+Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
+fl_draw_image.o:	../FL/mac.H ../FL/win32.H
+fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H
+fl_draw_image_win32.o:	../FL/mac.H ../FL/win32.H
+fl_draw_pixmap.o:	../FL/mac.H ../FL/win32.H
+Fl_File_Chooser2.o:	../FL/mac.H ../FL/win32.H
+fl_font.o:	../FL/mac.H ../FL/win32.H
+Fl_get_key.o:	../FL/mac.H ../FL/win32.H
+Fl_get_system_colors.o:	../FL/mac.H ../FL/win32.H
+Fl_Gl_Choice.o:	../FL/mac.H ../FL/win32.H
+Fl_Gl_Overlay.o:	../FL/mac.H ../FL/win32.H
+Fl_Gl_Window.o:	../FL/mac.H ../FL/win32.H
+Fl_grab.o:	../FL/mac.H ../FL/win32.H
+Fl_Image.o:	../FL/mac.H ../FL/win32.H
+fl_line_style.o:	../FL/mac.H ../FL/win32.H
+Fl_mac.o:	../FL/mac.H ../FL/win32.H
+Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
+fl_overlay.o:	../FL/mac.H ../FL/win32.H
+fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
+Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
+Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
+Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
+fl_rect.o:	../FL/mac.H ../FL/win32.H
+fl_scroll_area.o:	../FL/mac.H ../FL/win32.H
+fl_set_font.o:	../FL/mac.H ../FL/win32.H
+fl_set_fonts.o:	../FL/mac.H ../FL/win32.H
+fl_shortcut.o:	../FL/mac.H ../FL/win32.H
+fl_vertex.o:	../FL/mac.H ../FL/win32.H
+Fl_visual.o:	../FL/mac.H ../FL/win32.H
+Fl_Window_fullscreen.o:	../FL/mac.H ../FL/win32.H
+Fl_Window_iconize.o:	../FL/mac.H ../FL/win32.H
+Fl_x.o:	../FL/mac.H ../FL/win32.H
+gl_draw.o:	../FL/mac.H ../FL/win32.H
+gl_start.o:	../FL/mac.H ../FL/win32.H
 
 ################################################################
 
@@ -300,5 +343,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile,v 1.18.2.14.2.24 2001/12/06 22:16:49 easysw Exp $".
+# End of "$Id: Makefile,v 1.18.2.14.2.25 2001/12/09 20:26:24 easysw Exp $".
 #
