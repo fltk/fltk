@@ -295,12 +295,12 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
          *symptr++ = *str++);
     *symptr = '\0';
     if (isspace(*str)) str++;
-    symwidth[0] = min(w,h);
+    symwidth[0] = h;
   }
 
   if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
     strlcpy(symbol[1], p, sizeof(symbol[1]));
-    symwidth[1] = min(w,h);
+    symwidth[1] = h;
   }
 
   symtotal = symwidth[0] + symwidth[1];

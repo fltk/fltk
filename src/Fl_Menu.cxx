@@ -122,8 +122,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : (uchar)FL_NORMAL_SIZE;
   l.color   = FL_BLACK; // this makes no difference?
   fl_draw_shortcut = 1;
-  int w = l.size; int h = l.size;
-  if (hp) *hp = h;
+  int w = 0; int h = 0;
   l.measure(w, hp ? *hp : h);
   fl_draw_shortcut = 0;
   if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += 14;
