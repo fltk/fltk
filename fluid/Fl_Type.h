@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.h,v 1.5.2.7 2000/04/24 18:22:47 mike Exp $"
+// "$Id: Fl_Type.h,v 1.5.2.8 2000/05/16 12:26:03 mike Exp $"
 //
 // Widget type header file for the Fast Light Tool Kit (FLTK).
 //
@@ -11,7 +11,7 @@
 // instance of this object.  It could also have a "copy()" function,
 // but it was easier to implement this by using the file read/write
 // that is needed to save the setup anyways.
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -109,6 +109,9 @@ public:
   virtual void write_static(); // write static stuff to .c file
   virtual void write_code1(); // code and .h before children
   virtual void write_code2(); // code and .h after children
+
+  // get message number for I18N
+  int msgnum();
 
   // fake rtti:
   virtual int is_parent() const;
@@ -529,5 +532,5 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 extern int include_H_from_C;
 
 //
-// End of "$Id: Fl_Type.h,v 1.5.2.7 2000/04/24 18:22:47 mike Exp $".
+// End of "$Id: Fl_Type.h,v 1.5.2.8 2000/05/16 12:26:03 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Group_Type.cxx,v 1.4.2.3 1999/08/05 09:01:24 bill Exp $"
+// "$Id: Fl_Group_Type.cxx,v 1.4.2.4 2000/05/16 12:26:02 mike Exp $"
 //
 // Fl_Group object code for the Fast Light Tool Kit (FLTK).
 //
@@ -7,7 +7,7 @@
 // the Fl_Tabs widget, with special stuff to select tab items and
 // insure that only one is visible.
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -231,5 +231,5 @@ const char tile_type_name[] = "Fl_Tile";
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
 
 //
-// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.3 1999/08/05 09:01:24 bill Exp $".
+// End of "$Id: Fl_Group_Type.cxx,v 1.4.2.4 2000/05/16 12:26:02 mike Exp $".
 //

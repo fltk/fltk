@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu_Type.cxx,v 1.16.2.7 2000/04/25 01:57:49 mike Exp $"
+// "$Id: Fl_Menu_Type.cxx,v 1.16.2.8 2000/05/16 12:26:03 mike Exp $"
 //
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
@@ -9,7 +9,7 @@
 // This file also contains code to make Fl_Menu_Button, Fl_Menu_Bar,
 // etc widgets.
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -47,7 +47,6 @@ Fl_Menu_Item menu_item_type_menu[] = {
 
 extern int reading_file;
 extern int force_parent;
-extern int msgnum;
 extern int i18n_type;
 extern const char* i18n_include;
 extern const char* i18n_function;
@@ -228,7 +227,7 @@ void Fl_Menu_Item_Type::write_item() {
         break;
     case 2 : /* POSIX catgets */
         write_c("catgets(%s,%s,%d,", i18n_file[0] ? i18n_file : "_catalog",
-	        i18n_set, msgnum ++);
+	        i18n_set, msgnum());
         write_cstring(label());
 	write_c(")");
         break;
@@ -463,5 +462,5 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
 }
 
 //
-// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.7 2000/04/25 01:57:49 mike Exp $".
+// End of "$Id: Fl_Menu_Type.cxx,v 1.16.2.8 2000/05/16 12:26:03 mike Exp $".
 //

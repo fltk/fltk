@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Function_Type.cxx,v 1.15.2.13 2000/04/25 01:57:48 mike Exp $"
+// "$Id: Fl_Function_Type.cxx,v 1.15.2.14 2000/05/16 12:26:02 mike Exp $"
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -269,11 +269,6 @@ void Fl_Function_Type::write_code1() {
   }
   if (havewidgets) write_c("  %s* w;\n",subclassname(child));
   indentation += 2;
-
-  if (i18n_type == 2 && !i18n_file[0])
-    // Initialize _catalog as needed...
-    write_c("  if (_catalog == (nl_catd)-1) _catalog = catopen(\"%s\", 0);\n",
-            i18n_program);
 }
 
 void Fl_Function_Type::write_code2() {
@@ -677,5 +672,5 @@ void Fl_Class_Type::write_code2() {
 }
 
 //
-// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.13 2000/04/25 01:57:48 mike Exp $".
+// End of "$Id: Fl_Function_Type.cxx,v 1.15.2.14 2000/05/16 12:26:02 mike Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Type.cxx,v 1.6.2.1 1999/03/13 20:07:19 bill Exp $"
+// "$Id: Fl_Type.cxx,v 1.6.2.2 2000/05/16 12:26:03 mike Exp $"
 //
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
@@ -15,7 +15,7 @@
 // not in the linked list and are not written to files or
 // copied or otherwise examined.
 //
-// Copyright 1998-1999 by Bill Spitzak and others.
+// Copyright 1998-2000 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -387,6 +387,23 @@ void Fl_Type::insert(Fl_Type *g) {
   widget_browser->redraw();
 }
 
+// Return message number for I18N...
+int
+Fl_Type::msgnum() {
+  int		count;
+  Fl_Type	*p;
+
+  for (count = 0, p = this; p;) {
+    if (p->is_widget() && p->label() && !((Fl_Widget_Type *)p)->image) count ++;
+
+    if (p->prev) p = p->prev;
+    else p = p->parent;
+  }
+
+  return count;
+}
+
+
 // delete from parent:
 Fl_Type *Fl_Type::remove() {
   Fl_Type *end = this;
@@ -648,5 +665,5 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 //
-// End of "$Id: Fl_Type.cxx,v 1.6.2.1 1999/03/13 20:07:19 bill Exp $".
+// End of "$Id: Fl_Type.cxx,v 1.6.2.2 2000/05/16 12:26:03 mike Exp $".
 //
