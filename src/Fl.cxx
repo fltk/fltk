@@ -1,5 +1,5 @@
 //
-// "$Id: Fl.cxx,v 1.12 1999/01/04 19:27:00 mike Exp $"
+// "$Id: Fl.cxx,v 1.13 1999/01/07 16:47:40 mike Exp $"
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
@@ -595,69 +595,68 @@ void fl_throw_focus(Fl_Widget *o) {
 
 #include <FL/fl_draw.H>
 
+void Fl_Widget::redraw() {damage(FL_DAMAGE_ALL);}
+
 void Fl_Widget::damage(uchar flags) {
-  Fl_Widget* w = this;
-  while (w->type() < FL_WINDOW) {
-    w->damage_ |= flags;
-    w = w->parent();
-    if (!w) return;
-    flags = FL_DAMAGE_CHILD;
-  }
-  Fl_X* i = Fl_X::i((Fl_Window*)w);
-  if (i) {
-    if (i->region) {
-      // if there already is an update region then merge the area
-      // of the child with it:
-      if (w->damage() && w != this) {
-	w->damage(flags, x(), y(), this->w(), h());
-	return;
-      }
-      // otherwise it is faster to just damage the whole window and
-      // rely on Fl_Group only drawing the damaged children:
-      XDestroyRegion(i->region);
-      i->region = 0;
-    }
-    w->damage_ |= flags;
+  if (type() < FL_WINDOW) {
+    // damage only the rectangle covered by a child widget:
+    damage(flags, x(), y(), w(), h());
+  } else {
+    // damage entire window by deleting the region:
+    Fl_X* i = Fl_X::i((Fl_Window*)this);
+    if (!i) return; // window not mapped, so ignore it
+    if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+    damage_ |= flags;
     Fl::damage(FL_DAMAGE_CHILD);
   }
 }
 
-void Fl_Widget::redraw() {damage(FL_DAMAGE_ALL);}
-
 void Fl_Widget::damage(uchar flags, int X, int Y, int W, int H) {
-  Fl_Widget* w = this;
-  while (w->type() < FL_WINDOW) {
-    w->damage_ |= flags;
-    w = w->parent();
-    if (!w) return;
+  Fl_Widget* window = this;
+  // mark all parent widgets between this and window with FL_DAMAGE_CHILD:
+  while (window->type() < FL_WINDOW) {
+    window->damage_ |= flags;
+    window = window->parent();
+    if (!window) return;
     flags = FL_DAMAGE_CHILD;
   }
-  // see if damage covers entire window:
-  if (X<=0 && Y<=0 && W>=w->w() && H>=w->h()) {w->damage(flags); return;}
-  Fl_X* i = Fl_X::i((Fl_Window*)w);
-  if (i) {
-    if (w->damage()) {
-      // if we already have damage we must merge with existing region:
-      if (i->region) {
-#ifndef WIN32
-	XRectangle R;
-	R.x = X; R.y = Y; R.width = W; R.height = H;
-	XUnionRectWithRegion(&R, i->region, i->region);
-#else
-	Region r = XRectangleRegion(X,Y,W,H);
-	CombineRgn(i->region,i->region,r,RGN_OR);
-	XDestroyRegion(r);
-#endif
-      }
-      w->damage_ |= flags;
-    } else {
-      // create a new region:
-      if (i->region) XDestroyRegion(i->region);
-      i->region = XRectangleRegion(X,Y,W,H);
-      w->damage_ = flags;
-    }
-    Fl::damage(FL_DAMAGE_CHILD);
+  Fl_X* i = Fl_X::i((Fl_Window*)window);
+  if (!i) return; // window not mapped, so ignore it
+
+  if (X<=0 && Y<=0 && W>=window->w() && H>=window->h()) {
+    // if damage covers entire window delete region:
+    window->damage(flags);
+    return;
   }
+
+  // clip the damage to the window and quit if none:
+  if (X < 0) {W += X; X = 0;}
+  if (Y < 0) {H += Y; Y = 0;}
+  if (W > window->w()-X) W = window->w()-X;
+  if (H > window->h()-Y) H = window->h()-Y;
+  if (W <= 0 || H <= 0) return;
+
+  if (window->damage()) {
+    // if we already have damage we must merge with existing region:
+    if (i->region) {
+#ifndef WIN32
+      XRectangle R;
+      R.x = X; R.y = Y; R.width = W; R.height = H;
+      XUnionRectWithRegion(&R, i->region, i->region);
+#else
+      Region R = XRectangleRegion(X, Y, W, H);
+      CombineRgn(i->region, i->region, R, RGN_OR);
+      XDestroyRegion(R);
+#endif
+    }
+    window->damage_ |= flags;
+  } else {
+    // create a new region:
+    if (i->region) XDestroyRegion(i->region);
+    i->region = XRectangleRegion(X,Y,W,H);
+    window->damage_ = flags;
+  }
+  Fl::damage(FL_DAMAGE_CHILD);
 }
 
 void Fl_Window::flush() {
@@ -668,5 +667,5 @@ void Fl_Window::flush() {
 }
 
 //
-// End of "$Id: Fl.cxx,v 1.12 1999/01/04 19:27:00 mike Exp $".
+// End of "$Id: Fl.cxx,v 1.13 1999/01/07 16:47:40 mike Exp $".
 //
