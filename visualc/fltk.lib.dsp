@@ -379,10 +379,6 @@ SOURCE=..\src\Fl_Multi_Label.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Output.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\fl_oval_box.cxx
 # End Source File
 # Begin Source File

@@ -1296,19 +1296,6 @@ DEP_CPP_FL_MU=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_Output.cxx
-DEP_CPP_FL_OU=\
-	"..\fl\enumerations.h"\
-	"..\fl\fl.h"\
-	"..\fl\fl_draw.h"\
-	"..\fl\fl_export.h"\
-	"..\fl\fl_input_.h"\
-	"..\fl\fl_output.h"\
-	"..\fl\fl_widget.h"\
-	
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\fl_oval_box.cxx
 DEP_CPP_FL_OV=\
 	"..\fl\enumerations.h"\
