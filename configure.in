@@ -1,7 +1,7 @@
 dnl# -*- sh -*-
 dnl# the "configure" script is made from this by running GNU "autoconf"
 dnl#
-dnl# "$Id: configure.in,v 1.24 1999/02/22 20:53:33 mike Exp $"
+dnl# "$Id: configure.in,v 1.25 1999/02/22 21:42:54 mike Exp $"
 dnl#
 dnl# Configuration script for the Fast Light Tool Kit (FLTK).
 dnl#
@@ -145,7 +145,7 @@ AC_CHECK_HEADER(X11/extensions/Xdbe.h, \
     if test "$uname" != "SunOS" -a "$uname" != "IRIX"; then
         AC_DEFINE(HAVE_XDBE)
     fi
-    if test "$uname" == "IRIX" -a "$uversion" -gt 63; then
+    if test "$uname" = "IRIX" -a "$uversion" -gt 63; then
         AC_DEFINE(HAVE_XDBE)
     fi)
 
@@ -223,5 +223,5 @@ AC_CONFIG_HEADER(config.h:configh.in)
 AC_OUTPUT(makeinclude)
 
 dnl#
-dnl# End of "$Id: configure.in,v 1.24 1999/02/22 20:53:33 mike Exp $".
+dnl# End of "$Id: configure.in,v 1.25 1999/02/22 21:42:54 mike Exp $".
 dnl#
