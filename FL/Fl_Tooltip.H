@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.H,v 1.16.2.6 2002/04/09 17:20:23 easysw Exp $"
+// "$Id: Fl_Tooltip.H,v 1.16.2.7 2002/04/14 02:43:48 easysw Exp $"
 //
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
@@ -36,6 +36,7 @@ class Fl_Tooltip_Window;
 class FL_EXPORT Fl_Tooltip {
 
   friend class Fl_Tooltip_Box;
+  friend class Fl_Tooltip_Window;
   friend class Fl_Widget;
 
   static float delay_;
@@ -76,5 +77,5 @@ public:
 #endif
 
 //
-// End of "$Id: Fl_Tooltip.H,v 1.16.2.6 2002/04/09 17:20:23 easysw Exp $".
+// End of "$Id: Fl_Tooltip.H,v 1.16.2.7 2002/04/14 02:43:48 easysw Exp $".
 //

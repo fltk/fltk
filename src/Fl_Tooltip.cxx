@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tooltip.cxx,v 1.38.2.11 2002/04/09 17:20:24 easysw Exp $"
+// "$Id: Fl_Tooltip.cxx,v 1.38.2.12 2002/04/14 02:43:48 easysw Exp $"
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
@@ -68,8 +68,26 @@ class Fl_Tooltip_Window : public Fl_Menu_Window {
 
 int
 Fl_Tooltip_Window::handle(int event) {
-  if (event == FL_KEYDOWN || event == FL_KEYUP || event == FL_SHORTCUT) return 0;
-  else return Fl_Menu_Window::handle(event);
+  switch (event) {
+    case FL_KEYUP :
+    case FL_KEYDOWN :
+    case FL_SHORTCUT :
+    case FL_PUSH :
+    case FL_DRAG :
+    case FL_RELEASE :
+    case FL_MOUSEWHEEL :
+      if (Fl_Tooltip::widget) {
+        // Pass events to widget...
+        Fl::belowmouse(Fl_Tooltip::widget);
+	// Update event_x() and event_y() to be relative to the
+	// widget's window, not the tooltip window...
+	Fl::e_x = Fl::e_x_root - Fl_Tooltip::widget->window()->x();
+	Fl::e_y = Fl::e_y_root - Fl_Tooltip::widget->window()->y();
+	return Fl_Tooltip::widget->handle(event);
+      } else return 0;
+    default :
+      return Fl_Menu_Window::handle(event);
+  }
 }
 
 
@@ -140,7 +158,14 @@ Fl_Tooltip::enter(Fl_Widget *w) {
 //    printf("    visible() = %d\n", w->visible());
 //    printf("    active() = %d\n", w->active());
 //  }
+  Fl_Widget* temp = w;
+  while (temp && !temp->tooltip()) {
+    if (temp == window) return;	// Don't do anything if pointed at tooltip
+    temp = temp->parent();
+  }
+
   if ((!w || !w->tooltip()) && tooltip_callback_ && window) {
+//    puts("Hiding tooltip...");
     Fl::remove_timeout(tooltip_callback_);
     window->hide();
     shown = 0;
@@ -173,6 +198,7 @@ Fl_Tooltip::tooltip_exit(Fl_Widget *w) {
   widget = 0;
 
   if (window) {
+//    puts("Hiding tooltip...");
     window->hide();
     shown = 0;
   }
@@ -196,6 +222,9 @@ Fl_Tooltip::tooltip_timeout(void *v) {
     window->resizable(box);
     window->end();
     Fl_Group::current(saveCurrent);
+
+//    printf("Fl_Tooltip::window = %p\n", window);
+//    printf("Fl_Tooltip::box    = %p\n", box);
   }
 
   if (!v)
@@ -209,6 +238,7 @@ Fl_Tooltip::tooltip_timeout(void *v) {
   Fl_Window *widgetWindow = widget->window();
 
   if (widgetWindow) {
+//    puts("Showing tooltip");
     Fl::grab(*widgetWindow);
     window->show();
     Fl::release();
@@ -220,5 +250,5 @@ Fl_Tooltip::tooltip_timeout(void *v) {
 
 
 //
-// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.11 2002/04/09 17:20:24 easysw Exp $".
+// End of "$Id: Fl_Tooltip.cxx,v 1.38.2.12 2002/04/14 02:43:48 easysw Exp $".
 //

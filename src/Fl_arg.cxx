@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_arg.cxx,v 1.5.2.8.2.9 2002/04/13 22:17:46 easysw Exp $"
+// "$Id: Fl_arg.cxx,v 1.5.2.8.2.10 2002/04/14 02:43:48 easysw Exp $"
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
@@ -91,12 +91,20 @@ int Fl::arg(int argc, char **argv, int &i) {
     Fl::visible_focus(0);
     i++;
     return 1;
-  } else if (match(s, "dnd")) {
+  } else if (match(s, "dnd", 2)) {
     Fl::dnd_text_ops(1);
     i++;
     return 1;
   } else if (match(s, "nodnd", 3)) {
     Fl::dnd_text_ops(0);
+    i++;
+    return 1;
+  } else if (match(s, "tooltips", 2)) {
+    Fl_Tooltip::enable();
+    i++;
+    return 1;
+  } else if (match(s, "notooltips", 3)) {
+    Fl_Tooltip::disable();
     i++;
     return 1;
   }
@@ -113,26 +121,26 @@ int Fl::arg(int argc, char **argv, int &i) {
     geometry = v;
 
 #if !defined(WIN32) && !defined(__APPLE__)
-  } else if (match(s, "display")) {
+  } else if (match(s, "display", 2)) {
     Fl::display(v);
 #endif
 
-  } else if (match(s, "title")) {
+  } else if (match(s, "title", 2)) {
     title = v;
 
-  } else if (match(s, "name")) {
+  } else if (match(s, "name", 2)) {
     name = v;
 
   } else if (match(s, "bg2", 3) || match(s, "background2", 11)) {
     fl_bg2 = v;
 
-  } else if (match(s, "bg") || match(s, "background")) {
+  } else if (match(s, "bg", 2) || match(s, "background", 10)) {
     fl_bg = v;
 
-  } else if (match(s, "fg") || match(s, "foreground")) {
+  } else if (match(s, "fg", 2) || match(s, "foreground", 10)) {
     fl_fg = v;
 
-  } else if (match(s, "scheme")) {
+  } else if (match(s, "scheme", 1)) {
     Fl::scheme(v);
 
   } else return 0; // unrecognized
@@ -175,6 +183,11 @@ void Fl_Window::show(int argc, char **argv) {
     if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
                               strcasecmp(val, "on") == 0 ||
                               strcasecmp(val, "yes") == 0);
+
+    val = XGetDefault(fl_display, key, "tooltips");
+    if (val) Fl_Tooltip::enable(strcasecmp(val, "true") == 0 ||
+                                strcasecmp(val, "on") == 0 ||
+                                strcasecmp(val, "yes") == 0);
 
     val = XGetDefault(fl_display, key, "visibleFocus");
     if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
@@ -239,15 +252,19 @@ static const char * const helpmsg =
 "options are:\n"
 " -bg2 color\n"
 " -bg color\n"
-" -d[isplay] host:n.n\n"
+" -di[splay] host:n.n\n"
+" -dn[d]\n"
 " -fg color\n"
 " -g[eometry] WxH+X+Y\n"
 " -i[conic]\n"
 " -k[bd]\n"
-" -n[ame] classname\n"
+" -na[me] classname\n"
+" -nod[nd]\n"
 " -nok[bd]\n"
+" -not[ooltips]\n"
 " -s[cheme] scheme\n"
-" -t[itle] windowtitle";
+" -ti[tle] windowtitle\n";
+" -to[oltips]";
 
 const char * const Fl::help = helpmsg+13;
 
@@ -394,5 +411,5 @@ int XParseGeometry(const char* string, int* x, int* y,
 #endif // ifdef WIN32
 
 //
-// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.9 2002/04/13 22:17:46 easysw Exp $".
+// End of "$Id: Fl_arg.cxx,v 1.5.2.8.2.10 2002/04/14 02:43:48 easysw Exp $".
 //

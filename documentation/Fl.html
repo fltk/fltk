@@ -278,26 +278,73 @@ than <tt>argc</tt>.
 <P>All switches except -bg2 may be abbreviated one letter and case is ignored:
 
 <UL>
-<LI><tt>-display host:n.n</tt> The X display to use (ignored  under
-WIN32). </LI>
-<LI><tt>-geometry WxH+X+Y</tt> The window position and size  will be
-modified according the the standard X geometry string. </LI>
-<LI><tt>-name string</tt> Fl_Window::xclass(string) will be  done to
-the window, possibly changing its icon. </LI>
-<LI><tt>-title string</tt> Fl_Window::label(string) will be  done to
-the window, changing both its title and the icontitle. </LI>
-<LI><tt>-iconic</tt> Fl_Window::iconize() will be done to  the window. </LI>
-<LI><tt>-bg color</tt> XParseColor is used to lookup the  passed color
-and then Fl::background() is done.  Under WIN32  only color names of
-the form &quot;#xxxxxx&quot; are understood. </LI>
-<LI><tt>-bg2 color</tt> XParseColor is used to lookup the  passed color
-and then Fl::background2() is done. </LI>
-<LI><tt>-fg color</tt> XParseColor is used to lookup the  passed color
-and then Fl::foreground() is done. </LI>
+
+	<LI><TT>-bg color</TT> or <TT>-background color</TT>
+
+	<P>Sets the background color using <A
+	HREF="#Fl.background"><TT>Fl::background()</TT></A>.</LI>
+
+	<LI><TT>-bg2 color</TT> or <TT>-background2 color</TT>
+
+	<P>Sets the secondary background color using <A
+	HREF="#Fl.background2"><TT>Fl::background2()</TT></A>.</LI>
+
+	<LI><TT>-display host:n.n</TT>
+
+	<P>Sets the X display to use; this option is silently
+	ignored under WIN32 and MacOS.</LI>
+
+	<LI><TT>-dnd</TT> and <TT>-nodnd</TT>
+
+	<P>Enables or disables drag and drop text operations
+	using <A
+	HREF="#Fl.dnd_text_ops"><TT>Fl::dnd_text_ops()</TT></A>.</LI>
+
+	<LI><TT>-fg color</TT> or <TT>-foreground color</TT>
+
+	<P>Sets the foreground color using <A
+	HREF="#Fl.foreground"><TT>Fl::foreground()</TT></A>.</LI>
+
+	<LI><TT>-geometry WxH+X+Y</TT>
+
+	<P>Sets the initial window position and size according
+	the the standard X geometry string.</LI>
+
+	<LI><TT>-iconic</TT>
+
+	<P>Iconifies the window using <A
+	HREF="Fl_Window.html#Fl_Window.iconize"><TT>Fl_Window::iconize()</TT></A>.</LI>
+
+	<LI><TT>-kbd</TT> and <TT>-nokbd</TT>
+
+	<P>Enables or disables visible keyboard focus for
+	non-text widgets using <A
+	HREF="#Fl.visible_focus"><TT>Fl::visible_focus()</TT></A>.</LI>
+
+	<LI><TT>-name string</TT>
+
+	<P>Sets the window class using <A
+	HREF="Fl_Window.html#Fl_Window.xclass"><TT>Fl_Window::xclass()</TT></A>.</LI>
+
+	<LI><TT>-scheme string</TT>
+
+	<P>Sets the widget scheme using <A
+	HREF="#Fl.scheme"><TT>Fl::scheme()</TT></A>.</LI>
+
+	<LI><TT>-title string</TT>
+
+	<P>Sets the window title using <A
+	HREF="Fl_Window.html#Fl_Window.label"><TT>Fl_Window::label()</TT></A>.</LI>
+
+	<LI><TT>-tooltips</TT> and <TT>-notooltips</TT>
+
+	<P>Enables or disables tooltips using <A
+	HREF="Fl_Tooltip.html#Fl_Tooltip.enable"><TT>Fl_Tooltip::enable()</TT></A>.</LI>
+
 </UL>
 
 <P>The second form of <tt>Fl::args()</tt> is useful if your program does
-not have command line switches of its own.  It parses all the switches,
+not have command line switches of its own. It parses all the switches,
 and if any are not recognized it calls <tt>Fl::abort(Fl::help)</tt>.
 
 <P>A usage string is displayed if <tt>Fl::args()</tt> detects an invalid

@@ -1,12 +1,14 @@
 CHANGES IN FLTK 1.1.0
 
+	- Now pass correctly pass keyboard and mouse events to
+	  widget under tooltip as needed...
 	- Added new Fl::dnd_text_ops() methods to enable/disable
 	  drag-and-drop text operations.
 	- Fl_Input now supports clicking inside a selection to
 	  set the new text position when drag-and-drop is
 	  enabled.
 	- Added support of X resources for scheme, dnd_text_ops,
-	  and visible_focus...
+	  tooltips, and visible_focus...
 	- Fixed some case problems in includes for the MacOS X
 	  code.
 	- Fl_Widget::handle() returned 1 for FL_ENTER and
