@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_win32.cxx,v 1.33.2.37.2.20 2002/03/25 19:17:05 easysw Exp $"
+// "$Id: Fl_win32.cxx,v 1.33.2.37.2.21 2002/03/25 19:35:13 easysw Exp $"
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -776,7 +776,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 1;
 
   case WM_RENDERALLFORMATS:
-    i_own_selection = false;
+    fl_i_own_selection[1] = 0;
     // Windoze seems unhappy unless I do these two steps. Documentation
     // seems to vary on whether opening the clipboard is necessary or
     // is in fact wrong:
@@ -1156,5 +1156,5 @@ void Fl_Window::make_current() {
 }
 
 //
-// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.20 2002/03/25 19:17:05 easysw Exp $".
+// End of "$Id: Fl_win32.cxx,v 1.33.2.37.2.21 2002/03/25 19:35:13 easysw Exp $".
 //

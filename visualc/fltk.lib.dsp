@@ -223,10 +223,6 @@ SOURCE=..\src\fl_curve.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_cutpaste.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_Dial.cxx
 # End Source File
 # Begin Source File

@@ -262,6 +262,7 @@ DEP_CPP_FL_AS=\
 	"..\fl\fl_ask.h"\
 	"..\fl\fl_box.h"\
 	"..\fl\fl_button.h"\
+	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_input.h"\
@@ -561,23 +562,6 @@ DEP_CPP_FL_CUR=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\Fl_cutpaste.cxx
-DEP_CPP_FL_CUT=\
-	"..\fl\enumerations.h"\
-	"..\fl\fl.h"\
-	"..\fl\fl_export.h"\
-	"..\fl\fl_group.h"\
-	"..\fl\fl_widget.h"\
-	"..\fl\fl_window.h"\
-	"..\fl\mac.H"\
-	"..\fl\win32.h"\
-	"..\fl\x.h"\
-	"..\src\Fl_cutpaste_mac.cxx"\
-	"..\src\fl_cutpaste_win32.cxx"\
-	
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\Fl_Dial.cxx
 DEP_CPP_FL_DI=\
 	"..\fl\enumerations.h"\
@@ -622,7 +606,9 @@ DEP_CPP_FL_DN=\
 	"..\fl\mac.H"\
 	"..\fl\win32.h"\
 	"..\fl\x.h"\
+	"..\src\fl_dnd_mac.cxx"\
 	"..\src\fl_dnd_win32.cxx"\
+	"..\src\fl_dnd_x.cxx"\
 	".\config.h"\
 	
 # End Source File
@@ -881,6 +867,8 @@ DEP_CPP_FL_FO=\
 	"..\src\fl_font.h"\
 	"..\src\fl_font_mac.cxx"\
 	"..\src\fl_font_win32.cxx"\
+	"..\src\fl_font_x.cxx"\
+	"..\src\fl_font_xft.cxx"\
 	".\config.h"\
 	
 # End Source File
@@ -1659,6 +1647,9 @@ DEP_CPP_FL_SET=\
 	"..\src\fl_font.h"\
 	"..\src\fl_set_fonts_mac.cxx"\
 	"..\src\fl_set_fonts_win32.cxx"\
+	"..\src\fl_set_fonts_x.cxx"\
+	"..\src\fl_set_fonts_xft.cxx"\
+	".\config.h"\
 	
 # End Source File
 # Begin Source File
@@ -2041,6 +2032,7 @@ DEP_CPP_FL_X_=\
 	"..\fl\enumerations.h"\
 	"..\fl\filename.h"\
 	"..\fl\fl.h"\
+	"..\fl\fl_draw.h"\
 	"..\fl\fl_export.h"\
 	"..\fl\fl_group.h"\
 	"..\fl\fl_menu_.h"\
