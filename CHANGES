@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.0b9
 
+	- MacOS: cleaned up src/Fl_mac.cxx
+	- MacOS: fixed Fl::wait(0.0), fixed Cmd-Q handling
 	- Update CygWin support for Fl::add_fd().
 	- Update the plastic scheme to not override the default
 	  colors - move the color code to the MacOS-specific

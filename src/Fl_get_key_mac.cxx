@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_get_key_mac.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_get_key_mac.cxx,v 1.1.2.4 2002/01/03 08:08:21 matthiaswm Exp $"
 //
 // MacOS keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
@@ -77,8 +77,7 @@ static int fltk2mac(int fltk) {
 
 //: returns true, if that key was pressed during the last event
 int Fl::event_key(int k) {
-//++  return GetKeyState(fltk2mac(k))&~1;
-  return get_key(k); //++ find a faster way?!
+  return get_key(k);
 }
 
 #include <stdio.h>
@@ -100,5 +99,5 @@ int Fl::get_key(int k) {
 }
 
 //
-// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_get_key_mac.cxx,v 1.1.2.4 2002/01/03 08:08:21 matthiaswm Exp $".
 //

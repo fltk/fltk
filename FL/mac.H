@@ -1,5 +1,5 @@
 //
-// "$Id: mac.H,v 1.1.2.4 2002/01/01 15:11:28 easysw Exp $"
+// "$Id: mac.H,v 1.1.2.5 2002/01/03 08:08:21 matthiaswm Exp $"
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
@@ -63,23 +63,19 @@ inline void XDestroyRegion(Fl_Region r) {
 class Fl_X 
 {
 public:
-  Window xid;			// Mac WindowPtr
-  GWorldPtr other_xid;  // pointer for offscreen bitmaps (doublebuffer)
-  Fl_Window *w;			// FLTK window for 
+  Window xid;              // Mac WindowPtr
+  GWorldPtr other_xid;     // pointer for offscreen bitmaps (doublebuffer)
+  Fl_Window *w;            // FLTK window for 
   Fl_Region region;
-  Fl_Region subRegion;  // region for this specific subwindow
-  Fl_X *next;
-  Fl_X *xidChildren, *xidNext;
+  Fl_Region subRegion;     // region for this specific subwindow
+  Fl_X *next;              // linked tree to support subwindows
+  Fl_X *xidChildren, *xidNext; // more subwindow tree
   int wait_for_expose;
-  //+ int backbuffer_bad; 
   CursHandle cursor;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static void make(Fl_Window*);
-  static void MacGrowWindow(WindowPtr xid, const EventRecord &macevent);
-  static void MacDragWindow(WindowPtr xid, const EventRecord &macevent);
-  static int MacModifiers(const EventRecord &macevent, unsigned short prev);
   void flush();
 };
 
@@ -120,6 +116,6 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif // !FL_MAC_H
 
 //
-// End of "$Id: mac.H,v 1.1.2.4 2002/01/01 15:11:28 easysw Exp $".
+// End of "$Id: mac.H,v 1.1.2.5 2002/01/03 08:08:21 matthiaswm Exp $".
 //
 

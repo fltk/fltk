@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.7 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.8 2002/01/03 08:08:21 matthiaswm Exp $"
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
@@ -271,7 +271,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
       aglSetInteger( context, AGL_BUFFER_RECT, rect );
       aglEnable( context, AGL_BUFFER_RECT );
     }
-    aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); //++ Matt: this probably belongs only in create_gl_context
+    aglSetDrawable(context, GetWindowPort( fl_xid(w) ) ); 
     aglSetCurrentContext(context);
 #else
     glXMakeCurrent(fl_display, fl_xid(w), context);
@@ -309,5 +309,5 @@ void fl_delete_gl_context(GLContext context) {
 #endif
 
 //
-// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.7 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Gl_Choice.cxx,v 1.5.2.7.2.8 2002/01/03 08:08:21 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.8 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.9 2002/01/03 08:08:21 matthiaswm Exp $"
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
@@ -172,8 +172,8 @@ void Fl_Gl_Window::flush() {
   uchar save_valid = valid_;
 
 #ifdef __APPLE__
-  // matt: I have no idea hw expensive the following code is, but we need to reset the buffer rect after
-  // every window-reconfiguration, especially after window resizes.
+  // \todo Mac : matt: I have no idea how expensive the following code is, but we need to reset the buffer rect after
+  // every window-reconfiguration, especially after window resizes. aglUpdateContext(ctxt) may help here!
   if ( parent() ) { //: resize our GL buffer rectangle
     Rect wrect; GetWindowPortBounds( fl_xid(this), &wrect );
     GLint rect[] = { x(), wrect.bottom-h()-y(), w(), h() };
@@ -313,7 +313,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (W != w() || H != h()) {
     valid(0);
 #ifdef __APPLE__
-  if ( parent() ) { //: resize our GL buffer rectangle
+  if ( parent() ) { //: resize our GL buffer rectangle (see aglUpdateContext()
     Rect wrect; GetWindowPortBounds( fl_xid(this), &wrect );
     GLint rect[] = { X, wrect.bottom-h()-y(), W, H };
     aglSetInteger( context_, AGL_BUFFER_RECT, rect );
@@ -368,5 +368,5 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
 //
-// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.8 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Gl_Window.cxx,v 1.12.2.22.2.9 2002/01/03 08:08:21 matthiaswm Exp $".
 //

@@ -93,6 +93,7 @@ KNOWN MacFLTK BUGS
 	- Image transparency is not implemented.
 	- The 'shiny' demo needs work (flush/aglFlush).
 	- Threads are not implemented.
+	- OpenGL subwindow during window resize changes position
 
 
 TEST SUITE STATUS
@@ -127,14 +128,14 @@ OTHER STUFF
 
     Under MacOS X, all windows are double-buffered. Using
     Fl_Window has the same effect as using Fl_Double_Window on
-    other operating systems. However Fl_Overlay_Window uses one 
+    other operating systems. Fl_Overlay_Window however uses one 
     additional buffer for the overlay plane.
 
 
 FLTK 1.0.X FOR MAC
 
     FLTK 1.0.6 for MacOS 8.x and OS 9.x is in beta stage and can
-    be downloaded from http://www.matthiasm.com/fltk/mac.shtml.
+    be downloaded from http://www.matthiasm.com/flMac.html .
     The archive contains build files for Metrowerks CodeWarrior
     5 and 6.
 

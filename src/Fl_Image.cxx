@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image.cxx,v 1.5.2.3.2.13 2002/01/01 15:11:30 easysw Exp $"
+// "$Id: Fl_Image.cxx,v 1.5.2.3.2.14 2002/01/03 08:08:21 matthiaswm Exp $"
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
@@ -345,7 +345,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_copy_offscreen(X, Y, W, H, id, cx, cy);
   }
 #elif defined(__APPLE__)
-  //+ Need to implement masking/alpha blend!!!
+  // \todo Mac : alpha blending not yet implemented
   fl_copy_offscreen(X, Y, W, H, id, cx, cy);
 #else
   if (mask) {
@@ -378,5 +378,5 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
 
 
 //
-// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.13 2002/01/01 15:11:30 easysw Exp $".
+// End of "$Id: Fl_Image.cxx,v 1.5.2.3.2.14 2002/01/03 08:08:21 matthiaswm Exp $".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_visual.cxx,v 1.7.2.4.2.3 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_visual.cxx,v 1.7.2.4.2.4 2002/01/03 08:08:21 matthiaswm Exp $"
 //
 // Visual support for the Fast Light Tool Kit (FLTK).
 //
@@ -40,7 +40,7 @@ int Fl::visual(int flags) {
 }
 #elif defined(__APPLE__)
 
-//++ Matt: add support for visual flags
+// \todo Mac : need to implement Visual flags
 int Fl::visual(int flags) {
   (void)flags;
   return 1;
@@ -115,5 +115,5 @@ int Fl::visual(int flags) {
 #endif
 
 //
-// End of "$Id: Fl_visual.cxx,v 1.7.2.4.2.3 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_visual.cxx,v 1.7.2.4.2.4 2002/01/03 08:08:21 matthiaswm Exp $".
 //
