@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.7 2002/03/07 19:22:56 spitzak Exp $"
+// "$Id: Fl_Input_.cxx,v 1.21.2.11.2.8 2002/04/08 18:32:16 easysw Exp $"
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
@@ -696,6 +696,11 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
 
   case FL_PUSH:
     handle_mouse(X, Y, W, H, Fl::event_state(FL_SHIFT));
+
+    if (Fl::focus() != this) {
+      Fl::focus(this);
+      handle(FL_FOCUS);
+    }
     return 1;
 
   case FL_DRAG:
@@ -707,6 +712,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     copy(0);
     return 1;
 
+// MRS: FL_SELECTIONCLEAR is no longer used...
 //   case FL_SELECTIONCLEAR:
 //     minimal_update(mark_, position_);
 //     mark_ = position_;
@@ -858,5 +864,5 @@ Fl_Input_::~Fl_Input_() {
 }
 
 //
-// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.7 2002/03/07 19:22:56 spitzak Exp $".
+// End of "$Id: Fl_Input_.cxx,v 1.21.2.11.2.8 2002/04/08 18:32:16 easysw Exp $".
 //

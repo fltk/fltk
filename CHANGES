@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.0b13
 
+	- Fl_Output didn't take input focus when needed, so it
+	  was unable to support CTRL-C for copying text in the
+	  field and did not unhighlight selections when the
+	  widget lost focus.
 	- The fl_filename_name() function didn't handle a NULL
 	  input string.
 	- The input field used by the fl_input() and

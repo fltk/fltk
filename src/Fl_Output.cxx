@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Output.cxx,v 1.6.2.3.2.1 2002/01/01 15:11:31 easysw Exp $"
+// "$Id: Fl_Output.cxx,v 1.6.2.3.2.2 2002/04/08 18:32:16 easysw Exp $"
 //
 // Output widget for the Fast Light Tool Kit (FLTK).
 //
@@ -38,7 +38,10 @@ void Fl_Output::draw() {
 }
 
 int Fl_Output::handle(int event) {
-  if (event == FL_FOCUS) return 0;
+  if (event == FL_KEYBOARD && Fl::event_text()[0] == 0x03) {
+    // Handle CTRL-C for copy...
+    return copy(1);
+  }
   Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
   return Fl_Input_::handletext(event,
 	x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b),
@@ -46,5 +49,5 @@ int Fl_Output::handle(int event) {
 }
 
 //
-// End of "$Id: Fl_Output.cxx,v 1.6.2.3.2.1 2002/01/01 15:11:31 easysw Exp $".
+// End of "$Id: Fl_Output.cxx,v 1.6.2.3.2.2 2002/04/08 18:32:16 easysw Exp $".
 //
