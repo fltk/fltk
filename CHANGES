@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.0rc1
 
+	- Added threading support for MacOS X and Darwin.
 	- The filesystem list in the file chooser now works under
 	  MacOS X and Darwin.
 	- The fl_msg structure now contains all data passed to

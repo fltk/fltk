@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.21 2002/04/15 20:30:06 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.22 2002/04/16 15:49:06 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -93,7 +93,12 @@ extern Fl_Window* fl_xmousewin;
 enum { kEventClassFLTK = 'fltk' };
 enum { kEventFLTKBreakLoop = 1 };
 
- 
+// these pointers are set by the Fl::lock() function:
+static void nothing() {}
+void (*fl_lock_function)() = nothing;
+void (*fl_unlock_function)() = nothing;
+
+
 /**
  * \todo This funtion is not yet implemented!
  */
@@ -154,6 +159,9 @@ int fl_ready()
 static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   OSStatus ret = eventNotHandledErr;
+
+  fl_lock_function();
+
   switch ( GetEventClass( event ) )
   {
   case kEventClassMouse:
@@ -180,6 +188,9 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
   if ( ret == eventNotHandledErr )
     ret = CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
   QuitApplicationEventLoop();
+
+  fl_unlock_function();
+
   return ret;
 }
 
@@ -189,7 +200,11 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
  */
 static void timerProcCB( EventLoopTimerRef, void* )
 {
+  fl_lock_function();
+
   QuitApplicationEventLoop();
+
+  fl_unlock_function();
 }
 
 
@@ -199,9 +214,14 @@ static void timerProcCB( EventLoopTimerRef, void* )
 static void breakMacEventLoop()
 {
   EventRef breakEvent;
+
+  fl_lock_function();
+
   CreateEvent( 0, kEventClassFLTK, kEventFLTKBreakLoop, 0, kEventAttributeUserEvent, &breakEvent );
   PostEventToQueue( GetCurrentEventQueue(), breakEvent, kEventPriorityStandard );
   ReleaseEvent( breakEvent );
+
+  fl_unlock_function();
 }
 
 
@@ -251,10 +271,15 @@ static double do_queued_events( double time = 0.0 )
     ret = InstallEventHandler( target, dispatchHandler, 15, dispatchEvents, 0, 0L );
     ret = InstallEventLoopTimer( GetMainEventLoop(), 0, 0, NewEventLoopTimerUPP( timerProcCB ), 0, &timer );
   }
+
   if ( time > 0.0 ) 
   {
+    fl_unlock_function();
+
     SetEventLoopTimerNextFireTime( timer, time );
-    RunApplicationEventLoop(); // wil return after the previously set time
+    RunApplicationEventLoop(); // will return after the previously set time
+
+    fl_lock_function();
   }
   else
   {
@@ -266,11 +291,12 @@ static double do_queued_events( double time = 0.0 )
   }
   
 #if CONSOLIDATE_MOTION
-    if (send_motion && send_motion == fl_xmousewin) {
-      send_motion = 0;
-      Fl::handle(FL_MOVE, fl_xmousewin);
-    }
+  if (send_motion && send_motion == fl_xmousewin) {
+    send_motion = 0;
+    Fl::handle(FL_MOVE, fl_xmousewin);
+  }
 #endif
+
   return time;
 }
 
@@ -294,13 +320,20 @@ double fl_wait( double time )
  */
 static OSErr QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* reply, UInt32 refcon )
 {
+  fl_lock_function();
+
   while ( Fl_X::first ) {
     Fl_X *x = Fl_X::first;
     Fl::handle( FL_CLOSE, x->w );
-    if ( Fl_X::first == x )
+    if ( Fl_X::first == x ) {
+      fl_unlock_function();
       return noErr; // FLTK has not close all windows, so we return to the main program now
+    }
   }
   ExitToShell();
+
+  fl_unlock_function();
+
   return noErr;
 }
 
@@ -318,6 +351,8 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
   Rect currentBounds, originalBounds;
   WindowClass winClass;
   static Fl_Window *activeWindow = 0;
+  
+  fl_lock_function();
   
   switch ( kind )
   {
@@ -369,7 +404,9 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
     ret = noErr; // returning noErr tells Carbon to stop following up on this event
     break;
   }
-  
+
+  fl_unlock_function();
+
   return ret;
 }
 
@@ -382,6 +419,9 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
 {
   Fl_Window *window = (Fl_Window*)userData;
   EventMouseWheelAxis axis;
+
+  fl_lock_function();
+  
   GetEventParameter( event, kEventParamMouseWheelAxis, typeMouseWheelAxis, NULL, sizeof(EventMouseWheelAxis), NULL, &axis );
   long delta;
   GetEventParameter( event, kEventParamMouseWheelDelta, typeLongInteger, NULL, sizeof(long), NULL, &delta );
@@ -395,7 +435,14 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
     Fl::e_dy = -delta;
     if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
   }
-  else return eventNotHandledErr;
+  else {
+    fl_unlock_function();
+
+    return eventNotHandledErr;
+  }
+
+  fl_unlock_function();
+  
   return noErr;
 }
 
@@ -421,6 +468,9 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
 {
   static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
   static int px, py;
+
+  fl_lock_function();
+  
   fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
   Point pos;
@@ -437,8 +487,10 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   {
   case kEventMouseDown:
     part = FindWindow( pos, &tempXid );
-    if ( part != inContent )
+    if ( part != inContent ) {
+      fl_unlock_function();
       return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+    }
     if ( !IsWindowActive( xid ) )
       CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
     // normal handling of mouse-down follows
@@ -479,6 +531,9 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     Fl::handle( sendEvent, window );
     break;
   }
+
+  fl_unlock_function();
+  
   return noErr;
 }
 
@@ -528,6 +583,9 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
   Fl_Window *window = (Fl_Window*)userData;
   UInt32 mods;
   static UInt32 prevMods = 0xffffffff;
+
+  fl_lock_function();
+  
   GetEventParameter( event, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &mods );
   if ( prevMods == 0xffffffff ) prevMods = mods;
   UInt32 keyCode;
@@ -572,8 +630,15 @@ pascal OSStatus carbonKeyboardHandler( EventHandlerCallRef nextHandler, EventRef
     break; }
   }
   while (window->parent()) window = window->window();
-  if (sendEvent && Fl::handle(sendEvent,window)) return noErr; // return noErr if FLTK handled the event
-  return CallNextEventHandler( nextHandler, event );;
+  if (sendEvent && Fl::handle(sendEvent,window)) {
+    fl_unlock_function();
+  
+    return noErr; // return noErr if FLTK handled the event
+  } else {
+    fl_unlock_function();
+  
+    return CallNextEventHandler( nextHandler, event );;
+  }
 }
 
 
@@ -1364,6 +1429,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.21 2002/04/15 20:30:06 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.22 2002/04/16 15:49:06 easysw Exp $".
 //
 

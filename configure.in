@@ -1,7 +1,7 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id: configure.in,v 1.33.2.31.2.59 2002/04/10 16:26:33 easysw Exp $"
+dnl "$Id: configure.in,v 1.33.2.31.2.60 2002/04/16 15:49:06 easysw Exp $"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
@@ -360,6 +360,11 @@ case $uname in
         # MacOS X uses Carbon for graphics...
         LIBS="$LIBS -framework Carbon -framework ApplicationServices"
 
+	if test $have_pthread = yes; then
+	    AC_DEFINE(HAVE_PTHREAD)
+	    THREADS="threads"
+	fi
+
 	if test x$enable_gl != xno; then
             AC_DEFINE(HAVE_GL)
             AC_DEFINE(HAVE_GL_GLU_H)
@@ -712,5 +717,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id: configure.in,v 1.33.2.31.2.59 2002/04/10 16:26:33 easysw Exp $".
+dnl End of "$Id: configure.in,v 1.33.2.31.2.60 2002/04/16 15:49:06 easysw Exp $".
 dnl
