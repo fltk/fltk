@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.6 2000/02/21 10:29:58 bill Exp $"
+// "$Id: Fl_Input.cxx,v 1.10.2.7 2000/02/22 00:56:53 bill Exp $"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -62,32 +62,26 @@ int Fl_Input::handle_key() {
 
   char ascii = Fl::event_text()[0];
 
-  // Insert characters into numeric fields after checking for legality:
-  if (type() == FL_FLOAT_INPUT) {
+  int del;
+  if (Fl::compose(del)) {
 
-    // This could be improved to make sure characters are only inserted
-    // at legal positions...
-    if (ascii && strchr("0123456789.eE+-", ascii))
-      return replace(position(), mark(), &ascii, 1);
-
-  } else if (type() == FL_INT_INPUT) {
-
-    // Somewhat more complicated so that "0x12ab" hex can be typed
-    if (!position() && (ascii == '+' || ascii == '-')
-	|| (ascii >= '0' && ascii <= '9')
-	|| (position()==1 && index(0)=='0' && (ascii=='x' || ascii == 'X'))
-	|| (position()>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
-	    && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')))
-      return replace(position(), mark(), &ascii, 1);
-
-  } else {
-    // normal input fields use compose processing:
-    int del;
-    if (Fl::compose(del)) {
-      replace(position(), del ? position()-del : mark(),
-	      Fl::event_text(), Fl::event_length());
+    // Insert characters into numeric fields after checking for legality:
+    if (type() == FL_FLOAT_INPUT || type() == FL_INT_INPUT) {
+      Fl::compose_reset(); // ignore any foreign letters...
+      // This is complex to allow "0xff12" hex to be typed:
+      if (!position() && (ascii == '+' || ascii == '-') ||
+	  (ascii >= '0' && ascii <= '9') ||
+	  (position()==1 && index(0)=='0' && (ascii=='x' || ascii == 'X')) ||
+	  (position()>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
+	   && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')) ||
+	  type()==FL_FLOAT_INPUT && ascii && strchr(".eE+-", ascii))
+	replace(position(), mark(), &ascii, 1);
       return 1;
     }
+
+    replace(position(), del ? position()-del : mark(),
+	    Fl::event_text(), Fl::event_length());
+    return 1;
   }
 
   switch (Fl::event_key()) {
@@ -259,5 +253,5 @@ Fl_Input::Fl_Input(int x, int y, int w, int h, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.6 2000/02/21 10:29:58 bill Exp $".
+// End of "$Id: Fl_Input.cxx,v 1.10.2.7 2000/02/22 00:56:53 bill Exp $".
 //
