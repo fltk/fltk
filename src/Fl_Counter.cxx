@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.11 2002/11/19 16:37:34 easysw Exp $"
+// "$Id: Fl_Counter.cxx,v 1.8.2.3.2.12 2002/11/25 16:31:20 easysw Exp $"
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
@@ -137,7 +137,7 @@ int Fl_Counter::handle(int event) {
     i = calc_mouseobj();
     if (i != mouseobj) {
       Fl::remove_timeout(repeat_callback, this);
-      mouseobj = (short)i;
+      mouseobj = (uchar)i;
       if (i) Fl::add_timeout(INITIALREPEAT, repeat_callback, this);
       increment_cb();
       redraw();
@@ -188,5 +188,5 @@ Fl_Counter::Fl_Counter(int X, int Y, int W, int H, const char* l)
 }
 
 //
-// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.11 2002/11/19 16:37:34 easysw Exp $".
+// End of "$Id: Fl_Counter.cxx,v 1.8.2.3.2.12 2002/11/25 16:31:20 easysw Exp $".
 //
