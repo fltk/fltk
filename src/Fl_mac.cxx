@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_mac.cxx,v 1.1.2.23 2002/05/25 13:38:24 easysw Exp $"
+// "$Id: Fl_mac.cxx,v 1.1.2.24 2002/06/03 16:09:27 easysw Exp $"
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -77,12 +77,11 @@ Fl_Window *Fl_Window::current_;
 EventRef fl_os_event;		// last (mouse) event
 
 // forward declarations of variables in this file
-static unsigned short macKeyLookUp[];
 static Fl_Window* resize_from_system;
 static CursPtr default_cursor_ptr;
 static Cursor default_cursor;
 static WindowRef fl_os_capture = 0; // the dispatch handler will redirect mose move and drag events to these windows
- 
+
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
@@ -90,6 +89,37 @@ extern Fl_Window* fl_xmousewin;
 
 enum { kEventClassFLTK = 'fltk' };
 enum { kEventFLTKBreakLoop = 1 };
+
+/**
+* Mac keyboard lookup table
+ */
+static unsigned short macKeyLookUp[128] =
+{
+    'a', 's', 'd', 'f', 'h', 'g', 'z', 'x',
+    'c', 'v', 0/*ISO extra (u-umlaut?)*/, 'b', 'q', 'w', 'e', 'r',
+
+    'y', 't', '1', '2', '3', '4', '6', '5',
+    '=', '9', '7', '-', '8', '0', ']', 'o',
+
+    'u', '[', 'i', 'p', FL_Enter, 'l', 'j', '\'',
+    'k', ';', '\\', ',', '/', 'n', 'm', '.',
+
+    FL_Tab, ' ', '`', FL_BackSpace, 0, FL_Escape, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+
+    0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
+    FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0,
+
+    0, FL_KP+'=', FL_KP+'0', FL_KP+'1', FL_KP+'2', FL_KP+'3', FL_KP+'4', FL_KP+'5',
+    FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0,
+
+    FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11,
+    0, 0, FL_Print, FL_Scroll_Lock, 0, FL_F+10, 0, FL_F+12,
+
+    0, FL_Pause, FL_Help, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End,
+    FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0,
+};
+
 
 // these pointers are set by the Fl::lock() function:
 static void nothing() {}
@@ -724,37 +754,6 @@ void Fl::get_mouse(int &x, int &y)
   x = loc.h;
   y = loc.v;
 }
-
-
-/**
- * Mac keyboard lookup table
- */
-static unsigned short macKeyLookUp[128] = 
-{
- 'a', 's', 'd', 'f', 'h', 'g', 'z', 'x', 
- 'c', 'v', 0/*ISO extra (u-umlaut?)*/, 'b', 'q', 'w', 'e', 'r', 
- 
- 'y', 't', '1', '2', '3', '4', '6', '5', 
- '=', '9', '7', '-', '8', '0', ']', 'o', 
- 
- 'u', '[', 'i', 'p', FL_Enter, 'l', 'j', '\'', 
- 'k', ';', '\\', ',', '/', 'n', 'm', '.', 
- 
- FL_Tab, ' ', '`', FL_BackSpace, 0, FL_Escape, 0, 0, 
- 0, 0, 0, 0, 0, 0, 0, 0, 
- 
- 0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
- FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0, 
- 
- 0, FL_KP+'=', FL_KP+'0', FL_KP+'1', FL_KP+'2', FL_KP+'3', FL_KP+'4', FL_KP+'5', 
- FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0, 
- 
- FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11, 
- 0, 0, FL_Print, FL_Scroll_Lock, 0, FL_F+10, 0, FL_F+12, 
- 
- 0, FL_Pause, FL_Help, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End, 
- FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0, 
-};
 
 
 /**
@@ -1427,6 +1426,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 
 //
-// End of "$Id: Fl_mac.cxx,v 1.1.2.23 2002/05/25 13:38:24 easysw Exp $".
+// End of "$Id: Fl_mac.cxx,v 1.1.2.24 2002/06/03 16:09:27 easysw Exp $".
 //
 
