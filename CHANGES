@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692)
+	- Fl_Multiline_Input now scrolls the full height of the
+	  widget instead of 5 lines when the user presses PageUp
+	  or PageDown (STR #727)
 	- CMake build fixes (STR #724)
 	- Fl_Browser::swap() didn't handle redraws properly when
 	  the swapped lines had different heights (STR #729)

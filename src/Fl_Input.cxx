@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input.cxx,v 1.10.2.15.2.19 2004/04/11 04:38:57 easysw Exp $"
+// "$Id$"
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
@@ -108,13 +108,15 @@ int Fl_Input::handle_key() {
   case FL_Right:
     ascii = ctrl('F'); break;
   case FL_Page_Up:
-    repeat_num=5; //temporary hack
-                  //TODO: find number of lines in window and use it instead 5
+    fl_font(textfont(),textsize()); //ensure current font is set to ours
+    repeat_num=h()/fl_height(); // number of lines to scroll
+    if (!repeat_num) repeat_num=1;
   case FL_Up:
     ascii = ctrl('P'); break;
   case FL_Page_Down:
-    repeat_num=5; //temporary hack
-                  //TODO: find number of lines in window and use it instead 5
+    fl_font(textfont(),textsize());
+    repeat_num=h()/fl_height();
+    if (!repeat_num) repeat_num=1;
   case FL_Down:
     ascii = ctrl('N'); break;
   case FL_Home:
@@ -202,18 +204,20 @@ int Fl_Input::handle_key() {
     return copy_cuts();
   case ctrl('N'):
     i = position();
+    if (line_end(i) >= size()) return NORMAL_INPUT_MOVE;
     while (repeat_num--) {  
       i = line_end(i);
-      if (i >= size()) return NORMAL_INPUT_MOVE;
+      if (i >= size()) break;
       i++;
     }
     shift_up_down_position(i);
     return 1;
   case ctrl('P'):
     i = position();
+    if (!line_start(i)) return NORMAL_INPUT_MOVE;
     while(repeat_num--) {
       i = line_start(i);
-      if (!i) return NORMAL_INPUT_MOVE;
+      if (!i) break;
       i--;
     }
     shift_up_down_position(line_start(i));
@@ -414,5 +418,5 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 }
 
 //
-// End of "$Id: Fl_Input.cxx,v 1.10.2.15.2.19 2004/04/11 04:38:57 easysw Exp $".
+// End of "$Id$".
 //
