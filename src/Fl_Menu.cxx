@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.18 2002/10/02 20:09:12 easysw Exp $"
+// "$Id: Fl_Menu.cxx,v 1.18.2.12.2.19 2002/10/11 17:03:47 easysw Exp $"
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
@@ -199,11 +199,15 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
       fl_draw_box(FL_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
 	fl_color(labelcolor_);
-	int xu = x + W/3 + 3;
-	int yu = y + d + W - 4;
-	fl_line(xu - 2, yu - 2, xu, yu,     xu + 5, yu - 5);
-	fl_line(xu - 2, yu - 3, xu, yu - 1, xu + 5, yu - 6);
-	fl_line(xu - 2, yu - 4, xu, yu - 2, xu + 5, yu - 7);
+	int tx = x + 5;
+	int tw = W - 6;
+	int d1 = tw/3;
+	int d2 = tw-d1;
+	int ty = y + d + (W+d2)/2-d1-2;
+	for (int n = 0; n < 3; n++, ty++) {
+	  fl_line(tx, ty, tx+d1, ty+d1);
+	  fl_line(tx+d1, ty+d1, tx+tw-1, ty+d1-d2+1);
+	}
       }
     }
     x += W + 3;
@@ -776,5 +780,5 @@ const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
 }
 
 //
-// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.18 2002/10/02 20:09:12 easysw Exp $".
+// End of "$Id: Fl_Menu.cxx,v 1.18.2.12.2.19 2002/10/11 17:03:47 easysw Exp $".
 //
