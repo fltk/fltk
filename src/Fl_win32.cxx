@@ -587,7 +587,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
 
   case WM_PAINT: {
-    Fl_Region R;
+    Fl_Region R, sysR = CreateRectRgn(0,0,0,0);
+    GetUpdateRgn(hWnd,sysR,0);
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
     if (!i->region && window->damage()) {
@@ -617,7 +618,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     i->flush();
     fl_restore_pen();
     if (window->type() == FL_DOUBLE_WINDOW) ValidateRgn(hWnd,0);
-    else ValidateRgn(hWnd,i->region);
+    else ValidateRgn(hWnd,sysR);
     window->clear_damage();
     } return 0;
 
