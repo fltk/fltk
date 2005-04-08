@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0102 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public
@@ -28,8 +28,7 @@ Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
 Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {writePrefs();
-  delete myWindow;} {selected
-  }
+  delete myWindow;} {}
 } 
 
 Function {} {open return_type int
@@ -37,7 +36,7 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {394 64 298 311} visible
+    xywh {394 64 298 311} type Double visible
   } {
     Fl_Button {} {
       label Cancel
@@ -60,11 +59,11 @@ Function {} {open return_type int
       Fl_Choice wAmPm {open
         xywh {75 55 55 20} down_box BORDER_BOX
       } {
-        menuitem {} {
+        MenuItem {} {
           label {a.m.}
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label {p.m.}
           xywh {0 0 100 20}
         }
@@ -73,34 +72,38 @@ Function {} {open return_type int
         label {Wear:} open
         xywh {25 100 105 20} down_box BORDER_BOX align 5
       } {
-        menuitem {} {
+        MenuItem {} {
           label shoes
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label sandals
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label {flip flops}
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label {bare foot}
           xywh {0 0 100 20}
         }
       }
-      Fl_Round_Button wLeft {
-        label {left side}
-        xywh {35 120 95 25} down_box ROUND_DOWN_BOX
-      }
-      Fl_Round_Button wRight {
-        label {right side}
-        xywh {35 140 95 25} down_box ROUND_DOWN_BOX
-      }
-      Fl_Box {} {
-        label {of the bed}
-        xywh {38 160 95 20}
+      Fl_Group {} {open
+        xywh {35 120 98 60}
+      } {
+        Fl_Round_Button wLeft {
+          label {left side} selected
+          xywh {35 120 95 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button wRight {
+          label {right side} selected
+          xywh {35 140 95 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Box {} {
+          label {of the bed} selected
+          xywh {38 160 95 20}
+        }
       }
       Fl_Check_Button wShower {
         label shower
@@ -123,15 +126,15 @@ Function {} {open return_type int
         label {Drink:} open
         xywh {165 50 105 20} down_box BORDER_BOX align 5
       } {
-        menuitem {} {
+        MenuItem {} {
           label coffee
           xywh {10 10 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label tea
           xywh {10 10 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label juice
           xywh {10 10 100 20}
         }
@@ -144,19 +147,19 @@ Function {} {open return_type int
         label {Bread:} open
         xywh {165 110 105 20} down_box BORDER_BOX align 5
       } {
-        menuitem {} {
+        MenuItem {} {
           label wheat
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label white
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label rye
           xywh {0 0 100 20}
         }
-        menuitem {} {
+        MenuItem {} {
           label {sour doh}
           xywh {0 0 100 20}
         }
