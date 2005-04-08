@@ -80,7 +80,7 @@ static void screen_init() {
     if (num_screens >= 16) break;
   }
 }
-#elif defined(HAVE_XINERAMA)
+#elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
 
 // Screen data...
@@ -143,7 +143,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
       }
     }
   }
-#elif defined(HAVE_XINERAMA)
+#elif HAVE_XINERAMA
   if (num_screens > 0) {
     int i;
 
@@ -188,7 +188,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
     h = screens[n].height;
     return;
   }
-#elif defined(HAVE_XINERAMA)
+#elif HAVE_XINERAMA
   if (num_screens > 0 && n >= 0 && n < num_screens) {
     x = screens[n].x_org;
     y = screens[n].y_org;
