@@ -30,6 +30,8 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+#include <stdlib.h>
+#include "flstring.h"
 
 void Fl_Window::_Fl_Window() {
   type(FL_WINDOW);
@@ -106,6 +108,17 @@ void Fl_Window::draw() {
 }
 
 void Fl_Window::label(const char *name) {label(name, iconlabel());}
+
+void Fl_Window::copy_label(const char *a) {
+  if (flags() & COPIED_LABEL) {
+    free((void *)label());
+    clear_flag(COPIED_LABEL);
+  }
+  if (a) a = strdup(a);
+  label(a, iconlabel());
+  set_flag(COPIED_LABEL);
+}
+
 
 void Fl_Window::iconlabel(const char *iname) {
   uchar saveflags = flags();

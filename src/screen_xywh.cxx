@@ -35,11 +35,10 @@
 static int num_screens = 0;
 
 #ifdef WIN32
-
-#if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
-#define COMPILE_MULTIMON_STUBS
-#include <multimon.h>
-#endif
+#  if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
+#    define COMPILE_MULTIMON_STUBS
+#    include <multimon.h>
+#  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
 static RECT screens[16];
 

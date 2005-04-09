@@ -95,6 +95,7 @@ public:
   void label(const char*);
   void iconlabel(const char*);
   void label(const char* label, const char* iconlabel);
+  void copy_label(const char* a);
   const char* xclass() const	{return xclass_;}
   void xclass(const char* c)	{xclass_ = c;}
   const void* icon() const	{return icon_;}
