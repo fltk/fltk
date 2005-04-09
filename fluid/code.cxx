@@ -254,14 +254,24 @@ static Fl_Type* write_code(Fl_Type* p) {
     // Handle widget classes specially
     for (q = p->next; q && q->level > p->level;) {
       if (strcmp(q->type_name(), "Function")) q = write_code(q);
-      else q = q->next;
+      else {
+        int level = q->level;
+	do {
+	  q = q->next;
+	} while (q && q->level > level);
+      }
     }
 
     p->write_code2();
 
     for (q = p->next; q && q->level > p->level;) {
       if (!strcmp(q->type_name(), "Function")) q = write_code(q);
-      else q = q->next;
+      else {
+        int level = q->level;
+	do {
+	  q = q->next;
+	} while (q && q->level > level);
+      }
     }
 
     write_h("};\n");

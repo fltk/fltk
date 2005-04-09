@@ -1342,7 +1342,7 @@ void Fl_Widget_Class_Type::write_code1() {
     write_h("  void _%s();\n", name());
     write_h("public:\n");
     write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
-    write_h("  %s(int W, int H, const char *L = 0);\n");
+    write_h("  %s(int W, int H, const char *L = 0);\n", name());
 
     write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
     write_c("  : %s(X, Y, W, H, L) {\n", c);
