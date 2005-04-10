@@ -721,7 +721,7 @@ void Fl_Type::move_before(Fl_Type* g) {
   l->next = g;
   if (prev) prev->next = this; else Fl_Type::first = this;
   g->prev = l;
-  if (parent) parent->move_child(this,g);
+  if (parent && is_widget()) parent->move_child(this,g);
   widget_browser->redraw();
 }
 
