@@ -69,13 +69,13 @@ int strncasecmp(const char*,const char*,int);
 char *strdup(const char*);
 #  endif
 
-#  if !HAVE_SNPRINTF
 FL_EXPORT extern int fl_snprintf(char *, size_t, const char *, ...);
+#  if !HAVE_SNPRINTF
 #    define snprintf fl_snprintf
 #  endif /* !HAVE_SNPRINTF */
 
-#  if !HAVE_VSNPRINTF
 FL_EXPORT extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
+#  if !HAVE_VSNPRINTF
 #    define vsnprintf fl_vsnprintf
 #  endif /* !HAVE_VSNPRINTF */
 
@@ -84,13 +84,13 @@ FL_EXPORT extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
  * that work the way strncpy() and strncat() *should* have worked.
  */
 
-#  if !HAVE_STRLCAT
 FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t);
+#  if !HAVE_STRLCAT
 #    define strlcat fl_strlcat
 #  endif /* !HAVE_STRLCAT */
 
-#  if !HAVE_STRLCPY
 FL_EXPORT extern size_t fl_strlcpy(char *, const char *, size_t);
+#  if !HAVE_STRLCPY
 #    define strlcpy fl_strlcpy
 #  endif /* !HAVE_STRLCPY */
 

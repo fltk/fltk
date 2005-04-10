@@ -25,7 +25,7 @@
 
 #include "flstring.h"
 
-#  if !HAVE_STRLCAT
+
 /*
  * 'fl_strlcat()' - Safely concatenate two strings.
  */
@@ -64,9 +64,8 @@ fl_strlcat(char       *dst,	/* O - Destination string */
 
   return (dstlen + srclen);
 }
-#  endif /* !HAVE_STRLCAT */
 
-#  if !HAVE_STRLCPY
+
 /*
  * 'fl_strlcpy()' - Safely copy two strings.
  */
@@ -97,7 +96,6 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
 
   return (srclen);
 }
-#  endif /* !HAVE_STRLCPY */
 
 
 /*
