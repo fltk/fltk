@@ -362,7 +362,8 @@ J1:
       }
       item_draw(l, X-hposition_, yy+Y, W+hposition_, hh);
       if (l == selection_ && Fl::focus() == this) {
-	draw_focus(FL_NO_BOX, X, yy+Y+1, W, hh);
+	draw_box(FL_BORDER_FRAME, X, yy+Y, W, hh, color());
+	draw_focus(FL_NO_BOX, X, yy+Y, W, hh+1);
       }
       int ww = item_width(l);
       if (ww > max_width) {max_width = ww; max_width_item = l;}
