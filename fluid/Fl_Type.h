@@ -671,17 +671,23 @@ void delete_all(int selected_only=0);
 void selection_changed(Fl_Type* new_current);
 
 // file operations:
+#  ifdef __GNUC__
+#    define __fl_attr(x) __attribute__ (x)
+#  else
+#    define __fl_attr(x)
+#  endif // __GNUC__
+
 void write_word(const char *);
-void write_string(const char *,...);
+void write_string(const char *,...) __fl_attr((__format__ (__printf__, 1, 2)));
 int write_file(const char *, int selected_only = 0);
 int write_code(const char *cfile, const char *hfile);
 int write_strings(const char *sfile);
 
-int write_declare(const char *, ...);
+int write_declare(const char *, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 int is_id(char);
 const char* unique_id(void* o, const char*, const char*, const char*);
-void write_c(const char*, ...);
-void write_h(const char*, ...);
+void write_c(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
+void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_cstring(const char *);
 void write_cstring(const char *,int length);
 void write_indent(int n);
