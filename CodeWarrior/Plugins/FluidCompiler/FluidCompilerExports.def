@@ -1,9 +1,0 @@
-EXPORTS
-
-main
-CWPlugin_GetDropInFlags
-CWPlugin_GetDropInName
-CWPlugin_GetDisplayName
-CWPlugin_GetPanelList
-CWPlugin_GetTargetList
-CWPlugin_GetDefaultMappingList
