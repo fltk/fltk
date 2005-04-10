@@ -240,6 +240,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   : Fl_Menu_Window(X, Y, Wp, Hp, 0)
 {
   int scr_x, scr_y, scr_w, scr_h;
+  int tx = X, ty = Y;
 
   Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
@@ -310,7 +311,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (t) {
     int dy = menubar_title ? Fl::box_dy(button->box())+1 : 2;
     int ht = menubar_title ? button->h()-dy*2 : Htitle+2*BW+3;
-    title = new menutitle(X, Y-ht-dy, Wtitle, ht, t);
+    title = new menutitle(tx, ty-ht-dy, Wtitle, ht, t);
   } else
     title = 0;
 }
