@@ -61,7 +61,7 @@ class CodeEditor : public Fl_Text_Editor {
                            int /*nRestyled*/, const char * /*deletedText*/,
                            void *cbArg);
 
-  static int CodeEditor::auto_indent(int, CodeEditor* e);
+  static int auto_indent(int, CodeEditor* e);
 
   public:
 
