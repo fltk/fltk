@@ -37,8 +37,8 @@ int main(int, char **) {
   fl_alert("Quantum fluctuations in the space-time continuum detected, "
 	   "you have %g seconds to comply.", 10.0);
 
-  printf("fl_ask returned %d\n",
-    fl_ask("Do you really want to %s?", "continue"));
+  printf("fl_choice returned %d\n",
+    fl_choice("Do you really want to %s?", "No", "Yes", 0L, "continue"));
 
   printf("fl_choice returned %d\n",
     fl_choice("Choose one of the following:","choice0","choice1","choice2"));

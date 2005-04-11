@@ -645,7 +645,7 @@ fl_add_free(int t,double x,double y,double w,double h,const char* l,
 #include "fl_ask.H"
 #include "fl_show_colormap.H"
 
-inline int fl_show_question(const char* c, int = 0) {return fl_ask(c);}
+inline int fl_show_question(const char* c, int = 0) {return fl_choice(c,"No","Yes",0L);}
 FL_EXPORT void fl_show_message(const char *,const char *,const char *);
 FL_EXPORT void fl_show_alert(const char *,const char *,const char *,int=0);
 FL_EXPORT int fl_show_question(const char *,const char *,const char *);

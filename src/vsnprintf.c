@@ -97,7 +97,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  if ((format - bufformat + 1) > sizeof(tformat) ||
 	      (width + 2) > sizeof(temp)) break;
 
-	  strncpy(tformat, bufformat, format - bufformat);
+	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
 	  tformat[format - bufformat] = '\0';
 
 	  sprintf(temp, tformat, va_arg(ap, double));
@@ -106,7 +106,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
           if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, bufend - bufptr);
+	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
 	      break;
 	    } else {
@@ -127,7 +127,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  if ((format - bufformat + 1) > sizeof(tformat) ||
 	      (width + 2) > sizeof(temp)) break;
 
-	  strncpy(tformat, bufformat, format - bufformat);
+	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
 	  tformat[format - bufformat] = '\0';
 
 	  sprintf(temp, tformat, va_arg(ap, int));
@@ -136,7 +136,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
 	  if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, bufend - bufptr);
+	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
 	      break;
 	    } else {
@@ -150,7 +150,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  if ((format - bufformat + 1) > sizeof(tformat) ||
 	      (width + 2) > sizeof(temp)) break;
 
-	  strncpy(tformat, bufformat, format - bufformat);
+	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
 	  tformat[format - bufformat] = '\0';
 
 	  sprintf(temp, tformat, va_arg(ap, void *));
@@ -159,7 +159,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
 	  if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, bufend - bufptr);
+	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
 	      break;
 	    } else {
@@ -177,7 +177,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	    else {
 	      if ((bufptr + width) > bufend) width = bufend - bufptr;
 
-	      memcpy(bufptr, va_arg(ap, char *), width);
+	      memcpy(bufptr, va_arg(ap, char *), (size_t)width);
 	      bufptr += width;
 	    }
 	  }
@@ -197,11 +197,11 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
             if (slen > width) slen = width;
 
 	    if (sign == '-') {
-	      strncpy(bufptr, s, slen);
-	      memset(bufptr + slen, ' ', width - slen);
+	      strncpy(bufptr, s, (size_t)slen);
+	      memset(bufptr + slen, ' ', (size_t)(width - slen));
 	    } else {
-	      memset(bufptr, ' ', width - slen);
-	      strncpy(bufptr + width - slen, s, slen);
+	      memset(bufptr, ' ', (size_t)(width - slen));
+	      strncpy(bufptr + width - slen, s, (size_t)slen);
 	    }
 
 	    bufptr += width;
@@ -212,7 +212,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  if ((format - bufformat + 1) > sizeof(tformat) ||
 	      (width + 2) > sizeof(temp)) break;
 
-	  strncpy(tformat, bufformat, format - bufformat);
+	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
 	  tformat[format - bufformat] = '\0';
 
 	  sprintf(temp, tformat, va_arg(ap, int));
@@ -221,7 +221,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
 	  if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, bufend - bufptr);
+	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
 	      break;
 	    } else {

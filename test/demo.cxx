@@ -158,7 +158,7 @@ int numb2but(int inumb, int maxnumb)
 /* Pushing and Popping menus */
 
 char stack[64][32];
-char stsize = 0;
+int stsize = 0;
 
 void push_menu(const char* nnn)
 /* Pushes a menu to be visible */

@@ -221,7 +221,7 @@ void evaluateboard(node *n,int print) {
 
   if (!n->who) tb = b;	// move was black's
   else {
-    for (int i=0; i<45; i++) flipboard[44-i] = flip[b[i]];
+    for (int i=0; i<45; i++) flipboard[44-i] = flip[(int)b[i]];
     tb = flipboard;
   }
 
@@ -413,7 +413,7 @@ void movepiece(node* f, int i, node* jnode) {
   static char jumphappened;
 
   for (int k=0; k<4; k++) {
-    int direction = offset[b[i]][k];
+    int direction = offset[(int)b[i]][k];
     if (!direction) break;
     int j = i+direction;
     if (b[j] == EMPTY) {

@@ -154,7 +154,7 @@ hash(Config config)
   value = 0;
   for (i = 0; i < HEIGHT; i++) {
     for (j = 0; j < WIDTH; j++) {
-      value = value + convert[config[i][j]];
+      value = value + convert[(int)config[i][j]];
       value *= 6;
     }
   }
@@ -521,8 +521,8 @@ addConfig(Config config, struct puzzle *back)
 
       for (i = 0; i < WIDTH; i++) {
         for (j = 0; j < HEIGHT; j++) {
-          if (convert[config[j][i]] !=
-            convert[newpiece->pieces[j][i]])
+          if (convert[(int)config[j][i]] !=
+            convert[(int)newpiece->pieces[j][i]])
             goto nomatch;
         }
       }

@@ -185,7 +185,7 @@ void fl_show_alert(const char *q1,const char *q2,const char *q3,int) {
 }
 
 int fl_show_question(const char *q1,const char *q2,const char *q3) {
-  return fl_ask("%s\n%s\n%s", q1?q1:"", q2?q2:"", q3?q3:"");
+  return fl_choice("%s\n%s\n%s", "No", "Yes", 0L, q1?q1:"", q2?q2:"", q3?q3:"");
 }
 
 int fl_show_choice(

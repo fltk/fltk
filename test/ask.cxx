@@ -51,7 +51,7 @@ void rename_me(Fl_Widget*o) {
 }
 
 void window_callback(Fl_Widget*, void*) {
-  if (!fl_ask("Are you sure you want to quit?")) return;
+  if (!fl_choice("Are you sure you want to quit?", "Cancel", "Quit", 0L)) return;
   exit(0);
 }
 
