@@ -47,8 +47,8 @@
 #include "function_panel.h"
 #include "template_panel.h"
 #if !defined(WIN32) || defined(__CYGWIN__)
-#  include "print_panel.h"
-#endif // !WIN32
+#  include "print_panel.cxx"
+#endif // !WIN32 || __CYGWIN__
 
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
