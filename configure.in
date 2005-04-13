@@ -756,7 +756,7 @@ if test -n "$GCC"; then
 
     # Show all standard warnings + unused variables, conversion errors,
     # and inlining problems when compiling...
-    OPTIM="-Wall -Wunused -Wconversion $OPTIM"
+    OPTIM="-Wall -Wunused -Wconversion -Wno-format-y2k $OPTIM"
 
     # The following additional warnings are useful for tracking down problems...
     #OPTIM="-Wshadow $OPTIM"
