@@ -982,10 +982,10 @@ void print_menu_cb(Fl_Widget *, void *) {
 
     fl_draw(basename, 0, fontsize);
 
-    fl_draw(date, 0.5 * (width - fl_width(date)), fontsize);
+    fl_draw(date, (width - (int)fl_width(date)) / 2, fontsize);
 
     sprintf(buffer, "%d/%d", winpage + 1, num_windows);
-    fl_draw(buffer, width - fl_width(buffer), fontsize);
+    fl_draw(buffer, width - (int)fl_width(buffer), fontsize);
 
     // Get window image...
     uchar	*pixels;		// Window image data
@@ -1000,8 +1000,8 @@ void print_menu_cb(Fl_Widget *, void *) {
 
     // Figure out the window size, first at 100 PPI and then scaled
     // down if that is too big...
-    ww = w * xdpi / 100.0;
-    hh = h * ydpi / 100.0;
+    ww = w * xdpi / 100;
+    hh = h * ydpi / 100;
 
     if (ww > width) {
       ww = width;

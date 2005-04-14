@@ -43,7 +43,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   unsigned long ret;
 
   len    = strlen(dirname);
-  findIn = (char *)malloc(len+5);
+  findIn = (char *)malloc((size_t)(len+5));
 
   if (!findIn) return -1;
 
@@ -72,7 +72,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
     }
     if (!select || (*select)(selectDir)) {
       if (nDir==NDir) {
-	struct dirent **tempDir = (struct dirent **)calloc(sizeof(struct dirent*), NDir+33);
+	struct dirent **tempDir = (struct dirent **)calloc(sizeof(struct dirent*), (size_t)(NDir+33));
 	if (NDir) memcpy(tempDir, dir, sizeof(struct dirent*)*NDir);
 	if (dir) free(dir);
 	dir = tempDir;
@@ -94,8 +94,8 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
 
   free (findIn);
 
-  if (compar) qsort (dir, nDir, sizeof(*dir),
-		     (int(*)(const void*, const void*))compar);
+  if (compar) qsort(dir, (size_t)nDir, sizeof(*dir),
+		    (int(*)(const void*, const void*))compar);
 
   *namelist = dir;
   return nDir;

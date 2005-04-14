@@ -95,8 +95,10 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
 #ifndef __APPLE__
   int oldmode = mode_;
+#endif // !__APPLE__
+#if !defined(WIN32) && !defined(__APPLE__)
   Fl_Gl_Choice* oldg = g;
-#endif
+#endif // !WIN32 && !__APPLE__
   context(0);
   mode_ = m; alist = a;
   if (shown()) {
