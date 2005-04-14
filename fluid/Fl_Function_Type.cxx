@@ -681,7 +681,7 @@ void Fl_Comment_Type::read_property(const char *c) {
 #include "comments.h"
 
 static void load_comments_preset(Fl_Preferences &menu) {
-  static char *predefined_comment[] = {
+  static const char * const predefined_comment[] = {
     "GNU Public License/GPL Header",  "GNU Public License/GPL Footer",
     "GNU Public License/LGPL Header", "GNU Public License/LGPL Footer",
     "FLTK/Header", "FLTK/Footer" };

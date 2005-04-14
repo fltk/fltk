@@ -73,15 +73,17 @@ struct fl_jpeg_error_mgr {
 //
 
 #ifdef HAVE_LIBJPEG
-static void
-fl_jpeg_error_handler(j_common_ptr dinfo) {	// I - Decompressor info
-  longjmp(((fl_jpeg_error_mgr *)(dinfo->err))->errhand_, 1);
-  return;
-}
+extern "C" {
+  static void
+  fl_jpeg_error_handler(j_common_ptr dinfo) {	// I - Decompressor info
+    longjmp(((fl_jpeg_error_mgr *)(dinfo->err))->errhand_, 1);
+    return;
+  }
 
-static void
-fl_jpeg_output_handler(j_common_ptr dinfo) {	// I - Decompressor info
-  return;
+  static void
+  fl_jpeg_output_handler(j_common_ptr dinfo) {	// I - Decompressor info
+    return;
+  }
 }
 #endif // HAVE_LIBJPEG
 

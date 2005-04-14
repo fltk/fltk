@@ -83,7 +83,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
   format = atoi(lineptr);
   while (isdigit(*lineptr)) lineptr ++;
 
-  if (format == 7) lineptr = "";
+  if (format == 7) lineptr = (char *)"";
 
   while (lineptr != NULL && w() == 0) {
     if (*lineptr == '\0' || *lineptr == '#') {
