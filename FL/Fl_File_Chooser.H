@@ -71,57 +71,57 @@ public:
   Fl_File_Chooser(const char *d, const char *p, int t, const char *title);
 private:
   Fl_Double_Window *window;
-  inline void cb_window_i(Fl_Double_Window*, void*);
+  void cb_window_i(Fl_Double_Window*, void*);
   static void cb_window(Fl_Double_Window*, void*);
   Fl_Choice *showChoice;
-  inline void cb_showChoice_i(Fl_Choice*, void*);
+  void cb_showChoice_i(Fl_Choice*, void*);
   static void cb_showChoice(Fl_Choice*, void*);
   Fl_Menu_Button *favoritesButton;
-  inline void cb_favoritesButton_i(Fl_Menu_Button*, void*);
+  void cb_favoritesButton_i(Fl_Menu_Button*, void*);
   static void cb_favoritesButton(Fl_Menu_Button*, void*);
 public:
   Fl_Button *newButton;
 private:
-  inline void cb_newButton_i(Fl_Button*, void*);
+  void cb_newButton_i(Fl_Button*, void*);
   static void cb_newButton(Fl_Button*, void*);
-  inline void cb__i(Fl_Tile*, void*);
+  void cb__i(Fl_Tile*, void*);
   static void cb_(Fl_Tile*, void*);
   Fl_File_Browser *fileList;
-  inline void cb_fileList_i(Fl_File_Browser*, void*);
+  void cb_fileList_i(Fl_File_Browser*, void*);
   static void cb_fileList(Fl_File_Browser*, void*);
   Fl_Box *previewBox;
 public:
   Fl_Check_Button *previewButton;
 private:
-  inline void cb_previewButton_i(Fl_Check_Button*, void*);
+  void cb_previewButton_i(Fl_Check_Button*, void*);
   static void cb_previewButton(Fl_Check_Button*, void*);
   Fl_File_Input *fileName;
-  inline void cb_fileName_i(Fl_File_Input*, void*);
+  void cb_fileName_i(Fl_File_Input*, void*);
   static void cb_fileName(Fl_File_Input*, void*);
   Fl_Return_Button *okButton;
-  inline void cb_okButton_i(Fl_Return_Button*, void*);
+  void cb_okButton_i(Fl_Return_Button*, void*);
   static void cb_okButton(Fl_Return_Button*, void*);
   Fl_Button *cancelButton;
-  inline void cb_cancelButton_i(Fl_Button*, void*);
+  void cb_cancelButton_i(Fl_Button*, void*);
   static void cb_cancelButton(Fl_Button*, void*);
   Fl_Double_Window *favWindow;
   Fl_File_Browser *favList;
-  inline void cb_favList_i(Fl_File_Browser*, void*);
+  void cb_favList_i(Fl_File_Browser*, void*);
   static void cb_favList(Fl_File_Browser*, void*);
   Fl_Button *favUpButton;
-  inline void cb_favUpButton_i(Fl_Button*, void*);
+  void cb_favUpButton_i(Fl_Button*, void*);
   static void cb_favUpButton(Fl_Button*, void*);
   Fl_Button *favDeleteButton;
-  inline void cb_favDeleteButton_i(Fl_Button*, void*);
+  void cb_favDeleteButton_i(Fl_Button*, void*);
   static void cb_favDeleteButton(Fl_Button*, void*);
   Fl_Button *favDownButton;
-  inline void cb_favDownButton_i(Fl_Button*, void*);
+  void cb_favDownButton_i(Fl_Button*, void*);
   static void cb_favDownButton(Fl_Button*, void*);
   Fl_Button *favCancelButton;
-  inline void cb_favCancelButton_i(Fl_Button*, void*);
+  void cb_favCancelButton_i(Fl_Button*, void*);
   static void cb_favCancelButton(Fl_Button*, void*);
   Fl_Return_Button *favOkButton;
-  inline void cb_favOkButton_i(Fl_Return_Button*, void*);
+  void cb_favOkButton_i(Fl_Return_Button*, void*);
   static void cb_favOkButton(Fl_Return_Button*, void*);
 public:
   ~Fl_File_Chooser();

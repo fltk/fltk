@@ -31,7 +31,7 @@
 #include "flstring.h"
 #include <FL/fl_ask.H>
 
-inline void Fl_Help_Dialog::cb_view__i(Fl_Help_View*, void*) {
+void Fl_Help_Dialog::cb_view__i(Fl_Help_View*, void*) {
   if (view_->changed())
 {
   index_ ++;
@@ -66,14 +66,14 @@ void Fl_Help_Dialog::cb_view_(Fl_Help_View* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->user_data()))->cb_view__i(o,v);
 }
 
-inline void Fl_Help_Dialog::cb_Close_i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_Close_i(Fl_Button*, void*) {
   window_->hide();
 }
 void Fl_Help_Dialog::cb_Close(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_Close_i(o,v);
 }
 
-inline void Fl_Help_Dialog::cb_back__i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_back__i(Fl_Button*, void*) {
   if (index_ > 0)
   index_ --;
 
@@ -93,7 +93,7 @@ void Fl_Help_Dialog::cb_back_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_back__i(o,v);
 }
 
-inline void Fl_Help_Dialog::cb_forward__i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_forward__i(Fl_Button*, void*) {
   if (index_ < max_)
   index_ ++;
 
@@ -113,7 +113,7 @@ void Fl_Help_Dialog::cb_forward_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_forward__i(o,v);
 }
 
-inline void Fl_Help_Dialog::cb_smaller__i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_smaller__i(Fl_Button*, void*) {
   if (view_->textsize() > 8)
   view_->textsize(view_->textsize() - 2);
 
@@ -125,7 +125,7 @@ void Fl_Help_Dialog::cb_smaller_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_smaller__i(o,v);
 }
 
-inline void Fl_Help_Dialog::cb_larger__i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_larger__i(Fl_Button*, void*) {
   if (view_->textsize() < 18)
   view_->textsize(view_->textsize() + 2);
 
@@ -137,7 +137,7 @@ void Fl_Help_Dialog::cb_larger_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_larger__i(o,v);
 }
 
-inline void Fl_Help_Dialog::cb_find__i(Fl_Input*, void*) {
+void Fl_Help_Dialog::cb_find__i(Fl_Input*, void*) {
   find_pos_ = view_->find(find_->value(), find_pos_);
 }
 void Fl_Help_Dialog::cb_find_(Fl_Input* o, void* v) {
@@ -197,7 +197,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
         o->color(FL_BACKGROUND2_COLOR);
         { Fl_Input* o = find_ = new Fl_Input(35, 352, 268, 21, "@search");
           o->tooltip("find text in document");
-          o->box(FL_FLAT_BOX);
+          o->box(FL_NO_BOX);
           o->labelsize(13);
           o->callback((Fl_Callback*)cb_find_);
           o->when(FL_WHEN_ENTER_KEY_ALWAYS);

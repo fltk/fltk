@@ -29,7 +29,7 @@
 
 #include "../FL/Fl_File_Chooser.H"
 
-inline void Fl_File_Chooser::cb_window_i(Fl_Double_Window*, void*) {
+void Fl_File_Chooser::cb_window_i(Fl_Double_Window*, void*) {
   fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
@@ -39,21 +39,21 @@ void Fl_File_Chooser::cb_window(Fl_Double_Window* o, void* v) {
   ((Fl_File_Chooser*)(o->user_data()))->cb_window_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_showChoice_i(Fl_Choice*, void*) {
+void Fl_File_Chooser::cb_showChoice_i(Fl_Choice*, void*) {
   showChoiceCB();
 }
 void Fl_File_Chooser::cb_showChoice(Fl_Choice* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_showChoice_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favoritesButton_i(Fl_Menu_Button*, void*) {
+void Fl_File_Chooser::cb_favoritesButton_i(Fl_Menu_Button*, void*) {
   favoritesButtonCB();
 }
 void Fl_File_Chooser::cb_favoritesButton(Fl_Menu_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favoritesButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_newButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_newButton_i(Fl_Button*, void*) {
   newdir();
 }
 void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
@@ -66,35 +66,35 @@ static unsigned char idata_new[] =
 \200\1\200\377\377\0\0";
 static Fl_Bitmap image_new(idata_new, 16, 16);
 
-inline void Fl_File_Chooser::cb__i(Fl_Tile*, void*) {
+void Fl_File_Chooser::cb__i(Fl_Tile*, void*) {
   update_preview();
 }
 void Fl_File_Chooser::cb_(Fl_Tile* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->user_data()))->cb__i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_fileList_i(Fl_File_Browser*, void*) {
+void Fl_File_Chooser::cb_fileList_i(Fl_File_Browser*, void*) {
   fileListCB();
 }
 void Fl_File_Chooser::cb_fileList(Fl_File_Browser* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_fileList_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_previewButton_i(Fl_Check_Button*, void*) {
+void Fl_File_Chooser::cb_previewButton_i(Fl_Check_Button*, void*) {
   preview(previewButton->value());
 }
 void Fl_File_Chooser::cb_previewButton(Fl_Check_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_previewButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_fileName_i(Fl_File_Input*, void*) {
+void Fl_File_Chooser::cb_fileName_i(Fl_File_Input*, void*) {
   fileNameCB();
 }
 void Fl_File_Chooser::cb_fileName(Fl_File_Input* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_fileName_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
+void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
   // Do any callback that is registered...
 if (callback_)
   (*callback_)(this, data_);
@@ -105,7 +105,7 @@ void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_okButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_cancelButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_cancelButton_i(Fl_Button*, void*) {
   fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
@@ -115,42 +115,42 @@ void Fl_File_Chooser::cb_cancelButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_cancelButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favList_i(Fl_File_Browser*, void*) {
+void Fl_File_Chooser::cb_favList_i(Fl_File_Browser*, void*) {
   favoritesCB(favList);
 }
 void Fl_File_Chooser::cb_favList(Fl_File_Browser* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->user_data()))->cb_favList_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favUpButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_favUpButton_i(Fl_Button*, void*) {
   favoritesCB(favUpButton);
 }
 void Fl_File_Chooser::cb_favUpButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favUpButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favDeleteButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_favDeleteButton_i(Fl_Button*, void*) {
   favoritesCB(favDeleteButton);
 }
 void Fl_File_Chooser::cb_favDeleteButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favDeleteButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favDownButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_favDownButton_i(Fl_Button*, void*) {
   favoritesCB(favDownButton);
 }
 void Fl_File_Chooser::cb_favDownButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favDownButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favCancelButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_favCancelButton_i(Fl_Button*, void*) {
   favWindow->hide();
 }
 void Fl_File_Chooser::cb_favCancelButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favCancelButton_i(o,v);
 }
 
-inline void Fl_File_Chooser::cb_favOkButton_i(Fl_Return_Button*, void*) {
+void Fl_File_Chooser::cb_favOkButton_i(Fl_Return_Button*, void*) {
   favoritesCB(favOkButton);
 }
 void Fl_File_Chooser::cb_favOkButton(Fl_Return_Button* o, void* v) {

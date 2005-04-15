@@ -1475,7 +1475,7 @@ void Fl_Widget_Type::write_static() {
     }
     const char* cn = callback_name();
     if (k) {
-      write_c("\ninline void %s::%s_i(%s*", k, cn, t);
+      write_c("\nvoid %s::%s_i(%s*", k, cn, t);
     } else {
       write_c("\nstatic void %s(%s*", cn, t);
     }
@@ -1535,7 +1535,7 @@ void Fl_Widget_Type::write_code1() {
     const char* cn = callback_name();
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_public(0);
-    write_h("  inline void %s_i(%s*, %s);\n", cn, t, ut);
+    write_h("  void %s_i(%s*, %s);\n", cn, t, ut);
     write_h("  static void %s(%s*, %s);\n", cn, t, ut);
   }
   // figure out if local varaible will be used (prevent compiler warnings):
