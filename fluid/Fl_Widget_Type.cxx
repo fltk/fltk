@@ -1496,7 +1496,7 @@ void Fl_Widget_Type::write_static() {
     if (k) {
       write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
       write_c("  ((%s*)(o->", k);
-      for (Fl_Type* p = parent; p->is_widget(); p = p->parent)
+      for (Fl_Type* p = parent; p && p->is_widget(); p = p->parent)
 	write_c("parent()->");
       write_c("user_data()))->%s_i(o,v);\n}\n", cn);
     }

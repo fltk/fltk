@@ -85,6 +85,7 @@ makeinclude: configure configh.in makeinclude.in
 		./configure; \
 	fi
 	touch config.h
+	chmod +x fltk-config
 
 configure: configure.in
 	autoconf
