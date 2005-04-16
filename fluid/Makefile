@@ -48,8 +48,6 @@ CPPFILES = \
 
 OBJECTS = $(CPPFILES:.cxx=.o)
 
-CLEAN	= core*
-
 include ../makeinclude
 
 all:	$(FLUID) fluid$(EXEEXT)
@@ -66,8 +64,9 @@ fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
-clean :
-	-@ $(RM) *.o fluid$(EXEEXT) fluid-shared$(EXEEXT) $(CLEAN)
+clean:
+	-$(RM) *.o core.* *~ *.bck *.bck
+	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)
@@ -95,6 +94,8 @@ rebuild:
 	./fluid -c about_panel.fl
 	./fluid -c alignment_panel.fl
 	./fluid -c function_panel.fl
+	./fluid -c print_panel.fl
+	./fluid -c template_panel.fl
 	./fluid -c widget_panel.fl
 
 #

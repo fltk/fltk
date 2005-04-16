@@ -27,7 +27,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <config.h>
+#include "config.h"
 #if !HAVE_GL || !HAVE_GL_GLU_H
 #include <FL/Fl.H>
 #include <FL/fl_message.H>

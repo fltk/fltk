@@ -34,15 +34,14 @@ buttons.o: ../FL/Fl_Button.H ../FL/Fl_Repeat_Button.H ../FL/Fl.H
 buttons.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 buttons.o: ../FL/Fl_Light_Button.H ../FL/Fl_Round_Button.H ../FL/Fl_Tooltip.H
 buttons.o: ../FL/Fl_Widget.H
-checkers.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
-checkers.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Double_Window.H
-checkers.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-checkers.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/fl_draw.H
-checkers.o: ../FL/Fl_Menu_Item.H ../FL/fl_ask.H black_1.xbm black_2.xbm
-checkers.o: black_3.xbm black_4.xbm white_1.xbm white_2.xbm white_3.xbm
-checkers.o: white_4.xbm blackking_1.xbm blackking_2.xbm blackking_3.xbm
-checkers.o: blackking_4.xbm whiteking_1.xbm whiteking_2.xbm whiteking_3.xbm
-checkers.o: whiteking_4.xbm ../FL/Fl_Box.H ../FL/Fl_Slider.H
+checkers.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+checkers.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+checkers.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+checkers.o: ../FL/fl_draw.H ../FL/Fl_Menu_Item.H ../FL/fl_ask.H black_1.xbm
+checkers.o: black_2.xbm black_3.xbm black_4.xbm white_1.xbm white_2.xbm
+checkers.o: white_3.xbm white_4.xbm blackking_1.xbm blackking_2.xbm
+checkers.o: blackking_3.xbm blackking_4.xbm whiteking_1.xbm whiteking_2.xbm
+checkers.o: whiteking_3.xbm whiteking_4.xbm ../FL/Fl_Box.H ../FL/Fl_Slider.H
 checkers.o: ../FL/Fl_Valuator.H ../FL/Fl_Value_Output.H
 clock.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 clock.o: ../FL/Fl_Clock.H ../FL/Fl_Widget.H ../FL/Fl_Round_Clock.H
@@ -139,8 +138,7 @@ file_chooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 file_chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 file_chooser.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H ../FL/Fl_File_Icon.H
 file_chooser.o: ../FL/Fl_Shared_Image.H ../FL/Fl_PNM_Image.H
-file_chooser.o: ../FL/Fl_Light_Button.H ../src/flstring.h ../FL/Fl_Export.H
-file_chooser.o: ../config.h
+file_chooser.o: ../FL/Fl_Light_Button.H
 fonts.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 fonts.o: ../FL/Fl_Hold_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
 fonts.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
@@ -191,7 +189,7 @@ help.o: ../FL/Fl_Export.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 help.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Help_View.H ../FL/Fl.H
 help.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 help.o: ../FL/fl_draw.H ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
-help.o: ../FL/Fl_Button.H ../FL/Fl_Group.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+help.o: ../FL/Fl_Group.H ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 iconize.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 iconize.o: ../FL/Fl_Window.H ../FL/Fl_Button.H ../FL/Fl_Box.H
 image.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H

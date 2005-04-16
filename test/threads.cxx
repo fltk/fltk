@@ -23,7 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <config.h>
+#include "config.h"
 
 #if HAVE_PTHREAD || defined(WIN32)
 #  include <FL/Fl.H>

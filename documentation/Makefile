@@ -162,9 +162,9 @@ IMAGEFILES	= \
 		Fl_Check_Button.gif \
 		fl_choice.gif \
 		fl_color_chooser.jpg \
-		FL.gif \
 		Fl_File_Chooser.jpg \
 		Fl_File_Input.gif \
+		FL.gif \
 		Fl_Help_Dialog.gif \
 		fl_input.gif \
 		Fl_Light_Button.gif \
@@ -192,6 +192,7 @@ IMAGEFILES	= \
 		Fl_Value_Input.gif \
 		Fl_Value_Output.gif \
 		hello.C.gif \
+		input_choice.jpg \
 		menubar.gif \
 		menu_button.gif \
 		menu.gif \
@@ -207,6 +208,7 @@ IMAGEFILES	= \
 		valuators.gif \
 		value_slider.gif
 
+
 MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT)
 
 all:	$(MANPAGES)
@@ -217,6 +219,7 @@ clean:
 	$(RM) fltk.ps
 	$(RM) fltk.pdf
 	$(RMDIR) fltk.d
+	$(RM) *~ *.bck *.bck
 
 depend:
 
@@ -229,8 +232,8 @@ docdir = $(datadir)/doc/fltk
 install: $(MANPAGES)
 	echo "Installing documentation files in $(DESTDIR)$(docdir)..."
 	-$(MKDIR) $(DESTDIR)$(docdir)
-	$(CP) $(HTMLFILES) *.gif *.jpg index.html $(DESTDIR)$(docdir)
-	$(CHMOD) 644 $(DESTDIR)$(docdir)/*
+	$(CP) $(HTMLFILES) $(IMAGEFILES) index.html $(DESTDIR)$(docdir)
+	$(CHMOD) 644 $(DESTDIR)$(docdir)/*.*
 	echo "Installing man pages in $(DESTDIR)$(mandir)..."
 	-$(MKDIR) $(DESTDIR)$(mandir)/cat1
 	$(CP) fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1

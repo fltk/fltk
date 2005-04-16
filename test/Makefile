@@ -167,14 +167,18 @@ depend:	$(CPPFILES)
 include makedepend
 
 clean:
-	-@ rm -f $(ALL) $(GLALL) *.o core *~
+	-$(RM) $(ALL) $(GLALL) core
+	-$(RM) *.o core.* *~ *.bck *.bak
 
 install:
-	@echo Nothing to install in test directory.
+	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
+	-$(MKDIR) $(DESTDIR)$(docdir)/examples
+	$(CP) *.h *.cxx *.fl $(DESTDIR)$(docdir)/examples
+	$(CHMOD) 644 $(DESTDIR)$(docdir)/examples/*.*
 
 uninstall:
-	@echo Nothing to uninstall in test directory.
-
+	echo "Removing examples programs from $(DESTDIR)$(docdir)/examples..."
+	-$(RMDIR) $(DESTDIR)$(docdir)/examples
 
 # FLUID file rules
 .fl.cxx .fl.h:	../fluid/fluid$(EXEEXT)

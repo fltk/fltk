@@ -42,7 +42,7 @@ int main(int, char**) {
 
 #else
 
-#include <config.h>
+#include "config.h"
 
 #ifndef Fl_H
 

@@ -178,8 +178,6 @@ IMGCPPFILES = \
 
 CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
 
-CLEAN =	core* cmap
-
 ################################################################
 
 include ../makeinclude
@@ -339,15 +337,16 @@ libfltk_images_s.a: $(IMGOBJECTS)
 	$(CHMOD) +x libfltk_images_s.a
 
 
-clean :
-	-@ $(RM) *.o $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
+clean:
+	-$(RM) *.o core.* *~ *.bck *.bck
+	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		../lib/$(LIBNAME) ../lib/$(FLLIBNAME) ../lib/$(GLLIBNAME) \
 		../lib/$(IMGLIBNAME) \
 		libfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \
 		libfltk.sl libfltk_forms.sl libfltk_gl.sl libfltk_images.sl \
 		libfltk.dylib libfltk_forms.dylib \
 		libfltk_gl.dylib libfltk_images.dylib \
-		$(CLEAN)
+		cmap core
 
 depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES) $(FLCPPFILES) \

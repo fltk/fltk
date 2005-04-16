@@ -47,7 +47,7 @@ GUI functionality without the bloat and supports 3D graphics via
 OpenGL(r) and its built-in GLUT emulation.
 
 %package devel
-Summary: FLTK - development environment
+Summary: FLTK Development Environment
 Group: Development/Libraries
 
 %description devel

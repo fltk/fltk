@@ -44,7 +44,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_PNM_Image.H>
 #include <FL/Fl_Light_Button.H>
-#include "../src/flstring.h"
+#include <string.h>
 
 
 //
@@ -220,12 +220,12 @@ pdf_check(const char *name,	// I - Name of file
     return 0;
 
   home = getenv("HOME");
-  snprintf(preview, sizeof(preview), "%s/.preview.ppm", home ? home : "");
+  sprintf(preview, "%s/.preview.ppm", home ? home : "");
 
-  snprintf(command, sizeof(command),
-           "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
-	   "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' "
-	   "-dFirstPage=1 -dLastPage=1 \'%s\' 2>/dev/null", preview, name);
+  sprintf(command,
+          "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
+	  "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' "
+	  "-dFirstPage=1 -dLastPage=1 \'%s\' 2>/dev/null", preview, name);
 
   if (system(command)) return 0;
 
@@ -256,11 +256,11 @@ ps_check(const char *name,	// I - Name of file
     return 0;
 
   home = getenv("HOME");
-  snprintf(preview, sizeof(preview), "%s/.preview.ppm", home ? home : "");
+  sprintf(preview, "%s/.preview.ppm", home ? home : "");
 
   if (memcmp(header, "%!PS", 4) == 0) {
     // PS file has DSC comments; extract the first page...
-    snprintf(outname, sizeof(outname), "%s/.preview.ps", home ? home : "");
+    sprintf(outname, "%s/.preview.ps", home ? home : "");
 
     if (strcmp(name, outname) != 0) {
       in   = fopen(name, "rb");
@@ -281,13 +281,14 @@ ps_check(const char *name,	// I - Name of file
     }
   } else {
     // PS file doesn't have DSC comments; do the whole file...
-    strlcpy(outname, name, sizeof(outname));
+    strncpy(outname, name, sizeof(outname) - 1);
+    outname[sizeof(outname) - 1] = '\0';
   }
 
-  snprintf(command, sizeof(command),
-           "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
-	   "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' \'%s\' 2>/dev/null",
-	   preview, outname);
+  sprintf(command,
+          "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
+	  "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' \'%s\' 2>/dev/null",
+	  preview, outname);
 
   if (system(command)) return 0;
 

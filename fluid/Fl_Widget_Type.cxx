@@ -424,7 +424,7 @@ void x_cb(Fl_Value_Input *i, void *v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
 	w->resize((int)i->value(), w->y(), w->w(), w->h());
-	if (w->window()) w->window();
+	if (w->window()) w->window()->redraw();
 	if (o->is_window()) {
           ((Fl_Window *)w)->size_range(gridx, gridy, Fl::w(), Fl::h(),
                                        gridx, gridy, 0);

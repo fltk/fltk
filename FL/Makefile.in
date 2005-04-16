@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.1.2.9 2004/10/18 20:22:21 easysw Exp $"
+# "$Id$"
 #
 # Header makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -26,6 +26,10 @@
 include ../makeinclude
 
 all:
+
+clean:
+
+depend:
 
 install:
 	echo "Installing include files in $(DESTDIR)$(includedir)..."
@@ -54,5 +58,5 @@ uninstall:
 
 
 #
-# End of "$Id: Makefile.in,v 1.1.2.9 2004/10/18 20:22:21 easysw Exp $".
+# End of "$Id$".
 #

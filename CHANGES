@@ -2,6 +2,10 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- The example programs can now compile separate from the
+	  FLTK source distribution (STR #809)
+	- The example programs are now installed with the
+	  documentation (STR #809)
 	- Fixed the drawing of the Fl_Browser_ selection box (STR
 	  #786)
 	- Dropped Codewarrier project files and support.

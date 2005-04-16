@@ -25,7 +25,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-#include <config.h>
+#include "config.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
