@@ -22,7 +22,9 @@ dnl License along with this library; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 dnl USA.
 dnl
-dnl Please report all bugs and problems to "fltk-bugs@fltk.org".
+dnl Please report all bugs and problems on the following page:
+dnl
+dnl      http://www.fltk.org/str.php
 dnl
 
 dnl We need at least autoconf 2.13...
