@@ -315,7 +315,7 @@ int load_the_menu(const char* fname)
 }
 
 int main(int argc, char **argv) {
-  putenv("FLTK_DOCDIR=../documentation");
+  putenv((char *)"FLTK_DOCDIR=../documentation");
   create_the_forms();
   char buf[256];
   strcpy(buf, argv[0]);

@@ -175,7 +175,7 @@ clean:
 install:
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
 	-$(MKDIR) $(DESTDIR)$(docdir)/examples
-	$(CP) *.h *.cxx *.fl $(DESTDIR)$(docdir)/examples
+	$(CP) *.h *.cxx *.fl demo.menu *.xbm *.xpm $(DESTDIR)$(docdir)/examples
 	$(CHMOD) 644 $(DESTDIR)$(docdir)/examples/*.*
 
 uninstall:

@@ -551,13 +551,13 @@ void Fl_Decl_Type::write_code1() {
   while (e>c && e[-1]==';') e--;
   if (class_name(1)) {
     write_public(public_);
-    write_h("  %.*s;\n", e-c, c);
+    write_h("  %.*s;\n", (int)(e-c), c);
   } else {
     if (public_) {
-      write_h("extern %.*s;\n", e-c, c);
-      write_c("%.*s;\n", e-c, c);
+      write_h("extern %.*s;\n", (int)(e-c), c);
+      write_c("%.*s;\n", (int)(e-c), c);
     } else {
-      write_c("static %.*s;\n", e-c, c);
+      write_c("static %.*s;\n", (int)(e-c), c);
     }
   }
 }
