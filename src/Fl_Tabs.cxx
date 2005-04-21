@@ -238,7 +238,21 @@ void Fl_Tabs::draw() {
   int H = tab_height();
 
   if (damage() & FL_DAMAGE_ALL) { // redraw the entire thing:
-    draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H), v ? v->color() : color());
+    Fl_Color c = v ? v->color() : color();
+
+    draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H), c);
+
+    if (selection_color() != c) {
+      // Draw the top 5 lines of the tab pane in the selection color so
+      // that the user knows which tab is selected...
+      if (H >= 0) fl_push_clip(x(), y() + H, w(), 5);
+      else fl_push_clip(x(), y() + h() - H - 4, w(), 5);
+
+      draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H),
+               selection_color());
+
+      fl_pop_clip();
+    }
     if (v) draw_child(*v);
   } else { // redraw the child
     if (v) update_child(*v);
@@ -272,11 +286,22 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     H += dh;
 
-    draw_box(box(), x1, y(), W, H,
-             sel ? fl_color_average(selection_color(), o->selection_color(), 0.5f)
-	         : o->selection_color());
+    Fl_Color c = sel ? selection_color() : o->selection_color();
 
+    draw_box(box(), x1, y(), W, H, c);
+
+    // Make sure that the label contrasts the tab color...
+    c = fl_contrast(o->labelcolor(), c);
+
+    // Save the previous label color
+    Fl_Color oc = o->labelcolor();
+
+    // Draw the label using the contrast color...
+    o->labelcolor(c);    
     o->draw_label(x1, y(), W, H, FL_ALIGN_CENTER);
+
+    // Restore the original label color...
+    o->labelcolor(oc);
 
     if (Fl::focus() == this && o->visible())
       draw_focus(box(), x1, y(), W, H);
@@ -290,11 +315,22 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     H += dh;
 
-    draw_box(box(), x1, y() + h() - H, W, H,
-             sel ? fl_color_average(selection_color(), o->selection_color(), 0.5f)
-	         : o->selection_color());
+    Fl_Color c = sel ? selection_color() : o->selection_color();
 
+    draw_box(box(), x1, y() + h() - H, W, H, c);
+
+    // Make sure that the label contrasts the tab color...
+    c = fl_contrast(o->labelcolor(), c);
+
+    // Save the previous label color
+    Fl_Color oc = o->labelcolor();
+
+    // Draw the label using the contrast color...
+    o->labelcolor(c);    
     o->draw_label(x1, y() + h() - H, W, H, FL_ALIGN_CENTER);
+
+    // Restore the original label color...
+    o->labelcolor(oc);
 
     if (Fl::focus() == this && o->visible())
       draw_focus(box(), x1, y() + h() - H, W, H);
