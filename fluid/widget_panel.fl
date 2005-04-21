@@ -38,7 +38,7 @@ Function {make_widget_panel()} {open
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
-      xywh {3 5 397 310} selection_color 8 labelsize 11 when 0 resizable
+      xywh {3 5 397 310} selection_color 4 labelsize 11 when 0 resizable
     } {
       Fl_Group {} {
         label GUI
@@ -437,7 +437,7 @@ Function {make_widget_panel()} {open
         }
         Fl_Text_Editor {} {
           label {Callback:}
-          callback callback_cb selected
+          callback callback_cb
           tooltip {The callback function or code for the widget.} xywh {100 169 295 91} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11
           code0 {\#include "CodeEditor.h"}
           class CodeEditor
@@ -488,9 +488,9 @@ Function {make_widget_panel()} {open
         xywh {8 330 20 0} labelsize 11 resizable
       }
       Fl_Button {} {
-        label {No &Overlay}
-        callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {250 321 80 19} labelsize 11 labelcolor 1
+        label {Hide &Overlays}
+        callback overlay_cb selected
+        tooltip {Hide the widget overlay box.} xywh {231 321 99 19} labelsize 11 labelcolor 1
       }
       Fl_Button {} {
         label Revert

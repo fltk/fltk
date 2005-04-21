@@ -50,7 +50,7 @@ Fl_Double_Window* make_widget_panel() {
     o->labelsize(11);
     w->hotspot(o);
     { Fl_Tabs* o = new Fl_Tabs(3, 5, 397, 310);
-      o->selection_color(FL_INACTIVE_COLOR);
+      o->selection_color((Fl_Color)4);
       o->labelsize(11);
       o->callback((Fl_Callback*)cb_);
       o->when(FL_WHEN_NEVER);
@@ -653,7 +653,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         Fl_Group::current()->resizable(o);
       }
-      { Fl_Button* o = new Fl_Button(250, 321, 80, 19, "No &Overlay");
+      { Fl_Button* o = new Fl_Button(231, 321, 99, 19, "Hide &Overlays");
         o->tooltip("Hide the widget overlay box.");
         o->labelsize(11);
         o->labelcolor((Fl_Color)1);

@@ -37,24 +37,24 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public
 decl {\#include <FL/Fl_Text_Display.H>} {public
 } 
 
-decl {extern void load_history();} {selected public
+decl {extern void load_history();} {public
 } 
 
 Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings}
-    xywh {312 395 345 185} type Double hide
+    xywh {312 395 345 185} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
-    code1 {\#include <FL/Fl_Tooltip.H>} modal
+    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
       callback {project_window->hide();}
       tooltip {Close this dialog.} xywh {293 156 42 20} labelsize 11
     }
-    Fl_Tabs {} {open
-      xywh {10 10 325 138} selection_color 8 labelsize 11
+    Fl_Tabs {} {open selected
+      xywh {10 10 325 138} selection_color 4 labelsize 11
     } {
       Fl_Group {} {
         label Output open

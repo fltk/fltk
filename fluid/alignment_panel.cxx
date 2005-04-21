@@ -68,7 +68,7 @@ Fl_Double_Window* make_project_window() {
       o->callback((Fl_Callback*)cb_Close);
     }
     { Fl_Tabs* o = new Fl_Tabs(10, 10, 325, 138);
-      o->selection_color(FL_INACTIVE_COLOR);
+      o->selection_color((Fl_Color)4);
       o->labelsize(11);
       { Fl_Group* o = new Fl_Group(10, 30, 325, 116, "Output");
         o->labelsize(11);
