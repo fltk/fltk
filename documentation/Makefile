@@ -225,12 +225,6 @@ clean:
 
 depend:
 
-# According to FHS this should be:
-# htmldir = $(datadir)/doc/html/en/fltk
-# Possibly the "en/" can be removed, it is not clear.
-# KDE uses "HTML" instead of "html", which is correct?
-docdir = $(datadir)/doc/fltk
-
 install: $(MANPAGES)
 	echo "Installing documentation files in $(DESTDIR)$(docdir)..."
 	-$(MKDIR) $(DESTDIR)$(docdir)

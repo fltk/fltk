@@ -33,6 +33,7 @@ includedir	= @includedir@
 libdir		= @libdir@
 mandir		= @mandir@
 srcdir		= @srcdir@
+docdir		= $(datadir)/doc/fltk
 VPATH		= @srcdir@
 
 # programs we use...
