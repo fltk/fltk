@@ -1540,6 +1540,7 @@ void Fl_Text_Buffer::remove_rectangular_( int start, int end, int rectStart,
      the text between rectStart and rectEnd and padding appropriately */
   lineStart = start;
   outPtr = outStr;
+  endOffset = 0;
   while ( lineStart <= mLength && lineStart <= end ) {
     lineEnd = line_end( lineStart );
     line = text_range( lineStart, lineEnd );

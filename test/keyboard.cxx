@@ -62,7 +62,7 @@ int MyWindow::handle(int msg) {
   return 0;
 }
 
-struct {int n; const char* text;} table[] = {
+struct keycode_table{int n; const char* text;} table[] = {
   {FL_Escape, "FL_Escape"},
   {FL_BackSpace, "FL_BackSpace"},
   {FL_Tab, "FL_Tab"},

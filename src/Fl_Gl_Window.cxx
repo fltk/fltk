@@ -329,7 +329,7 @@ void Fl_Gl_Window::flush() {
 
       } else {
 	damage1_ = damage();
-	clear_damage(~0); draw();
+	clear_damage(0xff); draw();
 	swap_buffers();
       }
 

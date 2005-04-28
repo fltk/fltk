@@ -1633,6 +1633,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   max_width   = 0;
   pre         = 0;
   needspace   = 0;
+  font        = fonts_[nfonts_][0];
+  fsize       = fonts_[nfonts_][1];
 
   // Scan the table...
   for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)

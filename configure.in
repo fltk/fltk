@@ -754,7 +754,9 @@ if test -n "$GCC"; then
 	    ;;
     esac
 
-    CXX="$CC"
+    if test x$uname != xDarwin; then
+        CXX="$CC"
+    fi
 
     # Show all standard warnings + unused variables, conversion errors,
     # and inlining problems when compiling...
