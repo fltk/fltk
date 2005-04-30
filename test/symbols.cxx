@@ -38,7 +38,7 @@
 int N = 0;
 #define W 70
 #define H 70
-#define ROWS 7
+#define ROWS 8
 #define COLS 4
 
 Fl_Window *window;
@@ -121,6 +121,11 @@ bt("@UpArrow");
 bt("@DnArrow");
 bt("@search");
 bt("@FLTK");
+bt("@filenew");
+bt("@fileopen");
+bt("@filesave");
+bt("@filesaveas");
+bt("@fileprint");
 
   orientation = new Fl_Value_Slider(
     (int)(window->w()*.05+.5), window->h()-40,

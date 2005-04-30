@@ -374,6 +374,207 @@ static void draw_menu(Fl_Color col)
   rectangle(-0.65, -0.6, 0.65, -1.0, col);
 }
 
+// Standard UI icons...
+static void draw_filenew(Fl_Color c) {
+  fl_color(c);
+  BCP;
+    vv(-0.7, -1.0);
+    vv(0.1, -1.0);
+    vv(0.1, -0.4);
+    vv(0.7, -0.4);
+    vv(0.7, 1.0);
+    vv(-0.7, 1.0);
+  ECP;
+
+  fl_color(fl_lighter(c));
+  BP;
+    vv(0.1, -1.0);
+    vv(0.1, -0.4);
+    vv(0.7, -0.4);
+  EP;
+
+  fl_color(fl_darker(c));
+  BC;
+    vv(-0.7, -1.0);
+    vv(0.1, -1.0);
+    vv(0.1, -0.4);
+    vv(0.7, -0.4);
+    vv(0.7, 1.0);
+    vv(-0.7, 1.0);
+  EC;
+
+  BL;
+    vv(0.1, -1.0);
+    vv(0.7, -0.4);
+  EL;
+}
+
+static void draw_fileopen(Fl_Color c) {
+  fl_color(c);
+  BP;
+    vv(-1.0, -0.7);
+    vv(-0.9, -0.8);
+    vv(-0.4, -0.8);
+    vv(-0.3, -0.7);
+    vv(0.6, -0.7);
+    vv(0.6, 0.7);
+    vv(-1.0, 0.7);
+  EP;
+
+  fl_color(fl_darker(c));
+  BC;
+    vv(-1.0, -0.7);
+    vv(-0.9, -0.8);
+    vv(-0.4, -0.8);
+    vv(-0.3, -0.7);
+    vv(0.6, -0.7);
+    vv(0.6, 0.7);
+    vv(-1.0, 0.7);
+  EC;
+
+  fl_color(fl_lighter(c));
+  BP;
+    vv(-1.0, 0.7);
+    vv(-0.6, -0.3);
+    vv(1.0, -0.3);
+    vv(0.6, 0.7);
+  EP;
+
+  fl_color(fl_darker(c));
+  BC;
+    vv(-1.0, 0.7);
+    vv(-0.6, -0.3);
+    vv(1.0, -0.3);
+    vv(0.6, 0.7);
+  EC;
+}
+
+static void draw_filesave(Fl_Color c) {
+  fl_color(c);
+  BP;
+    vv(-0.9, -1.0);
+    vv(0.9, -1.0);
+    vv(1.0, -0.9);
+    vv(1.0, 0.9);
+    vv(0.9, 1.0);
+    vv(-0.9, 1.0);
+    vv(-1.0, 0.9);
+    vv(-1.0, -0.9);
+  EP;
+
+  fl_color(fl_lighter(c));
+  BP;
+    vv(-0.7, -1.0);
+    vv(0.7, -1.0);
+    vv(0.7, -0.4);
+    vv(-0.7, -0.4);
+  EP;
+
+  BP;
+    vv(-0.7, 0.0);
+    vv(0.7, 0.0);
+    vv(0.7, 1.0);
+    vv(-0.7, 1.0);
+  EP;
+
+  fl_color(c);
+  BP;
+    vv(-0.5, -0.9);
+    vv(-0.3, -0.9);
+    vv(-0.3, -0.5);
+    vv(-0.5, -0.5);
+  EP;
+
+  fl_color(fl_darker(c));
+  BC;
+    vv(-0.9, -1.0);
+    vv(0.9, -1.0);
+    vv(1.0, -0.9);
+    vv(1.0, 0.9);
+    vv(0.9, 1.0);
+    vv(-0.9, 1.0);
+    vv(-1.0, 0.9);
+    vv(-1.0, -0.9);
+  EC;
+}
+
+static void draw_filesaveas(Fl_Color c) {
+  draw_filesave(c);
+
+  fl_color(fl_color_average(c, FL_WHITE, 0.25f));
+  BP;
+    vv(0.6, -0.8);
+    vv(1.0, -0.4);
+    vv(0.0, 0.6);
+    vv(-0.4, 0.6);
+    vv(-0.4, 0.2);
+  EP;
+
+  fl_color(fl_darker(c));
+  BC;
+    vv(0.6, -0.8);
+    vv(1.0, -0.4);
+    vv(0.0, 0.6);
+    vv(-0.4, 0.6);
+    vv(-0.4, 0.2);
+  EC;
+
+  BP;
+    vv(-0.1, 0.6);
+    vv(-0.4, 0.6);
+    vv(-0.4, 0.3);
+  EP;
+}
+
+static void draw_fileprint(Fl_Color c) {
+  fl_color(c);
+  BP;
+    vv(-0.8, 0.0);
+    vv(0.8, 0.0);
+    vv(1.0, 0.2);
+    vv(1.0, 1.0);
+    vv(-1.0, 1.0);
+    vv(-1.0, 0.2);
+  EP;
+
+  fl_color(fl_color_average(c, FL_WHITE, 0.25f));
+  BP;
+    vv(-0.6, 0.0);
+    vv(-0.6, -1.0);
+    vv(0.6, -1.0);
+    vv(0.6, 0.0);
+  EP;
+
+  fl_color(fl_lighter(c));
+  BP;
+    vv(-0.6, 0.6);
+    vv(0.6, 0.6);
+    vv(0.6, 1.0);
+    vv(-0.6, 1.0);
+  EP;
+
+  fl_color(fl_darker(c));
+  BC;
+    vv(-0.8, 0.0);
+    vv(-0.6, 0.0);
+    vv(-0.6, -1.0);
+    vv(0.6, -1.0);
+    vv(0.6, 0.0);
+    vv(0.8, 0.0);
+    vv(1.0, 0.2);
+    vv(1.0, 1.0);
+    vv(-1.0, 1.0);
+    vv(-1.0, 0.2);
+  EC;
+
+  BC;
+    vv(-0.6, 0.6);
+    vv(0.6, 0.6);
+    vv(0.6, 1.0);
+    vv(-0.6, 1.0);
+  EC;
+}
+
 static void fl_init_symbols(void) {
   static char beenhere;
   if (beenhere) return;
@@ -409,6 +610,14 @@ static void fl_init_symbols(void) {
   fl_add_symbol("||",		draw_doublebar,		1);
   fl_add_symbol("search",       draw_search,            1);
   fl_add_symbol("FLTK",         draw_fltk,              1);
+
+  fl_add_symbol("filenew",      draw_filenew,           1);
+  fl_add_symbol("fileopen",     draw_fileopen,          1);
+  fl_add_symbol("filesave",     draw_filesave,          1);
+  fl_add_symbol("filesaveas",   draw_filesaveas,        1);
+  fl_add_symbol("fileprint",    draw_fileprint,         1);
+
+//  fl_add_symbol("file",      draw_file,           1);
 }
 
 //

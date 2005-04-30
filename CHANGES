@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Added "filenew", "fileopen", "filesave", "filesaveas",
+	  and "fileprint" symbols with standard toolbar
+	  symbology.
 	- Updated Fl_Tabs to check the contrast of the label
 	  color against the tab background, and to highlight the
 	  top 5 lines of the tab pane with the selection color so
