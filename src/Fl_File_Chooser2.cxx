@@ -1066,7 +1066,6 @@ Fl_File_Chooser::value(int f)	// I - File number
 	}
 
 	// Strip trailing slash, if any...
-	strlcpy(pathname, name, sizeof(pathname));
 	slash = pathname + strlen(pathname) - 1;
 	if (*slash == '/') *slash = '\0';
 	return pathname;
