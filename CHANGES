@@ -2,6 +2,7 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Resizing of OpenGL subwindows was broken on OSX (STR #804)
 	- The fltk-config script now supports running from a
 	  source directory (STR #840)
 	- Fl_Browser_ didn't update the position properly when an

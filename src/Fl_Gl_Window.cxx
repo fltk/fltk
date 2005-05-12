@@ -137,27 +137,30 @@ void Fl_Gl_Window::make_current() {
     mode_ &= ~NON_LOCAL_CONTEXT;
     context_ = fl_create_gl_context(this, g);
     valid(0);
-
-//#ifdef __APPLE__
-//    GLint xywh[4];
-//
-//    if (parent() && parent()->window()) {
-//      xywh[0] = x();
-//      xywh[1] = parent()->window()->h() - y() - h();
-//    } else {
-//      xywh[0] = 0;
-//      xywh[1] = 0;
-//    }
-//
-//    xywh[2] = w();
-//    xywh[3] = h();
-//    aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
-//    printf("make_current: xywh=[%d %d %d %d]\n", xywh[0], xywh[1], xywh[2], xywh[3]);
-//
-//    aglUpdateContext(context_);
-//#endif // __APPLE__
   }
   fl_set_gl_context(this, context_);
+
+#ifdef __APPLE__
+  // Set the buffer rectangle here, since in resize() we won't have the
+  // correct parent window size to work with...
+  GLint xywh[4];
+
+  if (window()) {
+    xywh[0] = x();
+    xywh[1] = window()->h() - y() - h();
+  } else {
+    xywh[0] = 0;
+    xywh[1] = 0;
+  }
+
+  xywh[2] = w();
+  xywh[3] = h();
+
+  aglEnable(context_, AGL_BUFFER_RECT);
+  aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
+//  printf("make_current: xywh=[%d %d %d %d]\n", xywh[0], xywh[1], xywh[2], xywh[3]);
+#endif // __APPLE__
+
 #if defined(WIN32) && USE_COLORMAP
   if (fl_palette) {
     fl_GetDC(fl_xid(this));
@@ -358,49 +361,18 @@ void Fl_Gl_Window::flush() {
 
 void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 //  printf("Fl_Gl_Window::resize(X=%d, Y=%d, W=%d, H=%d)\n", X, Y, W, H);
-  if (W != w() || H != h()) {
-    valid(0);
-#ifdef __APPLE_QD__
-    GLint xywh[4];
+//  printf("current: x()=%d, y()=%d, w()=%d, h()=%d\n", x(), y(), w(), h());
 
-    if (window()) {
-      // MRS: This isn't quite right, but the parent window won't have its W and H updated yet...
-      xywh[0] = x();
-      xywh[1] = window()->h() - y() - h();
-    } else {
-      xywh[0] = 0;
-      xywh[1] = 0;
-    }
+  if (W != w() || H != h()) valid(0);
 
-    xywh[2] = W;
-    xywh[3] = H;
-    aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
-//    printf("resize: xywh=[%d %d %d %d]\n", xywh[0], xywh[1], xywh[2], xywh[3]);
-
-    aglUpdateContext(context_);
-#elif defined(__APPLE_QUARTZ__)
-    GLint xywh[4];
-
-    if (window()) {
-      // MRS: This isn't quite right, but the parent window won't have its W and H updated yet...
-      xywh[0] = x();
-      xywh[1] = window()->h() - y() - h();
-    } else {
-      xywh[0] = 0;
-      xywh[1] = 0;
-    }
-
-    xywh[2] = W;
-    xywh[3] = H;
-    aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
-//    printf("resize: xywh=[%d %d %d %d]\n", xywh[0], xywh[1], xywh[2], xywh[3]);
-
-    aglUpdateContext(context_);
+#ifdef __APPLE__
+  if (X != x() || Y != y() || W != w() || H != h()) aglUpdateContext(context_);
 #elif !defined(WIN32)
-    if (!resizable() && overlay && overlay != this)
-      ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
-#endif
+  if ((W != w() || H != h()) && !resizable() && overlay && overlay != this) {
+    ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
   }
+#endif
+
   Fl_Window::resize(X,Y,W,H);
 }
 

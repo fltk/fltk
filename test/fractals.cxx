@@ -612,25 +612,30 @@ void myGLInit(void)
 /************************ GLUT STUFF ***************************/
 /***************************************************************/
 
+int winwidth = 1;
+int winheight = 1;
+
 void reshape(int w, int h)
 {
   glViewport(0,0,w,h);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(60.0, (GLdouble)w/h, 0.01, 100);
-  glPushMatrix();
-  glMatrixMode(GL_MODELVIEW);
-  glFlush();
+
+  winwidth  = w;
+  winheight = h;
 }
 
 void display(void)
-{ 
+{
+  time_t curtime;
+  char buf[255];
+  static time_t fpstime = 0;
+  static int fpscount = 0;
+  static int fps = 0;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-  glPushMatrix();  /* clear of last viewing xform, leaving perspective */
-
+  glLoadIdentity();
+  gluPerspective(60.0, (GLdouble)winwidth/winheight, 0.01, 100);
   agvViewTransform();
 
   glMatrixMode(GL_MODELVIEW);
@@ -646,12 +651,31 @@ void display(void)
   if (DrawAxes)
     glCallList(AXES);
 
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(0.0, winwidth, 0.0, winheight);
+
+  sprintf(buf, "FPS=%d", fps);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  gl_font(FL_HELVETICA, 12);
+  gl_draw(buf, 10, 10);
+
   //
   // Use glFinish() instead of glFlush() to avoid getting many frames
   // ahead of the display (problem with some Linux OpenGL implementations...)
   //
 
   glFinish();
+
+  // Update frames-per-second
+  fpscount ++;
+  curtime = time(NULL);
+  if ((curtime - fpstime) >= 2)
+  {
+    fps      = (fps + fpscount / (curtime - fpstime)) / 2;
+    fpstime  = curtime;
+    fpscount = 0;
+  }
 }
 
 void visible(int v)
