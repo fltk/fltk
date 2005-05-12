@@ -78,13 +78,18 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 		repcount,	// Number of times to repeat
 		temp,		// Temporary color
 		align,		// Alignment bytes
-		dataSize;	// number of bytes in image data set
+		dataSize,	// number of bytes in image data set
+		row_order,	// 1 = normal;  -1 = flipped row order
+		start_y,	// Beginning Y
+		end_y;		// Ending Y
   long		offbits;	// Offset to image data
   uchar		bit,		// Bit in image
 		byte;		// Byte in image
   uchar		*ptr;		// Pointer into pixels
   uchar		colormap[256][3];// Colormap
-  uchar		havemask = 0;	// single bit mask follows image data
+  uchar		havemask;	// Single bit mask follows image data
+  int		use_5_6_5;	// Use 5:6:5 for R:G:B channels in 16 bit images
+
 
   // Open the file...
   if ((fp = fopen(bmp, "rb")) == NULL) return;
@@ -107,6 +112,10 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
 //  printf("offbits = %ld, info_size = %d\n", offbits, info_size);
 
+  havemask  = 0;
+  row_order = -1;
+  use_5_6_5 = 0;
+
   if (info_size < 40) {
     // Old Windows/OS2 BMP header...
     w(read_word(fp));
@@ -120,7 +129,10 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   } else {
     // New BMP header...
     w(read_long(fp));
-    h(read_long(fp));
+    // If the height is negative, the row order is flipped
+    temp = read_long(fp);
+    if (temp < 0) row_order = 1;
+    h(abs(temp));
     read_word(fp);
     depth = read_word(fp);
     compression = read_dword(fp);
@@ -170,6 +182,10 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
     if (info_size > 12) getc(fp);
   }
 
+  // Read first dword of colormap. It tells us if 5:5:5 or 5:6:5 for 16 bit
+  if (depth == 16)
+    use_5_6_5 = (read_dword(fp) == 0xf800);
+
   // Setup image and buffers...
   d(bDepth);
   if (offbits) fseek(fp, offbits, SEEK_SET);
@@ -184,7 +200,15 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   byte  = 0;
   temp  = 0;
 
-  for (y = h() - 1; y >= 0; y --) {
+  if (row_order < 0) {
+    start_y = h() - 1;
+    end_y   = -1;
+  } else {
+    start_y = 0;
+    end_y   = h();
+  }
+
+  for (y = start_y; y != end_y; y += row_order) {
     ptr = (uchar *)array + y * w() * d();
 
     switch (depth)
@@ -342,22 +366,22 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 	  }
           break;
 
-      case 16 : // 16-bit 5:5:5 RGB
+      case 16 : // 16-bit 5:5:5 or 5:6:5 RGB
           for (x = w(); x > 0; x --, ptr += bDepth) {
 	    uchar b = getc(fp), a = getc(fp) ;
-#ifdef USE_5_6_5 // Green as the brightest color should have one bit more 5:6:5
-	    ptr[0] = (uchar)(( b << 3 ) & 0xf8);
-	    ptr[1] = (uchar)(((a << 5) & 0xe0) | ((b >> 3) & 0x1c));
-	    ptr[2] = (uchar)(a & 0xf8);
-#else // this is the default wasting one bit: 5:5:5
-	    ptr[2] = (uchar)((b << 3) & 0xf8);
-	    ptr[1] = (uchar)(((a << 6) & 0xc0) | ((b >> 2) & 0x38));
-	    ptr[0] = (uchar)((a<<1) & 0xf8);
-#endif
+	    if (use_5_6_5) {
+		ptr[2] = (uchar)(( b << 3 ) & 0xf8);
+		ptr[1] = (uchar)(((a << 5) & 0xe0) | ((b >> 3) & 0x1c));
+		ptr[0] = (uchar)(a & 0xf8);
+	    } else {
+		ptr[2] = (uchar)((b << 3) & 0xf8);
+		ptr[1] = (uchar)(((a << 6) & 0xc0) | ((b >> 2) & 0x38));
+		ptr[0] = (uchar)((a<<1) & 0xf8);
+	    }
 	  }
 
           // Read remaining bytes to align to 32 bits...
-	  for (temp = w() * 3; temp & 3; temp ++) {
+	  for (temp = w() * 2; temp & 3; temp ++) {
 	    getc(fp);
 	  }
           break;

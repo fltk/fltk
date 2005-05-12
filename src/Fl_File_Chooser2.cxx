@@ -1030,7 +1030,6 @@ Fl_File_Chooser::value(int f)	// I - File number
   int		i;		// Looping var
   int		fcount;		// Number of selected files
   const char	*name;		// Current filename
-  char		*slash;		// Trailing slash, if any
   static char	pathname[1024];	// Filename + directory
 
 
