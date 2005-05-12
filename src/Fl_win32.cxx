@@ -814,13 +814,13 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     break;
 
-  case WM_MOVE:
+  case WM_MOVE: {
     resize_bug_fix = window;
     int nx = LOWORD(lParam);
     int ny = HIWORD(lParam);
     if (nx & 0x8000) nx -= 65536;
     if (ny & 0x8000) ny -= 65536;
-    window->position(nx, ny);
+    window->position(nx, ny); }
     break;
 
   case WM_SETCURSOR:
