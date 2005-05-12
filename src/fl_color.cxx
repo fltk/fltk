@@ -362,20 +362,26 @@ Fl_Color fl_inactive(Fl_Color c) {
 }
 
 Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
-  unsigned c1, c2;
+  unsigned c1, c2;	// RGB colors
+  int l1, l2;		// Luminosities
 
+
+  // Get the RGB values for each color...
   if (fg & 0xffffff00) c1 = (unsigned)fg;
   else c1 = fl_cmap[fg];
 
   if (bg & 0xffffff00) c2 = (unsigned)bg;
   else c2 = fl_cmap[bg];
 
-  if ((c1^c2)&0x80800000)
-    return fg;
-  else if (c2&0x80800000)
-    return FL_BLACK;
-  else
-    return FL_WHITE;
+  // Compute the luminosity...
+  l1 = ((c1 >> 24) * 31 + ((c1 >> 16) & 255) * 61 + ((c1 >> 8) & 255) * 8) / 100;
+  l2 = ((c2 >> 24) * 31 + ((c2 >> 16) & 255) * 61 + ((c2 >> 8) & 255) * 8) / 100;
+
+  // Compare and return the contrasting color...
+  if ((l1 - l2) > 127) return fg;
+  else if ((l2 - l1) > 127) return fg;
+  else if (l2 > 127) return FL_BLACK;
+  else return FL_WHITE;
 }
 
 //
