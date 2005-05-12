@@ -88,6 +88,7 @@ int Fl_Scrollbar::handle(int event) {
   else {
     int S = int(slider_size()*ww+.5);
     int T = (horizontal() ? H : W)/2+1;
+    if (type()==FL_VERT_NICE_SLIDER || type()==FL_HOR_NICE_SLIDER) T += 4;
     if (S < T) S = T;
     double val =
       (maximum()-minimum()) ? (value()-minimum())/(maximum()-minimum()) : 0.5;
