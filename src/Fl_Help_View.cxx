@@ -61,6 +61,7 @@
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
+#include <math.h>
 
 #if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
@@ -329,6 +330,7 @@ Fl_Help_View::draw()
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
 					// Box to draw...
+  int			underline;	// Underline text?
 
 
   // Draw the scrollbar(s) and box first...
@@ -372,6 +374,7 @@ Fl_Help_View::draw()
       pre       = 0;
       head      = 0;
       needspace = 0;
+      underline = 0;
 
       initfont(font, fsize);
 
@@ -399,6 +402,8 @@ Fl_Help_View::draw()
 	    }
 
             fl_draw(buf, xx + x() - leftline_, yy + y());
+	    if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
+	                             xx + x() - leftline_ + ww);
 
             xx += ww;
 	    if ((fsize + 2) > hh)
@@ -416,6 +421,9 @@ Fl_Help_View::draw()
                 s = buf;
 
                 fl_draw(buf, xx + x() - leftline_, yy + y());
+		if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
+	                        	 xx + x() - leftline_ +
+					     (int)fl_width(buf));
 
 		if (line < 31)
 	          line ++;
@@ -444,7 +452,10 @@ Fl_Help_View::draw()
 	      s = buf;
 
               fl_draw(buf, xx + x() - leftline_, yy + y());
-              xx += (int)fl_width(buf);
+	      ww = (int)fl_width(buf);
+	      if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
+	                               xx + x() - leftline_ + ww);
+              xx += ww;
 	    }
 
 	    needspace = 0;
@@ -555,9 +566,52 @@ Fl_Help_View::draw()
 	  }
 	  else if (strcasecmp(buf, "A") == 0 &&
 	           get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
+	  {
 	    fl_color(linkcolor_);
+	    underline = 1;
+	  }
 	  else if (strcasecmp(buf, "/A") == 0)
+	  {
 	    fl_color(textcolor_);
+	    underline = 0;
+	  }
+	  else if (strcasecmp(buf, "FONT") == 0)
+	  {
+	    if (get_attr(attrs, "COLOR", attr, sizeof(attr)) != NULL) {
+	      fl_color(get_color(attr, textcolor_));
+	    }
+
+            if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
+	      if (!strncasecmp(attr, "helvetica", 9) ||
+	          !strncasecmp(attr, "arial", 5) ||
+		  !strncasecmp(attr, "sans", 4)) font = FL_HELVETICA;
+              else if (!strncasecmp(attr, "times", 5) ||
+	               !strncasecmp(attr, "serif", 5)) font = FL_TIMES;
+              else if (!strncasecmp(attr, "symbol", 6)) font = FL_SYMBOL;
+	      else font = FL_COURIER;
+            }
+
+            if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != NULL) {
+              if (isdigit(attr[0] & 255)) {
+	        // Absolute size
+	        fsize = (int)(textsize_ * pow(1.2, atof(attr) - 3.0));
+	      } else {
+	        // Relative size
+	        fsize = (int)(fsize * pow(1.2, atof(attr) - 3.0));
+	      }
+	    }
+
+            pushfont(font, fsize);
+	  }
+	  else if (strcasecmp(buf, "/FONT") == 0)
+	  {
+	    fl_color(textcolor_);
+	    popfont(font, fsize);
+	  }
+	  else if (strcasecmp(buf, "U") == 0)
+	    underline = 1;
+	  else if (strcasecmp(buf, "/U") == 0)
+	    underline = 0;
 	  else if (strcasecmp(buf, "B") == 0 ||
 	           strcasecmp(buf, "STRONG") == 0)
 	    pushfont(font |= FL_BOLD, fsize);
@@ -761,7 +815,11 @@ Fl_Help_View::draw()
       }
 
       if (s > buf && !head)
+      {
         fl_draw(buf, xx + x() - leftline_, yy + y());
+	if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
+	                         xx + x() - leftline_ + ww);
+      }
     }
 
   fl_pop_clip();
@@ -1388,6 +1446,32 @@ Fl_Help_View::format()
 	{
           popfont(font, fsize);
 	}
+	  else if (strcasecmp(buf, "FONT") == 0)
+	  {
+            if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
+	      if (!strncasecmp(attr, "helvetica", 9) ||
+	          !strncasecmp(attr, "arial", 5) ||
+		  !strncasecmp(attr, "sans", 4)) font = FL_HELVETICA;
+              else if (!strncasecmp(attr, "times", 5) ||
+	               !strncasecmp(attr, "serif", 5)) font = FL_TIMES;
+              else if (!strncasecmp(attr, "symbol", 6)) font = FL_SYMBOL;
+	      else font = FL_COURIER;
+            }
+
+            if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != NULL) {
+              if (isdigit(attr[0] & 255)) {
+	        // Absolute size
+	        fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
+	      } else {
+	        // Relative size
+	        fsize = (int)(fsize * pow(1.2, atoi(attr)));
+	      }
+	    }
+
+            pushfont(font, fsize);
+	  }
+	  else if (strcasecmp(buf, "/FONT") == 0)
+	    popfont(font, fsize);
 	else if (strcasecmp(buf, "B") == 0 ||
         	 strcasecmp(buf, "STRONG") == 0)
 	  pushfont(font |= FL_BOLD, fsize);

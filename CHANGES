@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fl_Help_View now supports the FONT and U elements (STR
+	  #815)
 	- OpenGL windows that were completely off-screen caused
 	  problems with some graphics cards on WIN32 (STR #831)
 	- Multiple screen support didn't work on Windows NT and
