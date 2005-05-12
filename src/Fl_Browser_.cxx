@@ -457,6 +457,7 @@ void Fl_Browser_::deleting(void* l) {
   } else {
     // we don't know where this item is, recalculate top...
     real_position_ = 0;
+    offset_ = 0;
     top_ = 0;
   }
   if (l == selection_) selection_ = 0;
