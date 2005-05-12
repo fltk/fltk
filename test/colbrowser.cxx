@@ -43,23 +43,6 @@ char dbname[FL_PATH_MAX];
 static void create_form_cl(void);
 static int load_browser(char *);
 
-/* the RGB data file does not have a standard location on unix. */
-
-#ifdef __VMS
-  static const char *rgbfile = "SYS$MANAGER:DECW$RGB.DAT";
-#else
-#ifdef __EMX__   /* OS2 */
-#include <X11/XlibInt.h>
-  static const char *rgbfile = "/XFree86/lib/X11/rgb.txt";
-#else
-#ifdef __FreeBSD__
-  static const char *rgbfile = "/usr/X11R6/lib/X11/rgb.txt";
-#else
-   static const char *rgbfile = "/usr/lib/X11/rgb.txt";
-#endif
-#endif
-#endif
-
 typedef struct { int r, g, b; } RGBdb;
 
 static RGBdb rgbdb[MAX_RGB];
@@ -71,7 +54,7 @@ main(int argc, char *argv[])
     fl_initialize(&argc, argv, "FormDemo", 0, 0);
 
     create_form_cl();
-    strcpy(dbname, rgbfile);
+    strcpy(dbname, "rgb.txt");
 
     if (load_browser(dbname))
 	fl_set_object_label(dbobj, dbname);
