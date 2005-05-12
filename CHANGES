@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- fl_draw() would segfault on WIN32 if no font was set;
+	  it now uses the default font (STR #828)
 	- Fl_Browser_ was calling the callback multiple times for
 	  a single selection change with FL_WHEN_CHANGED (STR
 	  #834)

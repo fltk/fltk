@@ -155,7 +155,7 @@ double fl_width(uchar c) {
 
 void fl_draw(const char* str, int n, int x, int y) {
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-  SelectObject(fl_gc, fl_fontsize->fid);
+  if (fl_fontsize) SelectObject(fl_gc, fl_fontsize->fid);
   TextOut(fl_gc, x, y, str, n);
   SetTextColor(fl_gc, oldColor);
 }
