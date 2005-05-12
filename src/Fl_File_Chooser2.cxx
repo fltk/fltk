@@ -1039,15 +1039,7 @@ Fl_File_Chooser::value(int f)	// I - File number
   if (!(type_ & MULTI)) {
     // Return the filename in the filename field...
     if (!name || !name[0]) return NULL;
-    else if (fl_filename_isdir(name)) {
-      if (type_ & DIRECTORY) {
-        // Strip trailing slash, if any...
-        strlcpy(pathname, name, sizeof(pathname));
-	slash = pathname + strlen(pathname) - 1;
-	if (*slash == '/') *slash = '\0';
-        return pathname;
-      } else return NULL;
-    } else return name;
+    else return name;
   }
 
   // Return a filename from the list...
@@ -1065,24 +1057,13 @@ Fl_File_Chooser::value(int f)	// I - File number
 	  strlcpy(pathname, name, sizeof(pathname));
 	}
 
-	// Strip trailing slash, if any...
-	slash = pathname + strlen(pathname) - 1;
-	if (*slash == '/') *slash = '\0';
 	return pathname;
       }
     }
 
   // If nothing is selected, use the filename field...
   if (!name || !name[0]) return NULL;
-  else if (fl_filename_isdir(name)) {
-    if (type_ & DIRECTORY) {
-      // Strip trailing slash, if any...
-      strlcpy(pathname, name, sizeof(pathname));
-      slash = pathname + strlen(pathname) - 1;
-      if (*slash == '/') *slash = '\0';
-      return pathname;
-    } else return NULL;
-  } else return name;
+  else return name;
 }
 
 
