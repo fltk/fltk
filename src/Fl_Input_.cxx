@@ -61,7 +61,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
   if (input_type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {*o++ = '*'; p++;}
   } else while (o<e) {
-    if (wrap() && (p >= value_+size_ || isspace(*p))) {
+    if (wrap() && (p >= value_+size_ || isspace(*p & 255))) {
       word_wrap = w() - Fl::box_dw(box()) - 2;
       width_to_lastspace += (int)fl_width(lastspace_out, o-lastspace_out);
       if (p > lastspace+1) {
@@ -593,7 +593,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   // result in sub-optimal update when such wrapping does not happen
   // but it is too hard to figure out for now...
   if (wrap())
-    while (b > 0 && !isspace(index(b))) b--;
+    while (b > 0 && !isspace(index(b) & 255)) b--;
 
   // make sure we redraw the old selection or cursor:
   if (mark_ < b) b = mark_;
@@ -716,34 +716,34 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     // strip trailing control characters and spaces before pasting:
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
-    if (input_type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1))) e--;
+    if (input_type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1) & 255)) e--;
     if (!t || e <= t) return 1; // Int/float stuff will crash without this test
     if (input_type() == FL_INT_INPUT) {
-      while (isspace(*t) && t < e) t ++;
+      while (isspace(*t & 255) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
       if (strncmp(p, "0x", 2) == 0) {
         p += 2;
-        while (isxdigit(*p) && p < e) p ++;
+        while (isxdigit(*p & 255) && p < e) p ++;
       } else {
-        while (isdigit(*p) && p < e) p ++;
+        while (isdigit(*p & 255) && p < e) p ++;
       }
       if (p < e) {
         fl_beep(FL_BEEP_ERROR);
         return 1;
       } else return replace(0, size(), t, e - t);
     } else if (input_type() == FL_FLOAT_INPUT) {
-      while (isspace(*t) && t < e) t ++;
+      while (isspace(*t & 255) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
-      while (isdigit(*p) && p < e) p ++;
+      while (isdigit(*p & 255) && p < e) p ++;
       if (*p == '.') {
         p ++;
-        while (isdigit(*p) && p < e) p ++;
+        while (isdigit(*p & 255) && p < e) p ++;
 	if (*p == 'e' || *p == 'E') {
 	  p ++;
 	  if (*p == '+' || *p == '-') p ++;
-	  while (isdigit(*p) && p < e) p ++;
+	  while (isdigit(*p & 255) && p < e) p ++;
 	}
       }
       if (p < e) {
