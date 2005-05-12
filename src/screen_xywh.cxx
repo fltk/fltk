@@ -40,6 +40,13 @@ static int num_screens = 0;
 #    include <multimon.h>
 #  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
+// BOOL EnumDisplayMonitors(HDC, LPCRECT, MONITORENUMPROC, LPARAM)
+typedef BOOL (*fl_edm_func)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
+// BOOL GetMonitorInfo(HMONITOR, LPMONITORINFO)
+typedef BOOL (*fl_gmi_func)(HMONITOR, LPMONITORINFO);
+
+static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
+
 static RECT screens[16];
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
@@ -48,19 +55,44 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
   MONITORINFO mi;
   mi.cbSize = sizeof(mi);
 
-  GetMonitorInfo(mon, &mi);
+//  GetMonitorInfo(mon, &mi);
+  fl_gmi(mon, &mi);
+
   screens[num_screens] = mi.rcWork;
   num_screens ++;
   return TRUE;
 }
 
 static void screen_init() {
-  num_screens = GetSystemMetrics(SM_CMONITORS);
-  if (num_screens > 1) {
-    // If there is more than 1 monitor, enumerate them...
-    num_screens = 0;
-    EnumDisplayMonitors(0,0,screen_cb,0);
+  // Since not all versions of Windows include multiple monitor support,
+  // we do a run-time check for the required functions...
+  HMODULE hMod = GetModuleHandle("USER32.DLL");
+
+  if (hMod) {
+    // check that EnumDisplayMonitors is available
+    fl_edm_func fl_edm = (fl_edm_func)GetProcAddress(hMod, "EnumDisplayMonitors");
+
+    if (fl_edm) {
+      // We do have EnumDisplayMonitors, so lets find out how many monitors...
+      num_screens = GetSystemMetrics(SM_CMONITORS);
+
+      if (num_screens > 1) {
+        // If there is more than 1 monitor, enumerate them...
+        fl_gmi = (fl_gmi_func)GetProcAddress(hMod, "GetMonitorInfoA");
+
+        if (fl_gmi) {
+          // We have GetMonitorInfoA, enumerate all the screens...
+          num_screens = 0;
+//        EnumDisplayMonitors(0,0,screen_cb,0);
+          fl_edm(0, 0, screen_cb, 0);
+          return;
+        }
+      }
+    }
   }
+
+  // If we get here, assume we have 1 monitor...
+  num_screens = 1;
 }
 #elif defined(__APPLE__)
 XRectangle screens[16];
@@ -111,7 +143,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
   if (!num_screens) screen_init();
 
 #ifdef WIN32
-  if (num_screens > 0) {
+  if (num_screens > 1) {
     int i;
 
     for (i = 0; i < num_screens; i ++) {
@@ -126,7 +158,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
     }
   }
 #elif defined(__APPLE__)
-  if (num_screens > 0) {
+  if (num_screens > 1) {
     int i;
 
     for (i = 0; i < num_screens; i ++) {
@@ -143,7 +175,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
     }
   }
 #elif HAVE_XINERAMA
-  if (num_screens > 0) {
+  if (num_screens > 1) {
     int i;
 
     for (i = 0; i < num_screens; i ++) {
@@ -172,7 +204,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
   if (!num_screens) screen_init();
 
 #ifdef WIN32
-  if (num_screens > 0 && n >= 0 && n < num_screens) {
+  if (num_screens > 1 && n >= 0 && n < num_screens) {
     x = screens[n].left;
     y = screens[n].top;
     w = screens[n].right - screens[n].left;
@@ -180,7 +212,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
     return;
   }
 #elif defined(__APPLE__)
-  if (num_screens > 0 && n >= 0 && n < num_screens) {
+  if (num_screens > 1 && n >= 0 && n < num_screens) {
     x = screens[n].x;
     y = screens[n].y;
     w = screens[n].width;
@@ -188,7 +220,7 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
     return;
   }
 #elif HAVE_XINERAMA
-  if (num_screens > 0 && n >= 0 && n < num_screens) {
+  if (num_screens > 1 && n >= 0 && n < num_screens) {
     x = screens[n].x_org;
     y = screens[n].y_org;
     w = screens[n].width;
