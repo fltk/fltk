@@ -610,7 +610,11 @@ int Fl_Browser_::handle(int event) {
     if (type() == FL_NORMAL_BROWSER || !top_)
       ;
     else if (type() != FL_MULTI_BROWSER) {
-      change = select_only(find_item(my), when() & FL_WHEN_CHANGED);
+      change = select_only(find_item(my), 0);
+      if (change && (when() & FL_WHEN_CHANGED)) {
+	set_changed();
+	do_callback();
+      }
     } else {
       void* l = find_item(my);
       whichway = 1;

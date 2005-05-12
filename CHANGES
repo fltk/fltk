@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fl_Browser_ was calling the callback multiple times for
+	  a single selection change with FL_WHEN_CHANGED (STR
+	  #834)
 	- Added "filenew", "fileopen", "filesave", "filesaveas",
 	  and "fileprint" symbols with standard toolbar
 	  symbology.
