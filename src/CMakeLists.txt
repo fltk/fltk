@@ -30,6 +30,7 @@ SET(CPPFILES
   Fl_Menu.cxx
   Fl_Menu_.cxx
   Fl_Menu_Bar.cxx
+	Fl_Sys_Menu_Bar.cxx
   Fl_Menu_Button.cxx
   Fl_Menu_Window.cxx
   Fl_Menu_add.cxx
@@ -121,8 +122,8 @@ SET(CPPFILES
   fl_show_colormap.cxx
   fl_symbols.cxx
   fl_vertex.cxx
+	screen_xywh.cxx
   )
-
 SET(FLCPPFILES
   forms_compatability.cxx
   forms_bitmap.cxx
@@ -131,7 +132,6 @@ SET(FLCPPFILES
   forms_pixmap.cxx
   forms_timer.cxx
   )
-
 SET(GLCPPFILES
   Fl_Gl_Choice.cxx
   Fl_Gl_Overlay.cxx
@@ -141,7 +141,6 @@ SET(GLCPPFILES
   glut_compatability.cxx
   glut_font.cxx
   )
-
 SET(IMGCPPFILES
   fl_images_core.cxx
   Fl_BMP_Image.cxx
