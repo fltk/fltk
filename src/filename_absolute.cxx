@@ -112,7 +112,7 @@ int					// O - 0 if no change, 1 if changed
 fl_filename_relative(char       *to,	// O - Relative filename
                      int        tolen,	// I - Size of "to" buffer
                      const char *from) {// I - Absolute filename
-  const char	*newslash;		// Directory separator
+  char		*newslash;		// Directory separator
   const char	*slash;			// Directory separator
   char		cwd[1024];		// Current directory
 
@@ -134,8 +134,8 @@ fl_filename_relative(char       *to,	// O - Relative filename
   }
 
 #if defined(WIN32) || defined(__EMX__)
-  for (slash = strchr(cwd, '\\'); slash; slash = strchr(slash + 1, '\\'))
-    *slash = '/';
+  for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
+    *newslash = '/';
 
   if (!strcasecmp(from, cwd)) {
     strlcpy(to, ".", tolen);

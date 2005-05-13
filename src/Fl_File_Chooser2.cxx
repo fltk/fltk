@@ -160,6 +160,7 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 
 #ifdef WIN32
   // See if the filename contains backslashes...
+  char	*slash;				// Pointer to slashes
   char	fixpath[1024];			// Path with slashes converted
   if (strchr(d, '\\')) {
     // Convert backslashes to slashes...
