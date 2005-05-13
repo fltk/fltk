@@ -134,6 +134,9 @@ fl_filename_relative(char       *to,	// O - Relative filename
   }
 
 #if defined(WIN32) || defined(__EMX__)
+  for (slash = strchr(cwd, '\\'); slash; slash = strchr(slash + 1, '\\'))
+    *slash = '/';
+
   if (!strcasecmp(from, cwd)) {
     strlcpy(to, ".", tolen);
     return (1);
