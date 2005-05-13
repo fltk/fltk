@@ -158,6 +158,20 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
   if (d == NULL)
     d = ".";
 
+#ifdef WIN32
+  // See if the filename contains backslashes...
+  char	fixpath[1024];			// Path with slashes converted
+  if (strchr(d, '\\')) {
+    // Convert backslashes to slashes...
+    strlcpy(fixpath, d, sizeof(fixpath));
+
+    for (slash = strchr(fixpath, '\\'); slash; slash = strchr(slash + 1, '\\'))
+      *slash = '/';
+
+    d = fixpath;
+  }
+#endif // WIN32
+
   if (d[0] != '\0')
   {
     // Make the directory absolute...
@@ -1071,12 +1085,13 @@ Fl_File_Chooser::value(int f)	// I - File number
 //
 
 void
-Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
+Fl_File_Chooser::value(const char *filename)
+					// I - Filename + directory
 {
-  int	i,					// Looping var
-  	fcount;					// Number of items in list
-  char	*slash;					// Directory separator
-  char	pathname[1024];				// Local copy of filename
+  int	i,				// Looping var
+  	fcount;				// Number of items in list
+  char	*slash;				// Directory separator
+  char	pathname[1024];			// Local copy of filename
 
 
 //  printf("Fl_File_Chooser::value(\"%s\")\n", filename == NULL ? "(null)" : filename);
@@ -1090,13 +1105,24 @@ Fl_File_Chooser::value(const char *filename)	// I - Filename + directory
     return;
   }
 
+#ifdef WIN32
+  // See if the filename contains backslashes...
+  char	fixpath[1024];			// Path with slashes converted
+  if (strchr(filename, '\\')) {
+    // Convert backslashes to slashes...
+    strlcpy(fixpath, filename, sizeof(fixpath));
+
+    for (slash = strchr(fixpath, '\\'); slash; slash = strchr(slash + 1, '\\'))
+      *slash = '/';
+
+    filename = fixpath;
+  }
+#endif // WIN32
+
   // See if there is a directory in there...
   fl_filename_absolute(pathname, sizeof(pathname), filename);
 
-  if ((slash = strrchr(pathname, '/')) == NULL)
-    slash = strrchr(pathname, '\\');
-
-  if (slash != NULL) {
+  if ((slash = strrchr(pathname, '/')) != NULL) {
     // Yes, change the display to the directory... 
     if (!fl_filename_isdir(pathname)) *slash++ = '\0';
 
