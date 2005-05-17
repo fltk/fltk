@@ -193,7 +193,7 @@ search_entry(int r, int g, int b)
     int i, j, diffr, diffg, diffb;
     unsigned int diff, mindiff;
 
-    mindiff = ~0;
+    mindiff = (unsigned int)~0;
     for (i = j = 0; db->r < 256; db++, i++)
     {
        diffr = r - db->r;
