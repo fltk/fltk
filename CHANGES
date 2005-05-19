@@ -2,6 +2,7 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fixed some redraw issues on Windows XP.
 	- FLUID didn't set the initial size of widgets properly
 	  (STR #850)
 	- Fl_Tabs would steal focus away from its children on a

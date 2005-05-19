@@ -589,27 +589,27 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
 
   case WM_PAINT: {
-    Fl_Region R, sysR = CreateRectRgn(0,0,0,0);
-    GetUpdateRgn(hWnd,sysR,0);
+    Fl_Region R;
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
     if (!i->region && window->damage()) {
       // Redraw the whole window...
       i->region = CreateRectRgn(0, 0, window->w(), window->h());
-    } else {
-      // We need to merge WIN32's damage into FLTK's damage.
-      R = CreateRectRgn(0,0,0,0);
-      GetUpdateRgn(hWnd,R,0);
-
-      if (i->region) {
-        // Also tell WIN32 that we are drawing someplace else as well...
-        InvalidateRgn(hWnd, i->region, FALSE);
-        CombineRgn(i->region, i->region, R, RGN_OR);
-        XDestroyRegion(R);
-      } else {
-        i->region = R;
-      }
     }
+
+    // We need to merge WIN32's damage into FLTK's damage.
+    R = CreateRectRgn(0,0,0,0);
+    GetUpdateRgn(hWnd,R,0);
+
+    if (i->region) {
+      // Also tell WIN32 that we are drawing someplace else as well...
+      InvalidateRgn(hWnd, i->region, FALSE);
+      CombineRgn(i->region, i->region, R, RGN_OR);
+      XDestroyRegion(R);
+    } else {
+      i->region = R;
+    }
+
     window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
     // These next two statements should not be here, so that all update
     // is deferred until Fl::flush() is called during idle.  However WIN32
@@ -620,7 +620,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     i->flush();
     fl_restore_pen();
     if (window->type() == FL_DOUBLE_WINDOW) ValidateRgn(hWnd,0);
-    else ValidateRgn(hWnd,sysR);
+    else ValidateRgn(hWnd,i->region);
     window->clear_damage();
     } return 0;
 
