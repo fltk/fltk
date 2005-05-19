@@ -1,14 +1,14 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {733 489 321 324} resizable visible
+    xywh {733 489 320 320} type Double resizable visible
   } {
-    Fl_Tabs {} {open
-      xywh {10 10 300 200} selection_color 7 resizable
+    Fl_Tabs {} {open selected
+      xywh {10 10 300 200} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
         label Label1 open
@@ -48,7 +48,7 @@ Function {} {open
         }
         Fl_Button {} {
           label {Test event blocking by modal window}
-          callback {fl_message("Make sure you cannot change the tabs while this modal window is up");} selected
+          callback {fl_message("Make sure you cannot change the tabs while this modal window is up");}
           xywh {30 170 260 30}
           code0 {\#include <FL/fl_ask.H>}
         }

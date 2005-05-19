@@ -288,16 +288,13 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     Fl_Color c = sel ? selection_color() : o->selection_color();
 
-    draw_box(box(), x1, y(), W, H, c);
-
-    // Make sure that the label contrasts the tab color...
-    c = fl_contrast(o->labelcolor(), c);
+    draw_box(box(), x1, y(), W, H + 10, c);
 
     // Save the previous label color
     Fl_Color oc = o->labelcolor();
 
-    // Draw the label using the contrast color...
-    o->labelcolor(c);    
+    // Draw the label using the current color...
+    o->labelcolor(sel ? labelcolor() : o->labelcolor());    
     o->draw_label(x1, y(), W, H, FL_ALIGN_CENTER);
 
     // Restore the original label color...
@@ -317,16 +314,13 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     Fl_Color c = sel ? selection_color() : o->selection_color();
 
-    draw_box(box(), x1, y() + h() - H, W, H, c);
-
-    // Make sure that the label contrasts the tab color...
-    c = fl_contrast(o->labelcolor(), c);
+    draw_box(box(), x1, y() + h() - H - 10, W, H + 10, c);
 
     // Save the previous label color
     Fl_Color oc = o->labelcolor();
 
-    // Draw the label using the contrast color...
-    o->labelcolor(c);    
+    // Draw the label using the current color...
+    o->labelcolor(sel ? labelcolor() : o->labelcolor());
     o->draw_label(x1, y() + h() - H, W, H, FL_ALIGN_CENTER);
 
     // Restore the original label color...

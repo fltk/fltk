@@ -267,8 +267,8 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 static void up_round(int x, int y, int w, int h, Fl_Color c) {
   if (w != h) up_box(x, y, w, h, c);
   else {
-    shade_round(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
-    frame_round(x, y, w, h - 1, "IJLM", c);
+    shade_round(x + 1, y + 1, w - 2, h - 2, "RVQNOPQRSTUVWVQ", c);
+    frame_round(x, y, w, h, "IJLM", c);
   }
 }
 
@@ -287,8 +287,8 @@ static void down_box(int x, int y, int w, int h, Fl_Color c) {
 static void down_round(int x, int y, int w, int h, Fl_Color c) {
   if (w != h) down_box(x, y, w, h, c);
   else {
-    shade_round(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
-    frame_round(x, y, w, h - 1, "MLJI", c);
+    shade_round(x + 2, y + 2, w - 4, h - 4, "STUVWWWVT", c);
+    frame_round(x, y, w, h, "MLJI", c);
   }
 }
 
