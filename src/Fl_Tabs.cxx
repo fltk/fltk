@@ -149,7 +149,9 @@ int Fl_Tabs::handle(int event) {
     if (!Fl::visible_focus()) return Fl_Group::handle(event);
     if (Fl::event() == FL_RELEASE ||
 	Fl::event() == FL_SHORTCUT ||
-	Fl::event() == FL_KEYBOARD) {
+	Fl::event() == FL_KEYBOARD ||
+	Fl::event() == FL_FOCUS ||
+	Fl::event() == FL_UNFOCUS) {
       int H = tab_height();
       if (H >= 0) {
         H += Fl::box_dy(box());
@@ -158,7 +160,8 @@ int Fl_Tabs::handle(int event) {
         H = Fl::box_dy(box()) - H;
         damage(FL_DAMAGE_SCROLL, x(), y() + h() - H, w(), H);
       }
-      return 1;
+      if (Fl::event() == FL_FOCUS || Fl::event() == FL_UNFOCUS) return 0;
+      else return 1;
     } else return Fl_Group::handle(event);
   case FL_KEYBOARD:
     switch (Fl::event_key()) {

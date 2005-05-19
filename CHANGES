@@ -2,6 +2,10 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- FLUID didn't set the initial size of widgets properly
+	  (STR #850)
+	- Fl_Tabs would steal focus away from its children on a
+	  window focus change (STR #870)
 	- filename_relative() now converts the current directory
 	  to forward slashes as needed on WIN32 (STR #816)
 	- Fl_File_Chooser::value() and ::directory() now handle

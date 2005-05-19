@@ -908,7 +908,7 @@ static void cb(Fl_Widget *, void *v) {
       wt->textstuff(2, f, s, c);
 
       // Resize and/or reposition new widget...
-      int w, h;
+      int w = 0, h = 0;
       wt->ideal_size(w, h);
 
       if (!strcmp(wt->type_name(), "Fl_Menu_Bar")) {
