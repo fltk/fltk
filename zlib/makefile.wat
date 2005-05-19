@@ -1,5 +1,5 @@
 #
-# "$Id: makefile.wat,v 1.1.2.1 2004/11/20 03:19:59 easysw Exp $"
+# "$Id$"
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
@@ -56,5 +56,5 @@ CLEANEXTS = obj
     -rm -f $(LIBNAME)
 
 #
-# End of "$Id: makefile.wat,v 1.1.2.1 2004/11/20 03:19:59 easysw Exp $".
+# End of "$Id$".
 #

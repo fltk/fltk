@@ -1,5 +1,5 @@
 #
-# "$Id: makefile.wat,v 1.1.2.1 2004/11/29 14:57:23 easysw Exp $"
+# "$Id$"
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
@@ -285,5 +285,5 @@ FLUIDMADE = fastslow inactive keyboard_ui preferences radio resize tabs valuator
     @for %a in ($(FLUIDMADE)) do -rm -f %a.cxx %a.h
 
 #
-# End of "$Id: makefile.wat,v 1.1.2.1 2004/11/29 14:57:23 easysw Exp $".
+# End of "$Id$".
 #
