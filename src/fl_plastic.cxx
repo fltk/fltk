@@ -274,7 +274,7 @@ static void up_round(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void down_frame(int x, int y, int w, int h, Fl_Color c) {
-  frame_rect(x, y, w, h - 1, "LLRRTTLL", c);
+  frame_rect(x, y, w, h - 1, "LLLLTTRR", c);
 }
 
 
