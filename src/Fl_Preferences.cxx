@@ -87,7 +87,7 @@ Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *key )
 {
-  rootNode = 0;
+  rootNode = parent.rootNode;
   node = parent.node->addChild( key );
 }
 
@@ -100,7 +100,7 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *key )
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *key )
 {
-  rootNode = 0;
+  rootNode = parent->rootNode;
   node = parent->node->addChild( key );
 }
 
@@ -112,7 +112,7 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *key )
  */
 Fl_Preferences::~Fl_Preferences()
 {
-  delete rootNode;
+  if (!node->parent()) delete rootNode;
   // DO NOT delete nodes! The root node will do that after writing the preferences
 }
 

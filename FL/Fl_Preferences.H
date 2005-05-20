@@ -117,6 +117,7 @@ private:
     Node *search( const char *path, int offset=0 );
     Node *addChild( const char *path );
     void setParent( Node *parent );
+    Node *parent() { return parent_; }
     char remove();
     char dirty();
     // entry methods
