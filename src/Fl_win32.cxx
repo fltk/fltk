@@ -1219,12 +1219,12 @@ Fl_Window *Fl_Window::current_;
 HDC fl_gc = 0;
 // the current window handle, initially set to -1 so we can correctly
 // allocate fl_GetDC(0)
-HWND fl_window = (HWND)-1;
+HWND fl_window = NULL;
 
 // Here we ensure only one GetDC is ever in place.
 HDC fl_GetDC(HWND w) {
   if (fl_gc) {
-    if (w == fl_window) return fl_gc;
+    if (w == fl_window  &&  fl_window != NULL) return fl_gc;
     ReleaseDC(fl_window, fl_gc);
   }
   fl_gc = GetDC(w);

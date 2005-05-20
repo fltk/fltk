@@ -2,6 +2,7 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Changed initializations on WIN32 (STR #862)
 	- Fl_Preferences::getUserdataPath() didn't work for
 	  sub-groups (STR #872)
 	- Fixed some redraw issues on Windows XP.
