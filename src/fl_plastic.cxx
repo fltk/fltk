@@ -197,7 +197,8 @@ static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
   int		clen = strlen(c) - 1;
   int		chalf = clen / 2;
   int		cstep = 1;
-  static const int kvals[] = { 5, 3, 2, 1 };
+  static const int kvals_table[] = { 21, 16, 11, 8, 5, 3, 2, 1 };
+  const int *kvals = kvals_table + 8 - chalf;
   if (clen >= h) cstep = 2;
 
   for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
