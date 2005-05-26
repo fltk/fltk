@@ -281,6 +281,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   int dh = Fl::box_dh(box());
   int dy = Fl::box_dy(box());
 
+  // compute offsets to make selected tab look bigger
+  int yofs = sel ? 0 : BORDER;
+
   if ((x2 < x1+W) && what == RIGHT) x1 = x2 - W;
 
   if (H >= 0) {
@@ -291,14 +294,14 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     Fl_Color c = sel ? selection_color() : o->selection_color();
 
-    draw_box(box(), x1, y(), W, H + 10, c);
+    draw_box(box(), x1, y() + yofs, W, H + 10 - yofs, c);
 
     // Save the previous label color
     Fl_Color oc = o->labelcolor();
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());    
-    o->draw_label(x1, y(), W, H, FL_ALIGN_CENTER);
+    o->draw_label(x1, y() + yofs, W, H - yofs, FL_ALIGN_CENTER);
 
     // Restore the original label color...
     o->labelcolor(oc);
@@ -317,14 +320,14 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     Fl_Color c = sel ? selection_color() : o->selection_color();
 
-    draw_box(box(), x1, y() + h() - H - 10, W, H + 10, c);
+    draw_box(box(), x1, y() + h() - H - 10, W, H + 10 - yofs, c);
 
     // Save the previous label color
     Fl_Color oc = o->labelcolor();
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
-    o->draw_label(x1, y() + h() - H, W, H, FL_ALIGN_CENTER);
+    o->draw_label(x1, y() + h() - H, W, H - yofs, FL_ALIGN_CENTER);
 
     // Restore the original label color...
     o->labelcolor(oc);

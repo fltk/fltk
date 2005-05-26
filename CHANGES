@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Selected tabs are now drawn slightly larger than
+	  unselected tabs so they stand out more (STR #882)
 	- FL_PLASTIC_DOWN_BOX drew with artifacts (STR #852)
 	- Changed initializations on WIN32 (STR #862)
 	- Fl_Preferences::getUserdataPath() didn't work for
