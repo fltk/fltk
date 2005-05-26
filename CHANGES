@@ -2,6 +2,10 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fl_Window::show(argc, argv) now sets the scheme before
+	  showing the window; this should eliminate any
+	  flickering between the standard and plastic schemes on
+	  startup.
 	- Selected tabs are now drawn slightly larger than
 	  unselected tabs so they stand out more (STR #882)
 	- FL_PLASTIC_DOWN_BOX drew with artifacts (STR #852)
