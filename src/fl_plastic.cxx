@@ -103,18 +103,52 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
   uchar *g = fl_gray_ramp();
   int b = strlen(c) / 4 + 1;
 
-  for (; b > 1; b --, x ++, y ++, w -= 2, h -= 2)
-  {
-    // Draw arcs around the perimeter of the button, 4 colors per
-    // circuit.
-    fl_color(shade_color(g[*c++], bc));
-    fl_arc(x, y, w, h, 45.0, 135.0);
-    fl_color(shade_color(g[*c++], bc));
-    fl_arc(x, y, w, h, 315.0, 405.0);
-    fl_color(shade_color(g[*c++], bc));
-    fl_arc(x, y, w, h, 225.0, 315.0);
-    fl_color(shade_color(g[*c++], bc));
-    fl_arc(x, y, w, h, 135.0, 225.0);
+  if (w==h) {
+    for (; b > 1; b --, x ++, y ++, w -= 2, h -= 2)
+    {
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, w, h, 45.0, 135.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, w, h, 315.0, 405.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, w, h, 225.0, 315.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, w, h, 135.0, 225.0);
+    }
+  } else if (w>h) {
+    int d = h/2;
+    for (; b > 1; d--, b --, x ++, y ++, w -= 2, h -= 2)
+    {
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, h, h, 90.0, 135.0);
+      fl_xyline(x+d, y, x+w-d);
+      fl_arc(x+w-h, y, h, h, 45.0, 90.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x+w-h, y, h, h, 315.0, 405.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x+w-h, y, h, h, 270.0, 315.0);
+      fl_xyline(x+d, y+h, x+w-d);
+      fl_arc(x, y, h, h, 225.0, 270.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, h, h, 135.0, 225.0);
+    }
+  } else if (w<h) {
+    int d = w/2;
+    for (; b > 1; d--, b --, x ++, y ++, w -= 2, h -= 2)
+    {
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, w, w, 45.0, 135.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y, w, w, 0.0, 45.0);
+      fl_yxline(x+w, y+d, y+h-d);
+      fl_arc(x, y+h-w, w, w, 315.0, 360.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y+h-w, w, w, 225.0, 315.0);
+      fl_color(shade_color(g[*c++], bc));
+      fl_arc(x, y+h-w, w, w, 180.0, 225.0);
+      fl_yxline(x, y+d, y+h-d);
+      fl_arc(x, y, w, w, 135.0, 180.0);
+    }
   }
 }
 
@@ -193,48 +227,56 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
 static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar		*g = fl_gray_ramp();
-  int		i, j, k;
+  int		i, j;
   int		clen = strlen(c) - 1;
   int		chalf = clen / 2;
   int		cstep = 1;
-  static const int kvals_table[] = { 21, 16, 11, 8, 5, 3, 2, 1 };
-  const int *kvals = kvals_table + 8 - chalf;
-  if (clen >= h) cstep = 2;
 
-  for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
-    // Indent k inside a circle...
-    k = kvals[i];
-
-    // Draw the top line and points...
-    fl_color(shade_color(g[c[i]], bc));
-    fl_xyline(x + k, y + i, x + w - k);
-
-    fl_color(shade_color(g[c[i] - 2], bc));
-    fl_point(x + k - 1, y + i + 1);
-    fl_point(x + k - 2, y + i + 2);
-    fl_point(x + w - k, y + i + 1);
-    fl_point(x + w - k - 1, y + i + 2);
-
-    // Draw the bottom line and points...
-    fl_color(shade_color(g[c[clen - i]], bc));
-    fl_xyline(x + k, y + h - i, x + w - k);
-
-    fl_color(shade_color(g[c[clen - i] - 2], bc));
-    fl_point(x + k - 1, y + h - i);
-    fl_point(x + k - 2, y + h - i - 1);
-    fl_point(x + w - k, y + h - i);
-    fl_point(x + w - k - 1, y + h - i - 1);
+  if (w>h) {
+    int d = h/2;
+    const int na = 8;
+    for (i=0; i<chalf; i++, d--, x++, y++, w-=2, h-=2)
+    {
+      fl_color(shade_color(g[c[i]], bc));
+      fl_pie(x, y, h, h, 90.0, 135.0+i*na);
+      fl_xyline(x+d, y, x+w-d);
+      fl_pie(x+w-h, y, h, h, 45.0+i*na, 90.0);
+      fl_color(shade_color(g[c[i] - 2], bc));
+      fl_pie(x+w-h, y, h, h, 315.0+i*na, 405.0+i*na);
+      fl_color(shade_color(g[c[clen - i]], bc));
+      fl_pie(x+w-h, y, h, h, 270.0, 315.0+i*na);
+      fl_xyline(x+d, y+h, x+w-d);
+      fl_pie(x, y, h, h, 225.0+i*na, 270.0);
+      fl_color(shade_color(g[c[clen - i] - 2], bc));
+      fl_pie(x, y, h, h, 135.0+i*na, 225.0+i*na);
+    }
+    fl_color(shade_color(g[c[chalf]], bc));
+    fl_rectf(x+d, y, w-h+1, h+1);
+    fl_pie(x, y, h, h, 90.0, 270.0);
+    fl_pie(x+w-h, y, h, h, 270.0, 90.0);
+  } else {
+    int d = w/2;
+    const int na = 8;
+    for (i=0; i<chalf; i++, d--, x++, y++, w-=2, h-=2)
+    {
+      fl_color(shade_color(g[c[i]], bc));
+      fl_pie(x, y, w, w, 45.0+i*na, 135.0+i*na);
+      fl_color(shade_color(g[c[i] - 2], bc));
+      fl_pie(x, y, w, w, 0.0, 45.0+i*na);
+      fl_yxline(x+w, y+d, y+h-d);
+      fl_pie(x, y+h-w, w, w, 315.0+i*na, 360.0);
+      fl_color(shade_color(g[c[clen - i]], bc));
+      fl_pie(x, y+h-w, w, w, 225.0+i*na, 315.0+i*na);
+      fl_color(shade_color(g[c[clen - i] - 2], bc));
+      fl_pie(x, y+h-w, w, w, 180.0, 225.0+i*na);
+      fl_yxline(x, y+d, y+h-d);
+      fl_pie(x, y, w, w, 135.0+i*na, 180.0);
+    }
+    fl_color(shade_color(g[c[chalf]], bc));
+    fl_rectf(x, y+d, w+1, h-w+1);
+    fl_pie(x, y, w, w, 0.0, 180.0);
+    fl_pie(x, y+h-w, w, w, 180.0, 360.0);
   }
-
-  // Draw the interior and sides...
-  i = chalf / cstep;
-
-  fl_color(shade_color(g[c[chalf]], bc));
-  fl_rectf(x + 1, y + i, w - 2, h - 2 * i + 1);
-
-  fl_color(shade_color(g[c[chalf] - 2], bc));
-  fl_yxline(x, y + i, y + h - i);
-  fl_yxline(x + w - 1, y + i, y + h - i);
 }
 
 
@@ -266,11 +308,8 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void up_round(int x, int y, int w, int h, Fl_Color c) {
-  if (w != h) up_box(x, y, w, h, c);
-  else {
-    shade_round(x + 1, y + 1, w - 2, h - 2, "RVQNOPQRSTUVWVQ", c);
-    frame_round(x, y, w, h, "IJLM", c);
-  }
+  shade_round(x, y, w, h-1, "RVQNOPQRSTUVWVQ", c);
+  frame_round(x, y, w, h-1, "IJLM", c);
 }
 
 
@@ -286,11 +325,8 @@ static void down_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void down_round(int x, int y, int w, int h, Fl_Color c) {
-  if (w != h) down_box(x, y, w, h, c);
-  else {
-    shade_round(x + 2, y + 2, w - 4, h - 4, "STUVWWWVT", c);
-    frame_round(x, y, w, h, "MLJI", c);
-  }
+  shade_round(x, y, w, h-1, "STUVWWWVT", c);
+  frame_round(x, y, w, h-1, "IJLM", c);
 }
 
 

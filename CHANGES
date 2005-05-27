@@ -8,6 +8,7 @@ CHANGES IN FLTK 1.1.7
 	  startup (STR #886)
 	- Selected tabs are now drawn slightly larger than
 	  unselected tabs so they stand out more (STR #882)
+	- Round Plastic boxes now draw round (STR #841)
 	- FL_PLASTIC_DOWN_BOX drew with artifacts (STR #852)
 	- Changed initializations on WIN32 (STR #862)
 	- Fl_Preferences::getUserdataPath() didn't work for

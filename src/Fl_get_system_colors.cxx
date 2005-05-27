@@ -302,7 +302,7 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_UP_BOX,     FL_PLASTIC_THIN_UP_BOX);
     set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_PLASTIC_ROUND_UP_BOX);
-    set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_ROUND_UP_BOX);
+    set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_ROUND_DOWN_BOX);
   } else {
     // Use the standard FLTK look-n-feel...
     if (scheme_bg_) {

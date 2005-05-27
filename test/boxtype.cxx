@@ -92,7 +92,7 @@ int main(int argc, char ** argv) {
   bt("FL_PLASTIC_THIN_DOWN_BOX",FL_PLASTIC_THIN_DOWN_BOX);
   window->resizable(window);
   window->end();
-//  window->show(argc,argv);
+  //window->show(argc,argv);
   window->show();
   return Fl::run();
 }
