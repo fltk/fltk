@@ -362,10 +362,10 @@ Fl_Button *comment_load=(Fl_Button *)0;
 
 Fl_Window* make_comment_panel() {
   Fl_Window* w;
-  { Fl_Window* o = comment_panel = new Fl_Window(545, 285, "Comment Properties");
+  { Fl_Window* o = comment_panel = new Fl_Window(552, 282, "Comment Properties");
     w = o;
     o->labelsize(11);
-    { CodeEditor* o = comment_input = new CodeEditor(95, 10, 438, 241);
+    { CodeEditor* o = comment_input = new CodeEditor(110, 10, 430, 230);
       o->box(FL_DOWN_BOX);
       o->color(FL_BACKGROUND2_COLOR);
       o->selection_color(FL_SELECTION_COLOR);
@@ -380,42 +380,42 @@ Fl_Window* make_comment_panel() {
       Fl_Group::current()->resizable(o);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
     }
-    { Fl_Group* o = new Fl_Group(368, 255, 167, 25);
+    { Fl_Group* o = new Fl_Group(110, 250, 430, 20);
       o->labelsize(11);
-      { Fl_Return_Button* o = comment_panel_ok = new Fl_Return_Button(419, 255, 55, 20, "OK");
+      { Fl_Return_Button* o = comment_panel_ok = new Fl_Return_Button(370, 250, 80, 20, "OK");
         o->labelsize(11);
         w->hotspot(o);
       }
-      { Fl_Button* o = comment_panel_cancel = new Fl_Button(479, 255, 56, 20, "Cancel");
+      { Fl_Button* o = comment_panel_cancel = new Fl_Button(460, 250, 80, 20, "Cancel");
         o->shortcut(0xff1b);
         o->labelsize(11);
       }
-      { Fl_Box* o = new Fl_Box(368, 255, 1, 1);
+      { Fl_Box* o = new Fl_Box(110, 250, 250, 20);
         o->labelsize(11);
         Fl_Group::current()->resizable(o);
       }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(10, 10, 205, 127);
+    { Fl_Group* o = new Fl_Group(10, 10, 90, 243);
       o->labelsize(11);
-      { Fl_Light_Button* o = comment_in_source = new Fl_Light_Button(10, 10, 80, 20, "In Source");
+      { Fl_Light_Button* o = comment_in_source = new Fl_Light_Button(10, 10, 90, 20, "In Source");
         o->tooltip("Put the comment into the source (.cxx) file.");
         o->labelsize(11);
         o->when(FL_WHEN_NEVER);
       }
-      { Fl_Light_Button* o = comment_in_header = new Fl_Light_Button(10, 35, 80, 20, "In Header");
+      { Fl_Light_Button* o = comment_in_header = new Fl_Light_Button(10, 40, 90, 20, "In Header");
         o->tooltip("Put the comment into the header (.h) file.");
         o->labelsize(11);
         o->when(FL_WHEN_NEVER);
       }
-      { Fl_Menu_Button* o = comment_predefined = new Fl_Menu_Button(10, 60, 80, 20, "Predefined");
+      { Fl_Menu_Button* o = comment_predefined = new Fl_Menu_Button(10, 70, 90, 20, "Predefined");
         o->labelsize(11);
         o->textsize(11);
       }
-      { Fl_Button* o = comment_load = new Fl_Button(10, 85, 80, 22, "Import...");
+      { Fl_Button* o = comment_load = new Fl_Button(10, 100, 90, 20, "Import...");
         o->labelsize(11);
       }
-      { Fl_Box* o = new Fl_Box(10, 135, 2, 2);
+      { Fl_Box* o = new Fl_Box(10, 132, 90, 121);
         o->labelsize(11);
         Fl_Group::current()->resizable(o);
       }

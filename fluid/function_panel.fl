@@ -215,50 +215,50 @@ Function {make_class_panel()} {open
 Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
-    label {Comment Properties}
-    xywh {328 152 545 285} type Single labelsize 11 hide resizable modal
+    label {Comment Properties} open selected
+    xywh {422 190 552 282} type Single labelsize 11 resizable modal visible
   } {
-    Fl_Text_Editor comment_input {selected
-      xywh {95 10 438 241} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
+    Fl_Text_Editor comment_input {
+      xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
       code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
       class CodeEditor
     }
     Fl_Group {} {open
-      xywh {368 255 167 25} labelsize 11
+      xywh {110 250 430 20} labelsize 11
     } {
       Fl_Return_Button comment_panel_ok {
         label OK
-        xywh {419 255 55 20} labelsize 11 hotspot
+        xywh {370 250 80 20} labelsize 11 hotspot
       }
       Fl_Button comment_panel_cancel {
         label Cancel
-        xywh {479 255 56 20} shortcut 0xff1b labelsize 11
+        xywh {460 250 80 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {368 255 1 1} labelsize 11 resizable
+        xywh {110 250 250 20} labelsize 11 resizable
       }
     }
     Fl_Group {} {open
-      xywh {10 10 205 127} labelsize 11
+      xywh {10 10 90 243} labelsize 11
     } {
       Fl_Light_Button comment_in_source {
         label {In Source}
-        tooltip {Put the comment into the source (.cxx) file.} xywh {10 10 80 20} labelsize 11 when 0
+        tooltip {Put the comment into the source (.cxx) file.} xywh {10 10 90 20} labelsize 11 when 0
       }
       Fl_Light_Button comment_in_header {
         label {In Header}
-        tooltip {Put the comment into the header (.h) file.} xywh {10 35 80 20} labelsize 11 when 0
+        tooltip {Put the comment into the header (.h) file.} xywh {10 40 90 20} labelsize 11 when 0
       }
       Fl_Menu_Button comment_predefined {
         label Predefined open
-        xywh {10 60 80 20} labelsize 11 textsize 11
+        xywh {10 70 90 20} labelsize 11 textsize 11
       } {}
       Fl_Button comment_load {
         label {Import...}
-        xywh {10 85 80 22} labelsize 11
+        xywh {10 100 90 20} labelsize 11
       }
       Fl_Box {} {
-        xywh {10 135 2 2} labelsize 11 resizable
+        xywh {10 132 90 121} labelsize 11 resizable
       }
     }
   }
