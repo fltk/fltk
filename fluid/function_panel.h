@@ -32,9 +32,11 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 extern Fl_Window *function_panel;
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Light_Button.H>
 extern Fl_Light_Button *f_public_button;
 extern Fl_Light_Button *f_c_button;
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Input.H>
 extern Fl_Input *f_name_input;
 extern Fl_Input *f_return_type_input;
@@ -46,10 +48,8 @@ Fl_Window* make_function_panel();
 extern Fl_Window *code_panel;
 #include "CodeEditor.h"
 extern CodeEditor *code_input;
-#include <FL/Fl_Group.H>
 extern Fl_Return_Button *code_panel_ok;
 extern Fl_Button *code_panel_cancel;
-#include <FL/Fl_Box.H>
 Fl_Window* make_code_panel();
 extern Fl_Window *codeblock_panel;
 extern Fl_Input *code_before_input;

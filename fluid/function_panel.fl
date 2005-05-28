@@ -46,32 +46,47 @@ decl {extern void select_only(Fl_Type*);} {}
 Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
-    label {Function/Method Properties}
-    xywh {855 21 285 140} type Single hide resizable modal
+    label {Function/Method Properties} selected
+    xywh {419 200 292 152} type Single resizable
+    code0 {o->size_range(292, 152, 2002, 152);} modal visible
   } {
-    Fl_Light_Button f_public_button {
-      label public
-      tooltip {Make the function or method publicly accessible.} xywh {10 10 54 20} labelsize 11 when 0
-    }
-    Fl_Light_Button f_c_button {
-      label {C declaration}
-      tooltip {Declare with a C interface instead of C++.} xywh {69 10 90 20} labelsize 11
+    Fl_Group {} {open
+      xywh {10 10 270 20}
+    } {
+      Fl_Light_Button f_public_button {
+        label public
+        tooltip {Make the function or method publicly accessible.} xywh {10 10 60 20} labelsize 11 when 0
+      }
+      Fl_Light_Button f_c_button {
+        label {C declaration}
+        tooltip {Declare with a C interface instead of C++.} xywh {80 10 80 20} labelsize 11
+      }
+      Fl_Box {} {
+        xywh {170 10 110 20} resizable
+      }
     }
     Fl_Input f_name_input {
       label {Name(args): (blank for main())}
-      tooltip {The name of the function or method.} xywh {10 49 265 19} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
+      tooltip {The name of the function or method.} xywh {10 50 270 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
     }
     Fl_Input f_return_type_input {
       label {Return Type: (blank to return outermost widget)}
-      tooltip {The return type of the function or method.} xywh {10 87 265 19} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+      tooltip {The return type of the function or method.} xywh {10 90 270 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
-    Fl_Return_Button f_panel_ok {
-      label OK
-      tooltip {Apply the changes.} xywh {175 113 47 20} labelsize 11 hotspot
-    }
-    Fl_Button f_panel_cancel {
-      label Cancel
-      tooltip {Cancel the changes.} xywh {227 113 48 20} shortcut 0xff1b labelsize 11
+    Fl_Group {} {open
+      xywh {10 120 270 20}
+    } {
+      Fl_Return_Button f_panel_ok {
+        label OK
+        tooltip {Apply the changes.} xywh {170 120 50 20} labelsize 11 hotspot
+      }
+      Fl_Button f_panel_cancel {
+        label Cancel
+        tooltip {Cancel the changes.} xywh {230 120 50 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 120 150 20} resizable
+      }
     }
   }
 } 
@@ -215,8 +230,8 @@ Function {make_class_panel()} {open
 Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
-    label {Comment Properties} open selected
-    xywh {422 190 552 282} type Single labelsize 11 resizable modal visible
+    label {Comment Properties}
+    xywh {422 190 552 282} type Single labelsize 11 hide resizable modal
   } {
     Fl_Text_Editor comment_input {
       xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable

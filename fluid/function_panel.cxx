@@ -51,18 +51,24 @@ Fl_Button *f_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_function_panel() {
   Fl_Window* w;
-  { Fl_Window* o = function_panel = new Fl_Window(285, 140, "Function/Method Properties");
+  { Fl_Window* o = function_panel = new Fl_Window(292, 152, "Function/Method Properties");
     w = o;
-    { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 54, 20, "public");
-      o->tooltip("Make the function or method publicly accessible.");
-      o->labelsize(11);
-      o->when(FL_WHEN_NEVER);
+    { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
+      { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
+        o->tooltip("Make the function or method publicly accessible.");
+        o->labelsize(11);
+        o->when(FL_WHEN_NEVER);
+      }
+      { Fl_Light_Button* o = f_c_button = new Fl_Light_Button(80, 10, 80, 20, "C declaration");
+        o->tooltip("Declare with a C interface instead of C++.");
+        o->labelsize(11);
+      }
+      { Fl_Box* o = new Fl_Box(170, 10, 110, 20);
+        Fl_Group::current()->resizable(o);
+      }
+      o->end();
     }
-    { Fl_Light_Button* o = f_c_button = new Fl_Light_Button(69, 10, 90, 20, "C declaration");
-      o->tooltip("Declare with a C interface instead of C++.");
-      o->labelsize(11);
-    }
-    { Fl_Input* o = f_name_input = new Fl_Input(10, 49, 265, 19, "Name(args): (blank for main())");
+    { Fl_Input* o = f_name_input = new Fl_Input(10, 50, 270, 20, "Name(args): (blank for main())");
       o->tooltip("The name of the function or method.");
       o->labelfont(1);
       o->labelsize(11);
@@ -72,7 +78,7 @@ Fl_Window* make_function_panel() {
       o->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Input* o = f_return_type_input = new Fl_Input(10, 87, 265, 19, "Return Type: (blank to return outermost widget)");
+    { Fl_Input* o = f_return_type_input = new Fl_Input(10, 90, 270, 20, "Return Type: (blank to return outermost widget)");
       o->tooltip("The return type of the function or method.");
       o->labelfont(1);
       o->labelsize(11);
@@ -81,16 +87,23 @@ Fl_Window* make_function_panel() {
       o->align(FL_ALIGN_TOP_LEFT);
       o->when(FL_WHEN_NEVER);
     }
-    { Fl_Return_Button* o = f_panel_ok = new Fl_Return_Button(175, 113, 47, 20, "OK");
-      o->tooltip("Apply the changes.");
-      o->labelsize(11);
-      w->hotspot(o);
+    { Fl_Group* o = new Fl_Group(10, 120, 270, 20);
+      { Fl_Return_Button* o = f_panel_ok = new Fl_Return_Button(170, 120, 50, 20, "OK");
+        o->tooltip("Apply the changes.");
+        o->labelsize(11);
+        w->hotspot(o);
+      }
+      { Fl_Button* o = f_panel_cancel = new Fl_Button(230, 120, 50, 20, "Cancel");
+        o->tooltip("Cancel the changes.");
+        o->shortcut(0xff1b);
+        o->labelsize(11);
+      }
+      { Fl_Box* o = new Fl_Box(10, 120, 150, 20);
+        Fl_Group::current()->resizable(o);
+      }
+      o->end();
     }
-    { Fl_Button* o = f_panel_cancel = new Fl_Button(227, 113, 48, 20, "Cancel");
-      o->tooltip("Cancel the changes.");
-      o->shortcut(0xff1b);
-      o->labelsize(11);
-    }
+    o->size_range(292, 152, 2002, 152);
     o->set_modal();
     o->end();
   }
