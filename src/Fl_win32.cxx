@@ -896,27 +896,70 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
-  if (w->border() && !w->parent()) {
-    if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) {
-      ret = 2;
-      bx = GetSystemMetrics(SM_CXSIZEFRAME);
-      by = GetSystemMetrics(SM_CYSIZEFRAME);
-    } else {
-      ret = 1;
-      bx = GetSystemMetrics(SM_CXFIXEDFRAME);
-      by = GetSystemMetrics(SM_CYFIXEDFRAME);
+
+  int fallback = 1;
+  if (!w->parent()) {
+    HWND hwnd = fl_xid(w);
+    if (hwnd) {
+      // The block below calculates the window borders by requesting the
+      // required decorated window rectangle for a desired client rectangle.
+      // If any part of the function above fails, we will drop to a 
+      // fallback to get the best guess which is always available.
+      HWND hwnd = fl_xid(w);
+      // request the style flags of this window, as WIN32 sees them
+      LONG style = GetWindowLong(hwnd, GWL_STYLE);
+      LONG exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+      RECT r;
+      r.left = w->x();
+      r.top = w->y();
+      r.right = w->x()+w->w();
+      r.bottom = w->y()+w->h();
+      // get the decoration rectangle for the desired client rectangle
+      BOOL ok = AdjustWindowRectEx(&r, style, FALSE, exstyle);
+      if (ok) {
+        X = r.left;
+        Y = r.top;
+        W = r.right - r.left;
+        H = r.bottom - r.top;
+        bx = w->x() - r.left;
+        bt = GetSystemMetrics(SM_CYCAPTION);
+        by = w->y() - r.top - bt;
+        xoff = bx;
+        yoff = by + bt;
+        dx = W - w->w();
+        dy = H - w->h();
+        if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh))
+          ret = 2;
+        else
+          ret = 1;
+        fallback = 0;
+      }
     }
-    bt = GetSystemMetrics(SM_CYCAPTION);
   }
-  //The coordinates of the whole window, including non-client area
-  xoff = bx;
-  yoff = by + bt;
-  dx = 2*bx;
-  dy = 2*by + bt;
-  X = w->x()-xoff;
-  Y = w->y()-yoff;
-  W = w->w()+dx;
-  H = w->h()+dy;
+  // This is the original (pre 1.1.7) routine to calculate window border sizes.
+  if (fallback) {
+    if (w->border() && !w->parent()) {
+      if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) {
+        ret = 2;
+        bx = GetSystemMetrics(SM_CXSIZEFRAME);
+        by = GetSystemMetrics(SM_CYSIZEFRAME);
+      } else {
+        ret = 1;
+        bx = GetSystemMetrics(SM_CXFIXEDFRAME);
+        by = GetSystemMetrics(SM_CYFIXEDFRAME);
+      }
+      bt = GetSystemMetrics(SM_CYCAPTION);
+    }
+    //The coordinates of the whole window, including non-client area
+    xoff = bx;
+    yoff = by + bt;
+    dx = 2*bx;
+    dy = 2*by + bt;
+    X = w->x()-xoff;
+    Y = w->y()-yoff;
+    W = w->w()+dx;
+    H = w->h()+dy;
+  }
 
   //Proceed to positioning the window fully inside the screen, if possible
   //Make border's lower right corner visible
@@ -963,10 +1006,10 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   if (!border()) flags |= SWP_NOACTIVATE;
   if (resize_from_program && shown()) {
     if (!resizable()) size_range(w(),h(),w(),h());
-    int dummy, bt, bx, by;
+    int dummy_x, dummy_y, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
     //specifically menus) can be moved offscreen.
-    if (Fl_X::fake_X_wm(this, dummy, dummy, bt, bx, by)) {
+    if (Fl_X::fake_X_wm(this, dummy_x, dummy_y, bt, bx, by)) {
       X -= bx;
       Y -= by+bt;
       W += 2*bx;
@@ -1137,9 +1180,9 @@ void Fl_Window::size_range_() {
 
 void Fl_X::set_minmax(LPMINMAXINFO minmax)
 {
-  int td, wd, hd, dummy;
+  int td, wd, hd, dummy_x, dummy_y;
 
-  fake_X_wm(w, dummy, dummy, td, wd, hd);
+  fake_X_wm(w, dummy_x, dummy_y, td, wd, hd);
   wd *= 2;
   hd *= 2;
   hd += td;
