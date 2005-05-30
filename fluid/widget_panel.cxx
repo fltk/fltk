@@ -64,7 +64,7 @@ Fl_Double_Window* make_widget_panel() {
           { Fl_Group* o = new Fl_Group(90, 35, 300, 20);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
-            { Fl_Input* o = new Fl_Input(90, 35, 200, 20, "Label:");
+            { Fl_Input* o = new Fl_Input(90, 35, 180, 20, "Label:");
               o->tooltip("The label text for the widget.");
               o->labelfont(1);
               o->labelsize(11);
@@ -73,7 +73,7 @@ Fl_Double_Window* make_widget_panel() {
               o->when(FL_WHEN_CHANGED);
               Fl_Group::current()->resizable(o);
             }
-            { Fl_Choice* o = new Fl_Choice(290, 35, 100, 20);
+            { Fl_Choice* o = new Fl_Choice(270, 35, 120, 20);
               o->tooltip("The label style for the widget.");
               o->box(FL_THIN_UP_BOX);
               o->down_box(FL_BORDER_BOX);

@@ -28,14 +28,14 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {in_source in_header
+} {selected in_source in_header
 } 
 
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
-    xywh {353 184 410 355} type Double labelsize 11 resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} visible
+    xywh {353 184 410 355} type Double labelsize 11 hide resizable hotspot
+    code0 {o->size_range(o->w(), o->h());}
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
@@ -56,12 +56,12 @@ Function {make_widget_panel()} {open
           } {
             Fl_Input {} {
               label {Label:}
-              callback label_cb selected
-              tooltip {The label text for the widget.} xywh {90 35 200 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
+              callback label_cb
+              tooltip {The label text for the widget.} xywh {90 35 180 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
             }
             Fl_Choice {} {
               callback labeltype_cb open
-              tooltip {The label style for the widget.} xywh {290 35 100 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
+              tooltip {The label style for the widget.} xywh {270 35 120 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
               code0 {extern Fl_Menu_Item labeltypemenu[];}
               code1 {o->menu(labeltypemenu);}
             } {}
