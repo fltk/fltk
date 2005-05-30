@@ -51,7 +51,7 @@ Fl_Button *f_panel_cancel=(Fl_Button *)0;
 
 Fl_Window* make_function_panel() {
   Fl_Window* w;
-  { Fl_Window* o = function_panel = new Fl_Window(292, 152, "Function/Method Properties");
+  { Fl_Window* o = function_panel = new Fl_Window(290, 150, "Function/Method Properties");
     w = o;
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
       { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
@@ -422,7 +422,7 @@ Fl_Button *comment_load=(Fl_Button *)0;
 
 Fl_Window* make_comment_panel() {
   Fl_Window* w;
-  { Fl_Window* o = comment_panel = new Fl_Window(552, 282, "Comment Properties");
+  { Fl_Window* o = comment_panel = new Fl_Window(550, 280, "Comment Properties");
     w = o;
     o->labelsize(11);
     { CodeEditor* o = comment_input = new CodeEditor(110, 10, 430, 230);
