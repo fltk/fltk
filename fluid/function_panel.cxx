@@ -539,6 +539,12 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("CodeBlock"));
         o->image(pixmap[9]);
       }
+      { Fl_Button* o = new Fl_Button(55, 30, 25, 25);
+        o->tooltip("Widget Class");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("widget_class"));
+        o->image(pixmap[48]);
+      }
       { Fl_Button* o = new Fl_Button(5, 55, 25, 25);
         o->tooltip("Declaration");
         o->box(FL_THIN_UP_BOX);

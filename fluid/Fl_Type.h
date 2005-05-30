@@ -499,6 +499,7 @@ public:
   void write_code2();
   Fl_Type *make();
   virtual const char *type_name() {return "widget_class";}
+  int pixmapID() { return 48; }
   int is_parent() const {return 1;}
   int is_decl_block() const {return 1;}
   int is_class() const {return 1;}

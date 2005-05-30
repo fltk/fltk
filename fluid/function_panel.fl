@@ -355,7 +355,7 @@ Function {make_widgetbin()} {open
     label {Widget Bin}
     xywh {413 185 520 85} type Single hide non_modal
   } {
-    Fl_Group {} {
+    Fl_Group {} {open
       xywh {3 3 79 79} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -387,6 +387,12 @@ Function {make_widgetbin()} {open
         callback type_make_cb
         tooltip {Code Block} xywh {30 30 25 25} box THIN_UP_BOX
         code0 {o->image(pixmap[9]);}
+      }
+      Fl_Button {} {
+        user_data {"widget_class"}
+        callback type_make_cb
+        tooltip {Widget Class} xywh {55 30 25 25} box THIN_UP_BOX
+        code0 {o->image(pixmap[48]);}
       }
       Fl_Button {} {
         user_data {"decl"}

@@ -1,0 +1,31 @@
+/* XPM */
+static const char *flWidgetClass_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 8 1",
+/* colors */
+"a c #606060",
+"b c #2020ff",
+"c c none",
+"d c #a0a0a0",
+"e c #8080ff",
+"f c #d0d0d0",
+"g c #c0e0c0",
+"h c #000000",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ffffffffffffffff",
+"feebbbbbbbeebeea",
+"feebbbbbbbeebeea",
+"fdddhhhhhhhhhhda",
+"fddhgggggggghdda",
+"fdhgggggggghddda",
+"fdhgggggggghddda",
+"fdhgggggggghddda",
+"fdhgggggggghddda",
+"fddhgggggggghdda",
+"fdddhhhhhhhhhhda",
+"faaaaaaaaaaaaaaa",
+"cccccccccccccccc",
+"cccccccccccccccc"
+};
