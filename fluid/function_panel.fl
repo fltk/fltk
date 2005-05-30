@@ -28,7 +28,7 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {in_source in_header
+} {selected in_source in_header
 } 
 
 decl {\#include <FL/Fl_Pixmap.H>} {} 
@@ -47,7 +47,7 @@ Function {make_function_panel()} {open
 } {
   Fl_Window function_panel {
     label {Function/Method Properties}
-    xywh {419 200 290 150} type Single hide resizable
+    xywh {419 200 290 150} type Double hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Group {} {open
@@ -95,7 +95,7 @@ Function {make_code_panel()} {open
 } {
   Fl_Window code_panel {
     label {Code Properties}
-    xywh {353 262 540 180} type Single labelsize 11 hide resizable
+    xywh {353 262 540 180} type Double labelsize 11 hide resizable
     code0 {o->size_range(200, 150);} modal
   } {
     Fl_Text_Editor code_input {
@@ -126,7 +126,7 @@ Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
     label {Code Block Properties}
-    xywh {468 221 300 115} type Single labelsize 11 hide resizable
+    xywh {468 221 300 115} type Double labelsize 11 hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Input code_before_input {
@@ -159,7 +159,7 @@ Function {make_declblock_panel()} {open
 } {
   Fl_Window declblock_panel {
     label {Declaration Block Properties}
-    xywh {428 215 300 135} type Single labelsize 11 hide resizable
+    xywh {428 215 300 135} type Double labelsize 11 hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Input decl_before_input {
@@ -202,7 +202,7 @@ Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
     label {Declaration Properties}
-    xywh {412 206 290 150} type Single hide resizable
+    xywh {412 206 290 150} type Double hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());}
   } {
     Fl_Group {} {open
@@ -242,7 +242,7 @@ Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
     label {Class Properties}
-    xywh {449 218 300 140} type Single labelsize 11 hide resizable
+    xywh {449 218 300 140} type Double labelsize 11 hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Group {} {open
@@ -286,10 +286,10 @@ Function {make_comment_panel()} {open
 } {
   Fl_Window comment_panel {
     label {Comment Properties}
-    xywh {422 190 550 280} type Single labelsize 11 hide resizable
+    xywh {422 190 550 280} type Double labelsize 11 hide resizable
     code0 {o->size_range(320, 180);} modal
   } {
-    Fl_Text_Editor comment_input {selected
+    Fl_Text_Editor comment_input {
       xywh {110 10 430 230} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
       code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
       class CodeEditor

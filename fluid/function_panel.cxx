@@ -35,7 +35,7 @@ extern class Fl_Pixmap *pixmap[];
 extern class Fl_Type *Fl_Type_make(const char*);
 extern void select_only(Fl_Type*);
 
-Fl_Window *function_panel=(Fl_Window *)0;
+Fl_Double_Window *function_panel=(Fl_Double_Window *)0;
 
 Fl_Light_Button *f_public_button=(Fl_Light_Button *)0;
 
@@ -49,9 +49,9 @@ Fl_Return_Button *f_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *f_panel_cancel=(Fl_Button *)0;
 
-Fl_Window* make_function_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = function_panel = new Fl_Window(290, 150, "Function/Method Properties");
+Fl_Double_Window* make_function_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = function_panel = new Fl_Double_Window(290, 150, "Function/Method Properties");
     w = o;
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
       { Fl_Light_Button* o = f_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
@@ -110,7 +110,7 @@ Fl_Window* make_function_panel() {
   return w;
 }
 
-Fl_Window *code_panel=(Fl_Window *)0;
+Fl_Double_Window *code_panel=(Fl_Double_Window *)0;
 
 CodeEditor *code_input=(CodeEditor *)0;
 
@@ -118,9 +118,9 @@ Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *code_panel_cancel=(Fl_Button *)0;
 
-Fl_Window* make_code_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = code_panel = new Fl_Window(540, 180, "Code Properties");
+Fl_Double_Window* make_code_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = code_panel = new Fl_Double_Window(540, 180, "Code Properties");
     w = o;
     o->labelsize(11);
     { CodeEditor* o = code_input = new CodeEditor(10, 10, 520, 130);
@@ -161,7 +161,7 @@ Fl_Window* make_code_panel() {
   return w;
 }
 
-Fl_Window *codeblock_panel=(Fl_Window *)0;
+Fl_Double_Window *codeblock_panel=(Fl_Double_Window *)0;
 
 Fl_Input *code_before_input=(Fl_Input *)0;
 
@@ -171,9 +171,9 @@ Fl_Return_Button *codeblock_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *codeblock_panel_cancel=(Fl_Button *)0;
 
-Fl_Window* make_codeblock_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = codeblock_panel = new Fl_Window(300, 115, "Code Block Properties");
+Fl_Double_Window* make_codeblock_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = codeblock_panel = new Fl_Double_Window(300, 115, "Code Block Properties");
     w = o;
     o->labelsize(11);
     { Fl_Input* o = code_before_input = new Fl_Input(10, 15, 280, 20, "Conditional code block");
@@ -214,7 +214,7 @@ Fl_Window* make_codeblock_panel() {
   return w;
 }
 
-Fl_Window *declblock_panel=(Fl_Window *)0;
+Fl_Double_Window *declblock_panel=(Fl_Double_Window *)0;
 
 Fl_Input *decl_before_input=(Fl_Input *)0;
 
@@ -226,9 +226,9 @@ Fl_Button *declblock_panel_cancel=(Fl_Button *)0;
 
 Fl_Light_Button *declblock_public_button=(Fl_Light_Button *)0;
 
-Fl_Window* make_declblock_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = declblock_panel = new Fl_Window(300, 135, "Declaration Block Properties");
+Fl_Double_Window* make_declblock_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = declblock_panel = new Fl_Double_Window(300, 135, "Declaration Block Properties");
     w = o;
     o->labelsize(11);
     { Fl_Input* o = decl_before_input = new Fl_Input(10, 40, 280, 20);
@@ -280,7 +280,7 @@ Fl_Window* make_declblock_panel() {
   return w;
 }
 
-Fl_Window *decl_panel=(Fl_Window *)0;
+Fl_Double_Window *decl_panel=(Fl_Double_Window *)0;
 
 Fl_Light_Button *decl_public_button=(Fl_Light_Button *)0;
 
@@ -290,9 +290,9 @@ Fl_Return_Button *decl_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *decl_panel_cancel=(Fl_Button *)0;
 
-Fl_Window* make_decl_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = decl_panel = new Fl_Window(290, 150, "Declaration Properties");
+Fl_Double_Window* make_decl_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = decl_panel = new Fl_Double_Window(290, 150, "Declaration Properties");
     w = o;
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
       { Fl_Light_Button* o = decl_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
@@ -336,7 +336,7 @@ Fl_Window* make_decl_panel() {
   return w;
 }
 
-Fl_Window *class_panel=(Fl_Window *)0;
+Fl_Double_Window *class_panel=(Fl_Double_Window *)0;
 
 Fl_Light_Button *c_public_button=(Fl_Light_Button *)0;
 
@@ -348,9 +348,9 @@ Fl_Return_Button *c_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *c_panel_cancel=(Fl_Button *)0;
 
-Fl_Window* make_class_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = class_panel = new Fl_Window(300, 140, "Class Properties");
+Fl_Double_Window* make_class_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = class_panel = new Fl_Double_Window(300, 140, "Class Properties");
     w = o;
     o->labelsize(11);
     { Fl_Group* o = new Fl_Group(10, 10, 280, 20);
@@ -404,7 +404,7 @@ Fl_Window* make_class_panel() {
   return w;
 }
 
-Fl_Window *comment_panel=(Fl_Window *)0;
+Fl_Double_Window *comment_panel=(Fl_Double_Window *)0;
 
 CodeEditor *comment_input=(CodeEditor *)0;
 
@@ -420,9 +420,9 @@ Fl_Menu_Button *comment_predefined=(Fl_Menu_Button *)0;
 
 Fl_Button *comment_load=(Fl_Button *)0;
 
-Fl_Window* make_comment_panel() {
-  Fl_Window* w;
-  { Fl_Window* o = comment_panel = new Fl_Window(550, 280, "Comment Properties");
+Fl_Double_Window* make_comment_panel() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = comment_panel = new Fl_Double_Window(550, 280, "Comment Properties");
     w = o;
     o->labelsize(11);
     { CodeEditor* o = comment_input = new CodeEditor(110, 10, 430, 230);
