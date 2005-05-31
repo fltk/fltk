@@ -235,7 +235,8 @@ global()</TT> setting (so don't destroy the widget!)</P>
 
 <p>Returns a pointer to the menu item with the given (full)
 pathname. If no matching menu item can be found, a NULL pointer
-is returned.</p>
+is returned. This function does not search submenus that are linked
+via FL_SUBMENU_POINTER.</p>
 
 <h4><a name=Fl_Menu_.item_pathname>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
 int Fl_Menu_::item_pathname(char *name, int namelen,

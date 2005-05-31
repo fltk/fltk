@@ -88,8 +88,9 @@ Fl_Menu_::find_item(const char *name)
   for ( int t=0; t < size(); t++ ) {
     Fl_Menu_Item *m = menu_ + t;
 
-    if (m->submenu()) {
+    if (m->flags&FL_SUBMENU) {
       // IT'S A SUBMENU
+      // we do not support searches through FL_SUBMENU_POINTER links
       if (menupath[0]) strlcat(menupath, "/", sizeof(menupath));
       strlcat(menupath, m->label(), sizeof(menupath));
       if (!strcmp(menupath, name)) return m;
