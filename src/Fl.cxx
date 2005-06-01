@@ -238,6 +238,7 @@ extern int fl_wait(double time); // in Fl_<platform>.cxx
 static char in_idle;
 
 double Fl::wait(double time_to_wait) {
+  // delete all widgets that were listed during callbacks
   do_widget_deletion();
 
   if (first_timeout) {

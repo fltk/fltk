@@ -273,7 +273,12 @@ int fl_wait(double time_to_wait) {
       KillTimer(NULL, timerid);
     }
   } else {
-    have_message = GetMessage(&fl_msg, NULL, 0, 0);
+    // make sure that we don't lock up if there are no more windows
+    // that could receive messages, but still handle pending messages.
+    if (!Fl_X::first)
+      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+    else
+      have_message = GetMessage(&fl_msg, NULL, 0, 0);
   }
 
   fl_lock_function();
