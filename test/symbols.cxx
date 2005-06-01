@@ -115,7 +115,7 @@ bt("@arrow");
 bt("@returnarrow");
 bt("@square");
 bt("@circle");
-bt("@line");
+bt("@00010line");
 bt("@menu");
 bt("@UpArrow");
 bt("@DnArrow");
