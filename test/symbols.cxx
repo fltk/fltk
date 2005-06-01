@@ -126,7 +126,10 @@ bt("@fileopen");
 bt("@filesave");
 bt("@filesaveas");
 bt("@fileprint");
-bt("@recycle");
+bt("@refresh");
+bt("@reload");
+bt("@undo");
+bt("@redo");
 
   orientation = new Fl_Value_Slider(
     (int)(window->w()*.05+.5), window->h()-40,

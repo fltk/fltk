@@ -113,6 +113,15 @@ int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
   if (w < 10) {x -= (10-w)/2; w = 10;}
   if (h < 10) {y -= (10-h)/2; h = 10;}
   w = (w-1)|1; h = (h-1)|1;
+  char flip_x = 0, flip_y = 0;
+  if (*p=='$') {
+    flip_x = 1;
+    p++;
+  }
+  if (*p=='%') {
+    flip_y = 1;
+    p++;
+  }
   int rotangle;
   switch (*p++) {
   case '0':
@@ -142,6 +151,8 @@ int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {
     if (equalscale) {if (w<h) h = w; else w = h;}
     fl_scale(0.5*w, 0.5*h);
     fl_rotate(rotangle/10.0);
+    if (flip_x) fl_scale(-1.0, 1.0);
+    if (flip_y) fl_scale(1.0, -1.0);
   }
   (symbols[pos].drawit)(col);
   fl_pop_matrix();
@@ -576,12 +587,11 @@ static void draw_fileprint(Fl_Color c) {
   EC;
 }
 
-static void draw_recycle(Fl_Color c) {
-  double i, r, di=5.0, dr1=0.005, dr2=0.015;
-  int j;
-  for (j=0; j<4; j++) {
-    fl_rotate(180.0);
-    if (j&2) {
+static void draw_round_arrow(Fl_Color c, float da=5.0) {
+  double a, r, dr1=0.005, dr2=0.015;
+  int i, j;
+  for (j=0; j<2; j++) {
+    if (j&1) {
       fl_color(c);
       set_outline_color(c);
       BC;
@@ -592,20 +602,47 @@ static void draw_recycle(Fl_Color c) {
     vv(-0.1, 0.0);
     vv(-1.0, 0.0);
     vv(-1.0, 0.9);
-    for (i=135.0, r=1.0; i>=0.0; i-=di, r-=dr1) {
-      double a = i/180.0 * M_PI;
-      vv(cos(a)*r, sin(a)*r);
+    for (i=27, a=140.0, r=1.0; i>0; i--, a-=da, r-=dr1) {
+      double ar = a/180.0 * M_PI;
+      vv(cos(ar)*r, sin(ar)*r);
     }
-    for (i=0.0; i<=135.0; i+=di, r-=dr2) {
-      double a = i/180.0 * M_PI;
-      vv(cos(a)*r, sin(a)*r);
+    for (i=27; i>=0; a+=da, i--, r-=dr2) {
+      double ar = a/180.0 * M_PI;
+      vv(cos(ar)*r, sin(ar)*r);
     }
-    if (j&2) {
+    if (j&1) {
       EC;
     } else {
       ECP;
     }
   }
+}
+
+static void draw_refresh(Fl_Color c) {
+  draw_round_arrow(c);
+  fl_rotate(180.0);
+  draw_round_arrow(c);
+  fl_rotate(-180.0);
+}
+
+static void draw_reload(Fl_Color c) {
+  fl_rotate(-135.0);
+  draw_round_arrow(c, 10);
+  fl_rotate(135.0);
+}
+
+static void draw_undo(Fl_Color c) {
+  fl_translate(0.0, 0.2);
+  fl_scale(1.0, -1.0);
+  draw_round_arrow(c, 6);
+  fl_scale(1.0, -1.0);
+  fl_translate(0.0, -0.2);
+}
+
+static void draw_redo(Fl_Color c) {
+  fl_scale(-1.0, 1.0);
+  draw_undo(c);
+  fl_scale(-1.0, 1.0);
 }
 
 static void fl_init_symbols(void) {
@@ -649,7 +686,11 @@ static void fl_init_symbols(void) {
   fl_add_symbol("filesave",     draw_filesave,          1);
   fl_add_symbol("filesaveas",   draw_filesaveas,        1);
   fl_add_symbol("fileprint",    draw_fileprint,         1);
-  fl_add_symbol("recycle",      draw_recycle,           1);
+
+  fl_add_symbol("refresh",      draw_refresh,           1);
+  fl_add_symbol("reload",       draw_reload,            1);
+  fl_add_symbol("undo",         draw_undo,              1);
+  fl_add_symbol("redo",         draw_redo,              1);
 
 //  fl_add_symbol("file",      draw_file,           1);
 }
