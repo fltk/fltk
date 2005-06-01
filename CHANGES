@@ -2,9 +2,10 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Clipping fixes for OSX
 	- Removed attempt to find items via 
 	  Fl_Menu_::find_item() in linked submenus
-	- Fluid interactive window resizing fixe (STR #873, 791)
+	- Fluid interactive window resizing fixes (STR #873, 791)
 	- Fluid panel resize and alignment fixes (STR #891)
 	- Fl_Window::show(argc, argv) now sets the scheme before
 	  showing the window; this should eliminate any
