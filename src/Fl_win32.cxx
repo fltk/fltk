@@ -384,11 +384,15 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   if (clipboard) {
     // set up for "delayed rendering":
     if (OpenClipboard(fl_xid(Fl::first_window()))) {
+      // if the system clipboard works, use it
       EmptyClipboard();
       SetClipboardData(CF_TEXT, NULL);
       CloseClipboard();
+      fl_i_own_selection[clipboard] = 0;
+    } else {
+      // only if it fails, instruct paste() to use the internal buffers
+      fl_i_own_selection[clipboard] = 1;
     }
-    fl_i_own_selection[clipboard] = 1;
   }
 }
 
