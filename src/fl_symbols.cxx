@@ -36,6 +36,7 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/math.h>
 #include "flstring.h"
 
 typedef struct {
@@ -575,6 +576,38 @@ static void draw_fileprint(Fl_Color c) {
   EC;
 }
 
+static void draw_recycle(Fl_Color c) {
+  double i, r, di=5.0, dr1=0.005, dr2=0.015;
+  int j;
+  for (j=0; j<4; j++) {
+    fl_rotate(180.0);
+    if (j&2) {
+      fl_color(c);
+      set_outline_color(c);
+      BC;
+    } else {
+      fl_color(c);
+      BCP;
+    }
+    vv(-0.1, 0.0);
+    vv(-1.0, 0.0);
+    vv(-1.0, 0.9);
+    for (i=135.0, r=1.0; i>=0.0; i-=di, r-=dr1) {
+      double a = i/180.0 * M_PI;
+      vv(cos(a)*r, sin(a)*r);
+    }
+    for (i=0.0; i<=135.0; i+=di, r-=dr2) {
+      double a = i/180.0 * M_PI;
+      vv(cos(a)*r, sin(a)*r);
+    }
+    if (j&2) {
+      EC;
+    } else {
+      ECP;
+    }
+  }
+}
+
 static void fl_init_symbols(void) {
   static char beenhere;
   if (beenhere) return;
@@ -616,6 +649,7 @@ static void fl_init_symbols(void) {
   fl_add_symbol("filesave",     draw_filesave,          1);
   fl_add_symbol("filesaveas",   draw_filesaveas,        1);
   fl_add_symbol("fileprint",    draw_fileprint,         1);
+  fl_add_symbol("recycle",      draw_recycle,           1);
 
 //  fl_add_symbol("file",      draw_file,           1);
 }

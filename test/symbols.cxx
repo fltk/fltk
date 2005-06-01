@@ -38,8 +38,8 @@
 int N = 0;
 #define W 70
 #define H 70
-#define ROWS 8
-#define COLS 4
+#define ROWS 6
+#define COLS 6
 
 Fl_Window *window;
 Fl_Value_Slider *orientation;
@@ -126,6 +126,7 @@ bt("@fileopen");
 bt("@filesave");
 bt("@filesaveas");
 bt("@fileprint");
+bt("@recycle");
 
   orientation = new Fl_Value_Slider(
     (int)(window->w()*.05+.5), window->h()-40,
