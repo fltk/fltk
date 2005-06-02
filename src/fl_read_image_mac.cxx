@@ -118,6 +118,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   UnlockPixels(pm);
   fl_delete_offscreen(osbuffer);
 
+  SetPort(srcPort);
   return p;
 }
 
