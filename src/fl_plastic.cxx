@@ -227,7 +227,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
 static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar		*g = fl_gray_ramp();
-  int		i, j;
+  int		i;
   int		clen = strlen(c) - 1;
   int		chalf = clen / 2;
   int		cstep = 1;
