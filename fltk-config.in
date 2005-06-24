@@ -59,22 +59,22 @@ LDFLAGS="@LDFLAGS@"
 LDLIBS="@LIBS@"
 
 # Check for local invocation, and update paths accordingly...
-if test -e "$selfdir/FL/Fl_Window.H"; then
+if test -f "$selfdir/FL/Fl_Window.H"; then
 	bindir="$selfdir/fluid"
 	includedir="$selfdir"
 	libdir="$selfdir/lib"
 
-	if test -e "$libdir/libfltk_jpeg.a"; then
+	if test -f "$libdir/libfltk_jpeg.a"; then
 		CFLAGS="-I$includedir/jpeg $CFLAGS"
 		CXXFLAGS="-I$includedir/jpeg $CXXFLAGS"
 	fi
 
-	if test -e "$libdir/libfltk_z.a"; then
+	if test -f "$libdir/libfltk_z.a"; then
 		CFLAGS="-I$includedir/zlib $CFLAGS"
 		CXXFLAGS="-I$includedir/zlib $CXXFLAGS"
 	fi
 
-	if test -e "$libdir/libfltk_png.a"; then
+	if test -f "$libdir/libfltk_png.a"; then
 		CFLAGS="-I$includedir/png $CFLAGS"
 		CXXFLAGS="-I$includedir/png $CXXFLAGS"
 	fi
