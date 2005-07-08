@@ -827,6 +827,28 @@ void Fl_Type::read_property(const char *c) {
 
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
+/**
+ * Build widgets and dataset needed in live mode.
+ * \return a widget pointer that the live mode initiator can 'show()'
+ * \see leave_live_mode()
+ */
+Fl_Widget *Fl_Type::enter_live_mode(int top) {
+  return 0L;
+}
+
+/**
+ * Release all resources created when enetring live mode.
+ * \see enter_live_mode()
+ */
+void Fl_Type::leave_live_mode() {
+}
+
+/**
+ * Copy all needed properties for this tye into the live object.
+ */
+void Fl_Type::copy_properties() {
+}
+
 //
 // End of "$Id$".
 //

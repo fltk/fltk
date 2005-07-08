@@ -1357,12 +1357,12 @@ void step_cb(Fl_Value_Input* i, void* v) {
     double n = i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
-	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-	if (q->is_valuator()) {
-	  ((Fl_Valuator*)(q->o))->step(n);
-	  q->o->redraw();
-	  mod = 1;
-	}
+        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+        if (q->is_valuator()) {
+	        ((Fl_Valuator*)(q->o))->step(n);
+	        q->o->redraw();
+	        mod = 1;
+        }
       }
     }
     if (mod) set_modflag(1);
@@ -1424,12 +1424,12 @@ void subtype_cb(Fl_Choice* i, void* v) {
     Fl_Menu_Item* m = current_widget->subtypes();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
-	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-	if (q->subtypes()==m) {
-	  q->o->type(n);
-	  q->redraw();
-	  mod = 1;
-	}
+        Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+        if (q->subtypes()==m) {
+	        q->o->type(n);
+	        q->redraw();
+	        mod = 1;
+        }
       }
     }
     if (mod) set_modflag(1);
@@ -1481,6 +1481,59 @@ void cancel_cb(Fl_Button* o, void* v) {
 void toggle_overlays(Fl_Widget *,void *); // in Fl_Window_Type.cxx
 void overlay_cb(Fl_Button*o,void *v) {
   toggle_overlays(o,v);
+}
+
+void leave_live_mode_cb(Fl_Widget*, void*);
+
+void live_mode_cb(Fl_Button*o,void *v) {
+  /// \todo live mode should end gracefully when the application quits
+  ///       or when the user closes the live widget
+  static Fl_Type *live_type = 0L;
+  static Fl_Widget *live_widget = 0L;
+  static Fl_Window *live_window = 0L;
+  // if 'o' is 0, we must quit live mode
+  if (!o) {
+    o = wLiveMode;
+    o->value(0);
+  }
+  if (o->value()) {
+    if (numselected == 1) {
+      live_widget = current_widget->enter_live_mode(1);
+      if (live_widget) {
+        live_type = current_widget;
+        Fl_Group::current(0);
+        int w = live_widget->w();
+        int h = live_widget->h();
+        live_window = new Fl_Window(w+20, h+55, "Fluid Live Mode Widget");
+        live_window->box(FL_FLAT_BOX);
+        live_window->color(FL_GREEN);
+        Fl_Group *rsz = new Fl_Group(0, h+20, 130, 35);
+        rsz->box(FL_NO_BOX);
+        Fl_Box *rsz_dummy = new Fl_Box(110, h+20, 1, 25);
+        rsz_dummy->box(FL_NO_BOX);
+        rsz->resizable(rsz_dummy);
+        Fl_Button *btn = new Fl_Button(10, h+20, 100, 25, "Exit Live Mode");
+        btn->labelsize(12);
+        btn->callback(leave_live_mode_cb);
+        live_widget->position(10, 10);
+        live_window->add(live_widget);
+        live_window->resizable(live_widget);
+        live_window->set_modal(); // block all other UI
+        live_window->callback(leave_live_mode_cb);
+        live_window->show();
+      } else o->value(0);
+    } else o->value(0);
+  } else {
+    if (live_type)
+      live_type->leave_live_mode();
+    if (live_window) {
+      live_window->hide();
+      Fl::delete_widget(live_window);
+    }
+    live_type = 0L;
+    live_widget = 0L;
+    live_window = 0L;
+  }
 }
 
 // update the panel according to current widget set:
@@ -2236,6 +2289,87 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
     return 0;
   }
   return 1;
+}
+
+static void leave_live_mode_cb(Fl_Widget*, void*) {
+  live_mode_cb(0, 0);
+}
+
+Fl_Widget *Fl_Widget_Type::enter_live_mode(int top) {
+  live_widget = widget(o->x(), o->y(), o->w(), o->h());
+  if (live_widget)
+    copy_properties();
+  return live_widget;
+}
+
+void Fl_Widget_Type::leave_live_mode() {
+}
+
+/**
+ * copy all properties from the edit widget to the live widget
+ */
+void Fl_Widget_Type::copy_properties() {
+  if (!live_widget) 
+    return;
+
+  Fl_Widget *w = live_widget;
+  w->label(o->label());
+  w->tooltip(o->tooltip());
+  w->type(o->type());
+  w->box(o->box());
+/* move this into the derived _type classes
+  if (is_button()) {
+    Fl_Button* d = (Fl_Button*)live_widget, *s = (Fl_Button*)o;
+    d->down_box(s->down_box());
+    d->shortcut(s->shortcut());
+    d->value(s->value());
+  } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
+    Fl_Input_Choice* d = (Fl_Input_Choice*)live_widget, *s = (Fl_Input_Choice*)o;
+    d->down_box(s->down_box());
+  } else if (is_menu_button()) {
+    Fl_Menu_* d = (Fl_Menu_*)live_widget, *s = (Fl_Menu_*)o;
+    d->down_box(s->down_box());
+  }
+*/
+  w->color(o->color());
+  w->selection_color(o->selection_color());
+  w->labeltype(o->labeltype());
+  w->labelfont(o->labelfont());
+  w->labelsize(o->labelsize());
+  w->labelcolor(o->labelcolor());
+  w->align(o->align());
+/* move this into the derived _type classes
+  if (is_valuator()) {
+    Fl_Valuator* d = (Fl_Valuator*)live_widget, *s = (Fl_Valuator*)o;
+    d->minimum(s->minimum());
+    d->maximum(s->maximum());
+    d->step(s->step());
+    d->value(s->value());
+    //if (is_valuator()==2) {
+    //  double x = ((Fl_Slider*)v)->slider_size();
+    //  double y = ((Fl_Slider*)f)->slider_size();
+    //  if (x != y) write_string("slider_size %g", x);
+    //}
+  }
+/* move this into the derived _type classes
+  {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
+    Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
+    if (f != ff) write_string("textfont %d", f);
+    if (s != fs) write_string("textsize %d", s);
+    if (c != fc) write_string("textcolor %d", c);
+  }}*/
+  /// hmmm: if (!o->visible()) write_string("hide");
+  if (!o->active()) 
+    w->deactivate();
+  if (resizable() && w->parent()) 
+    w->parent()->resizable(o);
+}
+
+void Fl_Pack_Type::copy_properties()
+{
+  Fl_Group_Type::copy_properties();
+  Fl_Pack *d = (Fl_Pack*)live_widget, *s =(Fl_Pack*)o;
+  d->spacing(s->spacing());
 }
 
 //

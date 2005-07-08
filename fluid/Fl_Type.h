@@ -115,6 +115,11 @@ public:
   virtual void write_code1(); // code and .h before children
   virtual void write_code2(); // code and .h after children
 
+  // live mode
+  virtual Fl_Widget *enter_live_mode(int top=0); // build wdgets needed for live mode
+  virtual void leave_live_mode(); // free allocated resources
+  virtual void copy_properties(); // copy properties from this type into a potetial live object
+
   // get message number for I18N
   int msgnum();
 
@@ -284,6 +289,7 @@ protected:
   void write_block_close();
   void write_code2();
   void write_color(const char*, Fl_Color);
+  Fl_Widget *live_widget;
 
 public:
   static int default_size;
@@ -325,6 +331,10 @@ public:
   virtual void write_properties();
   virtual void read_property(const char *);
   virtual int read_fdesign(const char*, const char*);
+
+  virtual Fl_Widget *enter_live_mode(int top=0);
+  virtual void leave_live_mode();
+  virtual void copy_properties();
 
   virtual void ideal_size(int &w, int &h);
   virtual void ideal_spacing(int &x, int &y);
@@ -373,6 +383,10 @@ public:
   int is_parent() const {return 1;}
   int is_group() const {return 1;}
   int pixmapID() { return 6; }
+
+  virtual Fl_Widget *enter_live_mode(int top=0);
+  virtual void leave_live_mode();
+  virtual void copy_properties();
 };
 
 extern const char pack_type_name[];
@@ -384,6 +398,7 @@ public:
   virtual const char *type_name() {return pack_type_name;}
   Fl_Widget_Type *_make() {return new Fl_Pack_Type();}
   int pixmapID() { return 22; }
+  void copy_properties();
 };
 
 extern const char tabs_type_name[];
@@ -403,6 +418,7 @@ public:
   void add_child(Fl_Type*, Fl_Type*);
   void remove_child(Fl_Type*);
   int pixmapID() { return 13; }
+  Fl_Widget *enter_live_mode(int top=0);
 };
 
 extern const char scroll_type_name[];
@@ -488,6 +504,10 @@ public:
   int is_parent() const {return 1;}
   int is_group() const {return 1;}
   int is_window() const {return 1;}
+
+  Fl_Widget *enter_live_mode(int top=0);
+  void leave_live_mode();
+  void copy_properties();
 };
 
 class Fl_Widget_Class_Type : private Fl_Window_Type {
