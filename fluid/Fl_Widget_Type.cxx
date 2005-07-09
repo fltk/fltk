@@ -2291,7 +2291,7 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
   return 1;
 }
 
-static void leave_live_mode_cb(Fl_Widget*, void*) {
+void leave_live_mode_cb(Fl_Widget*, void*) {
   live_mode_cb(0, 0);
 }
 
@@ -2351,6 +2351,7 @@ void Fl_Widget_Type::copy_properties() {
     //  if (x != y) write_string("slider_size %g", x);
     //}
   }
+*/
 /* move this into the derived _type classes
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
