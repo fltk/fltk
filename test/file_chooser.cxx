@@ -133,7 +133,7 @@ main(int  argc,		// I - Number of command-line arguments
 
   window->resizable(files);
   window->end();
-  window->show();
+  window->show(1, argv);
 
   Fl::run();
 

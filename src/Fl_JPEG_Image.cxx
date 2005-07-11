@@ -101,6 +101,8 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jpeg_decompress_struct	dinfo;	// Decompressor info
   fl_jpeg_error_mgr		jerr;	// Error handler info
   JSAMPROW			row;	// Sample row pointer
+  int max_finish_decompress_err = 10; // give up after too many errors
+  int max_destroy_decompress_err = 10; // give up after too many errors
 
 
   // Clear data...
@@ -118,8 +120,12 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   if (setjmp(jerr.errhand_))
   {
     // JPEG error handling...
-    if (array) jpeg_finish_decompress(&dinfo);
-    jpeg_destroy_decompress(&dinfo);
+    // if any of the cleanup routines hits another error, we would end up 
+    // in a loop. So instead, we decrement max_err for some upper cleanup limit.
+    if ( (max_finish_decompress_err-- > 0) && array)
+      jpeg_finish_decompress(&dinfo);
+    if ( max_destroy_decompress_err-- > 0)
+      jpeg_destroy_decompress(&dinfo);
 
     fclose(fp);
 

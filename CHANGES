@@ -2,6 +2,7 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Fixed hang on corrupt jpeg (STR #915)
 	- Added symbols 'refresh', 'reload', 'undo', and 'redo'.
 	- Fixed focus loss on Fl_Window:resize()
 	- Fl::delete_widget would hang fl_wait after deleting the
