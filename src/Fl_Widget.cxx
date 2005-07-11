@@ -253,6 +253,9 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 void
 Fl_Widget::label(const char *a) {
   if (flags() & COPIED_LABEL) {
+    // reassigning a copied label remains the same copied label
+    if (label_.value == a)
+      return;
     free((void *)(label_.value));
     clear_flag(COPIED_LABEL);
   }
