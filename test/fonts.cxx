@@ -54,8 +54,8 @@ FontDisplay *textobj;
 
 Fl_Hold_Browser *fontobj, *sizeobj;
 
-int *sizes[1000];
-int numsizes[1000];
+int **sizes;
+int *numsizes;
 int pickedsize = 14;
 
 void font_cb(Fl_Widget *, long) {
@@ -141,6 +141,8 @@ int main(int argc, char **argv) {
   int i = fl_choice("Which fonts:","-*","iso8859","All");
 #endif
   int k = Fl::set_fonts(i ? (i>1 ? "*" : 0) : "-*");
+  sizes = new int*[k];
+  numsizes = new int[k];
   for (i = 0; i < k; i++) {
     int t; const char *name = Fl::get_font_name((Fl_Font)i,&t);
     char buffer[128];
