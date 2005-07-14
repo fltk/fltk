@@ -63,10 +63,10 @@ class.
 	<LI><A HREF="#Fl_Text_Display.previous_word">previous_word</A></LI>
 	<LI><A HREF="#Fl_Text_Display.redisplay_range">redisplay_range</A></LI>
 	<LI><A HREF="#Fl_Text_Display.scrollbar_align">scrollbar_align</A></LI>
+        <LI><A HREF="#Fl_Text_Display.scrollbar_width">scrollbar_width</A></LI>
 
 </UL></TD><TD><UL>
 
-	<LI><A HREF="#Fl_Text_Display.scrollbar_width">scrollbar_width</A></LI>
 	<LI><A HREF="#Fl_Text_Display.scroll">scroll</A></LI>
 	<LI><A HREF="#Fl_Text_Display.show_cursor">show_cursor</A></LI>
 	<LI><A HREF="#Fl_Text_Display.show_insert_position">show_insert_position</A></LI>
@@ -75,6 +75,7 @@ class.
 	<LI><A HREF="#Fl_Text_Display.textsize">textsize</A></LI>
 	<LI><A HREF="#Fl_Text_Display.word_end">word_end</A></LI>
 	<LI><A HREF="#Fl_Text_Display.word_start">word_start</A></LI>
+	<LI><A HREF="#Fl_Text_Display.wrap_mode">wrap_mode</A></LI>
 
 </UL></TD></TR>
 </TABLE>
@@ -232,6 +233,11 @@ uchar textsize() const;</A></H4>
 <H4><A NAME="Fl_Text_Display.word_start">int word_start(int pos);</A></H4>
 
 <P>Moves the insert position to the beginning of the current word.
+
+<H4><A NAME="Fl_Text_Display.wrap_mode">void wrap_mode(int mode, int pos);</A></H4>
+
+<P>If <i>mode</i> is not zero, this call enables automatic word wrapping at column <i>pos</i>. 
+Word-wrapping does not change the text buffer itself, only the way that the text is displayed.
 
 </BODY>
 </HTML>
