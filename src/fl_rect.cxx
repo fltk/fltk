@@ -452,11 +452,35 @@ void fl_restore_clip() {
 #ifdef WIN32
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE_QD__)
+# if 1
+  // This code is required to allow true subwindows to work on Mac.
+  // During regular operation however, this seems overkill.
+  // See also: Fl_Window::make_current()
+  if ( fl_window ) {
+    GrafPtr port = GetWindowPort( fl_window );
+    if ( port ) { // port will be NULL if we are using a GWorld (and fl_window_region is invalid)
+      RgnHandle portClip = NewRgn();
+      CopyRgn( fl_window_region, portClip ); // changed
+      if ( r ) 
+        SectRgn( portClip, r, portClip );
+      SetPortClipRegion( port, portClip );
+      DisposeRgn( portClip );
+    }
+  } else {
+    if (r) 
+      SetClip(r);
+    else {
+      Rect rect; rect.left=0; rect.top=0; rect.right=0x7fff; rect.bottom=0x7fff;
+      ClipRect(&rect);
+    }
+  }
+# else
   if (r) SetClip(r);
   else {
     Rect rect; rect.left=0; rect.top=0; rect.right=0x7fff; rect.bottom=0x7fff;
     ClipRect(&rect);
   }
+# endif
 #elif defined(__APPLE_QUARTZ__)
   if ( fl_window )
   {

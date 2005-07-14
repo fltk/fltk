@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745)
+	- Reverted Mac Carbon Clipping simplification that broke
+	  subwindow clipping (STR #908, SVN r4386)
 	- Fixed bitmap scaling code
 	- Fixed tiny memory leak (STR #878)
 	- Fixed hang on corrupt jpeg (STR #915)
