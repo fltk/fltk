@@ -34,6 +34,7 @@
 #include <config.h>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
+#include <Fl/FL.H>
 #include <FL/math.h>
 #include <stdlib.h>
 
@@ -41,12 +42,22 @@ struct matrix {double a, b, c, d, x, y;};
 
 static matrix m = {1, 0, 0, 1, 0, 0};
 
-static matrix stack[10];
+static matrix stack[32];
 static int sptr = 0;
 
-void fl_push_matrix() {stack[sptr++] = m;}
+void fl_push_matrix() {
+  if (sptr==32)
+    Fl::error("fl_push_matrix(): matrix stack overflow.");
+  else
+    stack[sptr++] = m;
+}
 
-void fl_pop_matrix() {m = stack[--sptr];}
+void fl_pop_matrix() {
+  if (sptr==0)
+    Fl::error("fl_pop_matrix(): matrix stack underflow.");
+  else 
+    m = stack[--sptr];
+}
 
 void fl_mult_matrix(double a, double b, double c, double d, double x, double y) {
   matrix o;
