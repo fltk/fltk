@@ -476,15 +476,15 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W, old_ptr = array + sy * (w() + 7) / 8, sx = 0, new_bit = 128;
+    for (dx = W, xerr = W, old_ptr = array + sy * ((w() + 7) / 8), sx = 0, new_bit = 1;
 	 dx > 0;
 	 dx --) {
-      old_bit = (uchar)(128 >> (sx & 7));
+      old_bit = (uchar)(1 << (sx & 7));
       if (old_ptr[sx / 8] & old_bit) *new_ptr |= new_bit;
 
-      if (new_bit > 1) new_bit >>= 1;
+      if (new_bit < 128) new_bit <<= 1;
       else {
-        new_bit = 128;
+        new_bit = 1;
 	new_ptr ++;
       }
 
@@ -497,7 +497,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
       }
     }
 
-    if (new_bit < 128) new_ptr ++;
+    if (new_bit > 1) new_ptr ++;
 
     sy   += ystep;
     yerr -= ymod;

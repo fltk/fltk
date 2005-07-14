@@ -39,12 +39,12 @@ Function {make_widget_panel()} {open
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
-      xywh {3 5 402 310} selection_color 4 labelsize 11 when 0 resizable
+      xywh {5 5 400 310} selection_color 4 labelsize 11 when 0 resizable
     } {
       Fl_Group {} {
         label GUI
         callback propagate_load
-        xywh {3 25 402 290} labelsize 11 when 0 resizable
+        xywh {5 25 400 290} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           callback propagate_load
@@ -290,7 +290,7 @@ Function {make_widget_panel()} {open
       Fl_Group {} {
         label Style
         callback propagate_load
-        xywh {3 25 402 290} labelsize 11 when 0 hide
+        xywh {5 25 400 290} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           callback propagate_load

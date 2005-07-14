@@ -1504,7 +1504,7 @@ void live_mode_cb(Fl_Button*o,void *v) {
         Fl_Group::current(0);
         int w = live_widget->w();
         int h = live_widget->h();
-        live_window = new Fl_Window(w+20, h+55, "Fluid Live Mode Widget");
+        live_window = new Fl_Double_Window(w+20, h+55, "Fluid Live Mode Widget");
         live_window->box(FL_FLAT_BOX);
         live_window->color(FL_GREEN);
         Fl_Group *rsz = new Fl_Group(0, h+20, 130, 35);

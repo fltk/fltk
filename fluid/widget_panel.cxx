@@ -51,12 +51,12 @@ Fl_Double_Window* make_widget_panel() {
     w = o;
     o->labelsize(11);
     w->hotspot(o);
-    { Fl_Tabs* o = new Fl_Tabs(3, 5, 402, 310);
+    { Fl_Tabs* o = new Fl_Tabs(5, 5, 400, 310);
       o->selection_color((Fl_Color)4);
       o->labelsize(11);
       o->callback((Fl_Callback*)cb_);
       o->when(FL_WHEN_NEVER);
-      { Fl_Group* o = new Fl_Group(3, 25, 402, 290, "GUI");
+      { Fl_Group* o = new Fl_Group(5, 25, 400, 290, "GUI");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
@@ -387,7 +387,7 @@ Fl_Double_Window* make_widget_panel() {
         o->end();
         Fl_Group::current()->resizable(o);
       }
-      { Fl_Group* o = new Fl_Group(3, 25, 402, 290, "Style");
+      { Fl_Group* o = new Fl_Group(5, 25, 400, 290, "Style");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
