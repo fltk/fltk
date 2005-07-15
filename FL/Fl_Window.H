@@ -60,6 +60,10 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   };
   void _Fl_Window(); // constructor innards
 
+  // unimplemented copy ctor and assignment operator
+  Fl_Window(const Fl_Window&);
+  Fl_Window& operator=(const Fl_Window&);
+
 protected:
 
   static Fl_Window *current_;

@@ -42,6 +42,10 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 
   int navigation(int);
   static Fl_Group *current_;
+ 
+  // unimplemented copy ctor and assignment operator
+  Fl_Group(const Fl_Group&);
+  Fl_Group& operator=(const Fl_Group&);
 
 protected:
 

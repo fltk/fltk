@@ -71,13 +71,9 @@ class FL_EXPORT Fl_Widget {
 
   const char *tooltip_;
 
-#  if !defined(WIN32) || !defined(FL_DLL)
-  // "de-implement" the copy constructors, EXCEPT for when we are using the
-  // WIN32 DLL interface, in which case we can't hide them because Microsoft
-  // requires the copy constructors to implement subclassing...
-  Fl_Widget & operator=(const Fl_Widget &) { return *this; }
-  Fl_Widget(const Fl_Widget &) {}
-#  endif // !WIN32 || !FL_DLL
+  // unimplemented copy ctor and assignment operator
+  Fl_Widget(const Fl_Widget &);
+  Fl_Widget& operator=(const Fl_Widget &);
 
 protected:
 
