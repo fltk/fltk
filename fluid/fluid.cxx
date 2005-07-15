@@ -1649,6 +1649,9 @@ Fl_Menu_Item Main_Menu[] = {
 extern void fill_in_New_Menu();
 
 void scheme_cb(Fl_Choice *, void *) {
+  if (compile_only)
+    return;
+
   switch (scheme_choice->value()) {
     case 0 : // Default
       Fl::scheme(NULL);
