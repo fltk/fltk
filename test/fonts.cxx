@@ -110,7 +110,11 @@ void create_the_forms() {
   strcpy(label, "Hello, world!\n");
   int i = strlen(label);
   uchar c;
-  for (c = ' '+1; c < 127; c++) {if (!(c&0x1f)) label[i++]='\n'; label[i++]=c;}
+  for (c = ' '+1; c < 127; c++) {
+    if (!(c&0x1f)) label[i++]='\n'; 
+    if (c=='@') label[i++]=c;
+    label[i++]=c;
+  }
   label[i++] = '\n';
   for (c = 0xA1; c; c++) {if (!(c&0x1f)) label[i++]='\n'; label[i++]=c;}
   label[i] = 0;
