@@ -186,6 +186,10 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   if (depth == 16)
     use_5_6_5 = (read_dword(fp) == 0xf800);
 
+  // Set byte depth for RGBA images
+  if (depth == 32)
+    bDepth=4;
+
   // Setup image and buffers...
   d(bDepth);
   if (offbits) fseek(fp, offbits, SEEK_SET);
@@ -397,6 +401,15 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 	  for (temp = w() * 3; temp & 3; temp ++) {
 	    getc(fp);
 	  }
+          break;
+		  
+      case 32 : // 32-bit RGBA
+         for (x = w(); x > 0; x --, ptr += bDepth) {
+            ptr[2] = (uchar)getc(fp);
+            ptr[1] = (uchar)getc(fp);
+            ptr[0] = (uchar)getc(fp);
+            ptr[3] = (uchar)getc(fp);
+          }
           break;
     }
   }
