@@ -498,7 +498,7 @@ its <I>parent</I> window (if any), not <I>this</I> window.
 
 <P>Makes the widget visible; you must still redraw the parent
 widget to see a change in the window. Normally you want to use
-the <A HREF="#Fl_Widget.show"><CODE>show()</CODE> method
+the <A HREF="#Fl_Widget.show"><CODE>show()</CODE></A> method
 instead.
 
 
@@ -528,11 +528,13 @@ visible, as this will send false <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT>
  events to the widget</I>. <TT>redraw()</TT> is called if necessary on
 this or the parent.
 
-<H4><A NAME="Fl_Widget.visible_focus">void Fl_Widget::visible_focus();</A></H4>
+<H4><A NAME="Fl_Widget.visible_focus">void Fl_Widget::visible_focus(int);</A><BR>
+int Fl_Widget::visible_focus();</H4>
 
-<P>Returns non-zero if this widget will participate in keyboard
-focus navigation.
-
+<P>Modifies keyboard focus navigation. 
+See <A HREF="#Fl_Widget.set_visible_focus"><code>set_visible_focus()</code></a> and 
+<A HREF="#Fl_Widget.cleare_visible_focus"><code>clear_visible_focus()</code></a>. 
+The second form returns non-zero if this widget will participate in keyboard focus navigation.
 
 <H4><A name=Fl_Widget.when>Fl_When Fl_Widget::when() const
 <BR> void Fl_Widget::when(Fl_When)</A></H4>
