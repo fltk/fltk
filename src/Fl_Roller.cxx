@@ -37,7 +37,10 @@ int Fl_Roller::handle(int event) {
   int newpos = horizontal() ? Fl::event_x() : Fl::event_y();
   switch (event) {
   case FL_PUSH:
-    if (Fl::visible_focus()) Fl::focus(this);
+    if (Fl::visible_focus()) {
+      Fl::focus(this);
+      redraw();
+    }
     handle_push();
     ipos = newpos;
     return 1;

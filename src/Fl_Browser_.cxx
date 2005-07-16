@@ -605,7 +605,10 @@ int Fl_Browser_::handle(int event) {
   switch (event) {
   case FL_PUSH:
     if (!Fl::event_inside(X, Y, W, H)) return 0;
-    if (Fl::visible_focus()) Fl::focus(this);
+    if (Fl::visible_focus()) {
+      Fl::focus(this);
+      redraw();
+    }
     my = py = Fl::event_y();
     change = 0;
     if (type() == FL_NORMAL_BROWSER || !top_)

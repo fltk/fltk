@@ -278,7 +278,10 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
 }
 
 int Fl_Slider::handle(int event) {
-  if (event == FL_PUSH && Fl::visible_focus()) Fl::focus(this);
+  if (event == FL_PUSH && Fl::visible_focus()) {
+    Fl::focus(this);
+    redraw();
+  }
 
   return handle(event,
 		x()+Fl::box_dx(box()),
