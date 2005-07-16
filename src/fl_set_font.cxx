@@ -70,6 +70,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
     s->first = 0;
   }
   s->name = name;
+  s->fontname[0] = 0;
 #if !defined(WIN32) && !defined(__APPLE__)
   s->xlist = 0;
 #endif
