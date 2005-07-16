@@ -60,6 +60,10 @@ void Fl_Value_Slider::draw() {
 }
 
 int Fl_Value_Slider::handle(int event) {
+  if (event == FL_PUSH && Fl::visible_focus()) {
+    Fl::focus(this);
+    redraw();
+  }
   int sxx = x(), syy = y(), sww = w(), shh = h();
   if (horizontal()) {
     sxx += 35; sww -= 35;
