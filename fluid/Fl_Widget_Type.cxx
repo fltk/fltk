@@ -328,7 +328,10 @@ void name_public_cb(Fl_Light_Button* i, void* v) {
 	mod = 1;
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) {
+      set_modflag(1);
+      redraw_browser();
+    }
   }
 }    
 
