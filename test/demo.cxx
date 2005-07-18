@@ -328,7 +328,7 @@ int main(int argc, char **argv) {
   const char *fname = buf;
   int i = 0;
   if (!Fl::args(argc,argv,i) || i < argc-1)
-    Fl::fatal("Usage: %s <switches> <menufile>\n%s",Fl::help);
+    Fl::fatal("Usage: %s <switches> <menufile>\n%s",argv[0],Fl::help);
   if (i < argc) fname = argv[i];
 
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
