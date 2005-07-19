@@ -2318,7 +2318,7 @@ void Fl_Widget_Type::copy_properties() {
   // copy all attributes common to all widget types
   Fl_Widget *w = live_widget;
   w->label(o->label());
-  w->tooltip(o->tooltip());
+  w->tooltip(tooltip());
   w->type(o->type());
   w->box(o->box());
   w->color(o->color());
