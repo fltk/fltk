@@ -2315,25 +2315,12 @@ void Fl_Widget_Type::copy_properties() {
   if (!live_widget) 
     return;
 
+  // copy all attributes common to all widget types
   Fl_Widget *w = live_widget;
   w->label(o->label());
   w->tooltip(o->tooltip());
   w->type(o->type());
   w->box(o->box());
-/* move this into the derived _type classes
-  if (is_button()) {
-    Fl_Button* d = (Fl_Button*)live_widget, *s = (Fl_Button*)o;
-    d->down_box(s->down_box());
-    d->shortcut(s->shortcut());
-    d->value(s->value());
-  } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
-    Fl_Input_Choice* d = (Fl_Input_Choice*)live_widget, *s = (Fl_Input_Choice*)o;
-    d->down_box(s->down_box());
-  } else if (is_menu_button()) {
-    Fl_Menu_* d = (Fl_Menu_*)live_widget, *s = (Fl_Menu_*)o;
-    d->down_box(s->down_box());
-  }
-*/
   w->color(o->color());
   w->selection_color(o->selection_color());
   w->labeltype(o->labeltype());
@@ -2341,28 +2328,38 @@ void Fl_Widget_Type::copy_properties() {
   w->labelsize(o->labelsize());
   w->labelcolor(o->labelcolor());
   w->align(o->align());
-/* move this into the derived _type classes
+
+  // copy all attributes specific to widgets derived from Fl_Button
+  if (is_button()) {
+    Fl_Button* d = (Fl_Button*)live_widget, *s = (Fl_Button*)o;
+    d->down_box(s->down_box());
+    d->shortcut(s->shortcut());
+    d->value(s->value());
+  }
+
+  // copy all attributes specific to Fl_Valuator and derived classes
   if (is_valuator()) {
     Fl_Valuator* d = (Fl_Valuator*)live_widget, *s = (Fl_Valuator*)o;
     d->minimum(s->minimum());
     d->maximum(s->maximum());
     d->step(s->step());
     d->value(s->value());
-    //if (is_valuator()==2) {
-    //  double x = ((Fl_Slider*)v)->slider_size();
-    //  double y = ((Fl_Slider*)f)->slider_size();
-    //  if (x != y) write_string("slider_size %g", x);
-    //}
+    if (is_valuator()==2) {
+      Fl_Slider *d = (Fl_Slider*)live_widget, *s = (Fl_Slider*)o;
+      d->slider_size(s->slider_size());
+    }
   }
-*/
-/* move this into the derived _type classes
+ 
+/* TODO: implement this
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
     if (f != ff) write_string("textfont %d", f);
     if (s != fs) write_string("textsize %d", s);
     if (c != fc) write_string("textcolor %d", c);
   }}*/
-  /// hmmm: if (!o->visible()) write_string("hide");
+
+  if (!o->visible()) 
+    w->hide();
   if (!o->active()) 
     w->deactivate();
   if (resizable() && w->parent()) 

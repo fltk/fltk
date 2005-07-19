@@ -430,6 +430,7 @@ public:
   virtual const char *type_name() {return scroll_type_name;}
   Fl_Widget_Type *_make() {return new Fl_Scroll_Type();}
   int pixmapID() { return 19; }
+  void copy_properties();
 };
 
 extern const char tile_type_name[];
@@ -439,6 +440,7 @@ public:
   virtual const char *type_name() {return tile_type_name;}
   Fl_Widget_Type *_make() {return new Fl_Tile_Type();}
   int pixmapID() { return 20; }
+  void copy_properties();
 };
 
 extern const char wizard_type_name[];
@@ -589,6 +591,7 @@ public:
   void remove_child(Fl_Type*) {build_menu();}
   Fl_Type* click_test(int x, int y);
   void write_code2();
+  void copy_properties();
 };
 
 extern Fl_Menu_Item button_type_menu[];
@@ -671,6 +674,7 @@ public:
   Fl_Widget_Type *_make() {return new Fl_Input_Choice_Type();}
   virtual void build_menu();
   int pixmapID() { return 15; }
+  void copy_properties();
 };
 
 #include <FL/Fl_Window.H>

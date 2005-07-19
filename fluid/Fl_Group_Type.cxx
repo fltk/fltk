@@ -249,6 +249,7 @@ Fl_Widget *Fl_Tabs_Type::enter_live_mode(int top) {
     }
     grp->end();
   }
+  grp->value(((Fl_Tabs*)o)->value());
   return live_widget;
 }
 
@@ -280,11 +281,25 @@ Fl_Menu_Item scroll_type_menu[] = {
 
 Fl_Scroll_Type Fl_Scroll_type;	// the "factory"
 
+void Fl_Scroll_Type::copy_properties() {
+  Fl_Group_Type::copy_properties();
+  Fl_Scroll *s = (Fl_Scroll*)o, *d = (Fl_Scroll*)live_widget;
+  d->position(s->xposition(), s->yposition());
+  d->type(s->type()); // TODO: get this flag from Fl_Scroll_Type!
+  d->scrollbar.align(s->scrollbar.align());
+  d->hscrollbar.align(s->hscrollbar.align());
+}
+
 ////////////////////////////////////////////////////////////////
 
 const char tile_type_name[] = "Fl_Tile";
 
 Fl_Tile_Type Fl_Tile_type;	// the "factory"
+
+void Fl_Tile_Type::copy_properties() {
+  Fl_Group_Type::copy_properties();
+  // no additional properties
+}
 
 //
 // End of "$Id$".

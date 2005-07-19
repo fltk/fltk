@@ -448,6 +448,16 @@ void Fl_Menu_Type::write_code2() {
   Fl_Widget_Type::write_code2();
 }
 
+void Fl_Menu_Type::copy_properties() {
+  Fl_Widget_Type::copy_properties();
+  Fl_Menu_ *s = (Fl_Menu_*)o, *d = (Fl_Menu_*)live_widget;
+  d->menu(s->menu());
+  d->down_box(s->down_box());
+  d->textcolor(s->textcolor());
+  d->textfont(s->textfont());
+  d->textsize(s->textsize());
+}
+
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Menu_Button.H>
@@ -471,6 +481,16 @@ Fl_Menu_Item dummymenu[] = {{"CHOICE"},{0}};
 Fl_Choice_Type Fl_Choice_type;
 
 Fl_Input_Choice_Type Fl_Input_Choice_type;
+
+void Fl_Input_Choice_Type::copy_properties() {
+  Fl_Widget_Type::copy_properties();
+  Fl_Input_Choice *s = (Fl_Input_Choice*)o, *d = (Fl_Input_Choice*)live_widget;
+  d->menu(s->menu());
+  d->down_box(s->down_box());
+  d->textcolor(s->textcolor());
+  d->textfont(s->textfont());
+  d->textsize(s->textsize());
+}
 
 ////////////////////////////////////////////////////////////////
 
