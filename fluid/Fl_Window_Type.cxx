@@ -658,7 +658,8 @@ void Fl_Window_Type::draw_overlay() {
   if (selected) fl_rect(0,0,o->w(),o->h());
   if (!numselected) return;
   int mybx,myby,mybr,mybt;
-  mybx = o->w(); myby = o->h(); mybr = 0; mybt = 0;
+  int mysx,mysy,mysr,myst;
+  mybx = mysx = o->w(); myby = mysy = o->h(); mybr = mysr = 0; mybt = myst = 0;
   Fl_Type *selection = 0L; // used to store the one selected widget (if n==1)
   for (Fl_Type *q=next; q && q->level>level; q = q->next)
     if (q->selected && q->is_widget() && !q->is_menu_item()) {
@@ -667,6 +668,10 @@ void Fl_Window_Type::draw_overlay() {
       int x,y,r,t;
       newposition(myo,x,y,r,t);
       if (!show_guides || !drag || numselected != 1) fl_rect(x,y,r-x,t-y);
+      if (x < mysx) mysx = x;
+      if (y < mysy) mysy = y;
+      if (r > mysr) mysr = r;
+      if (t > myst) myst = t;
       if (!(myo->o->align() & FL_ALIGN_INSIDE)) {
         // Adjust left/right/top/bottom for top/bottom labels...
 	int ww, hh;
@@ -971,11 +976,16 @@ void Fl_Window_Type::draw_overlay() {
   }
 
   // Draw selection box + resize handles...
+  // draw box including all labels
+  fl_line_style(FL_DOT);
   fl_rect(mybx,myby,mybr-mybx,mybt-myby);
-  fl_rectf(mybx,myby,5,5);
-  fl_rectf(mybr-5,myby,5,5);
-  fl_rectf(mybr-5,mybt-5,5,5);
-  fl_rectf(mybx,mybt-5,5,5);
+  fl_line_style(FL_SOLID);
+  // draw box excluding labels
+  fl_rect(mysx,mysy,mysr-mysx,myst-mysy);
+  fl_rectf(mysx,mysy,5,5);
+  fl_rectf(mysr-5,mysy,5,5);
+  fl_rectf(mysr-5,myst-5,5,5);
+  fl_rectf(mysx,myst-5,5,5);
 }
 
 extern Fl_Menu_Item Main_Menu[];
