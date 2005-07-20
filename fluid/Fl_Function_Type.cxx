@@ -467,7 +467,7 @@ void Fl_CodeBlock_Type::write_code2() {
 
 int Fl_Decl_Type::is_public() const 
 {
- Fl_Type *p = Fl_Type::current;
+ Fl_Type *p = parent;
  while (p && !p->is_decl_block()) p = p->parent;
  if(p && p->is_public() && public_)
    return public_;
