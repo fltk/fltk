@@ -444,6 +444,13 @@ public:
   }
   Fl_Widget_Type *_make() {return new Fl_Input_Type();}
   int pixmapID() { return 14; }
+  virtual void copy_properties() {
+    Fl_Widget_Type::copy_properties();
+    Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
+    d->textfont(s->textfont());
+    d->textsize(s->textsize());
+    d->textcolor(s->textcolor());
+  }
 };
 static Fl_Input_Type Fl_Input_type;
 

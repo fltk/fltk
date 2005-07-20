@@ -253,7 +253,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 	else if (readonly()) xx -= 3;
       }
       // clip to and erase it:
-      fl_push_clip((int)xx, Y+ypos, (int)(r-xx+1), height);
+      fl_push_clip((int)xx-1-height/8, Y+ypos, (int)(r-xx+2+height/4), height);
       draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
                W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
       // it now draws entire line over it
