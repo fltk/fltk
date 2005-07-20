@@ -86,7 +86,7 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   SelectObject(fl_gc, fl_brush());
   Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
 #elif defined(__APPLE_QD__)
-  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
+  Rect r; r.left=x; r.right=x+w+1; r.top=y; r.bottom=y+h+1;
   a1 = a2-a1; a2 = 450-a2;
   PaintArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
