@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745, STR #942)
+	- Fluid Code Editor would occasionally not draw the last character
+	  in the buffer (STR #798)
 	- Fluid Declaration private flag fixed (STR #799)
 	- Fluid overlay now shows a seperate bounding box of selected
 	  items with correct handles and a dotted boundig box for all 

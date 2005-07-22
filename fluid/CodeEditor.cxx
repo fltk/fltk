@@ -345,8 +345,17 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
 
   for (ptr = text; isspace(*ptr); ptr ++);
   *ptr = '\0';  
-  e->insert("\n");
-  if (*text) e->insert(text);
+  if (*text) {
+    // use only a single 'insert' call to avoid redraw issues
+    int n = strlen(text);
+    char *b = (char*)malloc(n+2);
+    *b = '\n';
+    strcpy(b+1, text);
+    e->insert(b);
+    free(b);
+  } else {
+    e->insert("\n");
+  }
   e->show_insert_position();
   e->set_changed();
   if (e->when()&FL_WHEN_CHANGED) e->do_callback();
