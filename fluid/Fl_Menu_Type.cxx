@@ -492,6 +492,24 @@ void Fl_Input_Choice_Type::copy_properties() {
   d->textsize(s->textsize());
 }
 
+Fl_Type* Fl_Input_Choice_Type::click_test(int, int) {
+  if (selected) return 0; // let user move the widget
+  Fl_Menu_* w = ((Fl_Input_Choice*)o)->menubutton();
+  if (!menusize) return 0;
+  const Fl_Menu_Item* save = w->mvalue();
+  w->value((Fl_Menu_Item*)0);
+  Fl::pushed(w);
+  w->handle(FL_PUSH);
+  const Fl_Menu_Item* m = w->mvalue();
+  if (m) {
+    // restore the settings of toggles & radio items:
+    if (m->flags & (FL_MENU_RADIO | FL_MENU_TOGGLE)) build_menu();
+    return (Fl_Type*)(m->user_data());
+  }
+  w->value(save);
+  return this;
+}
+
 ////////////////////////////////////////////////////////////////
 
 Fl_Menu_Bar_Type Fl_Menu_Bar_type;

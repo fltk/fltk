@@ -643,10 +643,10 @@ public:
 #include <FL/Fl_Input_Choice.H>
 class Fl_Input_Choice_Type : public Fl_Menu_Type {
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
-    Fl_Menu_ *myo = (Fl_Menu_*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
+    Fl_Input_Choice *myo = (Fl_Input_Choice*)(w==4 ? ((Fl_Widget_Type*)this->factory)->o : this->o);
     switch (w) {
     case 4:
-    case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
+    case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
     case 1: myo->textfont(f); break;
     case 2: myo->textsize(s); break;
     case 3: myo->textcolor(c); break;
@@ -665,6 +665,7 @@ public:
     if (w < (15 + h)) w = 15 + h;
   }
   virtual const char *type_name() {return "Fl_Input_Choice";}
+  virtual Fl_Type* click_test(int,int);
   Fl_Widget *widget(int X,int Y,int W,int H) {
     Fl_Input_Choice *myo = new Fl_Input_Choice(X,Y,W,H,"input choice:");
     myo->menu(dummymenu);
