@@ -1916,8 +1916,9 @@ void Fl_Window::make_current()
   // \todo for performance reasons: we don't have to create this unless the child windows moved
   for ( Fl_X *cx = i->xidChildren; cx; cx = cx->xidNext )
   {
-    Fl_Region r = NewRgn();
     Fl_Window *cw = cx->w;
+    if (!cw->visible_r()) continue;
+    Fl_Region r = NewRgn();
     SetRectRgn( r, cw->x() - xp, cw->y() - yp, 
                    cw->x() + cw->w() - xp, cw->y() + cw->h() - yp );
     DiffRgn( fl_window_region, r, fl_window_region );

@@ -187,6 +187,8 @@ int Fl_Tabs::handle(int event) {
       default:
         break;
     }
+  case FL_SHOW:
+    value(); // update visibilities and fall through
   default:
     return Fl_Group::handle(event);
 
