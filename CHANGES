@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745, STR #942)
+	- New windows touching the right screen border would be 
+	  positioned all the way to the left (STR #898)
 	- Made pie drawing size for WIN32 and OS X the same as X11 (STR #905)
 	- Fixed OS X issue with OpenGL windows inside of Tabs (STR #602)
 	- Fluid Code Editor would occasionally not draw the last character

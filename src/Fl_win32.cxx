@@ -974,7 +974,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   //Make border's lower right corner visible
   int scr_x, scr_y, scr_w, scr_h;
   Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
-  if (scr_x+scr_w < X+W) X = scr_x+scr_x- W;
+  if (scr_x+scr_w < X+W) X = scr_x+scr_w - W;
   if (scr_y+scr_h < Y+H) Y = scr_y+scr_h - H;
   //Make border's upper left corner visible
   if (X<scr_x) X = scr_x;
