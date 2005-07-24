@@ -369,6 +369,9 @@ AC_CHECK_FUNC(snprintf,[
 AC_CHECK_HEADER(strings.h, AC_DEFINE(HAVE_STRINGS_H))
 AC_CHECK_FUNCS(strcasecmp strlcat strlcpy)
 
+AC_CHECK_HEADER(locale.h, AC_DEFINE(HAVE_LOCALE_H))
+AC_CHECK_FUNCS(localeconv)
+
 dnl FLTK library uses math library functions...
 AC_SEARCH_LIBS(pow, m)
 

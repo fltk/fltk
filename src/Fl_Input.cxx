@@ -33,12 +33,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include "flstring.h"
+
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
+
 
 void Fl_Input::draw() {
   if (input_type() == FL_HIDDEN_INPUT) return;
@@ -69,8 +73,12 @@ int Fl_Input::shift_up_down_position(int p) {
 // into account (for example, continental Europe uses a comma instead
 // of a decimal point). For back compatibility reasons, we always 
 // allow the decimal point.
+#ifdef HAVE_LOCALECONV
 static char *standard_fp_chars = ".eE+-"; 
 static char *legal_fp_chars = 0L;
+#else
+static char *legal_fp_chars = ".eE+-"; 
+#endif
 
 int Fl_Input::handle_key() {
 
@@ -86,6 +94,7 @@ int Fl_Input::handle_key() {
       Fl::compose_reset(); // ignore any foreign letters...
 
       // initialize the list of legal characters inside a floating point number
+#ifdef HAVE_LOCALECONV
       if (!legal_fp_chars) {
         int len = strlen(standard_fp_chars);
         struct lconv *lc = localeconv();
@@ -106,6 +115,7 @@ int Fl_Input::handle_key() {
           if (lc->negative_sign) strcat(legal_fp_chars, lc->negative_sign);
         }
       }
+#endif
 
       // This is complex to allow "0xff12" hex to be typed:
       if (!position() && (ascii == '+' || ascii == '-') ||

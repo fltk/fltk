@@ -153,6 +153,13 @@
 /*#undef HAVE_STRLCPY*/
 
 /*
+ * Do we have POSIX locale support?
+ */
+
+#define HAVE_LOCALE_H 1
+#define HAVE_LOCALECONV 1
+
+/*
  * HAVE_POLL:
  *
  * Use poll() if we don't have select().

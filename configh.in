@@ -190,6 +190,13 @@
 #undef HAVE_STRLCPY
 
 /*
+ * Do we have POSIX locale support?
+ */
+
+#undef HAVE_LOCALE_H
+#undef HAVE_LOCALECONV
+
+/*
  * HAVE_SYS_SELECT_H:
  *
  * Whether or not select() call has its own header file.
