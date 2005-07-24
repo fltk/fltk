@@ -32,6 +32,8 @@
 // the keybindings.
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
@@ -62,6 +64,14 @@ int Fl_Input::shift_up_down_position(int p) {
 
 #define ctrl(x) ((x)^0x40)
 
+// List of characters that are leagal in a floating point input field.
+// This text string is created at run-time to take the current locale
+// into account (for example, continental Europe uses a comma instead
+// of a decimal point). For back compatibility reasons, we always 
+// allow the decimal point.
+static char *standard_fp_chars = ".eE+-"; 
+static char *legal_fp_chars = 0L;
+
 int Fl_Input::handle_key() {
 
   char ascii = Fl::event_text()[0];
@@ -75,13 +85,35 @@ int Fl_Input::handle_key() {
     if (input_type() == FL_FLOAT_INPUT || input_type() == FL_INT_INPUT) {
       Fl::compose_reset(); // ignore any foreign letters...
 
+      // initialize the list of legal characters inside a floating point number
+      if (!legal_fp_chars) {
+        int len = strlen(standard_fp_chars);
+        struct lconv *lc = localeconv();
+        if (lc) {
+          if (lc->decimal_point) len += strlen(lc->decimal_point);
+          if (lc->mon_decimal_point) len += strlen(lc->mon_decimal_point);
+          if (lc->positive_sign) len += strlen(lc->positive_sign);
+          if (lc->negative_sign) len += strlen(lc->negative_sign);
+        }
+        // the following line is not a true memory leak because the array is only
+        // allocated once if required, and automatically freed when the program quits
+        legal_fp_chars = (char*)malloc(len+1);
+        strcpy(legal_fp_chars, standard_fp_chars);
+        if (lc) {
+          if (lc->decimal_point) strcat(legal_fp_chars, lc->decimal_point);
+          if (lc->mon_decimal_point) strcat(legal_fp_chars, lc->mon_decimal_point);
+          if (lc->positive_sign) strcat(legal_fp_chars, lc->positive_sign);
+          if (lc->negative_sign) strcat(legal_fp_chars, lc->negative_sign);
+        }
+      }
+
       // This is complex to allow "0xff12" hex to be typed:
       if (!position() && (ascii == '+' || ascii == '-') ||
 	  (ascii >= '0' && ascii <= '9') ||
 	  (position()==1 && index(0)=='0' && (ascii=='x' || ascii == 'X')) ||
 	  (position()>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
 	   && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')) ||
-	  input_type()==FL_FLOAT_INPUT && ascii && strchr(".eE+-", ascii)) {
+	  input_type()==FL_FLOAT_INPUT && ascii && strchr(legal_fp_chars, ascii)) {
 	if (readonly()) fl_beep();
 	else replace(position(), mark(), &ascii, 1);
       }
