@@ -64,7 +64,7 @@ int Fl_Input::shift_up_down_position(int p) {
 
 #define ctrl(x) ((x)^0x40)
 
-// List of characters that are leagal in a floating point input field.
+// List of characters that are legal in a floating point input field.
 // This text string is created at run-time to take the current locale
 // into account (for example, continental Europe uses a comma instead
 // of a decimal point). For back compatibility reasons, we always 
