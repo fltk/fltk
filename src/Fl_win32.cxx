@@ -1042,8 +1042,13 @@ int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
-  const char* class_name = /*w->xclass();
-  if (!class_name) class_name =*/ "FLTK"; // create a "FLTK" WNDCLASS
+  static const char *first_class_name = 0L;
+  const char *class_name = w->xclass();
+  if (!class_name) class_name = first_class_name; // reuse first class name used
+  if (!class_name) class_name = "FLTK"; // default to create a "FLTK" WNDCLASS
+  if (!first_class_name) {
+    first_class_name = class_name;
+  }
 
   const char* message_name = "FLTK::ThreadWakeup";
 
