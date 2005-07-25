@@ -31,7 +31,7 @@ comment {//
 } {in_source in_header
 } 
 
-decl {\#include <FL/fl_draw.h>} {selected
+decl {\#include <FL/fl_draw.H>} {selected
 } 
 
 class FL_EXPORT Fl_File_Chooser {open

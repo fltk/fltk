@@ -230,7 +230,6 @@ static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
   int		i;
   int		clen = strlen(c) - 1;
   int		chalf = clen / 2;
-  int		cstep = 1;
 
   if (w>h) {
     int d = h/2;

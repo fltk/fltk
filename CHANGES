@@ -6,30 +6,36 @@ CHANGES IN FLTK 1.1.7
 	- Added Windows support for Fl_Window::xclass() (STR #848)
 	- Floating point input field allows characters from
 	  current locale (STR #903)
-	- Fixed integration of Fl_Input_Choice into Fluid (STR #879)
+	- Fixed integration of Fl_Input_Choice into FLUID (STR
+	  #879)
 	- New windows touching the right screen border would be 
 	  positioned all the way to the left (STR #898)
-	- Made pie drawing size for WIN32 and OS X the same as X11 (STR #905)
-	- Fixed OS X issue with OpenGL windows inside of Tabs (STR #602)
-	- Fluid Code Editor would occasionally not draw the last character
-	  in the buffer (STR #798)
-	- Fluid Declaration private flag fixed (STR #799)
-	- Fluid overlay now shows a seperate bounding box of selected
-	  items with correct handles and a dotted boundig box for all 
-	  labels (STR #790)
-	- Fixed left overhang of large chracters in Fl_Input_ (STR #941)
+	- Made pie drawing size for WIN32 and OS X the same as
+	  X11 (STR #905)
+	- Fixed OS X issue with OpenGL windows inside of Tabs
+	  (STR #602)
+	- FLUID Code Editor would occasionally not draw the last
+	  character in the buffer (STR #798)
+	- FLUID Declaration private flag fixed (STR #799)
+	- FLUID overlay now shows a seperate bounding box of
+	  selected items with correct handles and a dotted
+	  boundig box for all  labels (STR #790)
+	- Fixed left overhang of large chracters in Fl_Input_
+	  (STR #941)
 	- Fixed button resizing in File Chooser (STR #884)
-	- Fixed Fluid redraw issue (STR #912)
+	- Fixed FLUID redraw issue (STR #912)
 	- Added 32bit BMP Image file format support (STR #918)
-	- Value Sliders would not receive focus when clicked on (STR #911)
-	- Added redraw of some widgets to show focus change (STR #910)
+	- Value Sliders would not receive focus when clicked on
+	  (STR #911)
+	- Added redraw of some widgets to show focus change (STR
+	  #910)
 	- Fl::set_font would not clear 'pretty' name (STR #902)
 	- Fixed unescaped '@' in fonts demo (STR #867)
-	- Fluid should not open the Display connection anymore if
+	- FLUID should not open the Display connection anymore if
 	  creating code only (STR #904)
 	- Improved hidden copy / ctor implementation (STR #860)
-	- Increased matrix stack depth and added over/underfolw error
-	  (STR #924)
+	- Increased matrix stack depth and added over/underflow
+	  error (STR #924)
 	- Reverted Mac Carbon Clipping simplification that broke
 	  subwindow clipping (STR #908, SVN r4386)
 	- Fixed bitmap scaling code
@@ -45,8 +51,8 @@ CHANGES IN FLTK 1.1.7
 	- Clipping fixes for OSX
 	- Removed attempt to find items via 
 	  Fl_Menu_::find_item() in linked submenus
-	- Fluid interactive window resizing fixes (STR #873, 791)
-	- Fluid panel resize and alignment fixes (STR #891)
+	- FLUID interactive window resizing fixes (STR #873, 791)
+	- FLUID panel resize and alignment fixes (STR #891)
 	- Fl_Window::show(argc, argv) now sets the scheme before
 	  showing the window; this should eliminate any
 	  flickering between the standard and plastic schemes on
@@ -683,7 +689,7 @@ CHANGES IN FLTK 1.1.4rc2
 	  input wrong (STR #101)
 	- Updated documentatiopn of fl_draw (STR #94)
 	  and Fl_Menu_::add() (STR #99)
-	- Fluid collapse triangle events were not offset by
+	- FLUID collapse triangle events were not offset by
           horizontal scroll (STR #106)
 	- QuitAppleEvent now correctly returns from Fl::run()
           instead of just exiting (STR #87)
@@ -2294,7 +2300,7 @@ CHANGES SINCE FLTK 1.0.9
 	- No longer clear Fl::keysym on every event, this makes
 	  better back compatability and fixes Win2000
 
-	- Fluid now restores which tab in an Fl_Tabs was
+	- FLUID now restores which tab in an Fl_Tabs was
 	  selected when loads .fl files.
 
 	- Hack to fix the annoying "raise another application
@@ -2674,7 +2680,7 @@ CHANGES SINCE FLTK 1.0.7
 	  ring, rather than the start, so they are executed in
 	  the order added, and a callback that adds itself does
 	  not prevent others from being called.
-	- Fluid lets you type in code that starts with '#' for
+	- FLUID lets you type in code that starts with '#' for
 	  cpp directives.
 	- XBell() could be called before the X11 display was
 	  opened, causing a segfault.
@@ -2800,8 +2806,8 @@ CHANGES SINCE FLTK 1.0.4
     - The XPM code didn't handle named colors with spaces in the names.
     - Pressing ESCape closed the window with pointer focus, even if there
       was a modal window open (now closes the modal window).
-    - Fluid no longer produces trigraphs accidentally in the image data.
-    - Fluid uses string constant concatenation to produce shorter image
+    - FLUID no longer produces trigraphs accidentally in the image data.
+    - FLUID uses string constant concatenation to produce shorter image
       data.
     - The Fl_Group deletion code crashed if there was exactly one child
       widget.
@@ -2860,7 +2866,7 @@ CHANGES SINCE FLTK 1.0.3
       infinite resizing loop.
     - Fl_win32.cxx now includes <FL/filename.H> to export missing
       DLL symbols.
-    - Fluid didn't handle member functions that include the
+    - FLUID didn't handle member functions that include the
       scope operator.
     - Fl_Chart was dividing by 0 if there were no data samples
       or if they were all the same (min == max).
