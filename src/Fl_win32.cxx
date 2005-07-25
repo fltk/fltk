@@ -601,14 +601,19 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     Fl_Region R;
     Fl_X *i = Fl_X::i(window);
     i->wait_for_expose = 0;
+    char redraw_whole_window = false;
     if (!i->region && window->damage()) {
       // Redraw the whole window...
       i->region = CreateRectRgn(0, 0, window->w(), window->h());
+      redraw_whole_window = true;
     }
 
     // We need to merge WIN32's damage into FLTK's damage.
     R = CreateRectRgn(0,0,0,0);
-    GetUpdateRgn(hWnd,R,0);
+    int r = GetUpdateRgn(hWnd,R,0);
+    if (r==NULLREGION && !redraw_whole_window) {
+      break;
+    }
 
     if (i->region) {
       // Also tell WIN32 that we are drawing someplace else as well...
