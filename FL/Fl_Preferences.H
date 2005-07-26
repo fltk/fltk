@@ -101,6 +101,11 @@ public:
 
 private:
 
+  // make the following functions unavailable
+  Fl_Preferences(); 
+  Fl_Preferences(const Fl_Preferences&); 
+  Fl_Preferences &operator=(const Fl_Preferences&);
+
   static char nameBuffer[128];
 
   class FL_EXPORT Node // a node contains a list to all its entries 
