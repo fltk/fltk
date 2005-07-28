@@ -238,6 +238,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
   if (event == FL_RELEASE) pressed_ = -1;
   else pressed_ = (short)i;
 
+  window()->make_current();
   draw_buttons();
 
   // Return immediately if the user is clicking on the last button or
