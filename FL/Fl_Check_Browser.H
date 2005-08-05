@@ -69,7 +69,7 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   public:
 
   Fl_Check_Browser(int x, int y, int w, int h, const char *l = 0);
-
+  ~Fl_Check_Browser() { clear(); }
   int add(char *s);               // add an (unchecked) item
   int add(char *s, int b);        // add an item and set checked
 				  // both return the new nitems()
