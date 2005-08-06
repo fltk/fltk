@@ -1,4 +1,6 @@
 CHANGES IN FLTK 1.1.7
+	- Problems with CMake on MinGW have been solved, thanks to
+	  Mr. "fltk.x0", who submitted the patch. (STR #863)
 	- Fixed memory leak in Fl_Check_Browser reported by "miguel2i". (STR #967)
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745, STR #942)
