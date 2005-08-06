@@ -43,6 +43,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <time.h> // time(), localtime(), etc.
 
 #include "../src/flstring.h"
 #include "alignment_panel.h"

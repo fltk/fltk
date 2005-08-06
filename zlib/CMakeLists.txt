@@ -11,4 +11,5 @@ inflate.c inftrees.c trees.c uncompr.c zutil.c
 )
 
 ADD_LIBRARY(fltk_zlib ${ZLIB_SRCS})
+INSTALL_TARGETS(/lib fltk_zlib)
 

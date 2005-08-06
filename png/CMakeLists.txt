@@ -19,6 +19,8 @@ SET(PNG_SRCS
   )
 
 ADD_LIBRARY(fltk_png ${PNG_SRCS})
+INSTALL_TARGETS(/lib fltk_png)
+
 
 IF(UNIX)
   TARGET_LINK_LIBRARIES(fltk_png ${FLTK_ZLIB_LIBRARIES} -lm)
