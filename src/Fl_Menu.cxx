@@ -38,7 +38,7 @@
 #include <stdio.h>
 
 #ifdef __APPLE__
-#  include <Carbon/Carbon.H>
+#  include <Carbon/Carbon.h>
 #endif
 
 int Fl_Menu_Item::size() const {

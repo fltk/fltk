@@ -40,7 +40,7 @@
 #  include <direct.h>
 #  include <io.h>
 #elif defined (__APPLE__)
-#  include <Carbon/Carbon.H>
+#  include <Carbon/Carbon.h>
 #  include <unistd.h>
 #else
 #  include <unistd.h>
