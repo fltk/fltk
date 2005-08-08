@@ -121,13 +121,19 @@ int Fl_Valuator::format(char* buffer) {
   double v = value();
   // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
   if (!A || !B) return snprintf(buffer, 128, "%g", v);
+
+  // Figure out how many digits are required to correctly format the
+  // value.
   int i;
-  double ab = A/B;
-  for (i=0; i<8; i++) {
-    if ((ab-floor(ab))<1e-9) break;
-    ab *= 10.0;
-  }
-  return sprintf(buffer, "%.*f", i, v);
+  char temp[255], *ptr;
+  snprintf(temp, sizeof(temp), "%g", A/B);
+  if ((ptr = strchr(temp, '.')) != NULL)
+    i = strlen(ptr + 1);
+  else
+    i = 0;
+
+  // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
+  return snprintf(buffer, 128, "%.*f", i, v);
 }
 
 //
