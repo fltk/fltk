@@ -1418,9 +1418,93 @@ static int FSSpec2UnixPath( FSSpec *fs, char *dst )
   FSRefMakePath( &fsRef, (UInt8*)dst, 1024 );
   return strlen(dst);
 }
- 
+
+static DragReference currDragRef = 0;
+static char *currDragData = 0L;
+static int currDragSize = 0; 
+static OSErr currDragErr = noErr;
 Fl_Window *fl_dnd_target_window = 0;
 #include <FL/fl_draw.H>
+
+/**
+ * Fill the currDrag* variables with the current DnD ASCII text.
+ */
+static OSErr fillCurrentDragData(DragReference dragRef)
+{
+  OSErr ret = noErr;
+  char *dst = 0L;
+  
+  // shortcut through this whole procedure if this is still the same drag event
+  if (dragRef==currDragRef)
+    return currDragErr;
+  
+  // clear currDrag* for a new drag event
+  currDragRef = dragRef;
+  if (currDragData) free(currDragData);
+  currDragData = 0;
+  currDragSize = 0;
+  
+  // fill currDRag* with ASCII data, if available
+  UInt16 i, nItem;
+  ItemReference itemRef;
+  FlavorFlags flags;
+  Size itemSize, size = 0;
+  CountDragItems( dragRef, &nItem );
+  for ( i = 1; i <= nItem; i++ )
+  {
+    GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
+      size += itemSize;
+    }
+    ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
+    if ( ret == noErr )
+    {
+      size += 1024; //++ ouch! We should create the full pathname and figure out its length
+    }
+  }
+
+  if ( !size )
+  {
+    currDragErr = userCanceledErr;
+    return currDragErr;
+  }
+
+  currDragSize = size + nItem - 1;
+  currDragData = dst = (char*)malloc( size+nItem );;
+
+  for ( i = 1; i <= nItem; i++ )
+  {
+    GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
+      GetFlavorData( dragRef, itemRef, 'TEXT', dst, &itemSize, 0L );
+      dst += itemSize;
+      *dst++ = '\n'; // add our element seperator
+    }
+    ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
+    if ( ret == noErr )
+    {
+      HFSFlavor hfs; itemSize = sizeof( hfs );
+      GetFlavorData( dragRef, itemRef, 'hfs ', &hfs, &itemSize, 0L );
+      itemSize = FSSpec2UnixPath( &hfs.fileSpec, dst );
+      dst += itemSize;
+      if ( itemSize>1 && ( hfs.fileType=='fold' || hfs.fileType=='disk' ) ) 
+        *dst++ = '/';
+      *dst++ = '\n'; // add our element seperator
+    }
+  }
+
+  dst[-1] = 0;
+  currDragSize = dst - currDragData - 1;
+  currDragErr = ret;
+  return ret;
+}
+
 /**
  * Drag'n'drop tracking handler
  */
@@ -1429,6 +1513,10 @@ static pascal OSErr dndTrackingHandler( DragTrackingMessage msg, WindowPtr w, vo
   Fl_Window *target = (Fl_Window*)userData;
   Point mp;
   static int px, py;
+  
+  fillCurrentDragData(dragRef);
+  Fl::e_length = currDragSize;
+  Fl::e_text = currDragData;
   
   switch ( msg )
   {
@@ -1493,69 +1581,27 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
   Fl::e_y = Fl::e_y_root - target->y();
   if ( !Fl::handle( FL_DND_RELEASE, target ) )
     return userCanceledErr;
-    
-  // get the ASCII text
-  UInt16 i, nItem;
-  ItemReference itemRef;
-  FlavorFlags flags;
-  Size itemSize, size = 0;
-  CountDragItems( dragRef, &nItem );
-  for ( i = 1; i <= nItem; i++ )
-  {
-    GetDragItemReferenceNumber( dragRef, i, &itemRef );
-    ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
-    if ( ret == noErr )
-    {
-      GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
-      size += itemSize;
-    }
-    ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
-    if ( ret == noErr )
-    {
-      size += 1024; //++ ouch! We should create the full pathname and figure out its length
-    }
-  }
-  
-  if ( !size )
+
+  ret = fillCurrentDragData(dragRef);
+  if (ret==userCanceledErr)
     return userCanceledErr;
   
-  Fl::e_length = size + nItem - 1;
-  char *dst = Fl::e_text = (char*)malloc( size+nItem );;
-  
-  for ( i = 1; i <= nItem; i++ )
-  {
-    GetDragItemReferenceNumber( dragRef, i, &itemRef );
-    ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
-    if ( ret == noErr )
-    {
-      GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
-      GetFlavorData( dragRef, itemRef, 'TEXT', dst, &itemSize, 0L );
-      dst += itemSize;
-      *dst++ = '\n'; // add our element seperator
-    }
-    ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
-    if ( ret == noErr )
-    {
-      HFSFlavor hfs; itemSize = sizeof( hfs );
-      GetFlavorData( dragRef, itemRef, 'hfs ', &hfs, &itemSize, 0L );
-      itemSize = FSSpec2UnixPath( &hfs.fileSpec, dst );
-      dst += itemSize;
-      if ( itemSize>1 && ( hfs.fileType=='fold' || hfs.fileType=='disk' ) ) 
-        *dst++ = '/';
-      *dst++ = '\n'; // add our element seperator
-    }
-  }
-  
-  dst[-1] = 0;
-//  if ( Fl::e_text[Fl::e_length-1]==0 ) Fl::e_length--; // modify, if trailing 0 is part of string
-  Fl::e_length = dst - Fl::e_text - 1;
+  Fl::e_length = currDragSize;
+  Fl::e_text = currDragData;
 //  printf("Sending following text to widget %p:\n%s\n", Fl::belowmouse(), Fl::e_text);
   int old_event = Fl::e_number;
   target->handle(Fl::e_number = FL_PASTE);
   Fl::e_number = old_event;
-  free( Fl::e_text );
-
+  
+  if (currDragData) {
+    free(currDragData);
+  }
+  currDragData = 0L;
+  currDragRef = 0;
+  Fl::e_text = 0L;
+  Fl::e_length = 0;
   fl_dnd_target_window = 0L;
+  
   breakMacEventLoop();
   return noErr;
 }
