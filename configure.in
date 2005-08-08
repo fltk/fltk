@@ -187,7 +187,19 @@ if test x$enable_shared = xyes; then
             SHAREDSUFFIX="_s"
             ;;
         CYGWIN* | MINGW*)
-            AC_MSG_WARN(Shared libraries are not supported under CygWin.)
+	    PICFLAG=0
+	    if test x$enable_cygwin != xyes; then
+		DSONAME="mgwfltknox-$FL_API_VERSION.dll"
+		FLDSONAME="mgwfltknox_forms-$FL_API_VERSION.dll"
+		GLDSONAME="mgwfltknox_gl-$FL_API_VERSION.dll"
+		IMGDSONAME="mgwfltknox_images-$FL_API_VERSION.dll"
+	    else
+		DSONAME="cygfltknox-$FL_API_VERSION.dll"
+		FLDSONAME="cygfltknox_forms-$FL_API_VERSION.dll"
+		GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
+		IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
+	    fi
+	    DSOCOMMAND="\$(CXX) -shared -Wl,--whole-archive -Wl,--export-all-symbols -Wl,--enable-auto-import -o \$@"
 	    ;;
 	*)
             AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)

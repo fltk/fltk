@@ -338,6 +338,51 @@ libfltk_images_s.a: $(IMGOBJECTS)
 	$(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
 	$(CHMOD) +x libfltk_images_s.a
 
+cygfltknox-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk.a ...
+	$(DSOCOMMAND) ../lib/libfltk.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
+
+cygfltknox_forms-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk_forms.a ...
+	$(DSOCOMMAND) ../lib/libfltk_forms.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_forms.dll.a \
+		-L../lib -lfltk $(LDLIBS)
+
+cygfltknox_gl-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk_gl.a ...
+	$(DSOCOMMAND) ../lib/libfltk_gl.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_gl.dll.a \
+		-L../lib -lfltk $(GLDLIBS)
+
+cygfltknox_images-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk_images ...
+	$(DSOCOMMAND) ../lib/libfltk_images.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_images.dll.a \
+		-L../lib -lfltk -ljpeg -lpng -lz $(LDLIBS)
+
+mgwfltknox-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk.a ...
+	$(DSOCOMMAND) ../lib/libfltk.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
+
+mgwfltknox_forms-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk_forms.a ...
+	$(DSOCOMMAND) ../lib/libfltk_forms.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_forms.dll.a \
+		-L../lib -lfltk $(LDLIBS)
+
+mgwfltknox_gl-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk_gl.a ...
+	$(DSOCOMMAND) ../lib/libfltk_gl.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_gl.dll.a \
+		-L../lib -lfltk $(GLDLIBS)
+
+mgwfltknox_images-1.1.dll:
+	echo $(DSOCOMMAND) ../lib/libfltk_images ...
+	$(DSOCOMMAND) ../lib/libfltk_images.a -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_images.dll.a \
+		-L../lib -lfltk -ljpeg -lpng -lz $(LDLIBS)
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck
@@ -423,6 +468,7 @@ install: $(LIBNAME) $(DSONAME) \
 	$(IMGLIBNAME) $(IMGDSONAME)
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
 	-$(MKDIR) $(DESTDIR)$(libdir)
+	-$(MKDIR) $(DESTDIR)$(bindir)
 	$(RM) $(DESTDIR)$(libdir)/$(LIBNAME)
 	-$(CP) $(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) $(IMGLIBNAME) $(DESTDIR)$(libdir)
 	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
@@ -454,6 +500,22 @@ install: $(LIBNAME) $(DSONAME) \
 		$(CP) libfltk_s.a $(DESTDIR)$(libdir); \
 		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_s.a; \
 	fi
+	if test x$(DSONAME) = xcygfltknox-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\
+		$(CP) $(DSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(DSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(CP) libfltk.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk.dll.a; \
+	fi
+	if test x$(DSONAME) = xmgwfltknox-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\
+		$(CP) $(DSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(DSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(CP) libfltk.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk.dll.a; \
+	fi
 	if test x$(FLDSONAME) = xlibfltk_forms.so.1.1; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
 		$(CP) libfltk_forms.so.1.1 $(DESTDIR)$(libdir); \
@@ -476,6 +538,22 @@ install: $(LIBNAME) $(DSONAME) \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
 		$(CP) libfltk_forms_s.a $(DESTDIR)$(libdir); \
 		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_forms.a; \
+	fi
+	if test x$(FLDSONAME) = xcygfltknox_forms-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
+		$(CP) $(FLDSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(FLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(CP) libfltk_forms.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_forms.dll.a; \
+	fi
+	if test x$(FLDSONAME) = xmgwfltknox_forms-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
+		$(CP) $(FLDSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(FLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(CP) libfltk_forms.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_forms.dll.a; \
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.so.1.1; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\
@@ -500,6 +578,22 @@ install: $(LIBNAME) $(DSONAME) \
 		$(CP) libfltk_gl_s.a $(DESTDIR)$(libdir); \
 		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_gl.a; \
 	fi
+	if test x$(GLDSONAME) = xcygfltknox_gl-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\
+		$(CP) $(GLDSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(GLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(CP) libfltk_gl.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_gl.dll.a; \
+	fi
+	if test x$(GLDSONAME) = xmgwfltknox_gl-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\
+		$(CP) $(GLDSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(GLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(CP) libfltk_gl.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_gl.dll.a; \
+	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.so.1.1; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\
 		$(CP) libfltk_images.so.1.1 $(DESTDIR)$(libdir); \
@@ -523,6 +617,22 @@ install: $(LIBNAME) $(DSONAME) \
 		$(CP) libfltk_images_s.a $(DESTDIR)$(libdir); \
 		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_images.a; \
 	fi
+	if test x$(IMGDSONAME) = xcygfltknox_images-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(CP) $(IMGDSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(CP) libfltk_images.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_images.dll.a; \
+	fi
+	if test x$(IMGDSONAME) = xmgwfltknox_images-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(CP) $(IMGDSONAME) $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(CP) libfltk_images.dll.a $(DESTDIR)$(libdir); \
+		$(CHMOD) 755 $(DESTDIR)$(libdir)/libfltk_images.dll.a; \
+	fi
 
 uninstall:
 	echo "Uninstalling libraries..."
@@ -539,6 +649,14 @@ uninstall:
 	if test x$(DSONAME) = xlibfltk_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\
 	fi
+	if test x$(DSONAME) = xcygfltknox-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+	fi
+	if test x$(DSONAME) = xmgwfltknox-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+	fi
 	$(RM) $(DESTDIR)$(libdir)/$(FLLIBNAME);
 	if test x$(FLDSONAME) = xlibfltk_forms.so.1.1; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
@@ -551,6 +669,14 @@ uninstall:
 	fi
 	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
+	fi
+	if test x$(FLDSONAME) = xcygfltknox_forms-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+	fi
+	if test x$(FLDSONAME) = xmgwfltknox_forms-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
 	fi
 	if test x$(GLLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(GLLIBNAME);\
@@ -567,6 +693,14 @@ uninstall:
 	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\
 	fi
+	if test x$(GLDSONAME) = xcygfltknox_gl-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+	fi
+	if test x$(GLDSONAME) = xmgwfltknox_gl-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+	fi
 	if test x$(IMGLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(IMGLIBNAME);\
 	fi
@@ -581,6 +715,14 @@ uninstall:
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\
+	fi
+	if test x$(IMGDSONAME) = xcygfltknox_images-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+	fi
+	if test x$(IMGDSONAME) = xmgwfltknox_images-1.1.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
 	fi
 
 

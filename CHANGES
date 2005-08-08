@@ -2,6 +2,8 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745, STR #942, STR #931)
+	- Added shared library support for Cygwin and MingW (STR
+	  #893)
 	- Fl_File_Chooser did not implement the user_data()
 	  methods (STR #970)
 	- Compilation could fail if a previous installation of
