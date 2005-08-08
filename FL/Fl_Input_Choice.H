@@ -74,9 +74,9 @@ class Fl_Input_Choice : public Fl_Group {
   inline int inp_h() { return(h() - Fl::box_dh(box())); }
 
   inline int menu_x() { return(x() + w() - 20 - Fl::box_dx(box())); }
-  inline int menu_y() { return(y() + Fl::box_dy(box()) + (Fl::scheme()?1:0)); }
+  inline int menu_y() { return(y() + Fl::box_dy(box())); }
   inline int menu_w() { return(20); }
-  inline int menu_h() { return(h() - Fl::box_dh(box()) - (Fl::scheme()?1:0)); }
+  inline int menu_h() { return(h() - Fl::box_dh(box())); }
 
 public:
   Fl_Input_Choice (int x,int y,int w,int h,const char*l=0) : Fl_Group(x,y,w,h,l) {
