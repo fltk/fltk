@@ -167,7 +167,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
     for (i = 0, j = 0; j < chalf; i ++, j += cstep) {
       // Draw the top line and points...
       fl_color(shade_color(g[c[i]], bc));
-      fl_xyline(x + 1, y + i, x + w - 1);
+      fl_xyline(x + 1, y + i, x + w - 2);
 
       fl_color(shade_color(g[c[i] - 2], bc));
       fl_point(x, y + i + 1);
@@ -175,7 +175,7 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
       // Draw the bottom line and points...
       fl_color(shade_color(g[c[clen - i]], bc));
-      fl_xyline(x + 1, y + h - i, x + w - 1);
+      fl_xyline(x + 1, y + h - i, x + w - 2);
 
       fl_color(shade_color(g[c[clen - i] - 2], bc));
       fl_point(x, y + h - i);
@@ -202,26 +202,26 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
       fl_color(shade_color(g[c[i] - 2], bc));
       fl_point(x + i + 1, y);
-      fl_point(x + i + 1, y + h - 1);
+      fl_point(x + i + 1, y + h);
 
       // Draw the right line and points...
       fl_color(shade_color(g[c[clen - i]], bc));
       fl_yxline(x + w - 1 - i, y + 1, y + h - 1);
 
       fl_color(shade_color(g[c[clen - i] - 2], bc));
-      fl_point(x + w - 1 - i, y);
-      fl_point(x + w - 1 - i, y + h - 1);
+      fl_point(x + w - 2 - i, y);
+      fl_point(x + w - 2 - i, y + h);
     }
 
     // Draw the interior, top, and bottom...
     i = chalf / cstep;
 
     fl_color(shade_color(g[c[chalf]], bc));
-    fl_rectf(x + i, y + 1, w - 2 * i, h - 2);
+    fl_rectf(x + i, y + 1, w - 2 * i, h - 1);
 
     fl_color(shade_color(g[c[chalf] - 2], bc));
     fl_xyline(x + i, y, x + w - i);
-    fl_xyline(x + i, y + h - 1, x + w - i);
+    fl_xyline(x + i, y + h, x + w - i);
   }
 }
 
