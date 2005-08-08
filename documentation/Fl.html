@@ -115,6 +115,8 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.repeat_timeout">repeat_timeout</A></LI>
 	<LI><A HREF="#Fl.run">run</A></LI>
 	<LI><A HREF="#Fl.scheme">scheme</A></LI>
+	<LI><A HREF="#Fl.screen_count">screen_count</A></LI>
+	<LI><A HREF="#Fl.screen_xywh">screen_xywh</A></LI>
 	<LI><A HREF="#Fl.selection">selection</A></LI>
 	<LI><A HREF="#Fl.selection_owner">selection_owner</A></LI>
 	<LI><A HREF="#Fl.set_abort">set_abort</A></LI>
@@ -1056,6 +1058,21 @@ with <tt>return Fl::run();</tt>.
 and "plastic" are recognized, and <TT>NULL</TT> will use the
 scheme defined in the <TT>FLTK_SCHEME</TT> environment variable
 or the <TT>scheme</TT> resource under X11.
+
+<H4><A NAME="Fl.screen_count">int screen_count();</A></H4>
+
+<P>Gets the number of available screens.</P>
+
+<H4><A NAME="Fl.screen_xywh">void screen_xywh(int &amp;x, int &amp;y, int &amp;w, int &amp;h);<BR>
+void screen_xywh(int &amp;x, int &amp;y, int &amp;w, int &amp;h, int mx, int my);<BR>
+void screen_xywh(int &amp;x, int &amp;y, int &amp;w, int &amp;h, int n);</A></H4>
+
+<P>Gets the bounding box of a screen. The first form gets the
+bounding box for the screen the mouse pointer is in. The second
+form gets the bounding box for the screen that contains the
+specified coordinates. The last form gets the bounding box for
+the numbered screen, where <tt>n</tt> is a number from 0 to the
+number of screens less 1.</P>
 
 <H4><A NAME="Fl.selection">void selection(Fl_Widget &amp;owner, const char* stuff, int len);</A></H4>
 
