@@ -35,8 +35,13 @@ VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
 ### BEGIN fltk-config
+symlink=`readlink $0`
+if test -n "$symlink"; then
+	selfdir=`dirname $symlink`
+else
+	selfdif=`dirname $0`
+fi
 
-selfdir=`dirname $0`
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 exec_prefix_set=no
