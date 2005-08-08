@@ -1,4 +1,4 @@
-.TH fltk-config 1 "Fast Light Tool Kit" "24 April 2002"
+.TH fltk-config 1 "Fast Light Tool Kit" "8 August 2005"
 .SH NAME
 fltk-config \- script to get information about the installed version of fltk.
 .sp
@@ -8,6 +8,7 @@ fltk-config [ --prefix
 ] [ --exec-prefix
 .I [=DIR]
 ] [ --version ] [ --api-version ] [ --use-gl ] [ --use-images ] [ --use-glut ]
+[ --cc ] [ --cxx ]
 [ --cflags ] [ --cxxflags ] [ --ldflags ] [ --ldstaticflags ] [ --libs ]
 [ -g ] [ --compile
 .I program.cxx
@@ -25,6 +26,12 @@ The following options are supported:
 --api-version
 .br
 Displays the current FLTK API version number, e.g. "1.1".
+.TP 5
+--cc
+.TP 5
+--cxx
+.br
+Displays the C/C++ compiler that was used to compile FLTK.
 .TP 5
 --cflags
 .TP 5

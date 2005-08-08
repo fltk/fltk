@@ -51,8 +51,8 @@ libdir=@libdir@
 srcdir=@srcdir@
 
 # compiler names
-CXX="@CXX@"
 CC="@CC@"
+CXX="@CXX@"
 
 # post-process command (only needed for MacOS)
 POSTBUILD="@POSTBUILD@"
@@ -111,6 +111,8 @@ Options telling what we are doing:
 	[--use-forms]     use forms compatibility layer
 
 Options telling what information we request:
+	[--cc]            return C compiler used to compile FLTK
+	[--cxx]           return C++ compiler used to compile FLTK
 	[--cflags]        return flags to compile C using FLTK
 	[--cxxflags]      return flags to compile C++ using FLTK
 	[--ldflags]       return flags to link against FLTK
@@ -153,6 +155,12 @@ do
 	    ;;
 	--api-version)
 	    echo $APIVERSION
+	    ;;
+	--cc)
+	    echo $CC
+	    ;;
+	--cxx)
+	    echo $CXX
 	    ;;
 	--use-gl | --use-glut)
 	    use_gl=yes

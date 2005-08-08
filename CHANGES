@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- The fltk-config utility now supports "--cc" and "--cxx"
+	  options to get the C and C++ compilers that were used
+	  to compile FLTK (STR #868)
 	- Fl_Valuator-derived widgets could show more digits than
 	  were necessary (STR #971)
 	- Fl_GIF_Image did not handle images with an incorrect
