@@ -375,9 +375,53 @@ int fl_selection_length[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2];
 
+// Convert \n -> \r\n
+class Lf2CrlfConvert {
+  char *out;
+  int outlen;
+public:
+  Lf2CrlfConvert(const char *in) {
+    outlen = 0;
+    const char *i;
+    char *o;
+    // Predict size of \r\n conversion buffer
+    for ( i=in; *i; ) {
+      if ( *i == '\r' && *(i+1) == '\n' )	// leave \r\n untranslated
+	{ i+=2; outlen+=2; }
+      else if ( *i == '\n' )			// \n by itself? leave room to insert \r
+	{ i++; outlen+=2; }
+      else
+	{ ++i; ++outlen; }
+    }
+    // Alloc conversion buffer + NULL
+    out = new char[outlen+1];
+    // Handle \n -> \r\n conversion
+    for ( i=in, o=out; *i; ) {
+      if ( *i == '\r' && *(i+1) == '\n' )	// leave \r\n untranslated
+        { *o++ = *i++; *o++ = *i++; }
+      else if ( *i == '\n' )			// \n by itself? insert \r
+        { *o++ = '\r'; *o++ = *i++; }
+      else
+        { *o++ = *i++; }
+    }
+    *o++ = 0;
+  }
+  ~Lf2CrlfConvert() {
+    delete[] out;
+  }
+  int GetLength() const { return(outlen); }
+  const char* GetValue() const { return(out); }
+};
+
 // call this when you create a selection:
 void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
+
+  // Convert \n -> \r\n (for old apps like Notepad, DOS)
+  Lf2CrlfConvert buf(stuff);
+  len = buf.GetLength();
+  stuff = buf.GetValue();
+
   if (len+1 > fl_selection_buffer_length[clipboard]) {
     delete[] fl_selection_buffer[clipboard];
     fl_selection_buffer[clipboard] = new char[len+100];
@@ -407,11 +451,20 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
-    Fl::e_text = fl_selection_buffer[clipboard];
-    Fl::e_length = fl_selection_length[clipboard];
 
-    if (!Fl::e_text) Fl::e_text = (char *)"";
+    // Convert \r\n -> \n
+    Fl::e_text = new char[fl_selection_length[clipboard]+1];
+    char *i = fl_selection_buffer[clipboard], 
+         *o = Fl::e_text;
+    while (*i) {
+      if ( *i == '\r' && *(i+1) == '\n') i++;
+      else *o++ = *i++;
+    }
+    *o = 0;
+    Fl::e_length = o - Fl::e_text;
     receiver.handle(FL_PASTE);
+    delete [] Fl::e_text;
+    Fl::e_text = 0;
   } else {
     if (!OpenClipboard(NULL)) return;
     HANDLE h = GetClipboardData(CF_TEXT);
