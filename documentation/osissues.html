@@ -596,9 +596,6 @@ version of FLTK:
 	then correctly returns whether or not there is overlay
 	hardware.</LI>
 
-	<LI>Cut text contains ^J rather than ^M^J to break
-	lines. This is a feature, not a bug. </LI>
-
 	<LI><TT>SetCapture</TT> (used by <TT>Fl::grab()</TT>)
 	doesn't work, and the main window title bar turns gray
 	while menus are popped up.</LI>
@@ -681,6 +678,11 @@ MacOS version of FLTK:
 
 	<LI>Line styles are not well supported. This is due to
 	limitations in the QuickDraw interface.</LI>
+
+	<li>Nested subwindows are not supported, i.e. you can
+	have a <tt>Fl_Window</tt> widget inside a
+	<tt>Fl_Window</tt>, but not a <tt>Fl_Window</tt> inside a
+	<tt>Fl_Window</tt> inside a <tt>Fl_Window</tt>.</li>
 
 </UL>
 
