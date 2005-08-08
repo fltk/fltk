@@ -599,6 +599,23 @@ int Fl_Browser_::handle(int event) {
   if (Fl_Group::handle(event)) return 1;
   int X, Y, W, H; bbox(X, Y, W, H);
   int my;
+// NOTE:
+// instead of:
+//     change = select_only(find_item(my), when() & FL_WHEN_CHANGED)
+// we use the construct:
+//     change = select_only(find_item(my), 0);
+//     if (change && (when() & FL_WHEN_CHANGED)) {
+//	 set_changed();
+//       do_callback();
+//     }
+// See str #834
+// The first form calls the callback *before* setting change.
+// The callback may execute an Fl::wait(), resulting in another
+// call of Fl_Browser_::handle() for the same widget. The sequence
+// of events can be an FL_PUSH followed by an FL_RELEASE.
+// This second call of Fl_Browser_::handle() may result in a -
+// somewhat unexpected - second concurrent invocation of the callback.
+
   static char change;
   static char whichway;
   static int py;
@@ -626,7 +643,11 @@ int Fl_Browser_::handle(int event) {
       TOGGLE:
 	if (l) {
 	  whichway = !item_selected(l);
-	  change = select(l, whichway, when() & FL_WHEN_CHANGED);
+	  change = select(l, whichway, 0);
+	  if (change && (when() & FL_WHEN_CHANGED)) {
+	    set_changed();
+	    do_callback();
+	  }
 	}
       } else if (Fl::event_state(FL_SHIFT)) { // extend selection:
 	if (l == selection_) goto TOGGLE;
@@ -651,10 +672,14 @@ int Fl_Browser_::handle(int event) {
 	  }
 	}
 	// do the clicked item last so the select box is around it:
-	if (l) select(l, whichway, when() & FL_WHEN_CHANGED);
 	change = 1;
+	if (l) select(l, whichway, when() & FL_WHEN_CHANGED);
       } else { // select only this item
-	change = select_only(l, when() & FL_WHEN_CHANGED);
+	change = select_only(l, 0);
+	if (change && (when() & FL_WHEN_CHANGED)) {
+	  set_changed();
+	  do_callback();
+	}
       }
     }
     return 1;
@@ -683,16 +708,23 @@ int Fl_Browser_::handle(int event) {
 	t = l;
 	b = selection_;
       }
-      for (; t && t != b; t = item_next(t))
-	change |= select(t, whichway, when() & FL_WHEN_CHANGED);
+      for (; t && t != b; t = item_next(t)) {
+	char change_t;
+	change_t = select(t, whichway, 0);
+	change |= change_t;
+	if (change_t && (when() & FL_WHEN_CHANGED)) {
+	  set_changed();
+	  do_callback();
+	}
+      }
       if (l) selection_ = l;
     } else {
       void* l1 = selection_;
       void* l =
 	(Fl::event_x()<x() || Fl::event_x()>x()+w()) ? selection_ :
 	find_item(my);
-      select_only(l, when() & FL_WHEN_CHANGED);
       change = (l != l1);
+      select_only(l, when() & FL_WHEN_CHANGED);
     }
     py = my;
     return 1;
