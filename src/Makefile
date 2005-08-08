@@ -310,13 +310,13 @@ $(IMGLIBNAME): $(IMGOBJECTS)
 
 libfltk_images.so.1.1: $(IMGOBJECTS) libfltk.so.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS) -L. -lfltk
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.so
 	$(LN) libfltk_images.so.1.1 libfltk_images.so
 
 libfltk_images.sl.1.1: $(IMGOBJECTS) libfltk.sl.1.1
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) $(IMAGELIBS) -L. -lfltk
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.sl
 	$(LN) libfltk_images.sl.1.1 libfltk_images.sl
 
@@ -326,7 +326,7 @@ libfltk_images.1.1.dylib: $(IMGOBJECTS) libfltk.1.1.dylib
 		-install_name $(libdir)/$@ \
 		-current_version 1.1.4 \
 		-compatibility_version 1.1.0 \
-		$(IMGOBJECTS) $(LDLIBS) -L. $(IMAGELIBS) -lfltk
+		$(IMGOBJECTS)  -L.$(LDLIBS) $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.dylib
 	$(LN) libfltk_images.1.1.dylib libfltk_images.dylib
 

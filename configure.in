@@ -80,9 +80,10 @@ case $uname in
 esac
 
 dnl Define the libraries and link options we'll need.
-LINKFLTK="-lfltk"
-LINKFLTKGL="-lfltk_gl"
-LINKFLTKIMG="-lfltk_images"
+LINKFLTK="../lib/libfltk.a"
+LINKFLTKFORMS="../lib/libfltk_forms.a"
+LINKFLTKGL="../lib/libfltk_gl.a"
+LINKFLTKIMG="../lib/libfltk_images.a"
 GLDEMOS="gldemos"
 
 LIBEXT=".a"
@@ -98,6 +99,7 @@ AC_SUBST(IMGLIBNAME)
 AC_SUBST(LIBEXT)
 AC_SUBST(LIBNAME)
 AC_SUBST(LINKFLTK)
+AC_SUBST(LINKFLTKFORMS)
 AC_SUBST(LINKFLTKGL)
 AC_SUBST(LINKFLTKIMG)
 
@@ -208,7 +210,7 @@ else
     PICFLAG=0
     SHAREDSUFFIX=""
     FLUID="fluid"
-    LINKSHARED="-L../lib -lfltk_images -lfltk_forms -lfltk"
+    LINKSHARED="../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
 fi
 
 AC_SUBST(DSOCOMMAND)

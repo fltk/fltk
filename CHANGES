@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #648, STR #692, STR #730, STR
 	  #744, STR #745, STR #942, STR #931)
+	- Compilation could fail if a previous installation of
+	  FLTK was in the same (non-standard) directory as an
+	  image library (STR #926)
 	- Fixed OSX compilation problems with non-HFS filesystems
 	  (STR #972)
 	- Problems with CMake on MinGW have been solved, thanks
