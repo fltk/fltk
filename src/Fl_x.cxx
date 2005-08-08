@@ -1141,6 +1141,14 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
       XSetTransientForHint(fl_display, xp->xid, fl_xid(wp));
       if (!wp->visible()) showit = 0; // guess that wm will not show it
     }
+   
+    // Make sure that borderless windows do not show in the task bar
+    if (!win->border()) {
+      Atom net_wm_state = XInternAtom (fl_display, "_NET_WM_STATE", 0);
+      Atom net_wm_state_skip_taskbar = XInternAtom (fl_display, "_NET_WM_STATE_SKIP_TASKBAR", 0);
+      XChangeProperty (fl_display, xp->xid, net_wm_state, XA_ATOM, 32, 
+          PropModeAppend, (unsigned char*) &net_wm_state_skip_taskbar, 1);
+    }
 
     // Make it receptive to DnD:
     long version = 4;
