@@ -155,6 +155,8 @@ public:
   uchar textsize();
   void type(int t);
   int type();
+  void * user_data() const;
+  void user_data(void *d);
   const char *value(int f = 1);
   void value(const char *filename);
   int visible();

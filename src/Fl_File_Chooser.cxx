@@ -426,6 +426,14 @@ int Fl_File_Chooser::type() {
   return (type_);
 }
 
+void * Fl_File_Chooser::user_data() const {
+  return (data_);
+}
+
+void Fl_File_Chooser::user_data(void *d) {
+  data_ = d;
+}
+
 int Fl_File_Chooser::visible() {
   return window->visible();
 }

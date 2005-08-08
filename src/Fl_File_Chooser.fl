@@ -31,8 +31,7 @@ comment {//
 } {in_source in_header
 } 
 
-decl {\#include <FL/fl_draw.H>} {selected
-} 
+decl {\#include <FL/fl_draw.H>} {} 
 
 class FL_EXPORT Fl_File_Chooser {open
 } {
@@ -160,8 +159,8 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {580 50 355 150} type Double resizable
-      code0 {favWindow->label(manage_favorites_label);} modal visible
+      private xywh {580 50 355 150} type Double hide resizable
+      code0 {favWindow->label(manage_favorites_label);} modal
     } {
       Fl_File_Browser favList {
         callback {favoritesCB(favList);}
@@ -355,6 +354,15 @@ else
   Function {type()} {return_type int
   } {
     code {return (type_);} {}
+  }
+  Function {user_data() const} {selected return_type {void *}
+  } {
+    code {return (data_);} {selected
+    }
+  }
+  Function {user_data(void *d)} {selected return_type void
+  } {
+    code {data_ = d;} {}
   }
   decl {const char *value(int f = 1);} {public
   }
