@@ -175,7 +175,6 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
       if (ch&0x80) { 
 	// read local color map
 	int n = 2<<(ch&7);
-	if (n > ColorMapSize) ColorMapSize = n;
 	for (i=0; i < n; i++) {	
 	  Red[i] = NEXTBYTE;
 	  Green[i] = NEXTBYTE;
@@ -183,7 +182,6 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 	}
       }
       CodeSize = NEXTBYTE+1;
-
       break; // okay, this is the image we want
     } else {
       Fl::warning("%s: unknown gif code 0x%02x", infname, i);
@@ -192,6 +190,13 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
     // skip the data:
     while (blocklen>0) {while (blocklen--) {NEXTBYTE;} blocklen=NEXTBYTE;}
+  }
+
+  if (BitsPerPixel >= CodeSize)
+  {
+    // Workaround for broken GIF files...
+    BitsPerPixel = CodeSize - 1;
+    ColorMapSize = 1 << BitsPerPixel;
   }
 
   uchar *Image = new uchar[Width*Height];
