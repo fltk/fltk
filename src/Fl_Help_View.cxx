@@ -334,9 +334,11 @@ Fl_Help_View::draw()
 
 
   // Draw the scrollbar(s) and box first...
-  ww = w();
+  ww = w() ;
   hh = h();
   i  = 0;
+
+  draw_box(b, x(), y(), ww, hh, bgcolor_);
 
   if (hscrollbar_.visible()) {
     draw_child(hscrollbar_);
@@ -350,10 +352,9 @@ Fl_Help_View::draw()
   }
   if (i == 2) {
     fl_color(FL_GRAY);
-    fl_rectf(x() + ww, y() + hh, 17, 17);
+    fl_rectf(x() + ww - Fl::box_dw(b) + Fl::box_dx(b),
+             y() + hh - Fl::box_dh(b) + Fl::box_dy(b), 17, 17);
   }
-
-  draw_box(b, x(), y(), ww, hh, bgcolor_);
 
   if (!value_)
     return;
@@ -927,6 +928,8 @@ Fl_Help_View::format()
 		columns[MAX_COLUMNS];
 				// Column widths
   Fl_Color	tc, rc;		// Table/row background color
+  Fl_Boxtype	b = box() ? box() : FL_DOWN_BOX;
+				// Box to draw...
 
 
   // Reset document width...
@@ -1637,23 +1640,26 @@ Fl_Help_View::format()
     qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
           (compare_func_t)compare_targets);
 
+  int dx = Fl::box_dw(b) - Fl::box_dx(b);
+  int dy = Fl::box_dh(b) - Fl::box_dy(b);
+
   if (hsize_ > (w() - 24)) {
     hscrollbar_.show();
 
     if (size_ < (h() - 24)) {
       scrollbar_.hide();
-      hscrollbar_.resize(x(), y() + h() - 17, w(), 17);
+      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - dy, w(), 17);
     } else {
       scrollbar_.show();
-      scrollbar_.resize(x() + w() - 17, y(), 17, h() - 17);
-      hscrollbar_.resize(x(), y() + h() - 17, w() - 17, 17);
+      scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h() - 17 - Fl::box_dh(b));
+      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - dy, w() - 17 - Fl::box_dw(b), 17);
     }
   } else {
     hscrollbar_.hide();
 
     if (size_ < (h() - 8)) scrollbar_.hide();
     else {
-      scrollbar_.resize(x() + w() - 17, y(), 17, h());
+      scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h());
       scrollbar_.show();
     }
   }
@@ -2505,6 +2511,8 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   hscrollbar_.callback(hscrollbar_callback);
   hscrollbar_.type(FL_HORIZONTAL);
   end();
+
+  resize(xx, yy, ww, hh);
 }
 
 
@@ -2629,14 +2637,20 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 
 void
 Fl_Help_View::resize(int xx,	// I - New left position
-                    int yy,	// I - New top position
-		    int ww,	// I - New width
-		    int hh)	// I - New height
+                     int yy,	// I - New top position
+		     int ww,	// I - New width
+		     int hh)	// I - New height
 {
+  Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
+					// Box to draw...
+
+
   Fl_Widget::resize(xx, yy, ww, hh);
 
-  scrollbar_.resize(x() + w() - 17, y(), 17, h() - 17);
-  hscrollbar_.resize(x(), y() + h() - 17, w() - 17, 17);
+  scrollbar_.resize(x() + w() - 17 - Fl::box_dw(b) + Fl::box_dx(b), y() + Fl::box_dy(b),
+                    17, h() - 17 - Fl::box_dh(b));
+  hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - Fl::box_dh(b) + Fl::box_dy(b),
+                     w() - 17 - Fl::box_dw(b), 17);
 
   format();
 }
