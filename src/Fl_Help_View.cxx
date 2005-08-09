@@ -1648,7 +1648,7 @@ Fl_Help_View::format()
 
     if (size_ < (h() - 24)) {
       scrollbar_.hide();
-      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - dy, w(), 17);
+      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - dy, w() - Fl::box_dw(b), 17);
     } else {
       scrollbar_.show();
       scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h() - 17 - Fl::box_dh(b));
@@ -1659,7 +1659,7 @@ Fl_Help_View::format()
 
     if (size_ < (h() - 8)) scrollbar_.hide();
     else {
-      scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h());
+      scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h() - Fl::box_dh(b));
       scrollbar_.show();
     }
   }
