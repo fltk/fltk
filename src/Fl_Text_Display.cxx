@@ -66,6 +66,13 @@ static int max( int i1, int i2 );
 static int min( int i1, int i2 );
 static int countlines( const char *string );
 
+/* The variables below are used in a timer event to allow smooth
+   scrolling of the text area when the pointer has left the area. */
+static int scroll_direction = 0;
+static int scroll_amount = 0;
+static int scroll_y = 0;
+static int scroll_x = 0;
+
 // CET - FIXME
 #define TMPFONTWIDTH 6
 
@@ -147,6 +154,10 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 ** freed, nor are the style buffer or style table.
 */
 Fl_Text_Display::~Fl_Text_Display() {
+  if (scroll_direction) {
+    Fl::remove_timeout(scroll_timer_cb, this);
+    scroll_direction = 0;
+  }
   if (mBuffer) {
     mBuffer->remove_modify_callback(buffer_modified_cb, this);
     mBuffer->remove_predelete_callback(buffer_predelete_cb, this);
@@ -3031,6 +3042,37 @@ void fl_text_drag_me(int pos, Fl_Text_Display* d) {
   }
 }
 
+// This timer event scrolls the text view proportionally to
+// how far the mouse pointer has left the text area. This 
+// allows for smooth scrolling without "wiggeling" the mouse.
+void Fl_Text_Display::scroll_timer_cb(void *user_data) {
+  Fl_Text_Display *w = (Fl_Text_Display*)user_data;
+  int pos;
+  switch (scroll_direction) {
+  case 1: // mouse is to the right, scroll left
+    w->scroll(w->mTopLineNum, w->mHorizOffset + scroll_amount);
+    pos = w->xy_to_position(w->text_area.x + w->text_area.w, scroll_y, CURSOR_POS);
+    break;
+  case 2: // mouse is to the left, scroll right
+    w->scroll(w->mTopLineNum, w->mHorizOffset + scroll_amount);
+    pos = w->xy_to_position(w->text_area.x, scroll_y, CURSOR_POS);
+    break;
+  case 3: // mouse is above, scroll down
+    w->scroll(w->mTopLineNum + scroll_amount, w->mHorizOffset);
+    pos = w->xy_to_position(scroll_x, w->text_area.y, CURSOR_POS);
+    break;
+  case 4: // mouse is below, scroll up
+    w->scroll(w->mTopLineNum + scroll_amount, w->mHorizOffset);
+    pos = w->xy_to_position(scroll_x, w->text_area.y + w->text_area.h, CURSOR_POS);
+    break;
+  default:
+    return;
+  }
+  fl_text_drag_me(pos, w);
+  Fl::repeat_timeout(.1, scroll_timer_cb, user_data);
+}
+
+
 int Fl_Text_Display::handle(int event) {
   if (!buffer()) return 0;
   // This isn't very elegant!
@@ -3089,21 +3131,53 @@ int Fl_Text_Display::handle(int event) {
     case FL_DRAG: {
         if (dragType < 0) return 1;
         int X = Fl::event_x(), Y = Fl::event_y(), pos;
+        // if we leave the text_area, we start a timer event
+        // that will take care of scrolling and selecting
         if (Y < text_area.y) {
-          move_up();
-	  scroll(mTopLineNum - 1, mHorizOffset);
-          pos = insert_position();
+          scroll_x = X;
+          scroll_amount = (Y - text_area.y) / 5 - 1;
+          if (!scroll_direction) {
+            Fl::add_timeout(.01, scroll_timer_cb, this);
+          }
+          scroll_direction = 3;
         } else if (Y >= text_area.y+text_area.h) {
-          move_down();
-	  scroll(mTopLineNum + 1, mHorizOffset);
-          pos = insert_position();
-        } else pos = xy_to_position(X, Y, CURSOR_POS);
-        fl_text_drag_me(pos, this);
+          scroll_x = X;
+          scroll_amount = (Y - text_area.y - text_area.h) / 5 + 1;
+          if (!scroll_direction) {
+            Fl::add_timeout(.01, scroll_timer_cb, this);
+          }
+          scroll_direction = 4;
+        } else if (X < text_area.x) {
+          scroll_y = Y;
+          scroll_amount = (X - text_area.x) / 2 - 1;
+          if (!scroll_direction) {
+            Fl::add_timeout(.01, scroll_timer_cb, this);
+          }
+          scroll_direction = 2;
+        } else if (X >= text_area.x+text_area.w) {
+          scroll_y = Y;
+          scroll_amount = (X - text_area.x - text_area.w) / 2 + 1;
+          if (!scroll_direction) {
+            Fl::add_timeout(.01, scroll_timer_cb, this);
+          }
+          scroll_direction = 1;
+        } else {
+          if (scroll_direction) {
+            Fl::remove_timeout(scroll_timer_cb, this);
+            scroll_direction = 0;
+          }
+          pos = xy_to_position(X, Y, CURSOR_POS);
+          fl_text_drag_me(pos, this);
+        }
         return 1;
       }
 
     case FL_RELEASE: {
         dragging = 0;
+        if (scroll_direction) {
+          Fl::remove_timeout(scroll_timer_cb, this);
+          scroll_direction = 0;
+        }
 
         // convert from WORD or LINE selection to CHAR
         if (insert_position() >= dragPos)

@@ -166,6 +166,8 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int position_to_line( int pos, int* lineNum );
     int string_width(const char* string, int length, int style);
 
+    static void scroll_timer_cb(void*);
+
     static void buffer_predelete_cb(int pos, int nDeleted, void* cbArg);
     static void buffer_modified_cb(int pos, int nInserted, int nDeleted,
                                    int nRestyled, const char* deletedText,
