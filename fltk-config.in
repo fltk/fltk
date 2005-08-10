@@ -35,11 +35,24 @@ VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
 ### BEGIN fltk-config
-symlink=`readlink $0`
-if test -n "$symlink"; then
-	selfdir=`dirname $symlink`
+
+# First, we need to figure out where we are, in case we are in a non-installed invocation
+# BUT to do that we need to check if we were called via a symlink or not...
+# AND some systems (e.g. mingw) have neither symlinks, nor readlink, nor which...
+HAVE_READLINK=`type -p readlink`
+if test -z "$HAVE_READLINK"; then
+# We don't have readlink, so just use local dir as selfdir
+  selfdir=`dirname $0`
 else
-	selfdif=`dirname $0`
+# We do have readlink - let us check if we were called via a symlink or not
+  selfdir=`readlink $0`
+  if test -n "$selfdir"; then
+#   Was a symlink, find the real selfdir
+    selfdir=`dirname $selfdir`
+  else
+#   Not a symlink, find the selfdir
+    selfdir=`dirname $0`
+  fi
 fi
 
 prefix=@prefix@
@@ -51,8 +64,8 @@ libdir=@libdir@
 srcdir=@srcdir@
 
 # compiler names
-CC="@CC@"
 CXX="@CXX@"
+CC="@CC@"
 
 # post-process command (only needed for MacOS)
 POSTBUILD="@POSTBUILD@"
@@ -68,6 +81,7 @@ if test -f "$selfdir/FL/Fl_Window.H"; then
 	bindir="$selfdir/fluid"
 	includedir="$selfdir"
 	libdir="$selfdir/lib"
+	prefix="$selfdir"
 
 	if test -f "$libdir/libfltk_jpeg.a"; then
 		CFLAGS="-I$includedir/jpeg $CFLAGS"
@@ -111,14 +125,15 @@ Options telling what we are doing:
 	[--use-forms]     use forms compatibility layer
 
 Options telling what information we request:
-	[--cc]            return C compiler used to compile FLTK
-	[--cxx]           return C++ compiler used to compile FLTK
 	[--cflags]        return flags to compile C using FLTK
 	[--cxxflags]      return flags to compile C++ using FLTK
 	[--ldflags]       return flags to link against FLTK
 	[--ldstaticflags] return flags to link against static FLTK library
                                           even if there are DSOs installed
 	[--libs]          return FLTK libraries full path for dependencies
+	[--cxx]           return name of C++ compiler used to build FLTK
+	[--cc]            return name of C compiler used to build FLTK
+	[--prefix]        return path to FLTK installation
 
 Option to compile and link an application:
 	[-g]              compile the program with debugging information
@@ -156,12 +171,6 @@ do
 	--api-version)
 	    echo $APIVERSION
 	    ;;
-	--cc)
-	    echo $CC
-	    ;;
-	--cxx)
-	    echo $CXX
-	    ;;
 	--use-gl | --use-glut)
 	    use_gl=yes
 	    ;;
@@ -185,6 +194,15 @@ do
 	    ;;
 	--libs)
 	    echo_libs=yes
+	    ;;
+	--cc)
+	    echo $CC
+	    ;;
+	--cxx)
+	    echo $CXX
+	    ;;
+	--prefix)
+	    echo_fltk_prefix=yes
 	    ;;
 	-g)
 	    debug=-g
@@ -306,6 +324,10 @@ fi
 
 if test "$echo_libs" = "yes"; then
     echo $LIBS
+fi
+
+if test "$echo_fltk_prefix" = "yes"; then
+    echo $prefix
 fi
 
 #
