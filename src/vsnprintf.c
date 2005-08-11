@@ -71,14 +71,26 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
       } else if (strchr(" -+#\'", *format)) sign = *format++;
       else sign = 0;
 
-      width = 0;
-      while (isdigit(*format & 255)) width = width * 10 + *format++ - '0';
+      if (*format == '*') {
+        // Get width from argument...
+	format ++;
+	width = va_arg(ap, int);
+      } else {
+	width = 0;
+	while (isdigit(*format & 255)) width = width * 10 + *format++ - '0';
+      }
 
       if (*format == '.') {
         format ++;
-	prec = 0;
 
-	while (isdigit(*format & 255)) prec = prec * 10 + *format++ - '0';
+        if (*format == '*') {
+          // Get precision from argument...
+	  format ++;
+	  prec = va_arg(ap, int);
+	} else {
+	  prec = 0;
+	  while (isdigit(*format & 255)) prec = prec * 10 + *format++ - '0';
+	}
       } else prec = -1;
 
       if (*format == 'l' && format[1] == 'l') {
@@ -236,7 +248,8 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
     } else {
       bytes ++;
 
-      if (bufptr && bufptr < bufend) *bufptr++ = *format++;
+      if (bufptr && bufptr < bufend) *bufptr++ = *format;
+      format ++;
     }
   }
 
