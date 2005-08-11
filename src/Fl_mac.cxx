@@ -1590,7 +1590,7 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
   Fl::e_text = currDragData;
 //  printf("Sending following text to widget %p:\n%s\n", Fl::belowmouse(), Fl::e_text);
   int old_event = Fl::e_number;
-  target->handle(Fl::e_number = FL_PASTE);
+  Fl::belowmouse()->handle(Fl::e_number = FL_PASTE);
   Fl::e_number = old_event;
   
   if (currDragData) {
