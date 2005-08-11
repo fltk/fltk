@@ -142,7 +142,6 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	    if ((bufptr + strlen(temp)) > bufend) {
 	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
-	      break;
 	    } else {
 	      strcpy(bufptr, temp);
 	      bufptr += strlen(temp);
@@ -168,7 +167,6 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	    if ((bufptr + strlen(temp)) > bufend) {
 	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
-	      break;
 	    } else {
 	      strcpy(bufptr, temp);
 	      bufptr += strlen(temp);
@@ -187,7 +185,6 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	    if ((bufptr + strlen(temp)) > bufend) {
 	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
 	      bufptr = bufend;
-	      break;
 	    } else {
 	      strcpy(bufptr, temp);
 	      bufptr += strlen(temp);
