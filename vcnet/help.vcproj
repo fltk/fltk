@@ -41,7 +41,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib"
-				IgnoreDefaultLibraryNames="libcd"
+				IgnoreDefaultLibraryNames="libcmt"
 				ProgramDatabaseFile=".\Release/help.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
@@ -104,7 +104,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib"
-				IgnoreDefaultLibraryNames="libcd"
+				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\help_/helpd.pdb"
 				SubSystem="2"

@@ -42,10 +42,10 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 		sign,			/* Sign of format width */
 		size,			/* Size character (h, l, L) */
 		type;			/* Format type character */
-  const char	*bufformat;		/* Start of format */
   int		width,			/* Width of field */
 		prec;			/* Number of characters of precision */
   char		tformat[100],		/* Temporary format string for sprintf() */
+		*tptr,			/* Pointer into temporary format */
 		temp[1024];		/* Buffer for formatted numbers */
   char		*s;			/* Pointer to string */
   int		slen;			/* Length of string */
@@ -62,45 +62,69 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
   while (*format) {
     if (*format == '%') {
-      bufformat = format;
-      format ++;
+      tptr = tformat;
+      *tptr++ = *format++;
 
       if (*format == '%') {
-        *bufptr++ = *format++;
+        if (bufptr && bufptr < bufend) *bufptr++ = *format;
+        bytes ++;
+        format ++;
 	continue;
-      } else if (strchr(" -+#\'", *format)) sign = *format++;
-      else sign = 0;
+      } else if (strchr(" -+#\'", *format)) {
+        *tptr++ = *format;
+        sign = *format++;
+      } else sign = 0;
 
       if (*format == '*') {
         // Get width from argument...
 	format ++;
 	width = va_arg(ap, int);
+	snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", width);
+	tptr += strlen(tptr);
       } else {
 	width = 0;
-	while (isdigit(*format & 255)) width = width * 10 + *format++ - '0';
+	while (isdigit(*format & 255)) {
+	  if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+	  width = width * 10 + *format++ - '0';
+	}
       }
 
       if (*format == '.') {
+	if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
         format ++;
 
         if (*format == '*') {
           // Get precision from argument...
 	  format ++;
 	  prec = va_arg(ap, int);
+	  snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", prec);
+	  tptr += strlen(tptr);
 	} else {
 	  prec = 0;
-	  while (isdigit(*format & 255)) prec = prec * 10 + *format++ - '0';
+	  while (isdigit(*format & 255)) {
+	    if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+	    prec = prec * 10 + *format++ - '0';
+	  }
 	}
       } else prec = -1;
 
       if (*format == 'l' && format[1] == 'l') {
         size = 'L';
+	if (tptr < (tformat + sizeof(tformat) - 2)) {
+	  *tptr++ = 'l';
+	  *tptr++ = 'l';
+	}
 	format += 2;
-      } else if (*format == 'h' || *format == 'l' || *format == 'L') size = *format++;
+      } else if (*format == 'h' || *format == 'l' || *format == 'L') {
+	if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+        size = *format++;
+      }
 
       if (!*format) break;
 
-      type = *format++;
+      if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
+      type  = *format++;
+      *tptr = '\0';
 
       switch (type) {
 	case 'E' : /* Floating point formats */
@@ -108,11 +132,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	case 'e' :
 	case 'f' :
 	case 'g' :
-	  if ((format - bufformat + 1) > sizeof(tformat) ||
-	      (width + 2) > sizeof(temp)) break;
-
-	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
-	  tformat[format - bufformat] = '\0';
+	  if ((width + 2) > sizeof(temp)) break;
 
 	  sprintf(temp, tformat, va_arg(ap, double));
 
@@ -138,11 +158,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	case 'o' :
 	case 'u' :
 	case 'x' :
-	  if ((format - bufformat + 1) > sizeof(tformat) ||
-	      (width + 2) > sizeof(temp)) break;
-
-	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
-	  tformat[format - bufformat] = '\0';
+	  if ((width + 2) > sizeof(temp)) break;
 
 	  sprintf(temp, tformat, va_arg(ap, int));
 
@@ -161,11 +177,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  break;
 	    
 	case 'p' : /* Pointer value */
-	  if ((format - bufformat + 1) > sizeof(tformat) ||
-	      (width + 2) > sizeof(temp)) break;
-
-	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
-	  tformat[format - bufformat] = '\0';
+	  if ((width + 2) > sizeof(temp)) break;
 
 	  sprintf(temp, tformat, va_arg(ap, void *));
 
@@ -223,26 +235,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  break;
 
 	case 'n' : /* Output number of chars so far */
-	  if ((format - bufformat + 1) > sizeof(tformat) ||
-	      (width + 2) > sizeof(temp)) break;
-
-	  strncpy(tformat, bufformat, (size_t)(format - bufformat));
-	  tformat[format - bufformat] = '\0';
-
-	  sprintf(temp, tformat, va_arg(ap, int));
-
-          bytes += strlen(temp);
-
-	  if (bufptr) {
-	    if ((bufptr + strlen(temp)) > bufend) {
-	      strncpy(bufptr, temp, (size_t)(bufend - bufptr));
-	      bufptr = bufend;
-	      break;
-	    } else {
-	      strcpy(bufptr, temp);
-	      bufptr += strlen(temp);
-	    }
-	  }
+	  *(va_arg(ap, int *)) = bytes;
 	  break;
       }
     } else {

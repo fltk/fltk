@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="valuators"
+	ProjectGUID="{9D950D8D-CD7F-4163-8E57-65016DB10E3E}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>

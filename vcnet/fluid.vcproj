@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="fluid"
+	ProjectGUID="{CA3316EA-0D67-4463-A97E-F5578EAC5CC3}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -40,7 +41,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib"
-				IgnoreDefaultLibraryNames="libcd"
+				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\fluid__0/fluidd.pdb"
 				SubSystem="2"
@@ -106,7 +107,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib"
-				IgnoreDefaultLibraryNames="libcd"
+				IgnoreDefaultLibraryNames="libcmt"
 				ProgramDatabaseFile=".\fluid___/fluid.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
