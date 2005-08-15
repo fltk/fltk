@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- fl_filename_list now recognizes pathnames without trailing 
+	  slash as directions (STR #854)
 	- Fl_Text_Display now auto-scrolls in all 
 	  directions (STR #915)
 	- Borderless windows will not show in the taskbar anymore

@@ -37,7 +37,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
 	       int (*select)(struct dirent *),
 	       int (*compar)(struct dirent **, struct dirent **)) {
   int len;
-  char *findIn, *d;
+  char *findIn, *d, is_dir = 0;
   WIN32_FIND_DATA find;
   HANDLE h;
   int nDir = 0, NDir = 0;
@@ -52,10 +52,15 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   strcpy(findIn, dirname);
   for (d = findIn; *d; d++) if (*d=='/') *d='\\';
   if ((len==0)) { strcpy(findIn, ".\\*"); }
-  if ((len==1)&& (d[-1]=='.')) { strcpy(findIn, ".\\*"); }
-  if ((len>0) && (d[-1]=='\\')) { *d++ = '*'; *d = 0; }
-  if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; }
-  
+  if ((len==2)&&findIn[1]==':'&&isalpha(findIn[0])) { *d++ = '\\'; *d = 0; }
+  if ((len==1)&& (d[-1]=='.')) { strcpy(findIn, ".\\*"); is_dir = 1; }
+  if ((len>0) && (d[-1]=='\\')) { *d++ = '*'; *d = 0; is_dir = 1; }
+  if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; is_dir = 1; }
+  if (!is_dir) { // this file may still be a directory that we need to list
+    DWORD attr = GetFileAttributes(findIn);
+    if (attr&FILE_ATTRIBUTE_DIRECTORY) 
+      strcpy(d, "\\*");
+  }
   if ((h=FindFirstFile(findIn, &find))==INVALID_HANDLE_VALUE) {
     free(findIn);
     ret = GetLastError();
