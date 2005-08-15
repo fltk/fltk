@@ -647,6 +647,7 @@ void Fl_Window_Type::draw_overlay() {
 	if (myo->o->y()+myo->o->h() > bt) bt = myo->o->y()+myo->o->h();
       }
     recalc = 0;
+    sx = bx; sy = by; sr = br; st = bt;
   }
   fl_color(FL_RED);
   if (drag==BOX && (x1 != mx || y1 != my)) {
@@ -695,7 +696,7 @@ void Fl_Window_Type::draw_overlay() {
     // - check for distance to the window edge
     //    * FLTK suggests 10 pixels from the edge
     int d;
-    int xsp, ysp;
+    int xsp, ysp, mybx_bak = mybx, myby_bak = myby;
     Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
 
 
@@ -973,7 +974,11 @@ void Fl_Window_Type::draw_overlay() {
           }
 	}
     }
+    mysx += mybx-mybx_bak; mysr += mybx-mybx_bak;
+    mysy += myby-myby_bak; myst += myby-myby_bak;
   }
+  // align the snapping selection box with the box we draw.
+  sx = mysx; sy = mysy; sr = mysr; st = myst;
 
   // Draw selection box + resize handles...
   // draw box including all labels

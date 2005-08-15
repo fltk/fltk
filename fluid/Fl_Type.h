@@ -464,7 +464,8 @@ protected:
   friend class Overlay_Window;
   int mx,my;		// mouse position during dragging
   int x1,y1;		// initial position of selection box
-  int bx,by,br,bt;	// bounding box of selection
+  int bx,by,br,bt;	// bounding box of selection before snapping
+  int sx,sy,sr,st;	// bounding box of selection after snapping to guides
   int dx,dy;
   int drag;		// which parts of bbox are being moved
   int numselected;	// number of children selected
