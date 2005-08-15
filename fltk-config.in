@@ -39,7 +39,7 @@ symlink=`readlink $0`
 if test -n "$symlink"; then
 	selfdir=`dirname $symlink`
 else
-	selfdif=`dirname $0`
+	selfdir=`dirname $0`
 fi
 
 prefix=@prefix@
