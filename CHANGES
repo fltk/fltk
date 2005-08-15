@@ -8,7 +8,7 @@ CHANGES IN FLTK 1.1.7
 	- Borderless windows will not show in the taskbar anymore
 	  on X11 (STR #933)
 	- Fixed event_text() field on FL_DND_* event on 
-	  OS X (STR #968)
+	  OS X and WIN32 (STR #968)
 	- The fltk-config utility now supports "--cc" and "--cxx"
 	  options to get the C and C++ compilers that were used
 	  to compile FLTK (STR #868)

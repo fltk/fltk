@@ -84,6 +84,7 @@ public:
   }
   HRESULT STDMETHODCALLTYPE DragEnter( IDataObject *pDataObj, DWORD /*grfKeyState*/, POINTL pt, DWORD *pdwEffect) {
     if( !pDataObj ) return E_INVALIDARG;
+    printf("DND Enter\n");
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
     POINT ppt; 
@@ -97,11 +98,15 @@ public:
     }
     fl_dnd_target_window = target;
     px = pt.x; py = pt.y;
+    if (fillCurrentDragData(pDataObj)) {
       // FLTK has no mechanism yet for the different drop effects, so we allow move and copy
-    if ( target && Fl::handle( FL_DND_ENTER, target ) )
-      *pdwEffect = DROPEFFECT_MOVE|DROPEFFECT_COPY; //|DROPEFFECT_LINK;
-    else
+      if ( target && Fl::handle( FL_DND_ENTER, target ) )
+        *pdwEffect = DROPEFFECT_MOVE|DROPEFFECT_COPY; //|DROPEFFECT_LINK;
+      else
+        *pdwEffect = DROPEFFECT_NONE;
+    } else {
       *pdwEffect = DROPEFFECT_NONE;
+    }
     lastEffect = *pdwEffect;
     return S_OK;
   }
@@ -116,6 +121,7 @@ public:
       *pdwEffect = lastEffect = DROPEFFECT_NONE;
       return S_OK;
     }
+    printf("DND Drag\n");
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     Fl::e_x_root = pt.x; 
     Fl::e_y_root = pt.y;
@@ -123,20 +129,26 @@ public:
       Fl::e_x = Fl::e_x_root-fl_dnd_target_window->x();
       Fl::e_y = Fl::e_y_root-fl_dnd_target_window->y();
     }
-    // Fl_Group will change DND_DRAG into DND_ENTER and DND_LEAVE if needed
-    if ( Fl::handle( FL_DND_DRAG, fl_dnd_target_window ) )
-      *pdwEffect = DROPEFFECT_MOVE|DROPEFFECT_COPY; //|DROPEFFECT_LINK;
-    else 
+    if (fillCurrentDragData(0)) {
+      // Fl_Group will change DND_DRAG into DND_ENTER and DND_LEAVE if needed
+      if ( Fl::handle( FL_DND_DRAG, fl_dnd_target_window ) )
+        *pdwEffect = DROPEFFECT_MOVE|DROPEFFECT_COPY; //|DROPEFFECT_LINK;
+      else 
+        *pdwEffect = DROPEFFECT_NONE;
+    } else {
       *pdwEffect = DROPEFFECT_NONE;
+    }
     px = pt.x; py = pt.y;
     lastEffect = *pdwEffect;
     return S_OK;
   }
   HRESULT STDMETHODCALLTYPE DragLeave() {
-    if ( fl_dnd_target_window )
+    printf("DND Leave\n");
+    if ( fl_dnd_target_window && fillCurrentDragData(0))
     {
       Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
       fl_dnd_target_window = 0;
+      clearCurrentDragData();
     }
     return S_OK;
   }
@@ -158,28 +170,62 @@ public:
     Fl_Widget *w = target;
     while (w->parent()) w = w->window();
     HWND hwnd = fl_xid( (Fl_Window*)w );
+    if (fillCurrentDragData(data)) {
+      int old_event = Fl::e_number;
+      Fl::belowmouse()->handle(Fl::e_number = FL_PASTE); // e_text will be invalid after this call
+      Fl::e_number = old_event;
+      SetForegroundWindow( hwnd );
+      clearCurrentDragData();
+      return S_OK;
+    }
+    return S_OK;
+  }
+private:
 
+  static IDataObject *currDragRef;
+  static char *currDragData;
+  static int currDragSize; 
+  static char currDragResult;
+
+  static void clearCurrentDragData() {
+    currDragRef = 0;
+    if (currDragData) free(currDragData);
+    currDragData = 0;
+    currDragSize = 0;
+    currDragResult = 0;
+  }
+  static char fillCurrentDragData(IDataObject *data) {
+    // shortcut through this whole procedure if there is no fresh data
+    if (!data) 
+      return currDragResult;
+    // shortcut through this whole procedure if this is still the same drag event
+    // (* this is safe, because 'currDragRef' is cleared on Leave and Drop events)
+    if (data==currDragRef)
+      return currDragResult;
+
+    // clear currDrag* for a new drag event
+    clearCurrentDragData();
+
+    // fill currDrag* with ASCII data, if available
     FORMATETC fmt = { 0 };
     STGMEDIUM medium = { 0 };
     fmt.tymed = TYMED_HGLOBAL;
     fmt.dwAspect = DVASPECT_CONTENT;
     fmt.lindex = -1;
     fmt.cfFormat = CF_TEXT;
-    // if it is ASCII text, send an FL_PASTE with that text
+    // if it is ASCII text, return a copy of it
     if ( data->GetData( &fmt, &medium )==S_OK )
     {
       void *stuff = GlobalLock( medium.hGlobal );
-      //long len = GlobalSize( medium.hGlobal );
-      Fl::e_length = strlen( (char*)stuff ); // min(strlen, len)
-      Fl::e_text = (char*)stuff;
-      int old_event = Fl::e_number;
-      Fl::belowmouse()->handle(Fl::e_number = FL_PASTE); // e_text will be invalid after this call
-      Fl::e_number = old_event;
+      Fl::e_length = strlen((char*)stuff);
+      Fl::e_text = strdup((char*)stuff);
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
-      SetForegroundWindow( hwnd );
-      return S_OK;
+      currDragResult = 1;
+      return currDragResult;
     }
+    // else fill currDrag* with filenames, if possible
+    memset(&fmt, 0, sizeof(fmt));
     fmt.tymed = TYMED_HGLOBAL;
     fmt.dwAspect = DVASPECT_CONTENT;
     fmt.lindex = -1;
@@ -199,19 +245,21 @@ public:
 	if ( i<nf-1 ) *dst++ = '\n';
       }
       *dst = 0;
-      int old_event = Fl::e_number;
-      Fl::belowmouse()->handle(Fl::e_number = FL_PASTE);
-      Fl::e_number = old_event;
-      free( Fl::e_text );
       ReleaseStgMedium( &medium );
-      SetForegroundWindow( hwnd );
-      return S_OK;
+      currDragResult = 1;
+      return currDragResult;
     }
-    return S_OK;
+    currDragResult = 0;
+    return currDragResult;
   }
 } flDropTarget;
 
 IDropTarget *flIDropTarget = &flDropTarget;
+
+IDataObject *FLDropTarget::currDragRef = 0;
+char *FLDropTarget::currDragData = 0;
+int FLDropTarget::currDragSize = 0; 
+char FLDropTarget::currDragResult = 0;
 
 /**
  * this class is needed to allow FLTK apps to be a DnD source
