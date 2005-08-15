@@ -1251,6 +1251,11 @@ void Fl_Window_Type::write_code2() {
     write_cstring(xclass);
     write_c(");\n");
   }
+  if (sr_max_w || sr_max_h) {
+    write_c("%so->size_range(%d, %d, %d, %d);\n", indent(), sr_min_w, sr_min_h, sr_max_w, sr_max_h);
+  } else if (sr_min_w || sr_min_h) {
+    write_c("%so->size_range(%d, %d);\n", indent(), sr_min_w, sr_min_h);
+  }
   write_c("%so->end();\n", indent());
   if (((Fl_Window*)o)->resizable() == o)
     write_c("%so->resizable(o);\n", indent());
@@ -1263,6 +1268,8 @@ void Fl_Window_Type::write_properties() {
   else if (non_modal) write_string("non_modal");
   if (!((Fl_Window*)o)->border()) write_string("noborder");
   if (xclass) {write_string("xclass"); write_word(xclass);}
+  if (sr_min_w || sr_min_h || sr_max_w || sr_max_h)
+    write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
   if (o->visible()) write_string("visible");
 }
 
@@ -1279,6 +1286,11 @@ void Fl_Window_Type::read_property(const char *c) {
   } else if (!strcmp(c,"xclass")) {
     storestring(read_word(),xclass);
     ((Fl_Window*)o)->xclass(xclass);
+  } else if (!strcmp(c,"size_range")) {
+    int mw, mh, MW, MH;
+    if (sscanf(read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
+      sr_min_w = mw; sr_min_h = mh; sr_max_w = MW; sr_max_h = MH;
+    }
   } else if (!strcmp(c,"xywh")) {
     Fl_Widget_Type::read_property(c);
     pasteoffset = 0; // make it not apply to contents

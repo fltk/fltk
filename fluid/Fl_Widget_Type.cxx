@@ -1284,8 +1284,94 @@ void textcolor_cb(Fl_Button* i, void* v) {
 ////////////////////////////////////////////////////////////////
 // Kludges to the panel for subclasses:
 
+void min_w_cb(Fl_Value_Input* i, void* v) {
+  if (v == LOAD) {
+    if (!current_widget->is_window()) {i->parent()->hide(); return;}
+    i->parent()->show();
+    i->value(((Fl_Window_Type*)current_widget)->sr_min_w);
+  } else {
+    int n = i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_window()) {
+        ((Fl_Window_Type*)current_widget)->sr_min_w = n;
+      }
+    }
+  }
+}
+
+void min_h_cb(Fl_Value_Input* i, void* v) {
+  if (v == LOAD) {
+    i->value(((Fl_Window_Type*)current_widget)->sr_min_h);
+  } else {
+    int n = i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_window()) {
+        ((Fl_Window_Type*)current_widget)->sr_min_h = n;
+      }
+    }
+  }
+}
+
+void max_w_cb(Fl_Value_Input* i, void* v) {
+  if (v == LOAD) {
+    i->value(((Fl_Window_Type*)current_widget)->sr_max_w);
+  } else {
+    int n = i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_window()) {
+        ((Fl_Window_Type*)current_widget)->sr_max_w = n;
+      }
+    }
+  }
+}
+
+void max_h_cb(Fl_Value_Input* i, void* v) {
+  if (v == LOAD) {
+    i->value(((Fl_Window_Type*)current_widget)->sr_max_h);
+  } else {
+    int n = i->value();
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_window()) {
+        ((Fl_Window_Type*)current_widget)->sr_max_h = n;
+      }
+    }
+  }
+}
+
+void set_min_size_cb(Fl_Button*, void* v) {
+  if (v == LOAD) {
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_window()) {
+        Fl_Window_Type *win = (Fl_Window_Type*)current_widget;
+        win->sr_min_w = win->o->w();
+        win->sr_min_h = win->o->h();
+      }
+    }
+    propagate_load(the_panel, LOAD);
+  }
+}
+
+void set_max_size_cb(Fl_Button*, void* v) {
+  if (v == LOAD) {
+  } else {
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_window()) {
+        Fl_Window_Type *win = (Fl_Window_Type*)current_widget;
+        win->sr_max_w = win->o->w();
+        win->sr_max_h = win->o->h();
+      }
+    }
+    propagate_load(the_panel, LOAD);
+  }
+}
+
 void slider_size_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
+    if (current_widget->is_window()) 
+      i->parent()->hide(); 
+    else
+      i->parent()->show();
     if (current_widget->is_valuator()!=2) {i->deactivate(); return;}
     i->activate();
     i->value(((Fl_Slider*)(current_widget->o))->slider_size());
@@ -1523,6 +1609,15 @@ void live_mode_cb(Fl_Button*o,void *v) {
         live_window->resizable(live_widget);
         live_window->set_modal(); // block all other UI
         live_window->callback(leave_live_mode_cb);
+        if (current_widget->is_window()) {
+          Fl_Window_Type *w = (Fl_Window_Type*)current_widget;
+          int mw = w->sr_min_w; if (mw>0) mw += 20;
+          int mh = w->sr_min_h; if (mh>0) mh += 55;
+          int MW = w->sr_max_w; if (MW>0) MW += 20; 
+          int MH = w->sr_max_h; if (MH>2) MH += 55;
+          if (mw || mh || MW || MH)
+            live_window->size_range(mw, mh, MW, MH);
+        }
         live_window->show();
       } else o->value(0);
     } else o->value(0);

@@ -51,12 +51,12 @@ Fl_Double_Window* make_widget_panel() {
     w = o;
     o->labelsize(11);
     w->hotspot(o);
-    { Fl_Tabs* o = new Fl_Tabs(5, 5, 400, 310);
+    { Fl_Tabs* o = new Fl_Tabs(3, 5, 402, 310);
       o->selection_color((Fl_Color)4);
       o->labelsize(11);
       o->callback((Fl_Callback*)cb_);
       o->when(FL_WHEN_NEVER);
-      { Fl_Group* o = new Fl_Group(5, 25, 400, 290, "GUI");
+      { Fl_Group* o = new Fl_Group(3, 25, 402, 290, "GUI");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
@@ -288,6 +288,61 @@ Fl_Double_Window* make_widget_panel() {
             }
             o->end();
           }
+          { Fl_Group* o = new Fl_Group(90, 180, 300, 20, "Size Range:");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            o->align(FL_ALIGN_LEFT);
+            o->hide();
+            { Fl_Value_Input* o = new Fl_Value_Input(90, 180, 55, 20, "Minimum Size:");
+              o->tooltip("The size of the slider.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)min_w_cb);
+              o->align(FL_ALIGN_TOP_LEFT);
+            }
+            { Fl_Value_Input* o = new Fl_Value_Input(150, 180, 55, 20);
+              o->tooltip("The minimum value of the widget.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)min_h_cb);
+              o->align(FL_ALIGN_TOP_LEFT);
+            }
+            { Fl_Button* o = new Fl_Button(210, 180, 25, 20, "set");
+              o->labelsize(11);
+              o->callback((Fl_Callback*)set_min_size_cb);
+            }
+            { Fl_Value_Input* o = new Fl_Value_Input(240, 180, 55, 20, "Maximum Size:");
+              o->tooltip("The maximum value of the widget.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)max_w_cb);
+              o->align(FL_ALIGN_TOP_LEFT);
+            }
+            { Fl_Value_Input* o = new Fl_Value_Input(300, 180, 55, 20);
+              o->tooltip("The resolution of the widget value.");
+              o->labelsize(11);
+              o->maximum(2048);
+              o->step(1);
+              o->textsize(11);
+              o->callback((Fl_Callback*)max_h_cb);
+              o->align(FL_ALIGN_TOP_LEFT);
+            }
+            { Fl_Button* o = new Fl_Button(360, 180, 25, 20, "set");
+              o->labelsize(11);
+              o->callback((Fl_Callback*)set_max_size_cb);
+            }
+            { Fl_Box* o = new Fl_Box(390, 180, 0, 20);
+              Fl_Group::current()->resizable(o);
+            }
+            o->end();
+          }
           { Shortcut_Button* o = new Shortcut_Button(90, 205, 300, 20, "Shortcut:");
             o->tooltip("The shortcut key for the widget.");
             o->box(FL_DOWN_BOX);
@@ -387,7 +442,7 @@ Fl_Double_Window* make_widget_panel() {
         o->end();
         Fl_Group::current()->resizable(o);
       }
-      { Fl_Group* o = new Fl_Group(5, 25, 400, 290, "Style");
+      { Fl_Group* o = new Fl_Group(3, 25, 402, 290, "Style");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);

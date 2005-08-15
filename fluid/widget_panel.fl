@@ -34,20 +34,20 @@ comment {//
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
-    xywh {353 184 410 355} type Double labelsize 11 hide resizable hotspot
-    code0 {o->size_range(o->w(), o->h());}
+    xywh {353 184 410 355} type Double labelsize 11 resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
-      xywh {5 5 400 310} selection_color 4 labelsize 11 when 0 resizable
+      xywh {3 5 402 310} selection_color 4 labelsize 11 when 0 resizable
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load
-        xywh {5 25 400 290} labelsize 11 when 0 resizable
+        callback propagate_load open
+        xywh {3 25 402 290} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
-          callback propagate_load
+          callback propagate_load open
           xywh {3 25 396 285} labelsize 11 resizable
         } {
           Fl_Group {} {
@@ -184,7 +184,7 @@ Function {make_widget_panel()} {open
           }
           Fl_Group {} {
             label {Values:}
-            callback propagate_load
+            callback propagate_load selected
             xywh {90 180 300 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Value_Input {} {
@@ -211,6 +211,43 @@ Function {make_widget_panel()} {open
               label {Value:}
               callback value_cb
               tooltip {The current widget value.} xywh {330 180 55 20} labelsize 11 align 5 textsize 11
+            }
+            Fl_Box {} {
+              xywh {390 180 0 20} resizable
+            }
+          }
+          Fl_Group {} {
+            label {Size Range:}
+            callback propagate_load
+            xywh {90 180 300 20} labelfont 1 labelsize 11 align 4 hide
+          } {
+            Fl_Value_Input {} {
+              label {Minimum Size:}
+              callback min_w_cb
+              tooltip {The size of the slider.} xywh {90 180 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            }
+            Fl_Value_Input {} {
+              callback min_h_cb
+              tooltip {The minimum value of the widget.} xywh {150 180 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            }
+            Fl_Button {} {
+              label set
+              callback set_min_size_cb
+              xywh {210 180 25 20} labelsize 11
+            }
+            Fl_Value_Input {} {
+              label {Maximum Size:}
+              callback max_w_cb
+              tooltip {The maximum value of the widget.} xywh {240 180 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            }
+            Fl_Value_Input {} {
+              callback max_h_cb
+              tooltip {The resolution of the widget value.} xywh {300 180 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
+            }
+            Fl_Button {} {
+              label set
+              callback set_max_size_cb
+              xywh {360 180 25 20} labelsize 11
             }
             Fl_Box {} {
               xywh {390 180 0 20} resizable
@@ -290,7 +327,7 @@ Function {make_widget_panel()} {open
       Fl_Group {} {
         label Style
         callback propagate_load
-        xywh {5 25 400 290} labelsize 11 when 0 hide
+        xywh {3 25 402 290} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           callback propagate_load
@@ -489,7 +526,7 @@ Function {make_widget_panel()} {open
         }
       }
     }
-    Fl_Group {} {selected
+    Fl_Group {} {
       xywh {8 321 391 24} labelsize 11
     } {
       Fl_Box {} {

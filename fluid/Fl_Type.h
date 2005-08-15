@@ -485,7 +485,7 @@ protected:
 
 public:
 
-  Fl_Window_Type() { drag = dx = dy = 0; }
+  Fl_Window_Type() { drag = dx = dy = 0; sr_min_w = sr_min_h = sr_max_w = sr_max_h = 0; }
   uchar modal, non_modal;
 
   Fl_Type *make();
@@ -511,6 +511,8 @@ public:
   Fl_Widget *enter_live_mode(int top=0);
   void leave_live_mode();
   void copy_properties();
+
+  int sr_min_w, sr_min_h, sr_max_w, sr_max_h;
 };
 
 class Fl_Widget_Class_Type : private Fl_Window_Type {

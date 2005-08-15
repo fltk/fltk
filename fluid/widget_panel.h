@@ -60,6 +60,12 @@ extern void min_cb(Fl_Value_Input*, void*);
 extern void max_cb(Fl_Value_Input*, void*);
 extern void step_cb(Fl_Value_Input*, void*);
 extern void value_cb(Fl_Value_Input*, void*);
+extern void min_w_cb(Fl_Value_Input*, void*);
+extern void min_h_cb(Fl_Value_Input*, void*);
+extern void set_min_size_cb(Fl_Button*, void*);
+extern void max_w_cb(Fl_Value_Input*, void*);
+extern void max_h_cb(Fl_Value_Input*, void*);
+extern void set_max_size_cb(Fl_Button*, void*);
 #include "Shortcut_Button.h"
 extern void shortcut_in_cb(Shortcut_Button*, void*);
 extern void xclass_cb(Fl_Input*, void*);
