@@ -985,6 +985,9 @@ void color_cb(Fl_Button* i, void *v) {
       if (o->selected && o->is_widget()) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
 	q->o->color(c); q->o->redraw();
+        if (q->parent && q->parent->type_name() == tabs_type_name) {
+          if (q->o->parent()) q->o->parent()->redraw();
+        }
 	mod = 1;
       }
     }
