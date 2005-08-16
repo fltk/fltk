@@ -1290,7 +1290,7 @@ void min_w_cb(Fl_Value_Input* i, void* v) {
     i->parent()->show();
     i->value(((Fl_Window_Type*)current_widget)->sr_min_w);
   } else {
-    int n = i->value();
+    int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_min_w = n;
@@ -1303,7 +1303,7 @@ void min_h_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     i->value(((Fl_Window_Type*)current_widget)->sr_min_h);
   } else {
-    int n = i->value();
+    int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_min_h = n;
@@ -1316,7 +1316,7 @@ void max_w_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     i->value(((Fl_Window_Type*)current_widget)->sr_max_w);
   } else {
-    int n = i->value();
+    int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_max_w = n;
@@ -1329,7 +1329,7 @@ void max_h_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     i->value(((Fl_Window_Type*)current_widget)->sr_max_h);
   } else {
-    int n = i->value();
+    int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_max_h = n;
