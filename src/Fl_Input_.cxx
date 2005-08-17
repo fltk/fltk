@@ -594,7 +594,8 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   // but it is too hard to figure out for now...
   if (wrap()) {
     // if there is a space in the pasted text, the whole line may have rewrapped
-    for (int i=0; i<ilen; i++) 
+    int i;
+    for (i=0; i<ilen; i++) 
       if (text[i]==' ') break;
     if (i==ilen)
       while (b > 0 && !isspace(index(b) & 255) && index(b)!='\n') b--;
