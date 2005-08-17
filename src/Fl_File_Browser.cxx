@@ -67,6 +67,7 @@
 // CodeWarrior (__MWERKS__) gets its include paths confused, so we
 // temporarily disable this...
 #if defined(__APPLE__) && !defined(__MWERKS__)
+#  include <Carbon/Carbon.h>
 #  include <sys/param.h>
 #  include <sys/ucred.h>
 #  include <sys/mount.h>
@@ -495,30 +496,20 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 	num_files ++;
       }
 #elif defined(__APPLE__) && !defined(__MWERKS__)
-    // MacOS X and Darwin use getfsstat() system call...
-    int			numfs;	// Number of file systems
-    struct statfs	*fs;	// Buffer for file system info
-
-
-    numfs = getfsstat(NULL, 0, MNT_NOWAIT);
-    if (numfs > 0) {
-      // We have file systems, get them...
-      fs = new struct statfs[numfs];
-      getfsstat(fs, sizeof(struct statfs) * numfs, MNT_NOWAIT);
-
-      // Add filesystems to the list...
-      for (i = 0; i < numfs; i ++) {
-        if (fs[i].f_mntonname[1]) {
-          snprintf(filename, sizeof(filename), "%s/", fs[i].f_mntonname);
-          add(filename, icon);
-        } else {
-          add("/", icon);
-        }
-        num_files ++;
+    // All mounted volumes are in a directory called '/Volumes/'
+    // This seems to be the case on international installations, too.
+    add("/", icon);
+    dirent **dir;
+    int n = fl_filename_list("/Volumes/", &dir, 0);
+    if (n>=0) {
+      int i;
+      for (i=0; i<n; i++) {
+        if (dir[i]->d_name[0]=='.') continue;
+        sprintf(filename, "/Volumes/%s", dir[i]->d_name);
+        add(filename, icon);
+        free(dir[i]);
       }
-
-      // Free the memory used for the file system info array...
-      delete[] fs;
+      free(dir);
     }
 #else
     //
@@ -596,18 +587,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 	if ((icon && icon->type() == Fl_File_Icon::DIRECTORY) ||
 	     fl_filename_isdir(filename)) {
           num_dirs ++;
-
-#if defined(WIN32) && !defined(__CYGWIN__)
-	  // WIN32 already has the trailing slash... :)
           insert(num_dirs, files[i]->d_name, icon);
-#else
-	  // Add a trailing slash to directory names...
-	  char name[1024]; // Temporary directory name
-
-	  snprintf(name, sizeof(name), "%s/", files[i]->d_name);
-
-          insert(num_dirs, name, icon);
-#endif // WIN32 && !__CYGWIN__
 	} else if (filetype_ == FILES &&
 	           fl_filename_match(files[i]->d_name, pattern_)) {
           add(files[i]->d_name, icon);

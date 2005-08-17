@@ -29,6 +29,7 @@
 
 #include <FL/filename.H>
 #include "flstring.h"
+#include <stdlib.h>
 
 
 extern "C" {
@@ -52,26 +53,52 @@ int fl_casealphasort(struct dirent **a, struct dirent **b) {
 int fl_filename_list(const char *d, dirent ***list,
                      Fl_File_Sort_F *sort) {
 #ifndef HAVE_SCANDIR
-  return scandir(d, list, 0, sort);
+  int n = scandir(d, list, 0, sort);
 #elif defined(__hpux) || defined(__CYGWIN__)
   // HP-UX, Cygwin define the comparison function like this:
-  return scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
+  int n = scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
   // OSF, DU 4.0x
-  return scandir(d, list, 0, (int(*)(dirent **, dirent **))sort);
+  int n = scandir(d, list, 0, (int(*)(dirent **, dirent **))sort);
 #elif defined(_AIX)
   // AIX is almost standard...
-  return scandir(d, list, 0, (int(*)(void*, void*))sort);
+  int n = scandir(d, list, 0, (int(*)(void*, void*))sort);
 #elif !defined(__sgi)
   // The vast majority of UNIX systems want the sort function to have this
   // prototype, most likely so that it can be passed to qsort without any
   // changes:
-  return scandir(d, list, 0, (int(*)(const void*,const void*))sort);
+  int n = scandir(d, list, 0, (int(*)(const void*,const void*))sort);
 #else
   // This version is when we define our own scandir (WIN32 and perhaps
   // some Unix systems) and apparently on IRIX:
-  return scandir(d, list, 0, sort);
+  int n = scandir(d, list, 0, sort);
 #endif
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+  // we did this already during fl_scandir/win32
+#else
+  // append a '/' to all filenames that are directories
+  int i, dirlen = strlen(d);
+  char *fullname = (char*)malloc(dirlen+FL_PATH_MAX+2);
+  memcpy(fullname, d, dirlen+1);
+  char *name = fullname + dirlen;
+  if (name!=fullname && name[-1]!='/') *name++ = '/';
+  for (i=0; i<n; i++) {
+    dirent *de = (*list)[i];
+    int len = strlen(de->d_name);
+    if (de->d_name[len-1]=='/' || len>FL_PATH_MAX) continue;
+    memcpy(name, de->d_name, len+1);
+    if (fl_filename_isdir(fullname)) {
+      if (len<FL_PATH_MAX) {
+        char *dst = de->d_name + len;
+        *dst++ = '/';
+        *dst = 0;
+      }
+    }
+  }
+  free(fullname);
+#endif
+  return n;
 }
 
 //
