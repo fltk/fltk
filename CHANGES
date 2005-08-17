@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Multiline Input will update right if a space character is
+	  inserted in word wrap mode (STR #981)
 	- FLUID group labels redraw correctly (STR #959)
 	- FLUID now updates color of Fl_Tabs children (STR #979)
 	- FLUID now supports 'size_range()' (STR #851)

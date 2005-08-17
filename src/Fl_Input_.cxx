@@ -592,8 +592,15 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   // right after the whitespace before the current word.  This will
   // result in sub-optimal update when such wrapping does not happen
   // but it is too hard to figure out for now...
-  if (wrap())
-    while (b > 0 && !isspace(index(b) & 255)) b--;
+  if (wrap()) {
+    // if there is a space in the pasted text, the whole line may have rewrapped
+    for (int i=0; i<ilen; i++) 
+      if (text[i]==' ') break;
+    if (i==ilen)
+      while (b > 0 && !isspace(index(b) & 255) && index(b)!='\n') b--;
+    else
+      while (b > 0 && index(b)!='\n') b--;
+  }
 
   // make sure we redraw the old selection or cursor:
   if (mark_ < b) b = mark_;
@@ -640,6 +647,8 @@ int Fl_Input_::undo() {
   mark_ = b /* -ilen */;
   position_ = b;
 
+  if (wrap())
+    while (b1 > 0 && index(b1)!='\n') b1--;
   minimal_update(b1);
   set_changed();
   if (when()&FL_WHEN_CHANGED) do_callback();
