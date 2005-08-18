@@ -79,7 +79,8 @@ int fl_filename_list(const char *d, dirent ***list,
 #else
   // append a '/' to all filenames that are directories
   int i, dirlen = strlen(d);
-  char *fullname = (char*)malloc(dirlen+FL_PATH_MAX+2);
+  char *fullname = (char*)malloc(dirlen+FL_PATH_MAX+3); // Add enough extra for two /'s and a nul
+  // Use memcpy for speed since we already know the length of the string...
   memcpy(fullname, d, dirlen+1);
   char *name = fullname + dirlen;
   if (name!=fullname && name[-1]!='/') *name++ = '/';
@@ -87,6 +88,7 @@ int fl_filename_list(const char *d, dirent ***list,
     dirent *de = (*list)[i];
     int len = strlen(de->d_name);
     if (de->d_name[len-1]=='/' || len>FL_PATH_MAX) continue;
+    // Use memcpy for speed since we already know the length of the string...
     memcpy(name, de->d_name, len+1);
     if (fl_filename_isdir(fullname)) {
       if (len<FL_PATH_MAX) {

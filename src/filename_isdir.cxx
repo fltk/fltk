@@ -43,6 +43,9 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 int fl_filename_isdir(const char* n) {
   struct stat	s;
 
+  // Do a quick optimization for filenames with a trailing slash...
+  if (*n && isdirsep(n[strlen(n) - 1])) return 1;
+
 #ifdef WIN32
   char		fn[1024];
   int		length;

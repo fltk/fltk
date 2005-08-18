@@ -67,7 +67,6 @@
 // CodeWarrior (__MWERKS__) gets its include paths confused, so we
 // temporarily disable this...
 #if defined(__APPLE__) && !defined(__MWERKS__)
-#  include <Carbon/Carbon.h>
 #  include <sys/param.h>
 #  include <sys/ucred.h>
 #  include <sys/mount.h>
@@ -496,20 +495,34 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 	num_files ++;
       }
 #elif defined(__APPLE__) && !defined(__MWERKS__)
-    // All mounted volumes are in a directory called '/Volumes/'
-    // This seems to be the case on international installations, too.
+    // MacOS X and Darwin use getfsstat() system call...
+    int			numfs;	// Number of file systems
+    struct statfs	*fs;	// Buffer for file system info
+
+
+    // We always have the root filesystem.
     add("/", icon);
-    dirent **dir;
-    int n = fl_filename_list("/Volumes/", &dir, 0);
-    if (n>=0) {
-      int i;
-      for (i=0; i<n; i++) {
-        if (dir[i]->d_name[0]=='.') continue;
-        sprintf(filename, "/Volumes/%s", dir[i]->d_name);
-        add(filename, icon);
-        free(dir[i]);
+
+    // Get the mounted filesystems...
+    numfs = getfsstat(NULL, 0, MNT_NOWAIT);
+    if (numfs > 0) {
+      // We have file systems, get them...
+      fs = new struct statfs[numfs];
+      getfsstat(fs, sizeof(struct statfs) * numfs, MNT_NOWAIT);
+
+      // Add filesystems to the list...
+      for (i = 0; i < numfs; i ++) {
+	// Ignore "/", "/dev", and "/.vol"...
+        if (fs[i].f_mntonname[1] && strcmp(fs[i].f_mntonname, "/dev") &&
+	    strcmp(fs[i].f_mntonname, "/.vol")) {
+          snprintf(filename, sizeof(filename), "%s/", fs[i].f_mntonname);
+          add(filename, icon);
+        }
+        num_files ++;
       }
-      free(dir);
+
+      // Free the memory used for the file system info array...
+      delete[] fs;
     }
 #else
     //
@@ -578,8 +591,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
       return (0);
 
     for (i = 0, num_dirs = 0; i < num_files; i ++) {
-      if (strcmp(files[i]->d_name, ".") &&
-          strcmp(files[i]->d_name, "./")) {
+      if (strcmp(files[i]->d_name, "./")) {
 	snprintf(filename, sizeof(filename), "%s/%s", directory_,
 	         files[i]->d_name);
 
