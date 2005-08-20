@@ -181,12 +181,18 @@ void Fl_Function_Type::open() {
     if (*c && *d != '(') {
       message = "must be name(arguments), try again:"; continue;
     }
+    int mod = 0;
     c = f_return_type_input->value();
     message = c_check(c); if (message) continue;
+    if (name() && strcmp(f_name_input->value(), name())) mod = 1;
     name(f_name_input->value());
+    if (return_type && strcmp(return_type, c)) mod = 1;
     storestring(c, return_type);
+    if (public_ != f_public_button->value()) mod = 1;
     public_ = f_public_button->value();
+    if (cdecl_ != f_c_button->value()) mod = 1;
     cdecl_ = f_c_button->value();
+    if (mod) set_modflag(1);
     break;
   }
  BREAK2:
