@@ -990,8 +990,8 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
         W = r.right - r.left;
         H = r.bottom - r.top;
         bx = w->x() - r.left;
-        bt = GetSystemMetrics(SM_CYCAPTION);
-        by = w->y() - r.top - bt;
+        by = r.bottom - w->y() - w->h(); // height of the bootm frame
+        bt = w->y() - r.top - by; // height of top caption bar
         xoff = bx;
         yoff = by + bt;
         dx = W - w->w();
