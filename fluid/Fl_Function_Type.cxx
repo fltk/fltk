@@ -184,14 +184,16 @@ void Fl_Function_Type::open() {
     int mod = 0;
     c = f_return_type_input->value();
     message = c_check(c); if (message) continue;
-    if (name() && strcmp(f_name_input->value(), name())) mod = 1;
     name(f_name_input->value());
-    if (return_type && strcmp(return_type, c)) mod = 1;
     storestring(c, return_type);
-    if (public_ != f_public_button->value()) mod = 1;
-    public_ = f_public_button->value();
-    if (cdecl_ != f_c_button->value()) mod = 1;
-    cdecl_ = f_c_button->value();
+    if (public_ != f_public_button->value()) {
+      mod = 1;
+      public_ = f_public_button->value();
+    }
+    if (cdecl_ != f_c_button->value()) {
+      mod = 1;
+      cdecl_ = f_c_button->value();
+    }
     if (mod) set_modflag(1);
     break;
   }
@@ -525,7 +527,10 @@ void Fl_Decl_Type::open() {
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     if (message) continue;
     name(c);
-    public_ = decl_public_button->value();
+    if (public_!=decl_public_button->value()) {
+      set_modflag(1);
+      public_ = decl_public_button->value();
+    }
     break;
   }
  BREAK2:
@@ -628,7 +633,10 @@ void Fl_DeclBlock_Type::open() {
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     if (message) continue;
     storestring(c,after);
-    public_ = declblock_public_button->value();
+    if (public_ != declblock_public_button->value()) {
+      set_modflag(1);
+      public_ = declblock_public_button->value();
+    }
     break;
   }
  BREAK2:
@@ -804,8 +812,16 @@ void Fl_Comment_Type::open() {
     char*c = comment_input->buffer()->text();
     name(c);
     free(c);
-    in_c_ = comment_in_source->value();
-    in_h_ = comment_in_header->value();
+    int mod = 0;
+    if (in_c_ != comment_in_source->value()) {
+      in_c_ = comment_in_source->value();
+      mod = 1;
+    }
+    if (in_h_ != comment_in_header->value()) {
+      in_h_ = comment_in_header->value();
+      mod = 1;
+    }
+    if (mod) set_modflag(1);
     break;
   }
  BREAK2:
@@ -967,7 +983,10 @@ void Fl_Class_Type::open() {
     prefix(pr);
     free((void*)s);
     storestring(c, subclass_of);
-    public_ = c_public_button->value();
+    if (public_ != c_public_button->value()) {
+      public_ = c_public_button->value();
+      set_modflag(1);
+    }
     break;
   }
  BREAK2:
