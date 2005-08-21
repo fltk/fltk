@@ -380,12 +380,13 @@ class Lf2CrlfConvert {
   char *out;
   int outlen;
 public:
-  Lf2CrlfConvert(const char *in) {
+  Lf2CrlfConvert(const char *in, int inlen) {
     outlen = 0;
     const char *i;
     char *o;
+    int lencount;
     // Predict size of \r\n conversion buffer
-    for ( i=in; *i; ) {
+    for ( i=in, lencount = inlen; lencount--; ) {
       if ( *i == '\r' && *(i+1) == '\n' )	// leave \r\n untranslated
 	{ i+=2; outlen+=2; }
       else if ( *i == '\n' )			// \n by itself? leave room to insert \r
@@ -396,7 +397,7 @@ public:
     // Alloc conversion buffer + NULL
     out = new char[outlen+1];
     // Handle \n -> \r\n conversion
-    for ( i=in, o=out; *i; ) {
+    for ( i=in, o=out, lencount = inlen; lencount--; ) {
       if ( *i == '\r' && *(i+1) == '\n' )	// leave \r\n untranslated
         { *o++ = *i++; *o++ = *i++; }
       else if ( *i == '\n' )			// \n by itself? insert \r
@@ -418,7 +419,7 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
 
   // Convert \n -> \r\n (for old apps like Notepad, DOS)
-  Lf2CrlfConvert buf(stuff);
+  Lf2CrlfConvert buf(stuff, len);
   len = buf.GetLength();
   stuff = buf.GetValue();
 
