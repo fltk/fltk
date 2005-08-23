@@ -348,6 +348,16 @@ void Fl_Function_Type::write_code2() {
   indentation = 0;
 }
 
+int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
+  if (!return_type) return 0;
+  if (!name()) return 0;
+  if (   strcmp(return_type, rtype)==0 
+      && fl_filename_match(name(), sig)) {
+    return 1;
+  }
+  return 0;
+}
+
 ////////////////////////////////////////////////////////////////
 
 Fl_Type *Fl_Code_Type::make() {
@@ -895,6 +905,20 @@ const char* Fl_Type::class_name(const int need_nest) const {
   return 0;
 }
 
+/**
+ * If this Type resides inside a class, this function returns the class type, or null.
+ */
+const Fl_Class_Type *Fl_Type::is_in_class() const {
+  Fl_Type* p = parent;
+  while (p) {
+    if (p->is_class()) {
+      return (Fl_Class_Type*)p;
+    }
+    p = p->parent;
+  }
+  return 0;
+}
+
 int Fl_Class_Type::is_public() const {return public_;}
 
 void Fl_Class_Type::prefix(const char*p) {
@@ -1022,6 +1046,21 @@ void Fl_Class_Type::write_code1() {
 void Fl_Class_Type::write_code2() {
   write_h("};\n");
   current_class = parent_class;
+}
+
+/**
+ * Return 1 if this class contains a function with the given signature.
+ */
+int Fl_Class_Type::has_function(const char *rtype, const char *sig) const {
+  Fl_Type *child;
+  for (child = next; child && child->level > level; child = child->next) {
+    if (child->level == level+1 && strcmp(child->type_name(), "Function")==0) {
+      const Fl_Function_Type *fn = (const Fl_Function_Type*)child;
+      if (fn->has_signature(rtype, sig))
+        return 1;
+    }
+  }
+  return 0;
 }
 
 //

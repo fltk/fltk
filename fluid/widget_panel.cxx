@@ -643,7 +643,8 @@ Fl_Double_Window* make_widget_panel() {
           o->callback((Fl_Callback*)v_input_cb, (void*)(3));
         }
         { CodeEditor* o = new CodeEditor(90, 170, 300, 90, "Callback:");
-          o->tooltip("The callback function or code for the widget.");
+          o->tooltip("The callback function or code for the widget. Use the variable name \'o\' to \
+access the Widget pointer and \'v\' to access the user value.");
           o->box(FL_DOWN_BOX);
           o->color(FL_BACKGROUND2_COLOR);
           o->selection_color(FL_SELECTION_COLOR);

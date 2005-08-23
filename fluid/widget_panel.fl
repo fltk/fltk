@@ -464,7 +464,7 @@ Function {make_widget_panel()} {open
         Fl_Text_Editor {} {
           label {Callback:}
           callback callback_cb
-          tooltip {The callback function or code for the widget.} xywh {90 170 300 90} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+          tooltip {The callback function or code for the widget. Use the variable name 'o' to access the Widget pointer and 'v' to access the user value.} xywh {90 170 300 90} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           class CodeEditor
         }

@@ -141,6 +141,7 @@ public:
   virtual int pixmapID() { return 0; }
 
   const char* class_name(const int need_nest) const;
+  const class Fl_Class_Type* is_in_class() const;
 };
 
 class Fl_Function_Type : public Fl_Type {
@@ -162,6 +163,7 @@ public:
   int pixmapID() { return 7; }
   void write_properties();
   void read_property(const char *);
+  int has_signature(const char *, const char*) const;
 };
 
 class Fl_Code_Type : public Fl_Type {
@@ -262,6 +264,7 @@ public:
   // class prefix attribute access
   void prefix(const char* p);
   const char*  prefix() const {return class_prefix;}
+  int has_function(const char*, const char*) const;
 private:
   const char* class_prefix;
 };

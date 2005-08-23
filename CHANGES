@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- FLUID now knows if a static callback is already declared
+	  in a class and won't declare it 'extern' (STR #776)
 	- Some actions in FLUID would not set the 
 	  "changed" flag (STR #984)
 	- fl_filename_list now always appends a forward slash to

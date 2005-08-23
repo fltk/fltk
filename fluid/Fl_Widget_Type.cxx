@@ -1763,11 +1763,20 @@ void Fl_Widget_Type::write_static() {
     if (extra_code(n) && isdeclare(extra_code(n)))
       write_declare("%s", extra_code(n));
   }
-  if (callback() && is_name(callback()))
-    write_declare("extern void %s(%s*, %s);", callback(), t,
-		  user_data_type() ? user_data_type() : "void*");
-  const char* c = array_name(this);
+  if (callback() && is_name(callback())) {
+    int write_extern_declaration = 1;
+    const Fl_Class_Type *cc = is_in_class();
+    if (cc) {
+      char buf[1024]; snprintf(buf, 1023, "%s(*)",  callback());
+      if (cc->has_function("static void", buf))
+        write_extern_declaration = 0;
+    }
+    if (write_extern_declaration)
+      write_declare("extern void %s(%s*, %s);", callback(), t,
+		    user_data_type() ? user_data_type() : "void*");
+  }
   const char* k = class_name(1);
+  const char* c = array_name(this);
   if (c && !k && !is_class()) {
     write_c("\n");
     if (!public_) write_c("static ");
