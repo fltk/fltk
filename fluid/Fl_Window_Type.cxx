@@ -220,14 +220,21 @@ void show_settings_cb(Fl_Widget *, void *) {
 }
 
 void header_input_cb(Fl_Input* i, void*) {
+  if (header_file_name && strcmp(header_file_name, i->value()))
+    set_modflag(1);
   header_file_name = i->value();
 }
 void code_input_cb(Fl_Input* i, void*) {
+  if (code_file_name && strcmp(code_file_name, i->value()))
+    set_modflag(1);
   code_file_name = i->value();
 }
 
 void include_H_from_C_button_cb(Fl_Light_Button* b, void*) {
-  include_H_from_C = b->value();
+  if (include_H_from_C != b->value()) {
+    set_modflag(1);
+    include_H_from_C = b->value();
+  }
 }
 
 ////////////////////////////////////////////////////////////////
