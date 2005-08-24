@@ -738,7 +738,7 @@ access the Widget pointer and \'v\' to access the user value.");
         o->callback((Fl_Callback*)cancel_cb);
         o->hide();
       }
-      { Fl_Button* o = wLiveMode = new Fl_Button(145, 325, 84, 20, "LIve &Mode");
+      { Fl_Button* o = wLiveMode = new Fl_Button(142, 325, 84, 20, "LIve &Mode");
         o->tooltip("Hide the widget overlay box.");
         o->type(1);
         o->labelsize(11);
