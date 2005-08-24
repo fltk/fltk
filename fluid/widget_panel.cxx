@@ -738,8 +738,9 @@ access the Widget pointer and \'v\' to access the user value.");
         o->callback((Fl_Callback*)cancel_cb);
         o->hide();
       }
-      { Fl_Button* o = wLiveMode = new Fl_Button(142, 325, 84, 20, "LIve &Mode");
-        o->tooltip("Hide the widget overlay box.");
+      { Fl_Button* o = wLiveMode = new Fl_Button(142, 325, 84, 20, "Live &Mode");
+        o->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh\
+avior.");
         o->type(1);
         o->labelsize(11);
         o->labelcolor(FL_FOREGROUND_COLOR);

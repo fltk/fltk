@@ -510,7 +510,7 @@ Function {make_widget_panel()} {open
       }
       Fl_Button {} {
         label {Hide &Overlays}
-        callback overlay_cb selected
+        callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {231 325 99 20} labelsize 11 labelcolor 1
       }
       Fl_Button {} {
@@ -529,9 +529,9 @@ Function {make_widget_panel()} {open
         xywh {329 325 70 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {
-        label {LIve &Mode}
-        callback live_mode_cb
-        tooltip {Hide the widget overlay box.} xywh {142 325 84 20} type Toggle labelsize 11 labelcolor 0
+        label {Live &Mode}
+        callback live_mode_cb selected
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {142 325 84 20} type Toggle labelsize 11 labelcolor 0
       }
     }
   }
