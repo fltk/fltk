@@ -91,11 +91,10 @@ int fl_filename_list(const char *d, dirent ***list,
     // Use memcpy for speed since we already know the length of the string...
     memcpy(name, de->d_name, len+1);
     if (fl_filename_isdir(fullname)) {
-      if (len<FL_PATH_MAX) {
-        char *dst = de->d_name + len;
-        *dst++ = '/';
-        *dst = 0;
-      }
+      (*list)[i] = de = (dirent*)realloc(de, de->d_name - (char*)de + len + 2);
+      char *dst = de->d_name + len;
+      *dst++ = '/';
+      *dst = 0;
     }
   }
   free(fullname);
