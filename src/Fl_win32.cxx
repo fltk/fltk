@@ -50,7 +50,7 @@
 // The following include files require GCC 3.x or a non-GNU compiler...
 #if !defined(__GNUC__) || __GNUC__ >= 3
 #  include <ole2.h>
-#  include <ShellApi.h>
+#  include <shellapi.h>
 #endif // !__GNUC__ || __GNUC__ >= 3
 
 
