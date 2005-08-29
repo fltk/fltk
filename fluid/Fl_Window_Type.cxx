@@ -703,7 +703,8 @@ void Fl_Window_Type::draw_overlay() {
     // - check for distance to the window edge
     //    * FLTK suggests 10 pixels from the edge
     int d;
-    int xsp, ysp, mybx_bak = mybx, myby_bak = myby;
+    int xsp, ysp;
+    int mybx_bak = mybx, myby_bak = myby, mybr_bak = mybr, mybt_bak = mybt;
     Fl_Widget_Type *mysel = (Fl_Widget_Type *)selection;
 
 
@@ -981,8 +982,8 @@ void Fl_Window_Type::draw_overlay() {
           }
 	}
     }
-    mysx += mybx-mybx_bak; mysr += mybx-mybx_bak;
-    mysy += myby-myby_bak; myst += myby-myby_bak;
+    mysx += mybx-mybx_bak; mysr += mybr-mybr_bak;
+    mysy += myby-myby_bak; myst += mybt-mybt_bak;
   }
   // align the snapping selection box with the box we draw.
   sx = mysx; sy = mysy; sr = mysr; st = myst;
