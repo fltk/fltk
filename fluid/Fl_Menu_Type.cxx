@@ -211,7 +211,7 @@ void Fl_Menu_Item_Type::write_static() {
       write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
       write_c("  ((%s*)(o->", k);
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
-      for (t = t->parent; t->is_widget(); t = t->parent) write_c("parent()->");
+      for (t = t->parent; t && t->is_widget() && !is_class(); t = t->parent) write_c("parent()->");
       write_c("user_data()))->%s_i(o,v);\n}\n", cn);
     }
   }
