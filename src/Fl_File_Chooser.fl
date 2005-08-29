@@ -285,7 +285,8 @@ showChoiceCB();} {}
 int w, h;
 okButton->measure_label(w, h);
 okButton->resize(cancelButton->x() - 50 - w, cancelButton->y(),
-                 w + 40, 25);} {}
+                 w + 40, 25);
+okButton->parent()->init_sizes();} {}
   }
   Function {ok_label()} {return_type {const char *}
   } {

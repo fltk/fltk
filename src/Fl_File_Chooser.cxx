@@ -362,6 +362,7 @@ int w, h;
 okButton->measure_label(w, h);
 okButton->resize(cancelButton->x() - 50 - w, cancelButton->y(),
                  w + 40, 25);
+okButton->parent()->init_sizes();
 }
 
 const char * Fl_File_Chooser::ok_label() {
