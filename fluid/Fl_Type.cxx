@@ -733,28 +733,38 @@ void Fl_Type::move_before(Fl_Type* g) {
 // move selected widgets in their parent's list:
 void earlier_cb(Fl_Widget*,void*) {
   Fl_Type *f;
+  int mod = 0;
   for (f = Fl_Type::first; f; ) {
     Fl_Type* nxt = f->next;
     if (f->selected) {
       Fl_Type* g;
       for (g = f->prev; g && g->level > f->level; g = g->prev);
-      if (g && g->level == f->level && !g->selected) f->move_before(g);
+      if (g && g->level == f->level && !g->selected) {
+        f->move_before(g);
+        mod = 1;
+      }
     }
     f = nxt;
   }
+  if (mod) set_modflag(1);
 }
 
 void later_cb(Fl_Widget*,void*) {
   Fl_Type *f;
+  int mod = 0;
   for (f = Fl_Type::last; f; ) {
     Fl_Type* prv = f->prev;
     if (f->selected) {
       Fl_Type* g;
       for (g = f->next; g && g->level > f->level; g = g->next);
-      if (g && g->level == f->level && !g->selected) g->move_before(f);
+      if (g && g->level == f->level && !g->selected) {
+        g->move_before(f);
+        mod = 1;
+      }
     }
     f = prv;
   }
+  if (mod) set_modflag(1);
 }
 
 ////////////////////////////////////////////////////////////////
