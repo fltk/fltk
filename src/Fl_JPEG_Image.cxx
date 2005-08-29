@@ -164,7 +164,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 
   jpeg_calc_output_dimensions(&dinfo);
 
-  w(dinfo.output_width);
+  w(dinfo.output_width); 
   h(dinfo.output_height);
   d(dinfo.output_components);
 
