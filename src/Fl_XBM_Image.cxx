@@ -88,7 +88,7 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
     }
     const char *a = buffer;
     while (*a && i<n) {
-      int t;
+      unsigned int t;
       if (sscanf(a," 0x%x",&t)>0) {
         *ptr++ = (uchar)t;
 	i ++;
