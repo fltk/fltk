@@ -30,16 +30,24 @@
 
 #include "Fl_Menu_Bar.H"
 
+#ifdef __APPLE__
+
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
   void draw();
 public:
-//int handle(int);
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0)
-      : Fl_Menu_Bar(x,y,w,h,l) {}
+      : Fl_Menu_Bar(x,y,w,h,l) {
+	   deactivate();			// don't let the old area take events
+	  }
   void menu(const Fl_Menu_Item *m);
-//  Fl_Menu_Item* picked(const Fl_Menu_Item* v);
 };
+
+#else
+
+typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
+
+#endif
 
 #endif
 
