@@ -3,6 +3,7 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Fixed C Plus Plus style comments in C files (STR #997)
 	- Fixed signednes of scanf argument (STR #996)
 	- Fixed cross-compiling (host: *-linux-* , target: *-mingw32) 
 	  problem. Patch provided by Amir Shalem <amir@boom.org.il> in (STR #995) .

@@ -76,7 +76,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
       } else sign = 0;
 
       if (*format == '*') {
-        // Get width from argument...
+        /* Get width from argument... */
 	format ++;
 	width = va_arg(ap, int);
 	snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", width);
@@ -94,7 +94,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
         format ++;
 
         if (*format == '*') {
-          // Get precision from argument...
+          /* Get precision from argument... */
 	  format ++;
 	  prec = va_arg(ap, int);
 	  snprintf(tptr, sizeof(tformat) - (tptr - tformat), "%d", prec);

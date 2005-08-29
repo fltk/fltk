@@ -56,7 +56,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   if ((len==1)&& (d[-1]=='.')) { strcpy(findIn, ".\\*"); is_dir = 1; }
   if ((len>0) && (d[-1]=='\\')) { *d++ = '*'; *d = 0; is_dir = 1; }
   if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; is_dir = 1; }
-  if (!is_dir) { // this file may still be a directory that we need to list
+  if (!is_dir) { /* this file may still be a directory that we need to list */
     DWORD attr = GetFileAttributes(findIn);
     if (attr&FILE_ATTRIBUTE_DIRECTORY) 
       strcpy(d, "\\*");
@@ -74,7 +74,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
     selectDir=(struct dirent*)malloc(sizeof(struct dirent)+strlen(find.cFileName)+2);
     strcpy(selectDir->d_name, find.cFileName);
     if (find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-      // Append a trailing slash to directory names...
+      /* Append a trailing slash to directory names... */
       strcat(selectDir->d_name, "/");
     }
     if (!select || (*select)(selectDir)) {
