@@ -101,9 +101,11 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jpeg_decompress_struct	dinfo;	// Decompressor info
   fl_jpeg_error_mgr		jerr;	// Error handler info
   JSAMPROW			row;	// Sample row pointer
-  int max_finish_decompress_err = 10; // give up after too many errors
-  int max_destroy_decompress_err = 10; // give up after too many errors
 
+  // the following variables are pointers allocating some private space that
+  // is not reset by 'setjmp()'
+  char* max_finish_decompress_err;      // count errors and give up afer a while
+  char* max_destroy_decompress_err;     // to avoid recusion and deadlock
 
   // Clear data...
   alloc_array = 0;
@@ -117,14 +119,20 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   jerr.pub_.error_exit     = fl_jpeg_error_handler;
   jerr.pub_.output_message = fl_jpeg_output_handler;
 
+  // Setup error loop variables
+  max_finish_decompress_err = (char*)malloc(1);   // allocate space on the frame for error counters
+  max_destroy_decompress_err = (char*)malloc(1);  // otherwise, the variables are reset on the longjmp
+  *max_finish_decompress_err=10;
+  *max_destroy_decompress_err=10;
+
   if (setjmp(jerr.errhand_))
   {
     // JPEG error handling...
     // if any of the cleanup routines hits another error, we would end up 
     // in a loop. So instead, we decrement max_err for some upper cleanup limit.
-    if ( (max_finish_decompress_err-- > 0) && array)
+    if ( ((*max_finish_decompress_err)-- > 0) && array)
       jpeg_finish_decompress(&dinfo);
-    if ( max_destroy_decompress_err-- > 0)
+    if ( (*max_destroy_decompress_err)-- > 0)
       jpeg_destroy_decompress(&dinfo);
 
     fclose(fp);
@@ -139,6 +147,9 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
       alloc_array = 0;
     }
 
+    free(max_destroy_decompress_err);
+    free(max_finish_decompress_err);
+    
     return;
   }
 
@@ -171,6 +182,9 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
 
   jpeg_finish_decompress(&dinfo);
   jpeg_destroy_decompress(&dinfo);
+
+  free(max_destroy_decompress_err);
+  free(max_finish_decompress_err);
 
   fclose(fp);
 #endif // HAVE_LIBJPEG
