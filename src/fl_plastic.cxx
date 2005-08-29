@@ -127,7 +127,7 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
       fl_arc(x+w-h, y, h, h, 315.0, 405.0);
       fl_color(shade_color(g[*c++], bc));
       fl_arc(x+w-h, y, h, h, 270.0, 315.0);
-      fl_xyline(x+d, y+h, x+w-d);
+      fl_xyline(x+d, y+h-1, x+w-d);
       fl_arc(x, y, h, h, 225.0, 270.0);
       fl_color(shade_color(g[*c++], bc));
       fl_arc(x, y, h, h, 135.0, 225.0);
@@ -140,7 +140,7 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
       fl_arc(x, y, w, w, 45.0, 135.0);
       fl_color(shade_color(g[*c++], bc));
       fl_arc(x, y, w, w, 0.0, 45.0);
-      fl_yxline(x+w, y+d, y+h-d);
+      fl_yxline(x+w-1, y+d, y+h-d);
       fl_arc(x, y+h-w, w, w, 315.0, 360.0);
       fl_color(shade_color(g[*c++], bc));
       fl_arc(x, y+h-w, w, w, 225.0, 315.0);
@@ -244,7 +244,7 @@ static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
       fl_pie(x+w-h, y, h, h, 315.0+i*na, 405.0+i*na);
       fl_color(shade_color(g[c[clen - i]], bc));
       fl_pie(x+w-h, y, h, h, 270.0, 315.0+i*na);
-      fl_xyline(x+d, y+h, x+w-d);
+      fl_xyline(x+d, y+h-1, x+w-d);
       fl_pie(x, y, h, h, 225.0+i*na, 270.0);
       fl_color(shade_color(g[c[clen - i] - 2], bc));
       fl_pie(x, y, h, h, 135.0+i*na, 225.0+i*na);
@@ -262,7 +262,7 @@ static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
       fl_pie(x, y, w, w, 45.0+i*na, 135.0+i*na);
       fl_color(shade_color(g[c[i] - 2], bc));
       fl_pie(x, y, w, w, 0.0, 45.0+i*na);
-      fl_yxline(x+w, y+d, y+h-d);
+      fl_yxline(x+w-1, y+d, y+h-d);
       fl_pie(x, y+h-w, w, w, 315.0+i*na, 360.0);
       fl_color(shade_color(g[c[clen - i]], bc));
       fl_pie(x, y+h-w, w, w, 225.0+i*na, 315.0+i*na);
@@ -307,8 +307,8 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void up_round(int x, int y, int w, int h, Fl_Color c) {
-  shade_round(x, y, w, h-1, "RVQNOPQRSTUVWVQ", c);
-  frame_round(x, y, w, h-1, "IJLM", c);
+  shade_round(x, y, w, h, "RVQNOPQRSTUVWVQ", c);
+  frame_round(x, y, w, h, "IJLM", c);
 }
 
 
@@ -324,8 +324,8 @@ static void down_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void down_round(int x, int y, int w, int h, Fl_Color c) {
-  shade_round(x, y, w, h-1, "STUVWWWVT", c);
-  frame_round(x, y, w, h-1, "IJLM", c);
+  shade_round(x, y, w, h, "STUVWWWVT", c);
+  frame_round(x, y, w, h, "IJLM", c);
 }
 
 

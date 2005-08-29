@@ -84,9 +84,9 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
   SelectObject(fl_gc, fl_brush());
-  Pie(fl_gc, x, y, x+w+1, y+h+1, xa, ya, xb, yb); 
+  Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
 #elif defined(__APPLE_QD__)
-  Rect r; r.left=x; r.right=x+w+1; r.top=y; r.bottom=y+h+1;
+  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
   PaintArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
@@ -108,7 +108,7 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   }
   CGContextFillPath(fl_gc);
 #else
-  XFillArc(fl_display, fl_window, fl_gc, x,y,w,h, int(a1*64),int((a2-a1)*64));
+  XFillArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 #endif
 }
 

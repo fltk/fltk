@@ -71,11 +71,11 @@ static void draw(int which, int x,int y,int w,int h, int inset, uchar color)
       fl_rectf(x+d/2, y, w-(d&-2), h);
   } else {
     if (w < h) {
-      if (which != UPPER_LEFT) fl_yxline(x+w-1, y+d/2, y+h-d/2);
-      if (which != LOWER_RIGHT) fl_yxline(x, y+d/2, y+h-d/2);
+      if (which != UPPER_LEFT) fl_yxline(x+w-1, y+d/2-1, y+h-d/2+1);
+      if (which != LOWER_RIGHT) fl_yxline(x, y+d/2-1, y+h-d/2+1);
     } else if (w > h) {
-      if (which != UPPER_LEFT) fl_xyline(x+d/2, y+h-1, x+w-d/2);
-      if (which != LOWER_RIGHT) fl_xyline(x+d/2, y, x+w-d/2);
+      if (which != UPPER_LEFT) fl_xyline(x+d/2-1, y+h-1, x+w-d/2+1);
+      if (which != LOWER_RIGHT) fl_xyline(x+d/2-1, y, x+w-d/2+1);
     }
   }
 }

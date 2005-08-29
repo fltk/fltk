@@ -45,9 +45,9 @@ void Fl_Dial::draw(int X, int Y, int W, int H) {
     int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
     if (foo) {X--; Y--; W+=2; H+=2;}
     fl_color(color());
-    fl_pie(X, Y, W-1, H-1, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
+    fl_pie(X, Y, W, H, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
     fl_color(selection_color());
-    fl_pie(X, Y, W-1, H-1, 270-angle, 270-a1);
+    fl_pie(X, Y, W, H, 270-angle, 270-a1);
     if (foo) {
       fl_color(FL_FOREGROUND_COLOR);
       fl_arc(X, Y, W, H, 0, 360);

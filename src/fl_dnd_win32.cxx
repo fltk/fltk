@@ -84,7 +84,6 @@ public:
   }
   HRESULT STDMETHODCALLTYPE DragEnter( IDataObject *pDataObj, DWORD /*grfKeyState*/, POINTL pt, DWORD *pdwEffect) {
     if( !pDataObj ) return E_INVALIDARG;
-    printf("DND Enter\n");
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
     POINT ppt; 
@@ -121,7 +120,6 @@ public:
       *pdwEffect = lastEffect = DROPEFFECT_NONE;
       return S_OK;
     }
-    printf("DND Drag\n");
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     Fl::e_x_root = pt.x; 
     Fl::e_y_root = pt.y;
@@ -143,7 +141,6 @@ public:
     return S_OK;
   }
   HRESULT STDMETHODCALLTYPE DragLeave() {
-    printf("DND Leave\n");
     if ( fl_dnd_target_window && fillCurrentDragData(0))
     {
       Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );

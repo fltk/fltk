@@ -32,7 +32,7 @@
 
 static void fl_shadow_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_color(FL_DARK3);
-  fl_rectf(x+BW, y+h-BW,  w, BW);
+  fl_rectf(x+BW, y+h-BW,  w - BW, BW);
   fl_rectf(x+w-BW,  y+BW, BW,  h - BW);
   fl_color(c);
   fl_rect(x,y,w-BW,h-BW);

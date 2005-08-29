@@ -43,7 +43,7 @@ static void fl_oval_frame(int x, int y, int w, int h, Fl_Color c) {
 }
 
 static void fl_oval_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_oval_flat_box(x,y,w-1,h-1,c);
+  fl_oval_flat_box(x,y,w,h,c);
   fl_oval_frame(x,y,w,h,FL_BLACK);
 }
 
