@@ -520,8 +520,16 @@ public:
 
 class Fl_Widget_Class_Type : private Fl_Window_Type {
 public:
+  Fl_Widget_Class_Type() {
+    write_public_state = 0;
+    wc_relative = 0;
+  }
   // state variables for output:
   char write_public_state; // true when public: has been printed
+  char wc_relative; // if true, reposition all child widgets in an Fl_Group
+
+  virtual void write_properties();
+  virtual void read_property(const char *);
 
   void write_code1();
   void write_code2();

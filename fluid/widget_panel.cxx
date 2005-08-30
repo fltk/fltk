@@ -241,7 +241,13 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)h_cb);
             o->align(FL_ALIGN_TOP_LEFT);
           }
-          { Fl_Box* o = new Fl_Box(330, 145, 60, 20);
+          { Fl_Light_Button* o = new Fl_Light_Button(330, 145, 55, 20, "Relative");
+            o->tooltip("If set, widgets inside a widget class of type Fl_Group are repositioned relat\
+ive to the origin at construction time");
+            o->labelsize(11);
+            o->callback((Fl_Callback*)wc_relative_cb);
+          }
+          { Fl_Box* o = new Fl_Box(389, 145, 1, 20);
             Fl_Group::current()->resizable(o);
           }
           o->end();

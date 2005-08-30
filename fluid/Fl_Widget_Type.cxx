@@ -558,6 +558,27 @@ void h_cb(Fl_Value_Input *i, void *v) {
   }
 }
 
+void wc_relative_cb(Fl_Light_Button *i, void *v) {
+  if (v == LOAD) {
+    if (!strcmp(current_widget->type_name(), "widget_class")) {
+      i->show();
+      i->value(((Fl_Widget_Class_Type *)current_widget)->wc_relative);
+    } else {
+      i->hide();
+    }
+  } else {
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && !strcmp(current_widget->type_name(), "widget_class")) {
+        Fl_Widget_Class_Type *t = (Fl_Widget_Class_Type *)o;
+        t->wc_relative = i->value();
+	mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 
 // turn number to string or string to number for saving to file:

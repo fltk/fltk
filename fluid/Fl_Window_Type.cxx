@@ -1355,10 +1355,23 @@ Fl_Type *Fl_Widget_Class_Type::make() {
   myo->add(p);
   myo->modal = 0;
   myo->non_modal = 0;
+  myo->wc_relative = 0;
 
   return myo;
 }
 
+void Fl_Widget_Class_Type::write_properties() {
+  Fl_Window_Type::write_properties();
+  if (wc_relative) write_string("position_relative");
+}
+
+void Fl_Widget_Class_Type::read_property(const char *c) {
+  if (!strcmp(c,"position_relative")) {
+    wc_relative = 1;
+  } else {
+    Fl_Window_Type::read_property(c);
+  }
+}
 
 void Fl_Widget_Class_Type::write_code1() {
 #if 0
@@ -1399,7 +1412,10 @@ void Fl_Widget_Class_Type::write_code1() {
     write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
 
     write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
-    write_c("  : %s(X, Y, W, H, L) {\n", c);
+    if (wc_relative)
+      write_c("  : %s(0, 0, W, H, L) {\n", c);
+    else
+      write_c("  : %s(X, Y, W, H, L) {\n", c);
   }
 
   write_c("  %s *o = this;\n", name());
@@ -1409,6 +1425,7 @@ void Fl_Widget_Class_Type::write_code1() {
 
 void Fl_Widget_Class_Type::write_code2() {
   write_extra_code();
+  if (wc_relative) write_c("%sposition(X, Y);\n", indent());
   if (modal) write_c("%sset_modal();\n", indent());
   else if (non_modal) write_c("%sset_non_modal();\n", indent());
   if (!((Fl_Window*)o)->border()) write_c("%sclear_border();\n", indent());

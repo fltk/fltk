@@ -43,7 +43,7 @@ Function {make_widget_panel()} {open
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load
+        callback propagate_load selected
         xywh {5 25 400 290} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -151,7 +151,7 @@ Function {make_widget_panel()} {open
         }
         Fl_Group {} {
           label {Position:}
-          callback propagate_load
+          callback propagate_load open
           xywh {90 145 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Value_Input widget_x_input {
@@ -174,8 +174,13 @@ Function {make_widget_panel()} {open
             callback h_cb
             tooltip {The height of the widget.} xywh {270 145 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
           }
+          Fl_Light_Button {} {
+            label Relative
+            callback wc_relative_cb
+            tooltip {If set, widgets inside a widget class of type Fl_Group are repositioned relative to the origin at construction time} xywh {330 145 55 20} labelsize 11
+          }
           Fl_Box {} {
-            xywh {330 145 60 20} resizable
+            xywh {389 145 1 20} resizable
           }
         }
         Fl_Group {} {
@@ -530,7 +535,7 @@ Function {make_widget_panel()} {open
       }
       Fl_Button wLiveMode {
         label {Live &Mode}
-        callback live_mode_cb selected
+        callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {142 325 84 20} type Toggle labelsize 11 labelcolor 0
       }
     }
