@@ -34,6 +34,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/fl_message.H>
 #include "Fl_Widget_Type.h"
+#include "../src/flstring.h"
 
 // Override group's resize behavior to do nothing to children:
 void igroup::resize(int X, int Y, int W, int H) {
@@ -71,7 +72,7 @@ void group_cb(Fl_Widget *, void *) {
   // Find the current widget:
   Fl_Type *qq = Fl_Type::current;
   while (qq && (!qq->is_widget() || qq->is_menu_item())) qq = qq->parent;
-  if (!qq || qq->level <= 1) {
+  if (!qq || qq->level < 1 || (qq->level == 1 && !strcmp(qq->type_name(), "widget_class"))) {
     fl_message("Please select widgets to group");
     return;
   }
@@ -95,7 +96,7 @@ void ungroup_cb(Fl_Widget *, void *) {
   Fl_Type *q = Fl_Type::current;
   while (q && (!q->is_widget() || q->is_menu_item())) q = q->parent;
   if (q) q = q->parent;
-  if (!q || q->level <= 1) {
+  if (!q || q->level < 1 || (q->level == 1 && !strcmp(q->type_name(), "widget_class"))) {
     fl_message("Please select widgets in a group");
     return;
   }
