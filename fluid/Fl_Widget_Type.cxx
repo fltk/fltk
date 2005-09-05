@@ -1838,10 +1838,13 @@ void Fl_Widget_Type::write_static() {
     write_c("\n}\n");
     if (k) {
       write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t, ut);
-      write_c("  ((%s*)(o->", k);
-      for (Fl_Type* p = parent; p && p->is_widget(); p = p->parent)
-	write_c("parent()->");
-      write_c("user_data()))->%s_i(o,v);\n}\n", cn);
+      write_c("  ((%s*)(o", k);
+      Fl_Type *q = 0;
+      for (Fl_Type* p = parent; p && p->is_widget(); q = p, p = p->parent)
+	write_c("->parent()");
+      if (!q || strcmp(q->type_name(), "widget_class"))
+        write_c("->user_data()");
+      write_c("))->%s_i(o,v);\n}\n", cn);
     }
   }
   if (image) {
@@ -1881,7 +1884,7 @@ void Fl_Widget_Type::write_code1() {
     write_h("  void %s_i(%s*, %s);\n", cn, t, ut);
     write_h("  static void %s(%s*, %s);\n", cn, t, ut);
   }
-  // figure out if local varaible will be used (prevent compiler warnings):
+  // figure out if local variable will be used (prevent compiler warnings):
   if (is_parent())
     varused = 1;
   else {
