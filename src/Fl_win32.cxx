@@ -454,9 +454,13 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     // called in response to FL_PASTE!
 
     // Convert \r\n -> \n
+    char *i = fl_selection_buffer[clipboard];
+    if (i==0L) {
+      Fl::e_text = 0; 
+      return;
+    }
     Fl::e_text = new char[fl_selection_length[clipboard]+1];
-    char *i = fl_selection_buffer[clipboard], 
-         *o = Fl::e_text;
+    char *o = Fl::e_text;
     while (*i) {
       if ( *i == '\r' && *(i+1) == '\n') i++;
       else *o++ = *i++;
