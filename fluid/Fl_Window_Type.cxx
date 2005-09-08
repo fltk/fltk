@@ -403,6 +403,7 @@ void modal_cb(Fl_Light_Button* i, void* v) {
     i->value(((Fl_Window_Type *)current_widget)->modal);
   } else {
     ((Fl_Window_Type *)current_widget)->modal = i->value();
+    set_modflag(1);
   }
 }
 
@@ -413,6 +414,7 @@ void non_modal_cb(Fl_Light_Button* i, void* v) {
     i->value(((Fl_Window_Type *)current_widget)->non_modal);
   } else {
     ((Fl_Window_Type *)current_widget)->non_modal = i->value();
+    set_modflag(1);
   }
 }
 
@@ -423,6 +425,7 @@ void border_cb(Fl_Light_Button* i, void* v) {
     i->value(((Fl_Window*)(current_widget->o))->border());
   } else {
     ((Fl_Window*)(current_widget->o))->border(i->value());
+    set_modflag(1);
   }
 }
 
@@ -432,14 +435,18 @@ void xclass_cb(Fl_Input* i, void* v) {
     i->show();
     i->value(((Fl_Widget_Type *)current_widget)->xclass);
   } else {
-    for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
+        mod = 1;
 	Fl_Widget_Type* w = (Fl_Widget_Type*)o;
 	if (w->is_window() || w->is_button())
 	  storestring(i->value(),w->xclass);
 	if (w->is_window()) ((Fl_Window*)(w->o))->xclass(w->xclass);
 	else if (w->is_menu_item()) w->redraw();
       }
+    }
+    if (mod) set_modflag(1);
   }
 }
 
