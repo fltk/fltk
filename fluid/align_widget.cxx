@@ -508,14 +508,11 @@ void align_widget_cb(Fl_Widget*, long how)
 }
 
 
-// Set default widget sizes...
+// Set sizes of selected widgets...
 void widget_size_cb(Fl_Widget *, long size) {
-  // Update the "normal" text size of new widgets...
-  Fl_Widget_Type::default_size = size;
-
   // Update any selected widgets...
   int changed = 0;
-  for (Fl_Type *o = Fl_Type::first; o; o = o->next)
+  for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
     if (o->selected && o->is_widget()) {
       if (!changed) {
 	changed = 1;
@@ -531,7 +528,10 @@ void widget_size_cb(Fl_Widget *, long size) {
       ((Fl_Widget_Type *)o)->textstuff(2, f, s, c);
 
       w->redraw();
+      // since this may be a major change, the whole window should be redrawn
+      if (w->window()) w->window()->redraw();
     }
+  }
 }
 
 

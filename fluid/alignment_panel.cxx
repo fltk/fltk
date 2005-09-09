@@ -274,6 +274,7 @@ Fl_Double_Window* make_settings_window() {
       recent_spinner->maximum(10);
       recent_spinner->value(c);
     }
+    o->set_non_modal();
     o->end();
   }
   return w;
@@ -391,43 +392,110 @@ static void cb_Close2(Fl_Button*, void*) {
   grid_window->hide();
 }
 
-Fl_Double_Window* make_grid_window() {
+Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
+
+Fl_Double_Window* make_layout_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(145, 185, "Grid");
+  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(275, 240, "Layout Settings");
     w = o;
-    { Fl_Input* o = horizontal_input = new Fl_Input(88, 10, 47, 25, "Horizontal:");
+    { Fl_Input* o = horizontal_input = new Fl_Input(106, 10, 50, 25, "x");
       o->tooltip("Horizontal grid spacing.");
       o->type(2);
       o->box(FL_THIN_DOWN_BOX);
-      o->labelfont(1);
       o->callback((Fl_Callback*)grid_cb, (void*)(1));
+      o->align(FL_ALIGN_RIGHT);
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Input* o = vertical_input = new Fl_Input(88, 45, 47, 25, "Vertical:");
+    { Fl_Input* o = vertical_input = new Fl_Input(166, 10, 50, 25, "pixels");
       o->tooltip("Vertical grid spacing.");
       o->type(2);
       o->box(FL_THIN_DOWN_BOX);
-      o->labelfont(1);
       o->callback((Fl_Callback*)grid_cb, (void*)(2));
+      o->align(FL_ALIGN_RIGHT);
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Input* o = snap_input = new Fl_Input(88, 80, 47, 25, "Snap:");
+    { Fl_Input* o = snap_input = new Fl_Input(106, 45, 50, 25, "pixel snap");
       o->tooltip("Snap to grid within this many pixels.");
       o->type(2);
       o->box(FL_THIN_DOWN_BOX);
-      o->labelfont(1);
       o->callback((Fl_Callback*)grid_cb, (void*)(3));
+      o->align(FL_ALIGN_RIGHT);
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     }
-    { Fl_Check_Button* o = guides_toggle = new Fl_Check_Button(27, 115, 108, 25, "Show Guides");
+    { Fl_Check_Button* o = guides_toggle = new Fl_Check_Button(106, 80, 110, 25, "Show Guides");
       o->tooltip("Show distance and alignment guides in overlay");
       o->down_box(FL_DOWN_BOX);
       o->callback((Fl_Callback*)guides_cb, (void*)(4));
     }
-    { Fl_Button* o = new Fl_Button(76, 150, 59, 25, "Close");
+    { Fl_Button* o = new Fl_Button(205, 205, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close2);
     }
+    { Fl_Box* o = new Fl_Box(26, 10, 70, 25, "Grid:");
+      o->labelfont(1);
+      o->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
+    }
+    { Fl_Box* o = new Fl_Box(-1, 115, 97, 25, "Widget Size:");
+      o->labelfont(1);
+      o->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
+    }
+    { Fl_Group* o = new Fl_Group(105, 115, 170, 75);
+      { Fl_Round_Button* o = def_widget_size[0] = new Fl_Round_Button(105, 115, 70, 25);
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->callback((Fl_Callback*)default_widget_size_cb, (void*)(8));
+      }
+      { Fl_Box* o = new Fl_Box(120, 115, 50, 25, "tiny");
+        o->labelsize(8);
+        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      }
+      { Fl_Round_Button* o = def_widget_size[1] = new Fl_Round_Button(180, 115, 70, 25);
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->callback((Fl_Callback*)default_widget_size_cb, (void*)(11));
+      }
+      { Fl_Box* o = new Fl_Box(195, 115, 50, 25, "small");
+        o->labelsize(11);
+        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      }
+      { Fl_Round_Button* o = def_widget_size[2] = new Fl_Round_Button(105, 140, 70, 25);
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->callback((Fl_Callback*)default_widget_size_cb, (void*)(14));
+      }
+      { Fl_Box* o = new Fl_Box(120, 140, 50, 25, "normal");
+        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      }
+      { Fl_Round_Button* o = def_widget_size[3] = new Fl_Round_Button(180, 140, 90, 25);
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->callback((Fl_Callback*)default_widget_size_cb, (void*)(18));
+      }
+      { Fl_Box* o = new Fl_Box(195, 140, 68, 25, "medium");
+        o->labelsize(18);
+        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      }
+      { Fl_Round_Button* o = def_widget_size[4] = new Fl_Round_Button(105, 165, 75, 25);
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->callback((Fl_Callback*)default_widget_size_cb, (void*)(24));
+      }
+      { Fl_Box* o = new Fl_Box(120, 165, 64, 25, "large");
+        o->labelsize(24);
+        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      }
+      { Fl_Round_Button* o = def_widget_size[5] = new Fl_Round_Button(180, 165, 95, 25);
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->callback((Fl_Callback*)default_widget_size_cb, (void*)(32));
+      }
+      { Fl_Box* o = new Fl_Box(195, 165, 76, 25, "huge");
+        o->labelsize(32);
+        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      }
+      o->end();
+    }
+    o->set_non_modal();
     o->end();
   }
   return w;

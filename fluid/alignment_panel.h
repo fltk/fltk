@@ -94,7 +94,10 @@ extern Fl_Input *vertical_input;
 extern Fl_Input *snap_input;
 extern void guides_cb(Fl_Check_Button*, long);
 extern Fl_Check_Button *guides_toggle;
-Fl_Double_Window* make_grid_window();
+#include <FL/Fl_Round_Button.H>
+extern void default_widget_size_cb(Fl_Round_Button*, long);
+extern Fl_Round_Button *def_widget_size[6];
+Fl_Double_Window* make_layout_window();
 #endif
 
 //

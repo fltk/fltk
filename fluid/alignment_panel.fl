@@ -53,7 +53,7 @@ Function {make_project_window()} {open
       callback {project_window->hide();}
       tooltip {Close this dialog.} xywh {293 156 42 20} labelsize 11
     }
-    Fl_Tabs {} {open selected
+    Fl_Tabs {} {open
       xywh {10 10 325 138} selection_color 4 labelsize 11
     } {
       Fl_Group {} {
@@ -144,8 +144,8 @@ decl {void scheme_cb(Fl_Choice *, void *);} {public
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings} open
-    xywh {326 145 340 225} type Double visible
+    label {GUI Settings}
+    xywh {326 145 340 225} type Double non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme:}
@@ -158,15 +158,15 @@ Function {make_settings_window()} {open
     } {
       MenuItem {} {
         label Default
-        xywh {0 0 35 25}
+        xywh {0 0 35 25} labelsize 14
       }
       MenuItem {} {
         label None
-        xywh {0 0 35 25}
+        xywh {0 0 35 25} labelsize 14
       }
       MenuItem {} {
         label Plastic
-        xywh {0 0 35 25}
+        xywh {0 0 35 25} labelsize 14
       }
     }
     Fl_Group {} {
@@ -235,7 +235,7 @@ Function {make_shell_window()} {open
 } {
   Fl_Window shell_window {
     label {Shell Command}
-    xywh {588 153 365 125} type Double hide
+    xywh {682 167 365 125} type Double visible
   } {
     Fl_Input shell_command_input {
       label {Command:}
@@ -297,43 +297,109 @@ Function {make_shell_window()} {open
   }
 } 
 
-Function {make_grid_window()} {open
+Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
-    label Grid
-    xywh {803 141 145 185} type Double hide
+    label {Layout Settings}
+    xywh {676 337 275 240} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
-      label {Horizontal:}
+      label x
       user_data 1 user_data_type long
       callback grid_cb
-      tooltip {Horizontal grid spacing.} xywh {88 10 47 25} type Int box THIN_DOWN_BOX labelfont 1
+      tooltip {Horizontal grid spacing.} xywh {106 10 50 25} type Int box THIN_DOWN_BOX align 8
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Input vertical_input {
-      label {Vertical:}
+      label pixels
       user_data 2 user_data_type long
       callback grid_cb
-      tooltip {Vertical grid spacing.} xywh {88 45 47 25} type Int box THIN_DOWN_BOX labelfont 1
+      tooltip {Vertical grid spacing.} xywh {166 10 50 25} type Int box THIN_DOWN_BOX align 8
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Input snap_input {
-      label {Snap:}
+      label {pixel snap}
       user_data 3 user_data_type long
       callback grid_cb
-      tooltip {Snap to grid within this many pixels.} xywh {88 80 47 25} type Int box THIN_DOWN_BOX labelfont 1
+      tooltip {Snap to grid within this many pixels.} xywh {106 45 50 25} type Int box THIN_DOWN_BOX align 8
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Check_Button guides_toggle {
       label {Show Guides}
       user_data 4 user_data_type long
       callback guides_cb
-      tooltip {Show distance and alignment guides in overlay} xywh {27 115 108 25} down_box DOWN_BOX
+      tooltip {Show distance and alignment guides in overlay} xywh {106 80 110 25} down_box DOWN_BOX
     }
     Fl_Button {} {
       label Close
       callback {grid_window->hide();}
-      tooltip {Close this dialog.} xywh {76 150 59 25}
+      tooltip {Close this dialog.} xywh {205 205 60 25}
+    }
+    Fl_Box {} {
+      label {Grid:}
+      xywh {26 10 70 25} labelfont 1 align 24
+    }
+    Fl_Box {} {
+      label {Widget Size:}
+      xywh {-1 115 97 25} labelfont 1 align 24
+    }
+    Fl_Group {} {open
+      xywh {105 115 170 75}
+    } {
+      Fl_Round_Button {def_widget_size[0]} {
+        user_data 8 user_data_type long
+        callback default_widget_size_cb selected
+        xywh {105 115 70 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label tiny
+        xywh {120 115 50 25} labelsize 8 align 20
+      }
+      Fl_Round_Button {def_widget_size[1]} {
+        user_data 11 user_data_type long
+        callback default_widget_size_cb selected
+        xywh {180 115 70 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label small
+        xywh {195 115 50 25} labelsize 11 align 20
+      }
+      Fl_Round_Button {def_widget_size[2]} {
+        user_data 14 user_data_type long
+        callback default_widget_size_cb selected
+        xywh {105 140 70 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label normal
+        xywh {120 140 50 25} align 20
+      }
+      Fl_Round_Button {def_widget_size[3]} {
+        user_data 18 user_data_type long
+        callback default_widget_size_cb selected
+        xywh {180 140 90 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label medium
+        xywh {195 140 68 25} labelsize 18 align 20
+      }
+      Fl_Round_Button {def_widget_size[4]} {
+        user_data 24 user_data_type long
+        callback default_widget_size_cb selected
+        xywh {105 165 75 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label large
+        xywh {120 165 64 25} labelsize 24 align 20
+      }
+      Fl_Round_Button {def_widget_size[5]} {
+        user_data 32 user_data_type long
+        callback default_widget_size_cb selected
+        xywh {180 165 95 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label huge
+        xywh {195 165 76 25} labelsize 32 align 20
+      }
     }
   }
 } 

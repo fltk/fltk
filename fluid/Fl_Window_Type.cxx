@@ -35,6 +35,7 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Round_Button.H>
 #include "Fl_Widget_Type.h"
 #include "undo.h"
 #include <math.h>
@@ -114,6 +115,15 @@ void grid_cb(Fl_Input *i, long v) {
     }
   }
 }
+
+// Set default widget sizes...
+void default_widget_size_cb(Fl_Round_Button *b, long size) {
+  // Update the "normal" text size of new widgets...
+  b->setonly();
+  Fl_Widget_Type::default_size = size;
+  fluid_prefs.set("widget_size", size);
+}
+
 
 void i18n_type_cb(Fl_Choice *c, void *) {
   undo_checkpoint();
@@ -210,6 +220,13 @@ void show_grid_cb(Fl_Widget *, void *) {
   sprintf(buf,"%d",gridy); vertical_input->value(buf);
   sprintf(buf,"%d",snap); snap_input->value(buf);
   guides_toggle->value(show_guides);
+  int s = Fl_Widget_Type::default_size;
+  if (s<=8) def_widget_size[0]->setonly();
+  else if (s<=11) def_widget_size[1]->setonly();
+  else if (s<=14) def_widget_size[2]->setonly();
+  else if (s<=18) def_widget_size[3]->setonly();
+  else if (s<=24) def_widget_size[4]->setonly();
+  else if (s<=32) def_widget_size[5]->setonly();
   grid_window->hotspot(grid_window);
   grid_window->show();
 }

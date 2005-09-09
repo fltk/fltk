@@ -1623,12 +1623,15 @@ Fl_Menu_Item Main_Menu[] = {
     {"&Horizontal",0,(Fl_Callback *)align_widget_cb,(void*)40},
     {"&Vertical",0,(Fl_Callback *)align_widget_cb,(void*)41},
     {0},
-  {"&Set Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
-    {"&Tiny",FL_ALT+'1',(Fl_Callback *)widget_size_cb,(void*)8,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,8},
-    {"&Small",FL_ALT+'2',(Fl_Callback *)widget_size_cb,(void*)11,FL_MENU_RADIO,FL_NORMAL_LABEL,FL_HELVETICA,11},
-    {"&Normal",FL_ALT+'3',(Fl_Callback *)widget_size_cb,(void*)14,FL_MENU_RADIO|FL_MENU_VALUE},
+  {"Set &Widget Size",0,0,0,FL_SUBMENU|FL_MENU_DIVIDER},
+    {"&Tiny",FL_ALT+'1',(Fl_Callback *)widget_size_cb,(void*)8,0,FL_NORMAL_LABEL,FL_HELVETICA,8},
+    {"&Small",FL_ALT+'2',(Fl_Callback *)widget_size_cb,(void*)11,0,FL_NORMAL_LABEL,FL_HELVETICA,11},
+    {"&Normal",FL_ALT+'3',(Fl_Callback *)widget_size_cb,(void*)14,0,FL_NORMAL_LABEL,FL_HELVETICA,14},
+    {"&Medium",FL_ALT+'4',(Fl_Callback *)widget_size_cb,(void*)18,0,FL_NORMAL_LABEL,FL_HELVETICA,18},
+    {"&Large",FL_ALT+'5',(Fl_Callback *)widget_size_cb,(void*)24,0,FL_NORMAL_LABEL,FL_HELVETICA,24},
+    {"&Huge",FL_ALT+'6',(Fl_Callback *)widget_size_cb,(void*)32,0,FL_NORMAL_LABEL,FL_HELVETICA,32},
     {0},
-  {"&Grid...",FL_CTRL+'g',show_grid_cb},
+  {"&Grid and Size Settings...",FL_CTRL+'g',show_grid_cb},
   {0},
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
@@ -1690,10 +1693,11 @@ void make_main_window() {
   fluid_prefs.get("gridx", gridx, 5);
   fluid_prefs.get("gridy", gridy, 5);
   fluid_prefs.get("show_guides", show_guides, 0);
+  fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
 
   load_history();
 
-  make_grid_window();
+  make_layout_window();
   make_settings_window();
   make_shell_window();
 
