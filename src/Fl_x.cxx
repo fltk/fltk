@@ -1052,7 +1052,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
     int scr_x, scr_y, scr_w, scr_h;
-    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X, Y);
 
     if (win->border()) {
       // ensure border is on screen:
