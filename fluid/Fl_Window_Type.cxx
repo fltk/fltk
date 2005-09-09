@@ -121,7 +121,7 @@ void default_widget_size_cb(Fl_Round_Button *b, long size) {
   // Update the "normal" text size of new widgets...
   b->setonly();
   Fl_Widget_Type::default_size = size;
-  fluid_prefs.set("widget_size", size);
+  fluid_prefs.set("widget_size", Fl_Widget_Type::default_size);
 }
 
 
