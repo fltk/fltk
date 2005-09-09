@@ -125,7 +125,7 @@ int Fl_Valuator::format(char* buffer) {
   // Figure out how many digits are required to correctly format the
   // value.
   int i, c = 0;
-  char temp[32], *ptr;
+  char temp[32];
   // output a number with many digits after the decimal point. This
   // seems to be needed to get high precission
   snprintf(temp, sizeof(temp), "%.12f", A/B);
