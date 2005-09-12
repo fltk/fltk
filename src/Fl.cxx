@@ -849,6 +849,16 @@ void Fl_Window::hide() {
   handle(FL_HIDE);
 
 #ifdef WIN32
+  // this little trick keeps the current clipboard alive, even if we are about
+  // to destroy the window that owns the selection.
+  if (GetClipboardOwner()==ip->xid) {
+    Fl_Window *w1 = Fl::first_window();
+    if (w1 && OpenClipboard(fl_xid(w1))) {
+      EmptyClipboard();
+      SetClipboardData(CF_TEXT, NULL);
+      CloseClipboard();
+    }
+  }
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
