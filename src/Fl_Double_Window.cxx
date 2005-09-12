@@ -89,8 +89,10 @@ HDC fl_makeDC(HBITMAP bitmap) {
 
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
+  int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
   BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+  RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
 
@@ -303,8 +305,10 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #ifdef WIN32
     HDC _sgc = fl_gc;
     fl_gc = fl_makeDC(myi->other_xid);
+    int save = SaveDC(fl_gc);
     fl_restore_clip(); // duplicate region into new gc
     draw();
+    RestoreDC(fl_gc, save);
     DeleteDC(fl_gc);
     fl_gc = _sgc;
 #elif defined(__APPLE__)

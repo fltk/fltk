@@ -70,6 +70,7 @@ inline void XClipBox(Fl_Region r,XRectangle* rect) {
 // Warning: this object is highly subject to change!
 class FL_EXPORT Fl_X {
 public:
+  // member variables - add new variables only at the end of this block
   Window xid;
   HBITMAP other_xid; // for double-buffered windows
   Fl_Window* w;
@@ -78,6 +79,8 @@ public:
   int wait_for_expose;
   HDC private_dc; // used for OpenGL
   HCURSOR cursor;
+  HDC saved_hdc;  // saves the handle of the DC currently loaded
+  // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window* w,int &X, int &Y,
@@ -104,6 +107,7 @@ extern FL_EXPORT struct Fl_XMap {
 inline COLORREF fl_RGB() {return fl_current_xmap->rgb;}
 inline HPEN fl_pen() {return fl_current_xmap->pen;}
 FL_EXPORT HBRUSH fl_brush(); // allocates a brush if necessary
+FL_EXPORT HBRUSH fl_brush_action(int); // now does the real work
 
 extern FL_EXPORT HINSTANCE fl_display;
 extern FL_EXPORT Window fl_window;
@@ -111,6 +115,8 @@ extern FL_EXPORT HDC fl_gc;
 extern FL_EXPORT HPALETTE fl_palette; // non-zero only on 8-bit displays!
 extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT MSG fl_msg;
+extern FL_EXPORT void fl_release_dc(HWND w, HDC dc);
+extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
 // off-screen pixmaps: create, destroy, draw into, copy to window
 typedef HBITMAP Fl_Offscreen;
@@ -119,10 +125,10 @@ typedef HBITMAP Fl_Offscreen;
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 #define fl_begin_offscreen(b) \
   HDC _sgc=fl_gc; Window _sw=fl_window; \
-  fl_gc=fl_makeDC(b); fl_window=(HWND)b; fl_push_no_clip()
+  fl_gc=fl_makeDC(b); int _savedc = SaveDC(fl_gc); fl_window=(HWND)b; fl_push_no_clip()
 
 #define fl_end_offscreen() \
-  fl_pop_clip(); DeleteDC(fl_gc); fl_window=_sw; fl_gc = _sgc
+  fl_pop_clip(); RestoreDC(fl_gc, _savedc); DeleteDC(fl_gc); fl_window=_sw; fl_gc = _sgc
 
 FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap);

@@ -33,6 +33,9 @@
 #include <FL/Fl_Image.H>
 #include "flstring.h"
 
+#ifdef WIN32
+void fl_release_dc(HWND, HDC); // from Fl_win32.cxx
+#endif
 
 void fl_restore_clip(); // from fl_rect.cxx
 
@@ -347,10 +350,12 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #ifdef WIN32
   if (mask) {
     HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)mask);
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
     SelectObject(new_gc, (void*)id);
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);

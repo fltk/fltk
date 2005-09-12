@@ -319,6 +319,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
 }
 
 menuwindow::~menuwindow() {
+  hide();
   delete title;
 }
 

@@ -11,7 +11,7 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// but WITHOUT ANY WARRANTY; without even 79the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Library General Public License for more details.
 //
@@ -372,10 +372,12 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!id) id = fl_create_bitmap(w(), h(), array);
 
   HDC tempdc = CreateCompatibleDC(fl_gc);
+  int save = SaveDC(tempdc);
   SelectObject(tempdc, (HGDIOBJ)id);
   SelectObject(fl_gc, fl_brush());
   // secret bitblt code found in old MSWindows reference manual:
   BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
+  RestoreDC(tempdc, save);
   DeleteDC(tempdc);
 #elif defined(__APPLE_QD__)
   if (!id) id = fl_create_bitmask(w(), h(), array);

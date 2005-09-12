@@ -34,6 +34,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Enumerations.H>
 #include "flstring.h"
+#include "Fl_Font.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -1101,6 +1102,7 @@ char fl_show_iconic;	// hack for Fl_Window::iconic()
 HCURSOR fl_default_cursor;
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
+WNDCLASSEX wc;
 
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
@@ -1115,26 +1117,38 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   const char* message_name = "FLTK::ThreadWakeup";
 
-  WNDCLASSEX wc;
-  // Documentation states a device context consumes about 800 bytes
-  // of memory... so who cares? If 800 bytes per window is what it
-  // takes to speed things up, I'm game.
-  //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
-  wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
-  wc.lpfnWndProc = (WNDPROC)WndProc;
-  wc.cbClsExtra = wc.cbWndExtra = 0;
-  wc.hInstance = fl_display;
-  if (!w->icon())
-    w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
-  wc.hIcon = wc.hIconSm = (HICON)w->icon();
-  wc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
-  //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
-  //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
-  wc.hbrBackground = NULL;
-  wc.lpszMenuName = NULL;
-  wc.lpszClassName = class_name;
-  wc.cbSize = sizeof(WNDCLASSEX);
-  RegisterClassEx(&wc);
+  // Register the first (or default FLTK) class only once. 
+  // If the user creates mutiple new windows using other class names, they will
+  // be registered multiple times. This is not correct and should be fixed by
+  // keeping a list of registered window classes. Anyway, Windows is 
+  // quite forgiving here,
+  static int first_time = 1;
+  if (first_time || strcmp(class_name, first_class_name)) {
+    WNDCLASSEX lwc;
+    // Documentation states a device context consumes about 800 bytes
+    // of memory... so who cares? If 800 bytes per window is what it
+    // takes to speed things up, I'm game.
+    //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
+    lwc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
+    lwc.lpfnWndProc = (WNDPROC)WndProc;
+    lwc.cbClsExtra = wc.cbWndExtra = 0;
+    lwc.hInstance = fl_display;
+    if (!w->icon())
+      w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
+    lwc.hIcon = lwc.hIconSm = (HICON)w->icon();
+    lwc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
+    //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
+    //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
+    lwc.hbrBackground = NULL;
+    lwc.lpszMenuName = NULL;
+    lwc.lpszClassName = class_name;
+    lwc.cbSize = sizeof(WNDCLASSEX);
+    RegisterClassEx(&lwc);
+    if (first_time) {
+      memcpy(&wc, &lwc, lwc.cbSize);
+      first_time = 0;
+    }
+  }
   if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
 
   HWND parent;
@@ -1346,9 +1360,10 @@ HWND fl_window = NULL;
 HDC fl_GetDC(HWND w) {
   if (fl_gc) {
     if (w == fl_window  &&  fl_window != NULL) return fl_gc;
-    ReleaseDC(fl_window, fl_gc);
+    if (fl_window) fl_release_dc(fl_window, fl_gc); // ReleaseDC
   }
   fl_gc = GetDC(w);
+  fl_save_dc(w, fl_gc);
   fl_window = w;
   // calling GetDC seems to always reset these: (?)
   SetTextAlign(fl_gc, TA_BASELINE|TA_LEFT);
@@ -1372,6 +1387,102 @@ void Fl_Window::make_current() {
   current_ = this;
   fl_clip_region(0);
 }
+
+/* Make sure that all allocated fonts are released. This works only if 
+   Fl::run() is allowed to exit by closing all windows. Calling 'exit(int)'
+   will not automatically free any fonts. */
+void fl_free_fonts(void)
+{
+// remove the Fl_FontSize chains
+  int i;
+  Fl_Fontdesc * s;
+  Fl_FontSize * f;
+  Fl_FontSize * ff;
+  for (i=0; i<FL_FREE_FONT; i++) {
+    s = fl_fonts + i;
+    for (f=s->first; f; f=ff) {
+      ff = f->next;
+      delete(f);
+      s->first = ff;
+    }
+  }
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//
+//  The following routines help fix a problem with the leaking of Windows
+//  Device Context (DC) objects. The 'proper' protocol is for a program to
+//  acquire a DC, save its state, do the modifications needed for drawing,
+//  perform the drawing, restore the initial state, and release the DC. In
+//  FLTK, the save and restore steps have previously been omitted and DCs are
+//  not properly released, leading to a great number of DC leaks. As some
+//  Windows "OSs" will hang when any process exceeds roughly 10,000 GDI objects,
+//  it is important to control GDI leaks, which are much more important than memory
+//  leaks. The following struct, global variable, and routines help implement
+//  the above protocol for those cases where the GetDC and RestoreDC are not in
+//  the same routine. For each GetDC, fl_save_dc is used to create an entry in 
+//  a linked list that saves the window handle, the DC handle, and the initial
+//  state. When the DC is to be released, 'fl_release_dc' is called. It restores
+//  the initial state and releases the DC. When the program exits, 'fl_cleanup_dc_list'
+//  frees any remaining nodes in the list.
+
+struct Win_DC_List {      // linked list 
+  HWND    window;         // window handle
+  HDC     dc;             // device context handle
+  int     saved_dc;       // initial state of DC
+  Win_DC_List * next;     // pointer to next item
+};
+
+static Win_DC_List * win_DC_list = 0;
+
+void fl_save_dc( HWND w, HDC dc) {
+  Win_DC_List * t;
+  t = new Win_DC_List;
+  t->window = w;
+  t->dc = dc;
+  t->saved_dc = SaveDC(dc);
+  if (win_DC_list)
+    t->next = win_DC_list;
+  else
+    t->next = NULL;
+  win_DC_list = t;
+}
+
+void fl_release_dc(HWND w, HDC dc) {
+  Win_DC_List * t= win_DC_list;
+  Win_DC_List * prev = 0;
+  if (!t)
+    return;
+  do {
+    if (t->dc == dc) {
+      RestoreDC(dc, t->saved_dc);
+      ReleaseDC(w, dc);
+      if (!prev) {
+        win_DC_list = t->next;   // delete first item
+      } else {
+        prev->next = t->next;       // one in the middle
+      }
+      delete (t);
+      return;
+    }
+    prev = t;
+    t = t->next;
+  } while (t);
+}
+
+void fl_cleanup_dc_list(void) {          // clean up the list
+  Win_DC_List * t = win_DC_list;
+  if (!t)return;
+  do {
+    RestoreDC(t->dc, t->saved_dc);
+    ReleaseDC(t->window, t->dc);
+    win_DC_list = t->next;
+    delete (t);
+    t = win_DC_list;
+  } while(t);
+}
+
 
 //
 // End of "$Id$".

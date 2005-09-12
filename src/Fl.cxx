@@ -42,6 +42,14 @@
 #  include <stdio.h>
 #endif // DEBUG
 
+#ifdef WIN32
+#  include <ole2.h>
+void fl_free_fonts(void);
+HBRUSH fl_brush_action(int action);
+void fl_cleanup_pens(void);
+void fl_release_dc(HWND,HDC);
+void fl_cleanup_dc_list(void);
+#endif // WIN32
 
 //
 // Globals...
@@ -298,6 +306,13 @@ double Fl::wait(double time_to_wait) {
 
 int Fl::run() {
   while (Fl_X::first) wait(FOREVER);
+#ifdef WIN32
+  fl_free_fonts();        // do some WIN32 cleanup
+  fl_cleanup_pens();
+  OleUninitialize();
+  fl_brush_action(1);
+  fl_cleanup_dc_list();
+#endif
   return 0;
 }
 
@@ -836,9 +851,9 @@ void Fl_Window::hide() {
 #ifdef WIN32
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
-  if (ip->private_dc) ReleaseDC(ip->xid,ip->private_dc);
-  if (ip->xid == fl_window && fl_gc) {
-    ReleaseDC(fl_window, fl_gc);
+  if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
+   if (ip->xid == fl_window && fl_gc) {
+    fl_release_dc(fl_window, fl_gc);
     fl_window = (HWND)-1;
     fl_gc = 0;
   }
@@ -871,6 +886,9 @@ void Fl_Window::hide() {
 # if USE_XFT
   fl_destroy_xft_draw(ip->xid);
 # endif
+#ifdef WIN32
+  fl_release_dc(ip->xid, fl_gc);
+#endif
   XDestroyWindow(fl_display, ip->xid);
 #endif
   

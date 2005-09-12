@@ -69,6 +69,7 @@ void fl_line_style(int style, int width, char* dashes) {
   }
   HPEN oldpen = (HPEN)SelectObject(fl_gc, newpen);
   DeleteObject(oldpen);
+  DeleteObject(fl_current_xmap->pen);
   fl_current_xmap->pen = newpen;
 #elif defined(__APPLE_QD__)
   // QuickDraw supports pen size and pattern, but no arbitrary line styles.

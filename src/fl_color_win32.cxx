@@ -49,9 +49,14 @@ Fl_XMap fl_xmap[256];
 Fl_XMap* fl_current_xmap;
 
 HPALETTE fl_palette;
-static HPEN tmppen=0;
-static HBRUSH tmpbrush=0;
+static HGDIOBJ tmppen=0;
 static HPEN savepen=0;
+
+void fl_cleanup_pens(void) {
+  for (int i=0; i<256; i++) {
+    if (fl_xmap[i].pen) DeleteObject(fl_xmap[i].pen);
+  }
+}
 
 void fl_save_pen(void) {
     if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
@@ -60,17 +65,16 @@ void fl_save_pen(void) {
 
 void fl_restore_pen(void) {
     if (savepen) SelectObject(fl_gc, savepen);
+    DeleteObject(tmppen);
+    tmppen = 0;
     savepen = 0;
 }
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
-    if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
-    if(!tmpbrush) tmpbrush = CreateSolidBrush(0);
-    HPEN oldpen = (HPEN)SelectObject(fl_gc, tmppen); // Push out the current pen of the gc
+    HGDIOBJ tmppen = GetStockObject(BLACK_PEN);
+    HGDIOBJ oldpen = SelectObject(fl_gc, tmppen);       // Push out the current pen of the gc
     if(oldpen != xmap.pen) SelectObject(fl_gc, oldpen); // Put it back if it is not the one we are about to delete
-    SelectObject(fl_gc, tmpbrush); // Push out the old pen of the gc
-    //fl_current_xmap = 0;
     DeleteObject((HGDIOBJ)(xmap.pen));
     xmap.pen = 0;
     xmap.brush = -1;
@@ -79,7 +83,12 @@ static void clear_xmap(Fl_XMap& xmap) {
 
 static void set_xmap(Fl_XMap& xmap, COLORREF c) {
   xmap.rgb = c;
-  xmap.pen = CreatePen(PS_SOLID, 1, xmap.rgb);
+  if (xmap.pen) {
+      HGDIOBJ oldpen = SelectObject(fl_gc,GetStockObject(BLACK_PEN)); // replace current pen with safe one
+      if (oldpen != xmap.pen)SelectObject(fl_gc,oldpen);              // if old one not xmap.pen, need to put it back
+      DeleteObject(xmap.pen);                                         // delete pen
+  }
+  xmap.pen = CreatePen(PS_SOLID, 1, xmap.rgb);                        // get a pen into xmap.pen
   xmap.brush = -1;
 }
 
@@ -122,6 +131,10 @@ void fl_color(uchar r, uchar g, uchar b) {
 }
 
 HBRUSH fl_brush() {
+  return fl_brush_action(0);
+}
+
+HBRUSH fl_brush_action(int action) {
   Fl_XMap *xmap = fl_current_xmap;
   // Wonko: we use some statistics to cache only a limited number
   // of brushes:
@@ -131,6 +144,15 @@ HBRUSH fl_brush() {
     unsigned short usage;
     Fl_XMap* backref;
   } brushes[FL_N_BRUSH];
+
+  if (action) {
+    SelectObject(fl_gc, GetStockObject(BLACK_BRUSH));  // Load stock object
+    for (int i=0; i<FL_N_BRUSH; i++) {
+      if (brushes[i].brush)
+        DeleteObject(brushes[i].brush); // delete all brushes in array
+    }
+    return NULL;
+  }
 
   int i = xmap->brush; // find the associated brush
   if (i != -1) { // if the brush was allready allocated
@@ -154,7 +176,10 @@ HBRUSH fl_brush() {
       }
     }
     i = imin;
-    DeleteObject(brushes[i].brush);
+    HGDIOBJ tmpbrush = GetStockObject(BLACK_BRUSH);  // get a stock brush
+    HGDIOBJ oldbrush = SelectObject(fl_gc,tmpbrush); // load in into current context
+    if (oldbrush != brushes[i].brush) SelectObject(fl_gc,oldbrush);  // reload old one
+    DeleteObject(brushes[i].brush);      // delete the one in list
     brushes[i].brush = NULL;
     brushes[i].backref->brush = -1;
   }

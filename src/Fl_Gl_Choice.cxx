@@ -39,6 +39,10 @@
 #    include <FL/Fl_Window.H>
 #  endif
 
+#  ifdef WIN32
+void fl_save_dc(HWND, HDC);
+#  endif
+
 static Fl_Gl_Choice *first;
 
 // this assummes one of the two arguments is zero:
@@ -311,6 +315,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   HDC hdc = i->private_dc;
   if (!hdc) {
     hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
+    fl_save_dc(i->xid, hdc);
     SetPixelFormat(hdc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
 #    if USE_COLORMAP
     if (fl_palette) SelectPalette(hdc, fl_palette, FALSE);
