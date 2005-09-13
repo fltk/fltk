@@ -1291,8 +1291,14 @@ Fl_Help_View::format()
 	    xx       -= 4 * fsize;
 	    block->h += fsize + 2;
 	  }
-	  else if (strcasecmp(buf, "/TABLE") == 0)
+          else if (strcasecmp(buf, "/TABLE") == 0) 
+          {
 	    block->h += fsize + 2;
+            // the current block is *not* the table block, so the current xx is 
+            // meaningless. Set it back to page x, so the next block will be aligned 
+            // reasonably. This fails fro table-in-table html!
+            xx = 4;
+          }
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
 	    pre = 0;
