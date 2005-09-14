@@ -1095,6 +1095,38 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 
 ////////////////////////////////////////////////////////////////
 
+/*
+ * This silly little class remembers the name of all window classes 
+ * we register to avoid double registration. It has the added bonus 
+ * of freeing everything on application colse as well.
+ */
+class NameList {
+public:
+  NameList() { name = (char**)malloc(sizeof(char**)); NName = 1; nName = 0; }
+  ~NameList() { 
+    int i;
+    for (i=0; i<nName; i++) free(name[i]);
+    if (name) free(name); 
+  }
+  void add_name(const char *n) {
+    if (NName==nName) {
+      NName += 5;
+      name = (char**)realloc(name, NName * sizeof(char*));
+    }
+    name[nName++] = strdup(n);
+  }
+  char has_name(const char *n) {
+    int i;
+    for (i=0; i<nName; i++) {
+      if (strcmp(name[i], n)==0) return 1;
+    }
+    return 0;
+  }
+private:
+  char **name;
+  int nName, NName;
+};
+
 void fl_fix_focus(); // in Fl.cxx
 
 char fl_show_iconic;	// hack for Fl_Window::iconic()
@@ -1102,11 +1134,11 @@ char fl_show_iconic;	// hack for Fl_Window::iconic()
 HCURSOR fl_default_cursor;
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
-WNDCLASSEX wc;
 
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
+  static NameList class_name_list;
   static const char *first_class_name = 0L;
   const char *class_name = w->xclass();
   if (!class_name) class_name = first_class_name; // reuse first class name used
@@ -1115,40 +1147,31 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     first_class_name = class_name;
   }
 
-  const char* message_name = "FLTK::ThreadWakeup";
-
-  // Register the first (or default FLTK) class only once. 
-  // If the user creates mutiple new windows using other class names, they will
-  // be registered multiple times. This is not correct and should be fixed by
-  // keeping a list of registered window classes. Anyway, Windows is 
-  // quite forgiving here,
-  static int first_time = 1;
-  if (first_time || strcmp(class_name, first_class_name)) {
-    WNDCLASSEX lwc;
+  if (!class_name_list.has_name(class_name)) {
+    WNDCLASSEX wc;
     // Documentation states a device context consumes about 800 bytes
     // of memory... so who cares? If 800 bytes per window is what it
     // takes to speed things up, I'm game.
     //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
-    lwc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
-    lwc.lpfnWndProc = (WNDPROC)WndProc;
-    lwc.cbClsExtra = wc.cbWndExtra = 0;
-    lwc.hInstance = fl_display;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
+    wc.lpfnWndProc = (WNDPROC)WndProc;
+    wc.cbClsExtra = wc.cbWndExtra = 0;
+    wc.hInstance = fl_display;
     if (!w->icon())
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
-    lwc.hIcon = lwc.hIconSm = (HICON)w->icon();
-    lwc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hIcon = wc.hIconSm = (HICON)w->icon();
+    wc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
     //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
     //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
-    lwc.hbrBackground = NULL;
-    lwc.lpszMenuName = NULL;
-    lwc.lpszClassName = class_name;
-    lwc.cbSize = sizeof(WNDCLASSEX);
-    RegisterClassEx(&lwc);
-    if (first_time) {
-      memcpy(&wc, &lwc, lwc.cbSize);
-      first_time = 0;
-    }
+    wc.hbrBackground = NULL;
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName = class_name;
+    wc.cbSize = sizeof(WNDCLASSEX);
+    RegisterClassEx(&wc);
+    class_name_list.add_name(class_name);
   }
+
+  const char* message_name = "FLTK::ThreadWakeup";
   if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
 
   HWND parent;
