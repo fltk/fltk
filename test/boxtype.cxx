@@ -50,6 +50,7 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
 }
 
 int main(int argc, char ** argv) {
+  Fl::get_system_colors();
   window = new Fl_Single_Window(4*W,ROWS*H);
   window->box(FL_FLAT_BOX);
   window->color(12);// light blue
@@ -92,7 +93,7 @@ int main(int argc, char ** argv) {
   bt("FL_PLASTIC_THIN_DOWN_BOX",FL_PLASTIC_THIN_DOWN_BOX);
   window->resizable(window);
   window->end();
-  //window->show(argc,argv);
+  //window->show(argc,argv); // commented out, so we won't load any schemes
   window->show();
   return Fl::run();
 }

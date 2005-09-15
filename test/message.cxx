@@ -32,6 +32,7 @@
 
 int main(int, char **) {
   Fl::scheme(NULL);
+  Fl::get_system_colors();
 
   fl_message("Spelling check sucessful, %d errors found with %g%% confidence",
 	     1002, 100*(15/77.0));

@@ -38,7 +38,7 @@ void adjcb(Fl_Widget *o, void *v) {
   b->redraw();
 }
 
-int main(int, char ** argv) {
+int main(int argc, char ** argv) {
    Fl_Window window(320,100,argv[0]);
 
    char buf1[100];
@@ -57,7 +57,7 @@ int main(int, char ** argv) {
 
    window.resizable(window);
    window.end();
-   window.show();
+   window.show(argc, argv);
    return Fl::run();
 }
 
