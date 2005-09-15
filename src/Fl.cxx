@@ -862,11 +862,11 @@ void Fl_Window::hide() {
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
-   if (ip->xid == fl_window && fl_gc) {
-    fl_release_dc(fl_window, fl_gc);
-    fl_window = (HWND)-1;
-    fl_gc = 0;
-  }
+    if (ip->xid == fl_window && fl_gc) {
+      fl_release_dc(fl_window, fl_gc);
+      fl_window = (HWND)-1;
+      fl_gc = 0;
+    }
 #elif defined(__APPLE_QD__)
   if ( ip->xid == fl_window )
     fl_window = 0;
@@ -878,7 +878,9 @@ void Fl_Window::hide() {
 
   if (ip->region) XDestroyRegion(ip->region);
 
-#ifdef __APPLE_QD__
+#ifdef WIN32
+  XDestroyWindow(fl_display, ip->xid);
+#elif defined(__APPLE_QD__)
   if ( !parent() ) // don't destroy shared windows!
   {
     //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
@@ -896,9 +898,6 @@ void Fl_Window::hide() {
 # if USE_XFT
   fl_destroy_xft_draw(ip->xid);
 # endif
-#ifdef WIN32
-  fl_release_dc(ip->xid, fl_gc);
-#endif
   XDestroyWindow(fl_display, ip->xid);
 #endif
   

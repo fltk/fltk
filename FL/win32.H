@@ -123,6 +123,7 @@ typedef HBITMAP Fl_Offscreen;
 #define fl_create_offscreen(w, h) CreateCompatibleBitmap(fl_gc, w, h)
 
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
+
 #define fl_begin_offscreen(b) \
   HDC _sgc=fl_gc; Window _sw=fl_window; \
   fl_gc=fl_makeDC(b); int _savedc = SaveDC(fl_gc); fl_window=(HWND)b; fl_push_no_clip()
