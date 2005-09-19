@@ -74,10 +74,10 @@ int Fl_Input::shift_up_down_position(int p) {
 // of a decimal point). For back compatibility reasons, we always 
 // allow the decimal point.
 #ifdef HAVE_LOCALECONV
-static char *standard_fp_chars = ".eE+-"; 
-static char *legal_fp_chars = 0L;
+static const char *standard_fp_chars = ".eE+-"; 
+static const char *legal_fp_chars = 0L;
 #else
-static char *legal_fp_chars = ".eE+-"; 
+static const char *legal_fp_chars = ".eE+-"; 
 #endif
 
 int Fl_Input::handle_key() {
@@ -106,16 +106,17 @@ int Fl_Input::handle_key() {
         }
         // the following line is not a true memory leak because the array is only
         // allocated once if required, and automatically freed when the program quits
-        legal_fp_chars = (char*)malloc(len+1);
-        strcpy(legal_fp_chars, standard_fp_chars);
+        char *chars = (char*)malloc(len+1);
+	legal_fp_chars = chars;
+        strcpy(chars, standard_fp_chars);
         if (lc) {
-          if (lc->decimal_point) strcat(legal_fp_chars, lc->decimal_point);
-          if (lc->mon_decimal_point) strcat(legal_fp_chars, lc->mon_decimal_point);
-          if (lc->positive_sign) strcat(legal_fp_chars, lc->positive_sign);
-          if (lc->negative_sign) strcat(legal_fp_chars, lc->negative_sign);
+          if (lc->decimal_point) strcat(chars, lc->decimal_point);
+          if (lc->mon_decimal_point) strcat(chars, lc->mon_decimal_point);
+          if (lc->positive_sign) strcat(chars, lc->positive_sign);
+          if (lc->negative_sign) strcat(chars, lc->negative_sign);
         }
       }
-#endif
+#endif // HAVE_LOCALECONV
 
       // This is complex to allow "0xff12" hex to be typed:
       if (!position() && (ascii == '+' || ascii == '-') ||
