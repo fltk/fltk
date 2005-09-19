@@ -1111,9 +1111,9 @@ char Fl_Preferences::Node::remove()
 	break;
       }
     }
+    parent_->dirty_ = 1;
   }
   delete this;
-  dirty_ = 1;
   return ( nd != 0 );
 }
 
