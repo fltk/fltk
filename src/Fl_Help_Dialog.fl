@@ -77,7 +77,7 @@ else if (view_->filename())
 {
   strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
   line_[index_] = view_->topline();
-}} open selected
+}} open
         private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
         code0 {\#include <FL/Fl_Help_View.H>}
         class Fl_Help_View
@@ -152,8 +152,8 @@ smaller_->activate();}
         } {
           Fl_Input find_ {
             label {@search}
-            callback {find_pos_ = view_->find(find_->value(), find_pos_);}
-            private tooltip {find text in document} xywh {35 352 268 21} box NO_BOX labelsize 13 when 10 resizable
+            callback {find_pos_ = view_->find(find_->value(), find_pos_);} selected
+            private tooltip {find text in document} xywh {35 352 268 21} box FLAT_BOX labelsize 13 when 10 resizable
           }
         }
       }

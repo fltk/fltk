@@ -197,7 +197,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
         o->color(FL_BACKGROUND2_COLOR);
         { Fl_Input* o = find_ = new Fl_Input(35, 352, 268, 21, "@search");
           o->tooltip("find text in document");
-          o->box(FL_NO_BOX);
+          o->box(FL_FLAT_BOX);
           o->labelsize(13);
           o->callback((Fl_Callback*)cb_find_);
           o->when(FL_WHEN_ENTER_KEY_ALWAYS);
