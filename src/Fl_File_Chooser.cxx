@@ -185,7 +185,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       }
       o->end();
     }
-    { Fl_Tile* o = new Fl_Tile(10, 45, 470, 225);
+    { Fl_Tile* o = new Fl_Tile(10, 45, 471, 225);
       o->callback((Fl_Callback*)cb_);
       { Fl_File_Browser* o = fileList = new Fl_File_Browser(10, 45, 295, 225);
         o->type(2);
@@ -284,6 +284,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     }
     favWindow->label(manage_favorites_label);
     o->set_modal();
+    o->size_range(181, 150);
     o->end();
   }
   callback_ = 0;

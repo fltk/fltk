@@ -208,6 +208,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       }
       o->end();
     }
+    o->size_range(260, 150);
     o->end();
   }
   back_->deactivate();

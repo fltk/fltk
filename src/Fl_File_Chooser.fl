@@ -90,7 +90,7 @@ window->hide();} open
       }
       Fl_Tile {} {
         callback {update_preview();}
-        private xywh {10 45 470 225} resizable
+        private xywh {10 45 471 225} resizable
       } {
         Fl_File_Browser fileList {
           callback {fileListCB();}
@@ -98,7 +98,7 @@ window->hide();} open
           code0 {\#include <FL/Fl_File_Browser.H>}
         }
         Fl_Box previewBox {
-          label {?}
+          label {?} selected
           private xywh {305 45 175 225} box DOWN_BOX labelsize 100 align 80
         }
       }
@@ -159,8 +159,8 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {580 50 355 150} type Double hide resizable
-      code0 {favWindow->label(manage_favorites_label);} modal
+      private xywh {580 50 355 150} type Double resizable
+      code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0} visible
     } {
       Fl_File_Browser favList {
         callback {favoritesCB(favList);}
@@ -356,12 +356,11 @@ else
   } {
     code {return (type_);} {}
   }
-  Function {user_data() const} {selected return_type {void *}
+  Function {user_data() const} {return_type {void *}
   } {
-    code {return (data_);} {selected
-    }
+    code {return (data_);} {}
   }
-  Function {user_data(void *d)} {selected return_type void
+  Function {user_data(void *d)} {return_type void
   } {
     code {data_ = d;} {}
   }

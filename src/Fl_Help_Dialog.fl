@@ -45,8 +45,8 @@ class FL_EXPORT Fl_Help_Dialog {open
   Function {Fl_Help_Dialog()} {open
   } {
     Fl_Window window_ {
-      label {Help Dialog} open
-      private xywh {398 65 530 385} type Double resizable visible
+      label {Help Dialog} open selected
+      private xywh {398 65 530 385} type Double resizable size_range {260 150 0 0} visible
     } {
       Fl_Group view_ {
         callback {if (view_->changed())
@@ -152,7 +152,7 @@ smaller_->activate();}
         } {
           Fl_Input find_ {
             label {@search}
-            callback {find_pos_ = view_->find(find_->value(), find_pos_);} selected
+            callback {find_pos_ = view_->find(find_->value(), find_pos_);}
             private tooltip {find text in document} xywh {35 352 268 21} box FLAT_BOX labelsize 13 when 10 resizable
           }
         }
