@@ -1314,12 +1314,15 @@ void min_w_cb(Fl_Value_Input* i, void* v) {
     i->parent()->show();
     i->value(((Fl_Window_Type*)current_widget)->sr_min_w);
   } else {
+    int mod = 0;
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_min_w = n;
+        mod = 1;
       }
     }
+    if (mod) set_modflag(1);
   }
 }
 
@@ -1327,12 +1330,15 @@ void min_h_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     i->value(((Fl_Window_Type*)current_widget)->sr_min_h);
   } else {
+    int mod = 0;
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_min_h = n;
+        mod = 1;
       }
     }
+    if (mod) set_modflag(1);
   }
 }
 
@@ -1340,12 +1346,15 @@ void max_w_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     i->value(((Fl_Window_Type*)current_widget)->sr_max_w);
   } else {
+    int mod = 0;
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_max_w = n;
+        mod = 1;
       }
     }
+    if (mod) set_modflag(1);
   }
 }
 
@@ -1353,40 +1362,49 @@ void max_h_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
     i->value(((Fl_Window_Type*)current_widget)->sr_max_h);
   } else {
+    int mod = 0;
     int n = (int)i->value();
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         ((Fl_Window_Type*)current_widget)->sr_max_h = n;
+        mod = 1;
       }
     }
+    if (mod) set_modflag(1);
   }
 }
 
 void set_min_size_cb(Fl_Button*, void* v) {
   if (v == LOAD) {
   } else {
+    int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         Fl_Window_Type *win = (Fl_Window_Type*)current_widget;
         win->sr_min_w = win->o->w();
         win->sr_min_h = win->o->h();
+        mod = 1;
       }
     }
     propagate_load(the_panel, LOAD);
+    if (mod) set_modflag(1);
   }
 }
 
 void set_max_size_cb(Fl_Button*, void* v) {
   if (v == LOAD) {
   } else {
+    int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_window()) {
         Fl_Window_Type *win = (Fl_Window_Type*)current_widget;
         win->sr_max_w = win->o->w();
         win->sr_max_h = win->o->h();
+        mod = 1;
       }
     }
     propagate_load(the_panel, LOAD);
+    if (mod) set_modflag(1);
   }
 }
 
