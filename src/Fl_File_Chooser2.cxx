@@ -943,7 +943,7 @@ Fl_File_Chooser::update_preview()
 
   if (!previewButton->value()) return;
 
-  if ((filename = value()) == NULL) image = NULL;
+  if ((filename = value()) == NULL || fl_filename_isdir(filename)) image = NULL;
   else {
     window->cursor(FL_CURSOR_WAIT);
     Fl::check();
