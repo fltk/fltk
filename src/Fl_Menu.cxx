@@ -306,8 +306,24 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0)
     Y = Y+(Hp-itemheight)/2-selected*itemheight-BW;
-  else
+  else {
     Y = Y+Hp;
+    // if the menu hits the bottom of the screen, we try to draw
+    // it above the menubar instead. We will not adjust any menu
+    // that has a selected item.
+    if (Y+h()>scr_y+scr_h && Y-h()>=scr_y) {
+      if (Hp>1) 
+        // if we know the height of the Fl_Menu_, use it
+        Y = Y-Hp-h();
+      else if (t)
+        // assume that the menubar item height relates to the first
+        // menuitem as well
+        Y = Y-itemheight-h()-Fl::box_dh(box());
+      else
+        // draw the menu to the right
+        Y = Y-h()+itemheight+Fl::box_dy(box());
+    }
+  }
   if (m) y(Y); else {y(Y-2); w(1); h(1);}
 
   if (t) {
