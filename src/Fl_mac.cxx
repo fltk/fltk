@@ -420,8 +420,8 @@ void Fl::remove_fd(int n)
  */
 int fl_ready()
 {
-  if (GetNumEventsInQueue(GetCurrentEventQueue()) > 0) return 1;
-  return 0;
+  EventRef event;
+  return !ReceiveNextEvent(0, NULL, 0.0, false, &event);
 }
 
 /**
@@ -543,25 +543,12 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
   }
   if ( ret == eventNotHandledErr )
     ret = CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
-  QuitApplicationEventLoop();
 
   fl_unlock_function();
 
   return ret;
 }
 
-
-/**
- * this callback simply quits the main event loop handler, so FLTK can do its magic
- */
-static pascal void timerProcCB( EventLoopTimerRef, void* )
-{
-  fl_lock_function();
-
-  QuitApplicationEventLoop();
-
-  fl_unlock_function();
-}
 
 /**
  * break the current event loop
@@ -601,7 +588,6 @@ static double do_queued_events( double time = 0.0 )
   }
   OSStatus ret;
   static EventTargetRef target = 0;
-  static EventLoopTimerRef timer = 0;
   if ( !target ) 
   {
     target = GetEventDispatcherTarget();
@@ -628,7 +614,6 @@ static double do_queued_events( double time = 0.0 )
     static EventTypeSpec appEvents[] = {
         { kEventClassCommand, kEventCommandProcess } };
     ret = InstallApplicationEventHandler( dispatchHandler, GetEventTypeCount(appEvents), appEvents, 0, 0L );
-    ret = InstallEventLoopTimer( GetMainEventLoop(), 0, 0, NewEventLoopTimerUPP( timerProcCB ), 0, &timer );
   }
 
   got_events = 0;
@@ -643,10 +628,13 @@ static double do_queued_events( double time = 0.0 )
 
   fl_unlock_function();
 
-  SetEventLoopTimerNextFireTime( timer, time );
-  RunApplicationEventLoop(); // will return after the previously set time
-  if ( dataready.IsThreadRunning() )
-    { dataready.CancelThread(DEBUGTEXT("APPEVENTLOOP DONE\n")); }
+  EventRef event;
+  EventTimeout timeout = time;
+  if (!ReceiveNextEvent(0, NULL, timeout, true, &event)) {
+    got_events = 1;
+    SendEventToEventTarget( event, target );
+    ReleaseEvent( event );
+  }
 
   fl_lock_function();
 
@@ -691,7 +679,6 @@ static OSErr QuitAppleEventHandler( const AppleEvent *appleEvt, AppleEvent* repl
       return noErr; // FLTK has not close all windows, so we return to the main program now
     }
   }
-  QuitApplicationEventLoop();
 
   fl_unlock_function();
 
