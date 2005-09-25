@@ -32,34 +32,43 @@
 #include <FL/fl_ask.H>
 
 void Fl_Help_Dialog::cb_view__i(Fl_Help_View*, void*) {
+  if (view_->filename())
+{
   if (view_->changed())
-{
-  index_ ++;
-
-  if (index_ >= 100)
   {
-    memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
-    memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
-    index_ -= 10;
+    index_ ++;
+
+    if (index_ >= 100)
+    {
+      memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
+      memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
+      index_ -= 10;
+    }
+
+    max_ = index_;
+
+    strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+    line_[index_] = view_->topline();
+
+    if (index_ > 0)
+      back_->activate();
+    else
+      back_->deactivate();
+
+    forward_->deactivate();
+    window_->label(view_->title());
   }
-
-  max_ = index_;
-
-  strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+  else // if ! view_->changed()
+  {
+    strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
+    line_[index_] = view_->topline();
+  }
+} else { // if ! view_->filename()
+  index_ = 0; // hitting an internal page will disable the back/fwd buffer
+  file_[index_][0] = 0; // unnamed internal page
   line_[index_] = view_->topline();
-
-  if (index_ > 0)
-    back_->activate();
-  else
-    back_->deactivate();
-
+  back_->deactivate();
   forward_->deactivate();
-  window_->label(view_->title());
-}
-else if (view_->filename())
-{
-  strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
-  line_[index_] = view_->topline();
 };
 }
 void Fl_Help_Dialog::cb_view_(Fl_Help_View* o, void* v) {
@@ -279,6 +288,16 @@ void Fl_Help_Dialog::topline(const char *n) {
 
 void Fl_Help_Dialog::topline(int n) {
   view_->topline(n);
+}
+
+void Fl_Help_Dialog::value(const char *f) {
+  view_->set_changed();
+view_->value(f);
+window_->label(view_->title());
+}
+
+const char * Fl_Help_Dialog::value() const {
+  return view_->value();
 }
 
 int Fl_Help_Dialog::visible() {

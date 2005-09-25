@@ -79,6 +79,8 @@ public:
   uchar textsize();
   void topline(const char *n);
   void topline(int n);
+  void value(const char *f);
+  const char * value() const;
   int visible();
   int w();
   int x();

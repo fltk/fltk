@@ -42,41 +42,49 @@ class FL_EXPORT Fl_Help_Dialog {open
   decl {int line_[100];} {}
   decl {char file_[100][256];} {}
   decl {int find_pos_;} {}
-  Function {Fl_Help_Dialog()} {open
-  } {
+  Function {Fl_Help_Dialog()} {} {
     Fl_Window window_ {
-      label {Help Dialog} open selected
+      label {Help Dialog} open
       private xywh {398 65 530 385} type Double resizable size_range {260 150 0 0} visible
     } {
       Fl_Group view_ {
-        callback {if (view_->changed())
+        callback {if (view_->filename())
 {
-  index_ ++;
-
-  if (index_ >= 100)
+  if (view_->changed())
   {
-    memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
-    memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
-    index_ -= 10;
+    index_ ++;
+
+    if (index_ >= 100)
+    {
+      memmove(line_, line_ + 10, sizeof(line_[0]) * 90);
+      memmove(file_, file_ + 10, sizeof(file_[0]) * 90);
+      index_ -= 10;
+    }
+
+    max_ = index_;
+
+    strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+    line_[index_] = view_->topline();
+
+    if (index_ > 0)
+      back_->activate();
+    else
+      back_->deactivate();
+
+    forward_->deactivate();
+    window_->label(view_->title());
   }
-
-  max_ = index_;
-
-  strlcpy(file_[index_], view_->filename(),sizeof(file_[0]));
+  else // if ! view_->changed()
+  {
+    strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
+    line_[index_] = view_->topline();
+  }
+} else { // if ! view_->filename()
+  index_ = 0; // hitting an internal page will disable the back/fwd buffer
+  file_[index_][0] = 0; // unnamed internal page
   line_[index_] = view_->topline();
-
-  if (index_ > 0)
-    back_->activate();
-  else
-    back_->deactivate();
-
+  back_->deactivate();
   forward_->deactivate();
-  window_->label(view_->title());
-}
-else if (view_->filename())
-{
-  strlcpy(file_[index_], view_->filename(), sizeof(file_[0]));
-  line_[index_] = view_->topline();
 }} open
         private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
         code0 {\#include <FL/Fl_Help_View.H>}
@@ -225,6 +233,16 @@ else
   Function {topline(int n)} {return_type void
   } {
     code {view_->topline(n);} {}
+  }
+  Function {value(const char *f)} {return_type void
+  } {
+    code {view_->set_changed();
+view_->value(f);
+window_->label(view_->title());} {}
+  }
+  Function {value() const} {selected return_type {const char *}
+  } {
+    code {return view_->value();} {}
   }
   Function {visible()} {return_type int
   } {
