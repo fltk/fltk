@@ -230,6 +230,10 @@ static int n_iso_buf = 0;
 
 // this function must be available for OpenGL character drawing as well
 const char *fl_iso2macRoman(const char *s, int n) {
+  // do not do a text lookup for 'Symbol' or 'WebDings'. This fails
+  // if the user assigns a new font to these numbers though.
+  if (fl_font_ == 12 || fl_font_ == 15)
+    return s;
   if (n>n_iso_buf) {
     if (iso_buf) free(iso_buf);
     iso_buf = (char*)malloc(n+500);
