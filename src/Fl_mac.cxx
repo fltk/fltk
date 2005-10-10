@@ -632,7 +632,17 @@ static double do_queued_events( double time = 0.0 )
   EventTimeout timeout = time;
   if (!ReceiveNextEvent(0, NULL, timeout, true, &event)) {
     got_events = 1;
-    SendEventToEventTarget( event, target );
+    OSErr ret = SendEventToEventTarget( event, target );
+    if (   ret==eventNotHandledErr
+        && GetEventClass(event)==kEventClassMouse
+        && GetEventKind(event)==kEventMouseDown ) {
+      WindowRef win; Point pos;
+      GetEventParameter(event, kEventParamMouseLocation, typeQDPoint,
+        NULL, sizeof(pos), NULL, &pos);
+      if (MacFindWindow(pos, &win)==inMenuBar) {
+        MenuSelect(pos);
+      }
+    }
     ReleaseEvent( event );
   }
 
