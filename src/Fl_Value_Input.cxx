@@ -71,7 +71,7 @@ void Fl_Value_Input::value_damage() {
 int Fl_Value_Input::handle(int event) {
   double v;
   int delta;
-  int mx = Fl::event_x();
+  int mx = Fl::event_x_root();
   static int ix, drag;
   input.when(when());
   switch (event) {
@@ -83,7 +83,7 @@ int Fl_Value_Input::handle(int event) {
     return 1;
   case FL_DRAG:
     if (!step()) goto DEFAULT;
-    delta = Fl::event_x()-ix;
+    delta = mx-ix;
     if (delta > 5) delta -= 5;
     else if (delta < -5) delta += 5;
     else delta = 0;

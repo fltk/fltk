@@ -3,19 +3,25 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
-	- Menus now pop up fully inside the screen if possible (STR #973)
-	- Fixed illegal acces in Preferenes (STR #1025)
+	- Fl_Value_Input now uses the screen-absolute position
+	  instead of the window-relative position when dragging
+	  the value; this avoids some jumping conditions (STR
+	  #1037)
+	- Menus now pop up fully inside the screen if possible
+	  (STR #973)
+	- Fixed illegal access in Preferences (STR #1025)
 	- Fixed x-offset problem in Help_Widget (STR #998)
-	- Clipboard will persist if owner window is hidden (STR #1019)
+	- Clipboard will persist if owner window is hidden (STR
+	  #1019)
 	- Fixed handling of Win32 Device Contexts (STR #1007)
-	- Fixed C Plus Plus style comments in C files (STR #997)
-	- Fixed signednes of scanf argument (STR #996)
-	- Fixed cross-compiling (host: *-linux-* , target: *-mingw32) 
-	  problem. Patch provided by Amir Shalem <amir@boom.org.il> in (STR #995) .
-	- FLUID now knows if a static callback is already declared
-	  in a class and won't declare it 'extern' (STR #776)
-	- Some actions in FLUID would not set the 
-	  "changed" flag (STR #984, STR #999)
+	- Fixed C++ style comments in C files (STR #997)
+	- Fixed signedness of scanf() argument (STR #996)
+	- Fixed cross-compiling problem (STR #995).
+	- FLUID now knows if a static callback is already
+	  declared in a class and won't declare it 'extern' (STR
+	  #776)
+	- Some actions in FLUID would not set the  "changed" flag
+	  (STR #984, STR #999)
 	- fl_filename_list now always appends a forward slash to
 	  directory names (STR #874)
 	- Multiline Input will update right if a space character is
@@ -24,8 +30,8 @@ CHANGES IN FLTK 1.1.7
 	- FLUID now updates color of Fl_Tabs children (STR #979)
 	- FLUID now supports 'size_range()' (STR #851)
 	- FLUID selection boxes now synchronised (STR #964)
-	- fl_filename_list now recognizes pathnames without trailing 
-	  slash as directions (STR #854)
+	- fl_filename_list() now recognizes pathnames without
+	  trailing  slash as directions (STR #854)
 	- Fl_Text_Display now auto-scrolls in all 
 	  directions (STR #915)
 	- Borderless windows will not show in the taskbar anymore
