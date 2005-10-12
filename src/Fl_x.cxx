@@ -26,9 +26,9 @@
 //
 
 #ifdef WIN32
-#  include "Fl_win32.cxx"
+//#  include "Fl_win32.cxx"
 #elif defined(__APPLE__)
-#  include "Fl_mac.cxx"
+//#  include "Fl_mac.cxx"
 #else
 
 #  define CONSOLIDATE_MOTION 1

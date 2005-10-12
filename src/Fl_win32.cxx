@@ -222,7 +222,6 @@ MSG fl_msg;
 // it returns 1.
 int fl_wait(double time_to_wait) {
   int have_message = 0;
-  int timerid;
 
 #ifndef USE_ASYNC_SELECT
   if (nfds) {
@@ -260,52 +259,48 @@ int fl_wait(double time_to_wait) {
 
   fl_unlock_function();
 
-  if (time_to_wait < 2147483.648) {
-    // Perform the requested timeout...
-    have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
-    if (!have_message) {
-      int t = (int)(time_to_wait * 1000.0 + .5);
-      if (t <= 0) { // too short to measure
-        fl_lock_function();
-	return 0;
-      }
-      timerid = SetTimer(NULL, 0, t, NULL);
-      have_message = GetMessage(&fl_msg, NULL, 0, 0);
-      KillTimer(NULL, timerid);
-    }
-  } else {
-    // make sure that we don't lock up if there are no more windows
-    // that could receive messages, but still handle pending messages.
-    if (!Fl_X::first)
-      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
-    else
-      have_message = GetMessage(&fl_msg, NULL, 0, 0);
-  }
+  time_to_wait = (time_to_wait > 10000 ? 10000 : time_to_wait);
+  int t_msec = (int) (time_to_wait * 1000.0 + 0.5);
+  int ret_val = MsgWaitForMultipleObjects(0, NULL, FALSE, t_msec, QS_ALLINPUT);
 
   fl_lock_function();
 
   // Execute the message we got, and all other pending messages:
-  while (have_message) {
+  have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+  if (have_message > 0) {
+    while (have_message != 0 && have_message != -1) {
 #ifdef USE_ASYNC_SELECT
-    if (fl_msg.message == WM_FLSELECT) {
-      // Got notification for socket
-      for (int i = 0; i < nfds; i ++)
-        if (fd[i].fd == (int)fl_msg.wParam) {
-	  (fd[i].cb)(fd[i].fd, fd[i].arg);
-	  break;
-	}
-      // looks like it is best to do the dispatch-message anyway:
-    }
+      if (fl_msg.message == WM_FLSELECT) {
+	// Got notification for socket
+	for (int i = 0; i < nfds; i ++)
+          if (fd[i].fd == (int)fl_msg.wParam) {
+	    (fd[i].cb)(fd[i].fd, fd[i].arg);
+	    break;
+	  }
+	// looks like it is best to do the dispatch-message anyway:
+      }
 #endif
 
-    if (fl_msg.message == fl_wake_msg)  // Used for awaking wait() from another thread
-      thread_message_ = (void*)fl_msg.wParam;
+      if (fl_msg.message == fl_wake_msg)  // Used for awaking wait() from another thread
+	thread_message_ = (void*)fl_msg.wParam;
 
-    TranslateMessage(&fl_msg);
-    DispatchMessage(&fl_msg);
-    have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+      TranslateMessage(&fl_msg);
+      DispatchMessage(&fl_msg);
+      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+    }
+    Fl::flush();
   }
 
+  // idle processing
+  static char in_idle;
+  if (Fl::idle && !in_idle) {
+    in_idle = 1;
+    Fl::idle();
+    in_idle = 0;
+  }
+
+  run_checks();
+  
   // This should return 0 if only timer events were handled:
   return 1;
 }
@@ -619,6 +614,45 @@ static int ms2fltk(int vk, int extended) {
 extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 #endif
 
+
+/////////////////////////////////////////////////////////////////////////////
+/// Win32 timers
+///
+
+struct Win32Timer
+{
+    UINT_PTR handle;
+    Fl_Timeout_Handler callback;
+    void *data;
+};
+static Win32Timer* win32_timers;
+static int win32_timer_alloc;
+static int win32_timer_used;
+static HWND s_TimerWnd;
+
+static void realloc_timers()
+{
+    if (win32_timer_alloc == 0) {
+        win32_timer_alloc = 8;
+    }
+    size_t size = sizeof(Win32Timer);
+    Win32Timer* new_timers = new Win32Timer[win32_timer_alloc * 2];
+    memmove(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
+    Win32Timer* delete_me = win32_timers;
+    win32_timers = new_timers;
+    delete [] delete_me;
+    win32_timer_alloc *= 2;
+}
+
+static void delete_timer(Win32Timer& t)
+{
+    KillTimer(s_TimerWnd, t.handle);
+    memset(&t, 0, sizeof(Win32Timer));
+}
+
+/// END TIMERS
+/////////////////////////////////////////////////////////////////////////////
+
 static Fl_Window* resize_bug_fix;
 
 extern void fl_save_pen(void);
@@ -646,6 +680,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_CLOSE: // user clicked close box
     Fl::handle(FL_CLOSE, window);
+    PostQuitMessage(0);
     return 0;
 
   case WM_SYNCPAINT :
@@ -1149,13 +1184,14 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   if (!class_name_list.has_name(class_name)) {
     WNDCLASSEX wc;
+    memset(&wc, 0, sizeof(wc));
+    wc.cbSize = sizeof(WNDCLASSEX);
     // Documentation states a device context consumes about 800 bytes
     // of memory... so who cares? If 800 bytes per window is what it
     // takes to speed things up, I'm game.
     //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
     wc.lpfnWndProc = (WNDPROC)WndProc;
-    wc.cbClsExtra = wc.cbWndExtra = 0;
     wc.hInstance = fl_display;
     if (!w->icon())
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
@@ -1163,10 +1199,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
     //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
     //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName = NULL;
     wc.lpszClassName = class_name;
-    wc.cbSize = sizeof(WNDCLASSEX);
     RegisterClassEx(&wc);
     class_name_list.add_name(class_name);
   }
@@ -1284,6 +1317,115 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
 }
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+/// Win32 timers
+///
+
+
+static LRESULT CALLBACK s_TimerProc(HWND hwnd, UINT msg,
+                                    WPARAM wParam, LPARAM lParam)
+{
+    switch (msg) {
+    case WM_TIMER:
+        {
+            unsigned int id = wParam - 1;
+            if (id < win32_timer_used && win32_timers[id].handle) {
+                Fl_Timeout_Handler cb   = win32_timers[id].callback;
+                void*              data = win32_timers[id].data;
+                delete_timer(win32_timers[id]);
+                if (cb) {
+                    (*cb)(data);
+                }
+            }
+        }
+        return 0;
+
+    default:
+        break;
+    }
+
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
+{
+    repeat_timeout(time, cb, data);
+}
+
+void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
+{
+    int timer_id = -1;
+    for (int i = 0;  i < win32_timer_used;  ++i) {
+        if ( !win32_timers[i].handle ) {
+            timer_id = i;
+            break;
+        }
+    }
+    if (timer_id == -1) {
+        if (win32_timer_used == win32_timer_alloc) {
+            realloc_timers();
+        }
+        timer_id = win32_timer_used++;
+    }
+    unsigned int elapsed = (unsigned int)(time * 1000);
+
+    if ( !s_TimerWnd ) {
+        const char* timer_class = "FLTimer";
+        WNDCLASSEX wc;
+        memset(&wc, 0, sizeof(wc));
+        wc.cbSize = sizeof (wc);
+        wc.style = CS_CLASSDC;
+        wc.lpfnWndProc = (WNDPROC)s_TimerProc;
+        wc.hInstance = fl_display;
+        wc.lpszClassName = timer_class;
+        ATOM atom = RegisterClassEx(&wc);
+
+        s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
+                                    timer_class, "",
+                                    WS_POPUP,
+                                    CW_USEDEFAULT, CW_USEDEFAULT, 1, 1,
+                                    NULL, NULL, fl_display, NULL);
+        ShowWindow(s_TimerWnd, SW_SHOWNOACTIVATE);
+    }
+
+    win32_timers[timer_id].callback = cb;
+    win32_timers[timer_id].data     = data;
+
+    win32_timers[timer_id].handle =
+        SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
+}
+
+int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
+{
+    for (int i = 0;  i < win32_timer_used;  ++i) {
+        Win32Timer& t = win32_timers[i];
+        if (t.handle  &&  t.callback == cb  &&  t.data == data) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
+{
+    int i;
+    for (i = 0;  i < win32_timer_used;  ++i) {
+        Win32Timer& t = win32_timers[i];
+        if (t.handle  &&  t.callback == cb  &&
+            (t.data == data  ||  data == NULL)) {
+            delete_timer(t);
+        }
+    }
+}
+
+/// END TIMERS
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 ////////////////////////////////////////////////////////////////
 

@@ -35,6 +35,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Tooltip.H>
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -104,6 +105,124 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   return (mx >= 0 && mx < o->w() && my >= 0 && my < o->h());
 }
 
+//
+//
+// timer support
+//
+
+#ifdef WIN32
+
+/// implementation in Fl_win32.cxx
+
+#elif defined(__APPLE__)
+
+//
+// MacOS X timers
+//
+
+struct MacTimeout {
+    Fl_Timeout_Handler callback;
+    void* data;
+    EventLoopTimerRef timer;
+};
+static MacTimeout* mac_timers;
+static int mac_timer_alloc;
+static int mac_timer_used;
+
+
+static void realloc_timers()
+{
+    if (mac_timer_alloc == 0) {
+        mac_timer_alloc = 8;
+    }
+    MacTimeout* new_timers = new MacTimeout[mac_timer_alloc * 2];
+    memmove(new_timers, mac_timers, sizeof(MacTimeout) * mac_timer_used);
+    MacTimeout* delete_me = mac_timers;
+    mac_timers = new_timers;
+    delete [] delete_me;
+    mac_timer_alloc *= 2;
+}
+
+static void delete_timer(MacTimeout& t)
+{
+    RemoveEventLoopTimer(t.timer);
+    memset(&t, 0, sizeof(MacTimeout));
+}
+
+
+static pascal void do_timer(EventLoopTimerRef timer, void* data)
+{
+   for (int i = 0;  i < mac_timer_used;  ++i) {
+        MacTimeout& t = mac_timers[i];
+        if (t.timer == timer  &&  t.data == data) {
+            return (*t.callback)(data);
+        }
+    }
+}
+
+
+void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
+{
+    int timer_id = -1;
+    for (int i = 0;  i < mac_timer_used;  ++i) {
+        if ( !mac_timers[i].timer ) {
+            timer_id = i;
+            break;
+        }
+    }
+    if (timer_id == -1) {
+        if (mac_timer_used == mac_timer_alloc) {
+            realloc_timers();
+        }
+        timer_id = mac_timer_used++;
+    }
+    
+    EventTimerInterval fireDelay = (EventTimerInterval) time;
+    EventLoopTimerUPP  timerUPP = NewEventLoopTimerUPP(do_timer);
+    EventLoopTimerRef  timerRef;
+    OSStatus err = InstallEventLoopTimer(GetMainEventLoop(), fireDelay, 0, timerUPP, data, &timerRef);
+    if (err == noErr) {
+        mac_timers[timer_id].callback = cb;
+        mac_timers[timer_id].data     = data;
+        mac_timers[timer_id].timer    = timerRef;
+    }
+}
+
+void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
+{
+    remove_timeout(cb, data);
+    add_timeout(time, cb, data);
+}
+
+int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
+{
+   for (int i = 0;  i < mac_timer_used;  ++i) {
+        MacTimeout& t = mac_timers[i];
+        if (t.callback == cb  &&  t.data == data) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
+{
+   for (int i = 0;  i < mac_timer_used;  ++i) {
+        MacTimeout& t = mac_timers[i];
+        if (t.callback == cb  && ( t.data == data || data == NULL)) {
+            delete_timer(t);
+        }
+    }
+}
+
+
+#else
+
+//
+// X11 timers
+//
+
+
 ////////////////////////////////////////////////////////////////
 // Timeouts are stored in a sorted list, so only the first one needs
 // to be checked to see if any should be called.
@@ -115,10 +234,9 @@ struct Timeout {
   Timeout* next;
 };
 static Timeout* first_timeout, *free_timeout;
+static int first_timeout_count, free_timeout_count;
 
-#ifndef WIN32
-#  include <sys/time.h>
-#endif
+#include <sys/time.h>
 
 // I avoid the overhead of getting the current time when we have no
 // timeouts by setting this flag instead of getting the time.
@@ -127,12 +245,6 @@ static Timeout* first_timeout, *free_timeout;
 static char reset_clock = 1;
 
 static void elapse_timeouts() {
-#ifdef WIN32
-  unsigned long newclock = GetTickCount();
-  static unsigned long prevclock;
-  double elapsed = (newclock-prevclock)/1000.0;
-  prevclock = newclock;
-#else
   static struct timeval prevclock;
   struct timeval newclock;
   gettimeofday(&newclock, NULL);
@@ -140,7 +252,6 @@ static void elapse_timeouts() {
     (newclock.tv_usec - prevclock.tv_usec)/1000000.0;
   prevclock.tv_sec = newclock.tv_sec;
   prevclock.tv_usec = newclock.tv_usec;
-#endif
   if (reset_clock) {
     reset_clock = 0;
   } else if (elapsed > 0) {
@@ -162,8 +273,12 @@ void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   time += missed_timeout_by; if (time < -.05) time = 0;
   Timeout* t = free_timeout;
-  if (t) free_timeout = t->next;
-  else t = new Timeout;
+  if (t) {
+      free_timeout = t->next;
+      --free_timeout_count;
+  } else {
+      t = new Timeout;
+  }
   t->time = time;
   t->cb = cb;
   t->arg = argp;
@@ -195,6 +310,8 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
   }
 }
 
+#endif
+
 ////////////////////////////////////////////////////////////////
 // Checks are just stored in a list. They are called in the reverse
 // order that they were added (this may change in the future).
@@ -208,7 +325,7 @@ struct Check {
   void* arg;
   Check* next;
 };
-static Check* first_check, *next_check, *free_check;
+static Check *first_check, *next_check, *free_check;
 
 void Fl::add_check(Fl_Timeout_Handler cb, void *argp) {
   Check* t = free_check;
@@ -235,6 +352,20 @@ void Fl::remove_check(Fl_Timeout_Handler cb, void *argp) {
   }
 }
 
+static void run_checks()
+{
+  // checks are a bit messy so that add/remove and wait may be called
+  // from inside them without causing an infinite loop:
+  if (next_check == first_check) {
+    while (next_check) {
+      Check* checkp = next_check;
+      next_check = checkp->next;
+      (checkp->cb)(checkp->arg);
+    }
+    next_check = first_check;
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 // wait/run/check/ready:
 
@@ -249,6 +380,17 @@ double Fl::wait(double time_to_wait) {
   // delete all widgets that were listed during callbacks
   do_widget_deletion();
 
+#ifdef WIN32
+
+  return fl_wait(time_to_wait);
+
+#elif defined(__APPLE__)
+
+  flush();
+  return fl_wait(time_to_wait);
+
+#else
+
   if (first_timeout) {
     elapse_timeouts();
     Timeout *t;
@@ -262,22 +404,15 @@ double Fl::wait(double time_to_wait) {
       first_timeout = t->next;
       t->next = free_timeout;
       free_timeout = t;
+      ++free_timeout_count;
+      --first_timeout_count;
       // Now it is safe for the callback to do add_timeout:
       cb(argp);
     }
   } else {
     reset_clock = 1; // we are not going to check the clock
   }
-  // checks are a bit messy so that add/remove and wait may be called
-  // from inside them without causing an infinite loop:
-  if (next_check == first_check) {
-    while (next_check) {
-      Check* checkp = next_check;
-      next_check = checkp->next;
-      (checkp->cb)(checkp->arg);
-    }
-    next_check = first_check;
-  }
+  run_checks();
 //  if (idle && !fl_ready()) {
   if (idle) {
     if (!in_idle) {
@@ -300,9 +435,10 @@ double Fl::wait(double time_to_wait) {
     flush();
     return fl_wait(time_to_wait);
   }
+#endif
 }
 
-#define FOREVER 1e20
+#define FOREVER 0.01 //1e20
 
 int Fl::run() {
   while (Fl_X::first) wait(FOREVER);
@@ -327,12 +463,14 @@ int Fl::check() {
 }
 
 int Fl::ready() {
+#if ! defined( WIN32 )  &&  ! defined(__APPLE__)
   if (first_timeout) {
     elapse_timeouts();
     if (first_timeout->time <= 0) return 1;
   } else {
     reset_clock = 1;
   }
+#endif
   return fl_ready();
 }
 
@@ -1099,6 +1237,11 @@ void Fl_Window::flush() {
   draw();
 }
 
+#ifdef WIN32
+#  include "Fl_win32.cxx"
+#elif defined(__APPLE__)
+#  include "Fl_mac.cxx"
+#endif
 
 //
 // The following methods allow callbacks to schedule the deletion of
