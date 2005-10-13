@@ -26,8 +26,6 @@
 //
 
 #include <X11/Xft/Xft.h>
-#include <string.h>
-#include <ctype.h>
 
 // This function fills in the fltk font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
