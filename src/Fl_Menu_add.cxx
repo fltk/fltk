@@ -204,7 +204,7 @@ int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
 	local_array = menu_ = new Fl_Menu_Item[local_array_alloc];
         memset(local_array, 0, sizeof(Fl_Menu_Item) * local_array_alloc);
       }
-      menu_[0].text = 0;
+      memset(menu_, 0, sizeof(Fl_Menu_Item));
       local_array_size = 1;
     }
     fl_menu_array_owner = this;
