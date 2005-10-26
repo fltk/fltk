@@ -226,6 +226,25 @@ void write_cstring(const char *w, int length) {
 // write a C string, quoting characters if necessary:
 void write_cstring(const char *w) {write_cstring(w,strlen(w));}
 
+// write an array of C binary data (does not add a null):
+void write_cdata(const char *s, int length) {
+  if (varused_test) return;
+  const unsigned char *w = (const unsigned char *)s;
+  const unsigned char *e = w+length;
+  int linelength = 1;
+  putc('{', code_file);
+  for (; w < e;) {
+    unsigned char c = *w++;
+    if (c>99) linelength += 4;
+    else if (c>9) linelength += 3;
+    else linelength += 2;
+    if (linelength >= 77) {fputs("\n",code_file); linelength = 0;}
+    fprintf(code_file, "%d", c);
+    if (w<e) putc(',', code_file);
+  }
+  putc('}', code_file);
+}
+
 void write_c(const char* format,...) {
   if (varused_test) {varused = 1; return;}
   va_list args;

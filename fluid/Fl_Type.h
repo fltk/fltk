@@ -732,6 +732,7 @@ void write_c(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_cstring(const char *);
 void write_cstring(const char *,int length);
+void write_cdata(const char *,int length);
 void write_indent(int n);
 void write_open(int);
 void write_close(int n);
