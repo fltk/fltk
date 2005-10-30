@@ -524,7 +524,7 @@ Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 void Shortcut_Button::draw() {
   if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
   else draw_box(FL_UP_BOX, FL_WHITE);
-  fl_font(FL_HELVETICA,14); fl_color(FL_BLACK);
+  fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
   fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
 }
 

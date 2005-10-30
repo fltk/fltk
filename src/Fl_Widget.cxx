@@ -88,7 +88,7 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   label_.type	 = FL_NORMAL_LABEL;
   label_.font	 = FL_HELVETICA;
   label_.size	 = (uchar)FL_NORMAL_SIZE;
-  label_.color	 = FL_BLACK;
+  label_.color	 = FL_FOREGROUND_COLOR;
   tooltip_       = 0;
   callback_	 = default_callback;
   user_data_ 	 = 0;

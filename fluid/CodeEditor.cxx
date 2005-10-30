@@ -38,13 +38,13 @@
 
 Fl_Text_Display::Style_Table_Entry CodeEditor::
 		styletable[] = {	// Style table
-		  { FL_BLACK,      FL_COURIER,        11 }, // A - Plain
-		  { FL_DARK_GREEN, FL_COURIER_ITALIC, 11 }, // B - Line comments
-		  { FL_DARK_GREEN, FL_COURIER_ITALIC, 11 }, // C - Block comments
-		  { FL_BLUE,       FL_COURIER,        11 }, // D - Strings
-		  { FL_DARK_RED,   FL_COURIER,        11 }, // E - Directives
-		  { FL_DARK_RED,   FL_COURIER_BOLD,   11 }, // F - Types
-		  { FL_BLUE,       FL_COURIER_BOLD,   11 }  // G - Keywords
+		  { FL_FOREGROUND_COLOR, FL_COURIER,        11 }, // A - Plain
+		  { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // B - Line comments
+		  { FL_DARK_GREEN,       FL_COURIER_ITALIC, 11 }, // C - Block comments
+		  { FL_BLUE,             FL_COURIER,        11 }, // D - Strings
+		  { FL_DARK_RED,         FL_COURIER,        11 }, // E - Directives
+		  { FL_DARK_RED,         FL_COURIER_BOLD,   11 }, // F - Types
+		  { FL_BLUE,             FL_COURIER_BOLD,   11 }  // G - Keywords
 		};
 const char * const CodeEditor::
 		code_keywords[] = {	// Sorted list of C/C++ keywords...

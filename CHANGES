@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Updated the default label and text colors of all widgets
+	  to use FL_FOREGROUND_COLOR instead of FL_BLACK (STR
+	  #1052)
 	- Fl::set_fonts() now works with Xft (STR #1012)
 	- Fl_Value_Input now uses the screen-absolute position
 	  instead of the window-relative position when dragging

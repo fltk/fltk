@@ -248,8 +248,8 @@ extern const char* subclassname(Fl_Type*);
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
   X += 3 + 18 + l->level * 12;
-  if (l->new_selected) fl_color(fl_contrast(FL_BLACK,FL_SELECTION_COLOR));
-  else fl_color(FL_BLACK);
+  if (l->new_selected) fl_color(fl_contrast(FL_FOREGROUND_COLOR,FL_SELECTION_COLOR));
+  else fl_color(FL_FOREGROUND_COLOR);
   Fl_Pixmap *pm = pixmap[l->pixmapID()];
   if (pm) pm->draw(X-18, Y);
   if (l->is_public() == 0) lock_pixmap.draw(X - 17, Y);

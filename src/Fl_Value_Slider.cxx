@@ -35,7 +35,7 @@ Fl_Value_Slider::Fl_Value_Slider(int X, int Y, int W, int H, const char*l)
   step(1,100);
   textfont_ = FL_HELVETICA;
   textsize_ = 10;
-  textcolor_ = FL_BLACK;
+  textcolor_ = FL_FOREGROUND_COLOR;
 }
 
 void Fl_Value_Slider::draw() {

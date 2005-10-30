@@ -296,7 +296,7 @@ Fl_Widget(X,Y,W,H,l) {
   min = max  = 0;
   textfont_  = FL_HELVETICA;
   textsize_  = 10;
-  textcolor_ = FL_BLACK;
+  textcolor_ = FL_FOREGROUND_COLOR;
   entries    = (FL_CHART_ENTRY *)calloc(sizeof(FL_CHART_ENTRY), FL_CHART_MAX + 1);
 }
 

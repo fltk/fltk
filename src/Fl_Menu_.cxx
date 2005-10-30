@@ -176,7 +176,7 @@ Fl_Menu_::Fl_Menu_(int X,int Y,int W,int H,const char* l)
   selection_color(FL_SELECTION_COLOR);
   textfont(FL_HELVETICA);
   textsize((uchar)FL_NORMAL_SIZE);
-  textcolor(FL_BLACK);
+  textcolor(FL_FOREGROUND_COLOR);
   down_box(FL_NO_BOX);
 }
 
