@@ -1383,11 +1383,18 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
         wc.hInstance = fl_display;
         wc.lpszClassName = timer_class;
         ATOM atom = RegisterClassEx(&wc);
-
+        // create a zero size window to handle timer events
         s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
                                     timer_class, "",
                                     WS_POPUP,
-                                    CW_USEDEFAULT, CW_USEDEFAULT, 1, 1,
+                                    0, 0, 0, 0,
+                                    NULL, NULL, fl_display, NULL);
+        // just in case this OS won't let us create a 0x0 size window:
+        if (!s_TimerWnd) 
+          s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
+                                    timer_class, "",
+                                    WS_POPUP,
+                                    0, 0, 1, 1,
                                     NULL, NULL, fl_display, NULL);
         ShowWindow(s_TimerWnd, SW_SHOWNOACTIVATE);
     }
