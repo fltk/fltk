@@ -868,7 +868,10 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     fl_os_capture = xid;
     sendEvent = FL_PUSH;
     Fl::e_is_click = 1; px = pos.h; py = pos.v;
-    Fl::e_clicks = clickCount-1;
+    if (clickCount>1) 
+      Fl::e_clicks++;
+    else
+      Fl::e_clicks = 0;
     // fall through
   case kEventMouseUp:
     if ( !window ) break;
