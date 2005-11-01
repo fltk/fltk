@@ -63,8 +63,8 @@ void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
 
 #include <FL/Fl_Bitmap.H>
 static unsigned char idata_new[] =
-"\0\0x\0\204\0\2\1\1\376\1\200""1\200""1\200\375\200\375\200""1\200""1\200\1\
-\200\1\200\377\377\0\0";
+{0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
+128,1,128,1,128,255,255,0,0};
 static Fl_Bitmap image_new(idata_new, 16, 16);
 
 void Fl_File_Chooser::cb__i(Fl_Tile*, void*) {
@@ -185,7 +185,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       }
       o->end();
     }
-    { Fl_Tile* o = new Fl_Tile(10, 45, 471, 225);
+    { Fl_Tile* o = new Fl_Tile(10, 45, 470, 225);
       o->callback((Fl_Callback*)cb_);
       { Fl_File_Browser* o = fileList = new Fl_File_Browser(10, 45, 295, 225);
         o->type(2);
@@ -200,7 +200,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       o->end();
       Fl_Group::current()->resizable(o);
     }
-    { Fl_Group* o = new Fl_Group(0, 275, 480, 95);
+    { Fl_Group* o = new Fl_Group(10, 275, 470, 95);
       { Fl_Group* o = new Fl_Group(10, 275, 470, 20);
         { Fl_Check_Button* o = previewButton = new Fl_Check_Button(10, 275, 170, 20, "Preview");
           o->down_box(FL_DOWN_BOX);
