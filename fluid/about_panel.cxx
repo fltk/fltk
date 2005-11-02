@@ -262,45 +262,40 @@ static const char *idata_fluid[] = {
 };
 static Fl_Pixmap image_fluid(idata_fluid);
 
-static void cb_Close(Fl_Return_Button* o, void*) {
-  ((Fl_Window*)(o->parent()))->hide();
-}
-
 static void cb_View(Fl_Button*, void*) {
   show_help("license.html");
 }
 
+static void cb_Close(Fl_Return_Button* o, void*) {
+  ((Fl_Window*)(o->parent()))->hide();
+}
+
 Fl_Double_Window* make_about_panel() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = about_panel = new Fl_Double_Window(350, 195, "About FLUID");
+  { Fl_Double_Window* o = about_panel = new Fl_Double_Window(315, 175, "About FLUID");
     w = o;
     o->color(FL_LIGHT1);
     o->selection_color(FL_DARK1);
     w->hotspot(o);
-    { Fl_Group* o = new Fl_Group(10, 10, 330, 141);
-      o->box(FL_THIN_UP_BOX);
-      { Fl_Box* o = new Fl_Box(20, 20, 116, 121);
-        o->image(image_fluid);
-      }
-      { Fl_Box* o = new Fl_Box(146, 20, 184, 69, "FLTK User\nInterface Designer\nVersion 1.1.7");
-        o->color((Fl_Color)12);
-        o->selection_color(FL_DARK1);
-        o->labelfont(1);
-        o->labelsize(18);
-        o->labelcolor(FL_FOREGROUND_COLOR);
-        o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-      }
-      { Fl_Box* o = new Fl_Box(146, 99, 184, 42, "Copyright 1998-2005 by\nBill Spitzak and others");
-        o->align(132|FL_ALIGN_INSIDE);
-      }
-      o->end();
+    { Fl_Box* o = new Fl_Box(10, 10, 115, 120);
+      o->image(image_fluid);
     }
-    { Fl_Return_Button* o = new Fl_Return_Button(271, 161, 69, 25, "Close");
-      o->callback((Fl_Callback*)cb_Close);
+    { Fl_Box* o = new Fl_Box(135, 10, 170, 69, "FLTK User\nInterface Designer\nVersion 1.1.7");
+      o->color((Fl_Color)12);
+      o->selection_color(FL_DARK1);
+      o->labelfont(1);
+      o->labelsize(18);
+      o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
     }
-    { Fl_Button* o = new Fl_Button(146, 161, 115, 25, "View License...");
+    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2005 by\nBill Spitzak and others");
+      o->align(132|FL_ALIGN_INSIDE);
+    }
+    { Fl_Button* o = new Fl_Button(89, 141, 123, 25, "View License...");
       o->labelcolor(FL_DARK_BLUE);
       o->callback((Fl_Callback*)cb_View);
+    }
+    { Fl_Return_Button* o = new Fl_Return_Button(222, 141, 83, 25, "Close");
+      o->callback((Fl_Callback*)cb_Close);
     }
     o->set_non_modal();
     o->end();

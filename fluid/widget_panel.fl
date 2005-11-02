@@ -43,7 +43,7 @@ Function {make_widget_panel()} {open
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load selected
+        callback propagate_load
         xywh {5 25 400 290} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
@@ -106,7 +106,7 @@ Function {make_widget_panel()} {open
           Fl_Button {} {
             label Wrap
             user_data FL_ALIGN_WRAP
-            callback align_cb
+            callback align_cb selected
             tooltip {Wrap the label text.} xywh {140 110 50 20} type Toggle selection_color 8 labelsize 11
           }
           Fl_Button {} {
@@ -536,7 +536,7 @@ Function {make_widget_panel()} {open
       Fl_Button wLiveMode {
         label {Live &Mode}
         callback live_mode_cb
-        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {142 325 84 20} type Toggle labelsize 11 labelcolor 0
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {142 325 84 20} type Toggle labelsize 11
       }
     }
   }

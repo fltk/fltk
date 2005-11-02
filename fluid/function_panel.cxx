@@ -130,7 +130,7 @@ Fl_Double_Window* make_code_panel() {
       o->labeltype(FL_NORMAL_LABEL);
       o->labelfont(0);
       o->labelsize(11);
-      o->labelcolor(FL_BLACK);
+      o->labelcolor(FL_FOREGROUND_COLOR);
       o->textfont(4);
       o->textsize(11);
       o->align(FL_ALIGN_TOP);
@@ -432,7 +432,7 @@ Fl_Double_Window* make_comment_panel() {
       o->labeltype(FL_NORMAL_LABEL);
       o->labelfont(0);
       o->labelsize(11);
-      o->labelcolor(FL_BLACK);
+      o->labelcolor(FL_FOREGROUND_COLOR);
       o->textfont(4);
       o->textsize(11);
       o->align(FL_ALIGN_TOP);

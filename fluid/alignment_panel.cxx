@@ -44,9 +44,9 @@ Fl_Light_Button *include_H_from_C_button=(Fl_Light_Button *)0;
 Fl_Choice *i18n_type_chooser=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_i18n_type_chooser[] = {
- {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 56},
- {"GNU gettext", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 56},
- {"POSIX catgets", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 56},
+ {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"GNU gettext", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"POSIX catgets", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -171,9 +171,9 @@ Fl_Double_Window *settings_window=(Fl_Double_Window *)0;
 Fl_Choice *scheme_choice=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_scheme_choice[] = {
- {"Default", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
- {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
- {"Plastic", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 56},
+ {"Default", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"Plastic", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
