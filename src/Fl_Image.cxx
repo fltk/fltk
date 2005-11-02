@@ -55,7 +55,7 @@ void Fl_Image::draw(int XP, int YP, int, int, int, int) {
 
 void Fl_Image::draw_empty(int X, int Y) {
   if (w() > 0 && h() > 0) {
-    fl_color(FL_BLACK);
+    fl_color(FL_FOREGROUND_COLOR);
     fl_rect(X, Y, w(), h());
     fl_line(X, Y, X + w() - 1, Y + h() - 1);
     fl_line(X, Y + h() - 1, X + w() - 1, Y);
