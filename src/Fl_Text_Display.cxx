@@ -123,7 +123,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   mNeedAbsTopLineNum = 0;
   mHorizOffset = mHorizOffsetHint = 0;
 
-  mCursor_color = FL_BLACK;
+  mCursor_color = FL_FOREGROUND_COLOR;
 
   mFixedFontWidth = -1;
   mStyleBuffer = 0;
