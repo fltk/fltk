@@ -30,8 +30,9 @@
 #include <FL/fl_ask.H>
 #include <stdio.h>
 
-int main(int, char **) {
+int main(int argc, char **argv) {
   Fl::scheme(NULL);
+  Fl::args(argc, argv);
   Fl::get_system_colors();
 
   fl_message("Spelling check sucessful, %d errors found with %g%% confidence",

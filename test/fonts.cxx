@@ -138,6 +138,7 @@ void create_the_forms() {
 
 int main(int argc, char **argv) {
   Fl::scheme(NULL);
+  Fl::args(argc, argv);
   Fl::get_system_colors();
   create_the_forms();
 #ifdef __APPLE__

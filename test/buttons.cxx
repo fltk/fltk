@@ -46,7 +46,8 @@ int main(int argc, char ** argv) {
   new Fl_Round_Button(150,50,160,30,"Fl_Round_Button");
   new Fl_Check_Button(150,90,160,30,"Fl_Check_Button");
   window->end();
-  window->show(argc,argv);
+  //window->show(argc,argv);
+  window->show();
   return Fl::run();
 }
 

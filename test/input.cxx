@@ -62,9 +62,9 @@ void button_cb(Fl_Widget *,void *) {
 void color_cb(Fl_Widget* button, void* v) {
   Fl_Color c;
   switch ((int)v) {
-  case 0: c = FL_WHITE; break;
+  case 0: c = FL_BACKGROUND2_COLOR; break;
   case 1: c = FL_SELECTION_COLOR; break;
-  default: c = FL_BLACK; break;
+  default: c = FL_FOREGROUND_COLOR; break;
   }
   uchar r,g,b; Fl::get_color(c, r,g,b);
   if (fl_color_chooser(0,r,g,b)) {
@@ -75,13 +75,17 @@ void color_cb(Fl_Widget* button, void* v) {
 }
 
 int main(int argc, char **argv) {
+  // the following two lines set the correct color scheme, so that 
+  // calling fl_contrast below will return good results
+  Fl::args(argc, argv);
+  Fl::get_system_colors();
   Fl_Window *window = new Fl_Window(400,400);
 
   int y = 10;
   input[0] = new Fl_Input(70,y,300,30,"Normal:"); y += 35;
   input[0]->tooltip("Normal input field");
   // input[0]->cursor_color(FL_SELECTION_COLOR);
-  //  input[0]->maximum_size(20);
+  // input[0]->maximum_size(20);
   // input[0]->static_value("this is a testgarbage");
   input[1] = new Fl_Float_Input(70,y,300,30,"Float:"); y += 35;
   input[1]->tooltip("Input field for floating-point number");

@@ -50,10 +50,19 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
 }
 
 int main(int argc, char ** argv) {
-  Fl::get_system_colors();
   window = new Fl_Single_Window(4*W,ROWS*H);
   window->box(FL_FLAT_BOX);
+#if 0 // this code uses the command line arguments to set arbitrary color schemes
+  Fl::args(argc, argv);
+  Fl::get_system_colors();
+#elif 0 // this code uses a single color to define a scheme
+  Fl::args(argc, argv);
+  Fl::get_system_colors();
+  Fl::background(113,113,198);
+#else // this code uses the nice bright blue background to show box vs. frame types
+  Fl::get_system_colors();
   window->color(12);// light blue
+#endif
   bt("FL_NO_BOX",FL_NO_BOX);
   bt("FL_FLAT_BOX",FL_FLAT_BOX);
   N += 2; // go to start of next row to line up boxes & frames
@@ -93,7 +102,6 @@ int main(int argc, char ** argv) {
   bt("FL_PLASTIC_THIN_DOWN_BOX",FL_PLASTIC_THIN_DOWN_BOX);
   window->resizable(window);
   window->end();
-  //window->show(argc,argv); // commented out, so we won't load any schemes
   window->show();
   return Fl::run();
 }
