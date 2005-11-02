@@ -633,6 +633,13 @@ static double do_queued_events( double time = 0.0 )
   if (!ReceiveNextEvent(0, NULL, timeout, true, &event)) {
     got_events = 1;
     OSErr ret = SendEventToEventTarget( event, target );
+    if (ret!=noErr) {
+      EventRecord clevent;
+      ConvertEventRefToEventRecord(event, &clevent);
+      if (clevent.what==kHighLevelEvent) {
+        ret = AEProcessAppleEvent(&clevent);
+      }
+    }
     if (   ret==eventNotHandledErr
         && GetEventClass(event)==kEventClassMouse
         && GetEventKind(event)==kEventMouseDown ) {
