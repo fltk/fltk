@@ -512,6 +512,9 @@ extern "C" {
 
 ////////////////////////////////////////////////////////////////
 
+static char unknown[] = "<unknown>";
+const int unknown_len = 10;
+
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
@@ -681,6 +684,8 @@ int fl_handle(const XEvent& thisevent)
         fl_dnd_type = fl_dnd_source_types[0];
 
       event = FL_DND_ENTER;
+      Fl::e_text = unknown;
+      Fl::e_length = unknown_len;
       break;
 
     } else if (message == fl_XdndPosition) {
@@ -696,6 +701,8 @@ int fl_handle(const XEvent& thisevent)
       fl_event_time = data[3];
       fl_dnd_source_action = data[4];
       fl_dnd_action = fl_XdndActionCopy;
+      Fl::e_text = unknown;
+      Fl::e_length = unknown_len;
       int accept = Fl::handle(FL_DND_DRAG, window);
       fl_sendClientMessage(data[0], fl_XdndStatus,
                            fl_xevent->xclient.window,
@@ -708,6 +715,8 @@ int fl_handle(const XEvent& thisevent)
     } else if (message == fl_XdndLeave) {
       fl_dnd_source_window = 0; // don't send a finished message to it
       event = FL_DND_LEAVE;
+      Fl::e_text = unknown;
+      Fl::e_length = unknown_len;
       break;
 
     } else if (message == fl_XdndDrop) {
@@ -716,6 +725,8 @@ int fl_handle(const XEvent& thisevent)
       fl_dnd_source_window = data[0];
       fl_event_time = data[2];
       Window to_window = fl_xevent->xclient.window;
+      Fl::e_text = unknown;
+      Fl::e_length = unknown_len;
       if (Fl::handle(FL_DND_RELEASE, window)) {
 	fl_selection_requestor = Fl::belowmouse();
 	XConvertSelection(fl_display, fl_XdndSelection,
