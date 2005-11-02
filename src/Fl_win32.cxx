@@ -288,7 +288,6 @@ int fl_wait(double time_to_wait) {
       DispatchMessage(&fl_msg);
       have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
     }
-    Fl::flush();
   }
 
   // idle processing
@@ -300,6 +299,7 @@ int fl_wait(double time_to_wait) {
   }
 
   run_checks();
+  Fl::flush();
   
   // This should return 0 if only timer events were handled:
   return 1;
