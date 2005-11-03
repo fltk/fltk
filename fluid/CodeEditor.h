@@ -67,6 +67,7 @@ class CodeEditor : public Fl_Text_Editor {
 
   CodeEditor(int X, int Y, int W, int H, const char *L=0);
   ~CodeEditor();
+  int top_line() { return get_absolute_top_line_number(); }
 };
 
 #endif // !CodeEditor_h

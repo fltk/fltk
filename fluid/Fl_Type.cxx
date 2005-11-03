@@ -436,6 +436,8 @@ Fl_Type::Fl_Type() {
   callback_ = 0;
   rtti = 0;
   level = 0;
+  code_line = header_line = -1;
+  code_line_end = header_line_end = -1;
 }
 
 static void fixvisible(Fl_Type *p) {

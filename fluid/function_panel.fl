@@ -28,7 +28,7 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {selected in_source in_header
+} {in_source in_header
 } 
 
 decl {\#include <FL/Fl_Pixmap.H>} {} 
@@ -353,9 +353,9 @@ Function {make_widgetbin()} {open
 } {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
-    xywh {413 185 520 85} type Single hide non_modal
+    xywh {413 185 520 85} type Single non_modal visible
   } {
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {3 3 79 79} box THIN_DOWN_BOX
     } {
       Fl_Button {} {
@@ -679,6 +679,67 @@ Function {make_widgetbin()} {open
         callback type_make_cb
         tooltip Progress xywh {465 55 25 25} box THIN_UP_BOX
         code0 {o->image(pixmap[36]);}
+      }
+    }
+  }
+} 
+
+Function {make_sourceview()} {open
+} {
+  Fl_Window sourceview_panel {
+    label {Code View}
+    callback toggle_sourceview_cb open
+    xywh {388 212 544 500} type Double resizable size_range {384 120 0 0} visible
+  } {
+    Fl_Tabs sv_tab {
+      callback update_sourceview_position_cb open
+      xywh {20 10 500 440} resizable
+    } {
+      Fl_Group {} {
+        label Source open
+        xywh {20 35 500 415} labelsize 13 resizable
+      } {
+        Fl_Text_Editor sv_source {
+          xywh {25 40 490 405} textfont 4 textsize 11 resizable
+          code0 {\#include "CodeEditor.h"}
+          class CodeEditor
+        }
+      }
+      Fl_Group {} {
+        label Header open
+        xywh {20 35 500 415} labelsize 13 hide
+      } {
+        Fl_Text_Editor sv_header {
+          xywh {25 40 490 405} textfont 4 textsize 11 resizable
+          code0 {\#include "CodeEditor.h"}
+          class CodeEditor
+        }
+      }
+    }
+    Fl_Group {} {open
+      xywh {20 460 500 25}
+    } {
+      Fl_Button {} {
+        label refresh
+        callback update_sourceview_cb
+        xywh {20 460 80 25} labelsize 11
+      }
+      Fl_Light_Button sv_autorefresh {
+        label autorefresh
+        xywh {105 460 80 25} labelsize 11
+        code0 {o->callback((Fl_Callback*)update_sourceview_cb);}
+      }
+      Fl_Light_Button sv_autoposition {
+        label autoposition
+        xywh {190 460 80 25} labelsize 11
+      }
+      Fl_Button {} {
+        label close
+        callback toggle_sourceview_b_cb selected
+        xywh {440 460 80 25} labelsize 11
+      }
+      Fl_Box {} {
+        xywh {275 460 160 25} resizable
       }
     }
   }

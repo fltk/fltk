@@ -72,6 +72,9 @@ public:	// things that should not be public:
   Fl_Type *factory;
   const char *callback_name();
 
+  int code_line, header_line;
+  int code_line_end, header_line_end;
+
 public:
 
   virtual ~Fl_Type();
@@ -737,6 +740,7 @@ void write_indent(int n);
 void write_open(int);
 void write_close(int n);
 extern int write_number;
+extern int write_sourceview;
 void write_public(int state); // writes pubic:/private: as needed
 extern int indentation;
 extern const char* indent();

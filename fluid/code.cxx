@@ -263,13 +263,21 @@ void write_h(const char* format,...) {
 
 #include <FL/filename.H>
 int write_number;
+int write_sourceview;
 
 // recursively dump code, putting children between the two parts
 // of the parent code:
 static Fl_Type* write_code(Fl_Type* p) {
-  // don't write the last comment until the very end
+  if (write_sourceview) {
+    p->code_line = (int)ftell(code_file);
+    if (p->header_line_end==-1)
+      p->header_line = (int)ftell(header_file);
+  }
+  // write all code that come before the children code
+  // (but don't write the last comment until the very end)
   if (!(p==Fl_Type::last && p->is_comment()))
     p->write_code1();
+  // recursively write the code of all children
   Fl_Type* q;
   if (p->is_widget() && p->is_class()) {
     // Handle widget classes specially
@@ -283,6 +291,7 @@ static Fl_Type* write_code(Fl_Type* p) {
       }
     }
 
+    // write all code that come after the children 
     p->write_code2();
 
     for (q = p->next; q && q->level > p->level;) {
@@ -298,8 +307,13 @@ static Fl_Type* write_code(Fl_Type* p) {
     write_h("};\n");
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
-
+    // write all code that come after the children 
     p->write_code2();
+  }
+  if (write_sourceview) {
+    p->code_line_end = (int)ftell(code_file);
+    if (p->header_line_end==-1)
+      p->header_line_end = (int)ftell(header_file);
   }
   return q;
 }
@@ -307,18 +321,21 @@ static Fl_Type* write_code(Fl_Type* p) {
 extern const char* header_file_name;
 
 int write_code(const char *s, const char *t) {
+  const char *filemode = "w";
+  if (write_sourceview) 
+    filemode = "wb";
   write_number++;
   delete id_root; id_root = 0;
   indentation = 0;
   if (!s) code_file = stdout;
   else {
-    FILE *f = fopen(s,"w");
+    FILE *f = fopen(s, filemode);
     if (!f) return 0;
     code_file = f;
   }
   if (!t) header_file = stdout;
   else {
-    FILE *f = fopen(t,"w");
+    FILE *f = fopen(t, filemode);
     if (!f) {fclose(code_file); return 0;}
     header_file = f;
   }
@@ -326,8 +343,16 @@ int write_code(const char *s, const char *t) {
   // a copyright notice. We print that before anything else in the file!
   Fl_Type* first_type = Fl_Type::first;
   if (first_type && first_type->is_comment()) {
-    // this is ok, because comments have no children or code2 blocks
+    if (write_sourceview) {
+      first_type->code_line = (int)ftell(code_file);
+      first_type->header_line = (int)ftell(header_file);
+    }
+    // it is ok to write non-recusive code here, because comments have no children or code2 blocks
     first_type->write_code1();
+    if (write_sourceview) {
+      first_type->code_line_end = (int)ftell(code_file);
+      first_type->header_line_end = (int)ftell(header_file);
+    }
     first_type = first_type->next;
   }
 
@@ -373,9 +398,20 @@ int write_code(const char *s, const char *t) {
   }
   for (Fl_Type* p = first_type; p;) {
     // write all static data for this & all children first
+    if (write_sourceview) p->header_line = (int)ftell(header_file);
     p->write_static();
-    for (Fl_Type* q = p->next; q && q->level > p->level; q = q->next)
+    if (write_sourceview) {
+      p->header_line_end = (int)ftell(header_file);
+      if (p->header_line==p->header_line_end) p->header_line_end = -1;
+    }
+    for (Fl_Type* q = p->next; q && q->level > p->level; q = q->next) {
+      if (write_sourceview) q->header_line = (int)ftell(header_file);
       q->write_static();
+      if (write_sourceview) {
+        q->header_line_end = (int)ftell(header_file);
+        if (q->header_line==q->header_line_end) q->header_line_end = -1;
+      }
+    }
     // then write the nested code:
     p = write_code(p);
   }
@@ -388,7 +424,15 @@ int write_code(const char *s, const char *t) {
 
   Fl_Type* last_type = Fl_Type::last;
   if (last_type && last_type->is_comment()) {
+    if (write_sourceview) {
+      last_type->code_line = (int)ftell(code_file);
+      last_type->header_line = (int)ftell(header_file);
+    }
     last_type->write_code1();
+    if (write_sourceview) {
+      last_type->code_line_end = (int)ftell(code_file);
+      last_type->header_line_end = (int)ftell(header_file);
+    }
   }
 
   int x = fclose(code_file);

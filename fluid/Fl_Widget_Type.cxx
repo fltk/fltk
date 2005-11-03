@@ -1710,6 +1710,7 @@ Fl_Type *Fl_Type::current;
 
 extern void redraw_overlays();
 extern void redraw_browser();
+extern void update_sourceview_position();
 
 // Called when ui changes what objects are selected:
 // p is selected object, null for all deletions (we must throw away
@@ -1742,6 +1743,8 @@ void selection_changed(Fl_Type *p) {
   redraw_overlays();
   // load the panel with the new settings:
   load_panel();
+  // update the source viewer to show the code for the selected object
+  update_sourceview_position();
 }
 
 ////////////////////////////////////////////////////////////////

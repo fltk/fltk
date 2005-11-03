@@ -839,6 +839,93 @@ Fl_Window* make_widgetbin() {
   return w;
 }
 
+Fl_Double_Window *sourceview_panel=(Fl_Double_Window *)0;
+
+Fl_Tabs *sv_tab=(Fl_Tabs *)0;
+
+CodeEditor *sv_source=(CodeEditor *)0;
+
+CodeEditor *sv_header=(CodeEditor *)0;
+
+Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
+
+Fl_Light_Button *sv_autoposition=(Fl_Light_Button *)0;
+
+Fl_Double_Window* make_sourceview() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = sourceview_panel = new Fl_Double_Window(544, 500, "Code View");
+    w = o;
+    o->callback((Fl_Callback*)toggle_sourceview_cb);
+    { Fl_Tabs* o = sv_tab = new Fl_Tabs(20, 10, 500, 440);
+      o->callback((Fl_Callback*)update_sourceview_position_cb);
+      { Fl_Group* o = new Fl_Group(20, 35, 500, 415, "Source");
+        o->labelsize(13);
+        { CodeEditor* o = sv_source = new CodeEditor(25, 40, 490, 405);
+          o->box(FL_DOWN_FRAME);
+          o->color(FL_BACKGROUND2_COLOR);
+          o->selection_color(FL_SELECTION_COLOR);
+          o->labeltype(FL_NORMAL_LABEL);
+          o->labelfont(0);
+          o->labelsize(14);
+          o->labelcolor(FL_FOREGROUND_COLOR);
+          o->textfont(4);
+          o->textsize(11);
+          o->align(FL_ALIGN_TOP);
+          o->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(o);
+        }
+        o->end();
+        Fl_Group::current()->resizable(o);
+      }
+      { Fl_Group* o = new Fl_Group(20, 35, 500, 415, "Header");
+        o->labelsize(13);
+        o->hide();
+        { CodeEditor* o = sv_header = new CodeEditor(25, 40, 490, 405);
+          o->box(FL_DOWN_FRAME);
+          o->color(FL_BACKGROUND2_COLOR);
+          o->selection_color(FL_SELECTION_COLOR);
+          o->labeltype(FL_NORMAL_LABEL);
+          o->labelfont(0);
+          o->labelsize(14);
+          o->labelcolor(FL_FOREGROUND_COLOR);
+          o->textfont(4);
+          o->textsize(11);
+          o->align(FL_ALIGN_TOP);
+          o->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(o);
+        }
+        o->end();
+      }
+      o->end();
+      Fl_Group::current()->resizable(o);
+    }
+    { Fl_Group* o = new Fl_Group(20, 460, 500, 25);
+      { Fl_Button* o = new Fl_Button(20, 460, 80, 25, "refresh");
+        o->labelsize(11);
+        o->callback((Fl_Callback*)update_sourceview_cb);
+      }
+      { Fl_Light_Button* o = sv_autorefresh = new Fl_Light_Button(105, 460, 80, 25, "autorefresh");
+        o->labelsize(11);
+        o->callback((Fl_Callback*)update_sourceview_cb);
+      }
+      { Fl_Light_Button* o = sv_autoposition = new Fl_Light_Button(190, 460, 80, 25, "autoposition");
+        o->labelsize(11);
+      }
+      { Fl_Button* o = new Fl_Button(440, 460, 80, 25, "close");
+        o->labelsize(11);
+        o->callback((Fl_Callback*)toggle_sourceview_b_cb);
+      }
+      { Fl_Box* o = new Fl_Box(275, 460, 160, 25);
+        Fl_Group::current()->resizable(o);
+      }
+      o->end();
+    }
+    o->size_range(384, 120);
+    o->end();
+  }
+  return w;
+}
+
 //
 // End of "$Id$".
 //

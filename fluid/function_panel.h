@@ -92,6 +92,18 @@ void type_make_cb(Fl_Widget*w,void*d);
 extern Fl_Window *widgetbin_panel;
 extern void type_make_cb(Fl_Button*, void*);
 Fl_Window* make_widgetbin();
+extern void toggle_sourceview_cb(Fl_Double_Window*, void*);
+extern Fl_Double_Window *sourceview_panel;
+#include <FL/Fl_Tabs.H>
+extern void update_sourceview_position_cb(Fl_Tabs*, void*);
+extern Fl_Tabs *sv_tab;
+extern CodeEditor *sv_source;
+extern CodeEditor *sv_header;
+extern void update_sourceview_cb(Fl_Button*, void*);
+extern Fl_Light_Button *sv_autorefresh;
+extern Fl_Light_Button *sv_autoposition;
+extern void toggle_sourceview_b_cb(Fl_Button*, void*);
+Fl_Double_Window* make_sourceview();
 #endif
 
 //
