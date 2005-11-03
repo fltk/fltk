@@ -396,7 +396,7 @@ Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
 
 Fl_Double_Window* make_layout_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(275, 240, "Layout Settings");
+  { Fl_Double_Window* o = grid_window = new Fl_Double_Window(285, 245, "Layout Settings");
     w = o;
     { Fl_Input* o = horizontal_input = new Fl_Input(106, 10, 50, 25, "x");
       o->tooltip("Horizontal grid spacing.");
@@ -427,7 +427,7 @@ Fl_Double_Window* make_layout_window() {
       o->down_box(FL_DOWN_BOX);
       o->callback((Fl_Callback*)guides_cb, (void*)(4));
     }
-    { Fl_Button* o = new Fl_Button(205, 205, 60, 25, "Close");
+    { Fl_Button* o = new Fl_Button(215, 210, 60, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close2);
     }
