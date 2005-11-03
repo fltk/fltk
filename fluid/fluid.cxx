@@ -1990,6 +1990,8 @@ void set_filename(const char *c) {
 //
 void update_sourceview_position()
 {
+  if (!sourceview_panel || !sourceview_panel->visible()) 
+    return;
   if (sv_autoposition->value()==0) 
     return;
   if (sourceview_panel && sourceview_panel->visible() && Fl_Type::current) {
@@ -2033,6 +2035,8 @@ static char *sv_header_filename = 0;
 //
 void update_sourceview_cb(Fl_Button*, void*) 
 {
+  if (!sourceview_panel || !sourceview_panel->visible()) 
+    return;
   // generate space for the source and header file filenames
   if (!sv_source_filename) {
     sv_source_filename = (char*)malloc(FL_PATH_MAX);
@@ -2044,26 +2048,25 @@ void update_sourceview_cb(Fl_Button*, void*)
     fluid_prefs.getUserdataPath(sv_header_filename, FL_PATH_MAX);
     strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
   }
+  if (!header_file_name || !*header_file_name) 
+    header_file_name = sv_header_filename;
   // generate the code and load the files
-  if (sourceview_panel && sourceview_panel->visible())
+  write_sourceview = 1;
+  // generate files
+  if (write_code(sv_source_filename, sv_header_filename)) 
   {
-    write_sourceview = 1;
-    // generate files
-    if (write_code(sv_source_filename, sv_header_filename)) 
-    {
-      // load file into source editor
-      int pos = sv_source->top_line();
-      sv_source->buffer()->loadfile(sv_source_filename);
-      sv_source->scroll(pos, 0);
-      // load file into header editor
-      pos = sv_header->top_line();
-      sv_header->buffer()->loadfile(sv_header_filename);
-      sv_header->scroll(pos, 0);
-      // update the source code highlighting
-      update_sourceview_position();
-    }
-    write_sourceview = 0;
+    // load file into source editor
+    int pos = sv_source->top_line();
+    sv_source->buffer()->loadfile(sv_source_filename);
+    sv_source->scroll(pos, 0);
+    // load file into header editor
+    pos = sv_header->top_line();
+    sv_header->buffer()->loadfile(sv_header_filename);
+    sv_header->scroll(pos, 0);
+    // update the source code highlighting
+    update_sourceview_position();
   }
+  write_sourceview = 0;
 }
 
 void update_sourceview_timer(void*) 
