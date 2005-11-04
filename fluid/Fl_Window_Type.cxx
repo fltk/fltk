@@ -448,8 +448,13 @@ void border_cb(Fl_Light_Button* i, void* v) {
 
 void xclass_cb(Fl_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_window()) {i->hide(); return;}
+    if (!current_widget->is_window()) {
+      i->hide(); 
+      i->parent()->hide(); // hides the "X Class:" label as well
+      return;
+    }
     i->show();
+    i->parent()->show();
     i->value(((Fl_Widget_Type *)current_widget)->xclass);
   } else {
     int mod = 0;
