@@ -394,7 +394,7 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
 // Destroy a CodeEditor widget...
 CodeEditor::~CodeEditor() {
   Fl_Text_Buffer *buf = mStyleBuffer;
-//  style_buffer(0);
+  mStyleBuffer = 0;
   delete buf;
 
   buf = mBuffer;
