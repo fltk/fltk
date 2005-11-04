@@ -59,8 +59,13 @@ void Fl_Window::default_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 #    define IDC_HAND	MAKEINTRESOURCE(32649)
 #  endif // !IDC_HAND
 
-void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
+void Fl_Window::cursor(Fl_Cursor c, Fl_Color c1, Fl_Color c2) {
   if (!shown()) return;
+  // the cursor must be set for the top level window, not for subwindows
+  Fl_Window *w = window(), *toplevel = this;
+  while (w) { toplevel = w; w = w->window(); }
+  if (toplevel != this) { toplevel->cursor(c, c1, c2); return; }
+  // now set the actual cursor
   if (c == FL_CURSOR_DEFAULT) {
     c = cursor_default;
   }

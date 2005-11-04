@@ -79,11 +79,13 @@ class testwindow : public Fl_Window {
   int handle(int);
   void draw();
   int cx, cy; char key;
+  Fl_Cursor crsr;
 public:
   testwindow(Fl_Boxtype b,int x,int y,const char *l)
-    : Fl_Window(x,y,l) {box(b); key = 0;}
+    : Fl_Window(x,y,l), crsr(FL_CURSOR_DEFAULT) {box(b); key = 0;}
   testwindow(Fl_Boxtype b,int x,int y,int w,int h,const char *l)
     : Fl_Window(x,y,w,h,l) {box(b); key = 0;}
+  void use_cursor(Fl_Cursor c) { crsr = c; }
 };
 
 #include <FL/fl_draw.H>
@@ -100,6 +102,12 @@ int testwindow::handle(int e) {
 #ifdef DEBUG
   if (e != FL_MOVE) printf("%s : %s\n",label(),eventnames[e]);
 #endif
+  if (crsr!=FL_CURSOR_DEFAULT) {
+    if (e == FL_ENTER) 
+      cursor(crsr);
+    if (e == FL_LEAVE) 
+      cursor(FL_CURSOR_DEFAULT);
+  }
   if (Fl_Window::handle(e)) return 1;
   if (e == FL_FOCUS) return 1;
   if (e == FL_PUSH) {Fl::focus(this); return 1;}
@@ -169,6 +177,7 @@ int main(int argc, char **argv) {
   subwindow->resizable(subwindow);
   window->resizable(subwindow);
   subwindow->end();
+  subwindow->use_cursor(FL_CURSOR_HAND);
   (new Fl_Box(FL_NO_BOX,0,0,400,100,
 	     "A child Fl_Window with children of it's own may "
 	     "be useful for imbedding controls into a GL or display "

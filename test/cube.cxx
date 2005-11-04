@@ -54,6 +54,7 @@ public:
 
 class cube_box : public Fl_Gl_Window {
   void draw();
+  int handle(int);
 public:
   double lasttime;
   int wire;
@@ -121,6 +122,14 @@ void cube_box::draw() {
   glDisable(GL_DEPTH_TEST);
   gl_draw(wire ? "Cube: wire" : "Cube: flat", -4.5f, -4.5f );
   glEnable(GL_DEPTH_TEST);
+}
+
+int cube_box::handle(int e) {
+  switch (e) {
+  case FL_ENTER: cursor(FL_CURSOR_CROSS); break;
+  case FL_LEAVE: cursor(FL_CURSOR_DEFAULT); break;
+  }
+  return Fl_Gl_Window::handle(e);
 }
 
 #endif
