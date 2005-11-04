@@ -681,6 +681,7 @@ Fl_Type *Fl_Comment_Type::make() {
   o->name("my comment");
   o->add(p);
   o->factory = this;
+  o->title_buf[0] = 0;
   return o;
 }
 
@@ -835,7 +836,29 @@ void Fl_Comment_Type::open() {
     break;
   }
  BREAK2:
+  title_buf[0] = 0;
   comment_panel->hide();
+}
+
+const char *Fl_Comment_Type::title() {
+  const char* n = name(); 
+  if (!n || !*n) return type_name();
+  if (title_buf[0]==0) {
+    const char *s = n;
+    char *d = title_buf;
+    int i = 50;
+    while (--i > 0) {
+      char n = *s++;
+      if (n==0) break;
+      if (n=='\r') { *d++ = '\\'; *d++ = 'r'; i--; }
+      else if (n=='\n') { *d++ = '\\'; *d++ = 'n'; i--; }
+      else if (n<32) { *d++ = '^'; *d++ = 'A'+n; i--; }
+      else *d++ = n;
+    }
+    if (i<=0) { *d++ = '.'; *d++ = '.'; *d++ = '.'; }
+    *d++ = 0;
+  }
+  return title_buf;
 }
 
 Fl_Comment_Type Fl_Comment_type;

@@ -230,12 +230,14 @@ public:
 
 class Fl_Comment_Type : public Fl_Type {
   char in_c_, in_h_, style_;
+  char title_buf[64];
 public:
   Fl_Type *make();
   void write_code1();
   void write_code2();
   void open();
   virtual const char *type_name() {return "comment";}
+  virtual const char *title(); // string for browser
   void write_properties();
   void read_property(const char *);
   virtual int is_public() const { return 1; }

@@ -2048,8 +2048,14 @@ void update_sourceview_cb(Fl_Button*, void*)
     fluid_prefs.getUserdataPath(sv_header_filename, FL_PATH_MAX);
     strlcat(sv_header_filename, "source_view_tmp.h", FL_PATH_MAX);
   }
-  if (!header_file_name || !*header_file_name) 
-    header_file_name = sv_header_filename;
+
+  strlcpy(i18n_program, fl_filename_name(sv_source_filename), sizeof(i18n_program));
+  fl_filename_setext(i18n_program, sizeof(i18n_program), "");
+  const char *code_file_name_bak = code_file_name;
+  code_file_name = sv_source_filename;
+  const char *header_file_name_bak = header_file_name;
+  header_file_name = sv_header_filename;
+
   // generate the code and load the files
   write_sourceview = 1;
   // generate files
@@ -2067,6 +2073,9 @@ void update_sourceview_cb(Fl_Button*, void*)
     update_sourceview_position();
   }
   write_sourceview = 0;
+
+  code_file_name = code_file_name_bak;
+  header_file_name = header_file_name_bak;
 }
 
 void update_sourceview_timer(void*) 

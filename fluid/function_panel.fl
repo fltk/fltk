@@ -402,7 +402,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"declblock"}
-        callback type_make_cb
+        callback type_make_cb selected
         tooltip {Declaration Block} xywh {30 55 25 25} box THIN_UP_BOX
         code0 {o->image(pixmap[11]);}
       }
@@ -688,11 +688,11 @@ Function {make_sourceview()} {open
 } {
   Fl_Window sourceview_panel {
     label {Code View}
-    callback toggle_sourceview_cb open
+    callback toggle_sourceview_cb
     xywh {533 374 520 490} type Double resizable size_range {384 120 0 0} visible
   } {
     Fl_Tabs sv_tab {
-      callback update_sourceview_position_cb open
+      callback update_sourceview_position_cb
       xywh {10 10 500 440} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
@@ -709,14 +709,14 @@ Function {make_sourceview()} {open
         label Header open
         xywh {10 35 500 415} labelsize 13
       } {
-        Fl_Text_Editor sv_header {selected
+        Fl_Text_Editor sv_header {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
           class CodeEditor
         }
       }
     }
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {10 460 500 20}
     } {
       Fl_Button {} {
