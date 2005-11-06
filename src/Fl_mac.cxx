@@ -1782,7 +1782,7 @@ void Fl_X::make(Fl_Window* w)
       OSStatus ret;
       EventHandlerUPP mousewheelHandler = NewEventHandlerUPP( carbonMousewheelHandler ); // will not be disposed by Carbon...
       static EventTypeSpec mousewheelEvents[] = {
-        { kEventClassMouse, 11 } // "11" is the yet unlabled "MightyMouse" wheel event - sigh!
+        { kEventClassMouse, 11 }, // "11" is the yet unlabled "MightyMouse" wheel event - sigh!
         { kEventClassMouse, kEventMouseWheelMoved } };
       ret = InstallWindowEventHandler( x->xid, mousewheelHandler, 2, mousewheelEvents, w, 0L );
       EventHandlerUPP mouseHandler = NewEventHandlerUPP( carbonMouseHandler ); // will not be disposed by Carbon...
