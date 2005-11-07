@@ -129,8 +129,13 @@ int Fl_Scrollbar::handle(int event) {
     if (pushed_) return 1;
     return Fl_Slider::handle(event, X,Y,W,H);
   case FL_MOUSEWHEEL :
-    if (horizontal()) return 0;
-    handle_drag(clamp(value() + linesize_ * Fl::e_dy));
+    if (horizontal()) {
+      if (Fl::e_dx==0) return 0;
+      handle_drag(clamp(value() + linesize_ * Fl::e_dx));
+    } else {
+      if (Fl::e_dy==0) return 0;
+      handle_drag(clamp(value() + linesize_ * Fl::e_dy));
+    }
     return 1;
   case FL_SHORTCUT:
   case FL_KEYBOARD: {
