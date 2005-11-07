@@ -283,22 +283,6 @@ static void up_frame(int x, int y, int w, int h, Fl_Color c) {
   frame_rect(x, y, w, h - 1, "KLDIIJLM", c);
 }
 
-void thin_up_box(int x, int y, int w, int h, Fl_Color c);
-
-static void up_box(int x, int y, int w, int h, Fl_Color c) {
-#ifdef USE_OLD_PLASTIC_BOX
-  shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
-  up_frame(x, y, w, h, c);
-#else
-  if (w > 8 && h > 8) {
-    shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
-    frame_rect(x, y, w, h - 1, "IJLM", c);
-  } else {
-    thin_up_box(x, y, w, h, c);
-  }
-#endif // USE_OLD_PLASTIC_BOX
-}
-
 
 static void narrow_thin_box(int x, int y, int w, int h, Fl_Color c) {
   if (h<=0 || w<=0) return;
@@ -327,6 +311,21 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
     frame_rect(x, y, w, h - 1, "IJLM", c);
   } else {
     narrow_thin_box(x, y, w, h, c);
+  }
+#endif // USE_OLD_PLASTIC_BOX
+}
+
+
+static void up_box(int x, int y, int w, int h, Fl_Color c) {
+#ifdef USE_OLD_PLASTIC_BOX
+  shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
+  up_frame(x, y, w, h, c);
+#else
+  if (w > 8 && h > 8) {
+    shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
+    frame_rect(x, y, w, h - 1, "IJLM", c);
+  } else {
+    thin_up_box(x, y, w, h, c);
   }
 #endif // USE_OLD_PLASTIC_BOX
 }
