@@ -60,7 +60,7 @@ class FL_EXPORT Fl_File_Chooser {open
       callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();} selected
+window->hide();}
       private xywh {387 242 490 380} type Double resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
@@ -90,7 +90,7 @@ window->hide();} selected
         }
       }
       Fl_Tile {} {
-        callback {update_preview();} open
+        callback {update_preview();}
         private xywh {10 45 470 225} resizable
       } {
         Fl_File_Browser fileList {
@@ -106,17 +106,17 @@ window->hide();} selected
       Fl_Group {} {
         private xywh {10 275 470 95}
       } {
-        Fl_Group {} {
+        Fl_Group {} {open
           private xywh {10 275 470 20}
         } {
           Fl_Check_Button previewButton {
             label Preview
             callback {preview(previewButton->value());}
-            xywh {10 275 170 20} down_box DOWN_BOX shortcut 0x80070 value 1
+            xywh {10 275 73 20} down_box DOWN_BOX shortcut 0x80070 value 1
             code0 {previewButton->label(preview_label);}
           }
           Fl_Box {} {
-            private xywh {10 275 395 20} resizable
+            private xywh {115 275 365 20} resizable
           }
         }
         Fl_File_Input fileName {
@@ -138,7 +138,7 @@ window->hide();} selected
 if (callback_)
   (*callback_)(this, data_);
 
-window->hide();}
+window->hide();} selected
             private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}
@@ -299,7 +299,7 @@ okButton->parent()->init_sizes();} {}
   }
   decl {void rescan();} {public
   }
-  Function {show()} {open return_type void
+  Function {show()} {return_type void
   } {
     code {window->hotspot(fileList);
 window->show();
@@ -337,7 +337,7 @@ fileName->take_focus();} {}
   } {
     code {return (fileList->textsize());} {}
   }
-  Function {type(int t)} {open return_type void
+  Function {type(int t)} {return_type void
   } {
     code {type_ = t;
 if (t & MULTI)

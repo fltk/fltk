@@ -788,20 +788,23 @@ Fl_File_Chooser::preview(int e)// I - 1 = enable preview, 0 = disable preview
   previewButton->value(e);
   prefs_.set("preview", e);
 
+  Fl_Group *p = previewBox->parent();
   if (e) {
-    int w = previewBox->h() * 2 / 3;
+    int w = p->w() * 2 / 3;
     fileList->resize(fileList->x(), fileList->y(),
-                     window->w() - 20 - w, fileList->h());
-    previewBox->resize(window->w() - 10 - w, previewBox->y(),
-                       w, previewBox->h());
-
+                     w, fileList->h());
+    previewBox->resize(fileList->x()+w, previewBox->y(),
+                       p->w()-w, previewBox->h());
+    previewBox->show();
     update_preview();
   } else {
     fileList->resize(fileList->x(), fileList->y(),
-                     window->w() - 20, fileList->h());
-    previewBox->resize(window->w() - 10, previewBox->y(),
+                     p->w(), fileList->h());
+    previewBox->resize(p->x()+p->w(), previewBox->y(),
                        0, previewBox->h());
+    previewBox->hide();
   }
+  p->init_sizes();
 
   fileList->parent()->redraw();
 }

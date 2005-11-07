@@ -202,14 +202,14 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
     }
     { Fl_Group* o = new Fl_Group(10, 275, 470, 95);
       { Fl_Group* o = new Fl_Group(10, 275, 470, 20);
-        { Fl_Check_Button* o = previewButton = new Fl_Check_Button(10, 275, 170, 20, "Preview");
+        { Fl_Check_Button* o = previewButton = new Fl_Check_Button(10, 275, 73, 20, "Preview");
           o->down_box(FL_DOWN_BOX);
           o->value(1);
           o->shortcut(0x80070);
           o->callback((Fl_Callback*)cb_previewButton);
           previewButton->label(preview_label);
         }
-        { Fl_Box* o = new Fl_Box(10, 275, 395, 20);
+        { Fl_Box* o = new Fl_Box(115, 275, 365, 20);
           Fl_Group::current()->resizable(o);
         }
         o->end();
