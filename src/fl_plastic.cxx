@@ -301,6 +301,7 @@ static void up_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void narrow_thin_box(int x, int y, int w, int h, Fl_Color c) {
+  if (h<=0 || w<=0) return;
   uchar *g = fl_gray_ramp();
   fl_color(shade_color(g['R'], c));
   fl_rectf(x+1, y+1, w-2, h-2);
