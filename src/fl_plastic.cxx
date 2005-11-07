@@ -283,15 +283,36 @@ static void up_frame(int x, int y, int w, int h, Fl_Color c) {
   frame_rect(x, y, w, h - 1, "KLDIIJLM", c);
 }
 
+void thin_up_box(int x, int y, int w, int h, Fl_Color c);
 
 static void up_box(int x, int y, int w, int h, Fl_Color c) {
 #ifdef USE_OLD_PLASTIC_BOX
   shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
   up_frame(x, y, w, h, c);
 #else
-  shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
-  frame_rect(x, y, w, h - 1, "IJLM", c);
+  if (w > 8 && h > 8) {
+    shade_rect(x + 1, y + 1, w - 2, h - 3, "RVQNOPQRSTUVWVQ", c);
+    frame_rect(x, y, w, h - 1, "IJLM", c);
+  } else {
+    thin_up_box(x, y, w, h, c);
+  }
 #endif // USE_OLD_PLASTIC_BOX
+}
+
+
+static void narrow_thin_box(int x, int y, int w, int h, Fl_Color c) {
+  uchar *g = fl_gray_ramp();
+  fl_color(shade_color(g['R'], c));
+  fl_rectf(x+1, y+1, w-2, h-2);
+  fl_color(shade_color(g['I'], c));
+  if (w > 1) {
+    fl_xyline(x+1, y, x+w-2);
+    fl_xyline(x+1, y+h-1, x+w-2);
+  }
+  if (h > 1) {
+    fl_yxline(x, y+1, y+h-2);
+    fl_yxline(x+w-1, y+1, y+h-2);
+  }
 }
 
 
@@ -300,8 +321,12 @@ static void thin_up_box(int x, int y, int w, int h, Fl_Color c) {
   shade_rect(x + 2, y + 2, w - 4, h - 5, "RVQNOPQRSTUVWVQ", c);
   up_frame(x, y, w, h, c);
 #else
-  shade_rect(x + 1, y + 1, w - 2, h - 3, "RQOQSUWQ", c);
-  frame_rect(x, y, w, h - 1, "IJLM", c);
+  if (w > 4 && h > 4) {
+    shade_rect(x + 1, y + 1, w - 2, h - 3, "RQOQSUWQ", c);
+    frame_rect(x, y, w, h - 1, "IJLM", c);
+  } else {
+    narrow_thin_box(x, y, w, h, c);
+  }
 #endif // USE_OLD_PLASTIC_BOX
 }
 
@@ -318,8 +343,13 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void down_box(int x, int y, int w, int h, Fl_Color c) {
-  shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
-  down_frame(x, y, w, h, c);
+  if (w > 6 && h > 6) {
+    shade_rect(x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c);
+    down_frame(x, y, w, h, c);
+  }
+  else {
+    narrow_thin_box(x, y, w, h, c);
+  }
 }
 
 
