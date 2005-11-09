@@ -658,19 +658,28 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
   mWrapMargin = wrapMargin;
   mContinuousWrap = wrap;
 
-  /* wrapping can change change the total number of lines, re-count */
-  mNBufferLines = count_lines(0, buffer()->length(), true);
+  if (buffer()) {
+    /* wrapping can change change the total number of lines, re-count */
+    mNBufferLines = count_lines(0, buffer()->length(), true);
 
-  /* changing wrap margins wrap or changing from wrapped mode to non-wrapped
-     can leave the character at the top no longer at a line start, and/or
-     change the line number */
-  mFirstChar = line_start(mFirstChar);
-  mTopLineNum = count_lines(0, mFirstChar, true) + 1;
-  reset_absolute_top_line_number();
+    /* changing wrap margins wrap or changing from wrapped mode to non-wrapped
+       can leave the character at the top no longer at a line start, and/or
+       change the line number */
+    mFirstChar = line_start(mFirstChar);
+    mTopLineNum = count_lines(0, mFirstChar, true) + 1;
 
-  /* update the line starts array */
-  calc_line_starts(0, mNVisibleLines);
-  calc_last_char();
+    reset_absolute_top_line_number();
+
+    /* update the line starts array */
+    calc_line_starts(0, mNVisibleLines);
+    calc_last_char();
+  } else {
+    // No buffer, so just clear the state info for later...
+    mNBufferLines  = 0;
+    mFirstChar     = 0;
+    mTopLineNum    = 1;
+    mAbsTopLineNum = 0;
+  }
 
   resize(x(), y(), w(), h());
 }

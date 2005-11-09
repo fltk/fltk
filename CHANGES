@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Fl_Text_Display::wrap_mode() would crash if no buffer
+	  was associated with the widget (STR #1069)
 	- Updated the default label and text colors of all widgets
 	  to use FL_FOREGROUND_COLOR instead of FL_BLACK (STR
 	  #1052)
