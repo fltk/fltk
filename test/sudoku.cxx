@@ -58,7 +58,7 @@
 class SudokuCell : public Fl_Widget {
   bool		readonly_;
   int		value_;
-
+  int		test_value_[4];
 
   public:
 
@@ -67,13 +67,20 @@ class SudokuCell : public Fl_Widget {
   int		handle(int event);
   void		readonly(bool r) { readonly_ = r; redraw(); }
   bool		readonly() const { return readonly_; }
-  void		value(int v) { value_ = v; redraw(); }
+  void		test_value(int v, int n) { test_value_[n] = v; redraw(); }
+  int		test_value(int n) const { return test_value_[n]; }
+  void		value(int v) {
+		  value_ = v;
+		  for (int i = 0; i < 4; i ++) test_value_[i] = 0;
+		  redraw();
+		}
   int		value() const { return value_; }
 };
 
 // Create a cell widget
 SudokuCell::SudokuCell(int X, int Y, int W, int H)
   : Fl_Widget(X, Y, W, H, 0) {
+  value(0);
 }
 
 
@@ -85,21 +92,45 @@ SudokuCell::draw() {
   else fl_draw_box(FL_DOWN_BOX, x(), y(), w(), h(), color());
 
   // Draw the cell background...
-  if (Fl::focus() == this) {
-    fl_color(FL_SELECTION_COLOR);
+  if (Fl::focus() == this && !readonly()) {
+    Fl_Color c = fl_color_average(FL_SELECTION_COLOR, color(), 0.5f);
+    fl_color(c);
     fl_rectf(x() + 4, y() + 4, w() - 8, h() - 8);
-    fl_color(fl_contrast(labelcolor(), FL_SELECTION_COLOR));
+    fl_color(fl_contrast(labelcolor(), c));
   } else fl_color(labelcolor());
 
   // Draw the cell value...
-  if (value_) {
-    char s[2];
+  char s[2];
 
+  s[1] = '\0';
+
+  if (value_) {
     s[0] = value_ + '0';
-    s[1] = '\0';
 
     fl_font(FL_HELVETICA_BOLD, h() - 10);
     fl_draw(s, x(), y(), w(), h(), FL_ALIGN_CENTER);
+  }
+
+  if (test_value_[0]) {
+    fl_font(FL_HELVETICA_BOLD, h() / 5);
+
+    s[0] = test_value_[0] + '0';
+    fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_TOP_LEFT);
+
+    if (test_value_[1]) {
+      s[0] = test_value_[1] + '0';
+      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_TOP_RIGHT);
+    }
+
+    if (test_value_[2]) {
+      s[0] = test_value_[2] + '0';
+      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_BOTTOM_LEFT);
+    }
+
+    if (test_value_[3]) {
+      s[0] = test_value_[3] + '0';
+      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_BOTTOM_RIGHT);
+    }
   }
 }
 
@@ -131,8 +162,29 @@ SudokuCell::handle(int event) {
 
     case FL_KEYDOWN :
       int key = Fl::event_key() - '0';
-      if (key >= 1 && key <= 9) {
-        value(key);
+      if (key >= 0 && key <= 9) {
+        if (Fl::event_state() & FL_SHIFT) {
+	  int i;
+
+	  for (i = 0; i < 4; i ++) {
+	    if (!test_value_[i]) break;
+	  }
+
+	  if (i >= 4) {
+	    for (i = 0; i < 3; i ++) test_value_[i] = test_value_[i + 1];
+	  }
+
+	  test_value_[i] = key;
+
+	  redraw();
+	} else {
+	  value(key);
+	  do_callback();
+	}
+	return 1;
+      } else if (Fl::event_key() == FL_BackSpace ||
+                 Fl::event_key() == FL_Delete) {
+        value(0);
 	do_callback();
 	return 1;
       }
@@ -193,8 +245,9 @@ Sudoku::Sudoku()
     { 0 },
     { "&Difficulty", 0, 0, 0, FL_SUBMENU },
     { "&Easy", FL_COMMAND | '1', diff_cb, (void *)"40", FL_MENU_RADIO },
-    { "&Medium", FL_COMMAND | '2', diff_cb, (void *)"28", FL_MENU_RADIO },
-    { "&Hard", FL_COMMAND | '3', diff_cb, (void *)"16", FL_MENU_RADIO },
+    { "&Medium", FL_COMMAND | '2', diff_cb, (void *)"32", FL_MENU_RADIO },
+    { "&Hard", FL_COMMAND | '3', diff_cb, (void *)"24", FL_MENU_RADIO },
+    { "&Impossible", FL_COMMAND | '4', diff_cb, (void *)"16", FL_MENU_RADIO },
     { 0 },
     { 0 }
   };
@@ -203,8 +256,9 @@ Sudoku::Sudoku()
   // Menubar...
   prefs_.get("difficulty", difficulty_, 40);
 
-  if (difficulty_ == 16) items[9].flags |= FL_MENU_VALUE;
-  else if (difficulty_ == 28) items[8].flags |= FL_MENU_VALUE;
+  if (difficulty_ == 16) items[10].flags |= FL_MENU_VALUE;
+  else if (difficulty_ == 24) items[9].flags |= FL_MENU_VALUE;
+  else if (difficulty_ == 32) items[8].flags |= FL_MENU_VALUE;
   else items[7].flags |= FL_MENU_VALUE;
 
   menubar_ = new Fl_Sys_Menu_Bar(0, 0, 3 * GROUP_SIZE, 25);
@@ -215,7 +269,7 @@ Sudoku::Sudoku()
 
   for (i = 0; i < 3; i ++)
     for (j = 0; j < 3; j ++) {
-      g = new Fl_Group(i * GROUP_SIZE, j * GROUP_SIZE + MENU_OFFSET,
+      g = new Fl_Group(j * GROUP_SIZE, i * GROUP_SIZE + MENU_OFFSET,
 		       GROUP_SIZE, GROUP_SIZE);
       g->box(FL_BORDER_BOX);
       g->color(FL_DARK3);
@@ -224,8 +278,8 @@ Sudoku::Sudoku()
 
       for (k = 0; k < 3; k ++)
         for (m = 0; m < 3; m ++) {
-	  cell = new SudokuCell(i * GROUP_SIZE + CELL_OFFSET + k * CELL_SIZE,
-	                        j * GROUP_SIZE + CELL_OFFSET + m * CELL_SIZE +
+	  cell = new SudokuCell(j * GROUP_SIZE + CELL_OFFSET + m * CELL_SIZE,
+	                        i * GROUP_SIZE + CELL_OFFSET + k * CELL_SIZE +
 				    MENU_OFFSET,
 			        CELL_SIZE, CELL_SIZE);
 	  cell->callback(reset_cb);
@@ -343,6 +397,22 @@ Sudoku::load_game() {
 
       if (val) cell->color(FL_GRAY);
       else cell->color(FL_LIGHT3);
+
+      sprintf(name, "test0%d.%d", i, j);
+      prefs_.get(name, val, 0);
+      cell->test_value(val, 0);
+
+      sprintf(name, "test1%d.%d", i, j);
+      prefs_.get(name, val, 0);
+      cell->test_value(val, 1);
+
+      sprintf(name, "test2%d.%d", i, j);
+      prefs_.get(name, val, 0);
+      cell->test_value(val, 2);
+
+      sprintf(name, "test3%d.%d", i, j);
+      prefs_.get(name, val, 0);
+      cell->test_value(val, 3);
     }
 
   // If we didn't load any values, then create a new game...
@@ -513,6 +583,11 @@ Sudoku::save_game() {
 
       sprintf(name, "readonly%d.%d", i, j);
       prefs_.set(name, cell->readonly());
+
+      for (int k = 0; k < 4; k ++) {
+	sprintf(name, "test%d%d.%d", k, i, j);
+	prefs_.set(name, cell->test_value(k));
+      }
     }
 }
 
@@ -534,7 +609,7 @@ Sudoku::solve_game() {
       SudokuCell *cell = grid_cells_[i][j];
 
       cell->value(grid_values_[i][j]);
-      cell->readonly();
+      cell->readonly(1);
       cell->color(FL_GRAY);
     }
 }
