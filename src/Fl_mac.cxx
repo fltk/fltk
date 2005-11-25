@@ -799,7 +799,7 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
   // to me why Apple changed the API on this even though the current API
   // supports two wheels just fine. Matthias,
   EventRef event;
-  if (GetEventKind(event)==11) {
+  if (GetEventKind(ev)==11) {
     // if this is a "MightyMouse" event, we need to convert it into a regular
     // MouseWheel event
     GetEventParameter( ev, kEventParamEventRef, typeEventRef, NULL, sizeof( EventRef ), NULL, &event );  

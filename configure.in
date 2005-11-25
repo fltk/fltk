@@ -760,7 +760,7 @@ if test -n "$GCC"; then
 	#       They all seem to make either no difference or enlarge
 	#       the code by a few hundred bytes.
         #
-	#       "-O2" seems to be the best compromise between speed and
+	#       "-Os" seems to be the best compromise between speed and
 	#       code size.  "-O3" and higher seem to make no effective
 	#       difference in the speed of the code, but does bloat the
 	#       library 10+%.
@@ -769,7 +769,7 @@ if test -n "$GCC"; then
         if test "x$with_optim" != x; then
 	    OPTIM="$with_optim $OPTIM"
 	else
-            OPTIM="-O2 $OPTIM"
+            OPTIM="-Os -g $OPTIM"
 	fi
     fi
 

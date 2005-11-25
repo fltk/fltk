@@ -85,6 +85,7 @@ CPPFILES =\
 	scroll.cxx \
 	shape.cxx \
 	subwindow.cxx \
+	sudoku.cxx \
 	symbols.cxx \
 	tabs.cxx \
 	threads.cxx \
@@ -142,6 +143,7 @@ ALL =	\
 	resizebox$(EXEEXT) \
 	scroll$(EXEEXT) \
 	subwindow$(EXEEXT) \
+	sudoku$(EXEEXT) \
 	symbols$(EXEEXT) \
 	tabs$(EXEEXT) \
 	$(THREADS) \
@@ -330,6 +332,11 @@ resizebox$(EXEEXT): resizebox.o
 scroll$(EXEEXT): scroll.o
 
 subwindow$(EXEEXT): subwindow.o
+
+sudoku$(EXEEXT): sudoku.o
+	echo Linking $@...
+	$(CXX) -I.. $(CXXFLAGS) sudoku.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(CP) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
 
 symbols$(EXEEXT): symbols.o
 
