@@ -133,11 +133,11 @@ static void setMenuShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
   if ( !isalnum( key ) )
     return;
   
-  long macMod = kMenuNoModifiers;
+  long macMod = kMenuNoCommandModifier;
+  if ( m->shortcut_ & FL_META ) macMod = kMenuNoModifiers;
   if ( m->shortcut_ & FL_SHIFT || isupper(key) ) macMod |= kMenuShiftModifier;
   if ( m->shortcut_ & FL_ALT ) macMod |= kMenuOptionModifier;
-  if ( m->shortcut_ & FL_META ) macMod |= kMenuControlModifier;
-  if ( !(m->shortcut_ & FL_CTRL) ) macMod |= kMenuNoCommandModifier;
+  if ( m->shortcut_ & FL_CTRL ) macMod |= kMenuControlModifier;
   
   //SetMenuItemKeyGlyph( mh, miCnt, key );
   SetItemCmd( mh, miCnt, toupper(key) );

@@ -352,6 +352,7 @@ void Fl::remove_check(Fl_Timeout_Handler cb, void *argp) {
   }
 }
 
+#if !defined(__APPLE__)
 static void run_checks()
 {
   // checks are a bit messy so that add/remove and wait may be called
@@ -366,6 +367,9 @@ static void run_checks()
   }
 }
 
+static char in_idle;
+#endif // !__APPLE__
+
 ////////////////////////////////////////////////////////////////
 // wait/run/check/ready:
 
@@ -373,8 +377,6 @@ void (*Fl::idle)(); // see Fl_add_idle.cxx for the add/remove functions
 
 extern int fl_ready(); // in Fl_<platform>.cxx
 extern int fl_wait(double time); // in Fl_<platform>.cxx
-
-static char in_idle;
 
 double Fl::wait(double time_to_wait) {
   // delete all widgets that were listed during callbacks

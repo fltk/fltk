@@ -809,7 +809,7 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
   }
 
   fl_lock_function();
-  
+
   fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
 
@@ -817,17 +817,13 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
   GetEventParameter( event, kEventParamMouseWheelAxis, typeMouseWheelAxis, NULL, sizeof(EventMouseWheelAxis), NULL, &axis );
   long delta;
   GetEventParameter( event, kEventParamMouseWheelDelta, typeLongInteger, NULL, sizeof(long), NULL, &delta );
-  if ( axis == kEventMouseWheelAxisX )
-  {
+  if ( axis == kEventMouseWheelAxisX ) {
     Fl::e_dx = delta;
     if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
-  }
-  else if ( axis == kEventMouseWheelAxisY )
-  {
+  } else if ( axis == kEventMouseWheelAxisY ) {
     Fl::e_dy = -delta;
     if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
-  }
-  else {
+  } else {
     fl_unlock_function();
 
     return eventNotHandledErr;
