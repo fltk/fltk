@@ -58,7 +58,7 @@
 class SudokuCell : public Fl_Widget {
   bool		readonly_;
   int		value_;
-  int		test_value_[4];
+  int		test_value_[8];
 
   public:
 
@@ -71,7 +71,7 @@ class SudokuCell : public Fl_Widget {
   int		test_value(int n) const { return test_value_[n]; }
   void		value(int v) {
 		  value_ = v;
-		  for (int i = 0; i < 4; i ++) test_value_[i] = 0;
+		  for (int i = 0; i < 8; i ++) test_value_[i] = 0;
 		  redraw();
 		}
   int		value() const { return value_; }
@@ -87,6 +87,18 @@ SudokuCell::SudokuCell(int X, int Y, int W, int H)
 // Draw cell
 void
 SudokuCell::draw() {
+  static Fl_Align align[8] = {
+    FL_ALIGN_TOP_LEFT,
+    FL_ALIGN_TOP,
+    FL_ALIGN_TOP_RIGHT,
+    FL_ALIGN_RIGHT,
+    FL_ALIGN_BOTTOM_RIGHT,
+    FL_ALIGN_BOTTOM,
+    FL_ALIGN_BOTTOM_LEFT,
+    FL_ALIGN_LEFT
+  };
+
+
   // Draw the cell box...
   if (readonly()) fl_draw_box(FL_UP_BOX, x(), y(), w(), h(), color());
   else fl_draw_box(FL_DOWN_BOX, x(), y(), w(), h(), color());
@@ -114,22 +126,11 @@ SudokuCell::draw() {
   if (test_value_[0]) {
     fl_font(FL_HELVETICA_BOLD, h() / 5);
 
-    s[0] = test_value_[0] + '0';
-    fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_TOP_LEFT);
-
-    if (test_value_[1]) {
-      s[0] = test_value_[1] + '0';
-      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_TOP_RIGHT);
-    }
-
-    if (test_value_[2]) {
-      s[0] = test_value_[2] + '0';
-      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_BOTTOM_LEFT);
-    }
-
-    if (test_value_[3]) {
-      s[0] = test_value_[3] + '0';
-      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, FL_ALIGN_BOTTOM_RIGHT);
+    for (int i = 0; i < 8; i ++) {
+      if (test_value_[i]) {
+	s[0] = test_value_[i] + '0';
+	fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, align[i]);
+      }
     }
   }
 }
@@ -166,15 +167,20 @@ SudokuCell::handle(int event) {
         if (Fl::event_state() & FL_SHIFT) {
 	  int i;
 
-	  for (i = 0; i < 4; i ++) {
-	    if (!test_value_[i] || test_value_[i] == key) break;
+	  for (i = 0; i < 8; i ++) {
+	    if (!test_value_[i]) {
+	      test_value_[i] = key;
+	      break;
+	    } else if (test_value_[i] == key) {
+	      test_value_[i] = 0;
+	      break;
+	    }
 	  }
 
-	  if (i >= 4) {
-	    for (i = 0; i < 3; i ++) test_value_[i] = test_value_[i + 1];
+	  if (i >= 8) {
+	    for (i = 0; i < 7; i ++) test_value_[i] = test_value_[i + 1];
+	    test_value_[i] = key;
 	  }
-
-	  test_value_[i] = key;
 
 	  redraw();
 	} else {
@@ -217,7 +223,7 @@ class Sudoku : public Fl_Window {
 
 	      	Sudoku();
 
-  void		check_game();
+  void		check_game(bool highlight = true);
   void		load_game();
   void		new_game();
   void		resize(int X, int Y, int W, int H);
@@ -317,7 +323,7 @@ Sudoku::check_cb(Fl_Widget *widget, void *) {
 
 // Check if the user has correctly solved the game...
 void
-Sudoku::check_game() {
+Sudoku::check_game(bool highlight) {
   bool empty = false;
   bool correct = true;
 
@@ -331,8 +337,11 @@ Sudoku::check_game() {
       if (!val) empty = true;
 
       if (val && grid_values_[i][j] != val) {
-        cell->color(FL_YELLOW);
-        cell->redraw();
+        if (highlight) {
+	  cell->color(FL_YELLOW);
+	  cell->redraw();
+	}
+
 	correct = false;
       }
     }
@@ -398,21 +407,11 @@ Sudoku::load_game() {
       if (val) cell->color(FL_GRAY);
       else cell->color(FL_LIGHT3);
 
-      sprintf(name, "test0%d.%d", i, j);
-      prefs_.get(name, val, 0);
-      cell->test_value(val, 0);
-
-      sprintf(name, "test1%d.%d", i, j);
-      prefs_.get(name, val, 0);
-      cell->test_value(val, 1);
-
-      sprintf(name, "test2%d.%d", i, j);
-      prefs_.get(name, val, 0);
-      cell->test_value(val, 2);
-
-      sprintf(name, "test3%d.%d", i, j);
-      prefs_.get(name, val, 0);
-      cell->test_value(val, 3);
+      for (int k = 0; k < 8; k ++) {
+	sprintf(name, "test%d%d.%d", k, i, j);
+	prefs_.get(name, val, 0);
+	cell->test_value(val, k);
+      }
     }
 
   // If we didn't load any values, then create a new game...
@@ -539,6 +538,8 @@ void
 Sudoku::reset_cb(Fl_Widget *widget, void *) {
   widget->color(FL_LIGHT3);
   widget->redraw();
+  
+  ((Sudoku *)(widget->window()))->check_game(false);
 }
 
 
@@ -584,7 +585,7 @@ Sudoku::save_game() {
       sprintf(name, "readonly%d.%d", i, j);
       prefs_.set(name, cell->readonly());
 
-      for (int k = 0; k < 4; k ++) {
+      for (int k = 0; k < 8; k ++) {
 	sprintf(name, "test%d%d.%d", k, i, j);
 	prefs_.set(name, cell->test_value(k));
       }
