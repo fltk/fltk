@@ -123,14 +123,12 @@ SudokuCell::draw() {
     fl_draw(s, x(), y(), w(), h(), FL_ALIGN_CENTER);
   }
 
-  if (test_value_[0]) {
-    fl_font(FL_HELVETICA_BOLD, h() / 5);
+  fl_font(FL_HELVETICA_BOLD, h() / 5);
 
-    for (int i = 0; i < 8; i ++) {
-      if (test_value_[i]) {
-	s[0] = test_value_[i] + '0';
-	fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, align[i]);
-      }
+  for (int i = 0; i < 8; i ++) {
+    if (test_value_[i]) {
+      s[0] = test_value_[i] + '0';
+      fl_draw(s, x() + 5, y() + 5, w() - 10, h() - 10, align[i]);
     }
   }
 }
@@ -167,14 +165,18 @@ SudokuCell::handle(int event) {
         if (Fl::event_state() & FL_SHIFT) {
 	  int i;
 
-	  for (i = 0; i < 8; i ++) {
-	    if (!test_value_[i]) {
-	      test_value_[i] = key;
-	      break;
-	    } else if (test_value_[i] == key) {
+	  for (i = 0; i < 8; i ++)
+	    if (test_value_[i] == key) {
 	      test_value_[i] = 0;
 	      break;
 	    }
+
+          if (i >= 8) {
+	    for (i = 0; i < 8; i ++)
+	      if (!test_value_[i]) {
+		test_value_[i] = key;
+		break;
+	      }
 	  }
 
 	  if (i >= 8) {
@@ -380,6 +382,8 @@ Sudoku::load_game() {
   // Load the current values and state of each grid...
   memset(grid_values_, 0, sizeof(grid_values_));
 
+  bool solved = true;
+
   for (int i = 0; i < 9; i ++)
     for (int j = 0; j < 9; j ++) {
       char name[255];
@@ -405,7 +409,10 @@ Sudoku::load_game() {
       cell->readonly(val);
 
       if (val) cell->color(FL_GRAY);
-      else cell->color(FL_LIGHT3);
+      else {
+        cell->color(FL_LIGHT3);
+	solved = false;
+      }
 
       for (int k = 0; k < 8; k ++) {
 	sprintf(name, "test%d%d.%d", k, i, j);
@@ -414,8 +421,9 @@ Sudoku::load_game() {
       }
     }
 
-  // If we didn't load any values, then create a new game...
-  if (!grid_values_[0][0]) new_game();
+  // If we didn't load any values or the last game was solved, then
+  // create a new game automatically...
+  if (solved || !grid_values_[0][0]) new_game();
 }
 
 
@@ -488,33 +496,35 @@ Sudoku::new_game() {
   // Show N cells, starting with potential confusing ones...
   count = difficulty_;
 
-  for (i = 0; i < 8; i ++)
-    for (j = 0; j < 8; j ++) {
+  for (i = 0; i < 9; i ++) {
+    j    = rand() % 9;
+    cell = grid_cells_[i][j];
+
+    for (m = 0; m < 9; m ++)
+      if (m != j && grid_values_[i][j] == grid_values_[i][m]) {
+	cell->value(grid_values_[i][j]);
+	cell->readonly(1);
+	cell->color(FL_GRAY);
+
+	count --;
+      }
+  }
+
+  for (j = 0; j < 9; j ++) {
+    do {
+      i    = rand() % 9;
       cell = grid_cells_[i][j];
+    } while (cell->readonly());
 
-      for (k = i + 1; k < 9; k ++) {
-        if (grid_values_[i][j] == grid_values_[k][j + 1] &&
-	    grid_values_[i][j + 1] == grid_values_[k][j]) {
-	  cell->value(grid_values_[i][j]);
-	  cell->readonly(1);
-	  cell->color(FL_GRAY);
+    for (k = 0; k < 9; k ++)
+      if (k != i && grid_values_[i][j] == grid_values_[k][j]) {
+	cell->value(grid_values_[i][j]);
+	cell->readonly(1);
+	cell->color(FL_GRAY);
 
-	  count --;
-	}
+	count --;
       }
-
-      for (m = j + 1; m < 9; m ++) {
-        if (!cell->readonly() &&
-	    grid_values_[i][j] == grid_values_[i + 1][m] &&
-	    grid_values_[i + 1][m] == grid_values_[i][m]) {
-	  cell->value(grid_values_[i][j]);
-	  cell->readonly(1);
-	  cell->color(FL_GRAY);
-
-	  count --;
-	}
-      }
-    }
+  }
 
   // Now show random fields...
   while (count > 0) {
