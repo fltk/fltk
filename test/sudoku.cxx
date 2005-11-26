@@ -496,48 +496,61 @@ Sudoku::new_game() {
   // Show N cells, starting with potential confusing ones...
   count = difficulty_;
 
-  for (i = 0; i < 9; i ++) {
-    j    = rand() % 9;
-    cell = grid_cells_[i][j];
+  int numbers[9];
 
-    for (m = 0; m < 9; m ++)
-      if (m != j && grid_values_[i][j] == grid_values_[i][m]) {
-	cell->value(grid_values_[i][j]);
-	cell->readonly(1);
-	cell->color(FL_GRAY);
+  for (i = 0; i < 9; i ++) numbers[i] = i + 1;
 
-	count --;
-      }
-  }
-
-  for (j = 0; j < 9; j ++) {
-    do {
-      i    = rand() % 9;
-      cell = grid_cells_[i][j];
-    } while (cell->readonly());
-
-    for (k = 0; k < 9; k ++)
-      if (k != i && grid_values_[i][j] == grid_values_[k][j]) {
-	cell->value(grid_values_[i][j]);
-	cell->readonly(1);
-	cell->color(FL_GRAY);
-
-	count --;
-      }
-  }
-
-  // Now show random fields...
   while (count > 0) {
-    i    = rand() % 9;
-    j    = rand() % 9;
-    cell = grid_cells_[i][j];
+    for (i = 0; i < 20; i ++) {
+      k          = rand() % 9;
+      m          = rand() % 9;
+      t          = numbers[k];
+      numbers[k] = numbers[m];
+      numbers[m] = t;
+    }
 
-    if (!cell->readonly()) {
-      cell->value(grid_values_[i][j]);
-      cell->readonly(1);
-      cell->color(FL_GRAY);
+    for (i = 0; count > 0 && i < 9; i ++) {
+      t = numbers[i];
 
-      count --;
+      for (j = 0; count > 0 && j < 9; j ++) {
+        cell = grid_cells_[i][j];
+
+        if (grid_values_[i][j] == t && !cell->readonly()) {
+	  cell->value(grid_values_[i][j]);
+	  cell->readonly(1);
+	  cell->color(FL_GRAY);
+
+	  count --;
+	  break;
+	}
+      }
+    }
+
+    if (count <= 0) break;
+
+    for (i = 0; i < 20; i ++) {
+      k          = rand() % 9;
+      m          = rand() % 9;
+      t          = numbers[k];
+      numbers[k] = numbers[m];
+      numbers[m] = t;
+    }
+
+    for (j = 0; count > 0 && j < 9; j ++) {
+      t = numbers[j];
+
+      for (i = 0; count > 0 && i < 9; i ++) {
+        cell = grid_cells_[i][j];
+
+        if (grid_values_[i][j] == t && !cell->readonly()) {
+	  cell->value(grid_values_[i][j]);
+	  cell->readonly(1);
+	  cell->color(FL_GRAY);
+
+	  count --;
+	  break;
+	}
+      }
     }
   }
 }
