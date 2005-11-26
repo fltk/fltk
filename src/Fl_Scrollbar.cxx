@@ -132,11 +132,13 @@ int Fl_Scrollbar::handle(int event) {
     if (horizontal()) {
       if (Fl::e_dx==0) return 0;
       handle_drag(clamp(value() + linesize_ * Fl::e_dx));
+      return 1;
     } else {
       if (Fl::e_dy==0) return 0;
       handle_drag(clamp(value() + linesize_ * Fl::e_dy));
+      return 1;
     }
-    return 1;
+    break;
   case FL_SHORTCUT:
   case FL_KEYBOARD: {
     int v = value();

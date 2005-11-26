@@ -799,14 +799,19 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
   // to me why Apple changed the API on this even though the current API
   // supports two wheels just fine. Matthias,
   EventRef event;
+//  fprintf(stderr, "carbonMousewheelHandler: GetEventKind(ev=%p) = %d\n", ev,
+//          GetEventKind(ev));
   if (GetEventKind(ev)==11) {
     // if this is a "MightyMouse" event, we need to convert it into a regular
     // MouseWheel event
+//    fputs("MightyMouse event!\n", stderr);
     GetEventParameter( ev, kEventParamEventRef, typeEventRef, NULL, sizeof( EventRef ), NULL, &event );  
   } else {
     // otherwise, we simply copy the event...
     event = ev;
   }
+
+//  fprintf(stderr, "event=%p!\n", event);
 
   fl_lock_function();
 
@@ -817,6 +822,7 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
   GetEventParameter( event, kEventParamMouseWheelAxis, typeMouseWheelAxis, NULL, sizeof(EventMouseWheelAxis), NULL, &axis );
   long delta;
   GetEventParameter( event, kEventParamMouseWheelDelta, typeLongInteger, NULL, sizeof(long), NULL, &delta );
+//  fprintf(stderr, "axis=%d, delta=%d\n", axis, delta);
   if ( axis == kEventMouseWheelAxisX ) {
     Fl::e_dx = delta;
     if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
@@ -1778,9 +1784,11 @@ void Fl_X::make(Fl_Window* w)
       OSStatus ret;
       EventHandlerUPP mousewheelHandler = NewEventHandlerUPP( carbonMousewheelHandler ); // will not be disposed by Carbon...
       static EventTypeSpec mousewheelEvents[] = {
-        { kEventClassMouse, 11 }, // "11" is the yet unlabled "MightyMouse" wheel event - sigh!
+//        { kEventClassMouse, 11 }, // "11" is the yet unlabled "MightyMouse" wheel event - sigh!
         { kEventClassMouse, kEventMouseWheelMoved } };
-      ret = InstallWindowEventHandler( x->xid, mousewheelHandler, 2, mousewheelEvents, w, 0L );
+      ret = InstallWindowEventHandler( x->xid, mousewheelHandler,
+	        (int)(sizeof(mousewheelEvents)/sizeof(mousewheelEvents[0])),
+		mousewheelEvents, w, 0L );
       EventHandlerUPP mouseHandler = NewEventHandlerUPP( carbonMouseHandler ); // will not be disposed by Carbon...
       static EventTypeSpec mouseEvents[] = {
         { kEventClassMouse, kEventMouseDown },

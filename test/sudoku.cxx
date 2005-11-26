@@ -162,12 +162,12 @@ SudokuCell::handle(int event) {
 
     case FL_KEYDOWN :
       int key = Fl::event_key() - '0';
-      if (key >= 0 && key <= 9) {
+      if (key > 0 && key <= 9) {
         if (Fl::event_state() & FL_SHIFT) {
 	  int i;
 
 	  for (i = 0; i < 4; i ++) {
-	    if (!test_value_[i]) break;
+	    if (!test_value_[i] || test_value_[i] == key) break;
 	  }
 
 	  if (i >= 4) {
@@ -182,7 +182,7 @@ SudokuCell::handle(int event) {
 	  do_callback();
 	}
 	return 1;
-      } else if (Fl::event_key() == FL_BackSpace ||
+      } else if (key == 0 || Fl::event_key() == FL_BackSpace ||
                  Fl::event_key() == FL_Delete) {
         value(0);
 	do_callback();
