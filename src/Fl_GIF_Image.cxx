@@ -110,8 +110,8 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   int ColorMapSize = 1 << BitsPerPixel;
   // int OriginalResolution = ((ch>>4)&7)+1;
   // int SortedTable = (ch&8)!=0;
-  NEXTBYTE; // Background Color index
-  NEXTBYTE; // Aspect ratio is N/64
+  ch = NEXTBYTE; // Background Color index
+  ch = NEXTBYTE; // Aspect ratio is N/64
 
   // Read in global colormap:
   uchar transparent_pixel = 0;
@@ -153,7 +153,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 	char bits;
 	bits = NEXTBYTE;
-	NEXTBYTE; NEXTBYTE; // GETSHORT(delay);
+	char junk = NEXTBYTE; junk = NEXTBYTE; // GETSHORT(delay);
 	transparent_pixel = NEXTBYTE;
 	if (bits & 1) has_transparent = 1;
 	blocklen = NEXTBYTE;
@@ -166,8 +166,8 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
       }
     } else if (i == 0x2c) {	// an image
 
-      NEXTBYTE; NEXTBYTE; // GETSHORT(x_position);
-      NEXTBYTE; NEXTBYTE; // GETSHORT(y_position);
+      ch = NEXTBYTE; ch = NEXTBYTE; // GETSHORT(x_position);
+      ch = NEXTBYTE; ch = NEXTBYTE; // GETSHORT(y_position);
       GETSHORT(Width);
       GETSHORT(Height);
       ch = NEXTBYTE;
@@ -189,7 +189,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     }
 
     // skip the data:
-    while (blocklen>0) {while (blocklen--) {NEXTBYTE;} blocklen=NEXTBYTE;}
+    while (blocklen>0) {while (blocklen--) {ch = NEXTBYTE;} blocklen=NEXTBYTE;}
   }
 
   if (BitsPerPixel >= CodeSize)

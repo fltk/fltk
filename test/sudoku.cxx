@@ -44,6 +44,7 @@
 #ifdef WIN32
 #  include "sudokurc.h"
 #elif !defined(__APPLE__)
+#  include "sudoku.xbm"
 #endif // WIN32
 
 
@@ -320,6 +321,10 @@ Sudoku::Sudoku()
 #ifdef WIN32
   icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
 #elif !defined(__APPLE__)
+  fl_open_display();
+  icon((char *)XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
+                                     (char *)sudoku_bits, sudoku_width,
+				     sudoku_height));
 #endif // WIN32
 
   // Catch window close events...

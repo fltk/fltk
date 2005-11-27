@@ -199,11 +199,13 @@ image.o: ../FL/Fl_Widget.H list_visuals.cxx ../config.h
 inactive.o: inactive.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 inactive.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 inactive.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/Fl_Button.H
-inactive.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+inactive.o: ../FL/Fl_Light_Button.H ../FL/Fl_Check_Button.H
+inactive.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Round_Button.H
 inactive.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Input.H
 inactive.o: ../FL/Fl_Input_.H ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H
-inactive.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/Fl_Box.H
-inactive.o: ../FL/Fl_Value_Output.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+inactive.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/Fl_Value_Output.H
+inactive.o: ../FL/Fl_Box.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+inactive.o: ../FL/Fl_Roller.H ../FL/Fl_Dial.H ../FL/Fl_Clock.H
 input.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Window.H
 input.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Widget.H
 input.o: ../FL/Fl_Float_Input.H ../FL/Fl_Input.H ../FL/Fl_Int_Input.H
@@ -219,7 +221,7 @@ input_choice.o: ../FL/Fl_Image.H ../FL/fl_draw.H
 keyboard.o: keyboard_ui.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 keyboard.o: keyboard.h ../FL/Fl_Window.H ../FL/Fl_Button.H ../FL/Fl_Output.H
 keyboard.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Widget.H
-keyboard.o: ../FL/Fl_Box.H ../FL/Fl_Dial.H ../FL/Fl_Valuator.H
+keyboard.o: ../FL/Fl_Box.H ../FL/Fl_Dial.H
 label.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 label.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 label.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Hor_Value_Slider.H
@@ -240,7 +242,8 @@ menubar.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl_Box.H
 menubar.o: ../FL/Fl_Window.H ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H
 menubar.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
 menubar.o: ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H ../FL/Fl_Menu_Button.H
-menubar.o: ../FL/Fl_Choice.H ../FL/fl_draw.H
+menubar.o: ../FL/Fl_Choice.H ../src/flstring.h ../FL/Fl_Export.H ../config.h
+menubar.o: ../FL/fl_draw.H
 message.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 message.o: ../FL/Fl_Window.H ../FL/fl_ask.H
 minimum.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -321,6 +324,16 @@ subwindow.o: ../FL/Fl_Window.H ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H
 subwindow.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
 subwindow.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/Fl_Box.H
 subwindow.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_draw.H
+sudoku.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
+sudoku.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Button.H
+sudoku.o: ../FL/Fl_Group.H ../FL/fl_ask.H ../FL/fl_draw.H
+sudoku.o: ../FL/Fl_Help_Dialog.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
+sudoku.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Help_View.H ../FL/Fl.H
+sudoku.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+sudoku.o: ../FL/fl_draw.H ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
+sudoku.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Preferences.H
+sudoku.o: ../FL/Fl_Sys_Menu_Bar.H ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H
+sudoku.o: ../FL/Fl_Menu_Item.H ../FL/x.H sudoku.xbm
 symbols.o: ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H
 symbols.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 symbols.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Value_Slider.H
