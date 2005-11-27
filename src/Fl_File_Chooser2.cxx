@@ -62,6 +62,10 @@
 #if defined(WIN32) && ! defined (__CYGWIN__)
 #  include <direct.h>
 #  include <io.h>
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define access _access
+#  define mkdir _mkdir
 // Apparently Borland C++ defines DIRECTORY in <direct.h>, which
 // interfers with the Fl_File_Icon enumeration of the same name.
 #  ifdef DIRECTORY
@@ -608,7 +612,7 @@ Fl_File_Chooser::fileNameCB()
       file = fileList->text(i);
 
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
-      if (strnicmp(filename, file, min_match) == 0) {
+      if (strncasecmp(filename, file, min_match) == 0) {
 #else
       if (strncmp(filename, file, min_match) == 0) {
 #endif // WIN32 || __EMX__
@@ -631,7 +635,7 @@ Fl_File_Chooser::fileNameCB()
 	  // Succeeding match; compare to find maximum string match...
 	  while (max_match > min_match)
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
-	    if (strnicmp(file, matchname, max_match) == 0)
+	    if (strncasecmp(file, matchname, max_match) == 0)
 #else
 	    if (strncmp(file, matchname, max_match) == 0)
 #endif // WIN32 || __EMX__
@@ -1187,7 +1191,7 @@ compare_dirnames(const char *a, const char *b) {
 
   // Do a comparison of the first N chars (alen == blen at this point)...
 #ifdef WIN32
-  return strnicmp(a, b, alen);
+  return strncasecmp(a, b, alen);
 #else
   return strncmp(a, b, alen);
 #endif // WIN32

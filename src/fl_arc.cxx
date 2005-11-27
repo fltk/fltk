@@ -32,6 +32,12 @@
 #include <FL/fl_draw.H>
 #include <FL/math.h>
 
+#ifdef WIN32
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define hypot _hypot
+#endif // WIN32
+
 void fl_arc(double x, double y, double r, double start, double end) {
 
   // draw start point accurately:

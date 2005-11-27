@@ -50,9 +50,12 @@
 #include <FL/math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(WIN32) && ! defined(__CYGWIN__)
+#if defined(WIN32) && !defined(__CYGWIN__)
 #  include <io.h>
 #  define F_OK	0
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define access _access
 #else
 #  include <unistd.h>
 #endif // WIN32

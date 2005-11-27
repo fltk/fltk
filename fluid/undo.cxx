@@ -34,6 +34,9 @@
 #  include <io.h>
 #  include <windows.h>
 #  define getpid (int)GetCurrentProcessId
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define unlink _unlink
 #else
 #  include <unistd.h>
 #endif // WIN32 && !__CYGWIN__

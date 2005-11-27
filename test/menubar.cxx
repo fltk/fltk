@@ -34,7 +34,7 @@
 #include <FL/Fl_Choice.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "../src/flstring.h"
 #include <FL/fl_draw.H>
 
 void window_cb(Fl_Widget* w, void*) {

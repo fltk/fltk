@@ -39,6 +39,10 @@
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <io.h>
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define access _access
+#  define mkdir _mkdir
 #elif defined (__APPLE__)
 #  include <Carbon/Carbon.h>
 #  include <unistd.h>

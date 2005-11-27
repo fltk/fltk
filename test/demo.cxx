@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define chdir _chdir
+#  define putenv _putenv
 #else
 #  include <unistd.h>
 #endif

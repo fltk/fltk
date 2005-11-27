@@ -66,6 +66,9 @@
 #if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
 #  include <direct.h>
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define getcwd _getcwd
 #else
 #  include <unistd.h>
 #endif // WIN32

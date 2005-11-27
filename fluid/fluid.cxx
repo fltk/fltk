@@ -59,6 +59,11 @@
 #  include <io.h>
 #  include <commdlg.h>
 #  include <FL/x.H>
+// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+// on Windows, which is supposed to be POSIX compliant...
+#  define access _access
+#  define chdir _chdir
+#  define getcwd _getcwd
 #else
 #  include <unistd.h>
 #endif

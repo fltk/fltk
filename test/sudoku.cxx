@@ -35,10 +35,16 @@
 #include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/x.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#ifdef WIN32
+#  include "sudokurc.h"
+#elif !defined(__APPLE__)
+#endif // WIN32
 
 
 //
@@ -105,7 +111,7 @@ SudokuCell::draw() {
   else fl_draw_box(FL_DOWN_BOX, x(), y(), w(), h(), color());
 
   // Draw the cell background...
-  if (Fl::focus() == this && !readonly()) {
+  if (Fl::focus() == this) {
     Fl_Color c = fl_color_average(FL_SELECTION_COLOR, color(), 0.5f);
     fl_color(c);
     fl_rectf(x() + 4, y() + 4, w() - 8, h() - 8);
@@ -140,12 +146,9 @@ int
 SudokuCell::handle(int event) {
   switch (event) {
     case FL_FOCUS :
-      if (!readonly()) {
-        Fl::focus(this);
-	redraw();
-	return 1;
-      }
-      break;
+      Fl::focus(this);
+      redraw();
+      return 1;
 
     case FL_UNFOCUS :
       redraw();
@@ -153,7 +156,7 @@ SudokuCell::handle(int event) {
       break;
 
     case FL_PUSH :
-      if (!readonly() && Fl::event_inside(this)) {
+      if (Fl::event_inside(this)) {
         Fl::focus(this);
 	redraw();
 	return 1;
@@ -163,6 +166,11 @@ SudokuCell::handle(int event) {
     case FL_KEYDOWN :
       int key = Fl::event_key() - '0';
       if (key > 0 && key <= 9) {
+        if (readonly()) {
+          fl_beep(FL_BEEP_ERROR);
+          return 1;
+        }
+
         if (Fl::event_state() & FL_SHIFT) {
 	  int i;
 
@@ -193,6 +201,11 @@ SudokuCell::handle(int event) {
 	return 1;
       } else if (key == 0 || Fl::event_key() == FL_BackSpace ||
                  Fl::event_key() == FL_Delete) {
+        if (readonly()) {
+          fl_beep(FL_BEEP_ERROR);
+          return 1;
+        }
+
         value(0);
 	do_callback();
 	return 1;
@@ -303,9 +316,18 @@ Sudoku::Sudoku()
       grid_cells_[i][j] = cell;
     }
 
+  // Set icon for window (MacOS uses app bundle for icon...)
+#ifdef WIN32
+  icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
+#elif !defined(__APPLE__)
+#endif // WIN32
+
+  // Catch window close events...
   callback(close_cb);
+
+  // Make the window resizable...
   resizable(grid_);
-  size_range(3 * GROUP_SIZE, 3 * GROUP_SIZE + MENU_OFFSET, 0, 0, 1, 1, 1);
+  size_range(3 * GROUP_SIZE, 3 * GROUP_SIZE + MENU_OFFSET, 0, 0, 5, 5, 1);
 
   // Restore the previous window dimensions...
   int X, Y, W, H;
