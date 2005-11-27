@@ -52,9 +52,11 @@ void Fl_Counter::draw() {
     xx[4] = x()+w()-1*W; ww[4] = W;
   } else {
     int W = w()*20/100;
+    xx[1] = 0;	         ww[1] = 0;
     xx[2] = x();	 ww[2] = W;
     xx[0] = x()+W;	 ww[0] = w()-2*W;
     xx[3] = x()+w()-1*W; ww[3] = W;
+    xx[4] = 0;	         ww[4] = 0;
   }
 
   draw_box(boxtype[0], xx[0], y(), ww[0], h(), FL_BACKGROUND2_COLOR);
