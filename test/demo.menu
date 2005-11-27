@@ -59,6 +59,7 @@
 	@e:Fractals:fractals
 	@e:Puzzle:glpuzzle
 	@e:Checkers:checkers
+	@e:Sudoku:sudoku
 
 @main:Other\nTests:@o
 	@o:Color Choosers:color_chooser r

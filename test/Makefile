@@ -335,8 +335,9 @@ subwindow$(EXEEXT): subwindow.o
 
 sudoku$(EXEEXT): sudoku.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) sudoku.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) sudoku.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(CP) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
+	$(POSTBUILD) $@ ../FL/mac.r
 
 symbols$(EXEEXT): symbols.o
 

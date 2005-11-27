@@ -1,3 +1,6 @@
+//
+// "$Id$"
+//
 // Test program for Fl_Input_Choice
 //
 // Copyright 1998-2005 by Bill Spitzak and others.
@@ -55,3 +58,8 @@ int main(int argc, char **argv) {
     win.show(argc, argv);
     return Fl::run();
 }
+
+
+//
+// End of "$Id$".
+//

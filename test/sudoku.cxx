@@ -32,6 +32,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <stdio.h>
@@ -215,13 +216,14 @@ class Sudoku : public Fl_Window {
   static void	check_cb(Fl_Widget *widget, void *);
   static void	close_cb(Fl_Widget *widget, void *);
   static void	diff_cb(Fl_Widget *widget, void *d);
+  static void	help_cb(Fl_Widget *, void *);
   static void	new_cb(Fl_Widget *widget, void *);
   static void	reset_cb(Fl_Widget *widget, void *);
   void		set_title();
   static void	solve_cb(Fl_Widget *widget, void *);
 
+  static Fl_Help_Dialog *help_dialog_;
   static Fl_Preferences	prefs_;
-
   public:
 
 	      	Sudoku();
@@ -235,14 +237,16 @@ class Sudoku : public Fl_Window {
 };
 
 
-// Preferences/saved state for game...
+// Sudoku class globals...
+Fl_Help_Dialog	*Sudoku::help_dialog_ = (Fl_Help_Dialog *)0;
 Fl_Preferences	Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
+
 
 // Create a Sudoku game window...
 Sudoku::Sudoku()
   : Fl_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku")
 {
-  int i, j, k, m;
+  int i, j;
   Fl_Group *g;
   SudokuCell *cell;
   static Fl_Menu_Item	items[] = {
@@ -257,6 +261,9 @@ Sudoku::Sudoku()
     { "&Medium", FL_COMMAND | '2', diff_cb, (void *)"1", FL_MENU_RADIO },
     { "&Hard", FL_COMMAND | '3', diff_cb, (void *)"2", FL_MENU_RADIO },
     { "&Impossible", FL_COMMAND | '4', diff_cb, (void *)"3", FL_MENU_RADIO },
+    { 0 },
+    { "&Help", 0, 0, 0, FL_SUBMENU },
+    { "&About Sudoku", FL_F + 1, help_cb, 0, 0 },
     { 0 },
     { 0 }
   };
@@ -280,24 +287,25 @@ Sudoku::Sudoku()
 		       GROUP_SIZE, GROUP_SIZE);
       g->box(FL_BORDER_BOX);
       g->color(FL_DARK3);
+      g->end();
 
       grid_groups_[i][j] = g;
+    }
 
-      for (k = 0; k < 3; k ++)
-        for (m = 0; m < 3; m ++) {
-	  cell = new SudokuCell(j * GROUP_SIZE + CELL_OFFSET + m * CELL_SIZE,
-	                        i * GROUP_SIZE + CELL_OFFSET + k * CELL_SIZE +
-				    MENU_OFFSET,
-			        CELL_SIZE, CELL_SIZE);
-	  cell->callback(reset_cb);
-	  grid_cells_[i * 3 + k][j * 3 + m] = cell;
-	}
-
-      g->end();
+  for (i = 0; i < 9; i ++)
+    for (j = 0; j < 9; j ++) {
+      cell = new SudokuCell(j * CELL_SIZE + CELL_OFFSET +
+                                (j / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+	                    i * CELL_SIZE + CELL_OFFSET + MENU_OFFSET +
+			        (i / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+			    CELL_SIZE, CELL_SIZE);
+      cell->callback(reset_cb);
+      grid_cells_[i][j] = cell;
     }
 
   callback(close_cb);
   resizable(grid_);
+  size_range(3 * GROUP_SIZE, 3 * GROUP_SIZE + MENU_OFFSET, 0, 0, 1, 1, 1);
 
   // Restore the previous window dimensions...
   int X, Y, W, H;
@@ -389,6 +397,8 @@ Sudoku::close_cb(Fl_Widget *widget, void *) {
 
   s->save_game();
   s->hide();
+
+  if (help_dialog_) help_dialog_->hide();
 }
 
 
@@ -402,6 +412,54 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
   s->set_title();
 
   prefs_.set("difficulty", s->difficulty_);
+}
+
+
+// Show the on-line help...
+void
+Sudoku::help_cb(Fl_Widget *, void *) {
+  if (!help_dialog_) {
+    help_dialog_ = new Fl_Help_Dialog();
+
+    help_dialog_->value(
+	"<HTML>\n"
+	"<HEAD>\n"
+	"<TITLE>Sudoku Help</TITLE>\n"
+	"</HEAD>\n"
+	"<BODY>\n"
+
+	"<H2>About the Game</H2>\n"
+
+	"<P>Sudoku (pronounced soo-dough-coo with the emphasis on the\n"
+        "first syllable) is a simple number-based puzzle/game played on a\n"
+	"9x9 grid that is divided into 3x3 subgrids. The goal is to enter\n"
+	"a number from 1 to 9 in each cell so that each number appears\n"
+	"only once in each column and row.</P>\n"
+
+	"<P>This version of the puzzle is Copyright 2005 by Michael R Sweet</P>\n"
+
+	"<H2>How to Play the Game</H2>\n"
+
+	"<P>At the start of a new game, Sudoku fills in a random selection\n"
+	"of cells for you - the number of cells depends on the difficulty\n"
+	"level you use. Click in any of the empty cells or use the arrow\n"
+	"keys to highlight individual cells and press a number from 1 to 9\n"
+	"to fill in the cell. To clear a cell, press 0, Delete, or\n"
+	"Backspace. As you complete each subgrid, correct subgrids are\n"
+	"highlighted in green. When you have successfully completed all\n"
+	"subgrids, the entire puzzle is highlighted until you start a new\n"
+	"game.</P>\n"
+
+	"<P>As you work to complete the puzzle, you can display possible\n"
+	"solutions inside each cell by holding the Shift key and pressing\n"
+	"each number in turn. Repeat the process to remove individual\n"
+	"numbers, or press a number without the Shift key to replace them\n"
+	"with the actual number to use.</P>\n"
+	"</BODY>\n"
+    );
+  }
+
+  help_dialog_->show();
 }
 
 
@@ -453,6 +511,7 @@ Sudoku::load_game() {
   // If we didn't load any values or the last game was solved, then
   // create a new game automatically...
   if (solved || !grid_values_[0][0]) new_game();
+  else check_game(false);
 }
 
 
@@ -620,16 +679,6 @@ Sudoku::reset_cb(Fl_Widget *widget, void *) {
 // Resize the window...
 void
 Sudoku::resize(int X, int Y, int W, int H) {
-  // Force resizes to keep the proper aspect ratio...
-  int M = H - MENU_OFFSET;
-
-  if (M > W) M = W;
-
-  if (W != M || H != (M + MENU_OFFSET)) {
-    W = M;
-    H = M + MENU_OFFSET;
-  }
-
   // Resize the window...
   Fl_Window::resize(X, Y, W, H);
 

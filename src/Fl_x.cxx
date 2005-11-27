@@ -944,6 +944,7 @@ int fl_handle(const XEvent& thisevent)
 
     // tell Fl_Window about it and set flag to prevent echoing:
     resize_bug_fix = window;
+//    printf("ConfigureNotify: X,Y,W,H=%d,%d,%d,%d\n", X, Y, W, H);
     window->resize(X, Y, W, H);
     break; // allow add_handler to do something too
     }
@@ -972,6 +973,10 @@ int fl_handle(const XEvent& thisevent)
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
+//  printf("Fl_Window::resize(X=%d,Y=%d,W=%d,H=%d)\n", X, Y, W, H);
+//  printf("    resize_bug_fix=%p\n", resize_bug_fix);
+//  printf("    this=%p\n", this);
+
   int is_a_move = (X != x() || Y != y());
   int is_a_resize = (W != w() || H != h());
   int resize_from_program = (this != resize_bug_fix);
@@ -989,7 +994,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     size_range(w(), h(), w(), h());
   }
 
-  if (resize_from_program && shown()) {
+  if (shown()) {
     if (is_a_resize) {
       if (!resizable()) size_range(w(),h(),w(),h());
       if (is_a_move) {
@@ -997,8 +1002,9 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       } else {
 	XResizeWindow(fl_display, i->xid, W>0 ? W : 1, H>0 ? H : 1);
       }
-    } else
+    } else if (resize_from_program) {
       XMoveWindow(fl_display, i->xid, X, Y);
+    }
   }
 }
 
