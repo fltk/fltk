@@ -217,6 +217,7 @@ class Sudoku : public Fl_Window {
   static void	diff_cb(Fl_Widget *widget, void *d);
   static void	new_cb(Fl_Widget *widget, void *);
   static void	reset_cb(Fl_Widget *widget, void *);
+  void		set_title();
   static void	solve_cb(Fl_Widget *widget, void *);
 
   static Fl_Preferences	prefs_;
@@ -252,22 +253,20 @@ Sudoku::Sudoku()
     { "&Quit", FL_COMMAND | 'q', close_cb, 0, 0 },
     { 0 },
     { "&Difficulty", 0, 0, 0, FL_SUBMENU },
-    { "&Easy", FL_COMMAND | '1', diff_cb, (void *)"40", FL_MENU_RADIO },
-    { "&Medium", FL_COMMAND | '2', diff_cb, (void *)"32", FL_MENU_RADIO },
-    { "&Hard", FL_COMMAND | '3', diff_cb, (void *)"24", FL_MENU_RADIO },
-    { "&Impossible", FL_COMMAND | '4', diff_cb, (void *)"16", FL_MENU_RADIO },
+    { "&Easy", FL_COMMAND | '1', diff_cb, (void *)"0", FL_MENU_RADIO },
+    { "&Medium", FL_COMMAND | '2', diff_cb, (void *)"1", FL_MENU_RADIO },
+    { "&Hard", FL_COMMAND | '3', diff_cb, (void *)"2", FL_MENU_RADIO },
+    { "&Impossible", FL_COMMAND | '4', diff_cb, (void *)"3", FL_MENU_RADIO },
     { 0 },
     { 0 }
   };
 
 
   // Menubar...
-  prefs_.get("difficulty", difficulty_, 40);
+  prefs_.get("difficulty", difficulty_, 0);
+  if (difficulty_ < 0 || difficulty_ > 3) difficulty_ = 0;
 
-  if (difficulty_ == 16) items[10].flags |= FL_MENU_VALUE;
-  else if (difficulty_ == 24) items[9].flags |= FL_MENU_VALUE;
-  else if (difficulty_ == 32) items[8].flags |= FL_MENU_VALUE;
-  else items[7].flags |= FL_MENU_VALUE;
+  items[7 + difficulty_].flags |= FL_MENU_VALUE;
 
   menubar_ = new Fl_Sys_Menu_Bar(0, 0, 3 * GROUP_SIZE, 25);
   menubar_->menu(items);
@@ -313,6 +312,7 @@ Sudoku::Sudoku()
 
   // Load the previous game...
   load_game();
+  set_title();
 }
 
 
@@ -328,11 +328,11 @@ void
 Sudoku::check_game(bool highlight) {
   bool empty = false;
   bool correct = true;
-
+  int i, j;
 
   // Check the game for right/wrong answers...
-  for (int i = 0; i < 9; i ++)
-    for (int j = 0; j < 9; j ++) {
+  for (i = 0; i < 9; i ++)
+    for (j = 0; j < 9; j ++) {
       SudokuCell *cell = grid_cells_[i][j];
       int val = cell->value();
 
@@ -352,6 +352,32 @@ Sudoku::check_game(bool highlight) {
     // Success!
     solve_game();
     fl_message("Congratulations, you solved the game!");
+  } else {
+    int k, m;
+
+    for (i = 0; i < 9; i += 3)
+      for (j = 0; j < 9; j += 3) {
+        correct = true;
+
+        for (k = 0; correct && k < 3; k ++)
+	  for (m = 0; m < 3; m ++)
+	    if (grid_cells_[i + k][j + m]->value() !=
+	            grid_values_[i + k][j + m]) {
+	      correct = false;
+	      break;
+	    }
+
+        if (correct) {
+	  for (k = 0; k < 3; k ++)
+	    for (m = 0; m < 3; m ++) {
+	      SudokuCell *cell = grid_cells_[i + k][j + m];
+
+              cell->readonly(1);
+	      cell->color(fl_color_average(FL_GRAY, FL_GREEN, 0.5f));
+	    }
+	}
+        
+      }
   }
 }
 
@@ -373,6 +399,9 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
 
   s->difficulty_ = atoi((char *)d);
   s->new_game();
+  s->set_title();
+
+  prefs_.set("difficulty", s->difficulty_);
 }
 
 
@@ -493,8 +522,8 @@ Sudoku::new_game() {
       cell->color(FL_LIGHT3);
     }
 
-  // Show N cells, starting with potential confusing ones...
-  count = difficulty_;
+  // Show N cells...
+  count = 5 * (5 - difficulty_);
 
   int numbers[9];
 
@@ -525,32 +554,54 @@ Sudoku::new_game() {
 	}
       }
     }
+  }
 
-    if (count <= 0) break;
+  // Show additional cells as needed to avoid ambiguous solutions.
+  // The basic premise is to find all possible numbers for each hidden
+  // cell and show the cell if we have more than two possible solutions.
+  int possible;
 
-    for (i = 0; i < 20; i ++) {
-      k          = rand() % 9;
-      m          = rand() % 9;
-      t          = numbers[k];
-      numbers[k] = numbers[m];
-      numbers[m] = t;
+  count = 5 * (5 - difficulty_);
+
+  while (count > 0) {
+    i    = rand() % 9;
+    j    = rand() % 9;
+    cell = grid_cells_[i][j];
+
+    if (cell->readonly()) continue;
+
+    possible = 9;
+    memset(numbers, 0, sizeof(numbers));
+
+    // Check vertical cells
+    for (k = 0; k < 9; k ++) {
+      cell = grid_cells_[k][j];
+      t    = grid_values_[k][j] - 1;
+
+      if (i != k && !numbers[t] && cell->readonly()) {
+	possible --;
+	numbers[t] = 1;
+      }
     }
 
-    for (j = 0; count > 0 && j < 9; j ++) {
-      t = numbers[j];
+    // Check horizontal cells
+    for (m = 0; m < 9; m ++) {
+      cell = grid_cells_[i][m];
+      t    = grid_values_[i][m] - 1;
 
-      for (i = 0; count > 0 && i < 9; i ++) {
-        cell = grid_cells_[i][j];
-
-        if (grid_values_[i][j] == t && !cell->readonly()) {
-	  cell->value(grid_values_[i][j]);
-	  cell->readonly(1);
-	  cell->color(FL_GRAY);
-
-	  count --;
-	  break;
-	}
+      if (j != m && !numbers[t] && cell->readonly()) {
+	possible --;
+	numbers[t] = 1;
       }
+    }
+
+    // Now, if the count > 2, show this cell...
+    if (possible > 2) {
+      cell = grid_cells_[i][j];
+      cell->value(grid_values_[i][j]);
+      cell->readonly(1);
+      cell->color(FL_GRAY);
+      count --;
     }
   }
 }
@@ -616,6 +667,20 @@ Sudoku::save_game() {
 }
 
 
+// Set title of window...
+void
+Sudoku::set_title() {
+  static const char * const titles[] = {
+    "Sudoku - Easy",
+    "Sudoku - Medium",
+    "Sudoku - Hard",
+    "Sudoku - Impossible"
+  };
+
+  label(titles[difficulty_]);
+}
+
+
 // Solve the puzzle...
 void
 Sudoku::solve_cb(Fl_Widget *widget, void *) {
@@ -634,7 +699,7 @@ Sudoku::solve_game() {
 
       cell->value(grid_values_[i][j]);
       cell->readonly(1);
-      cell->color(FL_GRAY);
+      cell->color(fl_color_average(FL_GRAY, FL_GREEN, 0.5f));
     }
 }
 
