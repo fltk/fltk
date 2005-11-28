@@ -68,8 +68,13 @@ void Fl_Window::fullscreen() {
   //determine its thickness
   border(0);
 #endif
+#ifdef __APPLE__
+  if (x()==Fl::x()) x(x()+1); // force it to call ResizeWindow()
+  resize(Fl::x(),Fl::y(),Fl::w(),Fl::h());
+#else
   if (!x()) x(1); // force it to call XResizeWindow()
   resize(0,0,Fl::w(),Fl::h());
+#endif
 }
 
 void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
