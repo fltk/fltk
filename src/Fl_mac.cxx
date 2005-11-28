@@ -145,7 +145,40 @@ static unsigned short macKeyLookUp[128] =
     FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0,
 };
 
+/**
+ * convert the current mouse chord into the FLTK modifier state
+ */
+static void mods_to_e_state( UInt32 mods )
+{
+  long state = 0;
+  if ( mods & kEventKeyModifierNumLockMask ) state |= FL_NUM_LOCK;
+  if ( mods & cmdKey ) state |= FL_META;
+  if ( mods & (optionKey|rightOptionKey) ) state |= FL_ALT;
+  if ( mods & (controlKey|rightControlKey) ) state |= FL_CTRL;
+  if ( mods & (shiftKey|rightShiftKey) ) state |= FL_SHIFT;
+  if ( mods & alphaLock ) state |= FL_CAPS_LOCK;
+  Fl::e_state = ( Fl::e_state & 0xff000000 ) | state;
+  //printf( "State 0x%08x (%04x)\n", Fl::e_state, mods );
+}
 
+
+/**
+ * convert the current mouse chord into the FLTK keysym
+ */
+static void mods_to_e_keysym( UInt32 mods )
+{
+  if ( mods & cmdKey ) Fl::e_keysym = FL_Meta_L;
+  else if ( mods & kEventKeyModifierNumLockMask ) Fl::e_keysym = FL_Num_Lock;
+  else if ( mods & optionKey ) Fl::e_keysym = FL_Alt_L;
+  else if ( mods & rightOptionKey ) Fl::e_keysym = FL_Alt_R;
+  else if ( mods & controlKey ) Fl::e_keysym = FL_Control_L;
+  else if ( mods & rightControlKey ) Fl::e_keysym = FL_Control_R;
+  else if ( mods & shiftKey ) Fl::e_keysym = FL_Shift_L;
+  else if ( mods & rightShiftKey ) Fl::e_keysym = FL_Shift_R;
+  else if ( mods & alphaLock ) Fl::e_keysym = FL_Caps_Lock;
+  else Fl::e_keysym = 0;
+  //printf( "to sym 0x%08x (%04x)\n", Fl::e_keysym, mods );
+}
 // these pointers are set by the Fl::lock() function:
 static void nothing() {}
 void (*fl_lock_function)() = nothing;
@@ -753,6 +786,7 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
         activeWindow = window;
       }
       Fl::handle( FL_SHOW, window);
+      mods_to_e_state(GetCurrentKeyModifiers());
     }
     break;
   case kEventWindowHidden:
@@ -935,41 +969,6 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   return noErr;
 }
 
-
-/**
- * convert the current mouse chord into the FLTK modifier state
- */
-static void mods_to_e_state( UInt32 mods )
-{
-  long state = 0;
-  if ( mods & kEventKeyModifierNumLockMask ) state |= FL_NUM_LOCK;
-  if ( mods & cmdKey ) state |= FL_META;
-  if ( mods & (optionKey|rightOptionKey) ) state |= FL_ALT;
-  if ( mods & (controlKey|rightControlKey) ) state |= FL_CTRL;
-  if ( mods & (shiftKey|rightShiftKey) ) state |= FL_SHIFT;
-  if ( mods & alphaLock ) state |= FL_CAPS_LOCK;
-  Fl::e_state = ( Fl::e_state & 0xff000000 ) | state;
-  //printf( "State 0x%08x (%04x)\n", Fl::e_state, mods );
-}
-
-
-/**
- * convert the current mouse chord into the FLTK keysym
- */
-static void mods_to_e_keysym( UInt32 mods )
-{
-  if ( mods & cmdKey ) Fl::e_keysym = FL_Meta_L;
-  else if ( mods & kEventKeyModifierNumLockMask ) Fl::e_keysym = FL_Num_Lock;
-  else if ( mods & optionKey ) Fl::e_keysym = FL_Alt_L;
-  else if ( mods & rightOptionKey ) Fl::e_keysym = FL_Alt_R;
-  else if ( mods & controlKey ) Fl::e_keysym = FL_Control_L;
-  else if ( mods & rightControlKey ) Fl::e_keysym = FL_Control_R;
-  else if ( mods & shiftKey ) Fl::e_keysym = FL_Shift_L;
-  else if ( mods & rightShiftKey ) Fl::e_keysym = FL_Shift_R;
-  else if ( mods & alphaLock ) Fl::e_keysym = FL_Caps_Lock;
-  else Fl::e_keysym = 0;
-  //printf( "to sym 0x%08x (%04x)\n", Fl::e_keysym, mods );
-}
 
 /**
  * convert the keyboard return code into the symbol on the keycaps
