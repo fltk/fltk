@@ -333,7 +333,8 @@ Fl_Help_View::draw()
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
 					// Box to draw...
-  int			underline;	// Underline text?
+  int			underline,	// Underline text?
+                        xtra_ww;        // Extra width for underlined space between words
 
 
   // Draw the scrollbar(s) and box first...
@@ -406,8 +407,11 @@ Fl_Help_View::draw()
 	    }
 
             fl_draw(buf, xx + x() - leftline_, yy + y());
-	    if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
-	                             xx + x() - leftline_ + ww);
+	    if (underline) {
+              xtra_ww = isspace(*ptr)?(int)fl_width(' '):0;
+              fl_xyline(xx + x() - leftline_, yy + y() + 1,
+	                xx + x() - leftline_ + ww + xtra_ww);
+            }
 
             xx += ww;
 	    if ((fsize + 2) > hh)
@@ -562,8 +566,13 @@ Fl_Help_View::draw()
 
             if (strcasecmp(buf, "LI") == 0)
 	    {
-	      fl_font(FL_SYMBOL, fsize);
-	      fl_draw("\267", xx - fsize + x() - leftline_, yy + y());
+#ifdef __APPLE_QUARTZ__
+              fl_font(FL_SYMBOL, fsize); 
+              fl_draw("\245", xx - fsize + x() - leftline_, yy + y());
+#else
+              fl_font(FL_SYMBOL, fsize);
+              fl_draw("\267", xx - fsize + x() - leftline_, yy + y());
+#endif
 	    }
 
 	    pushfont(font, fsize);
