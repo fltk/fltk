@@ -366,9 +366,9 @@ static void run_checks()
     next_check = first_check;
   }
 }
+#endif // !__APPLE__
 
 static char in_idle;
-#endif // !__APPLE__
 
 ////////////////////////////////////////////////////////////////
 // wait/run/check/ready:
@@ -389,6 +389,15 @@ double Fl::wait(double time_to_wait) {
 #elif defined(__APPLE__)
 
   flush();
+  if (idle) {
+    if (!in_idle) {
+      in_idle = 1;
+      idle();
+      in_idle = 0;
+    }
+    // the idle function may turn off idle, we can then wait:
+    if (idle) time_to_wait = 0.0;
+  }
   return fl_wait(time_to_wait);
 
 #else
