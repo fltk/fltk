@@ -310,7 +310,7 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   
   for (p = str, lines=0; p;) {
     e = expand(p, buf, w - symtotal, buflen, width, w != 0, draw_symbols);
-    if (int(ceil(width)) > W) W = int(ceil(width));
+    if ((int)ceil(width) > W) W = (int)ceil(width);
     lines++;
     if (!*e || (*e == '@' && draw_symbols)) break;
     p = e;
