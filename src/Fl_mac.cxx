@@ -827,26 +827,11 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
  * Carbon Mousewheel handler
  * This needs to be linked into all new window event handlers
  */
-static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef ev, void *userData )
+static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
   // Handle the new "MightyMouse" mouse wheel events. Please, someone explain
   // to me why Apple changed the API on this even though the current API
   // supports two wheels just fine. Matthias,
-  EventRef event;
-//  fprintf(stderr, "carbonMousewheelHandler: GetEventKind(ev=%p) = %d\n", ev,
-//          GetEventKind(ev));
-  if (GetEventKind(ev)==11) {
-    // if this is a "MightyMouse" event, we need to convert it into a regular
-    // MouseWheel event
-//    fputs("MightyMouse event!\n", stderr);
-    GetEventParameter( ev, kEventParamEventRef, typeEventRef, NULL, sizeof( EventRef ), NULL, &event );  
-  } else {
-    // otherwise, we simply copy the event...
-    event = ev;
-  }
-
-//  fprintf(stderr, "event=%p!\n", event);
-
   fl_lock_function();
 
   fl_os_event = event;
@@ -858,9 +843,11 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
   GetEventParameter( event, kEventParamMouseWheelDelta, typeLongInteger, NULL, sizeof(long), NULL, &delta );
 //  fprintf(stderr, "axis=%d, delta=%d\n", axis, delta);
   if ( axis == kEventMouseWheelAxisX ) {
-    Fl::e_dx = delta;
+    Fl::e_dx = -delta;
+    Fl::e_dy = 0;
     if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
   } else if ( axis == kEventMouseWheelAxisY ) {
+    Fl::e_dx = 0;
     Fl::e_dy = -delta;
     if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
   } else {
@@ -1783,7 +1770,6 @@ void Fl_X::make(Fl_Window* w)
       OSStatus ret;
       EventHandlerUPP mousewheelHandler = NewEventHandlerUPP( carbonMousewheelHandler ); // will not be disposed by Carbon...
       static EventTypeSpec mousewheelEvents[] = {
-//        { kEventClassMouse, 11 }, // "11" is the yet unlabled "MightyMouse" wheel event - sigh!
         { kEventClassMouse, kEventMouseWheelMoved } };
       ret = InstallWindowEventHandler( x->xid, mousewheelHandler,
 	        (int)(sizeof(mousewheelEvents)/sizeof(mousewheelEvents[0])),

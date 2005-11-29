@@ -3202,7 +3202,8 @@ int Fl_Text_Display::handle(int event) {
       }
 
     case FL_MOUSEWHEEL:
-      return mVScrollBar->handle(event);
+      if (Fl::event_dy()) return mVScrollBar->handle(event);
+      else return mHScrollBar->handle(event);
 
     case FL_FOCUS:
     case FL_UNFOCUS:
