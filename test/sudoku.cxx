@@ -166,6 +166,7 @@ SudokuCell::handle(int event) {
 
     case FL_KEYDOWN :
       int key = Fl::event_key() - '0';
+      if (key < 0 || key > 9) key = Fl::event_key() - FL_KP - '0';
       if (key > 0 && key <= 9) {
         if (readonly()) {
           fl_beep(FL_BEEP_ERROR);
@@ -461,7 +462,8 @@ Sudoku::help_cb(Fl_Widget *, void *) {
         "first syllable) is a simple number-based puzzle/game played on a\n"
 	"9x9 grid that is divided into 3x3 subgrids. The goal is to enter\n"
 	"a number from 1 to 9 in each cell so that each number appears\n"
-	"only once in each column and row.</P>\n"
+	"only once in each column and row. In addition, each 3x3 subgrid\n"
+	"may only contain one of each number.</P>\n"
 
 	"<P>This version of the puzzle is Copyright 2005 by Michael R Sweet</P>\n"
 
