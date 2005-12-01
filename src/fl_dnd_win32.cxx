@@ -288,7 +288,7 @@ public:
   STDMETHODIMP QueryContinueDrag( BOOL esc, DWORD keyState ) { 
     if ( esc ) 
       return DRAGDROP_S_CANCEL;
-    if ( !(keyState & MK_LBUTTON) ) 
+    if ( !(keyState & (MK_LBUTTON|MK_MBUTTON|MK_RBUTTON)) ) 
       return DRAGDROP_S_DROP;
     return S_OK;
   }
