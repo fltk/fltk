@@ -68,7 +68,7 @@ void Fl_Window::fullscreen() {
   //determine its thickness
   border(0);
 #endif
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(WIN32)
   int sx, sy, sw, sh;
   Fl::screen_xywh(sx, sy, sw, sh, x()+w()/2, y()+h()/2);
   // if we are on the main screen, we will leave the system menu bar unobstructed
