@@ -364,7 +364,7 @@ void
 Sudoku::check_game(bool highlight) {
   bool empty = false;
   bool correct = true;
-  int i, j;
+  int i, j, k;
 
   // Check the game for right/wrong answers...
   for (i = 0; i < 9; i ++)
@@ -373,47 +373,32 @@ Sudoku::check_game(bool highlight) {
       int val = cell->value();
 
       if (!val) empty = true;
+      else {
+        for (k = 0; k < 9; k ++)
+          if ((i != k && grid_cells_[k][j]->value() == val) ||
+	      (j != k && grid_cells_[i][k]->value() == val)) break;
 
-      if (val && grid_values_[i][j] != val) {
-        if (highlight) {
-	  cell->color(FL_YELLOW);
-	  cell->redraw();
+        if (k < 9) {
+          if (highlight) {
+	    cell->color(FL_YELLOW);
+	    cell->redraw();
+	  }
+
+	  correct = false;
 	}
-
-	correct = false;
       }
     }
 
   if (!empty && correct) {
     // Success!
-    solve_game();
-    fl_message("Congratulations, you solved the game!");
-  } else {
-    int k, m;
-
-    for (i = 0; i < 9; i += 3)
-      for (j = 0; j < 9; j += 3) {
-        correct = true;
-
-        for (k = 0; correct && k < 3; k ++)
-	  for (m = 0; m < 3; m ++)
-	    if (grid_cells_[i + k][j + m]->value() !=
-	            grid_values_[i + k][j + m]) {
-	      correct = false;
-	      break;
-	    }
-
-        if (correct) {
-	  for (k = 0; k < 3; k ++)
-	    for (m = 0; m < 3; m ++) {
-	      SudokuCell *cell = grid_cells_[i + k][j + m];
-
-              cell->readonly(1);
-	      cell->color(fl_color_average(FL_GRAY, FL_GREEN, 0.5f));
-	    }
-	}
-        
+    for (i = 0; i < 9; i ++)
+      for (j = 0; j < 9; j ++) {
+	SudokuCell *cell = grid_cells_[i][j];
+	cell->color(FL_GREEN);
+	cell->readonly(1);
       }
+
+    fl_message("Congratulations, you solved the game!");
   }
 }
 
@@ -611,7 +596,7 @@ Sudoku::new_game() {
     }
 
   // Show N cells...
-  count = 5 * (5 - difficulty_);
+  count = 10 * (5 - difficulty_);
 
   int numbers[9];
 
@@ -641,55 +626,6 @@ Sudoku::new_game() {
 	  break;
 	}
       }
-    }
-  }
-
-  // Show additional cells as needed to avoid ambiguous solutions.
-  // The basic premise is to find all possible numbers for each hidden
-  // cell and show the cell if we have more than two possible solutions.
-  int possible;
-
-  count = 5 * (5 - difficulty_);
-
-  while (count > 0) {
-    i    = rand() % 9;
-    j    = rand() % 9;
-    cell = grid_cells_[i][j];
-
-    if (cell->readonly()) continue;
-
-    possible = 9;
-    memset(numbers, 0, sizeof(numbers));
-
-    // Check vertical cells
-    for (k = 0; k < 9; k ++) {
-      cell = grid_cells_[k][j];
-      t    = grid_values_[k][j] - 1;
-
-      if (i != k && !numbers[t] && cell->readonly()) {
-	possible --;
-	numbers[t] = 1;
-      }
-    }
-
-    // Check horizontal cells
-    for (m = 0; m < 9; m ++) {
-      cell = grid_cells_[i][m];
-      t    = grid_values_[i][m] - 1;
-
-      if (j != m && !numbers[t] && cell->readonly()) {
-	possible --;
-	numbers[t] = 1;
-      }
-    }
-
-    // Now, if the count > 2, show this cell...
-    if (possible > 2) {
-      cell = grid_cells_[i][j];
-      cell->value(grid_values_[i][j]);
-      cell->readonly(1);
-      cell->color(FL_GRAY);
-      count --;
     }
   }
 }
