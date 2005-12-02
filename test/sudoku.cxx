@@ -223,6 +223,7 @@ SudokuCell::handle(int event) {
 class Sudoku : public Fl_Window {
   Fl_Sys_Menu_Bar *menubar_;
   Fl_Group	*grid_;
+  time_t	seed_;
   char		grid_values_[9][9];
   SudokuCell	*grid_cells_[9][9];
   Fl_Group	*grid_groups_[3][3];
@@ -234,6 +235,7 @@ class Sudoku : public Fl_Window {
   static void	help_cb(Fl_Widget *, void *);
   static void	new_cb(Fl_Widget *widget, void *);
   static void	reset_cb(Fl_Widget *widget, void *);
+  static void	restart_cb(Fl_Widget *widget, void *);
   void		set_title();
   static void	solve_cb(Fl_Widget *widget, void *);
 
@@ -245,7 +247,7 @@ class Sudoku : public Fl_Window {
 
   void		check_game(bool highlight = true);
   void		load_game();
-  void		new_game();
+  void		new_game(time_t seed);
   void		resize(int X, int Y, int W, int H);
   void		save_game();
   void		solve_game();
@@ -268,6 +270,7 @@ Sudoku::Sudoku()
     { "&Game", 0, 0, 0, FL_SUBMENU },
     { "&New Game", FL_COMMAND | 'n', new_cb, 0, FL_MENU_DIVIDER },
     { "&Check Game", FL_COMMAND | 'c', check_cb, 0, 0 },
+    { "&Restart Game", FL_COMMAND | 'r', restart_cb, 0, 0 },
     { "&Solve Game", FL_COMMAND | 's', solve_cb, 0, FL_MENU_DIVIDER },
     { "&Quit", FL_COMMAND | 'q', close_cb, 0, 0 },
     { 0 },
@@ -421,7 +424,7 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
   Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
 
   s->difficulty_ = atoi((char *)d);
-  s->new_game();
+  s->new_game(s->seed_);
   s->set_title();
 
   prefs_.set("difficulty", s->difficulty_);
@@ -523,7 +526,7 @@ Sudoku::load_game() {
 
   // If we didn't load any values or the last game was solved, then
   // create a new game automatically...
-  if (solved || !grid_values_[0][0]) new_game();
+  if (solved || !grid_values_[0][0]) new_game(time(NULL));
   else check_game(false);
 }
 
@@ -531,18 +534,19 @@ Sudoku::load_game() {
 // Create a new game...
 void
 Sudoku::new_cb(Fl_Widget *widget, void *) {
-  ((Sudoku *)(widget->window()))->new_game();
+  ((Sudoku *)(widget->window()))->new_game(time(NULL));
 }
 
 
 // Create a new game...
 void
-Sudoku::new_game() {
+Sudoku::new_game(time_t seed) {
   int i, j, k, m, t, count;
 
 
   // Generate a new (valid) Sudoku grid...
-  srand(time(NULL));
+  seed_ = seed;
+  srand(seed);
 
   memset(grid_values_, 0, sizeof(grid_values_));
 
@@ -677,6 +681,15 @@ Sudoku::save_game() {
 	prefs_.set(name, cell->test_value(k));
       }
     }
+}
+
+
+// Restart game from beginning...
+void
+Sudoku::restart_cb(Fl_Widget *widget, void *) {
+  Sudoku *s = (Sudoku *)(widget->window());
+
+  s->new_game(s->seed_);
 }
 
 
