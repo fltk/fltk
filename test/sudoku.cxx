@@ -459,9 +459,8 @@ Sudoku::help_cb(Fl_Widget *, void *) {
 	"level you use. Click in any of the empty cells or use the arrow\n"
 	"keys to highlight individual cells and press a number from 1 to 9\n"
 	"to fill in the cell. To clear a cell, press 0, Delete, or\n"
-	"Backspace. As you complete each subgrid, correct subgrids are\n"
-	"highlighted in green. When you have successfully completed all\n"
-	"subgrids, the entire puzzle is highlighted until you start a new\n"
+	"Backspace. When you have successfully completed all subgrids, the\n"
+	"entire puzzle is highlighted in green until you start a new\n"
 	"game.</P>\n"
 
 	"<P>As you work to complete the puzzle, you can display possible\n"
