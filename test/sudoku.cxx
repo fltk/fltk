@@ -173,7 +173,7 @@ SudokuCell::handle(int event) {
           return 1;
         }
 
-        if (Fl::event_state() & FL_SHIFT) {
+        if (Fl::event_state() & (FL_SHIFT | FL_CAPS_LOCK)) {
 	  int i;
 
 	  for (i = 0; i < 8; i ++)
