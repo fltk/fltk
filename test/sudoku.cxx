@@ -375,6 +375,8 @@ Sudoku::check_game(bool highlight) {
       SudokuCell *cell = grid_cells_[i][j];
       int val = cell->value();
 
+      if (cell->readonly()) continue;
+
       if (!val) empty = true;
       else {
         for (k = 0; k < 9; k ++)
@@ -388,6 +390,9 @@ Sudoku::check_game(bool highlight) {
 	  }
 
 	  correct = false;
+	} else if (highlight) {
+	  cell->color(FL_LIGHT3);
+	  cell->redraw();
 	}
       }
     }
