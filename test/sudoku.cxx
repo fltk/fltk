@@ -40,12 +40,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #ifdef WIN32
 #  include "sudokurc.h"
 #elif !defined(__APPLE__)
 #  include "sudoku.xbm"
 #endif // WIN32
+
+#include <config.h>
+
+#ifdef HAVE_ALSA_ASOUNDLIB_H
+#  define ALSA_PCM_NEW_HW_PARAMS_API
+#  include <alsa/asoundlib.h>
+#endif // HAVE_ALSA_ASOUNDLIB_H
 
 
 //
@@ -60,6 +68,181 @@
 #else
 #  define MENU_OFFSET	25
 #endif // __APPLE__
+
+// Sound class
+class SudokuSound {
+  // Private, OS-specific data...
+#ifdef __APPLE__
+#elif defined(WIN32)
+#else
+#  ifdef HAVE_ALSA_ASOUNDLIB_H
+  snd_pcm_t *handle;
+#  endif // HAVE_ALSA_ASOUNDLIB_H
+#endif // __APPLE__
+
+  // Common data...
+  static int frequencies[9];
+  static short *sample_data[9];
+  static int sample_size;
+
+  public:
+
+  SudokuSound();
+  ~SudokuSound();
+
+  void	play(char note);
+};
+
+
+int SudokuSound::frequencies[9] = {
+  880,	// A(5)
+  988,	// B(5)
+  1046,	// C(5)
+  1174,	// D(5)
+  1318,	// E(5)
+  1396,	// F(5)
+  1568,	// G(5)
+  1760,	// H (A6)
+  1976	// I (B6)
+};
+short *SudokuSound::sample_data[9] = { 0 };
+int SudokuSound::sample_size = 0;
+
+
+// Initialize the SudokuSound class
+SudokuSound::SudokuSound() {
+  sample_size = 0;
+
+#ifdef __APPLE__
+#elif defined(WIN32)
+#else
+#  ifdef HAVE_ALSA_ASOUNDLIB_H
+  handle = NULL;
+
+  if (snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0) >= 0) {
+    // Initialize PCM sound stuff...
+    snd_pcm_hw_params_t *params;
+
+    snd_pcm_hw_params_alloca(&params);
+    snd_pcm_hw_params_any(handle, params);
+    snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
+    snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16_LE);
+    snd_pcm_hw_params_set_channels(handle, params, 2);
+    unsigned rate = 44100;
+    int dir;
+    snd_pcm_hw_params_set_rate_near(handle, params, &rate, &dir);
+    snd_pcm_uframes_t period = (int)rate / 4;
+    snd_pcm_hw_params_set_period_size_near(handle, params, &period, &dir);
+
+    sample_size = rate / 20;
+
+    if (snd_pcm_hw_params(handle, params) < 0) {
+      sample_size = 0;
+      snd_pcm_close(handle);
+      handle = NULL;
+    }
+  }
+#  endif // HAVE_ALSA_ASOUNDLIB_H
+#endif // __APPLE__
+
+  if (sample_size) {
+    // Make each of the notes using a combination of sine and sawtooth waves
+    int attack = sample_size / 10;
+    int decay = 4 * sample_size / 5;
+
+    for (int i = 0; i < 9; i ++) {
+      sample_data[i] = new short[2 * sample_size];
+
+      short *sample_ptr = sample_data[i];
+
+      for (int j = 0; j < sample_size; j ++, sample_ptr += 2) {
+        double theta = 0.05 * frequencies[i] * j / sample_size;
+        double val = 0.5 * sin(2.0 * M_PI * theta) + theta - (int)theta - 0.5;
+
+        if (j < attack) {
+	  *sample_ptr = (int)(32767 * val * j / attack);
+	} else if (j > decay) {
+	  *sample_ptr = (int)(32767 * val * (sample_size - j + decay) /
+	                      sample_size);
+	} else *sample_ptr = (int)(32767 * val);
+
+        sample_ptr[1] = *sample_ptr;
+      }
+    }
+  }
+}
+
+
+// Cleanup the SudokuSound class
+SudokuSound::~SudokuSound() {
+#ifdef __APPLE__
+#elif defined(WIN32)
+#else
+#  ifdef HAVE_ALSA_ASOUNDLIB_H
+  if (handle) {
+    snd_pcm_drain(handle);
+    snd_pcm_close(handle);
+  }
+#  endif // HAVE_ALSA_ASOUNDLIB_H
+#endif // __APPLE__
+
+  if (sample_size) {
+    for (int i = 0; i < 9; i ++) {
+      delete[] sample_data[i];
+    }
+  }
+}
+
+
+// Play a note for 250ms...
+void SudokuSound::play(char note) {
+  Fl::check();
+
+#ifdef __APPLE__
+  // TODO
+#elif defined(WIN32)
+  Beep(frequencies[note - 'A'], 50);
+#else
+#  ifdef HAVE_ALSA_ASOUNDLIB_H
+  if (handle) {
+    // Use ALSA to play the sound...
+    if (snd_pcm_writei(handle, sample_data[note - 'A'], sample_size) < 0) {
+      snd_pcm_prepare(handle);
+      snd_pcm_writei(handle, sample_data[note - 'A'], sample_size);
+    }
+    usleep(50000);
+    return;
+  }
+#  endif // HAVE_ALSA_ASOUNDLIB_H
+
+  // Just use standard X11 stuff...
+  XKeyboardState	state;
+  XKeyboardControl	control;
+
+  // Get original pitch and duration...
+  XGetKeyboardControl(fl_display, &state);
+
+  // Sound a tone for the given note...
+  control.bell_percent  = 100;
+  control.bell_pitch    = frequencies[note - 'A'];
+  control.bell_duration = 50;
+
+  XChangeKeyboardControl(fl_display,
+                         KBBellPercent | KBBellPitch | KBBellDuration,
+			 &control);
+  XBell(fl_display, 100);
+  XFlush(fl_display);
+
+  // Restore original pitch and duration...
+  control.bell_percent  = state.bell_percent;
+  control.bell_pitch    = state.bell_pitch;
+  control.bell_duration = state.bell_duration;
+
+  XChangeKeyboardControl(fl_display,
+                         KBBellPercent | KBBellPitch | KBBellDuration,
+			 &control);
+#endif // __APPLE__
+}
 
 
 // Sudoku cell class...
@@ -228,6 +411,7 @@ class Sudoku : public Fl_Window {
   SudokuCell	*grid_cells_[9][9];
   Fl_Group	*grid_groups_[3][3];
   int		difficulty_;
+  SudokuSound	*sound_;
 
   static void	check_cb(Fl_Widget *widget, void *);
   static void	close_cb(Fl_Widget *widget, void *);
@@ -244,6 +428,7 @@ class Sudoku : public Fl_Window {
   public:
 
 	      	Sudoku();
+		~Sudoku();
 
   void		check_game(bool highlight = true);
   void		load_game();
@@ -286,6 +471,9 @@ Sudoku::Sudoku()
     { 0 }
   };
 
+
+  // Setup sound output...
+  sound_ = new SudokuSound();
 
   // Menubar...
   prefs_.get("difficulty", difficulty_, 0);
@@ -349,9 +537,13 @@ Sudoku::Sudoku()
     resize(X, X, W, H);
   }
 
-  // Load the previous game...
-  load_game();
   set_title();
+}
+
+
+// Destroy the sudoku window...
+Sudoku::~Sudoku() {
+  delete sound_;
 }
 
 
@@ -634,6 +826,8 @@ Sudoku::new_game(time_t seed) {
 	  break;
 	}
       }
+
+      sound_->play('A' + t - 1);
     }
   }
 }
@@ -727,10 +921,15 @@ Sudoku::solve_game() {
   for (i = 0; i < 9; i ++)
     for (j = 0; j < 9; j ++) {
       SudokuCell *cell = grid_cells_[i][j];
+      bool play_note = false;
+
+      if (cell->value() != grid_values_[i][j]) play_note = true;
 
       cell->value(grid_values_[i][j]);
       cell->readonly(1);
       cell->color(fl_color_average(FL_GRAY, FL_GREEN, 0.5f));
+
+      if (play_note) sound_->play('A' + cell->value() - 1);
     }
 }
 
@@ -740,7 +939,13 @@ int
 main(int argc, char *argv[]) {
   Sudoku s;
 
+  // Show the game...
   s.show(argc, argv);
+
+  // Load the previous game...
+  s.load_game();
+
+  // Run until the user quits...
   return (Fl::run());
 }
 

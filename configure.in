@@ -389,6 +389,15 @@ AC_CHECK_FUNCS(localeconv)
 dnl FLTK library uses math library functions...
 AC_SEARCH_LIBS(pow, m)
 
+dnl Check for audio libraries...
+AUDIOLIBS=""
+
+AC_CHECK_HEADER(alsa/asoundlib.h,
+    AC_DEFINE(HAVE_ALSA_ASOUNDLIB_H)
+    AUDIOLIBS="-lasound")
+
+AC_SUBST(AUDIOLIBS)
+
 dnl Check for image libraries...
 SAVELIBS="$LIBS"
 IMAGELIBS=""

@@ -249,6 +249,11 @@
 #undef HAVE_PTHREAD
 #undef HAVE_PTHREAD_H
 
+/*
+ * Do we have the ALSA library?
+ */
+
+#undef HAVE_ALSA_ASOUNDLIB_H
 
 /*
  * End of "$Id$".

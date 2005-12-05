@@ -335,14 +335,14 @@ subwindow$(EXEEXT): subwindow.o
 
 sudoku: sudoku.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) sudoku.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 	$(CP) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
 	$(POSTBUILD) $@ ../FL/mac.r
 
 sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
 	windres sudoku.rc sudokures.o
-	$(CXX) -I.. $(CXXFLAGS) sudoku.o sudokures.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) sudoku.o sudokures.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 
 symbols$(EXEEXT): symbols.o
 
