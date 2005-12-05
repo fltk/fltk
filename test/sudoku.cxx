@@ -348,6 +348,7 @@ SudokuCell::handle(int event) {
       break;
 
     case FL_KEYDOWN :
+      if (Fl::event_state() & FL_CTRL) break;
       int key = Fl::event_key() - '0';
       if (key < 0 || key > 9) key = Fl::event_key() - FL_KP - '0';
       if (key > 0 && key <= 9) {
