@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <math.h>
+#include <FL/math.h>
 
 #ifdef WIN32
 #  include "sudokurc.h"
