@@ -69,7 +69,18 @@
 #  define MENU_OFFSET	25
 #endif // __APPLE__
 
-// Sound class
+// Sound class for Sudoku...
+//
+// There are MANY ways to implement sound in a FLTK application.
+// The approach we are using here is to conditionally compile OS-
+// specific code into the application - CoreAudio for MacOS X, the
+// standard Win32 API stuff for Windows, ALSA or X11 for Linux, and
+// X11 for all others.  We have to support ALSA on Linux because the
+// current Xorg releases no longer support XBell() or the PC speaker.
+//
+// There are several good cross-platform audio libraries we could also
+// use, such as OpenAL, PortAudio, and SDL, however they were not chosen
+// for this application because of our limited use of sound.
 class SudokuSound {
   // Private, OS-specific data...
 #ifdef __APPLE__
