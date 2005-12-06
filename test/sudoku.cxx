@@ -592,14 +592,15 @@ Sudoku::check_game(bool highlight) {
 
   if (!empty && correct) {
     // Success!
-    for (i = 0; i < 9; i ++)
+    for (i = 0; i < 9; i ++) {
       for (j = 0; j < 9; j ++) {
 	SudokuCell *cell = grid_cells_[i][j];
 	cell->color(FL_GREEN);
 	cell->readonly(1);
       }
 
-    fl_message("Congratulations, you solved the game!");
+      sound_->play('A' + grid_cells_[i][8]->value() - 1);
+    }
   }
 }
 
@@ -919,19 +920,17 @@ void
 Sudoku::solve_game() {
   int i, j;
 
-  for (i = 0; i < 9; i ++)
+  for (i = 0; i < 9; i ++) {
     for (j = 0; j < 9; j ++) {
       SudokuCell *cell = grid_cells_[i][j];
-      bool play_note = false;
-
-      if (cell->value() != grid_values_[i][j]) play_note = true;
 
       cell->value(grid_values_[i][j]);
       cell->readonly(1);
-      cell->color(fl_color_average(FL_GRAY, FL_GREEN, 0.5f));
-
-      if (play_note) sound_->play('A' + cell->value() - 1);
+      cell->color(FL_GRAY);
     }
+
+    sound_->play('A' + grid_cells_[i][8]->value() - 1);
+  }
 }
 
 
