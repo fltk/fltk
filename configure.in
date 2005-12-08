@@ -396,6 +396,10 @@ AC_CHECK_HEADER(alsa/asoundlib.h,
     AC_DEFINE(HAVE_ALSA_ASOUNDLIB_H)
     AUDIOLIBS="-lasound")
 
+if test x$uname = xDarwin; then
+    AUDIOLIBS="-framework CoreAudio"
+fi
+
 AC_SUBST(AUDIOLIBS)
 
 dnl Check for image libraries...

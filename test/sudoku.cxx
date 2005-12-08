@@ -48,12 +48,20 @@
 #  include "sudoku.xbm"
 #endif // WIN32
 
+// Audio headers...
 #include <config.h>
+
+#ifndef WIN32
+#  include <unistd.h>
+#endif // !WIN32
 
 #ifdef HAVE_ALSA_ASOUNDLIB_H
 #  define ALSA_PCM_NEW_HW_PARAMS_API
 #  include <alsa/asoundlib.h>
 #endif // HAVE_ALSA_ASOUNDLIB_H
+#ifdef __APPLE__
+#  include <CoreAudio/AudioHardware.h>
+#endif // __APPLE__
 
 
 //
@@ -81,9 +89,24 @@
 // There are several good cross-platform audio libraries we could also
 // use, such as OpenAL, PortAudio, and SDL, however they were not chosen
 // for this application because of our limited use of sound.
+//
+// Many thanks to Ian MacArthur who provided sample code that led to
+// the CoreAudio implementation you see here!
 class SudokuSound {
   // Private, OS-specific data...
 #ifdef __APPLE__
+  AudioDeviceID device;
+  AudioStreamBasicDescription format;
+  short *data;
+  int remaining;
+
+  static OSStatus audio_cb(AudioDeviceID device,
+			   const AudioTimeStamp *current_time,
+			   const AudioBufferList *data_in,
+			   const AudioTimeStamp *time_in,
+			   AudioBufferList *data_out,
+			   const AudioTimeStamp *time_out,
+			   void *client_data);
 #elif defined(WIN32)
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
@@ -125,6 +148,36 @@ SudokuSound::SudokuSound() {
   sample_size = 0;
 
 #ifdef __APPLE__
+  remaining = 0;
+
+  UInt32 size = sizeof(device);
+
+  if (AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+			       &size, (void *)&device) != noErr) return;
+
+  size = sizeof(format);
+  if (AudioDeviceGetProperty(device, 0, false, kAudioDevicePropertyStreamFormat,
+			     &size, &format) != noErr) return;
+
+  // Set up a format we like...
+  format.mSampleRate       = 44100.0;	// 44.1kHz
+  format.mChannelsPerFrame = 2;		// stereo
+
+  if (AudioDeviceSetProperty(device, NULL, 0, false,
+                             kAudioDevicePropertyStreamFormat,
+	                     sizeof(format), &format) != noErr) return;
+
+  // Check we got linear pcm - what to do if we did not ???
+  if (format.mFormatID != kAudioFormatLinearPCM) return;
+
+  // Attach the callback
+  if (AudioDeviceAddIOProc(device, audio_cb, (void *)this) != noErr) return;
+
+  // Start the device...
+  AudioDeviceStart(device, audio_cb);
+
+  sample_size = (int)format.mSampleRate / 20;
+
 #elif defined(WIN32)
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
@@ -137,7 +190,7 @@ SudokuSound::SudokuSound() {
     snd_pcm_hw_params_alloca(&params);
     snd_pcm_hw_params_any(handle, params);
     snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
-    snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16_LE);
+    snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16);
     snd_pcm_hw_params_set_channels(handle, params, 2);
     unsigned rate = 44100;
     int dir;
@@ -187,6 +240,9 @@ SudokuSound::SudokuSound() {
 // Cleanup the SudokuSound class
 SudokuSound::~SudokuSound() {
 #ifdef __APPLE__
+  AudioDeviceStop(device, audio_cb);
+  AudioDeviceRemoveIOProc(device, audio_cb);
+
 #elif defined(WIN32)
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
@@ -205,12 +261,51 @@ SudokuSound::~SudokuSound() {
 }
 
 
+#ifdef __APPLE__
+// Callback function for writing audio data...
+OSStatus
+SudokuSound::audio_cb(AudioDeviceID device,
+		      const AudioTimeStamp *current_time,
+		      const AudioBufferList *data_in,
+		      const AudioTimeStamp *time_in,
+		      AudioBufferList *data_out,
+		      const AudioTimeStamp *time_out,
+		      void *client_data) {
+  SudokuSound *ss = (SudokuSound *)client_data;
+  int count;
+  float *buffer;
+
+  if (!ss->remaining) return noErr;
+
+  for (count = data_out->mBuffers[0].mDataByteSize / sizeof(float),
+          buffer = (float*) data_out->mBuffers[0].mData;
+       ss->remaining > 0 && count > 0;
+       count --, ss->data ++, ss->remaining --) {
+    *buffer++ = *(ss->data) / 32767.0;
+  }
+
+  while (count > 0) {
+    *buffer++ = 0.0;
+    count --;
+  }
+
+  return noErr;
+}
+#endif // __APPLE__
+
+
 // Play a note for 250ms...
 void SudokuSound::play(char note) {
   Fl::check();
 
 #ifdef __APPLE__
-  // TODO
+  // Point to the next note...
+  data      = sample_data[note - 'A'];
+  remaining = sample_size * 2;
+
+  // Wait for the sound to complete...
+  usleep(50000);
+
 #elif defined(WIN32)
   Beep(frequencies[note - 'A'], 50);
 #else
