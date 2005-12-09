@@ -62,6 +62,9 @@
 #ifdef __APPLE__
 #  include <CoreAudio/AudioHardware.h>
 #endif // __APPLE__
+#ifdef WIN32
+#  include <mmsystem.h>
+#endif // WIN32
 
 
 //
@@ -108,6 +111,12 @@ class SudokuSound {
 			   const AudioTimeStamp *time_out,
 			   void *client_data);
 #elif defined(WIN32)
+  HWAVEOUT	device;
+  HGLOBAL	header_handle;
+  LPWAVEHDR	header_ptr;
+  HGLOBAL	data_handle;
+  LPSTR		data_ptr;
+
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   snd_pcm_t *handle;
@@ -179,6 +188,39 @@ SudokuSound::SudokuSound() {
   sample_size = (int)format.mSampleRate / 20;
 
 #elif defined(WIN32)
+  WAVEFORMATEX	format;
+
+  memset(&format, 0, sizeof(format));
+  format.cbSize          = sizeof(format);
+  format.wFormatTag      = WAVE_FORMAT_PCM;
+  format.nChannels       = 2;
+  format.nSamplesPerSec  = 44100;
+  format.nAvgBytesPerSec = 44100 * 4;
+  format.nBlockAlign     = 4;
+  format.wBitsPerSample  = 16;
+
+  data_handle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, format.nSamplesPerSec / 5);
+  if (!data_handle) return;
+
+  data_ptr = (LPSTR)GlobalLock(data_handle);
+
+  header_handle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, sizeof(WAVEHDR));
+  if (!header_handle) return;
+
+  header_ptr = (WAVEHDR *)GlobalLock(header_handle);
+
+  header_ptr->lpData         = data_ptr;
+  header_ptr->dwBufferLength = format.nSamplesPerSec / 5;
+  header_ptr->dwFlags        = 0;
+  header_ptr->dwLoops        = 0;
+
+  if (waveOutOpen(&device, WAVE_MAPPER, &format, NULL, NULL, WAVE_ALLOWSYNC)
+          != MMSYSERR_NOERROR) return;
+
+  waveOutPrepareHeader(device, header_ptr, sizeof(WAVEHDR));
+
+  sample_size = 44100 / 20;
+
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   handle = NULL;
@@ -240,10 +282,22 @@ SudokuSound::SudokuSound() {
 // Cleanup the SudokuSound class
 SudokuSound::~SudokuSound() {
 #ifdef __APPLE__
-  AudioDeviceStop(device, audio_cb);
-  AudioDeviceRemoveIOProc(device, audio_cb);
+  if (sample_size) {
+    AudioDeviceStop(device, audio_cb);
+    AudioDeviceRemoveIOProc(device, audio_cb);
+  }
 
 #elif defined(WIN32)
+  if (sample_size) {
+    waveOutClose(device);
+
+    GlobalUnlock(header_handle);
+    GlobalFree(header_handle);
+
+    GlobalUnlock(data_handle);
+    GlobalFree(data_handle);
+  }
+
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
@@ -307,7 +361,14 @@ void SudokuSound::play(char note) {
   usleep(50000);
 
 #elif defined(WIN32)
-  Beep(frequencies[note - 'A'], 50);
+  if (sample_size) {
+    memcpy(data_ptr, sample_data[note - 'A'], sample_size * 4);
+
+    waveOutWrite(device, header_ptr, sizeof(WAVEHDR));
+
+    Sleep(50);
+  } else Beep(frequencies[note - 'A'], 50);
+
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
@@ -567,10 +628,10 @@ Sudoku::Sudoku()
     { "&Quit", FL_COMMAND | 'q', close_cb, 0, 0 },
     { 0 },
     { "&Difficulty", 0, 0, 0, FL_SUBMENU },
-    { "&Easy", FL_COMMAND | '1', diff_cb, (void *)"0", FL_MENU_RADIO },
-    { "&Medium", FL_COMMAND | '2', diff_cb, (void *)"1", FL_MENU_RADIO },
-    { "&Hard", FL_COMMAND | '3', diff_cb, (void *)"2", FL_MENU_RADIO },
-    { "&Impossible", FL_COMMAND | '4', diff_cb, (void *)"3", FL_MENU_RADIO },
+    { "&Easy", 0, diff_cb, (void *)"0", FL_MENU_RADIO },
+    { "&Medium", 0, diff_cb, (void *)"1", FL_MENU_RADIO },
+    { "&Hard", 0, diff_cb, (void *)"2", FL_MENU_RADIO },
+    { "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO },
     { 0 },
     { "&Help", 0, 0, 0, FL_SUBMENU },
     { "&About Sudoku", FL_F + 1, help_cb, 0, 0 },
@@ -586,7 +647,7 @@ Sudoku::Sudoku()
   prefs_.get("difficulty", difficulty_, 0);
   if (difficulty_ < 0 || difficulty_ > 3) difficulty_ = 0;
 
-  items[7 + difficulty_].flags |= FL_MENU_VALUE;
+  items[8 + difficulty_].flags |= FL_MENU_VALUE;
 
   menubar_ = new Fl_Sys_Menu_Bar(0, 0, 3 * GROUP_SIZE, 25);
   menubar_->menu(items);
@@ -727,12 +788,15 @@ Sudoku::close_cb(Fl_Widget *widget, void *) {
 void
 Sudoku::diff_cb(Fl_Widget *widget, void *d) {
   Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
+  int diff = atoi((char *)d);
 
-  s->difficulty_ = atoi((char *)d);
-  s->new_game(s->seed_);
-  s->set_title();
+  if (diff != s->difficulty_) {
+    s->difficulty_ = diff;
+    s->new_game(s->seed_);
+    s->set_title();
 
-  prefs_.set("difficulty", s->difficulty_);
+    prefs_.set("difficulty", s->difficulty_);
+  }
 }
 
 
@@ -747,7 +811,7 @@ Sudoku::help_cb(Fl_Widget *, void *) {
 	"<HEAD>\n"
 	"<TITLE>Sudoku Help</TITLE>\n"
 	"</HEAD>\n"
-	"<BODY>\n"
+	"<BODY BGCOLOR='#ffffff'>\n"
 
 	"<H2>About the Game</H2>\n"
 
@@ -839,7 +903,15 @@ Sudoku::load_game() {
 // Create a new game...
 void
 Sudoku::new_cb(Fl_Widget *widget, void *) {
-  ((Sudoku *)(widget->window()))->new_game(time(NULL));
+  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
+
+  if (s->grid_cells_[0][0]->color() != FL_GREEN) {
+    if (!fl_choice("Are you sure you want to change the difficulty level and "
+                   "discard the current game?", "Keep Current Game", "Start New Game",
+                   NULL)) return;
+  }
+
+  s->new_game(time(NULL));
 }
 
 
