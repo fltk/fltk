@@ -782,7 +782,7 @@ if test -n "$GCC"; then
         if test "x$with_optim" != x; then
 	    OPTIM="$with_optim $OPTIM"
 	else
-            OPTIM="-Os -g $OPTIM"
+            OPTIM="-Os $OPTIM"
 	fi
     fi
 
