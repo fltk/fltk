@@ -137,6 +137,69 @@ class SudokuSound {
 };
 
 
+// Sudoku cell class...
+class SudokuCell : public Fl_Widget {
+  bool		readonly_;
+  int		value_;
+  int		test_value_[8];
+
+  public:
+
+		SudokuCell(int X, int Y, int W, int H);
+  void		draw();
+  int		handle(int event);
+  void		readonly(bool r) { readonly_ = r; redraw(); }
+  bool		readonly() const { return readonly_; }
+  void		test_value(int v, int n) { test_value_[n] = v; redraw(); }
+  int		test_value(int n) const { return test_value_[n]; }
+  void		value(int v) {
+		  value_ = v;
+		  for (int i = 0; i < 8; i ++) test_value_[i] = 0;
+		  redraw();
+		}
+  int		value() const { return value_; }
+};
+
+
+// Sudoku window class...
+class Sudoku : public Fl_Window {
+  Fl_Sys_Menu_Bar *menubar_;
+  Fl_Group	*grid_;
+  time_t	seed_;
+  char		grid_values_[9][9];
+  SudokuCell	*grid_cells_[9][9];
+  Fl_Group	*grid_groups_[3][3];
+  int		difficulty_;
+  SudokuSound	*sound_;
+
+  static void	check_cb(Fl_Widget *widget, void *);
+  static void	close_cb(Fl_Widget *widget, void *);
+  static void	diff_cb(Fl_Widget *widget, void *d);
+  static void	help_cb(Fl_Widget *, void *);
+  static void	new_cb(Fl_Widget *widget, void *);
+  static void	reset_cb(Fl_Widget *widget, void *);
+  static void	restart_cb(Fl_Widget *widget, void *);
+  void		set_title();
+  static void	solve_cb(Fl_Widget *widget, void *);
+
+  static Fl_Help_Dialog *help_dialog_;
+  static Fl_Preferences	prefs_;
+  public:
+
+	      	Sudoku();
+		~Sudoku();
+
+  void		check_game(bool highlight = true);
+  void		load_game();
+  void		new_game(time_t seed);
+  int		next_value(SudokuCell *c);
+  void		resize(int X, int Y, int W, int H);
+  void		save_game();
+  void		solve_game();
+};
+
+
+// Sound class globals...
 int SudokuSound::frequencies[9] = {
   880,	// A(5)
   988,	// B(5)
@@ -412,29 +475,6 @@ void SudokuSound::play(char note) {
 }
 
 
-// Sudoku cell class...
-class SudokuCell : public Fl_Widget {
-  bool		readonly_;
-  int		value_;
-  int		test_value_[8];
-
-  public:
-
-		SudokuCell(int X, int Y, int W, int H);
-  void		draw();
-  int		handle(int event);
-  void		readonly(bool r) { readonly_ = r; redraw(); }
-  bool		readonly() const { return readonly_; }
-  void		test_value(int v, int n) { test_value_[n] = v; redraw(); }
-  int		test_value(int n) const { return test_value_[n]; }
-  void		value(int v) {
-		  value_ = v;
-		  for (int i = 0; i < 8; i ++) test_value_[i] = 0;
-		  redraw();
-		}
-  int		value() const { return value_; }
-};
-
 // Create a cell widget
 SudokuCell::SudokuCell(int X, int Y, int W, int H)
   : Fl_Widget(X, Y, W, H, 0) {
@@ -508,6 +548,14 @@ SudokuCell::handle(int event) {
 
     case FL_PUSH :
       if (Fl::event_inside(this)) {
+        if (Fl::event_clicks()) {
+	  // 2+ clicks increments/sets value
+	  if (value()) {
+	    if (value() < 9) value(value() + 1);
+	    else value(1);
+	  } else value(((Sudoku *)window())->next_value(this));
+	}
+
         Fl::focus(this);
 	redraw();
 	return 1;
@@ -570,43 +618,6 @@ SudokuCell::handle(int event) {
 }
 
 
-// Sudoku window class...
-class Sudoku : public Fl_Window {
-  Fl_Sys_Menu_Bar *menubar_;
-  Fl_Group	*grid_;
-  time_t	seed_;
-  char		grid_values_[9][9];
-  SudokuCell	*grid_cells_[9][9];
-  Fl_Group	*grid_groups_[3][3];
-  int		difficulty_;
-  SudokuSound	*sound_;
-
-  static void	check_cb(Fl_Widget *widget, void *);
-  static void	close_cb(Fl_Widget *widget, void *);
-  static void	diff_cb(Fl_Widget *widget, void *d);
-  static void	help_cb(Fl_Widget *, void *);
-  static void	new_cb(Fl_Widget *widget, void *);
-  static void	reset_cb(Fl_Widget *widget, void *);
-  static void	restart_cb(Fl_Widget *widget, void *);
-  void		set_title();
-  static void	solve_cb(Fl_Widget *widget, void *);
-
-  static Fl_Help_Dialog *help_dialog_;
-  static Fl_Preferences	prefs_;
-  public:
-
-	      	Sudoku();
-		~Sudoku();
-
-  void		check_game(bool highlight = true);
-  void		load_game();
-  void		new_game(time_t seed);
-  void		resize(int X, int Y, int W, int H);
-  void		save_game();
-  void		solve_game();
-};
-
-
 // Sudoku class globals...
 Fl_Help_Dialog	*Sudoku::help_dialog_ = (Fl_Help_Dialog *)0;
 Fl_Preferences	Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
@@ -660,7 +671,8 @@ Sudoku::Sudoku()
       g = new Fl_Group(j * GROUP_SIZE, i * GROUP_SIZE + MENU_OFFSET,
 		       GROUP_SIZE, GROUP_SIZE);
       g->box(FL_BORDER_BOX);
-      g->color(FL_DARK3);
+      if ((i == 1) ^ (j == 1)) g->color(FL_DARK3);
+      else g->color(FL_DARK2);
       g->end();
 
       grid_groups_[i][j] = g;
@@ -1013,6 +1025,41 @@ Sudoku::new_game(time_t seed) {
 }
 
 
+// Return the next available value for a cell...
+int
+Sudoku::next_value(SudokuCell *c) {
+  int	i, j, k, m;
+
+
+  for (i = 0; i < 9; i ++) {
+    for (j = 0; j < 9; j ++)
+      if (grid_cells_[i][j] == c) break;
+
+    if (j < 9) break;
+  }
+
+  if (i == 9) return 1;
+
+  i -= i % 3;
+  j -= j % 3;
+
+  int numbers[9];
+
+  memset(numbers, 0, sizeof(numbers));
+
+  for (k = 0; k < 3; k ++)
+    for (m = 0; m < 3; m ++) {
+      c = grid_cells_[i + k][j + m];
+      if (c->value()) numbers[c->value() - 1] = 1;
+    }
+
+  for (i = 0; i < 9; i ++)
+    if (!numbers[i]) return i + 1;
+
+  return 1;
+}
+
+
 // Reset widget color to gray...
 void
 Sudoku::reset_cb(Fl_Widget *widget, void *) {
@@ -1034,6 +1081,24 @@ Sudoku::resize(int X, int Y, int W, int H) {
   prefs_.set("y", Y);
   prefs_.set("width", W);
   prefs_.set("height", H);
+}
+
+
+// Restart game from beginning...
+void
+Sudoku::restart_cb(Fl_Widget *widget, void *) {
+  Sudoku *s = (Sudoku *)(widget->window());
+
+  for (int i = 0; i < 9; i ++)
+    for (int j = 0; j < 9; j ++) {
+      SudokuCell *cell = s->grid_cells_[i][j];
+
+      if (!cell->readonly()) {
+        int v = cell->value();
+	cell->value(0);
+	if (v) s->sound_->play('A' + v - 1);
+      }
+    }
 }
 
 
@@ -1060,15 +1125,6 @@ Sudoku::save_game() {
 	prefs_.set(name, cell->test_value(k));
       }
     }
-}
-
-
-// Restart game from beginning...
-void
-Sudoku::restart_cb(Fl_Widget *widget, void *) {
-  Sudoku *s = (Sudoku *)(widget->window());
-
-  s->new_game(s->seed_);
 }
 
 
