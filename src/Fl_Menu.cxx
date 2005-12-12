@@ -612,7 +612,10 @@ int menuwindow::handle(int e) {
     }} return 1;
   case FL_RELEASE:
     // do nothing if they try to pick inactive items
-    if (pp.current_item && !pp.current_item->activevisible()) return 1;
+    if (pp.current_item && !pp.current_item->activevisible()) {
+      pp.state = DONE_STATE;
+      return 1;
+    }
     // Mouse must either be held down/dragged some, or this must be
     // the second click (not the one that popped up the menu):
     if (!Fl::event_is_click() || pp.state == PUSH_STATE ||
