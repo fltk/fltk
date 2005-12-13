@@ -173,8 +173,8 @@ main() {
 }
 </PRE></UL>
 
-<H4><A NAME="Fl.add_fd">void add_fd(int fd, int when, void (*cb)(int,void*),void* =0);<BR>
-void add_fd(int fd, void (*cb)(int, void*), void* = 0);</A></H4>
+<H4><A NAME="Fl.add_fd">void add_fd(int fd, void (*cb)(int,void*),void* =0);<BR>
+void add_fd(int fd, int when, void (*cb)(int, void*), void* = 0);</A></H4>
 
 <P>Add file descriptor <tt>fd</tt> to listen to.  When the <tt>fd</tt>
 becomes ready for reading <tt>Fl::wait()</tt> will call the callback
