@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- OS X Quartz version now draw a nice resize control (STR
+	  #1099)
 	- FLTK now enables large file support when available (STR
 	  #1087)
 	- Fl_Clock_Output depended on a time value that was the

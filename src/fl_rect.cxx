@@ -240,8 +240,7 @@ void fl_line(int x, int y, int x1, int y1) {
   MoveTo(x, y); 
   LineTo(x1, y1);
 #elif defined(__APPLE_QUARTZ__)
-  if (( x==x1 || y==y1 ) && fl_quartz_line_width_!=1.0f )  
-    CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_==1.0f ) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextStrokePath(fl_gc);
@@ -264,10 +263,12 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(x1, y1);
   LineTo(x2, y2);
 #elif defined(__APPLE_QUARTZ__)
+  if (fl_quartz_line_width_==1.0f ) CGContextSetShouldAntialias(fl_gc, false);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextStrokePath(fl_gc);
+  if (fl_quartz_line_width_==1.0f ) CGContextSetShouldAntialias(fl_gc, true);
 #else
   XPoint p[3];
   p[0].x = x;  p[0].y = y;

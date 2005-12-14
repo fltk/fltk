@@ -35,6 +35,10 @@
 #include <stdlib.h>
 #include "flstring.h"
 
+#ifdef __APPLE_QUARTZ__
+#include <FL/fl_draw.h>
+#endif
+
 void Fl_Window::_Fl_Window() {
   type(FL_WINDOW);
   box(FL_FLAT_BOX);
@@ -102,6 +106,26 @@ void Fl_Window::draw() {
   // Make sure we don't draw the window title in the window background...
   Fl_Widget::label(0);
   Fl_Group::draw();
+#ifdef __APPLE_QUARTZ__
+  if (!parent() && resizable()) {
+    int dx = Fl::box_dw(box())-Fl::box_dx(box());
+    int dy = Fl::box_dh(box())-Fl::box_dy(box());
+    if (dx<=0) dx = 1;
+    if (dy<=0) dy = 1;
+    int x1 = w()-dx-1, x2 = x1, y1 = h()-dx-1, y2 = y1;
+    Fl_Color c[4] = {
+      color(),
+      fl_color_average(color(), FL_WHITE, 0.7f),
+      fl_color_average(color(), FL_BLACK, 0.6f),
+      fl_color_average(color(), FL_BLACK, 0.8f),
+    };
+    int i;
+    for (i=dx; i<12; i++) {
+      fl_color(c[i&3]);
+      fl_line(x1--, y1, x2, y2--);
+    }
+  }
+#endif
   // Restore the label...
   Fl_Widget::label(savelabel);
   set_flag(saveflags);
