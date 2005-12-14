@@ -256,5 +256,29 @@
 #undef HAVE_ALSA_ASOUNDLIB_H
 
 /*
+ * Do we have the long long type?
+ */
+
+#undef HAVE_LONG_LONG
+
+#ifdef HAVE_LONG_LONG
+#  define FLTK_LLFMT	"%lld"
+#  define FLTK_LLCAST	(long long)
+#else
+#  define FLTK_LLFMT	"%ld"
+#  define FLTK_LLCAST	(long)
+#endif /* HAVE_LONG_LONG */
+
+/*
+ * Do we have the strtoll() function?
+ */
+
+#undef HAVE_STRTOLL
+
+#ifndef HAVE_STRTOLL
+#  define strtoll(nptr,endptr,base) strtol((nptr), (endptr), (base))
+#endif /* !HAVE_STRTOLL */
+
+/*
  * End of "$Id$".
  */
