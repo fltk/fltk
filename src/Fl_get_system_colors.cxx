@@ -40,11 +40,11 @@
 extern "C" int putenv(const char*);
 #endif // __APPLE__ && __MWERKS__
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 // Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
 // on Windows, which is supposed to be POSIX compliant...
 #  define putenv _putenv
-#endif // WIN32
+#endif // WIN32 && !__CYGWIN__
 
 static char	fl_bg_set = 0;
 static char	fl_bg2_set = 0;

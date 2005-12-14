@@ -32,11 +32,11 @@
 #include <FL/fl_draw.H>
 #include <FL/math.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 // Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
 // on Windows, which is supposed to be POSIX compliant...
 #  define hypot _hypot
-#endif // WIN32
+#endif // WIN32 && !__CYGWIN__
 
 void fl_arc(double x, double y, double r, double start, double end) {
 
