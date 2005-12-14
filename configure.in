@@ -426,13 +426,22 @@ AC_CHECK_FUNC(strtoll, AC_DEFINE(HAVE_STRTOLL))
 dnl Check for audio libraries...
 AUDIOLIBS=""
 
-AC_CHECK_HEADER(alsa/asoundlib.h,
-    AC_DEFINE(HAVE_ALSA_ASOUNDLIB_H)
-    AUDIOLIBS="-lasound")
+case $uname in
+    CYGWIN* | MINGW*)
+	dnl Cygwin environment...
+	AUDIOLIBS="-lwinmm"
+	;;
 
-if test x$uname = xDarwin; then
-    AUDIOLIBS="-framework CoreAudio"
-fi
+    Darwin*)
+	AUDIOLIBS="-framework CoreAudio"
+	;;
+
+    *)
+	AC_CHECK_HEADER(alsa/asoundlib.h,
+	    AC_DEFINE(HAVE_ALSA_ASOUNDLIB_H)
+	    AUDIOLIBS="-lasound")
+        ;;
+esac
 
 AC_SUBST(AUDIOLIBS)
 
