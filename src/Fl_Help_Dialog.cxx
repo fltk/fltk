@@ -165,7 +165,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       o->labeltype(FL_NORMAL_LABEL);
       o->labelfont(0);
       o->labelsize(14);
-      o->labelcolor(FL_BLACK);
+      o->labelcolor(FL_FOREGROUND_COLOR);
       o->callback((Fl_Callback*)cb_view_);
       o->align(FL_ALIGN_TOP);
       o->when(FL_WHEN_RELEASE);
@@ -204,7 +204,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       { Fl_Group* o = new Fl_Group(10, 350, 296, 25);
         o->box(FL_DOWN_BOX);
         o->color(FL_BACKGROUND2_COLOR);
-        { Fl_Input* o = find_ = new Fl_Input(35, 352, 268, 21, "@search");
+        { Fl_Input* o = find_ = new Fl_Input(35, 352, 268, 21, "@2search");
           o->tooltip("find text in document");
           o->box(FL_FLAT_BOX);
           o->labelsize(13);
