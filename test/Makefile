@@ -217,7 +217,7 @@ clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ colbrowser.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 color_chooser$(EXEEXT): color_chooser.o
@@ -228,7 +228,7 @@ curve$(EXEEXT): curve.o
 
 demo$(EXEEXT): demo.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 doublebuffer$(EXEEXT): doublebuffer.o
@@ -250,7 +250,7 @@ fonts$(EXEEXT): fonts.o
 
 forms$(EXEEXT): forms.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ forms.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 hello$(EXEEXT): hello.o
@@ -280,7 +280,7 @@ keyboard_ui.cxx:	keyboard_ui.fl
 
 label$(EXEEXT): label.o
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ label.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 line_style$(EXEEXT): line_style.o
@@ -304,7 +304,7 @@ navigation$(EXEEXT): navigation.o
 
 output$(EXEEXT): output.o ../lib/$(FLLIBNAME)
 	echo Linking $@...
-	$(CXX) -I.. $(CXXFLAGS) -o $@ $< $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) -I.. $(CXXFLAGS) -o $@ output.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 overlay$(EXEEXT): overlay.o

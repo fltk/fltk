@@ -113,7 +113,7 @@ CAT3EXT		= @CAT3EXT@
 
 .o$(EXEEXT):
 	echo Linking $@...
-	$(CXX) -I.. @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(CXX) $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
