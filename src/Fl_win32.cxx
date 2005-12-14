@@ -257,6 +257,8 @@ int fl_wait(double time_to_wait) {
   }
 #endif // USE_ASYNC_SELECT
 
+  if (Fl::idle) time_to_wait = 0.0;
+
   fl_unlock_function();
 
   time_to_wait = (time_to_wait > 10000 ? 10000 : time_to_wait);

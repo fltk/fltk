@@ -449,7 +449,7 @@ double Fl::wait(double time_to_wait) {
 #endif
 }
 
-#define FOREVER 0.01 //1e20
+#define FOREVER 1e20
 
 int Fl::run() {
   while (Fl_X::first) wait(FOREVER);
