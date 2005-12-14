@@ -119,7 +119,9 @@ void Fl_Clock_Output::value(int H, int m, int s) {
 void Fl_Clock_Output::value(ulong v) {
   value_ = v;
   struct tm *timeofday;
-  timeofday = localtime((const time_t *)&v);
+  // Some platforms, notably Windows, now use a 64-bit time_t value...
+  time_t vv = (time_t)v;
+  timeofday = localtime(&vv);
   value(timeofday->tm_hour, timeofday->tm_min, timeofday->tm_sec);
 }
 

@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Fl_Clock_Output depended on a time value that was the
+	  same as an unsigned long, which is incorrect for WIN64
+	  and VC++ 2005 (STR #1079)
 	- Fl_Text_Display::wrap_mode() would crash if no buffer
 	  was associated with the widget (STR #1069)
 	- Updated the default label and text colors of all widgets
