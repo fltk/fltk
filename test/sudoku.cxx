@@ -277,7 +277,7 @@ SudokuSound::SudokuSound() {
   header_ptr->dwFlags        = 0;
   header_ptr->dwLoops        = 0;
 
-  if (waveOutOpen(&device, WAVE_MAPPER, &format, NULL, NULL, WAVE_ALLOWSYNC)
+  if (waveOutOpen(&device, WAVE_MAPPER, &format, 0, 0, WAVE_ALLOWSYNC)
           != MMSYSERR_NOERROR) return;
 
   waveOutPrepareHeader(device, header_ptr, sizeof(WAVEHDR));
