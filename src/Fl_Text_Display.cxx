@@ -3087,7 +3087,8 @@ int Fl_Text_Display::handle(int event) {
   // This isn't very elegant!
   if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h) &&
       !dragging && event != FL_LEAVE && event != FL_ENTER &&
-      event != FL_MOVE && event != FL_FOCUS && event != FL_UNFOCUS) {
+      event != FL_MOVE && event != FL_FOCUS && event != FL_UNFOCUS &&
+      event != FL_KEYBOARD && event != FL_KEYUP) {
     return Fl_Group::handle(event);
   }
 
