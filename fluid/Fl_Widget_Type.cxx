@@ -363,7 +363,7 @@ static Fl_Input *image_input;
 void image_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
     image_input = i;
-    if (current_widget->is_widget()) {
+    if (current_widget->is_widget() && !current_widget->is_window()) {
       i->activate();
       i->static_value(((Fl_Widget_Type*)current_widget)->image_name());
     } else i->deactivate();
@@ -381,8 +381,10 @@ void image_cb(Fl_Input* i, void *v) {
 
 void image_browse_cb(Fl_Button* b, void *v) {
   if (v == LOAD) {
-    if (current_widget->is_widget()) b->activate();
-    else b->deactivate();
+    if (current_widget->is_widget() && !current_widget->is_window())
+      b->activate();
+    else 
+      b->deactivate();
   } else {
     int mod = 0;
     if (ui_find_image(image_input->value())) {
@@ -403,7 +405,7 @@ static Fl_Input *inactive_input;
 void inactive_cb(Fl_Input* i, void *v) {
   if (v == LOAD) {
     inactive_input = i;
-    if (current_widget->is_widget()) {
+    if (current_widget->is_widget() && !current_widget->is_window()) {
       i->activate();
       i->static_value(((Fl_Widget_Type*)current_widget)->inactive_name());
     } else i->deactivate();
@@ -421,8 +423,10 @@ void inactive_cb(Fl_Input* i, void *v) {
 
 void inactive_browse_cb(Fl_Button* b, void *v) {
   if (v == LOAD) {
-    if (current_widget->is_widget()) b->activate();
-    else b->deactivate();
+    if (current_widget->is_widget() && !current_widget->is_window()) 
+      b->activate();
+    else 
+      b->deactivate();
   } else {
     int mod = 0;
     if (ui_find_image(inactive_input->value())) {
