@@ -257,7 +257,8 @@ int fl_wait(double time_to_wait) {
   }
 #endif // USE_ASYNC_SELECT
 
-  if (Fl::idle) time_to_wait = 0.0;
+  if (Fl::idle || Fl::damage()) 
+    time_to_wait = 0.0;
 
   fl_unlock_function();
 

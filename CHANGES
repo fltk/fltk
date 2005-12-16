@@ -3,6 +3,7 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Fixed unnecessary delay in WIN32 event handling (STR #1104)
 	- Fixed handling of Crl-C in Fl_Text_Display (STR #1122)
 	- OS X Quartz version now draw a nice resize control (STR
 	  #1099)
