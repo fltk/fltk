@@ -12,6 +12,18 @@
 instead of the unsigned character in 1.0.x. This allows for the
 specification of 24-bit RGB values or 8-bit FLTK color indices.
 
+<P><TT>FL_BLACK</TT> and <TT>FL_WHITE</TT> now remain black and 
+white, even if the base color of the gray ramp is changed using 
+<A HREF="Fl.html#Fl.background"><TT>Fl::background()</TT></A>.
+<TT>FL_DARK3</TT> and <TT>FL_LIGHT3</TT> can be used instead to 
+draw a very dark or a very bright background hue.</P>
+
+<P>Widgets use the new color symbols <TT>FL_FORGROUND_COLOR</TT>,
+<TT>FL_BACKGROUND_COLOR</TT>, <TT>FL_BACKGROUND2_COLOR</TT>, 
+<TT>FL_INACTIVE_COLOR</TT>, and <TT>FL_SELECTION_COLOR</TT>.
+More details can be found in the chapter
+<A HREF="enumerations.html#colors">Enumerations</A>.</P>
+
 <H2>Cut and Paste Support</H2>
 
 <P>The FLTK clipboard is now broken into two parts - a local

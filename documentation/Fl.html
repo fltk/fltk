@@ -392,16 +392,17 @@ any pending redraws can be processed.
 
 <H4><A NAME="Fl.background2">void background2(uchar, uchar, uchar);</A></H4>
 
-<P>Changes <tt>fl_color(FL_WHITE)</tt> and the same colors as <tt>
-Fl::foreground()</tt>.  This color is used as a background by <tt>
-Fl_Input</tt> and other text widgets.
+<P>Changes the alternative background color. This color is used as a 
+background by <tt>Fl_Input</tt> and other text widgets.
+<P>This call may change <tt>fl_color(FL_FOREGROUND_COLOR)</tt> if it 
+does not provide sufficient contrast to FL_BACKGROUND2_COLOR.
 
 <H4><A NAME="Fl.background">void background(uchar, uchar, uchar);</A></H4>
 
-<P>Changes <tt>fl_color(FL_GRAY)</tt> to the given color, and changes the
-gray ramp from 32 to 56 to black to white.  These are the colors used
-as backgrounds by almost all widgets and used to draw the edges of all
-the boxtypes.
+<P>Changes <tt>fl_color(FL_BACKGROUND_COLOR)</tt> to the given color, 
+and changes the gray ramp from 32 to 56 to black to white.  These are 
+the colors used as backgrounds by almost all widgets and used to draw 
+the edges of all the boxtypes.
 
 <H4><A NAME="Fl.belowmouse">Fl_Widget* belowmouse();<BR>
 void belowmouse(Fl_Widget*);</A></H4>
@@ -760,9 +761,7 @@ test</I> if the widget wants the focus (by it returning non-zero from
 
 <H4><A NAME="Fl.foreground">void foreground(uchar, uchar, uchar);</A></H4>
 
-<P>Changes <tt>fl_color(FL_BLACK)</tt>.  Also changes <tt>
-FL_INACTIVE_COLOR</tt> and <tt>FL_SELECTION_COLOR</tt> to be a ramp
-between this and <tt>FL_WHITE</tt>.
+<P>Changes <tt>fl_color(FL_FOREGROUND_COLOR)</tt>.
 
 <H4><A NAME="Fl.free_color">void free_color(Fl_Color c, int overlay = 0);</A></H4>
 
