@@ -204,7 +204,7 @@ Fl_Help_Dialog::Fl_Help_Dialog() {
       { Fl_Group* o = new Fl_Group(10, 350, 296, 25);
         o->box(FL_DOWN_BOX);
         o->color(FL_BACKGROUND2_COLOR);
-        { Fl_Input* o = find_ = new Fl_Input(35, 352, 268, 21, "@2search");
+        { Fl_Input* o = find_ = new Fl_Input(35, 352, 268, 21, "@search");
           o->tooltip("find text in document");
           o->box(FL_FLAT_BOX);
           o->labelsize(13);

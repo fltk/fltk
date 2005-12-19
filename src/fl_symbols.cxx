@@ -224,12 +224,12 @@ static void draw_fltk(Fl_Color col)
 static void draw_search(Fl_Color col) 
 {
   fl_color(col);
-  BP; vv(.4, .13); vv(1.0, .73); vv(.73, 1.0); vv(.13, .4); EP;
+  BP; vv(-.4, .13); vv(-1.0, .73); vv(-.73, 1.0); vv(-.13, .4); EP;
   set_outline_color(col);
   fl_line_style(FL_SOLID, 3, 0);
-  BC; fl_circle(-.2, -.2, .7); EC;
+  BC; fl_circle(.2, -.2, .6); EC;
   fl_line_style(FL_SOLID, 1, 0);
-  BC; vv(.4, .13); vv(1.0, .73); vv(.73, 1.0); vv(.13, .4); EC;
+  BC; vv(-.4, .13); vv(-1.0, .73); vv(-.73, 1.0); vv(-.13, .4); EC;
 }
 
 static void draw_arrow1(Fl_Color col)

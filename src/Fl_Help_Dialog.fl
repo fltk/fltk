@@ -159,7 +159,7 @@ smaller_->activate();}
           xywh {10 350 296 25} box DOWN_BOX color 7 resizable
         } {
           Fl_Input find_ {
-            label {@2search}
+            label {@search}
             callback {find_pos_ = view_->find(find_->value(), find_pos_);} selected
             private tooltip {find text in document} xywh {35 352 268 21} box FLAT_BOX labelsize 13 when 10 resizable
           }
