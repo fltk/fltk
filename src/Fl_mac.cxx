@@ -1768,7 +1768,6 @@ void Fl_X::make(Fl_Window* w)
     x->wait_for_expose = 1;
     x->next = Fl_X::first;
     Fl_X::first = x;
-    if (w->resizable()) DrawGrowIcon(x->xid);
     w->set_visible();
     { // Install Carbon Event handlers 
       OSStatus ret;
@@ -1939,7 +1938,10 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   resize_from_system = 0;
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
-    if (shown()) { redraw(); if (!parent()) i->wait_for_expose = 1; }
+    if (shown()) { 
+      redraw(); 
+      //if (!parent()) i->wait_for_expose = 1; 
+    }
   } else {
     x(X); y(Y); 
   }
