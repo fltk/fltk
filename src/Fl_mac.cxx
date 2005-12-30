@@ -1686,8 +1686,12 @@ void Fl_X::make(Fl_Window* w)
 
     if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) {
       // menu windows and tooltips
-      winclass = kHelpWindowClass;
-      winattr  = 0;
+      if (w->modal()||w->override()) {
+        winclass = kHelpWindowClass;
+        winattr  = 0;
+      } else {
+        winattr = kWindowNoTitleBarAttribute;
+      }
     } else if (w->modal()) {
       winclass = kMovableModalWindowClass;
     }
