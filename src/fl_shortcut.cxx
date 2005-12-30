@@ -54,6 +54,13 @@
 int Fl::test_shortcut(int shortcut) {
   if (!shortcut) return 0;
 
+  int v = shortcut & 0xffff;
+  if (v > 32 && v < 0x7f || v > 0xa0 && v <= 0xff) {
+    if (isupper(v)) {
+      shortcut |= FL_SHIFT;
+    }
+  }
+
   int shift = Fl::event_state();
   // see if any required shift flags are off:
   if ((shortcut&shift) != (shortcut&0x7fff0000)) return 0;
@@ -118,6 +125,13 @@ const char * fl_shortcut_label(int shortcut) {
   static char buf[20];
   char *p = buf;
   if (!shortcut) {*p = 0; return buf;}
+  // fix upper case shortcuts
+  int v = shortcut & 0xffff;
+  if (v > 32 && v < 0x7f || v > 0xa0 && v <= 0xff) {
+    if (isupper(v)) {
+      shortcut |= FL_SHIFT;
+    }
+  }
 #ifdef __APPLE__
   // \todo Mac :  we might want to change the symbols for Mac users - consider drawing Apple Symbols... .
   if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;} //: Mac hollow up arrow

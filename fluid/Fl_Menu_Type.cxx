@@ -534,6 +534,10 @@ int Shortcut_Button::handle(int e) {
     if (!value()) return 0;
     int v = Fl::event_text()[0];
     if (v > 32 && v < 0x7f || v > 0xa0 && v <= 0xff) {
+      if (isupper(v)) {
+        v = tolower(v);
+        v |= FL_SHIFT;
+      }
       v = v | Fl::event_state()&(FL_META|FL_ALT|FL_CTRL);
     } else {
       v = Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT) | Fl::event_key();
