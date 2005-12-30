@@ -263,15 +263,16 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
     for (int Y = 0; Y < d.h; Y++) {
       const uchar* p = data[Y];
       if (chars_per_pixel <= 1) {
+	int dw = d.w;
 	for (int X = 0; X < W; X++) {
-	  uchar b = (*p++ != transparent_index);
-	  if (*p++ != transparent_index) b |= 2;
-	  if (*p++ != transparent_index) b |= 4;
-	  if (*p++ != transparent_index) b |= 8;
-	  if (*p++ != transparent_index) b |= 16;
-	  if (*p++ != transparent_index) b |= 32;
-	  if (*p++ != transparent_index) b |= 64;
-	  if (*p++ != transparent_index) b |= 128;
+	  uchar b = (dw-->0 && *p++ != transparent_index);
+	  if (dw-->0 && *p++ != transparent_index) b |= 2;
+	  if (dw-->0 && *p++ != transparent_index) b |= 4;
+	  if (dw-->0 && *p++ != transparent_index) b |= 8;
+	  if (dw-->0 && *p++ != transparent_index) b |= 16;
+	  if (dw-->0 && *p++ != transparent_index) b |= 32;
+	  if (dw-->0 && *p++ != transparent_index) b |= 64;
+	  if (dw-->0 && *p++ != transparent_index) b |= 128;
 	  *bitmap++ = b;
 	}
       } else {

@@ -182,7 +182,8 @@ void push_menu(const char* nnn)
     if (menus[men].icommand[i][0] != '@') but[bn]->tooltip(menus[men].icommand[i]);
     else but[bn]->tooltip(0);
   }
-  strcpy(stack[stsize],nnn);
+  if (stack[stsize]!=nnn)
+    strcpy(stack[stsize],nnn);
   stsize++;
 }
 
@@ -255,8 +256,8 @@ void dobut(Fl_Widget *, long arg)
     CreateProcess(NULL, command, NULL, NULL, FALSE,
                   NORMAL_PRIORITY_CLASS, NULL, NULL, &suInfo, &prInfo);
 	
-    delete command;
-    delete copy_of_icommand;
+    delete[] command;
+    delete[] copy_of_icommand;
 	
 #else // NON WIN32 systems.
 
@@ -266,7 +267,7 @@ void dobut(Fl_Widget *, long arg)
     sprintf(command, "./%s &", menus[men].icommand[bn]);
     system(command);
 
-    delete command;
+    delete[] command;
 #endif // WIN32
   }
 }
@@ -336,7 +337,8 @@ int main(int argc, char **argv) {
   if (i < argc) fname = argv[i];
 
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
-  strcpy(buf,fname);
+  if (buf!=fname)
+    strcpy(buf,fname);
   const char *c = fl_filename_name(buf);
   if (c > buf) {buf[c-buf] = 0; chdir(buf);}
   push_menu("@main");

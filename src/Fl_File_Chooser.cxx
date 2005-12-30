@@ -359,7 +359,7 @@ const char * Fl_File_Chooser::label() {
 
 void Fl_File_Chooser::ok_label(const char *l) {
   okButton->label(l);
-int w, h;
+int w=0, h=0;
 okButton->measure_label(w, h);
 okButton->resize(cancelButton->x() - 50 - w, cancelButton->y(),
                  w + 40, 25);

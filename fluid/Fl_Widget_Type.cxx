@@ -1332,6 +1332,7 @@ void min_w_cb(Fl_Value_Input* i, void* v) {
 
 void min_h_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
+    if (!current_widget->is_window()) return;
     i->value(((Fl_Window_Type*)current_widget)->sr_min_h);
   } else {
     int mod = 0;
@@ -1348,6 +1349,7 @@ void min_h_cb(Fl_Value_Input* i, void* v) {
 
 void max_w_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
+    if (!current_widget->is_window()) return;
     i->value(((Fl_Window_Type*)current_widget)->sr_max_w);
   } else {
     int mod = 0;
@@ -1364,6 +1366,7 @@ void max_w_cb(Fl_Value_Input* i, void* v) {
 
 void max_h_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
+    if (!current_widget->is_window()) return;
     i->value(((Fl_Window_Type*)current_widget)->sr_max_h);
   } else {
     int mod = 0;

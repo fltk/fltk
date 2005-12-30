@@ -379,20 +379,26 @@ style_update(int        pos,		// I - Position of update
   end   = textbuf->line_end(pos + nInserted);
   text  = textbuf->text_range(start, end);
   style = stylebuf->text_range(start, end);
-  last  = style[end - start - 1];
+  if (start==end)
+    last = 0;
+  else
+    last  = style[end - start - 1];
 
-//  printf("start = %d, end = %d, text = \"%s\", style = \"%s\"...\n",
-//         start, end, text, style);
+//  printf("start = %d, end = %d, text = \"%s\", style = \"%s\", last='%c'...\n",
+//         start, end, text, style, last);
 
   style_parse(text, style, end - start);
 
-//  printf("new style = \"%s\"...\n", style);
+//  printf("new style = \"%s\", new last='%c'...\n", 
+//         style, style[end - start - 1]);
 
   stylebuf->replace(start, end, style);
   ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
 
-  if (last != style[end - start - 1]) {
-    // The last character on the line changed styles, so reparse the
+  if (start==end || last != style[end - start - 1]) {
+//    printf("Recalculate the rest of the buffer style\n");
+    // Either the user deleted some text, or the last character 
+    // on the line changed styles, so reparse the
     // remainder of the buffer...
     free(text);
     free(style);

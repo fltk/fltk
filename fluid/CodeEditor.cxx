@@ -305,14 +305,17 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
   end   = editor->mBuffer->line_end(pos + nInserted);
   text  = editor->mBuffer->text_range(start, end);
   style = editor->mStyleBuffer->text_range(start, end);
-  last  = style[end - start - 1];
+  if (start==end)
+    last = 0;
+  else
+    last  = style[end - start - 1];
 
   style_parse(text, style, end - start);
 
   editor->mStyleBuffer->replace(start, end, style);
   editor->redisplay_range(start, end);
 
-  if (last != style[end - start - 1]) {
+  if (start==end || last != style[end - start - 1]) {
     // The last character on the line changed styles, so reparse the
     // remainder of the buffer...
     free(text);
