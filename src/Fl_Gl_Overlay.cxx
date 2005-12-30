@@ -196,16 +196,26 @@ int Fl_Gl_Window::can_do_overlay() {
 void Fl_Gl_Window::redraw_overlay() {
   if (!shown()) return;
   make_overlay();
+#ifdef __APPLE__
+  redraw();
+#else
 #ifndef WIN32
   if (overlay != this)
     ((Fl_Gl_Window*)overlay)->redraw();
   else
 #endif
     damage(FL_DAMAGE_OVERLAY);
+#endif
 }
 
 void Fl_Gl_Window::make_overlay_current() {
   make_overlay();
+#ifdef __APPLE__
+  // this is not very useful, but unfortunatly, Apple decided
+  // that front buffer drawing can no longer (OS X 10.4) be 
+  // supported on their platforms.
+  make_current();
+#else
 #if HAVE_GL_OVERLAY
   if (overlay != this) {
 #ifdef WIN32
@@ -218,6 +228,7 @@ void Fl_Gl_Window::make_overlay_current() {
   } else
 #endif
     glDrawBuffer(GL_FRONT);
+#endif
 }
 
 void Fl_Gl_Window::hide_overlay() {
