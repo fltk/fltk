@@ -167,9 +167,14 @@ void
 Fl_File_Input::draw() {
   Fl_Boxtype b = box();
   if (damage() & (FL_DAMAGE_BAR | FL_DAMAGE_ALL)) draw_buttons();
-  if (damage() & FL_DAMAGE_ALL) draw_box(b,x(),y()+DIR_HEIGHT,w(),h()-DIR_HEIGHT,color());
-  Fl_Input_::drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b)+DIR_HEIGHT,
-		      w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b)-DIR_HEIGHT);
+  // this flag keeps Fl_Input_::drawtext from drawing a bogus box!
+  char must_trick_fl_input_ = 
+    Fl::focus()!=this && !size() && !(damage()&FL_DAMAGE_ALL);
+  if ((damage() & FL_DAMAGE_ALL) || must_trick_fl_input_) 
+    draw_box(b,x(),y()+DIR_HEIGHT,w(),h()-DIR_HEIGHT,color());
+  if (!must_trick_fl_input_) 
+    Fl_Input_::drawtext(x()+Fl::box_dx(b)+3, y()+Fl::box_dy(b)+DIR_HEIGHT,
+		        w()-Fl::box_dw(b)-6, h()-Fl::box_dh(b)-DIR_HEIGHT);
 }
 
 
