@@ -282,18 +282,17 @@ void Fl_Browser_::display(void* p) {
 
 void Fl_Browser_::draw() {
   int drawsquare = 0;
-  if (damage() & FL_DAMAGE_ALL) { // redraw the box if full redraw
-    Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
-    draw_box(b, x(), y(), w(), h(), color());
-    drawsquare = 1;
-  }
-
   update_top();
   int full_width_ = full_width();
   int full_height_ = full_height();
   int X, Y, W, H; bbox(X, Y, W, H);
   int dont_repeat = 0;
 J1:
+  if (damage() & FL_DAMAGE_ALL) { // redraw the box if full redraw
+    Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
+    draw_box(b, x(), y(), w(), h(), color());
+    drawsquare = 1;
+  }
   // see if scrollbar needs to be switched on/off:
   if ((has_scrollbar_ & VERTICAL) && (
 	(has_scrollbar_ & ALWAYS_ON) || position_ || full_height_ > H)) {
@@ -389,15 +388,15 @@ J1:
     full_width_ = full_width();
     if ((has_scrollbar_ & VERTICAL) &&
 	((has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
-      if (!scrollbar.visible()) goto J1;
+      if (!scrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
     } else {
-      if (scrollbar.visible()) goto J1;
+      if (scrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
     }
     if ((has_scrollbar_ & HORIZONTAL) &&
 	((has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
-      if (!hscrollbar.visible()) goto J1;
+      if (!hscrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
     } else {
-      if (hscrollbar.visible()) goto J1;
+      if (hscrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
     }
   }
 
