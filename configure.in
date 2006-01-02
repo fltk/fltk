@@ -581,10 +581,13 @@ case $uname in
 	    GLDEMOS=""
 	fi
 
-	if test x$have_pthread = xyes; then
-	    AC_DEFINE(HAVE_PTHREAD)
+	if test "x$enable_threads" = xyes; then
+	    if test x$have_pthread = xyes; then
+		AC_DEFINE(HAVE_PTHREAD)
+	    fi
+
 	    THREADS="threads.exe"
-	fi
+        fi
 
 	# Don't make symlinks since Windows is not case sensitive.
 	if test "x$with_links" != xyes; then
