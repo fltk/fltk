@@ -43,11 +43,25 @@ Fl_Shared_Image *img;
 static char name[1024];
 
 void load_file(const char *n) {
-  if (img) img->release();
-
+  if (img) {
+    img->release();
+    img = 0L;
+  }
+  if (fl_filename_isdir(n)) {
+    b->label("@fileopen"); // show a generic folder
+    b->labelsize(64);
+    b->labelcolor(FL_LIGHT2);
+    b->image(0);
+    b->redraw();
+    return;
+  }
   img = Fl_Shared_Image::get(n);
   if (!img) {
-    fl_alert("Image file format not recognized!");
+    b->label("@filenew"); // show an empty document
+    b->labelsize(64);
+    b->labelcolor(FL_LIGHT2);
+    b->image(0);
+    b->redraw();
     return;
   }
   if (img->w() > b->w() || img->h() > b->h()) {
@@ -58,8 +72,9 @@ void load_file(const char *n) {
     img->release();
     img = (Fl_Shared_Image *)temp;
   }
-
   b->label(name);
+  b->labelsize(14);
+  b->labelcolor(FL_FOREGROUND_COLOR);
   b->image(img);
   b->redraw();
 }
@@ -90,10 +105,11 @@ int main(int argc, char **argv) {
 
   Fl::args(argc,argv,i,arg);
 
-  Fl_Window window(400,400); ::w = &window;
-  Fl_Box b(0,0,window.w(),window.h()); ::b = &b;
-  b.box(FL_FLAT_BOX);
-  Fl_Button button(5,5,100,35,"load");
+  Fl_Window window(400,435); ::w = &window;
+  Fl_Box b(10,45,380,380); ::b = &b;
+  b.box(FL_THIN_DOWN_BOX);
+  b.align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER);
+  Fl_Button button(150,5,100,30,"load");
   button.callback(button_cb);
   if (!dvisual) Fl::visual(FL_RGB);
   if (argv[1]) load_file(argv[1]);
