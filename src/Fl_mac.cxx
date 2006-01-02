@@ -1735,7 +1735,7 @@ void Fl_X::make(Fl_Window* w)
         winclass = kHelpWindowClass;
         winattr  = 0;
       } else {
-        winattr = kWindowNoTitleBarAttribute;
+        winattr = 512; // kWindowNoTitleBarAttribute;
       }
     } else if (w->modal()) {
       winclass = kMovableModalWindowClass;
