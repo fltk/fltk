@@ -286,6 +286,7 @@ Atom fl_XdndStatus;
 Atom fl_XdndActionCopy;
 Atom fl_XdndFinished;
 //Atom fl_XdndProxy;
+Atom fl_XdndURIList;
 
 
 static void fd_callback(int,void *) {
@@ -339,6 +340,8 @@ void fl_open_display(Display* d) {
   fl_XdndActionCopy     = XInternAtom(d, "XdndActionCopy",	0);
   fl_XdndFinished       = XInternAtom(d, "XdndFinished",	0);
   //fl_XdndProxy        = XInternAtom(d, "XdndProxy",		0);
+  fl_XdndEnter          = XInternAtom(d, "XdndEnter",		0);
+  fl_XdndURIList        = XInternAtom(d, "text/uri-list",	0);
 
   Fl::add_fd(ConnectionNumber(d), POLLIN, fd_callback);
 

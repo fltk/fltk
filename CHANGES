@@ -3,6 +3,9 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Fl::dnd() now sets the content type of the drag to
+	  "text/uri-list" when it sees the dragged text is
+	  composed of URIs.
 	- Fixed keyboard shortcut handling in FLUID and shortcut
 	  labeling in FLTK (STR #1129)
 	- Fixed include path for CMake build (STR #1123)

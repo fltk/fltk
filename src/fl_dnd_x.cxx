@@ -28,6 +28,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
+#include "flstring.h"
 
 
 extern Atom fl_XdndAware;
@@ -41,8 +42,10 @@ extern Atom fl_XdndStatus;
 extern Atom fl_XdndActionCopy;
 extern Atom fl_XdndFinished;
 //extern Atom fl_XdndProxy;
+extern Atom fl_XdndURIList;
 
 extern char fl_i_own_selection[2];
+extern char *fl_selection_buffer[2];
 
 extern void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d0,
@@ -122,8 +125,18 @@ int Fl::dnd() {
       if (local_window) {
 	local_handle(FL_DND_ENTER, local_window);
       } else if (dndversion) {
-	fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-			     dndversion<<24, XA_STRING, 0, 0);
+        if (strncmp(fl_selection_buffer[0], "file:///", 8) &&
+	    strncmp(fl_selection_buffer[0], "ftp://", 6) &&
+	    strncmp(fl_selection_buffer[0], "http://", 7) &&
+	    strncmp(fl_selection_buffer[0], "https://", 8)) {
+	  // Send plain text...
+	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
+			       dndversion<<24, XA_STRING, 0, 0);
+        } else {
+	  // Send file/URI list...
+	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
+			       dndversion<<24, fl_XdndURIList, XA_STRING, 0);
+	}
       }
     }
     if (local_window) {
