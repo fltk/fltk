@@ -125,17 +125,19 @@ int Fl::dnd() {
       if (local_window) {
 	local_handle(FL_DND_ENTER, local_window);
       } else if (dndversion) {
-        if (strncmp(fl_selection_buffer[0], "file:///", 8) &&
-	    strncmp(fl_selection_buffer[0], "ftp://", 6) &&
-	    strncmp(fl_selection_buffer[0], "http://", 7) &&
-	    strncmp(fl_selection_buffer[0], "https://", 8)) {
-	  // Send plain text...
-	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-			       dndversion<<24, XA_STRING, 0, 0);
-        } else {
+        if ((!strncmp(fl_selection_buffer[0], "file:///", 8) ||
+	     !strncmp(fl_selection_buffer[0], "ftp://", 6) ||
+	     !strncmp(fl_selection_buffer[0], "http://", 7) ||
+	     !strncmp(fl_selection_buffer[0], "https://", 8)) &&
+	    !strchr(fl_selection_buffer[0], ' ') &&
+	    strstr(fl_selection_buffer[0], "\r\n")) {
 	  // Send file/URI list...
 	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
 			       dndversion<<24, fl_XdndURIList, XA_STRING, 0);
+        } else {
+	  // Send plain text...
+	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
+			       dndversion<<24, XA_STRING, 0, 0);
 	}
       }
     }
