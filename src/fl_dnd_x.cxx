@@ -125,6 +125,13 @@ int Fl::dnd() {
       if (local_window) {
 	local_handle(FL_DND_ENTER, local_window);
       } else if (dndversion) {
+        // Send an X-DND message to the target window.  In order to
+	// support dragging of files/URLs as well as arbitrary text,
+	// we look at the selection buffer - if the buffer starts
+	// with a common URI scheme, does not contain spaces, and
+	// contains at least one CR LF, then we flag the data as
+	// both a URI list (MIME media type "text/uri-list") and
+	// plain text.  Otherwise, we just say it is plain text.
         if ((!strncmp(fl_selection_buffer[0], "file:///", 8) ||
 	     !strncmp(fl_selection_buffer[0], "ftp://", 6) ||
 	     !strncmp(fl_selection_buffer[0], "http://", 7) ||
