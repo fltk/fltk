@@ -135,7 +135,12 @@ int Fl::dnd() {
         if ((!strncmp(fl_selection_buffer[0], "file:///", 8) ||
 	     !strncmp(fl_selection_buffer[0], "ftp://", 6) ||
 	     !strncmp(fl_selection_buffer[0], "http://", 7) ||
-	     !strncmp(fl_selection_buffer[0], "https://", 8)) &&
+	     !strncmp(fl_selection_buffer[0], "https://", 8) ||
+	     !strncmp(fl_selection_buffer[0], "ipp://", 6) ||
+	     !strncmp(fl_selection_buffer[0], "ldap:", 5) ||
+	     !strncmp(fl_selection_buffer[0], "mailto:", 7) ||
+	     !strncmp(fl_selection_buffer[0], "news:", 5) ||
+	     !strncmp(fl_selection_buffer[0], "smb://", 6)) &&
 	    !strchr(fl_selection_buffer[0], ' ') &&
 	    strstr(fl_selection_buffer[0], "\r\n")) {
 	  // Send file/URI list...
