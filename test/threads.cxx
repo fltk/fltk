@@ -61,9 +61,10 @@ void* prime_func(void* p)
   }
 
   // very simple prime number calculator !
-  for (; ; n+= step) {
+  for (;;) {
     int p;
     int hn = (int)sqrt((double)n);
+
     for (p=3; p<=hn; p+=2) if ( n%p == 0 ) break;
     if (p >= hn) {
       char s[128];
@@ -72,8 +73,16 @@ void* prime_func(void* p)
       browser->add(s);
       browser->bottomline(browser->size());
       if (n > value->value()) value->value(n);
+      n += step;
       Fl::unlock();
       Fl::awake((void*) (browser == browser1? p:0));	// Cause the browser to redraw ...
+    } else {
+      // This should not be necessary since "n" and "step" a local variables,
+      // however it appears that at least MacOS X has some threading issues
+      // that cause semi-random corruption of the (stack) variables.
+      Fl::lock();
+      n += step;
+      Fl::unlock();
     }
   }
   return 0;
