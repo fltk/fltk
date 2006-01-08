@@ -350,6 +350,9 @@ tabs$(EXEEXT): tabs.o
 tabs.cxx:	tabs.fl
 
 threads$(EXEEXT): threads.o
+# This ensures that we have this dependency even if threads are not
+# enabled in the current tree...
+threads.o:	threads.h
 
 tile$(EXEEXT): tile.o
 
