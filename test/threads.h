@@ -51,7 +51,7 @@
 typedef pthread_t Fl_Thread;
 
 static int fl_create_thread(Fl_Thread& t, void *(*f) (void *), void* p) {
-  return pthread_create((pthread_t*)&t, &attr, f, p);
+  return pthread_create((pthread_t*)&t, 0, f, p);
 }
 
 #  elif defined(WIN32) && !defined(__WATCOMC__) // Use Windows threading...
