@@ -1135,7 +1135,7 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
       }
     }
 
-  if (solved) s->new_game();
+  if (solved) s->new_game(s->seed_);
 }
 
 
