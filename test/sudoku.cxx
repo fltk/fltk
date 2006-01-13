@@ -3,7 +3,7 @@
 //
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2005 by Michael Sweet.
+// Copyright 2005-2006 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -769,6 +769,38 @@ Sudoku::check_game(bool highlight) {
       }
     }
 
+  // Check subgrids for duplicate numbers...
+  for (i = 0; i < 9; i += 3)
+    for (j = 0; j < 9; j += 3)
+      for (int ii = 0; ii < 3; ii ++)
+        for (int jj = 0; jj < 3; jj ++) {
+	  SudokuCell *cell = grid_cells_[i + ii][j + jj];
+	  int val = cell->value();
+
+	  if (cell->readonly() || !val) continue;
+
+          int iii;
+
+          for (iii = 0; iii < 3; iii ++) {
+	    int jjj;
+
+	    for (jjj = 0; jjj < 3; jjj ++)
+              if (ii != iii && jj != jjj &&
+	          grid_cells_[i + iii][j + jjj]->value() == val) break;
+
+            if (jjj < 3) break;
+	  }
+
+          if (iii < 3) {
+            if (highlight) {
+	      cell->color(FL_YELLOW);
+	      cell->redraw();
+	    }
+
+	    correct = false;
+	  }
+	}
+
   if (!empty && correct) {
     // Success!
     for (i = 0; i < 9; i ++) {
@@ -1088,17 +1120,22 @@ Sudoku::resize(int X, int Y, int W, int H) {
 void
 Sudoku::restart_cb(Fl_Widget *widget, void *) {
   Sudoku *s = (Sudoku *)(widget->window());
+  bool solved = true;
 
   for (int i = 0; i < 9; i ++)
     for (int j = 0; j < 9; j ++) {
       SudokuCell *cell = s->grid_cells_[i][j];
 
       if (!cell->readonly()) {
+        solved = false;
         int v = cell->value();
 	cell->value(0);
+	cell->color(FL_LIGHT3);
 	if (v) s->sound_->play('A' + v - 1);
       }
     }
+
+  if (solved) s->new_game();
 }
 
 
