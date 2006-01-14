@@ -411,9 +411,11 @@ void Fl_Gl_Window::init() {
   valid_   = 0;
   damage1_ = 0;
 
+#if 0 // This breaks resizing on Linux/X11
   int H = h();
   h(1); // Make sure we actually do something in resize()...
   resize(x(), y(), w(), H);
+#endif // 0
 }
 
 void Fl_Gl_Window::draw_overlay() {}
