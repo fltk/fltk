@@ -52,6 +52,7 @@ $docdir=$(datadir)/doc/fltk
 
 $CAT1EXT=@CAT1EXT@
 $CAT3EXT=@CAT3EXT@
+$CAT6EXT=@CAT6EXT@
 
 $DSONAME=@DSONAME@
 $FLDSONAME=@FLDSONAME@
@@ -59,6 +60,9 @@ $FLLIBNAME=@FLLIBNAME@
 $GLDSONAME=@GLDSONAME@
 $GLLIBNAME=@GLLIBNAME@
 $FLUID=@FLUID@
+$JPEG=@JPEG@
+$PNG=@PNG@
+$ZLIB=@ZLIB@
 
 %if DSONAME
 %system aix
@@ -119,16 +123,16 @@ l 0444 root sys /usr/include/gcc/darwin/3.1/g++-v3/FL $includedir/FL
 
 d 0555 root sys /Applications/fluid.app -
 d 0555 root sys /Applications/fluid.app/Contents -
-f 0444 root sys /Applications/fluid.app/Info.plist fluid/fluid.plist
-f 0444 root sys /Applications/fluid.app/PkgInfo fluid/fluid.info
+f 0444 root sys /Applications/fluid.app/Contents/Info.plist fluid/fluid.app/Contents/Info.plist
+f 0444 root sys /Applications/fluid.app/Contents/PkgInfo fluid/fluid.app/Contents/PkgInfo
 d 0555 root sys /Applications/fluid.app/Contents/MacOS -
 l 0555 root sys /Applications/fluid.app/Contents/MacOS/fluid $bindir/fluid
 d 0555 root sys /Applications/fluid.app/Contents/Resources -
-f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/icons/fluid.icns
+f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/fluid.app/Contents/Resources/fluid.icns
 %postinstall $bindir/fltk-config --post $bindir/fluid
 %postremove /bin/rm -rf /Applications/fluid.app
 
-%system linux
+%system !darwin
 f 0444 root sys /usr/share/applnk/Development/fluid.desktop fluid/fluid.desktop
 f 0444 root sys /usr/share/icons/hicolor/16x16/apps/fluid.png fluid/icons/fluid-16.png
 f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fluid.png fluid/icons/fluid-32.png
@@ -157,6 +161,18 @@ f 0444 root sys $libdir/libfltk_forms.a lib/libfltk_forms.a
 f 0444 root sys $libdir/libfltk_images.a lib/libfltk_images.a
 %if GLLIBNAME
 f 0444 root sys $libdir/libfltk_gl.a lib/libfltk_gl.a
+%endif
+
+%if JPEG
+f 0444 root sys $libdir/libfltk_jpeg.a lib/libfltk_jpeg.a
+%endif
+
+%if PNG
+f 0444 root sys $libdir/libfltk_png.a lib/libfltk_png.a
+%endif
+
+%if ZLIB
+f 0444 root sys $libdir/libfltk_z.a lib/libfltk_z.a
 %endif
 
 %if DSONAME
@@ -197,6 +213,24 @@ l 0000 root sys $libdir/libfltk_gl.so libfltk_gl.so.@FL_API_VERSION@
 
 # Header files
 f 0444 root sys $includedir/FL/ FL/*.[hH]
+
+%if JPEG
+f 0444 root sys $includedir/FL/images/jconfig.h jpeg/jconfig.h
+f 0444 root sys $includedir/FL/images/jerror.h jpeg/jerror.h
+f 0444 root sys $includedir/FL/images/jmorecfg.h jpeg/jmorecfg.h
+f 0444 root sys $includedir/FL/images/jpeglib.h jpeg/jpeglib.h
+%endif
+
+%if PNG
+f 0444 root sys $includedir/FL/images/png.h png/png.h
+f 0444 root sys $includedir/FL/images/pngconf.h png/pngconf.h
+%endif
+
+%if ZLIB
+f 0444 root sys $includedir/FL/images/zconf.h zlib/zconf.h
+f 0444 root sys $includedir/FL/images/zlib.h zlib/zlib.h
+f 0444 root sys $includedir/FL/images/zutil.h zlib/zutil.h
+%endif
 
 %system !darwin
 # Symlinks to handle common case problems...
@@ -326,6 +360,49 @@ f 0444 root sys $docdir/examples/config.h config.h
 f 0444 root sys $docdir/examples/ test/*.cxx
 f 0444 root sys $docdir/examples/ test/*.fl
 f 0444 root sys $docdir/examples/ test/*.h
+
+%subpackage games
+%description <<EOF
+Install fltk-games to play checkers or Sudoku on your computer.
+EOF
+
+%system darwin
+d 0555 root sys /Applications/checkers.app -
+d 0555 root sys /Applications/checkers.app/Contents -
+f 0444 root sys /Applications/checkers.app/Contents/Info.plist checkers/checkers.app/Contents/Info.plist
+f 0444 root sys /Applications/checkers.app/Contents/PkgInfo checkers/checkers.app/Contents/PkgInfo
+d 0555 root sys /Applications/checkers.app/Contents/MacOS -
+f 0555 root sys /Applications/checkers.app/Contents/MacOS/checkers test/checkers
+d 0555 root sys /Applications/checkers.app/Contents/Resources -
+f 0444 root sys /Applications/checkers.app/Contents/Resources/checkers.icns checkers/checkers.app/Contents/Resources/checkers.icns
+%postremove /bin/rm -rf /Applications/checkers.app
+
+d 0555 root sys /Applications/sudoku.app -
+d 0555 root sys /Applications/sudoku.app/Contents -
+f 0444 root sys /Applications/sudoku.app/Contents/Info.plist sudoku/sudoku.app/Contents/Info.plist
+f 0444 root sys /Applications/sudoku.app/Contents/PkgInfo sudoku/sudoku.app/Contents/PkgInfo
+d 0555 root sys /Applications/sudoku.app/Contents/MacOS -
+f 0555 root sys /Applications/sudoku.app/Contents/MacOS/sudoku test/sudoku
+d 0555 root sys /Applications/sudoku.app/Contents/Resources -
+f 0444 root sys /Applications/sudoku.app/Contents/Resources/sudoku.icns sudoku/sudoku.app/Contents/Resources/sudoku.icns
+%postremove /bin/rm -rf /Applications/sudoku.app
+
+%system !darwin
+f 0555 root sys $bindir/checkers test/checkers
+f 0555 root sys $bindir/sudoku test/sudoku
+f 0444 root sys /usr/share/applnk/Development/fluid.desktop fluid/fluid.desktop
+f 0444 root sys /usr/share/icons/hicolor/16x16/apps/fluid.png fluid/icons/fluid-16.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fluid.png fluid/icons/fluid-32.png
+f 0444 root sys /usr/share/icons/hicolor/48x48/apps/fluid.png fluid/icons/fluid-48.png
+f 0444 root sys /usr/share/icons/hicolor/64x64/apps/fluid.png fluid/icons/fluid-64.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/fluid.png fluid/icons/fluid-128.png
+f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/x-fluid.desktop
+
+%system all
+f 0444 root sys $mandir/cat6/checkers.$CAT6EXT documentation/checkers.$CAT6EXT
+f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/sudoku.$CAT6EXT
+f 0444 root sys $mandir/man6/checkers.6 documentation/checkers.man
+f 0444 root sys $mandir/man6/sudoku.6 documentation/sudoku.man
 
 #
 # End of "$Id$".
