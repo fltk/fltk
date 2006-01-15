@@ -130,11 +130,11 @@ f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/icon
 
 %system linux
 f 0444 root sys /usr/share/applnk/Development/fluid.desktop fluid/fluid.desktop
-f 0444 root sys /usr/share/icons/hicolor/16x16/fluid.png fluid/icons/fluid-16.png
-f 0444 root sys /usr/share/icons/hicolor/32x32/fluid.png fluid/icons/fluid-32.png
-f 0444 root sys /usr/share/icons/hicolor/48x48/fluid.png fluid/icons/fluid-48.png
-f 0444 root sys /usr/share/icons/hicolor/64x64/fluid.png fluid/icons/fluid-64.png
-f 0444 root sys /usr/share/icons/hicolor/128x128/fluid.png fluid/icons/fluid-128.png
+f 0444 root sys /usr/share/icons/hicolor/16x16/apps/fluid.png fluid/icons/fluid-16.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fluid.png fluid/icons/fluid-32.png
+f 0444 root sys /usr/share/icons/hicolor/48x48/apps/fluid.png fluid/icons/fluid-48.png
+f 0444 root sys /usr/share/icons/hicolor/64x64/apps/fluid.png fluid/icons/fluid-64.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/fluid.png fluid/icons/fluid-128.png
 f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/x-fluid.desktop
 
 %system all

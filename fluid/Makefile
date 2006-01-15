@@ -88,8 +88,8 @@ install-linux:
 	-$(MKDIR) $(DESTDIR)/usr/share/applnk/Development
 	$(CP) fluid.desktop  $(DESTDIR)/usr/share/applnk/Development
 	for size in 16 32 48 64 128; do \
-		-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}; \
-		$(CP) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/fluid.png; \
+		-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; \
+		$(CP) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps/fluid.png; \
 	done
 	-$(MKDIR) $(DESTDIR)/usr/share/mimelnk/application
 	$(CP) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
