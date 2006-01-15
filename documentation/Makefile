@@ -211,7 +211,8 @@ IMAGEFILES	= \
 		value_slider.gif
 
 
-MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT)
+MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT) \
+		checkers.$(CAT6EXT) sudoku.$(CAT6EXT)
 
 all:	$(MANPAGES)
 
@@ -248,6 +249,18 @@ install: $(MANPAGES)
 	$(CP) fltk.man $(DESTDIR)$(mandir)/man3/fltk.3
 	$(CHMOD) 644 $(DESTDIR)$(mandir)/man3/fltk.3
 
+install-linux install-osx:
+	-$(MKDIR) $(DESTDIR)$(mandir)/cat6
+	$(CP) checkers.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
+	$(CHMOD) 644 $(DESTDIR)$(mandir)/cat6/checkers.$(CAT6EXT)
+	$(CP) sudoku.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
+	$(CHMOD) 644 $(DESTDIR)$(mandir)/cat6/sudoku.$(CAT6EXT)
+	-$(MKDIR) $(DESTDIR)$(mandir)/man6
+	$(CP) checkers.man $(DESTDIR)$(mandir)/man6/checkers.6
+	$(CHMOD) 644 $(DESTDIR)$(mandir)/man6/checkers.6
+	$(CP) sudoku.man $(DESTDIR)$(mandir)/man6/sudoku.6
+	$(CHMOD) 644 $(DESTDIR)$(mandir)/man6/sudoku.6
+
 
 uninstall:
 	$(RMDIR) $(DESTDIR)$(docdir)
@@ -258,6 +271,11 @@ uninstall:
 	$(RM) $(DESTDIR)$(mandir)/cat3/fltk.$(CAT3EXT)
 	$(RM) $(DESTDIR)$(mandir)/man3/fltk.3
 
+uninstall-linux uninstall-osx:
+	$(RM) $(DESTDIR)$(mandir)/cat6/checkers.$(CAT6EXT)
+	$(RM) $(DESTDIR)$(mandir)/cat6/sudoku.$(CAT6EXT)
+	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
+	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
 
 # Base html files are now the readable ones, so this target is not make by
 # default...

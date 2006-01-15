@@ -91,28 +91,50 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root)
+
 %dir %{prefix}/bin
 %{prefix}/bin/fltk-config
 %{prefix}/bin/fluid
+
 %dir %{prefix}/include/FL
 %{prefix}/include/FL/*
 %{prefix}/include/Fl
+
 %dir %{prefix}/lib
 %{prefix}/lib/libfltk*.so
 %{prefix}/lib/libfltk*.a
+
 %dir %{_mandir}
-%{_mandir}/*
+%{_mandir}/cat1/*
+%{_mandir}/cat3/*
+%{_mandir}/man1/*
+%{_mandir}/man3/*
+
 %dir %{prefix}/share/doc/fltk
 %{prefix}/share/doc/fltk/*
+
+%dir %{prefix}/share/applnk
 %{prefix}/share/applnk/Development/*
+
+%dir %{prefix}/share/icons
 %{prefix}/share/icons/hicolor/*/apps/fluid.png
+
+%dir %{prefix}/share/mimelnk
 %{prefix}/share/mimelnk/*
 
 %files games
 %dir %{prefix}/bin
 %{prefix}/bin/checkers
 %{prefix}/bin/sudoku
+
+%dir %{_mandir}
+%{_mandir}/cat6/*
+%{_mandir}/man6/*
+
+%dir %{prefix}/share/applnk
 %{prefix}/share/applnk/Games/*
+
+%dir %{prefix}/share/icons
 %{prefix}/share/icons/hicolor/*/apps/checkers.png
 %{prefix}/share/icons/hicolor/*/apps/sudoku.png
 

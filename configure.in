@@ -762,21 +762,25 @@ case "$uname" in
 	# *BSD
 	CAT1EXT=0
 	CAT3EXT=0
+	CAT6EXT=0
 	;;
     IRIX*)
 	# SGI IRIX
 	CAT1EXT=z
 	CAT3EXT=z
+	CAT6EXT=z
 	;;
     *)
 	# All others
 	CAT1EXT=1
 	CAT3EXT=3
+	CAT6EXT=3
 	;;
 esac
 
 AC_SUBST(CAT1EXT)
 AC_SUBST(CAT3EXT)
+AC_SUBST(CAT6EXT)
 
 dnl Fix "mandir" variable...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then

@@ -46,6 +46,7 @@ install: makeinclude
 	done
 
 install-desktop: makeinclude
+	cd documentation; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 	cd fluid; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 	cd test; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 
@@ -57,6 +58,7 @@ uninstall: makeinclude
 	done
 
 uninstall-desktop: makeinclude
+	cd documentation; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 	cd fluid; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 	cd test; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 

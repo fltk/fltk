@@ -104,6 +104,7 @@ POSTBUILD	= @POSTBUILD@
 # Man page extensions...
 CAT1EXT		= @CAT1EXT@
 CAT3EXT		= @CAT3EXT@
+CAT6EXT		= @CAT6EXT@
 
 # Additional GUI install/uninstall targets...
 INSTALL_DESKTOP	= @INSTALL_DESKTOP@
