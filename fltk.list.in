@@ -32,7 +32,7 @@
 %vendor FLTK Development Team
 %license COPYING
 %readme README
-%version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@@FL_RELEASE_VERSION@
+%version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
 %description << EOF
 The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
 cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),

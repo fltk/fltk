@@ -47,6 +47,7 @@ install: makeinclude
 
 install-desktop: makeinclude
 	cd fluid; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
+	cd test; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 
 uninstall: makeinclude
 	$(RM) $(DESTDIR)$(bindir)/fltk-config
@@ -57,6 +58,7 @@ uninstall: makeinclude
 
 uninstall-desktop: makeinclude
 	cd fluid; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
+	cd test; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 
 depend: makeinclude
 	for dir in $(DIRS); do\

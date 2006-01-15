@@ -5,40 +5,43 @@
 
 echo "Getting distribution..."
 
-CVS_RSH=ssh; export CVS_RSH
-MAINTAINER=easysw
-
-cd /tmp
-cvs -q -d$MAINTAINER@cvs.sourceforge.net:/cvsroot/fltk get -P -r v1_1 fltk
-
-if test $# = 0; then
-	echo -n "Version number for distribution? "
-	read version
+if test $# = 0 -o "x$1" = xsnapshot; then
+	echo Updating for snapshot...
+	svn up
+	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
+	version="1.1svn"
+	fileversion="1.1svn-r$rev"
+	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
+	url="."
 else
+	echo Creating tag for release...
+	rev="1"
 	version=$1
+	fileversion=$1
+	fileurl="ftp://ftp.easysw.com/pub/fltk/$version/fltk-$fileversion-source.tar.bz2"
+	url="https://svn.easysw.com/public/fltk/fltk/tags/release-$version"
+
+	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.1 "$url" \
+		-m "Tag $version" || exit 1
 fi
 
-rm -rf fltk-$version
-mv fltk fltk-$version
-cd fltk-$version
+echo Exporting $version...
+rm -rf /tmp/fltk-$version
+svn export $url /tmp/fltk-$version
 
-if test x$version != xsnapshot; then
-	echo "Tagging release..."
+echo Applying version number...
+cd /tmp/fltk-$version
 
-	tag=`echo v$version | tr '.' '_'`
+fileurl=`echo $fileurl | sed -e '1,$s/\\//\\\\\\//g'`
+sed -e '1,$s/@VERSION@/'$version'/' \
+	-e '1,$s/@RELEASE@/'$rev'/' \
+	-e '1,$s/^Source:.*/Source: '$fileurl'/' \
+	<fltk.spec.in >fltk.spec
 
-	cvs tag -F $tag
-fi
+echo Creating configure script...
+autoconf -f
 
-echo "Making configuration script..."
-
-autoconf
-
-echo "Removing CVS directories..."
-
-find . -name .cvsignore -exec rm -f '{}' \;
-find . -name CVS -exec rm -rf '{}' \;
-
+echo Cleaning developer files...
 rm -rf OpenGL autom4te* bc5 config forms gl glut images packages themes
 rm -f makesrcdist
 
@@ -46,15 +49,15 @@ cd ..
 
 echo "Making UNIX distribution..."
 
-gtar czf fltk-$version-source.tar.gz fltk-$version
+gtar czf fltk-$fileversion-source.tar.gz fltk-$version
 
 echo "Making BZ2 distribution..."
-gunzip -c fltk-$version-source.tar.gz | bzip2 -v9 >fltk-$version-source.tar.bz2
+gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
 
 echo "Making Windows distribution..."
 
-rm -f fltk-$version-source.zip
-zip -r9 fltk-$version-source.zip fltk-$version
+rm -f fltk-$fileversion-source.zip
+zip -r9 fltk-$fileversion-source.zip fltk-$version
 
 echo "Removing distribution directory..."
 

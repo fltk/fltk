@@ -3,7 +3,7 @@
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2005 by Bill Spitzak and others.
+# Copyright 1998-2006 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -180,9 +180,52 @@ install:
 	$(CP) *.h *.cxx *.fl demo.menu *.xbm *.xpm $(DESTDIR)$(docdir)/examples
 	$(CHMOD) 644 $(DESTDIR)$(docdir)/examples/*.*
 
+install-linux:
+	echo Installing games to $(DESTDIR)$(bindir)...
+	-$(MKDIR) $(DESTDIR)$(bindir)
+	-$(MKDIR) $(DESTDIR)/usr/share/applnk/Games
+	-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps; \
+	-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps; \
+	for game in checkers sudoku; do \
+		$(CP) $$game $(DESTDIR)$(bindir); \
+		$(CHMOD) 755 $(DESTDIR)$(bindir)/$$game; \
+		$(CP) $$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
+		$(CP) icons/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
+		$(CP) icons/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+	done
+
+install-osx:
+	echo Installing games in $(DESTDIR)/Applications...
+	for game in checkers sudoku; do \
+		if test ! -d $(DESTDIR)/Applications/$$game.app; then \
+			$(MKDIR) $(DESTDIR)/Applications/$$game.app; \
+			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents; \
+			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
+			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+		fi; \
+		$(CP) $$game.app/Contents/Info.plist $(DESTDIR)/Applications/$$game.app/Contents; \
+		$(CP) $$game.app/Contents/PkgInfo $(DESTDIR)/Applications/$$game.app/Contents; \
+		$(CP) $$game.app/Contents/MacOS/$$game $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
+		$(CP) $$game.app/Contents/Resources/$$game.icns $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+	done
+
 uninstall:
 	echo "Removing examples programs from $(DESTDIR)$(docdir)/examples..."
 	-$(RMDIR) $(DESTDIR)$(docdir)/examples
+
+uninstall-linux:
+	echo Removing games from $(DESTDIR)$(bindir)...
+	for game in checkers sudoku; do \
+		$(RM) $(DESTDIR)$(bindir)/$$game; \
+		$(RM) $(DESTDIR)/usr/share/applnk/Games/$$game.desktop; \
+		$(RM) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
+		$(RM) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+	done
+
+uninstall-osx:
+	echo Removing games from $(DESTDIR)/Applications...
+	$(RM) -r $(DESTDIR)/Applications/checkers.app
+	$(RM) -r $(DESTDIR)/Applications/sudoku.app
 
 # FLUID file rules
 .fl.cxx .fl.h:	../fluid/fluid$(EXEEXT)
@@ -212,6 +255,10 @@ button$(EXEEXT): button.o
 buttons$(EXEEXT): buttons.o
 
 checkers$(EXEEXT): checkers.o
+	echo Linking $@...
+	$(CXX) $(CXXFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(CP) checkers$(EXEEXT) checkers.app/Contents/MacOS
+	$(POSTBUILD) $@ ../FL/mac.r
 
 clock$(EXEEXT): clock.o
 
