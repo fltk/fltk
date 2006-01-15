@@ -3,6 +3,8 @@ CHANGES IN FLTK 1.1.7
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
 	  STR #969)
+	- Pressing a Fl_Menu_Button widget now draws it pressed
+	  in (STR #1140)
 	- The threads demo would display negative prime numbers
 	  on MacOS X; this appears to be a MacOS X bug, but we
 	  added a workaround to "fix" this (STR #1138)

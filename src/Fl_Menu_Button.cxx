@@ -29,9 +29,12 @@
 #include <FL/Fl_Menu_Button.H>
 #include <FL/fl_draw.H>
 
+
+static Fl_Menu_Button	*pressed_menu_button_ = 0;
+
 void Fl_Menu_Button::draw() {
   if (!box() || type()) return;
-  draw_box(box(), color());
+  draw_box(pressed_menu_button_ == this ? fl_down(box()) : box(), color());
   draw_label();
   if (Fl::focus() == this) draw_focus();
   if (box() == FL_FLAT_BOX) return; // for XForms compatability
@@ -46,12 +49,16 @@ void Fl_Menu_Button::draw() {
 
 const Fl_Menu_Item* Fl_Menu_Button::popup() {
   const Fl_Menu_Item* m;
+  pressed_menu_button_ = this;
+  redraw();
   if (!box() || type()) {
     m = menu()->popup(Fl::event_x(), Fl::event_y(), label(), mvalue(), this);
   } else {
     m = menu()->pulldown(x(), y(), w(), h(), 0, this);
   }
   picked(m);
+  pressed_menu_button_ = 0;
+  redraw();
   return m;
 }
 
