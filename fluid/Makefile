@@ -76,7 +76,7 @@ depend:	$(CPPFILES)
 # Automatically generated dependencies...
 include makedepend
 
-install: all $(INSTALL_DESKTOP)
+install: all
 	echo "Installing FLUID in $(DESTDIR)$(bindir)..."
 	-$(MKDIR) $(DESTDIR)$(bindir)
 	$(CP) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
@@ -104,7 +104,7 @@ install-osx:
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
 	$(CP) icons/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
 
-uninstall: $(UNINSTALL_DESKTOP)
+uninstall:
 	$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
 
 uninstall-linux:

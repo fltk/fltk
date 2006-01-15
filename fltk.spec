@@ -72,7 +72,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
-make -e prefix=$RPM_BUILD_ROOT/%{prefix} mandir=$RPM_BUILD_ROOT/%{_mandir} install
+make -e DESTDIR=$RPM_BUILD_ROOT install install-desktop
 
 %clean
 rm -rf $RPM_BUILD_ROOT

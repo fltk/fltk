@@ -3,7 +3,7 @@
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2005 by Bill Spitzak and others.
+# Copyright 1998-2006 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -45,12 +45,18 @@ install: makeinclude
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
 	done
 
+install-desktop: makeinclude
+	cd fluid; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
+
 uninstall: makeinclude
 	$(RM) $(DESTDIR)$(bindir)/fltk-config
 	for dir in FL $(DIRS); do\
 		echo "=== uninstalling $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || break;\
 	done
+
+uninstall-desktop: makeinclude
+	cd fluid; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)
 
 depend: makeinclude
 	for dir in $(DIRS); do\
