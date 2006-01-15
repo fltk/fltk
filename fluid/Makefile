@@ -76,7 +76,7 @@ depend:	$(CPPFILES)
 # Automatically generated dependencies...
 include makedepend
 
-install: all
+install: all $(INSTALL_DESKTOP)
 	echo "Installing FLUID in $(DESTDIR)$(bindir)..."
 	-$(MKDIR) $(DESTDIR)$(bindir)
 	$(CP) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
@@ -84,8 +84,37 @@ install: all
 	$(DESTDIR)$(bindir)/fltk-config --post $(DESTDIR)$(bindir)/fluid$(EXEEXT)
 	$(CHMOD) 755 $(DESTDIR)$(bindir)/fluid$(EXEEXT)
 
-uninstall:
+install-linux:
+	-$(MKDIR) $(DESTDIR)/usr/share/applnk/Development
+	$(CP) fluid.desktop  $(DESTDIR)/usr/share/applnk/Development
+	for size in 16 32 48 64 128; do \
+		-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}; \
+		$(CP) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/fluid.png; \
+	done
+	-$(MKDIR) $(DESTDIR)/usr/share/mimelnk/application
+	$(CP) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
+
+install-osx:
+	-$(MKDIR) $(DESTDIR)/Applications/fluid.app
+	$(CP) fluid.plist $(DESTDIR)/Applications/fluid.app/Info.plist
+	$(CP) fluid.info $(DESTDIR)/Applications/fluid.app/PkgInfo
+	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents
+	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
+	$(LN) $(bindir)/fluid $(DESTDIR)/Application/fluid.app/Contents/MacOS/fluid
+	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
+	$(CP) icons/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
+
+uninstall: $(UNINSTALL_DESKTOP)
 	$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
+
+uninstall-linux:
+	$(RM) $(DESTDIR)/usr/share/applnk/Development/fluid.desktop
+	$(RM) $(DESTDIR)/usr/share/icons/hicolor/*/fluid.png
+	$(RM) $(DESTDIR)/usr/share/mimelnk/application/x-fluid.desktop
+
+uninstall-osx:
+	$(RM) -r $(DESTDIR)/Applications/fluid.app
+
 
 #
 # Note: The rebuild target can only be used if you have the original .fl

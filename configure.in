@@ -5,7 +5,7 @@ dnl "$Id$"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2005 by Bill Spitzak and others.
+dnl Copyright 1998-2006 by Bill Spitzak and others.
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Library General Public
@@ -37,7 +37,7 @@ dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
 FL_PATCH_VERSION=7
-FL_RELEASE_VERSION=cvs
+FL_RELEASE_VERSION=
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)
@@ -558,6 +558,9 @@ THREADS=
 
 AC_ARG_WITH(links, [  --with-links            make header links for common misspellings])
 
+INSTALL_DESKTOP=""
+UNINSTALL_DESKTOP=""
+
 case $uname in
     CYGWIN* | MINGW*)
 	dnl Cygwin environment...
@@ -622,6 +625,10 @@ case $uname in
 
 	# Add a postbuild step after linking applications
 	POSTBUILD="/Developer/Tools/Rez -t APPL -o"
+
+	# Install/Uninstall FLUID application
+	INSTALL_DESKTOP="install-osx"
+	UNINSTALL_DESKTOP="uninstall-osx"
 	;;
 
     *)
@@ -735,6 +742,10 @@ case $uname in
 	if test "x$with_links" = xno; then
 		HLINKS="#"
 	fi
+
+	# Install/Uninstall FLUID application support files
+	INSTALL_DESKTOP="install-linux"
+	UNINSTALL_DESKTOP="uninstall-linux"
 	;;
 esac
 
@@ -743,6 +754,9 @@ AC_SUBST(GLLIB)
 AC_SUBST(HLINKS)
 AC_SUBST(POSTBUILD)
 AC_SUBST(THREADS)
+
+AC_SUBST(INSTALL_DESKTOP)
+AC_SUBST(UNINSTALL_DESKTOP)
 
 dnl Figure out the appropriate formatted man page extension...
 case "$uname" in

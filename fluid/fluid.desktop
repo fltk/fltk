@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=fluid
+Comment=FLTK GUI Designer
+TryExec=fluid
+Exec=fluid
+Icon=fluid
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Categories=Development

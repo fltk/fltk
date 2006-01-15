@@ -5,7 +5,7 @@
 #
 # (EPM can be found at http://www.easysw.com/epm/)
 #
-# Copyright 1998-2005 by Bill Spitzak and others.
+# Copyright 1998-2006 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -28,7 +28,7 @@
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2005 by Bill Spitzak and others.
+%copyright 1998-2006 by Bill Spitzak and others.
 %vendor FLTK Development Team
 %license COPYING
 %readme README
@@ -48,7 +48,7 @@ $datadir=@datadir@
 $includedir=@includedir@
 $libdir=@libdir@
 $mandir=@mandir@
-$docdir=@docdir@
+$docdir=$(datadir)/doc/fltk
 
 $CAT1EXT=@CAT1EXT@
 $CAT3EXT=@CAT3EXT@
@@ -124,9 +124,19 @@ f 0444 root sys /Applications/fluid.app/PkgInfo fluid/fluid.info
 d 0555 root sys /Applications/fluid.app/Contents/MacOS -
 l 0555 root sys /Applications/fluid.app/Contents/MacOS/fluid $bindir/fluid
 d 0555 root sys /Applications/fluid.app/Contents/Resources -
-f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/fluid.icns
+f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/icons/fluid.icns
 %postinstall $bindir/fltk-config --post $bindir/fluid
 %postremove /bin/rm -rf /Applications/fluid.app
+
+%system linux
+f 0444 root sys /usr/share/applnk/Development/fluid.desktop fluid/fluid.desktop
+f 0444 root sys /usr/share/icons/hicolor/16x16/fluid.png fluid/icons/fluid-16.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/fluid.png fluid/icons/fluid-32.png
+f 0444 root sys /usr/share/icons/hicolor/48x48/fluid.png fluid/icons/fluid-48.png
+f 0444 root sys /usr/share/icons/hicolor/64x64/fluid.png fluid/icons/fluid-64.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/fluid.png fluid/icons/fluid-128.png
+f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/x-fluid.desktop
+
 %system all
 
 # FLUID
@@ -232,6 +242,7 @@ l 0000 root sys $includedir/FL/Fl_Image.h Fl_Image.H
 l 0000 root sys $includedir/FL/Fl_JPEG_Image.h Fl_JPEG_Image.H
 l 0000 root sys $includedir/FL/Fl_Input.h Fl_Input.H
 l 0000 root sys $includedir/FL/Fl_Input_.h Fl_Input_.H
+l 0000 root sys $includedir/FL/Fl_Input_Choice.h Fl_Input_Choice.H
 l 0000 root sys $includedir/FL/Fl_Int_Input.h Fl_Int_Input.H
 l 0000 root sys $includedir/FL/Fl_Light_Button.h Fl_Light_Button.H
 l 0000 root sys $includedir/FL/Fl_Line_Dial.h Fl_Line_Dial.H
@@ -270,6 +281,7 @@ l 0000 root sys $includedir/FL/Fl_Select_Browser.h Fl_Select_Browser.H
 l 0000 root sys $includedir/FL/Fl_Simple_Counter.h Fl_Simple_Counter.H
 l 0000 root sys $includedir/FL/Fl_Single_Window.h Fl_Single_Window.H
 l 0000 root sys $includedir/FL/Fl_Slider.h Fl_Slider.H
+l 0000 root sys $includedir/FL/Fl_Spinner.h Fl_Spinner.H
 l 0000 root sys $includedir/FL/Fl_Tabs.h Fl_Tabs.H
 l 0000 root sys $includedir/FL/Fl_Tile.h Fl_Tile.H
 l 0000 root sys $includedir/FL/Fl_Timer.h Fl_Timer.H

@@ -3,7 +3,7 @@
 #
 # RPM spec file for FLTK.
 #
-# Copyright 1998-2005 by Bill Spitzak and others.
+# Copyright 1998-2006 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -33,7 +33,7 @@ Summary: Fast Light Tool Kit (FLTK)
 Name: fltk
 Version: %{version}
 Release: %{release}
-Copyright: LGPL
+License: LGPL
 Group: System Environment/Libraries
 Source: ftp://ftp.fltk.org/pub/fltk/%{version}/fltk-%{version}-source.tar.gz
 URL: http://www.fltk.org
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*
 %dir %{prefix}/share/doc/fltk
 %{prefix}/share/doc/fltk/*
+%{prefix}/share/applnk/*
+%{prefix}/share/icons/*
+%{prefix}/share/mimelnk/*
 
 #
 # End of "$Id$".
