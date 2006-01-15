@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=checkers
+Name=Checkers
 Comment=Checkers Game
 TryExec=checkers
 Exec=checkers
@@ -7,4 +7,4 @@ Icon=checkers
 Terminal=false
 Type=Application
 Encoding=UTF-8
-Categories=Games
+Categories=Application;Game

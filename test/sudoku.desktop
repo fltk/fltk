@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=sudoku
+Name=Sudoku
 Comment=Suduku Number Game
 TryExec=sudoku
 Exec=sudoku
@@ -7,4 +7,4 @@ Icon=sudoku
 Terminal=false
 Type=Application
 Encoding=UTF-8
-Categories=Games
+Categories=Application;Game
