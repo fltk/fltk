@@ -59,6 +59,7 @@ fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
 	echo Linking $@...
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
+	$(CP) $@ fluid.app/Contents/MacOS
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
@@ -98,13 +99,13 @@ install-linux:
 
 install-osx:
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app
-	$(CP) fluid.plist $(DESTDIR)/Applications/fluid.app/Info.plist
-	$(CP) fluid.info $(DESTDIR)/Applications/fluid.app/PkgInfo
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents
+	$(CP) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
+	$(CP) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
 	$(LN) $(bindir)/fluid $(DESTDIR)/Application/fluid.app/Contents/MacOS/fluid
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
-	$(CP) icons/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
+	$(CP) fluid.app/Contents/Resources/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
 
 uninstall:
 	$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
