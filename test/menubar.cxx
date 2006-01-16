@@ -160,7 +160,7 @@ Fl_Menu_Item pulldown[] = {
   {"Red",	FL_ALT+'r'},
   {"Green",	FL_ALT+'g'},
   {"Blue",	FL_ALT+'b'},
-  {"Strange",	FL_ALT+'s'},
+  {"Strange",	FL_ALT+'s', 0, 0, FL_MENU_INACTIVE},
   {"&Charm",	FL_ALT+'c'},
   {"Truth",	FL_ALT+'t'},
   {"Beauty",	FL_ALT+'b'},

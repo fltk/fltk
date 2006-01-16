@@ -613,7 +613,10 @@ int menuwindow::handle(int e) {
   case FL_RELEASE:
     // do nothing if they try to pick inactive items
     if (pp.current_item && !pp.current_item->activevisible()) {
-      pp.state = DONE_STATE;
+      if (pp.state==INITIAL_STATE) {
+        setitem(0, -1, 0);
+        pp.state = DONE_STATE;
+      }
       return 1;
     }
     // Mouse must either be held down/dragged some, or this must be
