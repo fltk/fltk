@@ -588,16 +588,18 @@ int menuwindow::handle(int e) {
   case FL_PUSH:
   case FL_DRAG: {
 #ifdef __QNX__
-    // STR 704: workaround QNX X11 bug - in QNX an event FL_MOVE is sent
+    // STR 704: workaround QNX X11 bug - in QNX a FL_MOVE event is sent
     // right after FL_RELEASE...
     if (pp.state == DONE_STATE) return 1;
 #endif // __QNX__
     int mx = Fl::event_x_root();
     int my = Fl::event_y_root();
-    int item=0; int mymenu;
-    if (e == FL_PUSH &&
-        (mx < x() || mx >= (x() + w()) ||
-         my < y() || my >= (y() + h()))) {
+    int item=0; int mymenu = pp.nummenus-1;
+    if (e == FL_PUSH && (!pp.menubar || mymenu) &&
+        (mx < pp.p[mymenu]->x_root() ||
+	 mx >= (pp.p[mymenu]->x_root() + pp.p[mymenu]->w()) ||
+         my < pp.p[mymenu]->y_root() ||
+	 my >= (pp.p[mymenu]->y_root() + pp.p[mymenu]->h()))) {
       // Clicking outside menu cancels it...
       setitem(0, -1, 0);
       pp.state = DONE_STATE;
