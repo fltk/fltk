@@ -595,6 +595,14 @@ int menuwindow::handle(int e) {
     int mx = Fl::event_x_root();
     int my = Fl::event_y_root();
     int item=0; int mymenu;
+    if (e == FL_PUSH &&
+        (mx < x() || mx >= (x() + w()) ||
+         my < y() || my >= (y() + h()))) {
+      // Clicking outside menu cancels it...
+      setitem(0, -1, 0);
+      pp.state = DONE_STATE;
+      return 1;
+    }
     for (mymenu = pp.nummenus-1; ; mymenu--) {
       item = pp.p[mymenu]->find_selected(mx, my);
       if (item >= 0) break;
