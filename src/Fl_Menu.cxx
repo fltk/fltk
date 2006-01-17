@@ -598,7 +598,7 @@ int menuwindow::handle(int e) {
     for (mymenu = pp.nummenus-1; ; mymenu--) {
       item = pp.p[mymenu]->find_selected(mx, my);
       if (item >= 0) break;
-      if (mymenu <= 0) break;
+      if (mymenu <= 0) return 0;
     }
     if (my == 0 && item > 0) setitem(mymenu, item - 1);
     else setitem(mymenu, item);
@@ -674,7 +674,13 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   }
 
   pp.current_item = 0; pp.menu_number = 0; pp.item_number = -1;
-  if (menubar) mw.handle(FL_DRAG); // find the initial menu
+  if (menubar) {
+    // find the initial menu
+    if (!mw.handle(FL_DRAG)) {
+      Fl::release();
+      return 0;
+    }
+  }
   initial_item = pp.current_item;
   if (initial_item) goto STARTUP;
 
