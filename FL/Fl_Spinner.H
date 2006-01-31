@@ -127,9 +127,12 @@ class Fl_Spinner : public Fl_Group
 
   const char	*format() { return (format_); }
   void		format(const char *f) { format_ = f; update(); }
+  // Speling mistaks retained for source compatibility...
   double	maxinum() const { return (maximum_); }
+  double	maximum() const { return (maximum_); }
   void		maximum(double m) { maximum_ = m; }
   double	mininum() const { return (minimum_); }
+  double	minimum() const { return (minimum_); }
   void		minimum(double m) { minimum_ = m; }
   void		range(double a, double b) { minimum_ = a; maximum_ = b; }
   void		resize(int X, int Y, int W, int H) {

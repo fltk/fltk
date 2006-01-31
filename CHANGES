@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fl_Spinner's minimum() and maximum() "get" methods were
+	  misspelled (STR #1146)
 	- The largefile support changes in 1.1.7 broke binary
 	  compability for fl_filename_list(); you must now use
 	  "--enable-largefile" when configuring to get large file
