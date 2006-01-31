@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.8
 
+	- FLUID didn't handle loading .fl files with
+	  international characters properly with all compilers
+	  (STR #1150)
 	- Fl_Spinner's minimum() and maximum() "get" methods were
 	  misspelled (STR #1146)
 	- The largefile support changes in 1.1.7 broke binary

@@ -101,7 +101,7 @@ void write_string(const char *format, ...) {
   if (needspace) fputc(' ',fout);
   vfprintf(fout, format, args);
   va_end(args);
-  needspace = !isspace(format[strlen(format)-1]);
+  needspace = !isspace(format[strlen(format)-1] & 255);
 }
 
 // start a new line and indent it for a given nesting level:
@@ -246,7 +246,7 @@ const char *read_word(int wantbrace) {
       continue;
     } else if (x == '\n') {
       lineno++;
-    } else if (!isspace(x)) {
+    } else if (!isspace(x & 255)) {
       break;
     }
   }
@@ -287,7 +287,7 @@ const char *read_word(int wantbrace) {
     int length = 0;
     for (;;) {
       if (x == '\\') {x = read_quoted(); if (x<0) continue;}
-      else if (x<0 || isspace(x) || x=='{' || x=='}' || x=='#') break;
+      else if (x<0 || isspace(x & 255) || x=='{' || x=='}' || x=='#') break;
       buffer[length++] = x;
       expand_buffer(length);
       x = getc(fin);
@@ -519,7 +519,7 @@ int read_fdesign_line(const char*& name, const char*& value) {
     x = getc(fin);
     if (x < 0) return 0;
     if (x == '\n') {length = 0; continue;} // no colon this line...
-    if (!isspace(x)) {
+    if (!isspace(x & 255)) {
       buffer[length++] = x;
       expand_buffer(length);
     }
@@ -531,7 +531,7 @@ int read_fdesign_line(const char*& name, const char*& value) {
   // skip to start of value:
   for (;;) {
     x = getc(fin);
-    if (x < 0 || x == '\n' || !isspace(x)) break;
+    if (x < 0 || x == '\n' || !isspace(x & 255)) break;
   }
 
   // read the value:
