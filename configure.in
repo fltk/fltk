@@ -392,7 +392,7 @@ AC_SYS_LARGEFILE
 
 dnl Define largefile options as needed...
 LARGEFILE=""
-if test x$enable_largefile != xno; then
+if test x$enable_largefile = xyes; then
 	LARGEFILE="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
 
 	if test $ac_cv_sys_large_files = 1; then

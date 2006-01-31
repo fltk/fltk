@@ -1,3 +1,13 @@
+CHANGES IN FLTK 1.1.8
+
+	- The largefile support changes in 1.1.7 broke binary
+	  compability for fl_filename_list(); you must now use
+	  "--enable-largefile" when configuring to get large file
+	  support, and the large file support definitions are
+	  added to the output of "fltk-config --cflags" (STR
+	  #1159)
+
+
 CHANGES IN FLTK 1.1.7
 
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
