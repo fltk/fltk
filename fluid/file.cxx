@@ -8,7 +8,7 @@
 // They are somewhat similar to tcl, using matching { and }
 // to quote strings.
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -238,7 +238,7 @@ const char *read_word(int wantbrace) {
   // skip all the whitespace before it:
   for (;;) {
     x = getc(fin);
-    if (x < 0) {	// eof
+    if (x < 0 && feof(fin)) {	// eof
       return 0;
     } else if (x == '#') {	// comment
       do x = getc(fin); while (x >= 0 && x != '\n');
@@ -517,7 +517,7 @@ int read_fdesign_line(const char*& name, const char*& value) {
   // find a colon:
   for (;;) {
     x = getc(fin);
-    if (x < 0) return 0;
+    if (x < 0 && feof(fin)) return 0;
     if (x == '\n') {length = 0; continue;} // no colon this line...
     if (!isspace(x & 255)) {
       buffer[length++] = x;
@@ -531,7 +531,7 @@ int read_fdesign_line(const char*& name, const char*& value) {
   // skip to start of value:
   for (;;) {
     x = getc(fin);
-    if (x < 0 || x == '\n' || !isspace(x & 255)) break;
+    if ((x < 0 && feof(fin)) || x == '\n' || !isspace(x & 255)) break;
   }
 
   // read the value:
