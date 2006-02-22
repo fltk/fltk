@@ -227,7 +227,7 @@ Fl_Shared_Image::reload() {
     fread(header, 1, sizeof(header), fp);
     fclose(fp);
   } else {
-    memset(header, 0, sizeof(header));
+    return;
   }
 
   // Load the image as appropriate...
