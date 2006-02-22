@@ -547,7 +547,7 @@ SudokuCell::handle(int event) {
       break;
 
     case FL_PUSH :
-      if (Fl::event_inside(this)) {
+      if (!readonly() && Fl::event_inside(this)) {
         if (Fl::event_clicks()) {
 	  // 2+ clicks increments/sets value
 	  if (value()) {
