@@ -107,6 +107,7 @@ public:
   int titlex(int);
   void autoscroll(int);
   void position(int x, int y);
+  int is_inside(int x, int y);
 };
 
 #define LEADING 4 // extra vertical leading
@@ -458,6 +459,15 @@ int menuwindow::titlex(int n) {
   return xx;
 }
 
+// return 1, if the given root coordinates are inside the window
+int menuwindow::is_inside(int mx, int my) {
+  if ( mx < x_root() || mx >= x_root() + w() ||
+       my < y_root() || my >= y_root() + h()) {
+    return 0;
+  }
+  return 1;
+}
+
 ////////////////////////////////////////////////////////////////
 // Fl_Menu_Item::popup(...)
 
@@ -488,8 +498,19 @@ struct menustate {
   int nummenus;
   int menubar; // if true p[0] is a menubar
   int state;
+  int is_inside(int mx, int my);
 };
 static menustate* p;
+
+// return 1 if the coordinates are inside any of the menuwindows
+int menustate::is_inside(int mx, int my) {
+  int i;
+  for (i=nummenus-1; i>=0; i--) {
+    if (p[i]->is_inside(mx, my))
+      return 1;
+  }
+  return 0;
+}
 
 static inline void setitem(const Fl_Menu_Item* i, int m, int n) {
   p->current_item = i;
@@ -595,14 +616,11 @@ int menuwindow::handle(int e) {
     int mx = Fl::event_x_root();
     int my = Fl::event_y_root();
     int item=0; int mymenu = pp.nummenus-1;
-    if (e == FL_PUSH && (!pp.menubar || mymenu) &&
-        (mx < pp.p[mymenu]->x_root() ||
-	 mx >= (pp.p[mymenu]->x_root() + pp.p[mymenu]->w()) ||
-         my < pp.p[mymenu]->y_root() ||
-	 my >= (pp.p[mymenu]->y_root() + pp.p[mymenu]->h()))) {
-      // Clicking outside menu cancels it...
+    // Clicking or dragging outside menu cancels it...
+    if ((!pp.menubar || mymenu) && !pp.is_inside(mx, my)) {
       setitem(0, -1, 0);
-      pp.state = DONE_STATE;
+      if (e==FL_PUSH)
+        pp.state = DONE_STATE;
       return 1;
     }
     for (mymenu = pp.nummenus-1; ; mymenu--) {
