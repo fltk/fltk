@@ -136,66 +136,6 @@ static const char *broken_xpm[] =
 
 static Fl_Pixmap broken_image(broken_xpm);
 
-class FlexBuffer {
-  friend class FlexPointer;
-public:
-  FlexBuffer(int s) {
-    mem = (char*)malloc(s);
-    size_ = s;
-  }
-  ~FlexBuffer() {
-    free(mem);
-    mem = 0;
-  }
-  operator char*() {
-    return mem;
-  }
-  int size() {
-    return size_;
-  }
-private:
-  void enlarge(int need) {
-    int step = (need+512)&~511;
-    mem = (char*)realloc(mem, step);
-    size_ = step;
-  }
-  char *mem;
-  int size_;
-};
-
-class FlexPointer {
-public:
-  FlexPointer() { 
-    buf = 0; ix = 0; 
-  }
-  void operator=(FlexBuffer &flexbuffer) {
-    buf = &flexbuffer;
-    ix = 0;
-  }
-  operator char*() {
-    return buf->mem + ix;
-  }
-  int operator>(FlexBuffer &fb) {
-    return (buf->mem + ix > fb.mem);
-  }
-  int operator<(char *b) {
-    return (buf->mem + ix < b);
-  }
-  FlexPointer const operator++(int) {
-    FlexPointer tmp(*this);
-    ++ix;
-    return tmp;
-  }
-  char& operator*() const {
-    if (ix >= buf->size_)
-      buf->enlarge(ix);
-    return buf->mem[ix];
-  }
-private:
-  FlexBuffer *buf;
-  int ix;
-};
-
 
 //
 // 'Fl_Help_View::add_block()' - Add a text block to the list.
@@ -383,11 +323,9 @@ Fl_Help_View::draw()
   const Fl_Help_Block	*block;		// Pointer to current block
   const char		*ptr,		// Pointer to text in block
 			*attrs;		// Pointer to start of element attributes
-  //char			*s,		// Pointer into buffer
-//			buf[1024],	// Text buffer
-  FlexPointer           s;
-  FlexBuffer            buf(1024);
-  char                  attr[1024];	// Attribute buffer
+  char			*s,		// Pointer into buffer
+			buf[1024],	// Text buffer
+			attr[1024];	// Attribute buffer
   int			xx, yy, ww, hh;	// Current positions and sizes
   int			line;		// Current line
   unsigned char		font, fsize;	// Current font and size
@@ -557,7 +495,10 @@ Fl_Help_View::draw()
 	  }
 
 	  while (*ptr && *ptr != '>' && !isspace(*ptr))
-            *s++ = *ptr++;
+            if (s < (buf + sizeof(buf) - 1))
+	      *s++ = *ptr++;
+	    else
+	      ptr ++;
 
 	  *s = '\0';
 	  s = buf;
@@ -977,9 +918,9 @@ Fl_Help_View::format()
   const char	*ptr,		// Pointer into block
 		*start,		// Pointer to start of element
 		*attrs;		// Pointer to start of element attributes
-  FlexPointer   s;		// Pointer into buffer
-  FlexBuffer    buf(1024);	// Text buffer
-  char          attr[1024],	// Attribute buffer
+  char		*s,		// Pointer into buffer
+		buf[1024],	// Text buffer
+		attr[1024],	// Attribute buffer
 		wattr[1024],	// Width attribute buffer
 		hattr[1024],	// Height attribute buffer
 		linkdest[1024];	// Link destination
@@ -1157,7 +1098,10 @@ Fl_Help_View::format()
 	}
 
 	while (*ptr && *ptr != '>' && !isspace(*ptr))
-          *s++ = *ptr++;
+          if (s < (buf + sizeof(buf) - 1))
+            *s++ = *ptr++;
+	  else
+	    ptr ++;
 
 	*s = '\0';
 	s = buf;
@@ -1178,12 +1122,11 @@ Fl_Help_View::format()
 	else if (strcasecmp(buf, "TITLE") == 0)
 	{
           // Copy the title in the document...
-          char *s1;
-          for (s1 = title_;
-	       *ptr != '<' && *ptr && s1 < (title_ + sizeof(title_) - 1);
-	       *s1++ = *ptr++);
+          for (s = title_;
+	       *ptr != '<' && *ptr && s < (title_ + sizeof(title_) - 1);
+	       *s++ = *ptr++);
 
-	  *s1 = '\0';
+	  *s = '\0';
 	  s = buf;
 	}
 	else if (strcasecmp(buf, "A") == 0)
@@ -1644,7 +1587,7 @@ Fl_Help_View::format()
 
 	ptr ++;
       }
-      else if (*ptr == '&')
+      else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
       {
 	ptr ++;
 
@@ -1662,7 +1605,11 @@ Fl_Help_View::format()
       }
       else
       {
-        *s++ = *ptr++;
+	if (s < (buf + sizeof(buf) - 1))
+          *s++ = *ptr++;
+	else
+          ptr ++;
+
 	if ((fsize + 2) > hh)
           hh = fsize + 2;
       }
@@ -1827,7 +1774,10 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
       start = ptr;
 
       for (s = buf, ptr ++; *ptr && *ptr != '>' && !isspace(*ptr);)
-        *s++ = *ptr++;
+        if (s < (buf + sizeof(buf) - 1))
+          *s++ = *ptr++;
+	else
+	  ptr ++;
 
       *s = '\0';
       s = buf;
@@ -2068,7 +2018,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
       ptr ++;
     }
-    else if (*ptr == '&')
+    else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
     {
       ptr ++;
 
@@ -2083,7 +2033,10 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
     }
     else
     {
-      *s++ = *ptr++;
+      if (s < (buf + sizeof(buf) - 1))
+        *s++ = *ptr++;
+      else
+        ptr ++;
     }
   }
 
