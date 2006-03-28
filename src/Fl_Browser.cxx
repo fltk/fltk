@@ -503,6 +503,7 @@ int Fl_Browser::value() const {
 void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
 
   if ( a == b || !a || !b) return;          // nothing to do
+  swapping(a, b);
   FL_BLINE *aprev  = a->prev;
   FL_BLINE *anext  = a->next;
   FL_BLINE *bprev  = b->prev;
@@ -535,8 +536,6 @@ void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
   }
   // Disable cache -- we played around with positions
   cacheline = 0;
-  // Redraw modified lines
-  redraw_lines();
 }
 
 void Fl_Browser::swap(int ai, int bi) {

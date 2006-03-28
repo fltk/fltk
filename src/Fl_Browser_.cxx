@@ -470,6 +470,15 @@ void Fl_Browser_::replacing(void* a, void* b) {
   if (a == max_width_item) {max_width_item = 0; max_width = 0;}
 }
 
+void Fl_Browser_::swapping(void* a, void* b) {
+  redraw_line(a);
+  redraw_line(b);
+  if (a == selection_) selection_ = b;
+  else if (b == selection_) selection_ = a;
+  if (a == top_) top_ = b;
+  else if (b == top_) top_ = a;
+}
+
 void Fl_Browser_::inserting(void* a, void* b) {
   if (displayed(a)) redraw_lines();
   if (a == top_) top_ = b;
