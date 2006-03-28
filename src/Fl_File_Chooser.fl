@@ -61,7 +61,7 @@ class FL_EXPORT Fl_File_Chooser {open
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();}
-      private xywh {387 242 490 380} type Double resizable
+      private xywh {368 285 490 380} type Double resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -138,7 +138,7 @@ window->hide();}
 if (callback_)
   (*callback_)(this, data_);
 
-window->hide();} selected
+window->hide();}
             private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}
@@ -160,7 +160,7 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {437 187 355 150} type Double resizable
+      private xywh {421 56 355 150} type Double resizable
       code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0} visible
     } {
       Fl_File_Browser favList {
@@ -299,15 +299,18 @@ okButton->parent()->init_sizes();} {}
   }
   decl {void rescan();} {public
   }
-  Function {show()} {return_type void
+  decl {void rescan_keep_filename();} {public
+  }
+  Function {show()} {open return_type void
   } {
     code {window->hotspot(fileList);
 window->show();
 Fl::flush();
 fl_cursor(FL_CURSOR_WAIT);
-rescan();
+rescan_keep_filename();
 fl_cursor(FL_CURSOR_DEFAULT);
-fileName->take_focus();} {}
+fileName->take_focus();} {selected
+    }
   }
   Function {shown()} {return_type int
   } {

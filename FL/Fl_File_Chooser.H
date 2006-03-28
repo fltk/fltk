@@ -145,6 +145,7 @@ public:
   void preview(int e);
   int preview() const { return previewButton->value(); };
   void rescan();
+  void rescan_keep_filename();
   void show();
   int shown();
   void textcolor(Fl_Color c);

@@ -375,7 +375,7 @@ void Fl_File_Chooser::show() {
 window->show();
 Fl::flush();
 fl_cursor(FL_CURSOR_WAIT);
-rescan();
+rescan_keep_filename();
 fl_cursor(FL_CURSOR_DEFAULT);
 fileName->take_focus();
 }

@@ -467,7 +467,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
       {
         sprintf(filename, "%c:/", i);
 
-	if (i < 'C')
+	if (i < 'C') // see also: GetDriveType and GetVolumeInformation in WIN32
 	  add(filename, icon);
 	else
 	  add(filename, icon);
