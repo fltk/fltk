@@ -32,6 +32,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/fl_draw.H>
 
 // scroll a rectangle and redraw the newly exposed portions:
 void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
