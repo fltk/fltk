@@ -97,11 +97,22 @@ turned off by <TT>value(x)</TT> and just before doing a callback
 
 <H4><A name=Fl_Valuator.format>int Fl_Valuator::format(char *buffer)</A></H4>
 
+<P>Uses internal rules to format the fields numerical value into
+the character array pointed to by the passed parameter.</P>
+
+<P>The actual format used depends on the current step value. If
+the step value has been set to zero then a %g format is used.
+If the step value is non-zero, then a %.*f format is used,
+where the precision is calculated to show sufficient digits
+for the current step value. An integer step value, such as 1
+or 1.0, gives a precision of 0, so the formatted value will
+appear as an integer.</P>
+
 <P>This method is used by the <TT>Fl_Value_...</TT> group of widgets to 
 format the current value into a text string. 
 The return value is the length of the formatted text.
-The text itself is returned in <i>buffer</i>. 
-<i>buffer</i> should have space for up to 128 bytes.</P>
+The formatted value is written into in <i>buffer</i>. 
+<i>buffer</i> should have space for at least 128 bytes.</P>
 
 <P>You may override this function to create your own text formatting.</P>
 
