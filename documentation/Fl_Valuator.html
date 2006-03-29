@@ -95,12 +95,15 @@ turned off by <TT>value(x)</TT> and just before doing a callback
 
 <P>Clears the <TT>changed()</TT> flag.
 
-<H4><A name=Fl_Valuator.format>int Fl_Valuator::format(char *)</A></H4>
+<H4><A name=Fl_Valuator.format>int Fl_Valuator::format(char *buffer)</A></H4>
 
-<P>Format the passed value to show enough digits so that for the
-current step value. If the step has been set to zero then it
-does a <TT>%g</TT> format. The characters are written into the
-passed buffer.
+<P>This method is used by the <TT>Fl_Value_...</TT> group of widgets to 
+format the current value into a text string. 
+The return value is the length of the formatted text.
+The text itself is returned in <i>buffer</i>. 
+<i>buffer</i> should have space for up to 128 bytes.</P>
+
+<P>You may override this function to create your own text formatting.</P>
 
 <H4><A name=Fl_Valuator.increment>double
 Fl_Valuator::increment(double,int n)</A></H4>
