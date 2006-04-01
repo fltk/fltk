@@ -2159,14 +2159,15 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     Size len = 0;
     if (GetCurrentScrap(&scrap) == noErr && scrap != myScrap &&
 	GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
-      if ( len > fl_selection_buffer_length[1] ) {
+      if ( len >= fl_selection_buffer_length[1] ) {
 	fl_selection_buffer_length[1] = len + 32;
 	delete[] fl_selection_buffer[1];
-	fl_selection_buffer[1] = new char[len];
+	fl_selection_buffer[1] = new char[len + 32];
       }
+      fl_selection_length[1] = len; len++;
       GetScrapFlavorData( scrap, kScrapFlavorTypeText, &len,
 			  fl_selection_buffer[1] );
-      fl_selection_length[1] = len;
+      fl_selection_buffer[1][fl_selection_length[1]] = 0;
       // turn all \r characters into \n:
       for (int x = 0; x < len; x++) {
 	if (fl_selection_buffer[1][x] == '\r')
