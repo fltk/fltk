@@ -121,7 +121,7 @@ enum { kEventFLTKBreakLoop = 1, kEventFLTKDataReady };
 static unsigned short macKeyLookUp[128] =
 {
     'a', 's', 'd', 'f', 'h', 'g', 'z', 'x',
-    'c', 'v', 0/*ISO extra ('#' on German keyboard)*/, 'b', 'q', 'w', 'e', 'r',
+    'c', 'v', '^', 'b', 'q', 'w', 'e', 'r',
 
     'y', 't', '1', '2', '3', '4', '6', '5',
     '=', '9', '7', '-', '8', '0', ']', 'o',
