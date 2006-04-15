@@ -55,7 +55,11 @@ int Fl::test_shortcut(int shortcut) {
   if (!shortcut) return 0;
 
   int v = shortcut & 0xffff;
-  if (v > 32 && v < 0x7f || v > 0xa0 && v <= 0xff) {
+#ifdef __APPLE__
+  if (v > 32 && v < 0x7f || v >= 0x80 && v <= 0xff) {
+#else
+  if (v > 32 && v < 0x7f || v >= 0xa0 && v <= 0xff) {
+#endif
     if (isupper(v)) {
       shortcut |= FL_SHIFT;
     }
@@ -127,7 +131,11 @@ const char * fl_shortcut_label(int shortcut) {
   if (!shortcut) {*p = 0; return buf;}
   // fix upper case shortcuts
   int v = shortcut & 0xffff;
-  if (v > 32 && v < 0x7f || v > 0xa0 && v <= 0xff) {
+#ifdef __APPLE__
+  if (v > 32 && v < 0x7f || v >= 0x80 && v <= 0xff) {
+#else
+  if (v > 32 && v < 0x7f || v >= 0xa0 && v <= 0xff) {
+#endif
     if (isupper(v)) {
       shortcut |= FL_SHIFT;
     }

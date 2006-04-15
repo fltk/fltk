@@ -95,7 +95,11 @@ expand(const char* from, char* buf, double maxw, int& n, double &width,
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
-    } else if (c == 0xA0) { // non-breaking space
+#ifdef __APPLE__
+    } else if (c == 0xCA) { // non-breaking space in MacRoman
+#else
+    } else if (c == 0xA0) { // non-breaking space in ISO 8859
+#endif
       *o++ = ' ';
     } else if (c == '@' && draw_symbols) { // Symbol???
       if (p[1] && p[1] != '@')  break;
