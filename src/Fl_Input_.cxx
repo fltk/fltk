@@ -84,6 +84,12 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
 	*o++ = '^';
 	*o++ = c ^ 0x40;
       }
+#ifdef __APPLE__
+    // In MacRoman, all characters are defined, and non-break-space is 0xca
+    } else if (c == 0xCA) { // nbsp
+      *o++ = ' ';
+#else
+    // in ISO 8859-1, undefined characters are rendered as octal
     } else if (c >= 128 && c < 0xA0) {
       // these codes are not defined in ISO code, so we output the octal code instead
       *o++ = '\\'; 
@@ -92,6 +98,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
       *o++ = (c&0x07) + '0';
     } else if (c == 0xA0) { // nbsp
       *o++ = ' ';
+#endif
     } else {
       *o++ = c;
     }
@@ -114,9 +121,13 @@ double Fl_Input_::expandpos(
     if (c < ' ' || c == 127) {
       if (c == '\t' && input_type()==FL_MULTILINE_INPUT) n += 8-(n%8);
       else n += 2;
+#ifdef __APPLE__
+    // in MacRoman, all characters are defined
+#else
     } else if (c >= 128 && c < 0xA0) {
       // these codes are not defined in ISO code, so we output the octal code instead
       n += 4;
+#endif
     } else {
       n++;
     }
