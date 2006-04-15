@@ -84,6 +84,12 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
 	*o++ = '^';
 	*o++ = c ^ 0x40;
       }
+    } else if (c >= 128 && c < 0xA0) {
+      // these codes are not defined in ISO code, so we output the octal code instead
+      *o++ = '\\'; 
+      *o++ = ((c>>6)&0x03) + '0'; 
+      *o++ = ((c>>3)&0x07) + '0'; 
+      *o++ = (c&0x07) + '0';
     } else if (c == 0xA0) { // nbsp
       *o++ = ' ';
     } else {
@@ -109,6 +115,7 @@ double Fl_Input_::expandpos(
       if (c == '\t' && input_type()==FL_MULTILINE_INPUT) n += 8-(n%8);
       else n += 2;
     } else if (c >= 128 && c < 0xA0) {
+      // these codes are not defined in ISO code, so we output the octal code instead
       n += 4;
     } else {
       n++;
