@@ -90,12 +90,13 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
       *o++ = ' ';
 #else
     // in ISO 8859-1, undefined characters are rendered as octal
-    } else if (c >= 128 && c < 0xA0) {
+    // this is commented out since most X11 seems to use MSWindows Latin-1
+    //} else if (c >= 128 && c < 0xA0) {
       // these codes are not defined in ISO code, so we output the octal code instead
-      *o++ = '\\'; 
-      *o++ = ((c>>6)&0x03) + '0'; 
-      *o++ = ((c>>3)&0x07) + '0'; 
-      *o++ = (c&0x07) + '0';
+    //  *o++ = '\\'; 
+    //  *o++ = ((c>>6)&0x03) + '0'; 
+    //  *o++ = ((c>>3)&0x07) + '0'; 
+    //  *o++ = (c&0x07) + '0';
     } else if (c == 0xA0) { // nbsp
       *o++ = ' ';
 #endif
@@ -124,9 +125,10 @@ double Fl_Input_::expandpos(
 #ifdef __APPLE__
     // in MacRoman, all characters are defined
 #else
-    } else if (c >= 128 && c < 0xA0) {
+    // in Windows Latin-1 all characters are defined
+    //} else if (c >= 128 && c < 0xA0) {
       // these codes are not defined in ISO code, so we output the octal code instead
-      n += 4;
+    //  n += 4;
 #endif
     } else {
       n++;

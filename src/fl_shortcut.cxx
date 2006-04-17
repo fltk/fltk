@@ -58,7 +58,8 @@ int Fl::test_shortcut(int shortcut) {
 #ifdef __APPLE__
   if (v > 32 && v < 0x7f || v >= 0x80 && v <= 0xff) {
 #else
-  if (v > 32 && v < 0x7f || v >= 0xa0 && v <= 0xff) {
+  // most X11 use MSWindows Latin-1 if set to Western encoding, so 0x80 to 0xa0 are defined
+  if (v > 32 && v < 0x7f || v >= 0x80 && v <= 0xff) {
 #endif
     if (isupper(v)) {
       shortcut |= FL_SHIFT;
