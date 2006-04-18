@@ -251,6 +251,14 @@ SOURCE=..\src\fl_draw_pixmap.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_encoding_latin1.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\fl_encoding_mac_roman.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_engraved_label.cxx
 # End Source File
 # Begin Source File

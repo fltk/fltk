@@ -26,6 +26,7 @@
 //
 
 #include <FL/Fl.H>
+#include <stdio.h>
 
 //
 // MRS: Uncomment the following define to get the original (pre-1.1.2)
@@ -37,6 +38,7 @@
 
 
 static const char* const compose_pairs =
+"=E  _'f _\"..+ ++^ %%^S< OE  ^Z    ^''^^\"\"^-*- --~ TM^s> oe  ^z:Y" 
 "  ! % # $ y=| & : c a <<~ - r _ * +-2 3 ' u p . , 1 o >>141234? "
 "`A'A^A~A:A*AAE,C`E'E^E:E`I'I^I:I-D~N`O'O^O~O:Ox O/`U'U^U:U'YTHss"
 "`a'a^a~a:a*aae,c`e'e^e:e`i'i^i:i-d~n`o'o^o~o:o-:o/`u'u^u:u'yth:y";
@@ -90,7 +92,11 @@ int Fl::compose(int& del) {
   if (compose_state == 1) { // after the compose key
 
     if (ascii == ' ') { // space turns into nbsp
+#ifdef __APPLE__
+      e_text[0] = char(0xCA);
+#else
       e_text[0] = char(0xA0);
+#endif
       compose_state = 0;
       return 1;
     } else if (ascii < ' ' || ascii == 127) {
@@ -101,7 +107,7 @@ int Fl::compose(int& del) {
     // see if it is either character of any pair:
     for (const char *p = compose_pairs; *p; p += 2) 
       if (p[0] == ascii || p[1] == ascii) {
-	if (p[1] == ' ') e_text[0] = (p-compose_pairs)/2+0xA0;
+	if (p[1] == ' ') e_text[0] = (p-compose_pairs)/2+0x80;
 	compose_state = ascii;
 	return 1;
       }
@@ -117,7 +123,7 @@ int Fl::compose(int& del) {
     // now search for the pair in either order:
     for (const char *p = compose_pairs; *p; p += 2) {
       if (p[0] == ascii && p[1] == c1 || p[1] == ascii && p[0] == c1) {
-	e_text[0] = (p-compose_pairs)/2+0xA0;
+	e_text[0] = (p-compose_pairs)/2+0x80;
 	del = 1; // delete the old character and insert new one
 	compose_state = 0;
 	return 1;
@@ -134,7 +140,9 @@ int Fl::compose(int& del) {
     return 1;
   }
 
-#ifndef WIN32 // X only
+#ifdef WIN32
+//#elif (defined __APPLE__)
+#else
   // See if they typed a dead key.  This gets it into the same state as
   // typing prefix+accent:
   if (i >= 0xfe50 && i <= 0xfe5b) {
@@ -149,7 +157,7 @@ int Fl::compose(int& del) {
     ascii = e_text[0];
     for (const char *p = compose_pairs; *p; p += 2)
       if (p[0] == ascii ||
-          (p[1] == ' ' && (p - compose_pairs) / 2 + 0xA0 == ascii)) {
+          (p[1] == ' ' && (p - compose_pairs) / 2 + 0x80 == ascii)) {
         compose_state = p[0];
         return 1;
       }

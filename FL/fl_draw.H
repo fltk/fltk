@@ -160,6 +160,12 @@ FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align,
 	               void (*callthis)(const char *, int n, int x, int y),
 		       Fl_Image* img=0, int draw_symbols = 1);
 
+// font encoding:
+FL_EXPORT const char *fl_latin1_to_local(const char *, int n=-1);
+FL_EXPORT const char *fl_local_to_latin1(const char *, int n=-1);
+FL_EXPORT const char *fl_mac_roman_to_local(const char *, int n=-1);
+FL_EXPORT const char *fl_local_to_mac_roman(const char *, int n=-1);
+
 // boxtypes:
 FL_EXPORT void fl_frame(const char* s, int x, int y, int w, int h);
 FL_EXPORT void fl_frame2(const char* s, int x, int y, int w, int h);

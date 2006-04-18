@@ -127,17 +127,8 @@ void gl_remove_displaylist_fonts()
 #endif
 }
 
-#ifdef __APPLE__
-const char *fl_iso2macRoman(const char*, int);
-#endif
-
 void gl_draw(const char* str, int n) {
-#ifdef __APPLE__
-  const char *txt = fl_iso2macRoman(str, n);
-  glCallLists(n, GL_UNSIGNED_BYTE, txt);
-#else
   glCallLists(n, GL_UNSIGNED_BYTE, str);
-#endif
 }
 
 void gl_draw(const char* str, int n, int x, int y) {

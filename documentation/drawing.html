@@ -598,6 +598,34 @@ the display.
 <TT>fl_font(a,b)</TT>. This can be used to save/restore the
 font.
 
+<H3>Character Encoding</H3>
+
+<P>FLTK 1 supports western character sets using the eight bit encoding
+of the user-selected global code page. For MS Windows and X11, the code
+page is assumed to be Windows-1252/Latin1, a superset to ISO 8859-1. 
+On Mac OS X, we assume MacRoman.
+
+<P>FLTK provides the functions <tt>fl_latin1_to_local</tt>, 
+<tt>fl_local_to_latin1</tt>, <tt>fl_mac_roman_to_local</tt>, and
+<tt>fl_local_to_mac_roman</tt> to convert strings between both
+encodings. These functions are only required if your source
+code contains "C"-strings with international characters and 
+if this source will be compiled on multiple platforms.
+
+<P>Assuming that the following source code was written on MS Windows, 
+this example will output the correct label on OS X and X11 as well.
+Without the conversion call, the label on OS X would read 
+<tt>Fahrvergn&cedil;gen</tt> with a deformed umlaut u.
+<PRE>
+  btn = new Fl_Button(10, 10, 300, 25);
+  btn->copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
+</PRE>
+
+<P>If your application uses characters that are not part of both
+encodings, or it will be used in areas that commonly use different
+code pages, yoou might consider upgrading to FLTK 2 which supports
+UTF-8 encoding. 
+
 <H3><A name="overlay">Drawing Overlays</A></H3>
 
 <P>These functions allow you to draw interactive selection rectangles

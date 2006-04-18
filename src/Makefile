@@ -128,6 +128,8 @@ CPPFILES = \
 	fl_draw.cxx \
 	fl_draw_image.cxx \
 	fl_draw_pixmap.cxx \
+	fl_encoding_latin1.cxx \
+	fl_encoding_mac_roman.cxx \
 	fl_engraved_label.cxx \
 	fl_file_dir.cxx \
 	fl_font.cxx \
@@ -427,6 +429,8 @@ fl_draw_image.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image_win32.o:	../FL/mac.H ../FL/win32.H
 fl_draw_pixmap.o:	../FL/mac.H ../FL/win32.H
+fl_encoding_latin1.o:	../FL/mac.H ../FL/win32.H
+fl_encoding_mac_roman.o:   ../FL/mac.H ../FL/win32.H
 Fl_File_Chooser2.o:	../FL/mac.H ../FL/win32.H
 fl_font.o:	../FL/mac.H ../FL/win32.H
 Fl_get_key.o:	../FL/mac.H ../FL/win32.H

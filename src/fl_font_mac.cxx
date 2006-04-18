@@ -203,52 +203,7 @@ int fl_descent() {
   else return -1;
 }
 
-// MRS: The default character set is MacRoman, which is different from
-//      ISO-8859-1; in FLTK 2.0 we'll use UTF-8 with Quartz...
-
-static uchar macroman_lut[256] = {
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-  64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-  80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-  96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-  112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-  128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
-  144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
-  202, 193, 162, 163, 164, 180, 166, 164, 172, 169, 187, 199, 194, 173, 168, 248,
-  161, 177, 178, 179, 171, 181, 166, 225, 252, 185, 188, 200, 188, 189, 190, 192,
-  203, 231, 229, 204, 128, 129, 174, 130, 233, 131, 230, 232, 237, 234, 235, 236,
-  208, 132, 241, 238, 239, 205, 133, 215, 175, 244, 242, 243, 134, 221, 222, 167,
-  136, 135, 137, 139, 138, 140, 190, 141, 143, 142, 144, 145, 147, 146, 148, 149,
-  240, 150, 152, 151, 153, 155, 154, 214, 191, 157, 156, 158, 159, 253, 254, 216
-};
-
-static char *iso_buf = 0;
-static int n_iso_buf = 0;
-
-// this function must be available for OpenGL character drawing as well
-const char *fl_iso2macRoman(const char *s, int n) {
-  // do not do a text lookup for 'Symbol' or 'WebDings'. This fails
-  // if the user assigns a new font to these numbers though.
-  if (fl_font_ == 12 || fl_font_ == 15)
-    return s;
-  if (n>n_iso_buf) {
-    if (iso_buf) free(iso_buf);
-    iso_buf = (char*)malloc(n+500);
-    n_iso_buf = n;
-  }
-  uchar *src = (uchar*)s;
-  uchar *dst = (uchar*)iso_buf;
-  for (;n--;) {
-    *dst++ = macroman_lut[*src++];
-  }
-  return iso_buf;
-}
-
-double fl_width(const char* c, int n) {
-  const char *txt = fl_iso2macRoman(c, n);
+double fl_width(const char* txt, int n) {
 #ifdef __APPLE_QD__
   return (double)TextWidth( txt, 0, n );
 #else
@@ -269,20 +224,15 @@ double fl_width(const char* c, int n) {
 }
 
 double fl_width(uchar c) {
-#ifdef __APPLE_QD__
-  return (double)TextWidth((const char*)(macroman_lut + c), 0, 1 );
-#else
   return fl_width((const char*)(&c), 1);
-#endif
 }
 
 void fl_draw(const char *str, int n, float x, float y);
 
 void fl_draw(const char* str, int n, int x, int y) {
 #ifdef __APPLE_QD__
-  const char *txt = fl_iso2macRoman(str, n);
   MoveTo(x, y);
-  DrawText((const char *)txt, 0, n);
+  DrawText((const char *)str, 0, n);
 #elif defined(__APPLE_QUARTZ__)
   fl_draw(str, n, (float)x, (float)y);
 #else
@@ -294,8 +244,7 @@ void fl_draw(const char *str, int n, float x, float y) {
 #ifdef __APPLE_QD__
   fl_draw(str, n, (int)x, (int)y);
 #elif defined(__APPLE_QUARTZ__)
-  const char *txt = fl_iso2macRoman(str, n);
-  CGContextShowTextAtPoint(fl_gc, x, y, txt, n);
+  CGContextShowTextAtPoint(fl_gc, x, y, str, n);
 #else
 #  error : neither Quartz no Quickdraw chosen
 #endif

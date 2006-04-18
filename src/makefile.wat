@@ -126,6 +126,8 @@ CPPFILES = &
     fl_draw.obj &
     fl_draw_image.obj &
     fl_draw_pixmap.obj &
+    fl_encoding_latin1.obj &
+    fl_encoding_mac_roman.obj &
     fl_engraved_label.obj &
     fl_file_dir.obj &
     fl_font.obj &
