@@ -1067,10 +1067,27 @@ pascal OSStatus carbonKeyboardHandler(
   {
   case kEventRawKeyDown:
   case kEventRawKeyRepeat:
+    // When the user presses a "dead key", no information is send about
+    // which dead key symbol was created. So we need to trick Carbon into
+    // giving us the code by sending a "space" after the "dead key".
+    if (key==0) {
+      UInt32 ktState = 0;
+      KeyboardLayoutRef klr;
+      KLGetCurrentKeyboardLayout(&klr);
+      const void *kchar = 0; KLGetKeyboardLayoutProperty(klr, kKLKCHRData, &kchar);
+      KeyTranslate(kchar, (mods&0xff00) | keyCode, &ktState); // send the dead key
+      key = KeyTranslate(kchar, 0x31, &ktState); // fake a space key press
+      Fl::e_state |= 0x40000000; // mark this as a dead key
+    } else {
+      Fl::e_state &= 0xbfffffff; // clear the deadkey flag
+    }
     sendEvent = FL_KEYBOARD;
     // fall through
   case kEventRawKeyUp:
-    if ( !sendEvent ) sendEvent = FL_KEYUP;
+    if ( !sendEvent ) {
+      sendEvent = FL_KEYUP;
+      Fl::e_state &= 0xbfffffff; // clear the deadkey flag
+    }
     // if the user pressed alt/option, event_key should have the keycap, 
     // but event_text should generate the international symbol
     if ( isalpha(key) )
