@@ -407,7 +407,7 @@ include makedepend
 # These dependencies aren't part of the makedepend file since
 # they are part of the WIN32 and MacOS code base...
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
-Fl_x.o:		Fl_mac.cxx Fl_win32.cxx
+Fl.o:		Fl_mac.cxx Fl_win32.cxx
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx

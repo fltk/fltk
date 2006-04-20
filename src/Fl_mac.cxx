@@ -607,6 +607,8 @@ struct MacTimeout {
     Fl_Timeout_Handler callback;
     void* data;
     EventLoopTimerRef timer;
+    EventLoopTimerUPP upp;
+    char pending; 
 };
 static MacTimeout* mac_timers;
 static int mac_timer_alloc;
@@ -628,8 +630,11 @@ static void realloc_timers()
 
 static void delete_timer(MacTimeout& t)
 {
-    RemoveEventLoopTimer(t.timer);
-    memset(&t, 0, sizeof(MacTimeout));
+    if (t.timer) {
+        RemoveEventLoopTimer(t.timer);
+        DisposeEventLoopTimerUPP(t.upp);
+        memset(&t, 0, sizeof(MacTimeout));
+    }
 }
 
 
@@ -638,7 +643,10 @@ static pascal void do_timer(EventLoopTimerRef timer, void* data)
    for (int i = 0;  i < mac_timer_used;  ++i) {
         MacTimeout& t = mac_timers[i];
         if (t.timer == timer  &&  t.data == data) {
+            t.pending = 0;
             (*t.callback)(data);
+            if (t.pending==0)
+              delete_timer(t);
             break;
         }
     }
@@ -2201,34 +2209,56 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
+   // check, if this timer slot exists already
+   for (int i = 0;  i < mac_timer_used;  ++i) {
+        MacTimeout& t = mac_timers[i];
+        // if so, simply change the fire interval
+        if (t.callback == cb  &&  t.data == data) {
+            SetEventLoopTimerNextFireTime(t.timer, (EventTimerInterval)time);
+            t.pending = 1;
+            return;
+        }
+    }
+    // no existing timer to use. Create a new one:
     int timer_id = -1;
+    // find an empty slot in the timer array
     for (int i = 0;  i < mac_timer_used;  ++i) {
         if ( !mac_timers[i].timer ) {
             timer_id = i;
             break;
         }
     }
+    // if there was no empty slot, append a new timer
     if (timer_id == -1) {
+        // make space if needed
         if (mac_timer_used == mac_timer_alloc) {
             realloc_timers();
         }
         timer_id = mac_timer_used++;
     }
-
-    EventTimerInterval fireDelay = (EventTimerInterval) time;
+    // now install a brand new timer
+    MacTimeout& t = mac_timers[timer_id];
+    EventTimerInterval fireDelay = (EventTimerInterval)time;
     EventLoopTimerUPP  timerUPP = NewEventLoopTimerUPP(do_timer);
-    EventLoopTimerRef  timerRef;
+    EventLoopTimerRef  timerRef = 0;
     OSStatus err = InstallEventLoopTimer(GetMainEventLoop(), fireDelay, 0, timerUPP, data, &timerRef);
     if (err == noErr) {
-        mac_timers[timer_id].callback = cb;
-        mac_timers[timer_id].data     = data;
-        mac_timers[timer_id].timer    = timerRef;
+        t.callback = cb;
+        t.data     = data;
+        t.timer    = timerRef;
+        t.upp      = timerUPP;
+        t.pending  = 1;
+    } else {
+        if (timerRef) 
+            RemoveEventLoopTimer(timerRef);
+        if (timerUPP)
+            DisposeEventLoopTimerUPP(timerUPP);
     }
 }
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
-    remove_timeout(cb, data);
+    // currently, repeat_timeout does not subtract the trigger time of the previous timer event as it should.
     add_timeout(time, cb, data);
 }
 
@@ -2236,7 +2266,7 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
 {
    for (int i = 0;  i < mac_timer_used;  ++i) {
         MacTimeout& t = mac_timers[i];
-        if (t.callback == cb  &&  t.data == data) {
+        if (t.callback == cb  &&  t.data == data && t.pending) {
             return 1;
         }
     }
