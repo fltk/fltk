@@ -1,6 +1,17 @@
 CHANGES IN FLTK 1.1.8
 
-	- caret key lookup was missing for OS X
+	- FLUID crashed on WIN32 with international characters
+	  (STR #1176)
+	- Fl_Check_Browser did not allow the user to toggle the
+	  check boxes (STR #1232)
+	- Fl_Help_View crashed on WIN32 with international
+	  characters (STR #1228)
+	- Fl::run() no longer clears resources on WIN32 (STR
+	  #1231)
+	- Fl::add_timeout() leaked resources on OSX (STR #1233)
+	- Accented characters could not be entered on OSX (STR
+	  #1195)
+	- The caret key lookup was missing for OS X
 	- FLUID didn't handle loading .fl files with
 	  international characters properly with all compilers
 	  (STR #1150)
