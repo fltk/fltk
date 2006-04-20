@@ -88,6 +88,10 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   void check_none();
   int value() const;              // currently selected item
   char *text(int item) const;     // returns pointer to internal buffer
+
+  protected:
+
+  int handle(int);
 };
 
 #endif // Fl_Check_Browser_H

@@ -266,6 +266,11 @@ void Fl_Check_Browser::check_none() {
 	redraw();
 }
 
+int Fl_Check_Browser::handle(int event) {
+  if (event==FL_PUSH)
+    deselect();
+  return Fl_Browser_::handle(event);
+}
 
 //
 // End of "$Id$".
