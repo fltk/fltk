@@ -385,7 +385,7 @@ Fl_Help_View::draw()
 
       for (ptr = block->start, s = buf; ptr < block->end;)
       {
-	if ((*ptr == '<' || isspace(*ptr)) && s > buf)
+	if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf)
 	{
 	  if (!head && !pre)
 	  {
@@ -408,7 +408,7 @@ Fl_Help_View::draw()
 
             fl_draw(buf, xx + x() - leftline_, yy + y());
 	    if (underline) {
-              xtra_ww = isspace(*ptr)?(int)fl_width(' '):0;
+              xtra_ww = isspace((*ptr)&255)?(int)fl_width(' '):0;
               fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                xx + x() - leftline_ + ww + xtra_ww);
             }
@@ -421,7 +421,7 @@ Fl_Help_View::draw()
 	  }
 	  else if (pre)
 	  {
-	    while (isspace(*ptr))
+	    while (isspace((*ptr)&255))
 	    {
 	      if (*ptr == '\n')
 	      {
@@ -472,7 +472,7 @@ Fl_Help_View::draw()
 	  {
             s = buf;
 
-	    while (isspace(*ptr))
+	    while (isspace((*ptr)&255))
               ptr ++;
 	  }
 	}
@@ -494,7 +494,7 @@ Fl_Help_View::draw()
 	      break;
 	  }
 
-	  while (*ptr && *ptr != '>' && !isspace(*ptr))
+	  while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
             if (s < (buf + sizeof(buf) - 1))
 	      *s++ = *ptr++;
 	    else
@@ -766,7 +766,7 @@ Fl_Help_View::draw()
 
 	  ptr ++;
 	}
-	else if (isspace(*ptr))
+	else if (isspace((*ptr)&255))
 	{
 	  if (pre)
 	  {
@@ -990,7 +990,7 @@ Fl_Help_View::format()
 
     for (ptr = value_, s = buf; *ptr;)
     {
-      if ((*ptr == '<' || isspace(*ptr)) && s > buf)
+      if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf)
       {
         // Get width...
         *s = '\0';
@@ -1040,7 +1040,7 @@ Fl_Help_View::format()
 	    hh = fsize + 2;
 
           // Handle preformatted text...
-	  while (isspace(*ptr))
+	  while (isspace((*ptr)&255))
 	  {
 	    if (*ptr == '\n')
 	    {
@@ -1072,7 +1072,7 @@ Fl_Help_View::format()
 	else
 	{
           // Handle normal text or stuff in the <HEAD> section...
-	  while (isspace(*ptr))
+	  while (isspace((*ptr)&255))
             ptr ++;
 	}
 
@@ -1097,7 +1097,7 @@ Fl_Help_View::format()
 	    break;
 	}
 
-	while (*ptr && *ptr != '>' && !isspace(*ptr))
+	while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
           if (s < (buf + sizeof(buf) - 1))
             *s++ = *ptr++;
 	  else
@@ -1321,7 +1321,7 @@ Fl_Help_View::format()
 
           popfont(font, fsize);
 
-          while (isspace(*ptr))
+          while (isspace((*ptr)&255))
 	    ptr ++;
 
           block->h += hh;
@@ -1581,7 +1581,7 @@ Fl_Help_View::format()
 	needspace = 0;
 	ptr ++;
       }
-      else if (isspace(*ptr))
+      else if (isspace((*ptr)&255))
       {
 	needspace = 1;
 
@@ -1747,7 +1747,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   // Scan the table...
   for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)
   {
-    if ((*ptr == '<' || isspace(*ptr)) && s > buf && incell)
+    if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf && incell)
     {
       // Check width...
       if (needspace)
@@ -1773,7 +1773,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
     {
       start = ptr;
 
-      for (s = buf, ptr ++; *ptr && *ptr != '>' && !isspace(*ptr);)
+      for (s = buf, ptr ++; *ptr && *ptr != '>' && !isspace((*ptr)&255);)
         if (s < (buf + sizeof(buf) - 1))
           *s++ = *ptr++;
 	else
@@ -2012,7 +2012,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
       needspace = 0;
       ptr ++;
     }
-    else if (isspace(*ptr))
+    else if (isspace((*ptr)&255))
     {
       needspace = 1;
 
@@ -2172,13 +2172,13 @@ Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
 
   while (*p && *p != '>')
   {
-    while (isspace(*p))
+    while (isspace((*p)&255))
       p ++;
 
     if (*p == '>' || !*p)
       return (NULL);
 
-    for (ptr = name; *p && !isspace(*p) && *p != '=' && *p != '>';)
+    for (ptr = name; *p && !isspace((*p)&255) && *p != '=' && *p != '>';)
       if (ptr < (name + sizeof(name) - 1))
         *ptr++ = *p++;
       else
@@ -2186,14 +2186,14 @@ Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
 
     *ptr = '\0';
 
-    if (isspace(*p) || !*p || *p == '>')
+    if (isspace((*p)&255) || !*p || *p == '>')
       buf[0] = '\0';
     else
     {
       if (*p == '=')
         p ++;
 
-      for (ptr = buf; *p && !isspace(*p) && *p != '>';)
+      for (ptr = buf; *p && !isspace((*p)&255) && *p != '>';)
         if (*p == '\'' || *p == '\"')
 	{
 	  quote = *p++;
