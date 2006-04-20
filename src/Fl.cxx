@@ -355,15 +355,24 @@ double Fl::wait(double time_to_wait) {
 
 int Fl::run() {
   while (Fl_X::first) wait(FOREVER);
-#ifdef WIN32
-  fl_free_fonts();        // do some WIN32 cleanup
-  fl_cleanup_pens();
-  OleUninitialize();
-  fl_brush_action(1);
-  fl_cleanup_dc_list();
-#endif
   return 0;
 }
+
+#ifdef WIN32
+class Fl_Win32_At_Exit {
+  Fl_Win32_At_Exit() { }
+  ~Fl_Win32_At_Exit() {
+    fl_free_fonts();        // do some WIN32 cleanup
+    fl_cleanup_pens();
+    OleUninitialize();
+    fl_brush_action(1);
+    fl_cleanup_dc_list();
+  }
+};
+static Fl_Win32_At_Exit win32_at_exit;
+#endif
+
+
 
 int Fl::wait() {
   if (!Fl_X::first) return 0;
