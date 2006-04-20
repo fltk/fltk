@@ -360,6 +360,7 @@ int Fl::run() {
 
 #ifdef WIN32
 class Fl_Win32_At_Exit {
+public:
   Fl_Win32_At_Exit() { }
   ~Fl_Win32_At_Exit() {
     fl_free_fonts();        // do some WIN32 cleanup
