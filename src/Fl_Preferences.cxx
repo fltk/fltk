@@ -693,12 +693,17 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
 // - construct the name of the file that will hold our preferences
 Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, const char *path, const char *vendor, const char *application )
 {
-  char filename[ FL_PATH_MAX ]; filename[0] = 0;
-
-  snprintf(filename, sizeof(filename), "%s/%s.prefs", path, application);
-
+  if (!vendor)
+    vendor = "unknown";
+  if (!application) {
+    application = "unknown";
+    filename_ = strdup(path);
+  } else {
+    char filename[ FL_PATH_MAX ]; filename[0] = 0;
+    snprintf(filename, sizeof(filename), "%s/%s.prefs", path, application);
+    filename_  = strdup(filename);
+  }
   prefs_       = prefs;
-  filename_    = strdup(filename);
   vendor_      = strdup(vendor);
   application_ = strdup(application);
 

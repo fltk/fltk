@@ -1,9 +1,6 @@
-CHANGES IN FLTK 1.1.9
-
-	- caret key lookup was missing for OS X
-
 CHANGES IN FLTK 1.1.8
 
+	- caret key lookup was missing for OS X
 	- FLUID didn't handle loading .fl files with
 	  international characters properly with all compilers
 	  (STR #1150)
