@@ -1207,6 +1207,53 @@ Fl::do_widget_deletion() {
   num_dwidgets = 0;
 }
 
+static Fl_Widget ***widget_watch = 0;
+static int num_widget_watch = 0;
+static int max_widget_watch = 0;
+
+void Fl::watch_widget_pointer(Fl_Widget *&w) 
+{
+  Fl_Widget **wp = &w;
+  int i;
+  for (i=0; i<num_widget_watch; ++i) {
+    if (widget_watch[i]==wp) return;
+  }
+  for (i=0; i<num_widget_watch; ++i) {
+    if (widget_watch[i]==0L) {
+      widget_watch[i] = wp;
+      return;
+    }
+  }
+  if (num_widget_watch==max_widget_watch) {
+    max_widget_watch += 8;
+    widget_watch = (Fl_Widget***)realloc(widget_watch, sizeof(Fl_Widget**)*max_widget_watch);
+  }
+  widget_watch[num_widget_watch++] = wp;
+}
+
+void Fl::release_widget_pointer(Fl_Widget *&w)
+{
+  Fl_Widget **wp = &w;
+  int i;
+  for (i=0; i<num_widget_watch; ++i) {
+    if (widget_watch[i]==wp) {
+      widget_watch[i] = 0L;
+      return;
+    }
+  }
+}
+
+void Fl::clear_widget_pointer(Fl_Widget const *w) 
+{
+  if (w==0L) return;
+  int i;
+  for (i=0; i<num_widget_watch; ++i) {
+    if (widget_watch[i] && *widget_watch[i]==w) {
+      *widget_watch[i] = 0L;
+    }
+  }
+}
+
 
 //
 // End of "$Id$".

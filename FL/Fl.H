@@ -271,6 +271,9 @@ public:
   // Widget deletion:
   static void delete_widget(Fl_Widget *w);
   static void do_widget_deletion();
+  static void watch_widget_pointer(Fl_Widget *&w);
+  static void release_widget_pointer(Fl_Widget *&w);
+  static void clear_widget_pointer(Fl_Widget const *w);
 };
 
 #endif // !Fl_H

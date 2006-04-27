@@ -133,6 +133,7 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 // However, it is only legal to destroy a "root" such as an Fl_Window,
 // and automatic destructors may be called.
 Fl_Widget::~Fl_Widget() {
+  Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   parent_ = 0; // Don't throw focus to a parent widget.
   fl_throw_focus(this);
