@@ -622,6 +622,7 @@ Fl_Type::~Fl_Type() {
 int Fl_Type::is_parent() const {return 0;}
 int Fl_Type::is_widget() const {return 0;}
 int Fl_Type::is_valuator() const {return 0;}
+int Fl_Type::is_spinner() const {return 0;}
 int Fl_Type::is_button() const {return 0;}
 int Fl_Type::is_menu_item() const {return 0;}
 int Fl_Type::is_menu_button() const {return 0;}

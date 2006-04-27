@@ -394,6 +394,7 @@ public:
     if (w < 40) w = 40	;
   }
   virtual const char *type_name() {return "Fl_Spinner";}
+  int is_spinner() const { return 1; }
   Fl_Widget *widget(int x,int y,int w,int h) {
     return new Fl_Spinner(x,y,w,h,"spinner:");}
   Fl_Widget_Type *_make() {return new Fl_Spinner_Type();}

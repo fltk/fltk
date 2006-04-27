@@ -1443,9 +1443,16 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
 
 void min_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_valuator()) {i->deactivate(); return;}
-    i->activate();
-    i->value(((Fl_Valuator*)(current_widget->o))->minimum());
+    if (current_widget->is_valuator()) {
+      i->activate();
+      i->value(((Fl_Valuator*)(current_widget->o))->minimum());
+    } else if (current_widget->is_spinner()) {
+      i->activate();
+      i->value(((Fl_Spinner*)(current_widget->o))->minimum());
+    } else {
+      i->deactivate();
+      return;
+    }
   } else {
     int mod = 0;
     double n = i->value();
@@ -1456,7 +1463,11 @@ void min_cb(Fl_Value_Input* i, void* v) {
 	  ((Fl_Valuator*)(q->o))->minimum(n);
 	  q->o->redraw();
 	  mod = 1;
-	}
+	} else if (q->is_spinner()) {
+          ((Fl_Spinner*)(q->o))->minimum(n);
+          q->o->redraw();
+          mod = 1;
+        }
       }
     }
     if (mod) set_modflag(1);
@@ -1465,9 +1476,16 @@ void min_cb(Fl_Value_Input* i, void* v) {
 
 void max_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_valuator()) {i->deactivate(); return;}
-    i->activate();
-    i->value(((Fl_Valuator*)(current_widget->o))->maximum());
+    if (current_widget->is_valuator()) {
+      i->activate();
+      i->value(((Fl_Valuator*)(current_widget->o))->maximum());
+    } else if (current_widget->is_spinner()) {
+      i->activate();
+      i->value(((Fl_Spinner*)(current_widget->o))->maximum());
+    } else {
+      i->deactivate();
+      return;
+    }
   } else {
     int mod = 0;
     double n = i->value();
@@ -1478,6 +1496,10 @@ void max_cb(Fl_Value_Input* i, void* v) {
 	  ((Fl_Valuator*)(q->o))->maximum(n);
 	  q->o->redraw();
 	  mod = 1;
+        } else if (q->is_spinner()) {
+          ((Fl_Spinner*)(q->o))->maximum(n);
+          q->o->redraw();
+          mod = 1;
 	}
       }
     }
@@ -1487,9 +1509,16 @@ void max_cb(Fl_Value_Input* i, void* v) {
 
 void step_cb(Fl_Value_Input* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_valuator()) {i->deactivate(); return;}
-    i->activate();
-    i->value(((Fl_Valuator*)(current_widget->o))->step());
+    if (current_widget->is_valuator()) {
+      i->activate();
+      i->value(((Fl_Valuator*)(current_widget->o))->step());
+    } else if (current_widget->is_spinner()) {
+      i->activate();
+      i->value(((Fl_Spinner*)(current_widget->o))->step());
+    } else {
+      i->deactivate();
+      return;
+    }
   } else {
     int mod = 0;
     double n = i->value();
@@ -1497,9 +1526,13 @@ void step_cb(Fl_Value_Input* i, void* v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         if (q->is_valuator()) {
-	        ((Fl_Valuator*)(q->o))->step(n);
-	        q->o->redraw();
-	        mod = 1;
+          ((Fl_Valuator*)(q->o))->step(n);
+          q->o->redraw();
+          mod = 1;
+        } else if (q->is_spinner()) {
+          ((Fl_Spinner*)(q->o))->step(n);
+          q->o->redraw();
+          mod = 1;
         }
       }
     }
@@ -1515,6 +1548,9 @@ void value_cb(Fl_Value_Input* i, void* v) {
     } else if (current_widget->is_button()) {
       i->activate();
       i->value(((Fl_Button*)(current_widget->o))->value());
+    } else if (current_widget->is_spinner()) {
+      i->activate();
+      i->value(((Fl_Spinner*)(current_widget->o))->value());
     } else 
       i->deactivate();
   } else {
@@ -1530,6 +1566,9 @@ void value_cb(Fl_Value_Input* i, void* v) {
 	  ((Fl_Button*)(q->o))->value(n != 0);
 	  if (q->is_menu_item()) q->redraw();
 	  mod = 1;
+        } else if (q->is_spinner()) {
+          ((Fl_Spinner*)(q->o))->value(n);
+          mod = 1;
 	}
       }
     }
@@ -2074,6 +2113,19 @@ void Fl_Widget_Type::write_widget_code() {
       if (x != y) write_c("%so->slider_size(%g);\n", indent(), x);
     }
   }
+  if (is_spinner()) {
+    Fl_Spinner* v = (Fl_Spinner*)o;
+    Fl_Spinner* f = (Fl_Spinner*)(tplate);
+    if (v->minimum()!=f->minimum())
+      write_c("%so->minimum(%g);\n", indent(), v->minimum());
+    if (v->maximum()!=f->maximum())
+      write_c("%so->maximum(%g);\n", indent(), v->maximum());
+    if (v->step()!=f->step())
+      write_c("%so->step(%g);\n", indent(), v->step());
+    if (v->value())
+      write_c("%so->value(%g);\n", indent(), v->value());
+  }
+
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
     if (f != ff) write_c("%so->textfont(%d);\n", indent(), f);
@@ -2198,6 +2250,14 @@ void Fl_Widget_Type::write_properties() {
       if (x != y) write_string("slider_size %g", x);
     }
   }
+  if (is_spinner()) {
+    Fl_Spinner* v = (Fl_Spinner*)o;
+    Fl_Spinner* f = (Fl_Spinner*)(tplate);
+    if (v->minimum()!=f->minimum()) write_string("minimum %g",v->minimum());
+    if (v->maximum()!=f->maximum()) write_string("maximum %g",v->maximum());
+    if (v->step()!=f->step()) write_string("step %g",v->step());
+    if (v->value()!=0.0) write_string("value %g",v->value());
+  }
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
     if (f != ff) write_string("textfont %d", f);
@@ -2298,14 +2358,18 @@ void Fl_Widget_Type::read_property(const char *c) {
     if (sscanf(read_word(),"%d",&x) == 1) o->align(x);
   } else if (!strcmp(c,"when")) {
     if (sscanf(read_word(),"%d",&x) == 1) o->when(x);
-  } else if (!strcmp(c,"minimum") && is_valuator()) {
-    ((Fl_Valuator*)o)->minimum(strtod(read_word(),0));
-  } else if (!strcmp(c,"maximum") && is_valuator()) {
-    ((Fl_Valuator*)o)->maximum(strtod(read_word(),0));
-  } else if (!strcmp(c,"step") && is_valuator()) {
-    ((Fl_Valuator*)o)->step(strtod(read_word(),0));
-  } else if (!strcmp(c,"value") && is_valuator()) {
-    ((Fl_Valuator*)o)->value(strtod(read_word(),0));
+  } else if (!strcmp(c,"minimum")) {
+    if (is_valuator()) ((Fl_Valuator*)o)->minimum(strtod(read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->minimum(strtod(read_word(),0));
+  } else if (!strcmp(c,"maximum")) {
+    if (is_valuator()) ((Fl_Valuator*)o)->maximum(strtod(read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->maximum(strtod(read_word(),0));
+  } else if (!strcmp(c,"step")) {
+    if (is_valuator()) ((Fl_Valuator*)o)->step(strtod(read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->step(strtod(read_word(),0));
+  } else if (!strcmp(c,"value")) {
+    if (is_valuator()) ((Fl_Valuator*)o)->value(strtod(read_word(),0));
+    if (is_spinner()) ((Fl_Spinner*)o)->value(strtod(read_word(),0));
   } else if ((!strcmp(c,"slider_size")||!strcmp(c,"size"))&&is_valuator()==2) {
     ((Fl_Slider*)o)->slider_size(strtod(read_word(),0));
   } else if (!strcmp(c,"textfont")) {
@@ -2507,6 +2571,15 @@ void Fl_Widget_Type::copy_properties() {
       Fl_Slider *d = (Fl_Slider*)live_widget, *s = (Fl_Slider*)o;
       d->slider_size(s->slider_size());
     }
+  }
+
+  // copy all attributes specific to Fl_Spinner and derived classes
+  if (is_spinner()) {
+    Fl_Spinner* d = (Fl_Spinner*)live_widget, *s = (Fl_Spinner*)o;
+    d->minimum(s->minimum());
+    d->maximum(s->maximum());
+    d->step(s->step());
+    d->value(s->value());
   }
  
 /* TODO: implement this
