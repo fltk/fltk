@@ -95,8 +95,9 @@ const char* fl_encoding_ = "iso8859-1";
 Fl_FontSize* fl_fontsize = 0;
 
 void fl_font(int fnum, int size) {
-  if (fnum == fl_font_ && size == fl_size_ &&
-      !strcasecmp(fl_fontsize->encoding, fl_encoding_))
+  if (fnum == fl_font_ && size == fl_size_
+      && fl_fontsize
+      && !strcasecmp(fl_fontsize->encoding, fl_encoding_))
     return;
   fl_font_ = fnum; fl_size_ = size;
   Fl_Fontdesc *font = fl_fonts + fnum;
