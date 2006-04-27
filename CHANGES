@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.8
 
+	- Setting a new value in Fl_Input_ wil now actually move
+	  cursor to the end of the input field as documented
+	  (STR #1161)
 	- FLUID crashed on WIN32 with international characters
 	  (STR #1176)
 	- Fl_Check_Browser did not allow the user to toggle the

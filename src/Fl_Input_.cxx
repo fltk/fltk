@@ -868,7 +868,7 @@ int Fl_Input_::static_value(const char* str, int len) {
     xscroll_ = yscroll_ = 0;
     minimal_update(0);
   }
-  position(0, readonly() ? 0 : size());
+  position(readonly() ? 0 : size());
   return 1;
 }
 
