@@ -70,6 +70,7 @@ fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck
 	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
+	-$(RM) fluid.app/Contents/MacOS/fluid
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)

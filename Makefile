@@ -85,8 +85,8 @@ distclean: clean
 	$(RM) documentation/fltk.ps
 	$(RM) -r documentation/fltk.d
 	for file in test/*.fl; do\
-		$(RM) test/`basename $file .fl`.cxx; \
-		$(RM) test/`basename $file .fl`.h; \
+		$(RM) test/`basename $$file .fl`.cxx; \
+		$(RM) test/`basename $$file .fl`.h; \
 	done
 
 makeinclude: configure configh.in makeinclude.in

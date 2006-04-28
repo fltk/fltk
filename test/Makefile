@@ -173,6 +173,8 @@ include makedepend
 clean:
 	-$(RM) $(ALL) $(GLALL) core
 	-$(RM) *.o core.* *~ *.bck *.bak
+	-$(RM) checkers.app/Contents/MacOS/checkers
+	-$(RM) sudoku.app/Contents/MacOS/sudoku
 
 install:
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
