@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fluid Code Viewer is now truly a viewer, not a text
+	  editor because edited text can not be saved.
 	- Fl_Spinner is now fully supported by Fluid (STR #1158)
 	- Fixed usage of deleted object after menu pulldown
 	  (STR #1162)

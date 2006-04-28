@@ -402,7 +402,7 @@ Function {make_widgetbin()} {open
       }
       Fl_Button {} {
         user_data {"declblock"}
-        callback type_make_cb selected
+        callback type_make_cb
         tooltip {Declaration Block} xywh {30 55 25 25} box THIN_UP_BOX
         code0 {o->image(pixmap[11]);}
       }
@@ -702,17 +702,17 @@ Function {make_sourceview()} {open
         Fl_Text_Editor sv_source {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
-          class CodeEditor
+          class CodeViewer
         }
       }
       Fl_Group {} {
-        label Header open
+        label Header open selected
         xywh {10 35 500 415} labelsize 13
       } {
         Fl_Text_Editor sv_header {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
-          class CodeEditor
+          class CodeViewer
         }
       }
     }

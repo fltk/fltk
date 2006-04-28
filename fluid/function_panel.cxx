@@ -843,9 +843,9 @@ Fl_Double_Window *sourceview_panel=(Fl_Double_Window *)0;
 
 Fl_Tabs *sv_tab=(Fl_Tabs *)0;
 
-CodeEditor *sv_source=(CodeEditor *)0;
+CodeViewer *sv_source=(CodeViewer *)0;
 
-CodeEditor *sv_header=(CodeEditor *)0;
+CodeViewer *sv_header=(CodeViewer *)0;
 
 Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
 
@@ -863,7 +863,7 @@ Fl_Double_Window* make_sourceview() {
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Source");
         o->labelsize(13);
         o->hide();
-        { CodeEditor* o = sv_source = new CodeEditor(20, 50, 480, 390);
+        { CodeViewer* o = sv_source = new CodeViewer(20, 50, 480, 390);
           o->box(FL_DOWN_FRAME);
           o->color(FL_BACKGROUND2_COLOR);
           o->selection_color(FL_SELECTION_COLOR);
@@ -882,7 +882,7 @@ Fl_Double_Window* make_sourceview() {
       }
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Header");
         o->labelsize(13);
-        { CodeEditor* o = sv_header = new CodeEditor(20, 50, 480, 390);
+        { CodeViewer* o = sv_header = new CodeViewer(20, 50, 480, 390);
           o->box(FL_DOWN_FRAME);
           o->color(FL_BACKGROUND2_COLOR);
           o->selection_color(FL_SELECTION_COLOR);

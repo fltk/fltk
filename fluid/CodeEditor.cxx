@@ -406,6 +406,14 @@ CodeEditor::~CodeEditor() {
 }
 
 
+CodeViewer::CodeViewer(int X, int Y, int W, int H, const char *L)
+: CodeEditor(X, Y, W, H, L) 
+{
+  default_key_function(kf_ignore);  
+  remove_all_key_bindings(&key_bindings);
+  cursor_style(CARET_CURSOR);
+}
+
 //
 // End of "$Id$".
 //

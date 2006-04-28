@@ -70,6 +70,17 @@ class CodeEditor : public Fl_Text_Editor {
   int top_line() { return get_absolute_top_line_number(); }
 };
 
+class CodeViewer : public CodeEditor {
+
+  public:
+
+  CodeViewer(int X, int Y, int W, int H, const char *L=0);
+  
+  protected:
+
+  int handle(int ev) { return Fl_Text_Display::handle(ev); }
+};
+
 #endif // !CodeEditor_h
 
 //
