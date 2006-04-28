@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed maximizing in OS X (STR #1221)
 	- Fixed 'make distclean' to remove binaries inside
 	  MacOS app packages (STR #1169)
 	- Fluid Code Viewer is now truly a viewer, not a text

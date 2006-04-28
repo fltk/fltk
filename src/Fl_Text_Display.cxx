@@ -659,10 +659,10 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
   mContinuousWrap = wrap;
 
   if (buffer()) {
-    /* wrapping can change change the total number of lines, re-count */
+    /* wrapping can change the total number of lines, re-count */
     mNBufferLines = count_lines(0, buffer()->length(), true);
 
-    /* changing wrap margins wrap or changing from wrapped mode to non-wrapped
+    /* changing wrap margins or changing from wrapped mode to non-wrapped
        can leave the character at the top no longer at a line start, and/or
        change the line number */
     mFirstChar = line_start(mFirstChar);

@@ -1890,6 +1890,7 @@ void Fl_X::make(Fl_Window* w)
       Fl_Tooltip::enter(0);
     }
 
+    if (w->size_range_set) w->size_range_();
     ShowWindow(x->xid);
 
     Rect rect;
@@ -1909,10 +1910,14 @@ void Fl_X::make(Fl_Window* w)
 
 
 /**
- * this is a leftover from X Windows
+ * Tell the OS what window sizes we want to allow
  */
 void Fl_Window::size_range_() {
   size_range_set = 1;
+  HISize minSize = { minw, minh };
+  HISize maxSize = { maxw?maxw:32000, maxh?maxh:32000 };
+  if (i && i->xid)
+    SetWindowResizeLimits(i->xid, &minSize, &maxSize);
 }
 
 
