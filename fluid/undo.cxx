@@ -124,6 +124,7 @@ void undo_cb(Fl_Widget *, void *) {
   // Update undo/redo menu items...
   if (undo_current <= 0) Main_Menu[UNDO_ITEM].deactivate();
   Main_Menu[REDO_ITEM].activate();
+  undo_resume();
 }
 
 // Save current file to undo buffer
