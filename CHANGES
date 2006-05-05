@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed missing reset of flag in FLUID (STR #1187)
 	- Fixed maximizing in OS X (STR #1221)
 	- Fixed 'make distclean' to remove binaries inside
 	  MacOS app packages (STR #1169)
