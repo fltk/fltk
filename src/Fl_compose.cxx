@@ -46,7 +46,7 @@ static const char* const compose_pairs =
 "? ! !!v-f ~~Dt<<>>..  `A~A~OOEoe"
 "- --''``\"'\"`:-^V:y:Y//E=< > fifl"
 "++..,,_\"%%^A^E'A:E`E'I^I:I`I'O^O"
-"mc`O'U^U`U||^ ~ _ u . * , ~ ; v ";
+"mc`O'U^U`U||^ ~^_ u . * , ~-; v ";
 
 #else
 
@@ -141,6 +141,11 @@ int Fl::compose(int& del) {
       compose_state = '^';
       e_text[0] = 0xf6;
       return 1;
+    }
+    if (ascii==' ') {
+      del = 0;
+      compose_state = 0;
+      return 0;
     }
 #endif
     // now search for the pair in either order:
