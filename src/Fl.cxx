@@ -270,7 +270,9 @@ static void run_checks()
 }
 #endif // !__APPLE__
 
+#ifndef WIN32
 static char in_idle;
+#endif
 
 ////////////////////////////////////////////////////////////////
 // wait/run/check/ready:

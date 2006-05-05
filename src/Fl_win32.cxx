@@ -264,7 +264,7 @@ int fl_wait(double time_to_wait) {
 
   time_to_wait = (time_to_wait > 10000 ? 10000 : time_to_wait);
   int t_msec = (int) (time_to_wait * 1000.0 + 0.5);
-  int ret_val = MsgWaitForMultipleObjects(0, NULL, FALSE, t_msec, QS_ALLINPUT);
+  MsgWaitForMultipleObjects(0, NULL, FALSE, t_msec, QS_ALLINPUT);
 
   fl_lock_function();
 
@@ -638,7 +638,6 @@ static void realloc_timers()
     if (win32_timer_alloc == 0) {
         win32_timer_alloc = 8;
     }
-    size_t size = sizeof(Win32Timer);
     Win32Timer* new_timers = new Win32Timer[win32_timer_alloc * 2];
     memmove(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
     Win32Timer* delete_me = win32_timers;
@@ -1336,7 +1335,7 @@ static LRESULT CALLBACK s_TimerProc(HWND hwnd, UINT msg,
     case WM_TIMER:
         {
             unsigned int id = wParam - 1;
-            if (id < win32_timer_used && win32_timers[id].handle) {
+            if (id < (unsigned int)win32_timer_used && win32_timers[id].handle) {
                 Fl_Timeout_Handler cb   = win32_timers[id].callback;
                 void*              data = win32_timers[id].data;
                 delete_timer(win32_timers[id]);
@@ -1385,7 +1384,7 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
         wc.lpfnWndProc = (WNDPROC)s_TimerProc;
         wc.hInstance = fl_display;
         wc.lpszClassName = timer_class;
-        ATOM atom = RegisterClassEx(&wc);
+        /*ATOM atom =*/ RegisterClassEx(&wc);
         // create a zero size window to handle timer events
         s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
                                     timer_class, "",

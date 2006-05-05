@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include "flstring.h"
 
+#ifdef __APPLE__
+ 
 // These function assume a western code page. If you need to support 
 // scripts that are not part of this code page, you might want to
 // take a look at FLTK2, which uses utf8 for text encoding.
@@ -74,8 +76,6 @@ static uchar roman2latin[256] = {
 static char *buf = 0;
 static int n_buf = 0;
 
-#ifdef __APPLE__
- 
 const char *fl_latin1_to_local(const char *t, int n)  
 {
   if (n==-1) n = strlen(t);
