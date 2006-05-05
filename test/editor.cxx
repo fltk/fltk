@@ -616,7 +616,7 @@ void close_cb(Fl_Widget*, void* v) {
 
   w->hide();
   textbuf->remove_modify_callback(changed_cb, w);
-  delete w;
+  Fl::delete_widget(w);
   num_windows--;
   if (!num_windows) exit(0);
 }
