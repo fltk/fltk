@@ -536,6 +536,7 @@ void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
   }
   // Disable cache -- we played around with positions
   cacheline = 0;
+  cache = 0;
 }
 
 void Fl_Browser::swap(int ai, int bi) {

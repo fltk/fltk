@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed insufficiently invalidated cache 
+	  in Fl_Browser (STR #1265)
 	- Attempt to fix multi monitor issues (STR #1153)
 	- Fixed warnings when compiling w/Cygwin (STR #1152)
 	- Fixed missing reset of flag in FLUID (STR #1187)
