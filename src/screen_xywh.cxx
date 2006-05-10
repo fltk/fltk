@@ -41,25 +41,25 @@ static int num_screens = 0;
 #  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
 // BOOL EnumDisplayMonitors(HDC, LPCRECT, MONITORENUMPROC, LPARAM)
-typedef BOOL (*fl_edm_func)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
+typedef BOOL (WINAPI* fl_edm_func)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
 // BOOL GetMonitorInfo(HMONITOR, LPMONITORINFO)
-typedef BOOL (*fl_gmi_func)(HMONITOR, LPMONITORINFO);
+typedef BOOL (WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
 
 static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
 
 static RECT screens[16];
 
-static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT, LPARAM) {
+static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
   if (num_screens >= 16) return TRUE;
 
   MONITORINFO mi;
   mi.cbSize = sizeof(mi);
 
 //  GetMonitorInfo(mon, &mi);
-  fl_gmi(mon, &mi);
-
-  screens[num_screens] = mi.rcWork;
-  num_screens ++;
+  if (fl_gmi(mon, &mi)) {
+    screens[num_screens] = mi.rcWork;
+    num_screens ++;
+  }
   return TRUE;
 }
 
