@@ -200,6 +200,7 @@ public:
 
 class Fl_Decl_Type : public Fl_Type {
   char public_;
+  char static_;
 public:
   Fl_Type *make();
   void write_code1();

@@ -66,6 +66,7 @@ extern Fl_Light_Button *declblock_public_button;
 Fl_Double_Window* make_declblock_panel();
 extern Fl_Double_Window *decl_panel;
 extern Fl_Light_Button *decl_public_button;
+extern Fl_Light_Button *decl_static_button;
 extern Fl_Input *decl_input;
 extern Fl_Return_Button *decl_panel_ok;
 extern Fl_Button *decl_panel_cancel;

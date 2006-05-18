@@ -499,6 +499,7 @@ Fl_Type *Fl_Decl_Type::make() {
   while (p && !p->is_decl_block()) p = p->parent;
   Fl_Decl_Type *o = new Fl_Decl_Type();
   o->public_ = 0;
+  o->static_ = 1;
   o->name("int x;");
   o->add(p);
   o->factory = this;
@@ -508,11 +509,14 @@ Fl_Type *Fl_Decl_Type::make() {
 void Fl_Decl_Type::write_properties() {
   Fl_Type::write_properties();
   if (public_) write_string("public");
+  if (!static_) write_string("global");
 }
 
 void Fl_Decl_Type::read_property(const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
+  } else if (!strcmp(c,"global")) {
+    static_ = 0;
   } else {
     Fl_Type::read_property(c);
   }
@@ -522,6 +526,12 @@ void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
   decl_input->static_value(name());
   decl_public_button->value(public_);
+  decl_static_button->value(static_);
+  if (public_)
+    decl_static_button->label("extern");
+  else 
+    decl_static_button->label("static");
+  char pp = public_;
   decl_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -531,6 +541,14 @@ void Fl_Decl_Type::open() {
       if (w == decl_panel_cancel) goto BREAK2;
       else if (w == decl_panel_ok) break;
       else if (!w) Fl::wait();
+      if (pp != decl_public_button->value()) {
+        pp = decl_public_button->value();
+        if (pp)
+          decl_static_button->label("extern");
+        else
+          decl_static_button->label("static");
+        decl_static_button->redraw();
+      }
     }
     const char*c = decl_input->value();
     while (isspace(*c)) c++;
@@ -540,6 +558,10 @@ void Fl_Decl_Type::open() {
     if (public_!=decl_public_button->value()) {
       set_modflag(1);
       public_ = decl_public_button->value();
+    }
+    if (static_!=decl_static_button->value()) {
+      set_modflag(1);
+      static_ = decl_static_button->value();
     }
     break;
   }
@@ -575,10 +597,15 @@ void Fl_Decl_Type::write_code1() {
     write_h("  %.*s;\n", (int)(e-c), c);
   } else {
     if (public_) {
-      write_h("extern %.*s;\n", (int)(e-c), c);
-      write_c("%.*s;\n", (int)(e-c), c);
+      if (static_) 
+        write_h("extern ");
+      write_h("%.*s;\n", (int)(e-c), c);
+      if (static_)
+        write_c("%.*s;\n", (int)(e-c), c);
     } else {
-      write_c("static %.*s;\n", (int)(e-c), c);
+      if (static_) 
+        write_c("static ");
+      write_c("%.*s;\n", (int)(e-c), c);
     }
   }
 }

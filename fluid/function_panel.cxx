@@ -284,6 +284,8 @@ Fl_Double_Window *decl_panel=(Fl_Double_Window *)0;
 
 Fl_Light_Button *decl_public_button=(Fl_Light_Button *)0;
 
+Fl_Light_Button *decl_static_button=(Fl_Light_Button *)0;
+
 Fl_Input *decl_input=(Fl_Input *)0;
 
 Fl_Return_Button *decl_panel_ok=(Fl_Return_Button *)0;
@@ -300,7 +302,13 @@ Fl_Double_Window* make_decl_panel() {
         o->labelsize(11);
         o->when(FL_WHEN_NEVER);
       }
-      { Fl_Box* o = new Fl_Box(80, 10, 200, 20);
+      { Fl_Light_Button* o = decl_static_button = new Fl_Light_Button(80, 10, 60, 20, "static");
+        o->tooltip("Prepend \'static\' to private declarations in the source code, or \'extern\' \
+to public declarations in the header file.");
+        o->labelsize(11);
+        o->when(FL_WHEN_NEVER);
+      }
+      { Fl_Box* o = new Fl_Box(150, 10, 130, 20);
         Fl_Group::current()->resizable(o);
       }
       o->end();

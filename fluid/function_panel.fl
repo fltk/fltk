@@ -201,9 +201,9 @@ Function {make_declblock_panel()} {open
 Function {make_decl_panel()} {open
 } {
   Fl_Window decl_panel {
-    label {Declaration Properties}
-    xywh {412 206 290 150} type Double hide resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());}
+    label {Declaration Properties} open
+    xywh {412 206 290 150} type Double resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -212,8 +212,12 @@ Function {make_decl_panel()} {open
         label public
         tooltip {Make the declaration publicly accessible.} xywh {10 10 60 20} labelsize 11 when 0
       }
+      Fl_Light_Button decl_static_button {
+        label static selected
+        tooltip {Prepend 'static' to private declarations in the source code, or 'extern' to public declarations in the header file.} xywh {80 10 60 20} labelsize 11 when 0
+      }
       Fl_Box {} {
-        xywh {80 10 200 20} resizable
+        xywh {150 10 130 20} resizable
       }
     }
     Fl_Input decl_input {
@@ -706,7 +710,7 @@ Function {make_sourceview()} {open
         }
       }
       Fl_Group {} {
-        label Header open selected
+        label Header open
         xywh {10 35 500 415} labelsize 13
       } {
         Fl_Text_Editor sv_header {
