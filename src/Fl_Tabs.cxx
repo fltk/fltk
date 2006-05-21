@@ -35,6 +35,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Tooltip.H>
 
 #define BORDER 2
 #define EXTRASPACE 10
@@ -144,6 +145,21 @@ int Fl_Tabs::handle(int event) {
     } else push(o);
     if (Fl::visible_focus() && event == FL_RELEASE) Fl::focus(this);
     return 1;
+  case FL_MOVE: {
+    int ret = Fl_Group::handle(event);
+    Fl_Widget *o = Fl_Tooltip::current(), *n = o;
+    int H = tab_height();
+    if ( (H>=0) && (Fl::event_y()>y()+H) )
+      return ret;
+    else if ( (H<0) && (Fl::event_y() < y()+h()+H) )
+      return ret;
+    else { 
+      n = which(Fl::event_x(), Fl::event_y());
+      if (!n) n = this;
+    }
+    if (n!=o)
+      Fl_Tooltip::enter(n);
+    return ret; }
   case FL_FOCUS:
   case FL_UNFOCUS:
     if (!Fl::visible_focus()) return Fl_Group::handle(event);

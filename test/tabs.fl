@@ -7,7 +7,7 @@ Function {} {open
   Fl_Window foo_window {open
     xywh {561 88 320 331} type Double resizable visible
   } {
-    Fl_Tabs {} {open selected
+    Fl_Tabs {} {open
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 10 300 200} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
@@ -28,8 +28,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab2 open
-        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 30 300 180} selection_color 2 hide
+        label tab2 open selected
+        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 30 300 180} selection_color 2
       } {
         Fl_Button {} {
           label button1
@@ -89,11 +89,11 @@ Function {} {open
       }
       Fl_Group {} {
         label {     tab5      } open
-        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {10 30 300 180} labeltype ENGRAVED_LABEL
+        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {10 30 300 180} labeltype ENGRAVED_LABEL hide
       } {
         Fl_Button {} {
           label button2
-          xywh {20 80 60 80}
+          tooltip {button2 has a different tooltp than tab5} xywh {20 80 60 80}
         }
         Fl_Button {} {
           label button

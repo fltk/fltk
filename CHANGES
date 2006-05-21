@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Tabs now show the correct tooltip (STR #1282)
 	- Included fltk.spec in configure.in (STR #1274)
 	- Fixed insufficiently invalidated cache 
 	  in Fl_Browser (STR #1265)
