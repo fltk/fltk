@@ -5,14 +5,14 @@ code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {733 489 320 320} type Double resizable visible
+    xywh {561 88 320 331} type Double resizable visible
   } {
     Fl_Tabs {} {open selected
-      xywh {10 10 300 200} selection_color 4 labelcolor 7 resizable
+      tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 10 300 200} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
         label Label1 open
-        xywh {10 30 300 180} selection_color 1 hide resizable
+        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {10 30 300 180} selection_color 1 hide resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -29,7 +29,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab2 open
-        xywh {10 30 300 180} selection_color 2
+        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 30 300 180} selection_color 2 hide
       } {
         Fl_Button {} {
           label button1
@@ -55,7 +55,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab3 open
-        xywh {10 30 300 180} selection_color 3 hide
+        tooltip {tab3 checks for correct keyboard navigation} xywh {10 30 300 180} selection_color 3 hide
       } {
         Fl_Button {} {
           label button2
@@ -72,7 +72,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab4 open
-        xywh {10 30 300 180} selection_color 5 labelfont 2 hide
+        tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {10 30 300 180} selection_color 5 labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
@@ -89,7 +89,7 @@ Function {} {open
       }
       Fl_Group {} {
         label {     tab5      } open
-        xywh {10 30 300 180} labeltype ENGRAVED_LABEL hide
+        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {10 30 300 180} labeltype ENGRAVED_LABEL
       } {
         Fl_Button {} {
           label button2
