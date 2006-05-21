@@ -995,7 +995,7 @@ fi
 
 dnl Write all of the files...
 AC_CONFIG_HEADER(config.h:configh.in)
-AC_OUTPUT(makeinclude fltk.list fltk-config FL/Makefile)
+AC_OUTPUT(makeinclude fltk.list fltk-config fltk.spec FL/Makefile)
 
 dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
