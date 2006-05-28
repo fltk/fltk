@@ -574,6 +574,17 @@ Fl_Decl_Type Fl_Decl_type;
 void Fl_Decl_Type::write_code1() {
   const char* c = name();
   if (!c) return;
+  // handle a few keywords differently if inside a class
+  if (is_in_class() && (
+         !strncmp(c,"class",5) && isspace(c[5])
+      || !strncmp(c,"typedef",7) && isspace(c[7])
+      || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
+      || !strncmp(c,"struct",6) && isspace(c[6])
+      ) ) {
+    write_public(public_);
+    write_h("  %s\n", c);
+    return;
+  }
   // handle putting #include, extern, using or typedef into decl:
   if (!isalpha(*c) && *c != '~'
       || !strncmp(c,"extern",6) && isspace(c[6])

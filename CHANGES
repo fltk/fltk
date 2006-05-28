@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.8
 
+	- In Fluid, declarations starting with the keyword
+	  'typedef', 'class', or 'struct' are now treated
+	  correctly if inside a class (STR #1283)
 	- Tabs now show the correct tooltip (STR #1282)
 	- Included fltk.spec in configure.in (STR #1274)
 	- Fixed insufficiently invalidated cache 
