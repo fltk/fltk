@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed window resizing in OS X (STR #1297)
 	- In Fluid, declarations starting with the keyword
 	  'typedef', 'class', or 'struct' are now treated
 	  correctly if inside a class (STR #1283)

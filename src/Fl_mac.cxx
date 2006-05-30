@@ -28,7 +28,7 @@
 //// From the inner edge of a MetroWerks CodeWarrior CD:
 // (without permission)
 //
-// Three Compiles for 68Ks under the sky,
+// "Three Compiles for 68Ks under the sky,
 // Seven Compiles for PPCs in their fragments of code,
 // Nine Compiles for Mortal Carbon doomed to die,
 // One Compile for Mach-O Cocoa on its Mach-O throne,
@@ -36,7 +36,7 @@
 // 
 // One Compile to link them all, One Compile to merge them,
 // One Compile to copy them all and in the bundle bind them,
-// in the Land of MacOS X where the Drop-Shadows lie.
+// in the Land of MacOS X where the Drop-Shadows lie."
 
 // warning: the Apple Quartz version still uses some Quickdraw calls,
 //          mostly to get around the single active context in QD and 
@@ -1988,34 +1988,37 @@ void Fl_Window::show() {
  * resize a window
  */
 void Fl_Window::resize(int X,int Y,int W,int H) {
+  if (W<=0) W = 1; // OS X does not like zero width windows
+  if (H<=0) H = 1;
   int is_a_resize = (W != w() || H != h());
 //  printf("Fl_Winodw::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
 //         X, Y, W, H, is_a_resize, resize_from_system, this);
   if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
   else if (!is_a_resize) return;
   if ( (resize_from_system!=this) && (!parent()) && shown()) {
-    MoveWindow(i->xid, X, Y, 0);
     if (is_a_resize) {
-      if (!resizable()) size_range(W>0 ? W : 1, H>0 ? H : 1, W>0 ? W : 1, H>0 ? H : 1);
-      SizeWindow(i->xid, W>0 ? W : 1, H>0 ? H : 1, 1);
+      if (resizable()) {
+        if (W<minw) minw = W; // user request for resize takes priority
+        if (W>maxw) maxw = W; // over a previously set size_range
+        if (H<minh) minh = H;
+        if (H>maxh) maxh = H;
+        size_range(minw, minh, maxw, maxh);
+      } else {
+        size_range(W, H, W, H);
+      }
+      Rect dim; dim.left=X; dim.top=Y; dim.right=X+W; dim.bottom=Y+H;
+      SetWindowBounds(i->xid, kWindowContentRgn, &dim);
       Rect all; all.top=-32000; all.bottom=32000; all.left=-32000; all.right=32000;
       InvalWindowRect( i->xid, &all );    
+    } else {
+      MoveWindow(i->xid, X, Y, 0);
     }
-  } else if (resize_from_system == this && size_range_set && !parent() && shown()) {
-    if (size_range_set) {
-      if (W < minw) W = minw;
-      else if (W > maxw && maxw) W = maxw;
-      if (H < minh) H = minh;
-      else if (H > maxh && maxh) H = maxh;
-    }
-    SizeWindow(i->xid, W>0 ? W : 1, H>0 ? H : 1, 1);
   }
   resize_from_system = 0;
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
     if (shown()) { 
       redraw(); 
-      //if (!parent()) i->wait_for_expose = 1; 
     }
   } else {
     x(X); y(Y); 
