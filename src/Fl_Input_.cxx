@@ -246,7 +246,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   p = value();
   // visit each line and draw it:
   int desc = height-fl_descent();
-  float xpos = X - xscroll_ + 1;
+  float xpos = (float)(X - xscroll_ + 1);
   int ypos = -yscroll_;
   for (; ypos < H;) {
 
@@ -261,14 +261,14 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       if (readonly()) erase_cursor_only = 0; // this isn't the most efficient way
       if (erase_cursor_only && p > pp) goto CONTINUE2; // this line is after
       // calculate area to erase:
-      float r = X+W;
+      float r = (float)(X+W);
       float xx;
       if (p >= pp) {
-	xx = X;
+	xx = (float)X;
 	if (erase_cursor_only) r = xpos+2;
 	else if (readonly()) xx -= 3;
       } else {
-	xx = xpos+expandpos(p, pp, buf, 0);
+	xx = xpos + (float)expandpos(p, pp, buf, 0);
 	if (erase_cursor_only) r = xx+2;
 	else if (readonly()) xx -= 3;
       }
@@ -288,13 +288,13 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       int offset1 = 0;
       if (pp > p) {
 	fl_color(tc);
-	x1 += expandpos(p, pp, buf, &offset1);
+	x1 += (float)expandpos(p, pp, buf, &offset1);
 	fl_draw(buf, offset1, xpos, (float)(Y+ypos+desc));
       }
       pp = value()+selend;
-      float x2 = X+W;
+      float x2 = (float)(X+W);
       int offset2;
-      if (pp <= e) x2 = xpos+expandpos(p, pp, buf, &offset2);
+      if (pp <= e) x2 = xpos + (float)expandpos(p, pp, buf, &offset2);
       else offset2 = strlen(buf);
       fl_color(selection_color());
       fl_rectf((int)(x1+0.5), Y+ypos, (int)(x2-x1+0.5), height);

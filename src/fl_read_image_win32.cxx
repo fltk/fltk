@@ -55,11 +55,11 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
     for (x = 0; x < w; x ++, ptr += d) {
       COLORREF c = GetPixel(fl_gc, X + x, Y + y);
 
-      ptr[0] = c;
+      ptr[0] = (uchar)c;
       c >>= 8;
-      ptr[1] = c;
+      ptr[1] = (uchar)c;
       c >>= 8;
-      ptr[2] = c;
+      ptr[2] = (uchar)c;
     }
   }
 
