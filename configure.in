@@ -705,7 +705,7 @@ case $uname in
 	if test x$enable_xft = xyes; then
             AC_PATH_PROG(FTCONFIG,freetype-config)
 
-	    if test "x$FTCONFIG" != "x:"; then
+	    if test "x$FTCONFIG" != x; then
 	        CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
 	        CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
 
@@ -725,9 +725,14 @@ case $uname in
 	fi
 
 	dnl Check for overlay visuals...
+	AC_PATH_PROG(XPROP, xprop)
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,
-	    if xprop -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
-        	ac_cv_have_overlay=yes
+	    if test "x$XPROP" != x; then
+		if $XPROP -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
+        	    ac_cv_have_overlay=yes
+		else
+        	    ac_cv_have_overlay=no
+		fi
 	    else
         	ac_cv_have_overlay=no
 	    fi)
