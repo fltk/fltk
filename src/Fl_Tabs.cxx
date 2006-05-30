@@ -119,6 +119,18 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   return 0;
 }
 
+void Fl_Tabs::redraw_tabs()
+{
+  int H = tab_height();
+  if (H >= 0) {
+    H += Fl::box_dy(box());
+    damage(FL_DAMAGE_SCROLL, x(), y(), w(), H);
+  } else {
+    H = Fl::box_dy(box()) - H;
+    damage(FL_DAMAGE_SCROLL, x(), y() + h() - H, w(), H);
+  }
+}
+
 int Fl_Tabs::handle(int event) {
 
   Fl_Widget *o;
@@ -138,12 +150,15 @@ int Fl_Tabs::handle(int event) {
     o = which(Fl::event_x(), Fl::event_y());
     if (event == FL_RELEASE) {
       push(0);
+      if (o && Fl::visible_focus() && Fl::focus()!=this) { 
+        Fl::focus(this);
+        redraw_tabs();
+      }
       if (o && value(o)) {
         set_changed();
 	do_callback();
       }
     } else push(o);
-    if (Fl::visible_focus() && event == FL_RELEASE) Fl::focus(this);
     return 1;
   case FL_MOVE: {
     int ret = Fl_Group::handle(event);
@@ -168,14 +183,7 @@ int Fl_Tabs::handle(int event) {
 	Fl::event() == FL_KEYBOARD ||
 	Fl::event() == FL_FOCUS ||
 	Fl::event() == FL_UNFOCUS) {
-      int H = tab_height();
-      if (H >= 0) {
-        H += Fl::box_dy(box());
-	damage(FL_DAMAGE_SCROLL, x(), y(), w(), H);
-      } else {
-        H = Fl::box_dy(box()) - H;
-        damage(FL_DAMAGE_SCROLL, x(), y() + h() - H, w(), H);
-      }
+      redraw_tabs();
       if (Fl::event() == FL_FOCUS || Fl::event() == FL_UNFOCUS) return 0;
       else return 1;
     } else return Fl_Group::handle(event);

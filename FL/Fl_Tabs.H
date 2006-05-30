@@ -37,6 +37,7 @@ class FL_EXPORT Fl_Tabs : public Fl_Group {
   int tab_height();
   void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
 protected:
+  void redraw_tabs();
   void draw();
 
 public:

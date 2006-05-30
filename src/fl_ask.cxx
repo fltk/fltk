@@ -80,7 +80,7 @@ static Fl_Window *makeform() {
   o->labelcolor(FL_BLUE);
  }
  button[0] = new Fl_Button(310, 70, 90, 23);
- button[0]->shortcut("^[");
+ button[0]->shortcut(FL_Escape);
  button[0]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  button[1] = new Fl_Return_Button(210, 70, 90, 23);
  button[1]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
@@ -198,6 +198,8 @@ static int innards(const char* fmt, va_list ap,
 
   resizeform();
 
+  if (button[1]->visible() && !input->visible()) 
+    button[1]->take_focus();
   message_form->hotspot(button[0]);
   message_form->show();
   int r;

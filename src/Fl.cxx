@@ -78,6 +78,11 @@ int		Fl::visible_focus_ = 1,
 		Fl::dnd_text_ops_ = 1;
 
 
+Fl_Window *fl_xfocus;	// which window X thinks has focus
+Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
+Fl_Window *Fl::grab_;	// most recent Fl::grab()
+Fl_Window *Fl::modal_;	// topmost modal() window
+
 //
 // 'Fl::version()' - Return the API version number...
 //
@@ -526,6 +531,14 @@ void Fl::focus(Fl_Widget *o) {
   if (o != p) {
     Fl::compose_reset();
     focus_ = o;
+    // make sure that fl_xfocus is set to the top level window
+    // of this widget, or fl_fix_focus will clear our focus again
+    if (o) {
+      Fl_Window *win = 0, *w1 = o->window();
+      while (w1) { win=w1; w1=win->window(); }
+      if (win) fl_xfocus = win;
+    }
+    // take focus from the old focused window
     fl_oldfocus = 0;
     int old_event = e_number;
     e_number = FL_UNFOCUS;
@@ -556,11 +569,6 @@ void Fl::belowmouse(Fl_Widget *o) {
 void Fl::pushed(Fl_Widget *o) {
   pushed_ = o;
 }
-
-Fl_Window *fl_xfocus;	// which window X thinks has focus
-Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
-Fl_Window *Fl::grab_;	// most recent Fl::grab()
-Fl_Window *Fl::modal_;	// topmost modal() window
 
 static void nothing(Fl_Widget *) {}
 void (*Fl_Tooltip::enter)(Fl_Widget *) = nothing;

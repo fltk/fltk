@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed shortcut and default focus for message
+	  dialogs (STR #1298)
+	- Fixed focus issues (STR #1286, STR #1289, STR #1296)
 	- Fixed window resizing in OS X (STR #1297)
 	- In Fluid, declarations starting with the keyword
 	  'typedef', 'class', or 'struct' are now treated
