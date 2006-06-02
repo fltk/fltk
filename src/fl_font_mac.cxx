@@ -171,6 +171,47 @@ static Fl_Fontdesc built_in_table[] = {
 #endif
 };
 
+#ifdef __APPLE_QUARTZ__
+static UniChar utf16lut[128] = {
+  0x00c4, 0x00c5, 0x00c7, 0x00c9, 0x00d1, 0x00d6, 0x00dc, 0x00e1, 
+  0x00e0, 0x00e2, 0x00e4, 0x00e3, 0x00e5, 0x00e7, 0x00e9, 0x00e8, 
+  0x00ea, 0x00eb, 0x00ed, 0x00ec, 0x00ee, 0x00ef, 0x00f1, 0x00f3, 
+  0x00f2, 0x00f4, 0x00f6, 0x00f5, 0x00fa, 0x00f9, 0x00fb, 0x00fc, 
+  0x2020, 0x00b0, 0x00a2, 0x00a3, 0x00a7, 0x2022, 0x00b6, 0x00df, 
+  0x00ae, 0x00a9, 0x2122, 0x00b4, 0x00a8, 0x2260, 0x00c6, 0x00d8, 
+  0x221e, 0x00b1, 0x2264, 0x2265, 0x00a5, 0x00b5, 0x2202, 0x2211, 
+  0x220f, 0x03c0, 0x222b, 0x00aa, 0x00ba, 0x03a9, 0x00e6, 0x00f8, 
+  0x00bf, 0x00a1, 0x00ac, 0x221a, 0x0192, 0x2248, 0x2206, 0x00ab, 
+  0x00bb, 0x2026, 0x00a0, 0x00c0, 0x00c3, 0x00d5, 0x0152, 0x0153, 
+  0x2013, 0x2014, 0x201c, 0x201d, 0x2018, 0x2019, 0x00f7, 0x25ca, 
+  0x00ff, 0x0178, 0x2044, 0x20ac, 0x2039, 0x203a, 0xfb01, 0xfb02, 
+  0x2021, 0x00b7, 0x201a, 0x201e, 0x2030, 0x00c2, 0x00ca, 0x00c1, 
+  0x00cb, 0x00c8, 0x00cd, 0x00ce, 0x00cf, 0x00cc, 0x00d3, 0x00d4, 
+  0xf8ff, 0x00d2, 0x00da, 0x00db, 0x00d9, 0x0131, 0x02c6, 0x02dc, 
+  0x00af, 0x02d8, 0x02d9, 0x02da, 0x00b8, 0x02dd, 0x02db, 0x02c7, 
+};
+static UniChar *utf16buf = 0;
+static int utf16len = 0;
+UniChar *fl_macToUtf16(const char *txt, int len)
+{
+  if (len>utf16len) {
+    utf16len = len+100;
+    free(utf16buf);
+    utf16buf = (UniChar*)malloc((utf16len+1)*sizeof(UniChar));
+  }
+  int i;
+  unsigned char c;
+  const unsigned char *src = (unsigned char const*)txt;
+  UniChar *dst = utf16buf;
+  for (i=0; i<len; i++) {
+    c = *src++;
+    *dst++ = (c<128) ? c : utf16lut[c-128];
+  }
+  *dst = 0;
+  return utf16buf;
+}
+#endif
+
 Fl_Fontdesc* fl_fonts = built_in_table;
 
 void fl_font(Fl_FontSize* s) {
@@ -242,12 +283,7 @@ double fl_width(const char* txt, int n) {
   }
   OSStatus err;
     // convert to UTF-16 first
-  int i;
-  UniChar uniStr[n+1];
-  for (i=0; i<n; i++) {
-    uniStr[i] = txt[i];
-  }
-  uniStr[i] = 0;
+  UniChar *uniStr = fl_macToUtf16(txt, n);
     // now collect our ATSU resources
   ATSUTextLayout layout = fl_fontsize->layout;
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
@@ -281,12 +317,7 @@ void fl_draw(const char *str, int n, float x, float y) {
 #elif defined(__APPLE_QUARTZ__)
   OSStatus err;
     // convert to UTF-16 first 
-  int i;
-  UniChar uniStr[n+1];
-  for (i=0; i<n; i++) {
-    uniStr[i] = str[i];
-  }
-  uniStr[i] = 0;
+  UniChar *uniStr = fl_macToUtf16(str, n);
     // now collect our ATSU resources
   ATSUTextLayout layout = fl_fontsize->layout;
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
