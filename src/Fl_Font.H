@@ -60,9 +60,11 @@ public:
   bool knowMetrics;
 #  elif defined(__APPLE_QUARTZ__)
   FL_EXPORT Fl_FontSize(const char* fontname, int size);
+  ATSUTextLayout layout;
+  ATSUStyle style;
+  short ascent, descent, q_width;
   char *q_name;
   int size;
-  short ascent, descent, q_width;
 #  elif USE_XFT
   XftFont* font;
   const char* encoding;

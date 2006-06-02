@@ -57,24 +57,53 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   for (int i=0; i<256; i++) width[i] = fOut->widMax;
   minsize = maxsize = size;
 #elif defined(__APPLE_QUARTZ__)
+    // OpenGL needs those for its font handling
   q_name = strdup(name);
   size = Size;
+  OSStatus err;
+    // fill our structure with a few default values
   ascent = Size*3/4;
   descent = Size-ascent;
   q_width = Size*2/3;
   minsize = maxsize = Size;
-  // Using ATS to get the genral Glyph size information
-  CFStringRef cfname = CFStringCreateWithCString(0L, q_name, kCFStringEncodingASCII);
+    // now use ATS to get the actual Glyph size information
+  CFStringRef cfname = CFStringCreateWithCString(0L, name, kCFStringEncodingASCII);
   ATSFontRef font = ATSFontFindFromName(cfname, kATSOptionFlagsDefault);
   if (font) {
     ATSFontMetrics m = { 0 };
     ATSFontGetHorizontalMetrics(font, kATSOptionFlagsDefault, &m);
-    if (m.avgAdvanceWidth) q_width = int(m.avgAdvanceWidth*size);
-    // playing with the offsets a little to make standard sizes fit
-    if (m.ascent) ascent  = int(m.ascent*size-0.5f);
-    if (m.descent) descent = -int(m.descent*size-1.5f);
+    if (m.avgAdvanceWidth) q_width = int(m.avgAdvanceWidth*Size);
+      // playing with the offsets a little to make standard sizes fit
+    if (m.ascent) ascent  = int(m.ascent*Size-0.5f);
+    if (m.descent) descent = -int(m.descent*Size-1.5f);
   }
   CFRelease(cfname);
+    // now we allocate everything needed to render text in this font later
+    // get us the default layout and style
+  err = ATSUCreateTextLayout(&layout);
+  UniChar mTxt[2] = { 65, 0 };
+  err = ATSUSetTextPointerLocation(layout, mTxt, kATSUFromTextBeginning, 1, 1);
+  err = ATSUCreateStyle(&style);
+  err = ATSUSetRunStyle(layout, style, kATSUFromTextBeginning, kATSUToTextEnd);
+    // now set the actual font, size and attributes
+  Fixed fsize = IntToFixed(Size);
+  ATSUFontID fontID = FMGetFontFromATSFontRef(font);
+  ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag };
+  ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed) };
+  ATSUAttributeValuePtr sAttr[] = { &fontID, &fsize };
+  err = ATSUSetAttributes(style, 2, sTag, sBytes, sAttr);
+    // next, make sure that Quartz will only render at integer coordinates
+  ATSLineLayoutOptions llo = kATSLineUseDeviceMetrics|kATSLineDisableAllLayoutOperations;
+  ATSUAttributeTag aTag[] = { kATSULineLayoutOptionsTag };
+  ByteCount aBytes[] = { sizeof(ATSLineLayoutOptions) };
+  ATSUAttributeValuePtr aAttr[] = { &llo };
+  err = ATSUSetLineControls (layout, kATSUFromTextBeginning, 1, aTag, aBytes, aAttr);
+    // now we are finally ready to measure some letter to get the bounding box
+  Fixed bBefore, bAfter, bAscent, bDescent;
+  err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, 1, &bBefore, &bAfter, &bAscent, &bDescent);
+  ascent = FixedToInt(bAscent);
+  descent = FixedToInt(bDescent);
+  q_width = FixedToInt(bAfter);
 #endif
 }
 
@@ -97,7 +126,8 @@ Fl_FontSize::~Fl_FontSize() {
   */
   if (this == fl_fontsize) fl_fontsize = 0;
 #ifdef __APPLE_QUARTZ__
-  free(q_name);
+  ATSUDisposeTextLayout(layout);
+  ATSUDisposeStyle(style);
 #endif
 }
 
@@ -161,9 +191,7 @@ void fl_font(Fl_FontSize* s) {
     fl_fontsize->knowMetrics = 1;
   }
 #elif defined(__APPLE_QUARTZ__)
-  if (!s) return;
-  if (!fl_gc) return; // no worries, we will assign the font to the context later
-  CGContextSelectFont(fl_gc, s->q_name, (float)s->size, kCGEncodingMacRoman);
+  // we will use fl_fontsize later to access the required style and layout
 #else
 # error : need to defined either Quartz or Quickdraw
 #endif
@@ -212,14 +240,21 @@ double fl_width(const char* txt, int n) {
     if (w) w->make_current();
     if (!fl_gc) return -1;
   }
-  // according to the Apple developer docs, this is the correct way to
-  // find the length of a rendered text...
-  CGContextSetTextPosition(fl_gc, 0, 0);
-  CGContextSetTextDrawingMode(fl_gc, kCGTextInvisible);
-  CGContextShowText(fl_gc, txt, n);
-  CGContextSetTextDrawingMode(fl_gc, kCGTextFill);
-  CGPoint p = CGContextGetTextPosition(fl_gc);
-  return p.x;
+  OSStatus err;
+    // convert to UTF-16 first
+  int i;
+  UniChar uniStr[n+1];
+  for (i=0; i<n; i++) {
+    uniStr[i] = txt[i];
+  }
+  uniStr[i] = 0;
+    // now collect our ATSU resources
+  ATSUTextLayout layout = fl_fontsize->layout;
+  err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+    // now measure the bounding box
+  Fixed bBefore, bAfter, bAscent, bDescent;
+  err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, n, &bBefore, &bAfter, &bAscent, &bDescent);
+  return FixedToInt(bAfter);
 #endif
 }
 
@@ -244,7 +279,18 @@ void fl_draw(const char *str, int n, float x, float y) {
 #ifdef __APPLE_QD__
   fl_draw(str, n, (int)x, (int)y);
 #elif defined(__APPLE_QUARTZ__)
-  CGContextShowTextAtPoint(fl_gc, x, y, str, n);
+  OSStatus err;
+    // convert to UTF-16 first 
+  int i;
+  UniChar uniStr[n+1];
+  for (i=0; i<n; i++) {
+    uniStr[i] = str[i];
+  }
+  uniStr[i] = 0;
+    // now collect our ATSU resources
+  ATSUTextLayout layout = fl_fontsize->layout;
+  err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+  err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
 #else
 #  error : neither Quartz no Quickdraw chosen
 #endif
