@@ -2066,15 +2066,15 @@ void Fl_Window::make_current()
     DiffRgn( fl_window_region, r, fl_window_region );
     DisposeRgn( r );
   }
-  
-  fl_clip_region( 0 );
-  SetPortClipRegion( GetWindowPort(i->xid), fl_window_region );
+ 
 #ifdef __APPLE_QUARTZ__
   QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
   fl_gc = i->gc;
   CGContextSaveGState(fl_gc);
   Fl_X::q_fill_context();
 #endif
+  fl_clip_region( 0 );
+  SetPortClipRegion( GetWindowPort(i->xid), fl_window_region );
   return;
 }
 

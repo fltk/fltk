@@ -95,7 +95,7 @@ typedef enum { NOTALLOWED, MOUNTAIN, TREE, ISLAND, BIGMTN, STEM, LEAF,
 #define MAXLEVEL 8
 
 int Rebuild = 1,        /* Rebuild display list in next display? */
-    Fract   = TREE,     /* What fractal are we building */
+    fractal = TREE,     /* What fractal are we building */
     Level   = 4;        /* levels of recursion for fractals */     
 
 int DrawAxes = 0;       
@@ -642,11 +642,11 @@ void display(void)
   glLoadIdentity();
 
   if (Rebuild) {
-    Create(Fract);
+    Create(fractal);
     Rebuild = 0;
   }
 
-  glCallList(Fract);
+  glCallList(fractal);
 
   if (DrawAxes)
     glCallList(AXES);
@@ -713,7 +713,7 @@ void setlevel(int value)
 
 void choosefract(int value)
 {
-  Fract = value;
+  fractal = value;
   Rebuild = 1;
   glutPostRedisplay();
 }

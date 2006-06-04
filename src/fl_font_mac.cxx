@@ -27,12 +27,6 @@
 
 #include <config.h>
 
-//: MeasureText, FontMetrics, WidthTabHandle, GetSysFont, SysFontSize
-//: TextSize, TextFont
-//: GetFNum (theName: Str255; VAR familyID: Integer);
-//: FUNCTION FMSwapFont (inRec: FMInput): FMOutPtr;
-//: SetFractEnable
-
 Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   next = 0;
 #  if HAVE_GL

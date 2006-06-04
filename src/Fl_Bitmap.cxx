@@ -396,7 +396,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #elif defined(__APPLE_QUARTZ__)
   if (!id) id = fl_create_bitmask(w(), h(), array);
   if (id && fl_gc) {
-    CGRect rect = { X, Y, W, H };
+    CGRect rect = { { X, Y }, { W, H } };
     Fl_X::q_begin_image(rect, cx, cy, w(), h());
     CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
     Fl_X::q_end_image();

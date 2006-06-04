@@ -202,7 +202,7 @@ void fl_copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int sr
   CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
     src_bytes, 0L, false, kCGRenderingIntentDefault);
   // fl_push_clip();
-  CGRect rect = { x, y, w, h };
+  CGRect rect = { { x, y }, { w, h } };
   Fl_X::q_begin_image(rect, srcx, srcy, sw, sh);
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
