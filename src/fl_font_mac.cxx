@@ -288,8 +288,8 @@ double fl_width(const char* txt, int n) {
     Fl_Window *w = Fl::first_window();
     if (w) w->make_current();
     if (!fl_gc) {
-      fprintf(stderr, "FLTK:fl_width() - no visible window to measure this text.\n");
-      return -1;
+      // We fall back to some internal QuickDraw port.
+      // The result should be the same.
     }
   }
   OSStatus err;
