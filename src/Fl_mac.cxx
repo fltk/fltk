@@ -2085,7 +2085,7 @@ extern class Fl_FontSize *fl_fontsize;
 extern void fl_font(class Fl_FontSize*);
 extern void fl_quartz_restore_line_style_();
 
-// FLTK has only on global graphics state. This function copies the FLTK state into the
+// FLTK has only one global graphics state. This function copies the FLTK state into the
 // current Quartz context
 void Fl_X::q_fill_context() {
   if (!fl_gc) return;
@@ -2099,14 +2099,12 @@ void Fl_X::q_fill_context() {
   }
   CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
   CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-  static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
-  CGContextSetTextMatrix(fl_gc, font_mx);
   fl_font(fl_fontsize);
   fl_color(fl_color_);
   fl_quartz_restore_line_style_();
 }
 
-// The only way to reste clipping to its original state is to pop the current graphics
+// The only way to reset clipping to its original state is to pop the current graphics
 // state and restore the global state.
 void Fl_X::q_clear_clipping() {
   if (!fl_gc) return;

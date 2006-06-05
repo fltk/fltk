@@ -79,13 +79,16 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   err = ATSUSetTextPointerLocation(layout, mTxt, kATSUFromTextBeginning, 1, 1);
   err = ATSUCreateStyle(&style);
   err = ATSUSetRunStyle(layout, style, kATSUFromTextBeginning, kATSUToTextEnd);
-    // now set the actual font, size and attributes
+    // now set the actual font, size and attributes. We also set the font matrix to 
+    // render our font up-side-down, so when rendered through our inverted CGContext,
+    // text will appear normal again.
   Fixed fsize = IntToFixed(Size);
   ATSUFontID fontID = FMGetFontFromATSFontRef(font);
-  ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag };
-  ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed) };
-  ATSUAttributeValuePtr sAttr[] = { &fontID, &fsize };
-  err = ATSUSetAttributes(style, 2, sTag, sBytes, sAttr);
+  static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+  ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
+  ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed), sizeof(CGAffineTransform) };
+  ATSUAttributeValuePtr sAttr[] = { &fontID, &fsize, &font_mx };
+  err = ATSUSetAttributes(style, 3, sTag, sBytes, sAttr);
     // next, make sure that Quartz will only render at integer coordinates
   ATSLineLayoutOptions llo = kATSLineUseDeviceMetrics|kATSLineDisableAllLayoutOperations;
   ATSUAttributeTag aTag[] = { kATSULineLayoutOptionsTag };
@@ -95,9 +98,20 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
     // now we are finally ready to measure some letter to get the bounding box
   Fixed bBefore, bAfter, bAscent, bDescent;
   err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, 1, &bBefore, &bAfter, &bAscent, &bDescent);
-  ascent = FixedToInt(bAscent);
-  descent = FixedToInt(bDescent);
-  q_width = FixedToInt(bAfter);
+    // Requesting a certain height font on Mac does not guarantee that ascent+descent
+    // equal the requested height. I consider requesting noew fonts until that is the
+    // case, but for now we simply make sure that our store ascent and descent add up 
+    // as expected.
+    // The font "Apple Chancery" is a pretty extreme example of overlapping letters.
+  float fa = -FixedToFloat(bAscent), fd = -FixedToFloat(bDescent);
+  if (fa>0.0f && fd>0.0f) {
+    float f = Size/(fa+fd);
+    ascent = int(fa*f+0.5f);
+    descent = Size - ascent;
+  }
+  int w = FixedToInt(bAfter);
+  if (w)  
+    q_width = FixedToInt(bAfter);
 #endif
 }
 
@@ -188,7 +202,7 @@ static UniChar *utf16buf = 0;
 static int utf16len = 0;
 UniChar *fl_macToUtf16(const char *txt, int len)
 {
-  if (len>utf16len) {
+  if ((len+1)>utf16len) {
     utf16len = len+100;
     free(utf16buf);
     utf16buf = (UniChar*)malloc((utf16len+1)*sizeof(UniChar));
@@ -273,7 +287,10 @@ double fl_width(const char* txt, int n) {
   if (!fl_gc) {
     Fl_Window *w = Fl::first_window();
     if (w) w->make_current();
-    if (!fl_gc) return -1;
+    if (!fl_gc) {
+      fprintf(stderr, "FLTK:fl_width() - no visible window to measure this text.\n");
+      return -1;
+    }
   }
   OSStatus err;
     // convert to UTF-16 first
@@ -281,6 +298,11 @@ double fl_width(const char* txt, int n) {
     // now collect our ATSU resources
   ATSUTextLayout layout = fl_fontsize->layout;
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+    // activate the current GC
+  ByteCount iSize = sizeof(CGContextRef);
+  ATSUAttributeTag iTag = kATSUCGContextTag;
+  ATSUAttributeValuePtr iValuePtr=&fl_gc;
+  ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
     // now measure the bounding box
   Fixed bBefore, bAfter, bAscent, bDescent;
   err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, n, &bBefore, &bAfter, &bAscent, &bDescent);
@@ -314,6 +336,12 @@ void fl_draw(const char *str, int n, float x, float y) {
   UniChar *uniStr = fl_macToUtf16(str, n);
     // now collect our ATSU resources
   ATSUTextLayout layout = fl_fontsize->layout;
+
+  ByteCount iSize = sizeof(CGContextRef);
+  ATSUAttributeTag iTag = kATSUCGContextTag;
+  ATSUAttributeValuePtr iValuePtr=&fl_gc;
+  ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
+
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
 #else
