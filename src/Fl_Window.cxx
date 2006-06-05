@@ -107,7 +107,7 @@ void Fl_Window::draw() {
   Fl_Widget::label(0);
   Fl_Group::draw();
 #ifdef __APPLE_QUARTZ__
-  if (!parent() && resizable()) {
+  if (!parent() && resizable() && (!size_range_set || minh!=maxh || minw!=maxw)) {
     int dx = Fl::box_dw(box())-Fl::box_dx(box());
     int dy = Fl::box_dh(box())-Fl::box_dy(box());
     if (dx<=0) dx = 1;
