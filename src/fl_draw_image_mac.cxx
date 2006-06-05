@@ -178,7 +178,11 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     linedelta = W;
   }
   // create an image context
-  CGColorSpaceRef   lut = CGColorSpaceCreateDeviceRGB();
+  CGColorSpaceRef   lut = 0;
+  if (delta<=2) 
+    lut = CGColorSpaceCreateDeviceGray();
+  else
+    lut = CGColorSpaceCreateDeviceRGB();
   CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H*delta, 0L);
   CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta*delta,
                             lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
