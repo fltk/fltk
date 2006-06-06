@@ -219,12 +219,19 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
   free(data);
 }
 
-static CGContextRef prev_gc = 0;
-static Window prev_window = 0;
+const int stack_max = 16;
+static int stack_ix = 0;
+static CGContextRef stack_gc[stack_max];
+static Window stack_window[stack_max];
 
 void fl_begin_offscreen(Fl_Offscreen ctx) {
-  prev_gc = fl_gc;
-  prev_window = fl_window;
+  if (stack_ix<stack_max) {
+    stack_gc[stack_ix] = fl_gc;
+    stack_window[stack_ix] = fl_window;
+  } else 
+    fprintf(stderr, "FLTK CGContext Stack overflow error\n");
+  stack_ix++;
+
   fl_gc = (CGContextRef)ctx;
   fl_window = 0;
   //fl_push_no_clip();
@@ -235,8 +242,14 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
 void fl_end_offscreen() {
   Fl_X::q_release_context();
   //fl_pop_clip();
-  fl_gc = prev_gc;
-  fl_window = prev_window;
+  if (stack_ix>0)
+    stack_ix--;
+  else
+    fprintf(stderr, "FLTK CGContext Stack underflow error\n");
+  if (stack_ix<stack_max) {
+    fl_gc = stack_gc[stack_ix];
+    fl_window = stack_window[stack_ix];
+  }
 }
 
 extern void fl_restore_clip();

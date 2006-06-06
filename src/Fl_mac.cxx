@@ -2032,6 +2032,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 void Fl_Window::make_current() 
 {
 #ifdef __APPLE_QUARTZ__
+  OSStatus err;
   Fl_X::q_release_context();
 #endif
   if ( !fl_window_region )
@@ -2068,7 +2069,9 @@ void Fl_Window::make_current()
   }
  
 #ifdef __APPLE_QUARTZ__
-  QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
+  err = QDBeginCGContext(GetWindowPort(i->xid), &i->gc);
+  if (err!=noErr) 
+    fprintf(stderr, "Error %d in QDBeginCGContext\n", (int)err);
   fl_gc = i->gc;
   CGContextSaveGState(fl_gc);
   Fl_X::q_fill_context();
@@ -2117,7 +2120,11 @@ void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;
   if (!fl_gc) return;
   CGContextRestoreGState(fl_gc);
-  if (fl_window) QDEndCGContext(GetWindowPort(fl_window), &fl_gc);
+  if (fl_window) {
+    OSStatus err = QDEndCGContext(GetWindowPort(fl_window), &fl_gc);
+    if (err!=noErr)
+      fprintf(stderr, "Error %d in QDEndCGContext\n", (int)err);
+  }
   fl_gc = 0;
 }
 

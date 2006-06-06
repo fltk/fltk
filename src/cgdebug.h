@@ -83,6 +83,18 @@
 //+StrokePath
 //+TranslateCTM
 
+inline OSStatus dbgLocation(const char *file, int line) 
+{
+  fprintf(stderr, "%s:%d ", file, line);
+  return 0;
+}
+
+inline OSStatus dbgEndl()     
+{
+  fprintf(stderr, "\n");
+  return 0;
+}
+
 
 inline void dbgCGContextClipToRect(CGContextRef a, CGRect b)
 {
@@ -109,20 +121,20 @@ inline OSStatus dbgQDEndCGContext(CGrafPtr a, CGContextRef *b)
   return QDEndCGContext(a, b);
 }
 
-#define QDEndCGContext(a, b) { \
-  fprintf(stderr, "%s:%d ", __FILE__, __LINE__); \
-  dbgQDEndCGContext(a, b); \
-  fprintf(stderr, "\n"); }
+#define QDEndCGContext(a, b) ( \
+  dbgLocation(__FILE__, __LINE__) + \
+  dbgQDEndCGContext(a, b) + \
+  dbgEndl() )
 
 inline OSStatus dbgQDBeginCGContext(CGrafPtr a, CGContextRef *b) 
 {
   return QDBeginCGContext(a, b);
 }
 
-#define QDBeginCGContext(a, b) { \
-  fprintf(stderr, "%s:%d ", __FILE__, __LINE__); \
-  dbgQDBeginCGContext(a, b); \
-  fprintf(stderr, "\n"); }
+#define QDBeginCGContext(a, b) ( \
+  dbgLocation(__FILE__, __LINE__) + \
+  dbgQDBeginCGContext(a, b) + \
+  dbgEndl() )
 
 inline void dbgClipCGContextToRegion(CGContextRef a, const Rect *b, RgnHandle c) 
 {
