@@ -33,7 +33,7 @@
 #include <FL/Fl_Text_Buffer.H>
 
 
-#define PREFERRED_GAP_SIZE 80
+#define PREFERRED_GAP_SIZE 1024
 /* Initial size for the buffer gap (empty space
 in the buffer where text might be inserted
 if the user is typing sequential chars ) */
