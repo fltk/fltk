@@ -292,6 +292,11 @@ double fl_width(const char* txt, int n) {
       // The result should be the same.
     }
   }
+  if (!fl_fontsize) {
+    fl_font(0, 12); // avoid a crash!
+    if (!fl_fontsize)
+      return 0.0; // user must select a font first!
+  }
   OSStatus err;
     // convert to UTF-16 first
   UniChar *uniStr = fl_macToUtf16(txt, n);
