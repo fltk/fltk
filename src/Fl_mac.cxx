@@ -129,8 +129,10 @@ static unsigned short macKeyLookUp[128] =
     'u', '[', 'i', 'p', FL_Enter, 'l', 'j', '\'',
     'k', ';', '\\', ',', '/', 'n', 'm', '.',
 
-    FL_Tab, ' ', '`', FL_BackSpace, 0/*kp_enter on powerbook G4*/, FL_Escape, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+    FL_Tab, ' ', '`', FL_BackSpace, 
+    FL_KP_Enter, FL_Escape, 0, 0/*FL_Meta_L*/,
+    0/*FL_Shift_L*/, 0/*FL_Caps_Lock*/, 0/*FL_Alt_L*/, 0/*FL_Control_L*/, 
+    0/*FL_Shift_R*/, 0/*FL_Alt_R*/, 0/*FL_Control_R*/, 0,
 
     0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
     FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0,
@@ -139,10 +141,10 @@ static unsigned short macKeyLookUp[128] =
     FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0,
 
     FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11,
-    0, 0, FL_Print, FL_Scroll_Lock, 0, FL_F+10, FL_Menu, FL_F+12,
+    0, 0/*FL_F+13*/, FL_Print, FL_Scroll_Lock, 0, FL_F+10, FL_Menu, FL_F+12,
 
     0, FL_Pause, FL_Help, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End,
-    FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0,
+    FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0/*FL_Power*/,
 };
 
 /**
@@ -1107,7 +1109,8 @@ pascal OSStatus carbonKeyboardHandler(
     else
       sym = macKeyLookUp[ keyCode & 0x7f ];
     Fl::e_keysym = sym;
-    if ( keyCode==0x4c ) key=0x0d;
+    // Handle FL_KP_Enter on regular keyboards and on Powerbooks
+    if ( keyCode==0x4c || keyCode==0x34) key=0x0d;
     // Matt: the Mac has no concept of a NumLock key, or at least not visible
     // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
     // Matt: a numeric keypad key is pressed and does not correspond with
