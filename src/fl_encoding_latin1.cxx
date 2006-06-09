@@ -1,5 +1,5 @@
 //
-// "$Id: $"
+// "$Id$"
 //
 // Convert MSWindows-1252 (Latin-1) encoded text to the local encoding.
 //
@@ -133,5 +133,5 @@ const char *fl_local_to_latin1(const char *t, int)
 #endif
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //

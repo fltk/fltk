@@ -1,5 +1,5 @@
 //
-// "$Id: $"
+// "$Id$"
 //
 // Convert Mac Roman encoded text to the local encoding.
 //
@@ -130,5 +130,5 @@ const char *fl_mac_roman_to_local(const char *t, int n)
 #endif
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //
