@@ -834,8 +834,6 @@ int fl_handle(const XEvent& thisevent)
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
 #  endif
-    // Store this so we can later know if the KP was used
-    Fl::e_original_keysym = keysym;
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
     // for them.  There are 15 of these in the range 0xff91 ... 0xff9f
@@ -843,6 +841,8 @@ int fl_handle(const XEvent& thisevent)
       // Map keypad keysym to character or keysym depending on
       // numlock state...
       unsigned long keysym1 = XKeycodeToKeysym(fl_display, keycode, 1);
+      if (keysym1 <= 0x7f || (keysym1 > 0xff9f && keysym1 <= FL_KP_Last))
+        Fl::e_original_keysym = (int)(keysym1 | FL_KP);
       if ((xevent.xkey.state & Mod2Mask) &&
           (keysym1 <= 0x7f || (keysym1 > 0xff9f && keysym1 <= FL_KP_Last))) {
 	// Store ASCII numeric keypad value...
@@ -858,6 +858,9 @@ int fl_handle(const XEvent& thisevent)
 	  0xff0b/*XK_Clear*/, FL_Insert, FL_Delete};
 	keysym = table[keysym-0xff91];
       }
+    } else {
+      // Store this so we can later know if the KP was used
+      Fl::e_original_keysym = (int)keysym;
     }
     Fl::e_keysym = int(keysym);
     set_event_xy();
