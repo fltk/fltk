@@ -885,7 +885,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	    break;
 	}
       }
-    } else {
+    } else if ((lParam & (1<<31))==0){
       buffer[0] = 0;
       Fl::e_length = 0;
     }
