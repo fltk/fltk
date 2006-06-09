@@ -1108,7 +1108,7 @@ pascal OSStatus carbonKeyboardHandler(
       sym = keycode_to_sym( keyCode & 0x7f, 0, macKeyLookUp[ keyCode & 0x7f ] );
     else
       sym = macKeyLookUp[ keyCode & 0x7f ];
-    Fl::e_keysym = sym;
+    Fl::e_keysym = Fl::e_original_keysym = sym;
     // Handle FL_KP_Enter on regular keyboards and on Powerbooks
     if ( keyCode==0x4c || keyCode==0x34) key=0x0d;
     // Matt: the Mac has no concept of a NumLock key, or at least not visible

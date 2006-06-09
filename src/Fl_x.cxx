@@ -834,6 +834,8 @@ int fl_handle(const XEvent& thisevent)
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
 #  endif
+    // Store this so we can later know if the KP was used
+    Fl::e_original_keysym = keysym;
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
     // for them.  There are 15 of these in the range 0xff91 ... 0xff9f

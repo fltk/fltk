@@ -69,6 +69,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.event_is_click">event_is_click</A></LI>
 	<LI><A HREF="#Fl.event_key">event_key</A></LI>
 	<LI><A HREF="#Fl.event_length">event_length</A></LI>
+	<LI><A HREF="#Fl.event_original_key">event_original_key</A></LI>
 	<LI><A HREF="#Fl.event_shift">event_shift</A></LI>
 	<LI><A HREF="#Fl.event_state">event_state</A></LI>
 	<LI><A HREF="#Fl.event_text">event_text</A></LI>
@@ -659,6 +660,14 @@ Fl::event_key(FL_KP_Enter)</tt> do not work.
 will always be a nul at this position in the text.  However there may
 be a nul before that if the keystroke translates to a nul character or
 you paste a nul character.
+
+<H4><A NAME="Fl.event_original_key">int event_original_key();</A></H4>
+
+<P> If NumLock is deactivated, FLTK translates events from the 
+numeric keypad into the corresponding arrow key events. 
+<tt>event_key()</tt> returns the translated key code, whereas
+<tt>event_original_key()</tt> returns the keycode before 
+NumLock translation.
 
 <H4><A NAME="Fl.event_shift">int event_shift();</A></H4>
 

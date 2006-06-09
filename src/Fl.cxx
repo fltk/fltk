@@ -71,7 +71,8 @@ int		Fl::damage_,
 		Fl::e_state,
 		Fl::e_clicks,
 		Fl::e_is_click,
-		Fl::e_keysym;
+		Fl::e_keysym,
+                Fl::e_original_keysym;
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
 int		Fl::visible_focus_ = 1,

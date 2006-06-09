@@ -82,6 +82,8 @@ public: // should be private!
   static const char* scheme_;
   static Fl_Image* scheme_bg_;
 
+  static int e_original_keysym; // late addition
+
 public:
 
   // API version number
@@ -159,6 +161,7 @@ public:
   static int event_state()	{return e_state;}
   static int event_state(int i) {return e_state&i;}
   static int event_key()	{return e_keysym;}
+  static int event_original_key(){return e_original_keysym;}
   static int event_key(int);
   static int get_key(int);
   static const char* event_text() {return e_text;}

@@ -803,7 +803,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_KEYUP:
   case WM_SYSKEYUP:
     // save the keysym until we figure out the characters:
-    Fl::e_keysym = ms2fltk(wParam,lParam&(1<<24));
+    Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam,lParam&(1<<24));
     // See if TranslateMessage turned it into a WM_*CHAR message:
     if (PeekMessage(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE)) {
       uMsg = fl_msg.message;
@@ -832,10 +832,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
     Fl::e_state = state;
-    if (lParam & (1<<31)) { // key up events.
-      if (Fl::handle(FL_KEYUP, window)) return 0;
-      break;
-    }
     static char buffer[2];
     if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
       buffer[0] = char(wParam);
@@ -894,6 +890,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       Fl::e_length = 0;
     }
     Fl::e_text = buffer;
+    if (lParam & (1<<31)) { // key up events.
+      if (Fl::handle(FL_KEYUP, window)) return 0;
+      break;
+    }
     // for (int i = lParam&0xff; i--;)
     while (window->parent()) window = window->window();
     if (Fl::handle(FL_KEYBOARD,window)) return 0;
