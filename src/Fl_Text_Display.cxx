@@ -921,7 +921,7 @@ void Fl_Text_Display::display_insert() {
   if (insert_position() < mFirstChar) {
     topLine -= count_lines(insert_position(), mFirstChar, false);
   } else if (mLineStarts[mNVisibleLines-2] != -1) {
-    int lastChar = buffer()->line_end(mLineStarts[mNVisibleLines-2]);
+    int lastChar = line_end(mLineStarts[mNVisibleLines-2],true);
     if (insert_position() >= lastChar)
       topLine
         += count_lines(lastChar - (wrap_uses_character(mLastChar) ? 0 : 1),
@@ -934,8 +934,12 @@ void Fl_Text_Display::display_insert() {
      horizontal */
   if (!position_to_xy( mCursorPos, &X, &Y )) {
     scroll_(topLine, hOffset);
-    if (!position_to_xy( mCursorPos, &X, &Y ))
+    if (!position_to_xy( mCursorPos, &X, &Y )) {
+      #ifdef DEBUG
+      printf ("*** display_insert/position_to_xy # GIVE UP !\n"); fflush(stdout);
+      #endif // DEBUG
       return;   /* Give up, it's not worth it (but why does it fail?) */
+    }
   }
   if (X > text_area.x + text_area.w)
     hOffset += X-(text_area.x + text_area.w);
@@ -977,7 +981,7 @@ int Fl_Text_Display::move_up() {
   if ( position_to_line( mCursorPos, &visLineNum ) )
     lineStartPos = mLineStarts[ visLineNum ];
   else {
-    lineStartPos = buffer()->line_start( mCursorPos );
+    lineStartPos = line_start( mCursorPos );
     visLineNum = -1;
   }
   if ( lineStartPos == 0 )
@@ -991,10 +995,10 @@ int Fl_Text_Display::move_up() {
   if ( visLineNum != -1 && visLineNum != 0 )
     prevLineStartPos = mLineStarts[ visLineNum - 1 ];
   else
-    prevLineStartPos = buffer()->rewind_lines( lineStartPos, 1 );
+    prevLineStartPos = rewind_lines( lineStartPos, 1 );
   newPos = mBuffer->skip_displayed_characters( prevLineStartPos, column );
-    if (mContinuousWrap)
-    	newPos = min(newPos, line_end(prevLineStartPos, true));
+  if (mContinuousWrap)
+      newPos = min(newPos, line_end(prevLineStartPos, true));
 
   /* move the cursor */
   insert_position( newPos );
@@ -1012,7 +1016,7 @@ int Fl_Text_Display::move_down() {
   if ( position_to_line( mCursorPos, &visLineNum ) )
     lineStartPos = mLineStarts[ visLineNum ];
   else {
-    lineStartPos = buffer()->line_start( mCursorPos );
+    lineStartPos = line_start( mCursorPos );
     visLineNum = -1;
   }
   column = mCursorPreferredCol >= 0 ? mCursorPreferredCol :
@@ -1038,7 +1042,7 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
     int retLines, retPos, retLineStart, retLineEnd;
 
 #ifdef DEBUG
-    printf("Fl_Text_Display::count_line(startPos=%d, endPos=%d, startPosIsLineStart=%d\n",
+    printf("Fl_Text_Display::count_lines(startPos=%d, endPos=%d, startPosIsLineStart=%d\n",
            startPos, endPos, startPosIsLineStart);
 #endif // DEBUG
 
@@ -1051,7 +1055,7 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
 	    &retLineEnd);
 
 #ifdef DEBUG
-    printf("retPos=%d, retLines=%d, retLineStart=%d, retLineEnd=%d\n",
+    printf("   # after WLC: retPos=%d, retLines=%d, retLineStart=%d, retLineEnd=%d\n",
            retPos, retLines, retLineStart, retLineEnd);
 #endif // DEBUG
 
@@ -1973,14 +1977,14 @@ void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
   if ( newTopLineNum < oldTopLineNum && newTopLineNum < -lineDelta ) {
     mFirstChar = skip_lines( 0, newTopLineNum - 1, true );
   } else if ( newTopLineNum < oldTopLineNum ) {
-    mFirstChar = buffer()->rewind_lines( mFirstChar, -lineDelta );
+    mFirstChar = rewind_lines( mFirstChar, -lineDelta );
   } else if ( newTopLineNum < lastLineNum ) {
     mFirstChar = lineStarts[ newTopLineNum - oldTopLineNum ];
   } else if ( newTopLineNum - lastLineNum < mNBufferLines - newTopLineNum ) {
     mFirstChar = skip_lines( lineStarts[ nVisLines - 1 ],
                                        newTopLineNum - lastLineNum, true );
   } else {
-    mFirstChar = buffer()->rewind_lines( buf->length(), mNBufferLines - newTopLineNum + 1 );
+    mFirstChar = rewind_lines( buf->length(), mNBufferLines - newTopLineNum + 1 );
   }
 
   /* Fill in the line starts array */
@@ -2037,7 +2041,7 @@ void Fl_Text_Display::update_line_starts( int pos, int charsInserted,
     if ( position_to_line( pos + charsDeleted, &lineOfEnd ) &&
          ++lineOfEnd < nVisLines && lineStarts[ lineOfEnd ] != -1 ) {
       mTopLineNum = max( 1, mTopLineNum + lineDelta );
-      mFirstChar = buffer()->rewind_lines(
+      mFirstChar = rewind_lines(
             lineStarts[ lineOfEnd ] + charDelta, lineOfEnd );
       /* Otherwise anchor on original line number and recount everything */
     } else {

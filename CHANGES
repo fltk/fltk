@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed line wrapping in Fl_Text_Display (STR #1227)
 	- New function Fl::event_original_key() returns key 
 	  code before NumLock handling.
 	- Many OS X Quartz fixes (STR #1310, etc.)
