@@ -56,6 +56,7 @@ extern "C" {
 #include <FL/x.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1972,6 +1973,7 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
+  Fl_Tooltip::exit_(this);
   if (!shown() || !i) {
     Fl_X::make(this);
   } else {

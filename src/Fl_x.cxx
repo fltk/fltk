@@ -38,6 +38,7 @@
 #  include <FL/Fl.H>
 #  include <FL/x.H>
 #  include <FL/Fl_Window.H>
+#  include <FL/Fl_Tooltip.H>
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
@@ -1329,6 +1330,7 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
+  Fl_Tooltip::exit_(this);
   if (!shown()) {
     fl_open_display();
     if (can_boxcheat(box())) fl_background_pixel = int(fl_xpixel(color()));

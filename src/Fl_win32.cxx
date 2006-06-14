@@ -33,6 +33,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Enumerations.H>
+#include <FL/Fl_Tooltip.H>
 #include "flstring.h"
 #include "Fl_Font.H"
 #include <stdio.h>
@@ -1512,6 +1513,7 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
+  Fl_Tooltip::exit_(this);
   if (!shown()) {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
     Fl_X::make(this);
