@@ -351,7 +351,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
  */
 char Fl_Preferences::set( const char *key, const char *text )
 {
-  const char *s = text;
+  const char *s = text ? text : "";
   int n=0, ns=0;
   for ( ; *s; s++ ) { n++; if ( *s<32 || *s=='\\' || *s==0x7f ) ns+=4; }
   if ( ns )
