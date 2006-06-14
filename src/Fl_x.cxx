@@ -1330,7 +1330,7 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
-  Fl_Tooltip::exit_(this);
+  Fl_Tooltip::exit(this);
   if (!shown()) {
     fl_open_display();
     if (can_boxcheat(box())) fl_background_pixel = int(fl_xpixel(color()));

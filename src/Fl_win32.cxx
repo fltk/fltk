@@ -1513,7 +1513,7 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
-  Fl_Tooltip::exit_(this);
+  Fl_Tooltip::exit(this);
   if (!shown()) {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
     Fl_X::make(this);

@@ -1973,7 +1973,7 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
-  Fl_Tooltip::exit_(this);
+  Fl_Tooltip::exit(this);
   if (!shown() || !i) {
     Fl_X::make(this);
   } else {
