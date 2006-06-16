@@ -55,6 +55,7 @@
 //
 
 #include <FL/Fl_Help_View.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
 #include <stdio.h>
 #include <stdlib.h>
@@ -135,6 +136,96 @@ static const char *broken_xpm[] =
 		};
 
 static Fl_Pixmap broken_image(broken_xpm);
+
+//
+// All the stuff needed to implement text selection in Fl_Help_View
+//
+
+/* matt:
+ * We are trying to keep binary compatibility with previous versions
+ * of FLTK. This means that we are limited to adding static variables
+ * only to not enlarge the Fl_Help_View class. Lucky for us, only one
+ * text can be selected system wide, so we can remember the selection
+ * in a single set of variables.
+ *
+ * Still to do:
+ * - The viewer flickers like crazy when redrawing. The window should be
+ *   Fl_Double_Window, but is that binary compatible?
+ * - We should not draw anything when counting (draw_mode>0). That would 
+ *   improve performance a lot
+ * - &word; style characters mess up our count inside a word boundary
+ * - we can only select words, no individual characters
+ * - no dragging of the selection into another widget
+ * - selection must be cleared if another widget get focus!
+ * - write a comment for every new function
+ */
+
+/*
+The following functions are also used to draw stuff and should be replaced with
+local copies that are much faster when merely counting:
+
+fl_color(Fl_Color);
+fl_rectf(int, int, int, int);
+fl_push_clip(int, int, int, int);
+fl_xyline(int, int, int);
+fl_rect()
+fl_line()
+img->draw()
+*/
+
+static int selection_first = 0;
+static int selection_last = 0;
+static int selection_push_first = 0;
+static int selection_push_last = 0;
+static int selection_drag_first = 0;
+static int selection_drag_last = 0;
+static int selected = 0;
+static int draw_mode = 0;
+static int mouse_x = 0;
+static int mouse_y = 0;
+static int current_pos = 0;
+static int clicked_link = 0;
+static Fl_Help_View *current_view = 0L;
+Fl_Color hv_selection_color;
+Fl_Color hv_selection_text_color;
+
+/*
+ * Limitation: if a word contains &code; notations, we will calculate a wrong length.
+ *
+ * This function must be optimized for speed!
+ */
+void Fl_Help_View::hv_draw(const char *t, int x, int y)
+{
+  if (selected && current_view==this && current_pos<selection_last && current_pos>=selection_first) {
+    Fl_Color c = fl_color();
+    fl_color(hv_selection_color);
+    int w = fl_width(t);
+    if (current_pos+strlen(t)<selection_last) 
+      w += fl_width(' ');
+    fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
+    fl_color(hv_selection_text_color);
+    fl_draw(t, x, y);
+    fl_color(c);
+  } else {
+    fl_draw(t, x, y);
+  }
+  if (draw_mode) {
+    int w = fl_width(t);
+    if (mouse_x>=x && mouse_x<x+w) {
+      if (mouse_y>=y-fl_height()+fl_descent()&&mouse_y<=y+fl_descent()) {
+        int f = current_pos;
+        int l = f+strlen(t); // use 'quote_char' to calculate the true length of the HTML string
+        if (draw_mode==1) {
+          selection_push_first = f;
+          selection_push_last = l;
+        } else {
+          selection_drag_first = f;
+          selection_drag_last = l;
+        }
+      }
+    }
+  }
+}
 
 
 //
@@ -363,6 +454,12 @@ Fl_Help_View::draw()
   if (!value_)
     return;
 
+  if (current_view==this && selected) {
+    hv_selection_color = FL_SELECTION_COLOR;
+    hv_selection_text_color = fl_contrast(textcolor_, FL_SELECTION_COLOR);
+
+  }
+
   // Clip the drawing to the inside of the box...
   fl_push_clip(x() + Fl::box_dx(b), y() + Fl::box_dy(b),
                ww - Fl::box_dw(b), hh - Fl::box_dh(b));
@@ -406,12 +503,13 @@ Fl_Help_View::draw()
 	      hh = 0;
 	    }
 
-            fl_draw(buf, xx + x() - leftline_, yy + y());
+            hv_draw(buf, xx + x() - leftline_, yy + y());
 	    if (underline) {
               xtra_ww = isspace((*ptr)&255)?(int)fl_width(' '):0;
               fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                xx + x() - leftline_ + ww + xtra_ww);
             }
+            current_pos = ptr-value_;
 
             xx += ww;
 	    if ((fsize + 2) > hh)
@@ -428,11 +526,12 @@ Fl_Help_View::draw()
 	        *s = '\0';
                 s = buf;
 
-                fl_draw(buf, xx + x() - leftline_, yy + y());
+                hv_draw(buf, xx + x() - leftline_, yy + y());
 		if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                        	 xx + x() - leftline_ +
 					     (int)fl_width(buf));
 
+                current_pos = ptr-value_;
 		if (line < 31)
 	          line ++;
 		xx = block->line[line];
@@ -459,11 +558,12 @@ Fl_Help_View::draw()
 	      *s = '\0';
 	      s = buf;
 
-              fl_draw(buf, xx + x() - leftline_, yy + y());
+              hv_draw(buf, xx + x() - leftline_, yy + y());
 	      ww = (int)fl_width(buf);
 	      if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                               xx + x() - leftline_ + ww);
               xx += ww;
+              current_pos = ptr-value_;
 	    }
 
 	    needspace = 0;
@@ -474,6 +574,7 @@ Fl_Help_View::draw()
 
 	    while (isspace((*ptr)&255))
               ptr ++;
+            current_pos = ptr-value_;
 	  }
 	}
 
@@ -510,6 +611,8 @@ Fl_Help_View::draw()
 	  if (*ptr == '>')
             ptr ++;
 
+          // end of command reached, set the supposed start of printed eord here
+          current_pos = ptr-value_;
 	  if (strcasecmp(buf, "HEAD") == 0)
             head = 1;
 	  else if (strcasecmp(buf, "BR") == 0)
@@ -568,10 +671,10 @@ Fl_Help_View::draw()
 	    {
 #ifdef __APPLE_QUARTZ__
               fl_font(FL_SYMBOL, fsize); 
-              fl_draw("\245", xx - fsize + x() - leftline_, yy + y());
+              hv_draw("\245", xx - fsize + x() - leftline_, yy + y());
 #else
               fl_font(FL_SYMBOL, fsize);
-              fl_draw("\267", xx - fsize + x() - leftline_, yy + y());
+              hv_draw("\267", xx - fsize + x() - leftline_, yy + y());
 #endif
 	    }
 
@@ -755,7 +858,7 @@ Fl_Help_View::draw()
 	  *s = '\0';
 	  s = buf;
 
-          fl_draw(buf, xx + x() - leftline_, yy + y());
+          hv_draw(buf, xx + x() - leftline_, yy + y());
 
 	  if (line < 31)
 	    line ++;
@@ -765,6 +868,7 @@ Fl_Help_View::draw()
 	  needspace = 0;
 
 	  ptr ++;
+          current_pos = ptr-value_;
 	}
 	else if (isspace((*ptr)&255))
 	{
@@ -781,6 +885,7 @@ Fl_Help_View::draw()
 	  }
 
           ptr ++;
+          if (!pre) current_pos = ptr-value_;
 	  needspace = 1;
 	}
 	else if (*ptr == '&')
@@ -829,13 +934,21 @@ Fl_Help_View::draw()
 
       if (s > buf && !head)
       {
-        fl_draw(buf, xx + x() - leftline_, yy + y());
+        hv_draw(buf, xx + x() - leftline_, yy + y());
 	if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                         xx + x() - leftline_ + ww);
+        current_pos = ptr-value_;
       }
     }
 
   fl_pop_clip();
+  if (Fl::focus()==this) {
+    ww = w() ;
+    hh = h();
+    if (hscrollbar_.visible()) hh -= 18;
+    if (scrollbar_.visible()) ww -= 18;
+    draw_focus(box(), x(), y(), ww, hh);
+  }
 }
 
 
@@ -2363,6 +2476,235 @@ Fl_Help_View::get_length(const char *l) {	// I - Value
 }
 
 
+Fl_Help_Link *Fl_Help_View::find_link(int xx, int yy)
+{
+  int		i;
+  Fl_Help_Link	*linkp;
+  for (i = nlinks_, linkp = links_; i > 0; i --, linkp ++) {
+    if (xx >= linkp->x && xx < linkp->w &&
+        yy >= linkp->y && yy < linkp->h)
+      break;
+  }
+  return i ? linkp : 0L;
+}
+
+void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
+{
+  char		target[32];	// Current target
+
+  clear_selection();
+
+  strlcpy(target, linkp->name, sizeof(target));
+
+  set_changed();
+
+  if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
+  {
+    char	dir[1024];	// Current directory
+    char	temp[1024],	// Temporary filename
+	      *tempptr;	// Pointer into temporary filename
+
+
+    if (strchr(directory_, ':') != NULL &&
+        strchr(linkp->filename, ':') == NULL)
+    {
+      if (linkp->filename[0] == '/')
+      {
+        strlcpy(temp, directory_, sizeof(temp));
+        if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
+	  strlcpy(tempptr, linkp->filename, sizeof(temp));
+	else
+	  strlcat(temp, linkp->filename, sizeof(temp));
+      }
+      else
+	snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
+    }
+    else if (linkp->filename[0] != '/' && strchr(linkp->filename, ':') == NULL)
+    {
+      if (directory_[0])
+	snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
+      else
+      {
+	getcwd(dir, sizeof(dir));
+	snprintf(temp, sizeof(temp), "file:%s/%s", dir, linkp->filename);
+      }
+    }
+    else
+      strlcpy(temp, linkp->filename, sizeof(temp));
+
+    if (linkp->name[0])
+      snprintf(temp + strlen(temp), sizeof(temp) - strlen(temp), "#%s",
+	       linkp->name);
+
+    load(temp);
+  }
+  else if (target[0])
+    topline(target);
+  else
+    topline(0);
+
+  leftline(0);
+}
+
+void Fl_Help_View::clear_selection()
+{
+  if (current_view==this)
+    clear_global_selection();
+}
+
+void Fl_Help_View::select_all()
+{
+  clear_global_selection();
+  if (!value_) return;
+  current_view = this;
+  selection_drag_last = selection_last = strlen(value_);
+  selected = 1;
+}
+
+void Fl_Help_View::clear_global_selection()
+{
+  if (selected) redraw();
+  selection_push_first = selection_push_last = 0;
+  selection_drag_first = selection_drag_last = 0;
+  selection_first = selection_last = 0;
+  selected = 0;
+}
+
+char Fl_Help_View::begin_selection()
+{
+  clear_global_selection();
+  mouse_x = Fl::event_x(); mouse_y = Fl::event_y();
+  draw_mode = 1;
+  current_view = this;
+  window()->make_current();
+  draw();
+  draw_mode = 0;
+  if (selection_push_last) return 1;
+  return 0;
+}
+
+char Fl_Help_View::extend_selection()
+{
+  if (Fl::event_is_click())
+    return 0;
+  selected = 1;
+  int sf = selection_first, sl = selection_last;
+  mouse_x = Fl::event_x(); mouse_y = Fl::event_y();
+  draw_mode = 2;
+  window()->make_current();
+  draw();
+  draw_mode = 0;
+  if (selection_push_first < selection_drag_first)
+    selection_first = selection_push_first; else selection_first = selection_drag_first; 
+  if (selection_push_last > selection_drag_last)
+    selection_last = selection_push_last; else selection_last = selection_drag_last; 
+  if (sf!=selection_first || sl!=selection_last) 
+    return 1;
+  return 1;
+}
+
+// convert a command with up to four letters into an unsigned int
+static unsigned int command(const char *cmd)
+{
+  unsigned int ret = (tolower(cmd[0])<<24);
+  char c = cmd[1];
+  if (c=='>' || c==' ' || c==0) return ret;
+  ret |= (tolower(c)<<16);
+  c = cmd[2];
+  if (c=='>' || c==' ' || c==0) return ret;
+  ret |= (tolower(c)<<8);
+  c = cmd[3];
+  if (c=='>' || c==' ' || c==0) return ret;
+  ret |= tolower(c);
+  c = cmd[4];
+  if (c=='>' || c==' ' || c==0) return ret;
+  return 0;
+}
+
+#define CMD(a, b, c, d) ((a<<24)|(b<<16)|(c<<8)|d)
+
+void Fl_Help_View::end_selection(int clipboard) 
+{
+  if (!selected || current_view!=this) 
+    return;
+  // convert the select part of our html text into some kind of somewhat readable ASCII
+  // and store it in the selection buffer
+  char p = 0, pre = 0;;
+  int len = strlen(value_), nc;
+  char *txt = (char*)malloc(len+1), *d = txt;
+  const char *s = value_, *cmd, *src;
+  for (;;) {
+    char c = *s++;
+    if (c==0) break;
+    if (c=='<') { // begin of some html command. Skip until we find a '>'
+      cmd = s;
+      for (;;) {
+        c = *s++;
+        if (c==0 || c=='>') break;
+      }
+      if (c==0) break;
+      // do something with this command... .
+      // the replacement string must not be longer that the command itself plus '<' and '>'
+      src = 0;
+      switch (command(cmd)) {
+        case CMD('p','r','e', 0 ): pre = 1; break;
+        case CMD('/','p','r','e'): pre = 0; break;
+        case CMD('t','d', 0 , 0 ):
+        case CMD('p', 0 , 0 , 0 ):
+        case CMD('/','p', 0 , 0 ):
+        case CMD('b','r', 0 , 0 ): src = "\n"; break;
+        case CMD('l','i', 0 , 0 ): src = "\n * "; break;
+        case CMD('/','h','1', 0 ):
+        case CMD('/','h','2', 0 ):
+        case CMD('/','h','3', 0 ):
+        case CMD('/','h','4', 0 ):
+        case CMD('/','h','5', 0 ):
+        case CMD('/','h','6', 0 ): src = "\n\n"; break;
+        case CMD('t','r', 0 , 0 ):
+        case CMD('h','1', 0 , 0 ):
+        case CMD('h','2', 0 , 0 ):
+        case CMD('h','3', 0 , 0 ):
+        case CMD('h','4', 0 , 0 ):
+        case CMD('h','5', 0 , 0 ):
+        case CMD('h','6', 0 , 0 ): src = "\n\n"; break;
+        case CMD('d','t', 0 , 0 ): src = "\n "; break;
+        case CMD('d','d', 0 , 0 ): src = "\n - "; break;
+      }
+      int n = s-value_;
+      if (src && n>selection_first && n<=selection_last) {
+        while (*src) {
+          *d++ = *src++;
+        }
+        c = src[-1];
+        p = isspace(c) ? ' ' : c;
+      }
+      continue;
+    }
+    if (c=='&') { // special characters
+      int xx = quote_char(s);
+      if (xx>=0) {
+        c = (char)xx;
+        for (;;) {
+          char cc = *s++;
+          if (!cc || cc==';') break;
+        }
+      }
+    }
+    int n = s-value_;
+    if (n>selection_first && n<=selection_last) {
+      if (!pre && isspace(c)) c = ' ';
+      if (p!=' '||c!=' ')
+        *d++ = c;
+      p = c;
+    }
+  }
+  *d = 0;
+  Fl::copy(txt, strlen(txt), clipboard);
+  free(txt);
+}
+
+#define ctrl(x) ((x)&0x1f)
+
 //
 // 'Fl_Help_View::handle()' - Handle events in the widget.
 //
@@ -2370,105 +2712,96 @@ Fl_Help_View::get_length(const char *l) {	// I - Value
 int				// O - 1 if we handled it, 0 otherwise
 Fl_Help_View::handle(int event)	// I - Event to handle
 {
-  int		i;		// Looping var
-  int		xx, yy;		// Adjusted mouse position
-  Fl_Help_Link	*linkp;		// Current link
-  char		target[32];	// Current target
+  static Fl_Help_Link *linkp;   // currently clicked link
 
+  int xx = Fl::event_x() - x() + leftline_;
+  int yy = Fl::event_y() - y() + topline_;
 
   switch (event)
   {
-    case FL_PUSH :
-	if (Fl_Group::handle(event))
-	  return (1);
-
-    case FL_MOVE :
-        xx = Fl::event_x() - x() + leftline_;
-	yy = Fl::event_y() - y() + topline_;
-	break;
-
+    case FL_FOCUS:
+      redraw();
+      return 1;
+    case FL_UNFOCUS:
+      clear_selection();
+      redraw();
+      return 1;
+    case FL_ENTER :
+      Fl_Group::handle(event);
+      return 1;
     case FL_LEAVE :
-        fl_cursor(FL_CURSOR_DEFAULT);
-
-    default :
-	return (Fl_Group::handle(event));
-  }
-
-  // Handle mouse clicks on links...
-  for (i = nlinks_, linkp = links_; i > 0; i --, linkp ++)
-    if (xx >= linkp->x && xx < linkp->w &&
-        yy >= linkp->y && yy < linkp->h)
+      fl_cursor(FL_CURSOR_DEFAULT);
       break;
-
-  if (!i)
-  {
-    fl_cursor(FL_CURSOR_DEFAULT);
-    return (1);
-  }
-
-  // Change the cursor for FL_MOTION events, and go to the link for
-  // clicks...
-  if (event == FL_MOVE)
-    fl_cursor(FL_CURSOR_HAND);
-  else
-  {
-    fl_cursor(FL_CURSOR_DEFAULT);
-
-    strlcpy(target, linkp->name, sizeof(target));
-
-    set_changed();
-
-    if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
-    {
-      char	dir[1024];	// Current directory
-      char	temp[1024],	// Temporary filename
-		*tempptr;	// Pointer into temporary filename
-
-
-      if (strchr(directory_, ':') != NULL &&
-          strchr(linkp->filename, ':') == NULL)
-      {
-	if (linkp->filename[0] == '/')
-	{
-          strlcpy(temp, directory_, sizeof(temp));
-          if ((tempptr = strrchr(strchr(directory_, ':') + 3, '/')) != NULL)
-	    strlcpy(tempptr, linkp->filename, sizeof(temp));
-	  else
-	    strlcat(temp, linkp->filename, sizeof(temp));
-	}
-	else
-	  snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
-      }
-      else if (linkp->filename[0] != '/' && strchr(linkp->filename, ':') == NULL)
-      {
-	if (directory_[0])
-	  snprintf(temp, sizeof(temp), "%s/%s", directory_, linkp->filename);
-	else
-	{
-	  getcwd(dir, sizeof(dir));
-	  snprintf(temp, sizeof(temp), "file:%s/%s", dir, linkp->filename);
-	}
-      }
+    case FL_MOVE:
+      if (Fl_Group::handle(event))
+        return 1;
+      if (find_link(xx, yy))
+        fl_cursor(FL_CURSOR_HAND);
       else
-        strlcpy(temp, linkp->filename, sizeof(temp));
-
-      if (linkp->name[0])
-        snprintf(temp + strlen(temp), sizeof(temp) - strlen(temp), "#%s",
-	         linkp->name);
-
-      load(temp);
-    }
-    else if (target[0])
-      topline(target);
-    else
-      topline(0);
-
-    leftline(0);
+        fl_cursor(FL_CURSOR_DEFAULT);
+      return 1;
+    case FL_PUSH:
+      if (Fl::focus() != this) {
+        Fl::focus(this);
+        handle(FL_FOCUS);
+      }
+      if (Fl_Group::handle(event))
+        return 1;
+      linkp = find_link(xx, yy);
+      if (linkp) {
+        fl_cursor(FL_CURSOR_HAND);
+        return 1;
+      }
+      if (begin_selection()) {
+        fl_cursor(FL_CURSOR_INSERT);
+        return 1;
+      }
+      fl_cursor(FL_CURSOR_DEFAULT);
+      return 1;
+    case FL_DRAG:
+      if (linkp) {
+        if (Fl::event_is_click()) {
+          fl_cursor(FL_CURSOR_HAND);
+        } else {
+          fl_cursor(FL_CURSOR_DEFAULT); // should be "FL_CURSOR_CANCEL" if we had it
+        }
+        return 1;
+      }
+      if (current_view==this && selection_push_last) {
+        if (extend_selection()) {
+          redraw();
+        }
+        fl_cursor(FL_CURSOR_INSERT);
+        return 1;
+      }
+      fl_cursor(FL_CURSOR_DEFAULT);
+      return 1;
+    case FL_RELEASE:
+      if (linkp) {
+        fl_cursor(FL_CURSOR_DEFAULT);
+        if (Fl::event_is_click()) {
+          follow_link(linkp);
+        }
+        linkp = 0;
+        return 1;
+      }
+      if (current_view==this && selection_push_last) {
+        end_selection();
+        return 1;
+      }
+      return 1;
+    case FL_SHORTCUT: {
+      char ascii = Fl::event_text()[0];
+      fprintf(stderr, "%02x %c\n", ascii, ascii);
+      switch (ascii) {
+        case ctrl('A'): select_all(); redraw(); return 1;
+        case ctrl('X'): end_selection(1); return 1;
+        case ctrl('C'): end_selection(1); return 1;
+      }
+      break; }
   }
-
-  return (1);
+  return (Fl_Group::handle(event));
 }
-
 
 //
 // 'Fl_Help_View::Fl_Help_View()' - Build a Fl_Help_View widget.
@@ -2566,6 +2899,8 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		error[1024];	// Error buffer
   char		newname[1024];	// New filename buffer
 
+
+  clear_selection();
 
   strlcpy(newname, f, sizeof(newname));
   if ((target = strrchr(newname, '#')) != NULL)
@@ -2753,6 +3088,8 @@ Fl_Help_View::leftline(int l)	// I - Left position
 void
 Fl_Help_View::value(const char *v)	// I - Text to view
 {
+  clear_selection();
+
   if (!v)
     return;
 

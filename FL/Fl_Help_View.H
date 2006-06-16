@@ -158,7 +158,15 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 			fl_font(f = fonts_[nfonts_][0],
 			        s = fonts_[nfonts_][1]); }
 
-  public:
+  void          hv_draw(const char *t, int x, int y);
+  char          begin_selection();
+  char          extend_selection();
+  void          end_selection(int c=0);
+  void          clear_global_selection();
+  Fl_Help_Link  *find_link(int, int);
+  void          follow_link(Fl_Help_Link*);
+
+public:
 
   Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
   ~Fl_Help_View();
@@ -186,6 +194,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   int		leftline() const { return (leftline_); }
   void		value(const char *v);
   const char	*value() const { return (value_); }
+  void          clear_selection();
+  void          select_all();
 };
 
 #endif // !Fl_Help_View_H
