@@ -328,9 +328,15 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (m) y(Y); else {y(Y-2); w(1); h(1);}
 
   if (t) {
-    int dy = menubar_title ? Fl::box_dy(button->box())+1 : 2;
-    int ht = menubar_title ? button->h()-dy*2 : Htitle+2*BW+3;
-    title = new menutitle(tx, ty-ht-dy, Wtitle, ht, t);
+    if (menubar_title) {
+      int dy = Fl::box_dy(button->box())+1;
+      int ht = button->h()-dy*2;
+      title = new menutitle(tx, ty-ht-dy, Wtitle, ht, t);
+    } else {
+      int dy = 2;
+      int ht = Htitle+2*BW+3;
+      title = new menutitle(X, Y-ht-dy, Wtitle, ht, t);
+    }
   } else
     title = 0;
 }
