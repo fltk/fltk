@@ -133,6 +133,21 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   Fl_Scrollbar	scrollbar_,		// Vertical scrollbar for document
 		hscrollbar_;		// Horizontal scrollbar
 
+  static int    selection_first;
+  static int    selection_last;
+  static int    selection_push_first;
+  static int    selection_push_last;
+  static int    selection_drag_first;
+  static int    selection_drag_last;
+  static int    selected;
+  static int    draw_mode;
+  static int    mouse_x;
+  static int    mouse_y;
+  static int    current_pos;
+  static Fl_Help_View *current_view;
+  static Fl_Color hv_selection_color;
+  static Fl_Color hv_selection_text_color;
+
   Fl_Help_Block	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void		add_link(const char *n, int xx, int yy, int ww, int hh);
   void		add_target(const char *n, int yy);

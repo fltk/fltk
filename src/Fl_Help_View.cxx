@@ -173,20 +173,20 @@ fl_line()
 img->draw()
 */
 
-static int selection_first = 0;
-static int selection_last = 0;
-static int selection_push_first = 0;
-static int selection_push_last = 0;
-static int selection_drag_first = 0;
-static int selection_drag_last = 0;
-static int selected = 0;
-static int draw_mode = 0;
-static int mouse_x = 0;
-static int mouse_y = 0;
-static int current_pos = 0;
-static Fl_Help_View *current_view = 0L;
-Fl_Color hv_selection_color;
-Fl_Color hv_selection_text_color;
+int Fl_Help_View::selection_first = 0;
+int Fl_Help_View::selection_last = 0;
+int Fl_Help_View::selection_push_first = 0;
+int Fl_Help_View::selection_push_last = 0;
+int Fl_Help_View::selection_drag_first = 0;
+int Fl_Help_View::selection_drag_last = 0;
+int Fl_Help_View::selected = 0;
+int Fl_Help_View::draw_mode = 0;
+int Fl_Help_View::mouse_x = 0;
+int Fl_Help_View::mouse_y = 0;
+int Fl_Help_View::current_pos = 0;
+Fl_Help_View *Fl_Help_View::current_view = 0L;
+Fl_Color Fl_Help_View::hv_selection_color;
+Fl_Color Fl_Help_View::hv_selection_text_color;
 
 /*
  * Limitation: if a word contains &code; notations, we will calculate a wrong length.
