@@ -57,14 +57,14 @@ all:	$(FLUID) fluid$(EXEEXT)
 fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
 			../lib/$(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 	$(CP) $@ fluid.app/Contents/MacOS
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
 	echo Linking $@...
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 clean:

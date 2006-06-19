@@ -56,11 +56,13 @@ if test "x$uname" = x; then
 fi
 
 dnl Don't automatically add "-g" to compiler options...
+ARCHFLAGS="${ARCHFLAGS:=}"
 CFLAGS="${CFLAGS:=}"
 CPPFLAGS="${CPPFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 OPTIM="${OPTIM:=}"
 
+AC_SUBST(ARCHFLAGS)
 AC_SUBST(OPTIM)
 
 dnl OS-specific pre-tests...
@@ -69,10 +71,7 @@ case $uname in
         # Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=no]])
 	if test x$enable_cygwin != xyes; then
-	    CFLAGS="$CFLAGS -mno-cygwin"
-	    CPPFLAGS="$CPPFLAGS -mno-cygwin"
-	    CXXFLAGS="$CXXFLAGS -mno-cygwin"
-	    LDFLAGS="$LDFLAGS -mno-cygwin"
+	    ARCHFLAGS="$ARCHFLAGS -mno-cygwin"
 	fi
 	;;
 esac
@@ -236,6 +235,10 @@ AC_SUBST(FLUID)
 AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support])
 
 AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
+
+AC_ARG_WITH(archflags, [  --with-archflags="flags"
+                          use custom architecture flags],
+    ARCHFLAGS="$withval")
 
 case $uname in
     Darwin*)

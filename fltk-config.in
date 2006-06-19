@@ -53,6 +53,7 @@ CXX="@CXX@"
 POSTBUILD="@POSTBUILD@"
 
 # flags for C++ compiler:
+ARCHFLAGS="@ARCHFLAGS@"
 CFLAGS="@CFLAGS@ @LARGEFILE@"
 CXXFLAGS="@CXXFLAGS@ @LARGEFILE@"
 LDFLAGS="@LDFLAGS@"
@@ -262,8 +263,8 @@ if test -n "$compile"; then
 	    
     post=$prog
 
-    echo $CXX $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
-    $CXX $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+    echo $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+    $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
 fi
 
 if test -n "$post" -a "$POSTBUILD" != ":"; then

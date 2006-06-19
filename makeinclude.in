@@ -54,6 +54,7 @@ CC		= @CC@
 MAKEDEPEND	= @MAKEDEPEND@
 
 # flags for C++ compiler:
+ARCHFLAGS	= @ARCHFLAGS@
 OPTIM		= @OPTIM@
 CFLAGS		= $(OPTIM) @LARGEFILE@ @CPPFLAGS@ @CFLAGS@
 CXXFLAGS	= $(OPTIM) @LARGEFILE@ @CPPFLAGS@ @CXXFLAGS@
@@ -118,16 +119,16 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 
 .o$(EXEEXT):
 	echo Linking $@...
-	$(CXX) $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
 	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
 	echo Compiling $<...
-	$(CC) -I.. @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $<
+	$(CC) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $<
 
 .cxx.o:
 	echo Compiling $<...
-	$(CXX) -I.. @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $<
+	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $<
 
 .man.0 .man.1 .man.3:
 	echo Formatting $<...
