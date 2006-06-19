@@ -725,6 +725,7 @@ static Fl_Menu_Item scrollbar_type_menu[] = {
   {0}};
 class Fl_Scrollbar_Type : public Fl_Slider_Type {
   Fl_Menu_Item *subtypes() {return scrollbar_type_menu;}
+  int is_valuator() const {return 3;}
 public:
   virtual const char *type_name() {return "Fl_Scrollbar";}
   Fl_Widget *widget(int x,int y,int w,int h) {

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0107 
 header_name {.h} 
 code_name {.cxx}
 Function {callback(Fl_Widget* o, void*)} {open private return_type void
@@ -12,7 +12,7 @@ Function {} {open
 } {
   Fl_Window {} {
     label {Valuator classes, showing values for type()} open
-    xywh {635 288 565 505} color 43 selection_color 43
+    xywh {204 225 565 505} type Double color 43 selection_color 43
     code0 {\#include <stdio.h>} visible
   } {
     Fl_Box {} {
@@ -165,7 +165,7 @@ Function {} {open
     }
     Fl_Value_Output {} {
       label 0
-      callback callback selected
+      callback callback
       tooltip {Value Output} xywh {170 460 110 30} labelsize 8 maximum 100 step 0.1
     }
     Fl_Box {} {
@@ -175,12 +175,12 @@ Function {} {open
     Fl_Scrollbar {} {
       label 0
       callback callback
-      tooltip {Vertical Scrollbar} xywh {395 20 20 105} labelsize 8 align 1 maximum 100 slider_size 0.3
+      tooltip {Vertical Scrollbar} xywh {395 20 20 105} labelsize 8 align 1 maximum 100
     }
     Fl_Scrollbar {} {
       label FL_HORIZONTAL
-      callback callback
-      tooltip {Horizontal Scrollbar} xywh {300 65 95 20} type Horizontal labelsize 8 maximum 100 slider_size 0.3
+      callback callback selected
+      tooltip {Horizontal Scrollbar} xywh {300 65 95 20} type Horizontal labelsize 8 maximum 100 value 20
     }
   }
 } 

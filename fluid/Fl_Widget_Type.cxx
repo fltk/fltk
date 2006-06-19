@@ -1421,7 +1421,7 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
       i->parent()->hide(); 
     else
       i->parent()->show();
-    if (current_widget->is_valuator()!=2) {i->deactivate(); return;}
+    if (current_widget->is_valuator()<2) {i->deactivate(); return;}
     i->activate();
     i->value(((Fl_Slider*)(current_widget->o))->slider_size());
   } else {
@@ -1430,7 +1430,7 @@ void slider_size_cb(Fl_Value_Input* i, void* v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-	if (q->is_valuator()==2) {
+	if (q->is_valuator()>=2) {
 	  ((Fl_Slider*)(q->o))->slider_size(n);
 	  q->o->redraw();
 	  mod = 1;
@@ -2105,9 +2105,14 @@ void Fl_Widget_Type::write_widget_code() {
       write_c("%so->maximum(%g);\n", indent(), v->maximum());
     if (v->step()!=f->step())
       write_c("%so->step(%g);\n", indent(), v->step());
-    if (v->value())
-      write_c("%so->value(%g);\n", indent(), v->value());
-    if (is_valuator()==2) {
+    if (v->value()) {
+      if (is_valuator()==3) { // Fl_Scrollbar::value(double) is nott available
+        write_c("%so->Fl_Slider::value(%g);\n", indent(), v->value());
+      } else {
+        write_c("%so->value(%g);\n", indent(), v->value());
+      }
+    }
+    if (is_valuator()>=2) {
       double x = ((Fl_Slider*)v)->slider_size();
       double y = ((Fl_Slider*)f)->slider_size();
       if (x != y) write_c("%so->slider_size(%g);\n", indent(), x);
@@ -2244,7 +2249,7 @@ void Fl_Widget_Type::write_properties() {
     if (v->maximum()!=f->maximum()) write_string("maximum %g",v->maximum());
     if (v->step()!=f->step()) write_string("step %g",v->step());
     if (v->value()!=0.0) write_string("value %g",v->value());
-    if (is_valuator()==2) {
+    if (is_valuator()>=2) {
       double x = ((Fl_Slider*)v)->slider_size();
       double y = ((Fl_Slider*)f)->slider_size();
       if (x != y) write_string("slider_size %g", x);
@@ -2567,7 +2572,7 @@ void Fl_Widget_Type::copy_properties() {
     d->maximum(s->maximum());
     d->step(s->step());
     d->value(s->value());
-    if (is_valuator()==2) {
+    if (is_valuator()>=2) {
       Fl_Slider *d = (Fl_Slider*)live_widget, *s = (Fl_Slider*)o;
       d->slider_size(s->slider_size());
     }
