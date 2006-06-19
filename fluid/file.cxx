@@ -504,6 +504,7 @@ int read_file(const char *filename, int merge) {
     if (o->is_menu_button()) o->add_child(0,0);
   for (o = Fl_Type::first; o; o = o->next)
     if (o->selected) {Fl_Type::current = o; break;}
+  selection_changed(Fl_Type::current);
   return close_read();
 }
 

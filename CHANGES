@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Loading a file would not update the Widget
+	  Propertis dialog in FLUID (STR #1326)
 	- Fixed key compose sequences for
 	  shifted keys (STR #1194)
 	- Added text selection and copy to Fl_Help_View.
