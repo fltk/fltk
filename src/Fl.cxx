@@ -952,6 +952,7 @@ void Fl_Window::hide() {
   if (ip->region) XDestroyRegion(ip->region);
 
 #ifdef WIN32
+  CloseWindow(ip->xid);
   XDestroyWindow(fl_display, ip->xid);
 #elif defined(__APPLE_QD__)
   if ( !parent() ) // don't destroy shared windows!
