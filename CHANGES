@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed key compose sequences for
+	  shifted keys (STR #1194)
 	- Added text selection and copy to Fl_Help_View.
 	- Fixed position of popup menu titles (STR #1322)
 	- Showing any window will disable the current tooltip

@@ -105,6 +105,17 @@ int Fl::compose(int& del) {
 #endif // __APPLE__
 
   if (compose_state == 1) { // after the compose key
+    if ( // do not get distracted by any modifier keys
+      e_keysym==FL_Shift_L||
+      e_keysym==FL_Shift_R ||
+      e_keysym==FL_Alt_L ||
+      e_keysym==FL_Alt_R ||
+      e_keysym==FL_Meta_L ||
+      e_keysym==FL_Meta_R ||
+      e_keysym==FL_Control_R ||
+      e_keysym==FL_Control_L ||
+      e_keysym==FL_Menu
+      ) return 0;
 
     if (ascii == ' ') { // space turns into nbsp
 #ifdef __APPLE__
