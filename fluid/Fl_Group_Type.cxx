@@ -161,10 +161,14 @@ Fl_Type* Fl_Tabs_Type::click_test(int x, int y) {
   Fl_Tabs *t = (Fl_Tabs*)o;
   Fl_Widget *a = t->which(x,y);
   if (!a) return 0; // didn't click on tab
+  // changing the visible tab has an impact on the generated
+  // source code, so mark this project as changed.
+  int changed = (a!=t->value());
   // okay, run the tabs ui until they let go of mouse:
   t->handle(FL_PUSH);
   Fl::pushed(t);
   while (Fl::pushed()==t) Fl::wait();
+  if (changed) set_modflag(1);
   return (Fl_Type*)(t->value()->user_data());
 }
 
