@@ -952,7 +952,12 @@ void Fl_Window::hide() {
   if (ip->region) XDestroyRegion(ip->region);
 
 #ifdef WIN32
-  CloseWindow(ip->xid);
+  // this little trickery seems to avoid the popup window stacking problem
+  HWND p = GetForegroundWindow();
+  if (p==GetParent(ip->xid)) {
+    ShowWindow(ip->xid, SW_HIDE);
+    ShowWindow(p, SW_SHOWNA);
+  }
   XDestroyWindow(fl_display, ip->xid);
 #elif defined(__APPLE_QD__)
   if ( !parent() ) // don't destroy shared windows!
