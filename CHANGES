@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Added support for assigning Fl_Menu_Items to array 
+	  variables in Fluid (STR #1280)
 	- Added --with-archflags configure option to allow
 	  passing of specific architecture-selection options to
 	  the compiler and linker.

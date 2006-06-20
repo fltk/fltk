@@ -244,10 +244,19 @@ void Fl_Menu_Item_Type::write_static() {
     // Write menu item variables...
     t = prev; while (t && t->is_menu_item()) t = t->prev;
     for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
-      const char *c = array_name((Fl_Menu_Item_Type *)q);
+      Fl_Menu_Item_Type *m = (Fl_Menu_Item_Type*)q;
+      const char *c = array_name(m);
       if (c) {
-      int i; const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(i);
-      write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
+        if (c==m->name()) {
+          // assign a menu item address directly to a variable
+          int i; 
+          const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(i);
+          write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
+        } else {
+          // if the name is an array, only define the array. 
+          // The actual assignment is in write_code1()
+          write_c("Fl_Menu_Item* %s::%s;\n", k, c);
+        }
       }
     }
   }
@@ -336,8 +345,12 @@ void Fl_Menu_Item_Type::write_code1() {
     if (class_name(1)) {
       write_public(public_);
       write_h("  static Fl_Menu_Item *%s;\n", c);
-    } else
-      write_h("#define %s (%s+%d)\n", c, mname, i);
+    } else {
+      if (c==name())
+        write_h("#define %s (%s+%d)\n", c, mname, i);
+      else
+        write_h("extern Fl_Menu_Item *%s;\n", c);
+    }
   }
 
   if (callback()) {
@@ -351,9 +364,15 @@ void Fl_Menu_Item_Type::write_code1() {
   }
 
   int init = 0;
+  // if the name is an array variable, assign the value here
+  if (name() && strchr(name(), '[')) {
+    write_c("%s%s = &%s[%d];\n", indent(), name(), mname, i);
+  }
   if (image) {
-    write_c(" {Fl_Menu_Item* o = &%s[%d];\n", mname, i);
-    init = 1;
+    if (!init) {
+      init = 1;
+      write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
+    }
     image->write_code();
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++)
