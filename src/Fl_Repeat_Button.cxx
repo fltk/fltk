@@ -49,6 +49,8 @@ int Fl_Repeat_Button::handle(int event) {
     if (Fl::visible_focus()) Fl::focus(this);
     newval = Fl::event_inside(this);
   J1:
+    if (!active()) 
+      newval = 0;
     if (value(newval)) {
       if (newval) {
 	Fl::add_timeout(INITIALREPEAT,repeat_callback,this);
