@@ -32,6 +32,7 @@
 #include "alignment_panel.h"
 #include <FL/fl_message.H>
 #include <FL/Fl_Slider.H>
+#include <FL/Fl_Spinner.H>
 #include <FL/Fl_Window.H>
 #include "../src/flstring.h"
 #include <stdio.h>
@@ -1590,7 +1591,11 @@ void subtype_cb(Fl_Choice* i, void* v) {
     int j;
     for (j = 0;; j++) {
       if (!m[j].text) {j = 0; break;}
-      if (m[j].argument() == current_widget->o->type()) break;
+      if (current_widget->is_spinner()) {
+        if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
+      } else {
+        if (m[j].argument() == current_widget->o->type()) break;
+      }
     }
     i->value(j);
     i->activate();
@@ -1603,9 +1608,12 @@ void subtype_cb(Fl_Choice* i, void* v) {
       if (o->selected && o->is_widget()) {
         Fl_Widget_Type* q = (Fl_Widget_Type*)o;
         if (q->subtypes()==m) {
-	        q->o->type(n);
-	        q->redraw();
-	        mod = 1;
+          if (q->is_spinner())
+            ((Fl_Spinner*)q->o)->type(n);
+          else
+            q->o->type(n);
+          q->redraw();
+          mod = 1;
         }
       }
     }
@@ -2061,7 +2069,9 @@ void Fl_Widget_Type::write_widget_code() {
     write_c(");\n");
   }
 
-  if (o->type() != tplate->type() && !is_window())
+  if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
+    write_c("%so->type(%d);\n", indent(), ((Fl_Spinner*)o)->type());
+  else if (o->type() != tplate->type() && !is_window())
     write_c("%so->type(%d);\n", indent(), o->type());
   if (o->box() != tplate->box() || subclass())
     write_c("%so->box(FL_%s);\n", indent(), boxname(o->box()));
@@ -2203,7 +2213,10 @@ void Fl_Widget_Type::write_properties() {
   }
   write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
-  if (o->type() != tplate->type() || is_window()) {
+  if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
+    write_string("type");
+    write_word(item_name(subtypes(), ((Fl_Spinner*)o)->type()));
+  } else if (o->type() != tplate->type() || is_window()) {
     write_string("type");
     write_word(item_name(subtypes(), o->type()));
   }
@@ -2304,7 +2317,10 @@ void Fl_Widget_Type::read_property(const char *c) {
   } else if (!strcmp(c,"deimage")) {
     inactive_name(read_word());
   } else if (!strcmp(c,"type")) {
-    o->type(item_number(subtypes(), read_word()));
+    if (is_spinner()) 
+      ((Fl_Spinner*)o)->type(item_number(subtypes(), read_word()));
+    else
+      o->type(item_number(subtypes(), read_word()));
   } else if (!strcmp(c,"box")) {
     const char* value = read_word();
     if ((x = boxnumber(value))) {

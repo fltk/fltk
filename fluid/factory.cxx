@@ -378,8 +378,12 @@ int Fl_Counter_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Spinner.H>
+static Fl_Menu_Item spinner_type_menu[] = {
+  {"Integer",0,0,(void*)FL_INT_INPUT},
+  {"Float",  0,0,(void*)FL_FLOAT_INPUT},
+  {0}};
 class Fl_Spinner_Type : public Fl_Widget_Type {
-  Fl_Menu_Item *subtypes() {return 0;}
+  Fl_Menu_Item *subtypes() {return spinner_type_menu;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int pixmapID() { return 47; }
 public:

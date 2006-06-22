@@ -44,6 +44,7 @@ input area or use the buttons to change the value.
 	<li><a href='#Fl_Spinner.textcolor'>textcolor</a></li>
 	<li><a href='#Fl_Spinner.textfont'>textfont</a></li>
 	<li><a href='#Fl_Spinner.textsize'>textsize</a></li>
+	<li><a href='#Fl_Spinner.type'>type</a></li>
 	<li><a href='#Fl_Spinner.value'>value</a></li>
 
 </ul>
@@ -81,7 +82,10 @@ double minimum() const</a></h4>
 double step() const</a></h4>
 
 <p>Sets or returns the amount to change the value when the user
-clicks a button.</p>
+clicks a button. 
+Before setting <tt>step</tt> to a non-integer value, the spinner 
+<a href='#Fl_Spinner.type'><tt>type()</tt></a> should be changed 
+to floating point.</p>
 
 <h4><a name='Fl_Spinner.textcolor'>void textcolor(Fl_Color c)<br />
 Fl_Color textcolor() const</a></h4>
@@ -98,10 +102,22 @@ uchar textsize() const</a></h4>
 
 <p>Sets or returns the size of the text in the input field.</p>
 
+<h4><a name='Fl_Spinner.type'>void type(uchar s)<br />
+uchar type() const</a></h4>
+
+<p>Sets or returns the numeric representation in the input field.
+Valid values are <tt>FL_INT_INPUT</tt> and <tt>FL_FLOAT_INPUT</tt>.
+The first form also changes the <tt>format()</tt> template.
+Please note that <tt>type</tt> is not a virtual function. 
+Setting a new spinner type via a superclass pointer will not work.</p>
+
 <h4><a name="Fl_Spinner.value">void Fl_Spinner::value(double v)<br />
 double Fl_Spinner::value() const</a></h4>
 
-<p>Sets or returns the current value of the widget.</p>
+<p>Sets or returns the current value of the widget.
+Before setting <tt>value</tt> to a non-integer value, the spinner 
+<a href='#Fl_Spinner.type'><tt>type()</tt></a> should be changed 
+to floating point.</p>
 
 </body>
 </html>

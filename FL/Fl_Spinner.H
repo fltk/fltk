@@ -163,6 +163,15 @@ class Fl_Spinner : public Fl_Group
   void		textsize(uchar s) {
 		  input_.textsize(s);
 		}
+  uchar		type() const { return (input_.type()); }
+  void		type(uchar v) { 
+    if (v==FL_FLOAT_INPUT) {
+      format("%g");
+    } else {
+      format("%.0f");
+    }
+    input_.type(v); 
+  }
   double	value() const { return (value_); }
   void		value(double v) { value_ = v; update(); }
 };
