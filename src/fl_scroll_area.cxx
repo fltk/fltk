@@ -115,6 +115,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
             GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
 #elif defined(__APPLE_QUARTZ__)
   // warning: there does not seem to be an equivalent to this function in Quartz
+  // ScrollWindowRect is a QuickDraw function and won't work here.
   Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
   static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
