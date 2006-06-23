@@ -38,6 +38,13 @@ are very useful for drawing UI controls atop your 3D graphics.  If the
 overlay hardware is not provided, FLTK tries to simulate the overlay,
 This works pretty well if your graphics are double buffered, but not
 very well for single-buffered. </P>
+<P>Please note that the FLTK drawing and clipping functions
+will not work inside an <tt>Fl_Gl_Window</tt>. All drawing
+should be done using OpenGL calls exclusively.
+Even though <tt>Fl_Gl_Widget</tt> is derived from <tt>Fl_Group</tt>, 
+it is not useful to add other FLTK Widgets as children,
+unless those Widgets are modified to draw using OpenGL calls.</P>
+
 <H3>Methods</H3>
 <CENTER>
 <TABLE width=90% summary="Fl_Gl_Window methods.">
