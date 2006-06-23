@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Documentation fix (STR #1336)
 	- Added support for floating point Fl_Spinner in the
 	  API, documentation, and Fluid (STR #1331)
 	- Repeat button now cancels timeout if it should get 
