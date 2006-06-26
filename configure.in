@@ -71,7 +71,13 @@ case $uname in
         # Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=no]])
 	if test x$enable_cygwin != xyes; then
-	    ARCHFLAGS="$ARCHFLAGS -mno-cygwin"
+	    # NOTE: We can't use ARCHFLAGS for this, since it does not work
+	    #       with some of the function tests - Cygwin uses a
+	    #       different C library...
+	    CFLAGS="$CFLAGS -mno-cygwin"
+	    CPPFLAGS="$CPPFLAGS -mno-cygwin"
+	    CXXFLAGS="$CXXFLAGS -mno-cygwin"
+	    LDFLAGS="$LDFLAGS -mno-cygwin"
 	fi
 	;;
 esac
