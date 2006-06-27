@@ -68,6 +68,7 @@ HTMLFILES	= \
 		Fl_Check_Button.html \
 		Fl_Choice.html \
 		Fl_Clock.html \
+		Fl_Clock_Output.html \
 		Fl_Color_Chooser.html \
 		Fl_Counter.html \
 		Fl_Dial.html \
@@ -129,6 +130,7 @@ HTMLFILES	= \
 		Fl_Tile.html \
 		Fl_Tiled_Image.html \
 		Fl_Timer.html \
+		Fl_Toggle_Button.html \
 		Fl_Tooltip.html \
 		Fl_Valuator.html \
 		Fl_Value_Input.html \
