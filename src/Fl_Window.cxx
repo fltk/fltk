@@ -100,10 +100,11 @@ int Fl_Window::y_root() const {
 
 void Fl_Window::draw() {
   const char *savelabel = label();
-  uchar saveflags = flags();
+  int saveflags = flags();
   int savex = x(); x(0);
   int savey = y(); y(0);
   // Make sure we don't draw the window title in the window background...
+  clear_flag(COPIED_LABEL); // do not free copied labels!
   Fl_Widget::label(0);
   Fl_Group::draw();
 #ifdef __APPLE_QUARTZ__
@@ -133,7 +134,9 @@ void Fl_Window::draw() {
   x(savex);
 }
 
-void Fl_Window::label(const char *name) {label(name, iconlabel());}
+void Fl_Window::label(const char *name) {
+  label(name, iconlabel());
+}
 
 void Fl_Window::copy_label(const char *a) {
   if (flags() & COPIED_LABEL) {
