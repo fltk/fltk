@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed Fl_Window::visible() and shown() for OS X
+	  (STR #1341)
 	- Fixed Fl_Window::copy_label() losing copy (STR #1332)
 	- Documentation fixes (STR #1336, STR #1329, STR #1339,
 	  STR #1340)

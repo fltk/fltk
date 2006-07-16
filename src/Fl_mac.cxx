@@ -871,6 +871,12 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
     if (!Fl_X::first) QuitAppleEventHandler( 0, 0, 0 );
     ret = noErr; // returning noErr tells Carbon to stop following up on this event
     break;
+  case kEventWindowCollapsed:
+    window->clear_visible();
+    break;
+  case kEventWindowExpanded:
+    window->set_visible();
+    break;
   }
 
   fl_unlock_function();
@@ -1715,7 +1721,6 @@ void Fl_X::make(Fl_Window* w)
     x->gc = 0; // stay 0 for Quickdraw; fill with CGContext for Quartz
     Fl_Window *win = w->window();
     Fl_X *xo = Fl_X::i(win);
-    w->set_visible();
     if (xo) {
       x->xidNext = xo->xidChildren;
       x->xidChildren = 0L;
@@ -1842,7 +1847,6 @@ void Fl_X::make(Fl_Window* w)
     x->wait_for_expose = 1;
     x->next = Fl_X::first;
     Fl_X::first = x;
-    w->set_visible();
     { // Install Carbon Event handlers 
       OSStatus ret;
       EventHandlerUPP mousewheelHandler = NewEventHandlerUPP( carbonMousewheelHandler ); // will not be disposed by Carbon...
@@ -1873,6 +1877,8 @@ void Fl_X::make(Fl_Window* w)
         { kEventClassWindow, kEventWindowActivated },
         { kEventClassWindow, kEventWindowDeactivated },
         { kEventClassWindow, kEventWindowClose },
+        { kEventClassWindow, kEventWindowCollapsed },
+        { kEventClassWindow, kEventWindowExpanded },
         { kEventClassWindow, kEventWindowBoundsChanging },
         { kEventClassWindow, kEventWindowBoundsChanged } };
       ret = InstallWindowEventHandler( x->xid, windowHandler, 8, windowEvents, w, 0L );
@@ -1887,15 +1893,18 @@ void Fl_X::make(Fl_Window* w)
       if ( err==noErr ) SetFrontProcess( &psn );
     }
     
-    if (fl_show_iconic) { 
-      fl_show_iconic = 0;
-      CollapseWindow( x->xid, true ); // \todo Mac ; untested
-    } else if (winclass != kHelpWindowClass) {
-      Fl_Tooltip::enter(0);
-    }
-
     if (w->size_range_set) w->size_range_();
-    ShowWindow(x->xid);
+    
+    if (winclass != kHelpWindowClass) {
+      Fl_Tooltip::enter(0);
+      ShowWindow(x->xid);
+      if (fl_show_iconic) { 
+        fl_show_iconic = 0;
+        CollapseWindow( x->xid, true ); // \todo Mac ; untested
+      } else {
+        w->set_visible();
+      }
+    }
 
     Rect rect;
     GetWindowBounds(x->xid, kWindowContentRgn, &rect);
@@ -1906,7 +1915,6 @@ void Fl_X::make(Fl_Window* w)
     w->handle(Fl::e_number = FL_SHOW);
     Fl::e_number = old_event;
     w->redraw(); // force draw to happen
-    w->set_visible();
     
     if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
   }

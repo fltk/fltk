@@ -1023,10 +1023,8 @@ int Fl_Window::handle(int ev)
 	}
 #ifdef __APPLE_QD__
         hide();
-	set_visible();
 #elif defined(__APPLE_QUARTZ__)
         hide();
-        set_visible();
 #else
 	XUnmapWindow(fl_display, fl_xid(this));
 #endif // __APPLE__
