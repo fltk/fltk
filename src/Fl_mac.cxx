@@ -1881,7 +1881,7 @@ void Fl_X::make(Fl_Window* w)
         { kEventClassWindow, kEventWindowExpanded },
         { kEventClassWindow, kEventWindowBoundsChanging },
         { kEventClassWindow, kEventWindowBoundsChanged } };
-      ret = InstallWindowEventHandler( x->xid, windowHandler, 8, windowEvents, w, 0L );
+      ret = InstallWindowEventHandler( x->xid, windowHandler, 10, windowEvents, w, 0L );
       ret = InstallTrackingHandler( dndTrackingHandler, x->xid, w );
       ret = InstallReceiveHandler( dndReceiveHandler, x->xid, w );
     }
@@ -1895,7 +1895,7 @@ void Fl_X::make(Fl_Window* w)
     
     if (w->size_range_set) w->size_range_();
     
-    if (winclass != kHelpWindowClass) {
+    //if (winclass != kHelpWindowClass) {
       Fl_Tooltip::enter(0);
       ShowWindow(x->xid);
       if (fl_show_iconic) { 
@@ -1904,7 +1904,7 @@ void Fl_X::make(Fl_Window* w)
       } else {
         w->set_visible();
       }
-    }
+    //}
 
     Rect rect;
     GetWindowBounds(x->xid, kWindowContentRgn, &rect);
