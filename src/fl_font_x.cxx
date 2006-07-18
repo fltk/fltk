@@ -196,6 +196,7 @@ static Fl_FontSize* find(int fnum, int size) {
 int fl_font_ = 0;
 int fl_size_ = 0;
 XFontStruct* fl_xfont = 0;
+void *fl_xftfont = 0;
 static GC font_gc;
 
 void fl_font(int fnum, int size) {

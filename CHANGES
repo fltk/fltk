@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Added access to Xft font pointer (STR #1328)
 	- Fixed endianness in OS X mouse cursor graphics
 	  (STR #1348)
 	- Fixed crash on mixed use of keyboard and mouse for

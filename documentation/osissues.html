@@ -139,7 +139,17 @@ href="drawing.html#fl_color"><TT>fl_color()</TT></A> would use.
 href="drawing.html#fl_font"><TT>fl_font()</TT></A>. This is not
 necessarily the current font of <TT>fl_gc</TT>, which is not set
 until <A href="drawing.html#text"><TT>fl_draw()</TT></A> is
-called.
+called. If FLTK was compiled with Xft support, <TT>fl_xfont</TT>
+will usually be 0 and <TT>fl_xftfont</TT> will contain a pointer 
+to the XftFont structure instead.
+
+<H4><A name="fl_xftfont">extern void *fl_xftfont</A></H4>
+
+<P>If FLTK was compiled with Xft support enabled, <tt>fl_xftfont</tt>
+Points to the xft font selected by the most recent <A
+href="drawing.html#fl_font"><TT>fl_font()</TT></A>. Otherwise 
+it will be 0. <tt>fl_xftfont</tt> should be casted to 
+<tt>XftFont*</tt>.
 
 <H3>Changing the Display, Screen, or X Visual</H3>
 

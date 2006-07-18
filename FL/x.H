@@ -69,6 +69,7 @@ extern FL_EXPORT Colormap fl_colormap;
 extern FL_EXPORT GC fl_gc;
 extern FL_EXPORT Window fl_window;
 extern FL_EXPORT XFontStruct* fl_xfont;
+extern FL_EXPORT void *fl_xftfont;
 FL_EXPORT ulong fl_xpixel(Fl_Color i);
 FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);
 FL_EXPORT void fl_clip_region(Fl_Region);
