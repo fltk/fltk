@@ -3,7 +3,7 @@
 //
 // Fl_Help_View widget routines.
 //
-// Copyright 1997-2005 by Easy Software Products.
+// Copyright 1997-2006 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
 //
 // This library is free software; you can redistribute it and/or
@@ -198,9 +198,9 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
   if (selected && current_view==this && current_pos<selection_last && current_pos>=selection_first) {
     Fl_Color c = fl_color();
     fl_color(hv_selection_color);
-    int w = fl_width(t);
+    int w = (int)fl_width(t);
     if (current_pos+(int)strlen(t)<selection_last) 
-      w += fl_width(' ');
+      w += (int)fl_width(' ');
     fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
     fl_color(hv_selection_text_color);
     fl_draw(t, x, y);
@@ -209,7 +209,7 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
     fl_draw(t, x, y);
   }
   if (draw_mode) {
-    int w = fl_width(t);
+    int w = (int)fl_width(t);
     if (mouse_x>=x && mouse_x<x+w) {
       if (mouse_y>=y-fl_height()+fl_descent()&&mouse_y<=y+fl_descent()) {
         int f = current_pos;
