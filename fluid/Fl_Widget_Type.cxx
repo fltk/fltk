@@ -2010,7 +2010,7 @@ void Fl_Widget_Type::write_code1() {
   if (oused)
     indentation += 2;
 
-  if (wused) write_c("%s%s* w = o;\n",indent(), subclassname(this));
+  if (wused) write_c("%sw = o;\n", indent());
   write_widget_code();
 }
 
