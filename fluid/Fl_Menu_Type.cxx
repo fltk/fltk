@@ -9,7 +9,7 @@
 // This file also contains code to make Fl_Menu_Button, Fl_Menu_Bar,
 // etc widgets.
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -373,7 +373,7 @@ void Fl_Menu_Item_Type::write_code1() {
       init = 1;
       write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
     }
-    image->write_code();
+    image->write_code("o");
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++)
     if (extra_code(n) && !isdeclare(extra_code(n))) {
@@ -462,7 +462,7 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
 
 void Fl_Menu_Type::write_code2() {
   if (next && next->is_menu_item())
-    write_c("%so->menu(%s);\n", indent(),
+    write_c("%s%s->menu(%s);\n", indent(), name() ? name() : "o",
 	    unique_id(this, "menu", name(), label()));
   Fl_Widget_Type::write_code2();
 }

@@ -7,7 +7,7 @@
 // for interacting with the overlay, which allows the user to
 // select, move, and resize the children widgets.
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1279,23 +1279,27 @@ void Fl_Window_Type::write_code1() {
 }
 
 void Fl_Window_Type::write_code2() {
+  const char *var = is_class() ? "this" : name() ? name() : "o";
   write_extra_code();
-  if (modal) write_c("%so->set_modal();\n", indent());
-  else if (non_modal) write_c("%so->set_non_modal();\n", indent());
-  if (!((Fl_Window*)o)->border()) write_c("%so->clear_border();\n", indent());
+  if (modal) write_c("%s%s->set_modal();\n", indent(), var);
+  else if (non_modal) write_c("%s%s->set_non_modal();\n", indent(), var);
+  if (!((Fl_Window*)o)->border()) {
+    write_c("%s%s->clear_border();\n", indent(), var);
+  }
   if (xclass) {
-    write_c("%so->xclass(", indent());
+    write_c("%s%s->xclass(", indent(), var);
     write_cstring(xclass);
     write_c(");\n");
   }
   if (sr_max_w || sr_max_h) {
-    write_c("%so->size_range(%d, %d, %d, %d);\n", indent(), sr_min_w, sr_min_h, sr_max_w, sr_max_h);
+    write_c("%s%s->size_range(%d, %d, %d, %d);\n", indent(), var,
+            sr_min_w, sr_min_h, sr_max_w, sr_max_h);
   } else if (sr_min_w || sr_min_h) {
-    write_c("%so->size_range(%d, %d);\n", indent(), sr_min_w, sr_min_h);
+    write_c("%s%s->size_range(%d, %d);\n", indent(), var, sr_min_w, sr_min_h);
   }
-  write_c("%so->end();\n", indent());
+  write_c("%s%s->end();\n", indent(), var);
   if (((Fl_Window*)o)->resizable() == o)
-    write_c("%so->resizable(o);\n", indent());
+    write_c("%s%s->resizable(o);\n", indent(), var);
   write_block_close();
 }
 
@@ -1435,7 +1439,7 @@ void Fl_Widget_Class_Type::write_code1() {
     write_c("}\n\n");
 
     write_c("void %s::_%s() {\n", name(), name());
-    write_c("  %s *w = this;\n", name());
+//    write_c("  %s *w = this;\n", name());
   } else {
     write_h("public:\n");
     write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
@@ -1447,7 +1451,7 @@ void Fl_Widget_Class_Type::write_code1() {
       write_c("  : %s(X, Y, W, H, L) {\n", c);
   }
 
-  write_c("  %s *o = this;\n", name());
+//  write_c("  %s *o = this;\n", name());
 
   write_widget_code();
 }

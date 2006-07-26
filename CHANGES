@@ -1,8 +1,11 @@
 CHANGES IN FLTK 1.1.8
 
+	- FLUID now only writes definitions of "o" and "w"
+	  variables as needed, reducing the number of "variable
+	  is shadowed" warnings from GCC.
 	- Added access to Xft font pointer (STR #1328)
-	- Fixed endianness in OS X mouse cursor graphics
-	  (STR #1348)
+	- Fixed endianness in OS X mouse cursor graphics (STR
+	  #1348)
 	- Fixed crash on mixed use of keyboard and mouse for
 	  Fl_Menu_Button (STR #1356)
 	- Fixed Fl_Window::visible() and shown() for OS X

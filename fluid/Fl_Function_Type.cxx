@@ -3,7 +3,7 @@
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -334,7 +334,7 @@ void Fl_Function_Type::write_code1() {
       write_c("%s%s %s {\n", rtype, star, s);
     }
   }
-  if (havewidgets) write_c("  %s* w;\n",subclassname(child));
+//  if (havewidgets) write_c("  %s* w;\n",subclassname(child));
   indentation += 2;
 }
 
@@ -1082,9 +1082,8 @@ Fl_Class_Type Fl_Class_type;
 
 static Fl_Class_Type *current_class;
 extern Fl_Widget_Class_Type *current_widget_class;
-extern int varused_test;
 void write_public(int state) {
-  if ((!current_class && !current_widget_class) || varused_test) return;
+  if (!current_class && !current_widget_class) return;
   if (current_class && current_class->write_public_state == state) return;
   if (current_widget_class && current_widget_class->write_public_state == state) return;
   if (current_class) current_class->write_public_state = state;

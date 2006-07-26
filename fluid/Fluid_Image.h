@@ -50,7 +50,7 @@ public:
   void image(Fl_Widget *); // set the image of this widget
   void deimage(Fl_Widget *); // set the deimage of this widget
   void write_static();
-  void write_code(int inactive = 0);
+  void write_code(const char *var, int inactive = 0);
   const char *name() const {return name_;}
 };
 

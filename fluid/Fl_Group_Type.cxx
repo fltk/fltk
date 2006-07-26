@@ -7,7 +7,7 @@
 // the Fl_Tabs widget, with special stuff to select tab items and
 // insure that only one is visible.
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -124,9 +124,12 @@ void Fl_Group_Type::write_code1() {
 }
 
 void Fl_Group_Type::write_code2() {
+  const char *var = name() ? name() : "o";
   write_extra_code();
-  write_c("%so->end();\n", indent());
-  if (resizable()) write_c("%sFl_Group::current()->resizable(o);\n", indent());
+  write_c("%s%s->end();\n", indent(), var);
+  if (resizable()) {
+    write_c("%sFl_Group::current()->resizable(%s);\n", indent(), var);
+  }
   write_block_close();
 }
 

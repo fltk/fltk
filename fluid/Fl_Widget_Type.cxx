@@ -1941,8 +1941,6 @@ const char *Fl_Type::callback_name() {
   return unique_id(this, "cb", name(), label());
 }
 
-extern int varused_test, varused;
-  
 void Fl_Widget_Type::write_code1() {
   const char* t = subclassname(this);
   const char *c = array_name(this);
@@ -1960,17 +1958,23 @@ void Fl_Widget_Type::write_code1() {
     write_h("  static void %s(%s*, %s);\n", cn, t, ut);
   }
   // figure out if local variable will be used (prevent compiler warnings):
-  if (is_parent())
-    varused = 1;
-  else {
-    varused_test = 1; varused = 0;
-    write_widget_code();
-    varused_test = 0;
+  int oused = !name();
+  int wused = !name() && is_window();
+  const char *ptr;
+
+  if (!oused) {
     for (int n=0; n < NUM_EXTRA_CODE; n++)
-      if (extra_code(n) && !isdeclare(extra_code(n))) varused = 1;
+      if (extra_code(n) && !isdeclare(extra_code(n)) &&
+          (ptr = strstr(extra_code(n), "o->")) != NULL &&
+	  (ptr == extra_code(n) ||
+	   (!isalnum(ptr[-1] & 255) && ptr[-1] != '_'))) {
+	oused = 1;
+	break;
+      }
   }
+
   write_c(indent());
-  if (varused) write_c("{ %s* o = ", t);
+  if (oused) write_c("{ %s* o = ", t);
   if (name()) write_c("%s = ", name());
   if (is_window()) {
     // Handle special case where user is faking a Fl_Group type as a window,
@@ -2002,10 +2006,12 @@ void Fl_Widget_Type::write_code1() {
     }
   }
   write_c(");\n");
-  indentation += 2;
 
-  if (is_window()) write_c("%sw = o;\n",indent());
-  if (varused) write_widget_code();
+  if (oused)
+    indentation += 2;
+
+  if (wused) write_c("%s%s* w = o;\n",indent(), subclassname(this));
+  write_widget_code();
 }
 
 void Fl_Widget_Type::write_color(const char* field, Fl_Color color) {
@@ -2038,18 +2044,21 @@ void Fl_Widget_Type::write_color(const char* field, Fl_Color color) {
   case FL_DARK_CYAN:		color_name = "FL_DARK_CYAN";		break;
   case FL_WHITE:		color_name = "FL_WHITE";		break;
   }
+  const char *var = is_class() ? "this" : name() ? name() : "o";
   if (color_name) {
-    write_c("%so->%s(%s);\n", indent(), field, color_name);
+    write_c("%s%s->%s(%s);\n", indent(), var, field, color_name);
   } else {
-    write_c("%so->%s((Fl_Color)%d);\n", indent(), field, color);
+    write_c("%s%s->%s((Fl_Color)%d);\n", indent(), var, field, color);
   }
 }
 
 // this is split from write_code1() for Fl_Window_Type:
 void Fl_Widget_Type::write_widget_code() {
   Fl_Widget* tplate = ((Fl_Widget_Type*)factory)->o;
+  const char *var = is_class() ? "this" : name() ? name() : "o";
+
   if (tooltip() && *tooltip()) {
-    write_c("%so->tooltip(",indent());
+    write_c("%s%s->tooltip(",indent(), var);
     switch (i18n_type) {
     case 0 : /* None */
         write_cstring(tooltip());
@@ -2070,111 +2079,113 @@ void Fl_Widget_Type::write_widget_code() {
   }
 
   if (is_spinner() && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
-    write_c("%so->type(%d);\n", indent(), ((Fl_Spinner*)o)->type());
+    write_c("%s%s->type(%d);\n", indent(), var, ((Fl_Spinner*)o)->type());
   else if (o->type() != tplate->type() && !is_window())
-    write_c("%so->type(%d);\n", indent(), o->type());
+    write_c("%s%s->type(%d);\n", indent(), var, o->type());
   if (o->box() != tplate->box() || subclass())
-    write_c("%so->box(FL_%s);\n", indent(), boxname(o->box()));
+    write_c("%s%s->box(FL_%s);\n", indent(), var, boxname(o->box()));
   if (is_button()) {
     Fl_Button* b = (Fl_Button*)o;
-    if (b->down_box()) write_c("%so->down_box(FL_%s);\n", indent(),
+    if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
 			       boxname(b->down_box()));
-    if (b->value()) write_c("%so->value(1);\n", indent());
+    if (b->value()) write_c("%s%s->value(1);\n", indent(), var);
     if (b->shortcut())
-      write_c("%so->shortcut(0x%x);\n", indent(), b->shortcut());
+      write_c("%s%s->shortcut(0x%x);\n", indent(), var, b->shortcut());
   } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
-    if (b->down_box()) write_c("%so->down_box(FL_%s);\n", indent(),
+    if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
 			       boxname(b->down_box()));
   } else if (is_menu_button()) {
     Fl_Menu_* b = (Fl_Menu_*)o;
-    if (b->down_box()) write_c("%so->down_box(FL_%s);\n", indent(),
+    if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
 			       boxname(b->down_box()));
   }
   if (o->color() != tplate->color() || subclass())
     write_color("color", o->color());
   if (o->selection_color() != tplate->selection_color() || subclass())
     write_color("selection_color", o->selection_color());
-  if (image) image->write_code();
-  if (inactive) inactive->write_code(1);
+  if (image) image->write_code(var);
+  if (inactive) inactive->write_code(var, 1);
   if (o->labeltype() != tplate->labeltype() || subclass())
-    write_c("%so->labeltype(FL_%s);\n", indent(),
+    write_c("%s%s->labeltype(FL_%s);\n", indent(), var,
 	    item_name(labeltypemenu, o->labeltype()));
   if (o->labelfont() != tplate->labelfont() || subclass())
-    write_c("%so->labelfont(%d);\n", indent(), o->labelfont());
+    write_c("%s%s->labelfont(%d);\n", indent(), var, o->labelfont());
   if (o->labelsize() != tplate->labelsize() || subclass())
-    write_c("%so->labelsize(%d);\n", indent(), o->labelsize());
+    write_c("%s%s->labelsize(%d);\n", indent(), var, o->labelsize());
   if (o->labelcolor() != tplate->labelcolor() || subclass())
     write_color("labelcolor", o->labelcolor());
   if (is_valuator()) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* f = (Fl_Valuator*)(tplate);
     if (v->minimum()!=f->minimum())
-      write_c("%so->minimum(%g);\n", indent(), v->minimum());
+      write_c("%s%s->minimum(%g);\n", indent(), var, v->minimum());
     if (v->maximum()!=f->maximum())
-      write_c("%so->maximum(%g);\n", indent(), v->maximum());
+      write_c("%s%s->maximum(%g);\n", indent(), var, v->maximum());
     if (v->step()!=f->step())
-      write_c("%so->step(%g);\n", indent(), v->step());
+      write_c("%s%s->step(%g);\n", indent(), var, v->step());
     if (v->value()) {
       if (is_valuator()==3) { // Fl_Scrollbar::value(double) is nott available
-        write_c("%so->Fl_Slider::value(%g);\n", indent(), v->value());
+        write_c("%s%s->Fl_Slider::value(%g);\n", indent(), var, v->value());
       } else {
-        write_c("%so->value(%g);\n", indent(), v->value());
+        write_c("%s%s->value(%g);\n", indent(), var, v->value());
       }
     }
     if (is_valuator()>=2) {
       double x = ((Fl_Slider*)v)->slider_size();
       double y = ((Fl_Slider*)f)->slider_size();
-      if (x != y) write_c("%so->slider_size(%g);\n", indent(), x);
+      if (x != y) write_c("%s%s->slider_size(%g);\n", indent(), var, x);
     }
   }
   if (is_spinner()) {
     Fl_Spinner* v = (Fl_Spinner*)o;
     Fl_Spinner* f = (Fl_Spinner*)(tplate);
     if (v->minimum()!=f->minimum())
-      write_c("%so->minimum(%g);\n", indent(), v->minimum());
+      write_c("%s%s->minimum(%g);\n", indent(), var, v->minimum());
     if (v->maximum()!=f->maximum())
-      write_c("%so->maximum(%g);\n", indent(), v->maximum());
+      write_c("%s%s->maximum(%g);\n", indent(), var, v->maximum());
     if (v->step()!=f->step())
-      write_c("%so->step(%g);\n", indent(), v->step());
+      write_c("%s%s->step(%g);\n", indent(), var, v->step());
     if (v->value())
-      write_c("%so->value(%g);\n", indent(), v->value());
+      write_c("%s%s->value(%g);\n", indent(), var, v->value());
   }
 
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
-    if (f != ff) write_c("%so->textfont(%d);\n", indent(), f);
-    if (s != fs) write_c("%so->textsize(%d);\n", indent(), s);
-    if (c != fc) write_c("%so->textcolor(%d);\n",indent(), c);
+    if (f != ff) write_c("%s%s->textfont(%d);\n", indent(), var, f);
+    if (s != fs) write_c("%s%s->textsize(%d);\n", indent(), var, s);
+    if (c != fc) write_c("%s%s->textcolor(%d);\n",indent(), var, c);
   }}
   const char* ud = user_data();
   if (class_name(1) && !parent->is_widget()) ud = "this";
   if (callback()) {
-    write_c("%so->callback((Fl_Callback*)%s", indent(), callback_name());
+    write_c("%s%s->callback((Fl_Callback*)%s", indent(), var, callback_name());
     if (ud)
       write_c(", (void*)(%s));\n", ud);
     else
       write_c(");\n");
   } else if (ud) {
-    write_c("%so->user_data((void*)(%s));\n", indent(), ud);
+    write_c("%s%s->user_data((void*)(%s));\n", indent(), var, ud);
   }
   if (o->align() != tplate->align() || subclass()) {
     int i = o->align();
-    write_c("%so->align(%s", indent(),
+    write_c("%s%s->align(%s", indent(), var,
 	    item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
     if (i & FL_ALIGN_INSIDE) write_c("|FL_ALIGN_INSIDE");
     write_c(");\n");
   }
   if (o->when() != tplate->when() || subclass())
-    write_c("%so->when(%s);\n", indent(),item_name(whensymbolmenu, o->when()));
+    write_c("%s%s->when(%s);\n", indent(), var,
+            item_name(whensymbolmenu, o->when()));
   if (!o->visible() && o->parent())
-    write_c("%so->hide();\n", indent());
+    write_c("%s%s->hide();\n", indent(), var);
   if (!o->active())
-    write_c("%so->deactivate();\n", indent());
+    write_c("%s%s->deactivate();\n", indent(), var);
   if (!is_group() && resizable())
-    write_c("%sFl_Group::current()->resizable(o);\n",indent());
+    write_c("%sFl_Group::current()->resizable(%s);\n", indent(), var);
   if (hotspot())
-    write_c("%sw->hotspot(o);\n", indent());
+    write_c("%s%s->hotspot(o);\n", indent(),
+            is_class() ? "this" : name() ? name() : "w");
 }
 
 void Fl_Widget_Type::write_extra_code() {
@@ -2184,8 +2195,23 @@ void Fl_Widget_Type::write_extra_code() {
 }
 
 void Fl_Widget_Type::write_block_close() {
-  indentation -= 2;
-  if (is_parent() || varused) write_c("%s}\n", indent());
+  int oused = !name();
+  const char *ptr;
+
+  if (!oused) {
+    for (int n=0; n < NUM_EXTRA_CODE; n++)
+      if (extra_code(n) && !isdeclare(extra_code(n)) &&
+          (ptr = strstr(extra_code(n), "o->")) != NULL &&
+	  (ptr == extra_code(n) ||
+	   (!isalnum(ptr[-1] & 255) && ptr[-1] != '_'))) {
+	oused = 1;
+	break;
+      }
+  }
+  if (oused) {
+    indentation -= 2;
+    write_c("%s}\n", indent());
+  }
 }
 
 void Fl_Widget_Type::write_code2() {
