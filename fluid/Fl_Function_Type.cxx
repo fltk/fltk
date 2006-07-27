@@ -340,15 +340,15 @@ void Fl_Function_Type::write_code1() {
 }
 
 void Fl_Function_Type::write_code2() {
+  Fl_Type *child;
+  const char *var = "w";
+  for (child = next; child && child->level > level; child = child->next)
+    if (child->is_window() && child->name()) var = child->name();
+
   if (ismain()) {
-    if (havewidgets) write_c("  w->show(argc, argv);\n");
+    if (havewidgets) write_c("  %s->show(argc, argv);\n", var);
     write_c("  return Fl::run();\n");
   } else if (havewidgets && !constructor && !return_type) {
-    Fl_Type *child;
-    const char *var = "w";
-    for (child = next; child && child->level > level; child = child->next)
-      if (child->is_window() && child->name()) var = child->name();
-
     write_c("  return %s;\n", var);
   }
   write_c("}\n");

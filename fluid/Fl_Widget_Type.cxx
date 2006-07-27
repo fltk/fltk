@@ -1941,6 +1941,8 @@ const char *Fl_Type::callback_name() {
   return unique_id(this, "cb", name(), label());
 }
 
+extern int varused_test, varused;
+
 void Fl_Widget_Type::write_code1() {
   const char* t = subclassname(this);
   const char *c = array_name(this);
@@ -1958,23 +1960,34 @@ void Fl_Widget_Type::write_code1() {
     write_h("  static void %s(%s*, %s);\n", cn, t, ut);
   }
   // figure out if local variable will be used (prevent compiler warnings):
-  int oused = !name();
   int wused = !name() && is_window();
   const char *ptr;
 
-  if (!oused) {
+  varused = wused;
+
+  if (!name() && !varused) {
+    varused |= is_parent();
+
+    if (!varused) {
+      varused_test = 1;
+      write_widget_code();
+      varused_test = 0;
+    }
+  }
+
+  if (!varused) {
     for (int n=0; n < NUM_EXTRA_CODE; n++)
       if (extra_code(n) && !isdeclare(extra_code(n)) &&
           (ptr = strstr(extra_code(n), "o->")) != NULL &&
 	  (ptr == extra_code(n) ||
 	   (!isalnum(ptr[-1] & 255) && ptr[-1] != '_'))) {
-	oused = 1;
+	varused = 1;
 	break;
       }
   }
 
-  write_c(indent());
-  if (oused) write_c("{ %s* o = ", t);
+  write_c("%s{ ", indent());
+  if (varused) write_c("%s* o = ", t);
   if (name()) write_c("%s = ", name());
   if (is_window()) {
     // Handle special case where user is faking a Fl_Group type as a window,
@@ -2007,10 +2020,10 @@ void Fl_Widget_Type::write_code1() {
   }
   write_c(");\n");
 
-  if (oused)
-    indentation += 2;
+  indentation += 2;
 
   if (wused) write_c("%sw = o;\n", indent());
+
   write_widget_code();
 }
 
@@ -2195,23 +2208,9 @@ void Fl_Widget_Type::write_extra_code() {
 }
 
 void Fl_Widget_Type::write_block_close() {
-  int oused = !name();
-  const char *ptr;
-
-  if (!oused) {
-    for (int n=0; n < NUM_EXTRA_CODE; n++)
-      if (extra_code(n) && !isdeclare(extra_code(n)) &&
-          (ptr = strstr(extra_code(n), "o->")) != NULL &&
-	  (ptr == extra_code(n) ||
-	   (!isalnum(ptr[-1] & 255) && ptr[-1] != '_'))) {
-	oused = 1;
-	break;
-      }
-  }
-  if (oused) {
-    indentation -= 2;
-    write_c("%s}\n", indent());
-  }
+  indentation -= 2;
+  write_c("%s} // %s* %s\n", indent(), subclassname(this),
+          name() ? name() : "o");
 }
 
 void Fl_Widget_Type::write_code2() {

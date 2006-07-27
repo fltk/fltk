@@ -171,10 +171,20 @@ depend:	$(CPPFILES)
 include makedepend
 
 clean:
-	-$(RM) $(ALL) $(GLALL) core
-	-$(RM) *.o core.* *~ *.bck *.bak
-	-$(RM) checkers.app/Contents/MacOS/checkers
-	-$(RM) sudoku.app/Contents/MacOS/sudoku
+	$(RM) $(ALL) $(GLALL) core
+	$(RM) *.o core.* *~ *.bck *.bak
+	$(RM) CubeViewUI.cxx
+	$(RM) fast_slow.cxx
+	$(RM) inactive.cxx
+	$(RM) keyboard_ui.cxx
+	$(RM) mandelbrot_ui.cxx
+	$(RM) preferences.cxx
+	$(RM) radio.cxx
+	$(RM) resize.cxx
+	$(RM) tabs.cxx
+	$(RM) valuators.cxx
+	$(RM) checkers.app/Contents/MacOS/checkers
+	$(RM) sudoku.app/Contents/MacOS/sudoku
 
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
@@ -288,7 +298,7 @@ editor$(EXEEXT): editor.o
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fast_slow$(EXEEXT): fast_slow.o
-fast_slow.cxx:	fast_slow.fl
+fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)
 
 file_chooser$(EXEEXT): file_chooser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
@@ -314,7 +324,7 @@ iconize$(EXEEXT): iconize.o
 image$(EXEEXT): image.o
 
 inactive$(EXEEXT): inactive.o
-inactive.cxx:	inactive.fl
+inactive.cxx:	inactive.fl ../fluid/fluid$(EXEEXT)
 
 input$(EXEEXT): input.o
 
@@ -325,7 +335,7 @@ keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 keyboard_ui.o:	keyboard_ui.h
-keyboard_ui.cxx:	keyboard_ui.fl
+keyboard_ui.cxx:	keyboard_ui.fl ../fluid/fluid$(EXEEXT)
 
 label$(EXEEXT): label.o
 	echo Linking $@...
@@ -341,7 +351,7 @@ mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
 mandelbrot_ui.o:	mandelbrot_ui.h
-mandelbrot_ui.cxx:	mandelbrot_ui.fl
+mandelbrot_ui.cxx:	mandelbrot_ui.fl ../fluid/fluid$(EXEEXT)
 
 menubar$(EXEEXT): menubar.o
 
@@ -368,13 +378,13 @@ pixmap_browser$(EXEEXT): pixmap_browser.o ../lib/$(IMGLIBNAME)
 	$(POSTBUILD) $@ ../FL/mac.r
 
 preferences$(EXEEXT):	preferences.o
-preferences.cxx:	preferences.fl
+preferences.cxx:	preferences.fl ../fluid/fluid$(EXEEXT)
 
 radio$(EXEEXT): radio.o
-radio.cxx:	radio.fl
+radio.cxx:	radio.fl ../fluid/fluid$(EXEEXT)
 
 resize$(EXEEXT): resize.o
-resize.cxx:	resize.fl
+resize.cxx:	resize.fl ../fluid/fluid$(EXEEXT)
 
 resizebox$(EXEEXT): resizebox.o
 
@@ -396,7 +406,7 @@ sudoku.exe: sudoku.o sudoku.rc
 symbols$(EXEEXT): symbols.o
 
 tabs$(EXEEXT): tabs.o
-tabs.cxx:	tabs.fl
+tabs.cxx:	tabs.fl ../fluid/fluid$(EXEEXT)
 
 threads$(EXEEXT): threads.o
 # This ensures that we have this dependency even if threads are not
@@ -408,7 +418,7 @@ tile$(EXEEXT): tile.o
 tiled_image$(EXEEXT): tiled_image.o
 
 valuators$(EXEEXT): valuators.o
-valuators.cxx:	valuators.fl
+valuators.cxx:	valuators.fl ../fluid/fluid$(EXEEXT)
 
 # All OpenGL demos depend on the FLTK and FLTK_GL libraries...
 $(GLALL): ../lib/$(LIBNAME) ../lib/$(GLLIBNAME)
@@ -423,7 +433,7 @@ CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 CubeViewUI.o:	CubeViewUI.h
-CubeViewUI.cxx:	CubeViewUI.fl
+CubeViewUI.cxx:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...

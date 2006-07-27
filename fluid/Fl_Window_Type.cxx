@@ -1299,7 +1299,7 @@ void Fl_Window_Type::write_code2() {
   }
   write_c("%s%s->end();\n", indent(), var);
   if (((Fl_Window*)o)->resizable() == o)
-    write_c("%s%s->resizable(o);\n", indent(), var);
+    write_c("%s%s->resizable(%s);\n", indent(), var, var);
   write_block_close();
 }
 

@@ -153,8 +153,18 @@ int write_declare(const char *format, ...) {
 
 ////////////////////////////////////////////////////////////////
 
+// silly thing to prevent declaring unused variables:
+// When this symbol is on, all attempts to write code don't write
+// anything, but set a variable if it looks like the variable "o" is used:
+int varused_test;
+int varused;
+
 // write an array of C characters (adds a null):
 void write_cstring(const char *w, int length) {
+  if (varused_test) {
+    varused = 1;
+    return;
+  }
   const char *e = w+length;
   int linelength = 1;
   putc('\"', code_file);
@@ -221,6 +231,10 @@ void write_cstring(const char *w) {write_cstring(w,strlen(w));}
 
 // write an array of C binary data (does not add a null):
 void write_cdata(const char *s, int length) {
+  if (varused_test) {
+    varused = 1;
+    return;
+  }
   const unsigned char *w = (const unsigned char *)s;
   const unsigned char *e = w+length;
   int linelength = 1;
@@ -238,6 +252,10 @@ void write_cdata(const char *s, int length) {
 }
 
 void write_c(const char* format,...) {
+  if (varused_test) {
+    varused = 1;
+    return;
+  }
   va_list args;
   va_start(args, format);
   vfprintf(code_file, format, args);
@@ -245,6 +263,7 @@ void write_c(const char* format,...) {
 }
 
 void write_h(const char* format,...) {
+  if (varused_test) return;
   va_list args;
   va_start(args, format);
   vfprintf(header_file, format, args);
