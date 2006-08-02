@@ -98,7 +98,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #else
 /* This code to prevent "empty translation unit" or similar warnings... */
-static void dummy(void) {dummy();}
+static void dummy(void) {}
 #endif
 
 /*

@@ -936,15 +936,11 @@ else
 		fi
 	    fi
 
-            if test "x$with_optim" = x; then
-		OPTIM="$OPTIM +DAportable"
-            fi
-
 	    if test $PICFLAG = 1; then
 		OPTIM="+z $OPTIM"
 	    fi
 
-	    OPTIM="$OPTIM +W336,501,736,740,749,829"
+	    CXXFLAGS="$CXXFLAGS +W336,501,736,740,749,829"
 	    ;;
 	OSF1*)
 	    # Running Digital/Tru64 UNIX; these options should work for the
