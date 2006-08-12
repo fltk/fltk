@@ -128,7 +128,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
-	    DSOCOMMAND="\$(CC) $DSOFLAGS -dynamiclib -lc -o"
+	    DSOCOMMAND="\$(CXX) $DSOFLAGS -dynamiclib -lc -o"
 	    ;;
 
 	SunOS* | UNIX_S*)
