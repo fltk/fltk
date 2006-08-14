@@ -34,7 +34,7 @@
 int N = 0;
 #define W 200
 #define H 50
-#define ROWS 10
+#define ROWS 11
 
 Fl_Window *window;
 
@@ -100,6 +100,9 @@ int main(int argc, char ** argv) {
   bt("FL_PLASTIC_DOWN_FRAME",FL_PLASTIC_DOWN_FRAME);
   bt("FL_PLASTIC_THIN_UP_BOX",FL_PLASTIC_THIN_UP_BOX);
   bt("FL_PLASTIC_THIN_DOWN_BOX",FL_PLASTIC_THIN_DOWN_BOX);
+  N += 2;
+  bt("FL_PLASTIC_ROUND_UP_BOX",FL_PLASTIC_ROUND_UP_BOX);
+  bt("FL_PLASTIC_ROUND_DOWN_BOX",FL_PLASTIC_ROUND_DOWN_BOX);
   window->resizable(window);
   window->end();
   window->show();
