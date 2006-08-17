@@ -117,6 +117,7 @@ FL_EXPORT void glutInitWindowSize(int w, int h);
 
 FL_EXPORT void glutMainLoop();
 
+FL_EXPORT int glutCreateWindow(char *title);
 FL_EXPORT int glutCreateWindow(const char *title);
 
 FL_EXPORT int glutCreateSubWindow(int win, int x, int y, int width, int height);

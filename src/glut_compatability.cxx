@@ -220,6 +220,10 @@ void glutInitWindowSize(int w, int h) {
   initw = w; inith = h;
 }
 
+int glutCreateWindow(char *title) {
+  return glutCreateWindow((const char*)title);
+}
+
 int glutCreateWindow(const char *title) {
   Fl_Glut_Window *W;
   if (initpos) {
