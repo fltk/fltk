@@ -42,7 +42,7 @@ protected:
 
 public:
   int handle(int);
-  Fl_Widget *value();
+  Fl_Widget *value() const;
   int value(Fl_Widget *);
   Fl_Widget *push() const {return push_;}
   int push(Fl_Widget *);

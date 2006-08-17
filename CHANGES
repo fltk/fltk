@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fl_Tabs::value() is now "const" as described in the 
+	  documentation (STR #1379)
 	- FLUID now only writes definitions of "o" and "w"
 	  variables as needed, reducing the number of "variable
 	  is shadowed" warnings from GCC.
