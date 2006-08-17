@@ -583,12 +583,15 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
     i->svalue = ((Fl_Button*)(current_widget->o))->shortcut();
     i->redraw();
   } else {
+    int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_button()) {
 	Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
+        if (b->shortcut()!=i->svalue) mod = 1;
 	b->shortcut(i->svalue);
 	if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
       }
+    if (mod) set_modflag(1);
   }
 }
 
