@@ -48,6 +48,8 @@ space for the scrollbars, as Fluid won't show these either. </P>
 <P><I>You cannot use <TT>Fl_Window</TT> as a child of this since the
 clipping is not conveyed to it when drawn, and it will draw over the
 scrollbars and neighboring objects.</I></P>
+<P><I><TT>Fl_Scroll</TT> widgets should not be nested. Having an Fl_Scroll 
+inside another Fl_Scroll may result in drawing errors when resizing.</I></P>
 <H3>Methods</H3>
 <UL>
 <LI><A href=#Fl_Scroll.Fl_Scroll>Fl_Scroll</A></LI>
