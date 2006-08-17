@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed callback not called when using arrow keys
+	  in Fl_Slider (STR #1333)
 	- Changing the shorcut of a widget in fluid now marks
 	  the document as dirty (STR #1382)
 	- Fl_Text_Editor now correctly handles middle mouse

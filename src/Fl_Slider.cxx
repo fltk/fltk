@@ -241,21 +241,25 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
     switch (Fl::event_key()) {
       case FL_Up:
         if (horizontal()) return 0;
+        handle_push();
 	handle_drag(clamp(increment(value(),-1)));
 	handle_release();
 	return 1;
       case FL_Down:
         if (horizontal()) return 0;
+        handle_push();
 	handle_drag(clamp(increment(value(),1)));
 	handle_release();
 	return 1;
       case FL_Left:
         if (!horizontal()) return 0;
+        handle_push();
 	handle_drag(clamp(increment(value(),-1)));
 	handle_release();
 	return 1;
       case FL_Right:
         if (!horizontal()) return 0;
+        handle_push();
 	handle_drag(clamp(increment(value(),1)));
 	handle_release();
 	return 1;
