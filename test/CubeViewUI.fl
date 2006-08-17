@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0100 
+version 1.0108 
 header_name {.h} 
 code_name {.cxx}
 class CubeViewUI {open
@@ -7,7 +7,7 @@ class CubeViewUI {open
   Function {CubeViewUI()} {open
   } {
     Fl_Window mainWindow {
-      label CubeView open selected
+      label CubeView open
       private xywh {428 124 415 405} type Double box UP_BOX labelsize 12 resizable visible
     } {
       Fl_Group {} {open
@@ -47,14 +47,14 @@ cube->redraw();}
           }
         }
         Fl_Group MainView {open
-          xywh {46 27 333 333}
+          xywh {46 27 333 333} resizable
         } {
           Fl_Box cframe {
             xywh {46 27 333 333} box DOWN_FRAME color 4 selection_color 69
           }
           Fl_Box cube {
-            label {This is the cube_view}
-            xywh {48 29 329 329} align 16
+            label {This is the cube_view} selected
+            xywh {48 29 329 329} align 16 resizable
             code0 {\#include "CubeView.h"}
             class CubeView
           }

@@ -88,8 +88,12 @@ void Fl_Gl_Window::show() {
 
 void Fl_Gl_Window::invalidate() {
   valid(0);
+  context_valid(0);
 #ifndef WIN32
-  if (overlay) ((Fl_Gl_Window*)overlay)->valid(0);
+  if (overlay) {
+    ((Fl_Gl_Window*)overlay)->valid(0);
+    ((Fl_Gl_Window*)overlay)->context_valid(0);
+  }
 #endif
 }
 
@@ -137,6 +141,7 @@ void Fl_Gl_Window::make_current() {
     mode_ &= ~NON_LOCAL_CONTEXT;
     context_ = fl_create_gl_context(this, g);
     valid(0);
+    context_valid(0);
   }
   fl_set_gl_context(this, context_);
 
@@ -215,7 +220,10 @@ int fl_overlay_depth = 0;
 #endif
 
 void Fl_Gl_Window::flush() {
-  uchar save_valid = valid_;
+  uchar save_valid = valid_f_ & 1;
+#if HAVE_GL_OVERLAY && defined(WIN32)
+  uchar save_valid_f = valid_f_;
+#endif
 
 #ifdef __APPLE_QD__
   //: clear previous clipping in this shared port
@@ -256,7 +264,7 @@ void Fl_Gl_Window::flush() {
     fl_overlay = 1;
     draw_overlay();
     fl_overlay = 0;
-    valid(save_valid);
+    valid_f_ = save_valid_f;
     wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_OVERLAY1);
     // if only the overlay was damaged we are done, leave main layer alone:
     if (damage() == FL_DAMAGE_OVERLAY) {
@@ -357,6 +365,7 @@ void Fl_Gl_Window::flush() {
   if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
 #endif
   valid(1);
+  context_valid(1);
 }
 
 void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
@@ -408,7 +417,7 @@ void Fl_Gl_Window::init() {
   context_ = 0;
   g        = 0;
   overlay  = 0;
-  valid_   = 0;
+  valid_f_ = 0;
   damage1_ = 0;
 
 #if 0 // This breaks resizing on Linux/X11

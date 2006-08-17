@@ -58,6 +58,7 @@ unless those Widgets are modified to draw using OpenGL calls.</P>
 </TD><TD align=left valign=top>
 <UL>
 <LI><A href=#Fl_Gl_Window.context>context</A></LI>
+<LI><A href=#Fl_Gl_Window.context_valid>context_valid</A></LI>
 <LI><A href=#Fl_Gl_Window.draw>draw</A></LI>
 <LI><A href=#Fl_Gl_Window.draw_overlay>draw_overlay</A></LI>
 </UL>
@@ -164,8 +165,10 @@ void mywindow::draw() {
   if (!valid()) {
     glViewport(0,0,w(),h());
     glFrustum(...);
-    glLight(...);
     ...other initialization...
+  }
+  if (!context_valid()) {
+    ...load textures, etc. ...
   }
   ... draw your geometry here ...
 }
@@ -178,6 +181,14 @@ draw()</TT> returns.
 <H4><A name=Fl_Gl_Window.invalidate>void Fl_Gl_Window::invalidate()</A></H4>
  The <TT>invalidate()</TT> method turns off <TT>valid()</TT> and is
 equivalent to calling <TT>value(0)</TT>.
+
+<H4><A name=Fl_Gl_Window.context_valid>char Fl_Gl_Window::context_valid() const
+<BR> void Fl_Gl_Window::context_valid(char i)</A></H4>
+<TT>Fl_Gl_Window::context_valid()</TT> will only be set if the 
+OpenGL context is created or recreated. It differs from
+<TT>Fl_Gl_Window::valid()</TT> which is also set whenever the context
+changes size.
+
 <H4><A name=Fl_Gl_Window.ortho>void Fl_Gl_Window::ortho()</A></H4>
  Set the projection so 0,0 is in the lower left of the window and each
 pixel is 1 unit wide/tall.  If you are drawing 2D images, your <TT>

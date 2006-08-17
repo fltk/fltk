@@ -41,7 +41,7 @@ class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   const int *alist;
   Fl_Gl_Choice *g;
   GLContext context_;
-  char valid_;
+  char valid_f_;
   char damage1_; // damage() of back buffer
   virtual void draw_overlay();
   void init();
@@ -61,9 +61,12 @@ public:
   void hide();
   void resize(int,int,int,int);
 
-  char valid() const {return valid_;}
-  void valid(char v) {valid_ = v;}
+  char valid() const {return valid_f_ & 1;}
+  void valid(char v) {if (v) valid_f_ |= 1; else valid_f_ &= 0xfe;}
   void invalidate();
+
+  char context_valid() const {return valid_f_ & 2;}
+  void context_valid(char v) {if (v) valid_f_ |= 2; else valid_f_ &= 0xfd;}
 
   static int can_do(int m) {return can_do(m,0);}
   static int can_do(const int *m) {return can_do(0, m);}
