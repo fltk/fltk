@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed stray FL_RELEASE events after clicking system
+	  areas on OS X (STR #1376)
 	- Fl_Tabs::value() is now "const" as described in the 
 	  documentation (STR #1379)
 	- FLUID now only writes definitions of "o" and "w"

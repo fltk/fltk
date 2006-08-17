@@ -946,6 +946,7 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
 {
   static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
   static int px, py;
+  static char suppressed = 0;
 
   fl_lock_function();
   
@@ -967,8 +968,10 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     part = FindWindow( pos, &tempXid );
     if ( part != inContent ) {
       fl_unlock_function();
+      suppressed = 1;
       return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
     }
+    suppressed = 0;
     if ( !IsWindowActive( xid ) )
       CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
     // normal handling of mouse-down follows
@@ -981,6 +984,10 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
       Fl::e_clicks = 0;
     // fall through
   case kEventMouseUp:
+    if (suppressed) {
+      suppressed = 0;
+      break;
+    }
     if ( !window ) break;
     if ( !sendEvent ) {
       sendEvent = FL_RELEASE; 
@@ -988,11 +995,13 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     Fl::e_keysym = keysym[ btn ];
     // fall through
   case kEventMouseMoved:
+    suppressed = 0;
     if ( !sendEvent ) { 
       sendEvent = FL_MOVE; chord = 0; 
     }
     // fall through
   case kEventMouseDragged:
+    if (suppressed) break;
     if ( !sendEvent ) {
       sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
       if (abs(pos.h-px)>5 || abs(pos.v-py)>5) 
