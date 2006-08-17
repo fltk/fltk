@@ -231,7 +231,7 @@ int Fl_Tabs::push(Fl_Widget *o) {
 // are visible) and this also hides any other children.
 // This allows the tabs to be deleted, moved to other groups, and
 // show()/hide() called without it screwing up.
-Fl_Widget* Fl_Tabs::value() const {
+Fl_Widget* Fl_Tabs::value() {
   Fl_Widget* v = 0;
   Fl_Widget*const* a = array();
   for (int i=children(); i--;) {
