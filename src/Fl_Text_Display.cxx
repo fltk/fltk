@@ -3122,6 +3122,7 @@ int Fl_Text_Display::handle(int event) {
 	  Fl::focus(this);
 	  handle(FL_FOCUS);
 	}
+        if (Fl_Group::handle(event)) return 1;
         if (Fl::event_state()&FL_SHIFT) return handle(FL_DRAG);
         dragging = 1;
         int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);

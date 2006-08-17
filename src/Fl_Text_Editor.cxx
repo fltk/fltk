@@ -431,15 +431,6 @@ void Fl_Text_Editor::maybe_do_callback() {
 int Fl_Text_Editor::handle(int event) {
   if (!buffer()) return 0;
 
-  if (event == FL_PUSH && Fl::event_button() == 2) {
-    dragType = -1;
-    Fl::paste(*this, 0);
-    Fl::focus(this);
-    set_changed();
-    if (when()&FL_WHEN_CHANGED) do_callback();
-    return 1;
-  }
-
   switch (event) {
     case FL_FOCUS:
       show_cursor(mCursorOn); // redraws the cursor
@@ -475,6 +466,19 @@ int Fl_Text_Editor::handle(int event) {
 //    case FL_MOVE:
       show_cursor(mCursorOn);
       return 1;
+
+    case FL_PUSH:
+      if (Fl::event_button() == 2) {
+        // don't let the text_display see this event
+        if (Fl_Group::handle(event)) return 1;
+        dragType = -1;
+        Fl::paste(*this, 0);
+        Fl::focus(this);
+        set_changed();
+        if (when()&FL_WHEN_CHANGED) do_callback();
+        return 1;
+      }
+      break;
   }
 
   return Fl_Text_Display::handle(event);
