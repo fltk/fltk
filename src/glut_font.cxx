@@ -53,6 +53,11 @@ int glutBitmapWidth(void* font, int character) {
   return int(gl_width(character)+.5);
 }
 
+int glutBitmapLength(void *font, const unsigned char *string) {
+  gl_font(((Glut_Bitmap_Font *)font)->font,((Glut_Bitmap_Font *)font)->size);
+  return int(gl_width((const char*)string)+.5);
+}
+
 #endif
 
 //

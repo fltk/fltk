@@ -257,6 +257,10 @@ void glutDestroyWindow(int win) {
   delete windows[win];
 }
 
+void glutPostWindowRedisplay(int win) {
+  windows[win]->redraw();
+}
+
 void glutSetWindow(int win) {
   windows[win]->make_current();
 }

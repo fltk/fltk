@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Added some GLUT4 functions (STR #1370)
 	- Added "context_changed()" function for OpenGL windows
 	  which allows efficent texture loading (STR #1372)
 	- Added missing "const" to GLUT call (STR #1371)

@@ -125,6 +125,8 @@ FL_EXPORT void glutDestroyWindow(int win);
 
 inline void glutPostRedisplay() {glut_window->redraw();}
 
+FL_EXPORT void glutPostWindowRedisplay(int win);
+
 FL_EXPORT void glutSwapBuffers();
 
 inline int glutGetWindow() {return glut_window->number;}
@@ -421,6 +423,7 @@ extern FL_EXPORT struct Glut_Bitmap_Font {uchar font; int size;}
 
 FL_EXPORT void glutBitmapCharacter(void *font, int character);
 FL_EXPORT int glutBitmapWidth(void *font, int character);
+FL_EXPORT int glutBitmapLength(void *font, const unsigned char *string);
 
 ////////////////////////////////////////////////////////////////
 // GLUT drawing functions.  These are NOT emulated but you can
