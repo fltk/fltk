@@ -247,6 +247,19 @@ char Fl_Preferences::set( const char *key, float value )
 {
   sprintf( nameBuffer, "%g", value );
   node->set( key, nameBuffer );
+  float v1 = atof(nameBuffer);
+  return 1;
+}
+
+
+/**
+ * set an entry (name/value pair)
+ */
+char Fl_Preferences::set( const char *key, float value, int precision )
+{
+  sprintf( nameBuffer, "%.*g", precision, value );
+  node->set( key, nameBuffer );
+  float v1 = atof(nameBuffer);
   return 1;
 }
 
@@ -268,6 +281,17 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue )
 char Fl_Preferences::set( const char *key, double value )
 {
   sprintf( nameBuffer, "%g", value );
+  node->set( key, nameBuffer );
+  return 1;
+}
+
+
+/**
+ * set an entry (name/value pair)
+ */
+char Fl_Preferences::set( const char *key, double value, int precision )
+{
+  sprintf( nameBuffer, "%*g", precision, value );
   node->set( key, nameBuffer );
   return 1;
 }

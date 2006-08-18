@@ -65,7 +65,9 @@ public:
 
   char set( const char *entry, int value );
   char set( const char *entry, float value );
+  char set( const char *entry, float value, int precision );
   char set( const char *entry, double value );
+  char set( const char *entry, double value, int precision );
   char set( const char *entry, const char *value );
   char set( const char *entry, const void *value, int size ); 
 
