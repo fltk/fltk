@@ -291,7 +291,7 @@ char Fl_Preferences::set( const char *key, double value )
  */
 char Fl_Preferences::set( const char *key, double value, int precision )
 {
-  sprintf( nameBuffer, "%*g", precision, value );
+  sprintf( nameBuffer, "%.*g", precision, value );
   node->set( key, nameBuffer );
   return 1;
 }
