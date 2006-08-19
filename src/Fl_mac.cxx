@@ -1840,6 +1840,7 @@ void Fl_X::make(Fl_Window* w)
     if (w->non_modal() && !w->modal()) {
       // Major kludge: this is to have the regular look, but stay above the document windows
       SetWindowClass(x->xid, kFloatingWindowClass);
+      SetWindowActivationScope(x->xid, kWindowActivationScopeAll);
     }
     if (!(w->flags() & Fl_Window::FL_FORCE_POSITION))
     {
