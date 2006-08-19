@@ -51,6 +51,7 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   for (int i=0; i<256; i++) width[i] = fOut->widMax;
   minsize = maxsize = size;
 #elif defined(__APPLE_QUARTZ__)
+  knowWidths = 0;
     // OpenGL needs those for its font handling
   q_name = strdup(name);
   size = Size;
@@ -99,15 +100,13 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
   Fixed bBefore, bAfter, bAscent, bDescent;
   err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, 1, &bBefore, &bAfter, &bAscent, &bDescent);
     // Requesting a certain height font on Mac does not guarantee that ascent+descent
-    // equal the requested height. I consider requesting noew fonts until that is the
-    // case, but for now we simply make sure that our store ascent and descent add up 
-    // as expected.
+    // equal the requested height. fl_height will reflect the actual height that we got.
     // The font "Apple Chancery" is a pretty extreme example of overlapping letters.
   float fa = -FixedToFloat(bAscent), fd = -FixedToFloat(bDescent);
   if (fa>0.0f && fd>0.0f) {
     float f = Size/(fa+fd);
-    ascent = int(fa*f+0.5f);
-    descent = Size - ascent;
+    ascent = fa; //int(fa*f+0.5f);
+    descent = fd; //Size - ascent;
   }
   int w = FixedToInt(bAfter);
   if (w)  
@@ -284,34 +283,50 @@ double fl_width(const char* txt, int n) {
 #ifdef __APPLE_QD__
   return (double)TextWidth( txt, 0, n );
 #else
-  if (!fl_gc) {
-    Fl_Window *w = Fl::first_window();
-    if (w) w->make_current();
-    if (!fl_gc) {
-      // We fall back to some internal QuickDraw port.
-      // The result should be the same.
-    }
-  }
   if (!fl_fontsize) {
     fl_font(0, 12); // avoid a crash!
     if (!fl_fontsize)
-      return 0.0; // user must select a font first!
+      return 8*n; // user must select a font first!
   }
-  OSStatus err;
-    // convert to UTF-16 first
-  UniChar *uniStr = fl_macToUtf16(txt, n);
-    // now collect our ATSU resources
-  ATSUTextLayout layout = fl_fontsize->layout;
-  err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
-    // activate the current GC
-  ByteCount iSize = sizeof(CGContextRef);
-  ATSUAttributeTag iTag = kATSUCGContextTag;
-  ATSUAttributeValuePtr iValuePtr=&fl_gc;
-  ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-    // now measure the bounding box
-  Fixed bBefore, bAfter, bAscent, bDescent;
-  err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, n, &bBefore, &bAfter, &bAscent, &bDescent);
-  return FixedToInt(bAfter);
+  if (!fl_fontsize->knowWidths) {
+    if (!fl_gc) {
+      Fl_Window *w = Fl::first_window();
+      if (w) w->make_current();
+      if (!fl_gc) {
+        if (fl_fontsize) return fl_fontsize->q_width*n;
+        return 8*n;
+        // We fall back to some internal QuickDraw port.
+        // The result should be the same.
+      }
+    }
+    char buf[2];
+    for (int i=0; i<256; i++) {
+      OSStatus err;
+      buf[0] = (char)i;
+        // convert to UTF-16 first
+      UniChar *uniStr = fl_macToUtf16(buf, 1);
+        // now collect our ATSU resources
+      ATSUTextLayout layout = fl_fontsize->layout;
+      err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, 1, 1);
+        // activate the current GC
+      ByteCount iSize = sizeof(CGContextRef);
+      ATSUAttributeTag iTag = kATSUCGContextTag;
+      ATSUAttributeValuePtr iValuePtr=&fl_gc;
+      ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
+        // now measure the bounding box
+      Fixed bBefore, bAfter, bAscent, bDescent;
+      err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, 1, &bBefore, &bAfter, &bAscent, &bDescent);
+      fl_fontsize->width[i] = FixedToInt(bAfter);
+    }
+    fl_fontsize->knowWidths = 1;
+  }
+  int len = 0;
+  const char *src = txt;
+  for (int j=0; j<n; j++) {
+    unsigned int c = *src++;
+    len += fl_fontsize->width[c];
+  }
+  return len;
 #endif
 }
 

@@ -63,6 +63,8 @@ public:
   ATSUTextLayout layout;
   ATSUStyle style;
   short ascent, descent, q_width;
+  short width[256];
+  bool knowWidths;
   char *q_name;
   int size;
 #  elif USE_XFT

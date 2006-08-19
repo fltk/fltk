@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed speed issues when measuring text on OS X
+	  with Quartz (STR #1386).
 	- Fixed focus issues on OS X (STR #1377)
 	- Optional precission argument when storing floats or 
 	  doubles in a Preferences file (STR #1381)
