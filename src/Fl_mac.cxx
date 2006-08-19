@@ -623,12 +623,13 @@ static void realloc_timers()
     if (mac_timer_alloc == 0) {
         mac_timer_alloc = 8;
     }
-    MacTimeout* new_timers = new MacTimeout[mac_timer_alloc * 2];
-    memmove(new_timers, mac_timers, sizeof(MacTimeout) * mac_timer_used);
+    mac_timer_alloc *= 2;
+    MacTimeout* new_timers = new MacTimeout[mac_timer_alloc];
+    memset(new_timers, 0, sizeof(MacTimeout)*mac_timer_alloc);
+    memcpy(new_timers, mac_timers, sizeof(MacTimeout) * mac_timer_used);
     MacTimeout* delete_me = mac_timers;
     mac_timers = new_timers;
     delete [] delete_me;
-    mac_timer_alloc *= 2;
 }
 
 static void delete_timer(MacTimeout& t)
