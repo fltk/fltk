@@ -341,7 +341,7 @@ void fl_draw(const char* str, int n, int x, int y) {
   MoveTo(x, y);
   DrawText((const char *)str, 0, n);
 #elif defined(__APPLE_QUARTZ__)
-  fl_draw(str, n, (float)x, (float)y);
+  fl_draw(str, n, (float)x-0.0f, (float)y-0.5f);
 #else
 #  error : neither Quartz no Quickdraw chosen
 #endif
