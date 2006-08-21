@@ -22,13 +22,13 @@ decl {void writePrefs();} {public
 
 Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
-  code {delete myWindow;} {}
+  code {Fl::delete_widget(myWindow);} {}
 } 
 
 Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {writePrefs();
-  delete myWindow;} {}
+  Fl::delete_widget(myWindow);} {}
 } 
 
 Function {} {open return_type int

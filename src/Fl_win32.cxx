@@ -639,12 +639,13 @@ static void realloc_timers()
     if (win32_timer_alloc == 0) {
         win32_timer_alloc = 8;
     }
-    Win32Timer* new_timers = new Win32Timer[win32_timer_alloc * 2];
-    memmove(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
+    win32_timer_alloc *= 2;
+    Win32Timer* new_timers = new Win32Timer[win32_timer_alloc];
+    memset(new_timers, 0, sizeof(Win32Timer) * win32_timer_used);
+    memcpy(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
     Win32Timer* delete_me = win32_timers;
     win32_timers = new_timers;
     delete [] delete_me;
-    win32_timer_alloc *= 2;
 }
 
 static void delete_timer(Win32Timer& t)
