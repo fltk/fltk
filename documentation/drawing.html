@@ -300,11 +300,12 @@ href="#complex">transformation matrix</A>, so you should only
 call these while the matrix is set to the identity matrix (the
 default).
 
-<H4>void fl_point(int x, int y)</H4>
+<H4><A NAME=fl_point>void fl_point(int x, int y)</A></H4>
 
 <P>Draw a single pixel at the given coordinates.
 
-<H4>void fl_rectf(int x, int y, int w, int h)</H4>
+<H4><A NAME=fl_rectf>void fl_rectf(int x, int y, int w, int h)
+<BR>void fl_rectf(int x, int y, int w, int h)</A></H4>
 
 <P>Color a rectangle that exactly fills the given bounding box.
 
@@ -316,43 +317,44 @@ color this is done by drawing a solid-colored block using <A
 href="#fl_draw_image"><TT>fl_draw_image()</TT></A> so that
 the correct color shade is produced.
 
-<H4>void fl_rect(int x, int y, int w, int h)</H4>
+<H4><A NAME=fl_rect>void fl_rect(int x, int y, int w, int h)
+<BR>void fl_rect(int x, int y, int w, int h, Fl_Color c)</A></H4>
 
 <P>Draw a 1-pixel border <I>inside</I> this bounding box.
 
-<H4>void fl_line(int x, int y, int x1, int y1)
-<BR>void fl_line(int x, int y, int x1, int y1, int x2, int y2)</H4>
+<H4><A NAME=fl_line>void fl_line(int x, int y, int x1, int y1)
+<BR>void fl_line(int x, int y, int x1, int y1, int x2, int y2)</A></H4>
 
 <P>Draw one or two lines between the given points.
 
-<H4>void fl_loop(int x, int y, int x1, int y1, int x2, int y2)
+<H4><A NAME=fl_loop>void fl_loop(int x, int y, int x1, int y1, int x2, int y2)
 <BR>void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3,
-int y3)</H4>
+int y3)</A></H4>
 
 <P>Outline a 3 or 4-sided polygon with lines.
 
-<H4>void fl_polygon(int x, int y, int x1, int y1, int x2, int y2)
+<H4><A NAME=fl_polygon>void fl_polygon(int x, int y, int x1, int y1, int x2, int y2)
 <BR>void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int
-x3, int y3)</H4>
+x3, int y3)</A></H4>
 
 <P>Fill a 3 or 4-sided polygon. The polygon must be convex.
 
-<H4>void fl_xyline(int x, int y, int x1)
+<H4><A NAME=fl_xyline>void fl_xyline(int x, int y, int x1)
 <BR>void fl_xyline(int x, int y, int x1, int y2)
-<BR>void fl_xyline(int x, int y, int x1, int y2, int x3)</H4>
+<BR>void fl_xyline(int x, int y, int x1, int y2, int x3)</A></H4>
 
 <P>Draw horizontal and vertical lines. A horizontal line is
 drawn first, then a vertical, then a horizontal.
 
-<H4>void fl_yxline(int x, int y, int y1)
+<H4><A NAME=fl_yxline>void fl_yxline(int x, int y, int y1)
 <BR>void fl_yxline(int x, int y, int y1, int x2)
-<BR>void fl_yxline(int x, int y, int y1, int x2, int y3)</H4>
+<BR>void fl_yxline(int x, int y, int y1, int x2, int y3)</A></H4>
 
 <P>Draw vertical and horizontal lines. A vertical line is drawn
 first, then a horizontal, then a vertical.
 
-<H4>void fl_arc(int x, int y, int w, int h, double a1, double a2)
-<BR>void fl_pie(int x, int y, int w, int h, double a1, double a2)</H4>
+<H4><A NAME=fl_pie>void fl_arc(int x, int y, int w, int h, double a1, double a2)
+<BR>void fl_pie(int x, int y, int w, int h, double a1, double a2)</A></H4>
 
 <P>Draw ellipse sections using integer coordinates. These
 functions match the rather limited circle drawing code provided
@@ -389,40 +391,40 @@ severely limits the accuracy of these functions for complex
 graphics, so use OpenGL when greater accuracy and/or performance
 is required.
 
-<H4>void fl_push_matrix()
-<BR>void fl_pop_matrix()</H4>
+<H4><A NAME=fl_push_matrix>void fl_push_matrix()
+<BR>void fl_pop_matrix()</A></H4>
 
 <P>Save and restore the current transformation.  The maximum
 depth of the stack is 4.
 
-<H4>void fl_scale(float x, float y)
+<H4><A NAME=fl_scale>void fl_scale(float x, float y)
 <BR>void fl_scale(float x)
 <BR>void fl_translate(float x, float y)
 <BR>void fl_rotate(float d)
 <BR>void fl_mult_matrix(float a, float b, float c, float d, float
-x, float y)</H4>
+x, float y)</A></H4>
 
 <P>Concatenate another transformation onto the current one. The rotation
 angle is in degrees (not radians) and is counter-clockwise.
 
-<H4>void fl_begin_line()
-<BR>void fl_end_line()</H4>
+<H4><A NAME=fl_begin_line>void fl_begin_line()
+<BR>void fl_end_line()</A></H4>
 
 <P>Start and end drawing lines.
 
-<H4>void fl_begin_loop()
-<BR> void fl_end_loop()</H4>
+<H4><A NAME=fl_begin_loop>void fl_begin_loop()
+<BR> void fl_end_loop()</A></H4>
 
 <P>Start and end drawing a closed sequence of lines.
 
-<H4>void fl_begin_polygon()
-<BR>void fl_end_polygon()</H4>
+<H4><A NAME=fl_begin_polygon>void fl_begin_polygon()
+<BR>void fl_end_polygon()</A></H4>
 
 <P>Start and end drawing a convex filled polygon.
 
-<H4>void fl_begin_complex_polygon()
+<H4><A NAME=fl_begin_complex_polygon>void fl_begin_complex_polygon()
 <BR>void fl_gap()
-<BR>void fl_end_complex_polygon()</H4>
+<BR>void fl_end_complex_polygon()</A></H4>
 
 <P>Start and end drawing a complex filled polygon. This polygon
 may be concave, may have holes in it, or may be several
@@ -451,11 +453,11 @@ fl_begin_complex_polygon()</TT> and
 <TT>fl_begin_loop()</TT> and replace each <TT>fl_gap()</TT> with
 <TT>fl_end_loop();fl_begin_loop()</TT>.</P>
 
-<H4>void fl_vertex(float x, float y)</H4>
+<H4><A NAME=fl_vertex>void fl_vertex(float x, float y)</A></H4>
 Add a single vertex to the current path.
 
-<H4>void fl_curve(float x, float y, float x1, float y1, float x2, float
-y2, float x3, float y3)</H4>
+<H4><A NAME=fl_curve>void fl_curve(float x, float y, float x1, float y1, float x2, float
+y2, float x3, float y3)</A></H4>
 
 <P>Add a series of points on a Bezier curve to the path.  The curve ends
 (and two of the points) are at <TT>x,y</TT> and <TT>x3,y3</TT>.
@@ -471,7 +473,7 @@ in degrees counter-clockwise from 3 o'clock.  If <TT>end</TT> is
 less than <TT>start</TT> then it draws the arc in a clockwise
 direction.
 
-<H4>void fl_circle(float x, float y, float r)</H4>
+<H4><A NAME=fl_circle>void fl_circle(float x, float y, float r)</A></H4>
 
 <P><TT>fl_circle()</TT> is equivalent to <TT>fl_arc(...,0,360)</TT> but
 may be faster. It must be the <I>only</I> thing in the path: if you
@@ -494,8 +496,8 @@ want a circle as part of a complex polygon you must use <TT>fl_arc()</TT>.
 It is undefined whether this location or the characters are
 modified by the current transformation.
 
-<H4>void fl_draw(const char *, int x, int y)
-<BR>void fl_draw(const char *, int n, int x, int y)</H4>
+<H4><A NAME=fl_draw>void fl_draw(const char *, int x, int y)
+<BR>void fl_draw(const char *, int n, int x, int y)</A></H4>
 
 <P>Draw a nul-terminated string or an array of <TT>n</TT> characters
 starting at the given location. Text is aligned to the left and to
@@ -527,32 +529,33 @@ to look for symbol names starting with the "@" character.
 
 <P>The text length is limited to 1024 caracters per line.
 
-<H4>void fl_measure(const char *, int &amp;w, int &amp;h, int draw_symbols = 1)</H4>
+<H4><A NAME=fl_measure>void fl_measure(const char *, int &amp;w, 
+int &amp;h, int draw_symbols = 1)</A></H4>
 
 <P>Measure how wide and tall the string will be when printed by
 the <TT>fl_draw(...align)</TT> function. If the incoming
 <TT>w</TT> is non-zero it will wrap to that width.
 
-<H4>int fl_height()</H4>
+<H4><A NAME=fl_height>int fl_height()</A></H4>
 
 <P>Recommended minimum line spacing for the current font.  You
 can also just use the value of <TT>size</TT> passed to <A
 href=#fl_font><TT>fl_font()</TT></A>.
 
-<H4>int fl_descent()</H4>
+<H4><A NAME=fl_descent>int fl_descent()</A></H4>
 
 <P>Recommended distance above the bottom of a
 <TT>fl_height()</TT> tall box to draw the text at so it looks
 centered vertically in that box.
 
-<H4>float fl_width(const char*)
+<H4><A NAME=fl_width>float fl_width(const char*)
 <BR>float fl_width(const char*, int n)
-<BR>float fl_width(uchar)</H4>
+<BR>float fl_width(uchar)i</A></H4>
 
 <P>Return the pixel width of a nul-terminated string, a sequence of <TT>n</TT>
 characters, or a single character in the current font.
 
-<H4>const char *fl_shortcut_label(ulong)</H4>
+<H4><A NAME=fl_shortcut_label>const char *fl_shortcut_label(ulong)</A></H4>
 
 <P>Unparse a shortcut value as used by <A
 href="Fl_Button.html#Fl_Button.shortcut"><TT>Fl_Button</TT></A>
@@ -598,7 +601,7 @@ the display.
 <TT>fl_font(a,b)</TT>. This can be used to save/restore the
 font.
 
-<H3>Character Encoding</H3>
+<H3><A NAME=character_encoding>Character Encoding</A></H3>
 
 <P>FLTK 1 supports western character sets using the eight bit encoding
 of the user-selected global code page. For MS Windows and X11, the code
@@ -748,7 +751,7 @@ the first one may be greater than zero.</P>
 <P>If <TT>D</TT> is 4 or more, you must fill in the unused bytes
 with zero.</P>
 
-<H4>int fl_draw_pixmap(char **data, int X, int Y, Fl_Color = FL_GRAY)</H4>
+<H4><A NAME=fl_draw_pixmap>int fl_draw_pixmap(char **data, int X, int Y, Fl_Color = FL_GRAY)i</A></H4>
 
 <P>Draws XPM image data, with the top-left corner at the given position.
 The image is dithered on 8-bit displays so you won't lose color space
@@ -767,7 +770,7 @@ fl_draw_pixmap(foo, X, Y);
 <TT>Fl_Color</TT> argument. To draw with true transparency you must
 use the <A HREF="Fl_Pixmap.html"><TT>Fl_Pixmap</TT></A> class.
 
-<H4>int fl_measure_pixmap(char **data, int &amp;w, int &amp;h)</H4>
+<H4><A NAME=fl_measure_pixmap>int fl_measure_pixmap(char **data, int &amp;w, int &amp;h)</A></H4>
 
 <P>An XPM image contains the dimensions in its data. This
 function finds and returns the width and height. The return

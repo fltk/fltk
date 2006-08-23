@@ -507,6 +507,27 @@ method to select your label type.</P>
 <P>The <TT>Fl::set_labeltype</TT> method can also be used to overload
 an existing label type such as <TT>FL_NORMAL_LABEL</TT>.</P>
 
+<H4><A NAME="add_symbol">Making your own symbols</A></H4>
+
+<P>It is also possible to define your own drawings and add
+them to the symbol list, so they can be rendered as part of
+any label.</P>
+
+<P>To create a new symbol, you implement a drawing function 
+<tt>void drawit(Fl_Color c)</tt> which typically uses the
+<a href="drawing.html#complex">complex drawing functions</a>
+to generate a vector shape inside a two-by-two units sized box
+around the origin. This function is then linked into the symbols
+table using <tt>fl_add_symbol</tt>:</P>
+
+<UL><PRE>
+int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
+</PRE></UL>
+
+<P><i>name</i> is the name of the symbol without the "@"; <i>scalable</I>
+must be set to 1 if the symbol is generated using scalable vector drawing
+functions.</P>
+
 <H2>Callbacks</H2>
 
 <P>Callbacks are functions that are called when the value of a
