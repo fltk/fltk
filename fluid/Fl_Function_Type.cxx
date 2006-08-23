@@ -607,23 +607,27 @@ void Fl_Decl_Type::write_code1() {
       write_c("%s\n", c);
     return;
   }
+  // find the first C++ style comment
+  const char* e = c+strlen(c), *csc = c;
+  while (csc<e && (csc[0]!='/' || csc[1]!='/')) csc++;
+  if (csc!=e) e = csc; // comment found
   // lose all trailing semicolons so I can add one:
-  const char* e = c+strlen(c);
+  while (e>c && e[-1]==' ') e--;
   while (e>c && e[-1]==';') e--;
   if (class_name(1)) {
     write_public(public_);
-    write_h("  %.*s;\n", (int)(e-c), c);
+    write_h("  %.*s; %s\n", (int)(e-c), c, csc);
   } else {
     if (public_) {
       if (static_) 
         write_h("extern ");
-      write_h("%.*s;\n", (int)(e-c), c);
+      write_h("%.*s; %s\n", (int)(e-c), c, csc);
       if (static_)
-        write_c("%.*s;\n", (int)(e-c), c);
+        write_c("%.*s; %s\n", (int)(e-c), c, csc);
     } else {
       if (static_) 
         write_c("static ");
-      write_c("%.*s;\n", (int)(e-c), c);
+      write_c("%.*s; %s\n", (int)(e-c), c, csc);
     }
   }
 }
