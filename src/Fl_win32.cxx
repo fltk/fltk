@@ -1128,6 +1128,10 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       W += 2*bx;
       H += 2*by+bt;
     }
+    // avoid zero size windows. A zero sized window on Win32
+    // will cause continouly  new redraw events.
+    if (W<=0) W = 1;
+    if (H<=0) H = 1;
     SetWindowPos(i->xid, 0, X, Y, W, H, flags);
   }
 }
