@@ -714,7 +714,7 @@ Sudoku::Sudoku()
     prefs_.get("width", W, 3 * GROUP_SIZE);
     prefs_.get("height", H, 3 * GROUP_SIZE + MENU_OFFSET);
 
-    resize(X, X, W, H);
+    resize(X, Y, W, H);
   }
 
   set_title();

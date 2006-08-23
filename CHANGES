@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed Sudoku window positioning (STR #1398)
 	- Fluid Code Declarations can now handle
 	  C++ style comments (STR #1383)
 	- Fixed uninitialized data in OS X and WIN32 
