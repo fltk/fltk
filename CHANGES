@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed floating point value formatting
+	  for Fl_Spinner (STR #1331)
 	- Fixed Fl_Positioner callback 
 	  when released (STR #1387)
 	- Fixed WIN32 zero size window issue (STR #1387)

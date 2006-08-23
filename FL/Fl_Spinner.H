@@ -56,6 +56,7 @@ class Fl_Spinner : public Fl_Group
 		up_button_,		// Up button
 		down_button_;		// Down button
 
+
   static void	sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
 		  double v;		// New value
 
@@ -93,7 +94,20 @@ class Fl_Spinner : public Fl_Group
   void		update() {
 		  char s[255];		// Value string
 
-		  sprintf(s, format_, value_);
+                  if (format_[0]=='%'&&format_[1]=='.'&&format_[2]=='*') {  // precision argument
+                    // this code block is a simplified version of
+                    // Fl_Valuator::format() and works well (but looks ugly)
+                    int c = 0;
+                    char temp[64], *sp = temp;
+                    sprintf(temp, "%.12f", step_);
+                    while (*sp) sp++;
+                    sp--;
+                    while (sp>temp && *sp=='0') sp--;
+                    while (sp>temp && (*sp>='0' && *sp<='9')) { sp--; c++; }
+		    sprintf(s, format_, c, value_);
+                  } else {
+		    sprintf(s, format_, value_);
+                  }
 		  input_.value(s);
 		}
 
@@ -144,7 +158,7 @@ class Fl_Spinner : public Fl_Group
 		                      H / 2 + 2, H / 2);
 		}
   double	step() const { return (step_); }
-  void		step(double s) { step_ = s; }
+  void		step(double s) { step_ = s; update(); }
   Fl_Color	textcolor() const {
 		  return (input_.textcolor());
 		}
@@ -165,13 +179,13 @@ class Fl_Spinner : public Fl_Group
 		}
   uchar		type() const { return (input_.type()); }
   void		type(uchar v) { 
-    if (v==FL_FLOAT_INPUT) {
-      format("%g");
-    } else {
-      format("%.0f");
-    }
-    input_.type(v); 
-  }
+                  if (v==FL_FLOAT_INPUT) {
+                    format("%.*f");
+                  } else {
+                    format("%.0f");
+                  }
+                  input_.type(v); 
+                }
   double	value() const { return (value_); }
   void		value(double v) { value_ = v; update(); }
 };
