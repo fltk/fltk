@@ -32,11 +32,12 @@
 #include <FL/fl_draw.H>
 #include <FL/math.h>
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
-#  define hypot _hypot
-#endif // WIN32 && !__CYGWIN__
+// avoid problems with some platforms that don't 
+// implement hypot.
+static double _fl_hypot(double x, double y) {
+  return sqrt(x*x + y*y);
+}
+
 
 void fl_arc(double x, double y, double r, double start, double end) {
 
@@ -50,10 +51,10 @@ void fl_arc(double x, double y, double r, double start, double end) {
   // Maximum arc length to approximate with chord with error <= 0.125
   
   double epsilon; {
-    double r1 = hypot(fl_transform_dx(r,0), // Horizontal "radius"
-		      fl_transform_dy(r,0));
-    double r2 = hypot(fl_transform_dx(0,r), // Vertical "radius"
-		      fl_transform_dy(0,r));
+    double r1 = _fl_hypot(fl_transform_dx(r,0), // Horizontal "radius"
+		          fl_transform_dy(r,0));
+    double r2 = _fl_hypot(fl_transform_dx(0,r), // Vertical "radius"
+		          fl_transform_dy(0,r));
 		      
     if (r1 > r2) r1 = r2;		// r1 = minimum "radius"
     if (r1 < 2.) r1 = 2.;		// radius for circa 9 chords/circle
