@@ -95,16 +95,16 @@ void _Fl_Gl_Overlay::flush() {
 }
 
 void _Fl_Gl_Overlay::draw() {
-  if (!valid_) glClearIndex((GLfloat)fl_transparent_pixel);
+  if (!valid()) glClearIndex((GLfloat)fl_transparent_pixel);
   if (damage() != FL_DAMAGE_EXPOSE) glClear(GL_COLOR_BUFFER_BIT);
   Fl_Gl_Window *w = (Fl_Gl_Window *)parent();
-  uchar save_valid = w->valid_;
-  w->valid_ = valid_;
+  uchar save_valid = w->valid();
+  w->valid(valid());
   fl_overlay = 1;
   w->draw_overlay();
   fl_overlay = 0;
-  valid_ = w->valid_;
-  w->valid_ = save_valid;
+  valid(w->valid());
+  w->valid(save_valid);
 }
 
 void _Fl_Gl_Overlay::show() {
