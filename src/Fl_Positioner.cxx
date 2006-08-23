@@ -99,7 +99,11 @@ int Fl_Positioner::handle(int event, int X, int Y, int W, int H) {
       if (yy > ymin) yy = ymin;
       if (yy < ymax) yy = ymax;
     }
-    if (value(xx, yy)) set_changed();}
+    if (xx != xvalue_ || yy != yvalue_) {
+      xvalue_ = xx; yvalue_ = yy;
+      set_changed();
+      redraw();
+                   } }
     if (!(when() & FL_WHEN_CHANGED ||
 	  (when() & FL_WHEN_RELEASE && event == FL_RELEASE))) return 1;
     if (changed() || when()&FL_WHEN_NOT_CHANGED) {
