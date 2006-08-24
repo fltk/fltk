@@ -64,6 +64,8 @@ following types of drawing functions:
 
 	<LI><A href="#overlay">Overlay</A></LI>
 
+	<LI><A href="#offscreen">Offscreen Drawing</A></LI>
+
 </UL>
 
 <H3><A name="boxdraw">Boxes</A></H3>
@@ -91,6 +93,8 @@ not a multiple of 4 characters in length are undefined.
 
 <P>The only difference between this function and
 <CODE>fl_frame2()</CODE> is the order of the line segments.
+
+<P>See also: <A HREF="common.html#fl_frame">fl_frame boxtype</A>.
 
 <H4><A NAME="fl_frame2">void fl_frame2(const char *s, int x, int y, int w, int h);</A></H4>
 
@@ -122,11 +126,11 @@ void fl_push_clip(int x, int y, int w, int h)</H4>
 region onto the stack. The <CODE>fl_clip()</CODE> name is deprecated and
 will be removed from future releases.
 
-<H4>void fl_push_no_clip()</H4>
+<H4><A NAME=fl_push_no_clip>void fl_push_no_clip()</A></H4>
 
 <P>Pushes an empty clip region on the stack so nothing will be clipped.
 
-<H4>void fl_pop_clip()</H4>
+<H4><A NAME=fl_pop_clip>void fl_pop_clip()</A></H4>
 
 <P>Restore the previous clip region.
 
@@ -143,7 +147,7 @@ will be removed from future releases.
 </TR>
 </TABLE></CENTER>
 
-<H4>int fl_not_clipped(int x, int y, int w, int h)</H4>
+<H4><A NAME=fl_not_clipped>int fl_not_clipped(int x, int y, int w, int h)</A></H4>
 
 <P>Returns non-zero if any of the rectangle intersects the current clip
 region. If this returns 0 you don't have to draw the object.
@@ -159,8 +163,8 @@ region. If this returns 0 you don't have to draw the object.
 </TR>
 </TABLE></CENTER>
 
-<H4>int fl_clip_box(int x, int y, int w, int h, int &amp;X, int &amp;Y, int &amp;W,
-int &amp;H)</H4>
+<H4><A NAME=fl_clip_box>int fl_clip_box(int x, int y, int w, int h, int &amp;X, int &amp;Y, int &amp;W,
+int &amp;H)</A></H4>
 
 <P>Intersect the rectangle <TT>x,y,w,h</TT> with the current
 clip region and returns the bounding box of the result in
@@ -168,6 +172,13 @@ clip region and returns the bounding box of the result in
 different than the original. This can be used to limit the
 necessary drawing to a rectangle. <TT>W</TT> and <TT>H</TT> are
 set to zero if the rectangle is completely outside the region.
+
+<H4><A NAME=fl_clip_region>void fl_clip_region(Fl_Region r)
+<BR>Fl_Region fl_clip_region()</A></H4>
+
+<P>Replace the top of the clip stack with a clipping region of any shape.
+Fl_Region is an operating system specific type. The second form returns 
+the current clipping region.
 
 <H3><A name="colors">Colors</A></H3>
 
@@ -378,6 +389,14 @@ function described later in this chapter.</P>
 extend outside the line drawn by <TT>fl_arc</TT>; to avoid this
 use <TT>w - 1</TT> and <TT>h - 1</TT>.</P>
 
+<h4><a name=fl_scroll>void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
+void (*draw_area)(void*, int,int,int,int), void* data)</a></h4>
+
+<P>Scroll a rectangle and draw the newly exposed portions. The contents
+of the rectangular area is first shifted by <tt>dx</tt> and 
+<tt>dy</tt> pixels. The callback is then called for every newly 
+exposed rectangular area,
+
 <H3><A name="complex">Drawing Complex Shapes</A></H3>
 
 <P>The complex drawing functions let you draw arbitrary shapes
@@ -407,6 +426,22 @@ x, float y)</A></H4>
 <P>Concatenate another transformation onto the current one. The rotation
 angle is in degrees (not radians) and is counter-clockwise.
 
+<H4><A NAME=fl_transform>double fl_transform_x(double x, double y)
+<BR>double fl_transform_y(double x, double y)
+<BR>double fl_transform_dx(double x, double y)
+<BR>double fl_transform_dy(double x, double y)
+<BR>void fl_transformed_vertex(double xf, double yf)</A></H4>
+
+<P>Transform a coordinate or a distance trough the current transformation matrix.
+After transforming a coordinate pair, it can be added to the vertex
+list without any forther translations using <tt>fl_transformed_vertex</tt>.
+
+<H4><A NAME=fl_begin_points>void fl_begin_points()
+<BR>void fl_end_points()</A></H4>
+
+<P>Start and end drawing a list of points. Points are added to
+the list with <tt>fl_vertex</tt>.
+
 <H4><A NAME=fl_begin_line>void fl_begin_line()
 <BR>void fl_end_line()</A></H4>
 
@@ -417,7 +452,7 @@ angle is in degrees (not radians) and is counter-clockwise.
 
 <P>Start and end drawing a closed sequence of lines.
 
-<H4><A NAME=fl_begin_polygon>void fl_begin_polygon()
+<H4><A NAME=  fl_begin_polygon>void fl_begin_polygon()
 <BR>void fl_end_polygon()</A></H4>
 
 <P>Start and end drawing a convex filled polygon.
@@ -594,8 +629,8 @@ the display.
 <TT>pixels</TT> and not "points". Lines should be spaced
 <TT>size</TT> pixels apart or more.</P>
 
-<H4>int fl_font()
-<BR>int fl_size()</H4>
+<H4><A NAME=fl_size>int fl_font()
+<BR>int fl_size()</A></H4>
 
 <P>Returns the face and size set by the most recent call to
 <TT>fl_font(a,b)</TT>. This can be used to save/restore the
@@ -890,6 +925,44 @@ image, and this area is left unchanged.
 
 <P>Draws the image with the upper-left corner at <TT>x,y</TT>.
 This is the same as doing <TT>draw(x,y,img->w(),img->h(),0,0)</TT>.
+
+<h3><A NAME=offscreen>Offscreen Drawing</A></h3>
+
+Sometimes it can be very useful to generate a complex drawing
+in memory first and copy it to the screen at a later point in 
+time. This technique can significantly reduce the amount of
+repeated drawing. <tt>Fl_Double_Window</tt> uses offscreen rendering
+to avoid flickering on systems that don't support 
+double-buffering natively.
+
+<H4><A NAME=fl_create_offscreen>Fl_Offscreen fl_create_offscreen(int w, int h)</A></H4>
+
+<P>Create an RGB offscreen buffer with <tt>w*h</tt> pixels.
+
+<H4><A NAME=fl_create_offscreen_with_alpha>Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h)</A></H4>
+
+<P>Create an RGBA offscreen buffer. Alpha blending is not available
+on all platforms.
+
+<H4><A NAME=fl_delete_offscreen>void fl_delete_offscreen(Fl_Offscreen)</A></H4>
+
+<P>Delete a previously created offscreen buffer. All drawings are lost.
+
+<H4><A NAME=fl_begin_offscreen>void fl_begin_offscreen(Fl_Offscreen)</A></A></H4>
+
+<P>Send all subsequent drawing commands to this offscreen buffer. 
+FLTK can draw into a buffer at any time. There is no need to wait for 
+an <tt>Fl_Widget::draw()</tt> to occur.
+
+<H4><A NAME=fl_end_offscreen>void fl_end_offscreen()</A></H4>
+
+<P>Quit sending drawing commands to this offscreen buffer.
+
+<H4><A NAME=fl_copy_offscreen>void fl_copy_offscreen(int x, int y,
+int w, int h, Fl_Offscreen osrc, int srcx, int srcy)</A></H4>
+
+<P>Copy a rectangular area of the size <tt>w*h</tt> from <tt>srcx, srcy</tt> in the offscreen
+buffer into the current buffer at <tt>x, y</tt>.
 
 </BODY>
 </HTML>

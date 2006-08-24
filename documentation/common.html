@@ -318,6 +318,15 @@ void xyz_draw(int x, int y, int w, int h, Fl_Color c) {
 }
 </PRE></UL>
 
+<H4><A name="fl_down">Fl_Boxtype fl_down(Fl_Boxtype)</A></H4>
+
+<P><tt>fl_down</tt> returns the "pressed" or "down" version of a box.
+
+<H4><A name="fl_frame">Fl_Boxtype fl_frame(Fl_Boxtype)</A></H4>
+
+<P><tt>fl_frame</tt> returns the unfilled, frame-only version of a box.
+See also: <A HREF="drawing.html#fl_frame">fl_frame drawing</A>.
+
 <H4>Adding Your Box Type</H4>
 
 <P>The <TT>Fl::set_boxtype()</TT> method adds or replaces the
@@ -527,6 +536,12 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 <P><i>name</i> is the name of the symbol without the "@"; <i>scalable</I>
 must be set to 1 if the symbol is generated using scalable vector drawing
 functions.</P>
+
+<UL><PRE>
+int fl_draw_symbol(const char *name,int x,int y,int w,int h,Fl_Color col)
+</PRE></UL>
+
+<P>This function draw a named symbol fitting the given rectangle.
 
 <H2>Callbacks</H2>
 
