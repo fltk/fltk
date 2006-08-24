@@ -32,7 +32,7 @@ DIRS	=	$(IMAGEDIRS) src fluid test documentation
 all: makeinclude
 	for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
-		(cd $$dir; $(MAKE) $(MFLAGS)) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
 	done
 
 install: makeinclude
@@ -42,7 +42,7 @@ install: makeinclude
 	-chmod 755 $(DESTDIR)$(bindir)/fltk-config
 	for dir in FL $(DIRS); do\
 		echo "=== installing $$dir ===";\
-		(cd $$dir; $(MAKE) $(MFLAGS) install) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) install) || exit 1;\
 	done
 
 install-desktop: makeinclude
@@ -54,7 +54,7 @@ uninstall: makeinclude
 	$(RM) $(DESTDIR)$(bindir)/fltk-config
 	for dir in FL $(DIRS); do\
 		echo "=== uninstalling $$dir ===";\
-		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || exit 1;\
 	done
 
 uninstall-desktop: makeinclude
@@ -65,14 +65,14 @@ uninstall-desktop: makeinclude
 depend: makeinclude
 	for dir in $(DIRS); do\
 		echo "=== making dependencies in $$dir ===";\
-		(cd $$dir; $(MAKE) $(MFLAGS) depend) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) depend) || exit 1;\
 	done
 
 clean:
 	-$(RM) core *.o
 	for dir in $(DIRS); do\
 		echo "=== cleaning $$dir ===";\
-		(cd $$dir; $(MAKE) $(MFLAGS) clean) || break;\
+		(cd $$dir; $(MAKE) $(MFLAGS) clean) || exit 1;\
 	done
 
 distclean: clean
