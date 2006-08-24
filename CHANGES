@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed filechooser to behave as documented when 
+	  file pattern changes (STR #135s9)
 	- Completed the global function index and added an
 	  alphabetical list of all methods (STR #1319)
 	- Avoiding problems with some platforms that don't 
