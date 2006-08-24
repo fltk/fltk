@@ -839,6 +839,23 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
     s->new_game(s->seed_);
     s->set_title();
 
+    if (diff > 1)
+    {
+      // Display a message about the higher difficulty levels for the
+      // Sudoku zealots of the world...
+      int val;
+
+      prefs_.get("difficulty_warning", val, 0);
+
+      if (!val)
+      {
+        prefs_.set("difficulty_warning", 1);
+	fl_alert("Note: 'Hard' and 'Impossible' puzzles may have more than "
+	         "one possible solution.\n"
+		 "This is not an error or bug.");
+      }
+    }
+
     prefs_.set("difficulty", s->difficulty_);
   }
 }
@@ -866,7 +883,17 @@ Sudoku::help_cb(Fl_Widget *, void *) {
 	"only once in each column and row. In addition, each 3x3 subgrid\n"
 	"may only contain one of each number.</P>\n"
 
-	"<P>This version of the puzzle is Copyright 2005 by Michael R Sweet</P>\n"
+	"<P>This version of the puzzle is copyright 2005-2006 by Michael R\n"
+	"Sweet.</P>\n"
+
+	"<P><B>Note:</B> The 'Hard' and 'Impossible' difficulty\n"
+	"levels generate Sudoku puzzles with multiple possible solutions.\n"
+	"While some purists insist that these cannot be called 'Sudoku'\n"
+	"puzzles, the author (me) has personally solved many such puzzles\n"
+	"in published/printed Sudoku books and finds them far more\n"
+	"interesting than the simple single solution variety. If you don't\n"
+	"like it, don't play with the difficulty set to 'High' or\n"
+	"'Impossible'.</P>\n"
 
 	"<H2>How to Play the Game</H2>\n"
 
@@ -1020,7 +1047,7 @@ Sudoku::new_game(time_t seed) {
     }
 
   // Show N cells...
-  count = 10 * (5 - difficulty_);
+  count = 11 * (5 - difficulty_);
 
   int numbers[9];
 
@@ -1050,8 +1077,6 @@ Sudoku::new_game(time_t seed) {
 	  break;
 	}
       }
-
-      sound_->play('A' + t - 1);
     }
   }
 }

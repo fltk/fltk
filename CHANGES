@@ -1,15 +1,17 @@
 CHANGES IN FLTK 1.1.8
 
-	- Fixed filechooser to behave as documented when 
-	  file pattern changes (STR #135s9)
+	- Updated the Sudoku game to show a notice about Hard and
+	  Impossible puzzles having multiple solutions which are
+	  not a bug or error (STR #1361)
+	- Fixed filechooser to behave as documented when file
+	  pattern changes (STR #1359)
 	- Completed the global function index and added an
 	  alphabetical list of all methods (STR #1319)
 	- Avoiding problems with some platforms that don't 
 	  implement hypot() (STR #1366)
-	- Fixed floating point value formatting
-	  for Fl_Spinner (STR #1331)
-	- Fixed Fl_Positioner callback 
-	  when released (STR #1387)
+	- Fixed floating point value formatting for Fl_Spinner
+	  (STR #1331)
+	- Fixed Fl_Positioner callback when released (STR #1387)
 	- Fixed WIN32 zero size window issue (STR #1387)
 	- Fixed Sudoku window positioning (STR #1398)
 	- Fluid Code Declarations can now handle
