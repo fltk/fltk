@@ -88,14 +88,16 @@ is not <tt>NULL</tt>, the window is created as a subwindow of
 the parent window.</p>
 
 <p>The first form of the constructor creates a top-level window
-and tells the window manager to position the window. The second
+and asks the window manager to position the window. The second
 form of the constructor either creates a subwindow or a
 top-level window at the specified location, subject to window
 manager configuration. If you do not specify the position of the
 window, the window manager will pick a place to show the window
 or allow the user to pick a location. Use <tt>position(x,y)</tt>
-or <tt>hotspot()</tt> before calling <tt>show()</tt> to force a
-position on the screen.</p>
+or <tt>hotspot()</tt> before calling <tt>show()</tt> to request a
+position on the screen. See <TT><A href="#Fl_Window.resize">
+Fl_Window::resize()</A></TT> for some more details on positioning 
+windows.</p>
 
 <p>Top-level windows initially have <tt>visible()</tt> set to 0
 and <tt>parent()</tt> set to <tt>NULL</tt>. Subwindows initially
@@ -187,6 +189,11 @@ of resizing on the child widgets.
 <P>You can also call the <TT>Fl_Widget</TT> methods <TT>size(x,y)</TT>
  and <TT>position(w,h)</TT>, which are inline wrappers for this virtual
 function. </P>
+<P>A top-level window can not force, but merely suggest a position and 
+size to the operating system. The window manager may not be willing or 
+able to display a window at the desired position or with the given 
+dimensions. It is up to the application developer to verify window 
+parameters after the <tt>resize</tt> request.
 <H4><A name=Fl_Window.free_position>void Fl_Window::free_position()</A></H4>
  Undoes the effect of a previous <TT>resize()</TT> or <TT>show()</TT>
  so that the next time <TT>show()</TT> is called the window manager is
