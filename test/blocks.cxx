@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <sys/time.h>
 #include <math.h>
 
 // Audio headers...
@@ -43,6 +42,7 @@
 
 #ifndef WIN32
 #  include <unistd.h>
+#  include <sys/time.h>
 #endif // !WIN32
 
 #ifdef HAVE_ALSA_ASOUNDLIB_H
