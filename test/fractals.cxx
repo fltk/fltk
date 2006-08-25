@@ -64,7 +64,7 @@ int main(int, char**) {
  */
 
 #include <FL/glut.H>
-#include <FL/glu.H>
+#include <FL/glu.h>
 
 #include <stdio.h>
 #include <stdlib.h>

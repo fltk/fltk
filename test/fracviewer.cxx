@@ -16,7 +16,7 @@
 
 #if HAVE_GL && HAVE_GL_GLU_H
 #  include <FL/glut.H>
-#  include <FL/glu.H>
+#  include <FL/glu.h>
 
 #  include <stdio.h>
 #  include <stdlib.h>
