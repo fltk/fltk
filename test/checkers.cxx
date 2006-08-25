@@ -4,7 +4,7 @@
 // Checkers game for the Fast Light Tool Kit (FLTK).
 //
 // Hours of fun: the FLTK checkers game!
-// Based on a very old algorithim, but it still works!
+// Based on a very old algorithm, but it still works!
 //
 // Copyright 1998-2005 by Bill Spitzak and others.
 //
@@ -871,22 +871,22 @@ int VT100main() {
 // rather tedious and perhaps fltk should provide a direct support
 // to do this:
 
-#include "black_1.xbm"
-#include "black_2.xbm"
-#include "black_3.xbm"
-#include "black_4.xbm"
-#include "white_1.xbm"
-#include "white_2.xbm"
-#include "white_3.xbm"
-#include "white_4.xbm"
-#include "blackking_1.xbm"
-#include "blackking_2.xbm"
-#include "blackking_3.xbm"
-#include "blackking_4.xbm"
-#include "whiteking_1.xbm"
-#include "whiteking_2.xbm"
-#include "whiteking_3.xbm"
-#include "whiteking_4.xbm"
+#include "pixmaps/black_1.xbm"
+#include "pixmaps/black_2.xbm"
+#include "pixmaps/black_3.xbm"
+#include "pixmaps/black_4.xbm"
+#include "pixmaps/white_1.xbm"
+#include "pixmaps/white_2.xbm"
+#include "pixmaps/white_3.xbm"
+#include "pixmaps/white_4.xbm"
+#include "pixmaps/blackking_1.xbm"
+#include "pixmaps/blackking_2.xbm"
+#include "pixmaps/blackking_3.xbm"
+#include "pixmaps/blackking_4.xbm"
+#include "pixmaps/whiteking_1.xbm"
+#include "pixmaps/whiteking_2.xbm"
+#include "pixmaps/whiteking_3.xbm"
+#include "pixmaps/whiteking_4.xbm"
 
 Fl_Bitmap *bm[4][4];
 

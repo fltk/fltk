@@ -69,7 +69,7 @@ static VN_struct btypes[]=
    {-1}
 };
 
-#include "srs.xbm"
+#include "pixmaps/srs.xbm"
 
 /*************** Callback **********************/
 

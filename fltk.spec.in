@@ -62,7 +62,7 @@ Summary: FLTK Games
 Group: Games
 
 %description games
-Install fltk-games to play checkers or Sudoku on your computer.
+Install fltk-games to play Block Attack!, checkers, or Sudoku on your computer.
 
 %prep
 %setup
@@ -124,6 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files games
 %dir %{prefix}/bin
+%{prefix}/bin/blocks
 %{prefix}/bin/checkers
 %{prefix}/bin/sudoku
 
@@ -135,6 +136,7 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/share/applnk/Games/*
 
 %dir %{prefix}/share/icons
+%{prefix}/share/icons/hicolor/*/apps/blocks.png
 %{prefix}/share/icons/hicolor/*/apps/checkers.png
 %{prefix}/share/icons/hicolor/*/apps/sudoku.png
 

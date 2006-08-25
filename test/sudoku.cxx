@@ -45,7 +45,7 @@
 #ifdef WIN32
 #  include "sudokurc.h"
 #elif !defined(__APPLE__)
-#  include "sudoku.xbm"
+#  include "pixmaps/sudoku.xbm"
 #endif // WIN32
 
 // Audio headers...

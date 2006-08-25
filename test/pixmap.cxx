@@ -31,7 +31,7 @@
 #include <FL/Fl_Pixmap.H>
 #include <stdio.h>
 
-#include "porsche.xpm"
+#include "pixmaps/porsche.xpm"
 
 #include <FL/Fl_Toggle_Button.H>
 

@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "tile.xpm"
+#include "pixmaps/tile.xpm"
 
 Fl_Button *b;
 Fl_Window *w;

@@ -58,6 +58,7 @@
 	@e:Mandelbrot:mandelbrot
 	@e:Fractals:fractals
 	@e:Puzzle:glpuzzle
+	@e:Block\nAttack!:blocks
 	@e:Checkers:checkers
 	@e:Sudoku:sudoku
 

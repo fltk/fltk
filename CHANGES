@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Added a new demo game called "Block Attack!"
 	- Updated the Sudoku game to show a notice about Hard and
 	  Impossible puzzles having multiple solutions which are
 	  not a bug or error (STR #1361)

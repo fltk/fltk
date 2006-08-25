@@ -359,9 +359,19 @@ f 0444 root sys $docdir/examples/ test/*.h
 
 %subpackage games
 %description FLTK Games
-%description Install fltk-games to play checkers or Sudoku on your computer.
+%description Install fltk-games to play Block Attack!, checkers, or Sudoku on your computer.
 
 %system darwin
+d 0555 root sys /Applications/blocks.app -
+d 0555 root sys /Applications/blocks.app/Contents -
+f 0444 root sys /Applications/blocks.app/Contents/Info.plist test/blocks.app/Contents/Info.plist
+f 0444 root sys /Applications/blocks.app/Contents/PkgInfo test/blocks.app/Contents/PkgInfo
+d 0555 root sys /Applications/blocks.app/Contents/MacOS -
+f 0555 root sys /Applications/blocks.app/Contents/MacOS/blocks test/blocks
+d 0555 root sys /Applications/blocks.app/Contents/Resources -
+f 0444 root sys /Applications/blocks.app/Contents/Resources/blocks.icns test/blocks.app/Contents/Resources/blocks.icns
+%postremove /bin/rm -rf /Applications/blocks.app
+
 d 0555 root sys /Applications/checkers.app -
 d 0555 root sys /Applications/checkers.app/Contents -
 f 0444 root sys /Applications/checkers.app/Contents/Info.plist test/checkers.app/Contents/Info.plist
@@ -383,19 +393,26 @@ f 0444 root sys /Applications/sudoku.app/Contents/Resources/sudoku.icns test/sud
 %postremove /bin/rm -rf /Applications/sudoku.app
 
 %system !darwin
+f 0555 root sys $bindir/blocks test/blocks
+f 0444 root sys /usr/share/applnk/Games/blocks.desktop test/desktop/blocks.desktop
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/blocks.png test/icons/blocks-32.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/blocks.png test/icons/blocks-128.png
+
 f 0555 root sys $bindir/checkers test/checkers
-f 0444 root sys /usr/share/applnk/Games/checkers.desktop test/checkers.desktop
-f 0444 root sys /usr/share/icons/hicolor/32x32/apps/checkers.png checkers/checkers-32.png
-f 0444 root sys /usr/share/icons/hicolor/128x128/apps/checkers.png checkers/checkers-128.png
+f 0444 root sys /usr/share/applnk/Games/checkers.desktop test/desktop/checkers.desktop
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/checkers.png test/icons/checkers-32.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/checkers.png test/icons/checkers-128.png
 
 f 0555 root sys $bindir/sudoku test/sudoku
-f 0444 root sys /usr/share/applnk/Games/sudoku.desktop test/sudoku.desktop
-f 0444 root sys /usr/share/icons/hicolor/32x32/apps/sudoku.png sudoku/sudoku-32.png
-f 0444 root sys /usr/share/icons/hicolor/128x128/apps/sudoku.png sudoku/sudoku-128.png
+f 0444 root sys /usr/share/applnk/Games/sudoku.desktop test/desktop/sudoku.desktop
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/sudoku.png test/icons/sudoku-32.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/sudoku.png test/icons/sudoku-128.png
 
 %system all
+f 0444 root sys $mandir/cat6/blocks.$CAT6EXT documentation/blocks.$CAT6EXT
 f 0444 root sys $mandir/cat6/checkers.$CAT6EXT documentation/checkers.$CAT6EXT
 f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/sudoku.$CAT6EXT
+f 0444 root sys $mandir/man6/blocks.6 documentation/blocks.man
 f 0444 root sys $mandir/man6/checkers.6 documentation/checkers.man
 f 0444 root sys $mandir/man6/sudoku.6 documentation/sudoku.man
 

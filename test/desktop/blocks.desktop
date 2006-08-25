@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Block Attack!
+Comment=Block Attack! Game
+TryExec=blocks
+Exec=blocks
+Icon=blocks
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Categories=Application;Game

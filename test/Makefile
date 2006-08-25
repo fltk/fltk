@@ -33,6 +33,7 @@ CPPFILES =\
 	arc.cxx \
 	ask.cxx \
 	bitmap.cxx \
+	blocks.cxx \
 	boxtype.cxx \
 	browser.cxx \
 	button.cxx \
@@ -99,6 +100,7 @@ ALL =	\
 	arc$(EXEEXT) \
 	ask$(EXEEXT) \
 	bitmap$(EXEEXT) \
+	blocks$(EXEEXT) \
 	boxtype$(EXEEXT) \
 	browser$(EXEEXT) \
 	button$(EXEEXT) \
@@ -198,17 +200,17 @@ install-linux:
 	-$(MKDIR) $(DESTDIR)/usr/share/applnk/Games
 	-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps
 	-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
-	for game in checkers sudoku; do \
+	for game in blocks checkers sudoku; do \
 		$(CP) $$game $(DESTDIR)$(bindir); \
 		$(CHMOD) 755 $(DESTDIR)$(bindir)/$$game; \
-		$(CP) $$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
-		$(CP) $$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(CP) $$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(CP) desktop/$$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
+		$(CP) icons/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
+		$(CP) icons/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
 	done
 
 install-osx:
 	echo Installing games in $(DESTDIR)/Applications...
-	for game in checkers sudoku; do \
+	for game in blocks checkers sudoku; do \
 		if test ! -d $(DESTDIR)/Applications/$$game.app; then \
 			$(MKDIR) $(DESTDIR)/Applications/$$game.app; \
 			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents; \
@@ -227,7 +229,7 @@ uninstall:
 
 uninstall-linux:
 	echo Removing games from $(DESTDIR)$(bindir)...
-	for game in checkers sudoku; do \
+	for game in blocks checkers sudoku; do \
 		$(RM) $(DESTDIR)$(bindir)/$$game; \
 		$(RM) $(DESTDIR)/usr/share/applnk/Games/$$game.desktop; \
 		$(RM) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
@@ -236,6 +238,7 @@ uninstall-linux:
 
 uninstall-osx:
 	echo Removing games from $(DESTDIR)/Applications...
+	$(RM) -r $(DESTDIR)/Applications/blocks.app
 	$(RM) -r $(DESTDIR)/Applications/checkers.app
 	$(RM) -r $(DESTDIR)/Applications/sudoku.app
 
@@ -265,6 +268,12 @@ browser$(EXEEXT): browser.o
 button$(EXEEXT): button.o
 
 buttons$(EXEEXT): buttons.o
+
+blocks$(EXEEXT): blocks.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)
+	$(CP) blocks$(EXEEXT) blocks.app/Contents/MacOS
+	$(POSTBUILD) $@ ../FL/mac.r
 
 checkers$(EXEEXT): checkers.o
 	echo Linking $@...
