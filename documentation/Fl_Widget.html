@@ -425,6 +425,10 @@ resizing. The default version does <I>not</I> call the
 widget to do so because the parent may know a faster way to
 update the display, such as scrolling from the old position.
 
+<P>Some window managers under X11 call <TT>resize</TT> a lot more
+often than needed. Please verify that the position or size of
+a widget did actually change before doing any extensiive calculations.
+
 <P><TT>position(x,y)</TT> is a shortcut for <TT>resize(x,y,w(),h())</TT>,
 and <TT>size(w,h)</TT> is a shortcut for <TT>resize(x(),y(),w,h)</TT>.</P>
 
