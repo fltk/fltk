@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed GLUT behavior on window creation (STR #1267)
 	- Fixed OS X bug that would hide tooltips before
 	  they were shown (STR #1392)
 	- Fixed Fl_Tabs tooltip reappearing (STR #1324)

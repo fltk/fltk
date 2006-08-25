@@ -42,6 +42,7 @@
 
 #define MAXWINDOWS 32
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
+static unsigned char reshaped[MAXWINDOWS+1];
 
 Fl_Glut_Window *glut_window;
 int glut_menu;
@@ -60,8 +61,17 @@ static int indraw;
 void Fl_Glut_Window::draw() {
   glut_window = this;
   indraw = 1;
-  if (!valid()) {reshape(w(),h()); valid(1);}
-  display();
+  if (!reshaped[number] ) {
+    // ignore the first show event on glutCreateWindow
+    reshaped[number] = 1;
+  } else {
+    if( !valid() || reshaped[number] == 1 ) {
+      reshaped[number] = 2;
+      reshape(w(),h());
+      valid(1);
+    }
+    display();
+  }
   indraw = 0;
 }
 
@@ -71,8 +81,17 @@ void glutSwapBuffers() {
 
 void Fl_Glut_Window::draw_overlay() {
   glut_window = this;
-  if (!valid()) {reshape(w(),h()); valid(1);}
-  overlaydisplay();
+  if (!reshaped[number] ) {
+    // ignore the first show event on glutCreateWindow
+    reshaped[number] = 1;
+  } else {
+    if( !valid() || reshaped[number] == 1 ) {
+      reshaped[number] = 2;
+      reshape(w(),h());
+      valid(1);
+    }
+    overlaydisplay();
+  }
 }
 
 static void domenu(int, int, int);
