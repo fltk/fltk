@@ -1906,17 +1906,17 @@ void Fl_X::make(Fl_Window* w)
     
     if (w->size_range_set) w->size_range_();
     
-    //if (winclass != kHelpWindowClass) {
+    if (winclass != kHelpWindowClass) {
       Fl_Tooltip::enter(0);
-      if (w->size_range_set) w->size_range_();
-      ShowWindow(x->xid);
-      if (fl_show_iconic) { 
-        fl_show_iconic = 0;
-        CollapseWindow( x->xid, true ); // \todo Mac ; untested
-      } else {
-        w->set_visible();
-      }
-    //}
+    }
+    if (w->size_range_set) w->size_range_();
+    ShowWindow(x->xid);
+    if (fl_show_iconic) { 
+      fl_show_iconic = 0;
+      CollapseWindow( x->xid, true ); // \todo Mac ; untested
+    } else {
+      w->set_visible();
+    }
 
     Rect rect;
     GetWindowBounds(x->xid, kWindowContentRgn, &rect);
