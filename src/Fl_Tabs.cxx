@@ -158,7 +158,10 @@ int Fl_Tabs::handle(int event) {
         set_changed();
 	do_callback();
       }
-    } else push(o);
+      Fl_Tooltip::current(o);
+    } else {
+      push(o);
+    }
     return 1;
   case FL_MOVE: {
     int ret = Fl_Group::handle(event);
