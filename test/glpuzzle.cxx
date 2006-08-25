@@ -47,11 +47,7 @@ int main(int, char**) {
 #include <time.h>
 #include <math.h>
 #include <FL/glut.H>	// changed for fltk
-#ifdef __APPLE__
-# include <OpenGL/glu.h>
-#else
-# include <GL/glu.h> // added for fltk
-#endif
+#include <FL/glu.h>     // added for fltk
 #include "trackball.c"	// changed from trackball.h for fltk
 
 #define WIDTH 4

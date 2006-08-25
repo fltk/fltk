@@ -16,11 +16,7 @@
 
 #if HAVE_GL && HAVE_GL_GLU_H
 #  include <FL/glut.H>
-#  ifdef __APPLE__
-#    include <OpenGL/glu.h>
-#  else
-#    include <GL/glu.h> // added for FLTK
-#  endif
+#  include <FL/glu.H>
 
 #  include <stdio.h>
 #  include <stdlib.h>
