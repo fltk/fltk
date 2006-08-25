@@ -63,6 +63,8 @@ void Fl_Glut_Window::draw() {
   indraw = 1;
   if (!reshaped[number] ) {
     // ignore the first show event on glutCreateWindow
+    // avoid flickering:
+    glClear(GL_COLOR_BUFFER_BIT);
     reshaped[number] = 1;
   } else {
     if( !valid() || reshaped[number] == 1 ) {
