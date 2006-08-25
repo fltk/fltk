@@ -191,7 +191,9 @@ clean:
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
 	-$(MKDIR) $(DESTDIR)$(docdir)/examples
-	$(CP) *.h *.cxx *.fl demo.menu *.xbm *.xpm $(DESTDIR)$(docdir)/examples
+	$(CP) *.h *.cxx *.fl demo.menu $(DESTDIR)$(docdir)/examples
+	-$(MKDIR) $(DESTDIR)$(docdir)/examples/pixmaps
+	$(CP) pixmaps/*.xbm pixmaps/*.xpm $(DESTDIR)$(docdir)/examples/pixmaps
 	$(CHMOD) 644 $(DESTDIR)$(docdir)/examples/*.*
 
 install-linux:
