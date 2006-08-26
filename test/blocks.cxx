@@ -729,7 +729,7 @@ BlockWindow::handle(int event) {
 
 
   if (Fl_Double_Window::handle(event)) return (1);
-  else if (interval_ < 0.0) return (0);
+  else if (interval_ < 0.0 || paused_) return (0);
 
   switch (event) {
     case FL_PUSH :
@@ -977,7 +977,7 @@ BlockWindow::timeout_cb(BlockWindow *bw) {
   // Update the play/pause button as needed...
   if ((bw->paused_ || bw->interval_< 0.0) &&
       bw->play_button_->w() < 80) {
-    int s = bw->play_button_->w() + 5;
+    int s = bw->play_button_->w() + 10;
 
     bw->play_button_->resize(s, (s - 20) * (bw->h() - s) / 120, s, s);
     bw->play_button_->labelsize(s / 2 + 4);
