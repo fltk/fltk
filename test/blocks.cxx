@@ -411,6 +411,8 @@ void BlockSound::play_explosion(float duration) {
 
 class BlockWindow : public Fl_Double_Window
 {
+  public:
+
   struct Block
   {
     int		color;
@@ -424,6 +426,8 @@ class BlockWindow : public Fl_Double_Window
     Block	blocks[BLOCK_ROWS];
     int		x;
   };
+
+  private:
 
   int		num_columns_;
   Column	columns_[BLOCK_COLS];
