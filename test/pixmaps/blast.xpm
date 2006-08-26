@@ -1,5 +1,5 @@
 /* XPM */
-static char * blast_xpm[] = {
+static const char * blast_xpm[] = {
 "32 32 32 1",
 " 	c #905518",
 ".	c #9F580E",

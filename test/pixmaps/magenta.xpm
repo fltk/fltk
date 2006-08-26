@@ -1,5 +1,5 @@
 /* XPM */
-static char * magenta_xpm[] = {
+static const char * magenta_xpm[] = {
 "32 32 32 1",
 " 	c #000100",
 ".	c #380F3F",
