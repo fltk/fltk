@@ -236,7 +236,7 @@ BlockSound::BlockSound() {
   format.nBlockAlign     = 4;
   format.wBitsPerSample  = 16;
 
-  data_handle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, format.nSamplesPerSec / 5);
+  data_handle = GlobalAlloc(GMEM_MOVEABLE | GMEM_SHARE, format.nSamplesPerSec * 4);
   if (!data_handle) return;
 
   data_ptr = (LPSTR)GlobalLock(data_handle);
@@ -795,6 +795,7 @@ BlockWindow::help_cb(Fl_Widget *wi, BlockWindow *bw) {
 void
 BlockWindow::init() {
   count_       = 0;
+  help_        = false;
   interval_    = -1.0;
   level_       = 1;
   num_colors_  = 3;

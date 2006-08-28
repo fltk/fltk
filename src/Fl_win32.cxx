@@ -1583,7 +1583,7 @@ void fl_free_fonts(void)
     s = fl_fonts + i;
     for (f=s->first; f; f=ff) {
       ff = f->next;
-      delete(f);
+      delete f;
       s->first = ff;
     }
   }
