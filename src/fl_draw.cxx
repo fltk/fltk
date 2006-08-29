@@ -305,7 +305,7 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
     symwidth[0] = h;
   }
 
-  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1)) {
+  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1) && p[-1]!='@') {
     strlcpy(symbol[1], p, sizeof(symbol[1]));
     symwidth[1] = h;
   }

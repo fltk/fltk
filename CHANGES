@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed fl_measure which mistook a trailing '@@'
+	  for a symbol (STR #1406)
 	- Fixed GLUT behavior on window creation (STR #1403)
 	- Fixed OS X bug that would hide tooltips before
 	  they were shown (STR #1392)
