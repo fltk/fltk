@@ -116,7 +116,7 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 .SILENT:
 
 # Build commands and filename extensions...
-.SUFFIXES:	.0 .1 .3 .c .cxx .h .fl .man .o .z $(EXEEXT)
+.SUFFIXES:	.0 .1 .3 .6 .c .cxx .h .fl .man .o .z $(EXEEXT)
 
 .o$(EXEEXT):
 	echo Linking $@...
@@ -131,7 +131,7 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 	echo Compiling $<...
 	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $<
 
-.man.0 .man.1 .man.3:
+.man.0 .man.1 .man.3 .man.6:
 	echo Formatting $<...
 	rm -f $@
 	$(NROFF) -man $< >$@
