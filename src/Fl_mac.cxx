@@ -2321,7 +2321,67 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
     }
 }
 
+int MacUnlinkWindow(Fl_X *ip, Fl_X *start) {
+  if (!ip) return 0;
+  if (start) {
+    Fl_X *pc = start;
+    while (pc) {
+      if (pc->xidNext == ip) {
+        pc->xidNext = ip->xidNext;
+        return 1;
+      }
+      if (pc->xidChildren) {
+        if (pc->xidChildren == ip) {
+          pc->xidChildren = ip->xidNext;
+          return 1;
+        }
+        if (MacUnlinkWindow(ip, pc->xidChildren))
+          return 1;
+      }
+      pc = pc->xidNext;
+    }
+  } else {
+    for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next ) {
+      if (MacUnlinkWindow(ip, pc))
+        return 1;
+    }
+  }  
+  return 0;
+}
 
+static void MacRelinkWindow(Fl_X *x, Fl_X *p) {
+  if (!x || !p) return;
+  // first, check if 'x' is already registered as a child of 'p'
+  for (Fl_X *i = p->xidChildren; i; i=i->xidNext) {
+    if (i == x) return;
+  }
+  // now add 'x' as the first child of 'p'
+  x->xidNext = p->xidChildren;
+  p->xidChildren = x;
+}
+
+void MacDestroyWindow(Fl_Window *w, WindowPtr p) {
+  MacUnmapWindow(w, p);
+  if (w && !w->parent() && p)
+    DisposeWindow(p);
+}
+
+void MacMapWindow(Fl_Window *w, WindowPtr p) {
+  if (w && p)
+    ShowWindow(p);
+  //+ link to window list
+  if (w && w->parent()) {
+    MacRelinkWindow(Fl_X::i(w), Fl_X::i(w->window()));
+    w->redraw();
+  }
+}
+
+void MacUnmapWindow(Fl_Window *w, WindowPtr p) {
+  if (w && !w->parent() && p) 
+    HideWindow(p);
+  if (w && Fl_X::i(w)) 
+    MacUnlinkWindow(Fl_X::i(w));
+}
 
 //
 // End of "$Id$".

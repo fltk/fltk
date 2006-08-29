@@ -103,9 +103,17 @@ Function {} {open
           label {Make sure this clock does not use processor time when this tab is hidden or window is iconized}
           xywh {160 50 100 100} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
         }
+        Fl_Group {} {open
+          xywh {20 145 40 55} box THIN_DOWN_BOX color 173 align 16
+          class Fl_Window
+        } {}
         Fl_Group {} {
-          label subwindow open
-          xywh {20 135 130 65} box THIN_DOWN_BOX color 167 align 16
+          label {subwindows:} open
+          xywh {65 145 40 55} box THIN_DOWN_BOX color 167
+          class Fl_Window
+        } {}
+        Fl_Group {} {open
+          xywh {110 145 40 55} box THIN_DOWN_BOX color 239 align 16
           class Fl_Window
         } {}
       }

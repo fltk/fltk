@@ -54,10 +54,6 @@ inline void XDestroyRegion(Fl_Region r) {
   DisposeRgn(r);
 }
 
-#  define XDestroyWindow(a,b) DisposeWindow(b)
-#  define XMapWindow(a,b) ShowWindow(b)
-#  define XUnmapWindow(a,b) HideWindow(b)
-
 #  include "Fl_Window.H"
 
 // This object contains all mac-specific stuff about a window:
@@ -89,6 +85,11 @@ public:
   static void q_begin_image(CGRect&, int x, int y, int w, int h);
   static void q_end_image();
 };
+
+extern void MacDestroyWindow(Fl_Window*,WindowPtr);
+extern void MacMapWindow(Fl_Window*,WindowPtr);
+extern void MacUnmapWindow(Fl_Window*,WindowPtr);
+extern int MacUnlinkWindow(Fl_X*,Fl_X*start=0L);
 
 inline Window fl_xid(const Fl_Window*w) 
 {

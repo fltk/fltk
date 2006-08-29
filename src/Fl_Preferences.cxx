@@ -247,7 +247,6 @@ char Fl_Preferences::set( const char *key, float value )
 {
   sprintf( nameBuffer, "%g", value );
   node->set( key, nameBuffer );
-  float v1 = atof(nameBuffer);
   return 1;
 }
 
@@ -259,7 +258,6 @@ char Fl_Preferences::set( const char *key, float value, int precision )
 {
   sprintf( nameBuffer, "%.*g", precision, value );
   node->set( key, nameBuffer );
-  float v1 = atof(nameBuffer);
   return 1;
 }
 

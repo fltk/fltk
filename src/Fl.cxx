@@ -881,23 +881,9 @@ void Fl_Window::hide() {
   Fl_X** pp = &Fl_X::first;
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return;
   *pp = ip->next;
-
-#ifdef __APPLE_QD__
-  // remove all childwindow links
-  for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
-  { 
-    if ( pc->xidNext == ip ) pc->xidNext = ip->xidNext;
-    if ( pc->xidChildren == ip ) pc->xidChildren = ip->xidNext;   
-  }
-#elif defined(__APPLE_QUARTZ__)
-  // remove all childwindow links
-  for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next )
-  {
-    if ( pc->xidNext == ip ) pc->xidNext = ip->xidNext;
-    if ( pc->xidChildren == ip ) pc->xidChildren = ip->xidNext;
-  }
-#endif // __APPLE__
-
+#ifdef __APPLE__
+  MacUnlinkWindow(ip);
+#endif
   i = 0;
 
   // recursively remove any subwindows:
@@ -941,11 +927,11 @@ void Fl_Window::hide() {
       fl_gc = 0;
     }
 #elif defined(__APPLE_QD__)
-  if ( ip->xid == fl_window )
+  if ( ip->xid == fl_window && !parent() )
     fl_window = 0;
 #elif defined(__APPLE_QUARTZ__)
   Fl_X::q_release_context(ip);
-  if ( ip->xid == fl_window )
+  if ( ip->xid == fl_window && !parent() )
     fl_window = 0;
 #endif
 
@@ -960,19 +946,9 @@ void Fl_Window::hide() {
   }
   XDestroyWindow(fl_display, ip->xid);
 #elif defined(__APPLE_QD__)
-  if ( !parent() ) // don't destroy shared windows!
-  {
-    //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
-    //+ RemoveReceiveHandler( dndReceiveHandler, ip->xid );
-    XDestroyWindow(fl_display, ip->xid);
-  }
+  MacDestroyWindow(this, ip->xid);
 #elif defined(__APPLE_QUARTZ__)
-  if ( !parent() ) // don't destroy shared windows!
-  {
-    //+ RemoveTrackingHandler( dndTrackingHandler, ip->xid );
-    //+ RemoveReceiveHandler( dndReceiveHandler, ip->xid );
-    XDestroyWindow(fl_display, ip->xid);
-  }
+  MacDestroyWindow(this, ip->xid);
 #else
 # if USE_XFT
   fl_destroy_xft_draw(ip->xid);
@@ -1006,7 +982,15 @@ int Fl_Window::handle(int ev)
     switch (ev) {
     case FL_SHOW:
       if (!shown()) show();
-      else XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
+      else {
+#ifdef __APPLE_QD__
+        MacMapWindow(this, fl_xid(this));
+#elif defined(__APPLE_QUARTZ__)
+        MacMapWindow(this, fl_xid(this));
+#else
+        XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
+#endif // __APPLE__
+      }
       break;
     case FL_HIDE:
       if (shown()) {
@@ -1022,9 +1006,9 @@ int Fl_Window::handle(int ev)
 	 if (p->type() >= FL_WINDOW) break; // don't do the unmap
 	}
 #ifdef __APPLE_QD__
-        hide();
+	MacUnmapWindow(this, fl_xid(this));
 #elif defined(__APPLE_QUARTZ__)
-        hide();
+	MacUnmapWindow(this, fl_xid(this));
 #else
 	XUnmapWindow(fl_display, fl_xid(this));
 #endif // __APPLE__
