@@ -42,7 +42,6 @@
 
 #define MAXWINDOWS 32
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
-static unsigned char reshaped[MAXWINDOWS+1];
 
 Fl_Glut_Window *glut_window;
 int glut_menu;
@@ -61,19 +60,8 @@ static int indraw;
 void Fl_Glut_Window::draw() {
   glut_window = this;
   indraw = 1;
-  if (!reshaped[number] ) {
-    // ignore the first show event on glutCreateWindow
-    // avoid flickering:
-    glClear(GL_COLOR_BUFFER_BIT);
-    reshaped[number] = 1;
-  } else {
-    if( !valid() || reshaped[number] == 1 ) {
-      reshaped[number] = 2;
-      reshape(w(),h());
-      valid(1);
-    }
-    display();
-  }
+  if (!valid()) {reshape(w(),h()); valid(1);}
+  display();
   indraw = 0;
 }
 
@@ -83,17 +71,8 @@ void glutSwapBuffers() {
 
 void Fl_Glut_Window::draw_overlay() {
   glut_window = this;
-  if (!reshaped[number] ) {
-    // ignore the first show event on glutCreateWindow
-    reshaped[number] = 1;
-  } else {
-    if( !valid() || reshaped[number] == 1 ) {
-      reshaped[number] = 2;
-      reshape(w(),h());
-      valid(1);
-    }
-    overlaydisplay();
-  }
+  if (!valid()) {reshape(w(),h()); valid(1);}
+  overlaydisplay();
 }
 
 static void domenu(int, int, int);
@@ -260,6 +239,8 @@ int glutCreateWindow(const char *title) {
   } else {
     W->show();
   }
+  W->valid(0);
+  W->context_valid(0);
   W->make_current();
   return W->number;
 }
