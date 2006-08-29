@@ -147,7 +147,8 @@ HTMLFILES	= \
 		forms.html \
 		osissues.html \
 		migration.html \
-		license.html
+		license.html \
+		examples.html
 
 IMAGEFILES	= \
 		adjuster1.gif \
