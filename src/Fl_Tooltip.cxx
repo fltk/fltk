@@ -194,7 +194,7 @@ Fl_Tooltip::exit_(Fl_Widget *w) {
   widget_ = 0;
   Fl::remove_timeout(tooltip_timeout);
   Fl::remove_timeout(recent_timeout);
-  if (window) window->hide();
+  if (window && window->visible()) window->hide();
   if (recent_tooltip) {
     if (Fl::event_state() & FL_BUTTONS) recent_tooltip = 0;
     else Fl::add_timeout(Fl_Tooltip::hoverdelay(), recent_timeout);
@@ -233,11 +233,11 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
 #ifdef WIN32
     // possible fix for the Windows titlebar, it seems to want the
     // window to be destroyed, moving it messes up the parenting:
-    if (window) window->hide();
+    if (window && window->visible()) window->hide();
 #endif // WIN32
     tooltip_timeout(0);
   } else {
-    if (window) window->hide();
+    if (window && window->visible()) window->hide();
     Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout);
   }
 

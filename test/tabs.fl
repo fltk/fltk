@@ -1,18 +1,18 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0108 
 header_name {.h} 
 code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {open
-    xywh {561 88 320 331} type Double resizable visible
+    xywh {423 205 320 331} type Double resizable visible
   } {
     Fl_Tabs {} {open
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 10 300 200} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
-        label Label1 open
-        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {10 30 300 180} selection_color 1 hide resizable
+        label Label1 open selected
+        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {10 30 300 180} selection_color 1 resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -28,8 +28,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab2 open selected
-        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 30 300 180} selection_color 2
+        label tab2 open
+        tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 30 300 180} selection_color 2 hide
       } {
         Fl_Button {} {
           label button1
@@ -93,16 +93,21 @@ Function {} {open
       } {
         Fl_Button {} {
           label button2
-          tooltip {button2 has a different tooltp than tab5} xywh {20 80 60 80}
+          tooltip {button2 has a different tooltp than tab5} xywh {20 45 60 80}
         }
         Fl_Button {} {
           label button
-          xywh {90 90 60 80}
+          xywh {90 45 60 80}
         }
         Fl_Clock {} {
           label {Make sure this clock does not use processor time when this tab is hidden or window is iconized}
           xywh {160 50 100 100} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
         }
+        Fl_Group {} {
+          label subwindow open
+          xywh {20 135 130 65} box THIN_DOWN_BOX color 167 align 16
+          class Fl_Window
+        } {}
       }
     }
     Fl_Input {} {

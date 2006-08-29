@@ -158,15 +158,13 @@ void fl_draw(
 
   symtotal = symwidth[0] + symwidth[1];
 
-  if (str) {
-    for (p = str, lines=0; p;) {
-      e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP,
-                 draw_symbols);
-      lines++;
-      if (!*e || (*e == '@' && e[1] != '@' && draw_symbols)) break;
-      p = e;
-    }
-  } else lines = 0;
+  for (p = str, lines=0; p;) {
+    e = expand(p, buf, w - symtotal, buflen, width, align&FL_ALIGN_WRAP,
+               draw_symbols);
+    lines++;
+    if (!*e || (*e == '@' && e[1] != '@' && draw_symbols)) break;
+    p = e;
+  }
 
   if ((symwidth[0] || symwidth[1]) && lines) {
     if (symwidth[0]) symwidth[0] = lines * fl_height();
@@ -295,19 +293,21 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   symbol[1][0] = '\0';
   symwidth[1]  = 0;
 
-  if (str && str[0] == '@' && str[1] && str[1] != '@') {
-    // Start with a symbol...
-    for (symptr = symbol[0];
-         *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
-         *symptr++ = *str++);
-    *symptr = '\0';
-    if (isspace(*str)) str++;
-    symwidth[0] = h;
-  }
+  if (draw_symbols) {
+    if (str && str[0] == '@' && str[1] && str[1] != '@') {
+      // Start with a symbol...
+      for (symptr = symbol[0];
+           *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
+           *symptr++ = *str++);
+      *symptr = '\0';
+      if (isspace(*str)) str++;
+      symwidth[0] = min(w,h);
+    }
 
-  if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1) && p[-1]!='@') {
-    strlcpy(symbol[1], p, sizeof(symbol[1]));
-    symwidth[1] = h;
+    if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1) && p[-1]!='@') {
+      strlcpy(symbol[1], p, sizeof(symbol[1]));
+      symwidth[1] = min(w,h);
+    }
   }
 
   symtotal = symwidth[0] + symwidth[1];
