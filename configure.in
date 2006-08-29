@@ -788,7 +788,7 @@ case "$uname" in
 	# All others
 	CAT1EXT=1
 	CAT3EXT=3
-	CAT6EXT=3
+	CAT6EXT=6
 	;;
 esac
 
