@@ -247,14 +247,10 @@ int fl_wait(double time_to_wait) {
 	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
       }
       time_to_wait = 0.0; // just peek for any messages
-#ifdef __CYGWIN__
-    }
-#else
     } else {
       // we need to check them periodically, so set a short timeout:
       if (time_to_wait > .001) time_to_wait = .001;
     }
-#endif
   }
 #endif // USE_ASYNC_SELECT
 
