@@ -104,7 +104,7 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
     // The font "Apple Chancery" is a pretty extreme example of overlapping letters.
   float fa = -FixedToFloat(bAscent), fd = -FixedToFloat(bDescent);
   if (fa>0.0f && fd>0.0f) {
-    float f = Size/(fa+fd);
+    //float f = Size/(fa+fd);
     ascent = fa; //int(fa*f+0.5f);
     descent = fd; //Size - ascent;
   }

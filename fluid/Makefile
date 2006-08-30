@@ -99,12 +99,14 @@ install-linux:
 	$(CP) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
 
 install-osx:
+	echo Installing Fluid in $(DESTDIR)/Applications...
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents
 	$(CP) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
 	$(CP) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
-	$(LN) $(bindir)/fluid $(DESTDIR)/Application/fluid.app/Contents/MacOS/fluid
+	-$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
+	$(LN) $(bindir)/fluid $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
 	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
 	$(CP) fluid.app/Contents/Resources/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
 
