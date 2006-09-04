@@ -156,9 +156,19 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
     if (array) {
       // Make a copy of the image data and return a new Fl_RGB_Image...
       new_array = new uchar[w() * h() * d()];
-      memcpy(new_array, array, w() * h() * d());
-
-      new_image = new Fl_RGB_Image(new_array, w(), h(), d(), ld());
+      if (ld()) {
+        const uchar *src = array;
+        uchar *dst = new_array;
+        int dy, dh = h(), wd = w()*d(), wdld = wd+ld();
+        for (dy=0; dy<dh; dy++) {
+          memcpy(dst, src, wd);
+          src += wdld;
+          dst += wd;
+        }
+      } else {
+        memcpy(new_array, array, w() * h() * d());
+      }
+      new_image = new Fl_RGB_Image(new_array, w(), h(), d());
       new_image->alloc_array = 1;
 
       return new_image;
