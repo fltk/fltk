@@ -2196,9 +2196,14 @@ void Fl_Widget_Type::write_widget_code() {
     write_c("%s%s->deactivate();\n", indent(), var);
   if (!is_group() && resizable())
     write_c("%sFl_Group::current()->resizable(%s);\n", indent(), var);
-  if (hotspot())
-    write_c("%s%s->hotspot(o);\n", indent(),
-            is_class() ? "this" : name() ? name() : "w");
+  if (hotspot()) {
+    if (is_class())
+      write_c("%shotspot(%s);\n", indent(), var);
+    else if (is_window())
+      write_c("%s%s->hotspot(%s);\n", indent(), var, var);
+    else
+      write_c("%s%s->window()->hotspot(%s);\n", indent(), var, var);
+  }
 }
 
 void Fl_Widget_Type::write_extra_code() {

@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed Fluid hotspot bug (STR #1416)
 	- Fixed image copy code (STR #1412)
 	- Fixed latin-to-roman text conversion (STR #1411)
 	- Fixed Cygwin timeout for "select" calls (STR #1151)
