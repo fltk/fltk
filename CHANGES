@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed latin-to-roman text conversion (STR #1411)
 	- Fixed Cygwin timeout for "select" calls (STR #1151)
 	- Improved Mac OS X subwindow handling (STR #1402)
 	- Fixed more inconsistencies between fl_draw
