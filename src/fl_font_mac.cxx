@@ -264,6 +264,11 @@ int fl_font_ = 0;
 int fl_size_ = 0;
 
 void fl_font(int fnum, int size) {
+  if (fnum==-1) {
+    fl_font_ = 0; 
+    fl_size_ = 0;
+    return;
+  }
   fl_font_ = fnum;
   fl_size_ = size;
   fl_font(find(fnum, size));
