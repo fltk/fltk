@@ -660,6 +660,7 @@ case $uname in
 	CFLAGS="$CFLAGS $X_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $X_CFLAGS"
 	LDFLAGS="$X_LIBS $LDFLAGS"
+	DSOFLAGS="$X_LIBS $DSOFLAGS"
 
 	if test "x$x_includes" != x; then
 	    ac_cpp="$ac_cpp -I$x_includes"
