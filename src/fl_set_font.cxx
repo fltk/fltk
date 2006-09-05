@@ -30,6 +30,7 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/fl_draw.H>
 #include "flstring.h"
 #include "Fl_Font.H"
 #include <stdlib.h>
@@ -75,6 +76,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
   s->xlist = 0;
 #endif
   s->first = 0;
+  fl_font(-1, 0);
 }
 
 void Fl::set_font(Fl_Font fnum, Fl_Font from) {
