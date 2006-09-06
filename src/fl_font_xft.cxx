@@ -96,6 +96,10 @@ const char* fl_encoding_ = "iso8859-1";
 Fl_FontSize* fl_fontsize = 0;
 
 void fl_font(int fnum, int size) {
+  if (fnum==-1) { // special case to stop font caching
+    fl_font_ = 0; fl_size_ = 0;
+    return;
+  }
   if (fnum == fl_font_ && size == fl_size_
       && fl_fontsize
       && !strcasecmp(fl_fontsize->encoding, fl_encoding_))
