@@ -178,7 +178,6 @@ FL_SHOW</TT> events and <TT>visible()</TT> is turned on and off. </P>
 <P>There is no way to control what is drawn in the icon except with the
 string passed to <TT>Fl_Window::xclass()</TT>.  You should not rely on
 window managers displaying the icons. </P>
-
 <H4><A name=Fl_Window.resize>void Fl_Window::resize(int,int,int,int)</A></H4>
  Change the size and position of the window.  If <TT>shown()</TT> is
 true, these changes are communicated to the window server (which may
@@ -259,7 +258,8 @@ and &quot;xprog.1&quot; turns into &quot;xprog, XProg&quot;.</I> This only works
 before</I> calling <TT>show()</TT>.
 <P>Under Microsoft Windows this string is used as the name of the
 WNDCLASS structure, though it is not clear if this can have any
-visible effect. </P>
+visible effect. The passed pointer is stored unchanged. The string 
+is not copied.</P>
 <H4><A name=Fl_Window.make_current>void Fl_Window::make_current()</A></H4>
 <TT>make_current()</TT> sets things up so that the drawing functions in <A
 href=drawing.html#drawing><TT>&lt;FL/fl_draw.H&gt;</TT></A> will go into this
