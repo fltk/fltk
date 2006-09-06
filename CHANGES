@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Updated documentation (STR #1420, STR #1421)
 	- Fixed font caching issue (STR #1415)
 	- Fixed crash in fl_file_chooser (STR #1410)
 	- Fixed Fluid hotspot bug (STR #1416)

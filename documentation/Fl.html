@@ -424,18 +424,42 @@ handle()</tt>).
 <H4><A NAME="Fl.box_dh">int box_dh(Fl_Boxtype);</A></H4>
 
 <P>Returns the height offset for the given boxtype.
+See <tt><a href="#Fl.box_dy">box_dy</a></tt>.
 
 <H4><A NAME="Fl.box_dw">int box_dw(Fl_Boxtype);</A></H4>
 
 <P>Returns the width offset for the given boxtype.
+See <tt><a href="#Fl.box_dy">box_dy</a></tt>.
 
 <H4><A NAME="Fl.box_dx">int box_dx(Fl_Boxtype);</A></H4>
 
 <P>Returns the X offset for the given boxtype.
+See <tt><a href="#Fl.box_dy">box_dy</a></tt>.
 
 <H4><A NAME="Fl.box_dy">int box_dy(Fl_Boxtype);</A></H4>
 
 <P>Returns the Y offset for the given boxtype.
+
+<P>These functions return the offset values necessary for a given
+boxtype, useful for computing the area inside a box's borders, to
+prevent overdrawing the borders.
+
+<P>For instance, in the case of a boxtype like <tt>FL_DOWN_BOX</tt>
+where the border width might be 2 pixels all around, the above 
+functions would return 2, 2, 4, and 4 for <tt>box_dx</tt>, 
+<tt>box_dy</tt>, <tt>box_dw</tt>, and <tt>box_dh</tt>
+respectively.
+
+<P>An example to compute the area inside a widget's box():
+<pre>
+      int X = yourwidget->x() + Fl::box_dx(yourwidget->box());
+      int Y = yourwidget->y() + Fl::box_dy(yourwidget->box());
+      int W = yourwidget->w() - Fl::box_dw(yourwidget->box());
+      int H = yourwidget->h() - Fl::box_dh(yourwidget->box());
+</pre>
+<P>These functions are mainly useful in the <tt>draw()</tt> code 
+for deriving custom widgets, where one wants to avoid drawing 
+over the widget's own border <tt>box()</tt>.
 
 <H4><A NAME="Fl.check">int check();</A></H4>
 
