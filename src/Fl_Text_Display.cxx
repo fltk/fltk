@@ -3232,6 +3232,10 @@ int Fl_Text_Display::handle(int event) {
           buffer()->select(0,buffer()->length());
           return 1;
       }
+
+      if (mVScrollBar->handle(event)) return 1;
+      if (mHScrollBar->handle(event)) return 1;
+
       break;
   }
 
