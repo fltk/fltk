@@ -178,6 +178,7 @@ typedef void (*Fl_Draw_Image_Cb)(void*,int,int,int,uchar*);
 FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=3);
 FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=1);
 FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+FL_EXPORT char fl_can_do_alpha_blending();
 
 FL_EXPORT uchar *fl_read_image(uchar *p, int x,int y, int w, int h, int alpha=0);
 

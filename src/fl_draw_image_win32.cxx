@@ -112,12 +112,16 @@ static void monodither(uchar* to, const uchar* from, int w, int delta) {
 #endif // USE_COLORMAP
 
 static void innards(const uchar *buf, int X, int Y, int W, int H,
-		    int delta, int linedelta, int mono,
+		    int delta, int linedelta, int depth,
 		    Fl_Draw_Image_Cb cb, void* userdata)
 {
 #if USE_COLORMAP
   char indexed = (fl_palette != 0);
 #endif
+
+  if (depth==0) depth = 3;
+  if (indexed || !fl_can_do_alpha_blending()) 
+    depth = (depth-1)|1;
 
   if (!linedelta) linedelta = W*delta;
 
@@ -144,7 +148,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     }
   } else
 #endif
-  if (mono) {
+  if (depth<3) {
     for (int i=0; i<256; i++) {
       bmi.bmiColors[i].rgbBlue = (uchar)i;
       bmi.bmiColors[i].rgbGreen = (uchar)i;
@@ -154,11 +158,11 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   }
   bmi.bmiHeader.biWidth = w;
 #if USE_COLORMAP
-  bmi.bmiHeader.biBitCount = mono|indexed ? 8 : 24;
-  int pixelsize = mono|indexed ? 1 : 3;
+  bmi.bmiHeader.biBitCount = indexed ? 8 : depth*8;
+  int pixelsize = indexed ? 1 : depth;
 #else
-  bmi.bmiHeader.biBitCount = mono ? 8 : 24;
-  int pixelsize = mono ? 1 : 3;
+  bmi.bmiHeader.biBitCount = depth*8;
+  int pixelsize = depth;
 #endif
   int linesize = (pixelsize*w+3)&~3;
   
@@ -200,22 +204,44 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       uchar *to = (uchar*)buffer+(blocking-k-1)*linesize;
 #if USE_COLORMAP
       if (indexed) {
-	if (mono)
+	if (depth<3)
 	  monodither(to, from, w, delta);
 	else 
 	  dither(to, from, w, delta);
 	to += w;
       } else
 #endif
-      if (mono) {
-	for (int i=w; i--; from += delta) *to++ = *from;
-      } else {
-	for (int i=w; i--; from += delta, to += 3) {
-	  uchar r = from[0];
-	  to[0] = from[2];
-	  to[1] = from[1];
-	  to[2] = r;
-        }
+      {
+        int i;
+        switch (depth) {
+          case 1: 
+            for (i=w; i--; from += delta) *to++ = *from;
+            break;
+          case 2:
+            for (i=w; i--; from += delta) {
+              *to++ = *from;
+              *to++ = *from;
+            }
+            break;
+          case 3:
+	    for (i=w; i--; from += delta, to += 3) {
+	      uchar r = from[0];
+	      to[0] = from[2];
+	      to[1] = from[1];
+	      to[2] = r;
+            }
+            break;          
+          case 4:
+	    for (i=w; i--; from += delta, to += 4) {
+              uchar a = from[3];
+	      uchar r = from[0];
+	      to[0] = (from[2]*a)>>8;
+	      to[1] = (from[1]*a)>>8;
+	      to[2] = (r*a)>>8;
+	      to[3] = from[3];
+            }
+            break;          
+        }            
       }
     }
     SetDIBitsToDevice(fl_gc, x, y+j-k, w, k, 0, 0, 0, k,
@@ -230,19 +256,21 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   }
 }
 
+static int fl_abs(int v) { return v<0 ? -v : v; }
+
 void fl_draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0);
+  innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
 }
 void fl_draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data);
+  innards(0,x,y,w,h,d,0,fl_abs(d),cb,data);
 }
 void fl_draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0);
+  innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
 }
 void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data);
+  innards(0,x,y,w,h,d,0,fl_abs(d),cb,data);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {

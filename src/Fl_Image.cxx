@@ -352,7 +352,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_begin_offscreen((Fl_Offscreen)id);
     fl_draw_image(array, 0, 0, w(), h(), d(), ld());
     fl_end_offscreen();
-    if (d() == 2 || d() == 4) {
+    if (d() == 2 || d() == 4 && !fl_can_do_alpha_blending()) {
       mask = fl_create_alphamask(w(), h(), d(), ld(), array);
     }
 #endif

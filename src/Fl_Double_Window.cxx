@@ -76,6 +76,28 @@ void Fl_Double_Window::show() {
 // Code used to switch output to an off-screen window.  See macros in
 // win32.H which save the old state in local variables.
 
+typedef struct { BYTE a; BYTE b; BYTE c; BYTE d; } FL_BLENDFUNCTION;
+typedef BOOL (WINAPI* fl_alpha_blend_func)
+    (HDC,int,int,int,int,HDC,int,int,int,int,FL_BLENDFUNCTION);
+static fl_alpha_blend_func fl_alpha_blend = NULL;
+
+/*
+ * This function checks if the version of MSWindows that we
+ * curently run on supports alpha blending for bitmap transfers
+ * and finds the required function if so.
+ */
+char fl_can_do_alpha_blending() {
+  static char been_here = 0;
+  static char can_do = 0;
+  if (been_here) return can_do;
+  HMODULE hMod = LoadLibrary("MSIMG32.DLL");
+  if (!hMod) return 0;
+  fl_alpha_blend = (fl_alpha_blend_func)GetProcAddress(hMod, "AlphaBlend");
+  if (!fl_alpha_blend) return 0;
+  can_do = 1;
+  return 1;
+}
+
 HDC fl_makeDC(HBITMAP bitmap) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   SetTextAlign(new_gc, TA_BASELINE|TA_LEFT);
@@ -88,10 +110,15 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
+  static FL_BLENDFUNCTION blendfunc = { 0, 0, 255, 1};
+
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
-  BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+  if (fl_can_do_alpha_blending()) 
+    fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
+  else
+    BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
@@ -99,6 +126,10 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy)
 extern void fl_restore_clip();
 
 #elif defined(__APPLE_QD__)
+
+char fl_can_do_alpha_blending() {
+  return 0;
+}
 
 GWorldPtr fl_create_offscreen(int w, int h) {
   GWorldPtr gw;
@@ -172,6 +203,10 @@ void fl_end_offscreen() {
 extern void fl_restore_clip();
 
 #elif defined(__APPLE_QUARTZ__)
+
+char fl_can_do_alpha_blending() {
+  return 1;
+}
 
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   void *data = calloc(w*h,4);
@@ -253,6 +288,13 @@ void fl_end_offscreen() {
 }
 
 extern void fl_restore_clip();
+
+#else // X11
+
+// maybe someone feels inclined to implement alpha blending on X11?
+char fl_can_do_alpha_blending() {
+  return 0;
+}
 
 #endif
 
