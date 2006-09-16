@@ -865,13 +865,19 @@ color.
 The <TT>draw()</TT> method draws the image using the colors in the
 file, and masks off any transparent colors automatically.
 
-<P>The <TT>Fl_RGB_Image</TT> class encapsulates a full-color (or
-grayscale) image with 1 to 4 color components. Images with an
-even number of components are assumed to contain an alpha
-channel that is used for transparency. The transparency provided
-by the <TT>draw()</TT> method is either a 24-bit blend against
-the existing window contents or a "screen door" transparency
-mask, depending on the platform and screen color depth.
+<P>The <TT>Fl_RGB_Image</TT> class encapsulates a full-color 
+(or grayscale) image with 1 to 4 color components. Images with 
+an even number of components are assumed to contain an 
+alpha channel that is used for transparency. The transparency 
+provided by the <TT>draw()</TT> method is either a 24-bit 
+blend against the existing window contents or a "screen door" 
+transparency mask, depending on the platform and screen color depth. 
+
+<H4><A NAME=fl_can_do_alpha_blending>char fl_can_do_alpha_blending()</A></H4>
+
+<P><TT>fl_can_do_alpha_blending()</TT> will return 1, if your
+platform supports true alpha blending for RGBA images, or 0, 
+if FLTK will use screen door transparency.
 
 <P>FLTK also provides several image classes based on the three
 standard image types for common file formats:
