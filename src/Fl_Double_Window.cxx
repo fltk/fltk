@@ -87,6 +87,7 @@ static fl_alpha_blend_func fl_alpha_blend = NULL;
  * and finds the required function if so.
  */
 char fl_can_do_alpha_blending() {
+  return 0;
   static char been_here = 0;
   static char can_do = 0;
   if (been_here) return can_do;
