@@ -401,6 +401,10 @@ enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
   FL_FAKE_SINGLE = 512	// Fake single buffered windows using double-buffer
 };
 
+// image alpha blending
+
+#define FL_IMAGE_WITH_ALPHA 0x40000000
+
 // damage masks
 
 enum Fl_Damage {

@@ -331,7 +331,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
-  // clip the box down to the size of image, quit if empty:
+ // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
   if (cx+W > w()) W = w()-cx;
   if (W <= 0) return;
@@ -347,12 +347,26 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
         src, 0L, false, kCGRenderingIntentDefault);
     CGColorSpaceRelease(lut);
     CGDataProviderRelease(src);
+#elif defined(WIN32)
+    id = fl_create_offscreen(w(), h());
+    if (d() == 2 || d() == 4 && fl_can_do_alpha_blending()) {
+      fl_begin_offscreen((Fl_Offscreen)id);
+      fl_draw_image(array, 0, 0, w(), h(), d()|FL_IMAGE_WITH_ALPHA, ld());
+      fl_end_offscreen();
+    } else {
+      fl_begin_offscreen((Fl_Offscreen)id);
+      fl_draw_image(array, 0, 0, w(), h(), d(), ld());
+      fl_end_offscreen();
+      if (d() == 2 || d() == 4) {
+        mask = fl_create_alphamask(w(), h(), d(), ld(), array);
+      }
+    }
 #else
     id = fl_create_offscreen(w(), h());
     fl_begin_offscreen((Fl_Offscreen)id);
     fl_draw_image(array, 0, 0, w(), h(), d(), ld());
     fl_end_offscreen();
-    if (d() == 2 || d() == 4 && !fl_can_do_alpha_blending()) {
+    if (d() == 2 || d() == 4) {
       mask = fl_create_alphamask(w(), h(), d(), ld(), array);
     }
 #endif
@@ -367,6 +381,8 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
+  } else if (d()==2 || d()==4) {
+    fl_copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
   }

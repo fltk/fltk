@@ -87,7 +87,6 @@ static fl_alpha_blend_func fl_alpha_blend = NULL;
  * and finds the required function if so.
  */
 char fl_can_do_alpha_blending() {
-  return 0;
   static char been_here = 0;
   static char can_do = 0;
   if (been_here) return can_do;
@@ -111,8 +110,16 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
-  static FL_BLENDFUNCTION blendfunc = { 0, 0, 255, 1};
+  HDC new_gc = CreateCompatibleDC(fl_gc);
+  int save = SaveDC(new_gc);
+  SelectObject(new_gc, bitmap);
+  BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+  RestoreDC(new_gc, save);
+  DeleteDC(new_gc);
+}
 
+void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
+  static FL_BLENDFUNCTION blendfunc = { 0, 0, 255, 1};
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);

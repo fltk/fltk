@@ -259,18 +259,41 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 static int fl_abs(int v) { return v<0 ? -v : v; }
 
 void fl_draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
+  if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
+    d ^= FL_IMAGE_WITH_ALPHA;
+    innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
+  } else {
+    innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0);
+  }
 }
+
 void fl_draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,fl_abs(d),cb,data);
+  if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
+    d ^= FL_IMAGE_WITH_ALPHA;
+    innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data);
+  } else {
+    innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data);
+  }
 }
+
 void fl_draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
+  if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
+    d ^= FL_IMAGE_WITH_ALPHA;
+    innards(buf,x,y,w,h,d,l,1,0,0);
+  } else {
+    innards(buf,x,y,w,h,d,l,1,0,0);
+  }
 }
+
 void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,fl_abs(d),cb,data);
+  if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
+    d ^= FL_IMAGE_WITH_ALPHA;
+    innards(0,x,y,w,h,d,0,1,cb,data);
+  } else {
+    innards(0,x,y,w,h,d,0,1,cb,data);
+  }
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
