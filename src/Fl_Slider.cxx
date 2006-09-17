@@ -3,7 +3,7 @@
 //
 // Slider widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include <FL/Fl_Slider.H>
 #include <FL/fl_draw.H>
 #include <math.h>
+#include "flstring.h"
 
 void Fl_Slider::_Fl_Slider() {
   slider_size_ = 0;
@@ -148,6 +149,45 @@ void Fl_Slider::draw(int X, int Y, int W, int H) {
     draw_box(FL_THIN_DOWN_BOX, xsl+d, ysl+2, wsl-2*d, hsl-4,selection_color());
   } else {
     if (wsl>0 && hsl>0) draw_box(box1, xsl, ysl, wsl, hsl, selection_color());
+
+    if (type()!=FL_HOR_FILL_SLIDER && type() != FL_VERT_FILL_SLIDER &&
+        Fl::scheme_ && !strcmp(Fl::scheme_, "gtk+")) {
+      if (W>H && wsl>(hsl+8)) {
+        // Draw horizontal grippers
+	int yy, hh;
+	hh = hsl-8;
+	xx = xsl+(wsl-hsl-4)/2;
+	yy = ysl+3;
+
+	fl_color(fl_darker(selection_color()));
+	fl_line(xx, yy+hh, xx+hh, yy);
+	fl_line(xx+6, yy+hh, xx+hh+6, yy);
+	fl_line(xx+12, yy+hh, xx+hh+12, yy);
+
+        xx++;
+	fl_color(fl_lighter(selection_color()));
+	fl_line(xx, yy+hh, xx+hh, yy);
+	fl_line(xx+6, yy+hh, xx+hh+6, yy);
+	fl_line(xx+12, yy+hh, xx+hh+12, yy);
+      } else if (H>W && hsl>(wsl+8)) {
+        // Draw vertical grippers
+	int yy;
+	xx = xsl+4;
+	ww = wsl-8;
+	yy = ysl+(hsl-wsl-4)/2;
+
+	fl_color(fl_darker(selection_color()));
+	fl_line(xx, yy+ww, xx+ww, yy);
+	fl_line(xx, yy+ww+6, xx+ww, yy+6);
+	fl_line(xx, yy+ww+12, xx+ww, yy+12);
+
+        yy++;
+	fl_color(fl_lighter(selection_color()));
+	fl_line(xx, yy+ww, xx+ww, yy);
+	fl_line(xx, yy+ww+6, xx+ww, yy+6);
+	fl_line(xx, yy+ww+12, xx+ww, yy+12);
+      }
+    }
   }
 
   draw_label(xsl, ysl, wsl, hsl);

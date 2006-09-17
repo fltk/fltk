@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0108 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -28,7 +28,7 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {selected in_source in_header
+} {in_source in_header
 } 
 
 decl {void show_help(const char *name);} {public
@@ -46,7 +46,7 @@ Function {make_about_panel()} {open
     Fl_Box {} {
       label {FLTK User
 Interface Designer
-Version 1.1.7}
+Version 1.1.8} selected
       xywh {135 10 170 69} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
     }
     Fl_Box {} {

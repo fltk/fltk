@@ -3,7 +3,7 @@
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -322,6 +322,24 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_PLASTIC_ROUND_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_ROUND_DOWN_BOX);
+  } else if (scheme_ && !strcasecmp(scheme_, "gtk+")) {
+    // Use a GTK+ inspired look-n-feel...
+    if (scheme_bg_) {
+      delete scheme_bg_;
+      scheme_bg_ = (Fl_Image *)0;
+    }
+
+    set_boxtype(FL_UP_FRAME,        FL_GTK_UP_FRAME);
+    set_boxtype(FL_DOWN_FRAME,      FL_GTK_DOWN_FRAME);
+    set_boxtype(FL_THIN_UP_FRAME,   FL_GTK_UP_FRAME);
+    set_boxtype(FL_THIN_DOWN_FRAME, FL_GTK_DOWN_FRAME);
+
+    set_boxtype(FL_UP_BOX,          FL_GTK_UP_BOX);
+    set_boxtype(FL_DOWN_BOX,        FL_GTK_DOWN_BOX);
+    set_boxtype(FL_THIN_UP_BOX,     FL_GTK_UP_BOX);
+    set_boxtype(FL_THIN_DOWN_BOX,   FL_GTK_DOWN_BOX);
+    set_boxtype(_FL_ROUND_UP_BOX,   FL_GTK_ROUND_UP_BOX);
+    set_boxtype(_FL_ROUND_DOWN_BOX, FL_GTK_ROUND_DOWN_BOX);
   } else {
     // Use the standard FLTK look-n-feel...
     if (scheme_bg_) {

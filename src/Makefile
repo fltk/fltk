@@ -3,7 +3,7 @@
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2005 by Bill Spitzak and others.
+# Copyright 1998-2006 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -133,6 +133,7 @@ CPPFILES = \
 	fl_engraved_label.cxx \
 	fl_file_dir.cxx \
 	fl_font.cxx \
+	fl_gtk.cxx \
 	fl_labeltype.cxx \
 	fl_line_style.cxx \
 	fl_oval_box.cxx \

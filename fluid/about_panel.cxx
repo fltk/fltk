@@ -278,7 +278,7 @@ Fl_Double_Window* make_about_panel() {
     { Fl_Box* o = new Fl_Box(10, 10, 115, 120);
       o->image(image_fluid);
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(135, 10, 170, 69, "FLTK User\nInterface Designer\nVersion 1.1.7");
+    { Fl_Box* o = new Fl_Box(135, 10, 170, 69, "FLTK User\nInterface Designer\nVersion 1.1.8");
       o->color((Fl_Color)12);
       o->selection_color(FL_DARK1);
       o->labelfont(1);

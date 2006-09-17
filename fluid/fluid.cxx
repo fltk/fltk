@@ -1682,6 +1682,9 @@ void scheme_cb(Fl_Choice *, void *) {
     case 2 : // Plastic
       Fl::scheme("plastic");
       break;
+    case 3 : // GTK+
+      Fl::scheme("gtk+");
+      break;
   }
 
   fluid_prefs.set("scheme", scheme_choice->value());

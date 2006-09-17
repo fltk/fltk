@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Added the Bluecurve-inspired scheme "gtk+".
 	- Implemented alpha blending for WIN32
 	- Updated documentation (STR #1420, STR #1421)
 	- Fixed font caching issue (STR #1415)
@@ -9,13 +10,13 @@ CHANGES IN FLTK 1.1.8
 	- Fixed latin-to-roman text conversion (STR #1411)
 	- Fixed Cygwin timeout for "select" calls (STR #1151)
 	- Improved Mac OS X subwindow handling (STR #1402)
-	- Fixed more inconsistencies between fl_draw
-	  and fl_measure (STR #1408)
-	- Fixed fl_measure which mistook a trailing '@@'
-	  for a symbol (STR #1406)
+	- Fixed more inconsistencies between fl_draw and
+	  fl_measure (STR #1408)
+	- Fixed fl_measure which mistook a trailing '@@' for a
+	  symbol (STR #1406)
 	- Fixed GLUT behavior on window creation (STR #1403)
-	- Fixed OS X bug that would hide tooltips before
-	  they were shown (STR #1392)
+	- Fixed OS X bug that would hide tooltips before they
+	  were shown (STR #1392)
 	- Fixed Fl_Tabs tooltip reappearing (STR #1324)
 	- Added a new demo game called "Block Attack!"
 	- Updated the Sudoku game to show a notice about Hard and

@@ -3,7 +3,7 @@
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -51,8 +51,8 @@ void Fl_Choice::draw() {
     fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
     fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
   } else {
-    draw_box(FL_DOWN_BOX, color());
-    draw_box(FL_UP_BOX,X,Y,W,H,FL_GRAY);
+    draw_box(FL_DOWN_BOX, fl_lighter(color()));
+    draw_box(FL_UP_BOX,X,Y,W,H,color());
 
     fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
     fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
@@ -103,7 +103,6 @@ Fl_Choice::Fl_Choice(int X, int Y, int W, int H, const char *l)
   textfont(FL_HELVETICA);
   box(FL_FLAT_BOX);
   down_box(FL_BORDER_BOX);
-  color(FL_BACKGROUND2_COLOR);
 }
 
 int Fl_Choice::value(const Fl_Menu_Item *v) {

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0108 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -44,17 +44,17 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings}
-    xywh {312 395 345 185} type Double
+    xywh {312 395 345 190} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
       callback {project_window->hide();}
-      tooltip {Close this dialog.} xywh {293 156 42 20} labelsize 11
+      tooltip {Close this dialog.} xywh {293 160 42 20} labelsize 11
     }
     Fl_Tabs {} {open
-      xywh {10 10 325 138} selection_color 4 labelsize 11
+      xywh {10 10 325 140} selection_color 12 labelsize 11
     } {
       Fl_Group {} {
         label Output open
@@ -144,12 +144,12 @@ decl {void scheme_cb(Fl_Choice *, void *);} {public
 Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
-    label {GUI Settings}
+    label {GUI Settings} open
     xywh {326 145 340 225} type Double non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme:}
-      callback scheme_cb
+      callback scheme_cb open
       xywh {116 10 115 25} down_box BORDER_BOX labelfont 1
       code0 {int s;}
       code1 {fluid_prefs.get("scheme", s, 0);}
@@ -167,6 +167,10 @@ Function {make_settings_window()} {open
       MenuItem {} {
         label Plastic
         xywh {0 0 35 25}
+      }
+      MenuItem {} {
+        label {GTK+}
+        xywh {10 10 35 25}
       }
     }
     Fl_Group {} {
@@ -222,7 +226,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       label {\# Recent Files:}
       callback {fluid_prefs.set("recent_files", recent_spinner->value());
 load_history();}
-      xywh {116 155 40 25} labelfont 1 when 1
+      xywh {116 155 40 25} labelfont 1 when 1 value 1
       code0 {int c;}
       code1 {fluid_prefs.get("recent_files", c, 5);}
       code2 {recent_spinner->maximum(10);}
@@ -276,7 +280,7 @@ Function {make_shell_window()} {open
     }
     Fl_Button {} {
       label Cancel
-      callback {shell_window->hide();}
+      callback {shell_window->hide();} selected
       xywh {285 90 72 25}
     }
   }
@@ -300,7 +304,7 @@ Function {make_shell_window()} {open
 Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
-    label {Layout Settings} selected
+    label {Layout Settings}
     xywh {676 337 285 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
