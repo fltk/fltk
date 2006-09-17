@@ -445,6 +445,7 @@ CubeMain.o: CubeViewUI.h CubeView.h
 CubeView.o: CubeView.h
 CubeViewUI.o:	CubeViewUI.h
 CubeViewUI.cxx:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
+#CubeViewUI.h:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...
