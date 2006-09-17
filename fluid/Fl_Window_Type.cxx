@@ -1471,7 +1471,6 @@ void Fl_Widget_Class_Type::write_code2() {
   if (((Fl_Window*)o)->resizable() == o)
     write_c("%sresizable(this);\n", indent());
   write_c("}\n");
-  current_widget_class = 0L;
 }
 
 ////////////////////////////////////////////////////////////////

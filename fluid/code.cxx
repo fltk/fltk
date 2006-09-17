@@ -273,6 +273,7 @@ void write_h(const char* format,...) {
 #include <FL/filename.H>
 int write_number;
 int write_sourceview;
+extern Fl_Widget_Class_Type *current_widget_class;
 
 // recursively dump code, putting children between the two parts
 // of the parent code:
@@ -314,6 +315,7 @@ static Fl_Type* write_code(Fl_Type* p) {
     }
 
     write_h("};\n");
+    current_widget_class = 0L;
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children 
