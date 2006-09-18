@@ -307,6 +307,10 @@ SOURCE=..\src\Fl_Group.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_gtk.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Help_View.cxx
 # End Source File
 # Begin Source File
@@ -595,11 +599,11 @@ SOURCE=..\src\scandir.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\vsnprintf.c
+SOURCE=..\src\screen_xywh.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\screen_xywh.cxx
+SOURCE=..\src\vsnprintf.c
 # End Source File
 # End Target
 # End Project

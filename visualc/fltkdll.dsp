@@ -1165,6 +1165,10 @@ DEP_CPP_FL_GRO=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_gtk.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Help_Dialog.cxx
 DEP_CPP_FL_HE=\
 	"..\fl\enumerations.h"\
