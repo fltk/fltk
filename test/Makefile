@@ -441,11 +441,10 @@ CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 		CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 	$(POSTBUILD) $@ ../FL/mac.r
-CubeMain.o: CubeViewUI.h CubeView.h
+CubeMain.o: CubeViewUI.h CubeView.h CubeViewUI.cxx
 CubeView.o: CubeView.h
-CubeViewUI.o:	CubeViewUI.h
+CubeViewUI.o:	CubeViewUI.cxx CubeViewUI.h
 CubeViewUI.cxx:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
-#CubeViewUI.h:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
 
 cube$(EXEEXT): cube.o
 	echo Linking $@...
