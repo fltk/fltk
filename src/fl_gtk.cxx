@@ -38,12 +38,18 @@
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
 
 
+static void gtk_color(Fl_Color c) {
+  if (Fl::draw_box_active()) fl_color(c);
+  else fl_color(fl_inactive(c));
+}
+
+
 static void gtk_up_frame(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(fl_color_average(FL_WHITE, c, 0.5));
+  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
   fl_xyline(x + 2, y + 1, x + w - 3);
   fl_yxline(x + 1, y + 2, y + h - 4);
 
-  fl_color(fl_color_average(FL_BLACK, c, 0.5));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
   fl_begin_loop();
     fl_vertex(x, y + 2);
     fl_vertex(x + 2, y);
@@ -60,26 +66,26 @@ static void gtk_up_frame(int x, int y, int w, int h, Fl_Color c) {
 static void gtk_up_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_up_frame(x, y, w, h, c);
 
-  fl_color(fl_color_average(FL_WHITE, c, 0.4));
+  gtk_color(fl_color_average(FL_WHITE, c, 0.4));
   fl_xyline(x + 2, y + 2, x + w - 3);
-  fl_color(fl_color_average(FL_WHITE, c, 0.2));
+  gtk_color(fl_color_average(FL_WHITE, c, 0.2));
   fl_xyline(x + 2, y + 3, x + w - 3);
-  fl_color(fl_color_average(FL_WHITE, c, 0.1));
+  gtk_color(fl_color_average(FL_WHITE, c, 0.1));
   fl_xyline(x + 2, y + 4, x + w - 3);
-  fl_color(c);
+  gtk_color(c);
   fl_rectf(x + 2, y + 5, w - 4, h - 7);
-  fl_color(fl_color_average(FL_BLACK, c, 0.025));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.025));
   fl_xyline(x + 2, y + h - 4, x + w - 3);
-  fl_color(fl_color_average(FL_BLACK, c, 0.05));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.05));
   fl_xyline(x + 2, y + h - 3, x + w - 3);
-  fl_color(fl_color_average(FL_BLACK, c, 0.1));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.1));
   fl_xyline(x + 2, y + h - 2, x + w - 3);
   fl_yxline(x + w - 2, y + 2, y + h - 3);
 }
 
 
-void gtk_down_frame(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(fl_color_average(FL_BLACK, c, 0.5));
+static void gtk_down_frame(int x, int y, int w, int h, Fl_Color c) {
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
   fl_begin_loop();
     fl_vertex(x, y + 2);
     fl_vertex(x + 2, y);
@@ -91,28 +97,28 @@ void gtk_down_frame(int x, int y, int w, int h, Fl_Color c) {
     fl_vertex(x, y + h - 3);
   fl_end_loop();
 
-  fl_color(fl_color_average(FL_BLACK, c, 0.1));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.1));
   fl_xyline(x + 2, y + 1, x + w - 3);
   fl_yxline(x + 1, y + 2, y + h - 3);
 
-  fl_color(fl_color_average(FL_BLACK, c, 0.05));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.05));
   fl_yxline(x + 2, y + h - 2, y + 2, x + w - 2);
 }
 
 
-void gtk_down_box(int x, int y, int w, int h, Fl_Color c) {
+static void gtk_down_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_down_frame(x, y, w, h, c);
 
-  fl_color(c);
+  gtk_color(c);
   fl_rectf(x + 3, y + 3, w - 5, h - 4);
   fl_yxline(x + w - 2, y + 3, y + h - 3);
 }
 
 
-void gtk_round_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c);
+static void gtk_round_box(int x, int y, int w, int h, Fl_Color c) {
+  gtk_color(c);
   fl_pie(x, y, w, h, 0.0, 360.0);
-  fl_color(fl_color_average(FL_BLACK, c, 0.5));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
   fl_arc(x, y, w, h, 0.0, 360.0);
 }
 

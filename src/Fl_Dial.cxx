@@ -3,7 +3,7 @@
 //
 // Circular dial widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -44,25 +44,30 @@ void Fl_Dial::draw(int X, int Y, int W, int H) {
     // foo: draw this nicely in certain round box types
     int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
     if (foo) {X--; Y--; W+=2; H+=2;}
-    fl_color(color());
+    if (active_r()) fl_color(color());
+    else fl_color(fl_inactive(color()));
     fl_pie(X, Y, W, H, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
-    fl_color(selection_color());
+    if (active_r()) fl_color(selection_color());
+    else fl_color(fl_inactive(selection_color()));
     fl_pie(X, Y, W, H, 270-angle, 270-a1);
     if (foo) {
-      fl_color(FL_FOREGROUND_COLOR);
+      if (active_r()) fl_color(FL_FOREGROUND_COLOR);
+      else fl_color(fl_inactive(FL_FOREGROUND_COLOR));
       fl_arc(X, Y, W, H, 0, 360);
     }
     return;
   }
   if (!(damage()&FL_DAMAGE_ALL)) {
-    fl_color(color());
+    if (active_r()) fl_color(color());
+    else fl_color(fl_inactive(color()));
     fl_pie(X+1, Y+1, W-2, H-2, 0, 360);
   }
   fl_push_matrix();
   fl_translate(X+W/2-.5, Y+H/2-.5);
   fl_scale(W-1, H-1);
   fl_rotate(45-angle);
-  fl_color(selection_color());
+  if (active_r()) fl_color(selection_color());
+  else fl_color(fl_inactive(selection_color()));
   if (type()) { // FL_LINE_DIAL
     fl_begin_polygon();
     fl_vertex(0.0,   0.0);
@@ -70,7 +75,8 @@ void Fl_Dial::draw(int X, int Y, int W, int H) {
     fl_vertex(-0.25, 0.25);
     fl_vertex(0.0,   0.04);
     fl_end_polygon();
-    fl_color(FL_FOREGROUND_COLOR);
+    if (active_r()) fl_color(FL_FOREGROUND_COLOR);
+    else fl_color(fl_inactive(FL_FOREGROUND_COLOR));
     fl_begin_loop();
     fl_vertex(0.0,   0.0);
     fl_vertex(-0.04, 0.0);
@@ -79,7 +85,8 @@ void Fl_Dial::draw(int X, int Y, int W, int H) {
     fl_end_loop();
   } else {
     fl_begin_polygon(); fl_circle(-0.20, 0.20, 0.07); fl_end_polygon();
-    fl_color(FL_FOREGROUND_COLOR);
+    if (active_r()) fl_color(FL_FOREGROUND_COLOR);
+    else fl_color(fl_inactive(FL_FOREGROUND_COLOR));
     fl_begin_loop(); fl_circle(-0.20, 0.20, 0.07); fl_end_loop();
   }
   fl_pop_matrix();

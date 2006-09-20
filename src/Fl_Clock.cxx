@@ -3,7 +3,7 @@
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -54,6 +54,10 @@ static void drawhand(double ang,const float v[][2],Fl_Color fill,Fl_Color line)
 }
 
 void Fl_Clock_Output::drawhands(Fl_Color fill, Fl_Color line) {
+  if (!active_r()) {
+    fill = fl_inactive(fill);
+    line = fl_inactive(line);
+  }
   drawhand(-360*(hour()+minute()/60.0)/12, hourhand, fill, line);
   drawhand(-360*(minute()+second()/60.0)/60, minhand, fill, line);
   drawhand(-360*(second()/60.0), sechand, fill, line);
@@ -78,9 +82,9 @@ void Fl_Clock_Output::draw(int X, int Y, int W, int H) {
   fl_translate(X+W/2.0-.5, Y+H/2.0-.5);
   fl_scale((W-1)/28.0, (H-1)/28.0);
   if (type() == FL_ROUND_CLOCK) {
-    fl_color(color());
+    fl_color(active_r() ? color() : fl_inactive(color()));
     fl_begin_polygon(); fl_circle(0,0,14); fl_end_polygon();
-    fl_color(FL_FOREGROUND_COLOR);
+    fl_color(active_r() ? FL_FOREGROUND_COLOR : fl_inactive(FL_FOREGROUND_COLOR));
     fl_begin_loop(); fl_circle(0,0,14); fl_end_loop();
   }
   // draw the shadows:
@@ -90,7 +94,7 @@ void Fl_Clock_Output::draw(int X, int Y, int W, int H) {
   fl_pop_matrix();
   // draw the tick marks:
   fl_push_matrix();
-  fl_color(FL_FOREGROUND_COLOR); // color was 52
+  fl_color(active_r() ? FL_FOREGROUND_COLOR : fl_inactive(FL_FOREGROUND_COLOR));
   for (int i=0; i<12; i++) {
     if (i==6) rect(-0.5, 9, 1, 2);
     else if (i==3 || i==0 || i== 9) rect(-0.5, 9.5, 1, 1);
