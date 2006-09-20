@@ -1092,10 +1092,23 @@ with <tt>return Fl::run();</tt>.
 <H4><A NAME="Fl.scheme">void scheme(const char *name);
 <BR>const char *scheme();</A></H4>
 
-<P>Gets or sets the current widget scheme. Currently only "none"
-and "plastic" are recognized, and <TT>NULL</TT> will use the
-scheme defined in the <TT>FLTK_SCHEME</TT> environment variable
-or the <TT>scheme</TT> resource under X11.
+<P>Gets or sets the current widget scheme. <TT>NULL</TT> will use
+the scheme defined in the <TT>FLTK_SCHEME</TT> environment
+variable or the <TT>scheme</TT> resource under X11. Otherwise,
+any of the following schemes can be used:</P>
+
+<ul>
+
+	<li>"none" - This is the default look-n-feel which resembles old
+	Windows (95/98/Me/NT/2000) and old GTK/KDE</li>
+
+	<li>"plastic" - This scheme is inspired by the Aqua user interface
+	on Mac OS X</li>
+
+	<li>"gtk+" - This scheme is inspired by the Red Hat Bluecurve
+	theme</li>
+
+</ul>
 
 <H4><A NAME="Fl.screen_count">int screen_count();</A></H4>
 
