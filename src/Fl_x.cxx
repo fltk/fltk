@@ -596,8 +596,7 @@ int fl_handle(const XEvent& thisevent)
     if (e.target == TARGETS) {
       Atom a = XA_STRING;
       XChangeProperty(fl_display, e.requestor, e.property,
-		      XA_ATOM, sizeof(Atom)*8, 0, (unsigned char*)&a,
-		      sizeof(Atom));
+		      XA_ATOM, sizeof(Atom)*8, 0, (unsigned char*)&a, 1);
     } else if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
       XChangeProperty(fl_display, e.requestor, e.property,
 		      e.target, 8, 0,
