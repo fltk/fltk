@@ -40,7 +40,8 @@ int Fl_Button::value(int v) {
   clear_changed();
   if (value_ != v) {
     value_ = v;
-    redraw();
+    if (box()) redraw();
+    else redraw_label();
     return 1;
   } else {
     return 0;

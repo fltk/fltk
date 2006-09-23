@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Check buttons did not redraw properly with box() set to
+	  FL_NO_BOX (STR #1440)
 	- Added the Bluecurve-inspired scheme "gtk+".
 	- Implemented alpha blending for WIN32
 	- Updated documentation (STR #1420, STR #1421)
