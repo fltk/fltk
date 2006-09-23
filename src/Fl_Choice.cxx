@@ -51,7 +51,7 @@ void Fl_Choice::draw() {
     fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
     fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
   } else {
-    draw_box(FL_DOWN_BOX, fl_lighter(color()));
+    draw_box(FL_DOWN_BOX, FL_BACKGROUND2_COLOR);
     draw_box(FL_UP_BOX,X,Y,W,H,color());
 
     fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
