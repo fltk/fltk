@@ -118,6 +118,7 @@ Options telling what information we request:
 
 Option to compile and link an application:
 	[-g]              compile the program with debugging information
+	[-Dname[=value]]  compile the program with the given define
 	[--compile program.cxx]
         [--post program]
 "
@@ -184,6 +185,9 @@ do
 	    ;;
 	-g)
 	    debug=-g
+	    ;;
+	-D*)
+	    CXXFLAGS="$CXXFLAGS $1"
 	    ;;
 	--compile)
 	    compile=$2

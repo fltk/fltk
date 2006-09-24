@@ -28,6 +28,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Choice.H>
 #include <FL/fl_draw.H>
+#include "flstring.h"
 
 // Emulates the Forms choice widget.  This is almost exactly the same
 // as an Fl_Menu_Button.  The only difference is the appearance of the
@@ -48,8 +49,23 @@ void Fl_Choice::draw() {
     draw_box(FL_UP_BOX, color());
 
     fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-    fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
-    fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
+    if (!strcmp(Fl::scheme(), "plastic")) {
+      // Show larger up/down arrows...
+      fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
+      fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
+    } else {
+      // Show smaller up/down arrows with a divider...
+      x1 = x() + w() - 13 - dx;
+      y1 = y() + h() / 2;
+      fl_polygon(x1, y1 - 2, x1 + 3, y1 - 5, x1 + 6, y1 - 2);
+      fl_polygon(x1, y1 + 2, x1 + 3, y1 + 5, x1 + 6, y1 + 2);
+
+      fl_color(fl_darker(color()));
+      fl_yxline(x1 - 7, y1 - 8, y1 + 8);
+
+      fl_color(fl_lighter(color()));
+      fl_yxline(x1 - 6, y1 - 8, y1 + 8);
+    }
   } else {
     draw_box(FL_DOWN_BOX, FL_BACKGROUND2_COLOR);
     draw_box(FL_UP_BOX,X,Y,W,H,color());
