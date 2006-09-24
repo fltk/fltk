@@ -1,4 +1,4 @@
-.TH fltk-config 1 "Fast Light Tool Kit" "8 August 2005"
+.TH fltk-config 1 "Fast Light Tool Kit" "24 September 2006"
 .SH NAME
 fltk-config \- script to get information about the installed version of fltk.
 .sp
@@ -10,7 +10,7 @@ fltk-config [ --prefix
 ] [ --version ] [ --api-version ] [ --use-gl ] [ --use-images ] [ --use-glut ]
 [ --cc ] [ --cxx ]
 [ --cflags ] [ --cxxflags ] [ --ldflags ] [ --ldstaticflags ] [ --libs ]
-[ -g ] [ --compile
+[ -D\fIname[=value]\fR ] [ -g ] [ --compile
 .I program.cxx
 ] [ --post
 .I program

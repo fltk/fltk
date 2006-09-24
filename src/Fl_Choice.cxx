@@ -149,7 +149,16 @@ int Fl_Choice::handle(int e) {
   case FL_PUSH:
     if (Fl::visible_focus()) Fl::focus(this);
   J1:
-    v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+    if (Fl::scheme()) {
+      v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+    } else {
+      // In order to preserve the old look-n-feel of "white" menus,
+      // temporarily override the color() of this widget...
+      Fl_Color c = color();
+      color(FL_BACKGROUND2_COLOR);
+      v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+      color(c);
+    }
     if (!v || v->submenu()) return 1;
     if (v != mvalue()) redraw();
     picked(v);
