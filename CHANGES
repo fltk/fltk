@@ -1,9 +1,9 @@
 CHANGES IN FLTK 1.1.8
 
+	- Implemented alpha blending for Quartz, WIN32, and X11
 	- Check buttons did not redraw properly with box() set to
 	  FL_NO_BOX (STR #1440)
 	- Added the Bluecurve-inspired scheme "gtk+".
-	- Implemented alpha blending for WIN32
 	- Updated documentation (STR #1420, STR #1421)
 	- Fixed font caching issue (STR #1415)
 	- Fixed crash in fl_file_chooser (STR #1410)

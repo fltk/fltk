@@ -3,7 +3,7 @@
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -321,6 +321,64 @@ void Fl_RGB_Image::desaturate() {
   d(new_d);
 }
 
+#if !defined(WIN32) && !USE_QUARTZ
+// Composite an image with alpha on systems that don't have accelerated
+// alpha compositing...
+static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
+  uchar *srcptr = (uchar*)img->array + img->d() * (W * cy + cx);
+  int srcskip = img->d() * (img->w() - W);
+
+  uchar *dst = new uchar[W * H * 3];
+  uchar *dstptr = dst;
+
+  fl_read_image(dst, X, Y, W, H, 0);
+
+  uchar srcr, srcg, srcb, srca;
+  uchar dstr, dstg, dstb, dsta;
+
+  if (img->d() == 2) {
+    // Composite grayscale + alpha over RGB...
+    // Composite RGBA over RGB...
+    for (int y = H; y > 0; y--, srcptr+=srcskip)
+      for (int x = W; x > 0; x--, dstptr+=3) {
+	srcg = *srcptr++;
+	srca = *srcptr++;
+
+	dstr = dstptr[0];
+	dstg = dstptr[1];
+	dstb = dstptr[2];
+	dsta = 255 - srca;
+
+	*dstptr++ = (srcg * srca + dstr * dsta) >> 8;
+	*dstptr++ = (srcg * srca + dstg * dsta) >> 8;
+	*dstptr++ = (srcg * srca + dstb * dsta) >> 8;
+      }
+  } else {
+    // Composite RGBA over RGB...
+    for (int y = H; y > 0; y--, srcptr+=srcskip)
+      for (int x = W; x > 0; x--) {
+	srcr = *srcptr++;
+	srcg = *srcptr++;
+	srcb = *srcptr++;
+	srca = *srcptr++;
+
+	dstr = dstptr[0];
+	dstg = dstptr[1];
+	dstb = dstptr[2];
+	dsta = 255 - srca;
+
+	*dstptr++ = (srcr * srca + dstr * dsta) >> 8;
+	*dstptr++ = (srcg * srca + dstg * dsta) >> 8;
+	*dstptr++ = (srcb * srca + dstb * dsta) >> 8;
+      }
+  }
+
+  fl_draw_image(dst, X, Y, W, H, 3, 0);
+
+  delete[] dst;
+}
+#endif // !WIN32 && !USE_QUARTZ
+
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // Don't draw an empty image...
   if (!d() || !array) {
@@ -331,7 +389,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   // account for current clip region (faster on Irix):
   int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
- // clip the box down to the size of image, quit if empty:
+  // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
   if (cx+W > w()) W = w()-cx;
   if (W <= 0) return;
@@ -362,12 +420,11 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       }
     }
 #else
-    id = fl_create_offscreen(w(), h());
-    fl_begin_offscreen((Fl_Offscreen)id);
-    fl_draw_image(array, 0, 0, w(), h(), d(), ld());
-    fl_end_offscreen();
-    if (d() == 2 || d() == 4) {
-      mask = fl_create_alphamask(w(), h(), d(), ld(), array);
+    if (d() == 1 || d() == 3) {
+      id = fl_create_offscreen(w(), h());
+      fl_begin_offscreen((Fl_Offscreen)id);
+      fl_draw_image(array, 0, 0, w(), h(), d(), ld());
+      fl_end_offscreen();
     }
 #endif
   }
@@ -404,22 +461,14 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
     RGBForeColor(&rgb);
 
-#  if 0
-    // MRS: This *should* work, but doesn't on my system (iBook); change to
-    //      "#if 1" and restore the corresponding code in Fl_Bitmap.cxx
-    //      to test the real alpha channel support.
-    CopyDeepMask(GetPortBitMapForCopyBits((GrafPtr)id),
-	         GetPortBitMapForCopyBits((GrafPtr)mask), 
-	         GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
-                 &src, &src, &dst, blend, NULL);
-#  else // Fallback to screen-door transparency...
     CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
 	     GetPortBitMapForCopyBits((GrafPtr)mask), 
 	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
              &src, &src, &dst);
-#  endif // 0
-  } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  } else if (id) fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  else {
+    // Composite image with alpha manually each time...
+    alpha_blend(this, X, Y, W, H, cx, cy);
   }
 #elif defined(__APPLE_QUARTZ__)
   if (id && fl_gc) {
@@ -429,23 +478,30 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     Fl_X::q_end_image();
   }
 #else
-  if (mask) {
-    // I can't figure out how to combine a mask with existing region,
-    // so cut the image down to a clipped rectangle:
-    int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
-    cx += nx-X; X = nx;
-    cy += ny-Y; Y = ny;
-    // make X use the bitmap as a mask:
-    XSetClipMask(fl_display, fl_gc, mask);
-    int ox = X-cx; if (ox < 0) ox += w();
-    int oy = Y-cy; if (oy < 0) oy += h();
-    XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
-  }
-  fl_copy_offscreen(X, Y, W, H, id, cx, cy);
-  if (mask) {
-    // put the old clip region back
-    XSetClipOrigin(fl_display, fl_gc, 0, 0);
-    fl_restore_clip();
+  if (id) {
+    if (mask) {
+      // I can't figure out how to combine a mask with existing region,
+      // so cut the image down to a clipped rectangle:
+      int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
+      cx += nx-X; X = nx;
+      cy += ny-Y; Y = ny;
+      // make X use the bitmap as a mask:
+      XSetClipMask(fl_display, fl_gc, mask);
+      int ox = X-cx; if (ox < 0) ox += w();
+      int oy = Y-cy; if (oy < 0) oy += h();
+      XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
+    }
+
+    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+
+    if (mask) {
+      // put the old clip region back
+      XSetClipOrigin(fl_display, fl_gc, 0, 0);
+      fl_restore_clip();
+    }
+  } else {
+    // Composite image with alpha manually each time...
+    alpha_blend(this, X, Y, W, H, cx, cy);
   }
 #endif
 }
