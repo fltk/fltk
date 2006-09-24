@@ -1985,12 +1985,24 @@ void Fl_Widget_Type::write_code1() {
 
   if (!varused) {
     for (int n=0; n < NUM_EXTRA_CODE; n++)
-      if (extra_code(n) && !isdeclare(extra_code(n)) &&
-          (ptr = strstr(extra_code(n), "o->")) != NULL &&
-	  (ptr == extra_code(n) ||
-	   (!isalnum(ptr[-1] & 255) && ptr[-1] != '_'))) {
-	varused = 1;
-	break;
+      if (extra_code(n) && !isdeclare(extra_code(n)))
+      {
+        int instring = 0;
+	int inname = 0;
+        for (ptr = extra_code(n); *ptr; ptr ++)
+	  if (instring) {
+	    if (*ptr == '\\') ptr++;
+	    else if (*ptr == '\"') instring = 0;
+	  } else if (inname && !isalnum(*ptr & 255)) inname = 0;
+          else if (*ptr == '\"') instring = 1;
+	  else if (!strncmp(ptr, "o->", 3) || !strncmp(ptr, "o)", 2) ||
+	           !strncmp(ptr, "o,", 2) || !strncmp(ptr, "o ", 2)) break;
+	  else if (isalnum(*ptr & 255)) inname = 1;
+
+        if (*ptr) {
+	  varused = 1;
+	  break;
+	}
       }
   }
 

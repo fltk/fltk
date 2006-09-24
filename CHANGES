@@ -35,19 +35,19 @@ CHANGES IN FLTK 1.1.8
 	- Fixed Fl_Positioner callback when released (STR #1387)
 	- Fixed WIN32 zero size window issue (STR #1387)
 	- Fixed Sudoku window positioning (STR #1398)
-	- Fluid Code Declarations can now handle
-	  C++ style comments (STR #1383)
-	- Fixed uninitialized data in OS X and WIN32 
-	  timout functions (STR #1374).
-	- Fixed speed issues when measuring text on OS X
-	  with Quartz (STR #1386).
+	- Fluid Code Declarations can now handle C++ style
+	  comments (STR #1383)
+	- Fixed uninitialized data in OS X and WIN32 timeout
+	  functions (STR #1374).
+	- Fixed speed issues when measuring text on OS X with
+	  Quartz (STR #1386).
 	- Fixed focus issues on OS X (STR #1377)
 	- Optional precission argument when storing floats or 
 	  doubles in a Preferences file (STR #1381)
-	- Fixed callback not called when using arrow keys
-	  in Fl_Slider (STR #1333)
-	- Changing the shorcut of a widget in fluid now marks
-	  the document as dirty (STR #1382)
+	- Fixed callback not called when using arrow keys in
+	  Fl_Slider (STR #1333)
+	- Changing the shorcut of a widget in fluid now marks the
+	  document as dirty (STR #1382)
 	- Fl_Text_Editor now correctly handles middle mouse
 	  clicks (STR #1384)
 	- Added some GLUT4 functions (STR #1370)
