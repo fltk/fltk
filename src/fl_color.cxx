@@ -378,8 +378,8 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   l2 = ((c2 >> 24) * 31 + ((c2 >> 16) & 255) * 61 + ((c2 >> 8) & 255) * 8) / 100;
 
   // Compare and return the contrasting color...
-  if ((l1 - l2) > 127) return fg;
-  else if ((l2 - l1) > 127) return fg;
+  if ((l1 - l2) > 85) return fg;
+  else if ((l2 - l1) > 85) return fg;
   else if (l2 > 127) return FL_BLACK;
   else return FL_WHITE;
 }
