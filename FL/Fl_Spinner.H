@@ -116,9 +116,9 @@ class Fl_Spinner : public Fl_Group
 		Fl_Spinner(int X, int Y, int W, int H, const char *L = 0)
 		  : Fl_Group(X, Y, W, H, L),
 		    input_(X, Y, W - H / 2 - 2, H),
-		    up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2, "@-22<"),
+		    up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2, "@-42<"),
 		    down_button_(X + W - H / 2 - 2, Y + H - H / 2,
-		                 H / 2 + 2, H / 2, "@-22>") {
+		                 H / 2 + 2, H / 2, "@-42>") {
 		  end();
 
 		  value_   = 1.0;
