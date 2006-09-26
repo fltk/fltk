@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed CMake file to support GTK+ theme (STR #1447)
 	- Implemented alpha blending for Quartz, WIN32, and X11
 	- Check buttons did not redraw properly with box() set to
 	  FL_NO_BOX (STR #1440)
