@@ -1206,6 +1206,9 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\src\fl_gtk.cxx">
+		</File>
+		<File
 			RelativePath="..\src\Fl_Help_Dialog.cxx">
 			<FileConfiguration
 				Name="Release|Win32">
@@ -2757,7 +2760,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\src\vsnprintf.c">
+			RelativePath="..\src\screen_xywh.cxx">
 			<FileConfiguration
 				Name="Release|Win32">
 				<Tool
@@ -2775,7 +2778,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\src\screen_xywh.cxx">
+			RelativePath="..\src\vsnprintf.c">
 			<FileConfiguration
 				Name="Release|Win32">
 				<Tool
