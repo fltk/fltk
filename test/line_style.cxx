@@ -54,10 +54,10 @@ void test_box::draw() {
   buf[3] = char(sliders[7]->value());
   buf[4] = 0;
   fl_line_style(
-    (int)(choice[0]->mvalue()->user_data()) +
-    (int)(choice[1]->mvalue()->user_data()) +
-    (int)(choice[2]->mvalue()->user_data()),
-    (int)(sliders[3]->value()),
+    (long)(choice[0]->mvalue()->user_data()) +
+    (long)(choice[1]->mvalue()->user_data()) +
+    (long)(choice[2]->mvalue()->user_data()),
+    (long)(sliders[3]->value()),
     buf);
   fl_rect(10,10,w()-20,h()-20);
   fl_begin_line();

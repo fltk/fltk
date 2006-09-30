@@ -105,11 +105,11 @@ int main(int argc, char** argv) {
     for (int i = 0; i < window->children(); i++) {
       Fl_Widget* b = window->child(i);
       if (b->callback() == (Fl_Callback*)key_cb) {
-	int i = int(b->user_data());
+	int i = (long)b->user_data();
 	if (!i) i = b->label()[0];
 	((Fl_Button*)b)->value(Fl::event_key(i));
       } else if (b->callback() == (Fl_Callback*)shift_cb) {
-	int i = int(b->user_data());
+	int i = (long)b->user_data();
 	((Fl_Button*)b)->value(Fl::event_state(i));
       }
     }

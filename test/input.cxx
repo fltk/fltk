@@ -61,7 +61,7 @@ void button_cb(Fl_Widget *,void *) {
 
 void color_cb(Fl_Widget* button, void* v) {
   Fl_Color c;
-  switch ((int)v) {
+  switch ((long)v) {
   case 0: c = FL_BACKGROUND2_COLOR; break;
   case 1: c = FL_SELECTION_COLOR; break;
   default: c = FL_FOREGROUND_COLOR; break;
