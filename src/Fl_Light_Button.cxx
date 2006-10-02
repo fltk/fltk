@@ -35,6 +35,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/fl_draw.H>
+#include "flstring.h"
 
 void Fl_Light_Button::draw() {
   if (box()) draw_box(this==Fl::pushed() ? fl_down(box()) : box(), color());
@@ -118,7 +119,7 @@ void Fl_Light_Button::draw() {
     int ww = W/2+1;
     int xx = dx;
     if (w()<ww+2*xx) xx = (w()-ww)/2;
-    if (Fl::scheme()) {
+    if (Fl::scheme() && !strcmp(Fl::scheme(), "plastic")) {
       col = active_r() ? selection_color() : fl_inactive(selection_color());
       fl_color(value() ? col : fl_color_average(col, FL_BLACK, 0.5f));
       fl_pie(x()+xx, y()+dy+1, ww, hh, 0, 360);
