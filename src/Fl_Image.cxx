@@ -325,7 +325,7 @@ void Fl_RGB_Image::desaturate() {
 // Composite an image with alpha on systems that don't have accelerated
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  uchar *srcptr = (uchar*)img->array + img->d() * (W * cy + cx);
+  uchar *srcptr = (uchar*)img->array + img->d() * (img->w() * cy + cx);
   int srcskip = img->d() * (img->w() - W);
 
   uchar *dst = new uchar[W * H * 3];
