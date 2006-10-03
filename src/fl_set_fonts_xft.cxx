@@ -183,8 +183,9 @@ STYLE_DONE:
 static int fl_free_font = FL_FREE_FONT;
 
 // Uses the fontconfig lib to construct a list of all installed fonts.
-// I tried using XftListFonts for this, but the API is tricky - and when I looked
-// at the XftList* code, it calls the Fc* functions anyway... so...
+// I tried using XftListFonts for this, but the API is tricky - and when
+// I looked at the XftList* code, it calls the Fc* functions anyway, so...
+//
 // Also, for now I'm ignoring the "pattern_name" and just getting everything...
 // AND I don't try and skip the fonts we've already loaded in the defaults.
 // Blimey! What a hack!
@@ -205,23 +206,25 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
     
   // Make sure fontconfig is ready... is this necessary? The docs say it is
   // safe to call it multiple times, so just go for it anyway!
-  if (!FcInit ()) 
+  if (!FcInit()) 
   {
     // What to do? Just return defaults...
     return FL_FREE_FONT;
   }
 
-  // Create a search pattern that will match every font name - I think this does the
-  // Right Thing... but am not certain...
-  // This could possibly be "enhanced" to pay attention to the requested "pattern_name"?
-  fnt_pattern = FcPatternCreate ();
-  fnt_obj_set = FcObjectSetBuild (FC_FAMILY, FC_STYLE, 0);
+  // Create a search pattern that will match every font name - I think this
+  // does the Right Thing, but am not certain...
+  //
+  // This could possibly be "enhanced" to pay attention to the requested
+  // "pattern_name"?
+  fnt_pattern = FcPatternCreate();
+  fnt_obj_set = FcObjectSetBuild(FC_FAMILY, FC_STYLE, (void *)0);
     
   // Hopefully, this is a set of all the fonts...
-  fnt_set = FcFontList (0, fnt_pattern, fnt_obj_set);
+  fnt_set = FcFontList(0, fnt_pattern, fnt_obj_set);
   
   // We don't need the fnt_pattern any more, release it
-  FcPatternDestroy (fnt_pattern);
+  FcPatternDestroy(fnt_pattern);
 
   // Now, if we got any fonts, iterate through them...
   if (fnt_set)
@@ -243,7 +246,7 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
             
       // Convert from fontconfig internal pattern to human readable name
       // NOTE: This WILL malloc storage, so we need to free it later...
-      font = FcNameUnparse (fnt_set->fonts[j]);
+      font = FcNameUnparse(fnt_set->fonts[j]);
             
       // The returned strings look like this...
       // Century Schoolbook:style=Bold Italic,fed kursiv,Fett Kursiv,...
@@ -287,7 +290,7 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
     }
         
     // Release the fnt_set - we don't need it any more
-    FcFontSetDestroy (fnt_set);
+    FcFontSetDestroy(fnt_set);
         
     // Sort the list into alphabetic order
     qsort(full_list, font_count, sizeof(*full_list), name_sort);
@@ -311,7 +314,7 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
       }
     }
     // Now we are done with the list, release it fully
-    free (full_list);
+    free(full_list);
   }
   return (Fl_Font)fl_free_font;
 } // ::set_fonts
@@ -335,8 +338,10 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
   fl_open_display();
   XftFontSet* fs = XftListFonts(fl_display, fl_screen,
-        XFT_FAMILY, XftTypeString, s->name+1, 0,
-        XFT_PIXEL_SIZE, 0);
+                                XFT_FAMILY, XftTypeString, s->name+1,
+				(void *)0,
+                                XFT_PIXEL_SIZE,
+				(void *)0);
   static int* array = 0;
   static int array_size = 0;
   if (fs->nfont >= array_size) {
