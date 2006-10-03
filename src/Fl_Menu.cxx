@@ -3,7 +3,7 @@
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -36,6 +36,7 @@
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
+#include "flstring.h"
 
 #ifdef __APPLE__
 #  include <Carbon/Carbon.h>
@@ -174,10 +175,22 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
     if (flags & FL_MENU_RADIO) {
       fl_draw_box(FL_ROUND_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
-	fl_color(labelcolor_);
 	int tW = (W - Fl::box_dw(FL_ROUND_DOWN_BOX)) / 2 + 1;
 	if ((W - tW) & 1) tW++;	// Make sure difference is even to center
 	int td = Fl::box_dx(FL_ROUND_DOWN_BOX) + 1;
+        if (Fl::scheme()) {
+	  // Offset the radio circle...
+	  td ++;
+
+	  if (!strcmp(Fl::scheme(), "gtk+")) {
+	    fl_color(FL_SELECTION_COLOR);
+	    tW --;
+	    fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
+	    fl_arc(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
+	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2));
+	  } else fl_color(labelcolor_);
+	} else fl_color(labelcolor_);
+
 	switch (tW) {
 	  // Larger circles draw fine...
 	  default :
@@ -203,11 +216,20 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 	    fl_rectf(x + td + 2, y + d + td, tW, tW);
 	    break;
 	}
+
+	if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	  fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
+	  fl_arc(x + td + 2, y + d + td, tW + 1, tW + 1, 60.0, 180.0);
+	}
       }
     } else {
       fl_draw_box(FL_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
-	fl_color(labelcolor_);
+	if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	  fl_color(FL_SELECTION_COLOR);
+	} else {
+	  fl_color(labelcolor_);
+	}
 	int tx = x + 5;
 	int tw = W - 6;
 	int d1 = tw/3;

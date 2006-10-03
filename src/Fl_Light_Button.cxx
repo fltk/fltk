@@ -122,7 +122,7 @@ void Fl_Light_Button::draw() {
 	  if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
 	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
 	    fl_arc(x() + tdx, y() + tdy, tW + 1, tW + 1, 60.0, 180.0);
-	  } else fl_color(col);
+	  }
 	}
         break;
       default :
