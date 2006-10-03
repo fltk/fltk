@@ -3,7 +3,7 @@
 //
 // Lighted button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -59,7 +59,11 @@ void Fl_Light_Button::draw() {
         // Check box...
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
-	  fl_color(col);
+	  if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	    fl_color(FL_SELECTION_COLOR);
+	  } else {
+	    fl_color(col);
+	  }
 	  int tx = x() + dx + 3;
 	  int tw = W - 6;
 	  int d1 = tw/3;
@@ -76,11 +80,18 @@ void Fl_Light_Button::draw() {
         // Radio button...
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
-	  fl_color(col);
 	  int tW = (W - Fl::box_dw(down_box())) / 2 + 1;
 	  if ((W - tW) & 1) tW++; // Make sure difference is even to center
 	  int tdx = dx + (W - tW) / 2;
 	  int tdy = dy + (W - tW) / 2;
+
+	  if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	    fl_color(FL_SELECTION_COLOR);
+	    tW --;
+	    fl_pie(x() + tdx - 1, y() + tdy - 1, tW + 3, tW + 3, 0.0, 360.0);
+	    fl_arc(x() + tdx - 1, y() + tdy - 1, tW + 3, tW + 3, 0.0, 360.0);
+	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2));
+	  } else fl_color(col);
 
 	  switch (tW) {
 	    // Larger circles draw fine...
@@ -107,6 +118,11 @@ void Fl_Light_Button::draw() {
 	      fl_rectf(x() + tdx, y() + tdy, tW, tW);
 	      break;
 	  }
+
+	  if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
+	    fl_arc(x() + tdx, y() + tdy, tW + 1, tW + 1, 60.0, 180.0);
+	  } else fl_color(col);
 	}
         break;
       default :

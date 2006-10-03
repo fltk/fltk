@@ -331,13 +331,13 @@ int Fl::reload_scheme() {
 
     set_boxtype(FL_UP_FRAME,        FL_GTK_UP_FRAME);
     set_boxtype(FL_DOWN_FRAME,      FL_GTK_DOWN_FRAME);
-    set_boxtype(FL_THIN_UP_FRAME,   FL_GTK_UP_FRAME);
-    set_boxtype(FL_THIN_DOWN_FRAME, FL_GTK_DOWN_FRAME);
+    set_boxtype(FL_THIN_UP_FRAME,   FL_GTK_THIN_UP_FRAME);
+    set_boxtype(FL_THIN_DOWN_FRAME, FL_GTK_THIN_DOWN_FRAME);
 
     set_boxtype(FL_UP_BOX,          FL_GTK_UP_BOX);
     set_boxtype(FL_DOWN_BOX,        FL_GTK_DOWN_BOX);
-    set_boxtype(FL_THIN_UP_BOX,     FL_GTK_UP_BOX);
-    set_boxtype(FL_THIN_DOWN_BOX,   FL_GTK_DOWN_BOX);
+    set_boxtype(FL_THIN_UP_BOX,     FL_GTK_THIN_UP_BOX);
+    set_boxtype(FL_THIN_DOWN_BOX,   FL_GTK_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_GTK_ROUND_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_GTK_ROUND_DOWN_BOX);
   } else {

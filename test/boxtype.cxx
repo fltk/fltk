@@ -34,7 +34,7 @@
 int N = 0;
 #define W 200
 #define H 50
-#define ROWS 11
+#define ROWS 14
 
 Fl_Window *window;
 
@@ -94,6 +94,7 @@ int main(int argc, char ** argv) {
   bt("FL_ROUND_DOWN_BOX",FL_ROUND_DOWN_BOX);
   bt("FL_DIAMOND_UP_BOX",FL_DIAMOND_UP_BOX);
   bt("FL_DIAMOND_DOWN_BOX",FL_DIAMOND_DOWN_BOX);
+
   bt("FL_PLASTIC_UP_BOX",FL_PLASTIC_UP_BOX);
   bt("FL_PLASTIC_DOWN_BOX",FL_PLASTIC_DOWN_BOX);
   bt("FL_PLASTIC_UP_FRAME",FL_PLASTIC_UP_FRAME);
@@ -103,6 +104,18 @@ int main(int argc, char ** argv) {
   N += 2;
   bt("FL_PLASTIC_ROUND_UP_BOX",FL_PLASTIC_ROUND_UP_BOX);
   bt("FL_PLASTIC_ROUND_DOWN_BOX",FL_PLASTIC_ROUND_DOWN_BOX);
+  N += 2;
+
+  bt("FL_GTK_UP_BOX",FL_GTK_UP_BOX);
+  bt("FL_GTK_DOWN_BOX",FL_GTK_DOWN_BOX);
+  bt("FL_GTK_UP_FRAME",FL_GTK_UP_FRAME);
+  bt("FL_GTK_DOWN_FRAME",FL_GTK_DOWN_FRAME);
+  bt("FL_GTK_THIN_UP_BOX",FL_GTK_THIN_UP_BOX);
+  bt("FL_GTK_THIN_DOWN_BOX",FL_GTK_THIN_DOWN_BOX);
+  bt("FL_GTK_THIN_UP_FRAME",FL_GTK_THIN_UP_FRAME);
+  bt("FL_GTK_THIN_DOWN_FRAME",FL_GTK_THIN_DOWN_FRAME);
+  bt("FL_GTK_ROUND_UP_BOX",FL_GTK_ROUND_UP_BOX);
+  bt("FL_GTK_ROUND_DOWN_BOX",FL_GTK_ROUND_DOWN_BOX);
   window->resizable(window);
   window->end();
   window->show();

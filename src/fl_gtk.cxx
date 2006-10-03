@@ -115,10 +115,74 @@ static void gtk_down_box(int x, int y, int w, int h, Fl_Color c) {
 }
 
 
-static void gtk_round_box(int x, int y, int w, int h, Fl_Color c) {
+static void gtk_thin_up_frame(int x, int y, int w, int h, Fl_Color c) {
+  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
+  fl_xyline(x + 1, y, x + w - 2);
+  fl_yxline(x, y + 1, y + h - 2);
+
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  fl_xyline(x + 1, y + h - 1, x + w - 2);
+  fl_yxline(x + w - 1, y + 1, y + h - 2);
+}
+
+
+static void gtk_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
+  gtk_thin_up_frame(x, y, w, h, c);
+
+  gtk_color(fl_color_average(FL_WHITE, c, 0.4));
+  fl_xyline(x + 1, y + 1, x + w - 2);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.2));
+  fl_xyline(x + 1, y + 2, x + w - 2);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.1));
+  fl_xyline(x + 1, y + 3, x + w - 2);
+  gtk_color(c);
+  fl_rectf(x + 1, y + 4, w - 2, h - 8);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.025));
+  fl_xyline(x + 1, y + h - 4, x + w - 2);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.05));
+  fl_xyline(x + 1, y + h - 3, x + w - 2);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.1));
+  fl_xyline(x + 1, y + h - 2, x + w - 2);
+}
+
+
+static void gtk_thin_down_frame(int x, int y, int w, int h, Fl_Color c) {
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  fl_xyline(x + 1, y, x + w - 2);
+  fl_yxline(x, y + 1, y + h - 2);
+
+  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
+  fl_xyline(x + 1, y + h - 1, x + w - 2);
+  fl_yxline(x + w - 1, y + 1, y + h - 2);
+}
+
+
+static void gtk_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
+  gtk_thin_down_frame(x, y, w, h, c);
+
+  gtk_color(c);
+  fl_rectf(x + 1, y + 1, w - 2, h - 2);
+}
+
+
+static void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_color(c);
   fl_pie(x, y, w, h, 0.0, 360.0);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
+  fl_arc(x, y, w, h, 45.0, 180.0);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.25));
+  fl_arc(x, y, w, h, 180.0, 405.0);
   gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  fl_arc(x, y, w, h, 225.0, 360.0);
+}
+
+
+static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
+  gtk_color(c);
+  fl_pie(x, y, w, h, 0.0, 360.0);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.2));
+  fl_arc(x + 1, y, w, h, 90.0, 210.0);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.6));
   fl_arc(x, y, w, h, 0.0, 360.0);
 }
 
@@ -128,8 +192,12 @@ Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
   fl_internal_boxtype(_FL_GTK_DOWN_BOX, gtk_down_box);
   fl_internal_boxtype(_FL_GTK_UP_FRAME, gtk_up_frame);
   fl_internal_boxtype(_FL_GTK_DOWN_FRAME, gtk_down_frame);
-  fl_internal_boxtype(_FL_GTK_ROUND_UP_BOX, gtk_round_box);
-  fl_internal_boxtype(_FL_GTK_ROUND_DOWN_BOX, gtk_round_box);
+  fl_internal_boxtype(_FL_GTK_THIN_UP_BOX, gtk_thin_up_box);
+  fl_internal_boxtype(_FL_GTK_THIN_DOWN_BOX, gtk_thin_down_box);
+  fl_internal_boxtype(_FL_GTK_THIN_UP_FRAME, gtk_thin_up_frame);
+  fl_internal_boxtype(_FL_GTK_THIN_DOWN_FRAME, gtk_thin_down_frame);
+  fl_internal_boxtype(_FL_GTK_ROUND_UP_BOX, gtk_round_up_box);
+  fl_internal_boxtype(_FL_GTK_ROUND_DOWN_BOX, gtk_round_down_box);
 
   return _FL_GTK_UP_BOX;
 }
