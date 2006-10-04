@@ -116,11 +116,11 @@ static void gtk_down_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void gtk_thin_up_frame(int x, int y, int w, int h, Fl_Color c) {
-  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
+  gtk_color(fl_color_average(FL_WHITE, c, 0.6));
   fl_xyline(x + 1, y, x + w - 2);
   fl_yxline(x, y + 1, y + h - 2);
 
-  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.4));
   fl_xyline(x + 1, y + h - 1, x + w - 2);
   fl_yxline(x + w - 1, y + 1, y + h - 2);
 }
@@ -147,11 +147,11 @@ static void gtk_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
 
 
 static void gtk_thin_down_frame(int x, int y, int w, int h, Fl_Color c) {
-  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  gtk_color(fl_color_average(FL_BLACK, c, 0.4));
   fl_xyline(x + 1, y, x + w - 2);
   fl_yxline(x, y + 1, y + h - 2);
 
-  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
+  gtk_color(fl_color_average(FL_WHITE, c, 0.6));
   fl_xyline(x + 1, y + h - 1, x + w - 2);
   fl_yxline(x + w - 1, y + 1, y + h - 2);
 }
