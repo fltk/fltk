@@ -206,8 +206,8 @@ install-linux:
 		$(CP) $$game $(DESTDIR)$(bindir); \
 		$(CHMOD) 755 $(DESTDIR)$(bindir)/$$game; \
 		$(CP) desktop/$$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
-		$(CP) icons/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(CP) icons/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(CP) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
+		$(CP) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
 	done
 
 install-osx:
