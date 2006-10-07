@@ -1070,7 +1070,7 @@ Fl_Help_View::format()
     size_      = 0;
     bgcolor_   = color();
     textcolor_ = textcolor();
-    linkcolor_ = selection_color();
+    linkcolor_ = fl_contrast(FL_MAGENTA, color());
 
     tc = rc = bgcolor_;
 
