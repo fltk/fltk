@@ -3,7 +3,7 @@
 //
 // Test program for Fl_Input_Choice
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -40,7 +40,6 @@ void input_choice_cb(Fl_Widget*,void*data) {
 }
 
 int main(int argc, char **argv) {
-    Fl::scheme("plastic");		// optional
     Fl_Window win(300, 200);
 
     Fl_Input_Choice in(40,40,100,28,"Test");

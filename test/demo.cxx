@@ -41,6 +41,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Choice.H>
 #include <FL/filename.H>
 #include <FL/x.H>
 
@@ -49,33 +50,46 @@
 void doexit(Fl_Widget *, void *);
 void doback(Fl_Widget *, void *);
 void dobut(Fl_Widget *, long);
+void doscheme(Fl_Choice *c, void *) {
+  Fl::scheme(c->text(c->value()));
+}
 
 Fl_Window *form;
 Fl_Button *but[9];
 
 void create_the_forms() {
   Fl_Widget *obj;
-  form = new Fl_Window(370, 450);
-  obj = new Fl_Box(FL_FRAME_BOX,20,390,330,40,"FLTK Demonstration");
+  form = new Fl_Window(350, 440);
+  obj = new Fl_Box(FL_FRAME_BOX,10,385,330,40,"FLTK Demonstration");
   obj->color(FL_GRAY-4);
   obj->labelsize(24);
   obj->labelfont(FL_BOLD);
   obj->labeltype(FL_ENGRAVED_LABEL);
-  obj = new Fl_Box(FL_FRAME_BOX,20,50,330,330,0);
+  obj = new Fl_Box(FL_FRAME_BOX,10,45,330,330,0);
   obj->color(FL_GRAY-8);
-  obj = new Fl_Button(130,10,110,30,"Exit");
+  obj = new Fl_Button(280,10,60,25,"Exit");
   obj->callback(doexit);
-  obj = new Fl_Button(20,50,330,380); obj->type(FL_HIDDEN_BUTTON);
+  Fl_Choice *choice = new Fl_Choice(75, 10, 100, 25, "Scheme:");
+  choice->labelfont(FL_HELVETICA_BOLD);
+  choice->add("none");
+  choice->add("gtk+");
+  choice->add("plastic");
+  choice->callback((Fl_Callback *)doscheme);
+  Fl::scheme(NULL);
+  if (!Fl::scheme()) choice->value(0);
+  else if (!strcmp(Fl::scheme(), "gtk+")) choice->value(1);
+  else choice->value(2);
+  obj = new Fl_Button(10,45,330,380); obj->type(FL_HIDDEN_BUTTON);
   obj->callback(doback);
-  obj = but[0] = new Fl_Button(40,270,90,90);
-  obj = but[1] = new Fl_Button(140,270,90,90);
-  obj = but[2] = new Fl_Button(240,270,90,90);
-  obj = but[5] = new Fl_Button(240,170,90,90);
-  obj = but[4] = new Fl_Button(140,170,90,90);
-  obj = but[3] = new Fl_Button(40,170,90,90);
-  obj = but[6] = new Fl_Button(40,70,90,90);
-  obj = but[7] = new Fl_Button(140,70,90,90);
-  obj = but[8] = new Fl_Button(240,70,90,90);
+  obj = but[0] = new Fl_Button(30,265,90,90);
+  obj = but[1] = new Fl_Button(130,265,90,90);
+  obj = but[2] = new Fl_Button(230,265,90,90);
+  obj = but[5] = new Fl_Button(230,165,90,90);
+  obj = but[4] = new Fl_Button(130,165,90,90);
+  obj = but[3] = new Fl_Button(30,165,90,90);
+  obj = but[6] = new Fl_Button(30,65,90,90);
+  obj = but[7] = new Fl_Button(130,65,90,90);
+  obj = but[8] = new Fl_Button(230,65,90,90);
   for (int i=0; i<9; i++) {
     but[i]->align(FL_ALIGN_WRAP);
     but[i]->callback(dobut, i);
@@ -321,7 +335,6 @@ int load_the_menu(const char* fname)
 
 int main(int argc, char **argv) {
   putenv((char *)"FLTK_DOCDIR=../documentation");
-  create_the_forms();
   char buf[256];
   strcpy(buf, argv[0]);
 #if ( defined _MSC_VER || defined __MWERKS__ ) && defined _DEBUG
@@ -335,6 +348,8 @@ int main(int argc, char **argv) {
   if (!Fl::args(argc,argv,i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s",argv[0],Fl::help);
   if (i < argc) fname = argv[i];
+
+  create_the_forms();
 
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
   if (buf!=fname)

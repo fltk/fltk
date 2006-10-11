@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- The demo master test program now supports scheme
+	  selection and all demos use it (STR #1459)
 	- fl_arc() and fl_pie() did not draw properly on WIN32
 	  when the start and end points were identical (STR
 	  #1461)
