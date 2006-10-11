@@ -3,7 +3,7 @@
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -38,10 +38,10 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #ifdef WIN32
-#include <FL/math.h>
+#  include <FL/math.h>
 #endif
 #ifdef __APPLE__
-#include <config.h>
+#  include <config.h>
 #endif
 
 void fl_arc(int x,int y,int w,int h,double a1,double a2) {
@@ -51,7 +51,10 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
-  Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
+  if (fabs(a1 - a2) < 90) {
+    if (xa == xb && ya == yb) SetPixel(fl_gc, xa, ya, fl_RGB());
+    else Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb);
+  } else Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb);
 #elif defined(__APPLE_QD__)
   Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
@@ -84,7 +87,13 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
   SelectObject(fl_gc, fl_brush());
-  Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
+  if (fabs(a1 - a2) < 90) {
+    if (xa == xb && ya == yb) {
+      MoveToEx(fl_gc, x+w/2, y+h/2, 0L); 
+      LineTo(fl_gc, xa, ya);
+      SetPixel(fl_gc, xa, ya, fl_RGB());
+    } else Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb);
+  } else Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
 #elif defined(__APPLE_QD__)
   Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
   a1 = a2-a1; a2 = 450-a2;
