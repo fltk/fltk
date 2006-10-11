@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2005 by Bill Spitzak and others.
+// Copyright 2001-2006 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -3100,7 +3100,8 @@ int Fl_Text_Display::handle(int event) {
     case FL_ENTER:
     case FL_MOVE:
       if (active_r()) {
-        if (Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h)) window()->cursor(FL_CURSOR_INSERT);
+        if (Fl::event_inside(text_area.x, text_area.y, text_area.w,
+	                     text_area.h)) window()->cursor(FL_CURSOR_INSERT);
 	else window()->cursor(FL_CURSOR_DEFAULT);
 	return 1;
       } else {
@@ -3118,6 +3119,12 @@ int Fl_Text_Display::handle(int event) {
       }
 
     case FL_PUSH: {
+	if (active_r() && window()) {
+	  if (Fl::event_inside(text_area.x, text_area.y, text_area.w,
+	                       text_area.h)) window()->cursor(FL_CURSOR_INSERT);
+	  else window()->cursor(FL_CURSOR_DEFAULT);
+	}
+
 	if (Fl::focus() != this) {
 	  Fl::focus(this);
 	  handle(FL_FOCUS);

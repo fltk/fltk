@@ -3,7 +3,7 @@
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
@@ -348,7 +349,11 @@ int Fl_Input::handle(int event) {
       else
         position(position());
       return (1);
-    } else return handle_key();
+    } else {
+      if (active_r() && window()) window()->cursor(FL_CURSOR_NONE);
+
+      return handle_key();
+    }
 
   case FL_PUSH:
     if (Fl::dnd_text_ops()) {

@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2005 by Bill Spitzak and others.
+// Copyright 2001-2006 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -30,6 +30,7 @@
 #include "flstring.h"
 #include <ctype.h>
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Text_Editor.H>
 #include <FL/fl_ask.H>
 
@@ -446,6 +447,7 @@ int Fl_Text_Editor::handle(int event) {
       return 1;
 
     case FL_KEYBOARD:
+      if (active_r() && window()) window()->cursor(FL_CURSOR_NONE);
       return handle_key();
 
     case FL_PASTE:

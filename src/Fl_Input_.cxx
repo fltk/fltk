@@ -3,7 +3,7 @@
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -693,6 +693,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
   switch (event) {
 
   case FL_ENTER:
+  case FL_MOVE:
     if (active_r() && window()) window()->cursor(FL_CURSOR_INSERT);
     return 1;
 
@@ -717,6 +718,8 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     return 1;
 
   case FL_PUSH:
+    if (active_r() && window()) window()->cursor(FL_CURSOR_INSERT);
+
     handle_mouse(X, Y, W, H, Fl::event_state(FL_SHIFT));
 
     if (Fl::focus() != this) {
