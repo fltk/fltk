@@ -3,7 +3,7 @@
 //
 // Packing widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -47,7 +47,7 @@ void Fl_Pack::draw() {
   int tw = w()-Fl::box_dw(box());
   int th = h()-Fl::box_dh(box());
   int rw, rh;
-  int current_position = (horizontal() ? tx : ty) + spacing_ / 2;
+  int current_position = horizontal() ? tx : ty;
   int maximum_position = current_position;
   uchar d = damage();
   Fl_Widget*const* a = array();

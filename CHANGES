@@ -1,5 +1,12 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fl_Pack incorrectly started widgets at an offset of 1/2
+	  the spacing value.
+	- FLUID did not generate correct window class code if
+	  the class name was not a standard FLTK window class.
+	- FLUID incorrectly included <FL/Fl_classname.H> for
+	  widget classes that were not subclassed from a standard
+	  FLTK widget class.
 	- The demo master test program now supports scheme
 	  selection and all demos use it (STR #1459)
 	- fl_arc() and fl_pie() did not draw properly on WIN32
