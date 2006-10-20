@@ -1418,10 +1418,7 @@ void Fl_Widget_Class_Type::write_code1() {
   if (!c) c = "Fl_Group";
 
   write_h("\nclass %s : public %s {\n", name(), c);
-  if (!strcmp(c, "Fl_Window") ||
-      !strcmp(c, "Fl_Double_Window") ||
-      !strcmp(c, "Fl_Gl_Window") ||
-      !strcmp(c, "Fl_Overlay_Window")) {
+  if (strstr(c, "Window")) {
     write_h("  void _%s();\n", name());
     write_h("public:\n");
     write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
