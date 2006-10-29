@@ -32,6 +32,7 @@
 // Include necessary headers...
 //
 
+#  include <FL/Enumerations.H>
 #  include <FL/Fl_Group.H>
 #  include <FL/Fl_Input.H>
 #  include <FL/Fl_Repeat_Button.H>
@@ -141,6 +142,27 @@ class Fl_Spinner : public Fl_Group
 
   const char	*format() { return (format_); }
   void		format(const char *f) { format_ = f; update(); }
+
+  int		handle(int event) {
+		  switch (event) {
+		    case FL_KEYDOWN :
+		    case FL_SHORTCUT :
+		      if (Fl::event_key() == FL_Up) {
+			up_button_.do_callback();
+			return 1;
+		      } else if (Fl::event_key() == FL_Down) {
+			down_button_.do_callback();
+			return 1;
+		      } else return 0;
+
+		    case FL_FOCUS :
+		      if (input_.take_focus()) return 1;
+		      else return 0;
+		  }
+
+		  return Fl_Group::handle(event);
+		}
+
   // Speling mistaks retained for source compatibility...
   double	maxinum() const { return (maximum_); }
   double	maximum() const { return (maximum_); }

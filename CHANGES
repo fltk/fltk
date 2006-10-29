@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fl_Spinner did not handle the arrow keys properly (STR
+	  #1476)
 	- Fl_File_Browser did not calculate the width of
 	  directory items correctly (STR #1470)
 	- Fl_Pack incorrectly started widgets at an offset of 1/2
