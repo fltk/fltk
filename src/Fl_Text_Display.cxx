@@ -3218,8 +3218,9 @@ int Fl_Text_Display::handle(int event) {
       if (Fl::event_dy()) return mVScrollBar->handle(event);
       else return mHScrollBar->handle(event);
 
-    case FL_FOCUS:
     case FL_UNFOCUS:
+      if (active_r() && window()) window()->cursor(FL_CURSOR_DEFAULT);
+    case FL_FOCUS:
       if (buffer()->selected()) redraw();
 
       return 1;
