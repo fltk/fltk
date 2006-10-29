@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Shortcut events could be sent to the wrong window (STR
+	  #1451)
 	- Fl_Spinner did not handle the arrow keys properly (STR
 	  #1476)
 	- Fl_File_Browser did not calculate the width of
