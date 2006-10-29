@@ -1,11 +1,13 @@
 CHANGES IN FLTK 1.1.8
 
+	- Documentation fixes (STR #1454, STR #1455, STR #1456,
+	  STR #1457, STR #1458, STR #1460, STR #1481)
 	- Shortcut events could be sent to the wrong window (STR
 	  #1451)
 	- Fl_Spinner did not handle the arrow keys properly (STR
 	  #1476)
 	- Fl_File_Browser did not calculate the width of
-	  directory items correctly (STR #1470)
+	  directory items correctly (STR #1469, STR #1470)
 	- Fl_Pack incorrectly started widgets at an offset of 1/2
 	  the spacing value.
 	- FLUID did not generate correct window class code if

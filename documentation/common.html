@@ -1,4 +1,7 @@
 <HTML>
+<HEAD>
+	<TITLE>3 - Common Widgets and Attributes</TITLE>
+</HEAD>
 <BODY>
 
 <H1 ALIGN="RIGHT"><A NAME="common">3 - Common Widgets and Attributes</A></H1>
@@ -608,15 +611,15 @@ button-&gt;when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 	pointer to the instance of your class.</P>
 
 <PRE>
-class foo {
-  void my_callback(Widget *);
-  static void my_static_callback(Widget *w, foo *f) { f->my_callback(w); }
+class Foo {
+  void my_callback(Fl_Widget *w);
+  static void my_static_callback(Fl_Widget *w, void *f) { ((Foo *)f)->my_callback(w); }
   ...
 }
 
 ...
 
-w->callback(my_static_callback, this);
+w->callback(my_static_callback, (void *)this);
 </PRE>
 	</TD>
 </TR>
