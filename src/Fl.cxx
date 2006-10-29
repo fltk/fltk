@@ -106,7 +106,6 @@ int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
 }
 
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
-  if (first_window() != o->window()) return 0;
   int mx = e_x - o->x();
   int my = e_y - o->y();
   return (mx >= 0 && mx < o->w() && my >= 0 && my < o->h());
@@ -796,8 +795,7 @@ int Fl::handle(int e, Fl_Window* window)
       if (send(FL_KEYBOARD, wi, window)) return 1;
 
     // recursive call to try shortcut:
-    if (handle(FL_SHORTCUT, first_window())) return 1;
-    else if (first_window() != window && handle(FL_SHORTCUT, window)) return 1;
+    if (handle(FL_SHORTCUT, window)) return 1;
 
     // and then try a shortcut with the case of the text swapped, by
     // changing the text and falling through to FL_SHORTCUT case:
@@ -809,15 +807,15 @@ int Fl::handle(int e, Fl_Window* window)
   case FL_SHORTCUT:
     if (grab()) {wi = grab(); break;} // send it to grab window
 
-    // Try it as shortcut, sending to focused window then mouse widget and
-    // all parents:
-    if (send(FL_SHORTCUT, first_window(), first_window())) return 1;
-
+    // Try it as shortcut, sending to mouse widget and all parents:
     wi = belowmouse();
     if (!wi) {
       wi = modal();
       if (!wi) wi = window;
+    } else if (wi->window() != first_window()) {
+      if (send(FL_SHORTCUT, first_window(), first_window())) return 1;
     }
+
     for (; wi; wi = wi->parent()) {
       if (send(FL_SHORTCUT, wi, wi->window())) return 1;
     }
