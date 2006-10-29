@@ -3,7 +3,7 @@
 //
 // Fl_File_Browser routines.
 //
-// Copyright 1999-2005 by Michael Sweet.
+// Copyright 1999-2006 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -167,12 +167,15 @@ Fl_File_Browser::item_width(void *p) const	// I - List item data
   const int	*columns;		// Columns
 
 
-  // Set the font and size...
-  fl_font(textfont(), textsize());
-
   // Scan for newlines...
   line    = (FL_BLINE *)p;
   columns = column_widths();
+
+  // Set the font and size...
+  if (line->txt[strlen(line->txt) - 1] == '/')
+    fl_font(textfont() | FL_BOLD, textsize());
+  else
+    fl_font(textfont(), textsize());
 
   if (strchr(line->txt, '\n') == NULL &&
       strchr(line->txt, column_char()) == NULL)
