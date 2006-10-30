@@ -367,14 +367,55 @@ void fl_close_display() {
   XCloseDisplay(fl_display);
 }
 
-int Fl::h() {
+static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
+
+static void fl_init_workarea() {
   fl_open_display();
-  return DisplayHeight(fl_display,fl_screen);
+
+  Atom _NET_WORKAREA = XInternAtom(fl_display, "_NET_WORKAREA", 0);
+  Atom actual;
+  unsigned long count, remaining;
+  int format;
+  unsigned *xywh;
+
+  if (XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
+                         _NET_WORKAREA, 0, 4 * sizeof(unsigned), False,
+			 XA_CARDINAL, &actual, &format, &count, &remaining,
+			 (unsigned char **)&xywh))
+  {
+    fl_workarea_xywh[0] = 0;
+    fl_workarea_xywh[1] = 0;
+    fl_workarea_xywh[2] = DisplayWidth(fl_display, fl_screen);
+    fl_workarea_xywh[3] = DisplayHeight(fl_display, fl_screen);
+  }
+  else
+  {
+    fl_workarea_xywh[0] = (int)xywh[0];
+    fl_workarea_xywh[1] = (int)xywh[1];
+    fl_workarea_xywh[2] = (int)xywh[2];
+    fl_workarea_xywh[3] = (int)xywh[3];
+    XFree(xywh);
+  }
+}
+
+int Fl::x() {
+  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
+  return fl_workarea_xywh[0];
+}
+
+int Fl::y() {
+  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
+  return fl_workarea_xywh[1];
 }
 
 int Fl::w() {
-  fl_open_display();
-  return DisplayWidth(fl_display,fl_screen);
+  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
+  return fl_workarea_xywh[2];
+}
+
+int Fl::h() {
+  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
+  return fl_workarea_xywh[3];
 }
 
 void Fl::get_mouse(int &xx, int &yy) {

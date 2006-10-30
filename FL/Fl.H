@@ -3,7 +3,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -194,13 +194,8 @@ public:
   static void paste(Fl_Widget &receiver);
 
   // screen size:
-#if defined(WIN32) || defined(__APPLE__)
   static int x();
   static int y();
-#else
-  static int x() {return 0;}
-  static int y() {return 0;}
-#endif /* WIN32 || __APPLE__ */
   static int w();
   static int h();
 

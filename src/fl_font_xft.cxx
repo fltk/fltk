@@ -145,7 +145,7 @@ static XftFont* fontopen(const char* name, bool core) {
 		     XFT_PIXEL_SIZE, XftTypeDouble, (double)fl_size_,
 		     core ? XFT_CORE : 0, XftTypeBool, true,
 		     XFT_RENDER, XftTypeBool, false,
-		     0);
+		     (void *)0);
 }
 
 Fl_FontSize::Fl_FontSize(const char* name) {
