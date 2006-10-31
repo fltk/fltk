@@ -881,6 +881,16 @@ if test -n "$GCC"; then
 	AC_MSG_RESULT(no))
     CFLAGS="$OLDCFLAGS"
 
+    # See if GCC supports -fno-strict-aliasing...
+    AC_MSG_CHECKING(if GCC supports -fno-strict-aliasing)
+    OLDCFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -fno-strict-aliasing"
+    AC_TRY_COMPILE(,,
+	OPTIM="$OPTIM -fno-strict-aliasing"
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no))
+    CFLAGS="$OLDCFLAGS"
+
     # See if we are running Solaris; if so, try the -fpermissive option...
     # This option is required on some versions of Solaris to work around
     # bugs in the X headers up through Solaris 7.
