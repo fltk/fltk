@@ -27,8 +27,8 @@ dnl
 dnl      http://www.fltk.org/str.php
 dnl
 
-dnl We need at least autoconf 2.57...
-AC_PREREQ(2.57)
+dnl We need at least autoconf 2.50...
+AC_PREREQ(2.50)
 
 dnl Required file in package...
 AC_INIT(src/Fl.cxx)
