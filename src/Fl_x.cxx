@@ -381,7 +381,7 @@ static void fl_init_workarea() {
   if (XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
                          _NET_WORKAREA, 0, 4 * sizeof(unsigned), False,
 			 XA_CARDINAL, &actual, &format, &count, &remaining,
-			 (unsigned char **)&xywh))
+			 (unsigned char **)&xywh) || !xywh)
   {
     fl_workarea_xywh[0] = 0;
     fl_workarea_xywh[1] = 0;
