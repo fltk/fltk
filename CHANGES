@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fl_Progress was using the wrong width to calculate 
+	  progress (STR #1492)
 	- Documentation fixes (STR #1454, STR #1455, STR #1456,
 	  STR #1457, STR #1458, STR #1460, STR #1481)
 	- Fl::x(), Fl::y(), Fl::w(), and Fl::h() did not report
