@@ -3,7 +3,7 @@
 //
 // WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -108,12 +108,20 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
   // Copy the image from the off-screen buffer to the memory buffer.
   for (idy = 0, pdst = p; idy < h; idy ++)
+#ifdef __i386__
+    for (idx = 0, psrc = base + idy * rowBytes; idx < w; idx ++, psrc += 4, pdst += d) {
+      pdst[0] = psrc[2];
+      pdst[1] = psrc[1];
+      pdst[2] = psrc[0];
+    }
+#else
     for (idx = 0, psrc = base + idy * rowBytes + 1; idx < w; idx ++, psrc += 4, pdst += d) {
       pdst[0] = psrc[0];
       pdst[1] = psrc[1];
       pdst[2] = psrc[2];
     }
-
+#endif // __i386__
+     
   // Unlock and delete the off-screen buffer, then return...
   UnlockPixels(pm);
   fl_delete_offscreen(osbuffer);
