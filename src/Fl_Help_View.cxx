@@ -1287,6 +1287,7 @@ Fl_Help_View::format()
 		 strcasecmp(buf, "TABLE") == 0)
 	{
           block->end = start;
+	  newalign   = strcasecmp(buf, "CENTER") ? LEFT : CENTER;
           line       = do_align(block, line, xx, newalign, links);
           xx         = block->x;
           block->h   += hh;
@@ -1496,6 +1497,7 @@ Fl_Help_View::format()
           line       = do_align(block, line, xx, newalign, links);
           block->end = start;
 	  block->h   += hh;
+	  talign     = LEFT;
 
           xx = blocks_[row].x;
 
@@ -1578,33 +1580,34 @@ Fl_Help_View::format()
                   strcasecmp(buf, "/TH") == 0) && row)
 	{
           popfont(font, fsize);
+	  talign = LEFT;
 	}
-	  else if (strcasecmp(buf, "FONT") == 0)
-	  {
-            if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
-	      if (!strncasecmp(attr, "helvetica", 9) ||
-	          !strncasecmp(attr, "arial", 5) ||
-		  !strncasecmp(attr, "sans", 4)) font = FL_HELVETICA;
-              else if (!strncasecmp(attr, "times", 5) ||
-	               !strncasecmp(attr, "serif", 5)) font = FL_TIMES;
-              else if (!strncasecmp(attr, "symbol", 6)) font = FL_SYMBOL;
-	      else font = FL_COURIER;
-            }
+	else if (strcasecmp(buf, "FONT") == 0)
+	{
+          if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
+	    if (!strncasecmp(attr, "helvetica", 9) ||
+	        !strncasecmp(attr, "arial", 5) ||
+		!strncasecmp(attr, "sans", 4)) font = FL_HELVETICA;
+            else if (!strncasecmp(attr, "times", 5) ||
+	             !strncasecmp(attr, "serif", 5)) font = FL_TIMES;
+            else if (!strncasecmp(attr, "symbol", 6)) font = FL_SYMBOL;
+	    else font = FL_COURIER;
+          }
 
-            if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != NULL) {
-              if (isdigit(attr[0] & 255)) {
-	        // Absolute size
-	        fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
-	      } else {
-	        // Relative size
-	        fsize = (int)(fsize * pow(1.2, atoi(attr)));
-	      }
+          if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != NULL) {
+            if (isdigit(attr[0] & 255)) {
+	      // Absolute size
+	      fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
+	    } else {
+	      // Relative size
+	      fsize = (int)(fsize * pow(1.2, atoi(attr)));
 	    }
-
-            pushfont(font, fsize);
 	  }
-	  else if (strcasecmp(buf, "/FONT") == 0)
-	    popfont(font, fsize);
+
+          pushfont(font, fsize);
+	}
+	else if (strcasecmp(buf, "/FONT") == 0)
+	  popfont(font, fsize);
 	else if (strcasecmp(buf, "B") == 0 ||
         	 strcasecmp(buf, "STRONG") == 0)
 	  pushfont(font |= FL_BOLD, fsize);
