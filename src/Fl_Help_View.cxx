@@ -434,20 +434,21 @@ Fl_Help_View::draw()
 
   draw_box(b, x(), y(), ww, hh, bgcolor_);
 
+  int ss = Fl::scrollbar_size();
   if (hscrollbar_.visible()) {
     draw_child(hscrollbar_);
-    hh -= 17;
+    hh -= ss;
     i ++;
   }
   if (scrollbar_.visible()) {
     draw_child(scrollbar_);
-    ww -= 17;
+    ww -= ss;
     i ++;
   }
   if (i == 2) {
     fl_color(FL_GRAY);
     fl_rectf(x() + ww - Fl::box_dw(b) + Fl::box_dx(b),
-             y() + hh - Fl::box_dh(b) + Fl::box_dy(b), 17, 17);
+             y() + hh - Fl::box_dh(b) + Fl::box_dy(b), ss, ss);
   }
 
   if (!value_)
@@ -941,13 +942,6 @@ Fl_Help_View::draw()
     }
 
   fl_pop_clip();
-  if (Fl::focus()==this) {
-    ww = w() ;
-    hh = h();
-    if (hscrollbar_.visible()) hh -= 18;
-    if (scrollbar_.visible()) ww -= 18;
-    draw_focus(box(), x(), y(), ww, hh);
-  }
 }
 
 
@@ -1775,38 +1769,47 @@ Fl_Help_View::format()
 
   int dx = Fl::box_dw(b) - Fl::box_dx(b);
   int dy = Fl::box_dh(b) - Fl::box_dy(b);
+  int ss = Fl::scrollbar_size();
+  int dw = Fl::box_dw(b) + ss;
+  int dh = Fl::box_dh(b);
 
-  if (hsize_ > (w() - 24)) {
+  if (hsize_ > (w() - dw)) {
     hscrollbar_.show();
 
-    if (size_ < (h() - 24)) {
+    dh += ss;
+
+    if (size_ < (h() - dh)) {
       scrollbar_.hide();
-      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - dy, w() - Fl::box_dw(b), 17);
+      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - ss - dy,
+                         w() - Fl::box_dw(b), ss);
     } else {
       scrollbar_.show();
-      scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h() - 17 - Fl::box_dh(b));
-      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - dy, w() - 17 - Fl::box_dw(b), 17);
+      scrollbar_.resize(x() + w() - ss - dx, y() + Fl::box_dy(b),
+                        ss, h() - ss - Fl::box_dh(b));
+      hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - ss - dy,
+                         w() - ss - Fl::box_dw(b), ss);
     }
   } else {
     hscrollbar_.hide();
 
-    if (size_ < (h() - 8)) scrollbar_.hide();
+    if (size_ < (h() - dh)) scrollbar_.hide();
     else {
-      scrollbar_.resize(x() + w() - 17 - dx, y() + Fl::box_dy(b), 17, h() - Fl::box_dh(b));
+      scrollbar_.resize(x() + w() - ss - dx, y() + Fl::box_dy(b),
+                        ss, h() - Fl::box_dh(b));
       scrollbar_.show();
     }
   }
 
   // Reset scrolling if it needs to be...
   if (scrollbar_.visible()) {
-    int temph = h() - 8;
-    if (hscrollbar_.visible()) temph -= 16;
+    int temph = h() - Fl::box_dh(box());
+    if (hscrollbar_.visible()) temph -= ss;
     if ((topline_ + temph) > size_) topline(size_ - temph);
     else topline(topline_);
   } else topline(0);
 
   if (hscrollbar_.visible()) {
-    int tempw = w() - 24;
+    int tempw = w() - ss - Fl::box_dw(box());
     if ((leftline_ + tempw) > hsize_) leftline(hsize_ - tempw);
     else leftline(leftline_);
   } else leftline(0);
@@ -2743,10 +2746,6 @@ Fl_Help_View::handle(int event)	// I - Event to handle
         fl_cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_PUSH:
-      if (Fl::focus() != this) {
-        Fl::focus(this);
-        handle(FL_FOCUS);
-      }
       if (Fl_Group::handle(event))
         return 1;
       linkp = find_link(xx, yy);
@@ -2814,8 +2813,10 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 			   int        hh,	// I - Height in pixels
 			   const char *l)
     : Fl_Group(xx, yy, ww, hh, l),
-      scrollbar_(xx + ww - 17, yy, 17, hh - 17),
-      hscrollbar_(xx, yy + hh - 17, ww - 17, 17)
+      scrollbar_(xx + ww - Fl::scrollbar_size(), yy,
+                 Fl::scrollbar_size(), hh - Fl::scrollbar_size()),
+      hscrollbar_(xx, yy + hh - Fl::scrollbar_size(),
+                  ww - Fl::scrollbar_size(), Fl::scrollbar_size())
 {
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
 
@@ -3001,10 +3002,12 @@ Fl_Help_View::resize(int xx,	// I - New left position
 
   Fl_Widget::resize(xx, yy, ww, hh);
 
-  scrollbar_.resize(x() + w() - 17 - Fl::box_dw(b) + Fl::box_dx(b), y() + Fl::box_dy(b),
-                    17, h() - 17 - Fl::box_dh(b));
-  hscrollbar_.resize(x() + Fl::box_dx(b), y() + h() - 17 - Fl::box_dh(b) + Fl::box_dy(b),
-                     w() - 17 - Fl::box_dw(b), 17);
+  int ss = Fl::scrollbar_size();
+  scrollbar_.resize(x() + w() - ss - Fl::box_dw(b) + Fl::box_dx(b),
+                    y() + Fl::box_dy(b), ss, h() - ss - Fl::box_dh(b));
+  hscrollbar_.resize(x() + Fl::box_dx(b),
+                     y() + h() - ss - Fl::box_dh(b) + Fl::box_dy(b),
+                     w() - ss - Fl::box_dw(b), ss);
 
   format();
 }

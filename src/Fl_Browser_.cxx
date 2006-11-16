@@ -3,7 +3,7 @@
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2006 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -67,7 +67,19 @@ static void hscrollbar_callback(Fl_Widget* s, void*) {
   ((Fl_Browser_*)(s->parent()))->hposition(int(((Fl_Scrollbar*)s)->value()));
 }
 
+// Scrollbar size should be part of the Fl class, but is left here for
+// binary compatibility in 1.1.x - M. Sweet
 int Fl_Browser_::scrollbar_width_ = 16;
+
+// Get the standard scrollbar size
+int Fl::scrollbar_size() {
+  return Fl_Browser_::scrollbar_width();
+}
+
+// Set the standard scrollbar size
+void Fl::scrollbar_size(int W) {
+  Fl_Browser_::scrollbar_width(W);
+}
 
 // return where to draw the actual box:
 void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {

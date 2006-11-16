@@ -105,7 +105,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 
   end();
 
-  scrollbar_width(16);
+  scrollbar_width(Fl::scrollbar_size());
   scrollbar_align(FL_ALIGN_BOTTOM_RIGHT);
 
   mCursorOn = 0;

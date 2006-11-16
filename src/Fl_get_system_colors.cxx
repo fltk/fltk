@@ -322,6 +322,9 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_PLASTIC_ROUND_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_ROUND_DOWN_BOX);
+
+    // Use standard size scrollbars...
+    Fl::scrollbar_size(16);
   } else if (scheme_ && !strcasecmp(scheme_, "gtk+")) {
     // Use a GTK+ inspired look-n-feel...
     if (scheme_bg_) {
@@ -340,6 +343,9 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_DOWN_BOX,   FL_GTK_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_GTK_ROUND_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_GTK_ROUND_DOWN_BOX);
+
+    // Use slightly thinner scrollbars...
+    Fl::scrollbar_size(15);
   } else {
     // Use the standard FLTK look-n-feel...
     if (scheme_bg_) {
@@ -358,6 +364,9 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_DOWN_BOX,   fl_thin_down_box, 1, 1, 2, 2);
     set_boxtype(_FL_ROUND_UP_BOX,   fl_round_up_box, 3, 3, 6, 6);
     set_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, 3, 3, 6, 6);
+
+    // Use standard size scrollbars...
+    Fl::scrollbar_size(16);
   }
 
   // Set (or clear) the background tile for all windows...

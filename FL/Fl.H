@@ -109,6 +109,8 @@ public:
   static int scheme(const char*);
   static const char* scheme() {return scheme_;}
   static int reload_scheme();
+  static int scrollbar_size();
+  static void scrollbar_size(int W);
 
   // execution:
   static int wait();

@@ -47,7 +47,7 @@ class FL_EXPORT Fl_Help_Dialog {open
       label {Help Dialog} open
       private xywh {398 65 530 385} type Double resizable size_range {260 150 0 0} visible
     } {
-      Fl_Group view_ {
+      Fl_Help_View view_ {
         callback {if (view_->filename())
 {
   if (view_->changed())
@@ -87,8 +87,6 @@ class FL_EXPORT Fl_Help_Dialog {open
   forward_->deactivate();
 }} open
         private xywh {10 10 510 330} box DOWN_BOX selection_color 15 resizable
-        code0 {\#include <FL/Fl_Help_View.H>}
-        class Fl_Help_View
       } {}
       Fl_Group {} {open
         xywh {10 348 510 27}

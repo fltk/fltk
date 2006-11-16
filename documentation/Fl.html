@@ -121,6 +121,7 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.scheme">scheme</A></LI>
 	<LI><A HREF="#Fl.screen_count">screen_count</A></LI>
 	<LI><A HREF="#Fl.screen_xywh">screen_xywh</A></LI>
+	<LI><A HREF="#Fl.scrollbar_size">scrollbar_size</A></LI>
 	<LI><A HREF="#Fl.selection">selection</A></LI>
 	<LI><A HREF="#Fl.selection_owner">selection_owner</A></LI>
 	<LI><A HREF="#Fl.set_abort">set_abort</A></LI>
@@ -1127,6 +1128,15 @@ form gets the bounding box for the screen that contains the
 specified coordinates. The last form gets the bounding box for
 the numbered screen, where <tt>n</tt> is a number from 0 to the
 number of screens less 1.</P>
+
+<H4><A NAME="Fl.scrollbar_size">void scrollbar_size(int W);<BR>
+int scrollbar_size();</A></H4>
+
+<P>Sets or gets the default scrollbar size that is used by the
+<A HREF="Fl_Browser_.html#Fl_Browser_"><TT>Fl_Browser_</TT></A>,
+<A HREF="Fl_Help_View.html#Fl_Help_View"><TT>Fl_Help_View</TT></A>,
+<A HREF="Fl_Scroll.html#Fl_Scroll"><TT>Fl_Scroll</TT></A>, and
+<A HREF="Fl_Text_Display.html#Fl_Text_Display"><TT>Fl_Text_Display</TT></A> widgets.</P>
 
 <H4><A NAME="Fl.selection">void selection(Fl_Widget &amp;owner, const char* stuff, int len);</A></H4>
 
