@@ -94,6 +94,9 @@ class menuwindow : public Fl_Menu_Window {
 public:
   menutitle* title;
   int handle(int);
+#ifdef __APPLE__
+  int early_hide_handle(int);
+#endif
   int itemheight;	// zero == menubar
   int numitems;
   int selected;
@@ -526,6 +529,7 @@ struct menustate {
   int nummenus;
   int menubar; // if true p[0] is a menubar
   int state;
+  menuwindow* fakemenu; // kludge for buttons in menubar
   int is_inside(int mx, int my);
 };
 static menustate* p;
@@ -580,6 +584,35 @@ static int backward(int menu) { // previous item in menu menu if possible
 }
 
 int menuwindow::handle(int e) {
+#ifdef __APPLE__
+  // This off-route takes care of the "detached menu" bug on OS X.
+  // Apple event handler requires that we hide all menu windows right
+  // now, so that Carbon can continue undisturbed with handling window
+  // manager events, like dragging the application window.
+  int ret = early_hide_handle(e);
+  menustate &pp = *p;
+  if (pp.state == DONE_STATE) {
+    hide();
+    if (pp.fakemenu) {
+      pp.fakemenu->hide();
+      if (pp.fakemenu->title)
+        pp.fakemenu->title->hide();
+    }
+    int i = pp.nummenus;
+    while (i>0) {
+      menuwindow *mw = pp.p[--i];
+      if (mw) {
+        mw->hide();
+        if (mw->title) 
+          mw->title->hide();
+      }
+    }
+  }
+  return ret;
+}
+
+int menuwindow::early_hide_handle(int e) {
+#endif
   menustate &pp = *p;
   switch (e) {
   case FL_KEYBOARD:
@@ -723,8 +756,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   pp.nummenus = 1;
   pp.menubar = menubar;
   pp.state = INITIAL_STATE;
-
-  menuwindow* fakemenu = 0; // kludge for buttons in menubar
+  pp.fakemenu = 0; // kludge for buttons in menubar
 
   // preselected item, pop up submenus if necessary:
   if (initial_item && mw.selected >= 0) {
@@ -761,7 +793,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     if (pp.current_item == oldi) continue;}
     // only do rest if item changes:
 
-    delete fakemenu; fakemenu = 0; // turn off "menubar button"
+    delete pp.fakemenu; pp.fakemenu = 0; // turn off "menubar button"
 
     if (!pp.current_item) { // pointing at nothing
       // turn off selection in deepest menu, but don't erase other menus:
@@ -769,7 +801,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       continue;
     }
 
-    delete fakemenu; fakemenu = 0;
+    delete pp.fakemenu; pp.fakemenu = 0;
     initial_item = 0; // stop the startup code
     pp.p[pp.menu_number]->autoscroll(pp.item_number);
 
@@ -831,17 +863,17 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       while (pp.nummenus > pp.menu_number+1) delete pp.p[--pp.nummenus];
       if (!pp.menu_number && pp.menubar) {
 	// kludge so "menubar buttons" turn "on" by using menu title:
-	fakemenu = new menuwindow(0,
+	pp.fakemenu = new menuwindow(0,
 				  cw.x()+cw.titlex(pp.item_number),
 				  cw.y()+cw.h(), 0, 0,
 				  0, m, 0, 1);
-	fakemenu->title->show();
+	pp.fakemenu->title->show();
       }
     }
   }
   const Fl_Menu_Item* m = pp.current_item;
   Fl::release();
-  delete fakemenu;
+  delete pp.fakemenu;
   while (pp.nummenus>1) delete pp.p[--pp.nummenus];
   mw.hide();
   return m;

@@ -967,14 +967,18 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   {
   case kEventMouseDown:
     part = FindWindow( pos, &tempXid );
-    if ( part != inContent ) {
+    if ( part == inGrow  && !Fl::grab()) {
       fl_unlock_function();
       suppressed = 1;
+      Fl_Tooltip::current(0L);
+      // if (grab() && grab()!=thisWindow) handle grab first (popping down menu bars)
+      // if (modal() && modal()!=thisWindow) handle modal first (popping down menu bars)
       return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
     }
     suppressed = 0;
-    if ( !IsWindowActive( xid ) )
+    if (part==inContent && !IsWindowActive( xid ) ) {
       CallNextEventHandler( nextHandler, event ); // let the OS handle the activation, but continue to get a click-through effect
+    }
     // normal handling of mouse-down follows
     fl_os_capture = xid;
     sendEvent = FL_PUSH;
@@ -1019,7 +1023,12 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     Fl::e_x = pos.h;
     Fl::e_y = pos.v;
     SetPort( oldPort );
-    Fl::handle( sendEvent, window );
+    if (GetEventKind(event)==kEventMouseDown && part!=inContent) {
+      Fl::handle( sendEvent, window );
+      CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+    } else {
+      Fl::handle( sendEvent, window );
+    }
     break;
   }
 
