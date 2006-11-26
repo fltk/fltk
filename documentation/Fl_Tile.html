@@ -31,6 +31,24 @@ the border between them:
 
 <P ALIGN=CENTER><IMG src="Fl_Tile.gif" ALT="Fl_Tile widget."></P>
 
+<P>For the tiling to work correctly, the children of an 
+<TT>Fl_Tile</TT> must cover the entire area of the widget, but not
+overlap. This means that all children must touch each 
+other at their edges, and no gaps can't be left inside the 
+<TT>Fl_Tile</TT>.
+
+<P><TT>Fl_Tile</TT> does not normailly draw any graphics of its own.
+The &quot;borders&quot; which can be seen in the snapshot above
+are actually part of the children. Their boxtypes have been set
+to <TT>FL_DOWN_BOX</TT> creating the impression of 
+&quot;ridges&quot; where the boxes touch. What you see are 
+actually two adjacent <TT>FL_DOWN_BOX</TT>'s drawn next to each 
+other. All neighboring widgets share the same edge - the widget's 
+thick borders make it appear as though the widgets aren't actually
+touching, but they are. If the edges of adjacent widgets do not
+touch, then it will be impossible to drag the corresponding
+edges.</P>
+
 <P><TT>Fl_Tile</TT> allows objects to be resized to zero dimensions.
 To prevent this you can use the <TT>resizable()</TT> to limit where
 corners can be dragged to.</P>
@@ -40,17 +58,6 @@ initially have non-zero sizes so the <TT>Fl_Tile</TT> can figure out
 their layout. If desired, call <TT>position()</TT> after creating the
 children but before displaying the window to set the borders where you
 want.</P>
-
-<P>The &quot;borders&quot; are part of the children -
-<TT>Fl_Tile</TT> does not draw any graphics of its own. In the
-example above, all of the children have <TT>FL_DOWN_BOX</TT>
-types, and the &quot;ridges&quot; you see are actually two
-adjacent <TT>FL_DOWN_BOX</TT>'s drawn next to each other. All
-neighboring widgets share the same edge - the widget's thick
-borders make it appear as though the widgets aren't actually
-touching, but they are. If the edges of adjacent widgets do not
-touch, then it will be impossible to drag the corresponding
-edges.</P>
 
 <H3>Methods</H3>
 <UL>
