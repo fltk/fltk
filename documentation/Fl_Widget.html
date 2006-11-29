@@ -470,6 +470,11 @@ window when the user hovers the mouse over the widget. The
 string is <I>not</I> copied, so make sure any formatted string
 is stored in a <TT>static</TT>, global, or allocated buffer.
 
+<P>If no tooltip is set, the tooltip of the parent is inherited.
+Setting a tooltip for a group and setting no tooltip for a child 
+will show the group's tooltip instead. To avoid this behavior, 
+you can set the child's tooltip to an empty string 
+(<tt>&quot;&quot;</tt>).
 
 <H4><A NAME="Fl_Widget.type">uchar Fl_Widget::type() const;</A></H4>
 
