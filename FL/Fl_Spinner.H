@@ -126,13 +126,13 @@ class Fl_Spinner : public Fl_Group
 		  minimum_ = 1.0;
 		  maximum_ = 100.0;
 		  step_    = 1.0;
-		  format_  = "%.0f";
+		  format_  = "%g";
 
 		  align(FL_ALIGN_LEFT);
 
 		  input_.value("1");
 		  input_.type(FL_INT_INPUT);
-		  input_.when(FL_WHEN_CHANGED);
+		  input_.when(FL_WHEN_ENTER_KEY | FL_WHEN_RELEASE);
 		  input_.callback((Fl_Callback *)sb_cb, this);
 
 		  up_button_.callback((Fl_Callback *)sb_cb, this);
@@ -180,7 +180,12 @@ class Fl_Spinner : public Fl_Group
 		                      H / 2 + 2, H / 2);
 		}
   double	step() const { return (step_); }
-  void		step(double s) { step_ = s; update(); }
+  void		step(double s) {
+		  step_ = s;
+		  if (step_ != (int)step_) input_.type(FL_FLOAT_INPUT);
+		  else input_.type(FL_INT_INPUT);
+		  update();
+		}
   Fl_Color	textcolor() const {
 		  return (input_.textcolor());
 		}
