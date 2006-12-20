@@ -260,7 +260,6 @@ void Fl::remove_check(Fl_Timeout_Handler cb, void *argp) {
   }
 }
 
-#if !defined(__APPLE__)
 static void run_checks()
 {
   // checks are a bit messy so that add/remove and wait may be called
@@ -274,7 +273,6 @@ static void run_checks()
     next_check = first_check;
   }
 }
-#endif // !__APPLE__
 
 #ifndef WIN32
 static char in_idle;
@@ -298,7 +296,7 @@ double Fl::wait(double time_to_wait) {
 
 #elif defined(__APPLE__)
 
-  flush();
+  run_checks();
   if (idle) {
     if (!in_idle) {
       in_idle = 1;
@@ -308,6 +306,7 @@ double Fl::wait(double time_to_wait) {
     // the idle function may turn off idle, we can then wait:
     if (idle) time_to_wait = 0.0;
   }
+  flush();
   return fl_wait(time_to_wait);
 
 #else

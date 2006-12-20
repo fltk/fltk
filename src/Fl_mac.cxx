@@ -54,7 +54,6 @@ extern "C" {
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
