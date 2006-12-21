@@ -60,6 +60,7 @@ int main(int argc, char ** argv) {
   Fl::get_system_colors();
   Fl::background(113,113,198);
 #else // this code uses the nice bright blue background to show box vs. frame types
+  Fl::args(argc, argv);
   Fl::get_system_colors();
   window->color(12);// light blue
 #endif

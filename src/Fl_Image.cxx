@@ -130,8 +130,10 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 
 void Fl_RGB_Image::uncache() {
 #ifdef __APPLE_QUARTZ__
-  if (id)
+  if (id) {
     CGImageRelease((CGImageRef)id);
+    id = 0;
+  }
 #else
   if (id) {
     fl_delete_offscreen((Fl_Offscreen)id);
