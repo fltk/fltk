@@ -40,6 +40,14 @@ static int num_screens = 0;
 #    include <multimon.h>
 #  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
+// We go the much more difficult route of individually picking some multi-screen
+// functions from the USER32.DLL . If these functions are not available, we
+// will gracefully fall back to single monitor support.
+//
+// If we were to insist on the existence of "EnumDisplayMonitors" and 
+// "GetMonitorInfoA", it would be impossible to use FLTK on Windows 2000
+// before SP2 or earlier.
+
 // BOOL EnumDisplayMonitors(HDC, LPCRECT, MONITORENUMPROC, LPARAM)
 typedef BOOL (WINAPI* fl_edm_func)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
 // BOOL GetMonitorInfo(HMONITOR, LPMONITORINFO)
@@ -56,6 +64,7 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
   mi.cbSize = sizeof(mi);
 
 //  GetMonitorInfo(mon, &mi);
+//  (but we use our self-aquired function pointer instead)
   if (fl_gmi(mon, &mi)) {
     screens[num_screens] = mi.rcWork;
     num_screens ++;
@@ -84,6 +93,7 @@ static void screen_init() {
           // We have GetMonitorInfoA, enumerate all the screens...
           num_screens = 0;
 //        EnumDisplayMonitors(0,0,screen_cb,0);
+//        (but we use our self-aquired function pointer instead)
           fl_edm(0, 0, screen_cb, 0);
           return;
         }
