@@ -1995,19 +1995,22 @@ void Fl_Widget_Type::write_code1() {
       {
         int instring = 0;
 	int inname = 0;
-        for (ptr = extra_code(n); *ptr; ptr ++)
+        for (ptr = extra_code(n); *ptr; ptr ++) {
 	  if (instring) {
 	    if (*ptr == '\\') ptr++;
 	    else if (*ptr == '\"') instring = 0;
 	  } else if (inname && !isalnum(*ptr & 255)) inname = 0;
           else if (*ptr == '\"') instring = 1;
-	  else if (!strncmp(ptr, "o->", 3) || !strncmp(ptr, "o)", 2) ||
-	           !strncmp(ptr, "o,", 2) || !strncmp(ptr, "o ", 2)) break;
-	  else if (isalnum(*ptr & 255)) inname = 1;
+	  else if (isalnum(*ptr & 255) || *ptr == '_') {
+	    size_t len = strspn(ptr, "0123456789_"
+	                             "abcdefghijklmnopqrstuvwxyz"
+				     "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-        if (*ptr) {
-	  varused = 1;
-	  break;
+            if (!strncmp(ptr, "o", len)) {
+	      varused = 1;
+	      break;
+	    } else ptr += len - 1;
+          }
 	}
       }
   }
