@@ -886,6 +886,13 @@ void visible_cb(Fl_Light_Button* i, void* v) {
 	n ? q->o->show() : q->o->hide();
 	q->redraw();
 	mod = 1;
+	if (n && q->parent && q->parent->type_name()) {
+	  if (!strcmp(q->parent->type_name(), "Fl_Tabs")) {
+	    ((Fl_Tabs *)q->o->parent())->value(q->o);
+	  } else if (!strcmp(q->parent->type_name(), "Fl_Wizard")) {
+	    ((Fl_Wizard *)q->o->parent())->value(q->o);
+	  }
+	}
       }
     }
     if (mod) set_modflag(1);

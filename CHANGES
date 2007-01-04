@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Making a child group visible in a Fl_Tabs or Fl_Wizard
+	  group now shows that tab or pane.
 	- Added fl_open_uri() function as proposed on
 	  fltk.development.
 	- Added Fl::has_check() which previously was prototyped
