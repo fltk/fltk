@@ -1487,6 +1487,19 @@ DEP_CPP_FL_MU=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_open_uri.cxx
+DEP_CPP_FL_AR=\
+	"..\fl\enumerations.h"\
+	"..\fl\fl_draw.h"\
+	"..\fl\fl_export.h"\
+	"..\FL\math.h"\
+	
+NODEP_CPP_FL_AR=\
+	"..\..\..\..\..\usr\include\math.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_oval_box.cxx
 DEP_CPP_FL_OV=\
 	"..\fl\enumerations.h"\

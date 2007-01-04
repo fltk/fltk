@@ -1,8 +1,10 @@
 CHANGES IN FLTK 1.1.8
 
-	- added "Fl::has_check()" which previously was prototyped
+	- Added fl_open_uri() function as proposed on
+	  fltk.development.
+	- Added Fl::has_check() which previously was prototyped
 	  and documented, but not implemented (STR #1542)
-	- enabled "add_check()" on OS X (STR #1534)
+	- Enabled Fl::add_check() on OS X (STR #1534)
 	- Documented tooltip inheritance (STR #1467)
 	- Better event mouse handling fixing detached menus and
 	  sticky tooltips (STR #1463, STR #449)

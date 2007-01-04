@@ -111,6 +111,14 @@ typedef int (Fl_File_Sort_F)(struct dirent **, struct dirent **);
 
 FL_EXPORT int fl_filename_list(const char *d, struct dirent ***l,
                                Fl_File_Sort_F *s = fl_numericsort);
+
+/*
+ * Generic function to open a Uniform Resource Identifier (URI) using a
+ * system-defined program (added in FLTK 1.1.8)
+ */
+
+FL_EXPORT int	fl_open_uri(const char *uri, char *msg = (char *)0,
+		            int msglen = 0);
 #  endif /* __cplusplus */
 
 /*

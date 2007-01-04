@@ -375,6 +375,10 @@ SOURCE=..\src\Fl_Multi_Label.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_open_uri.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\fl_oval_box.cxx
 # End Source File
 # Begin Source File

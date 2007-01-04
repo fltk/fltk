@@ -114,6 +114,7 @@ A</A>.
         <LI><A HREF="#fl_numericsort"><TT>fl_numericsort</TT></A></LI>
         <LI><A HREF="osissues.html#fl_open_callback"><TT>fl_open_callback</TT></A></LI>
         <LI><A HREF="osissues.html#fl_open_display"><TT>fl_open_display</TT></A></LI>
+        <LI><A HREF="#fl_open_uri"><TT>fl_open_uri</TT></A></LI>
         <LI><A HREF="drawing.html#overlay"><TT>fl_overlay_clear</TT></A></LI>
         <LI><A HREF="drawing.html#overlay"><TT>fl_overlay_rect</TT></A></LI>
         <LI><A HREF="osissues.html#fl_parse_color"><TT>fl_parse_color</TT></A></LI>
@@ -313,6 +314,7 @@ A</A>.
 		<LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
 		<LI><A HREF="#fl_filename_relative"><TT>fl_filename_relative</TT></A></LI>
 		<LI><A HREF="#fl_filename_setext"><TT>fl_filename_setext</TT></A></LI>
+	        <LI><A HREF="#fl_open_uri"><TT>fl_open_uri</TT></A></LI>
 	</UL>
 	</LI>
 
@@ -330,24 +332,24 @@ A</A>.
 
 	<LI>Box Types
 	<UL>
-        <LI><A HREF="common.html#fl_down"><TT>fl_down</TT></A></LI>
-        <LI><A HREF="drawing.html#fl_draw_box"><TT>fl_draw_box</TT></A></LI>
-        <LI><A HREF="common.html#fl_frame"><TT>fl_frame</TT></A></LI>
+	        <LI><A HREF="common.html#fl_down"><TT>fl_down</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_draw_box"><TT>fl_draw_box</TT></A></LI>
+		<LI><A HREF="common.html#fl_frame"><TT>fl_frame</TT></A></LI>
 	</UL>
 
 	<LI>System Related Functions
 	<UL>
-        <LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_RGB</TT></A> (WIN32)</LI>
-        <LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_brush</TT></A> (WIN32)</LI>
-        <LI><A HREF="osissues.html#fl_close_display"><TT>fl_close_display</TT></A></LI>
-        <LI><A HREF="osissues.html#fl_find"><TT>fl_find</TT></A></LI>
-        <LI><A HREF="osissues.html#fl_handle"><TT>fl_handle</TT></A> (X11)</LI>
-        <LI><A HREF="osissues.html#fl_open_callback"><TT>fl_open_callback</TT></A></LI>
-        <LI><A HREF="osissues.html#fl_open_display"><TT>fl_open_display</TT></A></LI>
-        <LI><A HREF="osissues.html#fl_parse_color"><TT>fl_parse_color</TT></A></LI>
-        <LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_pen</TT></A> (WIN32)</LI>
-        <LI><A HREF="osissues.html#fl_xid"><TT>fl_xid</TT></A></LI>
-        <LI><A HREF="osissues.html#fl_xpixel"><TT>fl_xpixel</TT></A></LI>
+        	<LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_RGB</TT></A> (WIN32)</LI>
+        	<LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_brush</TT></A> (WIN32)</LI>
+        	<LI><A HREF="osissues.html#fl_close_display"><TT>fl_close_display</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_find"><TT>fl_find</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_handle"><TT>fl_handle</TT></A> (X11)</LI>
+        	<LI><A HREF="osissues.html#fl_open_callback"><TT>fl_open_callback</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_open_display"><TT>fl_open_display</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_parse_color"><TT>fl_parse_color</TT></A></LI>
+        	<LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_pen</TT></A> (WIN32)</LI>
+        	<LI><A HREF="osissues.html#fl_xid"><TT>fl_xid</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_xpixel"><TT>fl_xpixel</TT></A></LI>
 	</UL>
 
 </td>
@@ -1317,6 +1319,32 @@ Fl_Widget *fl_message_icon();
 <P>Returns a pointer to the box at the left edge of all the
 popups. You can alter the font, color, label, or image before
 calling the functions.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_open_uri">fl_open_uri</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_open_uri(const char *uri, char *msg = (char *)0, int msglen = 0);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>fl_open_uri() opens the specified Uniform Resource Identifier (URI) using an operating-system dependent program or interface. For URIs using the "ftp", "http", or "https" schemes, the system default web browser is used to open the URI, while "mailto" and "news" URIs are typically opened using the system default mail reader and "file" URIs are opened using the file system navigator.</P>
+
+<P>On success, the (optional) <TT>msg</TT> buffer is filled with the command that was run to open the URI; on Windows, this will always be "open uri".</P>
+
+<P>On failure, the <TT>msg</TT> buffer is filled with an English error message.</P>
 
 
 <!-- NEED 4in -->
