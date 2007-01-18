@@ -1310,7 +1310,7 @@ animate(void)
       glutSetWindowTitle("glpuzzle");
     }
   }
-  if (!solving && !spinning && !visible) {
+  if ((!solving && !spinning) || !visible) {
     glutIdleFunc(NULL);
   }
 }
