@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.8
 
-	- overlay drawing is now avoiding XOR mode (STR #1438) 
+	- Fixed Quartz image drawing bug (STR #1438)
+	- Fixed Quartz fl_read_image
+	- Overlay drawing is now avoiding XOR mode (STR #1438) 
 	- Fixed Scroll crash in Fluid Live Mode (STR #1524) 
 	- Fixed mousewheel event propagation (STR #1521) 
 	- Fixed drawing issues of a tile in a scroll (STR #1507) 

@@ -73,17 +73,17 @@ static void draw_current_rect() {
   if (bgE) { free(bgE); bgE = 0L; }
   if (bgW) { free(bgW); bgW = 0L; }
   if (pw>0 && ph>0) {
-    bgN = fl_read_image(0L, px, py, pw, 1);
+    bgE = fl_read_image(0L, px+pw-1, py, 1, ph);
+    bgW = fl_read_image(0L, px, py, 1, ph);
     bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
-    bgE = fl_read_image(0L, px, py, 1, ph);
-    bgW = fl_read_image(0L, px+pw-1, py, 1, ph);
+    bgN = fl_read_image(0L, px, py, pw, 1);
     bgx = px; bgy = py;
     bgw = pw; bgh = ph;
   }
-  fl_color(FL_BLACK);
+  fl_color(FL_WHITE);
   fl_line_style(FL_SOLID);
   fl_rect(px, py, pw, ph);
-  fl_color(FL_WHITE);
+  fl_color(FL_BLACK);
   fl_line_style(FL_DOT);
   fl_rect(px, py, pw, ph);
   fl_line_style(FL_SOLID);
@@ -98,10 +98,10 @@ static void erase_current_rect() {
   draw_current_rect();
 # endif
 #else
-  if (bgN) fl_draw_image(bgN, px, py, pw, 1);
-  if (bgS) fl_draw_image(bgS, px, py+ph-1, pw, 1);
-  if (bgE) fl_draw_image(bgE, px, py, 1, ph);
-  if (bgW) fl_draw_image(bgW, px+pw-1, py, 1, ph);
+  if (bgN) fl_draw_image(bgN, bgx, bgy, bgw, 1);
+  if (bgS) fl_draw_image(bgS, bgx, bgy+bgh-1, bgw, 1);
+  if (bgW) fl_draw_image(bgW, bgx, bgy, 1, bgh);
+  if (bgE) fl_draw_image(bgE, bgx+bgw-1, bgy, 1, bgh);
 #endif
 }
 

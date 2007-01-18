@@ -175,7 +175,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       cb(userdata, 0, i, W, tmpBuf+i*W*delta);
     }
     array = (void*)tmpBuf;
-    linedelta = W;
+    linedelta = W*delta;
   }
   // create an image context
   CGColorSpaceRef   lut = 0;
@@ -183,8 +183,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     lut = CGColorSpaceCreateDeviceGray();
   else
     lut = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H*delta, 0L);
-  CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta*delta,
+  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, 0L);
+  CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta,
                             lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
                             src, 0L, false, kCGRenderingIntentDefault);
   // draw the image into the destination context
