@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed dismissing buttons in menu bars (STR #1494) 
 	- Making a child group visible in a Fl_Tabs or Fl_Wizard
 	  group now shows that tab or pane.
 	- Added fl_open_uri() function as proposed on

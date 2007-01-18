@@ -689,8 +689,23 @@ int menuwindow::early_hide_handle(int e) {
     }
     for (mymenu = pp.nummenus-1; ; mymenu--) {
       item = pp.p[mymenu]->find_selected(mx, my);
-      if (item >= 0) break;
-      if (mymenu <= 0) return 0;
+      if (item >= 0) 
+        break;
+      if (mymenu <= 0) {
+        // buttons in menubars must be deselected if we move outside of them!
+        if (pp.menu_number==-1 && e==FL_PUSH) {
+          pp.state = DONE_STATE;
+          return 1;
+        }
+        if (pp.current_item && pp.menu_number==0 && !pp.current_item->submenu()) {
+          if (e==FL_PUSH)
+            pp.state = DONE_STATE;
+          setitem(0, -1, 0);
+          return 1;
+        }
+        // all others can stay selected
+        return 0;
+      }
     }
     if (my == 0 && item > 0) setitem(mymenu, item - 1);
     else setitem(mymenu, item);
