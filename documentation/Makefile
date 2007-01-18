@@ -54,7 +54,7 @@ HTMLFILES	= \
 		subclassing.html \
 		opengl.html \
 		fluid.html \
-		advanced.hml \
+		advanced.html \
 		widgets.html \
 		Fl.html \
 		Fl_Adjuster.html \
