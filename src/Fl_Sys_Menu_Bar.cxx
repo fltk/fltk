@@ -178,8 +178,6 @@ static void catMenuFlags( const Fl_Menu_Item *m, char *dst )
 {
   if ( !m->flags ) 
     return;
-  while ( *dst ) 
-    dst++;
   if ( m->flags & FL_MENU_INACTIVE )
     strcat( dst, "(" );
 }
@@ -245,27 +243,32 @@ void Fl_Sys_Menu_Bar::menu(const Fl_Menu_Item *m)
   fl_sys_menu_bar = this;
 
   char buf[255];
-  int cnt = 1; // first menu is no 2. no 1 is the Apple Menu
 
+  int cnt = 1; // first menu is no 2. no 1 is the Apple Menu
   const Fl_Menu_Item *mm = m;
   for (;;)
   {
-    if ( !mm->text )
+    if ( !mm || !mm->text )
       break;
+    char visible = mm->visible() ? 1 : 0;
     buf[1] = 0;
     catMenuText( mm->text, buf+1 );
     buf[0] = strlen( buf+1 );
     MenuHandle mh = NewMenu( ++cnt, (unsigned char*)buf );
+    if ( mm->flags & FL_MENU_INACTIVE ) {
+      ChangeMenuAttributes(mh, kMenuAttrAutoDisable, 0);
+      DisableAllMenuItems(mh);
+      DisableMenuItem(mh, 0);
+    }
     if ( mm->flags & FL_SUBMENU )
       createSubMenu( mh, cnt, ++mm );
-    else if ( mm->flags & FL_SUBMENU_POINTER )
-    {
+    else if ( mm->flags & FL_SUBMENU_POINTER ) {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
       createSubMenu( mh, cnt, smm );
     }
-    
-    InsertMenu( mh, 0 );
-    if ( mm->flags & FL_MENU_INACTIVE ) DisableMenuItem( mh, 0 );
+    if ( visible ) {
+      InsertMenu( mh, 0 );
+    }
     mm++;
   }
   DrawMenuBar();

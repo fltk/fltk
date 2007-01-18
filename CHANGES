@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- OS X system menu bar itop level attribute support 
+	  improved (STR #1505)
 	- Fixed Quartz image drawing bug (STR #1438)
 	- Fixed Quartz fl_read_image
 	- Overlay drawing is now avoiding XOR mode (STR #1438) 
