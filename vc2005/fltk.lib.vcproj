@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="fltk"
 	ProjectGUID="{E070AAFC-9D03-41A3-BC7D-30887EA0D50F}"
+	RootNamespace="fltk"
 	>
 	<Platforms>
 		<Platform
@@ -1508,6 +1509,10 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\src\fl_gtk.cxx"
+			>
 		</File>
 		<File
 			RelativePath="..\src\Fl_Help_View.cxx"
