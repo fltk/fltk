@@ -149,6 +149,11 @@ call the <a href="Fl.html#Fl.compose"><TT>Fl::compose()</TT></a>
 function to translate individual keystrokes into foreign
 characters.
 
+<P><code>FL_KEYUP</code> events are sent to the widget that 
+currently has focus. This is not necessarily the same widget
+that received the corresponding <code>FL_KEYDOWN</code> event
+because focus may have changed between events.
+
 <H3>FL_SHORTCUT</H3>
 
 <P>If the <A href="Fl.html#Fl.focus"><TT>Fl::focus()</TT></A>

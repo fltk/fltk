@@ -796,6 +796,20 @@ int Fl::handle(int e, Fl_Window* window)
     fl_fix_focus();
     return 1;
 
+  case FL_KEYUP:
+    // Send the key-up to the current focus. This is not 
+    // always the same widget that received the corresponding
+    // FL_KEYBOARD event because focus may have changed.
+    // Sending the KEYUP to the right KEYDOWN is possible, but
+    // would require that we track the KEYDOWN for every possible 
+    // key stroke (users may hold down multiple keys!) and then 
+    // make sure that the widget still exists before sending
+    // a KEYUP there. I believe that the current solution is
+    // "close enough".
+    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
+      if (send(FL_KEYUP, wi, window)) return 1;
+    return 0;
+
   case FL_KEYBOARD:
 #ifdef DEBUG
     printf("Fl::handle(e=%d, window=%p);\n", e, window);
@@ -872,10 +886,16 @@ int Fl::handle(int e, Fl_Window* window)
   case FL_MOUSEWHEEL:
     fl_xfocus = window; // this should not happen!  But maybe it does:
 
-    // Try sending it to the grab and then the window:
-    if (grab()) {
+    // Try sending it to the "grab" first
+    if (grab() && grab()!=modal() && grab()!=window) {
       if (send(FL_MOUSEWHEEL, grab(), window)) return 1;
     }
+    // Now try sending it to the "modal" window
+    if (modal()) {
+      send(FL_MOUSEWHEEL, modal(), window);
+      return 1;
+    }
+    // Finally try sending it to the window, the event occured in
     if (send(FL_MOUSEWHEEL, window, window)) return 1;
   default:
     break;
