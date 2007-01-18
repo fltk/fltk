@@ -395,6 +395,13 @@ main thread, causing any pending <TT>wait()</TT> call to
 terminate so that the main thread can retrieve the message and
 any pending redraws can be processed.
 
+<P>Multiple calls to <TT>awake()</TT> will overwrite the same 
+message pointer. 
+<A HREF="#Fl.thread_message"><TT>thread_message()</TT></A> only returns 
+the last message stored by the last <TT>awake()</TT> call.
+
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
+
 <H4><A NAME="Fl.background2">void background2(uchar, uchar, uchar);</A></H4>
 
 <P>Changes the alternative background color. This color is used as a 
@@ -961,6 +968,8 @@ wait until all child threads have called <A
 HREF="#Fl.unlock"><TT>unlock()</TT></A> before processing
 additional data.
 
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
+
 <H4><A NAME="Fl.modal">Fl_Window* modal();</A></H4>
 
 <P>Returns the top-most <tt>modal()</tt> window currently shown.
@@ -1236,12 +1245,16 @@ Fl_Widget::test_shortcut()</tt></A>.
 that was sent from a child by the <A
 HREF="#Fl.awake"><TT>awake()</TT></A> method.
 
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
+
 <H4><A NAME="Fl.unlock">void unlock();</A></H4>
 
 <P>The <TT>unlock()</TT> method releases the lock that was set
 using the <A HREF="#Fl.lock"><TT>lock()</TT></A> method. Child
 threads should call this method as soon as they are finished
 accessing FLTK.
+
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
 
 <H4><A NAME="Fl.version">double version();</A></H4>
 

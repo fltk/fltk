@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Added chapter 10 about multithreading (STR #1532, 
+	  1533)
 	- OS X system menu bar itop level attribute support 
 	  improved (STR #1505)
 	- Fixed Quartz image drawing bug (STR #1438)

@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+	<TITLE>10 - Advanced FLTK</TITLE>
+</HEAD>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="advanced">10 - Advanced FLTK</A></H1>
+
+<P>This chapter explains advanced programming and design topics
+that will help you to get the most out of FLTK.</P>
+
+<H2><A NAME="multithreading">10.1 Multithreading</H2>
+
+<P>FLTK supports multithreaded application using a locking mechanism
+based on "pthreads". We do not provide a threading interface 
+as part of the library. However a simple example how threads can 
+be implemented for all supported platforms can be found in 
+<tt>test/threads.h</tt> and <tt>test/threads.cxx</tt>.
+
+<P>To use the locking mechanism, the command line version of FLTK
+must be compiled with <tt>--enable-threads</tt> set during the 
+<tt>configure</tt> process. IDE-based versions of FLTK are 
+automatically compiled with locking enabled if possible.
+
+<P>In <TT>main()</TT>, before calling <TT>Fl::run()</TT>, call 
+<TT>Fl::lock()</TT>. This will startup the runtime multithreading 
+support for your program. All callbacks and derived functions 
+like <tt>handle()</tt> and <tt>draw()</tt> will now be properly
+locked.
+
+<pre>
+  main() {
+    <a href="Fl.html#Fl.lock">Fl::lock()</a>;
+    /* run thread */
+    while(Fl::wait() > 0) {
+      if(<a href="Fl.html#Fl.thread_message">Fl::thread_message()</a>) {
+        /* process your data */
+      }
+    }
+  }
+
+</pre>
+
+<P>You can now start as many threads as you like. From within
+a thread (other than the main thread) FLTK calls must be wrapped
+in the following code:
+
+<pre>
+  <a href="Fl.html#Fl.lock">Fl::lock()</a>;      // avoid conflicting calls
+  ...              // your code here
+  <a href="Fl.html#Fl.unlock">Fl::unlock()</a>;    // allow other threads to access FLTK again
+  <a href="Fl.html#Fl.awake">Fl::awake(msg)</a>;  // tells FLTK that another thread has made changes
+
+</pre>
+
+<P>FLTK supports multiple platforms, some of them which do not 
+allow any other but the main thread to handle system events and
+open or close windows. The safe thing to do is to adhere to the 
+following rulesi for threads on all operating systems.
+
+<ul>
+
+<li>don't <tt>show()</tt> or <tt>hide()</tt>anything that contains 
+widgets derived from <tt>Fl_Window</tt>, including dialogs, file
+choosers, subwindows or <tt>Fl_GL_Window</tt>s</li>
+
+<li>don't call <tt>Fl::wait()</tt>, <tt>Fl::flush()</tt> or any 
+related methods that will handle system messages</li>
+
+<li>don't start or cancel timers</li>
+
+<li>don't change window decorations or titles</li>
+
+<li><tt>make_current()</tt> may or may not work well for regular
+windows, but should always work for <tt>Fl_GL_Window</tt>s to 
+allow for high speed rendering on graphics cards with multiple 
+pipelines</li>
+
+</ul>
+
+<P>See also: 
+<a href="Fl.html#Fl.lock">void lock()</A>, 
+<a href="Fl.html#Fl.unlock">void unlock()</A>, 
+<a href="Fl.html#Fl.awake">void awake(void *message)</A>, 
+<a href="Fl.html#Fl.thread_message">void *thread_message()</A>.
+
+
+</BODY>
+</HTML>
