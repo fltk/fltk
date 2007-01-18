@@ -40,10 +40,10 @@ class FL_EXPORT Fl_Scroll : public Fl_Group {
   static void scrollbar_cb(Fl_Widget*, void*);
   void fix_scrollbar_order();
   static void draw_clip(void*,int,int,int,int);
-  void bbox(int&,int&,int&,int&);
 
 protected:
 
+  void bbox(int&,int&,int&,int&);
   void draw();
 
 public:
