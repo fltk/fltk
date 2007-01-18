@@ -278,6 +278,22 @@ void Fl_Group_Type::copy_properties() {
 
 const char scroll_type_name[] = "Fl_Scroll";
 
+Fl_Widget *Fl_Scroll_Type::enter_live_mode(int top) {
+  Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
+  grp->show();
+  live_widget = grp;
+  if (live_widget) {
+    copy_properties();
+    Fl_Type *n;
+    for (n = next; n && n->level > level; n = n->next) {
+      if (n->level == level+1)
+        n->enter_live_mode();
+    }
+    grp->end();
+  }
+  return live_widget;
+}
+
 Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH", 0, 0, 0/*(void*)Fl_Scroll::BOTH*/},
   {"HORIZONTAL", 0, 0, (void*)Fl_Scroll::HORIZONTAL},

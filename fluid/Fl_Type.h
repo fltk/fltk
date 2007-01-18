@@ -441,6 +441,7 @@ public:
   virtual const char *type_name() {return scroll_type_name;}
   Fl_Widget_Type *_make() {return new Fl_Scroll_Type();}
   int pixmapID() { return 19; }
+  Fl_Widget *enter_live_mode(int top=0);
   void copy_properties();
 };
 
