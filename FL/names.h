@@ -27,8 +27,9 @@
 
 // Thnaks to Greg Ercolano for this addition.
 
-#ifndef FL_EVENTNAMES_H
-#define FL_EVENTNAMES_H
+#ifndef FL_NAMES_H
+#define FL_NAMES_H
+
 char *fl_eventnames[] =
 {
   "FL_NO_EVENT",
@@ -56,7 +57,28 @@ char *fl_eventnames[] =
   "FL_DND_LEAVE",
   "FL_DND_RELEASE",
 };
-#endif /* FL_EVENTNAMES_H */
+
+char *fl_fontnames[] =
+{
+  "FL_HELVETICA",
+  "FL_HELVETICA_BOLD",
+  "FL_HELVETICA_ITALIC",
+  "FL_HELVETICA_BOLD_ITALIC",
+  "FL_COURIER",
+  "FL_COURIER_BOLD",
+  "FL_COURIER_ITALIC",
+  "FL_COURIER_BOLD_ITALIC",
+  "FL_TIMES",
+  "FL_TIMES_BOLD",
+  "FL_TIMES_ITALIC",
+  "FL_TIMES_BOLD_ITALIC",
+  "FL_SYMBOL",
+  "FL_SCREEN",
+  "FL_SCREEN_BOLD",
+  "FL_ZAPF_DINGBATS",
+};
+
+#endif /* FL_NAMES_H */
 
 //
 // End of "$Id:$".
