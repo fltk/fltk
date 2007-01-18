@@ -36,31 +36,77 @@
 #include <config.h>
 #endif
 
+//#define USE_XOR
+
 static int px,py,pw,ph;
 
+#ifndef USE_XOR
+#include <stdlib.h>
+static uchar *bgN = 0L, *bgS = 0L, *bgE = 0L, *bgW = 0L;
+static int bgx, bgy, bgw, bgh;
+#endif
+
 static void draw_current_rect() {
-#ifdef WIN32
+#ifdef USE_XOR
+# ifdef WIN32
   int old = SetROP2(fl_gc, R2_NOT);
   fl_rect(px, py, pw, ph);
   SetROP2(fl_gc, old);
-#elif defined(__APPLE_QD__)
+# elif defined(__APPLE_QD__)
   PenMode( patXor );
   fl_rect(px, py, pw, ph);
   PenMode( patCopy );
-#elif defined(__APPLE_QUARTZ__)
+# elif defined(__APPLE_QUARTZ__)
   // warning: Quartz does not support xor drawing
   // Use the Fl_Overlay_Window instead.
+  fl_color(FL_WHITE);
   fl_rect(px, py, pw, ph);
-#else
+# else
   XSetFunction(fl_display, fl_gc, GXxor);
   XSetForeground(fl_display, fl_gc, 0xffffffff);
   XDrawRectangle(fl_display, fl_window, fl_gc, px, py, pw, ph);
   XSetFunction(fl_display, fl_gc, GXcopy);
+# endif
+#else
+  if (bgN) { free(bgN); bgN = 0L; }
+  if (bgS) { free(bgS); bgS = 0L; }
+  if (bgE) { free(bgE); bgE = 0L; }
+  if (bgW) { free(bgW); bgW = 0L; }
+  if (pw>0 && ph>0) {
+    bgN = fl_read_image(0L, px, py, pw, 1);
+    bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
+    bgE = fl_read_image(0L, px, py, 1, ph);
+    bgW = fl_read_image(0L, px+pw-1, py, 1, ph);
+    bgx = px; bgy = py;
+    bgw = pw; bgh = ph;
+  }
+  fl_color(FL_BLACK);
+  fl_line_style(FL_SOLID);
+  fl_rect(px, py, pw, ph);
+  fl_color(FL_WHITE);
+  fl_line_style(FL_DOT);
+  fl_rect(px, py, pw, ph);
+  fl_line_style(FL_SOLID);
+#endif
+}
+
+static void erase_current_rect() {
+#ifdef USE_XOR
+# ifdef __APPLE_QUARTZ__
+  fl_rect(px, py, pw, ph);
+# else
+  draw_current_rect();
+# endif
+#else
+  if (bgN) fl_draw_image(bgN, px, py, pw, 1);
+  if (bgS) fl_draw_image(bgS, px, py+ph-1, pw, 1);
+  if (bgE) fl_draw_image(bgE, px, py, 1, ph);
+  if (bgW) fl_draw_image(bgW, px+pw-1, py, 1, ph);
 #endif
 }
 
 void fl_overlay_clear() {
-  if (pw > 0) {draw_current_rect(); pw = 0;}
+  if (pw > 0) {erase_current_rect(); pw = 0;}
 }
 
 void fl_overlay_rect(int x, int y, int w, int h) {
@@ -68,7 +114,7 @@ void fl_overlay_rect(int x, int y, int w, int h) {
   if (h < 0) {y += h; h = -h;} else if (!h) h = 1;
   if (pw > 0) {
     if (x==px && y==py && w==pw && h==ph) return;
-    draw_current_rect();
+    erase_current_rect();
   }
   px = x; py = y; pw = w; ph = h;
   draw_current_rect();
