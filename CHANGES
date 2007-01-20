@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- OS X resource fork now obsolete (STR #1453)
 	- Added chapter 10 about multithreading (STR #1532, 
 	  1533)
 	- OS X system menu bar itop level attribute support 

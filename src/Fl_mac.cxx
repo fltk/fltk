@@ -1264,8 +1264,16 @@ void fl_open_callback(void (*cb)(const char *)) {
 
 
 /**
- * initialize the Mac toolboxes and set the default menubar
+ * initialize the Mac toolboxes, dock status, and set the default menubar
  */
+
+#ifndef MAC_OS_X_VERSION_10_3
+extern "C" {
+extern OSErr CPSEnableForegroundOperation(ProcessSerialNumber *psn, UInt32 _arg2,
+    UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
+}
+#endif
+
 void fl_open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat )  {
@@ -1284,6 +1292,42 @@ void fl_open_display() {
     ClearMenuBar();
     AppendResMenu( GetMenuHandle( 1 ), 'DRVR' );
     DrawMenuBar();
+
+    // bring the application into foreground without a 'CARB' resource
+    Boolean same_psn;
+    ProcessSerialNumber cur_psn, front_psn;
+    if( !GetCurrentProcess( &cur_psn ) && !GetFrontProcess( &front_psn ) &&
+        !SameProcess( &front_psn, &cur_psn, &same_psn ) && !same_psn )
+    {
+      // only transform the application type for unbundled apps
+      CFBundleRef bundle = CFBundleGetMainBundle();
+      if( bundle )
+      {
+      	FSRef execFs;
+      	CFURLRef execUrl = CFBundleCopyExecutableURL( bundle );
+      	CFURLGetFSRef( execUrl, &execFs );
+
+      	FSRef bundleFs;
+      	GetProcessBundleLocation( &cur_psn, &bundleFs );
+
+      	if( !FSCompareFSRefs( &execFs, &bundleFs ) )
+          bundle = NULL;
+
+        CFRelease(execUrl);
+      }
+
+      if( !bundle )
+      {
+#ifdef MAC_OS_X_VERSION_10_3
+	// newer supported API
+	if( !TransformProcessType( &cur_psn, kProcessTransformToForegroundApplication ) )
+#else
+	// undocumented API
+	if( !CPSEnableForegroundOperation( &cur_psn, 0x03, 0x3C, 0x2C, 0x1103 ) )
+#endif
+	  SetFrontProcess( &cur_psn );
+      }
+    }
   }
 }
 
