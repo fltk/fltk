@@ -225,7 +225,7 @@ int Fl_Tabs::handle(int event) {
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
   if (push_ && !push_->visible() || o && !o->visible())
-    redraw();
+    redraw_tabs();
   push_ = o;
   return 1;
 }
@@ -309,6 +309,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   int sel = (what == SELECTED);
   int dh = Fl::box_dh(box());
   int dy = Fl::box_dy(box());
+  Fl_Boxtype bt = (o==push_ &&!sel) ? fl_down(box()) : box();
 
   // compute offsets to make selected tab look bigger
   int yofs = sel ? 0 : BORDER;
@@ -323,7 +324,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     Fl_Color c = sel ? selection_color() : o->selection_color();
 
-    draw_box(box(), x1, y() + yofs, W, H + 10 - yofs, c);
+    draw_box(bt, x1, y() + yofs, W, H + 10 - yofs, c);
 
     // Save the previous label color
     Fl_Color oc = o->labelcolor();
@@ -349,7 +350,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     Fl_Color c = sel ? selection_color() : o->selection_color();
 
-    draw_box(box(), x1, y() + h() - H - 10, W, H + 10 - yofs, c);
+    draw_box(bt, x1, y() + h() - H - 10, W, H + 10 - yofs, c);
 
     // Save the previous label color
     Fl_Color oc = o->labelcolor();

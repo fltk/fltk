@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Optimized Fl_Tabs drawing for speed (STR #1520)
 	- OS X resource fork now obsolete (STR #1453)
 	- Added chapter 10 about multithreading (STR #1532, 
 	  1533)
