@@ -1318,14 +1318,19 @@ void fl_open_display() {
 
       if( !bundle )
       {
+	OSErr err = 1;
 #ifdef MAC_OS_X_VERSION_10_3
-	// newer supported API
-	if( !TransformProcessType( &cur_psn, kProcessTransformToForegroundApplication ) )
+        if (TransformProcessType != NULL) {
+          err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
+        } 
 #else
-	// undocumented API
-	if( !CPSEnableForegroundOperation( &cur_psn, 0x03, 0x3C, 0x2C, 0x1103 ) )
+        if (CPSEnableForegroundOperation != NULL) {
+          err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+	}
 #endif
+        if (err == noErr) {
 	  SetFrontProcess( &cur_psn );
+        }
       }
     }
   }
