@@ -72,9 +72,9 @@ int fl_filename_isdir(const char* n) {
     }
   }
 #else
-  // Matt: Actually, we found out that a trailling slash may also throw off
-  // some Unix implementations of stat, so cutting slashes is a must on every
-  // platform (thanks for that test, Greg)
+  // Matt: Just in case, we strip the slash for other operating
+  // systems as well, avoid bugs by sloppy implementations
+  // of "stat".
   if (length > 0 && isdirsep(n[length - 1])) {
     length --;
     memcpy(fn, n, length);
