@@ -40,6 +40,7 @@ FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_match(const char *name, const char *pattern);
 FL_EXPORT int fl_filename_isdir(const char *name);
+FL_EXPORT int fl_filename_isdir_quick(const char *name);
 
 #  ifdef __cplusplus
 /*

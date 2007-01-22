@@ -600,7 +600,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
         icon = Fl_File_Icon::find(filename);
 	if ((icon && icon->type() == Fl_File_Icon::DIRECTORY) ||
-	     fl_filename_isdir(filename)) {
+	     fl_filename_isdir_quick(filename)) {
           num_dirs ++;
           insert(num_dirs, files[i]->d_name, icon);
 	} else if (filetype_ == FILES &&

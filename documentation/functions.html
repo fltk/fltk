@@ -58,11 +58,11 @@ A</A>.
         <LI><A HREF="drawing.html#fl_draw_image"><TT>fl_draw_image</TT></A></LI>
         <LI><A HREF="drawing.html#fl_draw_image"><TT>fl_draw_image_mono</TT></A></LI>
         <LI><A HREF="drawing.html#fl_draw_pixmap"><TT>fl_draw_pixmap</TT></A></LI>
+        <LI><A HREF="common.html#fl_draw_symbol"><TT>fl_draw_symbol</TT></A></LI>
       </UL>
     </TD>
     <TD width=33%>
       <UL>
-        <LI><A HREF="common.html#fl_draw_symbol"><TT>fl_draw_symbol</TT></A></LI>
         <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_end_complex_polygon</TT></A></LI>
         <LI><A HREF="drawing.html#fl_begin_line"><TT>fl_end_line</TT></A></LI>
         <LI><A HREF="drawing.html#fl_begin_loop"><TT>fl_end_loop</TT></A></LI>
@@ -76,6 +76,7 @@ A</A>.
         <LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
         <LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
         <LI><A HREF="#fl_filename_isdir"><TT>fl_filename_isdir</TT></A></LI>
+        <LI><A HREF="#fl_filename_isdir_quick"><TT>fl_filename_isdir_quick</TT></A></LI>
         <LI><A HREF="#fl_filename_list"><TT>fl_filename_list</TT></A></LI>
         <LI><A HREF="#fl_filename_match"><TT>fl_filename_match</TT></A></LI>
         <LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
@@ -104,11 +105,11 @@ A</A>.
         <LI><A HREF="drawing.html#fl_measure_pixmap"><TT>fl_measure_pixmap</TT></A></LI>
         <LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
         <LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
+        <LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
       </UL>
     </TD>
     <TD width=30%>
       <UL>
-        <LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
         <LI><A HREF="drawing.html#fl_scale"><TT>fl_mult_matrix</TT></A></LI>
         <LI><A HREF="drawing.html#fl_not_clipped"><TT>fl_not_clipped</TT></A></LI>
         <LI><A HREF="#fl_numericsort"><TT>fl_numericsort</TT></A></LI>
@@ -309,6 +310,7 @@ A</A>.
 		<LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
 		<LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
 		<LI><A HREF="#fl_filename_isdir"><TT>fl_filename_isdir</TT></A></LI>
+		<LI><A HREF="#fl_filename_isdir_quick"><TT>fl_filename_isdir_quick</TT></A></LI>
 		<LI><A HREF="#fl_filename_list"><TT>fl_filename_list</TT></A></LI>
 		<LI><A HREF="#fl_filename_match"><TT>fl_filename_match</TT></A></LI>
 		<LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
@@ -932,6 +934,34 @@ int fl_filename_isdir(const char *f);
 <H3>Description</H3>
 
 <P>Returns non-zero if the file exists and is a directory.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_isdir_quick">fl_filename_isdir_quick</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_isdir_quick(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns non-zero if the file is a directory. If the
+filename ends in a directory seperator (usually the 
+slash '/'), the existence of the directory will not
+be verified and '1' is returned. This is much faster
+than <tt>fl_filename_isdir</tt> if the file is known
+to exist, because its filename was obtained via
+<tt>fl_filename_list</tt> or similar.
 
 
 <!-- NEED 4in -->

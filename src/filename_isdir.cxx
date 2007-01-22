@@ -40,18 +40,22 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
-int fl_filename_isdir(const char* n) {
-  struct stat	s;
-
+int fl_filename_isdir_quick(const char* n) {
   // Do a quick optimization for filenames with a trailing slash...
   if (*n && isdirsep(n[strlen(n) - 1])) return 1;
+  return fl_filename_isdir(n);
+}
 
-#ifdef WIN32
+int fl_filename_isdir(const char* n) {
+  struct stat	s;
   char		fn[1024];
   int		length;
+
+  length = strlen(n);
+
+#ifdef WIN32
   // This workaround brought to you by the fine folks at Microsoft!
   // (read lots of sarcasm in that...)
-  length = strlen(n);
   if (length < (int)(sizeof(fn) - 1)) {
     if (length < 4 && isalpha(n[0]) && n[1] == ':' &&
         (isdirsep(n[2]) || !n[2])) {
@@ -66,6 +70,16 @@ int fl_filename_isdir(const char* n) {
       fn[length] = '\0';
       n = fn;
     }
+  }
+#else
+  // Matt: Actually, we found out that a trailling slash may also throw off
+  // some Unix implementations of stat, so cutting slashes is a must on every
+  // platform (thanks for that test, Greg)
+  if (length > 0 && isdirsep(n[length - 1])) {
+    length --;
+    memcpy(fn, n, length);
+    fn[length] = '\0';
+    n = fn;
   }
 #endif
 
