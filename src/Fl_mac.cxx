@@ -1267,12 +1267,19 @@ void fl_open_callback(void (*cb)(const char *)) {
  * initialize the Mac toolboxes, dock status, and set the default menubar
  */
 
-#ifndef MAC_OS_X_VERSION_10_3
 extern "C" {
-extern OSErr CPSEnableForegroundOperation(ProcessSerialNumber *psn, UInt32 _arg2,
+  extern OSErr CPSEnableForegroundOperation(ProcessSerialNumber *psn, UInt32 _arg2,
     UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
-}
+#ifndef MAC_OS_X_VERSION_10_3
+  enum {
+    kProcessTransformToForegroundApplication = 1L
+  };
+  typedef UInt32 ProcessApplicationTransformState;
+  extern OSStatus TransformProcessType(const ProcessSerialNumber *psn,
+    ProcessApplicationTransformState transformState); 
 #endif
+}
+//#endif
 
 void fl_open_display() {
   static char beenHereDoneThat = 0;
@@ -1319,15 +1326,11 @@ void fl_open_display() {
       if( !bundle )
       {
 	OSErr err = 1;
-#ifdef MAC_OS_X_VERSION_10_3
         if (TransformProcessType != NULL) {
           err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
-        } 
-#else
-        if (CPSEnableForegroundOperation != NULL) {
+        } else if (CPSEnableForegroundOperation != NULL) {
           err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
 	}
-#endif
         if (err == noErr) {
 	  SetFrontProcess( &cur_psn );
         }
