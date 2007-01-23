@@ -50,8 +50,10 @@
 // Local functions...
 //
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 static char	*path_find(const char *program, char *filename, int filesize);
+#endif // !WIN32 && !__APPLE__
+#ifndef WIN32
 static int	run_program(const char *program, char **argv, char *msg, int msglen);
 #endif // !WIN32
 
@@ -228,7 +230,7 @@ fl_open_uri(const char *uri, char *msg, int msglen) {
 }
 
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 // Find a program in the path...
 static char *path_find(const char *program, char *filename, int filesize) {
   const char	*path;			// Search path
@@ -260,8 +262,10 @@ static char *path_find(const char *program, char *filename, int filesize) {
 
   return 0;
 }
+#endif // !WIN32 && !__APPLE__
 
 
+#ifndef WIN32
 // Run the specified program, returning 1 on success and 0 on failure
 static int
 run_program(const char *program, char **argv, char *msg, int msglen) {
