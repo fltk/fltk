@@ -40,7 +40,7 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
-int fl_filename_isdir_quick(const char* n) {
+int _fl_filename_isdir_quick(const char* n) {
   // Do a quick optimization for filenames with a trailing slash...
   if (*n && isdirsep(n[strlen(n) - 1])) return 1;
   return fl_filename_isdir(n);

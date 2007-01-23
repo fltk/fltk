@@ -40,7 +40,6 @@ FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_match(const char *name, const char *pattern);
 FL_EXPORT int fl_filename_isdir(const char *name);
-FL_EXPORT int fl_filename_isdir_quick(const char *name);
 
 #  ifdef __cplusplus
 /*
@@ -120,6 +119,16 @@ FL_EXPORT int fl_filename_list(const char *d, struct dirent ***l,
 
 FL_EXPORT int	fl_open_uri(const char *uri, char *msg = (char *)0,
 		            int msglen = 0);
+
+/*
+ * _fl_filename_isdir_quick() is a private function that checks for a
+ * trailing slash and assumes that the passed name is a directory if
+ * it finds one.  This function is used by Fl_File_Browser and
+ * Fl_File_Chooser to avoid extra stat() calls, but is not supported
+ * outside of FLTK...
+ */
+int _fl_filename_isdir_quick(const char *name);
+
 #  endif /* __cplusplus */
 
 /*
