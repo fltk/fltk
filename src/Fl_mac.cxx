@@ -3,7 +3,7 @@
 //
 // MacOS specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2006 by Bill Spitzak and others.
+// Copyright 1998-2007 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1270,16 +1270,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 extern "C" {
   extern OSErr CPSEnableForegroundOperation(ProcessSerialNumber *psn, UInt32 _arg2,
     UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
-#ifndef MAC_OS_X_VERSION_10_3
-  enum {
-    kProcessTransformToForegroundApplication = 1L
-  };
-  typedef UInt32 ProcessApplicationTransformState;
-  extern OSStatus TransformProcessType(const ProcessSerialNumber *psn,
-    ProcessApplicationTransformState transformState); 
-#endif
 }
-//#endif
 
 void fl_open_display() {
   static char beenHereDoneThat = 0;
@@ -1325,12 +1316,19 @@ void fl_open_display() {
 
       if( !bundle )
       {
-	OSErr err = 1;
+        // Earlier versions of this code tried to use weak linking, however it
+	// appears that this does not work on 10.2.  Since 10.3 and higher provide
+	// both TransformProcessType and CPSEnableForegroundOperation, the following
+	// conditional code compiled on 10.2 will still work on newer releases...
+        OSErr err;
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
         if (TransformProcessType != NULL) {
-          err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
-        } else if (CPSEnableForegroundOperation != NULL) {
-          err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
-	}
+	  err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
+	} else
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
+        err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+
         if (err == noErr) {
 	  SetFrontProcess( &cur_psn );
         }
