@@ -138,10 +138,13 @@ will destroy all of the child widgets and groups in that group.
 
 <P><TT>Fl_Widget::active()</TT> returns whether the widget is
 active. <TT>Fl_Widget::active_r()</TT> returns whether the
-widget and all of its parents are active.  An inactive widget
-does not get any events, but it does get redrawn. A widget is
-only active if <TT>active()</TT> is true on it <I>and all of its
-parents</I>.
+widget and all of its parents are active. Inactive widgets
+will be drawn "grayed out", e.g. with less contrast than the 
+active widget. Inactive widgets will not receive any keyboard or
+mouse button events. Other events (including <tt>FL_ENTER</tt>,
+<tt>FL_MOVE</tt>, <tt>FL_LEAVE</tt>, <tt>FL_SHORTCUT</tt>, and 
+others) will still be sent. A widget is only active if 
+<TT>active()</TT> is true on it <I>and all of its parents</I>.
 
 <P>Changing this value will send <TT>FL_ACTIVATE</TT> or <TT>
 FL_DEACTIVATE</TT> to the widget if <tt>active_r()</tt> is true.
