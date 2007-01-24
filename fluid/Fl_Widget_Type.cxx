@@ -2223,9 +2223,15 @@ void Fl_Widget_Type::write_widget_code() {
     if (i & FL_ALIGN_INSIDE) write_c("|FL_ALIGN_INSIDE");
     write_c(");\n");
   }
-  if (o->when() != tplate->when() || subclass())
+  // avoid the unsupported combination of flegs when user sets 
+  // "when" to "FL_WHEN_NEVER", but keeps the "no change" set. 
+  // FIXME: This could be reflected in the GUI by graying out the button.
+  Fl_When ww = o->when();
+  if (ww==FL_WHEN_NOT_CHANGED)
+    ww = FL_WHEN_NEVER;
+  if (ww != tplate->when() || subclass())
     write_c("%s%s->when(%s);\n", indent(), var,
-            item_name(whensymbolmenu, o->when()));
+            item_name(whensymbolmenu, ww));
   if (!o->visible() && o->parent())
     write_c("%s%s->hide();\n", indent(), var);
   if (!o->active())

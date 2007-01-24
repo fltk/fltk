@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fluid avoids writing unsupported combinations of the 
+	  "when()" flags (STR #1501)
+	- Fl_Browser_ would allow keyboard callbacks even though
+	  "when()" was set to "never" (STR #1501)
 	- Added automated little helpers to Sudoku 
 	- Added example code for Wizard with the
 	  Tabs demo (STR #1564)
