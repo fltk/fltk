@@ -175,6 +175,7 @@ class Sudoku : public Fl_Window {
   static void	check_cb(Fl_Widget *widget, void *);
   static void	close_cb(Fl_Widget *widget, void *);
   static void	diff_cb(Fl_Widget *widget, void *d);
+  static void	update_helpers_cb(Fl_Widget *, void *);
   static void	help_cb(Fl_Widget *, void *);
   static void	new_cb(Fl_Widget *widget, void *);
   static void	reset_cb(Fl_Widget *widget, void *);
@@ -196,6 +197,7 @@ class Sudoku : public Fl_Window {
   void		resize(int X, int Y, int W, int H);
   void		save_game();
   void		solve_game();
+  void	        update_helpers();
 };
 
 
@@ -642,7 +644,8 @@ Sudoku::Sudoku()
     { "&Easy", 0, diff_cb, (void *)"0", FL_MENU_RADIO },
     { "&Medium", 0, diff_cb, (void *)"1", FL_MENU_RADIO },
     { "&Hard", 0, diff_cb, (void *)"2", FL_MENU_RADIO },
-    { "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO },
+    { "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO | FL_MENU_DIVIDER },
+    { "&Update Helpers", 0, update_helpers_cb, 0, 0 },
     { 0 },
     { "&Help", 0, 0, 0, FL_SUBMENU },
     { "&About Sudoku", FL_F + 1, help_cb, 0, 0 },
@@ -857,6 +860,63 @@ Sudoku::diff_cb(Fl_Widget *widget, void *d) {
     }
 
     prefs_.set("difficulty", s->difficulty_);
+  }
+}
+
+// Update the little marker numbers in all cells
+void
+Sudoku::update_helpers_cb(Fl_Widget *widget, void *) {
+  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
+  s->update_helpers();
+}
+
+void
+Sudoku::update_helpers() {
+  int i, j, k;
+  // first we delete any entries that the user may have made
+  for (i=0; i<9; i++) {
+    for (j=0; j<9; j++) {
+      SudokuCell *cell = grid_cells_[i][j];
+      for (k = 0; k < 8; k++) {
+        cell->test_value(0, k);
+      }
+    }
+  }
+  // now go through all cells and find out, what we can not be
+  for (i=0; i<81; i++) {
+    char taken[10] = { 0 };
+    // find our destination cell
+    int row = i/9;
+    int col = i%9;
+    SudokuCell *dst_cell = grid_cells_[row][col];
+    if (dst_cell->value()) continue;
+    // find all values already taken in this row
+    for (j=0; j<9; j++) {
+      SudokuCell *cell = grid_cells_[row][j];
+      int v = cell->value();
+      if (v) taken[v] = 1;
+    }
+    // find all values already taken in this column
+    for (j=0; j<9; j++) {
+      SudokuCell *cell = grid_cells_[j][col];
+      int v = cell->value();
+      if (v) taken[v] = 1;
+    }
+    // now find all values already taken in this sqare
+    int ro = (row/3) * 3;
+    int co = (col/3) * 3;
+    for (j=0; j<3; j++) {
+      for (k=0; k<3; k++) {
+        SudokuCell *cell = grid_cells_[ro+j][co+k];
+        int v = cell->value();
+        if (v) taken[v] = 1;
+      }
+    }
+    // transfer our findings to the markers
+    for (k = 1, j = 0; k <= 9; k++) {
+      if (!taken[k])
+        dst_cell->test_value(k, j++);
+    }
   }
 }
 
