@@ -164,6 +164,101 @@ static void gtk_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_rectf(x + 1, y + 1, w - 2, h - 2);
 }
 
+//------------------------
+// new GTK+ style for round buttons
+#if 1
+
+static void fl_arc_i(int x,int y,int w,int h,double a1,double a2) {
+  fl_arc(x,y,w,h,a1,a2);
+}
+
+enum {UPPER_LEFT, LOWER_RIGHT, CLOSED, FILL};
+
+static void draw(int which, int x,int y,int w,int h, int inset)
+{
+  if (inset*2 >= w) inset = (w-1)/2;
+  if (inset*2 >= h) inset = (h-1)/2;
+  x += inset;
+  y += inset;
+  w -= 2*inset;
+  h -= 2*inset;
+  int d = w <= h ? w : h;
+  if (d <= 1) return;
+  void (*f)(int,int,int,int,double,double);
+  f = (which==FILL) ? fl_pie : fl_arc_i;
+  if (which >= CLOSED) {
+    f(x+w-d, y, d, d, w<=h ? 0 : -90, w<=h ? 180 : 90);
+    f(x, y+h-d, d, d, w<=h ? 180 : 90, w<=h ? 360 : 270);
+  } else if (which == UPPER_LEFT) {
+    f(x+w-d, y, d, d, 45, w<=h ? 180 : 90);
+    f(x, y+h-d, d, d, w<=h ? 180 : 90, 225);
+  } else { // LOWER_RIGHT
+    f(x, y+h-d, d, d, 225, w<=h ? 360 : 270);
+    f(x+w-d, y, d, d, w<=h ? 360 : 270, 360+45);
+  }
+  if (which == FILL) {
+    if (w < h)
+      fl_rectf(x, y+d/2, w, h-(d&-2));
+    else if (w > h)
+      fl_rectf(x+d/2, y, w-(d&-2), h);
+  } else {
+    if (w < h) {
+      if (which != UPPER_LEFT) fl_yxline(x+w-1, y+d/2-1, y+h-d/2+1);
+      if (which != LOWER_RIGHT) fl_yxline(x, y+d/2-1, y+h-d/2+1);
+    } else if (w > h) {
+      if (which != UPPER_LEFT) fl_xyline(x+d/2-1, y+h-1, x+w-d/2+1);
+      if (which != LOWER_RIGHT) fl_xyline(x+d/2-1, y, x+w-d/2+1);
+    }
+  }
+}
+
+void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_color(c);
+  draw(FILL,	    x,   y, w,   h, 2);
+
+  gtk_color(fl_color_average(FL_BLACK, c, 0.025));
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 2);
+  draw(LOWER_RIGHT, x,   y, w,   h, 3);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.05));
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 1);
+  draw(LOWER_RIGHT, x,   y, w,   h, 2);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.1));
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 0);
+  draw(LOWER_RIGHT, x,   y, w,   h, 1);
+
+  gtk_color(fl_color_average(FL_WHITE, c, 0.1));
+  draw(UPPER_LEFT,  x,   y, w,   h, 4);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 3);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.2));
+  draw(UPPER_LEFT,  x,   y, w,   h, 3);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 2);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.4));
+  draw(UPPER_LEFT,  x,   y, w,   h, 2);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 1);
+  gtk_color(fl_color_average(FL_WHITE, c, 0.5));
+  draw(UPPER_LEFT,  x,   y, w,   h, 1);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 0);
+
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  draw(CLOSED,	    x,   y, w,   h, 0);
+}
+
+void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_color(c);
+  draw(FILL,	    x,   y, w,   h, 2);
+
+  gtk_color(fl_color_average(FL_BLACK, c, 0.05));
+  draw(UPPER_LEFT,  x,   y, w,   h, 2);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 1);
+  gtk_color(fl_color_average(FL_BLACK, c, 0.1));
+  draw(UPPER_LEFT,  x,   y, w,   h, 1);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 0);
+
+  gtk_color(fl_color_average(FL_BLACK, c, 0.5));
+  draw(CLOSED,	    x,   y, w,   h, 0);
+}
+
+#else
 
 static void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
   gtk_color(c);
@@ -186,6 +281,7 @@ static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_arc(x, y, w, h, 0.0, 360.0);
 }
 
+#endif
 
 Fl_Boxtype fl_define_FL_GTK_UP_BOX() {
   fl_internal_boxtype(_FL_GTK_UP_BOX, gtk_up_box);

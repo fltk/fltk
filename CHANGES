@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.8
 
+	- Improved GTK+ schemed round box (STR #1531)
 	- Fluid avoids writing unsupported combinations of the 
 	  "when()" flags (STR #1501)
 	- Fl_Browser_ would allow keyboard callbacks even though
