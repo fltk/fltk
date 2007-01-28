@@ -1,6 +1,9 @@
 CHANGES IN FLTK 1.1.8
 
 	- Fl::awake() could block on X11 and OSX (STR #1537)
+	- Dropped "native" recursive POSIX mutex support since the kernel's
+	  underlying implementation may not support it even if the C
+	  library does (STR #1575)
 	- WIN32 did check callbacks after the event processing instead of
 	  before as documented (STR #1535)
 	- Fl_File_Chooser now hides the window before doing a callback

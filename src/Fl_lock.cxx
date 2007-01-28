@@ -130,28 +130,9 @@ void Fl::awake(void* msg) {
 #  include <fcntl.h>
 #  include <pthread.h>
 
-#  ifdef PTHREAD_MUTEX_RECURSIVE_NP
-// Linux supports recursive locks, use them directly:
-
-static bool minit;
-static pthread_mutex_t fltk_mutex;
-// this is needed for the Fl_Mutex constructor:
-pthread_mutexattr_t Fl_Mutex_attrib = {PTHREAD_MUTEX_RECURSIVE_NP};
-
-static void lock_function() {
-  if (!minit) {
-    pthread_mutex_init(&fltk_mutex, &Fl_Mutex_attrib);
-    minit = true;
-  }
-  pthread_mutex_lock(&fltk_mutex);
-}
-
-void Fl::unlock() {
-  pthread_mutex_unlock(&fltk_mutex);
-}
-
-#  else // !PTHREAD_MUTEX_RECURSIVE_NP
-// Make a recursive lock out of the pthread mutex:
+// Make a recursive lock out of the pthread mutex; we don't use "native"
+// recursive locks since they may not be implemented by the running kernel
+// (see discussions in STR #1575)
 
 static pthread_mutex_t fltk_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t owner;
@@ -168,8 +149,6 @@ static void lock_function() {
 void Fl::unlock() {
   if (!--counter) pthread_mutex_unlock(&fltk_mutex);
 }
-
-#  endif // PTHREAD_MUTEX_RECURSIVE_NP
 
 // Pipe for thread messaging...
 static int thread_filedes[2];
