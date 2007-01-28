@@ -3,7 +3,7 @@
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2007 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -224,6 +224,16 @@ MSG fl_msg;
 int fl_wait(double time_to_wait) {
   int have_message = 0;
 
+  run_checks();
+
+  // idle processing
+  static char in_idle;
+  if (Fl::idle && !in_idle) {
+    in_idle = 1;
+    Fl::idle();
+    in_idle = 0;
+  }
+  
 #ifndef USE_ASYNC_SELECT
   if (nfds) {
     // For WIN32 we need to poll for socket input FIRST, since
@@ -291,16 +301,6 @@ int fl_wait(double time_to_wait) {
   }
   Fl::flush();
 
-  // idle processing
-  static char in_idle;
-  if (Fl::idle && !in_idle) {
-    in_idle = 1;
-    Fl::idle();
-    in_idle = 0;
-  }
-
-  run_checks();
-  
   // This should return 0 if only timer events were handled:
   return 1;
 }
