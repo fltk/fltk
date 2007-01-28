@@ -127,9 +127,10 @@ void Fl::awake(void* msg) {
 // POSIX threading...
 #elif HAVE_PTHREAD
 #  include <unistd.h>
+#  include <fcntl.h>
 #  include <pthread.h>
 
-#  if defined (PTHREAD_MUTEX_RECURSIVE_NP)
+#  ifdef PTHREAD_MUTEX_RECURSIVE_NP
 // Linux supports recursive locks, use them directly:
 
 static bool minit;
@@ -149,7 +150,7 @@ void Fl::unlock() {
   pthread_mutex_unlock(&fltk_mutex);
 }
 
-#  else
+#  else // !PTHREAD_MUTEX_RECURSIVE_NP
 // Make a recursive lock out of the pthread mutex:
 
 static pthread_mutex_t fltk_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -168,7 +169,7 @@ void Fl::unlock() {
   if (!--counter) pthread_mutex_unlock(&fltk_mutex);
 }
 
-#  endif
+#  endif // PTHREAD_MUTEX_RECURSIVE_NP
 
 // Pipe for thread messaging...
 static int thread_filedes[2];
@@ -193,6 +194,8 @@ void Fl::lock() {
   if (!thread_filedes[1]) { // initialize the mt support
     // Init threads communication pipe to let threads awake FLTK from wait
     pipe(thread_filedes);
+    fcntl(thread_filedes[1], F_SETFL,
+          fcntl(thread_filedes[1], F_GETFL) | O_NONBLOCK);
     Fl::add_fd(thread_filedes[0], FL_READ, thread_awake_cb);
     fl_lock_function   = lock_function;
     fl_unlock_function = Fl::unlock;
@@ -203,7 +206,7 @@ void Fl::awake(void* msg) {
   write(thread_filedes[1], &msg, sizeof(void*));
 }
 
-#endif
+#endif // WIN32
 
 //
 // End of "$Id$".
