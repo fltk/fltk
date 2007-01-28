@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.1.8
 
+	- Fixed indentation of nested HTML elements (STR #1549)
+	- Made layout of Fl_Help_Dialog consistent with other
+	  help windows and web browsers.
 	- Improved GTK+ schemed round box (STR #1531)
 	- Fluid avoids writing unsupported combinations of the 
 	  "when()" flags (STR #1501)

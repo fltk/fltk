@@ -31,10 +31,11 @@
 #define Fl_Help_Dialog_H
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Help_View.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Help_View.H>
 
 class FL_EXPORT Fl_Help_Dialog {
   int index_; 
@@ -46,11 +47,6 @@ public:
   Fl_Help_Dialog();
 private:
   Fl_Double_Window *window_;
-  Fl_Help_View *view_;
-  void cb_view__i(Fl_Help_View*, void*);
-  static void cb_view_(Fl_Help_View*, void*);
-  void cb_Close_i(Fl_Button*, void*);
-  static void cb_Close(Fl_Button*, void*);
   Fl_Button *back_;
   void cb_back__i(Fl_Button*, void*);
   static void cb_back_(Fl_Button*, void*);
@@ -66,6 +62,9 @@ private:
   Fl_Input *find_;
   void cb_find__i(Fl_Input*, void*);
   static void cb_find_(Fl_Input*, void*);
+  Fl_Help_View *view_;
+  void cb_view__i(Fl_Help_View*, void*);
+  static void cb_view_(Fl_Help_View*, void*);
 public:
   ~Fl_Help_Dialog();
   int h();

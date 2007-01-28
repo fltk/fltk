@@ -3,7 +3,7 @@
 //
 // Fl_Help_View widget routines.
 //
-// Copyright 1997-2006 by Easy Software Products.
+// Copyright 1997-2007 by Easy Software Products.
 // Image support donated by Matthias Melcher, Copyright 2000.
 //
 // This library is free software; you can redistribute it and/or
@@ -136,6 +136,52 @@ static const char *broken_xpm[] =
 		};
 
 static Fl_Pixmap broken_image(broken_xpm);
+
+//
+// Simple margin stack for Fl_Help_View::format()...
+//
+
+struct fl_margins {
+  int depth_;
+  int margins_[100];
+
+  fl_margins() { clear();  }
+
+  int clear() {
+//    puts("fl_margins::clear()");
+
+    depth_ = 0;
+    return margins_[0] = 4;
+  }
+
+  int current() { return margins_[depth_]; }
+
+  int pop() {
+//    printf("fl_margins::pop(): depth_=%d, xx=%d\n", depth_,
+//           depth_ > 0 ? margins_[depth_ - 1] : 4);
+
+    if (depth_ > 0) {
+      depth_ --;
+      return margins_[depth_];
+    } else return 4;
+  }
+
+  int push(int indent) {
+    int xx;
+
+    xx = margins_[depth_] + indent;
+
+//    printf("fl_margins::push(indent=%d): depth_=%d, xx=%d\n", indent,
+//           depth_ + 1, xx);
+
+    if (depth_ < 99) {
+      depth_ ++;
+      margins_[depth_] = xx;
+    }
+
+    return xx;
+  }
+};
 
 //
 // All the stuff needed to implement text selection in Fl_Help_View
@@ -454,10 +500,9 @@ Fl_Help_View::draw()
   if (!value_)
     return;
 
-  if (current_view==this && selected) {
-    hv_selection_color = FL_SELECTION_COLOR;
+  if (current_view == this && selected) {
+    hv_selection_color      = FL_SELECTION_COLOR;
     hv_selection_text_color = fl_contrast(textcolor_, FL_SELECTION_COLOR);
-
   }
 
   // Clip the drawing to the inside of the box...
@@ -1048,6 +1093,7 @@ Fl_Help_View::format()
   Fl_Color	tc, rc;		// Table/row background color
   Fl_Boxtype	b = box() ? box() : FL_DOWN_BOX;
 				// Box to draw...
+  fl_margins	margins;	// Left margin stack...
 
 
   // Reset document width...
@@ -1078,7 +1124,7 @@ Fl_Help_View::format()
 
     line         = 0;
     links        = 0;
-    xx           = 4;
+    xx           = margins.clear();
     yy           = fsize + 2;
     ww           = 0;
     column       = 0;
@@ -1291,7 +1337,7 @@ Fl_Help_View::format()
 	      strcasecmp(buf, "DL") == 0)
           {
 	    block->h += fsize + 2;
-	    xx       += 4 * fsize;
+	    xx       = margins.push(4 * fsize);
 	  }
           else if (strcasecmp(buf, "TABLE") == 0)
 	  {
@@ -1407,16 +1453,13 @@ Fl_Help_View::format()
 	      strcasecmp(buf, "/OL") == 0 ||
 	      strcasecmp(buf, "/DL") == 0)
 	  {
-	    xx       -= 4 * fsize;
+	    xx       = margins.pop();
 	    block->h += fsize + 2;
 	  }
           else if (strcasecmp(buf, "/TABLE") == 0) 
           {
 	    block->h += fsize + 2;
-            // the current block is *not* the table block, so the current xx is 
-            // meaningless. Set it back to page x, so the next block will be aligned 
-            // reasonably. This fails fro table-in-table html!
-            xx = 4;
+            xx       = margins.current();
           }
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
@@ -1494,7 +1537,6 @@ Fl_Help_View::format()
 	  talign     = LEFT;
 
           xx = blocks_[row].x;
-
           yy = blocks_[row].y + blocks_[row].h;
 
 	  for (cell = blocks_ + row + 1; cell <= block; cell ++)
@@ -1512,7 +1554,7 @@ Fl_Help_View::format()
 	      cell->h = block->h;
 	    }
 
-	  yy        = block->y + block->h - 4;
+	  yy        = block->y + block->h /*- 4*/;
           block     = add_block(start, xx, yy, hsize_, 0);
 	  needspace = 0;
 	  row       = 0;
@@ -1538,6 +1580,8 @@ Fl_Help_View::format()
           xx = blocks_[row].x + fsize + 3 + table_offset;
 	  for (i = 0; i < column; i ++)
 	    xx += columns[i] + 6;
+
+          margins.push(xx - margins.current());
 
           if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != NULL)
 	    colspan = atoi(attr);
@@ -1573,7 +1617,9 @@ Fl_Help_View::format()
 	else if ((strcasecmp(buf, "/TD") == 0 ||
                   strcasecmp(buf, "/TH") == 0) && row)
 	{
+          line = do_align(block, line, xx, newalign, links);
           popfont(font, fsize);
+	  xx = margins.pop();
 	  talign = LEFT;
 	}
 	else if (strcasecmp(buf, "FONT") == 0)
@@ -1762,6 +1808,7 @@ Fl_Help_View::format()
     size_      = yy + hh;
   }
 
+//  printf("margins.depth_=%d\n", margins.depth_);
 
   if (ntargets_ > 1)
     qsort(targets_, ntargets_, sizeof(Fl_Help_Target),
