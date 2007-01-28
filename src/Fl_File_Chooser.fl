@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0108 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 comment {//
@@ -134,11 +134,11 @@ window->hide();}
         } {
           Fl_Return_Button okButton {
             label OK
-            callback {// Do any callback that is registered...
-if (callback_)
-  (*callback_)(this, data_);
+            callback {window->hide();
 
-window->hide();}
+// Do any callback that is registered...
+if (callback_)
+  (*callback_)(this, data_);} selected
             private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}
@@ -309,8 +309,7 @@ Fl::flush();
 fl_cursor(FL_CURSOR_WAIT);
 rescan_keep_filename();
 fl_cursor(FL_CURSOR_DEFAULT);
-fileName->take_focus();} {selected
-    }
+fileName->take_focus();} {}
   }
   Function {shown()} {return_type int
   } {
