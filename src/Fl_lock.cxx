@@ -3,7 +3,7 @@
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2007 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -130,15 +130,19 @@ void Fl::awake(void* msg) {
 #  include <fcntl.h>
 #  include <pthread.h>
 
-// Make a recursive lock out of the pthread mutex; we don't use "native"
-// recursive locks since they may not be implemented by the running kernel
-// (see discussions in STR #1575)
+// Pipe for thread messaging via Fl::awake()...
+static int thread_filedes[2];
 
-static pthread_mutex_t fltk_mutex = PTHREAD_MUTEX_INITIALIZER;
+// Mutux and state information for Fl::lock() and Fl::unlock()...
+static pthread_mutex_t fltk_mutex;
 static pthread_t owner;
 static int counter;
 
-static void lock_function() {
+static void lock_function_init_std() {
+  pthread_mutex_init(&fltk_mutex, NULL);
+}
+
+static void lock_function_std() {
   if (!counter || owner != pthread_self()) {
     pthread_mutex_lock(&fltk_mutex);
     owner = pthread_self();
@@ -146,16 +150,35 @@ static void lock_function() {
   counter++;
 }
 
-void Fl::unlock() {
+static void unlock_function_std() {
   if (!--counter) pthread_mutex_unlock(&fltk_mutex);
 }
 
-// Pipe for thread messaging...
-static int thread_filedes[2];
+#  ifdef PTHREAD_MUTEX_RECURSIVE
+static bool lock_function_init_rec() {
+  pthread_mutexattr_t attrib;
+  pthread_mutexattr_init(&attrib);
+  if (pthread_mutexattr_settype(&attrib, PTHREAD_MUTEX_RECURSIVE)) {
+    pthread_mutexattr_destroy(&attrib);
+    return true;
+  }
 
-// These pointers are in Fl_x.cxx:
-extern void (*fl_lock_function)();
-extern void (*fl_unlock_function)();
+  pthread_mutex_init(&fltk_mutex, &attrib);
+  return false;
+}
+
+static void lock_function_rec() {
+  pthread_mutex_lock(&fltk_mutex);
+}
+
+static void unlock_function_rec() {
+  pthread_mutex_unlock(&fltk_mutex);
+}
+#  endif // PTHREAD_MUTEX_RECURSIVE
+
+void Fl::awake(void* msg) {
+  write(thread_filedes[1], &msg, sizeof(void*));
+}
 
 static void* thread_message_;
 void* Fl::thread_message() {
@@ -168,23 +191,48 @@ static void thread_awake_cb(int fd, void*) {
   read(fd, &thread_message_, sizeof(void*));
 }
 
+// These pointers are in Fl_x.cxx:
+extern void (*fl_lock_function)();
+extern void (*fl_unlock_function)();
+
 void Fl::lock() {
-  lock_function();
-  if (!thread_filedes[1]) { // initialize the mt support
-    // Init threads communication pipe to let threads awake FLTK from wait
+  if (!thread_filedes[1]) {
+    // Initialize thread communication pipe to let threads awake FLTK
+    // from Fl::wait()
     pipe(thread_filedes);
+
+    // Make the write side of the pipe non-blocking to avoid deadlock
+    // conditions (STR #1537)
     fcntl(thread_filedes[1], F_SETFL,
           fcntl(thread_filedes[1], F_GETFL) | O_NONBLOCK);
+
+    // Monitor the read side of the pipe so that messages sent via
+    // Fl::awake() from a thread will "wake up" the main thread in
+    // Fl::wait().
     Fl::add_fd(thread_filedes[0], FL_READ, thread_awake_cb);
-    fl_lock_function   = lock_function;
-    fl_unlock_function = Fl::unlock;
+
+    // Set lock/unlock functions for this system, using a system-supplied
+    // recursive mutex if supported...
+#  ifdef PTHREAD_MUTEX_RECURSIVE
+    if (!lock_function_init_rec()) {
+      fl_lock_function   = lock_function_rec;
+      fl_unlock_function = unlock_function_rec;
+    } else {
+#  endif // PTHREAD_MUTEX_RECURSIVE
+      lock_function_init_std();
+      fl_lock_function   = lock_function_std;
+      fl_unlock_function = unlock_function_std;
+#  ifdef PTHREAD_MUTEX_RECURSIVE
+    }
+#  endif // PTHREAD_MUTEX_RECURSIVE
   }
+
+  fl_lock_function();
 }
 
-void Fl::awake(void* msg) {
-  write(thread_filedes[1], &msg, sizeof(void*));
+void Fl::unlock() {
+  fl_unlock_function();
 }
-
 #endif // WIN32
 
 //
