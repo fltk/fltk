@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.8
 
+	- Documentation fixes (STR #1454, STR #1455, STR #1456,
+	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
 	- Fl::awake() could block on X11 and OSX (STR #1537)
 	- Updated recursive mutex code to run on platforms other
 	  than Linux and to do a run-time check to determine
@@ -42,8 +44,6 @@ CHANGES IN FLTK 1.1.8
 	- Documented tooltip inheritance (STR #1467)
 	- Better event mouse handling fixing detached menus and
 	  sticky tooltips (STR #1463, STR #449)
-	- Documentation fixes (STR #1454, STR #1455, STR #1456,
-	  STR #1457, STR #1458, STR #1460, STR #1481)
 	- Added Fl::scrollbar_size() methods that are used by all
 	  of the scrollbar-using widgets (STR #1500)
 	- fl_read_image() was broken on Intel-based Macs (STR
