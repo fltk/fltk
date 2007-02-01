@@ -370,7 +370,7 @@ enum {
 #  define GLUT_NUM_BUTTON_BOX_BUTTONS	607
 #  define GLUT_NUM_DIALS		608
 #  define GLUT_NUM_TABLET_BUTTONS	609
-inline int glutDeviceGet(GLenum type) { return type <= GLUT_HAS_MOUSE; }
+FL_EXPORT int glutDeviceGet(GLenum type);
 
 // WARNING: these values are different than GLUT uses:
 #  define GLUT_ACTIVE_SHIFT               FL_SHIFT

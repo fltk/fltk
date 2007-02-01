@@ -423,6 +423,15 @@ int glutLayerGet(GLenum type) {
   }
 }
 
+int glutDeviceGet(GLenum type) {
+  switch (type) {
+    case GLUT_HAS_KEYBOARD : return 1;
+    case GLUT_HAS_MOUSE : return 1;
+    case GLUT_NUM_MOUSE_BUTTONS : return 3;
+    default : return 0;
+  }
+}
+
 // Get extension function address...
 GLUTproc glutGetProcAddress(const char *procName) {
 #  ifdef WIN32

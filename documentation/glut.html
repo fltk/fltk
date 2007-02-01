@@ -4,30 +4,14 @@
 </HEAD>
 <BODY>
 <H1 ALIGN=RIGHT><A NAME=glut>D - GLUT Compatibility</A></H1>
- This appendix describes the GLUT compatibility header file supplied
-with FLTK.
+<P>This appendix describes the GLUT compatibility header file supplied with FLTK. FLTK's GLUT compatibility is based on the original GLUT 3.7 and the follow-on FreeGLUT 2.4.0 libraries.</P>
 <H2>Using the GLUT Compatibility Header File</H2>
- You should be able to compile existing GLUT source code by including <TT>
-&lt;FL/glut.H&gt;</TT> instead of <TT>&lt;GL/glut.h&gt;</TT>.  This can be done by
-editing the source, by changing the <TT>-I</TT> switches to the
-compiler, or by providing a symbolic link from <TT>GL/glut.h</TT> to <TT>
-FL/glut.H</TT>.
-<P><I>All files calling GLUT procedures must be compiled with C++</I>.
- You may have to alter them slightly to get them to compile without
-warnings, and you may have to rename them to get make to use the C++
-compiler. </P>
-<P>You must link with the FLTK library.  If you call any GLUT drawing
-functions that FLTK does not emulate (<TT>glutExtensionsSupported()</TT>
-, <TT>glutWire*()</TT>, <TT>glutSolid*()</TT>, and <TT>glutStroke*()</TT>
-), you will also have to link with the GLUT library (<I>after</I> the
-FLTK library!) </P>
-<P>Most of <TT>FL/glut.H</TT> is inline functions.  You should take a
-look at it (and maybe at <TT>test/glpuzzle.cxx</TT> in the FLTK source) if
-you are having trouble porting your GLUT program. </P>
-<P>This has been tested with most of the demo programs that come with
-the GLUT 3.3 distribution. </P>
+<P>You should be able to compile existing GLUT source code by including <TT>&lt;FL/glut.H&gt;</TT> instead of <TT>&lt;GL/glut.h&gt;</TT>.  This can be done by editing the source, by changing the <TT>-I</TT> switches to the compiler, or by providing a symbolic link from <TT>GL/glut.h</TT> to <TT>FL/glut.H</TT>.</P>
+<P><I>All files calling GLUT procedures must be compiled with C++</I>. You may have to alter them slightly to get them to compile without warnings, and you may have to rename them to get make to use the C++ compiler.</P>
+<P>You must link with the FLTK library. Most of <TT>FL/glut.H</TT> is inline functions.  You should take a look at it (and maybe at <TT>test/glpuzzle.cxx</TT> in the FLTK source) if you are having trouble porting your GLUT program. </P>
+<P>This has been tested with most of the demo programs that come with the GLUT and FreeGLUT distributions.</P>
 <H2>Known Problems</H2>
- The following functions and/or arguments to functions are missing, and
+<P>The following functions and/or arguments to functions are missing, and
 you will have to replace them or comment them out for your code to
 compile:
 <UL>
@@ -37,7 +21,7 @@ compile:
 <LI><TT>glutInitDisplayMode(GLUT_LUMINANCE)</TT></LI>
 <LI><TT>glutPushWindow()</TT></LI>
 <LI><TT>glutWarpPointer()</TT></LI>
-<LI>Spaceball, buttonbox, dials, tablet functions, <TT>glutDeviceGet()</TT>
+<LI>Spaceball, buttonbox, dials, tablet functions</TT>
 </LI>
 <LI><TT>glutWindowStatusFunc()</TT></LI>
 <LI><TT>glutGet(GLUT_WINDOW_NUM_CHILDREN)</TT></LI>
