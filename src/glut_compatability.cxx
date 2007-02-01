@@ -436,10 +436,10 @@ int glutDeviceGet(GLenum type) {
 GLUTproc glutGetProcAddress(const char *procName) {
 #  ifdef WIN32
   return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
-#  elif defined(__APPLE__)
-  return (GLUTproc)0;
-#  else
+#  elif defined(HAVE_GLXGETPROCADDRESSARB)
   return (GLUTproc)glXGetProcAddressARB(procName);
+#  else
+  return (GLUTproc)0;
 #  endif // WIN32
 }
 
