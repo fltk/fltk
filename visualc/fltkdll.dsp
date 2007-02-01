@@ -2620,6 +2620,46 @@ DEP_CPP_FORMS_T=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\freeglut_geometry.cxx
+DEP_CPP_GL_DR=\
+	"..\FL\gl.h"\
+	"..\FL\glut.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\freeglut_stroke_mono_roman.cxx
+DEP_CPP_GL_DR=\
+	"..\FL\gl.h"\
+	"..\FL\glut.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\freeglut_stroke_roman.cxx
+DEP_CPP_GL_DR=\
+	"..\FL\gl.h"\
+	"..\FL\glut.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\freeglut_teapot.cxx
+DEP_CPP_GL_DR=\
+	"..\FL\gl.h"\
+	"..\FL\glut.h"\
+	"..\src\flstring.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\gl_draw.cxx
 DEP_CPP_GL_DR=\
 	"..\fl\enumerations.h"\

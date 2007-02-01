@@ -3,7 +3,7 @@
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2007 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -35,7 +35,7 @@
 // Although I have copied the GLUT API, none of my code is based on
 // any Glut implementation details and is therefore covered by the LGPL.
 
-#include <config.h>
+#include "flstring.h"
 #if HAVE_GL
 
 #include <FL/glut.H>
@@ -406,6 +406,7 @@ int glutGet(GLenum type) {
 	glutGet(GLUT_WINDOW_ALPHA_SIZE);
     else
       return glutGet(GLUT_WINDOW_COLORMAP_SIZE);
+  case GLUT_VERSION: return 20400;
   default: {GLint p; glGetIntegerv(type, &p); return p;}
   }
 }
@@ -422,7 +423,49 @@ int glutLayerGet(GLenum type) {
   }
 }
 
-#endif
+// Get extension function address...
+GLUTproc glutGetProcAddress(const char *procName) {
+#  ifdef WIN32
+  return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
+#  elif defined(__APPLE__)
+  return (GLUTproc)0;
+#  else
+  return (GLUTproc)glXGetProcAddressARB(procName);
+#  endif // WIN32
+}
+
+// Parse the GL_EXTENSIONS string to see if the named extension is
+// supported.
+//
+// This code was copied from FreeGLUT 2.4.0 which carries the
+// following notice:
+//
+//     Copyright (c) 1999-2000 Pawel W. Olszta. All Rights Reserved.
+int glutExtensionSupported( const char* extension )
+{
+  if (!extension || strchr(extension, ' ')) return 0;
+
+  const char *extensions, *start;
+  const int len = strlen( extension );
+  
+  start = extensions = (const char *) glGetString(GL_EXTENSIONS);
+
+  if (!extensions) return 0;
+
+  for (;;) {
+    const char *p = strstr(extensions, extension);
+    if (!p) return 0;  /* not found */
+    /* check that the match isn't a super string */
+    if ((p == start || p[-1] == ' ') &&
+        (p[len] == ' ' || p[len] == 0)) return 1;
+    /* skip the false match and continue */
+    extensions = p + len;
+  }
+  
+  return 0;
+}
+
+#endif // HAVE_GL
 
 //
 // End of "$Id$".

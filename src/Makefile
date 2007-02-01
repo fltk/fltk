@@ -3,7 +3,7 @@
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -167,6 +167,10 @@ GLCPPFILES = \
 	Fl_Gl_Choice.cxx \
 	Fl_Gl_Overlay.cxx \
 	Fl_Gl_Window.cxx \
+	freeglut_geometry.cxx \
+	freeglut_stroke_mono_roman.cxx \
+	freeglut_stroke_roman.cxx \
+	freeglut_teapot.cxx \
 	gl_draw.cxx \
 	gl_start.cxx \
 	glut_compatability.cxx \

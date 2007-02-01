@@ -95,6 +95,26 @@ SOURCE=..\src\Fl_Gl_Window.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\freeglut_geometry.cxx
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\freeglut_stroke_mono_roman.cxx
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\freeglut_stroke_roman.cxx
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\freeglut_teapot.cxx
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\gl_draw.cxx
 # End Source File
 # Begin Source File

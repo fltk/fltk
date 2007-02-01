@@ -138,6 +138,10 @@ SET(GLCPPFILES
   Fl_Gl_Choice.cxx
   Fl_Gl_Overlay.cxx
   Fl_Gl_Window.cxx
+  freeglut_geometry.cxx
+  freeglut_stroke_mono_roman.cxx
+  freeglut_stroke_roman.cxx
+  freeglut_teapot.cxx
   gl_draw.cxx
   gl_start.cxx
   glut_compatability.cxx
