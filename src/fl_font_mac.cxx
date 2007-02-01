@@ -212,7 +212,7 @@ UniChar *fl_macToUtf16(const char *txt, int len)
   UniChar *dst = utf16buf;
   for (i=0; i<len; i++) {
     c = *src++;
-    *dst++ = (c<128) ? c : utf16lut[c-128];
+    *dst++ =(c<128) ? c : utf16lut[c-128];
   }
   *dst = 0;
   return utf16buf;
@@ -312,13 +312,13 @@ double fl_width(const char* txt, int n) {
       UniChar *uniStr = fl_macToUtf16(buf, 1);
         // now collect our ATSU resources
       ATSUTextLayout layout = fl_fontsize->layout;
-      err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, 1, 1);
         // activate the current GC
       ByteCount iSize = sizeof(CGContextRef);
       ATSUAttributeTag iTag = kATSUCGContextTag;
       ATSUAttributeValuePtr iValuePtr=&fl_gc;
       ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
         // now measure the bounding box
+      err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, 1, 1);
       Fixed bBefore, bAfter, bAscent, bDescent;
       err = ATSUGetUnjustifiedBounds(layout, kATSUFromTextBeginning, 1, &bBefore, &bAfter, &bAscent, &bDescent);
       fl_fontsize->width[i] = FixedToInt(bAfter);
@@ -328,7 +328,7 @@ double fl_width(const char* txt, int n) {
   int len = 0;
   const char *src = txt;
   for (int j=0; j<n; j++) {
-    unsigned int c = *src++;
+    unsigned char c = *src++;
     len += fl_fontsize->width[c];
   }
   return len;

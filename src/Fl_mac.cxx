@@ -966,13 +966,20 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   {
   case kEventMouseDown:
     part = FindWindow( pos, &tempXid );
-    if ( part == inGrow  && !Fl::grab()) {
-      fl_unlock_function();
-      suppressed = 1;
-      Fl_Tooltip::current(0L);
-      // if (grab() && grab()!=thisWindow) handle grab first (popping down menu bars)
-      // if (modal() && modal()!=thisWindow) handle modal first (popping down menu bars)
-      return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+    if (!(Fl::grab() && window!=Fl::grab())) {
+      if ( part == inGrow ) {
+        fl_unlock_function();
+        suppressed = 1;
+        Fl_Tooltip::current(0L);
+        return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+      }
+      if ( part != inContent ) {
+        fl_unlock_function();
+        suppressed = 1;
+        Fl_Tooltip::current(0L);
+        // anything else to here?
+        return CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+      }
     }
     suppressed = 0;
     if (part==inContent && !IsWindowActive( xid ) ) {
@@ -1023,8 +1030,10 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
     Fl::e_y = pos.v;
     SetPort( oldPort );
     if (GetEventKind(event)==kEventMouseDown && part!=inContent) {
-      Fl::handle( sendEvent, window );
+      int used = Fl::handle( sendEvent, window );
       CallNextEventHandler( nextHandler, event ); // let the OS handle this for us
+      if (!used) 
+        suppressed = 1;
     } else {
       Fl::handle( sendEvent, window );
     }
