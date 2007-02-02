@@ -718,14 +718,6 @@ int menuwindow::early_hide_handle(int e) {
 	pp.state = PUSH_STATE;
     }} return 1;
   case FL_RELEASE:
-    // do nothing if they try to pick inactive items
-    if (pp.current_item && !pp.current_item->activevisible()) {
-      if (pp.state==INITIAL_STATE) {
-        setitem(0, -1, 0);
-        pp.state = DONE_STATE;
-      }
-      return 1;
-    }
     // Mouse must either be held down/dragged some, or this must be
     // the second click (not the one that popped up the menu):
     if (!Fl::event_is_click() || pp.state == PUSH_STATE ||
@@ -738,6 +730,8 @@ int menuwindow::early_hide_handle(int e) {
 	pp.p[pp.menu_number]->redraw();
       } else
 #endif
+      // do nothing if they try to pick inactive items
+      if (!pp.current_item || pp.current_item->activevisible())
 	pp.state = DONE_STATE;
     }
     return 1;

@@ -235,6 +235,22 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\src\freeglut_geometry.cxx"
+			>
+		</File>
+		<File
+			RelativePath="..\src\freeglut_stroke_mono_roman.cxx"
+			>
+		</File>
+		<File
+			RelativePath="..\src\freeglut_stroke_roman.cxx"
+			>
+		</File>
+		<File
+			RelativePath="..\src\freeglut_teapot.cxx"
+			>
+		</File>
+		<File
 			RelativePath="..\src\gl_draw.cxx"
 			>
 			<FileConfiguration
