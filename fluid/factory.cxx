@@ -624,8 +624,10 @@ public:
   virtual const char *type_name() {return "Fl_Help_View";}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Help_View *myo = new Fl_Help_View(x,y,w,h);
-    myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
-               "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
+    if (!compile_only) {
+      myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
+                 "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
+    }
     return myo;}
   Fl_Widget_Type *_make() {return new Fl_Help_View_Type();}
   int pixmapID() { return 35; }
