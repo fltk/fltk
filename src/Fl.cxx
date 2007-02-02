@@ -927,6 +927,10 @@ void Fl_Window::hide() {
   *pp = ip->next;
 #ifdef __APPLE__
   MacUnlinkWindow(ip);
+  // MacOS X manages a single pointer per application. Make sure that hiding
+  // a toplevel window will not leave us with some random pointer shape, or
+  // worst case, an invisible pointer
+  if (!parent()) cursor(FL_CURSOR_DEFAULT);
 #endif
   i = 0;
 

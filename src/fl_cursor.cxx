@@ -202,36 +202,38 @@ static Cursor crsrARROW =
 #undef E
 
 void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
-  if (!shown()) return;
   if (c == FL_CURSOR_DEFAULT) {
     c = cursor_default;
   }
+  CursHandle icrsr = fl_default_cursor;
   switch (c) {
-  case FL_CURSOR_CROSS:     i->cursor = GetCursor( crossCursor ); break;
-  case FL_CURSOR_WAIT:      i->cursor = GetCursor( watchCursor ); break;
-  case FL_CURSOR_INSERT:    i->cursor = GetCursor( iBeamCursor ); break;
+  case FL_CURSOR_CROSS:  icrsr = GetCursor( crossCursor ); break;
+  case FL_CURSOR_WAIT:   icrsr = GetCursor( watchCursor ); break;
+  case FL_CURSOR_INSERT: icrsr = GetCursor( iBeamCursor ); break;
   case FL_CURSOR_N:
   case FL_CURSOR_S:
-  case FL_CURSOR_NS:        i->cursor = &crsrNSptr; break;
-  case FL_CURSOR_HELP:	i->cursor = &crsrHELPptr; break;
-  case FL_CURSOR_HAND:	i->cursor = &crsrHANDptr; break;
-  case FL_CURSOR_MOVE:	i->cursor = &crsrMOVEptr; break;
+  case FL_CURSOR_NS:     icrsr = &crsrNSptr; break;
+  case FL_CURSOR_HELP:   icrsr = &crsrHELPptr; break;
+  case FL_CURSOR_HAND:   icrsr = &crsrHANDptr; break;
+  case FL_CURSOR_MOVE:   icrsr = &crsrMOVEptr; break;
   case FL_CURSOR_NE:
   case FL_CURSOR_SW:
-  case FL_CURSOR_NESW:	i->cursor = &crsrNESWptr; break;
+  case FL_CURSOR_NESW:   icrsr = &crsrNESWptr; break;
   case FL_CURSOR_E:
   case FL_CURSOR_W:
-  case FL_CURSOR_WE:	i->cursor = &crsrWEptr; break;
+  case FL_CURSOR_WE:     icrsr = &crsrWEptr; break;
   case FL_CURSOR_SE:
   case FL_CURSOR_NW:
-  case FL_CURSOR_NWSE:	i->cursor = &crsrNWSEptr; break;
-  case FL_CURSOR_NONE:	i->cursor = &crsrNONEptr; break;
-  case FL_CURSOR_ARROW:   	i->cursor = &crsrARROWptr; break;
+  case FL_CURSOR_NWSE:   icrsr = &crsrNWSEptr; break;
+  case FL_CURSOR_NONE:   icrsr = &crsrNONEptr; break;
+  case FL_CURSOR_ARROW:  icrsr = &crsrARROWptr; break;
   case FL_CURSOR_DEFAULT:
-  default:
-    i->cursor = fl_default_cursor; break;
+  default: break;
   }
-  SetCursor( *i->cursor );
+  SetCursor( *icrsr );
+  if (i) {
+    i->cursor = icrsr;
+  }
 }
 
 #else
