@@ -802,6 +802,7 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
   UInt32 kind = GetEventKind( event );
   OSStatus ret = eventNotHandledErr;
   Fl_Window *window = (Fl_Window*)userData;
+  Fl::first_window(window);
 
   Rect currentBounds, originalBounds;
   WindowClass winClass;
@@ -898,6 +899,7 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
 
   fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
+  Fl::first_window(window);
 
   EventMouseWheelAxis axis;
   GetEventParameter( event, kEventParamMouseWheelAxis, typeMouseWheelAxis, NULL, sizeof(EventMouseWheelAxis), NULL, &axis );
@@ -952,6 +954,7 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   
   fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
+  Fl::first_window(window);
   Point pos;
   GetEventParameter( event, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &pos );
   EventMouseButton btn;
@@ -1074,6 +1077,7 @@ pascal OSStatus carbonKeyboardHandler(
   static char buffer[5];
   int sendEvent = 0;
   Fl_Window *window = (Fl_Window*)userData;
+  Fl::first_window(window);
   UInt32 mods;
   static UInt32 prevMods = 0xffffffff;
 
@@ -1678,6 +1682,7 @@ static OSErr fillCurrentDragData(DragReference dragRef)
 static pascal OSErr dndTrackingHandler( DragTrackingMessage msg, WindowPtr w, void *userData, DragReference dragRef )
 {
   Fl_Window *target = (Fl_Window*)userData;
+  Fl::first_window(target);
   Point mp;
   static int px, py;
   
@@ -1741,6 +1746,7 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
   OSErr ret;
   
   Fl_Window *target = fl_dnd_target_window = (Fl_Window*)userData;
+  Fl::first_window(target);
   GetDragMouse( dragRef, &mp, 0 );
   Fl::e_x_root = mp.h;
   Fl::e_y_root = mp.v;
