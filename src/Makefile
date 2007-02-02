@@ -346,51 +346,59 @@ libfltk_images_s.a: $(IMGOBJECTS)
 	$(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
 	$(CHMOD) +x libfltk_images_s.a
 
-cygfltknox-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk.a ...
-	$(DSOCOMMAND) ../lib/libfltk.a -Wl,--no-whole-archive \
+#-----------------------------------------------------------------
+# - the import libraries libfltk*.dll.a and the .dll files
+#   are created from the libfltk*.a files. They are built
+#   into the src dir.
+# - The _images, _gl, _forms and dlls must be linked
+#   against the import libraries in the src dir.
+#-----------------------------------------------------------------
+
+cygfltknox-1.1.dll: $(LIBNAME)
+	echo $(DSOCOMMAND) $(LIBNAME) ...
+	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
 
-cygfltknox_forms-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk_forms.a ...
-	$(DSOCOMMAND) ../lib/libfltk_forms.a -Wl,--no-whole-archive \
+cygfltknox_forms-1.1.dll: $(FLLIBNAME) cygfltknox-1.1.dll
+	echo $(DSOCOMMAND) $(FLLIBNAME) ...
+	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_forms.dll.a \
-		-L../lib -lfltk $(LDLIBS)
+		-L. -lfltk $(LDLIBS)
 
-cygfltknox_gl-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk_gl.a ...
-	$(DSOCOMMAND) ../lib/libfltk_gl.a -Wl,--no-whole-archive \
+cygfltknox_gl-1.1.dll: $(GLLIBNAME) cygfltknox-1.1.dll
+	echo $(DSOCOMMAND) $(GLLIBNAME) ...
+	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_gl.dll.a \
-		-L../lib -lfltk $(GLDLIBS)
+		-L. -lfltk $(GLDLIBS)
 
-cygfltknox_images-1.1.dll:
+cygfltknox_images-1.1.dll: $(IMGLIBNAME) cygfltknox-1.1.dll
 	echo $(DSOCOMMAND) ../lib/libfltk_images ...
-	$(DSOCOMMAND) ../lib/libfltk_images.a -Wl,--no-whole-archive \
+	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_images.dll.a \
-		-L../lib -lfltk -ljpeg -lpng -lz $(LDLIBS)
+		-L. -lfltk -ljpeg -lpng -lz $(LDLIBS)
 
-mgwfltknox-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk.a ...
-	$(DSOCOMMAND) ../lib/libfltk.a -Wl,--no-whole-archive \
+mgwfltknox-1.1.dll: $(LIBNAME)
+	echo $(DSOCOMMAND) $(LIBNAME) ...
+	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
 
-mgwfltknox_forms-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk_forms.a ...
-	$(DSOCOMMAND) ../lib/libfltk_forms.a -Wl,--no-whole-archive \
+mgwfltknox_forms-1.1.dll: $(FLLIBNAME) mgwfltknox-1.1.dll
+	echo $(DSOCOMMAND) $(FLLIBNAME) ...
+	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_forms.dll.a \
-		-L../lib -lfltk $(LDLIBS)
+		-L. -lfltk $(LDLIBS)
 
-mgwfltknox_gl-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk_gl.a ...
-	$(DSOCOMMAND) ../lib/libfltk_gl.a -Wl,--no-whole-archive \
+mgwfltknox_gl-1.1.dll: $(GLLIBNAME) mgwfltknox-1.1.dll
+	echo $(DSOCOMMAND) $(GLLIBNAME) ...
+	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_gl.dll.a \
-		-L../lib -lfltk $(GLDLIBS)
+		-L. -lfltk $(GLDLIBS)
 
-mgwfltknox_images-1.1.dll:
-	echo $(DSOCOMMAND) ../lib/libfltk_images ...
-	$(DSOCOMMAND) ../lib/libfltk_images.a -Wl,--no-whole-archive \
+mgwfltknox_images-1.1.dll: $(IMGLIBNAME) mgwfltknox-1.1.dll
+	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
+	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_images.dll.a \
-		-L../lib -lfltk -ljpeg -lpng -lz $(LDLIBS)
+		-L. -lfltk -ljpeg -lpng -lz $(LDLIBS)
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck

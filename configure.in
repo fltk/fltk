@@ -204,7 +204,7 @@ if test x$enable_shared = xyes; then
 		GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
 		IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
 	    fi
-	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -shared -Wl,--whole-archive -Wl,--export-all-symbols -Wl,--enable-auto-import -o \$@"
+	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -shared -Wl,--whole-archive -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--enable-auto-image-base -o \$@"
 	    ;;
 	*)
             AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)
@@ -578,6 +578,7 @@ case $uname in
 	CXXFLAGS="-mwindows -DWIN32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32 -lwsock32"
+	DSOFLAGS="-mwindows"
 	OPTIM="$OPTIM"
 
 	if test x$enable_gl != xno; then
