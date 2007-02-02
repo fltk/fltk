@@ -3,7 +3,7 @@
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2007 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -61,13 +61,6 @@ static int can_xdbe() {
 #endif
 
 void Fl_Double_Window::show() {
-#if !defined(WIN32) && !defined(__APPLE__)
-  if (!shown()) { // don't set the background pixel
-    fl_open_display();
-    Fl_X::make_xid(this);
-    return;
-  }
-#endif
   Fl_Window::show();
 }
 
