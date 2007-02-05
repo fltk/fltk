@@ -540,28 +540,39 @@ AC_EXEEXT
 
 dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
+PTHREAD_FLAGS=""
 
 if test "x$enable_threads" = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
-    AC_CHECK_FUNC(pthread_create,
-        have_pthread=yes,
-	[AC_CHECK_LIB(pthread, pthread_create)
 
-	if test "x$ac_cv_lib_pthread_pthread_create" = xyes -a x$ac_cv_header_pthread_h = xyes; then
-            have_pthread=yes
-	else
-            dnl *BSD uses -pthread option...
-            AC_MSG_CHECKING([for pthread_create using -pthread])
+    if test x$ac_cv_header_pthread_h = xyes; then
+	dnl Check various threading options for the platforms we support
+	for flag in -lpthreads -lpthread -pthread; do
+            AC_MSG_CHECKING([for pthread_create using $flag])
 	    SAVELIBS="$LIBS"
-	    LIBS="-pthread $LIBS"
+	    LIBS="$flag $LIBS"
             AC_TRY_LINK([#include <pthread.h>],
 		[pthread_create(0, 0, 0, 0);],
-        	LIBS="-pthread $SAVELIBS"
         	have_pthread=yes,
 		LIBS="$SAVELIBS")
             AC_MSG_RESULT([$have_pthread])
-	fi])
+
+	    if test $have_pthread = yes; then
+	        AC_DEFINE(HAVE_PTHREAD)
+		PTHREAD_FLAGS="-D_THREAD_SAFE -D_REENTRANT"
+
+		# Solaris requires -D_POSIX_PTHREAD_SEMANTICS to
+		# be POSIX-compliant... :(
+		if test $uname = SunOS; then
+		    PTHREAD_FLAGS="$PTHREAD_FLAGS -D_POSIX_PTHREAD_SEMANTICS"
+		fi
+		break
+	    fi
+	done
+    fi
 fi
+
+AC_SUBST(PTHREAD_FLAGS)
 
 dnl Define OS-specific stuff...
 HLINKS=
