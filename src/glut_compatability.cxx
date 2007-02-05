@@ -38,9 +38,12 @@
 #include "flstring.h"
 #if HAVE_GL
 
-#include <FL/glut.H>
-
-#define MAXWINDOWS 32
+#  include <FL/glut.H>
+#  ifdef HAVE_GLXGETPROCADDRESSARB
+#    define GLX_GLXEXT_LEGACY
+#    include <GL/glx.h>
+#  endif // HAVE_GLXGETPROCADDRESSARB
+#  define MAXWINDOWS 32
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
 Fl_Glut_Window *glut_window;
@@ -437,7 +440,7 @@ GLUTproc glutGetProcAddress(const char *procName) {
 #  ifdef WIN32
   return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
 #  elif defined(HAVE_GLXGETPROCADDRESSARB)
-  return (GLUTproc)glXGetProcAddressARB(procName);
+  return (GLUTproc)glXGetProcAddressARB((const GLubyte *)procName);
 #  else
   return (GLUTproc)0;
 #  endif // WIN32
