@@ -3,7 +3,7 @@
 #
 # Header makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2005 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -35,12 +35,12 @@ depend:
 
 install:
 	echo "Installing include files in $(DESTDIR)$(includedir)..."
-	-$(MKDIR) -p $(DESTDIR)$(includedir)
+	-$(INSTALL_DIR) -p $(DESTDIR)$(includedir)
 	$(RMDIR) $(DESTDIR)$(includedir)/FL
-	$(MKDIR) $(DESTDIR)$(includedir)/FL
-	$(CHMOD) 755 $(DESTDIR)$(includedir)/FL
-	$(CP) ../FL/*.[hHr] $(DESTDIR)$(includedir)/FL
-	$(CHMOD) 644 $(DESTDIR)$(includedir)/FL/*.[hHr]
+	$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL
+	for file in *.[hH]; do \
+		$(INSTALL_DATA) $$file $(DESTDIR)$(includedir)/FL; \
+	done
 @HLINKS@	cd $(DESTDIR)$(includedir)/FL;\
 @HLINKS@	for file in *.H; do\
 @HLINKS@		$(RM) "`basename $$file H`h";\

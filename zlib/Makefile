@@ -3,7 +3,7 @@
 #
 # GNU ZIP library makefile for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1997-2005 by Easy Software Products.
+# Copyright 1997-2007 by Easy Software Products.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -58,13 +58,14 @@ clean:
 
 install: $(LIBZ)
 	echo "Installing libfltk_z$(LIBEXT) in $(libdir)..."
-	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libfltk_z$(LIBEXT)
-	$(CP) $(LIBZ) $(libdir)
-	$(RANLIB) $(libdir)/libfltk_z$(LIBEXT)
+	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
+	$(INSTALL_LIB) libfltk_z$(LIBEXT) $(DESTDIR)$(libdir)
+	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_z$(LIBEXT)
 	echo "Installing zlib headers in $(includedir)/FL/images..."
-	-$(MKDIR) $(includedir)/FL/images
-	$(CP) zconf.h zlib.h zutil.h $(includedir)/FL/images
+	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) zconf.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) zlib.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) zutil.h $(DESTDIR)$(includedir)/FL/images
 
 
 #

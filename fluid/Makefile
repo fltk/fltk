@@ -3,7 +3,7 @@
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -58,14 +58,12 @@ fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
 			../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 	$(CP) $@ fluid.app/Contents/MacOS
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck
@@ -80,35 +78,32 @@ include makedepend
 
 install: all
 	echo "Installing FLUID in $(DESTDIR)$(bindir)..."
-	-$(MKDIR) $(DESTDIR)$(bindir)
-	$(CP) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
-	$(STRIP) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
-	$(DESTDIR)$(bindir)/fltk-config --post $(DESTDIR)$(bindir)/fluid$(EXEEXT)
-	$(CHMOD) 755 $(DESTDIR)$(bindir)/fluid$(EXEEXT)
+	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
+	$(INSTALL_BIN) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
 
 install-linux:
-	-$(MKDIR) $(DESTDIR)/usr/share/applnk/Development
-	$(CP) fluid.desktop  $(DESTDIR)/usr/share/applnk/Development
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applnk/Development
+	$(INSTALL_DATA) fluid.desktop  $(DESTDIR)/usr/share/applnk/Development
 	for size in 16 32 48 64 128; do \
 		if test ! -d $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; then \
-			$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; \
+			$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; \
 		fi; \
-		$(CP) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps/fluid.png; \
+		$(INSTALL_DATA) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps/fluid.png; \
 	done
-	-$(MKDIR) $(DESTDIR)/usr/share/mimelnk/application
-	$(CP) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/mimelnk/application
+	$(INSTALL_DATA) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
 
 install-osx:
 	echo Installing Fluid in $(DESTDIR)/Applications...
-	-$(MKDIR) $(DESTDIR)/Applications/fluid.app
-	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents
-	$(CP) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
-	$(CP) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
-	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
-	-$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents
+	$(INSTALL_DATA) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
+	$(INSTALL_DATA) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
+	$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
 	$(LN) $(bindir)/fluid $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
-	-$(MKDIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
-	$(CP) fluid.app/Contents/Resources/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
+	$(INSTALL_DATA) fluid.app/Contents/Resources/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
 
 uninstall:
 	$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)

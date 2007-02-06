@@ -3,7 +3,7 @@
 #
 # PNG library makefile for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1997-2005 by Easy Software Products.
+# Copyright 1997-2007 by Easy Software Products.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -58,13 +58,13 @@ clean:
 
 install: $(LIBPNG)
 	echo "Installing libfltk_png$(LIBEXT) in $(libdir)..."
-	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libfltk_png$(LIBEXT)
-	$(CP) $(LIBPNG) $(libdir)
-	$(RANLIB) $(libdir)/libfltk_png$(LIBEXT)
+	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
+	$(INSTALL_LIB) libfltk_png$(LIBEXT) $(DESTDIR)$(libdir)
+	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
 	echo "Installing png headers in $(includedir)/FL/images..."
-	-$(MKDIR) $(includedir)/FL/images
-	$(CP) png.h pngconf.h $(includedir)/FL/images
+	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) png.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) pngconf.h $(DESTDIR)$(includedir)/FL/images
 
 
 #
@@ -73,10 +73,10 @@ install: $(LIBPNG)
 
 uninstall:
 	echo "Uninstalling libfltk_png$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libfltk_png$(LIBEXT)
+	$(RM) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
 	echo "Uninstalling png headers in $(includedir)/FL/images..."
-	$(RM) $(includedir)/FL/images/png.h
-	$(RM) $(includedir)/FL/images/pngconf.h
+	$(RM) $(DESTDIR)$(includedir)/FL/images/png.h
+	$(RM) $(DESTDIR)$(includedir)/FL/images/pngconf.h
 
 
 #

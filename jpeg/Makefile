@@ -64,15 +64,17 @@ clean:
 # Install everything...
 #
 
-install:
-	echo "Installing libfltk_jpeg$(LIBEXT) in $(libdir)..."
-	-$(MKDIR) $(libdir)
-	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
-	$(CP) $(LIBJPEG) $(libdir)
-	$(RANLIB) $(libdir)/libfltk_jpeg$(LIBEXT)
+install:	$(LIBJPEG)
+	echo "Installing $(LIBJPEG) in $(libdir)..."
+	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
+	$(INSTALL_LIB) $(LIBJPEG) $(DESTDIR)$(libdir)
+	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_jpeg$(LIBEXT)
 	echo "Installing jpeg headers in $(includedir)/FL/images..."
-	-$(MKDIR) $(includedir)/FL/images
-	$(CP) jconfig.h jerror.h jmorecfg.h jpeglib.h $(includedir)/FL/images
+	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) jconfig.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) jerror.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) jmorecfg.h $(DESTDIR)$(includedir)/FL/images
+	$(INSTALL_DATA) jpeglib.h $(DESTDIR)$(includedir)/FL/images
 
 
 #

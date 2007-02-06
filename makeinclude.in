@@ -3,7 +3,7 @@
 #
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -37,11 +37,9 @@ docdir		= $(datadir)/doc/fltk
 VPATH		= @srcdir@
 
 # programs we use...
-CHMOD		= chmod
-CP		= cp
 HTMLDOC		= @HTMLDOC@
+INSTALL		= @INSTALL@
 LN		= ln -s
-MKDIR		= mkdir -p
 NROFF		= @NROFF@
 RM		= rm -f
 RMDIR		= rm -rf
@@ -101,13 +99,21 @@ THREADS		= @THREADS@
 # Name of FLUID executable we install
 FLUID		= @FLUID@$(EXEEXT)
 
-# Possible steps after linking...
-POSTBUILD	= @POSTBUILD@
-
 # Man page extensions...
 CAT1EXT		= @CAT1EXT@
 CAT3EXT		= @CAT3EXT@
 CAT6EXT		= @CAT6EXT@
+
+#
+# Installation programs...
+#
+
+INSTALL_BIN	= $(INSTALL) -m 755
+INSTALL_DATA	= $(INSTALL) -m 644
+INSTALL_DIR	= $(INSTALL) -d
+INSTALL_LIB	= $(INSTALL) -m 755
+INSTALL_MAN	= $(INSTALL) -m 644
+INSTALL_SCRIPT	= $(INSTALL) -m 755
 
 # Additional GUI install/uninstall targets...
 INSTALL_DESKTOP	= @INSTALL_DESKTOP@
@@ -122,7 +128,6 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 .o$(EXEEXT):
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
-	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
 	echo Compiling $<...

@@ -3,7 +3,7 @@
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -190,39 +190,41 @@ clean:
 
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
-	-$(MKDIR) $(DESTDIR)$(docdir)/examples
-	$(CP) *.h *.cxx *.fl demo.menu $(DESTDIR)$(docdir)/examples
-	-$(MKDIR) $(DESTDIR)$(docdir)/examples/pixmaps
-	$(CP) pixmaps/*.xbm pixmaps/*.xpm $(DESTDIR)$(docdir)/examples/pixmaps
-	$(CHMOD) 644 $(DESTDIR)$(docdir)/examples/*.*
+	-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples
+	for file in *.h *.cxx *.fl demo.menu; do \
+		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples; \
+	done
+	-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples/pixmaps
+	for file in pixmaps/*.xbm pixmaps/*.xpm; do \
+		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples/pixmaps; \
+	done
 
 install-linux:
 	echo Installing games to $(DESTDIR)$(bindir)...
-	-$(MKDIR) $(DESTDIR)$(bindir)
-	-$(MKDIR) $(DESTDIR)/usr/share/applnk/Games
-	-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps
-	-$(MKDIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
+	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applnk/Games
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
 	for game in blocks checkers sudoku; do \
-		$(CP) $$game $(DESTDIR)$(bindir); \
-		$(CHMOD) 755 $(DESTDIR)$(bindir)/$$game; \
-		$(CP) desktop/$$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
-		$(CP) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
-		$(CP) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
+		$(INSTALL_BIN) $$game $(DESTDIR)$(bindir); \
+		$(INSTALL_DATA) desktop/$$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
+		$(INSTALL_DATA) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
+		$(INSTALL_DATA) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
 	done
 
 install-osx:
 	echo Installing games in $(DESTDIR)/Applications...
 	for game in blocks checkers sudoku; do \
 		if test ! -d $(DESTDIR)/Applications/$$game.app; then \
-			$(MKDIR) $(DESTDIR)/Applications/$$game.app; \
-			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents; \
-			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
-			$(MKDIR) $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app; \
+			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents; \
+			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
+			$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
 		fi; \
-		$(CP) $$game.app/Contents/Info.plist $(DESTDIR)/Applications/$$game.app/Contents; \
-		$(CP) $$game.app/Contents/PkgInfo $(DESTDIR)/Applications/$$game.app/Contents; \
-		$(CP) $$game.app/Contents/MacOS/$$game $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
-		$(CP) $$game.app/Contents/Resources/$$game.icns $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
+		$(INSTALL_DATA) $$game.app/Contents/Info.plist $(DESTDIR)/Applications/$$game.app/Contents; \
+		$(INSTALL_DATA) $$game.app/Contents/PkgInfo $(DESTDIR)/Applications/$$game.app/Contents; \
+		$(INSTALL_BIN) $$game.app/Contents/MacOS/$$game $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \
+		$(INSTALL_DATA) $$game.app/Contents/Resources/$$game.icns $(DESTDIR)/Applications/$$game.app/Contents/Resources; \
 	done
 
 uninstall:
@@ -240,9 +242,9 @@ uninstall-linux:
 
 uninstall-osx:
 	echo Removing games from $(DESTDIR)/Applications...
-	$(RM) -r $(DESTDIR)/Applications/blocks.app
-	$(RM) -r $(DESTDIR)/Applications/checkers.app
-	$(RM) -r $(DESTDIR)/Applications/sudoku.app
+	$(RMDIR) $(DESTDIR)/Applications/blocks.app
+	$(RMDIR) $(DESTDIR)/Applications/checkers.app
+	$(RMDIR) $(DESTDIR)/Applications/sudoku.app
 
 # FLUID file rules
 .fl.cxx .fl.h:	../fluid/fluid$(EXEEXT)
@@ -275,20 +277,17 @@ blocks$(EXEEXT): blocks.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)
 	$(CP) blocks$(EXEEXT) blocks.app/Contents/MacOS
-	$(POSTBUILD) $@ ../FL/mac.r
 
 checkers$(EXEEXT): checkers.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
 	$(CP) checkers$(EXEEXT) checkers.app/Contents/MacOS
-	$(POSTBUILD) $@ ../FL/mac.r
 
 clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ colbrowser.o $(LINKFLTKFORMS) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 color_chooser$(EXEEXT): color_chooser.o
 
@@ -299,14 +298,12 @@ curve$(EXEEXT): curve.o
 demo$(EXEEXT): demo.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 doublebuffer$(EXEEXT): doublebuffer.o
 
 editor$(EXEEXT): editor.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) editor.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 fast_slow$(EXEEXT): fast_slow.o
 fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)
@@ -314,21 +311,18 @@ fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)
 file_chooser$(EXEEXT): file_chooser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 fonts$(EXEEXT): fonts.o
 
 forms$(EXEEXT): forms.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ forms.o $(LINKFLTKFORMS) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 hello$(EXEEXT): hello.o
 
 help$(EXEEXT): help.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 iconize$(EXEEXT): iconize.o
 
@@ -344,14 +338,12 @@ input_choice$(EXEEXT): input_choice.o
 keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 keyboard_ui.o:	keyboard_ui.h
 keyboard_ui.cxx:	keyboard_ui.fl ../fluid/fluid$(EXEEXT)
 
 label$(EXEEXT): label.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ label.o $(LINKFLTKFORMS) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 line_style$(EXEEXT): line_style.o
 
@@ -360,7 +352,6 @@ list_visuals$(EXEEXT): list_visuals.o
 mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 mandelbrot_ui.o:	mandelbrot_ui.h
 mandelbrot_ui.cxx:	mandelbrot_ui.fl ../fluid/fluid$(EXEEXT)
 
@@ -375,7 +366,6 @@ navigation$(EXEEXT): navigation.o
 output$(EXEEXT): output.o ../lib/$(FLLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ output.o $(LINKFLTKFORMS) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 overlay$(EXEEXT): overlay.o
 
@@ -386,7 +376,6 @@ pixmap$(EXEEXT): pixmap.o
 pixmap_browser$(EXEEXT): pixmap_browser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) pixmap_browser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 preferences$(EXEEXT):	preferences.o
 preferences.cxx:	preferences.fl ../fluid/fluid$(EXEEXT)
@@ -407,7 +396,6 @@ sudoku: sudoku.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 	$(CP) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
-	$(POSTBUILD) $@ ../FL/mac.r
 
 sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
@@ -440,7 +428,6 @@ CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ \
 		CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 CubeMain.o: CubeViewUI.h CubeView.h CubeViewUI.cxx
 CubeView.o: CubeView.h
 CubeViewUI.o:	CubeViewUI.cxx CubeViewUI.h
@@ -449,27 +436,21 @@ CubeViewUI.cxx:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
 cube$(EXEEXT): cube.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 fractals$(EXEEXT): fractals.o fracviewer.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ fractals.o fracviewer.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 fullscreen$(EXEEXT): fullscreen.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 glpuzzle$(EXEEXT): glpuzzle.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 
 #

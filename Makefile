@@ -38,8 +38,7 @@ all: makeinclude
 install: makeinclude
 	-mkdir -p $(DESTDIR)$(bindir)
 	$(RM) $(DESTDIR)$(bindir)/fltk-config
-	-cp fltk-config $(DESTDIR)$(bindir)
-	-chmod 755 $(DESTDIR)$(bindir)/fltk-config
+	$(INSTALL_SCRIPT) fltk-config $(DESTDIR)$(bindir)
 	for dir in FL $(DIRS); do\
 		echo "=== installing $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || exit 1;\

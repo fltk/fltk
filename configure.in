@@ -264,7 +264,7 @@ esac
 dnl Find commands...
 AC_PROG_CC
 AC_PROG_CXX
-dnl AC_PROG_INSTALL
+AC_PROG_INSTALL
 AC_PATH_PROG(NROFF,nroff)
 if test "x$NROFF" = "x:"; then
     AC_PATH_PROG(GROFF,groff)
