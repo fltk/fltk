@@ -5,7 +5,7 @@
 #
 # (EPM can be found at http://www.easysw.com/epm/)
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -28,7 +28,7 @@
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2006 by Bill Spitzak and others.
+%copyright 1998-2007 by Bill Spitzak and others.
 %vendor FLTK Development Team
 %license COPYING
 %readme README
@@ -114,7 +114,6 @@ f 0555 root sys $libdir/libfltk_gl.so.@FL_API_VERSION@ src/libfltk_gl.so.@FL_API
 %description dynamically linked applications.
 
 %system darwin
-f 0444 root sys $includedir/FL/mac.r FL/mac.r
 l 0444 root sys /usr/include/gcc/darwin/3.1/g++-v3/FL $includedir/FL
 
 d 0555 root sys /Applications/fluid.app -

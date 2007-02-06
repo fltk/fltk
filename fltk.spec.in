@@ -3,7 +3,7 @@
 #
 # RPM spec file for FLTK.
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -25,8 +25,8 @@
 #      http://www.fltk.org/str.php
 #
 
-%define version @VERSION@
-%define release @RELEASE@
+%define version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
+%define release 1
 %define prefix /usr
 
 Summary: Fast Light Tool Kit (FLTK)
@@ -62,7 +62,7 @@ Summary: FLTK Games
 Group: Games
 
 %description games
-Install fltk-games to play Block Attack!, checkers, or Sudoku on your computer.
+Install fltk-games to play Block Attack!, Checkers, or Sudoku on your computer.
 
 %prep
 %setup

@@ -4,7 +4,7 @@
 # 
 # FLTK configuration utility.
 #
-# Copyright 2000-2006 by Bill Spitzak and others.
+# Copyright 2000-2007 by Bill Spitzak and others.
 # Original version Copyright 2000 by James Dean Palmer
 # Adapted by Vincent Penne and Michael Sweet
 #
@@ -270,11 +270,6 @@ if test -n "$compile"; then
     echo $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
     $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
 fi
-
-#if test -n "$post" -a "$POSTBUILD" != ":"; then
-#    echo $POSTBUILD $post $includedir/FL/mac.r
-#    $POSTBUILD $post $includedir/FL/mac.r
-#fi
 
 if test "$echo_cflags" = "yes"; then
     echo $includes $CFLAGS

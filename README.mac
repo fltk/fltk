@@ -1,4 +1,4 @@
-README.mac - 10/03/2002 - Building FLTK under MacOS X
+README.mac - 2007-02-06 - Building FLTK under MacOS X
 -----------------------------------------------------
 
 CONTENTS
@@ -29,49 +29,6 @@ HOW TO BUILD USING GCC (MacOS X)
     BSD UNIX, the normal UNIX build procedure as described in
     'README' applies.
 
-    A 'resource fork' will be attached to applications to make
-    them visible in the Finder. The default resource file is
-    "FL/mac.r".
-
-    The "fltk-config" script can be used to attach the FLTK
-    resource fork to an executable using the "--post" option:
-
-        fltk-config --post foo
-	
-    where "foo" is the name of the executable.
-
-    To attach your own resource fork to your FLTK program, run
-    the "Rez" command:
-
-        Rez -t APPL foo.r -o foo
-
-
-SCRIPTS
-
-    When using Finder applications on source files (e.g.
-    FileMerge), I found the following script very useful. It adds
-    resource forks to all text files:
-
-	#!/bin/tcsh
-	setenv SET_MAC_TYPE "SetFile -t TEXT -c ttxt "
-	setenv F1MAC_N 7
-	echo "Setting Mac File Types. Please wait..."
-	echo "[1/"$F1MAC_N"]"
-	find . -name '*.H' -exec $SET_MAC_TYPE {} \;
-	echo "[2/"$F1MAC_N"]"
-	find . -name '*.h' -exec $SET_MAC_TYPE {} \;
-	echo "[3/"$F1MAC_N"]"
-	find . -name '*.c' -exec $SET_MAC_TYPE {} \;
-	echo "[4/"$F1MAC_N"]"
-	find . -name '*.cxx' -exec $SET_MAC_TYPE {} \;
-	echo "[5/"$F1MAC_N"]"
-	find . -name '*.fl' -exec $SET_MAC_TYPE {} \;
-	echo "[6/"$F1MAC_N"]"
-	find . -name 'make*' -exec $SET_MAC_TYPE {} \;
-	echo "[7/"$F1MAC_N"]"
-	find . -name 'Make*' -exec $SET_MAC_TYPE {} \;
-	echo "done."
-
 
 KNOWN MacFLTK BUGS
 
@@ -80,9 +37,7 @@ KNOWN MacFLTK BUGS
 
 	- Line styles are not fully implemented.
 	- Sub-sub-subwindow not tested.
-	- Image transparency is implemented as "screen-door" only
 	- The 'shiny' demo needs work (flush/aglFlush).
-	- OpenGL subwindow during window resize changes position
 
 
 TEST SUITE STATUS
