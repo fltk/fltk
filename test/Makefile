@@ -276,12 +276,12 @@ buttons$(EXEEXT): buttons.o
 blocks$(EXEEXT): blocks.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)
-	$(CP) blocks$(EXEEXT) blocks.app/Contents/MacOS
+	$(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
 
 checkers$(EXEEXT): checkers.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
-	$(CP) checkers$(EXEEXT) checkers.app/Contents/MacOS
+	$(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
 
 clock$(EXEEXT): clock.o
 
@@ -395,7 +395,7 @@ subwindow$(EXEEXT): subwindow.o
 sudoku: sudoku.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
-	$(CP) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
+	$(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
 
 sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
