@@ -1,774 +1,403 @@
-.TH LIBPNG 3 "September 12, 2004"
+.TH LIBPNG 3 "January 31, 2007"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.2.7
+libpng \- Portable Network Graphics (PNG) Reference Library 1.2.16
 .SH SYNOPSIS
-\fI\fB
-
-\fB#include <png.h>\fP
-
-\fI\fB
+\fB
+#include <png.h>\fP
 
 \fBpng_uint_32 png_access_version_number \fI(void\fP\fB);\fP
 
-\fI\fB
-
 \fBint png_check_sig (png_bytep \fP\fIsig\fP\fB, int \fInum\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_chunk_error (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fIerror\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_chunk_warning (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fImessage\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_convert_from_struct_tm (png_timep \fP\fIptime\fP\fB, struct tm FAR * \fIttime\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_convert_from_time_t (png_timep \fP\fIptime\fP\fB, time_t \fIttime\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_charp png_convert_to_rfc1123 (png_structp \fP\fIpng_ptr\fP\fB, png_timep \fIptime\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_infop png_create_info_struct (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_structp png_create_read_struct (png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fIwarn_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_structp png_create_read_struct_2(png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fP\fIwarn_fn\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_structp png_create_write_struct (png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fIwarn_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_structp png_create_write_struct_2(png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fP\fIwarn_fn\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
-
-\fI\fB
 
 \fBint png_debug(int \fP\fIlevel\fP\fB, png_const_charp \fImessage\fP\fB);\fP
 
-\fI\fB
-
 \fBint png_debug1(int \fP\fIlevel\fP\fB, png_const_charp \fP\fImessage\fP\fB, \fIp1\fP\fB);\fP
-
-\fI\fB
 
 \fBint png_debug2(int \fP\fIlevel\fP\fB, png_const_charp \fP\fImessage\fP\fB, \fP\fIp1\fP\fB, \fIp2\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_destroy_info_struct (png_structp \fP\fIpng_ptr\fP\fB, png_infopp \fIinfo_ptr_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_destroy_read_struct (png_structpp \fP\fIpng_ptr_ptr\fP\fB, png_infopp \fP\fIinfo_ptr_ptr\fP\fB, png_infopp \fIend_info_ptr_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_destroy_write_struct (png_structpp \fP\fIpng_ptr_ptr\fP\fB, png_infopp \fIinfo_ptr_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_error (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fIerror\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_free (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fIptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_free_chunk_list (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_free_default(png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fIptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_free_data (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fInum\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_byte png_get_bit_depth (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_bKGD (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_16p \fI*background\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_byte png_get_channels (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fP\fI*white_x\fP\fB, double \fP\fI*white_y\fP\fB, double \fP\fI*red_x\fP\fB, double \fP\fI*red_y\fP\fB, double \fP\fI*green_x\fP\fB, double \fP\fI*green_y\fP\fB, double \fP\fI*blue_x\fP\fB, double \fI*blue_y\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_cHRM_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*white_x\fP\fB, png_uint_32 \fP\fI*white_y\fP\fB, png_uint_32 \fP\fI*red_x\fP\fB, png_uint_32 \fP\fI*red_y\fP\fB, png_uint_32 \fP\fI*green_x\fP\fB, png_uint_32 \fP\fI*green_y\fP\fB, png_uint_32 \fP\fI*blue_x\fP\fB, png_uint_32 \fI*blue_y\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_byte png_get_color_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_byte png_get_compression_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_byte png_get_copyright (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_get_error_ptr (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_byte png_get_filter_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_gAMA (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fI*file_gamma\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_gAMA_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fI*int_file_gamma\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_byte png_get_header_ver (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_byte png_get_header_version (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_hIST (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_16p \fI*hist\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_iCCP (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charpp \fP\fIname\fP\fB, int \fP\fI*compression_type\fP\fB, png_charpp \fP\fIprofile\fP\fB, png_uint_32 \fI*proflen\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_IHDR (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*width\fP\fB, png_uint_32 \fP\fI*height\fP\fB, int \fP\fI*bit_depth\fP\fB, int \fP\fI*color_type\fP\fB, int \fP\fI*interlace_type\fP\fB, int \fP\fI*compression_type\fP\fB, int \fI*filter_type\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_image_height (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_image_width (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
+\fB#if !defined(PNG_1_0_X) png_int_32 png_get_int_32 (png_bytep buf); \fI#endif
 
 \fBpng_byte png_get_interlace_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_get_io_ptr (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_byte png_get_libpng_ver (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_get_mem_ptr(png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_oFFs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*offset_x\fP\fB, png_uint_32 \fP\fI*offset_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_pCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fI*purpose\fP\fB, png_int_32 \fP\fI*X0\fP\fB, png_int_32 \fP\fI*X1\fP\fB, int \fP\fI*type\fP\fB, int \fP\fI*nparams\fP\fB, png_charp \fP\fI*units\fP\fB, png_charpp \fI*params\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_pHYs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*res_x\fP\fB, png_uint_32 \fP\fI*res_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
-\fI\fB
-
 \fBfloat png_get_pixel_aspect_ratio (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_get_progressive_ptr (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_PLTE (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_colorp \fP\fI*palette\fP\fB, int \fI*num_palette\fP\fB);\fP
 
-\fI\fB
-
-\fBpng_byte png_get_rgb_to_gray_status (png_structp \fIpng_ptr)
-
-\fBpng_uint_32 png_get_rowbytes (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
+\fBpng_byte png_get_rgb_to_gray_status (png_structp png_ptr) png_uint_32 png_get_rowbytes (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fBpng_bytepp png_get_rows (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_sBIT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_8p \fI*sig_bit\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_bytep png_get_signature (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_sPLT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_spalette_p \fI*splt_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_sRGB (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fI*intent\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_text (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_textp \fP\fI*text_ptr\fP\fB, int \fI*num_text\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_tIME (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_timep \fI*mod_time\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_tRNS (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fI*trans\fP\fB, int \fP\fI*num_trans\fP\fB, png_color_16p \fI*trans_values\fP\fB);\fP
 
-\fI\fB
+\fB#if !defined(PNG_1_0_X) png_uint_16 png_get_uint_16 (png_bytep \fIbuf\fP\fB);\fP
+
+\fBpng_uint_32 png_get_uint_31 (png_bytep \fIbuf\fP\fB);\fP
+
+\fBpng_uint_32 png_get_uint_32 (png_bytep buf); \fI#endif
 
 \fBpng_uint_32 png_get_unknown_chunks (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_unknown_chunkpp \fIunknowns\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_get_user_chunk_ptr (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_user_height_max( png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_get_user_transform_ptr (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_user_width_max (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_valid (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fIflag\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_int_32 png_get_x_offset_microns (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_int_32 png_get_x_offset_pixels (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_x_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_int_32 png_get_y_offset_microns (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_int_32 png_get_y_offset_pixels (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_get_y_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_uint_32 png_get_compression_buffer_size (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBint png_handle_as_unknown (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fIchunk_name\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_init_io (png_structp \fP\fIpng_ptr\fP\fB, FILE \fI*fp\fP\fB);\fP
 
-\fI\fB
-
 \fBDEPRECATED: void png_info_init (png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBDEPRECATED: void png_info_init_2 (png_infopp \fP\fIptr_ptr\fP\fB, png_size_t \fIpng_info_struct_size\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_voidp png_malloc (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_voidp png_malloc_default(png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
 
-\fI\fB
-
 \fBvoidp png_memcpy (png_voidp \fP\fIs1\fP\fB, png_voidp \fP\fIs2\fP\fB, png_size_t \fIsize\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_voidp png_memcpy_check (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIs1\fP\fB, png_voidp \fP\fIs2\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
 
-\fI\fB
-
 \fBvoidp png_memset (png_voidp \fP\fIs1\fP\fB, int \fP\fIvalue\fP\fB, png_size_t \fIsize\fP\fB);\fP
-
-\fI\fB
 
 \fBpng_voidp png_memset_check (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIs1\fP\fB, int \fP\fIvalue\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
 
-\fI\fB
-
 \fBDEPRECATED: void png_permit_empty_plte (png_structp \fP\fIpng_ptr\fP\fB, int \fIempty_plte_permitted\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_process_data (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fIbuffer\fP\fB, png_size_t \fIbuffer_size\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_progressive_combine_row (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIold_row\fP\fB, png_bytep \fInew_row\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_read_destroy (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_infop \fIend_info_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_read_end (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_read_image (png_structp \fP\fIpng_ptr\fP\fB, png_bytepp \fIimage\fP\fB);\fP
 
-\fI\fB
-
 \fBDEPRECATED: void png_read_init (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBDEPRECATED: void png_read_init_2 (png_structpp \fP\fIptr_ptr\fP\fB, png_const_charp \fP\fIuser_png_ver\fP\fB, png_size_t \fP\fIpng_struct_size\fP\fB, png_size_t \fIpng_info_size\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_read_info (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_read_png (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fItransforms\fP\fB, png_voidp \fIparams\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_read_row (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIrow\fP\fB, png_bytep \fIdisplay_row\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_read_rows (png_structp \fP\fIpng_ptr\fP\fB, png_bytepp \fP\fIrow\fP\fB, png_bytepp \fP\fIdisplay_row\fP\fB, png_uint_32 \fInum_rows\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_read_update_info (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
+\fB#if !defined(PNG_1_0_X) png_save_int_32 (png_bytep \fP\fIbuf\fP\fB, png_int_32 \fIi\fP\fB);\fP
 
-\fB#if \fI!defined(PNG_1_0_X)
+\fBvoid png_save_uint_16 (png_bytep \fP\fIbuf\fP\fB, unsigned int \fIi\fP\fB);\fP
 
-\fBvoid png_set_add_alpha (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIfiller\fP\fB, int \fIflags\fP\fB);\fP
+\fBvoid png_save_uint_32 (png_bytep \fP\fIbuf\fP\fB, png_uint_32 \fIi\fP\fB);\fP
 
-\fI\fB#endif
-
-\fI\fB
+\fBvoid png_set_add_alpha (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIfiller\fP\fB, int flags); \fI#endif
 
 \fBvoid png_set_background (png_structp \fP\fIpng_ptr\fP\fB, png_color_16p \fP\fIbackground_color\fP\fB, int \fP\fIbackground_gamma_code\fP\fB, int \fP\fIneed_expand\fP\fB, double \fIbackground_gamma\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_bgr (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_bKGD (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_16p \fIbackground\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fP\fIwhite_x\fP\fB, double \fP\fIwhite_y\fP\fB, double \fP\fIred_x\fP\fB, double \fP\fIred_y\fP\fB, double \fP\fIgreen_x\fP\fB, double \fP\fIgreen_y\fP\fB, double \fP\fIblue_x\fP\fB, double \fIblue_y\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_cHRM_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fIwhite_x\fP\fB, png_uint_32 \fP\fIwhite_y\fP\fB, png_uint_32 \fP\fIred_x\fP\fB, png_uint_32 \fP\fIred_y\fP\fB, png_uint_32 \fP\fIgreen_x\fP\fB, png_uint_32 \fP\fIgreen_y\fP\fB, png_uint_32 \fP\fIblue_x\fP\fB, png_uint_32 \fIblue_y\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_compression_level (png_structp \fP\fIpng_ptr\fP\fB, int \fIlevel\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_compression_mem_level (png_structp \fP\fIpng_ptr\fP\fB, int \fImem_level\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_compression_method (png_structp \fP\fIpng_ptr\fP\fB, int \fImethod\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_compression_strategy (png_structp \fP\fIpng_ptr\fP\fB, int \fIstrategy\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_compression_window_bits (png_structp \fP\fIpng_ptr\fP\fB, int \fIwindow_bits\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_crc_action (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fIcrit_action\fP\fB, int \fIancil_action\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_dither (png_structp \fP\fIpng_ptr\fP\fB, png_colorp \fP\fIpalette\fP\fB, int \fP\fInum_palette\fP\fB, int \fP\fImaximum_colors\fP\fB, png_uint_16p \fP\fIhistogram\fP\fB, int \fIfull_dither\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_error_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fIwarning_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_expand (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
+\fBvoid png_set_expand_gray_1_2_4_to_8(png_structp \fIpng_ptr\fP\fB);\fP
 
 \fBvoid png_set_filler (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIfiller\fP\fB, int \fIflags\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_filter (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fImethod\fP\fB, int \fIfilters\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_filter_heuristics (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fIheuristic_method\fP\fB, int \fP\fInum_weights\fP\fB, png_doublep \fP\fIfilter_weights\fP\fB, png_doublep \fIfilter_costs\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_flush (png_structp \fP\fIpng_ptr\fP\fB, int \fInrows\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_gamma (png_structp \fP\fIpng_ptr\fP\fB, double \fP\fIscreen_gamma\fP\fB, double \fIdefault_file_gamma\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_gAMA (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fIfile_gamma\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_gAMA_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fIfile_gamma\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_gray_1_2_4_to_8(png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_gray_to_rgb (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_hIST (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_16p \fIhist\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_iCCP (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fIname\fP\fB, int \fP\fIcompression_type\fP\fB, png_charp \fP\fIprofile\fP\fB, png_uint_32 \fIproflen\fP\fB);\fP
 
-\fI\fB
-
 \fBint png_set_interlace_handling (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_invalid (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fImask\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_invert_alpha (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_invert_mono (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_IHDR (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fIwidth\fP\fB, png_uint_32 \fP\fIheight\fP\fB, int \fP\fIbit_depth\fP\fB, int \fP\fIcolor_type\fP\fB, int \fP\fIinterlace_type\fP\fB, int \fP\fIcompression_type\fP\fB, int \fIfilter_type\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_keep_unknown_chunks (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fIkeep\fP\fB, png_bytep \fP\fIchunk_list\fP\fB, int \fInum_chunks\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_mem_fn(png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_oFFs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fIoffset_x\fP\fB, png_uint_32 \fP\fIoffset_y\fP\fB, int \fIunit_type\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_packing (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_packswap (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_palette_to_rgb(png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_pCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fIpurpose\fP\fB, png_int_32 \fP\fIX0\fP\fB, png_int_32 \fP\fIX1\fP\fB, int \fP\fItype\fP\fB, int \fP\fInparams\fP\fB, png_charp \fP\fIunits\fP\fB, png_charpp \fIparams\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_pHYs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fIres_x\fP\fB, png_uint_32 \fP\fIres_y\fP\fB, int \fIunit_type\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_progressive_read_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIprogressive_ptr\fP\fB, png_progressive_info_ptr \fP\fIinfo_fn\fP\fB, png_progressive_row_ptr \fP\fIrow_fn\fP\fB, png_progressive_end_ptr \fIend_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_PLTE (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_colorp \fP\fIpalette\fP\fB, int \fInum_palette\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_read_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIio_ptr\fP\fB, png_rw_ptr \fIread_data_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_read_status_fn (png_structp \fP\fIpng_ptr\fP\fB, png_read_status_ptr \fIread_row_fn\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_read_user_transform_fn (png_structp \fP\fIpng_ptr\fP\fB, png_user_transform_ptr \fIread_user_transform_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_rgb_to_gray (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fIerror_action\fP\fB, double \fP\fIred\fP\fB, double \fIgreen\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_rgb_to_gray_fixed (png_structp \fP\fIpng_ptr\fP\fB, int error_action png_fixed_point \fP\fIred\fP\fB, png_fixed_point \fIgreen\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_rows (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytepp \fIrow_pointers\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_sBIT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_8p \fIsig_bit\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_sCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fIunit\fP\fB, double \fP\fIwidth\fP\fB, double \fIheight\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_shift (png_structp \fP\fIpng_ptr\fP\fB, png_color_8p \fItrue_bits\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_sig_bytes (png_structp \fP\fIpng_ptr\fP\fB, int \fInum_bytes\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_sPLT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_spalette_p \fP\fIsplt_ptr\fP\fB, int \fInum_spalettes\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_sRGB (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fIintent\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_sRGB_gAMA_and_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fIintent\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_strip_16 (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_strip_alpha (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_swap (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_swap_alpha (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_text (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_textp \fP\fItext_ptr\fP\fB, int \fInum_text\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_tIME (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_timep \fImod_time\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_tRNS (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fItrans\fP\fB, int \fP\fInum_trans\fP\fB, png_color_16p \fItrans_values\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_tRNS_to_alpha(png_structp \fIpng_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBpng_uint_32 png_set_unknown_chunks (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_unknown_chunkp \fP\fIunknowns\fP\fB, int \fP\fInum\fP\fB, int \fIlocation\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_unknown_chunk_location(png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIchunk\fP\fB, int \fIlocation\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_read_user_chunk_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIuser_chunk_ptr\fP\fB, png_user_chunk_ptr \fIread_user_chunk_fn\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_user_limits (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIuser_width_max\fP\fB, png_uint_32 \fIuser_height_max\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_user_transform_info (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIuser_transform_ptr\fP\fB, int \fP\fIuser_transform_depth\fP\fB, int \fIuser_transform_channels\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_write_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIio_ptr\fP\fB, png_rw_ptr \fP\fIwrite_data_fn\fP\fB, png_flush_ptr \fIoutput_flush_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_write_status_fn (png_structp \fP\fIpng_ptr\fP\fB, png_write_status_ptr \fIwrite_row_fn\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_set_write_user_transform_fn (png_structp \fP\fIpng_ptr\fP\fB, png_user_transform_ptr \fIwrite_user_transform_fn\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_set_compression_buffer_size(png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
-
-\fI\fB
 
 \fBint png_sig_cmp (png_bytep \fP\fIsig\fP\fB, png_size_t \fP\fIstart\fP\fB, png_size_t \fInum_to_check\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_start_read_image (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_warning (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fImessage\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_chunk (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIchunk_name\fP\fB, png_bytep \fP\fIdata\fP\fB, png_size_t \fIlength\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_write_chunk_data (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIdata\fP\fB, png_size_t \fIlength\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_chunk_end (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_write_chunk_start (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIchunk_name\fP\fB, png_uint_32 \fIlength\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_destroy (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_write_end (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_flush (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_write_image (png_structp \fP\fIpng_ptr\fP\fB, png_bytepp \fIimage\fP\fB);\fP
 
-\fI\fB
-
 \fBDEPRECATED: void png_write_init (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBDEPRECATED: void png_write_init_2 (png_structpp \fP\fIptr_ptr\fP\fB, png_const_charp \fP\fIuser_png_ver\fP\fB, png_size_t \fP\fIpng_struct_size\fP\fB, png_size_t \fIpng_info_size\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_info (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_write_info_before_PLTE (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_png (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fItransforms\fP\fB, png_voidp \fIparams\fP\fB);\fP
-
-\fI\fB
 
 \fBvoid png_write_row (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fIrow\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_write_rows (png_structp \fP\fIpng_ptr\fP\fB, png_bytepp \fP\fIrow\fP\fB, png_uint_32 \fInum_rows\fP\fB);\fP
-
-\fI\fB
 
 \fBvoidpf png_zalloc (voidpf \fP\fIpng_ptr\fP\fB, uInt \fP\fIitems\fP\fB, uInt \fIsize\fP\fB);\fP
 
-\fI\fB
-
 \fBvoid png_zfree (voidpf \fP\fIpng_ptr\fP\fB, voidpf \fIptr\fP\fB);\fP
-
-\fI\fB
 
 .SH DESCRIPTION
 The
@@ -781,10 +410,10 @@ Following is a copy of the libpng.txt file that accompanies libpng.
 .SH LIBPNG.TXT
 libpng.txt - A description on how to use and modify libpng
 
- libpng version 1.2.7 - September 12, 2004
+ libpng version 1.2.16 - January 31, 2007
  Updated and distributed by Glenn Randers-Pehrson
- <glennrp@users.sourceforge.net>
- Copyright (c) 1998-2004 Glenn Randers-Pehrson
+ <glennrp at users.sourceforge.net>
+ Copyright (c) 1998-2005 Glenn Randers-Pehrson
  For conditions of distribution and use, see copyright
  notice in png.h.
 
@@ -1173,7 +802,7 @@ dithering, and setting filler.)  If this is the case, simply do this:
 
     png_read_png(png_ptr, info_ptr, png_transforms, NULL)
 
-where png_transforms is an integer containing the logical OR of
+where png_transforms is an integer containing the bitwise OR of
 some set of transformation flags.  This call is equivalent to png_read_info(),
 followed the set of transformations indicated by the transform mask,
 then png_read_image(), and finally png_read_end().
@@ -1552,9 +1181,10 @@ in RGB RGB RGB format unless png_set_filler() or png_set_add_alpha()
 is called to insert filler bytes, either before or after each RGB triplet.
 16-bit RGB data will be returned RRGGBB RRGGBB, with the most significant
 byte of the color value first, unless png_set_strip_16() is called to
-transform it to regular RGB RGB triplets, or png_set_filler|add alpha()
-is called to insert filler bytes, either before or after each RRGGBB
-triplet.  Similarly, 8-bit or 16-bit grayscale data can be modified with
+transform it to regular RGB RGB triplets, or png_set_filler() or
+png_set_add alpha() is called to insert filler bytes, either before or
+after each RRGGBB triplet.  Similarly, 8-bit or 16-bit grayscale data can
+be modified with
 png_set_filler(), png_set_add_alpha(), or png_set_strip_16().
 
 The following code transforms grayscale images of less than 8 to 8 bits,
@@ -1567,7 +1197,7 @@ viewing application that wishes to treat all images in the same way.
         png_set_palette_to_rgb(png_ptr);
 
     if (color_type == PNG_COLOR_TYPE_GRAY &&
-        bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
+        bit_depth < 8) png_set_expand_gray_1_2_4_to_8(png_ptr);
 
     if (png_get_valid(png_ptr, info_ptr,
         PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
@@ -1576,6 +1206,11 @@ These three functions are actually aliases for png_set_expand(), added
 in libpng version 1.0.4, with the function names expanded to improve code
 readability.  In some future version they may actually do different
 things.
+
+As of libpng version 1.2.9, png_set_expand_gray_1_2_4_to_8() was
+added.  It expands the sample depth without changing tRNS to alpha.
+At the same time, png_set_gray_1_2_4_to_8() was deprecated, and it
+will be removed from a future version.
 
 PNG can have files with 16 bits per channel.  If you only can handle
 8 bits per channel, this will strip the pixels down to 8 bit.
@@ -1648,7 +1283,7 @@ to do that, you can add a true alpha channel with
     png_set_add_alpha(png_ptr, filler, PNG_FILLER_AFTER);
 
 where "filler" contains the alpha value to assign to each pixel.
-This function became available in libpng-1.2.7.
+This function was added in libpng-1.2.7.
 
 If you are reading an image with an alpha channel, and you need the
 data as ARGB instead of the normal PNG format RGBA:
@@ -1703,7 +1338,7 @@ the normalized graylevel is computed:
 
 The default values approximate those recommended in the Charles
 Poynton's Color FAQ, <http://www.inforamp.net/~poynton/>
-Copyright (c) 1998-01-04 Charles Poynton poynton@inforamp.net
+Copyright (c) 1998-01-04 Charles Poynton <poynton at inforamp.net>
 
     Y = 0.212671 * R + 0.715160 * G + 0.072169 * B
 
@@ -2028,8 +1663,8 @@ the second parameter NULL.
 
 .SS Finishing a sequential read
 
-After you are finished reading the image through either the high- or
-low-level interfaces, you can finish reading the file.  If you are
+After you are finished reading the image through the
+low-level interface, you can finish reading the file.  If you are
 interested in comments or time, which may be stored either before or
 after the image data, you should pass the separate png_info struct if
 you want to keep the comments from before and after the image
@@ -2047,7 +1682,7 @@ point to libpng-allocated storage with the following function:
 
     png_free_data(png_ptr, info_ptr, mask, seq)
     mask - identifies data to be freed, a mask
-           containing the logical OR of one or
+           containing the bitwise OR of one or
            more of
              PNG_FREE_PLTE, PNG_FREE_TRNS,
              PNG_FREE_HIST, PNG_FREE_ICCP,
@@ -2109,7 +1744,7 @@ application instead of by libpng, you can use
 
     png_set_invalid(png_ptr, info_ptr, mask);
     mask - identifies the chunks to be made invalid,
-           containing the logical OR of one or
+           containing the bitwise OR of one or
            more of
              PNG_INFO_gAMA, PNG_INFO_sBIT,
              PNG_INFO_cHRM, PNG_INFO_PLTE,
@@ -2376,6 +2011,14 @@ Libpng section below.
 
     png_init_io(png_ptr, fp);
 
+If you are embedding your PNG into a datastream such as MNG, and don't
+want libpng to write the 8-byte signature, or if you have already
+written the signature in your application, use
+
+    png_set_sig_bytes(png_ptr, 8);
+
+to inform libpng that it should not write a signature.
+
 .SS Write callbacks
 
 At this point, you can set up a callback function that will be
@@ -2413,7 +2056,7 @@ types.
 
     /* turn on or off filtering, and/or choose
        specific filters.  You can use either a single
-       PNG_FILTER_VALUE_NAME or the logical OR of one
+       PNG_FILTER_VALUE_NAME or the bitwise OR of one
        or more PNG_FILTER_NAME masks. */
     png_set_filter(png_ptr, 0,
        PNG_FILTER_NONE  | PNG_FILTER_VALUE_NONE |
@@ -2786,7 +2429,7 @@ png_set_rows() to put image data in the info structure), simply do this:
 
     png_write_png(png_ptr, info_ptr, png_transforms, NULL)
 
-where png_transforms is an integer containing the logical OR of some set of
+where png_transforms is an integer containing the bitwise OR of some set of
 transformation flags.  This call is equivalent to png_write_info(),
 followed the set of transformations indicated by the transform mask,
 then png_write_image(), and finally png_write_end().
@@ -3046,7 +2689,7 @@ point to libpng-allocated storage with the following function:
 
     png_free_data(png_ptr, info_ptr, mask, seq)
     mask  - identifies data to be freed, a mask
-            containing the logical OR of one or
+            containing the bitwise OR of one or
             more of
               PNG_FREE_PLTE, PNG_FREE_TRNS,
               PNG_FREE_HIST, PNG_FREE_ICCP,
@@ -3239,7 +2882,7 @@ to use the "cexcept" facility (see http://cexcept.sourceforge.net).
 If you need to read or write custom chunks, you may need to get deeper
 into the libpng code.  The library now has mechanisms for storing
 and writing chunks of unknown type; you can even declare callbacks
-for custom chunks.  Hoewver, this may not be good enough if the
+for custom chunks.  However, this may not be good enough if the
 library code itself needs to know about interactions between your
 chunk and existing `intrinsic' chunks.
 
@@ -3590,7 +3233,7 @@ defined:
 #if defined(PNG_USE_PNGGCCRD) && defined(PNG_ASSEMBLER_CODE_SUPPORTED) \
   && defined(PNG_THREAD_UNSAFE_OK)
     /* Disable thread-unsafe features of pnggccrd */
-    if (png_access_version() >= 10200)
+    if (png_access_version_number() >= 10200)
     {
       png_uint_32 mmx_disable_mask = 0;
       png_uint_32 asm_flags;
@@ -3616,12 +3259,12 @@ Libpng can support some of these extensions.  To enable them, use the
 png_permit_mng_features() function:
 
    feature_set = png_permit_mng_features(png_ptr, mask)
-   mask is a png_uint_32 containing the logical OR of the
+   mask is a png_uint_32 containing the bitwise OR of the
         features you want to enable.  These include
         PNG_FLAG_MNG_EMPTY_PLTE
         PNG_FLAG_MNG_FILTER_64
         PNG_ALL_MNG_FEATURES
-   feature_set is a png_uint_32 that is the logical AND of
+   feature_set is a png_uint_32 that is the bitwise AND of
       your mask with the set of MNG features that is
       supported by the version of libpng that you are using.
 
@@ -3684,13 +3327,13 @@ application:
 
 .SH IX. Y2K Compliance in libpng
 
-September 12, 2004
+January 31, 2007
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.2.7 are Y2K compliant.  It is my belief that earlier
+upward through 1.2.16 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that
@@ -3834,10 +3477,44 @@ the first widely used release:
  1.0.16              10    10016  10.so.0.1.0.16
  1.2.6               13    10206  12.so.0.1.2.6
  1.2.7beta1-2        13    10207  12.so.0.1.2.7beta1-2
- 1.0.17rc1           10    10017  12.so.0.1.0.17rc1
+ 1.0.17rc1           10    10017  10.so.0.1.0.17rc1
  1.2.7rc1            13    10207  12.so.0.1.2.7rc1
- 1.0.17              10    10017  12.so.0.1.0.17
+ 1.0.17              10    10017  10.so.0.1.0.17
  1.2.7               13    10207  12.so.0.1.2.7
+ 1.2.8beta1-5        13    10208  12.so.0.1.2.8beta1-5
+ 1.0.18rc1-5         10    10018  10.so.0.1.0.18rc1-5
+ 1.2.8rc1-5          13    10208  12.so.0.1.2.8rc1-5
+ 1.0.18              10    10018  10.so.0.1.0.18
+ 1.2.8               13    10208  12.so.0.1.2.8
+ 1.2.9beta1-3        13    10209  12.so.0.1.2.9beta1-3
+ 1.2.9beta4-11       13    10209  12.so.0.9[.0]
+ 1.2.9rc1            13    10209  12.so.0.9[.0]
+ 1.2.9               13    10209  12.so.0.9[.0]
+ 1.2.10beta1-8       13    10210  12.so.0.10[.0]
+ 1.2.10rc1-3         13    10210  12.so.0.10[.0]
+ 1.2.10              13    10210  12.so.0.10[.0]
+ 1.2.11beta1-4       13    10211  12.so.0.11[.0]
+ 1.0.19rc1-5         10    10019  10.so.0.19[.0]
+ 1.2.11rc1-5         13    10211  12.so.0.11[.0]
+ 1.0.19              10    10019  10.so.0.19[.0]
+ 1.2.11              13    10211  12.so.0.11[.0]
+ 1.0.20              10    10020  10.so.0.20[.0]
+ 1.2.12              13    10212  12.so.0.12[.0]
+ 1.2.13beta1         13    10213  12.so.0.13[.0]
+ 1.0.21              10    10021  10.so.0.21[.0]
+ 1.2.13              13    10213  12.so.0.13[.0]
+ 1.2.14beta1-2       13    10214  12.so.0.14[.0]
+ 1.0.22rc1           10    10022  10.so.0.22[.0]
+ 1.2.14rc1           13    10214  12.so.0.14[.0]
+ 1.2.15beta1-6       13    10215  12.so.0.15[.0]
+ 1.0.23rc1-5         10    10023  10.so.0.23[.0]
+ 1.2.15rc1-5         13    10215  12.so.0.15[.0]
+ 1.0.23              10    10023  10.so.0.23[.0]
+ 1.2.15              13    10215  12.so.0.15[.0]
+ 1.2.16beta1-2       13    10216  12.so.0.16[.0]
+ 1.2.16rc1           13    10216  12.so.0.16[.0]
+ 1.0.24              10    10024  10.so.0.24[.0]
+ 1.2.16              13    10216  12.so.0.16[.0]
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -3885,7 +3562,7 @@ and this library, the specification takes precedence.
 
 .SH AUTHORS
 This man page: Glenn Randers-Pehrson
-<glennrp@users.sourceforge.net>
+<glennrp at users.sourceforge.net>
 
 The contributing authors would like to thank all those who helped
 with testing, bug fixes, and patience.  This wouldn't have been
@@ -3893,14 +3570,17 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.2.7 - September 12, 2004:
+Libpng version 1.2.16 - January 31, 2007:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
-Currently maintained by Glenn Randers-Pehrson (glennrp@users.sourceforge.net).
+Currently maintained by Glenn Randers-Pehrson (glennrp at users.sourceforge.net).
 
 Supported by the PNG development group
 .br
-png-implement@ccrc.wustl.edu (subscription required; write to
-majordomo@ccrc.wustl.edu with "subscribe png-implement" in the message).
+png-mng-implement at lists.sf.net
+(subscription required; visit
+png-mng-implement at lists.sourceforge.net (subscription required; visit
+https://lists.sourceforge.net/lists/listinfo/png-mng-implement
+to subscribe).
 
 .SH COPYRIGHT NOTICE, DISCLAIMER, and LICENSE:
 
@@ -3911,8 +3591,8 @@ included in the libpng distribution, the latter shall prevail.)
 If you modify libpng you may insert additional notices immediately following
 this sentence.
 
-libpng version 1.2.6, September 12, 2004, is
-Copyright (c) 2004 Glenn Randers-Pehrson, and is
+libpng versions 1.2.6, August 15, 2004, through 1.2.16, January 31, 2007, are
+Copyright (c) 2004-2006 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
 with the following individual added to the list of Contributing Authors
 
@@ -4009,8 +3689,8 @@ Libpng is OSI Certified Open Source Software.  OSI Certified Open Source is a
 certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
-glennrp@users.sourceforge.net
-September 12, 2004
+glennrp at users.sourceforge.net
+January 31, 2007
 
 .\" end of man page
 

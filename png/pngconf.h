@@ -1,9 +1,9 @@
 
 /* pngconf.h - machine configurable file for libpng
  *
- * libpng version 1.2.7 - September 12, 2004
+ * libpng version 1.2.16 - January 31, 2007
  * For conditions of distribution and use, see copyright notice in png.h
- * Copyright (c) 1998-2005 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2007 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  */
@@ -17,9 +17,63 @@
 #ifndef PNGCONF_H
 #define PNGCONF_H
 
+#define PNG_1_2_X
+
+/* 
+ * PNG_USER_CONFIG has to be defined on the compiler command line. This
+ * includes the resource compiler for Windows DLL configurations.
+ */
 #ifdef PNG_USER_CONFIG
+#  ifndef PNG_USER_PRIVATEBUILD
+#    define PNG_USER_PRIVATEBUILD
+#  endif
 #include "pngusr.h"
 #endif
+
+/* PNG_CONFIGURE_LIBPNG is set by the "configure" script. */
+#ifdef PNG_CONFIGURE_LIBPNG
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#endif
+
+/*
+ * Added at libpng-1.2.8
+ *  
+ * If you create a private DLL you need to define in "pngusr.h" the followings:
+ * #define PNG_USER_PRIVATEBUILD <Describes by whom and why this version of
+ *        the DLL was built>
+ *  e.g. #define PNG_USER_PRIVATEBUILD "Build by MyCompany for xyz reasons."
+ * #define PNG_USER_DLLFNAME_POSTFIX <two-letter postfix that serve to
+ *        distinguish your DLL from those of the official release. These
+ *        correspond to the trailing letters that come after the version
+ *        number and must match your private DLL name>
+ *  e.g. // private DLL "libpng13gx.dll"
+ *       #define PNG_USER_DLLFNAME_POSTFIX "gx"
+ * 
+ * The following macros are also at your disposal if you want to complete the 
+ * DLL VERSIONINFO structure.
+ * - PNG_USER_VERSIONINFO_COMMENTS
+ * - PNG_USER_VERSIONINFO_COMPANYNAME
+ * - PNG_USER_VERSIONINFO_LEGALTRADEMARKS
+ */
+
+#ifdef __STDC__
+#ifdef SPECIALBUILD
+#  pragma message("PNG_LIBPNG_SPECIALBUILD (and deprecated SPECIALBUILD)\
+ are now LIBPNG reserved macros. Use PNG_USER_PRIVATEBUILD instead.")
+#endif
+
+#ifdef PRIVATEBUILD
+# pragma message("PRIVATEBUILD is deprecated.\
+ Use PNG_USER_PRIVATEBUILD instead.")
+# define PNG_USER_PRIVATEBUILD PRIVATEBUILD
+#endif
+#endif /* __STDC__ */
+
+#ifndef PNG_VERSION_INFO_ONLY
+
+/* End of material added to libpng-1.2.8 */
 
 /* This is the size of the compression buffer, and thus the size of
  * an IDAT chunk.  Make this whatever size you feel is best for your
@@ -409,18 +463,30 @@
  */
 
 /* The size of the png_text structure changed in libpng-1.0.6 when
- * iTXt is supported.  It is turned off by default, to support old apps
- * that malloc the png_text structure instead of calling png_set_text()
- * and letting libpng malloc it.  It will be turned on by default in
- * libpng-1.3.0.
+ * iTXt support was added.  iTXt support was turned off by default through
+ * libpng-1.2.x, to support old apps that malloc the png_text structure
+ * instead of calling png_set_text() and letting libpng malloc it.  It
+ * was turned on by default in libpng-1.3.0.
  */
 
-#ifndef PNG_iTXt_SUPPORTED
-#  if !defined(PNG_READ_iTXt_SUPPORTED) && !defined(PNG_NO_READ_iTXt)
+#if defined(PNG_1_0_X) || defined (PNG_1_2_X)
+#  ifndef PNG_NO_iTXt_SUPPORTED
+#    define PNG_NO_iTXt_SUPPORTED
+#  endif
+#  ifndef PNG_NO_READ_iTXt
 #    define PNG_NO_READ_iTXt
 #  endif
-#  if !defined(PNG_WRITE_iTXt_SUPPORTED) && !defined(PNG_NO_WRITE_iTXt)
+#  ifndef PNG_NO_WRITE_iTXt
 #    define PNG_NO_WRITE_iTXt
+#  endif
+#endif
+
+#if !defined(PNG_NO_iTXt_SUPPORTED)
+#  if !defined(PNG_READ_iTXt_SUPPORTED) && !defined(PNG_NO_READ_iTXt)
+#    define PNG_READ_iTXt
+#  endif
+#  if !defined(PNG_WRITE_iTXt_SUPPORTED) && !defined(PNG_NO_WRITE_iTXt)
+#    define PNG_WRITE_iTXt
 #  endif
 #endif
 
@@ -541,10 +607,12 @@
 #  endif
 #endif
 
+#if defined(PNG_1_0_X) || defined (PNG_1_2_X)
 /* Deprecated, will be removed from version 2.0.0.
    Use PNG_MNG_FEATURES_SUPPORTED instead. */
 #ifndef PNG_NO_READ_EMPTY_PLTE
 #  define PNG_READ_EMPTY_PLTE_SUPPORTED
+#endif
 #endif
 
 #endif /* PNG_READ_SUPPORTED */
@@ -589,11 +657,15 @@
 #  endif
 #endif /* PNG_WRITE_TRANSFORMS_SUPPORTED */
 
+#if !defined(PNG_NO_WRITE_INTERLACING_SUPPORTED) && \
+    !defined(PNG_WRITE_INTERLACING_SUPPORTED)
 #define PNG_WRITE_INTERLACING_SUPPORTED  /* not required for PNG-compliant
                                             encoders, but can cause trouble
                                             if left undefined */
+#endif
 
 #if !defined(PNG_NO_WRITE_WEIGHTED_FILTER) && \
+    !defined(PNG_WRITE_WEIGHTED_FILTER) && \
      defined(PNG_FLOATING_POINT_SUPPORTED)
 #  define PNG_WRITE_WEIGHTED_FILTER_SUPPORTED
 #endif
@@ -602,9 +674,11 @@
 #  define PNG_WRITE_FLUSH_SUPPORTED
 #endif
 
+#if defined(PNG_1_0_X) || defined (PNG_1_2_X)
 /* Deprecated, see PNG_MNG_FEATURES_SUPPORTED, above */
 #ifndef PNG_NO_WRITE_EMPTY_PLTE
 #  define PNG_WRITE_EMPTY_PLTE_SUPPORTED
+#endif
 #endif
 
 #endif /* PNG_WRITE_SUPPORTED */
@@ -647,15 +721,33 @@
 #endif
 
 /* PNG_ASSEMBLER_CODE was enabled by default in version 1.2.0 
-   even when PNG_USE_PNGVCRD or PNG_USE_PNGGCCRD is not defined */
+ * even when PNG_USE_PNGVCRD or PNG_USE_PNGGCCRD is not defined.
+ *
+ * PNG_NO_ASSEMBLER_CODE disables use of all assembler code and optimized C,
+ * and removes or includes several functions in the API.
+ *
+ * PNG_NO_MMX_CODE disables the use of MMX code without changing the API.
+ * When MMX code is off, then optimized C replacement functions are used.
+ */
+#if 0 /* DISABLE AT ALL TIMES */
 #if defined(PNG_READ_SUPPORTED) && !defined(PNG_NO_ASSEMBLER_CODE)
 #  ifndef PNG_ASSEMBLER_CODE_SUPPORTED
 #    define PNG_ASSEMBLER_CODE_SUPPORTED
 #  endif
-#  if !defined(PNG_MMX_CODE_SUPPORTED) && !defined(PNG_NO_MMX_CODE)
+#  if defined(XP_MACOSX) && !defined(PNG_NO_MMX_CODE)
+     /* work around Intel-Mac compiler bug */
+#    define PNG_NO_MMX_CODE
+#  endif
+#  if !defined(PNG_MMX_CODE_SUPPORTED) && !defined(PNG_NO_MMX_CODE) && \
+     defined(__MMX__)
 #    define PNG_MMX_CODE_SUPPORTED
 #  endif
+#  if !defined(PNG_USE_PNGGCCRD) && !defined(PNG_NO_MMX_CODE) && \
+     !defined(PNG_USE_PNGVCRD) && defined(__MMX__)
+#    define PNG_USE_PNGGCCRD
+#  endif
 #endif
+#endif /* 0 */
 
 /* If you are sure that you don't need thread safety and you are compiling
    with PNG_USE_PNGCCRD for an MMX application, you can define this for
@@ -1121,6 +1213,9 @@ typedef double          FAR * FAR * png_doublepp;
 /* Pointers to pointers to pointers; i.e., pointer to array */
 typedef char            FAR * FAR * FAR * png_charppp;
 
+#if defined(PNG_1_0_X) || defined(PNG_1_2_X)
+/* SPC -  Is this stuff deprecated? */
+/* It'll be removed as of libpng-1.3.0 - GR-P */
 /* libpng typedefs for types in zlib. If zlib changes
  * or another compression library is used, then change these.
  * Eliminates need to change all the source files.
@@ -1128,6 +1223,7 @@ typedef char            FAR * FAR * FAR * png_charppp;
 typedef charf *         png_zcharp;
 typedef charf * FAR *   png_zcharpp;
 typedef z_stream FAR *  png_zstreamp;
+#endif /* (PNG_1_0_X) || defined(PNG_1_2_X) */
 
 /*
  * Define PNG_BUILD_DLL if the module being built is a Windows
@@ -1274,6 +1370,17 @@ typedef z_stream FAR *  png_zstreamp;
 #  define PNG_IMPEXP
 #endif
 
+#ifdef PNG_BUILDSYMS
+#  ifndef PNG_EXPORT
+#    define PNG_EXPORT(type,symbol) PNG_FUNCTION_EXPORT symbol END
+#  endif
+#  ifdef PNG_USE_GLOBAL_ARRAYS
+#    ifndef PNG_EXPORT_VAR
+#      define PNG_EXPORT_VAR(type) PNG_DATA_EXPORT
+#    endif
+#  endif
+#endif
+
 #ifndef PNG_EXPORT
 #  define PNG_EXPORT(type,symbol) PNG_IMPEXP type PNGAPI symbol
 #endif
@@ -1372,5 +1479,7 @@ typedef z_stream FAR *  png_zstreamp;
 #endif /* PNG_INTERNAL */
 #endif /* PNG_READ_SUPPORTED */
 
-#endif /* PNGCONF_H */
+/* Added at libpng-1.2.8 */
+#endif /* PNG_VERSION_INFO_ONLY */
 
+#endif /* PNGCONF_H */
