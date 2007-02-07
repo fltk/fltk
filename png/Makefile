@@ -59,7 +59,7 @@ clean:
 install: $(LIBPNG)
 	echo "Installing libfltk_png$(LIBEXT) in $(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) libfltk_png$(LIBEXT) $(DESTDIR)$(libdir)
+	$(INSTALL_LIB) $(LIBPNG) $(DESTDIR)$(libdir)
 	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
 	echo "Installing png headers in $(includedir)/FL/images..."
 	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images

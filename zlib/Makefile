@@ -59,7 +59,7 @@ clean:
 install: $(LIBZ)
 	echo "Installing libfltk_z$(LIBEXT) in $(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) libfltk_z$(LIBEXT) $(DESTDIR)$(libdir)
+	$(INSTALL_LIB) $(LIBZ) $(DESTDIR)$(libdir)
 	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_z$(LIBEXT)
 	echo "Installing zlib headers in $(includedir)/FL/images..."
 	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
