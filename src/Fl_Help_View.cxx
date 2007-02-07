@@ -1298,7 +1298,7 @@ Fl_Help_View::format()
           textcolor_ = get_color(get_attr(attrs, "TEXT", attr, sizeof(attr)),
 	                	 textcolor());
           linkcolor_ = get_color(get_attr(attrs, "LINK", attr, sizeof(attr)),
-	                	 selection_color());
+	                	 fl_contrast(FL_MAGENTA, color()));
 	}
 	else if (strcasecmp(buf, "BR") == 0)
 	{
