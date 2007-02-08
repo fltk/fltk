@@ -38,6 +38,14 @@
    another.  This file is an attempt to make minimal additions
    and make them self-contained in this source file.
 
+   From Mike:
+
+   Starting with 1.1.8, we now have a callback so that you can
+   process awake() messages as they come in.
+
+
+   The API:
+
    Fl::lock() - recursive lock.  You must call this before the
    first call to Fl::wait()/run() to initialize the thread
    system. The lock is locked all the time except when
@@ -48,12 +56,17 @@
    Fl::awake(void*) - Causes Fl::wait() to return (with the lock
    locked) even if there are no events ready.
 
+   Fl::set_awake_cb(void (*cb)(void *)) - Registers a function
+   to call for Fl::awake() messages that is called for each
+   message received.
+
    Fl::thread_message() - returns an argument sent to an
    Fl::awake() call, or returns NULL if none.  WARNING: the
    current implementation only has a one-entry queue and only
    returns the most recent value!
 */
 
+void	(*Fl::awake_cb)(void *);
 
 ////////////////////////////////////////////////////////////////
 // Windows threading...
@@ -189,6 +202,7 @@ void* Fl::thread_message() {
 
 static void thread_awake_cb(int fd, void*) {
   read(fd, &thread_message_, sizeof(void*));
+  if (Fl::awake_cb) (*Fl::awake_cb)(thread_message_);
 }
 
 // These pointers are in Fl_x.cxx:

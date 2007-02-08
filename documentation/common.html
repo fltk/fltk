@@ -533,7 +533,7 @@ around the origin. This function is then linked into the symbols
 table using <tt>fl_add_symbol</tt>:</P>
 
 <UL><PRE>
-int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
+<A NAME="fl_add_symbol">int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)</A>
 </PRE></UL>
 
 <P><i>name</i> is the name of the symbol without the "@"; <i>scalable</I>
@@ -541,7 +541,7 @@ must be set to 1 if the symbol is generated using scalable vector drawing
 functions.</P>
 
 <UL><PRE>
-int fl_draw_symbol(const char *name,int x,int y,int w,int h,Fl_Color col)
+<A NAME="fl_draw_symbol">int fl_draw_symbol(const char *name,int x,int y,int w,int h,Fl_Color col)</A>
 </PRE></UL>
 
 <P>This function draw a named symbol fitting the given rectangle.

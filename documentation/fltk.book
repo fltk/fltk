@@ -1,5 +1,5 @@
-#HTMLDOC 1.8.20
--t pdf13 -f fltk.pdf --book --toclevels 2 --no-numbered --toctitle "Table of Contents" --title --titleimage FL.gif --linkstyle underline --size Universal --left 1.00in --right 0.50in --top 0.50in --bottom 0.50in --header .t. --footer h.1 --tocheader .t. --tocfooter ..i --duplex --portrait --color --no-pscommands --no-xrxcomments --compression=9 --jpeg=50 --no-embedfonts --fontsize 11.0 --fontspacing 1.2 --headingfont Helvetica --bodyfont Times --headfootsize 11.0 --headfootfont Helvetica --charset 8859-1 --links --no-truetype --pagemode outline --pagelayout single --firstpage c1 --pageeffect none --pageduration 10 --effectduration 1.0 --no-encryption --permissions all  --owner-password ""  --user-password "" --browserwidth 680
+#HTMLDOC 1.8.27.1
+-t pdf13 -f "fltk.pdf" --book --toclevels 2 --no-numbered --toctitle "Table of Contents" --title --titleimage "FL.gif" --linkstyle underline --size Universal --left 1.00in --right 0.50in --top 0.50in --bottom 0.50in --header .t. --header1 ... --footer h.1 --nup 1 --tocheader .t. --tocfooter ..i --duplex --portrait --color --no-pscommands --no-xrxcomments --compression=9 --jpeg=50 --fontsize 11.0 --fontspacing 1.2 --headingfont Helvetica --bodyfont Times --headfootsize 11.0 --headfootfont Helvetica --charset iso-8859-1 --links --no-embedfonts --pagemode outline --pagelayout single --firstpage c1 --pageeffect none --pageduration 10 --effectduration 1.0 --no-encryption --permissions all  --owner-password ""  --user-password "" --browserwidth 680 --strict --no-overflow
 preface.html
 intro.html
 basics.html
@@ -11,6 +11,7 @@ subclassing.html
 opengl.html
 fluid.html
 widgets.html
+advanced.html
 Fl.html
 Fl_Adjuster.html
 Fl_Bitmap.html
@@ -75,6 +76,7 @@ Fl_Scroll.html
 Fl_Scrollbar.html
 Fl_Secret_Input.html
 Fl_Select_Browser.html
+Fl_Shared_Image.html
 Fl_Single_Window.html
 Fl_Slider.html
 Fl_Spinner.html

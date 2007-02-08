@@ -291,8 +291,11 @@ int fl_wait(double time_to_wait) {
       }
 #endif
 
-      if (fl_msg.message == fl_wake_msg)  // Used for awaking wait() from another thread
+      if (fl_msg.message == fl_wake_msg) {
+        // Used for awaking wait() from another thread
 	thread_message_ = (void*)fl_msg.wParam;
+        if (awake_cb) (*awake_cb)(thread_message_);
+      }
 
       TranslateMessage(&fl_msg);
       DispatchMessage(&fl_msg);
