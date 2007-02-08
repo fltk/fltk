@@ -1110,7 +1110,7 @@ Fl_Help_View::format()
     size_      = 0;
     bgcolor_   = color();
     textcolor_ = textcolor();
-    linkcolor_ = fl_contrast(FL_MAGENTA, color());
+    linkcolor_ = fl_contrast(FL_BLUE, color());
 
     tc = rc = bgcolor_;
 
@@ -1298,7 +1298,7 @@ Fl_Help_View::format()
           textcolor_ = get_color(get_attr(attrs, "TEXT", attr, sizeof(attr)),
 	                	 textcolor());
           linkcolor_ = get_color(get_attr(attrs, "LINK", attr, sizeof(attr)),
-	                	 fl_contrast(FL_MAGENTA, color()));
+	                	 fl_contrast(FL_BLUE, color()));
 	}
 	else if (strcasecmp(buf, "BR") == 0)
 	{
@@ -2785,16 +2785,11 @@ Fl_Help_View::handle(int event)	// I - Event to handle
       fl_cursor(FL_CURSOR_DEFAULT);
       break;
     case FL_MOVE:
-      if (Fl_Group::handle(event))
-        return 1;
-      if (find_link(xx, yy))
-        fl_cursor(FL_CURSOR_HAND);
-      else
-        fl_cursor(FL_CURSOR_DEFAULT);
+      if (find_link(xx, yy)) fl_cursor(FL_CURSOR_HAND);
+      else fl_cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_PUSH:
-      if (Fl_Group::handle(event))
-        return 1;
+      if (Fl_Group::handle(event)) return 1;
       linkp = find_link(xx, yy);
       if (linkp) {
         fl_cursor(FL_CURSOR_HAND);
@@ -2842,8 +2837,8 @@ Fl_Help_View::handle(int event)	// I - Event to handle
       char ascii = Fl::event_text()[0];
       switch (ascii) {
         case ctrl('A'): select_all(); redraw(); return 1;
+        case ctrl('C'):
         case ctrl('X'): end_selection(1); return 1;
-        case ctrl('C'): end_selection(1); return 1;
       }
       break; }
   }
