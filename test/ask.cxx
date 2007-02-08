@@ -47,7 +47,7 @@ void rename_me(Fl_Widget*o) {
   const char *input = fl_input("Input:", o->label());
 
   if (input) {
-    o->label(input);
+    o->copy_label(input);
     o->redraw();
   }
 }
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 
   Fl_Window window(200, 55);
   Fl_Return_Button b(20, 10, 160, 35, buffer); b.callback(rename_me);
-  window.add(b);
+  window.end();
   window.resizable(&b);
   window.show(argc, argv);
 

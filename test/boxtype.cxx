@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Single_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 
 int N = 0;
@@ -50,7 +50,7 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
 }
 
 int main(int argc, char ** argv) {
-  window = new Fl_Single_Window(4*W,ROWS*H);
+  window = new Fl_Double_Window(4*W,ROWS*H);
   window->box(FL_FLAT_BOX);
 #if 0 // this code uses the command line arguments to set arbitrary color schemes
   Fl::args(argc, argv);

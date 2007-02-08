@@ -350,8 +350,8 @@ int Fl_Input::handle(int event) {
         position(position());
       return (1);
     } else {
-      if (active_r() && window()) window()->cursor(FL_CURSOR_NONE);
-
+      if (active_r() && window() && this == Fl::belowmouse()) 
+        window()->cursor(FL_CURSOR_NONE);
       return handle_key();
     }
 
