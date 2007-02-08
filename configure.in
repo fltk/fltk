@@ -265,8 +265,13 @@ dnl Find commands...
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
+if test "$INSTALL" = "$ac_install_sh"; then
+    # Use full path to install-sh script...
+    INSTALL="`pwd`/install-sh -c"
+fi
 AC_PATH_PROG(NROFF,nroff)
 if test "x$NROFF" = "x:"; then
+    # Try groff instead of nroff...
     AC_PATH_PROG(GROFF,groff)
     if test "x$GROFF" = "x:"; then
         NROFF="echo"
