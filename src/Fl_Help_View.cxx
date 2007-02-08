@@ -1327,8 +1327,8 @@ Fl_Help_View::format()
 		 strcasecmp(buf, "TABLE") == 0)
 	{
           block->end = start;
-	  newalign   = strcasecmp(buf, "CENTER") ? LEFT : CENTER;
           line       = do_align(block, line, xx, newalign, links);
+	  newalign   = strcasecmp(buf, "CENTER") ? LEFT : CENTER;
           xx         = block->x;
           block->h   += hh;
 
