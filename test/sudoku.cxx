@@ -3,7 +3,7 @@
 //
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2005-2006 by Michael Sweet.
+// Copyright 2005-2007 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -177,6 +177,7 @@ class Sudoku : public Fl_Window {
   static void	diff_cb(Fl_Widget *widget, void *d);
   static void	update_helpers_cb(Fl_Widget *, void *);
   static void	help_cb(Fl_Widget *, void *);
+  static void	mute_cb(Fl_Widget *widget, void *);
   static void	new_cb(Fl_Widget *widget, void *);
   static void	reset_cb(Fl_Widget *widget, void *);
   static void	restart_cb(Fl_Widget *widget, void *);
@@ -638,14 +639,15 @@ Sudoku::Sudoku()
     { "&Check Game", FL_COMMAND | 'c', check_cb, 0, 0 },
     { "&Restart Game", FL_COMMAND | 'r', restart_cb, 0, 0 },
     { "&Solve Game", FL_COMMAND | 's', solve_cb, 0, FL_MENU_DIVIDER },
+    { "&Update Helpers", 0, update_helpers_cb, 0, 0 },
+    { "&Mute Sound", FL_COMMAND | 'm', mute_cb, 0, FL_MENU_TOGGLE | FL_MENU_DIVIDER },
     { "&Quit", FL_COMMAND | 'q', close_cb, 0, 0 },
     { 0 },
     { "&Difficulty", 0, 0, 0, FL_SUBMENU },
     { "&Easy", 0, diff_cb, (void *)"0", FL_MENU_RADIO },
     { "&Medium", 0, diff_cb, (void *)"1", FL_MENU_RADIO },
     { "&Hard", 0, diff_cb, (void *)"2", FL_MENU_RADIO },
-    { "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO | FL_MENU_DIVIDER },
-    { "&Update Helpers", 0, update_helpers_cb, 0, 0 },
+    { "&Impossible", 0, diff_cb, (void *)"3", FL_MENU_RADIO },
     { 0 },
     { "&Help", 0, 0, 0, FL_SUBMENU },
     { "&About Sudoku", FL_F + 1, help_cb, 0, 0 },
@@ -655,7 +657,12 @@ Sudoku::Sudoku()
 
 
   // Setup sound output...
-  sound_ = new SudokuSound();
+  prefs_.get("mute_sound", i, 0);
+  if (i) {
+    // Mute sound?
+    sound_ = NULL;
+    items[6].flags |= FL_MENU_VALUE;
+  } else sound_ = new SudokuSound();
 
   // Menubar...
   prefs_.get("difficulty", difficulty_, 0);
@@ -726,7 +733,7 @@ Sudoku::Sudoku()
 
 // Destroy the sudoku window...
 Sudoku::~Sudoku() {
-  delete sound_;
+  if (sound_) delete sound_;
 }
 
 
@@ -813,7 +820,7 @@ Sudoku::check_game(bool highlight) {
 	cell->readonly(1);
       }
 
-      sound_->play('A' + grid_cells_[i][8]->value() - 1);
+      if (sound_) sound_->play('A' + grid_cells_[i][8]->value() - 1);
     }
   }
 }
@@ -1031,6 +1038,22 @@ Sudoku::load_game() {
 }
 
 
+// Mute/unmute sound...
+void
+Sudoku::mute_cb(Fl_Widget *widget, void *) {
+  Sudoku *s = (Sudoku *)(widget->window() ? widget->window() : widget);
+
+  if (s->sound_) {
+    delete s->sound_;
+    s->sound_ = NULL;
+    prefs_.set("mute_sound", 1);
+  } else {
+    s->sound_ = new SudokuSound();
+    prefs_.set("mute_sound", 0);
+  }
+}
+
+
 // Create a new game...
 void
 Sudoku::new_cb(Fl_Widget *widget, void *) {
@@ -1216,7 +1239,7 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
         int v = cell->value();
 	cell->value(0);
 	cell->color(FL_LIGHT3);
-	if (v) s->sound_->play('A' + v - 1);
+	if (v && s->sound_) s->sound_->play('A' + v - 1);
       }
     }
 
@@ -1285,7 +1308,7 @@ Sudoku::solve_game() {
       cell->color(FL_GRAY);
     }
 
-    sound_->play('A' + grid_cells_[i][8]->value() - 1);
+    if (sound_) sound_->play('A' + grid_cells_[i][8]->value() - 1);
   }
 }
 

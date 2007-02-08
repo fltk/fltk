@@ -2,6 +2,7 @@ CHANGES IN FLTK 1.1.8
 
 	- Documentation fixes (STR #1454, STR #1455, STR #1456,
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
+	- Added "mute sound" option to Sudoku game.
 	- Updated the bundled zlib to v1.2.3.
 	- Updated the bundled libpng to v1.2.16.
 	- "make install" now uses the install command (or the
