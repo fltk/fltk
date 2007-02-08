@@ -288,9 +288,10 @@
 #endif /* !HAVE_STRTOLL */
 
 /*
- * Do we have the dlsym() function?
+ * Do we have the dlsym() function and header?
  */
 
+#undef HAVE_DLFCN_H
 #undef HAVE_DLSYM
 
 /*

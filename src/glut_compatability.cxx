@@ -43,9 +43,9 @@
 #    define GLX_GLXEXT_LEGACY
 #    include <GL/glx.h>
 #  endif // HAVE_GLXGETPROCADDRESSARB
-#  ifdef HAVE_DLSYM
+#  ifdef HAVE_DLFCN_H
 #    include <dlfcn.h>
-#  endif // HAVE_DLSYM
+#  endif // HAVE_DLFCN_H
 #  define MAXWINDOWS 32
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
@@ -443,7 +443,7 @@ GLUTproc glutGetProcAddress(const char *procName) {
 #  ifdef WIN32
   return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
 
-#  elif defined(HAVE_DLSYM)
+#  elif defined(HAVE_DLSYM) && defined(HAVE_DLFCN_H)
   char symbol[1024];
 
   snprintf(symbol, sizeof(symbol), "_%s", procName);
