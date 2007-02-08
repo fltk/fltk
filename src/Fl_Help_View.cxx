@@ -57,6 +57,7 @@
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
+#include <FL/x.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -219,6 +220,9 @@ fl_line()
 img->draw()
 */
 
+// We don't put the offscreen buffer in the help view class because
+// we'd need to include x.H in the header...
+static Fl_Offscreen fl_help_view_buffer;
 int Fl_Help_View::selection_first = 0;
 int Fl_Help_View::selection_last = 0;
 int Fl_Help_View::selection_push_first = 0;
@@ -2625,34 +2629,67 @@ void Fl_Help_View::clear_global_selection()
 char Fl_Help_View::begin_selection()
 {
   clear_global_selection();
-  mouse_x = Fl::event_x(); mouse_y = Fl::event_y();
+
+  if (!fl_help_view_buffer) fl_help_view_buffer = fl_create_offscreen(1, 1);
+
+  mouse_x = Fl::event_x();
+  mouse_y = Fl::event_y();
   draw_mode = 1;
-  current_view = this;
-  window()->make_current();
-  draw();
+
+    current_view = this;
+    fl_begin_offscreen(fl_help_view_buffer);
+    draw();
+    fl_end_offscreen();
+
   draw_mode = 0;
+
   if (selection_push_last) return 1;
-  return 0;
+  else return 0;
 }
 
 char Fl_Help_View::extend_selection()
 {
   if (Fl::event_is_click())
     return 0;
-  selected = 1;
+
+//  printf("old selection_first=%d, selection_last=%d\n",
+//         selection_first, selection_last);
+
   int sf = selection_first, sl = selection_last;
-  mouse_x = Fl::event_x(); mouse_y = Fl::event_y();
+
+  selected = 1;
+  mouse_x = Fl::event_x();
+  mouse_y = Fl::event_y();
   draw_mode = 2;
-  window()->make_current();
-  draw();
+
+    fl_begin_offscreen(fl_help_view_buffer);
+    draw();
+    fl_end_offscreen();
+
   draw_mode = 0;
-  if (selection_push_first < selection_drag_first)
-    selection_first = selection_push_first; else selection_first = selection_drag_first; 
-  if (selection_push_last > selection_drag_last)
-    selection_last = selection_push_last; else selection_last = selection_drag_last; 
-  if (sf!=selection_first || sl!=selection_last) 
+
+  if (selection_push_first < selection_drag_first) {
+    selection_first = selection_push_first;
+  } else {
+    selection_first = selection_drag_first;
+  }
+
+  if (selection_push_last > selection_drag_last) {
+    selection_last = selection_push_last;
+  } else {
+    selection_last = selection_drag_last;
+  }
+
+//  printf("new selection_first=%d, selection_last=%d\n",
+//         selection_first, selection_last);
+
+  if (sf!=selection_first || sl!=selection_last) {
+//    puts("REDRAW!!!\n");
     return 1;
-  return 1;
+  } else {
+//    puts("");
+    return 0;
+  }
 }
 
 // convert a command with up to four letters into an unsigned int
@@ -2811,9 +2848,7 @@ Fl_Help_View::handle(int event)	// I - Event to handle
         return 1;
       }
       if (current_view==this && selection_push_last) {
-        if (extend_selection()) {
-          redraw();
-        }
+        if (extend_selection()) redraw();
         fl_cursor(FL_CURSOR_INSERT);
         return 1;
       }
