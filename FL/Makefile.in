@@ -35,7 +35,6 @@ depend:
 
 install:
 	echo "Installing include files in $(DESTDIR)$(includedir)..."
-	-$(INSTALL_DIR) -p $(DESTDIR)$(includedir)
 	$(RMDIR) $(DESTDIR)$(includedir)/FL
 	$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL
 	for file in *.[hH]; do \
