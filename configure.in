@@ -433,6 +433,9 @@ fi
 
 AC_CHECK_FUNC(strtoll, AC_DEFINE(HAVE_STRTOLL))
 
+dnl Check for dlopen/dlsym...
+AC_SEARCH_LIBS(dlsym, dl, AC_DEFINE(HAVE_DLSYM))
+
 dnl Check for audio libraries...
 AUDIOLIBS=""
 

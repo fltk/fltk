@@ -288,5 +288,11 @@
 #endif /* !HAVE_STRTOLL */
 
 /*
+ * Do we have the dlsym() function?
+ */
+
+#undef HAVE_DLSYM
+
+/*
  * End of "$Id$".
  */

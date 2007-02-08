@@ -43,6 +43,9 @@
 #    define GLX_GLXEXT_LEGACY
 #    include <GL/glx.h>
 #  endif // HAVE_GLXGETPROCADDRESSARB
+#  ifdef HAVE_DLSYM
+#    include <dlfcn.h>
+#  endif // HAVE_DLSYM
 #  define MAXWINDOWS 32
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
@@ -439,8 +442,17 @@ int glutDeviceGet(GLenum type) {
 GLUTproc glutGetProcAddress(const char *procName) {
 #  ifdef WIN32
   return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
+
+#  elif defined(HAVE_DLSYM)
+  char symbol[1024];
+
+  snprintf(symbol, sizeof(symbol), "_%s", procName);
+
+  return (GLUTproc)dlsym(RTLD_DEFAULT, symbol);
+
 #  elif defined(HAVE_GLXGETPROCADDRESSARB)
   return (GLUTproc)glXGetProcAddressARB((const GLubyte *)procName);
+
 #  else
   return (GLUTproc)0;
 #  endif // WIN32
