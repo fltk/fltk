@@ -338,9 +338,11 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   Fl_X *myi = Fl_X::i(this);
   if (!myi->other_xid) {
 #if USE_XDBE
-    if (can_xdbe()) myi->other_xid =
-      XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeUndefined);
-    else
+    if (can_xdbe()) {
+      myi->other_xid =
+        XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeCopied);
+      myi->backbuffer_bad = 1;
+    } else
 #endif
 #ifdef __APPLE_QD__
     if ( ( !QDIsPortBuffered( GetWindowPort(myi->xid) ) ) 
@@ -360,28 +362,27 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   }
 #if USE_XDBE
   if (use_xdbe) {
-    // if this is true, copy rather than swap so back buffer is preserved:
-    int copy = (myi->region || eraseoverlay);
-    if (myi->backbuffer_bad) { // make sure we do a complete redraw...
+    if (myi->backbuffer_bad) {
+      // Make sure we do a complete redraw...
       if (myi->region) {XDestroyRegion(myi->region); myi->region = 0;}
       clear_damage(FL_DAMAGE_ALL);
+      myi->backbuffer_bad = 0;
     }
+
+    // Redraw as needed...
     if (damage()) {
       fl_clip_region(myi->region); myi->region = 0;
       fl_window = myi->other_xid;
       draw();
       fl_window = myi->xid;
     }
-    if (!copy) {
-      XdbeSwapInfo s;
-      s.swap_window = fl_xid(this);
-      s.swap_action = XdbeUndefined;
-      XdbeSwapBuffers(fl_display, &s, 1);
-      myi->backbuffer_bad = 1;
-      return;
-    }
-    // otherwise just use normal copy from back to front:
-    myi->backbuffer_bad = 0; // which won't destroy the back buffer...
+
+    // Copy contents of back buffer to window...
+    XdbeSwapInfo s;
+    s.swap_window = fl_xid(this);
+    s.swap_action = XdbeCopied;
+    XdbeSwapBuffers(fl_display, &s, 1);
+    return;
   } else
 #endif
   if (damage() & ~FL_DAMAGE_EXPOSE) {
