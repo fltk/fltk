@@ -372,10 +372,11 @@ cygfltknox_gl-1.1.dll: $(GLLIBNAME) cygfltknox-1.1.dll
 		-L. -lfltk $(GLDLIBS)
 
 cygfltknox_images-1.1.dll: $(IMGLIBNAME) cygfltknox-1.1.dll
-	echo $(DSOCOMMAND) ../lib/libfltk_images ...
+	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
 	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_images.dll.a \
-		-L. -lfltk -ljpeg -lpng -lz $(LDLIBS)
+		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
+			$(IMAGELIBS) $(LDLIBS)
 
 mgwfltknox-1.1.dll: $(LIBNAME)
 	echo $(DSOCOMMAND) $(LIBNAME) ...
@@ -394,14 +395,19 @@ mgwfltknox_gl-1.1.dll: $(GLLIBNAME) mgwfltknox-1.1.dll
 		-Wl,--out-implib=libfltk_gl.dll.a \
 		-L. -lfltk $(GLDLIBS)
 
+#-----------------------------------------------------
+# See STR #1585 for --exclude-libs
+#-----------------------------------------------------
+
 mgwfltknox_images-1.1.dll: $(IMGLIBNAME) mgwfltknox-1.1.dll
 	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
 	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_images.dll.a \
-		-L. -lfltk -ljpeg -lpng -lz $(LDLIBS)
+		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
+			$(IMAGELIBS) $(LDLIBS)
 
 clean:
-	-$(RM) *.o core.* *~ *.bck *.bck
+	-$(RM) *.o *.dll.a core.* *~ *.bck *.bck
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		../lib/$(LIBNAME) ../lib/$(FLLIBNAME) ../lib/$(GLLIBNAME) \
 		../lib/$(IMGLIBNAME) \
