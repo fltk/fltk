@@ -15,20 +15,19 @@
 you will have to replace them or comment them out for your code to
 compile:
 <UL>
-<LI><TT>glutLayerGet(GLUT_LAYER_IN_USE)</TT></LI>
-<LI><TT>glutLayerGet(GLUT_HAS_OVERLAY)</TT></LI>
-<LI><TT>glutSetColor(), glutGetColor(), glutCopyColormap()</TT></LI>
-<LI><TT>glutInitDisplayMode(GLUT_LUMINANCE)</TT></LI>
-<LI><TT>glutPushWindow()</TT></LI>
-<LI><TT>glutWarpPointer()</TT></LI>
-<LI>Spaceball, buttonbox, dials, tablet functions</TT>
-</LI>
-<LI><TT>glutWindowStatusFunc()</TT></LI>
-<LI><TT>glutGet(GLUT_WINDOW_NUM_CHILDREN)</TT></LI>
-<LI><TT>glutGet(GLUT_SCREEN_WIDTH_MM)</TT></LI>
-<LI><TT>glutGet(GLUT_SCREEN_HEIGHT_MM)</TT></LI>
 <LI><TT>glutGet(GLUT_ELAPSED_TIME)</TT></LI>
+<LI><TT>glutGet(GLUT_SCREEN_HEIGHT_MM)</TT></LI>
+<LI><TT>glutGet(GLUT_SCREEN_WIDTH_MM)</TT></LI>
+<LI><TT>glutGet(GLUT_WINDOW_NUM_CHILDREN)</TT></LI>
+<LI><TT>glutInitDisplayMode(GLUT_LUMINANCE)</TT></LI>
+<LI><TT>glutLayerGet(GLUT_HAS_OVERLAY)</TT></LI>
+<LI><TT>glutLayerGet(GLUT_LAYER_IN_USE)</TT></LI>
+<LI><TT>glutPushWindow()</TT></LI>
+<LI><TT>glutSetColor(), glutGetColor(), glutCopyColormap()</TT></LI>
 <LI><TT>glutVideoResize()</TT> missing. </LI>
+<LI><TT>glutWarpPointer()</TT></LI>
+<LI><TT>glutWindowStatusFunc()</TT></LI>
+<LI>Spaceball, buttonbox, dials, and tablet functions</LI>
 </UL>
  Most of the symbols/enumerations have different values than GLUT uses.
  This will break code that relies on the actual values. The only

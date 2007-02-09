@@ -174,7 +174,7 @@ given value.
  This box type is used to surround the currently-selected items in the
 menus.  If this is <TT>FL_NO_BOX</TT> then it acts like <TT>
 FL_THIN_UP_BOX</TT> and <TT>selection_color()</TT> acts like <TT>
-FL_WHITE</TT>, for back compatability. </BODY></HTML>
+FL_WHITE</TT>, for back compatability.
 
 
 <h4><a name="Fl_Menu_.find_item">const Fl_Menu_Item *Fl_Menu_::find_item(const char *name);</a></h4>
@@ -186,8 +186,7 @@ via FL_SUBMENU_POINTER.</p>
 
 
 <h4><a name=Fl_Menu_.item_pathname>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
-int Fl_Menu_::item_pathname(char *name, int namelen,
-                            const Fl_Menu_Item *finditem) const;</h4>
+int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem) const;</h4>
 
 <p>Returns the 'menu pathname' (eg. "File/Quit") for the recently picked item in user supplied string 'name'. Useful in the callback function for a menu item, to determine the last picked item's 'menu pathname' string.
 
