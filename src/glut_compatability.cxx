@@ -448,7 +448,18 @@ GLUTproc glutGetProcAddress(const char *procName) {
 
   snprintf(symbol, sizeof(symbol), "_%s", procName);
 
+#    ifdef RTLD_DEFAULT
   return (GLUTproc)dlsym(RTLD_DEFAULT, symbol);
+
+#    else // No RTLD_DEFAULT support, so open the current a.out symbols...
+  static void *rtld_default = 0;
+
+  if (!rtld_default) rtld_default = dlopen(0, RTLD_LAZY);
+
+  if (rtld_default) return (GLUTproc)dlsym(rtld_default, symbol);
+  else return 0;
+
+#    endif // RTLD_DEFAULT
 
 #  elif defined(HAVE_GLXGETPROCADDRESSARB)
   return (GLUTproc)glXGetProcAddressARB((const GLubyte *)procName);
@@ -485,8 +496,6 @@ int glutExtensionSupported( const char* extension )
     /* skip the false match and continue */
     extensions = p + len;
   }
-  
-  return 0;
 }
 
 #endif // HAVE_GL
