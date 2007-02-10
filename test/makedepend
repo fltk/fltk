@@ -20,15 +20,17 @@ bitmap.o: bitmap.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Button.H
 blocks.o: blocks.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
-  ../FL/Fl_Widget.H ../FL/Fl_Preferences.H ../FL/Fl_XPM_Image.H \
-  ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/x.H \
-  ../config.h pixmaps/blast.xpm pixmaps/red.xpm pixmaps/red_bomb.xpm \
-  pixmaps/green.xpm pixmaps/green_bomb.xpm pixmaps/blue.xpm \
-  pixmaps/blue_bomb.xpm pixmaps/yellow.xpm pixmaps/yellow_bomb.xpm \
-  pixmaps/cyan.xpm pixmaps/cyan_bomb.xpm pixmaps/magenta.xpm \
-  pixmaps/magenta_bomb.xpm pixmaps/gray.xpm pixmaps/gray_bomb.xpm
+  ../FL/Fl_Widget.H ../FL/Fl_Button.H ../FL/Fl_Preferences.H \
+  ../FL/Fl_XPM_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H \
+  ../FL/Fl_XBM_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Tiled_Image.H \
+  ../FL/fl_draw.H ../FL/x.H ../config.h pixmaps/blast.xpm pixmaps/red.xpm \
+  pixmaps/red_bomb.xpm pixmaps/green.xpm pixmaps/green_bomb.xpm \
+  pixmaps/blue.xpm pixmaps/blue_bomb.xpm pixmaps/yellow.xpm \
+  pixmaps/yellow_bomb.xpm pixmaps/cyan.xpm pixmaps/cyan_bomb.xpm \
+  pixmaps/magenta.xpm pixmaps/magenta_bomb.xpm pixmaps/gray.xpm \
+  pixmaps/gray_bomb.xpm
 boxtype.o: boxtype.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
-  ../FL/Fl_Single_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
+  ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
   ../FL/Fl_Widget.H ../FL/Fl_Box.H
 browser.o: browser.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Select_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H \
@@ -112,7 +114,9 @@ curve.o: curve.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H
 demo.o: demo.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Box.H \
-  ../FL/Fl_Button.H ../FL/filename.H ../FL/x.H ../FL/Fl_Window.H
+  ../FL/Fl_Button.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H \
+  ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/filename.H ../FL/x.H \
+  ../FL/Fl_Window.H
 doublebuffer.o: doublebuffer.cxx ../FL/Fl.H ../FL/Enumerations.H \
   ../FL/Fl_Export.H ../FL/Fl_Single_Window.H ../FL/Fl_Window.H \
   ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Double_Window.H \
@@ -175,8 +179,8 @@ forms.o: forms.cxx ../FL/forms.H ../FL/Fl.H ../FL/Enumerations.H \
   pixmaps/srs.xbm
 fractals.o: fractals.cxx ../config.h ../FL/glut.H ../FL/gl.h \
   ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl.H ../FL/Fl_Gl_Window.H \
-  ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H fracviewer.h \
-  ../FL/Fl_Button.H ../FL/Fl_Group.H ../FL/Fl_Window.H
+  ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/glu.h \
+  fracviewer.h ../FL/Fl_Button.H ../FL/Fl_Group.H ../FL/Fl_Window.H
 fullscreen.o: fullscreen.cxx ../config.h ../FL/Fl.H ../FL/Enumerations.H \
   ../FL/Fl_Export.H ../FL/Fl_Single_Window.H ../FL/Fl_Window.H \
   ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Hor_Slider.H \
@@ -190,16 +194,17 @@ gl_overlay.o: gl_overlay.cxx ../config.h ../FL/Fl.H ../FL/Enumerations.H \
   ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
 glpuzzle.o: glpuzzle.cxx ../config.h ../FL/glut.H ../FL/gl.h \
   ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/Fl.H ../FL/Fl_Gl_Window.H \
-  ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H trackball.c \
-  trackball.h
+  ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/glu.h \
+  trackball.c trackball.h
 hello.o: hello.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
-  ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Box.H
+  ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Box.H \
+  ../FL/filename.H
 help.o: help.cxx ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/Enumerations.H \
   ../FL/Fl_Export.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H \
-  ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Help_View.H ../FL/Fl.H \
-  ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H \
-  ../FL/fl_draw.H ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H \
-  ../FL/Fl_Group.H ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+  ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/Fl_Button.H \
+  ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Box.H ../FL/Fl_Help_View.H \
+  ../FL/Fl.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H \
+  ../FL/fl_draw.H ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
 iconize.o: iconize.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Button.H \
   ../FL/Fl_Box.H
@@ -252,7 +257,7 @@ mandelbrot.o: mandelbrot.cxx mandelbrot_ui.h ../FL/Fl.H \
   ../FL/Enumerations.H ../FL/Fl_Export.H mandelbrot.h ../FL/Fl_Box.H \
   ../FL/Fl_Widget.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H \
   ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Input.H ../FL/Fl_Input_.H \
-  ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/fl_draw.H
+  ../FL/fl_draw.H
 menubar.o: menubar.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Box.H ../FL/Fl_Widget.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
   ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H \
@@ -344,10 +349,10 @@ sudoku.o: sudoku.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
   ../FL/Fl_Widget.H ../FL/Fl_Button.H ../FL/Fl_Group.H ../FL/fl_ask.H \
   ../FL/fl_draw.H ../FL/Fl_Help_Dialog.H ../FL/Fl_Double_Window.H \
-  ../FL/Fl_Window.H ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Fl_Scrollbar.H \
-  ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/fl_draw.H \
-  ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H ../FL/Fl_Input.H \
-  ../FL/Fl_Input_.H ../FL/Fl_Preferences.H ../FL/Fl_Sys_Menu_Bar.H \
+  ../FL/Fl_Window.H ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Box.H \
+  ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H \
+  ../FL/Fl_Valuator.H ../FL/fl_draw.H ../FL/Fl_Shared_Image.H \
+  ../FL/Fl_Image.H ../FL/Fl_Preferences.H ../FL/Fl_Sys_Menu_Bar.H \
   ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/x.H \
   ../FL/math.h pixmaps/sudoku.xbm ../config.h
 symbols.o: symbols.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
@@ -356,11 +361,14 @@ symbols.o: symbols.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/fl_draw.H
 tabs.o: tabs.cxx tabs.h ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
-  ../FL/Fl_Widget.H ../FL/Fl_Tabs.H ../FL/Fl_Group.H ../FL/Fl_Input.H \
-  ../FL/Fl_Input_.H ../FL/Fl_Button.H ../FL/fl_ask.H ../FL/Fl_Clock.H \
-  ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
-threads.o: threads.cxx ../config.h ../FL/fl_ask.H ../FL/Enumerations.H \
-  ../FL/Fl_Export.H
+  ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Tabs.H ../FL/Fl_Group.H \
+  ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Button.H ../FL/fl_ask.H \
+  ../FL/Fl_Clock.H ../FL/Fl_Wizard.H ../FL/Fl_Return_Button.H \
+  ../FL/Fl_Button.H
+threads.o: threads.cxx ../config.h ../FL/Fl.H ../FL/Enumerations.H \
+  ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H \
+  ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H \
+  ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Value_Output.H threads.h
 tile.o: tile.cxx ../FL/Fl.H ../FL/Enumerations.H ../FL/Fl_Export.H \
   ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H \
   ../FL/Fl_Widget.H ../FL/Fl_Tile.H ../FL/Fl_Box.H
@@ -375,6 +383,6 @@ valuators.o: valuators.cxx valuators.h ../FL/Fl.H ../FL/Enumerations.H \
   ../FL/Fl_Valuator.H ../FL/Fl_Value_Slider.H ../FL/Fl_Slider.H \
   ../FL/Fl_Value_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H \
   ../FL/Fl_Value_Output.H ../FL/Fl_Scrollbar.H ../FL/Fl_Adjuster.H \
-  ../FL/Fl_Counter.H ../FL/Fl_Spinner.H ../FL/Fl_Group.H ../FL/Fl_Input.H \
-  ../FL/Fl_Repeat_Button.H ../FL/Fl.H ../FL/Fl_Button.H ../FL/Fl_Dial.H \
-  ../FL/Fl_Roller.H
+  ../FL/Fl_Counter.H ../FL/Fl_Spinner.H ../FL/Enumerations.H \
+  ../FL/Fl_Group.H ../FL/Fl_Input.H ../FL/Fl_Repeat_Button.H ../FL/Fl.H \
+  ../FL/Fl_Button.H ../FL/Fl_Dial.H ../FL/Fl_Roller.H

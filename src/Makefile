@@ -443,7 +443,7 @@ Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H
 fl_color.o:	../FL/mac.H ../FL/win32.H
 fl_cursor.o:	../FL/mac.H ../FL/win32.H
 fl_dnd.o:	../FL/mac.H ../FL/win32.H
-Fl.o:	../FL/mac.H ../FL/win32.H
+Fl.o:	../FL/mac.H ../FL/win32.H Fl_win32.cxx Fl_mac.cxx
 Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H
