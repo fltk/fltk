@@ -227,6 +227,19 @@ selection indication. Most modern programs ignore this.
 
 <H2><A NAME="dnd">Drag And Drop Events</A></H2>
 
+<P>FLTK supports Drag And Drop of text and files from any 
+application on the desktop. Text is transfered as ASCII using
+the current code page. Files are received as a list of full path
+and file names, seperated by newline. On some platforms, path
+names are prepended with <tt>file://</tt>.
+
+<P>The Drag And Drop data is available in <tt>Fl::event_text()</tt> 
+at the concluding <tt>FL_PASTE</tt>. On some platforms, the
+event text is already available for all <tt>FL_DND_*</tt> events.
+
+<P><tt>FL_DND_*</tt> events can not be used in widgets derived
+form <tt>Fl_Group</tt> or <tt>Fl_Window</tt>.
+
 <H3>FL_DND_ENTER</H3>
 
 <P>The mouse has been moved to point at this widget. A widget
