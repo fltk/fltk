@@ -209,6 +209,7 @@ if test x$enable_shared = xyes; then
 	    # -Wl,--enable-runtime-pseudo-reloc: See str 1585
 	    # appears to be necessary for older binutils versions < 2.16
 	    #-----------------------------------------------------------
+            LDFLAGS="$LDFLAGS -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -shared \
 	    	-Wl,--whole-archive -Wl,--export-all-symbols \
 		-Wl,--enable-runtime-pseudo-reloc -Wl,--enable-auto-import \
