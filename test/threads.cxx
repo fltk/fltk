@@ -62,22 +62,32 @@ void* prime_func(void* p)
 
   // very simple prime number calculator !
   for (;;) {
-    int p;
+    int pp;
     int hn = (int)sqrt((double)n);
 
-    for (p=3; p<=hn; p+=2) if ( n%p == 0 ) break;
-    if (p >= hn) {
+    for (pp=3; pp<=hn; pp+=2) if ( n%pp == 0 ) break;
+    if (pp >= hn) {
       char s[128];
       sprintf(s, "%d", n);
+
+      // Obtain a lock before we access the browser widget...
       Fl::lock();
+
       browser->add(s);
       browser->bottomline(browser->size());
       if (n > value->value()) value->value(n);
       n += step;
+
+      // Release the lock...
       Fl::unlock();
-      Fl::awake((void*) (browser == browser1? p:0));	// Cause the browser to redraw ...
+
+      // Send a message to the main thread, at which point it will
+      // process any pending redraws for our browser widget.  The
+      // message we pass here isn't used for anything, so we could also
+      // just pass NULL.
+      Fl::awake(p);
     } else {
-      // This should not be necessary since "n" and "step" a local variables,
+      // This should not be necessary since "n" and "step" are local variables,
       // however it appears that at least MacOS X has some threading issues
       // that cause semi-random corruption of the (stack) variables.
       Fl::lock();
@@ -86,6 +96,12 @@ void* prime_func(void* p)
     }
   }
   return 0;
+}
+
+void message_cb(void *m) {
+  if (m == (void *)browser1) putchar('1');
+  else putchar('2');
+  fflush(stdout);
 }
 
 int main(int argc, char **argv)
@@ -106,10 +122,22 @@ int main(int argc, char **argv)
   browser1->add("Prime numbers:");
   browser2->add("Prime numbers:");
 
-  Fl::lock(); // you must do this before creating any threads!
+  // Enable multi-thread support by locking from the main
+  // thread.  Fl::wait() and Fl::run() call Fl::unlock() and
+  // Fl::lock() as needed to release control to the child threads
+  // when it is safe to do so...
+  Fl::lock();
+
+  // Register a callback for Fl::awake() messages.  This allows
+  // you to get all thread messages even if you are in another
+  // run loop (say, with a modal dialog...)
+  Fl::set_awake_cb(message_cb);
+
+  // Start threads...
 
   // One thread displaying in one browser
   fl_create_thread(prime_thread, prime_func, browser1);
+
   // Several threads displaying in another browser
   fl_create_thread(prime_thread, prime_func, browser2);
   fl_create_thread(prime_thread, prime_func, browser2);
@@ -118,12 +146,7 @@ int main(int argc, char **argv)
   fl_create_thread(prime_thread, prime_func, browser2);
   fl_create_thread(prime_thread, prime_func, browser2);
 
-  //  Fl::run();
-  while (w->visible()) {
-    Fl::wait();
-//    void* m = Fl::thread_message();
-//    printf("Received message: %p\n", m);
-  }
+  Fl::run();
 
   return 0;
 }
