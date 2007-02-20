@@ -3,7 +3,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2007 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -59,7 +59,7 @@
 #  include <io.h>
 #  include <commdlg.h>
 #  include <FL/x.H>
-#  if !defined(__WATCOMC__)
+#  ifndef __WATCOMC__
 // Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
 // on Windows, which is supposed to be POSIX compliant...
 #    define access _access

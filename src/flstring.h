@@ -3,7 +3,7 @@
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2005 by Bill Spitzak and others.
+ * Copyright 1998-2007 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,9 +52,9 @@
 #    define strcasecmp(s,t)	_stricmp((s), (t))
 #    define strncasecmp(s,t,n)	_strnicmp((s), (t), (n))
 // Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...  Some of these functions
-// are also defined in ISO C99...
-#    if !defined(__WATCOMC__)
+// on Windows, which is supposed to be POSIX compliant...  Some of these
+// functions are also defined in ISO C99...
+#    ifndef __WATCOMC__
 #      define strdup _strdup
 #      define unlink _unlink
 #    endif // !__WATCOMC__
