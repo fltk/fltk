@@ -198,13 +198,13 @@ EXEEXT=.exe
 
 !ifeqi D d
 WCADEBUG=-d1                        # debug opts for wasm
-WCCDEBUG=-d2 -s -ors                # debug opts for wcc. NOTE: -we is to make errors of all warnings
+WCCDEBUG=-d2 -s -ors -wcd=666 -wcd=836 # debug opts for wcc. NOTE: -we is to make errors of all warnings
 WCLDEBUG=d all                      # debug opts for wlink
 # WCCTIMING=-et         # if added to CC command line will generate timing file after execution
 !else
 #
 # WCADEBUG=                                    # debug opts for wasm
-WCCDEBUG= -ors -s                              # release opts for wcc
+WCCDEBUG= -ors -s -wcd=666 -wcd=836            # release opts for wcc
 # WCLDEBUG=                                    # release opts for wlink
 !endif
 

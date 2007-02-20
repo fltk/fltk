@@ -131,8 +131,10 @@ CPPFILES = &
     fl_engraved_label.obj &
     fl_file_dir.obj &
     fl_font.obj &
+    fl_gtk.obj &
     fl_labeltype.obj &
     fl_line_style.obj &
+    fl_open_uri.obj &
     fl_oval_box.obj &
     fl_overlay.obj &
     fl_overlay_visual.obj &
@@ -148,7 +150,8 @@ CPPFILES = &
     fl_shortcut.obj &
     fl_show_colormap.obj &
     fl_symbols.obj &
-    fl_vertex.obj
+    fl_vertex.obj &
+    screen_xywh.obj
 
 FLCPPFILES = &
     forms_compatability.obj &
@@ -162,6 +165,10 @@ GLCPPFILES = &
     Fl_Gl_Choice.obj &
     Fl_Gl_Overlay.obj &
     Fl_Gl_Window.obj &
+    freeglut_geometry.obj &
+    freeglut_stroke_mono_roman.obj &
+    freeglut_stroke_roman.obj &
+    freeglut_teapot.obj &
     gl_draw.obj &
     gl_start.obj &
     glut_compatability.obj &

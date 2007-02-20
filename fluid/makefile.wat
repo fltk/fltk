@@ -24,21 +24,24 @@
 #
 
 OBJECTS = &
+    CodeEditor.obj &
     Fl_Function_Type.obj &
-    Fl_Menu_Type.obj &
     Fl_Group_Type.obj &
-    Fl_Widget_Type.obj &
+    Fl_Menu_Type.obj &
     Fl_Type.obj &
+    Fl_Widget_Type.obj &
     Fl_Window_Type.obj &
     Fluid_Image.obj &
+    about_panel.obj &
+    align_widget.obj &
+    alignment_panel.obj &
     code.obj &
     factory.obj &
     file.obj &
-    align_widget.obj &
-    about_panel.obj &
-    widget_panel.obj &
-    alignment_panel.obj &
-    function_panel.obj
+    function_panel.obj &
+    template_panel.obj &
+    undo.obj &
+    widget_panel.obj
 
 #   fluid.obj should not be in the list, because the watcom.mif file
 #   assumes an object file with the same name as the target executable

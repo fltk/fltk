@@ -21,10 +21,10 @@ that will help you to get the most out of FLTK.</P>
     int main() {
       Fl::lock();
       /* run thread */
-      while (Fl::wait() > 0) {
-	if (Fl::thread_message()) {
+      while (Fl::wait() &lt; 0) {
+        if (Fl::thread_message()) {
           /* process your data */
-	}
+        }
       }
     }
 </pre>
