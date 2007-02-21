@@ -33,7 +33,7 @@ comment {//
 
 decl {\#include <FL/fl_draw.H>} {} 
 
-class FL_EXPORT Fl_File_Chooser {open
+class FL_EXPORT Fl_File_Chooser {open selected
 } {
   decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public
   }
@@ -53,15 +53,14 @@ class FL_EXPORT Fl_File_Chooser {open
   decl {void showChoiceCB();} {}
   decl {void update_favorites();} {}
   decl {void update_preview();} {}
-  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
-  } {
+  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
     Fl_Window window {
       label {Choose File}
       callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();}
-      private xywh {368 285 490 380} type Double resizable
+      private xywh {403 284 490 380} type Double resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -138,7 +137,7 @@ window->hide();}
 
 // Do any callback that is registered...
 if (callback_)
-  (*callback_)(this, data_);} selected
+  (*callback_)(this, data_);}
             private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
             code1 {okButton->label(fl_ok);}

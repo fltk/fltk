@@ -243,6 +243,7 @@ Fl_File_Chooser::favoritesButtonCB()
     sprintf(menuname, "favorite%02d", v);
 
     prefs_.set(menuname, directory_);
+    prefs_.flush();
 
     quote_pathname(menuname, directory_, sizeof(menuname));
     favoritesButton->add(menuname);
@@ -379,6 +380,7 @@ Fl_File_Chooser::favoritesCB(Fl_Widget *w)
     }
 
     update_favorites();
+    prefs_.flush();
 
     favWindow->hide();
   }
@@ -791,6 +793,7 @@ Fl_File_Chooser::preview(int e)// I - 1 = enable preview, 0 = disable preview
 {
   previewButton->value(e);
   prefs_.set("preview", e);
+  prefs_.flush();
 
   Fl_Group *p = previewBox->parent();
   if (e) {
