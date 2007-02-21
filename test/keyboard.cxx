@@ -42,6 +42,9 @@
 
 #include "keyboard_ui.h"
 
+#include <string.h>
+
+
 // these are used to identify which buttons are which:
 void key_cb(Fl_Button*, void*) {}
 void shift_cb(Fl_Button*, void*) {}
@@ -100,6 +103,7 @@ int main(int argc, char** argv) {
   Fl_Window *window = make_window();
   window->show(argc,argv);
   while (Fl::wait()) {
+    const char *str;
     
     // update all the buttons with the current key and shift state:
     for (int i = 0; i < window->children(); i++) {
@@ -107,10 +111,16 @@ int main(int argc, char** argv) {
       if (b->callback() == (Fl_Callback*)key_cb) {
 	int i = (long)b->user_data();
 	if (!i) i = b->label()[0];
-	((Fl_Button*)b)->value(Fl::event_key(i));
+        Fl_Button *btn = ((Fl_Button*)b);
+        int state = Fl::event_key(i);
+        if (btn->value()!=state)
+	  btn->value(state);
       } else if (b->callback() == (Fl_Callback*)shift_cb) {
 	int i = (long)b->user_data();
-	((Fl_Button*)b)->value(Fl::event_state(i));
+        Fl_Button *btn = ((Fl_Button*)b);
+        int state = Fl::event_state(i);
+        if (btn->value()!=state)
+	  btn->value(state);
       }
     }
 
@@ -133,9 +143,12 @@ int main(int argc, char** argv) {
       for (int i = 0; i < int(sizeof(table)/sizeof(*table)); i++)
 	if (table[i].n == k) {keyname = table[i].text; break;}
     }
-    key_output->value(keyname);
+    if (strcmp(key_output->value(), keyname))
+      key_output->value(keyname);
 
-    text_output->value(Fl::event_text());
+    str = Fl::event_text();
+    if (strcmp(text_output->value(), str))
+      text_output->value(str);
   }
   return 0;
 }
