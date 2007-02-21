@@ -4,6 +4,8 @@ CHANGES IN FLTK 1.1.8
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
 	- Flushing file chooser preferences after every change
 	  to avoid data loss (STR #1609)
+	- Fixed file chooser to behave transparently to the current
+	  group setting (STR #1611)
 	- Fixed clipping in OS X Quartz offscreen buffers
 	  (STR 1595)
 	- Added Fl::set_awake_cb() to set a handler for thread

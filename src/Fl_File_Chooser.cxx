@@ -159,6 +159,7 @@ void Fl_File_Chooser::cb_favOkButton(Fl_Return_Button* o, void* v) {
 }
 
 Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
+  Fl_Group *prev_current = Fl_Group::current();
   { window = new Fl_Double_Window(490, 380, "Choose File");
     window->callback((Fl_Callback*)cb_window, (void*)(this));
     { Fl_Group* o = new Fl_Group(10, 10, 470, 25);
@@ -296,6 +297,7 @@ type(t);
 int e;
 prefs_.get("preview", e, 1);
 preview(e);
+Fl_Group::current(prev_current);
 }
 
 Fl_File_Chooser::~Fl_File_Chooser() {

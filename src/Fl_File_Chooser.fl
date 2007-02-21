@@ -33,7 +33,7 @@ comment {//
 
 decl {\#include <FL/fl_draw.H>} {} 
 
-class FL_EXPORT Fl_File_Chooser {open selected
+class FL_EXPORT Fl_File_Chooser {open
 } {
   decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public
   }
@@ -53,14 +53,16 @@ class FL_EXPORT Fl_File_Chooser {open selected
   decl {void showChoiceCB();} {}
   decl {void update_favorites();} {}
   decl {void update_preview();} {}
-  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
+  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
+  } {
+    code {Fl_Group *prev_current = Fl_Group::current();} {}
     Fl_Window window {
       label {Choose File}
       callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();}
-      private xywh {403 284 490 380} type Double resizable
+      private xywh {388 284 490 380} type Double resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
@@ -159,7 +161,7 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {421 56 355 150} type Double resizable
+      private xywh {413 100 355 150} type Double resizable
       code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0} visible
     } {
       Fl_File_Browser favList {
@@ -217,7 +219,9 @@ value(d);
 type(t);
 int e;
 prefs_.get("preview", e, 1);
-preview(e);} {}
+preview(e);
+Fl_Group::current(prev_current);} {selected
+    }
   }
   Function {~Fl_File_Chooser()} {} {
     code {Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
