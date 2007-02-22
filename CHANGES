@@ -2,12 +2,14 @@ CHANGES IN FLTK 1.1.8
 
 	- Documentation fixes (STR #1454, STR #1455, STR #1456,
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
-	- Flushing file chooser preferences after every change
-	  to avoid data loss (STR #1609)
-	- Fixed file chooser to behave transparently to the current
-	  group setting (STR #1611)
-	- Fixed clipping in OS X Quartz offscreen buffers
-	  (STR 1595)
+	- The sample RPM spec file now enables large file support
+	  and threading support (STR #1603)
+	- Fixed clipping in OS X Quartz offscreen buffers (STR
+	  #1595)
+	- Now flush file chooser preferences after every change to
+	  avoid data loss (STR #1609)
+	- The Fl_File_Chooser constructor now saves and restores the
+	  current group (STR #1611)
 	- Added Fl::set_awake_cb() to set a handler for thread
 	  messages (STR #1536)
 	- Added "mute sound" option to Sudoku game.
