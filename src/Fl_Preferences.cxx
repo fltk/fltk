@@ -118,6 +118,10 @@ Fl_Preferences::~Fl_Preferences()
 {
   if (!node->parent()) delete rootNode;
   // DO NOT delete nodes! The root node will do that after writing the preferences
+  // zero all pointer to avoid memory errors, event though
+  // Valgrind does not complain (Cygwind does though)
+  node = 0L;
+  rootNode = 0L;
 }
 
 
@@ -573,7 +577,10 @@ Fl_Preferences::Name::Name( const char *format, ... )
 // delete the name
 Fl_Preferences::Name::~Name()
 {
-  free(data_);
+  if (data_) {
+    free(data_);
+    data_ = 0L;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -737,13 +744,20 @@ Fl_Preferences::RootNode::~RootNode()
 {
   if ( prefs_->node->dirty() )
     write();
-  if ( filename_ ) 
+  if ( filename_ ) { 
     free( filename_ );
-  if ( vendor_ )
+    filename_ = 0L;
+  }
+  if ( vendor_ ) {
     free( vendor_ );
-  if ( application_ )
+    vendor_ = 0L;
+  }
+  if ( application_ ) {
     free( application_ );
+    application_ = 0L;
+  }
   delete prefs_->node;
+  prefs_ = 0L;
 }
 
 // read a preferences file and construct the group tree and with all entry leafs
@@ -837,19 +851,30 @@ Fl_Preferences::Node::~Node()
     nx = nd->next_;
     delete nd;
   }
+  child_ = 0L;
   if ( entry )
   {
     for ( int i = 0; i < nEntry; i++ )
     {
-      if ( entry[i].name ) 
+      if ( entry[i].name ) {
 	free( entry[i].name );
-      if ( entry[i].value )
+	entry[i].name = 0L;
+      }
+      if ( entry[i].value ) {
 	free( entry[i].value );
+	entry[i].value = 0L;
+      }
     }
     free( entry );
+    entry = 0L;
+    nEntry = 0;
   }
-  if ( path_ ) 
+  if ( path_ ) {
     free( path_ );
+    path_ = 0L;
+  }
+  next_ = 0L;
+  parent_ = 0L;
 }
 
 // recursively check if any entry is dirty (was changed after loading a fresh prefs file)
