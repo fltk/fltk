@@ -267,6 +267,11 @@ int fl_wait(double time_to_wait) {
   if (Fl::idle || Fl::damage()) 
     time_to_wait = 0.0;
 
+  // if there are no more windows and this timer is set
+  // to FOREVER, continue through or look up indefinetely
+  if (!Fl::first_window() && time_to_wait==1e20)
+    time_to_wait = 0.0;
+
   fl_unlock_function();
 
   time_to_wait = (time_to_wait > 10000 ? 10000 : time_to_wait);

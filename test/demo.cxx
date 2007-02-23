@@ -306,6 +306,14 @@ int load_the_menu(const char* fname)
   }
   for (;;) {
     if (fgets(line,256,fin) == NULL) break;
+    // remove all carriage returns that Cygwin may have inserted
+    char *s = line, *d = line;
+    for (;;++d) {
+      while (*s=='\r') s++;
+      *d = *s++;
+      if (!*d) break;
+    }
+    // interprete the line
     j = 0; i = 0;
     while (line[i] == ' ' || line[i] == '\t') i++;
     if (line[i] == '\n') continue;
