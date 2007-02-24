@@ -4,6 +4,8 @@ CHANGES IN FLTK 1.1.8
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
 	- The sample RPM spec file now enables large file support
 	  and threading support (STR #1603)
+	- Fixed scrolling of clipped areas in MSWindows (STR
+	  #1601)
 	- Fixed clipping in OS X Quartz offscreen buffers (STR
 	  #1595)
 	- Now flush file chooser preferences after every change to

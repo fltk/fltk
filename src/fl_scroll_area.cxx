@@ -73,39 +73,59 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
     clip_h = H-src_h;
   }
 #ifdef WIN32
+  typedef int (WINAPI* fl_GetRandomRgn_func)(HDC, HRGN, INT);
+  static fl_GetRandomRgn_func fl_GetRandomRgn = 0L;
+  static char first_time = 1;
+
+  // We will have to do some Region magic now, so let's see if the 
+  // required function is available (and it should be staring w/Win95)
+  if (first_time) {
+    HMODULE hMod = GetModuleHandle("GDI32.DLL");
+    if (hMod) {
+      fl_GetRandomRgn = (fl_GetRandomRgn_func)GetProcAddress(hMod, "GetRandomRgn");
+    }
+    first_time = 0;
+  }
+
+  // Now check if the source scrolling area is fully visible.
+  // If it is, we will do a quick scroll and just update the 
+  // newly exposed area. If it is not, we go the safe route and 
+  // re-render the full area instead.
+  // Note 1: we could go and find the areas that are actually
+  // obscured and recursively call fl_scroll for the newly found
+  // rectangles. However, this practice would rely on the 
+  // elements of the undocumented Rgn structure.
+  // Note 2: although this method should take care of most 
+  // multi-screen solutions, it will not solve issues scrolling
+  // from a different resolution screen onto another.
+  // Note 3: this has been tested with image maps, too.
+  if (fl_GetRandomRgn) {
+    // get the DC region minus all overlapping windows
+    HRGN sys_rgn = CreateRectRgn(0, 0, 0, 0);
+    int nn = fl_GetRandomRgn(fl_gc, sys_rgn, 4);
+    // now get the source scrolling rectangle 
+    HRGN src_rgn = CreateRectRgn(src_x, src_y, src_x+src_w, src_y+src_h);
+    POINT offset = { 0, 0 };
+    if (GetDCOrgEx(fl_gc, &offset)) {
+      OffsetRgn(src_rgn, offset.x, offset.y);
+    }
+    // see if all source pixels are available in the system region
+    // Note: we could be a bit more merciful and subtract the 
+    // scroll destination region as well.
+    HRGN dst_rgn = CreateRectRgn(0, 0, 0, 0);
+    int r = CombineRgn(dst_rgn, src_rgn, sys_rgn, RGN_DIFF);
+    DeleteObject(dst_rgn);
+    DeleteObject(src_rgn);
+    DeleteObject(sys_rgn);
+    if (r!=NULLREGION) {
+      draw_area(data,X,Y,W,H);
+      return;
+    }
+  }
+
+  // Great, we can do an accelerated scroll insteasd of re-rendering
   BitBlt(fl_gc, dest_x, dest_y, src_w, src_h, fl_gc, src_x, src_y,SRCCOPY);
-  // NYI: need to redraw areas that the source of BitBlt was bad due to
-  // overlapped windows, probably similar to X version:
-  // MRS: basic code needs to redraw parts that scrolled from off-screen...
-  int temp, limit;
-  int wx, wy;
 
-  // Compute the X position of the current window;
-  // this only works when scrolling in response to
-  // a user event; Fl_Window::x/y_root() do not work
-  // on WIN32...
-  wx = Fl::event_x_root() - Fl::event_x();
-  wy = Fl::event_y_root() - Fl::event_y();
-
-  temp = wx + src_x;
-  if (temp < Fl::x()) {
-    draw_area(data, dest_x, dest_y, Fl::x() - temp, src_h);
-  }
-  temp  = wx + src_x + src_w;
-  limit = Fl::x() + Fl::w();
-  if (temp > limit) {
-    draw_area(data, dest_x + src_w - temp + limit, dest_y, temp - limit, src_h);
-  }
-
-  temp = wy + src_y;
-  if (temp < Fl::y()) {
-    draw_area(data, dest_x, dest_y, src_w, Fl::y() - temp);
-  }
-  temp  = wy + src_y + src_h;
-  limit = Fl::y() + Fl::h();
-  if (temp > limit) {
-    draw_area(data, dest_x, dest_y + src_h - temp + limit, src_w, temp - limit);
-  }
 #elif defined(__APPLE_QD__)
   Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
@@ -116,6 +136,8 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 #elif defined(__APPLE_QUARTZ__)
   // warning: there does not seem to be an equivalent to this function in Quartz
   // ScrollWindowRect is a QuickDraw function and won't work here.
+  // Since on OS X all windows are fully double buffered, we need not
+  // worry about offscreen or obscured areas
   Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
   Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
   static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
