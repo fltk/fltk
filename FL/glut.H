@@ -314,7 +314,7 @@ inline void glutOverlayDisplayFunc(void (*f)()) {
 
 // Warning: values are changed from GLUT!
 // Also relies on the GL_ symbols having values greater than 100
-int glutGet(GLenum type);
+FL_EXPORT int glutGet(GLenum type);
 enum {
   GLUT_RETURN_ZERO = 0,
   GLUT_WINDOW_X,
