@@ -2006,6 +2006,10 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\src\fl_open_uri.cxx"
+			>
+		</File>
+		<File
 			RelativePath="..\src\fl_oval_box.cxx"
 			>
 			<FileConfiguration
