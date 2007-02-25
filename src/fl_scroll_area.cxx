@@ -102,7 +102,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   if (fl_GetRandomRgn) {
     // get the DC region minus all overlapping windows
     HRGN sys_rgn = CreateRectRgn(0, 0, 0, 0);
-    int nn = fl_GetRandomRgn(fl_gc, sys_rgn, 4);
+    fl_GetRandomRgn(fl_gc, sys_rgn, 4);
     // now get the source scrolling rectangle 
     HRGN src_rgn = CreateRectRgn(src_x, src_y, src_x+src_w, src_y+src_h);
     POINT offset = { 0, 0 };
