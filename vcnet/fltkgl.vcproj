@@ -178,7 +178,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -186,7 +186,7 @@
 					Name="VCCLCompilerTool"
 					Optimization="0"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 		</File>
 		<File
@@ -196,7 +196,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -204,7 +204,7 @@
 					Name="VCCLCompilerTool"
 					Optimization="0"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 		</File>
 		<File
@@ -214,7 +214,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -222,7 +222,7 @@
 					Name="VCCLCompilerTool"
 					Optimization="0"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 		</File>
 		<File
@@ -232,7 +232,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -240,7 +240,7 @@
 					Name="VCCLCompilerTool"
 					Optimization="0"
 					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
+					PreprocessorDefinitions="" />
 			</FileConfiguration>
 		</File>
 		<File
