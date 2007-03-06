@@ -261,7 +261,7 @@ void* Fl::thread_message() {
 static void thread_awake_cb(int fd, void*) {
   read(fd, &thread_message_, sizeof(void*));
   if (Fl::awake_cb) (*Fl::awake_cb)(thread_message_);
-  Fl_Awake_Handler *func;
+  Fl_Awake_Handler func;
   void *data;
   while (Fl::get_awake_handler_(func, data)==0) {
     (*func)(data);
