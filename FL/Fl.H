@@ -46,6 +46,7 @@ typedef void (Fl_Label_Measure_F)(const Fl_Label*, int&, int&);
 typedef void (Fl_Box_Draw_F)(int,int,int,int, Fl_Color);
 
 typedef void (*Fl_Timeout_Handler)(void*);
+typedef void (*Fl_Awake_Handler)(void*);
 
 class FL_EXPORT Fl {
   Fl() {}; // no constructor!
@@ -79,6 +80,14 @@ public: // should be private!
 
   static void (*idle)();
   static void (*awake_cb)(void *);
+  static Fl_Awake_Handler *awake_ring_;
+  static void **awake_data_;
+  static int awake_ring_size_;
+  static int awake_ring_head_;
+  static int awake_ring_tail_;
+
+  static int add_awake_handler_(Fl_Awake_Handler, void*);
+  static int get_awake_handler_(Fl_Awake_Handler&, void*&);
 
   static const char* scheme_;
   static Fl_Image* scheme_bg_;
@@ -267,6 +276,7 @@ public:
   static void lock();
   static void unlock();
   static void awake(void* message = 0);
+  static int awake(Fl_Awake_Handler cb, void* message = 0);
   static void set_awake_cb(void (*cb)(void *)) { awake_cb = cb; }
   static void* thread_message();
 

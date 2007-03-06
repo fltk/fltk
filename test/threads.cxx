@@ -32,6 +32,7 @@
 #  include <FL/Fl_Window.H>
 #  include <FL/Fl_Browser.H>
 #  include <FL/Fl_Value_Output.H>
+#  include <FL/fl_ask.h>
 #  include "threads.h"
 #  include <stdio.h>
 #  include <math.h>
@@ -42,12 +43,20 @@ Fl_Browser *browser1, *browser2;
 Fl_Value_Output *value1, *value2;
 int start2 = 3;
 
+void magic_number_cb(void *p)
+{
+  Fl_Value_Output *w = (Fl_Value_Output*)p;
+  w->labelcolor(FL_RED);
+  w->redraw_label();
+}
+
 void* prime_func(void* p)
 {
   Fl_Browser* browser = (Fl_Browser*) p;
   Fl_Value_Output *value;
   int n;
   int step;
+  char proud = 0;
 
   if (browser == browser2) {
     n      = start2;
@@ -86,6 +95,10 @@ void* prime_func(void* p)
       // message we pass here isn't used for anything, so we could also
       // just pass NULL.
       Fl::awake(p);
+      if (n>10000 && !proud) {
+        proud = 1;
+        Fl::awake(magic_number_cb, value);
+      }
     } else {
       // This should not be necessary since "n" and "step" are local variables,
       // however it appears that at least MacOS X has some threading issues

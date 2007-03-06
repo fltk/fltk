@@ -29,6 +29,8 @@
 #include <FL/Fl.H>
 #include <config.h>
 
+#include <stdlib.h>
+
 /*
    From Bill:
 
@@ -67,6 +69,62 @@
 */
 
 void	(*Fl::awake_cb)(void *);
+
+Fl_Awake_Handler *Fl::awake_ring_;
+void **Fl::awake_data_;
+int Fl::awake_ring_size_;
+int Fl::awake_ring_head_;
+int Fl::awake_ring_tail_;
+const int AWAKE_RING_SIZE = 1024;
+
+int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
+{
+  int ret = 0;
+  Fl::lock();
+  if (!awake_ring_) {
+    awake_ring_size_ = AWAKE_RING_SIZE;
+    awake_ring_ = (Fl_Awake_Handler*)malloc(awake_ring_size_*sizeof(Fl_Awake_Handler));
+    awake_data_ = (void**)malloc(awake_ring_size_*sizeof(void*));
+  }
+  if (awake_ring_head_==awake_ring_tail_-1 || awake_ring_head_+1==awake_ring_tail_) {
+    // ring is full. Return -1 as ann error indicator.
+    ret = -1;
+  } else {
+    awake_ring_[awake_ring_head_] = func;
+    awake_data_[awake_ring_head_] = data;
+    ++awake_ring_head_;
+    if (awake_ring_head_ == awake_ring_size_)
+      awake_ring_head_ = 0;
+  }
+  Fl::unlock();
+  return ret;
+}
+
+int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
+{
+  // this function must only be called from within the event
+  // loop which is locked, so don't bother creating any locks 
+  if (!awake_ring_)
+    return -1;
+  if (awake_ring_head_ == awake_ring_tail_) 
+    return -1;
+  func = awake_ring_[awake_ring_tail_];
+  data = awake_data_[awake_ring_tail_];
+  ++awake_ring_tail_;
+  if (awake_ring_tail_ == awake_ring_size_)
+    awake_ring_tail_ = 0;
+  return 0;
+}
+
+//
+// 'Fl::awake()' - Let the main thread know an update is pending
+//                 and have it cal a specific function
+//
+int Fl::awake(Fl_Awake_Handler func, void *data) {
+  int ret = add_awake_handler_(func, data);
+  Fl::awake();
+  return ret;
+}
 
 ////////////////////////////////////////////////////////////////
 // Windows threading...
@@ -203,6 +261,11 @@ void* Fl::thread_message() {
 static void thread_awake_cb(int fd, void*) {
   read(fd, &thread_message_, sizeof(void*));
   if (Fl::awake_cb) (*Fl::awake_cb)(thread_message_);
+  Fl_Awake_Handler *func;
+  void *data;
+  while (Fl::get_awake_handler_(func, data)==0) {
+    (*func)(data);
+  }
 }
 
 // These pointers are in Fl_x.cxx:
