@@ -58,6 +58,7 @@ CFLAGS="@CFLAGS@ @LARGEFILE@ @PTHREAD_FLAGS@"
 CXXFLAGS="@CXXFLAGS@ @LARGEFILE@ @PTHREAD_FLAGS@"
 LDFLAGS="@LDFLAGS@"
 LDLIBS="@LIBS@"
+OPTIM="@OPTIM@"
 
 # Check for local invocation, and update paths accordingly...
 if test -f "$selfdir/FL/Fl_Window.H"; then
@@ -109,6 +110,7 @@ Options telling what we are doing:
 Options telling what information we request:
 	[--cc]            return C compiler used to compile FLTK
 	[--cxx]           return C++ compiler used to compile FLTK
+	[--optim]         return compiler optimization used to compile FLTK
 	[--cflags]        return flags to compile C using FLTK
 	[--cxxflags]      return flags to compile C++ using FLTK
 	[--ldflags]       return flags to link against FLTK
@@ -158,6 +160,9 @@ do
 	    ;;
 	--cxx)
 	    echo $CXX
+	    ;;
+	--optim)
+	    echo_optim=yes
 	    ;;
 	--use-gl | --use-glut)
 	    use_gl=yes
@@ -282,6 +287,10 @@ fi
 
 if test "$echo_cxxflags" = "yes"; then
     echo $includes $CXXFLAGS
+fi
+
+if test "$echo_optim" = "yes"; then
+    echo $OPTIM
 fi
 
 if test "$echo_ldflags" = "yes"; then
