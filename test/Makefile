@@ -277,17 +277,20 @@ blocks$(EXEEXT): blocks.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)
 	$(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
+	$(POSTBUILD) $@ ../FL/mac.r
 
 checkers$(EXEEXT): checkers.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
 	$(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
+	$(POSTBUILD) $@ ../FL/mac.r
 
 clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ colbrowser.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 color_chooser$(EXEEXT): color_chooser.o
 
@@ -298,12 +301,14 @@ curve$(EXEEXT): curve.o
 demo$(EXEEXT): demo.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 doublebuffer$(EXEEXT): doublebuffer.o
 
 editor$(EXEEXT): editor.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) editor.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 fast_slow$(EXEEXT): fast_slow.o
 fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)
@@ -311,18 +316,21 @@ fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)
 file_chooser$(EXEEXT): file_chooser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 fonts$(EXEEXT): fonts.o
 
 forms$(EXEEXT): forms.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ forms.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 hello$(EXEEXT): hello.o
 
 help$(EXEEXT): help.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 iconize$(EXEEXT): iconize.o
 
@@ -338,12 +346,14 @@ input_choice$(EXEEXT): input_choice.o
 keyboard$(EXEEXT): keyboard_ui.o keyboard.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 keyboard_ui.o:	keyboard_ui.h
 keyboard_ui.cxx:	keyboard_ui.fl ../fluid/fluid$(EXEEXT)
 
 label$(EXEEXT): label.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ label.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 line_style$(EXEEXT): line_style.o
 
@@ -352,6 +362,7 @@ list_visuals$(EXEEXT): list_visuals.o
 mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 mandelbrot_ui.o:	mandelbrot_ui.h
 mandelbrot_ui.cxx:	mandelbrot_ui.fl ../fluid/fluid$(EXEEXT)
 
@@ -366,6 +377,7 @@ navigation$(EXEEXT): navigation.o
 output$(EXEEXT): output.o ../lib/$(FLLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ output.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 overlay$(EXEEXT): overlay.o
 
@@ -376,6 +388,7 @@ pixmap$(EXEEXT): pixmap.o
 pixmap_browser$(EXEEXT): pixmap_browser.o ../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) pixmap_browser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 preferences$(EXEEXT):	preferences.o
 preferences.cxx:	preferences.fl ../fluid/fluid$(EXEEXT)
@@ -396,6 +409,7 @@ sudoku: sudoku.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 	$(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
+	$(POSTBUILD) $@ ../FL/mac.r
 
 sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
@@ -428,6 +442,7 @@ CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ \
 		CubeMain.o CubeView.o CubeViewUI.o \
 		$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 CubeMain.o: CubeViewUI.h CubeView.h CubeViewUI.cxx
 CubeView.o: CubeView.h
 CubeViewUI.o:	CubeViewUI.cxx CubeViewUI.h
@@ -436,21 +451,32 @@ CubeViewUI.cxx:	CubeViewUI.fl ../fluid/fluid$(EXEEXT)
 cube$(EXEEXT): cube.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
+
 fractals$(EXEEXT): fractals.o fracviewer.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ fractals.o fracviewer.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
+
 fullscreen$(EXEEXT): fullscreen.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
+
 glpuzzle$(EXEEXT): glpuzzle.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
+
 gl_overlay$(EXEEXT): gl_overlay.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
+
 shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
+	$(POSTBUILD) $@ ../FL/mac.r
 
 
 #

@@ -100,6 +100,9 @@ THREADS		= @THREADS@
 # Name of FLUID executable we install
 FLUID		= @FLUID@$(EXEEXT)
 
+# Possible steps after linking...
+POSTBUILD	= @POSTBUILD@
+
 # Man page extensions...
 CAT1EXT		= @CAT1EXT@
 CAT3EXT		= @CAT3EXT@
@@ -129,6 +132,7 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 .o$(EXEEXT):
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(POSTBUILD) $@ ../FL/mac.r
 
 .c.o:
 	echo Compiling $<...
