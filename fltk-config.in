@@ -271,6 +271,11 @@ if test -n "$compile"; then
     $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
 fi
 
+if test -n "$post" -a "$POSTBUILD" != ":"; then
+    echo $POSTBUILD $post $includedir/FL/mac.r
+    $POSTBUILD $post $includedir/FL/mac.r
+fi
+
 if test "$echo_cflags" = "yes"; then
     echo $includes $CFLAGS
 fi
