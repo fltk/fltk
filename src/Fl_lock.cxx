@@ -77,10 +77,14 @@ int Fl::awake_ring_head_;
 int Fl::awake_ring_tail_;
 const int AWAKE_RING_SIZE = 1024;
 
+static void lock_ring();
+static void unlock_ring();
+
+
 int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
 {
   int ret = 0;
-  Fl::lock();
+  lock_ring();
   if (!awake_ring_) {
     awake_ring_size_ = AWAKE_RING_SIZE;
     awake_ring_ = (Fl_Awake_Handler*)malloc(awake_ring_size_*sizeof(Fl_Awake_Handler));
@@ -96,24 +100,25 @@ int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
     if (awake_ring_head_ == awake_ring_size_)
       awake_ring_head_ = 0;
   }
-  Fl::unlock();
+  unlock_ring();
   return ret;
 }
 
 int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
 {
-  // this function must only be called from within the event
-  // loop which is locked, so don't bother creating any locks 
-  if (!awake_ring_)
-    return -1;
-  if (awake_ring_head_ == awake_ring_tail_) 
-    return -1;
-  func = awake_ring_[awake_ring_tail_];
-  data = awake_data_[awake_ring_tail_];
-  ++awake_ring_tail_;
-  if (awake_ring_tail_ == awake_ring_size_)
-    awake_ring_tail_ = 0;
-  return 0;
+  int ret = 0;
+  lock_ring();
+  if (!awake_ring_ || awake_ring_head_ == awake_ring_tail_) {
+    ret = -1;
+  } else {
+    func = awake_ring_[awake_ring_tail_];
+    data = awake_data_[awake_ring_tail_];
+    ++awake_ring_tail_;
+    if (awake_ring_tail_ == awake_ring_size_)
+      awake_ring_tail_ = 0;
+  }
+  unlock_ring();
+  return ret;
 }
 
 //
@@ -142,6 +147,19 @@ static DWORD main_thread;
 
 // Microsoft's version of a MUTEX...
 CRITICAL_SECTION cs;
+CRITICAL_SECTION *cs_ring;
+
+void unlock_ring() {
+  LeaveCriticalSection(cs_ring);
+}
+
+void lock_ring() {
+  if (!cs_ring) {
+    cs_ring = (CRITICAL_SECTION*)malloc(sizeof(CRITICAL_SECTION));
+    InitializeCriticalSection(cs_ring);
+  }
+  EnterCriticalSection(cs_ring);
+}
 
 //
 // 'unlock_function()' - Release the lock.
@@ -204,7 +222,7 @@ void Fl::awake(void* msg) {
 // Pipe for thread messaging via Fl::awake()...
 static int thread_filedes[2];
 
-// Mutux and state information for Fl::lock() and Fl::unlock()...
+// Mutex and state information for Fl::lock() and Fl::unlock()...
 static pthread_mutex_t fltk_mutex;
 static pthread_t owner;
 static int counter;
@@ -310,6 +328,23 @@ void Fl::lock() {
 void Fl::unlock() {
   fl_unlock_function();
 }
+
+// Mutex code for the awake ring buffer
+static pthread_mutex_t *ring_mutex;
+
+void unlock_ring() {
+  pthread_mutex_unlock(ring_mutex);
+}
+
+void lock_ring() {
+  if (!ring_mutex) {
+    ring_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+    pthread_mutex_init(ring_mutex, NULL);
+  }
+  pthread_mutex_lock(ring_mutex);
+}
+
+
 #endif // WIN32
 
 //
