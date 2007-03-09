@@ -32,7 +32,7 @@
 #  include <FL/Fl_Window.H>
 #  include <FL/Fl_Browser.H>
 #  include <FL/Fl_Value_Output.H>
-#  include <FL/fl_ask.h>
+#  include <FL/fl_ask.H>
 #  include "threads.h"
 #  include <stdio.h>
 #  include <math.h>
