@@ -37,7 +37,7 @@ install:
 	echo "Installing include files in $(DESTDIR)$(includedir)..."
 	$(RMDIR) $(DESTDIR)$(includedir)/FL
 	$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL
-	for file in *.[hH]; do \
+	for file in *.[hrH]; do \
 		$(INSTALL_DATA) $$file $(DESTDIR)$(includedir)/FL; \
 	done
 @HLINKS@	cd $(DESTDIR)$(includedir)/FL;\
