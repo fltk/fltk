@@ -75,7 +75,7 @@ void **Fl::awake_data_;
 int Fl::awake_ring_size_;
 int Fl::awake_ring_head_;
 int Fl::awake_ring_tail_;
-const int AWAKE_RING_SIZE = 1024;
+static const int AWAKE_RING_SIZE = 1024;
 
 static void lock_ring();
 static void unlock_ring();
@@ -344,6 +344,13 @@ void lock_ring() {
   pthread_mutex_lock(ring_mutex);
 }
 
+#else
+
+void unlock_ring() {
+}
+
+void lock_ring() {
+}
 
 #endif // WIN32
 
