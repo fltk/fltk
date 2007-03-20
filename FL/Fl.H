@@ -79,7 +79,6 @@ public: // should be private!
   static void damage(int d) {damage_ = d;}
 
   static void (*idle)();
-  static void (*awake_cb)(void *);
   static Fl_Awake_Handler *awake_ring_;
   static void **awake_data_;
   static int awake_ring_size_;
@@ -277,7 +276,6 @@ public:
   static void unlock();
   static void awake(void* message = 0);
   static int awake(Fl_Awake_Handler cb, void* message = 0);
-  static void set_awake_cb(void (*cb)(void *)) { awake_cb = cb; }
   static void* thread_message();
 
   // Widget deletion:

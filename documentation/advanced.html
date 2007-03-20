@@ -31,7 +31,8 @@ that will help you to get the most out of FLTK.</P>
 
 <P>You can now start as many threads as you like. From within
 a thread (other than the main thread) FLTK calls must be wrapped
-with calls to <a href="Fl.html#Fl.lock"><tt>Fl::lock()</tt></a> and <a href="Fl.html#Fl.unlock"><tt>Fl::unlock()</tt></a>:
+with calls to <a href="Fl.html#Fl.lock"><tt>Fl::lock()</tt></a> 
+and <a href="Fl.html#Fl.unlock"><tt>Fl::unlock()</tt></a>:
 
 <pre>
     Fl::lock();      // avoid conflicting calls
@@ -39,27 +40,28 @@ with calls to <a href="Fl.html#Fl.lock"><tt>Fl::lock()</tt></a> and <a href="Fl.
     Fl::unlock();    // allow other threads to access FLTK again
 </pre>
 
-<p>You can send messages from child threads to the main thread using <a href="Fl.html#Fl.awake"><tt>Fl::awake(msg)</tt></a>:</p>
+<p>You can send messages from child threads to the main thread 
+using <a href="Fl.html#Fl.awake"><tt>Fl::awake(msg)</tt></a>:</p>
 
 <pre>
     void *msg;       // "msg" is a pointer to your message
     Fl::awake(msg);  // send "msg" to main thread
 </pre>
 
-<p>These messages can be read by the main thread using <A HREF="Fl.html#Fl.thread_message"><TT>Fl::thread_message()</TT></A> or by registering a message callback with <A HREF="Fl.html#Fl.set_awake_cb"><TT>Fl::set_awake_cb()</TT></A>:</p>
+<p>You can also tell the main thread to call a function for you
+as soon as possible by using
+<a href="Fl.html#Fl.awake"><tt>Fl::awake(callback, userdata)</tt></a>:</p>
 
 <pre>
-    void message_cb(void *msg) {
-      ... do something with "msg" ...
+    void do_something(void *userdata) {
+      // running with the main thread
     }
 
-    int main() {
-      Fl::lock();
-      Fl::set_awake_cb(message_cb);
-      /* run thread */
-      return (Fl::run());
-    }
+    // running in another thread
+    void *data;       // "data" is a pointer to your user data
+    Fl::awake(do_something, data);  // call something in main thread
 </pre>
+
       
 <P>FLTK supports multiple platforms, some of them which do not 
 allow any other but the main thread to handle system events and
@@ -86,7 +88,6 @@ related methods that will handle system messages</li>
 <P>See also: 
 <a href="Fl.html#Fl.awake">void awake(void *message)</A>, 
 <a href="Fl.html#Fl.lock">void lock()</A>, 
-<a href="Fl.html#Fl.set_awake_cb">void set_awake_cb(void (*cb)(void *)</A>, 
 <a href="Fl.html#Fl.thread_message">void *thread_message()</A>,
 <a href="Fl.html#Fl.unlock">void unlock()</A>.
 

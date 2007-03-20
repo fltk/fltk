@@ -4,9 +4,9 @@ CHANGES IN FLTK 1.1.8
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
 	- The sample RPM spec file now enables large file support
 	  and threading support (STR #1603)
-	- Changed minumu contrast between background and text to 
+	- Changed minimum contrast between background and text to 
 	  96 and added more weight to the blue component to improve
-	  readability (STR #1625)
+	  readability for certain color combinations (STR #1625)
 	- Fixed VCNet OpenGL project file (STR #1617)
 	- Fixed scrolling of clipped areas in MSWindows (STR
 	  #1601)
@@ -16,7 +16,7 @@ CHANGES IN FLTK 1.1.8
 	  avoid data loss (STR #1609)
 	- The Fl_File_Chooser constructor now saves and restores the
 	  current group (STR #1611)
-	- Added Fl::set_awake_cb() to set a handler for thread
+	- Added Fl::awake(fn*,void*) to set a handler for thread
 	  messages (STR #1536)
 	- Added "mute sound" option to Sudoku game.
 	- Updated the bundled zlib to v1.2.3.

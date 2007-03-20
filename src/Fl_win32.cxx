@@ -299,7 +299,6 @@ int fl_wait(double time_to_wait) {
       if (fl_msg.message == fl_wake_msg) {
         // Used for awaking wait() from another thread
 	thread_message_ = (void*)fl_msg.wParam;
-        if (Fl::awake_cb) (*Fl::awake_cb)(thread_message_);
         Fl_Awake_Handler func;
         void *data;
         while (Fl::get_awake_handler_(func, data)==0) {

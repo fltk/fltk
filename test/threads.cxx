@@ -111,12 +111,6 @@ void* prime_func(void* p)
   return 0;
 }
 
-void message_cb(void *m) {
-  if (m == (void *)browser1) putchar('1');
-  else putchar('2');
-  fflush(stdout);
-}
-
 int main(int argc, char **argv)
 {
   Fl_Window* w = new Fl_Window(200, 200, "Single Thread");
@@ -140,11 +134,6 @@ int main(int argc, char **argv)
   // Fl::lock() as needed to release control to the child threads
   // when it is safe to do so...
   Fl::lock();
-
-  // Register a callback for Fl::awake() messages.  This allows
-  // you to get all thread messages even if you are in another
-  // run loop (say, with a modal dialog...)
-  Fl::set_awake_cb(message_cb);
 
   // Start threads...
 

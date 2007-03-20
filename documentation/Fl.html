@@ -126,7 +126,6 @@ state information and global methods for the current application.</P>
 	<LI><A HREF="#Fl.selection_owner">selection_owner</A></LI>
 	<LI><A HREF="#Fl.set_abort">set_abort</A></LI>
 	<LI><A HREF="#Fl.set_atclose">set_atclose</A></LI>
-	<LI><A HREF="#Fl.set_awake_cb">set_awake_cb</A></LI>
 	<LI><A HREF="#Fl.set_boxtype">set_boxtype</A></LI>
 	<LI><A HREF="#Fl.set_color">set_color</A></LI>
 	<LI><A HREF="#Fl.set_font">set_font</A></LI>
@@ -391,9 +390,24 @@ argument on the command-line. You can change the message by setting the
 
 <H4><A NAME="Fl.awake">void awake(void *p);</A></H4>
 
-<P>The <TT>awake()</TT> method sends a message pointer to the main thread, causing any pending <A HREF="#Fl.wait"><TT>Fl::wait()</TT></A> call to terminate so that the main thread can retrieve the message and any pending redraws can be processed.
+<H4><A NAME="Fl.awake">int awake(void (*callback)(void*), void *userdata);</A></H4>
 
-<P>Multiple calls to <TT>Fl::awake()</TT> will queue multiple pointers for the main thread to process, up to a system-defined (typically several thousand) depth. The default message handler saves the last message which can be accessed using the <A HREF="#Fl.thread_message"><TT>Fl::thread_message()</TT></A> function. Use the <A HREF="#Fl.set_awake_cb"><TT>Fl::set_awake_cb()</TT></A> function to register your own thread message handler that is called for every message received by the main thread.
+<P>The <TT>awake()</TT> method sends a message pointer to the main thread, 
+causing any pending <A HREF="#Fl.wait"><TT>Fl::wait()</TT></A> call to 
+terminate so that the main thread can retrieve the message and any pending 
+redraws can be processed.
+
+<P>Multiple calls to <TT>Fl::awake()</TT> will queue multiple pointers 
+for the main thread to process, up to a system-defined (typically several 
+thousand) depth. The default message handler saves the last message which 
+can be accessed using the <A HREF="#Fl.thread_message">
+<TT>Fl::thread_message()</TT></A> function.
+
+<P>The second form of <TT>awake()</TT> registers a function that will be 
+called by the main thread during the next message handling cycle. 
+<TT>awake()</TT> will return 0 if the callback function was registered, 
+and -1 if registration failed. Over a thousand awake callbacks can be
+registered simultaneously.
 
 <P>See also: <a href="advanced.html#multithreading">multithreading</a>.
 
@@ -1168,10 +1182,6 @@ of this.</I>
 <H4><A NAME="Fl.set_abort">void set_abort(void (*f)(const char*,...));</A></H4>
 
 <H4><A NAME="Fl.set_atclose">void set_atclose(void (*f)(Fl_Window*,void*));</A></H4>
-
-<H4><A NAME="Fl.set_awake_cb">void set_awake_cb(void (*cb)(void*));</A></H4>
-
-<P>Sets a function to handle thread messages sent via the <A HREF="#Fl.awake"><TT>Fl::awake()</TT></A> function.</P>
 
 <H4><A NAME="Fl.set_boxtype">void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar);<BR>
 void set_boxtype(Fl_Boxtype, Fl_Boxtype from);</A></H4>

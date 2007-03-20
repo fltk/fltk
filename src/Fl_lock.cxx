@@ -58,17 +58,14 @@
    Fl::awake(void*) - Causes Fl::wait() to return (with the lock
    locked) even if there are no events ready.
 
-   Fl::set_awake_cb(void (*cb)(void *)) - Registers a function
-   to call for Fl::awake() messages that is called for each
-   message received.
+   Fl::awake(void (*cb)(void *), void*) - Call a function
+   in the main thread from within another thread of execution.
 
    Fl::thread_message() - returns an argument sent to an
    Fl::awake() call, or returns NULL if none.  WARNING: the
    current implementation only has a one-entry queue and only
    returns the most recent value!
 */
-
-void	(*Fl::awake_cb)(void *);
 
 Fl_Awake_Handler *Fl::awake_ring_;
 void **Fl::awake_data_;
@@ -91,7 +88,7 @@ int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
     awake_data_ = (void**)malloc(awake_ring_size_*sizeof(void*));
   }
   if (awake_ring_head_==awake_ring_tail_-1 || awake_ring_head_+1==awake_ring_tail_) {
-    // ring is full. Return -1 as ann error indicator.
+    // ring is full. Return -1 as an error indicator.
     ret = -1;
   } else {
     awake_ring_[awake_ring_head_] = func;
@@ -278,7 +275,6 @@ void* Fl::thread_message() {
 
 static void thread_awake_cb(int fd, void*) {
   read(fd, &thread_message_, sizeof(void*));
-  if (Fl::awake_cb) (*Fl::awake_cb)(thread_message_);
   Fl_Awake_Handler func;
   void *data;
   while (Fl::get_awake_handler_(func, data)==0) {
