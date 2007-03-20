@@ -374,12 +374,12 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   else c2 = fl_cmap[bg];
 
   // Compute the luminosity...
-  l1 = ((c1 >> 24) * 31 + ((c1 >> 16) & 255) * 61 + ((c1 >> 8) & 255) * 8) / 100;
-  l2 = ((c2 >> 24) * 31 + ((c2 >> 16) & 255) * 61 + ((c2 >> 8) & 255) * 8) / 100;
+  l1 = ((c1 >> 24) * 30 + ((c1 >> 16) & 255) * 59 + ((c1 >> 8) & 255) * 11) / 100;
+  l2 = ((c2 >> 24) * 30 + ((c2 >> 16) & 255) * 59 + ((c2 >> 8) & 255) * 11) / 100;
 
   // Compare and return the contrasting color...
-  if ((l1 - l2) > 90) return fg;
-  else if ((l2 - l1) > 90) return fg;
+  if ((l1 - l2) > 96) return fg;
+  else if ((l2 - l1) > 96) return fg;
   else if (l2 > 127) return FL_BLACK;
   else return FL_WHITE;
 }

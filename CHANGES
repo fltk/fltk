@@ -4,6 +4,9 @@ CHANGES IN FLTK 1.1.8
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578)
 	- The sample RPM spec file now enables large file support
 	  and threading support (STR #1603)
+	- Changed minumu contrast between background and text to 
+	  96 and added more weight to the blue component to improve
+	  readability (STR #1625)
 	- Fixed VCNet OpenGL project file (STR #1617)
 	- Fixed scrolling of clipped areas in MSWindows (STR
 	  #1601)
