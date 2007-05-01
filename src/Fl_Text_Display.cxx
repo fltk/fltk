@@ -174,6 +174,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   if ( buf == mBuffer) return;
   if ( mBuffer != 0 ) {
     buffer_modified_cb( 0, 0, mBuffer->length(), 0, 0, this );
+	mNBufferLines = 0;
     mBuffer->remove_modify_callback( buffer_modified_cb, this );
     mBuffer->remove_predelete_callback( buffer_predelete_cb, this );
   }
@@ -1150,7 +1151,7 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
     while (true) {
 	lineStart = buf->line_start(pos);
 	wrapped_line_counter(buf, lineStart, pos, INT_MAX,
-	    	true, 0, &retPos, &retLines, &retLineStart, &retLineEnd);
+	    	true, 0, &retPos, &retLines, &retLineStart, &retLineEnd, false);
 	if (retLines > nLines)
     	    return skip_lines(lineStart, retLines-nLines,
     	    	    true);
