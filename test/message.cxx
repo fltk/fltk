@@ -38,8 +38,11 @@ int main(int argc, char **argv) {
   fl_message("Spelling check sucessful, %d errors found with %g%% confidence",
 	     1002, 100*(15/77.0));
 
-  fl_alert("Quantum fluctuations in the space-time continuum detected, "
-	   "you have %g seconds to comply.", 10.0);
+  fl_alert("<HTML><b>Quantum fluctuations</b> in the space-time continuum detected, "
+	   "you have <i>%g seconds</i> to comply."
+		 "<p>For more information on time travel "
+		 "please visit <a href=http://www.fltk.org/>http://www.fltk.org/</a>"
+		 , 10.0);
 
   printf("fl_choice returned %d\n",
     fl_choice("Do you really want to %s?", "No", "Yes", 0L, "continue"));

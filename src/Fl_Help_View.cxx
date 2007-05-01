@@ -196,10 +196,6 @@ struct fl_margins {
  * in a single set of variables.
  *
  * Still to do:
- * - The viewer flickers like crazy when redrawing. The window should be
- *   Fl_Double_Window, but is that binary compatible?
- * - We should not draw anything when counting (draw_mode>0). That would 
- *   improve performance a lot
  * - &word; style characters mess up our count inside a word boundary
  * - we can only select words, no individual characters
  * - no dragging of the selection into another widget
@@ -508,6 +504,7 @@ Fl_Help_View::draw()
     hv_selection_color      = FL_SELECTION_COLOR;
     hv_selection_text_color = fl_contrast(textcolor_, FL_SELECTION_COLOR);
   }
+  current_pos = 0;
 
   // Clip the drawing to the inside of the box...
   fl_push_clip(x() + Fl::box_dx(b), y() + Fl::box_dy(b),

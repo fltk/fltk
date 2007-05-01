@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include "flstring.h"
 
 #include <FL/Fl.H>
@@ -44,17 +45,24 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Secret_Input.H>
+#include <FL/Fl_Help_View.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+#include <FL/filename.H>
 
 static Fl_Window *message_form;
-static Fl_Box *message;
+static Fl_Help_View *message;
 static Fl_Box *icon;
 static Fl_Button *button[3];
 static Fl_Input *input;
 static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
 uchar fl_message_size_ = 14;
+
+static const char *follow_link(Fl_Widget*, const char *link) {
+	fl_open_uri(link);
+	return 0L;
+}
 
 static Fl_Window *makeform() {
  if (message_form) {
@@ -69,8 +77,10 @@ static Fl_Window *makeform() {
  Fl_Window *w = message_form = new Fl_Window(410,103,"");
  // w->clear_border();
  // w->box(FL_UP_BOX);
- (message = new Fl_Box(60, 25, 340, 20))
-   ->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+ message = new Fl_Help_View(60, 25, 340, 20);
+ message->box(FL_FLAT_BOX);
+ message->color(w->color());
+ message->link(follow_link);
  (input = new Fl_Input(60, 37, 340, 23))->hide();
  {Fl_Box* o = icon = new Fl_Box(10, 10, 50, 50);
   o->box(FL_THIN_UP_BOX);
@@ -101,13 +111,13 @@ static Fl_Window *makeform() {
 void resizeform() {
   int	i;
   int	message_w, message_h;
-  int	icon_size;
+  int	msg_inp_h;
   int	button_w[3], button_h[3];
   int	x, w, h, max_w, max_h;
 
   fl_font(fl_message_font_, fl_message_size_);
-  message_w = message_h = 0;
-  fl_measure(message->label(), message_w, message_h);
+  message_w = 340;
+  message_h = message->size() - 10; // adding ten pixel later for better alignment
 
   message_w += 10;
   message_h += 10;
@@ -115,6 +125,8 @@ void resizeform() {
     message_w = 340;
   if (message_h < 30)
     message_h = 30;
+  if (message_h > 500)
+    message_h = 500;
 
   fl_font(button[0]->labelfont(), button[0]->labelsize());
 
@@ -136,27 +148,27 @@ void resizeform() {
         max_h = button_h[i];
     }
 
-  if (input->visible()) icon_size = message_h + 25;
-  else icon_size = message_h;
+  if (input->visible()) msg_inp_h = message_h + 25;
+  else msg_inp_h = message_h;
 
-  max_w = message_w + 10 + icon_size;
+  max_w = message_w + 10 + 50;
   w     = button_w[0] + button_w[1] + button_w[2] - 10;
 
   if (w > max_w)
     max_w = w;
 
-  message_w = max_w - 10 - icon_size;
+  message_w = max_w - 10 - 50;
 
   w = max_w + 20;
-  h = max_h + 30 + icon_size;
+  h = max_h + 30 + msg_inp_h;
 
   message_form->size(w, h);
   message_form->size_range(w, h, w, h);
 
-  message->resize(20 + icon_size, 10, message_w, message_h);
-  icon->resize(10, 10, icon_size, icon_size);
-  icon->labelsize((uchar)(icon_size - 10));
-  input->resize(20 + icon_size, 10 + message_h, message_w, 25);
+  message->resize(20 + 50, 10, message_w, message_h+10);
+  icon->resize(10, 10, 50, 50);
+  icon->labelsize((uchar)(50 - 10));
+  input->resize(20 + 50, 10 + message_h, message_w, 25);
 
   for (x = w, i = 0; i < 3; i ++)
     if (button_w[i])
@@ -170,23 +182,65 @@ void resizeform() {
     }
 }
 
+static const char *check_html(const char *src) {
+	if (!src || strnicmp(src, "<html", 5)==0)
+		return src;
+	const char *s = src;
+	int n = 1;
+	for (;;) {
+		char c = *s++;
+		if (!c) break;
+		switch (c) {
+			case '<': n+=4; break; // &lt;
+			case '&': n+=5; break; // &amp;
+			case '\n':n+=4; break; // <br> or <p>
+			default:  ++n; break;
+		}
+	}
+	char *dst = (char*)malloc(n), *d = dst;
+	s = src;
+	for (;;) {
+		char c = *s++;
+		if (!c) break;
+		switch (c) {
+			case '<': *d++='&'; *d++='l'; *d++='t'; *d++=';'; break;
+			case '&': *d++='&'; *d++='a'; *d++='m'; *d++='p'; *d++=';'; break;
+			case '\n':
+				if (*s=='\n') {
+					*d++='<'; *d++='p'; *d++='>'; ++s;
+				} else {
+					*d++='<'; *d++='b'; *d++='r'; *d++='>';  
+				}
+				break;
+			default:  *d++ = c; break;
+		}
+	}
+	*d = 0;
+	return dst;
+}
+
 static int innards(const char* fmt, va_list ap,
   const char *b0,
   const char *b1,
   const char *b2)
 {
   makeform();
-  char buffer[1024];
+  const char *txt, *html; 
+	char buffer[1024];
+
   if (!strcmp(fmt,"%s")) {
-    message->label(va_arg(ap, const char*));
+		txt = va_arg(ap, const char*);
   } else {
     //: matt: MacOS provides two equally named vsnprintf's...
     ::vsnprintf(buffer, 1024, fmt, ap);
-    message->label(buffer);
+    txt = buffer;
   }
+	html = check_html(txt);
+  message->value(html);
+	if (html!=txt) free((char*)html);
 
-  message->labelfont(fl_message_font_);
-  message->labelsize(fl_message_size_);
+  message->textfont(fl_message_font_);
+  message->textsize(fl_message_size_);
   if (b0) {button[0]->show(); button[0]->label(b0); button[1]->position(210,70);}
   else {button[0]->hide(); button[1]->position(310,70);}
   if (b1) {button[1]->show(); button[1]->label(b1);}
