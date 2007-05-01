@@ -2,7 +2,7 @@ CHANGES IN FLTK 1.1.8
 
 	- Documentation fixes (STR #1454, STR #1455, STR #1456,
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578,
-	  STR #1639)
+	  STR #1639, STR #1645)
 	- Fixed Makefile "make clean" (STR #1642, STR #1643)
 	- The sample RPM spec file now enables large file support
 	  and threading support (STR #1603)

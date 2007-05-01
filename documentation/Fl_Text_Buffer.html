@@ -14,9 +14,6 @@
 
 <UL><PRE>
 <B>Fl_Text_Buffer</B>
-         |
-         +----<A href="Fl_Text_Display.html">Fl_Text_Display</A>,
-              <A href="Fl_Text_Editor.html">Fl_Text_Editor</A>
 </PRE></UL>
 
 <H3>Include Files</H3>
@@ -27,8 +24,11 @@
 
 <H3>Description</H3>
 
-<P>The <TT>Fl_Text_Buffer</TT> class is used by the <TT>Fl_Text_Display</TT>
-and <TT>Fl_Text_Editor</TT> to manage complex text data and is based upon the
+<P>The <TT>Fl_Text_Buffer</TT> class is used by the 
+<tt><A href="Fl_Text_Display.html">Fl_Text_Display</A></tt>
+and 
+<tt><A href="Fl_Text_Editor.html">Fl_Text_Editor</A></tt>
+to manage complex text data and is based upon the
 excellent NEdit text editor engine - see
 <A HREF="http://www.nedit.org/">http://www.nedit.org/</A>.</P>
 
@@ -420,8 +420,10 @@ done with the text, free it using the <tt>free()</tt> function.
 <H4><A NAME="Fl_Text_Buffer.text">const char* text();<BR>
 void text(const char* text);</A></H4>
 
-<P>Gets or sets the text in the buffer. When you are done with
-the text, free it using the <tt>free()</tt> function.
+<P>Gets or sets the text in the buffer.  The first form 
+returns a copy of the text in the buffer which you must
+later <tt>free()</tt> when done using it.  The second form sets the text in 
+the buffer, making an internal copy of the string that is automatically managed.
 
 <H4><A NAME="Fl_Text_Buffer.unhighlight">void unhighlight();</A></H4>
 
