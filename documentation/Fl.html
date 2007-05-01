@@ -593,26 +593,33 @@ prints the error message to <TT>stderr</TT> and returns.
 
 <H4><A NAME="Fl.event_button1">int event_button1();</A></H4>
 
-<P>Returns non-zero if button 1 is pressed.
+<P>Returns non-zero if button 1 is currently held down.
+For more details, see <TT><A href="#Fl.event_buttons">Fl::event_buttons()</A></TT>.
 
 <H4><A NAME="Fl.event_button2">int event_button2();</A></H4>
 
-<P>Returns non-zero if button 2 is pressed.
+<P>Returns non-zero if button 2 is currently held down.
+For more details, see <TT><A href="#Fl.event_buttons">Fl::event_buttons()</A></TT>.
 
 <H4><A NAME="Fl.event_button3">int event_button3();</A></H4>
 
-<P>Returns non-zero if button 3 is pressed.
+<P>Returns non-zero if button 3 is currently held down.
+For more details, see <TT><A href="#Fl.event_buttons">Fl::event_buttons()</A></TT>.
 
 <H4><A NAME="Fl.event_button">int event_button();</A></H4>
 
-<P>Returns which mouse button was pressed.  This returns garbage if the
+<P>Returns which mouse button caused te current event. This returns garbage if the
 most recent event was not a <tt>FL_PUSH</tt> or <tt>FL_RELEASE</tt>
 event.
 
 <H4><A NAME="Fl.event_buttons">int event_buttons();</A></H4>
 
 <P>Returns the button state bits; if non-zero, then at least one
-button is pressed.
+button is pressed.  This function returns the button state at the 
+time of the event. During an <tt>FL_RELEASE</tt> event, the state 
+of the released button will be <tt>0</tt>. To find out, which button 
+caused an <tt>FL_RELEASE<tt> event, you can use 
+<tt><a href="#Fl.event_button">Fl::event_button()</a></tt> instead.
 
 <H4><A NAME="Fl.event_clicks">int event_clicks();<BR>
 void event_clicks(int i);</A></H4>
