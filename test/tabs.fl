@@ -10,13 +10,13 @@ Function {} {open
   } {
     Fl_Box {} {
       label {class Fl_Tabs}
-      xywh {95 5 130 30} labeltype ENGRAVED_LABEL labelfont 1
+      xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
     Fl_Tabs {} {
-      tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 40 300 200} selection_color 4 labelcolor 7 resizable
+      tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 300 205} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
-        label Label1 open
+        label {Label&1} open selected
         tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {10 60 300 180} selection_color 1 resizable
       } {
         Fl_Input {} {
@@ -34,7 +34,7 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab2 open
+        label {tab&2} open
         tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 60 300 180} selection_color 2 hide
       } {
         Fl_Button {} {
@@ -60,7 +60,7 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab3 open
+        label {tab&3} open
         tooltip {tab3 checks for correct keyboard navigation} xywh {10 60 300 180} selection_color 3 hide
       } {
         Fl_Button {} {
@@ -77,8 +77,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab4 open
-        tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {10 60 300 180} selection_color 5 labelfont 2 hide
+        label {&tab4} open
+        tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {10 60 300 180} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
@@ -94,8 +94,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label {     tab5      } open
-        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {10 60 300 180} labeltype ENGRAVED_LABEL hide
+        label {@fileprint  &print} open
+        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {10 60 300 180} hide
       } {
         Fl_Button {} {
           label button2
@@ -126,7 +126,7 @@ Function {} {open
     }
     Fl_Box {} {
       label {class Fl_Wizard}
-      xywh {410 5 130 30} labeltype ENGRAVED_LABEL labelfont 1
+      xywh {410 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
     Fl_Wizard wWizard {
       xywh {325 60 300 180}
@@ -250,7 +250,7 @@ Function {} {open
       }
       Fl_Button {} {
         label {@<}
-        callback {wWizard->prev();} selected
+        callback {wWizard->prev();}
         tooltip {go to previous page [left arrow]} xywh {440 245 30 25} shortcut 0xff51
       }
       Fl_Button {} {

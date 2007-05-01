@@ -50,6 +50,9 @@ int Fl_Tabs::tab_positions(int* p, int* wp) {
   int selected = 0;
   Fl_Widget*const* a = array();
   int i;
+  char prev_draw_shortcut = fl_draw_shortcut;
+  fl_draw_shortcut = 1;
+
   p[0] = Fl::box_dx(box());
   for (i=0; i<children(); i++) {
     Fl_Widget* o = *a++;
@@ -61,6 +64,8 @@ int Fl_Tabs::tab_positions(int* p, int* wp) {
     wp[i]  = wt+EXTRASPACE;
     p[i+1] = p[i]+wp[i]+BORDER;
   }
+  fl_draw_shortcut = prev_draw_shortcut;
+
   int r = w();
   if (p[i] <= r) return selected;
   // uh oh, they are too big:
@@ -214,6 +219,19 @@ int Fl_Tabs::handle(int event) {
       default:
         break;
     }
+    return Fl_Group::handle(event);
+  case FL_SHORTCUT:
+    for (i = 0; i < children(); ++i) {
+      Fl_Widget *c = child(i);
+      if (c->test_shortcut(c->label())) {
+        char sc = !c->visible();
+        value(c);
+        if (sc) set_changed();
+        do_callback();
+        return 1;
+      }
+    }
+    return Fl_Group::handle(event);
   case FL_SHOW:
     value(); // update visibilities and fall through
   default:
@@ -309,6 +327,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   int sel = (what == SELECTED);
   int dh = Fl::box_dh(box());
   int dy = Fl::box_dy(box());
+  char prev_draw_shortcut = fl_draw_shortcut;
+  fl_draw_shortcut = 1;
+
   Fl_Boxtype bt = (o==push_ &&!sel) ? fl_down(box()) : box();
 
   // compute offsets to make selected tab look bigger
@@ -367,6 +388,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     fl_pop_clip();
   }
+  fl_draw_shortcut = prev_draw_shortcut;
 }
 
 Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
