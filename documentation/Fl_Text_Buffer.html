@@ -142,7 +142,10 @@ typedef void (*Fl_Text_Modify_Cb)(int pos, int nInserted, int nDeleted,
 
 <H4><A NAME="Fl_Text_Buffer.appendfile">int appendfile(const char *file, int buflen = 128*1024);</A></H4>
 
-<P>Appends the named file to the end of the buffer.
+<P>Appends the named file to the end of the buffer. Returns 0 on 
+success, non-zero on error (strerror() contains reason).  1 indicates 
+open for read failed (no data loaded). 2 indicates error occurred 
+while reading data (data was partially loaded).
 
 <H4><A NAME="Fl_Text_Buffer.call_modify_callbacks">void call_modify_callbacks();</A></H4>
 
@@ -239,7 +242,10 @@ int* charsInserted, int* charsDeleted);</A></H4>
 
 <H4><A NAME="Fl_Text_Buffer.insertfile">int insertfile(const char *file, int pos, int buflen = 128*1024);</A></H4>
 
-<P>Inserts a file at the specified position.
+<P>Inserts a file at the specified position. Returns 0 on success, 
+non-zero on error (strerror() contains reason).  1 indicates open 
+for read failed (no data loaded). 2 indicates error occurred 
+while reading data (data was partially loaded).
 
 <H4><A NAME="Fl_Text_Buffer.insert">void insert(int pos, const char* text);</A></H4>
 
@@ -265,7 +271,10 @@ using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.loadfile">int loadfile(const char *file, int buflen = 128*1024);</A></H4>
 
-<P>Replaces the current buffer with the contents of a file.
+<P>Replaces the current buffer with the contents of a file. Returns 0
+on success, non-zero on error (strerror() contains reason).  1 indicates 
+open for read failed (no data loaded). 2 indicates error occurred
+while reading data (data was partially loaded).
 
 <H4><A NAME="Fl_Text_Buffer.null_substitution_character">char null_substitution_character();</A></H4>
 
@@ -273,7 +282,10 @@ using the <tt>free()</tt> function.
 
 <H4><A NAME="Fl_Text_Buffer.outputfile">int outputfile(const char *file, int start, int end, int buflen = 128*1024);</A></H4>
 
-<P>Writes the specified portions of the file to a file.
+<P>Writes the specified portions of the file to a file. Returns 0 on success, non-zero 
+on error (strerror() contains reason).  1 indicates open for write failed 
+(no data saved). 2 indicates error occurred while writing data 
+(data was partially saved).
 
 <H4><A NAME="Fl_Text_Buffer.overlay_rectangular">void overlay_rectangular(int startPos, int rectStart, int rectEnd,
 const char* text, int* charsInserted, int* charsDeleted);</A></H4>
@@ -327,7 +339,10 @@ const char* text);</A></H4>
 
 <H4><A NAME="Fl_Text_Buffer.savefile">int savefile(const char *file, int buflen = 128*1024);</A></H4>
 
-<P>Saves the entire buffer to a file.
+<P>Saves the entire buffer to a file. Returns 0 on success, non-zero 
+on error (strerror() contains reason).  1 indicates open for write failed 
+(no data saved). 2 indicates error occurred while writing data 
+(data was partially saved).
 
 <H4><A NAME="Fl_Text_Buffer.search_backward">int search_backward(int startPos, const char* searchString, int* foundPos,
 int matchCase = 0);</A></H4>
