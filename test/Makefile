@@ -185,6 +185,7 @@ clean:
 	$(RM) resize.cxx
 	$(RM) tabs.cxx
 	$(RM) valuators.cxx
+	$(RM) blocks.app/Contents/MacOS/blocks
 	$(RM) checkers.app/Contents/MacOS/checkers
 	$(RM) sudoku.app/Contents/MacOS/sudoku
 
