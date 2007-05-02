@@ -278,6 +278,14 @@ if test "$INSTALL" = "$ac_install_sh"; then
     # Use full path to install-sh script...
     INSTALL="`pwd`/install-sh -c"
 fi
+AC_PATH_PROG(MKDIRR,mkdir)
+dnl recursive mkdir
+if test "x$MKDIRR" = "x:"; then
+    # Use install instead
+    MKDIRR="$INSTALL -d"
+else
+    MKDIRR="$MKDIRR -p"
+fi
 AC_PATH_PROG(NROFF,nroff)
 if test "x$NROFF" = "x:"; then
     # Try groff instead of nroff...
