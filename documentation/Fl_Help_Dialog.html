@@ -12,9 +12,7 @@
 <H3>Class Hierarchy</H3>
 
 <UL><PRE>
-<A HREF="Fl_Group.html">Fl_Group</A>
-   |
-   +----<B>Fl_Help_Dialog</B>
+<B>Fl_Help_Dialog</B>
 </PRE></UL>
 
 <H3>Include Files</H3>
@@ -42,12 +40,19 @@ using the <CODE>Fl_Help_View</CODE> widget.
 
 	<LI><A HREF="#Fl_Help_Dialog.Fl_Help_Dialog">Fl_Help_Dialog</A>
 	<LI><A HREF="#Fl_Help_Dialog.~Fl_Help_Dialog">~Fl_Help_Dialog</A>
+	<LI><A HREF="#Fl_Help_Dialog.xywh">h</A>
 	<LI><A HREF="#Fl_Help_Dialog.hide">hide</A>
 	<LI><A HREF="#Fl_Help_Dialog.load">load</A>
+	<LI><A HREF="#Fl_Help_Dialog.position">position</A>
+	<LI><A HREF="#Fl_Help_Dialog.resize">resize</A>
 	<LI><A HREF="#Fl_Help_Dialog.show">show</A>
+	<LI><A HREF="#Fl_Help_Dialog.textsize">textsize</A>
 	<LI><A HREF="#Fl_Help_Dialog.topline">topline</A>
 	<LI><A HREF="#Fl_Help_Dialog.value">value</A>
 	<LI><A HREF="#Fl_Help_Dialog.visible">visible</A>
+	<LI><A HREF="#Fl_Help_Dialog.xywh">w</A>
+	<LI><A HREF="#Fl_Help_Dialog.xywh">x</A>
+	<LI><A HREF="#Fl_Help_Dialog.xywh">y</A>
 
 </UL>
 
@@ -55,7 +60,7 @@ using the <CODE>Fl_Help_View</CODE> widget.
 
 <P>The constructor creates the dialog pictured above.
 
-<H4><A NAME="Fl_Help_Dialog.~Fl_Help_Dialog">~Fl_Help_View()</A></H4>
+<H4><A NAME="Fl_Help_Dialog.~Fl_Help_Dialog">~Fl_Help_Dialog()</A></H4>
 
 <P>The destructor destroys the widget and frees all memory that has been
 allocated for the current file.
@@ -69,9 +74,22 @@ allocated for the current file.
 <P>Loads the specified HTML file into the <CODE>Fl_Help_View</CODE> widget.
 The filename can also contain a target name ("filename.html#target").
 
+<H4><A NAME="Fl_Help_Dialog.position">void position(int x, int y)</A></H4>
+
+<P>Set the screen position of the dialog.
+
+<H4><A NAME="Fl_Help_Dialog.resize">void resize(int xx, int yy, int ww, int hh)</A></H4>
+
+<P>Change the position and size of the dialog.
+
 <H4><A NAME="Fl_Help_Dialog.show">void show()</A></H4>
 
 <P>Shows the <code>Fl_Help_Dialog</code> window.
+
+<H4><A NAME="Fl_Help_Dialog.topline">void textsize(uchar s)<BR>
+uchar textsize()</A></H4>
+
+<P>Sets or gets the default text size for the help view.
 
 <H4><A NAME="Fl_Help_Dialog.topline">void topline(const char *n)<BR>
 void topline(int n)</A></H4>
@@ -89,6 +107,14 @@ reformats the text. It also clears the history of the "back" and
 <H4><A NAME="Fl_Help_Dialog.visible">int visible()</A></H4>
 
 <P>Returns 1 if the <code>Fl_Help_Dialog</code> window is visible.
+
+<H4><A NAME="Fl_Help_Dialog.xywh">int x()<BR>
+int y()<BR>
+int w()<BR>
+int h()<BR>
+</A></H4>
+
+<P>Returns the position and size of the help dialog.
 
 </BODY>
 </HTML>
