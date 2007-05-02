@@ -183,7 +183,7 @@ void resizeform() {
 }
 
 static const char *check_html(const char *src) {
-	if (!src || strnicmp(src, "<html", 5)==0)
+	if (!src || strncasecmp(src, "<html", 5)==0)
 		return src;
 	const char *s = src;
 	int n = 1;
@@ -231,8 +231,7 @@ static int innards(const char* fmt, va_list ap,
   if (!strcmp(fmt,"%s")) {
 		txt = va_arg(ap, const char*);
   } else {
-    //: matt: MacOS provides two equally named vsnprintf's...
-    ::vsnprintf(buffer, 1024, fmt, ap);
+    fl_vsnprintf(buffer, 1024, fmt, ap);
     txt = buffer;
   }
 	html = check_html(txt);
