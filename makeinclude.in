@@ -40,7 +40,7 @@ VPATH		= @srcdir@
 # programs we use...
 HTMLDOC		= @HTMLDOC@
 INSTALL		= @INSTALL@
-MKDIRR		= @MKDIRR@
+MKDIRR		= ../mkinstalldirs 
 LN		= ln -s
 NROFF		= @NROFF@
 RM		= rm -f
