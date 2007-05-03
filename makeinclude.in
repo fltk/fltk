@@ -40,7 +40,6 @@ VPATH		= @srcdir@
 # programs we use...
 HTMLDOC		= @HTMLDOC@
 INSTALL		= @INSTALL@
-MKDIRR		= ../mkinstalldirs 
 LN		= ln -s
 NROFF		= @NROFF@
 RM		= rm -f
@@ -115,7 +114,7 @@ CAT6EXT		= @CAT6EXT@
 
 INSTALL_BIN	= $(INSTALL) -m 755
 INSTALL_DATA	= $(INSTALL) -m 644
-INSTALL_DIR	= $(MKDIRR)
+INSTALL_DIR	= $(INSTALL) -d 
 INSTALL_LIB	= $(INSTALL) -m 755
 INSTALL_MAN	= $(INSTALL) -m 644
 INSTALL_SCRIPT	= $(INSTALL) -m 755
