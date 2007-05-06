@@ -964,7 +964,7 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   UInt32 chord;
   GetEventParameter( event, kEventParamMouseChord, typeUInt32, NULL, sizeof(UInt32), NULL, &chord );
   WindowRef xid = fl_xid(window), tempXid;
-  int sendEvent = 0, part;
+  int sendEvent = 0, part = 0;
   switch ( GetEventKind( event ) )
   {
   case kEventMouseDown:
