@@ -34,6 +34,7 @@
 #define Fl_Input_Choice_H
 
 #include <FL/Fl.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/fl_draw.H>
