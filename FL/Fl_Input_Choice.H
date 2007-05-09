@@ -96,6 +96,9 @@ public:
   void add(const char *s) {
     menu_->add(s);
   }
+	int changed() const { 
+		return inp_->changed();
+	}
   void clear() {
     menu_->clear();
   }
