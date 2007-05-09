@@ -312,20 +312,20 @@ AC_C_BIGENDIAN
 AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
-if test $ac_cv_sizeof_short -eq 2; then
+if test ${ac_cv_sizeof_short:0:1} -eq 2; then
     AC_DEFINE(U16,unsigned short)
 fi
-if test $ac_cv_sizeof_int -eq 4; then
+if test ${ac_cv_sizeof_int:0:1} -eq 4; then
     AC_DEFINE(U32,unsigned)
 else
-    if test $ac_cv_sizeof_long -eq 4; then
+    if test ${ac_cv_sizeof_long:0:1} -eq 4; then
         AC_DEFINE(U32,unsigned long)
     fi
 fi
-if test $ac_cv_sizeof_int -eq 8; then
+if test ${ac_cv_sizeof_int:0:1} -eq 8; then
     AC_DEFINE(U64,unsigned)
 else
-    if test $ac_cv_sizeof_long -eq 8; then
+    if test ${ac_cv_sizeof_long:0:1} -eq 8; then
         AC_DEFINE(U64,unsigned long)
     fi
 fi
