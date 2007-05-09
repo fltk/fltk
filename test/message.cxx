@@ -38,11 +38,15 @@ int main(int argc, char **argv) {
   fl_message("Spelling check sucessful, %d errors found with %g%% confidence",
 	     1002, 100*(15/77.0));
 
-  fl_alert("<HTML><b>Quantum fluctuations</b> in the space-time continuum detected, "
-	   "you have <i>%g seconds</i> to comply."
-		 "<p>For more information on time travel "
-		 "please visit <a href=http://www.fltk.org/>http://www.fltk.org/</a>"
-		 , 10.0);
+  fl_alert(
+		"Quantum fluctuations in the space-time continuum detected,\n"
+	  "you have %g seconds to comply.\n\n"
+		"\"In physics, spacetime is any mathematical model that combines\n"
+		"space and time into a single construct called the space-time\n"
+		"continuum. Spacetime is usually interpreted with space being\n"
+		"three-dimensional and time playing the role of the\n"
+		"fourth dimension.\" - Wikipedia",
+		10.0);
 
   printf("fl_choice returned %d\n",
     fl_choice("Do you really want to %s?", "No", "Yes", 0L, "continue"));
