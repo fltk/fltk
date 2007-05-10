@@ -49,6 +49,7 @@ extern int snap;
 extern int show_guides;
 
 int include_H_from_C = 1;
+int use_FL_COMMAND = 0;
 extern int i18n_type;
 extern const char* i18n_include;
 extern const char* i18n_function;
@@ -183,6 +184,7 @@ extern const char* code_file_name;
 void show_project_cb(Fl_Widget *, void *) {
   if(project_window==0) make_project_window();
   include_H_from_C_button->value(include_H_from_C);
+  use_FL_COMMAND_button->value(use_FL_COMMAND);
   header_file_input->value(header_file_name);
   code_file_input->value(code_file_name);
   i18n_type_chooser->value(i18n_type);
@@ -247,10 +249,17 @@ void code_input_cb(Fl_Input* i, void*) {
   code_file_name = i->value();
 }
 
-void include_H_from_C_button_cb(Fl_Light_Button* b, void*) {
+void include_H_from_C_button_cb(Fl_Check_Button* b, void*) {
   if (include_H_from_C != b->value()) {
     set_modflag(1);
     include_H_from_C = b->value();
+  }
+}
+
+void use_FL_COMMAND_button_cb(Fl_Check_Button* b, void*) {
+  if (use_FL_COMMAND != b->value()) {
+    set_modflag(1);
+    use_FL_COMMAND = b->value();
   }
 }
 

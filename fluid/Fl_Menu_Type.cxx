@@ -308,9 +308,14 @@ void Fl_Menu_Item_Type::write_item() {
     }
   }
   else write_c("\"\"");
-  if (((Fl_Button*)o)->shortcut())
-    write_c(", 0x%x, ", ((Fl_Button*)o)->shortcut());
-  else
+  if (((Fl_Button*)o)->shortcut()) {
+		int s = ((Fl_Button*)o)->shortcut();
+		if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+			write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
+		} else {
+			write_c(", 0x%x, ", s);
+		}
+  } else
     write_c(", 0, ");
   if (callback()) {
     const char* k = is_name(callback()) ? 0 : class_name(1);
@@ -544,7 +549,13 @@ void Shortcut_Button::draw() {
   if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
   else draw_box(FL_UP_BOX, FL_WHITE);
   fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
-  fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
+	if (use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
+		char buf[1024];
+		fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
+		fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);
+	} else {
+		fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
+	}
 }
 
 int Shortcut_Button::handle(int e) {
@@ -562,7 +573,7 @@ int Shortcut_Button::handle(int e) {
       v = Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT) | Fl::event_key();
       if (v == FL_BackSpace && svalue) v = 0;
     }
-    if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
+		if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
     return 1;
   } else if (e == FL_UNFOCUS) {
     int c = changed(); value(0); if (c) set_changed();

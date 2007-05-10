@@ -44,25 +44,25 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings}
-    xywh {312 395 345 190} type Double
+    xywh {312 395 358 207} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
       callback {project_window->hide();}
-      tooltip {Close this dialog.} xywh {293 160 42 20} labelsize 11
+      tooltip {Close this dialog.} xywh {293 175 52 20} labelsize 11
     }
     Fl_Tabs {} {open
-      xywh {10 10 325 140} selection_color 12 labelsize 11
+      xywh {10 10 335 151} selection_color 12 labelsize 11
     } {
       Fl_Group {} {
         label Output open
-        xywh {10 30 325 116} labelsize 11
+        xywh {10 30 335 131} labelsize 11
       } {
         Fl_Box {} {
           label {Use "name.ext" to set name or just ".ext" to set extension.}
-          xywh {20 40 304 15} labelsize 11 align 148
+          xywh {15 40 325 15} labelsize 11 align 144
         }
         Fl_Input header_file_input {
           label {Header File:}
@@ -76,15 +76,20 @@ Function {make_project_window()} {open
           callback code_input_cb
           tooltip {The name of the generated code file.} xywh {97 85 227 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
         }
-        Fl_Light_Button include_H_from_C_button {
+        Fl_Check_Button include_H_from_C_button {
           label {Include Header from Code}
           callback include_H_from_C_button_cb
-          tooltip {Include the header file from the code file.} xywh {166 110 158 20} value 1 labelsize 11
+          tooltip {Include the header file from the code file.} xywh {95 110 145 20} down_box DOWN_BOX labelsize 11
+        }
+        Fl_Check_Button use_FL_COMMAND_button {
+          label {Generate menu shortcuts using FL_COMMAND}
+          callback use_FL_COMMAND_button_cb selected
+          tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {95 130 245 20} down_box DOWN_BOX labelsize 11
         }
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 30 325 116} labelsize 11 hide
+        xywh {10 30 335 131} labelsize 11 hide
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
@@ -280,7 +285,7 @@ Function {make_shell_window()} {open
     }
     Fl_Button {} {
       label Cancel
-      callback {shell_window->hide();} selected
+      callback {shell_window->hide();}
       xywh {285 90 72 25}
     }
   }

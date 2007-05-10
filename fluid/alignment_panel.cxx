@@ -39,7 +39,9 @@ Fl_Input *header_file_input=(Fl_Input *)0;
 
 Fl_Input *code_file_input=(Fl_Input *)0;
 
-Fl_Light_Button *include_H_from_C_button=(Fl_Light_Button *)0;
+Fl_Check_Button *include_H_from_C_button=(Fl_Check_Button *)0;
+
+Fl_Check_Button *use_FL_COMMAND_button=(Fl_Check_Button *)0;
 
 Fl_Choice *i18n_type_chooser=(Fl_Choice *)0;
 
@@ -59,20 +61,20 @@ Fl_Input *i18n_set_input=(Fl_Input *)0;
 Fl_Input *i18n_function_input=(Fl_Input *)0;
 
 Fl_Double_Window* make_project_window() {
-  { project_window = new Fl_Double_Window(345, 190, "Project Settings");
-    { Fl_Button* o = new Fl_Button(293, 160, 42, 20, "Close");
+  { project_window = new Fl_Double_Window(358, 207, "Project Settings");
+    { Fl_Button* o = new Fl_Button(293, 175, 52, 20, "Close");
       o->tooltip("Close this dialog.");
       o->labelsize(11);
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Button* o
-    { Fl_Tabs* o = new Fl_Tabs(10, 10, 325, 140);
+    { Fl_Tabs* o = new Fl_Tabs(10, 10, 335, 151);
       o->selection_color((Fl_Color)12);
       o->labelsize(11);
-      { Fl_Group* o = new Fl_Group(10, 30, 325, 116, "Output");
+      { Fl_Group* o = new Fl_Group(10, 30, 335, 131, "Output");
         o->labelsize(11);
-        { Fl_Box* o = new Fl_Box(20, 40, 304, 15, "Use \"name.ext\" to set name or just \".ext\" to set extension.");
+        { Fl_Box* o = new Fl_Box(15, 40, 325, 15, "Use \"name.ext\" to set name or just \".ext\" to set extension.");
           o->labelsize(11);
-          o->align(132|FL_ALIGN_INSIDE);
+          o->align(FL_ALIGN_WRAP|FL_ALIGN_INSIDE);
         } // Fl_Box* o
         { header_file_input = new Fl_Input(96, 60, 228, 20, "Header File:");
           header_file_input->tooltip("The name of the generated header file.");
@@ -94,15 +96,21 @@ Fl_Double_Window* make_project_window() {
           code_file_input->callback((Fl_Callback*)code_input_cb, (void*)(1));
           code_file_input->when(FL_WHEN_CHANGED);
         } // Fl_Input* code_file_input
-        { include_H_from_C_button = new Fl_Light_Button(166, 110, 158, 20, "Include Header from Code");
+        { include_H_from_C_button = new Fl_Check_Button(95, 110, 145, 20, "Include Header from Code");
           include_H_from_C_button->tooltip("Include the header file from the code file.");
-          include_H_from_C_button->value(1);
+          include_H_from_C_button->down_box(FL_DOWN_BOX);
           include_H_from_C_button->labelsize(11);
           include_H_from_C_button->callback((Fl_Callback*)include_H_from_C_button_cb);
-        } // Fl_Light_Button* include_H_from_C_button
+        } // Fl_Check_Button* include_H_from_C_button
+        { use_FL_COMMAND_button = new Fl_Check_Button(95, 130, 245, 20, "Generate menu shortcuts using FL_COMMAND");
+          use_FL_COMMAND_button->tooltip("Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.");
+          use_FL_COMMAND_button->down_box(FL_DOWN_BOX);
+          use_FL_COMMAND_button->labelsize(11);
+          use_FL_COMMAND_button->callback((Fl_Callback*)use_FL_COMMAND_button_cb);
+        } // Fl_Check_Button* use_FL_COMMAND_button
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(10, 30, 325, 116, "Internationalization");
+      { Fl_Group* o = new Fl_Group(10, 30, 335, 131, "Internationalization");
         o->labelsize(11);
         o->hide();
         { i18n_type_chooser = new Fl_Choice(80, 42, 100, 20, "Use:");

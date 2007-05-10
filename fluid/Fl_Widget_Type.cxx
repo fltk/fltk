@@ -2138,8 +2138,14 @@ void Fl_Widget_Type::write_widget_code() {
     if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
 			       boxname(b->down_box()));
     if (b->value()) write_c("%s%s->value(1);\n", indent(), var);
-    if (b->shortcut())
-      write_c("%s%s->shortcut(0x%x);\n", indent(), var, b->shortcut());
+    if (b->shortcut()) {
+			int s = b->shortcut();
+			if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+		    write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", indent(), var, s & ~(FL_CTRL|FL_META));
+			} else {
+	      write_c("%s%s->shortcut(0x%x);\n", indent(), var, s);
+			}
+		}
   } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,

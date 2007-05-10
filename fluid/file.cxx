@@ -323,6 +323,8 @@ int write_file(const char *filename, int selected_only) {
 	       "version %.4f",FL_VERSION);
   if(!include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
+  if(use_FL_COMMAND)
+    write_string("\nuse_FL_COMMAND");
   if (i18n_type) {
     write_string("\ni18n_type %d", i18n_type);
     write_string("\ni18n_include %s", i18n_include);
@@ -402,6 +404,10 @@ static void read_children(Fl_Type *p, int paste) {
 
     if (!strcmp(c,"do_not_include_H_from_C")) {
       include_H_from_C=0;
+      goto CONTINUE;
+    }
+    if (!strcmp(c,"use_FL_COMMAND")) {
+      use_FL_COMMAND=1;
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_type")) {

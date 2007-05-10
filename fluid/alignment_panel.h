@@ -46,9 +46,11 @@ extern void header_input_cb(Fl_Input*, void*);
 extern Fl_Input *header_file_input;
 extern void code_input_cb(Fl_Input*, void*);
 extern Fl_Input *code_file_input;
-#include <FL/Fl_Light_Button.H>
-extern void include_H_from_C_button_cb(Fl_Light_Button*, void*);
-extern Fl_Light_Button *include_H_from_C_button;
+#include <FL/Fl_Check_Button.H>
+extern void include_H_from_C_button_cb(Fl_Check_Button*, void*);
+extern Fl_Check_Button *include_H_from_C_button;
+extern void use_FL_COMMAND_button_cb(Fl_Check_Button*, void*);
+extern Fl_Check_Button *use_FL_COMMAND_button;
 #include <FL/Fl_Choice.H>
 extern void i18n_type_cb(Fl_Choice*, void*);
 extern Fl_Choice *i18n_type_chooser;
@@ -66,7 +68,6 @@ extern void scheme_cb(Fl_Choice *, void *);
 extern Fl_Double_Window *settings_window;
 extern void scheme_cb(Fl_Choice*, void*);
 extern Fl_Choice *scheme_choice;
-#include <FL/Fl_Check_Button.H>
 extern Fl_Check_Button *tooltips_button;
 extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;

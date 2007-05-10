@@ -763,6 +763,7 @@ const char *c_check(const char *c, int type = 0);
 int storestring(const char *n, const char * & p, int nostrip=0);
 
 extern int include_H_from_C;
+extern int use_FL_COMMAND;
 
 //
 // End of "$Id$".
