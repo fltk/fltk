@@ -186,7 +186,8 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 		dx, dy,		// Destination coordinates
 		xerr, yerr,	// X & Y errors
 		xmod, ymod,	// X & Y moduli
-		xstep, ystep;	// X & Y step increments
+		xstep, ystep,	// X & Y step increments
+    line_d; // stride from line to line
 
 
   // Figure out Bresenheim step/modulus values...
@@ -194,6 +195,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   xstep  = (w() / W) * d();
   ymod   = h() % H;
   ystep  = h() / H;
+  line_d = ld() ? ld() : w() * d();
 
   // Allocate memory for the new image...
   new_array = new uchar [W * H * d()];
@@ -202,9 +204,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W, old_ptr = array + sy * (w() * d() + ld());
-	 dx > 0;
-	 dx --) {
+    for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
       for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
 
       old_ptr += xstep;
@@ -257,17 +257,18 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   // Update the image data to do the blend...
   const uchar	*old_ptr;
   int		x, y;
+  int   line_i = ld() ? ld() - (w()*d()) : 0; // increment from line end to beginning of next line
 
   if (d() < 3) {
     ig = (r * 31 + g * 61 + b * 8) / 100 * (256 - ia);
 
-    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
+    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
       for (x = 0; x < w(); x ++) {
 	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
 	if (d() > 1) *new_ptr++ = *old_ptr++;
       }
   } else {
-    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
+    for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
       for (x = 0; x < w(); x ++) {
 	*new_ptr++ = (*old_ptr++ * ia + ir) >> 8;
 	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
@@ -306,8 +307,9 @@ void Fl_RGB_Image::desaturate() {
   // Copy the image data, converting to grayscale...
   const uchar	*old_ptr;
   int		x, y;
+  int   line_i = ld() ? ld() - (w()*d()) : 0; // increment from line end to beginning of next line
 
-  for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += ld())
+  for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
     for (x = 0; x < w(); x ++, old_ptr += d()) {
       *new_ptr++ = (uchar)((31 * old_ptr[0] + 61 * old_ptr[1] + 8 * old_ptr[2]) / 100);
       if (d() > 3) *new_ptr++ = old_ptr[3];
