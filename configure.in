@@ -274,6 +274,11 @@ dnl Find commands...
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
+case $uname in
+    OSF1*)
+	INSTALL="`pwd`/install-sh -c"
+	;;
+esac
 if test "$INSTALL" = "$ac_install_sh"; then
     # Use full path to install-sh script...
     INSTALL="`pwd`/install-sh -c"
