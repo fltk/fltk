@@ -615,7 +615,10 @@ case $uname in
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32 -lwsock32"
-	OPTIM="$OPTIM"
+	if test "x$with_optim" = x; then
+	    dnl Avoid -Os optimization on Cygwin/Mingw
+	    with_optim="-O3"
+	fi
 
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
