@@ -106,7 +106,7 @@ char fl_can_do_alpha_blending() {
   HDC new_gc = CreateCompatibleDC(dc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bm);
-  COLORREF set = SetPixel(new_gc, 0, 0, 0x01010101);
+  /*COLORREF set = */ SetPixel(new_gc, 0, 0, 0x01010101);
   BOOL alpha_ok = fl_alpha_blend(dc, 0, 0, 1, 1, new_gc, 0, 0, 1, 1, blendfunc);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
