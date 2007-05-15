@@ -59,6 +59,8 @@ class Fl_Input_Choice : public Fl_Group {
 
   static void menu_cb(Fl_Widget*, void *data) { 
     Fl_Input_Choice *o=(Fl_Input_Choice *)data;
+    const Fl_Menu_Item *item = o->menubutton()->mvalue();
+    if ( item && item->flags & (FL_SUBMENU|FL_SUBMENU_POINTER) ) return;	// ignore submenus
     o->inp_->value(o->menu_->text());
     o->do_callback();
   }
