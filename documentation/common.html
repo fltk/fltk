@@ -324,10 +324,15 @@ void xyz_draw(int x, int y, int w, int h, Fl_Color c) {
 <H4><A name="fl_down">Fl_Boxtype fl_down(Fl_Boxtype)</A></H4>
 
 <P><tt>fl_down</tt> returns the "pressed" or "down" version of a box.
+If no "down" version of a given box exists, the behavior of this function
+is undefined and some random box or frame is returned.
+See also: <A HREF="drawing.html#fl_frame">fl_frame drawing</A>.
 
 <H4><A name="fl_frame">Fl_Boxtype fl_frame(Fl_Boxtype)</A></H4>
 
 <P><tt>fl_frame</tt> returns the unfilled, frame-only version of a box.
+If no frame version of a given box exists, the behavior of this function
+is undefined and some random box or frame is returned.
 See also: <A HREF="drawing.html#fl_frame">fl_frame drawing</A>.
 
 <H4>Adding Your Box Type</H4>
