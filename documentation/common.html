@@ -350,6 +350,16 @@ Fl::set_boxtype(XYZ_BOX, xyz_draw, 1, 1, 2, 2);
 offsets for the x, y, width, and height values that should be
 subtracted when drawing the label inside the box.</P>
 
+<P>A complete box design contains four box types in this order: 
+a filled, neutral box (<TT>UP_BOX</TT>), a filled, depressed box 
+(<TT>DOWN_BOX</TT>), and the same as outlines only (<TT>UP_FRAME</TT> 
+and <TT>DOWN_FRAME</TT>). The function 
+<TT><A HREF="#fl_down">fl_down(Fl_Boxtype)</A></TT> 
+expects the neutral design on a boxtype with a numerical 
+value evenly divideable by two. 
+<TT><A HREF="#fl_frame">fl_frame(Fl_Boxtype)</A></TT> 
+expects the <TT>UP_BOX</TT> design at a value divideable by four.</P>
+
 <H2><A NAME="labels">Labels and Label Types</A></H2>
 
 <P>The <TT>label()</TT>, <TT>align()</TT>, <TT>labelfont()</TT>,
