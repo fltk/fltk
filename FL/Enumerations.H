@@ -229,8 +229,15 @@ extern FL_EXPORT Fl_Boxtype fl_define_FL_GTK_UP_BOX();
 #define FL_GTK_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+9)
 
 // conversions of box types to other boxtypes:
-inline Fl_Boxtype fl_down(Fl_Boxtype b) {return (Fl_Boxtype)(b|1);}
-inline Fl_Boxtype fl_frame(Fl_Boxtype b) {return (Fl_Boxtype)(b|2);}
+inline Fl_Boxtype fl_box(Fl_Boxtype b) {
+  return (Fl_Boxtype)((b<FL_UP_BOX||b%4>1)?b:(b-2));
+}
+inline Fl_Boxtype fl_down(Fl_Boxtype b) {
+  return (Fl_Boxtype)((b<FL_UP_BOX)?b:(b|1));
+}
+inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
+  return (Fl_Boxtype)((b%4<2)?b:(b+2));
+}
 
 // back-compatability box types:
 #define FL_FRAME FL_ENGRAVED_FRAME
