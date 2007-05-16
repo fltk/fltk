@@ -723,12 +723,13 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (i->region) {
       // Also tell WIN32 that we are drawing someplace else as well...
-      InvalidateRgn(hWnd, i->region, FALSE);
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
     } else {
       i->region = R;
     }
+    if (window->type() == FL_DOUBLE_WINDOW) ValidateRgn(hWnd,0);
+    else ValidateRgn(hWnd,i->region);
 
     window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
     // These next two statements should not be here, so that all update
@@ -739,8 +740,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_save_pen();
     i->flush();
     fl_restore_pen();
-    if (window->type() == FL_DOUBLE_WINDOW) ValidateRgn(hWnd,0);
-    else ValidateRgn(hWnd,i->region);
     window->clear_damage();
     } return 0;
 
