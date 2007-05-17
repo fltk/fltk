@@ -128,7 +128,7 @@ memory.</p>
 <H4><A name=Fl_Group.current>static Fl_Group *Fl_Group::current()
 <BR> static void Fl_Group::current(Fl_Group *w)</A></H4>
 <TT>current()</TT> returns the currently active group.  The Fl_Widget
- constructor automatically does <tt>current()->add(widget)</tt> if this is not null.
+ constructor automatically does <tt>current()-&gt;add(widget)</tt> if this is not null.
  To prevent new widgets from being added to a group, call <TT>Fl_Group::current(0)</TT>.
 <H4><A name=Fl_Group.begin>void Fl_Group::begin()</A></H4>
 <TT>begin()</TT> sets the current group so you can build the widget

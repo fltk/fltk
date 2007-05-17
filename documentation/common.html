@@ -406,7 +406,7 @@ sign. Figure 3-4 shows the available symbols.</P>
 </UL>
 
 <P>Thus, to show a very large arrow pointing downward you would use the
-label string "@+92->".
+label string "@+92-&gt;".
 
 <H3>align()</H3>
 
@@ -635,13 +635,13 @@ button-&gt;when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 <PRE>
 class Foo {
   void my_callback(Fl_Widget *w);
-  static void my_static_callback(Fl_Widget *w, void *f) { ((Foo *)f)->my_callback(w); }
+  static void my_static_callback(Fl_Widget *w, void *f) { ((Foo *)f)-&gt;my_callback(w); }
   ...
 }
 
 ...
 
-w->callback(my_static_callback, (void *)this);
+w-&gt;callback(my_static_callback, (void *)this);
 </PRE>
 	</TD>
 </TR>

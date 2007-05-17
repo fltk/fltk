@@ -659,7 +659,7 @@ Without the conversion call, the label on OS X would read
 <tt>Fahrvergn&cedil;gen</tt> with a deformed umlaut u.
 <PRE>
   btn = new Fl_Button(10, 10, 300, 25);
-  btn->copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
+  btn-&gt;copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
 </PRE>
 
 <P>If your application uses characters that are not part of both
@@ -933,7 +933,7 @@ image, and this area is left unchanged.
 <H4>void draw(int x, int y)</H4>
 
 <P>Draws the image with the upper-left corner at <TT>x,y</TT>.
-This is the same as doing <TT>draw(x,y,img->w(),img->h(),0,0)</TT>.
+This is the same as doing <TT>draw(x,y,img-&gt;w(),img-&gt;h(),0,0)</TT>.
 
 <h3><A NAME=offscreen>Offscreen Drawing</A></h3>
 

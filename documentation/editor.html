@@ -123,22 +123,22 @@ m-&gt;copy(menuitems);
 widget to edit the text:
 
 <UL><PRE>
-w->editor = new Fl_Text_Editor(0, 30, 640, 370);
-w->editor->buffer(textbuf);
+w-&gt;editor = new Fl_Text_Editor(0, 30, 640, 370);
+w-&gt;editor-&gt;buffer(textbuf);
 </PRE></UL>
 
 <P>So that we can keep track of changes to the file, we also want to add
 a &quot;modify&quot; callback:</P>
 
 <UL><PRE>
-textbuf->add_modify_callback(changed_cb, w);
-textbuf->call_modify_callbacks();
+textbuf-&gt;add_modify_callback(changed_cb, w);
+textbuf-&gt;call_modify_callbacks();
 </PRE></UL>
 
 <P>Finally, we want to use a mono-spaced font like <TT>FL_COURIER</TT>:
 
 <UL><PRE>
-w->editor->textfont(FL_COURIER);
+w-&gt;editor-&gt;textfont(FL_COURIER);
 </PRE></UL>
 
 <H2>The Replace Dialog</H2>
@@ -181,7 +181,7 @@ void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
   if ((nInserted || nDeleted) &amp;&amp; !loading) changed = 1;
   EditorWindow *w = (EditorWindow *)v;
   set_title(w);
-  if (loading) w->editor->show_insert_position();
+  if (loading) w-&gt;editor-&gt;show_insert_position();
 }
 </PRE></UL>
 
@@ -199,7 +199,7 @@ to copy the currently selected text to the clipboard:</P>
 <UL><PRE>
 void copy_cb(Fl_Widget*, void* v) {
   EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_copy(0, e->editor);
+  Fl_Text_Editor::kf_copy(0, e-&gt;editor);
 }
 </PRE></UL>
 
@@ -212,7 +212,7 @@ to cut the currently selected text to the clipboard:</P>
 <UL><PRE>
 void cut_cb(Fl_Widget*, void* v) {
   EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_cut(0, e->editor);
+  Fl_Text_Editor::kf_cut(0, e-&gt;editor);
 }
 </PRE></UL>
 
@@ -224,7 +224,7 @@ to delete the currently selected text to the clipboard:</P>
 
 <UL><PRE>
 void delete_cb(Fl_Widget*, void* v) {
-  textbuf->remove_selection();
+  textbuf-&gt;remove_selection();
 }
 </PRE></UL>
 
@@ -240,10 +240,10 @@ void find_cb(Fl_Widget* w, void* v) {
   EditorWindow* e = (EditorWindow*)v;
   const char *val;
 
-  val = fl_input("Search String:", e->search);
+  val = fl_input("Search String:", e-&gt;search);
   if (val != NULL) {
     // User entered a string - go find it!
-    strcpy(e->search, val);
+    strcpy(e-&gt;search, val);
     find2_cb(w, v);
   }
 </PRE></UL>
@@ -257,21 +257,21 @@ search dialog:
 <UL><PRE>
 void find2_cb(Fl_Widget* w, void* v) {
   EditorWindow* e = (EditorWindow*)v;
-  if (e->search[0] == '\0') {
+  if (e-&gt;search[0] == '\0') {
     // Search string is blank; get a new one...
     find_cb(w, v);
     return;
   }
 
-  int pos = e->editor->insert_position();
-  int found = textbuf->search_forward(pos, e->search, &amp;pos);
+  int pos = e-&gt;editor-&gt;insert_position();
+  int found = textbuf-&gt;search_forward(pos, e-&gt;search, &amp;pos);
   if (found) {
     // Found a match; select and update the position...
-    textbuf->select(pos, pos+strlen(e->search));
-    e->editor->insert_position(pos+strlen(e->search));
-    e->editor->show_insert_position();
+    textbuf-&gt;select(pos, pos+strlen(e-&gt;search));
+    e-&gt;editor-&gt;insert_position(pos+strlen(e-&gt;search));
+    e-&gt;editor-&gt;show_insert_position();
   }
-  else fl_alert("No occurrences of \'%s\' found!", e->search);
+  else fl_alert("No occurrences of \'%s\' found!", e-&gt;search);
 }
 </PRE></UL>
 
@@ -289,10 +289,10 @@ void new_cb(Fl_Widget*, void*) {
   if (!check_save()) return;
 
   filename[0] = '\0';
-  textbuf->select(0, textbuf->length());
-  textbuf->remove_selection();
+  textbuf-&gt;select(0, textbuf-&gt;length());
+  textbuf-&gt;remove_selection();
   changed = 0;
-  textbuf->call_modify_callbacks();
+  textbuf-&gt;call_modify_callbacks();
 }
 </PRE></UL>
 
@@ -323,7 +323,7 @@ to paste the clipboard at the current position:</P>
 <UL><PRE>
 void paste_cb(Fl_Widget*, void* v) {
   EditorWindow* e = (EditorWindow*)v;
-  Fl_Text_Editor::kf_paste(0, e->editor);
+  Fl_Text_Editor::kf_paste(0, e-&gt;editor);
 }
 </PRE></UL>
 
@@ -569,7 +569,7 @@ void set_title(Fl_Window* w) {
 
   if (changed) strcat(title, " (modified)");
 
-  w->label(title);
+  w-&gt;label(title);
 }
 </PRE></UL>
 
@@ -587,9 +587,9 @@ int main(int argc, char **argv) {
 
   Fl_Window* window = new_view();
 
-  window->show(1, argv);
+  window-&gt;show(1, argv);
 
-  if (argc > 1) load_file(argv[1], -1);
+  if (argc &gt; 1) load_file(argv[1], -1);
 
   return Fl::run();
 }
@@ -642,7 +642,7 @@ size of the text that is drawn.
 
 <P>Styles are defined using the
 <CODE>Fl_Text_Display::Style_Table_Entry</CODE> structure
-defined in <CODE>&lt;FL/Fl_Text_Display.H></CODE>:
+defined in <CODE>&lt;FL/Fl_Text_Display.H&gt;</CODE>:
 
 <UL><PRE>
 struct Style_Table_Entry {
@@ -683,7 +683,7 @@ style data and buffer with the text editor widget:
 <UL><PRE>
 Fl_Text_Buffer *stylebuf;
 
-w->editor->highlight_data(stylebuf, styletable,
+w-&gt;editor-&gt;highlight_data(stylebuf, styletable,
                           sizeof(styletable) / sizeof(styletable[0]),
                           'A', style_unfinished_cb, 0);
 </PRE></UL>
@@ -692,7 +692,7 @@ w->editor->highlight_data(stylebuf, styletable,
 that changes to the text buffer are mirrored in the style buffer:
 
 <UL><PRE>
-textbuf->add_modify_callback(style_update, w->editor);
+textbuf-&gt;add_modify_callback(style_update, w-&gt;editor);
 </PRE></UL>
 
 <P>The <CODE>style_update()</CODE> function, like the <CODE>change_cb()</CODE>
@@ -721,43 +721,43 @@ style_update(int        pos,          // I - Position of update
 
   // If this is just a selection change, just unselect the style buffer...
   if (nInserted == 0 &amp;&amp; nDeleted == 0) {
-    stylebuf->unselect();
+    stylebuf-&gt;unselect();
     return;
   }
 
   // Track changes in the text buffer...
-  if (nInserted > 0) {
+  if (nInserted &gt; 0) {
     // Insert characters into the style buffer...
     style = new char[nInserted + 1];
     memset(style, 'A', nInserted);
     style[nInserted] = '\0';
 
-    stylebuf->replace(pos, pos + nDeleted, style);
+    stylebuf-&gt;replace(pos, pos + nDeleted, style);
     delete[] style;
   } else {
     // Just delete characters in the style buffer...
-    stylebuf->remove(pos, pos + nDeleted);
+    stylebuf-&gt;remove(pos, pos + nDeleted);
   }
 
   // Select the area that was just updated to avoid unnecessary
   // callbacks...
-  stylebuf->select(pos, pos + nInserted - nDeleted);
+  stylebuf-&gt;select(pos, pos + nInserted - nDeleted);
 
   // Re-parse the changed region; we do this by parsing from the
   // beginning of the line of the changed region to the end of
   // the line of the changed region...  Then we check the last
   // style character and keep updating if we have a multi-line
   // comment character...
-  start = textbuf->line_start(pos);
-  end   = textbuf->line_end(pos + nInserted - nDeleted);
-  text  = textbuf->text_range(start, end);
-  style = stylebuf->text_range(start, end);
+  start = textbuf-&gt;line_start(pos);
+  end   = textbuf-&gt;line_end(pos + nInserted - nDeleted);
+  text  = textbuf-&gt;text_range(start, end);
+  style = stylebuf-&gt;text_range(start, end);
   last  = style[end - start - 1];
 
   style_parse(text, style, end - start);
 
-  stylebuf->replace(start, end, style);
-  ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
+  stylebuf-&gt;replace(start, end, style);
+  ((Fl_Text_Editor *)cbArg)-&gt;redisplay_range(start, end);
 
   if (last != style[end - start - 1]) {
     // The last character on the line changed styles, so reparse the
@@ -765,14 +765,14 @@ style_update(int        pos,          // I - Position of update
     free(text);
     free(style);
 
-    end   = textbuf->length();
-    text  = textbuf->text_range(start, end);
-    style = stylebuf->text_range(start, end);
+    end   = textbuf-&gt;length();
+    text  = textbuf-&gt;text_range(start, end);
+    style = stylebuf-&gt;text_range(start, end);
 
     style_parse(text, style, end - start);
 
-    stylebuf->replace(start, end, style);
-    ((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
+    stylebuf-&gt;replace(start, end, style);
+    ((Fl_Text_Editor *)cbArg)-&gt;redisplay_range(start, end);
   }
 
   free(text);
@@ -800,7 +800,7 @@ style_parse(const char *text,
              *bufptr;
   const char *temp;
 
-  for (current = *style, col = 0, last = 0; length > 0; length --, text ++) {
+  for (current = *style, col = 0, last = 0; length &gt; 0; length --, text ++) {
     if (current == 'A') {
       // Check for directives, comments, strings, and keywords...
       if (col == 0 &amp;&amp; *text == '#') {

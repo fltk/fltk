@@ -169,7 +169,7 @@ void callback(void*) {
   if (!state_changed) return;
   state_changed = false;
   do_expensive_calculation();
-  widget->redraw();
+  widget-&gt;redraw();
 }
 
 main() {
@@ -472,10 +472,10 @@ respectively.
 
 <P>An example to compute the area inside a widget's box():
 <pre>
-      int X = yourwidget->x() + Fl::box_dx(yourwidget->box());
-      int Y = yourwidget->y() + Fl::box_dy(yourwidget->box());
-      int W = yourwidget->w() - Fl::box_dw(yourwidget->box());
-      int H = yourwidget->h() - Fl::box_dh(yourwidget->box());
+      int X = yourwidget-&gt;x() + Fl::box_dx(yourwidget-&gt;box());
+      int Y = yourwidget-&gt;y() + Fl::box_dy(yourwidget-&gt;box());
+      int W = yourwidget-&gt;w() - Fl::box_dw(yourwidget-&gt;box());
+      int H = yourwidget-&gt;h() - Fl::box_dh(yourwidget-&gt;box());
 </pre>
 <P>These functions are mainly useful in the <tt>draw()</tt> code 
 for deriving custom widgets, where one wants to avoid drawing 
