@@ -619,6 +619,12 @@ version of FLTK:
 	doesn't work, and the main window title bar turns gray
 	while menus are popped up.</LI>
 
+	<LI>Compilation with <TT>gcc 3.4.4</TT> and <TT>-Os</TT> exposes an
+	optimisation bug in gcc. The symptom is that when drawing
+	filled circles only the perimeter is drawn. This can for instance
+	be seen in the symbols demo. Other optimisation options such
+	as -O2 and -O3 seem to work OK. More details can be found
+	in STR#1656 </LI>
 </UL>
 
 <H2>The MacOS Interface</h2>
