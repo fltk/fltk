@@ -212,11 +212,11 @@ public:
 
   // multi-head support:
   static int screen_count();
-  static void screen_xywh(int &x, int &y, int &w, int &h) {
-    screen_xywh(x, y, w, h, e_x_root, e_y_root);
+  static void screen_xywh(int &X, int &Y, int &W, int &H) {
+    screen_xywh(X, Y, W, H, e_x_root, e_y_root);
   }
-  static void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my);
-  static void screen_xywh(int &x, int &y, int &w, int &h, int n);
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int n);
 
   // color map:
   static void	set_color(Fl_Color, uchar, uchar, uchar);

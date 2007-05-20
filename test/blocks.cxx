@@ -738,7 +738,7 @@ BlockWindow::handle(int event) {
         mx    = w() - Fl::event_x() + BLOCK_SIZE;
 	my    = h() - Fl::event_y();
 	count = 0;
-	b     = c->blocks;
+	b     = 0;
 
 	for (j = 0, c = columns_; !count && j < num_columns_; j ++, c ++)
 	  for (k = 0, b = c->blocks; !count && k < c->num_blocks; k ++, b ++)

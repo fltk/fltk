@@ -96,7 +96,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   return rc;
 }
 
-#elif defined(__future_compiler_test)
+#elif defined(__hpux)
 /* This code to prevent "empty translation unit" or similar warnings... */
 static void dummy(void) {}
 #endif // WIN32 && !FL_DLL && !__GNUC__

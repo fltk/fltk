@@ -2571,7 +2571,7 @@ void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
     int nVisLines = mNVisibleLines;
     int *lineStarts = mLineStarts;
     int countFrom, lineStart;
-    int visLineNum = 0, nLines = 0, i;
+    int nLines = 0, i;
     /*
     ** Determine where to begin searching: either the previous newline, or
     ** if possible, limit to the start of the (original) previous displayed
@@ -2581,11 +2581,8 @@ void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
     	for (i=nVisLines-1; i>0; i--)
     	    if (lineStarts[i] != -1 && pos >= lineStarts[i])
     		break;
-    	if (i > 0) {
-    	    countFrom = lineStarts[i-1];
-    	    visLineNum = i-1;
-    	} else
-    	    countFrom = buf->line_start(pos);
+    	if (i > 0) countFrom = lineStarts[i-1];
+    	else countFrom = buf->line_start(pos);
     } else
     	countFrom = buf->line_start(pos);
     

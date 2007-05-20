@@ -149,7 +149,7 @@ int Fl::screen_count() {
 }
 
 // Return the screen bounding rect for the given mouse position...
-void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
   if (!num_screens) screen_init();
 
 #ifdef WIN32
@@ -159,10 +159,10 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
     for (i = 0; i < num_screens; i ++) {
       if (mx >= screens[i].left && mx < screens[i].right &&
 	  my >= screens[i].top && my < screens[i].bottom) {
-	x = screens[i].left;
-	y = screens[i].top;
-	w = screens[i].right - screens[i].left;
-	h = screens[i].bottom - screens[i].top;
+	X = screens[i].left;
+	Y = screens[i].top;
+	W = screens[i].right - screens[i].left;
+	H = screens[i].bottom - screens[i].top;
 	return;
       }
     }
@@ -176,10 +176,10 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
 	  mx < (screens[i].x + screens[i].width) &&
 	  my >= screens[i].y &&
 	  my < (screens[i].y + screens[i].height)) {
-	x = screens[i].x;
-	y = screens[i].y;
-	w = screens[i].width;
-	h = screens[i].height;
+	X = screens[i].x;
+	Y = screens[i].y;
+	W = screens[i].width;
+	H = screens[i].height;
 	return;
       }
     }
@@ -193,10 +193,10 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
 	  mx < (screens[i].x_org + screens[i].width) &&
 	  my >= screens[i].y_org &&
 	  my < (screens[i].y_org + screens[i].height)) {
-	x = screens[i].x_org;
-	y = screens[i].y_org;
-	w = screens[i].width;
-	h = screens[i].height;
+	X = screens[i].x_org;
+	Y = screens[i].y_org;
+	W = screens[i].width;
+	H = screens[i].height;
 	return;
       }
     }
@@ -206,48 +206,48 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
   (void)my;
 #endif // WIN32
 
-  x = Fl::x();
-  y = Fl::y();
-  w = Fl::w();
-  h = Fl::h();
+  X = Fl::x();
+  Y = Fl::y();
+  W = Fl::w();
+  H = Fl::h();
 }
 
 // Return the screen bounding rect for the given screen...
-void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   if (!num_screens) screen_init();
 
 #ifdef WIN32
   if (num_screens > 1 && n >= 0 && n < num_screens) {
-    x = screens[n].left;
-    y = screens[n].top;
-    w = screens[n].right - screens[n].left;
-    h = screens[n].bottom - screens[n].top;
+    X = screens[n].left;
+    Y = screens[n].top;
+    W = screens[n].right - screens[n].left;
+    H = screens[n].bottom - screens[n].top;
     return;
   }
 #elif defined(__APPLE__)
   if (num_screens > 1 && n >= 0 && n < num_screens) {
-    x = screens[n].x;
-    y = screens[n].y;
-    w = screens[n].width;
-    h = screens[n].height;
+    X = screens[n].x;
+    Y = screens[n].y;
+    W = screens[n].width;
+    H = screens[n].height;
     return;
   }
 #elif HAVE_XINERAMA
   if (num_screens > 1 && n >= 0 && n < num_screens) {
-    x = screens[n].x_org;
-    y = screens[n].y_org;
-    w = screens[n].width;
-    h = screens[n].height;
+    X = screens[n].x_org;
+    Y = screens[n].y_org;
+    W = screens[n].width;
+    H = screens[n].height;
     return;
   }
 #else
   (void)n;
 #endif // WIN32
 
-  x = Fl::x();
-  y = Fl::y();
-  w = Fl::w();
-  h = Fl::h();
+  X = Fl::x();
+  Y = Fl::y();
+  W = Fl::w();
+  H = Fl::h();
 }
 
 

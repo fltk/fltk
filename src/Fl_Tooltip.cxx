@@ -206,6 +206,9 @@ Fl_Tooltip::exit_(Fl_Widget *w) {
 void
 Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
 {
+  (void)x;
+  (void)w;
+
 #ifdef DEBUG
   printf("Fl_Tooltip::enter_area(wid=%p, x=%d, y=%d, w=%d, h=%d, t=\"%s\")\n",
          wid, x, y, w, h, t ? t : "(null)");
