@@ -383,7 +383,7 @@ BlockSound::play_explosion(float duration) {
   if (duration <= 0.0)
     return;
 
-#if defined(__APPLE_) || defined(WIN32) || defined(HAVE_ALSA_ASOUNDLIB_H)
+#if defined(__APPLE__) || defined(WIN32) || defined(HAVE_ALSA_ASOUNDLIB_H)
   if (duration > 1.0)
     duration = 1.0;
 
