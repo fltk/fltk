@@ -125,7 +125,7 @@ Function {make_code_panel()} {open
 Function {make_codeblock_panel()} {open
 } {
   Fl_Window codeblock_panel {
-    label {Code Block Properties}
+    label {Code Block Properties} selected
     xywh {468 221 300 115} type Double labelsize 11 hide resizable
     code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
@@ -339,7 +339,7 @@ Function {make_comment_panel()} {open
   }
 } 
 
-Function {type_make_cb(Fl_Widget*w,void*d)} {open return_type void
+Function {type_make_cb(Fl_Widget*,void*d)} {open return_type void
 } {
   code {undo_checkpoint();
   Fl_Type *t = Fl_Type_make((char*)d);
@@ -356,8 +356,8 @@ Function {type_make_cb(Fl_Widget*w,void*d)} {open return_type void
 Function {make_widgetbin()} {open
 } {
   Fl_Window widgetbin_panel {
-    label {Widget Bin} selected
-    xywh {411 171 551 85} type Single align 80 non_modal visible
+    label {Widget Bin}
+    xywh {411 171 550 85} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
       xywh {3 3 79 79}

@@ -721,7 +721,7 @@ continueSolving(void)
       }
     }
   }
-  glutSetWindowTitle("What!  No change?");
+  glutSetWindowTitle((char *)"What!  No change?");
   freeSolutions();
   return 0;
 
@@ -755,7 +755,7 @@ solvePuzzle(void)
   int i;
 
   if (solution(thePuzzle)) {
-    glutSetWindowTitle("Puzzle already solved!");
+    glutSetWindowTitle((char *)"Puzzle already solved!");
     return 0;
   }
   addConfig(thePuzzle, NULL);
@@ -1147,12 +1147,12 @@ toggleSolve(void)
     if (solving) {
       freeSolutions();
       solving = 0;
-      glutChangeToMenuEntry(1, "Solving", 1);
-      glutSetWindowTitle("glpuzzle");
+      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutSetWindowTitle((char *)"glpuzzle");
       movingPiece = 0;
     } else {
-      glutChangeToMenuEntry(1, "Stop solving", 1);
-      glutSetWindowTitle("Solving...");
+      glutChangeToMenuEntry(1, (char *)"Stop solving", 1);
+      glutSetWindowTitle((char *)"Solving...");
       if (solvePuzzle()) {
         solving = 1;
       }
@@ -1166,8 +1166,8 @@ void reset(void)
     if (solving) {
       freeSolutions();
       solving = 0;
-      glutChangeToMenuEntry(1, "Solving", 1);
-      glutSetWindowTitle("glpuzzle");
+      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutSetWindowTitle((char *)"glpuzzle");
       movingPiece = 0;
       changeState();
     }
@@ -1189,8 +1189,8 @@ keyboard(unsigned char c, int x, int y)
     if (solving) {
       freeSolutions();
       solving = 0;
-      glutChangeToMenuEntry(1, "Solving", 1);
-      glutSetWindowTitle("glpuzzle");
+      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutSetWindowTitle((char *)"glpuzzle");
       movingPiece = 0;
       changeState();
     }
@@ -1264,8 +1264,8 @@ mouse(int b, int s, int x, int y)
       if (solving) {
         freeSolutions();
         solving = 0;
-      glutChangeToMenuEntry(1, "Solving", 1);
-        glutSetWindowTitle("glpuzzle");
+      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+        glutSetWindowTitle((char *)"glpuzzle");
         movingPiece = 0;
       }
       left_mouse = GL_TRUE;
@@ -1306,8 +1306,8 @@ animate(void)
   if (solving) {
     if (!continueSolving()) {
       solving = 0;
-      glutChangeToMenuEntry(1, "Solving", 1);
-      glutSetWindowTitle("glpuzzle");
+      glutChangeToMenuEntry(1, (char *)"Solving", 1);
+      glutSetWindowTitle((char *)"glpuzzle");
     }
   }
   if ((!solving && !spinning) || !visible) {
@@ -1388,8 +1388,8 @@ init(void)
 static void
 Usage(void)
 {
-  printf("Usage: puzzle [-s]\n");
-  printf("   -s:  Run in single buffered mode\n");
+  puts("Usage: puzzle [-s]");
+  puts("   -s:  Run in single buffered mode");
   exit(-1);
 }
 
@@ -1454,15 +1454,15 @@ main(int argc, char **argv)
 
   glGetIntegerv(GL_VIEWPORT, viewport);
 
-  printf("\n");
-  printf("r   Reset puzzle\n");
-  printf("s   Solve puzzle (may take a few seconds to compute)\n");
-  printf("d   Destroy a piece - makes the puzzle easier\n");
-  printf("b   Toggles the depth buffer on and off\n");
-  printf("\n");
-  printf("Left mouse moves pieces\n");
-  printf("Middle mouse spins the puzzle\n");
-  printf("Right mouse has menu\n");
+  puts("");
+  puts("r   Reset puzzle");
+  puts("s   Solve puzzle (may take a few seconds to compute)");
+  puts("d   Destroy a piece - makes the puzzle easier");
+  puts("b   Toggles the depth buffer on and off");
+  puts("");
+  puts("Left mouse moves pieces");
+  puts("Middle mouse spins the puzzle");
+  puts("Right mouse has menu");
 
   glutReshapeFunc(Reshape);
   glutDisplayFunc(redraw);
@@ -1471,9 +1471,9 @@ main(int argc, char **argv)
   glutMouseFunc(mouse);
   glutVisibilityFunc(visibility);
   glutCreateMenu(menu);
-  glutAddMenuEntry("Solve", 1);
-  glutAddMenuEntry("Reset", 2);
-  glutAddMenuEntry("Quit", 3);
+  glutAddMenuEntry((char *)"Solve", 1);
+  glutAddMenuEntry((char *)"Reset", 2);
+  glutAddMenuEntry((char *)"Quit", 3);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
   glutMainLoop();
   return 0;             /* ANSI C requires main to return int. */

@@ -547,7 +547,6 @@ SudokuCell::handle(int event) {
     case FL_UNFOCUS :
       redraw();
       return 1;
-      break;
 
     case FL_PUSH :
       if (!readonly() && Fl::event_inside(this)) {
@@ -630,7 +629,7 @@ Fl_Preferences	Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
 Sudoku::Sudoku()
   : Fl_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku")
 {
-  int i, j;
+  int j, k;
   Fl_Group *g;
   SudokuCell *cell;
   static Fl_Menu_Item	items[] = {
@@ -657,8 +656,8 @@ Sudoku::Sudoku()
 
 
   // Setup sound output...
-  prefs_.get("mute_sound", i, 0);
-  if (i) {
+  prefs_.get("mute_sound", j, 0);
+  if (j) {
     // Mute sound?
     sound_ = NULL;
     items[6].flags |= FL_MENU_VALUE;
@@ -676,27 +675,27 @@ Sudoku::Sudoku()
   // Create the grids...
   grid_ = new Fl_Group(0, MENU_OFFSET, 3 * GROUP_SIZE, 3 * GROUP_SIZE);
 
-  for (i = 0; i < 3; i ++)
-    for (j = 0; j < 3; j ++) {
-      g = new Fl_Group(j * GROUP_SIZE, i * GROUP_SIZE + MENU_OFFSET,
+  for (j = 0; j < 3; j ++)
+    for (k = 0; k < 3; k ++) {
+      g = new Fl_Group(k * GROUP_SIZE, j * GROUP_SIZE + MENU_OFFSET,
 		       GROUP_SIZE, GROUP_SIZE);
       g->box(FL_BORDER_BOX);
-      if ((i == 1) ^ (j == 1)) g->color(FL_DARK3);
+      if ((int)(j == 1) ^ (int)(k == 1)) g->color(FL_DARK3);
       else g->color(FL_DARK2);
       g->end();
 
-      grid_groups_[i][j] = g;
+      grid_groups_[j][k] = g;
     }
 
-  for (i = 0; i < 9; i ++)
-    for (j = 0; j < 9; j ++) {
-      cell = new SudokuCell(j * CELL_SIZE + CELL_OFFSET +
-                                (j / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
-	                    i * CELL_SIZE + CELL_OFFSET + MENU_OFFSET +
-			        (i / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+  for (j = 0; j < 9; j ++)
+    for (k = 0; k < 9; k ++) {
+      cell = new SudokuCell(k * CELL_SIZE + CELL_OFFSET +
+                                (k / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
+	                    j * CELL_SIZE + CELL_OFFSET + MENU_OFFSET +
+			        (j / 3) * (GROUP_SIZE - 3 * CELL_SIZE),
 			    CELL_SIZE, CELL_SIZE);
       cell->callback(reset_cb);
-      grid_cells_[i][j] = cell;
+      grid_cells_[j][k] = cell;
     }
 
   // Set icon for window (MacOS uses app bundle for icon...)
@@ -749,23 +748,23 @@ void
 Sudoku::check_game(bool highlight) {
   bool empty = false;
   bool correct = true;
-  int i, j, k;
+  int j, k, m;
 
   // Check the game for right/wrong answers...
-  for (i = 0; i < 9; i ++)
-    for (j = 0; j < 9; j ++) {
-      SudokuCell *cell = grid_cells_[i][j];
+  for (j = 0; j < 9; j ++)
+    for (k = 0; k < 9; k ++) {
+      SudokuCell *cell = grid_cells_[j][k];
       int val = cell->value();
 
       if (cell->readonly()) continue;
 
       if (!val) empty = true;
       else {
-        for (k = 0; k < 9; k ++)
-          if ((i != k && grid_cells_[k][j]->value() == val) ||
-	      (j != k && grid_cells_[i][k]->value() == val)) break;
+        for (m = 0; m < 9; m ++)
+          if ((j != m && grid_cells_[m][k]->value() == val) ||
+	      (k != m && grid_cells_[j][m]->value() == val)) break;
 
-        if (k < 9) {
+        if (m < 9) {
           if (highlight) {
 	    cell->color(FL_YELLOW);
 	    cell->redraw();
@@ -780,28 +779,28 @@ Sudoku::check_game(bool highlight) {
     }
 
   // Check subgrids for duplicate numbers...
-  for (i = 0; i < 9; i += 3)
-    for (j = 0; j < 9; j += 3)
-      for (int ii = 0; ii < 3; ii ++)
-        for (int jj = 0; jj < 3; jj ++) {
-	  SudokuCell *cell = grid_cells_[i + ii][j + jj];
+  for (j = 0; j < 9; j += 3)
+    for (k = 0; k < 9; k += 3)
+      for (int jj = 0; jj < 3; jj ++)
+        for (int kk = 0; kk < 3; kk ++) {
+	  SudokuCell *cell = grid_cells_[j + jj][k + kk];
 	  int val = cell->value();
 
 	  if (cell->readonly() || !val) continue;
 
-          int iii;
+          int jjj;
 
-          for (iii = 0; iii < 3; iii ++) {
-	    int jjj;
+          for (jjj = 0; jjj < 3; jjj ++) {
+	    int kkk;
 
-	    for (jjj = 0; jjj < 3; jjj ++)
-              if (ii != iii && jj != jjj &&
-	          grid_cells_[i + iii][j + jjj]->value() == val) break;
+	    for (kkk = 0; kkk < 3; kkk ++)
+              if (jj != jjj && kk != kkk &&
+	          grid_cells_[j + jjj][k + kkk]->value() == val) break;
 
-            if (jjj < 3) break;
+            if (kkk < 3) break;
 	  }
 
-          if (iii < 3) {
+          if (jjj < 3) {
             if (highlight) {
 	      cell->color(FL_YELLOW);
 	      cell->redraw();
@@ -813,14 +812,14 @@ Sudoku::check_game(bool highlight) {
 
   if (!empty && correct) {
     // Success!
-    for (i = 0; i < 9; i ++) {
-      for (j = 0; j < 9; j ++) {
-	SudokuCell *cell = grid_cells_[i][j];
+    for (j = 0; j < 9; j ++) {
+      for (k = 0; k < 9; k ++) {
+	SudokuCell *cell = grid_cells_[j][k];
 	cell->color(FL_GREEN);
 	cell->readonly(1);
       }
 
-      if (sound_) sound_->play('A' + grid_cells_[i][8]->value() - 1);
+      if (sound_) sound_->play('A' + grid_cells_[j][8]->value() - 1);
     }
   }
 }
@@ -879,50 +878,52 @@ Sudoku::update_helpers_cb(Fl_Widget *widget, void *) {
 
 void
 Sudoku::update_helpers() {
-  int i, j, k;
-  // first we delete any entries that the user may have made
-  for (i=0; i<9; i++) {
-    for (j=0; j<9; j++) {
-      SudokuCell *cell = grid_cells_[i][j];
-      for (k = 0; k < 8; k++) {
-        cell->test_value(0, k);
+  int j, k, m;
+
+  // First we delete any entries that the user may have made
+  for (j = 0; j < 9; j ++) {
+    for (k = 0; k < 9; k ++) {
+      SudokuCell *cell = grid_cells_[j][k];
+      for (m = 0; m < 8; m ++) {
+        cell->test_value(0, m);
       }
     }
   }
-  // now go through all cells and find out, what we can not be
-  for (i=0; i<81; i++) {
+
+  // Now go through all cells and find out, what we can not be
+  for (j = 0; j < 81; j ++) {
     char taken[10] = { 0 };
-    // find our destination cell
-    int row = i/9;
-    int col = i%9;
+    // Find our destination cell
+    int row = j / 9;
+    int col = j % 9;
     SudokuCell *dst_cell = grid_cells_[row][col];
     if (dst_cell->value()) continue;
-    // find all values already taken in this row
-    for (j=0; j<9; j++) {
-      SudokuCell *cell = grid_cells_[row][j];
+    // Find all values already taken in this row
+    for (k = 0; k < 9; k ++) {
+      SudokuCell *cell = grid_cells_[row][k];
       int v = cell->value();
       if (v) taken[v] = 1;
     }
-    // find all values already taken in this column
-    for (j=0; j<9; j++) {
-      SudokuCell *cell = grid_cells_[j][col];
+    // Find all values already taken in this column
+    for (k = 0; k < 9; k ++) {
+      SudokuCell *cell = grid_cells_[k][col];
       int v = cell->value();
       if (v) taken[v] = 1;
     }
-    // now find all values already taken in this sqare
-    int ro = (row/3) * 3;
-    int co = (col/3) * 3;
-    for (j=0; j<3; j++) {
-      for (k=0; k<3; k++) {
-        SudokuCell *cell = grid_cells_[ro+j][co+k];
+    // Now find all values already taken in this square
+    int ro = (row / 3) * 3;
+    int co = (col / 3) * 3;
+    for (k = 0; k < 3; k ++) {
+      for (m = 0; m < 3; m ++) {
+        SudokuCell *cell = grid_cells_[ro + j][co + k];
         int v = cell->value();
         if (v) taken[v] = 1;
       }
     }
     // transfer our findings to the markers
-    for (k = 1, j = 0; k <= 9; k++) {
+    for (m = 1, k = 0; m <= 9; m ++) {
       if (!taken[k])
-        dst_cell->test_value(k, j++);
+        dst_cell->test_value(m, k ++);
     }
   }
 }
@@ -994,27 +995,27 @@ Sudoku::load_game() {
 
   bool solved = true;
 
-  for (int i = 0; i < 9; i ++)
-    for (int j = 0; j < 9; j ++) {
+  for (int j = 0; j < 9; j ++)
+    for (int k = 0; k < 9; k ++) {
       char name[255];
       int val;
 
-      SudokuCell *cell = grid_cells_[i][j];
+      SudokuCell *cell = grid_cells_[j][k];
 
-      sprintf(name, "value%d.%d", i, j);
+      sprintf(name, "value%d.%d", j, k);
       if (!prefs_.get(name, val, 0)) {
-        i = 9;
+        j = 9;
 	grid_values_[0][0] = 0;
 	break;
       }
 
-      grid_values_[i][j] = val;
+      grid_values_[j][k] = val;
 
-      sprintf(name, "state%d.%d", i, j);
+      sprintf(name, "state%d.%d", j, k);
       prefs_.get(name, val, 0);
       cell->value(val);
  
-      sprintf(name, "readonly%d.%d", i, j);
+      sprintf(name, "readonly%d.%d", j, k);
       prefs_.get(name, val, 0);
       cell->readonly(val);
 
@@ -1024,10 +1025,10 @@ Sudoku::load_game() {
 	solved = false;
       }
 
-      for (int k = 0; k < 8; k ++) {
-	sprintf(name, "test%d%d.%d", k, i, j);
+      for (int m = 0; m < 8; m ++) {
+	sprintf(name, "test%d%d.%d", m, j, k);
 	prefs_.get(name, val, 0);
-	cell->test_value(val, k);
+	cell->test_value(val, m);
       }
     }
 
@@ -1072,7 +1073,7 @@ Sudoku::new_cb(Fl_Widget *widget, void *) {
 // Create a new game...
 void
 Sudoku::new_game(time_t seed) {
-  int i, j, k, m, t, count;
+  int j, k, m, n, t, count;
 
 
   // Generate a new (valid) Sudoku grid...
@@ -1081,36 +1082,36 @@ Sudoku::new_game(time_t seed) {
 
   memset(grid_values_, 0, sizeof(grid_values_));
 
-  for (i = 0; i < 9; i += 3) {
-    for (j = 0; j < 9; j += 3) {
+  for (j = 0; j < 9; j += 3) {
+    for (k = 0; k < 9; k += 3) {
       for (t = 1; t <= 9; t ++) {
 	for (count = 0; count < 20; count ++) {
-	  k = i + (rand() % 3);
 	  m = j + (rand() % 3);
-	  if (!grid_values_[k][m]) {
-	    int kk;
-
-	    for (kk = 0; kk < k; kk ++)
-	      if (grid_values_[kk][m] == t) break;
-
-	    if (kk < k) continue;
-
+	  n = k + (rand() % 3);
+	  if (!grid_values_[m][n]) {
 	    int mm;
 
 	    for (mm = 0; mm < m; mm ++)
-	      if (grid_values_[k][mm] == t) break;
+	      if (grid_values_[mm][n] == t) break;
 
 	    if (mm < m) continue;
 
-	    grid_values_[k][m] = t;
+	    int nn;
+
+	    for (nn = 0; nn < n; nn ++)
+	      if (grid_values_[m][nn] == t) break;
+
+	    if (nn < n) continue;
+
+	    grid_values_[m][n] = t;
 	    break;
 	  }
 	}
 
 	if (count == 20) {
 	  // Unable to find a valid puzzle so far, so start over...
-	  j = 9;
-	  i = -3;
+	  k = 9;
+	  j = -3;
 	  memset(grid_values_, 0, sizeof(grid_values_));
 	}
       }
@@ -1120,9 +1121,9 @@ Sudoku::new_game(time_t seed) {
   // Start by making all cells editable
   SudokuCell *cell;
 
-  for (i = 0; i < 9; i ++)
-    for (j = 0; j < 9; j ++) {
-      cell = grid_cells_[i][j];
+  for (j = 0; j < 9; j ++)
+    for (k = 0; k < 9; k ++) {
+      cell = grid_cells_[j][k];
 
       cell->value(0);
       cell->readonly(0);
@@ -1134,10 +1135,10 @@ Sudoku::new_game(time_t seed) {
 
   int numbers[9];
 
-  for (i = 0; i < 9; i ++) numbers[i] = i + 1;
+  for (j = 0; j < 9; j ++) numbers[j] = j + 1;
 
   while (count > 0) {
-    for (i = 0; i < 20; i ++) {
+    for (j = 0; j < 20; j ++) {
       k          = rand() % 9;
       m          = rand() % 9;
       t          = numbers[k];
@@ -1145,14 +1146,14 @@ Sudoku::new_game(time_t seed) {
       numbers[m] = t;
     }
 
-    for (i = 0; count > 0 && i < 9; i ++) {
-      t = numbers[i];
+    for (j = 0; count > 0 && j < 9; j ++) {
+      t = numbers[j];
 
-      for (j = 0; count > 0 && j < 9; j ++) {
-        cell = grid_cells_[i][j];
+      for (k = 0; count > 0 && k < 9; k ++) {
+        cell = grid_cells_[j][k];
 
-        if (grid_values_[i][j] == t && !cell->readonly()) {
-	  cell->value(grid_values_[i][j]);
+        if (grid_values_[j][k] == t && !cell->readonly()) {
+	  cell->value(grid_values_[j][k]);
 	  cell->readonly(1);
 	  cell->color(FL_GRAY);
 
@@ -1168,33 +1169,33 @@ Sudoku::new_game(time_t seed) {
 // Return the next available value for a cell...
 int
 Sudoku::next_value(SudokuCell *c) {
-  int	i, j, k, m;
+  int	j, k, m, n;
 
 
-  for (i = 0; i < 9; i ++) {
-    for (j = 0; j < 9; j ++)
-      if (grid_cells_[i][j] == c) break;
+  for (j = 0; j < 9; j ++) {
+    for (k = 0; k < 9; k ++)
+      if (grid_cells_[j][k] == c) break;
 
-    if (j < 9) break;
+    if (k < 9) break;
   }
 
-  if (i == 9) return 1;
+  if (j == 9) return 1;
 
-  i -= i % 3;
   j -= j % 3;
+  k -= k % 3;
 
   int numbers[9];
 
   memset(numbers, 0, sizeof(numbers));
 
-  for (k = 0; k < 3; k ++)
-    for (m = 0; m < 3; m ++) {
-      c = grid_cells_[i + k][j + m];
+  for (m = 0; m < 3; m ++)
+    for (n = 0; n < 3; n ++) {
+      c = grid_cells_[j + m][k + n];
       if (c->value()) numbers[c->value() - 1] = 1;
     }
 
-  for (i = 0; i < 9; i ++)
-    if (!numbers[i]) return i + 1;
+  for (j = 0; j < 9; j ++)
+    if (!numbers[j]) return j + 1;
 
   return 1;
 }
@@ -1230,9 +1231,9 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
   Sudoku *s = (Sudoku *)(widget->window());
   bool solved = true;
 
-  for (int i = 0; i < 9; i ++)
-    for (int j = 0; j < 9; j ++) {
-      SudokuCell *cell = s->grid_cells_[i][j];
+  for (int j = 0; j < 9; j ++)
+    for (int k = 0; k < 9; k ++) {
+      SudokuCell *cell = s->grid_cells_[j][k];
 
       if (!cell->readonly()) {
         solved = false;
@@ -1251,23 +1252,23 @@ Sudoku::restart_cb(Fl_Widget *widget, void *) {
 void
 Sudoku::save_game() {
   // Save the current values and state of each grid...
-  for (int i = 0; i < 9; i ++)
-    for (int j = 0; j < 9; j ++) {
+  for (int j = 0; j < 9; j ++)
+    for (int k = 0; k < 9; k ++) {
       char name[255];
-      SudokuCell *cell = grid_cells_[i][j];
+      SudokuCell *cell = grid_cells_[j][k];
 
-      sprintf(name, "value%d.%d", i, j);
-      prefs_.set(name, grid_values_[i][j]);
+      sprintf(name, "value%d.%d", j, k);
+      prefs_.set(name, grid_values_[j][k]);
 
-      sprintf(name, "state%d.%d", i, j);
+      sprintf(name, "state%d.%d", j, k);
       prefs_.set(name, cell->value());
 
-      sprintf(name, "readonly%d.%d", i, j);
+      sprintf(name, "readonly%d.%d", j, k);
       prefs_.set(name, cell->readonly());
 
-      for (int k = 0; k < 8; k ++) {
-	sprintf(name, "test%d%d.%d", k, i, j);
-	prefs_.set(name, cell->test_value(k));
+      for (int m = 0; m < 8; m ++) {
+	sprintf(name, "test%d%d.%d", m, j, k);
+	prefs_.set(name, cell->test_value(m));
       }
     }
 }
@@ -1297,18 +1298,18 @@ Sudoku::solve_cb(Fl_Widget *widget, void *) {
 // Solve the puzzle...
 void
 Sudoku::solve_game() {
-  int i, j;
+  int j, k;
 
-  for (i = 0; i < 9; i ++) {
-    for (j = 0; j < 9; j ++) {
-      SudokuCell *cell = grid_cells_[i][j];
+  for (j = 0; j < 9; j ++) {
+    for (k = 0; k < 9; k ++) {
+      SudokuCell *cell = grid_cells_[j][k];
 
-      cell->value(grid_values_[i][j]);
+      cell->value(grid_values_[j][k]);
       cell->readonly(1);
       cell->color(FL_GRAY);
     }
 
-    if (sound_) sound_->play('A' + grid_cells_[i][8]->value() - 1);
+    if (sound_) sound_->play('A' + grid_cells_[j][8]->value() - 1);
   }
 }
 

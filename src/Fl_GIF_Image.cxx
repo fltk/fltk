@@ -153,7 +153,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
 	char bits;
 	bits = NEXTBYTE;
-	char junk = NEXTBYTE; junk = NEXTBYTE; // GETSHORT(delay);
+	getc(GifFile); getc(GifFile); // GETSHORT(delay);
 	transparent_pixel = NEXTBYTE;
 	if (bits & 1) has_transparent = 1;
 	blocklen = NEXTBYTE;

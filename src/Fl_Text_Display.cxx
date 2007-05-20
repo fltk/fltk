@@ -1148,7 +1148,7 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
     	return buf->rewind_lines(startPos, nLines);
 
     pos = startPos;
-    while (true) {
+    for (;;) {
 	lineStart = buf->line_start(pos);
 	wrapped_line_counter(buf, lineStart, pos, INT_MAX,
 	    	true, 0, &retPos, &retLines, &retLineStart, &retLineEnd, false);
@@ -2255,7 +2255,7 @@ void Fl_Text_Display::h_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
 ** stray marks outside of the character cell area, which might have been
 ** left from before a resize or font change.
 */
-void Fl_Text_Display::draw_line_numbers(bool clearAll) {
+void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
 #if 0
 	 // FIXME: don't want this yet, so will leave for another time
 
@@ -2447,7 +2447,7 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
     */
     lineStart = countFrom;
     *modRangeStart = countFrom;
-    while (true) {
+    for (;;) {
     	
     	/* advance to the next line.  If the line ended in a real newline
     	   or the end of the buffer, that's far enough */
@@ -2595,7 +2595,7 @@ void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
     ** line starts to re-sync with the original line starts array
     */
     lineStart = countFrom;
-    while (true) {
+    for (;;) {
     	/* advance to the next line.  If the line ended in a real newline
     	   or the end of the buffer, that's far enough */
     	wrapped_line_counter(buf, lineStart, buf->length(), 1, true, 0,

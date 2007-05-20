@@ -201,6 +201,9 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) {
       }
     }
   }
+#else
+  (void)mx;
+  (void)my;
 #endif // WIN32
 
   x = Fl::x();
@@ -237,6 +240,8 @@ void Fl::screen_xywh(int &x, int &y, int &w, int &h, int n) {
     h = screens[n].height;
     return;
   }
+#else
+  (void)n;
 #endif // WIN32
 
   x = Fl::x();

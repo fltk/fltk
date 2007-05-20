@@ -848,7 +848,7 @@ int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
  * \return a widget pointer that the live mode initiator can 'show()'
  * \see leave_live_mode()
  */
-Fl_Widget *Fl_Type::enter_live_mode(int top) {
+Fl_Widget *Fl_Type::enter_live_mode(int) {
   return 0L;
 }
 

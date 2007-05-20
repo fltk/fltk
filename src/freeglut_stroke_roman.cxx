@@ -2845,4 +2845,4 @@ static const Fl_Glut_StrokeChar *chars[] =
  &ch120, &ch121, &ch122, &ch123, &ch124, &ch125, &ch126, &ch127
 };
 
-Fl_Glut_StrokeFont glutStrokeRoman = {"Roman",128,152.381f,chars};
+Fl_Glut_StrokeFont glutStrokeRoman = {(char *)"Roman",128,152.381f,chars};

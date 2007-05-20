@@ -3,7 +3,7 @@
  *
  * snprintf() and vsnprintf() functions for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2005 by Bill Spitzak and others.
+ * Copyright 1998-2007 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,6 +108,8 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	}
       } else prec = -1;
 
+      size = '\0';
+
       if (*format == 'l' && format[1] == 'l') {
         size = 'L';
 	if (tptr < (tformat + sizeof(tformat) - 2)) {
@@ -159,7 +161,15 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	case 'x' :
 	  if ((width + 2) > sizeof(temp)) break;
 
-	  sprintf(temp, tformat, va_arg(ap, int));
+#ifdef HAVE_LONg_LONG
+	  if (size == 'L')
+	    sprintf(temp, tformat, va_arg(ap, long long));
+	  else
+#endif /* HAVE_LONG_LONG */
+	  if (size == 'l')
+	    sprintf(temp, tformat, va_arg(ap, long));
+	  else
+	    sprintf(temp, tformat, va_arg(ap, int));
 
           bytes += strlen(temp);
 

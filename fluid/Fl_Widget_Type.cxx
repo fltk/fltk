@@ -1689,7 +1689,7 @@ void overlay_cb(Fl_Button*o,void *v) {
 
 void leave_live_mode_cb(Fl_Widget*, void*);
 
-void live_mode_cb(Fl_Button*o,void *v) {
+void live_mode_cb(Fl_Button*o,void *) {
   /// \todo live mode should end gracefully when the application quits
   ///       or when the user closes the live widget
   static Fl_Type *live_type = 0L;
@@ -2620,7 +2620,7 @@ void leave_live_mode_cb(Fl_Widget*, void*) {
   live_mode_cb(0, 0);
 }
 
-Fl_Widget *Fl_Widget_Type::enter_live_mode(int top) {
+Fl_Widget *Fl_Widget_Type::enter_live_mode(int) {
   live_widget = widget(o->x(), o->y(), o->w(), o->h());
   if (live_widget)
     copy_properties();

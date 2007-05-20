@@ -887,7 +887,7 @@ if test -n "$GCC"; then
     OPTIM="-Wall -Wunused -Wno-format-y2k $OPTIM"
 
     # The following additional warnings are useful for tracking down problems...
-    #OPTIM="-Wshadow -Wconversion $OPTIM"
+    OPTIM="-Wshadow -Wconversion $OPTIM"
 
     # Set the default compiler optimizations...
     if test -z "$DEBUGFLAG"; then

@@ -230,7 +230,7 @@ void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
 ////////////////////////////////////////////////////////////////
 // live mode support
 
-Fl_Widget *Fl_Group_Type::enter_live_mode(int top) {
+Fl_Widget *Fl_Group_Type::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Group(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
   if (live_widget) {
@@ -245,7 +245,7 @@ Fl_Widget *Fl_Group_Type::enter_live_mode(int top) {
   return live_widget;
 }
 
-Fl_Widget *Fl_Tabs_Type::enter_live_mode(int top) {
+Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
   Fl_Tabs *grp = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
   if (live_widget) {
@@ -278,7 +278,7 @@ void Fl_Group_Type::copy_properties() {
 
 const char scroll_type_name[] = "Fl_Scroll";
 
-Fl_Widget *Fl_Scroll_Type::enter_live_mode(int top) {
+Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
   grp->show();
   live_widget = grp;

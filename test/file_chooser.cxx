@@ -211,7 +211,7 @@ multi_callback(void)
 Fl_Image *			// O - Page image or NULL
 pdf_check(const char *name,	// I - Name of file
           uchar      *header,	// I - Header data
-	  int        headerlen)	// I - Length of header data
+	  int)			// I - Length of header data (unused)
 {
   const char	*home;		// Home directory
   char		preview[1024],	// Preview filename
@@ -242,7 +242,7 @@ pdf_check(const char *name,	// I - Name of file
 Fl_Image *			// O - Page image or NULL
 ps_check(const char *name,	// I - Name of file
          uchar      *header,	// I - Header data
-	 int        headerlen)	// I - Length of header data
+	 int)			// I - Length of header data (unused)
 {
   const char	*home;		// Home directory
   char		preview[1024],	// Preview filename

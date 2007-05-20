@@ -45,7 +45,7 @@ Fl_Window *window;
 Fl_Value_Slider *orientation;
 Fl_Value_Slider *size;
 
-void slider_cb(Fl_Widget *w, void *) {
+void slider_cb(Fl_Widget *, void *) {
   static char buf[80];
   int val = (int)orientation->value();
   int sze = (int)size->value();

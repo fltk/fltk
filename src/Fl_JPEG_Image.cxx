@@ -79,12 +79,10 @@ extern "C" {
   static void
   fl_jpeg_error_handler(j_common_ptr dinfo) {	// I - Decompressor info
     longjmp(((fl_jpeg_error_mgr *)(dinfo->err))->errhand_, 1);
-    return;
   }
 
   static void
-  fl_jpeg_output_handler(j_common_ptr dinfo) {	// I - Decompressor info
-    return;
+  fl_jpeg_output_handler(j_common_ptr) {	// I - Decompressor info (not used)
   }
 }
 #endif // HAVE_LIBJPEG

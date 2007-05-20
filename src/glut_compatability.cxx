@@ -106,7 +106,6 @@ int Fl_Glut_Window::handle(int event) {
     while (button < 0) {mouse(3,GLUT_DOWN,ex,ey); ++button;}
     while (button > 0) {mouse(4,GLUT_DOWN,ex,ey); --button;}
     return 1;
-    break;
 
   case FL_RELEASE:
     for (button = 0; button < 3; button++) if (mouse_down & (1<<button)) {

@@ -104,7 +104,7 @@ void show_cb(Fl_Widget *o, void *) {
     browser->make_visible(line);
 }
 
-void swap_cb(Fl_Widget *o, void *) {
+void swap_cb(Fl_Widget *, void *) {
   int a = -1, b = -1;
   for ( int t=0; t<browser->size(); t++ ) {	// find two selected items
     if ( browser->selected(t) ) {

@@ -71,7 +71,7 @@ void box_cb(Fl_Widget* o, void*) {
 }
 
 void type_cb(Fl_Widget*, void* v) {
-  thescroll->type((long)v);
+  thescroll->type((uchar)((long)v));
   thescroll->redraw();
 }
 
@@ -87,7 +87,7 @@ Fl_Menu_Item choices[] = {
 };
 
 void align_cb(Fl_Widget*, void* v) {
-  thescroll->scrollbar.align((long)v);
+  thescroll->scrollbar.align((uchar)((long)v));
   thescroll->redraw();
 }
 

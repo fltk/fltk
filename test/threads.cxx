@@ -108,7 +108,6 @@ void* prime_func(void* p)
       Fl::unlock();
     }
   }
-  return 0;
 }
 
 int main(int argc, char **argv)

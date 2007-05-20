@@ -69,7 +69,7 @@ void fl_register_images() {
 Fl_Image *					// O - Image, if found
 fl_check_images(const char *name,		// I - Filename
                 uchar      *header,		// I - Header data from file
-		int        headerlen) {		// I - Amount of data
+		int) {				// I - Amount of data (not used)
   if (memcmp(header, "GIF87a", 6) == 0 ||
       memcmp(header, "GIF89a", 6) == 0)	// GIF file
     return new Fl_GIF_Image(name);

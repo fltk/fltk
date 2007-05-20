@@ -80,7 +80,7 @@ Fl_Group *beginTestPage(const char *l) {
 }
 
 //------- test the point drawing capabilities of this implementation ----------
-class PointTest : Fl_Widget {
+class PointTest : public Fl_Widget {
 public: PointTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
   void draw() {
     int a = x(), b = y();
@@ -111,7 +111,7 @@ void fl_point_test() {
 }
 
 //------- test the line drawing capabilities of this implementation ----------
-class LineTest : Fl_Widget {
+class LineTest : public Fl_Widget {
 public: LineTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
   void draw() {
     int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, w(), h());
@@ -148,7 +148,7 @@ void fl_line_test() {
 }
 
 //------- test the line drawing capabilities of this implementation ----------
-class RectTest : Fl_Widget {
+class RectTest : public Fl_Widget {
 public: RectTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
   void draw() {
     int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, w(), h());
@@ -176,7 +176,7 @@ void fl_rect_test() {
 }
 
 //------- test the line drawing capabilities of this implementation ----------
-class ViewportTest : Fl_Widget {
+class ViewportTest : public Fl_Widget {
   int pos;
 public: ViewportTest(int x, int y, int w, int h, int p) : Fl_Widget(x, y, w, h),
   pos(p) {}
@@ -218,7 +218,7 @@ void fl_viewport_test() {
 }
 
 //------- test the circle drawing capabilities of this implementation ----------
-class CircleTest : Fl_Widget {
+class CircleTest : public Fl_Widget {
 public: CircleTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
   void draw() {
     int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);

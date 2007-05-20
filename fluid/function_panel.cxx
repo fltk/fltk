@@ -483,7 +483,7 @@ Fl_Double_Window* make_comment_panel() {
   return comment_panel;
 }
 
-void type_make_cb(Fl_Widget*w,void*d) {
+void type_make_cb(Fl_Widget*,void*d) {
   undo_checkpoint();
   Fl_Type *t = Fl_Type_make((char*)d);
   if (t) {
@@ -499,7 +499,7 @@ void type_make_cb(Fl_Widget*w,void*d) {
 Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 Fl_Window* make_widgetbin() {
-  { widgetbin_panel = new Fl_Window(551, 85, "Widget Bin");
+  { widgetbin_panel = new Fl_Window(550, 85, "Widget Bin");
     widgetbin_panel->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
     { Fl_Group* o = new Fl_Group(3, 3, 79, 79);
       { Fl_Button* o = new Fl_Button(5, 5, 24, 24);

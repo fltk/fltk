@@ -383,11 +383,13 @@ BlockSound::play_explosion(float duration) {
   if (duration <= 0.0)
     return;
 
+#if defined(__APPLE_) || defined(WIN32) || defined(HAVE_ALSA_ASOUNDLIB_H)
   if (duration > 1.0)
     duration = 1.0;
 
   int samples = (int)(duration * sample_size);
   short *sample_ptr = sample_data + 2 * (sample_size - samples);
+#endif // __APPLE__ || WIN32 || HAVE_ALSA_ASOUNDLIB_H
 
 #ifdef __APPLE__
   // Point to the next note...
@@ -540,7 +542,7 @@ BlockWindow::_BlockWindow() {
 // Bomb all blocks of a given color and return the number of affected blocks
 int
 BlockWindow::bomb(int color) {
-  int		i, j;
+  int		j, k;
   int		count;
   Block		*b;
   Column	*c;
@@ -548,8 +550,8 @@ BlockWindow::bomb(int color) {
 
   if (color >= BLOCK_BLAST) return (0);
 
-  for (i = num_columns_, c = columns_, count = 1; i > 0; i --, c ++)
-    for (j = c->num_blocks, b = c->blocks; j > 0; j --, b ++)
+  for (j = num_columns_, c = columns_, count = 1; j > 0; j --, c ++)
+    for (k = c->num_blocks, b = c->blocks; k > 0; k --, b ++)
       if (b->color == color) {
         b->color = -color;
 	count ++;
@@ -607,7 +609,7 @@ BlockWindow::click(int col, int row) {
 // Draw the block window...
 void
 BlockWindow::draw() {
-  int		i, j, xx, yy;
+  int		j, k, xx, yy;
   Block		*b;
   Column	*c;
 
@@ -617,8 +619,8 @@ BlockWindow::draw() {
   fl_rectf(0, 0, w(), h());
 
   // Draw the blocks...
-  for (i = num_columns_, c = columns_; i > 0; i --, c ++)
-    for (j = c->num_blocks, b = c->blocks; j > 0; j --, b ++) {
+  for (j = num_columns_, c = columns_; j > 0; j --, c ++)
+    for (k = c->num_blocks, b = c->blocks; k > 0; k --, b ++) {
       xx = w() - c->x;
       yy = h() - BLOCK_SIZE - b->y;
 
@@ -723,7 +725,7 @@ BlockWindow::draw() {
 // Handle mouse clicks, etc.
 int
 BlockWindow::handle(int event) {
-  int		i, j, mx, my, count;
+  int		j, k, mx, my, count;
   Block		*b;
   Column	*c;
 
@@ -736,20 +738,21 @@ BlockWindow::handle(int event) {
         mx    = w() - Fl::event_x() + BLOCK_SIZE;
 	my    = h() - Fl::event_y();
 	count = 0;
+	b     = c->blocks;
 
-	for (i = 0, c = columns_; !count && i < num_columns_; i ++, c ++)
-	  for (j = 0, b = c->blocks; !count && j < c->num_blocks; j ++, b ++)
+	for (j = 0, c = columns_; !count && j < num_columns_; j ++, c ++)
+	  for (k = 0, b = c->blocks; !count && k < c->num_blocks; k ++, b ++)
 	    if (mx >= c->x && mx < (c->x + BLOCK_SIZE) &&
 	        my >= b->y && my < (b->y + BLOCK_SIZE)) {
 	      if (b->bomb) count = bomb(b->color);
-	      else count = click(i, j);
+	      else count = click(j, k);
 
               break;
 	    }
 
         if (count < 2) {
-	  for (i = 0, c = columns_; i < num_columns_; i ++, c ++)
-	    for (j = 0, b = c->blocks; j < c->num_blocks; j ++, b ++)
+	  for (j = 0, c = columns_; j < num_columns_; j ++, c ++)
+	    for (k = 0, b = c->blocks; k < c->num_blocks; k ++, b ++)
 	      if (b->color < 0) b->color = -b->color;
 	} else {
 	  count --;
@@ -771,8 +774,8 @@ BlockWindow::handle(int event) {
 	    prefs_.set("high_score", high_score_);
 	  }
 
-	  for (i = 0, c = columns_; i < num_columns_; i ++, c ++)
-	    for (j = 0, b = c->blocks; j < c->num_blocks; j ++, b ++)
+	  for (j = 0, c = columns_; j < num_columns_; j ++, c ++)
+	    for (k = 0, b = c->blocks; k < c->num_blocks; k ++, b ++)
 	      if (b->color < 0) b->color = BLOCK_BLAST;
 	}
 	return (1);
@@ -784,7 +787,7 @@ BlockWindow::handle(int event) {
 
 // Toggle the on-line help...
 void
-BlockWindow::help_cb(Fl_Widget *wi, BlockWindow *bw) {
+BlockWindow::help_cb(Fl_Widget *, BlockWindow *bw) {
   bw->paused_ = bw->help_ = !bw->help_;
   bw->play_button_->label("@>");
   bw->redraw();

@@ -60,7 +60,7 @@ public:
 
 Fl_Widget* Fl_Tooltip::widget_ = 0;
 static Fl_TooltipBox *window = 0;
-static int X,Y,W,H;
+static int Y,H;
 
 void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
@@ -71,10 +71,8 @@ void Fl_TooltipBox::layout() {
 
   // find position on the screen of the widget:
   int ox = Fl::event_x_root();
-  //int ox = X+W/2;
   int oy = Y + H+2;
   for (Fl_Widget* p = Fl_Tooltip::current(); p; p = p->window()) {
-    //ox += p->x();
     oy += p->y();
   }
   int scr_x, scr_y, scr_w, scr_h;
@@ -224,7 +222,7 @@ Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char* t)
   Fl::remove_timeout(tooltip_timeout);
   Fl::remove_timeout(recent_timeout);
   // remember it:
-  widget_ = wid; X = x; Y = y; W = w; H = h; tip = t;
+  widget_ = wid; Y = y; H = h; tip = t;
   // popup the tooltip immediately if it was recently up:
   if (recent_tooltip) {
     if (window) window->hide();

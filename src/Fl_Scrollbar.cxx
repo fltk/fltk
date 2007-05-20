@@ -139,7 +139,6 @@ int Fl_Scrollbar::handle(int event) {
       handle_drag(clamp(value() + linesize_ * Fl::e_dy));
       return 1;
     }
-    break;
   case FL_SHORTCUT:
   case FL_KEYBOARD: {
     int v = value();
