@@ -735,7 +735,7 @@ BlockWindow::handle(int event) {
 
   switch (event) {
     case FL_PUSH :
-        mx    = w() - Fl::event_x() + BLOCK_SIZE;
+	mx    = w() - Fl::event_x() + BLOCK_SIZE;
 	my    = h() - Fl::event_y();
 	count = 0;
 	b     = 0;

@@ -889,6 +889,12 @@ if test -n "$GCC"; then
     # The following additional warnings are useful for tracking down problems...
     #OPTIM="-Wshadow -Wconversion $OPTIM"
 
+    # We know that Carbon is deprecated on OS X 10.4. To avoid hundreds of warnings
+    # we will temporarily disable 'deprecated' warnings on OS X.
+    if test "$uname" = "Darwin" -a $uversion -ge 800; then
+        OPTIM="-Wno-deprecated-declarations $OPTIM"
+    fi
+
     # Set the default compiler optimizations...
     if test -z "$DEBUGFLAG"; then
     	#

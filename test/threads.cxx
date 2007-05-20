@@ -70,7 +70,14 @@ void* prime_func(void* p)
   }
 
   // very simple prime number calculator !
-  for (;;) {
+  //
+  // The return at the end of this function can never be reached and thus 
+  // will generate a warning with some compilers, however we need to have 
+  // a return statement or other compilers will complain there is no return 
+  // statement. To avoid warnings on all compilers, we fool the smart ones 
+  // into beleiving that there is a chance that we reach the end by testing 
+  // n>=0, knowing that logically, n will never be negative in this context.
+  if (n>=0) for (;;) {
     int pp;
     int hn = (int)sqrt((double)n);
 
@@ -108,11 +115,7 @@ void* prime_func(void* p)
       Fl::unlock();
     }
   }
-  // This return can never be reached and thus will generate a warning with
-  // some compilers, however we need to have a return statement or other
-  // compilers will complain there is no return statement...  You can't
-  // win sometimes... :(
-  return 0;
+  return 0L;
 }
 
 int main(int argc, char **argv)
