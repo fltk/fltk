@@ -108,6 +108,11 @@ void* prime_func(void* p)
       Fl::unlock();
     }
   }
+  // This return can never be reached and thus will generate a warning with
+  // some compilers, however we need to have a return statement or other
+  // compilers will complain there is no return statement...  You can't
+  // win sometimes... :(
+  return 0;
 }
 
 int main(int argc, char **argv)
