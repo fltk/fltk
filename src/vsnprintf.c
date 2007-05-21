@@ -161,7 +161,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	case 'x' :
 	  if ((width + 2) > sizeof(temp)) break;
 
-#ifdef HAVE_LONg_LONG
+#ifdef HAVE_LONG_LONG
 	  if (size == 'L')
 	    sprintf(temp, tformat, va_arg(ap, long long));
 	  else
