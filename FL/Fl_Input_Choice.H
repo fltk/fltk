@@ -68,7 +68,13 @@ class Fl_Input_Choice : public Fl_Group {
 
   static void inp_cb(Fl_Widget*, void *data) { 
     Fl_Input_Choice *o=(Fl_Input_Choice *)data;
+    if (o->inp_->changed()) 
+      o->Fl_Widget::set_changed();
+    else
+      o->Fl_Widget::clear_changed();
     o->do_callback();
+    if (o->callback() != default_callback)
+      o->Fl_Widget::clear_changed();
   }
 
   // Custom resize behavior -- input stretches, menu button doesn't
@@ -100,13 +106,15 @@ public:
     menu_->add(s);
   }
   int changed() const { 
-    return inp_->changed();
+    return inp_->changed() | Fl_Widget::changed();
   }
   void clear_changed() { 
-    return inp_->clear_changed();
+    inp_->clear_changed();
+    Fl_Widget::clear_changed();
   }
   void set_changed() { 
-    return inp_->set_changed();
+    inp_->set_changed();
+    // no need to call Fl_Widget::set_changed()
   }
   void clear() {
     menu_->clear();
