@@ -35,12 +35,6 @@
 // Although I have copied the GLUT API, none of my code is based on
 // any GLUT implementation details and is therefore covered by the LGPL.
 
-// FLTK does not include the GLUT drawing functions (such as
-// glutWireTeapot()) or the stroke fonts but the declarations for the
-// drawing functions are included here because otherwise there is no
-// way to get them along with this.  To use them you will have to
-// link in the original GLUT library, put -lglut *after* -lfltk.
-
 // Commented out lines indicate parts of GLUT that are not emulated.
 
 #ifndef Fl_glut_H
