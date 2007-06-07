@@ -32,6 +32,10 @@ void buttcb(Fl_Widget*,void*data) {
     flag ^= 1;
     if ( flag ) in->activate();
     else        in->deactivate();
+    if (in->changed()) {
+        printf("Callback: changed() is set\n");
+        in->clear_changed();
+    }
 }
 
 void input_choice_cb(Fl_Widget*,void*data) {

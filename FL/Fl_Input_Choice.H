@@ -62,6 +62,7 @@ class Fl_Input_Choice : public Fl_Group {
     const Fl_Menu_Item *item = o->menubutton()->mvalue();
     if ( item && item->flags & (FL_SUBMENU|FL_SUBMENU_POINTER) ) return;	// ignore submenus
     o->inp_->value(o->menu_->text());
+    o->inp_->set_changed();
     o->do_callback();
   }
 
@@ -100,6 +101,12 @@ public:
   }
   int changed() const { 
     return inp_->changed();
+  }
+  void clear_changed() { 
+    return inp_->clear_changed();
+  }
+  void set_changed() { 
+    return inp_->set_changed();
   }
   void clear() {
     menu_->clear();
