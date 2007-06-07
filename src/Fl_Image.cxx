@@ -344,7 +344,7 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
     // Composite grayscale + alpha over RGB...
     // Composite RGBA over RGB...
     for (int y = H; y > 0; y--, srcptr+=srcskip)
-      for (int x = W; x > 0; x--, dstptr+=3) {
+      for (int x = W; x > 0; x--) {
 	srcg = *srcptr++;
 	srca = *srcptr++;
 
