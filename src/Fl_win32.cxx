@@ -1188,6 +1188,14 @@ int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
+  // if the window is a subwindow and our parent is not mapped yet, we
+  // mark this window visible, so that mapping the parent at a later
+  // point in time will call this function again to finally map the subwindow.
+  if (w->parent() && !Fl_X::i(w->window())) {
+    w->set_visible();
+    return 0L;
+  }
+
   static NameList class_name_list;
   static const char *first_class_name = 0L;
   const char *class_name = w->xclass();
