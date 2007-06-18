@@ -337,7 +337,15 @@ void Overlay_Window::draw_overlay() {
   window->draw_overlay();
 }
 int Overlay_Window::handle(int e) {
-  return window->handle(e);
+  int ret =  window->handle(e);
+  if (ret==0) {
+    switch (e) {
+      case FL_SHOW:
+      case FL_HIDE:
+        ret = Fl_Overlay_Window::handle(e);
+    }
+  }
+  return ret;
 }
 
 Fl_Type *Fl_Window_Type::make() {
@@ -1375,7 +1383,7 @@ Fl_Widget_Class_Type *current_widget_class = 0;
 
 Fl_Type *Fl_Widget_Class_Type::make() {
   Fl_Type *p = Fl_Type::current;
-  while (p && !p->is_decl_block()) p = p->parent;
+  while (p && (!p->is_decl_block() || (p->is_widget() && p->is_class()))) p = p->parent;
   Fl_Widget_Class_Type *myo = new Fl_Widget_Class_Type();
   myo->name("UserInterface");
 

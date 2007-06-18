@@ -82,8 +82,8 @@ int main(int argc, char** argv) {
 
   tile.end();
   window.end();
-  window.show(argc,argv);
   w1.show();
+  window.show(argc,argv);
   return Fl::run();
 }
 
