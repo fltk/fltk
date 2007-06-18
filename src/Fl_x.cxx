@@ -1134,6 +1134,14 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     if (Y < scr_y) Y = scr_y;
   }
 
+  // if the window is a subwindow and our parent is not mapped, we
+  // mark this window visible, so that mapping the parent later will
+  // call this function again.
+  if (win->parent() && !Fl_X::i(win->window())) {
+    win->set_visible();
+    return;
+  }
+
   ulong root = win->parent() ?
     fl_xid(win->window()) : RootWindow(fl_display, fl_screen);
 
