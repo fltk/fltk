@@ -116,7 +116,7 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *key )
  */
 Fl_Preferences::~Fl_Preferences()
 {
-  if (!node->parent()) delete rootNode;
+  if (node && !node->parent()) delete rootNode;
   // DO NOT delete nodes! The root node will do that after writing the preferences
   // zero all pointer to avoid memory errors, event though
   // Valgrind does not complain (Cygwind does though)
@@ -757,7 +757,7 @@ Fl_Preferences::RootNode::~RootNode()
     application_ = 0L;
   }
   delete prefs_->node;
-  prefs_ = 0L;
+  prefs_->node = 0L;
 }
 
 // read a preferences file and construct the group tree and with all entry leafs
