@@ -39,13 +39,13 @@ int main(int argc, char **argv) {
 <!-- NEED 2in -->
 
 <P>After including the required header files, the program then creates a
-window:</P>
+window. All following widgets will automatically be children of this window.</P>
 
 <UL><PRE>
 Fl_Window *window = new <A href="Fl_Window.html#Fl_Window">Fl_Window</A>(300,180);
 </PRE></UL>
 
-<P>and a box with the &quot;Hello, World!&quot; string in it:</P>
+<P>Then we create a box with the &quot;Hello, World!&quot; string in it.</P>
 
 <UL><PRE>
 Fl_Box *box = new <A href="Fl_Box.html#Fl_Box">Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
@@ -60,10 +60,15 @@ box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelfont>labelfont</A>(FL_BOLD+FL_ITAL
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labeltype>labeltype</A>(FL_SHADOW_LABEL);
 </PRE></UL>
 
-<P>Finally, we show the window and enter the FLTK event loop:</P>
+<P>We tell FLTK that we will not add any more widgets to the window.</P>
 
 <UL><PRE>
 window-&gt;<A href=Fl_Group.html#Fl_Group.end>end</A>();
+</PRE></UL>
+
+<P>Finally, we show the window and enter the FLTK event loop:</P>
+
+<UL><PRE>
 window-&gt;<A href=Fl_Window.html#Fl_Window.show>show</A>(argc, argv);
 return <A href="Fl.html#Fl.run">Fl::run</A>();
 </PRE></UL>
