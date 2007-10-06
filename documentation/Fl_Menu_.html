@@ -144,6 +144,9 @@ Text shortcuts are converted to integer shortcut by calling
 
 <P>The return value is the index into the array that the entry was put. </P>
 
+<P>No items must be added to a menu during a callback to the same menu.</P>
+
+
 <h4>int Fl_Menu_::add(const char *)</H4>
 
 <P>The passed string is split at any '|' characters and then
@@ -153,10 +156,14 @@ with Forms and other GL programs. The section strings use the
 same special characters as described for the long version of <a
 href='#Fl_Menu_.add'><tt>add()</tt></a></p>
 
+<P>No items must be added to a menu during a callback to the same menu.</P>
+
 
 <H4><A name=Fl_Menu_.clear>void Fl_Menu_::clear()</A></H4>
 Same as <tt>menu(NULL)</tt>, set the array pointer to null, indicating
 a zero-length menu.
+
+<P>Menus must no be cleared during a callback to the same menu.</P>
 
 
 <H4><A name=Fl_Menu_.copy>void Fl_Menu_::copy(const
@@ -232,6 +239,8 @@ const</a></h4>
 
 Deletes item <TT>n</TT> from the menu.  If the menu array was directly
 set with menu(x) then copy() is done to make a private array.
+
+<P>No items must be removed from a menu during a callback to the same menu.</P>
 
 
 <H4><A name=Fl_Menu_.replace>void Fl_Menu_::replace(int n, const char *)</A>
