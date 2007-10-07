@@ -75,7 +75,7 @@ int fl_filename_isdir(const char* n) {
   // Matt: Just in case, we strip the slash for other operating
   // systems as well, avoid bugs by sloppy implementations
   // of "stat".
-  if (length > 0 && isdirsep(n[length - 1])) {
+  if (length > 1 && isdirsep(n[length - 1])) {
     length --;
     memcpy(fn, n, length);
     fn[length] = '\0';
