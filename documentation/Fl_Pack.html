@@ -36,6 +36,7 @@ widgets. </P>
 <UL>
 <LI><A href=#Fl_Pack.Fl_Pack>Fl_Pack</A></LI>
 <LI><A href=#Fl_Pack.~Fl_Pack>~Fl_Pack</A></LI>
+<LI><A href=#Fl_Pack.resizable>resizable</A></LI>
 <LI><A href=#Fl_Pack.spacing>spacing</A></LI>
 </UL>
 <H4><A name=Fl_Pack.Fl_Pack>Fl_Pack::Fl_Pack(int x, int y, int w, int
@@ -49,6 +50,15 @@ all the children in the user code. A kludge has been done so the <TT>
 Fl_Pack</TT> and all of it's children can be automatic (local)
 variables, but you must declare the <TT>Fl_Pack</TT><I>first</I>, so
 that it is destroyed last.
+
+<H4><A name=Fl_Pack.resizable>void Fl_Pack::resizable(Fl_Widget *box)
+<BR> void Fl_Pack::resizable(Fl_Widget &amp;box)
+<BR> Fl_Widget *Fl_Pack::resizable() const</A></H4>
+<P>The resizable for <tt>Fl_Pack</tt> is set to <TT>NULL</TT> by 
+default.</p>
+
+<p> See also: <A href=Fl_Group.html#Fl_Group.resizable>Fl_Group::resizable()</A></p>
+
 <H4><A name=Fl_Pack.spacing>int Fl_Pack::spacing() const
 <BR> void Fl_Pack::spacing(int)</A></H4>
  Gets or sets the number of extra pixels of blank space that are added
