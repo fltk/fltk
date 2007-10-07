@@ -59,11 +59,12 @@ The destructor <I>also deletes all the items in the list</I>.
 Deselects all lines.
 
 
-<H4><A name=Fl_Multi_Browser.select>int Fl_Browser::select(int,int=1)
-<BR> int Fl_Browser::selected(int) const</A></H4>
+<H4><A name=Fl_Multi_Browser.select>int Fl_Browser::select(int line_no,int v=1)
+<BR> int Fl_Browser::selected(int line_no) const</A></H4>
 
-Selects one or more lines or gets the current selection state of a
-line.
+The first version of this call selects (v=1) or deselects (v=0) 
+a line in the browser.  The second call returns the current selection 
+state of a line.
 
 
 <H4><A name=Fl_Multi_Browser.value>void Fl_Browser::value(int)
