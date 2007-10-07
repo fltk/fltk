@@ -575,47 +575,51 @@ int Fl_Browser_::handle(int event) {
     void* l1 = selection_;
     void* l = l1; if (!l) l = top_; if (!l) l = item_first();
     if (l) {
-      if (type()==FL_HOLD_BROWSER) switch (Fl::event_key()) {
-      case FL_Down:
-	while ((l = item_next(l)))
-	  if (item_height(l)>0) {select_only(l, when()); break;}
-	return 1;
-      case FL_Up:
-	while ((l = item_prev(l))) if (item_height(l)>0) {
-	  select_only(l, when()); break;}
-	return 1;
-      } else switch (Fl::event_key()) {
-      case FL_Enter:
-      case FL_KP_Enter:
-	select_only(l, when());
-	return 1;
-      case ' ':
-	selection_ = l;
-	select(l, !item_selected(l), when());
-	return 1;
-      case FL_Down:
-	while ((l = item_next(l))) {
-	  if (Fl::event_state(FL_SHIFT|FL_CTRL))
-	    select(l, l1 ? item_selected(l1) : 1, when());
-	  if (item_height(l)>0) goto J1;
-	}
-	return 1;
-      case FL_Up:
-	while ((l = item_prev(l))) {
-	  if (Fl::event_state(FL_SHIFT|FL_CTRL))
-	    select(l, l1 ? item_selected(l1) : 1, when());
-	  if (item_height(l)>0) goto J1;
-	}
-	return 1;
-      J1:
-	if (selection_) redraw_line(selection_);
-	selection_ = l; redraw_line(l);
-	display(l);
-	return 1;
+      if (type()==FL_HOLD_BROWSER) {
+        switch (Fl::event_key()) {
+        case FL_Down:
+          while ((l = item_next(l)))
+            if (item_height(l)>0) {select_only(l, when()); break;}
+            return 1;
+        case FL_Up:
+          while ((l = item_prev(l))) if (item_height(l)>0) {
+            select_only(l, when()); break;}
+          return 1;
+        } 
+      } else  {
+        switch (Fl::event_key()) {
+        case FL_Enter:
+        case FL_KP_Enter:
+          select_only(l, when());
+          return 1;
+        case ' ':
+          selection_ = l;
+          select(l, !item_selected(l), when());
+          return 1;
+        case FL_Down:
+          while ((l = item_next(l))) {
+            if (Fl::event_state(FL_SHIFT|FL_CTRL))
+              select(l, l1 ? item_selected(l1) : 1, when());
+            if (item_height(l)>0) goto J1;
+          }
+          return 1;
+        case FL_Up:
+          while ((l = item_prev(l))) {
+            if (Fl::event_state(FL_SHIFT|FL_CTRL))
+              select(l, l1 ? item_selected(l1) : 1, when());
+            if (item_height(l)>0) goto J1;
+          }
+          return 1;
+J1:
+          if (selection_) redraw_line(selection_);
+          selection_ = l; redraw_line(l);
+          display(l);
+          return 1;
+        }
       }
     }
   }
-
+  
   if (Fl_Group::handle(event)) return 1;
   int X, Y, W, H; bbox(X, Y, W, H);
   int my;

@@ -376,8 +376,11 @@ callback function for the widget.
 <H4><A NAME="Fl_Browser_.selection">void *Fl_Browser_::selection() const</A></H4>
 
 <P>Returns the item currently selected, or NULL if there is no selection.
-For multiple selection browsers this call returns the last item that was
-selected.
+
+<P>For multiple selection browsers this call returns the currently focused item,
+even if it is not selected. To find all selected items, call 
+<TT><A href=Fl_Multi_Browser.html#Fl_Multi_Browser.select>
+Fl_Multi_Browser::selected()</A></TT> for every item in question.
 
 
 <H4><A name="Fl_Browser_.textcolor">Fl_Color Fl_Browser_::textcolor() const
