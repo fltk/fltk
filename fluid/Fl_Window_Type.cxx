@@ -503,6 +503,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   Fl_Widget* t = resizable(); resizable(0);
   Fl_Overlay_Window::resize(X,Y,W,H);
   resizable(t);
+  set_modflag(1);
   update_xywh();
 }
 
