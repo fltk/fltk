@@ -1,29 +1,48 @@
+//
+// "$Id$"
+//
+// Hello, World! program for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
+#include <FL/filename.H>
 
-int  main(int argc, char ** argv)
-{
-	Fl_Window *window;
-	Fl_Box *box, *box1;
-
-	window = new Fl_Window(300, 180);
-	window->color(50);
-	box = new Fl_Box(20, 40, 130, 100, "Hello World!");
-	box->box(FL_UP_BOX);
-	box->labelsize(36);
-	box->color(fl_rgb_color(15));
-	box->labelfont(FL_BOLD+FL_ITALIC);
-	box->labeltype(FL_SHADOW_LABEL);
-	box1 = new Fl_Box(150, 40, 130, 100, "Hello World!");
-	box1->box(FL_UP_BOX);
-	box1->labelsize(36);
-	box1->color(15);
-	box1->labelfont(FL_BOLD+FL_ITALIC);
-	box1->labeltype(FL_SHADOW_LABEL);
-	window->end();
-	window->resizable(window);
-	window->show(argc, argv);
-	return(Fl::run());
+int main(int argc, char **argv) {
+  char b[1024];
+  fl_filename_relative(b, 1024, "/Users/matt/proj/source");
+  Fl_Window *window = new Fl_Window(300,180);
+  Fl_Box *box = new Fl_Box(FL_UP_BOX,20,40,260,100,"Hello, World!");
+  box->labelfont(FL_BOLD+FL_ITALIC);
+  box->labelsize(36);
+  box->labeltype(FL_SHADOW_LABEL);
+  window->end();
+  window->show(argc, argv);
+  return Fl::run();
 }
 
+//
+// End of "$Id$".
+//
