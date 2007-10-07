@@ -348,6 +348,9 @@ void unlock_ring() {
 void lock_ring() {
 }
 
+void Fl::awake(void*) {
+}
+
 #endif // WIN32
 
 //
