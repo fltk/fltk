@@ -207,17 +207,26 @@ int fl_old_shortcut(const char* s) {
 
 // Tests for &x shortcuts in button labels:
 
-int Fl_Widget::test_shortcut(const char *l) {
-  char c = Fl::event_text()[0];
-  if (!c || !l) return 0;
+char Fl_Widget::label_shortcut(const char *t) {
+  if (!t) return 0;
   for (;;) {
-    if (!*l) return 0;
-    if (*l++ == '&' && *l) {
-      if (*l == '&') l++;
-      else if (*l == c) return 1;
-      else return 0;
+    if (*t==0) return 0;
+    if (*t=='&') {
+      char s = t[1];
+      if (s==0) return 0;
+      else if (s=='&') t++;
+      else return s;
     }
+    t++;
   }
+}
+
+int Fl_Widget::test_shortcut(const char *t) {
+  char c = Fl::event_text()[0];
+  if (!c || !t) return 0;
+  if (c == label_shortcut(t))
+    return 1;
+  return 0;
 }
 
 int Fl_Widget::test_shortcut() {

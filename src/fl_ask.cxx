@@ -202,6 +202,11 @@ static int innards(const char* fmt, va_list ap,
   if (button[1]->visible() && !input->visible()) 
     button[1]->take_focus();
   message_form->hotspot(button[0]);
+  if (b0 && Fl_Widget::label_shortcut(b0))
+    button[0]->shortcut(0);
+  else
+    button[0]->shortcut(FL_Escape);
+
   message_form->show();
   int r;
   for (;;) {
