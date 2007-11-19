@@ -45,6 +45,7 @@ lines that may be selected and/or checked by the user.
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Check_Browser.remove>remove</A></LI>
 <LI><A href=#Fl_Check_Browser.set_checked>set_checked</A></LI>
 <LI><A href=#Fl_Check_Browser.text>text</A></LI>
 <LI><A href=#Fl_Check_Browser.value>value</A></LI>
@@ -85,6 +86,10 @@ Returns how many items are currently checked.
 <H4><A name=Fl_Check_Browser.nitems>int Fl_Check_Browser::nitems() const</A></H4>
 Returns how many lines are in the browser.  The last line number is equal to
 this.
+
+<H4><A name=Fl_Check_Browser.remove>int Fl_Check_Browser::remove(int n)</A></H4>
+Remove line <TT>n</TT> and make the browser one line shorter. Returns the 
+number of lines left in the browser.
 
 <H4><A name=Fl_Check_Browser.set_checked>void Fl_Check_Browser::set_checked(int item)</A></H4>
 Equivalent to <TT>Fl_Check_Browser::checked(item, 1)</TT>.
