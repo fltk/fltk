@@ -476,6 +476,7 @@ class BlockWindow : public Fl_Double_Window
   int		handle(int event);
   void		new_game();
   int		score() { return (score_); }
+  void          up_level();
 };
 
 
@@ -734,6 +735,12 @@ BlockWindow::handle(int event) {
   else if (interval_ < 0.0 || paused_) return (0);
 
   switch (event) {
+    case FL_KEYBOARD:
+        if (Fl::event_text()) {
+          if (strcmp(Fl::event_text(), "+") == 0)
+            up_level();
+        }
+        break;
     case FL_PUSH :
 	mx    = w() - Fl::event_x() + BLOCK_SIZE;
 	my    = h() - Fl::event_y();
@@ -841,6 +848,15 @@ BlockWindow::play_cb(Fl_Widget *wi, BlockWindow *bw) {
   }
 }
 
+void BlockWindow::up_level() {
+  interval_ *= 0.95;
+  opened_columns_ = 0;
+  if (num_colors_ < 7) num_colors_ ++;
+  level_ ++;
+  sprintf(title_, "Level: %d", level_);
+  title_y_ = h();
+  Fl::repeat_timeout(interval_, (Fl_Timeout_Handler)timeout_cb, (void *)this);
+}
 
 // Animate the game...
 void
@@ -940,14 +956,7 @@ BlockWindow::timeout_cb(BlockWindow *bw) {
 	bw->opened_columns_ ++;
 
 	if (bw->opened_columns_ > (2 * BLOCK_COLS)) {
-          bw->interval_ *= 0.95;
-	  bw->opened_columns_ = 0;
-
-          if (bw->num_colors_ < 7) bw->num_colors_ ++;
-
-          bw->level_ ++;
-	  sprintf(bw->title_, "Level: %d", bw->level_);
-	  bw->title_y_ = bw->h();
+          bw->up_level();
 	}
 
 	c = bw->columns_;
