@@ -1098,7 +1098,7 @@ Fl_Help_View::format()
 
 
   // Reset document width...
-  hsize_ = w() - 24;
+  hsize_ = w() - Fl::scrollbar_size();
 
   done = 0;
   while (!done)
@@ -2235,7 +2235,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   int scale_width = *table_width;
 
   if (scale_width == 0) {
-    if (width > (hsize_ - 24)) scale_width = hsize_ - 24;
+    if (width > (hsize_ - Fl::scrollbar_size())) scale_width = hsize_ - Fl::scrollbar_size();
     else scale_width = width;
   }
 
@@ -2522,7 +2522,7 @@ Fl_Help_View::get_length(const char *l) {	// I - Value
     if (val > 100) val = 100;
     else if (val < 0) val = 0;
 
-    val = val * (hsize_ - 24) / 100;
+    val = val * (hsize_ - Fl::scrollbar_size()) / 100;
   }
 
   return val;
@@ -3121,14 +3121,14 @@ Fl_Help_View::topline(int t)	// I - Top line number
   if (!value_)
     return;
 
-  if (size_ < (h() - 24) || t < 0)
+  if (size_ < (h() - Fl::scrollbar_size()) || t < 0)
     t = 0;
   else if (t > size_)
     t = size_;
 
   topline_ = t;
 
-  scrollbar_.value(topline_, h() - 24, 0, size_);
+  scrollbar_.value(topline_, h() - Fl::scrollbar_size(), 0, size_);
 
   do_callback();
 
@@ -3146,14 +3146,14 @@ Fl_Help_View::leftline(int l)	// I - Left position
   if (!value_)
     return;
 
-  if (hsize_ < (w() - 24) || l < 0)
+  if (hsize_ < (w() - Fl::scrollbar_size()) || l < 0)
     l = 0;
   else if (l > hsize_)
     l = hsize_;
 
   leftline_ = l;
 
-  hscrollbar_.value(leftline_, w() - 24, 0, hsize_);
+  hscrollbar_.value(leftline_, w() - Fl::scrollbar_size(), 0, hsize_);
 
   redraw();
 }
