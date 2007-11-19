@@ -188,6 +188,7 @@ public:
   void do_callback(Fl_Widget* o,void* arg=0) {callback_(o,arg); if (callback_ != default_callback) clear_changed();}
   void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg); if (callback_ != default_callback) clear_changed();}
   int test_shortcut();
+  static char label_shortcut(const char *t);
   static int test_shortcut(const char*);
   int contains(const Fl_Widget*) const ;
   int inside(const Fl_Widget* o) const {return o ? o->contains(this) : 0;}
