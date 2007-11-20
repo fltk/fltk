@@ -426,11 +426,11 @@ LARGEFILE=""
 if test x$enable_largefile = xyes; then
 	LARGEFILE="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
 
-	if test $ac_cv_sys_large_files = 1; then
+	if test x$ac_cv_sys_large_files = x1; then
 		LARGEFILE="$LARGEFILE -D_LARGE_FILES"
 	fi
 
-	if test $ac_cv_sys_file_offset_bits = 64; then
+	if test x$ac_cv_sys_file_offset_bits = x64; then
 		LARGEFILE="$LARGEFILE -D_FILE_OFFSET_BITS=64"
 	fi
 fi
@@ -1067,6 +1067,80 @@ if test x$prefix = xNONE; then
     AC_DEFINE_UNQUOTED(FLTK_DATADIR, "/usr/local/share/fltk")
 else
     AC_DEFINE_UNQUOTED(FLTK_DATADIR, "$prefix/share/fltk")
+fi
+
+dnl Summarize results of configure tests...
+echo ""
+echo "Configuration Summary"
+echo "-------------------------------------------------------------------------"
+
+case $uname in
+    CYGWIN* | MINGW*)
+        graphics="GDI"
+	;;
+    Darwin*)
+        if test x$enable_quartz = xyes; then
+            graphics="Quartz"
+	else
+            graphics="Quickdraw"
+	fi
+        ;;
+    *)
+        graphics="X11"
+	if test x$enable_xft = xyes; then
+	    graphics="$graphics+Xft"
+	fi
+	if test x$enable_xdbe = xyes; then
+	    graphics="$graphics+Xdbe"
+	fi
+	if test x$enable_xinerama = xyes; then
+	    graphics="$graphics+Xinerama"
+	fi
+        ;;
+esac
+
+echo "    Directories: prefix=$prefix"
+echo "                 bindir=$bindir"
+echo "                 datadir=$datadir"
+echo "                 datarootdir=$datarootdir"
+echo "                 exec_prefix=$exec_prefix"
+echo "                 includedir=$includedir"
+echo "                 libdir=$libdir"
+echo "                 mandir=$mandir"
+echo "       Graphics: $graphics"
+
+if test x$JPEG = x; then
+    echo "Image Libraries: JPEG=System"
+else
+    echo "Image Libraries: JPEG=Builtin"
+fi
+if test x$PNG = x; then
+    echo "                 PNG=System"
+else
+    echo "                 PNG=Builtin"
+fi
+if test x$ZLIB = x; then
+    echo "                 ZLIB=System"
+else
+    echo "                 ZLIB=Builtin"
+fi
+
+if test x$enable_largefile = xyes; then
+    echo "    Large Files: YES"
+else
+    echo "    Large Files: NO"
+fi
+
+if test x$GLDEMOS = x; then
+    echo "         OpenGL: NO"
+else
+    echo "         OpenGL: YES"
+fi
+
+if test x$THREADS = x; then
+    echo "        Threads: NO"
+else
+    echo "        Threads: YES"
 fi
 
 dnl Write all of the files...
