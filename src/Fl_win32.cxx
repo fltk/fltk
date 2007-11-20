@@ -1118,7 +1118,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   }
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
-    if (shown()) {redraw(); i->wait_for_expose = 1;}
+    if (visible_r()) {redraw(); i->wait_for_expose = 1;}
   } else {
     x(X); y(Y);
     flags |= SWP_NOSIZE;
