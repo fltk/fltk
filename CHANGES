@@ -4,6 +4,8 @@ CHANGES IN FLTK 1.1.8
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578,
 	  STR #1639, STR #1645, STR #1644, STR #1792, STR #1793,
 	  STR #1742, STR #1777)
+	- "fltk-config --use-* --libs" did not list all of the
+	  dependent libraries (STR #1799)
 	- Hiding a nested window on WIN32 caused 100% CPU (STR #1748)
 	- Changing the window size in FLUID would not mark the 
 	  project as modified (STR #1751)

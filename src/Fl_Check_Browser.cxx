@@ -195,8 +195,6 @@ int Fl_Check_Browser::add(char *s, int b) {
 
 int Fl_Check_Browser::remove(int item) {
   cb_item *p = find_item(item);
-  cb_item *prev;
-  cb_item *next;
   
   // line at item exists
   if(p) {

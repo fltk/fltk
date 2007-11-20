@@ -3,7 +3,7 @@
 #
 # Top-level makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2006 by Bill Spitzak and others.
+# Copyright 1998-2007 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -29,7 +29,7 @@ include makeinclude
 
 DIRS	=	$(IMAGEDIRS) src fluid test documentation
 
-all: makeinclude
+all: makeinclude fltk-config
 	for dir in $(DIRS); do\
 		echo "=== making $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\
@@ -89,6 +89,16 @@ distclean: clean
 		$(RM) test/`basename $$file .fl`.cxx; \
 		$(RM) test/`basename $$file .fl`.h; \
 	done
+
+fltk-config: configure configh.in fltk-config.in
+	if test -f config.status; then \
+		./config.status --recheck; \
+		./config.status; \
+	else \
+		./configure; \
+	fi
+	touch config.h
+	chmod +x fltk-config
 
 makeinclude: configure configh.in makeinclude.in
 	if test -f config.status; then \
