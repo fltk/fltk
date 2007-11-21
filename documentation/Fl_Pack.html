@@ -36,6 +36,7 @@ widgets. </P>
 <UL>
 <LI><A href=#Fl_Pack.Fl_Pack>Fl_Pack</A></LI>
 <LI><A href=#Fl_Pack.~Fl_Pack>~Fl_Pack</A></LI>
+<LI><A href=#Fl_Pack.box>box</A></LI>
 <LI><A href=#Fl_Pack.resizable>resizable</A></LI>
 <LI><A href=#Fl_Pack.spacing>spacing</A></LI>
 </UL>
@@ -50,6 +51,13 @@ all the children in the user code. A kludge has been done so the <TT>
 Fl_Pack</TT> and all of it's children can be automatic (local)
 variables, but you must declare the <TT>Fl_Pack</TT><I>first</I>, so
 that it is destroyed last.
+
+<H4><A name=Fl_Pack.box>Fl_Boxtype Fl_Pack::box() const
+<BR> void Fl_Pack::box(Fl_Boxtype)</A></H4>
+
+<P>Gets or sets the box type for the widget, which identifies a
+routine that draws the background of the widget. <em>Only frame
+box types may be used with the <tt>Fl_Pack</tt> widget.</em></p>
 
 <H4><A name=Fl_Pack.resizable>void Fl_Pack::resizable(Fl_Widget *box)
 <BR> void Fl_Pack::resizable(Fl_Widget &amp;box)
