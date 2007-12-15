@@ -39,18 +39,19 @@ behavior.
 <LI><A href=#Fl_Group.Fl_Group>Fl_Group</A></LI>
 <LI><A href=#Fl_Group.~Fl_Group>~Fl_Group</A></LI>
 <LI><A href=#Fl_Group.add>add</A></LI>
+<LI><A href=#Fl_Group.add_resizable>add_resizable</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Group.add_resizable>add_resizable</A></LI>
 <LI><A href=#Fl_Group.array>array</A></LI>
 <LI><A href=#Fl_Group.begin>begin</A></LI>
+<LI><A href=#Fl_Group.child>child</A></LI>
+<LI><A href=#Fl_Group.children>children</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
-<LI><A href=#Fl_Group.child>child</A></LI>
-<LI><A href=#Fl_Group.children>children</A></LI>
 <LI><A href="#Fl_Group.clear">clear</A></LI>
+<LI><A href="#Fl_Group.clip_children">clip_children</A></LI>
 <LI><A href=#Fl_Group.current>current</A></LI>
 </UL>
 </TD><TD align=left valign=top>
@@ -93,6 +94,16 @@ memory recursively.</p>
 <p>This method differs from the <a
 href='#Fl_Group.remove'><tt>remove()</tt></a> method in that it
 affects all child widgets and deletes them from memory.</p>
+
+<H4><A name="Fl_Group.clip_children">void Fl_Group::clip_children(int c);<br>
+int Fl_Group::clip_children();</A></H4>
+
+The first method controls whether the group widget clips the drawing of
+child widgets to its bounding box.
+
+<p>The second method returns the current clipping mode.
+
+<p>The default is to not clip (0) the drawing of child widgets.
 
 <H4><A name="Fl_Group.init_sizes">void Fl_Group::init_sizes()</A></H4>
 
