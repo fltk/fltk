@@ -114,7 +114,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   if (shown()) {
     g = Fl_Gl_Choice::find(m, a);
 #if defined(WIN32)
-    if (!g || (oldmode^m)&FL_DOUBLE) {
+    if (!g || (oldmode^m)&(FL_DOUBLE|FL_STEREO)) {
       hide();
       show();
     }
