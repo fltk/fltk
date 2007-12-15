@@ -84,6 +84,10 @@ void Fl_Gl_Window::show() {
 #endif
   }
   Fl_Window::show();
+
+#ifdef __APPLE__
+  set_visible();
+#endif /* __APPLE__ */
 }
 
 void Fl_Gl_Window::invalidate() {
