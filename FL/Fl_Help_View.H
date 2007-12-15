@@ -156,6 +156,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   void		draw();
   void		format();
   void		format_table(int *table_width, int *columns, const char *table);
+  void		free_data();
   int		get_align(const char *p, int a);
   const char	*get_attr(const char *p, const char *n, char *buf, int bufsize);
   Fl_Color	get_color(const char *n, Fl_Color c);

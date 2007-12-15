@@ -36,6 +36,7 @@
 //   Fl_Help_View::draw()            - Draw the Fl_Help_View widget.
 //   Fl_Help_View::format()          - Format the help text.
 //   Fl_Help_View::format_table()    - Format a table...
+//   Fl_Help_View::free_data()       - Free memory used for the document.
 //   Fl_Help_View::get_align()       - Get an alignment attribute.
 //   Fl_Help_View::get_attr()        - Get an attribute value from the string.
 //   Fl_Help_View::get_color()       - Get an alignment attribute.
@@ -888,9 +889,11 @@ Fl_Help_View::draw()
 	      hh = 0;
 	    }
 
-	    if (img) 
+	    if (img) {
 	      img->draw(xx + x() - leftline_,
 	                yy + y() - fl_height() + fl_descent() + 2);
+	      img->release();
+	    }
 
 	    xx += ww;
 	    if ((height + 2) > hh)
@@ -2297,6 +2300,111 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
 
 //
+// 'Fl_Help_View::free_data()' - Free memory used for the document.
+//
+
+void
+Fl_Help_View::free_data() {
+  // Releae all images...
+  if (value_) {
+    const char	*ptr,		// Pointer into block
+		*attrs;		// Pointer to start of element attributes
+    char	*s,		// Pointer into buffer
+		buf[1024],	// Text buffer
+		attr[1024],	// Attribute buffer
+		wattr[1024],	// Width attribute buffer
+		hattr[1024];	// Height attribute buffer
+
+
+    for (ptr = value_; *ptr;)
+    {
+      if (*ptr == '<')
+      {
+	ptr ++;
+
+        if (strncmp(ptr, "!--", 3) == 0)
+	{
+	  // Comment...
+	  ptr += 3;
+	  if ((ptr = strstr(ptr, "-->")) != NULL)
+	  {
+	    ptr += 3;
+	    continue;
+	  }
+	  else
+	    break;
+	}
+
+        s = buf;
+
+	while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
+          if (s < (buf + sizeof(buf) - 1))
+            *s++ = *ptr++;
+	  else
+	    ptr ++;
+
+	*s = '\0';
+
+	attrs = ptr;
+	while (*ptr && *ptr != '>')
+          ptr ++;
+
+	if (*ptr == '>')
+          ptr ++;
+
+	if (strcasecmp(buf, "IMG") == 0)
+	{
+	  Fl_Shared_Image	*img;
+	  int		width;
+	  int		height;
+
+
+          get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
+          get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+	  width  = get_length(wattr);
+	  height = get_length(hattr);
+
+	  if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+	    // Release the image twice to free it from memory...
+	    img = get_image(attr, width, height);
+	    img->release();
+	    img->release();
+	  }
+	}
+      }
+    }
+
+    free((void *)value_);
+    value_ = 0;
+  }
+
+  // Free all of the arrays...
+  if (nblocks_) {
+    free(blocks_);
+
+    ablocks_ = 0;
+    nblocks_ = 0;
+    blocks_  = 0;
+  }
+
+  if (nlinks_) {
+    free(links_);
+
+    alinks_ = 0;
+    nlinks_ = 0;
+    links_  = 0;
+  }
+
+  if (ntargets_) {
+    free(targets_);
+
+    atargets_ = 0;
+    ntargets_ = 0;
+    targets_  = 0;
+  }
+}
+
+//
 // 'Fl_Help_View::get_align()' - Get an alignment attribute.
 //
 
@@ -2949,14 +3057,8 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 
 Fl_Help_View::~Fl_Help_View()
 {
-  if (nblocks_)
-    free(blocks_);
-  if (nlinks_)
-    free(links_);
-  if (ntargets_)
-    free(targets_);
-  if (value_)
-    free((void *)value_);
+  clear_selection();
+  free_data();
 }
 
 
@@ -3167,18 +3269,16 @@ void
 Fl_Help_View::value(const char *v)	// I - Text to view
 {
   clear_selection();
+  free_data();
+  set_changed();
 
   if (!v)
     return;
-
-  if (value_ != NULL)
-    free((void *)value_);
 
   value_ = strdup(v);
 
   format();
 
-  set_changed();
   topline(0);
   leftline(0);
 }
