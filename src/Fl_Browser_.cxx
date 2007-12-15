@@ -590,11 +590,15 @@ int Fl_Browser_::handle(int event) {
         switch (Fl::event_key()) {
         case FL_Enter:
         case FL_KP_Enter:
-          select_only(l, when());
+          select_only(l, when() & ~FL_WHEN_ENTER_KEY);
+	  if (when() & FL_WHEN_ENTER_KEY) {
+	    set_changed();
+	    do_callback();
+	  }
           return 1;
         case ' ':
           selection_ = l;
-          select(l, !item_selected(l), when());
+          select(l, !item_selected(l), when() & ~FL_WHEN_ENTER_KEY);
           return 1;
         case FL_Down:
           while ((l = item_next(l))) {
@@ -761,6 +765,12 @@ J1:
       if (when() & FL_WHEN_RELEASE) do_callback();
     } else {
       if (when() & FL_WHEN_NOT_CHANGED) do_callback();
+    }
+    
+    // double click calls the callback: (like Enter Key)
+    if (Fl::event_clicks() && (when() & FL_WHEN_ENTER_KEY)) {
+      set_changed();
+      do_callback();
     }
     return 1;
   case FL_FOCUS:
