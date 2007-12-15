@@ -105,7 +105,9 @@ copy();</A></H4>
 
 <P>The <TT>copy()</TT> method creates a copy of the specified
 image. If the width and height are provided, the image is
-resized to the specified size.</P>
+resized to the specified size. The image should be deleted (or in
+the case of <tt>Fl_Shared_Image</tt>, released) when you are done
+with it.</P>
 
 <H4><A NAME="Fl_Image.count">int count();</A></H4>
 
