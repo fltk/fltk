@@ -537,7 +537,12 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 void Fl_Group::draw_children() {
   Fl_Widget*const* a = array();
 
-  if (clip_children()) fl_push_clip(x(), y(), w(), h());
+  if (clip_children()) {
+    fl_push_clip(x() + Fl::box_dx(box()),
+                 y() + Fl::box_dy(box()),
+		 w() - Fl::box_dw(box()),
+		 h() - Fl::box_dh(box()));
+  }
 
   if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
     for (int i=children_; i--;) {
