@@ -314,11 +314,11 @@ if test "$echo_libs" = "yes"; then
     echo $libdir/libfltk.a
 
     if test x$use_forms = xyes; then
-        echo $libdir/libfltk_images.a
+        echo $libdir/libfltk_forms.a
     fi
 
     if test x$use_gl = xyes; then
-        echo $libdir/libfltk_images.a
+        echo $libdir/libfltk_gl.a
     fi
 
     if test x$use_images = xyes; then
