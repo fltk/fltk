@@ -2372,6 +2372,8 @@ Fl_Help_View::free_data() {
 	  }
 	}
       }
+      else
+        ptr ++;
     }
 
     free((void *)value_);
