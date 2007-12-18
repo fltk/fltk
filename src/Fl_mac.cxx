@@ -2235,8 +2235,8 @@ void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   CGContextClipToRect(fl_gc, r2);
   mx.d = -1.0; mx.tx = -mx.tx;
   CGContextConcatCTM(fl_gc, mx);
-  rect.origin.x = rect.origin.x - cx;
-  rect.origin.y = (mx.ty+0.5f) - rect.origin.y - h + cy;
+  rect.origin.x = -(mx.tx+0.5f) + rect.origin.x     - cx;
+  rect.origin.y =  (mx.ty+0.5f) - rect.origin.y - h + cy;
   rect.size.width = w;
   rect.size.height = h;
 }
