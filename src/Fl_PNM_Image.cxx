@@ -155,21 +155,29 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
             }
           }
           break;
-
+          
       case 5 :
       case 6 :
+        if (maxval < 256) {
           fread(ptr, w(), d(), fp);
-          break;
-
+        } else {
+          for (x = d() * w(); x > 0; x --) {
+            val = (uchar)getc(fp);
+            val = (val<<8)|(uchar)getc(fp);
+            *ptr++ = (255*val)/maxval;
+          }
+        }
+        break;
+        
       case 7 : /* XV 3:3:2 thumbnail format */
-          for (x = w(); x > 0; x --) {
-	    byte = (uchar)getc(fp);
-
-	    *ptr++ = (uchar)(255 * ((byte >> 5) & 7) / 7);
-	    *ptr++ = (uchar)(255 * ((byte >> 2) & 7) / 7);
-	    *ptr++ = (uchar)(255 * (byte & 3) / 3);
-	  }
-          break;
+        for (x = w(); x > 0; x --) {
+          byte = (uchar)getc(fp);
+          
+          *ptr++ = (uchar)(255 * ((byte >> 5) & 7) / 7);
+          *ptr++ = (uchar)(255 * ((byte >> 2) & 7) / 7);
+          *ptr++ = (uchar)(255 * (byte & 3) / 3);
+        }
+        break;
     }
   }
 
