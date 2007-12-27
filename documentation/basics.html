@@ -45,7 +45,8 @@ window. All following widgets will automatically be children of this window.</P>
 Fl_Window *window = new <A href="Fl_Window.html#Fl_Window">Fl_Window</A>(300,180);
 </PRE></UL>
 
-<P>Then we create a box with the &quot;Hello, World!&quot; string in it.</P>
+<P>Then we create a box with the &quot;Hello, World!&quot; string in it. FLTK automatically adds
+the new box to <tt>window</tt>, the current grouping widget.</P>
 
 <UL><PRE>
 Fl_Box *box = new <A href="Fl_Box.html#Fl_Box">Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
@@ -60,7 +61,7 @@ box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelfont>labelfont</A>(FL_BOLD+FL_ITAL
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labeltype>labeltype</A>(FL_SHADOW_LABEL);
 </PRE></UL>
 
-<P>We tell FLTK that we will not add any more widgets to the window.</P>
+<P>We tell FLTK that we will not add any more widgets to <tt>window</tt>.</P>
 
 <UL><PRE>
 window-&gt;<A href=Fl_Group.html#Fl_Group.end>end</A>();
@@ -104,6 +105,24 @@ the widget with or <tt>NULL</tt>. If not specified the label
 defaults to <tt>NULL</tt>. The label string must be in static
 storage such as a string constant because FLTK does not make a
 copy of it - it just uses the pointer.</P>
+
+<H3>Creating Widget hierarchies</H3>
+
+<P>Widgets are commonly ordered into functional groups, which 
+in turn may be grouped again, creating a hierarchy of widgets. 
+FLTK makes it easy to fill groups by automatically adding all widgets 
+that are created between a <tt>myGroup-&gt;begin()</tt> and 
+<tt>myGroup-&gt;end()</tt>. In this example, <tt>myGroup</tt>  
+would be the <i>current</i> group.</P>
+
+<P>Newly created groups and their derived widgets implicitly call
+<tt>begin()</tt> in the constructor, effectively adding all 
+subsequently created widgets to itself until <tt>end()</tt> 
+is called.</P>
+
+<P>Setting the current group to <tt>NULL</tt> will stop automatic
+hierarchies. New widgets can now be added manually using 
+<tt>Fl_Group::add(...)</tt> and <tt>Fl_Group::insert(...)</tt>.</P>
 
 <H3>Get/Set Methods</H3>
 
