@@ -80,18 +80,19 @@ subclass of <TT>Fl_Browser_</TT>. </P>
 <LI><A href=#Fl_Browser.move>move</A></LI>
 <LI><A href=#Fl_Browser.position>position</A></LI>
 <LI><A href=#Fl_Browser.remove>remove</A></LI>
-<LI><A href=#Fl_Browser.show>show</A></LI>
+<LI><A href=#Fl_Browser.selected>selected</A></LI>
 </UL>
 </TD><TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Browser.show>show</A></LI>
 <LI><A href=#Fl_Browser.size>size</A></LI>
 <LI><A href=#Fl_Browser.swap>swap</A></LI>
 <LI><A href=#Fl_Browser.text>text</A></LI>
-<LI><A href=#Fl_Browser.topline>topline</A></LI>
 </UL>
 </TD>
 <TD align=left valign=top>
 <UL>
+<LI><A href=#Fl_Browser.topline>topline</A></LI>
 <LI><A href=#Fl_Browser.visible>visible</A></LI>
 </UL>
 </TD></TR>
@@ -196,6 +197,8 @@ will always return 0.
 <P>The second form sets the vertical scrollbar position to <TT>p</TT>. </P>
 <H4><A name=Fl_Browser.remove>void Fl_Browser::remove(int n)</A></H4>
  Remove line <TT>n</TT> and make the browser one line shorter.
+<H4><A name=Fl_Browser.selected>int Fl_Browser::selected(int n) const</A></H4>
+ Return 1 if line <TT>n</TT> is selected, 0 if it not selected.
 <H4><A name=Fl_Browser.show>void Fl_Browser::show(int n)</A></H4>
  Makes line <TT>n</TT> visible for selection.
 <H4><A name=Fl_Browser.size>int Fl_Browser::size() const</A></H4>
