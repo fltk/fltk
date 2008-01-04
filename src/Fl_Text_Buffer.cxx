@@ -669,6 +669,11 @@ void Fl_Text_Buffer::secondary_select_rectangular( int start, int end,
   redisplay_selection( &oldSelection, &mSecondary );
 }
 
+int Fl_Text_Buffer::secondary_selection_position( int *start, int *end
+                                      ) {
+  return mSecondary.position( start, end );
+}
+
 int Fl_Text_Buffer::secondary_selection_position( int *start, int *end,
     int *isRect, int *rectStart, int *rectEnd ) {
   return mSecondary.position( start, end, isRect, rectStart,
@@ -707,6 +712,11 @@ void Fl_Text_Buffer::highlight_rectangular( int start, int end,
 
   mHighlight.set_rectangular( start, end, rectStart, rectEnd );
   redisplay_selection( &oldSelection, &mHighlight );
+}
+
+int Fl_Text_Buffer::highlight_position( int *start, int *end
+                                      ) {
+  return mHighlight.position( start, end );
 }
 
 int Fl_Text_Buffer::highlight_position( int *start, int *end,

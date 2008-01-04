@@ -1662,15 +1662,21 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     font  = styleRec->font;
     fsize = styleRec->size;
 
-    if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
+    if (style & PRIMARY_MASK) {
       if (Fl::focus() == this) background = selection_color();
       else background = fl_color_average(color(), selection_color(), 0.5f);
+    } else if (style & HIGHLIGHT_MASK) {
+      if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.8f);
+      else background = fl_color_average(color(), selection_color(), 0.9f);
     } else background = color();
-
     foreground = fl_contrast(styleRec->color, background);
-  } else if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
+  } else if (style & PRIMARY_MASK) {
     if (Fl::focus() == this) background = selection_color();
     else background = fl_color_average(color(), selection_color(), 0.5f);
+    foreground = fl_contrast(textcolor(), background);
+  } else if (style & HIGHLIGHT_MASK) {
+    if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.8f);
+    else background = fl_color_average(color(), selection_color(), 0.9f);
     foreground = fl_contrast(textcolor(), background);
   } else {
     foreground = textcolor();
@@ -1707,6 +1713,7 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
   */
 }
 
+
 /*
 ** Clear a rectangle with the appropriate background color for "style"
 */
@@ -1716,25 +1723,23 @@ void Fl_Text_Display::clear_rect( int style, int X, int Y,
   if ( width == 0 )
     return;
 
-  if ( Fl::focus() != this ) {
-    if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
-      fl_color(fl_color_average(color(), selection_color(), 0.5f));
+  if (style & PRIMARY_MASK) {
+    if (Fl::focus()==this) {
+      fl_color(selection_color());
     } else {
-      fl_color( color() );
+      fl_color(fl_color_average(color(), selection_color(), 0.5f));
     }
-    fl_rectf( X, Y, width, height );
-  } else if ( style & HIGHLIGHT_MASK ) {
-    fl_color( fl_contrast(textcolor(), color()) );
-    fl_rectf( X, Y, width, height );
-  } else if ( style & PRIMARY_MASK ) {
-    fl_color( selection_color() );
-    fl_rectf( X, Y, width, height );
+  } else if (style & HIGHLIGHT_MASK) {
+    if (Fl::focus()==this) {
+      fl_color(fl_color_average(color(), selection_color(), 0.8f));
+    } else {
+      fl_color(fl_color_average(color(), selection_color(), 0.9f));
+    }
   } else {
     fl_color( color() );
-    fl_rectf( X, Y, width, height );
   }
+  fl_rectf( X, Y, width, height );
 }
-
 
 
 /*
@@ -3219,8 +3224,21 @@ int Fl_Text_Display::handle(int event) {
     case FL_UNFOCUS:
       if (active_r() && window()) window()->cursor(FL_CURSOR_DEFAULT);
     case FL_FOCUS:
-      if (buffer()->selected()) redraw();
-
+      if (buffer()->selected()) {
+        int start, end;
+        if (buffer()->selection_position(&start, &end))
+          redisplay_range(start, end);
+      }
+      if (buffer()->secondary_selected()) {
+        int start, end;
+        if (buffer()->secondary_selection_position(&start, &end))
+          redisplay_range(start, end);
+      }
+      if (buffer()->highlight()) {
+        int start, end;
+        if (buffer()->highlight_position(&start, &end))
+          redisplay_range(start, end);
+      }
       return 1;
 
     case FL_KEYBOARD:
