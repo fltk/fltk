@@ -1132,7 +1132,7 @@ void Fl_Class_Type::open() {
 
 Fl_Class_Type Fl_Class_type;
 
-static Fl_Class_Type *current_class;
+Fl_Class_Type *current_class;
 extern Fl_Widget_Class_Type *current_widget_class;
 void write_public(int state) {
   if (!current_class && !current_widget_class) return;

@@ -330,6 +330,7 @@ static Fl_Type* write_code(Fl_Type* p) {
 }
 
 extern const char* header_file_name;
+extern Fl_Class_Type *current_class;
 
 int write_code(const char *s, const char *t) {
   const char *filemode = "w";
@@ -338,6 +339,8 @@ int write_code(const char *s, const char *t) {
   write_number++;
   delete id_root; id_root = 0;
   indentation = 0;
+  current_class = 0L;
+  current_widget_class = 0L;
   if (!s) code_file = stdout;
   else {
     FILE *f = fopen(s, filemode);
