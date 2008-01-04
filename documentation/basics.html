@@ -24,15 +24,15 @@ World!&quot; program that uses FLTK to display the window.</P>
 #include &lt;FL/Fl_Box.H&gt;
 
 int main(int argc, char **argv) {
-  Fl_Window *window = new Fl_Window(300,180);
-  Fl_Box *box = new Fl_Box(20,40,260,100,&quot;Hello, World!&quot;);
-  box-&gt;box(FL_UP_BOX);
-  box-&gt;labelsize(36);
-  box-&gt;labelfont(FL_BOLD+FL_ITALIC);
-  box-&gt;labeltype(FL_SHADOW_LABEL);
-  window-&gt;end();
-  window-&gt;show(argc, argv);
-  return Fl::run();
+  <A href="Fl_Window.html">Fl_Window</A> *window = new <A href="Fl_Window.html#Fl_Window.Fl_Window">Fl_Window</A>(300,180);
+  <A href="Fl_Box.html">Fl_Box</A> *box = new <A href="Fl_Box.html#Fl_Box.Fl_Box">Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.box">box</A>(<A href="common.html#boxtypes">FL_UP_BOX</A>);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.labelsize">labelsize</A>(36);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.labelfont">labelfont</A>(<A href="drawing.html#fonts">FL_BOLD</A>+<A href="drawing.html#fonts">FL_ITALIC</A>);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.labeltype">labeltype</A>(<A href="common.html#labels">FL_SHADOW_LABEL</A>);
+  window-&gt;<A href="Fl_Group.html#Fl_Group.end">end</A>();
+  window-&gt;<A href="Fl_Window.html#Fl_Window.show">show</A>(argc, argv);
+  return <A href="Fl.html#Fl.run">Fl::run</A>();
 }
 </PRE></UL>
 
@@ -55,7 +55,7 @@ Fl_Box *box = new <A href="Fl_Box.html#Fl_Box">Fl_Box</A>(20,40,260,100,&quot;He
 <P>Next, we set the type of box and the size, font, and style of the label:</P>
 
 <UL><PRE>
-box-&gt;box(FL_UP_BOX);
+box-&gt;<A href="Fl_Widget.html#Fl_Widget.box">box</A>(FL_UP_BOX);
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelsize>labelsize</A>(36);
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelfont>labelfont</A>(FL_BOLD+FL_ITALIC);
 box-&gt;<A href=Fl_Widget.html#Fl_Widget.labeltype>labeltype</A>(FL_SHADOW_LABEL);
