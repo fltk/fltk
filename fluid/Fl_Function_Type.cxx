@@ -41,6 +41,8 @@ extern const char* i18n_file;
 extern const char* i18n_set;
 extern char i18n_program[];
 
+extern void redraw_browser();
+
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
 
@@ -134,7 +136,10 @@ Fl_Type *Fl_Function_Type::make() {
 
 void Fl_Function_Type::write_properties() {
   Fl_Type::write_properties();
-  if (!public_) write_string("private");
+  switch (public_) {
+    case 0: write_string("private"); break;
+    case 2: write_string("protected"); break;
+  }
   if (cdecl_) write_string("C");
   if (return_type) {
     write_string("return_type");
@@ -145,6 +150,8 @@ void Fl_Function_Type::write_properties() {
 void Fl_Function_Type::read_property(const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
+  } else if (!strcmp(c,"protected")) {
+    public_ = 2;
   } else if (!strcmp(c,"C")) {
     cdecl_ = 1;
   } else if (!strcmp(c,"return_type")) {
@@ -161,7 +168,15 @@ void Fl_Function_Type::open() {
   if (!function_panel) make_function_panel();
   f_return_type_input->static_value(return_type);
   f_name_input->static_value(name());
-  f_public_button->value(public_);
+  if (is_in_class()) {
+    f_public_member_choice->value(public_);
+    f_public_member_choice->show();
+    f_public_choice->hide();
+  } else {
+    f_public_choice->value(public_>0);
+    f_public_choice->show();
+    f_public_member_choice->hide();
+  }
   f_c_button->value(cdecl_);
   function_panel->show();
   const char* message = 0;
@@ -186,9 +201,18 @@ void Fl_Function_Type::open() {
     message = c_check(c); if (message) continue;
     name(f_name_input->value());
     storestring(c, return_type);
-    if (public_ != f_public_button->value()) {
-      mod = 1;
-      public_ = f_public_button->value();
+    if (is_in_class()) {
+      if (public_ != f_public_member_choice->value()) {
+        mod = 1;
+        public_ = f_public_member_choice->value();
+        redraw_browser();
+      }
+    } else {
+      if (public_ != f_public_choice->value()) {
+        mod = 1;
+        public_ = f_public_choice->value();
+        redraw_browser();
+      }
     }
     if (cdecl_ != f_c_button->value()) {
       mod = 1;
@@ -356,9 +380,9 @@ void Fl_Function_Type::write_code2() {
 }
 
 int Fl_Function_Type::has_signature(const char *rtype, const char *sig) const {
-  if (!return_type) return 0;
+  if (rtype && !return_type) return 0;
   if (!name()) return 0;
-  if (   strcmp(return_type, rtype)==0 
+  if ( (rtype==0L || strcmp(return_type, rtype)==0) 
       && fl_filename_match(name(), sig)) {
     return 1;
   }
@@ -515,13 +539,18 @@ Fl_Type *Fl_Decl_Type::make() {
 
 void Fl_Decl_Type::write_properties() {
   Fl_Type::write_properties();
-  if (public_) write_string("public");
+  switch (public_) {
+    case 1: write_string("public"); break;
+    case 2: write_string("protected"); break;
+  }
   if (!static_) write_string("global");
 }
 
 void Fl_Decl_Type::read_property(const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
+  } else if (!strcmp(c,"protected")) {
+    public_ = 2;
   } else if (!strcmp(c,"global")) {
     static_ = 0;
   } else {
@@ -532,13 +561,15 @@ void Fl_Decl_Type::read_property(const char *c) {
 void Fl_Decl_Type::open() {
   if (!decl_panel) make_decl_panel();
   decl_input->static_value(name());
-  decl_public_button->value(public_);
-  decl_static_button->value(static_);
-  if (public_)
-    decl_static_button->label("extern");
-  else 
-    decl_static_button->label("static");
-  char pp = public_;
+  if (is_in_class()) {
+    decl_class_choice->value(public_);
+    decl_class_choice->show();
+    decl_choice->hide();
+  } else {
+    decl_choice->value((public_&1)|((static_&1)<<1));
+    decl_choice->show();
+    decl_class_choice->hide();
+  }
   decl_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -548,27 +579,26 @@ void Fl_Decl_Type::open() {
       if (w == decl_panel_cancel) goto BREAK2;
       else if (w == decl_panel_ok) break;
       else if (!w) Fl::wait();
-      if (pp != decl_public_button->value()) {
-        pp = decl_public_button->value();
-        if (pp)
-          decl_static_button->label("extern");
-        else
-          decl_static_button->label("static");
-        decl_static_button->redraw();
-      }
     }
     const char*c = decl_input->value();
     while (isspace(*c)) c++;
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     if (message) continue;
     name(c);
-    if (public_!=decl_public_button->value()) {
-      set_modflag(1);
-      public_ = decl_public_button->value();
-    }
-    if (static_!=decl_static_button->value()) {
-      set_modflag(1);
-      static_ = decl_static_button->value();
+    if (is_in_class()) {
+      if (public_!=decl_class_choice->value()) {
+        set_modflag(1);
+        public_ = decl_class_choice->value();
+      }
+    } else {
+      if (public_!=(decl_choice->value()&1)) {
+        set_modflag(1);
+        public_ = (decl_choice->value()&1);
+      }
+      if (static_!=((decl_choice->value()>>1)&1)) {
+        set_modflag(1);
+        static_ = ((decl_choice->value()>>1)&1);
+      }
     }
     break;
   }
@@ -652,7 +682,10 @@ Fl_Type *Fl_DeclBlock_Type::make() {
 
 void Fl_DeclBlock_Type::write_properties() {
   Fl_Type::write_properties();
-  if (public_) write_string("public");
+  switch (public_) {
+    case 1: write_string("public"); break;
+    case 2: write_string("protected"); break;
+  }
   write_string("after");
   write_word(after);
 }
@@ -660,6 +693,8 @@ void Fl_DeclBlock_Type::write_properties() {
 void Fl_DeclBlock_Type::read_property(const char *c) {
   if(!strcmp(c,"public")) {
     public_ = 1;
+  } else if(!strcmp(c,"protected")) {
+    public_ = 2;
   } else  if (!strcmp(c,"after")) {
     storestring(read_word(),after);
   } else {
@@ -670,7 +705,7 @@ void Fl_DeclBlock_Type::read_property(const char *c) {
 void Fl_DeclBlock_Type::open() {
   if (!declblock_panel) make_declblock_panel();
   decl_before_input->static_value(name());
-  declblock_public_button->value(public_);
+  declblock_public_choice->value((public_>0));
   decl_after_input->static_value(after);
   declblock_panel->show();
   const char* message = 0;
@@ -692,9 +727,10 @@ void Fl_DeclBlock_Type::open() {
     message = c_check(c&&c[0]=='#' ? c+1 : c);
     if (message) continue;
     storestring(c,after);
-    if (public_ != declblock_public_button->value()) {
+    if (public_ != declblock_public_choice->value()) {
       set_modflag(1);
-      public_ = declblock_public_button->value();
+      public_ = declblock_public_choice->value();
+      redraw_browser();
     }
     break;
   }
@@ -1017,12 +1053,17 @@ void Fl_Class_Type::write_properties() {
     write_string(":");
     write_word(subclass_of);
   }
-  if (!public_) write_string("private");
+  switch (public_) {
+    case 0: write_string("private"); break;
+    case 2: write_string("protected"); break;
+  }
 }
 
 void Fl_Class_Type::read_property(const char *c) {
   if (!strcmp(c,"private")) {
     public_ = 0;
+  } else if (!strcmp(c,"protected")) {
+    public_ = 2;
   } else if (!strcmp(c,":")) {
     storestring(read_word(), subclass_of);
   } else {
@@ -1099,7 +1140,11 @@ void write_public(int state) {
   if (current_widget_class && current_widget_class->write_public_state == state) return;
   if (current_class) current_class->write_public_state = state;
   if (current_widget_class) current_widget_class->write_public_state = state;
-  write_h(state ? "public:\n" : "private:\n");
+  switch (state) {
+    case 0: write_h("private:\n"); break;
+    case 1: write_h("public:\n"); break;
+    case 2: write_h("protected:\n"); break;
+  }
 }
 
 void Fl_Class_Type::write_code1() {

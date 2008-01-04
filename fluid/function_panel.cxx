@@ -37,7 +37,22 @@ extern void select_only(Fl_Type*);
 
 Fl_Double_Window *function_panel=(Fl_Double_Window *)0;
 
-Fl_Light_Button *f_public_button=(Fl_Light_Button *)0;
+Fl_Choice *f_public_member_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_f_public_member_choice[] = {
+ {"private", 0,  0, (void*)(0), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, (void*)(1), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, (void*)(2), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Choice *f_public_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_f_public_choice[] = {
+ {"local", 0,  0, (void*)(0), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"global", 0,  0, (void*)(1), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
 
 Fl_Light_Button *f_c_button=(Fl_Light_Button *)0;
 
@@ -52,16 +67,27 @@ Fl_Button *f_panel_cancel=(Fl_Button *)0;
 Fl_Double_Window* make_function_panel() {
   { Fl_Double_Window* o = function_panel = new Fl_Double_Window(290, 150, "Function/Method Properties");
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
-      { f_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
-        f_public_button->tooltip("Make the function or method publicly accessible.");
-        f_public_button->labelsize(11);
-        f_public_button->when(FL_WHEN_NEVER);
-      } // Fl_Light_Button* f_public_button
-      { f_c_button = new Fl_Light_Button(80, 10, 80, 20, "C declaration");
+      { f_public_member_choice = new Fl_Choice(10, 10, 75, 20);
+        f_public_member_choice->tooltip("Change member access attribute.");
+        f_public_member_choice->down_box(FL_BORDER_BOX);
+        f_public_member_choice->labelsize(11);
+        f_public_member_choice->textsize(11);
+        f_public_member_choice->when(FL_WHEN_CHANGED);
+        f_public_member_choice->menu(menu_f_public_member_choice);
+      } // Fl_Choice* f_public_member_choice
+      { f_public_choice = new Fl_Choice(10, 10, 75, 20);
+        f_public_choice->tooltip("Change widget accessibility.");
+        f_public_choice->down_box(FL_BORDER_BOX);
+        f_public_choice->labelsize(11);
+        f_public_choice->textsize(11);
+        f_public_choice->when(FL_WHEN_CHANGED);
+        f_public_choice->menu(menu_f_public_choice);
+      } // Fl_Choice* f_public_choice
+      { f_c_button = new Fl_Light_Button(95, 10, 80, 20, "C declaration");
         f_c_button->tooltip("Declare with a C interface instead of C++.");
         f_c_button->labelsize(11);
       } // Fl_Light_Button* f_c_button
-      { Fl_Box* o = new Fl_Box(170, 10, 110, 20);
+      { Fl_Box* o = new Fl_Box(235, 10, 45, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
@@ -210,6 +236,16 @@ Fl_Double_Window* make_codeblock_panel() {
 
 Fl_Double_Window *declblock_panel=(Fl_Double_Window *)0;
 
+Fl_Choice *declblock_public_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_declblock_public_choice[] = {
+ {"in source code only", 0,  0, (void*)(0), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"in header and source", 0,  0, (void*)(1), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Light_Button *declblock_public_button_x=(Fl_Light_Button *)0;
+
 Fl_Input *decl_before_input=(Fl_Input *)0;
 
 Fl_Input *decl_after_input=(Fl_Input *)0;
@@ -218,11 +254,29 @@ Fl_Return_Button *declblock_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *declblock_panel_cancel=(Fl_Button *)0;
 
-Fl_Light_Button *declblock_public_button=(Fl_Light_Button *)0;
-
 Fl_Double_Window* make_declblock_panel() {
   { Fl_Double_Window* o = declblock_panel = new Fl_Double_Window(300, 135, "Declaration Block Properties");
     declblock_panel->labelsize(11);
+    { Fl_Group* o = new Fl_Group(10, 10, 280, 20);
+      { declblock_public_choice = new Fl_Choice(10, 10, 140, 20);
+        declblock_public_choice->tooltip("Change widget accessibility.");
+        declblock_public_choice->down_box(FL_BORDER_BOX);
+        declblock_public_choice->labelsize(11);
+        declblock_public_choice->textsize(11);
+        declblock_public_choice->when(FL_WHEN_NEVER);
+        declblock_public_choice->menu(menu_declblock_public_choice);
+      } // Fl_Choice* declblock_public_choice
+      { declblock_public_button_x = new Fl_Light_Button(10, 10, 60, 20, "public");
+        declblock_public_button_x->tooltip("Make the declaration publicly accessible.");
+        declblock_public_button_x->labelsize(11);
+        declblock_public_button_x->when(FL_WHEN_NEVER);
+        declblock_public_button_x->hide();
+      } // Fl_Light_Button* declblock_public_button_x
+      { Fl_Box* o = new Fl_Box(155, 10, 135, 20);
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      o->end();
+    } // Fl_Group* o
     { decl_before_input = new Fl_Input(10, 40, 280, 20);
       decl_before_input->tooltip("#ifdef or similar conditional declaration block.");
       decl_before_input->labelsize(11);
@@ -254,17 +308,6 @@ Fl_Double_Window* make_declblock_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(10, 10, 280, 20);
-      { declblock_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
-        declblock_public_button->tooltip("Make the declaration publicly accessible.");
-        declblock_public_button->labelsize(11);
-        declblock_public_button->when(FL_WHEN_NEVER);
-      } // Fl_Light_Button* declblock_public_button
-      { Fl_Box* o = new Fl_Box(80, 10, 210, 20);
-        Fl_Group::current()->resizable(o);
-      } // Fl_Box* o
-      o->end();
-    } // Fl_Group* o
     o->size_range(o->w(), o->h(), Fl::w(), o->h());
     declblock_panel->set_modal();
     declblock_panel->end();
@@ -274,9 +317,24 @@ Fl_Double_Window* make_declblock_panel() {
 
 Fl_Double_Window *decl_panel=(Fl_Double_Window *)0;
 
-Fl_Light_Button *decl_public_button=(Fl_Light_Button *)0;
+Fl_Choice *decl_choice=(Fl_Choice *)0;
 
-Fl_Light_Button *decl_static_button=(Fl_Light_Button *)0;
+Fl_Menu_Item menu_decl_choice[] = {
+ {"in source file only", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"in header file only", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"\"static\" in source file", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"in source and \"extern\" in header", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Choice *decl_class_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_decl_class_choice[] = {
+ {"private", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
 
 Fl_Input *decl_input=(Fl_Input *)0;
 
@@ -288,20 +346,21 @@ Fl_Double_Window* make_decl_panel() {
   { Fl_Double_Window* o = decl_panel = new Fl_Double_Window(290, 150, "Declaration Properties");
     decl_panel->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
-      { decl_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
-        decl_public_button->tooltip("Make the declaration publicly accessible.");
-        decl_public_button->labelsize(11);
-        decl_public_button->when(FL_WHEN_NEVER);
-      } // Fl_Light_Button* decl_public_button
-      { decl_static_button = new Fl_Light_Button(80, 10, 60, 20, "static");
-        decl_static_button->tooltip("Prepend \'static\' to private declarations in the source code, or \'extern\' \
-to public declarations in the header file.");
-        decl_static_button->labelsize(11);
-        decl_static_button->when(FL_WHEN_NEVER);
-      } // Fl_Light_Button* decl_static_button
-      { Fl_Box* o = new Fl_Box(150, 10, 130, 20);
+      { Fl_Box* o = new Fl_Box(200, 10, 80, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
+      { decl_choice = new Fl_Choice(10, 10, 185, 20);
+        decl_choice->down_box(FL_BORDER_BOX);
+        decl_choice->labelsize(11);
+        decl_choice->textsize(11);
+        decl_choice->menu(menu_decl_choice);
+      } // Fl_Choice* decl_choice
+      { decl_class_choice = new Fl_Choice(10, 10, 75, 20);
+        decl_class_choice->down_box(FL_BORDER_BOX);
+        decl_class_choice->labelsize(11);
+        decl_class_choice->textsize(11);
+        decl_class_choice->menu(menu_decl_class_choice);
+      } // Fl_Choice* decl_class_choice
       o->end();
     } // Fl_Group* o
     { decl_input = new Fl_Input(10, 40, 270, 20, "Can be any declaration, like \"int x;\", an external symbol like \"extern int\
@@ -348,20 +407,22 @@ Fl_Return_Button *c_panel_ok=(Fl_Return_Button *)0;
 Fl_Button *c_panel_cancel=(Fl_Button *)0;
 
 Fl_Double_Window* make_class_panel() {
-  { Fl_Double_Window* o = class_panel = new Fl_Double_Window(300, 140, "Class Properties");
+  { Fl_Double_Window* o = class_panel = new Fl_Double_Window(300, 115, "Class Properties");
     class_panel->labelsize(11);
     { Fl_Group* o = new Fl_Group(10, 10, 280, 20);
+      o->hide();
       { c_public_button = new Fl_Light_Button(10, 10, 60, 20, "public");
         c_public_button->tooltip("Make the class publicly accessible.");
         c_public_button->labelsize(11);
         c_public_button->when(FL_WHEN_NEVER);
+        c_public_button->hide();
       } // Fl_Light_Button* c_public_button
       { Fl_Box* o = new Fl_Box(80, 10, 210, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { c_name_input = new Fl_Input(10, 45, 280, 20, "Name:");
+    { c_name_input = new Fl_Input(10, 20, 280, 20, "Name:");
       c_name_input->tooltip("Name of class.");
       c_name_input->labelfont(1);
       c_name_input->labelsize(11);
@@ -371,7 +432,7 @@ Fl_Double_Window* make_class_panel() {
       c_name_input->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(c_name_input);
     } // Fl_Input* c_name_input
-    { c_subclass_input = new Fl_Input(10, 80, 280, 20, "Subclass of (text between : and {)");
+    { c_subclass_input = new Fl_Input(10, 55, 280, 20, "Subclass of (text between : and {)");
       c_subclass_input->tooltip("Name of subclass.");
       c_subclass_input->labelfont(1);
       c_subclass_input->labelsize(11);
@@ -380,16 +441,16 @@ Fl_Double_Window* make_class_panel() {
       c_subclass_input->align(FL_ALIGN_TOP_LEFT);
       c_subclass_input->when(FL_WHEN_NEVER);
     } // Fl_Input* c_subclass_input
-    { Fl_Group* o = new Fl_Group(10, 110, 280, 20);
-      { c_panel_ok = new Fl_Return_Button(160, 110, 60, 20, "OK");
+    { Fl_Group* o = new Fl_Group(10, 85, 280, 20);
+      { c_panel_ok = new Fl_Return_Button(160, 85, 60, 20, "OK");
         c_panel_ok->labelsize(11);
         c_panel_ok->window()->hotspot(c_panel_ok);
       } // Fl_Return_Button* c_panel_ok
-      { c_panel_cancel = new Fl_Button(230, 110, 60, 20, "Cancel");
+      { c_panel_cancel = new Fl_Button(230, 85, 60, 20, "Cancel");
         c_panel_cancel->shortcut(0xff1b);
         c_panel_cancel->labelsize(11);
       } // Fl_Button* c_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 110, 140, 20);
+      { Fl_Box* o = new Fl_Box(10, 85, 140, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();

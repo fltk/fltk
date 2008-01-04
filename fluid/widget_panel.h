@@ -94,7 +94,8 @@ extern void textcolor_cb(Fl_Button*, void*);
 extern void subclass_cb(Fl_Input*, void*);
 extern void subtype_cb(Fl_Choice*, void*);
 extern void name_cb(Fl_Input*, void*);
-extern void name_public_cb(Fl_Light_Button*, void*);
+extern void name_public_member_cb(Fl_Choice*, void*);
+extern void name_public_cb(Fl_Choice*, void*);
 extern void v_input_cb(Fl_Input*, void*);
 extern Fl_Input *v_input[4];
 #include "CodeEditor.h"
@@ -112,6 +113,8 @@ extern void cancel_cb(Fl_Button*, void*);
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
 Fl_Double_Window* make_widget_panel();
+extern Fl_Menu_Item menu_[];
+extern Fl_Menu_Item menu_1[];
 #endif
 
 //

@@ -5,6 +5,12 @@ CHANGES IN FLTK 1.1.8
 	  STR #1639, STR #1645, STR #1644, STR #1792, STR #1793,
 	  STR #1742, STR #1777, STR #1794, STR #1827, STR #1843,
 	  STR #1796, STR #1815, STR #1726, STR #1753)
+	- FLUID checks for seperately declared callbacks to 
+	  avoid a bogus "extern" declaration (STR #1776)
+	- Added "protected" class memebrs in FLUID
+	- Double-clicking a widget in a FLUID layout will show 
+	  the item in the widget browser
+	- Fixed color highlighting in Text_Display
 	- Fixed 16 bit PNM image support (STR #1847)
 	- Fixed exposure event on zero size windows (STR #1824)
 	- Fixed overlay offset for OS X Quartz (STR #1729)

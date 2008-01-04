@@ -1145,7 +1145,11 @@ int Fl_Window_Type::handle(int event) {
       Fl_Widget_Type* myo = (Fl_Widget_Type*)i;
       for (Fl_Widget *o1 = myo->o; o1; o1 = o1->parent())
 	if (!o1->visible()) goto CONTINUE2;
-      if (Fl::event_inside(myo->o)) selection = myo;
+      if (Fl::event_inside(myo->o)) {
+        selection = myo;
+        if (Fl::event_clicks()==1)
+          reveal_in_browser(myo);
+      }
     CONTINUE2:;
     }}
     // see if user grabs edges of selected region:

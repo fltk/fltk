@@ -721,6 +721,8 @@ Fl_Widget *make_widget_browser(int X,int Y,int W,int H);
 extern int modflag;
 void delete_all(int selected_only=0);
 void selection_changed(Fl_Type* new_current);
+void reveal_in_browser(Fl_Type*);
+int has_toplevel_function(const char *rtype, const char *sig);
 
 // file operations:
 #  ifdef __GNUC__

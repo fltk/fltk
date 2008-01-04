@@ -41,6 +41,19 @@ Fl_Value_Input *widget_w_input=(Fl_Value_Input *)0;
 
 Fl_Value_Input *widget_h_input=(Fl_Value_Input *)0;
 
+Fl_Menu_Item menu_[] = {
+ {"private", 0,  0, (void*)(0), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, (void*)(1), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, (void*)(2), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Menu_Item menu_1[] = {
+ {"local", 0,  0, (void*)(0), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"global", 0,  0, (void*)(1), 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Input *v_input[4]={(Fl_Input *)0};
 
 Fl_Button *wLiveMode=(Fl_Button *)0;
@@ -62,6 +75,7 @@ Fl_Double_Window* make_widget_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
+        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
           o->labelfont(1);
           o->labelsize(11);
@@ -469,6 +483,7 @@ ive to the origin at construction time");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)labelfont_cb);
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
@@ -500,6 +515,7 @@ ive to the origin at construction time");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)box_cb);
             Fl_Group::current()->resizable(o);
             o->menu(boxmenu);
@@ -522,6 +538,7 @@ ive to the origin at construction time");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)down_box_cb);
             Fl_Group::current()->resizable(o);
             o->menu(boxmenu);
@@ -544,6 +561,7 @@ ive to the origin at construction time");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)textfont_cb);
             Fl_Group::current()->resizable(o);
             o->menu(fontmenu);
@@ -574,7 +592,6 @@ ive to the origin at construction time");
         o->labelsize(11);
         o->callback((Fl_Callback*)propagate_load);
         o->when(FL_WHEN_NEVER);
-        o->hide();
         { Fl_Group* o = new Fl_Group(95, 40, 310, 20, "Class:");
           o->labelfont(1);
           o->labelsize(11);
@@ -594,6 +611,7 @@ ive to the origin at construction time");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)subtype_cb);
           } // Fl_Choice* o
           o->end();
@@ -603,7 +621,7 @@ ive to the origin at construction time");
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
           o->align(FL_ALIGN_LEFT);
-          { Fl_Input* o = new Fl_Input(95, 65, 250, 20);
+          { Fl_Input* o = new Fl_Input(95, 65, 235, 20);
             o->tooltip("The name of the widget.");
             o->labelfont(1);
             o->labelsize(11);
@@ -611,13 +629,24 @@ ive to the origin at construction time");
             o->callback((Fl_Callback*)name_cb);
             Fl_Group::current()->resizable(o);
           } // Fl_Input* o
-          { Fl_Light_Button* o = new Fl_Light_Button(345, 65, 60, 20, "public");
-            o->tooltip("Make the widget publicly accessible.");
-            o->selection_color((Fl_Color)1);
+          { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+            o->tooltip("Change member access attribute.");
+            o->down_box(FL_BORDER_BOX);
             o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)name_public_member_cb);
+            o->when(FL_WHEN_CHANGED);
+            o->menu(menu_);
+          } // Fl_Choice* o
+          { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+            o->tooltip("Change widget accessibility.");
+            o->down_box(FL_BORDER_BOX);
+            o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)name_public_cb);
             o->when(FL_WHEN_CHANGED);
-          } // Fl_Light_Button* o
+            o->menu(menu_1);
+          } // Fl_Choice* o
           o->end();
         } // Fl_Group* o
         { v_input[0] = new Fl_Input(95, 90, 310, 20, "Extra Code:");
@@ -686,6 +715,7 @@ access the Widget pointer and \'v\' to access the user value.");
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
             o->labelsize(11);
+            o->textsize(11);
             o->callback((Fl_Callback*)when_cb);
             o->when(FL_WHEN_CHANGED);
             o->menu(whenmenu);

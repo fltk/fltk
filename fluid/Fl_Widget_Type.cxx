@@ -318,9 +318,35 @@ void name_cb(Fl_Input* o, void *v) {
   }
 }
 
-void name_public_cb(Fl_Light_Button* i, void* v) {
+void name_public_member_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
     i->value(current_widget->public_);
+    if (current_widget->is_in_class()) i->show(); else i->hide();
+  } else {
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_widget()) {
+        Fl_Widget_Type *w = ((Fl_Widget_Type*)o);
+        if (w->is_in_class()) {
+          w->public_ = i->value();
+        } else {
+          // if this is not in a class, it can be only private or public
+          w->public_ = (i->value()>0);
+        }
+	mod = 1;
+      }
+    }
+    if (mod) {
+      set_modflag(1);
+      redraw_browser();
+    }
+  }
+}    
+
+void name_public_cb(Fl_Choice* i, void* v) {
+  if (v == LOAD) {
+    i->value(current_widget->public_>0);
+    if (current_widget->is_in_class()) i->hide(); else i->show();
   } else {
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
@@ -1883,9 +1909,12 @@ void Fl_Widget_Type::write_static() {
   if (callback() && is_name(callback())) {
     int write_extern_declaration = 1;
     const Fl_Class_Type *cc = is_in_class();
+    char buf[1024]; snprintf(buf, 1023, "%s(*)",  callback());
     if (cc) {
-      char buf[1024]; snprintf(buf, 1023, "%s(*)",  callback());
       if (cc->has_function("static void", buf))
+        write_extern_declaration = 0;
+    } else {
+      if (has_toplevel_function(0L, buf))
         write_extern_declaration = 0;
     }
     if (write_extern_declaration)
@@ -2276,7 +2305,11 @@ void Fl_Widget_Type::write_code2() {
 void Fl_Widget_Type::write_properties() {
   Fl_Type::write_properties();
   write_indent(level+1);
-  if (!public_) write_string("private");
+  switch (public_) {
+    case 0: write_string("private"); break;
+    case 1: break;
+    case 2: write_string("protected"); break;
+  }
   if (tooltip() && *tooltip()) {
     write_string("tooltip");
     write_word(tooltip());
@@ -2382,6 +2415,8 @@ void Fl_Widget_Type::read_property(const char *c) {
   int x,y,w,h; Fl_Font f; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
     public_ = 0;
+  } else if (!strcmp(c,"protected")) {
+    public_ = 2;
   } else if (!strcmp(c,"xywh")) {
     if (sscanf(read_word(),"%d %d %d %d",&x,&y,&w,&h) == 4) {
       x += pasteoffset;

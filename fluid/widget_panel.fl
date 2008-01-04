@@ -33,8 +33,8 @@ comment {//
 
 Function {make_widget_panel()} {open
 } {
-  Fl_Window {} {open selected
-    xywh {711 172 420 360} type Double labelsize 11 align 80 resizable hotspot
+  Fl_Window {} {open
+    xywh {383 206 420 360} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} visible
   } {
     Fl_Tabs {} {
@@ -44,7 +44,7 @@ Function {make_widget_panel()} {open
       Fl_Group {} {
         label GUI
         callback propagate_load
-        xywh {10 30 400 290} labelsize 11 when 0 resizable
+        xywh {10 30 400 290} labelsize 11 when 0 hide resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -151,7 +151,7 @@ Function {make_widget_panel()} {open
         }
         Fl_Group {} {
           label {Position:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 150 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Value_Input widget_x_input {
@@ -332,12 +332,12 @@ Function {make_widget_panel()} {open
       } {
         Fl_Group {} {
           label {Label Font:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback labelfont_cb open
-            tooltip {The style of the label text.} xywh {95 40 170 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+            tooltip {The style of the label text.} xywh {95 40 170 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
@@ -353,12 +353,12 @@ Function {make_widget_panel()} {open
         }
         Fl_Group {} {
           label {Box:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback box_cb open
-            tooltip {The "up" box of the widget.} xywh {95 65 219 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+            tooltip {The "up" box of the widget.} xywh {95 65 219 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
@@ -370,12 +370,12 @@ Function {make_widget_panel()} {open
         }
         Fl_Group {} {
           label {Down Box:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback down_box_cb open
-            tooltip {The "down" box of the widget.} xywh {95 90 219 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+            tooltip {The "down" box of the widget.} xywh {95 90 219 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item boxmenu[];}
             code1 {o->menu(boxmenu);}
           } {}
@@ -387,12 +387,12 @@ Function {make_widget_panel()} {open
         }
         Fl_Group {} {
           label {Text Font:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 115 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Choice {} {
             callback textfont_cb open
-            tooltip {The value text style.} xywh {95 115 170 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 resizable
+            tooltip {The value text style.} xywh {95 115 170 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
             code1 {o->menu(fontmenu);}
           } {}
@@ -412,8 +412,8 @@ Function {make_widget_panel()} {open
       }
       Fl_Group {} {
         label {C++}
-        callback propagate_load
-        xywh {10 30 400 290} labelsize 11 when 0 hide
+        callback propagate_load open
+        xywh {10 30 400 290} labelsize 11 when 0
       } {
         Fl_Group {} {
           label {Class:}
@@ -427,22 +427,52 @@ Function {make_widget_panel()} {open
           }
           Fl_Choice {} {
             callback subtype_cb open
-            tooltip {The widget subtype.} xywh {265 40 140 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11
+            tooltip {The widget subtype.} xywh {265 40 140 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
           } {}
         }
         Fl_Group {} {
           label {Name:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 65 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback name_cb
-            tooltip {The name of the widget.} xywh {95 65 250 20} labelfont 1 labelsize 11 textsize 11 resizable
+            callback name_cb selected
+            tooltip {The name of the widget.} xywh {95 65 235 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
-          Fl_Light_Button {} {
-            label public
-            callback name_public_cb
-            tooltip {Make the widget publicly accessible.} xywh {345 65 60 20} selection_color 1 labelsize 11 when 1
+          Fl_Choice {} {
+            callback name_public_member_cb open
+            tooltip {Change member access attribute.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
+          } {
+            MenuItem {} {
+              label private
+              user_data 0 user_data_type long
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label public
+              user_data 1 user_data_type long
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label protected
+              user_data 2 user_data_type long
+              xywh {0 0 100 20} labelsize 11
+            }
+          }
+          Fl_Choice {} {
+            callback name_public_cb open
+            tooltip {Change widget accessibility.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
+          } {
+            MenuItem {} {
+              label local
+              user_data 0 user_data_type long
+              xywh {10 10 100 20} labelsize 11
+            }
+            MenuItem {} {
+              label global
+              user_data 1 user_data_type long
+              xywh {10 10 100 20} labelsize 11
+            }
           }
         }
         Fl_Input {v_input[0]} {
@@ -485,7 +515,7 @@ Function {make_widget_panel()} {open
           Fl_Choice {} {
             label {When:}
             callback when_cb open
-            tooltip {When to call the callback function.} xywh {300 270 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1
+            tooltip {When to call the callback function.} xywh {300 270 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1 textsize 11
             code0 {extern Fl_Menu_Item whenmenu[];}
             code1 {o->menu(whenmenu);}
           } {}

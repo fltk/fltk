@@ -33,8 +33,10 @@
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *function_panel;
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Choice.H>
+extern Fl_Choice *f_public_member_choice;
+extern Fl_Choice *f_public_choice;
 #include <FL/Fl_Light_Button.H>
-extern Fl_Light_Button *f_public_button;
 extern Fl_Light_Button *f_c_button;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Input.H>
@@ -45,6 +47,8 @@ extern Fl_Return_Button *f_panel_ok;
 #include <FL/Fl_Button.H>
 extern Fl_Button *f_panel_cancel;
 Fl_Double_Window* make_function_panel();
+extern Fl_Menu_Item menu_f_public_member_choice[];
+extern Fl_Menu_Item menu_f_public_choice[];
 extern Fl_Double_Window *code_panel;
 #include "CodeEditor.h"
 extern CodeEditor *code_input;
@@ -58,19 +62,23 @@ extern Fl_Return_Button *codeblock_panel_ok;
 extern Fl_Button *codeblock_panel_cancel;
 Fl_Double_Window* make_codeblock_panel();
 extern Fl_Double_Window *declblock_panel;
+extern Fl_Choice *declblock_public_choice;
+extern Fl_Light_Button *declblock_public_button_x;
 extern Fl_Input *decl_before_input;
 extern Fl_Input *decl_after_input;
 extern Fl_Return_Button *declblock_panel_ok;
 extern Fl_Button *declblock_panel_cancel;
-extern Fl_Light_Button *declblock_public_button;
 Fl_Double_Window* make_declblock_panel();
+extern Fl_Menu_Item menu_declblock_public_choice[];
 extern Fl_Double_Window *decl_panel;
-extern Fl_Light_Button *decl_public_button;
-extern Fl_Light_Button *decl_static_button;
+extern Fl_Choice *decl_choice;
+extern Fl_Choice *decl_class_choice;
 extern Fl_Input *decl_input;
 extern Fl_Return_Button *decl_panel_ok;
 extern Fl_Button *decl_panel_cancel;
 Fl_Double_Window* make_decl_panel();
+extern Fl_Menu_Item menu_decl_choice[];
+extern Fl_Menu_Item menu_decl_class_choice[];
 extern Fl_Double_Window *class_panel;
 extern Fl_Light_Button *c_public_button;
 extern Fl_Input *c_name_input;
@@ -91,7 +99,6 @@ Fl_Double_Window* make_comment_panel();
 void type_make_cb(Fl_Widget*,void*d);
 #include <FL/Fl_Window.H>
 extern Fl_Window *widgetbin_panel;
-extern void type_make_cb(Fl_Button*, void*);
 Fl_Window* make_widgetbin();
 extern void toggle_sourceview_cb(Fl_Double_Window*, void*);
 extern Fl_Double_Window *sourceview_panel;
