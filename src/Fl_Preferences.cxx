@@ -991,7 +991,10 @@ void Fl_Preferences::Node::set( const char *line )
     const char *c = strchr( line, ':' );
     if ( c )
     {
-      strlcpy( nameBuffer, line, c-line+1);
+      unsigned int len = c-line+1;
+      if ( len >= sizeof( nameBuffer ) )
+        len = sizeof( nameBuffer );
+      strlcpy( nameBuffer, line, len );
       set( nameBuffer, c+1 );
     }
     else
