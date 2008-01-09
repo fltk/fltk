@@ -48,6 +48,8 @@
  * ::menu(bar) should only be called once!
  * Many other calls of the parent class don't work.
  * Changing the menu items has no effect on the menu bar.
+ * Starting with OS X 10.5, FLTK applications must be created as
+ * a bundle for the System Menu Bar (and maybe other features) to work!
  */
 
 #if defined(__APPLE__)
