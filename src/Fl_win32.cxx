@@ -1122,7 +1122,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       redraw(); 
       // only wait for exposure if this window has a size - a window 
       // with no width or height will never get an exposure event
-      if (W>0 && H>0)
+      if (i && W>0 && H>0)
         i->wait_for_expose = 1;
     }
   } else {
