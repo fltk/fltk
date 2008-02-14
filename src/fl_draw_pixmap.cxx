@@ -323,10 +323,9 @@ int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src);
   CGRect rect = { { x, y} , { d.w, d.h } };
-  Fl_X::q_begin_image(rect, x, y, d.w, d.h);
+  Fl_X::q_begin_image(rect, 0, 0, d.w, d.h);
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
-  CGContextFlush(fl_gc);
   CGImageRelease(img);
   delete array;
 
