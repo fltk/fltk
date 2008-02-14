@@ -55,8 +55,8 @@ The mouse position is in <a
 href="Fl.html#Fl.event_x"><tt>Fl::event_x()</tt></a> and <a
 href="Fl.html#Fl.event_y"><tt>Fl::event_y()</tt></a>.
 
-<P>To receive <CODE>FL_DRAG</CODE> events you must also respond to the
-<CODE>FL_PUSH</CODE> and <CODE>FL_RELEASE</CODE> events.
+<P>In order to receive <TT>FL_DRAG</TT> events, the widget must
+return non-zero when handling <TT>FL_PUSH</TT>.</P>
 
 <H3>FL_RELEASE</H3>
 
@@ -64,12 +64,18 @@ href="Fl.html#Fl.event_y"><tt>Fl::event_y()</tt></a>.
 button by calling <A
 href="Fl.html#Fl.event_button"><TT>Fl::event_button()</TT></A>.
 
+<P>In order to receive the <TT>FL_RELEASE</TT> event, the widget must
+return non-zero when handling <TT>FL_PUSH</TT>.</P>
+
 <H3>FL_MOVE</H3>
 
 <P>The mouse has moved without any mouse buttons held down. 
 This event is sent to the <A
 href="Fl.html#Fl.belowmouse"><TT>Fl::belowmouse()</TT></A>
-widget.
+widget.</P>
+
+<P>In order to receive <TT>FL_MOVE</TT> events, the widget must
+return non-zero when handling <TT>FL_ENTER</TT>.</P>
 
 <H3>FL_MOUSEWHEEL</H3>
 
@@ -96,6 +102,9 @@ events.
 <H3>FL_LEAVE</H3>
 
 <P>The mouse has moved out of the widget.
+
+<P>In order to receive the <TT>FL_LEAVE</TT> event, the widget must
+return non-zero when handling <TT>FL_ENTER</TT>.</P>
 
 <H3>FL_FOCUS</H3>
 
