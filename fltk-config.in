@@ -271,6 +271,12 @@ if test -n "$compile"; then
 
     echo $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
     $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+
+    # stop after compilation in case of errors
+    err=$?
+    if test $err != 0; then
+	exit $err
+    fi
 fi
 
 if test -n "$post" -a "$POSTBUILD" != ":"; then
