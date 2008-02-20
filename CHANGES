@@ -6,6 +6,7 @@ CHANGES IN FLTK 1.1.8
 	  STR #1742, STR #1777, STR #1794, STR #1827, STR #1843,
 	  STR #1796, STR #1815, STR #1726, STR #1753, STR #1855,
 	  STR #1862, STR #1867, STR #1874)
+	- Fixed recursion crash in event handling (STR #1873)
 	- Fixed missing return coe in 'fltk-config' (STR #1875)
 	- Fixed inconsistencies with CHANGED flags (STR #1719)
 	- Fixed message sent to hidden widgets (STR #1849)

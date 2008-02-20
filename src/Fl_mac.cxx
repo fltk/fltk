@@ -850,7 +850,7 @@ static pascal OSStatus carbonWindowHandler( EventHandlerCallRef nextHandler, Eve
     if ( !window->parent() ) Fl::handle( FL_HIDE, window);
     break;
   case kEventWindowActivated:
-    if ( window!=activeWindow ) 
+    if ( window->shown() && window!=activeWindow )
     {
       GetWindowClass( fl_xid( window ), &winClass );
       if ( winClass != kHelpWindowClass ) {	// help windows can't get the focus!
@@ -899,6 +899,11 @@ static pascal OSStatus carbonMousewheelHandler( EventHandlerCallRef nextHandler,
 
   fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
+  if ( !window->shown() )
+  {
+    fl_unlock_function();
+    return noErr;
+  }
   Fl::first_window(window);
 
   EventMouseWheelAxis axis;
@@ -954,6 +959,11 @@ static pascal OSStatus carbonMouseHandler( EventHandlerCallRef nextHandler, Even
   
   fl_os_event = event;
   Fl_Window *window = (Fl_Window*)userData;
+  if ( !window->shown() )
+  {
+    fl_unlock_function();
+    return noErr;
+  }
   Fl::first_window(window);
   Point pos;
   GetEventParameter( event, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &pos );
@@ -2459,4 +2469,3 @@ void MacUnmapWindow(Fl_Window *w, WindowPtr p) {
 //
 // End of "$Id$".
 //
-
