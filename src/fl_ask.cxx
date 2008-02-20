@@ -208,6 +208,10 @@ static int innards(const char* fmt, va_list ap,
     button[0]->shortcut(FL_Escape);
 
   message_form->show();
+  // deactivate Fl::grab(), because it is incompatible with Fl::readqueue()
+  Fl_Window* g = Fl::grab();
+  if (g) // do an alternative grab to avoid floating menus, if possible
+    Fl::grab(message_form);
   int r;
   for (;;) {
     Fl_Widget *o = Fl::readqueue();
@@ -217,6 +221,8 @@ static int innards(const char* fmt, va_list ap,
     else if (o == button[2]) {r = 2; break;}
     else if (o == message_form) {r = 0; break;}
   }
+  if (g) // regrab the previous popup menu, if there was one
+    Fl::grab(g);
   message_form->hide();
   icon->label(prev_icon_label);
   return r;
