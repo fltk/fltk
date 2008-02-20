@@ -85,7 +85,10 @@ int Fl_Button::handle(int event) {
       if (type() == FL_RADIO_BUTTON) newval = 1;
       else newval = !oldval;
     } else
+    {
+      clear_changed();
       newval = oldval;
+    }
     if (newval != value_) {
       value_ = newval;
       set_changed();
@@ -103,6 +106,7 @@ int Fl_Button::handle(int event) {
     else if (type() == FL_TOGGLE_BUTTON) oldval = value_;
     else {
       value(oldval);
+      set_changed();
       if (when() & FL_WHEN_CHANGED) do_callback();
     }
     if (when() & FL_WHEN_RELEASE) do_callback();

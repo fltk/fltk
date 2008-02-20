@@ -715,7 +715,9 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     } else //if (Fl::selection_owner() != this)
       minimal_update(mark_, position_);
   case FL_HIDE:
-    if (when() & FL_WHEN_RELEASE) maybe_do_callback();
+    if (!readonly() &&
+	(when() & (FL_WHEN_RELEASE | FL_WHEN_NOT_CHANGED)))
+      maybe_do_callback();
     return 1;
 
   case FL_PUSH:
