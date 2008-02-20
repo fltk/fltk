@@ -260,9 +260,7 @@ int Fl_Group::handle(int event) {
 
     if (children()) {
       for (int j = i;;) {
-        if (a[j]->takesevents() || event != FL_MOUSEWHEEL) {
-          if (send(a[j], event)) return 1;
-	}
+        if (a[j]->takesevents()) if (send(a[j], event)) return 1;
         j++;
         if (j >= children()) j = 0;
         if (j == i) break;
