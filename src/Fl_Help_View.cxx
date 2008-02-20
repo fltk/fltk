@@ -1101,7 +1101,7 @@ Fl_Help_View::format()
 
 
   // Reset document width...
-  hsize_ = w() - Fl::scrollbar_size();
+  hsize_ = w() - Fl::scrollbar_size() - Fl::box_dw(b);
 
   done = 0;
   while (!done)
@@ -1853,14 +1853,14 @@ Fl_Help_View::format()
 
   // Reset scrolling if it needs to be...
   if (scrollbar_.visible()) {
-    int temph = h() - Fl::box_dh(box());
+    int temph = h() - Fl::box_dh(b);
     if (hscrollbar_.visible()) temph -= ss;
     if ((topline_ + temph) > size_) topline(size_ - temph);
     else topline(topline_);
   } else topline(0);
 
   if (hscrollbar_.visible()) {
-    int tempw = w() - ss - Fl::box_dw(box());
+    int tempw = w() - ss - Fl::box_dw(b);
     if ((leftline_ + tempw) > hsize_) leftline(hsize_ - tempw);
     else leftline(leftline_);
   } else leftline(0);

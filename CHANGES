@@ -6,6 +6,7 @@ CHANGES IN FLTK 1.1.8
 	  STR #1742, STR #1777, STR #1794, STR #1827, STR #1843,
 	  STR #1796, STR #1815, STR #1726, STR #1753, STR #1855,
 	  STR #1862, STR #1867, STR #1874)
+	- Fixed width calculation in Fl_Help_ViewA (STR #1868)
 	- Fixed offset bug in OS X pixmap code (STR #1856)
 	- Fixed potential buffer overrun 
 	  in Fl_Preferences (STR #1853)
