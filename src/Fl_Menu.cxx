@@ -634,8 +634,14 @@ int menuwindow::early_hide_handle(int e) {
     case FL_Tab:
       if (Fl::event_shift()) goto BACKTAB;
     case FL_Down:
-      if (pp.menu_number || !pp.menubar) forward(pp.menu_number);
-      else if (pp.menu_number < pp.nummenus-1) forward(pp.menu_number+1);
+      if (pp.menu_number || !pp.menubar) {
+        if (!forward(pp.menu_number) && Fl::event_key()==FL_Tab) {
+          pp.item_number = -1;
+          forward(pp.menu_number);
+        }
+      } else if (pp.menu_number < pp.nummenus-1) {
+        forward(pp.menu_number+1);
+      }
       return 1;
     case FL_Right:
       if (pp.menubar && (pp.menu_number<=0 || pp.menu_number==1 && pp.nummenus==2))
