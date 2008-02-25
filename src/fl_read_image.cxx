@@ -26,6 +26,7 @@
 //
 
 #include <FL/x.H>
+#include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include "flstring.h"
 
@@ -41,11 +42,41 @@
 #  include <X11/Xutil.h>
 #  ifdef __sgi
 #    include <X11/extensions/readdisplay.h>
+#  else
+#    include <stdlib.h>
 #  endif // __sgi
 
 // Defined in fl_color.cxx
 extern uchar fl_redmask, fl_greenmask, fl_bluemask;
 extern int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
+
+//
+// 'fl_subimage_offsets()' - Calculate subimage offsets for an axis
+static inline int
+fl_subimage_offsets(int a, int aw, int b, int bw, int &obw)
+{
+  int off;
+  int ob;
+
+  if (b >= a) {
+    ob = b;
+    off = 0;
+  } else {
+    ob = a;
+    off = a - b;
+  }
+
+  bw -= off;
+
+  if (ob + bw <= a + aw) {
+    obw = bw;
+  } else {
+    obw = (a + aw) - ob;
+  }
+
+  return off;
+}
+
 
 //
 // 'fl_read_image()' - Read an image from the current window.
@@ -92,7 +123,42 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 #  endif // __sgi
 
   if (!image) {
+    // fetch absolute coordinates
+    int dx, dy;
+    Window child_win;
+    XTranslateCoordinates(fl_display, fl_window,
+	RootWindow(fl_display, fl_screen), X, Y, &dx, &dy, &child_win);
+
+    // screen dimensions
+    int sx, sy, sw, sh;
+    Fl::screen_xywh(sx, sy, sw, sh, fl_screen);
+
+    if (dx >= sx && dy >= sy && dx + w <= sw && dy + h <= sh) {
+      // the image is fully contained, we can use the traditional method
     image = XGetImage(fl_display, fl_window, X, Y, w, h, AllPlanes, ZPixmap);
+    } else {
+      // image is crossing borders, determine visible region
+      int nw, nh, noffx, noffy;
+      noffx = fl_subimage_offsets(sx, sw, dx, w, nw);
+      noffy = fl_subimage_offsets(sy, sh, dy, h, nh);
+      if (nw <= 0 || nh <= 0) return 0;
+
+      // allocate the image
+      int bpp = fl_visual->depth + ((fl_visual->depth / 8) % 2) * 8;
+      char* buf = (char*)malloc(bpp / 8 * w * h);
+      image = XCreateImage(fl_display, fl_visual->visual,
+	  fl_visual->depth, ZPixmap, 0, buf, w, h, bpp, 0);
+      if (!image) {
+	if (buf) free(buf);
+	return 0;
+  }
+
+      if (!XGetSubImage(fl_display, fl_window, X + noffx, Y + noffy,
+	      nw, nh, AllPlanes, ZPixmap, image, noffx, noffy)) {
+	XDestroyImage(image);
+	return 0;
+      }
+    }
   }
 
   if (!image) return 0;
