@@ -42,6 +42,7 @@ protected:
 public:
 
   Fl_Scrollbar(int x,int y,int w,int h, const char *l = 0);
+  ~Fl_Scrollbar();
   int handle(int);
 
   int value() {return int(Fl_Slider::value());}

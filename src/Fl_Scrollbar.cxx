@@ -265,6 +265,13 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
   step(1);
 }
 
+Fl_Scrollbar::~Fl_Scrollbar()
+{
+  if (pushed_)
+    Fl::remove_timeout(timeout_cb, this);
+}
+
+
 //
 // End of "$Id$".
 //

@@ -6,6 +6,7 @@ CHANGES IN FLTK 1.1.8
 	  STR #1742, STR #1777, STR #1794, STR #1827, STR #1843,
 	  STR #1796, STR #1815, STR #1726, STR #1753, STR #1855,
 	  STR #1862, STR #1867, STR #1874)
+	- Fixed possible timer leak in Scrollbar (STR #1880)
 	- Added documentation about the potential limitations
 	  of Fl::grab on newer operating systems (STR #1747)
 	- Fixed lockout when mixing popups and alerts
