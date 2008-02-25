@@ -203,12 +203,12 @@ install:	all
 install-linux:
 	echo Installing games to $(DESTDIR)$(bindir)...
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applnk/Games
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
 	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps
 	-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
 	for game in blocks checkers sudoku; do \
 		$(INSTALL_BIN) $$game $(DESTDIR)$(bindir); \
-		$(INSTALL_DATA) desktop/$$game.desktop  $(DESTDIR)/usr/share/applnk/Games; \
+		$(INSTALL_DATA) desktop/$$game.desktop  $(DESTDIR)/usr/share/applications; \
 		$(INSTALL_DATA) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
 		$(INSTALL_DATA) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
 	done
@@ -236,7 +236,7 @@ uninstall-linux:
 	echo Removing games from $(DESTDIR)$(bindir)...
 	for game in blocks checkers sudoku; do \
 		$(RM) $(DESTDIR)$(bindir)/$$game; \
-		$(RM) $(DESTDIR)/usr/share/applnk/Games/$$game.desktop; \
+		$(RM) $(DESTDIR)/usr/share/applications/$$game.desktop; \
 		$(RM) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \
 		$(RM) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \
 	done

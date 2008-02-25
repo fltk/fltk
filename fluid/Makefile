@@ -84,8 +84,8 @@ install: all
 	$(INSTALL_BIN) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
 
 install-linux:
-	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applnk/Development
-	$(INSTALL_DATA) fluid.desktop  $(DESTDIR)/usr/share/applnk/Development
+	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
+	$(INSTALL_DATA) fluid.desktop  $(DESTDIR)/usr/share/applications
 	for size in 16 32 48 64 128; do \
 		if test ! -d $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; then \
 			$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; \
@@ -111,7 +111,7 @@ uninstall:
 	$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
 
 uninstall-linux:
-	$(RM) $(DESTDIR)/usr/share/applnk/Development/fluid.desktop
+	$(RM) $(DESTDIR)/usr/share/applications/fluid.desktop
 	$(RM) $(DESTDIR)/usr/share/icons/hicolor/*/fluid.png
 	$(RM) $(DESTDIR)/usr/share/mimelnk/application/x-fluid.desktop
 

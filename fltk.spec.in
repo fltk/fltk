@@ -113,8 +113,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{prefix}/share/doc/fltk
 %{prefix}/share/doc/fltk/*
 
-%dir %{prefix}/share/applnk
-%{prefix}/share/applnk/Development/*
+%dir %{prefix}/share/applications
+%{prefix}/share/applications/*
 
 %dir %{prefix}/share/icons
 %{prefix}/share/icons/hicolor/*/apps/fluid.png
@@ -132,8 +132,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/cat6/*
 %{_mandir}/man6/*
 
-%dir %{prefix}/share/applnk
-%{prefix}/share/applnk/Games/*
+%dir %{prefix}/share/applications
+%{prefix}/share/applications/*
 
 %dir %{prefix}/share/icons
 %{prefix}/share/icons/hicolor/*/apps/blocks.png

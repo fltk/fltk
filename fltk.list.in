@@ -129,7 +129,7 @@ f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/flui
 %postremove /bin/rm -rf /Applications/fluid.app
 
 %system !darwin
-f 0444 root sys /usr/share/applnk/Development/fluid.desktop fluid/fluid.desktop
+f 0444 root sys /usr/share/applications/fluid.desktop fluid/fluid.desktop
 f 0444 root sys /usr/share/icons/hicolor/16x16/apps/fluid.png fluid/icons/fluid-16.png
 f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fluid.png fluid/icons/fluid-32.png
 f 0444 root sys /usr/share/icons/hicolor/48x48/apps/fluid.png fluid/icons/fluid-48.png
@@ -394,17 +394,17 @@ f 0444 root sys /Applications/sudoku.app/Contents/Resources/sudoku.icns test/sud
 
 %system !darwin
 f 0555 root sys $bindir/blocks test/blocks
-f 0444 root sys /usr/share/applnk/Games/blocks.desktop test/desktop/blocks.desktop
+f 0444 root sys /usr/share/applications/blocks.desktop test/desktop/blocks.desktop
 f 0444 root sys /usr/share/icons/hicolor/32x32/apps/blocks.png test/icons/blocks-32.png
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/blocks.png test/icons/blocks-128.png
 
 f 0555 root sys $bindir/checkers test/checkers
-f 0444 root sys /usr/share/applnk/Games/checkers.desktop test/desktop/checkers.desktop
+f 0444 root sys /usr/share/applications/checkers.desktop test/desktop/checkers.desktop
 f 0444 root sys /usr/share/icons/hicolor/32x32/apps/checkers.png test/icons/checkers-32.png
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/checkers.png test/icons/checkers-128.png
 
 f 0555 root sys $bindir/sudoku test/sudoku
-f 0444 root sys /usr/share/applnk/Games/sudoku.desktop test/desktop/sudoku.desktop
+f 0444 root sys /usr/share/applications/sudoku.desktop test/desktop/sudoku.desktop
 f 0444 root sys /usr/share/icons/hicolor/32x32/apps/sudoku.png test/icons/sudoku-32.png
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/sudoku.png test/icons/sudoku-128.png
 
