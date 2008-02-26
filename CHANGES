@@ -16,10 +16,10 @@ CHANGES IN FLTK 1.1.8
 	- Fixed lockout when mixing popups and alerts
 	  (STR # 1869)
 	- Fixed recursion crash in event handling (STR #1873)
-	- Fixed missing return coe in 'fltk-config' (STR #1875)
+	- Fixed missing return code in 'fltk-config' (STR #1875)
 	- Fixed inconsistencies with CHANGED flags (STR #1719)
 	- Fixed message sent to hidden widgets (STR #1849)
-	- Fixed width calculation in Fl_Help_ViewA (STR #1868)
+	- Fixed width calculation in Fl_Help_View (STR #1868)
 	- Fixed offset bug in OS X pixmap code (STR #1856)
 	- Fixed potential buffer overrun 
 	  in Fl_Preferences (STR #1853)
@@ -75,8 +75,7 @@ CHANGES IN FLTK 1.1.8
 	  accomodate for a missing '-d' option (STR #1632)
 	- New option in Fluid project settings to translate all
 	  shortcut modifiers from FL_META or FL_CTRL to FL_COMMAND
-	- Added static icon, text selection, and HTML formatting to
-	  fl_message etc. (STR #1626)
+	- Made icon size fixed (50x50) in fl_message etc. (STR #1626)
 	- Fixed selection of first word in Fl_Help_View
 	- Fixed endless loop in Fl_Text_Display (STR #1655)
 	- Allowing shortcuts in Tabs (STR #1652)
@@ -85,7 +84,7 @@ CHANGES IN FLTK 1.1.8
 	- The sample RPM spec file now enables large file support
 	  and threading support (STR #1603)
 	- Changed minimum contrast between background and text to 
-	  96 and added more weight to the blue component to improve
+	  99 and added more weight to the blue component to improve
 	  readability for certain color combinations (STR #1625)
 	- Fixed VCNet OpenGL project file (STR #1617)
 	- Fixed scrolling of clipped areas in MSWindows (STR
@@ -140,7 +139,7 @@ CHANGES IN FLTK 1.1.8
 	- OS X resource fork now obsolete (STR #1453)
 	- Added chapter 10 about multithreading (STR #1532, 
 	  1533)
-	- OS X system menu bar itop level attribute support 
+	- OS X system menu bar top level attribute support 
 	  improved (STR #1505)
 	- Fixed Quartz image drawing bug (STR #1438)
 	- Fixed Quartz fl_read_image
@@ -229,17 +228,17 @@ CHANGES IN FLTK 1.1.8
 	- Fixed speed issues when measuring text on OS X with
 	  Quartz (STR #1386).
 	- Fixed focus issues on OS X (STR #1377)
-	- Optional precission argument when storing floats or 
+	- Optional precision argument when storing floats or 
 	  doubles in a Preferences file (STR #1381)
 	- Fixed callback not called when using arrow keys in
 	  Fl_Slider (STR #1333)
-	- Changing the shorcut of a widget in fluid now marks the
+	- Changing the shortcut of a widget in fluid now marks the
 	  document as dirty (STR #1382)
 	- Fl_Text_Editor now correctly handles middle mouse
 	  clicks (STR #1384)
 	- Added some GLUT4 functions (STR #1370)
 	- Added "context_changed()" function for OpenGL windows
-	  which allows efficent texture loading (STR #1372)
+	  which allows efficient texture loading (STR #1372)
 	- Added missing "const" to GLUT call (STR #1371)
 	- Fixed stray FL_RELEASE events after clicking system
 	  areas on OS X (STR #1376)
@@ -279,7 +278,7 @@ CHANGES IN FLTK 1.1.8
 	- Updated documentation to reflect limitation of 
 	  Fl::delete_widget() (STR #1306)
 	- Fixed line wrapping in Fl_Text_Display (STR #1227)
-	- New function Fl::event_original_key() returns key  code
+	- New function Fl::event_original_key() returns key code
 	  before NumLock handling.
 	- Many OS X Quartz fixes (STR #1310, etc.)
 	- Fixed shortcut and default focus for message dialogs
