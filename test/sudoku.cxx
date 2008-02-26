@@ -141,7 +141,7 @@ class SudokuSound {
 class SudokuCell : public Fl_Widget {
   bool		readonly_;
   int		value_;
-  int		test_value_[8];
+  int		test_value_[9];
 
   public:
 
@@ -915,14 +915,14 @@ Sudoku::update_helpers() {
     int co = (col / 3) * 3;
     for (k = 0; k < 3; k ++) {
       for (m = 0; m < 3; m ++) {
-        SudokuCell *cell = grid_cells_[ro + j][co + k];
+        SudokuCell *cell = grid_cells_[ro + k][co + m];
         int v = cell->value();
         if (v) taken[v] = 1;
       }
     }
     // transfer our findings to the markers
     for (m = 1, k = 0; m <= 9; m ++) {
-      if (!taken[k])
+      if (!taken[m])
         dst_cell->test_value(m, k ++);
     }
   }
