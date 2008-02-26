@@ -185,9 +185,9 @@ clean:
 	$(RM) resize.cxx
 	$(RM) tabs.cxx
 	$(RM) valuators.cxx
-	$(RM) blocks.app/Contents/MacOS/blocks
-	$(RM) checkers.app/Contents/MacOS/checkers
-	$(RM) sudoku.app/Contents/MacOS/sudoku
+	$(OSX_ONLY) $(RM) blocks.app/Contents/MacOS/blocks$(EXEEXT)
+	$(OSX_ONLY) $(RM) checkers.app/Contents/MacOS/checkers$(EXEEXT)
+	$(OSX_ONLY) $(RM) sudoku.app/Contents/MacOS/sudoku$(EXEEXT)
 
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
@@ -277,13 +277,13 @@ buttons$(EXEEXT): buttons.o
 blocks$(EXEEXT): blocks.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)
-	$(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
 	$(POSTBUILD) $@ ../FL/mac.r
 
 checkers$(EXEEXT): checkers.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
-	$(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
 	$(POSTBUILD) $@ ../FL/mac.r
 
 clock$(EXEEXT): clock.o
@@ -409,7 +409,7 @@ subwindow$(EXEEXT): subwindow.o
 sudoku: sudoku.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
-	$(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
 	$(POSTBUILD) $@ ../FL/mac.r
 
 sudoku.exe: sudoku.o sudoku.rc

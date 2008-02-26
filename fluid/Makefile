@@ -58,7 +58,7 @@ fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
 			../lib/$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
-	$(INSTALL_BIN) fluid fluid.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
 	$(POSTBUILD) $@ ../FL/mac.r
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
@@ -70,7 +70,7 @@ fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck
 	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
-	-$(RM) fluid.app/Contents/MacOS/fluid
+	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)

@@ -100,6 +100,9 @@ THREADS		= @THREADS@
 # Name of FLUID executable we install
 FLUID		= @FLUID@$(EXEEXT)
 
+# Possible steps for OS X build only
+OSX_ONLY	= @OSX_ONLY@
+
 # Possible steps after linking...
 POSTBUILD	= @POSTBUILD@
 

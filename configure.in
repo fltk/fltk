@@ -600,6 +600,7 @@ AC_SUBST(PTHREAD_FLAGS)
 dnl Define OS-specific stuff...
 HLINKS=
 POSTBUILD=:
+OSX_ONLY=:
 THREADS=
 
 AC_ARG_WITH(links, [  --with-links            make header links for common misspellings])
@@ -679,6 +680,9 @@ case $uname in
 
 	# Add a postbuild step after linking applications
 	POSTBUILD="/Developer/Tools/Rez -t APPL -o"
+
+	# Some steps are only done for OS X package management
+	OSX_ONLY=
 
 	# Install/Uninstall FLUID application
 	INSTALL_DESKTOP="install-osx"
@@ -815,6 +819,7 @@ AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
 AC_SUBST(HLINKS)
 AC_SUBST(POSTBUILD)
+AC_SUBST(OSX_ONLY)
 AC_SUBST(THREADS)
 
 AC_SUBST(INSTALL_DESKTOP)
